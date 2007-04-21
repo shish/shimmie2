@@ -17,6 +17,14 @@ class Downtime extends Extension {
 			$event->config->set_bool("downtime", $_POST['downtime']);
 			$event->config->set_string("downtime_message", $_POST['downtime_message']);
 		}
+		if(is_a($event, 'PageRequestEvent')) {
+			global $config;
+			if($config->get_bool("downtime")) {
+				global $page;
+
+				$page->add_side_block(new Block("Downtime", "<span style='font-size: 1.5em'><b>DOWNTIME MODE IS ON!</b></span>"), 0);
+			}
+		}
 	}
 // }}}
 // do things {{{
