@@ -54,7 +54,7 @@ Upgrade process:
 3) Create a new, blank database, separate from the old one
 4) Unzip shimmie2 into a different folder than shimmie1
 5) Visit the URL of shimmie2
-6) Full in the old database location, the new database location, and the full
+6) Fill in the old database location, the new database location, and the full
    path to the old installation folder (the folder where the old "images" and
    "thumbs" can be found)
 7) Click "upgrade"
