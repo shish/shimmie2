@@ -278,15 +278,19 @@ function upgrade_process() { // {{{
 	print "<p>If everything looks OK, <a href='index.php?q=user/login'>continue</a>";
 } // }}}
 function move_data($old_dsn, $new_dsn, $old_data) {
+	print("<br>Upping PHP resource limits...");
+	set_time_limit(600);
+	ini_set("memory_limit", "32M");
+
 	print("<br>Fetching old data...");
 	$old_db = NewADOConnection($old_dsn);
 	$old_db->SetFetchMode(ADODB_FETCH_ASSOC);
 	# tmpfile & serialize?
 	$anon_id = -1;
-	$users = $old_db->GetAll("SELECT id, name, pass, joindate FROM users");
+	$users = $old_db->GetAll("SELECT id, name, pass, joindate FROM users ORDER BY id");
 	$admins = $old_db->GetCol("SELECT owner_id FROM user_configs WHERE name='isadmin' AND value='true'");
-	$images = $old_db->GetAll("SELECT id, owner_id, owner_ip, filename, hash, ext FROM images");
-	$comments = $old_db->GetAll("SELECT id, image_id, owner_id, owner_ip, posted, comment FROM comments");
+	$images = $old_db->GetAll("SELECT id, owner_id, owner_ip, filename, hash, ext FROM images ORDER BY id");
+	$comments = $old_db->GetAll("SELECT id, image_id, owner_id, owner_ip, posted, comment FROM comments ORDER BY id");
 	$tags = $old_db->GetAll("SELECT image_id, tag FROM tags");
 	$old_db->Close();
 
@@ -325,6 +329,18 @@ function move_data($old_dsn, $new_dsn, $old_data) {
 		$new_db->Execute("
 				INSERT INTO images(id, owner_id, owner_ip, filename, hash, ext, filesize, width, height, source, posted)
 				VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0, NULL, now())", $images);
+
+		print("<br>Setting orphan images to anonymous...");
+		$orphans = $new_db->GetCol("
+			SELECT images.id
+			FROM images
+			LEFT JOIN users ON users.id = images.owner_id
+			WHERE isnull(users.name)");
+		if($orphans) {
+			foreach($orphans as $orphan) {
+				$new_db->Execute("UPDATE images SET owner_id=? WHERE id=?", array($anon_id, $orphan));
+			}
+		}
 	}
 
 	if($comments) {
@@ -362,18 +378,6 @@ function move_data($old_dsn, $new_dsn, $old_data) {
 		if($orphans) {
 			foreach($orphans as $orphan) {
 				$new_db->Execute("UPDATE comments SET owner_id=? WHERE id=?", array($anon_id, $orphan));
-			}
-		}
-
-		print("<br>Setting orphan images to anonymous...");
-		$orphans = $new_db->GetCol("
-			SELECT images.id
-			FROM images
-			LEFT JOIN users ON users.id = images.owner_id
-			WHERE isnull(users.name)");
-		if($orphans) {
-			foreach($orphans as $orphan) {
-				$new_db->Execute("UPDATE images SET owner_id=? WHERE id=?", array($anon_id, $orphan));
 			}
 		}
 	}
