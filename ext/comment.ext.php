@@ -335,6 +335,7 @@ class CommentList extends Extension {
 
 	private function can_comment() {
 		global $config;
+		global $user;
 		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
 	}
 
