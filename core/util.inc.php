@@ -65,6 +65,29 @@ function to_shorthand_int($int) {
 	}
 }
 
+function get_memory_limit() {
+	global $config;
+
+	// thumbnail generation requires lots of memory
+	$default_limit = 8*1024*1024;
+	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_gd_mem_limit"));
+	if($shimmie_limit < 3*1024*1024) {
+		// we aren't going to fit, override
+		$shimmie_limit = $default_limit;
+	}
+	
+	ini_set("memory_limit", $shimmie_limit);
+	$memory = parse_shorthand_int(ini_get("memory_limit"));
+
+	// changing of memory limit is disabled / failed
+	if($memory == -1) {
+		$memory = $default_limit; 
+	}
+
+	return $memory;
+}
+
+
 function bbcode2html($text) {
 	$text = trim($text);
 	$text = html_escape($text);
