@@ -83,28 +83,6 @@ class RegenThumb extends Extension {
 		return imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
 	}
 
-	private function get_memory_limit() {
-		global $config;
-
-		// thumbnail generation requires lots of memory
-		$default_limit = 8*1024*1024;
-		$shimmie_limit = parse_shorthand_int($config->get_int("thumb_gd_mem_limit"));
-		if($shimmie_limit < 3*1024*1024) {
-			// we aren't going to fit, override
-			$shimmie_limit = $default_limit;
-		}
-		
-		ini_set("memory_limit", $shimmie_limit);
-		$memory = parse_shorthand_int(ini_get("memory_limit"));
-
-		// changing of memory limit is disabled / failed
-		if($memory == -1) {
-			$memory = $default_limit; 
-		}
-
-		return $memory;
-	}
-
 	private function get_thumb($tmpname) {
 		global $config;
 
@@ -116,7 +94,7 @@ class RegenThumb extends Extension {
 		$max_height = $config->get_int('thumb_height');
 
 		$memory_use = (filesize($tmpname)*2) + ($width*$height*4) + (4*1024*1024);
-		$memory_limit = $this->get_memory_limit();
+		$memory_limit = get_memory_limit();
 		
 		if($memory_use > $memory_limit) {
 			$thumb = imagecreatetruecolor($max_width, min($max_height, 64));
