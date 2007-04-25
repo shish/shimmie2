@@ -125,7 +125,22 @@ function tag_explode($tags) {
 }
 
 
+function get_thumbnail_size($orig_width, $orig_height) {
+	global $config;
+	$max_width  = $config->get_int('thumb_width');
+	$max_height = $config->get_int('thumb_height');
 
+	$xscale = ($max_height / $orig_height);
+	$yscale = ($max_width / $orig_width);
+	$scale = ($xscale < $yscale) ? $xscale : $yscale;
+
+//	if($scale >= 1) {
+//		return array($orig_width, $orig_height);
+//	}
+//	else {
+		return array($orig_width*$scale, $orig_height*$scale);
+//	}
+}
 
 
 # $db is the connection object

@@ -113,9 +113,6 @@ class ImageIO extends Extension {
 		$width = $info[0];
 		$height = $info[1];
 
-		$max_width  = $config->get_int('thumb_width');
-		$max_height = $config->get_int('thumb_height');
-
 		$memory_use = (filesize($tmpname)*2) + ($width*$height*4) + (4*1024*1024);
 		$memory_limit = get_memory_limit();
 		
@@ -129,21 +126,13 @@ class ImageIO extends Extension {
 		}
 		else {
 			$image = imagecreatefromstring($this->read_file($tmpname));
+			$tsize = get_thumbnail_size($width, $height);
 
-			$xscale = ($max_height / $height);
-			$yscale = ($max_width / $width);
-			$scale = ($xscale < $yscale) ? $xscale : $yscale;
-
-			if($scale >= 1) {
-				$thumb = $image;
-			}
-			else {
-				$thumb = imagecreatetruecolor($width*$scale, $height*$scale);
-				imagecopyresampled(
-						$thumb, $image, 0, 0, 0, 0,
-						$width*$scale, $height*$scale, $width, $height
-						);
-			}
+			$thumb = imagecreatetruecolor($tsize[0], $tsize[1]);
+			imagecopyresampled(
+					$thumb, $image, 0, 0, 0, 0,
+					$tsize[0], $tsize[1], $width, $height
+					);
 			return $thumb;
 		}
 	}
