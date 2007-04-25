@@ -1,4 +1,4 @@
-<?
+<?php
 global $config;
 $base_href = $config->get_string('base_href');
 $data_href = $config->get_string('data_href');
