@@ -4,24 +4,30 @@ $base_href = $config->get_string('base_href');
 $data_href = $config->get_string('data_href');
 $contact_link = $config->get_string('contact_link');
 
-function block_to_html($block) {
+function block_to_html($block, $hidable=false) {
 	$h = $block->header;
 	$b = $block->body;
-	$i = str_replace(' ', '_', $h);
 	$html = "";
-	if(!is_null($h)) $html .= "\n<h3 id='$i-toggle' onclick=\"toggle('$i')\">$h</h3>\n";
-	if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
+	if($hidable) {
+		$i = str_replace(' ', '_', $h);
+		if(!is_null($h)) $html .= "\n<h3 id='$i-toggle' onclick=\"toggle('$i')\">$h</h3>\n";
+		if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
+	}
+	else {
+		if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
+		if(!is_null($b)) $html .= "<div>$b</div>\n";
+	}
 	return $html;
 }
 
 $sideblock_html = "";
 foreach($this->sideblocks as $block) {
-	$sideblock_html .= block_to_html($block);
+	$sideblock_html .= block_to_html($block, true);
 }
 
 $mainblock_html = "";
 foreach($this->mainblocks as $block) {
-	$mainblock_html .= block_to_html($block);
+	$mainblock_html .= block_to_html($block, false);
 }
 
 $scripts = glob("scripts/*.js");
