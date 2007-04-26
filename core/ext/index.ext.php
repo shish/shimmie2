@@ -116,7 +116,7 @@ class Index extends Extension {
 			for($j=0; $j<$width; $j++) {
 				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
 				if(!is_null($image)) {
-					$table .= $this->build_thumb($image, $query);
+					$table .= build_thumb($image, $query);
 				}
 				else {
 					$table .= "\t<td>&nbsp;</td>\n";
@@ -127,16 +127,6 @@ class Index extends Extension {
 		$table .= "</table>\n";
 
 		return $table;
-	}
-
-	private function build_thumb($image, $query=null) {
-		global $config;
-		$h_view_link = make_link("post/view/{$image->id}", $query);
-		$h_tip = html_escape($image->get_tooltip());
-		$h_thumb_link = $image->get_thumb_link();
-		$tsize = get_thumbnail_size($image->width, $image->height);
-		return "<td><a href='$h_view_link'><img title='$h_tip' alt='$h_tip'
-				width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link'></a></td>\n";
 	}
 // }}}
 // rss {{{

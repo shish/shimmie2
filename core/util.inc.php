@@ -91,10 +91,22 @@ function get_memory_limit() {
 function bbcode2html($text) {
 	$text = trim($text);
 	$text = html_escape($text);
-#	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
-#	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
-#	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
+	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
+	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
+	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
+	$text = preg_replace("/\[\[(.*?)\]\]/s", 
+		"<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
 	$text = str_replace("\n", "\n<br>", $text);
+	return $text;
+}
+
+function strip_bbcode($text) {
+	$text = trim($text);
+	$text = html_escape($text);
+	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
+	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
+	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
+	$text = preg_replace("/\[\[(.*?)\]\]/s", "\\1", $text);
 	return $text;
 }
 
@@ -124,6 +136,9 @@ function tag_explode($tags) {
 	return $tag_array;
 }
 
+function sql_quote($text) {
+	return '"'.sql_escape($text).'"';
+}
 
 function get_thumbnail_size($orig_width, $orig_height) {
 	global $config;
@@ -141,6 +156,17 @@ function get_thumbnail_size($orig_width, $orig_height) {
 		return array($orig_width*$scale, $orig_height*$scale);
 //	}
 }
+
+function build_thumb($image, $query=null) {
+	global $config;
+	$h_view_link = make_link("post/view/{$image->id}", $query);
+	$h_tip = html_escape($image->get_tooltip());
+	$h_thumb_link = $image->get_thumb_link();
+	$tsize = get_thumbnail_size($image->width, $image->height);
+	return "<td><a href='$h_view_link'><img title='$h_tip' alt='$h_tip'
+			width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link'></a></td>\n";
+}
+
 
 
 # $db is the connection object
