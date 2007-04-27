@@ -92,41 +92,22 @@ class Database {
 			
 			$term = $this->resolve_alias($term);
 
-			if(substr($term, 0, 5) == "size=") {
-				$dim = substr($term, 5);
-				$parts = explode('x', $dim);
-				$args = array(int_escape($parts[0]), int_escape($parts[1]));
-				$img_search->append(new Querylet("AND (width = ? AND height = ?)", $args));
+			$matches = array();
+			if(preg_match("/size([><=]+)(\d+)x(\d+)/", $term, $matches)) {
+				$cmp = $matches[1];
+				$args = array(int_escape($matches[2]), int_escape($matches[3]));
+				$img_search->append(new Querylet("AND (width $cmp ? AND height $cmp ?)", $args));
 			}
-			else if(substr($term, 0, 5) == "size>") {
-				$dim = substr($term, 5);
-				$parts = explode('x', $dim);
-				$args = array(int_escape($parts[0]), int_escape($parts[1]));
-				$img_search->append(new Querylet("AND (width > ? AND height > ?)", $args));
+			else if(preg_match("/ratio([><=]+)(\d+):(\d+)/", $term, $matches)) {
+				$cmp = $matches[1];
+				$args = array(int_escape($matches[2]), int_escape($matches[3]));
+				$img_search->append(new Querylet("AND (width / height $cmp ? / ?)", $args));
 			}
-			else if(substr($term, 0, 5) == "size<") {
-				$dim = substr($term, 5);
-				$parts = explode('x', $dim);
-				$args = array(int_escape($parts[0]), int_escape($parts[1]));
-				$img_search->append(new Querylet("AND (width < ? AND height < ?)", $args));
-			}
-			else if(substr($term, 0, 6) == "ratio=") {
-				$dim = substr($term, 6);
-				$parts = explode(':', $dim);
-				$args = array(int_escape($parts[0]), int_escape($parts[1]));
-				$img_search->append(new Querylet("AND (width / height = ? / ?)", $args));
-			}
-			else if(substr($term, 0, 3) == "id<") {
-				$img_search->append(new Querylet("AND (id < ?)", array(int_escape(substr($term, 3)))));
-			}
-			else if(substr($term, 0, 3) == "id>") {
-				$img_search->append(new Querylet("AND (id > ?)", array(int_escape(substr($term, 3)))));
-			}
-			else if(substr($term, 0, 9) == "filesize<") {
-				$img_search->append(new Querylet("AND (filesize < ?)", array(parse_shorthand_int(substr($term, 9)))));
-			}
-			else if(substr($term, 0, 9) == "filesize>") {
-				$img_search->append(new Querylet("AND (filesize > ?)", array(parse_shorthand_int(substr($term, 9)))));
+			else if(preg_match("/(filesize|id)([><=]+)([\dKMGB]+)/i", $term, $matches)) {
+				$col = $matches[1];
+				$cmp = $matches[2];
+				$val = parse_shorthand_int($matches[3]);
+				$img_search->append(new Querylet("AND ($col $cmp $val)"));
 			}
 			else {
 				$term = str_replace("*", "%", $term);
@@ -156,7 +137,7 @@ class Database {
 			$query = new Querylet("SELECT * FROM ({$subquery->sql}) AS images ", $subquery->variables);
 		}
 
-		if(count($img_search->variables) > 0) {
+		if(strlen($img_search->sql) > 0) {
 			$query->append_sql("WHERE 1=1 ");
 			$query->append($img_search);
 		}
