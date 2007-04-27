@@ -6,12 +6,15 @@
            /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
                    \/      \/         \/      \/        \/        \/
 
-Shimmie2 Release Candidate
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Okay, so maybe my estimate of "it should be done within the week" was a bit
-optimistic... I did get the first 3.5k lines of code done in a week, then
-another 1k of extensions in another week, but making it all work *properly*
-took 3 months...
+Shimmie2 -- 2.0.X Series
+~~~~~~~~~~~~~~~~~~~~~~~~
+Changes since 2.0.0:
+ * Disabling anonymous comments doesn't break things
+ * When Shimmie is in downtime mode, there's a big notice in the sidebar
+ * A short opening tag (<?) was replaced with a long one (<?php), so people
+   with short tags disabled no longer see random PHP code
+ * Metadata searching was improved (see wiki -> user guide -> searching)
+ * Misc minor code cleanups
 
 
 Requirements
@@ -75,4 +78,12 @@ Shish on Freenode -- IRC
 
 
 
+Old News
+~~~~~~~~
 
+Shimmie2 Release Candidate
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Okay, so maybe my estimate of "it should be done within the week" was a bit
+optimistic... I did get the first 3.5k lines of code done in a week, then
+another 1k of extensions in another week, but making it all work *properly*
+took 3 months...
