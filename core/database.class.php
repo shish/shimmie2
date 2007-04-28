@@ -103,7 +103,7 @@ class Database {
 				$args = array(int_escape($matches[2]), int_escape($matches[3]));
 				$img_search->append(new Querylet("AND (width / height $cmp ? / ?)", $args));
 			}
-			else if(preg_match("/(filesize|id)(<|>|<=|>=|=)([\dKMGB]+)/i", $term, $matches)) {
+			else if(preg_match("/(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)/i", $term, $matches)) {
 				$col = $matches[1];
 				$cmp = $matches[2];
 				$val = parse_shorthand_int($matches[3]);
