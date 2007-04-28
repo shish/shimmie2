@@ -1,4 +1,9 @@
 <?php
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Input / Output Sanitising                                                 *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 function html_escape($input) {
 	return htmlentities($input);
 }
@@ -10,23 +15,6 @@ function int_escape($input) {
 function sql_escape($input) {
 	global $database;
 	return $database->db->Quote($input);
-}
-
-function make_link($page, $query=null) {
-	global $config;
-	$base = $config->get_string('base_href');
-
-	if(is_null($query)) {
-		return "$base/$page";
-	}
-	else {
-		if(strpos($base, "?")) {
-			return "$base/$page&$query";
-		}
-		else {
-			return "$base/$page?$query";
-		}
-	}
 }
 
 function parse_shorthand_int($limit) {
@@ -65,51 +53,6 @@ function to_shorthand_int($int) {
 	}
 }
 
-function get_memory_limit() {
-	global $config;
-
-	// thumbnail generation requires lots of memory
-	$default_limit = 8*1024*1024;
-	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_gd_mem_limit"));
-	if($shimmie_limit < 3*1024*1024) {
-		// we aren't going to fit, override
-		$shimmie_limit = $default_limit;
-	}
-	
-	ini_set("memory_limit", $shimmie_limit);
-	$memory = parse_shorthand_int(ini_get("memory_limit"));
-
-	// changing of memory limit is disabled / failed
-	if($memory == -1) {
-		$memory = $default_limit; 
-	}
-
-	return $memory;
-}
-
-
-function bbcode2html($text) {
-	$text = trim($text);
-	$text = html_escape($text);
-	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
-	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
-	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
-	$text = preg_replace("/\[\[(.*?)\]\]/s", 
-		"<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
-	$text = str_replace("\n", "\n<br>", $text);
-	return $text;
-}
-
-function strip_bbcode($text) {
-	$text = trim($text);
-	$text = html_escape($text);
-	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
-	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
-	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
-	$text = preg_replace("/\[\[(.*?)\]\]/s", "\\1", $text);
-	return $text;
-}
-
 function tag_explode($tags) {
 	if(is_string($tags)) {
 		$tags = explode(' ', $tags);
@@ -136,28 +79,51 @@ function tag_explode($tags) {
 	return $tag_array;
 }
 
-function sql_quote($text) {
-	return '"'.sql_escape($text).'"';
-}
 
-function get_thumbnail_size($orig_width, $orig_height) {
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* HTML Generation                                                           *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function make_link($page, $query=null) {
 	global $config;
-	$max_width  = $config->get_int('thumb_width');
-	$max_height = $config->get_int('thumb_height');
+	$base = $config->get_string('base_href');
 
-	$xscale = ($max_height / $orig_height);
-	$yscale = ($max_width / $orig_width);
-	$scale = ($xscale < $yscale) ? $xscale : $yscale;
-
-//	if($scale >= 1) {
-//		return array($orig_width, $orig_height);
-//	}
-//	else {
-		return array($orig_width*$scale, $orig_height*$scale);
-//	}
+	if(is_null($query)) {
+		return "$base/$page";
+	}
+	else {
+		if(strpos($base, "?")) {
+			return "$base/$page&$query";
+		}
+		else {
+			return "$base/$page?$query";
+		}
+	}
 }
 
-function build_thumb($image, $query=null) {
+function bbcode_to_html($text) {
+	$text = trim($text);
+	$text = html_escape($text);
+	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
+	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
+	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
+	$text = preg_replace("/\[\[(.*?)\]\]/s", 
+		"<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
+	$text = str_replace("\n", "\n<br>", $text);
+	return $text;
+}
+
+function bbcode_to_text($text) {
+	$text = trim($text);
+	$text = html_escape($text);
+	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
+	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
+	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
+	$text = preg_replace("/\[\[(.*?)\]\]/s", "\\1", $text);
+	return $text;
+}
+
+function build_thumb_html($image, $query=null) {
 	global $config;
 	$h_view_link = make_link("post/view/{$image->id}", $query);
 	$h_tip = html_escape($image->get_tooltip());
@@ -168,6 +134,53 @@ function build_thumb($image, $query=null) {
 }
 
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Input sanitising                                                          *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function get_memory_limit() {
+	global $config;
+
+	// thumbnail generation requires lots of memory
+	$default_limit = 8*1024*1024;
+	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_gd_mem_limit"));
+	if($shimmie_limit < 3*1024*1024) {
+		// we aren't going to fit, override
+		$shimmie_limit = $default_limit;
+	}
+	
+	ini_set("memory_limit", $shimmie_limit);
+	$memory = parse_shorthand_int(ini_get("memory_limit"));
+
+	// changing of memory limit is disabled / failed
+	if($memory == -1) {
+		$memory = $default_limit; 
+	}
+
+	return $memory;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Input sanitising                                                          *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function get_thumbnail_size($orig_width, $orig_height) {
+	global $config;
+	$max_width  = $config->get_int('thumb_width');
+	$max_height = $config->get_int('thumb_height');
+
+	$xscale = ($max_height / $orig_height);
+	$yscale = ($max_width / $orig_width);
+	$scale = ($xscale < $yscale) ? $xscale : $yscale;
+
+	if($scale > 1 && $config->get_bool('thumb_upscale')) {
+		return array($orig_width, $orig_height);
+	}
+	else {
+		return array($orig_width*$scale, $orig_height*$scale);
+	}
+}
 
 # $db is the connection object
 function CountExecs($db, $sql, $inputarray) {
@@ -184,7 +197,9 @@ function CountExecs($db, $sql, $inputarray) {
 }
 
 
-// internal things
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Event API                                                                 *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 $_event_listeners = array();
 
@@ -204,6 +219,10 @@ function send_event($event) {
 }
 
 
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Request initialisation stuff                                              *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 function _get_query_parts() {
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
@@ -221,6 +240,7 @@ function _get_query_parts() {
 
 	return split('/', $path);
 }
+
 function get_page_request() {
 	$args = _get_query_parts();
 
