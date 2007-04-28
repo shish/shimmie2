@@ -14,7 +14,7 @@ class Zoom extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool("image_zoom", $_POST['image_zoom']);
+			$event->config->set_bool_from_post("image_zoom");
 		}
 	}
 

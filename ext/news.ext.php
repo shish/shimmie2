@@ -15,7 +15,7 @@ class News extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string("news_text", $_POST['news_text']);
+			$event->config->set_string_from_post("news_text");
 		}
 	}
 }

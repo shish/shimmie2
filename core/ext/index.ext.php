@@ -72,9 +72,9 @@ class Index extends Extension {
 			$event->panel->add_main_block($sb, 20);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int("index_width", $_POST['index_width']);
-			$event->config->set_int("index_height", $_POST['index_height']);
-			$event->config->set_string("image_tip", $_POST['image_tip']);
+			$event->config->set_int_from_post("index_width");
+			$event->config->set_int_from_post("index_height");
+			$event->config->set_string_from_post("image_tip");
 		}
 	}
 // }}}

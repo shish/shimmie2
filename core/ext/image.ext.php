@@ -44,11 +44,11 @@ class ImageIO extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string("thumb_engine", $_POST['thumb_engine']);
-			$event->config->set_int("thumb_width", $_POST['thumb_width']);
-			$event->config->set_int("thumb_height", $_POST['thumb_height']);
-			$event->config->set_int("thumb_quality", $_POST['thumb_quality']);
-			$event->config->set_int("thumb_gd_mem_limit", $_POST['thumb_gd_mem_limit']);
+			$event->config->set_string_from_post("thumb_engine");
+			$event->config->set_int_from_post("thumb_width");
+			$event->config->set_int_from_post("thumb_height");
+			$event->config->set_int_from_post("thumb_quality");
+			$event->config->set_int_from_post("thumb_gd_mem_limit");
 		}
 	}
 // }}}

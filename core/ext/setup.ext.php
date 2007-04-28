@@ -138,12 +138,12 @@ class Setup extends Extension {
 			$event->panel->add_main_block($sb, 0);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string("title", $_POST['title']);
-			$event->config->set_string("base_href", $_POST['base_href']);
-			$event->config->set_string("data_href", $_POST['data_href']);
-			$event->config->set_string("contact_link", $_POST['contact_link']);
-			$event->config->set_string("theme", $_POST['theme']);
-			$event->config->set_int("anon_id", $_POST['anon_id']);
+			$event->config->set_string_from_post("title");
+			$event->config->set_string_from_post("base_href");
+			$event->config->set_string_from_post("data_href");
+			$event->config->set_string_from_post("contact_link");
+			$event->config->set_string_from_post("theme");
+			$event->config->set_int_from_post("anon_id");
 		}
 	}
 // }}}
