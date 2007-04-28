@@ -123,10 +123,14 @@ class Database {
 			$query = new Querylet("SELECT * FROM images ");
 		}
 		else {
+			$s_tag_array = array_map("sql_quote", $tag_search->variables);
+			$s_tag_list = join(', ', $s_tag_array);
+
 			$subquery = new Querylet("
 				SELECT *, SUM({$tag_search->sql}) AS score
 				FROM images
 				LEFT JOIN tags ON tags.image_id = images.id
+				WHERE tags.tag IN ({$s_tag_list})
 				GROUP BY images.id
 				HAVING score = ?",
 				array_merge(
@@ -144,64 +148,6 @@ class Database {
 
 		return $query;
 	}
-
-	private function build_search_querylet_old($tags) { // {{{
-		$querylet = new Querylet("SELECT images.*, SUM(");
-
-		$tnum = 0;
-		foreach($tags as $tag) {
-			if(($tag != "") && ($tag[0] == '-')) continue;
-			$querylet->append_sql($tnum == 0 ? "(" : " OR ");
-			$querylet->append($this->term_to_querylet($tag));
-			$tnum++;
-		}
-		$min_score = $tnum;
-		if($tnum > 0) $querylet->append_sql(")");
-
-		$tnum = 0;
-		foreach($tags as $tag) {
-			if(($tag == "") || ($tag[0] != '-')) continue;
-			$querylet->append_sql($tnum == 0 ? "-(" : " OR ");
-			$querylet->append($this->term_to_querylet(substr($tag, 1)));
-			$tnum++;
-		}
-		if($tnum > 0) $querylet->append_sql(")");
-
-		$querylet->append_sql(") AS score
-			FROM tags
-			LEFT JOIN images ON image_id=images.id
-			GROUP BY images.id
-			HAVING score >= ?
-		");
-		$querylet->add_variable($min_score);
-
-		return $querylet;
-	}
-	
-	private function term_to_querylet($term) {
-		$term = $this->resolve_alias($term);
-
-		if(substr($term, 0, 5) == "size:") {
-			$dim = substr($term, 5);
-			$parts = explode('x', $dim);
-			return new Querylet("(width = ? AND height = ?)", array(int_escape($parts[0]), int_escape($parts[1])));
-		}
-		else if(substr($term, 0, 9) == "size-min:") {
-			$dim = substr($term, 9);
-			$parts = explode('x', $dim);
-			return new Querylet("(width >= ? AND height >= ?)", array(int_escape($parts[0]), int_escape($parts[1])));
-		}
-		else if(substr($term, 0, 9) == "size-max:") {
-			$dim = substr($term, 9);
-			$parts = explode('x', $dim);
-			return new Querylet("(width <= ? AND height <= ?)", array(int_escape($parts[0]), int_escape($parts[1])));
-		}
-		else {
-			$term = str_replace("*", "%", $term);
-			$term = str_replace("?", "_", $term);
-			return new Querylet("(tag LIKE ?)", array($term));
-		}
-	} // }}}
 
 	public function delete_tags_from_image($image_id) {
 		$this->db->Execute("DELETE FROM tags WHERE image_id=?", array($image_id));
