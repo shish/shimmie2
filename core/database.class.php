@@ -81,6 +81,7 @@ class Database {
 	private function build_search_querylet($terms) {
 		$tag_search = new Querylet("0");
 		$positive_tag_count = 0;
+		$negative_tag_count = 0;
 		$img_search = new Querylet("");
 
 		foreach($terms as $term) {
@@ -114,12 +115,12 @@ class Database {
 				$term = str_replace("?", "_", $term);
 				$sign = $negative ? "-" : "+";
 				if($sign == "+") $positive_tag_count++;
+				else $negative_tag_count++;
 				$tag_search->append(new Querylet(" $sign (tag LIKE ?)", array($term)));
 			}
 		}
 
-		$database_fails = false; // MySQL 4.0 fails at subqueries
-		if(count($tag_search->variables) == 0 || $database_fails) {
+		if($positive_tag_count + $negative_tag_count == 0) {
 			$query = new Querylet("SELECT * FROM images ");
 		}
 		else {
