@@ -123,10 +123,14 @@ class Database {
 			$query = new Querylet("SELECT * FROM images ");
 		}
 		else {
+			$s_tag_array = array_map("sql_escape", $tag_search->variables);
+			$s_tag_list = join(', ', $s_tag_array);
+
 			$subquery = new Querylet("
 				SELECT *, SUM({$tag_search->sql}) AS score
 				FROM images
 				LEFT JOIN tags ON tags.image_id = images.id
+				WHERE tags.tag IN ({$s_tag_list})
 				GROUP BY images.id
 				HAVING score = ?",
 				array_merge(
