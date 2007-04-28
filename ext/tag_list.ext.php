@@ -54,10 +54,10 @@ class TagList extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int("tags_min", $_POST['tags_min']);
+			$event->config->set_int_from_post("tags_min");
 
-			$event->config->set_int("popular_count", $_POST['popular_count']);
-			$event->config->set_string("info_link", $_POST['info_link']);
+			$event->config->set_int_from_post("popular_count");
+			$event->config->set_string_from_post("info_link");
 		}
 	}
 // }}}

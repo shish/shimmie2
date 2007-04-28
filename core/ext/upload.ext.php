@@ -40,9 +40,9 @@ class Upload extends Extension {
 			$event->panel->add_main_block($sb, 10);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int("upload_count", $_POST['upload_count']);
-			$event->config->set_int("upload_size", $_POST['upload_size']);
-			$event->config->set_bool("upload_anon", $_POST['upload_anon']);
+			$event->config->set_int_from_post("upload_count");
+			$event->config->set_int_from_post("upload_size");
+			$event->config->set_bool_from_post("upload_anon");
 		}
 	}
 // }}}

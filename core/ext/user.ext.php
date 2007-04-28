@@ -66,9 +66,9 @@ class UserPage extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int("login_memory", $_POST['login_memory']);
-			$event->config->set_bool("login_signup_enabled", $_POST['login_signup_enabled']);
-			$event->config->set_string("login_tac", $_POST['login_tac']);
+			$event->config->set_int_from_post("login_memory");
+			$event->config->set_bool_from_post("login_signup_enabled");
+			$event->config->set_string_from_post("login_tac");
 		}
 	}
 // }}}

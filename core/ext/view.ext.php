@@ -41,15 +41,12 @@ class ViewImage extends Extension {
 			$sb->add_text_option("image_slink");
 			$sb->add_label("<br>Thumbnail link ");
 			$sb->add_text_option("image_tlink");
-			//$sb->add_label("<br>Zoom by default");
-			//$sb->add_bool_option("view_scale");
 			$event->panel->add_main_block($sb, 30);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string("image_ilink", $_POST['image_ilink']);
-			$event->config->set_string("image_slink", $_POST['image_slink']);
-			$event->config->set_string("image_tlink", $_POST['image_tlink']);
-			//$event->config->set_bool("view_scale", $_POST['view_scale']);
+			$event->config->set_string_from_post("image_ilink");
+			$event->config->set_string_from_post("image_slink");
+			$event->config->set_string_from_post("image_tlink");
 		}
 	}
 // }}}
