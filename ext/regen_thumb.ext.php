@@ -51,14 +51,7 @@ class RegenThumb extends Extension {
 		$page->set_title("Thumbnail Regenerated");
 		$page->set_heading("Thumbnail Regenerated");
 		$page->add_side_block(new NavBlock());
-		$page->add_main_block(new Block("Thumbnail", $this->build_thumb_html($image)));
-	}
-
-	private function build_thumb_html($image) {
-		$link = make_link("post/view/".$image->id);
-		$img = $image->get_thumb_link();
-		$html = "<a href='$link'><img src='$img'></a>";
-		return $html;
+		$page->add_main_block(new Block("Thumbnail", build_thumb_html($image)));
 	}
 
 	private function check_filename($filename) {
