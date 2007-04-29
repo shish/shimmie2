@@ -116,7 +116,7 @@ class Index extends Extension {
 			for($j=0; $j<$width; $j++) {
 				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
 				if(!is_null($image)) {
-					$table .= build_thumb($image, $query);
+					$table .= build_thumb_html($image, $query);
 				}
 				else {
 					$table .= "\t<td>&nbsp;</td>\n";
