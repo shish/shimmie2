@@ -28,20 +28,20 @@ class Comment { // {{{
 		$this->poster_ip =  $row['poster_ip'];
 	}
 
-	public function to_html($link_to_image = false) {
+	public function to_html($trim=false) {
 		global $user;
 
 		$i_uid = int_escape($this->owner_id);
 		$h_name = html_escape($this->owner_name);
 		$h_poster_ip = html_escape($this->poster_ip);
-		$h_comment = bbcode2html($this->comment);
+		$h_comment = ($trim ? substr(bbcode_to_text($this->comment), 0, 50)."..." : bbcode_to_html($this->comment));
 		$i_comment_id = int_escape($this->comment_id);
 		$i_image_id = int_escape($this->image_id);
 
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_dellink = $user->is_admin() ? 
 			"<br>($h_poster_ip, <a href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
-		$h_imagelink = $link_to_image ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
+		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		return "<p>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
 	}
 } // }}}
@@ -87,7 +87,6 @@ class CommentList extends Extension {
 			global $config;
 			if($config->get_int("comment_count") > 0) {
 				$page->add_side_block(new Block("Comments", $this->build_recent_comments()), 50);
-				// $page->add_quicknav("Comments", make_link("comments/list"));
 			}
 		}
 
@@ -190,10 +189,9 @@ class CommentList extends Extension {
 		while(!$result->EOF) {
 			$image = $database->get_image($result->fields["image_id"]);
 
-			$html = "<div style='text-align: left'>";
-			$html .= "<a href='".make_link("post/view/{$image->id}")."'>";
-			$html .= "<img src='".($image->get_thumb_link())."' align='left' style='margin-right: 16px;'></a>";
-			$html .= $this->build_image_comments($image->id);
+			$html  = "<div style='text-align: left'>";
+			$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
+			$html .=   $this->build_image_comments($image->id);
 			$html .= "</div>";
 			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
 
@@ -230,7 +228,7 @@ class CommentList extends Extension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				WHERE comments.image_id=?
 				ORDER BY comments.id ASC
-				", array($i_image_id));
+				", array($i_image_id), false);
 		$html .= "</div>";
 		return $html;
 	}
@@ -240,12 +238,7 @@ class CommentList extends Extension {
 		$html = $this->query_to_html("
 				SELECT
 				users.id as user_id, users.name as user_name,
-				if(
-					length(comments.comment) > 50,
-					concat(substring(comments.comment, 1, 50), ' ...'),
-					comments.comment
-				  ) as comment,
-				comments.id as comment_id,
+				comments.comment as comment, comments.id as comment_id,
 				comments.image_id as image_id, comments.owner_ip as poster_ip
 				FROM comments
 				LEFT JOIN users ON comments.owner_id=users.id
@@ -272,7 +265,7 @@ class CommentList extends Extension {
 		}
 	}
 
-	private function query_to_html($query, $args, $link_to_image=false) {
+	private function query_to_html($query, $args, $trim=false) {
 		global $database;
 		global $config;
 
@@ -280,7 +273,7 @@ class CommentList extends Extension {
 		$result = $database->db->Execute($query, $args);
 		while(!$result->EOF) {
 			$comment = new Comment($result->fields);
-			$html .= $comment->to_html($link_to_image);
+			$html .= $comment->to_html($trim);
 			$result->MoveNext();
 		}
 		return $html;
