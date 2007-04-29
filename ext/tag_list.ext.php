@@ -28,8 +28,12 @@ class TagList extends Extension {
 			global $config;
 			global $page;
 			if($config->get_int('popular_count') > 0) {
-				$page->add_side_block(new Block("Popular Tags", $this->get_popular_tags()), 60);
-				// $page->add_quicknav("Tags", make_link("tags"));
+				if(isset($_GET['search'])) {
+					$page->add_side_block(new Block("Refine Search", $this->get_refiner_tags($_GET['search'])), 60);
+				}
+				else {
+					$page->add_side_block(new Block("Popular Tags", $this->get_popular_tags()), 60);
+				}
 			}
 		}
 
@@ -54,10 +58,10 @@ class TagList extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int("tags_min", $_POST['tags_min']);
+			$event->config->set_int_from_post("tags_min");
 
-			$event->config->set_int("popular_count", $_POST['popular_count']);
-			$event->config->set_string("info_link", $_POST['info_link']);
+			$event->config->set_int_from_post("popular_count");
+			$event->config->set_string_from_post("info_link");
 		}
 	}
 // }}}
@@ -226,6 +230,45 @@ class TagList extends Extension {
 		$result->Close();
 
 		$html .= "<p><a href='".make_link("tags")."'>Full List &gt;&gt;&gt;</a>\n";
+
+		return $html;
+	}
+// }}}
+// get refine {{{
+	private function get_refiner_tags($search) {
+		global $database;
+		global $config;
+
+		$tags = tag_explode($search);
+		$s_tags = array_map("sql_escape", $tags);
+		$s_tag_list = join(',', $s_tags);
+
+		$query = "
+			SELECT t2.tag, COUNT(t2.image_id) AS count
+			FROM
+				tags AS t1,
+				tags AS t2
+			WHERE 
+				t1.tag IN($s_tag_list)
+				AND t1.image_id=t2.image_id
+			GROUP BY t2.tag 
+			ORDER BY count
+			DESC LIMIT ?
+		";
+
+		$n = 0;
+		$html = "";
+		$result = $database->db->Execute($query, array($config->get_int('popular_count')));
+		while(!$result->EOF) {
+			$row = $result->fields;
+			$h_tag = html_escape($row['tag']);
+			$count = $row['count'];
+			if($n++) $html .= "<br/>";
+			$link = $this->tag_link($row['tag']);
+			$html .= "<a href='$link'>$h_tag</a>\n";
+			$result->MoveNext();
+		}
+		$result->Close();
 
 		return $html;
 	}
