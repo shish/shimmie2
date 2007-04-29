@@ -27,7 +27,7 @@ class TagList extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
 			global $config;
 			global $page;
-			if($config->get_int('popular_count') > 0) {
+			if($config->get_int('tag_list_length') > 0) {
 				if(isset($_GET['search'])) {
 					$page->add_side_block(new Block("Refine Search", $this->get_refiner_tags($_GET['search'])), 60);
 				}
@@ -49,19 +49,22 @@ class TagList extends Extension {
 			$sb->add_label(" times");
 			$event->panel->add_main_block($sb);
 
-			$sb = new SetupBlock("Popular Tag List");
+			$sb = new SetupBlock("Popular / Related Tag List");
 			$sb->add_label("Show top ");
-			$sb->add_int_option("popular_count", 0, 60);
+			$sb->add_int_option("tag_list_length");
 			$sb->add_label(" tags");
 			$sb->add_label("<br>Tag info link: ");
-			$sb->add_text_option("info_link", true);
+			$sb->add_text_option("info_link");
+			$sb->add_label("<br>Show tag counts: ");
+			$sb->add_bool_option("tag_list_numbers");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_int_from_post("tags_min");
 
-			$event->config->set_int_from_post("popular_count");
+			$event->config->set_int_from_post("tag_list_length");
 			$event->config->set_string_from_post("info_link");
+			$event->config->set_bool_from_post("tag_list_numbers");
 		}
 	}
 // }}}
@@ -183,7 +186,8 @@ class TagList extends Extension {
 
 		$n = 0;
 		$html = "";
-		$result = $database->db->Execute($query, array($image->id, $config->get_int('popular_count')));
+		$result = $database->db->Execute($query, array($image->id, $config->get_int('tag_list_length')));
+		$show_count = $config->get_bool('tag_list_numbers');
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$h_tag = html_escape($row['tag']);
@@ -191,6 +195,9 @@ class TagList extends Extension {
 			if($n++) $html .= "<br/>";
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag</a>\n";
+			if($show_count) {
+				$html .= " ($count)";
+			}
 			$result->MoveNext();
 		}
 		$result->Close();
@@ -212,18 +219,22 @@ class TagList extends Extension {
 		";
 
 		$n = 0;
-		$result = $database->db->Execute($query, array($config->get_int('popular_count')));
+		$result = $database->db->Execute($query, array($config->get_int('tag_list_length')));
 		$html = "";
+		$show_count = $config->get_bool('tag_list_numbers');
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$tag = html_escape($row['tag']);
 			$count = $row['count'];
 			if($n++) $html .= "<br/>";
 			$link = $this->tag_link($row['tag']);
-			$html .= "<a href='$link'>$tag ($count)</a>\n";
+			$html .= "<a href='$link'>$tag</a>\n";
+			if($show_count) {
+				$html .= " ($count)";
+			}
 			if(!is_null($config->get_string('info_link'))) {
 				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= "<a href='$link'>?</a>\n";
+				$html .= " <a href='$link'>?</a>\n";
 			}
 			$result->MoveNext();
 		}
@@ -258,7 +269,8 @@ class TagList extends Extension {
 
 		$n = 0;
 		$html = "";
-		$result = $database->db->Execute($query, array($config->get_int('popular_count')));
+		$result = $database->db->Execute($query, array($config->get_int('tag_list_length')));
+		$show_count = $config->get_bool('tag_list_numbers');
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$h_tag = html_escape($row['tag']);
@@ -266,6 +278,9 @@ class TagList extends Extension {
 			if($n++) $html .= "<br/>";
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag</a>\n";
+			if($show_count) {
+				$html .= " ($count)";
+			}
 			$result->MoveNext();
 		}
 		$result->Close();
