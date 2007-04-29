@@ -122,11 +122,11 @@ class CommentList extends Extension {
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool("comment_anon", $_POST['comment_anon']);
-			$event->config->set_int("comment_limit", $_POST['comment_limit']);
-			$event->config->set_int("comment_window", $_POST['comment_window']);
-			$event->config->set_int("comment_count", $_POST['comment_count']);
-			$event->config->set_string("comment_wordpress_key", $_POST['comment_wordpress_key']);
+			$event->config->set_bool_from_post("comment_anon");
+			$event->config->set_int_from_post("comment_limit");
+			$event->config->set_int_from_post("comment_window");
+			$event->config->set_int_from_post("comment_count");
+			$event->config->set_string_from_post("comment_wordpress_key");
 		}
 	}
 // }}}
@@ -335,6 +335,7 @@ class CommentList extends Extension {
 
 	private function can_comment() {
 		global $config;
+		global $user;
 		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
 	}
 
