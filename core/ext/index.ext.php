@@ -9,6 +9,7 @@ class Index extends Extension {
 
 			if($event->count_args() > 0) {
 				$page_number = int_escape($event->get_arg(0));
+				if($page_number == 0) $page_number = 1; // invalid -> 0
 			}
 
 			if(isset($_GET['search'])) {
