@@ -162,6 +162,43 @@ class TagList extends Extension {
 		return $html;
 	}
 // }}}
+// common {{{
+	private function build_tag_list_html($query, $args, $callback=null, $cbdata=null) {
+		global $database;
+		global $config;
+
+		$n = 0;
+		$html = "";
+		$result = $database->db->Execute($query, $args);
+		$show_count = $config->get_bool('tag_list_numbers');
+		while(!$result->EOF) {
+			$row = $result->fields;
+			$tag = $row['tag'];
+			$h_tag = html_escape($tag);
+			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
+			$count = $row['count'];
+			if($n++) $html .= "<br/>";
+			$link = $this->tag_link($row['tag']);
+			$html .= "<a href='$link'>$h_tag_no_underscores</a>\n";
+			if($show_count) {
+				$html .= " ($count)";
+			}
+			if(!is_null($callback)) {
+				$html .= $this->$callback($tag, $cbdata);
+			}
+			else {
+				if(!is_null($config->get_string('info_link'))) {
+					$link = str_replace('$tag', $tag, $config->get_string('info_link'));
+					$html .= " <a href='$link'>?</a>\n";
+				}
+			}
+			$result->MoveNext();
+		}
+		$result->Close();
+
+		return $html;
+	}
+// }}}
 // get related {{{
 	private function get_related_tags($image) {
 		global $database;
@@ -183,26 +220,9 @@ class TagList extends Extension {
 			ORDER by count DESC
 			LIMIT ?
 		";
+		$args = array($image->id, $config->get_int('tag_list_length'));
 
-		$n = 0;
-		$html = "";
-		$result = $database->db->Execute($query, array($image->id, $config->get_int('tag_list_length')));
-		$show_count = $config->get_bool('tag_list_numbers');
-		while(!$result->EOF) {
-			$row = $result->fields;
-			$h_tag = html_escape($row['tag']);
-			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a href='$link'>$h_tag</a>\n";
-			if($show_count) {
-				$html .= " ($count)";
-			}
-			$result->MoveNext();
-		}
-		$result->Close();
-
-		return $html;
+		return $this->build_tag_list_html($query, $args);
 	}
 // }}}
 // get popular {{{
@@ -217,29 +237,9 @@ class TagList extends Extension {
 			ORDER BY count DESC
 			LIMIT ?
 		";
+		$args = array($config->get_int('tag_list_length'));
 
-		$n = 0;
-		$result = $database->db->Execute($query, array($config->get_int('tag_list_length')));
-		$html = "";
-		$show_count = $config->get_bool('tag_list_numbers');
-		while(!$result->EOF) {
-			$row = $result->fields;
-			$tag = html_escape($row['tag']);
-			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a href='$link'>$tag</a>\n";
-			if($show_count) {
-				$html .= " ($count)";
-			}
-			if(!is_null($config->get_string('info_link'))) {
-				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a href='$link'>?</a>\n";
-			}
-			$result->MoveNext();
-		}
-		$result->Close();
-
+		$html = $this->build_tag_list_html($query, $args);
 		$html .= "<p><a href='".make_link("tags")."'>Full List &gt;&gt;&gt;</a>\n";
 
 		return $html;
@@ -266,26 +266,46 @@ class TagList extends Extension {
 			ORDER BY count
 			DESC LIMIT ?
 		";
+		$args = array($config->get_int('tag_list_length'));
 
-		$n = 0;
+		return $this->build_tag_list_html($query, $args, "ars", $tags);
+	}
+
+	private function ars($tag, $tags) {
 		$html = "";
-		$result = $database->db->Execute($query, array($config->get_int('tag_list_length')));
-		$show_count = $config->get_bool('tag_list_numbers');
-		while(!$result->EOF) {
-			$row = $result->fields;
-			$h_tag = html_escape($row['tag']);
-			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a href='$link'>$h_tag</a>\n";
-			if($show_count) {
-				$html .= " ($count)";
-			}
-			$result->MoveNext();
-		}
-		$result->Close();
-
+		$html .= " (";
+		$html .= $this->get_add_link($tags, $tag);
+		$html .= $this->get_remove_link($tags, $tag);
+		$html .= $this->get_subtract_link($tags, $tag);
+		$html .= ")";
 		return $html;
+	}
+
+	private function get_remove_link($tags, $tag) {
+		if(!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
+			return "";
+		}
+		else {
+			return "<a href='".make_link("index/")."' title='Remove'>r</a>";
+		}
+	}
+
+	private function get_add_link($tags, $tag) {
+		if(in_array($tag, $tags)) {
+			return "";
+		}
+		else {
+			return "<a href='".make_link("index/")."' title='Add'>a</a>";
+		}
+	}
+
+	private function get_subtract_link($tags, $tag) {
+		if(in_array("-$tag", $tags)) {
+			return "";
+		}
+		else {
+			return "<a href='".make_link("index/")."' title='Subtract'>s</a>";
+		}
 	}
 // }}}
 }
