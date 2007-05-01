@@ -6,6 +6,7 @@ class Index extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
 			if($event->get_arg(0) == 'rss') {
 				$this->do_rss();
+				if($page_number == 0) $page_number = 1; // invalid -> 0
 			}
 			else {
 				$search_terms = array();
