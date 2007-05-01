@@ -286,7 +286,9 @@ class TagList extends Extension {
 			return "";
 		}
 		else {
-			return "<a href='".make_link("index/")."' title='Remove'>r</a>";
+			$tags = array_remove($tags, $tag);
+			$tags = array_remove($tags, "-$tag");
+			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Remove'>R</a>";
 		}
 	}
 
@@ -295,7 +297,9 @@ class TagList extends Extension {
 			return "";
 		}
 		else {
-			return "<a href='".make_link("index/")."' title='Add'>a</a>";
+			$tags = array_remove($tags, "-$tag");
+			$tags = array_add($tags, $tag);
+			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Add'>A</a>";
 		}
 	}
 
@@ -304,7 +308,9 @@ class TagList extends Extension {
 			return "";
 		}
 		else {
-			return "<a href='".make_link("index/")."' title='Subtract'>s</a>";
+			$tags = array_remove($tags, $tag);
+			$tags = array_add($tags, "-$tag");
+			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Subtract'>S</a>";
 		}
 	}
 // }}}

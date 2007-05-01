@@ -162,7 +162,7 @@ function get_memory_limit() {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* Input sanitising                                                          *
+* Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function get_thumbnail_size($orig_width, $orig_height) {
@@ -194,6 +194,28 @@ function CountExecs($db, $sql, $inputarray) {
 	else $_execs++;
 	# in PHP4.4 and PHP5, we need to return a value by reference
 	$null = null; return $null;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Things which should be in the core API                                    *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function array_remove($array, $to_remove) {
+	$array = array_unique($array);
+	$a2 = array();
+	foreach($array as $existing) {
+		if($existing != $to_remove) {
+			$a2[] = $existing;
+		}
+	}
+	return $a2;
+}
+
+function array_add($array, $element) {
+	$array[] = $element;
+	$array = array_unique($array);
+	return $array;
 }
 
 
