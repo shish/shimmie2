@@ -180,13 +180,13 @@ class TagList extends Extension {
 			if($n++) $html .= "<br/>";
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag_no_underscores</a>\n";
-			if($show_count) {
-				$html .= " ($count)";
-			}
 			if(!is_null($callback)) {
 				$html .= $this->$callback($tag, $cbdata);
 			}
 			else {
+				if($show_count) {
+					$html .= " ($count)";
+				}
 				if(!is_null($config->get_string('info_link'))) {
 					$link = str_replace('$tag', $tag, $config->get_string('info_link'));
 					$html .= " <a href='$link'>?</a>\n";
