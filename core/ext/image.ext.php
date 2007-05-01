@@ -117,7 +117,9 @@ class ImageIO extends Extension {
 		$memory_limit = get_memory_limit();
 		
 		if($memory_use > $memory_limit) {
-			$thumb = imagecreatetruecolor($max_width, min($max_height, 64));
+			$w = $config->get_int('thumb_width');
+			$h = $config->get_int('thumb_height');
+			$thumb = imagecreatetruecolor($w, min($h, 64));
 			$white = imagecolorallocate($thumb, 255, 255, 255);
 			$black = imagecolorallocate($thumb, 0,   0,   0);
 			imagefill($thumb, 0, 0, $white);
@@ -147,12 +149,12 @@ class ImageIO extends Extension {
 		/*
 		 * Check for an existing image
 		 */
-		if($row = $this->is_dupe($image->hash)) {
-			$iid = $row['id'];
-			$page->add_main_block(new Block(
-					"Error uploading {$image->filename}",
-					"Image <a href='".make_link("post/view/$iid")."'>$iid</a> ".
-					"already has hash {$image->hash}"));
+		$existing = $database->get_image_by_hash($image->hash);
+		if(!is_null($existing)) {
+			$page->add_main_block(new Block("Error uploading {$image->filename}",
+					"Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
+					"already has hash {$image->hash}:<p>".
+					build_thumb_html($existing)));
 			return false;
 		}
 

@@ -87,7 +87,9 @@ class RegenThumb extends Extension {
 		$memory_limit = get_memory_limit();
 		
 		if($memory_use > $memory_limit) {
-			$thumb = imagecreatetruecolor($max_width, min($max_height, 64));
+			$w = $config->get_int('thumb_width');
+			$h = $config->get_int('thumb_height');
+			$thumb = imagecreatetruecolor($w, min($h, 64));
 			$white = imagecolorallocate($thumb, 255, 255, 255);
 			$black = imagecolorallocate($thumb, 0,   0,   0);
 			imagefill($thumb, 0, 0, $white);
