@@ -4,57 +4,52 @@ class Index extends Extension {
 // event handling {{{
 	public function receive_event($event) {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
-			if($event->get_arg(0) == 'rss') {
-				$this->do_rss();
+			$search_terms = array();
+			$page_number = 1;
+
+			if($event->count_args() > 0) {
+				$page_number = int_escape($event->get_arg(0));
+			}
+
+			if(isset($_GET['search'])) {
+				$search_terms = explode(' ', $_GET['search']);
+				$query = "search=".html_escape($_GET['search']);
 			}
 			else {
-				$search_terms = array();
-				$page_number = 1;
-
-				if($event->count_args() > 0) {
-					$page_number = int_escape($event->get_arg(0));
-				}
-
-				if(isset($_GET['search'])) {
-					$search_terms = explode(' ', $_GET['search']);
-					$query = "search=".html_escape($_GET['search']);
-				}
-				else {
-					$query = null;
-				}
-
-				global $page;
-				global $config;
-				global $database;
-
-				$total_pages = $database->count_pages($search_terms);
-				$count = $config->get_int('index_width') * $config->get_int('index_height');
-				$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
-
-				if(count($search_terms) == 0) {
-					$page_title = $config->get_string('title');
-				}
-				else {
-					$page_title = html_escape($_GET['search']);
-					/*
-					$page_title = "";
-					foreach($search_terms as $term) {
-						$h_term = html_escape($term);
-						$page_title .= "<a href='".make_link("post/list", "search=$h_term")."'>$h_term</a>";
-					}
-					*/
-					$page->set_subheading("Page $page_number / $total_pages");
-				}
-				if($page_number > 1 || count($search_terms) > 0) {
-					// $page_title .= " / $page_number";
-				}
-				
-				$page->set_title($page_title);
-				$page->set_heading($page_title);
-				$page->add_side_block(new Block("Navigation", $this->build_navigation($page_number, $total_pages, $search_terms)), 0);
-				$page->add_main_block(new Block("Images", $this->build_table($images, $query)), 10);
-				$page->add_main_block(new Paginator("index", $query, $page_number, $total_pages), 90);
+				$query = null;
 			}
+
+			global $page;
+			global $config;
+			global $database;
+
+			$total_pages = $database->count_pages($search_terms);
+			$count = $config->get_int('index_width') * $config->get_int('index_height');
+			$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
+
+			if(count($search_terms) == 0) {
+				$page_title = $config->get_string('title');
+			}
+			else {
+				$page_title = html_escape($_GET['search']);
+				/*
+				$page_title = "";
+				foreach($search_terms as $term) {
+					$h_term = html_escape($term);
+					$page_title .= "<a href='".make_link("post/list", "search=$h_term")."'>$h_term</a>";
+				}
+				*/
+				$page->set_subheading("Page $page_number / $total_pages");
+			}
+			if($page_number > 1 || count($search_terms) > 0) {
+				// $page_title .= " / $page_number";
+			}
+			
+			$page->set_title($page_title);
+			$page->set_heading($page_title);
+			$page->add_side_block(new Block("Navigation", $this->build_navigation($page_number, $total_pages, $search_terms)), 0);
+			$page->add_main_block(new Block("Images", $this->build_table($images, $query)), 10);
+			$page->add_main_block(new Paginator("index", $query, $page_number, $total_pages), 90);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
@@ -116,7 +111,7 @@ class Index extends Extension {
 			for($j=0; $j<$width; $j++) {
 				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
 				if(!is_null($image)) {
-					$table .= build_thumb_html($image, $query);
+					$table .= "\t<td>" . build_thumb_html($image, $query) . "</td>\n";
 				}
 				else {
 					$table .= "\t<td>&nbsp;</td>\n";
@@ -127,11 +122,6 @@ class Index extends Extension {
 		$table .= "</table>\n";
 
 		return $table;
-	}
-// }}}
-// rss {{{
-	private function do_rss() {
-		// TODO: this function
 	}
 // }}}
 }
