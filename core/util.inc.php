@@ -129,8 +129,8 @@ function build_thumb_html($image, $query=null) {
 	$h_tip = html_escape($image->get_tooltip());
 	$h_thumb_link = $image->get_thumb_link();
 	$tsize = get_thumbnail_size($image->width, $image->height);
-	return "<td><a href='$h_view_link'><img title='$h_tip' alt='$h_tip'
-			width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link'></a></td>\n";
+	return "<a href='$h_view_link'><img title='$h_tip' alt='$h_tip'
+			width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>\n";
 }
 
 
