@@ -124,6 +124,8 @@ class Setup extends Extension {
 			$sb = new SetupBlock("General");
 			$sb->add_label("Site title: ");
 			$sb->add_text_option("title");
+			$sb->add_label("<br>Front page: ");
+			$sb->add_text_option("front_page");
 			$sb->add_label("<br>Base URL: ");
 			$sb->add_text_option("base_href");
 			$sb->add_label("<br>Data URL: ");
@@ -139,6 +141,7 @@ class Setup extends Extension {
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("title");
+			$event->config->set_string_from_post("front_page");
 			$event->config->set_string_from_post("base_href");
 			$event->config->set_string_from_post("data_href");
 			$event->config->set_string_from_post("contact_link");

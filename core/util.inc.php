@@ -246,6 +246,7 @@ function send_event($event) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function _get_query_parts() {
+	global $config;
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
 	}
@@ -253,7 +254,7 @@ function _get_query_parts() {
 		$path = $_SERVER["PATH_INFO"];
 	}
 	else {
-		$path = "index/1";
+		$path = $config->get_string('front_page', 'index');
 	}
 	
 	while(strlen($path) > 0 && $path[0] == '/') {

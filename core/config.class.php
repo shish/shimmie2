@@ -1,13 +1,11 @@
 <?php
 class Config {
-	var $values = array(
-			'image_tlink' => '/thumbs/$id.jpg',
-			'image_ilink' => '/images/$id.$ext',
-	);
+	var $values = array();
 	var $defaults = array(
 			'title' => 'Shimmie', # setup
-			'version' => 'Shimmie2-0.0.9', // internal
+			'version' => 'Shimmie2-2.0.2', // internal
 			'db_version' => '2.0.0.9', // this should be managed by upgrade.php
+			'front_page' => 'index', # setup
 			'base_href' => './index.php?q=', # setup
 			'data_href' => './', # setup
 			'theme' => 'default', # setup
@@ -101,19 +99,19 @@ class Config {
 		$this->save($name);
 	}
 
-	public function get_int($name) {
+	public function get_int($name, $default=null) {
 		// deprecated -- ints should be stored as ints now
-		return parse_shorthand_int($this->get($name));
+		return parse_shorthand_int($this->get($name, $default));
 	}
-	public function get_string($name) {
-		return $this->get($name);
+	public function get_string($name, $default=null) {
+		return $this->get($name, $default);
 	}
-	public function get_bool($name) {
+	public function get_bool($name, $default=null) {
 		// deprecated -- bools should be stored as Y/N now
-		return ($this->get($name) == 'Y' || $this->get($name) == '1');
+		return ($this->get($name, $default) == 'Y' || $this->get($name, $default) == '1');
 	}
 
-	public function get($name) {
+	public function get($name, $default=null) {
 		if(isset($this->values[$name])) {
 			return $this->values[$name];
 		}
@@ -121,7 +119,7 @@ class Config {
 			return $this->defaults[$name];
 		}
 		else {
-			return null;
+			return $default;
 		}
 	}
 }
