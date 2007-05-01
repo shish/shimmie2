@@ -39,6 +39,7 @@ class Page {
 	var $heading = "";
 	var $subheading = "";
 	var $quicknav = "";
+	var $headers = array();
 	var $sideblocks = array();
 	var $mainblocks = array();
 
@@ -52,6 +53,11 @@ class Page {
 
 	public function set_subheading($subheading) {
 		$this->subheading = $subheading;
+	}
+
+	public function add_header($line, $position=50) {
+		while(isset($this->headers[$position])) $position++;
+		$this->headers[$position] = $line;
 	}
 
 	public function add_side_block($block, $position=50) {

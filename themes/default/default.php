@@ -14,6 +14,11 @@ function block_to_html($block) {
 	return $html;
 }
 
+$header_html = "";
+foreach($this->headers as $line) {
+	$header_html .= "\t\t$line";
+}
+
 $sideblock_html = "";
 foreach($this->sideblocks as $block) {
 	$sideblock_html .= block_to_html($block);
@@ -73,6 +78,7 @@ print <<<EOD
 	<head>
 		<title>{$this->title}</title>
 		<link rel="stylesheet" href="$data_href/themes/default/style.css" type="text/css">
+$header_html
 		<script src='$data_href/themes/default/sidebar.js' type='text/javascript'></script>
 $script_html
 	</head>
