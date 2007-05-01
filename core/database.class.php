@@ -229,6 +229,12 @@ class Database {
 		return ($row ? new Image($row) : null);
 	}
 
+	public function get_image_by_hash($hash) {
+		$image = null;
+		$row = $this->db->GetRow("SELECT * FROM images WHERE hash=?", array($hash));
+		return ($row ? new Image($row) : null);
+	}
+
 	public function remove_image($id) {
 		$this->db->Execute("DELETE FROM images WHERE id=?", array($id));
 	}
