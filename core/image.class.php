@@ -5,6 +5,7 @@ class Image {
 	var $height, $width;
 	var $hash, $filesize;
 	var $filename, $ext;
+	var $posted;
 
 	public function Image($a=false, $b=false, $c=false) {
 		if($b == false && $c == false) {
@@ -24,6 +25,7 @@ class Image {
 		$this->ext      = $row['ext'];
 		$this->width    = $row['width'];
 		$this->height   = $row['height'];
+		$this->posted   = $row['posted'];
 	}
 
 	private function mime_to_ext($mime) {

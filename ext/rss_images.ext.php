@@ -32,6 +32,7 @@ class RSS_Images extends Extension {
 			$link = make_link("post/view/{$image->id}");
 			$tags = $image->get_tag_list();
 			$owner = $image->get_owner();
+			$posted = $image->posted; // FIXME: MySQL date != RSS date
 			$content = html_escape(
 				"<p>" . build_thumb_html($image) . "</p>" .
 				"<p>Uploaded by " . $owner->name . "</p>"
@@ -42,6 +43,7 @@ class RSS_Images extends Extension {
 					<title>{$image->id} - $tags</title>
 					<link>$link</link>
 					<guid isPermaLink=\"true\">$link</guid>
+					<pubDate>$posted</pubDate>
 					<description>$content</description>
 				</item>
 			";
