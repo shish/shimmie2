@@ -121,7 +121,7 @@ class Database {
 		}
 
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet("SELECT * FROM images ");
+			$query = new Querylet("SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
 		}
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
@@ -139,7 +139,9 @@ class Database {
 					array($positive_tag_count)
 				)
 			);
-			$query = new Querylet("SELECT * FROM ({$subquery->sql}) AS images ", $subquery->variables);
+			$query = new Querylet("
+				SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+				FROM ({$subquery->sql}) AS images ", $subquery->variables);
 		}
 
 		if(strlen($img_search->sql) > 0) {
@@ -180,7 +182,12 @@ class Database {
 		if($limit < 1) $limit = 1;
 		
 		if(count($tags) == 0) {
-			$result = $this->db->Execute("SELECT * FROM images ORDER BY id DESC LIMIT ?,?", array($start, $limit));
+			$result = $this->db->Execute("
+				SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp
+				FROM images
+				ORDER BY id DESC
+				LIMIT ?,?
+			", array($start, $limit));
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);

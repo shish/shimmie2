@@ -26,6 +26,7 @@ class Image {
 		$this->width    = $row['width'];
 		$this->height   = $row['height'];
 		$this->posted   = $row['posted'];
+		$this->posted_timestamp   = $row['posted_timestamp'];
 	}
 
 	private function mime_to_ext($mime) {
