@@ -107,6 +107,8 @@ function bbcode_to_html($text) {
 	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
+	$text = preg_replace("/&gt;&gt;(\d+)/s",
+		"<a href='".make_link("post/view/\\1")."'>&gt;&gt;\\1</a>", $text);
 	$text = preg_replace("/\[\[(.*?)\]\]/s", 
 		"<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
 	$text = str_replace("\n", "\n<br>", $text);
@@ -167,6 +169,10 @@ function get_memory_limit() {
 
 function get_thumbnail_size($orig_width, $orig_height) {
 	global $config;
+
+	if($orig_width == 0) $orig_width = 192;
+	if($orig_height == 0) $orig_height = 192;
+
 	$max_width  = $config->get_int('thumb_width');
 	$max_height = $config->get_int('thumb_height');
 
@@ -246,7 +252,6 @@ function send_event($event) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function _get_query_parts() {
-	global $config;
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
 	}
@@ -254,7 +259,7 @@ function _get_query_parts() {
 		$path = $_SERVER["PATH_INFO"];
 	}
 	else {
-		$path = $config->get_string('front_page', 'index');
+		$path = "";
 	}
 	
 	while(strlen($path) > 0 && $path[0] == '/') {
@@ -265,14 +270,15 @@ function _get_query_parts() {
 }
 
 function get_page_request() {
+	global $config;
 	$args = _get_query_parts();
 
-	if(count($args) == 0) {
-		$page = "index";
+	if(count($args) == 0 || strlen($args[0]) == 0) {
+		$page = $config->get_string('front_page', 'index');
 		$args = array();
 	}
 	else if(count($args) == 1) {
-		$page = (strlen($args[0]) > 0 ? $args[0] : "index");
+		$page = $args[0];
 		$args = array();
 	}
 	else {
