@@ -27,6 +27,7 @@ class Querylet { // {{{
 class Database {
 	var $db;
 	var $extensions;
+	var $get_images = "SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images";
 
 	public function Database() {
 		if(is_readable("config.php")) {
@@ -121,7 +122,7 @@ class Database {
 		}
 
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet("SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
+			$query = new Querylet($this->get_images);
 		}
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
@@ -182,12 +183,7 @@ class Database {
 		if($limit < 1) $limit = 1;
 		
 		if(count($tags) == 0) {
-			$result = $this->db->Execute("
-				SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp
-				FROM images
-				ORDER BY id DESC
-				LIMIT ?,?
-			", array($start, $limit));
+			$result = $this->db->Execute("{$this->get_images} ORDER BY id DESC LIMIT ?,?", array($start, $limit));
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
@@ -213,7 +209,7 @@ class Database {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->db->GetRow("SELECT * FROM images WHERE id $gtlt ? ORDER BY id $dir", array((int)$id));
+			$row = $this->db->GetRow("{$this->get_images} WHERE id $gtlt ? ORDER BY id $dir", array((int)$id));
 		}
 		else {
 			$tags[] = ($next ? "id<$id" : "id>$id");
@@ -232,13 +228,13 @@ class Database {
 
 	public function get_image($id) {
 		$image = null;
-		$row = $this->db->GetRow("SELECT * FROM images WHERE id=?", array($id));
+		$row = $this->db->GetRow("{$this->get_images} WHERE id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
 
 	public function get_image_by_hash($hash) {
 		$image = null;
-		$row = $this->db->GetRow("SELECT * FROM images WHERE hash=?", array($hash));
+		$row = $this->db->GetRow("{$this->get_images} WHERE hash=?", array($hash));
 		return ($row ? new Image($row) : null);
 	}
 
