@@ -49,7 +49,7 @@ class Upload extends Extension {
 // do things {{{
 	private function can_upload() {
 		global $config, $user;
-		return $config->get_bool("upload_anon") || ($user->id != $config->get_int("anon_id"));
+		return $config->get_bool("upload_anon") || !$user->is_anonymous();
 	}
 
 	private function try_upload($file) {
