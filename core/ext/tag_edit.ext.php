@@ -3,15 +3,23 @@
 class TagEdit extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "tags")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page == "tag_edit")) {
 			global $page;
 			if($event->get_arg(0) == "set") {
-				global $database;
-				$i_image_id = int_escape($_POST['image_id']);
-				$query = $_POST['query'];
-				$database->set_tags($i_image_id, $_POST['tags']);
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/view/$i_image_id", $query));
+				if($this->can_tag()) {
+					global $database;
+					$i_image_id = int_escape($_POST['image_id']);
+					$query = $_POST['query'];
+					$database->set_tags($i_image_id, $_POST['tags']);
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$i_image_id", $query));
+				}
+				else {
+					$page->set_title("Tag Edit Denied");
+					$page->set_heading("Tag Edit Denied");
+					$page->add_side_block(new NavBlock());
+					$page->add_main_block(new Block("Error", "Anonymous tag editing is disabled"));
+				}
 			}
 			else if($event->get_arg(0) == "replace") {
 				global $user;
@@ -48,6 +56,22 @@ class TagEdit extends Extension {
 		if(is_a($event, 'AddAliasEvent')) {
 			$this->mass_tag_edit($event->oldtag, $event->newtag);
 		}
+
+		if(is_a($event, 'SetupBuildingEvent')) {
+			$sb = new SetupBlock("Tag Editing");
+			$sb->add_label("Allow anonymous editing: ");
+			$sb->add_bool_option("tag_edit_anon");
+			$event->panel->add_main_block($sb);
+		}
+		if(is_a($event, 'ConfigSaveEvent')) {
+			$event->config->set_bool_from_post("tag_edit_anon");
+		}
+	}
+// }}}
+// do things {{{
+	private function can_tag() {
+		global $config, $user;
+		return $config->get_bool("tag_edit_anon") || !$user->is_anonymous();
 	}
 // }}}
 // edit {{{
@@ -72,7 +96,7 @@ class TagEdit extends Extension {
 		$i_image_id = int_escape($image->id);
 
 		return "
-		<p><form action='".make_link("tags/set")."' method='POST'>
+		<p><form action='".make_link("tag_edit/set")."' method='POST'>
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='query' value='$h_query'>
 			<input type='text' size='50' name='tags' value='$h_tags'>
@@ -82,7 +106,7 @@ class TagEdit extends Extension {
 	}
 	private function build_mass_tag_edit() {
 		return "
-		<form action='".make_link("tags/replace")."' method='POST'>
+		<form action='".make_link("tag_edit/replace")."' method='POST'>
 			<table border='1' style='width: 200px;'>
 				<tr><td>Search</td><td><input type='text' name='search'></tr>
 				<tr><td>Replace</td><td><input type='text' name='replace'></td></tr>
