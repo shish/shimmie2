@@ -6,6 +6,8 @@ class BulkAdd extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "bulk_add")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['dir'])) {
+				set_time_limit(0);
+
 				global $page;
 				$page->set_title("Adding folder");
 				$page->set_heading("Adding folder");
