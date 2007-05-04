@@ -25,6 +25,7 @@ class Config {
 			'view_scale' => false, # view
 			'tags_default' => 'map', # (ignored)
 			'tags_min' => '2', # tags
+			'tag_edit_anon' => true, # tags
 			'upload_count' => 3, # upload
 			'upload_size' => '256KB', # upload
 			'upload_anon' => true, # upload
