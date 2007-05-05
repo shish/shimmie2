@@ -27,7 +27,7 @@ class Querylet { // {{{
 class Database {
 	var $db;
 	var $extensions;
-	var $get_images = "SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images";
+	var $get_images = "SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
 
 	public function Database() {
 		if(is_readable("config.php")) {
