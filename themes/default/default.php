@@ -1,5 +1,6 @@
 <?php
 global $config;
+$theme_name = $config->get_string('theme');
 $base_href = $config->get_string('base_href');
 $data_href = $config->get_string('data_href');
 $contact_link = $config->get_string('contact_link');
@@ -83,9 +84,9 @@ print <<<EOD
 <html>
 	<head>
 		<title>{$this->title}</title>
-		<link rel="stylesheet" href="$data_href/themes/default/style.css" type="text/css">
+		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
 $header_html
-		<script src='$data_href/themes/default/sidebar.js' type='text/javascript'></script>
+		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 $script_html
 	</head>
 
