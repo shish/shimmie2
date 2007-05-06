@@ -75,9 +75,6 @@ class CommentList extends Extension {
 					// FIXME: denied message
 				}
 			}
-			else if($event->get_arg(0) == "rss") {
-				$this->build_rss();
-			}
 			else if($event->get_arg(0) == "list") {
 				$this->build_page($event->get_arg(1));
 			}
@@ -147,16 +144,6 @@ class CommentList extends Extension {
 	}
 // }}}
 // page building {{{
-	private function build_rss() {
-		global $page;
-		$page->set_mode("data");
-		$page->set_type("application/rss+xml");
-
-		$rss = "moo"; // FIXME
-
-		$page->set_data($rss);
-	}
-
 	private function build_page($current_page) {
 		global $page;
 		global $database;
