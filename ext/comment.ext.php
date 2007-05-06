@@ -232,7 +232,7 @@ class CommentList extends Extension {
 				ORDER BY comments.id DESC
 				LIMIT ?
 				", array($config->get_int('comment_count')), true);
-		$html .= "<p><a href='".make_link("comment/list")."'>Full List &gt;&gt;&gt;</a>";
+		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
 		return $html;
 	}
 

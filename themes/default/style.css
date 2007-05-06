@@ -94,6 +94,10 @@ A:hover {text-decoration: underline;}
 	overflow: hidden;
 }
 
+.more:after {
+	content: " >>>";
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                 the main part of each page                     *

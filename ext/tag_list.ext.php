@@ -170,7 +170,6 @@ class TagList extends Extension {
 		$n = 0;
 		$html = "";
 		$result = $database->db->Execute($query, $args);
-		$show_count = $config->get_bool('tag_list_numbers');
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$tag = $row['tag'];
@@ -179,18 +178,13 @@ class TagList extends Extension {
 			$count = $row['count'];
 			if($n++) $html .= "<br/>";
 			$link = $this->tag_link($row['tag']);
-			$html .= "<a href='$link'>$h_tag_no_underscores</a>\n";
+			$html .= "<a class='tag_name' href='$link'>$h_tag_no_underscores</a>\n";
 			if(!is_null($callback)) {
-				$html .= $this->$callback($tag, $cbdata);
+				$html .= $this->$callback($tag, $count, $cbdata);
 			}
-			else {
-				if($show_count) {
-					$html .= " ($count)";
-				}
-				if(!is_null($config->get_string('info_link'))) {
-					$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-					$html .= " <a href='$link'>?</a>\n";
-				}
+			if(!is_null($config->get_string('info_link'))) {
+				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
+				$html .= " <a class='tag_info_link' href='$link'>?</a>\n";
 			}
 			$result->MoveNext();
 		}
@@ -239,10 +233,19 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		$html = $this->build_tag_list_html($query, $args);
-		$html .= "<p><a href='".make_link("tags")."'>Full List &gt;&gt;&gt;</a>\n";
+		global $config;
+		if($config->get_bool('tag_list_numbers')) {
+			$html = $this->build_tag_list_html($query, $args, "add_count");
+		}
+		else {
+			$html = $this->build_tag_list_html($query, $args);
+		}
+		$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
 		return $html;
+	}
+	private function add_count($tag, $count, $data) {
+		return " <span class='tag_count'>($count)</span>";
 	}
 // }}}
 // get refine {{{
@@ -271,13 +274,13 @@ class TagList extends Extension {
 		return $this->build_tag_list_html($query, $args, "ars", $tags);
 	}
 
-	private function ars($tag, $tags) {
+	private function ars($tag, $count, $tags) {
 		$html = "";
-		$html .= " (";
+		$html .= " <span class='ars'>(";
 		$html .= $this->get_add_link($tags, $tag);
 		$html .= $this->get_remove_link($tags, $tag);
 		$html .= $this->get_subtract_link($tags, $tag);
-		$html .= ")";
+		$html .= ")</span>";
 		return $html;
 	}
 
