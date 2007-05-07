@@ -390,9 +390,6 @@ class UserPage extends Extension {
 		if($config->get_bool("login_signup_enabled")) {
 			$html .= "<small><a href='".make_link("user/create")."'>Create Account</a></small>";
 		}
-		else {
-			$html .= "<small>Account creation disabled</small>";
-		}
 		return $html;
 	}
 // }}}
