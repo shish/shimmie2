@@ -20,7 +20,7 @@ EOD;
 	exit;
 }
 
-$files = array_merge(glob("core/*.php"), glob("core/*/*.php"), glob("ext/*.php"));
+$files = array_merge(glob("core/*.php"), glob("core/*/*.php"), glob("ext/*/main.php"));
 
 foreach($files as $filename) {
 	require_once $filename;
