@@ -1,4 +1,22 @@
 <?php
+/**
+ * Name: Link to Image
+ * Author: Artanis <?@?.?>
+ * Link: http://artanis.00.googlepages.com/linktoimage
+ * License: ?
+ * Description: Creates a new block under comments in image view that contains
+ *    insertion code for forums and websites. Similar to how other image hosts
+ *    offer pre-formatted code for insertion on other websites. 
+ *
+ * Base URL must be set and used ($base) in the Image Link, Short Link, and
+ * Thumb Link fields. for the generation to function properly. 
+ * Data URL you might as well set while you're at it. 
+ *
+ * v0.1.2 - textboxes now select all when they gain focus. 
+ * v0.1.1 - fixed thumbnail link code (image tag was getting html escaped twice,
+ *  resulting in '&gt;' and '&lt;' being replaced with '&amp;lt;' and '&amp;gt;')
+ * v0.1.0 - release
+ */
 class LinkImage extends Extension {
 	//event handler
 	public function receive_event($event) {
@@ -7,8 +25,9 @@ class LinkImage extends Extension {
 			$page->add_main_block(new Block("Link to Image", $this->get_html($event->image)));
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
-			$sb = new SetupBlock("Extension - Link to Image");
-			$sb->add_text_option("ext_link-img_text-link_format","Text Link Format");
+			$sb = new SetupBlock("Link to Image");
+			$sb->add_label("Text link format: ");
+			$sb->add_text_option("ext_link-img_text-link_format");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
@@ -18,7 +37,7 @@ class LinkImage extends Extension {
 			global $config;
 			//just set default if empty.
 			if ($config->get_string("ext_link-img_text-link_format") == "") {
-			$config->set_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
+				$config->set_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
 			}
 		}
 	}
