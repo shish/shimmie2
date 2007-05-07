@@ -8,7 +8,14 @@
 
 Shimmie2 -- 2.0.X Series
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Changes since 2.0.0:
+Changes in 2.0.2:
+ * $page->add_header() function pulled from development, as it's small, 
+   and allows people to use development extensions (eg RSS)
+ * minor SQL tweak, huge speedup in several (but not all) cases
+ * ability to disable anonymous tag editing
+ * various internal fixes
+
+Changes in 2.0.1:
  * Disabling anonymous comments doesn't break things
  * When Shimmie is in downtime mode, there's a big notice in the sidebar
  * A short opening tag (<?) was replaced with a long one (<?php), so people
