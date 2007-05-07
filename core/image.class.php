@@ -90,22 +90,22 @@ class Image {
 
 	public function get_image_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_ilink'), $this);
+		return $this->parse_link_template($config->get_string('image_ilink'));
 	}
 
 	public function get_short_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_slink'), $this);
+		return $this->parse_link_template($config->get_string('image_slink'));
 	}
 
 	public function get_thumb_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tlink'), $this);
+		return $this->parse_link_template($config->get_string('image_tlink'));
 	}
 
 	public function get_tooltip() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tip'), $this);
+		return $this->parse_link_template($config->get_string('image_tip'));
 	}
 
 	public function get_image_filename() {
@@ -135,7 +135,7 @@ class Image {
 		return $this->ext;
 	}
 
-	private function parse_link_template($tmpl, $img) {
+	public function parse_link_template($tmpl) {
 		global $config;
 
 		// don't bother hitting the database if it won't be used...
@@ -143,20 +143,20 @@ class Image {
 		if(strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
 			$safe_tags = preg_replace(
 					"/[^a-zA-Z0-9_\- ]/",
-					"", $img->get_tag_list());
+					"", $this->get_tag_list());
 		}
 
 		$base_href = $config->get_string('base_href');
-		$fname = $img->get_filename();
+		$fname = $this->get_filename();
 		$base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
 
-		$tmpl = str_replace('$id',   $img->id,   $tmpl);
-		$tmpl = str_replace('$hash', $img->hash, $tmpl);
-		$tmpl = str_replace('$tags', $safe_tags, $tmpl);
-		$tmpl = str_replace('$base', $base_href, $tmpl);
-		$tmpl = str_replace('$ext',  $img->ext,  $tmpl);
-		$tmpl = str_replace('$size', "{$img->width}x{$img->height}", $tmpl);
-		$tmpl = str_replace('$filesize', to_shorthand_int($img->filesize), $tmpl);
+		$tmpl = str_replace('$id',   $this->id,   $tmpl);
+		$tmpl = str_replace('$hash', $this->hash, $tmpl);
+		$tmpl = str_replace('$tags', $safe_tags,  $tmpl);
+		$tmpl = str_replace('$base', $base_href,  $tmpl);
+		$tmpl = str_replace('$ext',  $this->ext,  $tmpl);
+		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
+		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
 		$tmpl = str_replace('$filename', $base_fname, $tmpl);
 
 		return $tmpl;
