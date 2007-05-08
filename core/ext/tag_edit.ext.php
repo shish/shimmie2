@@ -59,8 +59,7 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Editing");
-			$sb->add_label("Allow anonymous editing: ");
-			$sb->add_bool_option("tag_edit_anon");
+			$sb->add_bool_option("tag_edit_anon", "Allow anonymous editing: ");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

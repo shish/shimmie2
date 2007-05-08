@@ -44,19 +44,13 @@ class TagList extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Map Options");
-			$sb->add_label("Ignore tags used fewer than ");
-			$sb->add_int_option("tags_min", 0, 99);
-			$sb->add_label(" times");
+			$sb->add_int_option("tags_min", "Ignore tags used fewer than "); $sb->add_label(" times");
 			$event->panel->add_main_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
-			$sb->add_label("Show top ");
-			$sb->add_int_option("tag_list_length");
-			$sb->add_label(" tags");
-			$sb->add_label("<br>Tag info link: ");
-			$sb->add_text_option("info_link");
-			$sb->add_label("<br>Show tag counts: ");
-			$sb->add_bool_option("tag_list_numbers");
+			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" tags");
+			$sb->add_text_option("info_link", "<br>Tag info link: ");
+			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

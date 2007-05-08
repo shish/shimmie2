@@ -7,10 +7,8 @@ class Downtime extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Downtime");
-			$sb->add_label("Disable non-admin access: ");
-			$sb->add_bool_option("downtime");
-			$sb->add_label("<br>");
-			$sb->add_longtext_option("downtime_message");
+			$sb->add_bool_option("downtime", "Disable non-admin access: ");
+			$sb->add_longtext_option("downtime_message", "<br>");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

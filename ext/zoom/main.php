@@ -9,8 +9,7 @@ class Zoom extends Extension {
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Image Zoom");
-			$sb->add_label("Zoom by default: ");
-			$sb->add_bool_option("image_zoom");
+			$sb->add_bool_option("image_zoom", "Zoom by default: ");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

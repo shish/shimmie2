@@ -56,13 +56,9 @@ class UserPage extends Extension {
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("User Options");
-			$sb->add_label("Login memory: ");
-			$sb->add_int_option("login_memory");
-			$sb->add_label(" days");
-			$sb->add_label("<br>Allow new signups: ");
-			$sb->add_bool_option("login_signup_enabled");
-			$sb->add_label("<br>Terms &amp; Conditions:<br>");
-			$sb->add_longtext_option("login_tac");
+			$sb->add_int_option("login_memory", "Login memory: "); $sb->add_label(" days");
+			$sb->add_bool_option("login_signup_enabled", "<br>Allow new signups: ");
+			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

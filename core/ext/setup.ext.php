@@ -36,42 +36,67 @@ class SetupBlock extends Block {
 	public function add_label($text) {
 		$this->body .= $text;
 	}
-	public function add_text_option($name) {
+
+	public function add_text_option($name, $label=null) {
 		global $config;
 		$val = $config->get_string($name);
-		$this->body .= "<input type='text' name='$name' value='$val'>\n";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$this->body .= "<input type='text' id='$name' name='$name' value='$val'>\n";
 	}
-	public function add_longtext_option($name) {
+
+	public function add_longtext_option($name, $label=null) {
 		global $config;
 		$val = $config->get_string($name);
-		$this->body .= "<textarea rows='5' cols='40' name='$name'>$val</textarea>\n";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$this->body .= "<textarea rows='5' cols='40' id='$name' name='$name'>$val</textarea>\n";
 		$this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 	}
-	public function add_bool_option($name) {
+
+	public function add_bool_option($name, $label=null) {
 		global $config;
 		$checked = $config->get_bool($name) ? " checked" : "";
-		$this->body .= "<input type='checkbox' name='$name'$checked>\n";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$this->body .= "<input type='checkbox' id='$name' name='$name'$checked>\n";
 	}
-	public function add_hidden_option($name) {
+
+	public function add_hidden_option($name, $label=null) {
 		global $config;
 		$val = $config->get_string($name);
-		$this->body .= "<input type='hidden' name='$name' value='$val'>";
+		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
 	}
-	public function add_int_option($name) {
+
+	public function add_int_option($name, $label=null) {
 		global $config;
 		$val = $config->get_string($name);
-		$this->body .= "<input type='text' name='$name' value='$val' size='4' style='text-align: center;'>\n";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$this->body .= "<input type='text' id='$name' name='$name' value='$val' size='4' style='text-align: center;'>\n";
 	}
-	public function add_shorthand_int_option($name) {
+
+	public function add_shorthand_int_option($name, $label=null) {
 		global $config;
 		$val = to_shorthand_int($config->get_string($name));
-		$this->body .= "<input type='text' name='$name' value='$val' size='6' style='text-align: center;'>\n";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$this->body .= "<input type='text' id='$name' name='$name' value='$val' size='6' style='text-align: center;'>\n";
 	}
-	public function add_choice_option($name, $options) {
+
+	public function add_choice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_string($name);
 		
-		$html = "<select name='$name'>";
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$html = "<select id='$name' name='$name'>";
 		foreach($options as $optname => $optval) {
 			if($optval == $current) $selected=" selected";
 			else $selected="";
@@ -122,20 +147,13 @@ class Setup extends Extension {
 			}
 
 			$sb = new SetupBlock("General");
-			$sb->add_label("Site title: ");
-			$sb->add_text_option("title");
-			$sb->add_label("<br>Front page: ");
-			$sb->add_text_option("front_page");
-			$sb->add_label("<br>Base URL: ");
-			$sb->add_text_option("base_href");
-			$sb->add_label("<br>Data URL: ");
-			$sb->add_text_option("data_href");
-			$sb->add_label("<br>Contact URL: ");
-			$sb->add_text_option("contact_link");
-			$sb->add_label("<br>Theme: ");
-			$sb->add_choice_option("theme", $themes);
-			// $sb->add_label("<br>Anonymous ID: ");
-			// $sb->add_int_option("anon_id", 0, 100000);
+			$sb->add_text_option("title", "Site title: ");
+			$sb->add_text_option("front_page", "<br>Front page: ");
+			$sb->add_text_option("base_href", "<br>Base URL: ");
+			$sb->add_text_option("data_href", "<br>Data URL: ");
+			$sb->add_text_option("contact_link", "<br>Contact URL:");
+			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
+			// $sb->add_int_option("anon_id", "<br>Anonymous ID: "); // FIXME: create advanced options page
 			$sb->add_hidden_option("anon_id");
 			$event->panel->add_main_block($sb, 0);
 		}

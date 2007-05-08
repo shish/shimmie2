@@ -35,12 +35,9 @@ class ViewImage extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("View Options");
-			$sb->add_label("Long link ");
-			$sb->add_text_option("image_ilink");
-			$sb->add_label("<br>Short link ");
-			$sb->add_text_option("image_slink");
-			$sb->add_label("<br>Thumbnail link ");
-			$sb->add_text_option("image_tlink");
+			$sb->add_text_option("image_ilink", "Long link ");
+			$sb->add_text_option("image_slink", "<br>Short link ");
+			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
 			$event->panel->add_main_block($sb, 30);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

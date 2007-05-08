@@ -103,8 +103,7 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Comment Options");
-			$sb->add_label("Allow anonymous comments ");
-			$sb->add_bool_option("comment_anon");
+			$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
 			$sb->add_label("<br>Limit to ");
 			$sb->add_int_option("comment_limit");
 			$sb->add_label(" comments per ");
@@ -113,8 +112,7 @@ class CommentList extends Extension {
 			$sb->add_label("<br>Show ");
 			$sb->add_int_option("comment_count");
 			$sb->add_label(" recent comments on the index");
-			$sb->add_label("<br>Akismet Key ");
-			$sb->add_text_option("comment_wordpress_key");
+			$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

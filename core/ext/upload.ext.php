@@ -31,12 +31,9 @@ class Upload extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Upload");
-			$sb->add_label("Max Uploads: ");
-			$sb->add_int_option("upload_count");
-			$sb->add_label("<br>Max size per file: ");
-			$sb->add_shorthand_int_option("upload_size");
-			$sb->add_label("<br>Allow anonymous upoads: ");
-			$sb->add_bool_option("upload_anon");
+			$sb->add_int_option("upload_count", "Max uploads: ");
+			$sb->add_shorthand_int_option("upload_size", "<br>Max size per file: ");
+			$sb->add_bool_option("upload_anon", "<br>Allow anonymous upoads: ");
 			$event->panel->add_main_block($sb, 10);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {

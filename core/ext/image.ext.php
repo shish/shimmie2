@@ -27,8 +27,7 @@ class ImageIO extends Extension {
 			$thumbers['ImageMagick'] = "convert";
 
 			$sb = new SetupBlock("Thumbnailing");
-			$sb->add_label("Engine: ");
-			$sb->add_choice_option("thumb_engine", $thumbers);
+			$sb->add_choice_option("thumb_engine", $thumbers, "Engine: ");
 
 			$sb->add_label("<br>Size ");
 			$sb->add_int_option("thumb_width");
@@ -38,9 +37,8 @@ class ImageIO extends Extension {
 			$sb->add_int_option("thumb_quality");
 			$sb->add_label(" % quality ");
 
-			$sb->add_label("<br>Max GD memory use: ");
-			$sb->add_shorthand_int_option("thumb_gd_mem_limit");
-			
+			$sb->add_shorthand_int_option("thumb_gd_mem_limit", "<br>Max GD memory use: ");
+
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
