@@ -1,5 +1,19 @@
 <?php
 
+class UserBlockBuildingEvent extends Event {
+	var $parts = array();
+	var $user = null;
+
+	public function UserBlockBuildingEvent($user) {
+		$this->user = $user;
+	}
+
+	public function add_link($name, $link, $position=50) {
+		while(isset($this->parts[$position])) $position++;
+		$this->parts[$position] = "<a href='$link'>$name</a>";
+	}
+}
+
 class UserPage extends Extension {
 // event handling {{{
 	public function receive_event($event) {
@@ -65,6 +79,11 @@ class UserPage extends Extension {
 			$event->config->set_int_from_post("login_memory");
 			$event->config->set_bool_from_post("login_signup_enabled");
 			$event->config->set_string_from_post("login_tac");
+		}
+
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			$event->add_link("User Config", make_link("user"));
+			$event->add_link("Log Out", make_link("user/logout"));
 		}
 	}
 // }}}
@@ -361,14 +380,15 @@ class UserPage extends Extension {
 	private function build_links_block() {
 		global $user;
 
+		$ubbe = new UserBlockBuildingEvent($user);
+
+		send_event($ubbe);
+
 		$h_name = html_escape($user->name);
-		$html = "Logged in as $h_name";
-		if($user->is_admin()) {
-			$html .= "<br/><a href='".make_link("setup")."'>Board Config</a>";
-			$html .= "<br/><a href='".make_link("admin")."'>Admin</a>";
-		}
-		$html .= "<br/><a href='".make_link("user")."'>User Config</a>";
-		$html .= "<br/><a href='".make_link("user/logout")."'>Log Out</a>";
+		$html = "Logged in as $h_name<br>";
+
+		$html .= join("\n<br/>", $ubbe->parts);
+		
 		return $html;
 	}
 

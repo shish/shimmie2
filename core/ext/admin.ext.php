@@ -51,6 +51,12 @@ class AdminPage extends Extension {
 		if(is_a($event, 'AdminBuildingEvent')) {
 			$this->build_page();
 		}
+
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("Board Admin", make_link("admin"));
+			}
+		}
 	}
 // }}}
 // block HTML {{{

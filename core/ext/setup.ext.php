@@ -166,6 +166,12 @@ class Setup extends Extension {
 			$event->config->set_string_from_post("theme");
 			$event->config->set_int_from_post("anon_id");
 		}
+
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("Board Config", make_link("setup"));
+			}
+		}
 	}
 // }}}
 // HTML building {{{
