@@ -1,4 +1,7 @@
 <?php
+/*
+ * This file may not be distributed without its readme.txt
+**/
 class LinkImage extends Extension {
 	//event handler
 	public function receive_event($event) {
@@ -6,7 +9,7 @@ class LinkImage extends Extension {
 			global $page;
 			global $config;
 			$data_href = $config->get_string("data_href");
-			$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/style.css' type='text/css'>",0);
+			$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
 			$page->add_main_block(new Block("Link to Image", $this->get_html($event->image)));
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
