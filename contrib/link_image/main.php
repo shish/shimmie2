@@ -1,27 +1,12 @@
 <?php
-/**
- * Name: Link to Image
- * Author: Artanis <?@?.?>
- * Link: http://artanis.00.googlepages.com/linktoimage
- * License: ?
- * Description: Creates a new block under comments in image view that contains
- *    insertion code for forums and websites. Similar to how other image hosts
- *    offer pre-formatted code for insertion on other websites. 
- *
- * Base URL must be set and used ($base) in the Image Link, Short Link, and
- * Thumb Link fields. for the generation to function properly. 
- * Data URL you might as well set while you're at it. 
- *
- * v0.1.2 - textboxes now select all when they gain focus. 
- * v0.1.1 - fixed thumbnail link code (image tag was getting html escaped twice,
- *  resulting in '&gt;' and '&lt;' being replaced with '&amp;lt;' and '&amp;gt;')
- * v0.1.0 - release
- */
 class LinkImage extends Extension {
 	//event handler
 	public function receive_event($event) {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
+			global $config;
+			$data_href = $config->get_string("data_href");
+			$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/style.css' type='text/css'>",0);
 			$page->add_main_block(new Block("Link to Image", $this->get_html($event->image)));
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
@@ -51,36 +36,18 @@ class LinkImage extends Extension {
 		
 		$text_link = $this->parse_link_template($config->get_string("ext_link-img_text-link_format"),$image);
 		
-		$html = "<div class='ntf'>";
+		$html = "<div id='link_to_image'>";
 		
-		$html .= "<fieldset><legend>UBB Code</legend>";
-		$html .= $this->link_code(
-								"Text Link",
-								$this->ubb_url($post_link, $text_link),
-								"ubb_text-link");
-		$html .= $this->link_code(
-								"Thumbnail Link",
-								$this->ubb_url($post_link, $this->ubb_img($thumb_src)),
-								"ubb_thumb-link");
-		$html .= $this->link_code(
-								"Inline Image",
-								$this->ubb_img($image_src),
-								"ubb_full-img");
+		$html .= "<fieldset><legend><a href='http://en.wikipedia.org/wiki/Bbcode' target='_blank'>BBCode</a></legend>";
+		$html .= $this->link_code("Text Link", $this->ubb_url($post_link, $text_link), "ubb_text-link");
+		$html .= $this->link_code("Thumbnail Link", $this->ubb_url($post_link, $this->ubb_img($thumb_src)), "ubb_thumb-link");
+		$html .= $this->link_code("Inline Image", $this->ubb_img($image_src), "ubb_full-img");
 		$html .= "</fieldset>";
 		
-		$html .= "<fieldset><legend>HTML Code</legend>";
-		$html .= $this->link_code(
-								"Text Link",
-								$this->html_url($post_link, $text_link),
-								"html_text-link");
-		$html .= $this->link_code(
-								"Thumbnail Link",
-								$this->html_url($post_link,$this->html_img($thumb_src)),
-								"html_thumb-link");
-		$html .= $this->link_code(
-								"Inline Image",
-								$this->html_img($image_src),
-								"html_full-image");
+		$html .= "<fieldset><legend>HTML</legend>";
+		$html .= $this->link_code("Text Link", $this->html_url($post_link, $text_link), "html_text-link");
+		$html .= $this->link_code("Thumbnail Link", $this->html_url($post_link,$this->html_img($thumb_src)), "html_thumb-link");
+		$html .= $this->link_code("Inline Image", $this->html_img($image_src), "html_full-image");
 		$html .= "</fieldset>";
 		
 		$html .= "</div>";
@@ -89,6 +56,7 @@ class LinkImage extends Extension {
 	}
 	
 	private function ubb_url($link,$content) {
+		if ($content == NULL) { $content=$link; }
 		return "[url=".$link."]".$content."[/url]";
 	}
 	private function ubb_img($src) {
@@ -96,6 +64,7 @@ class LinkImage extends Extension {
 	}
 	
 	private function html_url($link,$content) {
+		if ($content == NULL) { $content=$link; }
 		return "<a href=\"".$link."\">".$content."</a>";
 	}
 	private function html_img($src) {
@@ -104,7 +73,7 @@ class LinkImage extends Extension {
 	
 	private function link_code($label,$content,$id=NULL) {
 		$control = "<label for='".$id."'>$label</label>\n";
-		$control .= "<input type='text' id='".$id."' name='".$id."' value='".$content."' onfocus='this.select();'></input>\n";
+		$control .= "<input type='text' readonly='readonly' id='".$id."' name='".$id."' value='".$content."' onfocus='this.select();'></input>\n";
 		$control .= "<br/>\n\n";
 		return $control;
 	}
