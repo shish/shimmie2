@@ -61,6 +61,6 @@ To leave the setting blank for any reason, leave a space (' ') in it.
 * Release.
 
 =Links=
-* http://artanis.00.googlepages.com/linktoimage - Home
-* http://forum.shishnet.org/viewtopic.php?p=153 - shishnet forum topic
-* http://trac.shishnet.org/shimmie2/browser/trunk/contrib/link_image - Shimmie Trac
+* http://trac.shishnet.org/shimmie2/wiki/Contrib/Extensions/LinkToImage - Home
+* http://forum.shishnet.org/viewtopic.php?p=153 - Discussion
+* http://trac.shishnet.org/shimmie2/browser/trunk/contrib/link_image - Shimmie2 Trac SVN
