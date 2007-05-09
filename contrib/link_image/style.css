@@ -1,1 +1,24 @@
-/* 404'ed :| */
+/* * * Link to Image * * */
+#link_to_image {
+	
+}
+#link_to_image fieldset {
+	width: 32%;
+	float:left;
+}
+
+#link_to_image input, #link_to_image label {
+	display:block;
+	width:56%;
+	float:left;
+	margin-bottom:2.5px;
+}
+#link_to_image label {
+	width:40%;
+	text-align:left;
+	padding-right:2%;
+	cursor:pointer;
+}
+#link_to_image br {
+	clear:both;
+}
