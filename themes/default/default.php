@@ -23,7 +23,7 @@ function block_to_html($block, $hidable=false) {
 
 $header_html = "";
 foreach($this->headers as $line) {
-	$header_html .= "\t\t$line";
+	$header_html .= "\t\t$line\n";
 }
 
 $sideblock_html = "";
