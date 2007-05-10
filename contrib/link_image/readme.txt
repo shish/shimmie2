@@ -33,6 +33,10 @@ To leave the setting blank for any reason, leave a space (' ') in it.
  * http://trac.shishnet.org/shimmie2/wiki/NiceURLs - Nice URLs
 
 = Change Log =
+== Version 0.1.4 - 20071510 ==
+ * Style changes.
+ * Added output containing only the locations of the thumb, image and post.
+ * Added a link to wikipedia's HTML page, just as BBCode has a wikipedia link.
 
 == Version 0.1.3b - 20070509 ==
  * Renamed style.css to _style.css to avoid the auto loader.

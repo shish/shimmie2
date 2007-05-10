@@ -14,8 +14,8 @@ class LinkImage extends Extension {
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Link to Image");
-			$sb->add_label("Text link format: ");
-			$sb->add_text_option("ext_link-img_text-link_format");
+			//$sb->add_label("Text link format: ");
+			$sb->add_text_option("ext_link-img_text-link_format","Text Link Fomrat:");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
@@ -47,10 +47,16 @@ class LinkImage extends Extension {
 		$html .= $this->link_code("Inline Image", $this->ubb_img($image_src), "ubb_full-img");
 		$html .= "</fieldset>";
 		
-		$html .= "<fieldset><legend>HTML</legend>";
+		$html .= "<fieldset><legend><a href='http://en.wikipedia.org/wiki/Html' target='_blank'>HTML</a></legend>";
 		$html .= $this->link_code("Text Link", $this->html_url($post_link, $text_link), "html_text-link");
 		$html .= $this->link_code("Thumbnail Link", $this->html_url($post_link,$this->html_img($thumb_src)), "html_thumb-link");
 		$html .= $this->link_code("Inline Image", $this->html_img($image_src), "html_full-image");
+		$html .= "</fieldset>";
+		
+		$html .= "<fieldset><legend>Plain Text</legend>";
+		$html .= $this->link_code("Post URL",$post_link,"text_post-link");
+		$html .= $this->link_code("Thumbnail URL",$thumb_src,"text_thumb-url");
+		$html .= $this->link_code("Image URL",$image_src,"text_image-src");
 		$html .= "</fieldset>";
 		
 		$html .= "</div>";
