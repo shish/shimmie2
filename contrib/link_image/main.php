@@ -15,7 +15,7 @@ class LinkImage extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Link to Image");
 			//$sb->add_label("Text link format: ");
-			$sb->add_text_option("ext_link-img_text-link_format","Text Link Fomrat:");
+			$sb->add_text_option("ext_link-img_text-link_format","Text Link Format:");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
