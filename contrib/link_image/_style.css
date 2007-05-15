@@ -3,7 +3,10 @@
 **/
 
 /* * * Link to Image * * */
-#link_to_image {	}
+#link_to_image {
+	/* allows borders to encompass the content; */
+	overflow:hidden;
+}
 
 #link_to_image fieldset {
 	width: 32%;
@@ -24,11 +27,15 @@
 	padding-right:2%;
 	cursor:pointer;
 }
+#link_to_image input {
+	font-size:0.7em;
+	font-family:courier, fixed, monospace;
+}
 
 #link_to_image br {
 	clear:both;
 }
 
 #link_to_image label:hover {
-	border-bottom:1px dashed;
+	/*border-bottom:1px dashed;*/
 }
