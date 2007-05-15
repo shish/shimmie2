@@ -81,7 +81,7 @@ class LinkImage extends Extension {
 	}
 	
 	private function link_code($label,$content,$id=NULL) {
-		$control = "<label for='".$id."'>$label</label>\n";
+		$control = "<label for='".$id."' title='Click to select the textbox'>$label</label>\n";
 		$control .= "<input type='text' readonly='readonly' id='".$id."' name='".$id."' value='".$content."' onfocus='this.select();'></input>\n";
 		$control .= "<br/>\n\n";
 		return $control;
