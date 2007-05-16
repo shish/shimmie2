@@ -27,6 +27,7 @@ class ET extends Extension {
 	private function build_data_form() {
 		global $database;
 		global $config;
+		global $_event_listeners; // yay for using secret globals \o/
 
 		$data = "";
 
@@ -54,6 +55,12 @@ class ET extends Extension {
 		$data .= "Comments: ".($database->db->GetOne("SELECT COUNT(*) FROM comments"))."\n";
 		$data .= "Users: ".($database->db->GetOne("SELECT COUNT(*) FROM users"))."\n";
 		$data .= "Tags: ".($database->db->GetOne("SELECT COUNT(*) FROM tags"))."\n";
+
+		$els = array();
+		foreach($_event_listeners as $el) {
+			$els[] = get_class($el);
+		}
+		$data .= "Extensions: ".join(", ", $els)."\n";
 
 		$html = "
 			<form action='http://shimmie.shishnet.org/register.php' method='POST'>
