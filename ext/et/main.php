@@ -61,6 +61,12 @@ class ET extends Extension {
 			$els[] = get_class($el);
 		}
 		$data .= "Extensions: ".join(", ", $els)."\n";
+		
+		//$cfs = array();
+		//foreach($database->db->GetAll("SELECT name, value FROM config") as $pair) {
+		//	$cfs[] = $pair['name']."=".$pair['value'];
+		//}
+		//$data .= "Config: ".join(", ", $cfs);
 
 		$html = "
 			<form action='http://shimmie.shishnet.org/register.php' method='POST'>
