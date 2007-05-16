@@ -40,7 +40,9 @@ class Comment { // {{{
 
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_dellink = $user->is_admin() ? 
-			"<br>($h_poster_ip, <a href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
+			"<br>($h_poster_ip, <a ".
+			"onclick=\"return confirm('Delete comment by $h_name:\\n".bbcode_to_text($this->comment)."');\" ".
+			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		return "<p>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
 	}
