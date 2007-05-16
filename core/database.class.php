@@ -243,7 +243,7 @@ class Database {
 	}
 // }}}
 // users {{{
-	var $SELECT_USER = "SELECT *,time_to_sec(timediff(now(), joindate))/(60*60*24) AS days_old FROM users ";
+	var $SELECT_USER = "SELECT *,(unix_timestamp(now()) - unix_timestamp(joindate))/(60*60*24) AS days_old FROM users ";
 	
 	public function get_user($a=false, $b=false) {
 		if($b == false) {
