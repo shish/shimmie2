@@ -161,6 +161,8 @@ function get_memory_limit() {
 		$memory = $default_limit; 
 	}
 
+	assert($memory > 0);
+
 	return $memory;
 }
 
