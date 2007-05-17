@@ -1,3 +1,4 @@
+<IfModule mod_rewrite.c>
 RewriteEngine  on
 
 # rather than link to images/ha/hash and have an ugly filename,
@@ -9,4 +10,4 @@ RewriteRule ^_thumbs/([0-9a-f]{2})([0-9a-f]{30})/.*\.jpg$   thumbs/$1/$1$2 [L]
 # any requests for files which don't physically exist should be handled by index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?q=$1&%{QUERY_STRING} [L]
-
+</IfModule>
