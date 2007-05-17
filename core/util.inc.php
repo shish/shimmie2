@@ -107,6 +107,7 @@ function bbcode_to_html($text) {
 	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
+	$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "<pre>\\1</pre>", $text);
 	$text = preg_replace("/&gt;&gt;(\d+)/s",
 		"<a href='".make_link("post/view/\\1")."'>&gt;&gt;\\1</a>", $text);
 	$text = preg_replace("/\[\[(.*?)\]\]/s", 
@@ -121,6 +122,7 @@ function bbcode_to_text($text) {
 	$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
 	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
+	$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "\\1", $text);
 	$text = preg_replace("/\[\[(.*?)\]\]/s", "\\1", $text);
 	return $text;
 }
@@ -302,8 +304,9 @@ function get_user() {
 		
 	}
 	if(is_null($user)) {
-		$user = $database->get_user($config->get_int("anon_id"));
+		$user = $database->get_user($config->get_int("anon_id", 0));
 	}
+	assert(!is_null($user));
 	return $user;
 }
 
