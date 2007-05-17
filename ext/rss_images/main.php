@@ -9,7 +9,7 @@ class RSS_Images extends Extension {
 			$title = $config->get_string('title');
 
 			$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
-				"title=\"$title\" href=\"".make_link("rss/images")."\" />");
+				"title=\"$title - Images\" href=\"".make_link("rss/images")."\" />");
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "rss")) {
 			if($event->get_arg(0) == 'images') {
