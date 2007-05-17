@@ -51,7 +51,7 @@ class Database {
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
-			$result = $this->db->Execute($querylet->sql, $querylet->variables);
+			$result = $this->execute($querylet->sql, $querylet->variables);
 			return ceil($result->RecordCount() / $images_per_page);
 		}
 	}
@@ -164,7 +164,7 @@ class Database {
 	}
 
 	public function delete_tags_from_image($image_id) {
-		$this->db->Execute("DELETE FROM tags WHERE image_id=?", array($image_id));
+		$this->execute("DELETE FROM tags WHERE image_id=?", array($image_id));
 	}
 
 	public function set_tags($image_id, $tags) {
@@ -179,7 +179,7 @@ class Database {
 		
 		// insert each new tag
 		foreach($tags as $tag) {
-			$this->db->Execute("INSERT INTO tags(image_id, tag) VALUES(?, ?)", array($image_id, $tag));
+			$this->execute("INSERT INTO tags(image_id, tag) VALUES(?, ?)", array($image_id, $tag));
 		}
 	}
 // }}}
@@ -193,12 +193,12 @@ class Database {
 		if($limit < 1) $limit = 1;
 		
 		if(count($tags) == 0) {
-			$result = $this->db->Execute("{$this->get_images} ORDER BY id DESC LIMIT ?,?", array($start, $limit));
+			$result = $this->execute("{$this->get_images} ORDER BY id DESC LIMIT ?,?", array($start, $limit));
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
 			$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ?,?", array($start, $limit)));
-			$result = $this->db->Execute($querylet->sql, $querylet->variables);
+			$result = $this->execute($querylet->sql, $querylet->variables);
 		}
 		
 		while(!$result->EOF) {
@@ -249,7 +249,7 @@ class Database {
 	}
 
 	public function remove_image($id) {
-		$this->db->Execute("DELETE FROM images WHERE id=?", array($id));
+		$this->execute("DELETE FROM images WHERE id=?", array($id));
 	}
 // }}}
 // users {{{
