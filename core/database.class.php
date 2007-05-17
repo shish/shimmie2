@@ -55,6 +55,16 @@ class Database {
 			return ceil($result->RecordCount() / $images_per_page);
 		}
 	}
+
+	public function execute($query, $args) {
+		$result = $this->db->Execute($query, $args);
+		if($result === False) {
+			print "SQL Error: " . $this->db->ErrorMsg() . "<br>";
+			print "Query: $query";
+			exit;
+		}
+		return $result;
+	}
 // }}}
 // extensions {{{
 	public function set_extension_version($name, $version) {
