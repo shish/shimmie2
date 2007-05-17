@@ -1,3 +1,7 @@
+<IfModule mod_dir.c>
+DirectoryIndex index.php5 index.php
+</IfModule>
+
 <IfModule mod_rewrite.c>
 RewriteEngine  on
 
