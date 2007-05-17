@@ -19,7 +19,7 @@ class Zoom extends Extension {
 
 	private function make_zoomer() {
 		global $config;
-		$default = $config->get_bool("image_zoom") ? "scale(img);" : "";
+		$default = $config->get_bool("image_zoom", false) ? "scale(img);" : "";
 		return <<<EOD
 <script type="text/javascript">
 img = byId("main_image");
