@@ -10,9 +10,6 @@ class Config {
 			'data_href' => './', # setup
 			'theme' => 'default', # setup
 			'debug_enabled' => true, # hidden
-			'anon_id' => 0, # general
-			'dir_images' => 'images', # general
-			'dir_thumbs' => 'thumbs', # general
 			'index_width' => 3, # index
 			'index_height' => 4, # index
 			'index_tips' => true,
@@ -20,7 +17,6 @@ class Config {
 			'thumb_height' => 192, # index
 			'thumb_quality' => 75,  # index
 			'thumb_gd_mem_limit' => '8MB', # upload
-			'view_scale' => false, # view
 			'tags_default' => 'map', # (ignored)
 			'tags_min' => '2', # tags
 			'upload_count' => 3, # upload
