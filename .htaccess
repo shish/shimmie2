@@ -15,3 +15,7 @@ RewriteRule ^_thumbs/([0-9a-f]{2})([0-9a-f]{30})/.*\.jpg$   thumbs/$1/$1$2 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?q=$1&%{QUERY_STRING} [L]
 </IfModule>
+
+php_flag register_globals 0 
+php_flag magic_quotes_gpc 0 
+php_flag magic_quotes_runtime 0
