@@ -249,9 +249,11 @@ function insert_defaults($dsn, $admin_name, $admin_pass) { // {{{
 		$admin_pass = md5(strtolower($admin_name).$admin_pass);
 		$db->Execute($user_insert, Array($admin_name, $admin_pass, 'Y'));
 
-		$convert_check = exec("convert");
-		if(!empty($convert_check)) {
-			$db->Execute($config_insert, Array('thumb_engine', 'convert'));
+		if(!ini_get('safe_mode')) {
+			$convert_check = exec("convert");
+			if(!empty($convert_check)) {
+				$db->Execute($config_insert, Array('thumb_engine', 'convert'));
+			}
 		}
 		
 		$db->Close();
