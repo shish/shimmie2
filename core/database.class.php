@@ -121,6 +121,17 @@ class Database {
 				$val = parse_shorthand_int($matches[3]);
 				$img_search->append(new Querylet("AND ($col $cmp $val)"));
 			}
+			else if(preg_match("/poster=(.*)/i", $term, $matches)) {
+				global $database;
+				$user = $database->get_user_by_name($matches[1]);
+				if(!is_null($user)) {
+					$user_id = $user->id;
+				}
+				else {
+					$user_id = -1;
+				}
+				$img_search->append(new Querylet("AND (owner_id = $user_id)"));
+			}
 			else {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
