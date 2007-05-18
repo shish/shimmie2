@@ -36,7 +36,7 @@ class UserPage extends Extension {
 				}
 			}
 			else if($event->get_arg(0) == "logout") {
-				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory', 365), "/");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("index"));
 			}
@@ -70,13 +70,11 @@ class UserPage extends Extension {
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("User Options");
-			$sb->add_int_option("login_memory", "Login memory: "); $sb->add_label(" days");
 			$sb->add_bool_option("login_signup_enabled", "<br>Allow new signups: ");
 			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
 			$event->panel->add_main_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int_from_post("login_memory");
 			$event->config->set_bool_from_post("login_signup_enabled");
 			$event->config->set_string_from_post("login_tac");
 		}
@@ -109,7 +107,7 @@ class UserPage extends Extension {
 					);
 			setcookie(
 					"shm_session", md5($hash.$addr),
-					time()+60*60*24*$config->get_int('login_memory'), "/"
+					time()+60*60*24*$config->get_int('login_memory', 365), "/"
 					);
 
 			$page->set_mode("redirect");
@@ -165,7 +163,7 @@ class UserPage extends Extension {
 				setcookie("shm_user", $name,
 						time()+60*60*24*365, '/');
 				setcookie("shm_session", md5($hash.$addr),
-						time()+60*60*24*$config->get_int('login_memory'), '/');
+						time()+60*60*24*$config->get_int('login_memory', 365), '/');
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("user"));
 			}
@@ -219,7 +217,7 @@ class UserPage extends Extension {
 					setcookie("shm_user", $name,
 							time()+60*60*24*365, '/');
 					setcookie("shm_session", md5($hash.$addr),
-							time()+60*60*24*$config->get_int('login_memory'), '/');
+							time()+60*60*24*$config->get_int('login_memory', 365), '/');
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("user"));
 				}

@@ -29,7 +29,6 @@ class Config {
 			'popular_count' => 15, # popular
 			'info_link' => 'http://tags.shishnet.org/wiki/$tag', # popular
 			'login_signup_enabled' => true, # user
-			'login_memory' => 7, # user
 			'image_ilink' => '$base/image/$id.$ext', # view
 			'image_slink' => '', # view
 			'image_tlink' => '$base/thumb/$id.jpg', # view
