@@ -110,6 +110,8 @@ function bbcode_to_html($text) {
 	$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "<pre>\\1</pre>", $text);
 	$text = preg_replace("/&gt;&gt;(\d+)/s",
 		"<a href='".make_link("post/view/\\1")."'>&gt;&gt;\\1</a>", $text);
+	$text = preg_replace("/\[url=((?:https?|ftp|irc):\/\/.*?)\](.*?)\[\/url\]/s", "<a href='\\1'>\\2</a>", $text);
+	$text = preg_replace("/\[url\]((?:https?|ftp|irc):\/\/.*?)\[\/url\]/s", "<a href='\\1'>\\1</a>", $text);
 	$text = preg_replace("/\[\[(.*?)\]\]/s", 
 		"<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
 	$text = str_replace("\n", "\n<br>", $text);
@@ -123,6 +125,8 @@ function bbcode_to_text($text) {
 	$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 	$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
 	$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "\\1", $text);
+	$text = preg_replace("/\[url=(.*?)\](.*?)\[\/url\]/s", "\\2", $text);
+	$text = preg_replace("/\[url\](.*?)\[\/url\]/s", "\\1", $text);
 	$text = preg_replace("/\[\[(.*?)\]\]/s", "\\1", $text);
 	return $text;
 }
