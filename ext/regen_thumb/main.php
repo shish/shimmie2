@@ -50,6 +50,7 @@ class RegenThumb extends Extension {
 		global $page;
 		$page->set_title("Thumbnail Regenerated");
 		$page->set_heading("Thumbnail Regenerated");
+		$page->add_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
 		$page->add_side_block(new NavBlock());
 		$page->add_main_block(new Block("Thumbnail", build_thumb_html($image)));
 	}
