@@ -1,0 +1,224 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                  things common to all pages                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+/* bzchan: BODY tags font changed, margin set */
+BODY {
+	background-color:#FFFFFF;
+	font: 80% verdana, sans-serif;
+	padding: 1em 3em;
+	text-align:center;
+}
+
+/* bzchan: All H* tags tweaked */
+H1, H3 {
+	
+	text-align: center;
+}
+H1 {
+	font-size: 2em;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 2px;
+}
+H1 A {
+	color: black;
+}
+H3 {
+	font-size: 1.2em;
+	margin-top: 0.5em;
+	margin-bottom: 0px;
+	padding: 1px;	
+}
+h4 {
+	font-size: 1.4em;
+}
+h5 {
+	font-size: 1.2em;
+}
+
+THEAD {
+	background: #DEDEDE;
+	font-weight: bold;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+/* bzchan: subtitle black border removed */
+#subtitle {
+	width: 256px;
+	font-size: 0.75em;
+	margin: auto;
+	text-align: center;
+	border-top: none;
+}
+#body SELECT {width: 150px;}
+/*
+TD INPUT {width: 100%;}
+TD SELECT {width: 100%;}
+*/
+
+#footer {
+	clear: both;
+	padding-top: 8px;
+	font-size: 0.7em;
+	text-align: center;
+}
+
+*[onclick] {cursor: pointer;}
+IMG {border: none;}
+FORM {margin: 0px;}
+A {text-decoration: none;}
+A:hover {text-decoration: underline;}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all it's blocks            *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* bzchan: nav made to be left blocked */
+#nav {
+	width: 150px;
+	float: left;
+	text-align:left;
+
+}
+#nav TABLE {
+	width: 150px;
+}
+#nav TD {
+	vertical-align: middle;
+}
+#nav INPUT {
+	width: 100%;
+	padding: 0px;
+}
+#nav SELECT {
+	width: 100%;
+	padding: 0px;
+}
+/* bzchan: nav H3 made to be left blocked */
+#nav H3 {
+	text-align: left;
+}
+
+#comments P {
+	text-align: left;
+	width: 150px;
+	max-width: 150px;
+	overflow: hidden;
+}
+
+.more:after {
+	content: " >>>";
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#body {
+	margin-left: 160px;
+	text-align: center;
+}
+#body TABLE {
+	width: 90%;
+	margin: auto;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     specific page types                        *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#pagelist {
+	margin-top: 32px;
+}
+
+#tagmap A {
+	padding: 8px 4px 8px 4px;
+}
+
+#image_comments {
+	text-align: left;
+}
+
+.setupblock {
+	border: 1px solid #AAA;
+	padding: 8px;
+	margin: 16px;
+	width: 350px;
+}
+
+.helpable {
+	border-bottom: 1px dashed gray;
+}
+
+.ok {
+	background: #AFA;
+}
+.bad {
+	background: #FAA;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     bzchan added                               *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+div#header {text-align: left;}
+div#header H1{text-align: left;}
+
+* {
+	font-family: verdana,sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+a:link {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #33CFFF;
+	text-decoration: none;
+}
+
+a:active {
+	color: #006FFA;
+	text-decoration: none;
+}
+
+ul.flat-list {
+	display: inline;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+}
+
+ul.flat-list * {
+	display: inline;
+	text-align:left;
+}
+
+ul.flat-list li {
+    text-align:left;
+	list-style-type: none;
+	font-weight: bold;
+	margin: 0 1em 0 0;
+}
+
+ul.flat-list li a {
+	font-weight: normal;
+}
+
+
