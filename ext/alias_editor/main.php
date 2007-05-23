@@ -24,7 +24,7 @@ class AliasEditor extends Extension {
 				else if($event->get_arg(0) == "remove") {
 					if(isset($_POST['oldtag'])) {
 						global $database;
-						$database->db->Execute("DELETE FROM aliases WHERE oldtag=?", array($_POST['oldtag']));
+						$database->Execute("DELETE FROM aliases WHERE oldtag=?", array($_POST['oldtag']));
 
 						global $page;
 						$page->set_mode("redirect");
@@ -41,7 +41,7 @@ class AliasEditor extends Extension {
 
 		if(is_a($event, 'AddAliasEvent')) {
 			global $database;
-			$database->db->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", array($event->oldtag, $event->newtag));
+			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", array($event->oldtag, $event->newtag));
 
 			global $page;
 			$page->set_mode("redirect");

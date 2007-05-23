@@ -157,7 +157,7 @@ class ImageIO extends Extension {
 		}
 
 		// actually insert the info
-		$database->db->Execute(
+		$database->Execute(
 				"INSERT INTO images(owner_id, owner_ip, filename, filesize, hash, ext, width, height, posted) ".
 				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())",
 				array($user->id, $_SERVER['REMOTE_ADDR'], $image->filename, $image->filesize,

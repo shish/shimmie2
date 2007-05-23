@@ -31,8 +31,7 @@ class User {
 		global $database;
 		
 		$yn = $enabled ? 'Y' : 'N';
-		$database->db->Execute("UPDATE users SET enabled=? WHERE id=?",
-				array($yn, $this->id));
+		$database->Execute("UPDATE users SET enabled=? WHERE id=?", array($yn, $this->id));
 	}
 
 	public function is_admin() {
@@ -43,8 +42,7 @@ class User {
 		global $database;
 
 		$yn = $admin ? 'Y' : 'N';
-		$database->db->Execute("UPDATE users SET admin=? WHERE id=?",
-				array($yn, $this->id));
+		$database->Execute("UPDATE users SET admin=? WHERE id=?", array($yn, $this->id));
 	}
 
 	public function get_days_old() {

@@ -130,7 +130,7 @@ class CommentList extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->db->Execute("CREATE TABLE `comments` (
+		$database->Execute("CREATE TABLE `comments` (
 			`id` int(11) NOT NULL auto_increment,
 			`image_id` int(11) NOT NULL,
 			`owner_id` int(11) NOT NULL,
@@ -162,7 +162,7 @@ class CommentList extends Extension {
 			ORDER BY latest DESC
 			LIMIT ?,?
 			";
-		$result = $database->db->Execute($get_threads, array($start, $threads_per_page));
+		$result = $database->Execute($get_threads, array($start, $threads_per_page));
 
 
 		$total_pages = (int)($database->db->GetOne("SELECT COUNT(distinct image_id) AS count FROM comments") / 10);
@@ -257,7 +257,7 @@ class CommentList extends Extension {
 		global $config;
 
 		$html = "";
-		$result = $database->db->Execute($query, $args);
+		$result = $database->Execute($query, $args);
 		while(!$result->EOF) {
 			$comment = new Comment($result->fields);
 			$html .= $comment->to_html($trim);
@@ -275,7 +275,7 @@ class CommentList extends Extension {
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
-		$result = $database->db->Execute("SELECT * FROM comments WHERE owner_ip = ? ".
+		$result = $database->Execute("SELECT * FROM comments WHERE owner_ip = ? ".
 				"AND posted > date_sub(now(), interval ? minute)",
 				Array($_SERVER['REMOTE_ADDR'], $window));
 		$recent_comments = $result->RecordCount();
@@ -343,7 +343,7 @@ class CommentList extends Extension {
 						"Akismet thinks that your comment is spam. Try rewriting the comment?"));
 		}
 		else {
-			$database->db->Execute(
+			$database->Execute(
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
@@ -354,12 +354,12 @@ class CommentList extends Extension {
 
 	private function delete_comments($image_id) {
 		global $database;
-		$database->db->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
+		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
 	}
 
 	private function delete_comment($comment_id) {
 		global $database;
-		$database->db->Execute("DELETE FROM comments WHERE id=?", array($comment_id));
+		$database->Execute("DELETE FROM comments WHERE id=?", array($comment_id));
 	}
 // }}}
 }

@@ -156,7 +156,7 @@ class UserPage extends Extension {
 				$email = isset($_POST['email']) ? $_POST['email'] : null;
 
 				// FIXME: send_event()
-				$database->db->Execute(
+				$database->Execute(
 						"INSERT INTO users (name, pass, joindate, email) VALUES (?, ?, now(), ?)",
 						array($name, $hash, $email));
 
@@ -209,7 +209,7 @@ class UserPage extends Extension {
 
 				// FIXME: send_event()
 				// FIXME: $duser->set_pass();
-				$database->db->Execute(
+				$database->Execute(
 						"UPDATE users SET pass = ? WHERE id = ?",
 						array($hash, $id));
 

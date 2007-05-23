@@ -18,7 +18,7 @@ class Notes extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->db->Execute("CREATE TABLE `image_notes` (
+		$database->Execute("CREATE TABLE `image_notes` (
 			`id` int(11) NOT NULL auto_increment,
 			`image_id` int(11) NOT NULL,
 			`user_id` int(11) NOT NULL,

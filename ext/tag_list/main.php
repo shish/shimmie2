@@ -84,7 +84,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->db->Execute(
+		$result = $database->Execute(
 				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY tag",
 				array($tags_min));
 
@@ -108,7 +108,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->db->Execute(
+		$result = $database->Execute(
 				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY tag",
 				array($tags_min));
 
@@ -135,7 +135,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->db->Execute(
+		$result = $database->Execute(
 				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY count DESC, tag ASC",
 				array($tags_min)
 				);
@@ -165,7 +165,7 @@ class TagList extends Extension {
 
 		$n = 0;
 		$html = "";
-		$result = $database->db->Execute($query, $args);
+		$result = $database->Execute($query, $args);
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$tag = $row['tag'];

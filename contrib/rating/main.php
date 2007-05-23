@@ -50,7 +50,7 @@ class Ratings extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->db->Execute("CREATE TABLE `image_voters` (
+		$database->Execute("CREATE TABLE `image_voters` (
 			`image_id` int(11) NOT NULL,
 			`user_id` int(11) NOT NULL,
 			`vote` tinyint(4) NOT NULL,
@@ -111,7 +111,7 @@ class Ratings extends Extension {
 		}
 		else {
 			$i_rating = int_escape($rating);
-			$database->db->Execute(
+			$database->Execute(
 					"INSERT INTO image_ratings(image_id, user_id, rating, rated) ".
 					"VALUES(?, ?, ?, now())",
 					array($image_id, $user->id, $i_rating));
@@ -122,7 +122,7 @@ class Ratings extends Extension {
 
 	private function delete_ratings($image_id) {
 		global $database;
-		$database->db->Execute("DELETE FROM image_voters WHERE image_id=?", array($image_id));
+		$database->Execute("DELETE FROM image_voters WHERE image_id=?", array($image_id));
 	}
 // }}}
 }

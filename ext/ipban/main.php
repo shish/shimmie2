@@ -75,7 +75,7 @@ class IPBan extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->db->Execute("CREATE TABLE bans (
+		$database->Execute("CREATE TABLE bans (
 			id int(11) NOT NULL auto_increment,
 			ip char(15) default NULL,
 			date datetime default NULL,
@@ -119,14 +119,14 @@ class IPBan extends Extension {
 
 	public function add_ip_ban($ip, $reason) {
 		global $database;
-		$database->db->Execute(
+		$database->Execute(
 				"INSERT INTO bans (ip, reason, date) VALUES (?, ?, now())",
 				array($ip, $reason));
 	}
 
 	public function remove_ip_ban($ip) {
 		global $database;
-		$database->db->Execute("DELETE FROM bans WHERE ip = ?", array($ip));
+		$database->Execute("DELETE FROM bans WHERE ip = ?", array($ip));
 	}
 // }}}
 // admin page HTML {{{

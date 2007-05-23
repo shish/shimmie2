@@ -46,15 +46,15 @@ class Config {
 			foreach($this->values as $name => $value) {
 				// does "or update" work with sqlite / postgres?
 				$database->db->StartTrans();
-				$database->db->Execute("DELETE FROM config WHERE name = ?", array($name));
-				$database->db->Execute("INSERT INTO config VALUES (?, ?)", array($name, $value));
+				$database->Execute("DELETE FROM config WHERE name = ?", array($name));
+				$database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $value));
 				$database->db->CommitTrans();
 			}
 		}
 		else {
 			$database->db->StartTrans();
-			$database->db->Execute("DELETE FROM config WHERE name = ?", array($name));
-			$database->db->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
+			$database->Execute("DELETE FROM config WHERE name = ?", array($name));
+			$database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
 			$database->db->CommitTrans();
 		}
 	}

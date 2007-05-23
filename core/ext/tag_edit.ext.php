@@ -77,7 +77,7 @@ class TagEdit extends Extension {
 	private function mass_tag_edit($search, $replace) {
 		// FIXME: deal with collisions
 		global $database;
-		$database->db->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
+		$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
 	}
 // }}}
 // HTML {{{
