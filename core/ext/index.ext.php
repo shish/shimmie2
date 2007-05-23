@@ -14,7 +14,7 @@ class Index extends Extension {
 
 			if(isset($_GET['search'])) {
 				$search_terms = explode(' ', $_GET['search']);
-				$query = "search=".html_escape($_GET['search']);
+				$query = "search=".url_escape($_GET['search']);
 			}
 			else {
 				$query = null;
@@ -36,8 +36,9 @@ class Index extends Extension {
 				/*
 				$page_title = "";
 				foreach($search_terms as $term) {
+					$u_term = url_escape($term);
 					$h_term = html_escape($term);
-					$page_title .= "<a href='".make_link("post/list", "search=$h_term")."'>$h_term</a>";
+					$page_title .= "<a href='".make_link("post/list", "search=$u_term")."'>$h_term</a>";
 				}
 				*/
 				$page->set_subheading("Page $page_number / $total_pages");
@@ -78,8 +79,8 @@ class Index extends Extension {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
-		$h_tags = html_escape(implode("%20", $search_terms));
-		$query = empty($h_tags) ? null : "search=$h_tags";
+		$u_tags = url_escape(implode(" ", $search_terms));
+		$query = empty($u_tags) ? null : "search=$u_tags";
 
 		
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("index/$prev", $query)."'>Prev</a>";

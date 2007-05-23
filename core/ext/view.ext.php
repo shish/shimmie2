@@ -61,7 +61,7 @@ class ViewImage extends Extension {
 		// $prev_img = $database->db->GetOne("SELECT id FROM images WHERE id > ? ORDER BY id ASC ", array($image_id));
 		if(isset($_GET['search'])) {
 			$search_terms = explode(' ', $_GET['search']);
-			$query = "search=".html_escape($_GET['search']);
+			$query = "search=".url_escape($_GET['search']);
 		}
 		else {
 			$search_terms = array();

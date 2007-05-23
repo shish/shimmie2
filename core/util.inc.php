@@ -12,6 +12,11 @@ function int_escape($input) {
 	return (int)$input;
 }
 
+function url_escape($input) {
+	$input = rawurlencode($input);
+	return $input;
+}
+
 function sql_escape($input) {
 	global $database;
 	return $database->db->Quote($input);

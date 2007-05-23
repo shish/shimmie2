@@ -64,8 +64,7 @@ class TagList extends Extension {
 // }}}
 // misc {{{
 	private function tag_link($tag) {
-		$h_tag = html_escape($tag);
-		return make_link("index", "search=$h_tag");
+		return make_link("index", "search=".url_escape($tag));
 	}
 // }}}
 // maps {{{
@@ -285,7 +284,7 @@ class TagList extends Extension {
 		else {
 			$tags = array_remove($tags, $tag);
 			$tags = array_remove($tags, "-$tag");
-			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Remove'>R</a>";
+			return "<a href='".make_link("index", "search=".url_escape(join('+', $tags)))."' title='Remove'>R</a>";
 		}
 	}
 
@@ -296,7 +295,7 @@ class TagList extends Extension {
 		else {
 			$tags = array_remove($tags, "-$tag");
 			$tags = array_add($tags, $tag);
-			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Add'>A</a>";
+			return "<a href='".make_link("index", "search=".url_escape(join('+', $tags)))."' title='Add'>A</a>";
 		}
 	}
 
@@ -307,7 +306,7 @@ class TagList extends Extension {
 		else {
 			$tags = array_remove($tags, $tag);
 			$tags = array_add($tags, "-$tag");
-			return "<a href='".make_link("index", "search=".html_escape(join('+', $tags)))."' title='Subtract'>S</a>";
+			return "<a href='".make_link("index", "search=".url_escape(join('+', $tags)))."' title='Subtract'>S</a>";
 		}
 	}
 // }}}

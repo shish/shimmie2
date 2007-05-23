@@ -85,7 +85,7 @@ class TagEdit extends Extension {
 		global $database;
 		
 		if(isset($_GET['search'])) {
-			$h_query = "search=".html_escape($_GET['search']);
+			$h_query = "search=".url_escape($_GET['search']);
 		}
 		else {
 			$h_query = "";

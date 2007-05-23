@@ -329,8 +329,8 @@ class UserPage extends Extension {
 		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
 		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
 
-		$h_name = html_escape($duser->name);
-		$images_link = make_link("index", "search=poster%3D$h_name");
+		$u_name = url_escape($duser->name);
+		$images_link = make_link("index", "search=poster%3D$u_name");
 
 		return "
 			Join date: $h_join_date ($i_days_old days old)
