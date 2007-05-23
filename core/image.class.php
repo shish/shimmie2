@@ -75,7 +75,7 @@ class Image {
 		if(!isset($this->tag_array)) {
 			global $database;
 			$this->tag_array = Array();
-			$row = $database->db->Execute("SELECT * FROM tags WHERE image_id=?", array($this->id));
+			$row = $database->Execute("SELECT * FROM tags WHERE image_id=? ORDER BY tag", array($this->id));
 			while(!$row->EOF) {
 				$this->tag_array[] = $row->fields['tag'];
 				$row->MoveNext();
