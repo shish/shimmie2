@@ -27,6 +27,7 @@ class WikiPage {
 	var $date;
 	var $title;
 	var $revision;
+	var $locked;
 	var $body;
 	
 	public function WikiPage($row=null) {
@@ -37,6 +38,7 @@ class WikiPage {
 			$this->date = $row['date'];
 			$this->title = $row['title'];
 			$this->revision = $row['revision'];
+			$this->locked = ($row['locked'] == 'Y');
 			$this->body = $row['body'];
 		}
 	}
@@ -47,7 +49,7 @@ class WikiPage {
 	}
 
 	public function is_locked() {
-		return false;
+		return $this->locked;
 	}
 }
 // }}}
@@ -55,10 +57,7 @@ class Wiki extends Extension {
 // event handler {{{
 	public function receive_event($event) {
 		if(is_a($event, 'InitExtEvent')) {
-			global $config;
-			if($config->get_int("ext_wiki_version") < 1) {
-				$this->install();
-			}
+			$this->setup();
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "wiki")) {
@@ -81,10 +80,16 @@ class Wiki extends Extension {
 				$title = $_POST['title'];
 				$rev = $_POST['revision'];
 				$body = $_POST['body'];
+				$lock = $_POST['lock'];
 				
 				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
-					$this->set_page($title, $rev, $body);
+					if($user->is_admin()) {
+						$this->set_page($title, $rev, $body, $lock);
+					}
+					else {
+						$this->set_page($title, $rev, $body, false);
+					}
 
 					$u_title = url_escape($title);
 
@@ -141,20 +146,28 @@ class Wiki extends Extension {
 	}
 // }}}
 // installer {{{
-	protected function install() {
+	private function setup() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE wiki_pages (
-			id int(11) NOT NULL auto_increment,
-			owner_id int(11) NOT NULL,
-			owner_ip char(15) NOT NULL,
-			date datetime default NULL,
-			title varchar(255) NOT NULL,
-			revision int(11) NOT NULL default 1,
-			body text NOT NULL,
-			PRIMARY KEY (id), UNIQUE (title, revision)
-		)");
-		$config->set_int("ext_wiki_version", 1);
+
+		if($config->get_int("ext_wiki_version") < 1) {
+			$database->Execute("CREATE TABLE wiki_pages (
+				id int(11) NOT NULL auto_increment,
+				owner_id int(11) NOT NULL,
+				owner_ip char(15) NOT NULL,
+				date datetime default NULL,
+				title varchar(255) NOT NULL,
+				revision int(11) NOT NULL default 1,
+				body text NOT NULL,
+				PRIMARY KEY (id), UNIQUE (title, revision)
+			)");
+			$config->set_int("ext_wiki_version", 1);
+		}
+		if($config->get_int("ext_wiki_version") < 2) {
+			$database->Execute("ALTER TABLE wiki_pages ADD COLUMN
+				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
+			$config->set_int("ext_wiki_version", 2);
+		}
 	}
 // }}}
 // database {{{
@@ -167,13 +180,13 @@ class Wiki extends Extension {
 				ORDER BY revision DESC", array($title));
 		return ($row ? new WikiPage($row) : null);
 	}
-	private function set_page($title, $rev, $body) {
+	private function set_page($title, $rev, $body, $locked) {
 		global $database;
 		global $user;
 		// FIXME: deal with collisions
 		$row = $database->Execute("
-				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, body)
-				VALUES (?, ?, now(), ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'], $title, $rev, $body));
+				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
+				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'], $title, $rev, $locked?'Y':'N', $body));
 	}
 // }}}
 // html {{{
@@ -182,11 +195,20 @@ class Wiki extends Extension {
 		$u_title = url_escape($page->title);
 		$i_revision = int_escape($page->revision) + 1;
 
+		global $user;
+		if($user->is_admin()) {
+			$val = $page->is_locked() ? " checked" : "";
+			$lock = "<br>Lock page: <input type='checkbox' name='lock'$val>";
+		}
+		else {
+			$lock = "";
+		}
 		return "
 			<form action='".make_link("wiki/$u_title", "save=on")."' method='POST'>
 				<input type='hidden' name='title' value='$h_title'>
 				<input type='hidden' name='revision' value='$i_revision'>
 				<textarea name='body' style='width: 100%' rows='20'>".html_escape($page->body)."</textarea>
+				$lock
 				<br><input type='submit' value='Save'>
 			</form>
 		";
