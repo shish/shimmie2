@@ -39,7 +39,10 @@ class TagList extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
-			$page->add_side_block(new Block("Related Tags", $this->get_related_tags($event->get_image())), 60);
+			global $config;
+			if($config->get_int('tag_list_length') > 0) {
+				$page->add_side_block(new Block("Related Tags", $this->get_related_tags($event->get_image())), 60);
+			}
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
