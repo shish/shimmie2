@@ -19,8 +19,8 @@ class WikiUpdateEvent extends Event {
 	}
 }
 // }}}
-
-class WikiPage { // {{{
+// WikiPage {{{
+class WikiPage {
 	var $id;
 	var $owner_id;
 	var $owner_ip;
@@ -45,8 +45,12 @@ class WikiPage { // {{{
 		global $database;
 		return $database->get_user_by_id($this->owner_id);
 	}
-} // }}}
 
+	public function is_locked() {
+		return false;
+	}
+}
+// }}}
 class Wiki extends Extension {
 // event handler {{{
 	public function receive_event($event) {
@@ -78,13 +82,23 @@ class Wiki extends Extension {
 				$rev = $_POST['revision'];
 				$body = $_POST['body'];
 				
-				$this->set_page($title, $rev, $body);
+				global $user;
+				if($this->can_edit($user, $this->get_page($title))) {
+					$this->set_page($title, $rev, $body);
 
-				$u_title = url_escape($title);
+					$u_title = url_escape($title);
 
-				global $page;
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("wiki/$u_title"));
+					global $page;
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("wiki/$u_title"));
+				}
+				else {
+					global $page;
+					$page->set_title("Denied");
+					$page->set_heading("Denied");
+					$page->add_side_block(new NavBlock());
+					$page->add_main_block(new Block("Denied", "You do not have permission to edit this page"));
+				}
 			}
 			else if(is_null($content)) {
 				$blank = new WikiPage();
@@ -102,6 +116,28 @@ class Wiki extends Extension {
 		if(is_a($event, 'WikiUpdateEvent')) {
 			$this->update_wiki_page($event->user, $event->page);
 		}
+
+		if(is_a($event, 'SetupBuildingEvent')) {
+			$sb = new SetupBlock("Wiki");
+			$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
+			$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
+			$event->panel->add_main_block($sb);
+		}
+		if(is_a($event, 'ConfigSaveEvent')) {
+			$event->config->set_bool_from_post("wiki_edit_anon");
+			$event->config->set_bool_from_post("wiki_edit_user");
+		}
+	}
+// }}}
+// misc {{{
+	private function can_edit($user, $page) {
+		global $config;
+
+		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
+		if($config->get_bool("wiki_edit_anon", false) && $user->is_anonymous()) return true;
+		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
+		if($user->is_admin()) return true;
+		return false;
 	}
 // }}}
 // installer {{{
@@ -163,7 +199,11 @@ class Wiki extends Extension {
 		$html .= bbcode_to_html($page->body);
 		$html .= "<hr>";
 		$html .= "<p>Revision {$page->revision} by {$owner->name} at {$page->date} ";
-		$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
+
+		global $user;
+		if($this->can_edit($user, $page)) {
+			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
+		}
 
 		return $html;
 	}
