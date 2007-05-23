@@ -56,7 +56,7 @@ class Database {
 		}
 	}
 
-	public function execute($query, $args) {
+	public function execute($query, $args=array()) {
 		$result = $this->db->Execute($query, $args);
 		if($result === False) {
 			print "SQL Error: " . $this->db->ErrorMsg() . "<br>";
