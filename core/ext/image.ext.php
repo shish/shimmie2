@@ -7,10 +7,14 @@ class ImageIO extends Extension {
 // event handling {{{
 	public function receive_event($event) {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "image")) {
-			$this->send_file($event->get_arg(0), "image");
+			if(is_numeric($event->get_arg(0))) {
+				$this->send_file($event->get_arg(0), "image");
+			}
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "thumb")) {
-			$this->send_file($event->get_arg(0), "thumb");
+			if(is_numeric($event->get_arg(0))) {
+				$this->send_file($event->get_arg(0), "thumb");
+			}
 		}
 
 		if(is_a($event, 'UploadingImageEvent')) {
