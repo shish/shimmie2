@@ -150,7 +150,7 @@ class Wiki extends Extension {
 		global $database;
 		global $config;
 
-		if($config->get_int("ext_wiki_version") < 1) {
+		if($config->get_int("ext_wiki_version", 0) < 1) {
 			$database->Execute("CREATE TABLE wiki_pages (
 				id int(11) NOT NULL auto_increment,
 				owner_id int(11) NOT NULL,
