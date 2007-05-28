@@ -6,14 +6,18 @@
 class ImageIO extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "image")) {
-			if(is_numeric($event->get_arg(0))) {
-				$this->send_file($event->get_arg(0), "image");
-			}
-		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "thumb")) {
-			if(is_numeric($event->get_arg(0))) {
-				$this->send_file($event->get_arg(0), "thumb");
+		if(is_a($event, 'PageRequestEvent')) {
+			$num = $event->get_arg(0);
+			$matches = array();
+			if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
+				$num = $matches[1];
+				
+				if($event->page == "image") {
+					$this->send_file($num, "image");
+				}
+				else if($event->page == "thumb") {
+					$this->send_file($num, "thumb");
+				}
 			}
 		}
 
