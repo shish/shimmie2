@@ -78,9 +78,9 @@ class Wiki extends Extension {
 			$content = $this->get_page($title);
 			if(isset($_GET['save']) && $_GET['save'] == "on") {
 				$title = $_POST['title'];
-				$rev = $_POST['revision'];
+				$rev = int_escape($_POST['revision']);
 				$body = $_POST['body'];
-				$lock = $_POST['lock'];
+				$lock = isset($_POST['lock']) && ($_POST['lock'] == "on");
 				
 				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
@@ -106,9 +106,20 @@ class Wiki extends Extension {
 				}
 			}
 			else if(is_null($content)) {
+				$default = $this->get_page("wiki:default");
 				$blank = new WikiPage();
 				$blank->title = $title;
-				$page->add_main_block(new Block("Content", $this->create_edit_html($blank)));
+				if(!is_null($default) && !isset($_GET['edit'])) {
+					global $config;
+					$blank->body = $default->body;
+					$blank->owner_id = $config->get_int('anon_id');
+					$blank->date = $default->date;
+					$content = $this->create_display_html($blank);
+				}
+				else {
+					$content = $this->create_edit_html($blank);
+				}
+				$page->add_main_block(new Block("Content", $content));
 			}
 			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
 				$page->add_main_block(new Block("Content", $this->create_edit_html($content)));
