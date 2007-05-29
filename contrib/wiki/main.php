@@ -228,7 +228,7 @@ class Wiki extends Extension {
 	private function create_display_html($page) {
 		$owner = $page->get_owner();
 
-		$html = "";
+		$html = "<div class='wiki-page'>";
 		$html .= bbcode_to_html($page->body);
 		$html .= "<hr>";
 		$html .= "<p>Revision {$page->revision} by {$owner->name} at {$page->date} ";
@@ -237,6 +237,8 @@ class Wiki extends Extension {
 		if($this->can_edit($user, $page)) {
 			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
 		}
+
+		$html .= "</div>";
 
 		return $html;
 	}
