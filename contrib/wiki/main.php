@@ -231,14 +231,14 @@ class Wiki extends Extension {
 		$html = "<div class='wiki-page'>";
 		$html .= bbcode_to_html($page->body);
 		$html .= "<hr>";
-		$html .= "<p>Revision {$page->revision} by {$owner->name} at {$page->date} ";
+		$html .= "<p class='wiki-footer'>Revision {$page->revision} by {$owner->name} at {$page->date} ";
 
 		global $user;
 		if($this->can_edit($user, $page)) {
 			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
 		}
 
-		$html .= "</div>";
+		$html .= "</p></div>";
 
 		return $html;
 	}
