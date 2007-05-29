@@ -44,7 +44,7 @@ class Paginator extends Block {
 		}
 		$pages_html = implode(" | ", $pages);
 
-		return "<p>$first_html | $prev_html | $random_html | $next_html | $last_html".
+		return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
 				"<br>&lt;&lt; $pages_html &gt;&gt;</p>";
 	}
 }
