@@ -30,62 +30,46 @@ class LinkImage extends Extension {
 		}
 	}
 	
-	private function get_html ($image) {
+	private function get_html($image) {
 		global $config;
 		
 		$thumb_src = $image->get_thumb_link();
 		$image_src = $image->get_image_link();
 		$post_link = $image->get_short_link();
-		
 		$text_link = $this->parse_link_template($config->get_string("ext_link-img_text-link_format"),$image);
 		
-		$html = "<div id='link_to_image'>";
+		$html = "";
 		
-		$html .= "<fieldset><legend><a href='http://en.wikipedia.org/wiki/Bbcode' target='_blank'>BBCode</a></legend>";
-		$html .= $this->link_code("Text Link", $this->ubb_url($post_link, $text_link), "ubb_text-link");
-		$html .= $this->link_code("Thumbnail Link", $this->ubb_url($post_link, $this->ubb_img($thumb_src)), "ubb_thumb-link");
-		$html .= $this->link_code("Inline Image", $this->ubb_img($image_src), "ubb_full-img");
-		$html .= "</fieldset>";
-		
-		$html .= "<fieldset><legend><a href='http://en.wikipedia.org/wiki/Html' target='_blank'>HTML</a></legend>";
-		$html .= $this->link_code("Text Link", $this->html_url($post_link, $text_link), "html_text-link");
-		$html .= $this->link_code("Thumbnail Link", $this->html_url($post_link,$this->html_img($thumb_src)), "html_thumb-link");
-		$html .= $this->link_code("Inline Image", $this->html_img($image_src), "html_full-image");
-		$html .= "</fieldset>";
-		
-		$html .= "<fieldset><legend>Plain Text</legend>";
-		$html .= $this->link_code("Post URL",$post_link,"text_post-link");
-		$html .= $this->link_code("Thumbnail URL",$thumb_src,"text_thumb-url");
-		$html .= $this->link_code("Image URL",$image_src,"text_image-src");
-		$html .= "</fieldset>";
-		
-		$html .= "</div>";
+		if($this->get_HTML_PHP()) {
+			$html_gen = new LinkImageHTML($post_link, $image_src, $thumb_src, $text_link);
+			$html = $html_gen->getHTML();
+		}
 		
 		return $html;
 	}
+
+/* This function would do better generalized in the Extension class instead  *
+ * of repeated in every extension. And probaly renamed, too...               *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+	private function get_HTML_PHP() {
+		global $config;
+		$theme = $config->get_string("theme");
 	
-	private function ubb_url($link,$content) {
-		if ($content == NULL) { $content=$link; }
-		return "[url=".$link."]".$content."[/url]";
+		if(file_exists("themes/$theme/link_image.html.php")) {
+			//$html .= "Using theme version";
+			include "themes/$theme/link_image.html.php";
+		} else if(file_exists("ext/link_image/link_image.html.php")) {
+			include "ext/link_image/link_image.html.php";
+			//$html .= "Using default generation in absense of themed generation.";
+		} else {
+			echo "<b>[Link to Image]<b> Error: <b>link_image.html.php</b> not found at either <b>ext/link_image/link_image.html.php</b> nor <b>themes/$theme/link_image.html.php</b>.<br/>".
+							"Please restore the default file to the former location, and copy it over to the latter if you wish to edit the html output of this extension.";
+			return false;
+		}		
+		return true;
 	}
-	private function ubb_img($src) {
-		return "[img]".$src."[/img]";
-	}
-	
-	private function html_url($link,$content) {
-		if ($content == NULL) { $content=$link; }
-		return "<a href=\"".$link."\">".$content."</a>";
-	}
-	private function html_img($src) {
-		return "<img src=\"".$src."\" />";
-	}
-	
-	private function link_code($label,$content,$id=NULL) {
-		$control = "<label for='".$id."' title='Click to select the textbox'>$label</label>\n";
-		$control .= "<input type='text' readonly='readonly' id='".$id."' name='".$id."' value='".$content."' onfocus='this.select();'></input>\n";
-		$control .= "<br/>\n\n";
-		return $control;
-	}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 	
 	private function parse_link_template($tmpl, $img) { //shamelessly copied from image.class.php
 		global $config;

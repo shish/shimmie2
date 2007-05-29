@@ -25,14 +25,22 @@ To reset to the default, simply clear the current setting. Link to Image will th
 
 To leave the setting blank for any reason, leave a space (' ') in it.
 
+= Theming =
+Link to Image now has a prototype theme engine built into it. All HTML generation has been moved to a seperate file.
+To use this, copy link_image.html.php from {{{ext/link_image/}}} to {{{themes/$theme/}}}. You may then change the html output of Link to Image by editing this copy as it will be used in preference of the default.
+
 = Install =
- 1. Copy the folder 'contrib/link_image' to 'ext'.
+ 1. Copy the folder {{{contrib/link_image/}}} to {{{ext/}}}.
  2. In the Config panel, make sure Base URL is set (you may as well set Data URL while you're there, if you haven't already.)
  3. Make sure Image Link, Thumb Link, and Short Link all contain the full path ("http://" and onward,) either by using $base or plain text. Link to Image will not be able to retrieve the correct paths without these variables.
- 4. If you use .htaccess to make NiceURLs, make sure that a it allows access to the /ext/ folder, or else Link to Image will not be able to access ext/link_image/style.css.
- * http://trac.shishnet.org/shimmie2/wiki/NiceURLs - Nice URLs
+ 4. If you use .htaccess to make NiceURLs, make sure that a it allows access to the {{{ext/ folder}}}, or else Link to Image will not be able to access {{{ext/link_image/style.css}}}.
+  * http://trac.shishnet.org/shimmie2/wiki/NiceURLs - Nice URLs
+  * Recent changes to .htaccess (with its addition to the SVN) may make this step unnessasary.
 
 = Change Log =
+== Version 0.2.0 ==
+ * Changed the HTML generation to use a prototype theme engine. All HTML generation is now contained within {{{link_image.html.php}}}, which may be copied to the current theme folder and edited from there.
+ 
 == Version 0.1.4 - 20071510 ==
  * Style changes.
  * Added output containing only the locations of the thumb, image and post.
@@ -45,9 +53,9 @@ To leave the setting blank for any reason, leave a space (' ') in it.
  * Created Readme.txt
  * Merged 0.1.2 into 0.1.2b
  * Removed uneeded documentation from main.php
- * Rewrote the css to be unique. Previously used css I was wrote for elsewhere. Styled to reduce space consumption.
- * Added code to insert the css import.
-  * Updated Nice URLs to allow access to the /ext/ folder. (Why is my stylesheet returning html instead of css?)
+ * Rewrote the css to be unique. Previously used CSS I wrote for elsewhere. Styled to reduce space consumption.
+ * Added code to insert the CSS import.
+  * Updated Nice URLs to allow access to the /ext/ folder. (Why is my stylesheet returning HTML instead of CSS?)
  * First SVN update.
 
 == Version 0.1.2b - 20070507 ==
@@ -56,7 +64,7 @@ To leave the setting blank for any reason, leave a space (' ') in it.
   * Updated to new extension format
    * Created folder link_image in trunk/contrib
    * Renamed link_image.ext.php to main.php and moved to /link_image/
-   * Created style.css { /* 404'd :|*/ }
+   * Created style.css {{{ /* 404'd :|*/ }}}.
   * Documentation (different from mine.)
   * Changed add_text_option() and added add_label() in SetupBuildingEvent because I was using an edited version of the function that shish didn't know about. It was a wonder that didn't throw massive errors.
   * Published on SVN.
