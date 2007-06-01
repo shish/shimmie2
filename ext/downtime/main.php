@@ -33,6 +33,7 @@ class Downtime extends Extension {
 		if($config->get_bool("downtime") && !$user->is_admin() && 
 				is_a($event, 'PageRequestEvent') && !$this->is_safe_page($event)) {
 			$msg = $config->get_string("downtime_message");
+			header("HTTP/1.0 503 Service Temporarily Unavailable");
 			print <<<EOD
 <html>
 	<head>
