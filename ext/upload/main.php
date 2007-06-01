@@ -1,5 +1,8 @@
 <?php
 
+define("UPLOAD_DEFAULT_MAX_SIZE", 256000);
+define("UPLOAD_DEFAULT_COUNT", 3);
+
 class Upload extends Extension {
 // event handling {{{
 	public function receive_event($event) {
@@ -11,7 +14,6 @@ class Upload extends Extension {
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "upload")) {
 			if($this->can_upload()) {
-				global $config;
 				global $page;
 
 				$ok = true;
@@ -46,7 +48,7 @@ class Upload extends Extension {
 // do things {{{
 	private function can_upload() {
 		global $config, $user;
-		return $config->get_bool("upload_anon") || !$user->is_anonymous();
+		return $config->get_bool("upload_anon", false) || !$user->is_anonymous();
 	}
 
 	private function try_upload($file) {
@@ -57,11 +59,12 @@ class Upload extends Extension {
 		
 		if(!file_exists($file['tmp_name'])) {
 			// this happens normally with blank file boxes
+			$ok = true;
 		}
-		else if(filesize($file['tmp_name']) > $config->get_int('upload_size')) {
+		else if(filesize($file['tmp_name']) > $config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE)) {
 			$page->add_main_block(new Block("Error with ".html_escape($file['name']),
 				"File too large (".filesize($file['tmp_name'])." &gt; ".
-				($config->get_int('upload_size')).")"));
+				($config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE)).")"));
 		}
 		else if(!($info = getimagesize($file['tmp_name']))) {
 			$page->add_main_block(new Block("Error with ".html_escape($file['name']),
@@ -104,13 +107,13 @@ class Upload extends Extension {
 		global $config;
 
 		$upload_list = "";
-		for($i=0; $i<$config->get_int('upload_count'); $i++) {
+		for($i=0; $i<$config->get_int('upload_count', UPLOAD_DEFAULT_COUNT); $i++) {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
 			$upload_list .= "<input accept='image/jpeg,image/png,image/gif' size='10' ".
 				"id='data$i' name='data$i' $style onchange=\"showUp('data".($i+1)."')\" type='file'>\n";
 		}
-		$max_size = $config->get_int('upload_size');
+		$max_size = $config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE);
 		$max_kb = (int)($max_size / 1024);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
