@@ -302,6 +302,7 @@ class UserPage extends Extension {
 				}
 				if($user->is_admin()) {
 					$page->add_main_block(new Block("More Options", $this->build_more_options($duser)));
+					$page->add_main_block(new Block("IP List", $this->build_ip_list($duser)));
 				}
 			}
 		}
@@ -375,6 +376,40 @@ class UserPage extends Extension {
 			<p><input type='submit' value='Set'>
 			</form>
 			";
+		return $html;
+	}
+
+	private function build_ip_list($duser) {
+		global $database;
+		global $config;
+
+		$html = "<table id='ip-history'>";
+		$html .= "<tr><td>Uploaded from: ";
+		$rows = $database->db->GetAll("
+				SELECT owner_ip, COUNT(images.id) AS count
+				FROM images
+				WHERE owner_id=?
+				GROUP BY owner_ip
+				ORDER BY posted DESC", array($duser->id), true);
+		foreach($rows as $row) {
+			$ip = $row['owner_ip'];
+			$count = $row['count'];
+			$html .= "<br>$ip ($count)";
+		}
+		$html .= "</td><td>Commented from:";
+		$rows = $database->db->GetAll("
+				SELECT owner_ip, COUNT(comments.id) AS count
+				FROM comments
+				WHERE owner_id=?
+				GROUP BY owner_ip
+				ORDER BY posted DESC", array($duser->id), true);
+		foreach($rows as $row) {
+			$ip = $row['owner_ip'];
+			$count = $row['count'];
+			$html .= "<br>$ip ($count)";
+		}
+		$html .= "</td></tr>";
+		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
 		return $html;
 	}
 
