@@ -5,6 +5,7 @@ class Image {
 	var $height, $width;
 	var $hash, $filesize;
 	var $filename, $ext;
+	var $owner_ip;
 	var $posted;
 
 	public function Image($a=false, $b=false, $c=false) {
@@ -19,6 +20,7 @@ class Image {
 	private function create_from_row($row) {
 		$this->id       = $row['id'];
 		$this->owner_id = $row['owner_id'];
+		$this->owner_ip = $row['owner_ip'];
 		$this->filename = $row['filename'];
 		$this->filesize = $row['filesize'];
 		$this->hash     = $row['hash'];

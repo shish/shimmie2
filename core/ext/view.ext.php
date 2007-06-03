@@ -98,8 +98,10 @@ class ViewImage extends Extension {
 	}
 
 	private function build_info($image) {
+		global $user;
 		$owner = $image->get_owner();
 		$h_owner = html_escape($owner->name);
+		$h_ip = html_escape($image->owner_ip);
 		$i_owner_id = int_escape($owner->id);
 
 		$html = "";
@@ -108,6 +110,9 @@ class ViewImage extends Extension {
 			$html .= "<p>Link: <input size='50' type='text' value='$slink'>";
 		}
 		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a>";
+		if($user->is_admin()) {
+			$html .= " ($h_ip)";
+		}
 		$html .= "<p>".$this->build_pin($image->id);
 		
 		return $html;
