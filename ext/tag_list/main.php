@@ -29,10 +29,10 @@ class TagList extends Extension {
 			global $page;
 			if($config->get_int('tag_list_length') > 0) {
 				if(isset($_GET['search'])) {
-					$page->add_side_block(new Block("Refine Search", $this->get_refiner_tags($_GET['search'])), 60);
+					$this->add_refine_block($page, $_GET['search']);
 				}
 				else {
-					$page->add_side_block(new Block("Popular Tags", $this->get_popular_tags()), 60);
+					$this->add_popular_block($page);
 				}
 			}
 		}
@@ -166,6 +166,7 @@ class TagList extends Extension {
 		$n = 0;
 		$html = "";
 		$result = $database->Execute($query, $args);
+		if($result->RecordCount() == 0) return false;
 		while(!$result->EOF) {
 			$row = $result->fields;
 			$tag = $row['tag'];
@@ -216,7 +217,7 @@ class TagList extends Extension {
 	}
 // }}}
 // get popular {{{
-	private function get_popular_tags() {
+	private function add_popular_block($page) {
 		global $database;
 		global $config;
 
@@ -229,23 +230,24 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		global $config;
 		if($config->get_bool('tag_list_numbers')) {
 			$html = $this->build_tag_list_html($query, $args, "add_count");
 		}
 		else {
 			$html = $this->build_tag_list_html($query, $args);
 		}
-		$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
-
-		return $html;
+	
+		if($html) {
+			$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
+			$page->add_side_block(new Block("Popular Tags", $html), 60);
+		}
 	}
 	private function add_count($tag, $count, $data) {
 		return " <span class='tag_count'>($count)</span>";
 	}
 // }}}
 // get refine {{{
-	private function get_refiner_tags($search) {
+	private function add_refine_block($page, $search) {
 		global $database;
 		global $config;
 
@@ -267,7 +269,11 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		return $this->build_tag_list_html($query, $args, "ars", $tags);
+		$tag_list = $this->build_tag_list_html($query, $args, "ars", $tags);
+		
+		if($tag_list) {
+			$page->add_side_block(new Block("Refine Search", $tag_list), 60);
+		}
 	}
 
 	private function ars($tag, $count, $tags) {
