@@ -37,6 +37,12 @@ class AliasEditor extends Extension {
 					$page->set_heading("Alias List");
 					$page->add_main_block(new Block("Aliases", $this->build_aliases()));
 				}
+				else if($event->get_arg(0) == "export") {
+					global $page;
+					$page->set_mode("data");
+					$page->set_type("text/plain");
+					$page->set_data($this->get_alias_csv());
+				}
 			}
 		}
 
@@ -89,8 +95,18 @@ class AliasEditor extends Extension {
 					</form>
 				</tr>
 			</table>
+			<p><a href='".make_link("alias/export")."'>Export</a>
 		";
 		return $html;
+	}
+	private function get_alias_csv() {
+		global $database;
+		$csv = "";
+		$aliases = $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases");
+		foreach($aliases as $old => $new) {
+			$csv .= "$old,$new\n";
+		}
+		return $csv;
 	}
 // }}}
 }
