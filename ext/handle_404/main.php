@@ -10,6 +10,7 @@ class Handle404 extends Extension {
 				header("HTTP/1.0 404 Page Not Found");
 				$page->set_title("404");
 				$page->set_heading("404 - No Handler Found");
+				$page->add_side_block(new NavBlock());
 				$page->add_main_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
 			}
 		}
