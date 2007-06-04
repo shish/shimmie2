@@ -31,12 +31,13 @@ class AliasEditor extends Extension {
 						$page->set_redirect(make_link("admin"));
 					}
 				}
+				else if($event->get_arg(0) == "list") {
+					global $page;
+					$page->set_title("Alias List");
+					$page->set_heading("Alias List");
+					$page->add_main_block(new Block("Aliases", $this->build_aliases()));
+				}
 			}
-		}
-
-		if(is_a($event, 'AdminBuildingEvent')) {
-			global $page;
-			$page->add_main_block(new Block("Edit Aliases", $this->build_aliases()));
 		}
 
 		if(is_a($event, 'AddAliasEvent')) {
@@ -46,6 +47,12 @@ class AliasEditor extends Extension {
 			global $page;
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("admin"));
+		}
+		
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("Alias Editor", make_link("alias/list"));
+			}
 		}
 	}
 // }}}
