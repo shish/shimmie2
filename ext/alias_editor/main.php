@@ -111,7 +111,7 @@ class AliasEditor extends Extension {
 				$h_aliases
 				$add
 			</table>
-			<p><a href='".make_link("alias/export")."'>Export</a></p>
+			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
 		";
 		return $html;
 	}
