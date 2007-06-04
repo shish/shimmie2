@@ -41,7 +41,9 @@ class Index extends Extension {
 					$page_title .= "<a href='".make_link("post/list", "search=$u_term")."'>$h_term</a>";
 				}
 				*/
-				$page->set_subheading("Page $page_number / $total_pages");
+				if(count($images) > 0) {
+					$page->set_subheading("Page $page_number / $total_pages");
+				}
 			}
 			if($page_number > 1 || count($search_terms) > 0) {
 				// $page_title .= " / $page_number";
@@ -50,8 +52,13 @@ class Index extends Extension {
 			$page->set_title($page_title);
 			$page->set_heading($page_title);
 			$page->add_side_block(new Block("Navigation", $this->build_navigation($page_number, $total_pages, $search_terms)), 0);
-			$page->add_main_block(new Block("Images", $this->build_table($images, $query)), 10);
-			$page->add_main_block(new Paginator("index", $query, $page_number, $total_pages), 90);
+			if(count($images) > 0) {
+				$page->add_main_block(new Block("Images", $this->build_table($images, $query)), 10);
+				$page->add_main_block(new Paginator("index", $query, $page_number, $total_pages), 90);
+			}
+			else {
+				$page->add_main_block(new Block("No Images Found", "No images were found to match the search criteria"));
+			}
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
