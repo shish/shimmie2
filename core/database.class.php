@@ -132,6 +132,12 @@ class Database {
 				}
 				$img_search->append(new Querylet("AND (owner_id = $user_id)"));
 			}
+			else if(preg_match("/hash=([0-9a-fA-F]*)/i",$term,$matches)) {
+				$hash = strtolower($matches[1]);
+				if(!is_null($hash)) {
+					$img_search->append(new Querylet("AND (hash = '$hash')"));
+				}
+			}
 			else {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
