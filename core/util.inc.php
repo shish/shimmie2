@@ -71,6 +71,7 @@ function tag_explode($tags) {
 
 	$tags = array_map("trim", $tags);
 
+	$tag_array = array();
 	foreach($tags as $tag) {
 		if(is_string($tag) && strlen($tag) > 0) {
 			$tag_array[] = $tag;
