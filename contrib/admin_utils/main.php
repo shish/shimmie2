@@ -38,6 +38,17 @@ class AdminUtils extends Extension {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
 	}
+	private function check_for_orphanned_images() {
+		$orphans = array();
+		foreach(glob("images/*") as $dir) {
+			foreach(glob("$dir/*") as $file) {
+				$hash = str_replace("$dir/", "", $file);
+				if(!$this->db_has_hash($hash)) {
+					$orphans[] = $hash;
+				}
+			}
+		}
+	}
 // }}}
 // admin page HTML {{{
 	private function build_form() {
