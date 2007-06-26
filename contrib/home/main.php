@@ -49,7 +49,7 @@ class Home extends Extension {
 		$data_href = $config->get_string('data_href');
 		$sitename = $config->get_string('title');
 	    $contact_link = $config->get_string('contact_link');
-		$counter_dir = $config->get_string('home_counter');		
+		$counter_dir = $config->get_string('home_counter', 'default');
 		
 		$total = ceil($database->db->GetOne("SELECT COUNT(*) FROM images"));
 	   	   
