@@ -49,8 +49,11 @@ class Comment { // {{{
 } // }}}
 
 class CommentList extends Extension {
+	var $theme;
 // event handler {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("comment", "CommentListTheme");
+
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			if($config->get_int("ext_comments_version") < 1) {
@@ -64,13 +67,12 @@ class CommentList extends Extension {
 			}
 			else if($event->get_arg(0) == "delete") {
 				global $user;
-				global $page;
 				if($user->is_admin()) {
 					// FIXME: post, not args
 					if($event->count_args() == 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("post/view/".$event->get_arg(2)));
+						$event->page_object->set_mode("redirect");
+						$event->page_object->set_redirect(make_link("post/view/".$event->get_arg(2)));
 					}
 				}
 				else {
@@ -85,15 +87,21 @@ class CommentList extends Extension {
 			global $page;
 			global $config;
 			if($config->get_int("comment_count") > 0) {
-				$page->add_side_block(new Block("Comments", $this->build_recent_comments()), 50);
+				$page->add_block(new Block("Comments", $this->build_recent_comments(), "left"));
 			}
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
-			$page->add_main_block(new Block("Comments",
+			if($this->can_comment()) {
+				$page->add_block(new Block("Comments",
 						$this->build_image_comments($event->image->id).
-						$this->build_postbox($event->image->id)), 50);
+						$this->theme->build_postbox($event->image->id), "main", 30));
+			}
+			else {
+				$page->add_block(new Block("Comments",
+						$this->build_image_comments($event->image->id), "main", 30));
+			}
 		}
 
 		if(is_a($event, 'ImageDeletionEvent')) {
@@ -115,7 +123,7 @@ class CommentList extends Extension {
 			$sb->add_int_option("comment_count");
 			$sb->add_label(" recent comments on the index");
 			$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool_from_post("comment_anon");
@@ -164,42 +172,19 @@ class CommentList extends Extension {
 			";
 		$result = $database->Execute($get_threads, array($start, $threads_per_page));
 
-
 		$total_pages = (int)($database->db->GetOne("SELECT COUNT(distinct image_id) AS count FROM comments") / 10);
 
-		$page->set_title("Comments");
-		$page->set_heading("Comments");
-		$page->add_side_block(new Block("Navigation", $this->build_navigation($current_page, $total_pages)));
-		$page->add_main_block(new Paginator("comment/list", null, $current_page, $total_pages), 90);
+
+		$this->theme->display_page_start($page, $current_page, $total_pages);
 
 		$n = 10;
 		while(!$result->EOF) {
 			$image = $database->get_image($result->fields["image_id"]);
-
-			$html  = "<div style='text-align: left'>";
-			$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
-			$html .=   $this->build_image_comments($image->id);
-			$html .= "</div>";
-			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
-
-			$page->add_main_block(new Block("{$image->id}: ".($image->get_tag_list()), $html), $n);
+			$comments = $this->build_image_comments($image->id);
+			$this->theme->add_comment_list($page, $image, $comments, $n, $this->can_comment());
 			$n += 1;
 			$result->MoveNext();
 		}
-
-	}
-
-	private function build_navigation($page_number, $total_pages) {
-		$prev = $page_number - 1;
-		$next = $page_number + 1;
-
-		$h_prev = ($page_number <= 1) ? "Prev" :
-			"<a href='".make_link("comment/list/$prev")."'>Prev</a>";
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" :
-			"<a href='".make_link("comment/list/$next")."'>Next</a>";
-
-		return "$h_prev | $h_index | $h_next";
 	}
 
 	private function build_image_comments($image_id) {
@@ -234,22 +219,6 @@ class CommentList extends Extension {
 				", array($config->get_int('comment_count')), true);
 		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
 		return $html;
-	}
-
-	private function build_postbox($image_id) {
-		if($this->can_comment()) {
-			$i_image_id = int_escape($image_id);
-			return "
-				<form action='".make_link("comment/add")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id' />
-				<textarea name='comment' rows='5' cols='50'></textarea>
-				<br><input type='submit' value='Post' />
-				</form>
-				";
-		}
-		else {
-			return "<p><small>You need to create an account before you can comment</small></p>";
-		}
 	}
 
 	private function query_to_html($query, $args, $trim=false) {
@@ -327,7 +296,7 @@ class CommentList extends Extension {
 
 		$page->set_title("Error");
 		$page->set_heading("Error");
-		$page->add_side_block(new NavBlock());
+		$page->add_block(new NavBlock());
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
 			$page->add_main_block(new Block("Permission Denied", "Anonymous posting has been disabled"));
 		}

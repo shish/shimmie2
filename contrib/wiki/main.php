@@ -63,7 +63,7 @@ class Wiki extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "wiki")) {
 			global $page;
 
-			$page->add_side_block(new NavBlock());
+			$page->add_block(new NavBlock());
 
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
@@ -101,7 +101,7 @@ class Wiki extends Extension {
 					global $page;
 					$page->set_title("Denied");
 					$page->set_heading("Denied");
-					$page->add_side_block(new NavBlock());
+					$page->add_block(new NavBlock());
 					$page->add_main_block(new Block("Denied", "You do not have permission to edit this page"));
 				}
 			}
@@ -137,7 +137,7 @@ class Wiki extends Extension {
 			$sb = new SetupBlock("Wiki");
 			$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
 			$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool_from_post("wiki_edit_anon");

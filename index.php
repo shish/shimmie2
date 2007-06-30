@@ -29,9 +29,13 @@ foreach($files as $filename) {
 $database = new Database();
 $database->db->fnExecute = 'CountExecs';
 $config = new Config();
+$_theme = $config->get_string("theme", "default");
+require_once "themes/$_theme/page.class.php";
+require_once "themes/$_theme/layout.class.php";
+require_once "themes/$_theme/themelet.class.php";
 $page = new Page();
 $user = get_user();
 send_event(new InitExtEvent());
-send_event(get_page_request());
+send_event(get_page_request($page));
 $page->display();
 ?>

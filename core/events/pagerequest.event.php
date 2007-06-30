@@ -14,10 +14,12 @@
 class PageRequestEvent extends Event {
 	var $page;
 	var $args;
+	var $page_object;
 
-	public function PageRequestEvent($page, $args) {
+	public function PageRequestEvent($page, $args, $page_object) {
 		$this->page = $page;
 		$this->args = $args;
+		$this->page_object = $page_object;
 	}
 
 	public function get_arg($n) {

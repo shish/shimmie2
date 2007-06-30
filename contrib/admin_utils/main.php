@@ -8,8 +8,11 @@
  */
 
 class AdminUtils extends Extension {
+	var $theme;
 // event handler {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("admin_utils", "AdminUtilsTheme");
+		
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "admin_utils")) {
 			global $user;
 			if($user->is_admin()) {
@@ -29,7 +32,7 @@ class AdminUtils extends Extension {
 
 		if(is_a($event, 'AdminBuildingEvent')) {
 			global $page;
-			$page->add_main_block(new Block("Misc Admin Tools", $this->build_form()));
+			$this->theme->display_form($page);
 		}
 	}
 // }}}
@@ -48,17 +51,6 @@ class AdminUtils extends Extension {
 				}
 			}
 		}
-	}
-// }}}
-// admin page HTML {{{
-	private function build_form() {
-		$html = "
-			<p><form action='".make_link("admin_utils")."' method='POST'>
-				<input type='hidden' name='action' value='lowercase all tags'>
-				<input type='submit' value='Lowercase All Tags'>
-			</form>
-		";
-		return $html;
 	}
 // }}}
 }

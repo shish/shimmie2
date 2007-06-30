@@ -6,6 +6,8 @@ class Paginator extends Block {
 
 	public function Paginator($page, $query, $page_number, $total_pages) {
 		$this->body = $this->build_paginator($page_number, $total_pages, $page, $query);
+		$this->section = "main";
+		$this->position = 90;
 	}
 
 	private function gen_page_link($base_url, $query, $page, $name) {

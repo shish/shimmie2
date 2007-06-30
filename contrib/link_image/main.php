@@ -10,13 +10,12 @@ class LinkImage extends Extension {
 			global $config;
 			$data_href = $config->get_string("data_href");
 			$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
-			$page->add_main_block(new Block("Link to Image", $this->get_html($event->image)));
+			$page->add_block(new Block("Link to Image", $this->get_html($event->image)));
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Link to Image");
-			//$sb->add_label("Text link format: ");
 			$sb->add_text_option("ext_link-img_text-link_format","Text Link Format:");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("ext_link-img_text-link_format");

@@ -17,8 +17,8 @@ class TagEdit extends Extension {
 				else {
 					$page->set_title("Tag Edit Denied");
 					$page->set_heading("Tag Edit Denied");
-					$page->add_side_block(new NavBlock());
-					$page->add_main_block(new Block("Error", "Anonymous tag editing is disabled"));
+					$page->add_block(new NavBlock());
+					$page->add_block(new Block("Error", "Anonymous tag editing is disabled"));
 				}
 			}
 			else if($event->get_arg(0) == "replace") {
@@ -34,7 +34,7 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
-			$page->add_main_block(new Block(null, $this->build_tag_editor($event->image)), 5);
+			$page->add_block(new Block(null, $this->build_tag_editor($event->image)), "main", 5);
 		}
 
 		if(is_a($event, 'TagSetEvent')) {
@@ -49,7 +49,7 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'AdminBuildingEvent')) {
 			global $page;
-			$page->add_main_block(new Block("Mass Tag Edit", $this->build_mass_tag_edit()));
+			$page->add_block(new Block("Mass Tag Edit", $this->build_mass_tag_edit()));
 		}
 
 		// When an alias is added, oldtag becomes inaccessable
@@ -60,7 +60,7 @@ class TagEdit extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Editing");
 			$sb->add_bool_option("tag_edit_anon", "Allow anonymous editing: ");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool_from_post("tag_edit_anon");

@@ -1,5 +1,5 @@
 <?php
-class Page {
+class GenericPage {
 	var $mode = "page";
 	var $type = "text/html";
 
@@ -40,8 +40,7 @@ class Page {
 	var $subheading = "";
 	var $quicknav = "";
 	var $headers = array();
-	var $sideblocks = array();
-	var $mainblocks = array();
+	var $blocks = array();
 
 	public function set_title($title) {
 		$this->title = $title;
@@ -60,14 +59,8 @@ class Page {
 		$this->headers[$position] = $line;
 	}
 
-	public function add_side_block($block, $position=50) {
-		while(isset($this->sideblocks[$position])) $position++;
-		$this->sideblocks[$position] = $block;
-	}
-
-	public function add_main_block($block, $position=50) {
-		while(isset($this->mainblocks[$position])) $position++;
-		$this->mainblocks[$position] = $block;
+	public function add_block($block) {
+		$this->blocks[] = $block;
 	}
 
 	// ==============================================
@@ -80,10 +73,9 @@ class Page {
 		switch($this->mode) {
 			case "page":
 				header("Cache-control: no-cache");
-				ksort($this->sideblocks);
-				ksort($this->mainblocks);
-				$theme = $config->get_string("theme");
-				require_once "themes/$theme/default.php";
+				usort($this->blocks, "blockcmp");
+				$layout = new Layout();
+				$layout->display_page($this);
 				break;
 			case "data":
 				print $this->data;

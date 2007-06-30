@@ -1,101 +1,64 @@
 <?php
 
 class ET extends Extension {
+	var $theme;
 // event handler {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "phone_home")) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
+
+		if(is_a($event, 'PageRequestEvent') && ($event->page == "system_info")) {
 			global $user;
 			if($user->is_admin()) {
-				$this->phone_home();
+				$this->theme->display_info_page($event->page_object, $this->get_info());
 			}
 		}
 
-		if(is_a($event, 'AdminBuildingEvent')) {
-			global $page;
-			$page->add_main_block(new Block("Gather System Info", $this->build_phone_home()), 99);
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("System Info", make_link("system_info"));
+			}
 		}
 	}
 // }}}
 // do it {{{
-	private function phone_home() {
-		global $page;
-		$page->set_title("System Info");
-		$page->set_heading("System Info");
-		$page->add_side_block(new NavBlock());
-		$page->add_main_block(new Block("Data which is to be sent:", $this->build_data_form()));
-	}
-	private function build_data_form() {
+	private function get_info() {
 		global $database;
 		global $config;
 		global $_event_listeners; // yay for using secret globals \o/
 
-		$data = "";
+		$info = array();
+		$info['site_title'] = $config->get_string("title");
+		$info['site_theme'] = $config->get_string("theme");
+		$info['site_genre'] = "[please write something here]";
+		$info['site_url']   = isset($_SERVER['SCRIPT_URI']) ? dirname($_SERVER['SCRIPT_URI']) : "???";
 
-		$data .= "Optional:\n";
-		$data .= "Add this site to the public shimmie users list: No\n";
-		$data .= "Site title: ".($config->get_string("title"))."\n";
-		$data .= "Theme: ".($config->get_string("theme"))."\n";
-		$data .= "Genre: [please write something here]\n";
-
-		$data .= "\nSystem stats:\n";
-		$data .= "PHP: ".phpversion()."\n";
-		$data .= "OS: ".php_uname()."\n";
-		$data .= "Server: ".($_SERVER["SERVER_SOFTWARE"])."\n";
-
-		include "config.php";
+		$info['sys_shimmie'] = $config->get_string("version");
+		$info['sys_php']     = phpversion();
+		$info['sys_os']      = php_uname();
+		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
+		include "config.php"; // more magical hax
 		$proto = preg_replace("#(.*)://.*#", "$1", $database_dsn);
 		$db = $database->db->ServerInfo();
-		$data .= "Database: $proto / {$db['version']}\n";
+		$info['sys_db'] = "$proto / {$db['version']}";
 
-		$data .= "\nShimmie stats:\n";
-		$uri = isset($_SERVER['SCRIPT_URI']) ? dirname($_SERVER['SCRIPT_URI']) : "???";
-		$data .= "URL: ".($uri)."\n";
-		$data .= "Version: ".($config->get_string("version"))."\n";
-		$data .= "Images: ".($database->db->GetOne("SELECT COUNT(*) FROM images"))."\n";
-		$data .= "Comments: ".($database->db->GetOne("SELECT COUNT(*) FROM comments"))."\n";
-		$data .= "Users: ".($database->db->GetOne("SELECT COUNT(*) FROM users"))."\n";
-		$data .= "Tags: ".($database->db->GetOne("SELECT COUNT(*) FROM tags"))."\n";
+		$info['stat_images']   = $database->db->GetOne("SELECT COUNT(*) FROM images");
+		$info['stat_comments'] = $database->db->GetOne("SELECT COUNT(*) FROM comments");
+		$info['stat_users']    = $database->db->GetOne("SELECT COUNT(*) FROM users");
+		$info['stat_tags']     = $database->db->GetOne("SELECT COUNT(*) FROM tags");
 
 		$els = array();
 		foreach($_event_listeners as $el) {
 			$els[] = get_class($el);
 		}
-		$data .= "Extensions: ".join(", ", $els)."\n";
+		$info['sys_extensions'] = join(', ', $els);
 		
 		//$cfs = array();
 		//foreach($database->db->GetAll("SELECT name, value FROM config") as $pair) {
 		//	$cfs[] = $pair['name']."=".$pair['value'];
 		//}
-		//$data .= "Config: ".join(", ", $cfs);
+		//$info[''] = "Config: ".join(", ", $cfs);
 
-		$html = "
-			<form action='http://shimmie.shishnet.org/register.php' method='POST'>
-				<input type='hidden' name='registration_api' value='1'>
-				<textarea name='data' rows='20' cols='80'>$data</textarea>
-				<br><input type='submit' value='Click to send to Shish'>
-				<br>Your stats are useful so that I know which combinations
-				of web servers / databases / etc I need to support,
-				<br>and so
-				that I can get some idea of how people use shimmie generally
-			</form>
-		";
-		return $html;
-	}
-// }}}
-// admin page HTML {{{
-	private function build_phone_home() {
-		global $database;
-		$h_bans = "";
-		$html = "
-			This button will gather various bits of information about
-			your system (PHP version, database, etc) which will be
-			useful in debugging~
-
-			<p><form action='".make_link("phone_home")."' method='POST'>
-				<input type='submit' value='Gather Info'>
-			</form>
-		";
-		return $html;
+		return $info;
 	}
 // }}}
 }

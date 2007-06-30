@@ -47,7 +47,7 @@ class ImageIO extends Extension {
 
 			$sb->add_shorthand_int_option("thumb_gd_mem_limit", "<br>Max GD memory use: ");
 
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("thumb_engine");
@@ -157,7 +157,7 @@ class ImageIO extends Extension {
 		 */
 		$existing = $database->get_image_by_hash($image->hash);
 		if(!is_null($existing)) {
-			$page->add_main_block(new Block("Error uploading {$image->filename}",
+			$page->add_block(new Block("Error uploading {$image->filename}",
 					"Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
 					"already has hash {$image->hash}:<p>".
 					build_thumb_html($existing)));
@@ -178,7 +178,7 @@ class ImageIO extends Extension {
 		 * insert the image info into the database
 		 */
 		if(!copy($image->temp_filename, $image->get_image_filename())) {
-			$page->add_main_block(new Block("Error uploading {$image->filename}",
+			$page->add_block(new Block("Error uploading {$image->filename}",
 					"The image couldn't be moved from the temporary area to the
 					main data store -- is the web server allowed to write to '".
 					($image->get_image_filename())."'?"));
@@ -188,7 +188,7 @@ class ImageIO extends Extension {
 		chmod($image->get_image_filename(), 0644);
 
 		if(!$this->make_thumb($image->get_image_filename(), $image->get_thumb_filename())) {
-			$page->add_main_block(new Block("Error uploading {$image->filename}",
+			$page->add_block(new Block("Error uploading {$image->filename}",
 					"The image thumbnail couldn't be generated -- is the web
 					server allowed to write to '".($image->get_thumb_filename())."'?"));
 			send_event(new ImageDeletionEvent($image->id));
@@ -240,8 +240,8 @@ class ImageIO extends Extension {
 		else {
 			$page->set_title("Not Found");
 			$page->set_heading("Not Found");
-			$page->add_side_block(new Block("Navigation", "<a href='".index."'>Index</a>"), 0);
-			$page->add_main_block(new Block("Image not in database",
+			$page->add_block(new Block("Navigation", "<a href='".index."'>Index</a>", "left", 0));
+			$page->add_block(new Block("Image not in database",
 					"The requested image was not found in the database"));
 		}
 	}

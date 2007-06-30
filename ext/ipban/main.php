@@ -24,8 +24,11 @@ class AddIPBanEvent extends Event {
 // }}}
 
 class IPBan extends Extension {
+	var $theme;
 // event handler {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("ipban", "IPBanTheme");
+
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			if($config->get_int("ext_ipban_version") < 1) {
@@ -69,7 +72,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'AdminBuildingEvent')) {
 			global $page;
-			$page->add_main_block(new Block("Edit IP Bans", $this->build_ip_bans()));
+			$this->theme->display_bans($page, $this->get_bans());
 		}
 	}
 // }}}
@@ -129,43 +132,6 @@ class IPBan extends Extension {
 	public function remove_ip_ban($ip) {
 		global $database;
 		$database->Execute("DELETE FROM bans WHERE ip = ?", array($ip));
-	}
-// }}}
-// admin page HTML {{{
-	private function build_ip_bans() {
-		global $database;
-		$h_bans = "";
-		$bans = $this->get_bans();
-		foreach($bans as $ban) {
-			$h_bans .= "
-				<tr>
-					<td>{$ban['ip']}</td>
-					<td>{$ban['reason']}</td>
-					<td>{$ban['end']}</td>
-					<td>
-						<form action='".make_link("ip_ban/remove")."' method='POST'>
-							<input type='hidden' name='ip' value='{$ban['ip']}'>
-							<input type='submit' value='Remove'>
-						</form>
-					</td>
-				</tr>
-			";
-		}
-		$html = "
-			<table border='1'>
-				<thead><td>IP</td><td>Reason</td><td>Until</td><td>Action</td></thead>
-				$h_bans
-				<tr>
-					<form action='".make_link("ip_ban/add")."' method='POST'>
-						<td><input type='text' name='ip'></td>
-						<td><input type='text' name='reason'></td>
-						<td><input type='text' name='end'></td>
-						<td><input type='submit' value='Ban'></td>
-					</form>
-				</tr>
-			</table>
-		";
-		return $html;
 	}
 // }}}
 }

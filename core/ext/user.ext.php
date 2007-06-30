@@ -30,8 +30,8 @@ class UserPage extends Extension {
 				else {
 					$page->set_title("Login");
 					$page->set_heading("Login");
-					$page->add_side_block(new NavBlock());
-					$page->add_main_block(new Block("Login There",
+					$page->add_block(new NavBlock());
+					$page->add_block(new Block("Login There",
 						"There should be a login box to the left"));
 				}
 			}
@@ -61,10 +61,10 @@ class UserPage extends Extension {
 			global $page;
 
 			if($user->is_anonymous()) {
-				$page->add_side_block(new Block("Login", $this->build_login_block()), 90);
+				$page->add_block(new Block("Login", $this->build_login_block(), "left", 90));
 			}
 			else {
-				$page->add_side_block(new Block("User Links", $this->build_links_block()), 90);
+				$page->add_block(new Block("User Links", $this->build_links_block(), "left", 90));
 			}
 		}
 		
@@ -72,7 +72,7 @@ class UserPage extends Extension {
 			$sb = new SetupBlock("User Options");
 			$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
 			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool_from_post("login_signup_enabled");
@@ -81,7 +81,7 @@ class UserPage extends Extension {
 
 		if(is_a($event, 'UserBlockBuildingEvent')) {
 			$event->add_link("User Config", make_link("user"));
-			$event->add_link("Log Out", make_link("user/logout"));
+			$event->add_link("Log Out", make_link("user/logout"), 99);
 		}
 	}
 // }}}
@@ -116,8 +116,8 @@ class UserPage extends Extension {
 		else {
 			$page->set_title("Permission Denied");
 			$page->set_heading("Permission Denied");
-			$page->add_side_block(new NavBlock(), 0);
-			$page->add_main_block(new Block("Error", "No user with those details was found"));
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Error", "No user with those details was found"));
 		}
 	}
 
@@ -129,8 +129,8 @@ class UserPage extends Extension {
 		if(!$config->get_bool("login_signup_enabled")) {
 			$page->set_title("Signups Disabled");
 			$page->set_heading("Signups Disabled");
-			$page->add_side_block(new NavBlock());
-			$page->add_main_block(new Block("Signups Disabled",
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Signups Disabled",
 				"The board admin has disabled the ability to create new accounts~"));
 		}
 		else if(isset($_POST['name']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
@@ -140,15 +140,15 @@ class UserPage extends Extension {
 
 			$page->set_title("Error");
 			$page->set_heading("Error");
-			$page->add_side_block(new NavBlock());
+			$page->add_block(new NavBlock());
 			if(strlen($name) < 1) {
-				$page->add_main_block(new Block("Error", "Username must be at least 1 character"));
+				$page->add_block(new Block("Error", "Username must be at least 1 character"));
 			}
 			else if($pass1 != $pass2) {
-				$page->add_main_block(new Block("Error", "Passwords don't match"));
+				$page->add_block(new Block("Error", "Passwords don't match"));
 			}
 			else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
-				$page->add_main_block(new Block("Error", "That username is already taken"));
+				$page->add_block(new Block("Error", "That username is already taken"));
 			}
 			else {
 				$addr = $_SERVER['REMOTE_ADDR'];
@@ -171,12 +171,12 @@ class UserPage extends Extension {
 		else {
 			$page->set_title("Create Account");
 			$page->set_heading("Create Account");
-			$page->add_side_block(new NavBlock());
-			$page->add_main_block(new Block("Signup", $this->build_signup_form()));
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Signup", $this->build_signup_form()));
 		}
 	}
 //}}} 
-// Things do ne *to* the user {{{
+// Things done *to* the user {{{
 	private function change_password_wrapper() {
 		global $user;
 		global $page;
@@ -184,9 +184,9 @@ class UserPage extends Extension {
 		
 		$page->set_title("Error");
 		$page->set_heading("Error");
-		$page->add_side_block(new NavBlock());
+		$page->add_block(new NavBlock());
 		if($user->is_anonymous()) {
-			$page->add_main_block(new Block("Error", "You aren't logged in"));
+			$page->add_block(new Block("Error", "You aren't logged in"));
 		}
 		else if(isset($_POST['id']) && isset($_POST['name']) &&
 				isset($_POST['pass1']) && isset($_POST['pass2'])) {
@@ -196,11 +196,11 @@ class UserPage extends Extension {
 			$pass2 = $_POST['pass2'];
 
 			if((!$user->is_admin()) && ($name != $user->name)) {
-				$page->add_main_block(new Block("Error",
+				$page->add_block(new Block("Error",
 						"You need to be an admin to change other people's passwords"));
 			}
 			else if($pass1 != $pass2) {
-				$page->add_main_block(new Block("Error", "Passwords don't match"));
+				$page->add_block(new Block("Error", "Passwords don't match"));
 			}
 			else {
 				global $config;
@@ -236,12 +236,12 @@ class UserPage extends Extension {
 		
 		$page->set_title("Error");
 		$page->set_heading("Error");
-		$page->add_side_block(new NavBlock());
+		$page->add_block(new NavBlock());
 		if(!$user->is_admin()) {
-			$page->add_main_block(new Block("Not Admin", "Only admins can edit accounts"));
+			$page->add_block(new Block("Not Admin", "Only admins can edit accounts"));
 		}
 		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-			$page->add_main_block(new Block("No ID Specified",
+			$page->add_block(new Block("No ID Specified",
 					"You need to specify the account number to edit"));
 		}
 		else {
@@ -293,24 +293,24 @@ class UserPage extends Extension {
 		if(!is_null($duser)) {
 			$page->set_title("{$duser->name}'s Page");
 			$page->set_heading("{$duser->name}'s Page");
-			$page->add_side_block(new NavBlock(), 0);
-			$page->add_main_block(new Block("Stats", $this->build_stats($duser)));
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Stats", $this->build_stats($duser)));
 
 			if(!$user->is_anonymous()) {
 				if($user->id == $duser->id || $user->is_admin()) {
-					$page->add_main_block(new Block("Options", $this->build_options($duser)));
+					$page->add_block(new Block("Options", $this->build_options($duser), "main", 0));
 				}
 				if($user->is_admin()) {
-					$page->add_main_block(new Block("More Options", $this->build_more_options($duser)));
-					$page->add_main_block(new Block("IP List", $this->build_ip_list($duser)));
+					$page->add_block(new Block("More Options", $this->build_more_options($duser)));
+					$page->add_block(new Block("IP List", $this->build_ip_list($duser)));
 				}
 			}
 		}
 		else {
 			$page->set_title("No Such User");
 			$page->set_heading("No Such User");
-			$page->add_side_block(new NavBlock(), 0);
-			$page->add_main_block(new Block("No User By That ID",
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("No User By That ID",
 						"If you typed the ID by hand, try again; if you came from a link on this ".
 						"site, it might be bug report time..."));
 		}
@@ -423,6 +423,7 @@ class UserPage extends Extension {
 		$h_name = html_escape($user->name);
 		$html = "Logged in as $h_name<br>";
 
+		ksort($ubbe->parts);
 		$html .= join("\n<br/>", $ubbe->parts);
 		
 		return $html;

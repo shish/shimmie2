@@ -1,8 +1,11 @@
 <?php
 
 class RegenThumb extends Extension {
+	var $theme;
 // event handler {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("regen_thumb", "RegenThumbTheme");
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "regen_thumb")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['program']) && isset($_POST['image_id'])) {
@@ -14,7 +17,7 @@ class RegenThumb extends Extension {
 			global $page;
 			global $user;
 			if($user->is_admin()) {
-				$page->add_side_block(new Block("Regen Thumb", $this->build_regen_buttons($event->image)));
+				$this->theme->display_buttons($page, $event->image->id);
 			}
 		}
 	}
@@ -48,11 +51,7 @@ class RegenThumb extends Extension {
 		}
 
 		global $page;
-		$page->set_title("Thumbnail Regenerated");
-		$page->set_heading("Thumbnail Regenerated");
-		$page->add_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
-		$page->add_side_block(new NavBlock());
-		$page->add_main_block(new Block("Thumbnail", build_thumb_html($image)));
+		$this->theme->display_results($page, $image);
 	}
 
 	private function check_filename($filename) {
@@ -107,24 +106,6 @@ class RegenThumb extends Extension {
 					$tsize[0], $tsize[1], $width, $height
 					);
 			return $thumb;
-		}
-	}
-// }}}
-// page building {{{
-	private function build_regen_buttons($image) {
-		global $user;
-		if($user->is_admin()) {
-			return "
-				<form action='".make_link("regen_thumb")."' method='POST'>
-				<input type='hidden' name='image_id' value='{$image->id}'>
-				<select name='program'>
-					<option value='convert'>ImageMagick</option>
-					<option value='gd'>GD</option>
-					<!-- <option value='epeg'>EPEG (for JPEG only)</option> -->
-				</select>
-				<input type='submit' value='Regenerate'>
-				</form>
-			";
 		}
 	}
 // }}}

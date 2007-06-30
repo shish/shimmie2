@@ -31,7 +31,7 @@ class Home extends Extension {
 			$sb->add_longtext_option("home_links", "<br>");
 			$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
 			$sb->add_label("<br>Note: page accessed via /home");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent'))
 		{

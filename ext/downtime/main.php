@@ -1,15 +1,18 @@
 <?php
 
 class Downtime extends Extension {
-// event handler {{{
+	var $theme;
+
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("downtime", "DowntimeTheme");
+
 		$this->check_downtime($event);
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Downtime");
 			$sb->add_bool_option("downtime", "Disable non-admin access: ");
 			$sb->add_longtext_option("downtime_message", "<br>");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool_from_post("downtime");
@@ -18,14 +21,11 @@ class Downtime extends Extension {
 		if(is_a($event, 'PageRequestEvent')) {
 			global $config;
 			if($config->get_bool("downtime")) {
-				global $page;
-
-				$page->add_side_block(new Block("Downtime", "<span style='font-size: 1.5em'><b>DOWNTIME MODE IS ON!</b></span>"), 0);
+				$this->theme->display_notification($event->page_object);
 			}
 		}
 	}
-// }}}
-// do things {{{
+
 	private function check_downtime($event) {
 		global $user;
 		global $config;
@@ -33,18 +33,7 @@ class Downtime extends Extension {
 		if($config->get_bool("downtime") && !$user->is_admin() && 
 				is_a($event, 'PageRequestEvent') && !$this->is_safe_page($event)) {
 			$msg = $config->get_string("downtime_message");
-			header("HTTP/1.0 503 Service Temporarily Unavailable");
-			print <<<EOD
-<html>
-	<head>
-		<title>Downtime</title>
-	</head>
-	<body>
-		$msg
-	</body>
-</html>
-EOD;
-			exit;
+			$this->theme->display_message($msg);
 		}
 	}
 
@@ -52,7 +41,6 @@ EOD;
 		if($event->page == "user" && $event->get_arg(0) == "login") return true;
 		else return false;
 	}
-// }}}
 }
 add_event_listener(new Downtime(), 10);
 ?>

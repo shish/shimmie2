@@ -1,7 +1,11 @@
 <?php
 
 class Notes extends Extension {
+	var $theme;
+
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("notes", "NotesTheme");
+
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			if($config->get_int("ext_notes_version") < 1) {
@@ -11,41 +15,31 @@ class Notes extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
-			$page->add_main_block(new Block(null, $this->make_notes($event->image->id)));
+			global $database;
+			$notes = $database->db->GetAll("SELECT * FROM image_notes WHERE image_id = ?", array($event->image->id));
+			$this->theme->display_notes($page, $notes);
 		}
 	}
 
 	protected function install() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE `image_notes` (
-			`id` int(11) NOT NULL auto_increment,
-			`image_id` int(11) NOT NULL,
-			`user_id` int(11) NOT NULL,
-			`owner_ip` char(15) NOT NULL,
-			`created_at` datetime NOT NULL,
-			`updated_at` datetime NOT NULL,
-			`version` int(11) DEFAULT 1 NOT NULL,
-			`is_active` enum('Y', 'N') DEFAULT 'Y' NOT NULL,
-			`x` int(11) NOT NULL,
-			`y` int(11) NOT NULL,
-			`w` int(11) NOT NULL,
-			`h` int(11) NOT NULL,
-			`body` text NOT NULL,
-			PRIMARY KEY  (`id`)
+		$database->Execute("CREATE TABLE image_notes (
+			id int(11) NOT NULL auto_increment PRIMARY KEY,
+			image_id int(11) NOT NULL,
+			user_id int(11) NOT NULL,
+			owner_ip char(15) NOT NULL,
+			created_at datetime NOT NULL,
+			updated_at datetime NOT NULL,
+			version int(11) DEFAULT 1 NOT NULL,
+			is_active enum('Y', 'N') DEFAULT 'Y' NOT NULL,
+			x int(11) NOT NULL,
+			y int(11) NOT NULL,
+			w int(11) NOT NULL,
+			h int(11) NOT NULL,
+			body text NOT NULL
 		)");
 		$config->set_int("ext_notes_version", 1);
-	}
-
-	private function make_notes($image_id) {
-		global $database;
-		$notes = $database->db->GetAll("SELECT * FROM image_notes WHERE image_id = ?", array($image_id));
-		
-		return <<<EOD
-<script type="text/javascript">
-img = byId("main_image");
-</script>
-EOD;
 	}
 }
 add_event_listener(new Notes());

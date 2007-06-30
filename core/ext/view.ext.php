@@ -16,9 +16,9 @@ class ViewImage extends Extension {
 				global $page;
 				$page->set_title("Image not found");
 				$page->set_heading("Image not found");
-				$page->add_side_block(new NavBlock(), 0);
-				$page->add_main_block(new Block("Image not found",
-					"No image in the database has the ID #$image_id"), 0);
+				$page->add_block(new NavBlock());
+				$page->add_block(new Block("Image not found",
+					"No image in the database has the ID #$image_id"));
 			}
 		}
 
@@ -28,17 +28,18 @@ class ViewImage extends Extension {
 			global $page;
 			$page->set_title("Image {$image->id}: ".$image->get_tag_list());
 			$page->set_heading($image->get_tag_list());
-			$page->add_side_block(new Block("Navigation", $this->build_navigation($image->id)), 0);
-			$page->add_main_block(new Block("Image", $this->build_image_view($image)), 0);
-			$page->add_main_block(new Block(null, $this->build_info($image)), 10);
+			$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
+			$page->add_block(new Block("Image", $this->build_image_view($image), "main", 0));
+			$page->add_block(new Block(null, $this->build_info($image), "main", 10));
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("View Options");
+			$sb->position = 30;
 			$sb->add_text_option("image_ilink", "Long link ");
 			$sb->add_text_option("image_slink", "<br>Short link ");
 			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
-			$event->panel->add_main_block($sb, 30);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("image_ilink");

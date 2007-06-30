@@ -51,18 +51,19 @@ class Index extends Extension {
 			
 			$page->set_title($page_title);
 			$page->set_heading($page_title);
-			$page->add_side_block(new Block("Navigation", $this->build_navigation($page_number, $total_pages, $search_terms)), 0);
+			$page->add_block(new Block("Navigation", $this->build_navigation($page_number, $total_pages, $search_terms), "left", 0));
 			if(count($images) > 0) {
-				$page->add_main_block(new Block("Images", $this->build_table($images, $query)), 10);
-				$page->add_main_block(new Paginator("index", $query, $page_number, $total_pages), 90);
+				$page->add_block(new Block("Images", $this->build_table($images, $query), "main", 10));
+				$page->add_block(new Paginator("index", $query, $page_number, $total_pages));
 			}
 			else {
-				$page->add_main_block(new Block("No Images Found", "No images were found to match the search criteria"));
+				$page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));
 			}
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Index Options");
+			$sb->position = 20;
 			
 			$sb->add_label("Index table size ");
 			$sb->add_int_option("index_width");
@@ -72,7 +73,7 @@ class Index extends Extension {
 
 			$sb->add_text_option("image_tip", "<br>Image tooltip ");
 
-			$event->panel->add_main_block($sb, 20);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_int_from_post("index_width");

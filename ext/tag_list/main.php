@@ -1,35 +1,39 @@
 <?php
 
 class TagList extends Extension {
+	var $theme = null;
+	
 // event handling {{{
 	public function receive_event($event) {
+		if($this->theme == null) $this->theme = get_theme_object("tag_list", "TagListTheme");
+		
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "tags")) {
 			global $page;
-			$page->set_title("Tag List");
-			$page->add_side_block(new Block("Navigation", $this->build_navigation()), 0);
 
+			$this->theme->set_navigation($this->build_navigation());
 			switch($event->get_arg(0)) {
 				default:
 				case 'map':
-					$page->set_heading("Tag Map");
-					$page->add_main_block(new Block("Tags", $this->build_tag_map()));
+					$this->theme->set_heading("Tag Map");
+					$this->theme->set_tag_list($this->build_tag_map());
 					break;
 				case 'alphabetic':
-					$page->set_heading("Alphabetic Tag List");
-					$page->add_main_block(new Block("Tags", $this->build_tag_alphabetic()));
+					$this->theme->set_heading("Alphabetic Tag List");
+					$this->theme->set_tag_list($this->build_tag_alphabetic());
 					break;
 				case 'popularity':
-					$page->set_heading("Tag List by Popularity");
-					$page->add_main_block(new Block("Tags", $this->build_tag_popularity()));
+					$this->theme->set_heading("Tag List by Popularity");
+					$this->theme->set_tag_list($this->build_tag_popularity());
 					break;
 			}
+			$this->theme->display_page($page);
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
 			global $config;
 			global $page;
 			if($config->get_int('tag_list_length') > 0) {
 				if(isset($_GET['search'])) {
-					$this->add_refine_block($page, $_GET['search']);
+					$this->add_refine_block($page, tag_explode($_GET['search']));
 				}
 				else {
 					$this->add_popular_block($page);
@@ -41,20 +45,20 @@ class TagList extends Extension {
 			global $page;
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
-				$page->add_side_block(new Block("Related Tags", $this->get_related_tags($event->get_image())), 60);
+				$this->add_related_block($page, $event->image);
 			}
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Map Options");
 			$sb->add_int_option("tags_min", "Ignore tags used fewer than "); $sb->add_label(" times");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
 			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" tags");
 			$sb->add_text_option("info_link", "<br>Tag info link: ");
 			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_int_from_post("tags_min");
@@ -158,40 +162,8 @@ class TagList extends Extension {
 		return $html;
 	}
 // }}}
-// common {{{
-	private function build_tag_list_html($query, $args, $callback=null, $cbdata=null) {
-		global $database;
-		global $config;
-
-		$n = 0;
-		$html = "";
-		$result = $database->Execute($query, $args);
-		if($result->RecordCount() == 0) return false;
-		while(!$result->EOF) {
-			$row = $result->fields;
-			$tag = $row['tag'];
-			$h_tag = html_escape($tag);
-			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
-			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a class='tag_name' href='$link'>$h_tag_no_underscores</a>\n";
-			if(!is_null($callback)) {
-				$html .= $this->$callback($tag, $count, $cbdata);
-			}
-			if(!is_null($config->get_string('info_link'))) {
-				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a class='tag_info_link' href='$link'>?</a>\n";
-			}
-			$result->MoveNext();
-		}
-		$result->Close();
-
-		return $html;
-	}
-// }}}
-// get related {{{
-	private function get_related_tags($image) {
+// blocks {{{
+	private function add_related_block($page, $image) {
 		global $database;
 		global $config;
 
@@ -213,10 +185,12 @@ class TagList extends Extension {
 		";
 		$args = array($image->id, $config->get_int('tag_list_length'));
 
-		return $this->build_tag_list_html($query, $args);
+		$tags = $database->db->GetAll($query, $args);
+		if(count($tags) > 0) {
+			$this->theme->display_related_block($page, $tags);
+		}
 	}
-// }}}
-// get popular {{{
+
 	private function add_popular_block($page) {
 		global $database;
 		global $config;
@@ -230,23 +204,12 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		if($config->get_bool('tag_list_numbers')) {
-			$html = $this->build_tag_list_html($query, $args, "add_count");
-		}
-		else {
-			$html = $this->build_tag_list_html($query, $args);
-		}
-	
-		if($html) {
-			$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
-			$page->add_side_block(new Block("Popular Tags", $html), 60);
+		$tags = $database->db->GetAll($query, $args);
+		if(count($tags) > 0) {
+			$this->theme->display_popular_block($page, $tags);
 		}
 	}
-	private function add_count($tag, $count, $data) {
-		return " <span class='tag_count'>($count)</span>";
-	}
-// }}}
-// get refine {{{
+
 	private function add_refine_block($page, $search) {
 		global $database;
 		global $config;
@@ -269,53 +232,9 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		$tag_list = $this->build_tag_list_html($query, $args, "ars", $tags);
-		
-		if($tag_list) {
-			$page->add_side_block(new Block("Refine Search", $tag_list), 60);
-		}
-	}
-
-	private function ars($tag, $count, $tags) {
-		$html = "";
-		$html .= " <span class='ars'>(";
-		$html .= $this->get_add_link($tags, $tag);
-		$html .= $this->get_remove_link($tags, $tag);
-		$html .= $this->get_subtract_link($tags, $tag);
-		$html .= ")</span>";
-		return $html;
-	}
-
-	private function get_remove_link($tags, $tag) {
-		if(!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
-			return "";
-		}
-		else {
-			$tags = array_remove($tags, $tag);
-			$tags = array_remove($tags, "-$tag");
-			return "<a href='".make_link("index", "search=".url_escape(join(' ', $tags)))."' title='Remove' rel='nofollow'>R</a>";
-		}
-	}
-
-	private function get_add_link($tags, $tag) {
-		if(in_array($tag, $tags)) {
-			return "";
-		}
-		else {
-			$tags = array_remove($tags, "-$tag");
-			$tags = array_add($tags, $tag);
-			return "<a href='".make_link("index", "search=".url_escape(join(' ', $tags)))."' title='Add' rel='nofollow'>A</a>";
-		}
-	}
-
-	private function get_subtract_link($tags, $tag) {
-		if(in_array("-$tag", $tags)) {
-			return "";
-		}
-		else {
-			$tags = array_remove($tags, $tag);
-			$tags = array_add($tags, "-$tag");
-			return "<a href='".make_link("index", "search=".url_escape(join(' ', $tags)))."' title='Subtract' rel='nofollow'>S</a>";
+		$tags = $database->db->GetAll($query, $args);
+		if(count($tags) > 0) {
+			$this->theme->display_refine_block($page, $tags, $search);
 		}
 	}
 // }}}

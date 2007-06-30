@@ -216,6 +216,57 @@ function CountExecs($db, $sql, $inputarray) {
 	$null = null; return $null;
 }
 
+function get_theme_object($file, $class) {
+	global $config;
+	$theme = $config->get_string("theme", "default");
+	if(file_exists("themes/$theme/$file.theme.php")) {
+		require_once "themes/$theme/$file.theme.php";
+		return new $class();
+	}
+	else {
+		require_once "ext/$file/theme.php";
+		return new $class();
+	}
+}
+
+function get_debug_info() {
+	global $config;
+	
+	if($config->get_bool('debug_enabled')) {
+		if(function_exists('memory_get_usage')) {
+			$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
+		}
+		else {
+			$i_mem = "???";
+		}
+		if(function_exists('getrusage')) {
+			$ru = getrusage();
+			$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
+			$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
+		}
+		else {
+			$i_utime = "???";
+			$i_stime = "???";
+		}
+		$i_files = count(get_included_files());
+		global $_execs;
+		$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
+		$debug .= "; Used $i_files files and $_execs queries";
+	}
+	else {
+		$debug = "";
+	}
+	return $debug;
+}
+
+function blockcmp($a, $b) {
+	if($a->position == $b->position) {
+		return 0;
+	}
+	else {
+		return ($a->position > $b->position);
+	}
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
@@ -284,7 +335,7 @@ function _get_query_parts() {
 	return split('/', $path);
 }
 
-function get_page_request() {
+function get_page_request($page_object) {
 	global $config;
 	$args = _get_query_parts();
 
@@ -301,7 +352,7 @@ function get_page_request() {
 		$args = array_slice($args, 1);
 	}
 	
-	return new PageRequestEvent($page, $args);
+	return new PageRequestEvent($page, $args, $page_object);
 }
 
 function get_user() {

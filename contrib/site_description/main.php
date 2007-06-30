@@ -21,7 +21,7 @@ class SiteDescription extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Site Description");
 			$sb->add_longtext_option("site_description");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("site_description");

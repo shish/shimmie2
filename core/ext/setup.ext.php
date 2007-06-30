@@ -19,7 +19,12 @@ class SetupBuildingEvent extends Event {
 /* SetupPanel {{{
  *
  */
-class SetupPanel extends Page {
+class SetupPanel {
+	var $blocks = array();
+
+	public function add_block($block) {
+		$this->blocks[] = $block;
+	}
 }
 // }}}
 /* SetupBlock {{{
@@ -31,6 +36,8 @@ class SetupBlock extends Block {
 
 	public function SetupBlock($title) {
 		$this->header = $title;
+		$this->section = "main";
+		$this->position = 50;
 	}
 
 	public function add_label($text) {
@@ -118,8 +125,8 @@ class Setup extends Extension {
 				global $page;
 				$page->set_title("Error");
 				$page->set_heading("Error");
-				$page->add_side_block(new NavBlock(), 0);
-				$page->add_main_block(new Block("Permission Denied", "This page is for admins only"), 0);
+				$page->add_block(new NavBlock());
+				$page->add_block(new Block("Permission Denied", "This page is for admins only"));
 			}
 			else {
 				if($event->get_arg(0) == "save") {
@@ -147,6 +154,7 @@ class Setup extends Extension {
 			}
 
 			$sb = new SetupBlock("General");
+			$sb->position = 0;
 			$sb->add_text_option("title", "Site title: ");
 			$sb->add_text_option("front_page", "<br>Front page: ");
 			$sb->add_text_option("base_href", "<br>Base URL: ");
@@ -155,7 +163,7 @@ class Setup extends Extension {
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
 			// $sb->add_int_option("anon_id", "<br>Anonymous ID: "); // FIXME: create advanced options page
 			$sb->add_hidden_option("anon_id");
-			$event->panel->add_main_block($sb, 0);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_string_from_post("title");
@@ -179,7 +187,7 @@ class Setup extends Extension {
 		$setupblock_html1 = "";
 		$setupblock_html2 = "";
 
-		ksort($panel->mainblocks);
+		usort($panel->blocks, "blockcmp");
 
 		/*
 		$flip = true;
@@ -198,7 +206,7 @@ class Setup extends Extension {
 		 */
 		$len1 = 0;
 		$len2 = 0;
-		foreach($panel->mainblocks as $block) {
+		foreach($panel->blocks as $block) {
 			if(is_a($block, 'SetupBlock')) {
 				$html = $this->sb_to_html($block);
 				$len = count(explode("<br>", $html));
@@ -223,8 +231,8 @@ class Setup extends Extension {
 		global $page;
 		$page->set_title("Shimmie Setup");
 		$page->set_heading("Shimmie Setup");
-		$page->add_side_block(new Block("Navigation", $this->build_navigation()), 0);
-		$page->add_main_block(new Block("Setup", $table));
+		$page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
+		$page->add_block(new Block("Setup", $table));
 	}
 
 	private function build_navigation() {

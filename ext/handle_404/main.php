@@ -5,13 +5,13 @@ class Handle404 extends Extension {
 		if(is_a($event, 'PageRequestEvent')) {
 			global $page;
 			// hax.
-			if($page->mode == "page" && (!isset($page->mainblocks) || count($page->mainblocks) == 0)) {
+			if($page->mode == "page" && (!isset($page->blocks) || count($page->blocks) == 0)) {
 				$h_pagename = html_escape($event->page);
 				header("HTTP/1.0 404 Page Not Found");
 				$page->set_title("404");
 				$page->set_heading("404 - No Handler Found");
-				$page->add_side_block(new NavBlock());
-				$page->add_main_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
+				$page->add_block(new NavBlock());
+				$page->add_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
 			}
 		}
 	}

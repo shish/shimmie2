@@ -30,7 +30,7 @@ class Ratings extends Extension {
 			$sb->add_label("<br>Show ");
 			$sb->add_int_option("comment_count", 0, 100);
 			$sb->add_label(" recent comments on the index");
-			$event->panel->add_main_block($sb);
+			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$event->config->set_bool("comment_anon", $_POST['comment_anon']);

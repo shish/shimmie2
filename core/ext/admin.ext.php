@@ -17,8 +17,8 @@ class AdminPage extends Extension {
 				global $page;
 				$page->set_title("Error");
 				$page->set_heading("Error");
-				$page->add_side_block(new NavBlock(), 0);
-				$page->add_main_block(new Block("Permission Denied", "This page is for admins only"), 0);
+				$page->add_block(new NavBlock());
+				$page->add_block(new Block("Permission Denied", "This page is for admins only"));
 			}
 			else {
 				if($event->get_arg(0) == "delete_image") {
@@ -44,7 +44,7 @@ class AdminPage extends Extension {
 			global $user;
 			if($user->is_admin()) {
 				global $page;
-				$page->add_side_block(new Block("Admin", $this->build_del_block($event->image->id)));
+				$page->add_block(new Block("Admin", $this->build_del_block($event->image->id), "left"));
 			}
 		}
 
@@ -75,7 +75,7 @@ class AdminPage extends Extension {
 		global $page;
 		$page->set_title("Admin Tools");
 		$page->set_heading("Admin Tools");
-		$page->add_side_block(new NavBlock(), 0);
+		$page->add_block(new NavBlock());
 	}
 // }}}
 }
