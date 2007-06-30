@@ -10,7 +10,7 @@ class TagEdit extends Extension {
 					global $database;
 					$i_image_id = int_escape($_POST['image_id']);
 					$query = $_POST['query'];
-					$database->set_tags($i_image_id, $_POST['tags']);
+					send_event(new TagSetEvent($i_image_id, $_POST['tags']));
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$i_image_id", $query));
 				}
@@ -34,7 +34,7 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $page;
-			$page->add_block(new Block(null, $this->build_tag_editor($event->image)), "main", 5);
+			$page->add_block(new Block(null, $this->build_tag_editor($event->image), "main", 5));
 		}
 
 		if(is_a($event, 'TagSetEvent')) {
