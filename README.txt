@@ -32,7 +32,7 @@ Installation
 ~~~~~~~~~~~~
 1) Create a blank database
 2) Unzip shimmie into a folder on the web host
-3) Visit the install folder with a web browser
+3) Visit the folder with a web browser
 4) Enter the location of the database, and choose login details for the first
    admin of the board
 5) Click "install". Hopefully you'll end up at the configuration screen; if
