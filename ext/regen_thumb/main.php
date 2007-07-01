@@ -41,7 +41,7 @@ class RegenThumb extends Extension {
 		switch($program) {
 			case 'convert':
 				if(file_exists($f_thumb)) unlink($f_thumb);
-				exec("convert $f_image -geometry {$w}x{$h} -quality {$q} $f_thumb");
+				exec("convert {$f_image}[0] -geometry {$w}x{$h} -quality {$q} jpg:$f_thumb");
 				break;
 			case 'gd':
 				$this->make_thumb_gd($f_image, $f_thumb);
