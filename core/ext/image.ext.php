@@ -94,7 +94,7 @@ class ImageIO extends Extension {
 		$h = $config->get_int("thumb_height");
 		$q = $config->get_int("thumb_quality");
 
-		exec("convert $inname -geometry {$w}x{$h} -quality {$q} $outname");
+		exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
 
 		return true;
 	}
