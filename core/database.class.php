@@ -158,7 +158,7 @@ class Database {
 		}
 		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
 			$query = new Querylet(
-				"{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
+				"{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
 				$tag_search->variables);
 
 			if(strlen($img_search->sql) > 0) {
