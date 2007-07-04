@@ -122,7 +122,7 @@ class Database {
 		if(count($tag_search->variables) == 0 || $database_fails) {
 			$query = new Querylet("SELECT * FROM images ");
 		}
-		else if(count($tag_search->variables) == 1 || $positive_tag_count == 1) {
+		else if(count($tag_search->variables) == 1 && $positive_tag_count == 1) {
 			$query = new Querylet(
 				"SELECT * FROM images WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
 				$tag_search->variables);
