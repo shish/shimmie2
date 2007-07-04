@@ -150,11 +150,20 @@ class Database {
 
 		if($positive_tag_count + $negative_tag_count == 0) {
 			$query = new Querylet($this->get_images);
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql("WHERE 1=1 ");
+				$query->append($img_search);
+			}
 		}
 		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
 			$query = new Querylet(
 				"{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
 				$tag_search->variables);
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append($img_search);
+			}
 		}
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
@@ -175,11 +184,11 @@ class Database {
 			$query = new Querylet("
 				SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
 				FROM ({$subquery->sql}) AS images ", $subquery->variables);
-		}
 
-		if(strlen($img_search->sql) > 0) {
-			$query->append_sql("WHERE 1=1 ");
-			$query->append($img_search);
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql("WHERE 1=1 ");
+				$query->append($img_search);
+			}
 		}
 
 		return $query;
