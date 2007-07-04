@@ -129,7 +129,7 @@ class Database {
 		}
 		else if(count($tag_search->variables) == 1 && $positive_tag_count == 1) {
 			$query = new Querylet(
-				"SELECT * FROM images WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
+				"SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM tags, images WHERE tag LIKE ? AND tags.image_id = images.id ",
 				$tag_search->variables);
 
 			if(strlen($img_search->sql) > 0) {
