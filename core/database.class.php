@@ -158,7 +158,9 @@ class Database {
 		}
 		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
 			$query = new Querylet(
-				"{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
+				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
+				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
+				"SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM tags, images WHERE tag LIKE ? AND tags.image_id = images.id ",
 				$tag_search->variables);
 
 			if(strlen($img_search->sql) > 0) {
