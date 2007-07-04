@@ -205,9 +205,9 @@ function get_thumbnail_size($orig_width, $orig_height) {
 # $db is the connection object
 function CountExecs($db, $sql, $inputarray) {
 	global $_execs;
-	$fp = fopen("sql.log", "a");
-	fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
-	fclose($fp);
+#	$fp = fopen("sql.log", "a");
+#	fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+#	fclose($fp);
 	if (!is_array($inputarray)) $_execs++;
 	# handle 2-dimensional input arrays
 	else if (is_array(reset($inputarray))) $_execs += sizeof($inputarray);
