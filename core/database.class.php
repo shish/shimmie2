@@ -151,6 +151,11 @@ class Database {
 		if($positive_tag_count + $negative_tag_count == 0) {
 			$query = new Querylet($this->get_images);
 		}
+		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
+			$query = new Querylet(
+				"{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
+				$tag_search->variables);
+		}
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
 			$s_tag_list = join(', ', $s_tag_array);
