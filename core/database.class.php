@@ -121,11 +121,20 @@ class Database {
 		$database_fails = false; // MySQL 4.0 fails at subqueries
 		if(count($tag_search->variables) == 0 || $database_fails) {
 			$query = new Querylet("SELECT * FROM images ");
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql("WHERE 1=1 ");
+				$query->append($img_search);
+			}
 		}
 		else if(count($tag_search->variables) == 1 && $positive_tag_count == 1) {
 			$query = new Querylet(
 				"SELECT * FROM images WHERE images.id IN (SELECT image_id FROM tags WHERE tag = ?) ",
 				$tag_search->variables);
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append($img_search);
+			}
 		}
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
@@ -144,11 +153,11 @@ class Database {
 				)
 			);
 			$query = new Querylet("SELECT * FROM ({$subquery->sql}) AS images ", $subquery->variables);
-		}
 
-		if(strlen($img_search->sql) > 0) {
-			$query->append_sql("WHERE 1=1 ");
-			$query->append($img_search);
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql("WHERE 1=1 ");
+				$query->append($img_search);
+			}
 		}
 
 		return $query;
