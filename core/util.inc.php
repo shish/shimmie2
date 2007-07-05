@@ -157,7 +157,7 @@ function get_memory_limit() {
 
 	// thumbnail generation requires lots of memory
 	$default_limit = 8*1024*1024;
-	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_gd_mem_limit"));
+	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
 	if($shimmie_limit < 3*1024*1024) {
 		// we aren't going to fit, override
 		$shimmie_limit = $default_limit;
