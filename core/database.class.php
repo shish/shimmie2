@@ -27,7 +27,7 @@ class Querylet { // {{{
 class Database {
 	var $db;
 	var $extensions;
-	var $get_images = "SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
+	var $get_images = "SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
 
 	public function Database() {
 		if(is_readable("config.php")) {
@@ -119,7 +119,7 @@ class Database {
 				$col = $matches[1];
 				$cmp = $matches[2];
 				$val = parse_shorthand_int($matches[3]);
-				$img_search->append(new Querylet("AND ($col $cmp $val)"));
+				$img_search->append(new Querylet("AND (images.$col $cmp $val)"));
 			}
 			else if(preg_match("/poster=(.*)/i", $term, $matches)) {
 				global $database;
@@ -130,12 +130,12 @@ class Database {
 				else {
 					$user_id = -1;
 				}
-				$img_search->append(new Querylet("AND (owner_id = $user_id)"));
+				$img_search->append(new Querylet("AND (images.owner_id = $user_id)"));
 			}
 			else if(preg_match("/hash=([0-9a-fA-F]*)/i",$term,$matches)) {
 				$hash = strtolower($matches[1]);
 				if(!is_null($hash)) {
-					$img_search->append(new Querylet("AND (hash = '$hash')"));
+					$img_search->append(new Querylet("AND (images.hash = '$hash')"));
 				}
 			}
 			else {
@@ -161,7 +161,7 @@ class Database {
 				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
 				"
-					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
 					FROM tags, image_tags, images
 					WHERE
 						tag LIKE ?
@@ -261,13 +261,13 @@ class Database {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->db->GetRow("{$this->get_images} WHERE id $gtlt ? ORDER BY id $dir LIMIT 1", array((int)$id));
+			$row = $this->db->GetRow("{$this->get_images} WHERE images.id $gtlt ? ORDER BY images.id $dir LIMIT 1", array((int)$id));
 		}
 		else {
-			$tags[] = ($next ? "id<$id" : "id>$id");
-			$dir    = ($next ? "DESC"   : "ASC");
+			$tags[] = ($next ? "images.id<$id" : "images.id>$id");
+			$dir    = ($next ? "DESC"          : "ASC");
 			$querylet = $this->build_search_querylet($tags);
-			$querylet->append_sql("ORDER BY id $dir LIMIT 1");
+			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
 			$row = $this->db->GetRow($querylet->sql, $querylet->variables);
 		}
 		
@@ -280,7 +280,7 @@ class Database {
 
 	public function get_image($id) {
 		$image = null;
-		$row = $this->db->GetRow("{$this->get_images} WHERE id=?", array($id));
+		$row = $this->db->GetRow("{$this->get_images} WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
 
