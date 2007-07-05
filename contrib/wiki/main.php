@@ -102,7 +102,7 @@ class Wiki extends Extension {
 					$page->set_title("Denied");
 					$page->set_heading("Denied");
 					$page->add_block(new NavBlock());
-					$page->add_main_block(new Block("Denied", "You do not have permission to edit this page"));
+					$page->add_block(new Block("Denied", "You do not have permission to edit this page"));
 				}
 			}
 			else if(is_null($content)) {
@@ -119,13 +119,13 @@ class Wiki extends Extension {
 				else {
 					$content = $this->create_edit_html($blank);
 				}
-				$page->add_main_block(new Block("Content", $content));
+				$page->add_block(new Block("Content", $content));
 			}
 			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
-				$page->add_main_block(new Block("Content", $this->create_edit_html($content)));
+				$page->add_block(new Block("Content", $this->create_edit_html($content)));
 			}
 			else {
-				$page->add_main_block(new Block("Content", $this->create_display_html($content)));
+				$page->add_block(new Block("Content", $this->create_display_html($content)));
 			}
 		}
 
