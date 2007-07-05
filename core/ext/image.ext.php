@@ -45,7 +45,7 @@ class ImageIO extends Extension {
 			$sb->add_int_option("thumb_quality");
 			$sb->add_label(" % quality ");
 
-			$sb->add_shorthand_int_option("thumb_gd_mem_limit", "<br>Max GD memory use: ");
+			$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
 
 			$event->panel->add_block($sb);
 		}
@@ -54,7 +54,7 @@ class ImageIO extends Extension {
 			$event->config->set_int_from_post("thumb_width");
 			$event->config->set_int_from_post("thumb_height");
 			$event->config->set_int_from_post("thumb_quality");
-			$event->config->set_int_from_post("thumb_gd_mem_limit");
+			$event->config->set_int_from_post("thumb_mem_limit");
 		}
 	}
 // }}}
@@ -99,8 +99,9 @@ class ImageIO extends Extension {
 		$w = $config->get_int("thumb_width");
 		$h = $config->get_int("thumb_height");
 		$q = $config->get_int("thumb_quality");
+		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
-		exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
+		exec("convert {$inname}[0] -limit memory {$mem} -geometry {$w}x{$h} -quality {$q} jpg:$outname");
 
 		return true;
 	}

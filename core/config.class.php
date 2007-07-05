@@ -16,7 +16,7 @@ class Config {
 			'thumb_width' => 192, # index
 			'thumb_height' => 192, # index
 			'thumb_quality' => 75,  # index
-			'thumb_gd_mem_limit' => '8MB', # upload
+			'thumb_mem_limit' => '8MB', # upload
 			'tags_default' => 'map', # (ignored)
 			'tags_min' => '2', # tags
 			'upload_count' => 3, # upload
