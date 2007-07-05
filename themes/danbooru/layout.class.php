@@ -59,12 +59,17 @@ class Layout {
 		$left_block_html = "";
 		$main_block_html = "";
 
+		$firstmain = true;
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
 					$left_block_html .= $this->block_to_html($block, true);
 					break;
 				case "main":
+					if($firstmain) {
+						$firstmain = false;
+						$block->header = "&nbsp;";
+					}
 					$main_block_html .= $this->block_to_html($block, false);
 					break;
 				default:
@@ -106,7 +111,7 @@ class Layout {
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
 	<head>
-		<title>{$this->title}</title>
+		<title>{$page->title}</title>
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
 $header_html
 		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>

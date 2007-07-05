@@ -111,8 +111,11 @@ A:hover {text-decoration: underline;}
 	overflow: hidden;
 }
 
-.more:after {
-	content: " >>>";
+.tag_count {
+	color: #AAA;
+}
+.more {
+	content: "More »";
 }
 
 
@@ -214,7 +217,7 @@ ul.flat-list li {
     text-align:left;
 	list-style-type: none;
 	font-weight: bold;
-	margin: 0 1em 0 0;
+	margin: 0 1.3em 0 0;
 }
 
 ul.flat-list li a {
