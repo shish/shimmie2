@@ -252,13 +252,13 @@ class Database {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->db->GetRow("{$this->get_images} WHERE id $gtlt ? ORDER BY id $dir", array((int)$id));
+			$row = $this->db->GetRow("{$this->get_images} WHERE id $gtlt ? ORDER BY id $dir LIMIT 1", array((int)$id));
 		}
 		else {
 			$tags[] = ($next ? "id<$id" : "id>$id");
 			$dir    = ($next ? "DESC"   : "ASC");
 			$querylet = $this->build_search_querylet($tags);
-			$querylet->append_sql("ORDER BY id $dir");
+			$querylet->append_sql("ORDER BY id $dir LIMIT 1");
 			$row = $this->db->GetRow($querylet->sql, $querylet->variables);
 		}
 		
