@@ -35,13 +35,13 @@ class TagListTheme extends Themelet {
 			$h_tag = html_escape($tag);
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
 			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a class='tag_name' href='$link'>$h_tag_no_underscores</a>\n";
+			if($n++) $html .= "\n<br/>";
 			if(!is_null($config->get_string('info_link'))) {
 				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a class='tag_info_link' href='$link'>?</a>\n";
+				$html .= " <a class='tag_info_link' href='$link'>?</a>";
 			}
+			$link = $this->tag_link($row['tag']);
+			$html .= " <a class='tag_name' href='$link'>$h_tag_no_underscores</a>";
 		}
 
 		$page->add_block(new Block("Related", $html, "left"));
@@ -64,15 +64,15 @@ class TagListTheme extends Themelet {
 			$h_tag = html_escape($tag);
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
 			$count = $row['count'];
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a class='tag_name' href='$link'>$h_tag_no_underscores</a>\n";
-			if($config->get_bool("tag_list_numbers")) {
-				$html .= " <span class='tag_count'>$count</span>";
-			}
+			if($n++) $html .= "\n<br/>";
 			if(!is_null($config->get_string('info_link'))) {
 				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a class='tag_info_link' href='$link'>?</a>\n";
+				$html .= " <a class='tag_info_link' href='$link'>?</a>";
+			}
+			$link = $this->tag_link($row['tag']);
+			$html .= " <a class='tag_name' href='$link'>$h_tag_no_underscores</a>";
+			if($config->get_bool("tag_list_numbers")) {
+				$html .= " <span class='tag_count'>$count</span>";
 			}
 		}
 	
@@ -96,14 +96,14 @@ class TagListTheme extends Themelet {
 			$tag = $row['tag'];
 			$h_tag = html_escape($tag);
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
-			if($n++) $html .= "<br/>";
-			$link = $this->tag_link($row['tag']);
-			$html .= "<a class='tag_name' href='$link'>$h_tag_no_underscores</a>\n";
-			$html .= $this->ars($tag, $search);
+			if($n++) $html .= "\n<br/>";
 			if(!is_null($config->get_string('info_link'))) {
 				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a class='tag_info_link' href='$link'>?</a>\n";
+				$html .= " <a class='tag_info_link' href='$link'>?</a>";
 			}
+			$link = $this->tag_link($row['tag']);
+			$html .= " <a class='tag_name' href='$link'>$h_tag_no_underscores</a>";
+			$html .= $this->ars($tag, $search);
 		}
 	
 		$page->add_block(new Block("Refine Search", $html, "left", 60));
