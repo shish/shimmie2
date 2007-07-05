@@ -283,12 +283,6 @@ function array_remove($array, $to_remove) {
 	return $a2;
 }
 
-function array_add($array, $element) {
-	$array[] = $element;
-	$array = array_unique($array);
-	return $array;
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *

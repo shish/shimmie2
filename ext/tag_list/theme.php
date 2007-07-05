@@ -136,7 +136,7 @@ class TagListTheme extends Themelet {
 		}
 		else {
 			$tags = array_remove($tags, "-$tag");
-			$tags = array_add($tags, $tag);
+			$tags = array_push($tags, $tag);
 			return "<a href='".$this->tag_link(join(' ', $tags))."' title='Add' rel='nofollow'>A</a>";
 		}
 	}
@@ -147,7 +147,7 @@ class TagListTheme extends Themelet {
 		}
 		else {
 			$tags = array_remove($tags, $tag);
-			$tags = array_add($tags, "-$tag");
+			$tags = array_push($tags, "-$tag");
 			return "<a href='".$this->tag_link(join(' ', $tags))."' title='Subtract' rel='nofollow'>S</a>";
 		}
 	}
