@@ -22,6 +22,12 @@ class AdminUtils extends Extension {
 					case 'lowercase all tags':
 						$this->lowercase_all_tags();
 						break;
+					case 'recount tag use':
+						$this->recount_tag_use();
+						break;
+					case 'purge unused tags':
+						$this->purge_unused_tags();
+						break;
 				}
 
 				global $page;
@@ -40,6 +46,15 @@ class AdminUtils extends Extension {
 	private function lowercase_all_tags() {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
+	}
+	private function recout_tag_use() {
+		global $database;
+		$database->Execute("UPDATE tags SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)");
+	}
+	private function purge_unused_tags() {
+		global $database;
+		$this->recount_tag_use();
+		$database->Execute("DELETE FROM tags WHERE count=0");
 	}
 	private function check_for_orphanned_images() {
 		$orphans = array();

@@ -89,7 +89,7 @@ class TagList extends Extension {
 
 		$tags_min = $config->get_int('tags_min');
 		$result = $database->Execute(
-				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY tag",
+				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
 				array($tags_min));
 
 		$html = "";
@@ -113,7 +113,7 @@ class TagList extends Extension {
 
 		$tags_min = $config->get_int('tags_min');
 		$result = $database->Execute(
-				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY tag",
+				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
 				array($tags_min));
 
 		$html = "";
@@ -140,7 +140,7 @@ class TagList extends Extension {
 
 		$tags_min = $config->get_int('tags_min');
 		$result = $database->Execute(
-				"SELECT tag,COUNT(image_id) AS count FROM tags GROUP BY tag HAVING count > ? ORDER BY count DESC, tag ASC",
+				"SELECT tag,count FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
 				array($tags_min)
 				);
 
@@ -168,19 +168,23 @@ class TagList extends Extension {
 		global $config;
 
 		$query = "
-			SELECT COUNT(t3.image_id) as count, t3.tag 
+			SELECT COUNT(it3.image_id) as count, t3.tag 
 			FROM
+				image_tags AS it1,
+				image_tags AS it2,
+				image_tags AS it3,
 				tags AS t1,
-				tags AS t2,
-				tags AS t3 
+				tags AS t3
 			WHERE
-				t1.image_id=?
-				AND t1.tag=t2.tag
-				AND t2.image_id=t3.image_id
+				it1.image_id=?
+				AND it1.tag_id=it2.tag_id
+				AND it2.image_id=it3.image_id
 				AND t1.tag != 'tagme'
 				AND t3.tag != 'tagme'
-			GROUP by t3.tag
-			ORDER by count DESC
+				AND t1.id = it1.tag_id
+				AND t3.id = it3.tag_id
+			GROUP BY it3.tag_id
+			ORDER BY count DESC
 			LIMIT ?
 		";
 		$args = array($image->id, $config->get_int('tag_list_length'));
@@ -196,9 +200,8 @@ class TagList extends Extension {
 		global $config;
 
 		$query = "
-			SELECT tag, COUNT(image_id) AS count
+			SELECT tag, count
 			FROM tags
-			GROUP BY tag
 			ORDER BY count DESC
 			LIMIT ?
 		";
@@ -219,13 +222,17 @@ class TagList extends Extension {
 		$s_tag_list = join(',', $s_tags);
 
 		$query = "
-			SELECT t2.tag, COUNT(t2.image_id) AS count
+			SELECT t2.tag, COUNT(it2.image_id) AS count
 			FROM
+				image_tags AS it1,
+				image_tags AS it2,
 				tags AS t1,
 				tags AS t2
 			WHERE 
 				t1.tag IN($s_tag_list)
-				AND t1.image_id=t2.image_id
+				AND it1.image_id=it2.image_id
+				AND it1.tag_id = t1.id
+				AND it2.tag_id = t2.id
 			GROUP BY t2.tag 
 			ORDER BY count
 			DESC LIMIT ?
@@ -233,6 +240,7 @@ class TagList extends Extension {
 		$args = array($config->get_int('tag_list_length'));
 
 		$tags = $database->db->GetAll($query, $args);
+		print $database->db->ErrorMsg();
 		if(count($tags) > 0) {
 			$this->theme->display_refine_block($page, $tags, $search);
 		}

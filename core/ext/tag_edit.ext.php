@@ -75,9 +75,16 @@ class TagEdit extends Extension {
 // }}}
 // edit {{{
 	private function mass_tag_edit($search, $replace) {
-		// FIXME: deal with collisions
 		global $database;
-		$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
+		$search_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($search));
+		$replace_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($replace));
+		if($search_id && $replace_id) {
+			// FIXME: what if the (image_id,tag_id) pair already exists?
+			$database->Execute("UPDATE image_tags SET tag_id=? WHERE tag_id=?", Array($replace_id, $search_id));
+		}
+		else if($search_id) {
+			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
+		}
 	}
 // }}}
 // HTML {{{

@@ -12,7 +12,7 @@ class AddAliasEvent extends Event {
 
 class AliasEditor extends Extension {
 	var $theme;
-// event handler {{{
+
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("alias_editor", "AliasEditorTheme");
 
@@ -65,7 +65,6 @@ class AliasEditor extends Extension {
 			}
 		}
 	}
-// }}}
 }
 add_event_listener(new AliasEditor());
 ?>

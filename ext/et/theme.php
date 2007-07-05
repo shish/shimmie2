@@ -30,6 +30,7 @@ Images: {$info['stat_images']}
 Comments: {$info['stat_comments']}
 Users: {$info['stat_users']}
 Tags: {$info['stat_tags']}
+Applications: {$info['stat_image_tags']}
 EOD;
 		$html = <<<EOD
 <form action='http://shimmie.shishnet.org/register.php' method='POST'>

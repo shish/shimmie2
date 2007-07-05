@@ -45,6 +45,7 @@ class ET extends Extension {
 		$info['stat_comments'] = $database->db->GetOne("SELECT COUNT(*) FROM comments");
 		$info['stat_users']    = $database->db->GetOne("SELECT COUNT(*) FROM users");
 		$info['stat_tags']     = $database->db->GetOne("SELECT COUNT(*) FROM tags");
+		$info['stat_image_tags'] = $database->db->GetOne("SELECT COUNT(*) FROM image_tags");
 
 		$els = array();
 		foreach($_event_listeners as $el) {

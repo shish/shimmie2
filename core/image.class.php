@@ -77,7 +77,7 @@ class Image {
 		if(!isset($this->tag_array)) {
 			global $database;
 			$this->tag_array = Array();
-			$row = $database->Execute("SELECT * FROM tags WHERE image_id=? ORDER BY tag", array($this->id));
+			$row = $database->Execute("SELECT * FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
 			while(!$row->EOF) {
 				$this->tag_array[] = $row->fields['tag'];
 				$row->MoveNext();

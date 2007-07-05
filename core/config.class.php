@@ -27,7 +27,7 @@ class Config {
 			'comment_limit' => 3, # comment
 			'comment_count' => 5, # comment
 			'popular_count' => 15, # popular
-			'info_link' => 'http://tags.shishnet.org/wiki/$tag', # popular
+			'info_link' => 'http://en.wikipedia.org/wiki/$tag', # popular
 			'login_signup_enabled' => true, # user
 			'image_ilink' => '$base/image/$id.$ext', # view
 			'image_slink' => '', # view

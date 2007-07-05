@@ -160,7 +160,14 @@ class Database {
 			$query = new Querylet(
 				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
-				"SELECT *,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM tags, images WHERE tag LIKE ? AND tags.image_id = images.id ",
+				"
+					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					FROM tags, image_tags, images
+					WHERE
+						tag LIKE ?
+						AND tags.id = image_tags.tag_id
+						AND image_tags.image_id = images.id
+				",
 				$tag_search->variables);
 
 			if(strlen($img_search->sql) > 0) {
@@ -172,9 +179,10 @@ class Database {
 			$s_tag_list = join(', ', $s_tag_array);
 
 			$subquery = new Querylet("
-				SELECT *, SUM({$tag_search->sql}) AS score
+				SELECT images.*, SUM({$tag_search->sql}) AS score
 				FROM images
-				LEFT JOIN tags ON tags.image_id = images.id
+				LEFT JOIN image_tags ON image_tags.image_id = images.id
+				JOIN tags ON image_tags.tag_id = tags.id
 				WHERE tags.tag IN ({$s_tag_list})
 				GROUP BY images.id
 				HAVING score = ?",
@@ -197,7 +205,7 @@ class Database {
 	}
 
 	public function delete_tags_from_image($image_id) {
-		$this->execute("DELETE FROM tags WHERE image_id=?", array($image_id));
+		$this->execute("DELETE FROM image_tags WHERE image_id=?", array($image_id));
 	}
 
 	public function set_tags($image_id, $tags) {
@@ -212,7 +220,8 @@ class Database {
 		
 		// insert each new tag
 		foreach($tags as $tag) {
-			$this->execute("INSERT INTO tags(image_id, tag) VALUES(?, ?)", array($image_id, $tag));
+			$this->execute("INSERT IGNORE INTO tags(tag) VALUES (?)",  array($tag));
+			$this->execute("INSERT INTO image_tags(image_id, tag_id) VALUES(?, (SELECT id FROM tags WHERE tag = ?))", array($image_id, $tag));
 		}
 	}
 // }}}
