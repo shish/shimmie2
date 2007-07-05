@@ -98,6 +98,13 @@ A:hover {text-decoration: underline;}
 	content: " >>>";
 }
 
+.tag_count:before {
+	content: "(";
+}
+.tag_count:after {
+	content: ")";
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                 the main part of each page                     *
