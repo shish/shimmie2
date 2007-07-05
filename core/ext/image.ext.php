@@ -101,7 +101,8 @@ class ImageIO extends Extension {
 		$q = $config->get_int("thumb_quality");
 		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
-		exec("convert {$inname}[0] -limit memory {$mem} -geometry {$w}x{$h} -quality {$q} jpg:$outname");
+		// "-limit memory $mem" broken?
+		exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
 
 		return true;
 	}
