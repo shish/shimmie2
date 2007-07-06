@@ -178,13 +178,19 @@ class Database {
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
 			$s_tag_list = join(', ', $s_tag_array);
+			
+			$tag_id_array = array();
+			foreach($tag_search->variables as $tag) {
+				$tag_id_array = array_merge($tag_id_array, $this->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag)));
+			}
+			$tag_id_list = join(', ', $tag_id_array);
 
 			$subquery = new Querylet("
 				SELECT images.*, SUM({$tag_search->sql}) AS score
 				FROM images
 				LEFT JOIN image_tags ON image_tags.image_id = images.id
 				JOIN tags ON image_tags.tag_id = tags.id
-				WHERE tags.tag IN ({$s_tag_list})
+				WHERE tags.id IN ({$tag_id_list})
 				GROUP BY images.id
 				HAVING score = ?",
 				array_merge(
