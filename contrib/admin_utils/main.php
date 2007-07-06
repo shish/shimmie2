@@ -47,7 +47,7 @@ class AdminUtils extends Extension {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
 	}
-	private function recout_tag_use() {
+	private function recount_tag_use() {
 		global $database;
 		$database->Execute("UPDATE tags SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)");
 	}
