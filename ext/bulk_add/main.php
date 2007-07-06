@@ -11,8 +11,8 @@ class BulkAdd extends Extension {
 			if($user->is_admin() && isset($_POST['dir'])) {
 				set_time_limit(0);
 
-				$this->theme->display_upload_results($event->page_object);
 				$this->add_dir($_POST['dir']);
+				$this->theme->display_upload_results($event->page_object);
 			}
 		}
 

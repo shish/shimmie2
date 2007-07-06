@@ -1,10 +1,15 @@
 <?php
 
 class BulkAddTheme extends Themelet {
+	var $messages = array();
+
 	public function display_upload_results($page) {
 		$page->set_title("Adding folder");
 		$page->set_heading("Adding folder");
 		$page->add_block(new NavBlock());
+		foreach($this->messages as $block) {
+			$page->add_block($block);
+		}
 	}
 
 	public function display_admin_block($page) {
@@ -23,7 +28,7 @@ class BulkAddTheme extends Themelet {
 	}
 
 	public function add_status($title, $body) {
-		$page->add_block(new Block($title, $body));
+		$this->messages[] = new Block($title, $body);
 	}
 }
 ?>
