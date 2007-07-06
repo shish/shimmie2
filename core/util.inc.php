@@ -149,35 +149,6 @@ function build_thumb_html($image, $query=null) {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* Input sanitising                                                          *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function get_memory_limit() {
-	global $config;
-
-	// thumbnail generation requires lots of memory
-	$default_limit = 8*1024*1024;
-	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
-	if($shimmie_limit < 3*1024*1024) {
-		// we aren't going to fit, override
-		$shimmie_limit = $default_limit;
-	}
-	
-	ini_set("memory_limit", $shimmie_limit);
-	$memory = parse_shorthand_int(ini_get("memory_limit"));
-
-	// changing of memory limit is disabled / failed
-	if($memory == -1) {
-		$memory = $default_limit; 
-	}
-
-	assert($memory > 0);
-
-	return $memory;
-}
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
@@ -205,9 +176,11 @@ function get_thumbnail_size($orig_width, $orig_height) {
 # $db is the connection object
 function CountExecs($db, $sql, $inputarray) {
 	global $_execs;
-#	$fp = fopen("sql.log", "a");
-#	fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
-#	fclose($fp);
+	if(DEBUG) {
+		$fp = fopen("sql.log", "a");
+		fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+		fclose($fp);
+	}
 	if (!is_array($inputarray)) $_execs++;
 	# handle 2-dimensional input arrays
 	else if (is_array(reset($inputarray))) $_execs += sizeof($inputarray);
@@ -228,6 +201,44 @@ function get_theme_object($file, $class) {
 		return new $class();
 	}
 }
+
+function blockcmp($a, $b) {
+	if($a->position == $b->position) {
+		return 0;
+	}
+	else {
+		return ($a->position > $b->position);
+	}
+}
+
+function get_memory_limit() {
+	global $config;
+
+	// thumbnail generation requires lots of memory
+	$default_limit = 8*1024*1024;
+	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
+	if($shimmie_limit < 3*1024*1024) {
+		// we aren't going to fit, override
+		$shimmie_limit = $default_limit;
+	}
+	
+	ini_set("memory_limit", $shimmie_limit);
+	$memory = parse_shorthand_int(ini_get("memory_limit"));
+
+	// changing of memory limit is disabled / failed
+	if($memory == -1) {
+		$memory = $default_limit; 
+	}
+
+	assert($memory > 0);
+
+	return $memory;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Debugging functions                                                       *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function get_debug_info() {
 	global $config;
@@ -259,14 +270,53 @@ function get_debug_info() {
 	return $debug;
 }
 
-function blockcmp($a, $b) {
-	if($a->position == $b->position) {
-		return 0;
-	}
-	else {
-		return ($a->position > $b->position);
-	}
+function print_obj($array,$title="Object Information") { 
+	global $user, $page;
+	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) { 
+		//   big test: 
+		//      $debug_active to be able to kill the function from the file system. 
+		//      Look for ?debug (GET type data) to prevent the debug from appearing to regular browsing. 
+		//      Finally an admin check, because variables may contain sensitive data. 
+		//   once all that is cleared, make a block: 
+		$page->add_block( 
+				new Block( 
+					$title, 
+					str_replace("    ", 
+						"<span style='opacity:0; -moz-opacity:0; alpha:0;'>__</span>", 
+						str_replace("\n","<br/>",html_escape(print_r($array,true)))), 
+					"main",1000 
+				) 
+		); 
+	} 
+	// print_r is called with the return option (not echo-style) to get a string 
+	// output to work with. 
+
+	// Then two str_replaces turn newlines into <br/> tags and indent spaces into 
+	// rendered underscores (which are then hidden.) 
+
+	// Finally the entire thing is packaged into a block and mailed to the main 
+	// section at the bottom of the pile. 
+} 
+
+// preset tests. 
+
+// Prints the contents of $event->args, even though they are clearly visible in 
+// the URL bar. 
+function print_url_args() { 
+	global $event; 
+	print_obj($event->args,"URL Arguments"); 
+} 
+
+// Prints all the POST data. 
+function print_POST() { 
+	print_obj($_POST,"\$_POST"); 
+} 
+
+// Prints GET, though this is also visible in the url ( url?var&var&var) 
+function print_GET() { 
+	print_obj($_GET,"\$_GET"); 
 }
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
