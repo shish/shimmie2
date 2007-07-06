@@ -5,7 +5,7 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function html_escape($input) {
-	return htmlentities($input);
+	return htmlentities($input, ENT_QUOTES, "UTF-8");
 }
 
 function int_escape($input) {

@@ -447,6 +447,8 @@ function move_data($old_dsn, $new_dsn, $old_data) {
 function create_tables_mysql($db) {
 	$db->StartTrans();
 
+	$db->Execute("SET NAMES utf8"); // FIXME: mysql-specific :(
+	
 	$db->Execute("DROP TABLE IF EXISTS aliases");
 	$db->Execute("CREATE TABLE aliases (
 		oldtag varchar(255) NOT NULL,

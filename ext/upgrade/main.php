@@ -60,6 +60,16 @@ class Upgrade extends Extension {
 			$config->set_int("db_version", 5);
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") == 5) {
+			$config->set_bool("in_upgrade", true);
+			$tables = $database->db->GetCol("SHOW TABLES");
+			foreach($tables as $table) {
+				$database->Execute("ALTER TABLE $table CONVERT TO CHARACTER SET utf8");
+			}
+			$config->set_int("db_version", 6);
+			$config->set_bool("in_upgrade", false);
+		}
 	}
 }
 add_event_listener(new Upgrade(), 5);

@@ -26,8 +26,8 @@ class ViewImage extends Extension {
 			$image = $event->get_image();
 			
 			global $page;
-			$page->set_title("Image {$image->id}: ".$image->get_tag_list());
-			$page->set_heading($image->get_tag_list());
+			$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
+			$page->set_heading(html_escape($image->get_tag_list()));
 			$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
 			$page->add_block(new Block("Image", $this->build_image_view($image), "main", 0));
 			$page->add_block(new Block(null, $this->build_info($image), "main", 10));

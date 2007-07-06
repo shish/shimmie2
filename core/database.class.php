@@ -34,6 +34,7 @@ class Database {
 			require_once "config.php";
 			$this->db = NewADOConnection($database_dsn);
 			$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+			$this->db->Execute("SET NAMES utf8"); // FIXME: mysql specific :|
 			$this->extensions = $this->db->GetAssoc("SELECT name, version FROM extensions");
 		}
 		else {
