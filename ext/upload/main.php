@@ -74,8 +74,9 @@ class Upload extends Extension {
 			$image = new Image($file['tmp_name'], $file['name'], $_POST['tags']);
 		
 			if($image->is_ok()) {
-				send_event(new UploadingImageEvent($image));
-				$ok = true;
+				$event = new UploadingImageEvent($image);
+				send_event($event);
+				$ok = $event->ok;
 			}
 			else {
 				$this->theme->display_upload_error("Error with ".html_escape($file['name']),
