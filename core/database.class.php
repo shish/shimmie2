@@ -212,6 +212,7 @@ class Database {
 	}
 
 	public function delete_tags_from_image($image_id) {
+		$this->execute("UPDATE tags SET count = count - 1 WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = ?)", array($image_id));
 		$this->execute("DELETE FROM image_tags WHERE image_id=?", array($image_id));
 	}
 
@@ -227,8 +228,9 @@ class Database {
 		
 		// insert each new tag
 		foreach($tags as $tag) {
-			$this->execute("INSERT IGNORE INTO tags(tag) VALUES (?)",  array($tag));
+			$this->execute("INSERT IGNORE INTO tags(tag) VALUES (?)", array($tag));
 			$this->execute("INSERT INTO image_tags(image_id, tag_id) VALUES(?, (SELECT id FROM tags WHERE tag = ?))", array($image_id, $tag));
+			$this->execute("UPDATE tags SET count = count + 1 WHERE tag = ?", array($tag));
 		}
 	}
 // }}}
