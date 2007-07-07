@@ -10,7 +10,7 @@ class ZoomTheme extends Themelet {
 		$default = $zoom_by_default ? "scale(img);" : "";
 		return <<<EOD
 <script type="text/javascript">
-img = byId("main_image");
+img = document.getElementById("main_image");
 
 img.onclick = function() {scale(img);};
 
