@@ -326,7 +326,7 @@ function add_event_listener($block, $pos=50) {
 
 function send_event($event) {
 	global $_event_listeners;
-	$my_event_listeners = $_event_listeners;
+	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		$listener->receive_event($event);
