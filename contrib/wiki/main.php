@@ -228,8 +228,11 @@ class Wiki extends Extension {
 	private function create_display_html($page) {
 		$owner = $page->get_owner();
 
+		$tfe = new TextFormattingEvent($page->body);
+		send_event($tfe);
+
 		$html = "<div class='wiki-page'>";
-		$html .= bbcode_to_html($page->body);
+		$html .= $tfe->formatted;
 		$html .= "<hr>";
 		$html .= "<p class='wiki-footer'>Revision {$page->revision} by ".
 		         "<a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a> at {$page->date} ";

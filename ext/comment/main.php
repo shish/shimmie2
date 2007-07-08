@@ -31,17 +31,20 @@ class Comment { // {{{
 	public function to_html($trim=false) {
 		global $user;
 
+		$tfe = new TextFormattingEvent($this->comment);
+		send_event($tfe);
+
 		$i_uid = int_escape($this->owner_id);
 		$h_name = html_escape($this->owner_name);
 		$h_poster_ip = html_escape($this->poster_ip);
-		$h_comment = ($trim ? substr(bbcode_to_text($this->comment), 0, 50)."..." : bbcode_to_html($this->comment));
+		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
 		$i_comment_id = int_escape($this->comment_id);
 		$i_image_id = int_escape($this->image_id);
 
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_dellink = $user->is_admin() ? 
 			"<br>($h_poster_ip, <a ".
-			"onclick=\"return confirm('Delete comment by $h_name:\\n".bbcode_to_text($this->comment)."');\" ".
+			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		return "<p>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
