@@ -46,5 +46,5 @@ class WordFilter extends Extension {
 		return $map;
 	}
 }
-add_event_listener(new WordFilter());
+add_event_listener(new WordFilter(), 40); // before emoticon filter
 ?>
