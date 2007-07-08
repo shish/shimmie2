@@ -1,4 +1,11 @@
 <?php
+/**
+ * Name: Autocomplete
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://trac.shishnet.org/shimmie2/
+ * License: GPLv2
+ * Description: Auto-complete for search and upload tags
+ */
 
 class AutoComplete extends Extension {
 	public function receive_event($event) {

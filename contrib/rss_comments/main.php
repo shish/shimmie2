@@ -1,4 +1,11 @@
 <?php
+/**
+ * Name: RSS for Comments
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://trac.shishnet.org/shimmie2/
+ * License: GPLv2
+ * Description: Self explanitory
+ */
 
 class RSS_Comments extends Extension {
 // event handling {{{
