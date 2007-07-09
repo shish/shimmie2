@@ -23,7 +23,7 @@ class Emoticons extends Extension {
 	}
 
 	private function bbcode_to_text($text) {
-		$text = preg_replace("/:([a-z]*?):/s", "\\1", $text);
+		// $text = preg_replace("/:([a-z]*?):/s", "\\1", $text);
 		return $text;
 	}
 }
