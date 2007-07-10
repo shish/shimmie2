@@ -42,10 +42,9 @@ class TagList extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			global $page;
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
-				$this->add_related_block($page, $event->image);
+				$this->add_related_block($event->page, $event->image);
 			}
 		}
 

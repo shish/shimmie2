@@ -7,9 +7,8 @@ class Zoom extends Extension {
 		if($this->theme == null) $this->theme = get_theme_object("zoom", "ZoomTheme");
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			global $page;
 			global $config;
-			$this->theme->display_zoomer($page, $config->get_bool("image_zoom", false));
+			$this->theme->display_zoomer($event->page, $config->get_bool("image_zoom", false));
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {

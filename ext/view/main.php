@@ -25,7 +25,7 @@ class ViewImage extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			$image = $event->get_image();
 			
-			global $page;
+			$page = $event->page;
 			$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 			$page->set_heading(html_escape($image->get_tag_list()));
 			$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));

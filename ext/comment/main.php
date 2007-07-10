@@ -95,14 +95,13 @@ class CommentList extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			global $page;
 			if($this->can_comment()) {
-				$page->add_block(new Block("Comments",
+				$event->page->add_block(new Block("Comments",
 						$this->build_image_comments($event->image->id).
 						$this->theme->build_postbox($event->image->id), "main", 30));
 			}
 			else {
-				$page->add_block(new Block("Comments",
+				$event->page->add_block(new Block("Comments",
 						$this->build_image_comments($event->image->id), "main", 30));
 			}
 		}

@@ -43,8 +43,7 @@ class AdminPage extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
 			if($user->is_admin()) {
-				global $page;
-				$page->add_block(new Block("Admin", $this->build_del_block($event->image->id), "left"));
+				$event->page->add_block(new Block("Admin", $this->build_del_block($event->image->id), "left"));
 			}
 		}
 

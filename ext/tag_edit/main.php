@@ -33,8 +33,7 @@ class TagEdit extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			global $page;
-			$page->add_block(new Block(null, $this->build_tag_editor($event->image), "main", 5));
+			$event->page->add_block(new Block(null, $this->build_tag_editor($event->image), "main", 5));
 		}
 
 		if(is_a($event, 'TagSetEvent')) {
