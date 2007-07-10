@@ -10,7 +10,7 @@ class ViewImage extends Extension {
 			$image = $database->get_image($image_id);
 
 			if(!is_null($image)) {
-				send_event(new DisplayingImageEvent($image, $event->page));
+				send_event(new DisplayingImageEvent($image, $event->page_object));
 			}
 			else {
 				global $page;
