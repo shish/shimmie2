@@ -9,9 +9,11 @@
  */
 class DisplayingImageEvent extends Event {
 	var $image;
+	var $page;
 
-	public function DisplayingImageEvent($image) {
+	public function DisplayingImageEvent($image, $page) {
 		$this->image = $image;
+		$this->page = $page;
 	}
 
 	public function get_image() {
