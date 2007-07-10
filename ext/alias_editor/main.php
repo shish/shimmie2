@@ -33,7 +33,7 @@ class AliasEditor extends Extension {
 
 						global $page;
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$page->set_redirect(make_link("alias/list"));
 					}
 				}
 			}
@@ -56,7 +56,7 @@ class AliasEditor extends Extension {
 
 			global $page;
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("admin"));
+			$page->set_redirect(make_link("alias/list"));
 		}
 		
 		if(is_a($event, 'UserBlockBuildingEvent')) {
