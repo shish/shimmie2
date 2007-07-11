@@ -27,7 +27,7 @@ class Index extends Extension {
 			$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
 			
 			$this->theme->set_page($page_number, $total_pages, $search_terms);
-			$this->theme->display_page($event->page, $page_title, $images);
+			$this->theme->display_page($event->page_object, $images);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {

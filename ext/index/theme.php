@@ -7,7 +7,9 @@ class IndexTheme extends Themelet {
 		$this->search_terms = $search_terms;
 	}
 
-	public function display_page($page, $page_title, $images) {
+	public function display_page($page, $images) {
+		global $config;
+
 		if(count($this->search_terms) == 0) {
 			$query = null;
 			$page_title = $config->get_string('title');
@@ -20,7 +22,7 @@ class IndexTheme extends Themelet {
 				$page->set_subheading("Page $page_number / $total_pages");
 			}
 		}
-		if($page_number > 1 || count($this->search_terms) > 0) {
+		if($this->page_number > 1 || count($this->search_terms) > 0) {
 			// $page_title .= " / $page_number";
 		}
 
