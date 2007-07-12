@@ -41,8 +41,9 @@ class BulkAdd extends Extension {
 			$image = new Image($tmpname, $filename, $tags);
 		
 			if($image->is_ok()) {
-				send_event(new UploadingImageEvent($image));
-				$ok = true;
+				$uie = new UploadingImageEvent($image);
+				send_event($uie);
+				$ok = $uie->_live;
 			}
 		}
 

@@ -71,7 +71,7 @@ class Upload extends Extension {
 			if($image->is_ok()) {
 				$event = new UploadingImageEvent($image);
 				send_event($event);
-				$ok = $event->ok;
+				$ok = $event->_live;
 			}
 			else {
 				$this->theme->display_upload_error("Error with ".html_escape($file['name']),

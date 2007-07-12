@@ -22,7 +22,8 @@ class ImageIO extends Extension {
 		}
 
 		if(is_a($event, 'UploadingImageEvent')) {
-			$event->ok = $this->add_image($event->image);
+			$ok = $this->add_image($event->image);
+			if(!$ok) $event->veto();
 		}
 
 		if(is_a($event, 'ImageDeletionEvent')) {
