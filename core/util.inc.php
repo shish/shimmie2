@@ -316,12 +316,12 @@ function array_add($array, $element) {
 
 $_event_listeners = array();
 
-function add_event_listener($block, $pos=50) {
+function add_event_listener($extension, $pos=50) {
 	global $_event_listeners;
 	while(isset($_event_listeners[$pos])) {
 		$pos++;
 	}
-	$_event_listeners[$pos] = $block;
+	$_event_listeners[$pos] = $extension;
 }
 
 function send_event($event) {
