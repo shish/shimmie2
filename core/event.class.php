@@ -4,10 +4,12 @@
  * generic parent class
  */
 class Event {
-	var $_live = true;
+	var $vetoed = false;
+	var $veto_reason;
 
-	public function veto() {
-		$this->_live = false;
+	public function veto($reason="") {
+		$this->vetoed = true;
+		$this->veto_reason = $reason;
 	}
 }
 ?>
