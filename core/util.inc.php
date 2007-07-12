@@ -356,7 +356,7 @@ function _get_query_parts() {
 	return split('/', $path);
 }
 
-function get_page_request($page_object) {
+function _get_page_request($page_object) {
 	global $config;
 	$args = _get_query_parts();
 
@@ -376,7 +376,7 @@ function get_page_request($page_object) {
 	return new PageRequestEvent($page, $args, $page_object);
 }
 
-function get_user() {
+function _get_user() {
 	global $database;
 	global $config;
 	

@@ -38,8 +38,8 @@ require_once "themes/$_theme/page.class.php";
 require_once "themes/$_theme/layout.class.php";
 require_once "themes/$_theme/themelet.class.php";
 $page = new Page();
-$user = get_user();
+$user = _get_user();
 send_event(new InitExtEvent());
-send_event(get_page_request($page));
+send_event(_get_page_request($page));
 $page->display();
 ?>
