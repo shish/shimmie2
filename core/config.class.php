@@ -72,28 +72,6 @@ class Config {
 		$this->save($name);
 	}
 
-	public function set_int_from_post($name) {
-		if(isset($_POST[$name])) {
-			$this->values[$name] = $_POST[$name];
-			$this->save($name);
-		}
-	}
-	public function set_string_from_post($name) {
-		if(isset($_POST[$name])) {
-			$this->values[$name] = $_POST[$name];
-			$this->save($name);
-		}
-	}
-	public function set_bool_from_post($name) {
-		if(isset($_POST[$name]) && ($_POST[$name] == 'on')) {
-			$this->values[$name] = 'Y';
-		}
-		else {
-			$this->values[$name] = 'N';
-		}
-		$this->save($name);
-	}
-
 	public function get_int($name, $default=null) {
 		// deprecated -- ints should be stored as ints now
 		return parse_shorthand_int($this->get($name, $default));
