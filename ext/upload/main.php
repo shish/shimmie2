@@ -62,7 +62,7 @@ class Upload extends Extension {
 				($config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE)).")");
 		}
 		else if(!($info = getimagesize($file['tmp_name']))) {
-			$this->theme->display_upload_error("Error with ".html_escape($file['name']),
+			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
 				"PHP doesn't recognise this as an image file");
 		}
 		else {
@@ -71,10 +71,14 @@ class Upload extends Extension {
 			if($image->is_ok()) {
 				$event = new UploadingImageEvent($image);
 				send_event($event);
-				$ok = $event->_live;
+				$ok = !$event->vetoed;
+				if(!$ok) {
+					$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
+						$event->veto_reason);
+				}
 			}
 			else {
-				$this->theme->display_upload_error("Error with ".html_escape($file['name']),
+				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
 					"Something is not right!");
 			}
 		}
