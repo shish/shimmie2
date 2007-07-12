@@ -97,7 +97,7 @@ class UserPage extends Extension {
 		$addr = $_SERVER['REMOTE_ADDR'];
 		$hash = md5( strtolower($name) . $pass );
 
-		$duser = $database->get_user($name, $hash);
+		$duser = $database->get_user_by_name_and_hash($name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
 

@@ -389,7 +389,7 @@ function _get_user() {
 		
 	}
 	if(is_null($user)) {
-		$user = $database->get_user($config->get_int("anon_id", 0));
+		$user = $database->get_user_by_id($config->get_int("anon_id", 0));
 	}
 	assert(!is_null($user));
 	return $user;

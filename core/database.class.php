@@ -306,15 +306,6 @@ class Database {
 // users {{{
 	var $SELECT_USER = "SELECT *,(unix_timestamp(now()) - unix_timestamp(joindate))/(60*60*24) AS days_old FROM users ";
 	
-	public function get_user($a=false, $b=false) {
-		if($b == false) {
-			return $this->get_user_by_id($a);
-		}
-		else {
-			return $this->get_user_by_name_and_hash($a, $b);
-		}
-	}
-
 	public function get_user_session($name, $session) {
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name LIKE ? AND md5(concat(pass, ?)) = ?",
 				array($name, $_SERVER['REMOTE_ADDR'], $session));

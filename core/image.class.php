@@ -70,7 +70,7 @@ class Image {
 
 	public function get_owner() {
 		global $database;
-		return $database->get_user($this->owner_id);
+		return $database->get_user_by_id($this->owner_id);
 	}
 
 	public function get_tag_array() {
