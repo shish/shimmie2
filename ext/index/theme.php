@@ -19,7 +19,7 @@ class IndexTheme extends Themelet {
 			$query = "search=".url_escape($search_string);
 			$page_title = html_escape($search_string);
 			if(count($images) > 0) {
-				$page->set_subheading("Page $page_number / $total_pages");
+				$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
 			}
 		}
 		if($this->page_number > 1 || count($this->search_terms) > 0) {

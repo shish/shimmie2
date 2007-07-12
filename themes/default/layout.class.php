@@ -35,11 +35,11 @@ class Layout {
 
 		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 
-		if(empty($this->subheading)) {
+		if(empty($page->subheading)) {
 			$subheading = "";
 		}
 		else {
-			$subheading = "<div id='subtitle'>{$this->subheading}</div>";
+			$subheading = "<div id='subtitle'>{$page->subheading}</div>";
 		}
 
 		print <<<EOD
