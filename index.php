@@ -31,7 +31,7 @@ foreach($files as $filename) {
 }
 
 $database = new Database();
-$database->db->fnExecute = 'CountExecs';
+$database->db->fnExecute = '_count_execs';
 $config = new Config();
 $_theme = $config->get_string("theme", "default");
 require_once "themes/$_theme/page.class.php";

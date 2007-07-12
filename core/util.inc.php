@@ -144,7 +144,7 @@ function get_thumbnail_size($orig_width, $orig_height) {
 }
 
 # $db is the connection object
-function CountExecs($db, $sql, $inputarray) {
+function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
 	if(DEBUG) {
 		$fp = fopen("sql.log", "a");
