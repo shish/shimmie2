@@ -106,7 +106,7 @@ class Config {
 		return ($this->get($name, $default) == 'Y' || $this->get($name, $default) == '1');
 	}
 
-	public function get($name, $default=null) {
+	private function get($name, $default=null) {
 		if(isset($this->values[$name])) {
 			return $this->values[$name];
 		}
