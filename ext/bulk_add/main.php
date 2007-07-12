@@ -43,7 +43,7 @@ class BulkAdd extends Extension {
 			if($image->is_ok()) {
 				$uie = new UploadingImageEvent($image);
 				send_event($uie);
-				$ok = $uie->_live;
+				$ok = !$uie->vetoed;
 			}
 		}
 
