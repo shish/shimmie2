@@ -168,7 +168,6 @@ class Setup extends Extension {
 			$sb->add_text_option("contact_link", "<br>Contact URL:");
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
 			// $sb->add_int_option("anon_id", "<br>Anonymous ID: "); // FIXME: create advanced options page
-			$sb->add_hidden_option("anon_id");
 			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
