@@ -50,9 +50,6 @@ class Tag_History extends Extension {
 			$sb->add_label(" entires per image");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int_from_post("history_limit");
-		}
 		if(is_a($event, 'TagSetEvent')) {
 			$this->add_tag_history($event->image_id);
 		}

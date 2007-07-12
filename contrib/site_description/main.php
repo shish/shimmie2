@@ -23,9 +23,6 @@ class SiteDescription extends Extension {
 			$sb->add_longtext_option("site_description");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("site_description");
-		}
 	}
 }
 add_event_listener(new SiteDescription());

@@ -59,13 +59,6 @@ class TagList extends Extension {
 			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int_from_post("tags_min");
-
-			$event->config->set_int_from_post("tag_list_length");
-			$event->config->set_string_from_post("info_link");
-			$event->config->set_bool_from_post("tag_list_numbers");
-		}
 	}
 // }}}
 // misc {{{

@@ -41,11 +41,6 @@ class ViewImage extends Extension {
 			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("image_ilink");
-			$event->config->set_string_from_post("image_slink");
-			$event->config->set_string_from_post("image_tlink");
-		}
 	}
 // }}}
 // HTML {{{

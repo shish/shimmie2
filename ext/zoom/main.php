@@ -16,9 +16,6 @@ class Zoom extends Extension {
 			$sb->add_bool_option("image_zoom", "Zoom by default: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("image_zoom");
-		}
 	}
 
 }

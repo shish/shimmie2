@@ -14,10 +14,6 @@ class Downtime extends Extension {
 			$sb->add_longtext_option("downtime_message", "<br>");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("downtime");
-			$event->config->set_string_from_post("downtime_message");
-		}
 		if(is_a($event, 'PageRequestEvent')) {
 			global $config;
 			if($config->get_bool("downtime")) {

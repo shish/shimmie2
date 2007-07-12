@@ -33,11 +33,6 @@ class Home extends Extension {
 			$sb->add_label("<br>Note: page accessed via /home");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent'))
-		{
-			$event->config->set_string_from_post("home_links");
-			$event->config->set_string_from_post("home_counter");
-		}
 	}
 
 	private function get_body()

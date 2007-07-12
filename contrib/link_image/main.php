@@ -17,9 +17,6 @@ class LinkImage extends Extension {
 			$sb->add_text_option("ext_link-img_text-link_format","Text Link Format:");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("ext_link-img_text-link_format");
-		}
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			//just set default if empty.

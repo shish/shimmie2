@@ -38,11 +38,6 @@ class Upload extends Extension {
 			$sb->add_bool_option("upload_anon", "<br>Allow anonymous uploads: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int_from_post("upload_count");
-			$event->config->set_int_from_post("upload_size");
-			$event->config->set_bool_from_post("upload_anon");
-		}
 	}
 // }}}
 // do things {{{

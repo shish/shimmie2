@@ -50,7 +50,8 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<input type='text' id='$name' name='$name' value='$val'>\n";
+		$this->body .= "<input type='text' id='$name' name='_config_$name' value='$val'>\n";
+		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
 
 	public function add_longtext_option($name, $label=null) {
@@ -59,8 +60,9 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<textarea rows='5' cols='40' id='$name' name='$name'>$val</textarea>\n";
+		$this->body .= "<textarea rows='5' cols='40' id='_config_$name' name='$name'>$val</textarea>\n";
 		$this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
+		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
 
 	public function add_bool_option($name, $label=null) {
@@ -69,14 +71,15 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<input type='checkbox' id='$name' name='$name'$checked>\n";
+		$this->body .= "<input type='checkbox' id='_config_$name' name='$name'$checked>\n";
+		$this->body .= "<input type='hidden' name='_type_$name' value='bool'>\n";
 	}
 
-	public function add_hidden_option($name, $label=null) {
-		global $config;
-		$val = $config->get_string($name);
-		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
-	}
+//	public function add_hidden_option($name, $label=null) {
+//		global $config;
+//		$val = $config->get_string($name);
+//		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
+//	}
 
 	public function add_int_option($name, $label=null) {
 		global $config;
@@ -84,7 +87,8 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<input type='text' id='$name' name='$name' value='$val' size='4' style='text-align: center;'>\n";
+		$this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
+		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
 	public function add_shorthand_int_option($name, $label=null) {
@@ -93,7 +97,8 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<input type='text' id='$name' name='$name' value='$val' size='6' style='text-align: center;'>\n";
+		$this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
+		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
 	public function add_choice_option($name, $options, $label=null) {
@@ -103,13 +108,14 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$html = "<select id='$name' name='$name'>";
+		$html = "<select id='_config_$name' name='$name'>";
 		foreach($options as $optname => $optval) {
 			if($optval == $current) $selected=" selected";
 			else $selected="";
 			$html .= "<option value='$optval'$selected>$optname</option>\n";
 		}
 		$html .= "</select>";
+		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
 		$this->body .= $html;
 	}
@@ -166,13 +172,16 @@ class Setup extends Extension {
 			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("title");
-			$event->config->set_string_from_post("front_page");
-			$event->config->set_string_from_post("base_href");
-			$event->config->set_string_from_post("data_href");
-			$event->config->set_string_from_post("contact_link");
-			$event->config->set_string_from_post("theme");
-			$event->config->set_int_from_post("anon_id");
+			foreach($_POST as $name => $value) {
+				if(substr($name, 0, 8) == "_config_") {
+					$name = substr($name, 8);
+					switch($_POST["_type_$name"]) {
+						case "string": $event->config->set_string($name, $value); break;
+						case "int":    $event->config->set_int($name, $value);    break;
+						case "bool":   $event->config->set_bool($name, $value);   break;
+					}
+				}
+			}
 		}
 
 		if(is_a($event, 'UserBlockBuildingEvent')) {

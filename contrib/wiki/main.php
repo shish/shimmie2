@@ -139,10 +139,6 @@ class Wiki extends Extension {
 			$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("wiki_edit_anon");
-			$event->config->set_bool_from_post("wiki_edit_user");
-		}
 	}
 // }}}
 // misc {{{

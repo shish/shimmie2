@@ -17,9 +17,6 @@ class News extends Extension {
 			$sb->add_longtext_option("news_text");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("news_text");
-		}
 	}
 }
 add_event_listener(new News());

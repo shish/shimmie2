@@ -49,13 +49,6 @@ class ImageIO extends Extension {
 
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_string_from_post("thumb_engine");
-			$event->config->set_int_from_post("thumb_width");
-			$event->config->set_int_from_post("thumb_height");
-			$event->config->set_int_from_post("thumb_quality");
-			$event->config->set_int_from_post("thumb_mem_limit");
-		}
 	}
 // }}}
 // add image {{{

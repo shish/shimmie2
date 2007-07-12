@@ -44,11 +44,6 @@ class Index extends Extension {
 
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_int_from_post("index_width");
-			$event->config->set_int_from_post("index_height");
-			$event->config->set_string_from_post("image_tip");
-		}
 	}
 }
 add_event_listener(new Index());

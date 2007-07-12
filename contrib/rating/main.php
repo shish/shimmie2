@@ -39,12 +39,6 @@ class Ratings extends Extension {
 			$sb->add_label(" recent comments on the index");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool("comment_anon", $_POST['comment_anon']);
-			$event->config->set_int("comment_limit", $_POST['comment_limit']);
-			$event->config->set_int("comment_window", $_POST['comment_window']);
-			$event->config->set_int("comment_count", $_POST['comment_count']);
-		}
 */
 	}
 

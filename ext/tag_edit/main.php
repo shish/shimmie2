@@ -61,9 +61,6 @@ class TagEdit extends Extension {
 			$sb->add_bool_option("tag_edit_anon", "Allow anonymous editing: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("tag_edit_anon");
-		}
 	}
 // }}}
 // do things {{{

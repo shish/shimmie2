@@ -127,13 +127,6 @@ class CommentList extends Extension {
 			$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("comment_anon");
-			$event->config->set_int_from_post("comment_limit");
-			$event->config->set_int_from_post("comment_window");
-			$event->config->set_int_from_post("comment_count");
-			$event->config->set_string_from_post("comment_wordpress_key");
-		}
 	}
 // }}}
 // installer {{{

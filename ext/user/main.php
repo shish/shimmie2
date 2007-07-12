@@ -74,10 +74,6 @@ class UserPage extends Extension {
 			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
-			$event->config->set_bool_from_post("login_signup_enabled");
-			$event->config->set_string_from_post("login_tac");
-		}
 
 		if(is_a($event, 'UserBlockBuildingEvent')) {
 			$event->add_link("User Config", make_link("user"));
