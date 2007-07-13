@@ -25,23 +25,20 @@ To reset to the default, simply clear the current setting. Link to Image will th
 
 To leave the setting blank for any reason, leave a space (' ') in it.
 
-= Theming =
-Link to Image now has a prototype theme engine built into it. All HTML generation has been moved to a seperate file.
-To use this, copy link_image.html.php from {{{ext/link_image/}}} to {{{themes/$theme/}}}. You may then change the html output of Link to Image by editing this copy as it will be used in preference of the default.
-
 = Install =
  1. Copy the folder {{{contrib/link_image/}}} to {{{ext/}}}.
  2. In the Config panel, make sure Base URL is set (you may as well set Data URL while you're there, if you haven't already.)
  3. Make sure Image Link, Thumb Link, and Short Link all contain the full path ("http://" and onward,) either by using $base or plain text. Link to Image will not be able to retrieve the correct paths without these variables.
- 4. If you use .htaccess to make NiceURLs, make sure that a it allows access to the {{{ext/ folder}}}, or else Link to Image will not be able to access {{{ext/link_image/style.css}}}.
-  * http://trac.shishnet.org/shimmie2/wiki/NiceURLs - Nice URLs
-  * Recent changes to .htaccess (with its addition to the SVN) may make this step unnessasary.
 
 = Change Log =
+== Version 0.3.0 ==
+ * Moved Link to Image over to the official theme engine. This functions basically the same as what the prototype was, but it's more thought out and nicer.
+ * Cleaned up the insides a bit.
+
 == Version 0.2.0 ==
  * Changed the HTML generation to use a prototype theme engine. All HTML generation is now contained within {{{link_image.html.php}}}, which may be copied to the current theme folder and edited from there.
  
-== Version 0.1.4 - 20071510 ==
+== Version 0.1.4 - 20070510 ==
  * Style changes.
  * Added output containing only the locations of the thumb, image and post.
  * Added a link to wikipedia's HTML page, just as BBCode has a wikipedia link.

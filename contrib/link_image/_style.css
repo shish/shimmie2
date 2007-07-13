@@ -3,39 +3,39 @@
 **/
 
 /* * * Link to Image * * */
-#link_to_image {
+#Link_to_Image {
 	/* allows borders to encompass the content; */
 	overflow:hidden;
 }
 
-#link_to_image fieldset {
+#Link_to_Image fieldset {
 	width: 32%;
 	float:left;
 	min-width:25em;
 }
 
-#link_to_image input, #link_to_image label {
+#Link_to_Image input, #Link_to_Image label {
 	display:block;
 	width:66%;
 	float:left;
 	margin-bottom:2.5px;
 }
 
-#link_to_image label {
+#Link_to_Image label {
 	width:30%;
 	text-align:left;
 	padding-right:2%;
 	cursor:pointer;
 }
-#link_to_image input {
+#Link_to_Image input {
 	font-size:0.7em;
 	font-family:courier, fixed, monospace;
 }
 
-#link_to_image br {
+#Link_to_Image br {
 	clear:both;
 }
 
-#link_to_image label:hover {
+#Link_to_Image label:hover {
 	border-bottom:1px dashed;
 }
