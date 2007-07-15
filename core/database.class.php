@@ -67,15 +67,6 @@ class Database {
 		return $result;
 	}
 // }}}
-// extensions {{{
-	public function set_extension_version($name, $version) {
-		$this->extensions[$name] = $version;
-		$this->db->GetRow("INSERT INTO extensions(name, version) VALUES (?, ?)", array($name, $version));
-	}
-	public function get_extension_version($name) {
-		return (isset($this->extensions[$name]) ? $this->extensions[$name] : -1);
-	}
-// }}}
 // tags {{{
 	public function resolve_alias($tag) {
 		$newtag = $this->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
