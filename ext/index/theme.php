@@ -32,7 +32,7 @@ class IndexTheme extends Themelet {
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
 		if(count($images) > 0) {
 			$page->add_block(new Block("Images", $this->build_table($images, $query), "main", 10));
-			$page->add_block(new Paginator("index", $query, $this->page_number, $this->total_pages));
+			$page->add_block(new Paginator("post/list", $query, $this->page_number, $this->total_pages));
 		}
 		else {
 			$page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));
@@ -45,12 +45,12 @@ class IndexTheme extends Themelet {
 		$next = $page_number + 1;
 
 		$u_tags = url_escape(implode(" ", $search_terms));
-		$query = empty($u_tags) ? null : "search=$u_tags";
+		$query = empty($u_tags) ? null : "/$u_tags";
 
 		
-		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("index/$prev", $query)."'>Prev</a>";
+		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("post/list/$prev", $query)."'>Prev</a>";
 		$h_index = "<a href='".make_link("index")."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("index/$next", $query)."'>Next</a>";
+		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list/$next", $query)."'>Next</a>";
 
 		$h_search_string = count($search_terms) == 0 ? "Search" : html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link("index");
