@@ -92,17 +92,17 @@ class Image {
 
 	public function get_image_link() {
 		global $config;
-		return url_escape($this->parse_link_template($config->get_string('image_ilink')));
+		return $this->parse_link_template($config->get_string('image_ilink'));
 	}
 
 	public function get_short_link() {
 		global $config;
-		return url_escape($this->parse_link_template($config->get_string('image_slink')));
+		return $this->parse_link_template($config->get_string('image_slink'));
 	}
 
 	public function get_thumb_link() {
 		global $config;
-		return url_escape($this->parse_link_template($config->get_string('image_tlink')));
+		return $this->parse_link_template($config->get_string('image_tlink'));
 	}
 
 	public function get_tooltip() {
