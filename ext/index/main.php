@@ -6,14 +6,22 @@ class Index extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("index", "IndexTheme");
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
+		if(is_a($event, 'PageRequestEvent') && (($event->page == "index") ||
+					($event->page == "post" && $event->get_arg(0) == "list"))) {
+			if($event->page == "post") array_shift($event->args);
+
 			$search_terms = array();
 			$page_number = 1;
 
-			if($event->count_args() > 0) {
+			if($event->count_args() == 1) {
 				$page_number = int_escape($event->get_arg(0));
-				if($page_number == 0) $page_number = 1; // invalid -> 0
 			}
+			else if($event->count_args() == 2) {
+				$search_terms = explode(' ', $event->get_arg(0));
+				$page_number = int_escape($event->get_arg(1));
+			}
+			
+			if($page_number == 0) $page_number = 1; // invalid -> 0
 
 			if(isset($_GET['search'])) {
 				$search_terms = explode(' ', $_GET['search']);
