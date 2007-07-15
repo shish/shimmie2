@@ -264,8 +264,7 @@ class Database {
 			$row = $this->db->GetRow("{$this->get_images} WHERE images.id $gtlt ? ORDER BY images.id $dir LIMIT 1", array((int)$id));
 		}
 		else {
-			$tags[] = ($next ? "images.id<$id" : "images.id>$id");
-			$dir    = ($next ? "DESC"          : "ASC");
+			$tags[] = "id$gtlt$id";
 			$querylet = $this->build_search_querylet($tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
 			$row = $this->db->GetRow($querylet->sql, $querylet->variables);
