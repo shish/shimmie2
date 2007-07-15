@@ -63,7 +63,8 @@ class TagList extends Extension {
 // }}}
 // misc {{{
 	private function tag_link($tag) {
-		return make_link("index", "search=".url_escape($tag));
+		$u_tag = url_escape($tag);
+		return make_link("post/list/$u_tag/1");
 	}
 // }}}
 // maps {{{
