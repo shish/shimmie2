@@ -153,7 +153,8 @@ class TagListTheme extends Themelet {
 	}
 
 	private function tag_link($tag) {
-		return make_link("index", "search=".url_escape($tag));
+		$u_tag = url_escape($tag);
+		return make_link("post/list/$tag/1");
 	}
 }
 ?>
