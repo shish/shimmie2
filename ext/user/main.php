@@ -14,6 +14,16 @@ class UserBlockBuildingEvent extends Event {
 	}
 }
 
+class UserPageBuildingEvent extends Event {
+	var $page = null;
+	var $user = null;
+
+	public function UserPageBuildingEvent($page, $user) {
+		$this->page = $page;
+		$this->user = $user;
+	}
+}
+
 class UserPage extends Extension {
 // event handling {{{
 	public function receive_event($event) {
@@ -57,8 +67,12 @@ class UserPage extends Extension {
 			}
 			else { // view
 				$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
-				$this->build_user_page($duser);
+				send_event(new UserPageBuildingEvent($event->page, $duser));
 			}
+		}
+		
+		if(is_a($event, 'UserPageBuildingEvent')) {
+			$this->build_user_page($event->user);
 		}
 
 		// user info is shown on all pages
