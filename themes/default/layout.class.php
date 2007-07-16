@@ -78,15 +78,15 @@ EOD;
 		$h = $block->header;
 		$b = $block->body;
 		$html = "";
+		$i = str_replace(' ', '_', $h);
 		if($hidable) {
-			$i = str_replace(' ', '_', $h);
-			if(!is_null($h)) $html .= "\n<h3 id='$i-toggle' onclick=\"toggle('$i')\">$h</h3>\n";
-			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
+			$toggle = " onclick=\"toggle('$i')\"";
 		}
 		else {
-			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
-			if(!is_null($b)) $html .= "<div>$b</div>\n";
+			$toggle = "";
 		}
+		if(!is_null($h)) $html .= "\n<h3 id='$i-toggle'$toggle>$h</h3>\n";
+		if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
 		return $html;
 	}
 }
