@@ -108,7 +108,7 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$html = "<select id='_config_$name' name='$name'>";
+		$html = "<select id='$name' name='_config_$name'>";
 		foreach($options as $optname => $optval) {
 			if($optval == $current) $selected=" selected";
 			else $selected="";
