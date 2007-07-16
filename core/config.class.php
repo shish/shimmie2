@@ -66,6 +66,11 @@ class Config {
 		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		$this->save($name);
 	}
+	public function set_default($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = $value;
+		}
+	}
 
 	public function get_int($name, $default=null) {
 		// deprecated -- ints should be stored as ints now
