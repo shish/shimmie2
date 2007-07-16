@@ -1,4 +1,6 @@
 <?php
+define("TAG_LIST_LENGTH", 15);
+define("TAGS_MIN", 3);
 
 class TagList extends Extension {
 	var $theme = null;
@@ -31,7 +33,7 @@ class TagList extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
 			global $config;
 			global $page;
-			if($config->get_int('tag_list_length') > 0) {
+			if($config->get_int('tag_list_length', TAG_LIST_LENGTH) > 0) {
 				if(isset($_GET['search'])) {
 					$this->add_refine_block($page, tag_explode($_GET['search']));
 				}
@@ -43,7 +45,7 @@ class TagList extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $config;
-			if($config->get_int('tag_list_length') > 0) {
+			if($config->get_int('tag_list_length', TAG_LIST_LENGTH) > 0) {
 				$this->add_related_block($event->page, $event->image);
 			}
 		}
@@ -80,7 +82,7 @@ class TagList extends Extension {
 		global $database;
 		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $config->get_int('tags_min', TAGS_MIN);
 		$result = $database->Execute(
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
 				array($tags_min));
@@ -104,7 +106,7 @@ class TagList extends Extension {
 		global $database;
 		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $config->get_int('tags_min', TAGS_MIN);
 		$result = $database->Execute(
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
 				array($tags_min));
@@ -131,7 +133,7 @@ class TagList extends Extension {
 		global $database;
 		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $config->get_int('tags_min', TAGS_MIN);
 		$result = $database->Execute(
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
 				array($tags_min)

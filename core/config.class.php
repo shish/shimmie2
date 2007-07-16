@@ -3,13 +3,10 @@ class Config {
 	var $values = array();
 	var $defaults = array(
 			'title' => 'Shimmie', # setup
-			'version' => 'Shimmie2-2.0.2', // internal
-			'db_version' => '2.0.0.9', // this should be managed by upgrade.php
+			'version' => 'Shimmie2-2.0.3', // internal
 			'front_page' => 'index', # setup
 			'base_href' => './index.php?q=', # setup
 			'data_href' => './', # setup
-			'theme' => 'default', # setup
-			'debug_enabled' => true, # hidden
 			'index_width' => 3, # index
 			'index_height' => 4, # index
 			'index_tips' => true,
@@ -17,8 +14,6 @@ class Config {
 			'thumb_height' => 192, # index
 			'thumb_quality' => 75,  # index
 			'thumb_mem_limit' => '8MB', # upload
-			'tags_default' => 'map', # (ignored)
-			'tags_min' => '2', # tags
 			'upload_count' => 3, # upload
 			'upload_size' => '256KB', # upload
 			'upload_anon' => true, # upload
