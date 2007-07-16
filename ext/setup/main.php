@@ -218,7 +218,7 @@ class Setup extends Extension {
 		foreach($panel->blocks as $block) {
 			if(is_a($block, 'SetupBlock')) {
 				$html = $this->sb_to_html($block);
-				$len = count(explode("<br>", $html));
+				$len = count(explode("<br>", $html))+1;
 				if($len1 <= $len2) {
 					$setupblock_html1 .= $this->sb_to_html($block);
 					$len1 += $len;
