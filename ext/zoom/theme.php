@@ -18,16 +18,12 @@ msg_div = document.createElement("div");
 msg_div.id = "msg_div";
 msg_div.appendChild(document.createTextNode("Note: Image has been scaled to fit the screen; click to enlarge"));
 msg_div.style.display="none";
-
 img.parentNode.insertBefore(msg_div, img);
 
-needs_scaling = false;
 orig_width = $image_width;
 
-needs_scaling = (orig_width >= img.parentNode.clientWidth * 0.9);
-
 function scale(img) {
-	if(needs_scaling) {
+	if(orig_width >= img.parentNode.clientWidth * 0.9) {
 		if(img.style.width != "90%") {
 			img.style.width = "90%";
 			msg_div.style.display = "block";
