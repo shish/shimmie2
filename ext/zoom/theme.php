@@ -24,7 +24,8 @@ img.parentNode.insertBefore(msg_div, img);
 orig_width = "";
 
 function scale(img) {
-	if(img.style.width != "90%") {
+	// element.clientWidth is not part of the JS standard :(
+	if(img.style.width != "90%" && (img.clientWidth >= img.parentNode.clientWidth * 0.9)) {
 		origwidth = img.style.width;
 		img.style.width = "90%";
 		msg_div.style.display = "block";
