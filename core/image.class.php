@@ -154,12 +154,13 @@ class Image {
 
 		$tmpl = str_replace('$id',   $this->id,   $tmpl);
 		$tmpl = str_replace('$hash', $this->hash, $tmpl);
-		$tmpl = str_replace('$tags', $safe_tags,  $tmpl);
+		$tmpl = str_replace('$tags', url_escape($safe_tags),  $tmpl);
 		$tmpl = str_replace('$base', $base_href,  $tmpl);
 		$tmpl = str_replace('$ext',  $this->ext,  $tmpl);
 		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
-		$tmpl = str_replace('$filename', $base_fname, $tmpl);
+		$tmpl = str_replace('$filename', url_escape($base_fname), $tmpl);
+		$tmpl = str_replace('$title', url_escape($config->get_string("title")), $tmpl);
 
 		return $tmpl;
 	}
