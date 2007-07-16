@@ -9,8 +9,9 @@ class TagList extends Extension {
 		
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			$config->set_default("tag_list_length", 15);
-			$config->set_default("tags_min", 3);
+			$config->set_default_int("tag_list_length", 15);
+			$config->set_default_int("tags_min", 3);
+			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "tags")) {

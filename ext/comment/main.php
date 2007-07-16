@@ -59,6 +59,11 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
+			$config->set_default_bool('comment_anon', true);
+			$config->set_default_int('comment_window', 5);
+			$config->set_default_int('comment_limit', 3);
+			$config->set_default_int('comment_count', 5);
+
 			if($config->get_int("ext_comments_version") < 1) {
 				$this->install();
 			}

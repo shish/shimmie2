@@ -1,14 +1,18 @@
 <?php
 
-define("UPLOAD_DEFAULT_MAX_SIZE", 256000);
-define("UPLOAD_DEFAULT_COUNT", 3);
-
 class Upload extends Extension {
 	var $theme;
 // event handling {{{
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("upload", "UploadTheme");
 		
+		if(is_a($event, 'InitExtEvent')) {
+			global $config;
+			$config->set_default_int('upload_count', 3);
+			$config->set_default_int('upload_size', '256KB');
+			$config->set_default_bool('upload_anon', false);
+		}
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
 			if($this->can_upload()) {
 				$this->theme->display_block($event->page_object);
@@ -43,7 +47,7 @@ class Upload extends Extension {
 // do things {{{
 	private function can_upload() {
 		global $config, $user;
-		return $config->get_bool("upload_anon", false) || !$user->is_anonymous();
+		return $config->get_bool("upload_anon") || !$user->is_anonymous();
 	}
 
 	private function try_upload($file) {
@@ -56,10 +60,10 @@ class Upload extends Extension {
 			// this happens normally with blank file boxes
 			$ok = true;
 		}
-		else if(filesize($file['tmp_name']) > $config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE)) {
+		else if(filesize($file['tmp_name']) > $config->get_int('upload_size')) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
 				"File too large (".filesize($file['tmp_name'])." &gt; ".
-				($config->get_int('upload_size', UPLOAD_DEFAULT_MAX_SIZE)).")");
+				($config->get_int('upload_size')).")");
 		}
 		else if(!($info = getimagesize($file['tmp_name']))) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),

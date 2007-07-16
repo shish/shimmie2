@@ -4,26 +4,8 @@ class Config {
 	var $defaults = array(
 			'title' => 'Shimmie', # setup
 			'version' => 'Shimmie2-2.0.3', // internal
-			'front_page' => 'index', # setup
 			'base_href' => './index.php?q=', # setup
 			'data_href' => './', # setup
-			'index_width' => 3, # index
-			'index_height' => 4, # index
-			'index_tips' => true,
-			'thumb_width' => 192, # index
-			'thumb_height' => 192, # index
-			'thumb_quality' => 75,  # index
-			'thumb_mem_limit' => '8MB', # upload
-			'upload_count' => 3, # upload
-			'upload_size' => '256KB', # upload
-			'upload_anon' => true, # upload
-			'comment_anon' => true, # comment
-			'comment_window' => 5, # comment
-			'comment_limit' => 3, # comment
-			'comment_count' => 5, # comment
-			'popular_count' => 15, # popular
-			'info_link' => 'http://en.wikipedia.org/wiki/$tag', # popular
-			'login_signup_enabled' => true, # user
 			'image_ilink' => '$base/image/$id.$ext', # view
 			'image_slink' => '', # view
 			'image_tlink' => '$base/thumb/$id.jpg', # view
@@ -66,9 +48,20 @@ class Config {
 		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		$this->save($name);
 	}
-	public function set_default($name, $value) {
+
+	public function set_default_int($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = parse_shorthand_int($value);
+		}
+	}
+	public function set_default_string($name, $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = $value;
+		}
+	}
+	public function set_default_bool($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		}
 	}
 
@@ -81,7 +74,11 @@ class Config {
 	}
 	public function get_bool($name, $default=null) {
 		// deprecated -- bools should be stored as Y/N now
-		return ($this->get($name, $default) == 'Y' || $this->get($name, $default) == '1');
+		return (
+			$this->get($name, $default) == 'Y' ||
+			$this->get($name, $default) == '1' ||
+			$this->get($name, $default) === true
+			);
 	}
 
 	private function get($name, $default=null) {

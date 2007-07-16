@@ -1,8 +1,11 @@
 <?php
 
 class ViewImage extends Extension {
+	var $theme;
 // event handling {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("view", "ViewTheme");
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "post") && ($event->get_arg(0) == "view")) {
 			$image_id = int_escape($event->get_arg(1));
 			
@@ -13,12 +16,7 @@ class ViewImage extends Extension {
 				send_event(new DisplayingImageEvent($image, $event->page_object));
 			}
 			else {
-				global $page;
-				$page->set_title("Image not found");
-				$page->set_heading("Image not found");
-				$page->add_block(new NavBlock());
-				$page->add_block(new Block("Image not found",
-					"No image in the database has the ID #$image_id"));
+				$this->theme->display_image_not_found($event->page_object, $image_id);
 			}
 		}
 

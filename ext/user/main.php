@@ -17,6 +17,12 @@ class UserBlockBuildingEvent extends Event {
 class UserPage extends Extension {
 // event handling {{{
 	public function receive_event($event) {
+		if(is_a($event, 'InitExtEvent')) {
+			global $config;
+			$config->set_default_bool("login_signup_enabled", true);
+			$config->set_default_int("login_memory", 365);
+		}
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page == "user")) {
 			global $page;
 			global $user;
@@ -36,7 +42,7 @@ class UserPage extends Extension {
 				}
 			}
 			else if($event->get_arg(0) == "logout") {
-				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory', 365), "/");
+				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("index"));
 			}
@@ -103,7 +109,7 @@ class UserPage extends Extension {
 					);
 			setcookie(
 					"shm_session", md5($hash.$addr),
-					time()+60*60*24*$config->get_int('login_memory', 365), "/"
+					time()+60*60*24*$config->get_int('login_memory'), "/"
 					);
 
 			$page->set_mode("redirect");
@@ -159,7 +165,7 @@ class UserPage extends Extension {
 				setcookie("shm_user", $name,
 						time()+60*60*24*365, '/');
 				setcookie("shm_session", md5($hash.$addr),
-						time()+60*60*24*$config->get_int('login_memory', 365), '/');
+						time()+60*60*24*$config->get_int('login_memory'), '/');
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("user"));
 			}
@@ -213,7 +219,7 @@ class UserPage extends Extension {
 					setcookie("shm_user", $name,
 							time()+60*60*24*365, '/');
 					setcookie("shm_session", md5($hash.$addr),
-							time()+60*60*24*$config->get_int('login_memory', 365), '/');
+							time()+60*60*24*$config->get_int('login_memory'), '/');
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("user"));
 				}

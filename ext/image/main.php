@@ -6,6 +6,14 @@
 class ImageIO extends Extension {
 // event handling {{{
 	public function receive_event($event) {
+		if(is_a($event, 'InitExtEvent')) {
+			global $config;
+			$config->set_default_int('thumb_width', 192);
+			$config->set_default_int('thumb_height', 192);
+			$config->set_default_int('thumb_quality', 75);
+			$config->set_default_int('thumb_mem_limit', '8MB');
+		}
+
 		if(is_a($event, 'PageRequestEvent')) {
 			$num = $event->get_arg(0);
 			$matches = array();

@@ -6,6 +6,13 @@ class Index extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("index", "IndexTheme");
 		
+		if(is_a($event, 'InitExtEvent')) {
+			global $config;
+			$config->set_default_int("index_width", 3);
+			$config->set_default_int("index_height", 4);
+			$config->set_default_bool("index_tips", true);
+		}
+
 		if(is_a($event, 'PageRequestEvent') && (($event->page == "index") ||
 					($event->page == "post" && $event->get_arg(0) == "list"))) {
 			if($event->page == "post") array_shift($event->args);
