@@ -25,8 +25,12 @@ class UserPageBuildingEvent extends Event {
 }
 
 class UserPage extends Extension {
+	var $theme;
+
 // event handling {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("user", "UserPageTheme");
+		
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			$config->set_default_bool("login_signup_enabled", true);
@@ -44,11 +48,7 @@ class UserPage extends Extension {
 					$this->login();
 				}
 				else {
-					$page->set_title("Login");
-					$page->set_heading("Login");
-					$page->add_block(new NavBlock());
-					$page->add_block(new Block("Login There",
-						"There should be a login box to the left"));
+					$this->theme->display_login_page($event->page);
 				}
 			}
 			else if($event->get_arg(0) == "logout") {
@@ -81,7 +81,7 @@ class UserPage extends Extension {
 			global $page;
 
 			if($user->is_anonymous()) {
-				$page->add_block(new Block("Login", $this->build_login_block(), "left", 90));
+				$this->theme->display_login_block($event->page);
 			}
 			else {
 				$page->add_block(new Block("User Links", $this->build_links_block(), "left", 90));
@@ -185,10 +185,7 @@ class UserPage extends Extension {
 			}
 		}
 		else {
-			$page->set_title("Create Account");
-			$page->set_heading("Create Account");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Signup", $this->build_signup_form()));
+			$this->theme->display_signup_page($page);
 		}
 	}
 //}}} 
@@ -279,30 +276,6 @@ class UserPage extends Extension {
 	}
 // }}}
 // HTML building {{{
-	private function build_signup_form() {
-		global $config;
-		$tac = $config->get_string("login_tac");
-
-		if(empty($tac)) {
-			$html = "";
-		}
-		else {
-			$html = "<p>$tac</p>";
-		}
-		$html .= "
-		<form action='".make_link("user/create")."' method='POST'>
-			<table style='width: 300px;' border='1'>
-				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
-			</table>
-		</form>
-		";
-		return $html;
-	}
-
 	private function build_user_page($duser) {
 		global $page;
 		global $user;
@@ -445,22 +418,6 @@ class UserPage extends Extension {
 		return $html;
 	}
 
-	private function build_login_block() {
-		global $config;
-		$html = "
-			<form action='".make_link("user/login")."' method='POST'>
-			<table border='1' summary='Login Form'>
-			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
-			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
-			<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
-			</table>
-			</form>
-		";
-		if($config->get_bool("login_signup_enabled")) {
-			$html .= "<small><a href='".make_link("user/create")."'>Create Account</a></small>";
-		}
-		return $html;
-	}
 // }}}
 }
 add_event_listener(new UserPage());
