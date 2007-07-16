@@ -7,6 +7,7 @@ class Image {
 	var $filename, $ext;
 	var $owner_ip;
 	var $posted;
+	var $source;
 
 	public function Image($a=false, $b=false, $c=false) {
 		if($b == false && $c == false) {
@@ -29,6 +30,7 @@ class Image {
 		$this->height   = $row['height'];
 		$this->posted   = $row['posted'];
 		$this->posted_timestamp   = $row['posted_timestamp'];
+		$this->source   = $row['source'];
 	}
 
 	private function mime_to_ext($mime) {
