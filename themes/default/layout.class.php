@@ -4,7 +4,7 @@ class Layout {
 	function display_page($page) {
 		global $config;
 		$theme_name = $config->get_string('theme', 'default');
-		$data_href = $config->get_string('data_href', './');
+		$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
 		$version = "Shimmie-".VERSION;
 

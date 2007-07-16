@@ -164,7 +164,6 @@ class Setup extends Extension {
 			$sb->add_text_option("title", "Site title: ");
 			$sb->add_text_option("front_page", "<br>Front page: ");
 			$sb->add_text_option("base_href", "<br>Base URL: ");
-			$sb->add_text_option("data_href", "<br>Data URL: ");
 			$sb->add_text_option("contact_link", "<br>Contact URL:");
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
 			// $sb->add_int_option("anon_id", "<br>Anonymous ID: "); // FIXME: create advanced options page

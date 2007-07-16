@@ -17,7 +17,7 @@ class Emoticons extends Extension {
 	
 	private function bbcode_to_html($text) {
 		global $config;
-		$data_href = $config->get_string("data_href");
+		$data_href = get_base_href();
 		$text = preg_replace("/:([a-z]*?):/s", "<img src='$data_href/ext/emoticons/default/\\1.gif'>", $text);
 		return $text;
 	}

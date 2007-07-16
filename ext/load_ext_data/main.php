@@ -4,7 +4,7 @@ class LoadExtData extends Extension {
 		if(is_a($event, 'PageRequestEvent')) {
 			global $page, $config;
 
-			$data_href = $config->get_string("data_href", './');
+			$data_href = get_base_href();
 
 			foreach(glob("ext/*/style.css") as $css_file) {
 				$page->add_header("<link rel='stylesheet' href='$data_href/$css_file' type='text/css'>");

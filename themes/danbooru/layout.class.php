@@ -46,7 +46,7 @@ class Layout {
 		global $config;
 		$theme_name = $config->get_string('theme');
 		$base_href = $config->get_string('base_href');
-		$data_href = $config->get_string('data_href');
+		$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
 		$version = $config->get_string('version');
 

@@ -205,6 +205,10 @@ function get_memory_limit() {
 	return $memory;
 }
 
+function get_base_href() {
+	return dirname($_SERVER['SCRIPT_NAME']);
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
