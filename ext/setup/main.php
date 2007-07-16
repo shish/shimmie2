@@ -170,10 +170,12 @@ class Setup extends Extension {
 			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
-			foreach($_POST as $name => $value) {
-				if(substr($name, 0, 8) == "_config_") {
-					$name = substr($name, 8);
-					switch($_POST["_type_$name"]) {
+			foreach($_POST as $_name => $junk) {
+				if(substr($_name, 0, 6) == "_type_") {
+					$name = substr($_name, 6);
+					$type = $_POST["_type_$name"];
+					$value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
+					switch($type) {
 						case "string": $event->config->set_string($name, $value); break;
 						case "int":    $event->config->set_int($name, $value);    break;
 						case "bool":   $event->config->set_bool($name, $value);   break;
