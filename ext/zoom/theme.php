@@ -29,7 +29,7 @@ function scale(img) {
 			msg_div.style.display = "block";
 		}
 		else {
-			img.style.width = origwidth;
+			img.style.width = orig_width;
 			msg_div.style.display = "none";
 		}
 	}
