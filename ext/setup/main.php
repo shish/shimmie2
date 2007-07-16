@@ -60,7 +60,7 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<textarea rows='5' cols='40' id='_config_$name' name='$name'>$val</textarea>\n";
+		$this->body .= "<textarea rows='5' cols='40' id='$name' name='_config_$name'>$val</textarea>\n";
 		$this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
@@ -71,7 +71,7 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<input type='checkbox' id='_config_$name' name='$name'$checked>\n";
+		$this->body .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
 		$this->body .= "<input type='hidden' name='_type_$name' value='bool'>\n";
 	}
 
