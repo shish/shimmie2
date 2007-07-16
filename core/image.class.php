@@ -109,7 +109,7 @@ class Image {
 
 	public function get_tooltip() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tip', '$tags // $size // $filesize'));
+		return $this->parse_link_template($config->get_string('image_tip', '$tags // $size // $filesize'), "html_escape");
 	}
 
 	public function get_image_filename() {
@@ -139,7 +139,7 @@ class Image {
 		return $this->ext;
 	}
 
-	public function parse_link_template($tmpl) {
+	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
 
 		// don't bother hitting the database if it won't be used...
@@ -156,13 +156,13 @@ class Image {
 
 		$tmpl = str_replace('$id',   $this->id,   $tmpl);
 		$tmpl = str_replace('$hash', $this->hash, $tmpl);
-		$tmpl = str_replace('$tags', url_escape($safe_tags),  $tmpl);
+		$tmpl = str_replace('$tags', $_escape($safe_tags),  $tmpl);
 		$tmpl = str_replace('$base', $base_href,  $tmpl);
 		$tmpl = str_replace('$ext',  $this->ext,  $tmpl);
 		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
-		$tmpl = str_replace('$filename', url_escape($base_fname), $tmpl);
-		$tmpl = str_replace('$title', url_escape($config->get_string("title")), $tmpl);
+		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
+		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
 
 		return $tmpl;
 	}
