@@ -1,11 +1,11 @@
 <?php
 
 class ZoomTheme extends Themelet {
-	public function display_zoomer($page, $zoom_by_default) {
-		$page->add_block(new Block(null, $this->make_zoomer($zoom_by_default)));
+	public function display_zoomer($page, $image, $zoom_by_default) {
+		$page->add_block(new Block(null, $this->make_zoomer($image->width, $zoom_by_default)));
 	}
 	
-	private function make_zoomer($zoom_by_default) {
+	private function make_zoomer($image_width, $zoom_by_default) {
 		global $config;
 		$default = $zoom_by_default ? "scale(img);" : "";
 		return <<<EOD
@@ -21,18 +21,21 @@ msg_div.style.display="none";
 
 img.parentNode.insertBefore(msg_div, img);
 
-orig_width = "";
+needs_scaling = false;
+orig_width = $image_width;
+
+needs_scaling = (orig_width >= img.parentNode.clientWidth * 0.9);
 
 function scale(img) {
-	// element.clientWidth is not part of the JS standard :(
-	if(img.style.width != "90%" && (img.clientWidth >= img.parentNode.clientWidth * 0.9)) {
-		origwidth = img.style.width;
-		img.style.width = "90%";
-		msg_div.style.display = "block";
-	}
-	else {
-		img.style.width = origwidth;
-		msg_div.style.display = "none";
+	if(needs_scaling) {
+		if(img.style.width != "90%") {
+			img.style.width = "90%";
+			msg_div.style.display = "block";
+		}
+		else {
+			img.style.width = origwidth;
+			msg_div.style.display = "none";
+		}
 	}
 }
 
