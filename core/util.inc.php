@@ -92,7 +92,7 @@ function tag_explode($tags) {
 
 function make_link($page, $query=null) {
 	global $config;
-	$base = $config->get_string('base_href');
+	$base = $config->get_string('base_href', './index.php?q=');
 
 	if(is_null($query)) {
 		return "$base/$page";

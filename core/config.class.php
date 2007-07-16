@@ -1,16 +1,6 @@
 <?php
 class Config {
 	var $values = array();
-	var $defaults = array(
-			'title' => 'Shimmie', # setup
-			'version' => 'Shimmie2-2.0.3', // internal
-			'base_href' => './index.php?q=', # setup
-			'data_href' => './', # setup
-			'image_ilink' => '$base/image/$id.$ext', # view
-			'image_slink' => '', # view
-			'image_tlink' => '$base/thumb/$id.jpg', # view
-			'image_tip' => '$tags // $size // $filesize' # view
-	);
 
 	public function Config() {
 		global $database;
@@ -74,19 +64,12 @@ class Config {
 	}
 	public function get_bool($name, $default=null) {
 		// deprecated -- bools should be stored as Y/N now
-		return (
-			$this->get($name, $default) == 'Y' ||
-			$this->get($name, $default) == '1' ||
-			$this->get($name, $default) === true
-			);
+		return ($this->get($name, $default) == 'Y' || $this->get($name, $default) == '1');
 	}
 
 	private function get($name, $default=null) {
 		if(isset($this->values[$name])) {
 			return $this->values[$name];
-		}
-		else if(isset($this->defaults[$name])) {
-			return $this->defaults[$name];
 		}
 		else {
 			return $default;

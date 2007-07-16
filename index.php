@@ -1,5 +1,6 @@
 <?php
 define("DEBUG", true);
+define("VERSION", '2.0.3-svn');
 
 if(DEBUG) {
 	error_reporting(E_ALL);

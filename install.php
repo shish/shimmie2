@@ -482,10 +482,18 @@ function create_tables_mysql($db) {
 
 	$db->Execute("DROP TABLE IF EXISTS tags");
 	$db->Execute("CREATE TABLE tags (
-		image_id int(11) NOT NULL default '0',
-		tag varchar(255) NOT NULL default '',
-		UNIQUE KEY image_id (image_id,tag),
-		KEY tags_tag (tag),
+		id int not null auto_increment primary key,
+		tag varchar(64) not null unique,
+		count int not null default 0,
+		KEY tags_count(count)
+	)");
+	
+	$db->Execute("DROP TABLE IF EXISTS image_tags");
+	$db->Execute("CREATE TABLE image_tags (
+		image_id int NOT NULL default 0,
+		tag_id int NOT NULL default 0,
+		UNIQUE KEY image_id_tag_id (image_id,tag_id),
+		KEY tags_tag_id (tag_id),
 		KEY tags_image_id (image_id)
 	)");
 
@@ -502,7 +510,17 @@ function create_tables_mysql($db) {
 		UNIQUE (name)
 	)");
 	
-	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', '2.0.0.9'));
+	$db->Execute("DROP TABLE IF EXISTS layout");
+	$database->Execute("CREATE TABLE layout (
+		title varchar(64) primary key not null,
+		section varchar(32) not null default \"left\",
+		position int not null default 50,
+		visible enum('Y', 'N') default 'Y' not null
+	)");
+
+	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('title', 'Shimmie'));
+	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
+	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('front_page', 'index'));
 
 	return $db->CommitTrans();
 }

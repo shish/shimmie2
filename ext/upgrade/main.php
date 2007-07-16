@@ -20,7 +20,7 @@ class Upgrade extends Extension {
 			$config->set_int("db_version", 2);
 		}
 
-		if($config->get_int("db_version") == 2) {
+		if($config->get_int("db_version") <= 2) {
 			$database->Execute("CREATE TABLE layout (
 				title varchar(64) primary key not null,
 				section varchar(32) not null default \"left\",

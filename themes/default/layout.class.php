@@ -3,11 +3,10 @@
 class Layout {
 	function display_page($page) {
 		global $config;
-		$theme_name = $config->get_string('theme');
-		$base_href = $config->get_string('base_href');
-		$data_href = $config->get_string('data_href');
+		$theme_name = $config->get_string('theme', 'default');
+		$data_href = $config->get_string('data_href', './');
 		$contact_link = $config->get_string('contact_link');
-		$version = $config->get_string('version');
+		$version = "Shimmie-".VERSION;
 
 		$header_html = "";
 		foreach($page->headers as $line) {
