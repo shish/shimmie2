@@ -75,10 +75,6 @@ class ViewTheme extends Themelet {
 		$i_owner_id = int_escape($owner->id);
 
 		$html = "";
-		if(strlen($image->get_short_link()) > 0) {
-			$slink = $image->get_short_link();
-			$html .= "<p>Link: <input size='50' type='text' value='$slink'>";
-		}
 		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		if($user->is_admin()) {
 			$html .= " ($h_ip)";

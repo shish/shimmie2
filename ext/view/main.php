@@ -23,15 +23,6 @@ class ViewImage extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			$this->theme->display_page($event->page, $event->get_image());
 		}
-
-		if(is_a($event, 'SetupBuildingEvent')) {
-			$sb = new SetupBlock("View Options");
-			$sb->position = 30;
-			$sb->add_text_option("image_ilink", "Long link ");
-			$sb->add_text_option("image_slink", "<br>Short link ");
-			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
-			$event->panel->add_block($sb);
-		}
 	}
 }
 add_event_listener(new ViewImage());

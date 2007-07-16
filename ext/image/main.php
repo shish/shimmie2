@@ -39,6 +39,12 @@ class ImageIO extends Extension {
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
+			$sb = new SetupBlock("Image Options");
+			$sb->position = 30;
+			$sb->add_text_option("image_ilink", "Image link ");
+			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
+			$event->panel->add_block($sb);
+
 			$thumbers = array();
 			$thumbers['Built-in GD'] = "gd";
 			$thumbers['ImageMagick'] = "convert";
