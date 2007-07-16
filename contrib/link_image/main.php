@@ -29,7 +29,7 @@ class LinkImage extends Extension {
 	private function data($image) {
 		global $config;
 		
-		$text_link = $this->parse_link_template($config->get_string("ext_link-img_text-link_format"),$image);
+		$text_link = $image->parse_link_template($config->get_string("ext_link-img_text-link_format"));
 		$text_link = $text_link==" "? null : $text_link; // null blank setting so the url gets filled in on the text links.
 		
 		return array(
@@ -37,34 +37,6 @@ class LinkImage extends Extension {
 			'image_src'	=>	$image->get_image_link(),
 			'post_link'	=>	$image->get_short_link(),
 			'text_link'		=>	$text_link);
-	}
-	
-	private function parse_link_template($tmpl, $img) { //shamelessly copied from image.class.php
-		global $config;
-		
-		// don't bother hitting the database if it won't be used...
-		$safe_tags = "";
-		if(strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
-			$safe_tags = preg_replace(
-				"/[^a-zA-Z0-9_\- ]/",
-				"", $img->get_tag_list());
-		}
-		
-		$base_href = $config->get_string('base_href');
-		$fname = $img->get_filename();
-		$base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
-		
-		$tmpl = str_replace('$id',   $img->id,   $tmpl);
-		$tmpl = str_replace('$hash', $img->hash, $tmpl);
-		$tmpl = str_replace('$tags', $safe_tags, $tmpl);
-		$tmpl = str_replace('$base', $base_href, $tmpl);
-		$tmpl = str_replace('$ext',  $img->ext,  $tmpl);
-		$tmpl = str_replace('$size', "{$img->width}x{$img->height}", $tmpl);
-		$tmpl = str_replace('$filesize', to_shorthand_int($img->filesize), $tmpl);
-		$tmpl = str_replace('$filename', $base_fname, $tmpl);
-		$tmpl = str_replace('$title', $config->get_string("title"), $tmpl);
-		
-		return $tmpl;
 	}
 }
 add_event_listener(new LinkImage());
