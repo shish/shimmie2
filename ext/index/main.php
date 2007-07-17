@@ -1,5 +1,15 @@
 <?php
 
+class PostListBuildingEvent extends Event {
+	var $page = null;
+	var $search_terms = null;
+
+	public function PostListBuildingEvent($page, $search) {
+		$this->page = $page;
+		$this->search_terms = $search;
+	}
+}
+
 class Index extends Extension {
 	var $theme;
 
@@ -40,6 +50,8 @@ class Index extends Extension {
 			$total_pages = $database->count_pages($search_terms);
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
 			$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
+
+			send_event(new PostListBuildingEvent($event->page, $search_terms));
 			
 			$this->theme->set_page($page_number, $total_pages, $search_terms);
 			$this->theme->display_page($event->page, $images);

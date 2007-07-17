@@ -13,11 +13,12 @@ class Upload extends Extension {
 			$config->set_default_bool('upload_anon', false);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
+		if(is_a($event, 'PostListBuildingEvent')) {
 			if($this->can_upload()) {
 				$this->theme->display_block($event->page);
 			}
 		}
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
 			if($this->can_upload()) {
 				global $page;

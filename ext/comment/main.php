@@ -91,7 +91,8 @@ class CommentList extends Extension {
 				$this->build_page($event->get_arg(1));
 			}
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
+
+		if(is_a($event, 'PostListBuildingEvent')) {
 			global $config;
 			if($config->get_int("comment_count") > 0) {
 				$event->page->add_block(new Block("Comments", $this->build_recent_comments(), "left"));

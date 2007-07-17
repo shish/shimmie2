@@ -35,15 +35,15 @@ class TagList extends Extension {
 			}
 			$this->theme->display_page($page);
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
+
+		if(is_a($event, 'PostListBuildingEvent')) {
 			global $config;
-			global $page;
 			if($config->get_int('tag_list_length') > 0) {
-				if(isset($_GET['search'])) {
-					$this->add_refine_block($page, tag_explode($_GET['search']));
+				if(!is_null($event->search_terms)) {
+					$this->add_refine_block($event->page, $event->search_terms);
 				}
 				else {
-					$this->add_popular_block($page);
+					$this->add_popular_block($event->page);
 				}
 			}
 		}
