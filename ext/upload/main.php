@@ -13,12 +13,12 @@ class Upload extends Extension {
 			$config->set_default_bool('upload_anon', false);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
 			if($this->can_upload()) {
-				$this->theme->display_block($event->page_object);
+				$this->theme->display_block($event->page);
 			}
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "upload")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
 			if($this->can_upload()) {
 				global $page;
 
@@ -27,10 +27,10 @@ class Upload extends Extension {
 					$ok = $ok & $this->try_upload($file);
 				}
 
-				$this->theme->display_upload_status($event->page_object, $ok);
+				$this->theme->display_upload_status($event->page, $ok);
 			}
 			else {
-				$this->theme->display_error($event->page_object, "Upload Denied", "Anonymous posting is disabled");
+				$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
 			}
 		}
 

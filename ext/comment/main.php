@@ -69,7 +69,7 @@ class CommentList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "comment")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "comment")) {
 			if($event->get_arg(0) == "add") {
 				$this->add_comment_wrapper($_POST['image_id'], $_POST['comment']);
 			}
@@ -79,8 +79,8 @@ class CommentList extends Extension {
 					// FIXME: post, not args
 					if($event->count_args() == 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
-						$event->page_object->set_mode("redirect");
-						$event->page_object->set_redirect(make_link("post/view/".$event->get_arg(2)));
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("post/view/".$event->get_arg(2)));
 					}
 				}
 				else {
@@ -91,11 +91,10 @@ class CommentList extends Extension {
 				$this->build_page($event->get_arg(1));
 			}
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
-			global $page;
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
 			global $config;
 			if($config->get_int("comment_count") > 0) {
-				$page->add_block(new Block("Comments", $this->build_recent_comments(), "left"));
+				$event->page->add_block(new Block("Comments", $this->build_recent_comments(), "left"));
 			}
 		}
 

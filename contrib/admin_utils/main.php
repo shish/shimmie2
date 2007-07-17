@@ -13,7 +13,7 @@ class AdminUtils extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("admin_utils", "AdminUtilsTheme");
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "admin_utils")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin_utils")) {
 			global $user;
 			if($user->is_admin()) {
 				set_time_limit(0);
@@ -30,9 +30,8 @@ class AdminUtils extends Extension {
 						break;
 				}
 
-				global $page;
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("admin"));
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link("admin"));
 			}
 		}
 

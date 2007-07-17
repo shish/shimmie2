@@ -20,10 +20,10 @@ class ImageIO extends Extension {
 			if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
 				$num = $matches[1];
 				
-				if($event->page == "image") {
+				if($event->page_name == "image") {
 					$this->send_file($num, "image");
 				}
-				else if($event->page == "thumb") {
+				else if($event->page_name == "thumb") {
 					$this->send_file($num, "thumb");
 				}
 			}

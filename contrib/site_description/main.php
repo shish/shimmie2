@@ -12,10 +12,10 @@
 class SiteDescription extends Extension {
 	public function receive_event($event) {
 		if(is_a($event, 'PageRequestEvent')) {
-			global $page, $config;
+			global $config;
 			if(strlen($config->get_string("site_description")) > 0) {
 				$description = $config->get_string("site_description");
-				$page->add_header("<meta name=\"description\" content=\"$description\">");
+				$event->page->add_header("<meta name=\"description\" content=\"$description\">");
 			}
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {

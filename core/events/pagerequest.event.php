@@ -12,14 +12,14 @@
  * Used for initial page generation triggers
  */
 class PageRequestEvent extends Event {
-	var $page;
+	var $page_name;
 	var $args;
-	var $page_object;
+	var $page;
 
-	public function PageRequestEvent($page, $args, $page_object) {
-		$this->page = $page;
+	public function PageRequestEvent($page_name, $args, $page) {
+		$this->page_name = $page_name;
 		$this->args = $args;
-		$this->page_object = $page_object;
+		$this->page = $page;
 	}
 
 	public function get_arg($n) {

@@ -13,9 +13,9 @@ class Index extends Extension {
 			$config->set_default_bool("index_tips", true);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && (($event->page == "index") ||
-					($event->page == "post" && $event->get_arg(0) == "list"))) {
-			if($event->page == "post") array_shift($event->args);
+		if(is_a($event, 'PageRequestEvent') && (($event->page_name == "index") ||
+					($event->page_name == "post" && $event->get_arg(0) == "list"))) {
+			if($event->page_name == "post") array_shift($event->args);
 
 			$search_terms = array();
 			$page_number = 1;
@@ -42,7 +42,7 @@ class Index extends Extension {
 			$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
 			
 			$this->theme->set_page($page_number, $total_pages, $search_terms);
-			$this->theme->display_page($event->page_object, $images);
+			$this->theme->display_page($event->page, $images);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {

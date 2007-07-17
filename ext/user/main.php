@@ -37,7 +37,7 @@ class UserPage extends Extension {
 			$config->set_default_int("login_memory", 365);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "user")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user")) {
 			global $page;
 			global $user;
 			global $database;
@@ -81,7 +81,7 @@ class UserPage extends Extension {
 			global $page;
 
 			if($user->is_anonymous()) {
-				$this->theme->display_login_block($event->page_object);
+				$this->theme->display_login_block($event->page);
 			}
 			else {
 				$page->add_block(new Block("User Links", $this->build_links_block(), "left", 90));

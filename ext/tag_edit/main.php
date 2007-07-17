@@ -3,7 +3,7 @@
 class TagEdit extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "tag_edit")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_edit")) {
 			global $page;
 			if($event->get_arg(0) == "set") {
 				if($this->can_tag()) {

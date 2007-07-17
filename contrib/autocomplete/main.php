@@ -9,15 +9,13 @@
 
 class AutoComplete extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "index" || $event->page == "view")) {
-			global $page;
-			$page->add_header("<script>autocomplete_url='".html_escape(make_link("autocomplete"))."';</script>");
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index" || $event->page_name == "view")) {
+			$event->page->add_header("<script>autocomplete_url='".html_escape(make_link("autocomplete"))."';</script>");
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "autocomplete")) {
-			global $page;
-			$page->set_mode("data");
-			$page->set_type("text/plain");
-			$page->set_data($this->get_completions($event->get_arg(0)));
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "autocomplete")) {
+			$event->page->set_mode("data");
+			$event->page->set_type("text/plain");
+			$event->page->set_data($this->get_completions($event->get_arg(0)));
 		}
 	}
 

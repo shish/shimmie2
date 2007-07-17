@@ -21,10 +21,9 @@ class Notes extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			global $page;
 			global $database;
 			$notes = $database->db->GetAll("SELECT * FROM image_notes WHERE image_id = ?", array($event->image->id));
-			$this->theme->display_notes($page, $notes);
+			$this->theme->display_notes($event->page, $notes);
 		}
 	}
 

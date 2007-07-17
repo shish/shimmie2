@@ -17,7 +17,7 @@ class Downtime extends Extension {
 		if(is_a($event, 'PageRequestEvent')) {
 			global $config;
 			if($config->get_bool("downtime")) {
-				$this->theme->display_notification($event->page_object);
+				$this->theme->display_notification($event->page);
 			}
 		}
 	}
@@ -34,7 +34,7 @@ class Downtime extends Extension {
 	}
 
 	private function is_safe_page($event) {
-		if($event->page == "user" && $event->get_arg(0) == "login") return true;
+		if($event->page_name == "user" && $event->get_arg(0) == "login") return true;
 		else return false;
 	}
 }

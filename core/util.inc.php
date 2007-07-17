@@ -363,24 +363,24 @@ function _get_query_parts() {
 	return split('/', $path);
 }
 
-function _get_page_request($page_object) {
+function _get_page_request($page) {
 	global $config;
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$page = $config->get_string('front_page', 'index');
+		$page_name = $config->get_string('front_page', 'index');
 		$args = array();
 	}
 	else if(count($args) == 1) {
-		$page = $args[0];
+		$page_name = $args[0];
 		$args = array();
 	}
 	else {
-		$page = $args[0];
+		$page_name = $args[0];
 		$args = array_slice($args, 1);
 	}
 	
-	return new PageRequestEvent($page, $args, $page_object);
+	return new PageRequestEvent($page_name, $args, $page);
 }
 
 function _get_user() {

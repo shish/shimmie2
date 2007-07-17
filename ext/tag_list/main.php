@@ -14,7 +14,7 @@ class TagList extends Extension {
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "tags")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tags")) {
 			global $page;
 
 			$this->theme->set_navigation($this->build_navigation());
@@ -35,7 +35,7 @@ class TagList extends Extension {
 			}
 			$this->theme->display_page($page);
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "index")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
 			global $config;
 			global $page;
 			if($config->get_int('tag_list_length') > 0) {

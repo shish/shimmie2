@@ -60,7 +60,7 @@ class Wiki extends Extension {
 			$this->setup();
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "wiki")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "wiki")) {
 			global $page;
 
 			$page->add_block(new NavBlock());

@@ -11,7 +11,7 @@ class AdminBuildingEvent extends Event {
 class AdminPage extends Extension {
 // event handler {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "admin")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin")) {
 			global $user;
 			if(!$user->is_admin()) {
 				global $page;

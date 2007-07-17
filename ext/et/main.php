@@ -6,10 +6,10 @@ class ET extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "system_info")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "system_info")) {
 			global $user;
 			if($user->is_admin()) {
-				$this->theme->display_info_page($event->page_object, $this->get_info());
+				$this->theme->display_info_page($event->page, $this->get_info());
 			}
 		}
 

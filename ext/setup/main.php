@@ -125,7 +125,7 @@ class SetupBlock extends Block {
 class Setup extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "setup")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "setup")) {
 			global $user;
 			if(!$user->is_admin()) {
 				global $page;

@@ -6,13 +6,13 @@ class BulkAdd extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("bulk_add", "BulkAddTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "bulk_add")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "bulk_add")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['dir'])) {
 				set_time_limit(0);
 
 				$this->add_dir($_POST['dir']);
-				$this->theme->display_upload_results($event->page_object);
+				$this->theme->display_upload_results($event->page);
 			}
 		}
 

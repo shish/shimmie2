@@ -13,7 +13,7 @@ class Home extends Extension {
 
 	public function receive_event($event) {
 		global $page;
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "home"))
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "home"))
 		{
 			// this is a request to display this page so output the page.
 		  	$this->output_pages();

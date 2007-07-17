@@ -5,12 +5,11 @@ class LinkImage extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("link_image", "LinkImageTheme");
 			if(is_a($event, 'DisplayingImageEvent')) {
-				global $page;
 				global $config;
-				$data_href = $config->get_string("data_href");
-				$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
+				$data_href = get_base_href();
+				$event->page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
 				
-				$this->theme->links_block($page,$this->data($event->image));
+				$this->theme->links_block($event->page,$this->data($event->image));
 			}
 			if(is_a($event, 'SetupBuildingEvent')) {
 				$sb = new SetupBlock("Link to Image");
@@ -20,10 +19,8 @@ class LinkImage extends Extension {
 			if(is_a($event, 'InitExtEvent')) {
 				global $config;
 				//just set default if empty.
-				if ($config->get_string("ext_link-img_text-link_format") == "") {
-					$config->set_string("ext_link-img_text-link_format",
+				$config->set_default_string("ext_link-img_text-link_format",
 										'$title - $id ($ext $size $filesize)');
-				}
 			}
 		}
 	private function data($image) {

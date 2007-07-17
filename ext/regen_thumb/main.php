@@ -6,7 +6,7 @@ class RegenThumb extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("regen_thumb", "RegenThumbTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page == "regen_thumb")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "regen_thumb")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['program']) && isset($_POST['image_id'])) {
 				$this->make_thumb($_POST['program'], $_POST['image_id']);
