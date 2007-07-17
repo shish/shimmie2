@@ -39,7 +39,7 @@ class TagList extends Extension {
 		if(is_a($event, 'PostListBuildingEvent')) {
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
-				if(!is_null($event->search_terms)) {
+				if(!empty($event->search_terms)) {
 					$this->add_refine_block($event->page, $event->search_terms);
 				}
 				else {
