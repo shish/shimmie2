@@ -206,7 +206,9 @@ function get_memory_limit() {
 }
 
 function get_base_href() {
-	return dirname($_SERVER['SCRIPT_NAME']);
+	$dir = dirname($_SERVER['SCRIPT_NAME']);
+	if($dir == "/") $dir = "";
+	return $dir;
 }
 
 
