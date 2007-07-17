@@ -511,7 +511,7 @@ function create_tables_mysql($db) {
 	)");
 	
 	$db->Execute("DROP TABLE IF EXISTS layout");
-	$database->Execute("CREATE TABLE layout (
+	$db->Execute("CREATE TABLE layout (
 		title varchar(64) primary key not null,
 		section varchar(32) not null default \"left\",
 		position int not null default 50,
