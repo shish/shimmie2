@@ -16,12 +16,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ index.php?q=$1&%{QUERY_STRING} [L]
 </IfModule>
 
-<IfModule mod_php4.c>
-	php_flag register_globals 0 
-	php_flag magic_quotes_gpc 0 
-	php_flag magic_quotes_runtime 0
-</IfModule>
-
 <IfModule mod_php5.c>
 	php_flag register_globals 0 
 	php_flag magic_quotes_gpc 0 
