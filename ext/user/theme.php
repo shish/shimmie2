@@ -2,11 +2,11 @@
 
 class UserPageTheme extends Themelet {
 	public function display_login_page($page) {
-					$page->set_title("Login");
-					$page->set_heading("Login");
-					$page->add_block(new NavBlock());
-					$page->add_block(new Block("Login There",
-						"There should be a login box to the left"));
+		$page->set_title("Login");
+		$page->set_heading("Login");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Login There",
+			"There should be a login box to the left"));
 	}
 
 	public function display_signup_page($page) {

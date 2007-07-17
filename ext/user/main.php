@@ -81,7 +81,7 @@ class UserPage extends Extension {
 			global $page;
 
 			if($user->is_anonymous()) {
-				$this->theme->display_login_block($event->page);
+				$this->theme->display_login_block($event->page_object);
 			}
 			else {
 				$page->add_block(new Block("User Links", $this->build_links_block(), "left", 90));
