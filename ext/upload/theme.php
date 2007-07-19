@@ -32,7 +32,7 @@ class UploadTheme extends Themelet {
 				"id='data$i' name='data$i' $style onchange=\"showUp('data".($i+1)."')\" type='file'>\n";
 		}
 		$max_size = $config->get_int('upload_size');
-		$max_kb = (int)($max_size / 1024);
+		$max_kb = to_shorthand_int($max_size);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
 			<form enctype='multipart/form-data' action='".make_link("upload")."' method='POST'>
@@ -40,7 +40,7 @@ class UploadTheme extends Themelet {
 				<input id='tagBox' name='tags' type='text' value='tagme' autocomplete='off'>
 				<input type='submit' value='Post'>
 			</form>
-			<div id='upload_completions' style='clear: both;'><small>(Max file size is {$max_kb}KB)</small></div>
+			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
 		";
 	}
 }
