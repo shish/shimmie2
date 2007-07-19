@@ -95,9 +95,11 @@ class Layout {
 		// bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
 		$custom_links = "";
 		$custom_links .= "<li><a href='".make_link('user')."'>My Account</a></li>";
-		$custom_links .= "<li><a href='".make_link('index')."'>Posts</a></li>";
+		$custom_links .= "<li><a href='".make_link('post/list')."'>Posts</a></li>";
 		$custom_links .= "<li><a href='".make_link('comment/list')."'>Comments</a></li>";
 		$custom_links .= "<li><a href='".make_link('tags')."'>Tags</a></li>";
+		$custom_links .= "<li><a href='".make_link('wiki')."'>Wiki</a></li>";
+		$custom_links .= "<li><a href='".make_link('wiki/more')."'>More &raquo;</a></li>";
 
 
 		// bzchan: failed attempt to add heading after title_link (failure was it looked bad)
