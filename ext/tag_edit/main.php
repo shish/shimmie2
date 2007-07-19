@@ -4,6 +4,8 @@ class TagEdit extends Extension {
 	var $theme;
 // event handling {{{
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("tag_edit", "TagEditTheme");
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_edit")) {
 			global $page;
 			if($event->get_arg(0) == "set") {
