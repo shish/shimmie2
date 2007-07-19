@@ -27,6 +27,14 @@ class Index extends Extension {
 					($event->page_name == "post" && $event->get_arg(0) == "list"))) {
 			if($event->page_name == "post") array_shift($event->args);
 
+			if(isset($_GET['search'])) {
+				$search = url_escape($_GET['search']);
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link("post/list/$search/1"));
+				$event->veto();
+				return;
+			}
+
 			$search_terms = array();
 			$page_number = 1;
 
@@ -39,10 +47,6 @@ class Index extends Extension {
 			}
 			
 			if($page_number == 0) $page_number = 1; // invalid -> 0
-
-			if(isset($_GET['search'])) {
-				$search_terms = explode(' ', $_GET['search']);
-			}
 
 			global $config;
 			global $database;
