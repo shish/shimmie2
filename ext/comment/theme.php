@@ -1,14 +1,7 @@
 <?php
 
 class CommentListTheme extends Themelet {
-	public function display_page_start($page, $current_page, $total_pages) {
-		$page->set_title("Comments");
-		$page->set_heading("Comments");
-		$page->add_block(new Block("Navigation", $this->build_navigation($current_page, $total_pages), "left"));
-		$page->add_block(new Paginator("comment/list", null, $current_page, $total_pages), 90);
-	}
-
-	private function build_navigation($page_number, $total_pages) {
+	public function display_page_start($page, $page_number, $total_pages) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -18,7 +11,39 @@ class CommentListTheme extends Themelet {
 		$h_next = ($page_number >= $total_pages) ? "Next" :
 			"<a href='".make_link("comment/list/$next")."'>Next</a>";
 
-		return "$h_prev | $h_index | $h_next";
+		$nav = "$h_prev | $h_index | $h_next";
+		
+		$page->set_title("Comments");
+		$page->set_heading("Comments");
+		$page->add_block(new Block("Navigation", $nav, "left"));
+		$page->add_block(new Paginator("comment/list", null, $page_number, $total_pages), 90);
+	}
+
+	public function display_recent_comments($page, $comments) {
+		$html = $this->comments_to_html($comments, true);
+		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
+		$page->add_block(new Block("Comments", $html, "left"));
+	}
+
+	public function display_comments($page, $comments, $postbox, $image_id) {
+		if($postbox) {
+			$page->add_block(new Block("Comments",
+					$this->comments_to_html($comments).
+					$this->build_postbox($image_id), "main", 30));
+		}
+		else {
+			$page->add_block(new Block("Comments",
+					$this->comments_to_html($comments), "main", 30));
+		}
+	}
+
+
+	private function comments_to_html($comments, $trim=false) {
+		$html = "";
+		foreach($comments as $comment) {
+			$html .= $comment->to_html($trim);
+		}
+		return $html;
 	}
 
 	// FIXME: privatise this
@@ -37,7 +62,7 @@ class CommentListTheme extends Themelet {
 	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
 		$html  = "<div style='text-align: left'>";
 		$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
-		$html .=   $comments;
+		$html .=   $this->comments_to_html($comments);
 		$html .= "</div>";
 		if($with_postbox) {
 			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";

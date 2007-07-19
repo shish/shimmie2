@@ -84,7 +84,7 @@ class CommentList extends Extension {
 					}
 				}
 				else {
-					// FIXME: denied message
+					$this->theme->display_error($event->page, "Denied", "Only admins can delete comments");
 				}
 			}
 			else if($event->get_arg(0) == "list") {
@@ -94,21 +94,18 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'PostListBuildingEvent')) {
 			global $config;
-			if($config->get_int("comment_count") > 0) {
-				$event->page->add_block(new Block("Comments", $this->build_recent_comments(), "left"));
+			$cc = $config->get_int("comment_count");
+			if($cc > 0) {
+				$this->theme->display_recent_comments($event->page, $this->get_recent_comments($cc));
 			}
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			if($this->can_comment()) {
-				$event->page->add_block(new Block("Comments",
-						$this->build_image_comments($event->image->id).
-						$this->theme->build_postbox($event->image->id), "main", 30));
-			}
-			else {
-				$event->page->add_block(new Block("Comments",
-						$this->build_image_comments($event->image->id), "main", 30));
-			}
+			$this->theme->display_comments(
+					$event->page,
+					$this->get_comments($event->image->id),
+					$this->can_comment(),
+					$event->image->id);
 		}
 
 		if(is_a($event, 'ImageDeletionEvent')) {
@@ -180,34 +177,18 @@ class CommentList extends Extension {
 		$n = 10;
 		while(!$result->EOF) {
 			$image = $database->get_image($result->fields["image_id"]);
-			$comments = $this->build_image_comments($image->id);
+			$comments = $this->get_comments($image->id);
 			$this->theme->add_comment_list($page, $image, $comments, $n, $this->can_comment());
 			$n += 1;
 			$result->MoveNext();
 		}
 	}
-
-	private function build_image_comments($image_id) {
+// }}}
+// get comments {{{
+	private function get_recent_comments() {
 		global $config;
-		$i_image_id = int_escape($image_id);
-		$html = "<div id='image_comments'>";
-		$html .= $this->query_to_html("
-				SELECT
-				users.id as user_id, users.name as user_name,
-				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip
-				FROM comments
-				LEFT JOIN users ON comments.owner_id=users.id
-				WHERE comments.image_id=?
-				ORDER BY comments.id ASC
-				", array($i_image_id), false);
-		$html .= "</div>";
-		return $html;
-	}
-
-	private function build_recent_comments() {
-		global $config;
-		$html = $this->query_to_html("
+		global $database;
+		$rows = $database->db->GetAll("
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,
@@ -216,23 +197,33 @@ class CommentList extends Extension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				ORDER BY comments.id DESC
 				LIMIT ?
-				", array($config->get_int('comment_count')), true);
-		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
-		return $html;
-	}
-
-	private function query_to_html($query, $args, $trim=false) {
-		global $database;
-		global $config;
-
-		$html = "";
-		$result = $database->Execute($query, $args);
-		while(!$result->EOF) {
-			$comment = new Comment($result->fields);
-			$html .= $comment->to_html($trim);
-			$result->MoveNext();
+				", array($config->get_int('comment_count')));
+		$comments = array();
+		foreach($rows as $row) {
+			$comments[] = new Comment($row);
 		}
-		return $html;
+		return $comments;
+	}
+	
+	private function get_comments($image_id) {
+		global $config;
+		global $database;
+		$i_image_id = int_escape($image_id);
+		$rows = $database->db->GetAll("
+				SELECT
+				users.id as user_id, users.name as user_name,
+				comments.comment as comment, comments.id as comment_id,
+				comments.image_id as image_id, comments.owner_ip as poster_ip
+				FROM comments
+				LEFT JOIN users ON comments.owner_id=users.id
+				WHERE comments.image_id=?
+				ORDER BY comments.id ASC
+				", array($i_image_id));
+		$comments = array();
+		foreach($rows as $row) {
+			$comments[] = new Comment($row);
+		}
+		return $comments;
 	}
 // }}}
 // add / remove / edit comments {{{
@@ -294,22 +285,19 @@ class CommentList extends Extension {
 		global $config;
 		global $page;
 
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
-			$page->add_main_block(new Block("Permission Denied", "Anonymous posting has been disabled"));
+			$this->theme->display_error($page, "Permission Denied", "Anonymous posting has been disabled");
 		}
 		else if(trim($comment) == "") {
-			$page->add_main_block(new Block("Comment Empty", "Comments need text..."));
+			$this->theme->display_error($page, "Comment Empty", "Comments need text...");
 		}
 		else if($this->is_comment_limit_hit()) {
-			$page->add_main_block(new Block("Comment Limit Hit",
-						"You've posted several comments recently; wait a minute and try again..."));
+			$this->theme->display_error($page, "Comment Limit Hit",
+						"You've posted several comments recently; wait a minute and try again...");
 		}
 		else if($this->is_spam($comment)) {
-			$page->add_main_block(new Block("Spam Detected",
-						"Akismet thinks that your comment is spam. Try rewriting the comment?"));
+			$this->theme->display_error($page, "Spam Detected",
+						"Akismet thinks that your comment is spam. Try rewriting the comment?");
 		}
 		else {
 			$database->Execute(
