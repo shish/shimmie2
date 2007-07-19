@@ -9,6 +9,13 @@ class UserPageTheme extends Themelet {
 			"There should be a login box to the left"));
 	}
 
+	public function display_user_block($page, $user, $parts) {
+		$h_name = html_escape($user->name);
+		$html = "Logged in as $h_name<br>";
+		$html .= join("\n<br/>", $parts);
+		$page->add_block(new Block("User Links", $html, "left", 90));
+	}
+
 	public function display_signup_page($page) {
 		global $config;
 		$tac = $config->get_string("login_tac");
@@ -50,5 +57,110 @@ class UserPageTheme extends Themelet {
 		}
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
+	
+	public function display_ip_list($page, $uploads, $comments) {
+		$html = "<table id='ip-history'>";
+		$html .= "<tr><td>Uploaded from: ";
+		foreach($uploads as $ip => $count) {
+			$html .= "<br>$ip ($count)";
+		}
+		$html .= "</td><td>Commented from:";
+		foreach($comments as $ip => $count) {
+			$html .= "<br>$ip ($count)";
+		}
+		$html .= "</td></tr>";
+		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
+
+		$page->add_block(new Block("IPs", $html));
+	}
+
+	public function display_user_page($page, $duser, $user) {
+		if(!is_null($duser)) {
+			$page->set_title("{$duser->name}'s Page");
+			$page->set_heading("{$duser->name}'s Page");
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Stats", $this->build_stats($duser)));
+
+			if(!$user->is_anonymous()) {
+				if($user->id == $duser->id || $user->is_admin()) {
+					$page->add_block(new Block("Options", $this->build_options($duser), "main", 0));
+				}
+				if($user->is_admin()) {
+					$page->add_block(new Block("More Options", $this->build_more_options($duser)));
+				}
+			}
+		}
+		else {
+			$this->display_error($page, "No Such User", 
+						"If you typed the ID by hand, try again; if you came from a link on this ".
+						"site, it might be bug report time...");
+		}
+	}
+
+	private function build_stats($duser) {
+		global $database;
+		global $config;
+
+		$i_days_old = int_escape($duser->get_days_old());
+		$h_join_date = html_escape($duser->join_date);
+		$i_image_count = int_escape($duser->get_image_count());
+		$i_comment_count = int_escape($duser->get_comment_count());
+
+		$i_days_old2 = ($i_days_old == 0) ? 1 : $i_days_old;
+
+		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
+		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
+
+		$u_name = url_escape($duser->name);
+		$images_link = make_link("index", "search=poster%3D$u_name");
+
+		return "
+			Join date: $h_join_date ($i_days_old days old)
+			<br><a href='$images_link'>Images uploaded</a>: $i_image_count ($h_image_rate / day)
+			<br>Comments made: $i_comment_count ($h_comment_rate / day)
+			";
+	}
+
+	private function build_options($duser) {
+		global $database;
+		global $config;
+
+		$html = "";
+		$html .= "
+		<form action='".make_link("user/changepass")."' method='POST'>
+			<input type='hidden' name='name' value='{$duser->name}'>
+			<input type='hidden' name='id' value='{$duser->id}'>
+			<table style='width: 300px;' border='1'>
+				<tr><td colspan='2'>Change Password</td></tr>
+				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
+				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
+				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
+			</table>
+		</form>
+		";
+		return $html;
+	}
+
+	private function build_more_options($duser) {
+		global $database;
+		global $config;
+
+		$i_user_id = int_escape($duser->id);
+		$h_is_admin = $duser->is_admin() ? " checked" : "";
+		$h_is_enabled = $duser->is_enabled() ? " checked" : "";
+
+		$html = "
+			<form action='".make_link("user/set_more")."' method='POST'>
+			<input type='hidden' name='id' value='$i_user_id'>
+			Admin: <input name='admin' type='checkbox'$h_is_admin>
+			<br>Enabled: <input name='enabled' type='checkbox'$h_is_enabled>
+			<p><input type='submit' value='Set'>
+			</form>
+			";
+		return $html;
+	}
+
+
+// }}}
 }
 ?>

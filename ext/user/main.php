@@ -72,7 +72,9 @@ class UserPage extends Extension {
 		}
 		
 		if(is_a($event, 'UserPageBuildingEvent')) {
-			$this->build_user_page($event->user);
+			global $user;
+			$this->theme->display_user_page($event->page, $event->user, $user);
+			$this->theme->display_ip_list($event->page, $this->count_upload_ips($event->user), $this->count_comment_ips($event->user));
 		}
 
 		// user info is shown on all pages
@@ -84,7 +86,10 @@ class UserPage extends Extension {
 				$this->theme->display_login_block($event->page);
 			}
 			else {
-				$page->add_block(new Block("User Links", $this->build_links_block(), "left", 90));
+				$ubbe = new UserBlockBuildingEvent($user);
+				send_event($ubbe);
+				ksort($ubbe->parts);
+				$this->theme->display_user_block($page, $user, $ubbe->parts);
 			}
 		}
 		
@@ -130,10 +135,7 @@ class UserPage extends Extension {
 			$page->set_redirect(make_link("user"));
 		}
 		else {
-			$page->set_title("Permission Denied");
-			$page->set_heading("Permission Denied");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Error", "No user with those details was found"));
+			$this->theme->display_error($event->page, "Error", "No user with those details was found");
 		}
 	}
 
@@ -275,149 +277,27 @@ class UserPage extends Extension {
 		}
 	}
 // }}}
-// HTML building {{{
-	private function build_user_page($duser) {
-		global $page;
-		global $user;
-		if(!is_null($duser)) {
-			$page->set_title("{$duser->name}'s Page");
-			$page->set_heading("{$duser->name}'s Page");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Stats", $this->build_stats($duser)));
-
-			if(!$user->is_anonymous()) {
-				if($user->id == $duser->id || $user->is_admin()) {
-					$page->add_block(new Block("Options", $this->build_options($duser), "main", 0));
-				}
-				if($user->is_admin()) {
-					$page->add_block(new Block("More Options", $this->build_more_options($duser)));
-					$page->add_block(new Block("IP List", $this->build_ip_list($duser)));
-				}
-			}
-		}
-		else {
-			$page->set_title("No Such User");
-			$page->set_heading("No Such User");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("No User By That ID",
-						"If you typed the ID by hand, try again; if you came from a link on this ".
-						"site, it might be bug report time..."));
-		}
-	}
-
-	private function build_stats($duser) {
+// ips {{{
+	private function count_upload_ips($duser) {
 		global $database;
-		global $config;
-
-		$i_days_old = int_escape($duser->get_days_old());
-		$h_join_date = html_escape($duser->join_date);
-		$i_image_count = int_escape($duser->get_image_count());
-		$i_comment_count = int_escape($duser->get_comment_count());
-
-		$i_days_old2 = ($i_days_old == 0) ? 1 : $i_days_old;
-
-		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
-		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
-
-		$u_name = url_escape($duser->name);
-		$images_link = make_link("index", "search=poster%3D$u_name");
-
-		return "
-			Join date: $h_join_date ($i_days_old days old)
-			<br><a href='$images_link'>Images uploaded</a>: $i_image_count ($h_image_rate / day)
-			<br>Comments made: $i_comment_count ($h_comment_rate / day)
-			";
-	}
-
-	private function build_options($duser) {
-		global $database;
-		global $config;
-
-		$html = "";
-		$html .= "
-		<form action='".make_link("user/changepass")."' method='POST'>
-			<input type='hidden' name='name' value='{$duser->name}'>
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;' border='1'>
-				<tr><td colspan='2'>Change Password</td></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
-			</table>
-		</form>
-		";
-		return $html;
-	}
-
-	private function build_more_options($duser) {
-		global $database;
-		global $config;
-
-		$i_user_id = int_escape($duser->id);
-		$h_is_admin = $duser->is_admin() ? " checked" : "";
-		$h_is_enabled = $duser->is_enabled() ? " checked" : "";
-
-		$html = "
-			<form action='".make_link("user/set_more")."' method='POST'>
-			<input type='hidden' name='id' value='$i_user_id'>
-			Admin: <input name='admin' type='checkbox'$h_is_admin>
-			<br>Enabled: <input name='enabled' type='checkbox'$h_is_enabled>
-			<p><input type='submit' value='Set'>
-			</form>
-			";
-		return $html;
-	}
-
-	private function build_ip_list($duser) {
-		global $database;
-		global $config;
-
-		$html = "<table id='ip-history'>";
-		$html .= "<tr><td>Uploaded from: ";
-		$rows = $database->db->GetAll("
+		$rows = $database->db->GetAssoc("
 				SELECT owner_ip, COUNT(images.id) AS count
 				FROM images
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY posted DESC", array($duser->id), true);
-		foreach($rows as $row) {
-			$ip = $row['owner_ip'];
-			$count = $row['count'];
-			$html .= "<br>$ip ($count)";
-		}
-		$html .= "</td><td>Commented from:";
-		$rows = $database->db->GetAll("
+				ORDER BY posted DESC", array($duser->id));
+		return $rows;
+	}
+	private function count_comment_ips($duser) {
+		global $database;
+		$rows = $database->db->GetAssoc("
 				SELECT owner_ip, COUNT(comments.id) AS count
 				FROM comments
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY posted DESC", array($duser->id), true);
-		foreach($rows as $row) {
-			$ip = $row['owner_ip'];
-			$count = $row['count'];
-			$html .= "<br>$ip ($count)";
-		}
-		$html .= "</td></tr>";
-		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
-		return $html;
+				ORDER BY posted DESC", array($duser->id));
+		return $rows;
 	}
-
-	private function build_links_block() {
-		global $user;
-
-		$ubbe = new UserBlockBuildingEvent($user);
-
-		send_event($ubbe);
-
-		$h_name = html_escape($user->name);
-		$html = "Logged in as $h_name<br>";
-
-		ksort($ubbe->parts);
-		$html .= join("\n<br/>", $ubbe->parts);
-		
-		return $html;
-	}
-
 // }}}
 }
 add_event_listener(new UserPage());
