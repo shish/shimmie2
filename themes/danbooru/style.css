@@ -117,6 +117,9 @@ A:hover {text-decoration: underline;}
 .more {
 	content: "More »";
 }
+.comment {
+	margin-bottom: 8px;
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
