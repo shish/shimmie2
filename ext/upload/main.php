@@ -124,7 +124,7 @@ class Upload extends Extension {
 
 			// PHP falls back to system default if /tmp fails, can't we just
 			// use the system default to start with? :-/
-			fopen($tmp_filename, "w");
+			$fp = fopen($tmp_filename, "w");
 			fwrite($fp, $data);
 			fclose($fp);
 		}
