@@ -41,9 +41,31 @@ class CommentListTheme extends Themelet {
 	private function comments_to_html($comments, $trim=false) {
 		$html = "";
 		foreach($comments as $comment) {
-			$html .= $comment->to_html($trim);
+			$html .= $this->comment_to_html($comment, $trim);
 		}
 		return $html;
+	}
+
+	private function comment_to_html($comment, $trim=false) {
+		global $user;
+
+		$tfe = new TextFormattingEvent($comment->comment);
+		send_event($tfe);
+
+		$i_uid = int_escape($comment->owner_id);
+		$h_name = html_escape($comment->owner_name);
+		$h_poster_ip = html_escape($comment->poster_ip);
+		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
+		$i_comment_id = int_escape($comment->comment_id);
+		$i_image_id = int_escape($comment->image_id);
+
+		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
+		$h_dellink = $user->is_admin() ? 
+			"<br>($h_poster_ip, <a ".
+			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
+			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
+		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
+		return "<p class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
 	}
 
 	// FIXME: privatise this
