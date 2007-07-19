@@ -20,18 +20,26 @@ class Upload extends Extension {
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
-			if($this->can_upload()) {
-				global $page;
+			if(count($_FILES) + count($_POST) > 0) {
+				if($this->can_upload()) {
+					$ok = true;
+					foreach($_FILES as $file) {
+						$ok = $ok & $this->try_upload($file);
+					}
+					foreach($_POST as $name => $value) {
+						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+							$ok = $ok & $this->try_transload($value);
+						}
+					}
 
-				$ok = true;
-				foreach($_FILES as $file) {
-					$ok = $ok & $this->try_upload($file);
+					$this->theme->display_upload_status($event->page, $ok);
 				}
-
-				$this->theme->display_upload_status($event->page, $ok);
+				else {
+					$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
+				}
 			}
 			else {
-				$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
+				$this->theme->display_page($event->page);
 			}
 		}
 
@@ -41,6 +49,11 @@ class Upload extends Extension {
 			$sb->add_int_option("upload_count", "Max uploads: ");
 			$sb->add_shorthand_int_option("upload_size", "<br>Max size per file: ");
 			$sb->add_bool_option("upload_anon", "<br>Allow anonymous uploads: ");
+			$sb->add_choice_option("transload_engine", array(
+				"Disabled" => "none",
+				"cURL" => "curl",
+				"fopen" => "fopen"
+			), "<br>Transload: ");
 			$event->panel->add_block($sb);
 		}
 	}
@@ -87,6 +100,70 @@ class Upload extends Extension {
 					"Something is not right!");
 			}
 		}
+
+		return $ok;
+	}
+
+	private function try_transload($url) {
+		global $page;
+		global $config;
+
+		$ok = false;
+
+		$tmp_filename = tempnam("/tmp", "shimmie_transload");
+
+		if($config->get_string("transload_engine") == "fopen") {
+			$fp = fopen($url, "r");
+			if(!$fp) {
+				$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+					"Error reading from ".html_escape($url));
+				return false;
+			}
+			$data = fread($fp, $config->get_int('upload_size'));
+			fclose($fp);
+
+			// PHP falls back to system default if /tmp fails, can't we just
+			// use the system default to start with? :-/
+			fopen($tmp_filename, "w");
+			fwrite($fp, $data);
+			fclose($fp);
+		}
+
+		if($config->get_string("transload_engine") == "curl") {
+			$ch = curl_init($url);
+			$fp = fopen($tmp_filename, "w");
+
+			curl_setopt($ch, CURLOPT_FILE, $fp);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+
+			curl_exec($ch);
+			curl_close($ch);
+			fclose($fp);
+		}
+		
+		if(!($info = getimagesize($tmp_filename))) {
+			$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+				"PHP doesn't recognise this as an image file");
+		}
+		else {
+			$image = new Image($tmp_filename, basename($url), $_POST['tags']);
+		
+			if($image->is_ok()) {
+				$event = new UploadingImageEvent($image);
+				send_event($event);
+				$ok = !$event->vetoed;
+				if(!$ok) {
+					$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+						$event->veto_reason);
+				}
+			}
+			else {
+				$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+					"Something is not right!");
+			}
+		}
+
+		unlink($tmp_filename);
 
 		return $ok;
 	}
