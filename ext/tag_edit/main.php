@@ -1,6 +1,7 @@
 <?php
 
 class TagEdit extends Extension {
+	var $theme;
 // event handling {{{
 	public function receive_event($event) {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_edit")) {
@@ -15,10 +16,7 @@ class TagEdit extends Extension {
 					$page->set_redirect(make_link("post/view/$i_image_id", $query));
 				}
 				else {
-					$page->set_title("Tag Edit Denied");
-					$page->set_heading("Tag Edit Denied");
-					$page->add_block(new NavBlock());
-					$page->add_block(new Block("Error", "Anonymous tag editing is disabled"));
+					$this->theme->display_anon_denied($event->page);
 				}
 			}
 			else if($event->get_arg(0) == "replace") {
@@ -33,7 +31,7 @@ class TagEdit extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			$event->page->add_block(new Block(null, $this->build_tag_editor($event->image), "main", 5));
+			$this->theme->display_editor($event->page, $event->image);
 		}
 
 		if(is_a($event, 'TagSetEvent')) {
@@ -47,8 +45,7 @@ class TagEdit extends Extension {
 		}
 
 		if(is_a($event, 'AdminBuildingEvent')) {
-			global $page;
-			$page->add_block(new Block("Mass Tag Edit", $this->build_mass_tag_edit()));
+			$this->theme->display_mass_editor($event->page);
 		}
 
 		// When an alias is added, oldtag becomes inaccessable
@@ -68,8 +65,7 @@ class TagEdit extends Extension {
 		global $config, $user;
 		return $config->get_bool("tag_edit_anon") || !$user->is_anonymous();
 	}
-// }}}
-// edit {{{
+
 	private function mass_tag_edit($search, $replace) {
 		global $database;
 		$search_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($search));
@@ -81,41 +77,6 @@ class TagEdit extends Extension {
 		else if($search_id) {
 			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
 		}
-	}
-// }}}
-// HTML {{{
-	private function build_tag_editor($image) {
-		global $database;
-		
-		if(isset($_GET['search'])) {
-			$h_query = "search=".url_escape($_GET['search']);
-		}
-		else {
-			$h_query = "";
-		}
-
-		$h_tags = html_escape($image->get_tag_list());
-		$i_image_id = int_escape($image->id);
-
-		return "
-		<p><form action='".make_link("tag_edit/set")."' method='POST'>
-			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='query' value='$h_query'>
-			<input type='text' size='50' name='tags' value='$h_tags'>
-			<input type='submit' value='Set'>
-		</form>
-		";
-	}
-	private function build_mass_tag_edit() {
-		return "
-		<form action='".make_link("tag_edit/replace")."' method='POST'>
-			<table border='1' style='width: 200px;'>
-				<tr><td>Search</td><td><input type='text' name='search'></tr>
-				<tr><td>Replace</td><td><input type='text' name='replace'></td></tr>
-				<tr><td colspan='2'><input type='submit' value='Replace'></td></tr>
-			</table>
-		</form>
-		";
 	}
 // }}}
 }
