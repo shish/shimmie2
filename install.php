@@ -391,8 +391,16 @@ function move_data($old_dsn, $new_dsn, $old_data) {
 
 	if($tags) {
 		print("<br>Moving tags..");
-		$new_db->Execute("DELETE FROM tags");
-		$new_db->Execute("INSERT INTO tags(image_id, tag) VALUES (?, ?)", $tags);
+		$new_db->Execute("CREATE TABLE old_tags(image_id int, tag varchar(64))");
+		$new_db->Execute("DELETE FROM old_tags");
+		$new_db->Execute("INSERT INTO old_tags(image_id, tag) VALUES (?, ?)", $tags);
+		
+		$database->Execute("DELETE FROM tags");
+		$database->Execute("INSERT INTO tags(tag) SELECT DISTINCT tag FROM old_tags");
+		$database->Execute("DELETE FROM image_tags");
+		$database->Execute("INSERT INTO image_tags(image_id, tag_id) SELECT old_tags.image_id, tags.id FROM old_tags JOIN tags ON old_tags.tag = tags.tag");
+		$database->Execute("UPDATE tags SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)");
+		$new_db->Execute("DROP TABLE tags_tmp");
 	}
 
 	print("<br>Moving files...");
