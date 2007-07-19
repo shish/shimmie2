@@ -1,7 +1,11 @@
 <?php
 
 class Tag_History extends Extension {
+	var $theme;
+
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("tag_history", "Tag_HistoryTheme");
+
 		if(is_a($event, 'InitExtEvent')) {
 			// shimmie is being installed so call install to create the table.
 			global $config;
@@ -21,22 +25,13 @@ class Tag_History extends Extension {
 			{
 				// must be an attempt to view a tag history
 				$image_id = int_escape($event->get_arg(0));
-				global $page;
-				global $config;
-				$page_heading = "Tag History: $image_id";
-				$page->set_title("Image $image_id Tag History");
-				$page->set_heading($page_heading);
-						
-				$page->add_block(new NavBlock());
-				$page->add_block(new Block("Tag History", $this->build_tag_history($image_id), "main", 10));
+				$this->theme->display_history_page($event->page, $image_id, $this->build_tag_history($image_id));
 			}
-			
 		}
 		if(is_a($event, 'DisplayingImageEvent'))
 		{
 			// handle displaying a link on the view page
-			global $page;
-			$page->add_block(new Block(null, $this->build_link($event->image->id), "main", 5));
+			$this->theme->display_history_link($event->page, $event->image->id);
 		}
 		if(is_a($event, 'ImageDeletionEvent'))
 		{
@@ -53,7 +48,6 @@ class Tag_History extends Extension {
 		if(is_a($event, 'TagSetEvent')) {
 			$this->add_tag_history($event->image_id);
 		}
-
 	}
 	
 	protected function install()
@@ -170,12 +164,6 @@ class Tag_History extends Extension {
 		global $database;
 		$row = $database->execute( "SELECT * FROM tag_histories WHERE image_id = ? ORDER BY id DESC", array($image_id));
 		return ($row ? $row : null);
-	}
-	
-	private function build_link($image_id)
-	{
-		// this function is called when a user is viewing an image
-		return "<a href='".make_link("tag_history/$image_id")."'>Tag History</a>\n";
 	}
 	
 	private function delete_all_tag_history($image_id)
