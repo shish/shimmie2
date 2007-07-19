@@ -54,17 +54,16 @@ class WikiPage {
 }
 // }}}
 class Wiki extends Extension {
-// event handler {{{
+	var $theme;
+
 	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("wiki", "WikiTheme");
+
 		if(is_a($event, 'InitExtEvent')) {
 			$this->setup();
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "wiki")) {
-			global $page;
-
-			$page->add_block(new NavBlock());
-
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
 			}
@@ -72,10 +71,8 @@ class Wiki extends Extension {
 				$title = $event->get_arg(0);
 			}
 			
-			$page->set_title(html_escape($title));
-			$page->set_heading(html_escape($title));
-
 			$content = $this->get_page($title);
+
 			if(isset($_GET['save']) && $_GET['save'] == "on") {
 				$title = $_POST['title'];
 				$rev = int_escape($_POST['revision']);
@@ -93,16 +90,11 @@ class Wiki extends Extension {
 
 					$u_title = url_escape($title);
 
-					global $page;
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("wiki/$u_title"));
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("wiki/$u_title"));
 				}
 				else {
-					global $page;
-					$page->set_title("Denied");
-					$page->set_heading("Denied");
-					$page->add_block(new NavBlock());
-					$page->add_block(new Block("Denied", "You do not have permission to edit this page"));
+					$this->theme->display_error($event->page, "Denied", "You do not have permission to edit this page");
 				}
 			}
 			else if(is_null($content)) {
@@ -114,18 +106,17 @@ class Wiki extends Extension {
 					$blank->body = $default->body;
 					$blank->owner_id = $config->get_int('anon_id');
 					$blank->date = $default->date;
-					$content = $this->create_display_html($blank);
+					$this->theme->display_page($event->page, $blank, $this->get_page("wiki:sidebar"));
 				}
 				else {
-					$content = $this->create_edit_html($blank);
+					$this->theme->display_page_editor($event->page, $blank);
 				}
-				$page->add_block(new Block("Content", $content));
 			}
 			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
-				$page->add_block(new Block("Content", $this->create_edit_html($content)));
+				$this->theme->display_page_editor($event->page, $content);
 			}
 			else {
-				$page->add_block(new Block("Content", $this->create_display_html($content)));
+				$this->theme->display_page($event->page, $content, $this->get_page("wiki:sidebar"));
 			}
 		}
 
@@ -140,8 +131,7 @@ class Wiki extends Extension {
 			$event->panel->add_block($sb);
 		}
 	}
-// }}}
-// misc {{{
+
 	private function can_edit($user, $page) {
 		global $config;
 
@@ -151,7 +141,7 @@ class Wiki extends Extension {
 		if($user->is_admin()) return true;
 		return false;
 	}
-// }}}
+
 // installer {{{
 	private function setup() {
 		global $database;
@@ -194,53 +184,6 @@ class Wiki extends Extension {
 		$row = $database->Execute("
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'], $title, $rev, $locked?'Y':'N', $body));
-	}
-// }}}
-// html {{{
-	private function create_edit_html($page) {
-		$h_title = html_escape($page->title);
-		$u_title = url_escape($page->title);
-		$i_revision = int_escape($page->revision) + 1;
-
-		global $user;
-		if($user->is_admin()) {
-			$val = $page->is_locked() ? " checked" : "";
-			$lock = "<br>Lock page: <input type='checkbox' name='lock'$val>";
-		}
-		else {
-			$lock = "";
-		}
-		return "
-			<form action='".make_link("wiki/$u_title", "save=on")."' method='POST'>
-				<input type='hidden' name='title' value='$h_title'>
-				<input type='hidden' name='revision' value='$i_revision'>
-				<textarea name='body' style='width: 100%' rows='20'>".html_escape($page->body)."</textarea>
-				$lock
-				<br><input type='submit' value='Save'>
-			</form>
-		";
-	}
-
-	private function create_display_html($page) {
-		$owner = $page->get_owner();
-
-		$tfe = new TextFormattingEvent($page->body);
-		send_event($tfe);
-
-		$html = "<div class='wiki-page'>";
-		$html .= $tfe->formatted;
-		$html .= "<hr>";
-		$html .= "<p class='wiki-footer'>Revision {$page->revision} by ".
-		         "<a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a> at {$page->date} ";
-
-		global $user;
-		if($this->can_edit($user, $page)) {
-			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
-		}
-
-		$html .= "</p></div>";
-
-		return $html;
 	}
 // }}}
 }

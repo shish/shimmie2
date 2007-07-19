@@ -1,0 +1,88 @@
+<?php
+
+class WikiTheme {
+	public function display_page($page, $wiki_page, $nav_page) {
+		if(is_null($nav_page)) {
+			$nav_page = new WikiPage();
+			$nav_page->body = "";
+		}
+		
+		$tfe = new TextFormattingEvent($nav_page->body);
+		send_event($tfe);
+
+		global $user;
+		if($user->is_admin()) {
+			$tfe->formatted .= "<p>(<a href='".make_link("wiki/wiki:sidebar", "edit=on")."'>Edit</a>)";
+		}
+
+		$page->set_title(html_escape($wiki_page->title));
+		$page->set_heading(html_escape($wiki_page->title));
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Wiki Index", $tfe->formatted, "left", 20));
+		$page->add_block(new Block("Content", $this->create_display_html($wiki_page)));
+	}
+
+	public function display_page_editor($page, $wiki_page) {
+		$page->set_title(html_escape($wiki_page->title));
+		$page->set_heading(html_escape($wiki_page->title));
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
+	}
+
+	private function can_edit($user, $page) {
+		global $config;
+
+		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
+		if($config->get_bool("wiki_edit_anon", false) && $user->is_anonymous()) return true;
+		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
+		if($user->is_admin()) return true;
+		return false;
+	}
+
+	private function create_edit_html($page) {
+		$h_title = html_escape($page->title);
+		$u_title = url_escape($page->title);
+		$i_revision = int_escape($page->revision) + 1;
+
+		global $user;
+		if($user->is_admin()) {
+			$val = $page->is_locked() ? " checked" : "";
+			$lock = "<br>Lock page: <input type='checkbox' name='lock'$val>";
+		}
+		else {
+			$lock = "";
+		}
+		return "
+			<form action='".make_link("wiki/$u_title", "save=on")."' method='POST'>
+				<input type='hidden' name='title' value='$h_title'>
+				<input type='hidden' name='revision' value='$i_revision'>
+				<textarea name='body' style='width: 100%' rows='20'>".html_escape($page->body)."</textarea>
+				$lock
+				<br><input type='submit' value='Save'>
+			</form>
+		";
+	}
+
+	private function create_display_html($page) {
+		$owner = $page->get_owner();
+
+		$tfe = new TextFormattingEvent($page->body);
+		send_event($tfe);
+
+		$html = "<div class='wiki-page'>";
+		$html .= $tfe->formatted;
+		$html .= "<hr>";
+		$html .= "<p class='wiki-footer'>Revision {$page->revision} by ".
+		         "<a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a> at {$page->date} ";
+
+		global $user;
+		if($this->can_edit($user, $page)) {
+			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
+		}
+
+		$html .= "</p></div>";
+
+		return $html;
+	}
+}
+?>
