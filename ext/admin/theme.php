@@ -14,7 +14,7 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new NavBlock());
 	}
 
-	public function display_delete_block($image_id) {
+	public function display_delete_block($page, $image_id) {
 		$i_image_id = int_escape($image_id);
 		$html = "
 			<form action='".make_link("admin/delete_image")."' method='POST'>
