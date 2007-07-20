@@ -176,10 +176,12 @@ class ImageIO extends Extension {
 
 		// actually insert the info
 		$database->Execute(
-				"INSERT INTO images(owner_id, owner_ip, filename, filesize, hash, ext, width, height, posted) ".
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, now())",
+				"INSERT INTO images(
+					owner_id, owner_ip, filename, filesize,
+					hash, ext, width, height, posted, source)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, now(), ?)",
 				array($user->id, $_SERVER['REMOTE_ADDR'], $image->filename, $image->filesize,
-						$image->hash, $image->ext, $image->width, $image->height));
+						$image->hash, $image->ext, $image->width, $image->height, $image->source));
 		$image->id = $database->db->Insert_ID();
 
 		/*

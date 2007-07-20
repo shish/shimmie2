@@ -9,12 +9,12 @@ class Image {
 	var $posted;
 	var $source;
 
-	public function Image($a=false, $b=false, $c=false) {
-		if($b == false && $c == false) {
+	public function Image($a=false, $b=false, $c=array(), $d="") {
+		if($b == false) {
 			$this->create_from_row($a);
 		}
 		else {
-			$this->create_from_data($a, $b, $c);
+			$this->create_from_data($a, $b, $c, $d);
 		}
 	}
 
@@ -42,7 +42,7 @@ class Image {
 		}
 	}
 
-	private function create_from_data($tmp, $filename, $tags) {
+	private function create_from_data($tmp, $filename, $tags, $source) {
 		global $config;
 
 		$this->ok = false;
@@ -60,8 +60,8 @@ class Image {
 		$this->ext = $this->mime_to_ext($info['mime']);
 		$this->hash = md5_file($tmp);
 		$this->temp_filename = $tmp;
-		
 		$this->tag_array = tag_explode($tags);
+		$this->source = $source;
 
 		$this->ok = true;
 	}
