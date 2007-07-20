@@ -110,6 +110,8 @@ class Upload extends Extension {
 
 		$ok = false;
 
+		// PHP falls back to system default if /tmp fails, can't we just
+		// use the system default to start with? :-/
 		$tmp_filename = tempnam("/tmp", "shimmie_transload");
 
 		if($config->get_string("transload_engine") == "fopen") {
@@ -119,11 +121,13 @@ class Upload extends Extension {
 					"Error reading from ".html_escape($url));
 				return false;
 			}
-			$data = fread($fp, $config->get_int('upload_size'));
+			$data = "";
+			while(!feof($fp) && $length <= $config->get_int('upload_size')) {
+				$data .= fread($fp, 8192);
+				$length = strlen($data);
+			}
 			fclose($fp);
 
-			// PHP falls back to system default if /tmp fails, can't we just
-			// use the system default to start with? :-/
 			$fp = fopen($tmp_filename, "w");
 			fwrite($fp, $data);
 			fclose($fp);
@@ -141,7 +145,12 @@ class Upload extends Extension {
 			fclose($fp);
 		}
 		
-		if(!($info = getimagesize($tmp_filename))) {
+		if(filesize($tmp_filename) > $config->get_int('upload_size')) {
+			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
+				"File too large (".filesize($tmp_filename)." &gt; ".
+				($config->get_int('upload_size')).")");
+		}
+		else if(!($info = getimagesize($tmp_filename))) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
 				"PHP doesn't recognise this as an image file");
 		}
