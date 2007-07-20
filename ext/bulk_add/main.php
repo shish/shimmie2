@@ -55,6 +55,7 @@ class BulkAdd extends Extension {
 		
 		if(!is_dir($base)) {
 			$this->theme->add_status("Error", "$base is not a directory");
+			return;
 		}
 
 		$list = "";
