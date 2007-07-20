@@ -21,14 +21,16 @@ class Upload extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
 			if(count($_FILES) + count($_POST) > 0) {
+				$tags = tag_explode($_POST['tags']);
+				$source = $_POST['source'];
 				if($this->can_upload()) {
 					$ok = true;
 					foreach($_FILES as $file) {
-						$ok = $ok & $this->try_upload($file);
+						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-							$ok = $ok & $this->try_transload($value);
+							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
 					}
 
@@ -64,7 +66,7 @@ class Upload extends Extension {
 		return $config->get_bool("upload_anon") || !$user->is_anonymous();
 	}
 
-	private function try_upload($file) {
+	private function try_upload($file, $tags, $source) {
 		global $page;
 		global $config;
 
@@ -84,7 +86,7 @@ class Upload extends Extension {
 				"PHP doesn't recognise this as an image file");
 		}
 		else {
-			$image = new Image($file['tmp_name'], $file['name'], $_POST['tags']);
+			$image = new Image($file['tmp_name'], $file['name'], $tags, $source);
 		
 			if($image->is_ok()) {
 				$event = new UploadingImageEvent($image);
@@ -104,11 +106,13 @@ class Upload extends Extension {
 		return $ok;
 	}
 
-	private function try_transload($url) {
+	private function try_transload($url, $tags, $source) {
 		global $page;
 		global $config;
 
 		$ok = false;
+
+		if(empty($source)) $source = $url;
 
 		// PHP falls back to system default if /tmp fails, can't we just
 		// use the system default to start with? :-/
@@ -122,6 +126,7 @@ class Upload extends Extension {
 				return false;
 			}
 			$data = "";
+			$length = 0;
 			while(!feof($fp) && $length <= $config->get_int('upload_size')) {
 				$data .= fread($fp, 8192);
 				$length = strlen($data);
@@ -155,7 +160,7 @@ class Upload extends Extension {
 				"PHP doesn't recognise this as an image file");
 		}
 		else {
-			$image = new Image($tmp_filename, basename($url), $_POST['tags']);
+			$image = new Image($tmp_filename, basename($url), $tags, $source);
 		
 			if($image->is_ok()) {
 				$event = new UploadingImageEvent($image);
