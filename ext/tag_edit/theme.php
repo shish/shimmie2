@@ -26,7 +26,7 @@ class TagEditTheme extends Themelet {
 		$page->add_block(new Block(null, $html, "main", 5));
 	}
 
-	public function display_mass_editor() {
+	public function display_mass_editor($page) {
 		$html = "
 		<form action='".make_link("tag_edit/replace")."' method='POST'>
 			<table border='1' style='width: 200px;'>
