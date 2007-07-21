@@ -26,6 +26,7 @@ class Comment { // {{{
 		$this->comment_id =  $row['comment_id'];
 		$this->image_id =  $row['image_id'];
 		$this->poster_ip =  $row['poster_ip'];
+		$this->posted =  $row['posted'];
 	}
 } // }}}
 
@@ -170,7 +171,8 @@ class CommentList extends Extension {
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip
+				comments.image_id as image_id, comments.owner_ip as poster_ip,
+				comments.posted as posted
 				FROM comments
 				LEFT JOIN users ON comments.owner_id=users.id
 				ORDER BY comments.id DESC
@@ -191,7 +193,8 @@ class CommentList extends Extension {
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,
-				comments.image_id as image_id, comments.owner_ip as poster_ip
+				comments.image_id as image_id, comments.owner_ip as poster_ip,
+				comments.posted as posted
 				FROM comments
 				LEFT JOIN users ON comments.owner_id=users.id
 				WHERE comments.image_id=?

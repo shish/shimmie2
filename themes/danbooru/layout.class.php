@@ -110,6 +110,15 @@ class Layout {
 		// bzchan: prepare main title link
 		$title_link = "<h1><a href='".make_link($front_page)."'>$site_name</a></h1>";
 
+		if($page->left_enabled) {
+			$left = "<div id='nav'>$left_block_html</div>";
+			$withleft = "withleft";
+		}
+		else {
+			$left = "";
+			$withleft = "";
+		}
+
 		print <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
@@ -130,8 +139,8 @@ $header_html
 		</div>
 		$subheading
 		
-		<div id="nav">$left_block_html</div>
-		<div id="body">$main_block_html</div>
+		$left
+		<div id="body" class="$withleft">$main_block_html</div>
 
 		<div id="footer">
 			<hr>

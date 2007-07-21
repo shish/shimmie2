@@ -8,14 +8,9 @@ BODY {
 	background-color:#FFFFFF;
 	font: 80% verdana, sans-serif;
 	padding: 1em 3em;
-	text-align:center;
 }
 
 /* bzchan: All H* tags tweaked */
-H1, H3 {
-	
-	text-align: center;
-}
 H1 {
 	font-size: 2em;
 	margin-top: 0px;
@@ -126,13 +121,15 @@ A:hover {text-decoration: underline;}
 *                 the main part of each page                     *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#body {
+.withleft {
 	margin-left: 160px;
-	text-align: center;
 }
 #body TABLE {
 	width: 90%;
 	margin: auto;
+}
+.paginator {
+	text-align: center;
 }
 
 
@@ -148,10 +145,6 @@ A:hover {text-decoration: underline;}
 
 #tagmap A {
 	padding: 8px 4px 8px 4px;
-}
-
-#image_comments {
-	text-align: left;
 }
 
 .setupblock {
@@ -170,6 +163,11 @@ A:hover {text-decoration: underline;}
 }
 .bad {
 	background: #FAA;
+}
+
+.comment .username {
+	font-size: 1.5em;
+	font-weight: bold;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

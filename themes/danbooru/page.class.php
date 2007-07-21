@@ -1,6 +1,9 @@
 <?php
 
 class Page extends GenericPage {
-	// no changes from default
+	var $left_enabled = true;
+	public function disable_left() {
+		$this->left_enabled = false;
+	}
 }
 ?>
