@@ -8,6 +8,7 @@ class Themelet {
 		$page->add_block(new Block("Error", $message));
 	}
 
+
 	public function display_paginator($page, $base, $query, $page_number, $total_pages) {
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
 		$page->add_block(new Block(null, $body, "main", 90));
@@ -20,9 +21,8 @@ class Themelet {
 	
 	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
-	    if($page == $current_page) $paginator .= "<b>";
-	    $paginator .= $this->gen_page_link($base_url, $query, $page, $name);
-	    if($page == $current_page) $paginator .= "</b>";
+	    if($page == $current_page) $paginator .= "<b>$page</b>";
+	    else $paginator .= $this->gen_page_link($base_url, $query, $page, $name);
 	    return $paginator;
 	}
 					
@@ -34,23 +34,27 @@ class Themelet {
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
-		$first_html  = $at_start ? "First" : $this->gen_page_link($base_url, $query, 1,            "First");
-		$prev_html   = $at_start ? "Prev"  : $this->gen_page_link($base_url, $query, $prev,        "Prev");
-		$random_html =                       $this->gen_page_link($base_url, $query, $rand,        "Random");
-		$next_html   = $at_end   ? "Next"  : $this->gen_page_link($base_url, $query, $next,        "Next");
-		$last_html   = $at_end   ? "Last"  : $this->gen_page_link($base_url, $query, $total_pages, "Last");
+		$first_html  = $at_start ? "" : $this->gen_page_link($base_url, $query, 1,            "1");
+		$prev_html   = $at_start ? "" : $this->gen_page_link($base_url, $query, $prev,        "&lt;&lt;");
+		$next_html   = $at_end   ? "" : $this->gen_page_link($base_url, $query, $next,        "&gt;&gt;");
+		$last_html   = $at_end   ? "" : $this->gen_page_link($base_url, $query, $total_pages, "$total_pages");
 
-		$start = $current_page-5 > 1 ? $current_page-5 : 1;
-		$end = $start+10 < $total_pages ? $start+10 : $total_pages;
+		$start = $current_page-2 > 1 ? $current_page-2 : 1;
+		$end   = $current_page+2 <= $total_pages ? $current_page+2 : $total_pages;
 
 		$pages = array();
 		foreach(range($start, $end) as $i) {
 			$pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, $i);
 		}
-		$pages_html = implode(" | ", $pages);
+		$pages_html = implode(" ", $pages);
 
-		return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
-				"<br>&lt;&lt; $pages_html &gt;&gt;</p>";
+		if(strlen($first_html) > 0) $pdots = "...";
+		else $pdots = "";
+
+		if(strlen($last_html) > 0) $ndots = "...";
+		else $ndots = "";
+
+		return "<p class='paginator'>$prev_html $first_html $pdots $pages_html $ndots $last_html $next_html</p>";
 	}
 }
 ?>
