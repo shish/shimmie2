@@ -26,7 +26,7 @@ class IndexTheme extends Themelet {
 		$page->add_block(new Block("Search", $nav, "left", 0));
 		if(count($images) > 0) {
 			$page->add_block(new Block("Images", $this->build_table($images, $query), "main", 10));
-			$page->add_block(new Paginator("post/list", $query, $this->page_number, $this->total_pages));
+			$this->display_paginator($page, "post/list", $query, $this->page_number, $this->total_pages);
 		}
 		else {
 			$page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));

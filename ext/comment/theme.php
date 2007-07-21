@@ -16,7 +16,7 @@ class CommentListTheme extends Themelet {
 		$page->set_title("Comments");
 		$page->set_heading("Comments");
 		$page->add_block(new Block("Navigation", $nav, "left"));
-		$page->add_block(new Paginator("comment/list", null, $page_number, $total_pages), 90);
+		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 	}
 
 	public function display_recent_comments($page, $comments) {
