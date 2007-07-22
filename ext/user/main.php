@@ -45,7 +45,7 @@ class UserPage extends Extension {
 
 			if($event->get_arg(0) == "login") {
 				if(isset($_POST['user']) && isset($_POST['pass'])) {
-					$this->login();
+					$this->login($event->page);
 				}
 				else {
 					$this->theme->display_login_page($event->page);
@@ -57,13 +57,13 @@ class UserPage extends Extension {
 				$page->set_redirect(make_link("index"));
 			}
 			else if($event->get_arg(0) == "changepass") {
-				$this->change_password_wrapper();
+				$this->change_password_wrapper($event->page);
 			}
 			else if($event->get_arg(0) == "create") {
-				$this->create_user_wrapper();
+				$this->create_user_wrapper($event->page);
 			}
 			else if($event->get_arg(0) == "set_more") {
-				$this->set_more_wrapper();
+				$this->set_more_wrapper($event->page);
 			}
 			else { // view
 				$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
@@ -107,8 +107,7 @@ class UserPage extends Extension {
 	}
 // }}}
 // Things done *with* the user {{{
-	private function login()  {
-		global $page;
+	private function login($page)  {
 		global $database;
 		global $config;
 		global $user;
@@ -135,12 +134,11 @@ class UserPage extends Extension {
 			$page->set_redirect(make_link("user"));
 		}
 		else {
-			$this->theme->display_error($event->page, "Error", "No user with those details was found");
+			$this->theme->display_error($page, "Error", "No user with those details was found");
 		}
 	}
 
-	private function create_user_wrapper() {
-		global $page;
+	private function create_user_wrapper($page) {
 		global $database;
 		global $config;
 
@@ -192,9 +190,8 @@ class UserPage extends Extension {
 	}
 //}}} 
 // Things done *to* the user {{{
-	private function change_password_wrapper() {
+	private function change_password_wrapper($page) {
 		global $user;
-		global $page;
 		global $database;
 		
 		$page->set_title("Error");
@@ -244,8 +241,7 @@ class UserPage extends Extension {
 		}
 	}
 
-	private function set_more_wrapper() {
-		global $page;
+	private function set_more_wrapper($page) {
 		global $user;
 		global $database;
 		
