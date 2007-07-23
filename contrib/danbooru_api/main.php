@@ -7,7 +7,7 @@ simple HTTP GET/POST requests.
 Author: JJS <jsutinen@gmail.com>
 Notes:
 danbooru API based on documentation from danbooru 1.0 - http://attachr.com/7569
-I've only been able to test add_post and find_tags beacuse I use the old danbooru firefox extension for firefox 1.5
+I've only been able to test add_post and find_tags because I use the old danbooru firefox extension for firefox 1.5
 
 Functions currently implemented:
 add_comment - NOT DONE YET, waiting on some backend shimmie code :)
@@ -221,11 +221,10 @@ class DanbooruApi extends Extension
 				} else
 				{	// If it went ok, grab the id for the newly uploaded image and pass it in the header
 					$newimg = $database->get_image_by_hash($image->hash);
-					$newid = "http://" . $_SERVER['HTTP_HOST'] . make_link("post/view/" . $newimg->id);
+					$newid = make_link("post/view/" . $newimg->id);
 					// Did we POST or GET this call?
 					if($_SERVER['REQUEST_METHOD'] == 'POST')
 					{
-						header("X-You-Win: yes");
 						header("X-Danbooru-Location: $newid");
 					}
 					else
