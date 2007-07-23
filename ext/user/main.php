@@ -283,7 +283,7 @@ class UserPage extends Extension {
 				FROM images
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY posted DESC", array($duser->id));
+				ORDER BY MAX(posted) DESC", array($duser->id));
 		return $rows;
 	}
 	private function count_comment_ips($duser) {
@@ -293,7 +293,7 @@ class UserPage extends Extension {
 				FROM comments
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY posted DESC", array($duser->id));
+				ORDER BY MAX(posted) DESC", array($duser->id));
 		return $rows;
 	}
 // }}}
