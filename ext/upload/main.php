@@ -69,6 +69,8 @@ class Upload extends Extension {
 	private function try_upload($file, $tags, $source) {
 		global $page;
 		global $config;
+		
+		if(empty($source)) $source = null;
 
 		$ok = false;
 		
