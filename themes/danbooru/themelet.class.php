@@ -31,8 +31,8 @@ class Themelet {
 		$prev = $current_page - 1;
 		$rand = rand(1, $total_pages);
 
-		$at_start = ($current_page <= 1 || $total_pages <= 1);
-		$at_end = ($current_page >= $total_pages);
+		$at_start = ($current_page <= 3 || $total_pages <= 3);
+		$at_end = ($current_page >= $total_pages -2);
 
 		$first_html  = $at_start ? "" : $this->gen_page_link($base_url, $query, 1,            "1");
 		$prev_html   = $at_start ? "" : $this->gen_page_link($base_url, $query, $prev,        "&lt;&lt;");

@@ -16,7 +16,7 @@ class IndexTheme extends Themelet {
 		}
 		else {
 			$search_string = implode(' ', $this->search_terms);
-			$query = "search=".url_escape($search_string);
+			$query = "/".url_escape($search_string);
 			$page_title = html_escape($search_string);
 		}
 
@@ -26,7 +26,7 @@ class IndexTheme extends Themelet {
 		$page->add_block(new Block("Search", $nav, "left", 0));
 		if(count($images) > 0) {
 			$page->add_block(new Block("Images", $this->build_table($images, $query), "main", 10));
-			$this->display_paginator($page, "post/list", $query, $this->page_number, $this->total_pages);
+			$this->display_paginator($page, "post/list$query", null, $this->page_number, $this->total_pages);
 		}
 		else {
 			$page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));
