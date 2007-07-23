@@ -74,7 +74,9 @@ class UserPage extends Extension {
 		if(is_a($event, 'UserPageBuildingEvent')) {
 			global $user;
 			$this->theme->display_user_page($event->page, $event->user, $user);
-			$this->theme->display_ip_list($event->page, $this->count_upload_ips($event->user), $this->count_comment_ips($event->user));
+			if($user->is_admin() || $user->id == $event->user->id) {
+				$this->theme->display_ip_list($event->page, $this->count_upload_ips($event->user), $this->count_comment_ips($event->user));
+			}
 		}
 
 		// user info is shown on all pages
