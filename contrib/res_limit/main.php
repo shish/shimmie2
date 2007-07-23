@@ -18,9 +18,9 @@ class ResolutionLimit extends Extension {
 			$image = $event->image;
 
 			if($min_w > 0 && $image->width < $min_w) $event->veto("Image too small");
-			if($min_h > 0 && $image->height < $min_w) $event->veto("Image too small");
+			if($min_h > 0 && $image->height < $min_h) $event->veto("Image too small");
 			if($max_w > 0 && $image->width > $min_w) $event->veto("Image too large");
-			if($max_h > 0 && $image->height > $min_w) $event->veto("Image too large");
+			if($max_h > 0 && $image->height > $min_h) $event->veto("Image too large");
 		}
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Resolution Limits");
