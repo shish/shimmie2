@@ -43,7 +43,9 @@ class IPBan extends Extension {
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
-						send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $_POST['end']));
+						if(empty($_POST['end'])) $end = null;
+						else $end = $_POST['end'];
+						send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
 						global $page;
 						$page->set_mode("redirect");
