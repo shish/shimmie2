@@ -119,11 +119,12 @@ class Upload extends Extension {
 		// PHP falls back to system default if /tmp fails, can't we just
 		// use the system default to start with? :-/
 		$tmp_filename = tempnam("/tmp", "shimmie_transload");
+		$filename = basename($url);
 
 		if($config->get_string("transload_engine") == "fopen") {
 			$fp = fopen($url, "r");
 			if(!$fp) {
-				$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+				$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 					"Error reading from ".html_escape($url));
 				return false;
 			}
@@ -152,13 +153,17 @@ class Upload extends Extension {
 			fclose($fp);
 		}
 		
-		if(filesize($tmp_filename) > $config->get_int('upload_size')) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
+		if(filesize($tmp_filename) == 0) {
+			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
+				"No data found -- perhaps the site has hotlink protection?");
+		}
+		else if(filesize($tmp_filename) > $config->get_int('upload_size')) {
+			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"File too large (".filesize($tmp_filename)." &gt; ".
 				($config->get_int('upload_size')).")");
 		}
 		else if(!($info = getimagesize($tmp_filename))) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"PHP doesn't recognise this as an image file");
 		}
 		else {
@@ -169,12 +174,12 @@ class Upload extends Extension {
 				send_event($event);
 				$ok = !$event->vetoed;
 				if(!$ok) {
-					$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+					$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 						$event->veto_reason);
 				}
 			}
 			else {
-				$this->theme->display_upload_error($page, "Error with ".html_escape(basename($url)),
+				$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 					"Something is not right!");
 			}
 		}
