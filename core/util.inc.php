@@ -136,10 +136,10 @@ function get_thumbnail_size($orig_width, $orig_height) {
 	$scale = ($xscale < $yscale) ? $xscale : $yscale;
 
 	if($scale > 1 && $config->get_bool('thumb_upscale')) {
-		return array($orig_width, $orig_height);
+		return array((int)$orig_width, (int)$orig_height);
 	}
 	else {
-		return array($orig_width*$scale, $orig_height*$scale);
+		return array((int)($orig_width*$scale), (int)($orig_height*$scale));
 	}
 }
 
