@@ -67,7 +67,14 @@ class UserPage extends Extension {
 			}
 			else { // view
 				$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
-				send_event(new UserPageBuildingEvent($event->page, $duser));
+				if(!is_null($duser)) {
+					send_event(new UserPageBuildingEvent($event->page, $duser));
+				}
+				else {
+					$this->theme->display_error($page, "No Such User", 
+						"If you typed the ID by hand, try again; if you came from a link on this ".
+						"site, it might be bug report time...");
+				}
 			}
 		}
 		

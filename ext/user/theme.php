@@ -75,25 +75,18 @@ class UserPageTheme extends Themelet {
 	}
 
 	public function display_user_page($page, $duser, $user) {
-		if(!is_null($duser)) {
-			$page->set_title("{$duser->name}'s Page");
-			$page->set_heading("{$duser->name}'s Page");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Stats", $this->build_stats($duser)));
+		$page->set_title("{$duser->name}'s Page");
+		$page->set_heading("{$duser->name}'s Page");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Stats", $this->build_stats($duser)));
 
-			if(!$user->is_anonymous()) {
-				if($user->id == $duser->id || $user->is_admin()) {
-					$page->add_block(new Block("Options", $this->build_options($duser), "main", 0));
-				}
-				if($user->is_admin()) {
-					$page->add_block(new Block("More Options", $this->build_more_options($duser)));
-				}
+		if(!$user->is_anonymous()) {
+			if($user->id == $duser->id || $user->is_admin()) {
+				$page->add_block(new Block("Options", $this->build_options($duser), "main", 0));
 			}
-		}
-		else {
-			$this->display_error($page, "No Such User", 
-						"If you typed the ID by hand, try again; if you came from a link on this ".
-						"site, it might be bug report time...");
+			if($user->is_admin()) {
+				$page->add_block(new Block("More Options", $this->build_more_options($duser)));
+			}
 		}
 	}
 
