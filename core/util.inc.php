@@ -13,8 +13,7 @@ function int_escape($input) {
 }
 
 function url_escape($input) {
-	$input = rawurlencode($input);
-	return $input;
+	return rawurlencode($input);
 }
 
 function sql_escape($input) {
