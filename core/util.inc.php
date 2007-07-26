@@ -13,7 +13,10 @@ function int_escape($input) {
 }
 
 function url_escape($input) {
-	return rawurlencode($input);
+	$input = str_replace('/', '//', $input);
+	$input = rawurlencode($input);
+	$input = str_replace('%2F', '/', $input);
+	return $input;
 }
 
 function sql_escape($input) {
@@ -359,7 +362,36 @@ function _get_query_parts() {
 		$path = substr($path, 1);
 	}
 
-	return split('/', $path);
+	/*
+	 * Split post/list/fate//stay_night/1
+	 * into post list fate/stay_night 1
+	 */
+	/*
+	$parts = array();
+	$n = 0;
+	$lastsplit = 0;
+	while($n<=strlen($path)) {
+		if(
+				$n == strlen($path) ||
+				(
+					$path[$n] == '/' &&
+					($n < strlen($path) && $path[$n+1] != '/')
+					&& ($n > 0 && $path[$n-1] != '/')
+				)
+		) {
+			$part = substr($path, $lastsplit, $n-$lastsplit);
+			$part = str_replace('//', '/', $part);
+			$parts[] = $part;
+			$lastsplit = $n+1;
+		}
+		$n++;
+	}
+	*/
+	$path = str_replace('/', ' ', $path);
+	$path = str_replace('  ', '/', $path);
+	$parts = split(' ', $path);
+
+	return $parts;
 }
 
 function _get_page_request($page) {
