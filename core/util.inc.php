@@ -92,8 +92,11 @@ function tag_explode($tags) {
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-function make_link($page, $query=null) {
+function make_link($page=null, $query=null) {
 	global $config;
+
+	if(is_null($page)) $page = $config->get_string('front_page', 'post/list');
+
 	$base = $config->get_string('base_href', './index.php?q=');
 
 	if(is_null($query)) {

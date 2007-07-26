@@ -73,7 +73,7 @@ class Tag_History extends Extension {
 			// tried to set it too the same thing so ignore it (might be a bot)
 			// go back to the index page with you
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("index"));
+			$page->set_redirect(make_link());
 			return;
 		}
 		

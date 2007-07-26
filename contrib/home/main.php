@@ -68,13 +68,13 @@ class Home extends Extension {
 		return "
 		<div id='front-page'>
 			<h1>
-				<a style='text-decoration: none;' href='".make_link("index")."'><span>$sitename</span></a>
+				<a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a>
 			</h1>
 			<div class='space' id='links'>
 				$main_links
 			</div>
 			<div class='space'>
-				<form action='".make_link("index")."' method='GET'>
+				<form action='".make_link()."' method='GET'>
 				<input id='search_input' name='search' size='55' type='text' value='' autocomplete='off' /><br/>
 				<input type='submit' value='Search'/>
 				</form>

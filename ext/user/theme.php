@@ -105,7 +105,7 @@ class UserPageTheme extends Themelet {
 		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
 
 		$u_name = url_escape($duser->name);
-		$images_link = make_link("index", "search=poster%3D$u_name");
+		$images_link = make_link(, "search=poster%3D$u_name");
 
 		return "
 			Join date: $h_join_date ($i_days_old days old)

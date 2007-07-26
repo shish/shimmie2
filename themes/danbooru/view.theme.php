@@ -41,7 +41,7 @@ class ViewTheme extends Themelet {
 		$prev = $database->get_prev_image($image_id, $search_terms);
 
 		$h_prev = (!is_null($prev) ? "<a href='".make_link("post/view/{$prev->id}", $query)."'>Prev</a>" : "Prev");
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
+		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = (!is_null($next) ? "<a href='".make_link("post/view/{$next->id}", $query)."'>Next</a>" : "Next");
 
 		$this->pin = "$h_prev | $h_index | $h_next";
@@ -51,7 +51,7 @@ class ViewTheme extends Themelet {
 	private function build_navigation($image_id) {
 		$h_pin = $this->build_pin($image_id);
 		$h_search = "
-			<p><form action='".make_link("index")."' method='GET'>
+			<p><form action='".make_link()."' method='GET'>
 				<input id='search_input' name='search' type='text'
 						value='Search' autocomplete='off'>
 				<input type='submit' value='Find' style='display: none;'>

@@ -36,7 +36,7 @@ class IndexTheme extends Themelet {
 
 	private function build_navigation($page_number, $total_pages, $search_terms) {
 		$h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
-		$h_search_link = make_link("index");
+		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input name='search' type='text'

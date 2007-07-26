@@ -54,7 +54,7 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "logout") {
 				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				$page->set_mode("redirect");
-				$page->set_redirect(make_link("index"));
+				$page->set_redirect(make_link());
 			}
 			else if($event->get_arg(0) == "changepass") {
 				$this->change_password_wrapper($event->page);

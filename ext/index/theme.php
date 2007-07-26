@@ -54,11 +54,11 @@ class IndexTheme extends Themelet {
 
 		
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("post/list$query/$prev")."'>Prev</a>";
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
+		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list$query/$next")."'>Next</a>";
 
 		$h_search_string = count($search_terms) == 0 ? "Search" : html_escape(implode(" ", $search_terms));
-		$h_search_link = make_link("index");
+		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>
 				<input id='search_input' name='search' type='text'

@@ -51,7 +51,7 @@ class ViewTheme extends Themelet {
 	private function build_navigation($image_id) {
 		$h_pin = $this->build_pin($image_id);
 		$h_search = "
-			<p><form action='".make_link("index")."' method='GET'>
+			<p><form action='".make_link()."' method='GET'>
 				<input id='search_input' name='search' type='text'
 						value='Search' autocomplete='off'>
 				<input type='submit' value='Find' style='display: none;'>

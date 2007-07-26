@@ -52,7 +52,7 @@ class UploadTheme extends Themelet {
 	public function display_upload_status($page, $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("index"));
+			$page->set_redirect(make_link());
 		}
 		else {
 			$page->set_title("Upload Status");

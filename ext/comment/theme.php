@@ -7,7 +7,7 @@ class CommentListTheme extends Themelet {
 
 		$h_prev = ($page_number <= 1) ? "Prev" :
 			"<a href='".make_link("comment/list/$prev")."'>Prev</a>";
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
+		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" :
 			"<a href='".make_link("comment/list/$next")."'>Next</a>";
 

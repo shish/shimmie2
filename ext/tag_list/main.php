@@ -76,7 +76,7 @@ class TagList extends Extension {
 // }}}
 // maps {{{
 	private function build_navigation() {
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
+		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_map = "<a href='".make_link("tags/map")."'>Map</a>";
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
