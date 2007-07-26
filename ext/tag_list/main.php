@@ -218,31 +218,41 @@ class TagList extends Extension {
 		global $config;
 
 		$tags = tag_explode($search);
-		$s_tags = array_map("sql_escape", $tags);
-		$s_tag_list = join(',', $s_tags);
+		
+		$tag_id_array = array();
+		$tags_ok = true;
+		foreach($tags as $tag) {
+			$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+			$tag_id_array = array_merge($tag_id_array, $tag_ids);
+			$tags_ok = count($tag_ids) > 0;
+			if(!$tags_ok) break;
+		}
+		$tag_id_list = join(', ', $tag_id_array);
 
-		$query = "
-			SELECT t2.tag, COUNT(it2.image_id) AS count
-			FROM
-				image_tags AS it1,
-				image_tags AS it2,
-				tags AS t1,
-				tags AS t2
-			WHERE 
-				t1.tag IN($s_tag_list)
-				AND it1.image_id=it2.image_id
-				AND it1.tag_id = t1.id
-				AND it2.tag_id = t2.id
-			GROUP BY t2.tag 
-			ORDER BY count
-			DESC LIMIT ?
-		";
-		$args = array($config->get_int('tag_list_length'));
+		if($tags_ok) {
+			$query = "
+				SELECT t2.tag, COUNT(it2.image_id) AS count
+				FROM
+					image_tags AS it1,
+					image_tags AS it2,
+					tags AS t1,
+					tags AS t2
+				WHERE 
+					t1.id IN($tag_id_list)
+					AND it1.image_id=it2.image_id
+					AND it1.tag_id = t1.id
+					AND it2.tag_id = t2.id
+				GROUP BY t2.tag 
+				ORDER BY count
+				DESC LIMIT ?
+			";
+			$args = array($config->get_int('tag_list_length'));
 
-		$tags = $database->db->GetAll($query, $args);
-		print $database->db->ErrorMsg();
-		if(count($tags) > 0) {
-			$this->theme->display_refine_block($page, $tags, $search);
+			$tags = $database->db->GetAll($query, $args);
+			print $database->db->ErrorMsg();
+			if(count($tags) > 0) {
+				$this->theme->display_refine_block($page, $tags, $search);
+			}
 		}
 	}
 // }}}
