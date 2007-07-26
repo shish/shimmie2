@@ -41,7 +41,7 @@ class ViewTheme extends Themelet {
 		$prev = $database->get_prev_image($image_id, $search_terms);
 
 		$h_prev = (!is_null($prev) ? "<a href='".make_link("post/view/{$prev->id}", $query)."'>Prev</a>" : "Prev");
-		$h_index = "<a href='".make_link("index")."'>Index</a>";
+		$h_index = "<a href='".make_link("post/list")."'>Index</a>";
 		$h_next = (!is_null($next) ? "<a href='".make_link("post/view/{$next->id}", $query)."'>Next</a>" : "Next");
 
 		$this->pin = "$h_prev | $h_index | $h_next";
