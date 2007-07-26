@@ -402,7 +402,7 @@ function _get_page_request($page) {
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$page_name = $config->get_string('front_page', 'index');
+		$page_name = $config->get_string('front_page', 'post/list');
 		$args = array();
 	}
 	else if(count($args) == 1) {
