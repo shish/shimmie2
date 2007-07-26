@@ -162,7 +162,7 @@ class Upload extends Extension {
 				"File too large (".filesize($tmp_filename)." &gt; ".
 				($config->get_int('upload_size')).")");
 		}
-		else if(!($info = getimagesize($tmp_filename))) {
+		else if(!($info = @getimagesize($tmp_filename))) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"PHP doesn't recognise this as an image file");
 		}
