@@ -164,7 +164,7 @@ class Upload extends Extension {
 		}
 		else if(!($info = @getimagesize($tmp_filename))) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-				"PHP doesn't recognise this as an image file");
+				"PHP doesn't recognise this as an image file -- perhaps the site has hotlink protection?");
 		}
 		else {
 			$image = new Image($tmp_filename, basename($url), $tags, $source);
