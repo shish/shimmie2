@@ -32,7 +32,7 @@ class AdminPage extends Extension {
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
 							$event->page->set_mode("redirect");
-							$event->page->set_redirect(make_link());
+							$event->page->set_redirect(make_link("post/list"));
 						}
 					}
 				}
