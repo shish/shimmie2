@@ -297,7 +297,7 @@ class UserPage extends Extension {
 		$rows = $database->db->GetAssoc("
 				SELECT
 					owner_ip,
-					COUNT(images.id) AS count,
+					COUNT(comments.id) AS count,
 					MAX(posted) AS most_recent
 				FROM comments
 				WHERE owner_id=?
