@@ -67,6 +67,7 @@ class UserPage extends Extension {
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user")) {
 			global $user;
+			global $database;
 			$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
 			if(!is_null($duser)) {
 				send_event(new UserPageBuildingEvent($event->page, $duser));
