@@ -41,6 +41,14 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Signup", $html));
 	}
 
+	public function display_signups_disabled($page) {
+		$page->set_title("Signups Disabled");
+		$page->set_heading("Signups Disabled");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Signups Disabled",
+			"The board admin has disabled the ability to create new accounts~"));
+	}
+
 	public function display_login_block($page) {
 		global $config;
 		$html = "

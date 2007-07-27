@@ -152,20 +152,13 @@ class UserPage extends Extension {
 		global $config;
 
 		if(!$config->get_bool("login_signup_enabled")) {
-			$page->set_title("Signups Disabled");
-			$page->set_heading("Signups Disabled");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Signups Disabled",
-				"The board admin has disabled the ability to create new accounts~"));
+			$this->theme->display_signups_disabled($page);
 		}
 		else if(isset($_POST['name']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 			$name = trim($_POST['name']);
 			$pass1 = $_POST['pass1'];
 			$pass2 = $_POST['pass2'];
 
-			$page->set_title("Error");
-			$page->set_heading("Error");
-			$page->add_block(new NavBlock());
 			if(strlen($name) < 1) {
 				$this->theme->display_error($page, "Error", "Username must be at least 1 character");
 			}
