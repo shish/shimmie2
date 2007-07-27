@@ -24,7 +24,7 @@ class UserPageTheme extends Themelet {
 		else {$html = "<p>$tac</p>";}
 
 		$html .= "
-		<form action='".make_link("user/create")."' method='POST'>
+		<form action='".make_link("user_admin/create")."' method='POST'>
 			<table style='width: 300px;' border='1'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
@@ -52,7 +52,7 @@ class UserPageTheme extends Themelet {
 	public function display_login_block($page) {
 		global $config;
 		$html = "
-			<form action='".make_link("user/login")."' method='POST'>
+			<form action='".make_link("user_admin/login")."' method='POST'>
 			<table border='1' summary='Login Form'>
 			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
 			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
@@ -61,7 +61,7 @@ class UserPageTheme extends Themelet {
 			</form>
 		";
 		if($config->get_bool("login_signup_enabled")) {
-			$html .= "<small><a href='".make_link("user/create")."'>Create Account</a></small>";
+			$html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
 		}
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
@@ -128,7 +128,7 @@ class UserPageTheme extends Themelet {
 
 		$html = "";
 		$html .= "
-		<form action='".make_link("user/changepass")."' method='POST'>
+		<form action='".make_link("user_admin/change_pass")."' method='POST'>
 			<input type='hidden' name='name' value='{$duser->name}'>
 			<input type='hidden' name='id' value='{$duser->id}'>
 			<table style='width: 300px;' border='1'>
@@ -151,7 +151,7 @@ class UserPageTheme extends Themelet {
 		$h_is_enabled = $duser->is_enabled() ? " checked" : "";
 
 		$html = "
-			<form action='".make_link("user/set_more")."' method='POST'>
+			<form action='".make_link("user_admin/set_more")."' method='POST'>
 			<input type='hidden' name='id' value='$i_user_id'>
 			Admin: <input name='admin' type='checkbox'$h_is_admin>
 			<br>Enabled: <input name='enabled' type='checkbox'$h_is_enabled>
@@ -160,8 +160,6 @@ class UserPageTheme extends Themelet {
 			";
 		return $html;
 	}
-
-
 // }}}
 }
 ?>

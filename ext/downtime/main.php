@@ -34,7 +34,7 @@ class Downtime extends Extension {
 	}
 
 	private function is_safe_page($event) {
-		if($event->page_name == "user" && $event->get_arg(0) == "login") return true;
+		if($event->page_name == "user_admin" && $event->get_arg(0) == "login") return true;
 		else return false;
 	}
 }

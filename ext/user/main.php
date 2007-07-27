@@ -37,8 +37,7 @@ class UserPage extends Extension {
 			$config->set_default_int("login_memory", 365);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user")) {
-			global $page;
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user_admin")) {
 			global $user;
 			global $database;
 			global $config;
@@ -53,10 +52,10 @@ class UserPage extends Extension {
 			}
 			else if($event->get_arg(0) == "logout") {
 				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link());
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link());
 			}
-			else if($event->get_arg(0) == "changepass") {
+			else if($event->get_arg(0) == "change_pass") {
 				$this->change_password_wrapper($event->page);
 			}
 			else if($event->get_arg(0) == "create") {
@@ -65,16 +64,17 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "set_more") {
 				$this->set_more_wrapper($event->page);
 			}
-			else { // view
-				$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
-				if(!is_null($duser)) {
-					send_event(new UserPageBuildingEvent($event->page, $duser));
-				}
-				else {
-					$this->theme->display_error($page, "No Such User", 
-						"If you typed the ID by hand, try again; if you came from a link on this ".
-						"site, it might be bug report time...");
-				}
+		}
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user")) {
+			global $user;
+			$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
+			if(!is_null($duser)) {
+				send_event(new UserPageBuildingEvent($event->page, $duser));
+			}
+			else {
+				$this->theme->display_error($event->page, "No Such User", 
+					"If you typed the ID by hand, try again; if you came from a link on this ".
+					"site, it might be bug report time...");
 			}
 		}
 		
@@ -111,7 +111,7 @@ class UserPage extends Extension {
 
 		if(is_a($event, 'UserBlockBuildingEvent')) {
 			$event->add_link("User Config", make_link("user"));
-			$event->add_link("Log Out", make_link("user/logout"), 99);
+			$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 		}
 	}
 // }}}
