@@ -282,21 +282,27 @@ class UserPage extends Extension {
 	private function count_upload_ips($duser) {
 		global $database;
 		$rows = $database->db->GetAssoc("
-				SELECT owner_ip, COUNT(images.id) AS count
+				SELECT
+					owner_ip,
+					COUNT(images.id) AS count,
+					MAX(posted) AS most_recent
 				FROM images
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY MAX(posted) DESC", array($duser->id));
+				ORDER BY most_recent DESC", array($duser->id), false, true);
 		return $rows;
 	}
 	private function count_comment_ips($duser) {
 		global $database;
 		$rows = $database->db->GetAssoc("
-				SELECT owner_ip, COUNT(comments.id) AS count
+				SELECT
+					owner_ip,
+					COUNT(images.id) AS count,
+					MAX(posted) AS most_recent
 				FROM comments
 				WHERE owner_id=?
 				GROUP BY owner_ip
-				ORDER BY MAX(posted) DESC", array($duser->id));
+				ORDER BY most_recent DESC", array($duser->id), false, true);
 		return $rows;
 	}
 // }}}
