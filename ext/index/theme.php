@@ -31,11 +31,12 @@ class IndexTheme extends Themelet {
 		$page->set_heading($page_title);
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
 		if(count($images) > 0) {
-			$page->add_block(new Block("Images", $this->build_table($images, $query), "main", 10));
 			if($query) {
+				$page->add_block(new Block("Images", $this->build_table($images, "search=$query"), "main", 10));
 				$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
 			}
 			else {
+				$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10));
 				$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
 			}
 		}
