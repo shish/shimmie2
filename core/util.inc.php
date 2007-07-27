@@ -402,8 +402,9 @@ function _get_page_request($page) {
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$page_name = $config->get_string('front_page', 'post/list');
-		$args = array();
+		$parts = split('/', $config->get_string('front_page', 'post/list'));
+		$page_name = array_shift($parts);
+		$args = $parts;
 	}
 	else if(count($args) == 1) {
 		$page_name = $args[0];
