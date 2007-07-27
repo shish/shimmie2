@@ -167,13 +167,16 @@ class UserPage extends Extension {
 			$page->set_heading("Error");
 			$page->add_block(new NavBlock());
 			if(strlen($name) < 1) {
-				$page->add_block(new Block("Error", "Username must be at least 1 character"));
+				$this->theme->display_error($page, "Error", "Username must be at least 1 character");
+			}
+			else if(!preg_match('/^[a-zA-Z0-9-_ ]+$/', $name)) {
+				$this->theme->display_error($page, "Error", "Username contains invalid characters. Allowed characters are letters, numbers, dash, underscore, and space");
 			}
 			else if($pass1 != $pass2) {
-				$page->add_block(new Block("Error", "Passwords don't match"));
+				$this->theme->display_error($page, "Error", "Passwords don't match");
 			}
 			else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
-				$page->add_block(new Block("Error", "That username is already taken"));
+				$this->theme->display_error($page, "Error", "That username is already taken");
 			}
 			else {
 				$addr = $_SERVER['REMOTE_ADDR'];
