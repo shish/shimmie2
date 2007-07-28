@@ -81,8 +81,9 @@ class UserPage extends Extension {
 		
 		if(is_a($event, 'UserPageBuildingEvent')) {
 			global $user;
+			global $config;
 			$this->theme->display_user_page($event->page, $event->user, $user);
-			if($user->is_admin() || $user->id == $event->user->id) {
+			if(($user->is_admin() || $user->id == $event->user->id) && ($user->id != $config->get_int('anon_id'))) {
 				$this->theme->display_ip_list($event->page, $this->count_upload_ips($event->user), $this->count_comment_ips($event->user));
 			}
 		}
