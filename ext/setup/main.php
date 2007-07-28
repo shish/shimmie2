@@ -124,7 +124,7 @@ class SetupBlock extends Block {
 
 class Setup extends Extension {
 	var $theme;
-// event handling {{{
+
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("setup", "SetupTheme");
 
@@ -162,6 +162,7 @@ class Setup extends Extension {
 			$sb->position = 0;
 			$sb->add_text_option("title", "Site title: ");
 			$sb->add_text_option("front_page", "<br>Front page: ");
+			$sb->add_text_option("main_page", "<br>Main page: ");
 			$sb->add_text_option("base_href", "<br>Base URL: ");
 			$sb->add_text_option("contact_link", "<br>Contact URL: ");
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");

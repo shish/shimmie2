@@ -95,7 +95,7 @@ function tag_explode($tags) {
 function make_link($page=null, $query=null) {
 	global $config;
 
-	if(is_null($page)) $page = $config->get_string('front_page', 'post/list');
+	if(is_null($page)) $page = $config->get_string('main_page', 'post/list');
 
 	$base = $config->get_string('base_href', './index.php?q=');
 

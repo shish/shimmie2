@@ -16,7 +16,7 @@ class Home extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "home"))
 		{
 			// this is a request to display this page so output the page.
-		  	$this->output_pages();
+		  	$this->output_pages($event->page);
 		}
 		if(is_a($event, 'SetupBuildingEvent'))
 		{
@@ -41,7 +41,7 @@ class Home extends Extension {
 		global $database;
 		global $config;
 		$base_href = $config->get_string('base_href');
-		$data_href = $config->get_string('data_href');
+		$data_href = get_base_href();
 		$sitename = $config->get_string('title');
 	    $contact_link = $config->get_string('contact_link');
 		$counter_dir = $config->get_string('home_counter', 'default');
@@ -74,7 +74,7 @@ class Home extends Extension {
 				$main_links
 			</div>
 			<div class='space'>
-				<form action='".make_link()."' method='GET'>
+				<form action='".make_link("post/list")."' method='GET'>
 				<input id='search_input' name='search' size='55' type='text' value='' autocomplete='off' /><br/>
 				<input type='submit' value='Search'/>
 				</form>
@@ -92,18 +92,19 @@ class Home extends Extension {
 		</div>";
 	}
 
-    private function output_pages()
+    private function output_pages($page)
 	{
 		// output a sectionalised list of all the main pages on the site.
 		global $config;
 		$base_href = $config->get_string('base_href');
-		$data_href = $config->get_string('data_href');
+		$data_href = get_base_href();
 		$sitename = $config->get_string('title');
 		$theme_name = $config->get_string('theme');
 		
-		$body = $this->get_body();	   
-	  
-	  	print <<<EOD
+		$body = $this->get_body();
+
+		$page->set_mode("data");
+		$page->set_data(<<<EOD
 <html>
 	<head>
 		<title>$sitename</title>
@@ -117,11 +118,11 @@ class Home extends Extension {
 		div#front-page li {list-style-type: none; margin: 0;}
 	</style>
 	<body>
-		$body		
+		$body
 	</body>
 </html>
-EOD;
-		exit;
+EOD
+);
 	}
 
 }
