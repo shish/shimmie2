@@ -1,13 +1,6 @@
 <?php
 
 class AdminPageTheme extends Themelet {
-	public function display_not_admin($page) {
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Permission Denied", "This page is for admins only"));
-	}
-	
 	public function display_page($page) {
 		$page->set_title("Admin Tools");
 		$page->set_heading("Admin Tools");

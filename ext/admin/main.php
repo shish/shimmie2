@@ -21,7 +21,7 @@ class AdminPage extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin")) {
 			global $user;
 			if(!$user->is_admin()) {
-				$this->theme->display_not_admin($event->page);
+				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
 			}
 			else {
 				if($event->get_arg(0) == "delete_image") {
