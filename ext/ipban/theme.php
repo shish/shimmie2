@@ -1,6 +1,16 @@
 <?php
 
 class IPBanTheme extends Themelet {
+	/*
+	 * Show all the bans
+	 *
+	 * $bans = an array of (
+	 *  'ip' => the banned IP
+	 *  'reason' => why the IP was banned
+	 *  'date' => when the ban started
+	 *  'end' => when the ban will end
+	 * )
+	 */
 	public function display_bans($page, $bans) {
 		$h_bans = "";
 		foreach($bans as $ban) {

@@ -25,6 +25,12 @@ class TagListTheme extends Themelet {
 
 	// =======================================================================
 
+	/*
+	 * $tag_infos = array(
+	 *                 array('tag' => $tag, 'count' => $number_of_uses), 
+	 *                 ...
+	 *              )
+	 */
 	public function display_related_block($page, $tag_infos) {
 		global $config;
 

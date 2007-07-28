@@ -1,6 +1,12 @@
 <?php
 
 class AdminUtilsTheme extends Themelet {
+	/*
+	 * Show a form which links to admin_utils with POST[action] set to one of:
+	 *  'lowercase all tags'
+	 *  'recount tag use'
+	 *  'purge unused tags'
+	 */
 	public function display_form($page) {
 		$html = "
 			<p><form action='".make_link("admin_utils")."' method='POST'>

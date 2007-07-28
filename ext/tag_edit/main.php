@@ -18,7 +18,7 @@ class TagEdit extends Extension {
 					$page->set_redirect(make_link("post/view/$i_image_id", $query));
 				}
 				else {
-					$this->theme->display_anon_denied($event->page);
+					$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
 				}
 			}
 			else if($event->get_arg(0) == "replace") {

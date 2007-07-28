@@ -1,6 +1,12 @@
 <?php
 
 class CommentListTheme extends Themelet {
+	/*
+	 * Do the basics of the comments page
+	 *
+	 * $page_number = the current page number
+	 * $total_pages = the total number of comment pages
+	 */
 	public function display_page_start($page, $page_number, $total_pages) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
@@ -19,12 +25,20 @@ class CommentListTheme extends Themelet {
 		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 	}
 
+	/*
+	 * Add some comments to the page, probably in a sidebar
+	 *
+	 * $comments = an array of Comment objects to be shown
+	 */
 	public function display_recent_comments($page, $comments) {
 		$html = $this->comments_to_html($comments, true);
 		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
 		$page->add_block(new Block("Comments", $html, "left"));
 	}
 
+	/*
+	 *
+	 */
 	public function display_comments($page, $comments, $postbox, $image_id) {
 		if($postbox) {
 			$page->add_block(new Block("Comments",
@@ -36,6 +50,29 @@ class CommentListTheme extends Themelet {
 					$this->comments_to_html($comments), "main", 30));
 		}
 	}
+
+	/*
+	 *
+	 */
+	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
+		$html  = "<div style='text-align: left'>";
+		$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
+		$html .=   $this->comments_to_html($comments);
+		$html .= "</div>";
+		if($with_postbox) {
+			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
+		}
+		else {
+			$html .= "<div style='clear:both;'><p><small>You need to create an account before you can comment</small></p></div>";
+		}
+
+		$page->add_block(new Block("{$image->id}: ".($image->get_tag_list()), $html, "main", $position));
+	}
+
+
+	/*
+	 * Various functions which are only used by this theme
+	 */
 
 
 	private function comments_to_html($comments, $trim=false) {
@@ -68,8 +105,7 @@ class CommentListTheme extends Themelet {
 		return "<p class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
 	}
 
-	// FIXME: privatise this
-	public function build_postbox($image_id) {
+	private function build_postbox($image_id) {
 		$i_image_id = int_escape($image_id);
 		return "
 			<form action='".make_link("comment/add")."' method='POST'>
@@ -78,22 +114,6 @@ class CommentListTheme extends Themelet {
 			<br><input type='submit' value='Post' />
 			</form>
 			";
-	}
-
-
-	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
-		$html  = "<div style='text-align: left'>";
-		$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
-		$html .=   $this->comments_to_html($comments);
-		$html .= "</div>";
-		if($with_postbox) {
-			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
-		}
-		else {
-			$html .= "<div style='clear:both;'><p><small>You need to create an account before you can comment</small></p></div>";
-		}
-
-		$page->add_block(new Block("{$image->id}: ".($image->get_tag_list()), $html, "main", $position));
 	}
 }
 ?>

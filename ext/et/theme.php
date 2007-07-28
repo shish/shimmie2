@@ -1,6 +1,11 @@
 <?php
 
 class ETTheme extends Themelet {
+	/*
+	 * Create a page showing info
+	 *
+	 * $info = an array of ($name => $value)
+	 */
 	public function display_info_page($page, $info) {
 		$page->set_title("System Info");
 		$page->set_heading("System Info");

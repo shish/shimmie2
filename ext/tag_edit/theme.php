@@ -1,6 +1,15 @@
 <?php
 
 class TagEditTheme extends Themelet {
+	/*
+	 * Display a form to edit tags for $image
+	 * The form should link to tag_edit/set, with the following set:
+	 *   POST[image_id]
+	 *   POST[query] = when redirecting to post/view, what the search string should be set to
+	 *   POST[tags]
+	 *
+	 * Note $image->get_tag_list()
+	 */
 	public function display_editor($page, $image) {
 		global $database;
 		
@@ -26,6 +35,10 @@ class TagEditTheme extends Themelet {
 		$page->add_block(new Block(null, $html, "main", 5));
 	}
 
+	/*
+	 * Display a form which links to tag_edit/replace with POST[search]
+	 * and POST[replace] set appropriately
+	 */
 	public function display_mass_editor($page) {
 		$html = "
 		<form action='".make_link("tag_edit/replace")."' method='POST'>
@@ -37,13 +50,6 @@ class TagEditTheme extends Themelet {
 		</form>
 		";
 		$page->add_block(new Block("Mass Tag Edit", $html));
-	}
-
-	public function display_anon_denied($page) {
-		$page->set_title("Tag Edit Denied");
-		$page->set_heading("Tag Edit Denied");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Error", "Anonymous tag editing is disabled"));
 	}
 }
 ?>

@@ -1,6 +1,12 @@
 <?php
 
 class AliasEditorTheme extends Themelet {
+	/*
+	 * Show a page of aliases:
+	 *
+	 * $aliases = an array of ($old_tag => $new_tag)
+	 * $is_admin = whether things like "add new alias" should be shown
+	 */
 	public function display_aliases($page, $aliases, $is_admin) {
 		if($is_admin) {
 			$action = "<td>Action</td>";

@@ -45,7 +45,7 @@ class AdminPage extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
 			if($user->is_admin()) {
-				$this->theme->display_delete_block($event->page, $event->image->id);
+				$this->theme->display_deleter($event->page, $event->image->id);
 			}
 		}
 

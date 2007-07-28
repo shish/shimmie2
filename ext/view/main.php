@@ -16,7 +16,7 @@ class ViewImage extends Extension {
 				send_event(new DisplayingImageEvent($image, $event->page));
 			}
 			else {
-				$this->theme->display_image_not_found($event->page, $image_id);
+				$this->theme->display_error($event->page, "Image not found", "No image in the database has the ID #$image_id");
 			}
 		}
 

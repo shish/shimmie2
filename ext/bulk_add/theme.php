@@ -3,6 +3,9 @@
 class BulkAddTheme extends Themelet {
 	var $messages = array();
 
+	/*
+	 * Show a standard page for results to be put into
+	 */
 	public function display_upload_results($page) {
 		$page->set_title("Adding folder");
 		$page->set_heading("Adding folder");
@@ -12,6 +15,11 @@ class BulkAddTheme extends Themelet {
 		}
 	}
 
+	/*
+	 * Add a section to the admin page. This should contain a form which
+	 * links to bulk_add with POST[dir] set to the name of a server-side
+	 * directory full of images
+	 */
 	public function display_admin_block($page) {
 		$html = "
 			Add a folder full of images; any subfolders will have their names

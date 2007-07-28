@@ -1,6 +1,9 @@
 <?php
 
 class RegenThumbTheme extends Themelet {
+	/*
+	 * Show a form which offers to regenerate the thumb of an image with ID #$image_id
+	 */
 	public function display_buttons($page, $image_id) {
 		$html = "
 			<form action='".make_link("regen_thumb")."' method='POST'>
@@ -16,6 +19,9 @@ class RegenThumbTheme extends Themelet {
 		$page->add_block(new Block("Regen Thumb", $html, "left"));
 	}
 
+	/*
+	 * Show a link to the new thumbnail
+	 */
 	public function display_results($page, $image) {
 		$page->set_title("Thumbnail Regenerated");
 		$page->set_heading("Thumbnail Regenerated");

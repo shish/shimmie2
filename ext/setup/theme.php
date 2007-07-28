@@ -1,29 +1,22 @@
 <?php
 
 class SetupTheme extends Themelet {
-	public function display_not_admin($page) {
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Permission Denied", "This page is for admins only"));
-	}
-
+	/*
+	 * Display a set of setup option blocks
+	 *
+	 * $panel = the container of the blocks
+	 * $panel->blocks the blocks to be displayed, unsorted
+	 *
+	 * It's recommented that the theme sort the blocks before doing anything
+	 * else, using:  usort($panel->blocks, "blockcmp");
+	 *
+	 * The page should wrap all the options in a form which links to setup_save
+	 */
 	public function display_page($page, $panel) {
 		$setupblock_html1 = "";
 		$setupblock_html2 = "";
 
 		usort($panel->blocks, "blockcmp");
-
-		/*
-		$flip = true;
-		foreach($panel->mainblocks as $block) {
-			if(is_a($block, 'SetupBlock')) {
-				if($flip) $setupblock_html1 .= $this->sb_to_html($block);
-				else $setupblock_html2 .= $this->sb_to_html($block);
-				$flip = !$flip;
-			}
-		}
-		*/
 
 		/*
 		 * Try and keep the two columns even; count the line breaks in

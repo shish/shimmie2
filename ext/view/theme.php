@@ -1,14 +1,9 @@
 <?php
 
 class ViewTheme extends Themelet {
-	public function display_image_not_found($page, $image_id) {
-		$page->set_title("Image not found");
-		$page->set_heading("Image not found");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Image not found",
-			"No image in the database has the ID #$image_id"));
-	}
-	
+	/*
+	 * Build a page showing $image and some info about it
+	 */
 	public function display_page($page, $image) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
