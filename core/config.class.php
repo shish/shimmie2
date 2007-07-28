@@ -1,28 +1,27 @@
 <?php
 class Config {
 	var $values = array();
+	var $database = null;
 
-	public function Config() {
-		global $database;
-		$this->values = $database->db->GetAssoc("SELECT name, value FROM config");
+	public function Config($database) {
+		$this->database = $database;
+		$this->values = $this->database->db->GetAssoc("SELECT name, value FROM config");
 	}
 	public function save($name=null) {
-		global $database;
-
 		if(is_null($name)) {
 			foreach($this->values as $name => $value) {
 				// does "or update" work with sqlite / postgres?
-				$database->db->StartTrans();
-				$database->Execute("DELETE FROM config WHERE name = ?", array($name));
-				$database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $value));
-				$database->db->CommitTrans();
+				$this->database->db->StartTrans();
+				$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
+				$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $value));
+				$this->database->db->CommitTrans();
 			}
 		}
 		else {
-			$database->db->StartTrans();
-			$database->Execute("DELETE FROM config WHERE name = ?", array($name));
-			$database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
-			$database->db->CommitTrans();
+			$this->database->db->StartTrans();
+			$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
+			$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
+			$this->database->db->CommitTrans();
 		}
 	}
 
