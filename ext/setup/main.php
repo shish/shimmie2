@@ -128,6 +128,13 @@ class Setup extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("setup", "SetupTheme");
 
+		if(is_a($event, 'InitExtEvent')) {
+			global $config;
+			$config->set_default_string("title", "Shimmie");
+			$config->set_default_string("front_page", "post/list");
+			$config->set_default_string("main_page", "post/list");
+		}
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "setup")) {
 			global $user;
 			if(!$user->is_admin()) {
