@@ -123,7 +123,7 @@ class DanbooruApi extends Extension
 				if(isset($_FILES['file']))
 				{	// A file was POST'd in
 					$file = $_FILES['file']['tmp_name'];
-					$filename = $file['name'];
+					$filename = $_FILES['file']['name'];
 					// If both a file is posted and a source provided, I'm assuming source is the source of the file
 					$source = isset($_REQUEST['source']) ? $_REQUEST['source'] : "";
 				} elseif(isset($_REQUEST['source']))
@@ -207,7 +207,7 @@ class DanbooruApi extends Extension
 				if(!is_null($existing)) {
 					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: duplicate");
-					$existinglink = "http://" . $_SERVER['HTTP_HOST'] . make_link("post/view/" . $existing->id);
+					$existinglink = make_link("post/view/" . $existing->id);
 					header("X-Danbooru-Location: $existinglink");
 				}
 
@@ -216,6 +216,7 @@ class DanbooruApi extends Extension
 				send_event($nevent);
 				// Did something screw up?
 				if($event->vetoed) {
+					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: $event->veto_reason");
 					return;
 				} else
@@ -232,6 +233,7 @@ class DanbooruApi extends Extension
 				}
 			} else 
 			{
+				header("HTTP/1.0 409 Conflict");
 				header("X-Danbooru-Errors: authentication error");
 				return;
 			}
