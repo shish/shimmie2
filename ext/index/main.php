@@ -28,10 +28,16 @@ class Index extends Extension {
 			if($event->page_name == "post") array_shift($event->args);
 
 			if(isset($_GET['search'])) {
-				$search = url_escape($_GET['search']);
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("post/list/$search/1"));
-				$event->veto();
+				$search = url_escape(trim($_GET['search']));
+				if(empty($search)) {
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("post/list/1"));
+				}
+				else {
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("post/list/$search/1"));
+					$event->veto();
+				}
 				return;
 			}
 
