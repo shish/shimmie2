@@ -122,7 +122,7 @@ class Upload extends Extension {
 		$filename = basename($url);
 
 		if($config->get_string("transload_engine") == "fopen") {
-			$fp = fopen($url, "r");
+			$fp = @fopen($url, "r");
 			if(!$fp) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 					"Error reading from ".html_escape($url));
