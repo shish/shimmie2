@@ -43,6 +43,7 @@ class ImageIO extends Extension {
 			$sb->position = 30;
 			$sb->add_text_option("image_ilink", "Image link ");
 			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
+			$sb->add_text_option("image_tip", "<br>Image tooltip ");
 			$event->panel->add_block($sb);
 
 			$thumbers = array();

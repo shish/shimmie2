@@ -71,8 +71,6 @@ class Index extends Extension {
 			$sb->add_int_option("index_height");
 			$sb->add_label(" images");
 
-			$sb->add_text_option("image_tip", "<br>Image tooltip ");
-
 			$event->panel->add_block($sb);
 		}
 	}
