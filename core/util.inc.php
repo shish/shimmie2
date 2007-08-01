@@ -224,30 +224,26 @@ function get_base_href() {
 function get_debug_info() {
 	global $config;
 	
-	if($config->get_bool('debug_enabled')) {
-		if(function_exists('memory_get_usage')) {
-			$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
-		}
-		else {
-			$i_mem = "???";
-		}
-		if(function_exists('getrusage')) {
-			$ru = getrusage();
-			$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
-			$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
-		}
-		else {
-			$i_utime = "???";
-			$i_stime = "???";
-		}
-		$i_files = count(get_included_files());
-		global $_execs;
-		$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
-		$debug .= "; Used $i_files files and $_execs queries";
+	if(function_exists('memory_get_usage')) {
+		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
 	}
 	else {
-		$debug = "";
+		$i_mem = "???";
 	}
+	if(function_exists('getrusage')) {
+		$ru = getrusage();
+		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
+		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
+	}
+	else {
+		$i_utime = "???";
+		$i_stime = "???";
+	}
+	$i_files = count(get_included_files());
+	global $_execs;
+	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
+	$debug .= "; Used $i_files files and $_execs queries";
+
 	return $debug;
 }
 
