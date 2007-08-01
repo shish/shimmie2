@@ -256,6 +256,11 @@ class Database {
 			$this->execute("UPDATE tags SET count = count + 1 WHERE tag = ?", array($tag));
 		}
 	}
+	
+	public function set_source($image_id, $source) {
+		if(empty($source)) $source = null;
+		$this->execute("UPDATE images SET source=? WHERE id=?", array($source, $image_id));
+	}
 // }}}
 // images {{{
 	public function get_images($start, $limit, $tags=array()) {

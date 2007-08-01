@@ -13,7 +13,6 @@ class ViewTheme extends Themelet {
 	}
 
 
-
 	var $pin = null;
 
 	private function build_pin($image_id) {
@@ -82,8 +81,36 @@ class ViewTheme extends Themelet {
 				$html .= " (<a href='http://$h_source'>source</a>)";
 			}
 		}
+
+
+		global $config;
+		global $user;
+		if($config->get_bool("tag_edit_anon") || ($user->id != $config->get_int("anon_id"))) {
+			$html .= " (<a href=\"javascript: toggle('imgdata')\">edit</a>)";
+
+			if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
+			else {$h_query = "";}
+
+			$h_tags = html_escape($image->get_tag_list());
+			$i_image_id = int_escape($image->id);
+
+			$html .= "
+			<div id='imgdata'><form action='".make_link("tag_edit/set")."' method='POST'>
+				<input type='hidden' name='image_id' value='$i_image_id'>
+				<input type='hidden' name='query' value='$h_query'>
+				<table style='width: 500px;'>
+				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tags' value='$h_tags'></td></tr>
+				<tr><td>Source</td><td><input type='text' name='source' value='$h_source'></td></tr>
+				<tr><td>&nbsp;</td><td><input type='submit' value='Set'></td></tr>
+				</table>
+			</form>
+			</div>
+			";
+		}
+
+
 		$html .= "<p>".$this->build_pin($image->id);
-		
+
 		return $html;
 	}
 }

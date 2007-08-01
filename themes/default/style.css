@@ -43,10 +43,8 @@ TD {
 	background: #DDD;
 }
 #body SELECT {width: 150px;}
-/*
-TD INPUT {width: 100%;}
-TD SELECT {width: 100%;}
-*/
+TD>INPUT {width: 100%;}
+TD>SELECT {width: 100%;}
 
 #footer {
 	clear: both;

@@ -14,6 +14,7 @@ class TagEdit extends Extension {
 					$i_image_id = int_escape($_POST['image_id']);
 					$query = $_POST['query'];
 					send_event(new TagSetEvent($i_image_id, $_POST['tags']));
+					send_event(new SourceSetEvent($i_image_id, $_POST['source']));
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$i_image_id", $query));
 				}
@@ -32,13 +33,14 @@ class TagEdit extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
-			$this->theme->display_editor($event->page, $event->image);
-		}
-
 		if(is_a($event, 'TagSetEvent')) {
 			global $database;
 			$database->set_tags($event->image_id, $event->tags);
+		}
+
+		if(is_a($event, 'SourceSetEvent')) {
+			global $database;
+			$database->set_source($event->image_id, $event->source);
 		}
 
 		if(is_a($event, 'ImageDeletionEvent')) {
