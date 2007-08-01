@@ -133,6 +133,7 @@ class Setup extends Extension {
 			$config->set_default_string("title", "Shimmie");
 			$config->set_default_string("front_page", "post/list");
 			$config->set_default_string("main_page", "post/list");
+			$config->set_default_string("base_href", "./index.php?q=");
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "setup")) {

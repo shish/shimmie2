@@ -97,7 +97,7 @@ function make_link($page=null, $query=null) {
 
 	if(is_null($page)) $page = $config->get_string('main_page');
 
-	$base = $config->get_string('base_href', './index.php?q=');
+	$base = $config->get_string('base_href');
 
 	if(is_null($query)) {
 		return "$base/$page";
