@@ -94,22 +94,22 @@ class Image {
 
 	public function get_image_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_ilink', '$base/image/$id.$ext'));
+		return $this->parse_link_template($config->get_string('image_ilink'));
 	}
 
 	public function get_short_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_slink', ''));
+		return $this->parse_link_template($config->get_string('image_slink'));
 	}
 
 	public function get_thumb_link() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tlink', '$base/thumb/$id.jpg'));
+		return $this->parse_link_template($config->get_string('image_tlink'));
 	}
 
 	public function get_tooltip() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tip', '$tags // $size // $filesize'), "html_escape");
+		return $this->parse_link_template($config->get_string('image_tip'), "html_escape");
 	}
 
 	public function get_image_filename() {

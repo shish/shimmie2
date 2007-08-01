@@ -12,6 +12,10 @@ class ImageIO extends Extension {
 			$config->set_default_int('thumb_height', 192);
 			$config->set_default_int('thumb_quality', 75);
 			$config->set_default_int('thumb_mem_limit', '8MB');
+			
+			$config->set_default_string('image_ilink', '$base/image/$id.$ext');
+			$config->set_default_string('image_tlink', '$base/thumb/$id.jpg');
+			$config->set_default_string('image_tip', '$tags // $size // $filesize');
 		}
 
 		if(is_a($event, 'PageRequestEvent')) {
@@ -41,9 +45,9 @@ class ImageIO extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Image Options");
 			$sb->position = 30;
-			$sb->add_text_option("image_ilink", "Image link ");
-			$sb->add_text_option("image_tlink", "<br>Thumbnail link ");
-			$sb->add_text_option("image_tip", "<br>Image tooltip ");
+			$sb->add_text_option("image_ilink", "Image link: ");
+			$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
+			$sb->add_text_option("image_tip", "<br>Image tooltip: ");
 			$event->panel->add_block($sb);
 
 			$thumbers = array();
