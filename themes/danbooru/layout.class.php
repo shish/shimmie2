@@ -59,15 +59,13 @@ class Layout {
 		$left_block_html = "";
 		$main_block_html = "";
 
-		$firstmain = true;
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
 					$left_block_html .= $this->block_to_html($block, true);
 					break;
 				case "main":
-					if($firstmain) {
-						$firstmain = false;
+					if($block->header == "Images") {
 						$block->header = "&nbsp;";
 					}
 					$main_block_html .= $this->block_to_html($block, false);
@@ -168,7 +166,7 @@ EOD;
 		else {
 			$i = str_replace(' ', '_', $h);
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
-			if(!is_null($b)) $html .= "<div>$b</div>\n"; 
+			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n"; 
 		}
 		return $html;
 	}

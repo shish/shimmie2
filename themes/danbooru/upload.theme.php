@@ -7,6 +7,8 @@ class UploadTheme extends Themelet {
 	}
 
 	public function display_page($page) {
+		$page->disable_left();
+
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 		

@@ -15,7 +15,6 @@ class CommentListTheme extends Themelet {
 		
 		$page->set_title("Comments");
 		$page->set_heading("Comments");
-		$page->add_block(new Block("Navigation", $nav, "left"));
 		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 		$page->disable_left();
 	}
@@ -103,7 +102,7 @@ class CommentListTheme extends Themelet {
 		$html .= "</div>";
 		$html .= "<div style='clear: both; display: block; height: 64px;'>&nbsp;</div>";
 
-		$page->add_block(new Block(null, $html, "main", $position));
+		$page->add_block(new Block("&nbsp;", $html, "main", $position));
 	}
 }
 ?>
