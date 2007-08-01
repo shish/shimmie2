@@ -176,7 +176,7 @@ class UserPage extends Extension {
 			else {
 				$addr = $_SERVER['REMOTE_ADDR'];
 				$hash = md5( strtolower($name) . $pass1 );
-				$email = isset($_POST['email']) ? $_POST['email'] : null;
+				$email = (isset($_POST['email']) && !empty($_POST['email'])) ? $_POST['email'] : null;
 
 				// FIXME: send_event()
 				$database->Execute(
