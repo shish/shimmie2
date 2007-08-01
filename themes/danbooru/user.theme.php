@@ -10,14 +10,14 @@ class UserPageTheme extends Themelet {
 	}
 
 	public function display_user_links($page, $user, $parts) {
-		# $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
+		$page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
 	}
 
 	public function display_user_block($page, $user, $parts) {
-		$h_name = html_escape($user->name);
-		$html = "Logged in as $h_name<br>";
-		$html .= join("\n<br/>", $parts);
-		$page->add_block(new Block("User Links", $html, "left", 90));
+#		$h_name = html_escape($user->name);
+#		$html = "Logged in as $h_name<br>";
+#		$html .= join("\n<br/>", $parts);
+#		$page->add_block(new Block("User Links", $html, "left", 90));
 	}
 
 	public function display_signup_page($page) {
@@ -95,6 +95,7 @@ class UserPageTheme extends Themelet {
 		$page->set_heading("{$duser->name}'s Page");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Stats", $this->build_stats($duser)));
+		$page->disable_left();
 
 		if(!$user->is_anonymous()) {
 			if($user->id == $duser->id || $user->is_admin()) {
