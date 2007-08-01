@@ -10,7 +10,7 @@
 class RSS_Comments extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "index")) {
+		if(is_a($event, 'PostListBuildingEvent')) {
 			global $page;
 			global $config;
 			$title = $config->get_string('title');
