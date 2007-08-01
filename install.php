@@ -526,9 +526,7 @@ function create_tables_mysql($db) {
 		visible enum('Y', 'N') default 'Y' not null
 	)");
 
-	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('title', 'Shimmie'));
 	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
-	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('front_page', 'index'));
 
 	return $db->CommitTrans();
 }
