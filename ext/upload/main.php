@@ -22,7 +22,7 @@ class Upload extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
 			if(count($_FILES) + count($_POST) > 0) {
 				$tags = tag_explode($_POST['tags']);
-				$source = $_POST['source'];
+				$source = isset($_POST['source']) ? $_POST['source'] : null;
 				if($this->can_upload()) {
 					$ok = true;
 					foreach($_FILES as $file) {
