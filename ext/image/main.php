@@ -34,8 +34,8 @@ class ImageIO extends Extension {
 		}
 
 		if(is_a($event, 'UploadingImageEvent')) {
-			$ok = $this->add_image($event->image);
-			if(!$ok) $event->veto();
+			$error = $this->add_image($event->image);
+			if(!empty($error)) $event->veto($error);
 		}
 
 		if(is_a($event, 'ImageDeletionEvent')) {
@@ -172,11 +172,9 @@ class ImageIO extends Extension {
 		 */
 		$existing = $database->get_image_by_hash($image->hash);
 		if(!is_null($existing)) {
-			$page->add_block(new Block("Error uploading {$image->filename}",
-					"Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-					"already has hash {$image->hash}:<p>".
-					build_thumb_html($existing)));
-			return false;
+			$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
+					"already has hash {$image->hash}:<p>".build_thumb_html($existing);
+			return $error;
 		}
 
 		// actually insert the info
@@ -195,27 +193,25 @@ class ImageIO extends Extension {
 		 * insert the image info into the database
 		 */
 		if(!copy($image->temp_filename, $image->get_image_filename())) {
-			$page->add_block(new Block("Error uploading {$image->filename}",
-					"The image couldn't be moved from the temporary area to the
-					main data store -- is the web server allowed to write to '".
-					($image->get_image_filename())."'?"));
 			send_event(new ImageDeletionEvent($image->id));
-			return false;
+			$error = "The image couldn't be moved from the temporary area to the
+					main data store -- is the web server allowed to write to '".
+					($image->get_image_filename())."'?";
+			return $error;
 		}
 		chmod($image->get_image_filename(), 0644);
 
 		if(!$this->make_thumb($image->get_image_filename(), $image->get_thumb_filename())) {
-			$page->add_block(new Block("Error uploading {$image->filename}",
-					"The image thumbnail couldn't be generated -- is the web
-					server allowed to write to '".($image->get_thumb_filename())."'?"));
 			send_event(new ImageDeletionEvent($image->id));
-			return false;
+			$error="The image thumbnail couldn't be generated -- is the web
+					server allowed to write to '".($image->get_thumb_filename())."'?";
+			return $error;
 		}
 		chmod($image->get_thumb_filename(), 0644);
 
 		send_event(new TagSetEvent($image->id, $image->get_tag_array()));
 
-		return true;
+		return null;
 	}
 // }}}
 // fetch image {{{
