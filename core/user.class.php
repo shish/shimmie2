@@ -51,12 +51,12 @@ class User {
 
 	public function get_image_count() {
 		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM images WHERE owner_id=?", $this->id);
+		return $database->db->GetOne("SELECT COUNT(*) AS count FROM images WHERE owner_id=?", array($this->id));
 	}
 	
 	public function get_comment_count() {
 		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", $this->id);
+		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($this->id));
 	}
 }
 ?>
