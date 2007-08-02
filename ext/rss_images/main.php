@@ -52,7 +52,7 @@ class RSS_Images extends Extension {
 		$base_href = $config->get_string('base_href');
 		$version = $config->get_string('version');
 		$xml = "
-<?xml version=\"1.0\" encoding=\"utf-8\" ?>
+<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
 <rss version=\"2.0\">
     <channel>
         <title>$title</title>
