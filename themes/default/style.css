@@ -130,7 +130,7 @@ A:hover {text-decoration: underline;}
 	padding: 8px 4px 8px 4px;
 }
 
-#image_comments {
+.comment {
 	text-align: left;
 }
 
