@@ -210,8 +210,20 @@ function get_memory_limit() {
 	return $memory;
 }
 
+/*
+ * PHP really, really sucks.
+ */
 function get_base_href() {
-	$dir = dirname($_SERVER['SCRIPT_NAME']);
+	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
+	$ok_var = null;
+	foreach($possible_vars as $var) {
+		if(substr($_SERVER[$var], -4) == '.php') {
+			$ok_var = $_SERVER[$var];
+			break;
+		}
+	}
+	assert(!empty($ok_var));
+	$dir = dirname($ok_var);
 	if($dir == "/") $dir = "";
 	return $dir;
 }
