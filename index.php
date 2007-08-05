@@ -1,5 +1,5 @@
 <?php
-define("DEBUG", true);
+define("DEBUG", false);
 define("VERSION", '2.1-rc1');
 
 if(DEBUG) {

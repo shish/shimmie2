@@ -6,13 +6,11 @@
            /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
                    \/      \/         \/      \/        \/        \/
 
-Shimmie2 Release Candidate
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-Okay, so maybe my estimate of "it should be done within the week" was a bit
-optimistic... I did get the first 3.5k lines of code done in a week, then
-another 1k of extensions in another week, but making it all work *properly*
-took 3 months...
-
+Shimmie 2.1 Release Candidate
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+RSS, BBCode + Emoticons, Wiki, Theme engine 2 + Danbooru theme, UTF8 support,
+Word filter, LOTS of database optimisations, Removal of ConfigSaveEvent and
+many small fixes and improvements \o/
 
 Requirements
 ~~~~~~~~~~~~
@@ -25,7 +23,7 @@ a) It's a pain in the ass to support
 b) Nobody has told me they want it
 
 If you want PHP 4 support, mail me, and I'll see if I can get it working for
-version 2.1...
+version 2.2...
 
 
 Installation
@@ -37,6 +35,12 @@ Installation
    admin of the board
 5) Click "install". Hopefully you'll end up at the configuration screen; if
    not, you should be given instructions on how to fix any errors~
+
+
+Upgrade from 2.0.X
+~~~~~~~~~~~~~~~~~~
+Should be automatic. This includes automatically messing with the database --
+back it up first!
 
 
 Upgrade from 0.8.4
@@ -71,7 +75,7 @@ Contact
 http://forum.shishnet.org/viewforum.php?f=6 -- discussion forum
 http://trac.shishnet.org/shimmie2/ -- bug tracker
 webmaster at shishnet.org -- email
-Shish on Freenode -- IRC
+#shimmie on Freenode -- IRC
 
 
 
