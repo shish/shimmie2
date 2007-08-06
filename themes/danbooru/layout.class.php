@@ -88,7 +88,7 @@ class Layout {
 		}
 
 		$site_name = $config->get_string('title'); // bzchan: change from normal default to get title for top of page
-		$front_page = $config->get_string('front_page'); // bzchan: change from normal default to get front page for top of page
+		$main_page = $config->get_string('main_page'); // bzchan: change from normal default to get main page for top of page
 
 		// bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
 		$custom_links = "";
@@ -103,10 +103,10 @@ class Layout {
 
 		// bzchan: failed attempt to add heading after title_link (failure was it looked bad)
 		//if($this->heading==$site_name)$this->heading = '';
-		//$title_link = "<h1><a href='".make_link($front_page)."'>$site_name</a>/$this->heading</h1>";
+		//$title_link = "<h1><a href='".make_link($main_page)."'>$site_name</a>/$this->heading</h1>";
 
 		// bzchan: prepare main title link
-		$title_link = "<h1><a href='".make_link($front_page)."'>$site_name</a></h1>";
+		$title_link = "<h1><a href='".make_link($main_page)."'>$site_name</a></h1>";
 
 		if($page->left_enabled) {
 			$left = "<div id='nav'>$left_block_html</div>";
