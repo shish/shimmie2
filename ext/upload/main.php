@@ -80,8 +80,8 @@ class Upload extends Extension {
 		}
 		else if(filesize($file['tmp_name']) > $config->get_int('upload_size')) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-				"File too large (".filesize($file['tmp_name'])." &gt; ".
-				($config->get_int('upload_size')).")");
+				"File too large (".to_shorthand_int(filesize($file['tmp_name']))." &gt; ".
+				(to_shorthand_int($config->get_int('upload_size'))).")");
 		}
 		else if(!($info = getimagesize($file['tmp_name']))) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
