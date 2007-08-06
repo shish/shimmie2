@@ -77,7 +77,34 @@ function begin() {
 	print <<<EOD
 <html>
 	<head><title>Shimmie2 Installer</title></head>
-	<link rel="stylesheet" href="themes/default/style.css">
+	<style>
+BODY {
+	background: #EEE;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+}
+H1, H3 {
+	border: 1px solid black;
+	background: #DDD;
+	text-align: center;
+}
+H1 {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 2px;
+}
+H3 {
+	margin-top: 32px;
+	padding: 1px;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+FORM {margin: 0px;}
+A {text-decoration: none;}
+A:hover {text-decoration: underline;}
+	</style>
 	<body>
 		<h1>Shimmie Installer</h1>
 
