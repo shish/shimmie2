@@ -122,10 +122,6 @@ A:hover {text-decoration: underline;}
 .withleft {
 	margin-left: 160px;
 }
-#body TABLE {
-	width: 90%;
-	margin: auto;
-}
 .paginator {
 	margin: 16px;
 	text-align: center;

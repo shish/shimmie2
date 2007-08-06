@@ -103,7 +103,7 @@ class ViewTheme extends Themelet {
 			<div id='imgdata'><form action='".make_link("tag_edit/set")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image_id'>
 				<input type='hidden' name='query' value='$h_query'>
-				<table style='width: 500px;'>
+				<table style='width: 500px; margin: 0px;'>
 				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tags' value='$h_tags'></td></tr>
 				<tr><td>Source</td><td><input type='text' name='source' value='$h_source'></td></tr>
 				<tr><td>&nbsp;</td><td><input type='submit' value='Set'></td></tr>

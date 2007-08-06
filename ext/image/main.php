@@ -168,6 +168,16 @@ class ImageIO extends Extension {
 		global $config;
 
 		/*
+		 * Validate things
+		 */
+		if(!empty($image->source)) {
+			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
+				$error = "Image's source isn't a valid URL";
+				return $error;
+			}
+		}
+
+		/*
 		 * Check for an existing image
 		 */
 		$existing = $database->get_image_by_hash($image->hash);

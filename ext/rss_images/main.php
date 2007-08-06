@@ -51,8 +51,7 @@ class RSS_Images extends Extension {
 		$title = $config->get_string('title');
 		$base_href = $config->get_string('base_href');
 		$version = $config->get_string('version');
-		$xml = "
-<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
+		$xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
 <rss version=\"2.0\">
     <channel>
         <title>$title</title>
@@ -62,8 +61,7 @@ class RSS_Images extends Extension {
 		<copyright>(c) 2007 Shish</copyright>
 		$data
 	</channel>
-</rss>
-";
+</rss>";
 		$page->set_data($xml);
 	}
 // }}}
