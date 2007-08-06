@@ -271,11 +271,11 @@ class Database {
 		if($limit < 1) $limit = 1;
 		
 		if(count($tags) == 0) {
-			$result = $this->execute("{$this->get_images} ORDER BY id DESC LIMIT ?,?", array($start, $limit));
+			$result = $this->execute("{$this->get_images} ORDER BY id DESC LIMIT ? OFFSET ?", array($limit, $start));
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
-			$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ?,?", array($start, $limit)));
+			$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
 			$result = $this->execute($querylet->sql, $querylet->variables);
 		}
 		
