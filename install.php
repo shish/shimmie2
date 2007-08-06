@@ -163,7 +163,10 @@ function create_tables($dsn) { // {{{
 		die("Couldn't connect to \"$dsn\"");
 	}
 	else {
-		if(create_tables_mysql($db)) {
+		if((substr($dsn, 0, 5) == "mysql") && create_tables_mysql($db)) {
+			$_SESSION['tables_created'] = true;
+		}
+		else if((substr($dsn, 0, 5) == "pgsql" || substr($dsn, 0, 8) == "postgres") && create_tables_pgsql($db)) {
 			$_SESSION['tables_created'] = true;
 		}
 		else {
@@ -484,21 +487,18 @@ function create_tables_mysql($db) {
 
 	$db->Execute("SET NAMES utf8"); // FIXME: mysql-specific :(
 	
-	$db->Execute("DROP TABLE IF EXISTS aliases");
 	$db->Execute("CREATE TABLE aliases (
 		oldtag varchar(255) NOT NULL,
 		newtag varchar(255) NOT NULL,
 		PRIMARY KEY (oldtag)
 	)");
 
-	$db->Execute("DROP TABLE IF EXISTS config");
 	$db->Execute("CREATE TABLE config (
 		name varchar(255) NOT NULL,
 		value text,
 		PRIMARY KEY (name)
 	)");
 
-	$db->Execute("DROP TABLE IF EXISTS images");
 	$db->Execute("CREATE TABLE images (
 		id int(11) NOT NULL auto_increment,
 		owner_id int(11) NOT NULL default '0',
@@ -515,7 +515,6 @@ function create_tables_mysql($db) {
 		UNIQUE (hash)
 	)");
 
-	$db->Execute("DROP TABLE IF EXISTS tags");
 	$db->Execute("CREATE TABLE tags (
 		id int not null auto_increment primary key,
 		tag varchar(64) not null unique,
@@ -523,7 +522,6 @@ function create_tables_mysql($db) {
 		KEY tags_count(count)
 	)");
 	
-	$db->Execute("DROP TABLE IF EXISTS image_tags");
 	$db->Execute("CREATE TABLE image_tags (
 		image_id int NOT NULL default 0,
 		tag_id int NOT NULL default 0,
@@ -532,7 +530,6 @@ function create_tables_mysql($db) {
 		KEY tags_image_id (image_id)
 	)");
 
-	$db->Execute("DROP TABLE IF EXISTS users");
 	$db->Execute("CREATE TABLE users (
 		id int(11) NOT NULL auto_increment,
 		name varchar(32) NOT NULL,
@@ -545,12 +542,81 @@ function create_tables_mysql($db) {
 		UNIQUE (name)
 	)");
 	
-	$db->Execute("DROP TABLE IF EXISTS layout");
 	$db->Execute("CREATE TABLE layout (
 		title varchar(64) primary key not null,
 		section varchar(32) not null default \"left\",
 		position int not null default 50,
 		visible enum('Y', 'N') default 'Y' not null
+	)");
+
+	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
+
+	return $db->CommitTrans();
+}
+function create_tables_pgsql($db) {
+	$db->StartTrans();
+	
+	$db->Execute("CREATE TABLE aliases (
+		oldtag varchar(255) NOT NULL,
+		newtag varchar(255) NOT NULL,
+		PRIMARY KEY (oldtag)
+	)");
+
+	$db->Execute("CREATE TABLE config (
+		name varchar(255) NOT NULL,
+		value text,
+		PRIMARY KEY (name)
+	)");
+
+	$db->Execute("CREATE TABLE images (
+		id SERIAL NOT NULL,
+		owner_id integer NOT NULL default '0',
+		owner_ip char(16) default NULL,
+		filename varchar(64) NOT NULL default '',
+		filesize integer NOT NULL default '0',
+		hash char(32) NOT NULL default '',
+		ext char(4) NOT NULL default '',
+		source varchar(255),
+		width integer NOT NULL,
+		height integer NOT NULL,
+		posted timestamp NOT NULL,
+		PRIMARY KEY (id),
+		UNIQUE (hash)
+	)");
+
+	$db->Execute("CREATE TABLE tags (
+		id SERIAL NOT NULL,
+		tag varchar(64) not null unique,
+		count int not null default 0,
+		PRIMARY KEY(id)
+	)");
+	$db->Execute("CREATE INDEX tags__count ON tags(count)");
+	
+	$db->Execute("CREATE TABLE image_tags (
+		image_id int NOT NULL default 0,
+		tag_id int NOT NULL default 0,
+		UNIQUE (image_id,tag_id)
+	)");
+	$db->Execute("CREATE INDEX image_tags__tag_id ON image_tags(tag_id)");
+	$db->Execute("CREATE INDEX image_tags__image_id ON image_tags(image_id)");
+
+	$db->Execute("CREATE TABLE users (
+		id SERIAL NOT NULL,
+		name varchar(32) NOT NULL,
+		pass char(32) default NULL,
+		joindate timestamp NOT NULL,
+		enabled char(1) NOT NULL default 'Y',
+		admin char(1) NOT NULL default 'N',
+		email varchar(255) default NULL,
+		PRIMARY KEY (id),
+		UNIQUE (name)
+	)");
+	
+	$db->Execute("CREATE TABLE layout (
+		title varchar(64) primary key not null,
+		section varchar(32) not null default 'left',
+		position int not null default 50,
+		visible char(1) default 'Y' not null
 	)");
 
 	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
