@@ -33,7 +33,7 @@ class UserPageTheme extends Themelet {
 
 		$html .= "
 		<form action='".make_link("user_admin/create")."' method='POST'>
-			<table style='width: 300px;' border='1'>
+			<table style='width: 300px;'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
@@ -75,7 +75,7 @@ class UserPageTheme extends Themelet {
 	}
 	
 	public function display_ip_list($page, $uploads, $comments) {
-		$html = "<table id='ip-history'>";
+		$html = "<table id='ip-history' style='width: 400px;'>";
 		$html .= "<tr><td>Uploaded from: ";
 		foreach($uploads as $ip => $count) {
 			$html .= "<br>$ip ($count)";
@@ -140,7 +140,7 @@ class UserPageTheme extends Themelet {
 		<form action='".make_link("user_admin/change_pass")."' method='POST'>
 			<input type='hidden' name='name' value='{$duser->name}'>
 			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;' border='1'>
+			<table style='width: 300px;'>
 				<tr><td colspan='2'>Change Password</td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
