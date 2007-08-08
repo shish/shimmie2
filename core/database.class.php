@@ -80,7 +80,7 @@ class Database {
 	public function cache_execute($time, $query, $args=array()) {
 		global $config;
 		if($config->get_bool('db_cache')) {
-			return $this->db->CacheExecute($time, $query, $args);
+			return $this->error_check($this->db->CacheExecute($time, $query, $args));
 		}
 		else {
 			return $this->error_check($this->db->Execute($query, $args));
