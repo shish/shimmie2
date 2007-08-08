@@ -74,7 +74,20 @@ class Database {
 	}
 
 	public function execute($query, $args=array()) {
-		$result = $this->db->Execute($query, $args);
+		return $this->error_check($this->db->Execute($query, $args));
+	}
+
+	public function cache_execute($time, $query, $args=array()) {
+		global $config;
+		if($config->get_bool('db_cache')) {
+			return $this->db->CacheExecute($time, $query, $args);
+		}
+		else {
+			return $this->error_check($this->db->Execute($query, $args));
+		}
+	}
+
+	private function error_check($result) {
 		if($result === False) {
 			print "SQL Error: " . $this->db->ErrorMsg() . "<br>";
 			print "Query: $query";
