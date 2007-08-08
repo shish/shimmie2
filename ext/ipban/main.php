@@ -34,9 +34,9 @@ class IPBan extends Extension {
 			if($config->get_int("ext_ipban_version") < 1) {
 				$this->install();
 			}
+			
+			$this->check_ip_ban();
 		}
-
-		$this->check_ip_ban();
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "ip_ban")) {
 			global $user;
