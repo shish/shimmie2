@@ -398,9 +398,9 @@ function _get_query_parts() {
 		$n++;
 	}
 	*/
-	$path = str_replace('/', ' ', $path);
-	$path = str_replace('  ', '/', $path);
-	$parts = split(' ', $path);
+	$path = str_replace('/', '%%', $path);
+	$path = str_replace('%%%%', '/', $path);
+	$parts = split('%%', $path);
 
 	return $parts;
 }
