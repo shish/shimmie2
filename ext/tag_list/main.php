@@ -88,21 +88,21 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->Execute(
-				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
-				array($tags_min));
+		$tag_data = $database->cache_execute(300, "
+				SELECT
+					tag,
+					FLOOR(LOG(LOG(count - ? + 1)+1)*1.5*100)/100 AS scaled
+				FROM tags
+				WHERE count > ?
+				ORDER BY tag
+			", array($tags_min, $tags_min))->GetArray();
 
 		$html = "";
-		while(!$result->EOF) {
-			$row = $result->fields;
+		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
-			$count = $row['count'];
-			if($count > 1) {
-				$size = floor(log(log($row['count'] - $tags_min + 1)+1)*1.5*100)/100;
-				$link = $this->tag_link($row['tag']);
-				$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag</a>&nbsp;\n";
-			}
-			$result->MoveNext();
+			$size = $row['scaled'];
+			$link = $this->tag_link($row['tag']);
+			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag</a>&nbsp;\n";
 		}
 		return $html;
 	}
@@ -112,14 +112,13 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->Execute(
+		$tag_data = $database->cache_execute(300,
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
-				array($tags_min));
+				array($tags_min))->GetArray();
 
 		$html = "";
 		$lastLetter = 0;
-		while(!$result->EOF) {
-			$row = $result->fields;
+		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
 			if($lastLetter != strtolower(substr($h_tag, 0, 1))) {
@@ -128,7 +127,6 @@ class TagList extends Extension {
 			}
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
-			$result->MoveNext();
 		}
 
 		return $html;
@@ -139,24 +137,22 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->Execute(
-				"SELECT tag,count FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
-				array($tags_min)
-				);
+		$tag_data = $database->cache_execute(300,
+				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
+				array($tags_min))->GetArray();
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
 		$lastLog = 0;
-		while(!$result->EOF) {
-			$row = $result->fields;
+		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
-			if($lastLog != floor(log($count))) {
-				$lastLog = floor(log($count));
+			$scaled = $row['scaled'];
+			if($lastLog != $scaled) {
+				$lastLog = $scaled;
 				$html .= "<p>$lastLog<br>";
 			}
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
-			$result->MoveNext();
 		}
 
 		return $html;
