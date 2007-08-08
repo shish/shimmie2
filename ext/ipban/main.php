@@ -121,7 +121,9 @@ class IPBan extends Extension {
 	public function get_ip_ban($ip) {
 		global $database;
 		// yes, this is "? LIKE var", because ? is the thing with matching tokens
-		return $database->db->GetRow("SELECT * FROM bans WHERE ? LIKE ip AND date < now() AND (end > now() OR isnull(end))", array($ip));
+		// actually, slow
+		// return $database->db->GetRow("SELECT * FROM bans WHERE ? LIKE ip AND date < now() AND (end > now() OR isnull(end))", array($ip));
+		return $database->db->GetRow("SELECT * FROM bans WHERE ip = ? AND date < now() AND (end > now() OR isnull(end))", array($ip));
 	}
 
 	public function add_ip_ban($ip, $reason, $end) {
