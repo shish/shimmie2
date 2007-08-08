@@ -178,12 +178,13 @@ function create_tables($dsn) { // {{{
 function build_dirs() { // {{{
 	if(!file_exists("images")) @mkdir("images"); // *try* and make default dirs. Ignore any errors -- 
 	if(!file_exists("thumbs")) @mkdir("thumbs"); // if something is amiss, we'll tell the user later
+	if(!file_exists("data")) @mkdir("data");
 
 	if(
-			((!file_exists("images") || !file_exists("thumbs")) && !is_writable("./")) ||
-			(!is_writable("images") || !is_writable("thumbs"))
+			((!file_exists("images") || !file_exists("thumbs") || !file_exists("data")) && !is_writable("./")) ||
+			(!is_writable("images") || !is_writable("thumbs") || !is_writable("data"))
 	) {
-		print "Shimmie needs two folders in it's directory, 'images' and 'thumbs',
+		print "Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
 		       and they need to be writable by the PHP user (if you see this error,
 			   if probably means the folders are owned by you, and they need to be
 			   writable by the web server).
@@ -194,6 +195,7 @@ function build_dirs() { // {{{
 	else {
 		assert(file_exists("images") && is_writable("images"));
 		assert(file_exists("thumbs") && is_writable("thumbs"));
+		assert(file_exists("data") && is_writable("data"));
 
 		if(!file_exists("images/ff")) {
 			for($i=0; $i<256; $i++) {

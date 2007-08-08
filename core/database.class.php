@@ -1,4 +1,5 @@
 <?php
+$ADODB_CACHE_DIR="./data";
 require_once "lib/adodb/adodb.inc.php";
 
 class Querylet { // {{{
