@@ -1,6 +1,6 @@
 <?php
 define("DEBUG", false);
-define("VERSION", '2.1-rc1');
+define("VERSION", '2.1-rc2');
 
 if(DEBUG) {
 	error_reporting(E_ALL);
