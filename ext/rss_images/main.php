@@ -50,14 +50,14 @@ class RSS_Images extends Extension {
 
 		$title = $config->get_string('title');
 		$base_href = $config->get_string('base_href');
-		$version = $config->get_string('version');
+		$version = VERSION;
 		$xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
 <rss version=\"2.0\">
     <channel>
         <title>$title</title>
         <description>The latest uploads to the image board</description>
 		<link>$base_href</link>
-		<generator>$version</generator>
+		<generator>Shimmie-$version</generator>
 		<copyright>(c) 2007 Shish</copyright>
 		$data
 	</channel>
