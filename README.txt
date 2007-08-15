@@ -12,6 +12,7 @@ RSS, BBCode + Emoticons, Wiki, Theme engine 2 + Danbooru theme, UTF8 support,
 Word filter, LOTS of database optimisations, Removal of ConfigSaveEvent and
 many small fixes and improvements \o/
 
+
 Requirements
 ~~~~~~~~~~~~
 MySQL 4.1+
@@ -39,8 +40,9 @@ Installation
 
 Upgrade from 2.0.X
 ~~~~~~~~~~~~~~~~~~
-Should be automatic. This includes automatically messing with the database --
-back it up first!
+Should be automatic, just unzip and copy across config.php, images and thumbs
+folders from the old version. This includes automatically messing with the
+database -- back it up first!
 
 
 Upgrade from 0.8.4
@@ -77,6 +79,13 @@ http://trac.shishnet.org/shimmie2/ -- bug tracker
 webmaster at shishnet.org -- email
 #shimmie on Freenode -- IRC
 
+
+Licence
+~~~~~~~
+All code is GPL2; ie, if you give shimmie to someone else, you have to give
+them the source (which should be easy, as PHP is an interpreted language...).
+If you want to add customisations to your own site, then those customisations
+belong to you, and you can do what you want with them.
 
 
 
