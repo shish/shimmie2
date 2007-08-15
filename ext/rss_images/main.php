@@ -38,13 +38,13 @@ class RSS_Images extends Extension {
 			);
 			
 			$data .= "
-				<item>
-					<title>{$image->id} - $tags</title>
-					<link>$link</link>
-					<guid isPermaLink=\"true\">$link</guid>
-					<pubDate>$posted</pubDate>
-					<description>$content</description>
-				</item>
+		<item>
+			<title>{$image->id} - $tags</title>
+			<link>$link</link>
+			<guid isPermaLink=\"true\">$link</guid>
+			<pubDate>$posted</pubDate>
+			<description>$content</description>
+		</item>
 			";
 		}
 
