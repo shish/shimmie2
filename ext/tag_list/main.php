@@ -88,14 +88,15 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$tag_data = $database->cache_execute(300, "
+		$result = $database->cache_execute(300, "
 				SELECT
 					tag,
 					FLOOR(LOG(LOG(count - ? + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count > ?
 				ORDER BY tag
-			", array($tags_min, $tags_min))->GetArray();
+			", array($tags_min, $tags_min));
+		$tag_data = $result->GetArray();
 
 		$html = "";
 		foreach($tag_data as $row) {
@@ -112,9 +113,10 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$tag_data = $database->cache_execute(300,
+		$result = $database->cache_execute(300,
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
-				array($tags_min))->GetArray();
+				array($tags_min));
+		$tag_data = $result->GetArray();
 
 		$html = "";
 		$lastLetter = 0;
@@ -137,9 +139,10 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$tag_data = $database->cache_execute(300,
+		$result = $database->cache_execute(300,
 				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
-				array($tags_min))->GetArray();
+				array($tags_min));
+		$tag_data = $result->GetArray();
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
 		$lastLog = 0;
