@@ -49,14 +49,14 @@ class Home extends Extension {
 		$counter_dir = $config->get_string('home_counter', 'default');
 		
 		$total = ceil($database->db->GetOne("SELECT COUNT(*) FROM images"));
+		$strtotal = "$total";
 	   	   
-		$numbers = array();
-		$numbers = str_split($total);
 		$num_comma = number_format($total);
 	   
 		$counter_text = "";
-		foreach ($numbers as $cur)
+		for($n=0; $n<strlen($strtotal); $n++)
 		{
+			$cur = $strtotal[$n];
 			$counter_text .= " <img alt='$cur' src='$data_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
 		}
 		
