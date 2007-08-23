@@ -156,6 +156,9 @@ A:hover {text-decoration: underline;}
 	padding: 8px 4px 8px 4px;
 }
 
+#large_upload_form {
+	width: 600px;
+}
 .setupblock {
 	border: 1px solid #AAA;
 	padding: 8px;
