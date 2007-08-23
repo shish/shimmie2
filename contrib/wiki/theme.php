@@ -36,7 +36,7 @@ class WikiTheme {
 		$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
 	}
 
-	private function can_edit($user, $page) {
+	protected function can_edit($user, $page) {
 		global $config;
 
 		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
@@ -46,7 +46,7 @@ class WikiTheme {
 		return false;
 	}
 
-	private function create_edit_html($page) {
+	protected function create_edit_html($page) {
 		$h_title = html_escape($page->title);
 		$u_title = url_escape($page->title);
 		$i_revision = int_escape($page->revision) + 1;
@@ -70,7 +70,7 @@ class WikiTheme {
 		";
 	}
 
-	private function create_display_html($page) {
+	protected function create_display_html($page) {
 		$owner = $page->get_owner();
 
 		$tfe = new TextFormattingEvent($page->body);

@@ -13,7 +13,7 @@ class ETTheme extends Themelet {
 		$page->add_block(new Block("Data which is to be sent:", $this->build_data_form($info)));
 	}
 	
-	private function build_data_form($info) {
+	protected function build_data_form($info) {
 		$data = <<<EOD
 Optional:
 Add this site to the public shimmie users list: No

@@ -75,7 +75,7 @@ class CommentListTheme extends Themelet {
 	 */
 
 
-	private function comments_to_html($comments, $trim=false) {
+	protected function comments_to_html($comments, $trim=false) {
 		$html = "";
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment, $trim);
@@ -83,7 +83,7 @@ class CommentListTheme extends Themelet {
 		return $html;
 	}
 
-	private function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
@@ -105,7 +105,7 @@ class CommentListTheme extends Themelet {
 		return "<p class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
 	}
 
-	private function build_postbox($image_id) {
+	protected function build_postbox($image_id) {
 		$i_image_id = int_escape($image_id);
 		return "
 			<form action='".make_link("comment/add")."' method='POST'>

@@ -1,6 +1,6 @@
 <?php
 
-class CommentListTheme extends Themelet {
+class CustomCommentListTheme extends CommentListTheme {
 	public function display_page_start($page, $page_number, $total_pages) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
@@ -40,15 +40,7 @@ class CommentListTheme extends Themelet {
 	}
 
 
-	private function comments_to_html($comments, $trim=false) {
-		$html = "";
-		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment, $trim);
-		}
-		return $html;
-	}
-
-	private function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
@@ -70,19 +62,6 @@ class CommentListTheme extends Themelet {
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		return "<p class='comment'>$h_userlink $h_dellink<br/><b>Posted on $h_posted</b><br/>$h_comment</p>";
 	}
-
-	// FIXME: privatise this
-	public function build_postbox($image_id) {
-		$i_image_id = int_escape($image_id);
-		return "
-			<form action='".make_link("comment/add")."' method='POST'>
-			<input type='hidden' name='image_id' value='$i_image_id' />
-			<textarea name='comment' rows='5' cols='50'></textarea>
-			<br><input type='submit' value='Post' />
-			</form>
-			";
-	}
-
 
 	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
 		$count = count($comments);

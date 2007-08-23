@@ -46,7 +46,7 @@ class IndexTheme extends Themelet {
 	}
 
 
-	private function build_navigation($page_number, $total_pages, $search_terms) {
+	protected function build_navigation($page_number, $total_pages, $search_terms) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -71,7 +71,7 @@ class IndexTheme extends Themelet {
 		return "$h_prev | $h_index | $h_next<br>$h_search";
 	}
 
-	private function build_table($images, $query) {
+	protected function build_table($images, $query) {
 		global $config;
 
 		$width = $config->get_int('index_width');

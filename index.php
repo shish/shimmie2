@@ -38,6 +38,10 @@ $_theme = $config->get_string("theme", "default");
 require_once "themes/$_theme/page.class.php";
 require_once "themes/$_theme/layout.class.php";
 require_once "themes/$_theme/themelet.class.php";
+$themelets = array_merge(glob("ext/*/theme.php"), glob("themes/$_theme/*.theme.php"));
+foreach($themelets as $filename) {
+	require_once $filename;
+}
 $page = new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
