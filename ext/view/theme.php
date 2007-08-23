@@ -15,7 +15,7 @@ class ViewTheme extends Themelet {
 
 	var $pin = null;
 
-	private function build_pin($image_id) {
+	protected function build_pin($image_id) {
 		if(!is_null($this->pin)) {
 			return $this->pin;
 		}
@@ -35,14 +35,14 @@ class ViewTheme extends Themelet {
 		$prev = $database->get_prev_image($image_id, $search_terms);
 
 		$h_prev = (!is_null($prev) ? "<a href='".make_link("post/view/{$prev->id}", $query)."'>Prev</a>" : "Prev");
-		$h_index = "<a href='".make_link("post/list")."'>Index</a>";
+		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = (!is_null($next) ? "<a href='".make_link("post/view/{$next->id}", $query)."'>Next</a>" : "Next");
 
 		$this->pin = "$h_prev | $h_index | $h_next";
 		return $this->pin;
 	}
 
-	private function build_navigation($image_id) {
+	protected function build_navigation($image_id) {
 		$h_pin = $this->build_pin($image_id);
 		$h_search = "
 			<p><form action='".make_link()."' method='GET'>
@@ -55,12 +55,12 @@ class ViewTheme extends Themelet {
 		return "$h_pin<br>$h_search";
 	}
 
-	private function build_image_view($image) {
+	protected function build_image_view($image) {
 		$ilink = $image->get_image_link();
 		return "<img id='main_image' src='$ilink'>";
 	}
 
-	private function build_info($image) {
+	protected function build_info($image) {
 		global $user;
 		$owner = $image->get_owner();
 		$h_owner = html_escape($owner->name);

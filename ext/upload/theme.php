@@ -51,7 +51,7 @@ class UploadTheme extends Themelet {
 	public function display_upload_status($page, $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("post/list"));
+			$page->set_redirect(make_link());
 		}
 		else {
 			$page->set_title("Upload Status");
@@ -64,7 +64,7 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block($title, $message));
 	}
 
-	private function build_upload_block() {
+	protected function build_upload_block() {
 		global $config;
 
 		$upload_list = "";

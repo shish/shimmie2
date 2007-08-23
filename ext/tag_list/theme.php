@@ -115,7 +115,7 @@ class TagListTheme extends Themelet {
 		$page->add_block(new Block("Refine Search", $html, "left", 60));
 	}
 	
-	private function ars($tag, $tags) {
+	protected function ars($tag, $tags) {
 		$html = "";
 		$html .= " <span class='ars'>(";
 		$html .= $this->get_add_link($tags, $tag);
@@ -125,7 +125,7 @@ class TagListTheme extends Themelet {
 		return $html;
 	}
 
-	private function get_remove_link($tags, $tag) {
+	protected function get_remove_link($tags, $tag) {
 		if(!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
 			return "";
 		}
@@ -136,7 +136,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	private function get_add_link($tags, $tag) {
+	protected function get_add_link($tags, $tag) {
 		if(in_array($tag, $tags)) {
 			return "";
 		}
@@ -147,7 +147,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	private function get_subtract_link($tags, $tag) {
+	protected function get_subtract_link($tags, $tag) {
 		if(in_array("-$tag", $tags)) {
 			return "";
 		}
@@ -158,7 +158,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	private function tag_link($tag) {
+	protected function tag_link($tag) {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}

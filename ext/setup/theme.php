@@ -52,14 +52,14 @@ class SetupTheme extends Themelet {
 		$page->add_block(new Block("Setup", $table));
 	}
 
-	private function build_navigation() {
+	protected function build_navigation() {
 		return "
 			<a href='".make_link()."'>Index</a>
 			<br><a href='http://trac.shishnet.org/shimmie2/wiki/Settings'>Help</a>
 		";
 	}
 
-	private function sb_to_html($block) {
+	protected function sb_to_html($block) {
 		return "<div class='setupblock'><b>{$block->header}</b><br>{$block->body}</div>\n";
 	}
 }

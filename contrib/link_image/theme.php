@@ -33,7 +33,7 @@ class LinkImageTheme extends Themelet {
 			50));
 	}
 	
-	private function url ($url,$content,$type) {
+	protected function url ($url,$content,$type) {
 		if ($content == NULL) {$content=$url;}
 		
 		switch ($type) {
@@ -49,7 +49,7 @@ class LinkImageTheme extends Themelet {
 		return $text;
 	}
 	
-	private function img ($src,$type) {
+	protected function img ($src,$type) {
 		switch ($type) {
 			case "html":
 				$text = "<img src=\"$src\" />";
@@ -63,7 +63,7 @@ class LinkImageTheme extends Themelet {
 		return $text;
 	}
 	
-	private function link_code($label,$content,$id=NULL) {
+	protected function link_code($label,$content,$id=NULL) {
 		return	"<label for='".$id."' title='Click to select the textbox'>$label</label>\n".
 				"<input type='text' readonly='readonly' id='".$id."' name='".$id."' value='".html_escape($content)."' onfocus='this.select();'></input>\n<br/>\n";
 	}
