@@ -21,7 +21,12 @@ class EventLog extends Extension {
 			global $user;
 			if($user->is_admin()) {
 				global $database;
-				$events = $database->db->GetAll("SELECT * FROM event_log WHERE date > date_sub(now(), interval 1 day) ORDER BY date DESC");
+				$events = $database->db->GetAll("
+					SELECT event_log.*,users.name FROM event_log
+					JOIN users ON event_log.owner_id = users.id
+					WHERE date > date_sub(now(), interval 1 day)
+					ORDER BY date DESC
+				");
 				$this->theme->display_page($event->page, $events);
 			}
 			else {

@@ -22,7 +22,7 @@ class EventLogTheme extends Themelet {
 			$table .= "
 				<tr>
 					<td>{$event['id']}</td>
-					<td>{$event['owner_id']}</td>
+					<td>{$event['name']}</td>
 					<td>{$event['owner_ip']}</td>
 					<td>{$event['date']}</td>
 					<td>{$event['event']}</td>
