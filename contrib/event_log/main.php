@@ -68,6 +68,10 @@ class EventLog extends Extension {
 		}
 
 		global $user; // bad
+		// TODO: log comments, uploads
+		if(is_a($event, 'CommentPostingEvent')) {
+			$this->add_to_log($event->user, 'Comment Posting', "Posted a comment on image #{$event->image_id}");
+		}
 		if(is_a($event, 'WikiUpdateEvent')) {
 			$this->add_to_log($event->user, 'Wiki Update', "Edited '{$event->page->title}'");
 		}
@@ -111,5 +115,5 @@ class EventLog extends Extension {
 		}
 	}
 }
-add_event_listener(new EventLog());
+add_event_listener(new EventLog(), 99); // ignore vetoed events
 ?>
