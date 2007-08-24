@@ -68,12 +68,10 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "comment")) {
 			if($event->get_arg(0) == "add") {
-				global $user;
-				send_event(new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']));
+				send_event(new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']));
 			}
 			else if($event->get_arg(0) == "delete") {
-				global $user;
-				if($user->is_admin()) {
+				if($event->user->is_admin()) {
 					// FIXME: post, not args
 					if($event->count_args() == 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));

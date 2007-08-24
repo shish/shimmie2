@@ -404,7 +404,7 @@ function _get_query_parts() {
 	return $parts;
 }
 
-function _get_page_request($page) {
+function _get_page_request($page, $user) {
 	global $config;
 	$args = _get_query_parts();
 
@@ -422,7 +422,7 @@ function _get_page_request($page) {
 		$args = array_slice($args, 1);
 	}
 	
-	return new PageRequestEvent($page_name, $args, $page);
+	return new PageRequestEvent($page_name, $args, $page, $user);
 }
 
 function _get_user() {

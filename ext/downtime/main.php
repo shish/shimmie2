@@ -6,7 +6,9 @@ class Downtime extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("downtime", "DowntimeTheme");
 
-		$this->check_downtime($event);
+		if(is_a($event, 'InitExtEvent')) {
+			$this->check_downtime($event);
+		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Downtime");
@@ -14,6 +16,7 @@ class Downtime extends Extension {
 			$sb->add_longtext_option("downtime_message", "<br>");
 			$event->panel->add_block($sb);
 		}
+
 		if(is_a($event, 'PageRequestEvent')) {
 			global $config;
 			if($config->get_bool("downtime")) {

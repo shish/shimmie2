@@ -9,13 +9,12 @@
 
 class AdminUtils extends Extension {
 	var $theme;
-// event handler {{{
+
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("admin_utils", "AdminUtilsTheme");
 		
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin_utils")) {
-			global $user;
-			if($user->is_admin()) {
+			if($event->user->is_admin()) {
 				set_time_limit(0);
 				
 				switch($_POST['action']) {
@@ -40,8 +39,7 @@ class AdminUtils extends Extension {
 			$this->theme->display_form($page);
 		}
 	}
-// }}}
-// do things {{{
+
 	private function lowercase_all_tags() {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
@@ -66,7 +64,6 @@ class AdminUtils extends Extension {
 			}
 		}
 	}
-// }}}
 }
 add_event_listener(new AdminUtils());
 ?>

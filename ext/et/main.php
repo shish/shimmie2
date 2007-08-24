@@ -2,13 +2,12 @@
 
 class ET extends Extension {
 	var $theme;
-// event handler {{{
+
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "system_info")) {
-			global $user;
-			if($user->is_admin()) {
+			if($event->user->is_admin()) {
 				$this->theme->display_info_page($event->page, $this->get_info());
 			}
 		}
@@ -19,7 +18,7 @@ class ET extends Extension {
 			}
 		}
 	}
-// }}}
+
 // do it {{{
 	private function get_info() {
 		global $database;

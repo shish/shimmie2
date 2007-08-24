@@ -14,13 +14,11 @@ class AdminBuildingEvent extends Event {
 class AdminPage extends Extension {
 	var $theme;
 	
-// event handler {{{
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("admin", "AdminPageTheme");
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin")) {
-			global $user;
-			if(!$user->is_admin()) {
+			if(!$event->user->is_admin()) {
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
 			}
 			else {
@@ -59,7 +57,6 @@ class AdminPage extends Extension {
 			}
 		}
 	}
-// }}}
 }
 add_event_listener(new AdminPage());
 ?>

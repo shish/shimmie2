@@ -14,7 +14,8 @@ class Upload extends Extension {
 		}
 
 		if(is_a($event, 'PostListBuildingEvent')) {
-			if($this->can_upload()) {
+			global $user;
+			if($this->can_upload($user)) {
 				$this->theme->display_block($event->page);
 			}
 		}
@@ -23,7 +24,8 @@ class Upload extends Extension {
 			if(count($_FILES) + count($_POST) > 0) {
 				$tags = tag_explode($_POST['tags']);
 				$source = isset($_POST['source']) ? $_POST['source'] : null;
-				if($this->can_upload()) {
+				global $user;
+				if($this->can_upload($user)) {
 					$ok = true;
 					foreach($_FILES as $file) {
 						$ok = $ok & $this->try_upload($file, $tags, $source);
@@ -61,9 +63,9 @@ class Upload extends Extension {
 	}
 // }}}
 // do things {{{
-	private function can_upload() {
-		global $config, $user;
-		return $config->get_bool("upload_anon") || !$user->is_anonymous();
+	private function can_upload($user) {
+		global $config;
+		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}
 
 	private function try_upload($file, $tags, $source) {
@@ -91,7 +93,8 @@ class Upload extends Extension {
 			$image = new Image($file['tmp_name'], $file['name'], $tags, $source);
 		
 			if($image->is_ok()) {
-				$event = new UploadingImageEvent($image);
+				global $user;
+				$event = new UploadingImageEvent($user, $image);
 				send_event($event);
 				$ok = !$event->vetoed;
 				if(!$ok) {
@@ -170,7 +173,8 @@ class Upload extends Extension {
 			$image = new Image($tmp_filename, basename($url), $tags, $source);
 		
 			if($image->is_ok()) {
-				$event = new UploadingImageEvent($image);
+				global $user;
+				$event = new UploadingImageEvent($user, $image);
 				send_event($event);
 				$ok = !$event->vetoed;
 				if(!$ok) {

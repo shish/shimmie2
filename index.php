@@ -45,6 +45,6 @@ foreach($themelets as $filename) {
 $page = new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
-send_event(_get_page_request($page));
+send_event(_get_page_request($page, $user));
 $page->display();
 ?>

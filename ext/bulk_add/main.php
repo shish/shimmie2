@@ -2,13 +2,12 @@
 
 class BulkAdd extends Extension {
 	var $theme;
-// event handler {{{
+
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("bulk_add", "BulkAddTheme");
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "bulk_add")) {
-			global $user;
-			if($user->is_admin() && isset($_POST['dir'])) {
+			if($event->user->is_admin() && isset($_POST['dir'])) {
 				set_time_limit(0);
 
 				$this->add_dir($_POST['dir']);
@@ -21,7 +20,7 @@ class BulkAdd extends Extension {
 			$this->theme->display_admin_block($page);
 		}
 	}
-// }}}
+
 // do the adding {{{
 	private function add_image($tmpname, $filename, $tags) {
 		global $config;

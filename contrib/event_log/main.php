@@ -18,9 +18,8 @@ class EventLog extends Extension {
 		}
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "event_log") {
-			global $user;
 			global $database;
-			if($user->is_admin()) {
+			if($event->user->is_admin()) {
 				if(isset($_POST['action'])) {
 					switch($_POST['action']) {
 						case 'clear':
@@ -68,9 +67,8 @@ class EventLog extends Extension {
 		}
 
 		global $user; // bad
-		// TODO: log comments, uploads
 		if(is_a($event, 'UploadingImageEvent')) {
-			$this->add_to_log($user, 'Uploading Image', "Uploaded a new image");
+			$this->add_to_log($event->user, 'Uploading Image', "Uploaded a new image");
 		}
 		if(is_a($event, 'CommentPostingEvent')) {
 			$this->add_to_log($event->user, 'Comment Posting', "Posted a comment on image #{$event->image_id}");

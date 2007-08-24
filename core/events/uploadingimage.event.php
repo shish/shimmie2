@@ -7,11 +7,11 @@
  */
 class UploadingImageEvent extends Event {
 	var $image;
-	var $ok;
+	var $user;
 
-	public function UploadingImageEvent($image) {
+	public function UploadingImageEvent($image, $user) {
 		$this->image = $image;
-		$this->ok = false;
+		$this->user = $user;
 	}
 }
 ?>

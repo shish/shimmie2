@@ -17,20 +17,18 @@ class AliasEditor extends Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object("alias_editor", "AliasEditorTheme");
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "alias")) {
-			global $user;
 			if($event->get_arg(0) == "add") {
-				if($user->is_admin()) {
+				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
 						send_event(new AddAliasEvent($_POST['oldtag'], $_POST['newtag']));
 
-						global $page;
 						$event->page->set_mode("redirect");
 						$event->page->set_redirect(make_link("alias/list"));
 					}
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
-				if($user->is_admin()) {
+				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag'])) {
 						global $database;
 						$database->Execute("DELETE FROM aliases WHERE oldtag=?", array($_POST['oldtag']));
@@ -42,7 +40,7 @@ class AliasEditor extends Extension {
 			}
 			else if($event->get_arg(0) == "list") {
 				global $database;
-				$this->theme->display_aliases($event->page, $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases"), $user->is_admin());
+				$this->theme->display_aliases($event->page, $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases"), $event->user->is_admin());
 			}
 			else if($event->get_arg(0) == "export") {
 				$event->page->set_mode("data");
