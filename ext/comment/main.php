@@ -1,6 +1,24 @@
 <?php
 require_once "lib/akismet.class.php";
 
+/* CommentPostingEvent {{{
+ * CommentPostingEvent:
+ *   $comment_id
+ *
+ * A comment is being deleted. Maybe used by spam
+ * detectors to get a feel for what should be delted
+ * and what should be kept?
+ */
+class CommentPostingEvent extends Event {
+	var $image_id, $user, $comment;
+
+	public function CommentPostingEvent($image_id, $user, $comment) {
+		$this->image_id = $image_id;
+		$this->user = $user;
+		$this->comment = $comment;
+	}
+}
+// }}}
 /* CommentDeletionEvent {{{
  * CommentDeletionEvent:
  *   $comment_id
@@ -50,7 +68,8 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "comment")) {
 			if($event->get_arg(0) == "add") {
-				$this->add_comment_wrapper($_POST['image_id'], $_POST['comment']);
+				global $user;
+				send_event(new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']));
 			}
 			else if($event->get_arg(0) == "delete") {
 				global $user;
@@ -89,6 +108,10 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'ImageDeletionEvent')) {
 			$this->delete_comments($event->image->id);
+		}
+		// TODO: split akismet into a separate class, which can veto the event
+		if(is_a($event, 'CommentPostingEvent')) {
+			$this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
 		}
 		if(is_a($event, 'CommentDeletionEvent')) {
 			$this->delete_comment($event->comment_id);
@@ -241,7 +264,7 @@ class CommentList extends Extension {
 				);
 
 			$akismet = new Akismet(
-					'http://www.yourdomain.com/',
+					$_SERVER['SERVER_NAME'],
 					$config->get_string('comment_wordpress_key'),
 					$comment);
 
@@ -260,8 +283,7 @@ class CommentList extends Extension {
 		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
 	}
 
-	private function add_comment_wrapper($image_id, $comment) {
-		global $user;
+	private function add_comment_wrapper($image_id, $user, $comment) {
 		global $database;
 		global $config;
 		global $page;
