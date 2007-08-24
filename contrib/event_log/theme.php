@@ -28,8 +28,8 @@ class EventLogTheme extends Themelet {
 						<a href='".make_link("event_log", "sort=name&order=DESC")."'>-</a>
 					</th>
 					<th style='width: 10em;'>IP
-						<a href='".make_link("event_log", "sort=ip&order=ASC")."'>+</a>
-						<a href='".make_link("event_log", "sort=ip&order=DESC")."'>-</a>
+						<a href='".make_link("event_log", "sort=owner_ip&order=ASC")."'>+</a>
+						<a href='".make_link("event_log", "sort=owner_ip&order=DESC")."'>-</a>
 					</th>
 					<th rowspan='2' class='entry'>Entry</th>
 				</tr>
@@ -45,16 +45,23 @@ class EventLogTheme extends Themelet {
 				</tr>
 		";
 		foreach($events as $event) {
-			$nobrdate = str_replace(" ", "&nbsp;", $event['date']);
 			$table .= "
 				<tr>
-					<td>{$event['name']}</td>
-					<td>{$event['owner_ip']}</td>
+					<td>
+						<a href='".make_link("event_log", "filter=name&where={$event['name']}")."'>{$event['name']}</a>
+					</td>
+					<td>
+						<a href='".make_link("event_log", "filter=owner_ip&where={$event['owner_ip']}")."'>{$event['owner_ip']}</a>
+					</td>
 					<td rowspan='2' class='entry'>{$event['entry']}</td>
 				</tr>
 				<tr>
-					<td>{$nobrdate}</td>
-					<td>{$event['event']}</td>
+					<td>
+						{$event['date']}
+					</td>
+					<td>
+						<a href='".make_link("event_log", "filter=event&where={$event['event']}")."'>{$event['event']}</a>
+					</td>
 				</tr>
 			";
 		}

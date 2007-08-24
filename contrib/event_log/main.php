@@ -29,20 +29,30 @@ class EventLog extends Extension {
 					}
 				}
 				
+				$columns = array("name", "date", "owner_ip", "event");
+				$orders = array("ASC", "DESC");
+
 				$sort = "date";
-				if(isset($_GET['sort']) && in_array($_GET['sort'], array("name", "date", "ip", "event"))) {
+				if(isset($_GET['sort']) && in_array($_GET['sort'], $columns)) {
 					$sort = $_GET['sort'];
 				}
 				
 				$order = "DESC";
-				if(isset($_GET['order']) && in_array($_GET['order'], array("ASC", "DESC"))) {
+				if(isset($_GET['order']) && in_array($_GET['order'], $orders)) {
 					$order = $_GET['order'];
+				}
+
+				$filter_sql = "";
+				if(isset($_GET['filter']) && isset($_GET['where']) && in_array($_GET['filter'], $columns)) {
+					$filter = $_GET['filter'];
+					$where = $database->db->Quote($_GET['where']);
+					$filter_sql = "WHERE $filter = $where";
 				}
 
 				$events = $database->db->GetAll("
 					SELECT event_log.*,users.name FROM event_log
 					JOIN users ON event_log.owner_id = users.id
-					WHERE date > date_sub(now(), interval 1 day)
+					$filter_sql
 					ORDER BY $sort $order
 				");
 				$this->theme->display_page($event->page, $events);
