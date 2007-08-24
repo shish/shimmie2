@@ -69,6 +69,9 @@ class EventLog extends Extension {
 
 		global $user; // bad
 		// TODO: log comments, uploads
+		if(is_a($event, 'UploadingImageEvent')) {
+			$this->add_to_log($user, 'Uploading Image', "Uploaded a new image");
+		}
 		if(is_a($event, 'CommentPostingEvent')) {
 			$this->add_to_log($event->user, 'Comment Posting', "Posted a comment on image #{$event->image_id}");
 		}
