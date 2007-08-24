@@ -23,13 +23,25 @@ class EventLogTheme extends Themelet {
 			</style>
 			<table border='1' class='event_log_table'>
 				<tr>
-					<th><a href='".make_link("event_log", "sort=name")."'>User</a></th>
-					<th style='width: 10em;'><a href='".make_link("event_log", "sort=ip")."'>IP</a></th>
+					<th>User
+						<a href='".make_link("event_log", "sort=name&order=ASC")."'>+</a>
+						<a href='".make_link("event_log", "sort=name&order=DESC")."'>-</a>
+					</th>
+					<th style='width: 10em;'>IP
+						<a href='".make_link("event_log", "sort=ip&order=ASC")."'>+</a>
+						<a href='".make_link("event_log", "sort=ip&order=DESC")."'>-</a>
+					</th>
 					<th rowspan='2' class='entry'>Entry</th>
 				</tr>
 				<tr>
-					<th style='width: 10em;'><a href='".make_link("event_log", "sort=date")."'>Date</a></th>
-					<th><a href='".make_link("event_log", "sort=event")."'>Event</a></th>
+					<th style='width: 10em;'>Date
+						<a href='".make_link("event_log", "sort=date&order=ASC")."'>+</a>
+						<a href='".make_link("event_log", "sort=date&order=DESC")."'>-</a>
+					</th>
+					<th>Event
+						<a href='".make_link("event_log", "sort=event&order=ASC")."'>+</a>
+						<a href='".make_link("event_log", "sort=event&order=DESC")."'>-</a>
+					</th>
 				</tr>
 		";
 		foreach($events as $event) {
