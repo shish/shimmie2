@@ -19,9 +19,42 @@ class EventLog extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "event_log") {
 			global $user;
+			global $database;
 			if($user->is_admin()) {
-				global $database;
-				$events = $database->db->GetAll("SELECT * FROM event_log WHERE date > date_sub(now(), interval 1 day) ORDER BY date DESC");
+				if(isset($_POST['action'])) {
+					switch($_POST['action']) {
+						case 'clear':
+							$database->execute("DELETE FROM event_log");
+							break;
+					}
+				}
+				
+				$columns = array("name", "date", "owner_ip", "event");
+				$orders = array("ASC", "DESC");
+
+				$sort = "date";
+				if(isset($_GET['sort']) && in_array($_GET['sort'], $columns)) {
+					$sort = $_GET['sort'];
+				}
+				
+				$order = "DESC";
+				if(isset($_GET['order']) && in_array($_GET['order'], $orders)) {
+					$order = $_GET['order'];
+				}
+
+				$filter_sql = "";
+				if(isset($_GET['filter']) && isset($_GET['where']) && in_array($_GET['filter'], $columns)) {
+					$filter = $_GET['filter'];
+					$where = $database->db->Quote($_GET['where']);
+					$filter_sql = "WHERE $filter = $where";
+				}
+
+				$events = $database->db->GetAll("
+					SELECT event_log.*,users.name FROM event_log
+					JOIN users ON event_log.owner_id = users.id
+					$filter_sql
+					ORDER BY $sort $order
+				");
 				$this->theme->display_page($event->page, $events);
 			}
 			else {
