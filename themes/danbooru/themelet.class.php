@@ -55,7 +55,7 @@ class Themelet {
 		if(strlen($last_html) > 0) $ndots = "...";
 		else $ndots = "";
 
-		return "<p class='paginator'>$prev_html $first_html $pdots $pages_html $ndots $last_html $next_html</p>";
+		return "<div id='paginator'>$prev_html $first_html $pdots $pages_html $ndots $last_html $next_html</div>";
 	}
 }
 ?>

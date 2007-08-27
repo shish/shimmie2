@@ -47,5 +47,13 @@ class CustomIndexTheme extends IndexTheme {
 
 		return $h_search;
 	}
+
+	protected function build_table($images, $query) {
+		$table = "";
+		foreach($images as $image) {
+			$table .= "\t<span class=\"thumb\">" . build_thumb_html($image, $query) . "</span>\n";
+		}
+		return $table;
+	}
 }
 ?>
