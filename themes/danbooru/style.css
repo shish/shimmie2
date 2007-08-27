@@ -122,25 +122,44 @@ A:hover {text-decoration: underline;}
 .withleft {
 	margin-left: 160px;
 }
+
+/*Shuugo: more danboorish*/
+div#paginator {
+	display: block;
+	padding: 2em 0 1em 0;
+	font-size: 1em;
+	text-align: center;
+	font-weight: bold;
+	clear: both;
+}
 .paginator {
 	margin: 16px;
 	text-align: center;
 }
-.paginator B {
+div#paginator B {
 	padding: 4px 8px 4px 8px;
 	margin: 3px;
 }
-.paginator A {
+div#paginator A {
 	padding: 4px 8px 4px 8px;
 	margin: 3px;
 	border: 1px solid #EEE;
 }
-.paginator A:hover {
+div#paginator A:hover {
 	border: 1px solid #EEE;
 	background: blue;
 	color: white;
 }
 
+
+span.thumb {
+	height: 220px;
+	width: 220px;
+	display: inline-block;
+	float: left;
+	text-align: center;
+	vertical-align: center;
+}
 
 
 
