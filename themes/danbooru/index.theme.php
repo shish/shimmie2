@@ -49,22 +49,10 @@ class CustomIndexTheme extends IndexTheme {
 	}
 
 	protected function build_table($images, $query) {
-		global $config;
-
-		$width = $config->get_int('index_width');
-		$height = $config->get_int('index_height');
-
-		$table = "<div>\n";
-		for($i=0; $i<$height; $i++) {
-			for($j=0; $j<$width; $j++) {
-				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
-				if(!is_null($image)) {
-					$table .= "\t<span class=\"thumb\">" . build_thumb_html($image, $query) . "</span>\n";
-				}
-			}
+		$table = "";
+		foreach($images as $image) {
+			$table .= "\t<span class=\"thumb\">" . build_thumb_html($image, $query) . "</span>\n";
 		}
-		$table .= "</div>";
-
 		return $table;
 	}
 }
