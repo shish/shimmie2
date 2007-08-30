@@ -125,7 +125,7 @@ class DanbooruApi extends Extension
 					$file = $_FILES['file']['tmp_name'];
 					$filename = $_FILES['file']['name'];
 					// If both a file is posted and a source provided, I'm assuming source is the source of the file
-					$source = isset($_REQUEST['source']) ? $_REQUEST['source'] : "";
+					$source = (isset($_REQUEST['source']) && !empty($_REQUEST['source'])) ? $_REQUEST['source'] : null;
 				} elseif(isset($_REQUEST['source']))
 				{	// A url was provided
 					$url = $_REQUEST['source'];
@@ -212,7 +212,7 @@ class DanbooruApi extends Extension
 				}
 
 				// Fire off an event which should process the new image and add it to the db
-				$nevent = new UploadingImageEvent($image);
+				$nevent = new UploadingImageEvent($user, $image);
 				send_event($nevent);
 				// Did something screw up?
 				if($event->vetoed) {
@@ -382,3 +382,4 @@ class DanbooruApi extends Extension
 
 add_event_listener(new DanbooruApi());
 ?>
+
