@@ -32,7 +32,8 @@ class ET extends Extension {
 		$info['site_genre'] = "[please write something here]";
 		$info['site_url']   = isset($_SERVER['SCRIPT_URI']) ? dirname($_SERVER['SCRIPT_URI']) : "???";
 
-		$info['sys_shimmie'] = $config->get_string("version");
+		$info['sys_shimmie'] = VERSION;
+		$info['sys_schema']  = $config->get_string("db_version");
 		$info['sys_php']     = phpversion();
 		$info['sys_os']      = php_uname();
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];

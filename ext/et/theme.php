@@ -24,6 +24,7 @@ URL: {$info['site_url']}
 
 System stats:
 Shimmie: {$info['sys_shimmie']}
+Schema: {$info['sys_schema']}
 PHP: {$info['sys_php']}
 OS: {$info['sys_os']}
 Server: {$info['sys_server']}
