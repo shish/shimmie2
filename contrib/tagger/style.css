@@ -1,0 +1,27 @@
+/* Tagger Cascading Style Sheet                                              *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#tagger_window {
+	position:fixed;
+}
+ 
+#tagger_titlebar {
+	font-weight:bold;
+	text-align:center;
+	position:relative;
+	top:-0em;
+	padding:.25em;
+	border:2px solid;
+	border-bottom:1px solid;
+	-moz-border-radius:10px 10px 0px 0px;
+	background-color:white;
+	cursor:move;
+}
+
+#tagger_body {
+	overflow:scroll;
+	padding:1em;
+	border:2px solid;
+	border-top:none;
+	background-color:white;
+}
