@@ -29,6 +29,56 @@ function addTagById(id) {
 	addTag(tag.value);
 }
 
+function tagger_filter(id) {
+	var filter = byId(id);
+	var e;
+	
+	search = filter.value;
+	if (search.length == 1)
+		search = " "+search;
+	
+	tag_links = getElementsByTagNames('div',byId('tagger_body'));
+	
+	for (x in tag_links) {
+		tag_id = tag_links[x].id;
+		tag = " "+tag_id.replace(/tagger_tag_/,"");
+		e = byId(tag_id);
+		if (!tag.match(search)) {
+			e.style.display = 'none';
+		} else {
+			e.style.display = '';
+		}
+	}
+}
+
+// Quirksmode.org //
+// http://www.quirksmode.org/dom/getElementsByTagNames.html //
+function getElementsByTagNames(list,obj) {
+	if (!obj) var obj = document;
+	var tagNames = list.split(',');
+	var resultArray = new Array();
+	for (var i=0;i<tagNames.length;i++) {
+		var tags = obj.getElementsByTagName(tagNames[i]);
+		for (var j=0;j<tags.length;j++) {
+			resultArray.push(tags[j]);
+		}
+	}
+	var testNode = resultArray[0];
+	if (!testNode) return [];
+	if (testNode.sourceIndex) {
+		resultArray.sort(function (a,b) {
+				return a.sourceIndex - b.sourceIndex;
+		});
+	}
+	else if (testNode.compareDocumentPosition) {
+		resultArray.sort(function (a,b) {
+				return 3 - (a.compareDocumentPosition(b) & 6);
+		});
+	}
+	return resultArray;
+}
+// End //
+
 // Drag Code //
 //*****************************************************************************
 // Do not remove this notice.
@@ -187,3 +237,4 @@ function dragStop(event) {
     document.removeEventListener("mouseup",   dragStop, true);
   }
 }
+// End //
