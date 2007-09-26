@@ -25,3 +25,7 @@
 	border-top:none;
 	background-color:white;
 }
+
+#tagger_body a {
+	font-size:1.5em;
+}

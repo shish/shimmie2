@@ -16,17 +16,46 @@ function tagExists(tag) {
 	return false;
 }
 
-function addTag(tag) {
+function toggleTag(tag) {
+	var tags = byId("tags");
+	var	tag_link = byId("tagger_tag_"+tag);
 	if (!tagExists(tag)) {
 		// append tag to tag box.
-		var tags = byId("tags");
 		tags.value = tags.value +" "+ tag;
+		// set indicator
+		if(tag_link) {
+			tag_link.style.fontWeight = "bold";
+		}
+	} else {
+		// remove tag
+		tags.value=tags.value.replace(" "+tag,"");
+		// set indicator
+		if(tag_link) {
+			tag_link.style.fontWeight = "";
+		}
 	}
 }
 
 function addTagById(id) {
 	tag = byId(id);
 	addTag(tag.value);
+}
+
+function setTagIndicators(id) {
+	tagger = byId(id);
+	tagger.onclick = null;	
+	
+	tags = byId("tags");
+	
+	tags = tags.value.split(" ");
+	
+	for (x in tags) {
+		tag = tags[x];
+		obj = byId("tagger_tag_"+tag);
+		if(obj) {
+			obj.style.fontWeight="bold";
+		}
+	}
 }
 
 function tagger_filter(id) {
