@@ -48,19 +48,24 @@ function toggleTag(tag) {
 		}
 	} else {
 		// remove tag
-		tags.value=tags.value.replace(" "+tag,"");
+		tags.value=" " + tags.value + " "; // catch first and last tag, too
+		tags.value=tags.value.replace(" "+tag+" "," ");
+		// remove extra spaces.
+		tags.value=tags.value.replace("  "," ");
 		// set indicator
 		if(tag_link) {
 			tag_link.style.fontWeight = "";
 		}
 	}
 	obj = byId("tagger_custTag");
-	obj.focus();
+	if(obj.value) {
+		obj.select();
+	}
 }
 
 function addTagById(id) {
 	tag = byId(id);
-	addTag(tag.value);
+	toggleTag(tag.value);
 }
 
 function setTagIndicators() {
