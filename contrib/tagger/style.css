@@ -14,7 +14,9 @@
 	border:2px solid;
 	border-bottom:1px solid;
 	-moz-border-radius:10px 10px 0px 0px;
+	background-image:none;
 	background-color:white;
+
 	cursor:move;
 }
 
@@ -28,4 +30,9 @@
 
 #tagger_body a {
 	font-size:1.5em;
+}
+
+#Tagger li {
+	margin-bottom:1em;
+	width:20em;
 }

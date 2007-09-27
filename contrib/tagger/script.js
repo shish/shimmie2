@@ -1,5 +1,25 @@
-function byId(id) {
-	return document.getElementById(id);
+// Tagger JS
+// Original Code Author: Artanis (Erik Youngren <artanis.00@gmail.com>)
+// All other code copyright by their authors, see comments for details.
+
+// In case the drag point goes off screen.
+function taggerResetPos() {
+	tagger = byId("tagger_window");
+	
+	// reset default position (bottom right.)
+	tagger.style.top="";
+	tagger.style.left="";
+	tagger.style.right="25px";
+	tagger.style.bottom="25px";
+	
+	// get location in (left,top) terms
+	pos = findPos(tagger);
+	
+	// set top left and clear bottom right.
+	tagger.style.top = pos[1]+"px";
+	tagger.style.left = pos[0]+"px";
+	tagger.style.right="";
+	tagger.style.bottom="";
 }
 
 function tagExists(tag) {
@@ -34,6 +54,8 @@ function toggleTag(tag) {
 			tag_link.style.fontWeight = "";
 		}
 	}
+	obj = byId("tagger_custTag");
+	obj.focus();
 }
 
 function addTagById(id) {
@@ -41,12 +63,15 @@ function addTagById(id) {
 	addTag(tag.value);
 }
 
-function setTagIndicators(id) {
-	tagger = byId(id);
-	tagger.onclick = null;	
+function setTagIndicators() {
+	tagger = byId("tagger_window");
+	// core.js took window.onload, so emulate it by using onclick and then
+	// removing the event.
+	tagger.setAttribute("onmousedown","");
+	
+	taggerResetPos();
 	
 	tags = byId("tags");
-	
 	tags = tags.value.split(" ");
 	
 	for (x in tags) {
@@ -63,6 +88,7 @@ function tagger_filter(id) {
 	var e;
 	
 	search = filter.value;
+	// set up single letter filters for first-letter matching only.
 	if (search.length == 1)
 		search = " "+search;
 	
@@ -70,6 +96,7 @@ function tagger_filter(id) {
 	
 	for (x in tag_links) {
 		tag_id = tag_links[x].id;
+		// remove tagger_tag from id, prepend space for first-letter matching.
 		tag = " "+tag_id.replace(/tagger_tag_/,"");
 		e = byId(tag_id);
 		if (!tag.match(search)) {
@@ -105,6 +132,19 @@ function getElementsByTagNames(list,obj) {
 		});
 	}
 	return resultArray;
+}
+// http://www.quirksmode.org/js/findpos.html //
+function findPos(obj) {
+	var curleft = curtop = 0;
+	if (obj.offsetParent) {
+		curleft = obj.offsetLeft
+		curtop = obj.offsetTop
+		while (obj = obj.offsetParent) {
+			curleft += obj.offsetLeft
+			curtop += obj.offsetTop
+		}
+	}
+	return [curleft,curtop];
 }
 // End //
 
@@ -160,7 +200,6 @@ var dragObj = new Object();
 dragObj.zIndex = 0;
 
 function dragStart(event, id) {
-
   var el;
   var x, y;
 
