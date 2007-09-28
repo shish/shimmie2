@@ -1,4 +1,7 @@
-/* Tagger Cascading Style Sheet                                              *
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Tagger - Advanced Tagging                                                 *
+ * Author: Artanis (Erik Youngren <artanis.00@gmail.com>)                    *
+ * Do not remove this notice.                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #tagger_window {
@@ -29,7 +32,7 @@
 }
 
 #tagger_body a {
-	font-size:1.5em;
+	font-size:1.25em;
 }
 
 #Tagger li {

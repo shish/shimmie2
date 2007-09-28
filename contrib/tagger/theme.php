@@ -1,25 +1,34 @@
 <?php
+// Tagger - Advanced Tagging
+// Author: Artanis (Erik Youngren <artanis.00@gmail.com>)
+// Do not remove this notice.
+
 class taggerTheme extends Themelet {
 	public function build ($page, $tags) {	
+	global $config;
+	
+	$tagme = $config->get_string("ext-tagger_clear-tagme","N") == "Y" ? "true":"false";
+	$base_href = $config->get_string("base_href");
 	
 	$tag_html = "";
 	foreach ($tags as $tag) {
 		$tag_name = $tag['tag'];
-		$tag_trunc = $this->trimTag($tag_name,16);
+		$tag_trunc = $this->trimTag($tag_name,20,"_");
 		$tag_html .= "<div id='tagger_tag_".$tag_name."'>"."
-			<a style='cursor:pointer;' onclick='toggleTag(&quot;".$tag_name."&quot;);' ".
+			<a style='cursor:pointer;' onclick='toggleTag(&quot;".$tag_name."&quot;,".$tagme.");' ".
 			"title='Add &quot;".$tag_name."&quot; to the tag list'>".$tag_trunc."</a>".
 			"</div>";
 	}
 	$url_more = make_link("about/tagger");
 	
 	$html = <<<EOD
+	<img style='display:none;' src='$base_href/ext/tagger/onload.gif' onload='setTagIndicators();'/>
 <span style="font-size:.7em;">Collapse this block to hide Tagger.</span>
 <br/>
 <a onclick="taggerResetPos();" style="cursor:pointer;">Default Location</a>
 <hr/>
 <a href='$url_more'>About Tagger</a>
-<div id="tagger_window" style="bottom:25px;right:25px;" onmousedown="setTagIndicators();">
+<div id="tagger_window" style="bottom:25px;right:25px;">
 	<div id="tagger_titlebar" title="Drag to move" onmousedown="dragStart(event,&quot;tagger_window&quot;);">
 	Tagger
 	</div>
@@ -31,16 +40,16 @@ class taggerTheme extends Themelet {
 	</div>
 </div>
 EOD;
-	$page->add_block( new Block("Tagger",
+	$page->add_block( new Block("Tagger - Advanced Tagging",
 		"".$html,
 		"left",
 		50));
 	}
 	
-	public function trimTag($s,$len=80) {
+	public function trimTag($s,$len=80,$break=" ") {
 		if(strlen($s) > $len) {
 			$s = substr($s, 0,$len-1);
-			$s = substr($s,0, strrpos($s,'_'))."...";
+			$s = substr($s,0, strrpos($s,$break))."...";
 		}
 		return $s;
 	}
@@ -77,8 +86,8 @@ EOD;
 	</li>
 </ul>
 EOD;
-	$page->set_title("About Extension: Tagger");
-	$page->set_heading("About Extension: Tagger");
+	$page->set_title("About / Extension / Tagger - Advanced Tagging");
+	$page->set_heading("About / Extension / Tagger - Advanced Tagging");
 	$page->add_block( new Block("Author",
 		"Artanis (Erik Youngren &lt;artanis.00@gmail.com&gt;)","main",0));
 	$page->add_block( new Block("Use", $html,"main",1));

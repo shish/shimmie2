@@ -1,9 +1,11 @@
-// Tagger JS
-// Original Code Author: Artanis (Erik Youngren <artanis.00@gmail.com>)
+// Tagger - Advanced Tagging
+// Author: Artanis (Erik Youngren <artanis.00@gmail.com>)
+// Do not remove this notice.
 // All other code copyright by their authors, see comments for details.
 
-// In case the drag point goes off screen.
+
 function taggerResetPos() {
+	// In case the drag point goes off screen.
 	tagger = byId("tagger_window");
 	
 	// reset default position (bottom right.)
@@ -36,26 +38,16 @@ function tagExists(tag) {
 	return false;
 }
 
-function toggleTag(tag) {
-	var tags = byId("tags");
-	var	tag_link = byId("tagger_tag_"+tag);
+function toggleTag(tag,rTagme) {
+
+	
 	if (!tagExists(tag)) {
-		// append tag to tag box.
-		tags.value = tags.value +" "+ tag;
-		// set indicator
-		if(tag_link) {
-			tag_link.style.fontWeight = "bold";
+		addTag(tag);
+		if(rTagme && tag != "tagme") {
+			remTag("tagme");
 		}
 	} else {
-		// remove tag
-		tags.value=" " + tags.value + " "; // catch first and last tag, too
-		tags.value=tags.value.replace(" "+tag+" "," ");
-		// remove extra spaces.
-		tags.value=tags.value.replace("  "," ");
-		// set indicator
-		if(tag_link) {
-			tag_link.style.fontWeight = "";
-		}
+		remTag(tag);
 	}
 	obj = byId("tagger_custTag");
 	if(obj.value) {
@@ -68,12 +60,39 @@ function addTagById(id) {
 	toggleTag(tag.value);
 }
 
-function setTagIndicators() {
-	tagger = byId("tagger_window");
-	// core.js took window.onload, so emulate it by using onclick and then
-	// removing the event.
-	tagger.setAttribute("onmousedown","");
+function addTag (tag) {
+	var tags = byId("tags");
+	var	tag_link = byId("tagger_tag_"+tag);
 	
+	var delim = " ";
+	if(tags.value == "") {
+		delim="";
+	}
+	tags.value = tags.value + delim + tag;
+	if(tag_link) {
+		tag_link.style.fontWeight = "bold";
+	}
+}
+
+function remTag (tag) {
+	var tags = byId("tags");
+	var	tag_link = byId("tagger_tag_"+tag);
+	
+	_tags = tags.value.split(" ");
+
+	tags.value = "";		
+	for (i in _tags) {
+		_tag = _tags[i];
+		if(_tag != tag) {
+			addTag(_tag);
+		}
+	}
+	if(tag_link) {
+		tag_link.style.fontWeight = "";
+	}
+}
+
+function setTagIndicators() {
 	taggerResetPos();
 	
 	tags = byId("tags");
