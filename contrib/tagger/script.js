@@ -8,7 +8,6 @@ function taggerResetPos() {
 	// In case the drag point goes off screen.
 	tagger = byId("tagger_window");
 	
-	// reset default position (bottom right.)
 	tagger.style.top="";
 	tagger.style.left="";
 	tagger.style.right="25px";
@@ -17,7 +16,6 @@ function taggerResetPos() {
 	// get location in (left,top) terms
 	pos = findPos(tagger);
 	
-	// set top left and clear bottom right.
 	tagger.style.top = pos[1]+"px";
 	tagger.style.left = pos[0]+"px";
 	tagger.style.right="";
@@ -39,8 +37,6 @@ function tagExists(tag) {
 }
 
 function toggleTag(tag,rTagme) {
-
-	
 	if (!tagExists(tag)) {
 		addTag(tag);
 		if(rTagme && tag != "tagme") {
@@ -107,26 +103,47 @@ function setTagIndicators() {
 	}
 }
 
+function pushSet(form_id) {
+	var set = getSetButton(form_id);
+	if(set) {
+		set.click();
+	}
+}
+
+function getSetButton(form_id) {
+	var form_nodes = getElementsByTagNames('input',byId(form_id));
+	for (i in form_nodes) {
+		node = form_nodes[i];
+		if (node.value=="Set" && node.type=="submit") {
+			return node;
+		}
+	}
+	return false;
+}
+
+var _f_custTag = false;
 function tagger_filter(id) {
-	var filter = byId(id);
-	var e;
-	
-	search = filter.value;
-	// set up single letter filters for first-letter matching only.
-	if (search.length == 1)
-		search = " "+search;
-	
-	tag_links = getElementsByTagNames('div',byId('tagger_body'));
-	
-	for (x in tag_links) {
-		tag_id = tag_links[x].id;
-		// remove tagger_tag from id, prepend space for first-letter matching.
-		tag = " "+tag_id.replace(/tagger_tag_/,"");
-		e = byId(tag_id);
-		if (!tag.match(search)) {
-			e.style.display = 'none';
-		} else {
-			e.style.display = '';
+	if (_f_custTag) {
+		var filter = byId(id);
+		var e;
+		
+		search = filter.value;
+		// set up single letter filters for first-letter matching only.
+		if (search.length == 1)
+			search = " "+search;
+		
+		tag_links = getElementsByTagNames('div',byId('tagger_body'));
+		
+		for (x in tag_links) {
+			tag_id = tag_links[x].id;
+			// remove tagger_tag from id, prepend space for first-letter matching.
+			tag = " "+tag_id.replace(/tagger_tag_/,"");
+			e = byId(tag_id);
+			if (!tag.match(search)) {
+				e.style.display = 'none';
+			} else {
+				e.style.display = '';
+			}
 		}
 	}
 }

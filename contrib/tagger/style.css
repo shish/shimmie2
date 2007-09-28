@@ -6,6 +6,7 @@
 
 #tagger_window {
 	position:fixed;
+	text-align:left;
 }
  
 #tagger_titlebar {
@@ -15,20 +16,31 @@
 	top:-0em;
 	padding:.25em;
 	border:2px solid;
-	border-bottom:1px solid;
-	-moz-border-radius:10px 10px 0px 0px;
+	-moz-border-radius:1em;
 	background-image:none;
-	background-color:white;
-
+	background-color:#DDDDDD;
+	margin-bottom:.5em;
 	cursor:move;
 }
 
-#tagger_body {
+#tagger_body, #tagger_filter {
 	overflow:scroll;
 	padding:1em;
 	border:2px solid;
 	border-top:none;
 	background-color:white;
+}
+#tagger_filter {
+	overflow:hidden;
+	-moz-border-radius:1em 1em 0 0;
+	border:2px solid;
+	border-bottom:none;
+	margin-bottom:-1px;
+	text-align:center;
+	padding-bottom:1px;
+}
+#tagger_filter input {
+	width:auto;
 }
 
 #tagger_body a {

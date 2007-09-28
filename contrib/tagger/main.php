@@ -30,7 +30,9 @@ class tagger extends Extension {
 			
 			$base_href = $config->get_string('base_href');
 			$tags_min = $config->get_int('ext-tagger_tags-min',2);
-			$hidden = $config->get_bool('ext-tagger_respect-hidden',true) ? "AND substring(tag,1,1) != '.' " : null;
+			$hidden = $config->get_bool(
+				'ext-tagger_respect-hidden',
+				true) ? "AND substring(tag,1,1) != '.' " : null;
 			
 			$tags = $database->Execute("
 				SELECT tag
@@ -51,8 +53,12 @@ class tagger extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tagger - Power Tagging");
 			$sb->add_bool_option("ext-tagger_show-hidden", "Show Hidden Tags");
-			$sb->add_bool_option("ext-tagger_clear-tagme", "<br/>Remove '<a href='".make_link("post/list/tagme/1")."'>tagme</a>' on use");
-			$sb->add_int_option("ext-tagger_tags-min", "<br/>Ignore tags used fewer than "); $sb->add_label("times.");
+			$sb->add_bool_option(
+				"ext-tagger_clear-tagme",
+				"<br/>Remove '<a href='".make_link("post/list/tagme/1")."'>tagme</a>' on use");
+			$sb->add_int_option(
+				"ext-tagger_tags-min",
+				"<br/>Ignore tags used fewer than "); $sb->add_label("times.");
 			$event->panel->add_block($sb);
 			}
 	}
