@@ -70,6 +70,22 @@ class Upgrade extends Extension {
 			$config->set_int("db_version", 6);
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") == -1) {
+			$database->Execute("ALTER TABLE users ADD COLUMN parent INTEGER");
+			$database->Execute("ALTER TABLE users ADD COLUMN is_template ENUM('Y','N') DEFAULT 'N'");
+			$database->Execute("INSERT INTO users(name, is_template) VALUES(?, 'Y')", array("[Anonymous]"));
+			$database->Execute("INSERT INTO users(name, is_template) VALUES(?, 'Y')", array("[User]"));
+			$database->Execute("INSERT INTO users(name, is_template) VALUES(?, 'Y')", array("[Moderator]"));
+			$database->Execute("INSERT INTO users(name, is_template) VALUES(?, 'Y')", array("[Admin]"));
+			$anon_id  = $database->db->GetOne("SELECT id FROM users WHERE name=?", array("[Anonymous]"));
+			$user_id  = $database->db->GetOne("SELECT id FROM users WHERE name=?", array("[User]"));
+			$admin_id = $database->db->GetOne("SELECT id FROM users WHERE name=?", array("[Admin]"));
+			$database->Execute("UPDATE users SET parent=?", array($user_id));
+			$database->Execute("UPDATE users SET parent=? WHERE password IS NULL", array($anon_id));
+			$database->Execute("UPDATE users SET parent=? WHERE is_admin='Y'", array($admin_id));
+			$config->set_int("db_version", 7);
+		}
 	}
 }
 add_event_listener(new Upgrade(), 5);
