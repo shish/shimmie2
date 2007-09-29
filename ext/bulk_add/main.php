@@ -41,8 +41,7 @@ class BulkAdd extends Extension {
 			$image = new Image($tmpname, $filename, $tags);
 		
 			if($image->is_ok()) {
-				global $user;
-				$uie = new UploadingImageEvent($user, $image);
+				$uie = new UploadingImageEvent($image);
 				send_event($uie);
 				$ok = !$uie->vetoed;
 			}
