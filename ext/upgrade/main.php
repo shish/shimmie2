@@ -71,6 +71,7 @@ class Upgrade extends Extension {
 			$config->set_bool("in_upgrade", false);
 		}
 
+/*
 		if($config->get_int("db_version") == -1) {
 			$database->Execute("ALTER TABLE users ADD COLUMN parent INTEGER");
 			$database->Execute("ALTER TABLE users ADD COLUMN is_template ENUM('Y','N') DEFAULT 'N'");
@@ -86,6 +87,7 @@ class Upgrade extends Extension {
 			$database->Execute("UPDATE users SET parent=? WHERE is_admin='Y'", array($admin_id));
 			$config->set_int("db_version", 7);
 		}
+*/
 	}
 }
 add_event_listener(new Upgrade(), 5);
