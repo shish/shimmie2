@@ -50,7 +50,7 @@ function tagger_tagIndicators() {
 function toggleTag(objTag) {
 	if(!tagExists(objTag)) {
 		addTag(objTag);
-		if (remove_tagme && objTag.attributes.tag.value != 'tagme') {
+		if (remove_tagme && objTag.getAttribute('tag') != 'tagme') {
 			remTag(remove_tagme);
 		}
 	} else {
@@ -65,7 +65,7 @@ function addTag (objTag) {
 	
 	delim = tags.value==" "?"":" ";
 
-	tags.value += delim + objTag.attributes.tag.value;
+	tags.value += delim + objTag.getAttribute('tag');
 	
 	if(objTag.value != 'Add') {
 		objTag.style.fontWeight = "bold";
@@ -80,7 +80,7 @@ function remTag (objTag) {
 	tags.value="";
 	for(i in aTags) {
 		aTag = aTags[i];
-		if(aTag != objTag.attributes.tag.value) {
+		if(aTag != objTag.getAttribute('tag')) {
 			if(tags.value=="") {
 				tags.value += aTag;
 			} else {
@@ -94,7 +94,7 @@ function remTag (objTag) {
 }
 
 function tagExists(objTag) {
-	return byId("tags").value.match(reescape(objTag.attributes.tag.value));
+	return byId("tags").value.match(reescape(objTag.getAttribute('tag')));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -111,7 +111,7 @@ function tagger_filter(override) {
 		
 		for(i in arObjTags) {
 			objTag = arObjTags[i];
-			tag = prepend + objTag.attributes.tag.value;
+			tag = prepend + objTag.getAttribute('tag');
 
 			if(tag.match(search) && taggerFilterMode(objTag)) {
 				objTag.style.display='';
@@ -124,18 +124,18 @@ function tagger_filter(override) {
 function taggerToggleMode() {
 	var obj = byId('tagger_mode');
 	
-	if(obj.attributes.mode.value=='all') {
-		obj.attributes.mode.value='applied';
+	if(obj.getAttribute('mode')=='all') {
+		obj.setAttribute('mode', 'applied');
 		obj.innerHTML = 'View All Tags';
 	} else {
-		obj.attributes.mode.value='all';
+		obj.setAttribute('mode','all');
 		obj.innerHTML = 'View Applied Tags';
 	}
 	tagger_filter(true);
 }
 function taggerFilterMode(objTag) {
 	var obj = byId('tagger_mode');
-	if(obj.attributes.mode.value == 'all') {
+	if(obj.getAttribute('mode') == 'all') {
 		return true;
 	} else {
 		return objTag.style.fontWeight=='bold';
@@ -143,7 +143,7 @@ function taggerFilterMode(objTag) {
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                                    Forms                                    *
+*                                     Misc                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function pushSet(form_id) {
@@ -157,7 +157,7 @@ function getSetButton(form_id) {
 	var form_nodes = getElementsByTagNames('input',byId(form_id));
 	for (i in form_nodes) {
 		node = form_nodes[i];
-		if (node.value=="Set" && node.type=="submit") {
+		if (node.getAttribute('value')=="Set" && node.getAttribute('type')=="submit") {
 			return node;
 		}
 	}
