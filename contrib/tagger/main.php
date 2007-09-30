@@ -30,14 +30,14 @@ class tagger extends Extension {
 			
 			$base_href = $config->get_string('base_href');
 			$tags_min = $config->get_int('ext-tagger_tags-min',2);
-			$hidden = $config->get_bool(
-				'ext-tagger_respect-hidden',
-				true) ? "AND substring(tag,1,1) != '.' " : null;
-			
+			$hidden = $config->get_string(
+				'ext-tagger_show-hidden','N')=='N' ?
+				" AND substring(tag,1,1) != '.' " : null;
+				
 			$tags = $database->Execute("
 				SELECT tag
 				FROM `tags`
-				WHERE count >= ? {$hidden}
+				WHERE count>=?{$hidden}
 				ORDER BY tag",array($tags_min));
 				
 			$this->theme->build($page, $tags);

@@ -4,40 +4,48 @@
  * Do not remove this notice.                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+#Tagger {
+	text-align:left;
+}
+
 #tagger_window {
 	position:fixed;
 	text-align:left;
+	min-width:250px;
 }
  
 #tagger_titlebar {
-	font-weight:bold;
-	text-align:center;
-	position:relative;
-	top:-0em;
-	padding:.25em;
-	border:2px solid;
-	-moz-border-radius:1em;
-	background-image:none;
 	background-color:#DDDDDD;
-	margin-bottom:.5em;
+	background-image:none;
+	border:2px solid;
 	cursor:move;
+	font-weight:bold;
+	/*margin-bottom:.5em;*/
+	-moz-border-radius:2em 2em 0 0;
+	padding:.25em;
+	position:relative;
+	text-align:center;
+	top:-0em;
 }
 
-#tagger_body, #tagger_filter {
-	overflow:scroll;
-	padding:1em;
+#tagger_body {
+	background-color:#EEEEEE;
 	border:2px solid;
 	border-top:none;
-	background-color:white;
+	overflow:scroll;
+	padding:1em;
+	max-height:200px;
 }
 #tagger_filter {
-	overflow:hidden;
-	-moz-border-radius:1em 1em 0 0;
+	background-color:#EEEEEE;
 	border:2px solid;
 	border-bottom:none;
+	border-top:none;
 	margin-bottom:-1px;
-	text-align:center;
+	/*-moz-border-radius:1em 1em 0 0;*/
+	padding:1em;
 	padding-bottom:1px;
+	text-align:center;
 }
 #tagger_filter input {
 	width:auto;
@@ -45,9 +53,20 @@
 
 #tagger_body a {
 	font-size:1.25em;
+	display:block;
+	cursor:pointer;
 }
 
-#Tagger li {
+#Use #Tagger {
+	-moz-column-gap:20px;
+	-moz-column-count:3;
+}
+
+#Use #Tagger li {
 	margin-bottom:1em;
-	width:20em;
+	max-width:30em;
+}
+
+#Tagger .tagger_js {
+	cursor:pointer;
 }
