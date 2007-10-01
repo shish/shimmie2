@@ -6,8 +6,21 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 *                              Tagger Management                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// Global settings and oft-used objects
 var remove_tagme = null;
+var tags_field = false;
+var set_button = false;
+// TODO: Store tagger's list here? Wouldn't need to get the elements every time,
+// but memory overhead?
+
+// Put everything in a class? better?
+
 function taggerInit() {
+	// get imgdata hooks
+	tags_field = (byId('tags') || getTagsField());
+	set_button = getSetButton();
+
+	// Set up Tagger
 	taggerResetPos();
 	tagger_tagIndicators()
 	DragHandler.attach(byId("tagger_titlebar"));
@@ -60,12 +73,10 @@ function toggleTag(objTag) {
 	if(t.value) { t.select(); }
 }
 
-function addTag (objTag) {
-	var tags = byId('tags');
-	
-	delim = tags.value==" "?"":" ";
+function addTag (objTag) {	
+	delim = tags_field.value==" "?"":" ";
 
-	tags.value += delim + objTag.getAttribute('tag');
+	tags_field.value += delim + objTag.getAttribute('tag');
 	
 	if(objTag.value != 'Add') {
 		objTag.style.fontWeight = "bold";
@@ -73,18 +84,16 @@ function addTag (objTag) {
 }
 
 function remTag (objTag) {	
-	var tags = byId("tags");
+	aTags = tags_field.value.split(" ");
 	
-	aTags = tags.value.split(" ");
-	
-	tags.value="";
+	tags_field.value="";
 	for(i in aTags) {
 		aTag = aTags[i];
 		if(aTag != objTag.getAttribute('tag')) {
-			if(tags.value=="") {
-				tags.value += aTag;
+			if(tags_field.value=="") {
+				tags_field.value += aTag;
 			} else {
-				tags.value += " "+aTag;
+				tags_field.value += " "+aTag;
 			}
 		}
 	}
@@ -94,16 +103,15 @@ function remTag (objTag) {
 }
 
 function tagExists(objTag) {
-	return byId("tags").value.match(reescape(objTag.getAttribute('tag')));
+	return tags_field.value.match(reescape(objTag.getAttribute('tag')));
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 *                                  Filtering                                  *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-var tagger_filter_focus = false;
-function tagger_filter(override) {
-	if(tagger_filter_focus || override) {
+function tagger_filter() {
+	if(tagger_filter_focus) {
 		var filter = byId('tagger_new-tag');
 		var arObjTags = getElementsByTagNames('a',byId('tagger_body'));
 		var prepend = filter.value.length<2? " ":"_";
@@ -146,15 +154,24 @@ function taggerFilterMode(objTag) {
 *                                     Misc                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+function getTagsField() {
+	var nodes = getElementsByTagNames('input,textarea',byId('imgdata'));
+	for (i in nodes) {
+		node = nodes[i];
+		if (node.getAttribute('name') == 'tags')
+			return node;
+	}
+	return false;
+}
+
 function pushSet(form_id) {
-	var set = getSetButton(form_id);
-	if(set) {
-		set.click();
+	if(set_button) {
+		set_button.click();
 	}
 }
 
-function getSetButton(form_id) {
-	var form_nodes = getElementsByTagNames('input',byId(form_id));
+function getSetButton() {
+	var form_nodes = getElementsByTagNames('input',byId('imgdata'));
 	for (i in form_nodes) {
 		node = form_nodes[i];
 		if (node.getAttribute('value')=="Set" && node.getAttribute('type')=="submit") {

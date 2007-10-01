@@ -43,10 +43,9 @@ class taggerTheme extends Themelet {
 		"<div id='tagger_window'>
 			<div id='tagger_titlebar' title='Drag to move'>Tagger</div>			
 			<div id='tagger_filter'>
-				<input type='text' id='tagger_new-tag' value='' size='12'
-					onfocus='tagger_filter_focus = true;'
-					onblur='tagger_filter_focus = false;'
-					onkeyup='tagger_filter();' focus='' title='Type to search' >
+				<input type='text' id='tagger_new-tag' value='' size='12' 
+					onfocus='this.select();' onkeyup='tagger_filter();'
+					focus='' title='Type to search' >
 				</input>
 				<input type='button' value='Add' tag='' title='Add typed tag'
 					onclick='
@@ -54,7 +53,7 @@ class taggerTheme extends Themelet {
 							byId(\"tagger_new-tag\").value;
 						toggleTag(this);'>
 				</input>
-				<input type='button' value='Set' onclick='pressSet();'
+				<input type='button' value='Set' onclick='pushSet();'
 					title='Save tags'></input>
 				$tagme
 				<hr/>

@@ -29,7 +29,7 @@ class tagger extends Extension {
 			global $config;
 			
 			$base_href = $config->get_string('base_href');
-			$tags_min = $config->get_int('ext-tagger_tags-min',2);
+			$tags_min = (isset($_GET['tagger_min']) && $_GET['tagger_min']>0)?$_GET['tagger_min']:$config->get_int('ext-tagger_tags-min',2);
 			$hidden = $config->get_string(
 				'ext-tagger_show-hidden','N')=='N' ?
 				" AND substring(tag,1,1) != '.' " : null;
