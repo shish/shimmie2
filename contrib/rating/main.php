@@ -15,11 +15,12 @@ class Ratings extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ratings_version") < 1) {
+			if($config->get_int("ext_ratings_version") < 2) {
 				$this->install();
 			}
 		}
 
+		# TODO: ImageEditorBuildingEvent
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "rating" &&
 				$event->get_arg(0) == "set" && $event->user->is_admin() &&
 				isset($_POST['rating']) && isset($_POST['image_id'])) {
@@ -31,7 +32,7 @@ class Ratings extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
 			if($user->is_admin()) {
-				$this->theme->display_rater($event->page, $event->image->id);
+				$this->theme->display_rater($event->page, $event->image->id, $event->image->rating);
 			}
 		}
 	}
@@ -39,10 +40,16 @@ class Ratings extends Extension {
 	private function install() {
 		global $database;
 		global $config;
-		$database->Execute("ALTER TABLE images
-			ADD COLUMN rating ENUM('s', 'q', 'e') NOT NULL DEFAULT 'q'
-		)");
-		$config->set_int("ext_ratings_version", 1);
+
+		if($config->get_int("ext_ratings_version") < 1) {
+			$database->Execute("ALTER TABLE images ADD COLUMN rating ENUM('s', 'q', 'e') NOT NULL DEFAULT 'q'");
+			$config->set_int("ext_ratings_version", 1);
+		}
+
+		if($config->get_int("ext_ratings_version") < 2) {
+			$database->Execute("CREATE INDEX images__rating ON images(rating)");
+			$config->set_int("ext_ratings_version", 2);
+		}
 	}
 
 	private function set_rating($image_id, $rating) {
