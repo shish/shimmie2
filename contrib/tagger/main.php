@@ -42,7 +42,7 @@ class tagger extends Extension {
 				
 			$this->theme->build($page, $tags);
 			global $user;
-			if($tags->_numOfRows > 100 && $user->is_admin()) {
+			if($tags->_numOfRows > 1000 && $user->is_admin()) {
 				$page->add_block( new Block (
 					"Warning - ext/tagger",
 					"<h4>It is likely that Tagger will not function</h4>
