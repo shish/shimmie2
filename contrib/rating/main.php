@@ -15,7 +15,7 @@ class Ratings extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ratings_version") < 2) {
+			if($config->get_int("ext_ratings2_version") < 2) {
 				$this->install();
 			}
 
@@ -57,14 +57,14 @@ class Ratings extends Extension {
 		global $database;
 		global $config;
 
-		if($config->get_int("ext_ratings_version") < 1) {
+		if($config->get_int("ext_ratings2_version") < 1) {
 			$database->Execute("ALTER TABLE images ADD COLUMN rating ENUM('s', 'q', 'e') NOT NULL DEFAULT 'q'");
-			$config->set_int("ext_ratings_version", 1);
+			$config->set_int("ext_ratings2_version", 1);
 		}
 
-		if($config->get_int("ext_ratings_version") < 2) {
+		if($config->get_int("ext_ratings2_version") < 2) {
 			$database->Execute("CREATE INDEX images__rating ON images(rating)");
-			$config->set_int("ext_ratings_version", 2);
+			$config->set_int("ext_ratings2_version", 2);
 		}
 	}
 
