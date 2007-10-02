@@ -30,8 +30,6 @@ class taggerTheme extends Themelet {
 		}
 		
 		$html = "
-		<img src='$base_href/ext/tagger/onload.gif'	style='display:none;'
-			onload='taggerInit();' />
 		<div style='font-size:0.7em;'>
 			Collapse this block to hide Tagger
 		</div>
@@ -62,6 +60,8 @@ class taggerTheme extends Themelet {
 					class='tagger_js' >Refresh Filter</a>
 			</div>
 			<div id='tagger_body'>$h_tags</div>
+			<img src='$base_href/ext/tagger/onload.gif'	style='display:none;'
+				onload='taggerInit();' />
 		</div>";
 		
 		$page->add_block( new Block(

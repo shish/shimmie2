@@ -41,6 +41,22 @@ class tagger extends Extension {
 				ORDER BY tag",array($tags_min));
 				
 			$this->theme->build($page, $tags);
+			global $user;
+			if($tags->_numOfRows > 100 && $user->is_admin()) {
+				$page->add_block( new Block (
+					"Warning - ext/tagger",
+					"<h4>It is likely that Tagger will not function</h4>
+					Currently the javascript code chokes on large numbers of
+					tags. The tag list currently numbers
+					<b>{$tags->_numOfRows}</b>.<br/>
+					You can increase the minimum use requirement for the tag
+					list in the <a href='".make_link('setup')."'>Board Config</a>
+					to reduce the size of this list.<br/>
+					This is a limitation of the method in which Tagger operates.
+					I am working on a solution, I do not know when such a
+					solution will be ready.",
+					"main",0));
+			}
 		}
 		
 		if(is_a($event,"PageRequestEvent")) {

@@ -10,8 +10,6 @@
 var remove_tagme = null;
 var tags_field = false;
 var set_button = false;
-// TODO: Store tagger's list here? Wouldn't need to get the elements every time,
-// but memory overhead?
 
 // Put everything in a class? better?
 
@@ -26,7 +24,7 @@ function taggerInit() {
 	c = c ? c.replace(/px/g,"").split(" ") : new Array(null,null);
 	taggerResetPos(c[0],c[1]);
 	
-	tagger_tagIndicators()
+	tagger_tagIndicators();
 	DragHandler.attach(byId("tagger_titlebar"));
 	remove_tagme = byId('tagme');
 	
@@ -69,7 +67,6 @@ function taggerSavePosition() {
 }
 
 function tagger_tagIndicators() {
-	tags = byId("tags");
 	arObjTags = getElementsByTagNames('a',byId('tagger_body'));
 	
 	for (i in arObjTags) {
