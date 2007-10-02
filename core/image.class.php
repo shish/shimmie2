@@ -19,18 +19,9 @@ class Image {
 	}
 
 	private function create_from_row($row) {
-		$this->id       = $row['id'];
-		$this->owner_id = $row['owner_id'];
-		$this->owner_ip = $row['owner_ip'];
-		$this->filename = $row['filename'];
-		$this->filesize = $row['filesize'];
-		$this->hash     = $row['hash'];
-		$this->ext      = $row['ext'];
-		$this->width    = $row['width'];
-		$this->height   = $row['height'];
-		$this->posted   = $row['posted'];
-		$this->posted_timestamp   = $row['posted_timestamp'];
-		$this->source   = $row['source'];
+		foreach($row as $name => $value) {
+			$this->$name = $value; // hax
+		}
 	}
 
 	private function mime_to_ext($mime) {
