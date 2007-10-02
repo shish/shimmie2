@@ -25,8 +25,9 @@ class Ratings extends Extension {
 		}
 
 		# TODO: ImageEditorBuildingEvent
+		global $user; // compat with stable
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "rating" &&
-				$event->get_arg(0) == "set" && $event->user->is_admin() &&
+				$event->get_arg(0) == "set" && $user->is_admin() &&
 				isset($_POST['rating']) && isset($_POST['image_id'])) {
 			$this->set_rating($_POST['image_id'], $_POST['rating']);
 			$event->page->set_mode("redirect");
