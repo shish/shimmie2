@@ -18,6 +18,10 @@ class Ratings extends Extension {
 			if($config->get_int("ext_ratings_version") < 2) {
 				$this->install();
 			}
+
+			global $config;
+			$config->set_default_string("ext_rating_anon_privs", 'sq');
+			$config->set_default_string("ext_rating_user_privs", 'sq');
 		}
 
 		# TODO: ImageEditorBuildingEvent
@@ -34,6 +38,18 @@ class Ratings extends Extension {
 			if($user->is_admin()) {
 				$this->theme->display_rater($event->page, $event->image->id, $event->image->rating);
 			}
+		}
+		
+		if(is_a($event, 'SetupBuildingEvent')) {
+			$privs = array();
+			$privs['Safe Only'] = 's';
+			$privs['Safe and Questionable'] = 'sq';
+			$privs['All'] = 'sqe';
+
+			$sb = new SetupBlock("Image Ratings");
+			$sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
+			$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Logged in: ");
+			$event->panel->add_block($sb);
 		}
 	}
 
