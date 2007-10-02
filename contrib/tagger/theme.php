@@ -32,13 +32,12 @@ class taggerTheme extends Themelet {
 		$html = "
 		<img src='$base_href/ext/tagger/onload.gif'	style='display:none;'
 			onload='taggerInit();' />
-		<span style='font-size:0.7em;'>
+		<div style='font-size:0.7em;'>
 			Collapse this block to hide Tagger
-		</span>
-		<br/>
-		<a onclick='taggerResetPos();' class='tagger_js'>Default Location</a>
+		</div>
+		<a href='$url_about'>About Tagger</a>
 		<hr/>
-		<a href='$url_about'>About Tagger</a>".
+		<button onclick='taggerResetPos();' class='tagger_js'>Default Location</button>".
 		// Tagger Floater
 		"<div id='tagger_window'>
 			<div id='tagger_titlebar' title='Drag to move'>Tagger</div>			
@@ -136,7 +135,26 @@ class taggerTheme extends Themelet {
 			"Artanis (Erik Youngren &lt;artanis.00@gmail.com&gt;)","main",0));
 		$page->add_block( new Block("Use", $html,"main",1));
 	}
-
+	
+	function configTagger($page/*,$presets*/) {
+		$presets = array(
+			'test_set_01' => 'tag set 01',
+			'test_set_02' => 'tag set 02',
+			'tsuryuya' => 'tsuryuya hair_green eyes_yellow suzumiya_haruhi_no_yuutsu',
+			'suzumiya_haruhi' => 'suzumiya_haruhi hair_brown eyes_brown suzumiya_haruhi_no_yuutsu');
+		
+		$html="<table>";
+		$html .= "<tr><th>Set Name</th><th>Tags</th></tr>";
+		foreach($presets as $keyname => $tags) {
+			$html .= "<tr><td>$keyname</td><td>$tags</td></tr>";
+		}
+		$html .= "</table>";
+		
+			
+		$page->set_title("Shimmie / Configure / Tagger");
+		$page->set_heading("Configure / Tagger");
+		$page->add_block( new Block("Tag Presets",$html,'main',0));
+	}
 
 	final function tag_to_html ($tag) {
 		// Important for script.js, no override. You can CSS this, though.

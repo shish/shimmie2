@@ -43,11 +43,21 @@ class tagger extends Extension {
 			$this->theme->build($page, $tags);
 		}
 		
-		if(is_a($event,"PageRequestEvent") && $event->page_name == "about"
-			&& $event->get_arg(0) == "tagger")
-		{
-			global $page;
-			$this->theme->show_about($page);
+		if(is_a($event,"PageRequestEvent")) {
+			if($event->page_name == "about" && $event->get_arg(0) == "tagger") {
+				global $page;
+				$this->theme->show_about($page);
+			}
+			if($event->page_name == "tagger") {
+				global $page;
+//				$this->theme->configTagger($page);
+			}
+		}
+		
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+//				$event->add_link("Tagger Config", make_link("tagger"));
+			}
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {

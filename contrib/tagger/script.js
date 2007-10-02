@@ -17,31 +17,55 @@ var set_button = false;
 
 function taggerInit() {
 	// get imgdata hooks
-	tags_field = (byId('tags') || getTagsField());
+	tags_field = getTagsField();
 	set_button = getSetButton();
 
 	// Set up Tagger
-	taggerResetPos();
+	// Get last position
+	c = getCookie('shimmie-tagger-position');
+	c = c ? c.replace(/px/g,"").split(" ") : new Array(null,null);
+	taggerResetPos(c[0],c[1]);
+	
 	tagger_tagIndicators()
 	DragHandler.attach(byId("tagger_titlebar"));
 	remove_tagme = byId('tagme');
+	
+	// save position cookie on unload.
+	window.onunload = function(e) {
+		taggerSavePosition();
+	};
 }
 
-function taggerResetPos() {
+function taggerResetPos(x,y) {
 	tagger = byId("tagger_window");
-	
-	tagger.style.top="";
-	tagger.style.left="";
-	tagger.style.right="25px";
-	tagger.style.bottom="25px";
-	
-	// get location in (left,top) terms
-	pos = findPos(tagger);
+
+	var pos = new Array();
+	if(!x || !y) {
+		tagger.style.top="";
+		tagger.style.left="";
+		tagger.style.right="25px";
+		tagger.style.bottom="25px";
+		// get location in (left,top) terms
+		pos = findPos(tagger);
+	} else {
+		pos[0] = x;
+		pos[1] = y;
+	}
 	
 	tagger.style.top = pos[1]+"px";
 	tagger.style.left = pos[0]+"px";
 	tagger.style.right="";
 	tagger.style.bottom="";
+}
+
+function taggerSavePosition() {
+	tw = byId('tagger_window');
+	if (tw) {
+		xy = tw.style.left +" "+ tw.style.top
+		setCookie('shimmie-tagger-position',xy);
+		return true;
+	}
+	return false;
 }
 
 function tagger_tagIndicators() {
@@ -111,21 +135,19 @@ function tagExists(objTag) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function tagger_filter() {
-	if(tagger_filter_focus) {
-		var filter = byId('tagger_new-tag');
-		var arObjTags = getElementsByTagNames('a',byId('tagger_body'));
-		var prepend = filter.value.length<2? " ":"_";
-		var search = prepend + reescape(filter.value);
-		
-		for(i in arObjTags) {
-			objTag = arObjTags[i];
-			tag = prepend + objTag.getAttribute('tag');
+	var filter = byId('tagger_new-tag');
+	var arObjTags = getElementsByTagNames('a',byId('tagger_body'));
+	var prepend = filter.value.length<2? " ":"_";
+	var search = prepend + reescape(filter.value);
+	
+	for(i in arObjTags) {
+		objTag = arObjTags[i];
+		tag = prepend + objTag.getAttribute('tag');
 
-			if(tag.match(search) && taggerFilterMode(objTag)) {
-				objTag.style.display='';
-			} else {
-				objTag.style.display='none';
-			}
+		if(tag.match(search) && taggerFilterMode(objTag)) {
+			objTag.style.display='';
+		} else {
+			objTag.style.display='none';
 		}
 	}
 }
