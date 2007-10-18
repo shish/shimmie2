@@ -7,6 +7,16 @@
  * Description: Allow users to score images
  */
 
+class ScoreSetEvent extends Event {
+	var $image_id, $user, $score;
+
+	public function ScoreSetEvent($image_id, $user, $score) {
+		$this->image_id = $image_id;
+		$this->user = $user;
+		$this->score = $score;
+	}
+}
+
 class Score extends Extension {
 	var $theme;
 
@@ -31,20 +41,26 @@ class Score extends Extension {
 			$i_image_id = int_escape($_POST['image_id']);
 			
 			if($i_score >= -2 || $i_score <= 2) {
-				$this->add_vote($i_image_id, $event->user->id, $i_score);
+				send_event(new ScoreSetEvent($i_image_id, $event->user->id, $i_score));
 			}
 			
 			$event->page->set_mode("redirect");
 			$event->page->set_redirect(make_link("post/view/$i_image_id"));
 		}
+		
+		if(is_a($event, 'ScoreSetEvent')) {
+			$this->add_vote($event->image_id, $event->user->id, $event->score);
+		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			$this->theme->display_rater($event->page, $event->image->id, $event->image->score);
+			// TODO: scorer vs voter
+			$this->theme->display_scorer($event->page, $event->image->id, $event->image->score);
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
 			/*
 			TODO: disable anon voting
+			TODO: switch between average and sum modes
 			*/
 		}
 	}
