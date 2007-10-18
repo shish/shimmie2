@@ -45,9 +45,10 @@ class AliasEditor extends Extension {
 				$this->theme->display_aliases($event->page, $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases"), $user->is_admin());
 			}
 			else if($event->get_arg(0) == "export") {
+				global $database;
 				$event->page->set_mode("data");
 				$event->page->set_type("text/plain");
-				$event->page->set_data($this->get_alias_csv());
+				$event->page->set_data($this->get_alias_csv($database));
 			}
 		}
 
@@ -61,6 +62,15 @@ class AliasEditor extends Extension {
 				$event->add_link("Alias Editor", make_link("alias/list"));
 			}
 		}
+	}
+
+	private function get_alias_csv($database) {
+		$csv = "";
+		$aliases = $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases");
+		foreach($aliases as $old => $new) {
+			$csv .= "$old,$new\n";
+		}
+		return $csv;
 	}
 }
 add_event_listener(new AliasEditor());
