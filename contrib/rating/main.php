@@ -7,6 +7,16 @@
  * Description: Allow users to rate images
  */
 
+class RatingSetEvent extends Event {
+	var $image_id, $user, $rating;
+
+	public function RatingSetEvent($image_id, $user, $rating) {
+		$this->image_id = $image_id;
+		$this->user = $user;
+		$this->rating = $rating;
+	}
+}
+
 class Ratings extends Extension {
 	var $theme;
 
@@ -29,9 +39,14 @@ class Ratings extends Extension {
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "rating" &&
 				$event->get_arg(0) == "set" && $user->is_admin() &&
 				isset($_POST['rating']) && isset($_POST['image_id'])) {
-			$this->set_rating($_POST['image_id'], $_POST['rating']);
+			$i_image_id = int_escape($_POST['image_id']);
+			send_event(new RatingSetEvent($i_image_id, $user, $_POST['rating']));
 			$event->page->set_mode("redirect");
 			$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
+		}
+
+		if(is_a($event, 'RatingSetEvent')) {
+			$this->set_rating($event->image_id, $event->rating);
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
