@@ -15,6 +15,14 @@ add_post - title and rating are currently ignored because shimmie does not suppo
 find_posts - sort of works, filename is returned as the original filename and probably won't help when it comes to actually downloading it
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
+CHANGELOG
+19-OCT-07 4:46PM CST - JJS
+Add compatibility with danbooru api v1.8.1 style urls 
+for find_posts and add_post. NOTE: This does not implement 
+the changes to the parameter names, it is simply a 
+workaround for the latest danbooruup firefox extension. 
+Completely compatibility will probably involve a rewrite with a different URL
+
 */
 
 class DanbooruApi extends Extension 
@@ -105,7 +113,7 @@ class DanbooruApi extends Extension
 		Get 
 		* Redirected to the newly uploaded post.
 		*/
-		if($event->get_arg(1) == 'add_post')
+		if(($event->get_arg(1) == 'add_post') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'create.xml')))
 		{
 			// No XML data is returned from this function
 			$page->set_type("text/plain");
@@ -250,7 +258,7 @@ class DanbooruApi extends Extension
 		* offset: offset 
 		* after_id: limit results to posts added after this id
 		*/
-		if($event->get_arg(1) == 'find_posts')
+		if(($event->get_arg(1) == 'find_posts') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'index.xml')))
 		{
 			if(isset($_GET['md5']))
 			{
