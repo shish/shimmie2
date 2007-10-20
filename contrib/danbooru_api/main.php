@@ -390,4 +390,3 @@ class DanbooruApi extends Extension
 
 add_event_listener(new DanbooruApi());
 ?>
-
