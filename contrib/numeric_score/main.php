@@ -28,6 +28,7 @@ class NumericScore extends Extension {
 			if($config->get_int("ext_numeric_score_version", 0) < 1) {
 				$this->install();
 			}
+			$config->set_default_bool("numeric_score_anon", true);
 		}
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "numeric_score" &&
@@ -45,18 +46,22 @@ class NumericScore extends Extension {
 		}
 		
 		if(is_a($event, 'NumericScoreSetEvent')) {
-			$this->add_vote($event->image_id, $event->user->id, $event->score);
+			if(!$event->user->is_anonymous() || $config->get_bool("numeric_score_anon")) {
+				$this->add_vote($event->image_id, $event->user->id, $event->score);
+			}
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			$this->theme->display_voter($event->page, $event->image->id, $event->image->numeric_score);
+			global $user;
+			if(!$user->is_anonymous() || $config->get_bool("numeric_score_anon")) {
+				$this->theme->display_voter($event->page, $event->image->id, $event->image->numeric_score);
+			}
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
-			/*
-			TODO: disable anon voting
-			TODO: switch between average and sum modes
-			*/
+			$sb = new SetupBlock("Numeric Score");
+			$sb->add_bool_option("numeric_score_anon", "Allow anonymous votes: ");
+			$event->panel->add_block($sb);
 		}
 	}
 

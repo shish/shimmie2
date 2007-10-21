@@ -28,6 +28,7 @@ class TextScore extends Extension {
 			if($config->get_int("ext_text_score_version", 0) < 1) {
 				$this->install();
 			}
+			$config->set_default_bool("text_score_anon", true);
 		}
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "text_score" &&
@@ -45,18 +46,22 @@ class TextScore extends Extension {
 		}
 		
 		if(is_a($event, 'TextScoreSetEvent')) {
-			$this->add_vote($event->image_id, $event->user->id, $event->score);
+			if(!$event->user->is_anonymous() || $config->get_bool("text_score_anon")) {
+				$this->add_vote($event->image_id, $event->user->id, $event->score);
+			}
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			$this->theme->display_scorer($event->page, $event->image->id, $event->image->text_score);
+			global $user;
+			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
+				$this->theme->display_scorer($event->page, $event->image->id, $event->image->text_score);
+			}
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
-			/*
-			TODO: disable anon voting
-			TODO: switch between average and sum modes
-			*/
+			$sb = new SetupBlock("Text Score");
+			$sb->add_bool_option("text_score_anon", "Allow anonymous votes: ");
+			$event->panel->add_block($sb);
 		}
 	}
 
