@@ -89,7 +89,7 @@ class TextScore extends Extension {
 		global $database;
 		// TODO: update if already voted
 		$database->Execute(
-			"INSERT INTO text_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
+			"REPLACE INTO text_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
 			array($image_id, $user_id, $score));
 		$database->Execute(
 			"UPDATE images SET text_score=(SELECT AVG(score) FROM text_score_votes WHERE image_id=?) WHERE id=?",
