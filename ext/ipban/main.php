@@ -2,10 +2,10 @@
 
 // RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event {
-	var $ip;
+	var $id;
 
-	public function RemoveIPBanEvent($ip) {
-		$this->ip = $ip;
+	public function RemoveIPBanEvent($id) {
+		$this->id = $id;
 	}
 }
 // }}}
@@ -53,8 +53,8 @@ class IPBan extends Extension {
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
-					if(isset($_POST['ip'])) {
-						send_event(new RemoveIPBanEvent($_POST['ip']));
+					if(isset($_POST['id'])) {
+						send_event(new RemoveIPBanEvent($_POST['id']));
 
 						global $page;
 						$page->set_mode("redirect");
@@ -69,7 +69,7 @@ class IPBan extends Extension {
 		}
 
 		if(is_a($event, 'RemoveIPBanEvent')) {
-			$this->remove_ip_ban($event->ip);
+			$this->remove_ip_ban($event->id);
 		}
 
 		if(is_a($event, 'AdminBuildingEvent')) {
@@ -131,9 +131,9 @@ class IPBan extends Extension {
 				array($ip, $reason, $end));
 	}
 
-	public function remove_ip_ban($ip) {
+	public function remove_ip_ban($id) {
 		global $database;
-		$database->Execute("DELETE FROM bans WHERE ip = ?", array($ip));
+		$database->Execute("DELETE FROM bans WHERE id = ?", array($id));
 	}
 // }}}
 }
