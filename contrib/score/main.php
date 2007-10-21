@@ -54,7 +54,7 @@ class Score extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			// TODO: scorer vs voter
-			$this->theme->display_scorer($event->page, $event->image->id, $event->image->score);
+			$this->theme->display_scorer($event->page, $event->image->id, $event->image->vote_score);
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {
