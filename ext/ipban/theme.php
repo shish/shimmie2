@@ -21,7 +21,7 @@ class IPBanTheme extends Themelet {
 					<td>{$ban['end']}</td>
 					<td>
 						<form action='".make_link("ip_ban/remove")."' method='POST'>
-							<input type='hidden' name='ip' value='{$ban['ip']}'>
+							<input type='hidden' name='id' value='{$ban['id']}'>
 							<input type='submit' value='Remove'>
 						</form>
 					</td>

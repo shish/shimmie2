@@ -2,10 +2,10 @@
 
 // RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event {
-	var $ip;
+	var $id;
 
-	public function RemoveIPBanEvent($ip) {
-		$this->ip = $ip;
+	public function RemoveIPBanEvent($id) {
+		$this->id = $id;
 	}
 }
 // }}}
@@ -31,7 +31,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 1) {
+			if($config->get_int("ext_ipban_version") < 2) {
 				$this->install();
 			}
 			
@@ -53,8 +53,8 @@ class IPBan extends Extension {
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
-					if(isset($_POST['ip'])) {
-						send_event(new RemoveIPBanEvent($_POST['ip']));
+					if(isset($_POST['id'])) {
+						send_event(new RemoveIPBanEvent($_POST['id']));
 
 						global $page;
 						$page->set_mode("redirect");
@@ -65,11 +65,12 @@ class IPBan extends Extension {
 		}
 
 		if(is_a($event, 'AddIPBanEvent')) {
-			$this->add_ip_ban($event->ip, $event->reason, $event->end);
+			global $user;
+			$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
 		}
 
 		if(is_a($event, 'RemoveIPBanEvent')) {
-			$this->remove_ip_ban($event->ip);
+			$this->remove_ip_ban($event->id);
 		}
 
 		if(is_a($event, 'AdminBuildingEvent')) {
@@ -82,15 +83,23 @@ class IPBan extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE bans (
-			id int(11) NOT NULL auto_increment,
-			ip char(15) default NULL,
-			date datetime default NULL,
-			end datetime default NULL,
-			reason varchar(255) default NULL,
-			PRIMARY KEY (id)
-		)");
-		$config->set_int("ext_ipban_version", 1);
+		
+		if($config->get_int("ext_ipban_version") < 1) {
+			$database->Execute("CREATE TABLE bans (
+				id int(11) NOT NULL auto_increment,
+				ip char(15) default NULL,
+				date datetime default NULL,
+				end datetime default NULL,
+				reason varchar(255) default NULL,
+				PRIMARY KEY (id)
+			)");
+			$config->set_int("ext_ipban_version", 1);
+		}
+		if($config->get_int("ext_ipban_version") < 2) {
+			$database->execute("ALTER TABLE bans CHANGE ip ip CHAR(15) NOT NULL");
+			$database->execute("ALTER TABLE bans ADD COLUMN banner_id INTEGER NOT NULL");
+			$config->set_int("ext_ipban_version", 2);
+		}
 	}
 // }}}
 // deal with banned person {{{
@@ -98,8 +107,9 @@ class IPBan extends Extension {
 		$row = $this->get_ip_ban($_SERVER['REMOTE_ADDR']);
 		if($row) {
 			global $config;
-
-			print "IP <b>{$row['ip']}</b> has been banned because of <b>{$row['reason']}</b>";
+			global $database;
+			$admin = $database->get_user_by_id($row['banner_id']);
+			print "IP <b>{$row['ip']}</b> has been banned by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 
 			$contact_link = $config->get_string("contact_link");
 			if(!empty($contact_link)) {
@@ -110,32 +120,28 @@ class IPBan extends Extension {
 	}
 // }}}
 // database {{{
-	public function get_bans() {
-		// FIXME: many
+	private function get_bans() {
 		global $database;
 		$bans = $database->db->GetAll("SELECT * FROM bans");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
 
-	public function get_ip_ban($ip) {
+	private function get_ip_ban($ip) {
 		global $database;
-		// yes, this is "? LIKE var", because ? is the thing with matching tokens
-		// actually, slow
-		// return $database->db->GetRow("SELECT * FROM bans WHERE ? LIKE ip AND date < now() AND (end > now() OR isnull(end))", array($ip));
 		return $database->db->GetRow("SELECT * FROM bans WHERE ip = ? AND date < now() AND (end > now() OR isnull(end))", array($ip));
 	}
 
-	public function add_ip_ban($ip, $reason, $end) {
+	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
 		$database->Execute(
-				"INSERT INTO bans (ip, reason, date, end) VALUES (?, ?, now(), ?)",
-				array($ip, $reason, $end));
+				"INSERT INTO bans (ip, reason, date, end, banner_id) VALUES (?, ?, now(), ?, ?)",
+				array($ip, $reason, $end, $user->id));
 	}
 
-	public function remove_ip_ban($ip) {
+	private function remove_ip_ban($id) {
 		global $database;
-		$database->Execute("DELETE FROM bans WHERE ip = ?", array($ip));
+		$database->Execute("DELETE FROM bans WHERE id = ?", array($id));
 	}
 // }}}
 }
