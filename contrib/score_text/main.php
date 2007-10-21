@@ -34,8 +34,8 @@ class Score extends Extension {
 			$config->set_default_string("ext_rating_user_privs", 'sq');
 		}
 
-		if(is_a($event, 'PageRequestEvent') && $event->page_name == "score" &&
-				$event->get_arg(0) == "set" && $event->user->is_admin() &&
+		if(is_a($event, 'PageRequestEvent') && $event->page_name == "score_text" &&
+				$event->get_arg(0) == "vote" && $event->user->is_admin() &&
 				isset($_POST['score']) && isset($_POST['image_id'])) {
 			$i_score = int_escape($_POST['score']);
 			$i_image_id = int_escape($_POST['image_id']);
@@ -53,7 +53,6 @@ class Score extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			// TODO: scorer vs voter
 			$this->theme->display_scorer($event->page, $event->image->id, $event->image->vote_score);
 		}
 		
@@ -87,16 +86,21 @@ class Score extends Extension {
 			$database->Execute("ALTER TABLE images CHANGE score vote_score INTEGER NOT NULL DEFAULT 0");
 			$config->set_int("ext_score_version", 2);
 		}
+		if($config->get_int("ext_score_version") < 3) {
+			$database->Execute("ALTER TABLE images CHANGE vote_score score_text INTEGER NOT NULL DEFAULT 0");
+			$database->Execute("RENAME TABLE images_score_votes TO votes_text");
+			$config->set_int("ext_score_version", 3);
+		}
 	}
 
 	private function add_vote($image_id, $user_id, $score) {
 		global $database;
 		// TODO: update if already voted
 		$database->Execute(
-			"INSERT INTO images_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
+			"INSERT INTO votes_text(image_id, user_id, score) VALUES(?, ?, ?)",
 			array($image_id, $user_id, $score));
 		$database->Execute(
-			"UPDATE images SET vote_score=(SELECT AVG(score) FROM images_score_votes WHERE image_id=?) WHERE id=?",
+			"UPDATE images SET score_text=(SELECT AVG(score) FROM votes_text WHERE image_id=?) WHERE id=?",
 			array($image_id, $image_id));
 	}
 }
