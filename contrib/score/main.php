@@ -25,7 +25,7 @@ class Score extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_score_version", 0) < 1) {
+			if($config->get_int("ext_score_version", 0) < 2) {
 				$this->install();
 			}
 
@@ -83,6 +83,10 @@ class Score extends Extension {
 			");
 			$config->set_int("ext_score_version", 1);
 		}
+		if($config->get_int("ext_score_version") < 2) {
+			$database->Execute("ALTER TABLE images CHANGE score vote_score INTEGER NOT NULL DEFAULT 0");
+			$config->set_int("ext_score_version", 2);
+		}
 	}
 
 	private function add_vote($image_id, $user_id, $score) {
@@ -92,7 +96,7 @@ class Score extends Extension {
 			"INSERT INTO images_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
 			array($image_id, $user_id, $score));
 		$database->Execute(
-			"UPDATE images SET score=(SELECT AVG(score) FROM images_score_votes WHERE image_id=?) WHERE id=?",
+			"UPDATE images SET vote_score=(SELECT AVG(score) FROM images_score_votes WHERE image_id=?) WHERE id=?",
 			array($image_id, $image_id));
 	}
 }
