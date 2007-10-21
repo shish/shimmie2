@@ -71,7 +71,7 @@ class TextScore extends Extension {
 
 		if($config->get_int("ext_text_score_version") < 1) {
 			$database->Execute("ALTER TABLE images ADD COLUMN text_score INTEGER NOT NULL DEFAULT 0");
-			$database->Execute("CREATE INDEX images__text_score ON images(numeric_score)");
+			$database->Execute("CREATE INDEX images__text_score ON images(text_score)");
 			$database->Execute("
 				CREATE TABLE text_score_votes (
 					image_id INTEGER NOT NULL,
