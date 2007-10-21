@@ -32,7 +32,7 @@ class NumericScore extends Extension {
 		}
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "numeric_score" &&
-				$event->get_arg(0) == "vote" && $event->user->is_admin() &&
+				$event->get_arg(0) == "vote" &&
 				isset($_POST['score']) && isset($_POST['image_id'])) {
 			$i_score = int_escape($_POST['score']);
 			$i_image_id = int_escape($_POST['image_id']);
