@@ -13,7 +13,7 @@ class TextScoreTheme extends Themelet {
 		$s_score = $words[$score];
 		$html = "
 			Current score is \"$s_score\"
-			<br><form action='".make_link("score_text/vote")."' method='POST'>
+			<br><form action='".make_link("text_score/vote")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image_id' />
 				<input type='radio' name='score' value='-2' id='-2'><label for='-2'>Delete</label>
 				<input type='radio' name='score' value='-1' id='-1'><label for='-1'>Bad</label>

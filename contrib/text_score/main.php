@@ -37,7 +37,7 @@ class TextScore extends Extension {
 			$i_image_id = int_escape($_POST['image_id']);
 			
 			if($i_score >= -2 || $i_score <= 2) {
-				send_event(new TextScoreSetEvent($i_image_id, $event->user->id, $i_score));
+				send_event(new TextScoreSetEvent($i_image_id, $event->user, $i_score));
 			}
 			
 			$event->page->set_mode("redirect");

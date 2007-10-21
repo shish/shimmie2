@@ -37,7 +37,7 @@ class NumericScore extends Extension {
 			$i_image_id = int_escape($_POST['image_id']);
 			
 			if($i_score >= -1 || $i_score <= 1) {
-				send_event(new NumericScoreSetEvent($i_image_id, $event->user->id, $i_score));
+				send_event(new NumericScoreSetEvent($i_image_id, $event->user, $i_score));
 			}
 			
 			$event->page->set_mode("redirect");
