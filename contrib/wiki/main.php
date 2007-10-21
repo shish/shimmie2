@@ -11,11 +11,11 @@
 // WikiUpdateEvent {{{
 class WikiUpdateEvent extends Event {
 	var $user;
-	var $page;
+	var $wikipage;
 
-	public function WikiUpdateEvent($user, $page) {
+	public function WikiUpdateEvent($user, $wikipage) {
 		$this->user = $user;
-		$this->page = $page;
+		$this->wikipage = $wikipage;
 	}
 }
 // }}}
@@ -81,6 +81,7 @@ class Wiki extends Extension {
 				
 				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
+					// send_event(new WikiUpdateEvent($event->user, new WikiPage(...))
 					if($user->is_admin()) {
 						$this->set_page($title, $rev, $body, $lock);
 					}
@@ -121,7 +122,7 @@ class Wiki extends Extension {
 		}
 
 		if(is_a($event, 'WikiUpdateEvent')) {
-			$this->update_wiki_page($event->user, $event->page);
+			$this->set_page($event->wikipage);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
@@ -177,6 +178,8 @@ class Wiki extends Extension {
 				ORDER BY revision DESC", array($title));
 		return ($row ? new WikiPage($row) : null);
 	}
+
+	// TODO: accept a WikiPage object
 	private function set_page($title, $rev, $body, $locked) {
 		global $database;
 		global $user;

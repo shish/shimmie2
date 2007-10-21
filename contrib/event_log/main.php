@@ -86,7 +86,8 @@ class EventLog extends Extension {
 			$this->add_to_log($user, 'Source Set', "Source for image #{$event->image_id} set to '{$event->source}'");
 		}
 		if(is_a($event, 'TagSetEvent')) {
-			$this->add_to_log($user, 'Tags Set', "Tags for image #{$event->image_id} set to '{$event->tags}'");
+			$tags = implode($event->tags, ", ");
+			$this->add_to_log($user, 'Tags Set', "Tags for image #{$event->image_id} set to '$tags'");
 		}
 	}
 
