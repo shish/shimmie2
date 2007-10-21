@@ -1,6 +1,6 @@
 <?php
 
-class ScoreTheme extends Themelet {
+class TextScoreTheme extends Themelet {
 	public function display_scorer($page, $image_id, $score) {
 		$i_image_id = int_escape($image_id);
 		

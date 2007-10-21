@@ -91,5 +91,5 @@ class NumericScore extends Extension {
 			array($image_id, $image_id));
 	}
 }
-add_event_listener(new Score());
+add_event_listener(new NumericScore());
 ?>
