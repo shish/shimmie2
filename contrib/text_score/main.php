@@ -32,7 +32,7 @@ class TextScore extends Extension {
 		}
 
 		if(is_a($event, 'PageRequestEvent') && $event->page_name == "text_score" &&
-				$event->get_arg(0) == "vote"
+				$event->get_arg(0) == "vote" &&
 				isset($_POST['score']) && isset($_POST['image_id'])) {
 			$i_score = int_escape($_POST['score']);
 			$i_image_id = int_escape($_POST['image_id']);
@@ -56,6 +56,11 @@ class TextScore extends Extension {
 			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
 				$this->theme->display_scorer($event->page, $event->image->id, $event->image->text_score);
 			}
+		}
+		
+		if(is_a($event, 'ImageDeletionEvent')) {
+			global $database;
+			$database->execute("DELETE FROM text_score_votes WHERE image_id=?", array($event->image->id));
 		}
 		
 		if(is_a($event, 'SetupBuildingEvent')) {

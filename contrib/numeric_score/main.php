@@ -58,6 +58,11 @@ class NumericScore extends Extension {
 			}
 		}
 		
+		if(is_a($event, 'ImageDeletionEvent')) {
+			global $database;
+			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=?", array($event->image->id));
+		}
+		
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Numeric Score");
 			$sb->add_bool_option("numeric_score_anon", "Allow anonymous votes: ");
