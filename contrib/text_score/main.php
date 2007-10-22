@@ -53,6 +53,7 @@ class TextScore extends Extension {
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
+			global $config;
 			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
 				$this->theme->display_scorer($event->page, $event->image->id, $event->image->text_score);
 			}
