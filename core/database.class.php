@@ -160,8 +160,8 @@ class Database {
 				}
 				$img_search->append(new Querylet("AND (images.owner_id = $user_id)"));
 			}
-			else if(preg_match("/hash=([0-9a-fA-F]*)/i",$term,$matches)) {
-				$hash = strtolower($matches[1]);
+			else if(preg_match("/(hash=|md5:)([0-9a-fA-F]*)/i",$term,$matches)) {
+				$hash = strtolower($matches[2]);
 				if(!is_null($hash)) {
 					$img_search->append(new Querylet("AND (images.hash = '$hash')"));
 				}
