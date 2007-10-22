@@ -16,6 +16,12 @@ find_posts - sort of works, filename is returned as the original filename and pr
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
 CHANGELOG
+21-OCT-07 9:07PM CST - JJS
+Turns out I actually did need to implement the new parameter names
+for danbooru api v1.8.1. Now danbooruup should work when used with /api/danbooru/post/create.xml
+Also correctly redirects the url provided by danbooruup in the event
+of a duplicate image.
+
 19-OCT-07 4:46PM CST - JJS
 Add compatibility with danbooru api v1.8.1 style urls 
 for find_posts and add_post. NOTE: This does not implement 
@@ -127,16 +133,32 @@ class DanbooruApi extends Extension
 				$file = null;
 				$filename = "";
 				$source = "";
-				
 				if(isset($_FILES['file']))
 				{	// A file was POST'd in
 					$file = $_FILES['file']['tmp_name'];
 					$filename = $_FILES['file']['name'];
 					// If both a file is posted and a source provided, I'm assuming source is the source of the file
-					$source = (isset($_REQUEST['source']) && !empty($_REQUEST['source'])) ? $_REQUEST['source'] : null;
-				} elseif(isset($_REQUEST['source']))
+					if(isset($_REQUEST['source']) && !empty($_REQUEST['source']))
+					{
+						$source = $_REQUEST['source'];
+					} else
+					{
+						$source = null;
+					}
+				} elseif(isset($_FILES['post']))
+				{
+					$file = $_FILES['post']['tmp_name']['file'];
+					$filename = $_FILES['post']['name']['file'];
+					if(isset($_REQUEST['post']['source']) && !empty($_REQUEST['post']['source']))
+					{
+						$source = $_REQUEST['post']['source'];
+					} else 
+					{
+						$source = null;
+					}
+				} elseif(isset($_REQUEST['source']) || isset($_REQUEST['post']['source']))
 				{	// A url was provided
-					$url = $_REQUEST['source'];
+					$url = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
 					$source = $url;
 					$tmp_filename = tempnam("/tmp", "shimmie_transload");
 					
@@ -184,8 +206,11 @@ class DanbooruApi extends Extension
 					return;
 				}
 				
+				// Get tags out of url
+				$posttags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags'];
+				
 				// Now that we have some sort of physical file, process it
-				$image = new Image($file, $filename, $_REQUEST['tags'], $source);
+				$image = new Image($file, $filename, $posttags, $source);
 				// This occurs if the uploaded file is not an image
 				if(!$image->is_ok())
 				{
@@ -359,6 +384,16 @@ class DanbooruApi extends Extension
 			}
 			$xml .= "</tags>";
 			$page->set_data($xml);
+		}
+		
+		// Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
+		// Shimmie view page
+		// Example: danbooruup says the url is http://shimmie/api/danbooru/post/show/123
+		// This redirects that to http://shimmie/post/view/123
+		if(($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show'))
+		{
+			$fixedlocation = make_link("post/view/" . $event->get_arg(3));
+			header("Location: $fixedlocation");
 		}
 	}
 	
