@@ -35,6 +35,7 @@ $database = new Database();
 $database->db->fnExecute = '_count_execs';
 $config = new Config($database);
 $_theme = $config->get_string("theme", "default");
+if(!file_exists($_theme)) $_theme = "default";
 require_once "themes/$_theme/page.class.php";
 require_once "themes/$_theme/layout.class.php";
 require_once "themes/$_theme/themelet.class.php";
