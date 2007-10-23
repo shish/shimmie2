@@ -1,210 +1,205 @@
-// Tagger - Advanced Tagging
-// Author: Artanis (Erik Youngren <artanis.00@gmail.com>)
-// Do not remove this notice.
-// All other code copyright by their authors, see comments for details.
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                              Tagger Management                              *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-// Global settings and oft-used objects
-var remove_tagme = null;
-var tags_field = false;
-var set_button = false;
-
-// Put everything in a class? better?
-
-function taggerInit() {
-	// get imgdata hooks
-	tags_field = getTagsField();
-	set_button = getSetButton();
-
-	// Set up Tagger
-	// Get last position
-	c = getCookie('shimmie-tagger-position');
-	c = c ? c.replace(/px/g,"").split(" ") : new Array(null,null);
-	taggerResetPos(c[0],c[1]);
-	
-	tagger_tagIndicators();
-	DragHandler.attach(byId("tagger_titlebar"));
-	remove_tagme = byId('tagme');
-	
-	// save position cookie on unload.
-	window.onunload = function(e) {
-		taggerSavePosition();
-	};
-}
-
-function taggerResetPos(x,y) {
-	tagger = byId("tagger_window");
-
-	var pos = new Array();
-	if(!x || !y) {
-		tagger.style.top="";
-		tagger.style.left="";
-		tagger.style.right="25px";
-		tagger.style.bottom="25px";
-		// get location in (left,top) terms
-		pos = findPos(tagger);
-	} else {
-		pos[0] = x;
-		pos[1] = y;
-	}
-	
-	tagger.style.top = pos[1]+"px";
-	tagger.style.left = pos[0]+"px";
-	tagger.style.right="";
-	tagger.style.bottom="";
-}
-
-function taggerSavePosition() {
-	tw = byId('tagger_window');
-	if (tw) {
-		xy = tw.style.left +" "+ tw.style.top
-		setCookie('shimmie-tagger-position',xy);
-		return true;
-	}
-	return false;
-}
-
-function tagger_tagIndicators() {
-	arObjTags = getElementsByTagNames('a',byId('tagger_body'));
-	
-	for (i in arObjTags) {
-		objTag = arObjTags[i];
-		if(tagExists(objTag)) {
-			objTag.style.fontWeight="bold";
-		}
-	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                                   Tagging                                   *
+* Tagger - Advanced Tagging v2                                                *
+* Author: Artanis (Erik Youngren <artanis.00@gmail.com>)                      *
+* Do not remove this notice.                                                  *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-function toggleTag(objTag) {
-	if(!tagExists(objTag)) {
-		addTag(objTag);
-		if (remove_tagme && objTag.getAttribute('tag') != 'tagme') {
-			remTag(remove_tagme);
-		}
-	} else {
-		remTag(objTag);
-	}
-	t = byId("tagger_new-tag");
-	if(t.value) { t.select(); }
-}
-
-function addTag (objTag) {	
-	delim = tags_field.value==" "?"":" ";
-
-	tags_field.value += delim + objTag.getAttribute('tag');
+/* Tagger Window Object
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+function Tagger() {
+// components
+	this.t_parent  = null;
+	this.t_title   = null;
+	this.t_toolbar = null;
+	this.t_menu    = null;
+	this.t_body    = null;
+	this.t_tags    = null;
+	this.t_form    = null;
+	this.t_status  = null;
+// data
+	this.searchTags  = null;
+	this.appliedTags = null;
+// methods
+	this.initialize     = initialize;
+	this.submit         = submit;
+	this.tagSearch      = tagSearch;
+	this.searchRequest  = searchRequest;
+	this.searchReceive  = searchReceive;
+	this.tagListReceive = tagListReceive;
+	this.tagPublish     = tagPublish;
+	this.prepTags       = prepTags;
+	this.createTag      = createTag;
+	this.buildPages     = buildPages;
+	this.tagsToString   = tagsToString;
+	this.toggleTag      = toggleTag;
+	this.setAlert       = setAlert;
 	
-	if(objTag.value != 'Add') {
-		objTag.style.fontWeight = "bold";
+// definitions
+	function initialize () {
+	// components
+		this.t_parent  = document.getElementById("tagger_parent");
+		this.t_title   = document.getElementById("tagger_titlebar");
+		this.t_toolbar = document.getElementById("tagger_toolbar");
+		this.t_menu    = document.getElementById("tagger_p-menu");
+		this.t_body    = document.getElementById("tagger_body");
+		this.t_tags    = document.getElementById("tagger_tags");
+		this.t_form    = this.t_tags.parentNode;
+		this.t_status  = document.getElementById("tagger_statusbar");
+	//pages
+		//this.buildPages();
+	// initial data
+		ajaxXML(query+"/"+image_id,tagListReceive);
+	// reveal
+		this.t_parent.style.display = "";
 	}
-}
+	function submit() {
+		this.t_tags.value = Tagger.tagsToString(Tagger.appliedTags);
+	}
+	function tagSearch(s,ms) {
+		clearTimeout(tagger_filter_timer);
+		tagger_filter_timer = setTimeout("Tagger.searchRequest('"+s+"')",ms);
+	}
+	function searchRequest(s) {
+		var s_query = !s? query+"?s" : query+"?s="+sqlescape(s);
 
-function remTag (objTag) {	
-	aTags = tags_field.value.split(" ");
-	
-	tags_field.value="";
-	for(i in aTags) {
-		aTag = aTags[i];
-		if(aTag != objTag.getAttribute('tag')) {
-			if(tags_field.value=="") {
-				tags_field.value += aTag;
-			} else {
-				tags_field.value += " "+aTag;
+		if(!this.searchTags) {
+			ajaxXML(s_query,searchReceive);
+			return true;
+		} else {
+			var prv_s = this.searchTags.getAttribute('query');
+		
+			if(s==prv_s) {
+				return false;
+			}else if(!s || s.length <= 2 || s.length<prv_s.length ||
+				this.searchTags.getAttribute("max"))
+			{
+				ajaxXML(s_query,searchReceive);
+				return true;
+				
+			} else if(s.length > 2 && s.match(reescape(prv_s))) {
+				var len = this.searchTags.childNodes.length;
+				
+				for (var i=len-1; i>=0; i--) {
+					var tag = this.searchTags.childNodes[i];
+					var t_name = tag.firstChild.data;
+					
+					if(!t_name.match(reescape(s))) {
+						this.searchTags.removeChild(tag);
+						// TODO: Fix so back searches are not needlessly re-queried.
+						//tag.setAttribute("style","display:none;");
+					} else {
+						//tag.setAttribute("style","");
+					}
+				}
+				
+				if (len != this.searchTags.childNodes.length) {
+					this.searchTags.setAttribute('query',s);
+				}
 			}
 		}
+		return false;
 	}
-	if(objTag.value != 'Add') {
-		objTag.style.fontWeight = "";
-	}
-}
-
-function tagExists(objTag) {
-	return tags_field.value.match(reescape(objTag.getAttribute('tag')));
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                                  Filtering                                  *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function tagger_filter() {
-	var filter = byId('tagger_new-tag');
-	var arObjTags = getElementsByTagNames('a',byId('tagger_body'));
-	var prepend = filter.value.length<2? " ":"_";
-	var search = prepend + reescape(filter.value);
-	
-	for(i in arObjTags) {
-		objTag = arObjTags[i];
-		tag = prepend + objTag.getAttribute('tag');
-
-		if(tag.match(search) && taggerFilterMode(objTag)) {
-			objTag.style.display='';
+	function searchReceive(xml) {
+		Tagger.searchTags = document.importNode(xml.getElementsByTagName("list")[0],true);
+		tagPublish(Tagger.searchTags,document.getElementById("tagger_p-search"));
+		
+		if(Tagger.searchTags.getAttribute("max")) {
+			Tagger.setAlert("maxout","Limited to "+Tagger.searchTags.getAttribute("rows")+" of "+Tagger.searchTags.getAttribute("max")+" tags");
 		} else {
-			objTag.style.display='none';
+			Tagger.setAlert("maxout",false);
 		}
 	}
-}
-function taggerToggleMode() {
-	var obj = byId('tagger_mode');
 	
-	if(obj.getAttribute('mode')=='all') {
-		obj.setAttribute('mode', 'applied');
-		obj.innerHTML = 'View All Tags';
-	} else {
-		obj.setAttribute('mode','all');
-		obj.innerHTML = 'View Applied Tags';
+	function tagListReceive(xml) {
+		Tagger.appliedTags = document.importNode(xml.getElementsByTagName("list")[0],true);
+		tagPublish(Tagger.appliedTags,document.getElementById("tagger_p-applied"));
 	}
-	tagger_filter(true);
-}
-function taggerFilterMode(objTag) {
-	var obj = byId('tagger_mode');
-	if(obj.getAttribute('mode') == 'all') {
-		return true;
-	} else {
-		return objTag.style.fontWeight=='bold';
+	function tagPublish(tag_list,page) {
+		page.innerHTML = "";
+		Tagger.prepTags(tag_list);
+		page.appendChild(tag_list);
 	}
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                                     Misc                                    *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function getTagsField() {
-	var nodes = getElementsByTagNames('input,textarea',byId('imgdata'));
-	for (i in nodes) {
-		node = nodes[i];
-		if (node.getAttribute('name') == 'tags')
-			return node;
-	}
-	return false;
-}
-
-function pushSet(form_id) {
-	if(set_button) {
-		set_button.click();
-	}
-}
-
-function getSetButton() {
-	var form_nodes = getElementsByTagNames('input',byId('imgdata'));
-	for (i in form_nodes) {
-		node = form_nodes[i];
-		if (node.getAttribute('value')=="Set" && node.getAttribute('type')=="submit") {
-			return node;
+	function prepTags(tag_list) {
+		var len = tag_list.childNodes.length;
+		
+		for(var i=0; i<len;i++) {
+			var tag = tag_list.childNodes[i];
+			tag.onclick = function() { toggleTag(this); document.getElementById("tagger_filter").select(); };
+			tag.style.display="block";
+			tag.setAttribute("title",tag.getAttribute("count")+" uses");
 		}
 	}
-	return false;
+	function createTag(tag_name) {
+		if (tag_name.length>0) {
+			var tag = document.createElement("tag");
+			tag.setAttribute("count","0");
+			tag.setAttribute("id","newTag_"+tag_name);
+			tag.onclick = function() { toggleTag(this); };
+			tag.appendChild(document.createTextNode(tag_name));
+			Tagger.appliedTags.appendChild(tag);
+		}
+	}
+	function buildPages () {
+		var pages = getElementsByTagNames("div",document.getElementById("tagger_body"));
+		var len = pages.length;
+		for(var i=0; i<len; i++) {
+			this.t_menu.innerHTML += "<li onclick='Tagger.togglePages("+
+				"\""+pages[i].getAttribute("id")+"\")'>"+
+				pages[i].getAttribute('name')+"</li>";
+		}
+	}
+	function tagsToString(tags) {
+		var len = tags.childNodes.length;
+		var str = "";
+		for (var i=0; i<len; i++) {
+			str += tags.childNodes[i].firstChild.data+" ";
+		}
+		return str;
+	}
+	function toggleTag(tag) {
+		if(tag.parentNode == Tagger.appliedTags) {
+			Tagger.appliedTags.removeChild(tag);
+		} else {
+			Tagger.appliedTags.appendChild(tag);
+		}
+	}
+	function setAlert(type,arg) {
+		var alert = document.getElementById("tagger_alert_"+type);
+		if (alert) {
+			if (arg==false) {
+				//remove existing
+				alert.parentNode.removeChild(alert);
+				return;
+			}
+			//update prior
+			alert.innerHTML = arg;
+		} else if (arg!=false) {
+			//create
+			var status = document.createElement("div");
+			status.setAttribute("id","tagger_alert_"+type);
+			status.innerHTML = arg;
+			Tagger.t_status.appendChild(status);
+		}
+	}
 }
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-*                                quirksmode.org                               *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* AJAX
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+function ajaxXML(url, callback) {
+	//var http = getHTTPObject();
+	var http = (new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP"));
+	http.open("GET", url, true);
+	http.onreadystatechange = function() {
+		if(http.readyState == 4) callback(http.responseXML);
+	}
+	http.send(null);
+}
 
-// http://www.quirksmode.org/dom/getElementsByTagNames.html
+/* Miscellaneous Code
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+// Quirksmode
+// http://www.quirksmode.org/dom/getElementsByTagNames.htmlgetElementdocument.getElementById
 function getElementsByTagNames(list,obj) {
 	if (!obj) var obj = document;
 	var tagNames = list.split(',');
@@ -229,7 +224,6 @@ function getElementsByTagNames(list,obj) {
 	}
 	return resultArray;
 }
-
 // http://www.quirksmode.org/js/findpos.html
 function findPos(obj) {
 	var curleft = curtop = 0;
@@ -248,6 +242,26 @@ function findPos(obj) {
 // todo: cite source
 function reescape(str){
 	var resp="()?:=[]*+{}^$|/,.!\\"
+	var found=false
+	var ret=""
+	for(var i=0;i<str.length;i++) {
+		found=false
+		for(var j=0;j<resp.length;j++) {
+			if(str.charAt(i)==resp.charAt(j)) {
+				found=true;break
+			}
+		}
+		if(found) {
+			ret+="\\"
+		}
+		ret+=str.charAt(i)
+	}
+	return ret
+}
+
+// Modified from above
+function sqlescape(str){
+	var resp="#%&_"
 	var found=false
 	var ret=""
 	for(var i=0;i<str.length;i++) {

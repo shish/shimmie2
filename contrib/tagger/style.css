@@ -1,5 +1,5 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Tagger - Advanced Tagging                                                 *
+ * Tagger - Advanced Tagging v2                                              *
  * Author: Artanis (Erik Youngren <artanis.00@gmail.com>)                    *
  * Do not remove this notice.                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -8,65 +8,83 @@
 	text-align:left;
 }
 
-#tagger_window {
+#tagger_parent {
 	position:fixed;
-	text-align:left;
-	min-width:250px;
+	top:25px;
+	right:25px;
+	max-width:300px;
+
 }
- 
+#tagger_parent * {
+	background-color:#EEE;
+}
+
 #tagger_titlebar {
-	background-color:#DDDDDD;
-	background-image:none;
+	background-color:#ddd;
 	border:2px solid;
 	cursor:move;
 	font-weight:bold;
-	/*margin-bottom:.5em;*/
-	-moz-border-radius:2em 2em 0 0;
+	-moz-border-radius:5px 5px 0 0;
 	padding:.25em;
-	position:relative;
 	text-align:center;
-	top:-0em;
 }
 
+#tagger_toolbar, #tagger_body {
+	padding:.25em;
+	border-style:solid;
+	border-width: 0px 2px 0px 2px;	
+}
 #tagger_body {
-	background-color:#EEEEEE;
-	border:2px solid;
-	border-top:none;
-	overflow:scroll;
-	padding:1em;
-	max-height:200px;
+	max-height:250px;
+	overflow:auto;
+	overflow-x:hidden;
+	overflow-y:auto;
 }
-#tagger_filter {
-	background-color:#EEEEEE;
+
+#tagger_statusbar {
+	background-color:#ddd;
 	border:2px solid;
-	border-bottom:none;
-	border-top:none;
-	margin-bottom:-1px;
-	/*-moz-border-radius:1em 1em 0 0;*/
-	padding:1em;
-	padding-bottom:1px;
-	text-align:center;
+	font-weight: bold;
+	-moz-border-radius:0 0 5px 5px;
+	padding:.25em;
+} #tagger_statusbar * { background-color:#ddd; }
+
+#tagger_body div {
+	padding-bottom:.125em;
+	margin-bottom:.125em;
+	border-top:1px solid;
 }
-#tagger_filter input {
+
+/* Tagger Styling
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+#Tagger form {
+	display:inline;
+}
+#Tagger input {
 	width:auto;
 }
+#Tagger input[type=text] {
+	background-color:white;
+}
 
-#tagger_body a {
+/* Custom Element Base Styles
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+list {
+	display:inherit;
+}
+tag {
 	font-size:1.25em;
 	display:block;
+}
+tag:hover {
 	cursor:pointer;
+	font-weight: bold;
+	background-color:#ddd;
 }
+list[id=image] tag:hover {
 
-#Use #Tagger {
-	-moz-column-gap:20px;
-	-moz-column-count:3;
 }
+list[id=search] tag:hover {
 
-#Use #Tagger li {
-	margin-bottom:1em;
-	max-width:30em;
-}
-
-#Tagger .tagger_js {
-	cursor:pointer;
 }
