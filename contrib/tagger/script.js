@@ -22,6 +22,8 @@ function Tagger() {
 // methods
 	this.initialize     = initialize;
 	this.submit         = submit;
+	this.getPosition    = function () { return findPos(this.t_parent); };
+	this.setPosition    = setPosition;
 	this.tagSearch      = tagSearch;
 	this.searchRequest  = searchRequest;
 	this.searchReceive  = searchReceive;
@@ -33,6 +35,7 @@ function Tagger() {
 	this.tagsToString   = tagsToString;
 	this.toggleTag      = toggleTag;
 	this.setAlert       = setAlert;
+
 	
 // definitions
 	function initialize () {
@@ -49,11 +52,37 @@ function Tagger() {
 		//this.buildPages();
 	// initial data
 		ajaxXML(query+"/"+image_id,tagListReceive);
+
 	// reveal
 		this.t_parent.style.display = "";
+	// dragging
+		DragHandler.attach(this.t_title);
+		// set position
+		// TODO: Apply cookie-based position saving
+		var pos = Tagger.getPosition();
+		setPosition(pos[0],pos[1]);
 	}
 	function submit() {
 		this.t_tags.value = Tagger.tagsToString(Tagger.appliedTags);
+	}
+	function setPosition(x,y) {
+		if(!x || !y) {
+			with(Tagger.t_parent.style) {
+				top = "25px";
+				left = "";
+				right = "25px";
+				bottom = "";
+			}
+			var pos = Tagger.getPosition();
+			x = pos[0];
+			y = pos[1];
+		}
+		with(Tagger.t_parent.style) {
+			top = y+"px";
+			left = x+"px";
+			right="";
+			bottom="";
+		}
 	}
 	function tagSearch(s,ms) {
 		clearTimeout(tagger_filter_timer);

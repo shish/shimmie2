@@ -7,8 +7,11 @@
 
 class taggerTheme extends Themelet {
 	public function build_tagger ($page, $event) {
+		global $config;
 		// Initialization code
+		$base_href = $config->get_string('base_href');
 		// TODO: AJAX test and fallback.
+		$page->add_header("<script src='$base_href/ext/tagger/webtoolkit.drag.js' type='text/javascript'></script>");
 		$page->add_block(new Block(null,
 			"<script type='text/javascript'>
 				var query = '".make_link("tagger/tags")."';
@@ -32,8 +35,9 @@ class taggerTheme extends Themelet {
 		
 		$url_form = make_link("tag_edit/set");
 		
+		// TODO: option for initial Tagger window placement.
 		$html = <<< EOD
-<div id="tagger_parent" style="display:none;">
+<div id="tagger_parent" style="display:none; top:25px; right:25px;">
 	<div id="tagger_titlebar">Tagger</div>
 	
 	<div id="tagger_toolbar">
