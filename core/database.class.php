@@ -160,11 +160,13 @@ class Database {
 				}
 				$img_search->append(new Querylet("AND (images.owner_id = $user_id)"));
 			}
-			else if(preg_match("/(hash=|md5:)([0-9a-fA-F]*)/i",$term,$matches)) {
+			else if(preg_match("/(hash=|md5:)([0-9a-fA-F]*)/i", $term, $matches)) {
 				$hash = strtolower($matches[2]);
-				if(!is_null($hash)) {
-					$img_search->append(new Querylet("AND (images.hash = '$hash')"));
-				}
+				$img_search->append(new Querylet("AND (images.hash = '$hash')"));
+			}
+			else if(preg_match("/(filetype|ext)=([a-zA-Z0-9]*)/i", $term, $matches)) {
+				$ext = strtolower($matches[2]);
+				$img_search->append(new Querylet("AND (images.ext = '$ext')"));
 			}
 			else {
 				$term = str_replace("*", "%", $term);
