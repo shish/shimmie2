@@ -163,13 +163,21 @@ function create_tables($dsn) { // {{{
 		die("Couldn't connect to \"$dsn\"");
 	}
 	else {
-		if((substr($dsn, 0, 5) == "mysql") && create_tables_mysql($db)) {
-			$_SESSION['tables_created'] = true;
+		if(substr($dsn, 0, 5) == "mysql") {
+			if(create_tables_mysql($db)) {
+				$_SESSION['tables_created'] = true;
+			}
 		}
-		else if((substr($dsn, 0, 5) == "pgsql" || substr($dsn, 0, 8) == "postgres") && create_tables_pgsql($db)) {
-			$_SESSION['tables_created'] = true;
+		else if(substr($dsn, 0, 5) == "pgsql" || substr($dsn, 0, 8) == "postgres") {
+			if(create_tables_pgsql($db)) {
+				$_SESSION['tables_created'] = true;
+			}
 		}
 		else {
+			die("This database format isn't currently supported. Please use either MySQL or PostgreSQL.");
+		}
+
+		if(!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
 			die("Error creating tables");
 		}
 	}
