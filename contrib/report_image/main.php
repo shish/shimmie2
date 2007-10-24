@@ -5,8 +5,8 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.1
- * October 23, 2007
+ * Version 0.2a - See change log below
+ * October 24, 2007
  */
  
 class RemoveReportedImageEvent extends Event {
@@ -37,7 +37,7 @@ class ReportImage extends Extension {
 	
 	if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ReportImage_version") < 2) {
+			if($config->get_int("ext_ReportImage_version") < 1) {
 				$this->install();
 			}
 		}
@@ -103,18 +103,12 @@ class ReportImage extends Extension {
 			$database->Execute("CREATE TABLE ReportImage (
 				id int(11) NOT NULL auto_increment,
 				image_id int(11) default NULL,
-				reporter_name int(11) default NULL,
+				reporter_name varchar(32) default NULL,
 				reason_type varchar(255) default NULL,
 				reason varchar(255) default NULL,
 				PRIMARY KEY (id)
 			)");
 			$config->set_int("ext_ReportImage_version", 1);
-		}
-		if($config->get_int("ext_ReportImage_version") < 2) {
-			$database->Execute("ALTER TABLE `reportimage`
-				CHANGE `reporter_id` `reporter_name` VARCHAR( 32 ) NULL DEFAULT NULL
-			");
-			$config->set_int("ext_ReportImage_version", 2);
 		}
 	}
 
@@ -148,4 +142,9 @@ class ReportImage extends Extension {
 		
 }
 add_event_listener(new ReportImage(), 29); // Not sure what I'm in before.
+
+//  ===== Changelog =====
+// * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)
+// * Version 0.2 - 10/24/07 - First public release.
+
 ?>

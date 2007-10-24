@@ -6,7 +6,7 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2
+ * Version 0.2a - See changelog in main.php
  * October 24, 2007
  */
  
