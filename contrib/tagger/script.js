@@ -8,59 +8,62 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 function Tagger() {
 // components
-	this.t_parent  = null;
-	this.t_title   = null;
-	this.t_toolbar = null;
-	this.t_menu    = null;
-	this.t_body    = null;
-	this.t_tags    = null;
-	this.t_form    = null;
-	this.t_status  = null;
+	this.t_parent         = null;
+	this.t_title          = null;
+	this.t_toolbar        = null;
+	this.t_menu           = null;
+	this.t_body           = null;
+	this.t_tags           = null;
+	this.t_form           = null;
+	this.t_status         = null;
 // data
-	this.searchTags  = null;
-	this.appliedTags = null;
+	this.searchTags       = null;
+	this.appliedTags      = null;
 // methods
-	this.initialize     = initialize;
-	this.submit         = submit;
-	this.getPosition    = function () { return findPos(this.t_parent); };
-	this.setPosition    = setPosition;
-	this.tagSearch      = tagSearch;
-	this.searchRequest  = searchRequest;
-	this.searchReceive  = searchReceive;
-	this.tagListReceive = tagListReceive;
-	this.tagPublish     = tagPublish;
-	this.prepTags       = prepTags;
-	this.createTag      = createTag;
-	this.buildPages     = buildPages;
-	this.tagsToString   = tagsToString;
-	this.toggleTag      = toggleTag;
-	this.setAlert       = setAlert;
+	this.initialize       = initialize;
+	this.submit           = submit;
+	this.getPosition      = function () { return findPos(this.t_parent); };
+	this.setPosition      = setPosition;
+	this.setSavedPosition = setSavedPosition;
+	this.getSavedPosition = getSavedPosition;
+	this.tagSearch        = tagSearch;
+	this.searchRequest    = searchRequest;
+	this.searchReceive    = searchReceive;
+	this.tagListReceive   = tagListReceive;
+	this.tagPublish       = tagPublish;
+	this.prepTags         = prepTags;
+	this.createTag        = createTag;
+	this.buildPages       = buildPages;
+	this.tagsToString     = tagsToString;
+	this.toggleTag        = toggleTag;
+	this.setAlert         = setAlert;
 
 	
 // definitions
 	function initialize () {
 	// components
-		this.t_parent  = document.getElementById("tagger_parent");
-		this.t_title   = document.getElementById("tagger_titlebar");
-		this.t_toolbar = document.getElementById("tagger_toolbar");
-		this.t_menu    = document.getElementById("tagger_p-menu");
-		this.t_body    = document.getElementById("tagger_body");
-		this.t_tags    = document.getElementById("tagger_tags");
+		this.t_parent  = byId("tagger_parent");
+		this.t_title   = byId("tagger_titlebar");
+		this.t_toolbar = byId("tagger_toolbar");
+		this.t_menu    = byId("tagger_p-menu");
+		this.t_body    = byId("tagger_body");
+		this.t_tags    = byId("tagger_tags");
 		this.t_form    = this.t_tags.parentNode;
-		this.t_status  = document.getElementById("tagger_statusbar");
+		this.t_status  = byId("tagger_statusbar");
 	//pages
 		//this.buildPages();
 	// initial data
 		ajaxXML(query+"/"+image_id,tagListReceive);
-
 	// reveal
 		this.t_parent.style.display = "";
 	// dragging
 		DragHandler.attach(this.t_title);
-		// set position
-		// TODO: Apply cookie-based position saving
-		var pos = Tagger.getPosition();
+	// set position
+		var pos = ( Tagger.getSavedPosition() || Tagger.getPosition() );
 		setPosition(pos[0],pos[1]);
+	// events
+		window.onunload = function () {Tagger.setSavedPosition(); };
+		
 	}
 	function submit() {
 		this.t_tags.value = Tagger.tagsToString(Tagger.appliedTags);
@@ -82,6 +85,22 @@ function Tagger() {
 			left = x+"px";
 			right="";
 			bottom="";
+		}
+	}
+	function setSavedPosition(x,y) {
+		if (!x || !y) {
+			var p = Tagger.getPosition();
+			x = p[0];
+			y = p[1];
+		}
+		setCookie("shimmie_tagger-position",x+" "+y,14);
+	}
+	function getSavedPosition() {
+		var p = getCookie("shimmie_tagger-position");
+		if(p) {
+			return p.split(" ");
+		} else {
+			return false;
 		}
 	}
 	function tagSearch(s,ms) {
@@ -130,10 +149,10 @@ function Tagger() {
 	}
 	function searchReceive(xml) {
 		Tagger.searchTags = document.importNode(xml.getElementsByTagName("list")[0],true);
-		tagPublish(Tagger.searchTags,document.getElementById("tagger_p-search"));
+		tagPublish(Tagger.searchTags,byId("tagger_p-search"));
 		
 		if(Tagger.searchTags.getAttribute("max")) {
-			Tagger.setAlert("maxout","Limited to "+Tagger.searchTags.getAttribute("rows")+" of "+Tagger.searchTags.getAttribute("max")+" tags");
+			Tagger.setAlert("maxout","Showing "+Tagger.searchTags.getAttribute("rows")+" of "+Tagger.searchTags.getAttribute("max")+" tags");
 		} else {
 			Tagger.setAlert("maxout",false);
 		}
@@ -141,7 +160,7 @@ function Tagger() {
 	
 	function tagListReceive(xml) {
 		Tagger.appliedTags = document.importNode(xml.getElementsByTagName("list")[0],true);
-		tagPublish(Tagger.appliedTags,document.getElementById("tagger_p-applied"));
+		tagPublish(Tagger.appliedTags,byId("tagger_p-applied"));
 	}
 	function tagPublish(tag_list,page) {
 		page.innerHTML = "";
@@ -153,8 +172,8 @@ function Tagger() {
 		
 		for(var i=0; i<len;i++) {
 			var tag = tag_list.childNodes[i];
-			tag.onclick = function() { toggleTag(this); document.getElementById("tagger_filter").select(); };
-			tag.style.display="block";
+			tag.onclick = function() { toggleTag(this); byId("tagger_filter").select(); };
+			//tag.style.display="block";
 			tag.setAttribute("title",tag.getAttribute("count")+" uses");
 		}
 	}
@@ -163,13 +182,15 @@ function Tagger() {
 			var tag = document.createElement("tag");
 			tag.setAttribute("count","0");
 			tag.setAttribute("id","newTag_"+tag_name);
+			tag.setAttribute("count",1);
+			tag.setAttribute("title","New");
 			tag.onclick = function() { toggleTag(this); };
 			tag.appendChild(document.createTextNode(tag_name));
 			Tagger.appliedTags.appendChild(tag);
 		}
 	}
 	function buildPages () {
-		var pages = getElementsByTagNames("div",document.getElementById("tagger_body"));
+		var pages = getElementsByTagNames("div",byId("tagger_body"));
 		var len = pages.length;
 		for(var i=0; i<len; i++) {
 			this.t_menu.innerHTML += "<li onclick='Tagger.togglePages("+
@@ -193,7 +214,7 @@ function Tagger() {
 		}
 	}
 	function setAlert(type,arg) {
-		var alert = document.getElementById("tagger_alert_"+type);
+		var alert = byId("tagger_alert_"+type);
 		if (alert) {
 			if (arg==false) {
 				//remove existing
@@ -228,7 +249,7 @@ function ajaxXML(url, callback) {
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 // Quirksmode
-// http://www.quirksmode.org/dom/getElementsByTagNames.htmlgetElementdocument.getElementById
+// http://www.quirksmode.org/dom/getElementsByTagNames.htmlgetElementbyId
 function getElementsByTagNames(list,obj) {
 	if (!obj) var obj = document;
 	var tagNames = list.split(',');

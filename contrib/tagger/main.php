@@ -19,7 +19,7 @@ class Tagger extends Extension {
 				$this->theme->build_tagger($page,$event);
 		}
 	}
-} if(isset($_GET['debug'])) add_event_listener( new tagger());
+} add_event_listener( new tagger());
 
 // Tagger AJAX back-end
 class TaggerXML extends Extension {

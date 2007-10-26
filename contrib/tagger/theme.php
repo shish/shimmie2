@@ -23,7 +23,7 @@ class taggerTheme extends Themelet {
 		
 		// Tagger block
 		$page->add_block( new Block(
-			"Tagger",
+			null,
 			$this->html($event->get_image()),
 			"main"));
 	}
