@@ -1,6 +1,9 @@
 <?php
 
 class Themelet {
+	/**
+	 * Generic error message display
+	 */
 	public function display_error($page, $title, $message) {
 		$page->set_title($title);
 		$page->set_heading($title);
@@ -9,6 +12,24 @@ class Themelet {
 	}
 
 
+	/**
+	 * Generic thumbnail code; returns HTML rather than adding
+	 * a block since thumbs tend to go inside blocks...
+	 */
+	public function build_thumb_html($image, $query=null) {
+		global $config;
+		$h_view_link = make_link("post/view/{$image->id}", $query);
+		$h_tip = html_escape($image->get_tooltip());
+		$h_thumb_link = $image->get_thumb_link();
+		$tsize = get_thumbnail_size($image->width, $image->height);
+		return "<a href='$h_view_link'><img title='$h_tip' alt='$h_tip' ".
+				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
+	}
+
+
+	/**
+	 * Add a generic paginator
+	 */
 	public function display_paginator($page, $base, $query, $page_number, $total_pages) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);

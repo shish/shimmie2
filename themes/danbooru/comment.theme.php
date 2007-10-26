@@ -67,7 +67,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$count = count($comments);
 
 		$html  = "<div style='text-align: left'>";
-		$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
+		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
 		$html .=   "<div style='float: right; margin-left: 16px; width: 200px; margin-bottom: 32px;'>";
 		foreach($image->get_tag_array() as $tag) {
 			$u_tag = url_escape($tag);

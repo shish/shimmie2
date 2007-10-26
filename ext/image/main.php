@@ -183,7 +183,7 @@ class ImageIO extends Extension {
 		$existing = $database->get_image_by_hash($image->hash);
 		if(!is_null($existing)) {
 			$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-					"already has hash {$image->hash}:<p>".build_thumb_html($existing);
+					"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
 			return $error;
 		}
 

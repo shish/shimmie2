@@ -33,7 +33,7 @@ class RSS_Images extends Extension {
 			$owner = $image->get_owner();
 			$posted = strftime("%a, %d %b %Y %T %Z", $image->posted_timestamp);
 			$content = html_escape(
-				"<p>" . build_thumb_html($image) . "</p>" .
+				"<p>" . Themelet::build_thumb_html($image) . "</p>" .
 				"<p>Uploaded by " . $owner->name . "</p>"
 			);
 			

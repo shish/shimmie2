@@ -56,7 +56,7 @@ class CommentListTheme extends Themelet {
 	 */
 	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
 		$html  = "<div style='text-align: left'>";
-		$html .=   "<div style='float: left; margin-right: 16px;'>" . build_thumb_html($image) . "</div>";
+		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
 		$html .=   $this->comments_to_html($comments);
 		$html .= "</div>";
 		if($with_postbox) {

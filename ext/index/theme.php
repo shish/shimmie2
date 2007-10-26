@@ -83,7 +83,7 @@ class IndexTheme extends Themelet {
 			for($j=0; $j<$width; $j++) {
 				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
 				if(!is_null($image)) {
-					$table .= "\t<td>" . build_thumb_html($image, $query) . "</td>\n";
+					$table .= "\t<td>" . $this->build_thumb_html($image, $query) . "</td>\n";
 				}
 				else {
 					$table .= "\t<td>&nbsp;</td>\n";
