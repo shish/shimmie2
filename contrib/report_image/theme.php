@@ -6,8 +6,8 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2a - See changelog in main.php
- * October 24, 2007
+ * Version 0.2b - See changelog in main.php
+ * October 27, 2007
  */
  
 class ReportImageTheme extends Themelet {

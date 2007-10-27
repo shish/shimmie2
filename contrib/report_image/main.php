@@ -5,8 +5,8 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2a - See change log below
- * October 24, 2007
+ * Version 0.2b - See changelog in main.php
+ * October 27, 2007
  */
  
 class RemoveReportedImageEvent extends Event {
@@ -30,10 +30,10 @@ class AddReportedImageEvent extends Event {
 	}
 }
 
-class ReportImage extends Extension {
+class report_image extends Extension {
 	public function receive_event($event) {
 	
-	if(is_null($this->theme)) $this->theme = get_theme_object("ReportImage", "ReportImageTheme");
+	if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
 	
 	if(is_a($event, 'InitExtEvent')) {
 			global $config;
@@ -141,9 +141,10 @@ class ReportImage extends Extension {
 	}
 		
 }
-add_event_listener(new ReportImage(), 29); // Not sure what I'm in before.
+add_event_listener(new report_image(), 29); // Not sure what I'm in before.
 
 //  ===== Changelog =====
+// * Version 0.2b - 10/27/07 - Now supports Shimmie2 RC2!
 // * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)
 // * Version 0.2 - 10/24/07 - First public release.
 
