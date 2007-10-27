@@ -37,7 +37,7 @@ class CommentListTheme extends Themelet {
 	}
 
 	/*
-	 *
+	 * Show comments for an image
 	 */
 	public function display_comments($page, $comments, $postbox, $image_id) {
 		if($postbox) {
@@ -46,13 +46,16 @@ class CommentListTheme extends Themelet {
 					$this->build_postbox($image_id), "main", 30));
 		}
 		else {
-			$page->add_block(new Block("Comments",
-					$this->comments_to_html($comments), "main", 30));
+			if(count($comments) > 0) {
+				$page->add_block(new Block("Comments",
+						$this->comments_to_html($comments), "main", 30));
+			}
 		}
 	}
 
 	/*
-	 *
+	 * Add a block with thumbnail and comments, as part of the comment
+	 * list page
 	 */
 	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
 		$html  = "<div style='text-align: left'>";
@@ -63,7 +66,8 @@ class CommentListTheme extends Themelet {
 			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
 		}
 		else {
-			$html .= "<div style='clear:both;'><p><small>You need to create an account before you can comment</small></p></div>";
+			// $html .= "<div style='clear:both;'><p><small>You need to create an account before you can comment</small></p></div>";
+			$html .= "<div style='clear:both;'><p>&nbsp;</p></div>";
 		}
 
 		$page->add_block(new Block("{$image->id}: ".($image->get_tag_list()), $html, "main", $position));
