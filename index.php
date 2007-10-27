@@ -1,4 +1,5 @@
 <?php
+// set up and purify the environment
 define("DEBUG", false);
 define("VERSION", '2.1-rc2');
 
@@ -13,27 +14,30 @@ if(version_compare(PHP_VERSION, "5.0.0") == -1) {
 Currently Shimmie 2 doesn't support versions of PHP lower than 5.0.0. Please
 either upgrade your PHP, or tell Shish that PHP 4 support is a big deal for
 you...
-<!--
-This version of Shimmie does not support versions lower than 5.0.0, however
-you can create a version that does by using the u_create_monolith.php script.
-This will read all the files in core/, events/ and ext/, strip the PHP 5 bits
-out, and write a file called monolith.php. Monolith contains all the core
-Shimmie code (not themes or config files), and can be used as a replacement
-for index.php.
--->
 EOD;
 	exit;
 }
 
-$files = array_merge(glob("core/*.php"), glob("core/*/*.php"), glob("ext/*/main.php"));
+function stripslashes_r($arr) {
+	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
+}
+if(get_magic_quotes_gpc()) $GLOBALS = stripslashes_r($GLOBALS);
 
+
+// load base files
+$files = array_merge(glob("core/*.php"), glob("core/*/*.php"), glob("ext/*/main.php"));
 foreach($files as $filename) {
 	require_once $filename;
 }
 
+
+// connect to database
 $database = new Database();
 $database->db->fnExecute = '_count_execs';
 $config = new Config($database);
+
+
+// load the theme parts
 $_theme = $config->get_string("theme", "default");
 if(!file_exists("themes/$_theme")) $_theme = "default";
 require_once "themes/$_theme/page.class.php";
@@ -43,6 +47,9 @@ $themelets = array_merge(glob("ext/*/theme.php"), glob("themes/$_theme/*.theme.p
 foreach($themelets as $filename) {
 	require_once $filename;
 }
+
+
+// start the page generation waterfall
 $page = new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
