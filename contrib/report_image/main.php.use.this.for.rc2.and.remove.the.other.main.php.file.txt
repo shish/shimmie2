@@ -5,10 +5,10 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2c - See changelog in main.php
+ * Version 0.2c_rc - See changelog in main.php
  * October 27, 2007
  *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RC2.
+ * NOTE: This is for Shimmie2 RC2. Rename this file to main.php and delete the other file.
  *
  */
  
@@ -49,7 +49,7 @@ class report_image extends Extension {
 			global $user;
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['image_id']) && isset($_POST['reason_type']) && isset($_POST['reason'])) {
-						send_event(new AddReportedImageEvent($_POST['image_id'], $event->user->name, $_POST['reason_type'], $_POST['reason']));
+						send_event(new AddReportedImageEvent($_POST['image_id'], $user->name, $_POST['reason_type'], $_POST['reason']));
 						global $page;
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
