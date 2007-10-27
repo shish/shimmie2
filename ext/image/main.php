@@ -170,6 +170,9 @@ class ImageIO extends Extension {
 		/*
 		 * Validate things
 		 */
+		if(strlen(trim($image->source)) == 0) {
+			$image->source = null;
+		}
 		if(!empty($image->source)) {
 			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
 				$error = "Image's source isn't a valid URL";
