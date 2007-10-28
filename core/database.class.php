@@ -116,7 +116,7 @@ class Database {
 	public function sanitise($tag) {
 		$tag = preg_replace("/[\s?*]/", "", $tag);
 		$tag = preg_replace("/\.+/", ".", $tag);
-		$tag = preg_replace("/^[\.\/]+/", "", $tag);
+		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
 		return $tag;
 	}
 
