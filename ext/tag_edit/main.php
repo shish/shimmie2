@@ -25,10 +25,18 @@ class TagEdit extends Extension {
 			else if($event->get_arg(0) == "replace") {
 				global $user;
 				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
+					$search = $_POST['search'];
+					$replace = $_POST['replace'];
 					global $page;
-					$this->mass_tag_edit($_POST['search'], $_POST['replace']);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("admin"));
+					if(strpos($search, " ") === false && strpos($replace, " ") === false) {
+						$this->mass_tag_edit($search, $replace);
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("admin"));
+					}
+					else {
+						$this->theme->display_error($page, "Search &amp; Replace Error",
+							"Bulk replace can only do single tags -- don't use spaces!");
+					}
 				}
 			}
 		}
@@ -76,7 +84,8 @@ class TagEdit extends Extension {
 		$replace_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($replace));
 		if($search_id && $replace_id) {
 			// FIXME: what if the (image_id,tag_id) pair already exists?
-			$database->Execute("UPDATE image_tags SET tag_id=? WHERE tag_id=?", Array($replace_id, $search_id));
+			$database->Execute("UPDATE IGNORE image_tags SET tag_id=? WHERE tag_id=?", Array($replace_id, $search_id));
+			$database->Execute("DELETE FROM image_tags WHERE tag_id=?", Array($search_id));
 		}
 		else if($search_id) {
 			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
