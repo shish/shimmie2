@@ -14,7 +14,9 @@ class TagEdit extends Extension {
 					$i_image_id = int_escape($_POST['image_id']);
 					$query = $_POST['query'];
 					send_event(new TagSetEvent($i_image_id, $_POST['tags']));
-					send_event(new SourceSetEvent($i_image_id, $_POST['source']));
+					if($this->can_source()) {
+						send_event(new SourceSetEvent($i_image_id, $_POST['source']));
+					}
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$i_image_id", $query));
 				}
@@ -67,7 +69,8 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Editing");
-			$sb->add_bool_option("tag_edit_anon", "Allow anonymous editing: ");
+			$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
+			$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");
 			$event->panel->add_block($sb);
 		}
 	}
@@ -76,6 +79,11 @@ class TagEdit extends Extension {
 	private function can_tag() {
 		global $config, $user;
 		return $config->get_bool("tag_edit_anon") || !$user->is_anonymous();
+	}
+
+	private function can_source() {
+		global $config, $user;
+		return $config->get_bool("source_edit_anon") || !$user->is_anonymous();
 	}
 
 	private function mass_tag_edit($search, $replace) {
