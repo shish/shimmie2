@@ -114,7 +114,10 @@ class Database {
 	}
 
 	public function sanitise($tag) {
-		return preg_replace("/[\s?*]/", "", $tag);
+		$tag = preg_replace("/[\s?*]/", "", $tag);
+		$tag = preg_replace("/\.+/", ".", $tag);
+		$tag = preg_replace("/^[\.\/]+/", "", $tag);
+		return $tag;
 	}
 
 	private function build_search_querylet($terms) {
