@@ -21,7 +21,11 @@ EOD;
 function stripslashes_r($arr) {
 	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
 }
-if(get_magic_quotes_gpc()) $GLOBALS = stripslashes_r($GLOBALS);
+if(get_magic_quotes_gpc()) {
+	$_GET = stripslashes_r($_GET);
+	$_POST = stripslashes_r($_POST);
+	$_COOKIE = stripslashes_r($_COOKIE);
+}
 
 
 // load base files
