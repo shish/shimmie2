@@ -25,10 +25,18 @@ class TagEdit extends Extension {
 			else if($event->get_arg(0) == "replace") {
 				global $user;
 				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
+					$search = $_POST['search'];
+					$replace = $_POST['replace'];
 					global $page;
-					$this->mass_tag_edit($_POST['search'], $_POST['replace']);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("admin"));
+					if(strpos($search, " ") === false && strpos($replace, " ") === false) {
+						$this->mass_tag_edit($search, $replace);
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("admin"));
+					}
+					else {
+						$this->theme->display_error($page, "Search &amp; Replace Error",
+							"Bulk replace can only do single tags -- don't use spaces!");
+					}
 				}
 			}
 		}
