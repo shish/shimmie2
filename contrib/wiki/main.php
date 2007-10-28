@@ -81,12 +81,12 @@ class Wiki extends Extension {
 				
 				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
-					if($user->is_admin()) {
-						$this->set_page($title, $rev, $body, $lock);
-					}
-					else {
-						$this->set_page($title, $rev, $body, false);
-					}
+					$wikipage = new WikiPage();
+					$wikipage->title = $title;
+					$wikipage->rev = $rev;
+					$wikipage->body = $body;
+					$wikipage->lock = $user->is_admin() ? $lock : false;
+					send_event(new WikiUpdateEvent($user, $wikipage));
 
 					$u_title = url_escape($title);
 
@@ -121,7 +121,7 @@ class Wiki extends Extension {
 		}
 
 		if(is_a($event, 'WikiUpdateEvent')) {
-			$this->update_wiki_page($event->user, $event->page);
+			$this->set_page($event->user, $event->wikipage);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
@@ -177,13 +177,13 @@ class Wiki extends Extension {
 				ORDER BY revision DESC", array($title));
 		return ($row ? new WikiPage($row) : null);
 	}
-	private function set_page($title, $rev, $body, $locked) {
+	private function set_page($user, $wpage) {
 		global $database;
-		global $user;
 		// FIXME: deal with collisions
 		$row = $database->Execute("
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
-				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'], $title, $rev, $locked?'Y':'N', $body));
+				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'],
+				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
 	}
 // }}}
 }
