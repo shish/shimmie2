@@ -223,7 +223,7 @@ function get_base_href() {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function get_debug_info() {
-	global $config;
+	global $config, $_event_count;
 	
 	if(function_exists('memory_get_usage')) {
 		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
@@ -244,6 +244,7 @@ function get_debug_info() {
 	global $_execs;
 	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
+	$debug .= "; Sent $_event_count events";
 
 	return $debug;
 }
@@ -332,14 +333,16 @@ function add_event_listener($extension, $pos=50) {
 	$_event_listeners[$pos] = $extension;
 }
 
+$_event_count = 0;
 function send_event($event) {
-	global $_event_listeners;
+	global $_event_listeners, $_event_count;
 	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		$listener->receive_event($event);
 		if($event->vetoed) break;
 	}
+	$_event_count++;
 }
 
 
