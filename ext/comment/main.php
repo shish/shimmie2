@@ -296,9 +296,9 @@ class CommentList extends Extension {
 			$this->theme->display_error($page, "Comment Limit Hit",
 						"You've posted several comments recently; wait a minute and try again...");
 		}
-		else if($this->is_spam($comment)) {
+		else if($user->is_anonymous() && $this->is_spam($comment)) {
 			$this->theme->display_error($page, "Spam Detected",
-						"Akismet thinks that your comment is spam. Try rewriting the comment?");
+						"Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}
 		else {
 			$database->Execute(
