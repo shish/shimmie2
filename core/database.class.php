@@ -174,10 +174,12 @@ class Database {
 			else {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
-				$sign = $negative ? "-" : "+";
-				if($sign == "+") $positive_tag_count++;
-				else $negative_tag_count++;
-				$tag_search->append(new Querylet(" $sign (tag LIKE ?)", array($term)));
+				if(!preg_match("/^[%_]+$/", $term)) {
+					$sign = $negative ? "-" : "+";
+					if($sign == "+") $positive_tag_count++;
+					else $negative_tag_count++;
+					$tag_search->append(new Querylet(" $sign (tag LIKE ?)", array($term)));
+				}
 			}
 		}
 
