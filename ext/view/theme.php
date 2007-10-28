@@ -85,7 +85,7 @@ class ViewTheme extends Themelet {
 
 		global $config;
 		global $user;
-		if($config->get_bool("tag_edit_anon") || ($user->id != $config->get_int("anon_id"))) {
+		if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
 			$html .= " (<a href=\"javascript: toggle('imgdata')\">edit</a>)";
 
 			if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
@@ -94,13 +94,18 @@ class ViewTheme extends Themelet {
 			$h_tags = html_escape($image->get_tag_list());
 			$i_image_id = int_escape($image->id);
 
+			$source_edit = "";
+			if($config->get_bool("source_edit_anon") || !$user->is_anonymous()) {
+				$source_edit = "<tr><td>Source</td><td><input type='text' name='source' value='$h_source'></td></tr>";
+			}
+
 			$html .= "
 			<div id='imgdata'><form action='".make_link("tag_edit/set")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image_id'>
 				<input type='hidden' name='query' value='$h_query'>
 				<table style='width: 500px;'>
 				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tags' value='$h_tags'></td></tr>
-				<tr><td>Source</td><td><input type='text' name='source' value='$h_source'></td></tr>
+				$source_edit
 				<tr><td>&nbsp;</td><td><input type='submit' value='Set'></td></tr>
 				</table>
 			</form>
