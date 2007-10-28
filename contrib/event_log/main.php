@@ -74,7 +74,7 @@ class EventLog extends Extension {
 			$this->add_to_log($event->user, 'Comment Posting', "Posted a comment on image #{$event->image_id}");
 		}
 		if(is_a($event, 'WikiUpdateEvent')) {
-			$this->add_to_log($event->user, 'Wiki Update', "Edited '{$event->page->title}'");
+			$this->add_to_log($event->user, 'Wiki Update', "Edited '{$event->wikipage->title}'");
 		}
 		if(is_a($event, 'ConfigSaveEvent')) {
 			$this->add_to_log($user, 'Config Save', "Updated the board config");
