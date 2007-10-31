@@ -76,8 +76,8 @@ class TaggerXML extends Extension {
 		$values = array();
 		
 		// Match
-		$p = strlen($s) == 1? " ":"_";
-		$sq = "%".mysql_real_escape_string($p.$s)."%";
+		$p = strlen($s) == 1? " ":"\_";
+		$sq = "%".$p.mysql_real_escape_string($s)."%";
 		$match = "concat(?,tag) LIKE ?";
 		array_push($values,$p,$sq);
 		// Exclude
