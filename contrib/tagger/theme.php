@@ -13,13 +13,8 @@ class taggerTheme extends Themelet {
 		// TODO: AJAX test and fallback.
 		$page->add_header("<script src='$base_href/ext/tagger/webtoolkit.drag.js' type='text/javascript'></script>");
 		$page->add_block(new Block(null,
-			"<script type='text/javascript'>
-				var query = '".make_link("tagger/tags")."';
-				var image_id = ".$event->get_image()->id.";
-				var tagger_filter_timer = null;
-				var Tagger = new Tagger();
-				Tagger.initialize();
-			</script>","main",1000));
+			"<script type='text/javascript'>Tagger.initialize("
+				.$event->get_image()->id.");</script>","main",1000));
 		
 		// Tagger block
 		$page->add_block( new Block(
@@ -28,10 +23,12 @@ class taggerTheme extends Themelet {
 			"main"));
 	}
 	private function html($image) {
+		global $config;
 		$i_image_id = int_escape($image->id);
 		$h_source = html_escape($image->source);
-		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
-		else {$h_query = "";}
+		$h_query = isset($_GET['search'])? $h_query= "search=".url_escape($_GET['search']) : "";
+		
+		$delay = $config->get_string("ext_tagger_search_delay","250");
 		
 		$url_form = make_link("tag_edit/set");
 		
@@ -41,9 +38,9 @@ class taggerTheme extends Themelet {
 	<div id="tagger_titlebar">Tagger</div>
 	
 	<div id="tagger_toolbar">
-		<input type="text" value="" id="tagger_filter" onkeyup="Tagger.tagSearch(this.value, 500);"></input>
-		<input type="button" value="Add" onclick="Tagger.createTag(byId('tagger_filter').value);"></input>
-		<form action="$url_form" method="POST" onsubmit="Tagger.submit();">
+		<input type="text" value="" id="tagger_filter" onkeyup="Tagger.tag.search(this.value, $delay);"></input>
+		<input type="button" value="Add" onclick="Tagger.tag.create(byId('tagger_filter').value);"></input>
+		<form action="$url_form" method="POST" onsubmit="Tagger.tag.submit();">
 			<input type='hidden' name='image_id' value='$i_image_id' id="image_id"></input>
 			<input type='hidden' name='query' value='$h_query'></input>
 			<input type='hidden' name='source' value='$h_source'></input>
@@ -55,9 +52,9 @@ class taggerTheme extends Themelet {
 		<br style="clear:both;"/>-->
 	</div>
 	
-	<div id="tagger_body">
-		<div id="tagger_p-applied" name="Applied Tags"></div>
+	<div id="tagger_body">	
 		<div id="tagger_p-search" name="Searched Tags"></div>
+		<div id="tagger_p-applied" name="Applied Tags"></div>
 	</div>
 	<div id="tagger_statusbar"></div>
 </div>

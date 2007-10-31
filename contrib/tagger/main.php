@@ -15,8 +15,23 @@ class Tagger extends Extension {
 		if(is_a($event,'DisplayingImageEvent')) {
 			global $page, $config, $user;
 			
-			if($config->get_bool("tag_edit_anon") || ($user->id != $config->get_int("anon_id")))
+			if($config->get_bool("tag_edit_anon")
+				|| ($user->id != $config->get_int("anon_id"))
+				&& $config->get_bool("ext_tagger_enabled"))
+			{
 				$this->theme->build_tagger($page,$event);
+			}
+		}
+		if(is_a($event,'SetupBuildingEvent')) {
+			$sb = new SetupBlock("Tagger");
+			$sb->add_bool_option("ext_tagger_enabled","Enable Tagger");
+			$sb->add_int_option("ext_tagger_search_delay","<br/>Delay queries by ");
+			$sb->add_label(" milliseconds.");
+			$sb->add_label("<br/>Limit queries returning more than ");
+			$sb->add_int_option("ext_tagger_tag_max");
+			$sb->add_label(" tags to ");
+			$sb->add_int_option("ext_tagger_limit");
+			$event->panel->add_block($sb);
 		}
 	}
 } add_event_listener( new tagger());
@@ -42,7 +57,7 @@ class TaggerXML extends Extension {
 			}
 			
 			$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".
-			"<tags xmlns='http://www.w3.org/1999/xhtml'>".
+			"<tags>".
 				$tags.
 			"</tags>";
 			
@@ -55,11 +70,14 @@ class TaggerXML extends Extension {
 	private function match_tag_list ($s) {
 		global $database, $config, $event;
 		
+		$max_rows = $config->get_int("ext_tagger_tag_max",30);
+		$limit_rows = $config->get_int("ext_tagger_limit",30);
+		
 		$values = array();
 		
 		// Match
-		$p = strlen($s) == 1? " ":"\_";
-		$sq = "%".$p.$s."%";
+		$p = strlen($s) == 1? " ":"_";
+		$sq = "%".mysql_real_escape_string($p.$s)."%";
 		$match = "concat(?,tag) LIKE ?";
 		array_push($values,$p,$sq);
 		// Exclude
@@ -74,9 +92,9 @@ class TaggerXML extends Extension {
 		// FROM based on return count
 		$q_from = null;
 		$count = $this->count($q_where,$values);
-		if ($count > 60) {
+		if ($count > $max_rows) {
 			$q_from = "FROM (SELECT * FROM `tags` {$q_where} ".
-				"ORDER BY count DESC LIMIT 0,30) AS `c_tags`";
+				"ORDER BY count DESC LIMIT 0, {$limit_rows}) AS `c_tags`";
 			$q_where = null;
 			$count = array("max"=>$count);
 		} else {

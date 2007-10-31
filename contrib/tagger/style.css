@@ -75,13 +75,11 @@
 }
 
 #tagger_parent list[id=image] tag:before {
-	font-family: monospace;
-	content:"[ ]";
+	content:url('./images/active.png');
 }
 
 #tagger_parent list[id=search] tag:before {
-	font-family: monospace;
-	content:"[ ]";
+	content:url('./images/inactive.png');
 }
 /* Hovering */
 #tagger_parent tag:hover {
@@ -89,20 +87,18 @@
 	background-color:#ddd;
 }
 
-#tagger_parent list[id=image] tag:hover {
+/*#tagger_parent list[id=image] tag:hover {
 	background-color:#faa;
 }
 
 #tagger_parent list[id=search] tag:hover {
 	background-color:#afa;
-}
+}*/
 
 #tagger_parent list[id=image] tag:hover:before {
-	font-family: monospace;
-	content:"[\00d7]";
+	content:url('./images/rem-tag.png');
 }
 
 #tagger_parent list[id=search] tag:hover:before {
-	font-family: monospace;
-	content:"[+]";
+	content:url('./images/add-tag.png');
 }
