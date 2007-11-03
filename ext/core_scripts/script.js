@@ -20,8 +20,11 @@ function initGray(boxname, text) {
 	var box = byId(boxname);
 	if(!box) return;
 
-	addEvent(box, "focus", function f() {cleargray(box, text);}, false);
-	addEvent(box, "blur",  function f() {setgray(box, text);}, false);
+	var clr = function () {cleargray(box, text);};
+	var set = function () {setgray(box, text);};
+
+	addEvent(box, "focus", clr, false);
+	addEvent(box, "blur",  set, false);
 
 	if(box.value == text) {
 		box.style.color = "#999";
