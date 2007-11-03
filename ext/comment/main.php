@@ -281,6 +281,11 @@ class CommentList extends Extension {
 		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
 	}
 
+	private function is_dupe($image_id, $comment) {
+		global $database;
+		return ($database->db->GetRow("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
+	}
+
 	private function add_comment_wrapper($image_id, $user, $comment) {
 		global $database;
 		global $config;
@@ -295,6 +300,10 @@ class CommentList extends Extension {
 		else if($this->is_comment_limit_hit()) {
 			$this->theme->display_error($page, "Comment Limit Hit",
 						"You've posted several comments recently; wait a minute and try again...");
+		}
+		else if($this->is_dupe($image_id, $comment)) {
+			$this->theme->display_error($page, "Duplicate Comment",
+						"Someone already made that comment on that image -- try and be more original?");
 		}
 		else if($user->is_anonymous() && $this->is_spam($comment)) {
 			$this->theme->display_error($page, "Spam Detected",
