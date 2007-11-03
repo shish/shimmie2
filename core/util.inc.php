@@ -249,33 +249,23 @@ function get_debug_info() {
 	return $debug;
 }
 
-function print_obj($array,$title="Object Information") { 
-	global $user, $page;
+// print_obj ($object, $title, $return)
+function print_obj($object,$title="Object Information", $return=false) {
+	global $user;
 	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) { 
-		//   big test: 
-		//      $debug_active to be able to kill the function from the file system. 
-		//      Look for ?debug (GET type data) to prevent the debug from appearing to regular browsing. 
-		//      Finally an admin check, because variables may contain sensitive data. 
-		//   once all that is cleared, make a block: 
-		$page->add_block( 
-				new Block( 
-					$title, 
-					str_replace("    ", 
-						"<span style='opacity:0; -moz-opacity:0; alpha:0;'>__</span>", 
-						str_replace("\n","<br/>",html_escape(print_r($array,true)))), 
-					"main",1000 
-				) 
-		); 
-	} 
-	// print_r is called with the return option (not echo-style) to get a string 
-	// output to work with. 
-
-	// Then two str_replaces turn newlines into <br/> tags and indent spaces into 
-	// rendered underscores (which are then hidden.) 
-
-	// Finally the entire thing is packaged into a block and mailed to the main 
-	// section at the bottom of the pile. 
-} 
+		$pr = print_r($object,true);
+		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
+		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
+		
+		if($return) {
+			return $pr;
+		} else {
+			global $page;
+			$page->add_block(new Block($title,$pr,"main",1000));
+			return true;
+		}
+	}
+}
 
 // preset tests. 
 
