@@ -69,6 +69,10 @@ class NumericScore extends Extension {
 			$sb->add_bool_option("numeric_score_anon", "Allow anonymous votes: ");
 			$event->panel->add_block($sb);
 		}
+
+		if(is_a($event, 'ParseLinkTemplateEvent')) {
+			$event->replace('$score', $event->image->numeric_score);
+		}
 	}
 
 	private function install() {

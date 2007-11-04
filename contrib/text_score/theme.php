@@ -4,13 +4,7 @@ class TextScoreTheme extends Themelet {
 	public function display_scorer($page, $image_id, $score) {
 		$i_image_id = int_escape($image_id);
 		
-		$words = array();
-		$words[-2] = "Delete";
-		$words[-1] = "Bad";
-		$words[ 0] = "Ok";
-		$words[ 1] = "Good";
-		$words[ 2] = "Favourite";
-		$s_score = $words[$score];
+		$s_score = $this->score_to_name($score);
 		$html = "
 			Current score is \"$s_score\"
 			<br><form action='".make_link("text_score/vote")."' method='POST'>
@@ -24,6 +18,17 @@ class TextScoreTheme extends Themelet {
 			</form>
 		";
 		$page->add_block(new Block(null, $html, "main", 7));
+	}
+
+	public function score_to_name($score) {
+		$words = array();
+		$words[-2] = "Delete";
+		$words[-1] = "Bad";
+		$words[ 0] = "Ok";
+		$words[ 1] = "Good";
+		$words[ 2] = "Favourite";
+		$s_score = $words[$score];
+		return $s_score;
 	}
 }
 

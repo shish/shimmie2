@@ -69,6 +69,10 @@ class TextScore extends Extension {
 			$sb->add_bool_option("text_score_anon", "Allow anonymous votes: ");
 			$event->panel->add_block($sb);
 		}
+
+		if(is_a($event, 'ParseLinkTemplateEvent')) {
+			$event->replace('$text_score', $this->theme->score_to_name($event->image->text_score));
+		}
 	}
 
 	private function install() {

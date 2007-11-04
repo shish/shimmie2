@@ -17,6 +17,15 @@ class RatingsTheme extends Themelet {
 		";
 		$page->add_block(new Block(null, $html, "main", 7));
 	}
+
+	public function rating_to_name($rating) {
+		switch($rating) {
+			case 's': return "Safe";
+			case 'q': return "Questionable";
+			case 'e': return "Explicit";
+			default: return "Unknown";
+		}
+	}
 }
 
 ?>

@@ -67,6 +67,10 @@ class Ratings extends Extension {
 			$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Logged in: ");
 			$event->panel->add_block($sb);
 		}
+
+		if(is_a($event, 'ParseLinkTemplateEvent')) {
+			$event->replace('$rating', $this->theme->rating_to_name($event->image->rating));
+		}
 	}
 
 	private function install() {
