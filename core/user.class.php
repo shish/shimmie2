@@ -45,6 +45,13 @@ class User {
 		$database->Execute("UPDATE users SET admin=? WHERE id=?", array($yn, $this->id));
 	}
 
+	public function set_password($password) {
+		global $database;
+
+		$hash = md5(strtolower($this->name) . $password);
+		$database->Execute("UPDATE users SET pass=? WHERE id=?", array($hash, $this->id));
+	}
+
 	public function get_days_old() {
 		return $this->days_old;
 	}

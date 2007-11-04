@@ -24,6 +24,18 @@ class UserPageBuildingEvent extends Event {
 	}
 }
 
+class UserCreationEvent extends Event {
+	var $username;
+	var $password;
+	var $email;
+
+	public function UserCreationEvent($name, $pass, $email) {
+		$this->username = $name;
+		$this->password = $pass;
+		$this->email = $email;
+	}
+}
+
 class UserPage extends Extension {
 	var $theme;
 
@@ -59,7 +71,27 @@ class UserPage extends Extension {
 				$this->change_password_wrapper($event->page);
 			}
 			else if($event->get_arg(0) == "create") {
-				$this->create_user_wrapper($event->page);
+				if(!$config->get_bool("login_signup_enabled")) {
+					$this->theme->display_signups_disabled($page);
+				}
+				else if(!isset($_POST['name'])) {
+					$this->theme->display_signup_page($event->page);
+				}
+				else if($_POST['pass1'] != $_POST['pass2']) {
+					$this->theme->display_error($event->page, "Password Mismatch", "Passwords don't match");
+				}
+				else {
+					$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
+					send_event($uce);
+					if($uce->vetoed) {
+						$this->theme->display_error($event->page, "User Creation Error", $uce->veto_reason);
+					}
+					else {
+						$this->set_login_cookie($uce->username, $uce->password);
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("user"));
+					}
+				}
 			}
 			else if($event->get_arg(0) == "set_more") {
 				$this->set_more_wrapper($event->page);
@@ -121,6 +153,10 @@ class UserPage extends Extension {
 			$event->add_link("User Config", make_link("user"));
 			$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 		}
+
+		if(is_a($event, 'UserCreationEvent')) {
+			if($this->check_user_creation($event)) $this->create_user($event);
+		}
 	}
 // }}}
 // Things done *with* the user {{{
@@ -132,21 +168,12 @@ class UserPage extends Extension {
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
 		$addr = $_SERVER['REMOTE_ADDR'];
-		$hash = md5( strtolower($name) . $pass );
+		$hash = md5(strtolower($name) . $pass);
 
 		$duser = $database->get_user_by_name_and_hash($name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
-
-			setcookie(
-					"shm_user", $name,
-					time()+60*60*24*365, "/"
-					);
-			setcookie(
-					"shm_session", md5($hash.$addr),
-					time()+60*60*24*$config->get_int('login_memory'), "/"
-					);
-
+			$this->set_login_cookie($name, $pass);
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("user"));
 		}
@@ -155,51 +182,48 @@ class UserPage extends Extension {
 		}
 	}
 
-	private function create_user_wrapper($page) {
+	private function check_user_creation($event) {
+		$name = $event->username;
+		$pass = $event->password;
+		$email = $event->email;
+
 		global $database;
+
+		if(strlen($name) < 1) {
+			$event->veto("Username must be at least 1 character");
+		}
+		else if(!preg_match('/^[a-zA-Z0-9-_ ]+$/', $name)) {
+			$event->veto("Username contains invalid characters. Allowed characters are letters, numbers, dash, underscore, and space");
+		}
+		else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
+			$event->veto("That username is already taken");
+		}
+
+		return (!$event->vetoed);
+	}
+
+	private function create_user($event) {
+		global $database;
+
+		$addr = $_SERVER['REMOTE_ADDR'];
+		$hash = md5(strtolower($event->username) . $event->password);
+		$email = (!empty($event->email)) ? $event->email : null;
+
+		$database->Execute(
+				"INSERT INTO users (name, pass, joindate, email) VALUES (?, ?, now(), ?)",
+				array($event->username, $hash, $email));
+	}
+	
+	private function set_login_cookie($name, $pass) {
 		global $config;
 
-		if(!$config->get_bool("login_signup_enabled")) {
-			$this->theme->display_signups_disabled($page);
-		}
-		else if(isset($_POST['name']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
-			$name = trim($_POST['name']);
-			$pass1 = $_POST['pass1'];
-			$pass2 = $_POST['pass2'];
+		$addr = $_SERVER['REMOTE_ADDR'];
+		$hash = md5(strtolower($name) . $pass);
 
-			if(strlen($name) < 1) {
-				$this->theme->display_error($page, "Error", "Username must be at least 1 character");
-			}
-			else if(!preg_match('/^[a-zA-Z0-9-_ ]+$/', $name)) {
-				$this->theme->display_error($page, "Error", "Username contains invalid characters. Allowed characters are letters, numbers, dash, underscore, and space");
-			}
-			else if($pass1 != $pass2) {
-				$this->theme->display_error($page, "Error", "Passwords don't match");
-			}
-			else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
-				$this->theme->display_error($page, "Error", "That username is already taken");
-			}
-			else {
-				$addr = $_SERVER['REMOTE_ADDR'];
-				$hash = md5( strtolower($name) . $pass1 );
-				$email = (isset($_POST['email']) && !empty($_POST['email'])) ? $_POST['email'] : null;
-
-				// FIXME: send_event()
-				$database->Execute(
-						"INSERT INTO users (name, pass, joindate, email) VALUES (?, ?, now(), ?)",
-						array($name, $hash, $email));
-
-				setcookie("shm_user", $name,
-						time()+60*60*24*365, '/');
-				setcookie("shm_session", md5($hash.$addr),
-						time()+60*60*24*$config->get_int('login_memory'), '/');
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("user"));
-			}
-		}
-		else {
-			$this->theme->display_signup_page($page);
-		}
+		setcookie("shm_user", $name,
+				time()+60*60*24*365, '/');
+		setcookie("shm_session", md5($hash.$addr),
+				time()+60*60*24*$config->get_int('login_memory'), '/');
 	}
 //}}} 
 // Things done *to* the user {{{
@@ -230,19 +254,12 @@ class UserPage extends Extension {
 			else {
 				global $config;
 				$addr = $_SERVER['REMOTE_ADDR'];
-				$hash = md5( strtolower($name) . $pass1 );
 
 				// FIXME: send_event()
-				// FIXME: $duser->set_pass();
-				$database->Execute(
-						"UPDATE users SET pass = ? WHERE id = ?",
-						array($hash, $id));
+				$duser->set_password($pass1);
 
 				if($id == $user->id) {
-					setcookie("shm_user", $name,
-							time()+60*60*24*365, '/');
-					setcookie("shm_session", md5($hash.$addr),
-							time()+60*60*24*$config->get_int('login_memory'), '/');
+					$this->set_login_cookie($name, $pass1);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("user"));
 				}
