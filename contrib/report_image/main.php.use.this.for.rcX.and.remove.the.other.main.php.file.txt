@@ -8,7 +8,7 @@
  * Version 0.3_rc - See changelog in main.php
  * November 06, 2007
  *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RCx.
+ * NOTE: This is for Shimmie2 RCx. Rename this file to main.php and delete the other file.
  *
  */
  
