@@ -1,11 +1,12 @@
 <?php
-/**
+
+/*
  * Name: Report Images
  * Author: ATravelingGeek (atg@atravelinggeek.com
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.3_rc - See changelog in main.php
+ * Version 0.3a_rc - See changelog in main.php
  * November 06, 2007
  *
  * NOTE: This is for Shimmie2 RCx. Rename this file to main.php and delete the other file.
@@ -59,7 +60,7 @@ class report_image extends Extension {
 				}
 				else if($event->get_arg(0) == "remove") {
 					if(isset($_POST['id'])) {
-						if($event->user->is_admin()) {
+						if($user->is_admin()) {
 							send_event(new RemoveReportedImageEvent($_POST['id']));
 							global $page;
 							$page->set_mode("redirect");
@@ -68,7 +69,7 @@ class report_image extends Extension {
 					}
 				}
 				else if($event->get_arg(0) == "list") {
-					if($event->user->is_admin()) {
+					if($user->is_admin()) {
 						global $page;
 						$this->theme->display_reported_images($page, $this->get_reported_images());
 					}

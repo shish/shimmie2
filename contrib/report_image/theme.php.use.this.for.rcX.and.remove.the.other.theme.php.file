@@ -6,10 +6,10 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.3a - See changelog in main.php
+ * Version 0.3a_rc - See changelog in main.php
  * November 06, 2007
  *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other theme.php.use... for Shimmie2 RCx.
+ * NOTE: This is for Shimmie2 RCx. Rename this file to theme.php and delete the other file.
  *
  */
  
@@ -60,13 +60,14 @@ class ReportImageTheme extends Themelet {
 		
 	}
 	
-		public function make_thumbnail_html($image_id) {
+		protected function make_thumbnail_html($image_id) {
 			global $config;
 			global $database;
 			
 			if($config->get_bool('report_image_show_thumbs')) {
+
 				$image_obj_reported = $database->get_image($image_id);
-				return "<br>" . $this->build_thumb_html($image_obj_reported);
+				return "<br>" . build_thumb_html($image_obj_reported);
 			}
 		}
 

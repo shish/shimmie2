@@ -1,11 +1,12 @@
 <?php
-/**
+
+/*
  * Name: Report Images
  * Author: ATravelingGeek (atg@atravelinggeek.com
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.3 - See changelog in main.php
+ * Version 0.3a - See changelog in main.php
  * November 06, 2007
  *
  * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RCx.
@@ -162,6 +163,8 @@ class report_image extends Extension {
 add_event_listener(new report_image(), 29); // Not sure what I'm in before.
 
 //  ===== Changelog =====
+// * Version 0.3a / 0.3a_rc - 11/06/07 - I can no longer use the same theme.php file for both SVN and RCx. Sorry.
+// *   Same deal with theme.php as it is with main.php
 // * Version 0.3 / 0.3_rc - 11/06/07 - Added the option to display thumbnails, moved the reported image list to it's
 //     own page, and checked to make sure the user is an admin before letting them delete / view reported images.
 // * Version 0.2c_rc2 - 10/27/07 - Now (really!) supports Shimmie2 RC2!
