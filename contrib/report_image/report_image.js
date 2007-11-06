@@ -4,8 +4,8 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2b - See changelog in main.php
- * October 27, 2007
+ * Version 0.3 - See changelog in main.php
+ * November 06, 2007
  */
 
 function validate_report()

@@ -5,10 +5,10 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2c - See changelog in main.php
- * October 27, 2007
+ * Version 0.3 - See changelog in main.php
+ * November 06, 2007
  *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RC2.
+ * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RCx.
  *
  */
  
@@ -34,6 +34,8 @@ class AddReportedImageEvent extends Event {
 }
 
 class report_image extends Extension {
+	var $theme;
+	
 	public function receive_event($event) {
 	
 	if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
@@ -57,20 +59,28 @@ class report_image extends Extension {
 				}
 				else if($event->get_arg(0) == "remove") {
 					if(isset($_POST['id'])) {
-						send_event(new RemoveReportedImageEvent($_POST['id']));
+						if($event->user->is_admin()) {
+							send_event(new RemoveReportedImageEvent($_POST['id']));
+							global $page;
+							$page->set_mode("redirect");
+							$page->set_redirect(make_link("ReportImage/list"));
+						}
+					}
+				}
+				else if($event->get_arg(0) == "list") {
+					if($event->user->is_admin()) {
 						global $page;
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$this->theme->display_reported_images($page, $this->get_reported_images());
 					}
 				}
 		}
 		
-		if(is_a($event, 'AdminBuildingEvent')) {
-			global $page;
-			$this->theme->display_reported_images($page, $this->get_reported_images());
-		}
+//		if(is_a($event, 'AdminBuildingEvent')) {
+//			global $page;
+//			$this->theme->display_reported_images($page, $this->get_reported_images());
+//		}
 		
-			if(is_a($event, 'AddReportedImageEvent')) {
+		if(is_a($event, 'AddReportedImageEvent')) {
 			$this->add_reported_image($event->image_id, $event->reporter_name, $event->reason_type, $event->reason);
 		}
 
@@ -91,10 +101,15 @@ class report_image extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Report Image Options");
 			$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
-//			I'll add this feature in soonish if anyone wants it.
-//			$sb->add_label("<br>");
-//			$sb->add_bool_option("report_image_sgow_thumbs", "Show thumbnails in admin panel: ");
+			$sb->add_label("<br>");
+			$sb->add_bool_option("report_image_show_thumbs", "Show thumbnails in admin panel: ");
 			$event->panel->add_block($sb);
+		}
+		
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("Reported Images", make_link("ReportImage/list"));
+			}
 		}
 		
 	}
@@ -147,6 +162,8 @@ class report_image extends Extension {
 add_event_listener(new report_image(), 29); // Not sure what I'm in before.
 
 //  ===== Changelog =====
+// * Version 0.3 / 0.3_rc - 11/06/07 - Added the option to display thumbnails, moved the reported image list to it's
+//     own page, and checked to make sure the user is an admin before letting them delete / view reported images.
 // * Version 0.2c_rc2 - 10/27/07 - Now (really!) supports Shimmie2 RC2!
 // * Version 0.2b - 10/27/07 - Now supports Shimmie2 RC2!
 // * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)

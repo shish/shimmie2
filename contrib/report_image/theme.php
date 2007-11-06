@@ -6,28 +6,31 @@
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc
- * Version 0.2b - See changelog in main.php
- * October 27, 2007
+ * Version 0.3 - See changelog in main.php
+ * November 06, 2007
  */
  
 class ReportImageTheme extends Themelet {
 	public function display_reported_images($page, $reportedimages) {
 		$h_reportedimages = "";
 		foreach($reportedimages as $reportedimage) {
+			
 			// If the reason is 'Duplicate' make the 'reason' field a link to the reported image
 			if ($reportedimage['reason_type'] == "Duplicate")
 			{
 				$reason = "<a href=\"".make_link("post/view/{$reportedimage['reason']}")."\">".$reportedimage['reason']."</a>";
+				$reason .= $this->make_thumbnail_html($reportedimage['reason']);
 			} else {
 				$reason = $reportedimage['reason'];
 			}
 			
 			$image_link = "<a href=\"".make_link("post/view/{$reportedimage['image_id']}")."\">".$reportedimage['image_id']."</a>";
+			$image_link .= $this->make_thumbnail_html($reportedimage['image_id']);
 			$userlink = "<a href='".make_link("user/{$reportedimage['reporter_name']}")."'>{$reportedimage['reporter_name']}</a>";
 			
 				$h_reportedimages .= "
 					<tr>
-						<td>{$image_link}</td>
+						<td>{$image_link}{$image_reported_thumb_html}</td>
 						<td>{$userlink}</td>
 						<td>{$reportedimage['reason_type']}</td>
 						<td>{$reason}</td>
@@ -47,14 +50,22 @@ class ReportImageTheme extends Themelet {
 			</table>
 		";
 		
-		$page->add_block(new Block("Reported Images", $html));
-	}
-	
-		public function display_page($page) {
 		$page->set_title("Reported Images");
 		$page->set_heading("Reported Images");
 		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Reported Images", $html));
+		
 	}
+	
+		public function make_thumbnail_html($image_id) {
+			global $config;
+			global $database;
+			
+			if($config->get_bool('report_image_show_thumbs')) {
+				$image_obj_reported = $database->get_image($image_id);
+				return "<br>" . $this->build_thumb_html($image_obj_reported);
+			}
+		}
 
 	public function display_image_banner($page, $image) {
 	
