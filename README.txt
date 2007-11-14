@@ -6,8 +6,8 @@
            /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
                    \/      \/         \/      \/        \/        \/
 
-Shimmie 2.1 Release Candidate
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Shimmie 2.1
+~~~~~~~~~~~
 RSS, BBCode + Emoticons, Wiki, Theme engine 2 + Danbooru theme, UTF8 support,
 Word filter, LOTS of database optimisations, Removal of ConfigSaveEvent and
 many small fixes and improvements \o/
@@ -21,7 +21,7 @@ GD or ImageMagick
 
 PHP 4 support has currently been dropped, because
 a) It's a pain in the ass to support
-b) Nobody has told me they want it
+b) Only one person has told me they want it, and they were a dick about it
 
 If you want PHP 4 support, mail me, and I'll see if I can get it working for
 version 2.2...
