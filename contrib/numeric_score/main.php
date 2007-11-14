@@ -51,13 +51,14 @@ class NumericScore extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
 			global $user;
 			global $config;
 			if(!$user->is_anonymous() || $config->get_bool("numeric_score_anon")) {
-				$this->theme->display_voter($event->page, $event->image->id, $event->image->numeric_score);
+				$event->add_part($this->theme->get_voter_html($event->image));
 			}
 		}
+		
 		
 		if(is_a($event, 'ImageDeletionEvent')) {
 			global $database;

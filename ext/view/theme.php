@@ -4,12 +4,13 @@ class ViewTheme extends Themelet {
 	/*
 	 * Build a page showing $image and some info about it
 	 */
-	public function display_page($page, $image) {
+	public function display_page($page, $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
 		$page->add_block(new Block("Image", $this->build_image_view($image), "main", 0));
-		$page->add_block(new Block(null, $this->build_info($image), "main", 10));
+		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
+		$page->add_block(new Block(null, $this->build_pin($image->id), "main", 11));
 	}
 
 
@@ -60,7 +61,7 @@ class ViewTheme extends Themelet {
 		return "<img id='main_image' src='$ilink'>";
 	}
 
-	protected function build_info($image) {
+	protected function build_info($image, $editor_parts) {
 		global $user;
 		$owner = $image->get_owner();
 		$h_owner = html_escape($owner->name);
@@ -70,6 +71,7 @@ class ViewTheme extends Themelet {
 
 		$html = "";
 		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a>";
+
 		if($user->is_admin()) {
 			$html .= " ($h_ip)";
 		}
@@ -81,41 +83,26 @@ class ViewTheme extends Themelet {
 				$html .= " (<a href='http://$h_source'>source</a>)";
 			}
 		}
+		$html .= " (<a href=\"javascript: toggle('imgdata')\">edit info</a>)";
 
 
-		global $config;
-		global $user;
-		if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
-			$html .= " (<a href=\"javascript: toggle('imgdata')\">edit</a>)";
+		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
+		else {$h_query = "";}
 
-			if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
-			else {$h_query = "";}
-
-			$h_tags = html_escape($image->get_tag_list());
-			$i_image_id = int_escape($image->id);
-
-			$source_edit = "";
-			if($config->get_bool("source_edit_anon") || !$user->is_anonymous()) {
-				$source_edit = "<tr><td>Source</td><td><input type='text' name='source' value='$h_source'></td></tr>";
-			}
-
-			$html .= "
-			<div id='imgdata'><form action='".make_link("tag_edit/set")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id'>
-				<input type='hidden' name='query' value='$h_query'>
-				<table style='width: 500px;'>
-				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tags' value='$h_tags'></td></tr>
-				$source_edit
-				<tr><td>&nbsp;</td><td><input type='submit' value='Set'></td></tr>
-				</table>
-			</form>
-			</div>
-			";
+		$html .= "
+			<div id='imgdata'>
+				<form action='".make_link("post/set")."' method='POST'>
+					<input type='hidden' name='image_id' value='{$image->id}'>
+					<input type='hidden' name='query' value='$h_query'>
+		";
+		foreach($editor_parts as $part) {
+			$html .= $part;
 		}
-
-
-		$html .= "<p>".$this->build_pin($image->id);
-
+		$html .= "
+					<input type='submit' value='Set'>
+				</div>
+			</form>
+		";
 		return $html;
 	}
 }

@@ -30,35 +30,30 @@ class TextScore extends Extension {
 			}
 			$config->set_default_bool("text_score_anon", true);
 		}
-
-		if(is_a($event, 'PageRequestEvent') && $event->page_name == "text_score" &&
-				$event->get_arg(0) == "vote" &&
-				isset($_POST['score']) && isset($_POST['image_id'])) {
-			$i_score = int_escape($_POST['score']);
-			$i_image_id = int_escape($_POST['image_id']);
-			
-			if($i_score >= -2 || $i_score <= 2) {
-				send_event(new TextScoreSetEvent($i_image_id, $event->user, $i_score));
+		
+		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+			global $user;
+			global $config;
+			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
+				$event->add_part($this->theme->get_scorer_html($event->image));
 			}
-			
-			$event->page->set_mode("redirect");
-			$event->page->set_redirect(make_link("post/view/$i_image_id"));
 		}
 		
+		if(is_a($event, 'ImageInfoSetEvent')) {
+			global $user;
+			$i_score = int_escape($_POST['text_score__score']);
+			
+			if($i_score >= -2 || $i_score <= 2) {
+				send_event(new TextScoreSetEvent($event->image_id, $user, $i_score));
+			}
+		}
+
 		if(is_a($event, 'TextScoreSetEvent')) {
 			if(!$event->user->is_anonymous() || $config->get_bool("text_score_anon")) {
 				$this->add_vote($event->image_id, $event->user->id, $event->score);
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
-			global $user;
-			global $config;
-			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
-				$this->theme->display_scorer($event->page, $event->image->id, $event->image->text_score);
-			}
-		}
-		
 		if(is_a($event, 'ImageDeletionEvent')) {
 			global $database;
 			$database->execute("DELETE FROM text_score_votes WHERE image_id=?", array($event->image->id));

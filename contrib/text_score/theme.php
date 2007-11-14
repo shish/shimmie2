@@ -1,23 +1,21 @@
 <?php
 
 class TextScoreTheme extends Themelet {
-	public function display_scorer($page, $image_id, $score) {
-		$i_image_id = int_escape($image_id);
+	public function get_scorer_html($image) {
+		$i_image_id = int_escape($image->id);
 		
-		$s_score = $this->score_to_name($score);
+		$s_score = $this->score_to_name($image->text_score);
 		$html = "
 			Current score is \"$s_score\"
-			<br><form action='".make_link("text_score/vote")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id' />
-				<input type='radio' name='score' value='-2' id='-2'><label for='-2'>Delete</label>
-				<input type='radio' name='score' value='-1' id='-1'><label for='-1'>Bad</label>
-				<input type='radio' name='score' value='0'  id='0' ><label for='0' >Ok</label>
-				<input type='radio' name='score' value='1'  id='1' ><label for='1' >Good</label>
-				<input type='radio' name='score' value='2'  id='2' ><label for='2' >Favourite</label>
-				<input type='submit' value='Vote' />
-			</form>
+			<br/>
+			<input type='hidden' name='image_id' value='$i_image_id' />
+			<input type='radio' name='text_score__score' value='-2' id='-2'><label for='-2'>Delete</label>
+			<input type='radio' name='text_score__score' value='-1' id='-1'><label for='-1'>Bad</label>
+			<input type='radio' name='text_score__score' value='0'  id='0' ><label for='0' >Ok</label>
+			<input type='radio' name='text_score__score' value='1'  id='1' ><label for='1' >Good</label>
+			<input type='radio' name='text_score__score' value='2'  id='2' ><label for='2' >Favourite</label>
 		";
-		$page->add_block(new Block(null, $html, "main", 7));
+		return $html;
 	}
 
 	public function score_to_name($score) {

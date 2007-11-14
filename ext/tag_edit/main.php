@@ -8,23 +8,7 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_edit")) {
 			global $page;
-			if($event->get_arg(0) == "set") {
-				if($this->can_tag()) {
-					global $database;
-					$i_image_id = int_escape($_POST['image_id']);
-					$query = $_POST['query'];
-					send_event(new TagSetEvent($i_image_id, $_POST['tags']));
-					if($this->can_source()) {
-						send_event(new SourceSetEvent($i_image_id, $_POST['source']));
-					}
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("post/view/$i_image_id", $query));
-				}
-				else {
-					$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
-				}
-			}
-			else if($event->get_arg(0) == "replace") {
+			if($event->get_arg(0) == "replace") {
 				global $user;
 				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
 					$search = $_POST['search'];
@@ -43,6 +27,19 @@ class TagEdit extends Extension {
 			}
 		}
 
+		if(is_a($event, 'ImageInfoSetEvent')) {
+			if($this->can_tag()) {
+				global $database;
+				send_event(new TagSetEvent($event->image_id, $_POST['tag_edit__tags']));
+				if($this->can_source()) {
+					send_event(new SourceSetEvent($event->image_id, $_POST['tag_edit__source']));
+				}
+			}
+			else {
+				$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
+			}
+		}
+		
 		if(is_a($event, 'TagSetEvent')) {
 			global $database;
 			$database->set_tags($event->image_id, $event->tags);
@@ -65,6 +62,11 @@ class TagEdit extends Extension {
 		// When an alias is added, oldtag becomes inaccessable
 		if(is_a($event, 'AddAliasEvent')) {
 			$this->mass_tag_edit($event->oldtag, $event->newtag);
+		}
+
+		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+			global $user;
+			$event->add_part($this->theme->get_editor_html($event->image, $user), 40);
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {
