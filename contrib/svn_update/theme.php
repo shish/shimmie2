@@ -3,22 +3,38 @@
 class SVNUpdateTheme extends Themelet {
 	public function display_form($page) {
 		$html = "
-			<a href='".make_link("update/log")."'>Check for Updates</a>
+			<a href='".make_link("update/view_changes")."'>Check for Updates</a>
 		";
 		$page->add_block(new Block("Update", $html));
 	}
 
-	public function display_update_todo($page, $log) {
+	public function display_update_todo($page, $log, $branches) {
 		$h_log = html_escape($log);
-		$html = "
+		$updates = "
 			<textarea rows='20' cols='80'>$h_log</textarea>
-			<br/><a href='".make_link("update/run")."'>Install Updates</a>
+			<br/>
+			<form action='".make_link("update/update")."' method='POST'>
+				<input type='submit' value='Install Updates'>
+			</form>
+		";
+		$options = "";
+		foreach($branches as $name => $nice) {
+			$options .= "<option value='$name'>$nice</option>";
+		}
+		$branches = "
+			<form action='".make_link("update/switch")."' method='POST'>
+				<select name='branch'>
+					$options
+				</select>
+				<input type='submit' value='Change Branch'>
+			</form>
 		";
 
 		$page->set_title("Updates Available");
 		$page->set_heading("Updates Available");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Updates", $html));
+		$page->add_block(new Block("Updates For Current Branch", $updates));
+		$page->add_block(new Block("Available Branches", $branches));
 	}
 
 	public function display_update_log($page, $log) {
