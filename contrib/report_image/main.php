@@ -2,7 +2,7 @@
 
 /*
  * Name: Report Images
- * Author: ATravelingGeek (atg@atravelinggeek.com
+ * Author: ATravelingGeek <atg@atravelinggeek.com>
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Report images as dupes/illegal/etc

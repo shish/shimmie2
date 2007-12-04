@@ -1,6 +1,6 @@
 <?php
 /*
-Danbooru Client API for Shimmie2
+Name: Danbooru Client API for Shimmie2
 Description: Provides simple interfaces for third party software to interact with Shimmie via
 simple HTTP GET/POST requests.
 

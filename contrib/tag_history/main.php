@@ -1,4 +1,9 @@
 <?php
+/**
+ * Name: Tag History
+ * Author: Bzchan <bzchan@animemahou.com>
+ * Description: Keep a record of tag changes
+ */
 
 class Tag_History extends Extension {
 	var $theme;
