@@ -3,7 +3,7 @@
 class ExtManagerTheme extends Themelet {
 	public function display_table($page, $extensions) {
 		$html = "
-			<form action='' method='POST'>
+			<form action='".make_link("ext_manager/set")."' method='POST'>
 				<table border='1'>
 					<tr><th>Name</th><th>Author</th><th>Description</th><th>Enabled</th></tr>
 		";
@@ -21,8 +21,11 @@ class ExtManagerTheme extends Themelet {
 						empty($h_link) ? 
 							"<td>$h_name</td>" :
 							"<td><a href='$h_link'>$h_name</a></td>"
+					) . (
+						empty($h_email) ?
+							"<td>$h_author</td>" :
+							"<td><a href='mailto:$h_email'>$h_author</a></td>"
 					) . "
-					<td><a href='mailto:$h_email'>$h_author</a></td>
 					<td>$h_description</td>
 					<td>
 						<input type='checkbox' name='ext_$ext_name'$h_enabled>
@@ -30,6 +33,7 @@ class ExtManagerTheme extends Themelet {
 				</tr>";
 		}
 		$html .= "
+					<tr><td colspan='4'><input type='submit' value='Set Extensions'></td></tr>
 				</table>
 			</form>
 		";
