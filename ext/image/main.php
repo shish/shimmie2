@@ -77,16 +77,6 @@ class ImageIO extends Extension {
 		return $database->db->GetRow("SELECT * FROM images WHERE hash=?", array($hash));
 	}
 
-	private function read_file($fname) {
-		$fp = fopen($fname, "r");
-		if(!$fp) return false;
-
-		$data = fread($fp, filesize($fname));
-		fclose($fp);
-
-		return $data;
-	}
-
 	private function add_image($image) {
 		global $page;
 		global $user;

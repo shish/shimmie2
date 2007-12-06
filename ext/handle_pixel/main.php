@@ -144,6 +144,16 @@ class PixelFileHandler extends Extension {
 			return $thumb;
 		}
 	}
+
+	private function read_file($fname) {
+		$fp = fopen($fname, "r");
+		if(!$fp) return false;
+
+		$data = fread($fp, filesize($fname));
+		fclose($fp);
+
+		return $data;
+	}
 // }}}
 }
 add_event_listener(new PixelFileHandler());
