@@ -10,14 +10,11 @@ class Config {
 	public function save($name=null) {
 		if(is_null($name)) {
 			foreach($this->values as $name => $value) {
-				// does "or update" work with sqlite / postgres?
-				$this->database->db->StartTrans();
-				$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
-				$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $value));
-				$this->database->db->CommitTrans();
+				$this->save($name);
 			}
 		}
 		else {
+			// does "or update" work with sqlite / postgres?
 			$this->database->db->StartTrans();
 			$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
 			$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
