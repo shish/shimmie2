@@ -8,7 +8,6 @@ class ViewTheme extends Themelet {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
-		$page->add_block(new Block("Image", $this->build_image_view($image), "main", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
 		$page->add_block(new Block(null, $this->build_pin($image->id), "main", 11));
 	}
@@ -54,11 +53,6 @@ class ViewTheme extends Themelet {
 			<div id='search_completions'></div>";
 
 		return "$h_pin<br>$h_search";
-	}
-
-	protected function build_image_view($image) {
-		$ilink = $image->get_image_link();
-		return "<img id='main_image' src='$ilink'>";
 	}
 
 	protected function build_info($image, $editor_parts) {

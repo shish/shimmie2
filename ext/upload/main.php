@@ -60,6 +60,13 @@ class Upload extends Extension {
 			), "<br>Transload: ");
 			$event->panel->add_block($sb);
 		}
+
+		if(is_a($event, "DataUploadEvent")) {
+			global $config;
+			if(filesize($tmp_filename) > $config->get_int('upload_size')) {
+				$event->veto("File too large (".filesize($tmp_filename)." &gt; ".($config->get_int('upload_size')).")");
+			}
+		}
 	}
 // }}}
 // do things {{{
@@ -74,37 +81,22 @@ class Upload extends Extension {
 		
 		if(empty($source)) $source = null;
 
-		$ok = false;
+		$ok = true;
 		
-		if(!file_exists($file['tmp_name'])) {
-			// this happens normally with blank file boxes
-			$ok = true;
-		}
-		else if(filesize($file['tmp_name']) > $config->get_int('upload_size')) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-				"File too large (".to_shorthand_int(filesize($file['tmp_name']))." &gt; ".
-				(to_shorthand_int($config->get_int('upload_size'))).")");
-		}
-		else if(!($info = getimagesize($file['tmp_name']))) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-				"PHP doesn't recognise this as an image file");
-		}
-		else {
-			$image = new Image($file['tmp_name'], $file['name'], $tags, $source);
-		
-			if($image->is_ok()) {
-				global $user;
-				$event = new UploadingImageEvent($user, $image);
-				send_event($event);
-				$ok = !$event->vetoed;
-				if(!$ok) {
-					$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-						$event->veto_reason);
-				}
-			}
-			else {
+		// blank file boxes cause empty uploads, no need for error message
+		if(file_exists($file['tmp_name'])) {
+			global $user;
+			$pathinfo = pathinfo($file['name']);
+			$metadata['filename'] = $pathinfo['basename'];
+			$metadata['extension'] = $pathinfo['extension'];
+			$metadata['tags'] = $tags;
+			$metadata['source'] = $source;
+			$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
+			send_event($event);
+			if($event->vetoed) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-					"Something is not right!");
+					$event->veto_reason);
+				$ok = false;
 			}
 		}
 
@@ -115,7 +107,7 @@ class Upload extends Extension {
 		global $page;
 		global $config;
 
-		$ok = false;
+		$ok = true;
 
 		if(empty($source)) $source = $url;
 
@@ -161,32 +153,21 @@ class Upload extends Extension {
 		if(filesize($tmp_filename) == 0) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"No data found -- perhaps the site has hotlink protection?");
-		}
-		else if(filesize($tmp_filename) > $config->get_int('upload_size')) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-				"File too large (".filesize($tmp_filename)." &gt; ".
-				($config->get_int('upload_size')).")");
-		}
-		else if(!($info = @getimagesize($tmp_filename))) {
-			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-				"PHP doesn't recognise this as an image file -- perhaps the site has hotlink protection?");
+			$ok = false;
 		}
 		else {
-			$image = new Image($tmp_filename, basename($url), $tags, $source);
-		
-			if($image->is_ok()) {
-				global $user;
-				$event = new UploadingImageEvent($user, $image);
-				send_event($event);
-				$ok = !$event->vetoed;
-				if(!$ok) {
-					$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-						$event->veto_reason);
-				}
-			}
-			else {
-				$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-					"Something is not right!");
+			global $user;
+			$pathinfo = pathinfo($file);
+			$metadata['filename'] = $pathinfo['basename'];
+			$metadata['extension'] = $pathinfo['extension'];
+			$metadata['tags'] = $tags;
+			$metadata['source'] = $source;
+			$event = new DataUploadEvent($user, $tmp_filename, $metadata);
+			send_event($event);
+			if($event->vetoed) {
+				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
+					$event->veto_reason);
+				$ok = false;
 			}
 		}
 
@@ -196,5 +177,5 @@ class Upload extends Extension {
 	}
 // }}}
 }
-add_event_listener(new Upload());
+add_event_listener(new Upload(), 40); // early, so it can veto the DataUploadEvent before any data handlers see it
 ?>

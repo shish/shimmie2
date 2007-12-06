@@ -9,12 +9,9 @@ class Image {
 	var $posted;
 	var $source;
 
-	public function Image($a=false, $b=false, $c=array(), $d="") {
-		if($b == false) {
+	public function Image($a=null) {
+		if(!is_null($a)) {
 			$this->create_from_row($a);
-		}
-		else {
-			$this->create_from_data($a, $b, $c, $d);
 		}
 	}
 
@@ -22,43 +19,6 @@ class Image {
 		foreach($row as $name => $value) {
 			$this->$name = $value; // hax
 		}
-	}
-
-	private function mime_to_ext($mime) {
-		switch($mime) {
-			default:
-			case 'image/jpeg': return "jpg"; break;
-			case 'image/png': return "png"; break;
-			case 'image/gif': return "gif"; break;
-		}
-	}
-
-	private function create_from_data($tmp, $filename, $tags, $source) {
-		global $config;
-
-		$this->ok = false;
-		$info = "";
-
-		if(!file_exists($tmp)) return;
-		if(filesize($tmp) > $config->get_int('upload_size')) return;
-		if(!($info = getimagesize($tmp))) return;
-
-		$this->width = $info[0];
-		$this->height = $info[1];
-		$this->mime_type = $info['mime'];
-		$this->filename = str_replace("/", "_", $filename); // is this even possible?
-		$this->filesize = filesize($tmp);
-		$this->ext = $this->mime_to_ext($info['mime']);
-		$this->hash = md5_file($tmp);
-		$this->temp_filename = $tmp;
-		$this->tag_array = tag_explode($tags);
-		$this->source = $source;
-
-		$this->ok = true;
-	}
-
-	public function is_ok() {
-		return $this->ok;
 	}
 
 	public function get_owner() {

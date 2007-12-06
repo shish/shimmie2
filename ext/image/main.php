@@ -33,7 +33,7 @@ class ImageIO extends Extension {
 			}
 		}
 
-		if(is_a($event, 'UploadingImageEvent')) {
+		if(is_a($event, 'ImageAdditionEvent')) {
 			$error = $this->add_image($event->image);
 			if(!empty($error)) $event->veto($error);
 		}
@@ -87,80 +87,6 @@ class ImageIO extends Extension {
 		return $data;
 	}
 
-	private function make_thumb($inname, $outname) {
-		global $config;
-		
-		$ok = false;
-		
-		switch($config->get_string("thumb_engine")) {
-			default:
-			case 'gd':
-				$ok = $this->make_thumb_gd($inname, $outname);
-				break;
-			case 'convert':
-				$ok = $this->make_thumb_convert($inname, $outname);
-				break;
-		}
-
-		return $ok;
-	}
-
-// IM thumber {{{
-	private function make_thumb_convert($inname, $outname) {
-		global $config;
-
-		$w = $config->get_int("thumb_width");
-		$h = $config->get_int("thumb_height");
-		$q = $config->get_int("thumb_quality");
-		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
-
-		// "-limit memory $mem" broken?
-		exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
-
-		return true;
-	}
-// }}}
-// GD thumber {{{
-	private function make_thumb_gd($inname, $outname) {
-		global $config;
-		$thumb = $this->get_thumb($inname);
-		return imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
-	}
-
-	private function get_thumb($tmpname) {
-		global $config;
-
-		$info = getimagesize($tmpname);
-		$width = $info[0];
-		$height = $info[1];
-
-		$memory_use = (filesize($tmpname)*2) + ($width*$height*4) + (4*1024*1024);
-		$memory_limit = get_memory_limit();
-		
-		if($memory_use > $memory_limit) {
-			$w = $config->get_int('thumb_width');
-			$h = $config->get_int('thumb_height');
-			$thumb = imagecreatetruecolor($w, min($h, 64));
-			$white = imagecolorallocate($thumb, 255, 255, 255);
-			$black = imagecolorallocate($thumb, 0,   0,   0);
-			imagefill($thumb, 0, 0, $white);
-			imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
-			return $thumb;
-		}
-		else {
-			$image = imagecreatefromstring($this->read_file($tmpname));
-			$tsize = get_thumbnail_size($width, $height);
-
-			$thumb = imagecreatetruecolor($tsize[0], $tsize[1]);
-			imagecopyresampled(
-					$thumb, $image, 0, 0, 0, 0,
-					$tsize[0], $tsize[1], $width, $height
-					);
-			return $thumb;
-		}
-	}
-// }}}
-
 	private function add_image($image) {
 		global $page;
 		global $user;
@@ -199,28 +125,6 @@ class ImageIO extends Extension {
 				array($user->id, $_SERVER['REMOTE_ADDR'], $image->filename, $image->filesize,
 						$image->hash, $image->ext, $image->width, $image->height, $image->source));
 		$image->id = $database->db->Insert_ID();
-
-		/*
-		 * If no errors: move the file from the temporary upload
-		 * area to the main file store, create a thumbnail, and
-		 * insert the image info into the database
-		 */
-		if(!copy($image->temp_filename, $image->get_image_filename())) {
-			send_event(new ImageDeletionEvent($image->id));
-			$error = "The image couldn't be moved from the temporary area to the
-					main data store -- is the web server allowed to write to '".
-					($image->get_image_filename())."'?";
-			return $error;
-		}
-		chmod($image->get_image_filename(), 0644);
-
-		if(!$this->make_thumb($image->get_image_filename(), $image->get_thumb_filename())) {
-			send_event(new ImageDeletionEvent($image->id));
-			$error="The image thumbnail couldn't be generated -- is the web
-					server allowed to write to '".($image->get_thumb_filename())."'?";
-			return $error;
-		}
-		chmod($image->get_thumb_filename(), 0644);
 
 		send_event(new TagSetEvent($image->id, $image->get_tag_array()));
 

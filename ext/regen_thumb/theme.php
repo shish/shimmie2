@@ -8,11 +8,6 @@ class RegenThumbTheme extends Themelet {
 		$html = "
 			<form action='".make_link("regen_thumb")."' method='POST'>
 			<input type='hidden' name='image_id' value='$image_id'>
-			<select name='program'>
-				<option value='convert'>ImageMagick</option>
-				<option value='gd'>GD</option>
-				<!-- <option value='epeg'>EPEG (for JPEG only)</option> -->
-			</select>
 			<input type='submit' value='Regenerate'>
 			</form>
 		";
