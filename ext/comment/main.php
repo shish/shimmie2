@@ -68,7 +68,15 @@ class CommentList extends Extension {
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "comment")) {
 			if($event->get_arg(0) == "add") {
-				send_event(new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']));
+				$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
+				send_event($cpe);
+				if($cpe->vetoed) {
+					$this->theme->display_error($event->page, "Comment Blocked", $cpe->veto_reason);
+				}
+				else {
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
+				}
 			}
 			else if($event->get_arg(0) == "delete") {
 				if($event->user->is_admin()) {
@@ -109,7 +117,7 @@ class CommentList extends Extension {
 		}
 		// TODO: split akismet into a separate class, which can veto the event
 		if(is_a($event, 'CommentPostingEvent')) {
-			$this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
+			$this->add_comment_wrapper($event->image_id, $event->user, $event->comment, $event);
 		}
 		if(is_a($event, 'CommentDeletionEvent')) {
 			$this->delete_comment($event->comment_id);
@@ -286,36 +294,30 @@ class CommentList extends Extension {
 		return ($database->db->GetRow("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
 	}
 
-	private function add_comment_wrapper($image_id, $user, $comment) {
+	private function add_comment_wrapper($image_id, $user, $comment, $event) {
 		global $database;
 		global $config;
-		global $page;
 
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
-			$this->theme->display_error($page, "Permission Denied", "Anonymous posting has been disabled");
+			$event->veto("Anonymous posting has been disabled");
 		}
 		else if(trim($comment) == "") {
-			$this->theme->display_error($page, "Comment Empty", "Comments need text...");
+			$event->veto("Comments need text...");
 		}
 		else if($this->is_comment_limit_hit()) {
-			$this->theme->display_error($page, "Comment Limit Hit",
-						"You've posted several comments recently; wait a minute and try again...");
+			$event->veto("You've posted several comments recently; wait a minute and try again...");
 		}
 		else if($this->is_dupe($image_id, $comment)) {
-			$this->theme->display_error($page, "Duplicate Comment",
-						"Someone already made that comment on that image -- try and be more original?");
+			$event->veto("Someone already made that comment on that image -- try and be more original?");
 		}
 		else if($user->is_anonymous() && $this->is_spam($comment)) {
-			$this->theme->display_error($page, "Spam Detected",
-						"Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
+			$event->veto("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}
 		else {
 			$database->Execute(
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
-			$page->set_mode("redirect");
-			$page->set_redirect(make_link("post/view/".int_escape($image_id)));
 		}
 	}
 
