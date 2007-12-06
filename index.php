@@ -29,7 +29,7 @@ if(get_magic_quotes_gpc()) {
 
 
 // load base files
-$files = array_merge(glob("core/*.php"), glob("core/*/*.php"), glob("ext/*/main.php"));
+$files = array_merge(glob("core/*.php"), glob("ext/*/main.php"));
 foreach($files as $filename) {
 	require_once $filename;
 }
