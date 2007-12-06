@@ -30,6 +30,7 @@ class FlashFileHandler extends Extension {
 		if(is_a($event, 'ThumbnailGenerationEvent') && $event->type == "swf") {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
+			// FIXME: scale image, as not all boards use 192x192
 			copy("ext/handle_flash/thumb.jpg", "thumbs/$ha/$hash");
 		}
 
