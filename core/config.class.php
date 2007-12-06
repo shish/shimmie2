@@ -1,12 +1,23 @@
 <?php
+/*
+ * A class for easy access to the 'config' table, can always be accessed
+ * through "global $config;"
+ */
 class Config {
 	var $values = array();
 	var $database = null;
 
+	/*
+	 * Load the config table from a database
+	 */
 	public function Config($database) {
 		$this->database = $database;
 		$this->values = $this->database->db->GetAssoc("SELECT name, value FROM config");
 	}
+
+	/*
+	 * Save the current values as the new config table
+	 */
 	public function save($name=null) {
 		if(is_null($name)) {
 			foreach($this->values as $name => $value) {

@@ -1,5 +1,9 @@
 <?php
-
+/*
+ * An object representing an entry in the images table. As of 2.2, this no
+ * longer necessarily represents an image per se, but could be a video,
+ * sound file, or any other supported upload type.
+ */
 class Image {
 	var $id = null;
 	var $height, $width;
@@ -9,15 +13,11 @@ class Image {
 	var $posted;
 	var $source;
 
-	public function Image($a=null) {
-		if(!is_null($a)) {
-			$this->create_from_row($a);
-		}
-	}
-
-	private function create_from_row($row) {
-		foreach($row as $name => $value) {
-			$this->$name = $value; // hax
+	public function Image($row=null) {
+		if(!is_null($row)) {
+			foreach($row as $name => $value) {
+				$this->$name = $value; // hax
+			}
 		}
 	}
 

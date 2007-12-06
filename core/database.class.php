@@ -2,7 +2,10 @@
 $ADODB_CACHE_DIR="./data";
 require_once "lib/adodb/adodb.inc.php";
 
-class Querylet { // {{{
+/* Querylet {{{
+ * A fragment of a query, used to build large search queries
+ */
+class Querylet {
 	var $sql;
 	var $variables;
 	
@@ -25,6 +28,9 @@ class Querylet { // {{{
 	}
 } // }}}
 
+/*
+ * A class for controlled database access, available through "global $database"
+ */
 class Database {
 	var $db;
 	var $extensions;

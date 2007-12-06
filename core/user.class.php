@@ -1,4 +1,7 @@
 <?php
+/*
+ * An object representing a row in the "users" table.
+ */
 class User {
 	var $id;
 	var $name;
