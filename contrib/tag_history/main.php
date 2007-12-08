@@ -24,13 +24,16 @@ class Tag_History extends Extension {
 			if($event->get_arg(0) == "revert")
 			{
 				// this is a request to revert to a previous version of the tags
-				$this->process_revert_request($_POST['image_id'], $_POST['revert']);
+				$this->process_revert_request($_POST['revert']);
 			}
-			else
+			else if($event->count_args() == 1)
 			{
 				// must be an attempt to view a tag history
 				$image_id = int_escape($event->get_arg(0));
-				$this->theme->display_history_page($event->page, $image_id, $this->build_tag_history($image_id));
+				$this->theme->display_history_page($event->page, $image_id, $this->get_tag_history_from_id($image_id));
+			}
+			else {
+				$this->theme->display_global_page($event->page, $this->get_global_tag_history());
 			}
 		}
 		if(is_a($event, 'DisplayingImageEvent'))
@@ -82,9 +85,11 @@ class Tag_History extends Extension {
 		}
 	}
 	
-	private function process_revert_request($image_id, $revert_id)
+	/*
+	 * this function is called when a revert request is received
+	 */
+	private function process_revert_request($revert_id)
 	{
-		// this function is called when a revert request is received
 		global $page;
 		// check for the nothing case
 		if($revert_id=="nothing")
@@ -97,7 +102,6 @@ class Tag_History extends Extension {
 		}
 		
 		$revert_id = int_escape($revert_id);
-		$image_id = int_escape($image_id);
 		
 		// lets get this revert id assuming it exists
 		$result = $this->get_tag_history_from_revert($revert_id);
@@ -115,73 +119,19 @@ class Tag_History extends Extension {
 		$stored_image_id = $result->fields['image_id'];
 		$stored_tags = $result->fields['tags'];
 		
-		if($image_id!=$stored_image_id)
-		{
-			// wth is going on there ids should be the same otherwise we are trying
-			// to edit another image... banhammer this user... j/k
-			die("Error: Mismatch in history image ids.");
-		}
-		
 		// all should be ok so we can revert by firing the SetUserTags event.
-		send_event(new TagSetEvent($image_id, $stored_tags));
+		send_event(new TagSetEvent($stored_image_id, $stored_tags));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");
-		$page->set_redirect(make_link("post/view/$image_id"));
-	}
-	
-	
-	
-	private function build_tag_history($image_id)
-	{
-		// this function is called when user tries to view tag history of an image
-		// check if the image exists
-		global $database;
-		$image = $database->get_image($image_id);
-		if($image==null)return "<strong>No image with the specified id currently exists</strong>";
-				
-		// get the current images tags
-		$current_tags = html_escape(implode(' ', $image->get_tag_array()));
-		//$current_tags = $image->cached_tags;
-		
-		// get any stored tag histories
-		$result = $this->get_tag_history_from_id($image_id);
-		$html =  "<div style='text-align: left'>";
-		$html .= "<br><form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>\n";
-		$html .= "<input type='hidden' name='image_id' value='$image_id'>\n";
-		$html .= "<ul style='list-style-type:none;'>\n";
-		// $html .= "<li><input type='radio' name='revert' value='nothing' checked>$current_tags (<strong>current</strong>)<br></li>\n";
-		
-		$end_string = "<input type='submit' value='Revert'></ul></form></div>";
-		// check for no stored history
-		if($result==null) return $html.$end_string;
-		
-		global $user;
-
-		// process each one
-		while(!$result->EOF)
-		{
-			$fields = $result->fields;
-			$current_id = $fields['id'];
-			$current_tags = $fields['tags'];
-			$setter = $fields['name'];
-			if($user->is_admin()) {
-				$setter .= " / " . $fields['user_ip'];
-			}
-			$html .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags (Set by $setter)<br></li>\n";
-			$result->MoveNext();	
-		}
-		$html .= $end_string;
-		
-		// now return the finished html
-		return $html;
+		$page->set_redirect(make_link("post/view/$stored_image_id"));
 	}
 	
 	public function get_tag_history_from_revert($revert_id)
 	{
 		global $database;
 		$row = $database->execute("
-				SELECT *
+				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
 				WHERE tag_histories.id = ?", array($revert_id));
@@ -191,26 +141,42 @@ class Tag_History extends Extension {
 	public function get_tag_history_from_id($image_id)
 	{
 		global $database;
-		$row = $database->execute("
-				SELECT *
+		$row = $database->db->GetAll("
+				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
 				WHERE image_id = ?
 				ORDER BY tag_histories.id DESC",
 				array($image_id));
-		return ($row ? $row : null);
+		return ($row ? $row : array());
 	}
 	
+	public function get_global_tag_history()
+	{
+		global $database;
+		$row = $database->db->GetAll("
+				SELECT tag_histories.*, users.name
+				FROM tag_histories
+				JOIN users ON tag_histories.user_id = users.id
+				ORDER BY tag_histories.id DESC
+				LIMIT 100");
+		return ($row ? $row : array());
+	}
+	
+	/*
+	 * this function is called when an image has been deleted
+	 */
 	private function delete_all_tag_history($image_id)
 	{
-		// this function is called when an image has been deleted
 		global $database;
 		$database->execute("DELETE FROM tag_histories WHERE image_id = ?", array($image_id));
 	}
 
+	/*
+	 * this function is called just before an images tag are changed
+	 */
 	private function add_tag_history($image_id, $tags)
 	{
-		// this function is called just before an images tag are changed
 		global $database;
 		global $config;
 		global $user;

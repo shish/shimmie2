@@ -2,12 +2,79 @@
 
 class Tag_HistoryTheme extends Themelet {
 	public function display_history_page($page, $image_id, $history) {
-		$page_heading = "Tag History: $image_id";
+		$start_string = "
+			<div style='text-align: left'>
+				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
+					<ul style='list-style-type:none;'>
+		";
+
+		global $user;
+		$history_list = "";
+		foreach($history as $fields)
+		{
+			$current_id = $fields['id'];
+			$current_tags = html_escape($fields['tags']);
+			$name = $fields['name'];
+			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>";
+			if($user->is_admin()) {
+				$setter .= " / " . $fields['user_ip'];
+			}
+			$history_list .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags (Set by $setter)</li>\n";
+		}
+		
+		$end_string = "
+					</ul>
+					<input type='submit' value='Revert'>
+				</form>
+			</div>
+		";
+		$history_html = $start_string . $history_list . $end_string;
+
 		$page->set_title("Image $image_id Tag History");
-		$page->set_heading($page_heading);
-						
+		$page->set_heading("Tag History: $image_id");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Tag History", $history, "main", 10));
+		$page->add_block(new Block("Tag History", $history_html, "main", 10));
+	}
+
+	public function display_global_page($page, $history) {
+		$start_string = "
+			<div style='text-align: left'>
+				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
+					<ul style='list-style-type:none;'>
+		";
+		$end_string = "
+					</ul>
+					<input type='submit' value='Revert'>
+				</form>
+			</div>
+		";
+
+		global $user;
+		$history_list = "";
+		foreach($history as $fields)
+		{
+			$current_id = $fields['id'];
+			$image_id = $fields['image_id'];
+			$current_tags = html_escape($fields['tags']);
+			$name = $fields['name'];
+			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>";
+			if($user->is_admin()) {
+				$setter .= " / " . $fields['user_ip'];
+			}
+			$history_list .= "
+				<li>
+					<input type='radio' name='revert' value='$current_id'>
+					<a href='".make_link("post/view/$image_id")."'>$image_id</a>:
+					$current_tags (Set by $setter)
+				</li>
+			";
+		}
+
+		$history_html = $start_string . $history_list . $end_string;
+		$page->set_title("Global Tag History");
+		$page->set_heading("Global Tag History");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
 	public function display_history_link($page, $image_id) {
