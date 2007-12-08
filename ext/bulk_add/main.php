@@ -21,7 +21,6 @@ class BulkAdd extends Extension {
 		}
 	}
 
-// do the adding {{{
 	private function add_image($tmpname, $filename, $tags) {
 		if(file_exists($tmpname)) {
 			global $user;
@@ -52,7 +51,10 @@ class BulkAdd extends Extension {
 		while($filename = readdir($dir)) {
 			$fullpath = "$base/$subdir/$filename";
 		
-			if(is_dir($fullpath)) {
+			if(is_link($fullpath)) {
+				// ignore
+			}
+			else if(is_dir($fullpath)) {
 				if($filename[0] != ".") {
 					$this->add_dir($base, "$subdir/$filename");
 				}
@@ -76,7 +78,6 @@ class BulkAdd extends Extension {
 
 		$this->theme->add_status("Adding $subdir", $list);
 	}
-// }}}
 }
 add_event_listener(new BulkAdd());
 ?>

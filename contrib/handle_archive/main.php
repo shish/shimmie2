@@ -51,7 +51,10 @@ class ArchiveFileHandler extends Extension {
 		while($filename = readdir($dir)) {
 			$fullpath = "$base/$subdir/$filename";
 		
-			if(is_dir($fullpath)) {
+			if(is_link($fullpath)) {
+				// ignore
+			}
+			else if(is_dir($fullpath)) {
 				if($filename[0] != ".") {
 					$this->add_dir($base, "$subdir/$filename");
 				}
