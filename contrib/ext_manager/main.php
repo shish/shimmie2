@@ -80,13 +80,13 @@ class ExtManager extends Extension {
 		if($enabled) {
 			// enable if currently disabled
 			if(!file_exists("ext/$fname")) {
-				shell_exec("ln -s ../contrib/$fname ext/$fname");
+				symlink("../contrib/$fname", "ext/$fname");
 			}
 		}
 		else {
 			// disable if currently enabled
 			if(file_exists("ext/$fname")) {
-				shell_exec("rm ext/$fname");
+				unlink("ext/$fname");
 			}
 		}
 	}
