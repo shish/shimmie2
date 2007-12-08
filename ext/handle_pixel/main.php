@@ -24,7 +24,13 @@ class PixelFileHandler extends Extension {
 				$event->veto("Pixel Handler failed to create image object from data");
 				return;
 			}
-			send_event(new ImageAdditionEvent($event->user, $image));
+
+			$iae = new ImageAdditionEvent($event->user, $image);
+			send_event($iae);
+			if($iae->vetoed) {
+				$event->veto($iae->veto_reason);
+				return;
+			}
 		}
 
 		if(is_a($event, 'ThumbnailGenerationEvent') && $this->supported_ext($event->type)) {
