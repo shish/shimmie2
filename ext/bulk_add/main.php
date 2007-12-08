@@ -23,31 +23,19 @@ class BulkAdd extends Extension {
 
 // do the adding {{{
 	private function add_image($tmpname, $filename, $tags) {
-		global $config;
-
-		$ok = false;
-		
-		if(filesize($tmpname) > $config->get_int('upload_size')) {
-//			$page->add_block(new Block("Error with ".html_escape($filename),
-//				"File too large (".filesize($file['tmp_name'])." &gt; ".
-//				($config->get_int('upload_size')).")"));
-		}
-		else if(!($info = getimagesize($tmpname))) {
-//			$page->add_block(new Block("Error with ".html_escape($file['name']),
-//				"PHP doesn't recognise this as an image file"));
-		}
-		else {
-			$image = new Image($tmpname, $filename, $tags);
-		
-			if($image->is_ok()) {
-				global $user;
-				$uie = new UploadingImageEvent($user, $image);
-				send_event($uie);
-				$ok = !$uie->vetoed;
+		if(file_exists($tmpname)) {
+			global $user;
+			$pathinfo = pathinfo($filename);
+			$metadata['filename'] = $pathinfo['basename'];
+			$metadata['extension'] = $pathinfo['extension'];
+			$metadata['tags'] = $tags;
+			$metadata['source'] = null;
+			$event = new DataUploadEvent($user, $tmpname, $metadata);
+			send_event($event);
+			if($event->vetoed) {
+				return $event->veto_reason;
 			}
 		}
-
-		return $ok;
 	}
 
 	private function add_dir($base, $subdir="") {
@@ -72,11 +60,12 @@ class BulkAdd extends Extension {
 			else {
 				$tmpfile = $fullpath;
 				$list .= "<br>".html_escape("$subdir/$filename (".str_replace("/", ",", $subdir).")...");
-				if($this->add_image($tmpfile, $filename, str_replace("/", " ", $subdir))) {
+				$error = $this->add_image($tmpfile, $filename, str_replace("/", " ", $subdir));
+				if(is_null($error)) {
 					$list .= "ok\n";
 				}
 				else {
-					$list .= "failed\n";
+					$list .= "failed: $error\n";
 				}
 			}
 		}
