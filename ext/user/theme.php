@@ -77,13 +77,25 @@ class UserPageTheme extends Themelet {
 	public function display_ip_list($page, $uploads, $comments) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";
+		$n = 0;
 		foreach($uploads as $ip => $count) {
 			$html .= "<br>$ip ($count)";
+			if(++$n >= 20) {
+				$html .= "<br>...";
+				break;
+			}
 		}
+
 		$html .= "</td><td>Commented from:";
+		$n = 0;
 		foreach($comments as $ip => $count) {
 			$html .= "<br>$ip ($count)";
+			if(++$n >= 20) {
+				$html .= "<br>...";
+				break;
+			}
 		}
+
 		$html .= "</td></tr>";
 		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
 
