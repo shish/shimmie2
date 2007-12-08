@@ -205,7 +205,7 @@ class TagSetEvent extends Event {
 
 	public function TagSetEvent($image_id, $tags) {
 		$this->image_id = $image_id;
-		$this->tags = $tags;
+		$this->tags = tag_explode($tags);
 	}
 }
 
