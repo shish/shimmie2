@@ -14,7 +14,7 @@ class Tag_History extends Extension {
 		if(is_a($event, 'InitExtEvent')) {
 			// shimmie is being installed so call install to create the table.
 			global $config;
-			if($config->get_int("ext_tag_history_version") < 1) {
+			if($config->get_int("ext_tag_history_version") < 3) {
 				$this->install();
 			}
 		}
@@ -51,7 +51,7 @@ class Tag_History extends Extension {
 			$event->panel->add_block($sb);
 		}
 		if(is_a($event, 'TagSetEvent')) {
-			$this->add_tag_history($event->image_id);
+			$this->add_tag_history($event->image_id, $event->tags);
 		}
 	}
 	
@@ -59,13 +59,27 @@ class Tag_History extends Extension {
 	{
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE tag_histories
-		(
-    		id integer NOT NULL auto_increment PRIMARY KEY,
-    		image_id integer NOT NULL,
-    		tags text NOT NULL
-		)");
-		$config->set_int("ext_tag_history_version", 1);
+
+		if($config->get_int("ext_tag_history_version") < 1) {
+			$database->Execute("CREATE TABLE tag_histories
+			(
+	    		id integer NOT NULL auto_increment PRIMARY KEY,
+	    		image_id integer NOT NULL,
+	    		tags text NOT NULL
+			)");
+			$config->set_int("ext_tag_history_version", 1);
+		}
+		
+		if($config->get_int("ext_tag_history_version") == 1) {
+			$database->Execute("ALTER TABLE tag_histories ADD COLUMN user_id INTEGER NOT NULL");
+			$database->Execute("ALTER TABLE tag_histories ADD COLUMN date_set DATETIME NOT NULL");
+			$config->set_int("ext_tag_history_version", 2);
+		}
+
+		if($config->get_int("ext_tag_history_version") == 2) {
+			$database->Execute("ALTER TABLE tag_histories ADD COLUMN user_ip CHAR(15) NOT NULL");
+			$config->set_int("ext_tag_history_version", 3);
+		}
 	}
 	
 	private function process_revert_request($image_id, $revert_id)
@@ -136,19 +150,25 @@ class Tag_History extends Extension {
 		$html .= "<br><form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>\n";
 		$html .= "<input type='hidden' name='image_id' value='$image_id'>\n";
 		$html .= "<ul style='list-style-type:none;'>\n";
-		$html .= "<li><input type='radio' name='revert' value='nothing' checked>$current_tags (<strong>current</strong>)<br></li>\n";
+		// $html .= "<li><input type='radio' name='revert' value='nothing' checked>$current_tags (<strong>current</strong>)<br></li>\n";
 		
 		$end_string = "<input type='submit' value='Revert'></ul></form></div>";
 		// check for no stored history
 		if($result==null) return $html.$end_string;
 		
+		global $user;
+
 		// process each one
 		while(!$result->EOF)
 		{
 			$fields = $result->fields;
 			$current_id = $fields['id'];
 			$current_tags = $fields['tags'];
-			$html .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags<br></li>\n";
+			$setter = $fields['name'];
+			if($user->is_admin()) {
+				$setter .= " / " . $fields['user_ip'];
+			}
+			$html .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags (Set by $setter)<br></li>\n";
 			$result->MoveNext();	
 		}
 		$html .= $end_string;
@@ -160,14 +180,24 @@ class Tag_History extends Extension {
 	public function get_tag_history_from_revert($revert_id)
 	{
 		global $database;
-		$row = $database->execute( "SELECT * FROM tag_histories WHERE id = ?", array($revert_id));
+		$row = $database->execute("
+				SELECT *
+				FROM tag_histories
+				JOIN users ON tag_histories.user_id = users.id
+				WHERE tag_histories.id = ?", array($revert_id));
 		return ($row ? $row : null);
 	}
 	
 	public function get_tag_history_from_id($image_id)
 	{
 		global $database;
-		$row = $database->execute( "SELECT * FROM tag_histories WHERE image_id = ? ORDER BY id DESC", array($image_id));
+		$row = $database->execute("
+				SELECT *
+				FROM tag_histories
+				JOIN users ON tag_histories.user_id = users.id
+				WHERE image_id = ?
+				ORDER BY tag_histories.id DESC",
+				array($image_id));
 		return ($row ? $row : null);
 	}
 	
@@ -178,22 +208,20 @@ class Tag_History extends Extension {
 		$database->execute("DELETE FROM tag_histories WHERE image_id = ?", array($image_id));
 	}
 
-	private function add_tag_history($image_id)
+	private function add_tag_history($image_id, $tags)
 	{
 		// this function is called just before an images tag are changed
 		global $database;
 		global $config;
-		
-		// get the old tags
-		$image = $database->get_image($image_id);
-		$tags = $image->get_tag_array();
-		if(count($tags)==0)return;
-		$tags = implode(' ',$tags);
+		global $user;
 		
 		// add a history entry		
 		$allowed = $config->get_int("history_limit",10);
-		if($allowed<=0)return;
-		$row = $database->execute("INSERT INTO tag_histories(image_id, tags) VALUES (?, ?)", array($image_id, $tags));
+		if($allowed<=0) return;
+		$row = $database->execute("
+				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
+				VALUES (?, ?, ?, ?, now())",
+				array($image_id, $tags, $user->id, $_SERVER['REMOTE_ADDR']));
 		$entries = $database->db->GetOne("SELECT COUNT(*) FROM `tag_histories` WHERE image_id = ?", array($image_id));
 		
 		// if needed remove oldest one
@@ -205,5 +233,5 @@ class Tag_History extends Extension {
 		}
 	}
 }
-add_event_listener(new Tag_History(), 40); // early, so that old tags can be archived before new ones are set
+add_event_listener(new Tag_History());
 ?>
