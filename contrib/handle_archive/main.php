@@ -58,8 +58,11 @@ class ArchiveFileHandler extends Extension {
 			}
 			else {
 				$tmpfile = $fullpath;
-				$list .= "<br>".html_escape("$subdir/$filename (".str_replace("/", ",", $subdir).")...");
-				$error = $this->add_image($tmpfile, $filename, str_replace("/", " ", $subdir));
+				$tags = $subdir;
+				$tags = str_replace("/", " ", $tags);
+				$tags = str_replace("__", " ", $tags);
+				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ",", $tags).")...");
+				$error = $this->add_image($tmpfile, $filename, $tags);
 				if(is_null($error)) {
 					$list .= "ok\n";
 				}
