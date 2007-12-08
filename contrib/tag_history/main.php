@@ -214,6 +214,8 @@ class Tag_History extends Extension {
 		global $database;
 		global $config;
 		global $user;
+
+		if(is_array($tags)) $tags = implode(' ', $tags);
 		
 		// add a history entry		
 		$allowed = $config->get_int("history_limit",10);
