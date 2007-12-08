@@ -8,13 +8,25 @@ class RSS_Images extends Extension {
 			global $config;
 			$title = $config->get_string('title');
 
-			$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
-				"title=\"$title - Images\" href=\"".make_link("rss/images")."\" />");
+			if(count($event->search_terms) > 0) {
+				$search = implode(' ', $event->search_terms);
+				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
+					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search")."\" />");
+			}
+			else {
+				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
+					"title=\"$title - Images\" href=\"".make_link("rss/images")."\" />");
+			}
 		}
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "rss")) {
 			if($event->get_arg(0) == 'images') {
 				global $database;
-				$this->do_rss($database->get_images(0, 12));
+				if($event->count_args() >= 2) {
+					$this->do_rss($database->get_images(0, 12, tag_explode($event->get_arg(1))));
+				}
+				else {
+					$this->do_rss($database->get_images(0, 12));
+				}
 			}
 		}
 	}
