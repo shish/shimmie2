@@ -1,0 +1,41 @@
+/*
+ * This file may not be distributed without its readme.txt
+**/
+
+/* * * Link to Image * * */
+#Link_to_Image {
+	/* allows borders to encompass the content; */
+	overflow:hidden;
+}
+
+#Link_to_Image fieldset {
+	width: 32%;
+	float:left;
+	min-width:25em;
+}
+
+#Link_to_Image input, #Link_to_Image label {
+	display:block;
+	width:66%;
+	float:left;
+	margin-bottom:2.5px;
+}
+
+#Link_to_Image label {
+	width:30%;
+	text-align:left;
+	padding-right:2%;
+	cursor:pointer;
+}
+#Link_to_Image input {
+	font-size:0.7em;
+	font-family:courier, fixed, monospace;
+}
+
+#Link_to_Image br {
+	clear:both;
+}
+
+#Link_to_Image label:hover {
+	border-bottom:1px dashed;
+}
