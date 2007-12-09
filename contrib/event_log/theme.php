@@ -45,6 +45,7 @@ class EventLogTheme extends Themelet {
 				</tr>
 		";
 		foreach($events as $event) {
+			$h_entry = html_escape($event['entry']);
 			$table .= "
 				<tr>
 					<td>
@@ -53,7 +54,7 @@ class EventLogTheme extends Themelet {
 					<td>
 						<a href='".make_link("event_log", "filter=owner_ip&where={$event['owner_ip']}")."'>{$event['owner_ip']}</a>
 					</td>
-					<td rowspan='2' class='entry'>{$event['entry']}</td>
+					<td rowspan='2' class='entry'>$h_entry</td>
 				</tr>
 				<tr>
 					<td>
