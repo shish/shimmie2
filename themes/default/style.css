@@ -59,6 +59,11 @@ FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 
+BLOCKQUOTE {
+	border: 1px solid black;
+	padding: 8px;
+	background: #DDD;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *
