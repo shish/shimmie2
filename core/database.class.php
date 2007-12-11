@@ -36,6 +36,10 @@ class Database {
 	var $extensions;
 	var $get_images = "SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
 
+	/*
+	 * Create a new database object using connection info
+	 * stored in config.php in the root shimmie folder
+	 */
 	public function Database() {
 		if(is_readable("config.php")) {
 			require_once "config.php";
