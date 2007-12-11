@@ -30,8 +30,21 @@ class SVGFileHandler extends Extension {
 		if(is_a($event, 'ThumbnailGenerationEvent') && $event->type == "svg") {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
-			// FIXME: scale image, as not all boards use 192x192
-			copy("ext/handle_svg/thumb.jpg", "thumbs/$ha/$hash");
+
+			global $config;
+
+//			if($config->get_string("thumb_engine") == "convert") {
+//				$w = $config->get_int("thumb_width");
+//				$h = $config->get_int("thumb_height");
+//				$q = $config->get_int("thumb_quality");
+//				$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
+//
+//				exec("convert images/{$ha}/{$hash}[0] -geometry {$w}x{$h} -quality {$q} jpg:thumbs/{$ha}/{$hash}");
+//			}
+//			else {
+				// FIXME: scale image, as not all boards use 192x192
+				copy("ext/handle_svg/thumb.jpg", "thumbs/$ha/$hash");
+//			}
 		}
 
 		if(is_a($event, 'DisplayingImageEvent') && $event->image->ext == "svg") {
