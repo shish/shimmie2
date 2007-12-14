@@ -61,7 +61,7 @@ class CommentList extends Extension {
 			$config->set_default_int('comment_limit', 3);
 			$config->set_default_int('comment_count', 5);
 
-			if($config->get_int("ext_comments_version") < 1) {
+			if($config->get_int("ext_comments_version") < 2) {
 				$this->install();
 			}
 		}
@@ -143,17 +143,26 @@ class CommentList extends Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE `comments` (
-			`id` int(11) NOT NULL auto_increment,
-			`image_id` int(11) NOT NULL,
-			`owner_id` int(11) NOT NULL,
-			`owner_ip` char(16) NOT NULL,
-			`posted` datetime default NULL,
-			`comment` text NOT NULL,
-			PRIMARY KEY  (`id`),
-			KEY `comments_image_id` (`image_id`)
-		)");
-		$config->set_int("ext_comments_version", 1);
+		
+		if($config->get_int("ext_comments_version") < 1) {
+			$database->Execute("CREATE TABLE `comments` (
+				`id` int(11) NOT NULL auto_increment,
+				`image_id` int(11) NOT NULL,
+				`owner_id` int(11) NOT NULL,
+				`owner_ip` char(16) NOT NULL,
+				`posted` datetime default NULL,
+				`comment` text NOT NULL,
+				PRIMARY KEY  (`id`),
+				KEY `comments_image_id` (`image_id`)
+			)");
+			$config->set_int("ext_comments_version", 1);
+		}
+
+		if($config->get_int("ext_comments_version") == 1) {
+			$database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
+			$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
+			$config->set_int("ext_comments_version", 2);
+		}
 	}
 // }}}
 // page building {{{
