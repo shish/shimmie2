@@ -47,7 +47,7 @@ porn
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Banned Phrases");
-			$sb->add_label("One per line, lines that start with slashes are treated as regex");
+			$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
 			$sb->add_longtext_option("banned_words");
 			$event->panel->add_block($sb);
 		}
