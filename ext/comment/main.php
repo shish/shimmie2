@@ -278,6 +278,9 @@ class CommentList extends Extension {
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
 			$this->theme->display_error($page, "Permission Denied", "Anonymous posting has been disabled");
 		}
+		else if(is_null($database->get_image($image_id))) {
+			$event->veto("The image does not exist");
+		}
 		else if(trim($comment) == "") {
 			$this->theme->display_error($page, "Comment Empty", "Comments need text...");
 		}
