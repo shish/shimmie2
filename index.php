@@ -47,7 +47,10 @@ if(!file_exists("themes/$_theme")) $_theme = "default";
 require_once "themes/$_theme/page.class.php";
 require_once "themes/$_theme/layout.class.php";
 require_once "themes/$_theme/themelet.class.php";
-$themelets = array_merge(glob("ext/*/theme.php"), glob("themes/$_theme/*.theme.php"));
+
+$themelets = glob("ext/*/theme.php");
+$custom_themelets = glob("themes/$_theme/*.theme.php");
+if($custom_themelets) $themelets = array_merge($themelets, $custom_themelets);
 foreach($themelets as $filename) {
 	require_once $filename;
 }
