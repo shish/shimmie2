@@ -214,7 +214,7 @@ function build_dirs() { // {{{
 	}
 } // }}}
 function write_config($dsn) { // {{{
-	$file_content .= "<?php \$database_dsn='$dsn'; ?>";
+	$file_content = "<?php \$database_dsn='$dsn'; ?>";
 	
 	if(is_writable("./") && installer_write_file("config.php", $file_content)) {
 		assert(file_exists("config.php"));
