@@ -65,6 +65,10 @@ BLOCKQUOTE {
 	background: #DDD;
 }
 
+UL {
+	text-align: left;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

@@ -30,6 +30,8 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "<ul>\\1</ul>", $text);
 		$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "<ol>\\1</ol>", $text);
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
+		$text = preg_replace("#\[\*\]#s", "<li>", $text);
+		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
 		return $text;
 	}
 
@@ -52,6 +54,7 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "\\1", $text);
 		$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "\\1", $text);
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "\\1", $text);
+		$text = preg_replace("/\[\*\](.*?)/s", "\\1", $text);
 		return $text;
 	}
 }
