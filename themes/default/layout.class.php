@@ -19,10 +19,10 @@ class Layout {
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
-					$left_block_html .= $this->block_to_html($block, true);
+					$left_block_html .= $this->block_to_html($block, true, "left");
 					break;
 				case "main":
-					$main_block_html .= $this->block_to_html($block, false);
+					$main_block_html .= $this->block_to_html($block, false, "main");
 					break;
 				default:
 					print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -73,11 +73,11 @@ $header_html
 EOD;
 	}
 
-	function block_to_html($block, $hidable=false) {
+	function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
 		$html = "";
-		$i = str_replace(' ', '_', $h);
+		$i = str_replace(' ', '_', $h) . $salt;
 		if($hidable) {
 			$toggle = " onclick=\"toggle('$i')\"";
 		}
