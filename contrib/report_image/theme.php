@@ -66,7 +66,12 @@ class ReportImageTheme extends Themelet {
 			
 			if($config->get_bool('report_image_show_thumbs')) {
 				$image_obj_reported = $database->get_image($image_id);
-				return "<br>" . $this->build_thumb_html($image_obj_reported);
+				if($image_obj_reported) {
+					return "<br>" . $this->build_thumb_html($image_obj_reported);
+				}
+				else {
+					return "<br>Image not found -- bug!";
+				}
 			}
 		}
 
