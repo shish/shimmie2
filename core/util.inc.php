@@ -213,7 +213,7 @@ function get_base_href() {
 	}
 	assert(!empty($ok_var));
 	$dir = dirname($ok_var);
-	if($dir == "/") $dir = "";
+	if($dir == "/" || $dir == "\\") $dir = "";
 	return $dir;
 }
 
