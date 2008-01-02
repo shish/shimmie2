@@ -47,7 +47,7 @@ class Upload extends Extension {
 				if($this->can_upload($user)) {
 					$url = $_GET['url'];
 					$tags = array('tagme');
-					if(!empty($_GET['tags'])) {
+					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 						$tags = tag_explode($_GET['tags']);
 					}
 					$ok = $this->try_transload($url, $tags, $url);
