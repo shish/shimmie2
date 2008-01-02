@@ -244,6 +244,11 @@ class ImageIO extends Extension {
 				$file = $image->get_image_filename();
 			}
 		
+			if(!file_exists($file)) {
+				print("Can't read $file");
+				exit;
+			}
+
 			$page->set_data(file_get_contents($file));
 
 			if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
