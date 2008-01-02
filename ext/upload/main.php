@@ -56,7 +56,8 @@ class Upload extends Extension {
 			$sb->add_choice_option("transload_engine", array(
 				"Disabled" => "none",
 				"cURL" => "curl",
-				"fopen" => "fopen"
+				"fopen" => "fopen",
+				"WGet" => "wget"
 			), "<br>Transload: ");
 			$event->panel->add_block($sb);
 		}
@@ -148,6 +149,13 @@ class Upload extends Extension {
 			curl_exec($ch);
 			curl_close($ch);
 			fclose($fp);
+		}
+		
+		if($config->get_string("transload_engine") == "wget") {
+			$ua = "Shimmie-".VERSION;
+			$s_url = escapeshellarg($url);
+			$s_tmp = escapeshellarg($tmp_filename);
+			system("wget $s_url --output-document=$s_tmp --user-agent=$ua --referer=$s_url");
 		}
 		
 		if(filesize($tmp_filename) == 0) {
