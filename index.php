@@ -62,4 +62,8 @@ $user = _get_user();
 send_event(new InitExtEvent());
 send_event(_get_page_request($page, $user));
 $page->display();
+
+
+// for databases which support transactions
+$database->db->CommitTrans(true);
 ?>

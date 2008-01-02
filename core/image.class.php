@@ -16,6 +16,7 @@ class Image {
 	public function Image($row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
+				// FIXME: some databases use table.name rather than name
 				$this->$name = $value; // hax
 			}
 		}
@@ -30,7 +31,7 @@ class Image {
 		if(!isset($this->tag_array)) {
 			global $database;
 			$this->tag_array = Array();
-			$row = $database->Execute("SELECT * FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
+			$row = $database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
 			while(!$row->EOF) {
 				$this->tag_array[] = $row->fields['tag'];
 				$row->MoveNext();

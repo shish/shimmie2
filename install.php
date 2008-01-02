@@ -492,145 +492,92 @@ function move_data($old_dsn, $new_dsn, $old_data) {
  * Note: try and keep this as ANSI SQL compliant as possible,
  * so that we can (in theory) support other databases
  */
-function create_tables_mysql($db) {
-	$db->StartTrans();
-
-	$db->Execute("SET NAMES utf8"); // FIXME: mysql-specific :(
-	
+function create_tables_common($db, $auto_incrementing_id, $boolean, $true, $false, $ip) {
 	$db->Execute("CREATE TABLE aliases (
-		oldtag varchar(255) NOT NULL,
-		newtag varchar(255) NOT NULL,
-		PRIMARY KEY (oldtag)
+		oldtag VARCHAR(255) NOT NULL PRIMARY KEY,
+		newtag VARCHAR(255) NOT NULL
 	)");
 
 	$db->Execute("CREATE TABLE config (
-		name varchar(255) NOT NULL,
-		value text,
-		PRIMARY KEY (name)
+		name VARCHAR(255) NOT NULL PRIMARY KEY,
+		value TEXT
 	)");
 
 	$db->Execute("CREATE TABLE images (
-		id int(11) NOT NULL auto_increment,
-		owner_id int(11) NOT NULL default '0',
-		owner_ip char(16) default NULL,
-		filename varchar(64) NOT NULL default '',
-		filesize int(11) NOT NULL default '0',
-		hash char(32) NOT NULL default '',
-		ext char(4) NOT NULL default '',
-		source varchar(255),
-		width int(11) NOT NULL,
-		height int(11) NOT NULL,
-		posted datetime NOT NULL,
-		PRIMARY KEY (id),
-		UNIQUE (hash)
-	)");
-
-	$db->Execute("CREATE TABLE tags (
-		id int not null auto_increment primary key,
-		tag varchar(64) not null unique,
-		count int not null default 0,
-		KEY tags_count(count)
-	)");
-	
-	$db->Execute("CREATE TABLE image_tags (
-		image_id int NOT NULL default 0,
-		tag_id int NOT NULL default 0,
-		UNIQUE KEY image_id_tag_id (image_id,tag_id),
-		KEY tags_tag_id (tag_id),
-		KEY tags_image_id (image_id)
+		id $auto_incrementing_id,
+		owner_id INTEGER NOT NULL,
+		owner_ip $ip,
+		filename VARCHAR(64) NOT NULL DEFAULT '',
+		filesize INTEGER NOT NULL,
+		hash CHAR(32) NOT NULL UNIQUE,
+		ext CHAR(4) NOT NULL,
+		source VARCHAR(255),
+		width INTEGER NOT NULL,
+		height INTEGER NOT NULL,
+		posted TIMESTAMP NOT NULL
 	)");
 
 	$db->Execute("CREATE TABLE users (
-		id int(11) NOT NULL auto_increment,
-		name varchar(32) NOT NULL,
-		pass char(32) default NULL,
-		joindate datetime NOT NULL,
-		enabled enum('N','Y') NOT NULL default 'Y',
-		admin enum('N','Y') NOT NULL default 'N',
-		email varchar(255) default NULL,
-		PRIMARY KEY (id),
-		UNIQUE (name)
+		id $auto_incrementing_id,
+		name VARCHAR(32) NOT NULL UNIQUE,
+		pass CHAR(32),
+		joindate DATETIME NOT NULL,
+		enabled $boolean NOT NULL DEFAULT $true,
+		admin $boolean NOT NULL DEFAULT $false,
+		email VARCHAR(255)
 	)");
 	
 	$db->Execute("CREATE TABLE layout (
-		title varchar(64) primary key not null,
-		section varchar(32) not null default \"left\",
-		position int not null default 50,
-		visible enum('Y', 'N') default 'Y' not null
-	)");
-
-	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
-
-	return $db->CommitTrans();
-}
-function create_tables_pgsql($db) {
-	$db->StartTrans();
-	
-	$db->Execute("CREATE TABLE aliases (
-		oldtag varchar(255) NOT NULL,
-		newtag varchar(255) NOT NULL,
-		PRIMARY KEY (oldtag)
-	)");
-
-	$db->Execute("CREATE TABLE config (
-		name varchar(255) NOT NULL,
-		value text,
-		PRIMARY KEY (name)
-	)");
-
-	$db->Execute("CREATE TABLE images (
-		id SERIAL NOT NULL,
-		owner_id integer NOT NULL default '0',
-		owner_ip char(16) default NULL,
-		filename varchar(64) NOT NULL default '',
-		filesize integer NOT NULL default '0',
-		hash char(32) NOT NULL default '',
-		ext char(4) NOT NULL default '',
-		source varchar(255),
-		width integer NOT NULL,
-		height integer NOT NULL,
-		posted timestamp NOT NULL,
-		PRIMARY KEY (id),
-		UNIQUE (hash)
+		title VARCHAR(64) PRIMARY KEY NOT NULL,
+		section VARCHAR(32) NOT NULL DEFAULT 'left',
+		position INTEGER NOT NULL DEFAULT 50,
+		visible $boolean DEFAULT $true
 	)");
 
 	$db->Execute("CREATE TABLE tags (
-		id SERIAL NOT NULL,
-		tag varchar(64) not null unique,
-		count int not null default 0,
-		PRIMARY KEY(id)
+		id $auto_incrementing_id,
+		tag VARCHAR(64) NOT NULL UNIQUE,
+		count INTEGER NOT NULL DEFAULT 0
 	)");
 	$db->Execute("CREATE INDEX tags__count ON tags(count)");
 	
 	$db->Execute("CREATE TABLE image_tags (
-		image_id int NOT NULL default 0,
-		tag_id int NOT NULL default 0,
-		UNIQUE (image_id,tag_id)
+		image_id INTEGER NOT NULL DEFAULT 0,
+		tag_id INTEGER NOT NULL DEFAULT 0,
+		UNIQUE (image_id, tag_id)
 	)");
 	$db->Execute("CREATE INDEX image_tags__tag_id ON image_tags(tag_id)");
 	$db->Execute("CREATE INDEX image_tags__image_id ON image_tags(image_id)");
-
-	$db->Execute("CREATE TABLE users (
-		id SERIAL NOT NULL,
-		name varchar(32) NOT NULL,
-		pass char(32) default NULL,
-		joindate timestamp NOT NULL,
-		enabled char(1) NOT NULL default 'Y',
-		admin char(1) NOT NULL default 'N',
-		email varchar(255) default NULL,
-		PRIMARY KEY (id),
-		UNIQUE (name)
-	)");
 	
-	$db->Execute("CREATE TABLE layout (
-		title varchar(64) primary key not null,
-		section varchar(32) not null default 'left',
-		position int not null default 50,
-		visible char(1) default 'Y' not null
-	)");
 
 	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
-
+}
+function create_tables_mysql($db) {
+	$db->StartTrans();
+	$db->Execute("SET NAMES utf8");
+	create_tables_common($db,
+		"INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY",
+		"ENUM('Y', 'N')", "'Y'", "'N'",
+		"CHAR(15)"
+	);
+	return $db->CommitTrans();
+}
+function create_tables_pgsql($db) {
+	$db->StartTrans();
+	create_tables_common($db,
+		"SERIAL NOT NULL PRIMARY KEY",
+		"BOOLEAN", "True", "False",
+		"INET"
+	);
+	return $db->CommitTrans();
+}
+function create_tables_sqlite($db) {
+	$db->StartTrans();
+	create_tables_common($db,
+		"INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL",
+		"CHAR(1)", "'Y'", "'N'",
+		"CHAR(15)"
+	);
 	return $db->CommitTrans();
 }
 // }}}
