@@ -42,6 +42,15 @@ class UploadTheme extends Themelet {
 			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
 		";
 
+		if($tl_enabled) {
+			global $config;
+			$link = make_link("upload");
+			$title = "Upload to " . $config->get_string('title');
+			$html .= '<p><a href="javascript:location.href=&quot;' .
+				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
+				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+		}
+
 		$page->set_title("Upload");
 		$page->set_heading("Upload");
 		$page->add_block(new NavBlock());

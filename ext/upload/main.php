@@ -40,6 +40,21 @@ class Upload extends Extension {
 					$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
 				}
 			}
+			else if(!empty($_GET['url'])) {
+				global $user;
+				if($this->can_upload($user)) {
+					$url = $_GET['url'];
+					$tags = array('tagme');
+					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
+						$tags = tag_explode($_GET['tags']);
+					}
+					$ok = $this->try_transload($url, $tags, $url);
+					$this->theme->display_upload_status($event->page, $ok);
+				}
+				else {
+					$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
+				}
+			}
 			else {
 				$this->theme->display_page($event->page);
 			}
