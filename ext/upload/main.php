@@ -180,7 +180,7 @@ class Upload extends Extension {
 		}
 		else {
 			global $user;
-			$pathinfo = pathinfo($file);
+			$pathinfo = pathinfo($url);
 			$metadata['filename'] = $pathinfo['basename'];
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
