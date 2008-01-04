@@ -96,6 +96,11 @@ class TagEdit extends Extension {
 			// FIXME: what if the (image_id,tag_id) pair already exists?
 			$database->Execute("UPDATE IGNORE image_tags SET tag_id=? WHERE tag_id=?", Array($replace_id, $search_id));
 			$database->Execute("DELETE FROM image_tags WHERE tag_id=?", Array($search_id));
+			$database->Execute("
+				UPDATE tags
+				SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)
+				WHERE id=?
+				", array($replace_id));
 		}
 		else if($search_id) {
 			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
