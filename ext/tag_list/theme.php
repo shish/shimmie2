@@ -116,6 +116,9 @@ class TagListTheme extends Themelet {
 	}
 	
 	protected function ars($tag, $tags) {
+		// FIXME: a better fix would be to make sure the inputs are correct
+		$tag = strtolower($tag);
+		$tags = array_map("strtolower", $tags);
 		$html = "";
 		$html .= " <span class='ars'>(";
 		$html .= $this->get_add_link($tags, $tag);
