@@ -54,7 +54,7 @@ class ET extends Extension {
 		$info['sys_extensions'] = join(', ', $els);
 		
 		//$cfs = array();
-		//foreach($database->db->GetAll("SELECT name, value FROM config") as $pair) {
+		//foreach($database->get_all("SELECT name, value FROM config") as $pair) {
 		//	$cfs[] = $pair['name']."=".$pair['value'];
 		//}
 		//$info[''] = "Config: ".join(", ", $cfs);

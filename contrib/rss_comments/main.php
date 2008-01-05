@@ -33,7 +33,7 @@ class RSS_Comments extends Extension {
 		$page->set_mode("data");
 		$page->set_type("application/xml");
 
-		$comments = $database->db->GetAll("
+		$comments = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,

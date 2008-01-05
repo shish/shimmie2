@@ -137,7 +137,7 @@ class report_image extends Extension {
 		public function get_reported_images() {
 		// FIXME: many
 		global $database;
-		$reportedimages = $database->db->GetAll("SELECT * FROM ReportImage");
+		$reportedimages = $database->get_all("SELECT * FROM ReportImage");
 		if($reportedimages) {return $reportedimages;}
 		else {return array();}
 		}

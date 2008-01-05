@@ -48,7 +48,7 @@ class EventLog extends Extension {
 					$filter_sql = "WHERE $filter = $where";
 				}
 
-				$events = $database->db->GetAll("
+				$events = $database->get_all("
 					SELECT event_log.*,users.name FROM event_log
 					JOIN users ON event_log.owner_id = users.id
 					$filter_sql

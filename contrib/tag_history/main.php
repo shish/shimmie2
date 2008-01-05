@@ -141,7 +141,7 @@ class Tag_History extends Extension {
 	public function get_tag_history_from_id($image_id)
 	{
 		global $database;
-		$row = $database->db->GetAll("
+		$row = $database->get_all("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
@@ -154,7 +154,7 @@ class Tag_History extends Extension {
 	public function get_global_tag_history()
 	{
 		global $database;
-		$row = $database->db->GetAll("
+		$row = $database->get_all("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id

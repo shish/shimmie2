@@ -188,7 +188,7 @@ class TagList extends Extension {
 		";
 		$args = array($image->id, $config->get_int('tag_list_length'));
 
-		$tags = $database->db->GetAll($query, $args);
+		$tags = $database->get_all($query, $args);
 		if(count($tags) > 0) {
 			$this->theme->display_related_block($page, $tags);
 		}
@@ -206,7 +206,7 @@ class TagList extends Extension {
 		";
 		$args = array($config->get_int('tag_list_length'));
 
-		$tags = $database->db->GetAll($query, $args);
+		$tags = $database->get_all($query, $args);
 		if(count($tags) > 0) {
 			$this->theme->display_popular_block($page, $tags);
 		}
@@ -216,12 +216,17 @@ class TagList extends Extension {
 		global $database;
 		global $config;
 
-		$tags = tag_explode($search);
+		$wild_tags = tag_explode($search);
+		// $search_tags = array();
 		
 		$tag_id_array = array();
 		$tags_ok = true;
-		foreach($tags as $tag) {
+		foreach($wild_tags as $tag) {
+			$tag = str_replace("*", "%", $tag);
+			$tag = str_replace("?", "_", $tag);
 			$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+			// $search_tags = array_merge($search_tags,
+			//                  $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag)));
 			$tag_id_array = array_merge($tag_id_array, $tag_ids);
 			$tags_ok = count($tag_ids) > 0;
 			if(!$tags_ok) break;
@@ -247,10 +252,10 @@ class TagList extends Extension {
 			";
 			$args = array($config->get_int('tag_list_length'));
 
-			$tags = $database->db->GetAll($query, $args);
+			$related_tags = $database->get_all($query, $args);
 			print $database->db->ErrorMsg();
-			if(count($tags) > 0) {
-				$this->theme->display_refine_block($page, $tags, $search);
+			if(count($related_tags) > 0) {
+				$this->theme->display_refine_block($page, $related_tags, $wild_tags);
 			}
 		}
 	}

@@ -127,7 +127,7 @@ class Image_Hash_Ban extends Extension {
 		public function get_image_hash_bans() {
 		// FIXME: many
 		global $database;
-		$bans = $database->db->GetAll("SELECT * FROM image_bans");
+		$bans = $database->get_all("SELECT * FROM image_bans");
 		if($bans) {return $bans;}
 		else {return array();}
 		}

@@ -205,7 +205,7 @@ class CommentList extends Extension {
 	private function get_recent_comments() {
 		global $config;
 		global $database;
-		$rows = $database->db->GetAll("
+		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,
@@ -227,7 +227,7 @@ class CommentList extends Extension {
 		global $config;
 		global $database;
 		$i_image_id = int_escape($image_id);
-		$rows = $database->db->GetAll("
+		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name,
 				comments.comment as comment, comments.id as comment_id,

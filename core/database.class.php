@@ -94,6 +94,17 @@ class Database {
 		return $result;
 	}
 
+	public function get_all($query, $args=array()) {
+		$result = $this->db->GetAll($query, $args);
+		if($result === False) {
+			print "SQL Error: " . $this->db->ErrorMsg();
+			print "<br>Query: $query";
+			print "<br>Args: "; print_r($args);
+			exit;
+		}
+		return $result;
+	}
+
 	public function cache_execute($time, $query, $args=array()) {
 		global $config;
 		if($config->get_bool('db_cache')) {
