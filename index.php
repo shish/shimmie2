@@ -1,7 +1,7 @@
 <?php
 // set up and purify the environment
 define("DEBUG", false);
-define("VERSION", '2.1.0');
+define("VERSION", '2.1.1');
 
 if(DEBUG) {
 	error_reporting(E_ALL);
