@@ -223,9 +223,10 @@ class TextFormattingEvent extends Event {
 	var $stripped;
 
 	public function TextFormattingEvent($text) {
-		$this->original  = $text;
-		$this->formatted = $text;
-		$this->stripped  = $text;
+		$h_text = html_escape(trim($text));
+		$this->original  = $h_text;
+		$this->formatted = $h_text;
+		$this->stripped  = $h_text;
 	}
 }
 

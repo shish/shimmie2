@@ -9,8 +9,6 @@ class BBCode extends Extension {
 	}
 	
 	private function bbcode_to_html($text) {
-		$text = trim($text);
-		$text = html_escape($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
@@ -36,8 +34,6 @@ class BBCode extends Extension {
 	}
 
 	private function bbcode_to_text($text) {
-		$text = trim($text);
-		$text = html_escape($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
