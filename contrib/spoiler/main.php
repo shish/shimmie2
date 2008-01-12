@@ -10,11 +10,18 @@ class Spoiler extends Extension {
 	public function receive_event($event) {
 		if(is_a($event, 'TextFormattingEvent')) {
 			$event->formatted = $this->filter($event->formatted);
-			$event->stripped  = $this->filter($event->stripped);
+			$event->stripped  = $this->strip($event->stripped);
 		}
 	}
 	
 	private function filter($text) {
+		return str_replace(
+			array("[spoiler]","[/spoiler]"),
+			array("<span style=\"background-color:#000; color:#000;\">","</span>"),
+			$text);
+	}
+
+	private function strip($text) {
 		$l1 = strlen("[spoiler]");
 		$l2 = strlen("[/spoiler]");
 		while(true) {
