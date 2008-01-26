@@ -114,7 +114,7 @@ FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 #iblock {width: 512px; margin: auto; margin-top: 16px;}
-TD INPUT {width: 100%}
+TD INPUT {width: 350px;}
 		</style>
 	</head>
 	<body>
@@ -130,7 +130,7 @@ TD INPUT {width: 100%}
 						<tr><td>Database:</td><td><input type="text" name="database_dsn" size="40"></td></tr>
 						<tr><td>Admin Name:</td><td><input type="text" name="admin_name" size="40"></td></tr>
 						<tr><td>Admin Pass:</td><td><input type="password" name="admin_pass" size="40"></td></tr>
-						<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+						<tr><td colspan="2"><center><input type="submit" value="Go!"></center></td></tr>
 					</table>
 				</center>
 			</form>
