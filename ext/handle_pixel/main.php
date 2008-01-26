@@ -15,7 +15,7 @@ class PixelFileHandler extends Extension {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!copy($event->tmpname, "images/$ha/$hash")) {
-				$event->veto("Pixel Handler failed to move file from uploads to archive");
+				$event->veto("Pixel Handler failed to copy file from uploads ({$event->tmpname}) to archive (images/$ha/$hash)");
 				return;
 			}
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
@@ -115,7 +115,9 @@ class PixelFileHandler extends Extension {
 	private function make_thumb_gd($inname, $outname) {
 		global $config;
 		$thumb = $this->get_thumb($inname);
-		return imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
+		$ok = imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
+		imagedestroy($thumb);
+		return $ok;
 	}
 
 	private function get_thumb($tmpname) {
