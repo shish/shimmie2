@@ -60,7 +60,6 @@ function do_install() {
 	switch($stage) {
 		default: begin(); break;
 		case 'install': install_process(); break;
-		case 'upgrade': upgrade_process(); break;
 	}
 }
 
@@ -131,20 +130,6 @@ A:hover {text-decoration: underline;}
 				<br>eg: mysql://shimmie:pw123@localhost/shimmie?persist
 			</center>
 		</form>
-		
-		<h3>Upgrade</h3>
-		<form action="install.php?stage=upgrade" method="POST">
-			<center>
-				<table>
-					<tr><td>Old Database:</td><td><input type="text" size="50" name="old_dsn"></td></tr>
-					<tr><td>New Database:</td><td><input type="text" size="50" name="new_dsn"></td></tr>
-					<tr><td>Old Data Folder:</td><td><input type="text" size="50" name="old_data"></td></tr>
-					<tr><td colspan="2"><input type="submit" value="Next"></td></tr>
-				</table>
-
-				<p>Data folder is where the "images" and "thumbs" folders are stored
-			</center>
-		</form>
 	</body>
 </html>
 EOD;
@@ -173,8 +158,13 @@ function create_tables($dsn) { // {{{
 				$_SESSION['tables_created'] = true;
 			}
 		}
+		else if(substr($dsn, 0, 6) == "sqlite") {
+			if(create_tables_sqlite($db)) {
+				$_SESSION['tables_created'] = true;
+			}
+		}
 		else {
-			die("This database format isn't currently supported. Please use either MySQL or PostgreSQL.");
+			die("This database format isn't currently supported. Please use either MySQL, PostgreSQL, or SQLite.");
 		}
 
 		if(!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
@@ -299,191 +289,6 @@ function insert_defaults($dsn, $admin_name, $admin_pass) { // {{{
 		$db->Close();
 	}
 } // }}}
-// }}}
-// upgrade {{{
-function upgrade_process() { // {{{
-	if(!isset($_POST['old_dsn']) || !isset($_POST["new_dsn"]) || !isset($_POST["old_data"])) {
-		die("Install is missing some paramaters (old_dsn, new_dsn, or old_data)");
-	}
-	else {
-		$old_dsn = $_POST['old_dsn'];
-		$new_dsn = $_POST['new_dsn'];
-		$old_data = $_POST['old_data'];
-	}
-
-	if(!is_readable($old_data)) {die("Can't find \"$old_data\"");}
-	if(!is_readable("$old_data/images")) {die("Can't find \"$old_data/images\"");}
-	if(!is_readable("$old_data/thumbs")) {die("Can't find \"$old_data/thumbs\"");}
-
-	// set_admin_cookie($admin_name, $admin_pass);
-	create_tables($new_dsn);
-	build_dirs();
-	move_data($old_dsn, $new_dsn, $old_data);
-	write_config($new_dsn);
-	
-//	header("Location: index.php?q=setup");
-	print "<p>If everything looks OK, <a href='index.php?q=user/login'>continue</a>";
-} // }}}
-function move_data($old_dsn, $new_dsn, $old_data) {
-	print("<br>Upping PHP resource limits...");
-	set_time_limit(600);
-	ini_set("memory_limit", "32M");
-
-	print("<br>Fetching old data...");
-	$old_db = NewADOConnection($old_dsn);
-	$old_db->SetFetchMode(ADODB_FETCH_ASSOC);
-	# tmpfile & serialize?
-	$anon_id = -1;
-	$users = $old_db->GetAll("SELECT id, name, pass, joindate FROM users ORDER BY id");
-	$admins = $old_db->GetCol("SELECT owner_id FROM user_configs WHERE name='isadmin' AND value='true'");
-	$images = $old_db->GetAll("SELECT id, owner_id, owner_ip, filename, hash, ext FROM images ORDER BY id");
-	$comments = $old_db->GetAll("SELECT id, image_id, owner_id, owner_ip, posted, comment FROM comments ORDER BY id");
-	$tags = $old_db->GetAll("SELECT image_id, tag FROM tags");
-	$old_db->Close();
-
-	$new_db = NewADOConnection($new_dsn);
-	$new_db->SetFetchMode(ADODB_FETCH_ASSOC);
-
-	if($users) {
-		print("<br>Moving users...");
-		$new_db->Execute("DELETE FROM users");
-		$new_db->Execute("
-				INSERT INTO users(id, name, pass, joindate, enabled, admin, email)
-				VALUES(?, ?, ?, ?, 'Y', 'N', '')", $users);
-	}
-
-	if($admins) {
-		print("<br>Setting account flags");
-		$new_db->Execute("UPDATE users SET admin='Y' WHERE id=?", array($admins));
-	}
-
-	if(true) {
-		print("<br>Updating anonymous account...");
-		$anon_id = $new_db->GetOne("SELECT id FROM users WHERE name='Anonymous'");
-		if(!$anon_id) {
-			print("<br><b>Warning</b>: 'Anonymous' not found; creating one");
-			$new_db->Execute("INSERT INTO users(name, pass, joindate) VALUES ('Anonymous', NULL, now())");
-			$anon_id = $new_db->Insert_ID();
-		}
-
-		$new_db->Execute("DELETE FROM config WHERE name=?", array("anon_id"));
-		$new_db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", array('anon_id', $anon_id));
-	}
-
-	if($images) {
-		print("<br>Moving images...");
-		$new_db->Execute("DELETE FROM images");
-		$new_db->Execute("
-				INSERT INTO images(id, owner_id, owner_ip, filename, hash, ext, filesize, width, height, source, posted)
-				VALUES (?, ?, ?, ?, ?, ?, 0, 0, 0, NULL, now())", $images);
-
-		print("<br>Setting orphan images to anonymous...");
-		$orphans = $new_db->GetCol("
-			SELECT images.id
-			FROM images
-			LEFT JOIN users ON users.id = images.owner_id
-			WHERE isnull(users.name)");
-		if($orphans) {
-			foreach($orphans as $orphan) {
-				$new_db->Execute("UPDATE images SET owner_id=? WHERE id=?", array($anon_id, $orphan));
-			}
-		}
-	}
-
-	if($comments) {
-		print("<br>Moving comments...");
-
-		// HAAAAAAAX!
-		// the comments table is installed by an extension, so it won't be
-		// ready when we need it...
-		$new_db->Execute("DROP TABLE comments");
-		$new_db->Execute("DELETE FROM config WHERE name=?", array('ext_comments_version'));
-
-		$new_db->Execute("CREATE TABLE `comments` (
-			`id` int(11) NOT NULL auto_increment,
-			`image_id` int(11) NOT NULL,
-			`owner_id` int(11) NOT NULL,
-			`owner_ip` char(16) NOT NULL,
-			`posted` datetime default NULL,
-			`comment` text NOT NULL,
-			PRIMARY KEY  (`id`),
-			KEY `comments_image_id` (`image_id`)
-		)");
-		$new_db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", array("ext_comments_version", 1));
-
-		$new_db->Execute("DELETE FROM comments");
-		$new_db->Execute("
-				INSERT INTO comments(id, image_id, owner_id, owner_ip, posted, comment)
-				VALUES (?, ?, ?, ?, ?, ?)", $comments);
-
-		print("<br>Setting orphan comments to anonymous...");
-		$orphans = $new_db->GetCol("
-			SELECT comments.id
-			FROM comments
-			LEFT JOIN users ON users.id = comments.owner_id
-			WHERE isnull(users.name)");
-		if($orphans) {
-			foreach($orphans as $orphan) {
-				$new_db->Execute("UPDATE comments SET owner_id=? WHERE id=?", array($anon_id, $orphan));
-			}
-		}
-	}
-
-	if($tags) {
-		print("<br>Moving tags..");
-		$new_db->Execute("CREATE TABLE old_tags(image_id int, tag varchar(64))");
-		$new_db->Execute("DELETE FROM old_tags");
-		$new_db->Execute("INSERT INTO old_tags(image_id, tag) VALUES (?, ?)", $tags);
-		
-		$database->Execute("DELETE FROM tags");
-		$database->Execute("INSERT INTO tags(tag) SELECT DISTINCT tag FROM old_tags");
-		$database->Execute("DELETE FROM image_tags");
-		$database->Execute("INSERT INTO image_tags(image_id, tag_id) SELECT old_tags.image_id, tags.id FROM old_tags JOIN tags ON old_tags.tag = tags.tag");
-		$database->Execute("UPDATE tags SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)");
-		$new_db->Execute("DROP TABLE tags_tmp");
-	}
-
-	print("<br>Moving files...");
-	$result = $new_db->Execute("SELECT * FROM images");
-	while(!$result->EOF) {
-		$fields = $result->fields;
-
-		$id = $fields['id'];
-		$hash = $fields['hash'];
-		$ext = $fields['ext'];
-		$ab = substr($hash, 0, 2);
-
-		if(file_exists("images/$ab/$hash")) {
-			unlink("images/$ab/$hash");
-		}
-
-		$fname = "$old_data/images/$id.$ext";
-		if(file_exists($fname)) {
-			$size = filesize($fname);
-			$sizekb = (int)($size/1024);
-			$info = getimagesize($fname);
-			if($info) {
-				$width = $info[0];
-				$height = $info[1];
-
-				// print "<br>{$id}: {$width}x{$height}, {$sizekb}KB\n"; // noise
-				$new_db->Execute("UPDATE images SET width=?, height=?, filesize=? WHERE id=?",
-					array($width, $height, $size, $id));
-			}
-	
-			copy("$old_data/thumbs/$id.jpg", "thumbs/$ab/$hash");
-			copy("$old_data/images/$id.$ext", "images/$ab/$hash");
-		}
-		else {
-			print "<br><b>Warning:</b> $fname not found; dropped from new database";
-			$new_db->Execute("DELETE FROM images WHERE id=?", array($id));
-		}
-	
-		$result->MoveNext();
-	}
-
-	$new_db->Close();
-}
 // }}}
 
 
