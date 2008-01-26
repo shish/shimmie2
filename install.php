@@ -1,4 +1,32 @@
-<?php
+<?php if(false) { ?>
+<html>
+	<head>
+		<title>Error</title>
+		<style>
+BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
+H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
+H1 {margin-top: 0px;margin-bottom: 0px;padding: 2px;}
+H3 {margin-top: 32px;padding: 1px;}
+FORM {margin: 0px;}
+A {text-decoration: none;}
+A:hover {text-decoration: underline;}
+#block {width: 512px; margin: auto; margin-top: 64px;}
+		</style>
+	</head>
+	<body>
+		<div id="block">
+			<h1>Install Error</h1>
+			<p>Shimmie needs to be run via a web server with PHP support -- you
+			appear to be either opening the file from your hard disk, or your
+			web server is mis-configured.
+			<p>If you've installed a web server on your desktop PC, you probably
+			want to visit <a href="http://localhost/">the local web server</a>.
+			<p>For more help with installation, visit
+			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
+			documentation wiki</a>.
+		</div>
+		<div style="display: none;">
+<?php }
 /*
  * install.php (c) Shish 2007
  *
@@ -75,61 +103,48 @@ function begin() {
 
 	print <<<EOD
 <html>
-	<head><title>Shimmie2 Installer</title></head>
-	<style>
-BODY {
-	background: #EEE;
-	font-family: "Arial", sans-serif;
-	font-size: 14px;
-}
-H1, H3 {
-	border: 1px solid black;
-	background: #DDD;
-	text-align: center;
-}
-H1 {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding: 2px;
-}
-H3 {
-	margin-top: 32px;
-	padding: 1px;
-}
-TD {
-	vertical-align: top;
-	text-align: center;
-}
+	<head>
+		<title>Shimmie2 Installer</title>
+		<style>
+BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
+H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
+H1 {margin-top: 0px;margin-bottom: 0px;padding: 2px;}
+H3 {margin-top: 32px;padding: 1px;}
 FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
-	</style>
+#iblock {width: 512px; margin: auto; margin-top: 16px;}
+TD INPUT {width: 100%}
+		</style>
+	</head>
 	<body>
-		<h1>Shimmie Installer</h1>
+		<div id="iblock">
+			<h1>Shimmie Installer</h1>
 
-		$gd
+			$gd
 
-		<h3>Note</h3>
-		Shimmie is developed with MySQL, and support
-		for it is included. Other databases <i>may</i> work,
-		but you'll need to add the appropriate ADOdb
-		drivers yourself
-		
-		<h3>Install</h3>
-		<form action="install.php?stage=install" method="POST">
-			<center>
-				<table>
-					<tr><td>Database</td><td><input type="text" name="database_dsn" size="50"></td></tr>
-					<tr><td>Admin Name:</td><td><input type="text" name="admin_name" size="50"></td></tr>
-					<tr><td>Admin Pass:</td><td><input type="password" name="admin_pass" size="50"></td></tr>
-					<tr><td colspan="2"><input type="submit" value="Next"></td></tr>
-				</table>
-				
-				<p>Databases should be specified like so:
-				<br>ie: protocol://username:password@host/database?options
-				<br>eg: mysql://shimmie:pw123@localhost/shimmie?persist
-			</center>
-		</form>
+			<h3>Install</h3>
+			<form action="install.php?stage=install" method="POST">
+				<center>
+					<table>
+						<tr><td>Database:</td><td><input type="text" name="database_dsn" size="40"></td></tr>
+						<tr><td>Admin Name:</td><td><input type="text" name="admin_name" size="40"></td></tr>
+						<tr><td>Admin Pass:</td><td><input type="password" name="admin_pass" size="40"></td></tr>
+						<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+					</table>
+				</center>
+			</form>
+
+			<h3>Help</h3>
+					
+			<p>Databases should be specified like so:
+			<br>ie: <code>protocol://username:password@host/database?options</code>
+			<br>eg: <code>mysql://shimmie:pw123@localhost/shimmie?persist</code>
+			
+			<p>For more help with installation, visit
+			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
+			documentation wiki</a>.
+		</div>
 	</body>
 </html>
 EOD;
