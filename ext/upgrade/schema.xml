@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<schema version="0.3">
+	<!-- FIXME: mysql utf8ness -->
+	<table name="aliases">
+		<field name="oldtag" type="C" size="255"><key/><notnull/></field>
+		<field name="newtag" type="C" size="255"><notnull/></field>
+		<index name="aliases__unique"><col>oldtag</col><col>newtag</col><unique/></index>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+	
+	<table name="config">
+		<field name="name" type="C" size="255"><key/><notnull/></field>
+		<field name="value" type="X" size="4000"></field>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+
+	<table name="images">
+		<field name="id" type="I"><key/><autoincrement/></field>
+		<field name="owner_id" type="I"><notnull/></field>
+		<field name="owner_ip" type="C" size="15"><notnull/></field>
+		<field name="filename" type="C" size="64"><notnull/></field>
+		<field name="filesize" type="I"><notnull/></field>
+		<field name="hash" type="C" size="32"><notnull/></field>
+		<field name="ext" type="C" size="4"><notnull/></field>
+		<field name="source" type="C" size="255"></field>
+		<field name="width" type="I"><notnull/></field>
+		<field name="height" type="I"><notnull/></field>
+		<field name="posted" type="T"><notnull/></field>
+		<index name="images__owner_id"><col>owner_id</col></index>
+		<index name="images__hash"><col>hash</col><unique/></index>
+		<index name="images__width"><col>width</col></index>
+		<index name="images__height"><col>height</col></index>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+
+	<table name="users">
+		<field name="id" type="I"><key/><autoincrement/></field>
+		<field name="name" type="C" size="32"><notnull/></field>
+		<field name="pass" type="C" size="32"></field>
+		<field name="joindate" type="T"><notnull/></field>
+		<field name="enabled" type="C" size="1"><notnull/><default value="Y"/></field>
+		<field name="admin" type="C" size="1"><notnull/><default value="N"/></field>
+		<field name="email" type="C" size="255"></field>
+		<index name="users__name"><col>name</col><unique/></index>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+
+	<table name="tags">
+		<field name="id" type="I"><key/><autoincrement/></field>
+		<field name="tag" type="C" size="64"><notnull/></field>
+		<field name="count" type="I"><notnull/><default value="0"/></field>
+		<index name="tags__tag"><col>tag</col><unique/></index>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+
+	<table name="image_tags">
+		<field name="image_id" type="I"><notnull/></field>
+		<field name="tag_id" type="I"><notnull/></field>
+		<index name="image_tags__image_id"><col>image_id</col></index>
+		<index name="image_tags__tag_id"><col>tag_id</col></index>
+		<index name="image_tags__key"><col>image_id</col><col>tag_id</col><unique/></index>
+		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
+	</table>
+
+	<sql>
+		<query>DELETE FROM config WHERE name='db_version'</query>
+		<query>INSERT INTO config(name, value) VALUES('db_version', 6)</query>
+	</sql>
+</schema>

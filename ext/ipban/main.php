@@ -84,21 +84,8 @@ class IPBan extends Extension {
 		global $database;
 		global $config;
 		
-		if($config->get_int("ext_ipban_version") < 1) {
-			$database->Execute("CREATE TABLE bans (
-				id int(11) NOT NULL auto_increment,
-				ip char(15) default NULL,
-				date datetime default NULL,
-				end datetime default NULL,
-				reason varchar(255) default NULL,
-				PRIMARY KEY (id)
-			)");
-			$config->set_int("ext_ipban_version", 1);
-		}
-		if($config->get_int("ext_ipban_version") < 2) {
-			$database->execute("ALTER TABLE bans CHANGE ip ip CHAR(15) NOT NULL");
-			$database->execute("ALTER TABLE bans ADD COLUMN banner_id INTEGER NOT NULL");
-			$config->set_int("ext_ipban_version", 2);
+		if($config->get_int("ext_ipban_version") < 3) {
+			$database->upgrade_schema("ext/ipban/schema.xml");
 		}
 	}
 // }}}
