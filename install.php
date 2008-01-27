@@ -1,7 +1,16 @@
-<?php if(false) { ?>
 <html>
+<!--
+ - install.php (c) Shish 2007
+ -
+ - Initialise the database, check that folder
+ - permissions are set properly, set an admin
+ - account.
+ -
+ - This file should be independant of the database
+ - and other such things that aren't ready yet
+-->
 	<head>
-		<title>Error</title>
+		<title>Shimmie Installation</title>
 		<style>
 BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
 H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
@@ -11,9 +20,12 @@ FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 #block {width: 512px; margin: auto; margin-top: 64px;}
+#iblock {width: 512px; margin: auto; margin-top: 16px;}
+TD INPUT {width: 350px;}
 		</style>
 	</head>
 	<body>
+<?php if(false) { ?>
 		<div id="block">
 			<h1>Install Error</h1>
 			<p>Shimmie needs to be run via a web server with PHP support -- you
@@ -26,22 +38,24 @@ A:hover {text-decoration: underline;}
 			documentation wiki</a>.
 		</div>
 		<div style="display: none;">
+			<PLAINTEXT>
 <?php }
-/*
- * install.php (c) Shish 2007
- *
- * Initialise the database, check that folder
- * permissions are set properly, set an admin
- * account.
- *
- * This file should be independant of the database
- * and other such things that aren't ready yet
- */
-
 // FIXME: should be called from index
-do_install();
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
+
+/*
+ * This file lets anyone destroy the database -- disable it
+ * as soon as the admin is done installing for the first time
+ */
+if(is_readable("config.php")) {
+	echo "'config.php' exists -- install function is disabled";
+	exit;
+}
+require_once "lib/adodb/adodb.inc.php";
+require_once "lib/adodb/adodb-xmlschema03.inc.php";
+
+do_install();
 
 // utilities {{{
 function installer_write_file($fname, $data) {
@@ -68,19 +82,16 @@ function check_gd_version() {
 
 	return $gdversion;
 }
+
+function check_im_version() {
+	if(!ini_get('safe_mode')) {
+		$convert_check = exec("convert");
+	}
+	return (empty($convert_check) ? 0 : 1);
+}
 // }}}
 // init {{{
 function do_install() {
-	/*
-	 * This file lets anyone destroy the database -- disable it
-	 * as soon as the admin is done installing for the first time
-	 */
-	if(is_readable("config.php")) {
-		echo "'config.php' exists -- install function is disabled";
-		exit;
-	}
-	require_once "lib/adodb/adodb.inc.php";
-
 	session_start(); // hold temp stuff in session
 
 	$stage = isset($_GET['stage']) ? $_GET['stage'] : "begin";
@@ -93,31 +104,16 @@ function do_install() {
 
 
 function begin() {
-	if(check_gd_version() == 0) {
-		$gd = "<h3>Error</h3>\nPHP's GD extension seems to be missing; ".
-		      "you can live without it if you have imagemagick installed...";
+	if(check_gd_version() == 0 && check_im_version() == 0) {
+		$gd = "<h3>Error</h3>\nPHP's GD extension seems to be missing, ".
+		      "and imagemagick's \"convert\" command cannot be found - ".
+			  "no thumbnailing engines are available.";
 	}
 	else {
 		$gd = "";
 	}
 
 	print <<<EOD
-<html>
-	<head>
-		<title>Shimmie2 Installer</title>
-		<style>
-BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
-H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
-H1 {margin-top: 0px;margin-bottom: 0px;padding: 2px;}
-H3 {margin-top: 32px;padding: 1px;}
-FORM {margin: 0px;}
-A {text-decoration: none;}
-A:hover {text-decoration: underline;}
-#iblock {width: 512px; margin: auto; margin-top: 16px;}
-TD INPUT {width: 350px;}
-		</style>
-	</head>
-	<body>
 		<div id="iblock">
 			<h1>Shimmie Installer</h1>
 
@@ -145,8 +141,6 @@ TD INPUT {width: 350px;}
 			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
 			documentation wiki</a>.
 		</div>
-	</body>
-</html>
 EOD;
 }
 // }}}
@@ -164,26 +158,16 @@ function create_tables($dsn) { // {{{
 	}
 	else {
 		if(substr($dsn, 0, 5) == "mysql") {
-			if(create_tables_mysql($db)) {
-				$_SESSION['tables_created'] = true;
-			}
+			$db->Execute("SET NAMES utf8");
 		}
-		else if(substr($dsn, 0, 5) == "pgsql" || substr($dsn, 0, 8) == "postgres") {
-			if(create_tables_pgsql($db)) {
-				$_SESSION['tables_created'] = true;
-			}
-		}
-		else if(substr($dsn, 0, 6) == "sqlite") {
-			if(create_tables_sqlite($db)) {
-				$_SESSION['tables_created'] = true;
-			}
-		}
-		else {
-			die("This database format isn't currently supported. Please use either MySQL, PostgreSQL, or SQLite.");
-		}
+		$schema = new adoSchema($db);
+		$sql = $schema->ParseSchema("ext/upgrade/schema.xml");
+		echo "<pre>"; var_dump($sql); echo "</pre>";
+		$result = $schema->ExecuteSchema();
 
-		if(!isset($_SESSION['tables_created']) || !$_SESSION['tables_created']) {
-			die("Error creating tables");
+		if(!$result) {
+			define( 'XMLS_DEBUG', TRUE );
+			die("Error creating tables from XML schema");
 		}
 	}
 	$db->Close();
@@ -228,9 +212,6 @@ function write_config($dsn) { // {{{
 	else {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
-<html>
-	<head><title>Shimmie2 Installer</title></head>
-	<body>
 		The web server isn't allowed to write to the config file; please copy
 	    the text below, save it as 'config.php', and upload it into the shimmie
 	    folder manually. Make sure that when you save it, there is no whitespace
@@ -239,15 +220,11 @@ function write_config($dsn) { // {{{
 		<p><textarea cols="80" rows="2">$file_content</textarea>
 						
 		<p>One done, <a href='index.php?q=setup'>Continue</a>
-	</body>
-</html>
 EOD;
 		session_destroy();
 		exit;
 	}
 } // }}}
-// }}}
-// install {{{
 function install_process() { // {{{
 	if(!isset($_POST['database_dsn']) || !isset($_POST["admin_name"]) || !isset($_POST["admin_pass"])) {
 		die("Install is missing some paramaters (database_dsn, admin_name, or admin_pass)");
@@ -294,111 +271,14 @@ function insert_defaults($dsn, $admin_name, $admin_pass) { // {{{
 		$admin_pass = md5(strtolower($admin_name).$admin_pass);
 		$db->Execute($user_insert, Array($admin_name, $admin_pass, 'Y'));
 
-		if(!ini_get('safe_mode')) {
-			$convert_check = exec("convert");
-			if(!empty($convert_check)) {
-				$db->Execute($config_insert, Array('thumb_engine', 'convert'));
-			}
+		if(check_im_version() > 0) {
+			$db->Execute($config_insert, Array('thumb_engine', 'convert'));
 		}
 		
 		$db->Close();
 	}
 } // }}}
 // }}}
-
-
-// table creation {{{
-/*
- * Note: try and keep this as ANSI SQL compliant as possible,
- * so that we can (in theory) support other databases
- */
-function create_tables_common($db, $auto_incrementing_id, $boolean, $true, $false, $ip) {
-	$db->Execute("CREATE TABLE aliases (
-		oldtag VARCHAR(255) NOT NULL PRIMARY KEY,
-		newtag VARCHAR(255) NOT NULL
-	)");
-
-	$db->Execute("CREATE TABLE config (
-		name VARCHAR(255) NOT NULL PRIMARY KEY,
-		value TEXT
-	)");
-
-	$db->Execute("CREATE TABLE images (
-		id $auto_incrementing_id,
-		owner_id INTEGER NOT NULL,
-		owner_ip $ip,
-		filename VARCHAR(64) NOT NULL DEFAULT '',
-		filesize INTEGER NOT NULL,
-		hash CHAR(32) NOT NULL UNIQUE,
-		ext CHAR(4) NOT NULL,
-		source VARCHAR(255),
-		width INTEGER NOT NULL,
-		height INTEGER NOT NULL,
-		posted TIMESTAMP NOT NULL
-	)");
-
-	$db->Execute("CREATE TABLE users (
-		id $auto_incrementing_id,
-		name VARCHAR(32) NOT NULL UNIQUE,
-		pass CHAR(32),
-		joindate DATETIME NOT NULL,
-		enabled $boolean NOT NULL DEFAULT $true,
-		admin $boolean NOT NULL DEFAULT $false,
-		email VARCHAR(255)
-	)");
-	
-	$db->Execute("CREATE TABLE layout (
-		title VARCHAR(64) PRIMARY KEY NOT NULL,
-		section VARCHAR(32) NOT NULL DEFAULT 'left',
-		position INTEGER NOT NULL DEFAULT 50,
-		visible $boolean DEFAULT $true
-	)");
-
-	$db->Execute("CREATE TABLE tags (
-		id $auto_incrementing_id,
-		tag VARCHAR(64) NOT NULL UNIQUE,
-		count INTEGER NOT NULL DEFAULT 0
-	)");
-	$db->Execute("CREATE INDEX tags__count ON tags(count)");
-	
-	$db->Execute("CREATE TABLE image_tags (
-		image_id INTEGER NOT NULL DEFAULT 0,
-		tag_id INTEGER NOT NULL DEFAULT 0,
-		UNIQUE (image_id, tag_id)
-	)");
-	$db->Execute("CREATE INDEX image_tags__tag_id ON image_tags(tag_id)");
-	$db->Execute("CREATE INDEX image_tags__image_id ON image_tags(image_id)");
-	
-
-	$db->Execute("INSERT INTO config(name, value) VALUES(?, ?)", Array('db_version', 5));
-}
-function create_tables_mysql($db) {
-	$db->StartTrans();
-	$db->Execute("SET NAMES utf8");
-	create_tables_common($db,
-		"INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY",
-		"ENUM('Y', 'N')", "'Y'", "'N'",
-		"CHAR(15)"
-	);
-	return $db->CommitTrans();
-}
-function create_tables_pgsql($db) {
-	$db->StartTrans();
-	create_tables_common($db,
-		"SERIAL NOT NULL PRIMARY KEY",
-		"BOOLEAN", "True", "False",
-		"INET"
-	);
-	return $db->CommitTrans();
-}
-function create_tables_sqlite($db) {
-	$db->StartTrans();
-	create_tables_common($db,
-		"INTEGER AUTOINCREMENT PRIMARY KEY NOT NULL",
-		"CHAR(1)", "'Y'", "'N'",
-		"CHAR(15)"
-	);
-	return $db->CommitTrans();
-}
-// }}}
 ?>
+	</body>
+</html>
