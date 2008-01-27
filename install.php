@@ -175,7 +175,6 @@ function create_tables($dsn) { // {{{
 		}
 		$schema = new adoSchema($db);
 		$sql = $schema->ParseSchema("ext/upgrade/schema.xml");
-		echo "<pre>"; var_dump($sql); echo "</pre>";
 		$result = $schema->ExecuteSchema();
 
 		if(!$result) {
