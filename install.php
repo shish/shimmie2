@@ -40,7 +40,6 @@ TD INPUT {width: 350px;}
 		<div style="display: none;">
 			<PLAINTEXT>
 <?php }
-// FIXME: should be called from index
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
 
@@ -90,20 +89,17 @@ function check_im_version() {
 	return (empty($convert_check) ? 0 : 1);
 }
 // }}}
-// init {{{
-function do_install() {
+function do_install() { // {{{
 	session_start(); // hold temp stuff in session
 
-	$stage = isset($_GET['stage']) ? $_GET['stage'] : "begin";
-
-	switch($stage) {
-		default: begin(); break;
-		case 'install': install_process(); break;
+	if(!isset($_POST['database_dsn'])) {
+		begin();
 	}
-}
-
-
-function begin() {
+	else {
+		install_process();
+	}
+} // }}}
+function begin() { // {{{
 	if(check_gd_version() == 0 && check_im_version() == 0) {
 		$gd = "<h3>Error</h3>\nPHP's GD extension seems to be missing, ".
 		      "and imagemagick's \"convert\" command cannot be found - ".
@@ -120,7 +116,7 @@ function begin() {
 			$gd
 
 			<h3>Install</h3>
-			<form action="install.php?stage=install" method="POST">
+			<form action="install.php" method="POST">
 				<center>
 					<table>
 						<tr><td>Database:</td><td><input type="text" name="database_dsn" size="40"></td></tr>
@@ -142,9 +138,28 @@ function begin() {
 			documentation wiki</a>.
 		</div>
 EOD;
-}
-// }}}
-// common {{{
+} // }}}
+function install_process() { // {{{
+	if(!isset($_POST['database_dsn']) || !isset($_POST["admin_name"]) || !isset($_POST["admin_pass"])) {
+		die("Install is missing some paramaters (database_dsn, admin_name, or admin_pass)");
+	}
+	else if(strlen($_POST["admin_name"]) < 1 || strlen($_POST["admin_pass"]) < 1) {
+		die("Admin name and password must be at least one character each");
+	}
+	else {
+		$database_dsn = $_POST['database_dsn'];
+		$admin_name = $_POST["admin_name"];
+		$admin_pass = $_POST["admin_pass"];
+	}
+
+	set_admin_cookie($admin_name, $admin_pass);
+	create_tables($database_dsn);
+	insert_defaults($database_dsn, $admin_name, $admin_pass);
+	build_dirs();
+	write_config($database_dsn);
+	
+	header("Location: index.php?q=setup");
+} // }}}
 function set_admin_cookie($admin_name, $admin_pass) { // {{{
 	$addr = $_SERVER['REMOTE_ADDR'];
 	$hash = md5(strtolower($admin_name) . $admin_pass);
@@ -166,11 +181,31 @@ function create_tables($dsn) { // {{{
 		$result = $schema->ExecuteSchema();
 
 		if(!$result) {
-			define( 'XMLS_DEBUG', TRUE );
 			die("Error creating tables from XML schema");
 		}
 	}
 	$db->Close();
+} // }}}
+function insert_defaults($dsn, $admin_name, $admin_pass) { // {{{
+	$db = NewADOConnection($dsn);
+	if(!$db) {
+		die("Couldn't connect to \"$dsn\"");
+	}
+	else {
+		$config_insert = $db->Prepare("INSERT INTO config(name, value) VALUES(?, ?)");
+		$user_insert = $db->Prepare("INSERT INTO users(name, pass, joindate, admin) VALUES(?, ?, now(), ?)");
+		$admin_pass = md5(strtolower($admin_name).$admin_pass);
+
+		$db->Execute($user_insert, Array('Anonymous', null, 'N'));
+		$db->Execute($config_insert, Array('anon_id', $db->Insert_ID()));
+		$db->Execute($user_insert, Array($admin_name, $admin_pass, 'Y'));
+
+		if(check_im_version() > 0) {
+			$db->Execute($config_insert, Array('thumb_engine', 'convert'));
+		}
+
+		$db->Close();
+	}
 } // }}}
 function build_dirs() { // {{{
 	if(!file_exists("images")) @mkdir("images"); // *try* and make default dirs. Ignore any errors -- 
@@ -225,60 +260,6 @@ EOD;
 		exit;
 	}
 } // }}}
-function install_process() { // {{{
-	if(!isset($_POST['database_dsn']) || !isset($_POST["admin_name"]) || !isset($_POST["admin_pass"])) {
-		die("Install is missing some paramaters (database_dsn, admin_name, or admin_pass)");
-	}
-	else if(strlen($_POST["admin_name"]) < 1 || strlen($_POST["admin_pass"]) < 1) {
-		die("Admin name and password must be at least one character each");
-	}
-	else {
-		$database_dsn = $_POST['database_dsn'];
-		$admin_name = $_POST["admin_name"];
-		$admin_pass = $_POST["admin_pass"];
-	}
-
-	set_admin_cookie($admin_name, $admin_pass);
-	create_tables($database_dsn);
-	insert_defaults($database_dsn, $admin_name, $admin_pass);
-	build_dirs();
-	write_config($database_dsn);
-	
-	header("Location: index.php?q=setup");
-} // }}}
-function insert_defaults($dsn, $admin_name, $admin_pass) { // {{{
-	$db = NewADOConnection($dsn);
-	if(!$db) {
-		die("Couldn't connect to \"$dsn\"");
-	}
-	else {
-		$config_insert = $db->Prepare("INSERT INTO config(name, value) VALUES(?, ?)");
-		$user_insert = $db->Prepare("INSERT INTO users(name, pass, joindate, admin) VALUES(?, ?, now(), ?)");
-
-		if(!$db->GetOne("SELECT * FROM users WHERE name=?", Array('Anonymous'))) {
-			$db->Execute($user_insert, Array('Anonymous', null, 'N'));
-				
-			$db->Execute("DELETE FROM config WHERE name=?", Array('anon_id'));
-			$db->Execute($config_insert, Array('anon_id', $db->Insert_ID()));
-		}
-	
-		# we can safely delete the user and recreate, hence changing the ID,
-		# because insert_defaults is only called during first installation
-		if($db->GetOne("SELECT * FROM users WHERE name=?", Array($admin_name))) {
-			$db->Execute("DELETE FROM users WHERE name=?", Array($admin_name));
-		}
-
-		$admin_pass = md5(strtolower($admin_name).$admin_pass);
-		$db->Execute($user_insert, Array($admin_name, $admin_pass, 'Y'));
-
-		if(check_im_version() > 0) {
-			$db->Execute($config_insert, Array('thumb_engine', 'convert'));
-		}
-		
-		$db->Close();
-	}
-} // }}}
-// }}}
 ?>
 	</body>
 </html>
