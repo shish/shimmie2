@@ -104,24 +104,25 @@ class Database {
 		}
 		return $result;
 	}
+	
+	public function upgrade_schema($filename) {
+		//print "<br>upgrading $filename";
 
-	public function cache_execute($time, $query, $args=array()) {
 		global $config;
-		if($config->get_bool('db_cache')) {
-			return $this->error_check($this->db->CacheExecute($time, $query, $args));
-		}
-		else {
-			return $this->execute($query, $args);
-		}
-	}
+		if($config->get_bool("in_upgrade")) return;
+		$config->set_bool("in_upgrade", true);
+			
+		require_once "lib/adodb/adodb-xmlschema03.inc.php";
+		$schema = new adoSchema($this->db);
+		$sql = $schema->ParseSchema($filename);
+		//echo "<pre>"; var_dump($sql); echo "</pre>";
+		$result = $schema->ExecuteSchema();
 
-	private function error_check($result) {
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg() . "<br>";
-			print "Query: $query";
-			exit;
+		if(!$result) {
+			die("Error creating tables from XML schema ($filename)");
 		}
-		return $result;
+
+		$config->set_bool("in_upgrade", false);
 	}
 // }}}
 // tags {{{
