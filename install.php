@@ -90,8 +90,6 @@ function check_im_version() {
 }
 // }}}
 function do_install() { // {{{
-	session_start(); // hold temp stuff in session
-
 	if(!isset($_POST['database_dsn'])) {
 		begin();
 	}
@@ -242,7 +240,6 @@ function write_config($dsn) { // {{{
 	
 	if(is_writable("./") && installer_write_file("config.php", $file_content)) {
 		assert(file_exists("config.php"));
-		session_destroy();
 	}
 	else {
 		$h_file_content = htmlentities($file_content);
@@ -256,7 +253,6 @@ function write_config($dsn) { // {{{
 						
 		<p>One done, <a href='index.php?q=setup'>Continue</a>
 EOD;
-		session_destroy();
 		exit;
 	}
 } // }}}
