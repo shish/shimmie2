@@ -9,12 +9,13 @@ class Querylet {
 	var $sql;
 	var $variables;
 	
-	public function querylet($sql, $variables=array()) {
+	public function Querylet($sql, $variables=array()) {
 		$this->sql = $sql;
 		$this->variables = $variables;
 	}
 
 	public function append($querylet) {
+		assert(!is_null($querylet));
 		$this->sql .= $querylet->sql;
 		$this->variables = array_merge($this->variables, $querylet->variables);
 	}
@@ -157,41 +158,10 @@ class Database {
 			
 			$term = $this->resolve_alias($term);
 
-			$matches = array();
-			if(preg_match("/size(<|>|<=|>=|=)(\d+)x(\d+)/", $term, $matches)) {
-				$cmp = $matches[1];
-				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$img_search->append(new Querylet("AND (width $cmp ? AND height $cmp ?)", $args));
-			}
-			else if(preg_match("/ratio(<|>|<=|>=|=)(\d+):(\d+)/", $term, $matches)) {
-				$cmp = $matches[1];
-				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$img_search->append(new Querylet("AND (width / height $cmp ? / ?)", $args));
-			}
-			else if(preg_match("/(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)/i", $term, $matches)) {
-				$col = $matches[1];
-				$cmp = $matches[2];
-				$val = parse_shorthand_int($matches[3]);
-				$img_search->append(new Querylet("AND (images.$col $cmp $val)"));
-			}
-			else if(preg_match("/(poster|user)=(.*)/i", $term, $matches)) {
-				global $database;
-				$user = $database->get_user_by_name($matches[2]);
-				if(!is_null($user)) {
-					$user_id = $user->id;
-				}
-				else {
-					$user_id = -1;
-				}
-				$img_search->append(new Querylet("AND (images.owner_id = $user_id)"));
-			}
-			else if(preg_match("/(hash=|md5:)([0-9a-fA-F]*)/i", $term, $matches)) {
-				$hash = strtolower($matches[2]);
-				$img_search->append(new Querylet("AND (images.hash = '$hash')"));
-			}
-			else if(preg_match("/(filetype|ext)=([a-zA-Z0-9]*)/i", $term, $matches)) {
-				$ext = strtolower($matches[2]);
-				$img_search->append(new Querylet("AND (images.ext = '$ext')"));
+			$stpe = new SearchTermParseEvent($term);
+			send_event($stpe);
+			if($stpe->is_querylet_set()) {
+				$img_search->append($stpe->get_querylet());
 			}
 			else {
 				$term = str_replace("*", "%", $term);

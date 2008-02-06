@@ -1,6 +1,6 @@
 <?php
 // set up and purify the environment
-define("DEBUG", false);
+define("DEBUG", true);
 define("VERSION", 'trunk');
 
 if(DEBUG) {

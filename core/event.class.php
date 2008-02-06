@@ -244,4 +244,31 @@ class ThumbnailGenerationEvent extends Event {
 		$this->type = $type;
 	}
 }
+
+
+/*
+ * SearchTermParseEvent:
+ * Signal that a search term needs parsing
+ */
+class SearchTermParseEvent extends Event {
+	var $term = null;
+	var $querylet = null;
+
+	public function SearchTermParseEvent($term) {
+		assert(!is_null($term));
+		$this->term = $term;
+	}
+
+	public function is_querylet_set() {
+		return !is_null($this->querylet);
+	}
+
+	public function get_querylet() {
+		return $this->querylet;
+	}
+
+	public function set_querylet($q) {
+		$this->querylet = $q;
+	}
+}
 ?>
