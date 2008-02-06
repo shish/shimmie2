@@ -16,6 +16,7 @@ class ImageIO extends Extension {
 			$config->set_default_string('image_ilink', '$base/image/$id.$ext');
 			$config->set_default_string('image_tlink', '$base/thumb/$id.jpg');
 			$config->set_default_string('image_tip', '$tags // $size // $filesize');
+			$config->set_default_string('upload_collision_handler', 'error');
 		}
 
 		if(is_a($event, 'PageRequestEvent')) {
@@ -48,6 +49,7 @@ class ImageIO extends Extension {
 			$sb->add_text_option("image_ilink", "Image link: ");
 			$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
 			$sb->add_text_option("image_tip", "<br>Image tooltip: ");
+			$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
 			$event->panel->add_block($sb);
 
 			$thumbers = array();
@@ -72,11 +74,6 @@ class ImageIO extends Extension {
 	}
 // }}}
 // add image {{{
-	private function is_dupe($hash) {
-		global $database;
-		return $database->db->GetRow("SELECT * FROM images WHERE hash=?", array($hash));
-	}
-
 	private function add_image($image) {
 		global $page;
 		global $user;
@@ -101,9 +98,16 @@ class ImageIO extends Extension {
 		 */
 		$existing = $database->get_image_by_hash($image->hash);
 		if(!is_null($existing)) {
-			$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-					"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
-			return $error;
+			$handler = $config->get_string("upload_collision_handler");
+			if($handler == "merge") {
+				send_event(new TagSetEvent($existing->id, array_merge($image->get_tag_array(), $existing->get_tag_array())));
+				return null;
+			}
+			else {
+				$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
+						"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
+				return $error;
+			}
 		}
 
 		// actually insert the info
