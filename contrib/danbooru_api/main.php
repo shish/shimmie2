@@ -42,6 +42,15 @@ class DanbooruApi extends Extension
 			// execute the danbooru processing code
 			$this->api_danbooru($event);
 		}
+		if(is_a($event, 'SearchTermParseEvent'))
+		{
+			$matches = array();
+			if(preg_match("/md5:([0-9a-fA-F]*)/i", $event->term, $matches))
+			{
+				$hash = strtolower($matches[2]);
+				$event->set_querylet(new Querylet("AND (images.hash = '$hash')"));
+			}
+		}
 	}
 	
 	// Danbooru API
