@@ -55,7 +55,8 @@ class ViewImage extends Extension {
 		}
 
 		if(is_a($event, 'DisplayingImageEvent')) {
-			$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $event->user);
+			global $user;
+			$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
 			send_event($iibbe);
 			ksort($iibbe->parts);
 			$this->theme->display_page($event->page, $event->get_image(), $iibbe->parts);

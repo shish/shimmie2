@@ -25,6 +25,7 @@ class TagEditTheme extends Themelet {
 		global $config;
 		if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
 			$h_tags = html_escape($image->get_tag_list());
+			$h_source = html_escape($image->get_source());
 			$i_image_id = int_escape($image->id);
 
 			$source_edit = "";

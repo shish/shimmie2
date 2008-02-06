@@ -91,6 +91,10 @@ class Image {
 		return $this->ext;
 	}
 
+	public function get_source() {
+		return $this->source;
+	}
+
 	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
 
