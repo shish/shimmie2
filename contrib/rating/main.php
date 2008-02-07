@@ -71,6 +71,19 @@ class Ratings extends Extension {
 		if(is_a($event, 'ParseLinkTemplateEvent')) {
 			$event->replace('$rating', $this->theme->rating_to_name($event->image->rating));
 		}
+
+		if(is_a($event, 'SearchTermParseEvent')) {
+			$matches = array();
+			if(preg_match("/rating=([sqe]+)/", $event->term, $matches)) {
+				$sqes = $matches[1];
+				$arr = array();
+				for($i=0; $i<strlen($sqes); $i++) {
+					$arr[] = "'" . $sqes[$i] . "'";
+				}
+				$set = join(', ', $arr);
+				$event->set_querylet(new Querylet("AND (rating IN ($set))"));
+			}
+		}
 	}
 
 	private function install() {
