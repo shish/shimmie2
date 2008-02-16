@@ -48,6 +48,25 @@ class AliasEditor extends Extension {
 				$event->page->set_type("text/plain");
 				$event->page->set_data($this->get_alias_csv($database));
 			}
+			else if($event->get_arg(0) == "import") {
+				if($event->user->is_admin()) {
+					print_r($_FILES);
+					if(count($_FILES) > 0) {
+						global $database;
+						$tmp = $_FILES['alias_file']['tmp_name'];
+						$contents = file_get_contents($tmp);
+						$this->add_alias_csv($database, $contents);
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("alias/list"));
+					}
+					else {
+						$this->theme->display_error($event->page, "No File Specified", "You have to upload a file");
+					}
+				}
+				else {
+					$this->theme->display_error($event->page, "Admins Only", "Only admins can edit the alias list");
+				}
+			}
 		}
 
 		if(is_a($event, 'AddAliasEvent')) {
@@ -69,6 +88,15 @@ class AliasEditor extends Extension {
 			$csv .= "$old,$new\n";
 		}
 		return $csv;
+	}
+
+	private function add_alias_csv($database, $csv) {
+		foreach(explode("\n", $csv) as $line) {
+			$parts = explode(",", $line);
+			if(count($parts) == 2) {
+				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $parts);
+			}
+		}
 	}
 }
 add_event_listener(new AliasEditor());

@@ -49,6 +49,10 @@ class AliasEditorTheme extends Themelet {
 				$add
 			</table>
 			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
+			<form enctype='multipart/form-data' action='".make_link("alias/import")."' method='POST'>
+				<input type='file' name='alias_file'>
+				<input type='submit' value='Upload List'>
+			</form>
 		";
 		
 		$page->set_title("Alias List");
