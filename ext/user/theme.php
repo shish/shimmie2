@@ -132,8 +132,8 @@ class UserPageTheme extends Themelet {
 		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
 		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
 
-		$u_name = url_escape($duser->name);
-		$images_link = make_link("post/list/user=$u_name/1");
+		$u_id = url_escape($duser->id);
+		$images_link = make_link("post/list/user_id=$u_id/1");
 
 		return "
 			Join date: $h_join_date ($i_days_old days old)

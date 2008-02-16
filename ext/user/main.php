@@ -157,6 +157,25 @@ class UserPage extends Extension {
 		if(is_a($event, 'UserCreationEvent')) {
 			if($this->check_user_creation($event)) $this->create_user($event);
 		}
+
+		if(is_a($event, 'SearchTermParseEvent')) {
+			$matches = array();
+			if(preg_match("/(poster|user)=(.*)/i", $event->term, $matches)) {
+				global $database;
+				$user = $database->get_user_by_name($matches[2]);
+				if(!is_null($user)) {
+					$user_id = $user->id;
+				}
+				else {
+					$user_id = -1;
+				}
+				$event->set_querylet(new Querylet("AND (images.owner_id = $user_id)"));
+			}
+			else if(preg_match("/(poster|user)_id=([0-9]+)/i", $event->term, $matches)) {
+				$user_id = int_escape($matches[2]);
+				$event->set_querylet(new Querylet("AND (images.owner_id = $user_id)"));
+			}
+		}
 	}
 // }}}
 // Things done *with* the user {{{

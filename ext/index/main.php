@@ -98,17 +98,6 @@ class Index extends Extension {
 				$val = parse_shorthand_int($matches[3]);
 				$event->set_querylet(new Querylet("AND (images.$col $cmp $val)"));
 			}
-			else if(preg_match("/(poster|user)=(.*)/i", $event->term, $matches)) {
-				global $database;
-				$user = $database->get_user_by_name($matches[2]);
-				if(!is_null($user)) {
-					$user_id = $user->id;
-				}
-				else {
-					$user_id = -1;
-				}
-				$event->set_querylet(new Querylet("AND (images.owner_id = $user_id)"));
-			}
 			else if(preg_match("/hash=([0-9a-fA-F]*)/i", $event->term, $matches)) {
 				$hash = strtolower($matches[2]);
 				$event->set_querylet(new Querylet("AND (images.hash = '$hash')"));
