@@ -49,10 +49,19 @@ require_once "themes/$_theme/layout.class.php";
 require_once "themes/$_theme/themelet.class.php";
 
 $themelets = glob("ext/*/theme.php");
-$custom_themelets = glob("themes/$_theme/*.theme.php");
-if($custom_themelets) $themelets = array_merge($themelets, $custom_themelets);
 foreach($themelets as $filename) {
 	require_once $filename;
+}
+
+$custom_themelets = glob("themes/$_theme/*.theme.php");
+if($custom_themelets) {
+	foreach($custom_themelets as $filename) {
+		$basename = str_replace($filename, "themes/$_theme/", "");
+		$basename = str_replace($basename, ".theme.php", "");
+		if(array_contains($themelets, "ext/$basename/theme.php")) {
+			require_once $filename;
+		}
+	}
 }
 
 

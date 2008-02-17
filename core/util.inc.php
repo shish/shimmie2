@@ -308,6 +308,15 @@ function array_add($array, $element) {
 	return $array; 
 } 
 
+function array_contains($array, $target) {
+	foreach($array as $element) {
+		if($target == $element) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
