@@ -77,12 +77,17 @@ class ViewTheme extends Themelet {
 				$html .= " (<a href='http://$h_source'>source</a>)";
 			}
 		}
-		$html .= " (<a href=\"javascript: toggle('imgdata')\">edit info</a>)";
 
+		$html .= $this->build_image_editor($image, $editor_parts);
 
+		return $html;
+	}
+
+	protected function build_image_editor($image, $editor_parts) {
 		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
 		else {$h_query = "";}
 
+		$html = " (<a href=\"javascript: toggle('imgdata')\">edit info</a>)";
 		$html .= "
 			<div id='imgdata'>
 				<form action='".make_link("post/set")."' method='POST'>
