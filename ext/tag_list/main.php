@@ -88,7 +88,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->cache_execute(300, "
+		$result = $database->execute("
 				SELECT
 					tag,
 					FLOOR(LOG(LOG(count - ? + 1)+1)*1.5*100)/100 AS scaled
@@ -113,7 +113,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->cache_execute(300,
+		$result = $database->execute(
 				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
 				array($tags_min));
 		$tag_data = $result->GetArray();
@@ -139,7 +139,7 @@ class TagList extends Extension {
 		global $config;
 
 		$tags_min = $config->get_int('tags_min');
-		$result = $database->cache_execute(300,
+		$result = $database->execute(
 				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
 				array($tags_min));
 		$tag_data = $result->GetArray();
