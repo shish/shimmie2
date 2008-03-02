@@ -16,6 +16,10 @@ find_posts - sort of works, filename is returned as the original filename and pr
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
 CHANGELOG
+01-MAR-08 7:00PM CST - JJS
+Rewrote to make it compatible with Shimmie trunk again (r723 at least)
+It may or may not support the new file handling stuff correctly, I'm only testing with images and the danbooru uploader for firefox
+
 21-OCT-07 9:07PM CST - JJS
 Turns out I actually did need to implement the new parameter names
 for danbooru api v1.8.1. Now danbooruup should work when used with /api/danbooru/post/create.xml
@@ -47,7 +51,7 @@ class DanbooruApi extends Extension
 			$matches = array();
 			if(preg_match("/md5:([0-9a-fA-F]*)/i", $event->term, $matches))
 			{
-				$hash = strtolower($matches[2]);
+				$hash = strtolower($matches[1]);
 				$event->set_querylet(new Querylet("AND (images.hash = '$hash')"));
 			}
 		}
@@ -216,36 +220,23 @@ class DanbooruApi extends Extension
 				}
 				
 				// Get tags out of url
-				$posttags = isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags'];
-				
-				// Now that we have some sort of physical file, process it
-				$image = new Image($file, $filename, $posttags, $source);
-				// This occurs if the uploaded file is not an image
-				if(!$image->is_ok())
-				{
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: unknown");
-					return;
-				}
-				// Was an md5 supplied? Does it match the image hash?
+				$posttags = tag_explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
+				$hash = md5_file($file);
+				// Was an md5 supplied? Does it match the file hash?
 				if(isset($_REQUEST['md5']))
 				{
-					if($_REQUEST['md5'] != $image->hash)
+					if(strtolower($_REQUEST['md5']) != $hash)
 					{
 						header("HTTP/1.0 409 Conflict");
 						header("X-Danbooru-Errors: md5 mismatch");
 						return;
 					}
 				}
-				// Is the image too large?
-				if(filesize($file['tmp_name']) > $config->get_int('upload_size'))
-				{
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: too large");
-					return;
-				}
+				// Upload size checking is now performed in the upload extension
+				// It is also currently broken due to some confusion over file variable ($tmp_filename?)
+				
 				// Does it exist already?
-				$existing = $database->get_image_by_hash($image->hash);
+				$existing = $database->get_image_by_hash($hash);
 				if(!is_null($existing)) {
 					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: duplicate");
@@ -253,8 +244,14 @@ class DanbooruApi extends Extension
 					header("X-Danbooru-Location: $existinglink");
 				}
 
-				// Fire off an event which should process the new image and add it to the db
-				$nevent = new UploadingImageEvent($user, $image);
+				// Fire off an event which should process the new file and add it to the db
+				$fileinfo = pathinfo($filename);
+				$metadata['filename'] = $fileinfo['basename'];
+				$metadata['extension'] = $fileinfo['extension'];
+				$metadata['tags'] = $posttags;
+				$metadata['source'] = $source;
+				
+				$nevent = new DataUploadEvent($user, $file, $metadata);
 				send_event($nevent);
 				// Did something screw up?
 				if($event->vetoed) {
@@ -263,7 +260,7 @@ class DanbooruApi extends Extension
 					return;
 				} else
 				{	// If it went ok, grab the id for the newly uploaded image and pass it in the header
-					$newimg = $database->get_image_by_hash($image->hash);
+					$newimg = $database->get_image_by_hash($hash);
 					$newid = make_link("post/view/" . $newimg->id);
 					// Did we POST or GET this call?
 					if($_SERVER['REQUEST_METHOD'] == 'POST')
