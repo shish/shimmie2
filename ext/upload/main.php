@@ -79,8 +79,8 @@ class Upload extends Extension {
 
 		if(is_a($event, "DataUploadEvent")) {
 			global $config;
-			if(filesize($tmp_filename) > $config->get_int('upload_size')) {
-				$event->veto("File too large (".filesize($tmp_filename)." &gt; ".($config->get_int('upload_size')).")");
+			if(filesize($event->tmpname) > $config->get_int('upload_size')) {
+				$event->veto("File too large (".filesize($event->tmpname)." &gt; ".($config->get_int('upload_size')).")");
 			}
 		}
 	}
