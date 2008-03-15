@@ -263,7 +263,9 @@ class UserPage extends Extension {
 			$pass1 = $_POST['pass1'];
 			$pass2 = $_POST['pass2'];
 
-			if((!$user->is_admin()) && ($name != $user->name)) {
+			$duser = $database->get_user_by_id($id);
+
+			if((!$user->is_admin()) && ($duser->name != $user->name)) {
 				$page->add_block(new Block("Error",
 						"You need to be an admin to change other people's passwords"));
 			}
@@ -278,7 +280,7 @@ class UserPage extends Extension {
 				$duser->set_password($pass1);
 
 				if($id == $user->id) {
-					$this->set_login_cookie($name, $pass1);
+					$this->set_login_cookie($duser->name, $pass1);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("user"));
 				}
