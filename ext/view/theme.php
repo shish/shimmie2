@@ -98,9 +98,10 @@ class ViewTheme extends Themelet {
 			$html .= $part;
 		}
 		$html .= "
-					<input type='submit' value='Set'>
-				</div>
-			</form>
+					<br><input type='submit' value='Set'>
+				</form>
+				<br>
+			</div>
 		";
 		return $html;
 	}
