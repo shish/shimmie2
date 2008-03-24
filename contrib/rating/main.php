@@ -34,25 +34,21 @@ class Ratings extends Extension {
 			$config->set_default_string("ext_rating_user_privs", 'sq');
 		}
 
-		# TODO: ImageEditorBuildingEvent
-		global $user; // compat with stable
-		if(is_a($event, 'PageRequestEvent') && $event->page_name == "rating" &&
-				$event->get_arg(0) == "set" && $user->is_admin() &&
-				isset($_POST['rating']) && isset($_POST['image_id'])) {
-			$i_image_id = int_escape($_POST['image_id']);
-			send_event(new RatingSetEvent($i_image_id, $user, $_POST['rating']));
-			$event->page->set_mode("redirect");
-			$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
-		}
-
 		if(is_a($event, 'RatingSetEvent')) {
 			$this->set_rating($event->image_id, $event->rating);
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
 			global $user;
 			if($user->is_admin()) {
-				$this->theme->display_rater($event->page, $event->image->id, $event->image->rating);
+				$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
+			}
+		}
+
+		if(is_a($event, 'ImageInfoSetEvent')) {
+			global $user;
+			if($user->is_admin()) {
+				send_event(new RatingSetEvent($event->image_id, $user, $_POST['rating']));
 			}
 		}
 		
