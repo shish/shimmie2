@@ -72,7 +72,12 @@ class PixelFileHandler extends Extension {
 	}
 
 	private function check_contents($file) {
-		return (file_exists($file) && !is_null(getimagesize($file)));
+		$valid = Array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG);
+		if(!file_exists($file)) return false;
+		$info = getimagesize($file);
+		if(is_null($info)) return false;
+		if(array_contains($valid, $info[2])) return true;
+		return false;
 	}
 
 	private function create_thumb($hash) {
