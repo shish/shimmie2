@@ -1,7 +1,7 @@
 <?php
 // set up and purify the environment
 define("DEBUG", true);
-define("VERSION", 'trunk');
+define("VERSION", '2.2.0-pre1');
 
 if(DEBUG) {
 	error_reporting(E_ALL);
