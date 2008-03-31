@@ -31,7 +31,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 2) {
+			if($config->get_int("ext_ipban_version") < 4) {
 				$this->install();
 			}
 			

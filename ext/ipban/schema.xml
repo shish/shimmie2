@@ -5,8 +5,8 @@
 		<field name="id" type="I"><key/><autoincrement/></field>
 		<field name="banner_id" type="I"><notnull/></field>
 		<field name="ip" type="C" size="15"><notnull/></field>
-		<field name="date" type="T"><notnull/></field>
-		<field name="end" type="T"><notnull/></field>
+		<field name="date" type="D"><notnull/></field>
+		<field name="end" type="D"><notnull/></field>
 		<field name="reason" type="C" size="255"><notnull/></field>
 		<index name="bans__ip"><col>ip</col></index>
 		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
@@ -14,6 +14,6 @@
 
 	<sql>
 		<query>DELETE FROM config WHERE name='ext_ipban_version'</query>
-		<query>INSERT INTO config(name, value) VALUES('ext_ipban_version', 3)</query>
+		<query>INSERT INTO config(name, value) VALUES('ext_ipban_version', 4)</query>
 	</sql>
 </schema>
