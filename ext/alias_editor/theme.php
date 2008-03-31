@@ -45,6 +45,7 @@ class AliasEditorTheme extends Themelet {
 		$html = "
 			<table border='1'>
 				<thead><td>From</td><td>To</td>$action</thead>
+				$add
 				$h_aliases
 				$add
 			</table>

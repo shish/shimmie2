@@ -40,7 +40,9 @@ class AliasEditor extends Extension {
 			}
 			else if($event->get_arg(0) == "list") {
 				global $database;
-				$this->theme->display_aliases($event->page, $database->db->GetAssoc("SELECT oldtag, newtag FROM aliases"), $event->user->is_admin());
+				$this->theme->display_aliases($event->page, 
+						$database->db->GetAssoc("SELECT oldtag, newtag FROM aliases ORDER BY newtag"),
+						$event->user->is_admin());
 			}
 			else if($event->get_arg(0) == "export") {
 				global $database;
@@ -71,7 +73,8 @@ class AliasEditor extends Extension {
 
 		if(is_a($event, 'AddAliasEvent')) {
 			global $database;
-			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", array($event->oldtag, $event->newtag));
+			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)",
+					array($event->oldtag, $event->newtag));
 		}
 		
 		if(is_a($event, 'UserBlockBuildingEvent')) {
