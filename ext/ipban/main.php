@@ -91,18 +91,21 @@ class IPBan extends Extension {
 // }}}
 // deal with banned person {{{
 	private function check_ip_ban() {
-		$row = $this->get_ip_ban($_SERVER['REMOTE_ADDR']);
-		if($row) {
-			global $config;
-			global $database;
-			$admin = $database->get_user_by_id($row['banner_id']);
-			print "IP <b>{$row['ip']}</b> has been banned by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
+		global $config;
+		global $database;
 
-			$contact_link = $config->get_string("contact_link");
-			if(!empty($contact_link)) {
-				print "<p><a href='$contact_link'>Contact The Admin</a>";
+		$bans = $this->get_active_bans();
+		foreach($bans as $row) {
+			if($row['ip'] == $_SERVER['REMOTE_ADDR']) {
+				$admin = $database->get_user_by_id($row['banner_id']);
+				print "IP <b>{$row['ip']}</b> has been banned by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
+
+				$contact_link = $config->get_string("contact_link");
+				if(!empty($contact_link)) {
+					print "<p><a href='$contact_link'>Contact The Admin</a>";
+				}
+				exit;
 			}
-			exit;
 		}
 	}
 // }}}
@@ -110,6 +113,13 @@ class IPBan extends Extension {
 	private function get_bans() {
 		global $database;
 		$bans = $database->get_all("SELECT * FROM bans");
+		if($bans) {return $bans;}
+		else {return array();}
+	}
+
+	private function get_active_bans() {
+		global $database;
+		$bans = $database->get_all("SELECT * FROM bans WHERE (date < now()) AND (end > now() OR isnull(end))");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
