@@ -12,6 +12,7 @@ class TagList extends Extension {
 			$config->set_default_int("tag_list_length", 15);
 			$config->set_default_int("tags_min", 3);
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
+			$config->set_default_string("tag_list_image_type", 'related');
 		}
 
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tags")) {
@@ -51,7 +52,12 @@ class TagList extends Extension {
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
-				$this->add_related_block($event->page, $event->image);
+				if($config->get_string('tag_list_image_type') == 'related') {
+					$this->add_related_block($event->page, $event->image);
+				}
+				else {
+					$this->add_tags_block($event->page, $event->image);
+				}
 			}
 		}
 
@@ -63,6 +69,10 @@ class TagList extends Extension {
 			$sb = new SetupBlock("Popular / Related Tag List");
 			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" tags");
 			$sb->add_text_option("info_link", "<br>Tag info link: ");
+			$sb->add_choice_option("tag_list_image_type", array(
+				"Image's tags only" => "tags",
+				"Show related" => "related"
+			), "<br>Image tag list: ");
 			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
 			$event->panel->add_block($sb);
 		}
@@ -184,6 +194,26 @@ class TagList extends Extension {
 				AND t1.id = it1.tag_id
 				AND t3.id = it3.tag_id
 			GROUP BY it3.tag_id
+			ORDER BY count DESC
+			LIMIT ?
+		";
+		$args = array($image->id, $config->get_int('tag_list_length'));
+
+		$tags = $database->db->GetAll($query, $args);
+		if(count($tags) > 0) {
+			$this->theme->display_related_block($page, $tags);
+		}
+	}
+
+	private function add_tags_block($page, $image) {
+		global $database;
+		global $config;
+
+		$query = "
+			SELECT tags.tag, tags.count
+			FROM tags, image_tags
+			WHERE tags.id = image_tags.tag_id
+			AND image_tags.image_id = ?
 			ORDER BY count DESC
 			LIMIT ?
 		";
