@@ -31,7 +31,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 2) {
+			if($config->get_int("ext_ipban_version") < 5) {
 				$this->install();
 			}
 			
@@ -94,9 +94,13 @@ class IPBan extends Extension {
 		global $config;
 		global $database;
 
+		$remote = $_SERVER['REMOTE_ADDR'];
 		$bans = $this->get_active_bans();
 		foreach($bans as $row) {
-			if($row['ip'] == $_SERVER['REMOTE_ADDR']) {
+			if(
+				(strstr($row['ip'], '/') && ip_in_range($remote, $row['ip'])) ||
+				($row['ip'] == $remote)
+			) {
 				$admin = $database->get_user_by_id($row['banner_id']);
 				print "IP <b>{$row['ip']}</b> has been banned by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 
