@@ -38,7 +38,6 @@
 		<field name="name" type="C" size="32"><notnull/></field>
 		<field name="pass" type="C" size="32"></field>
 		<field name="joindate" type="T"><notnull/></field>
-		<field name="enabled" type="C" size="1"><notnull/><default value="Y"/></field>
 		<field name="admin" type="C" size="1"><notnull/><default value="N"/></field>
 		<field name="email" type="C" size="255"></field>
 		<index name="users__name"><col>name</col><unique/></index>

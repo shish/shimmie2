@@ -308,11 +308,9 @@ class UserPage extends Extension {
 		}
 		else {
 			$admin = (isset($_POST['admin']) && ($_POST['admin'] == "on"));
-			$enabled = (isset($_POST['enabled']) && ($_POST['enabled'] == "on"));
 			
 			$duser = $database->get_user_by_id($_POST['id']);
 			$duser->set_admin($admin);
-			$duser->set_enabled($enabled);
 
 			$page->set_mode("redirect");
 			if($duser->id == $user->id) {
