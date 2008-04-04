@@ -111,6 +111,7 @@ A:hover {text-decoration: underline;}
 #body {
 	margin-left: 160px;
 	text-align: center;
+	height: 1%;
 }
 #body TABLE {
 	width: 90%;
