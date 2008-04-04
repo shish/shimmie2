@@ -68,8 +68,13 @@ if($custom_themelets) {
 // start the page generation waterfall
 $page = new Page();
 $user = _get_user();
-send_event(new InitExtEvent());
-send_event(_get_page_request($page, $user));
+$context = new RequestContext();
+$context->page = $page;
+$context->user = $user;
+$context->database = $database;
+$context->config = $config;
+send_event(new InitExtEvent($context));
+send_event(_get_page_request($context));
 $page->display();
 
 

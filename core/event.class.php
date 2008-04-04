@@ -115,7 +115,10 @@ class ImageDeletionEvent extends Event {
  * A wake-up call for extensions
  */
 class InitExtEvent extends Event {
-	public function InitExtEvent() {
+	var $context;
+
+	public function InitExtEvent($context) {
+		$this->context = $context;
 	}
 }
 
@@ -135,13 +138,14 @@ class InitExtEvent extends Event {
  * Used for initial page generation triggers
  */
 class PageRequestEvent extends Event {
-	var $page_name, $args, $page, $user;
+	var $context, $page_name, $args, $page, $user;
 
-	public function PageRequestEvent($page_name, $args, $page, $user) {
+	public function PageRequestEvent($context, $page_name, $args) {
+		$this->context = $context;
 		$this->page_name = $page_name;
 		$this->args = $args;
-		$this->page = $page;
-		$this->user = $user;
+		$this->page = $context->page;
+		$this->user = $context->user;
 	}
 
 	public function get_arg($n) {
