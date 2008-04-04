@@ -43,20 +43,15 @@ class Image_Hash_Ban extends Extension {
 
 		}
 	
-		if(is_a($event, 'UploadingImageEvent')) {
-		
-				global $database;
-
+		if(is_a($event, 'DataUploadEvent')) {
+			global $database;
 			
 			$image = $event->image;
 			$tmp_hash = $image->hash;
 			
 			if ($database->db->GetOne("SELECT COUNT(*) FROM image_bans WHERE hash = ?", $tmp_hash) == 1) {
 			  $event->veto("This image has been banned!");
-			 }
-
-			
-
+			}
 		}
 		
 		
