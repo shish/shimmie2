@@ -1,4 +1,5 @@
 <?php
+require_once "util.inc.php";
 $ADODB_CACHE_DIR=sys_get_temp_dir();
 require_once "lib/adodb/adodb.inc.php";
 
