@@ -30,6 +30,7 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
 		$text = preg_replace("#\[\*\]#s", "<li>", $text);
 		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
+		$text = $this->filter_spoiler($text);
 		return $text;
 	}
 
@@ -51,6 +52,33 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "\\1", $text);
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "\\1", $text);
 		$text = preg_replace("/\[\*\](.*?)/s", "\\1", $text);
+		$text = $this->strip_spoiler($text);
+		return $text;
+	}
+
+	private function filter_spoiler($text) {
+		return str_replace(
+			array("[spoiler]","[/spoiler]"),
+			array("<span style=\"background-color:#000; color:#000;\">","</span>"),
+			$text);
+	}
+
+	private function strip_spoiler($text) {
+		$l1 = strlen("[spoiler]");
+		$l2 = strlen("[/spoiler]");
+		while(true) {
+			$start = strpos($text, "[spoiler]");
+			if($start === false) break;
+			
+			$end = strpos($text, "[/spoiler]");
+			if($end === false) break;
+
+			$beginning = substr($text, 0, $start);
+			$middle = str_rot13(substr($text, $start+$l1, ($end-$start-$l1)));
+			$ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+
+			$text = $beginning . $middle . $ending;
+		}
 		return $text;
 	}
 }
