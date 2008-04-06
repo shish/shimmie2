@@ -29,8 +29,10 @@ class AddImageHashBanEvent extends Event {
 		$this->reason = $reason;
 	}
 }
-
+// }}}
 class Image_Hash_Ban extends Extension {
+	var $theme;
+
 	public function receive_event($event) {
 	
 	if(is_null($this->theme)) $this->theme = get_theme_object("Image_Hash_Ban", "ImageBanTheme");
