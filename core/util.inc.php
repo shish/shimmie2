@@ -364,6 +364,51 @@ function ip_in_range($IP, $CIDR) {
 	return ($ip_ip_net == $ip_net);
 }
 
+// from a patch by Christian Walde; only intended for use in the
+// "extension manager" extension, but it seems to fit better here
+function deltree($f) {
+	if (is_link($f)) {
+		unlink($f);
+	}
+	else if(is_dir($f)) {
+		foreach(glob($f.'/*') as $sf) {
+			if (is_dir($sf) && !is_link($sf)) {
+				deltree($sf);
+			} else {
+				unlink($sf);
+			}
+		}
+		rmdir($f);
+	}
+}
+
+// from a comment on http://uk.php.net/copy
+function full_copy($source, $target) {
+	if(is_dir($source)) {
+		@mkdir($target);
+
+		$d = dir($source);
+
+		while(FALSE !== ($entry = $d->read())) {
+			if($entry == '.' || $entry == '..') {
+				continue;
+			}
+
+			$Entry = $source . '/' . $entry;          
+			if(is_dir($Entry)) {
+				full_copy($Entry, $target . '/' . $entry);
+				continue;
+			}
+			copy($Entry, $target . '/' . $entry);
+		}
+		$d->close();
+	}
+	else {
+		copy($source, $target);
+	}
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
