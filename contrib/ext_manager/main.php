@@ -16,9 +16,15 @@ class ExtManager extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "ext_manager")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "set") {
-					$this->set_things($_POST);
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect("ext_manager");
+					if(is_writable("ext")) {
+						$this->set_things($_POST);
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("ext_manager"));
+					}
+					else {
+						$this->theme->display_error($event->page, "File Operation Failed",
+							"The extension folder isn't writable by the web server :(");
+					}
 				}
 				else {
 					$this->theme->display_table($event->page, $this->get_extensions());
@@ -73,21 +79,32 @@ class ExtManager extends Extension {
 			preg_match("#contrib/(.*)/main.php#", $main, $matches);
 			$fname = $matches[1];
 
+			if(!isset($settings["ext_$fname"])) $settings["ext_$fname"] = 0;
 			$this->set_enabled($fname, $settings["ext_$fname"]);
 		}
 	}
+
 	private function set_enabled($fname, $enabled) {
 		if($enabled) {
 			// enable if currently disabled
 			if(!file_exists("ext/$fname")) {
-				symlink("../contrib/$fname", "ext/$fname");
+				$this->enable_extension($fname);
 			}
 		}
 		else {
 			// disable if currently enabled
 			if(file_exists("ext/$fname")) {
-				unlink("ext/$fname");
+				deltree("ext/$fname");
 			}
+		}
+	}
+
+	private function enable_extension($fname) {
+		if(function_exists("symlink")) {
+			symlink("../contrib/$fname", "ext/$fname");
+		}
+		else {
+			full_copy("contrib/$fname", "ext/$fname");
 		}
 	}
 }
