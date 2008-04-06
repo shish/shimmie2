@@ -152,6 +152,10 @@ class Setup extends Extension {
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("setup"));
 				}
+				else if($event->get_arg(0) == "advanced") {
+					global $config;
+					$this->theme->display_advanced($event->page, $config->values);
+				}
 				else {
 					$panel = new SetupPanel();
 					send_event(new SetupBuildingEvent($panel));

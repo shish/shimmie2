@@ -52,10 +52,41 @@ class SetupTheme extends Themelet {
 		$page->add_block(new Block("Setup", $table));
 	}
 
+	public function display_advanced($page, $options) {
+		$rows = "";
+		foreach($options as $name => $value) {
+			$h_value = html_escape($value);
+			$len = strlen($h_value);
+			$box = "";
+			if($len < 50) {
+				$box .= "<input type='text' name='_config_$name' value='$h_value'>";
+			}
+			else {
+				$box .= "<textarea cols='50' rows='4' name='_config_$name'>$h_value</textarea>";
+			}
+			$box .= "<input type='hidden' name='_type_$name' value='string'>";
+			$rows .= "<tr><td>$name</td><td>$box</td></tr>";
+		}
+
+		$table = "
+			<form action='".make_link("setup/save")."' method='POST'><table>
+			<tr><th width='25%'>Name</th><th>Value</th></tr>
+			$rows
+			<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
+			</table></form>
+			";
+
+		$page->set_title("Shimmie Setup");
+		$page->set_heading("Shimmie Setup");
+		$page->add_block(new Block("Navigation", $this->build_navigation(), "left", 0));
+		$page->add_block(new Block("Setup", $table));
+	}
+
 	protected function build_navigation() {
 		return "
 			<a href='".make_link()."'>Index</a>
 			<br><a href='http://trac.shishnet.org/shimmie2/wiki/Settings'>Help</a>
+			<br><a href='".make_link("setup/advanced")."'>Advanced</a>
 		";
 	}
 
