@@ -8,9 +8,10 @@
 
 Shimmie 2.2
 ~~~~~~~~~~~
-Tag history, RSS for search results, unified image info editor, extensible
-file format support (ZIP, SWF, SVG, MP3, ...), wget transloader, event log
-filtering and sorting, as well as the usual various improvements~
+Integrated extension management, tag history, RSS for search results, unified
+image info editor, extensible file format support (ZIP, SWF, SVG, MP3, ...),
+wget transloader, event log filtering and sorting, as well as the usual misc
+improvements and bug fixes~
 
 
 Requirements
