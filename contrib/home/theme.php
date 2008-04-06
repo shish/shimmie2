@@ -36,6 +36,7 @@ EOD
 			<div class='space'>
 				<form action='".make_link("post/list")."' method='GET'>
 				<input id='search_input' name='search' size='55' type='text' value='' autocomplete='off' /><br/>
+				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Search'/>
 				</form>
 			</div>
