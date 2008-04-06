@@ -29,35 +29,33 @@ class AddImageHashBanEvent extends Event {
 		$this->reason = $reason;
 	}
 }
-
+// }}}
 class Image_Hash_Ban extends Extension {
+	var $theme;
+
 	public function receive_event($event) {
-	
-	if(is_null($this->theme)) $this->theme = get_theme_object("Image_Hash_Ban", "ImageBanTheme");
-	
-	if(is_a($event, 'InitExtEvent')) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("Image_Hash_Ban", "ImageBanTheme");
+
+		if(is_a($event, 'InitExtEvent')) {
 			global $config;
 			if($config->get_int("ext_imageban_version") < 1) {
 				$this->install();
 			}
-
 		}
-	
+
 		if(is_a($event, 'DataUploadEvent')) {
 			global $database;
-			
+
 			$image = $event->image;
 			$tmp_hash = $image->hash;
-			
+
 			if ($database->db->GetOne("SELECT COUNT(*) FROM image_bans WHERE hash = ?", $tmp_hash) == 1) {
-			  $event->veto("This image has been banned!");
+				$event->veto("This image has been banned!");
 			}
 		}
-		
-		
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "image_hash_ban")) {
-			global $user;
-			if($user->is_admin()) {
+			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
 						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
@@ -65,7 +63,6 @@ class Image_Hash_Ban extends Extension {
 						global $page;
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("admin"));
-
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
@@ -79,60 +76,49 @@ class Image_Hash_Ban extends Extension {
 				}
 			}
 		}
-		
+
 		if(is_a($event, 'AdminBuildingEvent')) {
 			global $page;
 			$this->theme->display_Image_hash_Bans($page, $this->get_image_hash_bans());
 		}
-		
-				if(is_a($event, 'AddImageHashBanEvent')) {
+
+		if(is_a($event, 'AddImageHashBanEvent')) {
 			$this->add_image_hash_ban($event->hash, $event->reason);
 		}
 
 		if(is_a($event, 'RemoveImageHashBanEvent')) {
 			$this->remove_image_hash_ban($event->hash);
 		}
-		
-				if(is_a($event, 'DisplayingImageEvent')) {
+
+		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
 			if($user->is_admin()) {
-			
 				$this->theme->display_image_banner($event->page, $event->image->hash);
 			}
 		}
-
-		
 	}
-	
+
 	protected function install() {
 		global $database;
 		global $config;
 		$database->Execute("CREATE TABLE image_bans (
 			id int(11) NOT NULL auto_increment,
-			hash char(32) default NULL,
-			date datetime default NULL,
-			reason varchar(255) default NULL,
-			PRIMARY KEY (id)
-		)");
+			   hash char(32) default NULL,
+			   date datetime default NULL,
+			   reason varchar(255) default NULL,
+			   PRIMARY KEY (id)
+				   )");
 		$config->set_int("ext_imageban_version", 1);
 	}
-	
+
 	// DB funness
-	
-		public function get_image_hash_bans() {
+
+	public function get_image_hash_bans() {
 		// FIXME: many
 		global $database;
 		$bans = $database->get_all("SELECT * FROM image_bans");
 		if($bans) {return $bans;}
 		else {return array();}
-		}
-		
-		public function get_image_hash_ban($hash) {
-		global $database;
-		// yes, this is "? LIKE var", because ? is the thing with matching tokens
-		// actually, slow
-		// return $database->db->GetRow("SELECT * FROM bans WHERE ? LIKE ip AND date < now() AND (end > now() OR isnull(end))", array($ip));
-		return $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ? AND date < now()", array($hash));
 	}
 
 	public function add_image_hash_ban($hash, $reason) {
@@ -146,7 +132,7 @@ class Image_Hash_Ban extends Extension {
 		global $database;
 		$database->Execute("DELETE FROM image_bans WHERE hash = ?", array($hash));
 	}
-		
+
 }
 add_event_listener(new Image_Hash_Ban(), 30); // in before resolution limit plugin
 ?>
