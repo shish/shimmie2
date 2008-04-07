@@ -44,10 +44,7 @@ class PixelFileHandler extends Extension {
 
 	private function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
-		foreach($exts as $supported) {
-			if($ext == $supported) return true;
-		}
-		return false;
+		return array_contains($exts, strtolower($ext));
 	}
 	
 	private function create_image_from_data($filename, $metadata) {
