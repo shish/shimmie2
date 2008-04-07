@@ -36,11 +36,7 @@ class ArchiveFileHandler extends Extension {
 
 	private function supported_ext($ext) {
 		$exts = array("zip");
-		$ext = strtolower($ext);
-		foreach($exts as $supported) {
-			if($ext == $supported) return true;
-		}
-		return false;
+		return array_contains($exts, strtolower($ext));
 	}
 
 	// copied from bulk add extension
