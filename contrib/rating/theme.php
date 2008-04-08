@@ -7,10 +7,14 @@ class RatingsTheme extends Themelet {
 		$q_checked = $rating == 'q' ? " checked" : "";
 		$e_checked = $rating == 'e' ? " checked" : "";
 		$html = "
-			<input type='hidden' name='image_id' value='$i_image_id' />
-			<input type='radio' name='rating' value='s' id='s'$s_checked><label for='s'>Safe</label>
-			<input type='radio' name='rating' value='q' id='q'$q_checked><label for='q'>Questionable</label>
-			<input type='radio' name='rating' value='e' id='e'$e_checked><label for='e'>Explicit</label>
+			<tr>
+				<td>Rating</td>
+				<td>
+					<input type='radio' name='rating' value='s' id='s'$s_checked><label for='s'>Safe</label>
+					<input type='radio' name='rating' value='q' id='q'$q_checked><label for='q'>Questionable</label>
+					<input type='radio' name='rating' value='e' id='e'$e_checked><label for='e'>Explicit</label>
+				</td>
+			</tr>
 		";
 		return $html;
 	}
