@@ -55,10 +55,11 @@ foreach($themelets as $filename) {
 
 $custom_themelets = glob("themes/$_theme/*.theme.php");
 if($custom_themelets) {
+	$m = array();
 	foreach($custom_themelets as $filename) {
-		$basename = str_replace($filename, "themes/$_theme/", "");
-		$basename = str_replace($basename, ".theme.php", "");
-		if(array_contains($themelets, "ext/$basename/theme.php")) {
+		if(preg_match("/themes\/$_theme\/(.*)\.theme\.php/",$filename,$m)
+		   && array_contains($themelets, "ext/{$m[1]}/theme.php"))
+		{
 			require_once $filename;
 		}
 	}
