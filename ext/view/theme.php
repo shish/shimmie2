@@ -93,12 +93,14 @@ class ViewTheme extends Themelet {
 				<form action='".make_link("post/set")."' method='POST'>
 					<input type='hidden' name='image_id' value='{$image->id}'>
 					<input type='hidden' name='query' value='$h_query'>
+					<table style='width: 500px;'>
 		";
 		foreach($editor_parts as $part) {
 			$html .= $part;
 		}
 		$html .= "
-					<br><input type='submit' value='Set'>
+						<tr><td colspan='2'><input type='submit' value='Set'></td></tr>
+					</table>
 				</form>
 				<br>
 			</div>

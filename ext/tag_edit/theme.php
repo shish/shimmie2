@@ -34,10 +34,8 @@ class TagEditTheme extends Themelet {
 			}
 
 			$html .= "
-				<table style='width: 500px;'>
 				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags'></td></tr>
 				$source_edit
-				</table>
 			";
 		}
 
