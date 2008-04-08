@@ -188,7 +188,7 @@ class Upload extends Extension {
 			$event = new DataUploadEvent($user, $tmp_filename, $metadata);
 			send_event($event);
 			if($event->vetoed) {
-				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
+				$this->theme->display_upload_error($page, "Error with ".html_escape($url),
 					$event->veto_reason);
 				$ok = false;
 			}
