@@ -1,0 +1,104 @@
+<?php
+/**
+ * Name: ICO File Handler
+ * Author: Shish <webmaster@shishnet.org>
+ * Description: Handle windows icons
+ */
+
+class IcoFileHandler extends Extension {
+	var $theme;
+
+	public function receive_event($event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("handle_ico", "IcoFileHandlerTheme");
+
+		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+			$hash = $event->hash;
+			$ha = substr($hash, 0, 2);
+			if(!move_upload_to_archive($event)) return;
+			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
+			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
+			if(is_null($image)) {
+				$event->veto("Handler failed to create image object from data");
+				return;
+			}
+
+			$iae = new ImageAdditionEvent($event->user, $image);
+			send_event($iae);
+			if($iae->vetoed) {
+				$event->veto($iae->veto_reason);
+				return;
+			}
+		}
+
+		if(is_a($event, 'ThumbnailGenerationEvent') && $this->supported_ext($event->type)) {
+			$this->create_thumb($event->hash);
+		}
+
+		if(is_a($event, 'DisplayingImageEvent') && $this->supported_ext($event->image->ext)) {
+			$this->theme->display_image($event->page, $event->image);
+		}
+	}
+
+	private function supported_ext($ext) {
+		$exts = array("ico", "ani", "cur");
+		return array_contains($exts, strtolower($ext));
+	}
+	
+	private function create_image_from_data($filename, $metadata) {
+		global $config;
+
+		$image = new Image();
+
+		$info = "";
+		$fp = fopen($filename, "r");
+		$header = unpack("snull/stype/scount", fread($fp, 6));
+
+		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
+		fclose($fp);
+		
+		$image->width = $subheader['width'];
+		$image->height = $subheader['height'];
+		
+		$image->filesize  = $metadata['size'];
+		$image->hash      = $metadata['hash'];
+		$image->filename  = $metadata['filename'];
+		$image->ext       = $metadata['extension'];
+		$image->tag_array = tag_explode($metadata['tags']);
+		$image->source    = $metadata['source'];
+
+		return $image;
+	}
+
+	private function check_contents($file) {
+		if(!file_exists($file)) return false;
+		$fp = fopen($file, "r");
+		$header = unpack("snull/stype/scount", fread($fp, 6));
+		fclose($fp);
+		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
+	}
+
+	private function create_thumb($hash) {
+		global $config;
+
+		$ha = substr($hash, 0, 2);
+		$inname  = "images/$ha/$hash";
+		$outname = "thumbs/$ha/$hash";
+
+		$w = $config->get_int("thumb_width");
+		$h = $config->get_int("thumb_height");
+		$q = $config->get_int("thumb_quality");
+		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
+
+		if($config->get_bool("ico_convert")) {
+			// "-limit memory $mem" broken?
+			exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
+		}
+		else {
+			copy($inname, $outname);
+		}
+
+		return true;
+	}
+}
+add_event_listener(new IcoFileHandler());
+?>
