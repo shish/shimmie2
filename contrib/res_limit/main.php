@@ -15,6 +15,7 @@ class ResolutionLimit extends Extension {
 			$max_w = $config->get_int("upload_max_width", -1);
 			$max_h = $config->get_int("upload_max_height", -1);
 			$ratios = explode(" ", $config->get_string("upload_ratios", ""));
+			$ratios = array_filter($ratios, "strlen");
 			
 			$image = $event->image;
 
@@ -27,6 +28,7 @@ class ResolutionLimit extends Extension {
 				$ok = false;
 				foreach($ratios as $ratio) {
 					$parts = explode(":", $ratio);
+					if(count($parts) < 2) continue;
 					$width = $parts[0];
 					$height = $parts[1];
 					if($image->width / $width == $image->height / $height) {
