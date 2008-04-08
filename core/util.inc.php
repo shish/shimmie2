@@ -199,6 +199,21 @@ function get_memory_limit() {
 	return $memory;
 }
 
+function get_session_ip() {
+	global $config;
+
+    $mask = $config->get_string("session_hash_mask");
+    if(!$mask) {
+        $config->set_string("session_hash_mask", "255.255.0.0");
+        $mask = "255.255.0.0";
+    }
+
+    $addr = $_SERVER['REMOTE_ADDR'];
+    $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
+
+    return $addr;
+}
+
 /*
  * PHP really, really sucks.
  */
@@ -315,39 +330,6 @@ function array_contains($array, $target) {
 		}
 	}
 	return false;
-}
-
-# (PHP 5 >= 5.2.1)
-if(!function_exists('sys_get_temp_dir')) {
-	// Based on http://www.phpit.net/
-	// article/creating-zip-tar-archives-dynamically-php/2/
-	function sys_get_temp_dir() {
-		// Try to get from environment variable
-		if(!empty($_ENV['TMP'])) {
-			return realpath($_ENV['TMP']);
-		}
-		else if(!empty($_ENV['TMPDIR'])) {
-			return realpath($_ENV['TMPDIR']);
-		}
-		else if(!empty($_ENV['TEMP'])) {
-			return realpath($_ENV['TEMP']);
-		}
-
-		// Detect by creating a temporary file
-		else {
-			// Try to use system's temporary directory
-			// as random name shouldn't exist
-			$temp_file = tempnam(md5(uniqid(rand(), TRUE)), '');
-			if($temp_file) {
-				$temp_dir = realpath(dirname($temp_file));
-				unlink($temp_file);
-				return $temp_dir;
-			}
-			else {
-				return FALSE;
-			}
-		}
-	}
 }
 
 // from http://uk.php.net/network
