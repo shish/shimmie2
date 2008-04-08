@@ -51,6 +51,7 @@ if(is_readable("config.php")) {
 	echo "'config.php' exists -- install function is disabled";
 	exit;
 }
+require_once "core/compat.inc.php";
 require_once "lib/adodb/adodb.inc.php";
 require_once "lib/adodb/adodb-xmlschema03.inc.php";
 
@@ -160,6 +161,7 @@ function install_process() { // {{{
 } // }}}
 function set_admin_cookie($admin_name, $admin_pass) { // {{{
 	$addr = $_SERVER['REMOTE_ADDR'];
+	$addr = inet_ntop(inet_pton($addr) & inet_pton("255.255.0.0"));
 	$hash = md5(strtolower($admin_name) . $admin_pass);
 	setcookie("shm_user", $admin_name, time()+60*60*24*365);
 	setcookie("shm_session", md5($hash.$addr), time()+60*60*24*7, "/");

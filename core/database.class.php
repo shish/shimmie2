@@ -355,7 +355,7 @@ class Database {
 	
 	public function get_user_session($name, $session) {
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name LIKE ? AND md5(concat(pass, ?)) = ?",
-				array($name, $_SERVER['REMOTE_ADDR'], $session));
+				array($name, get_session_ip(), $session));
 		return $row ? new User($row) : null;
 	}
 

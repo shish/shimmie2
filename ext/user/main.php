@@ -186,7 +186,6 @@ class UserPage extends Extension {
 
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
-		$addr = $_SERVER['REMOTE_ADDR'];
 		$hash = md5(strtolower($name) . $pass);
 
 		$duser = $database->get_user_by_name_and_hash($name, $hash);
@@ -224,7 +223,6 @@ class UserPage extends Extension {
 	private function create_user($event) {
 		global $database;
 
-		$addr = $_SERVER['REMOTE_ADDR'];
 		$hash = md5(strtolower($event->username) . $event->password);
 		$email = (!empty($event->email)) ? $event->email : null;
 
@@ -236,7 +234,7 @@ class UserPage extends Extension {
 	private function set_login_cookie($name, $pass) {
 		global $config;
 
-		$addr = $_SERVER['REMOTE_ADDR'];
+		$addr = get_session_ip();
 		$hash = md5(strtolower($name) . $pass);
 
 		setcookie("shm_user", $name,
@@ -274,7 +272,6 @@ class UserPage extends Extension {
 			}
 			else {
 				global $config;
-				$addr = $_SERVER['REMOTE_ADDR'];
 
 				// FIXME: send_event()
 				$duser->set_password($pass1);
