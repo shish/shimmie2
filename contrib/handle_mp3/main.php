@@ -11,7 +11,7 @@ class MP3FileHandler extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_mp3", "MP3FileHandlerTheme");
 
-		if(is_a($event, 'DataUploadEvent') && $event->type == "mp3" && $this->check_contents($event->tmpname)) {
+		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!copy($event->tmpname, "images/$ha/$hash")) {
@@ -27,16 +27,21 @@ class MP3FileHandler extends Extension {
 			send_event(new ImageAdditionEvent($event->user, $image));
 		}
 
-		if(is_a($event, 'ThumbnailGenerationEvent') && $event->type == "mp3") {
+		if(is_a($event, 'ThumbnailGenerationEvent') && $this->supported_ext($event->type)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			// FIXME: scale image, as not all boards use 192x192
 			copy("ext/handle_mp3/thumb.jpg", "thumbs/$ha/$hash");
 		}
 
-		if(is_a($event, 'DisplayingImageEvent') && $event->image->ext == "mp3") {
+		if(is_a($event, 'DisplayingImageEvent') && $this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
+	}
+
+	private function supported_ext($ext) {
+		$exts = array("mp3");
+		return array_contains($exts, strtolower($ext));
 	}
 
 	private function create_image_from_data($filename, $metadata) {
