@@ -6,26 +6,14 @@ class NumericScoreTheme extends Themelet {
 		$i_score = int_escape($image->numeric_score);
 		
 		$html = "
-			<table style='width: 400px;'>
-				<tr>
-					<td>Current score is $i_score</td>
-					<td>
-					<!--
-			<form action='".make_link("numeric_score/vote")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id' />
-				<input type='hidden' name='score' value='1'>
-				<input type='submit' value='Vote Up' />
-			</form>
-					</td>
-					<td>
-			<form action='".make_link("numeric_score/vote")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id' />
-				<input type='hidden' name='score' value='-1'>
-				<input type='submit' value='Vote Down' />
-			</form>-->
-					</td>
-				</tr>
-			</table>
+			<tr>
+				<td>Score ($i_score)</td>
+				<td>
+					<input type='radio' name='numeric_score' value='u' id='u'><label for='u'>Up</label>
+					<input type='radio' name='numeric_score' value='n' id='n' checked><label for='n'>Keep</label>
+					<input type='radio' name='numeric_score' value='d' id='d'><label for='d'>Down</label>
+				</td>
+			</tr>
 		";
 		return $html;
 	}

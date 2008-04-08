@@ -28,47 +28,31 @@ class NumericScore extends Extension {
 			if($config->get_int("ext_numeric_score_version", 0) < 1) {
 				$this->install();
 			}
-			$config->set_default_bool("numeric_score_anon", true);
-		}
-
-		if(is_a($event, 'PageRequestEvent') && $event->page_name == "numeric_score" &&
-				$event->get_arg(0) == "vote" &&
-				isset($_POST['score']) && isset($_POST['image_id'])) {
-			$i_score = int_escape($_POST['score']);
-			$i_image_id = int_escape($_POST['image_id']);
-			
-			if($i_score >= -1 || $i_score <= 1) {
-				send_event(new NumericScoreSetEvent($i_image_id, $event->user, $i_score));
-			}
-			
-			$event->page->set_mode("redirect");
-			$event->page->set_redirect(make_link("post/view/$i_image_id"));
 		}
 		
-		if(is_a($event, 'NumericScoreSetEvent')) {
-			if(!$event->user->is_anonymous() || $config->get_bool("numeric_score_anon")) {
-				$this->add_vote($event->image_id, $event->user->id, $event->score);
-			}
-		}
-
 		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
 			global $user;
 			global $config;
-			if(!$user->is_anonymous() || $config->get_bool("numeric_score_anon")) {
+			if(!$user->is_anonymous()) {
 				$event->add_part($this->theme->get_voter_html($event->image));
 			}
 		}
 		
+		if(is_a($event, 'ImageInfoSetEvent')) {
+			global $user;
+			$char = $_POST['numeric_score'];
+			if($char == "u") $score = 1;
+			else if($char == "d") $score = -1;
+			send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
+		}
 		
+		if(is_a($event, 'NumericScoreSetEvent')) {
+			$this->add_vote($event->image_id, $event->user->id, $event->score);
+		}
+
 		if(is_a($event, 'ImageDeletionEvent')) {
 			global $database;
 			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=?", array($event->image->id));
-		}
-		
-		if(is_a($event, 'SetupBuildingEvent')) {
-			$sb = new SetupBlock("Numeric Score");
-			$sb->add_bool_option("numeric_score_anon", "Allow anonymous votes: ");
-			$event->panel->add_block($sb);
 		}
 
 		if(is_a($event, 'ParseLinkTemplateEvent')) {
