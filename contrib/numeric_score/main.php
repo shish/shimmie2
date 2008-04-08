@@ -59,6 +59,15 @@ class NumericScore extends Extension {
 		if(is_a($event, 'ParseLinkTemplateEvent')) {
 			$event->replace('$score', $event->image->numeric_score);
 		}
+
+		if(is_a($event, 'SearchTermParseEvent')) {
+			$matches = array();
+			if(preg_match("/score(<|=|>)(\d+)/", $event->term, $matches)) {
+				$cmp = $matches[1];
+				$score = $matches[2];
+				$event->set_querylet(new Querylet("AND (numeric_score $cmp $score)"));
+			}
+		}
 	}
 
 	private function install() {
