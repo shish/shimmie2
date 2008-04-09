@@ -8,7 +8,6 @@ class User {
 	var $email;
 	var $join_date;
 	var $days_old;
-	var $enabled;
 	var $admin;
 	
 	public function User($row) {
@@ -17,24 +16,12 @@ class User {
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
 		$this->days_old = $row['days_old'];
-		$this->enabled = ($row['enabled'] == 'Y');
 		$this->admin = ($row['admin'] == 'Y');
 	}
 
 	public function is_anonymous() {
 		global $config;
 		return ($this->id == $config->get_int('anon_id'));
-	}
-
-	public function is_enabled() {
-		return $this->enabled;
-	}
-
-	public function set_enabled($enabled) {
-		global $database;
-		
-		$yn = $enabled ? 'Y' : 'N';
-		$database->Execute("UPDATE users SET enabled=? WHERE id=?", array($yn, $this->id));
 	}
 
 	public function is_admin() {

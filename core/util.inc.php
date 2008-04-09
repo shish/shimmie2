@@ -508,7 +508,7 @@ function _get_user() {
 	$user = null;
 	if(isset($_COOKIE["shm_user"]) && isset($_COOKIE["shm_session"])) {
 	    $tmp_user = $database->get_user_session($_COOKIE["shm_user"], $_COOKIE["shm_session"]);
-		if(!is_null($tmp_user) && $tmp_user->is_enabled()) {
+		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
 		

@@ -168,13 +168,11 @@ class UserPageTheme extends Themelet {
 
 		$i_user_id = int_escape($duser->id);
 		$h_is_admin = $duser->is_admin() ? " checked" : "";
-		$h_is_enabled = $duser->is_enabled() ? " checked" : "";
 
 		$html = "
 			<form action='".make_link("user_admin/set_more")."' method='POST'>
 			<input type='hidden' name='id' value='$i_user_id'>
 			Admin: <input name='admin' type='checkbox'$h_is_admin>
-			<br>Enabled: <input name='enabled' type='checkbox'$h_is_enabled>
 			<p><input type='submit' value='Set'>
 			</form>
 			";
