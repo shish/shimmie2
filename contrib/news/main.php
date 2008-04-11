@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: News
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Show a short amonut of text in a block on the post list
+ */
 
 class News extends Extension {
 	var $theme;

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: Regen Thumb
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Regenerate a thumbnail image
+ */
 
 class RegenThumb extends Extension {
 	var $theme;

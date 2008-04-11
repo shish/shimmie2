@@ -2,7 +2,6 @@
 /**
 * Name: Home Extension
 * Author: Bzchan <bzchan@animemahou.com>
-* Link: http://trac.shishnet.org/shimmie2/
 * License: GPLv2
 * Description: Extension adds a page "home" containing user specified
 *              links and a counter showing total number of posts. The

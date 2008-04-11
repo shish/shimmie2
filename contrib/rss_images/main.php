@@ -1,4 +1,11 @@
 <?php
+/**
+ * Name: RSS for Images
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Self explanitory
+ */
+
 
 class RSS_Images extends Extension {
 // event handling {{{

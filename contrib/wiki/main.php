@@ -4,8 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
- * Description: A simple wiki, for those who don't want the
- *              hugeness of mediawiki
+ * Description: A simple wiki, for those who don't want the hugeness of mediawiki
  */
 
 // WikiUpdateEvent {{{

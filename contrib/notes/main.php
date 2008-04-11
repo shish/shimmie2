@@ -2,7 +2,6 @@
 /**
  * Name: Image Notes
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Adds notes overlaid on the images
  */

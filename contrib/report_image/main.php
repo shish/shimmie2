@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Name: Report Images
  * Author: ATravelingGeek <atg@atravelinggeek.com>

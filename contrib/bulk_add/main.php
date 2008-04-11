@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: Bulk Add
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Bulk add server-side images
+ */
 
 class BulkAdd extends Extension {
 	var $theme;

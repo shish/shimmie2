@@ -2,7 +2,6 @@
 /**
  * Name: Comment Word Ban
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: For stopping spam and other comment abuse
  */

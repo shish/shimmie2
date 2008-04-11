@@ -2,7 +2,6 @@
 /**
  * Name: EventLog
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: A log of things that happen, for abuse tracking
  */
