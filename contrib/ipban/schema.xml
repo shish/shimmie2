@@ -5,8 +5,8 @@
 		<field name="id" type="I"><key/><autoincrement/></field>
 		<field name="banner_id" type="I"><notnull/></field>
 		<field name="ip" type="C" size="20"><notnull/></field>
-		<field name="date" type="T"><notnull/></field>
-		<field name="end" type="T"><notnull/></field>
+		<field name="date" type="D"><notnull/></field>
+		<field name="end" type="D"><notnull/></field>
 		<field name="reason" type="C" size="255"><notnull/></field>
 		<index name="bans__ip"><col>ip</col></index>
 		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
