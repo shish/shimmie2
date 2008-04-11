@@ -55,7 +55,7 @@ class IPBan extends Extension {
 
 						global $page;
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
@@ -64,7 +64,7 @@ class IPBan extends Extension {
 
 						global $page;
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "list") {
@@ -146,9 +146,16 @@ class IPBan extends Extension {
 
 	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
-		$database->Execute(
-				"INSERT INTO bans (ip, reason, date, end, banner_id) VALUES (?, ?, now(), ?, ?)",
-				array($ip, $reason, $end, $user->id));
+		if(preg_match("/^\d+ (day|week|month)$/i", $end)) {
+			$sql = "INSERT INTO bans (ip, reason, date, end, banner_id)
+			        VALUES (?, ?, now(), now() + interval $end, ?)";
+			$database->Execute($sql, array($ip, $reason, $user->id));
+		}
+		else {
+			$sql = "INSERT INTO bans (ip, reason, date, end, banner_id)
+			        VALUES (?, ?, now(), ?, ?)";
+			$database->Execute($sql, array($ip, $reason, $end, $user->id));
+		}
 	}
 
 	private function remove_ip_ban($id) {
