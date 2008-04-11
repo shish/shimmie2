@@ -14,10 +14,7 @@ class SVGFileHandler extends Extension {
 		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
-			if(!copy($event->tmpname, "images/$ha/$hash")) {
-				$event->veto("SVG Handler failed to move file from uploads to archive");
-				return;
-			}
+			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
@@ -74,9 +71,9 @@ class SVGFileHandler extends Extension {
 
 		$image = new Image();
 
-		// FIXME: ugh, xml parsing :|
-		$image->width = 0;
-		$image->height = 0;
+		$msp = new MiniSVGParser($filename);
+		$image->width = $msp->width;
+		$image->height = $msp->height;
 		
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
@@ -89,9 +86,33 @@ class SVGFileHandler extends Extension {
 	}
 
 	private function check_contents($file) {
-		// FIXME: magic header?
-		return (file_exists($file));
+		if(!file_exists($file)) return false;
+		
+		$msp = new MiniSVGParser($file);
+		return $msp->valid;
 	}
 }
+
+class MiniSVGParser {
+	var $valid=false, $width=0, $height=0;
+
+	function MiniSVGParser($file) {
+		$xml_parser = xml_parser_create();
+		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));
+		$this->valid = xml_parse($xml_parser, file_get_contents($file), true);
+		xml_parser_free($xml_parser);
+	}
+
+	function startElement($parser, $name, $attrs) {
+		if($name == "SVG") {
+			$this->width = int_escape($attrs["WIDTH"]);
+			$this->height = int_escape($attrs["HEIGHT"]);
+		}
+	}
+
+	function endElement($parser, $name) {
+	}
+}
+
 add_event_listener(new SVGFileHandler());
 ?>
