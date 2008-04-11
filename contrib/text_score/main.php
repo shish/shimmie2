@@ -2,7 +2,6 @@
 /**
  * Name: Image Scores (Text)
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allow users to score images
  */
