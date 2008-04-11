@@ -61,6 +61,16 @@ class IPBan extends Extension {
 						$page->set_redirect(make_link("admin"));
 					}
 				}
+				else if($event->get_arg(0) == "list") {
+					global $page;
+					$this->theme->display_bans($page, $this->get_bans());
+				}
+			}
+		}
+
+		if(is_a($event, 'UserBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_link("IP Bans", make_link("ip_ban/list"));
 			}
 		}
 
@@ -71,11 +81,6 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'RemoveIPBanEvent')) {
 			$this->remove_ip_ban($event->id);
-		}
-
-		if(is_a($event, 'AdminBuildingEvent')) {
-			global $page;
-			$this->theme->display_bans($page, $this->get_bans());
 		}
 	}
 // }}}
