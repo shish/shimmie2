@@ -7,6 +7,40 @@
  * Description: A thing for point & click extension management
  */
 
+class ExtensionInfo { // {{{
+	var $ext_name, $name, $link, $author, $email, $description;
+
+	function ExtensionInfo($main) {
+		$matches = array();
+		$data = file_get_contents($main);
+		preg_match("#contrib/(.*)/main.php#", $main, $matches);
+		$this->ext_name = $matches[1];
+		$this->name = $matches[1];
+
+		if(preg_match("/Name: (.*)/", $data, $matches)) {
+			$this->name = $matches[1];
+		}
+		if(preg_match("/Link: (.*)/", $data, $matches)) {
+			$this->link = $matches[1];
+		}
+		if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $data, $matches)) {
+			$this->author = $matches[1];
+			$this->email = $matches[2];
+		}
+		else if(preg_match("/Author: (.*)/", $data, $matches)) {
+			$this->author = $matches[1];
+		}
+		if(preg_match("/Description: (.*)/", $data, $matches)) {
+			$this->description = $matches[1];
+		}
+		$this->enabled = $this->is_enabled($this->ext_name);
+	}
+
+	private function is_enabled($fname) {
+		return file_exists("ext/$fname");
+	}
+} // }}}
+
 class ExtManager extends Extension {
 	var $theme;
 
@@ -42,35 +76,9 @@ class ExtManager extends Extension {
 	private function get_extensions() {
 		$extensions = array();
 		foreach(glob("contrib/*/main.php") as $main) {
-			$extension = array();
-			$matches = array();
-			$data = file_get_contents($main);
-			preg_match("#contrib/(.*)/main.php#", $main, $matches);
-			$extension["ext_name"] = $matches[1];
-			if(preg_match("/Name: (.*)/", $data, $matches)) {
-				$extension["name"] = $matches[1];
-			}
-			if(preg_match("/Link: (.*)/", $data, $matches)) {
-				$extension["link"] = $matches[1];
-			}
-			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $data, $matches)) {
-				$extension["author"] = $matches[1];
-				$extension["email"] = $matches[2];
-			}
-			else if(preg_match("/Author: (.*)/", $data, $matches)) {
-				$extension["author"] = $matches[1];
-			}
-			if(preg_match("/Description: (.*)/", $data, $matches)) {
-				$extension["description"] = $matches[1];
-			}
-			$extension["enabled"] = $this->is_enabled($extension["ext_name"]);
-			$extensions[] = $extension;
+			$extensions[] = new ExtensionInfo($main);
 		}
 		return $extensions;
-	}
-
-	private function is_enabled($fname) {
-		return file_exists("ext/$fname");
 	}
 
 	private function set_things($settings) {
@@ -88,7 +96,12 @@ class ExtManager extends Extension {
 		if($enabled) {
 			// enable if currently disabled
 			if(!file_exists("ext/$fname")) {
-				$this->enable_extension($fname);
+				if(function_exists("symlink")) {
+					symlink("../contrib/$fname", "ext/$fname");
+				}
+				else {
+					full_copy("contrib/$fname", "ext/$fname");
+				}
 			}
 		}
 		else {
@@ -96,15 +109,6 @@ class ExtManager extends Extension {
 			if(file_exists("ext/$fname")) {
 				deltree("ext/$fname");
 			}
-		}
-	}
-
-	private function enable_extension($fname) {
-		if(function_exists("symlink")) {
-			symlink("../contrib/$fname", "ext/$fname");
-		}
-		else {
-			full_copy("contrib/$fname", "ext/$fname");
 		}
 	}
 }

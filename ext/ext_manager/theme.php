@@ -8,13 +8,13 @@ class ExtManagerTheme extends Themelet {
 					<tr><th>Name</th><th>Author</th><th>Description</th><th>Enabled</th></tr>
 		";
 		foreach($extensions as $extension) {
-			$ext_name = $extension["ext_name"];
-			$h_name = empty($extension["name"]) ? $ext_name : html_escape($extension["name"]);
-			$h_email = html_escape($extension["email"]);
-			$h_link = isset($extension["link"]) ? html_escape($extension["link"]) : "";
-			$h_author = html_escape($extension["author"]);
-			$h_description = html_escape($extension["description"]);
-			$h_enabled = $extension["enabled"] ? " checked='checked'" : "";
+			$ext_name = $extension->ext_name;
+			$h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
+			$h_email = html_escape($extension->email);
+			$h_link = isset($extension->link) ? html_escape($extension->link) : "";
+			$h_author = html_escape($extension->author);
+			$h_description = html_escape($extension->description);
+			$h_enabled = $extension->enabled ? " checked='checked'" : "";
 			$html .= "
 				<tr>
 					" . (
