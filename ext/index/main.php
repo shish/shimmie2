@@ -106,6 +106,10 @@ class Index extends Extension {
 				$ext = strtolower($matches[2]);
 				$event->set_querylet(new Querylet("AND (images.ext = '$ext')"));
 			}
+			else if(preg_match("/(filename|name)=([a-zA-Z0-9]*)/i", $event->term, $matches)) {
+				$filename = strtolower($matches[2]);
+				$event->set_querylet(new Querylet("AND (images.filename LIKE '%$filename%')"));
+			}
 		}
 	}
 }
