@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: Downtime
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Show a "down for maintenance" page
+ */
 
 class Downtime extends Extension {
 	var $theme;

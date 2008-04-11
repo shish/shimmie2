@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: IP Ban
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Ban IP addresses
+ */
 
 // RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event {

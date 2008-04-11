@@ -2,7 +2,6 @@
 /**
  * Name: Site Description
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Sets the "description" meta-info in the page header, for
  *              eg search engines to read

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: System Info
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Show various bits of system information, for debugging
+ */
 
 class ET extends Extension {
 	var $theme;

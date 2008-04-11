@@ -1,4 +1,10 @@
 <?php
+/**
+ * Name: Image Zoom
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: Scales down too-large images using browser based scaling
+ */
 
 class Zoom extends Extension {
 	var $theme;
