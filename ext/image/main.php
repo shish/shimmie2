@@ -100,7 +100,8 @@ class ImageIO extends Extension {
 		if(!is_null($existing)) {
 			$handler = $config->get_string("upload_collision_handler");
 			if($handler == "merge") {
-				send_event(new TagSetEvent($existing->id, array_merge($image->get_tag_array(), $existing->get_tag_array())));
+				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
+				send_event(new TagSetEvent($existing->id, $merged));
 				return null;
 			}
 			else {
