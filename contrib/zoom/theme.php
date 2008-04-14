@@ -12,15 +12,19 @@ class ZoomTheme extends Themelet {
 <script type="text/javascript">
 img = document.getElementById("main_image");
 
-img.onclick = function() {scale(img);};
+if(img) {
+	img.onclick = function() {scale(img);};
 
-msg_div = document.createElement("div");
-msg_div.id = "msg_div";
-msg_div.appendChild(document.createTextNode("Note: Image has been scaled to fit the screen; click to enlarge"));
-msg_div.style.display="none";
-img.parentNode.insertBefore(msg_div, img);
+	msg_div = document.createElement("div");
+	msg_div.id = "msg_div";
+	msg_div.appendChild(document.createTextNode("Note: Image has been scaled to fit the screen; click to enlarge"));
+	msg_div.style.display="none";
+	img.parentNode.insertBefore(msg_div, img);
 
-orig_width = $image_width;
+	orig_width = $image_width;
+
+	$default
+}
 
 function scale(img) {
 	if(orig_width >= img.parentNode.clientWidth * 0.9) {
@@ -34,8 +38,6 @@ function scale(img) {
 		}
 	}
 }
-
-$default
 </script>
 EOD;
 	}
