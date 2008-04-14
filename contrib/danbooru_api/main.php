@@ -1,8 +1,7 @@
 <?php
 /*
-Name: Danbooru Client API for Shimmie2
-Description: Provides simple interfaces for third party software to interact with Shimmie via
-simple HTTP GET/POST requests.
+Name: Danbooru Client API
+Description: Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie
 
 Author: JJS <jsutinen@gmail.com>
 Notes:
@@ -10,12 +9,16 @@ danbooru API based on documentation from danbooru 1.0 - http://attachr.com/7569
 I've only been able to test add_post and find_tags because I use the old danbooru firefox extension for firefox 1.5
 
 Functions currently implemented:
-add_comment - NOT DONE YET, waiting on some backend shimmie code :)
 add_post - title and rating are currently ignored because shimmie does not support them
 find_posts - sort of works, filename is returned as the original filename and probably won't help when it comes to actually downloading it
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
 CHANGELOG
+13-APR-08 10:00PM CST - JJS
+Properly escape the tags returned in find_tags and find_posts - Caught by ATravelingGeek
+Updated extension info to be a bit more clear about its purpose
+Deleted add_comment code as it didn't do anything anyway
+
 01-MAR-08 7:00PM CST - JJS
 Rewrote to make it compatible with Shimmie trunk again (r723 at least)
 It may or may not support the new file handling stuff correctly, I'm only testing with images and the danbooru uploader for firefox
@@ -70,43 +73,6 @@ class DanbooruApi extends Extension
 		//$page->set_type("text/plain");
 		
 		$results = array();
-		
-		/*
-		add_comment() 
-		Adds a comment to a post. 
-		Parameters 
-		* body: the body of the comment 
-		* post_id: the post id 
-		* login: your login 
-		* password: your password Response 
-		* 200: success 
-		* 500: error. response body will the the error message.
-		*/
-		if($event->get_arg(1) == 'add_comment')
-		{
-			// On error the response body is the error message so plain text is fine
-			$page->set_type("text/plain");
-			// We do wish to auth the user if possible, if it fails treat as anonymous
-			$this->authenticate_user();
-			// Check if anonymous commenting is allowed before proceeding
-			if($config->get_bool("comment_anon") || !$user->is_anonymous())
-			{
-				// Did the user supply a post_id and a comment body?
-				if(isset($_REQUEST['post_id']) && isset($_REQUEST['body']) && trim($_REQUEST['body']) != "")
-				{
-					// waiting for someone to write an event handler for the comments extension :)
-				} else 
-				{
-					// User didn't supply necessary parameters, tell them that
-					header("HTTP/1.0 500 Internal Server Error");
-					$page->set_data("You forgot to supply either a post id or the body of your comment");
-				}
-			} else 
-			{
-				header("HTTP/1.0 500 Internal Server Error");
-				$page->set_data("You supplied an invalid login or password or anonymous commenting is currently disabled");
-			}
-		}
 		
 		/*
 		add_post()
@@ -324,7 +290,7 @@ class DanbooruApi extends Extension
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
-				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"$taglist\" source=\"$img->source\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
+				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . xmlspecialchars($taglist) . "\" source=\"$img->source\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
 			}
 			$xml .= "</posts>";
 			$page->set_data($xml);
@@ -386,7 +352,7 @@ class DanbooruApi extends Extension
 			$xml = "<tags>\n";
 			foreach($results as $tag)
 			{
-				$xml .= "<tag type=\"0\" count=\"$tag[0]\" name=\"$tag[1]\" id=\"$tag[2]\"/>\n";
+				$xml .= "<tag type=\"0\" count=\"$tag[0]\" name=\"" . xmlspecialchars($tag[1]) . "\" id=\"$tag[2]\"/>\n";
 			}
 			$xml .= "</tags>";
 			$page->set_data($xml);
@@ -426,6 +392,13 @@ class DanbooruApi extends Extension
 				$user = $database->get_user_by_id($config->get_int("anon_id", 0));
 			}
 		}
+	}
+
+	// From htmlspecialchars man page on php.net comments
+	// If tags contain quotes they need to be htmlified
+	private function xmlspecialchars($text) 
+	{
+		return str_replace('&#039;', '&apos;', htmlspecialchars($text, ENT_QUOTES));
 	}
 }
 
