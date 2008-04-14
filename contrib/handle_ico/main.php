@@ -37,6 +37,18 @@ class IcoFileHandler extends Extension {
 		if(is_a($event, 'DisplayingImageEvent') && $this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
+
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "get_ico")) {
+			global $database;
+			$id = int_escape($event->get_arg(0));
+			$image = $database->get_image($id);
+			$hash = $image->hash;
+			$ha = substr($hash, 0, 2);
+			
+			$event->page->set_type("image/x-icon");
+			$event->page->set_mode("data");
+			$event->page->set_data(file_get_contents("images/$ha/$hash"));
+		}
 	}
 
 	private function supported_ext($ext) {
