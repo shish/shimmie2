@@ -64,6 +64,7 @@ class IndexTheme extends Themelet {
 			<p><form action='$h_search_link' method='GET'>
 				<input id='search_input' name='search' type='text'
 						value='$h_search_string' autocomplete='off' />
+				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 			<div id='search_completions'></div>";
