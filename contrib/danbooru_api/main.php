@@ -290,7 +290,7 @@ class DanbooruApi extends Extension
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
-				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . xmlspecialchars($taglist) . "\" source=\"$img->source\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
+				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . $this->xmlspecialchars($taglist) . "\" source=\"$img->source\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
 			}
 			$xml .= "</posts>";
 			$page->set_data($xml);
@@ -352,7 +352,7 @@ class DanbooruApi extends Extension
 			$xml = "<tags>\n";
 			foreach($results as $tag)
 			{
-				$xml .= "<tag type=\"0\" count=\"$tag[0]\" name=\"" . xmlspecialchars($tag[1]) . "\" id=\"$tag[2]\"/>\n";
+				$xml .= "<tag type=\"0\" count=\"$tag[0]\" name=\"" . $this->xmlspecialchars($tag[1]) . "\" id=\"$tag[2]\"/>\n";
 			}
 			$xml .= "</tags>";
 			$page->set_data($xml);
