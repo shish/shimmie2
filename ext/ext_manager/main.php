@@ -12,28 +12,40 @@ class ExtensionInfo { // {{{
 
 	function ExtensionInfo($main) {
 		$matches = array();
-		$data = file_get_contents($main);
+		$lines = file($main);
 		preg_match("#contrib/(.*)/main.php#", $main, $matches);
 		$this->ext_name = $matches[1];
-		$this->name = $matches[1];
-
-		if(preg_match("/Name: (.*)/", $data, $matches)) {
-			$this->name = $matches[1];
-		}
-		if(preg_match("/Link: (.*)/", $data, $matches)) {
-			$this->link = $matches[1];
-		}
-		if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $data, $matches)) {
-			$this->author = $matches[1];
-			$this->email = $matches[2];
-		}
-		else if(preg_match("/Author: (.*)/", $data, $matches)) {
-			$this->author = $matches[1];
-		}
-		if(preg_match("/Description: (.*)/", $data, $matches)) {
-			$this->description = $matches[1];
-		}
+		$this->name = $this->ext_name;
 		$this->enabled = $this->is_enabled($this->ext_name);
+
+		for($i=0; $i<count($lines); $i++) {
+			$line = $lines[$i];
+			if(preg_match("/Name: (.*)/", $line, $matches)) {
+				$this->name = $matches[1];
+			}
+			if(preg_match("/Link: (.*)/", $line, $matches)) {
+				$this->link = $matches[1];
+			}
+			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
+				$this->author = $matches[1];
+				$this->email = $matches[2];
+			}
+			else if(preg_match("/Author: (.*)/", $line, $matches)) {
+				$this->author = $matches[1];
+			}
+			if(preg_match("/(.*)Description: (.*)/", $line, $matches)) {
+				$this->description = $matches[2];
+				$start = $matches[1]." ";
+				$start_len = strlen($start);
+				while(substr($lines[$i+1], 0, $start_len) == $start) {
+					$this->description .= substr($lines[$i+1], $start_len);
+					$i++;
+				}
+			}
+			if(preg_match("/\*\//", $line, $matches)) {
+				break;
+			}
+		}
 	}
 
 	private function is_enabled($fname) {
