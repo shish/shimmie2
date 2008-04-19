@@ -1,3 +1,4 @@
+<?php ob_start(); ?>
 <html>
 <!--
  - install.php (c) Shish 2007
