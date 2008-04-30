@@ -164,7 +164,7 @@ class ImageIO extends Extension {
 		else {
 			$page->set_title("Not Found");
 			$page->set_heading("Not Found");
-			$page->add_block(new Block("Navigation", "<a href='".index."'>Index</a>", "left", 0));
+			$page->add_block(new Block("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0));
 			$page->add_block(new Block("Image not in database",
 					"The requested image was not found in the database"));
 		}
