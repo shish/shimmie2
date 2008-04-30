@@ -96,7 +96,7 @@ class Index extends Extension {
 				$col = $matches[1];
 				$cmp = $matches[2];
 				$val = parse_shorthand_int($matches[3]);
-				$event->set_querylet(new Querylet("AND (images.$col $cmp $val)"));
+				$event->set_querylet(new Querylet("AND (images.$col $cmp ?)", array($val)));
 			}
 			else if(preg_match("/hash=([0-9a-fA-F]*)/i", $event->term, $matches)) {
 				$hash = strtolower($matches[2]);
