@@ -37,6 +37,7 @@ class Database {
 	var $db;
 	var $extensions;
 	var $get_images = "SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
+	var $cache_hits = 0, $cache_misses = 0;
 
 	/*
 	 * Create a new database object using connection info
@@ -46,6 +47,7 @@ class Database {
 		if(is_readable("config.php")) {
 			require_once "config.php";
 			$this->db = @NewADOConnection($database_dsn);
+			$this->use_memcache = isset($memcache);
 			if($this->db) {
 				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 				$this->db->Execute("SET NAMES utf8"); // FIXME: mysql specific :|
@@ -64,6 +66,10 @@ class Database {
 				";
 				exit;
 			}
+			if($this->use_memcache) {
+				$this->memcache = new Memcache;
+				$this->memcache->pconnect('localhost', 11211) or ($this->use_memcache = false);
+			}
 		}
 		else {
 			header("Location: install.php");
@@ -71,6 +77,33 @@ class Database {
 		}
 	}
 
+// memcache {{{
+	public function cache_get($key) {
+		if($this->use_memcache) {
+			$val = $this->memcache->get($key);
+			if($val) {
+				$this->cache_hits++;
+				return $val;
+			}
+			else {
+				$this->cache_misses++;
+			}
+		}
+		return false;
+	}
+
+	public function cache_set($key, $val, $time=0) {
+		if($this->use_memcache) {
+			$this->memcache->set($key, $val, false, $time);
+		}
+	}
+
+	public function cache_delete($key) {
+		if($this->use_memcache) {
+			$this->memcache->delete($key);
+		}
+	}
+// }}}
 // misc {{{
 	public function count_pages($tags=array()) {
 		global $config;
