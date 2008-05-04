@@ -2,14 +2,14 @@
 <schema version="0.3">
 	<!-- FIXME: mysql utf8ness -->
 	<table name="aliases">
-		<field name="oldtag" type="C" size="255"><key/><notnull/></field>
-		<field name="newtag" type="C" size="255"><notnull/></field>
+		<field name="oldtag" type="C" size="128"><key/><notnull/></field>
+		<field name="newtag" type="C" size="128"><notnull/></field>
 		<index name="aliases__unique"><col>oldtag</col><col>newtag</col><unique/></index>
 		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
 	</table>
 	
 	<table name="config">
-		<field name="name" type="C" size="255"><key/><notnull/></field>
+		<field name="name" type="C" size="128"><key/><notnull/></field>
 		<field name="value" type="X" size="4000"></field>
 		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
 	</table>
@@ -22,7 +22,7 @@
 		<field name="filesize" type="I"><notnull/></field>
 		<field name="hash" type="C" size="32"><notnull/></field>
 		<field name="ext" type="C" size="4"><notnull/></field>
-		<field name="source" type="C" size="255"></field>
+		<field name="source" type="C" size="249"></field>
 		<field name="width" type="I"><notnull/></field>
 		<field name="height" type="I"><notnull/></field>
 		<field name="posted" type="T"><notnull/></field>
@@ -39,7 +39,7 @@
 		<field name="pass" type="C" size="32"></field>
 		<field name="joindate" type="T"><notnull/></field>
 		<field name="admin" type="C" size="1"><notnull/><default value="N"/></field>
-		<field name="email" type="C" size="255"></field>
+		<field name="email" type="C" size="249"></field>
 		<index name="users__name"><col>name</col><unique/></index>
 		<opt platform="mysql">DEFAULT CHARSET='utf8'</opt>
 	</table>
