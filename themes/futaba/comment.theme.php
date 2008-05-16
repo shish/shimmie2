@@ -23,7 +23,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 	private function build_upload_box() {
-		return "upload";
+		return "[[ insert upload-and-comment extension here ]]";
 	}
 
 	/*
@@ -43,12 +43,6 @@ class CustomCommentListTheme extends CommentListTheme {
 		$html .=   "<div style='float: left; margin-left: 16px; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
 		$html .=   "<div class='commentset'>" . $this->comments_to_html($comments) . "</div>";
 		$html .= "</div>";
-		if($with_postbox) {
-			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
-		}
-		else {
-			$html .= "<div style='clear:both;'><p>&nbsp;</p></div>";
-		}
 
 		$page->add_block(new Block(null, $html, "main", $position));
 	}

@@ -6,7 +6,7 @@
 BODY {
 	font-family: arial,helvetica,sans-serif;
 	font-size: 10pt;
-	background: #FFFFEE;
+	background: #FFFFEE url(fade.png) top center repeat-x;
 	color: #800000;
 	padding-left: 5px;
 	padding-right: 5px;
@@ -30,6 +30,7 @@ IMG {border: none;}
 FORM {margin: 0px;}
 A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
+HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
