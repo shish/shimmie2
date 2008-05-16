@@ -57,7 +57,6 @@ $header_html
 		<h1>{$page->heading}</h1>
 		$subheading
 		
-		<div id="nav">$left_block_html</div>
 		<div id="body">$main_block_html</div>
 
 		<div id="footer">

@@ -4,49 +4,19 @@
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 BODY {
-	background: #EEE;
-	font-family: "Arial", sans-serif;
-	font-size: 14px;
-}
-H1, H3 {
-	border: 1px solid black;
-	background: #DDD;
-	text-align: center;
+	font-family: arial,helvetica,sans-serif;
+	font-size: 10pt;
+	background: #FFFFEE;
+	color: #800000;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-right: 0px;
+	margin-left: 0px;
+	margin-top: 5px;
 }
 H1 {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding: 2px;
-}
-H1 A {
-	color: black;
-}
-H3 {
-	margin-top: 32px;
-	padding: 1px;
-}
-THEAD {
-	background: #DEDEDE;
-	font-weight: bold;
-}
-TD {
-	vertical-align: top;
 	text-align: center;
 }
-#subtitle {
-	width: 256px;
-	font-size: 0.75em;
-	margin: auto;
-	text-align: center;
-	border: 1px solid black;
-	border-top: none;
-	background: #DDD;
-}
-#body SELECT {width: 150px;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>SELECT {width: 100%;}
 
 #footer {
 	clear: both;
@@ -58,92 +28,34 @@ TD>SELECT {width: 100%;}
 *[onclick] {cursor: pointer;}
 IMG {border: none;}
 FORM {margin: 0px;}
-A {text-decoration: none;}
-A:hover {text-decoration: underline;}
-
-BLOCKQUOTE {
-	border: 1px solid black;
-	padding: 8px;
-	background: #DDD;
-}
-
-UL {
-	text-align: left;
-}
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*             the navigation bar, and all its blocks             *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#nav {
-	width: 150px;
-	float: left;
-	text-align: center;
-	font-size: 0.9em;
-}
-#nav TABLE {
-	width: 150px;
-}
-#nav TD {
-	vertical-align: middle;
-}
-#nav INPUT {
-	width: 100%;
-	padding: 0px;
-}
-#nav SELECT {
-	width: 100%;
-	padding: 0px;
-}
-
-#comments P {
-	text-align: left;
-	width: 150px;
-	max-width: 150px;
-	overflow: hidden;
-}
-
-.more:after {
-	content: " >>>";
-}
-
-.tag_count:before {
-	content: "(";
-}
-.tag_count:after {
-	content: ")";
-}
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                 the main part of each page                     *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-#body {
-	margin-left: 160px;
-	text-align: center;
-	height: 1%;
-}
-#body TABLE {
-	width: 90%;
-	margin: auto;
-}
+A, A:visited {text-decoration: none; color: #0000EE;}
+A:hover {text-decoration: underline; color: #DD0000;}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                     specific page types                        *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#pagelist {
-	margin-top: 32px;
+.doubledash {
+	color: #D9BFB7;
+	vertical-align: top;
+	clear: both;
+	float: left;
 }
-
-#tagmap A {
-	padding: 8px 4px 8px 4px;
+.commentset TABLE:first-child TR TD .comment {
+	background: #FFFFEE;
+	border-width: 0px;
 }
-
 .comment {
-	text-align: left;
+	margin-bottom: 2px;
+	font-size: 10pt;
+	padding: 0px 5px;
+	background: #F0E0D6;
+	color: #800000;
+	border: 1px solid #D9BFB7;
+	border-left: none;
+	border-top: none;
+	padding: 2px;
 }
 
 .setupblock {
@@ -153,15 +65,6 @@ UL {
 	width: 350px;
 }
 
-.helpable {
-	border-bottom: 1px dashed gray;
+.paginator {
+	text-align: center;
 }
-
-.ok {
-	background: #AFA;
-}
-.bad {
-	background: #FAA;
-}
-
-

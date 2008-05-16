@@ -30,10 +30,10 @@ class Themelet {
 	/**
 	 * Add a generic paginator
 	 */
-	public function display_paginator($page, $base, $query, $page_number, $total_pages) {
+	public function display_paginator($page, $base, $query, $page_number, $total_pages, $position=90) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
-		$page->add_block(new Block(null, $body, "main", 90));
+		$page->add_block(new Block(null, $body, "main", $position));
 	}
 
 	private function gen_page_link($base_url, $query, $page, $name) {
