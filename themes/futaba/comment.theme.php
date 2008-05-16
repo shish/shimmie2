@@ -22,6 +22,10 @@ class CustomCommentListTheme extends CommentListTheme {
 		$page->add_block(new Block(null, "<hr>", "main", 80));
 		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages, 90);
 	}
+	
+	public function display_recent_comments($page, $comments) {
+		// sidebar fails in this theme
+	}
 
 	private function build_upload_box() {
 		return "[[ insert upload-and-comment extension here ]]";
