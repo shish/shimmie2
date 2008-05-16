@@ -42,11 +42,11 @@ A:hover {text-decoration: underline; color: #DD0000;}
 	clear: both;
 	float: left;
 }
-.commentset TABLE:first-child TR TD .comment {
+.comment {
 	background: #FFFFEE;
 	border-width: 0px;
 }
-.comment {
+.reply {
 	margin-bottom: 2px;
 	font-size: 10pt;
 	padding: 0px 5px;
@@ -56,6 +56,10 @@ A:hover {text-decoration: underline; color: #DD0000;}
 	border-left: none;
 	border-top: none;
 	padding: 2px;
+}
+.reply P {
+	margin-left: 32px;
+	margin-bottom: 0px;
 }
 
 .setupblock {

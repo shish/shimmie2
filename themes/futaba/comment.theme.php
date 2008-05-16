@@ -55,13 +55,14 @@ class CustomCommentListTheme extends CommentListTheme {
 
 	protected function comments_to_html($comments, $trim=false) {
 		$html = "";
+		$inner_id = 0;
 		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment, $trim);
+			$html .= $this->comment_to_html($comment, $trim, $inner_id++);
 		}
 		return $html;
 	}
 
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html($comment, $trim=false, $inner_id=0) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
@@ -81,9 +82,15 @@ class CustomCommentListTheme extends CommentListTheme {
 			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
-		return "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td>".
-			"<div class='comment'>$h_userlink$h_dellink $h_date No.$i_comment_id [Reply]<p>$h_comment</p></div>" .
-			"</td></tr></table>";
+
+		if($inner_id == 0) {
+			return "<div class='comment'>$h_userlink$h_dellink $h_date No.$i_comment_id [Reply]<p>$h_comment</p></div>";
+		}
+		else {
+			return "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td>".
+				"<div class='reply'>$h_userlink$h_dellink $h_date No.$i_comment_id [Reply]<p>$h_comment</p></div>" .
+				"</td></tr></table>";
+		}
 	}
 
 	protected function build_postbox($image_id) {
