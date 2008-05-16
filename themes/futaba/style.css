@@ -32,6 +32,31 @@ A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
 HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 
+#nav {
+	width: 150px;
+	float: left;
+	text-align:left;
+}
+#nav TABLE {
+	width: 150px;
+}
+#nav TD {
+	vertical-align: middle;
+}
+#nav INPUT {
+	width: 100%;
+	padding: 0px;
+}
+#nav SELECT {
+	width: 100%;
+	padding: 0px;
+}
+#nav H3 {
+	text-align: left;
+}
+.withleft {
+	margin-left: 160px;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                     specific page types                        *

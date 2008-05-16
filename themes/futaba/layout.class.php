@@ -41,6 +41,15 @@ class Layout {
 			$subheading = "<div id='subtitle'>{$page->subheading}</div>";
 		}
 
+		if($page->left_enabled) {
+			$left = "<div id='nav'>$left_block_html</div>";
+			$withleft = "withleft";
+		}
+		else {
+			$left = "";
+			$withleft = "";
+		}
+
 		print <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
@@ -57,7 +66,8 @@ $header_html
 		<h1>{$page->heading}</h1>
 		$subheading
 		
-		<div id="body">$main_block_html</div>
+		$left
+		<div id="body" class="$withleft">$main_block_html</div>
 
 		<div id="footer">
 			<hr>
