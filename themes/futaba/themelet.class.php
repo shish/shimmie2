@@ -38,7 +38,7 @@ class Themelet {
 
 	private function gen_page_link($base_url, $query, $page, $name) {
 		$link = make_link("$base_url/$page", $query);
-	    return "<a href='$link'>$name</a>";
+	    return "[<a href='$link'>$name</a>]";
 	}
 	
 	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
@@ -70,10 +70,11 @@ class Themelet {
 		foreach(range($start, $end) as $i) {
 			$pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, $i);
 		}
-		$pages_html = implode(" | ", $pages);
+		$pages_html = implode(" ", $pages);
 
-		return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
-				"<br>&lt;&lt; $pages_html &gt;&gt;</p>";
+		//return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
+		//		"<br>&lt;&lt; $pages_html &gt;&gt;</p>";
+		return "<p class='paginator'>$prev_html $pages_html $next_html";
 	}
 }
 ?>

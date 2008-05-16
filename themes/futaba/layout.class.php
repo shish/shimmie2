@@ -75,6 +75,7 @@ $header_html
 			<a href="http://trac.shishnet.org/shimmie2/">$version</a> &copy; 
 			<a href="http://www.shishnet.org/">Shish</a> 2007,
 			based on the <a href="http://trac.shishnet.org/shimmie2/wiki/DanbooruRipoff">Danbooru</a> concept.
+			<br>Futaba theme based on 4chan's layout and CSS :3
 			$debug
 			$contact
 		</div>

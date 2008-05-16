@@ -17,6 +17,9 @@ BODY {
 H1 {
 	text-align: center;
 }
+#subtitle {
+	display: none;
+}
 
 #footer {
 	clear: both;
@@ -72,7 +75,7 @@ HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 	background: #FFFFEE;
 	border-width: 0px;
 }
-.reply {
+.reply, .paginator {
 	margin-bottom: 2px;
 	font-size: 10pt;
 	padding: 0px 5px;
