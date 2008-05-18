@@ -74,7 +74,7 @@ class Themelet {
 
 		//return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
 		//		"<br>&lt;&lt; $pages_html &gt;&gt;</p>";
-		return "<p class='paginator'>$prev_html $pages_html $next_html";
+		return "<p class='paginator'>$prev_html $pages_html $next_html</p>";
 	}
 }
 ?>

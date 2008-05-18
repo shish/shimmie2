@@ -60,6 +60,9 @@ HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 .withleft {
 	margin-left: 160px;
 }
+TD {
+	vertical-align: top;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                     specific page types                        *
@@ -99,5 +102,6 @@ HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 }
 
 .paginator {
-	text-align: center;
+	display: inline;
+	padding: 5px;
 }
