@@ -144,8 +144,40 @@ class CommentList extends Extension {
 		global $database;
 		global $config;
 		
+		// shortcut to latest
 		if($config->get_int("ext_comments_version") < 1) {
-			$database->upgrade_schema("ext/comment/schema.xml");
+			$database->Execute("CREATE TABLE comments (
+				id {$database->engine->auto_increment},
+				image_id INTEGER NOT NULL,
+				owner_id INTEGER NOT NULL,
+				owner_ip CHAR(16) NOT NULL,
+				posted DATETIME DEFAULT NULL,
+				comment TEXT NOT NULL,
+				INDEX (image_id),
+				INDEX (owner_ip),
+				INDEX (posted)
+			) {$database->engine->create_table_extras}");
+			$config->set_int("ext_comments_version", 2);
+		}
+
+		// ===
+		if($config->get_int("ext_comments_version") < 1) {
+			$database->Execute("CREATE TABLE comments (
+				id {$database->engine->auto_increment},
+				image_id INTEGER NOT NULL,
+				owner_id INTEGER NOT NULL,
+				owner_ip CHAR(16) NOT NULL,
+				posted DATETIME DEFAULT NULL,
+				comment TEXT NOT NULL,
+				INDEX (image_id)
+			) {$database->engine->create_table_extras}");
+			$config->set_int("ext_comments_version", 1);
+		}
+
+		if($config->get_int("ext_comments_version") == 1) {
+			$database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
+			$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
+			$config->set_int("ext_comments_version", 2);
 		}
 	}
 // }}}
