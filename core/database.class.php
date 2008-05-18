@@ -29,6 +29,22 @@ class Querylet {
 		$this->variables[] = $var;
 	}
 } // }}}
+// {{{ dbengines
+class DBEngine {
+	var $name = null;
+	var $auto_increment = null;
+	var $create_table_extras = "";
+}
+class MySQL extends DBEngine {
+	var $name = "mysql";
+	var $auto_increment = "INTEGER PRIMARY KEY auto_increment";
+	var $create_table_extras = "TYPE=INNODB DEFAULT CHARSET='utf8'";
+}
+class PostgreSQL extends DBEngine {
+	var $name = "pgsql";
+	var $auto_increment = "SERIAL PRIMARY KEY";
+}
+//}}}
 
 /*
  * A class for controlled database access, available through "global $database"
@@ -37,6 +53,7 @@ class Database {
 	var $db;
 	var $extensions;
 	var $get_images = "SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
+	var $engine = null;
 
 	/*
 	 * Create a new database object using connection info
@@ -45,6 +62,7 @@ class Database {
 	public function Database() {
 		if(is_readable("config.php")) {
 			require_once "config.php";
+			$this->engine = new MySQL();
 			$this->db = @NewADOConnection($database_dsn);
 			if($this->db) {
 				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
@@ -108,6 +126,10 @@ class Database {
 	}
 	
 	public function upgrade_schema($filename) {
+		$this->install_schema($filename);
+	}
+	
+	public function install_schema($filename) {
 		//print "<br>upgrading $filename";
 
 		global $config;

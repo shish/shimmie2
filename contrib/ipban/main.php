@@ -37,7 +37,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 5) {
+			if($config->get_int("ext_ipban_version") < 3) {
 				$this->install();
 			}
 			
@@ -95,8 +95,46 @@ class IPBan extends Extension {
 		global $database;
 		global $config;
 		
-		if($config->get_int("ext_ipban_version") < 3) {
-			$database->upgrade_schema("ext/ipban/schema.xml");
+		// shortcut to latest
+		if($config->get_int("ext_ipban_version") < 1) {
+			$database->execute("
+				CREATE TABLE bans (
+					id {$database->engine->auto_increment},
+					banner_id INTEGER NOT NULL,
+					ip CHAR(15) NOT NULL,
+					end DATETIME NOT NULL,
+					reason TEXT NOT NULL,
+					INDEX (end)
+				) {$database->engine->create_table_extras};
+			");
+			$config->set_int("ext_ipban_version", 3);
+		}
+
+		// ===
+
+		if($config->get_int("ext_ipban_version") < 1) {
+			$database->Execute("CREATE TABLE bans (
+				id int(11) NOT NULL auto_increment,
+				ip char(15) default NULL,
+				date datetime default NULL,
+				end datetime default NULL,
+				reason varchar(255) default NULL,
+				PRIMARY KEY (id)
+			)");
+			$config->set_int("ext_ipban_version", 1);
+		}
+
+		if($config->get_int("ext_ipban_version") == 1) {
+			$database->execute("ALTER TABLE bans ADD COLUMN banner_id INTEGER NOT NULL AFTER id");
+			$config->set_int("ext_ipban_version", 2);
+		}
+
+		if($config->get_int("ext_ipban_version") == 2) {
+			$database->execute("ALTER TABLE bans DROP COLUMN date");
+			$database->execute("ALTER TABLE bans CHANGE ip ip CHAR(20) NOT NULL");
+			$database->execute("ALTER TABLE bans CHANGE reason reason TEXT NOT NULL");
+			$database->execute("CREATE INDEX bans__end ON bans(end)");
+			$config->set_int("ext_ipban_version", 3);
 		}
 	}
 // }}}
@@ -127,33 +165,29 @@ class IPBan extends Extension {
 // database {{{
 	private function get_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans ORDER BY date");
+		$bans = $database->get_all("SELECT * FROM bans ORDER BY end, id");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
 
 	private function get_active_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans WHERE (date < now()) AND (end > now() OR isnull(end))");
+		$bans = $database->get_all("SELECT * FROM bans WHERE (end > now() OR isnull(end))");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
 
-	private function get_ip_ban($ip) {
-		global $database;
-		return $database->db->GetRow("SELECT * FROM bans WHERE ip = ? AND date < now() AND (end > now() OR isnull(end))", array($ip));
-	}
-
 	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
-		if(preg_match("/^\d+ (day|week|month)$/i", $end)) {
-			$sql = "INSERT INTO bans (ip, reason, date, end, banner_id)
-			        VALUES (?, ?, now(), now() + interval $end, ?)";
+		$parts = array();
+		if(preg_match("/^(\d+) (day|week|month)s?$/i", $end, $parts)) {
+			$sql = "INSERT INTO bans (ip, reason, end, banner_id)
+			        VALUES (?, ?, now() + interval {$parts[1]} {$parts[2]}, ?)";
 			$database->Execute($sql, array($ip, $reason, $user->id));
 		}
 		else {
-			$sql = "INSERT INTO bans (ip, reason, date, end, banner_id)
-			        VALUES (?, ?, now(), ?, ?)";
+			$sql = "INSERT INTO bans (ip, reason, end, banner_id)
+			        VALUES (?, ?, ?, ?)";
 			$database->Execute($sql, array($ip, $reason, $end, $user->id));
 		}
 	}
