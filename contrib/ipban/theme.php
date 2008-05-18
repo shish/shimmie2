@@ -14,11 +14,12 @@ class IPBanTheme extends Themelet {
 	public function display_bans($page, $bans) {
 		$h_bans = "";
 		foreach($bans as $ban) {
+			$end_human = date('Y-m-d', $ban['end']);
 			$h_bans .= "
 				<tr>
 					<td>{$ban['ip']}</td>
 					<td>{$ban['reason']}</td>
-					<td>{$ban['end']}</td>
+					<td>{$end_human}</td>
 					<td>
 						<form action='".make_link("ip_ban/remove")."' method='POST'>
 							<input type='hidden' name='id' value='{$ban['id']}'>

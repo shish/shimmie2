@@ -37,7 +37,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 3) {
+			if($config->get_int("ext_ipban_version") < 4) {
 				$this->install();
 			}
 			
@@ -102,12 +102,12 @@ class IPBan extends Extension {
 					id {$database->engine->auto_increment},
 					banner_id INTEGER NOT NULL,
 					ip CHAR(15) NOT NULL,
-					end DATETIME NOT NULL,
+					end INTEGER,
 					reason TEXT NOT NULL,
 					INDEX (end)
 				) {$database->engine->create_table_extras};
 			");
-			$config->set_int("ext_ipban_version", 3);
+			$config->set_int("ext_ipban_version", 4);
 		}
 
 		// ===
@@ -135,6 +135,15 @@ class IPBan extends Extension {
 			$database->execute("ALTER TABLE bans CHANGE reason reason TEXT NOT NULL");
 			$database->execute("CREATE INDEX bans__end ON bans(end)");
 			$config->set_int("ext_ipban_version", 3);
+		}
+
+		if($config->get_int("ext_ipban_version") == 3) {
+			$database->execute("ALTER TABLE bans CHANGE end old_end DATE NOT NULL");
+			$database->execute("ALTER TABLE bans ADD COLUMN end INTEGER");
+			$database->execute("UPDATE bans SET end = UNIX_TIMESTAMP(old_end)");
+			$database->execute("ALTER TABLE bans DROP COLUMN old_end");
+			$database->execute("CREATE INDEX bans__end ON bans(end)");
+			$config->set_int("ext_ipban_version", 4);
 		}
 	}
 // }}}
@@ -172,7 +181,7 @@ class IPBan extends Extension {
 
 	private function get_active_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans WHERE (end > now() OR isnull(end))");
+		$bans = $database->get_all("SELECT * FROM bans WHERE (end > ? OR isnull(end))", array(time()));
 		if($bans) {return $bans;}
 		else {return array();}
 	}
@@ -182,13 +191,13 @@ class IPBan extends Extension {
 		$parts = array();
 		if(preg_match("/^(\d+) (day|week|month)s?$/i", $end, $parts)) {
 			$sql = "INSERT INTO bans (ip, reason, end, banner_id)
-			        VALUES (?, ?, now() + interval {$parts[1]} {$parts[2]}, ?)";
-			$database->Execute($sql, array($ip, $reason, $user->id));
+			        VALUES (?, ?, ?, ?)";
+			$database->Execute($sql, array($ip, $reason, strtotime("+{$parts[1]} {$parts[2]}"), $user->id));
 		}
 		else {
-			$sql = "INSERT INTO bans (ip, reason, end, banner_id)
-			        VALUES (?, ?, ?, ?)";
-			$database->Execute($sql, array($ip, $reason, $end, $user->id));
+			$sql = "INSERT INTO bans (ip, reason, banner_id)
+			        VALUES (?, ?, ?)";
+			$database->Execute($sql, array($ip, $reason, $user->id));
 		}
 	}
 
