@@ -137,7 +137,7 @@ class Database {
 	public function count_pages($tags=array()) {
 		global $config;
 		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
-		return ceil($thi->count_images($tags) / $images_per_page);
+		return ceil($this->count_images($tags) / $images_per_page);
 	}
 
 	public function execute($query, $args=array()) {
