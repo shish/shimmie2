@@ -84,7 +84,12 @@ class CommentList extends Extension {
 					if($event->count_args() == 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
 						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("post/view/".$event->get_arg(2)));
+						if(!empty($_SERVER['HTTP_REFERER'])) {
+							$event->page->set_redirect($_SERVER['HTTP_REFERER']);
+						}
+						else {
+							$event->page->set_redirect(make_link("post/view/".$event->get_arg(2)));
+						}
 					}
 				}
 				else {
