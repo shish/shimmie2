@@ -64,7 +64,7 @@ class NumericScore extends Extension {
 			if(preg_match("/score(<|=|>)(\d+)/", $event->term, $matches)) {
 				$cmp = $matches[1];
 				$score = $matches[2];
-				$event->set_querylet(new Querylet("AND (numeric_score $cmp $score)"));
+				$event->set_querylet(new Querylet("numeric_score $cmp $score"));
 			}
 		}
 	}

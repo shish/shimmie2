@@ -76,7 +76,7 @@ class Ratings extends Extension {
 					$arr[] = "'" . $sqes[$i] . "'";
 				}
 				$set = join(', ', $arr);
-				$event->set_querylet(new Querylet("AND (rating IN ($set))"));
+				$event->set_querylet(new Querylet("rating IN ($set)"));
 			}
 		}
 	}

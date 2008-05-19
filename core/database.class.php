@@ -28,7 +28,26 @@ class Querylet {
 	public function add_variable($var) {
 		$this->variables[] = $var;
 	}
-} // }}}
+}
+class TagQuerylet {
+	var $tag;
+	var $positive;
+
+	public function TagQuerylet($tag, $positive) {
+		$this->tag = $tag;
+		$this->positive = $positive;
+	}
+}
+class ImgQuerylet {
+	var $qlet;
+	var $positive;
+
+	public function ImgQuerylet($qlet, $positive) {
+		$this->qlet = $qlet;
+		$this->positive = $positive;
+	}
+}
+// }}}
 // {{{ dbengines
 class DBEngine {
 	var $name = null;
@@ -204,11 +223,13 @@ class Database {
 	}
 
 	private function build_search_querylet($terms) {
-		$tag_search = new Querylet("0");
+		$tag_querylets = array();
+		$img_querylets = array();
 		$positive_tag_count = 0;
 		$negative_tag_count = 0;
-		$img_search = new Querylet("");
 
+
+		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
 			$negative = false;
 			if((strlen($term) > 0) && ($term[0] == '-')) {
@@ -221,28 +242,54 @@ class Database {
 			$stpe = new SearchTermParseEvent($term);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
-				$img_search->append($stpe->get_querylet());
+				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), !$negative);
 			}
 			else {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
 				if(!preg_match("/^[%_]+$/", $term)) {
-					$sign = $negative ? "-" : "+";
-					if($sign == "+") $positive_tag_count++;
-					else $negative_tag_count++;
-					$tag_search->append(new Querylet(" $sign (tag LIKE ?)", array($term)));
+					$tag_querylets[] = new TagQuerylet($term, !$negative);
 				}
 			}
 		}
 
+		// merge all the tag querylets into one generic one
+		$sql = "0";
+		$terms = array();
+		foreach($tag_querylets as $tq) {
+			$sign = $tq->positive ? "+" : "-";
+			$sql .= " $sign (tag LIKE ?)";
+			$terms[] = $tq->tag;
+			
+			if($sign == "+") $positive_tag_count++;
+			else $negative_tag_count++;
+		}
+		$tag_search = new Querylet($sql, $terms);
+
+		// merge all the image metadata searches into one generic querylet
+		$n = 0;
+		$sql = "";
+		$terms = array();
+		foreach($img_querylets as $iq) {
+			if($n++ > 0) $sql .= " AND";
+			if(!$iq->positive) $sql .= " NOT";
+			$sql .= " (" . $iq->qlet->sql . ")";
+			$terms = array_merge($terms, $iq->qlet->variables);
+		}
+		$img_search = new Querylet($sql, $terms);
+
+
+		// no tags, do a simple search (+image metadata if we have any)
 		if($positive_tag_count + $negative_tag_count == 0) {
 			$query = new Querylet($this->get_images);
 
 			if(strlen($img_search->sql) > 0) {
-				$query->append_sql("WHERE 1=1 ");
+				$query->append_sql(" WHERE ");
 				$query->append($img_search);
 			}
 		}
+
+		// one positive tag (a common case), do an optimised search
 		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
 			$query = new Querylet(
 				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
@@ -258,9 +305,12 @@ class Database {
 				$tag_search->variables);
 
 			if(strlen($img_search->sql) > 0) {
+				$query->append_sql(" AND ");
 				$query->append($img_search);
 			}
 		}
+
+		// more than one positive tag, or more than zero negative tags
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
 			$s_tag_list = join(', ', $s_tag_array);
@@ -292,21 +342,19 @@ class Database {
 				$query = new Querylet("
 					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
 					FROM ({$subquery->sql}) AS images ", $subquery->variables);
+
+				if(strlen($img_search->sql) > 0) {
+					$query->append_sql(" WHERE ");
+					$query->append($img_search);
+				}
 			}
 			else {
 				# there are no results, "where 1=0" should shortcut things
 				$query = new Querylet("
 					SELECT images.*
 					FROM images
-					LEFT JOIN image_tags ON image_tags.image_id = images.id
-					JOIN tags ON image_tags.tag_id = tags.id
 					WHERE 1=0
 				");
-			}
-
-			if(strlen($img_search->sql) > 0) {
-				$query->append_sql("WHERE 1=1 ");
-				$query->append($img_search);
 			}
 		}
 
