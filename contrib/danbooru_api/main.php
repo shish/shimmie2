@@ -52,7 +52,7 @@ class DanbooruApi extends Extension
 			if(preg_match("/md5:([0-9a-fA-F]*)/i", $event->term, $matches))
 			{
 				$hash = strtolower($matches[1]);
-				$event->set_querylet(new Querylet("AND (images.hash = '$hash')"));
+				$event->set_querylet(new Querylet("images.hash = '$hash'"));
 			}
 		}
 	}

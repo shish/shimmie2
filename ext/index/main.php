@@ -85,26 +85,30 @@ class Index extends Extension {
 			if(preg_match("/size(<|>|<=|>=|=)(\d+)x(\d+)/", $event->term, $matches)) {
 				$cmp = $matches[1];
 				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$event->set_querylet(new Querylet("AND (width $cmp ? AND height $cmp ?)", $args));
+				$event->set_querylet(new Querylet("width $cmp ? AND height $cmp ?", $args));
 			}
 			else if(preg_match("/ratio(<|>|<=|>=|=)(\d+):(\d+)/", $event->term, $matches)) {
 				$cmp = $matches[1];
 				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$event->set_querylet(new Querylet("AND (width / height $cmp ? / ?)", $args));
+				$event->set_querylet(new Querylet("width / height $cmp ? / ?", $args));
 			}
 			else if(preg_match("/(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)/i", $event->term, $matches)) {
 				$col = $matches[1];
 				$cmp = $matches[2];
 				$val = parse_shorthand_int($matches[3]);
-				$event->set_querylet(new Querylet("AND (images.$col $cmp $val)"));
+				$event->set_querylet(new Querylet("images.$col $cmp ?", array($val)));
 			}
 			else if(preg_match("/hash=([0-9a-fA-F]*)/i", $event->term, $matches)) {
 				$hash = strtolower($matches[2]);
-				$event->set_querylet(new Querylet("AND (images.hash = '$hash')"));
+				$event->set_querylet(new Querylet("images.hash = '$hash'"));
 			}
 			else if(preg_match("/(filetype|ext)=([a-zA-Z0-9]*)/i", $event->term, $matches)) {
 				$ext = strtolower($matches[2]);
-				$event->set_querylet(new Querylet("AND (images.ext = '$ext')"));
+				$event->set_querylet(new Querylet("images.ext = '$ext'"));
+			}
+			else if(preg_match("/(filename|name)=([a-zA-Z0-9]*)/i", $event->term, $matches)) {
+				$filename = strtolower($matches[2]);
+				$event->set_querylet(new Querylet("images.filename LIKE '%$filename%'"));
 			}
 		}
 	}
