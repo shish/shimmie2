@@ -123,17 +123,21 @@ class Database {
 	}
 // }}}
 // misc {{{
-	public function count_pages($tags=array()) {
-		global $config;
-		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
+	public function count_images($tags=array()) {
 		if(count($tags) == 0) {
-			return ceil($this->db->GetOne("SELECT COUNT(*) FROM images") / $images_per_page);
+			return $this->db->GetOne("SELECT COUNT(*) FROM images");
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
 			$result = $this->execute($querylet->sql, $querylet->variables);
-			return ceil($result->RecordCount() / $images_per_page);
+			return $result->RecordCount();
 		}
+	}
+
+	public function count_pages($tags=array()) {
+		global $config;
+		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
+		return ceil($thi->count_images($tags) / $images_per_page);
 	}
 
 	public function execute($query, $args=array()) {
@@ -393,6 +397,14 @@ class Database {
 		$image = null;
 		$row = $this->db->GetRow("{$this->get_images} WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
+	}
+
+	public function get_random_image($tags=array()) {
+		$max = $this->count_images($tags);
+		$rand = mt_rand(0, $max);
+		$set = $this->get_images($rand, 1, $tags);
+		if(count($set) > 0) return $set[0];
+		else return null;
 	}
 
 	public function get_image_by_hash($hash) {
