@@ -371,7 +371,7 @@ class Database {
 
 		$tags = array_map(array($this, 'resolve_alias'), $tags);
 		$tags = array_map(array($this, 'sanitise'), $tags);
-		$tags = array_unique($tags); // remove any duplicate tags
+		$tags = array_iunique($tags); // remove any duplicate tags
 
 		// delete old
 		$this->delete_tags_from_image($image_id);
