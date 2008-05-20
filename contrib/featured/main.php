@@ -38,11 +38,13 @@ class Featured extends Extension {
 			}
 		}
 
+		/*
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Featured Image");
 			$sb->add_int_option("featured_id", "Image ID: ");
 			$event->panel->add_block($sb);
 		}
+		*/
 
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
