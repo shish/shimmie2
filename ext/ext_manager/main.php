@@ -109,6 +109,9 @@ class ExtManager extends Extension {
 			// enable if currently disabled
 			if(!file_exists("ext/$fname")) {
 				if(function_exists("symlink")) {
+					// yes, even though we are in /, and thus the path to contrib is
+					// ./contrib, the link needs to be ../ because it is literal data
+					// which will be interpreted relative to ./ext/ by the OS
 					symlink("../contrib/$fname", "ext/$fname");
 				}
 				else {
