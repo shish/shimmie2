@@ -87,7 +87,6 @@ function get_memory_limit() {
 	return $memory;
 }
 
-
 function bbcode2html($text) {
 	$text = trim($text);
 	$text = html_escape($text);
@@ -124,8 +123,22 @@ function tag_explode($tags) {
 	return $tag_array;
 }
 
-
-
+// case insensetive uniqueness
+function array_iunique($array) {
+	$ok = array();
+	foreach($array as $element) {
+		$found = false;
+		foreach($ok as $existing) {
+			if(strtolower($element) == strtolower($existing)) {
+				$found = true; break;
+			}
+		}
+		if(!$found) {
+			$ok[] = $element;
+		}
+	}
+	return $ok;
+}
 
 
 # $db is the connection object
