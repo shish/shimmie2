@@ -343,6 +343,23 @@ function array_contains($array, $target) {
 	return false;
 }
 
+// case insensetive uniqueness
+function array_iunique($array) {
+	$ok = array();
+	foreach($array as $element) {
+		$found = false;
+		foreach($ok as $existing) {
+			if(strtolower($element) == strtolower($existing)) {
+				$found = true; break;
+			}
+		}
+		if(!$found) {
+			$ok[] = $element;
+		}
+	}
+	return $ok;
+}
+
 // from http://uk.php.net/network
 function ip_in_range($IP, $CIDR) {
 	list ($net, $mask) = split ("/", $CIDR);
