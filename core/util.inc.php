@@ -327,6 +327,23 @@ function array_add($array, $element) {
 	return $array; 
 } 
 
+// case insensetive uniqueness
+function array_iunique($array) {
+	$ok = array();
+	foreach($array as $element) {
+		$found = false;
+		foreach($ok as $existing) {
+			if(strtolower($element) == strtolower($existing)) {
+				$found = true; break;
+			}
+		}
+		if(!$found) {
+			$ok[] = $element;
+		}
+	}
+	return $ok;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
