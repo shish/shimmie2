@@ -43,21 +43,30 @@ class AdminPage extends Extension {
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin_utils")) {
 			if($event->user->is_admin()) {
 				set_time_limit(0);
+				$redirect = false;
 				
 				switch($_POST['action']) {
 					case 'lowercase all tags':
 						$this->lowercase_all_tags();
+						$redirect = true;
 						break;
 					case 'recount tag use':
 						$this->recount_tag_use();
+						$redirect = true;
 						break;
 					case 'purge unused tags':
 						$this->purge_unused_tags();
+						$redirect = true;
+						break;
+					case 'database dump':
+						$this->dbdump($event->page);
 						break;
 				}
 
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("admin"));
+				if($redirect) {
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("admin"));
+				}
 			}
 		}
 
@@ -94,6 +103,29 @@ class AdminPage extends Extension {
 		global $database;
 		$this->recount_tag_use();
 		$database->Execute("DELETE FROM tags WHERE count=0");
+	}
+
+	private function dbdump($page) {
+		include "config.php";
+
+		$matches = array();
+		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", $database_dsn, $matches);
+		$software = $matches[1];
+		$username = $matches[2];
+		$password = $matches[3];
+		$hostname = $matches[4];
+		$database = $matches[5];
+
+		switch($software) {
+			case 'mysql':
+				$cmd = "mysqldump -h$hostname -u$username -p$password $database";
+				break;
+		}
+		
+		$page->set_mode("data");
+		$page->set_type("application/x-unknown");
+		$page->set_filename('shimmie-'.date('Ymd').'.sql');
+		$page->set_data(shell_exec($cmd));
 	}
 
 	private function check_for_orphanned_images() {
