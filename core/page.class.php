@@ -16,9 +16,14 @@ class GenericPage {
 
 	// data
 	var $data = "";
+	var $filename = null;
 
 	public function set_data($data) {
 		$this->data = $data;
+	}
+	
+	public function set_filename($filename) {
+		$this->filename = $filename;
 	}
 
 
@@ -78,6 +83,9 @@ class GenericPage {
 				$layout->display_page($this);
 				break;
 			case "data":
+				if(!is_null($this->filename)) {
+					header('Content-Disposition: attachment; filename='.$this->filename);
+				}
 				print $this->data;
 				break;
 			case "redirect":
