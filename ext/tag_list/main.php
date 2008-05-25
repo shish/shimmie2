@@ -63,7 +63,7 @@ class TagList extends Extension {
 
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Tag Map Options");
-			$sb->add_int_option("tags_min", "Ignore tags used fewer than "); $sb->add_label(" times");
+			$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
 			$event->panel->add_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
@@ -103,7 +103,7 @@ class TagList extends Extension {
 					tag,
 					FLOOR(LOG(LOG(count - ? + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
-				WHERE count > ?
+				WHERE count >= ?
 				ORDER BY tag
 			", array($tags_min, $tags_min));
 		$tag_data = $result->GetArray();
@@ -124,7 +124,7 @@ class TagList extends Extension {
 
 		$tags_min = $config->get_int('tags_min');
 		$result = $database->execute(
-				"SELECT tag,count FROM tags WHERE count > ? ORDER BY tag",
+				"SELECT tag,count FROM tags WHERE count >= ? ORDER BY tag",
 				array($tags_min));
 		$tag_data = $result->GetArray();
 
@@ -150,7 +150,7 @@ class TagList extends Extension {
 
 		$tags_min = $config->get_int('tags_min');
 		$result = $database->execute(
-				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count > ? ORDER BY count DESC, tag ASC",
+				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= ? ORDER BY count DESC, tag ASC",
 				array($tags_min));
 		$tag_data = $result->GetArray();
 
