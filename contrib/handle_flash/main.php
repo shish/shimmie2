@@ -97,8 +97,9 @@ class FlashFileHandler extends Extension {
 			$data = fread($fp, 16);
 		}
 		else if($head == "CWS") {
-			// inflate data
-			return null;
+			$data = fread($fp, 128*1024);
+			$data = gzuncompress($data);
+			$data = substr($data, 0, 16);
 		}
 
 		$bounds = array();
