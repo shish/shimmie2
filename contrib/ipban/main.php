@@ -4,6 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Ban IP addresses
+ * Link: http://trac.shishnet.org/shimmie2/wiki/Contrib/Extensions/IPBan
  */
 
 // RemoveIPBanEvent {{{
