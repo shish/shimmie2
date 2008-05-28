@@ -4,6 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Do things with a random image
+ * Link: http://trac.shishnet.org/shimmie2/wiki/Contrib/Extensions/RandomImage
  */
 
 class RandomImage extends Extension {
