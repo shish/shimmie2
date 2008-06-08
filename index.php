@@ -3,29 +3,11 @@
 define("DEBUG", true);
 define("VERSION", 'trunk');
 
-if(DEBUG) {
-	error_reporting(E_ALL);
-	assert_options(ASSERT_ACTIVE, 1);
-	assert_options(ASSERT_BAIL, 1);
-}
+require_once "core/util.inc.php";
 
-if(version_compare(PHP_VERSION, "5.0.0") == -1) {
-	print <<<EOD
-Currently Shimmie 2 doesn't support versions of PHP lower than 5.0.0. Please
-either upgrade your PHP, or tell Shish that PHP 4 support is a big deal for
-you...
-EOD;
-	exit;
-}
+version_check();
+sanitise_environment();
 
-function stripslashes_r($arr) {
-	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
-}
-if(get_magic_quotes_gpc()) {
-	$_GET = stripslashes_r($_GET);
-	$_POST = stripslashes_r($_POST);
-	$_COOKIE = stripslashes_r($_COOKIE);
-}
 
 
 // load base files
