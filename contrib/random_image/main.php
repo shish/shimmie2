@@ -29,6 +29,11 @@ class RandomImage extends Extension {
 					$event->page->set_data(file_get_contents($image->get_image_filename()));
 				}
 			}
+			if($event->get_arg(0) == "view") {
+				if(!is_null($image)) {
+					send_event(new DisplayingImageEvent($image, $event->page));
+				}
+			}
 		}
 	}
 }
