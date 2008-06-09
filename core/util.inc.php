@@ -128,6 +128,14 @@ EOD;
 	}
 }
 
+function check_cli() {
+	if(isset($_SERVER['REMOTE_ADDR'])) {
+		print "This script is to be run from the command line only.";
+		exit;
+	}
+	$_SERVER['REMOTE_ADDR'] = "127.0.0.1";
+}
+
 function get_thumbnail_size($orig_width, $orig_height) {
 	global $config;
 
