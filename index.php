@@ -9,7 +9,6 @@ version_check();
 sanitise_environment();
 
 
-
 // load base files
 $files = array_merge(glob("core/*.php"), glob("ext/*/main.php"));
 foreach($files as $filename) {
@@ -40,8 +39,7 @@ if($custom_themelets) {
 	$m = array();
 	foreach($custom_themelets as $filename) {
 		if(preg_match("/themes\/$_theme\/(.*)\.theme\.php/",$filename,$m)
-		   && array_contains($themelets, "ext/{$m[1]}/theme.php"))
-		{
+		        && array_contains($themelets, "ext/{$m[1]}/theme.php")) {
 			require_once $filename;
 		}
 	}
