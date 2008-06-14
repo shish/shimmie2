@@ -22,10 +22,9 @@ class RegenThumb extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
-			global $user;
-			if($user->is_admin()) {
-				$this->theme->display_buttons($event->page, $event->image->id);
+		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_part($this->theme->get_buttons_html($event->image->id));
 			}
 		}
 	}

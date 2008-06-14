@@ -24,6 +24,21 @@ class ImageInfoSetEvent extends Event {
 	}
 }
 
+class ImageAdminBlockBuildingEvent extends Event {
+	var $parts = array();
+	var $image = null;
+	var $user = null;
+
+	public function ImageAdminBlockBuildingEvent($image, $user) {
+		$this->image = $image;
+		$this->user = $user;
+	}
+
+	public function add_part($html, $position=50) {
+		while(isset($this->parts[$position])) $position++;
+		$this->parts[$position] = $html;
+	}
+}
 class ViewImage extends Extension {
 	var $theme;
 
@@ -38,6 +53,10 @@ class ViewImage extends Extension {
 
 			if(!is_null($image)) {
 				send_event(new DisplayingImageEvent($image, $event->page));
+				$iabbe = new ImageAdminBlockBuildingEvent($image, $event->user);
+				send_event($iabbe);
+				ksort($iabbe->parts);
+				$this->theme->display_admin_block($event->page, $iabbe->parts);
 			}
 			else {
 				$this->theme->display_error($event->page, "Image not found", "No image in the database has the ID #$image_id");

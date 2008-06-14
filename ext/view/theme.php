@@ -12,6 +12,12 @@ class ViewTheme extends Themelet {
 		$page->add_block(new Block(null, $this->build_pin($image->id), "main", 11));
 	}
 
+	public function display_admin_block($page, $parts) {
+		if(count($parts) > 0) {
+			$page->add_block(new Block("Image Admin", join("<br>", $parts), "left", 50));
+		}
+	}
+
 
 	var $pin = null;
 

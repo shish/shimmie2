@@ -4,14 +4,13 @@ class RegenThumbTheme extends Themelet {
 	/*
 	 * Show a form which offers to regenerate the thumb of an image with ID #$image_id
 	 */
-	public function display_buttons($page, $image_id) {
-		$html = "
+	public function get_buttons_html($image_id) {
+		return "
 			<form action='".make_link("regen_thumb")."' method='POST'>
 			<input type='hidden' name='image_id' value='$image_id'>
 			<input type='submit' value='Regenerate'>
 			</form>
 		";
-		$page->add_block(new Block("Regen Thumb", $html, "left"));
 	}
 
 	/*
