@@ -455,6 +455,21 @@ function sanitise_environment() {
 	}
 }
 
+function weighted_random($weights) {
+	$total = 0;
+	foreach($weights as $k => $w) {
+		$total += $w;
+	}
+
+	$r = mt_rand(0, $total);
+	foreach($weights as $k => $w) {
+		$r -= $w;
+		if($r <= 0) {
+			return $k;
+		}
+	}
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
