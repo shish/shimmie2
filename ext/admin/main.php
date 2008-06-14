@@ -70,10 +70,9 @@ class AdminPage extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
-			global $user;
-			if($user->is_admin()) {
-				$this->theme->display_deleter($event->page, $event->image->id);
+		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_part($this->theme->get_deleter_html($event->image->id));
 			}
 		}
 

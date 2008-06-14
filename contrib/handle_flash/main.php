@@ -57,12 +57,18 @@ class FlashFileHandler extends Extension {
 		$image->tag_array = tag_explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
-		$rect = $this->swf_get_bounds($filename);
-		if(is_null($rect)) {
-			return $null;
-		}
-		$image->width = $rect[1];
-		$image->height = $rect[3];
+		// redundant, since getimagesize() works on SWF o_O
+//		$rect = $this->swf_get_bounds($filename);
+//		if(is_null($rect)) {
+//			return $null;
+//		}
+//		$image->width = $rect[1];
+//		$image->height = $rect[3];
+		
+		if(!($info = getimagesize($filename))) return null;
+
+		$image->width = $info[0];
+		$image->height = $info[1];
 
 		return $image;
 	}

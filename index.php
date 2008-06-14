@@ -1,7 +1,7 @@
 <?php
 // set up and purify the environment
-define("DEBUG", true);
-define("VERSION", '2.2.0-pre1');
+define("DEBUG", false);
+define("VERSION", '2.2.0');
 
 require_once "core/util.inc.php";
 

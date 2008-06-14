@@ -15,7 +15,7 @@ class AdminPageTheme extends Themelet {
 	 *
 	 * $image_id = the image to delete
 	 */
-	public function display_deleter($page, $image_id) {
+	public function get_deleter_html($image_id) {
 		$i_image_id = int_escape($image_id);
 		$html = "
 			<form action='".make_link("admin/delete_image")."' method='POST'>
@@ -23,7 +23,7 @@ class AdminPageTheme extends Themelet {
 				<input type='submit' value='Delete'>
 			</form>
 		";
-		$page->add_block(new Block("Admin", $html, "left"));
+		return $html;
 	}
 
 	/*
