@@ -189,17 +189,8 @@ class IPBan extends Extension {
 
 	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
-		$parts = array();
-		if(preg_match("/^(\d+) (day|week|month)s?$/i", $end, $parts)) {
-			$sql = "INSERT INTO bans (ip, reason, end, banner_id)
-			        VALUES (?, ?, ?, ?)";
-			$database->Execute($sql, array($ip, $reason, strtotime("+{$parts[1]} {$parts[2]}"), $user->id));
-		}
-		else {
-			$sql = "INSERT INTO bans (ip, reason, banner_id)
-			        VALUES (?, ?, ?)";
-			$database->Execute($sql, array($ip, $reason, $user->id));
-		}
+		$sql = "INSERT INTO bans (ip, reason, end, banner_id) VALUES (?, ?, ?, ?)";
+		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
 	}
 
 	private function remove_ip_ban($id) {

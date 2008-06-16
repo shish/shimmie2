@@ -12,7 +12,7 @@ class FeaturedTheme extends Themelet {
 		return "
 			<form action='".make_link("set_feature")."' method='POST'>
 			<input type='hidden' name='image_id' value='$image_id'>
-			<input type='submit' value='Featue This'>
+			<input type='submit' value='Feature This'>
 			</form>
 		";
 	}
