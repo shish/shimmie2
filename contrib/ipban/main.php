@@ -161,7 +161,8 @@ class IPBan extends Extension {
 				($row['ip'] == $remote)
 			) {
 				$admin = $database->get_user_by_id($row['banner_id']);
-				print "IP <b>{$row['ip']}</b> has been banned by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
+				$date = date("Y-m-d", $row['end']);
+				print "IP <b>{$row['ip']}</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 
 				$contact_link = $config->get_string("contact_link");
 				if(!empty($contact_link)) {
