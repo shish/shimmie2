@@ -8,11 +8,7 @@
 class PicLens extends Extension {
 	public function receive_event($event) {
 		if(is_a($event, 'PageRequestEvent')) {
-			global $config;
-			if(strlen($config->get_string("site_description")) > 0) {
-				$description = $config->get_string("site_description");
-				$event->page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
-			}
+			$event->page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
 		}
 		if(is_a($event, 'PostListBuildingEvent')) {
 			$foo='
