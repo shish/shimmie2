@@ -50,6 +50,8 @@ class RSS_Images extends Extension {
 			$link = make_link("post/view/{$image->id}");
 			$tags = $image->get_tag_list();
 			$owner = $image->get_owner();
+			$thumb_url = $image->get_thumb_link();
+			$image_url = $image->get_image_link();
 			$posted = strftime("%a, %d %b %Y %T %Z", $image->posted_timestamp);
 			$content = html_escape(
 				"<p>" . Themelet::build_thumb_html($image) . "</p>" .
@@ -63,6 +65,8 @@ class RSS_Images extends Extension {
 			<guid isPermaLink=\"true\">$link</guid>
 			<pubDate>$posted</pubDate>
 			<description>$content</description>
+			<media:thumbnail url=\"$thumb_url\"/>
+			<media:content url=\"$image_url\"/>
 		</item>
 			";
 		}
@@ -71,7 +75,7 @@ class RSS_Images extends Extension {
 		$base_href = $config->get_string('base_href');
 		$version = VERSION;
 		$xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
-<rss version=\"2.0\">
+<rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\">
     <channel>
         <title>$title</title>
         <description>The latest uploads to the image board</description>
