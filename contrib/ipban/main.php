@@ -176,7 +176,11 @@ class IPBan extends Extension {
 // database {{{
 	private function get_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans ORDER BY end, id");
+		$bans = $database->get_all("
+			SELECT bans.*, users.name as banner_name
+			FROM bans
+			JOIN users ON banner_id = users.id
+			ORDER BY end, id");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
