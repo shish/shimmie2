@@ -12,6 +12,7 @@ class IPBanTheme extends Themelet {
 	 * )
 	 */
 	public function display_bans($page, $bans) {
+		global $user;
 		$h_bans = "";
 		foreach($bans as $ban) {
 			$end_human = date('Y-m-d', $ban['end']);
@@ -19,6 +20,7 @@ class IPBanTheme extends Themelet {
 				<tr>
 					<td>{$ban['ip']}</td>
 					<td>{$ban['reason']}</td>
+					<td>{$ban['banner_name']}</td>
 					<td>{$end_human}</td>
 					<td>
 						<form action='".make_link("ip_ban/remove")."' method='POST'>
@@ -31,12 +33,13 @@ class IPBanTheme extends Themelet {
 		}
 		$html = "
 			<table border='1'>
-				<thead><td>IP</td><td>Reason</td><td>Until</td><td>Action</td></thead>
+				<thead><td>IP</td><td>Reason</td><td>By</td><td>Until</td><td>Action</td></thead>
 				$h_bans
 				<tr>
 					<form action='".make_link("ip_ban/add")."' method='POST'>
 						<td><input type='text' name='ip'></td>
 						<td><input type='text' name='reason'></td>
+						<td>{$user->name}</td>
 						<td><input type='text' name='end'></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>
