@@ -255,7 +255,7 @@ function get_base_href() {
 function move_upload_to_archive($event) {
 	$hash = $event->hash;
 	$ha = substr($hash, 0, 2);
-	if(!copy($event->tmpname, "images/$ha/$hash")) {
+	if(!@copy($event->tmpname, "images/$ha/$hash")) {
 		$event->veto("Failed to copy file from uploads ({$event->tmpname}) to archive (images/$ha/$hash)");
 		return false;
 	}
