@@ -14,10 +14,7 @@ class FlashFileHandler extends Extension {
 		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
-			if(!copy($event->tmpname, "images/$ha/$hash")) {
-				$event->veto("Flash Handler failed to move file from uploads to archive");
-				return;
-			}
+			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
