@@ -448,6 +448,8 @@ function sanitise_environment() {
 		assert_options(ASSERT_BAIL, 1);
 	}
 
+	ob_start();
+
 	if(get_magic_quotes_gpc()) {
 		$_GET = stripslashes_r($_GET);
 		$_POST = stripslashes_r($_POST);
