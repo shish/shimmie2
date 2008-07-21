@@ -29,11 +29,24 @@ class NumericScore extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
-			global $config;
 			if(!$user->is_anonymous()) {
-				$event->add_part($this->theme->get_voter_html($event->image));
+				$html = $this->theme->get_voter_html($event->image);
+				$event->page->add_block(new Block("Image Score", $html, "left", 20));
+			}
+		}
+		
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "numeric_score_vote")) {
+			if(!$event->user->is_anonymous()) {
+				$image_id = int_escape($_POST['image_id']);
+				$char = $_POST['vote'];
+				$score = 0;
+				if($char == "up") $score = 1;
+				else if($char == "down") $score = -1;
+				if($score != 0) send_event(new NumericScoreSetEvent($image_id, $event->user, $score));
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link("post/view/$image_id"));
 			}
 		}
 		
