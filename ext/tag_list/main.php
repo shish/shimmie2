@@ -101,7 +101,7 @@ class TagList extends Extension {
 		$result = $database->execute("
 				SELECT
 					tag,
-					FLOOR(LOG(LOG(count - ? + 1)+1)*1.5*100)/100 AS scaled
+					FLOOR(LOG(2.7, LOG(2.7, count - ? + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= ?
 				ORDER BY tag
