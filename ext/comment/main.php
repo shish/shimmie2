@@ -203,9 +203,9 @@ class CommentList extends Extension {
 			FROM comments
 			GROUP BY image_id
 			ORDER BY latest DESC
-			LIMIT ?,?
+			LIMIT ? OFFSET ?
 			";
-		$result = $database->Execute($get_threads, array($start, $threads_per_page));
+		$result = $database->Execute($get_threads, array($threads_per_page, $start));
 
 		$total_pages = (int)($database->db->GetOne("SELECT COUNT(distinct image_id) AS count FROM comments") / 10);
 
