@@ -5,6 +5,8 @@ class Upload extends Extension {
 // event handling {{{
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("upload", "UploadTheme");
+
+		$is_full = (disk_free_space("./images/") < 100*1024*1024);
 		
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
@@ -16,7 +18,12 @@ class Upload extends Extension {
 		if(is_a($event, 'PostListBuildingEvent')) {
 			global $user;
 			if($this->can_upload($user)) {
-				$this->theme->display_block($event->page);
+				if($is_full) {
+					$this->theme->display_full($event->page);
+				}
+				else {
+					$this->theme->display_block($event->page);
+				}
 			}
 		}
 
@@ -58,7 +65,9 @@ class Upload extends Extension {
 				}
 			}
 			else {
-				$this->theme->display_page($event->page);
+				if(!$is_full) {
+					$this->theme->display_page($event->page);
+				}
 			}
 		}
 
@@ -79,6 +88,9 @@ class Upload extends Extension {
 
 		if(is_a($event, "DataUploadEvent")) {
 			global $config;
+			if($is_full) {
+				$event->veto("Upload failed; disk nearly full");
+			}
 			if(filesize($event->tmpname) > $config->get_int('upload_size')) {
 				$event->veto("File too large (".filesize($event->tmpname)." &gt; ".($config->get_int('upload_size')).")");
 			}
