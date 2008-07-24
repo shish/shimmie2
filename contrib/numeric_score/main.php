@@ -105,7 +105,10 @@ class NumericScore extends Extension {
 	private function add_vote($image_id, $user_id, $score) {
 		global $database;
 		$database->Execute(
-			"REPLACE INTO numeric_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
+			"DELETE FROM numeric_score_votes WHERE image_id=? AND user_id=?",
+			array($image_id, $user_id));
+		$database->Execute(
+			"INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
 			array($image_id, $user_id, $score));
 		$database->Execute(
 			"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=?) WHERE id=?",
