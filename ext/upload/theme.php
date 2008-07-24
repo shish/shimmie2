@@ -5,6 +5,10 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20));
 	}
 
+	public function display_full($page) {
+		$page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "left", 20));
+	}
+
 	public function display_page($page) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
