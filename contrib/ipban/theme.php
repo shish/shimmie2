@@ -15,7 +15,7 @@ class IPBanTheme extends Themelet {
 		global $user;
 		$h_bans = "";
 		foreach($bans as $ban) {
-			$end_human = date('Y-m-d', $ban['end']);
+			$end_human = date('Y-m-d', $ban['end_timestamp']);
 			$h_bans .= "
 				<tr>
 					<td>{$ban['ip']}</td>
