@@ -38,7 +38,7 @@ class IPBan extends Extension {
 
 		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ipban_version") < 4) {
+			if($config->get_int("ext_ipban_version") < 5) {
 				$this->install();
 			}
 			
@@ -103,12 +103,12 @@ class IPBan extends Extension {
 					id {$database->engine->auto_increment},
 					banner_id INTEGER NOT NULL,
 					ip CHAR(15) NOT NULL,
-					end INTEGER,
+					end_timestamp INTEGER,
 					reason TEXT NOT NULL,
 					INDEX (end)
 				) {$database->engine->create_table_extras};
 			");
-			$config->set_int("ext_ipban_version", 4);
+			$config->set_int("ext_ipban_version", 5);
 		}
 
 		// ===
@@ -146,6 +146,11 @@ class IPBan extends Extension {
 			$database->execute("CREATE INDEX bans__end ON bans(end)");
 			$config->set_int("ext_ipban_version", 4);
 		}
+
+		if($config->get_int("ext_ipban_version") == 4) {
+			$database->execute("ALTER TABLE bans CHANGE end end_timestamp INTEGER");
+			$config->set_int("ext_ipban_version", 5);
+		}
 	}
 // }}}
 // deal with banned person {{{
@@ -161,7 +166,7 @@ class IPBan extends Extension {
 				($row['ip'] == $remote)
 			) {
 				$admin = $database->get_user_by_id($row['banner_id']);
-				$date = date("Y-m-d", $row['end']);
+				$date = date("Y-m-d", $row['end_timestamp']);
 				print "IP <b>{$row['ip']}</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 
 				$contact_link = $config->get_string("contact_link");
@@ -180,21 +185,21 @@ class IPBan extends Extension {
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			ORDER BY bans.end, id");
+			ORDER BY end_timestamp, id");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
 
 	private function get_active_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans WHERE (end > ? OR isnull(end))", array(time()));
+		$bans = $database->get_all("SELECT * FROM bans WHERE (end_timestamp > ? OR isnull(end_timestamp))", array(time()));
 		if($bans) {return $bans;}
 		else {return array();}
 	}
 
 	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
-		$sql = "INSERT INTO bans (ip, reason, end, banner_id) VALUES (?, ?, ?, ?)";
+		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (?, ?, ?, ?)";
 		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
 	}
 
