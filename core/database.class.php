@@ -116,6 +116,7 @@ class Database {
 
 // memcache {{{
 	public function cache_get($key) {
+		assert(!is_null($key));
 		if($this->use_memcache) {
 			$val = $this->memcache->get($key);
 			if($val) {
@@ -130,12 +131,14 @@ class Database {
 	}
 
 	public function cache_set($key, $val, $time=0) {
+		assert(!is_null($key));
 		if($this->use_memcache) {
 			$this->memcache->set($key, $val, false, $time);
 		}
 	}
 
 	public function cache_delete($key) {
+		assert(!is_null($key));
 		if($this->use_memcache) {
 			$this->memcache->delete($key);
 		}
@@ -207,6 +210,7 @@ class Database {
 // }}}
 // tags {{{
 	public function resolve_alias($tag) {
+		assert(is_string($tag));
 		$newtag = $this->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
 		if(!empty($newtag)) {
 			return $newtag;
@@ -216,6 +220,7 @@ class Database {
 	}
 
 	public function sanitise($tag) {
+		assert(is_string($tag));
 		$tag = preg_replace("/[\s?*]/", "", $tag);
 		$tag = preg_replace("/\.+/", ".", $tag);
 		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
@@ -362,11 +367,13 @@ class Database {
 	}
 
 	public function delete_tags_from_image($image_id) {
+		assert(is_int($image_id));
 		$this->execute("UPDATE tags SET count = count - 1 WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = ?)", array($image_id));
 		$this->execute("DELETE FROM image_tags WHERE image_id=?", array($image_id));
 	}
 
 	public function set_tags($image_id, $tags) {
+		assert(is_int($image_id));
 		$tags = tag_explode($tags);
 
 		$tags = array_map(array($this, 'resolve_alias'), $tags);
@@ -385,6 +392,7 @@ class Database {
 	}
 	
 	public function set_source($image_id, $source) {
+		assert(is_int($image_id));
 		if(empty($source)) $source = null;
 		$this->execute("UPDATE images SET source=? WHERE id=?", array($source, $image_id));
 	}
@@ -393,8 +401,8 @@ class Database {
 	public function get_images($start, $limit, $tags=array()) {
 		$images = array();
 
-		assert($start >= 0);
-		assert($limit >  0);
+		assert(is_int($start) && $start >= 0);
+		assert(is_int($limit) && $limit >  0);
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
 		
@@ -415,6 +423,10 @@ class Database {
 	}
 
 	public function get_next_image($id, $tags=array(), $next=true) {
+		assert(is_int($id));
+		assert(is_array($tags));
+		assert(is_bool($next));
+		
 		if($next) {
 			$gtlt = "<";
 			$dir = "DESC";
@@ -442,6 +454,7 @@ class Database {
 	}
 
 	public function get_image($id) {
+		assert(is_int($id));
 		$image = null;
 		$row = $this->db->GetRow("{$this->get_images} WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
@@ -456,6 +469,7 @@ class Database {
 	}
 
 	public function get_image_by_hash($hash) {
+		assert(is_string($hash));
 		$image = null;
 		$row = $this->db->GetRow("{$this->get_images} WHERE hash=?", array($hash));
 		return ($row ? new Image($row) : null);
@@ -475,16 +489,21 @@ class Database {
 	}
 
 	public function get_user_by_id($id) {
+		assert(is_int($id));
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE id=?", array($id));
 		return $row ? new User($row) : null;
 	}
 	
 	public function get_user_by_name($name) {
+		assert(is_string($name));
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name=?", array($name));
 		return $row ? new User($row) : null;
 	}
 
 	public function get_user_by_name_and_hash($name, $hash) {
+		assert(is_string($name));
+		assert(is_string($hash));
+		assert(strlen($hash) == 32);
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name LIKE ? AND pass = ?", array($name, $hash));
 		return $row ? new User($row) : null;
 	}
