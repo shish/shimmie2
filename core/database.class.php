@@ -367,13 +367,13 @@ class Database {
 	}
 
 	public function delete_tags_from_image($image_id) {
-		assert(is_int($image_id));
+		assert(is_numeric($image_id));
 		$this->execute("UPDATE tags SET count = count - 1 WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = ?)", array($image_id));
 		$this->execute("DELETE FROM image_tags WHERE image_id=?", array($image_id));
 	}
 
 	public function set_tags($image_id, $tags) {
-		assert(is_int($image_id));
+		assert(is_numeric($image_id));
 		$tags = tag_explode($tags);
 
 		$tags = array_map(array($this, 'resolve_alias'), $tags);
@@ -392,7 +392,7 @@ class Database {
 	}
 	
 	public function set_source($image_id, $source) {
-		assert(is_int($image_id));
+		assert(is_numeric($image_id));
 		if(empty($source)) $source = null;
 		$this->execute("UPDATE images SET source=? WHERE id=?", array($source, $image_id));
 	}
@@ -401,8 +401,8 @@ class Database {
 	public function get_images($start, $limit, $tags=array()) {
 		$images = array();
 
-		assert(is_int($start) && $start >= 0);
-		assert(is_int($limit) && $limit >  0);
+		assert(is_numeric($start) && $start >= 0);
+		assert(is_numeric($limit) && $limit >  0);
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
 		
@@ -423,7 +423,7 @@ class Database {
 	}
 
 	public function get_next_image($id, $tags=array(), $next=true) {
-		assert(is_int($id));
+		assert(is_numeric($id));
 		assert(is_array($tags));
 		assert(is_bool($next));
 		
@@ -454,7 +454,7 @@ class Database {
 	}
 
 	public function get_image($id) {
-		assert(is_int($id));
+		assert(is_numeric($id));
 		$image = null;
 		$row = $this->db->GetRow("{$this->get_images} WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
@@ -489,7 +489,7 @@ class Database {
 	}
 
 	public function get_user_by_id($id) {
-		assert(is_int($id));
+		assert(is_numeric($id));
 		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE id=?", array($id));
 		return $row ? new User($row) : null;
 	}
