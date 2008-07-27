@@ -64,19 +64,16 @@ class ImageBanTheme extends Themelet {
 	 *
 	 * $image_id = the image to delete
 	 */
-	public function display_image_banner($page, $image_hash) {
-
-/* I'll fix this soon 
-		$i_image_hash = int_escape($image_hash);
+	public function get_buttons_html($image) {
 		$html = "
-			<form action='".make_link("admin/image_hash_ban")."' method='POST'>
-				<input type='hidden' name='image_hash' value='$i_image_hash'>
-				<input type='field' name='reason'>
+			<form action='".make_link("image_hash_ban/add")."' method='POST'>
+				<input type='hidden' name='hash' value='{$image->hash}'>
+				<input type='hidden' name='image_id' value='{$image->id}'>
+				<input type='text' name='reason'>
 				<input type='submit' value='Ban and Delete'>
 			</form>
 		";
-		$page->add_block(new Block("Image Ban", $html, "left"));
-*/
+		return $html;
 	}
 }
 ?>

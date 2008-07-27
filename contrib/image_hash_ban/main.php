@@ -46,10 +46,7 @@ class Image_Hash_Ban extends Extension {
 		if(is_a($event, 'DataUploadEvent')) {
 			global $database;
 
-			$image = $event->image;
-			$tmp_hash = $image->hash;
-
-			if ($database->db->GetOne("SELECT COUNT(*) FROM image_bans WHERE hash = ?", $tmp_hash) == 1) {
+			if ($database->db->GetOne("SELECT COUNT(*) FROM image_bans WHERE hash = ?", $event->hash) == 1) {
 				$event->veto("This image has been banned!");
 			}
 		}
@@ -63,6 +60,15 @@ class Image_Hash_Ban extends Extension {
 						global $page;
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("admin"));
+					}
+					if(isset($_POST['image_id'])) {
+						global $database;
+						$image = $database->get_image($_POST['image_id']);
+						if($image) {
+							send_event(new ImageDeletionEvent($image));
+							$event->page->set_mode("redirect");
+							$event->page->set_redirect(make_link("post/list"));
+						}
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
@@ -90,10 +96,9 @@ class Image_Hash_Ban extends Extension {
 			$this->remove_image_hash_ban($event->hash);
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
-			global $user;
-			if($user->is_admin()) {
-				$this->theme->display_image_banner($event->page, $event->image->hash);
+		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+			if($event->user->is_admin()) {
+				$event->add_part($this->theme->get_buttons_html($event->image));
 			}
 		}
 	}
