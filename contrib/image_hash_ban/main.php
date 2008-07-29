@@ -46,8 +46,9 @@ class Image_Hash_Ban extends Extension {
 		if(is_a($event, 'DataUploadEvent')) {
 			global $database;
 
-			if ($database->db->GetOne("SELECT COUNT(*) FROM image_bans WHERE hash = ?", $event->hash) == 1) {
-				$event->veto("This image has been banned!");
+			$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
+			if($row) {
+				$event->veto("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
 			}
 		}
 

@@ -343,6 +343,12 @@ class CommentList extends Extension {
 		else if($this->is_dupe($image_id, $comment)) {
 			$event->veto("Someone already made that comment on that image -- try and be more original?");
 		}
+		else if(strlen($comment) > 9000) {
+			$event->veto("Comment too long~");
+		}
+		else if(strlen($comment)/strlen(gzcompress($comment)) > 10) {
+			$event->veto("Comment too repetitive~");
+		}
 		else if($user->is_anonymous() && $this->is_spam($comment)) {
 			$event->veto("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}

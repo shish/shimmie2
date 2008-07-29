@@ -162,7 +162,12 @@ function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
 	if(DEBUG) {
 		$fp = fopen("sql.log", "a");
-		fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+		if(is_array($inputarray)) {
+			fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
+		}
+		else {
+			fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+		}
 		fclose($fp);
 	}
 	if (!is_array($inputarray)) $_execs++;
@@ -262,6 +267,12 @@ function move_upload_to_archive($event) {
 	return true;
 }
 
+function format_text($string) {
+	$tfe = new TextFormattingEvent($string);
+	send_event($tfe);
+	return $tfe->formatted;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *
@@ -287,9 +298,13 @@ function get_debug_info() {
 	}
 	$i_files = count(get_included_files());
 	global $_execs;
+	global $database;
+	$hits = $database->cache_hits;
+	$miss = $database->cache_misses;
 	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
+	$debug .= "; $hits cache hits and $miss misses";
 
 	return $debug;
 }
