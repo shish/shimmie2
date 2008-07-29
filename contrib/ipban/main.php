@@ -192,7 +192,7 @@ class IPBan extends Extension {
 
 	private function get_active_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans WHERE (end_timestamp > ? OR isnull(end_timestamp))", array(time()));
+		$bans = $database->get_all("SELECT * FROM bans WHERE (end_timestamp > ?) OR (end_timestamp IS NULL)", array(time()));
 		if($bans) {return $bans;}
 		else {return array();}
 	}
