@@ -58,10 +58,17 @@ class MySQL extends DBEngine {
 	var $name = "mysql";
 	var $auto_increment = "INTEGER PRIMARY KEY auto_increment";
 	var $create_table_extras = "TYPE=INNODB DEFAULT CHARSET='utf8'";
+
+	function init($db) {
+		$db->Execute("SET NAMES utf8;");
+	}
 }
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
 	var $auto_increment = "SERIAL PRIMARY KEY";
+
+	function init($db) {
+	}
 }
 //}}}
 
@@ -87,7 +94,7 @@ class Database {
 			$this->use_memcache = isset($memcache);
 			if($this->db) {
 				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-				$this->db->Execute("SET NAMES utf8"); // FIXME: mysql specific :|
+				$this->engine->init($this->db);
 			}
 			else {
 				$version = VERSION;
