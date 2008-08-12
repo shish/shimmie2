@@ -7,9 +7,6 @@
  * Description: Report images as dupes/illegal/etc
  * Version 0.3a - See changelog in main.php
  * November 06, 2007
- *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other main.php.use... for Shimmie2 RCx.
- *
  */
  
 class RemoveReportedImageEvent extends Event {
@@ -21,79 +18,76 @@ class RemoveReportedImageEvent extends Event {
 }
 
 class AddReportedImageEvent extends Event { 
-	var $reporter_name;
+	var $reporter_id;
 	var $image_id;
-	var $reason_type;
 	var $reason;
-	public function AddReportedImageEvent($image_id, $reporter_name, $reason_type, $reason) {
-		$this->reporter_name = $reporter_name;
+	
+	public function AddReportedImageEvent($image_id, $reporter_id, $reason) {
+		$this->reporter_id = $reporter_id;
 		$this->image_id = $image_id;
-		$this->reason_type = $reason_type;
 		$this->reason = $reason;
 	}
 }
 
-class report_image extends Extension {
+class ReportImage extends Extension {
 	var $theme;
 	
 	public function receive_event($event) {
-	
-	if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
-	
-	if(is_a($event, 'InitExtEvent')) {
+		if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
+		
+		if(is_a($event, 'InitExtEvent')) {
 			global $config;
-			if($config->get_int("ext_ReportImage_version") < 1) {
+			
+			$config->set_default_bool('report_image_show_thumbs', true);
+
+			if($config->get_int("ext_report_image_version") < 1) {
 				$this->install();
 			}
 		}
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "ReportImage")) {
+		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "image_report")) {
 			global $user;
-				if($event->get_arg(0) == "add") {
-					if(isset($_POST['image_id']) && isset($_POST['reason_type']) && isset($_POST['reason'])) {
-						send_event(new AddReportedImageEvent($_POST['image_id'], $event->user->name, $_POST['reason_type'], $_POST['reason']));
-						global $page;
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
-					}
+			if($event->get_arg(0) == "add") {
+				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
+					$image_id = int_escape($_POST['image_id']);
+					send_event(new AddReportedImageEvent($image_id, $event->user->id, $_POST['reason']));
+					$event->page->set_mode("redirect");
+					$event->page->set_redirect(make_link("post/view/$image_id"));
 				}
-				else if($event->get_arg(0) == "remove") {
-					if(isset($_POST['id'])) {
-						if($event->user->is_admin()) {
-							send_event(new RemoveReportedImageEvent($_POST['id']));
-							global $page;
-							$page->set_mode("redirect");
-							$page->set_redirect(make_link("ReportImage/list"));
-						}
-					}
-				}
-				else if($event->get_arg(0) == "list") {
+			}
+			else if($event->get_arg(0) == "remove") {
+				if(isset($_POST['id'])) {
 					if($event->user->is_admin()) {
-						global $page;
-						$this->theme->display_reported_images($page, $this->get_reported_images());
+						send_event(new RemoveReportedImageEvent($_POST['id']));
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("image_report/list"));
 					}
 				}
+			}
+			else if($event->get_arg(0) == "list") {
+				if($event->user->is_admin()) {
+					$this->theme->display_reported_images($event->page, $this->get_reported_images());
+				}
+			}
 		}
 		
-//		if(is_a($event, 'AdminBuildingEvent')) {
-//			global $page;
-//			$this->theme->display_reported_images($page, $this->get_reported_images());
-//		}
-		
 		if(is_a($event, 'AddReportedImageEvent')) {
-			$this->add_reported_image($event->image_id, $event->reporter_name, $event->reason_type, $event->reason);
+			global $database;
+			$database->Execute(
+					"INSERT INTO image_reports(image_id, reporter_id, reason)
+					VALUES (?, ?, ?)",
+					array($event->image_id, $event->reporter_id, $event->reason));
 		}
 
 		if(is_a($event, 'RemoveReportedImageEvent')) {
-			$this->remove_reported_image($event->id);
+			global $database;
+			$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
 		}
 		
 		if(is_a($event, 'DisplayingImageEvent')) {
 			global $user;
 			global $config;
-			if(!$config->get_bool('report_image_anon') && $user->is_anonymous()) {
-				// Show nothing
-			} else {
+			if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
 				$this->theme->display_image_banner($event->page, $event->image->id);
 			}
 		}
@@ -101,65 +95,61 @@ class report_image extends Extension {
 		if(is_a($event, 'SetupBuildingEvent')) {
 			$sb = new SetupBlock("Report Image Options");
 			$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
-			$sb->add_label("<br>");
-			$sb->add_bool_option("report_image_show_thumbs", "Show thumbnails in admin panel: ");
+			$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
 			$event->panel->add_block($sb);
 		}
 		
 		if(is_a($event, 'UserBlockBuildingEvent')) {
 			if($event->user->is_admin()) {
-				$event->add_link("Reported Images", make_link("ReportImage/list"));
+				$event->add_link("Reported Images", make_link("image_report/list"));
 			}
 		}
-		
+
+		if(is_a($event, 'ImageDeletionEvent')) {
+			global $database;
+			$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
+		}
 	}
 	
 	protected function install() {
 		global $database;
 		global $config;
-		if($config->get_int("ext_ReportImage_version") < 1) {
-			$database->Execute("CREATE TABLE ReportImage (
-				id int(11) NOT NULL auto_increment,
-				image_id int(11) default NULL,
-				reporter_name varchar(32) default NULL,
-				reason_type varchar(255) default NULL,
-				reason varchar(255) default NULL,
-				PRIMARY KEY (id)
+		if($config->get_int("ext_report_image_version") < 1) {
+			$database->Execute("CREATE TABLE image_reports (
+				id {$database->engine->auto_increment},
+				image_id INTEGER NOT NULL,
+				reporter_id INTEGER NOT NULL,
+				reason TEXT NOT NULL
 			)");
-			$config->set_int("ext_ReportImage_version", 1);
+			$config->set_int("ext_report_image_version", 1);
 		}
 	}
 
-	
-	// DB funness
-	
-		public function get_reported_images() {
-		// FIXME: many
+	public function get_reported_images() {
 		global $database;
-		$reportedimages = $database->get_all("SELECT * FROM ReportImage");
-		if($reportedimages) {return $reportedimages;}
-		else {return array();}
+		$all_reports = $database->get_all("
+			SELECT image_reports.*, users.name AS reporter_name
+			FROM image_reports
+			JOIN users ON reporter_id = users.id");
+		if(is_null($all_reports)) $all_reports = array();
+		
+		$reports = array();
+		foreach($all_reports as $report) {
+			global $database;
+			$image_id = int_escape($report['image_id']);
+			$image = $database->get_image($image_id);
+			if(is_null($image)) {
+				send_event(new RemoveReportedImageEvent($report['id']));
+				continue;
+			}
+			$report['image'] = $database->get_image($image_id);
+			$reports[] = $report;
 		}
-		
-		public function get_reported_image($id) {
-		global $database;
-		return $database->db->GetRow("SELECT * FROM ReportImage WHERE id = ?", array($id));
-	}
 
-	public function add_reported_image($image_id, $reporter_name, $reason_type, $reason) {
-		global $database;
-		$database->Execute(
-				"INSERT INTO ReportImage (image_id, reporter_name, reason_type, reason) VALUES (?, ?, ?, ?)",
-				array($image_id, $reporter_name, $reason_type, $reason));
+		return $reports;
 	}
-
-	public function remove_reported_image($id) {
-		global $database;
-		$database->Execute("DELETE FROM ReportImage WHERE id = ?", array($id));
-	}
-		
 }
-add_event_listener(new report_image(), 29); // Not sure what I'm in before.
+add_event_listener(new ReportImage(), 29); // Not sure what I'm in before.
 
 //  ===== Changelog =====
 // * Version 0.3a / 0.3a_rc - 11/06/07 - I can no longer use the same theme.php file for both SVN and RCx. Sorry.

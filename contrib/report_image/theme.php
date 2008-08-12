@@ -8,47 +8,58 @@
  * Description: Report images as dupes/illegal/etc
  * Version 0.3a - See changelog in main.php
  * November 06, 2007
- *
- * NOTE: This is for Shimmie2 SVN Trunk. Use the other theme.php.use... for Shimmie2 RCx.
- *
  */
  
 class ReportImageTheme extends Themelet {
-	public function display_reported_images($page, $reportedimages) {
+	public function display_reported_images($page, $reports) {
+		global $config;
+
 		$h_reportedimages = "";
-		foreach($reportedimages as $reportedimage) {
-			
-			// If the reason is 'Duplicate' make the 'reason' field a link to the reported image
-			if ($reportedimage['reason_type'] == "Duplicate")
-			{
-				$reason = "<a href=\"".make_link("post/view/{$reportedimage['reason']}")."\">".$reportedimage['reason']."</a>";
-				$reason .= $this->make_thumbnail_html($reportedimage['reason']);
-			} else {
-				$reason = $reportedimage['reason'];
+		foreach($reports as $report) {
+			$image = $report['image'];
+			$h_reason = html_escape($report['reason']);
+
+			if($config->get_bool('report_image_show_thumbs')) {
+				$image_link = $this->build_thumb_html($image);
 			}
+			else {
+				$image_link = "<a href=\"".make_link("post/view/{$image->id}")."\">{$image->id}</a>";
+			}
+
+			$reporter_name = html_escape($report['reporter_name']);
+			$userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
 			
-			$image_link = "<a href=\"".make_link("post/view/{$reportedimage['image_id']}")."\">".$reportedimage['image_id']."</a>";
-			$image_link .= $this->make_thumbnail_html($reportedimage['image_id']);
-			$userlink = "<a href='".make_link("user/{$reportedimage['reporter_name']}")."'>{$reportedimage['reporter_name']}</a>";
+			global $user;
+			$iabbe = new ImageAdminBlockBuildingEvent($image, $user);
+			send_event($iabbe);
+			ksort($iabbe->parts);
+			$actions = join("<br>", $iabbe->parts);
 			
-				$h_reportedimages .= "
-					<tr>
-						<td>{$image_link}</td>
-						<td>{$userlink}</td>
-						<td>{$reportedimage['reason_type']}</td>
-						<td>{$reason}</td>
-						<td>
-							<form action='".make_link("ReportImage/remove")."' method='POST'>
-								<input type='hidden' name='id' value='{$reportedimage['id']}'>
-								<input type='submit' value='Remove'>
-							</form>
-						</td>
-					</tr>
-				";
+			$h_reportedimages .= "
+				<tr>
+					<td>{$image_link}</td>
+					<td>Report by $userlink: $h_reason</td>
+					<td class='formstretch'>
+						<form action='".make_link("image_report/remove")."' method='POST'>
+							<input type='hidden' name='id' value='{$report['id']}'>
+							<input type='submit' value='Remove Report'>
+						</form>
+
+						<br>$actions
+					</td>
+				</tr>
+			";
 		}
+		
+		$thumb_width = $config->get_int("thumb_width");
 		$html = "
+			<style>
+			.formstretch FORM INPUT {
+				width: 100%;
+			}
+			</style>
 			<table border='1'>
-				<thead><td>Image</td><td>Reporter</td><td>Reason Type</td><td>Reason / Image ID</td><td>Action</td></thead>
+				<thead><td width='$thumb_width'>Image</td><td>Reason</td><td width='128'>Action</td></thead>
 				$h_reportedimages
 			</table>
 		";
@@ -59,45 +70,19 @@ class ReportImageTheme extends Themelet {
 		$page->add_block(new Block("Reported Images", $html));
 		
 	}
-	
-		public function make_thumbnail_html($image_id) {
-			global $config;
-			global $database;
-			
-			if($config->get_bool('report_image_show_thumbs')) {
-				$image_obj_reported = $database->get_image($image_id);
-				if($image_obj_reported) {
-					return "<br>" . $this->build_thumb_html($image_obj_reported);
-				}
-				else {
-					return "<br>Image not found -- bug!";
-				}
-			}
-		}
 
 	public function display_image_banner($page, $image) {
-	
-	global $config;
-
-		$page->add_header("<script type='text/javascript' src='".get_base_href()."/ext/report_image/report_image.js'></script>");
+		global $config;
 	
 		$i_image = int_escape($image);
 		$html = "
-			<form name='ReportImage' action='".make_link("ReportImage/add")."' onsubmit='return validate_report()' method='POST'>
+			<form action='".make_link("image_report/add")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image'>
-				<select onchange='change_reason()' name='reason_type'>
-				<option style='font-weight:bold' selected>Select a reason...</option>
-				<option value='Other'>Other</option>
-				<option value='Violates Rules'>Violates Rules</option>
-				<option value='Illegal'>Illegal</option>
-				<option value='Duplicate'>Duplicate</option>
-				<input type='field' name='reason' value='Please enter a reason' onclick='document.ReportImage.reason.select()'>
-				</select>
+				<input type='field' name='reason' value='Please enter a reason' onclick='this.value=\"\";'>
 				<input type='submit' value='Report'>
 			</form>
 		";
 		$page->add_block(new Block("Report Image", $html, "left"));
-
 	}
 }
 ?>
