@@ -105,7 +105,7 @@ class IPBan extends Extension {
 					ip CHAR(15) NOT NULL,
 					end_timestamp INTEGER,
 					reason TEXT NOT NULL,
-					INDEX (end)
+					INDEX (end_timestamp)
 				) {$database->engine->create_table_extras};
 			");
 			$config->set_int("ext_ipban_version", 5);
