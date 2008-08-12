@@ -54,23 +54,19 @@ class IPBan extends Extension {
 						else $end = $_POST['end'];
 						send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
-						global $page;
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("ip_ban/list"));
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
 					if(isset($_POST['id'])) {
 						send_event(new RemoveIPBanEvent($_POST['id']));
-
-						global $page;
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("ip_ban/list"));
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "list") {
-					global $page;
-					$this->theme->display_bans($page, $this->get_bans());
+					$this->theme->display_bans($event->page, $this->get_bans());
 				}
 			}
 		}
@@ -87,7 +83,8 @@ class IPBan extends Extension {
 		}
 
 		if(is_a($event, 'RemoveIPBanEvent')) {
-			$this->remove_ip_ban($event->id);
+			global $database;
+			$database->Execute("DELETE FROM bans WHERE id = ?", array($event->id));
 		}
 	}
 // }}}
@@ -192,7 +189,10 @@ class IPBan extends Extension {
 
 	private function get_active_bans() {
 		global $database;
-		$bans = $database->get_all("SELECT * FROM bans WHERE (end_timestamp > ?) OR (end_timestamp IS NULL)", array(time()));
+		$bans = $database->get_all("
+			SELECT * FROM bans
+			WHERE (end_timestamp > now()) OR (end_timestamp IS NULL)
+		");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
@@ -201,11 +201,6 @@ class IPBan extends Extension {
 		global $database;
 		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (?, ?, ?, ?)";
 		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
-	}
-
-	private function remove_ip_ban($id) {
-		global $database;
-		$database->Execute("DELETE FROM bans WHERE id = ?", array($id));
 	}
 // }}}
 }
