@@ -99,8 +99,8 @@ class TagEdit extends Extension {
 			$database->Execute("
 				UPDATE tags
 				SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)
-				WHERE id=?
-				", array($replace_id));
+				WHERE id=? OR id=?
+				", array($search_id, $replace_id));
 		}
 		else if($search_id) {
 			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));

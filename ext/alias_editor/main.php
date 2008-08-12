@@ -20,10 +20,15 @@ class AliasEditor extends Extension {
 			if($event->get_arg(0) == "add") {
 				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
-						send_event(new AddAliasEvent($_POST['oldtag'], $_POST['newtag']));
-
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("alias/list"));
+						$aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
+						send_event($aae);
+						if($aae->vetoed) {
+							$this->theme->display_error($event->page, "Error adding alias", $aae->veto_reason);
+						}
+						else {
+							$event->page->set_mode("redirect");
+							$event->page->set_redirect(make_link("alias/list"));
+						}
 					}
 				}
 			}
@@ -73,8 +78,13 @@ class AliasEditor extends Extension {
 
 		if(is_a($event, 'AddAliasEvent')) {
 			global $database;
-			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)",
-					array($event->oldtag, $event->newtag));
+			$pair = array($event->oldtag, $event->newtag);
+			if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
+				$event->veto("That alias already exists");
+			}
+			else {
+				$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);
+			}
 		}
 		
 		if(is_a($event, 'UserBlockBuildingEvent')) {
