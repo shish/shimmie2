@@ -7,7 +7,7 @@
  */
 class ResolutionLimit extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'ImageAdditionEvent')) {
+		if($event instanceof ImageAdditionEvent) {
 			global $config;
 			$min_w = $config->get_int("upload_min_width", -1);
 			$min_h = $config->get_int("upload_min_height", -1);
@@ -40,7 +40,7 @@ class ResolutionLimit extends Extension {
 				}
 			}
 		}
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Resolution Limits");
 
 			$sb->add_label("Min ");

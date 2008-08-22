@@ -12,14 +12,14 @@ class Downtime extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("downtime", "DowntimeTheme");
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Downtime");
 			$sb->add_bool_option("downtime", "Disable non-admin access: ");
 			$sb->add_longtext_option("downtime_message", "<br>");
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			global $config;
 			if($config->get_bool("downtime")) {
 				$this->check_downtime($event);
@@ -33,7 +33,7 @@ class Downtime extends Extension {
 		global $config;
 
 		if($config->get_bool("downtime") && !$user->is_admin() && 
-				is_a($event, 'PageRequestEvent') && !$this->is_safe_page($event)) {
+				($event instanceof PageRequestEvent) && !$this->is_safe_page($event)) {
 			$msg = $config->get_string("downtime_message");
 			$this->theme->display_message($msg);
 		}

@@ -16,7 +16,7 @@ class AliasEditor extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("alias_editor", "AliasEditorTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "alias")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "alias")) {
 			if($event->get_arg(0) == "add") {
 				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
@@ -76,7 +76,7 @@ class AliasEditor extends Extension {
 			}
 		}
 
-		if(is_a($event, 'AddAliasEvent')) {
+		if($event instanceof AddAliasEvent) {
 			global $database;
 			$pair = array($event->oldtag, $event->newtag);
 			if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
@@ -87,7 +87,7 @@ class AliasEditor extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Alias Editor", make_link("alias/list"));
 			}

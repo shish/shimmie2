@@ -9,19 +9,19 @@ class LinkImage extends Extension {
 	
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("link_image", "LinkImageTheme");
-			if(is_a($event, 'DisplayingImageEvent')) {
+			if(($event instanceof DisplayingImageEvent)) {
 				global $config;
 				$data_href = get_base_href();
 				$event->page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
 				
 				$this->theme->links_block($event->page,$this->data($event->image));
 			}
-			if(is_a($event, 'SetupBuildingEvent')) {
+			if($event instanceof SetupBuildingEvent) {
 				$sb = new SetupBlock("Link to Image");
 				$sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
 				$event->panel->add_block($sb);
 			}
-			if(is_a($event, 'InitExtEvent')) {
+			if($event instanceof InitExtEvent) {
 				global $config;
 				//just set default if empty.
 				$config->set_default_string("ext_link-img_text-link_format",

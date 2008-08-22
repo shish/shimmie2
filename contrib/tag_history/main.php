@@ -11,7 +11,7 @@ class Tag_History extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("tag_history", "Tag_HistoryTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if(($event instanceof InitExtEvent)) {
 			// shimmie is being installed so call install to create the table.
 			global $config;
 			if($config->get_int("ext_tag_history_version") < 3) {
@@ -19,7 +19,7 @@ class Tag_History extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_history"))
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_history"))
 		{
 			if($event->get_arg(0) == "revert")
 			{
@@ -39,24 +39,24 @@ class Tag_History extends Extension {
 				$this->theme->display_global_page($event->page, $this->get_global_tag_history());
 			}
 		}
-		if(is_a($event, 'DisplayingImageEvent'))
+		if(($event instanceof DisplayingImageEvent))
 		{
 			// handle displaying a link on the view page
 			$this->theme->display_history_link($event->page, $event->image->id);
 		}
-		if(is_a($event, 'ImageDeletionEvent'))
+		if(($event instanceof ImageDeletionEvent))
 		{
 			// handle removing of history when an image is deleted
 			$this->delete_all_tag_history($event->image->id);
 		}
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Tag History");
 			$sb->add_label("Limit to ");
 			$sb->add_int_option("history_limit");
 			$sb->add_label(" entires per image");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'TagSetEvent')) {
+		if(($event instanceof TagSetEvent)) {
 			$this->add_tag_history($event->image_id, $event->tags);
 		}
 	}

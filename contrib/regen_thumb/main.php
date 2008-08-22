@@ -12,7 +12,7 @@ class RegenThumb extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("regen_thumb", "RegenThumbTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "regen_thumb")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "regen_thumb")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['image_id'])) {
 				global $database;
@@ -22,7 +22,7 @@ class RegenThumb extends Extension {
 			}
 		}
 
-		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+		if($event instanceof ImageAdminBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_part($this->theme->get_buttons_html($event->image->id));
 			}

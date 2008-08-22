@@ -35,7 +35,7 @@ class ReportImage extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			
 			$config->set_default_bool('report_image_show_thumbs', true);
@@ -45,7 +45,7 @@ class ReportImage extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "image_report")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "image_report")) {
 			global $user;
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
@@ -71,7 +71,7 @@ class ReportImage extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'AddReportedImageEvent')) {
+		if($event instanceof AddReportedImageEvent) {
 			global $database;
 			$database->Execute(
 					"INSERT INTO image_reports(image_id, reporter_id, reason)
@@ -79,12 +79,12 @@ class ReportImage extends Extension {
 					array($event->image_id, $event->reporter_id, $event->reason));
 		}
 
-		if(is_a($event, 'RemoveReportedImageEvent')) {
+		if($event instanceof RemoveReportedImageEvent) {
 			global $database;
 			$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
 		}
 		
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			global $user;
 			global $config;
 			if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
@@ -92,20 +92,20 @@ class ReportImage extends Extension {
 			}
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Report Image Options");
 			$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
 			$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
 			$event->panel->add_block($sb);
 		}
 		
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Reported Images", make_link("image_report/list"));
 			}
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			global $database;
 			$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
 		}

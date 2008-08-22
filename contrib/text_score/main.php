@@ -22,7 +22,7 @@ class TextScore extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("text_score", "TextScoreTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if(($event instanceof InitExtEvent)) {
 			global $config;
 			if($config->get_int("ext_text_score_version", 0) < 1) {
 				$this->install();
@@ -30,7 +30,7 @@ class TextScore extends Extension {
 			$config->set_default_bool("text_score_anon", true);
 		}
 		
-		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+		if(($event instanceof ImageInfoBoxBuildingEvent)) {
 			global $user;
 			global $config;
 			if(!$user->is_anonymous() || $config->get_bool("text_score_anon")) {
@@ -38,7 +38,7 @@ class TextScore extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'ImageInfoSetEvent')) {
+		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			$i_score = int_escape($_POST['text_score__score']);
 			
@@ -47,24 +47,24 @@ class TextScore extends Extension {
 			}
 		}
 
-		if(is_a($event, 'TextScoreSetEvent')) {
+		if(($event instanceof TextScoreSetEvent)) {
 			if(!$event->user->is_anonymous() || $config->get_bool("text_score_anon")) {
 				$this->add_vote($event->image_id, $event->user->id, $event->score);
 			}
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if(($event instanceof ImageDeletionEvent)) {
 			global $database;
 			$database->execute("DELETE FROM text_score_votes WHERE image_id=?", array($event->image->id));
 		}
 		
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Text Score");
 			$sb->add_bool_option("text_score_anon", "Allow anonymous votes: ");
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'ParseLinkTemplateEvent')) {
+		if(($event instanceof ParseLinkTemplateEvent)) {
 			$event->replace('$text_score', $this->theme->score_to_name($event->image->text_score));
 		}
 	}

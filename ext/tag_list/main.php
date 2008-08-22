@@ -7,7 +7,7 @@ class TagList extends Extension {
 	public function receive_event($event) {
 		if($this->theme == null) $this->theme = get_theme_object("tag_list", "TagListTheme");
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int("tag_list_length", 15);
 			$config->set_default_int("tags_min", 3);
@@ -15,7 +15,7 @@ class TagList extends Extension {
 			$config->set_default_string("tag_list_image_type", 'related');
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tags")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "tags")) {
 			global $page;
 
 			$this->theme->set_navigation($this->build_navigation());
@@ -37,7 +37,7 @@ class TagList extends Extension {
 			$this->theme->display_page($page);
 		}
 
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
 				if(!empty($event->search_terms)) {
@@ -49,7 +49,7 @@ class TagList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			global $config;
 			if($config->get_int('tag_list_length') > 0) {
 				if($config->get_string('tag_list_image_type') == 'related') {
@@ -61,7 +61,7 @@ class TagList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Tag Map Options");
 			$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
 			$event->panel->add_block($sb);

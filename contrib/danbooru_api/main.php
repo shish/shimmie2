@@ -44,12 +44,12 @@ class DanbooruApi extends Extension
 	public function receive_event($event) 
 	{
 		// Check if someone is accessing /api/danbooru (us)
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "api") && ($event->get_arg(0) == 'danbooru')) 
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "api") && ($event->get_arg(0) == 'danbooru')) 
 		{
 			// execute the danbooru processing code
 			$this->api_danbooru($event);
 		}
-		if(is_a($event, 'SearchTermParseEvent'))
+		if($event instanceof SearchTermParseEvent)
 		{
 			$matches = array();
 			if(preg_match("/md5:([0-9a-fA-F]*)/i", $event->term, $matches))

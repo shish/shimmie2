@@ -128,7 +128,7 @@ class Setup extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("setup", "SetupTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string("title", "Shimmie");
 			$config->set_default_string("front_page", "post/list");
@@ -137,7 +137,7 @@ class Setup extends Extension {
 			$config->set_default_string("theme", "default");
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "setup")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "setup")) {
 			global $user;
 			if(!$user->is_admin()) {
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
@@ -164,7 +164,7 @@ class Setup extends Extension {
 			}
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$themes = array();
 			foreach(glob("themes/*") as $theme_dirname) {
 				$name = str_replace("themes/", "", $theme_dirname);
@@ -181,7 +181,8 @@ class Setup extends Extension {
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
 			$event->panel->add_block($sb);
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
+
+		if($event instanceof ConfigSaveEvent) {
 			foreach($_POST as $_name => $junk) {
 				if(substr($_name, 0, 6) == "_type_") {
 					$name = substr($_name, 6);
@@ -196,7 +197,7 @@ class Setup extends Extension {
 			}
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Board Config", make_link("setup"));
 			}

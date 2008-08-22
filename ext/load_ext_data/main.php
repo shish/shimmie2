@@ -1,7 +1,7 @@
 <?php
 class LoadExtData extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			global $page, $config;
 
 			$data_href = get_base_href();

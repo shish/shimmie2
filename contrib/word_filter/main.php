@@ -8,11 +8,11 @@
 
 class WordFilter extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'TextFormattingEvent')) {
+		if($event instanceof TextFormattingEvent) {
 			$event->formatted = $this->filter($event->formatted);
 			$event->stripped  = $this->filter($event->stripped);
 		}
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Word Filter");
 			$sb->add_longtext_option("word_filter");
 			$sb->add_label("<br>(each line should be search term and replace term, separated by a comma)");

@@ -7,10 +7,10 @@
  */
 class PicLens extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			$event->page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
 		}
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			$foo='
 				<a href="javascript:PicLensLite.start();">Start Slideshow 
 				<img src="http://lite.piclens.com/images/PicLensButton.png" 

@@ -36,14 +36,14 @@ class Image_Hash_Ban extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("Image_Hash_Ban", "ImageBanTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			if($config->get_int("ext_imageban_version") < 1) {
 				$this->install();
 			}
 		}
 
-		if(is_a($event, 'DataUploadEvent')) {
+		if($event instanceof DataUploadEvent) {
 			global $database;
 
 			$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
@@ -52,7 +52,7 @@ class Image_Hash_Ban extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "image_hash_ban")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "image_hash_ban")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
@@ -84,20 +84,20 @@ class Image_Hash_Ban extends Extension {
 			}
 		}
 
-		if(is_a($event, 'AdminBuildingEvent')) {
+		if($event instanceof AdminBuildingEvent) {
 			global $page;
 			$this->theme->display_Image_hash_Bans($page, $this->get_image_hash_bans());
 		}
 
-		if(is_a($event, 'AddImageHashBanEvent')) {
+		if($event instanceof AddImageHashBanEvent) {
 			$this->add_image_hash_ban($event->hash, $event->reason);
 		}
 
-		if(is_a($event, 'RemoveImageHashBanEvent')) {
+		if($event instanceof RemoveImageHashBanEvent) {
 			$this->remove_image_hash_ban($event->hash);
 		}
 
-		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+		if($event instanceof ImageAdminBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_part($this->theme->get_buttons_html($event->image));
 			}

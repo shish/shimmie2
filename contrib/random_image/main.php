@@ -9,7 +9,7 @@
 
 class RandomImage extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "random_image")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "random_image")) {
 			global $database;
 			
 			if($event->count_args() == 1) {

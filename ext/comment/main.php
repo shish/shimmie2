@@ -54,7 +54,7 @@ class CommentList extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("comment", "CommentListTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_bool('comment_anon', true);
 			$config->set_default_int('comment_window', 5);
@@ -66,7 +66,7 @@ class CommentList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "comment")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "comment")) {
 			if($event->get_arg(0) == "add") {
 				$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
 				send_event($cpe);
@@ -101,7 +101,7 @@ class CommentList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $config;
 			$cc = $config->get_int("comment_count");
 			if($cc > 0) {
@@ -109,7 +109,7 @@ class CommentList extends Extension {
 			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			$this->theme->display_comments(
 					$event->page,
 					$this->get_comments($event->image->id),
@@ -117,18 +117,18 @@ class CommentList extends Extension {
 					$event->image->id);
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			$this->delete_comments($event->image->id);
 		}
 		// TODO: split akismet into a separate class, which can veto the event
-		if(is_a($event, 'CommentPostingEvent')) {
+		if($event instanceof CommentPostingEvent) {
 			$this->add_comment_wrapper($event->image_id, $event->user, $event->comment, $event);
 		}
-		if(is_a($event, 'CommentDeletionEvent')) {
+		if($event instanceof CommentDeletionEvent) {
 			$this->delete_comment($event->comment_id);
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Comment Options");
 			$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
 			$sb->add_label("<br>Limit to ");

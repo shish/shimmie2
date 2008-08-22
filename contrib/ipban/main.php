@@ -36,7 +36,7 @@ class IPBan extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("ipban", "IPBanTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			if($config->get_int("ext_ipban_version") < 5) {
 				$this->install();
@@ -45,7 +45,7 @@ class IPBan extends Extension {
 			$this->check_ip_ban();
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "ip_ban")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "ip_ban")) {
 			global $user;
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {
@@ -71,18 +71,18 @@ class IPBan extends Extension {
 			}
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("IP Bans", make_link("ip_ban/list"));
 			}
 		}
 
-		if(is_a($event, 'AddIPBanEvent')) {
+		if($event instanceof AddIPBanEvent) {
 			global $user;
 			$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
 		}
 
-		if(is_a($event, 'RemoveIPBanEvent')) {
+		if($event instanceof RemoveIPBanEvent) {
 			global $database;
 			$database->Execute("DELETE FROM bans WHERE id = ?", array($event->id));
 		}

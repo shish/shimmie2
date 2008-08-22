@@ -8,14 +8,14 @@ class Upload extends Extension {
 
 		$is_full = (disk_free_space("./images/") < 100*1024*1024);
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('upload_count', 3);
 			$config->set_default_int('upload_size', '256KB');
 			$config->set_default_bool('upload_anon', false);
 		}
 
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $user;
 			if($this->can_upload($user)) {
 				if($is_full) {
@@ -27,7 +27,7 @@ class Upload extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "upload")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "upload")) {
 			if(count($_FILES) + count($_POST) > 0) {
 				$tags = tag_explode($_POST['tags']);
 				$source = isset($_POST['source']) ? $_POST['source'] : null;
@@ -71,7 +71,7 @@ class Upload extends Extension {
 			}
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Upload");
 			$sb->position = 10;
 			$sb->add_int_option("upload_count", "Max uploads: ");
@@ -86,7 +86,7 @@ class Upload extends Extension {
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, "DataUploadEvent")) {
+		if($event instanceof DataUploadEvent) {
 			global $config;
 			if($is_full) {
 				$event->veto("Upload failed; disk nearly full");

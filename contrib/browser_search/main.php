@@ -16,12 +16,12 @@ class BrowserSearch extends Extension {
 	global $page;
 	global $config;
 	
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			$config->set_default_string("search_suggestions_results_order", 'a');
 		}
 	
 		// Add in header code to let the browser know that the search plugin exists
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			// We need to build the data for the header
 			global $config;
 			$search_title = $config->get_string('title');
@@ -30,7 +30,7 @@ class BrowserSearch extends Extension {
 		}
 		
 		// The search.xml file that is generated on the fly
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "browser_search") && $event->get_arg(0) == "please_dont_use_this_tag_as_it_would_break_stuff__search.xml") {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "browser_search") && $event->get_arg(0) == "please_dont_use_this_tag_as_it_would_break_stuff__search.xml") {
 			// First, we need to build all the variables we'll need
 			
 			$search_title = $config->get_string('title');
@@ -58,7 +58,7 @@ class BrowserSearch extends Extension {
 			$page->set_mode("data");
 			$page->set_type("text/xml");
 			$page->set_data($xml);
-		} else if(is_a($event, 'PageRequestEvent') && ($event->page_name == "browser_search") && !$config->get_bool("disable_search_suggestions")) { // We need to return results!
+		} else if(($event instanceof PageRequestEvent) && ($event->page_name == "browser_search") && !$config->get_bool("disable_search_suggestions")) { // We need to return results!
 			global $database;
 			
 			// We have to build some json stuff
@@ -93,8 +93,7 @@ class BrowserSearch extends Extension {
 			$page->set_data($json_string);
 		}
 		
-		if(is_a($event, 'SetupBuildingEvent')) {
-		
+		if($event instanceof SetupBuildingEvent) {
 			$sort_by = array();
 			$sort_by['Alphabetical'] = 'a';
 			$sort_by['Tag Count'] = 't';
@@ -105,10 +104,7 @@ class BrowserSearch extends Extension {
 			$sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
 			$event->panel->add_block($sb);
 		}
-		
 	}
-	
-
 }
 add_event_listener(new BrowserSearch());
 ?>

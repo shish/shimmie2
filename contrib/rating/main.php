@@ -22,7 +22,7 @@ class Ratings extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("rating", "RatingsTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			if($config->get_int("ext_ratings2_version") < 2) {
 				$this->install();
@@ -33,25 +33,25 @@ class Ratings extends Extension {
 			$config->set_default_string("ext_rating_user_privs", 'sq');
 		}
 
-		if(is_a($event, 'RatingSetEvent')) {
+		if($event instanceof RatingSetEvent) {
 			$this->set_rating($event->image_id, $event->rating);
 		}
 
-		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+		if($event instanceof ImageInfoBoxBuildingEvent) {
 			global $user;
 			if($user->is_admin()) {
 				$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
 			}
 		}
 
-		if(is_a($event, 'ImageInfoSetEvent')) {
+		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			if($user->is_admin()) {
 				send_event(new RatingSetEvent($event->image_id, $user, $_POST['rating']));
 			}
 		}
 		
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$privs = array();
 			$privs['Safe Only'] = 's';
 			$privs['Safe and Questionable'] = 'sq';
@@ -63,11 +63,11 @@ class Ratings extends Extension {
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'ParseLinkTemplateEvent')) {
+		if($event instanceof ParseLinkTemplateEvent) {
 			$event->replace('$rating', $this->theme->rating_to_name($event->image->rating));
 		}
 
-		if(is_a($event, 'SearchTermParseEvent')) {
+		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(preg_match("/rating=([sqe]+)/", $event->term, $matches)) {
 				$sqes = $matches[1];

@@ -6,7 +6,7 @@ class TagEdit extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("tag_edit", "TagEditTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "tag_edit")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_edit")) {
 			global $page;
 			if($event->get_arg(0) == "replace") {
 				global $user;
@@ -27,7 +27,7 @@ class TagEdit extends Extension {
 			}
 		}
 
-		if(is_a($event, 'ImageInfoSetEvent')) {
+		if($event instanceof ImageInfoSetEvent) {
 			if($this->can_tag()) {
 				global $database;
 				send_event(new TagSetEvent($event->image_id, $_POST['tag_edit__tags']));
@@ -40,36 +40,36 @@ class TagEdit extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'TagSetEvent')) {
+		if($event instanceof TagSetEvent) {
 			global $database;
 			$database->set_tags($event->image_id, $event->tags);
 		}
 
-		if(is_a($event, 'SourceSetEvent')) {
+		if($event instanceof SourceSetEvent) {
 			global $database;
 			$database->set_source($event->image_id, $event->source);
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			global $database;
 			$database->delete_tags_from_image($event->image->id);
 		}
 
-		if(is_a($event, 'AdminBuildingEvent')) {
+		if($event instanceof AdminBuildingEvent) {
 			$this->theme->display_mass_editor($event->page);
 		}
 
 		// When an alias is added, oldtag becomes inaccessable
-		if(is_a($event, 'AddAliasEvent')) {
+		if($event instanceof AddAliasEvent) {
 			$this->mass_tag_edit($event->oldtag, $event->newtag);
 		}
 
-		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
+		if($event instanceof ImageInfoBoxBuildingEvent) {
 			global $user;
 			$event->add_part($this->theme->get_editor_html($event->image, $user), 40);
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Tag Editing");
 			$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
 			$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");

@@ -7,12 +7,12 @@
 
 class ArchiveFileHandler extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
 		}
 	
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Archive Handler Options");
 			$sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
 			$sb->add_text_option("archive_extract_command", "<br>Extraction command: ");
@@ -20,7 +20,7 @@ class ArchiveFileHandler extends Extension {
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type)) {
+		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type)) {
 			global $config;
 			$tmp = sys_get_temp_dir();
 			$tmpdir = "$tmp/shimmie-archive-{$event->hash}";

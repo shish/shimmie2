@@ -6,11 +6,10 @@
  * Description: Self explanitory
  */
 
-
 class RSS_Images extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $page;
 			global $config;
 			$title = $config->get_string('title');
@@ -25,7 +24,8 @@ class RSS_Images extends Extension {
 					"title=\"$title - Images\" href=\"".make_link("rss/images")."\" />");
 			}
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "rss")) {
+
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "rss")) {
 			if($event->get_arg(0) == 'images') {
 				global $database;
 				if($event->count_args() >= 2) {

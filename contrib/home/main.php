@@ -14,12 +14,12 @@ class Home extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("home", "HomeTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "home"))
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "home"))
 		{
 			// this is a request to display this page so output the page.
 		  	$this->output_pages($event->page);
 		}
-		if(is_a($event, 'SetupBuildingEvent'))
+		if($event instanceof SetupBuildingEvent)
 		{
 			$counters = array();
 			foreach(glob("ext/home/counters/*") as $counter_dirname) {

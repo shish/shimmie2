@@ -12,12 +12,12 @@ class Featured extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("featured", "FeaturedTheme");
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('featured_id', 0);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "set_feature")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "set_feature")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['image_id'])) {
 				global $config;
@@ -30,7 +30,7 @@ class Featured extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $config, $database;
 			$fid = $config->get_int("featured_id");
 			if($fid > 0) {
@@ -42,14 +42,14 @@ class Featured extends Extension {
 		}
 
 		/*
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Featured Image");
 			$sb->add_int_option("featured_id", "Image ID: ");
 			$event->panel->add_block($sb);
 		}
 		*/
 
-		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+		if($event instanceof ImageAdminBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_part($this->theme->get_buttons_html($event->image->id));
 			}

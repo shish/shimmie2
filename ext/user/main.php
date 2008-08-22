@@ -43,13 +43,13 @@ class UserPage extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("user", "UserPageTheme");
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_bool("login_signup_enabled", true);
 			$config->set_default_int("login_memory", 365);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user_admin")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "user_admin")) {
 			global $user;
 			global $database;
 			global $config;
@@ -97,7 +97,7 @@ class UserPage extends Extension {
 				$this->set_more_wrapper($event->page);
 			}
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "user")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "user")) {
 			global $user;
 			global $database;
 			$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
@@ -111,7 +111,7 @@ class UserPage extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'UserPageBuildingEvent')) {
+		if($event instanceof UserPageBuildingEvent) {
 			global $user;
 			global $config;
 			$this->theme->display_user_page($event->page, $event->user, $user);
@@ -127,7 +127,7 @@ class UserPage extends Extension {
 		}
 
 		// user info is shown on all pages
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			global $user;
 			global $page;
 
@@ -142,23 +142,23 @@ class UserPage extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("User Options");
 			$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
 			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			$event->add_link("User Config", make_link("user"));
 			$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 		}
 
-		if(is_a($event, 'UserCreationEvent')) {
+		if($event instanceof UserCreationEvent) {
 			if($this->check_user_creation($event)) $this->create_user($event);
 		}
 
-		if(is_a($event, 'SearchTermParseEvent')) {
+		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(preg_match("/(poster|user)=(.*)/i", $event->term, $matches)) {
 				global $database;

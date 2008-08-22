@@ -8,7 +8,7 @@
 
 class BanWords extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string('banned_words', "
 viagra
@@ -16,7 +16,7 @@ porn
 			");
 		}
 
-		if(is_a($event, 'CommentPostingEvent')) {
+		if($event instanceof CommentPostingEvent) {
 			global $config;
 			$banned = $config->get_string("banned_words");
 			$comment = strtolower($event->comment);
@@ -44,7 +44,7 @@ porn
 			}
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Banned Phrases");
 			$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
 			$sb->add_longtext_option("banned_words");

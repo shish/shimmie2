@@ -12,7 +12,7 @@ class SVNUpdate extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("svn_update", "SVNUpdateTheme");
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "update")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "update")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "view_changes") {
 					$this->theme->display_update_todo($event->page,
@@ -31,7 +31,7 @@ class SVNUpdate extends Extension {
 			}
 		}
 
-		if(is_a($event, 'AdminBuildingEvent')) {
+		if($event instanceof AdminBuildingEvent) {
 			global $page;
 			$this->theme->display_form($page);
 		}

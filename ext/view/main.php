@@ -45,7 +45,7 @@ class ViewImage extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("view", "ViewTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "post") && ($event->get_arg(0) == "view")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "post") && ($event->get_arg(0) == "view")) {
 			$image_id = int_escape($event->get_arg(1));
 			
 			global $database;
@@ -63,7 +63,7 @@ class ViewImage extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "post") && ($event->get_arg(0) == "set")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "post") && ($event->get_arg(0) == "set")) {
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent($image_id));
@@ -73,7 +73,7 @@ class ViewImage extends Extension {
 			$event->page->set_redirect(make_link("post/view/$image_id", $query));
 		}
 
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			global $user;
 			$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
 			send_event($iibbe);

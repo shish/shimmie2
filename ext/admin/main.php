@@ -17,7 +17,7 @@ class AdminPage extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("admin", "AdminPageTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "admin")) {
 			if(!$event->user->is_admin()) {
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
 			}
@@ -40,7 +40,7 @@ class AdminPage extends Extension {
 			}
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "admin_utils")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "admin_utils")) {
 			if($event->user->is_admin()) {
 				set_time_limit(0);
 				$redirect = false;
@@ -70,18 +70,18 @@ class AdminPage extends Extension {
 			}
 		}
 
-		if(is_a($event, 'ImageAdminBlockBuildingEvent')) {
+		if($event instanceof ImageAdminBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_part($this->theme->get_deleter_html($event->image->id));
 			}
 		}
 
-		if(is_a($event, 'AdminBuildingEvent')) {
+		if($event instanceof AdminBuildingEvent) {
 			$this->theme->display_page($event->page);
 			$this->theme->display_form($event->page);
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Board Admin", make_link("admin"));
 			}

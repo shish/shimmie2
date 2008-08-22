@@ -6,7 +6,7 @@
 class ImageIO extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('thumb_width', 192);
 			$config->set_default_int('thumb_height', 192);
@@ -19,7 +19,7 @@ class ImageIO extends Extension {
 			$config->set_default_string('upload_collision_handler', 'error');
 		}
 
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			$num = $event->get_arg(0);
 			$matches = array();
 			if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
@@ -34,16 +34,16 @@ class ImageIO extends Extension {
 			}
 		}
 
-		if(is_a($event, 'ImageAdditionEvent')) {
+		if($event instanceof ImageAdditionEvent) {
 			$error = $this->add_image($event->image);
 			if(!empty($error)) $event->veto($error);
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			$this->remove_image($event->image);
 		}
 		
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Image Options");
 			$sb->position = 30;
 			$sb->add_text_option("image_ilink", "Image link: ");

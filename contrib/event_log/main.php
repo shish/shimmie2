@@ -12,11 +12,11 @@ class EventLog extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("event_log", "EventLogTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			$this->setup();
 		}
 
-		if(is_a($event, 'PageRequestEvent') && $event->page_name == "event_log") {
+		if(($event instanceof PageRequestEvent) && $event->page_name == "event_log") {
 			global $database;
 			if($event->user->is_admin()) {
 				if(isset($_POST['action'])) {
@@ -59,32 +59,32 @@ class EventLog extends Extension {
 				$this->theme->display_error($event->page, "Denied", "Only admins can see the event log");
 			}
 		}
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Event Log", make_link("event_log"));
 			}
 		}
 
 		global $user; // bad
-		if(is_a($event, 'UploadingImageEvent')) {
+		if($event instanceof UploadingImageEvent) {
 			$this->add_to_log($event->user, 'Uploading Image', "Uploaded a new image");
 		}
-		if(is_a($event, 'CommentPostingEvent')) {
+		if($event instanceof CommentPostingEvent) {
 			$this->add_to_log($event->user, 'Comment Posting', "Posted a comment on image #{$event->image_id}");
 		}
-		if(is_a($event, 'WikiUpdateEvent')) {
+		if($event instanceof WikiUpdateEvent) {
 			$this->add_to_log($event->user, 'Wiki Update', "Edited '{$event->wikipage->title}'");
 		}
-		if(is_a($event, 'ConfigSaveEvent')) {
+		if($event instanceof ConfigSaveEvent) {
 			$this->add_to_log($user, 'Config Save', "Updated the board config");
 		}
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			$this->add_to_log($user, 'Image Deletion', "Deleted image {$event->image->id} (tags: {$event->image->get_tag_list()})");
 		}
-		if(is_a($event, 'SourceSetEvent')) {
+		if($event instanceof SourceSetEvent) {
 			$this->add_to_log($user, 'Source Set', "Source for image #{$event->image_id} set to '{$event->source}'");
 		}
-		if(is_a($event, 'TagSetEvent')) {
+		if($event instanceof TagSetEvent) {
 			$tags = implode($event->tags, ", ");
 			$this->add_to_log($user, 'Tags Set', "Tags for image #{$event->image_id} set to '$tags'");
 		}

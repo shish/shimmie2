@@ -59,7 +59,7 @@ class ExtManager extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("ext_manager", "ExtManagerTheme");
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "ext_manager")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "ext_manager")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "set") {
 					if(is_writable("ext")) {
@@ -78,7 +78,7 @@ class ExtManager extends Extension {
 			}
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Extension Manager", make_link("ext_manager"));
 			}

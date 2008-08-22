@@ -11,7 +11,7 @@ class PixelFileHandler extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_pixel", "PixelFileHandlerTheme");
 
-		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
@@ -30,11 +30,11 @@ class PixelFileHandler extends Extension {
 			}
 		}
 
-		if(is_a($event, 'ThumbnailGenerationEvent') && $this->supported_ext($event->type)) {
+		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
 			$this->create_thumb($event->hash);
 		}
 
-		if(is_a($event, 'DisplayingImageEvent') && $this->supported_ext($event->image->ext)) {
+		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
 	}

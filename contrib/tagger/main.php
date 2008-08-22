@@ -13,7 +13,7 @@ class Tagger extends Extension {
 		if(is_null($this->theme))
 			$this->theme = get_theme_object("tagger", "taggerTheme");
 			
-		if(is_a($event,'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			global $page, $config, $user;
 			
 			if($config->get_bool("tag_edit_anon")
@@ -23,7 +23,8 @@ class Tagger extends Extension {
 				$this->theme->build_tagger($page,$event);
 			}
 		}
-		if(is_a($event,'SetupBuildingEvent')) {
+
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Tagger");
 			$sb->add_bool_option("ext_tagger_enabled","Enable Tagger");
 			$sb->add_int_option("ext_tagger_search_delay","<br/>Delay queries by ");
@@ -35,12 +36,14 @@ class Tagger extends Extension {
 			$event->panel->add_block($sb);
 		}
 	}
-} add_event_listener( new tagger());
+}
+
+add_event_listener(new Tagger());
 
 // Tagger AJAX back-end
 class TaggerXML extends Extension {
 	public function receive_event($event) {
-		if(is_a($event,'PageRequestEvent')
+		if(($event instanceof PageRequestEvent)
 			&& $event->page_name == "tagger"
 			&& $event->get_arg(0) == "tags")
 		{

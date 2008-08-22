@@ -16,14 +16,14 @@ class Index extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("index", "IndexTheme");
 		
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int("index_width", 3);
 			$config->set_default_int("index_height", 4);
 			$config->set_default_bool("index_tips", true);
 		}
 
-		if(is_a($event, 'PageRequestEvent') && (($event->page_name == "index") ||
+		if(($event instanceof PageRequestEvent) && (($event->page_name == "index") ||
 					($event->page_name == "post" && $event->get_arg(0) == "list"))) {
 			if($event->page_name == "post") array_shift($event->args);
 
@@ -67,7 +67,7 @@ class Index extends Extension {
 			$this->theme->display_page($event->page, $images);
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Index Options");
 			$sb->position = 20;
 			
@@ -80,7 +80,7 @@ class Index extends Extension {
 			$event->panel->add_block($sb);
 		}
 
-		if(is_a($event, 'SearchTermParseEvent')) {
+		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(preg_match("/size(<|>|<=|>=|=)(\d+)x(\d+)/", $event->term, $matches)) {
 				$cmp = $matches[1];

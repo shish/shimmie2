@@ -2,7 +2,7 @@
 
 class Upgrade extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			$this->do_things();
 		}
 	}

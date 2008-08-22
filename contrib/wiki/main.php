@@ -57,11 +57,11 @@ class Wiki extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("wiki", "WikiTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if(($event instanceof InitExtEvent)) {
 			$this->setup();
 		}
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "wiki")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "wiki")) {
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
 			}
@@ -118,11 +118,11 @@ class Wiki extends Extension {
 			}
 		}
 
-		if(is_a($event, 'WikiUpdateEvent')) {
+		if(($event instanceof WikiUpdateEvent)) {
 			$this->set_page($event->user, $event->wikipage);
 		}
 
-		if(is_a($event, 'SetupBuildingEvent')) {
+		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Wiki");
 			$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
 			$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");

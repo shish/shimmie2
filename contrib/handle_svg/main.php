@@ -11,7 +11,7 @@ class SVGFileHandler extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_svg", "SVGFileHandlerTheme");
 
-		if(is_a($event, 'DataUploadEvent') && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
@@ -24,7 +24,7 @@ class SVGFileHandler extends Extension {
 			send_event(new ImageAdditionEvent($event->user, $image));
 		}
 
-		if(is_a($event, 'ThumbnailGenerationEvent') && $this->supported_ext($event->type)) {
+		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 
@@ -44,11 +44,11 @@ class SVGFileHandler extends Extension {
 //			}
 		}
 
-		if(is_a($event, 'DisplayingImageEvent') && $this->supported_ext($event->image->ext)) {
+		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "get_svg")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "get_svg")) {
 			global $database;
 			$id = int_escape($event->get_arg(0));
 			$image = $database->get_image($id);

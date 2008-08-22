@@ -2,7 +2,7 @@
 
 class Handle404 extends Extension {
 	public function receive_event($event) {
-		if(is_a($event, 'PageRequestEvent')) {
+		if($event instanceof PageRequestEvent) {
 			$page = $event->page;
 			// hax.
 			if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {

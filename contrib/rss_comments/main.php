@@ -9,7 +9,7 @@
 class RSS_Comments extends Extension {
 // event handling {{{
 	public function receive_event($event) {
-		if(is_a($event, 'PostListBuildingEvent')) {
+		if($event instanceof PostListBuildingEvent) {
 			global $page;
 			global $config;
 			$title = $config->get_string('title');
@@ -17,7 +17,7 @@ class RSS_Comments extends Extension {
 			$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
 				"title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
 		}
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "rss")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "rss")) {
 			if($event->get_arg(0) == 'comments') {
 				global $database;
 				$this->do_rss($database);

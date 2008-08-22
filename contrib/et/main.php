@@ -12,13 +12,13 @@ class ET extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
 
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "system_info")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "system_info")) {
 			if($event->user->is_admin()) {
 				$this->theme->display_info_page($event->page, $this->get_info());
 			}
 		}
 
-		if(is_a($event, 'UserBlockBuildingEvent')) {
+		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("System Info", make_link("system_info"));
 			}

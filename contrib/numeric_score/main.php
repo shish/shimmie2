@@ -22,14 +22,14 @@ class NumericScore extends Extension {
 	public function receive_event($event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("numeric_score", "NumericScoreTheme");
 
-		if(is_a($event, 'InitExtEvent')) {
+		if($event instanceof InitExtEvent) {
 			global $config;
 			if($config->get_int("ext_numeric_score_version", 0) < 1) {
 				$this->install();
 			}
 		}
 		
-		if(is_a($event, 'DisplayingImageEvent')) {
+		if($event instanceof DisplayingImageEvent) {
 			global $user;
 			if(!$user->is_anonymous()) {
 				$html = $this->theme->get_voter_html($event->image);
@@ -37,7 +37,7 @@ class NumericScore extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "numeric_score_vote")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "numeric_score_vote")) {
 			if(!$event->user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
 				$char = $_POST['vote'];
@@ -50,7 +50,7 @@ class NumericScore extends Extension {
 			}
 		}
 		
-		if(is_a($event, 'ImageInfoSetEvent')) {
+		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			$char = $_POST['numeric_score'];
 			$score = 0;
@@ -59,20 +59,20 @@ class NumericScore extends Extension {
 			if($score != 0) send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
 		}
 		
-		if(is_a($event, 'NumericScoreSetEvent')) {
+		if($event instanceof NumericScoreSetEvent) {
 			$this->add_vote($event->image_id, $event->user->id, $event->score);
 		}
 
-		if(is_a($event, 'ImageDeletionEvent')) {
+		if($event instanceof ImageDeletionEvent) {
 			global $database;
 			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=?", array($event->image->id));
 		}
 
-		if(is_a($event, 'ParseLinkTemplateEvent')) {
+		if($event instanceof ParseLinkTemplateEvent) {
 			$event->replace('$score', $event->image->numeric_score);
 		}
 
-		if(is_a($event, 'SearchTermParseEvent')) {
+		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(preg_match("/score(<|<=|=|>=|>)(\d+)/", $event->term, $matches)) {
 				$cmp = $matches[1];
