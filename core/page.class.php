@@ -71,8 +71,6 @@ class GenericPage {
 	// ==============================================
 	
 	public function display() {
-		global $config;
-
 		header("Content-type: {$this->type}");
 
 		switch($this->mode) {
