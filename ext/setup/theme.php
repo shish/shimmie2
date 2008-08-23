@@ -25,7 +25,7 @@ class SetupTheme extends Themelet {
 		$len1 = 0;
 		$len2 = 0;
 		foreach($panel->blocks as $block) {
-			if(is_a($block, 'SetupBlock')) {
+			if($block instanceof SetupBlock) {
 				$html = $this->sb_to_html($block);
 				$len = count(explode("<br>", $html))+1;
 				if($len1 <= $len2) {
