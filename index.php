@@ -48,7 +48,7 @@ if($custom_themelets) {
 
 // start the page generation waterfall
 $page = new Page();
-$user = _get_user();
+$user = _get_user($config, $database);
 $context = new RequestContext();
 $context->page = $page;
 $context->user = $user;

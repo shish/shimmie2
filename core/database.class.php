@@ -191,6 +191,22 @@ class Database {
 		return $result;
 	}
 	
+	public function get_row($query, $args=array()) {
+		$result = $this->db->GetRow($query, $args);
+		if($result === False) {
+			print "SQL Error: " . $this->db->ErrorMsg();
+			print "<br>Query: $query";
+			print "<br>Args: "; print_r($args);
+			exit;
+		}
+		if(count($result) == 0) {
+			return null;
+		}
+		else {
+			return $result;
+		}
+	}
+
 	public function upgrade_schema($filename) {
 		$this->install_schema($filename);
 	}

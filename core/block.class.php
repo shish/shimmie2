@@ -15,7 +15,7 @@ class Block {
 	var $section;
 	var $position;
 
-	public function Block($header, $body, $section="main", $position=50) {
+	public function __construct($header, $body, $section="main", $position=50) {
 		$this->header = $header;
 		$this->body = $body;
 		$this->section = $section;
@@ -29,11 +29,8 @@ class Block {
  * because "new NavBlock()" is easier than "new Block('Navigation', ..."
  */
 class NavBlock extends Block {
-	public function NavBlock() {
-		$this->header = "Navigation";
-		$this->body = "<a href='".make_link()."'>Index</a>";
-		$this->section = "left";
-		$this->position = 0;
+	public function __construct() {
+		parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
 	}
 }
 ?>

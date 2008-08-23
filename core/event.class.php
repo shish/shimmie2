@@ -3,12 +3,11 @@
  * Event:
  * generic parent class
  */
-class Event {
-	var $vetoed = false, $veto_reason = null;
+abstract class Event {
+	var $context;
 
-	public function veto($reason="") {
-		$this->vetoed = true;
-		$this->veto_reason = $reason;
+	public function __construct(RequestContext $context) {
+		$this->context = $context;
 	}
 }
 
@@ -114,13 +113,7 @@ class ImageDeletionEvent extends Event {
  * InitExtEvent:
  * A wake-up call for extensions
  */
-class InitExtEvent extends Event {
-	var $context;
-
-	public function InitExtEvent($context) {
-		$this->context = $context;
-	}
-}
+class InitExtEvent extends Event {}
 
 
 /*
@@ -147,6 +140,23 @@ class PageRequestEvent extends Event {
 		$this->page = $context->page;
 		$this->user = $context->user;
 	}
+
+	public function page_matches($name) {
+		$parts = explode("/", $name);
+
+		if(count($parts) > count($this->args)) {
+			return false;
+		}
+
+		for($i=0; $i<count($parts); $i++) {
+			if($parts[$i] != $this->args[$i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 
 	public function get_arg($n) {
 		return isset($this->args[$n]) ? $this->args[$n] : null;

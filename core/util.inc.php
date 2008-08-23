@@ -501,7 +501,6 @@ function send_event($event) {
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		$listener->receive_event($event);
-		if($event->vetoed) break;
 	}
 	$_event_count++;
 }
@@ -526,31 +525,6 @@ function _get_query_parts() {
 		$path = substr($path, 1);
 	}
 
-	/*
-	 * Split post/list/fate//stay_night/1
-	 * into post list fate/stay_night 1
-	 */
-	/*
-	$parts = array();
-	$n = 0;
-	$lastsplit = 0;
-	while($n<=strlen($path)) {
-		if(
-				$n == strlen($path) ||
-				(
-					$path[$n] == '/' &&
-					($n < strlen($path) && $path[$n+1] != '/')
-					&& ($n > 0 && $path[$n-1] != '/')
-				)
-		) {
-			$part = substr($path, $lastsplit, $n-$lastsplit);
-			$part = str_replace('//', '/', $part);
-			$parts[] = $part;
-			$lastsplit = $n+1;
-		}
-		$n++;
-	}
-	*/
 	$path = str_replace('/', '%%', $path);
 	$path = str_replace('%%%%', '/', $path);
 	$parts = split('%%', $path);
@@ -579,20 +553,17 @@ function _get_page_request($context) {
 	return new PageRequestEvent($context, $page_name, $args);
 }
 
-function _get_user() {
-	global $database;
-	global $config;
-	
+function _get_user($config, $database) {
 	$user = null;
 	if(isset($_COOKIE["shm_user"]) && isset($_COOKIE["shm_session"])) {
-	    $tmp_user = $database->get_user_session($_COOKIE["shm_user"], $_COOKIE["shm_session"]);
+	    $tmp_user = User::by_session($config, $database, $_COOKIE["shm_user"], $_COOKIE["shm_session"]);
 		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
 		
 	}
 	if(is_null($user)) {
-		$user = $database->get_user_by_id($config->get_int("anon_id", 0));
+		$user = User::by_id($config, $database, $config->get_int("anon_id", 0));
 	}
 	assert(!is_null($user));
 	return $user;
