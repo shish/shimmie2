@@ -19,9 +19,11 @@ MySQL 4.1+
 PHP 5.0+
 GD or ImageMagick
 
-PHP 4 support has currently been dropped, because it's a pain in the ass to
-support. If you are unfortunate enough to be stuck on a PHP4-only host, I'd
-be glad to host your image board for you :3
+There is no PHP4 support, because it lacks many useful features which make
+shimmie development easier, faster, and less bug prone. PHP4 is officially
+dead, if your host hasn't upgraded to at least 5, I would suggest switching
+hosts. I'll even host galleries for free if you can't get hosting elsewhere
+for whatever reason~
 
 
 Installation
