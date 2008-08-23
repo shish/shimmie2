@@ -99,8 +99,9 @@ class UserPage implements Extension {
 		}
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "user")) {
 			global $user;
+			global $config;
 			global $database;
-			$duser = ($event->count_args() == 0) ? $user : $database->get_user_by_name($event->get_arg(0));
+			$duser = ($event->count_args() == 0) ? $user : User::by_name($config, $database, $event->get_arg(0));
 			if(!is_null($duser)) {
 				send_event(new UserPageBuildingEvent($event->page, $duser));
 			}
@@ -161,8 +162,9 @@ class UserPage implements Extension {
 		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(preg_match("/(poster|user)=(.*)/i", $event->term, $matches)) {
+				global $config;
 				global $database;
-				$user = $database->get_user_by_name($matches[2]);
+				$user = User::by_name($config, $database, $matches[2]);
 				if(!is_null($user)) {
 					$user_id = $user->id;
 				}
@@ -188,7 +190,7 @@ class UserPage implements Extension {
 		$pass = $_POST['pass'];
 		$hash = md5(strtolower($name) . $pass);
 
-		$duser = $database->get_user_by_name_and_hash($name, $hash);
+		$duser = User::by_name_and_hash($config, $database, $name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($name, $pass);
@@ -246,6 +248,7 @@ class UserPage implements Extension {
 // Things done *to* the user {{{
 	private function change_password_wrapper($page) {
 		global $user;
+		global $config;
 		global $database;
 		
 		$page->set_title("Error");
@@ -261,7 +264,7 @@ class UserPage implements Extension {
 			$pass1 = $_POST['pass1'];
 			$pass2 = $_POST['pass2'];
 
-			$duser = $database->get_user_by_id($id);
+			$duser = User::by_id($config, $database, $id);
 
 			if((!$user->is_admin()) && ($duser->name != $user->name)) {
 				$page->add_block(new Block("Error",
@@ -291,6 +294,7 @@ class UserPage implements Extension {
 
 	private function set_more_wrapper($page) {
 		global $user;
+		global $config;
 		global $database;
 		
 		$page->set_title("Error");
@@ -306,7 +310,7 @@ class UserPage implements Extension {
 		else {
 			$admin = (isset($_POST['admin']) && ($_POST['admin'] == "on"));
 			
-			$duser = $database->get_user_by_id($_POST['id']);
+			$duser = User::by_id($config, $database, $_POST['id']);
 			$duser->set_admin($admin);
 
 			$page->set_mode("redirect");

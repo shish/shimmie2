@@ -502,34 +502,5 @@ class Database {
 		$this->execute("DELETE FROM images WHERE id=?", array($id));
 	}
 // }}}
-// users {{{
-	var $SELECT_USER = "SELECT *,(unix_timestamp(now()) - unix_timestamp(joindate))/(60*60*24) AS days_old FROM users ";
-	
-	public function get_user_session($name, $session) {
-		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name LIKE ? AND md5(concat(pass, ?)) = ?",
-				array($name, get_session_ip(), $session));
-		return $row ? new User($row) : null;
-	}
-
-	public function get_user_by_id($id) {
-		assert(is_numeric($id));
-		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE id=?", array($id));
-		return $row ? new User($row) : null;
-	}
-	
-	public function get_user_by_name($name) {
-		assert(is_string($name));
-		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name=?", array($name));
-		return $row ? new User($row) : null;
-	}
-
-	public function get_user_by_name_and_hash($name, $hash) {
-		assert(is_string($name));
-		assert(is_string($hash));
-		assert(strlen($hash) == 32);
-		$row = $this->db->GetRow("{$this->SELECT_USER} WHERE name LIKE ? AND pass = ?", array($name, $hash));
-		return $row ? new User($row) : null;
-	}
-// }}}
 }
 ?>

@@ -162,7 +162,7 @@ class IPBan implements Extension {
 				(strstr($row['ip'], '/') && ip_in_range($remote, $row['ip'])) ||
 				($row['ip'] == $remote)
 			) {
-				$admin = $database->get_user_by_id($row['banner_id']);
+				$admin = User::by_id($config, $database, $row['banner_id']);
 				$date = date("Y-m-d", $row['end_timestamp']);
 				print "IP <b>{$row['ip']}</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 

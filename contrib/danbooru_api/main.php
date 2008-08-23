@@ -374,6 +374,7 @@ class DanbooruApi implements Extension
 	// or makes them anonymous. Does not set any cookies or anything permanent.
 	private function authenticate_user()
 	{
+		global $config;
 		global $database;
 		global $user;
 
@@ -384,12 +385,12 @@ class DanbooruApi implements Extension
 			$name = $_REQUEST['login'];
 			$pass = $_REQUEST['password'];
 			$hash = md5( strtolower($name) . $pass );
-			$duser = $database->get_user_by_name_and_hash($name, $hash);
+			$duser = User::by_name_and_hash($config, $database, $name, $hash);
 			if(!is_null($duser)) {
 				$user = $duser;
 			} else
 			{
-				$user = $database->get_user_by_id($config->get_int("anon_id", 0));
+				$user = User::by_id($config, $database, $config->get_int("anon_id", 0));
 			}
 		}
 	}
