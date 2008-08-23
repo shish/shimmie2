@@ -6,10 +6,10 @@
  * Description: Scales down too-large images using browser based scaling
  */
 
-class Zoom extends Extension {
+class Zoom implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if($this->theme == null) $this->theme = get_theme_object("zoom", "ZoomTheme");
 
 		if($event instanceof DisplayingImageEvent) {

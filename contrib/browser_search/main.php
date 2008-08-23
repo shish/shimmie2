@@ -11,8 +11,8 @@
  *
  */
  
-class BrowserSearch extends Extension {
-	public function receive_event($event) {
+class BrowserSearch implements Extension {
+	public function receive_event(Event $event) {
 	global $page;
 	global $config;
 	

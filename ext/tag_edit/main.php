@@ -1,9 +1,9 @@
 <?php
 
-class TagEdit extends Extension {
+class TagEdit implements Extension {
 	var $theme;
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("tag_edit", "TagEditTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_edit")) {

@@ -3,9 +3,9 @@
  * A class to handle adding / getting / removing image
  * files from the disk
  */
-class ImageIO extends Extension {
+class ImageIO implements Extension {
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('thumb_width', 192);

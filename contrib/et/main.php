@@ -6,10 +6,10 @@
  * Description: Show various bits of system information, for debugging
  */
 
-class ET extends Extension {
+class ET implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "system_info")) {

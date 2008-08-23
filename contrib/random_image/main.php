@@ -7,8 +7,8 @@
  * Link: http://trac.shishnet.org/shimmie2/wiki/Contrib/Extensions/RandomImage
  */
 
-class RandomImage extends Extension {
-	public function receive_event($event) {
+class RandomImage implements Extension {
+	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "random_image")) {
 			global $database;
 			

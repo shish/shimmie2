@@ -5,8 +5,8 @@
  * License: GPLv2
  * Description: Adds a link to piclensify the gallery
  */
-class PicLens extends Extension {
-	public function receive_event($event) {
+class PicLens implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof PageRequestEvent) {
 			$event->page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
 		}

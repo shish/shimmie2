@@ -6,8 +6,8 @@
  * Description: Simple search and replace
  */
 
-class WordFilter extends Extension {
-	public function receive_event($event) {
+class WordFilter implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof TextFormattingEvent) {
 			$event->formatted = $this->filter($event->formatted);
 			$event->stripped  = $this->filter($event->stripped);

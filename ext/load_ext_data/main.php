@@ -1,6 +1,6 @@
 <?php
-class LoadExtData extends Extension {
-	public function receive_event($event) {
+class LoadExtData implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof PageRequestEvent) {
 			global $page, $config;
 

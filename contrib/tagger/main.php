@@ -6,7 +6,7 @@
  * Do not remove this notice.
  */
 
-class Tagger extends Extension {
+class Tagger implements Extension {
 	var $theme;
 	
 	public function receive_event ($event) {
@@ -41,8 +41,8 @@ class Tagger extends Extension {
 add_event_listener(new Tagger());
 
 // Tagger AJAX back-end
-class TaggerXML extends Extension {
-	public function receive_event($event) {
+class TaggerXML implements Extension {
+	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent)
 			&& $event->page_name == "tagger"
 			&& $event->get_arg(0) == "tags")

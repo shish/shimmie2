@@ -5,8 +5,8 @@
  * Description: Allow users to upload archives (zip, etc)
  */
 
-class ArchiveFileHandler extends Extension {
-	public function receive_event($event) {
+class ArchiveFileHandler implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');

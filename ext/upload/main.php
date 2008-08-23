@@ -1,9 +1,9 @@
 <?php
 
-class Upload extends Extension {
+class Upload implements Extension {
 	var $theme;
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("upload", "UploadTheme");
 
 		$is_full = (disk_free_space("./images/") < 100*1024*1024);

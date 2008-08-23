@@ -6,10 +6,10 @@
  * Description: A log of things that happen, for abuse tracking
  */
 
-class EventLog extends Extension {
+class EventLog implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("event_log", "EventLogTheme");
 
 		if($event instanceof InitExtEvent) {

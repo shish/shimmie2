@@ -5,8 +5,8 @@
  * License: GPLv2
  * Description: Allows the admin to set min / max image dimentions
  */
-class ResolutionLimit extends Extension {
-	public function receive_event($event) {
+class ResolutionLimit implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof ImageAdditionEvent) {
 			global $config;
 			$min_w = $config->get_int("upload_min_width", -1);

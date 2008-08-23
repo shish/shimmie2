@@ -1,7 +1,7 @@
 <?php
 
-class Upgrade extends Extension {
-	public function receive_event($event) {
+class Upgrade implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof InitExtEvent) {
 			$this->do_things();
 		}

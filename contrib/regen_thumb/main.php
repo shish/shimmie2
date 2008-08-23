@@ -6,10 +6,10 @@
  * Description: Regenerate a thumbnail image
  */
 
-class RegenThumb extends Extension {
+class RegenThumb implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("regen_thumb", "RegenThumbTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "regen_thumb")) {

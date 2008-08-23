@@ -29,10 +29,10 @@ class AddReportedImageEvent extends Event {
 	}
 }
 
-class ReportImage extends Extension {
+class ReportImage implements Extension {
 	var $theme;
 	
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("report_image", "ReportImageTheme");
 		
 		if($event instanceof InitExtEvent) {

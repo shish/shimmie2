@@ -1,10 +1,10 @@
 <?php
 
-class TagList extends Extension {
+class TagList implements Extension {
 	var $theme = null;
 	
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if($this->theme == null) $this->theme = get_theme_object("tag_list", "TagListTheme");
 		
 		if($event instanceof InitExtEvent) {

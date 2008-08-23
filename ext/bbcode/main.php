@@ -1,7 +1,7 @@
 <?php
 
-class BBCode extends Extension {
-	public function receive_event($event) {
+class BBCode implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof TextFormattingEvent) {
 			$event->formatted = $this->bbcode_to_html($event->formatted);
 			$event->stripped  = $this->bbcode_to_text($event->stripped);

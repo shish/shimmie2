@@ -5,10 +5,10 @@
  * Description: Keep a record of tag changes
  */
 
-class Tag_History extends Extension {
+class Tag_History implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("tag_history", "Tag_HistoryTheme");
 
 		if(($event instanceof InitExtEvent)) {

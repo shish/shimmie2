@@ -5,10 +5,10 @@
  * Description: Handle MP3 files
  */
 
-class MP3FileHandler extends Extension {
+class MP3FileHandler implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_mp3", "MP3FileHandlerTheme");
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {

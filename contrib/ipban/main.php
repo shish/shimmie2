@@ -30,10 +30,10 @@ class AddIPBanEvent extends Event {
 }
 // }}}
 
-class IPBan extends Extension {
+class IPBan implements Extension {
 	var $theme;
 // event handler {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("ipban", "IPBanTheme");
 
 		if($event instanceof InitExtEvent) {

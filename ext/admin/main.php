@@ -11,10 +11,10 @@ class AdminBuildingEvent extends Event {
 }
 // }}}
 
-class AdminPage extends Extension {
+class AdminPage implements Extension {
 	var $theme;
 	
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("admin", "AdminPageTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "admin")) {

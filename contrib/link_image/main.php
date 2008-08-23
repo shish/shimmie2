@@ -4,10 +4,10 @@
  * Author: Artanis <artanis.00@gmail.com>
  * Description: Show various forms of link to each image, for copy & paste
  */
-class LinkImage extends Extension {
+class LinkImage implements Extension {
 	var $theme;
 	
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("link_image", "LinkImageTheme");
 			if(($event instanceof DisplayingImageEvent)) {
 				global $config;

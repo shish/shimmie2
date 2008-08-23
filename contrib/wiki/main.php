@@ -51,10 +51,10 @@ class WikiPage {
 	}
 }
 // }}}
-class Wiki extends Extension {
+class Wiki implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("wiki", "WikiTheme");
 
 		if(($event instanceof InitExtEvent)) {

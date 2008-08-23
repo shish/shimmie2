@@ -36,11 +36,11 @@ class UserCreationEvent extends Event {
 	}
 }
 
-class UserPage extends Extension {
+class UserPage implements Extension {
 	var $theme;
 
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("user", "UserPageTheme");
 		
 		if($event instanceof InitExtEvent) {

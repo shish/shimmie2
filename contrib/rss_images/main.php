@@ -6,9 +6,9 @@
  * Description: Self explanitory
  */
 
-class RSS_Images extends Extension {
+class RSS_Images implements Extension {
 // event handling {{{
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if($event instanceof PostListBuildingEvent) {
 			global $page;
 			global $config;

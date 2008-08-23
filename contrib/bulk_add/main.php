@@ -6,10 +6,10 @@
  * Description: Bulk add server-side images
  */
 
-class BulkAdd extends Extension {
+class BulkAdd implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("bulk_add", "BulkAddTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "bulk_add")) {

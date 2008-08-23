@@ -6,10 +6,10 @@
  * Description: Show a "down for maintenance" page
  */
 
-class Downtime extends Extension {
+class Downtime implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("downtime", "DowntimeTheme");
 
 		if($event instanceof SetupBuildingEvent) {

@@ -6,10 +6,10 @@
  * Description: Bring a specific image to the users' attentions
  */
 
-class Featured extends Extension {
+class Featured implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("featured", "FeaturedTheme");
 		
 		if($event instanceof InitExtEvent) {

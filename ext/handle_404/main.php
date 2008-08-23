@@ -1,7 +1,7 @@
 <?php
 
-class Handle404 extends Extension {
-	public function receive_event($event) {
+class Handle404 implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof PageRequestEvent) {
 			$page = $event->page;
 			// hax.

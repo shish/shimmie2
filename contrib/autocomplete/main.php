@@ -6,8 +6,8 @@
  * Description: Auto-complete for search and upload tags
  */
 
-class AutoComplete extends Extension {
-	public function receive_event($event) {
+class AutoComplete implements Extension {
+	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "index" || $event->page_name == "view")) {
 			$event->page->add_header("<script>autocomplete_url='".html_escape(make_link("autocomplete"))."';</script>");
 		}

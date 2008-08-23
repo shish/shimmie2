@@ -16,10 +16,10 @@ class TextScoreSetEvent extends Event {
 	}
 }
 
-class TextScore extends Extension {
+class TextScore implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("text_score", "TextScoreTheme");
 
 		if(($event instanceof InitExtEvent)) {

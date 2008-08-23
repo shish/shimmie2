@@ -38,10 +38,10 @@ Completely compatibility will probably involve a rewrite with a different URL
 
 */
 
-class DanbooruApi extends Extension 
+class DanbooruApi implements Extension 
 {
 	// Receive the event
-	public function receive_event($event) 
+	public function receive_event(Event $event) 
 	{
 		// Check if someone is accessing /api/danbooru (us)
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "api") && ($event->get_arg(0) == 'danbooru')) 

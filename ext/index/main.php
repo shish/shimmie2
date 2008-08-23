@@ -10,10 +10,10 @@ class PostListBuildingEvent extends Event {
 	}
 }
 
-class Index extends Extension {
+class Index implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("index", "IndexTheme");
 		
 		if($event instanceof InitExtEvent) {

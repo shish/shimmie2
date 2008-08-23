@@ -5,10 +5,10 @@
  * Description: Handle SVG files
  */
 
-class SVGFileHandler extends Extension {
+class SVGFileHandler implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_svg", "SVGFileHandlerTheme");
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {

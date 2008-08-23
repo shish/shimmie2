@@ -39,10 +39,10 @@ class ImageAdminBlockBuildingEvent extends Event {
 		$this->parts[$position] = $html;
 	}
 }
-class ViewImage extends Extension {
+class ViewImage implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("view", "ViewTheme");
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "post") && ($event->get_arg(0) == "view")) {

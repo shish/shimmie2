@@ -16,10 +16,10 @@ class NumericScoreSetEvent extends Event {
 	}
 }
 
-class NumericScore extends Extension {
+class NumericScore implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("numeric_score", "NumericScoreTheme");
 
 		if($event instanceof InitExtEvent) {

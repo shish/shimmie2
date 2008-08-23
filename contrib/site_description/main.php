@@ -6,8 +6,8 @@
  * Description: Sets the "description" meta-info in the page header, for
  *              eg search engines to read
  */
-class SiteDescription extends Extension {
-	public function receive_event($event) {
+class SiteDescription implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof PageRequestEvent) {
 			global $config;
 			if(strlen($config->get_string("site_description")) > 0) {

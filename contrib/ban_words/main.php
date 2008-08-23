@@ -6,8 +6,8 @@
  * Description: For stopping spam and other comment abuse
  */
 
-class BanWords extends Extension {
-	public function receive_event($event) {
+class BanWords implements Extension {
+	public function receive_event(Event $event) {
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string('banned_words', "

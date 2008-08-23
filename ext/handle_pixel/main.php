@@ -5,10 +5,10 @@
  * Description: Handle JPG, PNG, GIF, etc files
  */
 
-class PixelFileHandler extends Extension {
+class PixelFileHandler implements Extension {
 	var $theme;
 
-	public function receive_event($event) {
+	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("handle_pixel", "PixelFileHandlerTheme");
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
