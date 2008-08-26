@@ -135,14 +135,14 @@ class ReportImage implements Extension {
 		
 		$reports = array();
 		foreach($all_reports as $report) {
-			global $database;
+			global $database, $config;
 			$image_id = int_escape($report['image_id']);
-			$image = $database->get_image($image_id);
+			$image = Image::by_id($config, $database, $image_id);
 			if(is_null($image)) {
 				send_event(new RemoveReportedImageEvent($report['id']));
 				continue;
 			}
-			$report['image'] = $database->get_image($image_id);
+			$report['image'] = $image;
 			$reports[] = $report;
 		}
 

@@ -5,6 +5,9 @@
  * sound file, or any other supported upload type.
  */
 class Image {
+	var $config;
+	var $database;
+
 	var $id = null;
 	var $height, $width;
 	var $hash, $filesize;
@@ -14,6 +17,12 @@ class Image {
 	var $source;
 
 	public function Image($row=null) {
+		global $config;
+		global $database;
+
+		$this->config = $config;
+		$this->database = $database;
+
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// FIXME: some databases use table.name rather than name
@@ -22,16 +31,28 @@ class Image {
 		}
 	}
 
+	public static function by_id(Config $config, Database $database, $id) {
+		assert(is_numeric($id));
+		$image = null;
+		$row = $this->database->get_row("{$this->get_images} WHERE images.id=?", array($id));
+		return ($row ? new Image($row) : null);
+	}
+	
+	public function delete() {
+		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
+		
+		unlink($this->get_image_filename());
+		unlink($this->get_thumb_filename());
+	}
+
 	public function get_owner() {
-		global $database;
-		return $database->get_user_by_id($this->owner_id);
+		return User::by_id($this->config, $this->database, $this->owner_id);
 	}
 
 	public function get_tag_array() {
 		if(!isset($this->tag_array)) {
-			global $database;
 			$this->tag_array = Array();
-			$row = $database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
+			$row = $this->database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
 			while(!$row->EOF) {
 				$this->tag_array[] = $row->fields['tag'];
 				$row->MoveNext();
@@ -45,18 +66,15 @@ class Image {
 	}
 
 	public function get_image_link() {
-		global $config;
-		return $this->parse_link_template($config->get_string('image_ilink'));
+		return $this->parse_link_template($this->config->get_string('image_ilink'));
 	}
 
 	public function get_short_link() {
-		global $config;
-		return $this->parse_link_template($config->get_string('image_slink'));
+		return $this->parse_link_template($this->config->get_string('image_slink'));
 	}
 
 	public function get_thumb_link() {
-		global $config;
-		return $this->parse_link_template($config->get_string('image_tlink'));
+		return $this->parse_link_template($this->config->get_string('image_tlink'));
 	}
 
 	public function get_tooltip() {
@@ -65,7 +83,6 @@ class Image {
 	}
 
 	public function get_image_filename() {
-		global $config;
 		$hash = $this->hash;
 		$ab = substr($hash, 0, 2);
 		$ext = $this->ext;
@@ -73,7 +90,6 @@ class Image {
 	}
 
 	public function get_thumb_filename() {
-		global $config;
 		$hash = $this->hash;
 		$ab = substr($hash, 0, 2);
 		return "thumbs/$ab/$hash";
@@ -96,8 +112,6 @@ class Image {
 	}
 
 	public function parse_link_template($tmpl, $_escape="url_escape") {
-		global $config;
-
 		// don't bother hitting the database if it won't be used...
 		$safe_tags = "";
 		if(strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
@@ -106,7 +120,7 @@ class Image {
 					"", $this->get_tag_list());
 		}
 
-		$base_href = $config->get_string('base_href');
+		$base_href = $this->config->get_string('base_href');
 		$fname = $this->get_filename();
 		$base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
 

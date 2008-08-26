@@ -189,6 +189,7 @@ class CommentList implements Extension {
 // page building {{{
 	private function build_page($current_page) {
 		global $page;
+		global $config;
 		global $database;
 
 		if(is_null($current_page) || $current_page <= 0) {
@@ -214,7 +215,7 @@ class CommentList implements Extension {
 
 		$n = 10;
 		while(!$result->EOF) {
-			$image = $database->get_image($result->fields["image_id"]);
+			$image = Image::by_id($config, $database, $result->fields["image_id"]);
 			$comments = $this->get_comments($image->id);
 			$this->theme->add_comment_list($page, $image, $comments, $n, $this->can_comment());
 			$n += 1;
@@ -331,7 +332,7 @@ class CommentList implements Extension {
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
 			$event->veto("Anonymous posting has been disabled");
 		}
-		else if(is_null($database->get_image($image_id))) {
+		else if(is_null(Image::by_id($config, $database, $image_id))) {
 			$event->veto("The image does not exist");
 		}
 		else if(trim($comment) == "") {

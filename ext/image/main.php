@@ -40,7 +40,7 @@ class ImageIO implements Extension {
 		}
 
 		if($event instanceof ImageDeletionEvent) {
-			$this->remove_image($event->image);
+			$event->image->delete();
 		}
 		
 		if($event instanceof SetupBuildingEvent) {
@@ -128,8 +128,9 @@ class ImageIO implements Extension {
 // }}}
 // fetch image {{{
 	private function send_file($image_id, $type) {
+		global $config;
 		global $database;
-		$image = $database->get_image($image_id);
+		$image = Image::by_id($config, $database, $image_id);
 
 		global $page;
 		if(!is_null($image)) {
@@ -169,15 +170,6 @@ class ImageIO implements Extension {
 			$page->add_block(new Block("Image not in database",
 					"The requested image was not found in the database"));
 		}
-	}
-// }}}
-// delete image {{{
-	private function remove_image($image) {
-		global $database;
-		$database->remove_image($image->id);
-		
-		unlink($image->get_image_filename());
-		unlink($image->get_thumb_filename());
 	}
 // }}}
 }

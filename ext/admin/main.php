@@ -25,8 +25,9 @@ class AdminPage implements Extension {
 				if($event->get_arg(0) == "delete_image") {
 					// FIXME: missing lots of else {complain}
 					if(isset($_POST['image_id'])) {
+						global $config;
 						global $database;
-						$image = $database->get_image($_POST['image_id']);
+						$image = Image::by_id($config, $database, $_POST['image_id']);
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
 							$event->page->set_mode("redirect");

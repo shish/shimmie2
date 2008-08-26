@@ -34,7 +34,7 @@ class Featured implements Extension {
 			global $config, $database;
 			$fid = $config->get_int("featured_id");
 			if($fid > 0) {
-				$image = $database->get_image($fid);
+				$image = Image::by_id($config, $database, $fid);
 				if(!is_null($image)) {
 					$this->theme->display_featured($event->page, $image);
 				}
