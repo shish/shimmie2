@@ -16,8 +16,8 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "<pre>\\1</pre>", $text);
 		$text = preg_replace("/&gt;&gt;(\d+)/s", "<a href='".make_link("post/view/\\1")."'>&gt;&gt;\\1</a>", $text);
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
-		$text = preg_replace("/\[url=((?:https?|ftp|irc):\/\/.*?)\](.*?)\[\/url\]/s", "<a href='\\1'>\\2</a>", $text);
-		$text = preg_replace("/\[url\]((?:https?|ftp|irc):\/\/.*?)\[\/url\]/s", "<a href='\\1'>\\1</a>", $text);
+		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href='\\1'>\\2</a>", $text);
+		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto):\/\/.*?)\[\/url\]/s", "<a href='\\1'>\\1</a>", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href='".make_link("wiki/\\1")."'>\\2</a>", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
 		$text = str_replace("\n", "\n<br>", $text);

@@ -174,8 +174,6 @@ function _count_execs($db, $sql, $inputarray) {
 }
 
 function get_theme_object($file, $class) {
-	global $config;
-	$theme = $config->get_string("theme", "default");
 	if(class_exists("Custom$class")) {
 		$class = "Custom$class";
 		return new $class();
