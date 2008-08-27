@@ -34,7 +34,7 @@ class Image {
 	public static function by_id(Config $config, Database $database, $id) {
 		assert(is_numeric($id));
 		$image = null;
-		$row = $this->database->get_row("{$this->get_images} WHERE images.id=?", array($id));
+		$row = $database->get_row("SELECT * FROM images WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
 	
@@ -132,7 +132,7 @@ class Image {
 		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
 		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
-		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
+		$tmpl = str_replace('$title', $_escape($this->config->get_string("title")), $tmpl);
 
 		$plte = new ParseLinkTemplateEvent($tmpl, $this);
 		send_event($plte);
