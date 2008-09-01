@@ -6,7 +6,7 @@ class Upload implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object("upload", "UploadTheme");
 
-		$is_full = (disk_free_space("./images/") < 100*1024*1024);
+		$is_full = (disk_free_space(realpath("./images/")) < 100*1024*1024);
 		
 		if($event instanceof InitExtEvent) {
 			global $config;
