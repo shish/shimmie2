@@ -46,7 +46,7 @@ class SetupBlock extends Block {
 
 	public function add_text_option($name, $label=null) {
 		global $config;
-		$val = $config->get_string($name);
+		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
@@ -56,7 +56,7 @@ class SetupBlock extends Block {
 
 	public function add_longtext_option($name, $label=null) {
 		global $config;
-		$val = $config->get_string($name);
+		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
@@ -83,7 +83,7 @@ class SetupBlock extends Block {
 
 	public function add_int_option($name, $label=null) {
 		global $config;
-		$val = $config->get_string($name);
+		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
