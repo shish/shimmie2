@@ -1,6 +1,6 @@
 <?php
 
-class ViewTheme extends Themelet {
+class ViewImageTheme extends Themelet {
 	/*
 	 * Build a page showing $image and some info about it
 	 */
