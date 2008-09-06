@@ -9,7 +9,7 @@ class IcoFileHandler implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("handle_ico", "IcoFileHandlerTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
