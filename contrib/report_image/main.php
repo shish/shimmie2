@@ -45,7 +45,7 @@ class ReportImage implements Extension {
 			}
 		}
 		
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "image_report")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("image_report")) {
 			global $user;
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['reason'])) {

@@ -17,7 +17,7 @@ class RSS_Comments implements Extension {
 			$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
 				"title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
 		}
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "rss")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("rss")) {
 			if($event->get_arg(0) == 'comments') {
 				global $database;
 				$this->do_rss($database);

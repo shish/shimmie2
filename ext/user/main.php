@@ -49,7 +49,7 @@ class UserPage implements Extension {
 			$config->set_default_int("login_memory", 365);
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "user_admin")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("user_admin")) {
 			global $user;
 			global $database;
 			global $config;
@@ -97,7 +97,7 @@ class UserPage implements Extension {
 				$this->set_more_wrapper($event->page);
 			}
 		}
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "user")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
 			global $user;
 			global $config;
 			global $database;

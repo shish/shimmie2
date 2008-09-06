@@ -66,7 +66,7 @@ class CommentList implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "comment")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("comment")) {
 			if($event->get_arg(0) == "add") {
 				$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
 				send_event($cpe);

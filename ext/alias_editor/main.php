@@ -16,7 +16,7 @@ class AliasEditor implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "alias")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("alias")) {
 			if($event->get_arg(0) == "add") {
 				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {

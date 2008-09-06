@@ -23,10 +23,7 @@ class Index implements Extension {
 			$config->set_default_bool("index_tips", true);
 		}
 
-		if(($event instanceof PageRequestEvent) && (($event->page_name == "index") ||
-					($event->page_name == "post" && $event->get_arg(0) == "list"))) {
-			if($event->page_name == "post") array_shift($event->args);
-
+		if(($event instanceof PageRequestEvent) && $event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
 				$search = url_escape(trim($_GET['search']));
 				if(empty($search)) {

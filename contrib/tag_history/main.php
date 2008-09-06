@@ -19,7 +19,7 @@ class Tag_History implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_history"))
+		if(($event instanceof PageRequestEvent) && $event->page_matches("tag_history"))
 		{
 			if($event->get_arg(0) == "revert")
 			{

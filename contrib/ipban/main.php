@@ -45,7 +45,7 @@ class IPBan implements Extension {
 			$this->check_ip_ban();
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "ip_ban")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("ip_ban")) {
 			global $user;
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {

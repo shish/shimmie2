@@ -17,7 +17,7 @@ class AdminPage implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "admin")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("admin")) {
 			if(!$event->user->is_admin()) {
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
 			}
@@ -41,7 +41,7 @@ class AdminPage implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "admin_utils")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("admin_utils")) {
 			if($event->user->is_admin()) {
 				set_time_limit(0);
 				$redirect = false;

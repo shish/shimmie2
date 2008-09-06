@@ -17,7 +17,7 @@ class Featured implements Extension {
 			$config->set_default_int('featured_id', 0);
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "set_feature")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("set_feature")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['image_id'])) {
 				global $config;

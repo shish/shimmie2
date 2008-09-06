@@ -133,6 +133,7 @@ class PageRequestEvent extends Event {
 		parent::__construct($context);
 		$this->args = $args;
 		$this->arg_count = count($args);
+		$this->page = $context->page;
 	}
 
 	public function page_matches($name) {
@@ -163,7 +164,7 @@ class PageRequestEvent extends Event {
 	}
 
 	public function count_args() {
-		return $this->arg_count;
+		return $this->arg_count - $this->part_count;
 	}
 }
 

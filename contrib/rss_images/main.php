@@ -25,7 +25,7 @@ class RSS_Images implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "rss")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("rss")) {
 			if($event->get_arg(0) == 'images') {
 				global $database;
 				if($event->count_args() >= 2) {

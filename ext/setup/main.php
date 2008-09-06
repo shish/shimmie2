@@ -137,7 +137,7 @@ class Setup implements Extension {
 			$config->set_default_string("theme", "default");
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "setup")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("setup")) {
 			global $user;
 			if(!$user->is_admin()) {
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");

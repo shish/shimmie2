@@ -535,24 +535,13 @@ function _get_query_parts() {
 }
 
 function _get_page_request($context) {
-	global $config;
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$parts = split('/', $config->get_string('front_page'));
-		$page_name = array_shift($parts);
-		$args = $parts;
-	}
-	else if(count($args) == 1) {
-		$page_name = $args[0];
-		$args = array();
-	}
-	else {
-		$page_name = $args[0];
-		$args = array_slice($args, 1);
+		$args = split('/', $context->config->get_string('front_page'));
 	}
 	
-	return new PageRequestEvent($context, $page_name, $args);
+	return new PageRequestEvent($context, $args);
 }
 
 function _get_user($config, $database) {

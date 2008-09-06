@@ -52,7 +52,7 @@ class ImageBan implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "image_hash_ban")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("image_hash_ban")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {

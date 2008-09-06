@@ -12,7 +12,7 @@ class RegenThumb implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "regen_thumb")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("regen_thumb")) {
 			global $user;
 			if($user->is_admin() && isset($_POST['image_id'])) {
 				global $database;

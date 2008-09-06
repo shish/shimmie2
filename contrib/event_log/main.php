@@ -16,7 +16,7 @@ class EventLog implements Extension {
 			$this->setup();
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_name == "event_log") {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("event_log")) {
 			global $database;
 			if($event->user->is_admin()) {
 				if(isset($_POST['action'])) {

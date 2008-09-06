@@ -45,8 +45,8 @@ class ViewImage implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "post") && ($event->get_arg(0) == "view")) {
-			$image_id = int_escape($event->get_arg(1));
+		if(($event instanceof PageRequestEvent) && $event->page_matches("post/view")) {
+			$image_id = int_escape($event->get_arg(0));
 			
 			global $database;
 			$image = $database->get_image($image_id);
@@ -63,7 +63,7 @@ class ViewImage implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "post") && ($event->get_arg(0) == "set")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("post/set")) {
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent($image_id));

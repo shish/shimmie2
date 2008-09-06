@@ -48,7 +48,7 @@ class SVGFileHandler implements Extension {
 			$this->theme->display_image($event->page, $event->image);
 		}
 		
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "get_svg")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("get_svg")) {
 			global $database;
 			$id = int_escape($event->get_arg(0));
 			$image = $database->get_image($id);

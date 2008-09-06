@@ -62,7 +62,7 @@ class Wiki implements Extension {
 			$this->setup();
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "wiki")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("wiki")) {
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
 			}

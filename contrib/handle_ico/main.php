@@ -38,7 +38,7 @@ class IcoFileHandler implements Extension {
 			$this->theme->display_image($event->page, $event->image);
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "get_ico")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("get_ico")) {
 			global $database;
 			$id = int_escape($event->get_arg(0));
 			$image = $database->get_image($id);

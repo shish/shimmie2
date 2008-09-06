@@ -12,7 +12,7 @@ class BulkAdd implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "bulk_add")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("bulk_add")) {
 			if($event->user->is_admin() && isset($_POST['dir'])) {
 				set_time_limit(0);
 

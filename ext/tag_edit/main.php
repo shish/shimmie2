@@ -6,7 +6,7 @@ class TagEdit implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_edit")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("tag_edit")) {
 			global $page;
 			if($event->get_arg(0) == "replace") {
 				global $user;

@@ -14,7 +14,7 @@ class Home implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "home"))
+		if(($event instanceof PageRequestEvent) && $event->page_matches("home"))
 		{
 			// this is a request to display this page so output the page.
 		  	$this->output_pages($event->page);

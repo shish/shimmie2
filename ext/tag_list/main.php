@@ -15,7 +15,7 @@ class TagList implements Extension {
 			$config->set_default_string("tag_list_image_type", 'related');
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "tags")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("tags")) {
 			global $page;
 
 			$this->theme->set_navigation($this->build_navigation());

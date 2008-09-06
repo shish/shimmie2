@@ -27,7 +27,7 @@ class Upload implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "upload")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("upload")) {
 			if(count($_FILES) + count($_POST) > 0) {
 				$tags = tag_explode($_POST['tags']);
 				$source = isset($_POST['source']) ? $_POST['source'] : null;
