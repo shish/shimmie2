@@ -33,6 +33,10 @@ class TagList implements Extension {
 					$this->theme->set_heading("Tag List by Popularity");
 					$this->theme->set_tag_list($this->build_tag_popularity());
 					break;
+				case 'categories':
+					$this->theme->set_heading("Popular Categories");
+					$this->theme->set_tag_list($this->build_tag_categories());
+					break;
 			}
 			$this->theme->display_page($page);
 		}
@@ -90,7 +94,8 @@ class TagList implements Extension {
 		$h_map = "<a href='".make_link("tags/map")."'>Map</a>";
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
-		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity";	
+		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
+		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats";	
 	}
 
 	private function build_tag_map() {
@@ -167,6 +172,31 @@ class TagList implements Extension {
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
+
+		return $html;
+	}
+
+	private function build_tag_categories() {
+		global $database;
+		global $config;
+
+		$tags_min = $config->get_int('tags_min');
+		$result = $database->execute("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
+		$tag_data = $result->GetArray();
+
+		$html = "<table>";
+		$n = 0;
+		foreach($tag_data as $row) {
+			if($n%3==0) $html .= "<tr>";
+			$h_tag = html_escape($row['tag']);
+			$link = $this->tag_link($row['tag']);
+			$image = $database->get_random_image(array($row['tag']));
+			$thumb = $image->get_thumb_link();
+			$html .= "<td><a href='$link'><img src='$thumb'><br>$h_tag</a></td>\n";
+			if($n%3==2) $html .= "</tr>";
+			$n++;
+		}
+		$html .= "</table>";
 
 		return $html;
 	}
