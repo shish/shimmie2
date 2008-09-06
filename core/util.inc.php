@@ -178,7 +178,7 @@ function _count_execs($db, $sql, $inputarray) {
 	$null = null; return $null;
 }
 
-function get_theme_object($class) {
+function get_theme_object(Extension $class) {
 	$base = get_class($class);
 	if(class_exists("Custom{$base}Theme")) {
 		$class = "Custom{$base}Theme";
