@@ -118,37 +118,32 @@ class InitExtEvent extends Event {}
 
 /*
  * PageRequestEvent:
- *   $page_name   -- the main name of the page, eg "post"
- *   $args        -- the arguments, eg "list"
- *   $page        -- a page object to add things to
- *   $user        -- the user requesting the page
- *   get_arg(int)
- *   count_args()
  *	
- * User requests /view/42 -> an event is generated with
- * $page_name="view" and $args=array("42");
+ * TODO: up to date docs
  *
  * Used for initial page generation triggers
  */
 class PageRequestEvent extends Event {
-	var $context, $page_name, $args, $page, $user;
+	var $args;
+	var $arg_count;
 
-	public function PageRequestEvent($context, $page_name, $args) {
-		$this->context = $context;
-		$this->page_name = $page_name;
+	var $part_count;
+
+	public function __construct(RequestContext $context, $args) {
+		parent::__construct($context);
 		$this->args = $args;
-		$this->page = $context->page;
-		$this->user = $context->user;
+		$this->arg_count = count($args);
 	}
 
 	public function page_matches($name) {
 		$parts = explode("/", $name);
-
-		if(count($parts) > count($this->args)) {
+		$this->part_count = count($parts);
+		
+		if($this->part_count > $this->arg_count) {
 			return false;
 		}
 
-		for($i=0; $i<count($parts); $i++) {
+		for($i=0; $i<$this->part_count; $i++) {
 			if($parts[$i] != $this->args[$i]) {
 				return false;
 			}
@@ -157,13 +152,18 @@ class PageRequestEvent extends Event {
 		return true;
 	}
 
-
 	public function get_arg($n) {
-		return isset($this->args[$n]) ? $this->args[$n] : null;
+		$offset = $this->part_count + $n;
+		if($offset >= 0 && $offset < $this->arg_count) {
+			return $this->args[$offset];
+		}
+		else {
+			return null;
+		}
 	}
 
 	public function count_args() {
-		return isset($this->args) ? count($this->args) : 0;
+		return $this->arg_count;
 	}
 }
 

@@ -30,7 +30,7 @@ class AddImageHashBanEvent extends Event {
 	}
 }
 // }}}
-class Image_Hash_Ban implements Extension {
+class ImageBan implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
@@ -140,5 +140,5 @@ class Image_Hash_Ban implements Extension {
 	}
 
 }
-add_event_listener(new Image_Hash_Ban(), 30); // in before resolution limit plugin
+add_event_listener(new ImageBan(), 30); // in before resolution limit plugin
 ?>
