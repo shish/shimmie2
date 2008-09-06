@@ -10,7 +10,7 @@ class News implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("news", "NewsTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if($event instanceof PostListBuildingEvent) {
 			global $config;

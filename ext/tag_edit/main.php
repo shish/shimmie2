@@ -4,7 +4,7 @@ class TagEdit implements Extension {
 	var $theme;
 // event handling {{{
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("tag_edit", "TagEditTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "tag_edit")) {
 			global $page;

@@ -10,7 +10,7 @@ class SVNUpdate implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("svn_update", "SVNUpdateTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "update")) {
 			if($event->user->is_admin()) {

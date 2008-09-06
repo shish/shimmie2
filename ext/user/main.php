@@ -41,7 +41,7 @@ class UserPage implements Extension {
 
 // event handling {{{
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("user", "UserPageTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if($event instanceof InitExtEvent) {
 			global $config;

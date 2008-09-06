@@ -14,7 +14,7 @@ class AliasEditor implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("alias_editor", "AliasEditorTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "alias")) {
 			if($event->get_arg(0) == "add") {

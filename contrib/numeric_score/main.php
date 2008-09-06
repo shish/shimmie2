@@ -20,7 +20,7 @@ class NumericScore implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("numeric_score", "NumericScoreTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
 			global $config;

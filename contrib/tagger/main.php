@@ -11,7 +11,7 @@ class Tagger implements Extension {
 	
 	public function receive_event ($event) {
 		if(is_null($this->theme))
-			$this->theme = get_theme_object("tagger", "taggerTheme");
+			$this->theme = get_theme_object($this);
 			
 		if($event instanceof DisplayingImageEvent) {
 			global $page, $config, $user;

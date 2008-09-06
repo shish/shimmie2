@@ -57,7 +57,7 @@ class ExtManager implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("ext_manager", "ExtManagerTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "ext_manager")) {
 			if($event->user->is_admin()) {

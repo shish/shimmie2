@@ -5,7 +5,7 @@ class TagList implements Extension {
 	
 // event handling {{{
 	public function receive_event(Event $event) {
-		if($this->theme == null) $this->theme = get_theme_object("tag_list", "TagListTheme");
+		if($this->theme == null) $this->theme = get_theme_object($this);
 		
 		if($event instanceof InitExtEvent) {
 			global $config;

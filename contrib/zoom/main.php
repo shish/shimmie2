@@ -10,7 +10,7 @@ class Zoom implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if($this->theme == null) $this->theme = get_theme_object("zoom", "ZoomTheme");
+		if($this->theme == null) $this->theme = get_theme_object($this);
 
 		if($event instanceof DisplayingImageEvent) {
 			global $config;

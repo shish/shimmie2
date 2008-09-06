@@ -178,12 +178,14 @@ function _count_execs($db, $sql, $inputarray) {
 	$null = null; return $null;
 }
 
-function get_theme_object($file, $class) {
-	if(class_exists("Custom$class")) {
-		$class = "Custom$class";
+function get_theme_object($class) {
+	$base = get_class($class);
+	if(class_exists("Custom{$base}Theme")) {
+		$class = "Custom{$base}Theme";
 		return new $class();
 	}
 	else {
+		$class = "{$base}Theme";
 		return new $class();
 	}
 }

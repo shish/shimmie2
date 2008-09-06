@@ -10,7 +10,7 @@ class ET implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("et", "ETTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && ($event->page_name == "system_info")) {
 			if($event->user->is_admin()) {

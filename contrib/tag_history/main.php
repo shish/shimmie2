@@ -9,7 +9,7 @@ class Tag_History implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("tag_history", "Tag_HistoryTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof InitExtEvent)) {
 			// shimmie is being installed so call install to create the table.

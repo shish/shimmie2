@@ -34,7 +34,7 @@ class IPBan implements Extension {
 	var $theme;
 // event handler {{{
 	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("ipban", "IPBanTheme");
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
 			global $config;
