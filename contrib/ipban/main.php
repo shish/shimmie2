@@ -99,13 +99,13 @@ class IPBan implements Extension {
 				CREATE TABLE bans (
 					id {$database->engine->auto_increment},
 					banner_id INTEGER NOT NULL,
-					ip CHAR(15) NOT NULL,
+					ip VARCHAR(15) NOT NULL,
 					end_timestamp INTEGER,
 					reason TEXT NOT NULL,
 					INDEX (end_timestamp)
 				) {$database->engine->create_table_extras};
 			");
-			$config->set_int("ext_ipban_version", 5);
+			$config->set_int("ext_ipban_version", 6);
 		}
 
 		// ===
@@ -147,6 +147,11 @@ class IPBan implements Extension {
 		if($config->get_int("ext_ipban_version") == 4) {
 			$database->execute("ALTER TABLE bans CHANGE end end_timestamp INTEGER");
 			$config->set_int("ext_ipban_version", 5);
+		}
+
+		if($config->get_int("ext_ipban_version") == 5) {
+			$database->execute("ALTER TABLE bans CHANGE ip ip VARCHAR(15)");
+			$config->set_int("ext_ipban_version", 6);
 		}
 	}
 // }}}
