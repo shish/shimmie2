@@ -6,6 +6,16 @@
  * Description: Allow users to send messages to eachother
  */
 
+class SendPMEvent extends Event {
+	public function SendPMEvent($from_id, $from_ip, $to_id, $subject, $message) {
+		$this->from_id = $from_id;
+		$this->from_ip = $from_ip;
+		$this->to_id = $to_id;
+		$this->subject = $subject;
+		$this->message = $message;
+	}
+}
+
 class PM implements Extension {
 	var $theme;
 
@@ -30,7 +40,7 @@ class PM implements Extension {
 		if($event instanceof UserPageBuildingEvent) {
 			global $user;
 			$duser = $event->user;
-			if(!$user->is_anonymous()) {
+			if(!$user->is_anonymous() && !$duser->is_anonymous()) {
 				if(($user->id == $duser->id) || $user->is_admin()) {
 					$this->theme->display_pms($event->page, $this->get_pms($duser));
 				}
@@ -40,41 +50,65 @@ class PM implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("pm/read")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("pm")) {
 			global $database;
 			global $config;
 			global $user;
-			$pm_id = int_escape($event->get_arg(0));
-			$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
-			if(is_null($pm)) {
-				// error
-			}
-			else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
-				$from_user = User::by_id($config, $database, int_escape($pm["from_id"]));
-				$this->theme->display_message($event->page, $from_user, $event->user, $pm);
-			}
-			else {
-				// else
+			if(!$user->is_anonymous()) {
+				switch($event->get_arg(0)) {
+					case "read":
+						$pm_id = int_escape($event->get_arg(1));
+						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
+						if(is_null($pm)) {
+							$this->theme->display_error($event->page, "No such PM", "There is no PM #$pm_id");
+						}
+						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
+							$from_user = User::by_id($config, $database, int_escape($pm["from_id"]));
+							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = ?", array($pm_id));
+							$this->theme->display_message($event->page, $from_user, $event->user, $pm);
+						}
+						else {
+							// permission denied
+						}
+						break;
+					case "delete":
+						$pm_id = int_escape($event->get_arg(1));
+						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
+						if(is_null($pm)) {
+							$this->theme->display_error($event->page, "No such PM", "There is no PM #$pm_id");
+						}
+						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
+							$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
+							$event->page->set_mode("redirect");
+							$event->page->set_redirect(make_link("user"));
+						}
+						else {
+							// permission denied
+						}
+						break;
+					case "send":
+						$to_id = int_escape($_POST["to_id"]);
+						$from_id = $user->id;
+						$subject = $_POST["subject"];
+						$message = $_POST["message"];
+						send_event(new SendPMEvent($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link($_SERVER["REFERER"]));
+						break;
+				}
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("pm/delete")) {
+		if($event instanceof SendPMEvent) {
 			global $database;
-			global $config;
-			global $user;
-			$pm_id = int_escape($event->get_arg(0));
-			$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
-			if(is_null($pm)) {
-				// error
-			}
-			else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
-				$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("user"));
-			}
-			else {
-				// else
-			}
+			$database->execute("
+					INSERT INTO private_message(
+						from_id, from_ip, to_id,
+						sent_date, subject, message)
+					VALUES(?, ?, ?, now(), ?, ?)",
+				array($event->from_id, $event->from_ip,
+				$event->to_id, $event->subject, $event->message)
+			);
 		}
 	}
 
