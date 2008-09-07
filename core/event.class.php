@@ -134,6 +134,7 @@ class PageRequestEvent extends Event {
 		$this->args = $args;
 		$this->arg_count = count($args);
 		$this->page = $context->page;
+		$this->user = $context->user;
 	}
 
 	public function page_matches($name) {
