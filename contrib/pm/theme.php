@@ -20,14 +20,15 @@ class PMTheme extends Themelet {
 		$page->add_block(new Block("Private Messages", $html, "main", 10));
 	}
 
-	public function display_composer(Page $page, User $from, User $to) {
+	public function display_composer(Page $page, User $from, User $to, $subject="") {
 		$post_url = make_link("pm/send");
+		$h_subject = html_escape($subject);
 		$to_id = $to->id;
 		$html = <<<EOD
 <form action="$post_url" method="POST">
 <input type="hidden" name="to_id" value="$to_id">
 <table style="width: 400px;">
-<tr><td>Subject:</td><td><input type="text" name="subject"></td></tr>
+<tr><td>Subject:</td><td><input type="text" name="subject" value="$h_subject"></td></tr>
 <tr><td colspan="2"><textarea style="width: 100%" rows="6" name="message"></textarea></td></tr>
 <tr><td colspan="2"><input type="submit" value="Send"></td></tr>
 </table>
@@ -37,9 +38,10 @@ EOD;
 	}
 
 	public function display_message(Page $page, User $from, User $to, $pm) {
-		$this->display_composer($page, $to, $from);
+		$this->display_composer($page, $to, $from, "Re: ".$pm["subject"]);
 		$page->set_title("Private Message");
 		$page->set_heading(html_escape($pm["subject"]));
+		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Message", format_text($pm["message"]), "main", 10));
 	}
 }
