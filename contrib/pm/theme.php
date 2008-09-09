@@ -6,6 +6,7 @@ class PMTheme extends Themelet {
 		$html .= "<tr><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr>";
 		foreach($pms as $pm) {
 			$h_subject = html_escape($pm["subject"]);
+			if(strlen($h_subject) == 0) $h_subject = "(No subject)";
 			$h_from = html_escape($pm["from_name"]);
 			$from_url = make_link("user/".url_escape($pm["from_name"]));
 			$pm_url = make_link("pm/read/".$pm["id"]);
