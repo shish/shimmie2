@@ -72,6 +72,7 @@ class GenericPage {
 	
 	public function display() {
 		header("Content-type: {$this->type}");
+		header("X-Powered-By: Shimmie-".VERSION);
 
 		switch($this->mode) {
 			case "page":
