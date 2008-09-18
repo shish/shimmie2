@@ -36,7 +36,7 @@ class User {
 
 	public static function by_session(Config $config, Database $database, $name, $session) {
 		$row = $database->get_row(
-				"SELECT * FROM user WHERE name = ? AND md5(concat(pass, ?)) = ?",
+				"SELECT * FROM users WHERE name = ? AND md5(concat(pass, ?)) = ?",
 				array($name, get_session_ip($config), $session)
 		);
 		return is_null($row) ? null : new User($config, $database, $row);
@@ -44,13 +44,13 @@ class User {
 
 	public static function by_id(Config $config, Database $database, $id) {
 		assert(is_numeric($id));
-		$row = $database->get_row("SELECT * FROM user WHERE id = ?", array($id));
+		$row = $database->get_row("SELECT * FROM users WHERE id = ?", array($id));
 		return is_null($row) ? null : new User($config, $database, $row);
 	}
 
 	public static function by_name(Config $config, Database $database, $name) {
 		assert(is_string($name));
-		$row = $database->get_row("SELECT * FROM user WHERE name = ?", array($name));
+		$row = $database->get_row("SELECT * FROM users WHERE name = ?", array($name));
 		return is_null($row) ? null : new User($config, $database, $row);
 	}
 
@@ -58,7 +58,7 @@ class User {
 		assert(is_string($name));
 		assert(is_string($hash));
 		assert(strlen($hash) == 32);
-		$row = $database->get_row("SELECT * FROM user WHERE name = ? AND pass = ?", array($name, $hash));
+		$row = $database->get_row("SELECT * FROM users WHERE name = ? AND pass = ?", array($name, $hash));
 		return is_null($row) ? null : new User($config, $database, $row);
 	}
 

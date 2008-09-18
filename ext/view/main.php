@@ -5,7 +5,7 @@ class ImageInfoBoxBuildingEvent extends Event {
 	var $image;
 	var $user;
 
-	public function ImageInfoBoxBuildingEvent($image, $user) {
+	public function ImageInfoBoxBuildingEvent(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
@@ -29,7 +29,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 	var $image = null;
 	var $user = null;
 
-	public function ImageAdminBlockBuildingEvent($image, $user) {
+	public function ImageAdminBlockBuildingEvent(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
