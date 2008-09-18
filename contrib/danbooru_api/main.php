@@ -14,6 +14,9 @@ find_posts - sort of works, filename is returned as the original filename and pr
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
 CHANGELOG
+17-SEP-08 10:00PM CST - JJS
+Bugfix for changed page name checker in PageRequestEvent
+
 13-APR-08 10:00PM CST - JJS
 Properly escape the tags returned in find_tags and find_posts - Caught by ATravelingGeek
 Updated extension info to be a bit more clear about its purpose
@@ -44,7 +47,7 @@ class DanbooruApi implements Extension
 	public function receive_event(Event $event) 
 	{
 		// Check if someone is accessing /api/danbooru (us)
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "api") && ($event->get_arg(0) == 'danbooru')) 
+		if(($event instanceof PageRequestEvent) && ($event->page_matches("api")) && ($event->get_arg(0) == 'danbooru')) 
 		{
 			// execute the danbooru processing code
 			$this->api_danbooru($event);
