@@ -96,7 +96,7 @@ class ImageIO implements Extension {
 		/*
 		 * Check for an existing image
 		 */
-		$existing = $database->get_image_by_hash($image->hash);
+		$existing = Image::by_hash($config, $database, $image->hash);
 		if(!is_null($existing)) {
 			$handler = $config->get_string("upload_collision_handler");
 			if($handler == "merge") {

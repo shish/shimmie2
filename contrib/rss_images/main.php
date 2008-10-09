@@ -27,12 +27,13 @@ class RSS_Images implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("rss")) {
 			if($event->get_arg(0) == 'images') {
+				global $config;
 				global $database;
 				if($event->count_args() >= 2) {
-					$this->do_rss($database->get_images(0, 12, tag_explode($event->get_arg(1))));
+					$this->do_rss(Image::find_images($config, $database, 0, 12, tag_explode($event->get_arg(1))));
 				}
 				else {
-					$this->do_rss($database->get_images(0, 12));
+					$this->do_rss(image::find_images($config, $database, 0, 12));
 				}
 			}
 		}

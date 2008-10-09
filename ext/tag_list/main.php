@@ -190,7 +190,7 @@ class TagList implements Extension {
 			if($n%3==0) $html .= "<tr>";
 			$h_tag = html_escape($row['tag']);
 			$link = $this->tag_link($row['tag']);
-			$image = $database->get_random_image(array($row['tag']));
+			$image = Image::by_random($config, $database, array($row['tag']));
 			$thumb = $image->get_thumb_link();
 			$html .= "<td><a href='$link'><img src='$thumb'><br>$h_tag</a></td>\n";
 			if($n%3==2) $html .= "</tr>";

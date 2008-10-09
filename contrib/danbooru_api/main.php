@@ -205,7 +205,7 @@ class DanbooruApi implements Extension
 				// It is also currently broken due to some confusion over file variable ($tmp_filename?)
 				
 				// Does it exist already?
-				$existing = $database->get_image_by_hash($hash);
+				$existing = Image::by_hash($config, $database, $hash);
 				if(!is_null($existing)) {
 					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: duplicate");
@@ -229,7 +229,7 @@ class DanbooruApi implements Extension
 					return;
 				} else
 				{	// If it went ok, grab the id for the newly uploaded image and pass it in the header
-					$newimg = $database->get_image_by_hash($hash);
+					$newimg = Image::by_hash($config, $database, $hash);
 					$newid = make_link("post/view/" . $newimg->id);
 					// Did we POST or GET this call?
 					if($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -265,21 +265,21 @@ class DanbooruApi implements Extension
 				$md5list = explode(",",$_GET['md5']);
 				foreach($md5list as $md5)
 				{
-					$results[] = $database->get_image_by_hash($md5);
+					$results[] = Image::by_hash($config, $database, $md5);
 				}
 			} elseif(isset($_GET['id']))
 			{
 				$idlist = explode(",",$_GET['id']);
 				foreach($idlist as $id)
 				{
-					$results[] = $database->get_image($id);
+					$results[] = Image::by_id($config, $database, $id);
 				}
 			} else
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
 				$start = isset($_GET['offset']) ? int_escape($_GET['offset']) : 0;
 				$tags = isset($_GET['tags']) ? tag_explode($_GET['tags']) : array();
-				$results = $database->get_images($start,$limit,$tags);
+				$results = Image::find_images($config,$database,$start,$limit,$tags);
 			}
 			
 			// Now we have the array $results filled with Image objects

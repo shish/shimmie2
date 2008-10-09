@@ -49,7 +49,8 @@ class ViewImage implements Extension {
 			$image_id = int_escape($event->get_arg(0));
 			
 			global $database;
-			$image = $database->get_image($image_id);
+			global $config;
+			$image = Image::by_id($config, $database, $image_id);
 
 			if(!is_null($image)) {
 				send_event(new DisplayingImageEvent($image, $event->page));

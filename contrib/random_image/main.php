@@ -11,6 +11,7 @@ class RandomImage implements Extension {
 	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent) && $event->page_matches("random_image")) {
 			global $database;
+			global $database;
 			
 			if($event->count_args() == 1) {
 				$action = $event->get_arg(0);
@@ -20,7 +21,7 @@ class RandomImage implements Extension {
 				$action = $event->get_arg(0);
 				$search_terms = explode(' ', $event->get_arg(1));
 			}
-			$image = $database->get_random_image($search_terms);
+			$image = Image::by_random($config, $database, $search_terms);
 
 			if($event->get_arg(0) == "download") {
 				if(!is_null($image)) {

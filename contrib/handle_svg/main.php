@@ -49,9 +49,10 @@ class SVGFileHandler implements Extension {
 		}
 		
 		if(($event instanceof PageRequestEvent) && $event->page_matches("get_svg")) {
+			global $config;
 			global $database;
 			$id = int_escape($event->get_arg(0));
-			$image = $database->get_image($id);
+			$image = Image::by_id($config, $database, $id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
 			

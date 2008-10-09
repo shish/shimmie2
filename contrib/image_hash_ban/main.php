@@ -63,8 +63,9 @@ class ImageBan implements Extension {
 						$page->set_redirect(make_link("admin"));
 					}
 					if(isset($_POST['image_id'])) {
+						global $config;
 						global $database;
-						$image = $database->get_image($_POST['image_id']);
+						$image = Image::by_id($config, $database, int_escape($_POST['image_id']));
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
 							$event->page->set_mode("redirect");

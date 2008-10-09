@@ -56,7 +56,7 @@ class Index implements Extension {
 
 			$total_pages = $database->count_pages($search_terms);
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
-			$images = $database->get_images(($page_number-1)*$count, $count, $search_terms);
+			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
 
 			send_event(new PostListBuildingEvent($event->page, $search_terms));
 			

@@ -9,7 +9,7 @@ class ViewImageTheme extends Themelet {
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
-		$page->add_block(new Block(null, $this->build_pin($image->id), "main", 11));
+		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 
 	public function display_admin_block($page, $parts) {
@@ -21,7 +21,7 @@ class ViewImageTheme extends Themelet {
 
 	var $pin = null;
 
-	protected function build_pin($image_id) {
+	protected function build_pin($image) {
 		if(!is_null($this->pin)) {
 			return $this->pin;
 		}
@@ -37,8 +37,8 @@ class ViewImageTheme extends Themelet {
 			$query = null;
 		}
 		
-		$next = $database->get_next_image($image_id, $search_terms);
-		$prev = $database->get_prev_image($image_id, $search_terms);
+		$next = $image->get_next($search_terms);
+		$prev = $image->get_prev($search_terms);
 
 		$h_prev = (!is_null($prev) ? "<a href='".make_link("post/view/{$prev->id}", $query)."'>Prev</a>" : "Prev");
 		$h_index = "<a href='".make_link()."'>Index</a>";
