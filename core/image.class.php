@@ -66,7 +66,7 @@ class Image {
 			$result = $database->execute("SELECT images.* FROM images ORDER BY id DESC LIMIT ? OFFSET ?", array($limit, $start));
 		}
 		else {
-			$querylet = $database->build_search_querylet($tags);
+			$querylet = Image::build_search_querylet($config, $database, $tags);
 			$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
 			$result = $database->execute($querylet->sql, $querylet->variables);
 		}
@@ -83,7 +83,7 @@ class Image {
 			return $database->db->GetOne("SELECT COUNT(*) FROM images");
 		}
 		else {
-			$querylet = $this->build_search_querylet($tags);
+			$querylet = Image::build_search_querylet($config, $database, $tags);
 			$result = $database->execute($querylet->sql, $querylet->variables);
 			return $result->RecordCount();
 		}
@@ -93,8 +93,6 @@ class Image {
 		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
 		return ceil(Image::count_images($config, $database, $tags) / $images_per_page);
 	}
-
-
 
 
 	public function get_next($tags=array(), $next=true) {
@@ -115,7 +113,7 @@ class Image {
 		}
 		else {
 			$tags[] = "id$gtlt{$this->id}";
-			$querylet = $this->database->build_search_querylet($tags);
+			$querylet = Image::build_search_querylet($this->config, $this->database, $tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
 			$row = $this->db->GetRow($querylet->sql, $querylet->variables);
 		}
@@ -230,7 +228,7 @@ class Image {
 		return $tmpl;
 	}
 
-	private function build_search_querylet($terms) {
+	private static function build_search_querylet(Config $config, Database $database, $terms) {
 		$tag_querylets = array();
 		$img_querylets = array();
 
@@ -244,7 +242,7 @@ class Image {
 				$term = substr($term, 1);
 			}
 			
-			$term = $this->resolve_alias($term);
+			$term = $database->resolve_alias($term);
 
 			$stpe = new SearchTermParseEvent($term);
 			send_event($stpe);
@@ -305,7 +303,7 @@ class Image {
 			$tags_ok = true;
 
 			foreach($tag_querylets as $tq) {
-				$tag_ids = $this->db->GetCol("SELECT id FROM tags WHERE lower(tag) = lower(?)", array($tq->tag));
+				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE lower(tag) = lower(?)", array($tq->tag));
 				if($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
