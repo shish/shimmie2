@@ -7,7 +7,7 @@ class ViewImageTheme extends Themelet {
 	public function display_page($page, $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
-		$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
+		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
@@ -48,8 +48,8 @@ class ViewImageTheme extends Themelet {
 		return $this->pin;
 	}
 
-	protected function build_navigation($image_id) {
-		$h_pin = $this->build_pin($image_id);
+	protected function build_navigation($image) {
+		$h_pin = $this->build_pin($image);
 		$h_search = "
 			<p><form action='".make_link()."' method='GET'>
 				<input id='search_input' name='search' type='text'
