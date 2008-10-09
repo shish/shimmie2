@@ -109,7 +109,7 @@ class Image {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
+			$row = $this->database->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
 		}
 		else {
 			$tags[] = "id$gtlt{$this->id}";
