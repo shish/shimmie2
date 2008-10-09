@@ -252,15 +252,14 @@ class Database {
 	private function build_search_querylet($terms) {
 		$tag_querylets = array();
 		$img_querylets = array();
-		$positive_tag_count = 0;
-		$negative_tag_count = 0;
 
 
-		// turn each term into a specific type of querylet
+		// parse the words that are searched for into
+		// various types of querylet
 		foreach($terms as $term) {
-			$negative = false;
+			$positive = true;
 			if((strlen($term) > 0) && ($term[0] == '-')) {
-				$negative = true;
+				$positive = false;
 				$term = substr($term, 1);
 			}
 			
@@ -269,29 +268,17 @@ class Database {
 			$stpe = new SearchTermParseEvent($term);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
-				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), !$negative);
+				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), $positive);
 			}
 			else {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
 				if(!preg_match("/^[%_]+$/", $term)) {
-					$tag_querylets[] = new TagQuerylet($term, !$negative);
+					$tag_querylets[] = new TagQuerylet($term, $positive);
 				}
 			}
 		}
 
-		// merge all the tag querylets into one generic one
-		$sql = "0";
-		$terms = array();
-		foreach($tag_querylets as $tq) {
-			$sign = $tq->positive ? "+" : "-";
-			$sql .= " $sign (tag LIKE ?)";
-			$terms[] = $tq->tag;
-			
-			if($sign == "+") $positive_tag_count++;
-			else $negative_tag_count++;
-		}
-		$tag_search = new Querylet($sql, $terms);
 
 		// merge all the image metadata searches into one generic querylet
 		$n = 0;
@@ -307,8 +294,8 @@ class Database {
 
 
 		// no tags, do a simple search (+image metadata if we have any)
-		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet("SELECT images.* FROM images");
+		if(count($tag_querylets) == 0) {
+			$query = new Querylet("SELECT images.* FROM images ");
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" WHERE ");
@@ -317,19 +304,12 @@ class Database {
 		}
 
 		// one positive tag (a common case), do an optimised search
-		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
-			$query = new Querylet(
-				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
-				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
-				"
-					SELECT images.*
-					FROM tags, image_tags, images
-					WHERE
-						tag LIKE ?
-						AND tags.id = image_tags.tag_id
-						AND image_tags.image_id = images.id
-				",
-				$tag_search->variables);
+		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
+			$query = new Querylet("
+				SELECT images.* FROM images
+				JOIN image_tags ON images.id = image_tags.image_id
+				WHERE tag_id = (SELECT tags.id FROM tags WHERE lower(tag) = lower(?))
+				", array($tag_querylets[0]->tag));
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" AND ");
@@ -339,36 +319,54 @@ class Database {
 
 		// more than one positive tag, or more than zero negative tags
 		else {
-			$s_tag_array = array_map("sql_escape", $tag_search->variables);
-			$s_tag_list = join(', ', $s_tag_array);
-			
-			$tag_id_array = array();
+			$positive_tag_id_array = array();
+			$negative_tag_id_array = array();
 			$tags_ok = true;
-			foreach($tag_search->variables as $tag) {
-				$tag_ids = $this->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
-				$tag_id_array = array_merge($tag_id_array, $tag_ids);
-				$tags_ok = count($tag_ids) > 0;
-				if(!$tags_ok) break;
-			}
-			if($tags_ok) {
-				$tag_id_list = join(', ', $tag_id_array);
 
-				$subquery = new Querylet("
-					SELECT images.*, SUM({$tag_search->sql}) AS score
-					FROM images
-					LEFT JOIN image_tags ON image_tags.image_id = images.id
-					JOIN tags ON image_tags.tag_id = tags.id
-					WHERE tags.id IN ({$tag_id_list})
-					GROUP BY images.id
-					HAVING score = ?",
-					array_merge(
-						$tag_search->variables,
-						array($positive_tag_count)
-					)
-				);
-				$query = new Querylet("
-					SELECT *
-					FROM ({$subquery->sql}) AS images ", $subquery->variables);
+			foreach($tag_querylets as $tq) {
+				$tag_ids = $this->db->GetCol("SELECT id FROM tags WHERE lower(tag) = lower(?)", array($tq->tag));
+				if($tq->positive) {
+					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
+					$tags_ok = count($tag_ids) > 0;
+					if(!$tags_ok) break;
+				}
+				else {
+					$negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
+				}
+			}
+
+			if($tags_ok) {
+				$have_pos = count($positive_tag_id_array) > 0;
+				$have_neg = count($negative_tag_id_array) > 0;
+
+				$sql = "SELECT images.* FROM images WHERE ";
+				if($have_pos) {
+					$positive_tag_id_list = join(', ', $positive_tag_id_array);
+					$positive_tag_count = count($positive_tag_id_array);
+					$sql .= "
+						images.id IN (
+							SELECT image_id
+							FROM image_tags
+							WHERE tag_id IN ($positive_tag_id_list)
+							GROUP BY image_id
+							HAVING COUNT(image_id)=$positive_tag_count
+						)
+					";
+				}
+				if($have_pos && $have_neg) {
+					$sql .= " AND ";
+				}
+				if($have_neg) {
+					$negative_tag_id_list = join(', ', $negative_tag_id_array);
+					$sql .= "
+						images.id NOT IN (
+							SELECT image_id
+							FROM image_tags
+							WHERE tag_id IN ($negative_tag_id_list)
+						)
+					";
+				}
+				$query = new Querylet($sql);
 
 				if(strlen($img_search->sql) > 0) {
 					$query->append_sql(" WHERE ");
@@ -376,7 +374,8 @@ class Database {
 				}
 			}
 			else {
-				# there are no results, "where 1=0" should shortcut things
+				# one of the positive tags had zero results, therefor there
+				# can be no results; "where 1=0" should shortcut things
 				$query = new Querylet("
 					SELECT images.*
 					FROM images
