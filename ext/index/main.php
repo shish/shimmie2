@@ -54,7 +54,7 @@ class Index implements Extension {
 			global $config;
 			global $database;
 
-			$total_pages = $database->count_pages($search_terms);
+			$total_pages = Image::count_pages($config, $database, $search_terms);
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
 			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
 
