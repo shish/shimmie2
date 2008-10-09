@@ -115,7 +115,7 @@ class Image {
 			$tags[] = "id$gtlt{$this->id}";
 			$querylet = Image::build_search_querylet($this->config, $this->database, $tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
-			$row = $this->db->GetRow($querylet->sql, $querylet->variables);
+			$row = $this->database->db->GetRow($querylet->sql, $querylet->variables);
 		}
 		
 		return ($row ? new Image($row) : null);
@@ -348,7 +348,7 @@ class Image {
 				$query = new Querylet($sql);
 
 				if(strlen($img_search->sql) > 0) {
-					$query->append_sql(" WHERE ");
+					$query->append_sql(" AND ");
 					$query->append($img_search);
 				}
 			}
