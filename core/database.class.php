@@ -78,7 +78,6 @@ class PostgreSQL extends DBEngine {
 class Database {
 	var $db;
 	var $extensions;
-	var $get_images = "SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ";
 	var $cache_hits = 0, $cache_misses = 0;
 	var $engine = null;
 
@@ -309,7 +308,7 @@ class Database {
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet($this->get_images);
+			$query = new Querylet("SELECT images.* FROM images");
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" WHERE ");
@@ -323,7 +322,7 @@ class Database {
 				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
 				"
-					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					SELECT images.*
 					FROM tags, image_tags, images
 					WHERE
 						tag LIKE ?
@@ -368,7 +367,7 @@ class Database {
 					)
 				);
 				$query = new Querylet("
-					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					SELECT *
 					FROM ({$subquery->sql}) AS images ", $subquery->variables);
 
 				if(strlen($img_search->sql) > 0) {
@@ -430,7 +429,7 @@ class Database {
 		if($limit < 1) $limit = 1;
 		
 		if(count($tags) == 0) {
-			$result = $this->execute("{$this->get_images} ORDER BY id DESC LIMIT ? OFFSET ?", array($limit, $start));
+			$result = $this->execute("SELECT images.* FROM images ORDER BY id DESC LIMIT ? OFFSET ?", array($limit, $start));
 		}
 		else {
 			$querylet = $this->build_search_querylet($tags);
@@ -460,7 +459,7 @@ class Database {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->db->GetRow("{$this->get_images} WHERE images.id $gtlt ? ORDER BY images.id $dir LIMIT 1", array((int)$id));
+			$row = $this->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt ? ORDER BY images.id $dir LIMIT 1", array((int)$id));
 		}
 		else {
 			$tags[] = "id$gtlt$id";
@@ -479,7 +478,7 @@ class Database {
 	public function get_image($id) {
 		assert(is_numeric($id));
 		$image = null;
-		$row = $this->db->GetRow("{$this->get_images} WHERE images.id=?", array($id));
+		$row = $this->db->GetRow("SELECT images.* FROM images WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -494,7 +493,7 @@ class Database {
 	public function get_image_by_hash($hash) {
 		assert(is_string($hash));
 		$image = null;
-		$row = $this->db->GetRow("{$this->get_images} WHERE hash=?", array($hash));
+		$row = $this->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
 		return ($row ? new Image($row) : null);
 	}
 

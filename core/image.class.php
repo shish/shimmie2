@@ -28,6 +28,7 @@ class Image {
 				// FIXME: some databases use table.name rather than name
 				$this->$name = $value; // hax
 			}
+			$this->posted_timestamp = strtotime($this->posted); // pray
 		}
 	}
 
