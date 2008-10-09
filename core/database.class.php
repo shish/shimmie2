@@ -224,6 +224,22 @@ class Database {
 		}
 	}
 
+	public function resolve_wildcard($tag) {
+		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
+			return array($tag);
+		}
+		else {
+			$newtags = $this->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
+			if(count($newtags) > 0) {
+				$resolved = $newtags;
+			} else {
+				$resolved = array($tag);
+			}
+			return $resolved;
+		}
+	}
+
+
 	public function sanitise($tag) {
 		assert(is_string($tag));
 		$tag = preg_replace("/[\s?*]/", "", $tag);

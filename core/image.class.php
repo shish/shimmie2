@@ -231,7 +231,7 @@ class Image {
 	private static function build_search_querylet(Config $config, Database $database, $terms) {
 		$tag_querylets = array();
 		$img_querylets = array();
-
+		$positive_tag_count = 0;
 
 		// parse the words that are searched for into
 		// various types of querylet
@@ -253,7 +253,11 @@ class Image {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
 				if(!preg_match("/^[%_]+$/", $term)) {
-					$tag_querylets[] = new TagQuerylet($term, $positive);
+					$expansions = $database->resolve_wildcard($term);
+					if($positive) $positive_tag_count++;
+					foreach($expansions as $term) {
+						$tag_querylets[] = new TagQuerylet($term, $positive);
+					}
 				}
 			}
 		}
@@ -287,7 +291,7 @@ class Image {
 			$query = new Querylet("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id = image_tags.image_id
-				WHERE tag_id = (SELECT tags.id FROM tags WHERE lower(tag) = lower(?))
+				WHERE tag_id = (SELECT tags.id FROM tags WHERE tag = ?)
 				", array($tag_querylets[0]->tag));
 
 			if(strlen($img_search->sql) > 0) {
@@ -303,7 +307,7 @@ class Image {
 			$tags_ok = true;
 
 			foreach($tag_querylets as $tq) {
-				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE lower(tag) = lower(?)", array($tq->tag));
+				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag = ?", array($tq->tag));
 				if($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
@@ -321,14 +325,13 @@ class Image {
 				$sql = "SELECT images.* FROM images WHERE ";
 				if($have_pos) {
 					$positive_tag_id_list = join(', ', $positive_tag_id_array);
-					$positive_tag_count = count($positive_tag_id_array);
 					$sql .= "
 						images.id IN (
 							SELECT image_id
 							FROM image_tags
 							WHERE tag_id IN ($positive_tag_id_list)
 							GROUP BY image_id
-							HAVING COUNT(image_id)=$positive_tag_count
+							HAVING COUNT(image_id)>=$positive_tag_count
 						)
 					";
 				}
