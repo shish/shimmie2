@@ -42,7 +42,7 @@ class Image {
 	public static function by_hash(Config $config, Database $database, $hash) {
 		assert(is_string($hash));
 		$image = null;
-		$row = $this->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
+		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
 		return ($row ? new Image($row) : null);
 	}
 
