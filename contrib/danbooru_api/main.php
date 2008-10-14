@@ -14,6 +14,9 @@ find_posts - sort of works, filename is returned as the original filename and pr
 find_tags - id, name, and after_id all work but the tags parameter is ignored just like danbooru 1.0 ignores it
 
 CHANGELOG
+13-OCT-08 8:00PM CST - JJS
+Bugfix - Properly escape source attribute
+
 17-SEP-08 10:00PM CST - JJS
 Bugfix for changed page name checker in PageRequestEvent
 
@@ -293,7 +296,7 @@ class DanbooruApi implements Extension
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
-				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . $this->xmlspecialchars($taglist) . "\" source=\"$img->source\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
+				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . $this->xmlspecialchars($taglist) . "\" source=\"" . $this->xmlspecialchars($img->source) . "\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
 			}
 			$xml .= "</posts>";
 			$page->set_data($xml);
