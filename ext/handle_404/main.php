@@ -6,7 +6,7 @@ class Handle404 implements Extension {
 			$page = $event->page;
 			// hax.
 			if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
-				$h_pagename = html_escape($event->page_name);
+				$h_pagename = html_escape(implode('/', $event->args));
 				header("HTTP/1.0 404 Page Not Found");
 				$page->set_title("404");
 				$page->set_heading("404 - No Handler Found");
