@@ -269,7 +269,7 @@ class ThumbnailGenerationEvent extends Event {
 class SearchTermParseEvent extends Event {
 	var $term = null;
 	var $context = null;
-	var $querylet = null;
+	var $querylets = array();
 
 	public function SearchTermParseEvent($term, $context) {
 		$this->term = $term;
@@ -277,15 +277,15 @@ class SearchTermParseEvent extends Event {
 	}
 
 	public function is_querylet_set() {
-		return !is_null($this->querylet);
+		return (count($this->querylets) > 0);
 	}
 
-	public function get_querylet() {
-		return $this->querylet;
+	public function get_querylets() {
+		return $this->querylets;
 	}
 
-	public function set_querylet($q) {
-		$this->querylet = $q;
+	public function add_querylet($q) {
+		$this->querylets[] = $q;
 	}
 }
 ?>

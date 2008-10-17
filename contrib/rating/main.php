@@ -69,6 +69,21 @@ class Ratings implements Extension {
 
 		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
+			if(is_null($event->term) && $this->no_rating_query($event->context)) {
+				global $user, $config;
+				if($user->is_anonymous()) {
+					$sqes = $config->get_string("ext_rating_anon_privs");
+				}
+				else {
+					$sqes = $config->get_string("ext_rating_user_privs");
+				}
+				$arr = array();
+				for($i=0; $i<strlen($sqes); $i++) {
+					$arr[] = "'" . $sqes[$i] . "'";
+				}
+				$set = join(', ', $arr);
+				$event->add_querylet(new Querylet("rating IN ($set)"));
+			}
 			if(preg_match("/rating=([sqe]+)/", $event->term, $matches)) {
 				$sqes = $matches[1];
 				$arr = array();
@@ -76,9 +91,18 @@ class Ratings implements Extension {
 					$arr[] = "'" . $sqes[$i] . "'";
 				}
 				$set = join(', ', $arr);
-				$event->set_querylet(new Querylet("rating IN ($set)"));
+				$event->add_querylet(new Querylet("rating IN ($set)"));
 			}
 		}
+	}
+
+	private function no_rating_query($context) {
+		foreach($context as $term) {
+			if(preg_match("/rating=([sqe]+)/", $term)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private function install() {

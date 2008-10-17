@@ -231,7 +231,9 @@ class Image {
 		$stpe = new SearchTermParseEvent(null, $terms);
 		send_event($stpe);
 		if($stpe->is_querylet_set()) {
-			$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), $positive);
+			foreach($stpe->get_querylets() as $querylet) {
+				$img_querylets[] = new ImgQuerylet($querylet, true);
+			}
 		}
 
 		// parse the words that are searched for into
@@ -248,7 +250,9 @@ class Image {
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
-				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), $positive);
+				foreach($stpe->get_querylets() as $querylet) {
+					$img_querylets[] = new ImgQuerylet($querylet, $positive);
+				}
 			}
 			else {
 				$term = str_replace("*", "%", $term);
