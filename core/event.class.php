@@ -272,7 +272,6 @@ class SearchTermParseEvent extends Event {
 	var $querylet = null;
 
 	public function SearchTermParseEvent($term, $context) {
-		assert(!is_null($term));
 		$this->term = $term;
 		$this->context = $context;
 	}
