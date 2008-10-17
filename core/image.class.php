@@ -57,8 +57,8 @@ class Image {
 	public static function find_images(Config $config, Database $database, $start, $limit, $tags=array()) {
 		$images = array();
 
-		assert(is_numeric($start) && $start >= 0);
-		assert(is_numeric($limit) && $limit >  0);
+		assert(is_numeric($start));
+		assert(is_numeric($limit));
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
 		
