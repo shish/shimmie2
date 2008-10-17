@@ -268,11 +268,13 @@ class ThumbnailGenerationEvent extends Event {
  */
 class SearchTermParseEvent extends Event {
 	var $term = null;
+	var $context = null;
 	var $querylet = null;
 
-	public function SearchTermParseEvent($term) {
+	public function SearchTermParseEvent($term, $context) {
 		assert(!is_null($term));
 		$this->term = $term;
+		$this->context = $context;
 	}
 
 	public function is_querylet_set() {

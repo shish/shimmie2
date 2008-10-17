@@ -233,6 +233,12 @@ class Image {
 		$img_querylets = array();
 		$positive_tag_count = 0;
 
+		$stpe = new SearchTermParseEvent(null, $tags);
+		send_event($stpe);
+		if($stpe->is_querylet_set()) {
+			$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), $positive);
+		}
+
 		// parse the words that are searched for into
 		// various types of querylet
 		foreach($terms as $term) {
@@ -244,7 +250,7 @@ class Image {
 			
 			$term = $database->resolve_alias($term);
 
-			$stpe = new SearchTermParseEvent($term);
+			$stpe = new SearchTermParseEvent($term, $tags);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
 				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), $positive);
