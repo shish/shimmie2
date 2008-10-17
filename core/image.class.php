@@ -62,14 +62,9 @@ class Image {
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
 		
-		if(count($tags) == 0) {
-			$result = $database->execute("SELECT images.* FROM images ORDER BY id DESC LIMIT ? OFFSET ?", array($limit, $start));
-		}
-		else {
-			$querylet = Image::build_search_querylet($config, $database, $tags);
-			$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
-			$result = $database->execute($querylet->sql, $querylet->variables);
-		}
+		$querylet = Image::build_search_querylet($config, $database, $tags);
+		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
+		$result = $database->execute($querylet->sql, $querylet->variables);
 		
 		while(!$result->EOF) {
 			$images[] = new Image($result->fields);
