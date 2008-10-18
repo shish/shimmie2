@@ -1,6 +1,6 @@
 <?php
 class AdminPageTest extends WebTestCase {
-	function testAdminPage() {
+	function testAuth() {
         $this->get('http://shimmie.shishnet.org/v2/admin');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
