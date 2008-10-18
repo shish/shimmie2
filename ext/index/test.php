@@ -26,6 +26,12 @@ class IndexTest extends WebTestCase {
         $this->get('http://shimmie.shishnet.org/v2/post/list/screenshot/1');
 		$this->assertTitle("screenshot");
 
+        $this->get('http://shimmie.shishnet.org/v2/post/list/size=1024x768/1');
+		$this->assertTitle("size=1024x768");
+
+        $this->get('http://shimmie.shishnet.org/v2/post/list/screenshot%20size=1024x768/1');
+		$this->assertTitle("screenshot size=1024x768");
+
 		$this->get('http://shimmie.shishnet.org/v2/post/list/screenshot%20computer/1');
 		$this->assertTitle("screenshot computer");
 
