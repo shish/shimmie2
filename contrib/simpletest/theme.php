@@ -9,6 +9,7 @@ class SCoreReporter extends HtmlReporter {
 
 	public function SCoreReporter($page) {
 		$this->page = $page;
+		$this->_fails = 0;
 	}
 
 	function paintHeader($test_name) {
@@ -18,10 +19,18 @@ class SCoreReporter extends HtmlReporter {
 
 	function paintFooter($test_name) {
 		//parent::paintFooter($test_name);
-		$html = "".
+		$fail = $this->getFailCount() > 0;
+		if($fail) {
+			$style = "background: red;";
+		}
+		else {
+			$style = "background: green;";
+		}
+		$html = "<div style=\"padding: 4px; $style\">".
 			$this->getPassCount() . " passes, " .
 			$this->getFailCount() . " failures" .
-			"<br>Passed modules: " . $this->clear_modules;
+			"<br>Passed modules: " . $this->clear_modules .
+			"</div>";
 		$this->page->add_block(new Block("Results", $html, "main", 40));
 	}
 	
@@ -31,13 +40,19 @@ class SCoreReporter extends HtmlReporter {
 	}
 
 	function paintGroupEnd($name) {
-		$name = substr($name, 4, strlen($name)-13);
+		$matches = array();
+		if(preg_match("#ext/(.*)/test.php#", $name, $matches)) {
+			$name = $matches[1];
+			$link = "<a href=\"".make_link("test/$name")."\"></a>";
+		}
 		parent::paintGroupEnd($name);
 		if($this->current_html == "") {
 			$this->clear_modules .= "$name, ";
 		}
 		else {
+			$this->current_html .= "<p>$link";
 			$this->page->add_block(new Block($name, $this->current_html, "main", 50));
+			$this->current_html = "";
 		}
 	}
 

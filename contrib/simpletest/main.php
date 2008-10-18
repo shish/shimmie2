@@ -7,12 +7,15 @@
  */
 
 require_once('simpletest/web_tester.php');
+require_once('simpletest/unit_tester.php');
 require_once('simpletest/reporter.php');
 
-class AllTests extends TestSuite {
-	function AllTests() {
+class TestFinder extends TestSuite {
+	function TestFinder($hint) {
+		$dir = "*";
+		if(file_exists("ext/$hint/test.php")) $dir = $hint; // FIXME: check for ..
 		$this->TestSuite('All tests');
-		foreach(glob("ext/*/test.php") as $file) {
+		foreach(glob("ext/$dir/test.php") as $file) {
 			$this->addFile($file);
 		}
 	}
@@ -24,12 +27,12 @@ class SimpleSCoreTest implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("test/all")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("test")) {
 			$event->page->set_title("Test Results");
 			$event->page->set_heading("Test Results");
 			$event->page->add_block(new NavBlock());
 
-			$all = new AllTests();
+			$all = new TestFinder($event->get_arg(0));
 			$all->run(new SCoreReporter($event->page));
 		}
 
