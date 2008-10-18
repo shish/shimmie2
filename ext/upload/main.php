@@ -46,7 +46,7 @@ class Upload implements Extension {
 					$this->theme->display_upload_status($event->page, $ok);
 				}
 				else {
-					$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
+					$this->theme->display_permission_denied($event->page);
 				}
 			}
 			else if(!empty($_GET['url'])) {
@@ -61,7 +61,7 @@ class Upload implements Extension {
 					$this->theme->display_upload_status($event->page, $ok);
 				}
 				else {
-					$this->theme->display_error($event->page, "Upload Denied", "Anonymous posting is disabled");
+					$this->theme->display_permission_denied($event->page);
 				}
 			}
 			else {

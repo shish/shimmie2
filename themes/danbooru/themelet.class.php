@@ -9,6 +9,12 @@ class Themelet {
 	}
 
 
+	public function display_permission_denied($page) {
+		header("HTTP/1.0 403 Permission Denied");
+		$this->display_error($page, "Permission Denied", "You do not have permission to access this page");
+	}
+
+
 	public function build_thumb_html($image, $query=null) {
 		global $config;
 		$h_view_link = make_link("post/view/{$image->id}", $query);

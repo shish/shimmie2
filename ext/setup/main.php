@@ -140,7 +140,7 @@ class Setup implements Extension {
 		if(($event instanceof PageRequestEvent) && $event->page_matches("setup")) {
 			global $user;
 			if(!$user->is_admin()) {
-				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
+				$this->theme->display_permission_denied($event->page);
 			}
 			else {
 				if($event->get_arg(0) == "save") {

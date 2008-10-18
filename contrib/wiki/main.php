@@ -93,7 +93,7 @@ class Wiki implements Extension {
 					$event->page->set_redirect(make_link("wiki/$u_title"));
 				}
 				else {
-					$this->theme->display_error($event->page, "Denied", "You do not have permission to edit this page");
+					$this->theme->display_permission_denied($event->page);
 				}
 			}
 			else if(is_null($content)) {

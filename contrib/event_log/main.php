@@ -56,7 +56,7 @@ class EventLog implements Extension {
 				$this->theme->display_page($event->page, $events);
 			}
 			else {
-				$this->theme->display_error($event->page, "Denied", "Only admins can see the event log");
+				$this->theme->display_permission_denied($event->page);
 			}
 		}
 		if($event instanceof UserBlockBuildingEvent) {

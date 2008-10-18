@@ -93,7 +93,7 @@ class CommentList implements Extension {
 					}
 				}
 				else {
-					$this->theme->display_error($event->page, "Denied", "Only admins can delete comments");
+					$this->theme->display_permission_denied($event->page);
 				}
 			}
 			else if($event->get_arg(0) == "list") {
