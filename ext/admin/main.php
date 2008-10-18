@@ -19,6 +19,8 @@ class AdminPage implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("admin")) {
 			if(!$event->user->is_admin()) {
+				//$event->page->add_header("HTTP/1.0 403 Access Denied");
+				header("HTTP/1.0 403 Access Denied");
 				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
 			}
 			else {
