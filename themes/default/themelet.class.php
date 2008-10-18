@@ -18,11 +18,12 @@ class Themelet {
 	 */
 	public function build_thumb_html($image, $query=null) {
 		global $config;
-		$h_view_link = make_link("post/view/{$image->id}", $query);
+		$i_id = int_escape($image->id);
+		$h_view_link = make_link("post/view/$i_id", $query);
 		$h_tip = html_escape($image->get_tooltip());
 		$h_thumb_link = $image->get_thumb_link();
 		$tsize = get_thumbnail_size($image->width, $image->height);
-		return "<a href='$h_view_link'><img title='$h_tip' alt='$h_tip' ".
+		return "<a href='$h_view_link'><img id='$i_id' title='$h_tip' alt='$h_tip' ".
 				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
 	}
 
