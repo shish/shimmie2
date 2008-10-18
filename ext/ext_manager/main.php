@@ -76,6 +76,9 @@ class ExtManager implements Extension {
 					$this->theme->display_table($event->page, $this->get_extensions());
 				}
 			}
+			else {
+				$this->theme->display_permission_denied($event->page);
+			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
