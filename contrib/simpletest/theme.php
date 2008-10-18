@@ -43,7 +43,7 @@ class SCoreReporter extends HtmlReporter {
 		$matches = array();
 		if(preg_match("#ext/(.*)/test.php#", $name, $matches)) {
 			$name = $matches[1];
-			$link = "<a href=\"".make_link("test/$name")."\"></a>";
+			$link = "<a href=\"".make_link("test/$name")."\">Test only this extension</a>";
 		}
 		parent::paintGroupEnd($name);
 		if($this->current_html == "") {
