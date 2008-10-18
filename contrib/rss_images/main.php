@@ -44,7 +44,7 @@ class RSS_Images implements Extension {
 		global $page;
 		global $config;
 		$page->set_mode("data");
-		$page->set_type("application/xml");
+		$page->set_type("application/rss+xml");
 
 		$data = "";
 		foreach($images as $image) {

@@ -30,7 +30,7 @@ class RSS_Comments implements Extension {
 		global $page;
 		global $config;
 		$page->set_mode("data");
-		$page->set_type("application/xml");
+		$page->set_type("application/rss+xml");
 
 		$comments = $database->get_all("
 				SELECT
