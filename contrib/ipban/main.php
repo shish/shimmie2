@@ -69,6 +69,10 @@ class IPBan implements Extension {
 					$this->theme->display_bans($event->page, $this->get_bans());
 				}
 			}
+			else {
+				header("HTTP/1.0 403 Access Denied");
+				$this->theme->display_error($event->page, "Permission Denied", "This page is for admins only");
+			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
