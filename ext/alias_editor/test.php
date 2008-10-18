@@ -2,7 +2,7 @@
 class AliasEditorTest extends WebTestCase {
 	function testAliasEditor() {
 		/*
-        $this->get('http://shimmie.shishnet.org/v2/admin');
+        $this->get(TEST_BASE.'/admin');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
 
@@ -10,7 +10,7 @@ class AliasEditorTest extends WebTestCase {
 		$this->setField('user', USER_NAME);
 		$this->setField('pass', USER_PASS);
 		$this->click("Log In");
-        $this->get('http://shimmie.shishnet.org/v2/admin');
+        $this->get(TEST_BASE.'/admin');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
 		$this->click('Log Out');
@@ -19,7 +19,7 @@ class AliasEditorTest extends WebTestCase {
 		$this->setField('user', ADMIN_NAME);
 		$this->setField('pass', ADMIN_PASS);
 		$this->click("Log In");
-        $this->get('http://shimmie.shishnet.org/v2/admin');
+        $this->get(TEST_BASE.'/admin');
 		$this->assertTitle("Admin Tools");
 		$this->click('Log Out');
 		*/

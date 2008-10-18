@@ -1,15 +1,15 @@
 <?php
 class UserPageTest extends WebTestCase {
 	function testUserPage() {
-        $this->get('http://shimmie.shishnet.org/v2/user');
+        $this->get(TEST_BASE.'/user');
         $this->assertTitle("Anonymous's Page");
 		$this->assertNoText("Options");
 		$this->assertNoText("More Options");
 
-        $this->get('http://shimmie.shishnet.org/v2/user/Shish');
+        $this->get(TEST_BASE.'/user/Shish');
         $this->assertTitle("Shish's Page");
 
-        $this->get('http://shimmie.shishnet.org/v2/user/MauMau');
+        $this->get(TEST_BASE.'/user/MauMau');
         $this->assertTitle("No Such User");
 
 		$this->assertText("Login");

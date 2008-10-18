@@ -1,16 +1,16 @@
 <?php
 class TagListTest extends WebTestCase {
 	function testTagList() {
-		$this->get('http://shimmie.shishnet.org/v2/tags/map');
+		$this->get(TEST_BASE.'/tags/map');
 		$this->assertTitle('Tag List');
 
-		$this->get('http://shimmie.shishnet.org/v2/tags/alphabetic');
+		$this->get(TEST_BASE.'/tags/alphabetic');
 		$this->assertTitle('Tag List');
 
-		$this->get('http://shimmie.shishnet.org/v2/tags/popularity');
+		$this->get(TEST_BASE.'/tags/popularity');
 		$this->assertTitle('Tag List');
 
-		$this->get('http://shimmie.shishnet.org/v2/tags/categories');
+		$this->get(TEST_BASE.'/tags/categories');
 		$this->assertTitle('Tag List');
 	}
 }
