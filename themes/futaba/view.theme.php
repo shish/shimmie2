@@ -1,6 +1,6 @@
 <?php
 
-class CustomViewTheme extends ViewTheme {
+class CustomViewImageTheme extends ViewImageTheme {
 	public function display_page($page, $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
