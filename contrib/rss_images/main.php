@@ -18,28 +18,43 @@ class RSS_Images extends Extension {
 			if(count($event->search_terms) > 0) {
 				$search = implode(' ', $event->search_terms);
 				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
-					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search")."\" />");
+					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 			}
 			else {
 				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
-					"title=\"$title - Images\" href=\"".make_link("rss/images")."\" />");
+					"title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
 			}
 		}
+
 		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "rss")) {
 			if($event->get_arg(0) == 'images') {
+				global $config;
 				global $database;
-				if($event->count_args() >= 2) {
-					$this->do_rss($database->get_images(0, 12, tag_explode($event->get_arg(1))));
+
+				$page_number = 0;
+				$search_terms = array();
+
+				if($event->count_args() == 2) {
+					$page_number = int_escape($event->get_arg(1));
+					// compat hack, deprecate this later
+					if($page_number == 0) {
+						$search_terms = explode(' ', $event->get_arg(1));
+						$page_number = 1;
+					}
 				}
-				else {
-					$this->do_rss($database->get_images(0, 12));
+				else if($event->count_args() == 3) {
+					$search_terms = explode(' ', $event->get_arg(1));
+					$page_number = int_escape($event->get_arg(2));
 				}
+
+				$images = $database->get_images(($page_number-1)*10, 10, $search_terms);
+				$this->do_rss($images, $search_terms, $page_number);
 			}
 		}
 	}
 // }}}
 // output {{{
-	private function do_rss($images) {
+	private function do_rss($images, $search_terms, $page_number) {
 		global $page;
 		global $config;
 		$page->set_mode("data");
@@ -73,6 +88,21 @@ class RSS_Images extends Extension {
 
 		$title = $config->get_string('title');
 		$base_href = $config->get_string('base_href');
+		$search = "";
+		if(count($search_terms) > 0) {
+			$search = html_escape(implode(" ", $search_terms)) . "/";
+		}
+
+		if($page_number > 1) {
+			$prev_url = make_link("rss/images/$search".($page_number-1));
+			$prev_link = "<atom:link rel=\"previous\" href=\"$prev_url\" />";
+		}
+		else {
+			$prev_link = "";
+		}
+		$next_url = make_link("rss/images/$search".($page_number+1));
+		$next_link = "<atom:link rel=\"next\" href=\"$next_url\" />"; // no end...
+
 		$version = VERSION;
 		$xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
 <rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\">
@@ -82,6 +112,8 @@ class RSS_Images extends Extension {
 		<link>$base_href</link>
 		<generator>Shimmie-$version</generator>
 		<copyright>(c) 2007 Shish</copyright>
+		$prev_link
+		$next_link
 		$data
 	</channel>
 </rss>";
