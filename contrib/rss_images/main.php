@@ -16,11 +16,11 @@ class RSS_Images implements Extension {
 
 			if(count($event->search_terms) > 0) {
 				$search = implode(' ', $event->search_terms);
-				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
+				$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 			}
 			else {
-				$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
+				$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 					"title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
 			}
 		}
@@ -102,7 +102,7 @@ class RSS_Images implements Extension {
 
 		$version = VERSION;
 		$xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\" ?".">
-<rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\">
+<rss version=\"2.0\" xmlns:media=\"http://search.yahoo.com/mrss\" xmlns:atom=\"http://www.w3.org/2005/Atom\">
     <channel>
         <title>$title</title>
         <description>The latest uploads to the image board</description>
