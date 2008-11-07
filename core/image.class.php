@@ -48,7 +48,7 @@ class Image {
 
 	public static function by_random(Config $config, Database $database, $tags=array()) {
 		$max = Image::count_images($config, $database, $tags);
-		$rand = mt_rand(0, $max);
+		$rand = mt_rand(0, $max-1);
 		$set = Image::find_images($config, $database, $rand, 1, $tags);
 		if(count($set) > 0) return $set[0];
 		else return null;
