@@ -212,8 +212,8 @@ class UserPage implements Extension {
 		if(strlen($name) < 1) {
 			$event->veto("Username must be at least 1 character");
 		}
-		else if(!preg_match('/^[a-zA-Z0-9-_ ]+$/', $name)) {
-			$event->veto("Username contains invalid characters. Allowed characters are letters, numbers, dash, underscore, and space");
+		else if(!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
+			$event->veto("Username contains invalid characters. Allowed characters are letters, numbers, dash, and underscore");
 		}
 		else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
 			$event->veto("That username is already taken");
