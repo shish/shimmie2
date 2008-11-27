@@ -20,6 +20,7 @@ class BBCode extends Extension {
 		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto):\/\/.*?)\[\/url\]/s", "<a href='\\1'>\\1</a>", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href='".make_link("wiki/\\1")."'>\\2</a>", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "<a href='".make_link("wiki/\\1")."'>\\1</a>", $text);
+		$text = preg_replace("/\n\s*\n/", "\n\n", $text);
 		$text = str_replace("\n", "\n<br>", $text);
 		$text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<small><small>Quoting \\1</small></small><blockquote><small>\\2</small></blockquote>", $text);
