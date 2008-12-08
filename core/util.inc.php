@@ -505,6 +505,7 @@ function send_event($event) {
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		$listener->receive_event($event);
+		if($event->vetoed) break;
 	}
 	$_event_count++;
 }

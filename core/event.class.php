@@ -5,9 +5,16 @@
  */
 abstract class Event {
 	var $context;
+	var $vetoed = false;
+	var $veto_reason;
 
 	public function __construct(RequestContext $context) {
 		$this->context = $context;
+	}
+
+	public function veto($reason="") {
+		$this->vetoed = true;
+		$this->veto_reason = $reason;
 	}
 }
 
