@@ -10,7 +10,7 @@
 class RandomImage implements Extension {
 	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent) && $event->page_matches("random_image")) {
-			global $database;
+			global $config;
 			global $database;
 			
 			if($event->count_args() == 1) {
