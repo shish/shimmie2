@@ -64,7 +64,7 @@ $header_html
 			<hr>
 			Images &copy; their respective owners,
 			<a href="http://trac.shishnet.org/shimmie2/">$version</a> &copy; 
-			<a href="http://www.shishnet.org/">Shish</a> 2007,
+			<a href="http://www.shishnet.org/">Shish</a> 2007-2008,
 			based on the <a href="http://trac.shishnet.org/shimmie2/wiki/DanbooruRipoff">Danbooru</a> concept.
 			$debug
 			$contact
