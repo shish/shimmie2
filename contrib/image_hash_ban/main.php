@@ -82,12 +82,16 @@ class ImageBan implements Extension {
 						$page->set_redirect(make_link("admin"));
 					}
 				}
+				else if($event->get_arg(0) == "list") {
+					$this->theme->display_Image_hash_Bans($event->page, $this->get_image_hash_bans());
+				}
 			}
 		}
 
-		if($event instanceof AdminBuildingEvent) {
-			global $page;
-			$this->theme->display_Image_hash_Bans($page, $this->get_image_hash_bans());
+		if($event instanceof UserBlockBuildingEvent) {
+			if($event->user->is_admin()) {
+				$event->add_link("Image Bans", make_link("image_hash_ban/list"));
+			}
 		}
 
 		if($event instanceof AddImageHashBanEvent) {

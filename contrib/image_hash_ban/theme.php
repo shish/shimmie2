@@ -50,13 +50,10 @@ class ImageBanTheme extends Themelet {
 				</tr>
 			</table>
 		";
-		$page->add_block(new Block("Edit Image Bans", $html));
-	}
-	
-		public function display_page($page) {
-		$page->set_title("Image Ban");
-		$page->set_heading("Image Ban");
+		$page->set_title("Image Bans");
+		$page->set_heading("Image Bans");
 		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Edit Image Bans", $html));
 	}
 
 	/*
