@@ -9,7 +9,7 @@
 class Tagger implements Extension {
 	var $theme;
 	
-	public function receive_event(Event $event) {
+	public function receive_event ($event) {
 		if(is_null($this->theme))
 			$this->theme = get_theme_object($this);
 			
@@ -43,7 +43,10 @@ add_event_listener(new Tagger());
 // Tagger AJAX back-end
 class TaggerXML implements Extension {
 	public function receive_event(Event $event) {
-		if(($event instanceof PageRequestEvent) && $event->page_matches("tagger/tags")) {
+		if(($event instanceof PageRequestEvent)
+			&& $event->page_name == "tagger"
+			&& $event->get_arg(0) == "tags")
+		{
 			global $page;
 			
 			//$match_tags = null;
@@ -52,9 +55,9 @@ class TaggerXML implements Extension {
 			if (isset($_GET['s'])) { // tagger/tags[/...]?s=$string
 				// return matching tags in XML form
 				$tags = $this->match_tag_list($_GET['s']);
-			} else if($event->get_arg(0)) { // tagger/tags/$int
+			} else if($event->get_arg(1)) { // tagger/tags/$int
 				// return arg[1] AS image_id's tag list in XML form
-				$tags = $this->image_tag_list($event->get_arg(0));
+				$tags = $this->image_tag_list($event->get_arg(1));
 			}
 			
 			$xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".

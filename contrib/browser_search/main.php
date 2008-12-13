@@ -30,7 +30,7 @@ class BrowserSearch implements Extension {
 		}
 		
 		// The search.xml file that is generated on the fly
-		if(($event instanceof PageRequestEvent) && $event->page_matches("browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_name == "browser_search") && $event->get_arg(0) == "please_dont_use_this_tag_as_it_would_break_stuff__search.xml") {
 			// First, we need to build all the variables we'll need
 			
 			$search_title = $config->get_string('title');
@@ -58,12 +58,7 @@ class BrowserSearch implements Extension {
 			$page->set_mode("data");
 			$page->set_type("text/xml");
 			$page->set_data($xml);
-		}
-		
-		else if(($event instanceof PageRequestEvent) && (
-				$event->page_matches("browser_search") &&
-				!$config->get_bool("disable_search_suggestions")
-		)) {
+		} else if(($event instanceof PageRequestEvent) && ($event->page_name == "browser_search") && !$config->get_bool("disable_search_suggestions")) { // We need to return results!
 			global $database;
 			
 			// We have to build some json stuff
