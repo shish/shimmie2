@@ -83,7 +83,11 @@ class ImageBan implements Extension {
 					}
 				}
 				else if($event->get_arg(0) == "list") {
-					$this->theme->display_Image_hash_Bans($event->page, $this->get_image_hash_bans());
+					$page_num = 0;
+					if($event->count_args() == 2) {
+						$page_num = int_escape($event->get_arg(1));
+					}
+					$this->theme->display_Image_hash_Bans($event->page, $page_num, $this->get_image_hash_bans($page_num));
 				}
 			}
 		}
@@ -124,10 +128,12 @@ class ImageBan implements Extension {
 
 	// DB funness
 
-	public function get_image_hash_bans() {
+	public function get_image_hash_bans($page, $size=1000) {
 		// FIXME: many
+		$size_i = int_escape($size);
+		$offset_i = int_escape($page)*$size_i;
 		global $database;
-		$bans = $database->get_all("SELECT * FROM image_bans");
+		$bans = $database->get_all("SELECT * FROM image_bans LIMIT $size_i OFFSET $offset_i");
 		if($bans) {return $bans;}
 		else {return array();}
 	}

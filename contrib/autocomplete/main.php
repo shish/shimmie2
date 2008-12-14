@@ -8,10 +8,10 @@
 
 class AutoComplete implements Extension {
 	public function receive_event(Event $event) {
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "index" || $event->page_name == "view")) {
+		if(($event instanceof PageRequestEvent) && ($event->page_matches("index") || $event->page_matches("view"))) {
 			$event->page->add_header("<script>autocomplete_url='".html_escape(make_link("autocomplete"))."';</script>");
 		}
-		if(($event instanceof PageRequestEvent) && ($event->page_name == "autocomplete")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("autocomplete")) {
 			$event->page->set_mode("data");
 			$event->page->set_type("text/plain");
 			$event->page->set_data($this->get_completions($event->get_arg(0)));
