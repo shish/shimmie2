@@ -1,8 +1,7 @@
 <?php
-
 /**
  * Name: Image Hash Ban
- * Author: ATravelingGeek (atg@atravelinggeek.com
+ * Author: ATravelingGeek <atg@atravelinggeek.com>
  * Link: http://atravelinggeek.com/
  * License: GPLv2
  * Description: Ban images based on their hash
