@@ -10,8 +10,6 @@ class CustomViewImageTheme extends ViewImageTheme {
 	}
 	
 
-
-
 	var $pin = null;
 
 	protected function build_info($image, $editor_parts) {
