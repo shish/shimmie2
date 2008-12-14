@@ -6,8 +6,8 @@
            /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
                    \/      \/         \/      \/        \/        \/
 
-Shimmie 2.2
-~~~~~~~~~~~
+Shimmie Alpha
+~~~~~~~~~~~~~
 Tag history, RSS for search results, unified image info editor, extensible
 file format support (ZIP, SWF, SVG, MP3, ...), wget transloader, event log
 filtering and sorting, as well as the usual various improvements~
