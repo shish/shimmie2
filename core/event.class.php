@@ -5,13 +5,6 @@
  */
 class Event {
 	var $vetoed = false, $veto_reason = null;
-	var $vetoed = false;
-	var $veto_reason;
-
-	public function veto($reason="") {
-		$this->vetoed = true;
-		$this->veto_reason = $reason;
-	}
 
 	public function veto($reason="") {
 		$this->vetoed = true;
