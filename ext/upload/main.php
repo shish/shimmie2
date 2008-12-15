@@ -92,7 +92,9 @@ class Upload extends Extension {
 				$event->veto("Upload failed; disk nearly full");
 			}
 			if(filesize($event->tmpname) > $config->get_int('upload_size')) {
-				$event->veto("File too large (".filesize($event->tmpname)." &gt; ".($config->get_int('upload_size')).")");
+				$size = to_shorthand_int(filesize($event->tmpname));
+				$limit = to_shorthand_int($config->get_int('upload_size'));
+				$event->veto("File too large ($size &gt; $limit)");
 			}
 		}
 	}
