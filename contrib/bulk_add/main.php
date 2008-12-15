@@ -82,7 +82,9 @@ class BulkAdd extends Extension {
 		}
 		closedir($dir);
 
-		$this->theme->add_status("Adding $subdir", $list);
+		if(strlen($list) > 0) {
+			$this->theme->add_status("Adding $subdir", $list);
+		}
 	}
 }
 add_event_listener(new BulkAdd());
