@@ -8,9 +8,12 @@
 
 Shimmie Alpha
 ~~~~~~~~~~~~~
-Tag history, RSS for search results, unified image info editor, extensible
-file format support (ZIP, SWF, SVG, MP3, ...), wget transloader, event log
-filtering and sorting, as well as the usual various improvements~
+This code is for people who want to write extensions compatible with the
+next version of shimmie. You can run a production site with it if you're
+feeling brave, but it's not recommended.
+
+If there is a feature here, and not in the stable branch, that's probably
+because the feature doesn't work yet :P
 
 
 Requirements
