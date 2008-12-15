@@ -70,13 +70,14 @@ class BulkAdd implements Extension {
 				$tags = $subdir;
 				$tags = str_replace("/", " ", $tags);
 				$tags = str_replace("__", " ", $tags);
-				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ",", $tags).")...");
+				$tags = trim($tags);
+				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ", ", $tags).")... ");
 				$error = $this->add_image($tmpfile, $filename, $tags);
 				if(is_null($error)) {
 					$list .= "ok\n";
 				}
 				else {
-					$list .= "failed: $error\n";
+					$list .= "failed:<br>$error\n";
 				}
 			}
 		}
