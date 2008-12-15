@@ -1,6 +1,6 @@
 <?php
 
-class CustomViewImageTheme extends ViewImageTheme {
+class CustomViewTheme extends ViewTheme {
 	public function display_image_not_found($page, $image_id) {
 		$page->set_title("Image not found");
 		$page->set_heading("Image not found");
