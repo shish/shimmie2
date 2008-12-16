@@ -90,6 +90,8 @@ class ViewTheme extends Themelet {
 	}
 
 	protected function build_image_editor($image, $editor_parts) {
+		if(count($editor_parts) == 0) return "";
+
 		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
 		else {$h_query = "";}
 

@@ -66,7 +66,13 @@ class TagEdit extends Extension {
 
 		if(is_a($event, 'ImageInfoBoxBuildingEvent')) {
 			global $user;
-			$event->add_part($this->theme->get_editor_html($event->image, $user), 40);
+			global $config;
+			if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
+				$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
+			}
+			if($config->get_bool("source_edit_anon") || !$user->is_anonymous()) {
+				$event->add_part($this->theme->get_source_editor_html($event->image), 41);
+			}
 		}
 
 		if(is_a($event, 'SetupBuildingEvent')) {

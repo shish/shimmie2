@@ -18,28 +18,14 @@ class TagEditTheme extends Themelet {
 		$page->add_block(new Block("Mass Tag Edit", $html));
 	}
 
-	public function get_editor_html($image, $user) {
-		$html = "";
+	public function get_tag_editor_html($image) {
+		$h_tags = html_escape($image->get_tag_list());
+		return "<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags'></td></tr>";
+	}
 
-
-		global $config;
-		if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
-			$h_tags = html_escape($image->get_tag_list());
-			$h_source = html_escape($image->get_source());
-			$i_image_id = int_escape($image->id);
-
-			$source_edit = "";
-			if($config->get_bool("source_edit_anon") || !$user->is_anonymous()) {
-				$source_edit = "<tr><td>Source</td><td><input type='text' name='tag_edit__source' value='$h_source'></td></tr>";
-			}
-
-			$html .= "
-				<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags'></td></tr>
-				$source_edit
-			";
-		}
-
-		return $html;
+	public function get_source_editor_html($image) {
+		$h_source = html_escape($image->get_source());
+		return "<tr><td>Source</td><td><input type='text' name='tag_edit__source' value='$h_source'></td></tr>";
 	}
 }
 ?>
