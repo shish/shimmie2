@@ -133,7 +133,7 @@ class ImageBan implements Extension {
 		$size_i = int_escape($size);
 		$offset_i = int_escape($page)*$size_i;
 		global $database;
-		$bans = $database->get_all("SELECT * FROM image_bans ORDER BY hash LIMIT $size_i OFFSET $offset_i");
+		$bans = $database->get_all("SELECT * FROM image_bans ORDER BY id LIMIT $size_i OFFSET $offset_i");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
