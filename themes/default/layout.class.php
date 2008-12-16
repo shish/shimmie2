@@ -33,13 +33,7 @@ class Layout {
 		$debug = get_debug_info();
 
 		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-
-		if(empty($page->subheading)) {
-			$subheading = "";
-		}
-		else {
-			$subheading = "<div id='subtitle'>{$page->subheading}</div>";
-		}
+		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		print <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
