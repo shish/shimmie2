@@ -36,7 +36,8 @@ class TagEdit extends Extension {
 				}
 			}
 			else {
-				$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
+				global $page;
+				$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
 			}
 		}
 		
