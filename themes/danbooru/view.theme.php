@@ -1,40 +1,40 @@
 <?php
 
 class CustomViewImageTheme extends ViewImageTheme {
-	public function display_image_not_found($page, $image_id) {
-		$page->set_title("Image not found");
-		$page->set_heading("Image not found");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Image not found",
-			"No image in the database has the ID #$image_id"));
+	public function display_page($page, $image, $editor_parts) {
+		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
+		$page->set_heading(html_escape($image->get_tag_list()));
+		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
+		$page->add_block(new Block("Statistics", $this->build_stats($image), "left", 10));
+		$page->add_block(new Block(null, $this->build_image_editor($image, $editor_parts), "main", 10));
+		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 	
-
-	var $pin = null;
-
-	protected function build_info($image, $editor_parts) {
-		global $user;
-		$owner = $image->get_owner();
-		$h_owner = html_escape($owner->name);
+	private function build_stats($image) {
+		$h_owner = html_escape($image->get_owner()->name);
+		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		$h_ip = html_escape($image->owner_ip);
-		$h_source = html_escape($image->source);
-		$i_owner_id = int_escape($owner->id);
+		$h_date = date("Y-m-d", strtotime($image->posted));
 
-		$html = "";
-		$html .= "<p>Posted on {$image->posted} by <a href='".make_link("user/$h_owner")."'>$h_owner</a>";
+		global $user;
 		if($user->is_admin()) {
-			$html .= " ($h_ip)";
-		}
-		if(!is_null($image->source)) {
-			if(substr($image->source, 0, 7) == "http://") {
-				$html .= " (<a href='$h_source'>source</a>)";
-			}
-			else {
-				$html .= " (<a href='http://$h_source'>source</a>)";
-			}
+			$h_ownerlink .= " ($h_ip)";
 		}
 
-		$html .= $this->build_image_editor($image, $editor_parts);
+		$html = "
+		Id: {$image->id}
+		<br>Posted: $h_date by $h_ownerlink
+		<br>Size: {$image->width}x{$image->height}
+		<br>Filesize: {$image->filesize}
+		";
+
+		if(!is_null($image->source)) {
+			$h_source = html_escape($image->source);
+			if(substr($image->source, 0, 7) == "http://") {
+				$h_source = "http://" . $h_source;
+			}
+			$html .= "<br>Source: <a href='$h_source'>link</a>";
+		}
 
 		return $html;
 	}
