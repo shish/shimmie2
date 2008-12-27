@@ -1,5 +1,7 @@
 .svn
 config.php
+images
+thumbs
 ext/ban_words
 ext/browser_search
 ext/bulk_add
@@ -28,6 +30,7 @@ ext/rss_comments
 ext/rss_images
 ext/site_description
 ext/tag_history
+ext/tagger
 ext/wiki
 ext/word_filter
 ext/zoom
