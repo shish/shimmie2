@@ -22,6 +22,8 @@ class ViewTheme extends Themelet {
 	var $pin = null;
 
 	protected function build_pin($image_id) {
+		assert(is_numeric($image_id));
+
 		if(!is_null($this->pin)) {
 			return $this->pin;
 		}

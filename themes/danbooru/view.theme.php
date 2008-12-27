@@ -4,10 +4,10 @@ class CustomViewTheme extends ViewTheme {
 	public function display_page($page, $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
-		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
+		$page->add_block(new Block("Navigation", $this->build_navigation($image->id), "left", 0));
 		$page->add_block(new Block("Statistics", $this->build_stats($image), "left", 10));
 		$page->add_block(new Block(null, $this->build_image_editor($image, $editor_parts), "main", 10));
-		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
+		$page->add_block(new Block(null, $this->build_pin($image->id), "main", 11));
 	}
 
 	private function build_stats($image) {
