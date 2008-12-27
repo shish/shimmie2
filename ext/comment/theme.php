@@ -101,9 +101,11 @@ class CommentListTheme extends Themelet {
 		$i_image_id = int_escape($comment->image_id);
 
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
+		$stripped_nonl = str_replace("\n", "\\n", $tfe->stripped);
+		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_dellink = $user->is_admin() ? 
 			"<br>($h_poster_ip, <a ".
-			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
+			"onclick=\"return confirm('Delete comment by $h_name:\\n$stripped_nonl');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		return "<p class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
