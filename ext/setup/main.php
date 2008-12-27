@@ -137,6 +137,11 @@ class Setup implements Extension {
 			$config->set_default_string("theme", "default");
 		}
 
+		if(($event instanceof PageRequestEvent) && $event->page_matches("nicetest")) {
+			$event->page->set_mode("data");
+			$event->page->set_data("ok");
+		}
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("setup")) {
 			global $user;
 			if(!$user->is_admin()) {
@@ -171,14 +176,47 @@ class Setup implements Extension {
 				$themes[ucfirst($name)] = $name;
 			}
 
+			$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+			$test_url = str_replace("/index.php", "/nicetest", $full);
+
+			$nicescript = "<script language='javascript'>
+				function getHTTPObject() {
+					if (window.XMLHttpRequest){
+						return new XMLHttpRequest();
+					}
+					else if(window.ActiveXObject){
+						return new ActiveXObject('Microsoft.XMLHTTP');
+					}
+				}
+
+				checkbox = document.getElementById('nice_urls');
+				out_span = document.getElementById('nicetest');
+
+				checkbox.disabled = true;
+				out_span.innerHTML = '(testing...)';
+
+				http_request = getHTTPObject();
+				http_request.open('GET', '$test_url', false);
+				http_request.send(null);
+
+				if(http_request.status == 200 && http_request.responseText == 'ok') {
+					checkbox.disabled = false;
+					out_span.innerHTML = '(tested ok)';
+				}
+				else {
+					checkbox.disabled = true;
+					out_span.innerHTML = '(test failed)';
+				}
+			</script>";
 			$sb = new SetupBlock("General");
 			$sb->position = 0;
 			$sb->add_text_option("title", "Site title: ");
 			$sb->add_text_option("front_page", "<br>Front page: ");
 			$sb->add_text_option("main_page", "<br>Main page: ");
-			$sb->add_text_option("base_href", "<br>Base URL: ");
 			$sb->add_text_option("contact_link", "<br>Contact URL: ");
 			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
+			$sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
+			$sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
 			$event->panel->add_block($sb);
 		}
 

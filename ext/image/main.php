@@ -11,10 +11,10 @@ class ImageIO implements Extension {
 			$config->set_default_int('thumb_width', 192);
 			$config->set_default_int('thumb_height', 192);
 			$config->set_default_int('thumb_quality', 75);
-			$config->set_default_int('thumb_mem_limit', '8MB');
+			$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
 			
-			$config->set_default_string('image_ilink', '$base/image/$id.$ext');
-			$config->set_default_string('image_tlink', '$base/thumb/$id.jpg');
+			$config->set_default_string('image_ilink', '');
+			$config->set_default_string('image_tlink', '');
 			$config->set_default_string('image_tip', '$tags // $size // $filesize');
 			$config->set_default_string('upload_collision_handler', 'error');
 		}
@@ -46,9 +46,10 @@ class ImageIO implements Extension {
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Image Options");
 			$sb->position = 30;
-			$sb->add_text_option("image_ilink", "Image link: ");
-			$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
-			$sb->add_text_option("image_tip", "<br>Image tooltip: ");
+			// advanced only
+			//$sb->add_text_option("image_ilink", "Image link: ");
+			//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
+			$sb->add_text_option("image_tip", "Image tooltip: ");
 			$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
 			$event->panel->add_block($sb);
 

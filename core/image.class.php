@@ -148,7 +148,16 @@ class Image {
 	}
 
 	public function get_image_link() {
-		return $this->parse_link_template($this->config->get_string('image_ilink'));
+		$c = $this->config;
+		if(strlen($c->get_string('image_ilink')) > 0) {
+			return $this->parse_link_template($c->get_string('image_ilink'));
+		}
+		else if($c->get_bool('nice_urls', false)) {
+			return $this->parse_link_template('$base/_images/$hash/$id - $tags.$ext');
+		}
+		else {
+			return $this->parse_link_template('image/$id.$ext');
+		}
 	}
 
 	public function get_short_link() {
@@ -156,7 +165,16 @@ class Image {
 	}
 
 	public function get_thumb_link() {
-		return $this->parse_link_template($this->config->get_string('image_tlink'));
+		$c = $this->config;
+		if(strlen($c->get_string('image_tlink')) > 0) {
+			return $this->parse_link_template($c->get_string('image_tlink'));
+		}
+		else if($c->get_bool('nice_urls', false)) {
+			return $this->parse_link_template('$base/_thumbs/$hash/$id.jpg');
+		}
+		else {
+			return $this->parse_link_template('image/$id.$ext');
+		}
 	}
 
 	public function get_tooltip() {

@@ -97,7 +97,13 @@ function make_link($page=null, $query=null) {
 
 	if(is_null($page)) $page = $config->get_string('main_page');
 
-	$base = $config->get_string('base_href');
+	if($config->get_bool('nice_urls', false)) {
+		$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+		$base = str_replace("/index.php", "", $full);
+	}
+	else {
+		$base = "./index.php?q=";
+	}
 
 	if(is_null($query)) {
 		return "$base/$page";
