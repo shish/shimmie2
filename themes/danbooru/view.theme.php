@@ -15,6 +15,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		$h_ip = html_escape($image->owner_ip);
 		$h_date = date("Y-m-d", strtotime($image->posted));
+		$h_filesize = to_shorthand_int($image->filesize);
 
 		global $user;
 		if($user->is_admin()) {
@@ -25,7 +26,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		Id: {$image->id}
 		<br>Posted: $h_date by $h_ownerlink
 		<br>Size: {$image->width}x{$image->height}
-		<br>Filesize: {$image->filesize}
+		<br>Filesize: $h_filesize
 		";
 
 		if(!is_null($image->source)) {
