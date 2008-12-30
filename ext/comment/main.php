@@ -284,6 +284,21 @@ class CommentList implements Extension {
 		return ($recent_comments >= $max);
 	}
 
+	private function hash_match() {
+		return ($_POST['hash'] == $this->get_hash());
+	}
+
+	/**
+	 * get a hash which semi-uniquely identifies a submission form,
+	 * to stop spam bots which download the form once then submit
+	 * many times.
+	 *
+	 * FIXME: assumes comments are posted via HTTP...
+	 */
+	public function get_hash() {
+		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
+	}
+
 	private function is_spam($text) {
 		global $user;
 		global $config;
@@ -329,6 +344,7 @@ class CommentList implements Extension {
 		global $database;
 		global $config;
 
+		// basic sanity checks
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
 			$event->veto("Anonymous posting has been disabled");
 		}
@@ -338,21 +354,32 @@ class CommentList implements Extension {
 		else if(trim($comment) == "") {
 			$event->veto("Comments need text...");
 		}
+		else if(strlen($comment) > 9000) {
+			$event->veto("Comment too long~");
+		}
+
+		// advanced sanity checks
+		else if(strlen($comment)/strlen(gzcompress($comment)) > 10) {
+			$event->veto("Comment too repetitive~");
+		}
+		else if($user->is_anonymous() && !$this->hash_match()) {
+			$event->veto("Comment submission form is out of date; refresh the comment form to show you aren't a spammer~");
+		}
+
+		// database-querying checks
 		else if($this->is_comment_limit_hit()) {
 			$event->veto("You've posted several comments recently; wait a minute and try again...");
 		}
 		else if($this->is_dupe($image_id, $comment)) {
 			$event->veto("Someone already made that comment on that image -- try and be more original?");
 		}
-		else if(strlen($comment) > 9000) {
-			$event->veto("Comment too long~");
-		}
-		else if(strlen($comment)/strlen(gzcompress($comment)) > 10) {
-			$event->veto("Comment too repetitive~");
-		}
+
+		// rate-limited external service checks last
 		else if($user->is_anonymous() && $this->is_spam($comment)) {
 			$event->veto("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}
+
+		// all checks passed
 		else {
 			$database->Execute(
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".

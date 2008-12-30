@@ -113,9 +113,11 @@ class CommentListTheme extends Themelet {
 
 	protected function build_postbox($image_id) {
 		$i_image_id = int_escape($image_id);
+		$hash = CommentList::get_hash();
 		return "
 			<form action='".make_link("comment/add")."' method='POST'>
 			<input type='hidden' name='image_id' value='$i_image_id' />
+			<input type='hidden' name='hash' value='$hash' />
 			<textarea name='comment' rows='5' cols='50'></textarea>
 			<br><input type='submit' value='Post' />
 			</form>
