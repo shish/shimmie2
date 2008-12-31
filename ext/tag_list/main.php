@@ -118,7 +118,9 @@ class TagList implements Extension {
 			$h_tag = html_escape($row['tag']);
 			$size = $row['scaled'];
 			$link = $this->tag_link($row['tag']);
-			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag</a>&nbsp;\n";
+			if($size<0.5) $size = 0.5;
+			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
+			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
 		}
 		return $html;
 	}
