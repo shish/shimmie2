@@ -107,7 +107,7 @@ class Index implements Extension {
 				$filename = strtolower($matches[2]);
 				$event->add_querylet(new Querylet("images.filename LIKE '%$filename%'"));
 			}
-			else if(preg_match("/posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)/",$term,$matches)) {
+			else if(preg_match("/posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)/", $event->term, $matches)) {
 				$val = str_replace("*", "%", $matches[1]);
 				$img_search->append(new Querylet("images.posted LIKE '%$val%'"));
 			}
