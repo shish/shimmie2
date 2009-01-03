@@ -1,4 +1,30 @@
 <?php
+/*
+ * SearchTermParseEvent:
+ * Signal that a search term needs parsing
+ */
+class SearchTermParseEvent extends Event {
+	var $term = null;
+	var $context = null;
+	var $querylets = array();
+
+	public function SearchTermParseEvent($term, $context) {
+		$this->term = $term;
+		$this->context = $context;
+	}
+
+	public function is_querylet_set() {
+		return (count($this->querylets) > 0);
+	}
+
+	public function get_querylets() {
+		return $this->querylets;
+	}
+
+	public function add_querylet($q) {
+		$this->querylets[] = $q;
+	}
+}
 
 class PostListBuildingEvent extends Event {
 	var $page = null;

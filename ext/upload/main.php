@@ -1,4 +1,28 @@
 <?php
+/*
+ * DataUploadEvent:
+ *   $user     -- the user uploading the data
+ *   $tmpname  -- the temporary file used for upload
+ *   $metadata -- info about the file, should contain at least "filename", "extension", "tags" and "source"
+ *
+ * Some data is being uploaded. Should be caught by a file handler.
+ */
+class DataUploadEvent extends Event {
+	var $user, $tmpname, $metadata, $hash, $type;
+
+	public function DataUploadEvent($user, $tmpname, $metadata) {
+		$this->user = $user;
+		$this->tmpname = $tmpname;
+
+		$this->metadata = $metadata;
+		$this->metadata['hash'] = md5_file($tmpname);
+		$this->metadata['size'] = filesize($tmpname);
+
+		// useful for most file handlers, so pull directly into fields
+		$this->hash = $this->metadata['hash'];
+		$this->type = strtolower($metadata['extension']);
+	}
+}
 
 class Upload implements Extension {
 	var $theme;

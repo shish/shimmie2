@@ -1,5 +1,76 @@
 <?php
 /*
+ * ImageAdditionEvent:
+ *   $user  -- the user adding the image
+ *   $image -- the image being added
+ *
+ * An image is being added to the database
+ */
+class ImageAdditionEvent extends Event {
+	var $user, $image;
+
+	public function ImageAdditionEvent($user, $image) {
+		$this->image = $image;
+		$this->user = $user;
+	}
+}
+
+
+/*
+ * ImageDeletionEvent:
+ *   $image -- the image being deleted
+ *
+ * An image is being deleted. Used by things like tags
+ * and comments handlers to clean out related rows in
+ * their tables
+ */
+class ImageDeletionEvent extends Event {
+	var $image;
+
+	public function ImageDeletionEvent($image) {
+		$this->image = $image;
+	}
+}
+
+
+/*
+ * ThumbnailGenerationEvent:
+ * Request a thumb be made for an image
+ */
+class ThumbnailGenerationEvent extends Event {
+	var $hash;
+	var $type;
+
+	public function ThumbnailGenerationEvent($hash, $type) {
+		$this->hash = $hash;
+		$this->type = $type;
+	}
+}
+
+
+/*
+ * ParseLinkTemplateEvent:
+ *   $link     -- the formatted link
+ *   $original -- the formatting string, for reference
+ *   $image    -- the image who's link is being parsed
+ */
+class ParseLinkTemplateEvent extends Event {
+	var $link, $original;
+	var $image;
+
+	public function ParseLinkTemplateEvent($link, $image) {
+		$this->link = $link;
+		$this->original = $link;
+		$this->image = $image;
+	}
+
+	public function replace($needle, $replace) {
+		$this->link = str_replace($needle, $replace, $this->link);
+	}
+}
+
+
+/*
  * A class to handle adding / getting / removing image
  * files from the disk
  */
