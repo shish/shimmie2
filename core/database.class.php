@@ -73,7 +73,7 @@ class PostgreSQL extends DBEngine {
 //}}}
 
 /*
- * A class for controlled database access, available through "global $database"
+ * A class for controlled database access
  */
 class Database {
 	var $db;
