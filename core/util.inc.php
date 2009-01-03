@@ -496,7 +496,7 @@ function weighted_random($weights) {
 
 $_event_listeners = array();
 
-function add_event_listener($extension, $pos=50) {
+function add_event_listener(Extension $extension, $pos=50) {
 	global $_event_listeners;
 	while(isset($_event_listeners[$pos])) {
 		$pos++;
@@ -505,7 +505,7 @@ function add_event_listener($extension, $pos=50) {
 }
 
 $_event_count = 0;
-function send_event($event) {
+function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
 	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
 	ksort($my_event_listeners);
@@ -560,7 +560,6 @@ function _get_user($config, $database) {
 		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
-		
 	}
 	if(is_null($user)) {
 		$user = User::by_id($config, $database, $config->get_int("anon_id", 0));

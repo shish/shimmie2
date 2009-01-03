@@ -28,7 +28,6 @@ class InitExtEvent extends Event {}
 
 /*
  * PageRequestEvent:
- *
  * User requests /view/42 -> an event is generated with $args = array("view",
  * "42"); when an event handler asks $event->page_matches("view"), it returns
  * true and ignores the matched part, such that $event->count_args() = 1 and
