@@ -126,9 +126,9 @@ function make_link($page=null, $query=null) {
 function version_check() {
 	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
 		print <<<EOD
-Currently Shimmie 2 doesn't support versions of PHP lower than 5.0.0. Please
-either upgrade your PHP, or tell Shish that PHP 4 support is a big deal for
-you...
+Currently SCore Engine doesn't support versions of PHP lower than 5.0.0 --
+PHP4 and earlier are officially dead according to their creators,
+please tell your host to upgrade.
 EOD;
 		exit;
 	}
