@@ -46,15 +46,15 @@ class UserPage implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_bool("login_signup_enabled", true);
-			$config->set_default_int("login_memory", 365);
+			$event->context->config->set_default_bool("login_signup_enabled", true);
+			$event->context->config->set_default_int("login_memory", 365);
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user_admin")) {
-			global $user;
-			global $database;
-			global $config;
+			$user = $event->context->user;
+			$database = $event->context->database;
+			$config = $event->context->config;
+			$page = $event->context->page;
 
 			if($event->get_arg(0) == "login") {
 				if(isset($_POST['user']) && isset($_POST['pass'])) {
