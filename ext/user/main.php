@@ -15,12 +15,11 @@ class UserBlockBuildingEvent extends Event {
 }
 
 class UserPageBuildingEvent extends Event {
-	var $page = null;
-	var $user = null;
+	var $display_user;
 
-	public function UserPageBuildingEvent($page, $user) {
-		$this->page = $page;
-		$this->user = $user;
+	public function __construct(RequestContext $context, User $display_user) {
+		parent::__construct($context);
+		$this->display_user = $display_user;
 	}
 }
 
@@ -105,7 +104,7 @@ class UserPage implements Extension {
 			global $database;
 			$duser = ($event->count_args() == 0) ? $user : User::by_name($config, $database, $event->get_arg(0));
 			if(!is_null($duser)) {
-				send_event(new UserPageBuildingEvent($event->page, $duser));
+				send_event(new UserPageBuildingEvent($event->context, $duser));
 			}
 			else {
 				$this->theme->display_error($event->page, "No Such User", 
@@ -117,15 +116,15 @@ class UserPage implements Extension {
 		if($event instanceof UserPageBuildingEvent) {
 			global $user;
 			global $config;
-			$this->theme->display_user_page($event->page, $event->user, $user);
-			if($user->id == $event->user->id) {
-				$ubbe = new UserBlockBuildingEvent($event->user);
+			$this->theme->display_user_page($event->context->page, $event->context->user, $user);
+			if($user->id == $event->display_user->id) {
+				$ubbe = new UserBlockBuildingEvent($event->display_user);
 				send_event($ubbe);
 				ksort($ubbe->parts);
-				$this->theme->display_user_links($event->page, $event->user, $ubbe->parts);
+				$this->theme->display_user_links($event->context->page, $event->context->user, $ubbe->parts);
 			}
-			if(($user->is_admin() || $user->id == $event->user->id) && ($user->id != $config->get_int('anon_id'))) {
-				$this->theme->display_ip_list($event->page, $this->count_upload_ips($event->user), $this->count_comment_ips($event->user));
+			if(($user->is_admin() || $user->id == $event->display_user->id) && ($user->id != $config->get_int('anon_id'))) {
+				$this->theme->display_ip_list($event->context->page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
 			}
 		}
 
