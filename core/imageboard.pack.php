@@ -260,38 +260,6 @@ class Image {
 		}
 	}
 
-	public function resolve_alias($tag) {
-		assert(is_string($tag));
-		$newtag = $this->database->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
-		if(!empty($newtag)) {
-			return $newtag;
-		} else {
-			return $tag;
-		}
-	}
-
-	public function resolve_wildcard($tag) {
-		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
-			return array($tag);
-		}
-		else {
-			$newtags = $this->database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
-			if(count($newtags) > 0) {
-				$resolved = $newtags;
-			} else {
-				$resolved = array($tag);
-			}
-			return $resolved;
-		}
-	}
-
-	public function sanitise($tag) {
-		assert(is_string($tag));
-		$tag = preg_replace("/[\s?*]/", "", $tag);
-		$tag = preg_replace("/\.+/", ".", $tag);
-		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
-		return $tag;
-	}
 
 	/*
 	 * Other actions
@@ -355,7 +323,7 @@ class Image {
 				$term = substr($term, 1);
 			}
 			
-			$term = $database->resolve_alias($term);
+			$term = Tag::resolve_alias($term);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
@@ -368,7 +336,7 @@ class Image {
 				$term = str_replace("*", "%", $term);
 				$term = str_replace("?", "_", $term);
 				if(!preg_match("/^[%_]+$/", $term)) {
-					$expansions = $database->resolve_wildcard($term);
+					$expansions = Tag::resolve_wildcard($term);
 					if($positive) $positive_tag_count++;
 					foreach($expansions as $term) {
 						$tag_querylets[] = new TagQuerylet($term, $positive);
@@ -482,6 +450,44 @@ class Image {
 		}
 
 		return $query;
+	}
+}
+
+class Tag {
+	public static function sanitise($tag) {
+		assert(is_string($tag));
+		$tag = preg_replace("/[\s?*]/", "", $tag);
+		$tag = preg_replace("/\.+/", ".", $tag);
+		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
+		return $tag;
+	}
+
+	public static function resolve_alias($tag) {
+		assert(is_string($tag));
+
+		global $database;
+		$newtag = $database->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
+		if(!empty($newtag)) {
+			return $newtag;
+		} else {
+			return $tag;
+		}
+	}
+
+	public static function resolve_wildcard($tag) {
+		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
+			return array($tag);
+		}
+		else {
+			global $database;
+			$newtags = $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
+			if(count($newtags) > 0) {
+				$resolved = $newtags;
+			} else {
+				$resolved = array($tag);
+			}
+			return $resolved;
+		}
 	}
 }
 
