@@ -133,11 +133,12 @@ class UserPage implements Extension {
 
 		// user info is shown on all pages
 		if($event instanceof PageRequestEvent) {
-			global $user;
-			global $page;
+			$user = $event->context->user;
+			$database = $event->context->database;
+			$page = $event->context->page;
 
 			if($user->is_anonymous()) {
-				$this->theme->display_login_block($event->page);
+				$this->theme->display_login_block($page);
 			}
 			else {
 				$ubbe = new UserBlockBuildingEvent($user);
