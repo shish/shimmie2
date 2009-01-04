@@ -2,6 +2,7 @@
 require_once "compat.inc.php";
 $ADODB_CACHE_DIR=sys_get_temp_dir();
 require_once "lib/adodb/adodb.inc.php";
+require_once "lib/adodb/adodb-exceptions.inc.php";
 
 /* Querylet {{{
  * A fragment of a query, used to build large search queries
