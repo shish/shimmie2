@@ -211,7 +211,6 @@ function get_base_href() {
 	return $dir;
 }
 
-
 function format_text($string) {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
