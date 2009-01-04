@@ -4,7 +4,7 @@ class DowntimeTheme Extends Themelet {
 	/*
 	 * Show the admin that downtime mode is enabled
 	 */
-	public function display_notification($page) {
+	public function display_notification(Page $page) {
 		$page->add_block(new Block("Downtime",
 			"<span style='font-size: 1.5em'><b>DOWNTIME MODE IS ON!</b></span>", "left", 0));
 	}
