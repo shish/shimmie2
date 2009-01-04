@@ -1,7 +1,7 @@
 <?php
 
 class Tag_HistoryTheme extends Themelet {
-	public function display_history_page($page, $image_id, $history) {
+	public function display_history_page(Page $page, $image_id, $history) {
 		$start_string = "
 			<div style='text-align: left'>
 				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
@@ -36,7 +36,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_global_page($page, $history) {
+	public function display_global_page(Page $page, $history) {
 		$start_string = "
 			<div style='text-align: left'>
 				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
@@ -77,7 +77,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_history_link($page, $image_id) {
+	public function display_history_link(Page $page, $image_id) {
 		$link = "<a href='".make_link("tag_history/$image_id")."'>Tag History</a>\n";
 		$page->add_block(new Block(null, $link, "main", 5));
 	}

@@ -7,7 +7,7 @@ class IndexTheme extends Themelet {
 		$this->search_terms = $search_terms;
 	}
 
-	public function display_page($page, $images) {
+	public function display_page(Page $page, $images) {
 		global $config;
 
 		if(count($this->search_terms) == 0) {

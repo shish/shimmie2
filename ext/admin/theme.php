@@ -4,7 +4,7 @@ class AdminPageTheme extends Themelet {
 	/*
 	 * Show the basics of a page, for other extensions to add to
 	 */
-	public function display_page($page) {
+	public function display_page(Page $page) {
 		$page->set_title("Admin Tools");
 		$page->set_heading("Admin Tools");
 		$page->add_block(new NavBlock());
@@ -32,7 +32,7 @@ class AdminPageTheme extends Themelet {
 	 *  'recount tag use'
 	 *  'purge unused tags'
 	 */
-	public function display_form($page) {
+	public function display_form(Page $page) {
 		$html = "
 			<p><form action='".make_link("admin_utils")."' method='POST'>
 				<select name='action'>

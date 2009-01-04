@@ -16,7 +16,7 @@ class RegenThumbTheme extends Themelet {
 	/*
 	 * Show a link to the new thumbnail
 	 */
-	public function display_results($page, $image) {
+	public function display_results(Page $page, Image $image) {
 		$page->set_title("Thumbnail Regenerated");
 		$page->set_heading("Thumbnail Regenerated");
 		$page->add_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");

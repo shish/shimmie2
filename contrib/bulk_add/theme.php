@@ -6,7 +6,7 @@ class BulkAddTheme extends Themelet {
 	/*
 	 * Show a standard page for results to be put into
 	 */
-	public function display_upload_results($page) {
+	public function display_upload_results(Page $page) {
 		$page->set_title("Adding folder");
 		$page->set_heading("Adding folder");
 		$page->add_block(new NavBlock());
@@ -20,7 +20,7 @@ class BulkAddTheme extends Themelet {
 	 * links to bulk_add with POST[dir] set to the name of a server-side
 	 * directory full of images
 	 */
-	public function display_admin_block($page) {
+	public function display_admin_block(Page $page) {
 		$html = "
 			Add a folder full of images; any subfolders will have their names
 			used as tags for the images within.

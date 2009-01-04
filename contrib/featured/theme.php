@@ -4,7 +4,7 @@ class FeaturedTheme extends Themelet {
 	/*
 	 * Show $text on the $page
 	 */
-	public function display_featured($page, $image) {
+	public function display_featured(Page $page, Image $image) {
 		$page->add_block(new Block("Featured Image", $this->build_thumb_html($image), "left", 3));
 	}
 

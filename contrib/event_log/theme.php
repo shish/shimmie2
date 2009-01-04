@@ -1,7 +1,7 @@
 <?php
 
 class EventLogTheme extends Themelet {
-	public function display_page($page, $events) {
+	public function display_page(Page $page, $events) {
 		$page->set_title("Event Log");
 		$page->set_heading("Event Log");
 		$page->add_block(new NavBlock());
@@ -10,7 +10,7 @@ class EventLogTheme extends Themelet {
 		$this->display_controls($page);
 	}
 
-	protected function display_table($page, $events) {
+	protected function display_table(Page $page, $events) {
 		$table = "
 			<style>
 			.event_log_table TD {
@@ -70,7 +70,7 @@ class EventLogTheme extends Themelet {
 		$page->add_block(new Block("Log Contents", $table));
 	}
 
-	protected function display_controls($page) {
+	protected function display_controls(Page $page) {
 		$html = "
 		<form action='".make_link("event_log")."' method='POST'>
 			<input type='hidden' name='action' value='clear'>

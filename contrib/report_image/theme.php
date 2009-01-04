@@ -11,7 +11,7 @@
  */
 
 class ReportImageTheme extends Themelet {
-	public function display_reported_images($page, $reports) {
+	public function display_reported_images(Page $page, $reports) {
 		global $config;
 
 		$h_reportedimages = "";
@@ -71,7 +71,7 @@ class ReportImageTheme extends Themelet {
 
 	}
 
-	public function display_image_banner($page, $image) {
+	public function display_image_banner(Page $page, Image $image) {
 		global $config;
 
 		$i_image = int_escape($image);

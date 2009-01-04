@@ -1,7 +1,7 @@
 <?php
 
 class ExtManagerTheme extends Themelet {
-	public function display_table($page, $extensions) {
+	public function display_table(Page $page, $extensions) {
 		$html = "
 			<form action='".make_link("ext_manager/set")."' method='POST'>
 				<table border='1'>

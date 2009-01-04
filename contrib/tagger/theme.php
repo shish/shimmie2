@@ -6,7 +6,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class taggerTheme extends Themelet {
-	public function build_tagger ($page, $event) {
+	public function build_tagger (Page $page, $event) {
 		global $config;
 		// Initialization code
 		$base_href = $config->get_string('base_href');
@@ -22,7 +22,7 @@ class taggerTheme extends Themelet {
 			$this->html($event->get_image()),
 			"main"));
 	}
-	private function html($image) {
+	private function html(Image $image) {
 		global $config;
 		$i_image_id = int_escape($image->id);
 		$h_source = html_escape($image->source);

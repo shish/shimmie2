@@ -4,7 +4,7 @@ class ViewImageTheme extends Themelet {
 	/*
 	 * Build a page showing $image and some info about it
 	 */
-	public function display_page($page, $image, $editor_parts) {
+	public function display_page(Page $page, Image $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
@@ -12,7 +12,7 @@ class ViewImageTheme extends Themelet {
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 
-	public function display_admin_block($page, $parts) {
+	public function display_admin_block(Page $page, $parts) {
 		if(count($parts) > 0) {
 			$page->add_block(new Block("Image Admin", join("<br>", $parts), "left", 50));
 		}
@@ -21,7 +21,7 @@ class ViewImageTheme extends Themelet {
 
 	var $pin = null;
 
-	protected function build_pin($image) {
+	protected function build_pin(Image $image) {
 		if(!is_null($this->pin)) {
 			return $this->pin;
 		}
@@ -48,7 +48,7 @@ class ViewImageTheme extends Themelet {
 		return $this->pin;
 	}
 
-	protected function build_navigation($image) {
+	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
 			<p><form action='".make_link()."' method='GET'>
@@ -61,7 +61,7 @@ class ViewImageTheme extends Themelet {
 		return "$h_pin<br>$h_search";
 	}
 
-	protected function build_info($image, $editor_parts) {
+	protected function build_info(Image $image, $editor_parts) {
 		global $user;
 		$owner = $image->get_owner();
 		$h_owner = html_escape($owner->name);
@@ -89,7 +89,7 @@ class ViewImageTheme extends Themelet {
 		return $html;
 	}
 
-	protected function build_image_editor($image, $editor_parts) {
+	protected function build_image_editor(Image $image, $editor_parts) {
 		if(count($editor_parts) == 0) return "";
 
 		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}

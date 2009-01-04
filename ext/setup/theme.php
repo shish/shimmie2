@@ -12,7 +12,7 @@ class SetupTheme extends Themelet {
 	 *
 	 * The page should wrap all the options in a form which links to setup_save
 	 */
-	public function display_page($page, $panel) {
+	public function display_page(Page $page, $panel) {
 		$setupblock_html1 = "";
 		$setupblock_html2 = "";
 
@@ -52,7 +52,7 @@ class SetupTheme extends Themelet {
 		$page->add_block(new Block("Setup", $table));
 	}
 
-	public function display_advanced($page, $options) {
+	public function display_advanced(Page $page, $options) {
 		$rows = "";
 		foreach($options as $name => $value) {
 			$h_value = html_escape($value);
@@ -90,7 +90,7 @@ class SetupTheme extends Themelet {
 		";
 	}
 
-	protected function sb_to_html($block) {
+	protected function sb_to_html(SetupBlock $block) {
 		return "<div class='setupblock'><b>{$block->header}</b><br>{$block->body}</div>\n";
 	}
 }

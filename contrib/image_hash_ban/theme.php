@@ -20,7 +20,7 @@ class ImageBanTheme extends Themelet {
 	 *  'date' => when the ban started
 	 * )
 	 */
-	public function display_image_hash_bans($page, $page_number, $bans) {
+	public function display_image_hash_bans(Page $page, $page_number, $bans) {
 		$h_bans = "";
 		foreach($bans as $ban) {
 			$h_bans .= "
@@ -70,7 +70,7 @@ class ImageBanTheme extends Themelet {
 	 *
 	 * $image_id = the image to delete
 	 */
-	public function get_buttons_html($image) {
+	public function get_buttons_html(Image $image) {
 		$html = "
 			<form action='".make_link("image_hash_ban/add")."' method='POST'>
 				<input type='hidden' name='hash' value='{$image->hash}'>

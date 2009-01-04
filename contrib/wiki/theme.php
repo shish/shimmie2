@@ -8,7 +8,7 @@ class WikiTheme {
 	 * $wiki_page = the wiki page, has ->title and ->body
 	 * $nav_page = a wiki page object with navigation, has ->body
 	 */
-	public function display_page($page, $wiki_page, $nav_page) {
+	public function display_page(Page $page, WikiPage $wiki_page, WikiPage $nav_page) {
 		if(is_null($nav_page)) {
 			$nav_page = new WikiPage();
 			$nav_page->body = "";
@@ -29,14 +29,14 @@ class WikiTheme {
 		$page->add_block(new Block("Content", $this->create_display_html($wiki_page)));
 	}
 
-	public function display_page_editor($page, $wiki_page) {
+	public function display_page_editor(Page $page, WikiPage $wiki_page) {
 		$page->set_title(html_escape($wiki_page->title));
 		$page->set_heading(html_escape($wiki_page->title));
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
 	}
 
-	protected function can_edit($user, $page) {
+	protected function can_edit(User $user, WikiPage $page) {
 		global $config;
 
 		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
@@ -46,7 +46,7 @@ class WikiTheme {
 		return false;
 	}
 
-	protected function create_edit_html($page) {
+	protected function create_edit_html(WikiPage $page) {
 		$h_title = html_escape($page->title);
 		$u_title = url_escape($page->title);
 		$i_revision = int_escape($page->revision) + 1;
@@ -70,7 +70,7 @@ class WikiTheme {
 		";
 	}
 
-	protected function create_display_html($page) {
+	protected function create_display_html(WikiPage $page) {
 		$owner = $page->get_owner();
 
 		$tfe = new TextFormattingEvent($page->body);

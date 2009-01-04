@@ -7,7 +7,7 @@ class CommentListTheme extends Themelet {
 	 * $page_number = the current page number
 	 * $total_pages = the total number of comment pages
 	 */
-	public function display_page_start($page, $page_number, $total_pages) {
+	public function display_page_start(Page $page, $page_number, $total_pages) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -30,7 +30,7 @@ class CommentListTheme extends Themelet {
 	 *
 	 * $comments = an array of Comment objects to be shown
 	 */
-	public function display_recent_comments($page, $comments) {
+	public function display_recent_comments(Page $page, $comments) {
 		$html = $this->comments_to_html($comments, true);
 		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
 		$page->add_block(new Block("Comments", $html, "left"));
@@ -39,7 +39,7 @@ class CommentListTheme extends Themelet {
 	/*
 	 * Show comments for an image
 	 */
-	public function display_comments($page, $comments, $postbox, $image_id) {
+	public function display_comments(Page $page, $comments, $postbox, $image_id) {
 		if($postbox) {
 			$page->add_block(new Block("Comments",
 					$this->comments_to_html($comments).
@@ -57,7 +57,7 @@ class CommentListTheme extends Themelet {
 	 * Add a block with thumbnail and comments, as part of the comment
 	 * list page
 	 */
-	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
+	public function add_comment_list(Page $page, Image $image, $comments, $position, $with_postbox) {
 		$html  = "<div style='text-align: left'>";
 		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
 		$html .=   $this->comments_to_html($comments);

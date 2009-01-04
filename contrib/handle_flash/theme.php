@@ -1,7 +1,7 @@
 <?php
 
 class FlashFileHandlerTheme extends Themelet {
-	public function display_image($page, $image) {
+	public function display_image(Page $page, Image $image) {
 		$ilink = $image->get_image_link();
 		// FIXME: object and embed have "height" and "width"
 		$html = "

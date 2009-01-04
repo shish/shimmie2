@@ -16,7 +16,7 @@ class TagListTheme extends Themelet {
 		$this->navigation = $nav;
 	}
 
-	public function display_page($page) {
+	public function display_page(Page $page) {
 		$page->set_title("Tag List");
 		$page->set_heading($this->heading);
 		$page->add_block(new Block("Tags", $this->list));
@@ -31,7 +31,7 @@ class TagListTheme extends Themelet {
 	 *                 ...
 	 *              )
 	 */
-	public function display_related_block($page, $tag_infos) {
+	public function display_related_block(Page $page, $tag_infos) {
 		global $config;
 
 		$html = "";
@@ -63,7 +63,7 @@ class TagListTheme extends Themelet {
 	 *                 ...
 	 *              )
 	 */
-	public function display_popular_block($page, $tag_infos) {
+	public function display_popular_block(Page $page, $tag_infos) {
 		global $config;
 
 		$html = "";
@@ -96,7 +96,7 @@ class TagListTheme extends Themelet {
 	 *              )
 	 * $search = the current array of tags being searched for
 	 */
-	public function display_refine_block($page, $tag_infos, $search) {
+	public function display_refine_block(Page $page, $tag_infos, $search) {
 		global $config;
 
 		$html = "";

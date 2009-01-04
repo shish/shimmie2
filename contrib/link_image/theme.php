@@ -1,7 +1,6 @@
 <?php
 class LinkImageTheme extends Themelet {
-	public function links_block($page,$data) {
-
+	public function links_block(Page $page, $data) {
 		$thumb_src = $data['thumb_src'];
 		$image_src = $data['image_src'];
 		$post_link = $data['post_link'];

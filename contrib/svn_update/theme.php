@@ -1,14 +1,14 @@
 <?php
 
 class SVNUpdateTheme extends Themelet {
-	public function display_form($page) {
+	public function display_form(Page $page) {
 		$html = "
 			<a href='".make_link("update/view_changes")."'>Check for Updates</a>
 		";
 		$page->add_block(new Block("Update", $html));
 	}
 
-	public function display_update_todo($page, $log, $branches) {
+	public function display_update_todo(Page $page, $log, $branches) {
 		$h_log = html_escape($log);
 		$updates = "
 			<textarea rows='20' cols='80'>$h_log</textarea>
@@ -37,7 +37,7 @@ class SVNUpdateTheme extends Themelet {
 		$page->add_block(new Block("Available Branches", $branches));
 	}
 
-	public function display_update_log($page, $log) {
+	public function display_update_log(Page $page, $log) {
 		$h_log = html_escape($log);
 		$html = "
 			<textarea rows='20' cols='80'>$h_log</textarea>

@@ -1,15 +1,15 @@
 <?php
 
 class UploadTheme extends Themelet {
-	public function display_block($page) {
+	public function display_block(Page $page) {
 		$page->add_block(new Block("Upload", $this->build_upload_block(), "left", 20));
 	}
 
-	public function display_full($page) {
+	public function display_full(Page $page) {
 		$page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "left", 20));
 	}
 
-	public function display_page($page) {
+	public function display_page(Page $page) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
@@ -61,7 +61,7 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block("Upload", $html, "main", 20));
 	}
 
-	public function display_upload_status($page, $ok) {
+	public function display_upload_status(Page $page, $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link());
@@ -73,7 +73,7 @@ class UploadTheme extends Themelet {
 		}
 	}
 
-	public function display_upload_error($page, $title, $message) {
+	public function display_upload_error(Page $page, $title, $message) {
 		$page->add_block(new Block($title, $message));
 	}
 

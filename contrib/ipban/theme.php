@@ -11,7 +11,7 @@ class IPBanTheme extends Themelet {
 	 *  'end' => when the ban will end
 	 * )
 	 */
-	public function display_bans($page, $bans) {
+	public function display_bans(Page $page, $bans) {
 		global $user;
 		$h_bans = "";
 		foreach($bans as $ban) {

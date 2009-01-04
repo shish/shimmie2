@@ -1,7 +1,7 @@
 <?php
 
 class HomeTheme extends Themelet {
-	public function display_page($page, $sitename, $data_href, $theme_name, $body) {
+	public function display_page(Page $page, $sitename, $data_href, $theme_name, $body) {
 		$page->set_mode("data");
 		$page->set_data(<<<EOD
 <html>
