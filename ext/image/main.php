@@ -107,7 +107,7 @@ class ImageIO implements Extension {
 
 		if($event instanceof ImageAdditionEvent) {
 			$error = $this->add_image($event->image);
-			if(!empty($error)) $event->veto($error);
+			if(!empty($error)) throw new UploadException($error);
 		}
 
 		if($event instanceof ImageDeletionEvent) {

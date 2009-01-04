@@ -47,10 +47,12 @@ class ArchiveFileHandler implements Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = null;
-			$event = new DataUploadEvent($user, $tmpname, $metadata);
-			send_event($event);
-			if($event->vetoed) {
-				return $event->veto_reason;
+			try {
+				$event = new DataUploadEvent($user, $tmpname, $metadata);
+				send_event($event);
+			}
+			catch(UploadException $ex) {
+				return $ex->getMessage();
 			}
 		}
 	}

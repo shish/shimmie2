@@ -36,6 +36,8 @@ class UserCreationEvent extends Event {
 	}
 }
 
+class UserCreationException extends SCoreException {}
+
 class UserPage implements Extension {
 	var $theme;
 
@@ -81,15 +83,15 @@ class UserPage implements Extension {
 					$this->theme->display_error($event->page, "Password Mismatch", "Passwords don't match");
 				}
 				else {
-					$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
-					send_event($uce);
-					if($uce->vetoed) {
-						$this->theme->display_error($event->page, "User Creation Error", $uce->veto_reason);
-					}
-					else {
+					try {
+						$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
+						send_event($uce);
 						$this->set_login_cookie($uce->username, $uce->password);
 						$event->page->set_mode("redirect");
 						$event->page->set_redirect(make_link("user"));
+					}
+					catch(UserCreationException $ex) {
+						$this->theme->display_error($event->page, "User Creation Error", $ex->getMessage());
 					}
 				}
 			}
@@ -210,16 +212,16 @@ class UserPage implements Extension {
 		global $database;
 
 		if(strlen($name) < 1) {
-			$event->veto("Username must be at least 1 character");
+			throw new UserCreationException("Username must be at least 1 character");
 		}
 		else if(!preg_match('/^[a-zA-Z0-9-_]+$/', $name)) {
-			$event->veto("Username contains invalid characters. Allowed characters are letters, numbers, dash, and underscore");
+			throw new UserCreationException(
+					"Username contains invalid characters. Allowed characters are ".
+					"letters, numbers, dash, and underscore");
 		}
 		else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
-			$event->veto("That username is already taken");
+			throw new UserCreationException("That username is already taken");
 		}
-
-		return (!$event->vetoed);
 	}
 
 	private function create_user($event) {

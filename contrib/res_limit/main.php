@@ -18,10 +18,10 @@ class ResolutionLimit implements Extension {
 			
 			$image = $event->image;
 
-			if($min_w > 0 && $image->width < $min_w) $event->veto("Image too small");
-			if($min_h > 0 && $image->height < $min_h) $event->veto("Image too small");
-			if($max_w > 0 && $image->width > $min_w) $event->veto("Image too large");
-			if($max_h > 0 && $image->height > $min_h) $event->veto("Image too large");
+			if($min_w > 0 && $image->width < $min_w) throw new UploadException("Image too small");
+			if($min_h > 0 && $image->height < $min_h) throw new UploadException("Image too small");
+			if($max_w > 0 && $image->width > $min_w) throw new UploadExceptiono("Image too large");
+			if($max_h > 0 && $image->height > $min_h) throw new UploadException("Image too large");
 
 			if(count($ratios) > 0) {
 				$ok = false;
@@ -36,7 +36,9 @@ class ResolutionLimit implements Extension {
 					}
 				}
 				if(!$ok) {
-					$event->veto("Image needs to be in one of these ratios: ".html_escape($config->get_string("upload_ratios", "")));
+					throw new UploadException(
+						"Image needs to be in one of these ratios: ".
+						html_escape($config->get_string("upload_ratios", "")));
 				}
 			}
 		}

@@ -18,8 +18,7 @@ class MP3FileHandler implements Extension {
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
-				$event->veto("MP3 Handler failed to create image object from data");
-				return;
+				throw new UploadException("MP3 handler failed to create image object from data");
 			}
 			send_event(new ImageAdditionEvent($event->user, $image));
 		}

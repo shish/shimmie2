@@ -223,15 +223,10 @@ class DanbooruApi implements Extension
 				$metadata['tags'] = $posttags;
 				$metadata['source'] = $source;
 				
-				$nevent = new DataUploadEvent($user, $file, $metadata);
-				send_event($nevent);
-				// Did something screw up?
-				if($event->vetoed) {
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: $event->veto_reason");
-					return;
-				} else
-				{	// If it went ok, grab the id for the newly uploaded image and pass it in the header
+				try {
+					$nevent = new DataUploadEvent($user, $file, $metadata);
+					send_event($nevent);
+					// If it went ok, grab the id for the newly uploaded image and pass it in the header
 					$newimg = Image::by_hash($config, $database, $hash);
 					$newid = make_link("post/view/" . $newimg->id);
 					// Did we POST or GET this call?
@@ -241,6 +236,12 @@ class DanbooruApi implements Extension
 					}
 					else
 					header("Location: $newid");
+				}
+				catch(UploadException $ex) {
+					// Did something screw up?
+					header("HTTP/1.0 409 Conflict");
+					header("X-Danbooru-Errors: ". $ex->getMessage());
+					return;
 				}
 			} else 
 			{

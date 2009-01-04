@@ -24,6 +24,8 @@ class DataUploadEvent extends Event {
 	}
 }
 
+class UploadException extends SCoreException {}
+
 class Upload implements Extension {
 	var $theme;
 // event handling {{{
@@ -113,12 +115,12 @@ class Upload implements Extension {
 		if($event instanceof DataUploadEvent) {
 			global $config;
 			if($is_full) {
-				$event->veto("Upload failed; disk nearly full");
+				throw new UploadException("Upload failed; disk nearly full");
 			}
 			if(filesize($event->tmpname) > $config->get_int('upload_size')) {
 				$size = to_shorthand_int(filesize($event->tmpname));
 				$limit = to_shorthand_int($config->get_int('upload_size'));
-				$event->veto("File too large ($size &gt; $limit)");
+				throw new UploadException("File too large ($size &gt; $limit)");
 			}
 		}
 	}
@@ -146,10 +148,12 @@ class Upload implements Extension {
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
 			$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
-			send_event($event);
-			if($event->vetoed) {
+			try {
+				send_event($event);
+			}
+			catch(UploadException $ex) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),
-					$event->veto_reason);
+					$ex->getMessage());
 				$ok = false;
 			}
 		}
@@ -224,10 +228,12 @@ class Upload implements Extension {
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
 			$event = new DataUploadEvent($user, $tmp_filename, $metadata);
-			send_event($event);
-			if($event->vetoed) {
+			try {
+				send_event($event);
+			}
+			catch(UploadException $ex) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($url),
-					$event->veto_reason);
+					$ex->getMessage());
 				$ok = false;
 			}
 		}
@@ -238,5 +244,5 @@ class Upload implements Extension {
 	}
 // }}}
 }
-add_event_listener(new Upload(), 40); // early, so it can veto the DataUploadEvent before any data handlers see it
+add_event_listener(new Upload(), 40); // early, so it can stop the DataUploadEvent before any data handlers see it
 ?>

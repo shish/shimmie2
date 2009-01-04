@@ -30,15 +30,13 @@ porn
 				else if($word[0] == '/') {
 					// lines that start with slash are regex
 					if(preg_match($word, $comment)) {
-						$event->veto("Comment contains banned terms");
-						break;
+						throw new CommentPostingException("Comment contains banned terms");
 					}
 				}
 				else {
 					// other words are literal
 					if(strpos($comment, $word) !== false) {
-						$event->veto("Comment contains banned terms");
-						break;
+						throw new CommentPostingException("Comment contains banned terms");
 					}
 				}
 			}

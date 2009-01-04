@@ -18,16 +18,9 @@ class IcoFileHandler implements Extension {
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
-				$event->veto("Handler failed to create image object from data");
-				return;
+				throw new UploadException("Icon handler failed to create image object from data");
 			}
-
-			$iae = new ImageAdditionEvent($event->user, $image);
-			send_event($iae);
-			if($iae->vetoed) {
-				$event->veto($iae->veto_reason);
-				return;
-			}
+			send_event(new ImageAdditionEvent($event->user, $image));
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {

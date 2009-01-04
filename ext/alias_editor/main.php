@@ -10,6 +10,8 @@ class AddAliasEvent extends Event {
 	}
 }
 
+class AddAliasException extends SCoreException {}
+
 class AliasEditor implements Extension {
 	var $theme;
 
@@ -20,14 +22,14 @@ class AliasEditor implements Extension {
 			if($event->get_arg(0) == "add") {
 				if($event->user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
-						$aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
-						send_event($aae);
-						if($aae->vetoed) {
-							$this->theme->display_error($event->page, "Error adding alias", $aae->veto_reason);
-						}
-						else {
+						try {
+							$aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
+							send_event($aae);
 							$event->page->set_mode("redirect");
 							$event->page->set_redirect(make_link("alias/list"));
+						}
+						catch(AddAliasException $ex) {
+							$this->theme->display_error($event->page, "Error adding alias", $ex->getMessage());
 						}
 					}
 				}
@@ -80,7 +82,7 @@ class AliasEditor implements Extension {
 			global $database;
 			$pair = array($event->oldtag, $event->newtag);
 			if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
-				$event->veto("That alias already exists");
+				throw new AddAliasException("That alias already exists");
 			}
 			else {
 				$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);

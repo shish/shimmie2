@@ -48,7 +48,7 @@ class ImageBan implements Extension {
 
 			$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
 			if($row) {
-				$event->veto("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
+				throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
 			}
 		}
 

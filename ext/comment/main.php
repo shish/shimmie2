@@ -35,6 +35,7 @@ class CommentDeletionEvent extends Event {
 	}
 }
 // }}}
+class CommentPostingException extends SCoreException {}
 
 class Comment { // {{{
 	public function Comment($row) {
@@ -68,14 +69,14 @@ class CommentList implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("comment")) {
 			if($event->get_arg(0) == "add") {
-				$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
-				send_event($cpe);
-				if($cpe->vetoed) {
-					$this->theme->display_error($event->page, "Comment Blocked", $cpe->veto_reason);
-				}
-				else {
+				try {
+					$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
+					send_event($cpe);
 					$event->page->set_mode("redirect");
 					$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
+				}
+				catch(CommentPostingException $ex) {
+					$this->theme->display_error($event->page, "Comment Blocked", $ex->getMessage());
 				}
 			}
 			else if($event->get_arg(0) == "delete") {
@@ -346,37 +347,39 @@ class CommentList implements Extension {
 
 		// basic sanity checks
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
-			$event->veto("Anonymous posting has been disabled");
+			throw new CommentPostingException("Anonymous posting has been disabled");
 		}
 		else if(is_null(Image::by_id($config, $database, $image_id))) {
-			$event->veto("The image does not exist");
+			throw new CommentPostingException("The image does not exist");
 		}
 		else if(trim($comment) == "") {
-			$event->veto("Comments need text...");
+			throw new CommentPostingException("Comments need text...");
 		}
 		else if(strlen($comment) > 9000) {
-			$event->veto("Comment too long~");
+			throw new CommentPostingException("Comment too long~");
 		}
 
 		// advanced sanity checks
 		else if(strlen($comment)/strlen(gzcompress($comment)) > 10) {
-			$event->veto("Comment too repetitive~");
+			throw new CommentPostingException("Comment too repetitive~");
 		}
 		else if($user->is_anonymous() && !$this->hash_match()) {
-			$event->veto("Comment submission form is out of date; refresh the comment form to show you aren't a spammer~");
+			throw new CommentPostingException(
+					"Comment submission form is out of date; refresh the ".
+					"comment form to show you aren't a spammer~");
 		}
 
 		// database-querying checks
 		else if($this->is_comment_limit_hit()) {
-			$event->veto("You've posted several comments recently; wait a minute and try again...");
+			throw new CommentPostingException("You've posted several comments recently; wait a minute and try again...");
 		}
 		else if($this->is_dupe($image_id, $comment)) {
-			$event->veto("Someone already made that comment on that image -- try and be more original?");
+			throw new CommentPostingException("Someone already made that comment on that image -- try and be more original?");
 		}
 
 		// rate-limited external service checks last
 		else if($user->is_anonymous() && $this->is_spam($comment)) {
-			$event->veto("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
+			throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}
 
 		// all checks passed

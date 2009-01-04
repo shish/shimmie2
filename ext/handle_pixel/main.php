@@ -18,16 +18,11 @@ class PixelFileHandler implements Extension {
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
-				$event->veto("Pixel Handler failed to create image object from data");
-				return;
+				throw new UploadException("Pixel Handler failed to create image object from data");
 			}
 
 			$iae = new ImageAdditionEvent($event->user, $image);
-			send_event($iae);
-			if($iae->vetoed) {
-				$event->veto($iae->veto_reason);
-				return;
-			}
+			send_event($iae); // this might raise an exception, but all we'd do is re-throw it...
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {

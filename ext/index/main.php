@@ -59,7 +59,6 @@ class Index implements Extension {
 				else {
 					$event->page->set_mode("redirect");
 					$event->page->set_redirect(make_link("post/list/$search/1"));
-					//$event->veto();
 				}
 				return;
 			}
