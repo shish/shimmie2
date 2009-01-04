@@ -13,9 +13,8 @@ class News implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 		
 		if($event instanceof PostListBuildingEvent) {
-			global $config;
-			if(strlen($config->get_string("news_text")) > 0) {
-				$this->theme->display_news($event->page, $config->get_string("news_text"));
+			if(strlen($event->context->config->get_string("news_text")) > 0) {
+				$this->theme->display_news($event->page, $event->context->config->get_string("news_text"));
 			}
 		}
 
