@@ -1,4 +1,6 @@
 <?php
 
-class PermissionDeniedException extends Exception {}
+class SCoreException extends Exception {}
+
+class PermissionDeniedException extends SCoreException {}
 ?>

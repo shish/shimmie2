@@ -60,33 +60,6 @@ function to_shorthand_int($int) {
 	}
 }
 
-function tag_explode($tags) {
-	if(is_string($tags)) {
-		$tags = explode(' ', $tags);
-	}
-	else if(is_array($tags)) {
-		// do nothing
-	}
-	else {
-		die("tag_explode only takes strings or arrays");
-	}
-
-	$tags = array_map("trim", $tags);
-
-	$tag_array = array();
-	foreach($tags as $tag) {
-		if(is_string($tag) && strlen($tag) > 0) {
-			$tag_array[] = $tag;
-		}
-	}
-
-	if(count($tag_array) == 0) {
-		$tag_array = array("tagme");
-	}
-
-	return $tag_array;
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
@@ -140,27 +113,6 @@ function check_cli() {
 		exit;
 	}
 	$_SERVER['REMOTE_ADDR'] = "127.0.0.1";
-}
-
-function get_thumbnail_size($orig_width, $orig_height) {
-	global $config;
-
-	if($orig_width == 0) $orig_width = 192;
-	if($orig_height == 0) $orig_height = 192;
-
-	$max_width  = $config->get_int('thumb_width');
-	$max_height = $config->get_int('thumb_height');
-
-	$xscale = ($max_height / $orig_height);
-	$yscale = ($max_width / $orig_width);
-	$scale = ($xscale < $yscale) ? $xscale : $yscale;
-
-	if($scale > 1 && $config->get_bool('thumb_upscale')) {
-		return array((int)$orig_width, (int)$orig_height);
-	}
-	else {
-		return array((int)($orig_width*$scale), (int)($orig_height*$scale));
-	}
 }
 
 # $db is the connection object
@@ -217,13 +169,13 @@ function get_memory_limit() {
 		// we aren't going to fit, override
 		$shimmie_limit = $default_limit;
 	}
-	
+
 	ini_set("memory_limit", $shimmie_limit);
 	$memory = parse_shorthand_int(ini_get("memory_limit"));
 
 	// changing of memory limit is disabled / failed
 	if($memory == -1) {
-		$memory = $default_limit; 
+		$memory = $default_limit;
 	}
 
 	assert($memory > 0);
@@ -260,93 +212,10 @@ function get_base_href() {
 }
 
 
-function move_upload_to_archive($event) {
-	$hash = $event->hash;
-	$ha = substr($hash, 0, 2);
-	if(!@copy($event->tmpname, "images/$ha/$hash")) {
-		$event->veto("Failed to copy file from uploads ({$event->tmpname}) to archive (images/$ha/$hash)");
-		return false;
-	}
-	return true;
-}
-
 function format_text($string) {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
 	return $tfe->formatted;
-}
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* Debugging functions                                                       *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function get_debug_info() {
-	global $config, $_event_count;
-	
-	if(function_exists('memory_get_usage')) {
-		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
-	}
-	else {
-		$i_mem = "???";
-	}
-	if(function_exists('getrusage')) {
-		$ru = getrusage();
-		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
-		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
-	}
-	else {
-		$i_utime = "???";
-		$i_stime = "???";
-	}
-	$i_files = count(get_included_files());
-	global $_execs;
-	global $database;
-	$hits = $database->cache_hits;
-	$miss = $database->cache_misses;
-	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
-	$debug .= "; Used $i_files files and $_execs queries";
-	$debug .= "; Sent $_event_count events";
-	$debug .= "; $hits cache hits and $miss misses";
-
-	return $debug;
-}
-
-// print_obj ($object, $title, $return)
-function print_obj($object,$title="Object Information", $return=false) {
-	global $user;
-	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) { 
-		$pr = print_r($object,true);
-		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
-		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
-		
-		if($return) {
-			return $pr;
-		} else {
-			global $page;
-			$page->add_block(new Block($title,$pr,"main",1000));
-			return true;
-		}
-	}
-}
-
-// preset tests. 
-
-// Prints the contents of $event->args, even though they are clearly visible in 
-// the URL bar. 
-function print_url_args() { 
-	global $event; 
-	print_obj($event->args,"URL Arguments"); 
-} 
-
-// Prints all the POST data. 
-function print_POST() { 
-	print_obj($_POST,"\$_POST"); 
-} 
-
-// Prints GET, though this is also visible in the url ( url?var&var&var) 
-function print_GET() { 
-	print_obj($_GET,"\$_GET"); 
 }
 
 
