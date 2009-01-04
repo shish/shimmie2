@@ -116,7 +116,7 @@ class UserPage implements Extension {
 		if($event instanceof UserPageBuildingEvent) {
 			global $user;
 			global $config;
-			$this->theme->display_user_page($event->context->page, $event->context->user, $user);
+			$this->theme->display_user_page($event->context->page, $event->display_user, $user);
 			if($user->id == $event->display_user->id) {
 				$ubbe = new UserBlockBuildingEvent($event->display_user);
 				send_event($ubbe);
