@@ -28,7 +28,8 @@ class UserCreationEvent extends Event {
 	var $password;
 	var $email;
 
-	public function UserCreationEvent($name, $pass, $email) {
+	public function __construct(RequestContext $context, $name, $pass, $email) {
+		parent::__construct($context);
 		$this->username = $name;
 		$this->password = $pass;
 		$this->email = $email;
@@ -83,7 +84,7 @@ class UserPage implements Extension {
 				}
 				else {
 					try {
-						$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
+						$uce = new UserCreationEvent($event->context, $_POST['name'], $_POST['pass1'], $_POST['email']);
 						send_event($uce);
 						$this->set_login_cookie($uce->username, $uce->password);
 						$event->page->set_mode("redirect");
