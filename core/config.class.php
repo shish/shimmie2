@@ -77,11 +77,45 @@ abstract class BaseConfig implements Config {
 
 
 /*
- * A class for easy access to the 'config' table, can always be accessed
- * through "global $config;"
+ * Loads the config list from a PHP file; the file should be in the format:
+ *
+ *  <?php
+ *  $config['foo'] = "bar";
+ *  $config['baz'] = "qux";
+ *  ?>
+ */
+class StaticConfig extends BaseConfig {
+	public function __construct($filename) {
+		if(file_exists($filename)) {
+			require_once $filename;
+			if(isset($config)) {
+				$this->values = $config;
+			}
+			else {
+				throw new Exception("Config file '$filename' doesn't contain any config");
+			}
+		}
+		else {
+			throw new Exception("Config file '$filename' missing");
+		}
+	}
+
+	public function save($name=null) {
+		// static config is static
+	}
+}
+
+
+/*
+ * Loads the config list from a table in a given database, the table should
+ * be called config and have the schema:
+ *
+ *  CREATE TABLE config(
+ *      name VARCHAR(255) NOT NULL,
+ *      value TEXT
+ *  );
  */
 class DatabaseConfig extends BaseConfig {
-	var $values = array();
 	var $database = null;
 
 	/*
@@ -102,11 +136,8 @@ class DatabaseConfig extends BaseConfig {
 			}
 		}
 		else {
-			// does "or update" work with sqlite / postgres?
-			$this->database->db->StartTrans();
 			$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
 			$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
-			$this->database->db->CommitTrans();
 		}
 	}
 }
