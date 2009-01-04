@@ -70,9 +70,9 @@ class GenericPage {
 
 	// ==============================================
 	
-	public function display() {
+	public function display($context) {
 		header("Content-type: {$this->type}");
-		header("X-Powered-By: Shimmie-".VERSION);
+		header("X-Powered-By: SCore-".SCORE_VERSION);
 
 		switch($this->mode) {
 			case "page":
