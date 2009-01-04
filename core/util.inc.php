@@ -183,13 +183,10 @@ function get_memory_limit() {
 	return $memory;
 }
 
-function get_session_ip() {
-	global $config;
-
+function get_session_ip($config) {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = $_SERVER['REMOTE_ADDR'];
     $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
-
     return $addr;
 }
 

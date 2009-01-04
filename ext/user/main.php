@@ -238,7 +238,7 @@ class UserPage implements Extension {
 	private function set_login_cookie($name, $pass) {
 		global $config;
 
-		$addr = get_session_ip();
+		$addr = get_session_ip($config);
 		$hash = md5(strtolower($name) . $pass);
 
 		setcookie("shm_user", $name,
