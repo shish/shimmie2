@@ -12,7 +12,7 @@ class SetupTheme extends Themelet {
 	 *
 	 * The page should wrap all the options in a form which links to setup_save
 	 */
-	public function display_page(Page $page, $panel) {
+	public function display_page(Page $page, SetupPanel $panel) {
 		$setupblock_html1 = "";
 		$setupblock_html2 = "";
 
