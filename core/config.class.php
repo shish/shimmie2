@@ -1,9 +1,86 @@
 <?php
 /*
+ * an abstract interface for altering a name:value pair list
+ */
+interface Config {
+	public function save($name=null);
+
+	public function set_int($name, $value);
+	public function set_string($name, $value);
+	public function set_bool($name, $value);
+
+	public function set_default_int($name, $value);
+	public function set_default_string($name, $value);
+	public function set_default_bool($name, $value);
+
+	public function get_int($name, $default=null);
+	public function get_string($name, $default=null);
+	public function get_bool($name, $default=null);
+}
+
+
+/*
+ * Common methods for manipulating the list, loading and saving is
+ * left to the concrete implementation
+ */
+abstract class BaseConfig implements Config {
+	var $values = array();
+
+	public function set_int($name, $value) {
+		$this->values[$name] = parse_shorthand_int($value);
+		$this->save($name);
+	}
+	public function set_string($name, $value) {
+		$this->values[$name] = $value;
+		$this->save($name);
+	}
+	public function set_bool($name, $value) {
+		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
+		$this->save($name);
+	}
+
+	public function set_default_int($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = parse_shorthand_int($value);
+		}
+	}
+	public function set_default_string($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = $value;
+		}
+	}
+	public function set_default_bool($name, $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
+		}
+	}
+
+	public function get_int($name, $default=null) {
+		return (int)($this->get($name, $default));
+	}
+	public function get_string($name, $default=null) {
+		return $this->get($name, $default);
+	}
+	public function get_bool($name, $default=null) {
+		return ($this->get($name, $default) == 'Y');
+	}
+
+	private function get($name, $default=null) {
+		if(isset($this->values[$name])) {
+			return $this->values[$name];
+		}
+		else {
+			return $default;
+		}
+	}
+}
+
+
+/*
  * A class for easy access to the 'config' table, can always be accessed
  * through "global $config;"
  */
-class Config {
+class DatabaseConfig {
 	var $values = array();
 	var $database = null;
 

@@ -19,7 +19,7 @@ foreach($files as $filename) {
 // connect to database
 $database = new Database();
 $database->db->fnExecute = '_count_execs';
-$config = new Config($database);
+$config = new DatabaseConfig($database);
 
 
 // load the theme parts
