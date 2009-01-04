@@ -24,7 +24,7 @@ class AliasEditorTheme extends Themelet {
 			$action = "";
 			$add = "";
 		}
-		
+
 		$h_aliases = "";
 		foreach($aliases as $old => $new) {
 			$h_old = html_escape($old);
@@ -55,7 +55,7 @@ class AliasEditorTheme extends Themelet {
 				<input type='submit' value='Upload List'>
 			</form>
 		";
-		
+
 		$page->set_title("Alias List");
 		$page->set_heading("Alias List");
 		$page->add_block(new NavBlock());

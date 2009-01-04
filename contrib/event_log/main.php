@@ -26,7 +26,7 @@ class EventLog implements Extension {
 							break;
 					}
 				}
-				
+
 				$columns = array("name", "date", "owner_ip", "event");
 				$orders = array("ASC", "DESC");
 
@@ -34,7 +34,7 @@ class EventLog implements Extension {
 				if(isset($_GET['sort']) && in_array($_GET['sort'], $columns)) {
 					$sort = $_GET['sort'];
 				}
-				
+
 				$order = "DESC";
 				if(isset($_GET['order']) && in_array($_GET['order'], $orders)) {
 					$order = $_GET['order'];
@@ -92,7 +92,7 @@ class EventLog implements Extension {
 
 	private function add_to_log($user, $event, $entry) {
 		global $database;
-		
+
 		$database->execute("
 			INSERT INTO event_log (owner_id, owner_ip, date, event, entry)
 			VALUES (?, ?, now(), ?, ?)",

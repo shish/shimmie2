@@ -41,7 +41,7 @@ class Index implements Extension {
 
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-		
+
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int("index_width", 3);
@@ -73,7 +73,7 @@ class Index implements Extension {
 				$search_terms = explode(' ', $event->get_arg(0));
 				$page_number = int_escape($event->get_arg(1));
 			}
-			
+
 			if($page_number == 0) $page_number = 1; // invalid -> 0
 
 			global $config;
@@ -84,7 +84,7 @@ class Index implements Extension {
 			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
 
 			send_event(new PostListBuildingEvent($event->page, $search_terms));
-			
+
 			$this->theme->set_page($page_number, $total_pages, $search_terms);
 			$this->theme->display_page($event->page, $images);
 		}
@@ -92,7 +92,7 @@ class Index implements Extension {
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Index Options");
 			$sb->position = 20;
-			
+
 			$sb->add_label("Index table size ");
 			$sb->add_int_option("index_width");
 			$sb->add_label(" x ");

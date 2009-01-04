@@ -33,7 +33,7 @@ class Upload implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		$is_full = (disk_free_space(realpath("./images/")) < 100*1024*1024);
-		
+
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('upload_count', 3);
@@ -134,11 +134,11 @@ class Upload implements Extension {
 	private function try_upload($file, $tags, $source) {
 		global $page;
 		global $config;
-		
+
 		if(empty($source)) $source = null;
 
 		$ok = true;
-		
+
 		// blank file boxes cause empty uploads, no need for error message
 		if(file_exists($file['tmp_name'])) {
 			global $user;
@@ -207,14 +207,14 @@ class Upload implements Extension {
 			curl_close($ch);
 			fclose($fp);
 		}
-		
+
 		if($config->get_string("transload_engine") == "wget") {
 			$ua = "Shimmie-".VERSION;
 			$s_url = escapeshellarg($url);
 			$s_tmp = escapeshellarg($tmp_filename);
 			system("wget $s_url --output-document=$s_tmp --user-agent=$ua --referer=$s_url");
 		}
-		
+
 		if(filesize($tmp_filename) == 0) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"No data found -- perhaps the site has hotlink protection?");

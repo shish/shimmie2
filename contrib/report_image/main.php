@@ -8,7 +8,7 @@
  * Version 0.3a - See changelog in main.php
  * November 06, 2007
  */
- 
+
 class RemoveReportedImageEvent extends Event {
 	var $id;
 
@@ -17,11 +17,11 @@ class RemoveReportedImageEvent extends Event {
 	}
 }
 
-class AddReportedImageEvent extends Event { 
+class AddReportedImageEvent extends Event {
 	var $reporter_id;
 	var $image_id;
 	var $reason;
-	
+
 	public function AddReportedImageEvent($image_id, $reporter_id, $reason) {
 		$this->reporter_id = $reporter_id;
 		$this->image_id = $image_id;
@@ -31,20 +31,20 @@ class AddReportedImageEvent extends Event {
 
 class ReportImage implements Extension {
 	var $theme;
-	
+
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-		
+
 		if($event instanceof InitExtEvent) {
 			global $config;
-			
+
 			$config->set_default_bool('report_image_show_thumbs', true);
 
 			if($config->get_int("ext_report_image_version") < 1) {
 				$this->install();
 			}
 		}
-		
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("image_report")) {
 			global $user;
 			if($event->get_arg(0) == "add") {
@@ -70,7 +70,7 @@ class ReportImage implements Extension {
 				}
 			}
 		}
-		
+
 		if($event instanceof AddReportedImageEvent) {
 			global $database;
 			$database->Execute(
@@ -83,7 +83,7 @@ class ReportImage implements Extension {
 			global $database;
 			$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
 		}
-		
+
 		if($event instanceof DisplayingImageEvent) {
 			global $user;
 			global $config;
@@ -98,7 +98,7 @@ class ReportImage implements Extension {
 			$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
 			$event->panel->add_block($sb);
 		}
-		
+
 		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
 				$event->add_link("Reported Images", make_link("image_report/list"));
@@ -110,7 +110,7 @@ class ReportImage implements Extension {
 			$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
 		}
 	}
-	
+
 	protected function install() {
 		global $database;
 		global $config;
@@ -132,7 +132,7 @@ class ReportImage implements Extension {
 			FROM image_reports
 			JOIN users ON reporter_id = users.id");
 		if(is_null($all_reports)) $all_reports = array();
-		
+
 		$reports = array();
 		foreach($all_reports as $report) {
 			global $database, $config;

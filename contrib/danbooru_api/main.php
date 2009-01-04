@@ -36,21 +36,21 @@ Also correctly redirects the url provided by danbooruup in the event
 of a duplicate image.
 
 19-OCT-07 4:46PM CST - JJS
-Add compatibility with danbooru api v1.8.1 style urls 
-for find_posts and add_post. NOTE: This does not implement 
-the changes to the parameter names, it is simply a 
-workaround for the latest danbooruup firefox extension. 
+Add compatibility with danbooru api v1.8.1 style urls
+for find_posts and add_post. NOTE: This does not implement
+the changes to the parameter names, it is simply a
+workaround for the latest danbooruup firefox extension.
 Completely compatibility will probably involve a rewrite with a different URL
 
 */
 
-class DanbooruApi implements Extension 
+class DanbooruApi implements Extension
 {
 	// Receive the event
-	public function receive_event(Event $event) 
+	public function receive_event(Event $event)
 	{
 		// Check if someone is accessing /api/danbooru (us)
-		if(($event instanceof PageRequestEvent) && ($event->page_matches("api")) && ($event->get_arg(0) == 'danbooru')) 
+		if(($event instanceof PageRequestEvent) && ($event->page_matches("api")) && ($event->get_arg(0) == 'danbooru'))
 		{
 			// execute the danbooru processing code
 			$this->api_danbooru($event);
@@ -65,7 +65,7 @@ class DanbooruApi implements Extension
 			}
 		}
 	}
-	
+
 	// Danbooru API
 	private function api_danbooru($event)
 	{
@@ -77,31 +77,31 @@ class DanbooruApi implements Extension
 		$page->set_type("application/xml");
 		//debug
 		//$page->set_type("text/plain");
-		
+
 		$results = array();
-		
+
 		/*
 		add_post()
-		Adds a post to the database. 
-		Parameters 
+		Adds a post to the database.
+		Parameters
 		* login: login
-		* password: password 
-		* file: file as a multipart form 
-		* source: source url 
+		* password: password
+		* file: file as a multipart form
+		* source: source url
 		* title: title **IGNORED**
-		* tags: list of tags as a string, delimited by whitespace 
-		* md5: MD5 hash of upload in hexadecimal format 
+		* tags: list of tags as a string, delimited by whitespace
+		* md5: MD5 hash of upload in hexadecimal format
 		* rating: rating of the post. can be explicit, questionable, or safe. **IGNORED**
-		Notes 
-		* The only necessary parameter is tags and either file or source. 
-		* If you want to sign your post, you need a way to authenticate your account, either by supplying login and password, or by supplying a cookie. 
-		* If an account is not supplied or if it doesn‘t authenticate, he post will be added anonymously. 
-		* If the md5 parameter is supplied and does not match the hash of what‘s on the server, the post is rejected. 
-		Response 
-		The response depends on the method used: 
-		Post 
-		* X-Danbooru-Location set to the URL for newly uploaded post. 
-		Get 
+		Notes
+		* The only necessary parameter is tags and either file or source.
+		* If you want to sign your post, you need a way to authenticate your account, either by supplying login and password, or by supplying a cookie.
+		* If an account is not supplied or if it doesn‘t authenticate, he post will be added anonymously.
+		* If the md5 parameter is supplied and does not match the hash of what‘s on the server, the post is rejected.
+		Response
+		The response depends on the method used:
+		Post
+		* X-Danbooru-Location set to the URL for newly uploaded post.
+		Get
 		* Redirected to the newly uploaded post.
 		*/
 		if(($event->get_arg(1) == 'add_post') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'create.xml')))
@@ -137,7 +137,7 @@ class DanbooruApi implements Extension
 					if(isset($_REQUEST['post']['source']) && !empty($_REQUEST['post']['source']))
 					{
 						$source = $_REQUEST['post']['source'];
-					} else 
+					} else
 					{
 						$source = null;
 					}
@@ -146,19 +146,19 @@ class DanbooruApi implements Extension
 					$url = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
 					$source = $url;
 					$tmp_filename = tempnam("/tmp", "shimmie_transload");
-					
+
 					// Are we using fopen wrappers or curl?
-					if($config->get_string("transload_engine") == "fopen") 
+					if($config->get_string("transload_engine") == "fopen")
 					{
 						$fp = fopen($url, "r");
 						if(!$fp) {
 							header("HTTP/1.0 409 Conflict");
 							header("X-Danbooru-Errors: fopen read error");
 						}
-						
+
 						$data = "";
 						$length = 0;
-						while(!feof($fp) && $length <= $config->get_int('upload_size')) 
+						while(!feof($fp) && $length <= $config->get_int('upload_size'))
 						{
 							$data .= fread($fp, 8192);
 							$length = strlen($data);
@@ -170,7 +170,7 @@ class DanbooruApi implements Extension
 						fclose($fp);
 					}
 
-					if($config->get_string("transload_engine") == "curl") 
+					if($config->get_string("transload_engine") == "curl")
 					{
 						$ch = curl_init($url);
 						$fp = fopen($tmp_filename, "w");
@@ -184,13 +184,13 @@ class DanbooruApi implements Extension
 					}
 					$file = $tmp_filename;
 					$filename = basename($url);
-				} else 
+				} else
 				{	// Nothing was specified at all
 					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: no input files");
 					return;
 				}
-				
+
 				// Get tags out of url
 				$posttags = tag_explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
 				$hash = md5_file($file);
@@ -206,7 +206,7 @@ class DanbooruApi implements Extension
 				}
 				// Upload size checking is now performed in the upload extension
 				// It is also currently broken due to some confusion over file variable ($tmp_filename?)
-				
+
 				// Does it exist already?
 				$existing = Image::by_hash($config, $database, $hash);
 				if(!is_null($existing)) {
@@ -222,7 +222,7 @@ class DanbooruApi implements Extension
 				$metadata['extension'] = $fileinfo['extension'];
 				$metadata['tags'] = $posttags;
 				$metadata['source'] = $source;
-				
+
 				try {
 					$nevent = new DataUploadEvent($user, $file, $metadata);
 					send_event($nevent);
@@ -243,23 +243,23 @@ class DanbooruApi implements Extension
 					header("X-Danbooru-Errors: ". $ex->getMessage());
 					return;
 				}
-			} else 
+			} else
 			{
 				header("HTTP/1.0 409 Conflict");
 				header("X-Danbooru-Errors: authentication error");
 				return;
 			}
 		}
-		
+
 		/*
-		find_posts() 
-		Find all posts that match the search criteria. Posts will be ordered by id descending. 
-		Parameters 
-		* md5: md5 hash to search for (comma delimited) 
-		* id: id to search for (comma delimited) 
-		* tags: what tags to search for 
-		* limit: limit 
-		* offset: offset 
+		find_posts()
+		Find all posts that match the search criteria. Posts will be ordered by id descending.
+		Parameters
+		* md5: md5 hash to search for (comma delimited)
+		* id: id to search for (comma delimited)
+		* tags: what tags to search for
+		* limit: limit
+		* offset: offset
 		* after_id: limit results to posts added after this id
 		*/
 		if(($event->get_arg(1) == 'find_posts') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'index.xml')))
@@ -285,7 +285,7 @@ class DanbooruApi implements Extension
 				$tags = isset($_GET['tags']) ? tag_explode($_GET['tags']) : array();
 				$results = Image::find_images($config,$database,$start,$limit,$tags);
 			}
-			
+
 			// Now we have the array $results filled with Image objects
 			// Let's display them
 			$xml = "<posts>\n";
@@ -302,13 +302,13 @@ class DanbooruApi implements Extension
 			$xml .= "</posts>";
 			$page->set_data($xml);
 		}
-		
+
 		/*
-		find_tags() Find all tags that match the search criteria. 
-		Parameters 
-		* id: A comma delimited list of tag id numbers. 
-		* name: A comma delimited list of tag names. 
-		* tags: any typical tag query. See Tag#parse_query for details. 
+		find_tags() Find all tags that match the search criteria.
+		Parameters
+		* id: A comma delimited list of tag id numbers.
+		* name: A comma delimited list of tag names.
+		* tags: any typical tag query. See Tag#parse_query for details.
 		* after_id: limit results to tags with an id number after after_id. Useful if you only want to refresh
 		*/
 		if($event->get_arg(1) == 'find_tags')
@@ -335,16 +335,16 @@ class DanbooruApi implements Extension
 						$results[] = array($sqlresult->fields['count'], $sqlresult->fields['tag'], $sqlresult->fields['id']);
 					}
 				}
-			} 
+			}
 			/* Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
 			elseif(isset($_GET['tags']))
 			{
 				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
 				$tags = tag_explode($_GET['tags']);
-				
+
 			}
 			*/
-			else 
+			else
 			{
 				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
 				$sqlresult = $database->execute("SELECT id,tag,count FROM tags WHERE count > 0 AND id >= ? ORDER BY id DESC",array($start));
@@ -354,7 +354,7 @@ class DanbooruApi implements Extension
 					$sqlresult->MoveNext();
 				}
 			}
-			
+
 			// Tag results collected, build XML output
 			$xml = "<tags>\n";
 			foreach($results as $tag)
@@ -364,7 +364,7 @@ class DanbooruApi implements Extension
 			$xml .= "</tags>";
 			$page->set_data($xml);
 		}
-		
+
 		// Hackery for danbooruup 0.3.2 providing the wrong view url. This simply redirects to the proper
 		// Shimmie view page
 		// Example: danbooruup says the url is http://shimmie/api/danbooru/post/show/123
@@ -375,7 +375,7 @@ class DanbooruApi implements Extension
 			header("Location: $fixedlocation");
 		}
 	}
-	
+
 	// Turns out I use this a couple times so let's make it a utility function
 	// Authenticates a user based on the contents of the login and password parameters
 	// or makes them anonymous. Does not set any cookies or anything permanent.
@@ -404,7 +404,7 @@ class DanbooruApi implements Extension
 
 	// From htmlspecialchars man page on php.net comments
 	// If tags contain quotes they need to be htmlified
-	private function xmlspecialchars($text) 
+	private function xmlspecialchars($text)
 	{
 		return str_replace('&#039;', '&apos;', htmlspecialchars($text, ENT_QUOTES));
 	}

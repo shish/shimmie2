@@ -28,7 +28,7 @@ class NumericScore implements Extension {
 				$this->install();
 			}
 		}
-		
+
 		if($event instanceof DisplayingImageEvent) {
 			global $user;
 			if(!$user->is_anonymous()) {
@@ -36,7 +36,7 @@ class NumericScore implements Extension {
 				$event->page->add_block(new Block("Image Score", $html, "left", 20));
 			}
 		}
-		
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("numeric_score_vote")) {
 			if(!$event->user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
@@ -49,7 +49,7 @@ class NumericScore implements Extension {
 				$event->page->set_redirect(make_link("post/view/$image_id"));
 			}
 		}
-		
+
 		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			$char = $_POST['numeric_score'];
@@ -58,7 +58,7 @@ class NumericScore implements Extension {
 			else if($char == "d") $score = -1;
 			if($score != 0) send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
 		}
-		
+
 		if($event instanceof NumericScoreSetEvent) {
 			$this->add_vote($event->image_id, $event->user->id, $event->score);
 		}

@@ -9,7 +9,7 @@
  * Version 0.3a - See changelog in main.php
  * November 06, 2007
  */
- 
+
 class ReportImageTheme extends Themelet {
 	public function display_reported_images($page, $reports) {
 		global $config;
@@ -28,13 +28,13 @@ class ReportImageTheme extends Themelet {
 
 			$reporter_name = html_escape($report['reporter_name']);
 			$userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
-			
+
 			global $user;
 			$iabbe = new ImageAdminBlockBuildingEvent($image, $user);
 			send_event($iabbe);
 			ksort($iabbe->parts);
 			$actions = join("<br>", $iabbe->parts);
-			
+
 			$h_reportedimages .= "
 				<tr>
 					<td>{$image_link}</td>
@@ -50,7 +50,7 @@ class ReportImageTheme extends Themelet {
 				</tr>
 			";
 		}
-		
+
 		$thumb_width = $config->get_int("thumb_width");
 		$html = "
 			<style>
@@ -63,17 +63,17 @@ class ReportImageTheme extends Themelet {
 				$h_reportedimages
 			</table>
 		";
-		
+
 		$page->set_title("Reported Images");
 		$page->set_heading("Reported Images");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Reported Images", $html));
-		
+
 	}
 
 	public function display_image_banner($page, $image) {
 		global $config;
-	
+
 		$i_image = int_escape($image);
 		$html = "
 			<form action='".make_link("image_report/add")."' method='POST'>

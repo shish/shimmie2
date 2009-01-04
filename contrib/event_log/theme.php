@@ -5,7 +5,7 @@ class EventLogTheme extends Themelet {
 		$page->set_title("Event Log");
 		$page->set_heading("Event Log");
 		$page->add_block(new NavBlock());
-		
+
 		$this->display_table($page, $events);
 		$this->display_controls($page);
 	}

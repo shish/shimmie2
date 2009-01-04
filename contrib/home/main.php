@@ -26,7 +26,7 @@ class Home implements Extension {
 				$name = str_replace("ext/home/counters/", "", $counter_dirname);
 				$counters[ucfirst($name)] = $name;
 			}
-			
+
 			$sb = new SetupBlock("Home Page");
 			$sb->add_label("Page Links - Example: [$"."base/index|Posts]");
 			$sb->add_longtext_option("home_links", "<br>");
@@ -46,19 +46,19 @@ class Home implements Extension {
 		$sitename = $config->get_string('title');
 	    $contact_link = $config->get_string('contact_link');
 		$counter_dir = $config->get_string('home_counter', 'default');
-		
+
 		$total = ceil($database->db->GetOne("SELECT COUNT(*) FROM images"));
 		$strtotal = "$total";
-	   	   
+
 		$num_comma = number_format($total);
-	   
+
 		$counter_text = "";
 		for($n=0; $n<strlen($strtotal); $n++)
 		{
 			$cur = $strtotal[$n];
 			$counter_text .= " <img alt='$cur' src='$data_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
 		}
-		
+
 		// get the homelinks and process them
 		$main_links = $config->get_string('home_links');
 		$main_links = str_replace('$base',	$base_href, 	$main_links);
@@ -77,7 +77,7 @@ class Home implements Extension {
 		$data_href = get_base_href();
 		$sitename = $config->get_string('title');
 		$theme_name = $config->get_string('theme');
-		
+
 		$body = $this->get_body();
 
 		$this->theme->display_page($page, $sitename, $data_href, $theme_name, $body);

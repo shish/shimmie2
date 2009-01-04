@@ -19,7 +19,7 @@ class WordFilter implements Extension {
 			$event->panel->add_block($sb);
 		}
 	}
-	
+
 	private function filter($text) {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {

@@ -26,7 +26,7 @@ class BulkAddTheme extends Themelet {
 			used as tags for the images within.
 			<br>Note: this is the folder as seen by the server -- you need to
 			upload via FTP or something first.
-			
+
 			<p><form action='".make_link("bulk_add")."' method='POST'>
 				Directory to add: <input type='text' name='dir' size='40'>
 				<input type='submit' value='Add'>

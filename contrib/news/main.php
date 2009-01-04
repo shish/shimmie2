@@ -11,7 +11,7 @@ class News implements Extension {
 
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-		
+
 		if($event instanceof PostListBuildingEvent) {
 			if(strlen($event->context->config->get_string("news_text")) > 0) {
 				$this->theme->display_news($event->page, $event->context->config->get_string("news_text"));

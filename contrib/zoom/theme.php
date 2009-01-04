@@ -4,7 +4,7 @@ class ZoomTheme extends Themelet {
 	public function display_zoomer($page, $image, $zoom_by_default) {
 		$page->add_block(new Block(null, $this->make_zoomer($image->width, $zoom_by_default)));
 	}
-	
+
 	protected function make_zoomer($image_width, $zoom_by_default) {
 		global $config;
 		$default = $zoom_by_default ? "scale(img);" : "";

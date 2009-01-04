@@ -70,7 +70,7 @@ class TagEdit implements Extension {
 				$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
 			}
 		}
-		
+
 		if($event instanceof TagSetEvent) {
 			$event->image->set_tags($event->tags);
 		}

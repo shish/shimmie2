@@ -17,7 +17,7 @@ class IPBanTest extends WebTestCase {
 		$this->setField('reason', 'unit testing');
 		$this->setField('end', '1 week');
 		$this->click("Ban");
-		
+
 		$this->assertText("42.42.42.42");
 		$this->click("Remove"); // FIXME: remove which ban? :S
 		$this->assertNoText("42.42.42.42");

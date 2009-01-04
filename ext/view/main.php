@@ -68,7 +68,7 @@ class ViewImage implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("post/view")) {
 			$image_id = int_escape($event->get_arg(0));
-			
+
 			global $database;
 			global $config;
 			$image = Image::by_id($config, $database, $image_id);
@@ -89,7 +89,7 @@ class ViewImage implements Extension {
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent($image_id));
-			
+
 			$query = $_POST['query'];
 			$event->page->set_mode("redirect");
 			$event->page->set_redirect(make_link("post/view/$image_id", $query));

@@ -114,7 +114,7 @@ class PM implements Extension {
 	protected function install(RequestContext $context) {
 		$database = $context->database;
 		$config = $context->config;
-		
+
 		// shortcut to latest
 		if($config->get_int("pm_version") < 1) {
 			$database->execute("

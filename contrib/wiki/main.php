@@ -27,7 +27,7 @@ class WikiPage {
 	var $revision;
 	var $locked;
 	var $body;
-	
+
 	public function WikiPage($row=null) {
 		if(!is_null($row)) {
 			$this->id = $row['id'];
@@ -69,7 +69,7 @@ class Wiki implements Extension {
 			else {
 				$title = $event->get_arg(0);
 			}
-			
+
 			$content = $this->get_page($title);
 
 			if(isset($_GET['save']) && $_GET['save'] == "on") {
@@ -77,7 +77,7 @@ class Wiki implements Extension {
 				$rev = int_escape($_POST['revision']);
 				$body = $_POST['body'];
 				$lock = isset($_POST['lock']) && ($_POST['lock'] == "on");
-				
+
 				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
 					$wikipage = new WikiPage();

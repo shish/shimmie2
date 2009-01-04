@@ -13,7 +13,7 @@ class AdminBuildingEvent extends Event {
 
 class AdminPage implements Extension {
 	var $theme;
-	
+
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
@@ -45,7 +45,7 @@ class AdminPage implements Extension {
 			if($event->user->is_admin()) {
 				set_time_limit(0);
 				$redirect = false;
-				
+
 				switch($_POST['action']) {
 					case 'lowercase all tags':
 						$this->lowercase_all_tags();
@@ -121,7 +121,7 @@ class AdminPage implements Extension {
 				$cmd = "mysqldump -h$hostname -u$username -p$password $database";
 				break;
 		}
-		
+
 		$page->set_mode("data");
 		$page->set_type("application/x-unknown");
 		$page->set_filename('shimmie-'.date('Ymd').'.sql');

@@ -57,7 +57,7 @@ class ET implements Extension {
 			$els[] = get_class($el);
 		}
 		$info['sys_extensions'] = join(', ', $els);
-		
+
 		//$cfs = array();
 		//foreach($database->get_all("SELECT name, value FROM config") as $pair) {
 		//	$cfs[] = $pair['name']."=".$pair['value'];

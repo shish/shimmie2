@@ -11,7 +11,7 @@ class ArchiveFileHandler implements Extension {
 			global $config;
 			$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
 		}
-	
+
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Archive Handler Options");
 			$sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
@@ -60,13 +60,13 @@ class ArchiveFileHandler implements Extension {
 	// copied from bulk add extension
 	private function add_dir($base, $subdir="") {
 		global $page;
-		
+
 		$list = "";
-		
+
 		$dir = opendir("$base/$subdir");
 		while($filename = readdir($dir)) {
 			$fullpath = "$base/$subdir/$filename";
-		
+
 			if(is_link($fullpath)) {
 				// ignore
 			}

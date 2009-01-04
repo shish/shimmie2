@@ -61,7 +61,7 @@ class FlashFileHandler implements Extension {
 //		}
 //		$image->width = $rect[1];
 //		$image->height = $rect[3];
-		
+
 		if(!($info = getimagesize($filename))) return null;
 
 		$image->width = $info[0];
@@ -89,7 +89,7 @@ class FlashFileHandler implements Extension {
 		}
 		return $int;
 	}
-	
+
 	private function swf_get_bounds($filename) {
 		$fp = fopen($filename, "r");
 		$head = fread($fp, 3);

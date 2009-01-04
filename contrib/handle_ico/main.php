@@ -38,7 +38,7 @@ class IcoFileHandler implements Extension {
 			$image = Image::by_id($config, $database, $id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
-			
+
 			$event->page->set_type("image/x-icon");
 			$event->page->set_mode("data");
 			$event->page->set_data(file_get_contents("images/$ha/$hash"));
@@ -49,7 +49,7 @@ class IcoFileHandler implements Extension {
 		$exts = array("ico", "ani", "cur");
 		return array_contains($exts, strtolower($ext));
 	}
-	
+
 	private function create_image_from_data($filename, $metadata) {
 		global $config;
 
@@ -61,10 +61,10 @@ class IcoFileHandler implements Extension {
 
 		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
 		fclose($fp);
-		
+
 		$image->width = $subheader['width'];
 		$image->height = $subheader['height'];
-		
+
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];

@@ -69,7 +69,7 @@ class RSS_Images implements Extension {
 				"<p>" . Themelet::build_thumb_html($image) . "</p>" .
 				"<p>Uploaded by " . $owner->name . "</p>"
 			);
-			
+
 			$data .= "
 		<item>
 			<title>{$image->id} - $tags</title>

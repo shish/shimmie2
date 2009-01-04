@@ -83,7 +83,7 @@ class ImageIO implements Extension {
 			$config->set_default_int('thumb_height', 192);
 			$config->set_default_int('thumb_quality', 75);
 			$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
-			
+
 			$config->set_default_string('image_ilink', '');
 			$config->set_default_string('image_tlink', '');
 			$config->set_default_string('image_tip', '$tags // $size // $filesize');
@@ -95,7 +95,7 @@ class ImageIO implements Extension {
 			$matches = array();
 			if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
 				$num = $matches[1];
-				
+
 				if($event->page_matches("image")) {
 					$this->send_file($num, "image");
 				}
@@ -113,7 +113,7 @@ class ImageIO implements Extension {
 		if($event instanceof ImageDeletionEvent) {
 			$event->image->delete();
 		}
-		
+
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Image Options");
 			$sb->position = 30;
@@ -215,7 +215,7 @@ class ImageIO implements Extension {
 				$page->set_type($image->get_mime_type());
 				$file = $image->get_image_filename();
 			}
-		
+
 			$page->set_data(file_get_contents($file));
 
 			if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {

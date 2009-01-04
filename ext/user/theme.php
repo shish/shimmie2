@@ -1,7 +1,7 @@
 <?php
 
 class UserPageTheme extends Themelet {
-	public function display_login_page($page) {
+	public function display_login_page(Page $page) {
 		$page->set_title("Login");
 		$page->set_heading("Login");
 		$page->add_block(new NavBlock());
@@ -9,18 +9,18 @@ class UserPageTheme extends Themelet {
 			"There should be a login box to the left"));
 	}
 
-	public function display_user_links($page, $user, $parts) {
+	public function display_user_links(Page $page, User $user, $parts) {
 		# $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
 	}
 
-	public function display_user_block($page, $user, $parts) {
+	public function display_user_block(Page $page, User $user, $parts) {
 		$h_name = html_escape($user->name);
 		$html = "Logged in as $h_name<br>";
 		$html .= join("\n<br/>", $parts);
 		$page->add_block(new Block("User Links", $html, "left", 90));
 	}
 
-	public function display_signup_page($page) {
+	public function display_signup_page(Page $page) {
 		global $config;
 		$tac = $config->get_string("login_tac", "");
 
@@ -49,7 +49,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Signup", $html));
 	}
 
-	public function display_signups_disabled($page) {
+	public function display_signups_disabled(Page $page) {
 		$page->set_title("Signups Disabled");
 		$page->set_heading("Signups Disabled");
 		$page->add_block(new NavBlock());
@@ -57,7 +57,7 @@ class UserPageTheme extends Themelet {
 			"The board admin has disabled the ability to create new accounts~"));
 	}
 
-	public function display_login_block($page) {
+	public function display_login_block(Page $page) {
 		global $config;
 		$html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
@@ -73,8 +73,8 @@ class UserPageTheme extends Themelet {
 		}
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
-	
-	public function display_ip_list($page, $uploads, $comments) {
+
+	public function display_ip_list(Page $page, $uploads, $comments) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";
 		$n = 0;
@@ -102,7 +102,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("IPs", $html));
 	}
 
-	public function display_user_page($page, $duser, $user) {
+	public function display_user_page(Page $page, User $duser, User $user) {
 		$page->set_title("{$duser->name}'s Page");
 		$page->set_heading("{$duser->name}'s Page");
 		$page->add_block(new NavBlock());

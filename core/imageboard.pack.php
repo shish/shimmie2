@@ -51,7 +51,7 @@ class Image {
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
-	
+
 	public static function by_hash(Config $config, Database $database, $hash) {
 		assert(is_string($hash));
 		$image = null;
@@ -66,7 +66,7 @@ class Image {
 		if(count($set) > 0) return $set[0];
 		else return null;
 	}
-	
+
 	public static function find_images(Config $config, Database $database, $start, $limit, $tags=array()) {
 		$images = array();
 
@@ -74,11 +74,11 @@ class Image {
 		assert(is_numeric($limit));
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
-		
+
 		$querylet = Image::build_search_querylet($config, $database, $tags);
 		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
 		$result = $database->execute($querylet->sql, $querylet->variables);
-		
+
 		while(!$result->EOF) {
 			$images[] = new Image($result->fields);
 			$result->MoveNext();
@@ -99,7 +99,7 @@ class Image {
 			return $result->RecordCount();
 		}
 	}
-	
+
 	public static function count_pages(Config $config, Database $database, $tags=array()) {
 		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
 		return ceil(Image::count_images($config, $database, $tags) / $images_per_page);
@@ -112,7 +112,7 @@ class Image {
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
 		assert(is_bool($next));
-		
+
 		if($next) {
 			$gtlt = "<";
 			$dir = "DESC";
@@ -131,14 +131,14 @@ class Image {
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
 			$row = $this->database->db->GetRow($querylet->sql, $querylet->variables);
 		}
-		
+
 		return ($row ? new Image($row) : null);
 	}
 
 	public function get_prev($tags=array()) {
 		return $this->get_next($tags, false);
 	}
-	
+
 	public function get_owner() {
 		return User::by_id($this->config, $this->database, $this->owner_id);
 	}
@@ -210,7 +210,7 @@ class Image {
 	public function get_filename() {
 		return $this->filename;
 	}
-	
+
 	public function get_mime_type() {
 		return "image/".($this->ext);
 	}
@@ -222,7 +222,7 @@ class Image {
 	public function get_source() {
 		return $this->source;
 	}
-	
+
 	public function set_source($source) {
 		if(empty($source)) $source = null;
 		$this->database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
@@ -244,7 +244,7 @@ class Image {
 
 		// delete old
 		$this->delete_tags_from_image();
-		
+
 		// insert each new tag
 		foreach($tags as $tag) {
 			$this->database->execute(
@@ -266,7 +266,7 @@ class Image {
 	 */
 	public function delete() {
 		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
-		
+
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
 	}
@@ -322,7 +322,7 @@ class Image {
 				$positive = false;
 				$term = substr($term, 1);
 			}
-			
+
 			$term = Tag::resolve_alias($term);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
@@ -498,7 +498,7 @@ class Tag {
 
 function get_debug_info() {
 	global $config, $_event_count;
-	
+
 	if(function_exists('memory_get_usage')) {
 		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
 	}
@@ -530,11 +530,11 @@ function get_debug_info() {
 // print_obj ($object, $title, $return)
 function print_obj($object,$title="Object Information", $return=false) {
 	global $user;
-	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) { 
+	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) {
 		$pr = print_r($object,true);
 		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
 		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
-		
+
 		if($return) {
 			return $pr;
 		} else {
@@ -545,23 +545,23 @@ function print_obj($object,$title="Object Information", $return=false) {
 	}
 }
 
-// preset tests. 
+// preset tests.
 
-// Prints the contents of $event->args, even though they are clearly visible in 
-// the URL bar. 
-function print_url_args() { 
-	global $event; 
-	print_obj($event->args,"URL Arguments"); 
-} 
+// Prints the contents of $event->args, even though they are clearly visible in
+// the URL bar.
+function print_url_args() {
+	global $event;
+	print_obj($event->args,"URL Arguments");
+}
 
-// Prints all the POST data. 
-function print_POST() { 
-	print_obj($_POST,"\$_POST"); 
-} 
+// Prints all the POST data.
+function print_POST() {
+	print_obj($_POST,"\$_POST");
+}
 
-// Prints GET, though this is also visible in the url ( url?var&var&var) 
-function print_GET() { 
-	print_obj($_GET,"\$_GET"); 
+// Prints GET, though this is also visible in the url ( url?var&var&var)
+function print_GET() {
+	print_obj($_GET,"\$_GET");
 }
 
 

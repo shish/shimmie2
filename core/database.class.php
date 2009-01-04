@@ -10,7 +10,7 @@ require_once "lib/adodb/adodb-exceptions.inc.php";
 class Querylet {
 	var $sql;
 	var $variables;
-	
+
 	public function Querylet($sql, $variables=array()) {
 		$this->sql = $sql;
 		$this->variables = $variables;
@@ -193,14 +193,14 @@ class Database {
 	public function upgrade_schema($filename) {
 		$this->install_schema($filename);
 	}
-	
+
 	public function install_schema($filename) {
 		//print "<br>upgrading $filename";
 
 		global $config;
 		if($config->get_bool("in_upgrade")) return;
 		$config->set_bool("in_upgrade", true);
-			
+
 		require_once "lib/adodb/adodb-xmlschema03.inc.php";
 		$schema = new adoSchema($this->db);
 		$sql = $schema->ParseSchema($filename);

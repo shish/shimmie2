@@ -38,7 +38,7 @@ class PixelFileHandler implements Extension {
 		$exts = array("jpg", "jpeg", "gif", "png");
 		return array_contains($exts, strtolower($ext));
 	}
-	
+
 	private function create_image_from_data($filename, $metadata) {
 		global $config;
 
@@ -49,7 +49,7 @@ class PixelFileHandler implements Extension {
 
 		$image->width = $info[0];
 		$image->height = $info[1];
-		
+
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
@@ -74,9 +74,9 @@ class PixelFileHandler implements Extension {
 		$inname  = "images/$ha/$hash";
 		$outname = "thumbs/$ha/$hash";
 		global $config;
-		
+
 		$ok = false;
-		
+
 		switch($config->get_string("thumb_engine")) {
 			default:
 			case 'gd':
@@ -131,7 +131,7 @@ class PixelFileHandler implements Extension {
 
 		$memory_use = (filesize($tmpname)*2) + ($width*$height*4) + (4*1024*1024);
 		$memory_limit = get_memory_limit();
-		
+
 		if($memory_use > $memory_limit) {
 			$w = $config->get_int('thumb_width');
 			$h = $config->get_int('thumb_height');

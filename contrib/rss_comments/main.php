@@ -53,7 +53,7 @@ class RSS_Comments implements Extension {
 			$posted = strftime("%a, %d %b %Y %T %Z", $comment['posted_timestamp']);
 			$comment = html_escape($comment['comment']);
 			$content = html_escape("$owner: $comment");
-			
+
 			$data .= "
 				<item>
 					<title>$owner comments on $image_id</title>

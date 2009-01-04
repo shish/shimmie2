@@ -2,11 +2,11 @@
 
 class TagList implements Extension {
 	var $theme = null;
-	
+
 // event handling {{{
 	public function receive_event(Event $event) {
 		if($this->theme == null) $this->theme = get_theme_object($this);
-		
+
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int("tag_list_length", 15);
@@ -95,7 +95,7 @@ class TagList implements Extension {
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
 		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
-		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats";	
+		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats";
 	}
 
 	private function build_tag_map() {
@@ -209,7 +209,7 @@ class TagList implements Extension {
 		global $config;
 
 		$query = "
-			SELECT COUNT(it3.image_id) as count, t3.tag AS tag 
+			SELECT COUNT(it3.image_id) as count, t3.tag AS tag
 			FROM
 				image_tags AS it1,
 				image_tags AS it2,
@@ -280,7 +280,7 @@ class TagList implements Extension {
 
 		$wild_tags = tag_explode($search);
 		// $search_tags = array();
-		
+
 		$tag_id_array = array();
 		$tags_ok = true;
 		foreach($wild_tags as $tag) {
@@ -303,12 +303,12 @@ class TagList implements Extension {
 					image_tags AS it2,
 					tags AS t1,
 					tags AS t2
-				WHERE 
+				WHERE
 					t1.id IN($tag_id_list)
 					AND it1.image_id=it2.image_id
 					AND it1.tag_id = t1.id
 					AND it2.tag_id = t2.id
-				GROUP BY t2.tag 
+				GROUP BY t2.tag
 				ORDER BY count
 				DESC LIMIT ?
 			";

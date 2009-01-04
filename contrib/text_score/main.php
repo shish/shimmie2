@@ -29,7 +29,7 @@ class TextScore implements Extension {
 			}
 			$config->set_default_bool("text_score_anon", true);
 		}
-		
+
 		if(($event instanceof ImageInfoBoxBuildingEvent)) {
 			global $user;
 			global $config;
@@ -37,11 +37,11 @@ class TextScore implements Extension {
 				$event->add_part($this->theme->get_scorer_html($event->image));
 			}
 		}
-		
+
 		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			$i_score = int_escape($_POST['text_score__score']);
-			
+
 			if($i_score >= -2 || $i_score <= 2) {
 				send_event(new TextScoreSetEvent($event->image_id, $user, $i_score));
 			}
@@ -57,7 +57,7 @@ class TextScore implements Extension {
 			global $database;
 			$database->execute("DELETE FROM text_score_votes WHERE image_id=?", array($event->image->id));
 		}
-		
+
 		if(($event instanceof SetupBuildingEvent)) {
 			$sb = new SetupBlock("Text Score");
 			$sb->add_bool_option("text_score_anon", "Allow anonymous votes: ");

@@ -3,7 +3,7 @@
 class TagListTheme extends Themelet {
 	var $heading = "";
 	var $list = "";
-	
+
 	public function set_heading($text) {
 		$this->heading = $text;
 	}
@@ -27,7 +27,7 @@ class TagListTheme extends Themelet {
 
 	/*
 	 * $tag_infos = array(
-	 *                 array('tag' => $tag, 'count' => $number_of_uses), 
+	 *                 array('tag' => $tag, 'count' => $number_of_uses),
 	 *                 ...
 	 *              )
 	 */
@@ -59,7 +59,7 @@ class TagListTheme extends Themelet {
 
 	/*
 	 * $tag_infos = array(
-	 *                 array('tag' => $tag, 'count' => $number_of_uses), 
+	 *                 array('tag' => $tag, 'count' => $number_of_uses),
 	 *                 ...
 	 *              )
 	 */
@@ -84,14 +84,14 @@ class TagListTheme extends Themelet {
 				$html .= " <span class='tag_count'>$count</span>";
 			}
 		}
-	
+
 		$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 		$page->add_block(new Block("Popular Tags", $html, "left", 60));
 	}
 
 	/*
 	 * $tag_infos = array(
-	 *                 array('tag' => $tag), 
+	 *                 array('tag' => $tag),
 	 *                 ...
 	 *              )
 	 * $search = the current array of tags being searched for
@@ -114,10 +114,10 @@ class TagListTheme extends Themelet {
 			$html .= " <a class='tag_name' href='$link'>$h_tag_no_underscores</a>";
 			$html .= $this->ars($tag, $search);
 		}
-	
+
 		$page->add_block(new Block("Refine Search", $html, "left", 60));
 	}
-	
+
 	protected function ars($tag, $tags) {
 		// FIXME: a better fix would be to make sure the inputs are correct
 		$tag = strtolower($tag);

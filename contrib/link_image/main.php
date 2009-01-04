@@ -6,14 +6,14 @@
  */
 class LinkImage implements Extension {
 	var $theme;
-	
+
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 			if(($event instanceof DisplayingImageEvent)) {
 				global $config;
 				$data_href = get_base_href();
 				$event->page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
-				
+
 				$this->theme->links_block($event->page,$this->data($event->image));
 			}
 			if($event instanceof SetupBuildingEvent) {
@@ -30,10 +30,10 @@ class LinkImage implements Extension {
 		}
 	private function data($image) {
 		global $config;
-		
+
 		$text_link = $image->parse_link_template($config->get_string("ext_link-img_text-link_format"));
 		$text_link = $text_link==" "? null : $text_link; // null blank setting so the url gets filled in on the text links.
-		
+
 		return array(
 			'thumb_src'	=>	$image->get_thumb_link(),
 			'image_src'	=>	$image->get_image_link(),

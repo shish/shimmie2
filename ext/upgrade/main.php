@@ -14,7 +14,7 @@ class Upgrade implements Extension {
 		if(!is_numeric($config->get_string("db_version"))) {
 			$config->set_int("db_version", 2);
 		}
-		
+
 		if($config->get_int("db_version") < 6) {
 			$database->upgrade_schema("ext/upgrade/schema.xml");
 		}

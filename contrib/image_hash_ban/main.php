@@ -9,7 +9,7 @@
  * Version 0.1
  * October 21, 2007
  */
- 
+
  // RemoveImageHashBanEvent {{{
 class RemoveImageHashBanEvent extends Event {
 	var $hash;
@@ -20,7 +20,7 @@ class RemoveImageHashBanEvent extends Event {
 }
 // }}}
 // AddImageHashBanEvent {{{
-class AddImageHashBanEvent extends Event { 
+class AddImageHashBanEvent extends Event {
 	var $hash;
 	var $reason;
 

@@ -13,7 +13,7 @@ class WikiTheme {
 			$nav_page = new WikiPage();
 			$nav_page->body = "";
 		}
-		
+
 		$tfe = new TextFormattingEvent($nav_page->body);
 		send_event($tfe);
 

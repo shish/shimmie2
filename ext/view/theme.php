@@ -36,7 +36,7 @@ class ViewImageTheme extends Themelet {
 			$search_terms = array();
 			$query = null;
 		}
-		
+
 		$next = $image->get_next($search_terms);
 		$prev = $image->get_prev($search_terms);
 

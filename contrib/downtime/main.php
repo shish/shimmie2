@@ -31,7 +31,7 @@ class Downtime implements Extension {
 		$user = $event->context->user;
 		$config = $event->context->config;
 
-		if($config->get_bool("downtime") && !$user->is_admin() && 
+		if($config->get_bool("downtime") && !$user->is_admin() &&
 				($event instanceof PageRequestEvent) && !$this->is_safe_page($event)) {
 			$msg = $config->get_string("downtime_message");
 			$this->theme->display_message($msg);

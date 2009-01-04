@@ -50,7 +50,7 @@ class Ratings implements Extension {
 				send_event(new RatingSetEvent($event->image_id, $user, $_POST['rating']));
 			}
 		}
-		
+
 		if($event instanceof SetupBuildingEvent) {
 			$privs = array();
 			$privs['Safe Only'] = 's';

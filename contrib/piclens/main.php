@@ -12,9 +12,9 @@ class PicLens implements Extension {
 		}
 		if($event instanceof PostListBuildingEvent) {
 			$foo='
-				<a href="javascript:PicLensLite.start();">Start Slideshow 
-				<img src="http://lite.piclens.com/images/PicLensButton.png" 
-					alt="PicLens" width="16" height="12" border="0" 
+				<a href="javascript:PicLensLite.start();">Start Slideshow
+				<img src="http://lite.piclens.com/images/PicLensButton.png"
+					alt="PicLens" width="16" height="12" border="0"
 					align="absmiddle"></a>';
 			$event->page->add_block(new Block("PicLens", $foo, "left", 20));
 		}

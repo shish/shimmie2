@@ -33,7 +33,7 @@ class SCoreReporter extends HtmlReporter {
 			"</div>";
 		$this->page->add_block(new Block("Results", $html, "main", 40));
 	}
-	
+
 	function paintGroupStart($name, $size) {
 		parent::paintGroupStart($name, $size);
 		$this->current_html = "";

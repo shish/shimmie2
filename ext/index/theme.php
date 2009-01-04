@@ -53,7 +53,7 @@ class IndexTheme extends Themelet {
 		$u_tags = url_escape(implode(" ", $search_terms));
 		$query = empty($u_tags) ? "" : "/$u_tags";
 
-		
+
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("post/list$query/$prev")."'>Prev</a>";
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list$query/$next")."'>Next</a>";

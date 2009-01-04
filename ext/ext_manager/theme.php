@@ -18,7 +18,7 @@ class ExtManagerTheme extends Themelet {
 			$html .= "
 				<tr>
 					" . (
-						empty($h_link) ? 
+						empty($h_link) ?
 							"<td>$h_name</td>" :
 							"<td><a href='$h_link'>$h_name</a></td>"
 					) . (

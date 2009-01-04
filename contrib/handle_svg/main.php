@@ -46,7 +46,7 @@ class SVGFileHandler implements Extension {
 		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
-		
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("get_svg")) {
 			global $config;
 			global $database;
@@ -54,7 +54,7 @@ class SVGFileHandler implements Extension {
 			$image = Image::by_id($config, $database, $id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
-			
+
 			$event->page->set_type("image/svg+xml");
 			$event->page->set_mode("data");
 			$event->page->set_data(file_get_contents("images/$ha/$hash"));
@@ -74,7 +74,7 @@ class SVGFileHandler implements Extension {
 		$msp = new MiniSVGParser($filename);
 		$image->width = $msp->width;
 		$image->height = $msp->height;
-		
+
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
@@ -87,7 +87,7 @@ class SVGFileHandler implements Extension {
 
 	private function check_contents($file) {
 		if(!file_exists($file)) return false;
-		
+
 		$msp = new MiniSVGParser($file);
 		return $msp->valid;
 	}

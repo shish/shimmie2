@@ -43,7 +43,7 @@ class PageRequestEvent extends Event {
 	public function page_matches($name) {
 		$parts = explode("/", $name);
 		$this->part_count = count($parts);
-		
+
 		if($this->part_count > $this->arg_count) {
 			return false;
 		}

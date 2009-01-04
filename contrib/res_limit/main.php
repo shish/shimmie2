@@ -15,7 +15,7 @@ class ResolutionLimit implements Extension {
 			$max_h = $config->get_int("upload_max_height", -1);
 			$ratios = explode(" ", $config->get_string("upload_ratios", ""));
 			$ratios = array_filter($ratios, "strlen");
-			
+
 			$image = $event->image;
 
 			if($min_w > 0 && $image->width < $min_w) throw new UploadException("Image too small");
@@ -56,13 +56,13 @@ class ResolutionLimit implements Extension {
 			$sb->add_label(" x ");
 			$sb->add_int_option("upload_max_height");
 			$sb->add_label(" px");
-			
+
 			$sb->add_label("<br>(-1 for no limit)");
 
 			$sb->add_label("<br>Ratios ");
 			$sb->add_text_option("upload_ratios");
 			$sb->add_label("<br>(eg. '4:3 16:9', blank for no limit)");
-			
+
 			$event->panel->add_block($sb);
 		}
 	}

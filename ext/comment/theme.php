@@ -18,7 +18,7 @@ class CommentListTheme extends Themelet {
 			"<a href='".make_link("comment/list/$next")."'>Next</a>";
 
 		$nav = "$h_prev | $h_index | $h_next";
-		
+
 		$page->set_title("Comments");
 		$page->set_heading("Comments");
 		$page->add_block(new Block("Navigation", $nav, "left"));
@@ -103,7 +103,7 @@ class CommentListTheme extends Themelet {
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$stripped_nonl = str_replace("\n", "\\n", $tfe->stripped);
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
-		$h_dellink = $user->is_admin() ? 
+		$h_dellink = $user->is_admin() ?
 			"<br>($h_poster_ip, <a ".
 			"onclick=\"return confirm('Delete comment by $h_name:\\n$stripped_nonl');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";

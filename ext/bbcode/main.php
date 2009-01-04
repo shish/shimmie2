@@ -7,7 +7,7 @@ class BBCode implements Extension {
 			$event->stripped  = $this->bbcode_to_text($event->stripped);
 		}
 	}
-	
+
 	private function bbcode_to_html($text) {
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
@@ -76,7 +76,7 @@ class BBCode implements Extension {
 		while(true) {
 			$start = strpos($text, "[spoiler]");
 			if($start === false) break;
-			
+
 			$end = strpos($text, "[/spoiler]");
 			if($end === false) break;
 

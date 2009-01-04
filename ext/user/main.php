@@ -44,7 +44,7 @@ class UserPage implements Extension {
 // event handling {{{
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-		
+
 		if($event instanceof InitExtEvent) {
 			$event->context->config->set_default_bool("login_signup_enabled", true);
 			$event->context->config->set_default_int("login_memory", 365);
@@ -58,62 +58,64 @@ class UserPage implements Extension {
 
 			if($event->get_arg(0) == "login") {
 				if(isset($_POST['user']) && isset($_POST['pass'])) {
-					$this->login($event->page);
+					$this->login($page);
 				}
 				else {
-					$this->theme->display_login_page($event->page);
+					$this->theme->display_login_page($page);
 				}
 			}
 			else if($event->get_arg(0) == "logout") {
 				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link());
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link());
 			}
 			else if($event->get_arg(0) == "change_pass") {
-				$this->change_password_wrapper($event->page);
+				$this->change_password_wrapper($page);
 			}
 			else if($event->get_arg(0) == "create") {
 				if(!$config->get_bool("login_signup_enabled")) {
 					$this->theme->display_signups_disabled($page);
 				}
 				else if(!isset($_POST['name'])) {
-					$this->theme->display_signup_page($event->page);
+					$this->theme->display_signup_page($page);
 				}
 				else if($_POST['pass1'] != $_POST['pass2']) {
-					$this->theme->display_error($event->page, "Password Mismatch", "Passwords don't match");
+					$this->theme->display_error($page, "Password Mismatch", "Passwords don't match");
 				}
 				else {
 					try {
 						$uce = new UserCreationEvent($event->context, $_POST['name'], $_POST['pass1'], $_POST['email']);
 						send_event($uce);
 						$this->set_login_cookie($uce->username, $uce->password);
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("user"));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("user"));
 					}
 					catch(UserCreationException $ex) {
-						$this->theme->display_error($event->page, "User Creation Error", $ex->getMessage());
+						$this->theme->display_error($page, "User Creation Error", $ex->getMessage());
 					}
 				}
 			}
 			else if($event->get_arg(0) == "set_more") {
-				$this->set_more_wrapper($event->page);
+				$this->set_more_wrapper($page);
 			}
 		}
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
-			global $user;
-			global $config;
-			global $database;
-			$duser = ($event->count_args() == 0) ? $user : User::by_name($config, $database, $event->get_arg(0));
-			if(!is_null($duser)) {
-				send_event(new UserPageBuildingEvent($event->context, $duser));
+			$user = $event->context->user;
+			$config = $event->context->config;
+			$database = $event->context->database;
+			$page = $event->context->page;
+
+			$display_user = ($event->count_args() == 0) ? $user : User::by_name($config, $database, $event->get_arg(0));
+			if(!is_null($display_user)) {
+				send_event(new UserPageBuildingEvent($event->context, $display_user));
 			}
 			else {
-				$this->theme->display_error($event->page, "No Such User", 
+				$this->theme->display_error($page, "No Such User",
 					"If you typed the ID by hand, try again; if you came from a link on this ".
 					"site, it might be bug report time...");
 			}
 		}
-		
+
 		if($event instanceof UserPageBuildingEvent) {
 			global $user;
 			global $config;
@@ -144,7 +146,7 @@ class UserPage implements Extension {
 				$this->theme->display_user_block($page, $user, $ubbe->parts);
 			}
 		}
-		
+
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("User Options");
 			$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
@@ -234,7 +236,7 @@ class UserPage implements Extension {
 				"INSERT INTO users (name, pass, joindate, email) VALUES (?, ?, now(), ?)",
 				array($event->username, $hash, $email));
 	}
-	
+
 	private function set_login_cookie($name, $pass) {
 		global $config;
 
@@ -246,13 +248,13 @@ class UserPage implements Extension {
 		setcookie("shm_session", md5($hash.$addr),
 				time()+60*60*24*$config->get_int('login_memory'), '/');
 	}
-//}}} 
+//}}}
 // Things done *to* the user {{{
 	private function change_password_wrapper($page) {
 		global $user;
 		global $config;
 		global $database;
-		
+
 		$page->set_title("Error");
 		$page->set_heading("Error");
 		$page->add_block(new NavBlock());
@@ -298,7 +300,7 @@ class UserPage implements Extension {
 		global $user;
 		global $config;
 		global $database;
-		
+
 		$page->set_title("Error");
 		$page->set_heading("Error");
 		$page->add_block(new NavBlock());
@@ -311,7 +313,7 @@ class UserPage implements Extension {
 		}
 		else {
 			$admin = (isset($_POST['admin']) && ($_POST['admin'] == "on"));
-			
+
 			$duser = User::by_id($config, $database, $_POST['id']);
 			$duser->set_admin($admin);
 

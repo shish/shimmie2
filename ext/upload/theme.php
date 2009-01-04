@@ -12,7 +12,7 @@ class UploadTheme extends Themelet {
 	public function display_page($page) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
-		
+
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
 			$n = $i + 1;

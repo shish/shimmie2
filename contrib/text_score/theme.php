@@ -3,7 +3,7 @@
 class TextScoreTheme extends Themelet {
 	public function get_scorer_html($image) {
 		$i_image_id = int_escape($image->id);
-		
+
 		$s_score = $this->score_to_name($image->text_score);
 		$html = "
 			Current score is \"$s_score\"

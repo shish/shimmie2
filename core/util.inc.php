@@ -230,11 +230,11 @@ function array_remove($array, $to_remove) {
 	return $a2;
 }
 
-function array_add($array, $element) { 
-	$array[] = $element; 
-	$array = array_unique($array); 
-	return $array; 
-} 
+function array_add($array, $element) {
+	$array[] = $element;
+	$array = array_unique($array);
+	return $array;
+}
 
 function array_contains($array, $target) {
 	foreach($array as $element) {
@@ -306,7 +306,7 @@ function full_copy($source, $target) {
 				continue;
 			}
 
-			$Entry = $source . '/' . $entry;          
+			$Entry = $source . '/' . $entry;
 			if(is_dir($Entry)) {
 				full_copy($Entry, $target . '/' . $entry);
 				continue;
@@ -395,7 +395,7 @@ function _get_query_parts() {
 	else {
 		$path = "";
 	}
-	
+
 	while(strlen($path) > 0 && $path[0] == '/') {
 		$path = substr($path, 1);
 	}
@@ -413,7 +413,7 @@ function _get_page_request($context) {
 	if(count($args) == 0 || strlen($args[0]) == 0) {
 		$args = split('/', $context->config->get_string('front_page'));
 	}
-	
+
 	return new PageRequestEvent($context, $args);
 }
 

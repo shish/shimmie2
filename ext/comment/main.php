@@ -149,7 +149,7 @@ class CommentList implements Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		
+
 		// shortcut to latest
 		if($config->get_int("ext_comments_version") < 1) {
 			$database->Execute("CREATE TABLE comments (
@@ -245,7 +245,7 @@ class CommentList implements Extension {
 		}
 		return $comments;
 	}
-	
+
 	private function get_comments($image_id) {
 		global $config;
 		global $database;

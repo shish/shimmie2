@@ -20,7 +20,7 @@ porn
 			global $config;
 			$banned = $config->get_string("banned_words");
 			$comment = strtolower($event->comment);
-			
+
 			foreach(explode("\n", $banned) as $word) {
 				$word = trim(strtolower($word));
 				if(strlen($word) == 0) {

@@ -43,7 +43,7 @@ EOD
       		<div style='font-size: 80%; margin-bottom: 2em;'>
 		 		<a href='$contact_link'>contact</a> &ndash; Serving $num_comma posts
 			</div>
-		
+
 			<div class='space'>
 				Powered by <a href='http://trac.shishnet.org/shimmie2/'>Shimmie</a>
 			</div>

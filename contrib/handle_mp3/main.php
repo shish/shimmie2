@@ -48,7 +48,7 @@ class MP3FileHandler implements Extension {
 		// FIXME: need more flash format specs :|
 		$image->width = 0;
 		$image->height = 0;
-		
+
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];

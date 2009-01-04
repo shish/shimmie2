@@ -11,7 +11,7 @@ class SVNUpdate implements Extension {
 
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-		
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("update")) {
 			if($event->user->is_admin()) {
 				if($event->get_arg(0) == "view_changes") {
@@ -50,7 +50,7 @@ class SVNUpdate implements Extension {
 		// FIXME: MySQL specific
 		if(preg_match("#^mysql://([^:]+):([^@]+)@([^/]+)/([^\?]+)#", $database_dsn, $matches)) {
 			$date = date("Ymd");
-			return 
+			return
 				shell_exec("mysqldump -uUSER -pPASS -hHOST DATABASE | gzip > db-$date.sql.gz") .
 				"\n\nDatabase dump should now be sitting in db-$date.sql.gz in the shimmie folder";
 		}

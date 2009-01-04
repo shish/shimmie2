@@ -47,18 +47,18 @@ class BulkAdd implements Extension {
 
 	private function add_dir($base, $subdir="") {
 		global $page;
-		
+
 		if(!is_dir($base)) {
 			$this->theme->add_status("Error", "$base is not a directory");
 			return;
 		}
 
 		$list = "";
-		
+
 		$dir = opendir("$base/$subdir");
 		while($filename = readdir($dir)) {
 			$fullpath = "$base/$subdir/$filename";
-		
+
 			if(is_link($fullpath)) {
 				// ignore
 			}

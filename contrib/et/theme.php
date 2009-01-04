@@ -12,7 +12,7 @@ class ETTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Information:", $this->build_data_form($info)));
 	}
-	
+
 	protected function build_data_form($info) {
 		$data = <<<EOD
 Optional:

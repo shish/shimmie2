@@ -6,12 +6,12 @@ class GenericPage {
 	public function set_mode($mode) {
 		$this->mode = $mode;
 	}
-	
+
 	public function set_type($type) {
 		$this->type = $type;
 	}
 
-	
+
 	// ==============================================
 
 	// data
@@ -21,7 +21,7 @@ class GenericPage {
 	public function set_data($data) {
 		$this->data = $data;
 	}
-	
+
 	public function set_filename($filename) {
 		$this->filename = $filename;
 	}
@@ -69,7 +69,7 @@ class GenericPage {
 	}
 
 	// ==============================================
-	
+
 	public function display($context) {
 		header("Content-type: {$this->type}");
 		header("X-Powered-By: SCore-".SCORE_VERSION);

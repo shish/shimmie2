@@ -21,7 +21,7 @@ class Tag_HistoryTheme extends Themelet {
 			}
 			$history_list .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags (Set by $setter)</li>\n";
 		}
-		
+
 		$end_string = "
 					</ul>
 					<input type='submit' value='Revert'>

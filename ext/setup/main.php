@@ -117,7 +117,7 @@ class SetupBlock extends Block {
 	public function add_choice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_string($name);
-		
+
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
@@ -165,7 +165,7 @@ class Setup implements Extension {
 					global $config;
 					send_event(new ConfigSaveEvent($config));
 					$config->save();
-					
+
 					global $page;
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("setup"));

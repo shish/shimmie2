@@ -17,7 +17,7 @@ class RemoveIPBanEvent extends Event {
 }
 // }}}
 // AddIPBanEvent {{{
-class AddIPBanEvent extends Event { 
+class AddIPBanEvent extends Event {
 	var $ip;
 	var $reason;
 	var $end;
@@ -41,7 +41,7 @@ class IPBan implements Extension {
 			if($config->get_int("ext_ipban_version") < 5) {
 				$this->install();
 			}
-			
+
 			$this->check_ip_ban();
 		}
 
@@ -95,7 +95,7 @@ class IPBan implements Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		
+
 		// shortcut to latest
 		if($config->get_int("ext_ipban_version") < 1) {
 			$database->execute("
