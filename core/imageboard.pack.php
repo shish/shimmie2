@@ -26,6 +26,9 @@ class Image {
 	var $posted;
 	var $source;
 
+	/*
+	 * Constructors and other instance creators
+	 */
 	public function Image($row=null) {
 		global $config;
 		global $database;
@@ -83,6 +86,9 @@ class Image {
 		return $images;
 	}
 
+	/*
+	 * Image-related utility functions
+	 */
 	public static function count_images(Config $config, Database $database, $tags=array()) {
 		if(count($tags) == 0) {
 			return $database->db->GetOne("SELECT COUNT(*) FROM images");
@@ -100,6 +106,9 @@ class Image {
 	}
 
 
+	/*
+	 * Accessors & mutators
+	 */
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
 		assert(is_bool($next));
@@ -130,13 +139,6 @@ class Image {
 		return $this->get_next($tags, false);
 	}
 	
-	public function delete() {
-		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
-		
-		unlink($this->get_image_filename());
-		unlink($this->get_thumb_filename());
-	}
-
 	public function get_owner() {
 		return User::by_id($this->config, $this->database, $this->owner_id);
 	}
@@ -219,6 +221,86 @@ class Image {
 
 	public function get_source() {
 		return $this->source;
+	}
+	
+	public function set_source($source) {
+		if(empty($source)) $source = null;
+		$this->database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
+	}
+
+	public function delete_tags_from_image() {
+		$this->database->execute(
+				"UPDATE tags SET count = count - 1 WHERE id IN ".
+				"(SELECT tag_id FROM image_tags WHERE image_id = ?)", array($this->id));
+		$this->database->execute("DELETE FROM image_tags WHERE image_id=?", array($this->id));
+	}
+
+	public function set_tags($tags) {
+		$tags = tag_explode($tags);
+
+		$tags = array_map(array($this, 'resolve_alias'), $tags);
+		$tags = array_map(array($this, 'sanitise'), $tags);
+		$tags = array_iunique($tags); // remove any duplicate tags
+
+		// delete old
+		$this->delete_tags_from_image();
+		
+		// insert each new tag
+		foreach($tags as $tag) {
+			$this->database->execute(
+					"INSERT IGNORE INTO tags(tag) VALUES (?)",
+					array($tag));
+			$this->database->execute(
+					"INSERT INTO image_tags(image_id, tag_id) ".
+					"VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
+					array($image_id, $tag));
+			$this->database->execute(
+					"UPDATE tags SET count = count + 1 WHERE tag = ?",
+					array($tag));
+		}
+	}
+
+	public function resolve_alias($tag) {
+		assert(is_string($tag));
+		$newtag = $this->database->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
+		if(!empty($newtag)) {
+			return $newtag;
+		} else {
+			return $tag;
+		}
+	}
+
+	public function resolve_wildcard($tag) {
+		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
+			return array($tag);
+		}
+		else {
+			$newtags = $this->database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
+			if(count($newtags) > 0) {
+				$resolved = $newtags;
+			} else {
+				$resolved = array($tag);
+			}
+			return $resolved;
+		}
+	}
+
+	public function sanitise($tag) {
+		assert(is_string($tag));
+		$tag = preg_replace("/[\s?*]/", "", $tag);
+		$tag = preg_replace("/\.+/", ".", $tag);
+		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
+		return $tag;
+	}
+
+	/*
+	 * Other actions
+	 */
+	public function delete() {
+		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
+		
+		unlink($this->get_image_filename());
+		unlink($this->get_thumb_filename());
 	}
 
 	public function parse_link_template($tmpl, $_escape="url_escape") {

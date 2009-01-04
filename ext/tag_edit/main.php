@@ -6,11 +6,11 @@
  *
  */
 class SourceSetEvent extends Event {
-	var $image_id;
+	var $image;
 	var $source;
 
-	public function SourceSetEvent($image_id, $source) {
-		$this->image_id = $image_id;
+	public function SourceSetEvent($image, $source) {
+		$this->image = $image;
 		$this->source = $source;
 	}
 }
@@ -23,11 +23,11 @@ class SourceSetEvent extends Event {
  *
  */
 class TagSetEvent extends Event {
-	var $image_id;
+	var $image;
 	var $tags;
 
-	public function TagSetEvent($image_id, $tags) {
-		$this->image_id = $image_id;
+	public function TagSetEvent($image, $tags) {
+		$this->image = $image;
 		$this->tags = tag_explode($tags);
 	}
 }
@@ -61,10 +61,9 @@ class TagEdit implements Extension {
 
 		if($event instanceof ImageInfoSetEvent) {
 			if($this->can_tag()) {
-				global $database;
-				send_event(new TagSetEvent($event->image_id, $_POST['tag_edit__tags']));
+				send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 				if($this->can_source()) {
-					send_event(new SourceSetEvent($event->image_id, $_POST['tag_edit__source']));
+					send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
 				}
 			}
 			else {
@@ -73,18 +72,15 @@ class TagEdit implements Extension {
 		}
 		
 		if($event instanceof TagSetEvent) {
-			global $database;
-			$database->set_tags($event->image_id, $event->tags);
+			$event->image->set_tags($event->tags);
 		}
 
 		if($event instanceof SourceSetEvent) {
-			global $database;
-			$database->set_source($event->image_id, $event->source);
+			$event->image->set_source($event->source);
 		}
 
 		if($event instanceof ImageDeletionEvent) {
-			global $database;
-			$database->delete_tags_from_image($event->image->id);
+			$event->image->delete_tags_from_image();
 		}
 
 		if($event instanceof AdminBuildingEvent) {

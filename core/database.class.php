@@ -151,7 +151,7 @@ class Database {
 		}
 	}
 // }}}
-// misc {{{
+// safety wrapping {{{
 	public function execute($query, $args=array()) {
 		$result = $this->db->Execute($query, $args);
 		if($result === False) {
@@ -173,7 +173,7 @@ class Database {
 		}
 		return $result;
 	}
-	
+
 	public function get_row($query, $args=array()) {
 		$result = $this->db->GetRow($query, $args);
 		if($result === False) {
@@ -215,70 +215,6 @@ class Database {
 	}
 // }}}
 // tags {{{
-	public function resolve_alias($tag) {
-		assert(is_string($tag));
-		$newtag = $this->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
-		if(!empty($newtag)) {
-			return $newtag;
-		} else {
-			return $tag;
-		}
-	}
-
-	public function resolve_wildcard($tag) {
-		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
-			return array($tag);
-		}
-		else {
-			$newtags = $this->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
-			if(count($newtags) > 0) {
-				$resolved = $newtags;
-			} else {
-				$resolved = array($tag);
-			}
-			return $resolved;
-		}
-	}
-
-
-	public function sanitise($tag) {
-		assert(is_string($tag));
-		$tag = preg_replace("/[\s?*]/", "", $tag);
-		$tag = preg_replace("/\.+/", ".", $tag);
-		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);
-		return $tag;
-	}
-
-	public function delete_tags_from_image($image_id) {
-		assert(is_numeric($image_id));
-		$this->execute("UPDATE tags SET count = count - 1 WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = ?)", array($image_id));
-		$this->execute("DELETE FROM image_tags WHERE image_id=?", array($image_id));
-	}
-
-	public function set_tags($image_id, $tags) {
-		assert(is_numeric($image_id));
-		$tags = tag_explode($tags);
-
-		$tags = array_map(array($this, 'resolve_alias'), $tags);
-		$tags = array_map(array($this, 'sanitise'), $tags);
-		$tags = array_iunique($tags); // remove any duplicate tags
-
-		// delete old
-		$this->delete_tags_from_image($image_id);
-		
-		// insert each new tag
-		foreach($tags as $tag) {
-			$this->execute("INSERT IGNORE INTO tags(tag) VALUES (?)", array($tag));
-			$this->execute("INSERT INTO image_tags(image_id, tag_id) VALUES(?, (SELECT id FROM tags WHERE tag = ?))", array($image_id, $tag));
-			$this->execute("UPDATE tags SET count = count + 1 WHERE tag = ?", array($tag));
-		}
-	}
-	
-	public function set_source($image_id, $source) {
-		assert(is_numeric($image_id));
-		if(empty($source)) $source = null;
-		$this->execute("UPDATE images SET source=? WHERE id=?", array($source, $image_id));
-	}
 // }}}
 }
 ?>
