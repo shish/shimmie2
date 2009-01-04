@@ -7,7 +7,8 @@
  */
 
 class SendPMEvent extends Event {
-	public function SendPMEvent($from_id, $from_ip, $to_id, $subject, $message) {
+	public function __construct(RequestContext $reqest, $from_id, $from_ip, $to_id, $subject, $message) {
+		parent::__construct($request);
 		$this->from_id = $from_id;
 		$this->from_ip = $from_ip;
 		$this->to_id = $to_id;
@@ -23,9 +24,8 @@ class PM implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
-			if($config->get_int("pm_version") < 1) {
-				$this->install();
+			if($event->context->config->get_int("pm_version") < 1) {
+				$this->install($event->context);
 			}
 		}
 
@@ -38,22 +38,22 @@ class PM implements Extension {
 		*/
 
 		if($event instanceof UserPageBuildingEvent) {
-			global $user;
-			$duser = $event->user;
+			$user = $event->context->user;
+			$duser = $event->display_user;
 			if(!$user->is_anonymous() && !$duser->is_anonymous()) {
 				if(($user->id == $duser->id) || $user->is_admin()) {
-					$this->theme->display_pms($event->page, $this->get_pms($duser));
+					$this->theme->display_pms($event->context->page, $this->get_pms($duser));
 				}
 				if($user->id != $duser->id) {
-					$this->theme->display_composer($event->page, $user, $duser);
+					$this->theme->display_composer($event->context->page, $user, $duser);
 				}
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("pm")) {
-			global $database;
-			global $config;
-			global $user;
+			$database = $event->context->database;
+			$config = $event->context->config;
+			$user = $event->config->user;
 			if(!$user->is_anonymous()) {
 				switch($event->get_arg(0)) {
 					case "read":
@@ -91,7 +91,7 @@ class PM implements Extension {
 						$from_id = $user->id;
 						$subject = $_POST["subject"];
 						$message = $_POST["message"];
-						send_event(new SendPMEvent($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
+						send_event(new SendPMEvent($event->context, $from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
 						$event->page->set_mode("redirect");
 						$event->page->set_redirect(make_link($_SERVER["REFERER"]));
 						break;
@@ -100,8 +100,7 @@ class PM implements Extension {
 		}
 
 		if($event instanceof SendPMEvent) {
-			global $database;
-			$database->execute("
+			$event->context->database->execute("
 					INSERT INTO private_message(
 						from_id, from_ip, to_id,
 						sent_date, subject, message)
@@ -112,9 +111,9 @@ class PM implements Extension {
 		}
 	}
 
-	protected function install() {
-		global $database;
-		global $config;
+	protected function install(RequestContext $context) {
+		$database = $context->database;
+		$config = $context->config;
 		
 		// shortcut to latest
 		if($config->get_int("pm_version") < 1) {

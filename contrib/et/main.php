@@ -13,22 +13,21 @@ class ET implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("system_info")) {
-			if($event->user->is_admin()) {
-				$this->theme->display_info_page($event->page, $this->get_info());
+			if($event->context->user->is_admin()) {
+				$this->theme->display_info_page($event->page, $this->get_info($event->context));
 			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($event->context->user->is_admin()) {
 				$event->add_link("System Info", make_link("system_info"));
 			}
 		}
 	}
 
-// do it {{{
-	private function get_info() {
-		global $database;
-		global $config;
+	private function get_info($context) {
+		$database = $context->database;
+		$config = $context->config;
 		global $_event_listeners; // yay for using secret globals \o/
 
 		$info = array();
