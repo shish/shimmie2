@@ -10,7 +10,6 @@ class User {
 	var $name;
 	var $email;
 	var $join_date;
-	var $days_old;
 	var $admin;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -30,7 +29,6 @@ class User {
 		$this->name = $row['name'];
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
-		$this->days_old = 0; // $row['days_old'];
 		$this->admin = ($row['admin'] == 'Y');
 	}
 
@@ -88,7 +86,7 @@ class User {
 	}
 
 	public function get_days_old() {
-		return $this->days_old;
+		return 0; // FIXME calculate this
 	}
 
 	public function get_image_count() {
