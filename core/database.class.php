@@ -214,7 +214,5 @@ class Database {
 		$config->set_bool("in_upgrade", false);
 	}
 // }}}
-// tags {{{
-// }}}
 }
 ?>
