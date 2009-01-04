@@ -118,7 +118,7 @@ class UserPageTheme extends Themelet {
 		}
 	}
 
-	protected function build_stats($duser) {
+	protected function build_stats(User $duser) {
 		global $database;
 		global $config;
 
@@ -142,7 +142,7 @@ class UserPageTheme extends Themelet {
 			";
 	}
 
-	protected function build_options($duser) {
+	protected function build_options(User $duser) {
 		global $database;
 		global $config;
 
@@ -162,7 +162,7 @@ class UserPageTheme extends Themelet {
 		return $html;
 	}
 
-	protected function build_more_options($duser) {
+	protected function build_more_options(User $duser) {
 		global $database;
 		global $config;
 
