@@ -3,7 +3,7 @@
  */
 
 var cookie_name="shimmie_sidebar";
-var default_sections=["upload", "edit_tags"];
+var default_sections=[];
 
 function toggle(id) 
 {
