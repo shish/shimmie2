@@ -94,7 +94,7 @@ class ImageBan implements Extension {
 
 		if($event instanceof UserBlockBuildingEvent) {
 			if($event->user->is_admin()) {
-				$event->add_link("Image Bans", make_link("image_hash_ban/list"));
+				$event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
 			}
 		}
 
@@ -131,9 +131,9 @@ class ImageBan implements Extension {
 	public function get_image_hash_bans($page, $size=1000) {
 		// FIXME: many
 		$size_i = int_escape($size);
-		$offset_i = int_escape($page)*$size_i;
+		$offset_i = int_escape($page-1)*$size_i;
 		global $database;
-		$bans = $database->get_all("SELECT * FROM image_bans ORDER BY id LIMIT $size_i OFFSET $offset_i");
+		$bans = $database->get_all("SELECT * FROM image_bans ORDER BY id DESC LIMIT $size_i OFFSET $offset_i");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
