@@ -19,13 +19,13 @@ class UploadTheme extends Themelet {
 			$width = $tl_enabled ? "35%" : "80%";
 			$upload_list .= "
 				<tr>
-					<td>File $n</td>
-					<td style='width: $width;'><input accept='image/jpeg,image/png,image/gif' id='data$i' name='data$i' type='file'></td>
+					<td width='50'>File $n</td>
+					<td width='250'><input accept='image/jpeg,image/png,image/gif' id='data$i' name='data$i' type='file'></td>
 			";
 			if($tl_enabled) {
 				$upload_list .= "
-					<td>URL $n</td>
-					<td><input id='url$i' name='url$i' type='text'></td>
+					<td width='50'>URL $n</td>
+					<td width='250'><input id='url$i' name='url$i' type='text'></td>
 				";
 			}
 			$upload_list .= "
