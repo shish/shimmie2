@@ -157,15 +157,16 @@ EOD;
 	
 	function block_to_html($block, $hidable=false) {
 		$h = $block->header;
+		$s = $block->section;
 		$b = $block->body;
 		$html = "";
 		if($hidable) {
-			$i = str_replace(' ', '_', $h);
+			$i = str_replace(' ', '_', $h.$s);
 			if(!is_null($h)) $html .= "\n<h3 id='$i-toggle' onclick=\"toggle('$i')\">$h</h3>\n";
 			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
 		}
 		else {
-			$i = str_replace(' ', '_', $h);
+			$i = str_replace(' ', '_', $h.$s);
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
 			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n"; 
 		}
