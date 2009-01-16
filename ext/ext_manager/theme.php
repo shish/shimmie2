@@ -45,7 +45,7 @@ class ExtManagerTheme extends Themelet {
 	}
 
 	public function display_doc(Page $page, ExtensionInfo $info) {
-		$html = "<div style='align: left'>".$info->documentation."</div>";
+		$html = "<div style='margin: auto; text-align: left; width: 512px;'>".$info->documentation."</div>";
 		$page->set_title("Documentation for ".html_escape($info->name));
 		$page->set_heading(html_escape($info->name));
 		$page->add_block(new NavBlock());
