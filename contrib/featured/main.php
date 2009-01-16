@@ -4,6 +4,11 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Bring a specific image to the users' attentions
+ * Documentation:
+ *  Once enabled, a new "feature this" button will appear next
+ *  to the other image control buttons (delete, rotate, etc).
+ *  Clicking it will set the image as the site's current feature,
+ *  which will be shown in the side bar of the post list.
  */
 
 class Featured implements Extension {

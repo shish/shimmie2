@@ -1,11 +1,17 @@
 <?php
 /**
-* Name: Home Extension
+* Name: Home Page
 * Author: Bzchan <bzchan@animemahou.com>
 * License: GPLv2
-* Description: Extension adds a page "home" containing user specified
-*              links and a counter showing total number of posts. The
-*              page is accessed via /home.
+* Description: Displays a front page with logo, search box and image count
+* Documentation:
+*  Once enabled, the page will show up at the URL "home", so if you want
+*  this to be the front page of your site, you should go to "Board Config"
+*  and set "Front Page" to "home".
+*  <p>The images used for the numbers can be changed from the board config
+*  page. If you want to use your own numbers, upload them into a new folder
+*  in <code>/ext/home/counters</code>, and they'll become available
+*  alongside the default choices.
 */
 
 class Home implements Extension {

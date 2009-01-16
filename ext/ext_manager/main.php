@@ -17,7 +17,6 @@ class ExtensionInfo { // {{{
 		$this->ext_name = $matches[1];
 		$this->name = $this->ext_name;
 		$this->enabled = $this->is_enabled($this->ext_name);
-		$this->link = make_link("ext_doc/{$this->ext_name}");
 
 		for($i=0; $i<count($lines); $i++) {
 			$line = $lines[$i];
@@ -58,6 +57,9 @@ class ExtensionInfo { // {{{
 			if(preg_match("/\*\//", $line, $matches)) {
 				break;
 			}
+		}
+		if(is_null($this->link) && !is_null($this->documentation)) {
+			$this->link = make_link("ext_doc/{$this->ext_name}");
 		}
 	}
 
