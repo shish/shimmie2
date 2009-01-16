@@ -8,7 +8,11 @@
  */
 
 class RandomImage implements Extension {
+	var $theme;
+
 	public function receive_event(Event $event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("random_image")) {
 			global $config;
 			global $database;
@@ -33,6 +37,22 @@ class RandomImage implements Extension {
 			if($event->get_arg(0) == "view") {
 				if(!is_null($image)) {
 					send_event(new DisplayingImageEvent($image, $event->page));
+				}
+			}
+		}
+
+		if(($event instanceof SetupBuildingEvent)) {
+			$sb = new SetupBlock("Random Image");
+			$sb->add_bool_option("show_random_block", "Show Random Block: ");
+			$event->panel->add_block($sb);
+		}
+
+		if($event instanceof PostListBuildingEvent) {
+			global $config, $database;
+			if($config->get_bool("show_random_block")) {
+				$image = Image::by_random($config, $database, $event->search_terms);
+				if(!is_null($image)) {
+					$this->theme->display_random($event->page, $image);
 				}
 			}
 		}
