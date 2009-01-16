@@ -37,7 +37,7 @@ class ExtensionInfo { // {{{
 			else if(preg_match("/Author: (.*)/", $line, $matches)) {
 				$this->author = $matches[1];
 			}
-			if(preg_match("/(.*)Description: (.*)/", $line, $matches)) {
+			if(preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
 				$this->description = $matches[2];
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
@@ -46,7 +46,7 @@ class ExtensionInfo { // {{{
 					$i++;
 				}
 			}
-			if(preg_match("/(.*)Documentation: (.*)/", $line, $matches)) {
+			if(preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
 				$this->documentation = $matches[2];
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
