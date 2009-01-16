@@ -8,7 +8,7 @@
  */
 
 class ExtensionInfo { // {{{
-	var $ext_name, $name, $link, $author, $email, $description;
+	var $ext_name, $name, $link, $author, $email, $description, $documentation;
 
 	function ExtensionInfo($main) {
 		$matches = array();
@@ -25,6 +25,9 @@ class ExtensionInfo { // {{{
 			}
 			if(preg_match("/Link: (.*)/", $line, $matches)) {
 				$this->link = $matches[1];
+				if($this->link[0] == "/") {
+					$this->link = make_link(substr($this->link, 1));
+				}
 			}
 			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
 				$this->author = $matches[1];
@@ -33,18 +36,30 @@ class ExtensionInfo { // {{{
 			else if(preg_match("/Author: (.*)/", $line, $matches)) {
 				$this->author = $matches[1];
 			}
-			if(preg_match("/(.*)Description: (.*)/", $line, $matches)) {
+			if(preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
 				$this->description = $matches[2];
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
 				while(substr($lines[$i+1], 0, $start_len) == $start) {
-					$this->description .= substr($lines[$i+1], $start_len);
+					$this->description .= " ".substr($lines[$i+1], $start_len);
+					$i++;
+				}
+			}
+			if(preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
+				$this->documentation = $matches[2];
+				$start = $matches[1]." ";
+				$start_len = strlen($start);
+				while(substr($lines[$i+1], 0, $start_len) == $start) {
+					$this->documentation .= " ".substr($lines[$i+1], $start_len);
 					$i++;
 				}
 			}
 			if(preg_match("/\*\//", $line, $matches)) {
 				break;
 			}
+		}
+		if(is_null($this->link) && !is_null($this->documentation)) {
+			$this->link = make_link("ext_doc/{$this->ext_name}");
 		}
 	}
 
@@ -79,6 +94,12 @@ class ExtManager implements Extension {
 			else {
 				$this->theme->display_permission_denied($event->page);
 			}
+		}
+
+		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_doc")) {
+			$ext = $event->get_arg(0);
+			$info = new ExtensionInfo("contrib/$ext/main.php");
+			$this->theme->display_doc($event->page, $info);
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {

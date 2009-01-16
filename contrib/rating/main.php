@@ -3,7 +3,7 @@
  * Name: Image Ratings
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Allow users to rate images
+ * Description: Allow users to rate images "safe", "questionable" or "explicit"
  */
 
 class RatingSetEvent extends Event {

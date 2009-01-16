@@ -4,6 +4,9 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Auto-complete for search and upload tags
+ * Documentation:
+ *  Just enable and things should start autocompleting as if
+ *  by magic. That is, if this extension actually worked...
  */
 
 class AutoComplete implements Extension {

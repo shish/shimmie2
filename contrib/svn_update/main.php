@@ -4,6 +4,12 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Provides a button to check for updates
+ * Documentation:
+ *  This is a very risky idea, implemented without safeguards.
+ *  If you've done a clean SVN checkout, then updating will
+ *  normally work fine; but if you've made changes in one way,
+ *  and SVN has changed something in a different way, then there
+ *  will be conflicts and the site will die :(
  */
 
 class SVNUpdate implements Extension {

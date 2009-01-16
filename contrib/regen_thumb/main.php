@@ -4,6 +4,12 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Regenerate a thumbnail image
+ * Documentation:
+ *  This adds a button in the image control section on an
+ *  image's view page, which allows an admin to regenerate
+ *  an image's thumbnail; useful for instance if the first
+ *  attempt failed due to lack of memory, and memory has
+ *  since been increased.
  */
 
 class RegenThumb implements Extension {

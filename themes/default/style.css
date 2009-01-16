@@ -33,6 +33,10 @@ TD {
 	vertical-align: top;
 	text-align: center;
 }
+CODE {
+	background: #DEDEDE;
+	font-size: 0.8em;
+}
 #subtitle {
 	width: 256px;
 	font-size: 0.75em;

@@ -4,6 +4,8 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Adds notes overlaid on the images
+ * Documentation:
+ *  This is quite broken :(
  */
 
 class Notes implements Extension {

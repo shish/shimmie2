@@ -3,7 +3,9 @@
  * Name: News
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Show a short amonut of text in a block on the post list
+ * Description: Show a short amount of text in a block on the post list
+ * Documentation:
+ *  Any HTML is allowed
  */
 
 class News implements Extension {

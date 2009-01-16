@@ -4,6 +4,11 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Allow users to score images
+ * Documentation:
+ *  Similar to the Image Scores (Numeric) extension, but this one
+ *  uses an average rather than the sum of all votes, which means
+ *  that the score will be [-2 .. +2], and each integer in that
+ *  range has a label attached.
  */
 
 class TextScoreSetEvent extends Event {

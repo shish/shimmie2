@@ -3,8 +3,10 @@
  * Name: Site Description
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Sets the "description" meta-info in the page header, for
- *              eg search engines to read
+ * Description: A description for search engines
+ * Documentation:
+ *  This extension sets the "description" meta tag in the header
+ *  of pages so that search engines can pick it up
  */
 class SiteDescription implements Extension {
 	public function receive_event(Event $event) {

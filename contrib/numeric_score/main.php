@@ -4,6 +4,9 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Allow users to score images
+ * Documentation:
+ *  Each registered user may vote an image +1 or -1, the
+ *  image's score is the sum of all votes.
  */
 
 class NumericScoreSetEvent extends Event {

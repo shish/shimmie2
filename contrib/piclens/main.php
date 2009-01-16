@@ -4,6 +4,11 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Adds a link to piclensify the gallery
+ * Documentation:
+ *  This extension only provides a button to the javascript
+ *  version of the gallery; the "RSS for Images" extension
+ *  is piclens-compatible to start with. (And that extension
+ *  must be active for this one to do anything useful)
  */
 class PicLens implements Extension {
 	public function receive_event(Event $event) {

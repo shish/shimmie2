@@ -4,6 +4,10 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Allow users to send messages to eachother
+ * Documentation:
+ *  PMs show up on a user's profile page, readable by that user
+ *  as well as board admins. To send a PM, visit another user's
+ *  profile page and a box will be shown.
  */
 
 class SendPMEvent extends Event {

@@ -3,7 +3,13 @@
  * Name: Emoticon Filter
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Turn :smile: into a link to smile.gif
+ * Description: Lets users use graphical smilies
+ * Documentation:
+ *  This extension will turn colon-something-colon into a link
+ *  to an image with that something as the name, eg :smile:
+ *  becomes a link to smile.gif
+ *  <p>Images are stored in /ext/emoticons/default/, and you can
+ *  add more emoticons by uploading images into that folder.
  */
 
 class Emoticons extends FormatterExtension {
