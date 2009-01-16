@@ -42,7 +42,7 @@ class ExtensionInfo { // {{{
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
 				while(substr($lines[$i+1], 0, $start_len) == $start) {
-					$this->description .= substr($lines[$i+1], $start_len);
+					$this->description .= " ".substr($lines[$i+1], $start_len);
 					$i++;
 				}
 			}
@@ -51,7 +51,7 @@ class ExtensionInfo { // {{{
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
 				while(substr($lines[$i+1], 0, $start_len) == $start) {
-					$this->documentation .= substr($lines[$i+1], $start_len);
+					$this->documentation .= " ".substr($lines[$i+1], $start_len);
 					$i++;
 				}
 			}
