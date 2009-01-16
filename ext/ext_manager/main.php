@@ -8,7 +8,7 @@
  */
 
 class ExtensionInfo { // {{{
-	var $ext_name, $name, $link, $author, $email, $description;
+	var $ext_name, $name, $link, $author, $email, $description, $documentation;
 
 	function ExtensionInfo($main) {
 		$matches = array();
@@ -42,6 +42,15 @@ class ExtensionInfo { // {{{
 				$start_len = strlen($start);
 				while(substr($lines[$i+1], 0, $start_len) == $start) {
 					$this->description .= substr($lines[$i+1], $start_len);
+					$i++;
+				}
+			}
+			if(preg_match("/(.*)Documentation: (.*)/", $line, $matches)) {
+				$this->documentation = $matches[2];
+				$start = $matches[1]." ";
+				$start_len = strlen($start);
+				while(substr($lines[$i+1], 0, $start_len) == $start) {
+					$this->documentation .= substr($lines[$i+1], $start_len);
 					$i++;
 				}
 			}
@@ -82,6 +91,12 @@ class ExtManager implements Extension {
 			else {
 				$this->theme->display_permission_denied($event->page);
 			}
+		}
+
+		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_doc")) {
+			$ext = $event->get_arg(0);
+			$info = new ExtensionInfo("contrib/$ext/main.php");
+			$this->theme->display_doc($event->page, $info);
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
