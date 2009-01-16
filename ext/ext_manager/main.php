@@ -25,6 +25,9 @@ class ExtensionInfo { // {{{
 			}
 			if(preg_match("/Link: (.*)/", $line, $matches)) {
 				$this->link = $matches[1];
+				if($this->link[0] == "/") {
+					$this->link = make_link(substr($this->link, 1));
+				}
 			}
 			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
 				$this->author = $matches[1];
