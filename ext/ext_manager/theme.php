@@ -4,9 +4,12 @@ class ExtManagerTheme extends Themelet {
 	public function display_table(Page $page, $extensions) {
 		$html = "
 			<form action='".make_link("ext_manager/set")."' method='POST'>
-				<table border='1'>
-					<tr><th>Name</th><th>Author</th><th>Description</th><th>Links</th><th>Enabled</th></tr>
+				<table class='zebra'>
+					<thead>
+						<tr><th>Name</th><th>Author</th><th>Description</th><th>Links</th><th>Enabled</th></tr>
+					</thead>
 		";
+		$n = 0;
 		foreach($extensions as $extension) {
 			$ext_name = $extension->ext_name;
 			$h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
@@ -18,9 +21,10 @@ class ExtManagerTheme extends Themelet {
 			$h_author = html_escape($extension->author);
 			$h_description = html_escape($extension->description);
 			$h_enabled = $extension->enabled ? " checked='checked'" : "";
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
 			$html .= "
-				<tr>
+				<tr class='$oe'>
 					<td>$h_name</td>
 					" . (
 						empty($h_email) ?
@@ -35,7 +39,7 @@ class ExtManagerTheme extends Themelet {
 				</tr>";
 		}
 		$html .= "
-					<tr><td colspan='4'><input type='submit' value='Set Extensions'></td></tr>
+					<tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr>
 				</table>
 			</form>
 		";
