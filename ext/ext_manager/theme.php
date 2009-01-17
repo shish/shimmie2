@@ -8,6 +8,7 @@ class ExtManagerTheme extends Themelet {
 					<thead>
 						<tr><th>Enabled</td><th>Name</th><th>Description</th></tr>
 					</thead>
+					<tbody>
 		";
 		$n = 0;
 		foreach($extensions as $extension) {
@@ -26,7 +27,8 @@ class ExtManagerTheme extends Themelet {
 				</tr>";
 		}
 		$html .= "
-					<tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr>
+					</tbody>
+					<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>
 				</table>
 			</form>
 		";

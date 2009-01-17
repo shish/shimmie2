@@ -26,7 +26,6 @@ H3 {
 	padding: 1px;
 }
 THEAD {
-	background: #DEDEDE;
 	font-weight: bold;
 }
 TD {
@@ -54,7 +53,8 @@ TD>SELECT {width: 100%;}
 
 TABLE.zebra {border-spacing: 0px;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
-TABLE.zebra THEAD {border-bottom: 2px solid #DDD;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #CCC;}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #CCC;}
 TABLE.zebra TR {border-bottom: 1px solid #DDD;}
 TABLE.zebra TR.odd {background: #EFEFEF;}
 TABLE.zebra TR.even {background: #E0E0E0;}

@@ -47,10 +47,9 @@ class AliasEditorTheme extends Themelet {
 		}
 		$html = "
 			<table class='zebra'>
-				<thead><th>From</th><th>To</th>$action</thead>
-				$add
-				$h_aliases
-				$add
+				<thead><tr><th>From</th><th>To</th>$action</tr>$add</thead>
+				<tbody>$h_aliases</tbody>
+				<tfoot>$add</tfoot>
 			</table>
 			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
 			<form enctype='multipart/form-data' action='".make_link("alias/import")."' method='POST'>
