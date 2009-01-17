@@ -5,11 +5,11 @@
  * License: GPLv2
  * Description: Bulk add server-side images
  * Documentation:
- *  Upload the images into a new directory via ftp or similar,
- *  go to shimmie's admin page and put that directory in the
- *  bulk add box. If there are subdirectories, they get used
- *  as tags (eg if you upload into /home/bob/uploads/holiday/2008/
- *  and point shimmie ad /home/bob/uploads, then images will be
+ *  Upload the images into a new directory via ftp or similar, go to
+ *  shimmie's admin page and put that directory in the bulk add box.
+ *  If there are subdirectories, they get used as tags (eg if you
+ *  upload into <code>/home/bob/uploads/holiday/2008/</code> and point
+ *  shimmie at <code>/home/bob/uploads</code>, then images will be
  *  tagged "holiday 2008")
  */
 

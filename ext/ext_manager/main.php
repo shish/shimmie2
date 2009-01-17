@@ -58,9 +58,6 @@ class ExtensionInfo { // {{{
 				break;
 			}
 		}
-		if(is_null($this->link) && !is_null($this->documentation)) {
-			$this->link = make_link("ext_doc/{$this->ext_name}");
-		}
 	}
 
 	private function is_enabled($fname) {
