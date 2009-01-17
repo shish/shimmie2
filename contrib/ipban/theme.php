@@ -14,15 +14,17 @@ class IPBanTheme extends Themelet {
 	public function display_bans(Page $page, $bans) {
 		global $user;
 		$h_bans = "";
+		$n = 0;
 		foreach($bans as $ban) {
 			$end_human = date('Y-m-d', $ban['end_timestamp']);
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
-				<tr>
-					<td>{$ban['ip']}</td>
+				<tr class='$oe'>
+					<td width='10%'>{$ban['ip']}</td>
 					<td>{$ban['reason']}</td>
-					<td>{$ban['banner_name']}</td>
-					<td>{$end_human}</td>
-					<td>
+					<td width='10%'>{$ban['banner_name']}</td>
+					<td width='15%'>{$end_human}</td>
+					<td width='10%'>
 						<form action='".make_link("ip_ban/remove")."' method='POST'>
 							<input type='hidden' name='id' value='{$ban['id']}'>
 							<input type='submit' value='Remove'>
@@ -32,10 +34,10 @@ class IPBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<table border='1'>
-				<thead><td>IP</td><td>Reason</td><td>By</td><td>Until</td><td>Action</td></thead>
+			<table class='zebra'>
+				<thead><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></thead>
 				$h_bans
-				<tr>
+				<tfoot><tr>
 					<form action='".make_link("ip_ban/add")."' method='POST'>
 						<td><input type='text' name='ip'></td>
 						<td><input type='text' name='reason'></td>
@@ -43,7 +45,7 @@ class IPBanTheme extends Themelet {
 						<td><input type='text' name='end'></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>
-				</tr>
+				</tr></tfoot>
 			</table>
 		";
 		$page->set_title("IP Bans");

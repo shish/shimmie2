@@ -54,25 +54,28 @@ class SetupTheme extends Themelet {
 
 	public function display_advanced(Page $page, $options) {
 		$rows = "";
+		$n = 0;
 		foreach($options as $name => $value) {
 			$h_value = html_escape($value);
 			$len = strlen($h_value);
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
+
 			$box = "";
-			if($len < 50) {
-				$box .= "<input type='text' name='_config_$name' value='$h_value'>";
-			}
-			else {
+			if(strpos($value, "\n") > 0) {
 				$box .= "<textarea cols='50' rows='4' name='_config_$name'>$h_value</textarea>";
 			}
+			else {
+				$box .= "<input type='text' name='_config_$name' value='$h_value'>";
+			}
 			$box .= "<input type='hidden' name='_type_$name' value='string'>";
-			$rows .= "<tr><td>$name</td><td>$box</td></tr>";
+			$rows .= "<tr class='$oe'><td>$name</td><td>$box</td></tr>";
 		}
 
 		$table = "
-			<form action='".make_link("setup/save")."' method='POST'><table>
-			<tr><th width='25%'>Name</th><th>Value</th></tr>
-			$rows
-			<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
+			<form action='".make_link("setup/save")."' method='POST'><table class='zebra'>
+				<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
+				<tbody>$rows</tbody>
+				<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>
 			</table></form>
 			";
 

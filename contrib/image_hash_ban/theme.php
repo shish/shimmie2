@@ -22,12 +22,14 @@ class ImageBanTheme extends Themelet {
 	 */
 	public function display_image_hash_bans(Page $page, $page_number, $bans) {
 		$h_bans = "";
+		$n = 0;
 		foreach($bans as $ban) {
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
-				<tr>
-					<td>{$ban['hash']}</td>
+				<tr class='$oe'>
+					<td width='30%'>{$ban['hash']}</td>
 					<td>{$ban['reason']}</td>
-					<td>
+					<td width='10%'>
 						<form action='".make_link("image_hash_ban/remove")."' method='POST'>
 							<input type='hidden' name='hash' value='{$ban['hash']}'>
 							<input type='submit' value='Remove'>
@@ -37,16 +39,16 @@ class ImageBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<table border='1'>
-				<thead><td>Hash</td><td>Reason</td><td>Action</td></thead>
+			<table class='zebra'>
+				<thead><th>Hash</th><th>Reason</th><th>Action</th></thead>
 				$h_bans
-				<tr>
+				<tfoot><tr>
 					<form action='".make_link("image_hash_ban/add")."' method='POST'>
 						<td><input type='text' name='hash'></td>
 						<td><input type='text' name='reason'></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>
-				</tr>
+				</tr></tfoot>
 			</table>
 		";
 

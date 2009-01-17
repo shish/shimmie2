@@ -9,7 +9,7 @@ class AliasEditorTheme extends Themelet {
 	 */
 	public function display_aliases(Page $page, $aliases, $is_admin) {
 		if($is_admin) {
-			$action = "<td>Action</td>";
+			$action = "<th width='10%'>Action</th>";
 			$add = "
 				<tr>
 					<form action='".make_link("alias/add")."' method='POST'>
@@ -26,10 +26,13 @@ class AliasEditorTheme extends Themelet {
 		}
 
 		$h_aliases = "";
+		$n = 0;
 		foreach($aliases as $old => $new) {
 			$h_old = html_escape($old);
 			$h_new = html_escape($new);
-			$h_aliases .= "<tr><td>$h_old</td><td>$h_new</td>";
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
+			
+			$h_aliases .= "<tr class='$oe'><td>$h_old</td><td>$h_new</td>";
 			if($is_admin) {
 				$h_aliases .= "
 					<td>
@@ -43,8 +46,8 @@ class AliasEditorTheme extends Themelet {
 			$h_aliases .= "</tr>";
 		}
 		$html = "
-			<table border='1'>
-				<thead><td>From</td><td>To</td>$action</thead>
+			<table class='zebra'>
+				<thead><th>From</th><th>To</th>$action</thead>
 				$add
 				$h_aliases
 				$add
