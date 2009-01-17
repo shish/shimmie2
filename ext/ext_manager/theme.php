@@ -6,36 +6,23 @@ class ExtManagerTheme extends Themelet {
 			<form action='".make_link("ext_manager/set")."' method='POST'>
 				<table class='zebra'>
 					<thead>
-						<tr><th>Name</th><th>Author</th><th>Description</th><th>Links</th><th>Enabled</th></tr>
+						<tr><th>Enabled</td><th>Name</th><th>Description</th></tr>
 					</thead>
 		";
 		$n = 0;
 		foreach($extensions as $extension) {
 			$ext_name = $extension->ext_name;
 			$h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
-			$h_email = html_escape($extension->email);
-			$h_link = isset($extension->link) ?
-					"<a href=\"".html_escape($extension->link)."\">Info</a>" : "";
-			$h_doc = isset($extension->documentation) ?
-					"<a href=\"".make_link("ext_doc/".html_escape($extension->ext_name))."\">Help</a>" : "";
-			$h_author = html_escape($extension->author);
 			$h_description = html_escape($extension->description);
 			$h_enabled = $extension->enabled ? " checked='checked'" : "";
+			$h_link = make_link("ext_doc/".html_escape($extension->ext_name));
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
 			$html .= "
 				<tr class='$oe'>
-					<td>$h_name</td>
-					" . (
-						empty($h_email) ?
-							"<td>$h_author</td>" :
-							"<td><a href='mailto:$h_email'>$h_author</a></td>"
-					) . "
-					<td>$h_description</td>
-					<td>$h_link $h_doc</td>
-					<td>
-						<input type='checkbox' name='ext_$ext_name'$h_enabled>
-					</td>
+					<td><input type='checkbox' name='ext_$ext_name'$h_enabled></td>
+					<td><a href='$h_link'>$h_name</a></td>
+					<td style='text-align: left;'>$h_description</td>
 				</tr>";
 		}
 		$html .= "
@@ -106,7 +93,25 @@ class ExtManagerTheme extends Themelet {
 	}
 
 	public function display_doc(Page $page, ExtensionInfo $info) {
-		$html = "<div style='margin: auto; text-align: left; width: 512px;'>".$info->documentation."</div>";
+		$author = "";
+		if($info->author) {
+			if($info->email) {
+				$author = "<br><b>Author:</b> <a href=\"mailto:".html_escape($info->email)."\">".html_escape($info->author)."</a>";
+			}
+			else {
+				$author = "<br><b>Author:</b> ".html_escape($info->author);
+			}
+		}
+		$version = ($info->version) ? "<br><b>Version:</b> ".html_escape($info->version) : "";
+		$link = ($info->link) ? "<br><b>Home Page:</b> <a href=\"".html_escape($info->link)."\">Link</a>" : "";
+		$doc = $info->documentation;
+		$html = "
+			<div style='margin: auto; text-align: left; width: 512px;'>
+				$author
+				$version
+				<p>$doc
+			</div>";
+
 		$page->set_title("Documentation for ".html_escape($info->name));
 		$page->set_heading(html_escape($info->name));
 		$page->add_block(new NavBlock());

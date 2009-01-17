@@ -52,8 +52,8 @@ TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
 TD>SELECT {width: 100%;}
 
-TABLE.zebra {}
-TABLE.zebra TD {vertical-align: middle;}
+TABLE.zebra {border-spacing: 0px;}
+TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD {border-bottom: 2px solid #DDD;}
 TABLE.zebra TR {border-bottom: 1px solid #DDD;}
 TABLE.zebra TR.odd {background: #EFEFEF;}

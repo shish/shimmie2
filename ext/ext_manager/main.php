@@ -8,7 +8,7 @@
  */
 
 class ExtensionInfo { // {{{
-	var $ext_name, $name, $link, $author, $email, $description, $documentation;
+	var $ext_name, $name, $link, $author, $email, $description, $documentation, $version;
 
 	function ExtensionInfo($main) {
 		$matches = array();
@@ -28,6 +28,9 @@ class ExtensionInfo { // {{{
 				if($this->link[0] == "/") {
 					$this->link = make_link(substr($this->link, 1));
 				}
+			}
+			if(preg_match("/Version: (.*)/", $line, $matches)) {
+				$this->version = $matches[1];
 			}
 			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
 				$this->author = $matches[1];
