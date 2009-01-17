@@ -34,7 +34,8 @@ class IPBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<table class='zebra'>
+			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
+			<p><table class='zebra'>
 				<thead><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></thead>
 				$h_bans
 				<tfoot><tr>

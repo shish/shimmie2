@@ -70,7 +70,8 @@ class IPBan implements Extension {
 					}
 				}
 				else if($event->get_arg(0) == "list") {
-					$this->theme->display_bans($event->page, $this->get_bans());
+					$bans = (isset($_GET["all"])) ? $this->get_bans() : $this->get_active_bans();
+					$this->theme->display_bans($event->page, $bans);
 				}
 			}
 			else {
@@ -194,7 +195,8 @@ class IPBan implements Extension {
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			ORDER BY end_timestamp, id");
+			ORDER BY end_timestamp, id
+		");
 		if($bans) {return $bans;}
 		else {return array();}
 	}
@@ -202,8 +204,11 @@ class IPBan implements Extension {
 	private function get_active_bans() {
 		global $database;
 		$bans = $database->get_all("
-			SELECT * FROM bans
-			WHERE (end_timestamp > now()) OR (end_timestamp IS NULL)
+			SELECT bans.*, users.name as banner_name
+			FROM bans
+			JOIN users ON banner_id = users.id
+			WHERE (end_timestamp > UNIX_TIMESTAMP(now())) OR (end_timestamp IS NULL)
+			ORDER BY end_timestamp, id
 		");
 		if($bans) {return $bans;}
 		else {return array();}
