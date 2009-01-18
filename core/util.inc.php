@@ -13,9 +13,9 @@ function int_escape($input) {
 }
 
 function url_escape($input) {
-	$input = str_replace('/', '//', $input);
+	$input = str_replace('^', '^^', $input);
+	$input = str_replace('/', '^s', $input);
 	$input = rawurlencode($input);
-	$input = str_replace('%2F', '/', $input);
 	return $input;
 }
 
@@ -385,6 +385,27 @@ function send_event(Event $event) {
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/*
+ * Turn ^^ into ^ and ^s into /
+ *
+ * Necessary because various servers and various clients
+ * think that / is special...
+ */
+function _decaret($str) {
+	$out = "";
+	for($i=0; $i<strlen($str); $i++) {
+		if($str[$i] == "^") {
+			$i++;
+			if($str[$i] == "^") $out .= "^";
+			if($str[$i] == "s") $out .= "/";
+		}
+		else {
+			$out .= $str[$i];
+		}
+	}
+	return $out;
+}
+
 function _get_query_parts() {
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
@@ -400,11 +421,18 @@ function _get_query_parts() {
 		$path = substr($path, 1);
 	}
 
-	$path = str_replace('/', '%%', $path);
-	$path = str_replace('%%%%', '/', $path);
-	$parts = split('%%', $path);
+	$parts = split('/', $path);
 
-	return $parts;
+	if(strpos($path, "^") === FALSE) {
+		return $parts;
+	}
+	else {
+		$unescaped = array();
+		foreach($parts as $part) {
+			$unescaped[] = _decaret($part);
+		}
+		return $unescaped;
+	}
 }
 
 function _get_page_request($context) {
