@@ -9,7 +9,7 @@
 class ImageAdditionEvent extends Event {
 	var $user, $image;
 
-	public function ImageAdditionEvent($user, $image) {
+	public function ImageAdditionEvent(User $user, Image $image) {
 		$this->image = $image;
 		$this->user = $user;
 	}
@@ -27,7 +27,7 @@ class ImageAdditionEvent extends Event {
 class ImageDeletionEvent extends Event {
 	var $image;
 
-	public function ImageDeletionEvent($image) {
+	public function ImageDeletionEvent(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -58,7 +58,7 @@ class ParseLinkTemplateEvent extends Event {
 	var $link, $original;
 	var $image;
 
-	public function ParseLinkTemplateEvent($link, $image) {
+	public function ParseLinkTemplateEvent($link, Image $image) {
 		$this->link = $link;
 		$this->original = $link;
 		$this->image = $image;
@@ -173,7 +173,7 @@ class ImageIO implements Extension {
 			$handler = $config->get_string("upload_collision_handler");
 			if($handler == "merge") {
 				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
-				send_event(new TagSetEvent($existing->id, $merged));
+				send_event(new TagSetEvent($existing, $merged));
 				return null;
 			}
 			else {
@@ -193,7 +193,7 @@ class ImageIO implements Extension {
 						$image->hash, $image->ext, $image->width, $image->height, $image->source));
 		$image->id = $database->db->Insert_ID();
 
-		send_event(new TagSetEvent($image->id, $image->get_tag_array()));
+		send_event(new TagSetEvent($image, $image->get_tag_array()));
 
 		return null;
 	}

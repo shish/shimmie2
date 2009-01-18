@@ -9,7 +9,7 @@ class SourceSetEvent extends Event {
 	var $image;
 	var $source;
 
-	public function SourceSetEvent($image, $source) {
+	public function SourceSetEvent(Image $image, $source) {
 		$this->image = $image;
 		$this->source = $source;
 	}
@@ -26,7 +26,7 @@ class TagSetEvent extends Event {
 	var $image;
 	var $tags;
 
-	public function TagSetEvent($image, $tags) {
+	public function TagSetEvent(Image $image, $tags) {
 		$this->image = $image;
 		$this->tags = tag_explode($tags);
 	}
