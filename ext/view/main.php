@@ -38,10 +38,10 @@ class ImageInfoBoxBuildingEvent extends Event {
 }
 
 class ImageInfoSetEvent extends Event {
-	var $image_id;
+	var $image;
 
-	public function ImageInfoSetEvent($image_id) {
-		$this->image_id = int_escape($image_id);
+	public function ImageInfoSetEvent($image) {
+		$this->image = $image;
 	}
 }
 
@@ -86,9 +86,10 @@ class ViewImage implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("post/set")) {
+			global $config, $database;
 			$image_id = int_escape($_POST['image_id']);
 
-			send_event(new ImageInfoSetEvent($image_id));
+			send_event(new ImageInfoSetEvent(Image::by_id($config, $database, $image_id)));
 
 			$query = $_POST['query'];
 			$event->page->set_mode("redirect");

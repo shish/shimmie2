@@ -238,14 +238,17 @@ class Image {
 	public function set_tags($tags) {
 		$tags = tag_explode($tags);
 
-		$tags = array_map(array($this, 'resolve_alias'), $tags);
-		$tags = array_map(array($this, 'sanitise'), $tags);
+		$tags = array_map(array('Tag', 'resolve_alias'), $tags);
+		$tags = array_map(array('Tag', 'sanitise'), $tags);
 		$tags = array_iunique($tags); // remove any duplicate tags
+
+		assert(is_array($tags));
+		assert(count($tags) > 0);
 
 		// delete old
 		$this->delete_tags_from_image();
 
-		// insert each new tag
+		// insert each new tags
 		foreach($tags as $tag) {
 			$this->database->execute(
 					"INSERT IGNORE INTO tags(tag) VALUES (?)",
@@ -253,7 +256,7 @@ class Image {
 			$this->database->execute(
 					"INSERT INTO image_tags(image_id, tag_id) ".
 					"VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
-					array($image_id, $tag));
+					array($this->id, $tag));
 			$this->database->execute(
 					"UPDATE tags SET count = count + 1 WHERE tag = ?",
 					array($tag));
