@@ -144,6 +144,9 @@ class Image {
 	}
 
 	public function get_tag_array() {
+		$cached = $this->database->cache_get("image-{$this->id}-tags");
+		if($cached) return $cached;
+
 		if(!isset($this->tag_array)) {
 			$this->tag_array = Array();
 			$row = $this->database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
@@ -152,6 +155,8 @@ class Image {
 				$row->MoveNext();
 			}
 		}
+
+		$this->database->cache_set("image-{$this->id}-tags", $this->tag_array);
 		return $this->tag_array;
 	}
 
@@ -261,6 +266,8 @@ class Image {
 					"UPDATE tags SET count = count + 1 WHERE tag = ?",
 					array($tag));
 		}
+
+		$this->database->cache_delete("image-{$this->id}-tags");
 	}
 
 
