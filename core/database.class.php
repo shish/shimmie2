@@ -49,7 +49,7 @@ class ImgQuerylet {
 	}
 }
 // }}}
-// {{{ dbengines
+// {{{ db engines
 class DBEngine {
 	var $name = null;
 	var $auto_increment = null;
@@ -71,7 +71,43 @@ class PostgreSQL extends DBEngine {
 	function init($db) {
 	}
 }
-//}}}
+// }}}
+// {{{ cache engines
+interface CacheEngine {
+	var $db;
+	public function cache_get($key);
+	public function cache_set($key, $val, $time);
+	public function cache_delete($key);
+}
+class MemCache implements CacheEngine {
+	public function __construct(Database $db) {
+		$this->db = $db;
+	}
+
+	public function cache_get($key) {
+		assert(!is_null($key));
+		$val = $this->db->memcache->get($key);
+		if($val) {
+			$this->cache_hits++;
+			return $val;
+		}
+		else {
+			$this->cache_misses++;
+			return false;
+		}
+	}
+
+	public function cache_set($key, $val, $time=0) {
+		assert(!is_null($key));
+		$this->db->memcache->set($key, $val, false, $time);
+	}
+
+	public function cache_delete($key) {
+		assert(!is_null($key));
+		$this->db->memcache->delete($key);
+	}
+}
+// }}}
 
 /*
  * A class for controlled database access
@@ -81,6 +117,7 @@ class Database {
 	var $extensions;
 	var $cache_hits = 0, $cache_misses = 0;
 	var $engine = null;
+	var $cache = null;
 
 	/*
 	 * Create a new database object using connection info
@@ -92,6 +129,15 @@ class Database {
 			$this->engine = new MySQL();
 			$this->db = @NewADOConnection($database_dsn);
 			$this->use_memcache = isset($memcache);
+
+			if(isset($memcache)) {
+				$this->cache = new MemCache($this);
+			}
+			if(isset($cache)) {
+				//$matches = array();
+				//preg_match("#(memcache)://#", $cache, $matches);
+			}
+
 			if($this->db) {
 				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 				$this->engine->init($this->db);
