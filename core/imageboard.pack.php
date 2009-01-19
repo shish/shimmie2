@@ -275,6 +275,7 @@ class Image {
 	 * Other actions
 	 */
 	public function delete() {
+		$this->delete_tags_from_image();
 		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
 
 		unlink($this->get_image_filename());
