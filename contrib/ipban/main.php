@@ -203,6 +203,10 @@ class IPBan implements Extension {
 
 	private function get_active_bans() {
 		global $database;
+
+		$cached = $database->cache_get("bans");
+		if($cached) return $cached;
+
 		$bans = $database->get_all("
 			SELECT bans.*, users.name as banner_name
 			FROM bans
@@ -210,6 +214,9 @@ class IPBan implements Extension {
 			WHERE (end_timestamp > UNIX_TIMESTAMP(now())) OR (end_timestamp IS NULL)
 			ORDER BY end_timestamp, id
 		");
+
+		$database->cache_set("bans", $bans);
+
 		if($bans) {return $bans;}
 		else {return array();}
 	}
@@ -218,6 +225,7 @@ class IPBan implements Extension {
 		global $database;
 		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (?, ?, ?, ?)";
 		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
+		$database->cache_delete("bans");
 	}
 // }}}
 }
