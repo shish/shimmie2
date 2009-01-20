@@ -74,18 +74,24 @@ class PostgreSQL extends DBEngine {
 // }}}
 // {{{ cache engines
 interface CacheEngine {
-	var $hits = 0, $misses = 0;
-
 	public function get($key);
-	public function set($key, $val, $time);
+	public function set($key, $val, $time=0);
 	public function delete($key);
+
+	public function get_hits();
+	public function get_misses();
 }
 class NoCache implements CacheEngine {
 	public function get($key) {return false;}
-	public function set($key) {}
+	public function set($key, $val, $time=0) {}
 	public function delete($key) {}
+
+	public function get_hits() {return 0;}
+	public function get_misses() {return 0;}
 }
 class MemCache implements CacheEngine {
+	var $hits=0, $misses=0;
+
 	public function __construct($args) {
 		$this->memcache = new Memcache;
 		$this->memcache->pconnect('localhost', 11211) or ($this->use_memcache = false);
@@ -113,6 +119,9 @@ class MemCache implements CacheEngine {
 		assert(!is_null($key));
 		$this->memcache->delete($key);
 	}
+
+	public function get_hits() {return $this->hits;}
+	public function get_misses() {return $this->misses;}
 }
 // }}}
 

@@ -528,8 +528,8 @@ function get_debug_info() {
 	$i_files = count(get_included_files());
 	global $_execs;
 	global $database;
-	$hits = $database->cache->hits;
-	$miss = $database->cache->misses;
+	$hits = $database->cache->get_hits();
+	$miss = $database->cache->get_misses();
 	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
