@@ -122,12 +122,9 @@ class UserPageTheme extends Themelet {
 		global $database;
 		global $config;
 
-		$i_days_old = int_escape($duser->get_days_old());
 		$h_join_date = html_escape($duser->join_date);
-		$i_image_count = int_escape($duser->get_image_count());
-		$i_comment_count = int_escape($duser->get_comment_count());
-
-		$i_days_old2 = ($i_days_old == 0) ? 1 : $i_days_old;
+		$i_image_count = Image::count_images($config, $database, array("user_id={$duser->id}"));
+		$i_comment_count = Comment::count_comments_by_user($duser);
 
 		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
 		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
@@ -136,7 +133,7 @@ class UserPageTheme extends Themelet {
 		$images_link = make_link("post/list/user_id=$u_id/1");
 
 		return "
-			Join date: $h_join_date ($i_days_old days old)
+			Join date: $h_join_date
 			<br><a href='$images_link'>Images uploaded</a>: $i_image_count ($h_image_rate / day)
 			<br>Comments made: $i_comment_count ($h_comment_rate / day)
 			";

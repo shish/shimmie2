@@ -47,6 +47,11 @@ class Comment { // {{{
 		$this->poster_ip =  $row['poster_ip'];
 		$this->posted =  $row['posted'];
 	}
+
+	public static function count_comments_by_user($user) {
+		global $database;
+		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($user->id));
+	}
 } // }}}
 
 class CommentList implements Extension {
