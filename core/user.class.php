@@ -84,19 +84,5 @@ class User {
 		$hash = md5(strtolower($this->name) . $password);
 		$this->database->Execute("UPDATE users SET pass=? WHERE id=?", array($hash, $this->id));
 	}
-
-	public function get_days_old() {
-		return 0; // FIXME calculate this
-	}
-
-	public function get_image_count() {
-		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM images WHERE owner_id=?", array($this->id));
-	}
-
-	public function get_comment_count() {
-		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($this->id));
-	}
 }
 ?>
