@@ -130,7 +130,7 @@ class DatabaseConfig extends BaseConfig {
 		}
 		else {
 			$this->values = $this->database->db->GetAssoc("SELECT name, value FROM config");
-			$database->cache_set("config", $values);
+			$database->cache_set("config", $this->values);
 		}
 	}
 
