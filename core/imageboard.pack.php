@@ -144,7 +144,7 @@ class Image {
 	}
 
 	public function get_tag_array() {
-		$cached = $this->database->cache_get("image-{$this->id}-tags");
+		$cached = $this->database->cache->get("image-{$this->id}-tags");
 		if($cached) return $cached;
 
 		if(!isset($this->tag_array)) {
@@ -156,7 +156,7 @@ class Image {
 			}
 		}
 
-		$this->database->cache_set("image-{$this->id}-tags", $this->tag_array);
+		$this->database->cache->set("image-{$this->id}-tags", $this->tag_array);
 		return $this->tag_array;
 	}
 
@@ -267,7 +267,7 @@ class Image {
 					array($tag));
 		}
 
-		$this->database->cache_delete("image-{$this->id}-tags");
+		$this->database->cache->delete("image-{$this->id}-tags");
 	}
 
 
@@ -528,8 +528,8 @@ function get_debug_info() {
 	$i_files = count(get_included_files());
 	global $_execs;
 	global $database;
-	$hits = $database->cache_hits;
-	$miss = $database->cache_misses;
+	$hits = $database->cache->get_hits();
+	$miss = $database->cache->get_misses();
 	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";

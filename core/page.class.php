@@ -79,7 +79,7 @@ class GenericPage {
 				header("Cache-control: no-cache");
 				usort($this->blocks, "blockcmp");
 				$layout = new Layout();
-				$layout->display_page($this);
+				$layout->display_page($context);
 				break;
 			case "data":
 				if(!is_null($this->filename)) {

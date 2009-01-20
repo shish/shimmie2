@@ -49,7 +49,7 @@ class ImgQuerylet {
 	}
 }
 // }}}
-// {{{ dbengines
+// {{{ db engines
 class DBEngine {
 	var $name = null;
 	var $auto_increment = null;
@@ -71,7 +71,59 @@ class PostgreSQL extends DBEngine {
 	function init($db) {
 	}
 }
-//}}}
+// }}}
+// {{{ cache engines
+interface CacheEngine {
+	public function get($key);
+	public function set($key, $val, $time=0);
+	public function delete($key);
+
+	public function get_hits();
+	public function get_misses();
+}
+class NoCache implements CacheEngine {
+	public function get($key) {return false;}
+	public function set($key, $val, $time=0) {}
+	public function delete($key) {}
+
+	public function get_hits() {return 0;}
+	public function get_misses() {return 0;}
+}
+class MemCache implements CacheEngine {
+	var $hits=0, $misses=0;
+
+	public function __construct($args) {
+		$this->memcache = new Memcache;
+		$this->memcache->pconnect('localhost', 11211) or ($this->use_memcache = false);
+	}
+
+	public function get($key) {
+		assert(!is_null($key));
+		$val = $this->memcache->get($key);
+		if($val) {
+			$this->hits++;
+			return $val;
+		}
+		else {
+			$this->misses++;
+			return false;
+		}
+	}
+
+	public function set($key, $val, $time=0) {
+		assert(!is_null($key));
+		$this->memcache->set($key, $val, false, $time);
+	}
+
+	public function delete($key) {
+		assert(!is_null($key));
+		$this->memcache->delete($key);
+	}
+
+	public function get_hits() {return $this->hits;}
+	public function get_misses() {return $this->misses;}
+}
+// }}}
 
 /*
  * A class for controlled database access
@@ -79,8 +131,8 @@ class PostgreSQL extends DBEngine {
 class Database {
 	var $db;
 	var $extensions;
-	var $cache_hits = 0, $cache_misses = 0;
 	var $engine = null;
+	var $cache = null;
 
 	/*
 	 * Create a new database object using connection info
@@ -91,7 +143,18 @@ class Database {
 			require_once "config.php";
 			$this->engine = new MySQL();
 			$this->db = @NewADOConnection($database_dsn);
-			$this->use_memcache = isset($memcache);
+
+			if(isset($cache)) {
+				$matches = array();
+				preg_match("#(memcache)://(.*)#", $cache, $matches);
+				if($matches[1] == "memcache") {
+					$this->cache = new MemCache($matches[2]);
+				}
+			}
+			else {
+				$this->cache = new NoCache();
+			}
+
 			if($this->db) {
 				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 				$this->engine->init($this->db);
@@ -110,10 +173,6 @@ class Database {
 				";
 				exit;
 			}
-			if($this->use_memcache) {
-				$this->memcache = new Memcache;
-				$this->memcache->pconnect('localhost', 11211) or ($this->use_memcache = false);
-			}
 		}
 		else {
 			header("Location: install.php");
@@ -121,36 +180,6 @@ class Database {
 		}
 	}
 
-// memcache {{{
-	public function cache_get($key) {
-		assert(!is_null($key));
-		if($this->use_memcache) {
-			$val = $this->memcache->get($key);
-			if($val) {
-				$this->cache_hits++;
-				return $val;
-			}
-			else {
-				$this->cache_misses++;
-			}
-		}
-		return false;
-	}
-
-	public function cache_set($key, $val, $time=0) {
-		assert(!is_null($key));
-		if($this->use_memcache) {
-			$this->memcache->set($key, $val, false, $time);
-		}
-	}
-
-	public function cache_delete($key) {
-		assert(!is_null($key));
-		if($this->use_memcache) {
-			$this->memcache->delete($key);
-		}
-	}
-// }}}
 // safety wrapping {{{
 	public function execute($query, $args=array()) {
 		$result = $this->db->Execute($query, $args);
