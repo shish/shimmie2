@@ -84,7 +84,7 @@ class Ratings implements Extension {
 				$set = join(', ', $arr);
 				$event->add_querylet(new Querylet("rating IN ($set)"));
 			}
-			if(preg_match("/rating=([sqe]+)/", $event->term, $matches)) {
+			if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
 				$sqes = $matches[1];
 				$arr = array();
 				for($i=0; $i<strlen($sqes); $i++) {

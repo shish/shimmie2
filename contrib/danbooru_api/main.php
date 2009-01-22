@@ -58,7 +58,7 @@ class DanbooruApi implements Extension
 		if($event instanceof SearchTermParseEvent)
 		{
 			$matches = array();
-			if(preg_match("/md5:([0-9a-fA-F]*)/i", $event->term, $matches))
+			if(preg_match("/^md5:([0-9a-fA-F]*)$/i", $event->term, $matches))
 			{
 				$hash = strtolower($matches[1]);
 				$event->set_querylet(new Querylet("images.hash = '$hash'"));

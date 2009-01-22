@@ -166,7 +166,7 @@ class UserPage implements Extension {
 
 		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
-			if(preg_match("/(poster|user)=(.*)/i", $event->term, $matches)) {
+			if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
 				global $config;
 				global $database;
 				$user = User::by_name($config, $database, $matches[2]);
@@ -178,7 +178,7 @@ class UserPage implements Extension {
 				}
 				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 			}
-			else if(preg_match("/(poster|user)_id=([0-9]+)/i", $event->term, $matches)) {
+			else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
 				$user_id = int_escape($matches[2]);
 				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 			}
