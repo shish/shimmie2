@@ -156,7 +156,7 @@ class UserPage implements Extension {
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			$event->add_link("User Config", make_link("user"));
+			$event->add_link("My Profile", make_link("user"));
 			$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 		}
 
