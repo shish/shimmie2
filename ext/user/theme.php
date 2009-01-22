@@ -126,16 +126,16 @@ class UserPageTheme extends Themelet {
 		$i_image_count = Image::count_images($config, $database, array("user_id={$duser->id}"));
 		$i_comment_count = Comment::count_comments_by_user($duser);
 
-		$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
-		$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
+		#$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));
+		#$h_comment_rate = sprintf("%3.1f", ($i_comment_count / $i_days_old2));
 
 		$u_id = url_escape($duser->id);
 		$images_link = make_link("post/list/user_id=$u_id/1");
 
 		return "
 			Join date: $h_join_date
-			<br><a href='$images_link'>Images uploaded</a>: $i_image_count ($h_image_rate / day)
-			<br>Comments made: $i_comment_count ($h_comment_rate / day)
+			<br><a href='$images_link'>Images uploaded</a>: $i_image_count
+			<br>Comments made: $i_comment_count
 			";
 	}
 
