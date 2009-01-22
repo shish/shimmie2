@@ -111,7 +111,10 @@ class CommentList implements Extension {
 			global $config;
 			$cc = $config->get_int("comment_count");
 			if($cc > 0) {
-				$this->theme->display_recent_comments($event->page, $this->get_recent_comments($cc));
+				$recent = $this->get_recent_comments($cc);
+				if(count($recent) > 0) {
+					$this->theme->display_recent_comments($event->page, $recent);
+				}
 			}
 		}
 
