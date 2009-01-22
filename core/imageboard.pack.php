@@ -170,7 +170,7 @@ class Image {
 			return $this->parse_link_template($c->get_string('image_ilink'));
 		}
 		else if($c->get_bool('nice_urls', false)) {
-			return $this->parse_link_template('$base/_images/$hash/$id - $tags.$ext');
+			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
 		}
 		else {
 			return $this->parse_link_template('image/$id.$ext');
@@ -187,10 +187,10 @@ class Image {
 			return $this->parse_link_template($c->get_string('image_tlink'));
 		}
 		else if($c->get_bool('nice_urls', false)) {
-			return $this->parse_link_template('$base/_thumbs/$hash/$id.jpg');
+			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
 		}
 		else {
-			return $this->parse_link_template('image/$id.$ext');
+			return $this->parse_link_template('image/$id.jpg');
 		}
 	}
 
