@@ -37,7 +37,7 @@ class Upload implements Extension {
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_int('upload_count', 3);
-			$config->set_default_int('upload_size', '256KB');
+			$config->set_default_int('upload_size', '1MB');
 			$config->set_default_bool('upload_anon', false);
 		}
 

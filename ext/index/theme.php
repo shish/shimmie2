@@ -22,7 +22,7 @@ and of course start organising your images :-)
 EOD;
 		$page->set_title("Welcome to Shimmie ".VERSION);
 		$page->set_heading("Welcome to Shimmie");
-		$page->add_block(new Block("Welcome", $text, "main", 0));
+		$page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
 	}
 
 	public function display_page(Page $page, $images) {
