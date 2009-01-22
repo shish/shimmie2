@@ -31,21 +31,21 @@ class Notes implements Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE image_notes (
-			id int(11) NOT NULL auto_increment PRIMARY KEY,
-			image_id int(11) NOT NULL,
-			user_id int(11) NOT NULL,
-			owner_ip char(15) NOT NULL,
-			created_at datetime NOT NULL,
-			updated_at datetime NOT NULL,
-			version int(11) DEFAULT 1 NOT NULL,
-			is_active enum('Y', 'N') DEFAULT 'Y' NOT NULL,
-			x int(11) NOT NULL,
-			y int(11) NOT NULL,
-			w int(11) NOT NULL,
-			h int(11) NOT NULL,
-			body text NOT NULL
-		)");
+		$database->create_table("image_notes", "
+			id SCORE_AIPK,
+			image_id INTEGER NOT NULL,
+			user_id INTEGER NOT NULL,
+			owner_ip SCORE_INET NOT NULL,
+			created_at DATETIME NOT NULL,
+			updated_at DATETIME NOT NULL,
+			version INTEGER DEFAULT 1 NOT NULL,
+			is_active SCORE_BOOL DEFAULT SCORE_BOOL_Y NOT NULL,
+			x INTEGER NOT NULL,
+			y INTEGER NOT NULL,
+			w INTEGER NOT NULL,
+			h INTEGER NOT NULL,
+			body TEXT NOT NULL
+		");
 		$config->set_int("ext_notes_version", 1);
 	}
 }

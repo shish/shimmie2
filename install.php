@@ -53,8 +53,7 @@ if(is_readable("config.php")) {
 	exit;
 }
 require_once "core/compat.inc.php";
-require_once "lib/adodb/adodb.inc.php";
-require_once "lib/adodb/adodb-xmlschema03.inc.php";
+require_once "core/database.class.php";
 
 do_install();
 
@@ -143,15 +142,62 @@ function create_tables($dsn) { // {{{
 	}
 	else {
 		if(substr($dsn, 0, 5) == "mysql") {
-			$db->Execute("SET NAMES utf8");
+			$engine = new MySQL();
 		}
-		$schema = new adoSchema($db);
-		$sql = $schema->ParseSchema("ext/upgrade/schema.xml");
-		$result = $schema->ExecuteSchema();
+		else if(substr($dsn, 0, 5) == "pgsql") {
+			$engine = new PostgreSQL();
+		}
+		$engine->init($db);
 
-		if(!$result) {
-			die("Error creating tables from XML schema");
-		}
+		$db->execute($engine->create_table_sql("aliases", "
+			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
+			newtag VARCHAR(128) NOT NULL,
+			UNIQUE(oldtag, newtag)
+		"));
+		$db->execute($engine->create_table_sql("config", "
+			name VARCHAR(128) NOT NULL PRIMARY KEY,
+			value TEXT
+		"));
+		$db->execute($engine->create_table_sql("images", "
+			id SCORE_AIPK,
+			owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+			owner_ip SCORE_INET NOT NULL,
+			filename VARCHAR(64) NOT NULL,
+			filesize INTEGER NOT NULL,
+			hash CHAR(32) NOT NULL,
+			ext CHAR(4) NOT NULL,
+			source VARCHAR(255),
+			width INTEGER NOT NULL,
+			height INTEGER NOT NULL,
+			posted TIMESTAMP NOT NULL DEFAULT SCORE_NOW,
+			INDEX(owner_id),
+			INDEX(hash),
+			INDEX(width),
+			INDEX(height)
+		"));
+		$db->execute($engine->create_table_sql("users", "
+			id SCORE_AIPK,
+			name VARCHAR(32) NOT NULL,
+			pass CHAR(32),
+			joindate DATATIME NOT NULL DEFAULT SCORE_NOW,
+			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+			email VARCHAR(128),
+			INDEX(name)
+		"));
+		$db->execute($engine->create_table_sql("tags", "
+			id SCORE_AIPK,
+			tag VARCHAR(64) NOT NULL,
+			count NOT NULL DEFAULT 0,
+			INDEX(tag)
+		"));
+		$db->execute($engine->create_table_sql("image_tags", "
+			image_id INTEGER REFERENCES images(id) ON DELETE CASCADE,
+			tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+			INDEX(image_id),
+			INDEX(tag_id),
+			INDEX(image_id, tag_id)
+		"));
+		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 7)");
 	}
 	$db->Close();
 } // }}}
@@ -220,7 +266,7 @@ function write_config($dsn) { // {{{
 
 		<p><textarea cols="80" rows="2">$file_content</textarea>
 						
-		<p>One done, <a href='index.php?q=setup'>Continue</a>
+		<p>One done, <a href='index.php'>Continue</a>
 EOD;
 		exit;
 	}

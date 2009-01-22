@@ -92,14 +92,12 @@ class NumericScore implements Extension {
 		if($config->get_int("ext_numeric_score_version") < 1) {
 			$database->Execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");
 			$database->Execute("CREATE INDEX images__numeric_score ON images(numeric_score)");
-			$database->Execute("
-				CREATE TABLE numeric_score_votes (
-					image_id INTEGER NOT NULL,
-					user_id INTEGER NOT NULL,
-					score INTEGER NOT NULL,
-					UNIQUE(image_id, user_id),
-					INDEX(image_id)
-				)
+			$database->create_table("numeric_score_votes", "
+				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+				user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				score INTEGER NOT NULL,
+				UNIQUE(image_id, user_id),
+				INDEX(image_id)
 			");
 			$config->set_int("ext_numeric_score_version", 1);
 		}

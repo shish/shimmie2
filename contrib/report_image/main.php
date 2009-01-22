@@ -115,12 +115,12 @@ class ReportImage implements Extension {
 		global $database;
 		global $config;
 		if($config->get_int("ext_report_image_version") < 1) {
-			$database->Execute("CREATE TABLE image_reports (
-				id {$database->engine->auto_increment},
-				image_id INTEGER NOT NULL,
-				reporter_id INTEGER NOT NULL,
+			$database->create_table("image_reports", "
+				id SCORE_AIPK,
+				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+				reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
 				reason TEXT NOT NULL
-			)");
+			");
 			$config->set_int("ext_report_image_version", 1);
 		}
 	}

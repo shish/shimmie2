@@ -104,14 +104,14 @@ class EventLog implements Extension {
 		global $config;
 
 		if($config->get_int("ext_event_log_version", 0) < 1) {
-			$database->Execute("CREATE TABLE event_log (
-				id int(11) NOT NULL auto_increment primary key,
-				owner_id int(11) NOT NULL,
-				owner_ip char(15) NOT NULL,
-				date datetime NOT NULL,
-				event varchar(32) NOT NULL,
-				entry varchar(255) NOT NULL
-			)");
+			$database->create_table("event_log", "
+				id SCORE_AIPK,
+				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				owner_ip SCORE_INET NOT NULL,
+				date DATETIME NOT NULL,
+				event VARCHAR(32) NOT NULL,
+				entry TEXT NOT NULL
+			");
 			$config->set_int("ext_event_log_version", 1);
 		}
 	}

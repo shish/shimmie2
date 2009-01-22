@@ -160,17 +160,17 @@ class CommentList implements Extension {
 
 		// shortcut to latest
 		if($config->get_int("ext_comments_version") < 1) {
-			$database->Execute("CREATE TABLE comments (
-				id {$database->engine->auto_increment},
-				image_id INTEGER NOT NULL,
-				owner_id INTEGER NOT NULL,
-				owner_ip CHAR(16) NOT NULL,
+			$database->create_table("comments", "
+				id SCORE_AIPK,
+				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				owner_ip SCORE_INET NOT NULL,
 				posted DATETIME DEFAULT NULL,
 				comment TEXT NOT NULL,
 				INDEX (image_id),
 				INDEX (owner_ip),
 				INDEX (posted)
-			) {$database->engine->create_table_extras}");
+			");
 			$config->set_int("ext_comments_version", 2);
 		}
 

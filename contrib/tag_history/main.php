@@ -67,12 +67,11 @@ class Tag_History implements Extension {
 		global $config;
 
 		if($config->get_int("ext_tag_history_version") < 1) {
-			$database->Execute("CREATE TABLE tag_histories
-			(
-	    		id integer NOT NULL auto_increment PRIMARY KEY,
-	    		image_id integer NOT NULL,
-	    		tags text NOT NULL
-			)");
+			$database->create_table("tag_histories", "
+	    		id SCORE_AIPK,
+	    		image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
+	    		tags TEXT NOT NULL
+			");
 			$config->set_int("ext_tag_history_version", 1);
 		}
 		

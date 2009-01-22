@@ -116,13 +116,12 @@ class ImageBan implements Extension {
 	protected function install() {
 		global $database;
 		global $config;
-		$database->Execute("CREATE TABLE image_bans (
-			id int(11) NOT NULL auto_increment,
-			   hash char(32) default NULL,
-			   date datetime default NULL,
-			   reason varchar(255) default NULL,
-			   PRIMARY KEY (id)
-				   )");
+		$database->create_table("image_bans", "
+			id SCORE_AIPK,
+			hash CHAR(32) NOT NULL,
+			date DATETIME DEFAULT now(),
+			reason TEXT NOT NULL,
+		");
 		$config->set_int("ext_imageban_version", 1);
 	}
 

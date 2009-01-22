@@ -53,22 +53,45 @@ class ImgQuerylet {
 class DBEngine {
 	var $name = null;
 	var $auto_increment = null;
+	var $inet = null;
 	var $create_table_extras = "";
+
+	public function create_table_sql($name, $data) {
+		return "CREATE TABLE $name ($data)";
+	}
 }
 class MySQL extends DBEngine {
 	var $name = "mysql";
-	var $auto_increment = "INTEGER PRIMARY KEY auto_increment";
-	var $create_table_extras = "TYPE=INNODB DEFAULT CHARSET='utf8'";
 
-	function init($db) {
+	public function init($db) {
 		$db->Execute("SET NAMES utf8;");
+	}
+
+	public function create_table_sql($name, $data) {
+		$data = str_replace($data, "SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment");
+		$data = str_replace($data, "SCORE_INET", "CHAR(15)");
+		$data = str_replace($data, "SCORE_BOOL", "ENUM('Y', 'N')");
+		$data = str_replace($data, "SCORE_BOOL_Y", "'Y'");
+		$data = str_replace($data, "SCORE_BOOL_N", "'N'");
+		$data = str_replace($data, "SCORE_NOW", "now()");
+		$ctes = "TYPE=InnoDB DEFAULT CHARSET='utf8'";
+		return "CREATE TABLE $name ($data) $ctes";
 	}
 }
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
-	var $auto_increment = "SERIAL PRIMARY KEY";
 
-	function init($db) {
+	public function init($db) {
+	}
+
+	public function create_table_sql($name, $data) {
+		$data = str_replace($data, "SCORE_AIPK", "SERIAL PRIMARY KEY");
+		$data = str_replace($data, "SCORE_INET", "INET");
+		$data = str_replace($data, "SCORE_BOOL", "BOOL",);
+		$data = str_replace($data, "SCORE_BOOL_Y", "'t'");
+		$data = str_replace($data, "SCORE_BOOL_N", "'f'");
+		$data = str_replace($data, "SCORE_NOW", "current_time");
+		return "CREATE TABLE $name ($data)";
 	}
 }
 // }}}
@@ -180,7 +203,6 @@ class Database {
 		}
 	}
 
-// safety wrapping {{{
 	public function execute($query, $args=array()) {
 		$result = $this->db->Execute($query, $args);
 		if($result === False) {
@@ -220,9 +242,7 @@ class Database {
 	}
 
 	public function create_table($name, $data) {
-		$data = str_replace($data, "SCORE_AIPK", $this->engine->auto_increment);
-		$ctes = $this->engine->create_table_extras;
-		$this->execute("CREATE TABLE $name ($data) $ctes");
+		$this->execute($this->engine->create_table_sql($name, $data));
 	}
 
 	public function upgrade_schema($filename) {
@@ -248,6 +268,5 @@ class Database {
 
 		$config->set_bool("in_upgrade", false);
 	}
-// }}}
 }
 ?>

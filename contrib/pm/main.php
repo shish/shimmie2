@@ -121,18 +121,16 @@ class PM implements Extension {
 
 		// shortcut to latest
 		if($config->get_int("pm_version") < 1) {
-			$database->execute("
-				CREATE TABLE private_message (
-					id {$database->engine->auto_increment},
-					from_id INTEGER NOT NULL,
-					from_ip VARCHAR(15) NOT NULL,
-					to_id INTEGER NOT NULL,
-					sent_date DATETIME NOT NULL,
-					subject VARCHAR(64) NOT NULL,
-					message TEXT NOT NULL,
-					is_read ENUM('Y', 'N') NOT NULL DEFAULT 'N',
-					INDEX (to_id)
-				) {$database->engine->create_table_extras};
+			$database->create_table("private_message", "
+				id SCORE_AIPK,
+				from_id INTEGER NOT NULL,
+				from_ip SCORE_INET NOT NULL,
+				to_id INTEGER NOT NULL,
+				sent_date DATETIME NOT NULL,
+				subject VARCHAR(64) NOT NULL,
+				message TEXT NOT NULL,
+				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+				INDEX (to_id)
 			");
 			$config->set_int("pm_version", 1);
 		}

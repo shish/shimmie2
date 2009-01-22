@@ -103,15 +103,13 @@ class IPBan implements Extension {
 
 		// shortcut to latest
 		if($config->get_int("ext_ipban_version") < 1) {
-			$database->execute("
-				CREATE TABLE bans (
-					id {$database->engine->auto_increment},
-					banner_id INTEGER NOT NULL,
-					ip VARCHAR(15) NOT NULL,
-					end_timestamp INTEGER,
-					reason TEXT NOT NULL,
-					INDEX (end_timestamp)
-				) {$database->engine->create_table_extras};
+			$database->create_table("bans", "
+				id SCORE_AIPK,
+				banner_id INTEGER NOT NULL,
+				ip SCORE_INET NOT NULL,
+				end_timestamp INTEGER,
+				reason TEXT NOT NULL,
+				INDEX (end_timestamp)
 			");
 			$config->set_int("ext_ipban_version", 6);
 		}
