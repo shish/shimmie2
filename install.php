@@ -81,11 +81,14 @@ function check_im_version() {
 }
 // }}}
 function do_install() { // {{{
-	if(!isset($_POST['database_dsn'])) {
-		begin();
+	if(isset($_POST['database_dsn'])) {
+		install_process($_POST['database_dsn']);
+	}
+	else if(file_exists("auto_install.conf")) {
+		install_process(trim(file_get_contents("auto_install.conf")));
 	}
 	else {
-		install_process();
+		begin();
 	}
 } // }}}
 function begin() { // {{{
@@ -126,8 +129,7 @@ function begin() { // {{{
 		</div>
 EOD;
 } // }}}
-function install_process() { // {{{
-	$database_dsn = $_POST['database_dsn'];
+function install_process($database_dsn) { // {{{
 	create_tables($database_dsn);
 	insert_defaults($database_dsn);
 	build_dirs();
