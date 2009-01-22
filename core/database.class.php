@@ -73,7 +73,7 @@ class MySQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
-		$data = str_replace("SCORE_NOW", "now()", $data);
+		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
 		$ctes = "TYPE=InnoDB DEFAULT CHARSET='utf8'";
 		return "CREATE TABLE $name ($data) $ctes";
 	}
