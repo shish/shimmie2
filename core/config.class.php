@@ -124,13 +124,13 @@ class DatabaseConfig extends BaseConfig {
 	public function DatabaseConfig($database) {
 		$this->database = $database;
 
-		$cached = $database->cache->get("config");
+		$cached = $this->database->cache->get("config");
 		if($cached) {
 			$this->values = $cached;
 		}
 		else {
 			$this->values = $this->database->db->GetAssoc("SELECT name, value FROM config");
-			$database->cache->set("config", $this->values);
+			$this->database->cache->set("config", $this->values);
 		}
 	}
 
@@ -147,7 +147,7 @@ class DatabaseConfig extends BaseConfig {
 			$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
 			$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
 		}
-		$database->cache->delete("config");
+		$this->database->cache->delete("config");
 	}
 }
 ?>
