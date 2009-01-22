@@ -56,6 +56,8 @@ class DBEngine {
 	var $inet = null;
 	var $create_table_extras = "";
 
+	public function init($db) {}
+
 	public function create_table_sql($name, $data) {
 		return "CREATE TABLE $name ($data)";
 	}
@@ -81,14 +83,24 @@ class MySQL extends DBEngine {
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
 
-	public function init($db) {
-	}
-
 	public function create_table_sql($name, $data) {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "INET", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'t'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'f'", $data);
+		$data = str_replace("SCORE_BOOL", "BOOL", $data);
+		$data = str_replace("SCORE_NOW", "current_time", $data);
+		return "CREATE TABLE $name ($data)";
+	}
+}
+class SQLite extends DBEngine {
+	var $name = "sqlite";
+
+	public function create_table_sql($name, $data) {
+		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
+		$data = str_replace("SCORE_INET", "INET", $data);
+		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
+		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "BOOL", $data);
 		$data = str_replace("SCORE_NOW", "current_time", $data);
 		return "CREATE TABLE $name ($data)";

@@ -149,6 +149,13 @@ function create_tables($dsn) { // {{{
 		else if(substr($dsn, 0, 5) == "pgsql") {
 			$engine = new PostgreSQL();
 		}
+		else if(substr($dsn, 0, 5) == "sqlite") {
+			$engine = new SQLite();
+		}
+		else {
+			die("Unknown database engine; Shimmie currently officially supports MySQL
+			(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
+		}
 		$engine->init($db);
 
 		$db->execute($engine->create_table_sql("aliases", "
