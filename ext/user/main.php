@@ -176,11 +176,11 @@ class UserPage implements Extension {
 				else {
 					$user_id = -1;
 				}
-				$event->set_querylet(new Querylet("images.owner_id = $user_id"));
+				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 			}
 			else if(preg_match("/(poster|user)_id=([0-9]+)/i", $event->term, $matches)) {
 				$user_id = int_escape($matches[2]);
-				$event->set_querylet(new Querylet("images.owner_id = $user_id"));
+				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 			}
 		}
 	}
