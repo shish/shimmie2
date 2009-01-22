@@ -7,6 +7,22 @@ class IndexTheme extends Themelet {
 		$this->search_terms = $search_terms;
 	}
 
+	public function display_intro(Page $page) {
+		$text = <<<EOD
+<div style="text-align: left;">
+<p>The first thing you'll probably want to do is create a new account; note
+that the first account you create will by default be marked as the board's
+administrator, and any further accounts will be regular users.
+
+<p>Once logged in you can play with the settings, install extra features,
+and of course start organising your images :-)
+</div>
+EOD;
+		$page->set_title("Welcome to Shimmie ".VERSION);
+		$page->set_heading("Welcome to Shimmie");
+		$page->add_block(new Block("Welcome", $text, "main", 0));
+	}
+
 	public function display_page(Page $page, $images) {
 		global $config;
 

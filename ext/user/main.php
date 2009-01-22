@@ -233,9 +233,13 @@ class UserPage implements Extension {
 		$hash = md5(strtolower($event->username) . $event->password);
 		$email = (!empty($event->email)) ? $event->email : null;
 
+		// if there are currently no admins, the new user should be one
+		$need_admin = ($database->db->GetOne("SELECT COUNT(*) FROM users WHERE admin IN ('Y', 't', '1')") == 0);
+		$admin = $need_admin ? 'Y' : 'N';
+
 		$database->Execute(
-				"INSERT INTO users (name, pass, joindate, email) VALUES (?, ?, now(), ?)",
-				array($event->username, $hash, $email));
+				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (?, ?, now(), ?, ?)",
+				array($event->username, $hash, $email, $admin));
 	}
 
 	private function set_login_cookie($name, $pass) {
