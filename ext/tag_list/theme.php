@@ -40,7 +40,7 @@ class TagListTheme extends Themelet {
 			$tag = $row['tag'];
 			$h_tag = html_escape($tag);
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
-			$count = $row['count'];
+			$count = $row['calc_count'];
 			if($n++) $html .= "\n<br/>";
 			if(!is_null($config->get_string('info_link'))) {
 				$link = str_replace('$tag', $tag, $config->get_string('info_link'));

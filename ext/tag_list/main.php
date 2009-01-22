@@ -210,7 +210,7 @@ class TagList implements Extension {
 		global $config;
 
 		$query = "
-			SELECT COUNT(it3.image_id) as count, t3.tag AS tag
+			SELECT COUNT(it3.image_id) as calc_count, t3.tag AS tag
 			FROM
 				image_tags AS it1,
 				image_tags AS it2,
@@ -226,7 +226,7 @@ class TagList implements Extension {
 				AND t1.id = it1.tag_id
 				AND t3.id = it3.tag_id
 			GROUP BY it3.tag_id
-			ORDER BY count DESC
+			ORDER BY calc_count DESC
 			LIMIT ?
 		";
 		$args = array($image->id, $config->get_int('tag_list_length'));

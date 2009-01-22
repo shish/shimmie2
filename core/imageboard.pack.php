@@ -255,13 +255,25 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			$this->database->execute(
-					"INSERT IGNORE INTO tags(tag) VALUES (?)",
+			$id = $this->database->db->GetOne(
+					"SELECT id FROM tags WHERE tag = ?",
 					array($tag));
-			$this->database->execute(
-					"INSERT INTO image_tags(image_id, tag_id) ".
-					"VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
-					array($this->id, $tag));
+			if(empty($id)) {
+				// a new tag
+				$this->database->execute(
+						"INSERT INTO tags(tag) VALUES (?)",
+						array($tag));
+				$this->database->execute(
+						"INSERT INTO image_tags(image_id, tag_id)
+						VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
+						array($this->id, $tag));
+			}
+			else {
+				// user of an existing tag
+				$this->database->execute(
+						"INSERT INTO image_tags(image_id, tag_id) VALUES(?, ?)",
+						array($this->id, $id));
+			}
 			$this->database->execute(
 					"UPDATE tags SET count = count + 1 WHERE tag = ?",
 					array($tag));
