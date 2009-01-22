@@ -53,15 +53,6 @@ class NumericScore implements Extension {
 			}
 		}
 
-		if($event instanceof ImageInfoSetEvent) {
-			global $user;
-			$char = $_POST['numeric_score'];
-			$score = 0;
-			if($char == "u") $score = 1;
-			else if($char == "d") $score = -1;
-			if($score != 0) send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
-		}
-
 		if($event instanceof NumericScoreSetEvent) {
 			$this->add_vote($event->image_id, $event->user->id, $event->score);
 		}

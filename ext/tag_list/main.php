@@ -193,6 +193,7 @@ class TagList implements Extension {
 			$h_tag = html_escape($row['tag']);
 			$link = $this->tag_link($row['tag']);
 			$image = Image::by_random($config, $database, array($row['tag']));
+			if(is_null($image)) continue; // one of the popular tags has no images
 			$thumb = $image->get_thumb_link();
 			$html .= "<td><a href='$link'><img src='$thumb'><br>$h_tag</a></td>\n";
 			if($n%3==2) $html .= "</tr>";

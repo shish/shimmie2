@@ -173,7 +173,7 @@ class Image {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
 		}
 		else {
-			return $this->parse_link_template('image/$id.$ext');
+			return $this->parse_link_template(make_link('image/$id.$ext'));
 		}
 	}
 
@@ -190,7 +190,7 @@ class Image {
 			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
 		}
 		else {
-			return $this->parse_link_template('image/$id.jpg');
+			return $this->parse_link_template(make_link('image/$id.jpg'));
 		}
 	}
 

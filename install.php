@@ -154,7 +154,7 @@ function create_tables($dsn) { // {{{
 		$db->execute($engine->create_table_sql("aliases", "
 			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
 			newtag VARCHAR(128) NOT NULL,
-			UNIQUE(oldtag, newtag)
+			INDEX(newtag)
 		"));
 		$db->execute($engine->create_table_sql("config", "
 			name VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -162,12 +162,11 @@ function create_tables($dsn) { // {{{
 		"));
 		$db->execute($engine->create_table_sql("users", "
 			id SCORE_AIPK,
-			name VARCHAR(32) NOT NULL,
+			name VARCHAR(32) UNIQUE NOT NULL,
 			pass CHAR(32),
 			joindate DATETIME NOT NULL DEFAULT SCORE_NOW,
 			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-			email VARCHAR(128),
-			INDEX(name)
+			email VARCHAR(128)
 		"));
 		$db->execute($engine->create_table_sql("images", "
 			id SCORE_AIPK,
@@ -175,30 +174,28 @@ function create_tables($dsn) { // {{{
 			owner_ip SCORE_INET NOT NULL,
 			filename VARCHAR(64) NOT NULL,
 			filesize INTEGER NOT NULL,
-			hash CHAR(32) NOT NULL,
+			hash CHAR(32) UNIQUE NOT NULL,
 			ext CHAR(4) NOT NULL,
 			source VARCHAR(255),
 			width INTEGER NOT NULL,
 			height INTEGER NOT NULL,
 			posted TIMESTAMP NOT NULL DEFAULT SCORE_NOW,
 			INDEX(owner_id),
-			INDEX(hash),
 			INDEX(width),
 			INDEX(height),
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 		"));
 		$db->execute($engine->create_table_sql("tags", "
 			id SCORE_AIPK,
-			tag VARCHAR(64) NOT NULL,
-			count INTEGER NOT NULL DEFAULT 0,
-			UNIQUE(tag)
+			tag VARCHAR(64) UNIQUE NOT NULL,
+			count INTEGER NOT NULL DEFAULT 0
 		"));
 		$db->execute($engine->create_table_sql("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
 			INDEX(image_id),
 			INDEX(tag_id),
-			INDEX(image_id, tag_id),
+			UNIQUE(image_id, tag_id),
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		"));

@@ -47,7 +47,7 @@ class Ratings implements Extension {
 		if($event instanceof ImageInfoSetEvent) {
 			global $user;
 			if($user->is_admin()) {
-				send_event(new RatingSetEvent($event->image_id, $user, $_POST['rating']));
+				send_event(new RatingSetEvent($event->image->id, $user, $_POST['rating']));
 			}
 		}
 

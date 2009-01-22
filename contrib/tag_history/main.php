@@ -57,7 +57,7 @@ class Tag_History implements Extension {
 			$event->panel->add_block($sb);
 		}
 		if(($event instanceof TagSetEvent)) {
-			$this->add_tag_history($event->image_id, $event->tags);
+			$this->add_tag_history($event->image->id, $event->tags);
 		}
 	}
 	
@@ -76,7 +76,7 @@ class Tag_History implements Extension {
 				date_set DATETIME NOT NULL,
 				INDEX(image_id),
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-				FOREIGN KEY (user_id) REFERENCES images(id) ON DELETE CASCADE
+				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_tag_history_version", 3);
 		}

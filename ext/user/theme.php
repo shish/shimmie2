@@ -33,7 +33,7 @@ class UserPageTheme extends Themelet {
 
 		$html .= "
 		<form action='".make_link("user_admin/create")."' method='POST'>
-			<table style='width: 300px;' border='1'>
+			<table style='width: 300px;'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
@@ -61,7 +61,7 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
-			<table border='1' summary='Login Form'>
+			<table summary='Login Form'>
 			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
 			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
 			<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
@@ -148,8 +148,8 @@ class UserPageTheme extends Themelet {
 		<form action='".make_link("user_admin/change_pass")."' method='POST'>
 			<input type='hidden' name='name' value='{$duser->name}'>
 			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;' border='1'>
-				<tr><td colspan='2'>Change Password</td></tr>
+			<table style='width: 300px;'>
+				<tr><th colspan='2'>Change Password</th></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>

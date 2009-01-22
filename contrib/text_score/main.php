@@ -48,7 +48,7 @@ class TextScore implements Extension {
 			$i_score = int_escape($_POST['text_score__score']);
 
 			if($i_score >= -2 || $i_score <= 2) {
-				send_event(new TextScoreSetEvent($event->image_id, $user, $i_score));
+				send_event(new TextScoreSetEvent($event->image->id, $user, $i_score));
 			}
 		}
 

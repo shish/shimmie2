@@ -82,11 +82,11 @@ class EventLog implements Extension {
 			$this->add_to_log($user, 'Image Deletion', "Deleted image {$event->image->id} (tags: {$event->image->get_tag_list()})");
 		}
 		if($event instanceof SourceSetEvent) {
-			$this->add_to_log($user, 'Source Set', "Source for image #{$event->image_id} set to '{$event->source}'");
+			$this->add_to_log($user, 'Source Set', "Source for image #{$event->image->id} set to '{$event->source}'");
 		}
 		if($event instanceof TagSetEvent) {
 			$tags = implode($event->tags, ", ");
-			$this->add_to_log($user, 'Tags Set', "Tags for image #{$event->image_id} set to '$tags'");
+			$this->add_to_log($user, 'Tags Set', "Tags for image #{$event->image->id} set to '$tags'");
 		}
 	}
 

@@ -9,11 +9,12 @@
  * which only appears when an image actually exists.
  */
 class DisplayingImageEvent extends Event {
-	var $image, $page;
+	var $image, $page, $context;
 
-	public function DisplayingImageEvent($image, $page) {
+	public function __construct(RequestContext $context, Image $image) {
+		parent::__construct($context);
 		$this->image = $image;
-		$this->page = $page;
+		$this->page = $context->page;
 	}
 
 	public function get_image() {
@@ -74,7 +75,7 @@ class ViewImage implements Extension {
 			$image = Image::by_id($config, $database, $image_id);
 
 			if(!is_null($image)) {
-				send_event(new DisplayingImageEvent($image, $event->page));
+				send_event(new DisplayingImageEvent($event->context, $image));
 				$iabbe = new ImageAdminBlockBuildingEvent($image, $event->user);
 				send_event($iabbe);
 				ksort($iabbe->parts);

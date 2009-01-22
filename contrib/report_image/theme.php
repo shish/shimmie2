@@ -74,7 +74,7 @@ class ReportImageTheme extends Themelet {
 	public function display_image_banner(Page $page, Image $image) {
 		global $config;
 
-		$i_image = int_escape($image);
+		$i_image = int_escape($image->id);
 		$html = "
 			<form action='".make_link("image_report/add")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image'>
