@@ -285,29 +285,5 @@ class Database {
 	public function create_table($name, $data) {
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
-
-	public function upgrade_schema($filename) {
-		$this->install_schema($filename);
-	}
-
-	public function install_schema($filename) {
-		//print "<br>upgrading $filename";
-
-		global $config;
-		if($config->get_bool("in_upgrade")) return;
-		$config->set_bool("in_upgrade", true);
-
-		require_once "lib/adodb/adodb-xmlschema03.inc.php";
-		$schema = new adoSchema($this->db);
-		$sql = $schema->ParseSchema($filename);
-		//echo "<pre>"; var_dump($sql); echo "</pre>";
-		$result = $schema->ExecuteSchema();
-
-		if(!$result) {
-			die("Error creating tables from XML schema ($filename)");
-		}
-
-		$config->set_bool("in_upgrade", false);
-	}
 }
 ?>
