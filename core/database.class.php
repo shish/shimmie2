@@ -219,6 +219,12 @@ class Database {
 		}
 	}
 
+	public function create_table($name, $data) {
+		$data = str_replace($data, "SCORE_AIPK", $this->engine->auto_increment);
+		$ctes = $this->engine->create_table_extras;
+		$this->execute("CREATE TABLE $name ($data) $ctes");
+	}
+
 	public function upgrade_schema($filename) {
 		$this->install_schema($filename);
 	}
