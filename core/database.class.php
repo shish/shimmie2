@@ -52,9 +52,6 @@ class ImgQuerylet {
 // {{{ db engines
 class DBEngine {
 	var $name = null;
-	var $auto_increment = null;
-	var $inet = null;
-	var $create_table_extras = "";
 
 	public function init($db) {}
 
