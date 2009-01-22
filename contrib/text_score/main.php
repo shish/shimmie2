@@ -82,11 +82,13 @@ class TextScore implements Extension {
 			$database->Execute("ALTER TABLE images ADD COLUMN text_score INTEGER NOT NULL DEFAULT 0");
 			$database->Execute("CREATE INDEX images__text_score ON images(text_score)");
 			$database->create_table("text_score_votes", "
-				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
-				user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				image_id INTEGER NOT NULL,
+				user_id INTEGER NOT NULL,
 				score INTEGER NOT NULL,
 				UNIQUE(image_id, user_id),
-				INDEX(image_id)
+				INDEX(image_id),
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_text_score_version", 1);
 		}

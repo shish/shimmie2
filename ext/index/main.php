@@ -30,8 +30,9 @@ class PostListBuildingEvent extends Event {
 	var $page = null;
 	var $search_terms = null;
 
-	public function PostListBuildingEvent($page, $search) {
-		$this->page = $page;
+	public function __construct(RequestContext $context, $search) {
+		parent::__construct($context);
+		$this->page = $context->page;
 		$this->search_terms = $search;
 	}
 }
@@ -83,7 +84,7 @@ class Index implements Extension {
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
 			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
 
-			send_event(new PostListBuildingEvent($event->page, $search_terms));
+			send_event(new PostListBuildingEvent($event->context, $search_terms));
 
 			if(!(count($search_terms) == 0 && count($images) == 0)) {
 				$this->theme->set_page($page_number, $total_pages, $search_terms);

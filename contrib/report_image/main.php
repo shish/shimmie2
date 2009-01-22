@@ -117,9 +117,11 @@ class ReportImage implements Extension {
 		if($config->get_int("ext_report_image_version") < 1) {
 			$database->create_table("image_reports", "
 				id SCORE_AIPK,
-				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
-				reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-				reason TEXT NOT NULL
+				image_id INTEGER NOT NULL,
+				reporter_id INTEGER NOT NULL,
+				reason TEXT NOT NULL,
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_report_image_version", 1);
 		}

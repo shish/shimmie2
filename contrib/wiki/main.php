@@ -149,14 +149,15 @@ class Wiki implements Extension {
 		if($config->get_int("ext_wiki_version", 0) < 1) {
 			$database->create_table("wiki_pages", "
 				id SCORE_AIPK,
-				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				owner_id INTEGER NOT NULL,
 				owner_ip SCORE_INET NOT NULL,
 				date DATETIME DEFAULT NULL,
 				title VARCHAR(255) NOT NULL,
 				revision INTEGER NOT NULL DEFAULT 1,
 				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 				body TEXT NOT NULL,
-				UNIQUE (title, revision)
+				UNIQUE (title, revision),
+				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_wiki_version", 2);
 		}

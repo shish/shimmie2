@@ -38,10 +38,11 @@ class Bookmarks implements Extension {
 		if($config->get_int("ext_bookmarks_version") < 1) {
 			$database->create_table("bookmark", "
 				id SCORE_AIPK,
-				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				owner_id INTEGER NOT NULL,
 				url TEXT NOT NULL,
 				title TET NOT NULL,
-				INDEX (owner_id)
+				INDEX (owner_id),
+				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_bookmarks_version", 1);
 		}

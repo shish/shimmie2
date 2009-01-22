@@ -69,10 +69,16 @@ class Tag_History implements Extension {
 		if($config->get_int("ext_tag_history_version") < 1) {
 			$database->create_table("tag_histories", "
 	    		id SCORE_AIPK,
-	    		image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
-	    		tags TEXT NOT NULL
+	    		image_id INTEGER NOT NULL,
+				user_id INTEGER NOT NULL,
+				user_ip SCORE_INET NOT NULL,
+	    		tags TEXT NOT NULL,
+				date_set DATETIME NOT NULL,
+				INDEX(image_id),
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (user_id) REFERENCES images(id) ON DELETE CASCADE
 			");
-			$config->set_int("ext_tag_history_version", 1);
+			$config->set_int("ext_tag_history_version", 3);
 		}
 		
 		if($config->get_int("ext_tag_history_version") == 1) {

@@ -106,11 +106,12 @@ class EventLog implements Extension {
 		if($config->get_int("ext_event_log_version", 0) < 1) {
 			$database->create_table("event_log", "
 				id SCORE_AIPK,
-				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				owner_id INTEGER NOT NULL,
 				owner_ip SCORE_INET NOT NULL,
 				date DATETIME NOT NULL,
 				event VARCHAR(32) NOT NULL,
-				entry TEXT NOT NULL
+				entry TEXT NOT NULL,
+				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_event_log_version", 1);
 		}

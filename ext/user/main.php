@@ -4,8 +4,9 @@ class UserBlockBuildingEvent extends Event {
 	var $parts = array();
 	var $user = null;
 
-	public function UserBlockBuildingEvent($user) {
-		$this->user = $user;
+	public function __construct(RequestContext $context) {
+		parent::__construct($context);
+		$this->user = $context->user;
 	}
 
 	public function add_link($name, $link, $position=50) {
@@ -121,7 +122,7 @@ class UserPage implements Extension {
 			global $config;
 			$this->theme->display_user_page($event->context->page, $event->display_user, $user);
 			if($user->id == $event->display_user->id) {
-				$ubbe = new UserBlockBuildingEvent($event->display_user);
+				$ubbe = new UserBlockBuildingEvent($event->context);
 				send_event($ubbe);
 				ksort($ubbe->parts);
 				$this->theme->display_user_links($event->context->page, $event->context->user, $ubbe->parts);
@@ -141,7 +142,7 @@ class UserPage implements Extension {
 				$this->theme->display_login_block($page);
 			}
 			else {
-				$ubbe = new UserBlockBuildingEvent($user);
+				$ubbe = new UserBlockBuildingEvent($event->context);
 				send_event($ubbe);
 				ksort($ubbe->parts);
 				$this->theme->display_user_block($page, $user, $ubbe->parts);

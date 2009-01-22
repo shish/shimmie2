@@ -162,14 +162,16 @@ class CommentList implements Extension {
 		if($config->get_int("ext_comments_version") < 1) {
 			$database->create_table("comments", "
 				id SCORE_AIPK,
-				image_id INTEGER NOT NULL REFERENCES images(id) ON DELETE CASCADE,
-				owner_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+				image_id INTEGER NOT NULL,
+				owner_id INTEGER NOT NULL,
 				owner_ip SCORE_INET NOT NULL,
 				posted DATETIME DEFAULT NULL,
 				comment TEXT NOT NULL,
 				INDEX (image_id),
 				INDEX (owner_ip),
-				INDEX (posted)
+				INDEX (posted),
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_comments_version", 2);
 		}
