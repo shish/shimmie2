@@ -187,7 +187,7 @@ function create_tables($dsn) { // {{{
 		$db->execute($engine->create_table_sql("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) NOT NULL,
-			count NOT NULL DEFAULT 0,
+			count INTEGER NOT NULL DEFAULT 0,
 			INDEX(tag)
 		"));
 		$db->execute($engine->create_table_sql("image_tags", "
