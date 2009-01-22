@@ -16,6 +16,8 @@ administrator, and any further accounts will be regular users.
 
 <p>Once logged in you can play with the settings, install extra features,
 and of course start organising your images :-)
+
+<p>This message will go away once your first image is uploaded~
 </div>
 EOD;
 		$page->set_title("Welcome to Shimmie ".VERSION);

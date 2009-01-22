@@ -161,7 +161,8 @@ class UserPage implements Extension {
 		}
 
 		if($event instanceof UserCreationEvent) {
-			if($this->check_user_creation($event)) $this->create_user($event);
+			$this->check_user_creation($event);
+			$this->create_user($event);
 		}
 
 		if($event instanceof SearchTermParseEvent) {
