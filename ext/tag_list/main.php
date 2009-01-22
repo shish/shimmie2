@@ -263,6 +263,7 @@ class TagList implements Extension {
 		$query = "
 			SELECT tag, count
 			FROM tags
+			WHERE count > 0
 			ORDER BY count DESC
 			LIMIT ?
 		";
