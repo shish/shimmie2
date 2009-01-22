@@ -149,7 +149,7 @@ function create_tables($dsn) { // {{{
 		else if(substr($dsn, 0, 5) == "pgsql") {
 			$engine = new PostgreSQL();
 		}
-		else if(substr($dsn, 0, 5) == "sqlite") {
+		else if(substr($dsn, 0, 6) == "sqlite") {
 			$engine = new SQLite();
 		}
 		else {

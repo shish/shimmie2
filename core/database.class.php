@@ -96,14 +96,33 @@ class PostgreSQL extends DBEngine {
 class SQLite extends DBEngine {
 	var $name = "sqlite";
 
+	public function init($db) {
+		// TODO: add functions:
+		// now()
+		// unix_timestamp()
+	}
+
 	public function create_table_sql($name, $data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
-		$data = str_replace("SCORE_INET", "INET", $data);
+		$data = str_replace("SCORE_INET", "VARCHAR(15)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
-		$data = str_replace("SCORE_BOOL", "BOOL", $data);
-		$data = str_replace("SCORE_NOW", "current_time", $data);
-		return "CREATE TABLE $name ($data)";
+		$data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
+		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
+		$cols = array();
+		$extras = "";
+		foreach(explode(",", $data) as $bit) {
+			$matches = array();
+			if(preg_match("/INDEX\s+\((.*)\)/", $bit, $matches)) {
+				$col = $matches[1];
+				$extras .= "CREATE INDEX {$name}_{$col} on $name($col);";
+			}
+			else {
+				$cols[] = $bit;
+			}
+		}
+		$cols_redone = implode(", ", $cols);
+		return "CREATE TABLE $name ($cols_redone); $extras";
 	}
 }
 // }}}
@@ -176,7 +195,17 @@ class Database {
 	public function Database() {
 		if(is_readable("config.php")) {
 			require_once "config.php";
-			$this->engine = new MySQL();
+
+			if(substr($database_dsn, 0, 5) == "mysql") {
+				$this->engine = new MySQL();
+			}
+			else if(substr($database_dsn, 0, 5) == "pgsql") {
+				$this->engine = new PostgreSQL();
+			}
+			else if(substr($database_dsn, 0, 6) == "sqlite") {
+				$this->engine = new SQLite();
+			}
+
 			$this->db = @NewADOConnection($database_dsn);
 
 			if(isset($cache)) {
