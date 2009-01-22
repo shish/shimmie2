@@ -55,7 +55,7 @@ class Ratings implements Extension {
 			$privs = array();
 			$privs['Safe Only'] = 's';
 			$privs['Safe and Questionable'] = 'sq';
-			$privs['All'] = 'sqe';
+			$privs['All'] = 'sqeu';
 
 			$sb = new SetupBlock("Image Ratings");
 			$sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
@@ -98,7 +98,7 @@ class Ratings implements Extension {
 
 	private function no_rating_query($context) {
 		foreach($context as $term) {
-			if(preg_match("/rating=([sqe]+)/", $term)) {
+			if(preg_match("/^rating=([sqeu]+)$/", $term)) {
 				return false;
 			}
 		}
@@ -110,13 +110,19 @@ class Ratings implements Extension {
 		global $config;
 
 		if($config->get_int("ext_ratings2_version") < 1) {
-			$database->Execute("ALTER TABLE images ADD COLUMN rating ENUM('s', 'q', 'e') NOT NULL DEFAULT 'q'");
-			$config->set_int("ext_ratings2_version", 1);
+			$database->Execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT 'u'");
+			$database->Execute("CREATE INDEX images__rating ON images(rating)");
+			$config->set_int("ext_ratings2_version", 3);
 		}
 
 		if($config->get_int("ext_ratings2_version") < 2) {
 			$database->Execute("CREATE INDEX images__rating ON images(rating)");
 			$config->set_int("ext_ratings2_version", 2);
+		}
+
+		if($config->get_int("ext_ratings2_version") < 3) {
+			$database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
+			$config->set_int("ext_ratings2_version", 3);
 		}
 	}
 
