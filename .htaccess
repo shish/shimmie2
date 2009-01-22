@@ -2,6 +2,10 @@
 DirectoryIndex index.php5 index.php
 </IfModule>
 
+<FilesMatch "\.(sqlite|sdb|s3db|db)$">
+Deny from all
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
 RewriteEngine  on
 

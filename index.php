@@ -66,7 +66,9 @@ try {
 
 
 	// for databases which support transactions
-	$database->db->CommitTrans(true);
+	if($database->engine->name != "sqlite") {
+		$database->db->CommitTrans(true);
+	}
 }
 catch(Exception $e) {
 	$version = VERSION;
