@@ -28,13 +28,13 @@ class TagSetEvent extends Event {
 
 	public function TagSetEvent(Image $image, $tags) {
 		$this->image = $image;
-		$this->tags = tag_explode($tags);
+		$this->tags = Tag::explode($tags);
 	}
 }
 
 class TagEdit implements Extension {
 	var $theme;
-// event handling {{{
+
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
@@ -46,15 +46,9 @@ class TagEdit implements Extension {
 					$search = $_POST['search'];
 					$replace = $_POST['replace'];
 					global $page;
-					if(strpos($search, " ") === false && strpos($replace, " ") === false) {
-						$this->mass_tag_edit($search, $replace);
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
-					}
-					else {
-						$this->theme->display_error($page, "Search &amp; Replace Error",
-							"Bulk replace can only do single tags -- don't use spaces!");
-					}
+					$this->mass_tag_edit($search, $replace);
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("admin"));
 				}
 			}
 		}
@@ -110,8 +104,7 @@ class TagEdit implements Extension {
 			$event->panel->add_block($sb);
 		}
 	}
-// }}}
-// do things {{{
+
 	private function can_tag() {
 		global $config, $user;
 		return $config->get_bool("tag_edit_anon") || !$user->is_anonymous();
@@ -124,23 +117,43 @@ class TagEdit implements Extension {
 
 	private function mass_tag_edit($search, $replace) {
 		global $database;
-		$search_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($search));
-		$replace_id = $database->db->GetOne("SELECT id FROM tags WHERE tag=?", array($replace));
-		if($search_id && $replace_id) {
-			// FIXME: what if the (image_id,tag_id) pair already exists?
-			$database->Execute("UPDATE IGNORE image_tags SET tag_id=? WHERE tag_id=?", Array($replace_id, $search_id));
-			$database->Execute("DELETE FROM image_tags WHERE tag_id=?", Array($search_id));
-			$database->Execute("
-				UPDATE tags
-				SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)
-				WHERE id=? OR id=?
-				", array($search_id, $replace_id));
-		}
-		else if($search_id) {
-			$database->Execute("UPDATE tags SET tag=? WHERE tag=?", Array($replace, $search));
+		global $config;
+
+		$search_set = Tag::explode($search);
+		$replace_set = Tag::explode($replace);
+
+		$last_id = -1;
+		while(true) {
+			// make sure we don't look at the same images twice.
+			// search returns high-ids first, so we want to look
+			// at images with lower IDs than the previous.
+			$search_forward = $search_set;
+			if($last_id >= 0) $search_forward[] = "id<$last_id";
+
+			$images = Image::find_images($config, $database, 0, 100, $search_forward);
+			if(count($images) == 0) break;
+
+			foreach($images as $image) {
+				// remove the search'ed tags
+				$before = $image->get_tag_array();
+				$after = array();
+				foreach($before as $tag) {
+					if(!in_array($tag, $search_set)) {
+						$after[] = $tag;
+					}
+				}
+
+				// add the replace'd tags
+				foreach($replace_set as $tag) {
+					$after[] = $tag;
+				}
+
+				$image->set_tags($after);
+
+				$last_id = $image->id;
+			}
 		}
 	}
-// }}}
 }
 add_event_listener(new TagEdit());
 ?>
