@@ -9,11 +9,11 @@ class BBCode implements Extension {
 	}
 
 	private function bbcode_to_html($text) {
+		$text = $this->extract_code($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
 		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "<s>\\1</s>", $text);
-		$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "<pre>\\1</pre>", $text);
 		$text = preg_replace("/&gt;&gt;(\d+)/s", "<a href=\"".make_link("post/view/\\1")."\">&gt;&gt;\\1</a>", $text);
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
@@ -35,6 +35,7 @@ class BBCode implements Extension {
 		$text = preg_replace("#\[\*\]#s", "<li>", $text);
 		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
 		$text = $this->filter_spoiler($text);
+		$text = $this->insert_code($text);
 		return $text;
 	}
 
@@ -85,6 +86,49 @@ class BBCode implements Extension {
 			$ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
 
 			$text = $beginning . $middle . $ending;
+		}
+		return $text;
+	}
+
+	private function extract_code($text) {
+		# at the end of this function, the only code! blocks should be
+		# the ones we've added -- others may contain malicious content,
+		# which would only appear after decoding
+		$text = preg_replace("/\[code!\](.*?)\[\/code!\]/s", "[code]\\1[/code]", $text);
+
+		$l1 = strlen("[code]");
+		$l2 = strlen("[/code]");
+		while(true) {
+			$start = strpos($text, "[code]");
+			if($start === false) break;
+
+			$end = strpos($text, "[/code]");
+			if($end === false) break;
+
+			$beginning = substr($text, 0, $start);
+			$middle = base64_encode(substr($text, $start+$l1, ($end-$start-$l1)));
+			$ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+
+			$text = $beginning . "[code!]" . $middle . "[/code!]" . $ending;
+		}
+		return $text;
+	}
+
+	private function insert_code($text) {
+		$l1 = strlen("[code!]");
+		$l2 = strlen("[/code!]");
+		while(true) {
+			$start = strpos($text, "[code!]");
+			if($start === false) break;
+
+			$end = strpos($text, "[/code!]");
+			if($end === false) break;
+
+			$beginning = substr($text, 0, $start);
+			$middle = base64_decode(substr($text, $start+$l1, ($end-$start-$l1)));
+			$ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
+
+			$text = $beginning . "<pre>" . $middle . "</pre>" . $ending;
 		}
 		return $text;
 	}
