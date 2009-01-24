@@ -86,7 +86,7 @@ class Index implements Extension {
 
 			send_event(new PostListBuildingEvent($event->context, $search_terms));
 
-			if(!(count($search_terms) == 0 && count($images) == 0)) {
+			if(count($search_terms) > 0 || count($images) > 0 || $page_number > 0) {
 				$this->theme->set_page($page_number, $total_pages, $search_terms);
 				$this->theme->display_page($event->page, $images);
 			}
