@@ -74,14 +74,16 @@ class CommentList implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("comment")) {
 			if($event->get_arg(0) == "add") {
-				try {
-					$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
-					send_event($cpe);
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
-				}
-				catch(CommentPostingException $ex) {
-					$this->theme->display_error($event->page, "Comment Blocked", $ex->getMessage());
+				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
+					try {
+						$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
+						send_event($cpe);
+						$event->page->set_mode("redirect");
+						$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
+					}
+					catch(CommentPostingException $ex) {
+						$this->theme->display_error($event->page, "Comment Blocked", $ex->getMessage());
+					}
 				}
 			}
 			else if($event->get_arg(0) == "delete") {
