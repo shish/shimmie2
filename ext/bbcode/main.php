@@ -28,9 +28,12 @@ class BBCode implements Extension {
 		$text = preg_replace("/\[h2\](.*?)\[\/h2\]/s", "<h2>\\1</h2>", $text);
 		$text = preg_replace("/\[h3\](.*?)\[\/h3\]/s", "<h3>\\1</h3>", $text);
 		$text = preg_replace("/\[h4\](.*?)\[\/h4\]/s", "<h4>\\1</h4>", $text);
-		$text = preg_replace("/\[list\](.*?)\[\/list\]/s", "<ul>\\1</ul>", $text);
-		$text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "<ul>\\1</ul>", $text);
-		$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "<ol>\\1</ol>", $text);
+		while(preg_match("/\[list\](.*?)\[\/list\]/s", $text))
+			$text = preg_replace("/\[list\](.*?)\[\/list\]/s", "<ul>\\1</ul>", $text);
+		while(preg_match("/\[ul\](.*?)\[\/ul\]/s", $text))
+			$text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "<ul>\\1</ul>", $text);
+		while(preg_match("/\[ol\](.*?)\[\/ol\]/s", $text))
+			$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "<ol>\\1</ol>", $text);
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
 		$text = preg_replace("#\[\*\]#s", "<li>", $text);
 		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
@@ -55,9 +58,7 @@ class BBCode implements Extension {
 		$text = preg_replace("/\[h2\](.*?)\[\/h2\]/s", "\\1", $text);
 		$text = preg_replace("/\[h3\](.*?)\[\/h3\]/s", "\\1", $text);
 		$text = preg_replace("/\[h4\](.*?)\[\/h4\]/s", "\\1", $text);
-		$text = preg_replace("/\[list\](.*?)\[\/list\]/s", "\\1", $text);
-		$text = preg_replace("/\[ul\](.*?)\[\/ul\]/s", "\\1", $text);
-		$text = preg_replace("/\[ol\](.*?)\[\/ol\]/s", "\\1", $text);
+		$text = preg_replace("/\[\/?(list|ul|ol)\]/", "", $text);
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "\\1", $text);
 		$text = preg_replace("/\[\*\](.*?)/s", "\\1", $text);
 		$text = $this->strip_spoiler($text);
