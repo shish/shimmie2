@@ -55,7 +55,7 @@ class Upload implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("upload")) {
 			if(count($_FILES) + count($_POST) > 0) {
-				$tags = tag_explode($_POST['tags']);
+				$tags = Tag::explode($_POST['tags']);
 				$source = isset($_POST['source']) ? $_POST['source'] : null;
 				global $user;
 				if($this->can_upload($user)) {
@@ -81,7 +81,7 @@ class Upload implements Extension {
 					$url = $_GET['url'];
 					$tags = array('tagme');
 					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
-						$tags = tag_explode($_GET['tags']);
+						$tags = Tag::explode($_GET['tags']);
 					}
 					$ok = $this->try_transload($url, $tags, $url);
 					$this->theme->display_upload_status($event->page, $ok);

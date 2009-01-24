@@ -51,7 +51,7 @@ class FlashFileHandler implements Extension {
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = tag_explode($metadata['tags']);
+		$image->tag_array = Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
 		// redundant, since getimagesize() works on SWF o_O

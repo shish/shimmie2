@@ -192,7 +192,7 @@ class DanbooruApi implements Extension
 				}
 
 				// Get tags out of url
-				$posttags = tag_explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
+				$posttags = Tag::explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
 				$hash = md5_file($file);
 				// Was an md5 supplied? Does it match the file hash?
 				if(isset($_REQUEST['md5']))
@@ -282,7 +282,7 @@ class DanbooruApi implements Extension
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
 				$start = isset($_GET['offset']) ? int_escape($_GET['offset']) : 0;
-				$tags = isset($_GET['tags']) ? tag_explode($_GET['tags']) : array();
+				$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : array();
 				$results = Image::find_images($config,$database,$start,$limit,$tags);
 			}
 
@@ -340,7 +340,7 @@ class DanbooruApi implements Extension
 			elseif(isset($_GET['tags']))
 			{
 				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
-				$tags = tag_explode($_GET['tags']);
+				$tags = Tag::explode($_GET['tags']);
 
 			}
 			*/
