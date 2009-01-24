@@ -108,7 +108,7 @@ class CommentListTheme extends Themelet {
 			"onclick=\"return confirm('Delete comment by $h_name:\\n$stripped_nonl');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
-		return "<p class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</p>";
+		return "<div class='comment'><p>$h_userlink: $h_comment $h_imagelink $h_dellink</p></div>";
 	}
 
 	protected function build_postbox($image_id) {
