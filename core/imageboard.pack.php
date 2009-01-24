@@ -241,11 +241,7 @@ class Image {
 	}
 
 	public function set_tags($tags) {
-		$tags = tag_explode($tags);
-
-		$tags = array_map(array('Tag', 'resolve_alias'), $tags);
-		$tags = array_map(array('Tag', 'sanitise'), $tags);
-		$tags = array_iunique($tags); // remove any duplicate tags
+		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
@@ -485,6 +481,33 @@ class Tag {
 		return $tag;
 	}
 
+	public static function explode($tags) {
+		if(is_string($tags)) {
+			$tags = explode(' ', $tags);
+		}
+		else if(is_array($tags)) {
+			// do nothing
+		}
+		else {
+			die("tag_explode only takes strings or arrays");
+		}
+
+		$tags = array_map("trim", $tags);
+
+		$tag_array = array();
+		foreach($tags as $tag) {
+			if(is_string($tag) && strlen($tag) > 0) {
+				$tag_array[] = $tag;
+			}
+		}
+
+		if(count($tag_array) == 0) {
+			$tag_array = array("tagme");
+		}
+
+		return $tag_array;
+	}
+
 	public static function resolve_alias($tag) {
 		assert(is_string($tag));
 
@@ -511,6 +534,20 @@ class Tag {
 			}
 			return $resolved;
 		}
+	}
+
+	public static function resolve_list($tags) {
+		$tags = Tag::explode($tags);
+		$new = array();
+		foreach($tags as $tag) {
+			$new_set = explode(' ', Tag::resolve_alias($tag));
+			foreach($new_set as $new_one) {
+				$new[] = $new_one;
+			}
+		}
+		$new = array_map(array('Tag', 'sanitise'), $new);
+		$new = array_iunique($new); // remove any duplicate tags
+		return $new;
 	}
 }
 
@@ -621,33 +658,6 @@ function get_thumbnail_size($orig_width, $orig_height) {
 	else {
 		return array((int)($orig_width*$scale), (int)($orig_height*$scale));
 	}
-}
-
-function tag_explode($tags) {
-	if(is_string($tags)) {
-		$tags = explode(' ', $tags);
-	}
-	else if(is_array($tags)) {
-		// do nothing
-	}
-	else {
-		die("tag_explode only takes strings or arrays");
-	}
-
-	$tags = array_map("trim", $tags);
-
-	$tag_array = array();
-	foreach($tags as $tag) {
-		if(is_string($tag) && strlen($tag) > 0) {
-			$tag_array[] = $tag;
-		}
-	}
-
-	if(count($tag_array) == 0) {
-		$tag_array = array("tagme");
-	}
-
-	return $tag_array;
 }
 
 ?>
