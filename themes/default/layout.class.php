@@ -37,6 +37,11 @@ class Layout {
 		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
+		$wrapper = "";
+		if(strlen($page->heading) > 100) {
+			$wrapper = ' style="height: 3em; overflow: auto;"';
+		}
+
 		print <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
@@ -50,7 +55,7 @@ $header_html
 	</head>
 
 	<body>
-		<h1>{$page->heading}</h1>
+		<h1$wrapper>{$page->heading}</h1>
 		$subheading
 		
 		<div id="nav">$left_block_html</div>
