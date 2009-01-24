@@ -242,11 +242,11 @@ class TagList implements Extension {
 		global $config;
 
 		$query = "
-			SELECT tags.tag, tags.count
+			SELECT tags.tag, tags.count as calc_count
 			FROM tags, image_tags
 			WHERE tags.id = image_tags.tag_id
 			AND image_tags.image_id = ?
-			ORDER BY count DESC
+			ORDER BY calc_count DESC
 			LIMIT ?
 		";
 		$args = array($image->id, $config->get_int('tag_list_length'));
@@ -280,7 +280,7 @@ class TagList implements Extension {
 		global $database;
 		global $config;
 
-		$wild_tags = tag_explode($search);
+		$wild_tags = Tag::explode($search);
 		// $search_tags = array();
 
 		$tag_id_array = array();

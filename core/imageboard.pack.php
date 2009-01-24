@@ -489,7 +489,7 @@ class Tag {
 			// do nothing
 		}
 		else {
-			die("tag_explode only takes strings or arrays");
+			die("Tag::explode() only takes strings or arrays");
 		}
 
 		$tags = array_map("trim", $tags);
