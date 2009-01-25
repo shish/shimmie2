@@ -13,6 +13,16 @@ class BBCodeUnitTest extends UnitTestCase {
 		$this->template("[b]bold[i]italic", "[b]bold[i]italic");
 	}
 
+	public function testCode() {
+		$this->template("[code][b]bold[/b][/code]", "<pre>[b]bold[/b]</pre>");
+	}
+
+	public function testNestedList() {
+		$this->template(
+			"[list][*]a[list][*]a[*]b[/list][*]b[/list]",
+			"<ul><li>a<ul><li>a<li>b</ul><li>b</ul>");
+	}
+
 	public function testURL() {
 		$this->template(
 			"[url]http://shishnet.org[/url]",
