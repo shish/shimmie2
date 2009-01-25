@@ -152,15 +152,6 @@ class ADODB_sqlite extends ADOConnection {
 	{
 		@sqlite_create_function($this->_connectionID, 'adodb_date', 'adodb_date', 1);
 		@sqlite_create_function($this->_connectionID, 'adodb_date2', 'adodb_date2', 2);
-
-		// XXX: shimmie customisation, as suggested by naikoto on the forums
-		@sqlite_create_function($this->_connectionID, 'UNIX_TIMESTAMP', 'UNIX_TIMESTAMP', 1); 
-		@sqlite_create_function($this->_connectionID, 'now', 'now', 0); 
-		@sqlite_create_function($this->_connectionID, 'floor', 'mfloor', 1); 
-		@sqlite_create_function($this->_connectionID, 'log', 'mlog', 1); 
-		@sqlite_create_function($this->_connectionID, 'isnull', 'fisnull', 1); 
-		@sqlite_create_function($this->_connectionID, 'md5', 'fmd5', 1); 
-		@sqlite_create_function($this->_connectionID, 'concat', 'fconcat', 2);
 	}
 	
 
@@ -402,16 +393,5 @@ class ADORecordset_sqlite extends ADORecordSet {
 	function _close() 
 	{
 	}
-
 }
-
-// shimmie functions
-ini_set ( 'sqlite.assoc_case' , 0 );
-function UNIX_TIMESTAMP($date) { return strtotime($date); } 
-function now() { return date("Y-m-d h:i:s"); } 
-function mfloor($a) { return floor($a); } 
-function mlog($a) { return log($a); } 
-function fisnull($a) { return is_null($a); } 
-function fmd5($a) { return md5($a); } 
-function fconcat($a, $b) { return $a . $b; }
 ?>
