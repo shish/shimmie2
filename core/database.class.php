@@ -97,6 +97,8 @@ class SQLite extends DBEngine {
 		// TODO: add functions:
 		// now()
 		// unix_timestamp()
+		// lower()
+		// log(base, number)
 	}
 
 	public function create_table_sql($name, $data) {
