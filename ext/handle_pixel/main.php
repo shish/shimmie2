@@ -99,8 +99,10 @@ class PixelFileHandler implements Extension {
 		$q = $config->get_int("thumb_quality");
 		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
+		// convert to bitmap & back to strip metadata -- otherwise we
+		// can end up with 3KB of jpg data and 200KB of misc extra...
 		// "-limit memory $mem" broken?
-		exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");
+		exec("convert {$inname}[0] -geometry {$w}x{$h} bmp:- | convert bmp:- -quality {$q} jpg:$outname");
 
 		return true;
 	}
