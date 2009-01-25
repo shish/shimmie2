@@ -187,6 +187,7 @@ function create_tables($dsn) { // {{{
 			width INTEGER NOT NULL,
 			height INTEGER NOT NULL,
 			posted TIMESTAMP NOT NULL DEFAULT SCORE_NOW,
+			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			INDEX(owner_id),
 			INDEX(width),
 			INDEX(height),
