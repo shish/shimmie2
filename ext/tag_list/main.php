@@ -136,7 +136,7 @@ class TagList implements Extension {
 		$tag_data = $result->GetArray();
 
 		$html = "";
-		$lastLetter = 0;
+		$lastLetter = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
