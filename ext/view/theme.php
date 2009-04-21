@@ -37,12 +37,9 @@ class ViewImageTheme extends Themelet {
 			$query = null;
 		}
 
-		$next = $image->get_next($search_terms);
-		$prev = $image->get_prev($search_terms);
-
-		$h_prev = (!is_null($prev) ? "<a href='".make_link("post/view/{$prev->id}", $query)."'>Prev</a>" : "Prev");
+		$h_prev = "<a href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = (!is_null($next) ? "<a href='".make_link("post/view/{$next->id}", $query)."'>Next</a>" : "Next");
+		$h_next = "<a href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
 
 		$this->pin = "$h_prev | $h_index | $h_next";
 		return $this->pin;
