@@ -67,6 +67,40 @@ class ViewImage implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
+		if(is_a($event, 'PageRequestEvent') && (
+			$event->page_matches("post/prev") ||
+			$event->page_matches("post/next")
+		)) {
+			global $config;
+			global $database;
+			$image_id = int_escape($event->get_arg(0));
+
+			if(isset($_GET['search'])) {
+				$search_terms = explode(' ', $_GET['search']);
+				$query = "search=".url_escape($_GET['search']);
+			}
+			else {
+				$search_terms = array();
+				$query = null;
+			}
+
+			$image = Image::by_id($config, $database, $image_id);
+			if($event->page_matches("post/next")) {
+				$image = $image->get_next($search_terms);
+			}
+			else {
+				$image = $image->get_prev($search_terms);
+			}
+
+			if(!is_null($image)) {
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link("post/view/{$image->id}", $query));
+			}
+			else {
+				$this->theme->display_error($event->page, "Image not found", "No more images");
+			}
+		}
+			
 		if(($event instanceof PageRequestEvent) && $event->page_matches("post/view")) {
 			$image_id = int_escape($event->get_arg(0));
 
