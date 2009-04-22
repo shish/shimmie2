@@ -73,6 +73,10 @@ class NumericScore implements Extension {
 				$score = $matches[2];
 				$event->set_querylet(new Querylet("numeric_score $cmp $score"));
 			}
+			if(preg_match("/^favou?rite$/", $event->term, $matches)) {
+				global $user;
+				$event->set_querylet(new Querylet("images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)", array($user->id)));
+			}
 		}
 	}
 
@@ -93,6 +97,10 @@ class NumericScore implements Extension {
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_numeric_score_version", 1);
+		}
+		if($config->get_int("ext_numeric_score_version") < 2) {
+			$database->Execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, scores)");
+			$config->set_int("ext_numeric_score_version", 2);
 		}
 	}
 
