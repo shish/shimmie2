@@ -86,12 +86,18 @@ class Index implements Extension {
 
 			send_event(new PostListBuildingEvent($event->context, $search_terms));
 
-			if(count($search_terms) > 0 || count($images) > 0 || $page_number > 0) {
-				$this->theme->set_page($page_number, $total_pages, $search_terms);
-				$this->theme->display_page($event->page, $images);
+			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 0) {
+				$this->theme->display_intro($event->page);
+			}
+			else if(count($search_terms) > 0 && count($images) == 1) {
+				$event->page->set_mode("redirect");
+				$event->page->set_redirect(make_link("post/view/{$images[0]->id}"));
 			}
 			else {
-				$this->theme->display_intro($event->page);
+				send_event(new PostListBuildingEvent($event->context, $search_terms));
+
+				$this->theme->set_page($page_number, $total_pages, $search_terms);
+				$this->theme->display_page($event->page, $images);
 			}
 		}
 
