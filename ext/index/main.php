@@ -84,8 +84,6 @@ class Index implements Extension {
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
 			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
 
-			send_event(new PostListBuildingEvent($event->context, $search_terms));
-
 			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 0) {
 				$this->theme->display_intro($event->page);
 			}
