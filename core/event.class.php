@@ -113,12 +113,14 @@ class LogEvent extends Event {
 		$this->time = time();
 
 		// this should be an extension
+		/*
 		$ftime = date("Y-m-d H:i:s", $this->time);
 		$username = $context->user->name;
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$fp = fopen("shimmie.log", "a");
 		fputs($fp, "$ftime\t$section/$priority\t$username/$ip\t$message\n");
 		fclose($fp);
+		*/
 	}
 }
 ?>
