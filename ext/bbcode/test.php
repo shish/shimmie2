@@ -46,7 +46,7 @@ class BBCodeUnitTest extends UnitTestCase {
 	}
 
 	private function filter($in) {
-		$bb = new WordFilter();
+		$bb = new BBCode();
 		$tfe = new TextFormattingEvent($in);
 		$bb->receive_event($tfe);
 		return $tfe->formatted;
