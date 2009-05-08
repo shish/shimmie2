@@ -193,7 +193,7 @@ class ImageIO implements Extension {
 						$image->hash, $image->ext, $image->width, $image->height, $image->source));
 		$image->id = $database->db->Insert_ID();
 
-		log_info("image", "Uploaded image {$image->id} ({$image->hash})");
+		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
 
 		send_event(new TagSetEvent($image, $image->get_tag_array()));
 
