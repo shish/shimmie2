@@ -67,6 +67,7 @@ class UserPage implements Extension {
 			}
 			else if($event->get_arg(0) == "logout") {
 				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				log_info("user", "Logged out");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
@@ -201,6 +202,7 @@ class UserPage implements Extension {
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($name, $pass);
+			log_info("user", "Logged in");
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("user"));
 		}
@@ -242,6 +244,8 @@ class UserPage implements Extension {
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (?, ?, now(), ?, ?)",
 				array($event->username, $hash, $email, $admin));
+		$uid = $database->db->Insert_ID();
+		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
 	private function set_login_cookie($name, $pass) {

@@ -91,4 +91,34 @@ class TextFormattingEvent extends Event {
 		$this->stripped  = $h_text;
 	}
 }
+
+
+/*
+ * LogEvent
+ *  $section  = a category, normally the extension name
+ *  $priority = see python
+ *  $message  = free text
+ */
+class LogEvent extends Event {
+	var $section;
+	var $priority = 0;
+	var $message;
+	var $time;
+
+	public function __construct($context, $section, $priority, $message) {
+		parent::__construct($context);
+		$this->section = $section;
+		$this->priority = $priority;
+		$this->message = $message;
+		$this->time = time();
+
+		// this should be an extension
+		$ftime = date("Y-m-d H:i:s", $this->time);
+		$username = $context->user->name;
+		$ip = $_SERVER['REMOTE_ADDR'];
+		$fp = fopen("shimmie.log", "a");
+		fprintf($fp, "$ftime\t$section/$priority\t$username/$ip\t$message");
+		fclose($fp);
+	}
+}
 ?>
