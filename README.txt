@@ -34,6 +34,7 @@ For users:
  o) Theme improvements, new themes
  o) Better searching
  o) Cooliris support
+ o) Search for images you've voted for (simple "favourites" system)
 
 For developers:
  o) More sensible APIs
