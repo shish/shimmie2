@@ -400,17 +400,21 @@ class CommentList implements Extension {
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
+			$cid = $database->db->Insert_ID();
+			log_info("comment", "Comment #$cid");
 		}
 	}
 
 	private function delete_comments($image_id) {
 		global $database;
 		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
+		log_info("comment", "Deleting all comments for Image #$image_id");
 	}
 
 	private function delete_comment($comment_id) {
 		global $database;
 		$database->Execute("DELETE FROM comments WHERE id=?", array($comment_id));
+		log_info("comment", "Deleting Comment #$comment_id");
 	}
 // }}}
 }

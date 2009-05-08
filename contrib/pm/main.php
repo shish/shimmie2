@@ -83,6 +83,7 @@ class PM implements Extension {
 						}
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
+							log_info("pm", "Deleted PM #$pm_id");
 							$event->page->set_mode("redirect");
 							$event->page->set_redirect(make_link("user"));
 						}
@@ -112,6 +113,7 @@ class PM implements Extension {
 				array($event->from_id, $event->from_ip,
 				$event->to_id, $event->subject, $event->message)
 			);
+			log_info("pm", "Sent PM to User #$to_id");
 		}
 	}
 
@@ -134,6 +136,8 @@ class PM implements Extension {
 			");
 			$config->set_int("pm_version", 1);
 		}
+
+		log_info("pm", "extension installed");
 	}
 
 	private function get_pms(User $user) {

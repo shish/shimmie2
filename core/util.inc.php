@@ -216,6 +216,27 @@ function format_text($string) {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Logging convenience                                                       *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+define("LOG_CRITICAL", 50);
+define("LOG_ERROR", 40);
+define("LOG_WARNING", 30);
+define("LOG_INFO", 20);
+define("LOG_DEBUG", 10);
+define("LOG_NOTSET", 0);
+
+function log_msg($section, $priority, $message) {
+	global $context;
+	send_event(new LogEvent($context, $section, $priority, $message));
+}
+
+function log_info($section, $message) {
+	log_msg($section, LOG_INFO, $message);
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

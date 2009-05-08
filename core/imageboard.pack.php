@@ -275,6 +275,7 @@ class Image {
 					array($tag));
 		}
 
+		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
 		$this->database->cache->delete("image-{$this->id}-tags");
 	}
 
@@ -285,6 +286,7 @@ class Image {
 	public function delete() {
 		$this->delete_tags_from_image();
 		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
+		log_info("core-image", "Deleted Image #{$image->id} ({$image->hash})")
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());

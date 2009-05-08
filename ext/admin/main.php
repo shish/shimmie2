@@ -43,6 +43,7 @@ class AdminPage implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("admin_utils")) {
 			if($event->user->is_admin()) {
+				log_info("admin", "Util: {$_POST['action']}")
 				set_time_limit(0);
 				$redirect = false;
 

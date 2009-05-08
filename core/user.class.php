@@ -78,11 +78,13 @@ class User {
 		assert(is_bool($admin));
 		$yn = $admin ? 'Y' : 'N';
 		$this->database->Execute("UPDATE users SET admin=? WHERE id=?", array($yn, $this->id));
+		log_info("core-user", "Made {$this->name} admin=$yn");
 	}
 
 	public function set_password($password) {
 		$hash = md5(strtolower($this->name) . $password);
 		$this->database->Execute("UPDATE users SET pass=? WHERE id=?", array($hash, $this->id));
+		log_info("core-user", "Set password for {$this->name}");
 	}
 }
 ?>
