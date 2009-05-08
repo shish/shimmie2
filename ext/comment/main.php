@@ -401,7 +401,7 @@ class CommentList implements Extension {
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
 			$cid = $database->db->Insert_ID();
-			log_info("comment", "Comment #$cid");
+			log_info("comment", "Comment #$cid added");
 		}
 	}
 
