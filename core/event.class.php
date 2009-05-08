@@ -117,7 +117,7 @@ class LogEvent extends Event {
 		$username = $context->user->name;
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$fp = fopen("shimmie.log", "a");
-		fprintf($fp, "$ftime\t$section/$priority\t$username/$ip\t$message");
+		fprintf($fp, "$ftime\t$section/$priority\t$username/$ip\t$message\n");
 		fclose($fp);
 	}
 }
