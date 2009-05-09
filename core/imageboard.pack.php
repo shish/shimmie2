@@ -501,7 +501,9 @@ class Image {
 			$stpe = new SearchTermParseEvent(null, $term);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
-				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), !$negative);
+				foreach($stpe->get_querylets() as $querylet) {
+					$img_querylets[] = new ImgQuerylet($querylet, !$negative);
+				}
 			}
 			else {
 				$term = str_replace("*", "%", $term);
