@@ -64,7 +64,7 @@ class RSS_Images implements Extension {
 			$owner = $image->get_owner();
 			$thumb_url = $image->get_thumb_link();
 			$image_url = $image->get_image_link();
-			$posted = strftime("%a, %d %b %Y %T %Z", $image->posted_timestamp);
+			$posted = date(DATE_RSS, $image->posted_timestamp);
 			$content = html_escape(
 				"<p>" . Themelet::build_thumb_html($image) . "</p>" .
 				"<p>Uploaded by " . $owner->name . "</p>"
