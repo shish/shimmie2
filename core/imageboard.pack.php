@@ -540,7 +540,7 @@ class Image {
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet("SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images");
+			$query = new Querylet("SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" WHERE ");
