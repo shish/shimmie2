@@ -498,7 +498,7 @@ class Image {
 			
 			$term = Tag::resolve_alias($term);
 
-			$stpe = new SearchTermParseEvent($term);
+			$stpe = new SearchTermParseEvent(null, $term);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
 				$img_querylets[] = new ImgQuerylet($stpe->get_querylet(), !$negative);
