@@ -487,6 +487,13 @@ class Image {
 		$positive_tag_count = 0;
 		$negative_tag_count = 0;
 
+		$stpe = new SearchTermParseEvent(null, $terms);
+		send_event($stpe);
+		if($stpe->is_querylet_set()) {
+			foreach($stpe->get_querylets() as $querylet) {
+				$img_querylets[] = new ImgQuerylet($querylet, true);
+			}
+		}
 
 		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
@@ -498,7 +505,7 @@ class Image {
 			
 			$term = Tag::resolve_alias($term);
 
-			$stpe = new SearchTermParseEvent(null, $term);
+			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
 			if($stpe->is_querylet_set()) {
 				foreach($stpe->get_querylets() as $querylet) {
