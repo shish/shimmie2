@@ -13,26 +13,24 @@
  *  tagged "holiday 2008")
  */
 
-class BulkAdd implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("bulk_add")) {
-			if($event->user->is_admin() && isset($_POST['dir'])) {
+class BulkAdd extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $page, $user;
+		if($event->page_matches("bulk_add")) {
+			if($user->is_admin() && isset($_POST['dir'])) {
 				set_time_limit(0);
 
 				$this->add_dir($_POST['dir']);
-				$this->theme->display_upload_results($event->page);
+				$this->theme->display_upload_results($page);
 			}
 		}
-
-		if($event instanceof AdminBuildingEvent) {
-			global $page;
-			$this->theme->display_admin_block($page);
-		}
 	}
+
+	public function onAdminBuilding($event) {
+		global $page;
+		$this->theme->display_admin_block($page);
+	}
+
 
 	private function add_image($tmpname, $filename, $tags) {
 		if(file_exists($tmpname)) {
@@ -97,5 +95,4 @@ class BulkAdd implements Extension {
 		}
 	}
 }
-add_event_listener(new BulkAdd());
 ?>

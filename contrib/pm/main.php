@@ -14,47 +14,58 @@ class SendPMEvent extends Event {
 	public function __construct($from_id, $from_ip, $to_id, $subject, $message) {
 		$this->from_id = $from_id;
 		$this->from_ip = $from_ip;
-		$this->to_id = $to_id;
+		$this->to_id   = $to_id;
 		$this->subject = $subject;
 		$this->message = $message;
 	}
 }
 
-class PM implements Extension {
-	var $theme;
+class PM extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config, $database;
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
+		// shortcut to latest
+		if($config->get_int("pm_version") < 1) {
+			$database->create_table("private_message", "
+				id SCORE_AIPK,
+				from_id INTEGER NOT NULL,
+				from_ip SCORE_INET NOT NULL,
+				to_id INTEGER NOT NULL,
+				sent_date DATETIME NOT NULL,
+				subject VARCHAR(64) NOT NULL,
+				message TEXT NOT NULL,
+				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+				INDEX (to_id)
+			");
+			$config->set_int("pm_version", 1);
+			log_info("pm", "extension installed");
+		}
+	}
 
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+	/*
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if(!$user->is_anonymous()) {
+			$event->add_link("Private Messages", make_link("pm"));
+		}
+	}
+	*/
 
-		if($event instanceof InitExtEvent) {
-			if($config->get_int("pm_version") < 1) {
-				$this->install();
+	public function onUserPageBuilding($event) {
+		global $page, $user;
+		$duser = $event->display_user;
+		if(!$user->is_anonymous() && !$duser->is_anonymous()) {
+			if(($user->id == $duser->id) || $user->is_admin()) {
+				$this->theme->display_pms($page, $this->get_pms($duser));
+			}
+			if($user->id != $duser->id) {
+				$this->theme->display_composer($page, $user, $duser);
 			}
 		}
+	}
 
-		/*
-		if($event instanceof UserBlockBuildingEvent) {
-			if(!$user->is_anonymous()) {
-				$event->add_link("Private Messages", make_link("pm"));
-			}
-		}
-		*/
-
-		if($event instanceof UserPageBuildingEvent) {
-			$duser = $event->display_user;
-			if(!$user->is_anonymous() && !$duser->is_anonymous()) {
-				if(($user->id == $duser->id) || $user->is_admin()) {
-					$this->theme->display_pms($page, $this->get_pms($duser));
-				}
-				if($user->id != $duser->id) {
-					$this->theme->display_composer($page, $user, $duser);
-				}
-			}
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("pm")) {
+	public function onPageRequest($event) {
+		if($event->page_matches("pm")) {
 			if(!$user->is_anonymous()) {
 				switch($event->get_arg(0)) {
 					case "read":
@@ -100,41 +111,20 @@ class PM implements Extension {
 				}
 			}
 		}
-
-		if($event instanceof SendPMEvent) {
-			$database->execute("
-					INSERT INTO private_message(
-						from_id, from_ip, to_id,
-						sent_date, subject, message)
-					VALUES(?, ?, ?, now(), ?, ?)",
-				array($event->from_id, $event->from_ip,
-				$event->to_id, $event->subject, $event->message)
-			);
-			log_info("pm", "Sent PM to User #$to_id");
-		}
 	}
 
-	protected function install() {
-		global $config, $database;
-
-		// shortcut to latest
-		if($config->get_int("pm_version") < 1) {
-			$database->create_table("private_message", "
-				id SCORE_AIPK,
-				from_id INTEGER NOT NULL,
-				from_ip SCORE_INET NOT NULL,
-				to_id INTEGER NOT NULL,
-				sent_date DATETIME NOT NULL,
-				subject VARCHAR(64) NOT NULL,
-				message TEXT NOT NULL,
-				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-				INDEX (to_id)
-			");
-			$config->set_int("pm_version", 1);
-		}
-
-		log_info("pm", "extension installed");
+	public function onSendPM($event) {
+		$database->execute("
+				INSERT INTO private_message(
+					from_id, from_ip, to_id,
+					sent_date, subject, message)
+				VALUES(?, ?, ?, now(), ?, ?)",
+			array($event->from_id, $event->from_ip,
+			$event->to_id, $event->subject, $event->message)
+		);
+		log_info("pm", "Sent PM to User #$to_id");
 	}
+
 
 	private function get_pms(User $user) {
 		global $database;
@@ -147,5 +137,4 @@ class PM implements Extension {
 			", array($user->id));
 	}
 }
-add_event_listener(new PM());
 ?>

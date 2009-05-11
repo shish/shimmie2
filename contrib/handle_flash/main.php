@@ -5,13 +5,9 @@
  * Description: Handle Flash files
  */
 
-class FlashFileHandler implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+class FlashFileHandler extends SimpleExtension {
+	public function onDataUpload($event) {
+		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
@@ -24,18 +20,24 @@ class FlashFileHandler implements Extension {
 			}
 			send_event(new ImageAdditionEvent($event->user, $image));
 		}
+	}
 
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
+	public function onThumbnailGeneration($event) {
+		if($this->supported_ext($event->type)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			// FIXME: scale image, as not all boards use 192x192
 			copy("ext/handle_flash/thumb.jpg", "thumbs/$ha/$hash");
 		}
+	}
 
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
+	public function onDisplayingImage($event) {
+		global $page;
+		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
 	}
+
 
 	private function supported_ext($ext) {
 		$exts = array("swf");
@@ -127,5 +129,4 @@ class FlashFileHandler implements Extension {
 		return true;
 	}
 }
-add_event_listener(new FlashFileHandler());
 ?>

@@ -10,22 +10,22 @@
  *  <br>7-zip: <code>7zr x -o"%d" "%f"</code>
  */
 
-class ArchiveFileHandler implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
-		}
+class ArchiveFileHandler extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Archive Handler Options");
-			$sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
-			$sb->add_text_option("archive_extract_command", "<br>Extraction command: ");
-			$sb->add_label("<br>%f for archive, %d for temporary directory");
-			$event->panel->add_block($sb);
-		}
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Archive Handler Options");
+		$sb->add_text_option("archive_tmp_dir", "Temporary folder: ");
+		$sb->add_text_option("archive_extract_command", "<br>Extraction command: ");
+		$sb->add_label("<br>%f for archive, %d for temporary directory");
+		$event->panel->add_block($sb);
+	}
 
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type)) {
+	public function onDataUpload($event) {
+		if($this->supported_ext($event->type)) {
 			global $config;
 			$tmp = sys_get_temp_dir();
 			$tmpdir = "$tmp/shimmie-archive-{$event->hash}";
@@ -37,6 +37,7 @@ class ArchiveFileHandler implements Extension {
 			unlink($tmpdir);
 		}
 	}
+
 
 	private function supported_ext($ext) {
 		$exts = array("zip");
@@ -100,5 +101,4 @@ class ArchiveFileHandler implements Extension {
 		// $this->theme->add_status("Adding $subdir", $list);
 	}
 }
-add_event_listener(new ArchiveFileHandler());
 ?>

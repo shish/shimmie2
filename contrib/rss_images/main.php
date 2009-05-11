@@ -6,26 +6,24 @@
  * Description: Self explanitory
  */
 
-class RSS_Images implements Extension {
-// event handling {{{
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
+class RSS_Images extends SimpleExtension {
+	public function onPostListBuilding($event) {
+		global $config, $page;
+		$title = $config->get_string('title');
 
-		if($event instanceof PostListBuildingEvent) {
-			$title = $config->get_string('title');
-
-			if(count($event->search_terms) > 0) {
-				$search = implode(' ', $event->search_terms);
-				$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
-			}
-			else {
-				$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
-					"title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
-			}
+		if(count($event->search_terms) > 0) {
+			$search = implode(' ', $event->search_terms);
+			$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
+				"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 		}
+		else {
+			$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
+				"title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
+		}
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("rss/images")) {
+	public function onPageRequest($event) {
+		if($event->page_matches("rss/images")) {
 			$page_number = 0;
 			$search_terms = array();
 
@@ -46,8 +44,8 @@ class RSS_Images implements Extension {
 			$this->do_rss($images, $search_terms, $page_number);
 		}
 	}
-// }}}
-// output {{{
+
+
 	private function do_rss($images, $search_terms, $page_number) {
 		global $page;
 		global $config;
@@ -113,7 +111,5 @@ class RSS_Images implements Extension {
 </rss>";
 		$page->set_data($xml);
 	}
-// }}}
 }
-add_event_listener(new RSS_Images());
 ?>

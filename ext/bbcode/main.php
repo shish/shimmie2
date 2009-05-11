@@ -1,14 +1,7 @@
 <?php
 
-class BBCode implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof TextFormattingEvent) {
-			$event->formatted = $this->bbcode_to_html($event->formatted);
-			$event->stripped  = $this->bbcode_to_text($event->stripped);
-		}
-	}
-
-	private function bbcode_to_html($text) {
+class BBCode extends FormatterExtension {
+	public function format($text) {
 		$text = $this->extract_code($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
@@ -42,7 +35,7 @@ class BBCode implements Extension {
 		return $text;
 	}
 
-	private function bbcode_to_text($text) {
+	public function strip($text) {
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
@@ -64,6 +57,7 @@ class BBCode implements Extension {
 		$text = $this->strip_spoiler($text);
 		return $text;
 	}
+
 
 	private function filter_spoiler($text) {
 		return str_replace(

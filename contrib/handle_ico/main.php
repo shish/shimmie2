@@ -5,13 +5,9 @@
  * Description: Handle windows icons
  */
 
-class IcoFileHandler implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+class IcoFileHandler extends SimpleExtension {
+	public function onDataUpload($event) {
+		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
@@ -22,28 +18,34 @@ class IcoFileHandler implements Extension {
 			}
 			send_event(new ImageAdditionEvent($event->user, $image));
 		}
+	}
 
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
+	public function onThumbnailGeneration($event) {
+		if($this->supported_ext($event->type)) {
 			$this->create_thumb($event->hash);
 		}
+	}
 
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
+	public function onDisplayingImage($event) {
+		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($event->page, $event->image);
 		}
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("get_ico")) {
-			global $config;
-			global $database;
+	public function onPageRequest($event) {
+		global $config, $database;
+		if($event->page_matches("get_ico")) {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
 
-			$event->page->set_type("image/x-icon");
-			$event->page->set_mode("data");
-			$event->page->set_data(file_get_contents("images/$ha/$hash"));
+			$page->set_type("image/x-icon");
+			$page->set_mode("data");
+			$page->set_data(file_get_contents("images/$ha/$hash"));
 		}
 	}
+
 
 	private function supported_ext($ext) {
 		$exts = array("ico", "ani", "cur");
@@ -106,5 +108,4 @@ class IcoFileHandler implements Extension {
 		return true;
 	}
 }
-add_event_listener(new IcoFileHandler());
 ?>

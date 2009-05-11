@@ -34,20 +34,17 @@ class PostListBuildingEvent extends Event {
 	}
 }
 
-class Index implements Extension {
-	var $theme;
+class Index extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_int("index_width", 3);
+		$config->set_default_int("index_height", 4);
+		$config->set_default_bool("index_tips", true);
+	}
 
-	public function receive_event(Event $event) {
+	public function onPageRequest($event) {
 		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof InitExtEvent) {
-			$config->set_default_int("index_width", 3);
-			$config->set_default_int("index_height", 4);
-			$config->set_default_bool("index_tips", true);
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("post/list")) {
+		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
 				$search = url_escape(trim($_GET['search']));
 				if(empty($search)) {
@@ -92,56 +89,55 @@ class Index implements Extension {
 				$this->theme->display_page($page, $images);
 			}
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Index Options");
-			$sb->position = 20;
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Index Options");
+		$sb->position = 20;
 
-			$sb->add_label("Index table size ");
-			$sb->add_int_option("index_width");
-			$sb->add_label(" x ");
-			$sb->add_int_option("index_height");
-			$sb->add_label(" images");
+		$sb->add_label("Index table size ");
+		$sb->add_int_option("index_width");
+		$sb->add_label(" x ");
+		$sb->add_int_option("index_height");
+		$sb->add_label(" images");
 
-			$event->panel->add_block($sb);
+		$event->panel->add_block($sb);
+	}
+
+	public function onSearchTermParse($event) {
+		$matches = array();
+		if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$args = array(int_escape($matches[2]), int_escape($matches[3]));
+			$event->add_querylet(new Querylet("width $cmp ? AND height $cmp ?", $args));
 		}
-
-		if($event instanceof SearchTermParseEvent) {
-			$matches = array();
-			if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
-				$cmp = $matches[1];
-				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$event->add_querylet(new Querylet("width $cmp ? AND height $cmp ?", $args));
-			}
-			else if(preg_match("/^ratio(<|>|<=|>=|=)(\d+):(\d+)$/", $event->term, $matches)) {
-				$cmp = $matches[1];
-				$args = array(int_escape($matches[2]), int_escape($matches[3]));
-				$event->add_querylet(new Querylet("width / height $cmp ? / ?", $args));
-			}
-			else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
-				$col = $matches[1];
-				$cmp = $matches[2];
-				$val = parse_shorthand_int($matches[3]);
-				$event->add_querylet(new Querylet("images.$col $cmp ?", array($val)));
-			}
-			else if(preg_match("/^hash=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
-				$hash = strtolower($matches[2]);
-				$event->add_querylet(new Querylet("images.hash = '$hash'"));
-			}
-			else if(preg_match("/^(filetype|ext)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
-				$ext = strtolower($matches[2]);
-				$event->add_querylet(new Querylet("images.ext = '$ext'"));
-			}
-			else if(preg_match("/^(filename|name)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
-				$filename = strtolower($matches[2]);
-				$event->add_querylet(new Querylet("images.filename LIKE '%$filename%'"));
-			}
-			else if(preg_match("/^posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)$/", $event->term, $matches)) {
-				$val = str_replace("*", "%", $matches[1]);
-				$img_search->append(new Querylet("images.posted LIKE '%$val%'"));
-			}
+		else if(preg_match("/^ratio(<|>|<=|>=|=)(\d+):(\d+)$/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$args = array(int_escape($matches[2]), int_escape($matches[3]));
+			$event->add_querylet(new Querylet("width / height $cmp ? / ?", $args));
+		}
+		else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
+			$col = $matches[1];
+			$cmp = $matches[2];
+			$val = parse_shorthand_int($matches[3]);
+			$event->add_querylet(new Querylet("images.$col $cmp ?", array($val)));
+		}
+		else if(preg_match("/^hash=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
+			$hash = strtolower($matches[2]);
+			$event->add_querylet(new Querylet("images.hash = '$hash'"));
+		}
+		else if(preg_match("/^(filetype|ext)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
+			$ext = strtolower($matches[2]);
+			$event->add_querylet(new Querylet("images.ext = '$ext'"));
+		}
+		else if(preg_match("/^(filename|name)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
+			$filename = strtolower($matches[2]);
+			$event->add_querylet(new Querylet("images.filename LIKE '%$filename%'"));
+		}
+		else if(preg_match("/^posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)$/", $event->term, $matches)) {
+			$val = str_replace("*", "%", $matches[1]);
+			$img_search->append(new Querylet("images.posted LIKE '%$val%'"));
 		}
 	}
 }
-add_event_listener(new Index());
 ?>

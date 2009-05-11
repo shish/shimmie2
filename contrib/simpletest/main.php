@@ -21,14 +21,10 @@ class TestFinder extends TestSuite {
 	}
 }
 
-class SimpleSCoreTest implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("test")) {
+class SimpleSCoreTest extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $page;
+		if($event->page_matches("test")) {
 			$page->set_title("Test Results");
 			$page->set_heading("Test Results");
 			$page->add_block(new NavBlock());
@@ -36,13 +32,13 @@ class SimpleSCoreTest implements Extension {
 			$all = new TestFinder($event->get_arg(0));
 			$all->run(new SCoreReporter($page));
 		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Run Tests", make_link("test/all"));
-			}
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Run Tests", make_link("test/all"));
 		}
 	}
 }
-add_event_listener(new SimpleSCoreTest());
 ?>
