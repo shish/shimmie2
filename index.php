@@ -52,6 +52,16 @@ try {
 	}
 
 
+	// initialise the extensions
+	foreach(get_declared_classes() as $class) {
+		if(is_subclass_of($class, "SimpleExtension")) {
+			$c = new $class();
+			$c->i_am($c);
+			add_event_listener($c);
+		}
+	}
+
+
 	// start the page generation waterfall
 	$page = new Page();
 	$user = _get_user($config, $database);
