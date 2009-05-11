@@ -55,14 +55,9 @@ try {
 	// start the page generation waterfall
 	$page = new Page();
 	$user = _get_user($config, $database);
-	$context = new RequestContext();
-	$context->page = $page;
-	$context->user = $user;
-	$context->database = $database;
-	$context->config = $config;
-	send_event(new InitExtEvent($context));
-	send_event(_get_page_request($context));
-	$context->page->display($context);
+	send_event(new InitExtEvent());
+	send_event(_get_page_request());
+	$page->display();
 
 
 	// for databases which support transactions

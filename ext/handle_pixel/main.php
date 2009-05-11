@@ -9,6 +9,7 @@ class PixelFileHandler implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $page;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
@@ -30,7 +31,7 @@ class PixelFileHandler implements Extension {
 		}
 
 		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($event->page, $event->image);
+			$this->theme->display_image($page, $event->image);
 		}
 	}
 

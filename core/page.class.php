@@ -70,7 +70,9 @@ class GenericPage {
 
 	// ==============================================
 
-	public function display($context) {
+	public function display() {
+		global $page;
+
 		header("Content-type: {$this->type}");
 		header("X-Powered-By: SCore-".SCORE_VERSION);
 
@@ -79,7 +81,7 @@ class GenericPage {
 				header("Cache-control: no-cache");
 				usort($this->blocks, "blockcmp");
 				$layout = new Layout();
-				$layout->display_page($context);
+				$layout->display_page($page);
 				break;
 			case "data":
 				if(!is_null($this->filename)) {

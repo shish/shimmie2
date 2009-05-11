@@ -227,8 +227,7 @@ define("LOG_DEBUG", 10);
 define("LOG_NOTSET", 0);
 
 function log_msg($section, $priority, $message) {
-	global $context;
-	send_event(new LogEvent($context, $section, $priority, $message));
+	send_event(new LogEvent($section, $priority, $message));
 }
 
 function log_info($section, $message) {
@@ -456,26 +455,28 @@ function _get_query_parts() {
 	}
 }
 
-function _get_page_request($context) {
+function _get_page_request() {
+	global $config;
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$args = split('/', $context->config->get_string('front_page'));
+		$args = split('/', $config->get_string('front_page'));
 	}
 
-	return new PageRequestEvent($context, $args);
+	return new PageRequestEvent($args);
 }
 
-function _get_user($config, $database) {
+function _get_user() {
+	global $config, $database;
 	$user = null;
 	if(isset($_COOKIE["shm_user"]) && isset($_COOKIE["shm_session"])) {
-	    $tmp_user = User::by_session($config, $database, $_COOKIE["shm_user"], $_COOKIE["shm_session"]);
+	    $tmp_user = User::by_session($_COOKIE["shm_user"], $_COOKIE["shm_session"]);
 		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
 	}
 	if(is_null($user)) {
-		$user = User::by_id($config, $database, $config->get_int("anon_id", 0));
+		$user = User::by_id($config->get_int("anon_id", 0));
 	}
 	assert(!is_null($user));
 	return $user;

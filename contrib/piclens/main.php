@@ -12,8 +12,9 @@
  */
 class PicLens implements Extension {
 	public function receive_event(Event $event) {
+		global $page;
 		if($event instanceof PageRequestEvent) {
-			$event->page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
+			$page->add_header("<script type=\"text/javascript\" src=\"http://lite.piclens.com/current/piclens.js\"></script>");
 		}
 		if($event instanceof PostListBuildingEvent) {
 			$foo='
@@ -21,7 +22,7 @@ class PicLens implements Extension {
 				<img src="http://lite.piclens.com/images/PicLensButton.png"
 					alt="PicLens" width="16" height="12" border="0"
 					align="absmiddle"></a>';
-			$event->page->add_block(new Block("PicLens", $foo, "left", 20));
+			$page->add_block(new Block("PicLens", $foo, "left", 20));
 		}
 	}
 }

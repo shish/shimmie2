@@ -30,6 +30,7 @@ class Upload implements Extension {
 	var $theme;
 // event handling {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		$is_full = (disk_free_space(realpath("./images/")) < 100*1024*1024);
@@ -45,10 +46,10 @@ class Upload implements Extension {
 			global $user;
 			if($this->can_upload($user)) {
 				if($is_full) {
-					$this->theme->display_full($event->page);
+					$this->theme->display_full($page);
 				}
 				else {
-					$this->theme->display_block($event->page);
+					$this->theme->display_block($page);
 				}
 			}
 		}
@@ -57,7 +58,6 @@ class Upload implements Extension {
 			if(count($_FILES) + count($_POST) > 0) {
 				$tags = Tag::explode($_POST['tags']);
 				$source = isset($_POST['source']) ? $_POST['source'] : null;
-				global $user;
 				if($this->can_upload($user)) {
 					$ok = true;
 					foreach($_FILES as $file) {
@@ -69,10 +69,10 @@ class Upload implements Extension {
 						}
 					}
 
-					$this->theme->display_upload_status($event->page, $ok);
+					$this->theme->display_upload_status($page, $ok);
 				}
 				else {
-					$this->theme->display_permission_denied($event->page);
+					$this->theme->display_permission_denied($page);
 				}
 			}
 			else if(!empty($_GET['url'])) {
@@ -84,15 +84,15 @@ class Upload implements Extension {
 						$tags = Tag::explode($_GET['tags']);
 					}
 					$ok = $this->try_transload($url, $tags, $url);
-					$this->theme->display_upload_status($event->page, $ok);
+					$this->theme->display_upload_status($page, $ok);
 				}
 				else {
-					$this->theme->display_permission_denied($event->page);
+					$this->theme->display_permission_denied($page);
 				}
 			}
 			else {
 				if(!$is_full) {
-					$this->theme->display_page($event->page);
+					$this->theme->display_page($page);
 				}
 			}
 		}

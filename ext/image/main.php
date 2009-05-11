@@ -168,7 +168,7 @@ class ImageIO implements Extension {
 		/*
 		 * Check for an existing image
 		 */
-		$existing = Image::by_hash($config, $database, $image->hash);
+		$existing = Image::by_hash($image->hash);
 		if(!is_null($existing)) {
 			$handler = $config->get_string("upload_collision_handler");
 			if($handler == "merge") {
@@ -204,7 +204,7 @@ class ImageIO implements Extension {
 	private function send_file($image_id, $type) {
 		global $config;
 		global $database;
-		$image = Image::by_id($config, $database, $image_id);
+		$image = Image::by_id($image_id);
 
 		global $page;
 		if(!is_null($image)) {

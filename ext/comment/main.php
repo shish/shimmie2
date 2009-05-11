@@ -58,6 +58,8 @@ class CommentList implements Extension {
 	var $theme;
 // event handler {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
+
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
@@ -76,32 +78,32 @@ class CommentList implements Extension {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
 					try {
-						$cpe = new CommentPostingEvent($_POST['image_id'], $event->user, $_POST['comment']);
+						$cpe = new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']);
 						send_event($cpe);
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
 					}
 					catch(CommentPostingException $ex) {
-						$this->theme->display_error($event->page, "Comment Blocked", $ex->getMessage());
+						$this->theme->display_error($page, "Comment Blocked", $ex->getMessage());
 					}
 				}
 			}
 			else if($event->get_arg(0) == "delete") {
-				if($event->user->is_admin()) {
+				if($user->is_admin()) {
 					// FIXME: post, not args
 					if($event->count_args() == 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
-						$event->page->set_mode("redirect");
+						$page->set_mode("redirect");
 						if(!empty($_SERVER['HTTP_REFERER'])) {
-							$event->page->set_redirect($_SERVER['HTTP_REFERER']);
+							$page->set_redirect($_SERVER['HTTP_REFERER']);
 						}
 						else {
-							$event->page->set_redirect(make_link("post/view/".$event->get_arg(2)));
+							$page->set_redirect(make_link("post/view/".$event->get_arg(2)));
 						}
 					}
 				}
 				else {
-					$this->theme->display_permission_denied($event->page);
+					$this->theme->display_permission_denied($page);
 				}
 			}
 			else if($event->get_arg(0) == "list") {
@@ -110,19 +112,18 @@ class CommentList implements Extension {
 		}
 
 		if($event instanceof PostListBuildingEvent) {
-			global $config;
 			$cc = $config->get_int("comment_count");
 			if($cc > 0) {
 				$recent = $this->get_recent_comments($cc);
 				if(count($recent) > 0) {
-					$this->theme->display_recent_comments($event->page, $recent);
+					$this->theme->display_recent_comments($page, $recent);
 				}
 			}
 		}
 
 		if($event instanceof DisplayingImageEvent) {
 			$this->theme->display_comments(
-					$event->page,
+					$page,
 					$this->get_comments($event->image->id),
 					$this->can_comment(),
 					$event->image->id);
@@ -228,7 +229,7 @@ class CommentList implements Extension {
 
 		$n = 10;
 		while(!$result->EOF) {
-			$image = Image::by_id($config, $database, $result->fields["image_id"]);
+			$image = Image::by_id($result->fields["image_id"]);
 			$comments = $this->get_comments($image->id);
 			$this->theme->add_comment_list($page, $image, $comments, $n, $this->can_comment());
 			$n += 1;
@@ -361,7 +362,7 @@ class CommentList implements Extension {
 		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
 			throw new CommentPostingException("Anonymous posting has been disabled");
 		}
-		else if(is_null(Image::by_id($config, $database, $image_id))) {
+		else if(is_null(Image::by_id($image_id))) {
 			throw new CommentPostingException("The image does not exist");
 		}
 		else if(trim($comment) == "") {

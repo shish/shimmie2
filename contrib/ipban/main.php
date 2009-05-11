@@ -38,10 +38,10 @@ class IPBan implements Extension {
 	var $theme;
 // event handler {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			if($config->get_int("ext_ipban_version") < 5) {
 				$this->install();
 			}
@@ -50,7 +50,6 @@ class IPBan implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("ip_ban")) {
-			global $user;
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
@@ -58,40 +57,38 @@ class IPBan implements Extension {
 						else $end = $_POST['end'];
 						send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("ip_ban/list"));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
 					if(isset($_POST['id'])) {
 						send_event(new RemoveIPBanEvent($_POST['id']));
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("ip_ban/list"));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
 				else if($event->get_arg(0) == "list") {
 					$bans = (isset($_GET["all"])) ? $this->get_bans() : $this->get_active_bans();
-					$this->theme->display_bans($event->page, $bans);
+					$this->theme->display_bans($page, $bans);
 				}
 			}
 			else {
-				$this->theme->display_permission_denied($event->page);
+				$this->theme->display_permission_denied($page);
 			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("IP Bans", make_link("ip_ban/list"));
 			}
 		}
 
 		if($event instanceof AddIPBanEvent) {
-			global $user;
 			$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
 		}
 
 		if($event instanceof RemoveIPBanEvent) {
-			global $database;
 			$database->Execute("DELETE FROM bans WHERE id = ?", array($event->id));
 		}
 	}
@@ -173,7 +170,7 @@ class IPBan implements Extension {
 				(strstr($row['ip'], '/') && ip_in_range($remote, $row['ip'])) ||
 				($row['ip'] == $remote)
 			) {
-				$admin = User::by_id($config, $database, $row['banner_id']);
+				$admin = User::by_id($row['banner_id']);
 				$date = date("Y-m-d", $row['end_timestamp']);
 				print "IP <b>{$row['ip']}</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
 

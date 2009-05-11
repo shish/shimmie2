@@ -42,9 +42,8 @@ Tips
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class Layout {
-	public function display_page($context) {
-		$page = $context->page;
-		$config = $context->config;
+	public function display_page($page) {
+		global $config;
 
 		$theme_name = $config->get_string('theme');
 		$base_href = $config->get_string('base_href');

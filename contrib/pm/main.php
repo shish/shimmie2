@@ -11,8 +11,7 @@
  */
 
 class SendPMEvent extends Event {
-	public function __construct(RequestContext $reqest, $from_id, $from_ip, $to_id, $subject, $message) {
-		parent::__construct($request);
+	public function __construct($from_id, $from_ip, $to_id, $subject, $message) {
 		$this->from_id = $from_id;
 		$this->from_ip = $from_ip;
 		$this->to_id = $to_id;
@@ -25,51 +24,49 @@ class PM implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
+
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			if($event->context->config->get_int("pm_version") < 1) {
-				$this->install($event->context);
+			if($config->get_int("pm_version") < 1) {
+				$this->install();
 			}
 		}
 
 		/*
 		if($event instanceof UserBlockBuildingEvent) {
-			if(!$event->user->is_anonymous()) {
+			if(!$user->is_anonymous()) {
 				$event->add_link("Private Messages", make_link("pm"));
 			}
 		}
 		*/
 
 		if($event instanceof UserPageBuildingEvent) {
-			$user = $event->context->user;
 			$duser = $event->display_user;
 			if(!$user->is_anonymous() && !$duser->is_anonymous()) {
 				if(($user->id == $duser->id) || $user->is_admin()) {
-					$this->theme->display_pms($event->context->page, $this->get_pms($duser));
+					$this->theme->display_pms($page, $this->get_pms($duser));
 				}
 				if($user->id != $duser->id) {
-					$this->theme->display_composer($event->context->page, $user, $duser);
+					$this->theme->display_composer($page, $user, $duser);
 				}
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("pm")) {
-			$database = $event->context->database;
-			$config = $event->context->config;
-			$user = $event->config->user;
 			if(!$user->is_anonymous()) {
 				switch($event->get_arg(0)) {
 					case "read":
 						$pm_id = int_escape($event->get_arg(1));
 						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
 						if(is_null($pm)) {
-							$this->theme->display_error($event->page, "No such PM", "There is no PM #$pm_id");
+							$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
 						}
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
-							$from_user = User::by_id($config, $database, int_escape($pm["from_id"]));
+							$from_user = User::by_id(int_escape($pm["from_id"]));
 							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = ?", array($pm_id));
-							$this->theme->display_message($event->page, $from_user, $event->user, $pm);
+							$this->theme->display_message($page, $from_user, $user, $pm);
 						}
 						else {
 							// permission denied
@@ -79,13 +76,13 @@ class PM implements Extension {
 						$pm_id = int_escape($event->get_arg(1));
 						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
 						if(is_null($pm)) {
-							$this->theme->display_error($event->page, "No such PM", "There is no PM #$pm_id");
+							$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
 						}
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
 							log_info("pm", "Deleted PM #$pm_id");
-							$event->page->set_mode("redirect");
-							$event->page->set_redirect(make_link("user"));
+							$page->set_mode("redirect");
+							$page->set_redirect(make_link("user"));
 						}
 						else {
 							// permission denied
@@ -96,16 +93,16 @@ class PM implements Extension {
 						$from_id = $user->id;
 						$subject = $_POST["subject"];
 						$message = $_POST["message"];
-						send_event(new SendPMEvent($event->context, $from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link($_SERVER["REFERER"]));
+						send_event(new SendPMEvent($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link($_SERVER["REFERER"]));
 						break;
 				}
 			}
 		}
 
 		if($event instanceof SendPMEvent) {
-			$event->context->database->execute("
+			$database->execute("
 					INSERT INTO private_message(
 						from_id, from_ip, to_id,
 						sent_date, subject, message)
@@ -117,9 +114,8 @@ class PM implements Extension {
 		}
 	}
 
-	protected function install(RequestContext $context) {
-		$database = $context->database;
-		$config = $context->config;
+	protected function install() {
+		global $config, $database;
 
 		// shortcut to latest
 		if($config->get_int("pm_version") < 1) {

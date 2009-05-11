@@ -1,4 +1,8 @@
 <?php
+class BBCodeTest extends WebTestCase {}
+
+if(!defined(VERSION)) return;
+
 class BBCodeUnitTest extends UnitTestCase {
 	public function testBasics() {
 		$this->assertEqual(

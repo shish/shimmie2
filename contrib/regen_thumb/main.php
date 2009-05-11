@@ -23,7 +23,7 @@ class RegenThumb implements Extension {
 			if($user->is_admin() && isset($_POST['image_id'])) {
 				global $config;
 				global $database;
-				$image = Image::by_id($config, $database, int_escape($_POST['image_id']));
+				$image = Image::by_id(int_escape($_POST['image_id']));
 				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext));
 				$this->theme->display_results($event->page, $image);
 			}

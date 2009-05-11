@@ -1,9 +1,8 @@
 <?php
 
 class Layout {
-	function display_page($context) {
-		$page = $context->page;
-		$config = $context->config;
+	function display_page($page) {
+		global $config;
 
 		$theme_name = $config->get_string('theme', 'default');
 		$data_href = get_base_href();

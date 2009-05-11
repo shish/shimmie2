@@ -9,11 +9,11 @@ class Tag_History implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof InitExtEvent)) {
 			// shimmie is being installed so call install to create the table.
-			global $config;
 			if($config->get_int("ext_tag_history_version") < 3) {
 				$this->install();
 			}
@@ -24,7 +24,6 @@ class Tag_History implements Extension {
 			if($event->get_arg(0) == "revert")
 			{
 				// this is a request to revert to a previous version of the tags
-				global $config, $user;
 				if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
 					$this->process_revert_request($_POST['revert']);
 				}
@@ -33,16 +32,16 @@ class Tag_History implements Extension {
 			{
 				// must be an attempt to view a tag history
 				$image_id = int_escape($event->get_arg(0));
-				$this->theme->display_history_page($event->page, $image_id, $this->get_tag_history_from_id($image_id));
+				$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
 			}
 			else {
-				$this->theme->display_global_page($event->page, $this->get_global_tag_history());
+				$this->theme->display_global_page($page, $this->get_global_tag_history());
 			}
 		}
 		if(($event instanceof DisplayingImageEvent))
 		{
 			// handle displaying a link on the view page
-			$this->theme->display_history_link($event->page, $event->image->id);
+			$this->theme->display_history_link($page, $event->image->id);
 		}
 		if(($event instanceof ImageDeletionEvent))
 		{

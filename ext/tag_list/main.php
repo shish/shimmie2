@@ -5,10 +5,10 @@ class TagList implements Extension {
 
 // event handling {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if($this->theme == null) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			$config->set_default_int("tag_list_length", 15);
 			$config->set_default_int("tags_min", 3);
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
@@ -16,8 +16,6 @@ class TagList implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("tags")) {
-			global $page;
-
 			$this->theme->set_navigation($this->build_navigation());
 			switch($event->get_arg(0)) {
 				default:
@@ -42,25 +40,23 @@ class TagList implements Extension {
 		}
 
 		if($event instanceof PostListBuildingEvent) {
-			global $config;
 			if($config->get_int('tag_list_length') > 0) {
 				if(!empty($event->search_terms)) {
-					$this->add_refine_block($event->page, $event->search_terms);
+					$this->add_refine_block($page, $event->search_terms);
 				}
 				else {
-					$this->add_popular_block($event->page);
+					$this->add_popular_block($page);
 				}
 			}
 		}
 
 		if($event instanceof DisplayingImageEvent) {
-			global $config;
 			if($config->get_int('tag_list_length') > 0) {
 				if($config->get_string('tag_list_image_type') == 'related') {
-					$this->add_related_block($event->page, $event->image);
+					$this->add_related_block($page, $event->image);
 				}
 				else {
-					$this->add_tags_block($event->page, $event->image);
+					$this->add_tags_block($page, $event->image);
 				}
 			}
 		}
@@ -192,7 +188,7 @@ class TagList implements Extension {
 			if($n%3==0) $html .= "<tr>";
 			$h_tag = html_escape($row['tag']);
 			$link = $this->tag_link($row['tag']);
-			$image = Image::by_random($config, $database, array($row['tag']));
+			$image = Image::by_random(array($row['tag']));
 			if(is_null($image)) continue; // one of the popular tags has no images
 			$thumb = $image->get_thumb_link();
 			$html .= "<td><a href='$link'><img src='$thumb'><br>$h_tag</a></td>\n";

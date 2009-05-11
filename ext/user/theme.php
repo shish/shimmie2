@@ -123,7 +123,7 @@ class UserPageTheme extends Themelet {
 		global $config;
 
 		$h_join_date = html_escape($duser->join_date);
-		$i_image_count = Image::count_images($config, $database, array("user_id={$duser->id}"));
+		$i_image_count = Image::count_images(array("user_id={$duser->id}"));
 		$i_comment_count = Comment::count_comments_by_user($duser);
 
 		#$h_image_rate = sprintf("%3.1f", ($i_image_count / $i_days_old2));

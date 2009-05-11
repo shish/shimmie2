@@ -4,11 +4,7 @@
  * generic parent class
  */
 abstract class Event {
-	var $context;
-
-	public function __construct(RequestContext $context) {
-		$this->context = $context;
-	}
+	public function __construct() {}
 }
 
 
@@ -32,12 +28,9 @@ class PageRequestEvent extends Event {
 
 	var $part_count;
 
-	public function __construct(RequestContext $context, $args) {
-		parent::__construct($context);
+	public function __construct($args) {
 		$this->args = $args;
 		$this->arg_count = count($args);
-		$this->page = $context->page;
-		$this->user = $context->user;
 	}
 
 	public function page_matches($name) {
@@ -105,8 +98,7 @@ class LogEvent extends Event {
 	var $message;
 	var $time;
 
-	public function __construct($context, $section, $priority, $message) {
-		parent::__construct($context);
+	public function __construct($section, $priority, $message) {
 		$this->section = $section;
 		$this->priority = $priority;
 		$this->message = $message;
@@ -114,8 +106,9 @@ class LogEvent extends Event {
 
 		// this should be an extension
 		/*
+		global $user;
 		$ftime = date("Y-m-d H:i:s", $this->time);
-		$username = $context->user->name;
+		$username = $user->name;
 		$ip = $_SERVER['REMOTE_ADDR'];
 		$fp = fopen("shimmie.log", "a");
 		fputs($fp, "$ftime\t$section/$priority\t$username/$ip\t$message\n");
