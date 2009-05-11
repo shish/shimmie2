@@ -105,15 +105,15 @@ class LogEvent extends Event {
 		$this->time = time();
 
 		// this should be an extension
-		/*
-		global $user;
-		$ftime = date("Y-m-d H:i:s", $this->time);
-		$username = $user->name;
-		$ip = $_SERVER['REMOTE_ADDR'];
-		$fp = fopen("shimmie.log", "a");
-		fputs($fp, "$ftime\t$section/$priority\t$username/$ip\t$message\n");
-		fclose($fp);
-		*/
+		if(defined("X-HALFASSED-LOGGING")) {
+			global $user;
+			$ftime = date("Y-m-d H:i:s", $this->time);
+			$username = $user->name;
+			$ip = $_SERVER['REMOTE_ADDR'];
+			$fp = fopen("shimmie.log", "a");
+			fputs($fp, "$ftime\t$section/$priority\t$username/$ip\t$message\n");
+			fclose($fp);
+		}
 	}
 }
 ?>
