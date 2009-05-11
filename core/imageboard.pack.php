@@ -586,7 +586,7 @@ class Image {
 			$tag_id_array = array();
 			$tags_ok = true;
 			foreach($tag_search->variables as $tag) {
-				$tag_ids = $this->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
 				$tags_ok = count($tag_ids) > 0;
 				if(!$tags_ok) break;
