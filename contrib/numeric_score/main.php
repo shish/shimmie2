@@ -96,7 +96,7 @@ class NumericScore implements Extension {
 			$config->set_int("ext_numeric_score_version", 1);
 		}
 		if($config->get_int("ext_numeric_score_version") < 2) {
-			$database->Execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, scores)");
+			$database->Execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, score)");
 			$config->set_int("ext_numeric_score_version", 2);
 		}
 	}
