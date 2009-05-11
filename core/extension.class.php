@@ -6,6 +6,26 @@ interface Extension {
 	public function receive_event(Event $event);
 }
 
+/*
+ * BlahEvent -> onBlah
+ */
+abstract class SimpleExtension implements Extension {
+	var $theme;
+	var $_child;
+
+	public function i_am($child) {
+		$this->_child = $child;
+		if(is_null($this->theme)) $this->theme = get_theme_object($child, false);
+	}
+
+	public function receive_event(Event $event) {
+		$name = get_class($event);
+		$name = "on".str_replace("Event", "", $name);
+		if(method_exists($this->_child, $name)) {
+			$this->_child->$name($event);
+		}
+	}
+}
 
 /*
  * Several extensions have this in common, make a common API
