@@ -59,6 +59,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 		$this->parts[$position] = $html;
 	}
 }
+
 class ViewImage implements Extension {
 	var $theme;
 

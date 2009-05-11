@@ -14,34 +14,36 @@
 *  alongside the default choices.
 */
 
-class Home implements Extension {
-	var $theme;
+class Home extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $config, $page;
+		if($event->page_matches("home")) {
+			$base_href = $config->get_string('base_href');
+			$data_href = get_base_href();
+			$sitename = $config->get_string('title');
+			$theme_name = $config->get_string('theme');
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+			$body = $this->get_body();
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("home"))
-		{
-			// this is a request to display this page so output the page.
-		  	$this->output_pages($page);
-		}
-		if($event instanceof SetupBuildingEvent)
-		{
-			$counters = array();
-			foreach(glob("ext/home/counters/*") as $counter_dirname) {
-				$name = str_replace("ext/home/counters/", "", $counter_dirname);
-				$counters[ucfirst($name)] = $name;
-			}
-
-			$sb = new SetupBlock("Home Page");
-			$sb->add_label("Page Links - Example: [$"."base/index|Posts]");
-			$sb->add_longtext_option("home_links", "<br>");
-			$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
-			$sb->add_label("<br>Note: page accessed via /home");
-			$event->panel->add_block($sb);
+			$this->theme->display_page($page, $sitename, $data_href, $theme_name, $body);
 		}
 	}
+
+	public function onSetupBuilding($event) {
+		$counters = array();
+		foreach(glob("ext/home/counters/*") as $counter_dirname) {
+			$name = str_replace("ext/home/counters/", "", $counter_dirname);
+			$counters[ucfirst($name)] = $name;
+		}
+
+		$sb = new SetupBlock("Home Page");
+		$sb->add_label("Page Links - Example: [$"."base/index|Posts]");
+		$sb->add_longtext_option("home_links", "<br>");
+		$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
+		$sb->add_label("<br>Note: page accessed via /home");
+		$event->panel->add_block($sb);
+	}
+
 
 	private function get_body()
 	{
@@ -75,21 +77,5 @@ class Home implements Extension {
 
 		return $this->theme->build_body($sitename, $main_links, $contact_link, $num_comma, $counter_text);
 	}
-
-    private function output_pages($page)
-	{
-		// output a sectionalised list of all the main pages on the site.
-		global $config;
-		$base_href = $config->get_string('base_href');
-		$data_href = get_base_href();
-		$sitename = $config->get_string('title');
-		$theme_name = $config->get_string('theme');
-
-		$body = $this->get_body();
-
-		$this->theme->display_page($page, $sitename, $data_href, $theme_name, $body);
-	}
-
 }
-add_event_listener(new Home());
 ?>

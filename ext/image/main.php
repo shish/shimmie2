@@ -74,77 +74,75 @@ class ParseLinkTemplateEvent extends Event {
  * A class to handle adding / getting / removing image
  * files from the disk
  */
-class ImageIO implements Extension {
-// event handling {{{
-	public function receive_event(Event $event) {
-		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_int('thumb_width', 192);
-			$config->set_default_int('thumb_height', 192);
-			$config->set_default_int('thumb_quality', 75);
-			$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
+class ImageIO extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_int('thumb_width', 192);
+		$config->set_default_int('thumb_height', 192);
+		$config->set_default_int('thumb_quality', 75);
+		$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
 
-			$config->set_default_string('image_ilink', '');
-			$config->set_default_string('image_tlink', '');
-			$config->set_default_string('image_tip', '$tags // $size // $filesize');
-			$config->set_default_string('upload_collision_handler', 'error');
-		}
+		$config->set_default_string('image_ilink', '');
+		$config->set_default_string('image_tlink', '');
+		$config->set_default_string('image_tip', '$tags // $size // $filesize');
+		$config->set_default_string('upload_collision_handler', 'error');
+	}
 
-		if($event instanceof PageRequestEvent) {
-			$num = $event->get_arg(0);
-			$matches = array();
-			if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
-				$num = $matches[1];
+	public function onPageRequest($event) {
+		$num = $event->get_arg(0);
+		$matches = array();
+		if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
+			$num = $matches[1];
 
-				if($event->page_matches("image")) {
-					$this->send_file($num, "image");
-				}
-				else if($event->page_matches("thumb")) {
-					$this->send_file($num, "thumb");
-				}
+			if($event->page_matches("image")) {
+				$this->send_file($num, "image");
+			}
+			else if($event->page_matches("thumb")) {
+				$this->send_file($num, "thumb");
 			}
 		}
-
-		if($event instanceof ImageAdditionEvent) {
-			$error = $this->add_image($event->image);
-			if(!empty($error)) throw new UploadException($error);
-		}
-
-		if($event instanceof ImageDeletionEvent) {
-			$event->image->delete();
-		}
-
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Image Options");
-			$sb->position = 30;
-			// advanced only
-			//$sb->add_text_option("image_ilink", "Image link: ");
-			//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
-			$sb->add_text_option("image_tip", "Image tooltip: ");
-			$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
-			$event->panel->add_block($sb);
-
-			$thumbers = array();
-			$thumbers['Built-in GD'] = "gd";
-			$thumbers['ImageMagick'] = "convert";
-
-			$sb = new SetupBlock("Thumbnailing");
-			$sb->add_choice_option("thumb_engine", $thumbers, "Engine: ");
-
-			$sb->add_label("<br>Size ");
-			$sb->add_int_option("thumb_width");
-			$sb->add_label(" x ");
-			$sb->add_int_option("thumb_height");
-			$sb->add_label(" px at ");
-			$sb->add_int_option("thumb_quality");
-			$sb->add_label(" % quality ");
-
-			$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
-
-			$event->panel->add_block($sb);
-		}
 	}
-// }}}
+
+	public function onImageAddition($event) {
+		$error = $this->add_image($event->image);
+		if(!empty($error)) throw new UploadException($error);
+	}
+
+	public function onImageDeletion($event) {
+		$event->image->delete();
+	}
+
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Image Options");
+		$sb->position = 30;
+		// advanced only
+		//$sb->add_text_option("image_ilink", "Image link: ");
+		//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
+		$sb->add_text_option("image_tip", "Image tooltip: ");
+		$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
+		$event->panel->add_block($sb);
+
+		$thumbers = array();
+		$thumbers['Built-in GD'] = "gd";
+		$thumbers['ImageMagick'] = "convert";
+
+		$sb = new SetupBlock("Thumbnailing");
+		$sb->add_choice_option("thumb_engine", $thumbers, "Engine: ");
+
+		$sb->add_label("<br>Size ");
+		$sb->add_int_option("thumb_width");
+		$sb->add_label(" x ");
+		$sb->add_int_option("thumb_height");
+		$sb->add_label(" px at ");
+		$sb->add_int_option("thumb_quality");
+		$sb->add_label(" % quality ");
+
+		$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
+
+		$event->panel->add_block($sb);
+	}
+
+
 // add image {{{
 	private function add_image($image) {
 		global $page;
@@ -247,5 +245,4 @@ class ImageIO implements Extension {
 	}
 // }}}
 }
-add_event_listener(new ImageIO());
 ?>

@@ -101,6 +101,7 @@ class TagEdit implements Extension {
 		}
 	}
 
+
 	private function can_tag() {
 		global $config, $user;
 		return $config->get_bool("tag_edit_anon") || !$user->is_anonymous();

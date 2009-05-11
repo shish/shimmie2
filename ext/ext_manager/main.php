@@ -68,14 +68,10 @@ class ExtensionInfo { // {{{
 	}
 } // }}}
 
-class ExtManager implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_manager")) {
+class ExtManager extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $page, $user;
+		if($event->page_matches("ext_manager")) {
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "set") {
 					if(is_writable("ext")) {
@@ -97,18 +93,20 @@ class ExtManager implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_doc")) {
+		if($event->page_matches("ext_doc")) {
 			$ext = $event->get_arg(0);
 			$info = new ExtensionInfo("contrib/$ext/main.php");
 			$this->theme->display_doc($page, $info);
 		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Extension Manager", make_link("ext_manager"));
-			}
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Extension Manager", make_link("ext_manager"));
 		}
 	}
+
 
 	private function get_extensions() {
 		$extensions = array();
@@ -152,5 +150,4 @@ class ExtManager implements Extension {
 		}
 	}
 }
-add_event_listener(new ExtManager());
 ?>

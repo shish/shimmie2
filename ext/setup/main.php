@@ -135,27 +135,25 @@ class SetupBlock extends Block {
 }
 // }}}
 
-class Setup implements Extension {
-	var $theme;
+class Setup extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_string("title", "Shimmie");
+		$config->set_default_string("front_page", "post/list");
+		$config->set_default_string("main_page", "post/list");
+		$config->set_default_string("base_href", "./index.php?q=");
+		$config->set_default_string("theme", "default");
+	}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+	public function onPageRequest($event) {
+		global $config, $page, $user;
 
-		if($event instanceof InitExtEvent) {
-			$config->set_default_string("title", "Shimmie");
-			$config->set_default_string("front_page", "post/list");
-			$config->set_default_string("main_page", "post/list");
-			$config->set_default_string("base_href", "./index.php?q=");
-			$config->set_default_string("theme", "default");
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("nicetest")) {
+		if($event->page_matches("nicetest")) {
 			$page->set_mode("data");
 			$page->set_data("ok");
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("setup")) {
+		if($event->page_matches("setup")) {
 			if(!$user->is_admin()) {
 				$this->theme->display_permission_denied($page);
 			}
@@ -177,80 +175,80 @@ class Setup implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$themes = array();
-			foreach(glob("themes/*") as $theme_dirname) {
-				$name = str_replace("themes/", "", $theme_dirname);
-				$themes[ucfirst($name)] = $name;
+	public function onSetupBuilding($event) {
+		$themes = array();
+		foreach(glob("themes/*") as $theme_dirname) {
+			$name = str_replace("themes/", "", $theme_dirname);
+			$themes[ucfirst($name)] = $name;
+		}
+
+		$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+		$test_url = str_replace("/index.php", "/nicetest", $full);
+
+		$nicescript = "<script language='javascript'>
+			function getHTTPObject() {
+				if (window.XMLHttpRequest){
+					return new XMLHttpRequest();
+				}
+				else if(window.ActiveXObject){
+					return new ActiveXObject('Microsoft.XMLHTTP');
+				}
 			}
 
-			$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
-			$test_url = str_replace("/index.php", "/nicetest", $full);
+			checkbox = document.getElementById('nice_urls');
+			out_span = document.getElementById('nicetest');
 
-			$nicescript = "<script language='javascript'>
-				function getHTTPObject() {
-					if (window.XMLHttpRequest){
-						return new XMLHttpRequest();
-					}
-					else if(window.ActiveXObject){
-						return new ActiveXObject('Microsoft.XMLHTTP');
-					}
-				}
+			checkbox.disabled = true;
+			out_span.innerHTML = '(testing...)';
 
-				checkbox = document.getElementById('nice_urls');
-				out_span = document.getElementById('nicetest');
+			http_request = getHTTPObject();
+			http_request.open('GET', '$test_url', false);
+			http_request.send(null);
 
+			if(http_request.status == 200 && http_request.responseText == 'ok') {
+				checkbox.disabled = false;
+				out_span.innerHTML = '(tested ok)';
+			}
+			else {
 				checkbox.disabled = true;
-				out_span.innerHTML = '(testing...)';
-
-				http_request = getHTTPObject();
-				http_request.open('GET', '$test_url', false);
-				http_request.send(null);
-
-				if(http_request.status == 200 && http_request.responseText == 'ok') {
-					checkbox.disabled = false;
-					out_span.innerHTML = '(tested ok)';
-				}
-				else {
-					checkbox.disabled = true;
-					out_span.innerHTML = '(test failed)';
-				}
-			</script>";
-			$sb = new SetupBlock("General");
-			$sb->position = 0;
-			$sb->add_text_option("title", "Site title: ");
-			$sb->add_text_option("front_page", "<br>Front page: ");
-			$sb->add_text_option("main_page", "<br>Main page: ");
-			$sb->add_text_option("contact_link", "<br>Contact URL: ");
-			$sb->add_choice_option("theme", $themes, "<br>Theme: ");
-			$sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
-			$sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
-			$event->panel->add_block($sb);
-		}
-
-		if($event instanceof ConfigSaveEvent) {
-			global $config;
-			foreach($_POST as $_name => $junk) {
-				if(substr($_name, 0, 6) == "_type_") {
-					$name = substr($_name, 6);
-					$type = $_POST["_type_$name"];
-					$value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
-					switch($type) {
-						case "string": $config->set_string($name, $value); break;
-						case "int":    $config->set_int($name, $value);    break;
-						case "bool":   $config->set_bool($name, $value);   break;
-					}
-				}
+				out_span.innerHTML = '(test failed)';
 			}
-		}
+		</script>";
+		$sb = new SetupBlock("General");
+		$sb->position = 0;
+		$sb->add_text_option("title", "Site title: ");
+		$sb->add_text_option("front_page", "<br>Front page: ");
+		$sb->add_text_option("main_page", "<br>Main page: ");
+		$sb->add_text_option("contact_link", "<br>Contact URL: ");
+		$sb->add_choice_option("theme", $themes, "<br>Theme: ");
+		$sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
+		$sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
+		$event->panel->add_block($sb);
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Board Config", make_link("setup"));
+	public function onConfigSave($event) {
+		global $config;
+		foreach($_POST as $_name => $junk) {
+			if(substr($_name, 0, 6) == "_type_") {
+				$name = substr($_name, 6);
+				$type = $_POST["_type_$name"];
+				$value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
+				switch($type) {
+					case "string": $config->set_string($name, $value); break;
+					case "int":    $config->set_int($name, $value);    break;
+					case "bool":   $config->set_bool($name, $value);   break;
+				}
 			}
 		}
 	}
+
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Board Config", make_link("setup"));
+		}
+	}
 }
-add_event_listener(new Setup());
 ?>
