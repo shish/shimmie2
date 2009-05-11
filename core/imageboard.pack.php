@@ -323,6 +323,15 @@ class Image {
 	}
 
 	private static function build_search_querylet(Config $config, Database $database, $terms) {
+		if($database->engine->name == "mysql")
+			return Image::build_ugly_search_querylet($config, $database, $terms);
+		else
+			return Image::build_accurate_search_querylet($config, $database, $terms);
+	}
+
+	// this method is simple, fast and accurate; but mysql chokes on it
+	// because it uses subqueries
+	private static function build_accurate_search_querylet(Config $config, Database $database, $terms) {
 		$tag_querylets = array();
 		$img_querylets = array();
 		$positive_tag_count = 0;
@@ -462,6 +471,155 @@ class Image {
 			else {
 				# one of the positive tags had zero results, therefor there
 				# can be no results; "where 1=0" should shortcut things
+				$query = new Querylet("
+					SELECT images.*
+					FROM images
+					WHERE 1=0
+				");
+			}
+		}
+
+		return $query;
+	}
+
+	// this function exists because mysql is a turd.
+	private static function build_ugly_search_querylet(Config $config, Database $database, $terms) {
+		$tag_querylets = array();
+		$img_querylets = array();
+		$positive_tag_count = 0;
+		$negative_tag_count = 0;
+
+		$stpe = new SearchTermParseEvent(null, $terms);
+		send_event($stpe);
+		if($stpe->is_querylet_set()) {
+			foreach($stpe->get_querylets() as $querylet) {
+				$img_querylets[] = new ImgQuerylet($querylet, true);
+			}
+		}
+
+		// turn each term into a specific type of querylet
+		foreach($terms as $term) {
+			$negative = false;
+			if((strlen($term) > 0) && ($term[0] == '-')) {
+				$negative = true;
+				$term = substr($term, 1);
+			}
+			
+			$term = Tag::resolve_alias($term);
+
+			$stpe = new SearchTermParseEvent($term, $terms);
+			send_event($stpe);
+			if($stpe->is_querylet_set()) {
+				foreach($stpe->get_querylets() as $querylet) {
+					$img_querylets[] = new ImgQuerylet($querylet, !$negative);
+				}
+			}
+			else {
+				$term = str_replace("*", "%", $term);
+				$term = str_replace("?", "_", $term);
+				if(!preg_match("/^[%_]+$/", $term)) {
+					$tag_querylets[] = new TagQuerylet($term, !$negative);
+				}
+			}
+		}
+
+		// merge all the tag querylets into one generic one
+		$sql = "0";
+		$terms = array();
+		foreach($tag_querylets as $tq) {
+			$sign = $tq->positive ? "+" : "-";
+			$sql .= " $sign (tag LIKE ?)";
+			$terms[] = $tq->tag;
+			
+			if($sign == "+") $positive_tag_count++;
+			else $negative_tag_count++;
+		}
+		$tag_search = new Querylet($sql, $terms);
+
+		// merge all the image metadata searches into one generic querylet
+		$n = 0;
+		$sql = "";
+		$terms = array();
+		foreach($img_querylets as $iq) {
+			if($n++ > 0) $sql .= " AND";
+			if(!$iq->positive) $sql .= " NOT";
+			$sql .= " (" . $iq->qlet->sql . ")";
+			$terms = array_merge($terms, $iq->qlet->variables);
+		}
+		$img_search = new Querylet($sql, $terms);
+
+
+		// no tags, do a simple search (+image metadata if we have any)
+		if($positive_tag_count + $negative_tag_count == 0) {
+			$query = new Querylet("SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql(" WHERE ");
+				$query->append($img_search);
+			}
+		}
+
+		// one positive tag (a common case), do an optimised search
+		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
+			$query = new Querylet(
+				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
+				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
+				"
+					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					FROM tags, image_tags, images
+					WHERE
+						tag LIKE ?
+						AND tags.id = image_tags.tag_id
+						AND image_tags.image_id = images.id
+				",
+				$tag_search->variables);
+
+			if(strlen($img_search->sql) > 0) {
+				$query->append_sql(" AND ");
+				$query->append($img_search);
+			}
+		}
+
+		// more than one positive tag, or more than zero negative tags
+		else {
+			$s_tag_array = array_map("sql_escape", $tag_search->variables);
+			$s_tag_list = join(', ', $s_tag_array);
+			
+			$tag_id_array = array();
+			$tags_ok = true;
+			foreach($tag_search->variables as $tag) {
+				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+				$tag_id_array = array_merge($tag_id_array, $tag_ids);
+				$tags_ok = count($tag_ids) > 0;
+				if(!$tags_ok) break;
+			}
+			if($tags_ok) {
+				$tag_id_list = join(', ', $tag_id_array);
+
+				$subquery = new Querylet("
+					SELECT images.*, SUM({$tag_search->sql}) AS score
+					FROM images
+					LEFT JOIN image_tags ON image_tags.image_id = images.id
+					JOIN tags ON image_tags.tag_id = tags.id
+					WHERE tags.id IN ({$tag_id_list})
+					GROUP BY images.id
+					HAVING score = ?",
+					array_merge(
+						$tag_search->variables,
+						array($positive_tag_count)
+					)
+				);
+				$query = new Querylet("
+					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					FROM ({$subquery->sql}) AS images ", $subquery->variables);
+
+				if(strlen($img_search->sql) > 0) {
+					$query->append_sql(" WHERE ");
+					$query->append($img_search);
+				}
+			}
+			else {
+				# there are no results, "where 1=0" should shortcut things
 				$query = new Querylet("
 					SELECT images.*
 					FROM images
