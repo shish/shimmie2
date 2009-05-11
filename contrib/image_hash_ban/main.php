@@ -58,7 +58,7 @@ class ImageBan implements Extension {
 						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
 
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$page->set_redirect(make_link("image_hash_ban/list/1"));
 					}
 					if(isset($_POST['image_id'])) {
 						$image = Image::by_id(int_escape($_POST['image_id']));
@@ -74,7 +74,7 @@ class ImageBan implements Extension {
 						send_event(new RemoveImageHashBanEvent($_POST['hash']));
 
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("admin"));
+						$page->set_redirect(make_link("image_hash_ban/list/1"));
 					}
 				}
 				else if($event->get_arg(0) == "list") {

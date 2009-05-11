@@ -292,7 +292,7 @@ class Image {
 	 */
 	public function delete() {
 		global $database;
-		$delete_tags_from_image();
+		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=?", array($this->id));
 		log_info("core-image", "Deleted Image #{$image->id} ({$image->hash})");
 
