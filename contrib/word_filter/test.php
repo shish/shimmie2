@@ -1,4 +1,8 @@
 <?php
+class WordFiterTest extends WebTestCase {}
+
+if(!defined(VERSION)) return;
+
 class WordFilterUnitTest extends UnitTestCase {
 	public function testURL() {
 		$this->assertEqual(

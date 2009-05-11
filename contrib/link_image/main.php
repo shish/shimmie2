@@ -8,13 +8,14 @@ class LinkImage implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-			if(($event instanceof DisplayingImageEvent)) {
-				global $config;
-				$data_href = get_base_href();
-				$event->page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
 
-				$this->theme->links_block($event->page,$this->data($event->image));
+			if(($event instanceof DisplayingImageEvent)) {
+				$data_href = get_base_href();
+				$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
+
+				$this->theme->links_block($page, $this->data($event->image));
 			}
 			if($event instanceof SetupBuildingEvent) {
 				$sb = new SetupBlock("Link to Image");
@@ -22,7 +23,6 @@ class LinkImage implements Extension {
 				$event->panel->add_block($sb);
 			}
 			if($event instanceof InitExtEvent) {
-				global $config;
 				//just set default if empty.
 				$config->set_default_string("ext_link-img_text-link_format",
 										'$title - $id ($ext $size $filesize)');

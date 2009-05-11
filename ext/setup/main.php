@@ -139,10 +139,10 @@ class Setup implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			$config->set_default_string("title", "Shimmie");
 			$config->set_default_string("front_page", "post/list");
 			$config->set_default_string("main_page", "post/list");
@@ -151,33 +151,29 @@ class Setup implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("nicetest")) {
-			$event->page->set_mode("data");
-			$event->page->set_data("ok");
+			$page->set_mode("data");
+			$page->set_data("ok");
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("setup")) {
-			global $user;
 			if(!$user->is_admin()) {
-				$this->theme->display_permission_denied($event->page);
+				$this->theme->display_permission_denied($page);
 			}
 			else {
 				if($event->get_arg(0) == "save") {
-					global $config;
 					send_event(new ConfigSaveEvent($config));
 					$config->save();
 
-					global $page;
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("setup"));
 				}
 				else if($event->get_arg(0) == "advanced") {
-					global $config;
-					$this->theme->display_advanced($event->page, $config->values);
+					$this->theme->display_advanced($page, $config->values);
 				}
 				else {
 					$panel = new SetupPanel();
 					send_event(new SetupBuildingEvent($panel));
-					$this->theme->display_page($event->page, $panel);
+					$this->theme->display_page($page, $panel);
 				}
 			}
 		}
@@ -234,22 +230,23 @@ class Setup implements Extension {
 		}
 
 		if($event instanceof ConfigSaveEvent) {
+			global $config;
 			foreach($_POST as $_name => $junk) {
 				if(substr($_name, 0, 6) == "_type_") {
 					$name = substr($_name, 6);
 					$type = $_POST["_type_$name"];
 					$value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
 					switch($type) {
-						case "string": $event->config->set_string($name, $value); break;
-						case "int":    $event->config->set_int($name, $value);    break;
-						case "bool":   $event->config->set_bool($name, $value);   break;
+						case "string": $config->set_string($name, $value); break;
+						case "int":    $config->set_int($name, $value);    break;
+						case "bool":   $config->set_bool($name, $value);   break;
 					}
 				}
 			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Board Config", make_link("setup"));
 			}
 		}

@@ -29,19 +29,19 @@ class Featured implements Extension {
 				$id = int_escape($_POST['image_id']);
 				if($id > 0) {
 					$config->set_int("featured_id", $id);
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("post/view/$id"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$id"));
 				}
 			}
 		}
 
 		if($event instanceof PostListBuildingEvent) {
-			global $config, $database;
+			global $config, $page;
 			$fid = $config->get_int("featured_id");
 			if($fid > 0) {
-				$image = Image::by_id($config, $database, $fid);
+				$image = Image::by_id($fid);
 				if(!is_null($image)) {
-					$this->theme->display_featured($event->page, $image);
+					$this->theme->display_featured($page, $image);
 				}
 			}
 		}

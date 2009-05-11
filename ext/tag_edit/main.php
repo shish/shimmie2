@@ -36,16 +36,14 @@ class TagEdit implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("tag_edit")) {
-			global $page;
 			if($event->get_arg(0) == "replace") {
-				global $user;
 				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
 					$search = $_POST['search'];
 					$replace = $_POST['replace'];
-					global $page;
 					$this->mass_tag_edit($search, $replace);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("admin"));
@@ -61,7 +59,7 @@ class TagEdit implements Extension {
 				}
 			}
 			else {
-				$this->theme->display_error($event->page, "Error", "Anonymous tag editing is disabled");
+				$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
 			}
 		}
 
@@ -78,7 +76,7 @@ class TagEdit implements Extension {
 		}
 
 		if($event instanceof AdminBuildingEvent) {
-			$this->theme->display_mass_editor($event->page);
+			$this->theme->display_mass_editor($page);
 		}
 
 		// When an alias is added, oldtag becomes inaccessable
@@ -87,8 +85,6 @@ class TagEdit implements Extension {
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
-			global $user;
-			global $config;
 			if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
 				$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
 			}
@@ -130,7 +126,7 @@ class TagEdit implements Extension {
 			$search_forward = $search_set;
 			if($last_id >= 0) $search_forward[] = "id<$last_id";
 
-			$images = Image::find_images($config, $database, 0, 100, $search_forward);
+			$images = Image::find_images(0, 100, $search_forward);
 			if(count($images) == 0) break;
 
 			foreach($images as $image) {

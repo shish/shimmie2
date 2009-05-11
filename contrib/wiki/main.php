@@ -44,7 +44,7 @@ class WikiPage {
 	public function get_owner() {
 		global $config;
 		global $database;
-		return User::by_id($config, $database, $this->owner_id);
+		return User::by_id($this->owner_id);
 	}
 
 	public function is_locked() {

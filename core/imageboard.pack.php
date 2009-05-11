@@ -15,9 +15,6 @@
  * sound file, or any other supported upload type.
  */
 class Image {
-	var $config;
-	var $database;
-
 	var $id = null;
 	var $height, $width;
 	var $hash, $filesize;
@@ -30,12 +27,6 @@ class Image {
 	 * Constructors and other instance creators
 	 */
 	public function Image($row=null) {
-		global $config;
-		global $database;
-
-		$this->config = $config;
-		$this->database = $database;
-
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// FIXME: some databases use table.name rather than name
@@ -45,37 +36,43 @@ class Image {
 		}
 	}
 
-	public static function by_id(Config $config, Database $database, $id) {
+	public static function by_id($id) {
 		assert(is_numeric($id));
+		global $database;
 		$image = null;
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=?", array($id));
 		return ($row ? new Image($row) : null);
 	}
 
-	public static function by_hash(Config $config, Database $database, $hash) {
+	public static function by_hash($hash) {
 		assert(is_string($hash));
+		global $database;
 		$image = null;
 		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
 		return ($row ? new Image($row) : null);
 	}
 
-	public static function by_random(Config $config, Database $database, $tags=array()) {
-		$max = Image::count_images($config, $database, $tags);
+	public static function by_random($tags=array()) {
+		assert(is_array($tags));
+		$max = Image::count_images($tags);
 		$rand = mt_rand(0, $max-1);
-		$set = Image::find_images($config, $database, $rand, 1, $tags);
+		$set = Image::find_images($rand, 1, $tags);
 		if(count($set) > 0) return $set[0];
 		else return null;
 	}
 
-	public static function find_images(Config $config, Database $database, $start, $limit, $tags=array()) {
-		$images = array();
-
+	public static function find_images($start, $limit, $tags=array()) {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
+		assert(is_array($tags));
+		global $database;
+
+		$images = array();
+
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
 
-		$querylet = Image::build_search_querylet($config, $database, $tags);
+		$querylet = Image::build_search_querylet($tags);
 		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
@@ -89,20 +86,24 @@ class Image {
 	/*
 	 * Image-related utility functions
 	 */
-	public static function count_images(Config $config, Database $database, $tags=array()) {
+	public static function count_images($tags=array()) {
+		assert(is_array($tags));
+		global $database;
 		if(count($tags) == 0) {
 			return $database->db->GetOne("SELECT COUNT(*) FROM images");
 		}
 		else {
-			$querylet = Image::build_search_querylet($config, $database, $tags);
+			$querylet = Image::build_search_querylet($tags);
 			$result = $database->execute($querylet->sql, $querylet->variables);
 			return $result->RecordCount();
 		}
 	}
 
-	public static function count_pages(Config $config, Database $database, $tags=array()) {
+	public static function count_pages($tags=array()) {
+		assert(is_array($tags));
+		global $config, $database;
 		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
-		return ceil(Image::count_images($config, $database, $tags) / $images_per_page);
+		return ceil(Image::count_images($tags) / $images_per_page);
 	}
 
 
@@ -112,6 +113,7 @@ class Image {
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
 		assert(is_bool($next));
+		global $database;
 
 		if($next) {
 			$gtlt = "<";
@@ -123,13 +125,13 @@ class Image {
 		}
 
 		if(count($tags) == 0) {
-			$row = $this->database->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
+			$row = $database->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
 		}
 		else {
 			$tags[] = "id$gtlt{$this->id}";
-			$querylet = Image::build_search_querylet($this->config, $this->database, $tags);
+			$querylet = Image::build_search_querylet($tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
-			$row = $this->database->db->GetRow($querylet->sql, $querylet->variables);
+			$row = $database->db->GetRow($querylet->sql, $querylet->variables);
 		}
 
 		return ($row ? new Image($row) : null);
@@ -140,23 +142,24 @@ class Image {
 	}
 
 	public function get_owner() {
-		return User::by_id($this->config, $this->database, $this->owner_id);
+		return User::by_id($this->owner_id);
 	}
 
 	public function get_tag_array() {
-		$cached = $this->database->cache->get("image-{$this->id}-tags");
+		global $database;
+		$cached = $database->cache->get("image-{$this->id}-tags");
 		if($cached) return $cached;
 
 		if(!isset($this->tag_array)) {
 			$this->tag_array = Array();
-			$row = $this->database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
+			$row = $database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
 			while(!$row->EOF) {
 				$this->tag_array[] = $row->fields['tag'];
 				$row->MoveNext();
 			}
 		}
 
-		$this->database->cache->set("image-{$this->id}-tags", $this->tag_array);
+		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
 		return $this->tag_array;
 	}
 
@@ -165,11 +168,11 @@ class Image {
 	}
 
 	public function get_image_link() {
-		$c = $this->config;
-		if(strlen($c->get_string('image_ilink')) > 0) {
+		global $config;
+		if(strlen($config->get_string('image_ilink')) > 0) {
 			return $this->parse_link_template($c->get_string('image_ilink'));
 		}
-		else if($c->get_bool('nice_urls', false)) {
+		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
 		}
 		else {
@@ -178,15 +181,16 @@ class Image {
 	}
 
 	public function get_short_link() {
-		return $this->parse_link_template($this->config->get_string('image_slink'));
+		global $config;
+		return $this->parse_link_template($config->get_string('image_slink'));
 	}
 
 	public function get_thumb_link() {
-		$c = $this->config;
-		if(strlen($c->get_string('image_tlink')) > 0) {
+		global $config;
+		if(strlen($config->get_string('image_tlink')) > 0) {
 			return $this->parse_link_template($c->get_string('image_tlink'));
 		}
-		else if($c->get_bool('nice_urls', false)) {
+		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
 		}
 		else {
@@ -229,18 +233,21 @@ class Image {
 	}
 
 	public function set_source($source) {
+		global $database;
 		if(empty($source)) $source = null;
-		$this->database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
+		$database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
 	}
 
 	public function delete_tags_from_image() {
-		$this->database->execute(
+		global $database;
+		$database->execute(
 				"UPDATE tags SET count = count - 1 WHERE id IN ".
 				"(SELECT tag_id FROM image_tags WHERE image_id = ?)", array($this->id));
-		$this->database->execute("DELETE FROM image_tags WHERE image_id=?", array($this->id));
+		$database->execute("DELETE FROM image_tags WHERE image_id=?", array($this->id));
 	}
 
 	public function set_tags($tags) {
+		global $database;
 		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
@@ -251,32 +258,32 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			$id = $this->database->db->GetOne(
+			$id = $database->db->GetOne(
 					"SELECT id FROM tags WHERE tag = ?",
 					array($tag));
 			if(empty($id)) {
 				// a new tag
-				$this->database->execute(
+				$database->execute(
 						"INSERT INTO tags(tag) VALUES (?)",
 						array($tag));
-				$this->database->execute(
+				$database->execute(
 						"INSERT INTO image_tags(image_id, tag_id)
 						VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
 						array($this->id, $tag));
 			}
 			else {
 				// user of an existing tag
-				$this->database->execute(
+				$database->execute(
 						"INSERT INTO image_tags(image_id, tag_id) VALUES(?, ?)",
 						array($this->id, $id));
 			}
-			$this->database->execute(
+			$database->execute(
 					"UPDATE tags SET count = count + 1 WHERE tag = ?",
 					array($tag));
 		}
 
 		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
-		$this->database->cache->delete("image-{$this->id}-tags");
+		$database->cache->delete("image-{$this->id}-tags");
 	}
 
 
@@ -284,8 +291,9 @@ class Image {
 	 * Other actions
 	 */
 	public function delete() {
-		$this->delete_tags_from_image();
-		$this->database->execute("DELETE FROM images WHERE id=?", array($this->id));
+		global $database;
+		$delete_tags_from_image();
+		$database->execute("DELETE FROM images WHERE id=?", array($this->id));
 		log_info("core-image", "Deleted Image #{$image->id} ({$image->hash})");
 
 		unlink($this->get_image_filename());
@@ -293,6 +301,8 @@ class Image {
 	}
 
 	public function parse_link_template($tmpl, $_escape="url_escape") {
+		global $config;
+
 		// don't bother hitting the database if it won't be used...
 		$safe_tags = "";
 		if(strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
@@ -301,7 +311,7 @@ class Image {
 					"", $this->get_tag_list());
 		}
 
-		$base_href = $this->config->get_string('base_href');
+		$base_href = $config->get_string('base_href');
 		$fname = $this->get_filename();
 		$base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
 
@@ -313,7 +323,7 @@ class Image {
 		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
 		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
-		$tmpl = str_replace('$title', $_escape($this->config->get_string("title")), $tmpl);
+		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
 
 		$plte = new ParseLinkTemplateEvent($tmpl, $this);
 		send_event($plte);
@@ -322,16 +332,20 @@ class Image {
 		return $tmpl;
 	}
 
-	private static function build_search_querylet(Config $config, Database $database, $terms) {
+	private static function build_search_querylet($terms) {
+		assert(is_array($terms));
+		global $database;
 		if($database->engine->name == "mysql")
-			return Image::build_ugly_search_querylet($config, $database, $terms);
+			return Image::build_ugly_search_querylet($terms);
 		else
-			return Image::build_accurate_search_querylet($config, $database, $terms);
+			return Image::build_accurate_search_querylet($terms);
 	}
 
 	// this method is simple, fast and accurate; but mysql chokes on it
 	// because it uses subqueries
-	private static function build_accurate_search_querylet(Config $config, Database $database, $terms) {
+	private static function build_accurate_search_querylet($terms) {
+		global $config, $database;
+
 		$tag_querylets = array();
 		$img_querylets = array();
 		$positive_tag_count = 0;
@@ -483,7 +497,9 @@ class Image {
 	}
 
 	// this function exists because mysql is a turd.
-	private static function build_ugly_search_querylet(Config $config, Database $database, $terms) {
+	private static function build_ugly_search_querylet($terms) {
+		global $config, $database;
+
 		$tag_querylets = array();
 		$img_querylets = array();
 		$positive_tag_count = 0;

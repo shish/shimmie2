@@ -9,9 +9,9 @@
 class RSS_Images implements Extension {
 // event handling {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
+
 		if($event instanceof PostListBuildingEvent) {
-			global $page;
-			global $config;
 			$title = $config->get_string('title');
 
 			if(count($event->search_terms) > 0) {
@@ -26,9 +26,6 @@ class RSS_Images implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("rss/images")) {
-			global $config;
-			global $database;
-
 			$page_number = 0;
 			$search_terms = array();
 
@@ -45,7 +42,7 @@ class RSS_Images implements Extension {
 				$page_number = int_escape($event->get_arg(1));
 			}
 
-			$images = Image::find_images($config, $database, ($page_number-1)*10, 10, $search_terms);
+			$images = Image::find_images(($page_number-1)*10, 10, $search_terms);
 			$this->do_rss($images, $search_terms, $page_number);
 		}
 	}

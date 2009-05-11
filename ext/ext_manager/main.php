@@ -72,38 +72,39 @@ class ExtManager implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_manager")) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				if($event->get_arg(0) == "set") {
 					if(is_writable("ext")) {
 						$this->set_things($_POST);
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("ext_manager"));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("ext_manager"));
 					}
 					else {
-						$this->theme->display_error($event->page, "File Operation Failed",
+						$this->theme->display_error($page, "File Operation Failed",
 							"The extension folder isn't writable by the web server :(");
 					}
 				}
 				else {
-					$this->theme->display_table($event->page, $this->get_extensions());
+					$this->theme->display_table($page, $this->get_extensions());
 				}
 			}
 			else {
-				$this->theme->display_permission_denied($event->page);
+				$this->theme->display_permission_denied($page);
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("ext_doc")) {
 			$ext = $event->get_arg(0);
 			$info = new ExtensionInfo("contrib/$ext/main.php");
-			$this->theme->display_doc($event->page, $info);
+			$this->theme->display_doc($page, $info);
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Extension Manager", make_link("ext_manager"));
 			}
 		}

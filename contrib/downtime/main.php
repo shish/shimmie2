@@ -10,6 +10,7 @@ class Downtime implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof SetupBuildingEvent) {
@@ -20,16 +21,15 @@ class Downtime implements Extension {
 		}
 
 		if($event instanceof PageRequestEvent) {
-			if($event->context->config->get_bool("downtime")) {
+			if($config->get_bool("downtime")) {
 				$this->check_downtime($event);
-				$this->theme->display_notification($event->page);
+				$this->theme->display_notification($page);
 			}
 		}
 	}
 
 	private function check_downtime(PageRequestEvent $event) {
-		$user = $event->context->user;
-		$config = $event->context->config;
+		global $user, $config;
 
 		if($config->get_bool("downtime") && !$user->is_admin() &&
 				($event instanceof PageRequestEvent) && !$this->is_safe_page($event)) {

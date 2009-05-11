@@ -10,21 +10,20 @@ class Bookmarks implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("bookmark")) {
-			$user = $event->context->user;
-
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['url'])) {
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("user"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("user"));
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
 				if(isset($_POST['id'])) {
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("user"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("user"));
 				}
 			}
 		}

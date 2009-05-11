@@ -10,11 +10,11 @@ class Zoom implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if($this->theme == null) $this->theme = get_theme_object($this);
 
 		if($event instanceof DisplayingImageEvent) {
-			global $config;
-			$this->theme->display_zoomer($event->page, $event->image, $config->get_bool("image_zoom", false));
+			$this->theme->display_zoomer($page, $event->image, $config->get_bool("image_zoom", false));
 		}
 
 		if($event instanceof SetupBuildingEvent) {

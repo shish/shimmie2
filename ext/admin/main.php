@@ -15,34 +15,33 @@ class AdminPage implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("admin")) {
-			if(!$event->user->is_admin()) {
-				$this->theme->display_permission_denied($event->page);
+			if(!$user->is_admin()) {
+				$this->theme->display_permission_denied($page);
 			}
 			else {
 				if($event->get_arg(0) == "delete_image") {
 					// FIXME: missing lots of else {complain}
 					if(isset($_POST['image_id'])) {
-						global $config;
-						global $database;
-						$image = Image::by_id($config, $database, $_POST['image_id']);
+						$image = Image::by_id($_POST['image_id']);
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
-							$event->page->set_mode("redirect");
-							$event->page->set_redirect(make_link("post/list"));
+							$page->set_mode("redirect");
+							$page->set_redirect(make_link("post/list"));
 						}
 					}
 				}
 				else {
-					send_event(new AdminBuildingEvent($event->page));
+					send_event(new AdminBuildingEvent($page));
 				}
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("admin_utils")) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				log_info("admin", "Util: {$_POST['action']}");
 				set_time_limit(0);
 				$redirect = false;
@@ -61,30 +60,30 @@ class AdminPage implements Extension {
 						$redirect = true;
 						break;
 					case 'database dump':
-						$this->dbdump($event->page);
+						$this->dbdump($page);
 						break;
 				}
 
 				if($redirect) {
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("admin"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("admin"));
 				}
 			}
 		}
 
 		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_part($this->theme->get_deleter_html($event->image->id));
 			}
 		}
 
 		if($event instanceof AdminBuildingEvent) {
-			$this->theme->display_page($event->page);
-			$this->theme->display_form($event->page);
+			$this->theme->display_page($page);
+			$this->theme->display_form($page);
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Board Admin", make_link("admin"));
 			}
 		}

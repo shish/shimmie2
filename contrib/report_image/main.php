@@ -33,11 +33,10 @@ class ReportImage implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
-
 			$config->set_default_bool('report_image_show_thumbs', true);
 
 			if($config->get_int("ext_report_image_version") < 1) {
@@ -46,33 +45,31 @@ class ReportImage implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("image_report")) {
-			global $user;
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
 					$image_id = int_escape($_POST['image_id']);
-					send_event(new AddReportedImageEvent($image_id, $event->user->id, $_POST['reason']));
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("post/view/$image_id"));
+					send_event(new AddReportedImageEvent($image_id, $user->id, $_POST['reason']));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$image_id"));
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
 				if(isset($_POST['id'])) {
-					if($event->user->is_admin()) {
+					if($user->is_admin()) {
 						send_event(new RemoveReportedImageEvent($_POST['id']));
-						$event->page->set_mode("redirect");
-						$event->page->set_redirect(make_link("image_report/list"));
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("image_report/list"));
 					}
 				}
 			}
 			else if($event->get_arg(0) == "list") {
-				if($event->user->is_admin()) {
-					$this->theme->display_reported_images($event->page, $this->get_reported_images());
+				if($user->is_admin()) {
+					$this->theme->display_reported_images($page, $this->get_reported_images());
 				}
 			}
 		}
 
 		if($event instanceof AddReportedImageEvent) {
-			global $database;
 			$database->Execute(
 					"INSERT INTO image_reports(image_id, reporter_id, reason)
 					VALUES (?, ?, ?)",
@@ -80,13 +77,12 @@ class ReportImage implements Extension {
 		}
 
 		if($event instanceof RemoveReportedImageEvent) {
-			global $database;
 			$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
 		}
 
 		if($event instanceof DisplayingImageEvent) {
-			if($event->context->config->get_bool('report_image_anon') || !$event->context->user->is_anonymous()) {
-				$this->theme->display_image_banner($event->page, $event->image);
+			if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
+				$this->theme->display_image_banner($page, $event->image);
 			}
 		}
 
@@ -98,13 +94,12 @@ class ReportImage implements Extension {
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Reported Images", make_link("image_report/list"));
 			}
 		}
 
 		if($event instanceof ImageDeletionEvent) {
-			global $database;
 			$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
 		}
 	}
@@ -126,7 +121,7 @@ class ReportImage implements Extension {
 	}
 
 	public function get_reported_images() {
-		global $database;
+		global $config, $database;
 		$all_reports = $database->get_all("
 			SELECT image_reports.*, users.name AS reporter_name
 			FROM image_reports
@@ -135,9 +130,8 @@ class ReportImage implements Extension {
 
 		$reports = array();
 		foreach($all_reports as $report) {
-			global $database, $config;
 			$image_id = int_escape($report['image_id']);
-			$image = Image::by_id($config, $database, $image_id);
+			$image = Image::by_id($image_id);
 			if(is_null($image)) {
 				send_event(new RemoveReportedImageEvent($report['id']));
 				continue;

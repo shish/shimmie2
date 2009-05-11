@@ -2,12 +2,6 @@
 
 class UserBlockBuildingEvent extends Event {
 	var $parts = array();
-	var $user = null;
-
-	public function __construct(RequestContext $context) {
-		parent::__construct($context);
-		$this->user = $context->user;
-	}
 
 	public function add_link($name, $link, $position=50) {
 		while(isset($this->parts[$position])) $position++;
@@ -18,8 +12,7 @@ class UserBlockBuildingEvent extends Event {
 class UserPageBuildingEvent extends Event {
 	var $display_user;
 
-	public function __construct(RequestContext $context, User $display_user) {
-		parent::__construct($context);
+	public function __construct(User $display_user) {
 		$this->display_user = $display_user;
 	}
 }
@@ -29,8 +22,7 @@ class UserCreationEvent extends Event {
 	var $password;
 	var $email;
 
-	public function __construct(RequestContext $context, $name, $pass, $email) {
-		parent::__construct($context);
+	public function __construct($name, $pass, $email) {
 		$this->username = $name;
 		$this->password = $pass;
 		$this->email = $email;
@@ -44,19 +36,16 @@ class UserPage implements Extension {
 
 // event handling {{{
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
+
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			$event->context->config->set_default_bool("login_signup_enabled", true);
-			$event->context->config->set_default_int("login_memory", 365);
+			$config->set_default_bool("login_signup_enabled", true);
+			$config->set_default_int("login_memory", 365);
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user_admin")) {
-			$user = $event->context->user;
-			$database = $event->context->database;
-			$config = $event->context->config;
-			$page = $event->context->page;
-
 			if($event->get_arg(0) == "login") {
 				if(isset($_POST['user']) && isset($_POST['pass'])) {
 					$this->login($page);
@@ -86,7 +75,7 @@ class UserPage implements Extension {
 				}
 				else {
 					try {
-						$uce = new UserCreationEvent($event->context, $_POST['name'], $_POST['pass1'], $_POST['email']);
+						$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
 						send_event($uce);
 						$this->set_login_cookie($uce->username, $uce->password);
 						$page->set_mode("redirect");
@@ -102,14 +91,9 @@ class UserPage implements Extension {
 			}
 		}
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
-			$user = $event->context->user;
-			$config = $event->context->config;
-			$database = $event->context->database;
-			$page = $event->context->page;
-
-			$display_user = ($event->count_args() == 0) ? $user : User::by_name($config, $database, $event->get_arg(0));
+			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
 			if(!is_null($display_user)) {
-				send_event(new UserPageBuildingEvent($event->context, $display_user));
+				send_event(new UserPageBuildingEvent($display_user));
 			}
 			else {
 				$this->theme->display_error($page, "No Such User",
@@ -119,31 +103,25 @@ class UserPage implements Extension {
 		}
 
 		if($event instanceof UserPageBuildingEvent) {
-			global $user;
-			global $config;
-			$this->theme->display_user_page($event->context->page, $event->display_user, $user);
+			$this->theme->display_user_page($page, $event->display_user, $user);
 			if($user->id == $event->display_user->id) {
-				$ubbe = new UserBlockBuildingEvent($event->context);
+				$ubbe = new UserBlockBuildingEvent();
 				send_event($ubbe);
 				ksort($ubbe->parts);
-				$this->theme->display_user_links($event->context->page, $event->context->user, $ubbe->parts);
+				$this->theme->display_user_links($page, $user, $ubbe->parts);
 			}
 			if(($user->is_admin() || $user->id == $event->display_user->id) && ($user->id != $config->get_int('anon_id'))) {
-				$this->theme->display_ip_list($event->context->page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
+				$this->theme->display_ip_list($page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
 			}
 		}
 
 		// user info is shown on all pages
 		if($event instanceof PageRequestEvent) {
-			$user = $event->context->user;
-			$database = $event->context->database;
-			$page = $event->context->page;
-
 			if($user->is_anonymous()) {
 				$this->theme->display_login_block($page);
 			}
 			else {
-				$ubbe = new UserBlockBuildingEvent($event->context);
+				$ubbe = new UserBlockBuildingEvent();
 				send_event($ubbe);
 				ksort($ubbe->parts);
 				$this->theme->display_user_block($page, $user, $ubbe->parts);
@@ -172,7 +150,7 @@ class UserPage implements Extension {
 			if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
 				global $config;
 				global $database;
-				$user = User::by_name($config, $database, $matches[2]);
+				$user = User::by_name($matches[2]);
 				if(!is_null($user)) {
 					$user_id = $user->id;
 				}
@@ -190,15 +168,13 @@ class UserPage implements Extension {
 // }}}
 // Things done *with* the user {{{
 	private function login($page)  {
-		global $database;
-		global $config;
 		global $user;
 
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
 		$hash = md5(strtolower($name) . $pass);
 
-		$duser = User::by_name_and_hash($config, $database, $name, $hash);
+		$duser = User::by_name_and_hash($name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($name, $pass);
@@ -279,7 +255,7 @@ class UserPage implements Extension {
 			$pass1 = $_POST['pass1'];
 			$pass2 = $_POST['pass2'];
 
-			$duser = User::by_id($config, $database, $id);
+			$duser = User::by_id($id);
 
 			if((!$user->is_admin()) && ($duser->name != $user->name)) {
 				$page->add_block(new Block("Error",
@@ -325,7 +301,7 @@ class UserPage implements Extension {
 		else {
 			$admin = (isset($_POST['admin']) && ($_POST['admin'] == "on"));
 
-			$duser = User::by_id($config, $database, $_POST['id']);
+			$duser = User::by_id($_POST['id']);
 			$duser->set_admin($admin);
 
 			$page->set_mode("redirect");

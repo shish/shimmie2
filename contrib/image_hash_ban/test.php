@@ -1,4 +1,8 @@
 <?php
+class ImageHashBanTest extends WebTestCase {}
+
+if(!defined(VERSION)) return;
+
 class ImageHashBanUnitTest extends UnitTestCase {
 	public function _broken_testUploadFailsWhenBanned() {
 		$ihb = new ImageHashBan();

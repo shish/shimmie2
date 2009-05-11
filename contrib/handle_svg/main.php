@@ -51,7 +51,7 @@ class SVGFileHandler implements Extension {
 			global $config;
 			global $database;
 			$id = int_escape($event->get_arg(0));
-			$image = Image::by_id($config, $database, $id);
+			$image = Image::by_id($id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
 

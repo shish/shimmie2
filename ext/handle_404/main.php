@@ -3,7 +3,7 @@
 class Handle404 implements Extension {
 	public function receive_event(Event $event) {
 		if($event instanceof PageRequestEvent) {
-			$page = $event->page;
+			global $page;
 			// hax.
 			if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
 				$h_pagename = html_escape(implode('/', $event->args));

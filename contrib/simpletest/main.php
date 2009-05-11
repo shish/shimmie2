@@ -25,19 +25,20 @@ class SimpleSCoreTest implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("test")) {
-			$event->page->set_title("Test Results");
-			$event->page->set_heading("Test Results");
-			$event->page->add_block(new NavBlock());
+			$page->set_title("Test Results");
+			$page->set_heading("Test Results");
+			$page->add_block(new NavBlock());
 
 			$all = new TestFinder($event->get_arg(0));
-			$all->run(new SCoreReporter($event->page));
+			$all->run(new SCoreReporter($page));
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Run Tests", make_link("test/all"));
 			}
 		}

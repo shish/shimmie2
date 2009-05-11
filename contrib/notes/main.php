@@ -12,19 +12,18 @@ class Notes implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			if($config->get_int("ext_notes_version") < 1) {
 				$this->install();
 			}
 		}
 
 		if($event instanceof DisplayingImageEvent) {
-			global $database;
 			$notes = $database->get_all("SELECT * FROM image_notes WHERE image_id = ?", array($event->image->id));
-			$this->theme->display_notes($event->page, $notes);
+			$this->theme->display_notes($page, $notes);
 		}
 	}
 

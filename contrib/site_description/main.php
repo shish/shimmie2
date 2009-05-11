@@ -10,10 +10,11 @@
  */
 class SiteDescription implements Extension {
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if($event instanceof PageRequestEvent) {
-			if(strlen($event->context->config->get_string("site_description")) > 0) {
-				$description = $event->context->config->get_string("site_description");
-				$event->context->page->add_header("<meta name=\"description\" content=\"$description\">");
+			if(strlen($config->get_string("site_description")) > 0) {
+				$description = $config->get_string("site_description");
+				$page->add_header("<meta name=\"description\" content=\"$description\">");
 			}
 		}
 

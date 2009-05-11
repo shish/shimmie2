@@ -27,12 +27,9 @@ class SearchTermParseEvent extends Event {
 }
 
 class PostListBuildingEvent extends Event {
-	var $page = null;
 	var $search_terms = null;
 
-	public function __construct(RequestContext $context, $search) {
-		parent::__construct($context);
-		$this->page = $context->page;
+	public function __construct($search) {
 		$this->search_terms = $search;
 	}
 }
@@ -41,10 +38,10 @@ class Index implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			$config->set_default_int("index_width", 3);
 			$config->set_default_int("index_height", 4);
 			$config->set_default_bool("index_tips", true);
@@ -54,12 +51,12 @@ class Index implements Extension {
 			if(isset($_GET['search'])) {
 				$search = url_escape(trim($_GET['search']));
 				if(empty($search)) {
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("post/list/1"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/list/1"));
 				}
 				else {
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("post/list/$search/1"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/list/$search/1"));
 				}
 				return;
 			}
@@ -77,25 +74,22 @@ class Index implements Extension {
 
 			if($page_number == 0) $page_number = 1; // invalid -> 0
 
-			global $config;
-			global $database;
-
-			$total_pages = Image::count_pages($config, $database, $search_terms);
+			$total_pages = Image::count_pages($search_terms);
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
-			$images = Image::find_images($config, $database, ($page_number-1)*$count, $count, $search_terms);
+			$images = Image::find_images(($page_number-1)*$count, $count, $search_terms);
 
 			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 0) {
-				$this->theme->display_intro($event->page);
+				$this->theme->display_intro($page);
 			}
 			else if(count($search_terms) > 0 && count($images) == 1) {
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("post/view/{$images[0]->id}"));
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("post/view/{$images[0]->id}"));
 			}
 			else {
-				send_event(new PostListBuildingEvent($event->context, $search_terms));
+				send_event(new PostListBuildingEvent($search_terms));
 
 				$this->theme->set_page($page_number, $total_pages, $search_terms);
-				$this->theme->display_page($event->page, $images);
+				$this->theme->display_page($page, $images);
 			}
 		}
 

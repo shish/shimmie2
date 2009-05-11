@@ -20,15 +20,14 @@ class Ratings implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			if($config->get_int("ext_ratings2_version") < 2) {
 				$this->install();
 			}
 
-			global $config;
 			$config->set_default_string("ext_rating_anon_privs", 'sq');
 			$config->set_default_string("ext_rating_user_privs", 'sq');
 		}
@@ -38,14 +37,12 @@ class Ratings implements Extension {
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
-			global $user;
 			if($user->is_admin()) {
 				$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
 			}
 		}
 
 		if($event instanceof ImageInfoSetEvent) {
-			global $user;
 			if($user->is_admin()) {
 				send_event(new RatingSetEvent($event->image->id, $user, $_POST['rating']));
 			}
@@ -70,7 +67,6 @@ class Ratings implements Extension {
 		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(is_null($event->term) && $this->no_rating_query($event->context)) {
-				global $user, $config;
 				if($user->is_anonymous()) {
 					$sqes = $config->get_string("ext_rating_anon_privs");
 				}

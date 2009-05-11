@@ -16,24 +16,24 @@ class ET implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("system_info")) {
-			if($event->context->user->is_admin()) {
-				$this->theme->display_info_page($event->page, $this->get_info($event->context));
+			if($user->is_admin()) {
+				$this->theme->display_info_page($page, $this->get_info());
 			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->context->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("System Info", make_link("system_info"));
 			}
 		}
 	}
 
-	private function get_info($context) {
-		$database = $context->database;
-		$config = $context->config;
+	private function get_info() {
+		global $config, $database;
 		global $_event_listeners; // yay for using secret globals \o/
 
 		$info = array();

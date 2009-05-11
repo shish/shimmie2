@@ -23,42 +23,40 @@ class NumericScore implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			if($config->get_int("ext_numeric_score_version", 0) < 1) {
 				$this->install();
 			}
 		}
 
 		if($event instanceof DisplayingImageEvent) {
-			global $user;
 			if(!$user->is_anonymous()) {
 				$html = $this->theme->get_voter_html($event->image);
-				$event->page->add_block(new Block("Image Score", $html, "left", 20));
+				$page->add_block(new Block("Image Score", $html, "left", 20));
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("numeric_score_vote")) {
-			if(!$event->user->is_anonymous()) {
+			if(!$user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
 				$char = $_POST['vote'];
 				$score = 0;
 				if($char == "up") $score = 1;
 				else if($char == "down") $score = -1;
-				if($score != 0) send_event(new NumericScoreSetEvent($image_id, $event->user, $score));
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("post/view/$image_id"));
+				if($score != 0) send_event(new NumericScoreSetEvent($image_id, $user, $score));
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("post/view/$image_id"));
 			}
 		}
 
 		if($event instanceof NumericScoreSetEvent) {
-			$this->add_vote($event->image_id, $event->user->id, $event->score);
+			$this->add_vote($event->image_id, $user->id, $event->score);
 		}
 
 		if($event instanceof ImageDeletionEvent) {
-			global $database;
 			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=?", array($event->image->id));
 		}
 
@@ -74,7 +72,6 @@ class NumericScore implements Extension {
 				$event->set_querylet(new Querylet("numeric_score $cmp $score"));
 			}
 			if(preg_match("/^favou?rite$/", $event->term, $matches)) {
-				global $user;
 				$event->set_querylet(new Querylet("images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)", array($user->id)));
 			}
 		}

@@ -34,18 +34,16 @@ class ImageBan implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			if($config->get_int("ext_imageban_version") < 1) {
 				$this->install();
 			}
 		}
 
 		if($event instanceof DataUploadEvent) {
-			global $database;
-
 			$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
 			if($row) {
 				log_info("image_hash_ban", "Blocked image ({$event->hash})");
@@ -54,23 +52,20 @@ class ImageBan implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("image_hash_ban")) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
 						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
 
-						global $page;
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("admin"));
 					}
 					if(isset($_POST['image_id'])) {
-						global $config;
-						global $database;
-						$image = Image::by_id($config, $database, int_escape($_POST['image_id']));
+						$image = Image::by_id(int_escape($_POST['image_id']));
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
-							$event->page->set_mode("redirect");
-							$event->page->set_redirect(make_link("post/list"));
+							$page->set_mode("redirect");
+							$page->set_redirect(make_link("post/list"));
 						}
 					}
 				}
@@ -78,7 +73,6 @@ class ImageBan implements Extension {
 					if(isset($_POST['hash'])) {
 						send_event(new RemoveImageHashBanEvent($_POST['hash']));
 
-						global $page;
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("admin"));
 					}
@@ -88,13 +82,13 @@ class ImageBan implements Extension {
 					if($event->count_args() == 2) {
 						$page_num = int_escape($event->get_arg(1));
 					}
-					$this->theme->display_Image_hash_Bans($event->page, $page_num, $this->get_image_hash_bans($page_num));
+					$this->theme->display_Image_hash_Bans($page, $page_num, $this->get_image_hash_bans($page_num));
 				}
 			}
 		}
 
 		if($event instanceof UserBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
 			}
 		}
@@ -108,7 +102,7 @@ class ImageBan implements Extension {
 		}
 
 		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_part($this->theme->get_buttons_html($event->image));
 			}
 		}

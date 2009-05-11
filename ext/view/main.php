@@ -11,10 +11,8 @@
 class DisplayingImageEvent extends Event {
 	var $image, $page, $context;
 
-	public function __construct(RequestContext $context, Image $image) {
-		parent::__construct($context);
+	public function __construct(Image $image) {
 		$this->image = $image;
-		$this->page = $context->page;
 	}
 
 	public function get_image() {
@@ -65,14 +63,13 @@ class ViewImage implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(is_a($event, 'PageRequestEvent') && (
 			$event->page_matches("post/prev") ||
 			$event->page_matches("post/next")
 		)) {
-			global $config;
-			global $database;
 			$image_id = int_escape($event->get_arg(0));
 
 			if(isset($_GET['search'])) {
@@ -84,7 +81,7 @@ class ViewImage implements Extension {
 				$query = null;
 			}
 
-			$image = Image::by_id($config, $database, $image_id);
+			$image = Image::by_id($image_id);
 			if($event->page_matches("post/next")) {
 				$image = $image->get_next($search_terms);
 			}
@@ -93,50 +90,46 @@ class ViewImage implements Extension {
 			}
 
 			if(!is_null($image)) {
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("post/view/{$image->id}", $query));
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("post/view/{$image->id}", $query));
 			}
 			else {
-				$this->theme->display_error($event->page, "Image not found", "No more images");
+				$this->theme->display_error($page, "Image not found", "No more images");
 			}
 		}
 			
 		if(($event instanceof PageRequestEvent) && $event->page_matches("post/view")) {
 			$image_id = int_escape($event->get_arg(0));
 
-			global $database;
-			global $config;
-			$image = Image::by_id($config, $database, $image_id);
+			$image = Image::by_id($image_id);
 
 			if(!is_null($image)) {
-				send_event(new DisplayingImageEvent($event->context, $image));
-				$iabbe = new ImageAdminBlockBuildingEvent($image, $event->user);
+				send_event(new DisplayingImageEvent($image));
+				$iabbe = new ImageAdminBlockBuildingEvent($image, $user);
 				send_event($iabbe);
 				ksort($iabbe->parts);
-				$this->theme->display_admin_block($event->page, $iabbe->parts);
+				$this->theme->display_admin_block($page, $iabbe->parts);
 			}
 			else {
-				$this->theme->display_error($event->page, "Image not found", "No image in the database has the ID #$image_id");
+				$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
 			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("post/set")) {
-			global $config, $database;
 			$image_id = int_escape($_POST['image_id']);
 
-			send_event(new ImageInfoSetEvent(Image::by_id($config, $database, $image_id)));
+			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 
 			$query = $_POST['query'];
-			$event->page->set_mode("redirect");
-			$event->page->set_redirect(make_link("post/view/$image_id", $query));
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/view/$image_id", $query));
 		}
 
 		if($event instanceof DisplayingImageEvent) {
-			global $user;
 			$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
 			send_event($iibbe);
 			ksort($iibbe->parts);
-			$this->theme->display_page($event->page, $event->get_image(), $iibbe->parts);
+			$this->theme->display_page($page, $event->get_image(), $iibbe->parts);
 		}
 	}
 }
