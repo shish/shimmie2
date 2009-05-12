@@ -75,7 +75,6 @@ database -- back it up first!
 
 Contact
 ~~~~~~~
-http://forum.shishnet.org/viewforum.php?f=6 -- discussion forum
 http://trac.shishnet.org/shimmie2/ -- bug tracker
 webmaster at shishnet.org -- email
 #shimmie on Freenode -- IRC
