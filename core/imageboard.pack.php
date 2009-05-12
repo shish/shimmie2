@@ -170,7 +170,7 @@ class Image {
 	public function get_image_link() {
 		global $config;
 		if(strlen($config->get_string('image_ilink')) > 0) {
-			return $this->parse_link_template($c->get_string('image_ilink'));
+			return $this->parse_link_template($config->get_string('image_ilink'));
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
@@ -188,7 +188,7 @@ class Image {
 	public function get_thumb_link() {
 		global $config;
 		if(strlen($config->get_string('image_tlink')) > 0) {
-			return $this->parse_link_template($c->get_string('image_tlink'));
+			return $this->parse_link_template($config->get_string('image_tlink'));
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
