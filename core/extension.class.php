@@ -7,7 +7,20 @@ interface Extension {
 }
 
 /*
- * BlahEvent -> onBlah
+ * send_event(BlahEvent()) -> onBlah($event)
+ *
+ * Also loads the theme object into $this->theme if available
+ *
+ * index.php will load all SimpleExtension subclasses with default
+ * priority, so no need for register_extension(new Foo())
+ *
+ * Hopefully this removes as much copy & paste code from the extension
+ * files as possible \o/
+ *
+ * The original concept came from Artanis's SimpleExtension extension
+ * --> http://github.com/Artanis/simple-extension/tree/master
+ * Then re-implemented by Shish after he broke the forum and couldn't
+ * find the thread where the original was posted >_<
  */
 abstract class SimpleExtension implements Extension {
 	var $theme;
