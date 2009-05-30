@@ -31,21 +31,30 @@ class UserCreationEvent extends Event {
 
 class UserCreationException extends SCoreException {}
 
-class UserPage implements Extension {
+class UserPage extends SimpleExtension {
 	var $theme;
 
-// event handling {{{
-	public function receive_event(Event $event) {
+	public function onInitExt(Event $event) {
+		global $config;
+		$config->set_default_bool("login_signup_enabled", true);
+		$config->set_default_int("login_memory", 365);
+	}
+
+	public function onPageRequest(Event $event) {
 		global $config, $database, $page, $user;
 
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof InitExtEvent) {
-			$config->set_default_bool("login_signup_enabled", true);
-			$config->set_default_int("login_memory", 365);
+		// user info is shown on all pages
+		if($user->is_anonymous()) {
+			$this->theme->display_login_block($page);
+		}
+		else {
+			$ubbe = new UserBlockBuildingEvent();
+			send_event($ubbe);
+			ksort($ubbe->parts);
+			$this->theme->display_user_block($page, $user, $ubbe->parts);
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("user_admin")) {
+		if($event->page_matches("user_admin")) {
 			if($event->get_arg(0) == "login") {
 				if(isset($_POST['user']) && isset($_POST['pass'])) {
 					$this->login($page);
@@ -89,7 +98,19 @@ class UserPage implements Extension {
 			else if($event->get_arg(0) == "set_more") {
 				$this->set_more_wrapper($page);
 			}
+			else if($event->get_arg(0) == "list") {
+// select users.id,name,joindate,admin,
+// (select count(*) from images where images.owner_id=users.id) as images,
+// (select count(*) from comments where comments.owner_id=users.id) as comments from users;
+
+// select users.id,name,joindate,admin,image_count,comment_count
+// from users
+// join (select owner_id,count(*) as image_count from images group by owner_id) as _images on _images.owner_id=users.id
+// join (select owner_id,count(*) as comment_count from comments group by owner_id) as _comments on _comments.owner_id=users.id;
+				$this->theme->display_user_list($page, User::by_list(0), $user);
+			}
 		}
+
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
 			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
 			if(!is_null($display_user)) {
@@ -101,68 +122,54 @@ class UserPage implements Extension {
 					"site, it might be bug report time...");
 			}
 		}
+	}
 
-		if($event instanceof UserPageBuildingEvent) {
-			$this->theme->display_user_page($page, $event->display_user, $user);
-			if($user->id == $event->display_user->id) {
-				$ubbe = new UserBlockBuildingEvent();
-				send_event($ubbe);
-				ksort($ubbe->parts);
-				$this->theme->display_user_links($page, $user, $ubbe->parts);
-			}
-			if(($user->is_admin() || $user->id == $event->display_user->id) && ($user->id != $config->get_int('anon_id'))) {
-				$this->theme->display_ip_list($page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
-			}
+	public function onUserPageBuilding(Event $event) {
+		global $user, $config;
+		$this->theme->display_user_page($page, $event->display_user, $user);
+		if($user->id == $event->display_user->id) {
+			$ubbe = new UserBlockBuildingEvent();
+			send_event($ubbe);
+			ksort($ubbe->parts);
+			$this->theme->display_user_links($page, $user, $ubbe->parts);
 		}
+		if(($user->is_admin() || $user->id == $event->display_user->id) && ($user->id != $config->get_int('anon_id'))) {
+			$this->theme->display_ip_list($page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
+		}
+	}
 
-		// user info is shown on all pages
-		if($event instanceof PageRequestEvent) {
-			if($user->is_anonymous()) {
-				$this->theme->display_login_block($page);
+	public function onSetupBuilding(Event $event) {
+		$sb = new SetupBlock("User Options");
+		$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
+		$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
+		$event->panel->add_block($sb);
+	}
+
+	public function onUserBlockBuilding(Event $event) {
+		$event->add_link("My Profile", make_link("user"));
+		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
+	}
+
+	public function onUserCreation(Event $event) {
+		$this->check_user_creation($event);
+		$this->create_user($event);
+	}
+
+	public function onSearchTermParse(Event $event) {
+		$matches = array();
+		if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
+			$user = User::by_name($matches[2]);
+			if(!is_null($user)) {
+				$user_id = $user->id;
 			}
 			else {
-				$ubbe = new UserBlockBuildingEvent();
-				send_event($ubbe);
-				ksort($ubbe->parts);
-				$this->theme->display_user_block($page, $user, $ubbe->parts);
+				$user_id = -1;
 			}
+			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
-
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("User Options");
-			$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
-			$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
-			$event->panel->add_block($sb);
-		}
-
-		if($event instanceof UserBlockBuildingEvent) {
-			$event->add_link("My Profile", make_link("user"));
-			$event->add_link("Log Out", make_link("user_admin/logout"), 99);
-		}
-
-		if($event instanceof UserCreationEvent) {
-			$this->check_user_creation($event);
-			$this->create_user($event);
-		}
-
-		if($event instanceof SearchTermParseEvent) {
-			$matches = array();
-			if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
-				global $config;
-				global $database;
-				$user = User::by_name($matches[2]);
-				if(!is_null($user)) {
-					$user_id = $user->id;
-				}
-				else {
-					$user_id = -1;
-				}
-				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
-			}
-			else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
-				$user_id = int_escape($matches[2]);
-				$event->add_querylet(new Querylet("images.owner_id = $user_id"));
-			}
+		else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
+			$user_id = int_escape($matches[2]);
+			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
 	}
 // }}}
