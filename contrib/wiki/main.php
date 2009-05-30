@@ -63,6 +63,7 @@ class Wiki implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("wiki")) {
+			global $config, $page;
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
 			}
@@ -89,11 +90,11 @@ class Wiki implements Extension {
 
 					$u_title = url_escape($title);
 
-					$event->page->set_mode("redirect");
-					$event->page->set_redirect(make_link("wiki/$u_title"));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("wiki/$u_title"));
 				}
 				else {
-					$this->theme->display_permission_denied($event->page);
+					$this->theme->display_permission_denied($page);
 				}
 			}
 			else if(is_null($content)) {
@@ -101,21 +102,20 @@ class Wiki implements Extension {
 				$blank = new WikiPage();
 				$blank->title = $title;
 				if(!is_null($default) && !isset($_GET['edit'])) {
-					global $config;
 					$blank->body = $default->body;
 					$blank->owner_id = $config->get_int('anon_id');
 					$blank->date = $default->date;
-					$this->theme->display_page($event->page, $blank, $this->get_page("wiki:sidebar"));
+					$this->theme->display_page($page, $blank, $this->get_page("wiki:sidebar"));
 				}
 				else {
-					$this->theme->display_page_editor($event->page, $blank);
+					$this->theme->display_page_editor($page, $blank);
 				}
 			}
 			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
-				$this->theme->display_page_editor($event->page, $content);
+				$this->theme->display_page_editor($page, $content);
 			}
 			else {
-				$this->theme->display_page($event->page, $content, $this->get_page("wiki:sidebar"));
+				$this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
 			}
 		}
 
