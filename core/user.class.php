@@ -1,4 +1,8 @@
 <?php
+function _new_user($row) {
+	return new User($row);
+}
+
 /*
  * An object representing a row in the "users" table.
  */
@@ -18,7 +22,7 @@ class User {
 	* User objects shouldn't be created directly, they should be   *
 	* fetched from the database like so:                           *
 	*                                                              *
-	*    $user = User::by_name($config, $database, "bob");         *
+	*    $user = User::by_name("bob");                             *
 	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 	public function User($row) {
@@ -59,6 +63,14 @@ class User {
 		global $database;
 		$row = $database->get_row("SELECT * FROM users WHERE name = ? AND pass = ?", array($name, $hash));
 		return is_null($row) ? null : new User($row);
+	}
+
+	public static function by_list($offset, $limit=50) {
+		assert(is_numeric($offset));
+		assert(is_numeric($limit));
+		global $database;
+		$rows = $database->get_all("SELECT * FROM users WHERE id >= ? AND id < ?", array($offset, $offset+$limit));
+		return array_map("_new_user", $rows);
 	}
 
 
