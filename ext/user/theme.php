@@ -9,6 +9,21 @@ class UserPageTheme extends Themelet {
 			"There should be a login box to the left"));
 	}
 
+	public function display_user_list(Page $page, $users, User $user) {
+		$page->set_title("User List");
+		$page->set_heading("User List");
+		$page->add_block(new NavBlock());
+		$html = "<table>";
+		$html .= "<tr><td>Name</td></tr>";
+		foreach($users as $duser) {
+			$html .= "<tr>";
+			$html .= "<td><a href='".make_link("user/"+$duser->name)."'>".html_escape($duser->name)."</a></td>";
+			$html .= "</tr>";
+		}
+		$html .= "</table>";
+		$page->add_block(new Block("Users", $html));
+	}
+
 	public function display_user_links(Page $page, User $user, $parts) {
 		# $page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
 	}
