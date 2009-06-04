@@ -91,6 +91,12 @@ function make_link($page=null, $query=null) {
 	}
 }
 
+function theme_file($filepath) {
+	global $config;
+	$theme = $config->get_string("theme","default");
+	return make_link("themes/$theme/$filepath");
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
