@@ -1,3 +1,4 @@
+<<<<<<< HEAD:themes/danbooru/layout.class.php
 <?php
 /**
 * Name: Danbooru Theme
@@ -53,6 +54,7 @@ class Layout {
 
 
 		$header_html = "";
+		ksort($page->headers);
 		foreach($page->headers as $line) {
 			$header_html .= "\t\t$line\n";
 		}
