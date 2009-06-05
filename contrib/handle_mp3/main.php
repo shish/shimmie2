@@ -37,7 +37,7 @@ class MP3FileHandler implements Extension {
 
 	private function supported_ext($ext) {
 		$exts = array("mp3");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	private function create_image_from_data($filename, $metadata) {
