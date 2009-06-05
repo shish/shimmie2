@@ -145,9 +145,9 @@ $header_html
 		<div id="footer">
 			<hr>
 			Images &copy; their respective owners,
-			<a href="http://trac.shishnet.org/shimmie2/">$version</a> &copy; 
-			<a href="http://www.shishnet.org/">Shish</a> 2007,
-			based on the <a href="http://trac.shishnet.org/shimmie2/wiki/DanbooruRipoff">Danbooru</a> concept.
+			<a href="http://code.shishnet.org/shimmie2/">$version</a> &copy;
+			<a href="http://www.shishnet.org/">Shish</a> 2007-2009,
+			based on the Danbooru concept.
 			$debug
 			$contact
 		</div>
