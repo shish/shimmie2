@@ -45,7 +45,7 @@ try {
 		$m = array();
 		foreach($custom_themelets as $filename) {
 			if(preg_match("/themes\/$_theme\/(.*)\.theme\.php/",$filename,$m)
-					&& array_contains($themelets, "ext/{$m[1]}/theme.php")) {
+					&& in_array("ext/{$m[1]}/theme.php", $themelets)) {
 				require_once $filename;
 			}
 		}

@@ -41,7 +41,7 @@ class ArchiveFileHandler extends SimpleExtension {
 
 	private function supported_ext($ext) {
 		$exts = array("zip");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	// copied from bulk add extension

@@ -63,7 +63,7 @@ class SVGFileHandler implements Extension {
 
 	private function supported_ext($ext) {
 		$exts = array("svg");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	private function create_image_from_data($filename, $metadata) {

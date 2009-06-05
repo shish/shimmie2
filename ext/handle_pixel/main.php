@@ -37,7 +37,7 @@ class PixelFileHandler implements Extension {
 
 	private function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	private function create_image_from_data($filename, $metadata) {
@@ -66,7 +66,7 @@ class PixelFileHandler implements Extension {
 		if(!file_exists($file)) return false;
 		$info = getimagesize($file);
 		if(is_null($info)) return false;
-		if(array_contains($valid, $info[2])) return true;
+		if(in_array($info[2], $valid)) return true;
 		return false;
 	}
 

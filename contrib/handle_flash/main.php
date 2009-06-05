@@ -41,7 +41,7 @@ class FlashFileHandler extends SimpleExtension {
 
 	private function supported_ext($ext) {
 		$exts = array("swf");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	private function create_image_from_data($filename, $metadata) {
@@ -124,7 +124,7 @@ class FlashFileHandler extends SimpleExtension {
 		$fp = fopen($file, "r");
 		$head = fread($fp, 3);
 		fclose($fp);
-		if(!array_contains(array("CWS", "FWS"), $head)) return false;
+		if(!in_array($head, array("CWS", "FWS"))) return false;
 
 		return true;
 	}

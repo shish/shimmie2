@@ -49,7 +49,7 @@ class IcoFileHandler extends SimpleExtension {
 
 	private function supported_ext($ext) {
 		$exts = array("ico", "ani", "cur");
-		return array_contains($exts, strtolower($ext));
+		return in_array(strtolower($ext), $exts);
 	}
 
 	private function create_image_from_data($filename, $metadata) {
