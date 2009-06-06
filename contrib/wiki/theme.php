@@ -8,7 +8,7 @@ class WikiTheme {
 	 * $wiki_page = the wiki page, has ->title and ->body
 	 * $nav_page = a wiki page object with navigation, has ->body
 	 */
-	public function display_page(Page $page, WikiPage $wiki_page, WikiPage $nav_page) {
+	public function display_page(Page $page, WikiPage $wiki_page, $nav_page) { // $nav_page = WikiPage or null
 		if(is_null($nav_page)) {
 			$nav_page = new WikiPage();
 			$nav_page->body = "";
