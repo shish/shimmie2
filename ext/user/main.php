@@ -125,7 +125,7 @@ class UserPage extends SimpleExtension {
 	}
 
 	public function onUserPageBuilding(Event $event) {
-		global $user, $config;
+		global $page, $user, $config;
 		$this->theme->display_user_page($page, $event->display_user, $user);
 		if($user->id == $event->display_user->id) {
 			$ubbe = new UserBlockBuildingEvent();
