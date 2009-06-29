@@ -79,7 +79,7 @@ function make_link($page=null, $query=null) {
 	}
 
 	if(is_null($query)) {
-		return "$base/$page";
+		return str_replace("//", "/", "$base/$page");
 	}
 	else {
 		if(strpos($base, "?")) {
