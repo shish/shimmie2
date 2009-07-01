@@ -16,21 +16,19 @@ class RegenThumb implements Extension {
 	var $theme;
 
 	public function receive_event(Event $event) {
+		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("regen_thumb")) {
-			global $user;
 			if($user->is_admin() && isset($_POST['image_id'])) {
-				global $config;
-				global $database;
 				$image = Image::by_id(int_escape($_POST['image_id']));
 				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext));
-				$this->theme->display_results($event->page, $image);
+				$this->theme->display_results($page, $image);
 			}
 		}
 
 		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($event->user->is_admin()) {
+			if($user->is_admin()) {
 				$event->add_part($this->theme->get_buttons_html($event->image->id));
 			}
 		}
