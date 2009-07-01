@@ -71,7 +71,8 @@ function make_link($page=null, $query=null) {
 	if(is_null($page)) $page = $config->get_string('main_page');
 
 	if($config->get_bool('nice_urls', false)) {
-		$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+		$full = $_SERVER["PHP_SELF"];
 		$base = str_replace("/index.php", "", $full);
 	}
 	else {
