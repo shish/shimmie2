@@ -12,27 +12,22 @@
  *  since been increased.
  */
 
-class RegenThumb implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
+class RegenThumb extends SimpleExtension {
+	public function onPageRequest($event) {
 		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("regen_thumb")) {
-			if($user->is_admin() && isset($_POST['image_id'])) {
-				$image = Image::by_id(int_escape($_POST['image_id']));
-				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext));
-				$this->theme->display_results($page, $image);
-			}
+		if($event->page_matches("regen_thumb") && $user->is_admin() && isset($_POST['image_id'])) {
+			$image = Image::by_id(int_escape($_POST['image_id']));
+			send_event(new ThumbnailGenerationEvent($image->hash, $image->ext));
+			$this->theme->display_results($page, $image);
 		}
+	}
 
-		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_part($this->theme->get_buttons_html($event->image->id));
-			}
+	public function onImageAdminBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_part($this->theme->get_buttons_html($event->image->id));
 		}
 	}
 }
-add_event_listener(new RegenThumb());
 ?>
