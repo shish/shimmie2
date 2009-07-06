@@ -97,9 +97,9 @@ EOD;
 			}
 			else {
 				$html .= "
-					<div class='rr'>
+					<div class='rr' id='$i'>
 						<div class='rrtop'><div></div></div>
-						<div class='rrcontent'><div class='blockbody' id='$i'>$b</div></div>
+						<div class='rrcontent'><div class='blockbody'>$b</div></div>
 						<div class='rrbot'><div></div></div>
 					</div>
 				";
