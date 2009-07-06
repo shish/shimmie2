@@ -188,6 +188,7 @@ UL {
 }
 .setupblock TEXTAREA {
 	width: 300px;
+	font-size: 0.75em;
 }
 
 .helpable {
