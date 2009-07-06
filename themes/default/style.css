@@ -210,7 +210,6 @@ UL {
 .thumb {
 	display: inline-block;
 	text-align: center;
-	vertical-align: center;
 	margin-bottom: 32px;
 }
 
