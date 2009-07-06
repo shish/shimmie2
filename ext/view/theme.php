@@ -9,7 +9,7 @@ class ViewImageTheme extends Themelet {
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
-		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
+		//$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 
 	public function display_admin_block(Page $page, $parts) {

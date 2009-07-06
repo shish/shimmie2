@@ -42,7 +42,7 @@ class CustomCommentListTheme extends CommentListTheme {
 			<div class='rr'>
 				<div class='rrtop'><div></div></div>
 				<div class='rrcontent'>
-				$h_userlink: $h_comment $h_imagelink $h_dellink
+				<div class='comment'>$h_userlink: $h_comment $h_imagelink $h_dellink</div>
 				</div>
 				<div class='rrbot'><div></div></div>
 			</div>";

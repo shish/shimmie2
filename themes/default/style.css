@@ -118,6 +118,9 @@ UL {
 	max-width: 150px;
 	overflow: hidden;
 }
+.comment {
+	text-align: left;
+}
 
 .more:after {
 	content: " >>>";
@@ -171,7 +174,7 @@ UL {
 .rrbot     {background: url("circle-bl.png") no-repeat bottom left;}
 .rrbot div {background: url("circle-br.png") no-repeat bottom right;}
 .rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
-.rrcontent {margin: 0px 8px;}
+.rrcontent {margin: 0px 8px; text-align: center;}
 
 .hrr {text-align: left; background: #CCC; margin: 8px;}
 .hrrtop     {background: url("dcircle-tl.png") no-repeat top left;}
