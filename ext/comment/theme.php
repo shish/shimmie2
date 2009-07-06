@@ -60,7 +60,7 @@ class CommentListTheme extends Themelet {
 	public function add_comment_list(Page $page, Image $image, $comments, $position, $with_postbox) {
 		$html  = "<div style='text-align: left'>";
 		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
-		$html .=   $this->comments_to_html($comments);
+		$html .=   "<div style='margin-left: 230px;'>" . $this->comments_to_html($comments) . "</div>";
 		$html .= "</div>";
 		if($with_postbox) {
 			$html .= "<div style='clear:both;'>".($this->build_postbox($image->id))."</div>";
@@ -80,10 +80,11 @@ class CommentListTheme extends Themelet {
 
 
 	protected function comments_to_html($comments, $trim=false) {
-		$html = "";
+		$html = "<div class='commentblock'>";
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment, $trim);
 		}
+		$html .= "</div>";
 		return $html;
 	}
 

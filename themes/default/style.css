@@ -175,4 +175,10 @@ UL {
 	background: #FAA;
 }
 
+.thumb {
+	width: 220px;
+	display: inline-block;
+	margin-bottom: 16px;
+}
+
 

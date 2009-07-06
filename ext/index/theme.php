@@ -91,27 +91,10 @@ EOD;
 	}
 
 	protected function build_table($images, $query) {
-		global $config;
-
-		$width = $config->get_int('index_width');
-		$height = $config->get_int('index_height');
-
-		$table = "<table>\n";
-		for($i=0; $i<$height; $i++) {
-			$table .= "<tr>\n";
-			for($j=0; $j<$width; $j++) {
-				$image = isset($images[$i*$width+$j]) ? $images[$i*$width+$j] : null;
-				if(!is_null($image)) {
-					$table .= "\t<td>" . $this->build_thumb_html($image, $query) . "</td>\n";
-				}
-				else {
-					$table .= "\t<td>&nbsp;</td>\n";
-				}
-			}
-			$table .= "</tr>\n";
+		$table = "";
+		foreach($images as $image) {
+			$table .= $this->build_thumb_html($image, $query);
 		}
-		$table .= "</table>\n";
-
 		return $table;
 	}
 }
