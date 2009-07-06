@@ -182,10 +182,12 @@ UL {
 .hrrcontent {margin: 0px 8px;}
 
 .setupblock {
-	border: 1px solid #AAA;
-	padding: 8px;
+	text-align: center;
 	margin: 16px;
 	width: 350px;
+}
+.setupblock TEXTAREA {
+	width: 300px;
 }
 
 .helpable {
