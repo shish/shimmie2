@@ -29,6 +29,7 @@ For admins:
  o) Better spam filtering
 
 For users:
+ o) New default theme
  o) Better BBCode support
  o) Image ratings, with eg. hiding of explicit images to anonymous users
  o) Theme improvements, new themes
