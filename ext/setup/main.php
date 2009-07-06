@@ -181,7 +181,9 @@ class Setup extends SimpleExtension {
 		$themes = array();
 		foreach(glob("themes/*") as $theme_dirname) {
 			$name = str_replace("themes/", "", $theme_dirname);
-			$themes[ucfirst($name)] = $name;
+			$human = str_replace("_", " ", $name);
+			$human = ucwords($human);
+			$themes[$human] = $name;
 		}
 
 		$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
