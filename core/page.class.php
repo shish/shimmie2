@@ -80,6 +80,10 @@ class GenericPage {
 			case "page":
 				header("Cache-control: no-cache");
 				usort($this->blocks, "blockcmp");
+				$data_href = get_base_href();
+				foreach(glob("lib/*.js") as $js) {
+					$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
+				}
 				$layout = new Layout();
 				$layout->display_page($page);
 				break;
