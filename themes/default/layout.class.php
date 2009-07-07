@@ -51,6 +51,8 @@ class Layout {
 $header_html
 		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 		<script src='$data_href/themes/$theme_name/script.js' type='text/javascript'></script>
+		<script src='$data_href/lib/jquery-1.3.2.min.js' type='text/javascript'></script>
+		<script src='$data_href/lib/jquery.tablesorter.min.js' type='text/javascript'></script>
 	</head>
 
 	<body>
@@ -79,12 +81,20 @@ EOD;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
 		if($hidable) {
-			$toggle = " onclick=\"toggle('$i')\"";
+			#$toggle = " onclick=\"toggle('$i')\"";
+			$toggle = "";
 		}
 		else {
 			$toggle = "";
 		}
 		if(!is_null($h)) $html .= "
+			<script>
+			$(document).ready(function() {
+				$(\"#$i-toggle\").click(function() {
+					$(\"#$i\").slideToggle(\"slow\");
+				});
+			});
+			</script>
 			<div class='hrr'>
 				<div class='hrrtop'><div></div></div>
 				<div class='hrrcontent'><h3 id='$i-toggle'$toggle>$h</h3></div>

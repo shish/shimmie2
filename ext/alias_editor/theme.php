@@ -46,7 +46,12 @@ class AliasEditorTheme extends Themelet {
 			$h_aliases .= "</tr>";
 		}
 		$html = "
-			<table class='zebra'>
+			<script>
+			$(document).ready(function() {
+				$(\"#aliases\").tablesorter();
+			});
+			</script>
+			<table id='aliases' class='zebra'>
 				<thead><tr><th>From</th><th>To</th>$action</tr>$add</thead>
 				<tbody>$h_aliases</tbody>
 				<tfoot>$add</tfoot>
