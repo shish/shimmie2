@@ -39,7 +39,12 @@ class ImageBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<table class='zebra'>
+			<script>
+			$(document).ready(function() {
+				$(\"#image_bans\").tablesorter();
+			});
+			</script>
+			<table id='image_bans' class='zebra'>
 				<thead><th>Hash</th><th>Reason</th><th>Action</th></thead>
 				$h_bans
 				<tfoot><tr>

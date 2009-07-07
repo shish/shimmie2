@@ -4,7 +4,12 @@ class ExtManagerTheme extends Themelet {
 	public function display_table(Page $page, $extensions) {
 		$html = "
 			<form action='".make_link("ext_manager/set")."' method='POST'>
-				<table class='zebra'>
+				<script>
+				$(document).ready(function() {
+					$(\"#extensions\").tablesorter();
+				});
+				</script>
+				<table id='extensions' class='zebra'>
 					<thead>
 						<tr><th>Enabled</td><th>Name</th><th>Description</th></tr>
 					</thead>

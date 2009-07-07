@@ -2,9 +2,18 @@
 
 class PMTheme extends Themelet {
 	public function display_pms(Page $page, $pms) {
-		$html = "<table>";
-		$html .= "<tr><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr>";
+		$html = "
+			<script>
+			$(document).ready(function() {
+				$(\"#pms\").tablesorter();
+			});
+			</script>
+			<table id='pms' class='zebra'>
+				<thead><tr><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
+				<tbody>";
+		$n = 0;
 		foreach($pms as $pm) {
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_subject = html_escape($pm["subject"]);
 			if(strlen(trim($h_subject)) == 0) $h_subject = "(No subject)";
 			$h_from = html_escape($pm["from_name"]);
@@ -13,11 +22,14 @@ class PMTheme extends Themelet {
 			$del_url = make_link("pm/delete/".$pm["id"]);
 			$h_date = html_escape($pm["sent_date"]);
 			if($pm["is_read"] == "N") $h_subject = "<b>$h_subject</b>";
-			$html .= "<tr><td><a href='$pm_url'>$h_subject</a></td>
+			$html .= "<tr class='$oe'><td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
 			<td><form action='$del_url'><input type='submit' value='Delete'></form></td></tr>";
 		}
-		$html .= "</table>";
+		$html .= "
+				</tbody>
+			</table>
+		";
 		$page->add_block(new Block("Private Messages", $html, "main", 10));
 	}
 

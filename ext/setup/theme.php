@@ -72,7 +72,12 @@ class SetupTheme extends Themelet {
 		}
 
 		$table = "
-			<form action='".make_link("setup/save")."' method='POST'><table class='zebra'>
+			<script>
+			$(document).ready(function() {
+				$(\"#settings\").tablesorter();
+			});
+			</script>
+			<form action='".make_link("setup/save")."' method='POST'><table id='settings' class='zebra'>
 				<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
 				<tbody>$rows</tbody>
 				<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>

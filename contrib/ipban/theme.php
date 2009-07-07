@@ -34,9 +34,14 @@ class IPBanTheme extends Themelet {
 			";
 		}
 		$html = "
+			<script>
+			$(document).ready(function() {
+				$(\"#bans\").tablesorter();
+			});
+			</script>
 			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
-			<p><table class='zebra'>
-				<thead><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></thead>
+			<p><table id='bans' class='zebra'>
+				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></tr></thead>
 				$h_bans
 				<tfoot><tr>
 					<form action='".make_link("ip_ban/add")."' method='POST'>
