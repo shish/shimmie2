@@ -87,15 +87,16 @@ EOD;
 			<script>
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
-					$(\"#$i\").slideToggle(\"slow\");
-					if($(\"#$i\").is(\":hidden\")) {
-						$.cookie(\"$i-hidden\", true);
-					}
-					else {
-						$.cookie(\"$i-hidden\", false);
-					}
+					$(\"#$i\").slideToggle(\"slow\", function() {
+						if($(\"#$i\").is(\":hidden\")) {
+							$.cookie(\"$i-hidden\", 'true', {path: '/'});
+						}
+						else {
+							$.cookie(\"$i-hidden\", 'false', {path: '/'});
+						}
+					});
 				});
-				if($.cookie(\"$i-hidden\")) {
+				if($.cookie(\"$i-hidden\") == 'true') {
 					$(\"#$i\").hide();
 				}
 			});

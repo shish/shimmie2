@@ -76,9 +76,14 @@ EOD;
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list$query/$next")."'>Next</a>";
 
-		$h_search_string = count($search_terms) == 0 ? "Search" : html_escape(implode(" ", $search_terms));
+		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
+			<script>
+			$(document).ready(function() {
+				$(\"#search_input\").DefaultValue(\"Search\");
+			});
+			</script>
 			<p><form action='$h_search_link' method='GET'>
 				<input id='search_input' name='search' type='text'
 						value='$h_search_string' autocomplete='off' />
