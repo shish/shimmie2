@@ -75,8 +75,9 @@ class Index extends SimpleExtension {
 			$count = $config->get_int('index_width') * $config->get_int('index_height');
 			$images = Image::find_images(($page_number-1)*$count, $count, $search_terms);
 
-			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 0) {
+			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 1) {
 				$this->theme->display_intro($page);
+				send_event(new PostListBuildingEvent($search_terms));
 			}
 			else if(count($search_terms) > 0 && count($images) == 1) {
 				$page->set_mode("redirect");
