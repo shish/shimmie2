@@ -85,7 +85,7 @@ class TagListTheme extends Themelet {
 			}
 		}
 
-		$html .= "<p><a class='more' href='".make_link("tags")."'>Full List</a>\n";
+		$html .= "<br>&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 		$page->add_block(new Block("Popular Tags", $html, "left", 60));
 	}
 
