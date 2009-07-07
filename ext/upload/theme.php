@@ -85,15 +85,20 @@ class UploadTheme extends Themelet {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
 			$upload_list .= "<input accept='image/jpeg,image/png,image/gif' size='10' ".
-				"id='data$i' name='data$i' $style onchange=\"showUp('data".($i+1)."')\" type='file'>\n";
+				"id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" type='file'>\n";
 		}
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
+			<script>
+			$(document).ready(function() {
+				$(\"#tag_input\").DefaultValue(\"tagme\");
+			});
+			</script>
 			<form enctype='multipart/form-data' action='".make_link("upload")."' method='POST'>
 				$upload_list
-				<input id='tagBox' name='tags' type='text' value='tagme' autocomplete='off'>
+				<input id='tag_input' name='tags' type='text' autocomplete='off'>
 				<input type='submit' value='Post'>
 			</form>
 			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
