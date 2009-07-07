@@ -49,10 +49,6 @@ class Layout {
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
 $header_html
-		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
-		<script src='$data_href/themes/$theme_name/script.js' type='text/javascript'></script>
-		<script src='$data_href/lib/jquery-1.3.2.min.js' type='text/javascript'></script>
-		<script src='$data_href/lib/jquery.tablesorter.min.js' type='text/javascript'></script>
 	</head>
 
 	<body>
@@ -92,7 +88,16 @@ EOD;
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\");
+					if($(\"#$i\").is(\":hidden\")) {
+						$.cookie(\"$i-hidden\", true);
+					}
+					else {
+						$.cookie(\"$i-hidden\", false);
+					}
 				});
+				if($.cookie(\"$i-hidden\")) {
+					$(\"#$i\").hide();
+				}
 			});
 			</script>
 			<div class='hrr'>
