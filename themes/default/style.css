@@ -39,6 +39,7 @@ CODE {
 	width: 256px;
 	font-size: 0.75em;
 	margin: auto;
+	margin-top: -16px;
 	text-align: center;
 	border: 1px solid black;
 	border-top: none;
