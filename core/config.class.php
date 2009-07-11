@@ -8,14 +8,17 @@ interface Config {
 	public function set_int($name, $value);
 	public function set_string($name, $value);
 	public function set_bool($name, $value);
+	public function set_array($name, $value);
 
 	public function set_default_int($name, $value);
 	public function set_default_string($name, $value);
 	public function set_default_bool($name, $value);
+	public function set_default_array($name, $value);
 
 	public function get_int($name, $default=null);
 	public function get_string($name, $default=null);
 	public function get_bool($name, $default=null);
+	public function get_array($name, $default=array());
 }
 
 
@@ -38,6 +41,11 @@ abstract class BaseConfig implements Config {
 		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		$this->save($name);
 	}
+	public function set_array($name, $value) {
+		assert(is_array($value));
+		$this->values[$name] = implode(",", $value);
+		$this->save($name);
+	}
 
 	public function set_default_int($name, $value) {
 		if(is_null($this->get($name))) {
@@ -54,6 +62,12 @@ abstract class BaseConfig implements Config {
 			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		}
 	}
+	public function set_default_array($name, $value) {
+		assert(is_array($value));
+		if(is_null($this->get($name))) {
+			$this->values[$name] = implode(",", $value);
+		}
+	}
 
 	public function get_int($name, $default=null) {
 		return (int)($this->get($name, $default));
@@ -63,6 +77,9 @@ abstract class BaseConfig implements Config {
 	}
 	public function get_bool($name, $default=null) {
 		return ($this->get($name, $default) == 'Y');
+	}
+	public function get_array($name, $default=array()) {
+		return explode(",", $this->get($name, ""));
 	}
 
 	private function get($name, $default=null) {

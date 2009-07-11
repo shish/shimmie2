@@ -132,6 +132,26 @@ class SetupBlock extends Block {
 
 		$this->body .= $html;
 	}
+
+	public function add_multichoice_option($name, $options, $label=null) {
+		global $config;
+		$current = $config->get_array($name);
+
+		if(!is_null($label)) {
+			$this->body .= "<label for='$name'>$label</label>";
+		}
+		$html = "<select id='$name' name='_config_{$name}[]' multiple size='5'>";
+		foreach($options as $optname => $optval) {
+			if(in_array($optval, $current)) $selected=" selected";
+			else $selected="";
+			$html .= "<option value='$optval'$selected>$optname</option>\n";
+		}
+		$html .= "</select>";
+		$this->body .= "<input type='hidden' name='_type_$name' value='array'>\n";
+		$this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
+
+		$this->body .= $html;
+	}
 }
 // }}}
 
@@ -225,6 +245,7 @@ class Setup extends SimpleExtension {
 		$sb->add_text_option("main_page", "<br>Main page: ");
 		$sb->add_text_option("contact_link", "<br>Contact URL: ");
 		$sb->add_choice_option("theme", $themes, "<br>Theme: ");
+		//$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
 		$sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
 		$sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
 		$event->panel->add_block($sb);
@@ -241,6 +262,7 @@ class Setup extends SimpleExtension {
 					case "string": $config->set_string($name, $value); break;
 					case "int":    $config->set_int($name, $value);    break;
 					case "bool":   $config->set_bool($name, $value);   break;
+					case "array":  $config->set_array($name, $value);  break;
 				}
 			}
 		}
