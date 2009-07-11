@@ -72,6 +72,15 @@ class UserPage extends SimpleExtension {
 			else if($event->get_arg(0) == "change_pass") {
 				$this->change_password_wrapper($page);
 			}
+			else if($event->get_arg(0) == "recover") {
+				$user = User::by_name($_POST['username']);
+				if(is_null($user)) {
+					$this->theme->display_error($page, "Error", "There's no user with that name");
+				}
+				if(is_null($user->email)) {
+					//
+				}
+			}
 			else if($event->get_arg(0) == "create") {
 				if(!$config->get_bool("login_signup_enabled")) {
 					$this->theme->display_signups_disabled($page);
