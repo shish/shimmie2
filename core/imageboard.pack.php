@@ -294,7 +294,7 @@ class Image {
 		global $database;
 		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=?", array($this->id));
-		log_info("core-image", "Deleted Image #{$image->id} ({$image->hash})");
+		log_info("core-image", "Deleted Image #{$this->id} ({$this->hash})");
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
