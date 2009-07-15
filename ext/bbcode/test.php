@@ -1,5 +1,5 @@
 <?php
-class BBCodeTest extends WebTestCase {}
+class BBCodeTest extends ShimmieWebTestCase {}
 
 if(!defined(VERSION)) return;
 

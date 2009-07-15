@@ -1,5 +1,5 @@
 <?php
-class ImageHashBanTest extends WebTestCase {}
+class ImageHashBanTest extends ShimmieWebTestCase {}
 
 if(!defined(VERSION)) return;
 

@@ -8,7 +8,7 @@
  * Some data is being uploaded. Should be caught by a file handler.
  */
 class DataUploadEvent extends Event {
-	var $user, $tmpname, $metadata, $hash, $type;
+	var $user, $tmpname, $metadata, $hash, $type, $image_id = -1;
 
 	public function DataUploadEvent($user, $tmpname, $metadata) {
 		$this->user = $user;
@@ -150,6 +150,7 @@ class Upload implements Extension {
 			$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
 			try {
 				send_event($event);
+				header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
 			}
 			catch(UploadException $ex) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),

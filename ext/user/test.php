@@ -1,36 +1,30 @@
 <?php
-class UserPageTest extends WebTestCase {
+class UserPageTest extends ShimmieWebTestCase {
 	function testUserPage() {
-		$this->get(TEST_BASE.'/user');
+		$this->get_page('user');
 		$this->assertTitle("Anonymous's Page");
 		$this->assertNoText("Options");
 		$this->assertNoText("More Options");
 
-		$this->get(TEST_BASE.'/user/Shish');
-		$this->assertTitle("Shish's Page");
+		$this->get_page('user/demo');
+		$this->assertTitle("demo's Page");
 
-		$this->get(TEST_BASE.'/user/MauMau');
+		$this->get_page('user/MauMau');
 		$this->assertTitle("No Such User");
 
-		$this->assertText("Login");
-		$this->setField('user', USER_NAME);
-		$this->setField('pass', USER_PASS);
-		$this->click("Log In");
+		$this->log_in_as_user();
 		// should be on the user page
-		$this->assertTitle("test's Page");
+		$this->assertTitle(USER_NAME+"'s Page");
 		$this->assertText("Options");
 		$this->assertNoText("More Options");
-		$this->click('Log Out');
+		$this->log_out();
 
-		$this->assertText("Login");
-		$this->setField('user', ADMIN_NAME);
-		$this->setField('pass', ADMIN_PASS);
-		$this->click("Log In");
+		$this->log_in_as_admin();
 		// should be on the user page
 		$this->assertTitle(ADMIN_NAME+"'s Page");
 		$this->assertText("Options");
 		$this->assertText("More Options");
-		$this->click('Log Out');
+		$this->log_out();
 	}
 }
 ?>

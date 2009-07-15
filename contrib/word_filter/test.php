@@ -1,5 +1,5 @@
 <?php
-class WordFiterTest extends WebTestCase {}
+class WordFiterTest extends ShimmieWebTestCase {}
 
 if(!defined(VERSION)) return;
 

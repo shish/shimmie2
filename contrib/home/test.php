@@ -1,9 +1,9 @@
 <?php
-class HomeTest extends WebTestCase {
+class HomeTest extends ShimmieWebTestCase {
     function testHomePage() {
-        $this->get(TEST_BASE.'/home');
-        $this->assertTitle('Shimmie Testbed');
-        $this->assertText('Shimmie Testbed');
+        $this->get_page('home');
+        $this->assertTitle('Shimmie');
+        $this->assertText('Shimmie');
     }
 }
 ?>
