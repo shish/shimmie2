@@ -197,7 +197,7 @@ function create_tables($dsn) { // {{{
 			id SCORE_AIPK,
 			name VARCHAR(32) UNIQUE NOT NULL,
 			pass CHAR(32),
-			joindate DATETIME NOT NULL DEFAULT SCORE_NOW,
+			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			email VARCHAR(128)
 		"));
@@ -212,7 +212,7 @@ function create_tables($dsn) { // {{{
 			source VARCHAR(255),
 			width INTEGER NOT NULL,
 			height INTEGER NOT NULL,
-			posted TIMESTAMP NOT NULL DEFAULT SCORE_NOW,
+			posted SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			INDEX(owner_id),
 			INDEX(width),
