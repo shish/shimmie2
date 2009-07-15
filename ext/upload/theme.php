@@ -40,7 +40,7 @@ class UploadTheme extends Themelet {
 					$upload_list
 					<tr><td>Tags</td><td colspan='3'><input id='tagBox' name='tags' type='text' value='tagme' autocomplete='off'></td></tr>
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
-					<tr><td colspan='4'><input type='submit' value='Post'></td></tr>
+					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
 			</form>
 			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>

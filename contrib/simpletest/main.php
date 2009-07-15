@@ -10,7 +10,6 @@ require_once('simpletest/web_tester.php');
 require_once('simpletest/unit_tester.php');
 require_once('simpletest/reporter.php');
 
-define('TEST_BASE', "http://shimmie.shishnet.org/branch_2.3/index.php?q=");
 define('USER_NAME', "test");
 define('USER_PASS', "test");
 define('ADMIN_NAME', "demo");
@@ -18,7 +17,7 @@ define('ADMIN_PASS', "demo");
 
 class ShimmieWebTestCase extends WebTestCase {
 	protected function get_page($page) {
-		$this->get(TEST_BASE.'/'.$page);
+		$this->get($_SERVER["HTTP_HOST"].'/'.make_link($page));
 	}
 	protected function log_in_as_user() {
         $this->get_page('post/list');
@@ -49,7 +48,7 @@ class ShimmieWebTestCase extends WebTestCase {
 		$this->assertText("Upload");
 		$this->setField("data0", $filename);
 		$this->setField("tags", $tags);
-		$this->click("Post");
+		$this->clickSubmitById("uploadbutton");
 
 		$raw_headers = $this->getBrowser()->getHeaders();
 		$headers = explode("\n", $raw_headers);
@@ -74,8 +73,9 @@ class ShimmieWebTestCase extends WebTestCase {
 
 class TestFinder extends TestSuite {
 	function TestFinder($hint) {
+		if(strpos($hint, "..") !== FALSE) return;
 		$dir = "*";
-		if(file_exists("ext/$hint/test.php")) $dir = $hint; // FIXME: check for ..
+		if(file_exists("ext/$hint/test.php")) $dir = $hint;
 		$this->TestSuite('All tests');
 		foreach(glob("ext/$dir/test.php") as $file) {
 			$this->addFile($file);

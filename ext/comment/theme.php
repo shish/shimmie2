@@ -120,7 +120,7 @@ class CommentListTheme extends Themelet {
 			<input type='hidden' name='image_id' value='$i_image_id' />
 			<input type='hidden' name='hash' value='$hash' />
 			<textarea name='comment' rows='5' cols='50'></textarea>
-			<br><input type='submit' value='Post' />
+			<br><input type='submit' value='Post Comment' />
 			</form>
 			";
 	}
