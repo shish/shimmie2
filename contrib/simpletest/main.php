@@ -48,7 +48,7 @@ class ShimmieWebTestCase extends WebTestCase {
 		$this->assertText("Upload");
 		$this->setField("data0", $filename);
 		$this->setField("tags", $tags);
-		$this->clickSubmitById("uploadbutton");
+		$this->click("Post");
 
 		$raw_headers = $this->getBrowser()->getHeaders();
 		$headers = explode("\n", $raw_headers);
