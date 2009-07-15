@@ -1,6 +1,10 @@
 <?php
 class IndexTest extends ShimmieWebTestCase {
 	function testIndexPage() {
+		$this->get_page('post/list');
+		$this->assertTitle("Welcome to Shimmie ".VERSION);
+		$this->assertNoText("Prev | Index | Next");
+
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->log_out();
