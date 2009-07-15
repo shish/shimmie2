@@ -15,6 +15,13 @@ class ImageAdditionEvent extends Event {
 	}
 }
 
+class ImageAdditionException extends SCoreException {
+	var $error;
+
+	public function __construct($error) {
+		$this->error = $error;
+	}
+}
 
 /*
  * ImageDeletionEvent:
@@ -104,8 +111,12 @@ class ImageIO extends SimpleExtension {
 	}
 
 	public function onImageAddition($event) {
-		$error = $this->add_image($event->image);
-		if(!empty($error)) throw new UploadException($error);
+		try {
+			$this->add_image($event->image);
+		}
+		catch(ImageAdditionException $e) {
+			throw new UploadException($e->error);
+		}
 	}
 
 	public function onImageDeletion($event) {
@@ -158,8 +169,7 @@ class ImageIO extends SimpleExtension {
 		}
 		if(!empty($image->source)) {
 			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
-				$error = "Image's source isn't a valid URL";
-				return $error;
+				throw new ImageAdditionException("Image's source isn't a valid URL");
 			}
 		}
 
@@ -177,7 +187,7 @@ class ImageIO extends SimpleExtension {
 			else {
 				$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
 						"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
-				return $error;
+				throw new ImageAdditionException($error);
 			}
 		}
 
@@ -194,8 +204,6 @@ class ImageIO extends SimpleExtension {
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
 
 		send_event(new TagSetEvent($image, $image->get_tag_array()));
-
-		return null;
 	}
 // }}}
 // fetch image {{{

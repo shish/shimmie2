@@ -1,28 +1,13 @@
 <?php
-class AliasEditorTest extends WebTestCase {
+class AliasEditorTest extends ShimmieWebTestCase {
 	function testAliasEditor() {
-		/*
-        $this->get(TEST_BASE.'/admin');
-		$this->assertResponse(403);
-		$this->assertTitle("Permission Denied");
+        $this->get_page('alias/list');
+		$this->assertTitle("Alias List");
 
-		$this->assertText("Login");
-		$this->setField('user', USER_NAME);
-		$this->setField('pass', USER_PASS);
-		$this->click("Log In");
-        $this->get(TEST_BASE.'/admin');
-		$this->assertResponse(403);
-		$this->assertTitle("Permission Denied");
-		$this->click('Log Out');
-
-		$this->assertText("Login");
-		$this->setField('user', ADMIN_NAME);
-		$this->setField('pass', ADMIN_PASS);
-		$this->click("Log In");
-        $this->get(TEST_BASE.'/admin');
-		$this->assertTitle("Admin Tools");
-		$this->click('Log Out');
-		*/
+		$this->log_in_as_admin();
+        $this->get_page('alias/list');
+		$this->assertTitle("Alias List");
+		$this->log_out();
 	}
 }
 ?>

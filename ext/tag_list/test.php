@@ -1,16 +1,16 @@
 <?php
-class TagListTest extends WebTestCase {
+class TagListTest extends ShimmieWebTestCase {
 	function testTagList() {
-		$this->get(TEST_BASE.'/tags/map');
+		$this->get_page('tags/map');
 		$this->assertTitle('Tag List');
 
-		$this->get(TEST_BASE.'/tags/alphabetic');
+		$this->get_page('tags/alphabetic');
 		$this->assertTitle('Tag List');
 
-		$this->get(TEST_BASE.'/tags/popularity');
+		$this->get_page('tags/popularity');
 		$this->assertTitle('Tag List');
 
-		$this->get(TEST_BASE.'/tags/categories');
+		$this->get_page('tags/categories');
 		$this->assertTitle('Tag List');
 	}
 }

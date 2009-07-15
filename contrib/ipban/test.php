@@ -1,17 +1,13 @@
 <?php
-class IPBanTest extends WebTestCase {
+class IPBanTest extends ShimmieWebTestCase {
 	function testIPBan() {
-        $this->get(TEST_BASE.'/ip_ban/list');
+        $this->get_page('ip_ban/list');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
 
-        $this->get(TEST_BASE.'/user');
-		$this->assertText("Login");
-		$this->setField('user', ADMIN_NAME);
-		$this->setField('pass', ADMIN_PASS);
-		$this->click("Log In");
+        $this->log_in_as_admin();
 
-        $this->get(TEST_BASE.'/ip_ban/list');
+        $this->get_page('ip_ban/list');
 		$this->assertNoText("42.42.42.42");
 		$this->setField('ip', '42.42.42.42');
 		$this->setField('reason', 'unit testing');
@@ -22,7 +18,7 @@ class IPBanTest extends WebTestCase {
 		$this->click("Remove"); // FIXME: remove which ban? :S
 		$this->assertNoText("42.42.42.42");
 
-		$this->click('Log Out');
+		$this->log_out();
 	}
 }
 ?>

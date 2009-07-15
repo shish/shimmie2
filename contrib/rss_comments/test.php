@@ -1,7 +1,7 @@
 <?php
-class RSSCommentsTest extends WebTestCase {
+class RSSCommentsTest extends ShimmieWebTestCase {
     function testImageFeed() {
-        $this->get(TEST_BASE.'/rss/comments');
+        $this->get_page('rss/comments');
 		$this->assertMime("application/rss+xml");
 		$this->assertNoText("Exception");
     }

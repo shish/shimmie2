@@ -1,27 +1,21 @@
 <?php
-class SetupTest extends WebTestCase {
+class SetupTest extends ShimmieWebTestCase {
 	function testAuth() {
-        $this->get(TEST_BASE.'/setup');
+        $this->get_page('setup');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
 
-		$this->assertText("Login");
-		$this->setField('user', USER_NAME);
-		$this->setField('pass', USER_PASS);
-		$this->click("Log In");
-        $this->get(TEST_BASE.'/setup');
+		$this->log_in_as_user();
+        $this->get_page('setup');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
-		$this->click('Log Out');
+		$this->log_out();
 
-		$this->assertText("Login");
-		$this->setField('user', ADMIN_NAME);
-		$this->setField('pass', ADMIN_PASS);
-		$this->click("Log In");
-        $this->get(TEST_BASE.'/setup');
+		$this->log_in_as_admin();
+        $this->get_page('setup');
 		$this->assertTitle("Shimmie Setup");
 		$this->assertText("General");
-		$this->click('Log Out');
+		$this->log_out();
 	}
 }
 ?>

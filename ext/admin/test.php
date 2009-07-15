@@ -1,26 +1,20 @@
 <?php
-class AdminPageTest extends WebTestCase {
+class AdminPageTest extends ShimmieWebTestCase {
 	function testAuth() {
-		$this->get(TEST_BASE.'/admin');
+		$this->get_page('admin');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
 
-		$this->assertText("Login");
-		$this->setField('user', USER_NAME);
-		$this->setField('pass', USER_PASS);
-		$this->click("Log In");
-		$this->get(TEST_BASE.'/admin');
+		$this->log_in_as_user();
+		$this->get_page('admin');
 		$this->assertResponse(403);
 		$this->assertTitle("Permission Denied");
-		$this->click('Log Out');
+		$this->log_out();
 
-		$this->assertText("Login");
-		$this->setField('user', ADMIN_NAME);
-		$this->setField('pass', ADMIN_PASS);
-		$this->click("Log In");
-		$this->get(TEST_BASE.'/admin');
+		$this->log_in_as_admin();
+		$this->get_page('admin');
 		$this->assertTitle("Admin Tools");
-		$this->click('Log Out');
+		$this->log_out();
 	}
 }
 ?>

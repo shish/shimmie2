@@ -24,6 +24,7 @@ class PixelFileHandler implements Extension {
 
 			$iae = new ImageAdditionEvent($event->user, $image);
 			send_event($iae); // this might raise an exception, but all we'd do is re-throw it...
+			$event->image_id = $iae->image->id;
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {

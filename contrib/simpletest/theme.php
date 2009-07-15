@@ -4,7 +4,7 @@ class SimpleSCoreTestTheme extends Themelet {
 
 class SCoreReporter extends HtmlReporter {
 	var $current_html = "";
-	var $clear_modules = "";
+	var $clear_modules = array();
 	var $page;
 
 	public function SCoreReporter(Page $page) {
@@ -19,8 +19,7 @@ class SCoreReporter extends HtmlReporter {
 
 	function paintFooter($test_name) {
 		//parent::paintFooter($test_name);
-		$fail = $this->getFailCount() > 0;
-		if($fail) {
+		if($this->getFailCount() > 0) {
 			$style = "background: red;";
 		}
 		else {
@@ -29,7 +28,7 @@ class SCoreReporter extends HtmlReporter {
 		$html = "<div style=\"padding: 4px; $style\">".
 			$this->getPassCount() . " passes, " .
 			$this->getFailCount() . " failures" .
-			"<br>Passed modules: " . $this->clear_modules .
+			"<br>Passed modules: " . implode(", ", $this->clear_modules) .
 			"</div>";
 		$this->page->add_block(new Block("Results", $html, "main", 40));
 	}
@@ -47,7 +46,7 @@ class SCoreReporter extends HtmlReporter {
 		}
 		parent::paintGroupEnd($name);
 		if($this->current_html == "") {
-			$this->clear_modules .= "$name, ";
+			$this->clear_modules[] = $name;
 		}
 		else {
 			$this->current_html .= "<p>$link";
