@@ -86,6 +86,7 @@ function do_install() { // {{{
 	}
 	else if(file_exists("auto_install.conf")) {
 		install_process(trim(file_get_contents("auto_install.conf")));
+		unlink("auto_install.conf");
 	}
 	else {
 		begin();
