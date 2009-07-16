@@ -29,7 +29,8 @@ class Image {
 	public function Image($row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
-				// FIXME: some databases use table.name rather than name
+				// some databases use table.name rather than name
+				$name = str_replace("images.", "", $name);
 				$this->$name = $value; // hax
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
