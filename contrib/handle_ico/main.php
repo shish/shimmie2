@@ -16,7 +16,9 @@ class IcoFileHandler extends SimpleExtension {
 			if(is_null($image)) {
 				throw new UploadException("Icon handler failed to create image object from data");
 			}
-			send_event(new ImageAdditionEvent($event->user, $image));
+			$iae = new ImageAdditionEvent($event->user, $image);
+			send_event($iae);
+			$event->image_id = $iae->image->id;
 		}
 	}
 
@@ -27,13 +29,14 @@ class IcoFileHandler extends SimpleExtension {
 	}
 
 	public function onDisplayingImage($event) {
+		global $page;
 		if($this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($event->page, $event->image);
+			$this->theme->display_image($page, $event->image);
 		}
 	}
 
 	public function onPageRequest($event) {
-		global $config, $database;
+		global $config, $database, $page;
 		if($event->page_matches("get_ico")) {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);

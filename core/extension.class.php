@@ -54,4 +54,40 @@ abstract class FormatterExtension implements Extension {
 	abstract public function format($text);
 	abstract public function strip($text);
 }
+
+abstract class DataHandlerExtension implements Extension {
+	var $theme;
+
+	public function receive_event(Event $event) {
+		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+
+		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+			$hash = $event->hash;
+			$ha = substr($hash, 0, 2);
+			if(!move_upload_to_archive($event)) return;
+			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
+			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
+			if(is_null($image)) {
+				throw new UploadException("Data handler failed to create image object from data");
+			}
+			$iae = new ImageAdditionEvent($event->user, $image);
+			send_event($iae);
+			$event->image_id = $iae->image->id;
+		}
+
+		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
+			$this->create_thumb($event->hash);
+		}
+
+		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
+			global $page;
+			$this->theme->display_image($page, $event->image);
+		}
+	}
+
+	abstract protected function supported_ext($ext);
+	abstract protected function check_contents($tmpname);
+	abstract protected function create_image_from_data($filename, $metadata);
+	abstract protected function create_thumb($hash);
+}
 ?>

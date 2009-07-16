@@ -150,6 +150,9 @@ class Upload implements Extension {
 			$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
 			try {
 				send_event($event);
+				if($event->image_id == -1) {
+					throw new UploadException("File type not recognised");
+				}
 				header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
 			}
 			catch(UploadException $ex) {
