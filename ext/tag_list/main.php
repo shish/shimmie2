@@ -112,7 +112,7 @@ class TagList implements Extension {
 		$html = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
-			$size = $row['scaled'];
+			$size = sprintf("%.2f", (float)$row['scaled']);
 			$link = $this->tag_link($row['tag']);
 			if($size<0.5) $size = 0.5;
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
