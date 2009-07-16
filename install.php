@@ -243,6 +243,21 @@ function insert_defaults($dsn) { // {{{
 		die("Couldn't connect to \"$dsn\"");
 	}
 	else {
+		if(substr($dsn, 0, 5) == "mysql") {
+			$engine = new MySQL();
+		}
+		else if(substr($dsn, 0, 5) == "pgsql") {
+			$engine = new PostgreSQL();
+		}
+		else if(substr($dsn, 0, 6) == "sqlite") {
+			$engine = new SQLite();
+		}
+		else {
+			die("Unknown database engine; Shimmie currently officially supports MySQL
+			(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
+		}
+		$engine->init($db);
+
 		$config_insert = $db->Prepare("INSERT INTO config(name, value) VALUES(?, ?)");
 		$user_insert = $db->Prepare("INSERT INTO users(name, pass, joindate, admin) VALUES(?, ?, now(), ?)");
 
