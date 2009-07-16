@@ -5,42 +5,19 @@
  * Description: Handle MP3 files
  */
 
-class MP3FileHandler implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
-			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
-			if(!move_upload_to_archive($event)) return;
-			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
-			if(is_null($image)) {
-				throw new UploadException("MP3 handler failed to create image object from data");
-			}
-			send_event(new ImageAdditionEvent($event->user, $image));
-		}
-
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
-			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
-			// FIXME: scale image, as not all boards use 192x192
-			copy("ext/handle_mp3/thumb.jpg", "thumbs/$ha/$hash");
-		}
-
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($event->page, $event->image);
-		}
+class MP3FileHandler extends DataHandlerExtension {
+	protected function create_thumb($hash) {
+		$ha = substr($hash, 0, 2);
+		// FIXME: scale image, as not all boards use 192x192
+		copy("ext/handle_mp3/thumb.jpg", "thumbs/$ha/$hash");
 	}
 
-	private function supported_ext($ext) {
+	protected function supported_ext($ext) {
 		$exts = array("mp3");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	private function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data($filename, $metadata) {
 		global $config;
 
 		$image = new Image();
@@ -59,7 +36,7 @@ class MP3FileHandler implements Extension {
 		return $image;
 	}
 
-	private function check_contents($file) {
+	protected function check_contents($file) {
 		// FIXME: mp3 magic header?
 		return (file_exists($file));
 	}

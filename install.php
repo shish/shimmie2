@@ -86,26 +86,52 @@ function do_install() { // {{{
 	}
 	else if(file_exists("auto_install.conf")) {
 		install_process(trim(file_get_contents("auto_install.conf")));
+		unlink("auto_install.conf");
 	}
 	else {
 		begin();
 	}
 } // }}}
 function begin() { // {{{
+	$err = "";
+	$thumberr = "";
+	$dberr = "";
+
 	if(check_gd_version() == 0 && check_im_version() == 0) {
-		$gd = "<h3>Error</h3>\nPHP's GD extension seems to be missing, ".
+		$thumberr = "<p>PHP's GD extension seems to be missing, ".
 		      "and imagemagick's \"convert\" command cannot be found - ".
 			  "no thumbnailing engines are available.";
 	}
-	else {
-		$gd = "";
+
+	if(!function_exists("mysql_connect")) {
+		$dberr = "<p>PHP's MySQL extension seems to be missing; you may ".
+				"be able to use an unofficial alternative, checking ".
+				"for libraries...";
+		if(!function_exists("pg_connect")) {
+			$dberr .= "<br>PgSQL is missing";
+		}
+		else {
+			$dberr .= "<br>PgSQL is available";
+		}
+		if(!function_exists("sqlite_open")) {
+			$dberr .= "<br>SQLite is missing";
+		}
+		else {
+			$dberr .= "<br>SQLite is available";
+		}
+	}
+
+	if($thumberr || $dberr) {
+		$err = "<h3>Error</h3>";
 	}
 
 	print <<<EOD
 		<div id="iblock">
 			<h1>Shimmie Installer</h1>
 
-			$gd
+			$err
+			$thumberr
+			$dberr
 
 			<h3>Install</h3>
 			<form action="install.php" method="POST">
@@ -171,7 +197,7 @@ function create_tables($dsn) { // {{{
 			id SCORE_AIPK,
 			name VARCHAR(32) UNIQUE NOT NULL,
 			pass CHAR(32),
-			joindate DATETIME NOT NULL DEFAULT SCORE_NOW,
+			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			email VARCHAR(128)
 		"));
@@ -186,7 +212,7 @@ function create_tables($dsn) { // {{{
 			source VARCHAR(255),
 			width INTEGER NOT NULL,
 			height INTEGER NOT NULL,
-			posted TIMESTAMP NOT NULL DEFAULT SCORE_NOW,
+			posted SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			INDEX(owner_id),
 			INDEX(width),

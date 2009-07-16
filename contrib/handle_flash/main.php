@@ -5,46 +5,19 @@
  * Description: Handle Flash files
  */
 
-class FlashFileHandler extends SimpleExtension {
-	public function onDataUpload($event) {
-		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
-			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
-			if(!move_upload_to_archive($event)) return;
-			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
-			if(is_null($image)) {
-				throw new UploadException(
-						"Flash Handler failed to create image object from data. ".
-						"Note: compressed flash files are currently unsupported");
-			}
-			send_event(new ImageAdditionEvent($event->user, $image));
-		}
+class FlashFileHandler extends DataHandlerExtension {
+	protected function create_thumb($hash) {
+		$ha = substr($hash, 0, 2);
+		// FIXME: scale image, as not all boards use 192x192
+		copy("ext/handle_flash/thumb.jpg", "thumbs/$ha/$hash");
 	}
 
-	public function onThumbnailGeneration($event) {
-		if($this->supported_ext($event->type)) {
-			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
-			// FIXME: scale image, as not all boards use 192x192
-			copy("ext/handle_flash/thumb.jpg", "thumbs/$ha/$hash");
-		}
-	}
-
-	public function onDisplayingImage($event) {
-		global $page;
-		if($this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($event->page, $event->image);
-		}
-	}
-
-
-	private function supported_ext($ext) {
+	protected function supported_ext($ext) {
 		$exts = array("swf");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	private function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data($filename, $metadata) {
 		global $config;
 
 		$image = new Image();
@@ -70,6 +43,17 @@ class FlashFileHandler extends SimpleExtension {
 		$image->height = $info[1];
 
 		return $image;
+	}
+
+	protected function check_contents($file) {
+		if(!file_exists($file)) return false;
+
+		$fp = fopen($file, "r");
+		$head = fread($fp, 3);
+		fclose($fp);
+		if(!in_array($head, array("CWS", "FWS"))) return false;
+
+		return true;
 	}
 
 	private function str_to_binarray($string) {
@@ -117,16 +101,6 @@ class FlashFileHandler extends SimpleExtension {
 
 		return $bounds;
 	}
-
-	private function check_contents($file) {
-		if(!file_exists($file)) return false;
-
-		$fp = fopen($file, "r");
-		$head = fread($fp, 3);
-		fclose($fp);
-		if(!in_array($head, array("CWS", "FWS"))) return false;
-
-		return true;
-	}
 }
+add_event_listener(new FlashFileHandler());
 ?>

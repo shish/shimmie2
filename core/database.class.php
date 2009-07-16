@@ -72,6 +72,7 @@ class MySQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
+		$data = str_replace("SCORE_DATETIME", "DATETIME", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
 		$ctes = "TYPE=InnoDB DEFAULT CHARSET='utf8'";
 		return "CREATE TABLE $name ($data) $ctes";
@@ -86,6 +87,7 @@ class PostgreSQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL_Y", "'t'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'f'", $data);
 		$data = str_replace("SCORE_BOOL", "BOOL", $data);
+		$data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
 		$data = str_replace("SCORE_NOW", "current_time", $data);
 		return "CREATE TABLE $name ($data)";
 	}

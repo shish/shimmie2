@@ -48,14 +48,17 @@ class IndexTest extends ShimmieWebTestCase {
 		# regular tag, many results
         $this->get_page('post/list/computer/1');
 		$this->assertTitle("computer");
+		$this->assertNoText("No Images Found");
 
 		# meta tag, many results
         $this->get_page('post/list/size=640x480/1');
 		$this->assertTitle("size=640x480");
+		$this->assertNoText("No Images Found");
 
 		# multiple tags, many results
         $this->get_page('post/list/computer%20size=640x480/1');
 		$this->assertTitle("computer size=640x480");
+		$this->assertNoText("No Images Found");
 
 		# multiple tags, single result; search with one result = direct to image
 		$this->get_page('post/list/screenshot%20computer/1');
@@ -64,6 +67,11 @@ class IndexTest extends ShimmieWebTestCase {
 		# negative tag, should have one result
 		$this->get_page('post/list/computer%20-pbx/1');
 		$this->assertTitle(new PatternExpectation("/^Image $image_id_2: /"));
+
+		# negative tag alone, should work
+		# FIXME: known broken in mysql
+		//$this->get_page('post/list/-pbx/1');
+		//$this->assertTitle(new PatternExpectation("/^Image $image_id_2: /"));
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id_1);

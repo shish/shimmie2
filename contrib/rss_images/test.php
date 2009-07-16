@@ -5,9 +5,6 @@ class RSSImagesTest extends ShimmieWebTestCase {
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->log_out();
 
-		$this->assertTitle("Upload Status");
-		$this->assertText("already has hash");
-
         $this->get_page('rss/images');
 		$this->assertMime("application/rss+xml");
 		$this->assertNoText("Exception");
@@ -16,11 +13,18 @@ class RSSImagesTest extends ShimmieWebTestCase {
 		$this->assertMime("application/rss+xml");
 		$this->assertNoText("Exception");
 
-        $this->get_page('rss/images/tagme/1');
+		# FIXME: test that the image is actually found
+        $this->get_page('rss/images/computer/1');
 		$this->assertMime("application/rss+xml");
 		$this->assertNoText("Exception");
 
-        $this->get_page('rss/images/tagme/2');
+		# valid tag, invalid page
+        $this->get_page('rss/images/computer/2');
+		$this->assertMime("application/rss+xml");
+		$this->assertNoText("Exception");
+
+		# not found
+        $this->get_page('rss/images/waffle/2');
 		$this->assertMime("application/rss+xml");
 		$this->assertNoText("Exception");
 
