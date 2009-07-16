@@ -76,14 +76,7 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if($hidable) {
-			#$toggle = " onclick=\"toggle('$i')\"";
-			$toggle = "";
-		}
-		else {
-			$toggle = "";
-		}
-		if(!is_null($h)) $html .= "
+		if($hidable) $html .= "
 			<script>
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
@@ -101,9 +94,11 @@ EOD;
 				}
 			});
 			</script>
-			<div class='hrr'>
+		";
+		if(!is_null($h)) $html .= "
+			<div class='hrr' id='$i-toggle'>
 				<div class='hrrtop'><div></div></div>
-				<div class='hrrcontent'><h3 id='$i-toggle'$toggle>$h</h3></div>
+				<div class='hrrcontent'><h3>$h</h3></div>
 				<div class='hrrbot'><div></div></div>
 			</div>
 		";
