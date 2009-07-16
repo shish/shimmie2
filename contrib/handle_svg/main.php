@@ -20,7 +20,9 @@ class SVGFileHandler implements Extension {
 			if(is_null($image)) {
 				throw new UploadException("SVG handler failed to create image object from data");
 			}
-			send_event(new ImageAdditionEvent($event->user, $image));
+			$iae = new ImageAdditionEvent($event->user, $image);
+			send_event($iae);
+			$event->image_id = $iae->image->id;
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
@@ -44,20 +46,20 @@ class SVGFileHandler implements Extension {
 		}
 
 		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($event->page, $event->image);
+			global $page;
+			$this->theme->display_image($page, $event->image);
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("get_svg")) {
-			global $config;
-			global $database;
+			global $config, $database, $page;
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
 			$hash = $image->hash;
 			$ha = substr($hash, 0, 2);
 
-			$event->page->set_type("image/svg+xml");
-			$event->page->set_mode("data");
-			$event->page->set_data(file_get_contents("images/$ha/$hash"));
+			$page->set_type("image/svg+xml");
+			$page->set_mode("data");
+			$page->set_data(file_get_contents("images/$ha/$hash"));
 		}
 	}
 

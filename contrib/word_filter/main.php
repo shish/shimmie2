@@ -23,6 +23,8 @@ class WordFilter implements Extension {
 	private function filter($text) {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {
+			$search = trim($search);
+			$replace = trim($replace);
 			$search = "/\\b$search\\b/i";
 			$text = preg_replace($search, $replace, $text);
 		}

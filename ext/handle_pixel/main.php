@@ -5,43 +5,13 @@
  * Description: Handle JPG, PNG, GIF, etc files
  */
 
-class PixelFileHandler implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		global $page;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
-			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
-			if(!move_upload_to_archive($event)) return;
-			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
-			if(is_null($image)) {
-				throw new UploadException("Pixel Handler failed to create image object from data");
-			}
-
-			$iae = new ImageAdditionEvent($event->user, $image);
-			send_event($iae); // this might raise an exception, but all we'd do is re-throw it...
-			$event->image_id = $iae->image->id;
-		}
-
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
-			$this->create_thumb($event->hash);
-		}
-
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($page, $event->image);
-		}
-	}
-
-	private function supported_ext($ext) {
+class PixelFileHandler extends DataHandlerExtension {
+	protected function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	private function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data($filename, $metadata) {
 		global $config;
 
 		$image = new Image();
@@ -62,7 +32,7 @@ class PixelFileHandler implements Extension {
 		return $image;
 	}
 
-	private function check_contents($file) {
+	protected function check_contents($file) {
 		$valid = Array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG);
 		if(!file_exists($file)) return false;
 		$info = getimagesize($file);
@@ -71,7 +41,7 @@ class PixelFileHandler implements Extension {
 		return false;
 	}
 
-	private function create_thumb($hash) {
+	protected function create_thumb($hash) {
 		$ha = substr($hash, 0, 2);
 		$inname  = "images/$ha/$hash";
 		$outname = "thumbs/$ha/$hash";
