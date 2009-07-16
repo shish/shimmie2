@@ -158,7 +158,7 @@ class TagList implements Extension {
 		$tag_data = $result->GetArray();
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
-		$lastLog = 0;
+		$lastLog = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
