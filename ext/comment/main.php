@@ -222,7 +222,7 @@ class CommentList implements Extension {
 			";
 		$result = $database->Execute($get_threads, array($threads_per_page, $start));
 
-		$total_pages = (int)($database->db->GetOne("SELECT COUNT(distinct image_id) AS count FROM comments") / 10);
+		$total_pages = (int)($database->db->GetOne("SELECT COUNT(image_id) AS count FROM comments GROUP BY image_id") / 10);
 
 
 		$this->theme->display_page_start($page, $current_page, $total_pages);
@@ -286,6 +286,9 @@ class CommentList implements Extension {
 		global $user;
 		global $config;
 		global $database;
+
+		// sqlite fails at intervals
+		if($database->engine->name == "sqlite") return false;
 
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
