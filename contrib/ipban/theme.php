@@ -12,21 +12,23 @@ class IPBanTheme extends Themelet {
 	 * )
 	 */
 	public function display_bans(Page $page, $bans) {
-		global $user;
+		global $database, $user;
 		$h_bans = "";
 		$n = 0;
+		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");
+		$prefix2 = ($database->engine->name == "sqlite" ? "users." : "");
 		foreach($bans as $ban) {
-			$end_human = date('Y-m-d', $ban['end_timestamp']);
+			$end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
 				<tr class='$oe'>
-					<td width='10%'>{$ban['ip']}</td>
-					<td>{$ban['reason']}</td>
+					<td width='10%'>{$ban[$prefix.'ip']}</td>
+					<td>{$ban[$prefix.'reason']}</td>
 					<td width='10%'>{$ban['banner_name']}</td>
 					<td width='15%'>{$end_human}</td>
 					<td width='10%'>
 						<form action='".make_link("ip_ban/remove")."' method='POST'>
-							<input type='hidden' name='id' value='{$ban['id']}'>
+							<input type='hidden' name='id' value='{$ban[$prefix.'id']}'>
 							<input type='submit' value='Remove'>
 						</form>
 					</td>
