@@ -97,8 +97,10 @@ class PostgreSQL extends DBEngine {
 function _unix_timestamp($date) { return strtotime($date); }
 function _now() { return date("Y-m-d h:i:s"); }
 function _floor($a) { return floor($a); }
-function _log1($a) { return log($a); }
-function _log2($a, $b) { return log($a, $b); }
+function _log($a, $b=null) {
+	if(is_null($b)) return log($a);
+	else return log($a, $b);
+}
 function _isnull($a) { return is_null($a); }
 function _md5($a) { return md5($a); }
 function _concat($a, $b) { return $a . $b; }
@@ -112,8 +114,7 @@ class SQLite extends DBEngine {
 		@sqlite_create_function($db->_connectionID, 'UNIX_TIMESTAMP', '_unix_timestamp', 1);
 		@sqlite_create_function($db->_connectionID, 'now', '_now', 0);
 		@sqlite_create_function($db->_connectionID, 'floor', '_floor', 1);
-		@sqlite_create_function($db->_connectionID, 'log', '_log1', 1);
-		@sqlite_create_function($db->_connectionID, 'log', '_log2', 2);
+		@sqlite_create_function($db->_connectionID, 'log', '_log');
 		@sqlite_create_function($db->_connectionID, 'isnull', '_isnull', 1);
 		@sqlite_create_function($db->_connectionID, 'md5', '_md5', 1);
 		@sqlite_create_function($db->_connectionID, 'concat', '_concat', 2);
