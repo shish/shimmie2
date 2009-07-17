@@ -2,7 +2,7 @@
 // set up and purify the environment
 define("DEBUG", true);
 define("SCORE_VERSION", 's2hack');
-define("VERSION", '2.3-beta5');
+define("VERSION", '2.3-beta6');
 
 if(!file_exists("config.php")) {
 	header("Location: install.php");
