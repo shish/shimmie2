@@ -163,16 +163,20 @@ class IPBan implements Extension {
 		global $config;
 		global $database;
 
+		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");
+
 		$remote = $_SERVER['REMOTE_ADDR'];
 		$bans = $this->get_active_bans();
 		foreach($bans as $row) {
+			$ip = $row[$prefix."ip"];
 			if(
-				(strstr($row['ip'], '/') && ip_in_range($remote, $row['ip'])) ||
-				($row['ip'] == $remote)
+				(strstr($ip, '/') && ip_in_range($remote, $ip)) ||
+				($ip == $remote)
 			) {
-				$admin = User::by_id($row['banner_id']);
-				$date = date("Y-m-d", $row['end_timestamp']);
-				print "IP <b>{$row['ip']}</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>{$row['reason']}</b>";
+				$reason = $row[$prefix.'reason'];
+				$admin = User::by_id($row[$prefix.'banner_id']);
+				$date = date("Y-m-d", $row[$prefix.'end_timestamp']);
+				print "IP <b>$ip</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>$reason</b>";
 
 				$contact_link = $config->get_string("contact_link");
 				if(!empty($contact_link)) {
@@ -190,7 +194,7 @@ class IPBan implements Extension {
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			ORDER BY end_timestamp, id
+			ORDER BY end_timestamp, bans.id
 		");
 		if($bans) {return $bans;}
 		else {return array();}
@@ -207,7 +211,7 @@ class IPBan implements Extension {
 			FROM bans
 			JOIN users ON banner_id = users.id
 			WHERE (end_timestamp > UNIX_TIMESTAMP(now())) OR (end_timestamp IS NULL)
-			ORDER BY end_timestamp, id
+			ORDER BY end_timestamp, bans.id
 		");
 
 		$database->cache->set("bans", $bans);
