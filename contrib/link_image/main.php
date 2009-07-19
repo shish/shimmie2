@@ -12,9 +12,6 @@ class LinkImage implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 			if(($event instanceof DisplayingImageEvent)) {
-				$data_href = get_base_href();
-				$page->add_header("<link rel='stylesheet' href='$data_href/ext/link_image/_style.css' type='text/css'>",0);
-
 				$this->theme->links_block($page, $this->data($event->image));
 			}
 			if($event instanceof SetupBuildingEvent) {
@@ -28,17 +25,27 @@ class LinkImage implements Extension {
 										'$title - $id ($ext $size $filesize)');
 			}
 		}
+
+	private function hostify($str) {
+		$str = str_replace(" ", "%20", $str);
+		if(strpos($str, "ttp://") > 0) {
+			return $str;
+		}
+		else {
+			return "http://" . $_SERVER["HTTP_HOST"] . $str;
+		}
+	}
 	private function data($image) {
 		global $config;
 
 		$text_link = $image->parse_link_template($config->get_string("ext_link-img_text-link_format"));
-		$text_link = $text_link==" "? null : $text_link; // null blank setting so the url gets filled in on the text links.
+		$text_link = trim($text_link) == "" ? null : $text_link; // null blank setting so the url gets filled in on the text links.
 
 		return array(
-			'thumb_src'	=>	$image->get_thumb_link(),
-			'image_src'	=>	$image->get_image_link(),
-			'post_link'	=>	$image->get_short_link(),
-			'text_link'		=>	$text_link);
+			'thumb_src'	=> $this->hostify($image->get_thumb_link()),
+			'image_src'	=> $this->hostify($image->get_image_link()),
+			'post_link'	=> $this->hostify($_SERVER["REQUEST_URI"]),
+			'text_link' => $text_link);
 	}
 }
 add_event_listener(new LinkImage());
