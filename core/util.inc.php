@@ -1,17 +1,36 @@
 <?php
+/**
+ * @package SCore
+ */
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * Make some data safe for printing into HTML
+ *
+ * @var string
+ */
 function html_escape($input) {
 	return htmlentities($input, ENT_QUOTES, "UTF-8");
 }
 
+/**
+ * Make sure some data is safe to be used in integer context
+ *
+ * @var int
+ */
 function int_escape($input) {
 	return (int)$input;
 }
 
+/**
+ * Make sure some data is safe to be used in URL context
+ *
+ * @var string
+ */
 function url_escape($input) {
 	$input = str_replace('^', '^^', $input);
 	$input = str_replace('/', '^s', $input);
@@ -19,11 +38,21 @@ function url_escape($input) {
 	return $input;
 }
 
+/**
+ * Make sure some data is safe to be used in SQL context
+ *
+ * @var string
+ */
 function sql_escape($input) {
 	global $database;
 	return $database->db->Quote($input);
 }
 
+/**
+ * Turn a human readable filesize into an integer, eg 1KB -> 1024
+ *
+ * @var int
+ */
 function parse_shorthand_int($limit) {
 	if(is_numeric($limit)) {
 		return (int)$limit;
@@ -45,6 +74,11 @@ function parse_shorthand_int($limit) {
 	}
 }
 
+/**
+ * Turn an integer into a human readable filesize, eg 1024 -> 1KB
+ *
+ * @var string
+ */
 function to_shorthand_int($int) {
 	if($int >= pow(1024, 3)) {
 		return sprintf("%.1fGB", $int / pow(1024, 3));
@@ -65,6 +99,12 @@ function to_shorthand_int($int) {
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * Figure out the correct way to link to a page, taking into account
+ * things like the nice URLs setting
+ *
+ * @var string
+ */
 function make_link($page=null, $query=null) {
 	global $config;
 
@@ -103,6 +143,9 @@ function theme_file($filepath) {
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * @ignore
+ */
 function version_check() {
 	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
 		print <<<EOD
@@ -114,6 +157,9 @@ EOD;
 	}
 }
 
+/**
+ * @ignore
+ */
 function check_cli() {
 	if(isset($_SERVER['REMOTE_ADDR'])) {
 		print "This script is to be run from the command line only.";
@@ -122,7 +168,11 @@ function check_cli() {
 	$_SERVER['REMOTE_ADDR'] = "127.0.0.1";
 }
 
-# $db is the connection object
+/**
+ * $db is the connection object
+ *
+ * @ignore
+ */
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
 	if(DEBUG) {
@@ -143,6 +193,9 @@ function _count_execs($db, $sql, $inputarray) {
 	$null = null; return $null;
 }
 
+/**
+ * Find the theme object for a given extension
+ */
 function get_theme_object(Extension $class, $fatal=true) {
 	$base = get_class($class);
 	if(class_exists("Custom{$base}Theme")) {
@@ -157,6 +210,11 @@ function get_theme_object(Extension $class, $fatal=true) {
 	}
 }
 
+/**
+ * Compare two Block objects, used to sort them before being displayed
+ *
+ * @var int
+ */
 function blockcmp($a, $b) {
 	if($a->position == $b->position) {
 		return 0;
@@ -166,6 +224,11 @@ function blockcmp($a, $b) {
 	}
 }
 
+/**
+ * Figure out PHP's internal memory limit
+ *
+ * @var int
+ */
 function get_memory_limit() {
 	global $config;
 
@@ -190,6 +253,12 @@ function get_memory_limit() {
 	return $memory;
 }
 
+/**
+ * Get the currently active IP, masked to make it not change when the last
+ * octet or two change, for use in session cookies and such
+ *
+ * @var string
+ */
 function get_session_ip($config) {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = $_SERVER['REMOTE_ADDR'];
@@ -197,8 +266,12 @@ function get_session_ip($config) {
     return $addr;
 }
 
-/*
+/**
+ * Figure out the path to the shimmie install root.
+ *
  * PHP really, really sucks.
+ *
+ * @var string
  */
 function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
@@ -215,6 +288,12 @@ function get_base_href() {
 	return $dir;
 }
 
+/**
+ * A shorthand way to send a TextFormattingEvent and get the
+ * results
+ *
+ * @var string
+ */
 function format_text($string) {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
@@ -246,6 +325,11 @@ function log_info($section, $message) {
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * Remove an item from an array
+ *
+ * @var array
+ */
 function array_remove($array, $to_remove) {
 	$array = array_unique($array);
 	$a2 = array();
@@ -257,13 +341,22 @@ function array_remove($array, $to_remove) {
 	return $a2;
 }
 
+/**
+ * Add an item to an array
+ *
+ * @var array
+ */
 function array_add($array, $element) {
 	$array[] = $element;
 	$array = array_unique($array);
 	return $array;
 }
 
-// case insensetive uniqueness
+/**
+ * Return the unique elements of an array, case insensitively
+ *
+ * @var array
+ */
 function array_iunique($array) {
 	$ok = array();
 	foreach($array as $element) {
@@ -280,7 +373,13 @@ function array_iunique($array) {
 	return $ok;
 }
 
-// from http://uk.php.net/network
+/**
+ * Figure out if an IP is in a specified range
+ *
+ * from http://uk.php.net/network
+ *
+ * @var bool
+ */
 function ip_in_range($IP, $CIDR) {
 	list ($net, $mask) = split ("/", $CIDR);
 
@@ -294,8 +393,12 @@ function ip_in_range($IP, $CIDR) {
 	return ($ip_ip_net == $ip_net);
 }
 
-// from a patch by Christian Walde; only intended for use in the
-// "extension manager" extension, but it seems to fit better here
+/**
+ * Delete an entire file heirachy
+ *
+ * from a patch by Christian Walde; only intended for use in the
+ * "extension manager" extension, but it seems to fit better here
+ */
 function deltree($f) {
 	if (is_link($f)) {
 		unlink($f);
@@ -312,7 +415,11 @@ function deltree($f) {
 	}
 }
 
-// from a comment on http://uk.php.net/copy
+/**
+ * Copy an entire file heirachy
+ *
+ * from a comment on http://uk.php.net/copy
+ */
 function full_copy($source, $target) {
 	if(is_dir($source)) {
 		@mkdir($target);
@@ -338,10 +445,16 @@ function full_copy($source, $target) {
 	}
 }
 
+/**
+ * @ignore
+ */
 function stripslashes_r($arr) {
 	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
 }
 
+/**
+ * @ignore
+ */
 function sanitise_environment() {
 	if(DEBUG) {
 		error_reporting(E_ALL);
@@ -358,6 +471,9 @@ function sanitise_environment() {
 	}
 }
 
+/**
+ * @ignore
+ */
 function weighted_random($weights) {
 	$total = 0;
 	foreach($weights as $k => $w) {
@@ -377,8 +493,14 @@ function weighted_random($weights) {
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * @ignore
+ */
 $_event_listeners = array();
 
+/**
+ * Register an Extension
+ */
 function add_event_listener(Extension $extension, $pos=50) {
 	global $_event_listeners;
 	while(isset($_event_listeners[$pos])) {
@@ -387,7 +509,14 @@ function add_event_listener(Extension $extension, $pos=50) {
 	$_event_listeners[$pos] = $extension;
 }
 
+/**
+ * @ignore
+ */
 $_event_count = 0;
+
+/**
+ * Send an event to all registered Extensions
+ */
 function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
 	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
@@ -400,14 +529,89 @@ function send_event(Event $event) {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Debugging functions                                                       *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function get_debug_info() {
+	global $config, $_event_count;
+
+	if(function_exists('memory_get_usage')) {
+		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
+	}
+	else {
+		$i_mem = "???";
+	}
+	if(function_exists('getrusage')) {
+		$ru = getrusage();
+		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
+		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
+	}
+	else {
+		$i_utime = "???";
+		$i_stime = "???";
+	}
+	$i_files = count(get_included_files());
+	global $_execs;
+	global $database;
+	$hits = $database->cache->get_hits();
+	$miss = $database->cache->get_misses();
+	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
+	$debug .= "; Used $i_files files and $_execs queries";
+	$debug .= "; Sent $_event_count events";
+	$debug .= "; $hits cache hits and $miss misses";
+
+	return $debug;
+}
+
+// print_obj ($object, $title, $return)
+function print_obj($object,$title="Object Information", $return=false) {
+	global $user;
+	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) {
+		$pr = print_r($object,true);
+		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
+		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
+
+		if($return) {
+			return $pr;
+		} else {
+			global $page;
+			$page->add_block(new Block($title,$pr,"main",1000));
+			return true;
+		}
+	}
+}
+
+// preset tests.
+
+// Prints the contents of $event->args, even though they are clearly visible in
+// the URL bar.
+function print_url_args() {
+	global $event;
+	print_obj($event->args,"URL Arguments");
+}
+
+// Prints all the POST data.
+function print_POST() {
+	print_obj($_POST,"\$_POST");
+}
+
+// Prints GET, though this is also visible in the url ( url?var&var&var)
+function print_GET() {
+	print_obj($_GET,"\$_GET");
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*
+/**
  * Turn ^^ into ^ and ^s into /
  *
  * Necessary because various servers and various clients
  * think that / is special...
+ *
+ * @ignore
  */
 function _decaret($str) {
 	$out = "";
@@ -424,6 +628,9 @@ function _decaret($str) {
 	return $out;
 }
 
+/**
+ * @ignore
+ */
 function _get_query_parts() {
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
@@ -453,6 +660,9 @@ function _get_query_parts() {
 	}
 }
 
+/**
+ * @ignore
+ */
 function _get_page_request() {
 	global $config;
 	$args = _get_query_parts();
@@ -464,6 +674,9 @@ function _get_page_request() {
 	return new PageRequestEvent($args);
 }
 
+/**
+ * @ignore
+ */
 function _get_user() {
 	global $config, $database;
 	$user = null;

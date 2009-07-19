@@ -1,12 +1,17 @@
 <?php
+/**
+ * @package SCore
+ */
+
 require_once "compat.inc.php";
 $ADODB_CACHE_DIR=sys_get_temp_dir();
 require_once "lib/adodb/adodb.inc.php";
 require_once "lib/adodb/adodb-exceptions.inc.php";
 
-/* Querylet {{{
- * A fragment of a query, used to build large search queries
+/**#@+
+ * @ignore
  */
+// Querylet {{{
 class Querylet {
 	var $sql;
 	var $variables;
@@ -197,17 +202,28 @@ class MemCache implements CacheEngine {
 	public function get_misses() {return $this->misses;}
 }
 // }}}
+/**#@-*/
 
-/*
+/**
  * A class for controlled database access
  */
 class Database {
+	/**
+	 * The ADODB database connection object, for anyone who wants direct access
+	 */
 	var $db;
-	var $extensions;
+
+	/**
+	 * Meta info about the database engine
+	 */
 	var $engine = null;
+
+	/**
+	 * The currently active cache engine
+	 */
 	var $cache = null;
 
-	/*
+	/**
 	 * Create a new database object using connection info
 	 * stored in config.php in the root shimmie folder
 	 */
@@ -263,6 +279,9 @@ class Database {
 		}
 	}
 
+	/**
+	 * Execute an SQL query and return an ADODB resultset
+	 */
 	public function execute($query, $args=array()) {
 		$result = $this->db->Execute($query, $args);
 		if($result === False) {
@@ -274,6 +293,9 @@ class Database {
 		return $result;
 	}
 
+	/**
+	 * Execute an SQL query and return a 2D array
+	 */
 	public function get_all($query, $args=array()) {
 		$result = $this->db->GetAll($query, $args);
 		if($result === False) {
@@ -285,6 +307,9 @@ class Database {
 		return $result;
 	}
 
+	/**
+	 * Execute an SQL query and return a single row
+	 */
 	public function get_row($query, $args=array()) {
 		$result = $this->db->GetRow($query, $args);
 		if($result === False) {
@@ -301,6 +326,9 @@ class Database {
 		}
 	}
 
+	/**
+	 * Create a table from pseudo-SQL
+	 */
 	public function create_table($name, $data) {
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}

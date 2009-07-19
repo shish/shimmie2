@@ -1,15 +1,16 @@
 <?php
-/*
+/**
  * All the imageboard-specific bits of code should be in this file, everything
  * else in /core should be standard SCore bits.
+ *
+ * @package SCore
  */
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/*
+/**
  * An object representing an entry in the images table. As of 2.2, this no
  * longer necessarily represents an image per se, but could be a video,
  * sound file, or any other supported upload type.
@@ -23,8 +24,9 @@ class Image {
 	var $posted;
 	var $source;
 
-	/*
-	 * Constructors and other instance creators
+	/**
+	 * One will very rarely construct an image directly, more common
+	 * would be to use Image::by_id, Image::by_hash, etc
 	 */
 	public function Image($row=null) {
 		if(!is_null($row)) {
@@ -37,6 +39,11 @@ class Image {
 		}
 	}
 
+	/**
+	 * Find an image by ID
+	 *
+	 * @var Image
+	 */
 	public static function by_id($id) {
 		assert(is_numeric($id));
 		global $database;
@@ -45,6 +52,11 @@ class Image {
 		return ($row ? new Image($row) : null);
 	}
 
+	/**
+	 * Find an image by hash
+	 *
+	 * @var Image
+	 */
 	public static function by_hash($hash) {
 		assert(is_string($hash));
 		global $database;
@@ -53,6 +65,11 @@ class Image {
 		return ($row ? new Image($row) : null);
 	}
 
+	/**
+	 * Pick a random image out of a set
+	 *
+	 * @var Image
+	 */
 	public static function by_random($tags=array()) {
 		assert(is_array($tags));
 		$max = Image::count_images($tags);
@@ -62,6 +79,9 @@ class Image {
 		else return null;
 	}
 
+	/**
+	 * Search for an array of images
+	 */
 	public static function find_images($start, $limit, $tags=array()) {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
@@ -87,6 +107,10 @@ class Image {
 	/*
 	 * Image-related utility functions
 	 */
+	
+	/**
+	 * Count the number of image results for a given search
+	 */
 	public static function count_images($tags=array()) {
 		assert(is_array($tags));
 		global $database;
@@ -100,6 +124,9 @@ class Image {
 		}
 	}
 
+	/**
+	 * Count the number of pages for a given search
+	 */
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
 		global $config, $database;
@@ -110,6 +137,15 @@ class Image {
 
 	/*
 	 * Accessors & mutators
+	 */
+
+	/**
+	 * Find the next image in the sequence.
+	 *
+	 * Rather than simply $this_id + 1, one must take into account
+	 * deleted images and search queries
+	 *
+	 * @var Image
 	 */
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
@@ -138,14 +174,27 @@ class Image {
 		return ($row ? new Image($row) : null);
 	}
 
+	/**
+	 * The reverse of get_next
+	 *
+	 * @var Image
+	 */
 	public function get_prev($tags=array()) {
 		return $this->get_next($tags, false);
 	}
 
+	/**
+	 * Find the User who owns this Image
+	 *
+	 * @var User
+	 */
 	public function get_owner() {
 		return User::by_id($this->owner_id);
 	}
 
+	/**
+	 * Get this image's tags as an array
+	 */
 	public function get_tag_array() {
 		global $database;
 		$cached = $database->cache->get("image-{$this->id}-tags");
@@ -164,10 +213,18 @@ class Image {
 		return $this->tag_array;
 	}
 
+	/**
+	 * Get this image's tags as a string
+	 */
 	public function get_tag_list() {
 		return implode(' ', $this->get_tag_array());
 	}
 
+	/**
+	 * Get the URL for the full size image
+	 *
+	 * @var string
+	 */
 	public function get_image_link() {
 		global $config;
 		if(strlen($config->get_string('image_ilink')) > 0) {
@@ -181,11 +238,22 @@ class Image {
 		}
 	}
 
+	/**
+	 * Get a short link to the full size image
+	 *
+	 * @deprecated
+	 * @var string
+	 */
 	public function get_short_link() {
 		global $config;
 		return $this->parse_link_template($config->get_string('image_slink'));
 	}
 
+	/**
+	 * Get the URL for the thumbnail
+	 *
+	 * @var string
+	 */
 	public function get_thumb_link() {
 		global $config;
 		if(strlen($config->get_string('image_tlink')) > 0) {
@@ -199,11 +267,22 @@ class Image {
 		}
 	}
 
+	/**
+	 * Get the tooltip for this image, formatted according to the
+	 * configured template
+	 *
+	 * @var string
+	 */
 	public function get_tooltip() {
 		global $config;
 		return $this->parse_link_template($config->get_string('image_tip'), "html_escape");
 	}
 
+	/**
+	 * Figure out where the full size image is on disk
+	 *
+	 * @var string
+	 */
 	public function get_image_filename() {
 		$hash = $this->hash;
 		$ab = substr($hash, 0, 2);
@@ -211,34 +290,69 @@ class Image {
 		return "images/$ab/$hash";
 	}
 
+	/**
+	 * Figure out where the thumbnail is on disk
+	 *
+	 * @var string
+	 */
 	public function get_thumb_filename() {
 		$hash = $this->hash;
 		$ab = substr($hash, 0, 2);
 		return "thumbs/$ab/$hash";
 	}
 
+	/**
+	 * Get the original filename
+	 *
+	 * @var string
+	 */
 	public function get_filename() {
 		return $this->filename;
 	}
 
+	/**
+	 * Get the image's mime type
+	 *
+	 * FIXME: now we handle more than just images
+	 *
+	 * @var string
+	 */
 	public function get_mime_type() {
 		return "image/".($this->ext);
 	}
 
+	/**
+	 * Get the image's filename extension
+	 *
+	 * @var string
+	 */
 	public function get_ext() {
 		return $this->ext;
 	}
 
+	/**
+	 * Get the image's source URL
+	 *
+	 * @var string
+	 */
 	public function get_source() {
 		return $this->source;
 	}
 
+	/**
+	 * Set the image's source URL
+	 */
 	public function set_source($source) {
 		global $database;
 		if(empty($source)) $source = null;
 		$database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
 	}
 
+	/**
+	 * Delete all tags from this image.
+	 *
+	 * Normally in preparation to set them to a new set.
+	 */
 	public function delete_tags_from_image() {
 		global $database;
 		$database->execute(
@@ -247,6 +361,9 @@ class Image {
 		$database->execute("DELETE FROM image_tags WHERE image_id=?", array($this->id));
 	}
 
+	/**
+	 * Set the tags for this image
+	 */
 	public function set_tags($tags) {
 		global $database;
 		$tags = Tag::resolve_list($tags);
@@ -287,9 +404,8 @@ class Image {
 		$database->cache->delete("image-{$this->id}-tags");
 	}
 
-
-	/*
-	 * Other actions
+	/**
+	 * Delete this image from the database and disk
 	 */
 	public function delete() {
 		global $database;
@@ -301,6 +417,11 @@ class Image {
 		unlink($this->get_thumb_filename());
 	}
 
+	/**
+	 * ...?
+	 *
+	 * @var string
+	 */
 	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
 
@@ -649,7 +770,15 @@ class Image {
 	}
 }
 
+/**
+ * A class for organising the tag related functions.
+ *
+ * All the methods are static, one should never actually use a tag object.
+ */
 class Tag {
+	/**
+	 * Remove any excess fluff from a user-input tag
+	 */
 	public static function sanitise($tag) {
 		assert(is_string($tag));
 		$tag = preg_replace("/[\s?*]/", "", $tag);
@@ -658,15 +787,17 @@ class Tag {
 		return $tag;
 	}
 
+	/**
+	 * Turn any string or array into a valid tag array
+	 */
 	public static function explode($tags) {
+		assert(is_string($tags) || is_array($tags));
+	
 		if(is_string($tags)) {
 			$tags = explode(' ', $tags);
 		}
 		else if(is_array($tags)) {
 			// do nothing
-		}
-		else {
-			die("Tag::explode() only takes strings or arrays");
 		}
 
 		$tags = array_map("trim", $tags);
@@ -730,82 +861,13 @@ class Tag {
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* Debugging functions                                                       *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function get_debug_info() {
-	global $config, $_event_count;
-
-	if(function_exists('memory_get_usage')) {
-		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
-	}
-	else {
-		$i_mem = "???";
-	}
-	if(function_exists('getrusage')) {
-		$ru = getrusage();
-		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
-		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
-	}
-	else {
-		$i_utime = "???";
-		$i_stime = "???";
-	}
-	$i_files = count(get_included_files());
-	global $_execs;
-	global $database;
-	$hits = $database->cache->get_hits();
-	$miss = $database->cache->get_misses();
-	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
-	$debug .= "; Used $i_files files and $_execs queries";
-	$debug .= "; Sent $_event_count events";
-	$debug .= "; $hits cache hits and $miss misses";
-
-	return $debug;
-}
-
-// print_obj ($object, $title, $return)
-function print_obj($object,$title="Object Information", $return=false) {
-	global $user;
-	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) {
-		$pr = print_r($object,true);
-		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
-		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
-
-		if($return) {
-			return $pr;
-		} else {
-			global $page;
-			$page->add_block(new Block($title,$pr,"main",1000));
-			return true;
-		}
-	}
-}
-
-// preset tests.
-
-// Prints the contents of $event->args, even though they are clearly visible in
-// the URL bar.
-function print_url_args() {
-	global $event;
-	print_obj($event->args,"URL Arguments");
-}
-
-// Prints all the POST data.
-function print_POST() {
-	print_obj($_POST,"\$_POST");
-}
-
-// Prints GET, though this is also visible in the url ( url?var&var&var)
-function print_GET() {
-	print_obj($_GET,"\$_GET");
-}
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc functions                                                            *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * Move a file from PHP's temporary area into shimmie's image storage
+ * heirachy, or throw an exception trying
+ */
 function move_upload_to_archive($event) {
 	$hash = $event->hash;
 	$ha = substr($hash, 0, 2);
@@ -816,6 +878,10 @@ function move_upload_to_archive($event) {
 	return true;
 }
 
+/**
+ * Given a full size pair of dimentions, return a pair scaled down to fit
+ * into the configured thumbnail square, with ratio intact
+ */
 function get_thumbnail_size($orig_width, $orig_height) {
 	global $config;
 
