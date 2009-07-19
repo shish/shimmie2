@@ -20,7 +20,7 @@ class ResolutionLimit implements Extension {
 
 			if($min_w > 0 && $image->width < $min_w) throw new UploadException("Image too small");
 			if($min_h > 0 && $image->height < $min_h) throw new UploadException("Image too small");
-			if($max_w > 0 && $image->width > $min_w) throw new UploadExceptiono("Image too large");
+			if($max_w > 0 && $image->width > $min_w) throw new UploadException("Image too large");
 			if($max_h > 0 && $image->height > $min_h) throw new UploadException("Image too large");
 
 			if(count($ratios) > 0) {

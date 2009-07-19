@@ -77,7 +77,7 @@ EOD;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
 		if($hidable) $html .= "
-			<script>
+			<script><!--
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {
@@ -93,7 +93,7 @@ EOD;
 					$(\"#$i\").hide();
 				}
 			});
-			</script>
+			//--></script>
 		";
 		if(!is_null($h)) $html .= "
 			<div class='hrr' id='$i-toggle'>
