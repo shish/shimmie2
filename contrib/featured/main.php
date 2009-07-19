@@ -11,21 +11,16 @@
  *  which will be shown in the side bar of the post list.
  */
 
-class Featured implements Extension {
-	var $theme;
+class Featured extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_int('featured_id', 0);
+	}
 
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_int('featured_id', 0);
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("set_feature")) {
-			global $user;
+	public function onPageRequest($event) {
+		global $config, $page, $user;
+		if($event->page_matches("set_feature")) {
 			if($user->is_admin() && isset($_POST['image_id'])) {
-				global $config;
 				$id = int_escape($_POST['image_id']);
 				if($id > 0) {
 					$config->set_int("featured_id", $id);
@@ -34,32 +29,24 @@ class Featured implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof PostListBuildingEvent) {
-			global $config, $page;
-			$fid = $config->get_int("featured_id");
-			if($fid > 0) {
-				$image = Image::by_id($fid);
-				if(!is_null($image)) {
-					$this->theme->display_featured($page, $image);
-				}
-			}
-		}
-
-		/*
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = new SetupBlock("Featured Image");
-			$sb->add_int_option("featured_id", "Image ID: ");
-			$event->panel->add_block($sb);
-		}
-		*/
-
-		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($event->user->is_admin()) {
-				$event->add_part($this->theme->get_buttons_html($event->image->id));
+	public function onPostListBuilding($event) {
+		global $config, $page;
+		$fid = $config->get_int("featured_id");
+		if($fid > 0) {
+			$image = Image::by_id($fid);
+			if(!is_null($image)) {
+				$this->theme->display_featured($page, $image);
 			}
 		}
 	}
+
+	public function onImageAdminBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_part($this->theme->get_buttons_html($event->image->id));
+		}
+	}
 }
-add_event_listener(new Featured());
 ?>
