@@ -5,8 +5,8 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->get_page("setup");
 		$this->setField("_config_upload_min_height", "0");
 		$this->setField("_config_upload_min_width", "0");
-		$this->setField("_config_upload_max_height", "1000");
-		$this->setField("_config_upload_max_width", "1000");
+		$this->setField("_config_upload_max_height", "2000");
+		$this->setField("_config_upload_max_width", "2000");
 		$this->setField("_config_upload_ratios", "4:3 16:9");
 		$this->click("Save Settings");
 		$this->log_out();
@@ -14,6 +14,9 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assertResponse(302);
+		$this->assertNoText("Image too large");
+		$this->assertNoText("Image too small");
+		$this->assertNoText("ratio");
 		$this->log_out();
 
 		$this->log_in_as_admin();
@@ -26,8 +29,8 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->get_page("setup");
 		$this->setField("_config_upload_min_height", "900");
 		$this->setField("_config_upload_min_width", "900");
-		$this->setField("_config_upload_max_height", "1000");
-		$this->setField("_config_upload_max_width", "1000");
+		$this->setField("_config_upload_max_height", "-1");
+		$this->setField("_config_upload_max_width", "-1");
 		$this->setField("_config_upload_ratios", "4:3 16:9");
 		$this->click("Save Settings");
 		$this->log_out();
@@ -72,10 +75,10 @@ class ResLimitTest extends ShimmieWebTestCase {
 	function testResLimitRatio() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
-		$this->setField("_config_upload_min_height", "0");
-		$this->setField("_config_upload_min_width", "0");
-		$this->setField("_config_upload_max_height", "1000");
-		$this->setField("_config_upload_max_width", "1000");
+		$this->setField("_config_upload_min_height", "-1");
+		$this->setField("_config_upload_min_width", "-1");
+		$this->setField("_config_upload_max_height", "-1");
+		$this->setField("_config_upload_max_width", "-1");
 		$this->setField("_config_upload_ratios", "16:9");
 		$this->click("Save Settings");
 		$this->log_out();
