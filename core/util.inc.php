@@ -305,12 +305,12 @@ function format_text($string) {
 * Logging convenience                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-define("LOG_CRITICAL", 50);
-define("LOG_ERROR", 40);
-define("LOG_WARNING", 30);
-define("LOG_INFO", 20);
-define("LOG_DEBUG", 10);
-define("LOG_NOTSET", 0);
+if(!defined("LOG_CRITICAL")) define("LOG_CRITICAL", 50);
+if(!defined("LOG_ERROR"))    define("LOG_ERROR", 40);
+if(!defined("LOG_WARNING"))  define("LOG_WARNING", 30);
+if(!defined("LOG_INFO"))     define("LOG_INFO", 20);
+if(!defined("LOG_DEBUG"))    define("LOG_DEBUG", 10);
+if(!defined("LOG_NOTSET"))   define("LOG_NOTSET", 0);
 
 function log_msg($section, $priority, $message) {
 	send_event(new LogEvent($section, $priority, $message));
