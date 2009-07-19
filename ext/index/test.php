@@ -57,7 +57,7 @@ class IndexTest extends ShimmieWebTestCase {
 
 		# meta tag, one result
 		$this->get_page("post/list/hash=feb01bab5698a11dd87416724c7a89e3/1");
-		$this->assertTitle(new PatternExpectation("/^Image $image_id_2: /"));
+		$this->assertTitle(new PatternExpectation("/^Image $image_id_1: /"));
 		$this->assertNoText("No Images Found");
 
 		# multiple tags, many results
