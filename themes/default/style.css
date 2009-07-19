@@ -206,6 +206,13 @@ UL {
 	background: #FAA;
 }
 
+#nav .thumbblock {
+	float: none;
+	height: auto;
+}
+#nav .thumb {
+	margin-bottom: 0px;
+}
 .thumbblock {
 	width: 220px;
 	height: 220px;
