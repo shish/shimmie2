@@ -123,10 +123,7 @@ class GenericPage {
 			case "page":
 				header("Cache-control: no-cache");
 				usort($this->blocks, "blockcmp");
-				$data_href = get_base_href();
-				foreach(glob("lib/*.js") as $js) {
-					$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
-				}
+				$this->add_auto_headers();
 				$layout = new Layout();
 				$layout->display_page($page);
 				break;
@@ -143,6 +140,27 @@ class GenericPage {
 			default:
 				print "Invalid page mode";
 				break;
+		}
+	}
+
+	private function add_auto_headers() {
+		$data_href = get_base_href();
+		foreach(glob("lib/*.js") as $js) {
+			$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
+		}
+
+		$css_files = glob("ext/*/style.css");
+		if($css_files) {
+			foreach($css_files as $css_file) {
+				$this->add_header("<link rel='stylesheet' href='$data_href/$css_file' type='text/css'>");
+			}
+		}
+
+		$js_files = glob("ext/*/script.js");
+		if($js_files) {
+			foreach($js_files as $js_file) {
+				$this->add_header("<script src='$data_href/$js_file' type='text/javascript'></script>");
+			}
 		}
 	}
 }

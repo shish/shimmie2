@@ -15,13 +15,17 @@ define('USER_PASS', "test");
 define('ADMIN_NAME', "demo");
 define('ADMIN_PASS', "demo");
 
-class ShimmieWebTestCase extends WebTestCase {
+class SCoreWebTestCase extends WebTestCase {
 	protected function get_page($page) {
 		$url = "http://".$_SERVER["HTTP_HOST"].get_base_href().'/'.make_link($page);
 		$url = str_replace("/./", "/", $url);
 		$this->get($url);
-		$this->assertNoText(".php on line");
+		$this->assertNoText("Exception:");
+		$this->assertNoText("Error:");
+		$this->assertNoText("Warning:");
+		$this->assertNoText("Notice:");
 	}
+
 	protected function log_in_as_user() {
         $this->get_page('post/list');
 		$this->assertText("Login");
@@ -42,7 +46,9 @@ class ShimmieWebTestCase extends WebTestCase {
         $this->get_page('post/list');
 		$this->click('Log Out');
 	}
+}
 
+class ShimmieWebTestCase extends SCoreWebTestCase {
 	protected function post_image($filename, $tags) {
 		$image_id = -1;
 		$this->setMaximumRedirects(0);
