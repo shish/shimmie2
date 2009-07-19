@@ -28,7 +28,7 @@ class Ratings implements Extension {
 				$this->install();
 			}
 
-			$config->set_default_string("ext_rating_anon_privs", 'sq');
+			$config->set_default_string("ext_rating_anon_privs", 'squ');
 			$config->set_default_string("ext_rating_user_privs", 'squ');
 			$config->set_default_string("ext_rating_admin_privs", 'sqeu');
 		}

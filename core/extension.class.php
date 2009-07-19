@@ -55,6 +55,10 @@ abstract class FormatterExtension implements Extension {
 	abstract public function strip($text);
 }
 
+/*
+ * This too is a common class of extension with many methods in common,
+ * so we have a base class to extend from
+ */
 abstract class DataHandlerExtension implements Extension {
 	var $theme;
 

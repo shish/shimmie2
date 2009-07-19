@@ -24,7 +24,10 @@ class PMTheme extends Themelet {
 			if($pm["is_read"] == "N") $h_subject = "<b>$h_subject</b>";
 			$html .= "<tr class='$oe'><td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
-			<td><form action='$del_url'><input type='submit' value='Delete'></form></td></tr>";
+			<td><form action='$del_url'>
+				<input type='hidden' name='q' value='/pm/delete/{$pm["id"]}'>
+				<input type='submit' value='Delete'>
+			</form></td></tr>";
 		}
 		$html .= "
 				</tbody>
