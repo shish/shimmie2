@@ -78,7 +78,7 @@ class ReportImageTheme extends Themelet {
 		$html = "
 			<form action='".make_link("image_report/add")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image'>
-				<input type='field' name='reason' value='Please enter a reason' onclick='this.value=\"\";'>
+				<input type='text' name='reason' value='Please enter a reason' onclick='this.value=\"\";'>
 				<input type='submit' value='Report'>
 			</form>
 		";

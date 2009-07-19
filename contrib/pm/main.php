@@ -65,6 +65,7 @@ class PM extends SimpleExtension {
 	}
 
 	public function onPageRequest($event) {
+		global $database, $page, $user;
 		if($event->page_matches("pm")) {
 			if(!$user->is_anonymous()) {
 				switch($event->get_arg(0)) {
@@ -93,7 +94,7 @@ class PM extends SimpleExtension {
 							$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
 							log_info("pm", "Deleted PM #$pm_id");
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("user"));
+							$page->set_redirect(make_link($_SERVER["REFERER"]));
 						}
 						else {
 							// permission denied
@@ -108,12 +109,16 @@ class PM extends SimpleExtension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link($_SERVER["REFERER"]));
 						break;
+					default:
+						$this->theme->display_error($page, "Invalid action", "That's not something you can do with a PM");
+						break;
 				}
 			}
 		}
 	}
 
 	public function onSendPM($event) {
+		global $database;
 		$database->execute("
 				INSERT INTO private_message(
 					from_id, from_ip, to_id,
@@ -122,7 +127,7 @@ class PM extends SimpleExtension {
 			array($event->from_id, $event->from_ip,
 			$event->to_id, $event->subject, $event->message)
 		);
-		log_info("pm", "Sent PM to User #$to_id");
+		log_info("pm", "Sent PM to User #{$event->to_id}");
 	}
 
 

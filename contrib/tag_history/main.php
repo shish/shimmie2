@@ -127,7 +127,7 @@ class Tag_History implements Extension {
 		$stored_tags = $result->fields['tags'];
 		
 		// all should be ok so we can revert by firing the SetUserTags event.
-		send_event(new TagSetEvent($stored_image_id, $stored_tags));
+		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");

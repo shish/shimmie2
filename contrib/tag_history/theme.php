@@ -2,16 +2,18 @@
 
 class Tag_HistoryTheme extends Themelet {
 	public function display_history_page(Page $page, $image_id, $history) {
+		global $user;
 		$start_string = "
 			<div style='text-align: left'>
 				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
 					<ul style='list-style-type:none;'>
 		";
 
-		global $user;
 		$history_list = "";
+		$n = 0;
 		foreach($history as $fields)
 		{
+			$n++;
 			$current_id = $fields['id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
@@ -19,7 +21,8 @@ class Tag_HistoryTheme extends Themelet {
 			if($user->is_admin()) {
 				$setter .= " / " . $fields['user_ip'];
 			}
-			$history_list .= "<li><input type='radio' name='revert' value='$current_id'>$current_tags (Set by $setter)</li>\n";
+			$selected = ($n == 2) ? " checked" : "";
+			$history_list .= "<li><input type='radio' name='revert' value='$current_id'$selected>$current_tags (Set by $setter)</li>\n";
 		}
 
 		$end_string = "
