@@ -13,6 +13,8 @@ class Tag_History implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof InitExtEvent)) {
+			$config->set_default_int("history_limit", -1);
+
 			// shimmie is being installed so call install to create the table.
 			if($config->get_int("ext_tag_history_version") < 3) {
 				$this->install();
@@ -53,6 +55,7 @@ class Tag_History implements Extension {
 			$sb->add_label("Limit to ");
 			$sb->add_int_option("history_limit");
 			$sb->add_label(" entires per image");
+			$sb->add_label("<br>(-1 for unlimited)");
 			$event->panel->add_block($sb);
 		}
 		if(($event instanceof TagSetEvent)) {
@@ -191,8 +194,9 @@ class Tag_History implements Extension {
 		if(is_array($tags)) $tags = implode(' ', $tags);
 		
 		// add a history entry		
-		$allowed = $config->get_int("history_limit",10);
-		if($allowed<=0) return;
+		$allowed = $config->get_int("history_limit");
+		if($allowed == 0) return;
+
 		$row = $database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
@@ -200,6 +204,7 @@ class Tag_History implements Extension {
 		$entries = $database->db->GetOne("SELECT COUNT(*) FROM `tag_histories` WHERE image_id = ?", array($image_id));
 		
 		// if needed remove oldest one
+		if($allowed == -1) return;
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
