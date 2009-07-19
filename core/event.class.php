@@ -1,22 +1,27 @@
 <?php
-/*
- * Event:
- * generic parent class
+/**
+ * @package SCore
+ */
+
+/**
+ * Generic parent class for all events.
+ *
+ * An event is anything that can be passed around via send_event($blah)
  */
 abstract class Event {
 	public function __construct() {}
 }
 
 
-/*
- * InitExtEvent:
+/**
  * A wake-up call for extensions
  */
 class InitExtEvent extends Event {}
 
 
-/*
- * PageRequestEvent:
+/**
+ * A signal that a page has been requested.
+ *
  * User requests /view/42 -> an event is generated with $args = array("view",
  * "42"); when an event handler asks $event->page_matches("view"), it returns
  * true and ignores the matched part, such that $event->count_args() = 1 and
@@ -25,7 +30,6 @@ class InitExtEvent extends Event {}
 class PageRequestEvent extends Event {
 	var $args;
 	var $arg_count;
-
 	var $part_count;
 
 	public function __construct($args) {
@@ -33,6 +37,11 @@ class PageRequestEvent extends Event {
 		$this->arg_count = count($args);
 	}
 
+	/**
+	 * Test if the requested path matches a given pattern.
+	 *
+	 * If it matches, store the remaining path elements in $args
+	 */
 	public function page_matches($name) {
 		$parts = explode("/", $name);
 		$this->part_count = count($parts);
@@ -66,18 +75,27 @@ class PageRequestEvent extends Event {
 }
 
 
-/*
- * TextFormattingEvent:
- *   $original  - for reference
- *   $formatted - with formatting applied
- *   $stripped  - with formatting removed
+/**
+ * A signal that some text needs formatting, the event carries
+ * both the text and the result
  */
 class TextFormattingEvent extends Event {
+	/**
+	 * For reference
+	 */
 	var $original;
+
+	/**
+	 * with formatting applied
+	 */
 	var $formatted;
+
+	/**
+	 * with formatting removed
+	 */
 	var $stripped;
 
-	public function TextFormattingEvent($text) {
+	public function __construct($text) {
 		$h_text = html_escape(trim($text));
 		$this->original  = $h_text;
 		$this->formatted = $h_text;
@@ -86,16 +104,36 @@ class TextFormattingEvent extends Event {
 }
 
 
-/*
- * LogEvent
- *  $section  = a category, normally the extension name
- *  $priority = see python
- *  $message  = free text
+/**
+ * A signal that something needs logging
  */
 class LogEvent extends Event {
+	/**
+	 * a category, normally the extension name
+	 *
+	 * @var string
+	 */
 	var $section;
+
+	/**
+	 * See python...
+	 *
+	 * @var int
+	 */
 	var $priority = 0;
+
+	/**
+	 * Free text to be logged
+	 *
+	 * @var text
+	 */
 	var $message;
+
+	/**
+	 * The time that the event was created
+	 *
+	 * @var int
+	 */
 	var $time;
 
 	public function __construct($section, $priority, $message) {

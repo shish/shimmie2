@@ -1,10 +1,19 @@
 <?php
+/**
+ * @package SCore
+ */
+
+/**
+ * @ignore
+ */
 function _new_user($row) {
 	return new User($row);
 }
 
-/*
+/**
  * An object representing a row in the "users" table.
+ *
+ * The currently logged in user will always be accessable via the global variable $user
  */
 class User {
 	var $config;
@@ -25,6 +34,10 @@ class User {
 	*    $user = User::by_name("bob");                             *
 	* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+	/**
+	 * One will very rarely construct a user directly, more common
+	 * would be to use User::by_id, User::by_session, etc
+	 */
 	public function User($row) {
 		$this->id = int_escape($row['id']);
 		$this->name = $row['name'];
@@ -78,12 +91,21 @@ class User {
 	 * useful user object functions start here
 	 */
 
-
+	/**
+	 * Test if this user is anonymous (not logged in)
+	 *
+	 * @var bool
+	 */
 	public function is_anonymous() {
 		global $config;
 		return ($this->id == $config->get_int('anon_id'));
 	}
 
+	/**
+	 * Test if this user is an administrator
+	 *
+	 * @var bool
+	 */
 	public function is_admin() {
 		return $this->admin;
 	}

@@ -1,12 +1,16 @@
 <?php
-/*
+/**
+ * @package SCore
+ */
+
+/**
  * A generic extension class, for subclassing
  */
 interface Extension {
 	public function receive_event(Event $event);
 }
 
-/*
+/**
  * send_event(BlahEvent()) -> onBlah($event)
  *
  * Also loads the theme object into $this->theme if available
@@ -40,7 +44,7 @@ abstract class SimpleExtension implements Extension {
 	}
 }
 
-/*
+/**
  * Several extensions have this in common, make a common API
  */
 abstract class FormatterExtension implements Extension {
@@ -55,7 +59,7 @@ abstract class FormatterExtension implements Extension {
 	abstract public function strip($text);
 }
 
-/*
+/**
  * This too is a common class of extension with many methods in common,
  * so we have a base class to extend from
  */

@@ -1,0 +1,43 @@
+
+The Highest Level
+~~~~~~~~~~~~~~~~~
+index.php takes care of loading the globals:
+
+$config -- some variety of Config class
+$database -- a class used to get raw SQL access
+$page -- a GenericPage object, a data structure which holds all the page parts
+$user -- the currently logged in User
+
+then it sends an InitExtEvent and PageRequestEvent, these can each trigger
+more events of their own.
+
+Once the chain of events comes to an end, the $page object is passed
+to the theme's layout.class.php to be turned into HTML
+
+
+Events and Extensions
+~~~~~~~~~~~~~~~~~~~~~
+An event is a little blob of data saying "something happened", possibly
+"something happened, here's the specific data". Events are sent with the
+send_event() function.
+
+An extension is something which is capable of reacting to events. They
+register themselves using the add_event_listener() command. (Although for
+subclasses of SimpleExtension, registration is handled automatically).
+
+
+Themes
+~~~~~~
+Each extension has a theme with a specific name -- the extension Cake which
+is stored in ext/cake/main.php will have a theme called CakeTheme stored in
+ext/cake/theme.php. If you want to customise it, create a class in the file
+themes/mytheme/cake.theme.php called CustomCakeTheme which extends CakeTheme
+and overrides some of its methods.
+
+Generally an extension should only deal with processing data; whenever it
+wants to display something, it should pass the $page data structure along
+with the data to be displayed to the theme object, and the theme will add
+the data into the page.
+
+
+
