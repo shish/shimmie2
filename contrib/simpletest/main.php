@@ -20,6 +20,7 @@ class ShimmieWebTestCase extends WebTestCase {
 		$url = "http://".$_SERVER["HTTP_HOST"].get_base_href().'/'.make_link($page);
 		$url = str_replace("/./", "/", $url);
 		$this->get($url);
+		$this->assertNoText(".php on line");
 	}
 	protected function log_in_as_user() {
         $this->get_page('post/list');

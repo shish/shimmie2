@@ -36,6 +36,7 @@ class BulkAdd extends SimpleExtension {
 		if(file_exists($tmpname)) {
 			global $user;
 			$pathinfo = pathinfo($filename);
+			if(!array_key_exists('extension', $pathinfo)) return;
 			$metadata['filename'] = $pathinfo['basename'];
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
