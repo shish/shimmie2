@@ -29,7 +29,8 @@ class Ratings implements Extension {
 			}
 
 			$config->set_default_string("ext_rating_anon_privs", 'sq');
-			$config->set_default_string("ext_rating_user_privs", 'sq');
+			$config->set_default_string("ext_rating_user_privs", 'squ');
+			$config->set_default_string("ext_rating_admin_privs", 'sqeu');
 		}
 
 		if($event instanceof RatingSetEvent) {
@@ -51,12 +52,15 @@ class Ratings implements Extension {
 		if($event instanceof SetupBuildingEvent) {
 			$privs = array();
 			$privs['Safe Only'] = 's';
+			$privs['Safe and Unknown'] = 'su';
 			$privs['Safe and Questionable'] = 'sq';
+			$privs['Safe, Questionable, Unknown'] = 'squ';
 			$privs['All'] = 'sqeu';
 
 			$sb = new SetupBlock("Image Ratings");
 			$sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
-			$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Logged in: ");
+			$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Users: ");
+			$sb->add_choice_option("ext_rating_admin_privs", $privs, "<br>Admins: ");
 			$event->panel->add_block($sb);
 		}
 
@@ -69,6 +73,9 @@ class Ratings implements Extension {
 			if(is_null($event->term) && $this->no_rating_query($event->context)) {
 				if($user->is_anonymous()) {
 					$sqes = $config->get_string("ext_rating_anon_privs");
+				}
+				else if($user->is_admin()) {
+					$sqes = $config->get_string("ext_rating_admin_privs");
 				}
 				else {
 					$sqes = $config->get_string("ext_rating_user_privs");
