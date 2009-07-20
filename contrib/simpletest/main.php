@@ -19,11 +19,12 @@ class SCoreWebTestCase extends WebTestCase {
 	protected function get_page($page) {
 		$url = "http://".$_SERVER["HTTP_HOST"].get_base_href().'/'.make_link($page);
 		$url = str_replace("/./", "/", $url);
-		$this->get($url);
+		$raw = $this->get($url);
 		$this->assertNoText("Exception:");
 		$this->assertNoText("Error:");
 		$this->assertNoText("Warning:");
 		$this->assertNoText("Notice:");
+		return $raw;
 	}
 
 	protected function log_in_as_user() {
