@@ -26,6 +26,9 @@ class SVGHandlerTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		unlink("test.svg");
+
+		# FIXME: test that the thumb works
+		# FIXME: test that it gets displayed properly
 	}
 }
 ?>

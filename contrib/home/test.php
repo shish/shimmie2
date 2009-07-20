@@ -4,6 +4,8 @@ class HomeTest extends ShimmieWebTestCase {
         $this->get_page('home');
         $this->assertTitle('Shimmie');
         $this->assertText('Shimmie');
+
+		# FIXME: test search box
     }
 }
 ?>

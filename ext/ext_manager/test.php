@@ -16,6 +16,8 @@ class ExtManagerTest extends ShimmieWebTestCase {
 		$this->assertTitle("Extensions");
 		$this->assertText("SimpleTest integration");
 		$this->log_out();
+
+		# FIXME: test that some extensions can be added and removed? :S
 	}
 }
 ?>

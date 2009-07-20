@@ -9,6 +9,9 @@ class PixelHandlerTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+
+		# FIXME: test that the thumb works
+		# FIXME: test that it gets displayed properly
 	}
 }
 ?>

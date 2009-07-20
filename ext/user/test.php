@@ -2,7 +2,7 @@
 class UserPageTest extends ShimmieWebTestCase {
 	function testUserPage() {
 		$this->get_page('user');
-		$this->assertTitle("Anonymous's Page");
+		$this->assertTitle("Not Logged In");
 		$this->assertNoText("Options");
 		$this->assertNoText("More Options");
 
@@ -25,6 +25,10 @@ class UserPageTest extends ShimmieWebTestCase {
 		$this->assertText("Options");
 		$this->assertText("More Options");
 		$this->log_out();
+
+		# FIXME: test user creation
+		# FIXME: test adminifying
+		# FIXME: test password reset
 	}
 }
 ?>

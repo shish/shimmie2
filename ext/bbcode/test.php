@@ -1,4 +1,5 @@
 <?php
+# FIXME: web test
 class BBCodeTest extends ShimmieWebTestCase {}
 
 if(!defined(VERSION)) return;

@@ -19,6 +19,8 @@ class IPBanTest extends ShimmieWebTestCase {
 		$this->assertNoText("42.42.42.42");
 
 		$this->log_out();
+
+		# FIXME: test that the IP is actually banned
 	}
 }
 ?>

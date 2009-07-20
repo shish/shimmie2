@@ -5,6 +5,8 @@ class WikiTest extends ShimmieWebTestCase {
 		$this->get_page("wiki");
 		$this->assertTitle("Index");
 		$this->log_out();
+
+		# FIXME: needs a ton of tests...
 	}
 }
 ?>

@@ -79,11 +79,11 @@ EOD;
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
-			<script>
+			<script><!--
 			$(document).ready(function() {
 				$(\"#search_input\").DefaultValue(\"Search\");
 			});
-			</script>
+			//--></script>
 			<p><form action='$h_search_link' method='GET'>
 				<input id='search_input' name='search' type='text'
 						value='$h_search_string' autocomplete='off' />
