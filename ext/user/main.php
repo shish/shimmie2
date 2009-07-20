@@ -122,7 +122,11 @@ class UserPage extends SimpleExtension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
 			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
-			if(!is_null($display_user)) {
+			if($event->count_args() == 0 && $user->is_anonymous()) {
+				$this->theme->display_error($page, "Not Logged In",
+					"You aren't logged in. First do that, then you can see your stats.");
+			}
+			else if(!is_null($display_user)) {
 				send_event(new UserPageBuildingEvent($display_user));
 			}
 			else {
