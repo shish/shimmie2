@@ -7,7 +7,8 @@ class LinkImageTest extends ShimmieWebTestCase {
 		# look in the "plain text link to post" box, follow the link
 		# in there, see if it takes us to the right page
 		$raw = $this->get_page("post/view/$image_id");
-		$matches = preg_match("/name='text_post-link'\s+value='([^']+)'/", $raw);
+		$matches = array();
+		preg_match("#value='(http://.*(/|%2F)post(/|%2F)view(/|%2F)[0-9]+)'#", $raw, $matches);
 		$this->assertTrue(count($matches) > 0);
 		$this->get($matches[1]);
 		$this->assertTitle("Image $image_id: pie");
