@@ -39,13 +39,14 @@ class ET implements Extension {
 		$info = array();
 		$info['site_title'] = $config->get_string("title");
 		$info['site_theme'] = $config->get_string("theme");
-		$info['site_genre'] = "[please write something here]";
-		$info['site_url']   = isset($_SERVER['SCRIPT_URI']) ? dirname($_SERVER['SCRIPT_URI']) : "???";
+		$info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
 
 		$info['sys_shimmie'] = VERSION;
 		$info['sys_schema']  = $config->get_string("db_version");
 		$info['sys_php']     = phpversion();
 		$info['sys_os']      = php_uname();
+		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
+		                       to_shorthand_int(disk_total_space("./"));
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
 		include "config.php"; // more magical hax
 		$proto = preg_replace("#(.*)://.*#", "$1", $database_dsn);
