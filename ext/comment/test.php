@@ -46,6 +46,8 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+
+		# FIXME: test deleting one comment at a time
 	}
 }
 ?>

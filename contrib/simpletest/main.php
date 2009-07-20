@@ -27,7 +27,7 @@ class SCoreWebTestCase extends WebTestCase {
 	}
 
 	protected function log_in_as_user() {
-        $this->get_page('post/list');
+        $this->get_page('user_admin/login');
 		$this->assertText("Login");
 		$this->setField('user', USER_NAME);
 		$this->setField('pass', USER_PASS);
@@ -35,7 +35,7 @@ class SCoreWebTestCase extends WebTestCase {
 	}
 
 	protected function log_in_as_admin() {
-        $this->get_page('post/list');
+        $this->get_page('user_admin/login');
 		$this->assertText("Login");
 		$this->setField('user', ADMIN_NAME);
 		$this->setField('pass', ADMIN_PASS);
@@ -96,6 +96,8 @@ class SimpleSCoreTest extends SimpleExtension {
 	public function onPageRequest($event) {
 		global $page;
 		if($event->page_matches("test")) {
+			set_time_limit(0);
+
 			$page->set_title("Test Results");
 			$page->set_heading("Test Results");
 			$page->add_block(new NavBlock());

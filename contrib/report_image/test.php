@@ -18,6 +18,9 @@ class ReportImageTest extends ShimmieWebTestCase {
 
 		$this->delete_image($image_id);
 		$this->log_out();
+
+		# FIXME: test delete image from report screen
+		# FIXME: test that >>123 works
 	}
 }
 ?>

@@ -18,6 +18,8 @@ class FeaturedTest extends ShimmieWebTestCase {
 		# after deletion, there should be no feature
         $this->get_page("post/list");
 		$this->assertNoText("Featured Image");
+
+		# FIXME: test changing from one feature to another
 	}
 }
 ?>

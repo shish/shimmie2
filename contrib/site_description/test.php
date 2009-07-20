@@ -5,7 +5,7 @@ class SiteDescriptionTest extends ShimmieWebTestCase {
 		$this->get_page('setup');
 		$this->assertTitle("Shimmie Setup");
 		$this->setField("_config_site_description", "A Shimmie testbed");
-		$this->click("Save Settings")
+		$this->click("Save Settings");
 
 		$raw_headers = $this->getBrowser()->getHeaders();
 		$header = '<meta name="description" content="A Shimmie testbed">';

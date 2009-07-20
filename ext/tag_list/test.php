@@ -12,6 +12,8 @@ class TagListTest extends ShimmieWebTestCase {
 
 		$this->get_page('tags/categories');
 		$this->assertTitle('Tag List');
+
+		# FIXME: test that these show the right stuff
 	}
 }
 ?>

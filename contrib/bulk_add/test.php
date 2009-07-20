@@ -8,6 +8,8 @@ class BulkAddTest extends ShimmieWebTestCase {
 		$this->setField('dir', "contrib/simpletest");
 		$this->click("Add");
 
+		# FIXME: test that the output here makes sense, no "adding foo.php ... ok"
+
 		$this->get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");
 		$this->assertTitle(new PatternExpectation("/^Image \d+: data/"));
 		$this->click("Delete");

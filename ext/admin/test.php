@@ -15,6 +15,8 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->get_page('admin');
 		$this->assertTitle("Admin Tools");
 		$this->log_out();
+
+		# FIXME: make sure the admin tools actually work
 	}
 }
 ?>

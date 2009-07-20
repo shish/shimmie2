@@ -8,11 +8,16 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->setField("tag_edit__tags", "new");
 		$this->click("Set");
 		$this->assertTitle("Image $image_id: new");
+		$this->setField("tag_edit__tags", "");
+		$this->click("Set");
+		$this->assertTitle("Image $image_id: tagme");
 		$this->log_out();
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+
+		# FIXME: test mass tag editor
 	}
 }
 ?>
