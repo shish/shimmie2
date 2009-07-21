@@ -14,7 +14,9 @@ abstract class Event {
 
 
 /**
- * A wake-up call for extensions
+ * A wake-up call for extensions. Upon recieving an InitExtEvent an extension
+ * should check that it's database tables are there and install them if not,
+ * and set any defaults with Config::set_default_int() and such.
  */
 class InitExtEvent extends Event {}
 

@@ -6,6 +6,21 @@
  * @package SCore
  */
 
+/**
+ * \page search Shimmie2: Searching
+ * 
+ * The current search system is built of several search item -> image ID list
+ * translators, eg:
+ * 
+ * \li the item "fred" will search the image_tags table to find image IDs with the fred tag
+ * \li the item "size=640x480" will search the images table to find image IDs of 640x480 images
+ * 
+ * So the search "fred size=640x480" will calculate two lists and take the
+ * intersection. (There are some optimisations in there making it more
+ * complicated behind the scenes, but as long as you can turn a single word
+ * into a list of image IDs, making a search plugin should be simple)
+ */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
