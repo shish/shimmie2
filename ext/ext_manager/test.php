@@ -1,5 +1,5 @@
 <?php
-class ExtManagerTest extends ShimmieWebTestCase {
+class ExtManagerTest extends SCoreWebTestCase {
 	function testAuth() {
         $this->get_page('ext_manager');
 		$this->assertResponse(403);

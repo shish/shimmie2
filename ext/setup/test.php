@@ -1,5 +1,5 @@
 <?php
-class SetupTest extends ShimmieWebTestCase {
+class SetupTest extends SCoreWebTestCase {
 	function testAuth() {
         $this->get_page('setup');
 		$this->assertResponse(403);

@@ -1,5 +1,5 @@
 <?php
-class IPBanTest extends ShimmieWebTestCase {
+class IPBanTest extends SCoreWebTestCase {
 	function testIPBan() {
         $this->get_page('ip_ban/list');
 		$this->assertResponse(403);

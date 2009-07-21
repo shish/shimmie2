@@ -1,7 +1,7 @@
 <?php
 
 class DowntimeTheme Extends Themelet {
-	/*
+	/**
 	 * Show the admin that downtime mode is enabled
 	 */
 	public function display_notification(Page $page) {
@@ -9,7 +9,7 @@ class DowntimeTheme Extends Themelet {
 			"<span style='font-size: 1.5em'><b>DOWNTIME MODE IS ON!</b></span>", "left", 0));
 	}
 
-	/*
+	/**
 	 * Display $message and exit
 	 */
 	public function display_message($message) {

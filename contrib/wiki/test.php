@@ -1,5 +1,5 @@
 <?php
-class WikiTest extends ShimmieWebTestCase {
+class WikiTest extends SCoreWebTestCase {
 	function testWiki() {
 		$this->log_in_as_admin();
 		$this->get_page("wiki");

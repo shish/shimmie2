@@ -1,16 +1,44 @@
 <?php
 /**
  * \mainpage Shimmie2 / SCore Documentation
+ *
+ * SCore is a framework designed for writing flexible, extendable applications.
+ * Whereas most PHP apps are built monolithicly, score's event-based nature
+ * allows parts to be mixed and matched. For instance, the most famous
+ * collection of score extensions is the Shimmie image board, which includes
+ * user management, a wiki, a private messaging system, etc. But one could
+ * easily remove the image board bits and simply have a wiki with users and
+ * PMs; or one could replace it with a blog module; or one could have a blog
+ * which links to images on an image board, with no wiki or messaging, and so
+ * on and so on...
  * 
+ * To learn about the innards of SCore, start with the \ref overview.
+ *
+ *
+ * \page overview High Level Overview
+ *
+ * Dijkstra will kill me for personifying my architecture, but I can't think
+ * of a better way without going into all the little details.
+ *
  * There are a bunch of Extension subclasses, they talk to eachother by sending
  * and recieving Event subclasses. The topic of conversation is decided by the
  * initial PageRequestEvent, and each extension puts its notes into the shared
  * Page data store. Once the conversation is over, the Page is passed to the
  * current theme's Layout class which will tidy up the data and present it to
  * the user.
- * 
  *
- * \page globals Globals
+ * To learn more about the architecture:
+ *
+ * \li \ref eande
+ * \li \ref themes
+ *
+ * To learn more about practical development:
+ *
+ * \li \ref scglobals
+ * \li \ref unittests
+ * \li \ref hello
+ *
+ * \page scglobals SCore Globals
  * 
  * There are four global variables which are pretty essential to most extensions:
  * 
@@ -18,6 +46,8 @@
  * \li $database -- a Database object used to get raw SQL access
  * \li $page -- a Page to holds all the loose bits of extension output
  * \li $user -- the currently logged in User
+ *
+ * Each of these can be imported at the start of a function with eg "global $page, $user;"
  */
 
 // set up and purify the environment
@@ -52,7 +82,7 @@ try {
 	// load the theme parts
 	$_theme = $config->get_string("theme", "default");
 	if(!file_exists("themes/$_theme")) $_theme = "default";
-	require_once "themes/$_theme/page.class.php";
+	if(file_exists("themes/$_theme/page.class.php")) require_once "themes/$_theme/page.class.php";
 	require_once "themes/$_theme/layout.class.php";
 	require_once "themes/$_theme/themelet.class.php";
 
@@ -84,7 +114,7 @@ try {
 
 
 	// start the page generation waterfall
-	$page = new Page();
+	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 	$user = _get_user($config, $database);
 	send_event(new InitExtEvent());
 	send_event(_get_page_request());

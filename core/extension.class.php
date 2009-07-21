@@ -1,6 +1,6 @@
 <?php
 /**
- * \page events Events and Extensions
+ * \page eande Events and Extensions
  * 
  * An event is a little blob of data saying "something happened", possibly
  * "something happened, here's the specific data". Events are sent with the
@@ -20,6 +20,46 @@
  * SimpleExtension subclasses are slightly different -- they are registered
  * automatically, and events are sent to a named method, eg PageRequestEvent
  * will be sent to onPageRequest()
+ *
+ *
+ * \page hello The Hello World Extension
+ *
+ * \code
+ * // ext/hello/main.php
+ * public class Hello extends SimpleExtension {
+ *     public void onPageRequest(PageRequestEvent $event) {
+ *         global $page, $user;
+ *         $this->theme->display_hello($page, $user);
+ *     }
+ * }
+ *
+ * // ext/hello/theme.php
+ * public class HelloTheme extends Themelet {
+ *     public void display_hello(Page $page, User $user) {
+ *         $page->add_block(new Block("Hello!", "Hello there ".html_escape($user->name));
+ *     }
+ * }
+ *
+ * // ext/hello/test.php
+ * public class HelloTest extends ShimmieWebTestCase {
+ *     public void testHello() {
+ *         $this->get_page("post/list");
+ *         $this->assertText("Hello there");
+ *     }
+ * }
+ *
+ * // themes/mytheme/hello.theme.php
+ * public class CustomHelloTheme extends HelloTheme {
+ *     public function display_hello(Page $page, User $user) {
+ *         $h_user = html_escape($user->name);
+ *         $page->add_block(new Block(
+ *             "Hello!",
+ *             "Hello there $h_user, look at my snazzy custom theme!"
+ *         );
+ *     }
+ * }
+ * \endcode
+ *
  */
 
 /**
@@ -38,7 +78,7 @@ interface Extension {
  * priority, so no need for register_extension(new Foo())
  *
  * Hopefully this removes as much copy & paste code from the extension
- * files as possible \o/
+ * files as possible~
  *
  * The original concept came from Artanis's SimpleExtension extension
  * --> http://github.com/Artanis/simple-extension/tree/master

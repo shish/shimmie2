@@ -2,8 +2,6 @@
 /**
  * All the imageboard-specific bits of code should be in this file, everything
  * else in /core should be standard SCore bits.
- *
- * @package SCore
  */
 
 /**
@@ -57,7 +55,7 @@ class Image {
 	/**
 	 * Find an image by ID
 	 *
-	 * @var Image
+	 * @retval Image
 	 */
 	public static function by_id($id) {
 		assert(is_numeric($id));
@@ -70,7 +68,7 @@ class Image {
 	/**
 	 * Find an image by hash
 	 *
-	 * @var Image
+	 * @retval Image
 	 */
 	public static function by_hash($hash) {
 		assert(is_string($hash));
@@ -83,7 +81,7 @@ class Image {
 	/**
 	 * Pick a random image out of a set
 	 *
-	 * @var Image
+	 * @retval Image
 	 */
 	public static function by_random($tags=array()) {
 		assert(is_array($tags));
@@ -160,7 +158,7 @@ class Image {
 	 * Rather than simply $this_id + 1, one must take into account
 	 * deleted images and search queries
 	 *
-	 * @var Image
+	 * @retval Image
 	 */
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
@@ -192,7 +190,7 @@ class Image {
 	/**
 	 * The reverse of get_next
 	 *
-	 * @var Image
+	 * @retval Image
 	 */
 	public function get_prev($tags=array()) {
 		return $this->get_next($tags, false);
@@ -201,7 +199,7 @@ class Image {
 	/**
 	 * Find the User who owns this Image
 	 *
-	 * @var User
+	 * @retval User
 	 */
 	public function get_owner() {
 		return User::by_id($this->owner_id);
@@ -238,7 +236,7 @@ class Image {
 	/**
 	 * Get the URL for the full size image
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_image_link() {
 		global $config;
@@ -257,7 +255,7 @@ class Image {
 	 * Get a short link to the full size image
 	 *
 	 * @deprecated
-	 * @var string
+	 * @retval string
 	 */
 	public function get_short_link() {
 		global $config;
@@ -267,7 +265,7 @@ class Image {
 	/**
 	 * Get the URL for the thumbnail
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_thumb_link() {
 		global $config;
@@ -286,7 +284,7 @@ class Image {
 	 * Get the tooltip for this image, formatted according to the
 	 * configured template
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_tooltip() {
 		global $config;
@@ -296,7 +294,7 @@ class Image {
 	/**
 	 * Figure out where the full size image is on disk
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_image_filename() {
 		$hash = $this->hash;
@@ -308,7 +306,7 @@ class Image {
 	/**
 	 * Figure out where the thumbnail is on disk
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_thumb_filename() {
 		$hash = $this->hash;
@@ -319,7 +317,7 @@ class Image {
 	/**
 	 * Get the original filename
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_filename() {
 		return $this->filename;
@@ -330,7 +328,7 @@ class Image {
 	 *
 	 * FIXME: now we handle more than just images
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_mime_type() {
 		return "image/".($this->ext);
@@ -339,7 +337,7 @@ class Image {
 	/**
 	 * Get the image's filename extension
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_ext() {
 		return $this->ext;
@@ -348,7 +346,7 @@ class Image {
 	/**
 	 * Get the image's source URL
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function get_source() {
 		return $this->source;
@@ -433,9 +431,9 @@ class Image {
 	}
 
 	/**
-	 * ...?
+	 * Someone please explain this
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
