@@ -1,6 +1,25 @@
 <?php
 /**
- * @package SCore
+ * \page events Events and Extensions
+ * 
+ * An event is a little blob of data saying "something happened", possibly
+ * "something happened, here's the specific data". Events are sent with the
+ * send_event() function. Since events can store data, they can be used to
+ * return data to the extension which sent them, for example:
+ * 
+ * \code
+ * $tfe = new TextFormattingEvent($original_text);
+ * send_event($tfe);
+ * $formatted_text = $tfe->formatted;
+ * \endcode
+ * 
+ * An extension is something which is capable of reacting to events. They
+ * register themselves using the add_event_listener() function, after which
+ * events will be sent to the object's recieve_event() function.
+ * 
+ * SimpleExtension subclasses are slightly different -- they are registered
+ * automatically, and events are sent to a named method, eg PageRequestEvent
+ * will be sent to onPageRequest()
  */
 
 /**

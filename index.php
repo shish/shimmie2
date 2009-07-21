@@ -1,4 +1,25 @@
 <?php
+/**
+ * \mainpage Shimmie2 / SCore Documentation
+ * 
+ * There are a bunch of Extension subclasses, they talk to eachother by sending
+ * and recieving Event subclasses. The topic of conversation is decided by the
+ * initial PageRequestEvent, and each extension puts its notes into the shared
+ * Page data store. Once the conversation is over, the Page is passed to the
+ * current theme's Layout class which will tidy up the data and present it to
+ * the user.
+ * 
+ *
+ * \page globals Globals
+ * 
+ * There are four global variables which are pretty essential to most extensions:
+ * 
+ * \li $config -- some variety of Config subclass
+ * \li $database -- a Database object used to get raw SQL access
+ * \li $page -- a Page to holds all the loose bits of extension output
+ * \li $user -- the currently logged in User
+ */
+
 // set up and purify the environment
 define("DEBUG", true);
 define("SCORE_VERSION", 's2hack');
@@ -10,8 +31,8 @@ if(!file_exists("config.php")) {
 }
 
 require_once "core/util.inc.php";
-version_check();
-sanitise_environment();
+_version_check();
+_sanitise_environment();
 
 
 try {

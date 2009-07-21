@@ -11,7 +11,7 @@
 /**
  * Make some data safe for printing into HTML
  *
- * @var string
+ * @retval string
  */
 function html_escape($input) {
 	return htmlentities($input, ENT_QUOTES, "UTF-8");
@@ -20,7 +20,7 @@ function html_escape($input) {
 /**
  * Make sure some data is safe to be used in integer context
  *
- * @var int
+ * @retval int
  */
 function int_escape($input) {
 	return (int)$input;
@@ -29,7 +29,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
- * @var string
+ * @retval string
  */
 function url_escape($input) {
 	$input = str_replace('^', '^^', $input);
@@ -41,7 +41,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
- * @var string
+ * @retval string
  */
 function sql_escape($input) {
 	global $database;
@@ -51,7 +51,7 @@ function sql_escape($input) {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @var int
+ * @retval int
  */
 function parse_shorthand_int($limit) {
 	if(is_numeric($limit)) {
@@ -77,7 +77,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
- * @var string
+ * @retval string
  */
 function to_shorthand_int($int) {
 	if($int >= pow(1024, 3)) {
@@ -103,7 +103,7 @@ function to_shorthand_int($int) {
  * Figure out the correct way to link to a page, taking into account
  * things like the nice URLs setting
  *
- * @var string
+ * @retval string
  */
 function make_link($page=null, $query=null) {
 	global $config;
@@ -132,6 +132,10 @@ function make_link($page=null, $query=null) {
 	}
 }
 
+/**
+ * Make a link to a static file in the current theme's
+ * directory
+ */
 function theme_file($filepath) {
 	global $config;
 	$theme = $config->get_string("theme","default");
@@ -144,21 +148,21 @@ function theme_file($filepath) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * @ignore
+ * @private
  */
-function version_check() {
+function _version_check() {
 	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
-		print <<<EOD
+		print "
 Currently SCore Engine doesn't support versions of PHP lower than 5.0.0 --
 PHP4 and earlier are officially dead according to their creators,
 please tell your host to upgrade.
-EOD;
+";
 		exit;
 	}
 }
 
 /**
- * @ignore
+ * @private
  */
 function check_cli() {
 	if(isset($_SERVER['REMOTE_ADDR'])) {
@@ -171,7 +175,7 @@ function check_cli() {
 /**
  * $db is the connection object
  *
- * @ignore
+ * @private
  */
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
@@ -213,7 +217,7 @@ function get_theme_object(Extension $class, $fatal=true) {
 /**
  * Compare two Block objects, used to sort them before being displayed
  *
- * @var int
+ * @retval int
  */
 function blockcmp($a, $b) {
 	if($a->position == $b->position) {
@@ -227,7 +231,7 @@ function blockcmp($a, $b) {
 /**
  * Figure out PHP's internal memory limit
  *
- * @var int
+ * @retval int
  */
 function get_memory_limit() {
 	global $config;
@@ -257,7 +261,7 @@ function get_memory_limit() {
  * Get the currently active IP, masked to make it not change when the last
  * octet or two change, for use in session cookies and such
  *
- * @var string
+ * @retval string
  */
 function get_session_ip($config) {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
@@ -271,7 +275,7 @@ function get_session_ip($config) {
  *
  * PHP really, really sucks.
  *
- * @var string
+ * @retval string
  */
 function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
@@ -292,7 +296,7 @@ function get_base_href() {
  * A shorthand way to send a TextFormattingEvent and get the
  * results
  *
- * @var string
+ * @retval string
  */
 function format_text($string) {
 	$tfe = new TextFormattingEvent($string);
@@ -312,10 +316,16 @@ if(!defined("LOG_INFO"))     define("LOG_INFO", 20);
 if(!defined("LOG_DEBUG"))    define("LOG_DEBUG", 10);
 if(!defined("LOG_NOTSET"))   define("LOG_NOTSET", 0);
 
+/**
+ * A shorthand way to send a LogEvent
+ */
 function log_msg($section, $priority, $message) {
 	send_event(new LogEvent($section, $priority, $message));
 }
 
+/**
+ * A shorthand way to send a LogEvent
+ */
 function log_info($section, $message) {
 	log_msg($section, LOG_INFO, $message);
 }
@@ -328,7 +338,7 @@ function log_info($section, $message) {
 /**
  * Remove an item from an array
  *
- * @var array
+ * @retval array
  */
 function array_remove($array, $to_remove) {
 	$array = array_unique($array);
@@ -344,7 +354,7 @@ function array_remove($array, $to_remove) {
 /**
  * Add an item to an array
  *
- * @var array
+ * @retval array
  */
 function array_add($array, $element) {
 	$array[] = $element;
@@ -355,7 +365,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @var array
+ * @retval array
  */
 function array_iunique($array) {
 	$ok = array();
@@ -378,7 +388,7 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
- * @var bool
+ * @retval bool
  */
 function ip_in_range($IP, $CIDR) {
 	list ($net, $mask) = split ("/", $CIDR);
@@ -446,33 +456,7 @@ function full_copy($source, $target) {
 }
 
 /**
- * @ignore
- */
-function stripslashes_r($arr) {
-	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
-}
-
-/**
- * @ignore
- */
-function sanitise_environment() {
-	if(DEBUG) {
-		error_reporting(E_ALL);
-		assert_options(ASSERT_ACTIVE, 1);
-		assert_options(ASSERT_BAIL, 1);
-	}
-
-	ob_start();
-
-	if(get_magic_quotes_gpc()) {
-		$_GET = stripslashes_r($_GET);
-		$_POST = stripslashes_r($_POST);
-		$_COOKIE = stripslashes_r($_COOKIE);
-	}
-}
-
-/**
- * @ignore
+ * @private
  */
 function weighted_random($weights) {
 	$total = 0;
@@ -493,9 +477,7 @@ function weighted_random($weights) {
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/**
- * @ignore
- */
+/** @private */
 $_event_listeners = array();
 
 /**
@@ -509,9 +491,7 @@ function add_event_listener(Extension $extension, $pos=50) {
 	$_event_listeners[$pos] = $extension;
 }
 
-/**
- * @ignore
- */
+/** @private */
 $_event_count = 0;
 
 /**
@@ -605,13 +585,33 @@ function print_GET() {
 * Request initialisation stuff                                              *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/** @privatesection */
+
+function _stripslashes_r($arr) {
+	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
+}
+
+function _sanitise_environment() {
+	if(DEBUG) {
+		error_reporting(E_ALL);
+		assert_options(ASSERT_ACTIVE, 1);
+		assert_options(ASSERT_BAIL, 1);
+	}
+
+	ob_start();
+
+	if(get_magic_quotes_gpc()) {
+		$_GET = _stripslashes_r($_GET);
+		$_POST = _stripslashes_r($_POST);
+		$_COOKIE = _stripslashes_r($_COOKIE);
+	}
+}
+
 /**
  * Turn ^^ into ^ and ^s into /
  *
  * Necessary because various servers and various clients
  * think that / is special...
- *
- * @ignore
  */
 function _decaret($str) {
 	$out = "";
@@ -628,9 +628,6 @@ function _decaret($str) {
 	return $out;
 }
 
-/**
- * @ignore
- */
 function _get_query_parts() {
 	if(isset($_GET["q"])) {
 		$path = $_GET["q"];
@@ -660,9 +657,6 @@ function _get_query_parts() {
 	}
 }
 
-/**
- * @ignore
- */
 function _get_page_request() {
 	global $config;
 	$args = _get_query_parts();
@@ -674,9 +668,6 @@ function _get_page_request() {
 	return new PageRequestEvent($args);
 }
 
-/**
- * @ignore
- */
 function _get_user() {
 	global $config, $database;
 	$user = null;
