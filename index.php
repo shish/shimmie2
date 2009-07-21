@@ -82,7 +82,7 @@ try {
 	// load the theme parts
 	$_theme = $config->get_string("theme", "default");
 	if(!file_exists("themes/$_theme")) $_theme = "default";
-	if(file_exists("themes/$_theme/page.class.php")) require_once "themes/$_theme/page.class.php";
+	if(file_exists("themes/$_theme/custompage.class.php")) require_once "themes/$_theme/custompage.class.php";
 	require_once "themes/$_theme/layout.class.php";
 	require_once "themes/$_theme/themelet.class.php";
 
