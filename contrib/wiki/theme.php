@@ -1,6 +1,6 @@
 <?php
 
-class WikiTheme {
+class WikiTheme extends Themelet {
 	/*
 	 * Show a page
 	 *

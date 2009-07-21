@@ -1,11 +1,5 @@
 <?php
-/**
- * @package SCore
- */
-
-/**
- * @ignore
- */
+/** @private */
 function _new_user($row) {
 	return new User($row);
 }
@@ -94,7 +88,7 @@ class User {
 	/**
 	 * Test if this user is anonymous (not logged in)
 	 *
-	 * @var bool
+	 * @retval bool
 	 */
 	public function is_anonymous() {
 		global $config;
@@ -104,7 +98,7 @@ class User {
 	/**
 	 * Test if this user is an administrator
 	 *
-	 * @var bool
+	 * @retval bool
 	 */
 	public function is_admin() {
 		return $this->admin;

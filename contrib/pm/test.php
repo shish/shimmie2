@@ -1,5 +1,5 @@
 <?php
-class PMTest extends ShimmieWebTestCase {
+class PMTest extends SCoreWebTestCase {
 	function testPM() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");

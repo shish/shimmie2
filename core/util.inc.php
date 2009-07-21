@@ -1,9 +1,4 @@
 <?php
-/**
- * @package SCore
- */
-
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -219,7 +214,7 @@ function get_theme_object(Extension $class, $fatal=true) {
  *
  * @retval int
  */
-function blockcmp($a, $b) {
+function blockcmp(Block $a, Block $b) {
 	if($a->position == $b->position) {
 		return 0;
 	}

@@ -1,5 +1,5 @@
 <?php
-class SiteDescriptionTest extends ShimmieWebTestCase {
+class SiteDescriptionTest extends SCoreWebTestCase {
 	function testSiteDescription() {
 		$this->log_in_as_admin();
 		$this->get_page('setup');

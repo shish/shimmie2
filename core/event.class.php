@@ -1,9 +1,5 @@
 <?php
 /**
- * @package SCore
- */
-
-/**
  * Generic parent class for all events.
  *
  * An event is anything that can be passed around via send_event($blah)
@@ -113,28 +109,28 @@ class LogEvent extends Event {
 	/**
 	 * a category, normally the extension name
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	var $section;
 
 	/**
 	 * See python...
 	 *
-	 * @var int
+	 * @retval int
 	 */
 	var $priority = 0;
 
 	/**
 	 * Free text to be logged
 	 *
-	 * @var text
+	 * @retval text
 	 */
 	var $message;
 
 	/**
 	 * The time that the event was created
 	 *
-	 * @var int
+	 * @retval int
 	 */
 	var $time;
 

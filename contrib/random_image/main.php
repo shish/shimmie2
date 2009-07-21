@@ -19,14 +19,10 @@
  *  <code>/random_image/download/size:1024x768+cute</code>
  */
 
-class RandomImage implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
+class RandomImage extends SimpleExtension {
+	public function onPageRequest($event) {
 		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("random_image")) {
+		if($event->page_matches("random_image")) {
 			if($event->count_args() == 1) {
 				$action = $event->get_arg(0);
 				$search_terms = array();
@@ -50,22 +46,22 @@ class RandomImage implements Extension {
 				}
 			}
 		}
+	}
 
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = new SetupBlock("Random Image");
-			$sb->add_bool_option("show_random_block", "Show Random Block: ");
-			$event->panel->add_block($sb);
-		}
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Random Image");
+		$sb->add_bool_option("show_random_block", "Show Random Block: ");
+		$event->panel->add_block($sb);
+	}
 
-		if($event instanceof PostListBuildingEvent) {
-			if($config->get_bool("show_random_block")) {
-				$image = Image::by_random($event->search_terms);
-				if(!is_null($image)) {
-					$this->theme->display_random($page, $image);
-				}
+	public function onPostListBuilding($event) {
+		global $config, $page;
+		if($config->get_bool("show_random_block")) {
+			$image = Image::by_random($event->search_terms);
+			if(!is_null($image)) {
+				$this->theme->display_random($page, $image);
 			}
 		}
 	}
 }
-add_event_listener(new RandomImage());
 ?>

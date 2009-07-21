@@ -1,5 +1,5 @@
 <?php
-class NewsTest extends ShimmieWebTestCase {
+class NewsTest extends SCoreWebTestCase {
 	function testNews() {
 		$this->log_in_as_admin();
 
