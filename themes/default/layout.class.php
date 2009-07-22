@@ -1,7 +1,12 @@
 <?php
-
+/**
+ * A class to turn a Page data structure into a blob of HTML
+ */
 class Layout {
-	function display_page($page) {
+	/**
+	 * turns the Page into HTML
+	 */
+	public function display_page(Page $page) {
 		global $config;
 
 		$theme_name = $config->get_string('theme', 'default');
@@ -71,7 +76,10 @@ $header_html
 EOD;
 	}
 
-	function block_to_html($block, $hidable=false, $salt="") {
+	/**
+	 * A handy function which does exactly what it says in the method name
+	 */
+	private function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
 		$html = "";

@@ -2,6 +2,7 @@
 class SimpleSCoreTestTheme extends Themelet {
 }
 
+/** @private */
 class SCoreReporter extends HtmlReporter {
 	var $current_html = "";
 	var $clear_modules = array();

@@ -6,6 +6,19 @@
  * Description: adds unit testing to SCore
  */
 
+/**
+ * \page unittests Unit Tests
+ * 
+ * Each extension should (although doesn't technically have to) come with a
+ * test.php file, for example ext/index/test.php. The SimpleSCoreTest
+ * extension will look for these files and load any SCoreWebTestCase classes
+ * it finds inside them, then run them and report whether or not the test
+ * passes.
+ * 
+ * For Shimmie2 specific extensions, there is a ShimmieWebTestCase class which
+ * includes functions to upload and delete images.
+ */
+
 require_once('simpletest/web_tester.php');
 require_once('simpletest/unit_tester.php');
 require_once('simpletest/reporter.php');
@@ -15,6 +28,9 @@ define('USER_PASS', "test");
 define('ADMIN_NAME', "demo");
 define('ADMIN_PASS', "demo");
 
+/**
+ * A set of common SCore activities to test
+ */
 class SCoreWebTestCase extends WebTestCase {
 	protected function get_page($page) {
 		$url = "http://".$_SERVER["HTTP_HOST"].get_base_href().'/'.make_link($page);
@@ -49,6 +65,9 @@ class SCoreWebTestCase extends WebTestCase {
 	}
 }
 
+/**
+ * A set of common Shimmie activities to test
+ */
 class ShimmieWebTestCase extends SCoreWebTestCase {
 	protected function post_image($filename, $tags) {
 		$image_id = -1;
@@ -81,6 +100,7 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 	}
 }
 
+/** @private */
 class TestFinder extends TestSuite {
 	function TestFinder($hint) {
 		if(strpos($hint, "..") !== FALSE) return;

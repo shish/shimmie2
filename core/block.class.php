@@ -1,29 +1,25 @@
 <?php
 /**
- * @package SCore
- */
-
-/**
  * A basic chunk of a page
  */
 class Block {
 	/**
 	 * The block's title
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	var $header;
 	/**
 	 * The content
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	var $body;
 	/** 
 	 * Where the block should be placed. The default theme supports
 	 * "main" and "left", other themes can add their own areas
 	 *
-	 * @var string
+	 * @retval string
 	 */
 	var $section;
 	/**
@@ -31,7 +27,7 @@ class Block {
 	 * numbers appear lower. The scale is 0-100 by convention,
 	 * though any number or string will work.
 	 *
-	 * @var int
+	 * @retval int
 	 */
 	var $position;
 

@@ -1,6 +1,5 @@
 <?php
-/* AdminBuildingEvent {{{
- *
+/**
  * Sent when the admin page is ready to be added to
  */
 class AdminBuildingEvent extends Event {
@@ -9,7 +8,6 @@ class AdminBuildingEvent extends Event {
 		$this->page = $page;
 	}
 }
-// }}}
 
 class AdminPage implements Extension {
 	var $theme;

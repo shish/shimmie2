@@ -3,17 +3,13 @@
  * Functions which are only in some versions of PHP,
  * or only implemented on some platforms
  *
- * @ignore
- * @package SCore
+ * \privatesection
  */
 
 # (PHP 5 >= 5.2.1)
 # Based on http://www.phpit.net/
 # article/creating-zip-tar-archives-dynamically-php/2/
 if(!function_exists('sys_get_temp_dir')) {
-/**
- * @ignore
- */
 function sys_get_temp_dir() {
 	// Try to get from environment variable
 	if(!empty($_ENV['TMP'])) {
@@ -46,9 +42,6 @@ function sys_get_temp_dir() {
 # (PHP >= 5.1)
 # from http://www.php.net/inet_pton
 if(!function_exists('inet_pton')) {
-/**
- * @ignore
- */
 function inet_pton($ip) {
     # ipv4
     if(strpos($ip, '.') !== FALSE) {
@@ -70,9 +63,6 @@ function inet_pton($ip) {
 # (PHP >= 5.1)
 # from http://www.php.net/inet_ntop
 if(!function_exists('inet_ntop')) {
-/**
- * @ignore
- */
 function inet_ntop($ip) {
     if (strlen($ip)==4) {
         // ipv4

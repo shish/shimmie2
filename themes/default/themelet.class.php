@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * A collection of common functions for theme parts
+ */
 class Themelet {
 	/**
 	 * Generic error message display

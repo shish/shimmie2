@@ -7,7 +7,8 @@
  * Description: A thing for point & click extension management
  */
 
-class ExtensionInfo { // {{{
+/** @private */
+class ExtensionInfo {
 	var $ext_name, $name, $link, $author, $email, $description, $documentation, $version;
 
 	function ExtensionInfo($main) {
@@ -66,7 +67,7 @@ class ExtensionInfo { // {{{
 	private function is_enabled($fname) {
 		return file_exists("ext/$fname");
 	}
-} // }}}
+}
 
 class ExtManager extends SimpleExtension {
 	public function onPageRequest($event) {

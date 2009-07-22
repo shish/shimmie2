@@ -1,5 +1,5 @@
 <?php
-class UserPageTest extends ShimmieWebTestCase {
+class UserPageTest extends SCoreWebTestCase {
 	function testUserPage() {
 		$this->get_page('user');
 		$this->assertTitle("Not Logged In");

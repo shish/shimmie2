@@ -1,15 +1,39 @@
 <?php
 /**
- * @package SCore
+ * \page themes Themes
+ * 
+ * Each extension has a theme with a specific name -- eg. the extension Setup
+ * which is stored in ext/setup/main.php will have a theme called SetupTheme
+ * stored in ext/setup/theme.php. If you want to customise it, create a class
+ * in the file themes/mytheme/setup.theme.php called CustomSetupTheme which
+ * extends SetupTheme and overrides some of its methods.
+ * 
+ * Generally an extension should only deal with processing data; whenever it
+ * wants to display something, it should pass the $page data structure along
+ * with the data to be displayed to the theme object, and the theme will add
+ * the data into the page.
+ *
+ * A page should make sure that all the data it outputs is free from dangerous
+ * data by using html_escape(), url_escape(), or int_escape() as appropriate.
+ *
+ * Because some HTML can be placed anywhere according to the theme, coming up
+ * with the correct way to link to a page can be hard -- thus we have the
+ * make_link() function, which will take a path like "post/list" and turn it
+ * into a full and correct link, eg /myboard/post/list, /foo/index.php?q=post/list,
+ * etc depending on how things are set up. This should always be used to link
+ * to pages rather than hardcoding a path.
+ *
+ * Various other common functions are available as part of the Themelet class.
  */
+
 
 /**
  * A data structure for holding all the bits of data that make up a page.
  *
  * The various extensions all add whatever they want to this structure,
- * then layout.class.php turns it into HTML
+ * then Layout turns it into HTML
  */
-class GenericPage {
+class Page {
 	var $mode = "page";
 	var $type = "text/html";
 

@@ -1,16 +1,10 @@
 <?php
-/**
- * @package SCore
- */
-
 require_once "compat.inc.php";
 $ADODB_CACHE_DIR=sys_get_temp_dir();
 require_once "lib/adodb/adodb.inc.php";
 require_once "lib/adodb/adodb-exceptions.inc.php";
 
-/**#@+
- * @ignore
- */
+/** @privatesection */
 // Querylet {{{
 class Querylet {
 	var $sql;
@@ -202,7 +196,7 @@ class MemCache implements CacheEngine {
 	public function get_misses() {return $this->misses;}
 }
 // }}}
-/**#@-*/
+/** @publicsection */
 
 /**
  * A class for controlled database access

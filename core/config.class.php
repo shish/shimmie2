@@ -1,9 +1,5 @@
 <?php
 /**
- * @package SCore
- */
-
-/**
  * an abstract interface for altering a name:value pair list
  */
 interface Config {
@@ -29,8 +25,6 @@ interface Config {
 /**
  * Common methods for manipulating the list, loading and saving is
  * left to the concrete implementation
- *
- * @ignore
  */
 abstract class BaseConfig implements Config {
 	var $values = array();
@@ -106,8 +100,6 @@ abstract class BaseConfig implements Config {
  *  $config['foo'] = "bar";
  *  $config['baz'] = "qux";
  *  ?>
- *
- * @ignore
  */
 class StaticConfig extends BaseConfig {
 	public function __construct($filename) {
@@ -135,12 +127,12 @@ class StaticConfig extends BaseConfig {
  * Loads the config list from a table in a given database, the table should
  * be called config and have the schema:
  *
+ * \code
  *  CREATE TABLE config(
  *      name VARCHAR(255) NOT NULL,
  *      value TEXT
  *  );
- *
- * @ignore
+ * \endcode
  */
 class DatabaseConfig extends BaseConfig {
 	var $database = null;
