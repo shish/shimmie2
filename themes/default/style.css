@@ -178,10 +178,10 @@ UL {
 .rrcontent {margin: 0px 8px; text-align: center;}
 
 .hrr {text-align: left; background: #CCC; margin: 8px;}
-.hrrtop     {background: url("dcircle-tl.png") no-repeat top left;}
-.hrrtop div {background: url("dcircle-tr.png") no-repeat top right;}
-.hrrbot     {background: url("dcircle-bl.png") no-repeat bottom left;}
-.hrrbot div {background: url("dcircle-br.png") no-repeat bottom right;}
+.hrrtop     {background: url("circle-tl.png") no-repeat top left;}
+.hrrtop div {background: url("circle-tr.png") no-repeat top right;}
+.hrrbot     {background: url("circle-bl.png") no-repeat bottom left;}
+.hrrbot div {background: url("circle-br.png") no-repeat bottom right;}
 .hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
 .hrrcontent {margin: 0px 8px;}
 
