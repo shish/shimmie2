@@ -1,0 +1,226 @@
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+3                  things common to all pages                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+BODY {
+	background: url(bg.png);
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	margin: 0px;
+}
+#header {
+	border-bottom: 1px solid #B89F7C;
+	margin-top: 0px;
+	margin-bottom: 16px;
+	padding: 8px;
+	background: #FCD9A9;
+	text-align: center;
+}
+H1 {
+	font-size: 5em;
+	margin: 0px;
+	padding: 0px;
+}
+H1 A {
+	color: black;
+}
+H3 {
+	text-align: center;
+	margin: 0px;
+}
+THEAD {
+	font-weight: bold;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+CODE {
+	background: #DEDEDE;
+	font-size: 0.8em;
+}
+#subtitle {
+	width: 256px;
+	font-size: 0.75em;
+	margin: auto;
+	margin-top: -16px;
+	text-align: center;
+	border: 1px solid black;
+	border-top: none;
+	background: #DDD;
+}
+#body SELECT {width: 150px;}
+TD>INPUT[type="submit"] {width: 100%;}
+TD>INPUT[type="text"] {width: 100%;}
+TD>INPUT[type="password"] {width: 100%;}
+TD>SELECT {width: 100%;}
+
+TABLE.zebra {border-spacing: 0px; border: 1px solid #B89F7C; }
+TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #B89F7C;}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
+TABLE.zebra TD {border-top: 1px solid #B89F7C;}
+TABLE.zebra TR.odd {background: #FCD9A9;}
+TABLE.zebra TR.even {background: #DABC92;}
+
+#footer {
+	clear: both;
+	padding: 8px;
+	font-size: 0.7em;
+	text-align: center;
+	border-top: 1px solid #B89F7C;
+	background: #FCD9A9;
+}
+
+*[onclick] {cursor: pointer;}
+IMG {border: none;}
+FORM {margin: 0px;}
+A         {color: #665844; text-decoration: none; font-weight: bold;}
+A:hover   {color: #665844; text-decoration: underline;}
+A:visited {color: #665844; text-decoration: none}
+A:active  {color: #665844; text-decoration: underline;}
+
+BLOCKQUOTE {
+	border: 1px solid black;
+	padding: 8px;
+	background: #DDD;
+}
+
+UL {
+	text-align: left;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all its blocks             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#nav {
+	width: 250px;
+	float: left;
+	text-align: center;
+	margin-left: 16px;
+}
+#nav .blockbody {
+	font-size: 0.85em;
+	text-align: center;
+}
+#nav TABLE {
+	width: 150px;
+}
+#nav TD {
+	vertical-align: middle;
+}
+#nav INPUT {
+	width: 100%;
+	padding: 0px;
+}
+#nav SELECT {
+	width: 100%;
+	padding: 0px;
+}
+
+#comments P {
+	text-align: left;
+	width: 150px;
+	max-width: 150px;
+	overflow: hidden;
+}
+.comment {
+	text-align: left;
+}
+
+.more:after {
+	content: " >>>";
+}
+
+.tag_count:before {
+	content: "(";
+}
+.tag_count:after {
+	content: ")";
+}
+
+.paginator {
+	clear: both;
+	padding: 4px;
+	margin-bottom: 32px;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#body {
+	margin-left: 276px;
+	margin-right: 16px;
+	text-align: center;
+	height: 1%;
+}
+#body TABLE {
+	width: 90%;
+	margin: auto;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     specific page types                        *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#pagelist {
+	margin-top: 32px;
+}
+
+#tagmap A {
+	padding: 8px 4px 8px 4px;
+}
+
+.rr {text-align: left; background: #FCD9A9; margin: 8px; border: 1px solid #B89F7C;}
+.rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
+.rrcontent {margin: 0px 8px; text-align: center;}
+
+.hrr {text-align: left; background: #DABC92; margin: 8px; border: 1px solid #B89F7C;}
+.hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
+.hrrcontent {margin: 0px 8px;}
+
+.setupblock {
+	text-align: center;
+	margin: 16px;
+	width: 350px;
+}
+.setupblock TEXTAREA {
+	width: 300px;
+	font-size: 0.75em;
+}
+
+.helpable {
+	border-bottom: 1px dashed gray;
+}
+
+.ok {
+	background: #AFA;
+}
+.bad {
+	background: #FAA;
+}
+
+#nav .thumbblock {
+	float: none;
+	height: auto;
+}
+#nav .thumb {
+	margin-bottom: 0px;
+}
+.thumbblock {
+	width: 220px;
+	height: 220px;
+	display: inline-block;
+	float: left;
+}
+.thumb {
+	display: inline-block;
+	text-align: center;
+	margin-bottom: 32px;
+}
+
