@@ -33,9 +33,7 @@ define('ADMIN_PASS', "demo");
  */
 class SCoreWebTestCase extends WebTestCase {
 	protected function get_page($page) {
-		$url = "http://".$_SERVER["HTTP_HOST"].get_base_href().'/'.make_link($page);
-		$url = str_replace("/./", "/", $url);
-		$raw = $this->get($url);
+		$raw = $this->get(make_http(make_link($url)));
 		$this->assertNoText("Exception:");
 		$this->assertNoText("Error:");
 		$this->assertNoText("Warning:");
