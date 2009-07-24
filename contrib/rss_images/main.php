@@ -54,7 +54,7 @@ class RSS_Images extends SimpleExtension {
 
 		$data = "";
 		foreach($images as $image) {
-			$link = make_link("post/view/{$image->id}");
+			$link = make_http(make_link("post/view/{$image->id}"));
 			$tags = $image->get_tag_list();
 			$owner = $image->get_owner();
 			$thumb_url = $image->get_thumb_link();

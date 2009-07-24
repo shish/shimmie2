@@ -128,6 +128,19 @@ function make_link($page=null, $query=null) {
 }
 
 /**
+ * Turn a relative link into an absolute one, including hostname
+ *
+ * @retval string
+ */
+function make_http($link) {
+	if(strpos($link, "ttp://") > 0) return $link;
+	if($link[0] != '/') $link = get_base_href().'/'.$link;
+	$link = "http://".$_SERVER["HTTP_HOST"].$link;
+	$link = str_replace("/./", "/", $link);
+	return $link;
+}
+
+/**
  * Make a link to a static file in the current theme's
  * directory
  */
