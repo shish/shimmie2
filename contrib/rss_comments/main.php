@@ -37,7 +37,7 @@ class RSS_Comments extends SimpleExtension {
 			foreach($comments as $comment) {
 				$image_id = $comment['image_id'];
 				$comment_id = $comment['comment_id'];
-				$link = make_link("post/view/$image_id");
+				$link = make_http(make_link("post/view/$image_id"));
 				$owner = html_escape($comment['user_name']);
 				$posted = date(DATE_RSS, $comment['posted_timestamp']);
 				$comment = html_escape($comment['comment']);
