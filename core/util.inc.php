@@ -90,6 +90,20 @@ function to_shorthand_int($int) {
 }
 
 
+/**
+ * Turn a date into a time, a date, an "X minutes ago...", etc
+ *
+ * Currently missing step 2
+ *
+ * @retval string
+ */
+function autodate($date) {
+	$ts = strtotime($date);
+	// Step 2: ...
+	return $date;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

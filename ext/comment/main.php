@@ -126,7 +126,7 @@ class CommentList implements Extension {
 					$page,
 					$this->get_comments($event->image->id),
 					$this->can_comment(),
-					$event->image->id);
+					$event->image);
 		}
 
 		if($event instanceof ImageDeletionEvent) {
