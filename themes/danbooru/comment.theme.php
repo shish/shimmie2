@@ -26,17 +26,16 @@ class CustomCommentListTheme extends CommentListTheme {
 		//$page->add_block(new Block("Comments", $html, "left"));
 	}
 
-	public function display_comments($page, $comments, $postbox, $image_id) {
+	public function display_comments(Page $page, $comments, $postbox, Image $image) {
 		$count = count($comments);
+		$cs = $count == 1 ? "Comment" : "Comments";
 		if($postbox) {
-			$page->add_block(new Block("$count Comments",
-					$this->comments_to_html($comments).
-					$this->build_postbox($image_id), "main", 30));
+			$html = $this->comments_to_html($comments) . $this->build_postbox($image->id);
 		}
 		else {
-			$page->add_block(new Block("$count Comments",
-					$this->comments_to_html($comments), "main", 30));
+			$html = $this->comments_to_html($comments);
 		}
+		$page->add_block(new Block("$count $cs", $html, "main", 30));
 	}
 
 
@@ -63,19 +62,20 @@ class CustomCommentListTheme extends CommentListTheme {
 		return "<p class='comment'>$h_userlink $h_dellink<br/><b>Posted on $h_posted</b><br/>$h_comment</p>";
 	}
 
-	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
-		$count = count($comments);
+	public function add_comment_list(Page $page, Image $image, $comments, $position, $with_postbox) {
+		$s = "&nbsp;&nbsp;&nbsp;";
+		$un = $image->get_owner()->name;
+		$t = "";
+		foreach($image->get_tag_array() as $tag) {
+			$u_tag = url_escape($tag);
+			$t .= "<a href='".make_link("post/list/$u_tag/1")."'>".html_escape($tag)."</a> ";
+		}
+		$p = autodate($image->posted);
 
 		$html  = "<div style='text-align: left'>";
 		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
-		$html .=   "<div style='float: right; margin-left: 16px; width: 200px; margin-bottom: 32px;'>";
-		foreach($image->get_tag_array() as $tag) {
-			$u_tag = url_escape($tag);
-			$html .= "<br><a href='".make_link("post/list/$u_tag/1")."'>".html_escape($tag)."</a>";
-		}
-		$html .=   "</div>";
 		$html .=   "<div style='margin-left: 250px;'>";
-		$html .=   "<b>$count Comments</b><br>";
+		$html .=   "<b>Date</b> $p $s <b>User</b> $un<br><b>Tags</b> $t<p>&nbsp;";
 		$html .=   $this->comments_to_html($comments);
 		$html .=   "</div>";
 		$html .= "</div>";
