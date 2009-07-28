@@ -14,7 +14,7 @@ class ViewImageTheme extends Themelet {
 
 	public function display_admin_block(Page $page, $parts) {
 		if(count($parts) > 0) {
-			$page->add_block(new Block("Image Admin", join("<br>", $parts), "left", 50));
+			$page->add_block(new Block("Image Controls", join("<br>", $parts), "left", 50));
 		}
 	}
 
