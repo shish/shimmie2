@@ -39,7 +39,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
@@ -51,7 +51,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
-		$h_posted = html_escape($comment->posted);
+		$h_posted = autodate($comment->posted);
 
 		$h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_dellink = $user->is_admin() ? 

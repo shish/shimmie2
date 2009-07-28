@@ -100,7 +100,7 @@ function to_shorthand_int($int) {
 function autodate($date) {
 	$ts = strtotime($date);
 	// Step 2: ...
-	return $date;
+	return date("Y-m-d", $ts);
 }
 
 

@@ -39,18 +39,14 @@ class CommentListTheme extends Themelet {
 	/*
 	 * Show comments for an image
 	 */
-	public function display_comments(Page $page, $comments, $postbox, $image_id) {
+	public function display_comments(Page $page, $comments, $postbox, Image $image) {
 		if($postbox) {
-			$page->add_block(new Block("Comments",
-					$this->comments_to_html($comments).
-					$this->build_postbox($image_id), "main", 30));
+			$html = $this->comments_to_html($comments) . $this->build_postbox($image->id);
 		}
 		else {
-			if(count($comments) > 0) {
-				$page->add_block(new Block("Comments",
-						$this->comments_to_html($comments), "main", 30));
-			}
+			$html = $this->comments_to_html($comments);
 		}
+		$page->add_block(new Block("Comments", $html, "main", 30));
 	}
 
 	/*

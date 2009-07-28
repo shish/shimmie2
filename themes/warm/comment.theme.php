@@ -17,7 +17,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$page->add_block(new Block("{$image->id}: ".($image->get_tag_list()), $html, "main", $position));
 	}
 
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);

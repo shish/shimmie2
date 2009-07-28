@@ -14,7 +14,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		$h_ip = html_escape($image->owner_ip);
-		$h_date = date("Y-m-d", strtotime($image->posted));
+		$h_date = autodate($image->posted);
 		$h_filesize = to_shorthand_int($image->filesize);
 
 		global $user;
