@@ -51,7 +51,7 @@ class WikiTheme extends Themelet {
 			$lock = "";
 		}
 		return "
-			<form action='".make_link("wiki/$u_title", "save=on")."' method='POST'>
+			<form action='".make_link("wiki_admin/save")."' method='POST'>
 				<input type='hidden' name='title' value='$h_title'>
 				<input type='hidden' name='revision' value='$i_revision'>
 				<textarea name='body' style='width: 100%' rows='20'>".html_escape($page->body)."</textarea>
@@ -68,9 +68,30 @@ class WikiTheme extends Themelet {
 		send_event($tfe);
 
 		global $user;
-		$edit = Wiki::can_edit($user, $page) ?
-			"[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] " :
+		$edit = "<table><tr>";
+		$edit .= Wiki::can_edit($user, $page) ?
+			"
+				<td><form action='".make_link("wiki_admin/edit")."' method='POST'>
+					<input type='hidden' name='title' value='".html_escape($page->title)."'>
+					<input type='hidden' name='revision' value='".int_escape($page->revision)."'>
+					<input type='submit' value='Edit'>
+				</form></td>
+			" :
 			"";
+		if($user->is_admin()) {
+			$edit .= "
+				<td><form action='".make_link("wiki_admin/delete_revision")."' method='POST'>
+					<input type='hidden' name='title' value='".html_escape($page->title)."'>
+					<input type='hidden' name='revision' value='".int_escape($page->revision)."'>
+					<input type='submit' value='Delete This Version'>
+				</form></td>
+				<td><form action='".make_link("wiki_admin/delete_all")."' method='POST'>
+					<input type='hidden' name='title' value='".html_escape($page->title)."'>
+					<input type='submit' value='Delete All'>
+				</form></td>
+			";
+		}
+		$edit .= "</tr></table>";
 
 		return "
 			<div class='wiki-page'>
