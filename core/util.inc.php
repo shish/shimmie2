@@ -93,14 +93,26 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
- * Currently missing step 2
- *
  * @retval string
  */
 function autodate($date) {
-	$ts = strtotime($date);
-	// Step 2: ...
-	return date("Y-m-d", $ts);
+	$diff = time() - strtotime($date);
+	if ($diff<60) return $diff . " second" . plural($diff) . " ago"; $diff = round($diff/60);
+	if ($diff<60) return $diff . " minute" . plural($diff) . " ago"; $diff = round($diff/60);
+	if ($diff<24) return $diff . " hour" . plural($diff) . " ago";   $diff = round($diff/24);
+	if ($diff<7)  return $diff . " day" . plural($diff) . " ago";    $diff = round($diff/7);
+	if ($diff<4)  return $diff . " week" . plural($diff) . " ago";
+	return "on " . date("F j, Y", strtotime($date));
+}
+
+
+/**
+ * Return a pluraliser if necessary
+ *
+ * @retval string
+ */
+function plural($num, $single_form="", $plural_form="s") {
+	return ($num == 1) ? $single_form : $plural_form;
 }
 
 

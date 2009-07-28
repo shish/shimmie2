@@ -65,9 +65,10 @@ class ViewImageTheme extends Themelet {
 		$h_ip = html_escape($image->owner_ip);
 		$h_source = html_escape($image->source);
 		$i_owner_id = int_escape($owner->id);
+		$h_date = autodate($image->posted);
 
 		$html = "";
-		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a>";
+		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a> $h_date";
 
 		if($user->is_admin()) {
 			$html .= " ($h_ip)";
