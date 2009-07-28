@@ -22,7 +22,11 @@ class Tag_HistoryTheme extends Themelet {
 				$setter .= " / " . $fields['user_ip'];
 			}
 			$selected = ($n == 2) ? " checked" : "";
-			$history_list .= "<li><input type='radio' name='revert' value='$current_id'$selected>$current_tags (Set by $setter)</li>\n";
+			$history_list .= "
+				<li>
+					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
+					<label for='$current_id'>$current_tags (Set by $setter)</label>
+				</li>\n";
 		}
 
 		$end_string = "
