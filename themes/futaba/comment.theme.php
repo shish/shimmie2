@@ -7,7 +7,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	 * $page_number = the current page number
 	 * $total_pages = the total number of comment pages
 	 */
-	public function display_page_start($page, $page_number, $total_pages) {
+	public function display_page_start(Page $page, $page_number, $total_pages) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -23,7 +23,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages, 90);
 	}
 	
-	public function display_recent_comments($page, $comments) {
+	public function display_recent_comments(Page $page, $comments) {
 		// sidebar fails in this theme
 	}
 
@@ -35,7 +35,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	 * Add a block with thumbnail and comments, as part of the comment
 	 * list page
 	 */
-	public function add_comment_list($page, $image, $comments, $position, $with_postbox) {
+	public function add_comment_list(Page $page, Image $image, $comments, $position, $with_postbox) {
 		$h_filename = html_escape($image->filename);
 		$h_filesize = to_shorthand_int($image->filesize);
 		$w = $image->width;
@@ -61,7 +61,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		return $html;
 	}
 
-	protected function comment_to_html($comment, $trim=false, $inner_id=0) {
+	protected function comment_to_html(Comment $comment, $trim=false, $inner_id=0) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
