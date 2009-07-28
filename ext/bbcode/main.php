@@ -2,6 +2,7 @@
 
 class BBCode extends FormatterExtension {
 	public function format($text) {
+		$text = wordwrap($text, 80, " ", true);
 		$text = $this->extract_code($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
@@ -36,6 +37,7 @@ class BBCode extends FormatterExtension {
 	}
 
 	public function strip($text) {
+		$text = wordwrap($text, 80, " ", true);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
