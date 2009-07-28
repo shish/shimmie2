@@ -94,7 +94,12 @@ class AdminPage implements Extension {
 
 	private function recount_tag_use() {
 		global $database;
-		$database->Execute("UPDATE tags SET count=(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id)");
+		$database->Execute("
+			UPDATE tags
+			SET count = COALESCE(
+				SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id,
+				0
+			)");
 	}
 
 	private function purge_unused_tags() {
