@@ -26,7 +26,7 @@ class WikiTheme extends Themelet {
 		$page->set_heading(html_escape($wiki_page->title));
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Wiki Index", $tfe->formatted, "left", 20));
-		$page->add_block(new Block($wiki_page->title, $this->create_display_html($wiki_page)));
+		$page->add_block(new Block(html_escape($wiki_page->title), $this->create_display_html($wiki_page)));
 	}
 
 	public function display_page_editor(Page $page, WikiPage $wiki_page) {
