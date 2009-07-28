@@ -79,7 +79,7 @@ class RSS_Images extends SimpleExtension {
 		}
 
 		$title = $config->get_string('title');
-		$base_href = $config->get_string('base_href');
+		$base_href = make_http($config->get_string('base_href'));
 		$search = "";
 		if(count($search_terms) > 0) {
 			$search = html_escape(implode(" ", $search_terms)) . "/";
