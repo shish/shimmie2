@@ -119,6 +119,7 @@ class Layout {
 			case "post":
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
 				break;
 			case "tags":
 				$custom_sublinks .= "<li><a href='".make_link('tags/map')."'>Map</a></li>";
@@ -126,6 +127,7 @@ class Layout {
 				$custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('tags/categories')."'>Categories</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Aliases</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("wiki/tags")."'>Help</a></li>";
 				break;
 		}
 
