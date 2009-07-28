@@ -33,7 +33,7 @@ define('ADMIN_PASS', "demo");
  */
 class SCoreWebTestCase extends WebTestCase {
 	protected function get_page($page) {
-		$raw = $this->get(make_http(make_link($url)));
+		$raw = $this->get(make_http(make_link($page)));
 		$this->assertNoText("Exception:");
 		$this->assertNoText("Error:");
 		$this->assertNoText("Warning:");
