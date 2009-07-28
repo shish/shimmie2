@@ -6,18 +6,16 @@
  * Description: A simple wiki, for those who don't want the hugeness of mediawiki
  */
 
-// WikiUpdateEvent {{{
 class WikiUpdateEvent extends Event {
 	var $user;
 	var $wikipage;
 
-	public function WikiUpdateEvent($user, $wikipage) {
+	public function WikiUpdateEvent(User $user, WikiPage $wikipage) {
 		$this->user = $user;
 		$this->wikipage = $wikipage;
 	}
 }
-// }}}
-// WikiPage {{{
+
 class WikiPage {
 	var $id;
 	var $owner_id;
@@ -51,19 +49,15 @@ class WikiPage {
 		return $this->locked;
 	}
 }
-// }}}
-class Wiki implements Extension {
-	var $theme;
 
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+class Wiki extends SimpleExtension {
+	public function onInitExt($event) {
+		$this->setup();
+	}
 
-		if(($event instanceof InitExtEvent)) {
-			$this->setup();
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("wiki")) {
-			global $config, $page;
+	public function onPageRequest($event) {
+		global $config, $page, $user;
+		if($event->page_matches("wiki")) {
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
 				$title = "Index";
 			}
@@ -73,13 +67,13 @@ class Wiki implements Extension {
 
 			$content = $this->get_page($title);
 
+			// save the POST data as the page
 			if(isset($_GET['save']) && $_GET['save'] == "on") {
 				$title = $_POST['title'];
 				$rev = int_escape($_POST['revision']);
 				$body = $_POST['body'];
 				$lock = isset($_POST['lock']) && ($_POST['lock'] == "on");
 
-				global $user;
 				if($this->can_edit($user, $this->get_page($title))) {
 					$wikipage = new WikiPage();
 					$wikipage->title = $title;
@@ -97,38 +91,28 @@ class Wiki implements Extension {
 					$this->theme->display_permission_denied($page);
 				}
 			}
-			else if(is_null($content)) {
-				$default = $this->get_page("wiki:default");
-				$blank = new WikiPage();
-				$blank->title = $title;
-				if(!is_null($default) && !isset($_GET['edit'])) {
-					$blank->body = $default->body;
-					$blank->owner_id = $config->get_int('anon_id');
-					$blank->date = $default->date;
-					$this->theme->display_page($page, $blank, $this->get_page("wiki:sidebar"));
-				}
-				else {
-					$this->theme->display_page_editor($page, $blank);
-				}
-			}
+
+			// edit
 			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
 				$this->theme->display_page_editor($page, $content);
 			}
+
+			// default: display the page
 			else {
 				$this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
 			}
 		}
+	}
 
-		if(($event instanceof WikiUpdateEvent)) {
-			$this->set_page($event->user, $event->wikipage);
-		}
+	public function onWikiUpdate($event) {
+		$this->set_page($event->user, $event->wikipage);
+	}
 
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = new SetupBlock("Wiki");
-			$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
-			$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
-			$event->panel->add_block($sb);
-		}
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Wiki");
+		$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
+		$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
+		$event->panel->add_block($sb);
 	}
 
 	private function can_edit($user, $page) {
@@ -141,7 +125,6 @@ class Wiki implements Extension {
 		return false;
 	}
 
-// installer {{{
 	private function setup() {
 		global $database;
 		global $config;
@@ -167,20 +150,51 @@ class Wiki implements Extension {
 			$config->set_int("ext_wiki_version", 2);
 		}
 	}
-// }}}
-// database {{{
+
 	private function get_page($title, $revision=-1) {
 		global $database;
+		// first try and get the actual page
 		$row = $database->db->GetRow("
 				SELECT *
 				FROM wiki_pages
 				WHERE title LIKE ?
 				ORDER BY revision DESC", array($title));
-		return ($row ? new WikiPage($row) : null);
+
+		// fall back to wiki:default
+		if(is_null($row)) {
+			$row = $database->db->GetRow("
+					SELECT *
+					FROM wiki_pages
+					WHERE title LIKE ?
+					ORDER BY revision DESC", "wiki:default");
+
+			// fall further back to manual
+			if(is_null($row)) {
+				$row = array(
+					"id" => -1,
+					"owner_ip" => "0.0.0.0",
+					"date" => "",
+					"revision" => 0,
+					"locked" => false,
+					"body" => "
+						This is a default page for when a page is empty,
+						it can be edited by editing [[wiki:default]].
+					",
+				);
+			}
+
+			// correct the default
+			global $config;
+			$row["title"] = $title;
+			$row["owner_id"] = $config->get_int("anon_id", 0);
+		}
+
+		assert(!is_null($row));
+
+		return new WikiPage($row);
 	}
 
-	// TODO: accept a WikiPage object
-	private function set_page($user, $wpage) {
+	private function set_page(User $user, WikiPage $wpage) {
 		global $database;
 		// FIXME: deal with collisions
 		$row = $database->Execute("
@@ -188,7 +202,5 @@ class Wiki implements Extension {
 				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'],
 				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
 	}
-// }}}
 }
-add_event_listener(new Wiki());
 ?>
