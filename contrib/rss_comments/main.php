@@ -55,7 +55,7 @@ class RSS_Comments extends SimpleExtension {
 			}
 
 			$title = $config->get_string('title');
-			$base_href = $config->get_string('base_href');
+			$base_href = make_http($config->get_string('base_href'));
 			$version = $config->get_string('version');
 			$xml = <<<EOD
 <?xml version="1.0" encoding="utf-8" ?>
