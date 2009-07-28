@@ -58,12 +58,16 @@ class Layout {
 		}
 
 		$left_block_html = "";
+		$user_block_html = "";
 		$main_block_html = "";
 
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
 					$left_block_html .= $this->block_to_html($block, true);
+					break;
+				case "user":
+					$user_block_html .= $block->body; // $this->block_to_html($block, true);
 					break;
 				case "main":
 					if($block->header == "Images") {
@@ -101,6 +105,29 @@ class Layout {
 		$custom_links .= "<li><a href='".make_link('wiki')."'>Wiki</a></li>";
 		$custom_links .= "<li><a href='".make_link('wiki/more')."'>More &raquo;</a></li>";
 
+		$custom_sublinks = "";
+		// hack
+		global $user;
+		$username = url_escape($user->name);
+		// hack
+		$qp = _get_query_parts();
+		// php sucks
+		switch($qp[0]) {
+			case "user":
+				$custom_sublinks .= $user_block_html;
+				break;
+			case "post":
+				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
+				break;
+			case "tags":
+				$custom_sublinks .= "<li><a href='".make_link('tags/map')."'>Map</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link('tags/alphabetic')."'>Alphabetic</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link('tags/categories')."'>Categories</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Aliases</a></li>";
+				break;
+		}
 
 		// bzchan: failed attempt to add heading after title_link (failure was it looked bad)
 		//if($this->heading==$site_name)$this->heading = '';
@@ -135,6 +162,9 @@ $header_html
 		$title_link
 		<ul class="flat-list">
 			$custom_links
+		</ul>
+		<br><ul class="flat-list">
+			$custom_sublinks
 		</ul>
 		</div>
 		$subheading
