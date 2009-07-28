@@ -10,14 +10,13 @@ class CustomUserPageTheme extends UserPageTheme {
 	}
 
 	public function display_user_links($page, $user, $parts) {
-		$page->add_block(new Block("User Links", join(", ", $parts), "main", 10));
+	//	$page->add_block(new Block("User Links", join("<br>", $parts), "left", 10));
 	}
 
 	public function display_user_block($page, $user, $parts) {
-#		$h_name = html_escape($user->name);
-#		$html = "Logged in as $h_name<br>";
-#		$html .= join("\n<br/>", $parts);
-#		$page->add_block(new Block("User Links", $html, "left", 90));
+		$h_name = html_escape($user->name);
+		$html = "<li>" . join("\n<li>", $parts);
+		$page->add_block(new Block("User Links", $html, "user", 90));
 	}
 
 	public function display_signup_page($page) {
@@ -89,6 +88,5 @@ class CustomUserPageTheme extends UserPageTheme {
 		";
 		return $html;
 	}
-// }}}
 }
 ?>
