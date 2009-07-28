@@ -16,102 +16,105 @@ class FavoriteSetEvent extends Event {
 	}
 }
 
-class Favorites extends Extension {
-	var $theme;
-
-	public function receive_event($event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object("favorites", "FavoritesTheme");
-
-		if(is_a($event, 'InitExtEvent')) {
-			global $config;
-			if($config->get_int("ext_favorites_version", 0) < 1) {
-				$this->install();
-			}
-		}
-		
-		if(is_a($event, 'DisplayingImageEvent')) {
-			global $user;
-			if(!$user->is_anonymous()) {
-			
-				$user_id = $user->id;				
-				$image_id = $event->image->id;
-				
-				global $database;
-				
-				$is_favorited = false;
-				$sqlresult = $database->execute("SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = ? AND image_id = ?", array($user_id, $image_id));
-				if(!$sqlresult->EOF)
-				{
-					$is_favorited = $sqlresult->fields['ct'] > 0;
-				}
-			
-				$html = $this->theme->get_voter_html($event->image, $is_favorited);
-			} else {
-				$html = $this->theme->show_anonymous_html($event->image);
-			}
-			$event->page->add_block(new Block("Favorites", $html, "left", 20));
-			
-			$html = $this->theme->show_favorite_marks($this->list_persons_who_have_favorited($event->image));
-
-			$event->page->add_block(new Block("Favorited by", $html, "left", 25));
-		}
-		
-		if(is_a($event, 'PageRequestEvent') && ($event->page_name == "change_favorite")) {
-			if(!$event->user->is_anonymous()) {
-				$image_id = int_escape($_POST['image_id']);
-				if (($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) {
-					send_event(new FavoriteSetEvent($image_id, $event->user, ($_POST['favorite_action'] == "set")));
-				}
-				$event->page->set_mode("redirect");
-				$event->page->set_redirect(make_link("post/view/$image_id"));
-			}
-		}
-		
-		if(is_a($event, 'ImageInfoSetEvent')) {
-			global $user;
-			if (($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) {
-				send_event(new FavoriteSetEvent($event->image_id, $user, ($_POST['favorite_action'] == "set")));
-			}
-		}
-		
-		if(is_a($event, 'FavoriteSetEvent')) {
-			$this->add_vote($event->image_id, $event->user->id, $event->do_set);
-		}
-
-		if(is_a($event, 'ImageDeletionEvent')) {
-			global $database;
-			$database->execute("DELETE FROM user_favorites WHERE image_id=?", array($event->image->id));
-		}
-
-		if(is_a($event, 'ParseLinkTemplateEvent')) {
-			$event->replace('$favorites', $event->image->favorites);
-		}
-
-		if(is_a($event, 'SearchTermParseEvent')) {
-			$matches = array();
-			if(preg_match("/favorites(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
-				$cmp = $matches[1];
-				$favorites = $matches[2];
-				$event->set_querylet(new Querylet("favorites $cmp $favorites"));
-			}
-			else if(preg_match("/favorited_by=(.*)/i", $event->term, $matches)) {
-				global $database;
-				$user = $database->get_user_by_name($matches[1]);
-				if(!is_null($user)) {
-					$user_id = $user->id;
-				}
-				else {
-					$user_id = -1;
-				}
-
-				$event->set_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
-			}
-			else if(preg_match("/favorited_by_userno=([0-9]+)/i", $event->term, $matches)) {
-				$user_id = int_escape($matches[1]);
-				$event->set_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
-			}
+class Favorites extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		if($config->get_int("ext_favorites_version", 0) < 1) {
+			$this->install();
 		}
 	}
+
+	public function onImageAdminBlockBuilding($event) {
+		global $database, $page, $user;
+		if(!$user->is_anonymous()) {
+			$user_id = $user->id;
+			$image_id = $event->image->id;
+
+			$is_favorited = $database->db->GetOne(
+				"SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = ? AND image_id = ?",
+				array($user_id, $image_id)) > 0;
+		
+			$event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
+		}
+	}
+
+	public function onDisplayingImage($event) {
+		$people = $this->list_persons_who_have_favorited($event->image);
+		if(count($people) > 0) {
+			$html = $this->theme->display_people($people);
+		}
+	}
+
+	public function onPageRequest($event) {
+		global $page, $user;
+		if($event->page_matches("change_favorite") && !$user->is_anonymous()) {
+			$image_id = int_escape($_POST['image_id']);
+			if (($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) {
+				send_event(new FavoriteSetEvent($image_id, $user, ($_POST['favorite_action'] == "set")));
+			}
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/view/$image_id"));
+		}
+	}
+
+	public function onImageInfoSet($event) {
+		global $user;
+		if(($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) {
+			send_event(new FavoriteSetEvent($event->image_id, $user, ($_POST['favorite_action'] == "set")));
+		}
+	}
+
+	public function onFavoriteSet($event) {
+		global $user;
+		$this->add_vote($event->image_id, $user->id, $event->do_set);
+	}
+
+	public function onImageDeletion($event) {
+		global $database;
+		$database->execute("DELETE FROM user_favorites WHERE image_id=?", array($event->image->id));
+	}
+
+	public function onParseLinkTemplate($event) {
+		$event->replace('$favorites', $event->image->favorites);
+	}
+
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if(strpos($user->name, ' ') === false) {
+			$username = url_escape($user->name);
+			$link = make_link("post/list/favorited_by=$username/1");
+		} else {
+			$userid = $user->id;
+			$link = make_link("post/list/favorited_by_userno=$userid/1");
+		}
+		$event->add_link("My Favorites", $link);
+	}
+
+	public function onSearchTermParse($event) {
+		$matches = array();
+		if(preg_match("/favorites(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$favorites = $matches[2];
+			$event->set_querylet(new Querylet("favorites $cmp $favorites"));
+		}
+		else if(preg_match("/favorited_by=(.*)/i", $event->term, $matches)) {
+			global $database;
+			$user = User::by_name($matches[1]);
+			if(!is_null($user)) {
+				$user_id = $user->id;
+			}
+			else {
+				$user_id = -1;
+			}
+
+			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
+		}
+		else if(preg_match("/favorited_by_userno=([0-9]+)/i", $event->term, $matches)) {
+			$user_id = int_escape($matches[1]);
+			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
+		}
+	}
+
 
 	private function install() {
 		global $database;
@@ -124,7 +127,7 @@ class Favorites extends Extension {
 				CREATE TABLE user_favorites (
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created_at DATETIME NOT NULL,,
+					created_at DATETIME NOT NULL,
 					UNIQUE(image_id, user_id),
 					INDEX(image_id)
 				)
@@ -159,5 +162,4 @@ class Favorites extends Extension {
 		return $result->GetArray();
 	}
 }
-add_event_listener(new Favorites());
 ?>
