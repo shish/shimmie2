@@ -64,39 +64,53 @@ class Wiki extends SimpleExtension {
 			}
 
 			$content = $this->get_page($title);
+			$this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+		}
+		else if($event->page_matches("wiki_admin/edit")) {
+			$content = $this->get_page($_POST['title']);
+			$this->theme->display_page_editor($page, $content);
+		}
+		else if($event->page_matches("wiki_admin/save")) {
+			$title = $_POST['title'];
+			$rev = int_escape($_POST['revision']);
+			$body = $_POST['body'];
+			$lock = $user->is_admin() && isset($_POST['lock']) && ($_POST['lock'] == "on");
 
-			// save the POST data as the page
-			if(isset($_GET['save']) && $_GET['save'] == "on") {
-				$title = $_POST['title'];
-				$rev = int_escape($_POST['revision']);
-				$body = $_POST['body'];
-				$lock = isset($_POST['lock']) && ($_POST['lock'] == "on");
+			if($this->can_edit($user, $this->get_page($title))) {
+				$wikipage = $this->get_page($title);
+				$wikipage->rev = $rev;
+				$wikipage->body = $body;
+				$wikipage->locked = $lock;
+				send_event(new WikiUpdateEvent($user, $wikipage));
 
-				if($this->can_edit($user, $this->get_page($title))) {
-					$wikipage = $this->get_page($title);
-					$wikipage->rev = $rev;
-					$wikipage->body = $body;
-					$wikipage->locked = $user->is_admin() ? $lock : false;
-					send_event(new WikiUpdateEvent($user, $wikipage));
-
-					$u_title = url_escape($title);
-
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("wiki/$u_title"));
-				}
-				else {
-					$this->theme->display_permission_denied($page);
-				}
+				$u_title = url_escape($title);
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("wiki/$u_title"));
 			}
-
-			// edit
-			else if(isset($_GET['edit']) && $_GET['edit'] == "on") {
-				$this->theme->display_page_editor($page, $content);
-			}
-
-			// default: display the page
 			else {
-				$this->theme->display_page($page, $content, $this->get_page("wiki:sidebar"));
+				$this->theme->display_permission_denied($page);
+			}
+		}
+		else if($event->page_matches("wiki_admin/delete_revision")) {
+			if($user->is_admin()) {
+				global $database;
+				$database->Execute(
+						"DELETE FROM wiki_pages WHERE title=? AND revision=?",
+						array($_POST["title"], $_POST["revision"]));
+				$u_title = url_escape($_POST["title"]);
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("wiki/$u_title"));
+			}
+		}
+		else if($event->page_matches("wiki_admin/delete_all")) {
+			if($user->is_admin()) {
+				global $database;
+				$database->Execute(
+						"DELETE FROM wiki_pages WHERE title=?",
+						array($_POST["title"]));
+				$u_title = url_escape($_POST["title"]);
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("wiki/$u_title"));
 			}
 		}
 	}
