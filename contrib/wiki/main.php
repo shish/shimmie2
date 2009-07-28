@@ -26,22 +26,20 @@ class WikiPage {
 	var $locked;
 	var $body;
 
-	public function WikiPage($row=null) {
-		if(!is_null($row)) {
-			$this->id = $row['id'];
-			$this->owner_id = $row['owner_id'];
-			$this->owner_ip = $row['owner_ip'];
-			$this->date = $row['date'];
-			$this->title = $row['title'];
-			$this->revision = $row['revision'];
-			$this->locked = ($row['locked'] == 'Y');
-			$this->body = $row['body'];
-		}
+	public function WikiPage($row) {
+		assert(!empty($row));
+
+		$this->id = $row['id'];
+		$this->owner_id = $row['owner_id'];
+		$this->owner_ip = $row['owner_ip'];
+		$this->date = $row['date'];
+		$this->title = $row['title'];
+		$this->revision = $row['revision'];
+		$this->locked = ($row['locked'] == 'Y');
+		$this->body = $row['body'];
 	}
 
 	public function get_owner() {
-		global $config;
-		global $database;
 		return User::by_id($this->owner_id);
 	}
 
@@ -75,11 +73,10 @@ class Wiki extends SimpleExtension {
 				$lock = isset($_POST['lock']) && ($_POST['lock'] == "on");
 
 				if($this->can_edit($user, $this->get_page($title))) {
-					$wikipage = new WikiPage();
-					$wikipage->title = $title;
+					$wikipage = $this->get_page($title);
 					$wikipage->rev = $rev;
 					$wikipage->body = $body;
-					$wikipage->lock = $user->is_admin() ? $lock : false;
+					$wikipage->locked = $user->is_admin() ? $lock : false;
 					send_event(new WikiUpdateEvent($user, $wikipage));
 
 					$u_title = url_escape($title);
@@ -115,13 +112,24 @@ class Wiki extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	private function can_edit($user, $page) {
+	/**
+	 * See if the given user is allowed to edit the given page
+	 *
+	 * @retval boolean
+	 */
+	public static function can_edit(User $user, WikiPage $page) {
 		global $config;
 
-		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
+		// admins can edit everything
+		if($user->is_admin()) return true;
+
+		// anon / user can't ever edit locked pages
+		if($page->is_locked()) return false;
+
+		// anon / user can edit if allowed by config
 		if($config->get_bool("wiki_edit_anon", false) && $user->is_anonymous()) return true;
 		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
-		if($user->is_admin()) return true;
+
 		return false;
 	}
 
@@ -161,7 +169,7 @@ class Wiki extends SimpleExtension {
 				ORDER BY revision DESC", array($title));
 
 		// fall back to wiki:default
-		if(is_null($row)) {
+		if(empty($row)) {
 			$row = $database->db->GetRow("
 					SELECT *
 					FROM wiki_pages
@@ -169,17 +177,15 @@ class Wiki extends SimpleExtension {
 					ORDER BY revision DESC", "wiki:default");
 
 			// fall further back to manual
-			if(is_null($row)) {
+			if(empty($row)) {
 				$row = array(
 					"id" => -1,
 					"owner_ip" => "0.0.0.0",
 					"date" => "",
 					"revision" => 0,
 					"locked" => false,
-					"body" => "
-						This is a default page for when a page is empty,
-						it can be edited by editing [[wiki:default]].
-					",
+					"body" => "This is a default page for when a page is empty, ".
+						"it can be edited by editing [[wiki:default]].",
 				);
 			}
 
@@ -189,7 +195,7 @@ class Wiki extends SimpleExtension {
 			$row["owner_id"] = $config->get_int("anon_id", 0);
 		}
 
-		assert(!is_null($row));
+		assert(!empty($row));
 
 		return new WikiPage($row);
 	}

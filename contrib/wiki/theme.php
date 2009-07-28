@@ -17,6 +17,7 @@ class WikiTheme extends Themelet {
 		$tfe = new TextFormattingEvent($nav_page->body);
 		send_event($tfe);
 
+		// only the admin can edit the sidebar
 		global $user;
 		if($user->is_admin()) {
 			$tfe->formatted .= "<p>(<a href='".make_link("wiki/wiki:sidebar", "edit=on")."'>Edit</a>)";
@@ -34,16 +35,6 @@ class WikiTheme extends Themelet {
 		$page->set_heading(html_escape($wiki_page->title));
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Editor", $this->create_edit_html($wiki_page)));
-	}
-
-	protected function can_edit(User $user, WikiPage $page) {
-		global $config;
-
-		if(!is_null($page) && $page->is_locked() && !$user->is_admin()) return false;
-		if($config->get_bool("wiki_edit_anon", false) && $user->is_anonymous()) return true;
-		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
-		if($user->is_admin()) return true;
-		return false;
 	}
 
 	protected function create_edit_html(WikiPage $page) {
@@ -76,20 +67,23 @@ class WikiTheme extends Themelet {
 		$tfe = new TextFormattingEvent($page->body);
 		send_event($tfe);
 
-		$html = "<div class='wiki-page'>";
-		$html .= $tfe->formatted;
-		$html .= "<hr>";
-		$html .= "<p class='wiki-footer'>Revision {$page->revision} by ".
-		         "<a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a> at {$page->date} ";
-
 		global $user;
-		if($this->can_edit($user, $page)) {
-			$html .= "[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] ";
-		}
+		$edit = Wiki::can_edit($user, $page) ?
+			"[<a href='".make_link("wiki/{$page->title}", "edit=on")."'>edit</a>] " :
+			"";
 
-		$html .= "</p></div>";
-
-		return $html;
+		return "
+			<div class='wiki-page'>
+			$tfe->formatted
+			<hr>
+			<p class='wiki-footer'>
+				Revision {$page->revision}
+				by <a href='".make_link("user/{$owner->name}")."'>{$owner->name}</a>
+				at {$page->date}
+				$edit
+			</p>
+			</div>
+		";
 	}
 }
 ?>
