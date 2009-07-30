@@ -95,7 +95,7 @@ class Favorites extends SimpleExtension {
 		if(preg_match("/favorites(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
 			$cmp = $matches[1];
 			$favorites = $matches[2];
-			$event->set_querylet(new Querylet("favorites $cmp $favorites"));
+			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
 		}
 		else if(preg_match("/favorited_by=(.*)/i", $event->term, $matches)) {
 			global $database;
