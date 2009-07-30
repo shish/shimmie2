@@ -18,7 +18,7 @@ class FlashFileHandlerTheme extends Themelet {
 					width='{$image->width}'
 					type='application/x-shockwave-flash'></embed>
 			</object>";
-		$page->add_block(new Block("Image", $html, "main", 0));
+		$page->add_block(new Block("Flash Animation", $html, "main", 0));
 	}
 }
 ?>
