@@ -742,7 +742,7 @@ function _start_cache() {
 			else {
 				header("Content-type: text/html");
 				header("Last-Modified: $gmdate_mod");
-				print file_get_contents($cachename);
+				print gzuncompress(file_get_contents($cachename));
 			}
 			exit;
 		}
@@ -753,7 +753,7 @@ function _start_cache() {
 function _end_cache() {
 	$_do_cache = (CACHE && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
 	if($_do_cache) {
-		file_put_contents($cachename, ob_get_contents());
+		file_put_contents($cachename, gzcompress(ob_get_contents()));
 	}
 }
 ?>
