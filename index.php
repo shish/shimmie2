@@ -52,6 +52,7 @@
 
 // set up and purify the environment
 define("DEBUG", true);
+define("CACHE", true);
 define("SCORE_VERSION", 's2hack');
 define("VERSION", '2.3-beta7');
 
@@ -63,7 +64,7 @@ if(!file_exists("config.php")) {
 require_once "core/util.inc.php";
 _version_check();
 _sanitise_environment();
-
+_start_cache();
 
 try {
 	// load base files
@@ -125,6 +126,8 @@ try {
 	if($database->engine->name != "sqlite") {
 		$database->db->CommitTrans(true);
 	}
+
+	_end_cache();
 }
 catch(Exception $e) {
 	$version = VERSION;
