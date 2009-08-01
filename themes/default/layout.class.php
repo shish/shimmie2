@@ -15,8 +15,14 @@ class Layout {
 		$version = "Shimmie-".VERSION;
 
 		$header_html = "";
+		$footer_html = "";
 		foreach($page->headers as $line) {
-			$header_html .= "\t\t$line\n";
+			if(strpos($line, "script src=") > 0) {
+				$footer_html .= "\t\t$line\n";
+			}
+			else {
+				$header_html .= "\t\t$line\n";
+			}
 		}
 
 		$left_block_html = "";
@@ -70,6 +76,7 @@ $header_html
 			based on the Danbooru concept.
 			$debug
 			$contact
+			$footer_html
 		</div>
 	</body>
 </html>
