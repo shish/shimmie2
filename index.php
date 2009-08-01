@@ -52,7 +52,7 @@
 
 // set up and purify the environment
 define("DEBUG", true);
-define("CACHE", true);
+define("CACHE", false);
 define("SCORE_VERSION", 's2hack');
 define("VERSION", 'trunk');
 
