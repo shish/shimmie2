@@ -718,4 +718,42 @@ function _get_user() {
 	return $user;
 }
 
+function _start_cache() {
+	$_do_cache = (CACHE && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
+	if($_do_cache) {
+		$hash = md5($_SERVER["QUERY_STRING"]);
+		$ab = substr($hash, 0, 2);
+		$cd = substr($hash, 2, 2);
+		$cachename = "data/$ab/$cd/$hash";
+		if(!file_exists("data/$ab/$cd/")) {
+			mkdir("data/$ab/$cd/", 0750, true);
+		}
+		if(file_exists($cachename)) {
+			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($cachename)) . ' GMT';
+
+			if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+				$if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+
+				if($if_modified_since == $gmdate_mod) {
+					header("HTTP/1.0 304 Not Modified");
+					header("Content-type: text/html");
+				}
+			}
+			else {
+				header("Content-type: text/html");
+				header("Last-Modified: $gmdate_mod");
+				print file_get_contents($cachename);
+			}
+			exit;
+		}
+		ob_start();
+	}
+}
+
+function _end_cache() {
+	$_do_cache = (CACHE && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
+	if($_do_cache) {
+		file_put_contents($cachename, ob_get_contents());
+	}
+}
 ?>
