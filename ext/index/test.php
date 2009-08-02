@@ -62,6 +62,11 @@ class IndexTest extends ShimmieWebTestCase {
 		$this->assertTitle(new PatternExpectation("/^Image $image_id_1: /"));
 		$this->assertNoText("No Images Found");
 
+		# meta tag, one result
+		$this->get_page("post/list/md5=feb01bab5698a11dd87416724c7a89e3/1");
+		$this->assertTitle(new PatternExpectation("/^Image $image_id_1: /"));
+		$this->assertNoText("No Images Found");
+
 		# multiple tags, many results
         $this->get_page('post/list/computer%20size=640x480/1');
 		$this->assertTitle("computer size=640x480");
