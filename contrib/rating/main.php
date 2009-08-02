@@ -7,10 +7,10 @@
  */
 
 class RatingSetEvent extends Event {
-	var $image_id, $user, $rating;
+	var $image, $user, $rating;
 
-	public function RatingSetEvent($image_id, $user, $rating) {
-		$this->image_id = $image_id;
+	public function RatingSetEvent(Image $image, User $user, $rating) {
+		$this->image = $image;
 		$this->user = $user;
 		$this->rating = $rating;
 	}
@@ -23,6 +23,35 @@ class Ratings implements Extension {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
+		if($event instanceof AdminBuildingEvent) {
+			$this->theme->display_bulk_rater();
+		}
+
+		if(($event instanceof PageRequestEvent) && $event->page_matches("admin/bulk_rate")) {
+			global $database, $user, $page;
+			if(!$user->is_admin()) {
+				throw PermissionDeniedException();
+			}
+			else {
+				$n = 0;
+				while(true) {
+					$images = Image::find_images($n, 100, Tag::explode($_POST["query"]));
+					if(count($images) == 0) break;
+					foreach($images as $image) {
+						send_event(new RatingSetEvent($image, $user, $_POST['rating']));
+					}
+					$n += 100;
+				}
+				#$database->execute("
+				#	update images set rating=? where images.id in (
+				#		select image_id from image_tags join tags
+				#		on image_tags.tag_id = tags.id where tags.tag = ?);
+				#	", array($_POST["rating"], $_POST["tag"]));
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("admin"));
+			}
+		}
+
 		if($event instanceof InitExtEvent) {
 			if($config->get_int("ext_ratings2_version") < 2) {
 				$this->install();
@@ -34,7 +63,7 @@ class Ratings implements Extension {
 		}
 
 		if($event instanceof RatingSetEvent) {
-			$this->set_rating($event->image_id, $event->rating);
+			$this->set_rating($event->image->id, $event->rating);
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
@@ -45,7 +74,7 @@ class Ratings implements Extension {
 
 		if($event instanceof ImageInfoSetEvent) {
 			if($user->is_admin()) {
-				send_event(new RatingSetEvent($event->image->id, $user, $_POST['rating']));
+				send_event(new RatingSetEvent($event->image, $user, $_POST['rating']));
 			}
 		}
 
