@@ -622,7 +622,7 @@ function print_GET() {
 /** @privatesection */
 
 function _stripslashes_r($arr) {
-	return is_array($arr) ? array_map('stripslashes_r', $arr) : stripslashes($arr);
+	return is_array($arr) ? array_map('_stripslashes_r', $arr) : stripslashes($arr);
 }
 
 function _sanitise_environment() {
