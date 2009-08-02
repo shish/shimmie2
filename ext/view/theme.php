@@ -48,9 +48,13 @@ class ViewImageTheme extends Themelet {
 	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
+			<script><!--
+			$(document).ready(function() {
+				$(\"#search_input\").DefaultValue(\"Search\");
+			});
+			//--></script>
 			<p><form action='".make_link()."' method='GET'>
-				<input id='search_input' name='search' type='text'
-						value='Search' autocomplete='off'>
+				<input id='search_input' name='search' type='text'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
 			<div id='search_completions'></div>";
