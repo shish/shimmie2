@@ -52,7 +52,7 @@ class AliasEditorTheme extends Themelet {
 			});
 			</script>
 			<table id='aliases' class='zebra'>
-				<thead><tr><th>From</th><th>To</th>$action</tr>$add</thead>
+				<thead><tr><th>From</th><th>To</th>$action</tr></thead>
 				<tbody>$h_aliases</tbody>
 				<tfoot>$add</tfoot>
 			</table>
