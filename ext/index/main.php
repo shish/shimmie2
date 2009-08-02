@@ -123,8 +123,8 @@ class Index extends SimpleExtension {
 			$val = parse_shorthand_int($matches[3]);
 			$event->add_querylet(new Querylet("images.$col $cmp ?", array($val)));
 		}
-		else if(preg_match("/^hash=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
-			$hash = strtolower($matches[1]);
+		else if(preg_match("/^(hash|md5)=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
+			$hash = strtolower($matches[2]);
 			$event->add_querylet(new Querylet("images.hash = '$hash'"));
 		}
 		else if(preg_match("/^(filetype|ext)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
