@@ -125,6 +125,11 @@ class Ratings implements Extension {
 				$set = join(', ', $arr);
 				$event->add_querylet(new Querylet("rating IN ($set)"));
 			}
+			if(preg_match("/^rating=(safe|questionable|explicit|unknown)$/", strtolower($event->term), $matches)) {
+				$text = $matches[1];
+				$char = $text[0];
+				$event->add_querylet(new Querylet("rating = ?", array($char)));
+			}
 		}
 	}
 
