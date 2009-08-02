@@ -54,7 +54,7 @@
 define("DEBUG", true);
 define("CACHE", false);
 define("SCORE_VERSION", 's2hack');
-define("VERSION", '2.3-beta7');
+define("VERSION", '2.3-beta8');
 
 if(!file_exists("config.php")) {
 	header("Location: install.php");
