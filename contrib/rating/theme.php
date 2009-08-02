@@ -19,6 +19,37 @@ class RatingsTheme extends Themelet {
 		return $html;
 	}
 
+	public function display_bulk_rater() {
+		global $page;
+		$html = "
+			<form action='".make_link("admin/bulk_rate")."' method='POST'>
+				<table style='width: 300px'>
+					<tr>
+						<td>Search</td>
+						<td>
+							<input type='text' name='query'>
+						</td>
+					</tr>
+					<tr>
+						<td>Rating</td>
+						<td>
+							<select name='rating'>
+								<option value='s'>Safe</option>
+								<option value='q'>Questionable</option>
+								<option value='e'>Explicit</option>
+								<option value='u'>Unrated</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2'><input type='submit' value='Go'></td>
+					</tr>
+				</table>
+			</form>
+		";
+		$page->add_block(new Block("Bulk Rating", $html));
+	}
+
 	public function rating_to_name($rating) {
 		switch($rating) {
 			case 's': return "Safe";
