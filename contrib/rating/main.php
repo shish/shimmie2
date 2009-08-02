@@ -135,7 +135,7 @@ class Ratings implements Extension {
 
 	private function no_rating_query($context) {
 		foreach($context as $term) {
-			if(preg_match("/^rating=([sqeu]+)$/", $term)) {
+			if(preg_match("/^rating=/", $term)) {
 				return false;
 			}
 		}
