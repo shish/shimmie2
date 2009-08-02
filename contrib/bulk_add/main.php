@@ -61,8 +61,7 @@ class BulkAdd extends SimpleExtension {
 
 		$list = "";
 
-		$dir = opendir("$base/$subdir");
-		while($filename = readdir($dir)) {
+		foreach(glob("$base/$subdir/*") as $filename) {
 			$fullpath = "$base/$subdir/$filename";
 
 			if(is_link($fullpath)) {
@@ -89,7 +88,6 @@ class BulkAdd extends SimpleExtension {
 				}
 			}
 		}
-		closedir($dir);
 
 		if(strlen($list) > 0) {
 			$this->theme->add_status("Adding $subdir", $list);
