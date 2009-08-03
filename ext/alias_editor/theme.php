@@ -57,6 +57,9 @@ class AliasEditorTheme extends Themelet {
 				<tfoot>$add</tfoot>
 			</table>
 			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
+		";
+
+		$bulk_html = "
 			<form enctype='multipart/form-data' action='".make_link("alias/import")."' method='POST'>
 				<input type='file' name='alias_file'>
 				<input type='submit' value='Upload List'>
@@ -67,6 +70,9 @@ class AliasEditorTheme extends Themelet {
 		$page->set_heading("Alias List");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Aliases", $html));
+		if($is_admin) {
+			$page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
+		}
 	}
 }
 ?>
