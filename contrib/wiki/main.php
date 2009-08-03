@@ -16,6 +16,9 @@ class WikiUpdateEvent extends Event {
 	}
 }
 
+class WikiUpdateException extends SCoreException {
+}
+
 class WikiPage {
 	var $id;
 	var $owner_id;
@@ -50,7 +53,29 @@ class WikiPage {
 
 class Wiki extends SimpleExtension {
 	public function onInitExt($event) {
-		$this->setup();
+		global $database;
+		global $config;
+
+		if($config->get_int("ext_wiki_version", 0) < 1) {
+			$database->create_table("wiki_pages", "
+				id SCORE_AIPK,
+				owner_id INTEGER NOT NULL,
+				owner_ip SCORE_INET NOT NULL,
+				date DATETIME DEFAULT NULL,
+				title VARCHAR(255) NOT NULL,
+				revision INTEGER NOT NULL DEFAULT 1,
+				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+				body TEXT NOT NULL,
+				UNIQUE (title, revision),
+				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+			");
+			$config->set_int("ext_wiki_version", 2);
+		}
+		if($config->get_int("ext_wiki_version") < 2) {
+			$database->Execute("ALTER TABLE wiki_pages ADD COLUMN
+				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
+			$config->set_int("ext_wiki_version", 2);
+		}
 	}
 
 	public function onPageRequest($event) {
@@ -116,7 +141,17 @@ class Wiki extends SimpleExtension {
 	}
 
 	public function onWikiUpdate($event) {
-		$this->set_page($event->user, $event->wikipage);
+		global $database;
+		$wpage = $event->wikipage;
+		try {
+			$row = $database->Execute("
+				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
+				VALUES (?, ?, now(), ?, ?, ?, ?)", array($event->user->id, $_SERVER['REMOTE_ADDR'],
+				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
+		}
+		catch(Exception $e) {
+			throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
+		}
 	}
 
 	public function onSetupBuilding($event) {
@@ -145,32 +180,6 @@ class Wiki extends SimpleExtension {
 		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
 
 		return false;
-	}
-
-	private function setup() {
-		global $database;
-		global $config;
-
-		if($config->get_int("ext_wiki_version", 0) < 1) {
-			$database->create_table("wiki_pages", "
-				id SCORE_AIPK,
-				owner_id INTEGER NOT NULL,
-				owner_ip SCORE_INET NOT NULL,
-				date DATETIME DEFAULT NULL,
-				title VARCHAR(255) NOT NULL,
-				revision INTEGER NOT NULL DEFAULT 1,
-				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-				body TEXT NOT NULL,
-				UNIQUE (title, revision),
-				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
-			");
-			$config->set_int("ext_wiki_version", 2);
-		}
-		if($config->get_int("ext_wiki_version") < 2) {
-			$database->Execute("ALTER TABLE wiki_pages ADD COLUMN
-				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
-			$config->set_int("ext_wiki_version", 2);
-		}
 	}
 
 	private function get_page($title, $revision=-1) {
@@ -212,15 +221,6 @@ class Wiki extends SimpleExtension {
 		assert(!empty($row));
 
 		return new WikiPage($row);
-	}
-
-	private function set_page(User $user, WikiPage $wpage) {
-		global $database;
-		// FIXME: deal with collisions
-		$row = $database->Execute("
-				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
-				VALUES (?, ?, now(), ?, ?, ?, ?)", array($user->id, $_SERVER['REMOTE_ADDR'],
-				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
 	}
 }
 ?>
