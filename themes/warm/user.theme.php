@@ -3,7 +3,10 @@
 class CustomUserPageTheme extends UserPageTheme {
 	public function display_user_block(Page $page, User $user, $parts) {
 		$h_name = html_escape($user->name);
-		$html = join("\n | ", $parts);
+		$html = " | ";
+		foreach($parts as $part) {
+			$html .= "<a href='{$part["link"]}'>{$part["name"]}</a> | ";
+		}
 		$page->add_block(new Block("Logged in as $h_name", $html, "head", 90));
 	}
 	public function display_login_block(Page $page) {

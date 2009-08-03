@@ -5,7 +5,7 @@ class UserBlockBuildingEvent extends Event {
 
 	public function add_link($name, $link, $position=50) {
 		while(isset($this->parts[$position])) $position++;
-		$this->parts[$position] = "<a href='$link'>$name</a>";
+		$this->parts[$position] = array("name" => $name, "link" => $link);
 	}
 }
 
