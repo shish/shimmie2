@@ -13,14 +13,41 @@ class DowntimeTheme extends Themelet {
 	 * Display $message and exit
 	 */
 	public function display_message($message) {
+		global $config;
+		$theme_name = $config->get_string('theme');
+		$data_href = get_base_href();
+		$login_link = make_link("user_admin/login");
 		header("HTTP/1.0 503 Service Temporarily Unavailable");
+
 		print <<<EOD
 <html>
 	<head>
 		<title>Downtime</title>
+		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
 	</head>
 	<body>
-		$message
+		<div id="downtime">
+			<h1>Down for Maintenance</h1>
+			<div id="message">
+				$message
+			</div>
+			<h3>Admin Login</h3>
+			<div id="login">
+				<form action="$login_link" method="POST">
+					<table id="login_table" summary="Login Form">
+						<tr>
+							<td width="70"><label for="user">Name</label></td>
+							<td width="70"><input id="user" type="text" name="user"></td>
+						</tr>
+						<tr>
+							<td><label for="pass">Password</label></td>
+							<td><input id="pass" type="password" name="pass"></td>
+						</tr>
+						<tr><td colspan="2"><input type="submit" value="Log In"></td></tr>
+					</table>
+				</form>
+			</div>
+		</div>
 	</body>
 </html>
 EOD;
