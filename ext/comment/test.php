@@ -2,7 +2,7 @@
 class CommentListTest extends ShimmieWebTestCase {
 	function testCommentsPage() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
 
 		# a good comment
 		$this->get_page("post/view/$image_id");
@@ -28,11 +28,17 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->click("Post Comment");
 		$this->assertText("Comments need text...");
 
-		# repetitive (gzip gives 10x improvement)
+		# repetitive (aka. gzip gives >= 10x improvement)
 		$this->get_page("post/view/$image_id");
 		$this->setField('comment', str_repeat("U", 5000));
 		$this->click("Post Comment");
 		$this->assertText("Comment too repetitive~");
+
+		# test that search by comment metadata works
+		$this->get_page("post/list/commented_by=test/1");
+		$this->assertTitle("Image $image_id: pbx");
+		$this->get_page("post/list/comments=1/1");
+		$this->assertTitle("Image $image_id: pbx");
 
 		$this->log_out();
 
