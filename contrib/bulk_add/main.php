@@ -33,21 +33,21 @@ class BulkAdd extends SimpleExtension {
 
 
 	private function add_image($tmpname, $filename, $tags) {
-		if(file_exists($tmpname)) {
-			global $user;
-			$pathinfo = pathinfo($filename);
-			if(!array_key_exists('extension', $pathinfo)) return;
-			$metadata['filename'] = $pathinfo['basename'];
-			$metadata['extension'] = $pathinfo['extension'];
-			$metadata['tags'] = $tags;
-			$metadata['source'] = null;
-			try {
-				$event = new DataUploadEvent($user, $tmpname, $metadata);
-				send_event($event);
-			}
-			catch(Exception $ex) {
-				return $ex->getMessage();
-			}
+		assert(file_exists($tmpname));
+
+		global $user;
+		$pathinfo = pathinfo($filename);
+		if(!array_key_exists('extension', $pathinfo)) {
+			throw new UploadException("File has no extension");
+		}
+		$metadata['filename'] = $pathinfo['basename'];
+		$metadata['extension'] = $pathinfo['extension'];
+		$metadata['tags'] = $tags;
+		$metadata['source'] = null;
+		$event = new DataUploadEvent($user, $tmpname, $metadata);
+		send_event($event);
+		if($event->image_id == -1) {
+			throw new UploadException("File type not recognised");
 		}
 	}
 
@@ -61,30 +61,29 @@ class BulkAdd extends SimpleExtension {
 
 		$list = "";
 
-		foreach(glob("$base/$subdir/*") as $filename) {
-			$fullpath = "$base/$subdir/$filename";
+		foreach(glob("$base/$subdir/*") as $fullpath) {
+			$fullpath = str_replace("//", "/", $fullpath);
+			$shortpath = str_replace($base, "", $fullpath);
 
 			if(is_link($fullpath)) {
 				// ignore
 			}
 			else if(is_dir($fullpath)) {
-				if($filename[0] != ".") {
-					$this->add_dir($base, "$subdir/$filename");
-				}
+				$this->add_dir($base, str_replace($base, "", $fullpath));
 			}
 			else {
-				$tmpfile = $fullpath;
+				$pathinfo = pathinfo($fullpath);
 				$tags = $subdir;
 				$tags = str_replace("/", " ", $tags);
 				$tags = str_replace("__", " ", $tags);
 				$tags = trim($tags);
-				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ", ", $tags).")... ");
-				$error = $this->add_image($tmpfile, $filename, $tags);
-				if(is_null($error)) {
+				$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
+				try{
+					$this->add_image($fullpath, $pathinfo["basename"], $tags);
 					$list .= "ok\n";
 				}
-				else {
-					$list .= "failed:<br>$error\n";
+				catch(Exception $ex) {
+					$list .= "failed:<br>". $ex->getMessage();
 				}
 			}
 		}

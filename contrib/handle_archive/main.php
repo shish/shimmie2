@@ -30,11 +30,11 @@ class ArchiveFileHandler extends SimpleExtension {
 			$tmp = sys_get_temp_dir();
 			$tmpdir = "$tmp/shimmie-archive-{$event->hash}";
 			$cmd = $config->get_string('archive_extract_command');
-			$cmd = str_replace('%f', $event->tmpfile);
-			$cmd = str_replace('%d', $tmpdir);
-			system($cmd);
+			$cmd = str_replace('%f', $event->tmpname, $cmd);
+			$cmd = str_replace('%d', $tmpdir, $cmd);
+			exec($cmd);
 			$this->add_dir($tmpdir);
-			unlink($tmpdir);
+			deltree($tmpdir);
 		}
 	}
 
@@ -46,20 +46,23 @@ class ArchiveFileHandler extends SimpleExtension {
 
 	// copied from bulk add extension
 	private function add_image($tmpname, $filename, $tags) {
-		if(file_exists($tmpname)) {
+		assert(file_exists($tmpname));
+
+		try {
 			global $user;
 			$pathinfo = pathinfo($filename);
+			if(!array_key_exists('extension', $pathinfo)) {
+				throw new UploadException("File has no extension");
+			}
 			$metadata['filename'] = $pathinfo['basename'];
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = null;
-			try {
-				$event = new DataUploadEvent($user, $tmpname, $metadata);
-				send_event($event);
-			}
-			catch(UploadException $ex) {
-				return $ex->getMessage();
-			}
+			$event = new DataUploadEvent($user, $tmpname, $metadata);
+			send_event($event);
+		}
+		catch(UploadException $ex) {
+			return $ex->getMessage();
 		}
 	}
 
