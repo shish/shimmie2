@@ -15,7 +15,10 @@ class CustomUserPageTheme extends UserPageTheme {
 
 	public function display_user_block($page, $user, $parts) {
 		$h_name = html_escape($user->name);
-		$html = "<li>" . join("\n<li>", $parts);
+		$html = "";
+		foreach($parts as $part) {
+			$html .= "<li><a href='{$part["link"]}'>{$part["name"]}</a>";
+		}
 		$page->add_block(new Block("User Links", $html, "user", 90));
 	}
 
