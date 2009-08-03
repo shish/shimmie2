@@ -3,6 +3,10 @@
 class BBCode extends FormatterExtension {
 	public function format($text) {
 		$text = wordwrap($text, 80, " ", true);
+		$text = preg_replace_callback("/(\[img\]https?:\/\/.*?\[\/img\])/s", array($this, "unwrap"), $text);
+		$text = preg_replace_callback("/(\[url=(?:https?|ftp|irc|mailto):\/\/.*?\])/s", array($this, "unwrap"), $text);
+		$text = preg_replace_callback("/(\[url\](?:https?|ftp|irc|mailto):\/\/.*?\[\/url\])/s", array($this, "unwrap"), $text);
+
 		$text = $this->extract_code($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
@@ -12,6 +16,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
 		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto):\/\/.*?)\[\/url\]/s", "<a href=\"\\1\">\\1</a>", $text);
+		$text = preg_replace("/\[img\](https?:\/\/.*?)\[\/img\]/s", "<img src=\"\\1\">", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\2</a>", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\1</a>", $text);
 		$text = preg_replace("/\n\s*\n/", "\n\n", $text);
@@ -36,6 +41,10 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
+	private function unwrap($matches) {
+		return str_replace(' ', '', $matches[1]);
+	}
+
 	public function strip($text) {
 		$text = wordwrap($text, 80, " ", true);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
@@ -45,6 +54,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "\\1", $text);
 		$text = preg_replace("/\[url=(.*?)\](.*?)\[\/url\]/s", "\\2", $text);
 		$text = preg_replace("/\[url\](.*?)\[\/url\]/s", "\\1", $text);
+		$text = preg_replace("/\[img\](.*?)\[\/img\]/s", "", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "\\2", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "\\1", $text);
 		$text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "", $text);
