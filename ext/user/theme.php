@@ -78,11 +78,17 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = "
 			<form action='".make_link("user_admin/login")."' method='POST'>
-			<table summary='Login Form' align='center'>
-			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
-			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
-			<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
-			</table>
+				<table summary='Login Form'>
+					<tr>
+						<td width='70'><label for='user'>Name</label></td>
+						<td width='70'><input id='user' type='text' name='user'></td>
+					</tr>
+					<tr>
+						<td><label for='pass'>Password</label></td>
+						<td><input id='pass' type='password' name='pass'></td>
+					</tr>
+					<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
+				</table>
 			</form>
 		";
 		if($config->get_bool("login_signup_enabled")) {
