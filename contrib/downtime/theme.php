@@ -1,6 +1,6 @@
 <?php
 
-class DowntimeTheme Extends Themelet {
+class DowntimeTheme extends Themelet {
 	/**
 	 * Show the admin that downtime mode is enabled
 	 */
