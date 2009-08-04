@@ -2,6 +2,7 @@
 config.php
 images
 thumbs
+data
 sql.log
 ext/autocomplete
 ext/ban_words
@@ -12,6 +13,7 @@ ext/downtime
 ext/emoticons
 ext/et
 ext/event_log
+ext/favorites
 ext/featured
 ext/handle_archive
 ext/handle_flash
@@ -36,6 +38,7 @@ ext/rss_comments
 ext/rss_images
 ext/simpletest
 ext/site_description
+ext/sitemap
 ext/svn_update
 ext/tag_history
 ext/tagger
