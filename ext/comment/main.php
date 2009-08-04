@@ -230,7 +230,7 @@ class CommentList extends SimpleExtension {
 			";
 		$result = $database->Execute($get_threads, array($threads_per_page, $start));
 
-		$total_pages = (int)($database->db->GetOne("SELECT COUNT(image_id) AS count FROM comments GROUP BY image_id") / 10);
+		$total_pages = (int)($database->db->GetOne("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
 
 
 		$images = array();
@@ -272,7 +272,7 @@ class CommentList extends SimpleExtension {
 		$i_image_id = int_escape($image_id);
 		$rows = $database->get_all("
 				SELECT
-				users.id as user_id, users.name as user_name,
+				users.id as user_id, users.name as user_name, users.email as user_email,
 				comments.comment as comment, comments.id as comment_id,
 				comments.image_id as image_id, comments.owner_ip as poster_ip,
 				comments.posted as posted
