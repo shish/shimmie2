@@ -120,6 +120,7 @@ UL {
 	overflow: hidden;
 }
 .comment {
+	margin-bottom: 16px;
 	text-align: left;
 }
 
@@ -187,7 +188,6 @@ UL {
 
 .setupblock {
 	text-align: center;
-	margin: 16px;
 	width: 350px;
 }
 .setupblock TEXTAREA {

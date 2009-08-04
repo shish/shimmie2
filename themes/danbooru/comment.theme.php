@@ -1,7 +1,12 @@
 <?php
 
 class CustomCommentListTheme extends CommentListTheme {
-	public function display_page_start($page, $page_number, $total_pages) {
+	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
+		global $page;
+
+		$page->disable_left();
+
+		// parts for the whole page
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -12,30 +17,51 @@ class CustomCommentListTheme extends CommentListTheme {
 			"<a href='".make_link("comment/list/$next")."'>Next</a>";
 
 		$nav = "$h_prev | $h_index | $h_next";
-		
+
 		$page->set_title("Comments");
 		$page->set_heading("Comments");
+		$page->add_block(new Block("Navigation", $nav, "left"));
 		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
-		$page->disable_left();
+
+		// parts for each image
+		$position = 10;
+		foreach($images as $pair) {
+			$image = $pair[0];
+			$comments = $pair[1];
+
+			$thumb_html = $this->build_thumb_html($image);
+
+			$s = "&nbsp;&nbsp;&nbsp;";
+			$un = $image->get_owner()->name;
+			$t = "";
+			foreach($image->get_tag_array() as $tag) {
+				$u_tag = url_escape($tag);
+				$t .= "<a href='".make_link("post/list/$u_tag/1")."'>".html_escape($tag)."</a> ";
+			}
+			$p = autodate($image->posted);
+
+			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un<br><b>Tags</b> $t<p>&nbsp;";
+			foreach($comments as $comment) {
+				$comment_html .= $this->comment_to_html($comment);
+			}
+			if($can_post) {
+				$comment_html .= $this->build_postbox($image->id);
+			}
+
+			$html  = "
+				<table><tr>
+					<td style='width: 220px;'>$thumb_html</td>
+					<td style='text-align: left;'>$comment_html</td>
+				</tr></table>
+			";
+
+
+			$page->add_block(new Block("&nbsp;", $html, "main", $position++));
+		}
 	}
 
-	public function display_recent_comments($page, $comments) {
+	public function display_recent_comments($comments) {
 		// no recent comments in this theme
-		//$html = $this->comments_to_html($comments, true);
-		//$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
-		//$page->add_block(new Block("Comments", $html, "left"));
-	}
-
-	public function display_comments(Page $page, $comments, $postbox, Image $image) {
-		$count = count($comments);
-		$cs = $count == 1 ? "Comment" : "Comments";
-		if($postbox) {
-			$html = $this->comments_to_html($comments) . $this->build_postbox($image->id);
-		}
-		else {
-			$html = $this->comments_to_html($comments);
-		}
-		$page->add_block(new Block("$count $cs", $html, "main", 30));
 	}
 
 
@@ -55,33 +81,21 @@ class CustomCommentListTheme extends CommentListTheme {
 
 		$h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_dellink = $user->is_admin() ? 
-			" ($h_poster_ip, <a ".
+			"<br>($h_poster_ip, <a ".
 			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
-		return "<p class='comment'>$h_userlink $h_dellink<br/><b>Posted on $h_posted</b><br/>$h_comment</p>";
-	}
-
-	public function add_comment_list(Page $page, Image $image, $comments, $position, $with_postbox) {
-		$s = "&nbsp;&nbsp;&nbsp;";
-		$un = $image->get_owner()->name;
-		$t = "";
-		foreach($image->get_tag_array() as $tag) {
-			$u_tag = url_escape($tag);
-			$t .= "<a href='".make_link("post/list/$u_tag/1")."'>".html_escape($tag)."</a> ";
+		if($trim) {
+			return "<p class='comment'>$h_userlink $h_dellink<br/><b>Posted $h_posted</b><br/>$h_comment</p>";
 		}
-		$p = autodate($image->posted);
-
-		$html  = "<div style='text-align: left'>";
-		$html .=   "<div style='float: left; margin-right: 16px;'>" . $this->build_thumb_html($image) . "</div>";
-		$html .=   "<div style='margin-left: 250px;'>";
-		$html .=   "<b>Date</b> $p $s <b>User</b> $un<br><b>Tags</b> $t<p>&nbsp;";
-		$html .=   $this->comments_to_html($comments);
-		$html .=   "</div>";
-		$html .= "</div>";
-		$html .= "<div style='clear: both; display: block; height: 64px;'>&nbsp;</div>";
-
-		$page->add_block(new Block("&nbsp;", $html, "main", $position));
+		else {
+			return "
+				<table class='comment'><tr>
+					<td style='width: 150px;'>$h_userlink<br/><b>Posted $h_posted</b>$h_dellink</td>
+					<td>$h_comment</td>
+				</tr></table>
+			";
+		}
 	}
 }
 ?>

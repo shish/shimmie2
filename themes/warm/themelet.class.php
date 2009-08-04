@@ -52,6 +52,20 @@ class Themelet {
 
 
 	/**
+	 * Put something in a box; specific to the default theme
+	 */
+	public function box($html) {
+		return "
+			<div class='rr'>
+				<div class='rrtop'><div></div></div>
+				<div class='rrcontent'>$html</div>
+				<div class='rrbot'><div></div></div>
+			</div>
+		";
+	}
+
+
+	/**
 	 * Add a generic paginator
 	 */
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {

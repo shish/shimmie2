@@ -39,7 +39,6 @@ THEAD {
 }
 TD {
 	vertical-align: top;
-	text-align: center;
 }
 /* bzchan: subtitle black border removed */
 #subtitle {
@@ -50,7 +49,9 @@ TD {
 	border-top: none;
 }
 #body SELECT {width: 150px;}
-TD>INPUT {width: 100%;}
+TD>INPUT[type="submit"] {width: 100%;}
+TD>INPUT[type="text"] {width: 100%;}
+TD>INPUT[type="password"] {width: 100%;}
 TD>SELECT {width: 100%;}
 
 #footer {
