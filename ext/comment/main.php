@@ -30,6 +30,7 @@ class Comment {
 	public function Comment($row) {
 		$this->owner_id = $row['user_id'];
 		$this->owner_name = $row['user_name'];
+		$this->owner_email = $row['user_email'];
 		$this->comment =  $row['comment'];
 		$this->comment_id =  $row['comment_id'];
 		$this->image_id =  $row['image_id'];
@@ -249,7 +250,7 @@ class CommentList extends SimpleExtension {
 		global $database;
 		$rows = $database->get_all("
 				SELECT
-				users.id as user_id, users.name as user_name,
+				users.id as user_id, users.name as user_name, users.email as user_email,
 				comments.comment as comment, comments.id as comment_id,
 				comments.image_id as image_id, comments.owner_ip as poster_ip,
 				comments.posted as posted
