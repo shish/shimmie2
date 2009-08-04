@@ -106,7 +106,5 @@ TD {
 	padding: 5px;
 }
 .thumb {
-	width: 220px;
-	display: inline-block;
-	margin-bottom: 16px;
+	margin: 16px;
 }

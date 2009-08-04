@@ -1,14 +1,6 @@
 <?php
 require_once "lib/akismet.class.php";
 
-/* CommentPostingEvent {{{
- * CommentPostingEvent:
- *   $comment_id
- *
- * A comment is being deleted. Maybe used by spam
- * detectors to get a feel for what should be delted
- * and what should be kept?
- */
 class CommentPostingEvent extends Event {
 	var $image_id, $user, $comment;
 
@@ -18,11 +10,8 @@ class CommentPostingEvent extends Event {
 		$this->comment = $comment;
 	}
 }
-// }}}
-/* CommentDeletionEvent {{{
- * CommentDeletionEvent:
- *   $comment_id
- *
+
+/**
  * A comment is being deleted. Maybe used by spam
  * detectors to get a feel for what should be delted
  * and what should be kept?
@@ -34,10 +23,10 @@ class CommentDeletionEvent extends Event {
 		$this->comment_id = $comment_id;
 	}
 }
-// }}}
+
 class CommentPostingException extends SCoreException {}
 
-class Comment { // {{{
+class Comment {
 	public function Comment($row) {
 		$this->owner_id = $row['user_id'];
 		$this->owner_name = $row['user_name'];
@@ -52,29 +41,59 @@ class Comment { // {{{
 		global $database;
 		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($user->id));
 	}
-} // }}}
+}
 
-class CommentList implements Extension {
-	var $theme;
-// event handler {{{
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
+class CommentList extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config, $database;
+		$config->set_default_bool('comment_anon', true);
+		$config->set_default_int('comment_window', 5);
+		$config->set_default_int('comment_limit', 10);
+		$config->set_default_int('comment_count', 5);
 
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+		if($config->get_int("ext_comments_version") < 2) {
+			// shortcut to latest
+			if($config->get_int("ext_comments_version") < 1) {
+				$database->create_table("comments", "
+					id SCORE_AIPK,
+					image_id INTEGER NOT NULL,
+					owner_id INTEGER NOT NULL,
+					owner_ip SCORE_INET NOT NULL,
+					posted DATETIME DEFAULT NULL,
+					comment TEXT NOT NULL,
+					INDEX (image_id),
+					INDEX (owner_ip),
+					INDEX (posted),
+					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+				");
+				$config->set_int("ext_comments_version", 2);
+			}
 
-		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_bool('comment_anon', true);
-			$config->set_default_int('comment_window', 5);
-			$config->set_default_int('comment_limit', 10);
-			$config->set_default_int('comment_count', 5);
+			// ===
+			if($config->get_int("ext_comments_version") < 1) {
+				$database->Execute("CREATE TABLE comments (
+					id {$database->engine->auto_increment},
+					image_id INTEGER NOT NULL,
+					owner_id INTEGER NOT NULL,
+					owner_ip CHAR(16) NOT NULL,
+					posted DATETIME DEFAULT NULL,
+					comment TEXT NOT NULL,
+					INDEX (image_id)
+				) {$database->engine->create_table_extras}");
+				$config->set_int("ext_comments_version", 1);
+			}
 
-			if($config->get_int("ext_comments_version") < 2) {
-				$this->install();
+			if($config->get_int("ext_comments_version") == 1) {
+				$database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
+				$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
+				$config->set_int("ext_comments_version", 2);
 			}
 		}
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("comment")) {
+	public function onPageRequest($event) {
+		if($event->page_matches("comment")) {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
 					try {
@@ -110,121 +129,84 @@ class CommentList implements Extension {
 				$this->build_page($event->get_arg(1));
 			}
 		}
-
-		if($event instanceof PostListBuildingEvent) {
-			$cc = $config->get_int("comment_count");
-			if($cc > 0) {
-				$recent = $this->get_recent_comments($cc);
-				if(count($recent) > 0) {
-					$this->theme->display_recent_comments($page, $recent);
-				}
-			}
-		}
-
-		if($event instanceof DisplayingImageEvent) {
-			$this->theme->display_comments(
-					$page,
-					$this->get_comments($event->image->id),
-					$this->can_comment(),
-					$event->image);
-		}
-
-		if($event instanceof ImageDeletionEvent) {
-			$this->delete_comments($event->image->id);
-		}
-		// TODO: split akismet into a separate class, which can veto the event
-		if($event instanceof CommentPostingEvent) {
-			$this->add_comment_wrapper($event->image_id, $event->user, $event->comment, $event);
-		}
-		if($event instanceof CommentDeletionEvent) {
-			$this->delete_comment($event->comment_id);
-		}
-
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Comment Options");
-			$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
-			$sb->add_label("<br>Limit to ");
-			$sb->add_int_option("comment_limit");
-			$sb->add_label(" comments per ");
-			$sb->add_int_option("comment_window");
-			$sb->add_label(" minutes");
-			$sb->add_label("<br>Show ");
-			$sb->add_int_option("comment_count");
-			$sb->add_label(" recent comments on the index");
-			$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
-			$event->panel->add_block($sb);
-		}
-
-		if(is_a($event, 'SearchTermParseEvent')) {
-			$matches = array();
-			if(preg_match("/comments(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
-				$cmp = $matches[1];
-				$comments = $matches[2];
-				$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
-			}
-			else if(preg_match("/commented_by=(.*)/i", $event->term, $matches)) {
-				global $database;
-				$user = User::by_name($matches[1]);
-				if(!is_null($user)) {
-					$user_id = $user->id;
-				}
-				else {
-					$user_id = -1;
-				}
-
-				$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
-			}
-			else if(preg_match("/commented_by_userid=([0-9]+)/i", $event->term, $matches)) {
-				$user_id = int_escape($matches[1]);
-				$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
-			}
-		}
 	}
-// }}}
-// installer {{{
-	protected function install() {
-		global $database;
+
+	public function onPostListBuilding($event) {
 		global $config;
-
-		// shortcut to latest
-		if($config->get_int("ext_comments_version") < 1) {
-			$database->create_table("comments", "
-				id SCORE_AIPK,
-				image_id INTEGER NOT NULL,
-				owner_id INTEGER NOT NULL,
-				owner_ip SCORE_INET NOT NULL,
-				posted DATETIME DEFAULT NULL,
-				comment TEXT NOT NULL,
-				INDEX (image_id),
-				INDEX (owner_ip),
-				INDEX (posted),
-				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
-			");
-			$config->set_int("ext_comments_version", 2);
-		}
-
-		// ===
-		if($config->get_int("ext_comments_version") < 1) {
-			$database->Execute("CREATE TABLE comments (
-				id {$database->engine->auto_increment},
-				image_id INTEGER NOT NULL,
-				owner_id INTEGER NOT NULL,
-				owner_ip CHAR(16) NOT NULL,
-				posted DATETIME DEFAULT NULL,
-				comment TEXT NOT NULL,
-				INDEX (image_id)
-			) {$database->engine->create_table_extras}");
-			$config->set_int("ext_comments_version", 1);
-		}
-
-		if($config->get_int("ext_comments_version") == 1) {
-			$database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
-			$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
-			$config->set_int("ext_comments_version", 2);
+		$cc = $config->get_int("comment_count");
+		if($cc > 0) {
+			$recent = $this->get_recent_comments($cc);
+			if(count($recent) > 0) {
+				$this->theme->display_recent_comments($recent);
+			}
 		}
 	}
-// }}}
+
+	public function onDisplayingImage($event) {
+		$this->theme->display_image_comments(
+			$event->image,
+			$this->get_comments($event->image->id),
+			$this->can_comment()
+		);
+	}
+
+	public function onImageDeletion($event) {
+		global $database;
+		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
+		log_info("comment", "Deleting all comments for Image #$image_id");
+	}
+
+	// TODO: split akismet into a separate class, which can veto the event
+	public function onCommentPosting($event) {
+		$this->add_comment_wrapper($event->image_id, $event->user, $event->comment, $event);
+	}
+
+	public function onCommentDeletion($event) {
+		global $database;
+		$database->Execute("DELETE FROM comments WHERE id=?", array($comment_id));
+		log_info("comment", "Deleting Comment #$comment_id");
+	}
+
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Comment Options");
+		$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
+		$sb->add_label("<br>Limit to ");
+		$sb->add_int_option("comment_limit");
+		$sb->add_label(" comments per ");
+		$sb->add_int_option("comment_window");
+		$sb->add_label(" minutes");
+		$sb->add_label("<br>Show ");
+		$sb->add_int_option("comment_count");
+		$sb->add_label(" recent comments on the index");
+		$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
+		$event->panel->add_block($sb);
+	}
+
+	public function onSearchTermParse($event) {
+		$matches = array();
+		if(preg_match("/comments(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$comments = $matches[2];
+			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
+		}
+		else if(preg_match("/commented_by=(.*)/i", $event->term, $matches)) {
+			global $database;
+			$user = User::by_name($matches[1]);
+			if(!is_null($user)) {
+				$user_id = $user->id;
+			}
+			else {
+				$user_id = -1;
+			}
+
+			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
+		}
+		else if(preg_match("/commented_by_userid=([0-9]+)/i", $event->term, $matches)) {
+			$user_id = int_escape($matches[1]);
+			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
+		}
+	}
+
 // page building {{{
 	private function build_page($current_page) {
 		global $page;
@@ -250,16 +232,15 @@ class CommentList implements Extension {
 		$total_pages = (int)($database->db->GetOne("SELECT COUNT(image_id) AS count FROM comments GROUP BY image_id") / 10);
 
 
-		$this->theme->display_page_start($page, $current_page, $total_pages);
-
-		$n = 10;
+		$images = array();
 		while(!$result->EOF) {
 			$image = Image::by_id($result->fields["image_id"]);
 			$comments = $this->get_comments($image->id);
-			$this->theme->add_comment_list($page, $image, $comments, $n, $this->can_comment());
-			$n += 1;
+			$images[] = array($image, $comments);
 			$result->MoveNext();
 		}
+
+		$this->theme->display_comment_list($images, $current_page, $total_pages, $this->can_comment());
 	}
 // }}}
 // get comments {{{
@@ -433,19 +414,6 @@ class CommentList implements Extension {
 			log_info("comment", "Comment #$cid added");
 		}
 	}
-
-	private function delete_comments($image_id) {
-		global $database;
-		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
-		log_info("comment", "Deleting all comments for Image #$image_id");
-	}
-
-	private function delete_comment($comment_id) {
-		global $database;
-		$database->Execute("DELETE FROM comments WHERE id=?", array($comment_id));
-		log_info("comment", "Deleting Comment #$comment_id");
-	}
 // }}}
 }
-add_event_listener(new CommentList());
 ?>
