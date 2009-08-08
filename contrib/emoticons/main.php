@@ -24,4 +24,12 @@ class Emoticons extends FormatterExtension {
 	}
 }
 add_event_listener(new Emoticons());
+
+class EmoticonList extends SimpleExtension {
+	public function onPageRequest($event) {
+		if($event->page_matches("emote/list")) {
+			$this->theme->display_emotes(glob("ext/emoticons/default/*"));
+		}
+	}
+}
 ?>
