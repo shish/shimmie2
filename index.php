@@ -61,6 +61,7 @@ if(!file_exists("config.php")) {
 	exit;
 }
 
+require_once "config.php";
 require_once "core/util.inc.php";
 _version_check();
 _sanitise_environment();

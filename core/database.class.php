@@ -222,53 +222,47 @@ class Database {
 	 * stored in config.php in the root shimmie folder
 	 */
 	public function Database() {
-		if(is_readable("config.php")) {
-			require_once "config.php";
+		global $database_dsn;
 
-			if(substr($database_dsn, 0, 5) == "mysql") {
-				$this->engine = new MySQL();
-			}
-			else if(substr($database_dsn, 0, 5) == "pgsql") {
-				$this->engine = new PostgreSQL();
-			}
-			else if(substr($database_dsn, 0, 6) == "sqlite") {
-				$this->engine = new SQLite();
-			}
+		if(substr($database_dsn, 0, 5) == "mysql") {
+			$this->engine = new MySQL();
+		}
+		else if(substr($database_dsn, 0, 5) == "pgsql") {
+			$this->engine = new PostgreSQL();
+		}
+		else if(substr($database_dsn, 0, 6) == "sqlite") {
+			$this->engine = new SQLite();
+		}
 
-			$this->db = @NewADOConnection($database_dsn);
+		$this->db = @NewADOConnection($database_dsn);
 
-			if(isset($cache)) {
-				$matches = array();
-				preg_match("#(memcache)://(.*)#", $cache, $matches);
-				if($matches[1] == "memcache") {
-					$this->cache = new MemCache($matches[2]);
-				}
-			}
-			else {
-				$this->cache = new NoCache();
-			}
-
-			if($this->db) {
-				$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-				$this->engine->init($this->db);
-			}
-			else {
-				$version = VERSION;
-				print "
-				<html>
-					<head>
-						<title>Internal error - Shimmie-$version</title>
-					</head>
-					<body>
-						Internal error: Could not connect to database
-					</body>
-				</html>
-				";
-				exit;
+		if(isset($cache)) {
+			$matches = array();
+			preg_match("#(memcache)://(.*)#", $cache, $matches);
+			if($matches[1] == "memcache") {
+				$this->cache = new MemCache($matches[2]);
 			}
 		}
 		else {
-			header("Location: install.php");
+			$this->cache = new NoCache();
+		}
+
+		if($this->db) {
+			$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+			$this->engine->init($this->db);
+		}
+		else {
+			$version = VERSION;
+			print "
+			<html>
+				<head>
+					<title>Internal error - Shimmie-$version</title>
+				</head>
+				<body>
+					Internal error: Could not connect to database
+				</body>
+			</html>
+			";
 			exit;
 		}
 	}
