@@ -718,42 +718,81 @@ function _get_user() {
 	return $user;
 }
 
+
+$_cache_hash = null;
+$_cache_memcache = false;
+$_cache_filename = null;
+
+function _cache_active() {
+	return ((CACHE_MEMCACHE || CACHE_DIR) && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
+}
+
 function _start_cache() {
-	$_do_cache = (CACHE && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
-	if($_do_cache) {
-		$hash = md5($_SERVER["QUERY_STRING"]);
-		$ab = substr($hash, 0, 2);
-		$cd = substr($hash, 2, 2);
-		$cachename = "data/$ab/$cd/$hash";
-		if(!file_exists("data/$ab/$cd/")) {
-			mkdir("data/$ab/$cd/", 0750, true);
-		}
-		if(file_exists($cachename)) {
-			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($cachename)) . ' GMT';
+	global $_cache_hash, $_cache_memcache, $_cache_filename;
 
-			if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-				$if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+	if(_cache_active()) {
+		$_cache_hash = md5($_SERVER["QUERY_STRING"]);
 
-				if($if_modified_since == $gmdate_mod) {
-					header("HTTP/1.0 304 Not Modified");
-					header("Content-type: text/html");
+		if(CACHE_MEMCACHE) {
+			$_cache_memcache = new Memcache;
+			$_cache_memcache->pconnect('localhost', 11211);
+			$zdata = $_cache_memcache->get($hash);
+			if($zdata) {
+				header("Content-type: text/html");
+				$data = @gzuncompress($zdata);
+				if($data) {
+					print $data;
+					exit;
 				}
 			}
-			else {
-				header("Content-type: text/html");
-				header("Last-Modified: $gmdate_mod");
-				print gzuncompress(file_get_contents($cachename));
-			}
-			exit;
 		}
-		ob_start();
+
+		if(CACHE_DIR) {
+			$ab = substr($_cache_hash, 0, 2);
+			$cd = substr($_cache_hash, 2, 2);
+			$_cache_filename = "data/$ab/$cd/$_cache_hash";
+
+			if(!file_exists(dirname($_cache_filename))) {
+				mkdir(dirname($_cache_filename), 0750, true);
+			}
+			if(file_exists($_cache_filename) && (filemtime($cachename) > time() - 3600)) {
+				$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($_cache_filename)) . ' GMT';
+
+				if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
+					$if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
+
+					if($if_modified_since == $gmdate_mod) {
+						header("HTTP/1.0 304 Not Modified");
+						header("Content-type: text/html");
+						exit;
+					}
+				}
+				else {
+					header("Content-type: text/html");
+					header("Last-Modified: $gmdate_mod");
+					$data = @gzuncompress(file_get_contents($_cache_filename));
+					if($data) {
+						print $data;
+						exit;
+					}
+				}
+			}
+			ob_start();
+		}
 	}
 }
 
 function _end_cache() {
-	$_do_cache = (CACHE && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
-	if($_do_cache) {
-		file_put_contents($cachename, gzcompress(ob_get_contents()));
+	global $_cache_hash, $_cache_memcache, $_cache_filename;
+
+	if(_cache_active()) {
+		$data = gzcompress(ob_get_contents(), 9);
+		if(CACHE_MEMCACHE) {
+			$_cache_memcache->set($_cache_hash, $data, 0, 600);
+		}
+		if(CACHE_DIR) {
+			file_put_contents($_cache_filename, $data);
+		}
 	}
 }
 ?>
