@@ -89,6 +89,7 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_int('thumb_quality', 75);
 		$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
 
+		$config->set_default_bool('image_show_meta', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
@@ -131,6 +132,7 @@ class ImageIO extends SimpleExtension {
 		//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
 		$sb->add_text_option("image_tip", "Image tooltip: ");
 		$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
+		$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
