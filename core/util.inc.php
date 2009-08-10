@@ -724,7 +724,7 @@ $_cache_memcache = false;
 $_cache_filename = null;
 
 function _cache_active() {
-	return ((CACHE_MEMCACHE || CACHE_DIR) && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
+	return ((CACHE_MEMCACHE || CACHE_DIR) && $_SERVER["REQUEST_METHOD"] == "GET" && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
 }
 
 function _start_cache() {
