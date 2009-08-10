@@ -94,6 +94,7 @@ class CommentList extends SimpleExtension {
 	}
 
 	public function onPageRequest($event) {
+		global $user;
 		if($event->page_matches("comment")) {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
