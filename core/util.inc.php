@@ -770,7 +770,11 @@ function _start_cache() {
 				else {
 					header("Content-type: text/html");
 					header("Last-Modified: $gmdate_mod");
-					$data = @gzuncompress(file_get_contents($_cache_filename));
+					$zdata = @file_get_contents($_cache_filename);
+					if(CACHE_MEMCACHE) {
+						$_cache_memcache->set($_cache_hash, $zdata, 0, 600);
+					}
+					$data = @gzuncompress($zdata);
 					if($data) {
 						print $data;
 						exit;
