@@ -135,9 +135,6 @@ class UserPageTheme extends Themelet {
 			if($user->id == $duser->id || $user->is_admin()) {
 				$page->add_block(new Block("Options", $this->build_options($duser), "main", 20));
 			}
-			if($user->is_admin()) {
-				$page->add_block(new Block("More Options", $this->build_more_options($duser)));
-			}
 		}
 	}
 
@@ -170,13 +167,12 @@ class UserPageTheme extends Themelet {
 	}
 
 	protected function build_options(User $duser) {
-		global $database;
-		global $config;
+		global $config, $database, $user;
 
 		$html = "";
+
 		$html .= "
 		<form action='".make_link("user_admin/change_pass")."' method='POST'>
-			<input type='hidden' name='name' value='{$duser->name}'>
 			<input type='hidden' name='id' value='{$duser->id}'>
 			<table style='width: 300px;'>
 				<tr><th colspan='2'>Change Password</th></tr>
@@ -185,24 +181,28 @@ class UserPageTheme extends Themelet {
 				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
 			</table>
 		</form>
+
+		<p><form action='".make_link("user_admin/change_email")."' method='POST'>
+			<input type='hidden' name='id' value='{$duser->id}'>
+			<table style='width: 300px;'>
+				<tr><th colspan='2'>Change Email</th></tr>
+				<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
+				<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
+			</table>
+		</form>
 		";
-		return $html;
-	}
 
-	protected function build_more_options(User $duser) {
-		global $database;
-		global $config;
-
-		$i_user_id = int_escape($duser->id);
-		$h_is_admin = $duser->is_admin() ? " checked" : "";
-
-		$html = "
-			<form action='".make_link("user_admin/set_more")."' method='POST'>
-			<input type='hidden' name='id' value='$i_user_id'>
-			Admin: <input name='admin' type='checkbox'$h_is_admin>
-			<p><input type='submit' value='Set'>
-			</form>
+		if($user->is_admin()) {
+			$i_user_id = int_escape($duser->id);
+			$h_is_admin = $duser->is_admin() ? " checked" : "";
+			$html .= "
+				<p><form action='".make_link("user_admin/set_more")."' method='POST'>
+				<input type='hidden' name='id' value='$i_user_id'>
+				Admin: <input name='admin' type='checkbox'$h_is_admin>
+				<input type='submit' value='Set'>
+				</form>
 			";
+		}
 		return $html;
 	}
 // }}}
