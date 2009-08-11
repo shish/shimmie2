@@ -129,7 +129,7 @@ class UserPageTheme extends Themelet {
 		$page->set_title("{$duser->name}'s Page");
 		$page->set_heading("{$duser->name}'s Page");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Stats", $this->build_stats($duser)));
+		$page->add_block(new Block("Stats", $this->build_stats($duser), "main", 0));
 
 		if(!$user->is_anonymous()) {
 			if($user->id == $duser->id || $user->is_admin()) {
@@ -156,7 +156,13 @@ class UserPageTheme extends Themelet {
 		$u_id = url_escape($duser->id);
 		$images_link = make_link("post/list/user_id=$u_id/1");
 
+		$avatar = "";
+		if(!empty($comment->owner->email)) {
+			$hash = md5(strtolower($comment->owner->email));
+			$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\" style='float: left;'>";
+		}
 		return "
+			$avatar
 			Join date: $h_join_date
 			<br><a href='$images_link'>Images uploaded</a>: $i_image_count, $h_image_rate per day
 			<br>Comments made: $i_comment_count, $h_comment_rate per day
