@@ -439,11 +439,11 @@ class Image {
 		global $config;
 
 		// don't bother hitting the database if it won't be used...
-		$safe_tags = "";
+		$tags = "";
 		if(strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
-			$safe_tags = preg_replace(
-					"/[^a-zA-Z0-9_\- ]/",
-					"", $this->get_tag_list());
+			$tags = $this->get_tag_list();
+			$tags = str_replace("/", "", $tags);
+			$tags = preg_replace("/^\.+/", "", $tags);
 		}
 
 		$base_href = $config->get_string('base_href');
@@ -452,7 +452,7 @@ class Image {
 
 		$tmpl = str_replace('$id',   $this->id,   $tmpl);
 		$tmpl = str_replace('$hash', $this->hash, $tmpl);
-		$tmpl = str_replace('$tags', $_escape($safe_tags),  $tmpl);
+		$tmpl = str_replace('$tags', $_escape($tags),  $tmpl);
 		$tmpl = str_replace('$base', $base_href,  $tmpl);
 		$tmpl = str_replace('$ext',  $this->ext,  $tmpl);
 		$tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
