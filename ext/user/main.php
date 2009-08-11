@@ -72,6 +72,9 @@ class UserPage extends SimpleExtension {
 			else if($event->get_arg(0) == "change_pass") {
 				$this->change_password_wrapper($page);
 			}
+			else if($event->get_arg(0) == "change_email") {
+				$this->change_email_wrapper($page);
+			}
 			else if($event->get_arg(0) == "recover") {
 				$user = User::by_name($_POST['username']);
 				if(is_null($user)) {
@@ -262,15 +265,10 @@ class UserPage extends SimpleExtension {
 		global $config;
 		global $database;
 
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
 		if($user->is_anonymous()) {
-			$page->add_block(new Block("Error", "You aren't logged in"));
+			$this->theme->display_error($page, "Error", "You aren't logged in");
 		}
-		else if(isset($_POST['id']) && isset($_POST['name']) &&
-				isset($_POST['pass1']) && isset($_POST['pass2'])) {
-			$name = $_POST['name'];
+		else if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 			$id = $_POST['id'];
 			$pass1 = $_POST['pass1'];
 			$pass2 = $_POST['pass2'];
@@ -278,15 +276,13 @@ class UserPage extends SimpleExtension {
 			$duser = User::by_id($id);
 
 			if((!$user->is_admin()) && ($duser->name != $user->name)) {
-				$page->add_block(new Block("Error",
-						"You need to be an admin to change other people's passwords"));
+				$this->theme->display_error($page, "Error",
+						"You need to be an admin to change other people's passwords");
 			}
 			else if($pass1 != $pass2) {
-				$page->add_block(new Block("Error", "Passwords don't match"));
+				$this->theme->display_error($page, "Error", "Passwords don't match");
 			}
 			else {
-				global $config;
-
 				// FIXME: send_event()
 				$duser->set_password($pass1);
 
@@ -297,7 +293,40 @@ class UserPage extends SimpleExtension {
 				}
 				else {
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("user/{$user->name}"));
+					$page->set_redirect(make_link("user/{$duser->name}"));
+				}
+			}
+		}
+	}
+
+	private function change_email_wrapper($page) {
+		global $user;
+		global $config;
+		global $database;
+
+		if($user->is_anonymous()) {
+			$this->theme->display_error($page, "Error", "You aren't logged in");
+		}
+		else if(isset($_POST['id']) && isset($_POST['address'])) {
+			$id = $_POST['id'];
+			$address = $_POST['address'];
+
+			$duser = User::by_id($id);
+
+			if((!$user->is_admin()) && ($duser->name != $user->name)) {
+				$this->theme->display_error($page, "Error",
+						"You need to be an admin to change other people's addressess");
+			}
+			else {
+				$duser->set_email($address);
+
+				if($id == $user->id) {
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("user"));
+				}
+				else {
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("user/{$duser->name}"));
 				}
 			}
 		}

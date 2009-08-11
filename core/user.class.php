@@ -118,5 +118,11 @@ class User {
 		$database->Execute("UPDATE users SET pass=? WHERE id=?", array($hash, $this->id));
 		log_info("core-user", "Set password for {$this->name}");
 	}
+
+	public function set_email($address) {
+		global $database;
+		$database->Execute("UPDATE users SET email=? WHERE id=?", array($address, $this->id));
+		log_info("core-user", "Set email for {$this->name}");
+	}
 }
 ?>
