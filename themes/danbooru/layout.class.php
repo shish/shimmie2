@@ -113,13 +113,20 @@ class Layout {
 		$qp = _get_query_parts();
 		// php sucks
 		switch($qp[0]) {
-			case "user":
+			default:
 				$custom_sublinks .= $user_block_html;
 				break;
 			case "post":
+			case "comment":
+			case "upload":
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				break;
+			case "wiki":
+				$custom_sublinks .= "<li><a href='".make_link('wiki')."'>Index</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("wiki/rules")."'>Rules</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("wiki/wiki")."'>Help</a></li>";
 				break;
 			case "tags":
 				$custom_sublinks .= "<li><a href='".make_link('tags/map')."'>Map</a></li>";
