@@ -52,8 +52,27 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+	}
 
-		# FIXME: test deleting one comment at a time
+	function testSingleDel() {
+		$this->log_in_as_admin();
+		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+
+		# make a comment
+		$this->get_page("post/view/$image_id");
+		$this->setField('comment', "Test Comment ASDFASDF");
+		$this->click("Post Comment");
+		$this->assertTitle("Image $image_id: pbx");
+		$this->assertText("ASDFASDF");
+
+		# delete it
+		$this->click("Del");
+		$this->assertTitle("Image $image_id: pbx");
+		$this->assertNoText("ASDFASDF");
+
+		# tidy up
+		$this->delete_image($image_id);
+		$this->log_out();
 	}
 }
 ?>
