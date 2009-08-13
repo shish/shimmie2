@@ -12,7 +12,15 @@ class NumericScoreTest extends ShimmieWebTestCase {
 		# FIXME: "remove vote" button?
 		# FIXME: test that up and down are hidden if already voted up or down
 
+		# test search by score
 		$this->get_page("post/list/score=1/1");
+		$this->assertTitle("Image $image_id: pbx");
+
+		# test search by vote
+		$this->get_page("post/list/upvoted_by=demo/1");
+		$this->assertTitle("Image $image_id: pbx");
+
+		$this->get_page("post/list/downvoted_by=demo/1");
 		$this->assertTitle("Image $image_id: pbx");
 		$this->log_out();
 

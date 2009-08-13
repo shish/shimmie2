@@ -69,10 +69,27 @@ class NumericScore implements Extension {
 			if(preg_match("/^score(<|<=|=|>=|>)(\d+)$/", $event->term, $matches)) {
 				$cmp = $matches[1];
 				$score = $matches[2];
-				$event->set_querylet(new Querylet("numeric_score $cmp $score"));
+				$event->add_querylet(new Querylet("numeric_score $cmp $score"));
 			}
-			if(preg_match("/^favou?rite$/", $event->term, $matches)) {
-				$event->set_querylet(new Querylet("images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)", array($user->id)));
+			if(preg_match("/^upvoted_by=(.*)$/", $event->term, $matches)) {
+				$duser = User::by_name($matches[1]);
+				if(is_null($duser)) {
+					throw new SearchTermParseException(
+							"Can't find the user named ".html_escape($matches[1]));
+				}
+				$event->add_querylet(new Querylet(
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)",
+					array($duser->id)));
+			}
+			if(preg_match("/^downvoted_by=(.*)$/", $event->term, $matches)) {
+				$duser = User::by_name($matches[1]);
+				if(is_null($duser)) {
+					throw new SearchTermParseException(
+							"Can't find the user named ".html_escape($matches[1]));
+				}
+				$event->add_querylet(new Querylet(
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=-1)",
+					array($duser->id)));
 			}
 		}
 	}
