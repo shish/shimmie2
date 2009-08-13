@@ -26,6 +26,9 @@ class SearchTermParseEvent extends Event {
 	}
 }
 
+class SearchTermParseException extends SCoreException {
+}
+
 class PostListBuildingEvent extends Event {
 	var $search_terms = null;
 
