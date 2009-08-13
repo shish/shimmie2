@@ -16,14 +16,14 @@ class UserPageTest extends SCoreWebTestCase {
 		// should be on the user page
 		$this->assertTitle(USER_NAME+"'s Page");
 		$this->assertText("Options");
-		$this->assertNoText("More Options");
+		$this->assertNoText("Admin:");
 		$this->log_out();
 
 		$this->log_in_as_admin();
 		// should be on the user page
 		$this->assertTitle(ADMIN_NAME+"'s Page");
 		$this->assertText("Options");
-		$this->assertText("More Options");
+		$this->assertText("Admin:");
 		$this->log_out();
 
 		# FIXME: test user creation
