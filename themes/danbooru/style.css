@@ -1,260 +1,273 @@
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                  things common to all pages                    *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/* bzchan: BODY tags font changed, margin set */
-BODY {
-	background-color:#FFFFFF;
-	font: 80% verdana, sans-serif;
-	padding: 1em 3em;
+.noleft{
+padding-left:20px;
 }
-
-/* bzchan: All H* tags tweaked */
-H1 {
-	font-size: 2em;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding: 2px;
+div#header {
+margin-bottom:1em;
 }
-H1 A {
-	color: black;
+div#header #site-title {
+padding:10px 20px 0;
 }
-H3 {
-	font-size: 1.2em;
-	margin-top: 0.5em;
-	margin-bottom: 0px;
-	padding: 1px;	
+div#header ul#navbar {
+margin:0;
+padding:5px 20px 2px 10px;
+}
+div#header ul#navbar li {
+font-size:120%;
+margin:0;
+padding:0 10px 2px;
+}
+div#header ul#navbar li.current-page {
+background-color:#F7F7FF;
+}
+div#header ul#navbar li.current-page a {
+font-weight:bold;
+}
+div#header ul#subnavbar {
+background-color:#F7F7FF;
+margin:0 0 1em;
+padding:5px 20px 5px 15px;
+}
+div#header ul#subnavbar li {
+padding:0 5px;
+}
+div#header #site-title {
+padding:10px 20px 0;
+}
+body {
+-x-system-font:none;
+background-color:#FFFFFF;
+font-family:verdana,sans-serif;
+font-size:80%;
+font-size-adjust:none;
+font-stretch:normal;
+font-style:normal;
+font-variant:normal;
+font-weight:normal;
+line-height:normal;
+}
+h1 {
+font-size:2em;
+margin-bottom:0;
+margin-top:0;
+padding:2px;
+}
+h1 a {
+color:black;
+}
+h3 {
+font-size:1.2em;
+margin-bottom:0;
+margin-top:0.5em;
+padding:1px;
 }
 h4 {
-	font-size: 1.4em;
+font-size:1.4em;
 }
 h5 {
-	font-size: 1.2em;
+font-size:1.2em;
 }
-
-THEAD {
-	background: #DEDEDE;
-	font-weight: bold;
+thead {
+-moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+background:#DEDEDE none repeat scroll 0 0;
+font-weight:bold;
 }
-TD {
-	vertical-align: top;
+td {
+text-align:center;
+vertical-align:top;
 }
-/* bzchan: subtitle black border removed */
 #subtitle {
-	width: 256px;
-	font-size: 0.75em;
-	margin: auto;
-	text-align: center;
-	border-top: none;
+border-top:medium none;
+font-size:0.75em;
+margin:auto;
+text-align:center;
+width:256px;
 }
-#body SELECT {width: 150px;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>SELECT {width: 100%;}
-
+#body select {
+width:150px;
+}
+td > input {
+width:100%;
+}
+td > select {
+width:100%;
+}
 #footer {
-	clear: both;
-	padding-top: 8px;
-	font-size: 0.7em;
-	text-align: center;
+clear:both;
+color:#CCCCCC;
+font-size:0.9em;
+padding-left:10px;
+padding-top:8px;
 }
-
-*[onclick] {cursor: pointer;}
-IMG {border: none;}
-FORM {margin: 0px;}
-A {text-decoration: none;}
-A:hover {text-decoration: underline;}
-
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*             the navigation bar, and all it's blocks            *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/* bzchan: nav made to be left blocked */
+[onclick] {
+cursor:pointer;
+}
+img {
+border:medium none;
+}
+form {
+margin:0;
+}
+a {
+text-decoration:none;
+}
+a:hover {
+text-decoration:underline;
+}
 #nav {
-	width: 150px;
-	float: left;
-	text-align:left;
-
+float:left;
+text-align:left;
+width:150px;
+padding:5px 20px 2px 10px;
 }
-#nav TABLE {
-	width: 150px;
+#nav table {
+width:150px;
 }
-#nav TD {
-	vertical-align: middle;
+#nav td {
+vertical-align:middle;
 }
-#nav INPUT {
-	width: 100%;
-	padding: 0px;
+#nav input {
+padding:0;
+width:100%;
 }
-#nav SELECT {
-	width: 100%;
-	padding: 0px;
+#nav select {
+padding:0;
+width:100%;
 }
-/* bzchan: nav H3 made to be left blocked */
-#nav H3 {
-	text-align: left;
+#nav h3 {
+text-align:left;
 }
-
-#comments P {
-	text-align: left;
-	width: 150px;
-	max-width: 150px;
-	overflow: hidden;
+#comments p {
+max-width:150px;
+overflow:hidden;
+text-align:left;
+width:150px;
 }
-
 .tag_count {
-	color: #AAA;
+color:#AAAAAA;
 }
 .more {
-	content: "More ª";
+content:"More Å‚";
 }
 .comment {
-	margin-bottom: 8px;
+margin-bottom:8px;
 }
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                 the main part of each page                     *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 .withleft {
-	margin-left: 160px;
+margin-left:160px;
 }
-
-/*Shuugo: more danboorish*/
 div#paginator {
-	display: block;
-	padding: 2em 0 1em 0;
-	font-size: 1em;
-	text-align: center;
-	font-weight: bold;
-	clear: both;
+clear:both;
+display:block;
+font-size:1em;
+font-weight:bold;
+padding:2em 0 1em;
+text-align:center;
 }
 .paginator {
-	margin: 16px;
-	text-align: center;
+margin:16px;
+text-align:center;
 }
-div#paginator B {
-	padding: 4px 8px 4px 8px;
-	margin: 3px;
+div#paginator b {
+margin:3px;
+padding:4px 8px;
 }
-div#paginator A {
-	padding: 4px 8px 4px 8px;
-	margin: 3px;
-	border: 1px solid #EEE;
+div#paginator a {
+border:1px solid #EEEEEE;
+margin:3px;
+padding:4px 8px;
 }
-div#paginator A:hover {
-	border: 1px solid #EEE;
-	background: blue;
-	color: white;
+div#paginator a:hover {
+-moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+background:blue none repeat scroll 0 0;
+border:1px solid #EEEEEE;
+color:white;
 }
-
-
 span.thumb {
-	height: 220px;
-	width: 220px;
-	display: inline-block;
-	float: left;
-	text-align: center;
-	vertical-align: center;
+display:inline-block;
+float:left;
+height:220px;
+text-align:center;
+width:220px;
 }
-
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                     specific page types                        *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 #pagelist {
-	margin-top: 32px;
+margin-top:32px;
 }
-
-#tagmap A {
-	padding: 8px 4px 8px 4px;
+#tagmap a {
+padding:8px 4px;
 }
-
 #large_upload_form {
-	width: 600px;
+width:600px;
 }
 .setupblock {
-	border: 1px solid #AAA;
-	padding: 8px;
-	margin: 16px;
-	width: 350px;
+border:1px solid #AAAAAA;
+margin:16px;
+padding:8px;
+width:350px;
 }
-
 .helpable {
-	border-bottom: 1px dashed gray;
+border-bottom:1px dashed gray;
 }
-
 .ok {
-	background: #AFA;
+-moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+background:#AAFFAA none repeat scroll 0 0;
 }
 .bad {
-	background: #FAA;
+-moz-background-clip:border;
+-moz-background-inline-policy:continuous;
+-moz-background-origin:padding;
+background:#FFAAAA none repeat scroll 0 0;
 }
-
 .comment .username {
-	font-size: 1.5em;
-	font-weight: bold;
+font-size:1.5em;
+font-weight:bold;
 }
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                     bzchan added                               *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-div#header {text-align: left;}
-div#header H1{text-align: left;}
-
+div#header {
+text-align:left;
+}
+div#header h1 {
+text-align:left;
+}
 * {
-	font-family: verdana,sans-serif;
-	margin: 0;
-	padding: 0;
+font-family:verdana,sans-serif;
+margin:0;
+padding:0;
 }
-
 a:link {
-	color: #006FFA;
-	text-decoration: none;
+color:#006FFA;
+text-decoration:none;
 }
-
 a:visited {
-	color: #006FFA;
-	text-decoration: none;
+color:#006FFA;
+text-decoration:none;
 }
-
 a:hover {
-	color: #33CFFF;
-	text-decoration: none;
+color:#33CFFF;
+text-decoration:none;
 }
-
 a:active {
-	color: #006FFA;
-	text-decoration: none;
+color:#006FFA;
+text-decoration:none;
 }
-
 ul.flat-list {
-	display: inline;
-	margin:0 0 0 0;
-	padding:0 0 0 0;
+display:block;
+margin:0;
+padding:0;
 }
-
 ul.flat-list * {
-	display: inline;
-	text-align:left;
+display:inline;
+text-align:left;
 }
-
 ul.flat-list li {
-    text-align:left;
-	list-style-type: none;
-	font-weight: bold;
-	margin: 0 1.3em 0 0;
+font-weight:bold;
+list-style-type:none;
+margin:0 1.3em 0 0;
+text-align:left;
 }
-
 ul.flat-list li a {
-	font-weight: normal;
+font-weight:normal;
 }
-
-

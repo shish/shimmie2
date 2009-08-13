@@ -8,7 +8,8 @@
 *              look more like danbooru as well as adding a custom links
 *              bar and title to the top of every page.
 */
-
+//Small changes added by zshall <http://seemslegit.com>
+//Changed CSS and layout to make shimmie look even more like danbooru
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 Danbooru Theme - Notes (Bzchan)
 
@@ -143,7 +144,7 @@ class Layout {
 		//$title_link = "<h1><a href='".make_link($main_page)."'>$site_name</a>/$this->heading</h1>";
 
 		// bzchan: prepare main title link
-		$title_link = "<h1><a href='".make_link($main_page)."'>$site_name</a></h1>";
+		$title_link = "<h1 id='site-title'><a href='".make_link($main_page)."'>$site_name</a></h1>";
 
 		if($page->left_enabled) {
 			$left = "<div id='nav'>$left_block_html</div>";
@@ -151,7 +152,7 @@ class Layout {
 		}
 		else {
 			$left = "";
-			$withleft = "";
+			$withleft = "noleft";
 		}
 
 		print <<<EOD
@@ -169,10 +170,10 @@ $header_html
 	<body>
 		<div id="header">
 		$title_link
-		<ul class="flat-list">
+		<ul id="navbar" class="flat-list">
 			$custom_links
 		</ul>
-		<br><ul class="flat-list">
+		<ul id="subnavbar" class="flat-list">
 			$custom_sublinks
 		</ul>
 		</div>
@@ -182,13 +183,14 @@ $header_html
 		<div id="body" class="$withleft">$main_block_html</div>
 
 		<div id="footer">
-			<hr>
+        <em>
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">$version</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> 2007-2009,
 			based on the Danbooru concept.
 			$debug
 			$contact
+        </em>
 		</div>
 	</body>
 </html>
