@@ -20,8 +20,9 @@ class NumericScoreTest extends ShimmieWebTestCase {
 		$this->get_page("post/list/upvoted_by=demo/1");
 		$this->assertTitle("Image $image_id: pbx");
 
+		# and downvote
 		$this->get_page("post/list/downvoted_by=demo/1");
-		$this->assertTitle("Image $image_id: pbx");
+		$this->assertText("No Images Found");
 		$this->log_out();
 
 		$this->log_in_as_admin();
