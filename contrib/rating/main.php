@@ -10,6 +10,7 @@ class RatingSetEvent extends Event {
 	var $image, $user, $rating;
 
 	public function RatingSetEvent(Image $image, User $user, $rating) {
+		assert(in_array($rating, array("s", "q", "e", "u")));
 		$this->image = $image;
 		$this->user = $user;
 		$this->rating = $rating;
@@ -58,7 +59,7 @@ class Ratings implements Extension {
 			}
 
 			$config->set_default_string("ext_rating_anon_privs", 'squ');
-			$config->set_default_string("ext_rating_user_privs", 'squ');
+			$config->set_default_string("ext_rating_user_privs", 'sqeu');
 			$config->set_default_string("ext_rating_admin_privs", 'sqeu');
 		}
 
@@ -67,13 +68,13 @@ class Ratings implements Extension {
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
-			if($user->is_admin()) {
+			if($this->can_rate()) {
 				$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
 			}
 		}
 
 		if($event instanceof ImageInfoSetEvent) {
-			if($user->is_admin()) {
+			if($this->can_rate() && isset($_POST["rating"])) {
 				send_event(new RatingSetEvent($event->image, $user, $_POST['rating']));
 			}
 		}
@@ -131,6 +132,15 @@ class Ratings implements Extension {
 				$event->add_querylet(new Querylet("rating = ?", array($char)));
 			}
 		}
+	}
+
+	// FIXME: this is a bit ugly and guessey, should have proper options
+	private function can_rate() {
+		global $config, $user;
+		if($user->is_anonymous() && $config->get_string("ext_rating_anon_privs") == "sqeu") return false;
+		if($user->is_admin()) return true;
+		if(!$user->is_anonymous() && $config->get_string("ext_rating_user_privs") == "sqeu") return true;
+		return false;
 	}
 
 	private function no_rating_query($context) {
