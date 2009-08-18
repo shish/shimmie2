@@ -67,9 +67,10 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("IPs", $html));
 	}
 
-	public function display_user_page($page, $duser, $user) {
+	public function display_user_page(User $duser, $stats) {
+		global $page;
 		$page->disable_left();
-		parent::display_user_page($page, $duser, $user);
+		parent::display_user_page($duser, $stats);
 	}
 
 	protected function build_options($duser) {

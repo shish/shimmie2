@@ -9,6 +9,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		}
 		$page->add_block(new Block("Logged in as $h_name", $html, "head", 90));
 	}
+
 	public function display_login_block(Page $page) {
 		global $config;
 		$html = "
