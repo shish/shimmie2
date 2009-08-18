@@ -11,9 +11,15 @@ class UserBlockBuildingEvent extends Event {
 
 class UserPageBuildingEvent extends Event {
 	var $display_user;
+	var $stats = array();
 
 	public function __construct(User $display_user) {
 		$this->display_user = $display_user;
+	}
+
+	public function add_stats($html, $position=50) {
+		while(isset($this->stats[$position])) $position++;
+		$this->stats[$position] = $html;
 	}
 }
 
@@ -142,15 +148,32 @@ class UserPage extends SimpleExtension {
 
 	public function onUserPageBuilding(Event $event) {
 		global $page, $user, $config;
-		$this->theme->display_user_page($page, $event->display_user, $user);
+
+		$h_join_date = html_escape($event->display_user->join_date);
+		$event->add_stats("Join date: $h_join_date", 10);
+
+		if(!empty($comment->owner->email)) {
+			$hash = md5(strtolower($comment->owner->email));
+			$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\" style='float: left;'>";
+			$event->add_stats($avatar, 0);
+		}
+
+		ksort($event->stats);
+		$this->theme->display_user_page($event->display_user, $event->stats);
 		if($user->id == $event->display_user->id) {
 			$ubbe = new UserBlockBuildingEvent();
 			send_event($ubbe);
 			ksort($ubbe->parts);
 			$this->theme->display_user_links($page, $user, $ubbe->parts);
 		}
-		if(($user->is_admin() || $user->id == $event->display_user->id) && ($user->id != $config->get_int('anon_id'))) {
-			$this->theme->display_ip_list($page, $this->count_upload_ips($event->display_user), $this->count_comment_ips($event->display_user));
+		if(
+			($user->is_admin() || $user->id == $event->display_user->id) &&
+			($user->id != $config->get_int('anon_id'))
+		) {
+			$this->theme->display_ip_list(
+				$page,
+				$this->count_upload_ips($event->display_user),
+				$this->count_comment_ips($event->display_user));
 		}
 	}
 

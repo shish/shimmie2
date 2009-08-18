@@ -144,6 +144,13 @@ class CommentList extends SimpleExtension {
 		}
 	}
 
+	public function onUserPageBuilding(Event $event) {
+		$i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
+		$i_comment_count = Comment::count_comments_by_user($event->display_user);
+		$h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
+		$event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
+	}
+
 	public function onDisplayingImage($event) {
 		$this->theme->display_image_comments(
 			$event->image,
