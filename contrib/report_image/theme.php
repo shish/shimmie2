@@ -15,6 +15,7 @@ class ReportImageTheme extends Themelet {
 		global $config;
 
 		$h_reportedimages = "";
+		$n = 0;
 		foreach($reports as $report) {
 			$image = $report['image'];
 			$h_reason = html_escape($report['reason']);
@@ -35,8 +36,9 @@ class ReportImageTheme extends Themelet {
 			ksort($iabbe->parts);
 			$actions = join("<br>", $iabbe->parts);
 
+			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_reportedimages .= "
-				<tr>
+				<tr class='$oe'>
 					<td>{$image_link}</td>
 					<td>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>
@@ -53,12 +55,7 @@ class ReportImageTheme extends Themelet {
 
 		$thumb_width = $config->get_int("thumb_width");
 		$html = "
-			<style>
-			.formstretch FORM INPUT {
-				width: 100%;
-			}
-			</style>
-			<table border='1'>
+			<table id='reportedimage' class='zebra'>
 				<thead><td width='$thumb_width'>Image</td><td>Reason</td><td width='128'>Action</td></thead>
 				$h_reportedimages
 			</table>
