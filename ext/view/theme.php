@@ -6,6 +6,7 @@ class ViewImageTheme extends Themelet {
 	 */
 	public function display_page(Page $page, Image $image, $editor_parts) {
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
+		$page->add_header("<meta name=\"keywords\" content=\"".html_escape($image->get_tag_list())."\">");
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
