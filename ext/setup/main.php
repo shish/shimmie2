@@ -163,6 +163,7 @@ class Setup extends SimpleExtension {
 		$config->set_default_string("main_page", "post/list");
 		$config->set_default_string("base_href", "./index.php?q=");
 		$config->set_default_string("theme", "default");
+		$config->set_default_bool("use_autodate", true);
 	}
 
 	public function onPageRequest($event) {
