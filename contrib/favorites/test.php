@@ -15,6 +15,11 @@ class FavoritesTest extends ShimmieWebTestCase {
 		$this->assertTitle("Image $image_id: test");
 		$this->assertText("Favorited By");
 
+		$this->get_page("user/test");
+		$this->assertText("Images favorited: 1");
+		$this->click("Images favorited");
+		$this->assertTitle("Image $image_id: test");
+
 		$this->click("Un-Favorite");
 		$this->assertNoText("Favorited By");
 

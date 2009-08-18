@@ -8,6 +8,7 @@ class UserPageTest extends SCoreWebTestCase {
 
 		$this->get_page('user/demo');
 		$this->assertTitle("demo's Page");
+		$this->assertText("Join date:");
 
 		$this->get_page('user/MauMau');
 		$this->assertTitle("No Such User");

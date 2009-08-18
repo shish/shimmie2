@@ -125,45 +125,20 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("IPs", $html));
 	}
 
-	public function display_user_page(Page $page, User $duser, User $user) {
+	public function display_user_page(User $duser, $stats) {
+		global $page, $user;
+		assert(is_array($stats));
+
 		$page->set_title("{$duser->name}'s Page");
 		$page->set_heading("{$duser->name}'s Page");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Stats", $this->build_stats($duser), "main", 0));
+		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
 
 		if(!$user->is_anonymous()) {
 			if($user->id == $duser->id || $user->is_admin()) {
 				$page->add_block(new Block("Options", $this->build_options($duser), "main", 20));
 			}
 		}
-	}
-
-	protected function build_stats(User $duser) {
-		global $database;
-		global $config;
-
-		$h_join_date = html_escape($duser->join_date);
-		$i_image_count = Image::count_images(array("user_id={$duser->id}"));
-		$i_comment_count = Comment::count_comments_by_user($duser);
-
-		$i_days_old = ((time() - strtotime($duser->join_date)) / 86400) + 1;
-		$h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
-		$h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
-
-		$u_id = url_escape($duser->id);
-		$images_link = make_link("post/list/user_id=$u_id/1");
-
-		$avatar = "";
-		if(!empty($comment->owner->email)) {
-			$hash = md5(strtolower($comment->owner->email));
-			$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\" style='float: left;'>";
-		}
-		return "
-			$avatar
-			Join date: $h_join_date
-			<br><a href='$images_link'>Images uploaded</a>: $i_image_count, $h_image_rate per day
-			<br>Comments made: $i_comment_count, $h_comment_rate per day
-			";
 	}
 
 	protected function build_options(User $duser) {
