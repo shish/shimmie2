@@ -2,13 +2,17 @@
 
 class CommentListTheme extends Themelet {
 	/**
-	 * Do the basics of the comments page
-	 *
-	 * $page_number = the current page number
-	 * $total_pages = the total number of comment pages
+	 * Display a page with a list of images, and for each image,
+	 * the image's comments
 	 */
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
-		global $page;
+		global $config, $page;
+
+		// aaaaaaargh php
+		assert(is_array($images));
+		assert(is_int($page_number));
+		assert(is_int($total_pages));
+		assert(is_bool($can_post));
 
 		// parts for the whole page
 		$prev = $page_number - 1;
@@ -36,6 +40,13 @@ class CommentListTheme extends Themelet {
 			$thumb_html = $this->build_thumb_html($image);
 
 			$comment_html = "";
+			$comment_limit = $config->get_int("comment_list_count", 10);
+			$comment_count = count($comments);
+			if($comment_limit > 0 && $comment_count > $comment_limit) {
+				$hidden = $comment_count - $comment_limit;
+				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
+				$comments = array_slice($comments, -$comment_limit);
+			}
 			foreach($comments as $comment) {
 				$comment_html .= $this->comment_to_html($comment);
 			}
