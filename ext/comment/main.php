@@ -50,6 +50,7 @@ class CommentList extends SimpleExtension {
 		$config->set_default_bool('comment_anon', true);
 		$config->set_default_int('comment_window', 5);
 		$config->set_default_int('comment_limit', 10);
+		$config->set_default_int('comment_list_count', 10);
 		$config->set_default_int('comment_count', 5);
 
 		if($config->get_int("ext_comments_version") < 2) {
@@ -187,6 +188,9 @@ class CommentList extends SimpleExtension {
 		$sb->add_label("<br>Show ");
 		$sb->add_int_option("comment_count");
 		$sb->add_label(" recent comments on the index");
+		$sb->add_label("<br>Show ");
+		$sb->add_int_option("comment_list_count");
+		$sb->add_label(" comments per image on the list");
 		$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
 		$event->panel->add_block($sb);
 	}

@@ -2,7 +2,7 @@
 
 class CustomCommentListTheme extends CommentListTheme {
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
-		global $page;
+		global $config, $page;
 
 		$page->disable_left();
 
@@ -41,6 +41,13 @@ class CustomCommentListTheme extends CommentListTheme {
 			$p = autodate($image->posted);
 
 			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un<br><b>Tags</b> $t<p>&nbsp;";
+			$comment_limit = $config->get_int("comment_list_count", 10);
+			$comment_count = count($comments);
+			if($comment_limit > 0 && $comment_count > $comment_limit) {
+				$hidden = $comment_count - $comment_limit;
+				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
+				$comments = array_slice($comments, -$comment_limit);
+			}
 			foreach($comments as $comment) {
 				$comment_html .= $this->comment_to_html($comment);
 			}
