@@ -9,16 +9,16 @@ class FeaturedTest extends ShimmieWebTestCase {
 
 		$this->log_in_as_admin();
         $this->get_page("post/view/$image_id");
-		$this->assertTitle("Image $image_id: pbx");
+		$this->assert_title("Image $image_id: pbx");
 		$this->click("Feature This");
         $this->get_page("post/list");
-		$this->assertText("Featured Image");
+		$this->assert_text("Featured Image");
 		$this->delete_image($image_id);
 		$this->log_out();
 
 		# after deletion, there should be no feature
         $this->get_page("post/list");
-		$this->assertNoText("Featured Image");
+		$this->assert_no_text("Featured Image");
 
 		# FIXME: test changing from one feature to another
 	}

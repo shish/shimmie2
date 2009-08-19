@@ -7,45 +7,45 @@ class RatingTest extends ShimmieWebTestCase {
 		# test for bug #735: user forced to set rating, can't
 		# set tags and leave unrated
 		$this->get_page("post/view/$image_id");
-		$this->assertTitle("Image $image_id: pbx");
-		$this->setField("tag_edit__tags", "new");
+		$this->assert_title("Image $image_id: pbx");
+		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		# set safe
-		$this->setField("rating", "s");
+		$this->set_field("rating", "s");
 		$this->click("Set");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		# search for it in various ways
 		$this->get_page("post/list/rating=Safe/1");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		$this->get_page("post/list/rating=s/1");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		$this->get_page("post/list/rating=sqe/1");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		# test that search by tag still works
 		$this->get_page("post/list/new/1");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		# searching for a different rating should return nothing
 		$this->get_page("post/list/rating=q/1");
-		$this->assertText("No Images Found");
+		$this->assert_text("No Images Found");
 
 		# now set explicit, for the next test
 		$this->get_page("post/view/$image_id");
-		$this->setField("rating", "e");
+		$this->set_field("rating", "e");
 		$this->click("Set");
-		$this->assertTitle("Image $image_id: new");
+		$this->assert_title("Image $image_id: new");
 
 		$this->log_out();
 
 		# the explicit image shouldn't show up in anon's searches
 		$this->get_page("post/list/new/1");
-		$this->assertText("No Images Found");
+		$this->assert_text("No Images Found");
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);

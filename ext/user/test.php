@@ -2,29 +2,29 @@
 class UserPageTest extends SCoreWebTestCase {
 	function testUserPage() {
 		$this->get_page('user');
-		$this->assertTitle("Not Logged In");
-		$this->assertNoText("Options");
-		$this->assertNoText("More Options");
+		$this->assert_title("Not Logged In");
+		$this->assert_no_text("Options");
+		$this->assert_no_text("More Options");
 
 		$this->get_page('user/demo');
-		$this->assertTitle("demo's Page");
-		$this->assertText("Join date:");
+		$this->assert_title("demo's Page");
+		$this->assert_text("Join date:");
 
 		$this->get_page('user/MauMau');
-		$this->assertTitle("No Such User");
+		$this->assert_title("No Such User");
 
 		$this->log_in_as_user();
 		// should be on the user page
-		$this->assertTitle(USER_NAME+"'s Page");
-		$this->assertText("Options");
-		$this->assertNoText("Admin:");
+		$this->assert_title(USER_NAME+"'s Page");
+		$this->assert_text("Options");
+		$this->assert_no_text("Admin:");
 		$this->log_out();
 
 		$this->log_in_as_admin();
 		// should be on the user page
-		$this->assertTitle(ADMIN_NAME+"'s Page");
-		$this->assertText("Options");
-		$this->assertText("Admin:");
+		$this->assert_title(ADMIN_NAME+"'s Page");
+		$this->assert_text("Options");
+		$this->assert_text("Admin:");
 		$this->log_out();
 
 		# FIXME: test user creation

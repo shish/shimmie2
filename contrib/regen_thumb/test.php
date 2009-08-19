@@ -5,7 +5,7 @@ class RegenThumbTest extends ShimmieWebTestCase {
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
         $this->get_page("post/view/$image_id");
 		$this->click("Regenerate");
-		$this->assertTitle("Thumbnail Regenerated");
+		$this->assert_title("Thumbnail Regenerated");
 		$this->delete_image($image_id);
 		$this->log_out();
 

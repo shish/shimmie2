@@ -2,21 +2,21 @@
 class IPBanTest extends SCoreWebTestCase {
 	function testIPBan() {
         $this->get_page('ip_ban/list');
-		$this->assertResponse(403);
-		$this->assertTitle("Permission Denied");
+		$this->assert_response(403);
+		$this->assert_title("Permission Denied");
 
         $this->log_in_as_admin();
 
         $this->get_page('ip_ban/list');
-		$this->assertNoText("42.42.42.42");
-		$this->setField('ip', '42.42.42.42');
-		$this->setField('reason', 'unit testing');
-		$this->setField('end', '1 week');
+		$this->assert_no_text("42.42.42.42");
+		$this->set_field('ip', '42.42.42.42');
+		$this->set_field('reason', 'unit testing');
+		$this->set_field('end', '1 week');
 		$this->click("Ban");
 
-		$this->assertText("42.42.42.42");
+		$this->assert_text("42.42.42.42");
 		$this->click("Remove"); // FIXME: remove which ban? :S
-		$this->assertNoText("42.42.42.42");
+		$this->assert_no_text("42.42.42.42");
 
 		$this->log_out();
 

@@ -6,48 +6,48 @@ class CommentListTest extends ShimmieWebTestCase {
 
 		# a good comment
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', "Test Comment ASDFASDF");
+		$this->set_field('comment', "Test Comment ASDFASDF");
 		$this->click("Post Comment");
-		$this->assertText("ASDFASDF");
+		$this->assert_text("ASDFASDF");
 
 		# dupe
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', "Test Comment ASDFASDF");
+		$this->set_field('comment', "Test Comment ASDFASDF");
 		$this->click("Post Comment");
-		$this->assertText("try and be more original");
+		$this->assert_text("try and be more original");
 
 		# empty comment
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', "");
+		$this->set_field('comment', "");
 		$this->click("Post Comment");
-		$this->assertText("Comments need text...");
+		$this->assert_text("Comments need text...");
 
 		# whitespace is still empty...
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', " \t\r\n");
+		$this->set_field('comment', " \t\r\n");
 		$this->click("Post Comment");
-		$this->assertText("Comments need text...");
+		$this->assert_text("Comments need text...");
 
 		# repetitive (aka. gzip gives >= 10x improvement)
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', str_repeat("U", 5000));
+		$this->set_field('comment', str_repeat("U", 5000));
 		$this->click("Post Comment");
-		$this->assertText("Comment too repetitive~");
+		$this->assert_text("Comment too repetitive~");
 
 		# test that search by comment metadata works
 		$this->get_page("post/list/commented_by=test/1");
-		$this->assertTitle("Image $image_id: pbx");
+		$this->assert_title("Image $image_id: pbx");
 		$this->get_page("post/list/comments=1/1");
-		$this->assertTitle("Image $image_id: pbx");
+		$this->assert_title("Image $image_id: pbx");
 
 		$this->log_out();
 
 		$this->get_page('comment/list');
-		$this->assertTitle('Comments');
-		$this->assertText('ASDFASDF');
+		$this->assert_title('Comments');
+		$this->assert_text('ASDFASDF');
 
 		$this->get_page('comment/list/2');
-		$this->assertTitle('Comments');
+		$this->assert_title('Comments');
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
@@ -60,15 +60,15 @@ class CommentListTest extends ShimmieWebTestCase {
 
 		# make a comment
 		$this->get_page("post/view/$image_id");
-		$this->setField('comment', "Test Comment ASDFASDF");
+		$this->set_field('comment', "Test Comment ASDFASDF");
 		$this->click("Post Comment");
-		$this->assertTitle("Image $image_id: pbx");
-		$this->assertText("ASDFASDF");
+		$this->assert_title("Image $image_id: pbx");
+		$this->assert_text("ASDFASDF");
 
 		# delete it
 		$this->click("Del");
-		$this->assertTitle("Image $image_id: pbx");
-		$this->assertNoText("ASDFASDF");
+		$this->assert_title("Image $image_id: pbx");
+		$this->assert_no_text("ASDFASDF");
 
 		# tidy up
 		$this->delete_image($image_id);
