@@ -22,7 +22,7 @@
  * \code
  * <?php
  * class ExampleTest extends SCoreWebTestCase {
- *     public function testBlah() {
+ *     public function test_blah() {
  *     }
  * }
  * ?>
@@ -30,11 +30,38 @@
  *
  * SCoreWebTestCase is for testing generic extensions, ShimmieWebTestCase is
  * for imageboard-specific extensions. The name of the function doesn't matter
- * as long as it begins with "test".
+ * as long as it begins with "test". If you want to test several parts of the
+ * extension independantly, you can write several functions, just make sure
+ * that each begins with "test".
  *
  * Once you're in the function, $this is a reference to a virtual web browser
  * which you can control with code. The functions available are visible in the
  * docs for class SCoreWebTestCase and ShimmieWebTestCase.
+ *
+ * Basically, just simulate a browsing session, making sure that everything
+ * is where it's supposed to be. If you can simulate a browsing session that
+ * triggers a bug, then it makes that bug much easier for developers to fix,
+ * and will make sure that it doesn't come back.
+ *
+ * \code
+ * <?php
+ * class ExampleTest extends SCoreWebTestCase {
+ *     public function test_blah() {
+ *         $this->get_page("my/page");
+ *         $this->assert_title("My Page Title");
+ *         $this->assert_text("This is my page");
+ *         $this->click("a link to my other page");
+ *         $this->assert_title("My Other Page");
+ *         $this->back();
+ *         $this->assert_title("My Page Title");
+ *         $this->set_field("some_text", "Here is some text");
+ *         $this->click("Send Some Text");
+ *         $this->assert_text("Your input was: Here is some text");
+ *     }
+ * }
+ * ?>
+ * \endcode
+ *
  */
 
 require_once('simpletest/web_tester.php');
