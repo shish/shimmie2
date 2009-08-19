@@ -41,8 +41,8 @@ class WikiTest extends SCoreWebTestCase {
 	function testLock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
-		$this->set_field("_config_wiki_Edit_anon", false);
-		$this->set_field("_config_wiki_Edit_user", true);
+		$this->set_field("_config_wiki_edit_anon", false);
+		$this->set_field("_config_wiki_edit_user", true);
 		$this->click("Save Settings");
 
 		$this->get_page("wiki/test_locked");
