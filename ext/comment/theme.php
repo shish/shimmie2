@@ -10,8 +10,8 @@ class CommentListTheme extends Themelet {
 
 		// aaaaaaargh php
 		assert(is_array($images));
-		assert(is_int($page_number));
-		assert(is_int($total_pages));
+		assert(is_numeric($page_number));
+		assert(is_numeric($total_pages));
 		assert(is_bool($can_post));
 
 		// parts for the whole page
