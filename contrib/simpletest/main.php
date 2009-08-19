@@ -1,4 +1,11 @@
 <?php
+/*
+ * Name: SimpleTest integration
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: adds unit testing to SCore
+ */
+
 /**
  * \page unittests Unit Tests
  * 
@@ -188,12 +195,6 @@ class TestFinder extends TestSuite {
 	}
 }
 
-/**
- * Name: SimpleTest integration
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: adds unit testing to SCore
- */
 class SimpleSCoreTest extends SimpleExtension {
 	public function onPageRequest($event) {
 		global $page;
