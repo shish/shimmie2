@@ -2,8 +2,8 @@
 class WikiTest extends SCoreWebTestCase {
 	function testIndex() {
 		$this->get_page("wiki");
-		$this->assertTitle("Index");
-		$this->assertText("This is a default page");
+		$this->assert_title("Index");
+		$this->assert_text("This is a default page");
 	}
 
 	function testAccess() {
@@ -13,7 +13,7 @@ class WikiTest extends SCoreWebTestCase {
 				if($user != "admin") {
 					$this->log_in_as_admin();
 					$this->get_page("setup");
-					$this->setField("_config_wiki_edit_$user", $allowed);
+					$this->set_field("_config_wiki_edit_$user", $allowed);
 					$this->click("Save Settings");
 					$this->log_out();
 				}
@@ -22,15 +22,15 @@ class WikiTest extends SCoreWebTestCase {
 				if($user == "admin") {$this->log_in_as_admin();}
 
 				$this->get_page("wiki/test");
-				$this->assertTitle("test");
-				$this->assertText("This is a default page");
+				$this->assert_title("test");
+				$this->assert_text("This is a default page");
 				if($allowed || $user == "admin") {
 					$this->click("Edit");
-					$this->assertText("Editor");
+					$this->assert_text("Editor");
 				}
 				else {
 					$this->click("Edit");
-					$this->assertNoText("Editor");
+					$this->assert_no_text("Editor");
 				}
 
 				if($user == "user" || $user == "admin") {$this->log_out();}
@@ -41,30 +41,30 @@ class WikiTest extends SCoreWebTestCase {
 	function testLock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
-		$this->setField("_config_wiki_Edit_anon", false);
-		$this->setField("_config_wiki_Edit_user", true);
+		$this->set_field("_config_wiki_Edit_anon", false);
+		$this->set_field("_config_wiki_Edit_user", true);
 		$this->click("Save Settings");
 
 		$this->get_page("wiki/test_locked");
-		$this->assertTitle("test_locked");
-		$this->assertText("This is a default page");
+		$this->assert_title("test_locked");
+		$this->assert_text("This is a default page");
 		$this->click("Edit");
-		$this->setField("body", "test_locked content");
-		$this->setField("lock", true);
+		$this->set_field("body", "test_locked content");
+		$this->set_field("lock", true);
 		$this->click("Save");
 		$this->log_out();
 
 		$this->log_in_as_user();
 		$this->get_page("wiki/test_locked");
-		$this->assertTitle("test_locked");
-		$this->assertText("test_locked content");
-		$this->assertNoText("Edit");
+		$this->assert_title("test_locked");
+		$this->assert_text("test_locked content");
+		$this->assert_no_text("Edit");
 		$this->log_out();
 
 		$this->get_page("wiki/test_locked");
-		$this->assertTitle("test_locked");
-		$this->assertText("test_locked content");
-		$this->assertNoText("Edit");
+		$this->assert_title("test_locked");
+		$this->assert_text("test_locked content");
+		$this->assert_no_text("Edit");
 
 		$this->log_in_as_admin();
 		$this->get_page("wiki/test_locked");
@@ -75,14 +75,14 @@ class WikiTest extends SCoreWebTestCase {
 	function testDefault() {
 		$this->log_in_as_admin();
 		$this->get_page("wiki/wiki:default");
-		$this->assertTitle("wiki:default");
-		$this->assertText("This is a default page");
+		$this->assert_title("wiki:default");
+		$this->assert_text("This is a default page");
 		$this->click("Edit");
-		$this->setField("body", "Empty page! Fill it!");
+		$this->set_field("body", "Empty page! Fill it!");
 		$this->click("Save");
 
 		$this->get_page("wiki/something");
-		$this->assertText("Empty page! Fill it!");
+		$this->assert_text("Empty page! Fill it!");
 
 		$this->get_page("wiki/wiki:default");
 		$this->click("Delete All");
@@ -92,21 +92,21 @@ class WikiTest extends SCoreWebTestCase {
 	function testRevisions() {
 		$this->log_in_as_admin();
 		$this->get_page("wiki/test");
-		$this->assertTitle("test");
-		$this->assertText("This is a default page");
+		$this->assert_title("test");
+		$this->assert_text("This is a default page");
 		$this->click("Edit");
-		$this->setField("body", "Mooooo 1");
+		$this->set_field("body", "Mooooo 1");
 		$this->click("Save");
-		$this->assertText("Mooooo 1");
-		$this->assertText("Revision 1");
+		$this->assert_text("Mooooo 1");
+		$this->assert_text("Revision 1");
 		$this->click("Edit");
-		$this->setField("body", "Mooooo 2");
+		$this->set_field("body", "Mooooo 2");
 		$this->click("Save");
-		$this->assertText("Mooooo 2");
-		$this->assertText("Revision 2");
+		$this->assert_text("Mooooo 2");
+		$this->assert_text("Revision 2");
 		$this->click("Delete This Version");
-		$this->assertText("Mooooo 1");
-		$this->assertText("Revision 1");
+		$this->assert_text("Mooooo 1");
+		$this->assert_text("Revision 1");
 		$this->click("Delete All");
 		$this->log_out();
 	}

@@ -4,13 +4,13 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
-		$this->assertTitle("Image $image_id: pbx");
-		$this->setField("tag_edit__tags", "new");
+		$this->assert_title("Image $image_id: pbx");
+		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");
-		$this->assertTitle("Image $image_id: new");
-		$this->setField("tag_edit__tags", "");
+		$this->assert_title("Image $image_id: new");
+		$this->set_field("tag_edit__tags", "");
 		$this->click("Set");
-		$this->assertTitle("Image $image_id: tagme");
+		$this->assert_title("Image $image_id: tagme");
 		$this->log_out();
 
 		$this->log_in_as_admin();

@@ -4,25 +4,25 @@ class UploadTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 
 		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
-		$this->assertResponse(302);
+		$this->assert_response(302);
 
 		$image_id_2 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
-		$this->assertResponse(200);
-		$this->assertTitle("Upload Status");
-		$this->assertText("already has hash");
+		$this->assert_response(200);
+		$this->assert_title("Upload Status");
+		$this->assert_text("already has hash");
 
 		$image_id_3 = $this->post_image("index.php", "test");
-		$this->assertResponse(200);
-		$this->assertTitle("Upload Status");
-		$this->assertText("File type not recognised");
+		$this->assert_response(200);
+		$this->assert_title("Upload Status");
+		$this->assert_text("File type not recognised");
 
 		/*
 		// FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
 		file_put_contents("huge.dat", file_get_contents("ext/simpletest/data/pbx_screenshot.jpg") . str_repeat("U", 1024*1024*3));
 		$image_id_4 = $this->post_image("index.php", "test");
-		$this->assertResponse(200);
-		$this->assertTitle("Upload Status");
-		$this->assertText("File too large");
+		$this->assert_response(200);
+		$this->assert_title("Upload Status");
+		$this->assert_text("File too large");
 		unlink("huge.dat");
 		*/
 

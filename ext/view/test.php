@@ -7,13 +7,13 @@ class ViewTest extends ShimmieWebTestCase {
 		$this->log_out();
 
         $this->get_page("post/view/$image_id");
-        $this->assertTitle("Image $image_id: test");
+        $this->assert_title("Image $image_id: test");
 
         $this->get_page("post/view/$idp1");
-        $this->assertTitle('Image not found');
+        $this->assert_title('Image not found');
 
         $this->get_page('post/view/-1');
-        $this->assertTitle('Image not found');
+        $this->assert_title('Image not found');
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);

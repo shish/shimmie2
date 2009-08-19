@@ -11,7 +11,7 @@ class LinkImageTest extends ShimmieWebTestCase {
 		preg_match("#value='(http://.*(/|%2F)post(/|%2F)view(/|%2F)[0-9]+)'#", $raw, $matches);
 		$this->assertTrue(count($matches) > 0);
 		$this->get($matches[1]);
-		$this->assertTitle("Image $image_id: pie");
+		$this->assert_title("Image $image_id: pie");
 
 		$this->log_out();
 

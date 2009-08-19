@@ -6,7 +6,7 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->log_out();
 
         $this->get_page("random_image/view");
-        $this->assertTitle("Image $image_id: test");
+        $this->assert_title("Image $image_id: test");
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);

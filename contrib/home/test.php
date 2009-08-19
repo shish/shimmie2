@@ -2,8 +2,8 @@
 class HomeTest extends ShimmieWebTestCase {
     function testHomePage() {
         $this->get_page('home');
-        $this->assertTitle('Shimmie');
-        $this->assertText('Shimmie');
+        $this->assert_title('Shimmie');
+        $this->assert_text('Shimmie');
 
 		# FIXME: test search box
     }

@@ -5,23 +5,23 @@ class FavoritesTest extends ShimmieWebTestCase {
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
 
 		$this->get_page("post/view/$image_id");
-		$this->assertTitle("Image $image_id: test");
-		$this->assertNoText("Favorited By");
+		$this->assert_title("Image $image_id: test");
+		$this->assert_no_text("Favorited By");
 
 		$this->click("Favorite");
-		$this->assertText("Favorited By");
+		$this->assert_text("Favorited By");
 
 		$this->get_page("post/list/favorited_by=test/1");
-		$this->assertTitle("Image $image_id: test");
-		$this->assertText("Favorited By");
+		$this->assert_title("Image $image_id: test");
+		$this->assert_text("Favorited By");
 
 		$this->get_page("user/test");
-		$this->assertText("Images favorited: 1");
+		$this->assert_text("Images favorited: 1");
 		$this->click("Images favorited");
-		$this->assertTitle("Image $image_id: test");
+		$this->assert_title("Image $image_id: test");
 
 		$this->click("Un-Favorite");
-		$this->assertNoText("Favorited By");
+		$this->assert_no_text("Favorited By");
 
 		$this->log_out();
 
