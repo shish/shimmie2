@@ -1,12 +1,5 @@
 <?php
 /**
- * Name: SimpleTest integration
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: adds unit testing to SCore
- */
-
-/**
  * \page unittests Unit Tests
  * 
  * Each extension should (although doesn't technically have to) come with a
@@ -17,6 +10,31 @@
  * 
  * For Shimmie2 specific extensions, there is a ShimmieWebTestCase class which
  * includes functions to upload and delete images.
+ *
+ * For a quick guide on the spcifics of how to write tests, see \ref wut
+ *
+ *
+ * \page wut Writing Unit Tests
+ *
+ * An empty test class starts like so (assuming the extension we're writing
+ * tests for is called "Example")
+ *
+ * \code
+ * <?php
+ * class ExampleTest extends SCoreWebTestCase {
+ *     public function testBlah() {
+ *     }
+ * }
+ * ?>
+ * \endcode
+ *
+ * SCoreWebTestCase is for testing generic extensions, ShimmieWebTestCase is
+ * for imageboard-specific extensions. The name of the function doesn't matter
+ * as long as it begins with "test".
+ *
+ * Once you're in the function, $this is a reference to a virtual web browser
+ * which you can control with code. The functions available are visible in the
+ * docs for class SCoreWebTestCase and ShimmieWebTestCase.
  */
 
 require_once('simpletest/web_tester.php');
@@ -32,6 +50,24 @@ define('ADMIN_PASS', "demo");
  * A set of common SCore activities to test
  */
 class SCoreWebTestCase extends WebTestCase {
+ 	/**
+	 * Click on a link or a button
+	 */
+ 	public function click($text) {
+		parent::click($text);
+	}
+
+	/**
+	 * Click the virtual browser's back button
+	 */
+	public function back() {
+		parent::back();
+	}
+
+	/**
+	 * Get a page based on the SCore URL, eg get_page("post/list") will do
+	 * the right thing; no need for http:// or any such
+	 */
 	protected function get_page($page) {
 		$raw = $this->get(make_http(make_link($page)));
 		$this->assertNoText("Exception:");
@@ -61,6 +97,20 @@ class SCoreWebTestCase extends WebTestCase {
         $this->get_page('post/list');
 		$this->click('Log Out');
 	}
+
+	/**
+	 * Look through the HTML for a form element with the name $name,
+	 * set its value to $value
+	 */
+	protected function set_field($name, $value) {
+		parent::setField($name, $value);
+	}
+
+	protected function assert_text($text) {parent::assertText($text);}
+	protected function assert_title($title) {parent::assertTitle($title);}
+	protected function assert_no_text($text) {parent::assertNoText($text);}
+	protected function assert_mime($type) {parent::assertMime($type);}
+	protected function assert_response($code) {parent::assertResponse($code);}
 }
 
 /**
@@ -111,6 +161,12 @@ class TestFinder extends TestSuite {
 	}
 }
 
+/**
+ * Name: SimpleTest integration
+ * Author: Shish <webmaster@shishnet.org>
+ * License: GPLv2
+ * Description: adds unit testing to SCore
+ */
 class SimpleSCoreTest extends SimpleExtension {
 	public function onPageRequest($event) {
 		global $page;
