@@ -88,14 +88,14 @@ class SCoreWebTestCase extends WebTestCase {
 	 * Click on a link or a button
 	 */
  	public function click($text) {
-		parent::click($text);
+		return parent::click($text);
 	}
 
 	/**
 	 * Click the virtual browser's back button
 	 */
 	public function back() {
-		parent::back();
+		return parent::back();
 	}
 
 	/**
