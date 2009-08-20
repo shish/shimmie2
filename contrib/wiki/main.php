@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Simple Wiki
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

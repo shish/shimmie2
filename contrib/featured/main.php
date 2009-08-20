@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Featured Image
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

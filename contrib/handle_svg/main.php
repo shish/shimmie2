@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: SVG File Handler
  * Author: Shish <webmaster@shishnet.org>
  * Description: Handle SVG files

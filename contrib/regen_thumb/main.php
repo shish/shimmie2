@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Regen Thumb
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

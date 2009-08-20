@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Image Scores (Numeric)
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

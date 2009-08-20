@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: XML Sitemap
  * Author: Sein Kraft <mail@seinkraft.info>
  * License: GPLv2

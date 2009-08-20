@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: News
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

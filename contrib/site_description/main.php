@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Site Description
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

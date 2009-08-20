@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Random Image
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

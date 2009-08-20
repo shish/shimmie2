@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Emoticon Filter
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Image Ratings
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
