@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Link to Image
  * Author: Artanis <artanis.00@gmail.com>
  * Description: Show various forms of link to each image, for copy & paste

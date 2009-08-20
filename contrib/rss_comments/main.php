@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: RSS for Comments
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

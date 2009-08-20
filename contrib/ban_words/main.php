@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Comment Word Ban
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

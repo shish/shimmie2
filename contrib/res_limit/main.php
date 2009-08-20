@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Resolution Limiter
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

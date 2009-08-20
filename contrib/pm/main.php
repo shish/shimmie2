@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Private Messaging
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

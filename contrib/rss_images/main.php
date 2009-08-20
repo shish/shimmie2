@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: RSS for Images
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

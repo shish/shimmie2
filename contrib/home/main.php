@@ -1,5 +1,5 @@
 <?php
-/**
+/*
 * Name: Home Page
 * Author: Bzchan <bzchan@animemahou.com>
 * License: GPLv2

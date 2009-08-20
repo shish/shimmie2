@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: ICO File Handler
  * Author: Shish <webmaster@shishnet.org>
  * Description: Handle windows icons

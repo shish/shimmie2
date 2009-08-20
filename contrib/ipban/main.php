@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: IP Ban
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

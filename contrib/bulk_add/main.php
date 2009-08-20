@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Bulk Add
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

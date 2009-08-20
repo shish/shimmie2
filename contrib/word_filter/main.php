@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Word Filter
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2

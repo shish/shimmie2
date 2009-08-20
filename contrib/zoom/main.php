@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * Name: Image Zoom
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
