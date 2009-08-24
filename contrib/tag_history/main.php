@@ -59,7 +59,7 @@ class Tag_History implements Extension {
 			$event->panel->add_block($sb);
 		}
 		if(($event instanceof TagSetEvent)) {
-			$this->add_tag_history($event->image->id, $event->tags);
+			$this->add_tag_history($event->image, $event->tags);
 		}
 	}
 	
@@ -185,14 +185,16 @@ class Tag_History implements Extension {
 	/*
 	 * this function is called just before an images tag are changed
 	 */
-	private function add_tag_history($image_id, $tags)
+	private function add_tag_history($image, $tags)
 	{
 		global $database;
 		global $config;
 		global $user;
 
-		if(is_array($tags)) $tags = implode(' ', $tags);
-		
+		$new_tags = Tag::implode($tags);
+		$old_tags = Tag::implode($image->get_tag_array());
+		if($new_tags == $old_tags) return;
+
 		// add a history entry		
 		$allowed = $config->get_int("history_limit");
 		if($allowed == 0) return;
@@ -200,18 +202,18 @@ class Tag_History implements Extension {
 		$row = $database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
-				array($image_id, $tags, $user->id, $_SERVER['REMOTE_ADDR']));
-		$entries = $database->db->GetOne("SELECT COUNT(*) FROM `tag_histories` WHERE image_id = ?", array($image_id));
+				array($image->id, $new_tags, $user->id, $_SERVER['REMOTE_ADDR']));
 		
 		// if needed remove oldest one
 		if($allowed == -1) return;
+		$entries = $database->db->GetOne("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
-			$min_id = $database->db->GetOne("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image_id));
+			$min_id = $database->db->GetOne("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image->id));
 			$database->execute("DELETE FROM tag_histories WHERE id = ?", array($min_id));
 		}
 	}
 }
-add_event_listener(new Tag_History());
+add_event_listener(new Tag_History(), 40); // in before tags are actually set, so that "get current tags" works
 ?>

@@ -230,7 +230,7 @@ class Image {
 	 * Get this image's tags as a string
 	 */
 	public function get_tag_list() {
-		return implode(' ', $this->get_tag_array());
+		return Tag::implode($this->get_tag_array());
 	}
 
 	/**
@@ -827,6 +827,19 @@ class Tag {
 		}
 
 		return $tag_array;
+	}
+
+	public static function implode($tags) {
+		assert(is_string($tags) || is_array($tags));
+
+		if(is_string($tags)) {
+			// do nothing
+		}
+		else if(is_array($tags)) {
+			$tags = implode(' ', $tags);
+		}
+
+		return $tags;
 	}
 
 	public static function resolve_alias($tag) {
