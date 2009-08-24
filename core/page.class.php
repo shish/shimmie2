@@ -167,7 +167,7 @@ class Page {
 		}
 	}
 
-	private function add_auto_headers() {
+	protected function add_auto_headers() {
 		$data_href = get_base_href();
 		foreach(glob("lib/*.js") as $js) {
 			$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
