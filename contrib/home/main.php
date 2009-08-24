@@ -15,6 +15,16 @@
 */
 
 class Home extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_string("home_links", '
+		[$base/post/list|Posts]
+		[$base/comment/list|Comments]
+		[$base/tags|Tags]
+		[$base/wiki|Wiki]
+		[$base/wiki/more|&raquo;]
+		');
+	}
 	public function onPageRequest($event) {
 		global $config, $page;
 		if($event->page_matches("home")) {
@@ -37,10 +47,9 @@ class Home extends SimpleExtension {
 		}
 
 		$sb = new SetupBlock("Home Page");
-		$sb->add_label("Page Links - Example: [$"."base/index|Posts]");
-		$sb->add_longtext_option("home_links", "<br>");
+		$sb->add_longtext_option("home_links", 'Page Links - Example: [/post/list|Posts]<br>');
+		$sb->add_longtext_option("home_text", "<br>Page Text:<br>");
 		$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
-		$sb->add_label("<br>Note: page accessed via /home");
 		$event->panel->add_block($sb);
 	}
 
@@ -75,7 +84,9 @@ class Home extends SimpleExtension {
 		$main_links = str_replace('|', 		"'>", 			$main_links);
 		$main_links = str_replace(']', 		"</a>", 		$main_links);
 
-		return $this->theme->build_body($sitename, $main_links, $contact_link, $num_comma, $counter_text);
+		$main_text = $config->get_string('home_text');
+
+		return $this->theme->build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text);
 	}
 }
 ?>
