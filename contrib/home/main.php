@@ -17,13 +17,11 @@
 class Home extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config;
-		$config->set_default_string("home_links", '
-		[$base/post/list|Posts]
-		[$base/comment/list|Comments]
-		[$base/tags|Tags]
-		[$base/wiki|Wiki]
-		[$base/wiki/more|&raquo;]
-		');
+		$config->set_default_string("home_links", '[$base/post/list|Posts]
+[$base/comment/list|Comments]
+[$base/tags|Tags]
+[$base/wiki|Wiki]
+[$base/wiki/more|&raquo;]');
 	}
 	public function onPageRequest($event) {
 		global $config, $page;
