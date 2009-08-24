@@ -1,6 +1,8 @@
 <?php
 
 class CommentListTheme extends Themelet {
+	var $comments_shown = 0;
+
 	/**
 	 * Display a page with a list of images, and for each image,
 	 * the image's comments
@@ -132,8 +134,9 @@ class CommentListTheme extends Themelet {
 			//	$hash = md5(strtolower($comment->owner->email));
 			//	$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			//}
+			$oe = ($this->comments_shown++ % 2 == 0) ? "even" : "odd";
 			return "
-				<div class='comment'>
+				<div class='$oe comment'>
 				$h_userlink: $h_comment
 				$h_dellink
 				</div>
