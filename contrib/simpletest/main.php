@@ -23,6 +23,12 @@
  *
  * \page wut Writing Unit Tests
  *
+ * Note: The unit test framework assumes a fresh, default install with an
+ * admin called "demo" and a user called "test". The full test suite takes
+ * a few minutes to run on my test VM, which is long enough that my shared
+ * hosting provider cuts it off half way through. Running tests for specific
+ * extensions (visit "/test/extension_folder_name") is generally OK though.
+ *
  * An empty test class starts like so (assuming the extension we're writing
  * tests for is called "Example")
  *
