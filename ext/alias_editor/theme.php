@@ -7,7 +7,7 @@ class AliasEditorTheme extends Themelet {
 	 * $aliases = an array of ($old_tag => $new_tag)
 	 * $is_admin = whether things like "add new alias" should be shown
 	 */
-	public function display_aliases(Page $page, $aliases, $is_admin) {
+	public function display_aliases(Page $page, $aliases, $is_admin, $pageNumber, $totalPages) {
 		if($is_admin) {
 			$action = "<th width='10%'>Action</th>";
 			$add = "
@@ -73,6 +73,8 @@ class AliasEditorTheme extends Themelet {
 		if($is_admin) {
 			$page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
 		}
+
+		$this->display_paginator($page, "alias/list", null, $pageNumber, $totalPages);
 	}
 }
 ?>

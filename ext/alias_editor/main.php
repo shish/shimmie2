@@ -46,9 +46,27 @@ class AliasEditor implements Extension {
 				}
 			}
 			else if($event->get_arg(0) == "list") {
-				$this->theme->display_aliases($page,
-						$database->db->GetAssoc("SELECT oldtag, newtag FROM aliases ORDER BY newtag"),
-						$user->is_admin());
+				$page_number = $event->get_arg(1);
+				if(is_null($page_number) || !is_numeric($page_number)) {
+					$page_number = 0;
+				}
+				else if ($page_number <= 0) {
+					$page_number = 0;
+				}
+				else {
+					$page_number--;
+				}
+
+				$alias_per_page = $config->get_int('alias_items_per_page', 30);
+
+				$alias = $database->db->GetAssoc(
+					"SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT ?, ?",
+					array($page_number * $alias_per_page, $alias_per_page)
+				);
+
+				$total_pages = ceil($database->db->GetOne("SELECT COUNT(*) FROM aliases") / $alias_per_page);
+
+				$this->theme->display_aliases($page, $alias, $user->is_admin(), $page_number + 1, $total_pages);
 			}
 			else if($event->get_arg(0) == "export") {
 				$page->set_mode("data");
