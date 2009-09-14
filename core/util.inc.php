@@ -428,7 +428,7 @@ function array_iunique($array) {
  * @retval bool
  */
 function ip_in_range($IP, $CIDR) {
-	list ($net, $mask) = split ("/", $CIDR);
+	list ($net, $mask) = explode("/", $CIDR);
 
 	$ip_net = ip2long ($net);
 	$ip_mask = ~((1 << (32 - $mask)) - 1);
@@ -680,7 +680,7 @@ function _get_query_parts() {
 		$path = substr($path, 1);
 	}
 
-	$parts = split('/', $path);
+	$parts = explode('/', $path);
 
 	if(strpos($path, "^") === FALSE) {
 		return $parts;
