@@ -164,7 +164,7 @@ class Setup extends SimpleExtension {
 		$config->set_default_string("base_href", "./index.php?q=");
 		$config->set_default_string("theme", "default");
 		$config->set_default_bool("use_autodate", true);
-		$config->set_default_bool("use_autodate", "F j, Y");
+		$config->set_default_string("use_autodate", "F j, Y");
 	}
 
 	public function onPageRequest($event) {
