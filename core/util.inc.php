@@ -105,7 +105,8 @@ function autodate($date) {
 		if ($diff<7)  return $diff . " day" . plural($diff) . " ago";    $diff = round($diff/7);
 		if ($diff<4)  return $diff . " week" . plural($diff) . " ago";
 	}
-	return "on " . date("F j, Y", strtotime($date));
+	$format = $config->get_string('autodate_format', "F j, Y");
+	return "on " . date($format, strtotime($date));
 }
 
 
