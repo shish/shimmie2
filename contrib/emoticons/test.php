@@ -10,6 +10,9 @@ class EmoticonTest extends ShimmieWebTestCase {
 		$this->assert_no_text(":cool:"); # FIXME: test for working image link
 		#$this->assert_text(":beans:"); # FIXME: this should be left as-is
 
+		$this->get_page("emote/list");
+		$this->assert_text(":arrow:");
+
 		$this->log_out();
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
