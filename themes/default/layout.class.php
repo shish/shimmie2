@@ -21,6 +21,7 @@ class Layout {
 
 		$left_block_html = "";
 		$main_block_html = "";
+		$sub_block_html  = "";
 
 		foreach($page->blocks as $block) {
 			switch($block->section) {
@@ -29,6 +30,9 @@ class Layout {
 					break;
 				case "main":
 					$main_block_html .= $this->block_to_html($block, false, "main");
+					break;
+				case "subheading":
+					$sub_block_html .= $this->block_to_html($block, false, "main");
 					break;
 				default:
 					print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -59,7 +63,8 @@ $header_html
 	<body>
 		<h1$wrapper>{$page->heading}</h1>
 		$subheading
-		
+		$sub_block_html
+
 		<div id="nav">$left_block_html</div>
 		<div id="body">$main_block_html</div>
 
