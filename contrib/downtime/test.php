@@ -9,6 +9,7 @@ class DowntimeTest extends SCoreWebTestCase {
 		$this->assert_text("DOWNTIME MODE IS ON!");
 		$this->log_out();
 
+		$this->get_page("post/list");
 		$this->assert_text("brb, unit testing");
 
 		$this->log_in_as_admin();
