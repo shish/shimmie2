@@ -5,6 +5,12 @@ class BulkAddTest extends ShimmieWebTestCase {
 
         $this->get_page('admin');
 		$this->assert_title("Admin Tools");
+		$this->set_field('dir', "asdf");
+		$this->click("Add");
+		$this->assert_text("is not a directory");
+
+        $this->get_page('admin');
+		$this->assert_title("Admin Tools");
 		$this->set_field('dir', "contrib/simpletest");
 		$this->click("Add");
 

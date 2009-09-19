@@ -64,6 +64,11 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->assert_no_text("test1");
 
 		$this->log_out();
+
+
+        $this->get_page('alias/list');
+		$this->assert_title("Alias List");
+		$this->assert_no_text("Add");
 	}
 }
 ?>
