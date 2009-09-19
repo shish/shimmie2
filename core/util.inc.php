@@ -803,4 +803,25 @@ function _end_cache() {
 		}
 	}
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* Code coverage                                                             *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function _start_debug() {
+	if(function_exists("xdebug_start_code_coverage")) {
+		#xdebug_start_code_coverage(XDEBUG_CC_UNUSED|XDEBUG_CC_DEAD_CODE);
+		xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
+	}
+}
+
+function _end_debug() {
+	if(function_exists("xdebug_get_code_coverage")) {
+		if(!file_exists("data/coverage")) mkdir("data/coverage");
+		$n = 0;
+		$t = time();
+		while(file_exists("data/coverage/$t.$n.log")) $n++;
+		file_put_contents("data/coverage/$t.$n.log", serialize(xdebug_get_code_coverage()));
+	}
+}
 ?>

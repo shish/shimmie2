@@ -64,6 +64,7 @@ if(!file_exists("config.php")) {
 
 require_once "config.php";
 require_once "core/util.inc.php";
+if(DEBUG) {_start_debug();}
 _version_check();
 _sanitise_environment();
 _start_cache();
@@ -147,4 +148,5 @@ catch(Exception $e) {
 </html>
 EOD;
 }
+if(DEBUG) {_end_debug();}
 ?>
