@@ -38,6 +38,18 @@ class BBCodeUnitTest extends UnitTestCase {
 			"<ul><li>a<ul><li>a<li>b</ul><li>b</ul>");
 	}
 
+	public function testSpoiler() {
+		$this->assertEqual(
+			$this->filter("[spoiler]ShishNet[/spoiler]"),
+			"<span style=\"background-color:#000; color:#000;\">ShishNet</span>");
+		$this->assertEqual(
+			$this->strip("[spoiler]ShishNet[/spoiler]"),
+			"FuvfuArg");
+		#$this->assertEqual(
+		#	$this->filter("[spoiler]ShishNet"),
+		#	"[spoiler]ShishNet");
+	}
+
 	public function testURL() {
 		$this->assertEqual(
 			$this->filter("[url]http://shishnet.org[/url]"),
@@ -55,6 +67,13 @@ class BBCodeUnitTest extends UnitTestCase {
 		$tfe = new TextFormattingEvent($in);
 		$bb->receive_event($tfe);
 		return $tfe->formatted;
+	}
+
+	private function strip($in) {
+		$bb = new BBCode();
+		$tfe = new TextFormattingEvent($in);
+		$bb->receive_event($tfe);
+		return $tfe->stripped;
 	}
 }
 ?>
