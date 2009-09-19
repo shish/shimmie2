@@ -4,6 +4,7 @@ images
 thumbs
 data
 sql.log
+shimmie.log
 ext/autocomplete
 ext/ban_words
 ext/browser_search
@@ -15,6 +16,7 @@ ext/et
 ext/event_log
 ext/favorites
 ext/featured
+ext/forum
 ext/handle_archive
 ext/handle_flash
 ext/handle_ico
@@ -26,9 +28,11 @@ ext/ipban
 ext/link_image
 ext/news
 ext/notes
+ext/notes
 ext/numeric_score
 ext/piclens
 ext/pm
+ext/pools
 ext/random_image
 ext/rating
 ext/regen_thumb
@@ -40,9 +44,10 @@ ext/simpletest
 ext/site_description
 ext/sitemap
 ext/svn_update
-ext/tag_history
 ext/tagger
+ext/tag_history
 ext/text_score
+ext/tips
 ext/wiki
 ext/word_filter
 ext/zoom
