@@ -21,7 +21,7 @@ class BanWordsTest extends ShimmieWebTestCase {
 		$this->assert_title("Comment Blocked");
 
 		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "kittens and viagra!");
+		$this->set_field('comment', "kittens\n\n\n\nand viagra!");
 		$this->click("Post Comment");
 		$this->assert_title("Comment Blocked");
 
