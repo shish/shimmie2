@@ -30,6 +30,9 @@ class UserPageTest extends SCoreWebTestCase {
 		# FIXME: test user creation
 		# FIXME: test adminifying
 		# FIXME: test password reset
+
+		$this->get_page('user/list');
+		$this->assert_text("demo");
 	}
 }
 ?>
