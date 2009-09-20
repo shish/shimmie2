@@ -29,11 +29,6 @@ class RSS_Images extends SimpleExtension {
 
 			if($event->count_args() == 1) {
 				$page_number = int_escape($event->get_arg(0));
-				// compat hack, deprecate this later
-				if($page_number == 0) {
-					$search_terms = explode(' ', $event->get_arg(0));
-					$page_number = 1;
-				}
 			}
 			else if($event->count_args() == 2) {
 				$search_terms = explode(' ', $event->get_arg(0));
