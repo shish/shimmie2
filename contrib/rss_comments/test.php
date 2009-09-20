@@ -1,11 +1,22 @@
 <?php
 class RSSCommentsTest extends ShimmieWebTestCase {
     function testImageFeed() {
+		$this->log_in_as_user();
+		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$this->get_page("post/view/$image_id");
+		$this->set_field('comment', "Test Comment ASDFASDF");
+		$this->click("Post Comment");
+		$this->assert_text("ASDFASDF");
+		$this->log_out();
+
         $this->get_page('rss/comments');
 		$this->assert_mime("application/rss+xml");
 		$this->assert_no_text("Exception");
+		$this->assert_text("ASDFASDF");
 
-		# FIXME: test that there are some comments here
+		$this->log_in_as_admin();
+		$this->delete_image($image_id);
+		$this->log_out();
     }
 }
 ?>
