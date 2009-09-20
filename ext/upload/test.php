@@ -3,6 +3,9 @@ class UploadTest extends ShimmieWebTestCase {
 	function testUpload() {
 		$this->log_in_as_user();
 
+		$this->get_page("upload");
+		$this->assert_title("Upload");
+
 		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(302);
 
