@@ -12,6 +12,10 @@ class TagHistoryTest extends ShimmieWebTestCase {
 		$this->assert_text("new (Set by demo");
 		$this->click("Revert");
 		$this->assert_title("Image $image_id: pbx");
+
+		$this->get_page("tag_history");
+		$this->click("Global Tag History");
+
 		$this->delete_image($image_id);
 		$this->log_out();
 	}

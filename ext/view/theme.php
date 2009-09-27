@@ -22,13 +22,7 @@ class ViewImageTheme extends Themelet {
 	}
 
 
-	var $pin = null;
-
 	protected function build_pin(Image $image) {
-		if(!is_null($this->pin)) {
-			return $this->pin;
-		}
-
 		global $database;
 
 		if(isset($_GET['search'])) {
@@ -44,8 +38,7 @@ class ViewImageTheme extends Themelet {
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = "<a href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
 
-		$this->pin = "$h_prev | $h_index | $h_next";
-		return $this->pin;
+		return "$h_prev | $h_index | $h_next";
 	}
 
 	protected function build_navigation(Image $image) {

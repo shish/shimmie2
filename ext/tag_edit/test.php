@@ -14,6 +14,8 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_admin();
+		$this->get_page("admin");
+		$this->assert_text("Mass Tag Edit"); // just test it exists
 		$this->delete_image($image_id);
 		$this->log_out();
 
