@@ -49,6 +49,7 @@ CODE {
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
+TD>TEXTAREA {width: 100%;}
 TD>SELECT {width: 100%;}
 
 TABLE.zebra {border-spacing: 0px; border: 2px solid #CCC;}
