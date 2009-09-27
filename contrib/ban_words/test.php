@@ -3,7 +3,7 @@ class BanWordsTest extends ShimmieWebTestCase {
 	function testWordBan() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
-		$this->set_field("_config_banned_words", "viagra\nporn\n/http:.*\.cn\//");
+		$this->set_field("_config_banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
 		$this->click("Save Settings");
 		$this->log_out();
 
@@ -21,7 +21,7 @@ class BanWordsTest extends ShimmieWebTestCase {
 		$this->assert_title("Comment Blocked");
 
 		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "kittens\n\n\n\nand viagra!");
+		$this->set_field('comment', "kittens and viagra!");
 		$this->click("Post Comment");
 		$this->assert_title("Comment Blocked");
 

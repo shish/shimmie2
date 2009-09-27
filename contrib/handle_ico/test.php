@@ -6,6 +6,8 @@ class IcoHandlerTest extends ShimmieWebTestCase {
 		$this->assert_response(302);
 		$this->log_out();
 
+		$raw = $this->get_page("get_ico/$image_id"); // test for no crash
+
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();

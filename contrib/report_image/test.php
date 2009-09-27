@@ -9,9 +9,23 @@ class ReportImageTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_admin();
+
+		$this->get_page("setup");
+		$this->set_field("_config_report_image_show_thumbs", true);
+		$this->click("Save Settings");
 		$this->get_page("image_report/list");
 		$this->assert_title("Reported Images");
 		$this->assert_text("report details");
+
+		$this->get_page("setup");
+		$this->set_field("_config_report_image_show_thumbs", false);
+		$this->click("Save Settings");
+		$this->get_page("image_report/list");
+		$this->assert_title("Reported Images");
+		$this->assert_text("report details");
+		$this->assert_text("$image_id");
+
+		$this->get_page("image_report/list");
 		$this->click("Remove Report");
 		$this->assert_title("Reported Images");
 		$this->assert_no_text("report details");

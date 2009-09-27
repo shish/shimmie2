@@ -15,6 +15,10 @@ class SetupTest extends SCoreWebTestCase {
         $this->get_page('setup');
 		$this->assert_title("Shimmie Setup");
 		$this->assert_text("General");
+
+        $this->get_page('setup/advanced');
+		$this->assert_title("Shimmie Setup");
+		$this->assert_text("thumb_quality");
 		$this->log_out();
 	}
 }

@@ -18,6 +18,8 @@ class IPBanTest extends SCoreWebTestCase {
 		$this->click("Remove"); // FIXME: remove which ban? :S
 		$this->assert_no_text("42.42.42.42");
 
+        $this->get_page('ip_ban/list?all=on'); // just test it doesn't crash for now
+
 		$this->log_out();
 
 		# FIXME: test that the IP is actually banned
