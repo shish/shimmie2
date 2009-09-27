@@ -52,6 +52,7 @@
 
 // set up and purify the environment
 define("DEBUG", true);
+define("COVERAGE", true);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
 define("SCORE_VERSION", 's2hack');
@@ -64,7 +65,7 @@ if(!file_exists("config.php")) {
 
 require_once "config.php";
 require_once "core/util.inc.php";
-if(DEBUG) {_start_debug();}
+if(COVERAGE) {_start_coverage();}
 _version_check();
 _sanitise_environment();
 _start_cache();
@@ -148,5 +149,5 @@ catch(Exception $e) {
 </html>
 EOD;
 }
-if(DEBUG) {_end_debug();}
+if(COVERAGE) {_end_coverage();}
 ?>
