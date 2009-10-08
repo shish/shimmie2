@@ -319,6 +319,33 @@ function get_session_ip($config) {
 }
 
 /**
+ * similar to $_COOKIE[$name], but $name has the site-wide cookie
+ * prefix prepended to it, eg username -> shm_username, to prevent
+ * conflicts from multiple installs within one domain.
+ */
+function get_prefixed_cookie($name) {
+	global $config;
+	$full_name = $config->get_string('cookie_prefix','shm')."_".$name;
+	if(isset($_COOKIE[$full_name])) {
+		return $_COOKIE[$full_name];
+	}
+	else {
+		return null;
+	}
+}
+
+/**
+ * The counterpart for get_prefixed_cookie, this works like php's
+ * setcookie method, but prepends the site-wide cookie prefix to
+ * the $name argument before doing anything.
+ */
+function set_prefixed_cookie($name, $value, $time, $path) {
+	global $config;
+	$full_name = $config->get_string('cookie_prefix','shm')."_".$name;
+	setcookie($full_name, $value, $time, $path);
+}
+
+/**
  * Figure out the path to the shimmie install root.
  *
  * PHP really, really sucks.
@@ -719,8 +746,8 @@ function _get_page_request() {
 function _get_user() {
 	global $config, $database;
 	$user = null;
-	if(isset($_COOKIE["shm_user"]) && isset($_COOKIE["shm_session"])) {
-	    $tmp_user = User::by_session($_COOKIE["shm_user"], $_COOKIE["shm_session"]);
+	if(get_prefixed_cookie("user") && get_prefixed_cookie("session")) {
+	    $tmp_user = User::by_session(get_prefixed_cookie("user"), get_prefixed_cookie("session"));
 		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
@@ -738,7 +765,12 @@ $_cache_memcache = false;
 $_cache_filename = null;
 
 function _cache_active() {
-	return ((CACHE_MEMCACHE || CACHE_DIR) && $_SERVER["REQUEST_METHOD"] == "GET" && !isset($_COOKIE["shm_session"]) && !isset($_COOKIE["shm_nocache"]));
+	return (
+		(CACHE_MEMCACHE || CACHE_DIR) &&
+		$_SERVER["REQUEST_METHOD"] == "GET" &&
+		!get_prefixed_cookie("session") &&
+		!get_prefixed_cookie("nocache")
+	);
 }
 
 function _start_cache() {
