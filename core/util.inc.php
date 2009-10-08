@@ -120,6 +120,16 @@ function plural($num, $single_form="", $plural_form="s") {
 }
 
 
+/**
+ * Different databases have different ways to represent booleans; this
+ * will try and standardise them
+ */
+function undb_bool($val) {
+	if($val === true  || $val == 'Y' || $val == 'y' || $val == 'T' || $val == 't' || $val === 1) return true;
+	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
