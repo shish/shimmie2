@@ -17,9 +17,12 @@ class SVGHandlerTest extends ShimmieWebTestCase {
 </svg>');
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("favicon.ico", "shimmie favicon");
+		$image_id = $this->post_image("test.svg", "something");
 		$this->assert_response(302);
 		$this->log_out();
+
+		$raw = $this->get_page("get_svg/$image_id");
+		$this->assertTrue(strpos($raw, "www.w3.org") > 0);
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
