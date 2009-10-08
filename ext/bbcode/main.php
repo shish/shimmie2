@@ -22,7 +22,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\n\s*\n/", "\n\n", $text);
 		$text = str_replace("\n", "\n<br>", $text);
 		$text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "<blockquote><small>\\1</small></blockquote>", $text);
-		$text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<small><small>Quoting \\1</small></small><blockquote><small>\\2</small></blockquote>", $text);
+		$text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<blockquote><em>\\1 said:</em><br><small>\\2</small></blockquote>", $text);
 		$text = preg_replace("/\[h1\](.*?)\[\/h1\]/s", "<h1>\\1</h1>", $text);
 		$text = preg_replace("/\[h2\](.*?)\[\/h2\]/s", "<h2>\\1</h2>", $text);
 		$text = preg_replace("/\[h3\](.*?)\[\/h3\]/s", "<h3>\\1</h3>", $text);
