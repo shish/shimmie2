@@ -72,7 +72,7 @@ class UserPage extends SimpleExtension {
 				}
 			}
 			else if($event->get_arg(0) == "logout") {
-				setcookie("shm_session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
@@ -275,9 +275,9 @@ class UserPage extends SimpleExtension {
 		$addr = get_session_ip($config);
 		$hash = md5(strtolower($name) . $pass);
 
-		setcookie("shm_user", $name,
+		set_prefixed_cookie("user", $name,
 				time()+60*60*24*365, '/');
-		setcookie("shm_session", md5($hash.$addr),
+		set_prefixed_cookie("session", md5($hash.$addr),
 				time()+60*60*24*$config->get_int('login_memory'), '/');
 	}
 //}}}
