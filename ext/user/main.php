@@ -44,6 +44,8 @@ class UserPage extends SimpleExtension {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);
 		$config->set_default_int("login_memory", 365);
+		$config->set_default_string("avatar_host", "gravatar");
+		$config->set_default_string("avatar_gravatar_options", "");
 	}
 
 	public function onPageRequest(Event $event) {
