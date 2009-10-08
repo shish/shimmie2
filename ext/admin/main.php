@@ -97,7 +97,7 @@ class AdminPage implements Extension {
 		$database->Execute("
 			UPDATE tags
 			SET count = COALESCE(
-				SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id,
+				(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id),
 				0
 			)");
 	}
