@@ -191,7 +191,8 @@ class TagList implements Extension {
 			$image = Image::by_random(array($row['tag']));
 			if(is_null($image)) continue; // one of the popular tags has no images
 			$thumb = $image->get_thumb_link();
-			$html .= "<td><a href='$link'><img src='$thumb'><br>$h_tag</a></td>\n";
+			$tsize = get_thumbnail_size($image->width, $image->height);
+			$html .= "<td><a href='$link'><img src='$thumb' style='height: {$tsize[1]}px; width: {$tsize[0]}px;'><br>$h_tag</a></td>\n";
 			if($n%3==2) $html .= "</tr>";
 			$n++;
 		}
