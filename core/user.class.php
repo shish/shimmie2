@@ -124,5 +124,18 @@ class User {
 		$database->Execute("UPDATE users SET email=? WHERE id=?", array($address, $this->id));
 		log_info("core-user", "Set email for {$this->name}");
 	}
+
+	/**
+	 * Get a snippet of HTML which will render the user's avatar, be that
+	 * a local file, a remote file, a gravatar, a something else, etc
+	 */
+	public function get_avatar_html() {
+		// FIXME: configurable
+		if(!empty($this->email)) {
+			$hash = md5(strtolower($this->email));
+			return "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\">";
+		}
+		return "";
+	}
 }
 ?>
