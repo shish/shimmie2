@@ -11,16 +11,38 @@
  */
 
 class SendPMEvent extends Event {
-	public function __construct($from_id, $from_ip, $to_id, $subject, $message) {
-		$this->from_id = $from_id;
-		$this->from_ip = $from_ip;
-		$this->to_id   = $to_id;
-		$this->subject = $subject;
-		$this->message = $message;
+	public function __construct($pm) {
+		$this->pm = $pm;
 	}
 }
 
-class PM extends SimpleExtension {
+class PM {
+	public function __construct($from_id=0, $from_ip="0.0.0.0", $to_id=0, $subject="A Message", $message="Some Text", $read=False) {
+		# PHP: the P stands for "really", the H stands for "awful" and the other P stands for "language"
+		if(is_array($from_id)) {
+			$a = $from_id;
+			$this->id      = $a["id"];
+			$this->from_id = $a["from_id"];
+			$this->from_ip = $a["from_ip"];
+			$this->to_id   = $a["to_id"];
+			$this->sent_date = $a["sent_date"];
+			$this->subject = $a["subject"];
+			$this->message = $a["message"];
+			$this->is_read = undb_bool($a["is_read"]);
+		}
+		else {
+			$this->id      = -1;
+			$this->from_id = $from_id;
+			$this->from_ip = $from_ip;
+			$this->to_id   = $to_id;
+			$this->subject = $subject;
+			$this->message = $message;
+			$this->is_read = $read;
+		}
+	}
+}
+
+class PrivMsg extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config, $database;
 
@@ -78,7 +100,7 @@ class PM extends SimpleExtension {
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$from_user = User::by_id(int_escape($pm["from_id"]));
 							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = ?", array($pm_id));
-							$this->theme->display_message($page, $from_user, $user, $pm);
+							$this->theme->display_message($page, $from_user, $user, new PM($pm));
 						}
 						else {
 							// permission denied
@@ -105,7 +127,7 @@ class PM extends SimpleExtension {
 						$from_id = $user->id;
 						$subject = $_POST["subject"];
 						$message = $_POST["message"];
-						send_event(new SendPMEvent($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message));
+						send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
 						$page->set_mode("redirect");
 						$page->set_redirect($_SERVER["HTTP_REFERER"]);
 						break;
@@ -124,8 +146,8 @@ class PM extends SimpleExtension {
 					from_id, from_ip, to_id,
 					sent_date, subject, message)
 				VALUES(?, ?, ?, now(), ?, ?)",
-			array($event->from_id, $event->from_ip,
-			$event->to_id, $event->subject, $event->message)
+			array($event->pm->from_id, $event->pm->from_ip,
+			$event->pm->to_id, $event->pm->subject, $event->pm->message)
 		);
 		log_info("pm", "Sent PM to User #{$event->to_id}");
 	}
@@ -134,12 +156,17 @@ class PM extends SimpleExtension {
 	private function get_pms(User $user) {
 		global $database;
 
-		return $database->get_all("
+		$arr = $database->get_all("
 			SELECT private_message.*,user_from.name AS from_name
 			FROM private_message
 			JOIN users AS user_from ON user_from.id=from_id
 			WHERE to_id = ?
 			", array($user->id));
+		$pms = array();
+		foreach($arr as $pm) {
+			$pms[] = new PM($pm);
+		}
+		return $pms;
 	}
 }
 ?>
