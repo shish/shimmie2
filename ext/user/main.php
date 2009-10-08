@@ -152,11 +152,8 @@ class UserPage extends SimpleExtension {
 		$h_join_date = html_escape($event->display_user->join_date);
 		$event->add_stats("Join date: $h_join_date", 10);
 
-		if(!empty($comment->owner->email)) {
-			$hash = md5(strtolower($comment->owner->email));
-			$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\" style='float: left;'>";
-			$event->add_stats($avatar, 0);
-		}
+		$av = $event->display_user->get_avatar_html();
+		if($av) $event->add_stats($av, 0);
 
 		ksort($event->stats);
 		$this->theme->display_user_page($event->display_user, $event->stats);
