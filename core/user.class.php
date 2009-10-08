@@ -131,9 +131,13 @@ class User {
 	 */
 	public function get_avatar_html() {
 		// FIXME: configurable
-		if(!empty($this->email)) {
-			$hash = md5(strtolower($this->email));
-			return "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\">";
+		global $config;
+		if($config->get_string("avatar_host") == "gravatar") {
+			if(!empty($this->email)) {
+				$hash = md5(strtolower($this->email));
+				$args = $config->get_string("avatar_gravatar_options");
+				return "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?$args\">";
+			}
 		}
 		return "";
 	}
