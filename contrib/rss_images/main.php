@@ -3,7 +3,7 @@
  * Name: RSS for Images
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Self explanitory
+ * Description: Self explanatory
  */
 
 class RSS_Images extends SimpleExtension {
