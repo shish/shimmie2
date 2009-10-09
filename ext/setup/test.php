@@ -5,6 +5,12 @@ class SetupTest extends SCoreWebTestCase {
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");
 
+		# XXX: this only checks that the text is "ok", to check
+		# for a bug where it was coming out as "\nok"; it doesn't
+		# check that niceurls actually work
+		$raw = $this->get_page('nicetest');
+		$this->assertTrue($raw == "ok");
+
 		$this->log_in_as_user();
         $this->get_page('setup');
 		$this->assert_response(403);
