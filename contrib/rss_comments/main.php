@@ -3,7 +3,7 @@
  * Name: RSS for Comments
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
- * Description: Self explanitory
+ * Description: Self explanatory
  */
 
 class RSS_Comments extends SimpleExtension {
