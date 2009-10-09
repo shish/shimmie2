@@ -87,12 +87,9 @@ width:256px;
 #body select {
 width:150px;
 }
-td > input {
-width:100%;
-}
-td > select {
-width:100%;
-}
+td > input[type="submit"] {width: 100%;}
+td > input[type="text"] {width: 100%;}
+td > input[type="password"] {width: 100%;}
 #footer {
 clear:both;
 color:#CCCCCC;
