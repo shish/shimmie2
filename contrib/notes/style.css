@@ -1,0 +1,35 @@
+.note {
+	display: none;
+	background-color: #fffdef; 
+	border: #412a21 1px solid; 
+	overflow: hidden; 
+	position: absolute; 
+	z-index: 0;
+
+	filter:alpha(opacity=50);
+	-moz-opacity:0.5;
+	-khtml-opacity: 0.5;
+	opacity: 0.5;
+}
+
+.notep {
+	display: none; 
+	color: #412a21;
+	background-color: #fffdef; 
+	border: #412a21 1px solid; 
+	font-size: 8pt; 
+	margin-top: 0px; 
+	padding: 2px;
+	position: absolute;
+	width: 175px;
+} 
+
+#noteform, #noteEditForm {
+	display: none;
+	position: absolute;
+	width: 250px;
+}
+
+#noteform textarea, #noteEditForm textarea {
+	width: 100%;
+}
