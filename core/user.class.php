@@ -136,7 +136,7 @@ class User {
 			if(!empty($this->email)) {
 				$hash = md5(strtolower($this->email));
 				$args = $config->get_string("avatar_gravatar_options");
-				return "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?$args\">";
+				return "<img class=\"avatar gravatar\" src=\"http://www.gravatar.com/avatar/$hash.jpg?$args\">";
 			}
 		}
 		return "";
