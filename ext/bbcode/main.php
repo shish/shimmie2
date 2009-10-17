@@ -2,7 +2,10 @@
 
 class BBCode extends FormatterExtension {
 	public function format($text) {
-		$text = wordwrap($text, 80, " ", true);
+		global $config;
+		if($config->get_bool("word_wrap", true)) {
+			$text = wordwrap($text, 80, " ", true);
+		}
 		$text = preg_replace_callback("/(\[img\]https?:\/\/.*?\[\/img\])/s", array($this, "unwrap"), $text);
 		$text = preg_replace_callback("/(\[url=(?:https?|ftp|irc|mailto):\/\/.*?\])/s", array($this, "unwrap"), $text);
 		$text = preg_replace_callback("/(\[url\](?:https?|ftp|irc|mailto):\/\/.*?\[\/url\])/s", array($this, "unwrap"), $text);
@@ -46,7 +49,10 @@ class BBCode extends FormatterExtension {
 	}
 
 	public function strip($text) {
-		$text = wordwrap($text, 80, " ", true);
+		global $config;
+		if($config->get_bool("word_wrap", true)) {
+			$text = wordwrap($text, 80, " ", true);
+		}
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
