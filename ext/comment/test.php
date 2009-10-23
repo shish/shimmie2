@@ -52,6 +52,10 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+
+		$this->get_page('comment/list');
+		$this->assert_title('Comments');
+		$this->assert_no_text('ASDFASDF');
 	}
 
 	function testSingleDel() {
