@@ -325,7 +325,7 @@ function get_session_ip($config) {
  */
 function get_prefixed_cookie($name) {
 	global $config;
-	$full_name = $config->get_string('cookie_prefix','shm')."_".$name;
+	$full_name = COOKIE_PREFIX."_".$name;
 	if(isset($_COOKIE[$full_name])) {
 		return $_COOKIE[$full_name];
 	}
