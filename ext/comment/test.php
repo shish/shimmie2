@@ -1,5 +1,21 @@
 <?php
 class CommentListTest extends ShimmieWebTestCase {
+	function setUp() {
+		$this->log_in_as_admin();
+		$this->get_page("setup");
+		$this->set_field("_config_comment_limit", "100");
+		$this->click("Save Settings");
+		$this->log_out();
+	}
+
+	function tearDown() {
+		$this->log_in_as_admin();
+		$this->get_page("setup");
+		$this->set_field("_config_comment_limit", "10");
+		$this->click("Save Settings");
+		$this->log_out();
+	}
+
 	function testCommentsPage() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
