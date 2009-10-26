@@ -102,6 +102,7 @@ class UploadTheme extends Themelet {
 				<input type='submit' value='Post'>
 			</form>
 			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
+			<noscript><a href='".make_link("upload")."'>Larger Form</a></noscript>
 		";
 	}
 }
