@@ -166,7 +166,6 @@ class Setup extends SimpleExtension {
 		$config->set_default_bool("use_autodate", true);
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_string("use_autodate", "F j, Y");
-		$config->set_default_string("cookie_prefix", "shm");
 	}
 
 	public function onPageRequest($event) {
