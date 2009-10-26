@@ -162,6 +162,7 @@ class CommentList extends SimpleExtension {
 
 	public function onImageDeletion($event) {
 		global $database;
+		$image_id = $event->image->id;
 		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
 		log_info("comment", "Deleting all comments for Image #$image_id");
 	}
