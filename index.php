@@ -57,6 +57,7 @@ define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
 define("SCORE_VERSION", 's2hack');
 define("VERSION", 'trunk');
+define("COOKIE_PREFIX", 'shm');
 
 if(!file_exists("config.php")) {
 	header("Location: install.php");
