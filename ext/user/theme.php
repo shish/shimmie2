@@ -48,6 +48,9 @@ class UserPageTheme extends Themelet {
 		if(empty($tac)) {$html = "";}
 		else {$html = "<p>$tac</p>";}
 
+		$rpk = $config->get_string("api_recaptcha_pubkey");
+		$reca = empty($rpk) ? "" : "<tr><td colspan='2'>".recaptcha_get_html($rpk)."</td></tr>";
+
 		$html .= "
 		<form action='".make_link("user_admin/create")."' method='POST'>
 			<table style='width: 300px;'>
@@ -55,6 +58,7 @@ class UserPageTheme extends Themelet {
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
+				$reca
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
 		</form>

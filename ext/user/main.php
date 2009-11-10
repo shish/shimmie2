@@ -1,4 +1,5 @@
 <?php
+require_once "lib/recaptchalib.php";
 
 class UserBlockBuildingEvent extends Event {
 	var $parts = array();
@@ -104,6 +105,18 @@ class UserPage extends SimpleExtension {
 				}
 				else {
 					try {
+						if(strlen($config->get_string('api_recaptcha_privkey')) > 0) {
+							$resp = recaptcha_check_answer(
+									$config->get_string('api_recaptcha_privkey'),
+									$_SERVER["REMOTE_ADDR"],
+									$_POST["recaptcha_challenge_field"],
+									$_POST["recaptcha_response_field"]);
+
+							if(!$resp->is_valid) {
+								throw new UserCreationException("Error in captcha");
+							}
+						}
+
 						$uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
 						send_event($uce);
 						$this->set_login_cookie($uce->username, $uce->password);
