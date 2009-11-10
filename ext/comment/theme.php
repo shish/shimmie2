@@ -145,11 +145,14 @@ class CommentListTheme extends Themelet {
 	}
 
 	protected function build_postbox($image_id) {
+		global $config, $user;
+
 		$i_image_id = int_escape($image_id);
 		$hash = CommentList::get_hash();
 
 		$rpk = $config->get_string("comment_recaptcha_pubkey");
-		$reca = empty($rpk) ? "" : recaptcha_get_html($rpk);
+		$reca = (!$user->is_anonymous() || empty($rpk)) ?
+				"" : recaptcha_get_html($rpk);
 		return "
 			<form action='".make_link("comment/add")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image_id' />

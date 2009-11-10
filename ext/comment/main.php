@@ -342,8 +342,7 @@ class CommentList extends SimpleExtension {
 	}
 
 	private function is_spam_recaptcha($text) {
-		global $user;
-		global $config;
+		global $config, $user;
 
 		if(strlen($config->get_string('comment_recaptcha_privkey')) > 0) {
 			$resp = recaptcha_check_answer(
@@ -353,7 +352,7 @@ class CommentList extends SimpleExtension {
 					$_POST["recaptcha_response_field"]);
 
 			if(!$resp->is_valid) {
-				log_info("Captcha failed: " . $resp->error);
+				log_info("comment", "Captcha failed: " . $resp->error);
 				return true;
 			}
 		}
@@ -362,6 +361,7 @@ class CommentList extends SimpleExtension {
 	}
 
 	private function is_spam_akismet($text) {
+		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
 			$comment = array(
 				'author'       => $user->name,
