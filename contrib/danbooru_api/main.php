@@ -267,6 +267,7 @@ class DanbooruApi implements Extension
 		*/
 		if(($event->get_arg(1) == 'find_posts') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'index.xml')))
 		{
+			$this->authenticate_user();
 			if(isset($_GET['md5']))
 			{
 				$md5list = explode(",",$_GET['md5']);
