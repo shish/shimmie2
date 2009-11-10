@@ -112,11 +112,8 @@ class ForumTheme extends Themelet {
 			
             $user = "<a href='".make_link("user/".$post["user_name"]."")."'>".$post["user_name"]."</a>";
 
-            $email = $post["user_email"];
-            $default = "$data_href/themes/$theme_name/images/gravatar.jpg";
-            $size = 50;
-
-            $gravatar = "<img id='gravatar' height='".$size."' width='".$size."' src='http://www.gravatar.com/avatar/".md5(strtolower($email))."?&d=".urlencode($default)."&s=".$size."'>";
+			$poster = User::by_name($post["user_name"]);
+			$gravatar = $poster->get_avatar_html();
 
             $oe = ($n++ % 2 == 0) ? "even" : "odd";
 			
