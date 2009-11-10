@@ -1,5 +1,6 @@
 <?php
 require_once "lib/akismet.class.php";
+require_once "lib/recaptchalib.php";
 
 class CommentPostingEvent extends Event {
 	var $image_id, $user, $comment;
@@ -192,7 +193,11 @@ class CommentList extends SimpleExtension {
 		$sb->add_label("<br>Show ");
 		$sb->add_int_option("comment_list_count");
 		$sb->add_label(" comments per image on the list");
-		$sb->add_text_option("comment_wordpress_key", "<br>Akismet Key ");
+		$sb->add_label("<br>&nbsp;<br><a href='http://akismet.com/'>Akismet</a>");
+		$sb->add_text_option("comment_wordpress_key", "<br>API key: ");
+		$sb->add_label("<br>&nbsp;<br><a href='http://recaptcha.net/'>ReCAPTCHA</a>");
+		$sb->add_text_option("comment_recaptcha_privkey", "<br>Private key: ");
+		$sb->add_text_option("comment_recaptcha_pubkey", "<br>Public key: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -336,14 +341,28 @@ class CommentList extends SimpleExtension {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
-	private function is_spam($text) {
+	private function is_spam_recaptcha($text) {
 		global $user;
 		global $config;
 
-		if(strlen($config->get_string('comment_wordpress_key')) == 0) {
-			return false;
+		if(strlen($config->get_string('comment_recaptcha_privkey')) > 0) {
+			$resp = recaptcha_check_answer(
+					$config->get_string('comment_recaptcha_privkey'),
+					$_SERVER["REMOTE_ADDR"],
+					$_POST["recaptcha_challenge_field"],
+					$_POST["recaptcha_response_field"]);
+
+			if(!$resp->is_valid) {
+				log_info("Captcha failed: " . $resp->error);
+				return true;
+			}
 		}
-		else {
+
+		return false;
+	}
+
+	private function is_spam_akismet($text) {
+		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
 			$comment = array(
 				'author'       => $user->name,
 				'email'        => $user->email,
@@ -364,6 +383,8 @@ class CommentList extends SimpleExtension {
 				return $akismet->isSpam();
 			}
 		}
+
+		return false;
 	}
 
 	private function can_comment() {
@@ -414,7 +435,10 @@ class CommentList extends SimpleExtension {
 		}
 
 		// rate-limited external service checks last
-		else if($user->is_anonymous() && $this->is_spam($comment)) {
+		else if($user->is_anonymous() && $this->is_spam_recaptcha($comment)) {
+			throw new CommentPostingException("Error in captcha");
+		}
+		else if($user->is_anonymous() && $this->is_spam_akismet($comment)) {
 			throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
 		}
 
