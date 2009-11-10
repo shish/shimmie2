@@ -106,7 +106,7 @@ class BrowserSearch implements Extension {
 			$sort_by['Tag Count'] = 't';
 
 			$sb = new SetupBlock("Browser Search");
-			$sb->add_bool_option("disable_search_suggestions", "Disable search suggestions when using browser-based search: ");
+			$sb->add_bool_option("disable_search_suggestions", "Disable search suggestions: ");
 			$sb->add_label("<br>");
 			$sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
 			$event->panel->add_block($sb);
