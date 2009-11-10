@@ -252,6 +252,14 @@ class Setup extends SimpleExtension {
 		$sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
 		$sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
 		$event->panel->add_block($sb);
+
+		$sb = new SetupBlock("Remote API Integration");
+		$sb->add_label("<br>&nbsp;<br><a href='http://akismet.com/'>Akismet</a>");
+		$sb->add_text_option("comment_wordpress_key", "<br>API key: ");
+		$sb->add_label("<br>&nbsp;<br><a href='http://recaptcha.net/'>ReCAPTCHA</a>");
+		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
+		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
+		$event->panel->add_block($sb);
 	}
 
 	public function onConfigSave($event) {

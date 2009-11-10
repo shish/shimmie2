@@ -193,11 +193,6 @@ class CommentList extends SimpleExtension {
 		$sb->add_label("<br>Show ");
 		$sb->add_int_option("comment_list_count");
 		$sb->add_label(" comments per image on the list");
-		$sb->add_label("<br>&nbsp;<br><a href='http://akismet.com/'>Akismet</a>");
-		$sb->add_text_option("comment_wordpress_key", "<br>API key: ");
-		$sb->add_label("<br>&nbsp;<br><a href='http://recaptcha.net/'>ReCAPTCHA</a>");
-		$sb->add_text_option("comment_recaptcha_privkey", "<br>Private key: ");
-		$sb->add_text_option("comment_recaptcha_pubkey", "<br>Public key: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -344,9 +339,9 @@ class CommentList extends SimpleExtension {
 	private function is_spam_recaptcha($text) {
 		global $config, $user;
 
-		if(strlen($config->get_string('comment_recaptcha_privkey')) > 0) {
+		if(strlen($config->get_string('api_recaptcha_privkey')) > 0) {
 			$resp = recaptcha_check_answer(
-					$config->get_string('comment_recaptcha_privkey'),
+					$config->get_string('api_recaptcha_privkey'),
 					$_SERVER["REMOTE_ADDR"],
 					$_POST["recaptcha_challenge_field"],
 					$_POST["recaptcha_response_field"]);

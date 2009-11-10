@@ -150,7 +150,7 @@ class CommentListTheme extends Themelet {
 		$i_image_id = int_escape($image_id);
 		$hash = CommentList::get_hash();
 
-		$rpk = $config->get_string("comment_recaptcha_pubkey");
+		$rpk = $config->get_string("api_recaptcha_pubkey");
 		$reca = (!$user->is_anonymous() || empty($rpk)) ?
 				"" : recaptcha_get_html($rpk);
 		return "
