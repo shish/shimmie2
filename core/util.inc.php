@@ -95,20 +95,35 @@ function to_shorthand_int($int) {
  *
  * @retval string
  */
-function autodate($date) {
+function autodate($date, $html=true) {
 	global $config;
-	if($config->get_bool('use_autodate', true)) {
-		$diff = time() - strtotime($date);
-		if ($diff<60) return $diff . " second" . plural($diff) . " ago"; $diff = round($diff/60);
-		if ($diff<60) return $diff . " minute" . plural($diff) . " ago"; $diff = round($diff/60);
-		if ($diff<24) return $diff . " hour" . plural($diff) . " ago";   $diff = round($diff/24);
-		if ($diff<7)  return $diff . " day" . plural($diff) . " ago";    $diff = round($diff/7);
-		if ($diff<4)  return $diff . " week" . plural($diff) . " ago";   $diff = round($diff/4);
-		if ($diff<12) return $diff . " month" . plural($diff) . " ago";  $diff = round($diff/12);
-		if ($diff<99) return $diff . " year" . plural($diff) . " ago";
-	}
+
 	$format = $config->get_string('autodate_format', "F j, Y");
-	return "on " . date($format, strtotime($date));
+	$seconds = time() - strtotime($date);
+	$ago = seconds_to_time($date) . " ago";
+	$on = "on " . date($format, strtotime($date));
+
+	if($config->get_bool('use_autodate', true)) {
+		return ($html ? "<span title='$on'>$ago</span>" : $ago);
+	}
+	else {
+		return $on;
+	}
+}
+
+/**
+ * Turn a number of seconds into a vague human timespan, eg 142 -> "2 minutes"
+ *
+ * @retval string
+ */
+function seconds_to_time($seconds) {
+	if($seconds<60) return $seconds . " second" . plural($seconds); $seconds = round($seconds/60);
+	if($seconds<60) return $seconds . " minute" . plural($seconds); $seconds = round($seconds/60);
+	if($seconds<24) return $seconds . " hour" . plural($seconds);   $seconds = round($seconds/24);
+	if($seconds<7)  return $seconds . " day" . plural($seconds);    $seconds = round($seconds/7);
+	if($seconds<4)  return $seconds . " week" . plural($seconds);   $seconds = round($seconds/4);
+	if($seconds<12) return $seconds . " month" . plural($seconds);  $seconds = round($seconds/12);
+	                return $seconds . " year" . plural($seconds);
 }
 
 
