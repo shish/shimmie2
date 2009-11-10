@@ -254,7 +254,7 @@ class Setup extends SimpleExtension {
 		$event->panel->add_block($sb);
 
 		$sb = new SetupBlock("Remote API Integration");
-		$sb->add_label("<br>&nbsp;<br><a href='http://akismet.com/'>Akismet</a>");
+		$sb->add_label("<a href='http://akismet.com/'>Akismet</a>");
 		$sb->add_text_option("comment_wordpress_key", "<br>API key: ");
 		$sb->add_label("<br>&nbsp;<br><a href='http://recaptcha.net/'>ReCAPTCHA</a>");
 		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
