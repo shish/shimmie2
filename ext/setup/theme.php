@@ -55,6 +55,7 @@ class SetupTheme extends Themelet {
 	public function display_advanced(Page $page, $options) {
 		$rows = "";
 		$n = 0;
+		ksort($options);
 		foreach($options as $name => $value) {
 			$h_value = html_escape($value);
 			$len = strlen($h_value);
