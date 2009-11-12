@@ -451,9 +451,9 @@ class Image {
 		$base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
 
 		$tmpl = str_replace('$id',   $this->id,   $tmpl);
-		$tmpl = str_replace('$hash', $this->hash, $tmpl);
 		$tmpl = str_replace('$hash_ab', substr($this->hash, 0, 2), $tmpl);
 		$tmpl = str_replace('$hash_cd', substr($this->hash, 2, 2), $tmpl);
+		$tmpl = str_replace('$hash', $this->hash, $tmpl);
 		$tmpl = str_replace('$tags', $_escape($tags),  $tmpl);
 		$tmpl = str_replace('$base', $base_href,  $tmpl);
 		$tmpl = str_replace('$ext',  $this->ext,  $tmpl);
