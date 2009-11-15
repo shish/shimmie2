@@ -7,6 +7,9 @@
  * Documentation:
  */
 
+class PoolCreationException extends SCoreException {
+}
+
 class Pools extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config, $database;
@@ -82,12 +85,17 @@ class Pools extends SimpleExtension {
 				}
 				case "create": // ADD _POST
 				{
-					if(!$user->is_anonymous()) {
+					try {
+						if($user->is_anonymous()) {
+							throw new PoolCreationException("You must be registered and logged in to add a image.");
+						}
+
 						$newPoolID = $this->add_pool();
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$newPoolID.""));
-					} else {
-						$this->theme->display_error("You must be registered and logged in to add a image.");
+						$page->set_redirect(make_link("pool/view/".$newPoolID));
+					}
+					catch(PoolCreationException $ex) {
+						$this->theme->display_error($ex->getMessage());
 					}
 					break;
 				}
@@ -125,7 +133,7 @@ class Pools extends SimpleExtension {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID.""));
+							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
 					}
 					break;
@@ -134,7 +142,7 @@ class Pools extends SimpleExtension {
 				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/edit/".$poolID.""));
+					$page->set_redirect(make_link("pool/edit/".$poolID));
 					break;
 				}
 				case "order":
@@ -148,7 +156,7 @@ class Pools extends SimpleExtension {
 							$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID.""));
+							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
 					}
 					break;
@@ -157,7 +165,7 @@ class Pools extends SimpleExtension {
 				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/order/".$poolID.""));
+					$page->set_redirect(make_link("pool/order/".$poolID));
 					break;
 				}
 				case "import":
@@ -261,7 +269,7 @@ class Pools extends SimpleExtension {
 		foreach ($poolsIDs as $poolID) {
 			$pools = $this->get_pool($poolID['pool_id']);
 			foreach ($pools as $pool) {
-				$linksPools .= "<a href='".make_link("pool/view/".$pool['id']."")."'>".$pool['title']."</a>, ";
+				$linksPools .= "<a href='".make_link("pool/view/".$pool['id'])."'>".$pool['title']."</a>, ";
 			}
 		}
 		$linksPools = substr($linksPools, 0, -2);
@@ -311,12 +319,14 @@ class Pools extends SimpleExtension {
 		global $user, $database;
 
 		$public = html_escape($_POST["public"]);
-		$title = html_escape($_POST["title"]);
-		$description = html_escape($_POST["description"]);
+		$title = html_escape(trim($_POST["title"]));
+		$description = html_escape(trim($_POST["description"]));
 
 		if($public == "") {
 			$public = "N";
 		}
+
+		if(empty($title)) throw new PoolCreationException("Pool must have a title");
 
 		$database->execute("
 				INSERT INTO pools
@@ -325,7 +335,7 @@ class Pools extends SimpleExtension {
 				(?, ?, ?, ?, now())",
 				array($user->id, $public, $title, $description));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID", array());
+		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID");
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
 

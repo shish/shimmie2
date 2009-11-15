@@ -63,6 +63,9 @@ class PoolsTheme extends Themelet {
 
 		}
 
+		if(!$user->is_anonymous()) {
+			$html .= "<tfoot><tr><td colspan='5'><a href='".make_link("pool/new")."'>Create New</a></td></tr></tfoot>";
+		}
 		$html .= "</tbody></table>";
 
 		$blockTitle = "Pools";
@@ -84,7 +87,7 @@ class PoolsTheme extends Themelet {
 			<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
 			<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
 			<tr><td>Description:</td><td><textarea name='description'></textarea></td></tr>
-			<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
+			<tr><td colspan='2'><input type='submit' value='Create' /></td></tr>
 			</table>
 			";
 
@@ -123,14 +126,21 @@ class PoolsTheme extends Themelet {
 					$this->sidebar_options($page, $pool);
 				}
 			}
-			$this->display_paginator($page, "pool/view/".$pool['id']."", null, $pageNumber, $totalPages);
+			$this->display_paginator($page, "pool/view/".$pool['id'], null, $pageNumber, $totalPages);
 		}
 
 		$pool_info .= "</tbody></table>";
 
-		$page->set_title("Viewing Pool");
-		$page->set_heading("Viewing Pool");
-		$page->add_block(new Block("Viewing Pool", $pool_info, "main", 10));
+		if(count($pools) == 1) {
+			$page->set_title("Pool: ".html_escape($pool['title']));
+			$page->set_heading(html_escape($pool['title']));
+			$page->add_block(new Block("Viewing Pool", $pool_info, "main", 10));
+		}
+		else {
+			$page->set_title("Viewing Pool");
+			$page->set_heading("Viewing Pool");
+			$page->add_block(new Block("Viewing Pool", $pool_info, "main", 10));
+		}
 
 		$pool_images = '';
 		foreach($images as $pair) {
