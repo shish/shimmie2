@@ -85,7 +85,7 @@ class Pools extends SimpleExtension {
 					if(!$user->is_anonymous()) {
 						$newPoolID = $this->add_pool();
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$newPoolID.""));
+						$page->set_redirect(make_link("pool/view/".$newPoolID));
 					} else {
 						$this->theme->display_error("You must be registered and logged in to add a image.");
 					}
@@ -93,7 +93,7 @@ class Pools extends SimpleExtension {
 				}
 				case "view":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$this->get_posts($event, $poolID);
 					break;
 				}
@@ -105,7 +105,7 @@ class Pools extends SimpleExtension {
 				case "revert":
 				{
 					if(!$user->is_anonymous()) {
-						$historyID = $event->get_arg(1);
+						$historyID = int_escape($event->get_arg(1));
 
 						$this->revert_history($historyID);
 
@@ -116,7 +116,7 @@ class Pools extends SimpleExtension {
 				}
 				case "edit":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
@@ -125,7 +125,7 @@ class Pools extends SimpleExtension {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID.""));
+							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
 					}
 					break;
@@ -134,12 +134,12 @@ class Pools extends SimpleExtension {
 				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/edit/".$poolID.""));
+					$page->set_redirect(make_link("pool/edit/".$poolID));
 					break;
 				}
 				case "order":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
@@ -325,7 +325,7 @@ class Pools extends SimpleExtension {
 				(?, ?, ?, ?, now())",
 				array($user->id, $public, $title, $description));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID", array());
+		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID");
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
 
@@ -338,8 +338,7 @@ class Pools extends SimpleExtension {
 		return $database->get_all("SELECT * FROM pools WHERE id=?", array($poolID));
 	}
 
-	private function get_single_pool($poolID)
-	{
+	private function get_single_pool($poolID) {
 		global $database;
 		$poolID = int_escape($poolID);
 		return $database->get_row("SELECT * FROM pools WHERE id=?", array($poolID));
@@ -351,7 +350,7 @@ class Pools extends SimpleExtension {
 	private function get_pool_id($imageID) {
 		global $database;
 		$imageID = int_escape($imageID);
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id =?", array($imageID));
+		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=?", array($imageID));
 	}
 
 
@@ -415,7 +414,7 @@ class Pools extends SimpleExtension {
 			list ($imageORDER, $imageID) = $data;
 
 			$imageID = int_escape($imageID);
-			$database->Execute("UPDATE pool_images SET image_order = ? WHERE pool_id = ? AND image_id = ?", array($imageORDER, $poolID, $imageID));
+			$database->Execute("UPDATE pool_images SET image_order=? WHERE pool_id=? AND image_id=?", array($imageORDER, $poolID, $imageID));
 		}
 
 		return $poolID;
@@ -433,8 +432,7 @@ class Pools extends SimpleExtension {
 		$images = "";
 
 		foreach ($_POST['check'] as $imageID) {
-			$database->execute("DELETE FROM pool_images WHERE pool_id = ? AND image_id = ?", array($poolID, $imageID));
-
+			$database->execute("DELETE FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
 			$images .= " ".$imageID;
 		}
 
@@ -481,13 +479,13 @@ class Pools extends SimpleExtension {
 
 		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WICH VERSION AND IF IT WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER							 
 		if($config->get_int("ext_ratings2_version") < 3) {
-			$result = $database->get_all("SELECT image_id ".
-					"FROM pool_images ".
-					"WHERE pool_id=? ".
-					"ORDER BY image_order ASC ".
-					"LIMIT ?, ?"
-					, array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
-			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?",array($poolID)) / $imagesPerPage);
+			$result = $database->get_all("SELECT image_id
+					FROM pool_images
+					WHERE pool_id=?
+					ORDER BY image_order ASC
+					LIMIT ?, ?",
+					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
 		}
 
 		if($config->get_int("ext_ratings2_version") >= 3) {
@@ -506,15 +504,15 @@ class Pools extends SimpleExtension {
 			}
 			$rating = join(', ', $arr);
 
-			$result = $database->get_all("SELECT p.image_id ".
-					"FROM pool_images AS p ".
-					"INNER JOIN images AS i ".
-					"ON i.id = p.image_id ".
-					"WHERE p.pool_id = ? ".
-					"AND i.rating IN ($rating) ".
-					"ORDER BY p.image_order ASC ".
-					"LIMIT ?, ?"
-					, array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+			$result = $database->get_all("SELECT p.image_id
+					FROM pool_images AS p
+					INNER JOIN images AS i
+					ON i.id = p.image_id
+					WHERE p.pool_id = ?
+					AND i.rating IN ($rating)
+					ORDER BY p.image_order ASC
+					LIMIT ?, ?",
+					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
 
 			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) ".
 						"FROM pool_images AS p ".
