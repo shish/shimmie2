@@ -217,7 +217,7 @@ class Pools extends SimpleExtension {
 				}
 				case "nuke":
 				{
-					$pool_id = $event->get_arg(1);
+					$pool_id = int_escape($event->get_arg(1));
 					$pool = $this->get_single_pool($pool_id);
 
 					// only admins and owners may do this
@@ -277,7 +277,7 @@ class Pools extends SimpleExtension {
 	private function list_pools(Page $page, $event) {
 		global $config, $database;
 
-		$pageNumber = $event->get_arg(1);
+		$pageNumber = int_escape($event->get_arg(1));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -366,7 +366,7 @@ class Pools extends SimpleExtension {
 
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
 
-		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($pool_tag));
+		$images = Image::find_images(0, $poolsMaxResults, Tag::explode($pool_tag));
 		$this->theme->pool_result($page, $images, $pool_id);
 	}
 
@@ -382,7 +382,6 @@ class Pools extends SimpleExtension {
 		$images = "";
 
 		foreach ($_POST['check'] as $imageID) {
-
 			if(!$this->check_post($poolID, $imageID)) {
 				$database->execute("
 						INSERT INTO pool_images
@@ -393,7 +392,6 @@ class Pools extends SimpleExtension {
 
 				$images .= " ".$imageID;
 			}
-
 		}
 
 		if(!strlen($images) == 0) {
@@ -668,8 +666,7 @@ class Pools extends SimpleExtension {
 		global $database;
 		$status = $database->get_all("SELECT * FROM pool_history WHERE id=?", array($historyID));
 
-		foreach ($status as $entry)
-		{
+		foreach ($status as $entry) {
 			$images = trim($entry['images']);
 			$images = explode(" ", $images);
 			$poolID = $entry['pool_id'];
