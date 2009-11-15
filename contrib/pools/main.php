@@ -467,7 +467,7 @@ class Pools extends SimpleExtension {
 	private function get_posts($event, $poolID) {
 		global $config, $user, $database;
 
-		$pageNumber = $event->get_arg(2);
+		$pageNumber = int_esscape($event->get_arg(2));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -480,7 +480,7 @@ class Pools extends SimpleExtension {
 		$imagesPerPage = $config->get_int("poolsImagesPerPage");
 
 		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WICH VERSION AND IF IT WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER							 
-		if($config->get_int("ext_ratings2_version") < 3) {
+		if(class_exists("Ratings") && $config->get_int("ext_ratings2_version") < 3) {
 			$result = $database->get_all("SELECT image_id ".
 					"FROM pool_images ".
 					"WHERE pool_id=? ".
@@ -490,21 +490,8 @@ class Pools extends SimpleExtension {
 			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?",array($poolID)) / $imagesPerPage);
 		}
 
-		if($config->get_int("ext_ratings2_version") >= 3) {
-			if($user->is_anonymous()) {
-				$sqes = $config->get_string("ext_rating_anon_privs");
-			}
-			else if($user->is_admin()) {
-				$sqes = $config->get_string("ext_rating_admin_privs");
-			}
-			else {
-				$sqes = $config->get_string("ext_rating_user_privs");
-			}
-			$arr = array();
-			for($i=0; $i<strlen($sqes); $i++) {
-				$arr[] = "'" . $sqes[$i] . "'";
-			}
-			$rating = join(', ', $arr);
+		if(class_exists("Ratings") && $config->get_int("ext_ratings2_version") >= 3) {
+			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 
 			$result = $database->get_all("SELECT p.image_id ".
 					"FROM pool_images AS p ".
