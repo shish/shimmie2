@@ -830,7 +830,7 @@ function _start_cache() {
 			if(!file_exists(dirname($_cache_filename))) {
 				mkdir(dirname($_cache_filename), 0750, true);
 			}
-			if(file_exists($_cache_filename) && (filemtime($cachename) > time() - 3600)) {
+			if(file_exists($_cache_filename) && (filemtime($_cache_filename) > time() - 3600)) {
 				$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($_cache_filename)) . ' GMT';
 
 				if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
