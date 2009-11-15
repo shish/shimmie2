@@ -245,14 +245,19 @@ function check_cli() {
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
 	if(DEBUG) {
-		$fp = fopen("sql.log", "a");
-		if(is_array($inputarray)) {
-			fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
+		$fp = @fopen("sql.log", "a");
+		if($fp) {
+			if(is_array($inputarray)) {
+				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
+			}
+			else {
+				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+			}
+			fclose($fp);
 		}
 		else {
-			fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+			log_error("core", "failed to open sql.log for appending");
 		}
-		fclose($fp);
 	}
 	if (!is_array($inputarray)) $_execs++;
 	# handle 2-dimensional input arrays
@@ -420,6 +425,13 @@ function log_msg($section, $priority, $message) {
  */
 function log_info($section, $message) {
 	log_msg($section, LOG_INFO, $message);
+}
+
+/**
+ * A shorthand way to send a LogEvent
+ */
+function log_error($section, $message) {
+	log_msg($section, LOG_ERROR, $message);
 }
 
 
