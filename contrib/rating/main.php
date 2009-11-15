@@ -101,20 +101,7 @@ class Ratings implements Extension {
 		if($event instanceof SearchTermParseEvent) {
 			$matches = array();
 			if(is_null($event->term) && $this->no_rating_query($event->context)) {
-				if($user->is_anonymous()) {
-					$sqes = $config->get_string("ext_rating_anon_privs");
-				}
-				else if($user->is_admin()) {
-					$sqes = $config->get_string("ext_rating_admin_privs");
-				}
-				else {
-					$sqes = $config->get_string("ext_rating_user_privs");
-				}
-				$arr = array();
-				for($i=0; $i<strlen($sqes); $i++) {
-					$arr[] = "'" . $sqes[$i] . "'";
-				}
-				$set = join(', ', $arr);
+				$set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 				$event->add_querylet(new Querylet("rating IN ($set)"));
 			}
 			if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
@@ -132,6 +119,29 @@ class Ratings implements Extension {
 				$event->add_querylet(new Querylet("rating = ?", array($char)));
 			}
 		}
+	}
+
+	public static function get_user_privs($user) {
+		global $config;
+		if($user->is_anonymous()) {
+			$sqes = $config->get_string("ext_rating_anon_privs");
+		}
+		else if($user->is_admin()) {
+			$sqes = $config->get_string("ext_rating_admin_privs");
+		}
+		else {
+			$sqes = $config->get_string("ext_rating_user_privs");
+		}
+		return $sqes;
+	}
+
+	public static function privs_to_sql($sqes) {
+		$arr = array();
+		for($i=0; $i<strlen($sqes); $i++) {
+			$arr[] = "'" . $sqes[$i] . "'";
+		}
+		$set = join(', ', $arr);
+		return $set;
 	}
 
 	// FIXME: this is a bit ugly and guessey, should have proper options
