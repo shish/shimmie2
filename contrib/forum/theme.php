@@ -110,9 +110,11 @@ class ForumTheme extends Themelet {
             $message = str_replace('\n', '<br>', $message);
             $message = str_replace('\r', '<br>', $message);
 			
+			$message = stripslashes($message);
+			
             $user = "<a href='".make_link("user/".$post["user_name"]."")."'>".$post["user_name"]."</a>";
 
-			$poster = User::by_name($post["user_name"]);
+            $poster = User::by_name($post["user_name"]);
 			$gravatar = $poster->get_avatar_html();
 
             $oe = ($n++ % 2 == 0) ? "even" : "odd";
@@ -120,7 +122,7 @@ class ForumTheme extends Themelet {
 			if ($post["user_admin"] == "Y") {
 			$rank = "<sup>admin</sup>";
 			} else {
-			$rank = "<small>user</small>";
+			$rank = "<sup>user</sup>";
 			}
 			
 			$postID = $post['id'];

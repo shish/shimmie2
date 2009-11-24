@@ -197,7 +197,7 @@ class Forum extends SimpleExtension {
                 $hasErrors = true;
                 $errors .= "<div id='error'>You cannot have an empty title.</div>";
             }
-            else if (strlen(mysql_real_escape_string(htmlspecialchars($_POST["title"]))) > 255)
+            else if (strlen(mysql_real_escape_string(html_escape($_POST["title"]))) > 255)
             {
                 $hasErrors = true;
                 $errors .= "<div id='error'>Your title is too long.</div>";
@@ -274,7 +274,7 @@ class Forum extends SimpleExtension {
                 "INNER JOIN forum_posts AS p ".
                 "ON p.thread_id = f.id ".
                 "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.admin ".
-                "ORDER BY f.sticky DESC, f.uptodate DESC LIMIT ?, ?"
+                "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT ?, ?"
                 , array($pageNumber * $threadsPerPage, $threadsPerPage)
             );
 			
@@ -318,7 +318,7 @@ class Forum extends SimpleExtension {
 
         private function save_new_thread($user)
         {
-            $title = mysql_real_escape_string(htmlspecialchars($_POST["title"]));
+            $title = mysql_real_escape_string(html_escape($_POST["title"]));
 			$sticky = html_escape($_POST["sticky"]);
 			
 			if($sticky == ""){
@@ -344,7 +344,7 @@ class Forum extends SimpleExtension {
         {
 			global $config;
             $userID = $user->id;
-            $message = mysql_real_escape_string(htmlspecialchars($_POST["message"]));
+            $message = mysql_real_escape_string(html_escape($_POST["message"]));
 			
 			$max_characters = $config->get_int('forumMaxCharsPerPost');
 			$message = substr($message, 0, $max_characters);
