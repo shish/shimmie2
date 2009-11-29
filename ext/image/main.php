@@ -89,7 +89,7 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_int('thumb_quality', 75);
 		$config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
 
-		$config->set_default_bool('image_show_meta', true);
+		$config->set_default_bool('image_show_meta', false);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
