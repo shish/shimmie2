@@ -250,7 +250,7 @@ class CommentList extends SimpleExtension {
 		while(!$result->EOF) {
 			$image = Image::by_id($result->fields["image_id"]);
 			$comments = $this->get_comments($image->id);
-			$images[] = array($image, $comments);
+			if(!is_null($image)) $images[] = array($image, $comments);
 			$result->MoveNext();
 		}
 
