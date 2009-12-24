@@ -276,7 +276,7 @@ class Image {
 			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
 		}
 		else {
-			return $this->parse_link_template(make_link('image/$id.jpg'));
+			return $this->parse_link_template(make_link('thumb/$id.jpg'));
 		}
 	}
 
