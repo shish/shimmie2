@@ -69,9 +69,9 @@ Installation
 
 Upgrade from 2.2.X
 ~~~~~~~~~~~~~~~~~~
-Should be automatic, just unzip and copy across config.php, images and thumbs
-folders from the old version. This includes automatically messing with the
-database -- back it up first!
+Should be automatic, just unzip into a clean folder and copy across
+config.php, images and thumbs folders from the old version. This
+includes automatically messing with the database -- back it up first!
 
 
 Contact
