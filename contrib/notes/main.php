@@ -264,7 +264,7 @@ class Notes extends SimpleExtension {
 		$noteY1     = int_escape($_POST["note_y1"]);
 		$noteHeight = int_escape($_POST["note_height"]);
 		$noteWidth  = int_escape($_POST["note_width"]);
-		$noteText   = html_escape($_POST["note_text"]);
+		$noteText   = mysql_real_escape_string(html_escape($_POST["note_text"]));
 
 		$database->execute("
 				INSERT INTO notes
@@ -313,13 +313,13 @@ class Notes extends SimpleExtension {
 	*/
 	private function update_note()
 	{
-		$imageID = $_POST["image_id"];
-		$noteID  = $_POST["note_id"];
-		$noteX1 = $_POST["note_x1"];
-		$noteY1 = $_POST["note_y1"];
-		$noteHeight = $_POST["note_height"];
-		$noteWidth = $_POST["note_width"];
-		$noteText = $_POST["note_text"];
+		$imageID = int_escape($_POST["image_id"]);
+		$noteID  = int_escape($_POST["note_id"]);
+		$noteX1 = int_escape($_POST["note_x1"]);
+		$noteY1 = int_escape($_POST["note_y1"]);
+		$noteHeight = int_escape($_POST["note_height"]);
+		$noteWidth = int_escape($_POST["note_width"]);
+		$noteText = mysql_real_escape_string(html_escape($_POST["note_text"]));
 
 		// validate parameters
 		if(is_null($imageID) || !is_numeric($imageID))
@@ -362,8 +362,8 @@ class Notes extends SimpleExtension {
 	*/
 	private function delete_note()
 	{
-		$imageID = $_POST["image_id"];
-		$noteID = $_POST["note_id"];
+		$imageID = int_escape($_POST["image_id"]);
+		$noteID = int_escape($_POST["note_id"]);
 
 		// validate parameters
 		if(is_null($imageID) || !is_numeric($imageID))

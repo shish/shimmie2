@@ -129,7 +129,11 @@ class Artists implements Extension {
             $artistName = $author;
         }
 
-        $database->execute("UPDATE images SET author = ? WHERE id = ?", array($artistName, $event->image->id));
+        $database->execute("UPDATE images SET author = ? WHERE id = ?"
+            , array(
+                mysql_real_escape_string($artistName)
+                , $event->image->id
+            ));
     }
     public function handle_commands($event)
     {
@@ -143,22 +147,22 @@ class Artists implements Extension {
                 case "list":
                 {
                     $this->get_listing($page, $event);
-					$this->theme->sidebar_options("neutral");
+                    $this->theme->sidebar_options("neutral");
                     break;
                 }
                 case "new":
                 {
-					if(!$user->is_anonymous()){
+                    if(!$user->is_anonymous()){
                     	$this->theme->new_artist_composer();
-					}else{
-						$errMessage = "You must be registered and logged in to create a new artist.";
+                    }else{
+                        $errMessage = "You must be registered and logged in to create a new artist.";
                         $this->theme->display_error($page, "Error", $errMessage);
-					}
+                    }
                     break;
                 }
-				case "new_artist":
+                case "new_artist":
                 {
-					$page->set_mode("redirect");
+                    $page->set_mode("redirect");
                     $page->set_redirect(make_link("artist/new"));
                     break;
                 }
@@ -197,7 +201,7 @@ class Artists implements Extension {
                     $userIsLogged = !$user->is_anonymous();
                     $userIsAdmin = $user->is_admin();
 					
-					$images = Image::find_images(0, 4, Tag::explode($artist['name']));
+                    $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
                     $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
                     if ($userIsLogged)
@@ -207,7 +211,7 @@ class Artists implements Extension {
                         //$this->theme->show_new_url_composer($artistID);
                     }
 					
-					$this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+                    $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
 					
                     break;
                 }
@@ -220,23 +224,21 @@ class Artists implements Extension {
                     $members = $this->get_members($artistID);
                     $urls = $this->get_urls($artistID);
 					
-					
-					
-					if(!$user->is_anonymous()){
+                    if(!$user->is_anonymous()){
                     	$this->theme->show_artist_editor($artist, $aliases, $members, $urls);
 						
-						$userIsAdmin = $user->is_admin();
-						$this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-					}else{
-						$errMessage = "You must be registered and logged in to edit an artist.";
+                        $userIsAdmin = $user->is_admin();
+                        $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
+                    }else{
+                        $errMessage = "You must be registered and logged in to edit an artist.";
                         $this->theme->display_error($page, "Error", $errMessage);
-					}
+                    }
                     break;
                 }
-				case "edit_artist":
+                case "edit_artist":
                 {
                     $artistID = $_POST['artist_id'];
-					$page->set_mode("redirect");
+                    $page->set_mode("redirect");
                     $page->set_redirect(make_link("artist/edit/".$artistID));
                     break;
                 }
@@ -248,10 +250,10 @@ class Artists implements Extension {
                     $page->set_redirect(make_link("artist/view/".$artistID));
                     break;
                 }
-				case "nuke_artist":
+                case "nuke_artist":
                 {
                     $artistID = $_POST['artist_id'];
-					$page->set_mode("redirect");
+                    $page->set_mode("redirect");
                     $page->set_redirect(make_link("artist/nuke/".$artistID));
                     break;
                 }
@@ -263,22 +265,22 @@ class Artists implements Extension {
                     $page->set_redirect(make_link("artist/list"));
                     break;
                 }
-				case "add_alias":
+                case "add_alias":
                 {
                     $artistID = $_POST['artist_id'];
-					$this->theme->show_new_alias_composer($artistID);
+                    $this->theme->show_new_alias_composer($artistID);
                     break;
                 }
-				case "add_member":
+                case "add_member":
                 {
                     $artistID = $_POST['artist_id'];
-					$this->theme->show_new_member_composer($artistID);
+                    $this->theme->show_new_member_composer($artistID);
                     break;
                 }
-				case "add_url":
+                case "add_url":
                 {
                     $artistID = $_POST['artist_id'];
-					$this->theme->show_new_url_composer($artistID);
+                    $this->theme->show_new_url_composer($artistID);
                     break;
                 }
                 //***********ALIAS SECTION ***********************
@@ -418,17 +420,19 @@ class Artists implements Extension {
 
     private function get_artistName_by_imageID($imageID)
     {
+        if(!is_numeric($imageID)) return null;
+
         global $database;
 
         $result = $database->get_row("SELECT author FROM images WHERE id = ?", array($imageID));
-        return $result['author'];
+        return stripslashes($result['author']);
     }
 
     private function url_exists_by_url($url)
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array($url));
+        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
         return ($result != 0);
     }
 
@@ -436,7 +440,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE name = ?", array($member));
+        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
         return ($result != 0);
     }
 
@@ -444,39 +448,48 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array($alias));
+        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array(mysql_real_escape_string($alias)));
         return ($result != 0);
     }
 
     private function alias_exists($artistID, $alias){
+        if (!is_numeric($artistID)) return;
+
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?", array($artistID, $alias));
+        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?", array(
+                $artistID
+                , mysql_real_escape_string($alias)
+            ));
         return ($result != 0);
     }
 
     private function get_artistID_by_url($url)
     {
         global $database;
-        $result = $database->get_row("SELECT artist_id FROM artist_urls WHERE url = ?", array($url));
+        $result = $database->get_row("SELECT artist_id FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
         return $result['artist_id'];
     }
 
     private function get_artistID_by_memberName($member)
     {
         global $database;
-        $result = $database->get_row("SELECT artist_id FROM artist_members WHERE name = ?", array($member));
+        $result = $database->get_row("SELECT artist_id FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
         return $result['artist_id'];
     }
     private function get_artistName_by_artistID($artistID)
     {
+        if (!is_numeric($artistID)) return;
+
         global $database;
         $result = $database->get_row("SELECT name FROM artists WHERE id = ?", array($artistID));
-        return $result['name'];
+        return stripslashes($result['name']);
     }
 
     private function get_artistID_by_aliasID($aliasID)
     {
+        if (!is_numeric($aliasID)) return;
+
         global $database;
         $result = $database->get_row("SELECT artist_id FROM artist_alias WHERE id = ?", array($aliasID));
         return $result['artist_id'];
@@ -484,6 +497,8 @@ class Artists implements Extension {
 
     private function get_artistID_by_memberID($memberID)
     {
+        if (!is_numeric($memberID)) return;
+
         global $database;
         $result = $database->get_row("SELECT artist_id FROM artist_members WHERE id = ?", array($memberID));
         return $result['artist_id'];
@@ -491,6 +506,8 @@ class Artists implements Extension {
 
     private function get_artistID_by_urlID($urlID)
     {
+        if (!is_numeric($urlID)) return;
+
         global $database;
         $result = $database->get_row("SELECT artist_id FROM artist_urls WHERE id = ?", array($urlID));
         return $result['artist_id'];
@@ -498,18 +515,24 @@ class Artists implements Extension {
 
     private function delete_alias($aliasID)
     {
+        if (!is_numeric($aliasID)) return;
+
         global $database;
         $database->execute("DELETE FROM artist_alias WHERE id = ?", array($aliasID));
     }
 
     private function delete_url($urlID)
     {
+        if (!is_numeric($urlID)) return;
+
         global $database;
         $database->execute("DELETE FROM artist_urls WHERE id = ?", array($urlID));
     }
 
     private function delete_member($memberID)
     {
+        if (!is_numeric($memberID)) return;
+
         global $database;
         $database->execute("DELETE FROM artist_members WHERE id = ?", array($memberID));
     }
@@ -517,20 +540,38 @@ class Artists implements Extension {
 
     private function get_alias_by_id($aliasID)
     {
+        if (!is_numeric($aliasID)) return;
+
         global $database;
-        return $database->get_row("SELECT * FROM artist_alias WHERE id = ?", array($aliasID));
+        $result = $database->get_row("SELECT * FROM artist_alias WHERE id = ?", array($aliasID));
+
+        $result["alias"] = stripslashes($result["alias"]);
+        
+        return $result;
     }
 
     private function get_url_by_id($urlID)
     {
+        if (!is_numeric($urlID)) return;
+
         global $database;
-        return $database->get_row("SELECT * FROM artist_urls WHERE id = ?", array($urlID));
+        $result = $database->get_row("SELECT * FROM artist_urls WHERE id = ?", array($urlID));
+
+        $result["url"] = stripslashes($result["url"]);
+
+        return $result;
     }
 
     private function get_member_by_id($memberID)
     {
+        if (!is_numeric($memberID)) return;
+
         global $database;
-        return $database->get_row("SELECT * FROM artist_members WHERE id = ?", array($memberID));
+        $result = $database->get_row("SELECT * FROM artist_members WHERE id = ?", array($memberID));
+
+        $result["name"] = stripslashes($result["name"]);
+
+        return $result;
     }
 
     private function update_artist()
@@ -541,41 +582,55 @@ class Artists implements Extension {
         $notes = $_POST['notes'];
         $userID = $user->id;
 
-        $aliasesAsString = $_POST["aliases"];
-        $aliasesIDsAsString = $_POST["aliasesIDs"];
+        $aliasesAsString = trim($_POST["aliases"]);
+        if (strlen($aliasesAsString) == 0) $aliasesAsString = NULL;
+        $aliasesIDsAsString = trim($_POST["aliasesIDs"]);
+        if (strlen($aliasesIDsAsString) == 0) $aliasesIDsAsString = NULL;
 
-        $membersAsString = $_POST["members"];
-        $membersIDsAsString = $_POST["membersIDs"];
+        $membersAsString = trim($_POST["members"]);
+        if (strlen($membersAsString) == 0) $membersAsString = NULL;
+        $membersIDsAsString = trim($_POST["membersIDs"]);
+        if (strlen($membersIDsAsString) == 0) $membersIDsAsString = NULL;
 
-        $urlsAsString = $_POST["urls"];
-        $urlsIDsAsString = $_POST["urlsIDs"];
+        $urlsAsString = trim($_POST["urls"]);
+        if (strlen($urlsAsString) == 0) $urlsAsString = NULL;
+        $urlsIDsAsString = trim($_POST["urlsIDs"]);
+        if (strlen($urlsIDsAsString) == 0) $urlsIDsAsString = NULL;
 
         if (is_null($artistID) || !is_numeric($artistID))
+            return;
+
+        if (is_null($userID) || !is_numeric($userID))
             return;
 
         if (is_null($name) || strlen($name) == 0 || strpos($name, " "))
             return;
 
-        if (is_null($aliasesAsString) || is_null($aliasesIDsAsString))
-            return;
+        //if (is_null($aliasesAsString) || is_null($aliasesIDsAsString))
+        //    return;
 
-        if (is_null($membersAsString) || is_null($membersIDsAsString))
-            return;
+        //if (is_null($membersAsString) || is_null($membersIDsAsString))
+        //    return;
 
-        if (is_null($urlsAsString) || is_null($urlsIDsAsString))
-            return;
+        //if (is_null($urlsAsString) || is_null($urlsIDsAsString))
+        //    return;
 
         if (strlen($notes) == 0)
             $notes = NULL;
 
         global $database;
         $database->execute("UPDATE artists SET name = ?, notes = ?, updated = now(), user_id = ? WHERE id = ? "
-            , array($name, $notes, $userID, $artistID));
+            , array(
+                mysql_real_escape_string($name)
+                , mysql_real_escape_string($notes)
+                , $userID
+                , $artistID
+            ));
 
         // ALIAS MATCHING SECTION
         $i = 0;
-        $aliasesAsArray = explode(" ", $aliasesAsString);
-        $aliasesIDsAsArray = explode(" ", $aliasesIDsAsString);
+        $aliasesAsArray = is_null($aliasesAsString) ? array() : explode(" ", $aliasesAsString);
+        $aliasesIDsAsArray = is_null($aliasesIDsAsString) ? array() : explode(" ", $aliasesIDsAsString);
         while ($i < count($aliasesAsArray))
         {
             // if an alias was updated
@@ -594,8 +649,8 @@ class Artists implements Extension {
 
         // MEMBERS MATCHING SECTION
         $i = 0;
-        $membersAsArray = explode(" ", $membersAsString);
-        $membersIDsAsArray = explode(" ", $membersIDsAsString);
+        $membersAsArray = is_null($membersAsString) ? array() : explode(" ", $membersAsString);
+        $membersIDsAsArray = is_null($membersIDsAsString) ? array() : explode(" ", $membersIDsAsString);
         while ($i < count($membersAsArray))
         {
             // if a member was updated
@@ -614,19 +669,26 @@ class Artists implements Extension {
 
         // URLS MATCHING SECTION
         $i = 0;
-        $urlsAsArray = explode("\n", $urlsAsString);
-        $urlsIDsAsArray = explode(" ", $urlsIDsAsString);
+        $urlsAsString = str_replace("\r\n", "\n", $urlsAsString);
+        $urlsAsString = str_replace("\n\r", "\n", $urlsAsString);
+        $urlsAsArray = is_null($urlsAsString) ? array() : explode("\n", $urlsAsString);
+        $urlsIDsAsArray = is_null($urlsIDsAsString) ? array() : explode(" ", $urlsIDsAsString);
         while ($i < count($urlsAsArray))
         {
             // if an URL was updated
             if ($i < count($urlsIDsAsArray))
+            {
                 // save it
                 $this->save_existing_url($urlsIDsAsArray[$i], $urlsAsArray[$i], $userID);
+            }
             else
+            {
                 $this->save_new_url($artistID, $urlsAsArray[$i], $userID);
+            }
 
             $i++;
         }
+        
         // if we have more ids than urls, then some urls have been deleted -- delete them from db
         while ($i < count($urlsIDsAsArray))
             $this->delete_url($urlsIDsAsArray[$i++]);
@@ -649,9 +711,16 @@ class Artists implements Extension {
 
     private function save_existing_alias($aliasID, $alias, $userID)
     {
+        if (!is_numeric($userID)) return;
+        if (!is_numeric($aliasID)) return;
+
         global $database;
         $database->execute("UPDATE artist_alias SET alias = ?, updated = now(), user_id  = ? WHERE id = ? "
-            , array($alias, $userID, $aliasID));
+            , array(
+                mysql_real_escape_string($alias)
+                , $userID
+                , $aliasID
+            ));
     }
 
     private function update_url()
@@ -671,9 +740,16 @@ class Artists implements Extension {
 
     private function save_existing_url($urlID, $url, $userID)
     {
+        if (!is_numeric($userID)) return;
+        if (!is_numeric($urlID)) return;
+
         global $database;
         $database->execute("UPDATE artist_urls SET url = ?, updated = now(), user_id = ? WHERE id = ?"
-            , array($url, $userID, $urlID));
+            , array(
+                mysql_real_escape_string($url)
+                , $userID
+                , $urlID
+            ));
     }
 
     private function update_member()
@@ -693,10 +769,17 @@ class Artists implements Extension {
 
     private function save_existing_member($memberID, $memberName, $userID)
     {
+        if (!is_numeric($memberID)) return;
+        if (!is_numeric($userID)) return;
+
         global $database;
 		
         $database->execute("UPDATE artist_members SET name = ?, updated = now(), user_id = ? WHERE id = ?"
-            , array($memberName, $userID, $memberID));
+            , array(
+                mysql_real_escape_string($memberName)
+                , $userID
+                , $memberID
+            ));
     }
 
     /*
@@ -747,6 +830,10 @@ class Artists implements Extension {
 
         if (strlen($urls))
         {
+            //delete double "separators"
+            $urls = str_replace("\r\n", "\n", $urls);
+            $urls = str_replace("\n\r", "\n", $urls);
+            
             $urlsArray = explode("\n", $urls);
             foreach ($urlsArray as $url)
                 if (!$this->url_exists($artistID, $url))
@@ -764,7 +851,11 @@ class Artists implements Extension {
                     (user_id, name, notes, created, updated)
             VALUES
                     (?, ?, ?, now(), now())",
-            array($user->id, $name, $notes));
+            array(
+                $user->id
+                , mysql_real_escape_string($name)
+                , mysql_real_escape_string($notes)
+            ));
 
         $result = $database->get_row("SELECT LAST_INSERT_ID() AS artistID", array());
 
@@ -777,7 +868,10 @@ class Artists implements Extension {
     private function artist_exists($name){
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artists WHERE name = ?", array($name));
+        $result = $database->db->GetOne("SELECT COUNT(1) FROM artists WHERE name = ?"
+            , array(
+                mysql_real_escape_string($name)
+            ));
         return ($result != 0);
     }
 
@@ -785,19 +879,54 @@ class Artists implements Extension {
     * HERE WE GET THE INFO OF THE ARTIST
     */
     private function get_artist($artistID){
-            global $database;
-            return $database->get_row("SELECT * FROM artists WHERE id = ?", array($artistID));
+        if (!is_numeric($artistID)) return;
+
+        global $database;
+        $result =  $database->get_row("SELECT * FROM artists WHERE id = ?",
+            array(
+                $artistID
+            ));
+
+        $result["name"] = stripslashes($result["name"]);
+        $result["notes"] = stripslashes($result["notes"]);
+
+        return $result;
     }
 
     private function get_members($artistID)
     {
+        if (!is_numeric($artistID)) return;
+
         global $database;
-        return $database->get_all("SELECT * FROM artist_members WHERE artist_id = ?", array($artistID));
+        $result = $database->get_all("SELECT * FROM artist_members WHERE artist_id = ?"
+            , array(
+                $artistID
+            ));
+
+        for ($i = 0 ; $i < count($result) ; $i++)
+        {
+            $result[$i]["name"] = stripslashes($result[$i]["name"]);
+        }
+
+        return $result;
     }
     private function get_urls($artistID)
     {
+        if (!is_numeric($artistID)) return;
+
         global $database;
-        return $database->get_all("SELECT id, url FROM artist_urls WHERE artist_id = ?", array($artistID));
+        $result = $database->get_all("SELECT id, url FROM artist_urls WHERE artist_id = ?"
+            , array(
+                $artistID
+            ));
+
+        for ($i = 0 ; $i < count($result) ; $i++)
+        {
+            $result[$i]["url"] = stripslashes($result[$i]["url"]);
+        }
+        
+
+        return $result;
     }
 
 	/*
@@ -805,7 +934,10 @@ class Artists implements Extension {
 	*/
 	private function get_artist_id($name){
 		global $database;
-		$artistID = $database->get_row("SELECT id FROM artists WHERE name = ?", array($name));
+		$artistID = $database->get_row("SELECT id FROM artists WHERE name = ?"
+                    , array(
+                        mysql_real_escape_string($name)
+                    ));
 		return $artistID['id'];
 	}
 
@@ -813,7 +945,10 @@ class Artists implements Extension {
         {
             global $database;
 
-            $artistID = $database->get_row("SELECT artist_id FROM artist_alias WHERE alias = ?", array($alias));
+            $artistID = $database->get_row("SELECT artist_id FROM artist_alias WHERE alias = ?"
+                , array(
+                    mysql_real_escape_string($alias)
+                ));
             return $artistID["artist_id"];
         }
 	
@@ -823,8 +958,13 @@ class Artists implements Extension {
 	*/
 	private function delete_artist($artistID)
         {
+            if (!is_numeric($artistID)) return;
+
             global $database;
-            $database->execute("DELETE FROM artists WHERE id = ? ", array($artistID));
+            $database->execute("DELETE FROM artists WHERE id = ? "
+                , array(
+                    $artistID
+                ));
 	}
 	
 	
@@ -892,7 +1032,17 @@ class Artists implements Extension {
                         )
                 ORDER BY updated DESC
                 LIMIT ?, ?
-            ", array($pageNumber * $artistsPerPage, $artistsPerPage));
+            ", array(
+                    $pageNumber * $artistsPerPage
+                    , $artistsPerPage
+                ));
+
+            for ($i = 0 ; $i < count($listing) ; $i++)
+            {
+                $listing[$i]["name"] = stripslashes($listing[$i]["name"]);
+                $listing[$i]["user_name"] = stripslashes($listing[$i]["user_name"]);
+                $listing[$i]["artist_name"] = stripslashes($listing[$i]["artist_name"]);
+            }
 
             $count = $database->db->GetOne(
                 "SELECT COUNT(1)
@@ -933,9 +1083,16 @@ class Artists implements Extension {
 
         private function save_new_url($artistID, $url, $userID)
         {
+            if (!is_numeric($artistID)) return;
+            if (!is_numeric($userID)) return;
+
             global $database;
             $database->execute("INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (?, now(), now(), ?, ?)"
-                , array($artistID, $url, $userID));
+                , array(
+                    $artistID
+                    , mysql_real_escape_string($url)
+                    , $userID
+                ));
         }
 
 	private function add_alias()
@@ -960,9 +1117,16 @@ class Artists implements Extension {
 
         private function save_new_alias($artistID, $alias, $userID)
         {
+            if (!is_numeric($artistID)) return;
+            if (!is_numeric($userID)) return;
+
             global $database;
             $database->execute("INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (?, now(), now(), ?, ?)"
-                        , array($artistID, $alias, $userID));
+                        , array(
+                            $artistID
+                            , mysql_real_escape_string($alias)
+                            , $userID
+                        ));
         }
 
         private function add_members()
@@ -986,24 +1150,43 @@ class Artists implements Extension {
 
         private function save_new_member($artistID, $member, $userID)
         {
+            if (!is_numeric($artistID)) return;
+            if (!is_numeric($userID)) return;
+
             global $database;
             $database->execute("INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (?, ?, now(), now(), ?)"
-                , array($artistID, $member, $userID));
+                , array(
+                    $artistID
+                    , mysql_real_escape_string($member)
+                    , $userID
+                ));
         }
 
         private function member_exists($artistID, $member)
         {
+            if (!is_numeric($artistID)) return;
+
             global $database;
 
-            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?", array($artistID, $member));
+            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?"
+                , array(
+                    $artistID
+                    , mysql_real_escape_string($member)
+                ));
             return ($result != 0);
         }
 
         private function url_exists($artistID, $url)
         {
+            if (!is_numeric($artistID)) return;
+
             global $database;
 
-            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?", array($artistID, $url));
+            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?"
+                , array(
+                    $artistID
+                    , mysql_real_escape_string($url)
+                ));
             return ($result != 0);
         }
 
@@ -1011,13 +1194,21 @@ class Artists implements Extension {
 	* HERE WE GET THE INFO OF THE ALIAS
 	*/
 	private function get_alias($artistID){
+            if (!is_numeric($artistID)) return;
+
             global $database;
             
-            return $database->get_all("SELECT id AS alias_id, alias AS alias_name ".
+            $result = $database->get_all("SELECT id AS alias_id, alias AS alias_name ".
                                       "FROM artist_alias ".
                                       "WHERE artist_id = ? ".
                                       "ORDER BY alias ASC"
                                       , array($artistID));
+
+            for ($i = 0 ; $i < count($result) ; $i++)
+            {
+                $result[$i]["alias_name"] = stripslashes($result[$i]["alias_name"]);
+            }
+            return $result;
 	}	
 }
 add_event_listener(new Artists());
