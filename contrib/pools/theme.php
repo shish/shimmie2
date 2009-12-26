@@ -4,14 +4,9 @@ class PoolsTheme extends Themelet {
 	 * HERE WE ADD THE POOL INFO ON IMAGE
 	 */
 	public function pool_info($linksPools) {
-		global $config, $page;
-		$editor = 'This post belongs to the '.html_escape($linksPools).' pool.';
-
-		if($config->get_bool("poolsInfoOnViewImage")) {
-			if($linksPools != " ") {
-				$page->add_block(new Block("Pool Info", $editor, "main", 1));
-			}
-		}
+		global $page;
+		$editor = 'This post belongs to the '.$linksPools.' pool.';
+		$page->add_block(new Block("Pool Info", $editor, "main", 1));
 	}
 
 
@@ -37,8 +32,9 @@ class PoolsTheme extends Themelet {
 		foreach($pools as $pool) {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
-			$pool_link = '<a href="'.make_link("pool/view/".$pool['id']).'">'.$pool['title']."</a>";
-			$user_link = '<a href="'.make_link("user/".$pool['user_name']).'">'.$pool['user_name']."</a>";
+			$pool_link = '<a href="'.make_link("pool/view/".$pool['id']).'">'.html_escape($pool['title'])."</a>";
+			$user_link = '<a href="'.make_link("user/".url_escape($pool['user_name'])).'">'.html_escape($pool['user_name'])."</a>";
+			$edit_link = '<a href="'.make_link("pool/edit/".$pool['id']).'">Edit</a>';
 			$del_link = '<a href="'.make_link("pool/nuke/".$pool['id']).'">Delete</a>';
 			$public = ($pool['public'] == "Y" ? "Yes" : "No");
 
@@ -49,7 +45,7 @@ class PoolsTheme extends Themelet {
 				"<td>".$public."</td>";
 
 			if($user->is_admin()){
-				$html .= "<td>".$del_link."</td>";
+				$html .= "<td>$edit_link / $del_link</td>";
 			}
 
 			$html .= "</tr>";
@@ -304,7 +300,7 @@ class PoolsTheme extends Themelet {
 
 		$pool_images .= "<br>".
 			"<input type='submit' name='edit' id='edit' value='Remove Selected'/>".
-			"<input type='hidden' name='pool_id' value='".$pool['id']."'>".
+			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
 		$page->add_block(new Block("Editing Posts", $pool_images, "main", 30));

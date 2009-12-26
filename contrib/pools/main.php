@@ -66,12 +66,10 @@ class Pools extends SimpleExtension {
 		if($event->page_matches("pool")) {
 			switch($event->get_arg(0)) {
 				case "list": //index
-				{
-					$this->list_pools($page, $event);
+					$this->list_pools($page, int_escape($event->get_arg(1)));
 					break;
-				}
+
 				case "new": // Show form
-				{
 					if(!$user->is_anonymous()){
 						$this->theme->new_pool_composer($page);
 					} else {
@@ -79,48 +77,41 @@ class Pools extends SimpleExtension {
 						$this->theme->display_error($errMessage);
 					}
 					break;
-				}
+
 				case "create": // ADD _POST
-				{
 					if(!$user->is_anonymous()){
 						$newPoolID = $this->add_pool();
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$newPoolID.""));
+						$page->set_redirect(make_link("pool/view/".$newPoolID));
 					} else {
 						$this->theme->display_error("You must be registered and logged in to add a image.");
 					}
 					break;
-				}
+
 				case "view":
-				{
 					$poolID = int_escape($event->get_arg(1));
 					$this->get_posts($event, $poolID);
 					break;
-				}
+
 				case "updated":
-				{
-					$this->get_history($event);
+					$this->get_history(int_escape($event->get_arg(1)));
 					break;
-				}
+
 				case "revert":
-				{
 					if(!$user->is_anonymous()) {
 						$historyID = int_escape($event->get_arg(1));
-
 						$this->revert_history($historyID);
-
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/updated"));
 					}
 					break;
-				}
+
 				case "edit":
-				{
 					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
-						//if the pool is public and user is logged OR if the user is admin OR the user is the owner
+						// if the pool is public and user is logged OR if the user is admin OR the user is the owner
 						if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
@@ -129,16 +120,15 @@ class Pools extends SimpleExtension {
 						}
 					}
 					break;
-				}
+
 				case "edit_pool":
-				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("pool/edit/".$poolID));
 					break;
-				}
+
+				/*
 				case "order":
-				{
 					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
@@ -152,42 +142,14 @@ class Pools extends SimpleExtension {
 						}
 					}				
 					break;
-				}
+
 				case "edit_order":
-				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("pool/order/".$poolID));
 					break;
-				}
-				case "import":
-				{
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
 
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
-						$this->import_posts();
-					} else {
-						$this->theme->display_error("Permssion denied.");
-					}
-					break;
-				}
-				case "add_posts":
-				{
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
-
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
-						$this->add_posts();
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$pool_id));
-					} else {
-						$this->theme->display_error("Permssion denied.");
-					}
-					break;
-				}
 				case "order_posts":
-				{
 					$pool_id = int_escape($_POST["pool_id"]);
 					$pool = $this->get_single_pool($pool_id);
 
@@ -199,9 +161,34 @@ class Pools extends SimpleExtension {
 						$this->theme->display_error("Permssion denied.");
 					}
 					break;
-				}
+
+				*/
+
+				case "import":
+					$pool_id = int_escape($_POST["pool_id"]);
+					$pool = $this->get_single_pool($pool_id);
+
+					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+						$this->import_posts();
+					} else {
+						$this->theme->display_error("Permssion denied.");
+					}
+					break;
+
+				case "add_posts":
+					$pool_id = int_escape($_POST["pool_id"]);
+					$pool = $this->get_single_pool($pool_id);
+
+					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+						$this->add_posts();
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("pool/view/".$pool_id));
+					} else {
+						$this->theme->display_error("Permssion denied.");
+					}
+					break;
+
 				case "remove_posts":
-				{
 					$pool_id = int_escape($_POST["pool_id"]);
 					$pool = $this->get_single_pool($pool_id);
 
@@ -214,9 +201,8 @@ class Pools extends SimpleExtension {
 					}
 
 					break;
-				}
+
 				case "nuke":
-				{
 					$pool_id = int_escape($event->get_arg(1));
 					$pool = $this->get_single_pool($pool_id);
 
@@ -229,55 +215,52 @@ class Pools extends SimpleExtension {
 						$this->theme->display_error("Permssion denied.");
 					}
 					break;
-				}
+
 				case "nuke_pool":
-				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("pool/nuke/".$poolID));
 					break;
-				}
+
 				default:
-				{
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("pool/list"));
 					break;
-				}
 			}
 		}
 	}
-
 
 
 	/*
 	 * HERE WE GET THE POOLS WHERE THE IMAGE APPEARS WHEN THE IMAGE IS DISPLAYED
 	 */
 	public function onDisplayingImage($event) {
-		global $page;
-		$imageID = $event->image->id;
-		$poolsIDs = $this->get_pool_id($imageID);
+		global $config, $page;
 
-		$linksPools = "";
-		foreach ($poolsIDs as $poolID){
-			$pools = $this->get_pool($poolID['pool_id']);
-			foreach ($pools as $pool){
-				$linksPools .= "<a href='".make_link("pool/view/".$pool['id'])."'>".$pool['title']."</a>, ";
+		if($config->get_bool("poolsInfoOnViewImage")) {
+			$imageID = $event->image->id;
+			$poolsIDs = $this->get_pool_id($imageID);
+
+			$linksPools = array();
+			foreach($poolsIDs as $poolID) {
+				$pools = $this->get_pool($poolID['pool_id']);
+				foreach ($pools as $pool){
+					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".$pool['title']."</a>";
+				}
+			}
+			if(count($linksPools) > 0) {
+				$this->theme->pool_info(implode($linksPools));
 			}
 		}
-		$linksPools = substr($linksPools, 0, -2);
-		$linksPools = $linksPools." ";
-		$this->theme->pool_info($linksPools);
 	}
-
 
 
 	/*
 	 * HERE WE GET THE LIST OF POOLS
 	 */
-	private function list_pools(Page $page, $event){
+	private function list_pools(Page $page, $pageNumber) {
 		global $config, $database;
 
-		$pageNumber = int_escape($event->get_arg(1));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -301,7 +284,6 @@ class Pools extends SimpleExtension {
 
 		$this->theme->list_pools($page, $pools, $pageNumber + 1, $totalPages);
 	}
-
 
 
 	/*
@@ -342,7 +324,6 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * HERE WE GET THE IMAGES FROM THE TAG ON IMPORT
 	 */
@@ -356,7 +337,6 @@ class Pools extends SimpleExtension {
 		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($_POST["pool_tag"]));
 		$this->theme->pool_result($page, $images, $pool_id);
 	}
-
 
 
 	/*
@@ -413,7 +393,6 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * HERE WE REMOVE CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
 	 */
@@ -434,7 +413,6 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * HERE WE CHECK IF THE POST IS ALREADY ON POOL
 	 * USED IN add_posts()
@@ -444,7 +422,6 @@ class Pools extends SimpleExtension {
 		$result = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
 		return ($result != 0);
 	}
-
 
 
 	/*
@@ -556,7 +533,6 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL
 	 */
@@ -576,7 +552,6 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * HERE WE ADD A HISTORY ENTRY
 	 * FOR $action 1 (one) MEANS ADDED, 0 (zero) MEANS REMOVED
@@ -587,17 +562,15 @@ class Pools extends SimpleExtension {
 				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
 				VALUES (?, ?, ?, ?, ?, now())",
 				array($poolID, $user->id, $action, $images, $count));
-
 	}
 
 
 	/*
 	 * HERE WE GET THE HISTORY LIST
 	 */
-	private function get_history($event){
+	private function get_history($pageNumber) {
 		global $config, $database;
 
-		$pageNumber = int_escape($event->get_arg(1));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
