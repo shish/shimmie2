@@ -93,7 +93,7 @@ class Pools extends SimpleExtension {
 				}
 				case "view":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$this->get_posts($event, $poolID);
 					break;
 				}
@@ -105,7 +105,7 @@ class Pools extends SimpleExtension {
 				case "revert":
 				{
 					if(!$user->is_anonymous()) {
-						$historyID = $event->get_arg(1);
+						$historyID = int_escape($event->get_arg(1));
 
 						$this->revert_history($historyID);
 
@@ -116,7 +116,7 @@ class Pools extends SimpleExtension {
 				}
 				case "edit":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
@@ -125,7 +125,7 @@ class Pools extends SimpleExtension {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID.""));
+							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
 					}
 					break;
@@ -134,12 +134,12 @@ class Pools extends SimpleExtension {
 				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/edit/".$poolID.""));
+					$page->set_redirect(make_link("pool/edit/".$poolID));
 					break;
 				}
 				case "order":
 				{
-					$poolID = $event->get_arg(1);
+					$poolID = int_escape($event->get_arg(1));
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
@@ -148,7 +148,7 @@ class Pools extends SimpleExtension {
 							$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID.""));
+							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
 					}				
 					break;
@@ -157,7 +157,7 @@ class Pools extends SimpleExtension {
 				{
 					$poolID = int_escape($_POST["pool_id"]);
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/order/".$poolID.""));
+					$page->set_redirect(make_link("pool/order/".$poolID));
 					break;
 				}
 				case "import":
@@ -208,7 +208,7 @@ class Pools extends SimpleExtension {
 					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
 						$this->remove_posts();
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$pool_id ));
+						$page->set_redirect(make_link("pool/view/".$pool_id));
 					} else {
 						$this->theme->display_error("Permssion denied.");
 					}
@@ -217,7 +217,7 @@ class Pools extends SimpleExtension {
 				}
 				case "nuke":
 				{
-					$pool_id = $event->get_arg(1);
+					$pool_id = int_escape($event->get_arg(1));
 					$pool = $this->get_single_pool($pool_id);
 
 					// only admins and owners may do this
@@ -261,7 +261,7 @@ class Pools extends SimpleExtension {
 		foreach ($poolsIDs as $poolID){
 			$pools = $this->get_pool($poolID['pool_id']);
 			foreach ($pools as $pool){
-				$linksPools .= "<a href='".make_link("pool/view/".$pool['id']."")."'>".$pool['title']."</a>, ";
+				$linksPools .= "<a href='".make_link("pool/view/".$pool['id'])."'>".$pool['title']."</a>, ";
 			}
 		}
 		$linksPools = substr($linksPools, 0, -2);
@@ -277,7 +277,7 @@ class Pools extends SimpleExtension {
 	private function list_pools(Page $page, $event){
 		global $config, $database;
 
-		$pageNumber = $event->get_arg(1);
+		$pageNumber = int_escape($event->get_arg(1));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -307,51 +307,38 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE CREATE A NEW POOL
 	 */
-	private function add_pool(){
+	private function add_pool() {
 		global $user, $database;
 
-		$public = html_escape($_POST["public"]);
-		$title = mysql_real_escape_string(html_escape($_POST["title"]));
-		$description = mysql_real_escape_string(html_escape($_POST["description"]));
-
-		if($public <> "Y"){
-			$public = "N";
-		}
-
+		$public = $_POST["public"] == "Y" ? "Y" : "N";
 		$database->execute("
-				INSERT INTO pools
-				(user_id, public, title, description, date)
-				VALUES
-				(?, ?, ?, ?, now())",
-				array($user->id, $public, $title, $description));
+				INSERT INTO pools (user_id, public, title, description, date)
+				VALUES (?, ?, ?, ?, now())",
+				array($user->id, $public, $_POST["title"], $_POST["description"]));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID", array());
+		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID"); # FIXME database specific?
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
 
 		return $result["poolID"];
 	}
 
-	private function get_pool($poolID){
+	private function get_pool($poolID) {
 		global $database;
-		$poolID = int_escape($poolID);
 		return $database->get_all("SELECT * FROM pools WHERE id=?", array($poolID));
 	}
 
-	private function get_single_pool($poolID)
-	{
+	private function get_single_pool($poolID) {
 		global $database;
-		$poolID = int_escape($poolID);
 		return $database->get_row("SELECT * FROM pools WHERE id=?", array($poolID));
 	}
 
 	/*
 	 * HERE WE GET THE ID OF THE POOL FROM AN IMAGE
 	 */
-	private function get_pool_id($imageID){
+	private function get_pool_id($imageID) {
 		global $database;
-		$imageID = int_escape($imageID);
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id =?", array($imageID));
+		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=?", array($imageID));
 	}
 
 
@@ -359,15 +346,14 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE IMAGES FROM THE TAG ON IMPORT
 	 */
-	private function import_posts(){
+	private function import_posts() {
 		global $page, $config, $database;
 
 		$pool_id = int_escape($_POST["pool_id"]);
-		$pool_tag = mysql_real_escape_string(html_escape($_POST["pool_tag"]));
 
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
 
-		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($pool_tag));
+		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($_POST["pool_tag"]));
 		$this->theme->pool_result($page, $images, $pool_id);
 	}
 
@@ -376,20 +362,17 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE ADD CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
 	 */
-	private function add_posts(){ //ADD CHECKED POSTS
+	private function add_posts() {
 		global $database;
 
 		$poolID = int_escape($_POST['pool_id']);
 		$images = "";
 
 		foreach ($_POST['check'] as $imageID){
-
 			if(!$this->check_post($poolID, $imageID)){
 				$database->execute("
-						INSERT INTO pool_images
-						(pool_id, image_id)
-						VALUES
-						(?, ?)",
+						INSERT INTO pool_images (pool_id, image_id)
+						VALUES (?, ?)",
 						array($poolID, $imageID));
 
 				$images .= " ".$imageID;
@@ -397,25 +380,33 @@ class Pools extends SimpleExtension {
 
 		}
 
-		if(!strlen($images) == 0){
+		if(!strlen($images) == 0) {
 			$count = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
 			$this->add_history($poolID, 1, $images, $count);
 		}
 
-		$database->Execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=?) WHERE id=?", array($poolID, $poolID));
+		$database->Execute("
+			UPDATE pools
+			SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=?)
+			WHERE id=?",
+			array($poolID, $poolID)
+		);
 		return $poolID;	 
 	}
 
-	private function order_posts(){ //ORDER POSTS
+	private function order_posts() {
 		global $database;
 
 		$poolID = int_escape($_POST['pool_id']);
 
-		foreach ($_POST['imgs'] as $data) {
-			list ($imageORDER, $imageID) = $data;
-
-			$imageID = int_escape($imageID);
-			$database->Execute("UPDATE pool_images SET image_order = ? WHERE pool_id = ? AND image_id = ?", array($imageORDER, $poolID, $imageID));
+		foreach($_POST['imgs'] as $data) {
+			list($imageORDER, $imageID) = $data;
+			$database->Execute("
+				UPDATE pool_images
+				SET image_order = ?
+				WHERE pool_id = ? AND image_id = ?",
+				array($imageORDER, $poolID, $imageID)
+			);
 		}
 
 		return $poolID;
@@ -426,15 +417,14 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE REMOVE CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
 	 */
-	private function remove_posts(){
+	private function remove_posts() {
 		global $database;
 
 		$poolID = int_escape($_POST['pool_id']);
 		$images = "";
 
-		foreach ($_POST['check'] as $imageID){
+		foreach($_POST['check'] as $imageID) {
 			$database->execute("DELETE FROM pool_images WHERE pool_id = ? AND image_id = ?", array($poolID, $imageID));
-
 			$images .= " ".$imageID;
 		}
 
@@ -449,14 +439,10 @@ class Pools extends SimpleExtension {
 	 * HERE WE CHECK IF THE POST IS ALREADY ON POOL
 	 * USED IN add_posts()
 	 */
-	private function check_post($poolID, $imageID){
+	private function check_post($poolID, $imageID) {
 		global $database;
 		$result = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
-		if($result == 0) {
-			return FALSE;
-		} else {
-			return TRUE;
-		}
+		return ($result != 0);
 	}
 
 
@@ -464,10 +450,10 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET ALL IMAGES FOR THE POOL
 	 */
-	private function get_posts($event, $poolID){
+	private function get_posts($event, $poolID) {
 		global $config, $user, $database;
 
-		$pageNumber = $event->get_arg(2);
+		$pageNumber = int_escape($event->get_arg(2));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -480,53 +466,38 @@ class Pools extends SimpleExtension {
 		$imagesPerPage = $config->get_int("poolsImagesPerPage");
 
 		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WICH VERSION AND IF IT WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER							 
-		if($config->get_int("ext_ratings2_version") < 3) {
-			$result = $database->get_all("SELECT image_id ".
-					"FROM pool_images ".
-					"WHERE pool_id=? ".
-					"ORDER BY image_order ASC ".
-					"LIMIT ?, ?"
-					, array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+		if(!class_exists("Ratings") || $config->get_int("ext_ratings2_version") < 3) {
+			$result = $database->get_all("
+					SELECT image_id
+					FROM pool_images
+					WHERE pool_id=?
+					ORDER BY image_order ASC
+					LIMIT ?, ?",
+					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
 			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?",array($poolID)) / $imagesPerPage);
 		}
+		else if(class_exists("Ratings") && $config->get_int("ext_ratings2_version") >= 3) {
+			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 
-		if($config->get_int("ext_ratings2_version") >= 3) {
-			if($user->is_anonymous()) {
-				$sqes = $config->get_string("ext_rating_anon_privs");
-			}
-			else if($user->is_admin()) {
-				$sqes = $config->get_string("ext_rating_admin_privs");
-			}
-			else {
-				$sqes = $config->get_string("ext_rating_user_privs");
-			}
-			$arr = array();
-			for($i=0; $i<strlen($sqes); $i++) {
-				$arr[] = "'" . $sqes[$i] . "'";
-			}
-			$rating = join(', ', $arr);
+			$result = $database->get_all("
+					SELECT p.image_id
+					FROM pool_images AS p
+					INNER JOIN images AS i ON i.id = p.image_id
+					WHERE p.pool_id = ? AND i.rating IN ($rating)
+					ORDER BY p.image_order ASC
+					LIMIT ?, ?",
+					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
 
-			$result = $database->get_all("SELECT p.image_id ".
-					"FROM pool_images AS p ".
-					"INNER JOIN images AS i ".
-					"ON i.id = p.image_id ".
-					"WHERE p.pool_id = ? ".
-					"AND i.rating IN ($rating) ".
-					"ORDER BY p.image_order ASC ".
-					"LIMIT ?, ?"
-					, array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
-
-			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) ".
-						"FROM pool_images AS p ".
-						"INNER JOIN images AS i ".
-						"ON i.id = p.image_id ".
-						"WHERE pool_id=? ".
-						"AND i.rating IN ($rating) "
-						,array($poolID)) / $imagesPerPage);
+			$totalPages = ceil($database->db->GetOne("
+					SELECT COUNT(*) 
+					FROM pool_images AS p
+					INNER JOIN images AS i ON i.id = p.image_id
+					WHERE pool_id=? AND i.rating IN ($rating)",
+					array($poolID)) / $imagesPerPage);
 		}
 
 		$images = array();
-		foreach ($result as $singleResult) {
+		foreach($result as $singleResult) {
 			$image = Image::by_id($singleResult["image_id"]);
 			$images[] = array($image);
 		}
@@ -539,9 +510,8 @@ class Pools extends SimpleExtension {
 	/*
 	 * WE GET THE ORDER OF THE IMAGES
 	 */
-	private function edit_posts($poolID){
+	private function edit_posts($poolID) {
 		global $database;
-		$poolID = int_escape($poolID);
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=? ORDER BY image_order ASC", array($poolID));
 
@@ -556,23 +526,20 @@ class Pools extends SimpleExtension {
 	}
 
 
-
 	/*
 	 * WE GET THE ORDER OF THE IMAGES BUT HERE WE SEND KEYS ADDED IN ARRAY TO GET THE ORDER IN THE INPUT VALUE
 	 */
-	private function edit_order($poolID){
+	private function edit_order($poolID) {
 		global $database;
-		$poolID = int_escape($poolID);
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=? ORDER BY image_order ASC", array($poolID));									
-
 		$images = array();
 		while(!$result->EOF) {
-			$image = $database->get_row("SELECT * FROM images AS i ".
-					"INNER JOIN pool_images AS p ".
-					"ON i.id = p.image_id ".
-					"WHERE pool_id=? AND i.id=?"
-					, array($poolID, $result->fields["image_id"]));
+			$image = $database->get_row("
+					SELECT * FROM images AS i
+					INNER JOIN pool_images AS p ON i.id = p.image_id
+					WHERE pool_id=? AND i.id=?",
+					array($poolID, $result->fields["image_id"]));
 			$image = ($image ? new Image($image) : null);
 			$images[] = array($image);
 			$result->MoveNext();
@@ -593,15 +560,15 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL
 	 */
-	private function nuke_pool($poolID){
+	private function nuke_pool($poolID) {
 		global $user, $database;
 
-		if($user->is_admin()){
+		if($user->is_admin()) {
 			$database->execute("DELETE FROM pool_history WHERE pool_id = ?", array($poolID));
 			$database->execute("DELETE FROM pool_images WHERE pool_id = ?", array($poolID));
 			$database->execute("DELETE FROM pools WHERE id = ?", array($poolID));
-		} elseif(!$user->is_anonymous()){
-			// WE CHECK IF THE USER IS THE OWNER OF THE POOL IF NOT HE CAN'T DO ANYTHING
+		} elseif(!$user->is_anonymous()) {
+			// FIXME: WE CHECK IF THE USER IS THE OWNER OF THE POOL IF NOT HE CAN'T DO ANYTHING
 			$database->execute("DELETE FROM pool_history WHERE pool_id = ?", array($poolID));
 			$database->execute("DELETE FROM pool_images WHERE pool_id = ?", array($poolID));
 			$database->execute("DELETE FROM pools WHERE id = ? AND user_id = ?", array($poolID, $user->id));
@@ -614,18 +581,14 @@ class Pools extends SimpleExtension {
 	 * HERE WE ADD A HISTORY ENTRY
 	 * FOR $action 1 (one) MEANS ADDED, 0 (zero) MEANS REMOVED
 	 */
-	private function add_history($poolID, $action, $images, $count){
+	private function add_history($poolID, $action, $images, $count) {
 		global $user, $database;
-		$user_id = $user->id;
 		$database->execute("
-				INSERT INTO pool_history
-				(pool_id, user_id, action, images, count, date)
-				VALUES
-				(?, ?, ?, ?, ?, now())",
-				array($poolID, $user_id, $action, $images, $count));
+				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
+				VALUES (?, ?, ?, ?, ?, now())",
+				array($poolID, $user->id, $action, $images, $count));
 
 	}
-
 
 
 	/*
@@ -634,7 +597,7 @@ class Pools extends SimpleExtension {
 	private function get_history($event){
 		global $config, $database;
 
-		$pageNumber = $event->get_arg(1);
+		$pageNumber = int_escape($event->get_arg(1));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -666,29 +629,29 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL
 	 */
-	private function revert_history($historyID){
+	private function revert_history($historyID) {
 		global $database;
 		$status = $database->get_all("SELECT * FROM pool_history WHERE id=?", array($historyID));
 
-		foreach ($status as $entry)
-		{
+		foreach($status as $entry) {
 			$images = trim($entry['images']);
 			$images = explode(" ", $images);
 			$poolID = $entry['pool_id'];
 			$imageArray = "";
 
-			if ($entry['action'] == 0) {
-				// READD ENTRIES
-				foreach ($images as $image) {	
+			if($entry['action'] == 0) {
+				// READ ENTRIES
+				foreach($images as $image) {	
 					$imageID = $image;		
 					$this->add_post($poolID, $imageID);
 
 					$imageArray .= " ".$imageID;
 					$newAction = 1;
 				}
-			} elseif ($entry['action'] == 1) {
+			}
+			else if($entry['action'] == 1) {
 				// DELETE ENTRIES
-				foreach ($images as $image) {
+				foreach($images as $image) {
 					$imageID = $image;		
 					$this->delete_post($poolID, $imageID);
 
@@ -708,15 +671,13 @@ class Pools extends SimpleExtension {
 	 * HERE WE ADD A SIMPLE POST FROM POOL
 	 * USED WITH FOREACH IN revert_history()
 	 */
-	private function add_post($poolID, $imageID){
+	private function add_post($poolID, $imageID) {
 		global $database;
 
-		if(!$this->check_post($poolID, $imageID)){
+		if(!$this->check_post($poolID, $imageID)) {
 			$database->execute("
-					INSERT INTO pool_images
-					(pool_id, image_id)
-					VALUES
-					(?, ?)",
+					INSERT INTO pool_images (pool_id, image_id)
+					VALUES (?, ?)",
 					array($poolID, $imageID));
 		}
 
@@ -729,7 +690,7 @@ class Pools extends SimpleExtension {
 	 * HERE WE REMOVE A SIMPLE POST FROM POOL
 	 * USED WITH FOREACH IN revert_history()
 	 */
-	private function delete_post($poolID, $imageID){
+	private function delete_post($poolID, $imageID) {
 		global $database;
 
 		$database->execute("DELETE FROM pool_images WHERE pool_id = ? AND image_id = ?", array($poolID, $imageID));
