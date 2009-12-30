@@ -39,6 +39,7 @@ class AliasEditor implements Extension {
 				if($user->is_admin()) {
 					if(isset($_POST['oldtag'])) {
 						$database->Execute("DELETE FROM aliases WHERE oldtag=?", array($_POST['oldtag']));
+						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag']);
 
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("alias/list"));
@@ -102,6 +103,7 @@ class AliasEditor implements Extension {
 			}
 			else {
 				$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);
+				log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}");
 			}
 		}
 

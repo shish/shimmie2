@@ -74,7 +74,7 @@ class UserPage extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "logout") {
 				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				log_info("user", "Logged out");
+				log_debug("user", "Logged out");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}

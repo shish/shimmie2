@@ -26,6 +26,7 @@ ext/home
 ext/image_hash_ban
 ext/ipban
 ext/link_image
+ext/log_db
 ext/news
 ext/notes
 ext/notes
