@@ -172,4 +172,3 @@ class Tips extends SimpleExtension {
 	}
 }
 ?>
-
