@@ -406,12 +406,12 @@ function format_text($string) {
 * Logging convenience                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-if(!defined("LOG_CRITICAL")) define("LOG_CRITICAL", 50);
-if(!defined("LOG_ERROR"))    define("LOG_ERROR", 40);
-if(!defined("LOG_WARNING"))  define("LOG_WARNING", 30);
-if(!defined("LOG_INFO"))     define("LOG_INFO", 20);
-if(!defined("LOG_DEBUG"))    define("LOG_DEBUG", 10);
-if(!defined("LOG_NOTSET"))   define("LOG_NOTSET", 0);
+define("SCORE_LOG_CRITICAL", 50);
+define("SCORE_LOG_ERROR", 40);
+define("SCORE_LOG_WARNING", 30);
+define("SCORE_LOG_INFO", 20);
+define("SCORE_LOG_DEBUG", 10);
+define("SCORE_LOG_NOTSET", 0);
 
 /**
  * A shorthand way to send a LogEvent
@@ -424,14 +424,14 @@ function log_msg($section, $priority, $message) {
  * A shorthand way to send a LogEvent
  */
 function log_info($section, $message) {
-	log_msg($section, LOG_INFO, $message);
+	log_msg($section, SCORE_LOG_INFO, $message);
 }
 
 /**
  * A shorthand way to send a LogEvent
  */
 function log_error($section, $message) {
-	log_msg($section, LOG_ERROR, $message);
+	log_msg($section, SCORE_LOG_ERROR, $message);
 }
 
 

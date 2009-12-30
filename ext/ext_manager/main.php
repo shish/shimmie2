@@ -141,12 +141,14 @@ class ExtManager extends SimpleExtension {
 				else {
 					full_copy("contrib/$fname", "ext/$fname");
 				}
+				log_info("ext_manager", "Enabling $fname");
 			}
 		}
 		else {
 			// disable if currently enabled
 			if(file_exists("ext/$fname")) {
 				deltree("ext/$fname");
+				log_info("ext_manager", "Disabling $fname");
 			}
 		}
 	}
