@@ -27,11 +27,18 @@ class Upgrade implements Extension {
 				}
 			}
 			$config->set_int("db_version", 7);
-			log_info("Database at version 7");
+			log_info("upgrade", "Database at version 7");
 		}
 
 		// TODO:
 		// add column image->locked
+		if($config->get_int("db_version") < 8) {
+			$database->execute($database->engine->scoreql_to_sql(
+				"ALTER TABLE images ADD COLUMN locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
+			));
+			$config->set_int("db_version", 8);
+			log_info("upgrade", "Database at version 8");
+		}
 	}
 }
 add_event_listener(new Upgrade(), 5);

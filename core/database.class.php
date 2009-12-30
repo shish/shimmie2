@@ -54,6 +54,10 @@ class DBEngine {
 
 	public function init($db) {}
 
+	public function scoreql_to_sql($scoreql) {
+		return $scoreql;
+	}
+
 	public function create_table_sql($name, $data) {
 		return "CREATE TABLE $name ($data)";
 	}
@@ -65,7 +69,7 @@ class MySQL extends DBEngine {
 		$db->Execute("SET NAMES utf8;");
 	}
 
-	public function create_table_sql($name, $data) {
+	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
 		$data = str_replace("SCORE_INET", "CHAR(15)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
@@ -73,6 +77,11 @@ class MySQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
 		$data = str_replace("SCORE_DATETIME", "DATETIME", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
+		return $data;
+	}
+
+	public function create_table_sql($name, $data) {
+		$data = $this->scoreql_to_sql($data);
 		$ctes = "TYPE=InnoDB DEFAULT CHARSET='utf8'";
 		return "CREATE TABLE $name ($data) $ctes";
 	}
@@ -80,7 +89,7 @@ class MySQL extends DBEngine {
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
 
-	public function create_table_sql($name, $data) {
+	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "INET", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'t'", $data);
@@ -88,6 +97,11 @@ class PostgreSQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL", "BOOL", $data);
 		$data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
 		$data = str_replace("SCORE_NOW", "current_time", $data);
+		return $data;
+	}
+
+	public function create_table_sql($name, $data) {
+		$data = $this->scoreql_to_sql($data);
 		return "CREATE TABLE $name ($data)";
 	}
 }
