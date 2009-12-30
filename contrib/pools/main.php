@@ -58,7 +58,7 @@ class Pools extends SimpleExtension {
 		$sb->add_int_option("poolsListsPerPage", "<br>Index list items per page: ");
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
-		$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
+		//$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
 		$event->panel->add_block($sb);
 	}
 
