@@ -32,11 +32,16 @@ class Featured extends SimpleExtension {
 	}
 
 	public function onPostListBuilding($event) {
-		global $config, $page;
+		global $config, $page, $user;
 		$fid = $config->get_int("featured_id");
 		if($fid > 0) {
 			$image = Image::by_id($fid);
 			if(!is_null($image)) {
+				if(class_exists("Ratings")) {
+					if(strpos(Ratings::get_user_privs($user), $image->rating) === FALSE) {
+						return;
+					}
+				}
 				$this->theme->display_featured($page, $image);
 			}
 		}
