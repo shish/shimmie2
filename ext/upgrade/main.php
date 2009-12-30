@@ -18,9 +18,20 @@ class Upgrade implements Extension {
 			// cry :S
 		}
 
-		if($config->get_int("db_version") < 6) { // 7
-			// add column image->locked
+		if($config->get_int("db_version") < 7) {
+			if($database->engine->name == "mysql") {
+				$tables = $database->db->MetaTables();
+				foreach($tables as $table) {
+					log_info("upgrade", "converting $table to innodb");
+					$database->execute("ALTER TABLE $table TYPE=INNODB");
+				}
+			}
+			$config->set_int("db_version", 7);
+			log_info("Database at version 7");
 		}
+
+		// TODO:
+		// add column image->locked
 	}
 }
 add_event_listener(new Upgrade(), 5);
