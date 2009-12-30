@@ -19,6 +19,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
 		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto):\/\/.*?)\[\/url\]/s", "<a href=\"\\1\">\\1</a>", $text);
+		$text = preg_replace("/\[email\](.*?)\[\/email\]/s", "<a href=\"mailto:\\1\">\\1</a>", $text);
 		$text = preg_replace("/\[img\](https?:\/\/.*?)\[\/img\]/s", "<img src=\"\\1\">", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\2</a>", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\1</a>", $text);
@@ -60,6 +61,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "\\1", $text);
 		$text = preg_replace("/\[url=(.*?)\](.*?)\[\/url\]/s", "\\2", $text);
 		$text = preg_replace("/\[url\](.*?)\[\/url\]/s", "\\1", $text);
+		$text = preg_replace("/\[email\](.*?)\[\/email\]/s", "\\1", $text);
 		$text = preg_replace("/\[img\](.*?)\[\/img\]/s", "", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "\\2", $text);
 		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "\\1", $text);
