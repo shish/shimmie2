@@ -1,9 +1,9 @@
 <?php
 /**
- * Name: [Beta] Pools System
+ * Name: Pools System
  * Author: Sein Kraft <mail@seinkraft.info>
  * License: GPLv2
- * Description: Simple pools extension
+ * Description: Allow users to create groups of images
  * Documentation:
  */
 
