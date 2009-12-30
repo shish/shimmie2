@@ -102,9 +102,14 @@ class Layout {
 		$custom_links .= "<li><a href='".make_link('post/list')."'>Posts</a></li>";
 		$custom_links .= "<li><a href='".make_link('comment/list')."'>Comments</a></li>";
 		$custom_links .= "<li><a href='".make_link('tags')."'>Tags</a></li>";
+		if(class_exists("Pools")) {
+			$custom_links .= "<li><a href='".make_link('pool/list')."'>Pools</a></li>";
+		}
 		$custom_links .= "<li><a href='".make_link('upload')."'>Upload</a></li>";
-		$custom_links .= "<li><a href='".make_link('wiki')."'>Wiki</a></li>";
-		$custom_links .= "<li><a href='".make_link('wiki/more')."'>More &raquo;</a></li>";
+		if(class_exists("Wiki")) {
+			$custom_links .= "<li><a href='".make_link('wiki')."'>Wiki</a></li>";
+			$custom_links .= "<li><a href='".make_link('wiki/more')."'>More &raquo;</a></li>";
+		}
 
 		$custom_sublinks = "";
 		// hack
@@ -112,6 +117,7 @@ class Layout {
 		$username = url_escape($user->name);
 		// hack
 		$qp = _get_query_parts();
+		$hw = class_exists("Wiki");
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -122,7 +128,13 @@ class Layout {
 			case "upload":
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
-				$custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				break;
+			case "pool":
+				$custom_sublinks .= "<li><a href='".make_link('pool/list')."'>List</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("pool/new")."'>Create</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("pool/updated")."'>Changes</a></li>";
+				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/pools")."'>Help</a></li>";
 				break;
 			case "wiki":
 				$custom_sublinks .= "<li><a href='".make_link('wiki')."'>Index</a></li>";
@@ -135,7 +147,7 @@ class Layout {
 				$custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('tags/categories')."'>Categories</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Aliases</a></li>";
-				$custom_sublinks .= "<li><a href='".make_link("wiki/tags")."'>Help</a></li>";
+				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/tags")."'>Help</a></li>";
 				break;
 		}
 
