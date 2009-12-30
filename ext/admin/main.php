@@ -57,6 +57,10 @@ class AdminPage implements Extension {
 						$this->purge_unused_tags();
 						$redirect = true;
 						break;
+					case 'convert to innodb':
+						$this->convert_to_innodb();
+						$redirect = true;
+						break;
 					case 'database dump':
 						$this->dbdump($page);
 						break;
@@ -139,6 +143,17 @@ class AdminPage implements Extension {
 				if(!$this->db_has_hash($hash)) {
 					$orphans[] = $hash;
 				}
+			}
+		}
+	}
+
+	private function convert_to_innodb() {
+		global $database;
+		if($database->engine->name == "mysql") {
+			$tables = $database->db->MetaTables();
+			foreach($tables as $table) {
+				log_info("upgrade", "converting $table to innodb");
+				$database->execute("ALTER TABLE $table TYPE=INNODB");
 			}
 		}
 	}
