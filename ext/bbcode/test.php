@@ -62,6 +62,12 @@ class BBCodeUnitTest extends UnitTestCase {
 			"[url=javascript:alert(&quot;owned&quot;)]click to fail[/url]");
 	}
 
+	public function testURL() {
+		$this->assertEqual(
+			$this->filter("[email]spam@shishnet.org[/email]"),
+			"<a href=\"mailto:spam@shishnet.org\">spam@shishnet.org</a>");
+	}
+
 	private function filter($in) {
 		$bb = new BBCode();
 		$tfe = new TextFormattingEvent($in);
