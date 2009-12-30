@@ -233,7 +233,7 @@ function create_tables($dsn) { // {{{
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		"));
-		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 7)");
+		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 8)");
 	}
 	$db->Close();
 } // }}}
