@@ -45,6 +45,7 @@ class Pools extends SimpleExtension {
 			$config->set_int("poolsListsPerPage", 20);
 			$config->set_int("poolsUpdatedPerPage", 20);
 			$config->set_bool("poolsInfoOnViewImage", "N");
+			$config->set_bool("poolsAdderOnViewImage", "N");
 
 			log_info("pools", "extension installed");
 		}
@@ -57,6 +58,7 @@ class Pools extends SimpleExtension {
 		$sb->add_int_option("poolsListsPerPage", "<br>Index list items per page: ");
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
+		$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -79,7 +81,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "create": // ADD _POST
-					if(!$user->is_anonymous()){
+					if(!$user->is_anonymous()) {
 						$newPoolID = $this->add_pool();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$newPoolID));
@@ -121,48 +123,34 @@ class Pools extends SimpleExtension {
 					}
 					break;
 
-				case "edit_pool":
-					$poolID = int_escape($_POST["pool_id"]);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/edit/".$poolID));
-					break;
-
-				/*
 				case "order":
-					$poolID = int_escape($event->get_arg(1));
-					$pools = $this->get_pool($poolID);
+					if($_SERVER["REQUEST_METHOD"] == "GET") {
+						$poolID = int_escape($event->get_arg(1));
+						$pools = $this->get_pool($poolID);
 
-					foreach($pools as $pool) {
-						//if the pool is public and user is logged OR if the user is admin
-						if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
-							$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
-						} else {
-							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID));
+						foreach($pools as $pool) {
+							//if the pool is public and user is logged OR if the user is admin
+							if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+								$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
+							} else {
+								$page->set_mode("redirect");
+								$page->set_redirect(make_link("pool/view/".$poolID));
+							}
 						}
-					}				
-					break;
+					}
+					else {
+						$pool_id = int_escape($_POST["pool_id"]);
+						$pool = $this->get_single_pool($pool_id);
 
-				case "edit_order":
-					$poolID = int_escape($_POST["pool_id"]);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/order/".$poolID));
-					break;
-
-				case "order_posts":
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
-
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
-						$this->order_posts();
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("pool/view/".$pool_id));
-					} else {
-						$this->theme->display_error("Permssion denied.");
+						if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+							$this->order_posts();
+							$page->set_mode("redirect");
+							$page->set_redirect(make_link("pool/view/".$pool_id));
+						} else {
+							$this->theme->display_error("Permssion denied.");
+						}
 					}
 					break;
-
-				*/
 
 				case "import":
 					$pool_id = int_escape($_POST["pool_id"]);
@@ -203,7 +191,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "nuke":
-					$pool_id = int_escape($event->get_arg(1));
+					$pool_id = int_escape($_POST['pool_id']);
 					$pool = $this->get_single_pool($pool_id);
 
 					// only admins and owners may do this
@@ -216,12 +204,6 @@ class Pools extends SimpleExtension {
 					}
 					break;
 
-				case "nuke_pool":
-					$poolID = int_escape($_POST["pool_id"]);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("pool/nuke/".$poolID));
-					break;
-
 				default:
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("pool/list"));
@@ -230,12 +212,16 @@ class Pools extends SimpleExtension {
 		}
 	}
 
+	public function onUserBlockBuilding($event) {
+		$event->add_link("Pools", make_link("pool/list"));
+	}
+
 
 	/*
 	 * HERE WE GET THE POOLS WHERE THE IMAGE APPEARS WHEN THE IMAGE IS DISPLAYED
 	 */
 	public function onDisplayingImage($event) {
-		global $config, $page;
+		global $config, $database, $page;
 
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
@@ -245,11 +231,24 @@ class Pools extends SimpleExtension {
 			foreach($poolsIDs as $poolID) {
 				$pools = $this->get_pool($poolID['pool_id']);
 				foreach ($pools as $pool){
-					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".$pool['title']."</a>";
+					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
 				}
 			}
-			if(count($linksPools) > 0) {
-				$this->theme->pool_info(implode($linksPools));
+			$this->theme->pool_info($linksPools);
+		}
+	}
+
+	public function onImageAdminBlockBuilding($event) {
+		global $config, $database, $user;
+		if($config->get_bool("poolsAdderOnViewImage") && !$user->is_anonymous()) {
+			if($user->is_admin()) {
+				$pools = $database->get_all("SELECT * FROM pools");
+			}
+			else {
+				$pools = $database->get_all("SELECT * FROM pools WHERE user_id=?", array($user->id));
+			}
+			if(count($pools) > 0) {
+				$event->add_part($this->theme->get_adder_html($event->image, $pools));
 			}
 		}
 	}
@@ -442,18 +441,9 @@ class Pools extends SimpleExtension {
 
 		$imagesPerPage = $config->get_int("poolsImagesPerPage");
 
-		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WICH VERSION AND IF IT WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER							 
-		if(!class_exists("Ratings") || $config->get_int("ext_ratings2_version") < 3) {
-			$result = $database->get_all("
-					SELECT image_id
-					FROM pool_images
-					WHERE pool_id=?
-					ORDER BY image_order ASC
-					LIMIT ?, ?",
-					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
-			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?",array($poolID)) / $imagesPerPage);
-		}
-		else if(class_exists("Ratings") && $config->get_int("ext_ratings2_version") >= 3) {
+		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
+		// WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
+		if(class_exists("Ratings")) {
 			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 
 			$result = $database->get_all("
@@ -472,11 +462,20 @@ class Pools extends SimpleExtension {
 					WHERE pool_id=? AND i.rating IN ($rating)",
 					array($poolID)) / $imagesPerPage);
 		}
+		else {
+			$result = $database->get_all("
+					SELECT image_id
+					FROM pool_images
+					WHERE pool_id=?
+					ORDER BY image_order ASC
+					LIMIT ?, ?",
+					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
+		}
 
 		$images = array();
 		foreach($result as $singleResult) {
-			$image = Image::by_id($singleResult["image_id"]);
-			$images[] = array($image);
+			$images[] = Image::by_id($singleResult["image_id"]);
 		}
 
 		$pool = $this->get_pool($poolID);
