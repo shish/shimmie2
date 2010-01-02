@@ -10,7 +10,7 @@ class FeaturedTheme extends Themelet {
 
 	public function get_buttons_html($image_id) {
 		return "
-			<form action='".make_link("set_feature")."' method='POST'>
+			<form action='".make_link("featured_image/set")."' method='POST'>
 			<input type='hidden' name='image_id' value='$image_id'>
 			<input type='submit' value='Feature This'>
 			</form>
