@@ -66,15 +66,18 @@ font-size:1.4em;
 h5 {
 font-size:1.2em;
 }
+table.zebra {border-collapse: collapse;border-spacing: 0;}
+table.zebra > tbody > tr:hover {background: #FFD;}
+table.zebra th {color: #171BB3; padding-right: 8px;}
+table.zebra td {border: 1px dotted #EEE;margin: 0;padding-right: 8px;}
+table.zebra th {margin: 0;text-align: left;}
 thead {
 -moz-background-clip:border;
 -moz-background-inline-policy:continuous;
 -moz-background-origin:padding;
-background:#DEDEDE none repeat scroll 0 0;
 font-weight:bold;
 }
 td {
-text-align:center;
 vertical-align:top;
 }
 #subtitle {

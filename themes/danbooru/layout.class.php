@@ -44,7 +44,7 @@ Tips
 
 class Layout {
 	public function display_page($page) {
-		global $config;
+		global $config, $user;
 
 		$theme_name = $config->get_string('theme');
 		$base_href = $config->get_string('base_href');
@@ -98,7 +98,12 @@ class Layout {
 
 		// bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
 		$custom_links = "";
-		$custom_links .= "<li><a href='".make_link('user')."'>My Account</a></li>";
+		if($user->is_anonymous()) {
+			$custom_links .= "<li><a href='".make_link('user_admin/login')."'>My Account</a></li>";
+		}
+		else {
+			$custom_links .= "<li><a href='".make_link('user')."'>My Account</a></li>";
+		}
 		$custom_links .= "<li><a href='".make_link('post/list')."'>Posts</a></li>";
 		$custom_links .= "<li><a href='".make_link('comment/list')."'>Comments</a></li>";
 		$custom_links .= "<li><a href='".make_link('tags')."'>Tags</a></li>";
