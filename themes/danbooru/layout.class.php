@@ -60,6 +60,7 @@ class Layout {
 		$left_block_html = "";
 		$user_block_html = "";
 		$main_block_html = "";
+		$sub_block_html = "";
 
 		foreach($page->blocks as $block) {
 			switch($block->section) {
@@ -68,6 +69,9 @@ class Layout {
 					break;
 				case "user":
 					$user_block_html .= $block->body; // $this->block_to_html($block, true);
+					break;
+				case "subheading":
+					$sub_block_html .= $block->body; // $this->block_to_html($block, true);
 					break;
 				case "main":
 					if($block->header == "Images") {
@@ -195,6 +199,7 @@ $header_html
 		</ul>
 		</div>
 		$subheading
+		$sub_block_html
 		
 		$left
 		<div id="body" class="$withleft">$main_block_html</div>
