@@ -55,8 +55,8 @@ define("DEBUG", true);
 define("COVERAGE", true);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
-define("SCORE_VERSION", 's2hack');
 define("VERSION", 'trunk');
+define("SCORE_VERSION", 's2hack/'.VERSION);
 define("COOKIE_PREFIX", 'shm');
 
 if(!file_exists("config.php")) {

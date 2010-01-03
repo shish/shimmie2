@@ -12,7 +12,6 @@ class Layout {
 		$theme_name = $config->get_string('theme', 'default');
 		$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
-		$version = "Shimmie-".VERSION;
 
 		$header_html = "";
 		foreach($page->headers as $line) {
@@ -70,7 +69,7 @@ $header_html
 
 		<div id="footer">
 			Images &copy; their respective owners,
-			<a href="http://code.shishnet.org/shimmie2/">$version</a> &copy;
+			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> 2007-2009,
 			based on the Danbooru concept.
 			$debug
