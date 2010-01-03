@@ -1,4 +1,7 @@
 <?php
+require_once "lib/recaptchalib.php";
+require_once "lib/securimage/securimage.php";
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -205,6 +208,60 @@ function theme_file($filepath) {
 	global $config;
 	$theme = $config->get_string("theme","default");
 	return make_link("themes/$theme/$filepath");
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
+* CAPTCHA abstraction                                                       *
+\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+function captcha_get_html() {
+	global $config, $user;
+	$captcha = "";
+	if($user->is_anonymous()) {
+		$rpk = $config->get_string("api_recaptcha_pubkey");
+		if(!empty($rpk)) {
+			$captcha = recaptcha_get_html($rpk);
+		}
+		else {
+			session_start();
+			$securimg = new Securimage();
+			$base = get_base_href();
+			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
+				"<br/>CAPTCHA: <input type='text' name='code' value='' />";
+		}
+	}
+	return $captcha;
+}
+
+function captcha_check() {
+	global $config, $user;
+
+	if($user->is_anonymous()) {
+		$rpk = $config->get_string('api_recaptcha_privkey');
+		if(!empty($rpk)) {
+			$resp = recaptcha_check_answer(
+					$rpk,
+					$_SERVER["REMOTE_ADDR"],
+					$_POST["recaptcha_challenge_field"],
+					$_POST["recaptcha_response_field"]);
+
+			if(!$resp->is_valid) {
+				log_info("core", "Captcha failed (ReCaptcha): " . $resp->error);
+				return false;
+			}
+		}
+		else {
+			session_start();
+			$securimg = new Securimage();
+			if($securimg->check($_POST['code']) == false) {
+				log_info("core", "Captcha failed (Securimage)");
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 

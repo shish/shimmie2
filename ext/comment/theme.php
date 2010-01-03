@@ -1,5 +1,4 @@
 <?php
-
 class CommentListTheme extends Themelet {
 	var $comments_shown = 0;
 
@@ -8,7 +7,7 @@ class CommentListTheme extends Themelet {
 	 * the image's comments
 	 */
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
-		global $config, $page;
+		global $config, $page, $user;
 
 		// aaaaaaargh php
 		assert(is_array($images));
@@ -52,8 +51,19 @@ class CommentListTheme extends Themelet {
 			foreach($comments as $comment) {
 				$comment_html .= $this->comment_to_html($comment);
 			}
-			if($can_post) {
-				$comment_html .= $this->build_postbox($image->id);
+			if(!$user->is_anonymous()) {
+				if($can_post) {
+					$comment_html .= $this->build_postbox($image->id);
+				}
+			} else {
+				if ($can_post) {
+					if(!$config->get_bool('comment_captcha')) {
+						$comment_html .= $this->build_postbox($image->id);
+					}
+					else {
+						$comment_html .= "<a href='".make_link("post/view/".$image->id)."'>Add Comment</a>";
+					}
+				}
 			}
 
 			$html  = "
@@ -145,20 +155,18 @@ class CommentListTheme extends Themelet {
 	}
 
 	protected function build_postbox($image_id) {
-		global $config, $user;
+		global $config;
 
 		$i_image_id = int_escape($image_id);
 		$hash = CommentList::get_hash();
+		$captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
-		$rpk = $config->get_string("api_recaptcha_pubkey");
-		$reca = (!$user->is_anonymous() || empty($rpk)) ?
-				"" : recaptcha_get_html($rpk);
 		return "
-			<form action='".make_link("comment/add")."' method='POST'>
+			<form name='comment_form' action='".make_link("comment/add")."' method='POST'>
 				<input type='hidden' name='image_id' value='$i_image_id' />
 				<input type='hidden' name='hash' value='$hash' />
 				<textarea name='comment' rows='5' cols='50'></textarea>
-				$reca
+				$captcha
 				<br><input type='submit' value='Post Comment' />
 			</form>
 		";

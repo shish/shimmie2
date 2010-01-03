@@ -2,7 +2,7 @@
 
 class CustomCommentListTheme extends CommentListTheme {
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
-		global $config, $page;
+		global $config, $page, $user;
 
 		$page->disable_left();
 
@@ -52,7 +52,17 @@ class CustomCommentListTheme extends CommentListTheme {
 				$comment_html .= $this->comment_to_html($comment);
 			}
 			if($can_post) {
-				$comment_html .= $this->build_postbox($image->id);
+				if(!$user->is_anonymous()) {
+					$comment_html .= $this->build_postbox($image->id);
+				}
+				else {
+					if(!$config->get_bool('comment_captcha')) {
+						$comment_html .= $this->build_postbox($image->id);
+					}
+					else {
+						$comment_html .= "<a href='".make_link("post/view/".$image->id)."'>Add Comment</a>";
+					}
+				}
 			}
 
 			$html  = "
