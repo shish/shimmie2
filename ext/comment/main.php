@@ -1,6 +1,5 @@
 <?php
 require_once "lib/akismet.class.php";
-require_once "lib/recaptchalib.php";
 
 class CommentPostingEvent extends Event {
 	var $image_id, $user, $comment;
@@ -53,6 +52,7 @@ class CommentList extends SimpleExtension {
 		$config->set_default_int('comment_limit', 10);
 		$config->set_default_int('comment_list_count', 10);
 		$config->set_default_int('comment_count', 5);
+		$config->set_default_bool('comment_captcha', false);
 
 		if($config->get_int("ext_comments_version") < 2) {
 			// shortcut to latest
@@ -182,6 +182,7 @@ class CommentList extends SimpleExtension {
 	public function onSetupBuilding($event) {
 		$sb = new SetupBlock("Comment Options");
 		$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
+		$sb->add_bool_option("comment_captcha", "<br>Require CAPTCHA for anonymous comments: ");
 		$sb->add_label("<br>Limit to ");
 		$sb->add_int_option("comment_limit");
 		$sb->add_label(" comments per ");
@@ -336,25 +337,6 @@ class CommentList extends SimpleExtension {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
-	private function is_spam_recaptcha($text) {
-		global $config, $user;
-
-		if(strlen($config->get_string('api_recaptcha_privkey')) > 0) {
-			$resp = recaptcha_check_answer(
-					$config->get_string('api_recaptcha_privkey'),
-					$_SERVER["REMOTE_ADDR"],
-					$_POST["recaptcha_challenge_field"],
-					$_POST["recaptcha_response_field"]);
-
-			if(!$resp->is_valid) {
-				log_info("comment", "Captcha failed: " . $resp->error);
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	private function is_spam_akismet($text) {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
@@ -430,7 +412,7 @@ class CommentList extends SimpleExtension {
 		}
 
 		// rate-limited external service checks last
-		else if($user->is_anonymous() && $this->is_spam_recaptcha($comment)) {
+		else if($config->get_bool('comment_captcha') && !captcha_check()) {
 			throw new CommentPostingException("Error in captcha");
 		}
 		else if($user->is_anonymous() && $this->is_spam_akismet($comment)) {
