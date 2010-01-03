@@ -228,18 +228,20 @@ class Setup extends SimpleExtension {
 			checkbox.disabled = true;
 			out_span.innerHTML = '(testing...)';
 
-			http_request = getHTTPObject();
-			http_request.open('GET', '$test_url', false);
-			http_request.send(null);
+			$(document).ready(function() {
+				http_request = getHTTPObject();
+				http_request.open('GET', '$test_url', false);
+				http_request.send(null);
 
-			if(http_request.status == 200 && http_request.responseText == 'ok') {
-				checkbox.disabled = false;
-				out_span.innerHTML = '(tested ok)';
-			}
-			else {
-				checkbox.disabled = true;
-				out_span.innerHTML = '(test failed)';
-			}
+				if(http_request.status == 200 && http_request.responseText == 'ok') {
+					checkbox.disabled = false;
+					out_span.innerHTML = '(tested ok)';
+				}
+				else {
+					checkbox.disabled = true;
+					out_span.innerHTML = '(test failed)';
+				}
+			});
 		</script>";
 		$sb = new SetupBlock("General");
 		$sb->position = 0;
