@@ -150,6 +150,13 @@ content:"More Å‚";
 .comment {
 margin-bottom:8px;
 }
+.comment .meta {
+width: 150px;
+color: gray;
+}
+.comment TD {
+text-align: left;
+}
 .withleft {
 margin-left:160px;
 }

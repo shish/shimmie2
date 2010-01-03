@@ -144,6 +144,15 @@ class Ratings implements Extension {
 		return $set;
 	}
 
+	public static function rating_to_human($rating) {
+		switch($rating) {
+			case "s": return "Safe";
+			case "q": return "Questionable";
+			case "e": return "Explicit";
+			default:  return "Unknown";
+		}
+	}
+
 	// FIXME: this is a bit ugly and guessey, should have proper options
 	private function can_rate() {
 		global $config, $user;

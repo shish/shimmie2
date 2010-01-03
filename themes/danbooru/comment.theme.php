@@ -40,7 +40,8 @@ class CustomCommentListTheme extends CommentListTheme {
 			}
 			$p = autodate($image->posted);
 
-			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un<br><b>Tags</b> $t<p>&nbsp;";
+			$r = class_exists("Ratings") ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
+			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 			$comment_limit = $config->get_int("comment_list_count", 10);
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
@@ -103,12 +104,12 @@ class CustomCommentListTheme extends CommentListTheme {
 			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
 		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		if($trim) {
-			return "<p class='comment'>$h_userlink $h_dellink<br/><b>Posted $h_posted</b><br/>$h_comment</p>";
+			return "<p class='comment'>$h_userlink $h_dellink<br/>$h_posted<br/>$h_comment</p>";
 		}
 		else {
 			return "
 				<table class='comment'><tr>
-					<td style='width: 150px;'>$h_userlink<br/><b>Posted $h_posted</b>$h_dellink</td>
+					<td class='meta'>$h_userlink<br/>$h_posted$h_dellink</td>
 					<td>$h_comment</td>
 				</tr></table>
 			";
