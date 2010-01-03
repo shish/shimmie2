@@ -2,15 +2,36 @@
 
 class CustomUserPageTheme extends UserPageTheme {
 	public function display_login_page($page) {
+		global $config;
 		$page->set_title("Login");
 		$page->set_heading("Login");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Login There",
-			"There should be a login box to the left"));
+		$page->disable_left();
+		$html = "
+			<form action='".make_link("user_admin/login")."' method='POST'>
+				<table summary='Login Form'>
+					<tr>
+						<td width='70'><label for='user'>Name</label></td>
+						<td width='70'><input id='user' type='text' name='user'></td>
+					</tr>
+					<tr>
+						<td><label for='pass'>Password</label></td>
+						<td><input id='pass' type='password' name='pass'></td>
+					</tr>
+					<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
+				</table>
+			</form>
+		";
+		if($config->get_bool("login_signup_enabled")) {
+			$html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
+		}
+		$page->add_block(new Block("Login", $html, "main", 90));
 	}
 
 	public function display_user_links($page, $user, $parts) {
-	//	$page->add_block(new Block("User Links", join("<br>", $parts), "left", 10));
+		// no block in this theme
+	}
+	public function display_login_block(Page $page) {
+		// no block in this theme
 	}
 
 	public function display_user_block($page, $user, $parts) {
@@ -49,7 +70,7 @@ class CustomUserPageTheme extends UserPageTheme {
 
 		$page->set_title("Create Account");
 		$page->set_heading("Create Account");
-		$page->add_block(new NavBlock());
+		$page->disable_left();
 		$page->add_block(new Block("Signup", $html));
 	}
 
