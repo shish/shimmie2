@@ -142,6 +142,7 @@ class Layout {
 				$custom_sublinks .= "<li><a href='".make_link("wiki/wiki")."'>Help</a></li>";
 				break;
 			case "tags":
+			case "alias":
 				$custom_sublinks .= "<li><a href='".make_link('tags/map')."'>Map</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('tags/alphabetic')."'>Alphabetic</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
