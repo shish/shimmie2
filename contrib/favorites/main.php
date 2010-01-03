@@ -16,7 +16,10 @@
 class FavoriteSetEvent extends Event {
 	var $image_id, $user, $do_set;
 
-	public function FavoriteSetEvent($image_id, $user, $do_set) {
+	public function FavoriteSetEvent($image_id, User $user, $do_set) {
+		assert(is_numeric($image_id));
+		assert(is_bool($do_set));
+
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->do_set = $do_set;
