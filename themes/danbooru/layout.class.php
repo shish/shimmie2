@@ -131,6 +131,12 @@ class Layout {
 			default:
 				$custom_sublinks .= $user_block_html;
 				break;
+			case "":
+				# FIXME: this assumes that the front page is
+				# post/list; in 99% of case it will either be
+				# post/list or home, and in the latter case
+				# the subnav links aren't shown, but it would
+				# be nice to be correct
 			case "post":
 			case "comment":
 			case "upload":
