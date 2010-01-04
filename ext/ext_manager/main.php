@@ -14,8 +14,8 @@ class ExtensionInfo {
 	function ExtensionInfo($main) {
 		$matches = array();
 		$lines = file($main);
-		preg_match("#contrib/(.*)/main.php#", $main, $matches);
-		$this->ext_name = $matches[1];
+		preg_match("#(ext|contrib)/(.*)/main.php#", $main, $matches);
+		$this->ext_name = $matches[2];
 		$this->name = $this->ext_name;
 		$this->enabled = $this->is_enabled($this->ext_name);
 
@@ -96,7 +96,12 @@ class ExtManager extends SimpleExtension {
 
 		if($event->page_matches("ext_doc")) {
 			$ext = $event->get_arg(0);
-			$info = new ExtensionInfo("contrib/$ext/main.php");
+			if(file_exists("ext/$ext/main.php")) {
+				$info = new ExtensionInfo("ext/$ext/main.php");
+			}
+			else {
+				$info = new ExtensionInfo("contrib/$ext/main.php");
+			}
 			$this->theme->display_doc($page, $info);
 		}
 	}
