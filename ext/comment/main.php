@@ -2,7 +2,7 @@
 /**
  * Name: Image Comments
  * Author: Shish <webmaster@shishnet.org>
- * Link: http://trac.shishnet.org/shimmie2/
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allow users to make comments on images
  * Documentation:
