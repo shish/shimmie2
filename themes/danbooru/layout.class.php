@@ -141,22 +141,22 @@ class Layout {
 			case "upload":
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
-				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("ext_doc/index")."'>Help</a></li>";
 				break;
 			case "comment":
 				$custom_sublinks .= "<li><a href='".make_link('comment/list')."'>All</a></li>";
-				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/comment")."'>Help</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("ext_doc/comment")."'>Help</a></li>";
 				break;
 			case "pool":
 				$custom_sublinks .= "<li><a href='".make_link('pool/list')."'>List</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("pool/new")."'>Create</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("pool/updated")."'>Changes</a></li>";
-				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/pools")."'>Help</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("ext_doc/pools")."'>Help</a></li>";
 				break;
 			case "wiki":
 				$custom_sublinks .= "<li><a href='".make_link('wiki')."'>Index</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("wiki/rules")."'>Rules</a></li>";
-				$custom_sublinks .= "<li><a href='".make_link("wiki/wiki")."'>Help</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("ext_doc/wiki")."'>Help</a></li>";
 				break;
 			case "tags":
 			case "alias":
@@ -165,7 +165,7 @@ class Layout {
 				$custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('tags/categories')."'>Categories</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Aliases</a></li>";
-				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/tags")."'>Help</a></li>";
+				$custom_sublinks .= "<li><a href='".make_link("ext_doc/tag_edit")."'>Help</a></li>";
 				break;
 		}
 
