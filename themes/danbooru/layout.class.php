@@ -138,11 +138,14 @@ class Layout {
 				# the subnav links aren't shown, but it would
 				# be nice to be correct
 			case "post":
-			case "comment":
 			case "upload":
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
 				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				break;
+			case "comment":
+				$custom_sublinks .= "<li><a href='".make_link('comment/list')."'>All</a></li>";
+				if($hw) $custom_sublinks .= "<li><a href='".make_link("wiki/comment")."'>Help</a></li>";
 				break;
 			case "pool":
 				$custom_sublinks .= "<li><a href='".make_link('pool/list')."'>List</a></li>";
