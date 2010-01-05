@@ -43,14 +43,17 @@ class LogDatabase extends SimpleExtension {
 		global $database, $user;
 		if($event->page_matches("log/view")) {
 			if($user->is_admin()) {
-				$events = $database->get_all("SELECT * FROM score_log");
+				$events = $database->get_all("SELECT * FROM score_log ORDER BY id DESC LIMIT 50");
 				$this->theme->display_events($events);
 			}
 		}
 	}
 
 	public function onUserBlockBuilding($event) {
-		$event->add_link("Event Log", make_link("log/view"));
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Event Log", make_link("log/view"));
+		}
 	}
 
 	public function onLog($event) {
