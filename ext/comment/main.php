@@ -6,8 +6,7 @@
  * License: GPLv2
  * Description: Allow users to make comments on images
  * Documentation:
- *  Formatting is done with BBCode, as interpreted by the
- *  BBCode extension
+ *  Formatting is done with the standard formatting API (normally BBCode)
  */
 
 require_once "lib/akismet.class.php";

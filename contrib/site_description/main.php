@@ -3,6 +3,7 @@
  * Name: Site Description
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
+ * Visibility: admin
  * Description: A description for search engines
  * Documentation:
  *  This extension sets the "description" meta tag in the header

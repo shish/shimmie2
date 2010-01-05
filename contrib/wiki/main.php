@@ -4,6 +4,8 @@
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: A simple wiki, for those who don't want the hugeness of mediawiki
+ * Documentation:
+ *  Standard formatting APIs are used (This will be BBCode by default)
  */
 
 class WikiUpdateEvent extends Event {

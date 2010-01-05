@@ -6,8 +6,8 @@
  * License: GPLv2
  * Description: Edit the alias list
  * Documentation:
- *  The list is visible at $site/alias/list; only site admins can edit it,
- *  other people can view and download it
+ *  The list is visible at <a href="$site/alias/list">/alias/list</a>; only
+ *  site admins can edit it, other people can view and download it
  */
 
 class AddAliasEvent extends Event {
