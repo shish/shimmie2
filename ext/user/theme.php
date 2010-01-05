@@ -41,9 +41,11 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$tac = $config->get_string("login_tac", "");
 
-		$tfe = new TextFormattingEvent($tac);
-		send_event($tfe);
-		$tac = $tfe->formatted;
+		if($config->get_bool("login_tac_bbcode")) {
+			$tfe = new TextFormattingEvent($tac);
+			send_event($tfe);
+			$tac = $tfe->formatted;
+		}
 
 		if(empty($tac)) {$html = "";}
 		else {$html = "<p>$tac</p>";}

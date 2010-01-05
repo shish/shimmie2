@@ -51,6 +51,7 @@ class UserPage extends SimpleExtension {
 		$config->set_default_int("login_memory", 365);
 		$config->set_default_string("avatar_host", "gravatar");
 		$config->set_default_string("avatar_gravatar_options", "");
+		$config->set_default_bool("login_tac_bbcode", true);
 	}
 
 	public function onPageRequest(Event $event) {
