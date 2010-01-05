@@ -3,6 +3,7 @@
  * Name: Logging (Database)
  * Author: Shish
  * Description: Keep a record of SCore events
+ * Visibility: admin
  */
 
 class LogDatabase extends SimpleExtension {

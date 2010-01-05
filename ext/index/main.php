@@ -1,6 +1,6 @@
 <?php
 /**
- * Name: Post Index
+ * Name: Image List
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2

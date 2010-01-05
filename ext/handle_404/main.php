@@ -4,6 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
+ * Visibility: admin
  * Description: Shows an error message when the user views a page with no content
  */
 

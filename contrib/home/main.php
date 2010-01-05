@@ -3,6 +3,7 @@
 * Name: Home Page
 * Author: Bzchan <bzchan@animemahou.com>
 * License: GPLv2
+* Visibility: admin
 * Description: Displays a front page with logo, search box and image count
 * Documentation:
 *  Once enabled, the page will show up at the URL "home", so if you want

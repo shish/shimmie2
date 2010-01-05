@@ -18,6 +18,8 @@ class ExtManagerTheme extends Themelet {
 		";
 		$n = 0;
 		foreach($extensions as $extension) {
+			if(!$editable && $extension->visibility == "admin") continue;
+
 			$ext_name = $extension->ext_name;
 			$h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
 			$h_description = html_escape($extension->description);

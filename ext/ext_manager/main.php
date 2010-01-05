@@ -4,6 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
+ * Visibility: admin
  * Description: A thing for point & click extension management
  * Documentation:
  *   Allows the admin to view a list of all extensions and enable or
@@ -18,7 +19,8 @@ function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
 
 /** @private */
 class ExtensionInfo {
-	var $ext_name, $name, $link, $author, $email, $description, $documentation, $version;
+	var $ext_name, $name, $link, $author, $email;
+	var $description, $documentation, $version, $visibility;
 
 	function ExtensionInfo($main) {
 		$matches = array();
@@ -32,6 +34,9 @@ class ExtensionInfo {
 			$line = $lines[$i];
 			if(preg_match("/Name: (.*)/", $line, $matches)) {
 				$this->name = $matches[1];
+			}
+			if(preg_match("/Visibility: (.*)/", $line, $matches)) {
+				$this->visibility = $matches[1];
 			}
 			if(preg_match("/Link: (.*)/", $line, $matches)) {
 				$this->link = $matches[1];
@@ -66,6 +71,7 @@ class ExtensionInfo {
 					$this->documentation .= " ".substr($lines[$i+1], $start_len);
 					$i++;
 				}
+				$this->documentation = str_replace('$site', make_http(get_base_href()), $this->documentation);
 			}
 			if(preg_match("/\*\//", $line, $matches)) {
 				break;

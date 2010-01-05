@@ -3,6 +3,7 @@
  * Name: Database Upgrader
  * Author: Shish
  * Description: Keeps things happy behind the scenes
+ * Visibility: admin
  */
 
 class Upgrade implements Extension {
