@@ -86,11 +86,11 @@ class ExtManager extends SimpleExtension {
 					}
 				}
 				else {
-					$this->theme->display_table($page, $this->get_extensions());
+					$this->theme->display_table($page, $this->get_extensions(true), true);
 				}
 			}
 			else {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_table($page, $this->get_extensions(false), false);
 			}
 		}
 
@@ -111,12 +111,16 @@ class ExtManager extends SimpleExtension {
 		if($user->is_admin()) {
 			$event->add_link("Extension Manager", make_link("ext_manager"));
 		}
+		else {
+			$event->add_link("Help", make_link("ext_manager"));
+		}
 	}
 
 
-	private function get_extensions() {
+	private function get_extensions($all) {
 		$extensions = array();
-		foreach(glob("contrib/*/main.php") as $main) {
+		$exts = $all ? glob("contrib/*/main.php") : glob("ext/*/main.php");
+		foreach($exts as $main) {
 			$extensions[] = new ExtensionInfo($main);
 		}
 		return $extensions;
