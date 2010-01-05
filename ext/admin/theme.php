@@ -11,22 +11,6 @@ class AdminPageTheme extends Themelet {
 	}
 
 	/*
-	 * Display a link to delete an image
-	 *
-	 * $image_id = the image to delete
-	 */
-	public function get_deleter_html($image_id) {
-		$i_image_id = int_escape($image_id);
-		$html = "
-			<form action='".make_link("admin/delete_image")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id'>
-				<input type='submit' value='Delete'>
-			</form>
-		";
-		return $html;
-	}
-
-	/*
 	 * Show a form which links to admin_utils with POST[action] set to one of:
 	 *  'lowercase all tags'
 	 *  'recount tag use'

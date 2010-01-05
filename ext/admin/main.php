@@ -47,20 +47,7 @@ class AdminPage implements Extension {
 				$this->theme->display_permission_denied($page);
 			}
 			else {
-				if($event->get_arg(0) == "delete_image") {
-					// FIXME: missing lots of else {complain}
-					if(isset($_POST['image_id'])) {
-						$image = Image::by_id($_POST['image_id']);
-						if($image) {
-							send_event(new ImageDeletionEvent($image));
-							$page->set_mode("redirect");
-							$page->set_redirect(make_link("post/list"));
-						}
-					}
-				}
-				else {
-					send_event(new AdminBuildingEvent($page));
-				}
+				send_event(new AdminBuildingEvent($page));
 			}
 		}
 
@@ -96,12 +83,6 @@ class AdminPage implements Extension {
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("admin"));
 				}
-			}
-		}
-
-		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_part($this->theme->get_deleter_html($event->image->id));
 			}
 		}
 

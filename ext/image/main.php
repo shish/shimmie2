@@ -115,6 +115,24 @@ class ImageIO extends SimpleExtension {
 				$this->send_file($num, "thumb");
 			}
 		}
+		if($event->page_matches("image_admin/delete")) {
+			global $page, $user;
+			if($user->is_admin() && isset($_POST['image_id'])) {
+				$image = Image::by_id($_POST['image_id']);
+				if($image) {
+					send_event(new ImageDeletionEvent($image));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/list"));
+				}
+			}
+		}
+	}
+
+	public function onImageAdminBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_part($this->theme->get_deleter_html($event->image->id));
+		}
 	}
 
 	public function onImageAddition($event) {
