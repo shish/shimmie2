@@ -5,6 +5,10 @@
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: A thing for point & click extension management
+ * Documentation:
+ *   Allows the admin to view a list of all extensions and enable or
+ *   disable them; also allows users to view the list of activated
+ *   extensions and read their documentation
  */
 
 /** @private */

@@ -1,4 +1,9 @@
 <?php
+/*
+ * Name: Database Upgrader
+ * Author: Shish
+ * Description: Keeps things happy behind the scenes
+ */
 
 class Upgrade implements Extension {
 	public function receive_event(Event $event) {

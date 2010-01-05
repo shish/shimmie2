@@ -1,5 +1,11 @@
 <?php
 /*
+ * Name: Uploader
+ * Author: Shish
+ * Description: Allows people to upload files to the website
+ */
+
+/*
  * DataUploadEvent:
  *   $user     -- the user uploading the data
  *   $tmpname  -- the temporary file used for upload

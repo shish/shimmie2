@@ -1,5 +1,11 @@
 <?php
 /*
+ * Name: Tag Editor
+ * Author: Shish
+ * Description: Allow images to have tags assigned to them
+ */
+
+/*
  * SourceSetEvent:
  *   $image_id
  *   $source

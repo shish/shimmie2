@@ -1,5 +1,31 @@
 <?php
 /**
+ * Name: Admin Controls
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
+ * License: GPLv2
+ * Description: Various things to make admins' lives easier
+ * Documentation:
+ *  <p>Lowercase all tags:
+ *  <br>Set all tags to lowercase for consistency
+ *  <p>Recount tag use:
+ *  <br>If the counts of images per tag get messed up somehow, this will reset them
+ *  <p>Purge unused tags:
+ *  <br>Get rid of all the tags that don't have any images associated with
+ *  them (normally they were created as typos or spam); this is mostly for
+ *  neatness, the performance gain is tiny...
+ *  <p>Convert to InnoDB:
+ *  <br>Convert your database tables to InnoDB, thus allowing shimmie to
+ *  take advantage of useful InnoDB-only features (this should be done
+ *  automatically, this button only exists as a backup). This only applies
+ *  to MySQL -- all other databases come with useful features enabled
+ *  as standard.
+ *  <p>Database dump:
+ *  <br>Download the contents of the database in plain text format, useful
+ *  for backups.
+ */
+
+/**
  * Sent when the admin page is ready to be added to
  */
 class AdminBuildingEvent extends Event {
