@@ -287,7 +287,7 @@ class Setup extends SimpleExtension {
 				}
 			}
 		}
-		log_info("setup", "Configuration updated");
+		log_warning("setup", "Configuration updated");
 	}
 
 	public function onUserBlockBuilding($event) {
