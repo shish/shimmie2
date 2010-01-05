@@ -1,4 +1,14 @@
 <?php
+/**
+ * Name: Alias Editor
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
+ * License: GPLv2
+ * Description: Edit the alias list
+ * Documentation:
+ *  The list is visible at $site/alias/list; only site admins can edit it,
+ *  other people can view and download it
+ */
 
 class AddAliasEvent extends Event {
 	var $oldtag;

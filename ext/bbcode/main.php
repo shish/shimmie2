@@ -1,4 +1,27 @@
 <?php
+/**
+ * Name: BBCode
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
+ * License: GPLv2
+ * Description: Turns BBCode into HTML
+ * Documentation:
+ *  Supported tags:
+ *  <ul>
+ *    <li>[img]url[/img]
+ *    <li>[url]<a href="http://code.shishnet.org/shimmie2/">http://code.shishnet.org/</a>[/url]
+ *    <li>[email]<a href="mailto:webmaster@shishnet.org">webmaster@shishnet.org</a>[/email]
+ *    <li>[b]<b>bold</b>[/b]
+ *    <li>[i]<i>italic</i>[/i]
+ *    <li>[u]<u>underline</u>[/u]
+ *    <li>[s]<s>strikethrough</s>[/s]
+ *    <li>[[wiki article]]
+ *    <li>[[wiki article|with some text]]
+ *    <li>[quote]text[/quote]
+ *    <li>[quote=Username]text[/quote]
+ *    <li>&gt;&gt;123 (link to image #123)
+ *  </ul>
+ */
 
 class BBCode extends FormatterExtension {
 	public function format($text) {

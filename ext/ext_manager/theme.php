@@ -121,7 +121,10 @@ class ExtManagerTheme extends Themelet {
 			<div style='margin: auto; text-align: left; width: 512px;'>
 				$author
 				$version
+				$link
 				<p>$doc
+				<hr>
+				<p><a href='".make_link("ext_manager")."'>Back to the list</a>
 			</div>";
 
 		$page->set_title("Documentation for ".html_escape($info->name));

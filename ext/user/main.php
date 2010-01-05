@@ -1,4 +1,10 @@
 <?php
+/*
+ * Name: User Management
+ * Author: Shish
+ * Description: Allows people to sign up to the website
+ */
+
 require_once "lib/recaptchalib.php";
 
 class UserBlockBuildingEvent extends Event {

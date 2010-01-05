@@ -1,5 +1,11 @@
 <?php
 /*
+ * Name: Image Manager
+ * Author: Shish
+ * Description: Handle the image database
+ */
+
+/*
  * ImageAdditionEvent:
  *   $user  -- the user adding the image
  *   $image -- the image being added

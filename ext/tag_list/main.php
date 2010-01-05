@@ -1,4 +1,9 @@
 <?php
+/*
+ * Name: Tag List
+ * Author: Shish
+ * Description: Show the tags in various ways
+ */
 
 class TagList implements Extension {
 	var $theme = null;
