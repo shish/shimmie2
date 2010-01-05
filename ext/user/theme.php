@@ -48,8 +48,7 @@ class UserPageTheme extends Themelet {
 		if(empty($tac)) {$html = "";}
 		else {$html = "<p>$tac</p>";}
 
-		$rpk = $config->get_string("api_recaptcha_pubkey");
-		$reca = empty($rpk) ? "" : "<tr><td colspan='2'>".recaptcha_get_html($rpk)."</td></tr>";
+		$reca = captcha_get_html();
 
 		$html .= "
 		<form action='".make_link("user_admin/create")."' method='POST'>
