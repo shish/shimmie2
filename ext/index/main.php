@@ -207,6 +207,11 @@ class Index extends SimpleExtension {
 			$val = str_replace("*", "%", $matches[1]);
 			$event->add_querylet(new Querylet("images.posted LIKE '%$val%'"));
 		}
+		else if(preg_match("/tags(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$tags = $matches[2];
+			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) $cmp $tags)"));
+		}
 	}
 }
 ?>
