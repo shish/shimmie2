@@ -58,10 +58,36 @@
  *      <ul>
  *        <li>posted=2009-12-25 -- find images posted on the 25th December
  *      </ul>
- *   </ul>
+ *  </ul>
  *  <p>Search items can be combined to search for images which match both,
  *  or you can stick "-" in front of an item to search for things that don't
  *  match it.
+ *  <p>Some search methods provided by extensions:
+ *  <ul>
+ *    <li>Danbooru API
+ *      <ul>
+ *        <li>md5:[hash] -- same as "hash=", but the API calls it by a different name
+ *      </ul>
+ *    <li>Numeric Score
+ *      <ul>
+ *        <li>score (=, &lt;, &gt;, &lt;=, &gt;=) number -- seach by score
+ *        <li>upvoted_by=Username -- search for a user's likes
+ *        <li>downvoted_by=Username -- search for a user's dislikes
+ *      </ul>
+ *    <li>Image Rating
+ *      <ul>
+ *        <li>rating=se -- find safe and explicit images, ignore questionable and unknown
+ *      </ul>
+ *    <li>Favorites
+ *      <ul>
+ *        <li>favorites (=, &lt;, &gt;, &lt;=, &gt;=) number -- search for images favourited a certain number of times
+ *        <li>favourited_by=Username -- search for a user's choices
+ *      </ul>
+ *    <li>Notes
+ *      <ul>
+ *        <li>notes (=, &lt;, &gt;, &lt;=, &gt;=) number -- search by the number of notes an image has
+ *      </ul>
+ *  </ul>
  */
 
 /*
