@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: Archive File Handler
+ * Name: Handle Archives
  * Author: Shish <webmaster@shishnet.org>
  * Description: Allow users to upload archives (zip, etc)
  * Documentation:

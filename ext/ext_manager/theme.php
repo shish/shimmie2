@@ -23,7 +23,7 @@ class ExtManagerTheme extends Themelet {
 			$h_description = html_escape($extension->description);
 			if($extension->enabled === TRUE) $h_enabled = " checked='checked'";
 			else if($extension->enabled === FALSE) $h_enabled = "";
-			else $h_enabled = " disabled";
+			else $h_enabled = " disabled checked='checked'";
 			$h_link = make_link("ext_doc/".html_escape($extension->ext_name));
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 

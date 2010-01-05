@@ -2,7 +2,7 @@
 /*
  * Name: Image Viewer
  * Author: Shish
- * Description: Allows users too see uploaded images
+ * Description: Allows users to see uploaded images
  */
 
 /*
