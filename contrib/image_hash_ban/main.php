@@ -81,7 +81,9 @@ class ImageBan implements Extension {
 					if($event->count_args() == 2) {
 						$page_num = int_escape($event->get_arg(1));
 					}
-					$this->theme->display_Image_hash_Bans($page, $page_num, $this->get_image_hash_bans($page_num));
+					$page_size = 100;
+					$page_count = ceil($database->db->getone("SELECT COUNT(id) FROM image_bans")/$page_size);
+					$this->theme->display_Image_hash_Bans($page, $page_num, $page_count, $this->get_image_hash_bans($page_num, $page_size));
 				}
 			}
 		}
@@ -121,7 +123,7 @@ class ImageBan implements Extension {
 
 	// DB funness
 
-	public function get_image_hash_bans($page, $size=1000) {
+	public function get_image_hash_bans($page, $size=100) {
 		// FIXME: many
 		$size_i = int_escape($size);
 		$offset_i = int_escape($page-1)*$size_i;

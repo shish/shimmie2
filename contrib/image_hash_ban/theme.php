@@ -20,7 +20,7 @@ class ImageBanTheme extends Themelet {
 	 *  'date' => when the ban started
 	 * )
 	 */
-	public function display_image_hash_bans(Page $page, $page_number, $bans) {
+	public function display_image_hash_bans(Page $page, $page_number, $page_count, $bans) {
 		$h_bans = "";
 		$n = 0;
 		foreach($bans as $ban) {
@@ -62,7 +62,7 @@ class ImageBanTheme extends Themelet {
 
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("image_hash_ban/list/$prev")."'>Prev</a>";
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = "<a href='".make_link("image_hash_ban/list/$next")."'>Next</a>";
+		$h_next = ($page_number >= $page_count) ? "Next" : "<a href='".make_link("image_hash_ban/list/$next")."'>Next</a>";
 
 		$nav = "$h_prev | $h_index | $h_next";
 
@@ -70,6 +70,7 @@ class ImageBanTheme extends Themelet {
 		$page->set_heading("Image Bans");
 		$page->add_block(new Block("Edit Image Bans", $html));
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
+		$this->display_paginator($page, "image_hash_ban/list", null, $page_number, $page_count);
 	}
 
 	/*
