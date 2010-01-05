@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: Flash File Handler
+ * Name: Handle Flash
  * Author: Shish <webmaster@shishnet.org>
  * Description: Handle Flash files
  */

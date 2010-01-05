@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: MP3 File Handler
+ * Name: Handle MP3
  * Author: Shish <webmaster@shishnet.org>
  * Description: Handle MP3 files
  */

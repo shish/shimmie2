@@ -1,8 +1,8 @@
 <?php
 /**
- * Name: Pixel File Handler
+ * Name: Handle Pixel
  * Author: Shish <webmaster@shishnet.org>
- * Description: Handle JPG, PNG, GIF, etc files
+ * Description: Handle JPEG, PNG, GIF, etc files
  */
 
 class PixelFileHandler extends DataHandlerExtension {

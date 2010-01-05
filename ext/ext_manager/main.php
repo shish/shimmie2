@@ -12,6 +12,11 @@
  */
 
 /** @private */
+function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
+	return strcmp($a->name, $b->name);
+}
+
+/** @private */
 class ExtensionInfo {
 	var $ext_name, $name, $link, $author, $email, $description, $documentation, $version;
 
@@ -69,7 +74,9 @@ class ExtensionInfo {
 	}
 
 	private function is_enabled($fname) {
-		return file_exists("ext/$fname");
+		if(file_exists("ext/$fname") && file_exists("contrib/$fname")) return true; // both
+		if(file_exists("contrib/$fname")) return false; // only disabled (optional)
+		return null; // only active (core)
 	}
 }
 
@@ -123,10 +130,21 @@ class ExtManager extends SimpleExtension {
 
 	private function get_extensions($all) {
 		$extensions = array();
-		$exts = $all ? glob("contrib/*/main.php") : glob("ext/*/main.php");
+		if($all) {
+			$exts = glob("ext/*/main.php");
+			foreach(glob("contrib/*/main.php") as $ae) {
+				if(!in_array("ext".substr($ae, 7), $exts)) {
+					$exts[] = $ae;
+				}
+			}
+		}
+		else {
+			$exts = glob("ext/*/main.php");
+		}
 		foreach($exts as $main) {
 			$extensions[] = new ExtensionInfo($main);
 		}
+		usort($extensions, "__extman_extcmp");
 		return $extensions;
 	}
 
