@@ -39,10 +39,11 @@ class Upgrade implements Extension {
 		// TODO:
 		// add column image->locked
 		if($config->get_int("db_version") < 8) {
+			// if this fails, don't try again
+			$config->set_int("db_version", 8);
 			$database->execute($database->engine->scoreql_to_sql(
 				"ALTER TABLE images ADD COLUMN locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
 			));
-			$config->set_int("db_version", 8);
 			log_info("upgrade", "Database at version 8");
 		}
 	}
