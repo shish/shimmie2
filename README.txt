@@ -6,14 +6,11 @@
         /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
                 \/      \/         \/      \/        \/        \/
 
-Shimmie 2.3 Beta
-~~~~~~~~~~~~~~~~
-This code is for people who want to write extensions compatible with the
-next version of shimmie. You can run a production site with it if you're
-feeling brave, but it's not recommended.
+Shimmie 2.3
+~~~~~~~~~~~
+1000 days since the first import was converted to git \o/
 
-If there is a feature here, and not in the stable branch, that's probably
-because the feature doesn't work yet :P
+And over a year since the last non-beta release x_x
 
 
 New since 2.2
@@ -27,6 +24,8 @@ For admins:
  o) Improved extension management, built-in documentation function
  o) Built-in documentation for extensions
  o) Better spam filtering
+ o) CAPTCHA tests for signup and anonymous comments
+ o) Detailed event logging
 
 For users:
  o) New default theme
@@ -36,12 +35,21 @@ For users:
  o) Better searching
  o) Cooliris support
  o) Search for images you've voted for (simple "favourites" system)
+ o) Gravatar support
+ o) Nicer date formatting
+ o) Random image extension
+ o) The current featured image is linkable
+ o) Private message system
+ o) Only the most recent posts for each image shown on the comment list
+ o) Image pools extension
 
 For developers:
  o) More sensible APIs
  o) Automated testing
  o) Preliminary SQLite & Postgres support, for people with very small and
     very large sites (Not all extensions are compatible yet though)
+
+And much more that I can't remember \o/
 
 
 Requirements
