@@ -41,10 +41,10 @@
  * }
  *
  * // ext/hello/test.php
- * public class HelloTest extends ShimmieWebTestCase {
+ * public class HelloTest extends SCoreWebTestCase {
  *     public void testHello() {
  *         $this->get_page("post/list");
- *         $this->assertText("Hello there");
+ *         $this->assert_text("Hello there");
  *     }
  * }
  *

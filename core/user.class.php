@@ -10,9 +10,6 @@ function _new_user($row) {
  * The currently logged in user will always be accessable via the global variable $user
  */
 class User {
-	var $config;
-	var $database;
-
 	var $id;
 	var $name;
 	var $email;
@@ -93,6 +90,16 @@ class User {
 	public function is_anonymous() {
 		global $config;
 		return ($this->id == $config->get_int('anon_id'));
+	}
+
+	/**
+	 * Test if this user is logged in
+	 *
+	 * @retval bool
+	 */
+	public function is_logged_in() {
+		global $config;
+		return ($this->id != $config->get_int('anon_id'));
 	}
 
 	/**

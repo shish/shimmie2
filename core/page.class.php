@@ -9,9 +9,9 @@
  * extends SetupTheme and overrides some of its methods.
  * 
  * Generally an extension should only deal with processing data; whenever it
- * wants to display something, it should pass the $page data structure along
- * with the data to be displayed to the theme object, and the theme will add
- * the data into the page.
+ * wants to display something, it should pass the data to be displayed to the
+ * theme object, and the theme will add the data into the global $page
+ * structure.
  *
  * A page should make sure that all the data it outputs is free from dangerous
  * data by using html_escape(), url_escape(), or int_escape() as appropriate.
@@ -34,11 +34,15 @@
  * then Layout turns it into HTML
  */
 class Page {
+	/** @name Overall */
+	//@{
+	/** @private */
 	var $mode = "page";
+	/** @private */
 	var $type = "text/html";
 
 	/**
-	 * Set what this page should do; page, data, or redirect.
+	 * Set what this page should do; "page", "data", or "redirect".
 	 */
 	public function set_mode($mode) {
 		$this->mode = $mode;
@@ -52,73 +56,85 @@ class Page {
 	}
 
 
+	//@}
 	// ==============================================
+	/** @name "data" mode */
+	//@{
 
-	// data
+	/** @private */
 	var $data = "";
+	/** @private */
 	var $filename = null;
 
 	/**
-	 * If the page is in "data" mode, this will set the data to be sent
+	 * Set the raw data to be sent
 	 */
 	public function set_data($data) {
 		$this->data = $data;
 	}
 
 	/**
-	 * If the page is in "data" mode, this will set the recommended download filename
+	 * Set the recommended download filename
 	 */
 	public function set_filename($filename) {
 		$this->filename = $filename;
 	}
 
 
+	//@}
 	// ==============================================
+	/** @name "redirect" mode */
+	//@{
 
-	// redirect
+	/** @private */
 	var $redirect = "";
 
 	/**
-	 * If the page is in "redirect" mode, this will set where to redirect to
+	 * Set the URL to redirect to (remember to use make_link() if linking
+	 * to a page in the same site)
 	 */
 	public function set_redirect($redirect) {
 		$this->redirect = $redirect;
 	}
 
 
+	//@}
 	// ==============================================
+	/** @name "page" mode */
+	//@{
 
-	// page
+	/** @privatesection */
 	var $title = "";
 	var $heading = "";
 	var $subheading = "";
 	var $quicknav = "";
 	var $headers = array();
 	var $blocks = array();
+	/** @publicsection */
 
 	/**
-	 * If the page is in "page" mode, set the window title
+	 * Set the window title
 	 */
 	public function set_title($title) {
 		$this->title = $title;
 	}
 
 	/**
-	 * If the page is in "page" mode, set the main heading
+	 * Set the main heading
 	 */
 	public function set_heading($heading) {
 		$this->heading = $heading;
 	}
 
 	/**
-	 * If the page is in "page" mode, set the sub heading
+	 * Set the sub heading
 	 */
 	public function set_subheading($subheading) {
 		$this->subheading = $subheading;
 	}
 
 	/**
-	 * If the page is in "page" mode, add a line to the HTML head section
+	 * Add a line to the HTML head section
 	 */
 	public function add_header($line, $position=50) {
 		while(isset($this->headers[$position])) $position++;
@@ -126,16 +142,18 @@ class Page {
 	}
 
 	/**
-	 * If the page is in "page" mode, add a block of data
+	 * Add a Block of data
 	 */
-	public function add_block($block) {
+	public function add_block(Block $block) {
 		$this->blocks[] = $block;
 	}
 
+
+	//@}
 	// ==============================================
 
 	/**
-	 * display the page according to the mode and data given
+	 * Display the page according to the mode and data given
 	 */
 	public function display() {
 		global $page;
