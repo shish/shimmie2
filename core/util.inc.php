@@ -156,7 +156,9 @@ function undb_bool($val) {
 
 /**
  * Figure out the correct way to link to a page, taking into account
- * things like the nice URLs setting
+ * things like the nice URLs setting.
+ *
+ * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
  *
  * @retval string
  */

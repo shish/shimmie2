@@ -3,22 +3,49 @@
  * an abstract interface for altering a name:value pair list
  */
 interface Config {
+	/**
+	 * Save the list of name:value pairs to wherever they came from,
+	 * so that the next time a page is loaded it will use the new
+	 * configuration
+	 */
 	public function save($name=null);
 
+	/** @name set_*
+	 * Set a configuration option to a new value, regardless
+	 * of what the value is at the moment
+	 */
+	//@{
 	public function set_int($name, $value);
 	public function set_string($name, $value);
 	public function set_bool($name, $value);
 	public function set_array($name, $value);
+	//@}
 
+	/** @name set_default_*
+	 * Set a configuration option to a new value, if there is no
+	 * value currently. Extensions should generally call these
+	 * from their InitExtEvent handlers. This has the advantage
+	 * that the values will show up in the "advanced" setup page
+	 * where they can be modified, while calling get_* with a
+	 * "default" paramater won't show up.
+	 */
+	//@{
 	public function set_default_int($name, $value);
 	public function set_default_string($name, $value);
 	public function set_default_bool($name, $value);
 	public function set_default_array($name, $value);
+	//@}
 
+	/** @name get_*
+	 * pick a value out of the table by name, cast to the
+	 * appropritate data type
+	 */
+	//@{
 	public function get_int($name, $default=null);
 	public function get_string($name, $default=null);
 	public function get_bool($name, $default=null);
 	public function get_array($name, $default=array());
+	//@}
 }
 
 
