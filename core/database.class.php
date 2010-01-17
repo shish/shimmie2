@@ -52,7 +52,9 @@ class ImgQuerylet {
 class DBEngine {
 	var $name = null;
 
-	public function init($db) {}
+	public function init($db) {
+		$db->execute("PRAGMA foreign_keys = ON;");
+	}
 
 	public function scoreql_to_sql($scoreql) {
 		return $scoreql;
