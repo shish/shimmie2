@@ -164,24 +164,25 @@ function install_process($database_dsn) { // {{{
 	header("Location: index.php");
 } // }}}
 function create_tables($dsn) { // {{{
+	if(substr($dsn, 0, 5) == "mysql") {
+		$engine = new MySQL();
+	}
+	else if(substr($dsn, 0, 5) == "pgsql") {
+		$engine = new PostgreSQL();
+	}
+	else if(substr($dsn, 0, 6) == "sqlite") {
+		$engine = new SQLite();
+	}
+	else {
+		die("Unknown database engine; Shimmie currently officially supports MySQL
+		(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
+	}
+
 	$db = NewADOConnection($dsn);
 	if(!$db) {
 		die("Couldn't connect to \"$dsn\"");
 	}
 	else {
-		if(substr($dsn, 0, 5) == "mysql") {
-			$engine = new MySQL();
-		}
-		else if(substr($dsn, 0, 5) == "pgsql") {
-			$engine = new PostgreSQL();
-		}
-		else if(substr($dsn, 0, 6) == "sqlite") {
-			$engine = new SQLite();
-		}
-		else {
-			die("Unknown database engine; Shimmie currently officially supports MySQL
-			(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
-		}
 		$engine->init($db);
 
 		$db->execute($engine->create_table_sql("aliases", "
