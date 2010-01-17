@@ -436,7 +436,7 @@ class Notes extends SimpleExtension {
 			
 		$result = $database->Execute($get_notes, array(1, $pageNumber * $notesPerPage, $notesPerPage));
 		
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM notes") / $notesPerPage);
+		$totalPages = ceil($database->db->GetOne("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 		
 		$images = array();
 		while(!$result->EOF) {
