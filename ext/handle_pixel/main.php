@@ -74,7 +74,8 @@ class PixelFileHandler extends DataHandlerExtension {
 		// convert to bitmap & back to strip metadata -- otherwise we
 		// can end up with 3KB of jpg data and 200KB of misc extra...
 		// "-limit memory $mem" broken?
-		exec("convert {$inname}[0] -geometry {$w}x{$h} bmp:- | convert bmp:- -quality {$q} jpg:$outname");
+		exec("convert {$inname}[0] -geometry {$w}x{$h} -strip -quality {$q} jpg:$outname");
+		#exec("convert {$inname}[0] -geometry {$w}x{$h} bmp:- | convert bmp:- -quality {$q} jpg:$outname");
 
 		return true;
 	}
