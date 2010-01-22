@@ -74,8 +74,25 @@ class PixelFileHandler extends DataHandlerExtension {
 		// convert to bitmap & back to strip metadata -- otherwise we
 		// can end up with 3KB of jpg data and 200KB of misc extra...
 		// "-limit memory $mem" broken?
-		exec("convert {$inname}[0] -geometry {$w}x{$h} -strip -quality {$q} jpg:$outname");
-		#exec("convert {$inname}[0] -geometry {$w}x{$h} bmp:- | convert bmp:- -quality {$q} jpg:$outname");
+
+		// Windows is a special case, use what will work on most everything else first
+		if(in_array("OS", $_SERVER) && $_SERVER["OS"] != 'Windows_NT') {
+			$cmd = "convert {$inname}[0] -strip -thumbnail {$w}x{$h} jpg:$outname";
+		}
+		else {
+			$imageMagick = $config->get_string("thumb_convert_path");
+
+			// running the call with cmd.exe requires quoting for our paths
+			$stringFormat = '"%s" "%s[0]" -strip -thumbnail %ux%u jpg:"%s"';
+
+			// Concat the command altogether
+			$cmd = sprintf($stringFormat, $imageMagick, $inname, $w, $h, $outname);
+		}
+
+		// Execute IM's convert command, grab the output and return code it'll help debug it
+		exec($cmd, $output, $ret);
+
+		log_debug('handle_pixel', "Generating thumnail with command `$cmd`, returns $ret");
 
 		return true;
 	}
