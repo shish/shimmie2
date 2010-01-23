@@ -50,7 +50,7 @@ class UserPageTheme extends Themelet {
 		if(empty($tac)) {$html = "";}
 		else {$html = "<p>$tac</p>";}
 
-		$reca = captcha_get_html();
+		$reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
 		$html .= "
 		<form action='".make_link("user_admin/create")."' method='POST'>
