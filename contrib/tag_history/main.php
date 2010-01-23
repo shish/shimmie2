@@ -129,6 +129,7 @@ class Tag_History implements Extension {
 		$stored_image_id = $result->fields['image_id'];
 		$stored_tags = $result->fields['tags'];
 		
+		log_debug("tag_history", "Reverting tags of $stored_image_id to [$stored_tags]");
 		// all should be ok so we can revert by firing the SetUserTags event.
 		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
 		
@@ -193,6 +194,7 @@ class Tag_History implements Extension {
 
 		$new_tags = Tag::implode($tags);
 		$old_tags = Tag::implode($image->get_tag_array());
+		log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
 		if($new_tags == $old_tags) return;
 
 		// add a history entry		
