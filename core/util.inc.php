@@ -219,6 +219,9 @@ function theme_file($filepath) {
 
 function captcha_get_html() {
 	global $config, $user;
+
+	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return "";
+
 	$captcha = "";
 	if($user->is_anonymous()) {
 		$rpk = $config->get_string("api_recaptcha_pubkey");
@@ -238,6 +241,8 @@ function captcha_get_html() {
 
 function captcha_check() {
 	global $config, $user;
+
+	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return true;
 
 	if($user->is_anonymous()) {
 		$rpk = $config->get_string('api_recaptcha_privkey');
