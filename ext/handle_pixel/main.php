@@ -75,11 +75,8 @@ class PixelFileHandler extends DataHandlerExtension {
 		// can end up with 3KB of jpg data and 200KB of misc extra...
 		// "-limit memory $mem" broken?
 
-		// Windows is a special case, use what will work on most everything else first
-		if(in_array("OS", $_SERVER) && $_SERVER["OS"] != 'Windows_NT') {
-			$cmd = "convert {$inname}[0] -strip -thumbnail {$w}x{$h} jpg:$outname";
-		}
-		else {
+		// Windows is a special case
+		if(in_array("OS", $_SERVER) && $_SERVER["OS"] == 'Windows_NT') {
 			$imageMagick = $config->get_string("thumb_convert_path");
 
 			// running the call with cmd.exe requires quoting for our paths
@@ -87,6 +84,9 @@ class PixelFileHandler extends DataHandlerExtension {
 
 			// Concat the command altogether
 			$cmd = sprintf($stringFormat, $imageMagick, $inname, $w, $h, $outname);
+		}
+		else {
+			$cmd = "convert {$inname}[0] -strip -thumbnail {$w}x{$h} jpg:$outname";
 		}
 
 		// Execute IM's convert command, grab the output and return code it'll help debug it
