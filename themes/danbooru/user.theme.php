@@ -52,6 +52,8 @@ class CustomUserPageTheme extends UserPageTheme {
 		$tfe = new TextFormattingEvent($tac);
 		send_event($tfe);
 		$tac = $tfe->formatted;
+		
+		$reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
 		if(empty($tac)) {$html = "";}
 		else {$html = "<p>$tac</p>";}
@@ -63,6 +65,7 @@ class CustomUserPageTheme extends UserPageTheme {
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
+				$reca;
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
 		</form>
