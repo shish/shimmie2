@@ -309,7 +309,7 @@ function check_cli() {
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
 	if(DEBUG) {
-		$fp = @fopen("sql.log", "a");
+		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
 			if(is_array($inputarray)) {
 				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
@@ -858,6 +858,14 @@ function _cache_active() {
 	);
 }
 
+function _cache_log($text) {
+	$fp = @fopen("data/cache.log", "a");
+	if($fp) {
+		fputs($fp, $text);
+		fclose($fp);
+	}
+}
+
 function _start_cache() {
 	global $_cache_hash, $_cache_memcache, $_cache_filename;
 
@@ -867,7 +875,11 @@ function _start_cache() {
 		if(CACHE_MEMCACHE) {
 			$_cache_memcache = new Memcache;
 			$_cache_memcache->pconnect('localhost', 11211);
-			$zdata = $_cache_memcache->get($hash);
+			$zdata = $_cache_memcache->get($_cache_hash);
+			if(DEBUG) {
+				$stat = $zdata ? "hit" : "miss";
+				_cache_log(time() . " " . $_cache_hash . sprintf(" %-12s ", $stat) . $_SERVER["QUERY_STRING"] . "\n");
+			}
 			if($zdata) {
 				header("Content-type: text/html");
 				$data = @gzuncompress($zdata);
