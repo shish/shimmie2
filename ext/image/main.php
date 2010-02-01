@@ -236,7 +236,13 @@ class ImageIO extends SimpleExtension {
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, now(), ?)",
 				array($user->id, $_SERVER['REMOTE_ADDR'], $image->filename, $image->filesize,
 						$image->hash, $image->ext, $image->width, $image->height, $image->source));
-		$image->id = $database->db->Insert_ID();
+		if($database->engine->name == "pgsql") {
+			$database->Execute("UPDATE users SET image_count = image_count+1 WHERE id = ? ", array($user->id));
+			$image->id = $database->db->GetOne("SELECT id FROM images WHERE hash=?", array($image->hash));
+		}
+		else {
+			$image->id = $database->db->Insert_ID();
+		}
 
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
 
