@@ -40,7 +40,7 @@ class User {
 	public static function by_session($name, $session) {
 		global $config, $database;
 		$row = $database->get_row(
-				"SELECT * FROM users WHERE name = ? AND md5(concat(pass, ?)) = ?",
+				"SELECT * FROM users WHERE name = ? AND md5(pass || ?) = ?",
 				array($name, get_session_ip($config), $session)
 		);
 		return is_null($row) ? null : new User($row);
