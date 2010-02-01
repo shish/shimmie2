@@ -176,7 +176,7 @@ class NoCache implements CacheEngine {
 	public function get_hits() {return 0;}
 	public function get_misses() {return 0;}
 }
-class MemCache implements CacheEngine {
+class MemcacheCache implements CacheEngine {
 	var $hits=0, $misses=0;
 
 	public function __construct($args) {
@@ -255,7 +255,7 @@ class Database {
 			$matches = array();
 			preg_match("#(memcache)://(.*)#", $cache, $matches);
 			if($matches[1] == "memcache") {
-				$this->cache = new MemCache($matches[2]);
+				$this->cache = new MemcacheCache($matches[2]);
 			}
 		}
 		else {
