@@ -16,7 +16,9 @@ class LogDatabaseTheme extends Themelet {
 				$table .= "<td>".$event['address']."</td>";
 			}
 			else {
-				$table .= "<td><span title='".$event['address']."'>".html_escape($event['username'])."</span></td>";
+				$table .= "<td><span title='".$event['address']."'>".
+					"<a href='".make_link("user/".url_escape($event['username']))."'>".html_escape($event['username'])."</a>".
+					"</span></td>";
 			}
 			$table .= "<td>".html_escape($event['message'])."</td>";
 			$table .= "</tr>\n";
