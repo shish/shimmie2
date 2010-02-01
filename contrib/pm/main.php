@@ -149,7 +149,7 @@ class PrivMsg extends SimpleExtension {
 			array($event->pm->from_id, $event->pm->from_ip,
 			$event->pm->to_id, $event->pm->subject, $event->pm->message)
 		);
-		log_info("pm", "Sent PM to User #{$event->to_id}");
+		log_info("pm", "Sent PM to User #{$event->pm->to_id}");
 	}
 
 
