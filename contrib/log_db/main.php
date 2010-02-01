@@ -14,14 +14,14 @@ class LogDatabase extends SimpleExtension {
 		if($config->get_int("ext_log_database_version") < 1) {
 			$database->create_table("score_log", "
 				id SCORE_AIPK,
-				date_sent DATETIME NOT NULL,
+				date_sent SCORE_DATETIME NOT NULL,
 				section VARCHAR(32) NOT NULL,
 				username VARCHAR(32) NOT NULL,
 				address SCORE_INET NOT NULL,
 				priority INT NOT NULL,
-				message TEXT NOT NULL,
-				INDEX(section)
+				message TEXT NOT NULL
 			");
+				//INDEX(section)
 			$config->set_int("ext_log_database_version", 1);
 		}
 
