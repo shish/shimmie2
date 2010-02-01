@@ -52,9 +52,7 @@ class ImgQuerylet {
 class DBEngine {
 	var $name = null;
 
-	public function init($db) {
-		$db->execute("PRAGMA foreign_keys = ON;");
-	}
+	public function init($db) {}
 
 	public function scoreql_to_sql($scoreql) {
 		return $scoreql;
@@ -126,6 +124,7 @@ class SQLite extends DBEngine {
 
 	public function init($db) {
 		ini_set('sqlite.assoc_case', 0);
+		$db->execute("PRAGMA foreign_keys = ON;");
 		@sqlite_create_function($db->_connectionID, 'UNIX_TIMESTAMP', '_unix_timestamp', 1);
 		@sqlite_create_function($db->_connectionID, 'now', '_now', 0);
 		@sqlite_create_function($db->_connectionID, 'floor', '_floor', 1);
