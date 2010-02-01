@@ -5,6 +5,7 @@ thumbs
 data
 sql.log
 shimmie.log
+ext/admin
 ext/autocomplete
 ext/ban_words
 ext/browser_search
@@ -34,6 +35,7 @@ ext/numeric_score
 ext/piclens
 ext/pm
 ext/pools
+ext/qr_code
 ext/random_image
 ext/rating
 ext/regen_thumb
