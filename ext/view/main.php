@@ -45,7 +45,7 @@ class ImageInfoBoxBuildingEvent extends Event {
 class ImageInfoSetEvent extends Event {
 	var $image;
 
-	public function ImageInfoSetEvent($image) {
+	public function ImageInfoSetEvent(Image $image) {
 		$this->image = $image;
 	}
 }
