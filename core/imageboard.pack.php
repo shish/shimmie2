@@ -400,7 +400,7 @@ class Image {
 			else {
 				$query = "SELECT id FROM tags WHERE tag = ?";
 			}
-			$id = $database->db->GetOne($query, args($tag));
+			$id = $database->db->GetOne($query, array($tag));
 			if(empty($id)) {
 				// a new tag
 				$database->execute(
