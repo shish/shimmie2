@@ -561,11 +561,11 @@ class Image {
 
 		// one positive tag (a common case), do an optimised search
 		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
-			$query = new Querylet("
+			$query = new Querylet($database->engine->scoreql_to_sql("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id = image_tags.image_id
-				WHERE tag_id = (SELECT tags.id FROM tags WHERE tag = ?)
-				", array($tag_querylets[0]->tag));
+				WHERE tag_id = (SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?))
+				"), array($tag_querylets[0]->tag));
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" AND ");
@@ -580,7 +580,11 @@ class Image {
 			$tags_ok = true;
 
 			foreach($tag_querylets as $tq) {
-				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag = ?", array($tq->tag));
+				$tag_ids = $database->db->GetCol(
+						$database->engine->scoreql_to_sql(
+							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+						),
+						array($tq->tag));
 				if($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
