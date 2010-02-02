@@ -271,7 +271,7 @@ class Database {
 	 * stored in config.php in the root shimmie folder
 	 */
 	public function Database() {
-		global $database_dsn;
+		global $database_dsn, $cache_dsn;
 
 		if(substr($database_dsn, 0, 5) == "mysql") {
 			$this->engine = new MySQL();
@@ -285,11 +285,14 @@ class Database {
 
 		$this->db = @NewADOConnection($database_dsn);
 
-		if(isset($cache)) {
+		if(isset($cache_dsn) && !empty($cache_dsn)) {
 			$matches = array();
-			preg_match("#(memcache)://(.*)#", $cache, $matches);
+			preg_match("#(memcache|apc)://(.*)#", $cache_dsn, $matches);
 			if($matches[1] == "memcache") {
 				$this->cache = new MemcacheCache($matches[2]);
+			}
+			else if($matches[1] == "apc") {
+				$this->cache = new APCCache();
 			}
 		}
 		else {
