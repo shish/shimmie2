@@ -140,6 +140,11 @@ class Image {
 			}
 			return $total;
 		}
+		else if(count($tags) == 1) {
+			return $database->db->GetOne(
+				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"),
+				$tags);
+		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
 			$result = $database->execute($querylet->sql, $querylet->variables);
