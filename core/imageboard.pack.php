@@ -394,9 +394,13 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			$id = $database->db->GetOne(
-					"SELECT id FROM tags WHERE lower(tag) = lower(?)",
-					array($tag));
+			if($database->engine->name == "pgsql") {
+				$query = "SELECT id FROM tags WHERE lower(tag) = lower(?)";
+			}
+			else {
+				$query = "SELECT id FROM tags WHERE tag = ?";
+			}
+			$id = $database->db->GetOne($query, args($tag));
 			if(empty($id)) {
 				// a new tag
 				$database->execute(
