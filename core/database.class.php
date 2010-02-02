@@ -292,7 +292,7 @@ class Database {
 				$this->cache = new MemcacheCache($matches[2]);
 			}
 			else if($matches[1] == "apc") {
-				$this->cache = new APCCache();
+				$this->cache = new APCCache($matches[2]);
 			}
 		}
 		else {
