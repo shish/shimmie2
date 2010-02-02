@@ -39,10 +39,13 @@ class User {
 
 	public static function by_session($name, $session) {
 		global $config, $database;
-		$row = $database->get_row(
-				"SELECT * FROM users WHERE name = ? AND md5(pass || ?) = ?",
-				array($name, get_session_ip($config), $session)
-		);
+		if($database->engine->name == "mysql") {
+			$query = "SELECT * FROM users WHERE name = ? AND md5(concat(pass, ?)) = ?";
+		}
+		else {
+			$query = "SELECT * FROM users WHERE name = ? AND md5(pass || ?) = ?";
+		}
+		$row = $database->get_row($query, array($name, get_session_ip($config), $session));
 		return is_null($row) ? null : new User($row);
 	}
 
