@@ -213,6 +213,37 @@ class MemcacheCache implements CacheEngine {
 	public function get_hits() {return $this->hits;}
 	public function get_misses() {return $this->misses;}
 }
+class APCCache implements CacheEngine {
+	var $hits=0, $misses=0;
+
+	public function __construct($args) {}
+
+	public function get($key) {
+		assert(!is_null($key));
+		$val = apc_fetch($key);
+		if($val) {
+			$this->hits++;
+			return $val;
+		}
+		else {
+			$this->misses++;
+			return false;
+		}
+	}
+
+	public function set($key, $val, $time=0) {
+		assert(!is_null($key));
+		apc_store($key, $val, $time);
+	}
+
+	public function delete($key) {
+		assert(!is_null($key));
+		apc_delete($key);
+	}
+
+	public function get_hits() {return $this->hits;}
+	public function get_misses() {return $this->misses;}
+}
 // }}}
 /** @publicsection */
 
