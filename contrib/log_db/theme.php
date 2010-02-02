@@ -20,7 +20,7 @@ class LogDatabaseTheme extends Themelet {
 					"<a href='".make_link("user/".url_escape($event['username']))."'>".html_escape($event['username'])."</a>".
 					"</span></td>";
 			}
-			$table .= "<td>".html_escape($event['message'])."</td>";
+			$table .= "<td>".$this->scan_entities(html_escape($event['message']))."</td>";
 			$table .= "</tr>\n";
 		}
 		$table .= "</tbody></table>";
@@ -41,6 +41,16 @@ class LogDatabaseTheme extends Themelet {
 			case SCORE_LOG_CRITICAL: return "#F00";
 			default: return "";
 		}
+	}
+
+	protected function scan_entities($line) {
+		$line = preg_replace_callback("/Image #(\d+)/s", array($this, "link_image"), $line);
+		return $line;
+	}
+
+	protected function link_image($id) {
+		$iid = int_escape($id[1]);
+		return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
 	}
 }
 ?>
