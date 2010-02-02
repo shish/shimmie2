@@ -394,13 +394,11 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			if($database->engine->name == "pgsql") {
-				$query = "SELECT id FROM tags WHERE lower(tag) = lower(?)";
-			}
-			else {
-				$query = "SELECT id FROM tags WHERE tag = ?";
-			}
-			$id = $database->db->GetOne($query, array($tag));
+			$id = $database->db->GetOne(
+					$database->engine->scoreql_to_sql(
+						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+					),
+					array($tag));
 			if(empty($id)) {
 				// a new tag
 				$database->execute(
@@ -418,7 +416,9 @@ class Image {
 						array($this->id, $id));
 			}
 			$database->execute(
-					"UPDATE tags SET count = count + 1 WHERE tag = ?",
+					$database->engine->scoreql_to_sql(
+						"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+					),
 					array($tag));
 		}
 
