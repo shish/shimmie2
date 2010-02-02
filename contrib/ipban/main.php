@@ -207,8 +207,11 @@ class IPBan implements Extension {
 		if($cached) return $cached;
 
 		$bans = $database->get_all("
-			SELECT * FROM bans
+			SELECT bans.*, users.name as banner_name
+			FROM bans
+			JOIN users ON banner_id = users.id
 			WHERE (end_timestamp > ?) OR (end_timestamp IS NULL)
+			ORDER BY end_timestamp, bans.id
 		", array(time()));
 
 		$database->cache->set("ip_bans", $bans, 600);
@@ -221,7 +224,7 @@ class IPBan implements Extension {
 		global $database;
 		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (?, ?, ?, ?)";
 		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
-		$database->cache->delete("bans");
+		$database->cache->delete("ip_bans");
 	}
 // }}}
 }
