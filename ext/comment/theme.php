@@ -1,6 +1,7 @@
 <?php
 class CommentListTheme extends Themelet {
 	var $comments_shown = 0;
+	var $anon_id = 1;
 
 	/**
 	 * Display a page with a list of images, and for each image,
@@ -85,6 +86,7 @@ class CommentListTheme extends Themelet {
 	 */
 	public function display_recent_comments($comments) {
 		global $page;
+		$this->anon_id = -1;
 		$html = "";
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment, true);
@@ -99,6 +101,7 @@ class CommentListTheme extends Themelet {
 	 */
 	public function display_image_comments(Image $image, $comments, $postbox) {
 		global $page;
+		$this->anon_id = 1;
 		$html = "";
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment);
@@ -123,7 +126,12 @@ class CommentListTheme extends Themelet {
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
-		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
+		$anoncode = "";
+		if($h_name == "Anonymous" && $this->anon_id >= 0) {
+			$anoncode = "<sup>{$this->anon_id}</sup>";
+			$this->anon_id++;
+		}
+		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>$anoncode";
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_dellink = $user->is_admin() ?
