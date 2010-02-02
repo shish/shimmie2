@@ -16,7 +16,7 @@ class SVGFileHandler implements Extension {
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
+			$image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
 			if(is_null($image)) {
 				throw new UploadException("SVG handler failed to create image object from data");
 			}
@@ -41,7 +41,7 @@ class SVGFileHandler implements Extension {
 //			}
 //			else {
 				// FIXME: scale image, as not all boards use 192x192
-				copy("ext/handle_svg/thumb.jpg", "thumbs/$ha/$hash");
+				copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
 //			}
 		}
 
@@ -55,11 +55,10 @@ class SVGFileHandler implements Extension {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
 			$hash = $image->hash;
-			$ha = substr($hash, 0, 2);
 
 			$page->set_type("image/svg+xml");
 			$page->set_mode("data");
-			$page->set_data(file_get_contents("images/$ha/$hash"));
+			$page->set_data(file_get_contents(warehouse_path("images", $hash)));
 		}
 	}
 

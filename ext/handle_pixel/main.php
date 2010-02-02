@@ -43,8 +43,8 @@ class PixelFileHandler extends DataHandlerExtension {
 
 	protected function create_thumb($hash) {
 		$ha = substr($hash, 0, 2);
-		$inname  = "images/$ha/$hash";
-		$outname = "thumbs/$ha/$hash";
+		$inname  = warehouse_path("images", $hash);
+		$outname = warehouse_path("thumbs", $hash);
 		global $config;
 
 		$ok = false;
