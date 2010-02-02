@@ -203,18 +203,15 @@ class IPBan implements Extension {
 	private function get_active_bans() {
 		global $database;
 
-		$cached = $database->cache->get("bans");
+		$cached = $database->cache->get("ip_bans");
 		if($cached) return $cached;
 
 		$bans = $database->get_all("
-			SELECT bans.*, users.name as banner_name
-			FROM bans
-			JOIN users ON banner_id = users.id
-			WHERE (end_timestamp > UNIX_TIMESTAMP(now())) OR (end_timestamp IS NULL)
-			ORDER BY end_timestamp, bans.id
-		");
+			SELECT * FROM bans
+			WHERE (end_timestamp > ?) OR (end_timestamp IS NULL)
+		", array(time()));
 
-		$database->cache->set("bans", $bans);
+		$database->cache->set("ip_bans", $bans, 600);
 
 		if($bans) {return $bans;}
 		else {return array();}
