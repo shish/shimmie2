@@ -465,6 +465,10 @@ function format_text($string) {
 	return $tfe->formatted;
 }
 
+function warehouse_path($base, $hash) {
+	$ab = substr($hash, 0, 2);
+	return "$base/$ab/$hash";
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Logging convenience                                                       *
