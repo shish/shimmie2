@@ -49,6 +49,7 @@ class CommentListTheme extends Themelet {
 				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
 				$comments = array_slice($comments, -$comment_limit);
 			}
+			$this->anon_id = 1;
 			foreach($comments as $comment) {
 				$comment_html .= $this->comment_to_html($comment);
 			}
