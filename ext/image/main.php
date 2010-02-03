@@ -246,7 +246,14 @@ class ImageIO extends SimpleExtension {
 
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
 
-		send_event(new TagSetEvent($image, $image->get_tag_array()));
+		# at this point in time, the image's tags haven't really been set,
+		# and so, having $image->tag_array set to something is a lie (but
+		# a useful one, as we want to know what the tags are /supposed/ to
+		# be). Here we correct the lie, by first nullifying the wrong tags
+		# then using the standard mechanism to set them properly.
+		$tags_to_set = $image->get_tag_array();
+		$image->tag_array = array();
+		send_event(new TagSetEvent($image, $tags_to_set));
 	}
 // }}}
 // fetch image {{{
