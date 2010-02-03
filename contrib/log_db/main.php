@@ -44,7 +44,31 @@ class LogDatabase extends SimpleExtension {
 		global $database, $user;
 		if($event->page_matches("log/view")) {
 			if($user->is_admin()) {
-				$events = $database->get_all("SELECT * FROM score_log ORDER BY id DESC LIMIT 50");
+				$wheres = array();
+				$args = array();
+				if(!empty($_GET["time"])) {
+					$wheres[] = "date_sent LIKE ?";
+					$args[] = $_GET["time"]."%";
+				}
+				if(!empty($_GET["module"])) {
+					$wheres[] = "section = ?";
+					$args[] = $_GET["module"];
+				}
+				if(!empty($_GET["user"])) {
+					$wheres[] = "(username = ? OR address = ?)";
+					$args[] = $_GET["user"];
+					$args[] = $_GET["user"];
+				}
+				if(!empty($_GET["priority"])) {
+					$wheres[] = "priority >= ?";
+					$args[] = int_escape($_GET["priority"]);
+				}
+				$where = "";
+				if(count($wheres) > 0) {
+					$where = "WHERE ";
+					$where .= join(" AND ", $wheres);
+				}
+				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT 50", $args);
 				$this->theme->display_events($events);
 			}
 		}
