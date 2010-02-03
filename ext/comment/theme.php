@@ -155,6 +155,7 @@ class CommentListTheme extends Themelet {
 			//}
 			$oe = ($this->comments_shown++ % 2 == 0) ? "even" : "odd";
 			return "
+				<a name='$i_comment_id'></a>
 				<div class='$oe comment'>
 				$h_userlink: $h_comment
 				$h_dellink
