@@ -55,9 +55,22 @@ class LogDatabase extends SimpleExtension {
 					$args[] = $_GET["module"];
 				}
 				if(!empty($_GET["user"])) {
-					$wheres[] = "(username = ? OR address = ?)";
-					$args[] = $_GET["user"];
-					$args[] = $_GET["user"];
+					if($database->engine->name == "pgsql") {
+						if(preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
+							$wheres[] = "(username = ? OR address << ?)";
+							$args[] = $_GET["user"];
+							$args[] = $_GET["user"];
+						}
+						else {
+							$wheres[] = "lower(username) = lower(?)";
+							$args[] = $_GET["user"];
+						}
+					}
+					else {
+						$wheres[] = "(username = ? OR address = ?)";
+						$args[] = $_GET["user"];
+						$args[] = $_GET["user"];
+					}
 				}
 				if(!empty($_GET["priority"])) {
 					$wheres[] = "priority >= ?";
