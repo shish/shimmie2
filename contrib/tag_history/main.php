@@ -61,6 +61,11 @@ class Tag_History implements Extension {
 		if(($event instanceof TagSetEvent)) {
 			$this->add_tag_history($event->image, $event->tags);
 		}
+		if($event instanceof UserBlockBuildingEvent) {
+			if($user->is_admin()) {
+				$event->add_link("Tag Changes", make_link("tag_history"));
+			}
+		}
 	}
 	
 	protected function install()
