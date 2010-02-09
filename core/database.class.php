@@ -183,8 +183,9 @@ class MemcacheCache implements CacheEngine {
 	var $hits=0, $misses=0;
 
 	public function __construct($args) {
+		$hp = split(":", $args);
 		$this->memcache = new Memcache;
-		$this->memcache->pconnect('localhost', 11211) or ($this->use_memcache = false);
+		@$this->memcache->pconnect($hp[0], $hp[1]);
 	}
 
 	public function get($key) {
