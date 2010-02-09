@@ -81,7 +81,7 @@ class ViewImage implements Extension {
 
 			if(isset($_GET['search'])) {
 				$search_terms = explode(' ', $_GET['search']);
-				$query = "search=".url_escape($_GET['search']);
+				$query = "#search=".url_escape($_GET['search']);
 			}
 			else {
 				$search_terms = array();
