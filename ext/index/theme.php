@@ -50,7 +50,7 @@ EOD;
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
 		if(count($images) > 0) {
 			if($query) {
-				$page->add_block(new Block("Images", $this->build_table($images, "search=$query"), "main", 10));
+				$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10));
 				$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
 			}
 			else {
