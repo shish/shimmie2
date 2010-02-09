@@ -183,6 +183,9 @@ function make_link($page=null, $query=null) {
 		if(strpos($base, "?")) {
 			return "$base/$page&$query";
 		}
+		else if(strpos($query, "#") === 0) {
+			return "$base/$page$query";
+		}
 		else {
 			return "$base/$page?$query";
 		}
