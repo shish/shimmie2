@@ -34,11 +34,24 @@ class ViewImageTheme extends Themelet {
 			$query = null;
 		}
 
-		$h_prev = "<a href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
+		$h_prev = "<a id='prevlink' href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = "<a href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
+		$h_next = "<a id='nextlink' href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
+		$script = "
+		<script><!--
+		$(document).ready(function() {
+			if(document.location.hash.length > 3) {
+				query = document.location.hash.substring(1);
+				a = document.getElementById(\"prevlink\");
+				a.href = a.href + '?' + query;
+				a = document.getElementById(\"nextlink\");
+				a.href = a.href + '?' + query;
+			}
+		});
+		//--></script>
+			";
 
-		return "$h_prev | $h_index | $h_next";
+		return "$h_prev | $h_index | $h_next$script";
 	}
 
 	protected function build_navigation(Image $image) {
