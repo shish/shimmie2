@@ -492,8 +492,24 @@ class Image {
 			return Image::build_accurate_search_querylet($terms);
 	}
 
-	// this method is simple, fast and accurate; but mysql chokes on it
-	// because it uses subqueries
+	/**
+	 * "foo bar -baz user=foo" becomes
+	 *
+	 * SELECT * FROM images WHERE
+	 *           images.id IN (SELECT image_id FROM image_tags WHERE tag='foo')
+	 *   AND     images.id IN (SELECT image_id FROM image_tags WHERE tag='bar')
+	 *   AND NOT images.id IN (SELECT image_id FROM image_tags WHERE tag='baz')
+	 *   AND     images.id IN (SELECT id FROM images WHERE owner_name='foo')
+	 *
+	 * This is:
+	 *   A) Incredibly simple:
+	 *      Each search term maps to a list of image IDs
+	 *   B) Runs really fast on a good database:
+	 *      These lists are calucalted once, and the set intersection taken
+	 *   C) Runs really slow on bad databases:
+	 *      All the subqueries are executed every time for every row in the
+	 *      images table. Yes, MySQL does suck this much.
+	 */
 	private static function build_accurate_search_querylet($terms) {
 		global $config, $database;
 
@@ -651,7 +667,10 @@ class Image {
 		return $query;
 	}
 
-	// this function exists because mysql is a turd.
+	/**
+	 * this function exists because mysql is a turd, see the docs for
+	 * build_accurate_search_querylet() for a full explanation
+	 */
 	private static function build_ugly_search_querylet($terms) {
 		global $config, $database;
 
