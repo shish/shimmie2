@@ -18,7 +18,7 @@ class ReportImageTheme extends Themelet {
 		$n = 0;
 		foreach($reports as $report) {
 			$image = $report['image'];
-			$h_reason = html_escape($report['reason']);
+			$h_reason = format_text($report['reason']);
 
 			if($config->get_bool('report_image_show_thumbs')) {
 				$image_link = $this->build_thumb_html($image);
