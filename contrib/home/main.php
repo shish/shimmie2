@@ -77,9 +77,8 @@ class Home extends SimpleExtension {
 		// get the homelinks and process them
 		$main_links = $config->get_string('home_links');
 		$main_links = str_replace('$base',	$base_href, 	$main_links);
-		$main_links = str_replace('[', 		"<a href='", 	$main_links);
-		$main_links = str_replace('|', 		"'>", 			$main_links);
-		$main_links = str_replace(']', 		"</a>", 		$main_links);
+		$main_links = preg_replace('#\[(.*?)\|(.*?)\]#', "<a href='\\1'>\\2</a>", $main_links);
+		$main_links = str_replace('//',	"/", $main_links);
 
 		$main_text = $config->get_string('home_text');
 
