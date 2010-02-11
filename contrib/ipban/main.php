@@ -90,6 +90,7 @@ class IPBan implements Extension {
 
 		if($event instanceof RemoveIPBanEvent) {
 			$database->Execute("DELETE FROM bans WHERE id = ?", array($event->id));
+			$database->cache->delete("ip_bans");
 		}
 	}
 // }}}
