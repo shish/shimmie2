@@ -46,6 +46,8 @@ class LogDatabase extends SimpleExtension {
 			if($user->is_admin()) {
 				$wheres = array();
 				$args = array();
+				$page_num = int_escape($event->get_arg(0));
+				if($page_num <= 0) $page_num = 1;
 				if(!empty($_GET["time"])) {
 					$wheres[] = "date_sent LIKE ?";
 					$args[] = $_GET["time"]."%";
@@ -76,13 +78,32 @@ class LogDatabase extends SimpleExtension {
 					$wheres[] = "priority >= ?";
 					$args[] = int_escape($_GET["priority"]);
 				}
+				else {
+					$wheres[] = "priority >= ?";
+					$args[] = 20;
+				}
 				$where = "";
 				if(count($wheres) > 0) {
 					$where = "WHERE ";
 					$where .= join(" AND ", $wheres);
 				}
-				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT 50", $args);
-				$this->theme->display_events($events);
+
+				$limit = 50;
+				$offset = ($page_num-1) * $limit;
+				$page_total = $database->cache->get("event_log_length");
+				if(!$page_total) {
+					$page_total = $database->db->GetOne("SELECT count(*) FROM score_log $where", $args);
+					// don't cache a length of zero when the extension is first installed
+					if($page_total > 10) {
+						$database->cache->set("event_log_length", 600);
+					}
+				}
+
+				$args[] = $offset;
+				$args[] = $limit;
+				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT ?,?", $args);
+
+				$this->theme->display_events($events, $page_num, 100);
 			}
 		}
 	}

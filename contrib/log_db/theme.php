@@ -5,7 +5,13 @@ class LogDatabaseTheme extends Themelet {
 		if(isset($_GET[$var])) return html_escape($_GET[$var]);
 		else return "";
 	}
-	public function display_events($events) {
+
+	protected function ueie($var) {
+		if(isset($_GET[$var])) return $var."=".url_escape($_GET[$var]);
+		else return "";
+	}
+
+	public function display_events($events, $page_num, $page_total) {
 		$table = "
 <style>
 .sizedinputs TD INPUT {
@@ -59,6 +65,9 @@ class LogDatabaseTheme extends Themelet {
 		$page->set_heading("Event Log");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Events", $table));
+
+		$args = $this->ueie("time")."&".$this->ueie("module")."&".$this->ueie("user")."&".$this->ueie("priority");
+		$this->display_paginator($page, "log/view", $args, $page_num, $page_total);
 	}
 
 	protected function pri_to_col($pri) {
