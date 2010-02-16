@@ -281,3 +281,14 @@ font-weight:normal;
 #tips {
 margin-left:16px;
 }
+#blotter1 {
+margin-left:16px;
+margin-right:16px;
+font-size: 90%;
+position: relative;
+}
+#blotter2 {
+margin-left:16px;
+margin-right:16px;
+font-size: 90%;
+}
