@@ -27,5 +27,10 @@ class TagEditTheme extends Themelet {
 		$h_source = html_escape($image->get_source());
 		return "<tr><td>Source</td><td><input type='text' name='tag_edit__source' value='$h_source'></td></tr>";
 	}
+
+	public function get_lock_editor_html(Image $image) {
+		$h_locked = $image->is_locked() ? " checked" : "";
+		return "<tr><td>Locked</td><td><input type='checkbox' name='tag_edit__locked'$h_locked></td></tr>";
+	}
 }
 ?>

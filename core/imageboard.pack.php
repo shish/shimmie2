@@ -36,6 +36,7 @@ class Image {
 	var $owner_ip;
 	var $posted;
 	var $source;
+	var $locked;
 
 	/**
 	 * One will very rarely construct an image directly, more common
@@ -369,6 +370,19 @@ class Image {
 		global $database;
 		if(empty($source)) $source = null;
 		$database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
+	}
+
+
+	public function is_locked() {
+		return ($this->locked === true || $this->locked == "Y");
+	}
+	public function set_locked($tf) {
+		global $database;
+		$ln = $tf ? "Y" : "N";
+		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
+		$sln = str_replace("'", "", $sln);
+		$sln = str_replace('"', "", $sln);
+		$database->execute("UPDATE images SET locked=? WHERE id=?", array($sln, $this->id));
 	}
 
 	/**

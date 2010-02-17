@@ -101,7 +101,7 @@ class ViewImageTheme extends Themelet {
 	}
 
 	protected function build_image_editor(Image $image, $editor_parts) {
-		if(count($editor_parts) == 0) return "";
+		if(count($editor_parts) == 0) return ($image->is_locked() ? "<br>[Image Locked]" : "");
 
 		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
 		else {$h_query = "";}
