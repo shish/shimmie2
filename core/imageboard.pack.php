@@ -374,7 +374,7 @@ class Image {
 
 
 	public function is_locked() {
-		return ($this->locked === true || $this->locked == "Y");
+		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
 	}
 	public function set_locked($tf) {
 		global $database;
