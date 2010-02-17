@@ -101,7 +101,7 @@ class LogDatabase extends SimpleExtension {
 
 				$args[] = $offset;
 				$args[] = $limit;
-				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT ?,?", $args);
+				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC OFFSET ? LIMIT ?", $args);
 
 				$this->theme->display_events($events, $page_num, 100);
 			}
