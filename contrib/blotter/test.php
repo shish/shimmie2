@@ -9,11 +9,11 @@ class BlotterTest extends SCoreWebTestCase {
 
 	function testDenial() {
 		$this->get_page("blotter/editor");
-		$this->assert_response(503);
+		$this->assert_response(403);
 		$this->get_page("blotter/add");
-		$this->assert_response(503);
+		$this->assert_response(403);
 		$this->get_page("blotter/remove");
-		$this->assert_response(503);
+		$this->assert_response(403);
 	}
 
 	function testAddViewRemove() {
