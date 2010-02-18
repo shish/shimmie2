@@ -7,6 +7,15 @@ class BlotterTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
+	function testDenial() {
+		$this->get_page("blotter/editor");
+		$this->assert_response(503);
+		$this->get_page("blotter/add");
+		$this->assert_response(503);
+		$this->get_page("blotter/remove");
+		$this->assert_response(503);
+	}
+
 	function testAddViewRemove() {
 		$this->log_in_as_admin();
 
