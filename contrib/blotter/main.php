@@ -64,7 +64,7 @@ class Blotter extends SimpleExtension {
 					/**
 					 * Displays the blotter editor.
 					 */
-					global $database, $user;
+					global $page, $database, $user;
 					if(!$user->is_admin()) {
 						$this->theme->display_permission_denied($page);
 					} else {
