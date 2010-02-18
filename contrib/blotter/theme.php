@@ -67,7 +67,7 @@ class BlotterTheme extends Themelet {
 			if($this->is_odd($i)) {$tr_class = "even";}
 			// Add the new table row(s)
 			$table_rows .= 
-				"<tr class='{$tr_class}'
+				"<tr class='{$tr_class}'>
 				<td>$entry_date</td>
 				<td>$entry_text</td>
 				<td>$important</td>
