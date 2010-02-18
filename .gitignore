@@ -8,6 +8,7 @@ shimmie.log
 ext/admin
 ext/autocomplete
 ext/ban_words
+ext/blotter
 ext/browser_search
 ext/bulk_add
 ext/danbooru_api
