@@ -84,8 +84,8 @@ class Blotter extends SimpleExtension {
 						if($entry_text == "") { die("No entry message!"); }
 						if(isset($_POST['important'])) { $important = 'Y'; } else { $important = 'N'; }
 						// Now insert into db:
-						$database->execute("INSERT INTO blotter (id, entry_date, entry_text, important) VALUES (?, now(), ?, ?)", 
-								array(NULL, $entry_text, $important));
+						$database->execute("INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), ?, ?)", 
+								array($entry_text, $important));
 						log_info("blotter", "Added Message: $entry_text");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("blotter/editor"));
@@ -101,7 +101,7 @@ class Blotter extends SimpleExtension {
 					} else {
 						$id = int_escape($_POST['id']);
 						if(!isset($id)) { die("No ID!"); }
-						$database->Execute("DELETE FROM blotter WHERE id=$id");
+						$database->Execute("DELETE FROM blotter WHERE id=?", array($id));
 						log_info("blotter", "Removed Entry #$id");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("blotter/editor"));
@@ -126,7 +126,7 @@ class Blotter extends SimpleExtension {
 	private function display_blotter() {
 		global $database, $config;
 		$limit = $config->get_int("blotter_recent", 5);
-		$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC LIMIT 0,$limit");
+		$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC LIMIT ?,?", array(0, $limit));
 		$this->theme->display_blotter($entries);
 	}
 }
