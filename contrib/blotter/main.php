@@ -65,56 +65,56 @@ class Blotter extends SimpleExtension {
 					 * Displays the blotter editor.
 					 */
 					global $database, $user;
-				if(!$user->is_admin()) {
-					$this->theme->display_permission_denied($page);
-				} else {
-					$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
-					$this->theme->display_editor($entries);
-				}
-				break;
+					if(!$user->is_admin()) {
+						$this->theme->display_permission_denied($page);
+					} else {
+						$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
+						$this->theme->display_editor($entries);
+					}
+					break;
 				case "add":
 					/**
 					 * Adds an entry
 					 */
 					global $page, $database, $user;
-				if(!$user->is_admin()) {
-					$this->theme->display_permission_denied($page);
-				} else {
-					$entry_text = $_POST['entry_text'];
-					if($entry_text == "") { die("No entry message!"); }
-					if(isset($_POST['important'])) { $important = 'Y'; } else { $important = 'N'; }
-					// Now insert into db:
-					$database->execute("INSERT INTO blotter (id, entry_date, entry_text, important) VALUES (?, now(), ?, ?)", 
-							array(NULL, $entry_text, $important));
-					log_info("blotter", "Added Message: $entry_text");
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("blotter/editor"));
-				}
-				break;	
+					if(!$user->is_admin()) {
+						$this->theme->display_permission_denied($page);
+					} else {
+						$entry_text = $_POST['entry_text'];
+						if($entry_text == "") { die("No entry message!"); }
+						if(isset($_POST['important'])) { $important = 'Y'; } else { $important = 'N'; }
+						// Now insert into db:
+						$database->execute("INSERT INTO blotter (id, entry_date, entry_text, important) VALUES (?, now(), ?, ?)", 
+								array(NULL, $entry_text, $important));
+						log_info("blotter", "Added Message: $entry_text");
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("blotter/editor"));
+					}
+					break;
 				case "remove":
 					/**
 					 * Removes an entry
 					 */
 					global $page, $database, $user;
-				if(!$user->is_admin()) {
-					$this->theme->display_permission_denied($page);
-				} else {
-					$id = int_escape($_POST['id']);
-					if(!isset($id)) { die("No ID!"); }
-					$database->Execute("DELETE FROM blotter WHERE id=$id");
-					log_info("blotter", "Removed Entry #$id");
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("blotter/editor"));
-				}
-				break;
+					if(!$user->is_admin()) {
+						$this->theme->display_permission_denied($page);
+					} else {
+						$id = int_escape($_POST['id']);
+						if(!isset($id)) { die("No ID!"); }
+						$database->Execute("DELETE FROM blotter WHERE id=$id");
+						log_info("blotter", "Removed Entry #$id");
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("blotter/editor"));
+					}
+					break;
 				case "":
 					/**
 					 * Displays all blotter entries
 					 */
 					global $database, $user;
-				$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
-				$this->theme->display_blotter_page($entries);
-				break;
+					$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
+					$this->theme->display_blotter_page($entries);
+					break;
 			}
 		}
 		/**
