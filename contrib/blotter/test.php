@@ -19,7 +19,7 @@ class BlotterTest extends SCoreWebTestCase {
 		$this->assert_text("blotter testing");
 
 		$this->get_page("blotter/editor");
-		$this->clock("Remove");
+		$this->click("Remove");
 		$this->assert_no_text("blotter testing");
 
 		$this->log_out();
