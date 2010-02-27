@@ -52,7 +52,7 @@
  *      </ul>
  *    <li>filename=blah, eg
  *      <ul>
- *        <li>user=kitten -- find all images with "kitten" in the original filename
+ *        <li>filename=kitten -- find all images with "kitten" in the original filename
  *      </ul>
  *    <li>posted=date, eg
  *      <ul>
