@@ -26,7 +26,7 @@ class Layout {
 		
 		$menu = "<div class='menu'>
 			<script type='text/javascript' src='$data_href/themes/$theme_name/wz_tooltip.js'></script>
-			<a href='".make_link()."' onmouseover='Tip(&#39;{$page->title}&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img src='http://localhost/favicon.ico' style='position: relative; top: 3px;'></a>
+			<a href='".make_link()."' onmouseover='Tip(&#39;Home&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img src='http://localhost/favicon.ico' style='position: relative; top: 3px;'></a>
 			<b>{$site_name}</b> ";
 		
 		// Custom links: These appear on the menu.
@@ -132,7 +132,7 @@ class Layout {
 				$cs .= "<a class='tab' href='".make_link('featured/download')."'>Download</a>";
 				break;
 		}
-		if(is_null($cs)) {$custom_sublinks = "";} else {
+		if($cs == "") {$custom_sublinks = "";} else {
 		$custom_sublinks .= "$cs</div>";}
 
 
