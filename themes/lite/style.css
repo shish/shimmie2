@@ -1,0 +1,358 @@
+BODY {
+	background: #F0F7FF;
+	font-family: sans-serif;
+	font-size: 14px;
+	margin: 0px;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+3                            menu bar                            *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.menu {
+	border-bottom: 1px solid #C3D2E0;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 4px;
+	background: #E3EFFA;
+}
+a.tab, a.tab:visited {
+	color:#000000;
+	text-decoration:none;
+}
+a.tab:hover, a.tab:active {
+	color:#000000;
+	background-color:#FFFFFF;
+	text-decoration:none;
+}
+.tab {
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border:1px solid #C8D1DB;
+	padding:4px;
+	cursor:default;
+	margin-right:2px;
+	padding:2px;
+}
+.tab-selected {
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	padding:2px;
+	background:none repeat scroll 0 0 #FFFFFE;
+	border:1px solid #C8D1DB;
+	color:#333333;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+3                        secondary bars                          *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+.sbar {
+	border-bottom: 1px solid #C3D2E0;
+	margin-top: 0px;
+	margin-bottom: 16px;
+	padding: 4px;
+	background: #CEDFF0;
+	text-align: left;
+}
+.sfoot {
+	border-top: 1px solid #C3D2E0;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding: 4px;
+	background: #CEDFF0;
+	text-align: right;
+}
+.navside {
+background:none repeat scroll 0 0 #CEDFF0;
+text-align:left;
+padding:4px;
+font-size:85%;
+border:1px solid #C3D2E0;
+margin-bottom:5px;
+-moz-border-radius:4px;
+-webkit-border-radius:4px;
+}
+.highlighted {
+	background:none repeat scroll 0 0 #CEDFF0;
+	padding:4px;
+	border:1px solid #C3D2E0;
+	margin:5px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+}
+.navtop, .maintop {
+font-size:110%;
+border-bottom:0 none;
+margin:0 0 0 0;
+padding:2px 10px;
+position:relative;
+left:0px;
+width:50%;
+}
+.navtop {
+	top:5px;
+}
+.maintop {
+	top:0px;
+	margin-top:5px;
+	margin-bottom:5px;
+}
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+3                  things common to all pages                    *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+H1 A {
+	color: black;
+}
+A, A:hover, A:active, A:visited {
+	color: #2860AD;
+}
+H3 {
+	text-align: center;
+	margin: 0px;
+}
+THEAD {
+	font-weight: bold;
+}
+TD {
+	vertical-align: top;
+	text-align: center;
+}
+CODE {
+	background: #DEDEDE;
+	font-size: 0.8em;
+}
+#subtitle {
+	width: 256px;
+	font-size: 0.75em;
+	margin: auto;
+	margin-top: -16px;
+	text-align: center;
+	border: 1px solid black;
+	border-top: none;
+	background: #DDD;
+}
+#body SELECT {width: 150px;}
+TD>INPUT[type="submit"] {width: 100%;}
+TD>INPUT[type="text"] {width: 100%;}
+TD>INPUT[type="password"] {width: 100%;}
+TD>TEXTAREA {width: 100%;}
+TD>SELECT {width: 100%;}
+[onclick] {cursor:pointer;}
+
+TABLE.zebra {border-spacing: 0px; border: 2px solid #C3D2E0;}
+TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
+TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #C3D2E0;}
+TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #C3D2E0;}
+TABLE.zebra TR TD {border-bottom: 1px solid #C3D2E0;}
+TABLE.zebra TR.odd {background: #CEDFF0;}
+TABLE.zebra TR.even {background: #F0F7FF;}
+
+INPUT, TEXTAREA {
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border:1px solid #C8D1DB;
+	padding:4px;
+	cursor:default;
+	margin-right:2px;
+	padding:2px;
+}
+
+INPUT:hover, TEXTAREA:hover {
+	background-color:#FFFFFF;
+	text-decoration:none;
+}
+
+#footer {
+	clear: both;
+	padding: 8px;
+	font-size: 0.7em;
+	text-align: right;
+	border-top: 1px solid #C3D2E0;
+	background: #E3EFFA;
+}
+
+*[onclick] {cursor: pointer;}
+IMG {border: none;}
+FORM {margin: 0px;}
+A {text-decoration: none;}
+A:hover {text-decoration: underline;}
+
+BLOCKQUOTE {
+	border: 1px solid black;
+	padding: 8px;
+	background: #DDD;
+}
+
+UL {
+	text-align: left;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*             the navigation bar, and all its blocks             *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#nav {
+	width: 200px;
+	float: left;
+	text-align: center;
+	margin-left: 16px;
+}
+#nav .blockbody {
+	font-size: 0.85em;
+	text-align: center;
+}
+#nav TABLE {
+	width: 190px;
+}
+#nav TD {
+	vertical-align: middle;
+}
+#nav INPUT {
+	width: 95%;
+	padding: 0px;
+}
+#nav SELECT {
+	width: 100%;
+	padding: 0px;
+}
+
+#comments P {
+	text-align: left;
+	width: 150px;
+	max-width: 150px;
+	overflow: hidden;
+}
+.comment {
+	text-align: left;
+}
+
+.more:after {
+	content: " >>>";
+}
+
+.tag_count:before {
+	content: "(";
+}
+.tag_count:after {
+	content: ")";
+}
+
+.paginator {
+	clear: both;
+	padding: 4px;
+	border-right: 1px solid #C3D2E0;
+	border-left: 1px solid #C3D2E0;
+}
+.paginator A {
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	color: #000;
+	border:1px solid #C8D1DB;
+	padding:4px;
+	cursor:default;
+	margin-right:2px;
+	padding:2px;
+}
+.paginator A:hover {
+	background-color:#FFFFFF;
+	text-decoration:none;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                 the main part of each page                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#body {
+	margin-left: 226px;
+	margin-right: 16px;
+	text-align: left;
+	height: 1%;
+}
+#body TABLE {
+	width: 90%;
+	margin: auto;
+}
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                     specific page types                        *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+#pagelist {
+	margin-top: 32px;
+}
+
+#tagmap A {
+	padding: 8px 4px 8px 4px;
+}
+
+/*.rr {text-align: left; background: #E3EFFA; margin: 8px;}
+.rrtop     {background: url("circle-tl.png") no-repeat top left;}
+.rrtop div {background: url("circle-tr.png") no-repeat top right;}
+.rrbot     {background: url("circle-bl.png") no-repeat bottom left;}
+.rrbot div {background: url("circle-br.png") no-repeat bottom right;}
+.rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
+.rrcontent {margin: 0px 8px; text-align: left;}
+
+.hrr {text-align: left; background: #C3D2E0; margin: 8px;}
+.hrrtop     {background: url("circle-tl.png") no-repeat top left;}
+.hrrtop div {background: url("circle-tr.png") no-repeat top right;}
+.hrrbot     {background: url("circle-bl.png") no-repeat bottom left;}
+.hrrbot div {background: url("circle-br.png") no-repeat bottom right;}
+.hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
+.hrrcontent {margin: 0px 8px;}*/
+
+.setupblock {
+	text-align: center;
+	width: 350px;
+}
+.setupblock TEXTAREA {
+	width: 300px;
+	font-size: 0.75em;
+}
+
+.helpable {
+	border-bottom: 1px dashed gray;
+}
+
+.ok {
+	background: #AFA;
+}
+.bad {
+	background: #FAA;
+}
+
+#nav .thumbblock {
+	float: none;
+	height: auto;
+}
+#nav .thumb {
+	margin-bottom: 0px;
+}
+.thumbblock {
+	width: 220px;
+	height: 220px;
+	display: inline-block;
+	float: left;
+}
+.thumb {
+	display: inline-block;
+	text-align: center;
+	margin-bottom: 32px;
+}
+
+#downtime #message, #downtime #login {
+	text-align: center;
+}
+#downtime H3 {
+	margin-top: 32px;
+}
+#downtime #login_table {
+	margin: auto;
+}
+
+.tooltip{
+   position:absolute;
+   top:0;
+   left:0;
+   z-index:3;
+   display:none;
+}
