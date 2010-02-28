@@ -51,7 +51,7 @@ class Themelet {
 	 */
 	public function rr($html) {
 		return "
-			<div class='tab'>
+			<div class='tframe'>
 				$html
 			</div>
 		";

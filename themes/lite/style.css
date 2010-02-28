@@ -18,12 +18,12 @@ a.tab, a.tab:visited {
 	color:#000000;
 	text-decoration:none;
 }
-a.tab:hover, a.tab:active {
+a.tab:hover, a.tab:active, .tab-selected {
 	color:#000000;
-	background-color:#FFFFFF;
+	background-color:#FFFFFE;
 	text-decoration:none;
 }
-.tab {
+.tab, .tab-selected, .tframe, #tips {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
@@ -32,13 +32,8 @@ a.tab:hover, a.tab:active {
 	margin-right:2px;
 	padding:2px;
 }
-.tab-selected {
-	-moz-border-radius:4px;
-	-webkit-border-radius:4px;
-	padding:2px;
-	background:none repeat scroll 0 0 #FFFFFE;
-	border:1px solid #C8D1DB;
-	color:#333333;
+.tframe {
+	margin:4px;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -61,14 +56,14 @@ a.tab:hover, a.tab:active {
 	text-align: right;
 }
 .navside {
-background:none repeat scroll 0 0 #CEDFF0;
-text-align:left;
-padding:4px;
-font-size:85%;
-border:1px solid #C3D2E0;
-margin-bottom:5px;
--moz-border-radius:4px;
--webkit-border-radius:4px;
+	background:none repeat scroll 0 0 #CEDFF0;
+	text-align:left;
+	padding:4px;
+	font-size:85%;
+	border:1px solid #C3D2E0;
+	margin-bottom:5px;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
 }
 .highlighted {
 	background:none repeat scroll 0 0 #CEDFF0;
@@ -79,21 +74,25 @@ margin-bottom:5px;
 	-webkit-border-radius:4px;
 }
 .navtop, .maintop {
-font-size:110%;
-border-bottom:0 none;
-margin:0 0 0 0;
-padding:2px 10px;
-position:relative;
-left:0px;
-width:50%;
+	font-size:110%;
+	border-bottom:0 none;
+	margin:0 0 2px 0; /* top right bottom left */
+	padding:2px 10px;
+	position:relative;
+	left:0px;
+	width:50%;
 }
 .navtop {
-	top:5px;
+	top:7px;
 }
 .maintop {
 	top:0px;
 	margin-top:5px;
 	margin-bottom:5px;
+}
+#tips, #blotter1, #blotter2 {
+	margin-right:16px;
+	margin-left:16px;
 }
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 3                  things common to all pages                    *
@@ -113,7 +112,7 @@ THEAD {
 }
 TD {
 	vertical-align: top;
-	text-align: center;
+	text-align: left;
 }
 CODE {
 	background: #DEDEDE;
@@ -263,6 +262,15 @@ UL {
 #body {
 	margin-left: 226px;
 	margin-right: 16px;
+	text-align: left;
+	height: 1%;
+}
+#body_noleft {
+	margin-left: 4px;
+	margin-right: 16px;
+	margin-bottom:16px;
+	padding-left:4px;
+	padding-right:4px;
 	text-align: left;
 	height: 1%;
 }

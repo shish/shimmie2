@@ -12,7 +12,7 @@ class Layout {
 	 * turns the Page into HTML
 	 */
 	public function display_page(Page $page) {
-		global $config;
+		global $config, $user;
 
 		$theme_name = $config->get_string('theme', 'lite');
 		$site_name = $config->get_string('title');
@@ -31,7 +31,11 @@ class Layout {
 		
 		// Custom links: These appear on the menu.
 		$custom_links = "";
-		$custom_links .= $this->navlinks(make_link('user'), "Account", array("user", "setup", "admin", "profile"));
+		if($user->is_anonymous()) {
+			$custom_links .= $this->navlinks(make_link('user_admin/login'), "Account", array("user", "user_admin", "setup", "admin", "profile"));
+		} else {
+			$custom_links .= $this->navlinks(make_link('user'), "Account", array("user", "setup", "user_admin", "admin", "profile"));
+		}
 		$custom_links .= $this->navlinks(make_link('post/list'), "Posts", array("post", "view"));
 		$custom_links .= $this->navlinks(make_link('comment/list'), "Comments", array("comment"));
 		$custom_links .= $this->navlinks(make_link('tags'), "Tags", array("tags"));
@@ -42,6 +46,31 @@ class Layout {
 		}
 		$menu .= "$custom_links</div>";
 		
+		$left_block_html = "";
+		$main_block_html = "";
+		$sub_block_html  = "";
+		$user_block_html = "";
+
+		foreach($page->blocks as $block) {
+			switch($block->section) {
+				case "left":
+					$left_block_html .= $this->block_to_html($block, true, "left");
+					break;
+				case "main":
+					$main_block_html .= $this->block_to_html($block, false, "main");
+					break;
+				case "user":
+					$user_block_html .= $block->body;
+					break;
+				case "subheading":
+					$sub_block_html .= $this->block_to_html($block, false, "main");
+					break;
+				default:
+					print "<p>error: {$block->header} using an unknown section ({$block->section})";
+					break;
+			}
+		}
+
 		$custom_sublinks = "<div class='sbar'>";
 		$cs = null;
 		// hack
@@ -53,7 +82,7 @@ class Layout {
 		// php sucks
 		switch($qp[0]) {
 			default:
-				$cs = null;
+				$cs = $user_block_html;
 				break;
 			case "":
 				# FIXME: this assumes that the front page is
@@ -105,29 +134,7 @@ class Layout {
 		}
 		if(is_null($cs)) {$custom_sublinks = "";} else {
 		$custom_sublinks .= "$cs</div>";}
-		$left_block_html = "";
-		$main_block_html = "";
-		$sub_block_html  = "";
 
-		foreach($page->blocks as $block) {
-			switch($block->section) {
-				case "left":
-					$left_block_html .= $this->block_to_html($block, true, "left");
-					break;
-				case "main":
-					$main_block_html .= $this->block_to_html($block, false, "main");
-					break;
-				case "user":
-					$user_block_html .= $block->body;
-					break;
-				case "subheading":
-					$sub_block_html .= $this->block_to_html($block, false, "main");
-					break;
-				default:
-					print "<p>error: {$block->header} using an unknown section ({$block->section})";
-					break;
-			}
-		}
 
 		$debug = get_debug_info();
 
@@ -137,6 +144,13 @@ class Layout {
 		$wrapper = "";
 		if(strlen($page->heading) > 100) {
 			$wrapper = ' style="height: 3em; overflow: auto;"';
+		}
+		if($page->left_enabled==false) {
+			$left_block_html = "";
+			$main_block_html = "<div id='body_noleft'>$main_block_html</div>";
+		} else {
+			$left_block_html = "<div id='nav'>$left_block_html</div>";
+			$main_block_html = "<div id='body'>$main_block_html</div>";
 		}
 
 		print <<<EOD
@@ -152,11 +166,12 @@ class Layout {
 	<body>
 		$menu
 		$custom_sublinks
-		$subheading
+		
 		$sub_block_html
 
-		<div id="nav">$left_block_html</div>
-		<div id="body">$main_block_html</div>
+		$left_block_html
+		$main_block_html
+		
 
 		<div id="footer">
 			Images &copy; their respective owners,
