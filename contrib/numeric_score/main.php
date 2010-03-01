@@ -91,6 +91,18 @@ class NumericScore implements Extension {
 					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=-1)",
 					array($duser->id)));
 			}
+			if(preg_match("/^upvoted_by_id=(\d+)$/", $event->term, $matches)) {
+				$iid = int_escape($matches[1]);
+				$event->add_querylet(new Querylet(
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)",
+					array($iid)));
+			}
+			if(preg_match("/^downvoted_by_id=(\d+)$/", $event->term, $matches)) {
+				$iid = int_escape($matches[1]);
+				$event->add_querylet(new Querylet(
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=-1)",
+					array($iid)));
+			}
 		}
 	}
 
