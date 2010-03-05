@@ -133,6 +133,7 @@ class UserPageTheme extends Themelet {
 	public function display_user_page(User $duser, $stats) {
 		global $page, $user;
 		assert(is_array($stats));
+		$stats[] = "User ID: {$duser->id}";
 
 		$page->set_title("{$duser->name}'s Page");
 		$page->set_heading("{$duser->name}'s Page");
