@@ -27,8 +27,8 @@ class ViewTest extends ShimmieWebTestCase {
         $this->assert_title('Image not found');
 
 		# note: skips image #2
-		# note: can't click "Next" / "Prev" since the query is added by javascript
-		$this->get_page("post/prev/$image_id_1?search=test");
+		$this->get_page("post/view/$image_id_1?search=test");
+		$this->click("Prev");
 		$this->assert_title("Image $image_id_3: test");
 
 		$this->log_in_as_admin();
