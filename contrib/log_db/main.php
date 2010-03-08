@@ -117,6 +117,10 @@ class LogDatabase extends SimpleExtension {
 
 	public function onLog($event) {
 		global $config, $database, $user;
+
+		// not installed yet...
+		if($config->get_int("ext_log_database_version") < 1) return;
+
 		if($event->priority >= $config->get_int("log_db_priority")) {
 			$database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
