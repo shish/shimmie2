@@ -34,9 +34,9 @@ TD INPUT {width: 350px;}
 			web server is mis-configured.
 			<p>If you've installed a web server on your desktop PC, you probably
 			want to visit <a href="http://localhost/">the local web server</a>.
-			<p>For more help with installation, visit
+			<!--<p>For more help with installation, visit
 			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
-			documentation wiki</a>.
+			documentation wiki</a>.-->
 		</div>
 		<div style="display: none;">
 			<PLAINTEXT>
