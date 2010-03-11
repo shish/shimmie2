@@ -413,9 +413,11 @@ class Artists implements Extension {
 
     public function add_author_field_to_image($event)
     {
+		global $user;
         $artistName = $this->get_artistName_by_imageID($event->image->id);
-
-        $event->add_part($this->theme->get_author_editor_html($artistName), 42);
+		if(!$user->is_anonymous()) {
+	        $event->add_part($this->theme->get_author_editor_html($artistName), 42);
+		}
     }
 
     private function get_artistName_by_imageID($imageID)
