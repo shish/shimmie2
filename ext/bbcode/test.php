@@ -36,6 +36,9 @@ class BBCodeUnitTest extends UnitTestCase {
 		$this->assertEqual(
 			$this->filter("[list][*]a[list][*]a[*]b[/list][*]b[/list]"),
 			"<ul><li>a<ul><li>a<li>b</ul><li>b</ul>");
+		$this->assertEqual(
+			$this->filter("[ul][*]a[ol][*]a[*]b[/ol][*]b[/ul]"),
+			"<ul><li>a<ol><li>a<li>b</ol><li>b</ul>");
 	}
 
 	public function testSpoiler() {
