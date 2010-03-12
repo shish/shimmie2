@@ -85,6 +85,20 @@ class IndexTest extends ShimmieWebTestCase {
 		//$this->get_page('post/list/-pbx/1');
 		//$this->assert_title(new PatternExpectation("/^Image $image_id_2: /"));
 
+		# test various search methods
+		$this->get_page("post/list/id=$image_id_1/1");
+		$this->assert_title(new PatternExpectation("/^Image $image_id_1: /"));
+		$this->assert_no_text("No Images Found");
+		$this->get_page("post/list/filename=screenshot/1");
+		$this->assert_title(new PatternExpectation("/^Image $image_id_1: /"));
+		$this->assert_no_text("No Images Found");
+		$this->get_page("post/list/tags=4/1");
+		$this->assert_title("tags=4");
+		$this->assert_no_text("No Images Found");
+		$this->get_page("post/list/ext=jpg/1");
+		$this->assert_title("ext=jpg");
+		$this->assert_no_text("No Images Found");
+
 		$this->log_in_as_admin();
 		$this->delete_image($image_id_1);
 		$this->delete_image($image_id_2);
