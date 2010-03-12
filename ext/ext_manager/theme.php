@@ -51,6 +51,7 @@ class ExtManagerTheme extends Themelet {
 		$page->add_block(new Block("Extension Manager", $html));
 	}
 
+	/*
 	public function display_blocks(Page $page, $extensions) {
 		$n = 0;
 		$col_1 = "";
@@ -105,6 +106,7 @@ class ExtManagerTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Extension Manager", $html));
 	}
+	*/
 
 	public function display_doc(Page $page, ExtensionInfo $info) {
 		$author = "";

@@ -11,6 +11,9 @@ class ExtManagerTest extends SCoreWebTestCase {
 		$this->assert_title("Documentation for Extension Manager");
 		$this->assert_text("view a list of all extensions");
 
+		# test author without email
+		$this->get_page('ext_doc/user');
+
 		$this->log_in_as_admin();
 		$this->get_page('ext_manager');
 		$this->assert_title("Extensions");
