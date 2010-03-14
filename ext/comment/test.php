@@ -50,6 +50,12 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->click("Post Comment");
 		$this->assert_text("Comment too repetitive~");
 
+		# test UTF8
+		$this->get_page("post/view/$image_id");
+		$this->set_field('comment', "Test Comment むちむち");
+		$this->click("Post Comment");
+		$this->assert_text("むちむち");
+
 		# test that search by comment metadata works
 		$this->get_page("post/list/commented_by=test/1");
 		$this->assert_title("Image $image_id: pbx");
