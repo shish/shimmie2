@@ -172,7 +172,7 @@ class Setup extends SimpleExtension {
 		$config->set_default_bool("use_autodate", true);
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_bool("use_captchas", false);
-		$config->set_default_string("use_autodate", "F j, Y");
+		$config->set_default_string("autodate_format", "F j, Y");
 	}
 
 	public function onPageRequest($event) {
