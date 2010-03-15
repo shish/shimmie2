@@ -949,6 +949,7 @@ class Tag {
  */
 function move_upload_to_archive($event) {
 	$target = warehouse_path("images", $event->hash);
+	mkdir(dirname($target), 0755, true);
 	if(!@copy($event->tmpname, $target)) {
 		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target)");
 		return false;

@@ -149,9 +149,9 @@ function begin() { // {{{
 EOD;
 } // }}}
 function install_process($database_dsn) { // {{{
+	build_dirs();
 	create_tables($database_dsn);
 	insert_defaults($database_dsn);
-	build_dirs();
 	write_config($database_dsn);
 	
 	header("Location: index.php");
@@ -266,33 +266,25 @@ function insert_defaults($dsn) { // {{{
 	}
 } // }}}
 function build_dirs() { // {{{
-	if(!file_exists("images")) @mkdir("images"); // *try* and make default dirs. Ignore any errors -- 
-	if(!file_exists("thumbs")) @mkdir("thumbs"); // if something is amiss, we'll tell the user later
-	if(!file_exists("data")) @mkdir("data");
+	// *try* and make default dirs. Ignore any errors --
+	// if something is amiss, we'll tell the user later
+	if(!file_exists("images")) @mkdir("images");
+	if(!file_exists("thumbs")) @mkdir("thumbs");
+	if(!file_exists("data")  ) @mkdir("data");
+	if(!is_writable("images")) @chmod("images", 0755);
+	if(!is_writable("thumbs")) @chmod("thumbs", 0755);
+	if(!is_writable("data")  ) @chmod("data", 0755);
 
 	if(
-			((!file_exists("images") || !file_exists("thumbs") || !file_exists("data")) && !is_writable("./")) ||
-			(!is_writable("images") || !is_writable("thumbs") || !is_writable("data"))
+			!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
+			!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
 	) {
 		print "Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
 		       and they need to be writable by the PHP user (if you see this error,
 			   if probably means the folders are owned by you, and they need to be
 			   writable by the web server).
-			   
 			   <p>Once you have created these folders, hit 'refresh' to continue.";
 		exit;
-	}
-	else {
-		assert(file_exists("images") && is_writable("images"));
-		assert(file_exists("thumbs") && is_writable("thumbs"));
-		assert(file_exists("data") && is_writable("data"));
-
-		if(!file_exists("images/ff")) {
-			for($i=0; $i<256; $i++) {
-				mkdir(sprintf("images/%02x", $i));
-				mkdir(sprintf("thumbs/%02x", $i));
-			}
-		}
 	}
 } // }}}
 function write_config($dsn) { // {{{
