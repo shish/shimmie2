@@ -34,9 +34,6 @@ TD INPUT {width: 350px;}
 			web server is mis-configured.
 			<p>If you've installed a web server on your desktop PC, you probably
 			want to visit <a href="http://localhost/">the local web server</a>.
-			<!--<p>For more help with installation, visit
-			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
-			documentation wiki</a>.-->
 		</div>
 		<div style="display: none;">
 			<PLAINTEXT>
@@ -148,10 +145,6 @@ function begin() { // {{{
 			<p>Databases should be specified like so:
 			<br>ie: <code>protocol://username:password@host/database?options</code>
 			<br>eg: <code>mysql://shimmie:pw123@localhost/shimmie?persist</code>
-			
-			<p>For more help with installation, visit
-			<a href="http://trac.shishnet.org/shimmie2/wiki/Guides/Admin/Install">the
-			documentation wiki</a>.
 		</div>
 EOD;
 } // }}}
