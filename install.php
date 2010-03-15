@@ -46,7 +46,64 @@ assert_options(ASSERT_BAIL, 1);
  * as soon as the admin is done installing for the first time
  */
 if(is_readable("config.php")) {
-	echo "'config.php' exists -- install function is disabled";
+	session_start();
+?>
+		<div id="iblock">
+			<h1>Shimmie Repair Console</h1>
+<?php
+	include "config.php";
+	if($_SESSION['dsn'] == $database_dsn || $_POST['dsn'] == $database_dsn) {
+		if($_POST['dsn']) {$_SESSION['dsn'] = $_POST['dsn'];}
+
+		if(empty($_GET["action"])) {
+			echo "<h3>Basic Checks</h3>";
+			echo "If these checks fail, something is broken; if they all pass, ";
+			echo "something <i>might</i> be broken, just not checked for...";
+			eok("Images writable", is_writable("images"));
+			eok("Thumbs writable", is_writable("thumbs"));
+			eok("Data writable", is_writable("data"));
+
+			/*
+			echo "<h3>New Database DSN</h3>";
+			echo "
+				<form action='install.php?action=newdsn' method='POST'>
+					<center>
+						<table>
+							<tr><td>Database:</td><td><input type='text' name='new_dsn' size='40'></td></tr>
+							<tr><td colspan='2'><center><input type='submit' value='Go!'></center></td></tr>
+						</table>
+					</center>
+				</form>
+			";
+			*/
+
+			echo "<h3>Log Out</h3>";
+			echo "
+				<form action='install.php?action=logout' method='POST'>
+					<input type='submit' value='Leave'>
+				</form>
+			";
+		}
+		else if($_GET["action"] == "logout") {
+			session_destroy();
+		}
+	} else {
+		echo "
+			<h3>Login</h3>
+			Enter the database DSN exactly as in config.php (ie, as originally
+			installed) to access advanced recovery tools:
+
+			<form action='install.php' method='POST'>
+				<center>
+					<table>
+						<tr><td>Database:</td><td><input type='text' name='dsn' size='40'></td></tr>
+						<tr><td colspan='2'><center><input type='submit' value='Go!'></center></td></tr>
+					</table>
+				</center>
+			</form>
+		";
+	}
+	echo "\t\t</div>";
 	exit;
 }
 require_once "core/compat.inc.php";
@@ -75,6 +132,16 @@ function check_im_version() {
 		$convert_check = exec("convert");
 	}
 	return (empty($convert_check) ? 0 : 1);
+}
+
+function eok($name, $value) {
+	echo "<br>$name ... ";
+	if($value) {
+		echo "<font color='green'>ok</font>\n";
+	}
+	else {
+		echo "<font color='red'>failed</font>\n";
+	}
 }
 // }}}
 function do_install() { // {{{
