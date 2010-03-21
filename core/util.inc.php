@@ -323,7 +323,13 @@ function _count_execs($db, $sql, $inputarray) {
 			fclose($fp);
 		}
 		else {
-			log_error("core", "failed to open sql.log for appending");
+			# WARNING:
+			# SQL queries happen before the event system is fully initialised
+			# (eg, "select theme from config" happens before "load themes"),
+			# so using the event system to report an error will create some
+			# really weird looking bugs.
+			#
+			#log_error("core", "failed to open sql.log for appending");
 		}
 	}
 	if (!is_array($inputarray)) $_execs++;
