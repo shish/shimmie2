@@ -59,7 +59,7 @@ class CommentListTest extends ShimmieWebTestCase {
 		# test that search by comment metadata works
 		$this->get_page("post/list/commented_by=test/1");
 		$this->assert_title("Image $image_id: pbx");
-		$this->get_page("post/list/comments=1/1");
+		$this->get_page("post/list/comments=2/1");
 		$this->assert_title("Image $image_id: pbx");
 
 		$this->log_out();
