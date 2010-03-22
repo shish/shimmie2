@@ -24,6 +24,17 @@ class NumericScoreTest extends ShimmieWebTestCase {
 		# and downvote
 		$this->get_page("post/list/downvoted_by=test/1");
 		$this->assert_text("No Images Found");
+
+		# test errors
+		$this->get_page("post/list/upvoted_by=asdfasdf/1");
+		$this->assert_text("No Images Found");
+		$this->get_page("post/list/downvoted_by=asdfasdf/1");
+		$this->assert_text("No Images Found");
+		$this->get_page("post/list/upvoted_by_id=0/1");
+		$this->assert_text("No Images Found");
+		$this->get_page("post/list/downvoted_by_id=0/1");
+		$this->assert_text("No Images Found");
+
 		$this->log_out();
 
 		$this->log_in_as_admin();
