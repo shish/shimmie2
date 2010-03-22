@@ -16,6 +16,14 @@ class PrivMsgTest extends SCoreWebTestCase {
 		$this->back();
 		$this->click("Delete");
 		$this->assert_no_text("message demo to test");
+
+		$this->get_page("pm/read/0");
+		$this->assert_text("No such PM");
+		$this->get_page("pm/delete/0");
+		$this->assert_text("No such PM");
+		$this->get_page("pm/waffle/0");
+		$this->assert_text("Invalid action");
+
 		$this->log_out();
 	}
 
