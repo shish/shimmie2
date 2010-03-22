@@ -115,11 +115,12 @@ class ExtManager extends SimpleExtension {
 			$ext = $event->get_arg(0);
 			if(file_exists("ext/$ext/main.php")) {
 				$info = new ExtensionInfo("ext/$ext/main.php");
+				$this->theme->display_doc($page, $info);
 			}
-			else {
+			else if(file_exists("contrib/$ext/main.php")) {
 				$info = new ExtensionInfo("contrib/$ext/main.php");
+				$this->theme->display_doc($page, $info);
 			}
-			$this->theme->display_doc($page, $info);
 		}
 	}
 
