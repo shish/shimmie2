@@ -27,19 +27,13 @@ class Downtime implements Extension {
 
 		if($event instanceof PageRequestEvent) {
 			if($config->get_bool("downtime")) {
-				$this->check_downtime($event);
+				if(!$user->is_admin() && !$this->is_safe_page($event)) {
+					$msg = $config->get_string("downtime_message");
+					$this->theme->display_message($msg);
+					exit;
+				}
 				$this->theme->display_notification($page);
 			}
-		}
-	}
-
-	private function check_downtime(PageRequestEvent $event) {
-		global $user, $config;
-
-		if($config->get_bool("downtime") && !$user->is_admin() &&
-				($event instanceof PageRequestEvent) && !$this->is_safe_page($event)) {
-			$msg = $config->get_string("downtime_message");
-			$this->theme->display_message($msg);
 		}
 	}
 

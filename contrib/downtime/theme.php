@@ -51,7 +51,6 @@ class DowntimeTheme extends Themelet {
 	</body>
 </html>
 EOD;
-		exit;
 	}
 }
 ?>
