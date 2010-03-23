@@ -105,7 +105,7 @@ class Layout {
 			$custom_links .= $this->navlinks(make_link('user_admin/login'), "My Account", array("user", "user_admin", "setup", "admin"));
 		}
 		else {
-			$custom_links .= $this->navlinks(make_link('user'), "My Account", array("user", "user_admin"));
+			$custom_links .= $this->navlinks(make_link('user'), "My Account", array("user", "user_admin", "setup", "admin"));
 		}
 		$custom_links .= $this->navlinks(make_link('post/list'), "Posts", array("post"));
 		$custom_links .= $this->navlinks(make_link('comment/list'), "Comments", array("comment"));
