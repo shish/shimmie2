@@ -34,6 +34,7 @@ class ViewTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id_1);
 		$this->delete_image($image_id_2);
+		$this->delete_image($image_id_3);
 		$this->log_out();
 	}
 }
