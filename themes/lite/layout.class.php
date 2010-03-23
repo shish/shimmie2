@@ -238,7 +238,7 @@ EOD;
 	
 	private function navlinks($link, $desc, $pages_matched) {
 	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!!
+	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 	 */
 		$html = null;
 		$url = $_GET['q'];

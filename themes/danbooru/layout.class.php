@@ -102,21 +102,21 @@ class Layout {
 		// bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
 		$custom_links = "";
 		if($user->is_anonymous()) {
-			$custom_links .= "<li><a href='".make_link('user_admin/login')."'>My Account</a></li>";
+			$custom_links .= $this->navlinks(make_link('user_admin/login'), "My Account", array("user", "user_admin", "setup", "admin"));
 		}
 		else {
-			$custom_links .= "<li><a href='".make_link('user')."'>My Account</a></li>";
+			$custom_links .= $this->navlinks(make_link('user'), "My Account", array("user", "user_admin"));
 		}
-		$custom_links .= "<li><a href='".make_link('post/list')."'>Posts</a></li>";
-		$custom_links .= "<li><a href='".make_link('comment/list')."'>Comments</a></li>";
-		$custom_links .= "<li><a href='".make_link('tags')."'>Tags</a></li>";
+		$custom_links .= $this->navlinks(make_link('post/list'), "Posts", array("post"));
+		$custom_links .= $this->navlinks(make_link('comment/list'), "Comments", array("comment"));
+		$custom_links .= $this->navlinks(make_link('tags'), "Tags", array("tags"));
 		if(class_exists("Pools")) {
-			$custom_links .= "<li><a href='".make_link('pool/list')."'>Pools</a></li>";
+			$custom_links .= $this->navlinks(make_link('pool/list'), "Pools", array("pool"));
 		}
-		$custom_links .= "<li><a href='".make_link('upload')."'>Upload</a></li>";
+		$custom_links .= $this->navlinks(make_link('upload'), "Upload", array("upload"));
 		if(class_exists("Wiki")) {
-			$custom_links .= "<li><a href='".make_link('wiki')."'>Wiki</a></li>";
-			$custom_links .= "<li><a href='".make_link('wiki/more')."'>More &raquo;</a></li>";
+			$custom_links .= $this->navlinks(make_link('wiki'), "Wiki", array("wiki"));
+			$custom_links .= $this->navlinks(make_link('wiki/more'), "More &raquo;", array("wiki/more"));
 		}
 
 		$custom_sublinks = "";
@@ -168,6 +168,7 @@ class Layout {
 				$custom_sublinks .= "<li><a href='".make_link("ext_doc/tag_edit")."'>Help</a></li>";
 				break;
 		}
+
 
 		// bzchan: failed attempt to add heading after title_link (failure was it looked bad)
 		//if($this->heading==$site_name)$this->heading = '';
@@ -243,6 +244,28 @@ EOD;
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
 			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n"; 
 		}
+		return $html;
+	}
+	private function navlinks($link, $desc, $pages_matched) {
+	/**
+	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+	 */
+		$html = null;
+		$url = $_GET['q'];
+
+		$re1='.*?';
+		$re2='((?:[a-z][a-z]+))';
+
+		if ($c=preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
+			$url=$matches[1][0];
+		}
+		
+		for($i=0;$i<count($pages_matched);$i++) {
+			if($url == $pages_matched[$i]) {
+				$html = "<li class='current-page'><a href='$link'>$desc</a></li>";
+			}
+		}
+		if(is_null($html)) {$html = "<li><a class='tab' href='$link'>$desc</a></li>";}
 		return $html;
 	}
 }
