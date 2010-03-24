@@ -66,7 +66,10 @@ if(!file_exists("config.php")) {
 
 require_once "config.php";
 require_once "core/util.inc.php";
-if(COVERAGE) {_start_coverage();}
+if(COVERAGE) {
+	_start_coverage();
+	register_shutdown_function("_end_coverage");
+}
 _version_check();
 _sanitise_environment();
 _start_cache();
@@ -150,5 +153,4 @@ catch(Exception $e) {
 </html>
 EOD;
 }
-if(COVERAGE) {_end_coverage();}
 ?>
