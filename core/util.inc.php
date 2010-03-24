@@ -47,6 +47,16 @@ function sql_escape($input) {
 }
 
 /**
+ * Some functions require a callback function for escaping,
+ * but we might not want to alter the data
+ *
+ * @retval string
+ */
+function no_escape($input) {
+	return $input;
+}
+
+/**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
  * @retval int
