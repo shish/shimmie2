@@ -24,8 +24,32 @@ class BanWords implements Extension {
 		if($event instanceof InitExtEvent) {
 			global $config;
 			$config->set_default_string('banned_words', "
+a href=
+anal
+blowjob
+/buy-.*-online/
+casino
+cialis
+doors.txt
+fuck
+hot video
+kaboodle.com
+lesbian
+nexium
+penis
+/pokerst.*/
+pornhub
+porno
+purchase
+sex
+sex tape
+spinnenwerk.de
+thx for all
+TRAMADOL
+ultram
+very nice site
 viagra
-porn
+xanax
 			");
 		}
 
