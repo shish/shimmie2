@@ -304,7 +304,7 @@ class Image {
 	 */
 	public function get_tooltip() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tip'), "html_escape");
+		return $this->parse_link_template($config->get_string('image_tip'), "no_escape");
 	}
 
 	/**
