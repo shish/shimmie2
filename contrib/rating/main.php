@@ -127,9 +127,7 @@ class Ratings implements Extension {
 			global $user, $database, $page;
 			$user_view_level = Ratings::get_user_privs($user);
 			$user_view_level = preg_split('//', $user_view_level, -1);
-			$image_level = $database->get_row("SELECT  `rating` FROM  `images` WHERE id =?",$event->image->id);
-			$image_level = $image_level["rating"];
-			if(!in_array($image_level, $user_view_level)) {
+			if(!in_array($event->image->rating, $user_view_level)) {
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("post/list"));
 			}
