@@ -139,6 +139,7 @@ class AliasEditor implements Extension {
 	}
 
 	private function add_alias_csv($database, $csv) {
+		$csv = str_replace("\r", "\n", $csv);
 		foreach(explode("\n", $csv) as $line) {
 			$parts = explode(",", $line);
 			if(count($parts) == 2) {
