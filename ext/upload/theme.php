@@ -48,7 +48,7 @@ class UploadTheme extends Themelet {
 
 		if($tl_enabled) {
 			global $config;
-			$link = make_link("upload");
+			$link = make_http(make_link("upload"));
 			$title = "Upload to " . $config->get_string('title');
 			$html .= '<p><a href="javascript:location.href=&quot;' .
 				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
