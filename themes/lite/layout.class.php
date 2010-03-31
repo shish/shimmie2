@@ -178,7 +178,7 @@ class Layout {
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp; Co 2007-2010,
 			based on the Danbooru concept.<br />
-			<a href="http://github.com/zshall/shimmie2/">Lite Theme</a> by <a href="http://seemslegit.com">Zach</a>, based on Default, Danbooru, and <a href="http://qwebirc.org/">qwebirc</a>
+			Lite Theme by <a href="http://seemslegit.com">Zach</a>
 			$debug
 			$contact
 		</div>

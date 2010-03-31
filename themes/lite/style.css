@@ -1,3 +1,8 @@
+/**
+ * Some style elements borrowed from the QWebIRC project
+ * http://qwebirc.org/
+ */
+
 BODY {
 	background: #F0F7FF;
 	font-family: sans-serif;
@@ -175,9 +180,9 @@ A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 
 BLOCKQUOTE {
-	border: 1px solid black;
+	border: 1px solid #C3D2E0;
 	padding: 8px;
-	background: #DDD;
+	background: #E3EFFA;
 }
 
 UL {
