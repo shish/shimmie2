@@ -72,6 +72,11 @@ class IndexTest extends ShimmieWebTestCase {
 		$this->assert_title("computer size=640x480");
 		$this->assert_no_text("No Images Found");
 
+		# multiple tags, one of which doesn't exist
+		# (test the "one tag doesn't exist = no hits" path)
+        $this->get_page('post/list/computer%20asdfasdfwaffle/1');
+		$this->assert_text("No Images Found");
+
 		# multiple tags, single result; search with one result = direct to image
 		$this->get_page('post/list/screenshot%20computer/1');
 		$this->assert_title(new PatternExpectation("/^Image $image_id_1: /"));
