@@ -31,16 +31,19 @@ class RandomImage extends SimpleExtension {
 				$action = $event->get_arg(0);
 				$search_terms = explode(' ', $event->get_arg(1));
 			}
+			else {
+				# FIXME: throw exception
+			}
 			$image = Image::by_random($search_terms);
 
-			if($event->get_arg(0) == "download") {
+			if($action == "download") {
 				if(!is_null($image)) {
 					$page->set_mode("data");
 					$page->set_type("image/jpeg");
 					$page->set_data(file_get_contents($image->get_image_filename()));
 				}
 			}
-			if($event->get_arg(0) == "view") {
+			if($action == "view") {
 				if(!is_null($image)) {
 					send_event(new DisplayingImageEvent($image, $page));
 				}
