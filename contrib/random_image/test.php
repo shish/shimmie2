@@ -8,12 +8,15 @@ class RandomTest extends ShimmieWebTestCase {
         $this->get_page("random_image/view");
         $this->assert_title("Image $image_id: test");
 
+        $this->get_page("random_image/view/test");
+        $this->assert_title("Image $image_id: test");
+
+        $raw = $this->get_page("random_image/download");
+		# FIXME: assert($raw == file(blah.jpg))
+
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
-
-		# FIXME: test random_image/download
-		# FIXME: test random_image/ratio=4:3/download
 	}
 
 	function tesPostListBlock() {
