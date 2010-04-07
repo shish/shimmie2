@@ -38,9 +38,10 @@ class CommentPostingException extends SCoreException {}
 
 class Comment {
 	public function Comment($row) {
+		$this->owner = null;
 		$this->owner_id = $row['user_id'];
 		$this->owner_name = $row['user_name'];
-		$this->owner_email = $row['user_email'];
+		$this->owner_email = $row['user_email']; // deprecated
 		$this->comment =  $row['comment'];
 		$this->comment_id =  $row['comment_id'];
 		$this->image_id =  $row['image_id'];
@@ -51,6 +52,11 @@ class Comment {
 	public static function count_comments_by_user($user) {
 		global $database;
 		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($user->id));
+	}
+
+	public function get_owner() {
+		if(empty($this->owner)) $this->owner = User::by_id($this->owner_id);
+		return $this->owner;
 	}
 }
 
