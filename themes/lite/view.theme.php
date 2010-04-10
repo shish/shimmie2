@@ -8,7 +8,6 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$page->add_block(new Block("Statistics", $this->build_stats($image), "left", 10));
 		$page->add_block(new Block(null, $this->build_image_editor($image, $editor_parts), "main", 10));
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
-		$page->add_block(new Block(null, "hello world", "subheading", 0));
 	}
 	
 	private function build_stats($image) {
