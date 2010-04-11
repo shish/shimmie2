@@ -1,4 +1,3 @@
-<<<<<<< HEAD:themes/danbooru/layout.class.php
 <?php
 /**
 * Name: Danbooru Theme
