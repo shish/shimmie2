@@ -106,7 +106,8 @@ class TagList implements Extension {
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
 		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
-		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats";
+		$h_all = "<a href='?mincount=1'>Show All</a>";
+		return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
 	}
 
 	private function build_tag_map() {
