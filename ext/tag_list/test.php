@@ -14,6 +14,7 @@ class TagListTest extends ShimmieWebTestCase {
 		$this->assert_title('Tag List');
 
 		# FIXME: test that these show the right stuff
+		# FIXME: test mincount
 	}
 }
 ?>
