@@ -9,7 +9,7 @@ class ZoomTheme extends Themelet {
 		global $config;
 		$default = $zoom_by_default ? "scale(img);" : "";
 		return <<<EOD
-<!-- rrcontent -->
+<!-- cancel border -->
 <script type="text/javascript">
 img = document.getElementById("main_image");
 

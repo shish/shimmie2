@@ -116,7 +116,7 @@ EOD;
 			</div>
 		";
 		if(!is_null($b)) {
-			if(strpos($b, "rrcontent")) {
+			if(strpos($b, "<!-- cancel border -->")) {
 				$html .= "<div class='blockbody' id='$i'>$b</div>";
 			}
 			else {
