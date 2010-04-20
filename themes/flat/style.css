@@ -1,6 +1,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-*                  things common to all pages                    *
+3                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 BODY {
@@ -10,9 +10,12 @@ BODY {
 	margin: 0px;
 }
 H1 {
+	border-bottom: 1px solid black;
+	margin-top: 0px;
+	margin-bottom: 16px;
+	padding: 8px;
 	background: #BBB;
 	text-align: center;
-	border: 1px solid #AAA;
 }
 H1 A {
 	color: black;
@@ -20,22 +23,6 @@ H1 A {
 H3 {
 	text-align: center;
 	margin: 0px;
-}
-.hrr {
-	background: #CCC;
-	border: 1px solid #BBB;
-}
-.brr, .thumb {
-	background: #DDD;
-	border: 1px solid #CCC;
-}
-.brr, .hrr, H1, #footer, .thumb {
-	margin: 8px;
-	padding: 8px;
-	-webkit-border-radius: 12px;
-	-moz-border-radius: 12px;
-	-webkit-box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
-	-moz-box-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
 THEAD {
 	font-weight: bold;
@@ -76,10 +63,11 @@ TABLE.zebra TR.even {background: #E0E0E0;}
 
 #footer {
 	clear: both;
+	padding: 8px;
 	font-size: 0.7em;
 	text-align: center;
+	border-top: 1px solid black;
 	background: #BBB;
-	border: 1px solid #AAA;
 }
 
 *[onclick] {cursor: pointer;}
@@ -111,7 +99,6 @@ UL {
 #nav .blockbody {
 	font-size: 0.85em;
 	text-align: center;
-	overflow: hidden;
 }
 #nav TABLE {
 	width: 150px;
@@ -184,6 +171,22 @@ UL {
 	padding: 8px 4px 8px 4px;
 }
 
+.rr {text-align: left; background: #DDD; margin: 8px;}
+.rrtop     {background: url("circle-tl.png") no-repeat top left;}
+.rrtop div {background: url("circle-tr.png") no-repeat top right;}
+.rrbot     {background: url("circle-bl.png") no-repeat bottom left;}
+.rrbot div {background: url("circle-br.png") no-repeat bottom right;}
+.rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
+.rrcontent {margin: 0px 8px; text-align: center;}
+
+.hrr {text-align: left; background: #CCC; margin: 8px;}
+.hrrtop     {background: url("circle-tl.png") no-repeat top left;}
+.hrrtop div {background: url("circle-tr.png") no-repeat top right;}
+.hrrbot     {background: url("circle-bl.png") no-repeat bottom left;}
+.hrrbot div {background: url("circle-br.png") no-repeat bottom right;}
+.hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
+.hrrcontent {margin: 0px 8px;}
+
 .setupblock {
 	text-align: center;
 	width: 350px;
@@ -215,11 +218,11 @@ UL {
 	width: 220px;
 	height: 220px;
 	display: inline-block;
-	text-align: center;
 	float: left;
 }
 .thumb {
 	display: inline-block;
+	text-align: center;
 	margin-bottom: 32px;
 }
 

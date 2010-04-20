@@ -25,14 +25,13 @@ class CustomSetupTheme extends SetupTheme {
 				}
 			});
 			//--></script>
-			<div class='setupblock brr'>
+			<div class='setupblock'>
 				<b id='$i-toggle'>$h</b>
 				<br><div id='$i'>$b</div>
 			</div>
-			<!-- cancel border -->
 		";
 
-		return $html;
+		return $this->rr($html);
 	}
 }
 ?>

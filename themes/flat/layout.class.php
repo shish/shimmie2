@@ -109,14 +109,24 @@ EOD;
 			//--></script>
 		";
 		if(!is_null($h)) $html .= "
-			<h3 id='$i-toggle' class='hrr'>$h</h3>
+			<div class='hrr' id='$i-toggle'>
+				<div class='hrrtop'><div></div></div>
+				<div class='hrrcontent'><h3>$h</h3></div>
+				<div class='hrrbot'><div></div></div>
+			</div>
 		";
 		if(!is_null($b)) {
-			if(strpos($b, "<!-- cancel border -->") === FALSE) {
-				$html .= "<div class='blockbody brr' id='$i'>$b</div>";
+			if(strpos($b, "<!-- cancel border -->")) {
+				$html .= "<div class='blockbody' id='$i'>$b</div>";
 			}
 			else {
-				$html .= "<div class='blockbody' id='$i'>$b</div>";
+				$html .= "
+					<div class='rr' id='$i'>
+						<div class='rrtop'><div></div></div>
+						<div class='rrcontent'><div class='blockbody'>$b</div></div>
+						<div class='rrbot'><div></div></div>
+					</div>
+				";
 			}
 		}
 
