@@ -10,7 +10,7 @@ class HomeTheme extends Themelet {
 		<link rel='stylesheet' href='$data_href/themes/$theme_name/style.css' type='text/css'>
 	</head>
 	<style>
-		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none;}
+		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
 		div#front-page {text-align:center;}
 		.space {margin-bottom: 1em;}
 		div#front-page div#links a {margin: 0 0.5em;}
