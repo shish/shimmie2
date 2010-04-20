@@ -8,12 +8,5 @@ class CustomCommentListTheme extends CommentListTheme {
 	protected function build_postbox($image_id) {
 		return $this->rr(parent::build_postbox($image_id));
 	}
-
-	protected function rr($html) {
-		return "
-			<!-- cancel border -->
-			<div class='brr'>$html</div>
-		";
-	}
 }
 ?>

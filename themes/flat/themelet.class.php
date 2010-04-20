@@ -35,13 +35,30 @@ class Themelet {
 		$h_thumb_link = $image->get_thumb_link();
 		$tsize = get_thumbnail_size($image->width, $image->height);
 		return "
-			<!-- cancel border -->
 			<div class='thumbblock'>
-			<div class='thumb'>
+			<div class='rr thumb'>
+				<div class='rrtop'><div></div></div>
+				<div class='rrcontent'>
 				<a href='$h_view_link' style='position: relative; display: block; height: {$tsize[1]}px; width: {$tsize[0]}px;'>
 					<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' style='height: {$tsize[1]}px; width: {$tsize[0]}px;' src='$h_thumb_link'>
 				</a>
+				</div>
+				<div class='rrbot'><div></div></div>
 			</div>
+			</div>
+		";
+	}
+
+
+	/**
+	 * Put something in a rounded rectangle box; specific to the default theme
+	 */
+	public function rr($html) {
+		return "
+			<div class='rr'>
+				<div class='rrtop'><div></div></div>
+				<div class='rrcontent'>$html</div>
+				<div class='rrbot'><div></div></div>
 			</div>
 		";
 	}
