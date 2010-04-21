@@ -185,9 +185,15 @@ class UserPage extends SimpleExtension {
 	}
 
 	public function onSetupBuilding(Event $event) {
+		$hosts = array(
+			"None" => "none",
+			"Gravatar" => "gravatar"
+		);
+
 		$sb = new SetupBlock("User Options");
 		$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
 		$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
+		#$sb->add_choice_option("avatar_host", $hosts, "<br>Avatars: ");
 		$event->panel->add_block($sb);
 	}
 
