@@ -88,6 +88,16 @@ class TagList implements Extension {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}
+
+	private function get_tags_min() {
+		if(isset($_GET['mincount'])) {
+			return int_escape($_GET['mincount']);
+		}
+		else {
+			global $config;
+			return $config->get_int('tags_min');
+		}
+	}
 // }}}
 // maps {{{
 	private function build_navigation() {
@@ -96,14 +106,14 @@ class TagList implements Extension {
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
 		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
-		return "$h_index<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats";
+		$h_all = "<a href='?mincount=1'>Show All</a>";
+		return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
 	}
 
 	private function build_tag_map() {
 		global $database;
-		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $this->get_tags_min();
 		$result = $database->execute("
 				SELECT
 					tag,
@@ -128,9 +138,8 @@ class TagList implements Extension {
 
 	private function build_tag_alphabetic() {
 		global $database;
-		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $this->get_tags_min();
 		$result = $database->execute(
 				"SELECT tag,count FROM tags WHERE count >= ? ORDER BY tag",
 				array($tags_min));
@@ -154,9 +163,8 @@ class TagList implements Extension {
 
 	private function build_tag_popularity() {
 		global $database;
-		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $this->get_tags_min();
 		$result = $database->execute(
 				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= ? ORDER BY count DESC, tag ASC",
 				array($tags_min));
@@ -181,9 +189,8 @@ class TagList implements Extension {
 
 	private function build_tag_categories() {
 		global $database;
-		global $config;
 
-		$tags_min = $config->get_int('tags_min');
+		$tags_min = $this->get_tags_min();
 		$result = $database->execute("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
 		$tag_data = $result->GetArray();
 
