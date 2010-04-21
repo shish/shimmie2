@@ -121,6 +121,9 @@ class ExtManager extends SimpleExtension {
 				$info = new ExtensionInfo("contrib/$ext/main.php");
 				$this->theme->display_doc($page, $info);
 			}
+			else {
+				$this->theme->display_table($page, $this->get_extensions(false), false);
+			}
 		}
 	}
 
@@ -130,7 +133,7 @@ class ExtManager extends SimpleExtension {
 			$event->add_link("Extension Manager", make_link("ext_manager"));
 		}
 		else {
-			$event->add_link("Help", make_link("ext_manager"));
+			$event->add_link("Help", make_link("ext_doc"));
 		}
 	}
 
