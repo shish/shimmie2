@@ -47,8 +47,10 @@ class UserPage extends SimpleExtension {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);
 		$config->set_default_int("login_memory", 365);
-		$config->set_default_string("avatar_host", "gravatar");
-		$config->set_default_string("avatar_gravatar_options", "");
+		$config->set_default_string("avatar_host", "none");
+		$config->set_default_int("avatar_gravatar_size", 80);
+		$config->set_default_string("avatar_gravatar_default", "");
+		$config->set_default_string("avatar_gravatar_rating", "g");
 		$config->set_default_bool("login_tac_bbcode", true);
 	}
 
@@ -185,6 +187,8 @@ class UserPage extends SimpleExtension {
 	}
 
 	public function onSetupBuilding(Event $event) {
+		global $config;
+
 		$hosts = array(
 			"None" => "none",
 			"Gravatar" => "gravatar"
@@ -193,7 +197,23 @@ class UserPage extends SimpleExtension {
 		$sb = new SetupBlock("User Options");
 		$sb->add_bool_option("login_signup_enabled", "Allow new signups: ");
 		$sb->add_longtext_option("login_tac", "<br>Terms &amp; Conditions:<br>");
-		#$sb->add_choice_option("avatar_host", $hosts, "<br>Avatars: ");
+		$sb->add_choice_option("avatar_host", $hosts, "<br>Avatars: ");
+
+		if($config->get_string("avatar_host") == "gravatar") {
+			$sb->add_label("<br>&nbsp;<br><b>Gravatar Options</b>");
+			$sb->add_choice_option("avatar_gravatar_type",
+				array(
+					'Default'=>'default',
+					'Wavatar'=>'wavatar',
+					'Monster ID'=>'monsterid',
+					'Identicon'=>'identicon'
+				),
+				"<br>Type: ");
+			$sb->add_choice_option("avatar_gravatar_rating",
+				array('G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'),
+				"<br>Rating: ");
+		}
+
 		$event->panel->add_block($sb);
 	}
 

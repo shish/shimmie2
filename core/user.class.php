@@ -145,8 +145,10 @@ class User {
 		if($config->get_string("avatar_host") == "gravatar") {
 			if(!empty($this->email)) {
 				$hash = md5(strtolower($this->email));
-				$args = $config->get_string("avatar_gravatar_options");
-				return "<img class=\"avatar gravatar\" src=\"http://www.gravatar.com/avatar/$hash.jpg?$args\">";
+				$s = $config->get_string("avatar_gravatar_size");
+				$d = $config->get_string("avatar_gravatar_default");
+				$r = $config->get_string("avatar_gravatar_rating");
+				return "<img class=\"avatar gravatar\" src=\"http://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r\">";
 			}
 		}
 		return "";
