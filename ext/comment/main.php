@@ -244,6 +244,11 @@ class CommentList extends SimpleExtension {
 		global $config;
 		global $database;
 
+		if(class_exists("Ratings")) {
+			global $user;
+			$user_ratings = Ratings::get_user_privs($user);
+		}
+
 		if(is_null($current_page) || $current_page <= 0) {
 			$current_page = 1;
 		}
@@ -267,6 +272,11 @@ class CommentList extends SimpleExtension {
 		while(!$result->EOF) {
 			$image = Image::by_id($result->fields["image_id"]);
 			$comments = $this->get_comments($image->id);
+			if(class_exists("Ratings")) {
+				if(strpos($user_ratings, $image->rating) === FALSE) {
+					$image = null; // this is "clever", I may live to regret it
+				}
+			}
 			if(!is_null($image)) $images[] = array($image, $comments);
 			$result->MoveNext();
 		}
