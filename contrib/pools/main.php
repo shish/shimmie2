@@ -275,7 +275,7 @@ class Pools extends SimpleExtension {
 				"INNER JOIN users AS u ".
 				"ON p.user_id = u.id ".
 				"ORDER BY p.date DESC ".
-				"LIMIT ?, ?"
+				"OFFSET ? LIMIT ?"
 				, array($pageNumber * $poolsPerPage, $poolsPerPage)
 				);
 
@@ -452,7 +452,7 @@ class Pools extends SimpleExtension {
 					INNER JOIN images AS i ON i.id = p.image_id
 					WHERE p.pool_id = ? AND i.rating IN ($rating)
 					ORDER BY p.image_order ASC
-					LIMIT ?, ?",
+					OFFSET ? LIMIT ?",
 					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
 
 			$totalPages = ceil($database->db->GetOne("
@@ -468,7 +468,7 @@ class Pools extends SimpleExtension {
 					FROM pool_images
 					WHERE pool_id=?
 					ORDER BY image_order ASC
-					LIMIT ?, ?",
+					OFFSET ? LIMIT ?",
 					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
 			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
 		}
@@ -588,7 +588,7 @@ class Pools extends SimpleExtension {
 				"INNER JOIN users AS u ".
 				"ON h.user_id = u.id ".
 				"ORDER BY h.date DESC ".
-				"LIMIT ?, ?"
+				"OFFSET ? LIMIT ?"
 				, array($pageNumber * $historiesPerPage, $historiesPerPage));
 
 		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
