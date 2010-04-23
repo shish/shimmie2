@@ -32,6 +32,7 @@ function int_escape($input) {
 function url_escape($input) {
 	$input = str_replace('^', '^^', $input);
 	$input = str_replace('/', '^s', $input);
+	$input = str_replace('\\', '^b', $input);
 	$input = rawurlencode($input);
 	return $input;
 }
@@ -803,6 +804,7 @@ function _decaret($str) {
 			$i++;
 			if($str[$i] == "^") $out .= "^";
 			if($str[$i] == "s") $out .= "/";
+			if($str[$i] == "b") $out .= "\\";
 		}
 		else {
 			$out .= $str[$i];
