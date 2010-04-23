@@ -131,9 +131,11 @@ try {
 
 
 	// for databases which support transactions
-	if($database->engine->name != "sqlite") {
-		$database->db->CommitTrans(true);
-	}
+	// XXX: removed since we never start a transaction, and postgres
+	// fills the disk with warnings about that
+	//if($database->engine->name != "sqlite") {
+	//	$database->db->CommitTrans(true);
+	//}
 
 	_end_cache();
 }
