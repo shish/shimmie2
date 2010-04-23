@@ -48,7 +48,6 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		$ok = false;
 
-		mkdir(dirname($outname), 0755, true);
 		switch($config->get_string("thumb_engine")) {
 			default:
 			case 'gd':

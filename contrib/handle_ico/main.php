@@ -99,7 +99,6 @@ class IcoFileHandler extends SimpleExtension {
 		$q = $config->get_int("thumb_quality");
 		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
-		mkdir(dirname($outname), 0755, true);
 		if($config->get_bool("ico_convert")) {
 			// "-limit memory $mem" broken?
 			exec("convert {$inname}[0] -geometry {$w}x{$h} -quality {$q} jpg:$outname");

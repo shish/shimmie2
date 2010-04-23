@@ -485,9 +485,11 @@ function format_text($string) {
 	return $tfe->formatted;
 }
 
-function warehouse_path($base, $hash) {
+function warehouse_path($base, $hash, $create=true) {
 	$ab = substr($hash, 0, 2);
-	return "$base/$ab/$hash";
+	$pa = "$base/$ab/$hash";
+	if($create && !file_exists(dirname($pa))) mkdir(dirname($pa), 0755, true);
+	return $pa;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
