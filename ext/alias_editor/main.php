@@ -70,12 +70,7 @@ class AliasEditor implements Extension {
 
 				$alias_per_page = $config->get_int('alias_items_per_page', 30);
 
-				if($database->engine->name == "mysql") {
-					$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT ?, ?";
-				}
-				else {
-					$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC OFFSET ? LIMIT ?";
-				}
+				$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC OFFSET ? LIMIT ?";
 				$alias = $database->db->GetAssoc($query,
 					array($page_number * $alias_per_page, $alias_per_page)
 				);
