@@ -35,15 +35,29 @@ class UploadTheme extends Themelet {
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		$html = "
+			<script>
+			$(document).ready(function() {
+				$('#tag_box').DefaultValue('tagme');
+				$('#tag_box').autocomplete('".make_link("api/internal/tag_list/complete")."', {
+					width: 320,
+					max: 15,
+					highlight: false,
+					multiple: true,
+					multipleSeparator: ' ',
+					scroll: true,
+					scrollHeight: 300
+				});
+			});
+			</script>
 			<form enctype='multipart/form-data' action='".make_link("upload")."' method='POST'>
 				<table id='large_upload_form'>
 					$upload_list
-					<tr><td>Tags</td><td colspan='3'><input id='tagBox' name='tags' type='text' value='tagme' autocomplete='off'></td></tr>
+					<tr><td>Tags</td><td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
 			</form>
-			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
+			<small>(Max file size is $max_kb)</small>
 		";
 
 		if($tl_enabled) {
@@ -93,7 +107,16 @@ class UploadTheme extends Themelet {
 		return "
 			<script>
 			$(document).ready(function() {
-				$(\"#tag_input\").DefaultValue(\"tagme\");
+				$('#tag_input').DefaultValue('tagme');
+				$('#tag_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {
+					width: 320,
+					max: 15,
+					highlight: false,
+					multiple: true,
+					multipleSeparator: ' ',
+					scroll: true,
+					scrollHeight: 300
+				});
 			});
 			</script>
 			<form enctype='multipart/form-data' action='".make_link("upload")."' method='POST'>

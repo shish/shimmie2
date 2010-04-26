@@ -19,8 +19,29 @@ class TagEditTheme extends Themelet {
 	}
 
 	public function get_tag_editor_html(Image $image) {
+		$script = "
+			<script type='text/javascript'>
+			$().ready(function() {
+				$('#tag_editor').autocomplete('".make_link("api/internal/tag_list/complete")."', {
+					width: 320,
+					max: 15,
+					highlight: false,
+					multiple: true,
+					multipleSeparator: ' ',
+					scroll: true,
+					scrollHeight: 300
+				});
+			});
+			</script>
+		";
 		$h_tags = html_escape($image->get_tag_list());
-		return "<tr><td width='50px'>Tags</td><td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags'></td></tr>";
+		return "
+			<tr>
+				<td width='50px'>Tags</td>
+				<td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor'></td>
+			</tr>
+			$script
+		";
 	}
 
 	public function get_source_editor_html(Image $image) {

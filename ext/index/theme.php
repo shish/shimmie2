@@ -81,7 +81,16 @@ EOD;
 		$h_search = "
 			<script><!--
 			$(document).ready(function() {
-				$(\"#search_input\").DefaultValue(\"Search\");
+				$('#search_input').DefaultValue('Search');
+				$('#search_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {
+					width: 320,
+					max: 15,
+					highlight: false,
+					multiple: true,
+					multipleSeparator: ' ',
+					scroll: true,
+					scrollHeight: 300
+				});
 			});
 			//--></script>
 			<p><form action='$h_search_link' method='GET'>
