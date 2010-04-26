@@ -43,7 +43,6 @@ class Layout {
 		$debug = get_debug_info();
 
 		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
 		if(strlen($page->heading) > 100) {
@@ -62,7 +61,7 @@ $header_html
 
 	<body>
 		<h1$wrapper>{$page->heading}</h1>
-		$subheading
+
 		$sub_block_html
 
 		<div id="nav">$left_block_html</div>

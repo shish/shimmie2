@@ -49,16 +49,6 @@ CODE {
 	background: #DEDEDE;
 	font-size: 0.8em;
 }
-#subtitle {
-	width: 256px;
-	font-size: 0.75em;
-	margin: auto;
-	margin-top: -16px;
-	text-align: center;
-	border: 1px solid black;
-	border-top: none;
-	background: #DDD;
-}
 #body SELECT {width: 150px;}
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
