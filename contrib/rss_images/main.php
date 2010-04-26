@@ -24,18 +24,10 @@ class RSS_Images extends SimpleExtension {
 
 	public function onPageRequest($event) {
 		if($event->page_matches("rss/images")) {
-			$page_number = 0;
-			$search_terms = array();
-
-			if($event->count_args() == 1) {
-				$page_number = int_escape($event->get_arg(0));
-			}
-			else if($event->count_args() == 2) {
-				$search_terms = explode(' ', $event->get_arg(0));
-				$page_number = int_escape($event->get_arg(1));
-			}
-
-			$images = Image::find_images(($page_number-1)*10, 10, $search_terms);
+			$search_terms = $event->get_search_terms();
+			$page_number = $event->get_page_number();
+			$page_size = $event->get_page_size();
+			$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
 			$this->do_rss($images, $search_terms, $page_number);
 		}
 	}

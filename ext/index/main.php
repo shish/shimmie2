@@ -152,22 +152,11 @@ class Index extends SimpleExtension {
 				return;
 			}
 
-			$search_terms = array();
-			$page_number = 1;
-
-			if($event->count_args() == 1) {
-				$page_number = int_escape($event->get_arg(0));
-			}
-			else if($event->count_args() == 2) {
-				$search_terms = explode(' ', $event->get_arg(0));
-				$page_number = int_escape($event->get_arg(1));
-			}
-
-			if($page_number == 0) $page_number = 1; // invalid -> 0
-
+			$search_terms = $event->get_search_terms();
+			$page_number = $event->get_page_number();
+			$page_size = $event->get_page_size();
 			$total_pages = Image::count_pages($search_terms);
-			$count = $config->get_int('index_width') * $config->get_int('index_height');
-			$images = Image::find_images(($page_number-1)*$count, $count, $search_terms);
+			$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
 
 			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 1) {
 				$this->theme->display_intro($page);
