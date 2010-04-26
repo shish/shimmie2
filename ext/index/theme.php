@@ -82,6 +82,10 @@ EOD;
 			<script><!--
 			$(document).ready(function() {
 				$(\"#search_input\").DefaultValue(\"Search\");
+				$(\"#search_input\").autocomplete({
+				    source: \"".make_link("api/internal/index/get_tags")."\",
+					minLength: 2
+					});
 			});
 			//--></script>
 			<p><form action='$h_search_link' method='GET'>
