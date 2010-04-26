@@ -77,7 +77,7 @@ class PageRequestEvent extends Event {
 	public function get_search_terms() {
 		$search_terms = array();
 		if($this->count_args() == 2) {
-			$search_terms = Tag::explode(' ', $this->get_arg(0));
+			$search_terms = explode(' ', $this->get_arg(0));
 		}
 		return $search_terms;
 	}
