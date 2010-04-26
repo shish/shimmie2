@@ -191,6 +191,9 @@ class Page {
 		foreach(glob("lib/*.js") as $js) {
 			$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
 		}
+		foreach(glob("lib/*.css") as $css) {
+			$this->add_header("<link rel='stylesheet' href='$data_href/$css' type='text/css'>");
+		}
 
 		$css_files = glob("ext/*/style.css");
 		if($css_files) {
