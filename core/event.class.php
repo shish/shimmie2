@@ -70,6 +70,33 @@ class PageRequestEvent extends Event {
 	public function count_args() {
 		return $this->arg_count - $this->part_count;
 	}
+
+	/*
+	 * Many things use these functions
+	 */
+	public function get_search_terms() {
+		$search_terms = array();
+		if($this->count_args() == 2) {
+			$search_terms = Tag::explode(' ', $this->get_arg(0));
+		}
+		return $search_terms;
+	}
+	public function get_page_number() {
+		$page_number = 1;
+		if($event->count_args() == 1) {
+			$page_number = int_escape($event->get_arg(0));
+		}
+		else if($event->count_args() == 2) {
+			$page_number = int_escape($event->get_arg(1));
+		}
+		if($page_number == 0) $page_number = 1; // invalid -> 0
+		return $page_number;
+	}
+	public function get_page_size() {
+		global $config;
+		$count = $config->get_int('index_width') * $config->get_int('index_height');
+		return $count;
+	}
 }
 
 
