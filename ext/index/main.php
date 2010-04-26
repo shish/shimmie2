@@ -173,28 +173,6 @@ class Index extends SimpleExtension {
 				$this->theme->display_page($page, $images);
 			}
 		}
-
-		if($event->page_matches("api/internal/index/get_tags")) {
-			$page->set_mode("data");
-			$page->set_type("text/plain");
-
-			$term = ltrim($_GET["term"]);
-			$space_pos = strrpos($term, " ");
-			$pre = "";
-			$term_only = $term;
-			if($space_pos !== FALSE) {
-				$pre = substr($term, 0, $space_pos+1);
-				$term_only = substr($term, $space_pos+1);
-			}
-
-			$all = $database->get_all(
-				"SELECT tag FROM tags WHERE tag LIKE ? LIMIT 10",
-				array($term_only."%"));
-
-			$res = array();
-			foreach($all as $row) {$res[] = $pre.$row["tag"];}
-			$page->set_data(json_encode($res));
-		}
 	}
 
 	public function onSetupBuilding($event) {
