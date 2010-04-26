@@ -44,6 +44,7 @@ ext/report_image
 ext/res_limit
 ext/rss_comments
 ext/rss_images
+ext/shimmie_api
 ext/simpletest
 ext/site_description
 ext/sitemap
