@@ -44,6 +44,19 @@ class TagList implements Extension {
 			$this->theme->display_page($page);
 		}
 
+		if(($event instanceof PageRequestEvent) && $event->page_matches("api/internal/tag_list/complete")) {
+			$all = $database->get_all(
+					"SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 LIMIT 10",
+					array($_GET["s"]."%"));
+
+			$res = array();
+			foreach($all as $row) {$res[] = $row["tag"];}
+
+			$page->set_mode("data");
+			$page->set_type("text/plain");
+			$page->set_data(implode("\n", $res));
+		}
+
 		if($event instanceof PostListBuildingEvent) {
 			if($config->get_int('tag_list_length') > 0) {
 				if(!empty($event->search_terms)) {
