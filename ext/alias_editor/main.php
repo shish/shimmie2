@@ -70,9 +70,9 @@ class AliasEditor implements Extension {
 
 				$alias_per_page = $config->get_int('alias_items_per_page', 30);
 
-				$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC OFFSET ? LIMIT ?";
+				$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT ? OFFSET ?";
 				$alias = $database->db->GetAssoc($query,
-					array($page_number * $alias_per_page, $alias_per_page)
+					array($alias_per_page, $page_number * $alias_per_page)
 				);
 
 				$total_pages = ceil($database->db->GetOne("SELECT COUNT(*) FROM aliases") / $alias_per_page);
