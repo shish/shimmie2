@@ -45,7 +45,8 @@ class UploadTheme extends Themelet {
 					multiple: true,
 					multipleSeparator: ' ',
 					scroll: true,
-					scrollHeight: 300
+					scrollHeight: 300,
+					selectFirst: false
 				});
 			});
 			</script>
@@ -115,7 +116,8 @@ class UploadTheme extends Themelet {
 					multiple: true,
 					multipleSeparator: ' ',
 					scroll: true,
-					scrollHeight: 300
+					scrollHeight: 300,
+					selectFirst: false
 				});
 			});
 			</script>

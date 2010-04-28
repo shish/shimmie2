@@ -89,7 +89,8 @@ EOD;
 					multiple: true,
 					multipleSeparator: ' ',
 					scroll: true,
-					scrollHeight: 300
+					scrollHeight: 300,
+					selectFirst: false
 				});
 			});
 			//--></script>
