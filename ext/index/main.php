@@ -155,8 +155,15 @@ class Index extends SimpleExtension {
 			$search_terms = $event->get_search_terms();
 			$page_number = $event->get_page_number();
 			$page_size = $event->get_page_size();
-			$total_pages = Image::count_pages($search_terms);
-			$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+			try {
+				$total_pages = Image::count_pages($search_terms);
+				$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+			}
+			catch(SearchTermParseException $stpe) {
+				// FIXME: display the error somewhere
+				$total_pages = 0;
+				$images = array();
+			}
 
 			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 1) {
 				$this->theme->display_intro($page);

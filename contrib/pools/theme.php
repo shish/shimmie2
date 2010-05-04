@@ -86,7 +86,7 @@ class PoolsTheme extends Themelet {
 			<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
 			<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
 			<tr><td>Description:</td><td><textarea name='description'></textarea></td></tr>
-			<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
+			<tr><td colspan='2'><input type='submit' value='Create' /></td></tr>
 			</table>
 		";
 
@@ -147,7 +147,7 @@ class PoolsTheme extends Themelet {
 	public function view_pool($pools, $images, $pageNumber, $totalPages) {
 		global $user, $page;
 
-		$this->display_top($pools, "Viewing Pool");
+		$this->display_top($pools, "Pool: ".$pools[0]['title']);
 
 		$pool_images = '';
 		foreach($images as $image) {

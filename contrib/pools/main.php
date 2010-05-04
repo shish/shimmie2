@@ -7,6 +7,9 @@
  * Documentation:
  */
 
+class PoolCreationException extends SCoreException {
+}
+
 class Pools extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config, $database;
@@ -81,12 +84,13 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "create": // ADD _POST
-					if(!$user->is_anonymous()) {
+					try {
 						$newPoolID = $this->add_pool();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$newPoolID));
-					} else {
-						$this->theme->display_error("You must be registered and logged in to add a image.");
+					}
+					catch(PoolCreationException $pce) {
+						$this->theme->display_error($pce->getMessage());
 					}
 					break;
 
@@ -269,14 +273,15 @@ class Pools extends SimpleExtension {
 
 		$poolsPerPage = $config->get_int("poolsListsPerPage");
 
-		$pools = $database->get_all(
-				"SELECT p.id, p.user_id, p.public, p.title, p.description, p.posts, u.name as user_name ".
-				"FROM pools AS p ".
-				"INNER JOIN users AS u ".
-				"ON p.user_id = u.id ".
-				"ORDER BY p.date DESC ".
-				"OFFSET ? LIMIT ?"
-				, array($pageNumber * $poolsPerPage, $poolsPerPage)
+		$pools = $database->get_all("
+				SELECT p.id, p.user_id, p.public, p.title, p.description,
+				       p.posts, u.name as user_name
+				FROM pools AS p
+				INNER JOIN users AS u
+				ON p.user_id = u.id
+				ORDER BY p.date DESC
+				LIMIT ? OFFSET ?
+				", array($poolsPerPage, $pageNumber * $poolsPerPage)
 				);
 
 		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pools") / $poolsPerPage);
@@ -290,6 +295,13 @@ class Pools extends SimpleExtension {
 	 */
 	private function add_pool() {
 		global $user, $database;
+
+		if($user->is_anonymous()) {
+			throw new PoolCreationException("You must be registered and logged in to add a image.");
+		}
+		if(empty($_POST["title"])) {
+			throw new PoolCreationException("Pool needs a title");
+		}
 
 		$public = $_POST["public"] == "Y" ? "Y" : "N";
 		$database->execute("
@@ -452,8 +464,8 @@ class Pools extends SimpleExtension {
 					INNER JOIN images AS i ON i.id = p.image_id
 					WHERE p.pool_id = ? AND i.rating IN ($rating)
 					ORDER BY p.image_order ASC
-					OFFSET ? LIMIT ?",
-					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+					LIMIT ? OFFSET ?",
+					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
 
 			$totalPages = ceil($database->db->GetOne("
 					SELECT COUNT(*) 
@@ -468,8 +480,8 @@ class Pools extends SimpleExtension {
 					FROM pool_images
 					WHERE pool_id=?
 					ORDER BY image_order ASC
-					OFFSET ? LIMIT ?",
-					array($poolID, $pageNumber * $imagesPerPage, $imagesPerPage));
+					LIMIT ? OFFSET ?",
+					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
 			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
 		}
 
@@ -580,16 +592,17 @@ class Pools extends SimpleExtension {
 
 		$historiesPerPage = $config->get_int("poolsUpdatedPerPage");
 
-		$history = $database->get_all(
-				"SELECT h.id, h.pool_id, h.user_id, h.action, h.images, h.count, h.date, u.name as user_name, p.title as title ".
-				"FROM pool_history AS h ".
-				"INNER JOIN pools AS p ".
-				"ON p.id = h.pool_id ".
-				"INNER JOIN users AS u ".
-				"ON h.user_id = u.id ".
-				"ORDER BY h.date DESC ".
-				"OFFSET ? LIMIT ?"
-				, array($pageNumber * $historiesPerPage, $historiesPerPage));
+		$history = $database->get_all("
+				SELECT h.id, h.pool_id, h.user_id, h.action, h.images,
+				       h.count, h.date, u.name as user_name, p.title as title
+				FROM pool_history AS h
+				INNER JOIN pools AS p
+				ON p.id = h.pool_id
+				INNER JOIN users AS u
+				ON h.user_id = u.id
+				ORDER BY h.date DESC
+				LIMIT ? OFFSET ?
+				", array($historiesPerPage, $pageNumber * $historiesPerPage));
 
 		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 

@@ -5,7 +5,7 @@ class ExtManagerTest extends SCoreWebTestCase {
 		$this->assert_title("Extensions");
 
 		$this->get_page('ext_doc');
-		$this->assert_response(404);
+		$this->assert_title("Extensions");
 
 		$this->get_page('ext_doc/ext_manager');
 		$this->assert_title("Documentation for Extension Manager");
