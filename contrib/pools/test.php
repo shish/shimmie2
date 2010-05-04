@@ -11,7 +11,7 @@ class PoolsTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 
 		$this->get_page('pool/list');
-		$this->click("Create New");
+		$this->click("Create Pool");
 		$this->assert_title("Create Pool");
 		$this->click("Create");
 		$this->assert_title("Error");
@@ -31,7 +31,7 @@ class PoolsTest extends ShimmieWebTestCase {
 		$this->get_page('pool/list');
 		$this->click("Test Pool Title");
 		$this->assert_title("Pool: Test Pool Title");
-		$this->click("Delete");
+		$this->click("Delete Pool");
 		$this->assert_title("Pools");
 		$this->assert_no_text("Test Pool Title");
 

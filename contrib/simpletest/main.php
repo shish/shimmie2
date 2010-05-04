@@ -176,6 +176,8 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 			}
 		}
 
+		$this->assertTrue($image_id > 0);
+
 		$this->setMaximumRedirects(5);
 		return $image_id;
 	}

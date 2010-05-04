@@ -12,12 +12,14 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testPurge() {
+	function testLowercase() {
+		$ts = time(); // we need a tag that hasn't been used before
+
 		$this->log_in_as_admin();
-		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "TeSt");
+		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "TeStCase$ts");
 
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: TeSt");
+        $this->assert_title("Image $image_id_1: TeStCase$ts");
 
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
@@ -26,7 +28,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 
         $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: test");
+        $this->assert_title("Image $image_id_1: testcase$ts");
 
 		$this->delete_image($image_id_1);
 		$this->log_out();
