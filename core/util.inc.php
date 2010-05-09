@@ -766,6 +766,16 @@ function print_GET() {
 	print_obj($_GET,"\$_GET");
 }
 
+$_last_time = microtime(true);
+$_last_msg = null;
+function timeline($text) {
+	if(empty($_GET["timeline"])) return;
+	global $_last_time, $_last_msg;
+	$time = microtime(true);
+	if($_last_msg) printf("TL: %s (%dms)<br>", $_last_msg, (int)(($time-$_last_time)*1000));
+	$_last_time = $time;
+	$_last_msg = $text;
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
