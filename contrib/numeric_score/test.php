@@ -16,6 +16,18 @@ class NumericScoreTest extends ShimmieWebTestCase {
 		$this->get_page("post/list/score=1/1");
 		$this->assert_title("Image $image_id: pbx");
 
+		$this->get_page("post/list/score>0/1");
+		$this->assert_title("Image $image_id: pbx");
+
+		$this->get_page("post/list/score>-5/1");
+		$this->assert_title("Image $image_id: pbx");
+
+		$this->get_page("post/list/-score>5/1");
+		$this->assert_title("Image $image_id: pbx");
+
+		$this->get_page("post/list/-score<-5/1");
+		$this->assert_title("Image $image_id: pbx");
+
 		# test search by vote
 		$this->get_page("post/list/upvoted_by=test/1");
 		$this->assert_title("Image $image_id: pbx");
