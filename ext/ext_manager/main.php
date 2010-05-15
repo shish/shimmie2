@@ -87,7 +87,7 @@ class ExtensionInfo {
 }
 
 class ExtManager extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("ext_manager")) {
 			if($user->is_admin()) {
@@ -127,7 +127,7 @@ class ExtManager extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Extension Manager", make_link("ext_manager"));

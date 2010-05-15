@@ -16,7 +16,7 @@
 */
 
 class Home extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("home_links", '[$base/post/list|Posts]
 [$base/comment/list|Comments]
@@ -24,7 +24,8 @@ class Home extends SimpleExtension {
 [$base/wiki|Wiki]
 [$base/wiki/more|&raquo;]');
 	}
-	public function onPageRequest($event) {
+
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page;
 		if($event->page_matches("home")) {
 			$base_href = $config->get_string('base_href');
@@ -38,7 +39,7 @@ class Home extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$counters = array();
 		foreach(glob("ext/home/counters/*") as $counter_dirname) {
 			$name = str_replace("ext/home/counters/", "", $counter_dirname);
@@ -53,8 +54,7 @@ class Home extends SimpleExtension {
 	}
 
 
-	private function get_body()
-	{
+	private function get_body() {
 		// returns just the contents of the body
 		global $database;
 		global $config;
