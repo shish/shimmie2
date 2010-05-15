@@ -44,14 +44,12 @@ class Upload implements Extension {
 		$is_full = (disk_free_space(realpath("./images/")) < 100*1024*1024);
 
 		if($event instanceof InitExtEvent) {
-			global $config;
 			$config->set_default_int('upload_count', 3);
 			$config->set_default_int('upload_size', '1MB');
 			$config->set_default_bool('upload_anon', false);
 		}
 
 		if($event instanceof PostListBuildingEvent) {
-			global $user;
 			if($this->can_upload($user)) {
 				if($is_full) {
 					$this->theme->display_full($page);
@@ -84,7 +82,6 @@ class Upload implements Extension {
 				}
 			}
 			else if(!empty($_GET['url'])) {
-				global $user;
 				if($this->can_upload($user)) {
 					$url = $_GET['url'];
 					$tags = array('tagme');
@@ -121,7 +118,6 @@ class Upload implements Extension {
 		}
 
 		if($event instanceof DataUploadEvent) {
-			global $config;
 			if($is_full) {
 				throw new UploadException("Upload failed; disk nearly full");
 			}
