@@ -83,9 +83,7 @@ class AliasEditor extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "import") {
 				if($user->is_admin()) {
-					print_r($_FILES);
 					if(count($_FILES) > 0) {
-						global $database;
 						$tmp = $_FILES['alias_file']['tmp_name'];
 						$contents = file_get_contents($tmp);
 						$this->add_alias_csv($database, $contents);
