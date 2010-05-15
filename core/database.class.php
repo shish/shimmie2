@@ -180,12 +180,14 @@ class NoCache implements CacheEngine {
 	public function get_misses() {return 0;}
 }
 class MemcacheCache implements CacheEngine {
-	var $hits=0, $misses=0;
+	var $memcache=null, $hits=0, $misses=0;
 
 	public function __construct($args) {
 		$hp = split(":", $args);
-		$this->memcache = new Memcache;
-		@$this->memcache->pconnect($hp[0], $hp[1]);
+		if(class_exists("Memcache")) {
+			$this->memcache = new Memcache;
+			@$this->memcache->pconnect($hp[0], $hp[1]);
+		}
 	}
 
 	public function get($key) {
