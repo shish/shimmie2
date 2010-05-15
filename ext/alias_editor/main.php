@@ -22,14 +22,11 @@ class AddAliasEvent extends Event {
 
 class AddAliasException extends SCoreException {}
 
-class AliasEditor implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
+class AliasEditor extends SimpleExtension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("alias")) {
+		if($event->page_matches("alias")) {
 			if($event->get_arg(0) == "add") {
 				if($user->is_admin()) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
@@ -104,23 +101,24 @@ class AliasEditor implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof AddAliasEvent) {
-			global $database;
-			$pair = array($event->oldtag, $event->newtag);
-			if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
-				throw new AddAliasException("That alias already exists");
-			}
-			else {
-				$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);
-				log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}");
-			}
+	public function onAddAlias(AddAliasEvent $event) {
+		global $database;
+		$pair = array($event->oldtag, $event->newtag);
+		if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
+			throw new AddAliasException("That alias already exists");
 		}
+		else {
+			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);
+			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}");
+		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Alias Editor", make_link("alias/list"));
-			}
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Alias Editor", make_link("alias/list"));
 		}
 	}
 
@@ -143,5 +141,4 @@ class AliasEditor implements Extension {
 		}
 	}
 }
-add_event_listener(new AliasEditor());
 ?>
