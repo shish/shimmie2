@@ -66,7 +66,19 @@ class LogDatabaseTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Events", $table));
 
-		$args = $this->ueie("time")."&".$this->ueie("module")."&".$this->ueie("user")."&".$this->ueie("priority");
+		$args = "";
+		// Check if each arg is actually empty and skip it if so
+		if(strlen($this->ueie("time")))
+	            $args .= $this->ueie("time")."&";
+	        if(strlen($this->ueie("module")))
+	                        $args .= $this->ueie("module")."&";
+	        if(strlen($this->ueie("user")))
+	                        $args .= $this->ueie("user")."&";
+	        if(strlen($this->ueie("priority")))
+	                        $args .= $this->ueie("priority");
+		// If there are no args at all, set $args to null to prevent an unnecessary ? at the end of the paginator url
+		if(strlen($args) == 0)
+			$args = null;
 		$this->display_paginator($page, "log/view", $args, $page_num, $page_total);
 	}
 
