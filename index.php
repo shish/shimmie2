@@ -117,7 +117,7 @@ try {
 		if(is_subclass_of($class, "SimpleExtension")) {
 			$c = new $class();
 			$c->i_am($c);
-			add_event_listener($c);
+			add_event_listener($c, $c->get_priority());
 		}
 	}
 
