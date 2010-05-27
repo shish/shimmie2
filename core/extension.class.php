@@ -74,8 +74,10 @@ interface Extension {
  *
  * Also loads the theme object into $this->theme if available
  *
- * index.php will load all SimpleExtension subclasses with default
- * priority, so no need for register_extension(new Foo())
+ * index.php will load all SimpleExtension subclasses,
+ * so no need for register_extension(new Foo())
+ *
+ * Automatic registration is done with priority returned by get_priority()
  *
  * Hopefully this removes as much copy & paste code from the extension
  * files as possible~
@@ -101,6 +103,8 @@ abstract class SimpleExtension implements Extension {
 			$this->_child->$name($event);
 		}
 	}
+
+	public function get_priority() {return 50;}
 }
 
 /**
