@@ -43,10 +43,11 @@ class NumericScore implements Extension {
 			if(!$user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
 				$char = $_POST['vote'];
-				$score = 0;
+				$score = null;
 				if($char == "up") $score = 1;
+				else if($char == "null") $score = 0;
 				else if($char == "down") $score = -1;
-				if($score != 0) send_event(new NumericScoreSetEvent($image_id, $user, $score));
+				if(!is_null($score)) send_event(new NumericScoreSetEvent($image_id, $user, $score));
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("post/view/$image_id"));
 			}
@@ -135,9 +136,11 @@ class NumericScore implements Extension {
 		$database->Execute(
 			"DELETE FROM numeric_score_votes WHERE image_id=? AND user_id=?",
 			array($image_id, $user_id));
-		$database->Execute(
-			"INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
-			array($image_id, $user_id, $score));
+		if($score != 0) {
+			$database->Execute(
+				"INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
+				array($image_id, $user_id, $score));
+		}
 		$database->Execute(
 			"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=?) WHERE id=?",
 			array($image_id, $image_id));
