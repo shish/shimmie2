@@ -29,7 +29,7 @@ class AddImageHashBanEvent extends Event {
 	}
 }
 // }}}
-class ImageBan implements Extension {
+class ImageBan extends SimpleExtension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 		if($config->get_int("ext_imageban_version") < 1) {
