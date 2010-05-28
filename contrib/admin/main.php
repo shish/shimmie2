@@ -52,7 +52,7 @@ class AdminPage implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("admin_utils")) {
-			if($user->is_admin()) {
+			if($user->is_admin() && $user->check_auth_token()) {
 				log_info("admin", "Util: {$_POST['action']}");
 				set_time_limit(0);
 				$redirect = false;

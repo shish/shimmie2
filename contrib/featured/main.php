@@ -27,7 +27,7 @@ class Featured extends SimpleExtension {
 	public function onPageRequest($event) {
 		global $config, $page, $user;
 		if($event->page_matches("featured_image")) {
-			if($event->get_arg(0) == "set") {
+			if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 				if($user->is_admin() && isset($_POST['image_id'])) {
 					$id = int_escape($_POST['image_id']);
 					if($id > 0) {

@@ -91,7 +91,7 @@ class ExtManager extends SimpleExtension {
 		global $page, $user;
 		if($event->page_matches("ext_manager")) {
 			if($user->is_admin()) {
-				if($event->get_arg(0) == "set") {
+				if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 					if(is_writable("ext")) {
 						$this->set_things($_POST);
 						$page->set_mode("redirect");

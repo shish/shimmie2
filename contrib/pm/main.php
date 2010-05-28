@@ -107,29 +107,30 @@ class PrivMsg extends SimpleExtension {
 						}
 						break;
 					case "delete":
-						$pm_id = int_escape($event->get_arg(1));
-						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
-						if(is_null($pm)) {
-							$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
-						}
-						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
-							$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
-							log_info("pm", "Deleted PM #$pm_id");
-							$page->set_mode("redirect");
-							$page->set_redirect($_SERVER["HTTP_REFERER"]);
-						}
-						else {
-							// permission denied
+						if($user->check_auth_token()) {
+							$pm_id = int_escape($_POST["pm_id"]);
+							$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
+							if(is_null($pm)) {
+								$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
+							}
+							else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
+								$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
+								log_info("pm", "Deleted PM #$pm_id");
+								$page->set_mode("redirect");
+								$page->set_redirect($_SERVER["HTTP_REFERER"]);
+							}
 						}
 						break;
 					case "send":
-						$to_id = int_escape($_POST["to_id"]);
-						$from_id = $user->id;
-						$subject = $_POST["subject"];
-						$message = $_POST["message"];
-						send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
-						$page->set_mode("redirect");
-						$page->set_redirect($_SERVER["HTTP_REFERER"]);
+						if($user->check_auth_token()) {
+							$to_id = int_escape($_POST["to_id"]);
+							$from_id = $user->id;
+							$subject = $_POST["subject"];
+							$message = $_POST["message"];
+							send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
+							$page->set_mode("redirect");
+							$page->set_redirect($_SERVER["HTTP_REFERER"]);
+						}
 						break;
 					default:
 						$this->theme->display_error($page, "Invalid action", "That's not something you can do with a PM");

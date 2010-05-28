@@ -5,22 +5,15 @@ class FavoritesTheme extends Themelet {
 		global $page, $user;
 
 		$i_image_id = int_escape($image->id);
-		if(!$is_favorited) {
-			$html = "<form action='".make_link("change_favorite")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id'>
-				<input type='hidden' name='favorite_action' value='set'>
-				<input type='submit' value='Favorite'>
-				</form>
-			";
-		}
-		else {
-			$html = "<form action='".make_link("change_favorite")."' method='POST'>
-				<input type='hidden' name='image_id' value='$i_image_id'>
-				<input type='hidden' name='favorite_action' value='unset'>
-				<input type='submit' value='Un-Favorite'>
-				</form>
-			";
-		}
+		$name  = $is_favorited ? "unset" : "set";
+		$label = $is_favorited ? "Un-Favorite" : "Favorite";
+		$html  = "<form action='".make_link("change_favorite")."' method='POST'>
+			".$user->get_auth_html()."
+			<input type='hidden' name='image_id' value='$i_image_id'>
+			<input type='hidden' name='favorite_action' value='$name'>
+			<input type='submit' value='$label'>
+			</form>
+		";
 
 		return $html;
 	}

@@ -51,7 +51,7 @@ class IPBan implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("ip_ban")) {
 			if($user->is_admin()) {
-				if($event->get_arg(0) == "add") {
+				if($event->get_arg(0) == "add" && $user->check_auth_token()) {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
 						if(empty($_POST['end'])) $end = null;
 						else $end = $_POST['end'];
@@ -61,7 +61,7 @@ class IPBan implements Extension {
 						$page->set_redirect(make_link("ip_ban/list"));
 					}
 				}
-				else if($event->get_arg(0) == "remove") {
+				else if($event->get_arg(0) == "remove" && $user->check_auth_token()) {
 					if(isset($_POST['id'])) {
 						send_event(new RemoveIPBanEvent($_POST['id']));
 						$page->set_mode("redirect");

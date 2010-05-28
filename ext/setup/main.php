@@ -188,7 +188,7 @@ class Setup extends SimpleExtension {
 				$this->theme->display_permission_denied($page);
 			}
 			else {
-				if($event->get_arg(0) == "save") {
+				if($event->get_arg(0) == "save" && $user->check_auth_token()) {
 					send_event(new ConfigSaveEvent($config));
 					$config->save();
 

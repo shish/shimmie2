@@ -36,52 +36,33 @@ class Tips extends SimpleExtension {
 
 		$this->getTip();
 
-		if($event->page_matches("tips")) {
+		if($event->page_matches("tips") && $user->is_admin()) {
 			switch($event->get_arg(0)) {
 				case "list":
-				{
-					if($user->is_admin()) {
-						$this->manageTips();
-						$this->getAll();
-					}
+					$this->manageTips();
+					$this->getAll();
 					break;
-				}
-				case "new":
-				{
-					break;
-				}
 				case "save":
-				{
-					if($user->is_admin()) {
+					if($user->check_auth_token()) {
 						$this->saveTip();
-
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("tips/list"));
 					}
 					break;
-				}
 				case "status":
-				{
-					if($user->is_admin()) {
-						$tipID = int_escape($event->get_arg(1));
-						$this->setStatus($tipID);
-
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("tips/list"));		
-					}
+					// FIXME: HTTP GET CSRF
+					$tipID = int_escape($event->get_arg(1));
+					$this->setStatus($tipID);
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("tips/list"));
 					break;
-				}
 				case "delete":
-				{
-					if($user->is_admin()) {
-						$tipID = int_escape($event->get_arg(1));
-						$this->deleteTip($tipID);
-
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("tips/list"));		
-					}
+					// FIXME: HTTP GET CSRF
+					$tipID = int_escape($event->get_arg(1));
+					$this->deleteTip($tipID);
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("tips/list"));
 					break;
-				}
 			}
 		}
 	}

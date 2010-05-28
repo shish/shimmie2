@@ -58,13 +58,13 @@ class Blotter extends SimpleExtension {
 		}
 	}
 	public function onPageRequest(Event $event) {
+		global $page, $database, $user;
 		if($event->page_matches("blotter")) {
 			switch($event->get_arg(0)) {
 				case "editor":		
 					/**
 					 * Displays the blotter editor.
 					 */
-					global $page, $database, $user;
 					if(!$user->is_admin()) {
 						$this->theme->display_permission_denied($page);
 					} else {
@@ -76,8 +76,7 @@ class Blotter extends SimpleExtension {
 					/**
 					 * Adds an entry
 					 */
-					global $page, $database, $user;
-					if(!$user->is_admin()) {
+					if(!$user->is_admin() || !$user->check_auth_token()) {
 						$this->theme->display_permission_denied($page);
 					} else {
 						$entry_text = $_POST['entry_text'];
@@ -95,8 +94,7 @@ class Blotter extends SimpleExtension {
 					/**
 					 * Removes an entry
 					 */
-					global $page, $database, $user;
-					if(!$user->is_admin()) {
+					if(!$user->is_admin() || !$user->check_auth_token()) {
 						$this->theme->display_permission_denied($page);
 					} else {
 						$id = int_escape($_POST['id']);
@@ -111,7 +109,6 @@ class Blotter extends SimpleExtension {
 					/**
 					 * Displays all blotter entries
 					 */
-					global $database, $user;
 					$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
 					$this->theme->display_blotter_page($entries);
 					break;
