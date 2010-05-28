@@ -11,6 +11,7 @@
  *  upload into <code>/home/bob/uploads/holiday/2008/</code> and point
  *  shimmie at <code>/home/bob/uploads</code>, then images will be
  *  tagged "holiday 2008")
+ *  <p><b>Note:</b> requires the "admin" extension to be enabled
  */
 
 class BulkAdd extends SimpleExtension {
