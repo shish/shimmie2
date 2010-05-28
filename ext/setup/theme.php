@@ -13,6 +13,8 @@ class SetupTheme extends Themelet {
 	 * The page should wrap all the options in a form which links to setup_save
 	 */
 	public function display_page(Page $page, SetupPanel $panel) {
+		global $user;
+
 		$setupblock_html1 = "";
 		$setupblock_html2 = "";
 
@@ -41,6 +43,7 @@ class SetupTheme extends Themelet {
 
 		$table = "
 			<form action='".make_link("setup/save")."' method='POST'><table>
+			".$user->get_auth_html()."
 			<tr><td>$setupblock_html1</td><td>$setupblock_html2</td></tr>
 			<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
 			</table></form>
@@ -53,6 +56,8 @@ class SetupTheme extends Themelet {
 	}
 
 	public function display_advanced(Page $page, $options) {
+		global $user;
+
 		$rows = "";
 		$n = 0;
 		ksort($options);
@@ -79,6 +84,7 @@ class SetupTheme extends Themelet {
 			});
 			</script>
 			<form action='".make_link("setup/save")."' method='POST'><table id='settings' class='zebra'>
+				".$user->get_auth_html()."
 				<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
 				<tbody>$rows</tbody>
 				<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>

@@ -18,9 +18,8 @@ class BulkAdd extends SimpleExtension {
 	public function onPageRequest($event) {
 		global $page, $user;
 		if($event->page_matches("bulk_add")) {
-			if($user->is_admin() && isset($_POST['dir'])) {
+			if($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
 				set_time_limit(0);
-
 				$this->add_dir($_POST['dir']);
 				$this->theme->display_upload_results($page);
 			}
@@ -28,8 +27,7 @@ class BulkAdd extends SimpleExtension {
 	}
 
 	public function onAdminBuilding($event) {
-		global $page;
-		$this->theme->display_admin_block($page);
+		$this->theme->display_admin_block();
 	}
 
 

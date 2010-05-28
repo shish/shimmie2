@@ -39,7 +39,7 @@ class NumericScore implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("numeric_score_vote")) {
+		if(($event instanceof PageRequestEvent) && $event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
 			if(!$user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
 				$char = $_POST['vote'];

@@ -2,9 +2,11 @@
 
 class ExtManagerTheme extends Themelet {
 	public function display_table(Page $page, $extensions, $editable) {
+		global $user;
 		$en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			<form action='".make_link("ext_manager/set")."' method='POST'>
+				".$user->get_auth_html()."
 				<script>
 				$(document).ready(function() {
 					$(\"#extensions\").tablesorter();
@@ -53,6 +55,7 @@ class ExtManagerTheme extends Themelet {
 
 	/*
 	public function display_blocks(Page $page, $extensions) {
+		global $user;
 		$n = 0;
 		$col_1 = "";
 		$col_2 = "";
@@ -94,6 +97,7 @@ class ExtManagerTheme extends Themelet {
 		}
 		$html = "
 			<form action='".make_link("ext_manager/set")."' method='POST'>
+				".$user->get_auth_html()."
 				<table border='0'>
 					<tr><td width='50%'>$col_1</td><td>$col_2</td></tr>
 					<tr><td colspan='2'><input type='submit' value='Set Extensions'></td></tr>

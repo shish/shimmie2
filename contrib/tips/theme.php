@@ -1,7 +1,7 @@
 <?php
 class TipsTheme extends Themelet {
 	public function manageTips($url, $images) {
-		global $page;
+		global $page, $user;
 		$select = "<select name='image'><option value=''>- Select Image -</option>";
 
 		foreach($images as $image){
@@ -12,6 +12,7 @@ class TipsTheme extends Themelet {
 
 		$html = "
 <form action='".make_link("tips/save")."' method='POST'>
+".$user->get_auth_html()."
 <table>
   <tr>
     <td>Enable:</td>

@@ -28,6 +28,8 @@ class BlotterTheme extends Themelet {
 	}
 
 	private function get_html_for_blotter_editor($entries) {
+		global $user;
+
 		/**
 		 * Long function name, but at least I won't confuse it with something else ^_^
 		 */
@@ -44,6 +46,7 @@ class BlotterTheme extends Themelet {
 		$add_new = "
 			<tr class='even'>
 			<form action='".make_link("blotter/add")."' method='POST'>
+			".$user->get_auth_html()."
 			<td colspan='2'><textarea style='text-align:left;' name='entry_text' rows='2' /></textarea></td>
 			<td><input type='checkbox' name='important' /></td>
 			<td><input type='submit' value='Add'></td>
@@ -72,6 +75,7 @@ class BlotterTheme extends Themelet {
 				<td>$entry_text</td>
 				<td>$important</td>
 				<td><form name='remove$id' method='post' action='".make_link("blotter/remove")."'>
+				".$user->get_auth_html()."
 				<input type='hidden' name='id' value='$id' />
 				<input type='submit' style='width: 100%;' value='Remove' />
 				</form>

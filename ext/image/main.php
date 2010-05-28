@@ -119,7 +119,7 @@ class ImageIO extends SimpleExtension {
 		}
 		if($event->page_matches("image_admin/delete")) {
 			global $page, $user;
-			if($user->is_admin() && isset($_POST['image_id'])) {
+			if($user->is_admin() && isset($_POST['image_id']) && $user->check_auth_token()) {
 				$image = Image::by_id($_POST['image_id']);
 				if($image) {
 					send_event(new ImageDeletionEvent($image));
