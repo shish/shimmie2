@@ -35,6 +35,7 @@ class User {
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
 		$this->admin = ($row['admin'] == 'Y');
+		$this->passhash = $row['pass'];
 	}
 
 	public static function by_session($name, $session) {
@@ -153,5 +154,32 @@ class User {
 		}
 		return "";
 	}
+
+	/**
+	 * Get an auth token to be used in POST forms
+	 *
+	 * password = secret, avoid storing directly
+	 * passhash = md5(password), so someone who gets to the database can't get passwords
+	 * sesskey  = md5(passhash . IP), so if it gets sniffed it can't be used from another IP,
+	 *            and it can't be used to get the passhash to generate new sesskeys
+	 * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
+	 *            the form was generated within the session. Salted and re-hashed so that
+	 *            reading a web page from the user's cache doesn't give access to the session key
+	 */
+	public function get_auth_token() {
+		global $config;
+		$addr = get_session_ip($config);
+		return md5(md5($this->passhash . $addr) . "salty-csrf");
+	}
+
+	public function get_auth_html() {
+		$at = $this->get_auth_token();
+		return "<input type='hidden' name='auth_token' value='$at'>";
+	}
+
+	public function check_auth_token() {
+		return ($_POST["auth_token"] == $this->get_auth_token());
+	}
+
 }
 ?>
