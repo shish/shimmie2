@@ -6,14 +6,8 @@
  * Visibility: admin
  */
 
-class Upgrade implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof InitExtEvent) {
-			$this->do_things();
-		}
-	}
-
-	private function do_things() {
+class Upgrade extends SimpleExtension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		if(!is_numeric($config->get_string("db_version"))) {
@@ -36,8 +30,6 @@ class Upgrade implements Extension {
 			log_info("upgrade", "Database at version 7");
 		}
 
-		// TODO:
-		// add column image->locked
 		if($config->get_int("db_version") < 8) {
 			// if this fails, don't try again
 			$config->set_int("db_version", 8);
@@ -47,6 +39,7 @@ class Upgrade implements Extension {
 			log_info("upgrade", "Database at version 8");
 		}
 	}
+
+	public function get_priority() {return 5;}
 }
-add_event_listener(new Upgrade(), 5);
 ?>

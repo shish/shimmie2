@@ -30,27 +30,32 @@ class AddImageHashBanEvent extends Event {
 }
 // }}}
 class ImageBan implements Extension {
-	var $theme;
+	public function onInitExt(InitExtEvent $event) {
+		global $config, $database;
+		if($config->get_int("ext_imageban_version") < 1) {
+			$database->create_table("image_bans", "
+				id SCORE_AIPK,
+				hash CHAR(32) NOT NULL,
+				date DATETIME DEFAULT SCORE_NOW,
+				reason TEXT NOT NULL
+			");
+			$config->set_int("ext_imageban_version", 1);
+		}
+	}
 
-	public function receive_event(Event $event) {
+	public function onDataUpload(DataUploadEvent $event) {
+		global $database;
+		$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
+		if($row) {
+			log_info("image_hash_ban", "Blocked image ({$event->hash})");
+			throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
+		}
+	}
+
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if($event instanceof InitExtEvent) {
-			if($config->get_int("ext_imageban_version") < 1) {
-				$this->install();
-			}
-		}
-
-		if($event instanceof DataUploadEvent) {
-			$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
-			if($row) {
-				log_info("image_hash_ban", "Blocked image ({$event->hash})");
-				throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
-			}
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("image_hash_ban")) {
+		if($event->page_matches("image_hash_ban")) {
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
@@ -87,38 +92,28 @@ class ImageBan implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
-			}
-		}
-
-		if($event instanceof AddImageHashBanEvent) {
-			$this->add_image_hash_ban($event->hash, $event->reason);
-		}
-
-		if($event instanceof RemoveImageHashBanEvent) {
-			$this->remove_image_hash_ban($event->hash);
-		}
-
-		if($event instanceof ImageAdminBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_part($this->theme->get_buttons_html($event->image));
-			}
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
 		}
 	}
 
-	protected function install() {
-		global $database;
-		global $config;
-		$database->create_table("image_bans", "
-			id SCORE_AIPK,
-			hash CHAR(32) NOT NULL,
-			date DATETIME DEFAULT SCORE_NOW,
-			reason TEXT NOT NULL
-		");
-		$config->set_int("ext_imageban_version", 1);
+	public function onAddImageHashBan(AddImageHashBanEvent $event) {
+		$this->add_image_hash_ban($event->hash, $event->reason);
+	}
+
+	public function onRemoveImageHashBan(RemoveImageHashBanEvent $event) {
+		$this->remove_image_hash_ban($event->hash);
+	}
+
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_part($this->theme->get_buttons_html($event->image));
+		}
 	}
 
 	// DB funness
@@ -145,6 +140,7 @@ class ImageBan implements Extension {
 		$database->Execute("DELETE FROM image_bans WHERE hash = ?", array($hash));
 	}
 
+	// in before resolution limit plugin
+	public function get_priority() {return 30;}
 }
-add_event_listener(new ImageBan(), 30); // in before resolution limit plugin
 ?>

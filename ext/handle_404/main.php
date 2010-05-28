@@ -8,20 +8,18 @@
  * Description: Shows an error message when the user views a page with no content
  */
 
-class Handle404 implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof PageRequestEvent) {
-			global $page;
-			// hax.
-			if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
-				$h_pagename = html_escape(implode('/', $event->args));
-				header("HTTP/1.0 404 Page Not Found");
-				log_debug("handle_404", "Hit 404: $h_pagename");
-				$page->set_title("404");
-				$page->set_heading("404 - No Handler Found");
-				$page->add_block(new NavBlock());
-				$page->add_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
-			}
+class Handle404 extends SimpleExtension {
+	public function onPageRequest(PageRequestEvent $event) {
+		global $page;
+		// hax.
+		if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
+			$h_pagename = html_escape(implode('/', $event->args));
+			header("HTTP/1.0 404 Page Not Found");
+			log_debug("handle_404", "Hit 404: $h_pagename");
+			$page->set_title("404");
+			$page->set_heading("404 - No Handler Found");
+			$page->add_block(new NavBlock());
+			$page->add_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
 		}
 	}
 
@@ -32,6 +30,7 @@ class Handle404 implements Extension {
 		}
 		return $n;
 	}
+
+	public function get_priority() {return 99;}
 }
-add_event_listener(new Handle404(), 99); // hax++
 ?>
