@@ -14,7 +14,13 @@ class NumericScoreTheme extends Themelet {
 			<input type='submit' value='Vote Up'>
 			</form>
 
-			<p><form action='".make_link("numeric_score_vote")."' method='POST'>
+			<form action='".make_link("numeric_score_vote")."' method='POST'>
+			<input type='hidden' name='image_id' value='$i_image_id'>
+			<input type='hidden' name='vote' value='null'>
+			<input type='submit' value='Remove Vote'>
+			</form>
+
+			<form action='".make_link("numeric_score_vote")."' method='POST'>
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='vote' value='down'>
 			<input type='submit' value='Vote Down'>
