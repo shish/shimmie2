@@ -4,7 +4,9 @@ class ViewImageTheme extends Themelet {
 	/*
 	 * Build a page showing $image and some info about it
 	 */
-	public function display_page(Page $page, Image $image, $editor_parts) {
+	public function display_page(Image $image, $editor_parts) {
+		global $page;
+
 		$metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
 
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));

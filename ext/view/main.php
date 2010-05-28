@@ -66,17 +66,15 @@ class ImageAdminBlockBuildingEvent extends Event {
 	}
 }
 
-class ViewImage implements Extension {
-	var $theme;
+class ViewImage extends SimpleExtension {
+	public function onPageRequest(PageRequestEvent $event) {
+		global $page;
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(is_a($event, 'PageRequestEvent') && (
+		if(
 			$event->page_matches("post/prev") ||
 			$event->page_matches("post/next")
-		)) {
+		) {
+
 			$image_id = int_escape($event->get_arg(0));
 
 			if(isset($_GET['search'])) {
@@ -105,7 +103,7 @@ class ViewImage implements Extension {
 			}
 		}
 			
-		if(($event instanceof PageRequestEvent) && $event->page_matches("post/view")) {
+		if($event->page_matches("post/view")) {
 			$image_id = int_escape($event->get_arg(0));
 
 			$image = Image::by_id($image_id);
@@ -122,7 +120,7 @@ class ViewImage implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("post/set")) {
+		if($event->page_matches("post/set")) {
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
@@ -131,14 +129,13 @@ class ViewImage implements Extension {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("post/view/$image_id", $query));
 		}
+	}
 
-		if($event instanceof DisplayingImageEvent) {
-			$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
-			send_event($iibbe);
-			ksort($iibbe->parts);
-			$this->theme->display_page($page, $event->get_image(), $iibbe->parts);
-		}
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
+		send_event($iibbe);
+		ksort($iibbe->parts);
+		$this->theme->display_page($event->get_image(), $iibbe->parts);
 	}
 }
-add_event_listener(new ViewImage());
 ?>

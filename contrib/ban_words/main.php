@@ -19,11 +19,10 @@
  *  from Essex"
  */
 
-class BanWords implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof InitExtEvent) {
-			global $config;
-			$config->set_default_string('banned_words', "
+class BanWords extends SimpleExtension {
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_string('banned_words', "
 a href=
 anal
 blowjob
@@ -50,42 +49,42 @@ ultram
 very nice site
 viagra
 xanax
-			");
-		}
+");
+	}
 
-		if($event instanceof CommentPostingEvent) {
-			global $config;
-			$banned = $config->get_string("banned_words");
-			$comment = strtolower($event->comment);
+	public function onCommentPosting(CommentPostingEvent $event) {
+		global $config;
+		$banned = $config->get_string("banned_words");
+		$comment = strtolower($event->comment);
 
-			foreach(explode("\n", $banned) as $word) {
-				$word = trim(strtolower($word));
-				if(strlen($word) == 0) {
-					// line is blank
-					continue;
+		foreach(explode("\n", $banned) as $word) {
+			$word = trim(strtolower($word));
+			if(strlen($word) == 0) {
+				// line is blank
+				continue;
+			}
+			else if($word[0] == '/') {
+				// lines that start with slash are regex
+				if(preg_match($word, $comment)) {
+					throw new CommentPostingException("Comment contains banned terms");
 				}
-				else if($word[0] == '/') {
-					// lines that start with slash are regex
-					if(preg_match($word, $comment)) {
-						throw new CommentPostingException("Comment contains banned terms");
-					}
-				}
-				else {
-					// other words are literal
-					if(strpos($comment, $word) !== false) {
-						throw new CommentPostingException("Comment contains banned terms");
-					}
+			}
+			else {
+				// other words are literal
+				if(strpos($comment, $word) !== false) {
+					throw new CommentPostingException("Comment contains banned terms");
 				}
 			}
 		}
-
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Banned Phrases");
-			$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
-			$sb->add_longtext_option("banned_words");
-			$event->panel->add_block($sb);
-		}
 	}
+
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Banned Phrases");
+		$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
+		$sb->add_longtext_option("banned_words");
+		$event->panel->add_block($sb);
+	}
+
+	public function get_priority() {return 30;}
 }
-add_event_listener(new BanWords(), 30); // before the comment is added
 ?>
