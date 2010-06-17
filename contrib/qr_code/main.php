@@ -8,7 +8,7 @@
  */
 class QRImage extends SimpleExtension {
 	public function onDisplayingImage($event) {
-		$this->theme->links_block(make_http(make_link('image/'.$event->image->id)));
+		$this->theme->links_block(make_http(make_link('image/'.$event->image->id.'.jpg')));
 	}
 }
 ?>
