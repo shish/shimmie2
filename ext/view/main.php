@@ -68,7 +68,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 
 class ViewImage extends SimpleExtension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page;
+		global $page, $user;
 
 		if(
 			$event->page_matches("post/prev") ||
@@ -132,6 +132,7 @@ class ViewImage extends SimpleExtension {
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $user;
 		$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
 		send_event($iibbe);
 		ksort($iibbe->parts);
