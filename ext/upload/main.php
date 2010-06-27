@@ -41,7 +41,14 @@ class Upload implements Extension {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		$is_full = (disk_free_space(realpath("./images/")) < 100*1024*1024);
+		// fucking PHP "security" measures -_-;;;
+		$free_num = @disk_free_space(realpath("./images/"));
+		if($free_num === FALSE) {
+			$is_full = false;
+		}
+		else {
+			$is_full = $free_num < 100*1024*1024;
+		}
 
 		if($event instanceof InitExtEvent) {
 			$config->set_default_int('upload_count', 3);
