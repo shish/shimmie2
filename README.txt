@@ -54,6 +54,14 @@ database and file formats haven't changed *completely*, it's different
 enough to be a pain.
 
 
+Development Info
+~~~~~~~~~~~~~~~~
+http://shimmie.shishnet.org/doc/
+
+Please tell me if those docs are lacking in any way, so that they can be
+improved for the next person who uses them
+
+
 Contact
 ~~~~~~~
 #shimmie on Freenode -- IRC
