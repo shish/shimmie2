@@ -167,7 +167,9 @@ class ImageIO extends SimpleExtension {
 		//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
 		$sb->add_text_option("image_tip", "Image tooltip: ");
 		$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
-		$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
+		if(!in_array("OS", $_SERVER) || $_SERVER["OS"] != 'Windows_NT') {
+			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
+		}
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
