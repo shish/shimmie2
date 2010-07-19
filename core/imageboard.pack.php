@@ -342,7 +342,9 @@ class Image {
 	 * @retval string
 	 */
 	public function get_mime_type() {
-		return "image/".($this->ext);
+		$type = strtolower($this->ext);
+		if($type == "jpg") $type = "jpeg";
+		return "image/$type";
 	}
 
 	/**
