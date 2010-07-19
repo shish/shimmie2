@@ -1,6 +1,6 @@
 <?php
 /*
-V4.94 23 Jan 2007  (c) 2000-2007 John Lim (jlim#natsoft.com.my). All rights reserved.
+V5.11 5 May 2010   (c) 2000-2010 John Lim (jlim#natsoft.com). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -78,14 +78,14 @@ class ADODB_sqlite extends ADOConnection {
 	}
 	
 	// mark newnham
-	function &MetaColumns($tab)
+	function MetaColumns($table, $normalize=true) 
 	{
 	  global $ADODB_FETCH_MODE;
 	  $false = false;
 	  $save = $ADODB_FETCH_MODE;
 	  $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 	  if ($this->fetchMode !== false) $savem = $this->SetFetchMode(false);
-	  $rs = $this->Execute("PRAGMA table_info('$tab')");
+	  $rs = $this->Execute("PRAGMA table_info('$table')");
 	  if (isset($savem)) $this->SetFetchMode($savem);
 	  if (!$rs) {
 	    $ADODB_FETCH_MODE = $save; 
@@ -190,14 +190,14 @@ class ADODB_sqlite extends ADOConnection {
 		return $rez;
 	}
 	
-	function &SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
+	function SelectLimit($sql,$nrows=-1,$offset=-1,$inputarr=false,$secs2cache=0) 
 	{
 		$offsetStr = ($offset >= 0) ? " OFFSET $offset" : '';
 		$limitStr  = ($nrows >= 0)  ? " LIMIT $nrows" : ($offset >= 0 ? ' LIMIT 999999999' : '');
 	  	if ($secs2cache)
-	   		$rs =& $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
+	   		$rs = $this->CacheExecute($secs2cache,$sql."$limitStr$offsetStr",$inputarr);
 	  	else
-	   		$rs =& $this->Execute($sql."$limitStr$offsetStr",$inputarr);
+	   		$rs = $this->Execute($sql."$limitStr$offsetStr",$inputarr);
 			
 		return $rs;
 	}
@@ -261,7 +261,7 @@ class ADODB_sqlite extends ADOConnection {
 		return @sqlite_close($this->_connectionID);
 	}
 
-	function &MetaIndexes($table, $primary = FALSE, $owner=false)
+	function MetaIndexes($table, $primary = FALSE, $owner=false, $owner = false)
 	{
 		$false = false;
 		// save old fetch mode
@@ -350,7 +350,7 @@ class ADORecordset_sqlite extends ADORecordSet {
 	}
 
 
-	function &FetchField($fieldOffset = -1)
+	function FetchField($fieldOffset = -1)
 	{
 		$fld = new ADOFieldObject;
 		$fld->name = sqlite_field_name($this->_queryID, $fieldOffset);
@@ -393,5 +393,6 @@ class ADORecordset_sqlite extends ADORecordSet {
 	function _close() 
 	{
 	}
+
 }
 ?>
