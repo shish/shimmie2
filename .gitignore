@@ -53,6 +53,8 @@ ext/tagger
 ext/tag_history
 ext/text_score
 ext/tips
+ext/amazon_s3
+ext/upload_cmd
 ext/wiki
 ext/word_filter
 ext/zoom
