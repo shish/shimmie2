@@ -77,7 +77,10 @@ class Favorites extends SimpleExtension {
 
 	public function onImageInfoSet($event) {
 		global $user;
-		if(($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) {
+		if(
+			in_array('favorite_action', $_POST) &&
+			(($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset"))
+		) {
 			send_event(new FavoriteSetEvent($event->image_id, $user, ($_POST['favorite_action'] == "set")));
 		}
 	}
