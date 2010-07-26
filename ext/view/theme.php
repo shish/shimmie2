@@ -65,6 +65,7 @@ class ViewImageTheme extends Themelet {
 			});
 			//--></script>
 			<p><form action='".make_link()."' method='GET'>
+				<input type='hidden' name='q' value='/post/list'>
 				<input id='search_input' name='search' type='text'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
