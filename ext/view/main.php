@@ -125,9 +125,8 @@ class ViewImage extends SimpleExtension {
 
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 
-			$query = $_POST['query'];
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("post/view/$image_id", $query));
+			$page->set_redirect(make_link("post/view/$image_id", url_escape($_POST['query'])));
 		}
 	}
 
