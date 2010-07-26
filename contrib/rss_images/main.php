@@ -16,7 +16,7 @@ class RSS_Images extends Extension {
 			$title = $config->get_string('title');
 
 			if(count($event->search_terms) > 0) {
-				$search = implode(' ', $event->search_terms);
+				$search = html_escape(implode(' ', $event->search_terms));
 				$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 					"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 			}
