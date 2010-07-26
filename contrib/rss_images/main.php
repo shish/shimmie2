@@ -12,7 +12,7 @@ class RSS_Images extends SimpleExtension {
 		$title = $config->get_string('title');
 
 		if(count($event->search_terms) > 0) {
-			$search = implode(' ', $event->search_terms);
+			$search = html_escape(implode(' ', $event->search_terms));
 			$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 				"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 		}
@@ -42,14 +42,14 @@ class RSS_Images extends SimpleExtension {
 		$data = "";
 		foreach($images as $image) {
 			$link = make_http(make_link("post/view/{$image->id}"));
-			$tags = $image->get_tag_list();
+			$tags = html_escape($image->get_tag_list());
 			$owner = $image->get_owner();
 			$thumb_url = $image->get_thumb_link();
 			$image_url = $image->get_image_link();
 			$posted = date(DATE_RSS, $image->posted_timestamp);
 			$content = html_escape(
 				"<p>" . Themelet::build_thumb_html($image) . "</p>" .
-				"<p>Uploaded by " . $owner->name . "</p>"
+				"<p>Uploaded by " . html_escape($owner->name) . "</p>"
 			);
 
 			$data .= "
@@ -69,7 +69,7 @@ class RSS_Images extends SimpleExtension {
 		$base_href = make_http($config->get_string('base_href'));
 		$search = "";
 		if(count($search_terms) > 0) {
-			$search = html_escape(implode(" ", $search_terms)) . "/";
+			$search = url_escape(implode(" ", $search_terms)) . "/";
 		}
 
 		if($page_number > 1) {
