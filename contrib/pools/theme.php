@@ -147,7 +147,7 @@ class PoolsTheme extends Themelet {
 	public function view_pool($pools, $images, $pageNumber, $totalPages) {
 		global $user, $page;
 
-		$this->display_top($pools, "Pool: ".$pools[0]['title']);
+		$this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
 
 		$pool_images = '';
 		foreach($images as $image) {
