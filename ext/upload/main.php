@@ -110,17 +110,20 @@ class Upload implements Extension {
 		}
 
 		if($event instanceof SetupBuildingEvent) {
+			$tes = array();
+			$tes["Disabled"] = "none";
+			if(function_exists("curl_init")) {
+				$tes["cURL"] = "curl";
+			}
+			$tes["fopen"] = "fopen";
+			$tes["WGet"] = "wget";
+
 			$sb = new SetupBlock("Upload");
 			$sb->position = 10;
 			$sb->add_int_option("upload_count", "Max uploads: ");
 			$sb->add_shorthand_int_option("upload_size", "<br>Max size per file: ");
 			$sb->add_bool_option("upload_anon", "<br>Allow anonymous uploads: ");
-			$sb->add_choice_option("transload_engine", array(
-				"Disabled" => "none",
-				"cURL" => "curl",
-				"fopen" => "fopen",
-				"WGet" => "wget"
-			), "<br>Transload: ");
+			$sb->add_choice_option("transload_engine", $tes, "<br>Transload: ");
 			$event->panel->add_block($sb);
 		}
 
@@ -209,7 +212,7 @@ class Upload implements Extension {
 			fclose($fp);
 		}
 
-		if($config->get_string("transload_engine") == "curl") {
+		if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
 			$ch = curl_init($url);
 			$fp = fopen($tmp_filename, "w");
 
