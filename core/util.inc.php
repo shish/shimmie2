@@ -859,7 +859,7 @@ function _get_page_request() {
 	$args = _get_query_parts();
 
 	if(count($args) == 0 || strlen($args[0]) == 0) {
-		$args = split('/', $config->get_string('front_page'));
+		$args = explode('/', $config->get_string('front_page'));
 	}
 
 	return new PageRequestEvent($args);
