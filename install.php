@@ -224,19 +224,7 @@ function install_process($database_dsn) { // {{{
 	header("Location: index.php");
 } // }}}
 function create_tables($dsn) { // {{{
-	if(substr($dsn, 0, 5) == "mysql") {
-		$engine = new MySQL();
-	}
-	else if(substr($dsn, 0, 5) == "pgsql") {
-		$engine = new PostgreSQL();
-	}
-	else if(substr($dsn, 0, 6) == "sqlite") {
-		$engine = new SQLite();
-	}
-	else {
-		die("Unknown database engine; Shimmie currently officially supports MySQL
-		(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
-	}
+	$engine = select_db_engine($dsn);
 
 	$db = NewADOConnection($dsn);
 	if(!$db) {
@@ -304,19 +292,7 @@ function insert_defaults($dsn) { // {{{
 		die("Couldn't connect to \"$dsn\"");
 	}
 	else {
-		if(substr($dsn, 0, 5) == "mysql") {
-			$engine = new MySQL();
-		}
-		else if(substr($dsn, 0, 5) == "pgsql") {
-			$engine = new PostgreSQL();
-		}
-		else if(substr($dsn, 0, 6) == "sqlite") {
-			$engine = new SQLite();
-		}
-		else {
-			die("Unknown database engine; Shimmie currently officially supports MySQL
-			(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
-		}
+		$engine = select_db_engine($dsn);
 		$engine->init($db);
 
 		$config_insert = $db->Prepare("INSERT INTO config(name, value) VALUES(?, ?)");
@@ -331,6 +307,13 @@ function insert_defaults($dsn) { // {{{
 
 		$db->Close();
 	}
+} // }}}
+function select_db_engine($dsn) { // {{{
+	if(substr($dsn, 0, 5) == "mysql") return new MySQL();
+	if(substr($dsn, 0, 5) == "pgsql") return new PostgreSQL();
+	if(substr($dsn, 0, 6) == "sqlite") return new SQLite();
+	die("Unknown database engine; Shimmie currently officially supports MySQL
+	(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
 } // }}}
 function build_dirs() { // {{{
 	// *try* and make default dirs. Ignore any errors --
