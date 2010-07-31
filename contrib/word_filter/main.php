@@ -37,7 +37,7 @@ class WordFilter implements Extension {
 		$lines = explode("\n", $raw);
 		$map = array();
 		foreach($lines as $line) {
-			$parts = split(",", $line);
+			$parts = explode(",", $line);
 			if(count($parts) == 2) {
 				$map[$parts[0]] = $parts[1];
 			}
