@@ -23,20 +23,24 @@ function remove_mass_tag_id( button, list, id, string ) {
     return false;
 }
 
-function activate_mass_tagger () {
+function activate_mass_tagger ( image_link ) {
     
-    $('.thumbblock').each(add_mass_tag_button);
+    $('.thumbblock').each(
+        function ( index, block ) {
+            add_mass_tag_button( block, image_link );
+        }
+    );
     $('#mass_tagger_controls').attr( 'style', 'display:block' );
     $('#mass_tagger_activate').attr( 'style', 'display:none' );
     
     return false;
 }
 
-function add_mass_tag_button ( index, block ) {
+function add_mass_tag_button ( block, image_link ) {
     
     var id = get_image_id( block );
     
-    var button = create_mass_tag_button( id );
+    var button = create_mass_tag_button( id, image_link );
     $(block).append( button );
     
     return;
@@ -51,7 +55,7 @@ function get_image_id ( block ) {
 
 function create_mass_tag_button ( id ) {
     var img = $('<img />');
-    img.attr("src",'/ext/mass_tagger/toggle.gif');
+    img.attr( "src", image_link+'/ext/mass_tagger/toggle.gif' );
     
     var link = $('<a />');
     link.attr("class",'zoom');
