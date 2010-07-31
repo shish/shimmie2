@@ -53,7 +53,7 @@ function get_image_id ( block ) {
     return id;
 }
 
-function create_mass_tag_button ( id ) {
+function create_mass_tag_button ( id, image_link ) {
     var img = $('<img />');
     img.attr( "src", image_link+'/ext/mass_tagger/toggle.gif' );
     
