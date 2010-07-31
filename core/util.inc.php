@@ -989,17 +989,13 @@ function _start_coverage() {
 	}
 }
 
-function _end_coverage() {
+function _end_coverage( $dir ) {
 	if(function_exists("xdebug_get_code_coverage")) {
-		$dir = getcwd();
-		$end_cov = function() use ( $dir ) {
-			if(!file_exists("$dir/data/coverage")) mkdir("$dir/data/coverage");
-			$n = 0;
-			$t = time();
-			while(file_exists("$dir/data/coverage/$t.$n.log")) $n++;
-			file_put_contents("$dir/data/coverage/$t.$n.log", serialize(xdebug_get_code_coverage()));
-		};
-		return $end_cov;
+		if(!file_exists("$dir/data/coverage")) mkdir("$dir/data/coverage");
+		$n = 0;
+		$t = time();
+		while(file_exists("$dir/data/coverage/$t.$n.log")) $n++;
+		file_put_contents("$dir/data/coverage/$t.$n.log", serialize(xdebug_get_code_coverage()));
 	}
 }
 ?>

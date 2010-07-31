@@ -68,7 +68,8 @@ require_once "config.php";
 require_once "core/util.inc.php";
 if(COVERAGE) {
 	_start_coverage();
-	register_shutdown_function(_end_coverage());
+	$dir = getcwd();
+	register_shutdown_function( "_end_coverage", $dir );
 }
 _version_check();
 _sanitise_environment();
