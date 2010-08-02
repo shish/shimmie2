@@ -101,14 +101,9 @@ class Favorites extends SimpleExtension {
 
 	public function onUserBlockBuilding($event) {
 		global $user;
-		if(strpos($user->name, ' ') === false) {
-			$username = url_escape($user->name);
-			$link = make_link("post/list/favorited_by=$username/1");
-		} else {
-			$userid = $user->id;
-			$link = make_link("post/list/favorited_by_userno=$userid/1");
-		}
-		$event->add_link("My Favorites", $link);
+
+		$username = url_escape($user->name);
+		$event->add_link("My Favorites", make_link("post/list/favorited_by=$username/1"), 20);
 	}
 
 	public function onSearchTermParse($event) {
