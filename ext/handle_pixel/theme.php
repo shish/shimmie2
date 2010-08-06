@@ -23,7 +23,40 @@ class PixelFileHandlerTheme extends Themelet {
 				}
 			}
 		}
-		$page->add_block(new Block("Image", $html, "main", 0));
+
+		$zoom_default = $config->get_bool("image_zoom", false) ? "scale(img);" : "";
+		$zoom = "<script type=\"text/javascript\">
+					img = document.getElementById(\"main_image\");
+					
+					if(img) {
+						img.onclick = function() {scale(img);};
+					
+						msg_div = document.createElement(\"div\");
+						msg_div.id = \"msg_div\";
+						msg_div.appendChild(document.createTextNode(\"Note: Image has been scaled to fit the screen; click to enlarge\"));
+						msg_div.style.display=\"none\";
+						img.parentNode.insertBefore(msg_div, img);
+					
+						orig_width = $image->width;
+					
+						$zoom_default
+					}
+					
+					function scale(img) {
+						if(orig_width >= img.parentNode.clientWidth * 0.9) {
+							if(img.style.width != \"90%\") {
+								img.style.width = \"90%\";
+								msg_div.style.display = \"block\";
+							}
+							else {
+								img.style.width = orig_width + 'px';
+								msg_div.style.display = \"none\";
+							}
+						}
+					}
+				</script>";
+		
+		$page->add_block(new Block("Image", $html.$zoom, "main", 0));
 	}
 }
 ?>

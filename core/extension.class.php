@@ -152,8 +152,14 @@ abstract class DataHandlerExtension implements Extension {
 			global $page;
 			$this->theme->display_image($page, $event->image);
 		}
+
+		if(($event instanceof SetupBuildingEvent)) {
+			$sb = $this->setup();
+			if($sb) $event->panel->add_block($sb);
+		}
 	}
 
+	protected function setup() {}
 	abstract protected function supported_ext($ext);
 	abstract protected function check_contents($tmpname);
 	abstract protected function create_image_from_data($filename, $metadata);
