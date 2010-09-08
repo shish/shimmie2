@@ -25,7 +25,7 @@ function remove_mass_tag_id( button, list, id, string ) {
 
 function activate_mass_tagger ( image_link ) {
     
-    $('.thumbblock').each(
+    find_thumb_link_containers().each(
         function ( index, block ) {
             add_mass_tag_button( block, image_link );
         }
