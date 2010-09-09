@@ -6,8 +6,6 @@ class MassTaggerTheme extends Themelet {
 	 */
 	public function display_mass_tagger( Page $page, Event $event, $config ) {
 		$data_href = get_base_href();  
-		$page->add_header("<link  href='$data_href/ext/mass_tagger/mass_tagger.css' type='text/css' rel='stylesheet' />");
-		$page->add_header("<script src='$data_href/ext/mass_tagger/mass_tagger.js' type='text/javascript'></script>");
 		$body = "
 			<form action='".make_link("mass_tagger/tag")."' method='POST'>
 				<input id='mass_tagger_activate' type='button' onclick='activate_mass_tagger(\"$data_href\");' value='Activate'/>
@@ -16,7 +14,7 @@ class MassTaggerTheme extends Themelet {
 					<br />
 					<input type='hidden' name='ids' id='mass_tagger_ids' />
 					<label>Tags: <input type='text' name='tag' /></label>
-					
+
 					<input type='submit' value='Tag Marked Images' />
 				</div>
 			</form>
