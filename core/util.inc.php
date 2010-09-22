@@ -226,7 +226,7 @@ function make_form($target, $method="POST", $multipart=False) {
 	$auth = $user->get_auth_html();
 	$extra = "";
 	if($multipart) {
-		$extra .= " enctype='multipart/form-data'"
+		$extra .= " enctype='multipart/form-data'";
 	}
 	return "<form action='$target' method='$method'$extra>$auth";
 }

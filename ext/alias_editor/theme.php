@@ -60,7 +60,7 @@ class AliasEditorTheme extends Themelet {
 		";
 
 		$bulk_html = "
-			".make_form(make_link("alias/import"), multipart=True)."
+			".make_form(make_link("alias/import"), $multipart=True)."
 				<input type='file' name='alias_file'>
 				<input type='submit' value='Upload List'>
 			</form>
