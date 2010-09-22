@@ -173,7 +173,7 @@ class CommentListTheme extends Themelet {
 		$captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
 		return "
-			<form name='comment_form' action='".make_link("comment/add")."' method='POST'>
+			".make_form(make_link("comment/add"))."
 				<input type='hidden' name='image_id' value='$i_image_id' />
 				<input type='hidden' name='hash' value='$hash' />
 				<textarea name='comment' rows='5' cols='50'></textarea>

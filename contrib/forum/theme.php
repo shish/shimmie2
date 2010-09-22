@@ -21,8 +21,7 @@ class ForumTheme extends Themelet {
     {
 		global $config, $user;
 		$max_characters = $config->get_int('forumMaxCharsPerPost');
-        $postUrl = make_link("forum/create");
-        $html = '<form action="'.$postUrl.'" method="POST">';
+		$html = make_form(make_link("forum/create"));
 
        
         if (!is_null($threadTitle))
@@ -58,8 +57,7 @@ class ForumTheme extends Themelet {
 		
 		$max_characters = $config->get_int('forumMaxCharsPerPost');
 		
-        $postUrl = make_link("forum/answer");
-        $html = '<form action="'.$postUrl.'" method="POST">';
+		$html = make_form(make_link("forum/answer"));
 
         $html .= '<input type="hidden" name="threadID" value="'.$threadID.'" />';
 		

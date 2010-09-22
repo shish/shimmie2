@@ -30,7 +30,7 @@ class ImageBanTheme extends Themelet {
 					<td width='30%'>{$ban['hash']}</td>
 					<td>{$ban['reason']}</td>
 					<td width='10%'>
-						<form action='".make_link("image_hash_ban/remove")."' method='POST'>
+						".make_form(make_link("image_hash_ban/remove"))."
 							<input type='hidden' name='hash' value='{$ban['hash']}'>
 							<input type='submit' value='Remove'>
 						</form>
@@ -48,7 +48,7 @@ class ImageBanTheme extends Themelet {
 				<thead><th>Hash</th><th>Reason</th><th>Action</th></thead>
 				$h_bans
 				<tfoot><tr>
-					<form action='".make_link("image_hash_ban/add")."' method='POST'>
+					".make_form(make_link("image_hash_ban/add"))."
 						<td><input type='text' name='hash'></td>
 						<td><input type='text' name='reason'></td>
 						<td><input type='submit' value='Ban'></td>
@@ -80,7 +80,7 @@ class ImageBanTheme extends Themelet {
 	 */
 	public function get_buttons_html(Image $image) {
 		$html = "
-			<form action='".make_link("image_hash_ban/add")."' method='POST'>
+			".make_form(make_link("image_hash_ban/add"))."
 				<input type='hidden' name='hash' value='{$image->hash}'>
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input type='text' name='reason'>

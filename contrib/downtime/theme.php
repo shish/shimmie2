@@ -19,6 +19,7 @@ class DowntimeTheme extends Themelet {
 		$login_link = make_link("user_admin/login");
 		header("HTTP/1.0 503 Service Temporarily Unavailable");
 
+		$auth = $user->get_auth_html();
 		print <<<EOD
 <html>
 	<head>
@@ -34,6 +35,7 @@ class DowntimeTheme extends Themelet {
 			<h3>Admin Login</h3>
 			<div id="login">
 				<form action="$login_link" method="POST">
+					$auth
 					<table id="login_table" summary="Login Form">
 						<tr>
 							<td width="70"><label for="user">Name</label></td>

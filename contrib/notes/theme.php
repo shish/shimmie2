@@ -23,26 +23,21 @@ class NotesTheme extends Themelet {
 					';
 	}
 	public function request_button($image_id) {
-		return '						
-						
-						<form action="'.make_link("note/add_request").'" method="POST">
+		return make_form(make_link("note/add_request")) . '
 						<input id="noterequest" type="submit" value="Add Note Request">
 						<input type="hidden" name="image_id" value="'.$image_id.'">
 						</form>
 					';
 	}
 	public function nuke_notes_button($image_id) {
-		return '
-							<form action="'.make_link("note/nuke_notes").'" method="POST" ">
+		return make_form(make_link("note/nuke_notes")) . '
 							<input id="noterequest" type="submit" value="Nuke Notes" onclick="return confirm_action()">
 							<input type="hidden" name="image_id" value="'.$image_id.'">
 							</form>
 				';
 	}
 	public function nuke_requests_button($image_id) {
-		return '
-							
-							<form action="'.make_link("note/nuke_requests").'" method="POST">
+		return make_form(make_link("note/nuke_requests")) . '
 							<input id="noterequest" type="submit" value="Nuke Requests" onclick="return confirm_action()">
 							<input type="hidden" name="image_id" value="'.$image_id.'">
 							</form>
@@ -167,7 +162,7 @@ class NotesTheme extends Themelet {
 	</script>
 	
 	<div id='noteform'>
-		<form id='NoteAddForm' action='".make_link("note/add_note")."' method='POST'>
+		".make_form(make_link("note/add_note"))."
 			<input type='hidden' name='image_id' value='".$image_id."' />
 			<input name='note_x1' type='hidden' value='' id='NoteX1' />
 			<input name='note_y1' type='hidden' value='' id='NoteY1' />
@@ -189,7 +184,7 @@ class NotesTheme extends Themelet {
 		</form>
 	</div>
         <div id='noteEditForm'>
-            <form id='NoteEditForm' action='".make_link("note/edit_note")."' method='POST'>
+			".make_form(make_link("note/edit_note"))."
                 <input type='hidden' name='image_id' value='".$image_id."' />
                 <input type='hidden' name='note_id' id='EditNoteID' value='' />
                 <input name='note_x1' type='hidden' value='' id='EditNoteX1' />
@@ -211,7 +206,7 @@ class NotesTheme extends Themelet {
 
         if($adminOptions)
             $html .= "
-            <form id='NoteDeleteForm' action='".make_link("note/delete_note")."' method='POST'>
+				".make_form(make_link("note/delete_note"))."
                 <input type='hidden' name='image_id' value='".$image_id."' />
                 <input type='hidden' name='note_id' value='' id='DeleteNoteNoteID' />
                 <table>

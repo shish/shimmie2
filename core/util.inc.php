@@ -217,6 +217,21 @@ function make_http($link) {
 }
 
 /**
+ * Make a form tag with relevant auth token and stuff
+ *
+ * @retval string
+ */
+function make_form($target, $method="POST", $multipart=False) {
+	global $user;
+	$auth = $user->get_auth_html();
+	$extra = "";
+	if($multipart) {
+		$extra .= " enctype='multipart/form-data'"
+	}
+	return "<form action='$target' method='$method'$extra>$auth";
+}
+
+/**
  * Make a link to a static file in the current theme's
  * directory
  */

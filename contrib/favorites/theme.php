@@ -7,8 +7,8 @@ class FavoritesTheme extends Themelet {
 		$i_image_id = int_escape($image->id);
 		$name  = $is_favorited ? "unset" : "set";
 		$label = $is_favorited ? "Un-Favorite" : "Favorite";
-		$html  = "<form action='".make_link("change_favorite")."' method='POST'>
-			".$user->get_auth_html()."
+		$html  = "
+			".make_form(make_link("change_favorite"))."
 			<input type='hidden' name='image_id' value='$i_image_id'>
 			<input type='hidden' name='favorite_action' value='$name'>
 			<input type='submit' value='$label'>

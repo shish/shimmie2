@@ -17,7 +17,7 @@ class PoolsTheme extends Themelet {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
 		}
 		$editor = "
-			<form method='POST' action='".make_link("pool/add_post")."'>
+			".make_form(make_link("pool/add_post"))."
 				<select name='pool_id'>
 					$h
 				</select>
@@ -81,13 +81,15 @@ class PoolsTheme extends Themelet {
 	 * HERE WE DISPLAY THE NEW POOL COMPOSER
 	 */
 	public function new_pool_composer(Page $page) {
-		$create_html = "<form action=".make_link("pool/create")." method='POST'>
-			<table>
-			<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
-			<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
-			<tr><td>Description:</td><td><textarea name='description'></textarea></td></tr>
-			<tr><td colspan='2'><input type='submit' value='Create' /></td></tr>
-			</table>
+		$create_html = "
+			".make_form(make_link("pool/create"))."
+				<table>
+					<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
+					<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
+					<tr><td>Description:</td><td><textarea name='description'></textarea></td></tr>
+					<tr><td colspan='2'><input type='submit' value='Create' /></td></tr>
+				</table>
+			</form>
 		";
 
 		$blockTitle = "Create Pool";
@@ -168,7 +170,8 @@ class PoolsTheme extends Themelet {
 	public function sidebar_options(Page $page, $pool, $check_all) {
 		global $user;
 
-		$editor = " <form action='".make_link("pool/import")."' method='POST'>
+		$editor = "
+			".make_form(make_link("pool/import"))."
 			<input type='text' name='pool_tag' id='edit' value='Please enter a tag' onclick='this.value=\"\";'/>
 			<input type='submit' name='edit' id='edit' value='Import'/>
 			<input type='hidden' name='pool_id' value='".$pool['id']."'>
@@ -191,7 +194,7 @@ class PoolsTheme extends Themelet {
 				}
 				</script>
 
-				<form action='".make_link("pool/nuke")."' method='POST'>
+				".make_form(make_link("pool/nuke"))."
 				<input type='submit' name='delete' id='delete' value='Delete Pool' onclick='return confirm_action()' />
 				<input type='hidden' name='pool_id' value='".$pool['id']."'>
 				</form>

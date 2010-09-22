@@ -11,8 +11,7 @@ class FeaturedTheme extends Themelet {
 	public function get_buttons_html($image_id) {
 		global $user;
 		return "
-			<form action='".make_link("featured_image/set")."' method='POST'>
-			".$user->get_auth_html()."
+			".make_form(make_link("featured_image/set"))."
 			<input type='hidden' name='image_id' value='$image_id'>
 			<input type='submit' value='Feature This'>
 			</form>

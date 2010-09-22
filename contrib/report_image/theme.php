@@ -42,7 +42,7 @@ class ReportImageTheme extends Themelet {
 					<td>{$image_link}</td>
 					<td>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>
-						<form action='".make_link("image_report/remove")."' method='POST'>
+						".make_form(make_link("image_report/remove"))."
 							<input type='hidden' name='id' value='{$report['id']}'>
 							<input type='submit' value='Remove Report'>
 						</form>
@@ -73,7 +73,7 @@ class ReportImageTheme extends Themelet {
 
 		$i_image = int_escape($image->id);
 		$html = "
-			<form action='".make_link("image_report/add")."' method='POST'>
+			".make_form(make_link("image_report/add"))."
 				<input type='hidden' name='image_id' value='$i_image'>
 				<input type='text' name='reason' value='Please enter a reason' onclick='this.value=\"\";'>
 				<input type='submit' value='Report'>
