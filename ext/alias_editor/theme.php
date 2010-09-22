@@ -12,7 +12,7 @@ class AliasEditorTheme extends Themelet {
 			$action = "<th width='10%'>Action</th>";
 			$add = "
 				<tr>
-					<form action='".make_link("alias/add")."' method='POST'>
+					".make_form(make_link("alias/add"))."
 						<td><input type='text' name='oldtag'></td>
 						<td><input type='text' name='newtag'></td>
 						<td><input type='submit' value='Add'></td>
@@ -36,7 +36,7 @@ class AliasEditorTheme extends Themelet {
 			if($is_admin) {
 				$h_aliases .= "
 					<td>
-						<form action='".make_link("alias/remove")."' method='POST'>
+						".make_form(make_link("alias/remove"))."
 							<input type='hidden' name='oldtag' value='$h_old'>
 							<input type='submit' value='Remove'>
 						</form>
@@ -60,7 +60,7 @@ class AliasEditorTheme extends Themelet {
 		";
 
 		$bulk_html = "
-			<form enctype='multipart/form-data' action='".make_link("alias/import")."' method='POST'>
+			".make_form(make_link("alias/import"), multipart=True)."
 				<input type='file' name='alias_file'>
 				<input type='submit' value='Upload List'>
 			</form>

@@ -53,7 +53,7 @@ class UserPageTheme extends Themelet {
 		$reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
 		$html .= "
-		<form action='".make_link("user_admin/create")."' method='POST'>
+		".make_form(make_link("user_admin/create"))."
 			<table style='width: 300px;'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
@@ -82,7 +82,7 @@ class UserPageTheme extends Themelet {
 	public function display_login_block(Page $page) {
 		global $config;
 		$html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
+			".make_form(make_link("user_admin/login"))."
 				<table summary='Login Form'>
 					<tr>
 						<td width='70'><label for='user'>Name</label></td>
@@ -150,10 +150,8 @@ class UserPageTheme extends Themelet {
 	protected function build_options(User $duser) {
 		global $config, $database, $user;
 
-		$html = "";
-
-		$html .= "
-		<form action='".make_link("user_admin/change_pass")."' method='POST'>
+		$html = "
+		".make_form(make_link("user_admin/change_pass"))."
 			<input type='hidden' name='id' value='{$duser->id}'>
 			<table style='width: 300px;'>
 				<tr><th colspan='2'>Change Password</th></tr>
@@ -163,7 +161,7 @@ class UserPageTheme extends Themelet {
 			</table>
 		</form>
 
-		<p><form action='".make_link("user_admin/change_email")."' method='POST'>
+		<p>".make_form(make_link("user_admin/change_email"))."
 			<input type='hidden' name='id' value='{$duser->id}'>
 			<table style='width: 300px;'>
 				<tr><th colspan='2'>Change Email</th></tr>
@@ -177,10 +175,10 @@ class UserPageTheme extends Themelet {
 			$i_user_id = int_escape($duser->id);
 			$h_is_admin = $duser->is_admin() ? " checked" : "";
 			$html .= "
-				<p><form action='".make_link("user_admin/set_more")."' method='POST'>
-				<input type='hidden' name='id' value='$i_user_id'>
-				Admin: <input name='admin' type='checkbox'$h_is_admin>
-				<input type='submit' value='Set'>
+				<p>".make_form(make_link("user_admin/set_more"))."
+					<input type='hidden' name='id' value='$i_user_id'>
+					Admin: <input name='admin' type='checkbox'$h_is_admin>
+					<input type='submit' value='Set'>
 				</form>
 			";
 		}

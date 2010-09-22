@@ -20,8 +20,7 @@ class AdminPageTheme extends Themelet {
 		global $user;
 
 		$html = "
-			<p><form action='".make_link("admin_utils")."' method='POST'>
-				".$user->get_auth_html()."
+			".make_form(make_link("admin_utils"))."
 				<select name='action'>
 					<option value='lowercase all tags'>All tags to lowercase</option>
 					<option value='recount tag use'>Recount tag use</option>

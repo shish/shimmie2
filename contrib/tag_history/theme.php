@@ -5,7 +5,7 @@ class Tag_HistoryTheme extends Themelet {
 		global $user;
 		$start_string = "
 			<div style='text-align: left'>
-				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
+				".make_form(make_link("tag_history/revert"))."
 					<ul style='list-style-type:none;'>
 		";
 
@@ -46,7 +46,7 @@ class Tag_HistoryTheme extends Themelet {
 	public function display_global_page(Page $page, $history) {
 		$start_string = "
 			<div style='text-align: left'>
-				<form enctype='multipart/form-data' action='".make_link("tag_history/revert")."' method='POST'>
+				".make_form(make_link("tag_history/revert"))."
 					<ul style='list-style-type:none;'>
 		";
 		$end_string = "

@@ -27,8 +27,7 @@ class IPBanTheme extends Themelet {
 					<td width='10%'>{$ban['banner_name']}</td>
 					<td width='15%'>{$end_human}</td>
 					<td width='10%'>
-						<form action='".make_link("ip_ban/remove")."' method='POST'>
-							".$user->get_auth_html()."
+						".make_form(make_link("ip_ban/remove"))."
 							<input type='hidden' name='id' value='{$ban[$prefix.'id']}'>
 							<input type='submit' value='Remove'>
 						</form>
@@ -47,8 +46,7 @@ class IPBanTheme extends Themelet {
 				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></tr></thead>
 				$h_bans
 				<tfoot><tr>
-					<form action='".make_link("ip_ban/add")."' method='POST'>
-						".$user->get_auth_html()."
+					".make_form(make_link("ip_ban/add"))."
 						<td><input type='text' name='ip'></td>
 						<td><input type='text' name='reason'></td>
 						<td>{$user->name}</td>

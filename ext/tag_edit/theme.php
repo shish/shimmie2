@@ -7,7 +7,7 @@ class TagEditTheme extends Themelet {
 	 */
 	public function display_mass_editor(Page $page) {
 		$html = "
-		<form action='".make_link("tag_edit/replace")."' method='POST'>
+		".make_form(make_link("tag_edit/replace"))."
 			<table style='width: 300px;'>
 				<tr><td>Search</td><td><input type='text' name='search'></tr>
 				<tr><td>Replace</td><td><input type='text' name='replace'></td></tr>

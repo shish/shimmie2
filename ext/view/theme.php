@@ -112,7 +112,7 @@ class ViewImageTheme extends Themelet {
 		$html = " (<a href=\"javascript: toggle('imgdata')\">edit info</a>)";
 		$html .= "
 			<div id='imgdata'>
-				<form action='".make_link("post/set")."' method='POST'>
+				".make_form(make_link("post/set"))."
 					<input type='hidden' name='image_id' value='{$image->id}'>
 					<input type='hidden' name='query' value='$h_query'>
 					<table style='width: 500px;'>

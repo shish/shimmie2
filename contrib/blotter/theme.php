@@ -45,8 +45,7 @@ class BlotterTheme extends Themelet {
 			</tr>";
 		$add_new = "
 			<tr class='even'>
-			<form action='".make_link("blotter/add")."' method='POST'>
-			".$user->get_auth_html()."
+			".make_form(make_link("blotter/add"))."
 			<td colspan='2'><textarea style='text-align:left;' name='entry_text' rows='2' /></textarea></td>
 			<td><input type='checkbox' name='important' /></td>
 			<td><input type='submit' value='Add'></td>

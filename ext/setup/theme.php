@@ -42,11 +42,12 @@ class SetupTheme extends Themelet {
 		}
 
 		$table = "
-			<form action='".make_link("setup/save")."' method='POST'><table>
-			".$user->get_auth_html()."
-			<tr><td>$setupblock_html1</td><td>$setupblock_html2</td></tr>
-			<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
-			</table></form>
+			".make_form(make_link("setup/save"))."
+				<table>
+				<tr><td>$setupblock_html1</td><td>$setupblock_html2</td></tr>
+				<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
+				</table>
+			</form>
 			";
 
 		$page->set_title("Shimmie Setup");
@@ -83,12 +84,13 @@ class SetupTheme extends Themelet {
 				$(\"#settings\").tablesorter();
 			});
 			</script>
-			<form action='".make_link("setup/save")."' method='POST'><table id='settings' class='zebra'>
-				".$user->get_auth_html()."
-				<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
-				<tbody>$rows</tbody>
-				<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>
-			</table></form>
+			".make_form(make_link("setup/save"))."
+				<table id='settings' class='zebra'>
+					<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
+					<tbody>$rows</tbody>
+					<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>
+				</table>
+			</form>
 			";
 
 		$page->set_title("Shimmie Setup");

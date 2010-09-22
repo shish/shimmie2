@@ -22,7 +22,7 @@ class RatingsTheme extends Themelet {
 	public function display_bulk_rater() {
 		global $page;
 		$html = "
-			<form action='".make_link("admin/bulk_rate")."' method='POST'>
+			".make_form(make_link("admin/bulk_rate"))."
 				<table style='width: 300px'>
 					<tr>
 						<td>Search</td>
