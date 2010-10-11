@@ -50,7 +50,7 @@ class UploadTheme extends Themelet {
 				});
 			});
 			</script>
-			".make_form(make_link("upload"), $multipart=True)."
+			".make_form(make_link("upload"), "POST", $multipart=True)."
 				<table id='large_upload_form'>
 					$upload_list
 					<tr><td>Tags</td><td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
@@ -120,7 +120,7 @@ class UploadTheme extends Themelet {
 				});
 			});
 			</script>
-			".make_form(make_link("upload"), $multipart=True)."
+			".make_form(make_link("upload"), "POST", $multipart=True)."
 				$upload_list
 				<input id='tag_input' name='tags' type='text' autocomplete='off'>
 				<input type='submit' value='Post'>
