@@ -64,7 +64,8 @@ class DanbooruApi implements Extension
 			if(preg_match("/^md5:([0-9a-fA-F]*)$/i", $event->term, $matches))
 			{
 				$hash = strtolower($matches[1]);
-				$event->set_querylet(new Querylet("images.hash = '$hash'"));
+				$event->add_querylet(new Querylet("images.hash = '$hash'"));	// :-O
+//				$event->set_querylet(new Querylet("images.hash = '$hash'"));
 			}
 		}
 	}
@@ -82,6 +83,8 @@ class DanbooruApi implements Extension
 		//$page->set_type("text/plain");
 
 		$results = array();
+
+		$danboorup_kludge=1;			// danboorup for firefox makes broken links out of location: /path
 
 		/*
 		add_post()
@@ -116,6 +119,7 @@ class DanbooruApi implements Extension
 			$this->authenticate_user();
 			// Now we check if a file was uploaded or a url was provided to transload
 			// Much of this code is borrowed from /ext/upload
+
 			if($config->get_bool("upload_anon") || !$user->is_anonymous())
 			{
 				$file = null;
@@ -216,7 +220,9 @@ class DanbooruApi implements Extension
 					header("HTTP/1.0 409 Conflict");
 					header("X-Danbooru-Errors: duplicate");
 					$existinglink = make_link("post/view/" . $existing->id);
+					if($danboorup_kludge) $existinglink=make_http($existinglink);
 					header("X-Danbooru-Location: $existinglink");
+					return;	// wut!
 				}
 
 				// Fire off an event which should process the new file and add it to the db
@@ -225,13 +231,18 @@ class DanbooruApi implements Extension
 				$metadata['extension'] = $fileinfo['extension'];
 				$metadata['tags'] = $posttags;
 				$metadata['source'] = $source;
+				//log_debug("danbooru_api","========== NEW($filename) =========");
+				//log_debug("danbooru_api", "upload($filename): fileinfo(".var_export($fileinfo,TRUE)."), metadata(".var_export($metadata,TRUE).")...");
 
 				try {
 					$nevent = new DataUploadEvent($user, $file, $metadata);
+					//log_debug("danbooru_api", "send_event(".var_export($nevent,TRUE).")");
 					send_event($nevent);
 					// If it went ok, grab the id for the newly uploaded image and pass it in the header
-					$newimg = Image::by_hash($hash);
+					$newimg = Image::by_hash($hash);		// FIXME: Unsupported file doesn't throw an error?
 					$newid = make_link("post/view/" . $newimg->id);
+					if($danboorup_kludge) $newid=make_http($newid);
+
 					// Did we POST or GET this call?
 					if($_SERVER['REQUEST_METHOD'] == 'POST')
 					{
@@ -243,7 +254,7 @@ class DanbooruApi implements Extension
 				catch(UploadException $ex) {
 					// Did something screw up?
 					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: ". $ex->getMessage());
+					header("X-Danbooru-Errors: exception - " . $ex->getMessage());
 					return;
 				}
 			} else
