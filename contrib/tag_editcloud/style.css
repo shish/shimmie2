@@ -1,0 +1,20 @@
+span.tag-selected {
+	background:#88EE88;
+}
+
+.tageditcloud {
+	color: #0000FF;
+}
+
+.tageditcloud div#tagcloud_unset {
+	color: #0000FF;
+}
+
+.tageditcloud div#tagcloud_set {
+        color: #0000FF;
+	font-style:italic;
+}
+
+.tageditcloud div#tagcloud_extra {  
+        color: #0000FF;
+}
