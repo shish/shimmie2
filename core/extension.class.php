@@ -132,7 +132,25 @@ abstract class DataHandlerExtension implements Extension {
 	public function receive_event(Event $event) {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+		if($event instanceof DataUploadEvent) {
+			$valid=FALSE;								// TRUE = skip check_contents()
+			$USEHEADERSALWAYS=FALSE; //TRUE; // STUB - make option
+			if ( is_null($event->type) || ($event->type == "") || ( $USEHEADERSALWAYS ) ) {
+				if (is_callable(array($this,'find_ext'))) {
+												// find_ext should always return false or a valid str, so:
+					if(!$ext=$this->find_ext($event->tmpname)) return;	// pass off to the next listener and avoid ext=NULL mysql insert
+					$valid=TRUE;						// or avoid calling check_contents() needlessly
+					$event->type = $ext;
+					$event->metadata['extension']=$ext;
+					log_info("core-extension", get_class($this)." has renamed '".$event->metadata['filename']."' to '".$event->metadata['filename'].".$ext'");
+					$event->metadata['filename']=$event->metadata['filename'].".$ext";
+				} else { if(!$USEHEADERSALWAYS) return; } // no ext + valid check_contents = mysql error.
+			}
+
+
+
+			if( ($valid) || ($this->check_contents($event->tmpname)) ) {
+
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
@@ -142,6 +160,7 @@ abstract class DataHandlerExtension implements Extension {
 			$iae = new ImageAdditionEvent($event->user, $image);
 			send_event($iae);
 			$event->image_id = $iae->image->id;
+		}
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
