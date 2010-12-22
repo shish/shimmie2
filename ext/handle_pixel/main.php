@@ -32,6 +32,17 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	protected function find_ext($file) {
+		$phpimgexts = array ( 1=> 'gif', 'jpg', 'png', 'swf', 'psd', 'bmp', 'tiff', 'tiff',
+			 'jpc', 'jp2', 'jpf', 'jb2', 'swc', 'aiff', 'wbmp', 'xbm'); // const, do not change. Less overhead / PITA than image_type_to_extension($info[2])
+
+		if(!file_exists($file)) return false;
+		$info = getimagesize($file);
+		$exts = array("jpg", "jpeg", "gif", "png");
+		$ret=$phpimgexts[$info[2]];
+		return (in_array($ret,$exts)?$ret:false);
+	}
+
 	protected function check_contents($file) {
 		$valid = Array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG);
 		if(!file_exists($file)) return false;
