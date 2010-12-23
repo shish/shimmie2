@@ -26,6 +26,7 @@ For admins:
  o) Better spam filtering
  o) CAPTCHA tests for signup and anonymous comments
  o) Detailed event logging
+ o) Delete by query
 
 For users:
  o) New default theme
@@ -42,6 +43,7 @@ For users:
  o) Private message system
  o) Only the most recent posts for each image shown on the comment list
  o) Image pools extension
+ o) Tagger cloud
 
 For developers:
  o) More sensible APIs
@@ -102,7 +104,7 @@ Contact
 ~~~~~~~
 #shimmie on Freenode -- IRC
 webmaster at shishnet.org -- email
-http://redmine.shishnet.org/projects/show/shimmie2 -- bug tracker
+https://github.com/shish/shimmie2/issues -- bug tracker
 
 
 Licence
