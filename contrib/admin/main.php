@@ -58,6 +58,10 @@ class AdminPage implements Extension {
 				$redirect = false;
 
 				switch($_POST['action']) {
+					case 'delete by query':
+						$this->delete_by_query($_POST['query']);
+						$redirect = true;
+						break;
 					case 'lowercase all tags':
 						$this->lowercase_all_tags();
 						$redirect = true;
@@ -95,6 +99,14 @@ class AdminPage implements Extension {
 			if($user->is_admin()) {
 				$event->add_link("Board Admin", make_link("admin"));
 			}
+		}
+	}
+
+	private function delete_by_query($query) {
+		global $page, $user;
+		assert(strlen($query) > 1);
+		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
+			send_event(new ImageDeletionEvent($image));
 		}
 	}
 

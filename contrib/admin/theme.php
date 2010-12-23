@@ -32,6 +32,15 @@ class AdminPageTheme extends Themelet {
 			</form>
 		";
 		$page->add_block(new Block("Misc Admin Tools", $html));
+
+		$html = "
+			".make_form(make_link("admin_utils"))."
+				<input type='hidden' name='action' value='delete by query'>
+				<input type='text' name='query'>
+				<input type='submit' value='Go'>
+			</form>
+		";
+		$page->add_block(new Block("Delete by Query", $html));
 	}
 }
 ?>
