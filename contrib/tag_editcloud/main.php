@@ -52,9 +52,9 @@ class TagEditCloud implements Extension {
 			$sb->add_bool_option("tageditcloud_usedfirst","<br>Always show used tags first: ");
 			$sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
 			$sb->add_int_option("tageditcloud_minusage");
-			$sb->add_label(" times.<br><b>Popularity sort</b>:<br>Show tags used ");
+			$sb->add_label(" times.<br><b>Popularity sort</b>:<br>Show ");
 			$sb->add_int_option("tageditcloud_defcount");
-			$sb->add_label(" times by default.<br>Show a maximum of ");
+			$sb->add_label(" tags by default.<br>Show a maximum of ");
 			$sb->add_int_option("tageditcloud_maxcount");
 			$sb->add_label(" tags.");
 
