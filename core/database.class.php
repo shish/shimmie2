@@ -274,6 +274,7 @@ class Database {
 		global $database_dsn, $cache_dsn;
 
 		# FIXME: translate database URI into something PDO compatible
+		include "config.php";
 		#$db_proto = $database_dsn;
 		#$db_host  = $database_dsn;
 		#$db_name  = $database_dsn;
@@ -320,7 +321,7 @@ class Database {
 	 * Execute an SQL query and return a 2D array
 	 */
 	public function get_all($query, $args=array()) {
-		$result = $this->db->fetchAll($query, $args);
+		$result = $this->db->query($query, $args)->fetchAll();
 		return $result;
 	}
 
@@ -328,12 +329,12 @@ class Database {
 	 * Execute an SQL query and return a single row
 	 */
 	public function get_row($query, $args=array()) {
-		$result = $this->db->fetch($query, $args);
+		$result = $this->db->query($query, $args)->fetchAll();
 		if(count($result) == 0) {
 			return null;
 		}
 		else {
-			return $result;
+			return $result[0];
 		}
 	}
 

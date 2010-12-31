@@ -175,7 +175,7 @@ class DatabaseConfig extends BaseConfig {
 			$this->values = $cached;
 		}
 		else {
-			$this->values = $this->database->db->GetAssoc("SELECT name, value FROM config");
+			$this->values = $this->database->db->query("SELECT name, value FROM config")->fetchAll();
 			$this->database->cache->set("config", $this->values);
 		}
 	}
