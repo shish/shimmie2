@@ -289,6 +289,7 @@ class Database {
 		}
 
 		$this->db = new PDO("$db_proto:host=$db_host;dbname=$db_name", $db_user, $db_pass);
+		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		if(isset($cache_dsn) && !empty($cache_dsn)) {
 			$matches = array();
@@ -304,23 +305,7 @@ class Database {
 			$this->cache = new NoCache();
 		}
 
-		if($this->db) {
-			$this->engine->init($this->db);
-		}
-		else {
-			$version = VERSION;
-			print "
-			<html>
-				<head>
-					<title>Internal error - Shimmie-$version</title>
-				</head>
-				<body>
-					Internal error: Could not connect to database
-				</body>
-			</html>
-			";
-			exit;
-		}
+		$this->engine->init($this->db);
 	}
 
 	/**
@@ -328,12 +313,6 @@ class Database {
 	 */
 	public function execute($query, $args=array()) {
 		$result = $this->db->query($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
-			exit;
-		}
 		return $result;
 	}
 
@@ -341,13 +320,7 @@ class Database {
 	 * Execute an SQL query and return a 2D array
 	 */
 	public function get_all($query, $args=array()) {
-		$result = $this->db->GetAll($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
-			exit;
-		}
+		$result = $this->db->fetchAll($query, $args);
 		return $result;
 	}
 
@@ -355,13 +328,7 @@ class Database {
 	 * Execute an SQL query and return a single row
 	 */
 	public function get_row($query, $args=array()) {
-		$result = $this->db->GetRow($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
-			exit;
-		}
+		$result = $this->db->fetch($query, $args);
 		if(count($result) == 0) {
 			return null;
 		}

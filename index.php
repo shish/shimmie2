@@ -84,7 +84,7 @@ try {
 
 	// connect to the database
 	$database = new Database();
-	$database->db->fnExecute = '_count_execs';
+	//$database->db->fnExecute = '_count_execs'; // FIXME: PDO equivalent
 	$config = new DatabaseConfig($database);
 
 
