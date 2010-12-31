@@ -451,7 +451,7 @@ class CommentList extends SimpleExtension {
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
-			$cid = $database->db->Insert_ID();
+			$cid = $database->db->lastInsertId();
 			log_info("comment", "Comment #$cid added to Image #$image_id");
 		}
 	}

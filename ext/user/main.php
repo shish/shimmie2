@@ -304,7 +304,7 @@ class UserPage extends SimpleExtension {
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (?, ?, now(), ?, ?)",
 				array($event->username, $hash, $email, $admin));
-		$uid = $database->db->Insert_ID();
+		$uid = $database->db->lastInsertId();
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 

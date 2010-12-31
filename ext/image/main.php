@@ -243,7 +243,7 @@ class ImageIO extends SimpleExtension {
 			$image->id = $database->db->GetOne("SELECT id FROM images WHERE hash=?", array($image->hash));
 		}
 		else {
-			$image->id = $database->db->Insert_ID();
+			$image->id = $database->db->lastInsertId();
 		}
 
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
