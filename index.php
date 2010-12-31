@@ -85,6 +85,7 @@ try {
 	// connect to the database
 	$database = new Database();
 	//$database->db->fnExecute = '_count_execs'; // FIXME: PDO equivalent
+	$database->db->beginTransaction();
 	$config = new DatabaseConfig($database);
 
 
@@ -129,14 +130,7 @@ try {
 	send_event(_get_page_request());
 	$page->display();
 
-
-	// for databases which support transactions
-	// XXX: removed since we never start a transaction, and postgres
-	// fills the disk with warnings about that
-	//if($database->engine->name != "sqlite") {
-	//	$database->db->CommitTrans(true);
-	//}
-
+	$database->db->commit();
 	_end_cache();
 }
 catch(Exception $e) {
@@ -154,5 +148,6 @@ catch(Exception $e) {
 	</body>
 </html>
 EOD;
+	$database->db->rollback();
 }
 ?>
