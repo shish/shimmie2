@@ -1,8 +1,5 @@
 <?php
 require_once "compat.inc.php";
-$ADODB_CACHE_DIR=sys_get_temp_dir();
-require_once "lib/adodb/adodb.inc.php";
-require_once "lib/adodb/adodb-exceptions.inc.php";
 
 /** @privatesection */
 // Querylet {{{
@@ -66,7 +63,7 @@ class MySQL extends DBEngine {
 	var $name = "mysql";
 
 	public function init($db) {
-		$db->Execute("SET NAMES utf8;");
+		$db->query("SET NAMES utf8;");
 	}
 
 	public function scoreql_to_sql($data) {
@@ -255,7 +252,7 @@ class APCCache implements CacheEngine {
  */
 class Database {
 	/**
-	 * The ADODB database connection object, for anyone who wants direct access
+	 * The PDO database connection object, for anyone who wants direct access
 	 */
 	var $db;
 
@@ -276,17 +273,22 @@ class Database {
 	public function Database() {
 		global $database_dsn, $cache_dsn;
 
-		if(substr($database_dsn, 0, 5) == "mysql") {
+		# FIXME: translate database URI into something PDO compatible
+		#$db_proto = $database_dsn;
+		#$db_host  = $database_dsn;
+		#$db_name  = $database_dsn;
+
+		if($db_proto == "mysql") {
 			$this->engine = new MySQL();
 		}
-		else if(substr($database_dsn, 0, 5) == "pgsql") {
+		else if($db_proto == "pgsql") {
 			$this->engine = new PostgreSQL();
 		}
-		else if(substr($database_dsn, 0, 6) == "sqlite") {
+		else if($db_proto == "sqlite") {
 			$this->engine = new SQLite();
 		}
 
-		$this->db = @NewADOConnection($database_dsn);
+		$this->db = new PDO("$db_proto:host=$db_host;dbname=$db_name", $db_user, $db_pass);
 
 		if(isset($cache_dsn) && !empty($cache_dsn)) {
 			$matches = array();
@@ -303,7 +305,6 @@ class Database {
 		}
 
 		if($this->db) {
-			$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
 			$this->engine->init($this->db);
 		}
 		else {
@@ -323,10 +324,10 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return an ADODB resultset
+	 * Execute an SQL query and return an PDO resultset
 	 */
 	public function execute($query, $args=array()) {
-		$result = $this->db->Execute($query, $args);
+		$result = $this->db->query($query, $args);
 		if($result === False) {
 			print "SQL Error: " . $this->db->ErrorMsg();
 			print "<br>Query: $query";
