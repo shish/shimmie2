@@ -52,8 +52,8 @@ class UploadS3 extends SimpleExtension {
 				S3::ACL_PUBLIC_READ,
 				array(),
 				array(
-					"Content-Type" => "image/" . $event->image->type,
-					"Content-Disposition" => "inline; filename=image-" . $event->image->id . "." . $event->image->type,
+					"Content-Type" => $event->image->get_mime_type(),
+					"Content-Disposition" => "inline; filename=image-" . $event->image->id . "." . $event->image->ext,
 				)
 			);
 		}
