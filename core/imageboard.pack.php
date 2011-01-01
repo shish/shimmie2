@@ -881,6 +881,8 @@ class Tag {
 			$tag_array = array("tagme");
 		}
 
+		sort($tag_array);
+
 		return $tag_array;
 	}
 
@@ -891,6 +893,7 @@ class Tag {
 			// do nothing
 		}
 		else if(is_array($tags)) {
+			sort($tags);
 			$tags = implode(' ', $tags);
 		}
 
