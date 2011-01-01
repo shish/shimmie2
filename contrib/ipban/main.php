@@ -89,7 +89,7 @@ class IPBan implements Extension {
 		}
 
 		if($event instanceof RemoveIPBanEvent) {
-			$database->Execute("DELETE FROM bans WHERE id = ?", array($event->id));
+			$database->Execute("DELETE FROM bans WHERE id = :id", array("id"=>$event->id));
 			$database->cache->delete("ip_bans");
 		}
 	}
@@ -211,9 +211,9 @@ class IPBan implements Extension {
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			WHERE (end_timestamp > ?) OR (end_timestamp IS NULL)
+			WHERE (end_timestamp > :end_timestamp) OR (end_timestamp IS NULL)
 			ORDER BY end_timestamp, bans.id
-		", array(time()));
+		", array("end_timestamp"=>time()));
 
 		$database->cache->set("ip_bans", $bans, 600);
 

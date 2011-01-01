@@ -136,6 +136,7 @@ try {
 catch(Exception $e) {
 	$version = VERSION;
 	$message = $e->getMessage();
+	$trace = var_dump($e->getTrace());
 	header("HTTP/1.0 500 Internal Error");
 	print <<<EOD
 <html>
@@ -145,6 +146,7 @@ catch(Exception $e) {
 	<body>
 		<h1>Internal Error</h1>
 		<p>$message
+		<p>$trace
 	</body>
 </html>
 EOD;
