@@ -313,30 +313,60 @@ class Database {
 	 * Execute an SQL query and return an PDO resultset
 	 */
 	public function execute($query, $args=array()) {
-		$result = $this->db->query($query, $args);
-		return $result;
+		try {
+			$stmt = $this->db->prepare($query);
+			foreach($args as $name=>$value) {
+				if(is_numeric($value)) {
+					$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+				}
+				else {
+					$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
+				}
+			}
+			$stmt->execute();
+			return $stmt;
+		}
+		catch(PDOException $pdoe) {
+			print "Message: ".$pdoe->getMessage();
+			print "<p>Error: $query";
+			exit;
+		}
 	}
 
 	/**
 	 * Execute an SQL query and return a 2D array
 	 */
 	public function get_all($query, $args=array()) {
-		$result = $this->db->query($query, $args)->fetchAll();
-		return $result;
+		return $this->execute($query, $args)->fetchAll();
 	}
 
 	/**
 	 * Execute an SQL query and return a single row
 	 */
 	public function get_row($query, $args=array()) {
-		$result = $this->db->query($query, $args)->fetchAll();
-		if(count($result) == 0) {
-			return null;
-		}
-		else {
-			return $result[0];
-		}
+		return $this->execute($query, $args)->fetch();
 	}
+
+	/**
+	 * Execute an SQL query and return the first column of each row
+	 */
+	public function get_col($query, $args=array()) {
+		$stmt = $this->execute($query, $args);
+		$res = array();
+		foreach($stmt as $row) {
+			$res[] = $row[0];
+		}
+		return $res;
+	}
+
+	/**
+	 * Execute an SQL query and return a single value
+	 */
+	public function get_one($query, $args=array()) {
+		$row = $this->execute($query, $args)->fetch();
+		return $row[0];
+	}
+
 
 	/**
 	 * Create a table from pseudo-SQL
