@@ -166,6 +166,7 @@ class AdminPage implements Extension {
 		}
 	}
 
+	/*
 	private function convert_to_innodb() {
 		global $database;
 		if($database->engine->name == "mysql") {
@@ -176,6 +177,7 @@ class AdminPage implements Extension {
 			}
 		}
 	}
+	*/
 }
 add_event_listener(new AdminPage());
 ?>

@@ -26,7 +26,7 @@ class AdminPageTheme extends Themelet {
 					<option value='recount tag use'>Recount tag use</option>
 					<option value='purge unused tags'>Purge unused tags</option>
 					<option value='database dump'>Download database contents</option>
-					<option value='convert to innodb'>Convert database to InnoDB (MySQL only)</option>
+					<!--<option value='convert to innodb'>Convert database to InnoDB (MySQL only)</option>-->
 				</select>
 				<input type='submit' value='Go'>
 			</form>
