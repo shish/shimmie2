@@ -19,6 +19,8 @@ class Upgrade extends SimpleExtension {
 		}
 
 		if($config->get_int("db_version") < 7) {
+			/*
+			// mysql-adodb specific
 			if($database->engine->name == "mysql") {
 				$tables = $database->db->MetaTables();
 				foreach($tables as $table) {
@@ -26,6 +28,7 @@ class Upgrade extends SimpleExtension {
 					$database->execute("ALTER TABLE $table TYPE=INNODB");
 				}
 			}
+			*/
 			$config->set_int("db_version", 7);
 			log_info("upgrade", "Database at version 7");
 		}
