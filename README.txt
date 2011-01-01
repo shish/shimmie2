@@ -39,9 +39,15 @@ Installation
    not, you should be given instructions on how to fix any errors~
 
 
-Upgrade from 2.2.X
+Upgrade from 2.3.X
 ~~~~~~~~~~~~~~~~~~
-Should be automatic, just unzip into a clean folder and copy across
+The database connection setting in config.php has changed; now using
+PDO DSN format [1] rather than ADODB URI [2]
+
+ [1] <proto>:user=<username>;password=<password>;host=<host>;dbname=<database>
+ [2] <proto>://<username>:<password>@<host>/<database>
+
+The rest should be automatic, just unzip into a clean folder and copy across
 config.php, images and thumbs folders from the old version. This
 includes automatically messing with the database -- back it up first!
 
@@ -66,7 +72,7 @@ Contact
 ~~~~~~~
 #shimmie on Freenode -- IRC
 webmaster at shishnet.org -- email
-http://redmine.shishnet.org/projects/show/shimmie2 -- bug tracker
+https://github.com/shish/shimmie2 -- bug tracker
 
 
 Licence
