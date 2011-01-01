@@ -60,8 +60,8 @@ class Forum extends SimpleExtension {
 	public function onUserPageBuilding($event) {
 		global $page, $user, $database;
 		
-		$threads_count = $database->db->GetOne("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", array($event->display_user->id));
-        $posts_count = $database->db->GetOne("SELECT COUNT(*) FROM forum_posts WHERE user_id=?", array($event->display_user->id));
+		$threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", array($event->display_user->id));
+        $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=?", array($event->display_user->id));
 			
         $days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
 				
@@ -278,7 +278,7 @@ class Forum extends SimpleExtension {
                 , array($pageNumber * $threadsPerPage, $threadsPerPage)
             );
 			
-            $totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
+            $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 			
             $this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
         }
@@ -309,7 +309,7 @@ class Forum extends SimpleExtension {
                 , array($threadID, $pageNumber * $postsPerPage, $postsPerPage)
             );
 			
-            $totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
+            $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
 			
 			$threadTitle = $this->get_thread_title($threadID);
 			

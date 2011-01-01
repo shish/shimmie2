@@ -14,6 +14,8 @@ class ETTheme extends Themelet {
 	}
 
 	protected function build_data_form($info) {
+		global $user;
+
 		$data = <<<EOD
 Optional:
 Site title: {$info['site_title']}
@@ -27,7 +29,6 @@ Schema: {$info['sys_schema']}
 PHP: {$info['sys_php']}
 OS: {$info['sys_os']}
 Server: {$info['sys_server']}
-Database: {$info['sys_db']}
 Disk use: {$info['sys_disk']}
 
 Shimmie stats:

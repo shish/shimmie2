@@ -49,38 +49,34 @@ class LogDatabase extends SimpleExtension {
 				$page_num = int_escape($event->get_arg(0));
 				if($page_num <= 0) $page_num = 1;
 				if(!empty($_GET["time"])) {
-					$wheres[] = "date_sent LIKE ?";
-					$args[] = $_GET["time"]."%";
+					$wheres[] = "date_sent LIKE :time";
+					$args["time"] = $_GET["time"]."%";
 				}
 				if(!empty($_GET["module"])) {
-					$wheres[] = "section = ?";
-					$args[] = $_GET["module"];
+					$wheres[] = "section = :module";
+					$args["module"] = $_GET["module"];
 				}
 				if(!empty($_GET["user"])) {
 					if($database->engine->name == "pgsql") {
 						if(preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-							$wheres[] = "(username = ? OR address << ?)";
-							$args[] = $_GET["user"];
-							$args[] = $_GET["user"];
+							$wheres[] = "(username = :user OR address << :user)";
 						}
 						else {
-							$wheres[] = "lower(username) = lower(?)";
-							$args[] = $_GET["user"];
+							$wheres[] = "lower(username) = lower(:user)";
 						}
 					}
 					else {
-						$wheres[] = "(username = ? OR address = ?)";
-						$args[] = $_GET["user"];
-						$args[] = $_GET["user"];
+						$wheres[] = "(username = :user OR address = :user)";
 					}
+					$args["user"] = $_GET["user"];
 				}
 				if(!empty($_GET["priority"])) {
-					$wheres[] = "priority >= ?";
-					$args[] = int_escape($_GET["priority"]);
+					$wheres[] = "priority >= :priority";
+					$args["priority"] = int_escape($_GET["priority"]);
 				}
 				else {
-					$wheres[] = "priority >= ?";
-					$args[] = 20;
+					$wheres[] = "priority >= :priority";
+					$args["priority"] = 20;
 				}
 				$where = "";
 				if(count($wheres) > 0) {
@@ -92,16 +88,16 @@ class LogDatabase extends SimpleExtension {
 				$offset = ($page_num-1) * $limit;
 				$page_total = $database->cache->get("event_log_length");
 				if(!$page_total) {
-					$page_total = $database->db->GetOne("SELECT count(*) FROM score_log $where", $args);
+					$page_total = $database->get_one("SELECT count(*) FROM score_log $where", $args);
 					// don't cache a length of zero when the extension is first installed
 					if($page_total > 10) {
 						$database->cache->set("event_log_length", 600);
 					}
 				}
 
-				$args[] = $limit;
-				$args[] = $offset;
-				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT ? OFFSET ?", $args);
+				$args["limit"] = $limit;
+				$args["offset"] = $offset;
+				$events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT :limit OFFSET :offset", $args);
 
 				$this->theme->display_events($events, $page_num, 100);
 			}
@@ -124,8 +120,11 @@ class LogDatabase extends SimpleExtension {
 		if($event->priority >= $config->get_int("log_db_priority")) {
 			$database->execute("
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
-				VALUES(now(), ?, ?, ?, ?, ?)
-			", array($event->section, $event->priority, $user->name, $_SERVER['REMOTE_ADDR'], $event->message));
+				VALUES(now(), :section, :priority, :username, :address, :message)
+			", array(
+				"section"=>$event->section, "priority"=>$event->priority, "username"=>$user->name,
+				"address"=>$_SERVER['REMOTE_ADDR'], "message"=>$event->message
+			));
 		}
 	}
 }

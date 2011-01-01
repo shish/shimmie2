@@ -79,7 +79,7 @@ class Image {
 		assert(is_string($hash));
 		global $database;
 		$image = null;
-		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
+		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -132,7 +132,7 @@ class Image {
 		assert(is_array($tags));
 		global $database;
 		if(count($tags) == 0) {
-			#return $database->db->GetOne("SELECT COUNT(*) FROM images");
+			#return $database->get_one("SELECT COUNT(*) FROM images");
 			$total = $database->cache->get("image-count");
 			if(!$total) {
 				$total = $database->get_one("SELECT COUNT(*) FROM images");
@@ -190,13 +190,13 @@ class Image {
 		}
 
 		if(count($tags) == 0) {
-			$row = $database->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
+			$row = $database->get_row("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
 		}
 		else {
 			$tags[] = "id$gtlt{$this->id}";
 			$querylet = Image::build_search_querylet($tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
-			$row = $database->db->GetRow($querylet->sql, $querylet->variables);
+			$row = $database->get_row($querylet->sql, $querylet->variables);
 		}
 
 		return ($row ? new Image($row) : null);
@@ -409,7 +409,7 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			$id = $database->db->GetOne(
+			$id = $database->get_one(
 					$database->engine->scoreql_to_sql(
 						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 					),

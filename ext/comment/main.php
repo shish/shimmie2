@@ -397,7 +397,7 @@ class CommentList extends SimpleExtension {
 
 	private function is_dupe($image_id, $comment) {
 		global $database;
-		return ($database->db->GetRow("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
+		return ($database->get_row("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
 	}
 
 	private function add_comment_wrapper($image_id, $user, $comment, $event) {

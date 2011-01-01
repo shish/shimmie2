@@ -436,7 +436,7 @@ class Notes extends SimpleExtension {
 			
 		$result = $database->Execute($get_notes, array(1, $pageNumber * $notesPerPage, $notesPerPage));
 		
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(DISTINCT image_id) FROM notes") / $notesPerPage);
 		
 		$images = array();
 		while(!$result->EOF) {
@@ -476,7 +476,7 @@ class Notes extends SimpleExtension {
 			
 		$result = $database->Execute($get_requests, array($pageNumber * $requestsPerPage, $requestsPerPage));
 		
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM note_request") / $requestsPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_request") / $requestsPerPage);
 		
 		$images = array();
 		while(!$result->EOF) {
@@ -498,7 +498,7 @@ class Notes extends SimpleExtension {
 		
 		$userID = $user->id;
 		
-		$reviewID = $database->db->GetOne("SELECT COUNT(*) FROM note_histories WHERE note_id = ?", array($noteID));
+		$reviewID = $database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = ?", array($noteID));
 		$reviewID = $reviewID + 1;
 	
 		$database->execute("
@@ -536,7 +536,7 @@ class Notes extends SimpleExtension {
 										"ORDER BY date DESC LIMIT ?, ?",
 										array($pageNumber * $histiriesPerPage, $histiriesPerPage));
 		
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM note_histories") / $histiriesPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories") / $histiriesPerPage);
 		
 		$this->theme->display_histories($histories, $pageNumber + 1, $totalPages);
 	}
@@ -569,7 +569,7 @@ class Notes extends SimpleExtension {
 										"ORDER BY date DESC LIMIT ?, ?",
 										array($noteID, $pageNumber * $histiriesPerPage, $histiriesPerPage));
 					
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM note_histories WHERE note_id = ?", array($noteID)) / $histiriesPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM note_histories WHERE note_id = ?", array($noteID)) / $histiriesPerPage);
 		
 		$this->theme->display_history($histories, $pageNumber + 1, $totalPages);
 	}

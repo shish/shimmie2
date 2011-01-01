@@ -40,7 +40,7 @@ class Favorites extends SimpleExtension {
 			$user_id = $user->id;
 			$image_id = $event->image->id;
 
-			$is_favorited = $database->db->GetOne(
+			$is_favorited = $database->get_one(
 				"SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = ? AND image_id = ?",
 				array($user_id, $image_id)) > 0;
 		
