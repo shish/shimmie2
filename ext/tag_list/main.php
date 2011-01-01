@@ -310,7 +310,7 @@ class TagList implements Extension {
 		foreach($wild_tags as $tag) {
 			$tag = str_replace("*", "%", $tag);
 			$tag = str_replace("?", "_", $tag);
-			$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
+			$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 			// $search_tags = array_merge($search_tags,
 			//                  $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
 			$tag_id_array = array_merge($tag_id_array, $tag_ids);
@@ -339,7 +339,6 @@ class TagList implements Extension {
 			$args = array("limit"=>$config->get_int('tag_list_length'));
 
 			$related_tags = $database->get_all($query, $args);
-			print $database->db->ErrorMsg();
 			if(count($related_tags) > 0) {
 				$this->theme->display_refine_block($page, $related_tags, $wild_tags);
 			}

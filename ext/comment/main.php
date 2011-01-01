@@ -51,7 +51,7 @@ class Comment {
 
 	public static function count_comments_by_user($user) {
 		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id", array("owner_id"=>$user->id));
+		return $database->get_one("SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id", array("owner_id"=>$user->id));
 	}
 
 	public function get_owner() {
@@ -265,12 +265,12 @@ class CommentList extends SimpleExtension {
 			";
 		$result = $database->Execute($get_threads, array("limit"=>$threads_per_page, "offset"=>$start));
 
-		$total_pages = (int)($database->db->GetOne("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
+		$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
 
 
 		$images = array();
-		while(!$result->EOF) {
-			$image = Image::by_id($result->fields["image_id"]);
+		while($row = $result->fetch()) {
+			$image = Image::by_id($row["image_id"]);
 			$comments = $this->get_comments($image->id);
 			if(class_exists("Ratings")) {
 				if(strpos($user_ratings, $image->rating) === FALSE) {
@@ -278,7 +278,6 @@ class CommentList extends SimpleExtension {
 				}
 			}
 			if(!is_null($image)) $images[] = array($image, $comments);
-			$result->MoveNext();
 		}
 
 		$this->theme->display_comment_list($images, $current_page, $total_pages, $this->can_comment());
