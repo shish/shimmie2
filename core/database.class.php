@@ -360,6 +360,18 @@ class Database {
 	}
 
 	/**
+	 * Execute an SQL query and return the the first row => the second rown
+	 */
+	public function get_pairs($query, $args=array()) {
+		$stmt = $this->execute($query, $args);
+		$res = array();
+		foreach($stmt as $row) {
+			$res[$row[0]] = $row[1];
+		}
+		return $res;
+	}
+
+	/**
 	 * Execute an SQL query and return a single value
 	 */
 	public function get_one($query, $args=array()) {
