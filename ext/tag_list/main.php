@@ -46,8 +46,8 @@ class TagList implements Extension {
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("api/internal/tag_list/complete")) {
 			$all = $database->get_all(
-					"SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 LIMIT 10",
-					array($_GET["s"]."%"));
+					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 LIMIT 10",
+					array("search"=>$_GET["s"]."%"));
 
 			$res = array();
 			foreach($all as $row) {$res[] = $row["tag"];}
@@ -130,11 +130,11 @@ class TagList implements Extension {
 		$result = $database->execute("
 				SELECT
 					tag,
-					FLOOR(LOG(2.7, LOG(2.7, count - ? + 1)+1)*1.5*100)/100 AS scaled
+					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
-				WHERE count >= ?
+				WHERE count >= :tags_min
 				ORDER BY tag
-			", array($tags_min, $tags_min));
+			", array("tags_min"=>$tags_min));
 		$tag_data = $result->GetArray();
 
 		$html = "";
@@ -154,8 +154,8 @@ class TagList implements Extension {
 
 		$tags_min = $this->get_tags_min();
 		$result = $database->execute(
-				"SELECT tag,count FROM tags WHERE count >= ? ORDER BY tag",
-				array($tags_min));
+				"SELECT tag,count FROM tags WHERE count >= :tags_min ORDER BY tag",
+				array("tags_min"=>$tags_min));
 		$tag_data = $result->GetArray();
 
 		$html = "";
@@ -179,8 +179,8 @@ class TagList implements Extension {
 
 		$tags_min = $this->get_tags_min();
 		$result = $database->execute(
-				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= ? ORDER BY count DESC, tag ASC",
-				array($tags_min));
+				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= :tags_min ORDER BY count DESC, tag ASC",
+				array("tags_min"=>$tags_min));
 		$tag_data = $result->GetArray();
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
@@ -240,7 +240,7 @@ class TagList implements Extension {
 				tags AS t1,
 				tags AS t3
 			WHERE
-				it1.image_id=?
+				it1.image_id=:image_id
 				AND it1.tag_id=it2.tag_id
 				AND it2.image_id=it3.image_id
 				AND t1.tag != 'tagme'
@@ -249,9 +249,9 @@ class TagList implements Extension {
 				AND t3.id = it3.tag_id
 			GROUP BY it3.tag_id
 			ORDER BY calc_count DESC
-			LIMIT ?
+			LIMIT :tag_list_length
 		";
-		$args = array($image->id, $config->get_int('tag_list_length'));
+		$args = array("image_id"=>$image->id, "tag_list_length"=>$config->get_int('tag_list_length'));
 
 		$tags = $database->get_all($query, $args);
 		if(count($tags) > 0) {
@@ -267,11 +267,11 @@ class TagList implements Extension {
 			SELECT tags.tag, tags.count as calc_count
 			FROM tags, image_tags
 			WHERE tags.id = image_tags.tag_id
-			AND image_tags.image_id = ?
+			AND image_tags.image_id = :image_id
 			ORDER BY calc_count DESC
-			LIMIT ?
+			LIMIT :tag_list_length
 		";
-		$args = array($image->id, $config->get_int('tag_list_length'));
+		$args = array("image_id"=>$image->id, "tag_list_length"=>$config->get_int('tag_list_length'));
 
 		$tags = $database->get_all($query, $args);
 		if(count($tags) > 0) {
@@ -288,9 +288,9 @@ class TagList implements Extension {
 			FROM tags
 			WHERE count > 0
 			ORDER BY count DESC
-			LIMIT ?
+			LIMIT :tag_list_length
 		";
-		$args = array($config->get_int('tag_list_length'));
+		$args = array("tag_list_length"=>$config->get_int('tag_list_length'));
 
 		$tags = $database->get_all($query, $args);
 		if(count($tags) > 0) {
@@ -310,9 +310,9 @@ class TagList implements Extension {
 		foreach($wild_tags as $tag) {
 			$tag = str_replace("*", "%", $tag);
 			$tag = str_replace("?", "_", $tag);
-			$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+			$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 			// $search_tags = array_merge($search_tags,
-			//                  $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag)));
+			//                  $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
 			$tag_id_array = array_merge($tag_id_array, $tag_ids);
 			$tags_ok = count($tag_ids) > 0;
 			if(!$tags_ok) break;
@@ -334,12 +334,11 @@ class TagList implements Extension {
 					AND it2.tag_id = t2.id
 				GROUP BY t2.tag
 				ORDER BY calc_count
-				DESC LIMIT ?
+				DESC LIMIT :limit
 			";
-			$args = array($config->get_int('tag_list_length'));
+			$args = array("limit"=>$config->get_int('tag_list_length'));
 
 			$related_tags = $database->get_all($query, $args);
-			print $database->db->ErrorMsg();
 			if(count($related_tags) > 0) {
 				$this->theme->display_refine_block($page, $related_tags, $wild_tags);
 			}

@@ -213,11 +213,11 @@ class Tag_History implements Extension {
 		
 		// if needed remove oldest one
 		if($allowed == -1) return;
-		$entries = $database->db->GetOne("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
+		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
-			$min_id = $database->db->GetOne("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image->id));
+			$min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image->id));
 			$database->execute("DELETE FROM tag_histories WHERE id = ?", array($min_id));
 		}
 	}

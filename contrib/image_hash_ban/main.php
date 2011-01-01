@@ -45,7 +45,7 @@ class ImageBan extends SimpleExtension {
 
 	public function onDataUpload(DataUploadEvent $event) {
 		global $database;
-		$row = $database->db->GetRow("SELECT * FROM image_bans WHERE hash = ?", $event->hash);
+		$row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", array("hash"=>$event->hash));
 		if($row) {
 			log_info("image_hash_ban", "Blocked image ({$event->hash})");
 			throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
@@ -87,7 +87,7 @@ class ImageBan extends SimpleExtension {
 						$page_num = int_escape($event->get_arg(1));
 					}
 					$page_size = 100;
-					$page_count = ceil($database->db->getone("SELECT COUNT(id) FROM image_bans")/$page_size);
+					$page_count = ceil($database->get_one("SELECT COUNT(id) FROM image_bans")/$page_size);
 					$this->theme->display_Image_hash_Bans($page, $page_num, $page_count, $this->get_image_hash_bans($page_num, $page_size));
 				}
 			}

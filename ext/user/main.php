@@ -286,7 +286,7 @@ class UserPage extends SimpleExtension {
 					"Username contains invalid characters. Allowed characters are ".
 					"letters, numbers, dash, and underscore");
 		}
-		else if($database->db->GetRow("SELECT * FROM users WHERE name = ?", array($name))) {
+		else if($database->get_row("SELECT * FROM users WHERE name = ?", array($name))) {
 			throw new UserCreationException("That username is already taken");
 		}
 	}
@@ -298,13 +298,13 @@ class UserPage extends SimpleExtension {
 		$email = (!empty($event->email)) ? $event->email : null;
 
 		// if there are currently no admins, the new user should be one
-		$need_admin = ($database->db->GetOne("SELECT COUNT(*) FROM users WHERE admin IN ('Y', 't', '1')") == 0);
+		$need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE admin IN ('Y', 't', '1')") == 0);
 		$admin = $need_admin ? 'Y' : 'N';
 
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (?, ?, now(), ?, ?)",
 				array($event->username, $hash, $email, $admin));
-		$uid = $database->db->Insert_ID();
+		$uid = $database->db->lastInsertId();
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
@@ -427,28 +427,28 @@ class UserPage extends SimpleExtension {
 // ips {{{
 	private function count_upload_ips($duser) {
 		global $database;
-		$rows = $database->db->GetAssoc("
+		$rows = $database->get_pairs("
 				SELECT
 					owner_ip,
 					COUNT(images.id) AS count,
 					MAX(posted) AS most_recent
 				FROM images
-				WHERE owner_id=?
+				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY most_recent DESC", array($duser->id), false, true);
+				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
 	private function count_comment_ips($duser) {
 		global $database;
-		$rows = $database->db->GetAssoc("
+		$rows = $database->get_pairs("
 				SELECT
 					owner_ip,
 					COUNT(comments.id) AS count,
 					MAX(posted) AS most_recent
 				FROM comments
-				WHERE owner_id=?
+				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY most_recent DESC", array($duser->id), false, true);
+				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
 // }}}

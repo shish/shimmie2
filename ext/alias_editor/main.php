@@ -67,12 +67,12 @@ class AliasEditor extends SimpleExtension {
 
 				$alias_per_page = $config->get_int('alias_items_per_page', 30);
 
-				$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT ? OFFSET ?";
-				$alias = $database->db->GetAssoc($query,
-					array($alias_per_page, $page_number * $alias_per_page)
+				$query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT :limit OFFSET :offset";
+				$alias = $database->get_pairs($query,
+					array("limit"=>$alias_per_page, "offset"=>$page_number * $alias_per_page)
 				);
 
-				$total_pages = ceil($database->db->GetOne("SELECT COUNT(*) FROM aliases") / $alias_per_page);
+				$total_pages = ceil($database->get_one("SELECT COUNT(*) FROM aliases") / $alias_per_page);
 
 				$this->theme->display_aliases($page, $alias, $user->is_admin(), $page_number + 1, $total_pages);
 			}
@@ -104,7 +104,7 @@ class AliasEditor extends SimpleExtension {
 	public function onAddAlias(AddAliasEvent $event) {
 		global $database;
 		$pair = array($event->oldtag, $event->newtag);
-		if($database->db->GetRow("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
+		if($database->get_row("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
 			throw new AddAliasException("That alias already exists");
 		}
 		else {

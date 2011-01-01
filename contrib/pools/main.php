@@ -284,7 +284,7 @@ class Pools extends SimpleExtension {
 				", array($poolsPerPage, $pageNumber * $poolsPerPage)
 				);
 
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pools") / $poolsPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
 
 		$this->theme->list_pools($page, $pools, $pageNumber + 1, $totalPages);
 	}
@@ -372,7 +372,7 @@ class Pools extends SimpleExtension {
 		}
 
 		if(!strlen($images) == 0) {
-			$count = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
 			$this->add_history($poolID, 1, $images, $count);
 		}
 
@@ -418,7 +418,7 @@ class Pools extends SimpleExtension {
 			$images .= " ".$imageID;
 		}
 
-		$count = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+		$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
 		$this->add_history($poolID, 0, $images, $count);
 		return $poolID;	 
 	}
@@ -430,7 +430,7 @@ class Pools extends SimpleExtension {
 	 */
 	private function check_post($poolID, $imageID) {
 		global $database;
-		$result = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
+		$result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
 		return ($result != 0);
 	}
 
@@ -467,7 +467,7 @@ class Pools extends SimpleExtension {
 					LIMIT ? OFFSET ?",
 					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
 
-			$totalPages = ceil($database->db->GetOne("
+			$totalPages = ceil($database->get_one("
 					SELECT COUNT(*) 
 					FROM pool_images AS p
 					INNER JOIN images AS i ON i.id = p.image_id
@@ -482,7 +482,7 @@ class Pools extends SimpleExtension {
 					ORDER BY image_order ASC
 					LIMIT ? OFFSET ?",
 					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
-			$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
+			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
 		}
 
 		$images = array();
@@ -604,7 +604,7 @@ class Pools extends SimpleExtension {
 				LIMIT ? OFFSET ?
 				", array($historiesPerPage, $pageNumber * $historiesPerPage));
 
-		$totalPages = ceil($database->db->GetOne("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
+		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
 		$this->theme->show_history($history, $pageNumber + 1, $totalPages);
 	}
@@ -645,7 +645,7 @@ class Pools extends SimpleExtension {
 				}
 			}
 
-			$count = $database->db->GetOne("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
 			$this->add_history($poolID, $newAction, $imageArray, $count);
 		}
 	}

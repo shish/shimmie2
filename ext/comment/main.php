@@ -51,7 +51,7 @@ class Comment {
 
 	public static function count_comments_by_user($user) {
 		global $database;
-		return $database->db->GetOne("SELECT COUNT(*) AS count FROM comments WHERE owner_id=?", array($user->id));
+		return $database->get_one("SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id", array("owner_id"=>$user->id));
 	}
 
 	public function get_owner() {
@@ -180,7 +180,7 @@ class CommentList extends SimpleExtension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 		$image_id = $event->image->id;
-		$database->Execute("DELETE FROM comments WHERE image_id=?", array($image_id));
+		$database->Execute("DELETE FROM comments WHERE image_id=:image_id", array("image_id"=>$image_id));
 		log_info("comment", "Deleting all comments for Image #$image_id");
 	}
 
@@ -191,7 +191,7 @@ class CommentList extends SimpleExtension {
 
 	public function onCommentDeletion(CommentDeletionEvent $event) {
 		global $database;
-		$database->Execute("DELETE FROM comments WHERE id=?", array($event->comment_id));
+		$database->Execute("DELETE FROM comments WHERE id=:comment_id", array("comment_id"=>$event->comment_id));
 		log_info("comment", "Deleting Comment #{$event->comment_id}");
 	}
 
@@ -261,16 +261,16 @@ class CommentList extends SimpleExtension {
 			FROM comments
 			GROUP BY image_id
 			ORDER BY latest DESC
-			LIMIT ? OFFSET ?
+			LIMIT :limit OFFSET :offset
 			";
-		$result = $database->Execute($get_threads, array($threads_per_page, $start));
+		$result = $database->Execute($get_threads, array("limit"=>$threads_per_page, "offset"=>$start));
 
-		$total_pages = (int)($database->db->GetOne("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
+		$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
 
 
 		$images = array();
-		while(!$result->EOF) {
-			$image = Image::by_id($result->fields["image_id"]);
+		while($row = $result->fetch()) {
+			$image = Image::by_id($row["image_id"]);
 			$comments = $this->get_comments($image->id);
 			if(class_exists("Ratings")) {
 				if(strpos($user_ratings, $image->rating) === FALSE) {
@@ -278,7 +278,6 @@ class CommentList extends SimpleExtension {
 				}
 			}
 			if(!is_null($image)) $images[] = array($image, $comments);
-			$result->MoveNext();
 		}
 
 		$this->theme->display_comment_list($images, $current_page, $total_pages, $this->can_comment());
@@ -297,8 +296,8 @@ class CommentList extends SimpleExtension {
 				FROM comments
 				LEFT JOIN users ON comments.owner_id=users.id
 				ORDER BY comments.id DESC
-				LIMIT ?
-				", array($config->get_int('comment_count')));
+				LIMIT :limit
+				", array("limit"=>$config->get_int('comment_count')));
 		$comments = array();
 		foreach($rows as $row) {
 			$comments[] = new Comment($row);
@@ -318,9 +317,9 @@ class CommentList extends SimpleExtension {
 				comments.posted as posted
 				FROM comments
 				LEFT JOIN users ON comments.owner_id=users.id
-				WHERE comments.image_id=?
+				WHERE comments.image_id=:image_id
 				ORDER BY comments.id ASC
-				", array($i_image_id));
+				", array("image_id"=>$i_image_id));
 		$comments = array();
 		foreach($rows as $row) {
 			$comments[] = new Comment($row);
@@ -398,7 +397,7 @@ class CommentList extends SimpleExtension {
 
 	private function is_dupe($image_id, $comment) {
 		global $database;
-		return ($database->db->GetRow("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
+		return ($database->get_row("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
 	}
 
 	private function add_comment_wrapper($image_id, $user, $comment, $event) {
@@ -451,7 +450,7 @@ class CommentList extends SimpleExtension {
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(?, ?, ?, now(), ?)",
 					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
-			$cid = $database->db->Insert_ID();
+			$cid = $database->db->lastInsertId();
 			log_info("comment", "Comment #$cid added to Image #$image_id");
 		}
 	}

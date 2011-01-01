@@ -434,7 +434,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
         return ($result != 0);
     }
 
@@ -442,7 +442,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
         return ($result != 0);
     }
 
@@ -450,7 +450,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array(mysql_real_escape_string($alias)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array(mysql_real_escape_string($alias)));
         return ($result != 0);
     }
 
@@ -459,7 +459,7 @@ class Artists implements Extension {
 
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?", array(
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?", array(
                 $artistID
                 , mysql_real_escape_string($alias)
             ));
@@ -870,7 +870,7 @@ class Artists implements Extension {
     private function artist_exists($name){
         global $database;
 
-        $result = $database->db->GetOne("SELECT COUNT(1) FROM artists WHERE name = ?"
+        $result = $database->get_one("SELECT COUNT(1) FROM artists WHERE name = ?"
             , array(
                 mysql_real_escape_string($name)
             ));
@@ -1046,7 +1046,7 @@ class Artists implements Extension {
                 $listing[$i]["artist_name"] = stripslashes($listing[$i]["artist_name"]);
             }
 
-            $count = $database->db->GetOne(
+            $count = $database->get_one(
                 "SELECT COUNT(1)
                 FROM artists AS a
                     LEFT OUTER JOIN artist_members AS am
@@ -1170,7 +1170,7 @@ class Artists implements Extension {
 
             global $database;
 
-            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?"
+            $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?"
                 , array(
                     $artistID
                     , mysql_real_escape_string($member)
@@ -1184,7 +1184,7 @@ class Artists implements Extension {
 
             global $database;
 
-            $result = $database->db->GetOne("SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?"
+            $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?"
                 , array(
                     $artistID
                     , mysql_real_escape_string($url)

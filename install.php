@@ -323,7 +323,7 @@ function insert_defaults($dsn) { // {{{
 		$user_insert = $db->Prepare("INSERT INTO users(name, pass, joindate, admin) VALUES(?, ?, now(), ?)");
 
 		$db->Execute($user_insert, Array('Anonymous', null, 'N'));
-		$db->Execute($config_insert, Array('anon_id', $db->Insert_ID()));
+		$db->Execute($config_insert, Array('anon_id', $db->lastInsertId()));
 
 		if(check_im_version() > 0) {
 			$db->Execute($config_insert, Array('thumb_engine', 'convert'));

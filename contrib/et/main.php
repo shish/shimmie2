@@ -50,14 +50,14 @@ class ET implements Extension {
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
 		include "config.php"; // more magical hax
 		$proto = preg_replace("#(.*)://.*#", "$1", $database_dsn);
-		$db = $database->db->ServerInfo();
-		$info['sys_db'] = "$proto / {$db['version']}";
+		#$db = $database->db->ServerInfo();
+		#$info['sys_db'] = "$proto / {$db['version']}";
 
-		$info['stat_images']   = $database->db->GetOne("SELECT COUNT(*) FROM images");
-		$info['stat_comments'] = $database->db->GetOne("SELECT COUNT(*) FROM comments");
-		$info['stat_users']    = $database->db->GetOne("SELECT COUNT(*) FROM users");
-		$info['stat_tags']     = $database->db->GetOne("SELECT COUNT(*) FROM tags");
-		$info['stat_image_tags'] = $database->db->GetOne("SELECT COUNT(*) FROM image_tags");
+		$info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
+		$info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");
+		$info['stat_users']    = $database->get_one("SELECT COUNT(*) FROM users");
+		$info['stat_tags']     = $database->get_one("SELECT COUNT(*) FROM tags");
+		$info['stat_image_tags'] = $database->get_one("SELECT COUNT(*) FROM image_tags");
 
 		$els = array();
 		foreach($_event_listeners as $el) {

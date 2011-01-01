@@ -1,8 +1,5 @@
 <?php
 require_once "compat.inc.php";
-$ADODB_CACHE_DIR=sys_get_temp_dir();
-require_once "lib/adodb/adodb.inc.php";
-require_once "lib/adodb/adodb-exceptions.inc.php";
 
 /** @privatesection */
 // Querylet {{{
@@ -66,7 +63,7 @@ class MySQL extends DBEngine {
 	var $name = "mysql";
 
 	public function init($db) {
-		$db->Execute("SET NAMES utf8;");
+		$db->query("SET NAMES utf8;");
 	}
 
 	public function scoreql_to_sql($data) {
@@ -255,7 +252,7 @@ class APCCache implements CacheEngine {
  */
 class Database {
 	/**
-	 * The ADODB database connection object, for anyone who wants direct access
+	 * The PDO database connection object, for anyone who wants direct access
 	 */
 	var $db;
 
@@ -276,17 +273,34 @@ class Database {
 	public function Database() {
 		global $database_dsn, $cache_dsn;
 
-		if(substr($database_dsn, 0, 5) == "mysql") {
+		# FIXME: detect ADODB URI, automatically translate PDO DSN
+
+		/*
+		 * Why does the abstraction layer act differently depending on the
+		 * back-end? Because PHP is deliberately retarded.
+		 *
+		 * http://stackoverflow.com/questions/237367
+		 */
+		$matches = array(); $db_user=null; $db_pass=null;
+		if(preg_match("/user=([^;]*)/", $database_dsn, $matches)) $db_user=$matches[1];
+		if(preg_match("/password=([^;]*)/", $database_dsn, $matches)) $db_pass=$matches[1];
+
+		$this->db = new PDO($database_dsn, $db_user, $db_pass);
+		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+		if($db_proto == "mysql") {
 			$this->engine = new MySQL();
 		}
-		else if(substr($database_dsn, 0, 5) == "pgsql") {
+		else if($db_proto == "pgsql") {
 			$this->engine = new PostgreSQL();
 		}
-		else if(substr($database_dsn, 0, 6) == "sqlite") {
+		else if($db_proto == "sqlite") {
 			$this->engine = new SQLite();
 		}
-
-		$this->db = @NewADOConnection($database_dsn);
+		else {
+			die("Unknown PDO driver: $db_proto");
+		}
 
 		if(isset($cache_dsn) && !empty($cache_dsn)) {
 			$matches = array();
@@ -302,72 +316,79 @@ class Database {
 			$this->cache = new NoCache();
 		}
 
-		if($this->db) {
-			$this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-			$this->engine->init($this->db);
-		}
-		else {
-			$version = VERSION;
-			print "
-			<html>
-				<head>
-					<title>Internal error - Shimmie-$version</title>
-				</head>
-				<body>
-					Internal error: Could not connect to database
-				</body>
-			</html>
-			";
-			exit;
-		}
+		$this->engine->init($this->db);
 	}
 
 	/**
-	 * Execute an SQL query and return an ADODB resultset
+	 * Execute an SQL query and return an PDO resultset
 	 */
 	public function execute($query, $args=array()) {
-		$result = $this->db->Execute($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
+		try {
+			$stmt = $this->db->prepare($query);
+			foreach($args as $name=>$value) {
+				if(is_numeric($value)) {
+					$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+				}
+				else {
+					$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
+				}
+			}
+			$stmt->execute();
+			return $stmt;
+		}
+		catch(PDOException $pdoe) {
+			print "Message: ".$pdoe->getMessage();
+			print "<p>Error: $query";
 			exit;
 		}
-		return $result;
 	}
 
 	/**
 	 * Execute an SQL query and return a 2D array
 	 */
 	public function get_all($query, $args=array()) {
-		$result = $this->db->GetAll($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
-			exit;
-		}
-		return $result;
+		return $this->execute($query, $args)->fetchAll();
 	}
 
 	/**
 	 * Execute an SQL query and return a single row
 	 */
 	public function get_row($query, $args=array()) {
-		$result = $this->db->GetRow($query, $args);
-		if($result === False) {
-			print "SQL Error: " . $this->db->ErrorMsg();
-			print "<br>Query: $query";
-			print "<br>Args: "; print_r($args);
-			exit;
-		}
-		if(count($result) == 0) {
-			return null;
-		}
-		else {
-			return $result;
-		}
+		return $this->execute($query, $args)->fetch();
 	}
+
+	/**
+	 * Execute an SQL query and return the first column of each row
+	 */
+	public function get_col($query, $args=array()) {
+		$stmt = $this->execute($query, $args);
+		$res = array();
+		foreach($stmt as $row) {
+			$res[] = $row[0];
+		}
+		return $res;
+	}
+
+	/**
+	 * Execute an SQL query and return the the first row => the second rown
+	 */
+	public function get_pairs($query, $args=array()) {
+		$stmt = $this->execute($query, $args);
+		$res = array();
+		foreach($stmt as $row) {
+			$res[$row[0]] = $row[1];
+		}
+		return $res;
+	}
+
+	/**
+	 * Execute an SQL query and return a single value
+	 */
+	public function get_one($query, $args=array()) {
+		$row = $this->execute($query, $args)->fetch();
+		return $row[0];
+	}
+
 
 	/**
 	 * Create a table from pseudo-SQL

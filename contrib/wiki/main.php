@@ -198,7 +198,7 @@ class Wiki extends SimpleExtension {
 	private function get_page($title, $revision=-1) {
 		global $database;
 		// first try and get the actual page
-		$row = $database->db->GetRow("
+		$row = $database->get_row("
 				SELECT *
 				FROM wiki_pages
 				WHERE title LIKE ?
@@ -206,7 +206,7 @@ class Wiki extends SimpleExtension {
 
 		// fall back to wiki:default
 		if(empty($row)) {
-			$row = $database->db->GetRow("
+			$row = $database->get_row("
 					SELECT *
 					FROM wiki_pages
 					WHERE title LIKE ?

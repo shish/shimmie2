@@ -41,26 +41,26 @@ class User {
 	public static function by_session($name, $session) {
 		global $config, $database;
 		if($database->engine->name == "mysql") {
-			$query = "SELECT * FROM users WHERE name = ? AND md5(concat(pass, ?)) = ?";
+			$query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
 		}
 		else {
-			$query = "SELECT * FROM users WHERE name = ? AND md5(pass || ?) = ?";
+			$query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
 		}
-		$row = $database->get_row($query, array($name, get_session_ip($config), $session));
+		$row = $database->get_row($query, array("name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session));
 		return is_null($row) ? null : new User($row);
 	}
 
 	public static function by_id($id) {
 		assert(is_numeric($id));
 		global $database;
-		$row = $database->get_row("SELECT * FROM users WHERE id = ?", array($id));
+		$row = $database->get_row("SELECT * FROM users WHERE id = :id", array("id"=>$id));
 		return is_null($row) ? null : new User($row);
 	}
 
 	public static function by_name($name) {
 		assert(is_string($name));
 		global $database;
-		$row = $database->get_row("SELECT * FROM users WHERE name = ?", array($name));
+		$row = $database->get_row("SELECT * FROM users WHERE name = :name", array("name"=>$name));
 		return is_null($row) ? null : new User($row);
 	}
 
@@ -69,7 +69,7 @@ class User {
 		assert(is_string($hash));
 		assert(strlen($hash) == 32);
 		global $database;
-		$row = $database->get_row("SELECT * FROM users WHERE name = ? AND pass = ?", array($name, $hash));
+		$row = $database->get_row("SELECT * FROM users WHERE name = :name AND pass = :hash", array("name"=>$name, "hash"=>$hash));
 		return is_null($row) ? null : new User($row);
 	}
 
@@ -77,7 +77,7 @@ class User {
 		assert(is_numeric($offset));
 		assert(is_numeric($limit));
 		global $database;
-		$rows = $database->get_all("SELECT * FROM users WHERE id >= ? AND id < ?", array($offset, $offset+$limit));
+		$rows = $database->get_all("SELECT * FROM users WHERE id >= :start AND id < :end", array("start"=>$offset, "end"=>$offset+$limit));
 		return array_map("_new_user", $rows);
 	}
 
@@ -119,20 +119,20 @@ class User {
 		assert(is_bool($admin));
 		global $database;
 		$yn = $admin ? 'Y' : 'N';
-		$database->Execute("UPDATE users SET admin=? WHERE id=?", array($yn, $this->id));
+		$database->Execute("UPDATE users SET admin=:yn WHERE id=:id", array("yn"=>$yn, "id"=>$this->id));
 		log_info("core-user", "Made {$this->name} admin=$yn");
 	}
 
 	public function set_password($password) {
 		global $database;
 		$hash = md5(strtolower($this->name) . $password);
-		$database->Execute("UPDATE users SET pass=? WHERE id=?", array($hash, $this->id));
+		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$hash, "id"=>$this->id));
 		log_info("core-user", "Set password for {$this->name}");
 	}
 
 	public function set_email($address) {
 		global $database;
-		$database->Execute("UPDATE users SET email=? WHERE id=?", array($address, $this->id));
+		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
 		log_info("core-user", "Set email for {$this->name}");
 	}
 
@@ -181,6 +181,5 @@ class User {
 	public function check_auth_token() {
 		return ($_POST["auth_token"] == $this->get_auth_token());
 	}
-
 }
 ?>

@@ -66,7 +66,7 @@ class Image {
 		assert(is_numeric($id));
 		global $database;
 		$image = null;
-		$row = $database->get_row("SELECT * FROM images WHERE images.id=?", array($id));
+		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -79,7 +79,7 @@ class Image {
 		assert(is_string($hash));
 		global $database;
 		$image = null;
-		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
+		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -112,12 +112,11 @@ class Image {
 		if($limit < 1) $limit = 1;
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
+		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
-		while(!$result->EOF) {
-			$images[] = new Image($result->fields);
-			$result->MoveNext();
+		while($row = $result->fetch()) {
+			$images[] = new Image($row);
 		}
 		return $images;
 	}
@@ -133,23 +132,23 @@ class Image {
 		assert(is_array($tags));
 		global $database;
 		if(count($tags) == 0) {
-			#return $database->db->GetOne("SELECT COUNT(*) FROM images");
+			#return $database->get_one("SELECT COUNT(*) FROM images");
 			$total = $database->cache->get("image-count");
 			if(!$total) {
-				$total = $database->db->GetOne("SELECT COUNT(*) FROM images");
+				$total = $database->get_one("SELECT COUNT(*) FROM images");
 				$database->cache->set("image-count", $total, 600);
 			}
 			return $total;
 		}
 		else if(count($tags) == 1 && !preg_match("/[:=><]/", $tags[0])) {
-			return $database->db->GetOne(
-				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"),
-				$tags);
+			return $database->get_one(
+				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+				array("tag"=>$tags[0]));
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
 			$result = $database->execute($querylet->sql, $querylet->variables);
-			return $result->RecordCount();
+			return $result->rowCount();
 		}
 	}
 
@@ -191,13 +190,13 @@ class Image {
 		}
 
 		if(count($tags) == 0) {
-			$row = $database->db->GetRow("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
+			$row = $database->get_row("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
 		}
 		else {
 			$tags[] = "id$gtlt{$this->id}";
 			$querylet = Image::build_search_querylet($tags);
 			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
-			$row = $database->db->GetRow($querylet->sql, $querylet->variables);
+			$row = $database->get_row($querylet->sql, $querylet->variables);
 		}
 
 		return ($row ? new Image($row) : null);
@@ -230,12 +229,7 @@ class Image {
 		if($cached) return $cached;
 
 		if(!isset($this->tag_array)) {
-			$this->tag_array = Array();
-			$row = $database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
-			while(!$row->EOF) {
-				$this->tag_array[] = $row->fields['tag'];
-				$row->MoveNext();
-			}
+			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
 		}
 
 		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
@@ -371,7 +365,7 @@ class Image {
 	public function set_source($source) {
 		global $database;
 		if(empty($source)) $source = null;
-		$database->execute("UPDATE images SET source=? WHERE id=?", array($source, $this->id));
+		$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
 	}
 
 
@@ -384,7 +378,7 @@ class Image {
 		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		$database->execute("UPDATE images SET locked=? WHERE id=?", array($sln, $this->id));
+		$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
 	}
 
 	/**
@@ -396,8 +390,8 @@ class Image {
 		global $database;
 		$database->execute(
 				"UPDATE tags SET count = count - 1 WHERE id IN ".
-				"(SELECT tag_id FROM image_tags WHERE image_id = ?)", array($this->id));
-		$database->execute("DELETE FROM image_tags WHERE image_id=?", array($this->id));
+				"(SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id));
+		$database->execute("DELETE FROM image_tags WHERE image_id=:id", array("id"=>$this->id));
 	}
 
 	/**
@@ -415,32 +409,32 @@ class Image {
 
 		// insert each new tags
 		foreach($tags as $tag) {
-			$id = $database->db->GetOne(
+			$id = $database->get_one(
 					$database->engine->scoreql_to_sql(
-						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 					),
-					array($tag));
+					array("tag"=>$tag));
 			if(empty($id)) {
 				// a new tag
 				$database->execute(
-						"INSERT INTO tags(tag) VALUES (?)",
-						array($tag));
+						"INSERT INTO tags(tag) VALUES (:tag)",
+						array("tag"=>$tag));
 				$database->execute(
 						"INSERT INTO image_tags(image_id, tag_id)
-						VALUES(?, (SELECT id FROM tags WHERE tag = ?))",
-						array($this->id, $tag));
+						VALUES(:id, (SELECT id FROM tags WHERE tag = :tag))",
+						array("id"=>$this->id, "tag"=>$tag));
 			}
 			else {
 				// user of an existing tag
 				$database->execute(
-						"INSERT INTO image_tags(image_id, tag_id) VALUES(?, ?)",
-						array($this->id, $id));
+						"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
+						array("iid"=>$this->id, "tid"=>$id));
 			}
 			$database->execute(
 					$database->engine->scoreql_to_sql(
-						"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+						"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 					),
-					array($tag));
+					array("tag"=>$tag));
 		}
 
 		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
@@ -453,7 +447,7 @@ class Image {
 	public function delete() {
 		global $database;
 		$this->delete_tags_from_image();
-		$database->execute("DELETE FROM images WHERE id=?", array($this->id));
+		$database->execute("DELETE FROM images WHERE id=:id", array("id"=>$this->id));
 		log_info("core-image", "Deleted Image #{$this->id} ({$this->hash})");
 
 		unlink($this->get_image_filename());
@@ -601,8 +595,8 @@ class Image {
 			$query = new Querylet($database->engine->scoreql_to_sql("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id = image_tags.image_id
-				WHERE tag_id = (SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?))
-				"), array($tag_querylets[0]->tag));
+				WHERE tag_id = (SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag))
+				"), array("tag"=>$tag_querylets[0]->tag));
 
 			if(strlen($img_search->sql) > 0) {
 				$query->append_sql(" AND ");
@@ -619,9 +613,9 @@ class Image {
 			foreach($tag_querylets as $tq) {
 				$tag_ids = $database->db->GetCol(
 						$database->engine->scoreql_to_sql(
-							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 						),
-						array($tq->tag));
+						array("tag"=>$tq->tag));
 				if($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
@@ -734,8 +728,8 @@ class Image {
 		$terms = array();
 		foreach($tag_querylets as $tq) {
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= " $sign (tag LIKE ?)";
-			$terms[] = $tq->tag;
+			$sql .= " $sign (tag LIKE :tag)";
+			$terms["tag"] = $tq->tag;
 			
 			if($sign == "+") $positive_tag_count++;
 			else $negative_tag_count++;
@@ -774,7 +768,7 @@ class Image {
 					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
 					FROM tags, image_tags, images
 					WHERE
-						tag LIKE ?
+						tag LIKE :tag
 						AND tags.id = image_tags.tag_id
 						AND image_tags.image_id = images.id
 				",
@@ -794,7 +788,7 @@ class Image {
 			$tag_id_array = array();
 			$tags_ok = true;
 			foreach($tag_search->variables as $tag) {
-				$tag_ids = $database->db->GetCol("SELECT id FROM tags WHERE tag LIKE ?", array($tag));
+				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
 				$tags_ok = count($tag_ids) > 0;
 				if(!$tags_ok) break;
@@ -809,10 +803,10 @@ class Image {
 					JOIN tags ON image_tags.tag_id = tags.id
 					WHERE tags.id IN ({$tag_id_list})
 					GROUP BY images.id
-					HAVING score = ?",
+					HAVING score = :score",
 					array_merge(
 						$tag_search->variables,
-						array($positive_tag_count)
+						array("score"=>$positive_tag_count)
 					)
 				);
 				$query = new Querylet("
@@ -904,7 +898,7 @@ class Tag {
 		assert(is_string($tag));
 
 		global $database;
-		$newtag = $database->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
+		$newtag = $database->get_one("SELECT newtag FROM aliases WHERE oldtag=:tag", array("tag"=>$tag));
 		if(!empty($newtag)) {
 			return $newtag;
 		} else {

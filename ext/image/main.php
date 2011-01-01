@@ -234,16 +234,23 @@ class ImageIO extends SimpleExtension {
 		$database->Execute(
 				"INSERT INTO images(
 					owner_id, owner_ip, filename, filesize,
-					hash, ext, width, height, posted, source)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, now(), ?)",
-				array($user->id, $_SERVER['REMOTE_ADDR'], $image->filename, $image->filesize,
-						$image->hash, $image->ext, $image->width, $image->height, $image->source));
+					hash, ext, width, height, posted, source
+				)
+				VALUES (
+					:owner_id, :owner_ip, :filename, :filesize,
+					:hash, :ext, :width, :height, now(), :source
+				)",
+				array(
+					"owner_id"=>$user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'], "filename"=>$image->filename, "filesize"=>$image->filesize,
+					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
+				)
+		);
 		if($database->engine->name == "pgsql") {
 			$database->Execute("UPDATE users SET image_count = image_count+1 WHERE id = ? ", array($user->id));
-			$image->id = $database->db->GetOne("SELECT id FROM images WHERE hash=?", array($image->hash));
+			$image->id = $database->get_one("SELECT id FROM images WHERE hash=?", array($image->hash));
 		}
 		else {
-			$image->id = $database->db->Insert_ID();
+			$image->id = $database->db->lastInsertId();
 		}
 
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
