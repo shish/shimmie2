@@ -273,12 +273,22 @@ class Database {
 	public function Database() {
 		global $database_dsn, $cache_dsn;
 
-		# FIXME: translate database URI into something PDO compatible
-		include "config.php";
-		#$db_proto = $database_dsn;
-		#$db_host  = $database_dsn;
-		#$db_name  = $database_dsn;
+		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
+		/*
+		 * Why does the abstraction layer act differently depending on the
+		 * back-end? Because PHP is deliberately retarded.
+		 *
+		 * http://stackoverflow.com/questions/237367
+		 */
+		$matches = array(); $db_user=null; $db_pass=null;
+		if(preg_match("/user=([^;]*)/", $database_dsn, $matches)) $db_user=$matches[1];
+		if(preg_match("/password=([^;]*)/", $database_dsn, $matches)) $db_pass=$matches[1];
+
+		$this->db = new PDO($database_dsn, $db_user, $db_pass);
+		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		if($db_proto == "mysql") {
 			$this->engine = new MySQL();
 		}
@@ -288,9 +298,9 @@ class Database {
 		else if($db_proto == "sqlite") {
 			$this->engine = new SQLite();
 		}
-
-		$this->db = new PDO("$db_proto:host=$db_host;dbname=$db_name", $db_user, $db_pass);
-		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		else {
+			die("Unknown PDO driver: $db_proto");
+		}
 
 		if(isset($cache_dsn) && !empty($cache_dsn)) {
 			$matches = array();
