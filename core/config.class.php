@@ -175,7 +175,10 @@ class DatabaseConfig extends BaseConfig {
 			$this->values = $cached;
 		}
 		else {
-			$this->values = $this->database->db->query("SELECT name, value FROM config")->fetchAll();
+			$this->values = array();
+			foreach($this->database->get_all("SELECT name, value FROM config") as $row) {
+				$this->values[$row["name"]] = $row["value"];
+			}
 			$this->database->cache->set("config", $this->values);
 		}
 	}
@@ -190,8 +193,8 @@ class DatabaseConfig extends BaseConfig {
 			}
 		}
 		else {
-			$this->database->Execute("DELETE FROM config WHERE name = ?", array($name));
-			$this->database->Execute("INSERT INTO config VALUES (?, ?)", array($name, $this->values[$name]));
+			$this->database->Execute("DELETE FROM config WHERE name = :name", array("name"=>$name));
+			$this->database->Execute("INSERT INTO config VALUES (:name, :value)", array("name"=>$name, "value"=>$this->values[$name]));
 		}
 		$this->database->cache->delete("config");
 	}

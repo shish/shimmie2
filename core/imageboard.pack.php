@@ -66,7 +66,7 @@ class Image {
 		assert(is_numeric($id));
 		global $database;
 		$image = null;
-		$row = $database->get_row("SELECT * FROM images WHERE images.id=?", array($id));
+		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -79,7 +79,7 @@ class Image {
 		assert(is_string($hash));
 		global $database;
 		$image = null;
-		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=?", array($hash));
+		$row = $database->db->GetRow("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
 
@@ -112,12 +112,11 @@ class Image {
 		if($limit < 1) $limit = 1;
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT ? OFFSET ?", array($limit, $start)));
+		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
-		while(!$result->EOF) {
-			$images[] = new Image($result->fields);
-			$result->MoveNext();
+		while($row = $result->fetch()) {
+			$images[] = new Image($row);
 		}
 		return $images;
 	}
@@ -136,15 +135,15 @@ class Image {
 			#return $database->db->GetOne("SELECT COUNT(*) FROM images");
 			$total = $database->cache->get("image-count");
 			if(!$total) {
-				$total = $database->db->GetOne("SELECT COUNT(*) FROM images");
+				$total = $database->get_one("SELECT COUNT(*) FROM images");
 				$database->cache->set("image-count", $total, 600);
 			}
 			return $total;
 		}
 		else if(count($tags) == 1 && !preg_match("/[:=><]/", $tags[0])) {
-			return $database->db->GetOne(
-				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"),
-				$tags);
+			return $database->get_one(
+				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+				array("tag"=>$tags[0]));
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
@@ -230,12 +229,7 @@ class Image {
 		if($cached) return $cached;
 
 		if(!isset($this->tag_array)) {
-			$this->tag_array = Array();
-			$row = $database->Execute("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=? ORDER BY tag", array($this->id));
-			while(!$row->EOF) {
-				$this->tag_array[] = $row->fields['tag'];
-				$row->MoveNext();
-			}
+			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
 		}
 
 		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
