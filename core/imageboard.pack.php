@@ -611,7 +611,7 @@ class Image {
 			$tags_ok = true;
 
 			foreach($tag_querylets as $tq) {
-				$tag_ids = $database->db->GetCol(
+				$tag_ids = $database->get_col(
 						$database->engine->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 						),
@@ -912,7 +912,7 @@ class Tag {
 		}
 		else {
 			global $database;
-			$newtags = $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
+			$newtags = $database->get_col("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
 			if(count($newtags) > 0) {
 				$resolved = $newtags;
 			} else {

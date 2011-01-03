@@ -389,6 +389,13 @@ class Database {
 		return $row[0];
 	}
 
+	/**
+	 * get the ID of the last inserted row
+	 */
+	public function get_last_insert_id() {
+		return $this->get_last_insert_id();
+	}
+
 
 	/**
 	 * Create a table from pseudo-SQL

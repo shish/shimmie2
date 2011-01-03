@@ -312,7 +312,7 @@ class TagList implements Extension {
 			$tag = str_replace("?", "_", $tag);
 			$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 			// $search_tags = array_merge($search_tags,
-			//                  $database->db->GetCol("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
+			//                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
 			$tag_id_array = array_merge($tag_id_array, $tag_ids);
 			$tags_ok = count($tag_ids) > 0;
 			if(!$tags_ok) break;
