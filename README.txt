@@ -8,6 +8,10 @@
 
 Shimmie Alpha
 ~~~~~~~~~~~~~
+If you're reading this on github and looking for the stable version, go
+to the top of the page -> switch branches -> pick a stable branch. To do
+similarly with a git clone, "git checkout -b my_2.X origin/branch_2.X"
+
 This code is for people who want to write extensions compatible with the
 next version of shimmie. You can run a production site with it if you're
 feeling brave, but it's not recommended.
