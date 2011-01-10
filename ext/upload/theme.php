@@ -20,7 +20,7 @@ class UploadTheme extends Themelet {
 			$upload_list .= "
 				<tr>
 					<td width='50'>File $n</td>
-					<td width='250'><input accept='image/jpeg,image/png,image/gif' id='data$i' name='data$i' type='file'></td>
+					<td width='250'><input id='data$i' name='data$i' type='file'></td>
 			";
 			if($tl_enabled) {
 				$upload_list .= "
@@ -98,7 +98,7 @@ class UploadTheme extends Themelet {
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
-			$upload_list .= "<input accept='image/jpeg,image/png,image/gif' size='10' ".
+			$upload_list .= "<input size='10' ".
 				"id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" type='file'>\n";
 		}
 		$max_size = $config->get_int('upload_size');
