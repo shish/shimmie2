@@ -600,8 +600,11 @@ class Image {
 		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
 			$query = new Querylet($database->engine->scoreql_to_sql("
 				SELECT images.* FROM images
-				JOIN image_tags ON images.id = image_tags.image_id
-				WHERE tag_id = (SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?))
+				WHERE images.id IN (
+					SELECT image_id FROM image_tags WHERE tag_id = (
+						SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)
+					)
+				)
 				"), array($tag_querylets[0]->tag));
 
 			if(strlen($img_search->sql) > 0) {
@@ -901,7 +904,11 @@ class Tag {
 		assert(is_string($tag));
 
 		global $database;
-		$newtag = $database->db->GetOne("SELECT newtag FROM aliases WHERE oldtag=?", array($tag));
+		$newtag = $database->db->GetOne(
+				$database->engine->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(?)"),
+				array($tag));
+
+
 		if(!empty($newtag)) {
 			return $newtag;
 		} else {
