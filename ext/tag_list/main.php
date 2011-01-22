@@ -283,16 +283,20 @@ class TagList implements Extension {
 		global $database;
 		global $config;
 
-		$query = "
-			SELECT tag, count
-			FROM tags
-			WHERE count > 0
-			ORDER BY count DESC
-			LIMIT :tag_list_length
-		";
-		$args = array("tag_list_length"=>$config->get_int('tag_list_length'));
+		$tags = $database->cache->get("popular_tags");
+		if(empty($tags)) {
+			$query = "
+				SELECT tag, count
+				FROM tags
+				WHERE count > 0
+				ORDER BY count DESC
+				LIMIT :tag_list_length
+				";
+			$args = array("tag_list_length"=>$config->get_int('tag_list_length'));
 
-		$tags = $database->get_all($query, $args);
+			$tags = $database->get_all($query, $args);
+			$database->cache->set("popular_tags", $tags, 600);
+		}
 		if(count($tags) > 0) {
 			$this->theme->display_popular_block($page, $tags);
 		}
