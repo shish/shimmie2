@@ -267,6 +267,7 @@ class UserPage extends SimpleExtension {
 			$page->set_redirect(make_link("user"));
 		}
 		else {
+			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
 			$this->theme->display_error($page, "Error", "No user with those details was found");
 		}
 	}
