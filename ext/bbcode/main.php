@@ -34,6 +34,10 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace_callback("/(\[url\](?:https?|ftp|irc|mailto):\/\/.*?\[\/url\])/s", array($this, "unwrap"), $text);
 
 		$text = $this->extract_code($text);
+		$text = preg_replace("/\[left\](.*?)\[\/left\]/s", "<div style='text-align: left;'>\\1</div>", $text);
+		$text = preg_replace("/\[center\](.*?)\[\/center\]/s", "<div style='text-align: center;'>\\1</div>", $text);
+		$text = preg_replace("/\[right\](.*?)\[\/right\]/s", "<div style='text-align: right;'>\\1</div>", $text);
+
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
