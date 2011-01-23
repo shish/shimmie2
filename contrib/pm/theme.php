@@ -41,6 +41,7 @@ class PrivMsgTheme extends Themelet {
 	}
 
 	public function display_composer(Page $page, User $from, User $to, $subject="") {
+		global $user;
 		$post_url = make_link("pm/send");
 		$h_subject = html_escape($subject);
 		$to_id = $to->id;
