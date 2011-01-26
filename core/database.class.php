@@ -393,7 +393,7 @@ class Database {
 	 * get the ID of the last inserted row
 	 */
 	public function get_last_insert_id() {
-		return $this->get_last_insert_id();
+		return $this->db->lastInsertId();
 	}
 
 
