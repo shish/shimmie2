@@ -245,9 +245,9 @@ class ImageIO extends SimpleExtension {
 					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
 				)
 		);
+		//$database->Execute("UPDATE users SET image_count = image_count+1 WHERE id = :id ", array("id"=>$user->id));
 		if($database->engine->name == "pgsql") {
-			$database->Execute("UPDATE users SET image_count = image_count+1 WHERE id = ? ", array($user->id));
-			$image->id = $database->get_one("SELECT id FROM images WHERE hash=?", array($image->hash));
+			$image->id = $database->get_one("SELECT id FROM images WHERE hash=:hash", array("hash"=>$image->hash));
 		}
 		else {
 			$image->id = $database->get_last_insert_id();
