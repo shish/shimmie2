@@ -114,6 +114,8 @@ class LogDatabase extends SimpleExtension {
 	public function onLog($event) {
 		global $config, $database, $user;
 
+		$username = ($user && $user->name) ? $user->name : "null";
+
 		// not installed yet...
 		if($config->get_int("ext_log_database_version") < 1) return;
 
@@ -122,7 +124,7 @@ class LogDatabase extends SimpleExtension {
 				INSERT INTO score_log(date_sent, section, priority, username, address, message)
 				VALUES(now(), :section, :priority, :username, :address, :message)
 			", array(
-				"section"=>$event->section, "priority"=>$event->priority, "username"=>$user->name,
+				"section"=>$event->section, "priority"=>$event->priority, "username"=>$username,
 				"address"=>$_SERVER['REMOTE_ADDR'], "message"=>$event->message
 			));
 		}
