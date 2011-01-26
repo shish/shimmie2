@@ -70,25 +70,27 @@ class PixelFileHandler extends DataHandlerExtension {
 		$q = $config->get_int("thumb_quality");
 		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
-		// convert to bitmap & back to strip metadata -- otherwise we
-		// can end up with 3KB of jpg data and 200KB of misc extra...
-		// "-limit memory $mem" broken?
-
 		// Windows is a special case
 		if(in_array("OS", $_SERVER) && $_SERVER["OS"] == 'Windows_NT') {
-			$imageMagick = $config->get_string("thumb_convert_path");
-
-			// running the call with cmd.exe requires quoting for our paths
-			$stringFormat = '"%s" "%s[0]" -strip -thumbnail %ux%u jpg:"%s"';
-
-			// Concat the command altogether
-			$cmd = sprintf($stringFormat, $imageMagick, $inname, $w, $h, $outname);
+			$convert = $config->get_string("thumb_convert_path");
 		}
 		else {
-			$cmd = "convert {$inname}[0] -strip -thumbnail {$w}x{$h} jpg:$outname";
+			$convert = "convert";
 		}
 
-		// Execute IM's convert command, grab the output and return code it'll help debug it
+		//  ffff imagemagic fails sometimes, not sure why
+		//$format = "'%s' '%s[0]' -format '%%[fx:w] %%[fx:h]' info:";
+		//$cmd = sprintf($format, $convert, $inname);
+		//$size = shell_exec($cmd);
+		//$size = explode(" ", trim($size));
+		$size = getimagesize($inname);
+		if($size[0] > $size[1]*5) $size[0] = $size[1]*5;
+		if($size[1] > $size[0]*5) $size[1] = $size[0]*5;
+
+		// running the call with cmd.exe requires quoting for our paths
+		log_debug("handle_pixel", "cropping to {$size[0]}x{$size[1]} first");
+		$format = '"%s" "%s[0]" -crop %ux%u +repage -flatten -strip -thumbnail %ux%u jpg:"%s"';
+		$cmd = sprintf($format, $convert, $inname, $size[0], $size[1], $w, $h, $outname);
 		exec($cmd, $output, $ret);
 
 		log_debug('handle_pixel', "Generating thumnail with command `$cmd`, returns $ret");
@@ -134,6 +136,9 @@ class PixelFileHandler extends DataHandlerExtension {
 			return $thumb;
 		}
 		else {
+			if($width > $height*5) $width = $height*5;
+			if($height > $width*5) $height = $width*5;
+
 			$image = imagecreatefromstring($this->read_file($tmpname));
 			$tsize = get_thumbnail_size($width, $height);
 
