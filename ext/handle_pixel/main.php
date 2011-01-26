@@ -88,7 +88,6 @@ class PixelFileHandler extends DataHandlerExtension {
 		if($size[1] > $size[0]*5) $size[1] = $size[0]*5;
 
 		// running the call with cmd.exe requires quoting for our paths
-		log_debug("handle_pixel", "cropping to {$size[0]}x{$size[1]} first");
 		$format = '"%s" "%s[0]" -crop %ux%u +repage -flatten -strip -thumbnail %ux%u jpg:"%s"';
 		$cmd = sprintf($format, $convert, $inname, $size[0], $size[1], $w, $h, $outname);
 		exec($cmd, $output, $ret);
