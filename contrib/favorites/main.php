@@ -41,8 +41,8 @@ class Favorites extends SimpleExtension {
 			$image_id = $event->image->id;
 
 			$is_favorited = $database->get_one(
-				"SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = ? AND image_id = ?",
-				array($user_id, $image_id)) > 0;
+				"SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = :user_id AND image_id = :image_id",
+				array("user_id"=>$user_id, "image_id"=>$image_id)) > 0;
 		
 			$event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
 		}
@@ -92,7 +92,7 @@ class Favorites extends SimpleExtension {
 
 	public function onImageDeletion($event) {
 		global $database;
-		$database->execute("DELETE FROM user_favorites WHERE image_id=?", array($event->image->id));
+		$database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", array("image_id"=>$event->image->id));
 	}
 
 	public function onParseLinkTemplate($event) {
@@ -156,24 +156,24 @@ class Favorites extends SimpleExtension {
 		global $database;
 		if ($do_set) {
 			$database->Execute(
-				"INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(?, ?, NOW())",
-				array($image_id, $user_id));
+				"INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
+				array("image_id"=>$image_id, "user_id"=>$user_id));
 		} else {
 			$database->Execute(
-				"DELETE FROM user_favorites WHERE image_id = ? AND user_id = ?",
-				array($image_id, $user_id));
+				"DELETE FROM user_favorites WHERE image_id = :image_id AND user_id = :user_id",
+				array("image_id"=>$image_id, "user_id"=>$user_id));
 		}
 		$database->Execute(
-			"UPDATE images SET favorites=(SELECT COUNT(*) FROM user_favorites WHERE image_id=?) WHERE id=?",
-			array($image_id, $image_id));
+			"UPDATE images SET favorites=(SELECT COUNT(*) FROM user_favorites WHERE image_id=:image_id) WHERE id=:user_id",
+			array("image_id"=>$image_id, "user_id"=>$user_id));
 	}
 	
 	private function list_persons_who_have_favorited($image) {
 		global $database;
 
 		$result = $database->execute(
-				"SELECT name FROM users WHERE id IN (SELECT user_id FROM user_favorites WHERE image_id = ?) ORDER BY name",
-				array($image->id));
+				"SELECT name FROM users WHERE id IN (SELECT user_id FROM user_favorites WHERE image_id = :image_id) ORDER BY name",
+				array("image_id"=>$image->id));
 				
 		return $result->GetArray();
 	}
