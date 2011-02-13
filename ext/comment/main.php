@@ -339,9 +339,9 @@ class CommentList extends SimpleExtension {
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
-		$result = $database->Execute("SELECT * FROM comments WHERE owner_ip = ? ".
-				"AND posted > date_sub(now(), interval ? minute)",
-				Array($_SERVER['REMOTE_ADDR'], $window));
+		$result = $database->Execute("SELECT * FROM comments WHERE owner_ip = :remote_id ".
+				"AND posted > date_sub(now(), interval :window minute)",
+				Array("remote_ip"=>$_SERVER['REMOTE_ADDR'], "window"=>$window));
 		$recent_comments = $result->RecordCount();
 
 		return ($recent_comments >= $max);
@@ -397,7 +397,7 @@ class CommentList extends SimpleExtension {
 
 	private function is_dupe($image_id, $comment) {
 		global $database;
-		return ($database->get_row("SELECT * FROM comments WHERE image_id=? AND comment=?", array($image_id, $comment)));
+		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
 
 	private function add_comment_wrapper($image_id, $user, $comment, $event) {
@@ -448,8 +448,8 @@ class CommentList extends SimpleExtension {
 		else {
 			$database->Execute(
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
-					"VALUES(?, ?, ?, now(), ?)",
-					array($image_id, $user->id, $_SERVER['REMOTE_ADDR'], $comment));
+					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
+					array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
 			$cid = $database->get_last_insert_id();
 			log_info("comment", "Comment #$cid added to Image #$image_id");
 		}
