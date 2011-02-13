@@ -971,6 +971,9 @@ function get_thumbnail_size($orig_width, $orig_height) {
 	if($orig_width == 0) $orig_width = 192;
 	if($orig_height == 0) $orig_height = 192;
 
+	if($orig_width > $orig_height * 5) $orig_width = $orig_height * 5;
+	if($orig_height > $orig_width * 5) $orig_height = $orig_width * 5;
+
 	$max_width  = $config->get_int('thumb_width');
 	$max_height = $config->get_int('thumb_height');
 
