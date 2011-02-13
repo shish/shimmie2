@@ -339,12 +339,11 @@ class CommentList extends SimpleExtension {
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
-		$result = $database->Execute("SELECT * FROM comments WHERE owner_ip = :remote_ip ".
+		$result = $database->get_all("SELECT * FROM comments WHERE owner_ip = :remote_ip ".
 				"AND posted > date_sub(now(), interval :window minute)",
 				Array("remote_ip"=>$_SERVER['REMOTE_ADDR'], "window"=>$window));
-		$recent_comments = $result->RecordCount();
 
-		return ($recent_comments >= $max);
+		return (count($result) >= $max);
 	}
 
 	private function hash_match() {
