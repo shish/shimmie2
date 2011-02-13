@@ -25,7 +25,7 @@ class FavoritesTheme extends Themelet {
 		$html = "$i_favorites people:";
 
 		foreach($username_array as $row) {
-			$username = html_escape($row['name']);
+			$username = html_escape($row);
 			$html .= "<br><a href='".make_link("user/$username")."'>$username</a>";
 		}
 
