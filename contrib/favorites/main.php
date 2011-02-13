@@ -171,11 +171,9 @@ class Favorites extends SimpleExtension {
 	private function list_persons_who_have_favorited($image) {
 		global $database;
 
-		$result = $database->execute(
+		return $database->get_col(
 				"SELECT name FROM users WHERE id IN (SELECT user_id FROM user_favorites WHERE image_id = :image_id) ORDER BY name",
 				array("image_id"=>$image->id));
-				
-		return $result->GetArray();
 	}
 }
 ?>
