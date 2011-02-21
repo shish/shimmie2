@@ -287,7 +287,7 @@ class UserPage extends SimpleExtension {
 					"Username contains invalid characters. Allowed characters are ".
 					"letters, numbers, dash, and underscore");
 		}
-		else if($database->get_row("SELECT * FROM users WHERE name = ?", array($name))) {
+		else if($database->get_row("SELECT * FROM users WHERE name = :name", array("name"=>$name))) {
 			throw new UserCreationException("That username is already taken");
 		}
 	}
@@ -303,8 +303,8 @@ class UserPage extends SimpleExtension {
 		$admin = $need_admin ? 'Y' : 'N';
 
 		$database->Execute(
-				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (?, ?, now(), ?, ?)",
-				array($event->username, $hash, $email, $admin));
+				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (:username, :hash, now(), :email, :admin)",
+				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "admin"=>$admin));
 		$uid = $database->get_last_insert_id();
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
