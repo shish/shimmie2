@@ -127,7 +127,7 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$result = $database->execute("
+		$tag_data = $database->get_all("
 				SELECT
 					tag,
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
@@ -135,7 +135,6 @@ class TagList implements Extension {
 				WHERE count >= :tags_min
 				ORDER BY tag
 			", array("tags_min"=>$tags_min));
-		$tag_data = $result->GetArray();
 
 		$html = "";
 		foreach($tag_data as $row) {
@@ -153,10 +152,9 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$result = $database->execute(
+		$tag_data = $database->get_all(
 				"SELECT tag,count FROM tags WHERE count >= :tags_min ORDER BY tag",
 				array("tags_min"=>$tags_min));
-		$tag_data = $result->GetArray();
 
 		$html = "";
 		$lastLetter = "";
@@ -178,10 +176,9 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$result = $database->execute(
+		$tag_data = $database->get_all(
 				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= :tags_min ORDER BY count DESC, tag ASC",
 				array("tags_min"=>$tags_min));
-		$tag_data = $result->GetArray();
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
 		$lastLog = "";
@@ -204,8 +201,7 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$result = $database->execute("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
-		$tag_data = $result->GetArray();
+		$tag_data = $database->get_all("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
 
 		$html = "<table>";
 		$n = 0;
