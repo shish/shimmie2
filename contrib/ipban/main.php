@@ -223,8 +223,8 @@ class IPBan implements Extension {
 
 	private function add_ip_ban($ip, $reason, $end, $user) {
 		global $database;
-		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (?, ?, ?, ?)";
-		$database->Execute($sql, array($ip, $reason, strtotime($end), $user->id));
+		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (:ip, :reason, :end, :admin_id)";
+		$database->Execute($sql, array("ip"=>$ip, "reason"=>$reason, "end"=>strtotime($end), "admin_id"=>$user->id));
 		$database->cache->delete("ip_bans");
 	}
 // }}}
