@@ -145,8 +145,10 @@ function eok($name, $value) {
 }
 // }}}
 function do_install() { // {{{
-	if(isset($_POST['database_dsn'])) {
-		install_process($_POST['database_dsn']);
+	if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
+		global $database_dsn;
+		$database_dsn = "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}";
+		install_process();
 	}
 	else if(file_exists("auto_install.conf")) {
 		install_process(trim(file_get_contents("auto_install.conf")));
@@ -197,11 +199,34 @@ function begin() { // {{{
 			$thumberr
 			$dberr
 
-			<h3>Install</h3>
+			<h3>Database Install</h3>
 			<form action="install.php" method="POST">
 				<center>
 					<table>
-						<tr><td>Database:</td><td><input type="text" name="database_dsn" size="40"></td></tr>
+						<tr>
+							<td>Type:</td>
+							<td><select name="database_type">
+								<option value="mysql" selected>MySQL</option>
+								<option value="pgsql">PostgreSQL</option>
+								<option value="sqlite">SQLite</option>
+							</td>
+						</tr>
+						<tr>
+							<td>Host:</td>
+							<td><input type="text" name="database_host" size="40" value="localhost"></td>
+						</tr>
+						<tr>
+							<td>Username:</td>
+							<td><input type="text" name="database_user" size="40"></td>
+						</tr>
+						<tr>
+							<td>Password:</td>
+							<td><input type="password" name="database_password" size="40"></td>
+						</tr>
+						<tr>
+							<td>Name:</td>
+							<td><input type="text" name="database_name" size="40" value="shimmie"></td>
+						</tr>
 						<tr><td colspan="2"><center><input type="submit" value="Go!"></center></td></tr>
 					</table>
 				</center>
@@ -209,60 +234,42 @@ function begin() { // {{{
 
 			<h3>Help</h3>
 					
-			<p>Databases should be specified like so:
-			<br>ie: <code>protocol://username:password@host/database?options</code>
-			<br>eg: <code>mysql://shimmie:pw123@localhost/shimmie?persist</code>
+			<p>Please make sure the database you have chosen exists and is empty.<br>
+			The username provided must have access to create tables within the database.
+			
 		</div>
 EOD;
 } // }}}
-function install_process($database_dsn) { // {{{
+function install_process() { // {{{
 	build_dirs();
-	create_tables($database_dsn);
-	insert_defaults($database_dsn);
-	write_config($database_dsn);
+	create_tables();
+	insert_defaults();
+	write_config();
 	
 	header("Location: index.php");
 } // }}}
-function create_tables($dsn) { // {{{
-	if(substr($dsn, 0, 5) == "mysql") {
-		$engine = new MySQL();
-	}
-	else if(substr($dsn, 0, 5) == "pgsql") {
-		$engine = new PostgreSQL();
-	}
-	else if(substr($dsn, 0, 6) == "sqlite") {
-		$engine = new SQLite();
-	}
-	else {
-		die("Unknown database engine; Shimmie currently officially supports MySQL
-		(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
-	}
-
-	$db = NewADOConnection($dsn);
-	if(!$db) {
-		die("Couldn't connect to \"$dsn\"");
-	}
-	else {
-		$engine->init($db);
-
-		$db->execute($engine->create_table_sql("aliases", "
+function create_tables() { // {{{
+	try {
+		$db = new Database();
+		
+		$db->create_table("aliases", "
 			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
 			newtag VARCHAR(128) NOT NULL,
 			INDEX(newtag)
-		"));
-		$db->execute($engine->create_table_sql("config", "
+		");
+		$db->create_table("config", "
 			name VARCHAR(128) NOT NULL PRIMARY KEY,
 			value TEXT
-		"));
-		$db->execute($engine->create_table_sql("users", "
+		");
+		$db->create_table("users", "
 			id SCORE_AIPK,
 			name VARCHAR(32) UNIQUE NOT NULL,
 			pass CHAR(32),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			email VARCHAR(128)
-		"));
-		$db->execute($engine->create_table_sql("images", "
+		");
+		$db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
 			owner_ip SCORE_INET NOT NULL,
@@ -279,13 +286,13 @@ function create_tables($dsn) { // {{{
 			INDEX(width),
 			INDEX(height),
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
-		"));
-		$db->execute($engine->create_table_sql("tags", "
+		");
+		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
 			count INTEGER NOT NULL DEFAULT 0
-		"));
-		$db->execute($engine->create_table_sql("image_tags", "
+		");
+		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
 			INDEX(image_id),
@@ -293,43 +300,30 @@ function create_tables($dsn) { // {{{
 			UNIQUE(image_id, tag_id),
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-		"));
+		");
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 8)");
 	}
-	$db->Close();
-} // }}}
-function insert_defaults($dsn) { // {{{
-	$db = NewADOConnection($dsn);
-	if(!$db) {
-		die("Couldn't connect to \"$dsn\"");
+	catch (PDOException $e)
+	{
+		// FIXME: Make the error message user friendly
+		exit($e->getMessage());
 	}
-	else {
-		if(substr($dsn, 0, 5) == "mysql") {
-			$engine = new MySQL();
-		}
-		else if(substr($dsn, 0, 5) == "pgsql") {
-			$engine = new PostgreSQL();
-		}
-		else if(substr($dsn, 0, 6) == "sqlite") {
-			$engine = new SQLite();
-		}
-		else {
-			die("Unknown database engine; Shimmie currently officially supports MySQL
-			(mysql://), with hacks for Postgres (pgsql://) and SQLite (sqlite://)");
-		}
-		$engine->init($db);
-
-		$config_insert = $db->Prepare("INSERT INTO config(name, value) VALUES(?, ?)");
-		$user_insert = $db->Prepare("INSERT INTO users(name, pass, joindate, admin) VALUES(?, ?, now(), ?)");
-
-		$db->Execute($user_insert, Array('Anonymous', null, 'N'));
-		$db->Execute($config_insert, Array('anon_id', $db->lastInsertId()));
+} // }}}
+function insert_defaults() { // {{{
+	try {
+		$db = new Database();
+	
+		$db->execute("INSERT INTO users(name, pass, joindate, admin) VALUES(:name, :pass, now(), :admin)", Array("name" => 'Anonymous', "pass" => null, "admin" => 'N'));
+		$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'anon_id', "value" => $db->get_last_insert_id()));
 
 		if(check_im_version() > 0) {
-			$db->Execute($config_insert, Array('thumb_engine', 'convert'));
+			$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'thumb_engine', "value" => 'convert'));
 		}
-
-		$db->Close();
+	}
+	catch (PDOException $e)
+	{
+		// FIXME: Make the error message user friendly
+		exit($e->getMessage());
 	}
 } // }}}
 function build_dirs() { // {{{
@@ -354,8 +348,9 @@ function build_dirs() { // {{{
 		exit;
 	}
 } // }}}
-function write_config($dsn) { // {{{
-	$file_content = "<?php \$database_dsn='$dsn'; ?>";
+function write_config() { // {{{
+	global $database_dsn;
+	$file_content = "<?php \$database_dsn='$database_dsn'; ?>";
 	
 	if(is_writable("./") && file_put_contents("config.php", $file_content)) {
 		assert(file_exists("config.php"));
