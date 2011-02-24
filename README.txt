@@ -22,15 +22,9 @@ because the feature doesn't work yet :P
 
 Requirements
 ~~~~~~~~~~~~
-MySQL 4.1+
-PHP 5.0+
+MySQL 4.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
+PHP 5.2+
 GD or ImageMagick
-
-There is no PHP4 support, because it lacks many useful features which make
-shimmie development easier, faster, and less bug prone. PHP4 is officially
-dead, if your host hasn't upgraded to at least 5, I would suggest switching
-hosts. I'll even host galleries for free if you can't get hosting elsewhere
-for whatever reason~
 
 
 Installation
