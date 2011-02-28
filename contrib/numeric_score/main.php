@@ -54,6 +54,7 @@ class NumericScore implements Extension {
 		}
 
 		if($event instanceof NumericScoreSetEvent) {
+			log_info("numeric_score", "Rated Image #{$event->image_id} as {$event->score}");
 			$this->add_vote($event->image_id, $user->id, $event->score);
 		}
 
