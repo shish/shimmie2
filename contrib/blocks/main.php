@@ -43,6 +43,7 @@ class Blocks extends SimpleExtension {
 			foreach($lines as $line) {
 				if(strpos($line, ":")) {
 					$parts = explode(":", $line, 2);
+					$parts[0] = trim($parts[0]);
 					$parts[1] = trim($parts[1]);
 					if($parts[0] == "Title") {
 						$title = $parts[1];
