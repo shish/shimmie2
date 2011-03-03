@@ -177,7 +177,14 @@ class ExtManager extends SimpleExtension {
 					// yes, even though we are in /, and thus the path to contrib is
 					// ./contrib, the link needs to be ../ because it is literal data
 					// which will be interpreted relative to ./ext/ by the OS
-					symlink("../contrib/$fname", "ext/$fname");
+					
+					//Because Windows (I know, bad excuse)
+					if (PHP_OS === 'WINNT') {
+						symlink(realpath("./contrib/$fname"), realpath("./ext/").'/'.$fname);
+					}
+					else {
+						symlink("../contrib/$fname", "ext/$fname");
+					}
 				}
 				else {
 					full_copy("contrib/$fname", "ext/$fname");
