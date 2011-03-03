@@ -8,7 +8,9 @@ shimmie.log
 ext/admin
 ext/autocomplete
 ext/ban_words
+ext/blocks
 ext/blotter
+ext/bookmarks
 ext/browser_search
 ext/bulk_add
 ext/danbooru_api
@@ -30,7 +32,6 @@ ext/ipban
 ext/link_image
 ext/log_db
 ext/news
-ext/notes
 ext/notes
 ext/numeric_score
 ext/piclens
