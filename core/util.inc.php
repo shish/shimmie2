@@ -612,7 +612,13 @@ function ip_in_range($IP, $CIDR) {
  */
 function deltree($f) {
 	if (is_link($f)) {
-		unlink($f);
+		//Because Windows (I know, bad excuse)
+		if (PHP_OS === 'WINNT') {
+			rmdir($f);
+		}
+		else {
+			unlink($f);
+		}
 	}
 	else if(is_dir($f)) {
 		foreach(glob($f.'/*') as $sf) {
