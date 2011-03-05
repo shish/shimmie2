@@ -102,6 +102,7 @@ class CustomUserPageTheme extends UserPageTheme {
 	protected function build_options($duser) {
 		global $database;
 		global $config;
+		global $user;
 
 		$html = "";
 		$html .= "
