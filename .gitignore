@@ -6,6 +6,7 @@ data
 sql.log
 shimmie.log
 ext/admin
+ext/artists
 ext/autocomplete
 ext/ban_words
 ext/blocks
