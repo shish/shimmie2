@@ -325,15 +325,20 @@ class Database {
 	public function execute($query, $args=array()) {
 		try {
 			$stmt = $this->db->prepare($query);
-			foreach($args as $name=>$value) {
-				if(is_numeric($value)) {
-					$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+			if (!array_key_exists(0, $args)) {
+				foreach($args as $name=>$value) {
+					if(is_numeric($value)) {
+						$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+					}
+					else {
+						$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
+					}
 				}
-				else {
-					$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
-				}
+				$stmt->execute();
+			} 
+			else {
+				$stmt->execute($args);
 			}
-			$stmt->execute();
 			return $stmt;
 		}
 		catch(PDOException $pdoe) {
