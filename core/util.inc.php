@@ -611,24 +611,39 @@ function ip_in_range($IP, $CIDR) {
  * "extension manager" extension, but it seems to fit better here
  */
 function deltree($f) {
-	if (is_link($f)) {
-		//Because Windows (I know, bad excuse)
-		if (PHP_OS === 'WINNT') {
+	//Because Windows (I know, bad excuse)
+	if (PHP_OS === 'WINNT') {
+		$real = realpath($f);
+		$path = realpath('./').'\\'.str_replace('/', '\\', $f);
+		if ($path != $real) {
+			rmdir($path);
+		}
+		else
+		{
+			foreach(glob($f.'/*') as $sf) {
+				if (is_dir($sf) && !is_link($sf)) {
+					deltree($sf);
+				} else {
+					unlink($sf);
+				}
+			}
 			rmdir($f);
 		}
-		else {
+	}
+	else {
+		if (is_link($f)) {
 			unlink($f);
 		}
-	}
-	else if(is_dir($f)) {
-		foreach(glob($f.'/*') as $sf) {
-			if (is_dir($sf) && !is_link($sf)) {
-				deltree($sf);
-			} else {
-				unlink($sf);
+		else if(is_dir($f)) {
+			foreach(glob($f.'/*') as $sf) {
+				if (is_dir($sf) && !is_link($sf)) {
+					deltree($sf);
+				} else {
+					unlink($sf);
+				}
 			}
+			rmdir($f);
 		}
-		rmdir($f);
 	}
 }
 
