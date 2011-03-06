@@ -359,7 +359,7 @@ class CommentList extends SimpleExtension {
 	 *
 	 * FIXME: assumes comments are posted via HTTP...
 	 */
-	public function get_hash() {
+	public static function get_hash() {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
