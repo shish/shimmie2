@@ -14,8 +14,6 @@ class ETTheme extends Themelet {
 	}
 
 	protected function build_data_form($info) {
-		global $user;
-
 		$data = <<<EOD
 Optional:
 Site title: {$info['site_title']}
@@ -39,10 +37,8 @@ Tags: {$info['stat_tags']}
 Applications: {$info['stat_image_tags']}
 Extensions: {$info['sys_extensions']}
 EOD;
-		$auth = $user->get_auth_html();
 		$html = <<<EOD
 <form action='http://shimmie.shishnet.org/register.php' method='POST'>
-	$auth
 	<input type='hidden' name='registration_api' value='1'>
 	<textarea name='data' rows='20' cols='80'>$data</textarea>
 	<br><input type='submit' value='Click to send to Shish'>
