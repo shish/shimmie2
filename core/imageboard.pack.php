@@ -23,6 +23,8 @@
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+$tag_n = 0; // temp hack
+
 /**
  * An object representing an entry in the images table. As of 2.2, this no
  * longer necessarily represents an image per se, but could be a video,
@@ -730,9 +732,11 @@ class Image {
 		$sql = "0";
 		$terms = array();
 		foreach($tag_querylets as $tq) {
+			global $tag_n;
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= " $sign (tag LIKE :tag)";
-			$terms["tag"] = $tq->tag;
+			$sql .= " $sign (tag LIKE :tag$tag_n)";
+			$terms["tag$tag_n"] = $tq->tag;
+			$tag_n++;
 			
 			if($sign == "+") $positive_tag_count++;
 			else $negative_tag_count++;
