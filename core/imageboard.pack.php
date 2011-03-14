@@ -115,6 +115,7 @@ class Image {
 
 		$querylet = Image::build_search_querylet($tags);
 		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
+		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
 		while($row = $result->fetch()) {
@@ -775,7 +776,7 @@ class Image {
 					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
 					FROM tags, image_tags, images
 					WHERE
-						tag LIKE :tag
+						tag LIKE :tag0
 						AND tags.id = image_tags.tag_id
 						AND image_tags.image_id = images.id
 				",
