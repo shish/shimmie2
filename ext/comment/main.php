@@ -457,6 +457,7 @@ class CommentList extends SimpleExtension {
 					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
 					array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
 			$cid = $database->get_last_insert_id();
+			setcookie("nocache", "true", time()+60*60);
 			log_info("comment", "Comment #$cid added to Image #$image_id");
 		}
 	}
