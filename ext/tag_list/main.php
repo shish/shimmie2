@@ -127,6 +127,10 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
+		if(file_exists("data/tag_map_$tags_min.html")) {
+			return file_get_contents("data/tag_map_$tags_min.html");
+		}
+
 		$tag_data = $database->get_all("
 				SELECT
 					tag,
@@ -145,6 +149,8 @@ class TagList implements Extension {
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
 			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
 		}
+
+		// file_put_contents("data/tag_map_$tags_min.html", $html);
 		return $html;
 	}
 
@@ -152,6 +158,10 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
+		if(file_exists("data/tag_alpha_$tags_min.html")) {
+			return file_get_contents("data/tag_alpha_$tags_min.html");
+		}
+
 		$tag_data = $database->get_all(
 				"SELECT tag,count FROM tags WHERE count >= :tags_min ORDER BY tag",
 				array("tags_min"=>$tags_min));
@@ -169,6 +179,7 @@ class TagList implements Extension {
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
+		// file_put_contents("data/tag_alpha_$tags_min.html", $html);
 		return $html;
 	}
 
@@ -176,6 +187,10 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
+		if(file_exists("data/tag_popul_$tags_min.html")) {
+			return file_get_contents("data/tag_popul_$tags_min.html");
+		}
+
 		$tag_data = $database->get_all(
 				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= :tags_min ORDER BY count DESC, tag ASC",
 				array("tags_min"=>$tags_min));
@@ -194,6 +209,7 @@ class TagList implements Extension {
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
+		// file_put_contents("data/tag_popul_$tags_min.html", $html);
 		return $html;
 	}
 
