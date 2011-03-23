@@ -53,7 +53,12 @@ class User {
 	public static function by_id($id) {
 		assert(is_numeric($id));
 		global $database;
+		if($id == 1) {
+			$cached = $database->cache->get("user-id:$id");
+			if($cached) return new User($cached);
+		}
 		$row = $database->get_row("SELECT * FROM users WHERE id = ?", array($id));
+		if($id == 1) $database->cache->set("user-id:$id", $row, 300);
 		return is_null($row) ? null : new User($row);
 	}
 
