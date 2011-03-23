@@ -55,10 +55,14 @@ class Featured extends SimpleExtension {
 	}
 
 	public function onPostListBuilding($event) {
-		global $config, $page, $user;
+		global $config, $database, $page, $user;
 		$fid = $config->get_int("featured_id");
 		if($fid > 0) {
-			$image = Image::by_id($fid);
+			$image = $database->cache->get("featured_image_object");
+			if(empty($image)) {
+				$image = Image::by_id($fid);
+				$database->cache->set("featured_image_object", $image, 60);
+			}
 			if(!is_null($image)) {
 				if(class_exists("Ratings")) {
 					if(strpos(Ratings::get_user_privs($user), $image->rating) === FALSE) {
