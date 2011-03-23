@@ -57,7 +57,16 @@ class ImageBan extends SimpleExtension {
 
 		if($event->page_matches("image_hash_ban")) {
 			if($user->is_admin()) {
-				if($event->get_arg(0) == "add") {
+				if($event->get_arg(0) == "dnp") {
+					$image = Image::by_id(int_escape($event->get_arg(1)));
+					if($image) {
+						send_event(new AddImageHashBanEvent($image->hash, "DNP"));
+						send_event(new ImageDeletionEvent($image));
+					}
+					$page->set_mode("redirect");
+					$page->set_redirect($_SERVER["HTTP_REFERER"]);
+				}
+				else if($event->get_arg(0) == "add") {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
 						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
 
