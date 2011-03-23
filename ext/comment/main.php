@@ -152,10 +152,14 @@ class CommentList extends SimpleExtension {
 	}
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {
-		global $config;
+		global $config, $database;
 		$cc = $config->get_int("comment_count");
 		if($cc > 0) {
-			$recent = $this->get_recent_comments($cc);
+			$recent = $database->cache->get("recent_comments");
+			if(empty($recent)) {
+				$recent = $this->get_recent_comments($cc);
+				$database->cache->set("recent_comments", $recent, 600);
+			}
 			if(count($recent) > 0) {
 				$this->theme->display_recent_comments($recent);
 			}
@@ -265,8 +269,11 @@ class CommentList extends SimpleExtension {
 			";
 		$result = $database->Execute($get_threads, array($threads_per_page, $start));
 
-		$total_pages = (int)($database->db->GetOne("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
-
+		$total_pages = $database->cache->get("comment_pages");
+		if(empty($total_pages)) {
+			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
+			$database->cache->set("comment_pages", $total_pages, 600);
+		}
 
 		$images = array();
 		while(!$result->EOF) {
