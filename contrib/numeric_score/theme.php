@@ -30,6 +30,15 @@ class NumericScoreTheme extends Themelet {
 			<input type='submit' value='Vote Down'>
 			</form>
 		";
+		if($user->is_admin()) {
+			$html .= "
+			<form action='".make_link("numeric_score/remove_votes_on")."' method='POST'>
+			".$user->get_auth_html()."
+			<input type='hidden' name='image_id' value='$i_image_id'>
+			<input type='submit' value='Remove All Votes'>
+			</form>
+			";
+		}
 		return $html;
 	}
 }

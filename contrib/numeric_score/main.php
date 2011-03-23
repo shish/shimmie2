@@ -74,6 +74,34 @@ class NumericScore implements Extension {
 					$page->set_redirect(make_link("post/view/$image_id"));
 				}
 			}
+			if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
+				if($user->is_admin()) {
+					$image_id = int_escape($_POST['image_id']);
+					$database->execute(
+							"DELETE FROM numeric_score_votes WHERE image_id=?",
+							array($image_id));
+					$database->execute(
+							"UPDATE images SET numeric_score=0 WHERE id=?",
+							array($image_id));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$image_id"));
+				}
+			}
+			if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
+				if($user->is_admin()) {
+					$user_id = int_escape($_POST['user_id']);
+					$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
+
+					$database->execute(
+							"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN ?",
+							array($user_id, $image_ids));
+					$database->execute(
+							"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN ?",
+							array($image_ids));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$image_id"));
+				}
+			}
 		}
 
 		if($event instanceof NumericScoreSetEvent) {
