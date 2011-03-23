@@ -35,21 +35,44 @@ class NumericScore implements Extension {
 		if($event instanceof DisplayingImageEvent) {
 			if(!$user->is_anonymous()) {
 				$html = $this->theme->get_voter_html($event->image);
+				if($user->is_admin()) {
+					$html .= "<p><a href='/numeric_score_votes/{$event->image->id}'>See All Votes</a>";
+				}
 				$page->add_block(new Block("Image Score", $html, "left", 20));
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
-			if(!$user->is_anonymous()) {
-				$image_id = int_escape($_POST['image_id']);
-				$char = $_POST['vote'];
-				$score = null;
-				if($char == "up") $score = 1;
-				else if($char == "null") $score = 0;
-				else if($char == "down") $score = -1;
-				if(!is_null($score) && $image_id>0) send_event(new NumericScoreSetEvent($image_id, $user, $score));
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/view/$image_id"));
+		if($event instanceof PageRequestEvent) {
+			if($event->page_matches("numeric_score_votes")) {
+				$image_id = int_escape($event->get_arg(0));
+				$x = $database->get_all(
+					"SELECT users.name as username, user_id, score 
+					FROM numeric_score_votes 
+					JOIN users ON numeric_score_votes.user_id=users.id
+					WHERE image_id=?",
+					array($image_id));
+				$html = "<table>";
+				foreach($x as $vote) {
+					$html .= "<tr><td>";
+					$html .= "<a href='/user/{$vote['username']}'>{$vote['username']}</a>";
+					$html .= "</td><td>";
+					$html .= $vote['score'];
+					$html .= "</td></tr>";
+				}
+				die($html);
+			}
+			if($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
+				if(!$user->is_anonymous()) {
+					$image_id = int_escape($_POST['image_id']);
+					$char = $_POST['vote'];
+					$score = null;
+					if($char == "up") $score = 1;
+					else if($char == "null") $score = 0;
+					else if($char == "down") $score = -1;
+					if(!is_null($score) && $image_id>0) send_event(new NumericScoreSetEvent($image_id, $user, $score));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/view/$image_id"));
+				}
 			}
 		}
 
