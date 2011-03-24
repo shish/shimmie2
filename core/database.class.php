@@ -359,7 +359,8 @@ class Database {
 	 * Execute an SQL query and return a single row
 	 */
 	public function get_row($query, $args=array()) {
-		return $this->execute($query, $args)->fetch();
+		$row = $this->execute($query, $args)->fetch();
+		return $row ? $row : null;
 	}
 
 	/**
