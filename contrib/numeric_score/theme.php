@@ -41,6 +41,18 @@ class NumericScoreTheme extends Themelet {
 		}
 		return $html;
 	}
+
+	public function get_nuller_html(User $duser) {
+		global $user;
+		$html = "
+			<form action='".make_link("numeric_score/remove_votes_by")."' method='POST'>
+			".$user->get_auth_html()."
+			<input type='hidden' name='user_id' value='{$duser->id}'>
+			<input type='submit' value='Delete all votes by this user'>
+			</form>
+		";
+		return $html;
+	}
 }
 
 ?>

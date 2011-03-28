@@ -42,6 +42,11 @@ class NumericScore implements Extension {
 			}
 		}
 
+		if($event instanceof UserPageBuildingEvent) {
+			$html = $this->theme->get_nuller_html($event->display_user);
+			$page->add_block(new Block("Votes", $html, "main", 60));
+		}
+
 		if($event instanceof PageRequestEvent) {
 			if($event->page_matches("numeric_score_votes")) {
 				$image_id = int_escape($event->get_arg(0));
@@ -99,7 +104,7 @@ class NumericScore implements Extension {
 							"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN ?",
 							array($image_ids));
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("post/view/$image_id"));
+					$page->set_redirect(make_link());
 				}
 			}
 		}
