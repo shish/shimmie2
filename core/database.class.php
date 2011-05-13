@@ -80,7 +80,7 @@ class MySQL extends DBEngine {
 
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
-		$ctes = "TYPE=InnoDB DEFAULT CHARSET='utf8'";
+		$ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
 		return "CREATE TABLE $name ($data) $ctes";
 	}
 }
