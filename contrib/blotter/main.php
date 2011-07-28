@@ -99,7 +99,7 @@ class Blotter extends SimpleExtension {
 					} else {
 						$id = int_escape($_POST['id']);
 						if(!isset($id)) { die("No ID!"); }
-						$database->Execute("DELETE FROM blotter WHERE id=?", array($id));
+						$database->Execute("DELETE FROM blotter WHERE id=:id", array("id"=>$id));
 						log_info("blotter", "Removed Entry #$id");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("blotter/editor"));
@@ -123,7 +123,7 @@ class Blotter extends SimpleExtension {
 	private function display_blotter() {
 		global $database, $config;
 		$limit = $config->get_int("blotter_recent", 5);
-		$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC LIMIT ?", array($limit));
+		$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC LIMIT :lim", array("lim"=>$limit));
 		$this->theme->display_blotter($entries);
 	}
 }
