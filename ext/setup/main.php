@@ -216,7 +216,15 @@ class Setup extends SimpleExtension {
 			$themes[$human] = $name;
 		}
 
-		$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
+		if(isset($_SERVER["HTTP_HOST"])) {
+			$host = $_SERVER["HTTP_HOST"];
+		} else {
+			$host = $_SERVER["SERVER_NAME"];
+			if($_SERVER["SERVER_PORT"] != "80") {
+				$host .= ":" . $_SERVER["SERVER_PORT"];
+			}
+		}
+		$full = "http://" . $host . $_SERVER["PHP_SELF"];
 		$test_url = str_replace("/index.php", "/nicetest", $full);
 
 		$nicescript = "<script language='javascript'>
