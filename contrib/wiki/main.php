@@ -133,8 +133,8 @@ class Wiki extends SimpleExtension {
 			if($user->is_admin()) {
 				global $database;
 				$database->Execute(
-						"DELETE FROM wiki_pages WHERE title=? AND revision=?",
-						array($_POST["title"], $_POST["revision"]));
+						"DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
+						array("title"=>$_POST["title"], "rev"=>$_POST["revision"]));
 				$u_title = url_escape($_POST["title"]);
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("wiki/$u_title"));
@@ -144,8 +144,8 @@ class Wiki extends SimpleExtension {
 			if($user->is_admin()) {
 				global $database;
 				$database->Execute(
-						"DELETE FROM wiki_pages WHERE title=?",
-						array($_POST["title"]));
+						"DELETE FROM wiki_pages WHERE title=:title",
+						array("title"=>$_POST["title"]));
 				$u_title = url_escape($_POST["title"]);
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("wiki/$u_title"));
@@ -201,16 +201,17 @@ class Wiki extends SimpleExtension {
 		$row = $database->get_row("
 				SELECT *
 				FROM wiki_pages
-				WHERE title LIKE ?
-				ORDER BY revision DESC", array($title));
+				WHERE title LIKE :title
+				ORDER BY revision DESC",
+				array("title"=>$title));
 
 		// fall back to wiki:default
 		if(empty($row)) {
 			$row = $database->get_row("
 					SELECT *
 					FROM wiki_pages
-					WHERE title LIKE ?
-					ORDER BY revision DESC", "wiki:default");
+					WHERE title LIKE :title
+					ORDER BY revision DESC", array("title"=>"wiki:default"));
 
 			// fall further back to manual
 			if(empty($row)) {
