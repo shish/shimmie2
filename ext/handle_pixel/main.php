@@ -90,6 +90,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		// running the call with cmd.exe requires quoting for our paths
 		$format = '"%s" "%s[0]" -crop %ux%u +repage -flatten -strip -thumbnail %ux%u jpg:"%s"';
 		$cmd = sprintf($format, $convert, $inname, $size[0], $size[1], $w, $h, $outname);
+		$cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
 		exec($cmd, $output, $ret);
 
 		log_debug('handle_pixel', "Generating thumnail with command `$cmd`, returns $ret");
