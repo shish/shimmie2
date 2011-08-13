@@ -35,7 +35,7 @@ class UploadTheme extends Themelet {
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		$html = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$('#tag_box').DefaultValue('tagme');
 				$('#tag_box').autocomplete('".make_link("api/internal/tag_list/complete")."', {
@@ -105,7 +105,7 @@ class UploadTheme extends Themelet {
 		$max_kb = to_shorthand_int($max_size);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$('#tag_input').DefaultValue('tagme');
 				$('#tag_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {

@@ -39,7 +39,7 @@ class ImageBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$(\"#image_bans\").tablesorter();
 			});

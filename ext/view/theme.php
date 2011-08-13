@@ -44,7 +44,7 @@ class ViewImageTheme extends Themelet {
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = "<a id='nextlink' href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
 		$script = "
-		<script><!--
+		<script type='text/javascript'><!--
 		$(document).ready(function() {
 			if(document.location.hash.length > 3) {
 				query = document.location.hash.substring(1);
@@ -63,7 +63,7 @@ class ViewImageTheme extends Themelet {
 	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
-			<script><!--
+			<script type='text/javascript'><!--
 			$(document).ready(function() {
 				$(\"#search_input\").DefaultValue(\"Search\");
 			});
