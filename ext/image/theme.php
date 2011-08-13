@@ -10,7 +10,7 @@ class ImageIOTheme {
 
 		$i_image_id = int_escape($image_id);
 		$html = "
-			".make_form(make_link("image_admin/delete"))."
+			".make_form(make_link("image_admin/delete"),'POST',false,'delete_image')."
 				<input type='hidden' name='image_id' value='$i_image_id'>
 				<input type='submit' value='Delete'>
 			</form>

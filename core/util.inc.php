@@ -218,13 +218,14 @@ function make_http($link) {
 
 /**
  * Make a form tag with relevant auth token and stuff
+ * (Added optional Form ID field for helping jquery.)
  *
  * @retval string
  */
-function make_form($target, $method="POST", $multipart=False) {
+function make_form($target, $method="POST", $multipart=False, $form_id="") {
 	global $user;
 	$auth = $user->get_auth_html();
-	$extra = "";
+	$extra = empty($form_id) ? '' : " id='$form_id'";
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
 	}
