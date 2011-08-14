@@ -5,7 +5,7 @@ class PrivMsgTheme extends Themelet {
 		global $user;
 
 		$html = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$(\"#pms\").tablesorter();
 			});

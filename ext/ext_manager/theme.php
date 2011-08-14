@@ -6,7 +6,7 @@ class ExtManagerTheme extends Themelet {
 		$en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			".make_form(make_link("ext_manager/set"))."
-				<script>
+				<script type='text/javascript'>
 				$(document).ready(function() {
 					$(\"#extensions\").tablesorter();
 				});

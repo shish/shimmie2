@@ -46,7 +46,7 @@ class AliasEditorTheme extends Themelet {
 			$h_aliases .= "</tr>";
 		}
 		$html = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$(\"#aliases\").tablesorter();
 			});

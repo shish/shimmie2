@@ -79,7 +79,7 @@ EOD;
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
-			<script><!--
+			<script type='text/javascript'><!--
 			$(document).ready(function() {
 				$('#search_input').DefaultValue('Search');
 				$('#search_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {
