@@ -8,7 +8,7 @@ class CustomSetupTheme extends SetupTheme {
 		$b = $block->body;
 		$i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
 		$html = "
-			<script><!--
+			<script type='text/javascript'><!--
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {

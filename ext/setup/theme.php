@@ -79,7 +79,7 @@ class SetupTheme extends Themelet {
 		}
 
 		$table = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$(\"#settings\").tablesorter();
 			});

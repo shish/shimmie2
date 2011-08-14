@@ -36,7 +36,7 @@ class IPBanTheme extends Themelet {
 			";
 		}
 		$html = "
-			<script>
+			<script type='text/javascript'>
 			$(document).ready(function() {
 				$(\"#bans\").tablesorter();
 			});
