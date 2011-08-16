@@ -120,10 +120,13 @@ class Upload implements Extension {
 
 			$sb = new SetupBlock("Upload");
 			$sb->position = 10;
+			// Output the limits from PHP so the user has an idea of what they can set.
+			$sb->add_label("<i>PHP's Upload Limit = ".ini_get('max_file_uploads')."</i><br/>");
 			$sb->add_int_option("upload_count", "Max uploads: ");
-			$sb->add_shorthand_int_option("upload_size", "<br>Max size per file: ");
-			$sb->add_bool_option("upload_anon", "<br>Allow anonymous uploads: ");
-			$sb->add_choice_option("transload_engine", $tes, "<br>Transload: ");
+			$sb->add_label("<br/><i>PHP's Max Size Upload = ".ini_get('upload_max_filesize')."</i><br/>");
+			$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
+			$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
+			$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
 			$event->panel->add_block($sb);
 		}
 
@@ -145,24 +148,55 @@ class Upload implements Extension {
 		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}
 
+	// Helper function based on the one from the online PHP Documentation
+	// which is licensed under Creative Commons Attribution 3.0 License
+	// TODO: Make these messages user/admin editable
+	private function upload_error_message($error_code) {
+		switch ($error_code) {
+			case UPLOAD_ERR_INI_SIZE:
+				return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+			case UPLOAD_ERR_FORM_SIZE:
+				return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+			case UPLOAD_ERR_PARTIAL:
+				return 'The uploaded file was only partially uploaded';
+			case UPLOAD_ERR_NO_FILE:
+				return 'No file was uploaded';
+			case UPLOAD_ERR_NO_TMP_DIR:
+				return 'Missing a temporary folder';
+			case UPLOAD_ERR_CANT_WRITE:
+				return 'Failed to write file to disk';
+			case UPLOAD_ERR_EXTENSION:
+				return 'File upload stopped by extension';
+			default:
+				return 'Unknown upload error';
+		}
+	}
+	
 	private function try_upload($file, $tags, $source) {
 		global $page;
 		global $config;
+		global $user;
 
 		if(empty($source)) $source = null;
 
 		$ok = true;
 
 		// blank file boxes cause empty uploads, no need for error message
-		if(file_exists($file['tmp_name'])) {
-			global $user;
-			$pathinfo = pathinfo($file['name']);
-			$metadata['filename'] = $pathinfo['basename'];
-			$metadata['extension'] = $pathinfo['extension'];
-			$metadata['tags'] = $tags;
-			$metadata['source'] = $source;
-			$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
+		if (!empty($file['name'])) {
 			try {
+				// check if the upload was successful
+				if ($file['error'] !== UPLOAD_ERR_OK) {
+					throw new UploadException($this->upload_error_message($file['error']));
+				}
+
+				$pathinfo = pathinfo($file['name']);
+				$metadata['filename'] = $pathinfo['basename'];
+				$metadata['extension'] = $pathinfo['extension'];
+				$metadata['tags'] = $tags;
+				$metadata['source'] = $source;
+				
+				$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
+
 				send_event($event);
 				if($event->image_id == -1) {
 					throw new UploadException("File type not recognised");
