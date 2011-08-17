@@ -98,6 +98,7 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_string('thumb_convert_path', 'convert.exe');
 
 		$config->set_default_bool('image_show_meta', false);
+		$config->set_default_bool('jquery_confirm', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
@@ -170,6 +171,7 @@ class ImageIO extends SimpleExtension {
 		if(!in_array("OS", $_SERVER) || $_SERVER["OS"] != 'Windows_NT') {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
+		$sb->add_bool_option("jquery_confirm", "<br>Confirm Delete with jQuery: ");
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
