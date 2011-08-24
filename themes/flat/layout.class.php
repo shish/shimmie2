@@ -90,7 +90,7 @@ EOD;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
 		if($hidable) $html .= "
-			<script><!--
+			<script type='text/javascript'><!--
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {

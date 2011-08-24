@@ -138,7 +138,7 @@ class BlotterTheme extends Themelet {
 #blotter1 {font-size: 80%; position: relative;}
 #blotter2 {font-size: 80%;}
 </style>";
-		$html .= "<script><!--
+		$html .= "<script type='text/javascript'><!--
 $(document).ready(function() {
 	$(\"#blotter2-toggle\").click(function() {
 		$(\"#blotter2\").slideToggle(\"slow\", function() {
