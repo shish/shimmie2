@@ -249,7 +249,7 @@ class Pools extends SimpleExtension {
 				$pools = $database->get_all("SELECT * FROM pools");
 			}
 			else {
-				$pools = $database->get_all("SELECT * FROM pools WHERE user_id=?", array($user->id));
+				$pools = $database->get_all("SELECT * FROM pools WHERE user_id=:id", array("id"=>$user->id));
 			}
 			if(count($pools) > 0) {
 				$event->add_part($this->theme->get_adder_html($event->image, $pools));
@@ -280,8 +280,8 @@ class Pools extends SimpleExtension {
 				INNER JOIN users AS u
 				ON p.user_id = u.id
 				ORDER BY p.date DESC
-				LIMIT ? OFFSET ?
-				", array($poolsPerPage, $pageNumber * $poolsPerPage)
+				LIMIT :l OFFSET :o
+				", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage)
 				);
 
 		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
@@ -306,8 +306,8 @@ class Pools extends SimpleExtension {
 		$public = $_POST["public"] == "Y" ? "Y" : "N";
 		$database->execute("
 				INSERT INTO pools (user_id, public, title, description, date)
-				VALUES (?, ?, ?, ?, now())",
-				array($user->id, $public, $_POST["title"], $_POST["description"]));
+				VALUES (:uid, :public, :title, :desc, now())",
+				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
 
 		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID"); # FIXME database specific?
 
@@ -318,12 +318,12 @@ class Pools extends SimpleExtension {
 
 	private function get_pool($poolID) {
 		global $database;
-		return $database->get_all("SELECT * FROM pools WHERE id=?", array($poolID));
+		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
 
 	private function get_single_pool($poolID) {
 		global $database;
-		return $database->get_row("SELECT * FROM pools WHERE id=?", array($poolID));
+		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
 
 	/*
@@ -331,7 +331,7 @@ class Pools extends SimpleExtension {
 	 */
 	private function get_pool_id($imageID) {
 		global $database;
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=?", array($imageID));
+		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>"iid"=>$imageID));
 	}
 
 
@@ -363,8 +363,8 @@ class Pools extends SimpleExtension {
 			if(!$this->check_post($poolID, $imageID)){
 				$database->execute("
 						INSERT INTO pool_images (pool_id, image_id)
-						VALUES (?, ?)",
-						array($poolID, $imageID));
+						VALUES (:pid, :iid)",
+						array("pid"=>$poolID, "iid"=>$imageID));
 
 				$images .= " ".$imageID;
 			}
@@ -372,15 +372,15 @@ class Pools extends SimpleExtension {
 		}
 
 		if(!strlen($images) == 0) {
-			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
 			$this->add_history($poolID, 1, $images, $count);
 		}
 
 		$database->Execute("
 			UPDATE pools
-			SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=?)
-			WHERE id=?",
-			array($poolID, $poolID)
+			SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid)
+			WHERE id=:pid",
+			array("pid"=>$poolID)
 		);
 		return $poolID;	 
 	}
@@ -394,9 +394,9 @@ class Pools extends SimpleExtension {
 			list($imageORDER, $imageID) = $data;
 			$database->Execute("
 				UPDATE pool_images
-				SET image_order = ?
-				WHERE pool_id = ? AND image_id = ?",
-				array($imageORDER, $poolID, $imageID)
+				SET image_order = :ord
+				WHERE pool_id = :pid AND image_id = :iid",
+				array("ord"=>$imageORDER, "pid"=>$poolID, "iid"=>$imageID)
 			);
 		}
 
@@ -414,11 +414,11 @@ class Pools extends SimpleExtension {
 		$images = "";
 
 		foreach($_POST['check'] as $imageID) {
-			$database->execute("DELETE FROM pool_images WHERE pool_id = ? AND image_id = ?", array($poolID, $imageID));
+			$database->execute("DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid", array("pid"=>$poolID, "iid"=>$imageID));
 			$images .= " ".$imageID;
 		}
 
-		$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+		$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
 		$this->add_history($poolID, 0, $images, $count);
 		return $poolID;	 
 	}
@@ -430,7 +430,7 @@ class Pools extends SimpleExtension {
 	 */
 	private function check_post($poolID, $imageID) {
 		global $database;
-		$result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=? AND image_id=?", array($poolID, $imageID));
+		$result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid", array("pid"=>$poolID, "iid"=>$imageID));
 		return ($result != 0);
 	}
 
@@ -462,27 +462,27 @@ class Pools extends SimpleExtension {
 					SELECT p.image_id
 					FROM pool_images AS p
 					INNER JOIN images AS i ON i.id = p.image_id
-					WHERE p.pool_id = ? AND i.rating IN ($rating)
+					WHERE p.pool_id = :pid AND i.rating IN ($rating)
 					ORDER BY p.image_order ASC
-					LIMIT ? OFFSET ?",
-					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
+					LIMIT :l OFFSET :o",
+					array("pid"=>$poolID, "l"=>$imagesPerPage, "o"=>$pageNumber * $imagesPerPage));
 
 			$totalPages = ceil($database->get_one("
 					SELECT COUNT(*) 
 					FROM pool_images AS p
 					INNER JOIN images AS i ON i.id = p.image_id
-					WHERE pool_id=? AND i.rating IN ($rating)",
-					array($poolID)) / $imagesPerPage);
+					WHERE pool_id=:pid AND i.rating IN ($rating)",
+					array("pid"=>$poolID)) / $imagesPerPage);
 		}
 		else {
 			$result = $database->get_all("
 					SELECT image_id
 					FROM pool_images
-					WHERE pool_id=?
+					WHERE pool_id=:pid
 					ORDER BY image_order ASC
-					LIMIT ? OFFSET ?",
-					array($poolID, $imagesPerPage, $pageNumber * $imagesPerPage));
-			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID)) / $imagesPerPage);
+					LIMIT :l OFFSET :o",
+					array("pid"=>$poolID, "l"=>$imagesPerPage, "o"=>$pageNumber * $imagesPerPage));
+			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID)) / $imagesPerPage);
 		}
 
 		$images = array();
@@ -501,7 +501,7 @@ class Pools extends SimpleExtension {
 	private function edit_posts($poolID) {
 		global $database;
 
-		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=? ORDER BY image_order ASC", array($poolID));
+		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));
 
 		$images = array();
 		while(!$result->EOF) {
@@ -520,14 +520,14 @@ class Pools extends SimpleExtension {
 	private function edit_order($poolID) {
 		global $database;
 
-		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=? ORDER BY image_order ASC", array($poolID));									
+		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));									
 		$images = array();
 		while(!$result->EOF) {
 			$image = $database->get_row("
 					SELECT * FROM images AS i
 					INNER JOIN pool_images AS p ON i.id = p.image_id
-					WHERE pool_id=? AND i.id=?",
-					array($poolID, $result->fields["image_id"]));
+					WHERE pool_id=:pid AND i.id=:iid",
+					array("pid"=>$poolID, "iid"=>$result->fields["image_id"]));
 			$image = ($image ? new Image($image) : null);
 			$images[] = array($image);
 			$result->MoveNext();
@@ -551,14 +551,14 @@ class Pools extends SimpleExtension {
 		global $user, $database;
 
 		if($user->is_admin()) {
-			$database->execute("DELETE FROM pool_history WHERE pool_id = ?", array($poolID));
-			$database->execute("DELETE FROM pool_images WHERE pool_id = ?", array($poolID));
-			$database->execute("DELETE FROM pools WHERE id = ?", array($poolID));
+			$database->execute("DELETE FROM pool_history WHERE pool_id = :pid", array("pid"=>$poolID));
+			$database->execute("DELETE FROM pool_images WHERE pool_id = :pid", array("pid"=>$poolID));
+			$database->execute("DELETE FROM pools WHERE id = :pid", array("pid"=>$poolID));
 		} elseif(!$user->is_anonymous()) {
 			// FIXME: WE CHECK IF THE USER IS THE OWNER OF THE POOL IF NOT HE CAN'T DO ANYTHING
-			$database->execute("DELETE FROM pool_history WHERE pool_id = ?", array($poolID));
-			$database->execute("DELETE FROM pool_images WHERE pool_id = ?", array($poolID));
-			$database->execute("DELETE FROM pools WHERE id = ? AND user_id = ?", array($poolID, $user->id));
+			$database->execute("DELETE FROM pool_history WHERE pool_id = :pid", array("pid"=>$poolID));
+			$database->execute("DELETE FROM pool_images WHERE pool_id = :pid", array("pid"=>$poolID));
+			$database->execute("DELETE FROM pools WHERE id = :pid AND user_id = :uid", array("pid"=>$poolID, "uid"=>$user->id));
 		}
 	}
 
@@ -571,8 +571,8 @@ class Pools extends SimpleExtension {
 		global $user, $database;
 		$database->execute("
 				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
-				VALUES (?, ?, ?, ?, ?, now())",
-				array($poolID, $user->id, $action, $images, $count));
+				VALUES (:pid, :uid, :act, :img, :count, now())",
+				array("pid"=>$poolID, "uid"=>$user->id, "act"=>$action, "img"=>$images, "count"=>$count));
 	}
 
 
@@ -601,8 +601,8 @@ class Pools extends SimpleExtension {
 				INNER JOIN users AS u
 				ON h.user_id = u.id
 				ORDER BY h.date DESC
-				LIMIT ? OFFSET ?
-				", array($historiesPerPage, $pageNumber * $historiesPerPage));
+				LIMIT :l OFFSET :o
+				", array("l"=>$historiesPerPage, "o"=>$pageNumber * $historiesPerPage));
 
 		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
@@ -616,7 +616,7 @@ class Pools extends SimpleExtension {
 	 */
 	private function revert_history($historyID) {
 		global $database;
-		$status = $database->get_all("SELECT * FROM pool_history WHERE id=?", array($historyID));
+		$status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", array("hid"=>$historyID));
 
 		foreach($status as $entry) {
 			$images = trim($entry['images']);
@@ -645,7 +645,7 @@ class Pools extends SimpleExtension {
 				}
 			}
 
-			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=?", array($poolID));
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
 			$this->add_history($poolID, $newAction, $imageArray, $count);
 		}
 	}
@@ -662,11 +662,11 @@ class Pools extends SimpleExtension {
 		if(!$this->check_post($poolID, $imageID)) {
 			$database->execute("
 					INSERT INTO pool_images (pool_id, image_id)
-					VALUES (?, ?)",
-					array($poolID, $imageID));
+					VALUES (:pid, :iid)",
+					array("pid"=>$poolID, "iid"=>$imageID));
 		}
 
-		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=?) WHERE id=?", array($poolID, $poolID));
+		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));
 	}
 
 
@@ -678,8 +678,8 @@ class Pools extends SimpleExtension {
 	private function delete_post($poolID, $imageID) {
 		global $database;
 
-		$database->execute("DELETE FROM pool_images WHERE pool_id = ? AND image_id = ?", array($poolID, $imageID));
-		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=?) WHERE id=?", array($poolID, $poolID));
+		$database->execute("DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid", array("pid"=>$poolID, "iid"=>$imageID));
+		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));
 	}
 
 }
