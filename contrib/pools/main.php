@@ -331,7 +331,7 @@ class Pools extends SimpleExtension {
 	 */
 	private function get_pool_id($imageID) {
 		global $database;
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>"iid"=>$imageID));
+		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
 	}
 
 
