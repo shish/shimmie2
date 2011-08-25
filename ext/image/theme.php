@@ -27,6 +27,9 @@ class ImageIOTheme {
 				</form>
 			";
 		}
+		
+		$html .= "<a href='".make_link("upload/replace/".$i_image_id)."'>Replace Image</a>";
+		
 		return $html;
 	}
 }

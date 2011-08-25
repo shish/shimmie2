@@ -84,18 +84,19 @@ class Upload implements Extension {
 				
 				if(count($_FILES) + count($_POST) > 0)
 				{
-					if (count($_FILES) + count($_POST) > 1) {
+					if (count($_FILES) > 1) {
 						throw new UploadException("Can not upload more than one image for replacing.");
 					}
 					
 					if($this->can_upload($user)) {
-						/* This could be changed so that it doesn't use foreach loops.. */
-						foreach($_FILES as $file) {
-							$ok = $ok & $this->try_upload($_FILES, $tags, $source, $image_id);
-						}
-						foreach($_POST as $name => $value) {
-							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-								$ok = $ok & $this->try_transload($value, $tags, $source, $image_id);
+						if (count($_FILES)) {
+							$ok = $this->try_upload($_FILES, $tags, $source, $image_id);
+						} else {
+							foreach($_POST as $name => $value) {
+								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+									$ok = $this->try_transload($value, $tags, $source, $image_id);
+									break; // leave the foreach loop.
+								}
 							}
 						}
 						/* Could replace with a page saying the image replace was successful? */
