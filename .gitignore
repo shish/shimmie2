@@ -5,6 +5,7 @@ thumbs
 data
 sql.log
 shimmie.log
+!lib/images
 ext/admin
 ext/artists
 ext/autocomplete
