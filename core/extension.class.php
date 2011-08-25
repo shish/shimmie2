@@ -98,6 +98,7 @@ abstract class SimpleExtension implements Extension {
 
 	public function receive_event(Event $event) {
 		$name = get_class($event);
+		// this is rather clever..
 		$name = "on".str_replace("Event", "", $name);
 		if(method_exists($this->_child, $name)) {
 			$this->_child->$name($event);
@@ -139,9 +140,18 @@ abstract class DataHandlerExtension implements Extension {
 			if(is_null($image)) {
 				throw new UploadException("Data handler failed to create image object from data");
 			}
-			$iae = new ImageAdditionEvent($event->user, $image);
-			send_event($iae);
-			$event->image_id = $iae->image->id;
+			/* Check if we are replacing an image */
+			if ( isset($event->metadata['replace']))
+			{
+				$image_id = $event->metadata['replace'];
+				$ire = new ImageReplaceEvent($image_id, $image);
+				send_event($ire);
+				$event->image_id = $image_id;
+			} else {
+				$iae = new ImageAdditionEvent($event->user, $image);
+				send_event($iae);
+				$event->image_id = $iae->image->id;
+			}
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {

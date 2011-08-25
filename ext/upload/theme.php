@@ -75,6 +75,54 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block("Upload", $html, "main", 20));
 	}
 
+	/* only allows 1 file to be uploaded - for replacing another image file */
+	public function display_replace_page(Page $page) {
+		global $config;
+		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+
+		$upload_list = '';
+		$width = $tl_enabled ? "35%" : "80%";
+		$upload_list .= "
+			<tr>
+				<td width='50'>File</td>
+				<td width='250'><input id='data0' name='data0' type='file'></td>
+		";
+		if($tl_enabled) {
+			$upload_list .= "
+				<td width='50'>URL</td>
+				<td width='250'><input id='url0' name='url0' type='text'></td>
+			";
+		}
+		$upload_list .= "
+			</tr>
+		";
+
+		$max_size = $config->get_int('upload_size');
+		$max_kb = to_shorthand_int($max_size);
+		$html = make_form(make_link("upload/replace"), "POST", $multipart=True)."
+				<table id='large_upload_form'>
+					$upload_list
+					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
+					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
+				</table>
+			</form>
+			<small>(Max file size is $max_kb)</small>
+		";
+/*
+		if($tl_enabled) {
+			$link = make_http(make_link("upload"));
+			$title = "Upload to " . $config->get_string('title');
+			$html .= '<p><a href="javascript:location.href=&quot;' .
+				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
+				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+		}
+*/
+		$page->set_title("Replace Image Upload");
+		$page->set_heading("Replace Image Upload");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Replace Image Upload", $html, "main", 20));
+	}
+	
 	public function display_upload_status(Page $page, $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
