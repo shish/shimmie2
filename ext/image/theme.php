@@ -28,7 +28,14 @@ class ImageIOTheme {
 			";
 		}
 		
-		$html .= "<a href='".make_link("upload/replace/".$i_image_id)."'>Replace Image</a>";
+		if($config->get_bool("upload_replace")) {
+			$html .= "
+				".make_form(make_link("image_admin/replace"))."
+					<input type='hidden' name='image_id' value='$i_image_id' />
+					<input type='submit' value='Replace' />
+				</form>
+			";
+		}
 		
 		return $html;
 	}

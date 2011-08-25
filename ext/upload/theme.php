@@ -76,7 +76,7 @@ class UploadTheme extends Themelet {
 	}
 
 	/* only allows 1 file to be uploaded - for replacing another image file */
-	public function display_replace_page(Page $page) {
+	public function display_replace_page(Page $page, $image_id) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
@@ -99,7 +99,9 @@ class UploadTheme extends Themelet {
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
-		$html = make_form(make_link("upload/replace"), "POST", $multipart=True)."
+		$html = "<p>Replacing Image ID# ".$image_id."</p>"
+				.make_form(make_link("upload"), "POST", $multipart=True)."
+				<input type='hidden' name='image_id' value='$image_id'>
 				<table id='large_upload_form'>
 					$upload_list
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
@@ -108,15 +110,7 @@ class UploadTheme extends Themelet {
 			</form>
 			<small>(Max file size is $max_kb)</small>
 		";
-/*
-		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
-			$title = "Upload to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:location.href=&quot;' .
-				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
-				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
-		}
-*/
+
 		$page->set_title("Replace Image Upload");
 		$page->set_heading("Replace Image Upload");
 		$page->add_block(new NavBlock());
@@ -135,6 +129,22 @@ class UploadTheme extends Themelet {
 		}
 	}
 
+	public function display_replace_upload_status(Page $page, $ok) {
+		if($ok) {
+			$page->set_title("GREAT SUCCESS!");
+			$page->set_heading("GREAT SUCCESS!");
+			$page->add_block(new NavBlock());
+		/*  
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link());*/
+		}
+		else {
+			$page->set_title("poo");
+			$page->set_heading("Upload Status");
+			$page->add_block(new NavBlock());
+		}
+	}
+	
 	public function display_upload_error(Page $page, $title, $message) {
 		$page->add_block(new Block($title, $message));
 	}

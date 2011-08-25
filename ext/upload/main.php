@@ -69,98 +69,131 @@ class Upload implements Extension {
 		}
 
 		if($event instanceof PageRequestEvent) {
-			/* Upload and Replace Image */
 			if ($event->page_matches("upload/replace"))
 			{
+				/* Replace Image Request */
+				if (!$config->get_bool("upload_replace")) {
+					throw new UploadException("Upload Replacing Images is not enabled.");
+				}
 				if($is_full) {
 					throw new UploadException("Can not replace Image: disk nearly full");
 				}
+				// Try to get the image ID
 				$image_id = int_escape($event->get_arg(0));
-				$image_old = Image::by_id($image_id);
+				if (empty($image_id)) {
+					$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
+				}
 
+				if (empty($image_id)) {
+					throw new UploadException("Can not replace Image: No valid Image ID given.");
+				}
+			
+				$image_old = Image::by_id($image_id);
 				if(is_null($image_old)) {
 					$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
 				}
 				
-				if(count($_FILES) + count($_POST) > 0)
-				{
-					if (count($_FILES) > 1) {
-						throw new UploadException("Can not upload more than one image for replacing.");
-					}
-					
-					if($this->can_upload($user)) {
-						if (count($_FILES)) {
-							$ok = $this->try_upload($_FILES, $tags, $source, $image_id);
-						} else {
-							foreach($_POST as $name => $value) {
-								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-									$ok = $this->try_transload($value, $tags, $source, $image_id);
-									break; // leave the foreach loop.
-								}
-							}
-						}
-						/* Could replace with a page saying the image replace was successful? */
-						$this->theme->display_upload_status($page, $ok);
-					} else {
-						$this->theme->display_permission_denied($page);
-					}
-				}
-				else if(!empty($_GET['url']))
-				{
-					if($this->can_upload($user)) {
-						$url = $_GET['url'];
-						$ok = $this->try_transload($url, $tags, $url, $image_id);
-						/* Replace with a page saying the image replace was successful */
-						$this->theme->display_upload_status($page, $ok);
-					}
-					else {
-						$this->theme->display_permission_denied($page);
-					}
-				} else {
-					$this->theme->display_replace_page($page);
-				}
+				$this->theme->display_replace_page($page, $image_id);
+				
 			}
-			/* Upload Image */
 			else if ($event->page_matches("upload"))
 			{
-				if(count($_FILES) + count($_POST) > 0) {
-					$tags = Tag::explode($_POST['tags']);
-					$source = isset($_POST['source']) ? $_POST['source'] : null;
-					if($this->can_upload($user)) {
-						$ok = true;
-						foreach($_FILES as $file) {
-							$ok = $ok & $this->try_upload($file, $tags, $source);
-						}
-						foreach($_POST as $name => $value) {
-							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-								$ok = $ok & $this->try_transload($value, $tags, $source);
-							}
-						}
-
-						$this->theme->display_upload_status($page, $ok);
-					}
-					else {
-						$this->theme->display_permission_denied($page);
-					}
+				// Try to get the image ID
+				$image_id = int_escape($event->get_arg(0));
+				if (empty($image_id)) {
+					$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
 				}
-				else if(!empty($_GET['url']))
+				if (!empty($image_id))
 				{
-					if($this->can_upload($user)) {
-						$url = $_GET['url'];
-						$tags = array('tagme');
-						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
-							$tags = Tag::explode($_GET['tags']);
-						}
-						$ok = $this->try_transload($url, $tags, $url);
-						$this->theme->display_upload_status($page, $ok);
+					/* Upload and Replace Image */
+					if (!$config->get_bool("upload_replace")) {
+						throw new UploadException("Upload Replacing Images is not enabled.");
 					}
-					else {
-						$this->theme->display_permission_denied($page);
+					if($is_full) {
+						throw new UploadException("Can not replace Image: disk nearly full");
+					}
+					$image_old = Image::by_id($image_id);
+					if(is_null($image_old)) {
+						$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
+					}
+					if(count($_FILES) + count($_POST) > 0)
+					{
+						if (count($_FILES) > 1) {
+							throw new UploadException("Can not upload more than one image for replacing.");
+						}
+						if($this->can_upload($user)) {
+							if (count($_FILES)) {
+								$ok = $this->try_upload($_FILES, $tags, $source, $image_id);
+							} else {
+								foreach($_POST as $name => $value) {
+									if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+										$ok = $this->try_transload($value, $tags, $source, $image_id);
+										break; // leave the foreach loop.
+									}
+								}
+							}
+							/* Could replace with a page saying the image replace was successful? */
+							$this->theme->display_replace_upload_status($page, $ok);
+						} else {
+							$this->theme->display_permission_denied($page);
+						}
+					}
+					else if(!empty($_GET['url']))
+					{
+						if($this->can_upload($user)) {
+							$url = $_GET['url'];
+							$ok = $this->try_transload($url, $tags, $url, $image_id);
+							/* Replace with a page saying the image replace was successful */
+							$this->theme->display_replace_upload_status($page, $ok);
+						}
+						else {
+							$this->theme->display_permission_denied($page);
+						}
 					}
 				}
-				else {
-					if(!$is_full) {
-						$this->theme->display_page($page);
+				else
+				{
+					/* Regular Upload Image */
+					if(count($_FILES) + count($_POST) > 0)
+					{
+						$tags = Tag::explode($_POST['tags']);
+						$source = isset($_POST['source']) ? $_POST['source'] : null;
+						if($this->can_upload($user)) {
+							$ok = true;
+							foreach($_FILES as $file) {
+								$ok = $ok & $this->try_upload($file, $tags, $source);
+							}
+							foreach($_POST as $name => $value) {
+								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+									$ok = $ok & $this->try_transload($value, $tags, $source);
+								}
+							}
+
+							$this->theme->display_upload_status($page, $ok);
+						}
+						else {
+							$this->theme->display_permission_denied($page);
+						}
+					}
+					else if(!empty($_GET['url']))
+					{
+						if($this->can_upload($user)) {
+							$url = $_GET['url'];
+							$tags = array('tagme');
+							if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
+								$tags = Tag::explode($_GET['tags']);
+							}
+							$ok = $this->try_transload($url, $tags, $url);
+							$this->theme->display_upload_status($page, $ok);
+						}
+						else {
+							$this->theme->display_permission_denied($page);
+						}
+					}
+					else {
+						if(!$is_full) {
+							$this->theme->display_page($page);
+						}
 					}
 				}
 			}

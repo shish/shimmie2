@@ -57,7 +57,8 @@ class ImageDeletionEvent extends Event {
 class ImageReplaceEvent extends Event {
 	var $image;
 
-	public function ImageReplaceEvent(Image $image) {
+	public function ImageReplaceEvent($id, Image $image) {
+		$this->id = $id;
 		$this->image = $image;
 	}
 }
@@ -162,7 +163,7 @@ class ImageIO extends SimpleExtension {
 					$page->set_redirect(make_link('upload/replace/'.$image->id));
 				} else {
 					/* Invalid image ID */
-					// fail silently?
+					throw new ImageReplaceException("Image to replace does not exist.");
 				}
 			}
 		}
@@ -190,7 +191,7 @@ class ImageIO extends SimpleExtension {
 
 	public function onImageReplace($event) {
 		try {
-			$this->replace_image($event->image_old, $event->image_new);
+			$this->replace_image($event->id, $event->image);
 		}
 		catch(ImageReplaceException $e) {
 			throw new UploadException($e->error);
