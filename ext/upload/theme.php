@@ -99,8 +99,13 @@ class UploadTheme extends Themelet {
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
-		$html = "<p>Replacing Image ID# ".$image_id."</p>"
-				.make_form(make_link("upload"), "POST", $multipart=True)."
+		
+		$image = Image::by_id($image_id);
+		$thumbnail = $this->build_thumb_html($image, null);
+		
+		$html = "<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
+				.$thumbnail."<br>"
+				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
 				<input type='hidden' name='image_id' value='$image_id'>
 				<table id='large_upload_form'>
 					$upload_list
@@ -111,10 +116,10 @@ class UploadTheme extends Themelet {
 			<small>(Max file size is $max_kb)</small>
 		";
 
-		$page->set_title("Replace Image Upload");
-		$page->set_heading("Replace Image Upload");
+		$page->set_title("Replace Image");
+		$page->set_heading("Replace Image");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Replace Image Upload", $html, "main", 20));
+		$page->add_block(new Block("Upload Replacement Image", $html, "main", 20));
 	}
 	
 	public function display_upload_status(Page $page, $ok) {
@@ -129,22 +134,6 @@ class UploadTheme extends Themelet {
 		}
 	}
 
-	public function display_replace_upload_status(Page $page, $ok) {
-		if($ok) {
-			$page->set_title("GREAT SUCCESS!");
-			$page->set_heading("GREAT SUCCESS!");
-			$page->add_block(new NavBlock());
-		/*  
-			$page->set_mode("redirect");
-			$page->set_redirect(make_link());*/
-		}
-		else {
-			$page->set_title("poo");
-			$page->set_heading("Upload Status");
-			$page->add_block(new NavBlock());
-		}
-	}
-	
 	public function display_upload_error(Page $page, $title, $message) {
 		$page->add_block(new Block($title, $message));
 	}

@@ -48,14 +48,15 @@ class ImageDeletionEvent extends Event {
 
 /*
  * ImageReplaceEvent:
- *   $image -- the new image to be used
+ *   $id     -- the ID of the image to replace
+ *   $image  -- the image object of the new image to use
  *
  * This function replaces an image. Effectively it only
  * replaces the image file contents and leaves the tags
  * and such the same.
  */
 class ImageReplaceEvent extends Event {
-	var $image;
+	var $id, $image;
 
 	public function ImageReplaceEvent($id, Image $image) {
 		$this->id = $id;
@@ -369,22 +370,15 @@ class ImageIO extends SimpleExtension {
 		global $database;
 		global $config;
 		
-		/*
-		 * Validate things
-		 */
-		
-		/* Check to make sure the image exists. */		
+		/* Check to make sure the image exists. */
 		$existing = Image::by_id($id);
 		
 		if(is_null($existing)) {
 			throw new ImageReplaceException("Image to replace does not exist!");
 		}
 		
-		if ($existing->hash === $image->hash) {
-			throw new ImageReplaceException("The uploaded image is the same as the one to replace.");
-		}
 		if(strlen(trim($image->source)) == 0) {
-			$image->source = null;
+			$image->source = $existing->get_source();
 		}
 		if(!empty($image->source)) {
 			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
@@ -396,9 +390,9 @@ class ImageIO extends SimpleExtension {
 			This step could be optional, ie: perhaps move the image somewhere
 			and have it stored in a 'replaced images' list that could be 
 			inspected later by an admin?
-		*/	   
+		*/
+		log_debug("image", "Removing image with hash ".$existing->hash);
 		$existing->remove_image_only();	// Actually delete the old image file from disk
-		
 		
 		// Update the data in the database.
 		$database->Execute(
@@ -411,11 +405,11 @@ class ImageIO extends SimpleExtension {
 				array(
 					"filename"=>$image_new->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
 					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
-					"id"=>$existing->id
+					"id"=>$id
 				)
 		);
 
-		log_info("image", "Replaced Image #{$existing->id} with ({$image->hash})");
+		log_info("image", "Replaced Image #{$id} with ({$image->hash})");
 	}
 // }}} end replace
 
