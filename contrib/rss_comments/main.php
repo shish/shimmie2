@@ -11,7 +11,7 @@ class RSS_Comments extends SimpleExtension {
 		global $config, $page;
 		$title = $config->get_string('title');
 
-		$page->add_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
+		$page->add_html_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
 			"title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
 	}
 

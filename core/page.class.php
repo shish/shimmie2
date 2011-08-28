@@ -108,7 +108,7 @@ class Page {
 	var $heading = "";
 	var $subheading = "";
 	var $quicknav = "";
-	var $headers = array();
+	var $html_headers = array();
 	var $blocks = array();
 	/** @publicsection */
 
@@ -136,9 +136,9 @@ class Page {
 	/**
 	 * Add a line to the HTML head section
 	 */
-	public function add_header($line, $position=50) {
-		while(isset($this->headers[$position])) $position++;
-		$this->headers[$position] = $line;
+	public function add_html_header($line, $position=50) {
+		while(isset($this->html_headers[$position])) $position++;
+		$this->html_headers[$position] = $line;
 	}
 
 	/**
@@ -165,7 +165,7 @@ class Page {
 			case "page":
 				header("Cache-control: no-cache");
 				usort($this->blocks, "blockcmp");
-				$this->add_auto_headers();
+				$this->add_auto_html_headers();
 				$layout = new Layout();
 				$layout->display_page($page);
 				break;
@@ -186,26 +186,26 @@ class Page {
 		}
 	}
 
-	protected function add_auto_headers() {
+	protected function add_auto_html_headers() {
 		$data_href = get_base_href();
 
 		foreach(glob("lib/*.css") as $css) {
-			$this->add_header("<link rel='stylesheet' href='$data_href/$css' type='text/css'>");
+			$this->add_html_header("<link rel='stylesheet' href='$data_href/$css' type='text/css'>");
 		}
 		$css_files = glob("ext/*/style.css");
 		if($css_files) {
 			foreach($css_files as $css_file) {
-				$this->add_header("<link rel='stylesheet' href='$data_href/$css_file' type='text/css'>");
+				$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_file' type='text/css'>");
 			}
 		}
 
 		foreach(glob("lib/*.js") as $js) {
-			$this->add_header("<script src='$data_href/$js' type='text/javascript'></script>");
+			$this->add_html_header("<script src='$data_href/$js' type='text/javascript'></script>");
 		}
 		$js_files = glob("ext/*/script.js");
 		if($js_files) {
 			foreach($js_files as $js_file) {
-				$this->add_header("<script src='$data_href/$js_file' type='text/javascript'></script>");
+				$this->add_html_header("<script src='$data_href/$js_file' type='text/javascript'></script>");
 			}
 		}
 	}
