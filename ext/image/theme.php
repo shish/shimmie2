@@ -28,7 +28,7 @@ class ImageIOTheme {
 			";
 		}
 		
-		if($config->get_bool("upload_replace")) {
+		if($config->get_bool("upload_replace") && $user->is_admin()) {
 			$html .= "
 				".make_form(make_link("image_admin/replace"))."
 					<input type='hidden' name='image_id' value='$i_image_id' />
