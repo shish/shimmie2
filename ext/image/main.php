@@ -367,13 +367,13 @@ class ImageIO extends SimpleExtension {
 			}
 			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
 
-			// FIXME: should be $page->blah
 			if($if_modified_since == $gmdate_mod) {
-				header("HTTP/1.0 304 Not Modified");
+				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
 			}
 			else {
-				header("Last-Modified: $gmdate_mod");
-				header("Expires: Fri, 2 Sep 2101 12:42:42 GMT"); // War was beginning
+				/* FIXME: The Expires date Needs to be admin-configurable */
+				$page->add_http_header("Last-Modified: $gmdate_mod");
+				$page->add_http_header("Expires: Fri, 2 Sep 2101 12:42:42 GMT"); // War was beginning
 			}
 		}
 		else {

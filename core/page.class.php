@@ -109,6 +109,7 @@ class Page {
 	var $subheading = "";
 	var $quicknav = "";
 	var $html_headers = array();
+	var $http_headers = array();
 	var $blocks = array();
 	/** @publicsection */
 
@@ -144,8 +145,9 @@ class Page {
 	/**
 	 * Add a http header to be sent to the client.
 	 */
-	public function add_header($line) {
-		die("Function is not impliemented yet.");
+	public function add_http_header($line, $position=50) {
+		while(isset($this->http_headers[$position])) $position++;
+		$this->http_headers[$position] = $line;
 	}
 	
 	/**
@@ -164,9 +166,17 @@ class Page {
 	 */
 	public function display() {
 		global $page;
+		
+		add_http_header("Content-type: {$this->type}", 1);
+		add_http_header("X-Powered-By: SCore-".SCORE_VERSION, 2);
 
-		header("Content-type: {$this->type}");
-		header("X-Powered-By: SCore-".SCORE_VERSION);
+		if (!headers_sent()) {
+			foreach($this->http_headers as $head){
+				header($head);
+			}
+		} else {
+			print "Error: Headers have already been sent to the client.";
+		}
 
 		switch($this->mode) {
 			case "page":
