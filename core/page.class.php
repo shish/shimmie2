@@ -140,7 +140,14 @@ class Page {
 		while(isset($this->html_headers[$position])) $position++;
 		$this->html_headers[$position] = $line;
 	}
-
+	
+	/**
+	 * Add a http header to be sent to the client.
+	 */
+	public function add_header($line) {
+		die("Function is not impliemented yet.");
+	}
+	
 	/**
 	 * Add a Block of data
 	 */
