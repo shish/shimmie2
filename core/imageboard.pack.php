@@ -458,6 +458,16 @@ class Image {
 	}
 
 	/**
+	 * This function removes an image (and thumbnail) from the DISK ONLY.
+	 * It DOES NOT remove anything from the database.
+	 */
+	public function remove_image_only() {
+		log_info("core-image", "Removed Image File ({$this->hash})");
+		unlink($this->get_image_filename());
+		unlink($this->get_thumb_filename());
+	}
+	
+	/**
 	 * Someone please explain this
 	 *
 	 * @retval string

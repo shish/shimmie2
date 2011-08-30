@@ -54,6 +54,7 @@ class Upload implements Extension {
 			$config->set_default_int('upload_count', 3);
 			$config->set_default_int('upload_size', '1MB');
 			$config->set_default_bool('upload_anon', false);
+			$config->set_default_bool('upload_replace', true);
 		}
 
 		if($event instanceof PostListBuildingEvent) {
@@ -67,44 +68,118 @@ class Upload implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("upload")) {
-			if(count($_FILES) + count($_POST) > 0) {
-				$tags = Tag::explode($_POST['tags']);
-				$source = isset($_POST['source']) ? $_POST['source'] : null;
-				if($this->can_upload($user)) {
-					$ok = true;
-					foreach($_FILES as $file) {
-						$ok = $ok & $this->try_upload($file, $tags, $source);
-					}
-					foreach($_POST as $name => $value) {
-						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-							$ok = $ok & $this->try_transload($value, $tags, $source);
-						}
-					}
+		if($event instanceof PageRequestEvent) {
+		
+			if ($event->page_matches("upload/replace"))
+			{
+				/* Upload & Replace Image Request */
+				
+				if (!$config->get_bool("upload_replace")) {
+					throw new UploadException("Upload Replacing Images is not enabled.");
+				}
+				if($is_full) {
+					throw new UploadException("Can not replace Image: disk nearly full");
+				}
+				// Try to get the image ID
+				$image_id = int_escape($event->get_arg(0));
+				if (empty($image_id)) {
+					$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
+				}
 
-					$this->theme->display_upload_status($page, $ok);
+				if (empty($image_id)) {
+					throw new UploadException("Can not replace Image: No valid Image ID given.");
 				}
-				else {
-					$this->theme->display_permission_denied($page);
+					
+				$image_old = Image::by_id($image_id);
+				if(is_null($image_old)) {
+					$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
 				}
-			}
-			else if(!empty($_GET['url'])) {
-				if($this->can_upload($user)) {
-					$url = $_GET['url'];
-					$tags = array('tagme');
-					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
-						$tags = Tag::explode($_GET['tags']);
+					
+				if(count($_FILES) + count($_POST) > 0)
+				{
+					if (count($_FILES) > 1) {
+						throw new UploadException("Can not upload more than one image for replacing.");
 					}
-					$ok = $this->try_transload($url, $tags, $url);
-					$this->theme->display_upload_status($page, $ok);
+					if($this->can_upload($user)) {
+						if (count($_FILES)) {
+							foreach($_FILES as $file) {
+								$ok = $this->try_upload($file, $tags, $source, $image_id);
+								break; // leave the foreach loop.
+							}
+						} else {
+							foreach($_POST as $name => $value) {
+								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+									$ok = $this->try_transload($value, $tags, $source, $image_id);
+									break; // leave the foreach loop.
+								}
+							}
+						}
+
+						$this->theme->display_upload_status($page, $ok);
+					} else {
+						$this->theme->display_permission_denied($page);
+					}
 				}
-				else {
-					$this->theme->display_permission_denied($page);
+				else if(!empty($_GET['url']))
+				{
+					if($this->can_upload($user)) {
+						$url = $_GET['url'];
+						$ok = $this->try_transload($url, $tags, $url, $image_id);
+						$this->theme->display_upload_status($page, $ok);
+					}
+					else {
+						$this->theme->display_permission_denied($page);
+					}
+				}
+				else
+				{
+					$this->theme->display_replace_page($page, $image_id);
 				}
 			}
-			else {
-				if(!$is_full) {
-					$this->theme->display_page($page);
+			else if ($event->page_matches("upload"))
+			{
+				/* Regular Upload Image */
+				if(count($_FILES) + count($_POST) > 0)
+				{
+					$tags = Tag::explode($_POST['tags']);
+					$source = isset($_POST['source']) ? $_POST['source'] : null;
+					if($this->can_upload($user)) {
+						$ok = true;
+						foreach($_FILES as $file) {
+							$ok = $ok & $this->try_upload($file, $tags, $source);
+						}
+						foreach($_POST as $name => $value) {
+							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+								$ok = $ok & $this->try_transload($value, $tags, $source);
+							}
+						}
+
+						$this->theme->display_upload_status($page, $ok);
+					}
+					else {
+						$this->theme->display_permission_denied($page);
+					}
+				}
+				else if(!empty($_GET['url']))
+				{
+					if($this->can_upload($user)) {
+						$url = $_GET['url'];
+						$tags = array('tagme');
+						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
+							$tags = Tag::explode($_GET['tags']);
+						}
+						$ok = $this->try_transload($url, $tags, $url);
+						$this->theme->display_upload_status($page, $ok);
+					}
+					else {
+						$this->theme->display_permission_denied($page);
+					}
+				}
+				else
+				{
+					if(!$is_full) {
+						$this->theme->display_page($page);
+					}
 				}
 			}
 		}
@@ -126,6 +201,7 @@ class Upload implements Extension {
 			$sb->add_label("<br/><i>PHP's Max Size Upload = ".ini_get('upload_max_filesize')."</i><br/>");
 			$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
 			$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
+			$sb->add_bool_option("upload_replace", "<br/>Allow replacing images: ");
 			$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
 			$event->panel->add_block($sb);
 		}
@@ -172,7 +248,7 @@ class Upload implements Extension {
 		}
 	}
 	
-	private function try_upload($file, $tags, $source) {
+	private function try_upload($file, $tags, $source, $replace='') {
 		global $page;
 		global $config;
 		global $user;
@@ -188,15 +264,19 @@ class Upload implements Extension {
 				if ($file['error'] !== UPLOAD_ERR_OK) {
 					throw new UploadException($this->upload_error_message($file['error']));
 				}
-
+				
 				$pathinfo = pathinfo($file['name']);
 				$metadata['filename'] = $pathinfo['basename'];
 				$metadata['extension'] = $pathinfo['extension'];
 				$metadata['tags'] = $tags;
 				$metadata['source'] = $source;
 				
+				/* check if we have been given an image ID to replace */
+				if (!empty($replace)) {
+					$metadata['replace'] = $replace;
+				}
+				
 				$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
-
 				send_event($event);
 				if($event->image_id == -1) {
 					throw new UploadException("File type not recognised");
@@ -213,7 +293,7 @@ class Upload implements Extension {
 		return $ok;
 	}
 
-	private function try_transload($url, $tags, $source) {
+	private function try_transload($url, $tags, $source, $replace='') {
 		global $page;
 		global $config;
 
@@ -279,6 +359,12 @@ class Upload implements Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
+			
+			/* check if we have been given an image ID to replace */
+			if (!empty($replace)) {
+				$metadata['replace'] = $replace;
+			}
+			
 			$event = new DataUploadEvent($user, $tmp_filename, $metadata);
 			try {
 				send_event($event);
