@@ -159,8 +159,8 @@ class DanbooruApi implements Extension
 					{
 						$fp = fopen($url, "r");
 						if(!$fp) {
-							header("HTTP/1.0 409 Conflict");
-							header("X-Danbooru-Errors: fopen read error");
+							$page->add_http_header("HTTP/1.0 409 Conflict");
+							$page->add_http_header("X-Danbooru-Errors: fopen read error");
 						}
 
 						$data = "";
@@ -193,8 +193,8 @@ class DanbooruApi implements Extension
 					$filename = basename($url);
 				} else
 				{	// Nothing was specified at all
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: no input files");
+					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->add_http_header("X-Danbooru-Errors: no input files");
 					return;
 				}
 
@@ -206,8 +206,8 @@ class DanbooruApi implements Extension
 				{
 					if(strtolower($_REQUEST['md5']) != $hash)
 					{
-						header("HTTP/1.0 409 Conflict");
-						header("X-Danbooru-Errors: md5 mismatch");
+						$page->add_http_header("HTTP/1.0 409 Conflict");
+						$page->add_http_header("X-Danbooru-Errors: md5 mismatch");
 						return;
 					}
 				}
@@ -217,11 +217,11 @@ class DanbooruApi implements Extension
 				// Does it exist already?
 				$existing = Image::by_hash($hash);
 				if(!is_null($existing)) {
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: duplicate");
+					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->add_http_header("X-Danbooru-Errors: duplicate");
 					$existinglink = make_link("post/view/" . $existing->id);
 					if($danboorup_kludge) $existinglink=make_http($existinglink);
-					header("X-Danbooru-Location: $existinglink");
+					$page->add_http_header("X-Danbooru-Location: $existinglink");
 					return;	// wut!
 				}
 
@@ -246,21 +246,21 @@ class DanbooruApi implements Extension
 					// Did we POST or GET this call?
 					if($_SERVER['REQUEST_METHOD'] == 'POST')
 					{
-						header("X-Danbooru-Location: $newid");
+						$page->add_http_header("X-Danbooru-Location: $newid");
 					}
 					else
-					header("Location: $newid");
+					$page->add_http_header("Location: $newid");
 				}
 				catch(UploadException $ex) {
 					// Did something screw up?
-					header("HTTP/1.0 409 Conflict");
-					header("X-Danbooru-Errors: exception - " . $ex->getMessage());
+					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->add_http_header("X-Danbooru-Errors: exception - " . $ex->getMessage());
 					return;
 				}
 			} else
 			{
-				header("HTTP/1.0 409 Conflict");
-				header("X-Danbooru-Errors: authentication error");
+				$page->add_http_header("HTTP/1.0 409 Conflict");
+				$page->add_http_header("X-Danbooru-Errors: authentication error");
 				return;
 			}
 		}
@@ -387,7 +387,7 @@ class DanbooruApi implements Extension
 		if(($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show'))
 		{
 			$fixedlocation = make_link("post/view/" . $event->get_arg(3));
-			header("Location: $fixedlocation");
+			$page->add_http_header("Location: $fixedlocation");
 		}
 	}
 
