@@ -79,7 +79,7 @@ class Upload implements Extension {
 				}
 				
 				// check if the user is an administrator and can upload files.
-				if (!$user->is_admin() && !$this->can_upload($user)) {
+				if (!$user->is_admin()) {
 					$this->theme->display_permission_denied($page);
 				}
 				else
