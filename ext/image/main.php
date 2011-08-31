@@ -46,6 +46,32 @@ class ImageDeletionEvent extends Event {
 	}
 }
 
+/*
+ * ImageReplaceEvent:
+ *   $id     -- the ID of the image to replace
+ *   $image  -- the image object of the new image to use
+ *
+ * This function replaces an image. Effectively it only
+ * replaces the image file contents and leaves the tags
+ * and such the same.
+ */
+class ImageReplaceEvent extends Event {
+	var $id, $image;
+
+	public function ImageReplaceEvent($id, Image $image) {
+		$this->id = $id;
+		$this->image = $image;
+	}
+}
+
+class ImageReplaceException extends SCoreException {
+	var $error;
+
+	public function __construct($error) {
+		$this->error = $error;
+	}
+}
+
 
 /*
  * ThumbnailGenerationEvent:
@@ -129,6 +155,19 @@ class ImageIO extends SimpleExtension {
 				}
 			}
 		}
+		if($event->page_matches("image_admin/replace")) {
+			global $page, $user;
+			if($user->is_admin() && isset($_POST['image_id']) && $user->check_auth_token()) {
+				$image = Image::by_id($_POST['image_id']);
+				if($image) {
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link('upload/replace/'.$image->id));
+				} else {
+					/* Invalid image ID */
+					throw new ImageReplaceException("Image to replace does not exist.");
+				}
+			}
+		}
 	}
 
 	public function onImageAdminBlockBuilding($event) {
@@ -151,6 +190,15 @@ class ImageIO extends SimpleExtension {
 		$event->image->delete();
 	}
 
+	public function onImageReplace($event) {
+		try {
+			$this->replace_image($event->id, $event->image);
+		}
+		catch(ImageReplaceException $e) {
+			throw new UploadException($e->error);
+		}
+	}
+	
 	public function onUserPageBuilding($event) {
 		$u_id = url_escape($event->display_user->id);
 		$i_image_count = Image::count_images(array("user_id={$event->display_user->id}"));
@@ -266,7 +314,8 @@ class ImageIO extends SimpleExtension {
 		$image->tag_array = array();
 		send_event(new TagSetEvent($image, $tags_to_set));
 	}
-// }}}
+// }}}  end add
+
 // fetch image {{{
 	private function send_file($image_id, $type) {
 		global $config;
@@ -312,6 +361,58 @@ class ImageIO extends SimpleExtension {
 					"The requested image was not found in the database"));
 		}
 	}
-// }}}
-}
+// }}} end fetch
+
+// replace image {{{
+	private function replace_image($id, $image) {
+		global $page;
+		global $user;
+		global $database;
+		global $config;
+		
+		/* Check to make sure the image exists. */
+		$existing = Image::by_id($id);
+		
+		if(is_null($existing)) {
+			throw new ImageReplaceException("Image to replace does not exist!");
+		}
+		
+		if(strlen(trim($image->source)) == 0) {
+			$image->source = $existing->get_source();
+		}
+		if(!empty($image->source)) {
+			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
+				throw new ImageReplaceException("Image's source isn't a valid URL");
+			}
+		}
+		
+		/*
+			This step could be optional, ie: perhaps move the image somewhere
+			and have it stored in a 'replaced images' list that could be 
+			inspected later by an admin?
+		*/
+		log_debug("image", "Removing image with hash ".$existing->hash);
+		$existing->remove_image_only();	// Actually delete the old image file from disk
+		
+		// Update the data in the database.
+		$database->Execute(
+				"UPDATE images SET 
+					filename = :filename, filesize = :filesize,	hash = :hash,
+					ext = :ext, width = :width, height = :height, source = :source
+				WHERE 
+					id = :id
+				",
+				array(
+					"filename"=>$image_new->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
+					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
+					"id"=>$id
+				)
+		);
+
+		log_info("image", "Replaced Image #{$id} with ({$image->hash})");
+	}
+// }}} end replace
+
+
+} // end of class ImageIO
 ?>

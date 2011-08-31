@@ -98,6 +98,7 @@ abstract class SimpleExtension implements Extension {
 
 	public function receive_event(Event $event) {
 		$name = get_class($event);
+		// this is rather clever..
 		$name = "on".str_replace("Event", "", $name);
 		if(method_exists($this->_child, $name)) {
 			$this->_child->$name($event);
@@ -133,15 +134,50 @@ abstract class DataHandlerExtension implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
 
 		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+		
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-			$image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
-			if(is_null($image)) {
-				throw new UploadException("Data handler failed to create image object from data");
+
+			/* Check if we are replacing an image */
+			if (array_key_exists('replace',$event->metadata) && isset($event->metadata['replace']))
+			{
+				/* hax: This seems like such a dirty way to do this.. */
+				
+				/* Validate things */
+				$image_id = int_escape($event->metadata['replace']);
+				
+				/* Check to make sure the image exists. */
+				$existing = Image::by_id($image_id);
+				
+				if(is_null($existing)) {
+					throw new UploadException("Image to replace does not exist!");
+				}
+				if ($existing->hash === $event->metadata['hash']) {
+					throw new UploadException("The uploaded image is the same as the one to replace.");
+				}
+
+				// even more hax..
+				$event->metadata['tags'] = $existing->get_tag_list();
+				$image = $this->create_image_from_data(warehouse_path("images", $event->metadata['hash']), $event->metadata);
+				
+				if(is_null($image)) {
+					throw new UploadException("Data handler failed to create image object from data");
+				}
+
+				$ire = new ImageReplaceEvent($image_id, $image);
+				send_event($ire);
+				$event->image_id = $image_id;
 			}
-			$iae = new ImageAdditionEvent($event->user, $image);
-			send_event($iae);
-			$event->image_id = $iae->image->id;
+			else
+			{
+				$image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
+				if(is_null($image)) {
+					throw new UploadException("Data handler failed to create image object from data");
+				}
+				$iae = new ImageAdditionEvent($event->user, $image);
+				send_event($iae);
+				$event->image_id = $iae->image->id;
+			}
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
