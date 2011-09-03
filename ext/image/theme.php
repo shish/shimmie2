@@ -7,7 +7,6 @@ class ImageIOTheme {
 	 * @param $image_id The image to delete
 	 */
 	public function get_deleter_html($image_id) {
-		global $user;
 		global $config;
 
 		if($config->get_bool("jquery_confirm")) {

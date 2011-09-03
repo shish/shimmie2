@@ -175,6 +175,10 @@ class ImageIO extends SimpleExtension {
 		if($user->is_admin()) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
 		}
+		/* In the future, could perhaps allow users to replace images that they own as well... */
+		if ($user->is_admin() && $config->get_bool("upload_replace")) {
+			$event->add_part($this->theme->get_replace_html($event->image->id));
+		}
 	}
 
 	public function onImageAddition($event) {
@@ -209,11 +213,6 @@ class ImageIO extends SimpleExtension {
 		$h_image_rate = sprintf("%.1f", ($i_image_count / $i_days_old));
 		$images_link = make_link("post/list/user_id=$u_id/1");
 		$event->add_stats("<a href='$images_link'>Images uploaded</a>: $i_image_count, $h_image_rate per day");
-		
-		/* In the future, could perhaps allow users to replace images that they own as well... */
-		if ($user->is_admin() && $config->get_bool("upload_replace")) {
-			$event->add_part($this->theme->get_replace_html($event->image->id));
-		}
 	}
 
 	public function onSetupBuilding($event) {
