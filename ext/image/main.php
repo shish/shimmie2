@@ -172,6 +172,8 @@ class ImageIO extends SimpleExtension {
 
 	public function onImageAdminBlockBuilding($event) {
 		global $user;
+		global $config;
+		
 		if($user->is_admin()) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
 		}
