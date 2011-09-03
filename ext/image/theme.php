@@ -32,7 +32,7 @@ class ImageIOTheme {
 	 *
 	 * @param $image_id The image to replace
 	 */
-	public function get_deleter_html($image_id) {
+	public function get_resize_html($image_id) {
 	
 		$html = "
 				".make_form(make_link("image_admin/replace"))."
