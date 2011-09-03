@@ -1,21 +1,27 @@
 <?php
 /*
  * Name: Image Manager
- * Author: Shish
+ * Author: Shish <webmaster@shishnet.org>
+ * Modified by: jgen <jgen.tech@gmail.com>
  * Description: Handle the image database
  * Visibility: admin
  */
 
-/*
- * ImageAdditionEvent:
- *   $user  -- the user adding the image
- *   $image -- the image being added
- *
- * An image is being added to the database
+ /**
+ * An image is being added to the database.
  */
 class ImageAdditionEvent extends Event {
 	var $user, $image;
-
+	
+	/**
+	 * Inserts a new image into the database with its associated
+	 * information. Also calls TagSetEvent to set the tags for
+	 * this new image.
+	 *
+	 * @sa TagSetEvent
+	 * @param $user	The user adding the image
+	 * @param $image	The new image to add.
+	 */
 	public function ImageAdditionEvent(User $user, Image $image) {
 		$this->image = $image;
 		$this->user = $user;
@@ -30,34 +36,41 @@ class ImageAdditionException extends SCoreException {
 	}
 }
 
-/*
- * ImageDeletionEvent:
- *   $image -- the image being deleted
- *
- * An image is being deleted. Used by things like tags
- * and comments handlers to clean out related rows in
- * their tables
+/**
+ * An image is being deleted.
  */
 class ImageDeletionEvent extends Event {
 	var $image;
-
+	
+	/**
+	 * Deletes an image.
+	 * Used by things like tags and comments handlers to
+	 * clean out related rows in their tables.
+	 *
+	 * @param $image 	The image being deleted
+	*/
 	public function ImageDeletionEvent(Image $image) {
 		$this->image = $image;
 	}
 }
 
-/*
- * ImageReplaceEvent:
- *   $id     -- the ID of the image to replace
- *   $image  -- the image object of the new image to use
- *
- * This function replaces an image. Effectively it only
- * replaces the image file contents and leaves the tags
- * and such the same.
+/**
+ * An image is being replaced.
  */
 class ImageReplaceEvent extends Event {
 	var $id, $image;
-
+	
+	/**
+	 * Replaces an image.
+	 * Updates an existing ID in the database to use a new image
+	 * file, leaving the tags and such unchanged. Also removes 
+	 * the old image file and thumbnail from the disk.
+	 *
+	 * @param $id
+	 *   The ID of the image to replace
+	 * @param $image
+	 *   The image object of the new image to use
+	 */
 	public function ImageReplaceEvent($id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
@@ -72,15 +85,18 @@ class ImageReplaceException extends SCoreException {
 	}
 }
 
-
-/*
- * ThumbnailGenerationEvent:
- * Request a thumb be made for an image
+/**
+ * Request a thumbnail be made for an image object.
  */
 class ThumbnailGenerationEvent extends Event {
-	var $hash;
-	var $type;
-
+	var $hash, $type;
+	
+	/**
+	 * Request a thumbnail be made for an image object
+	 *
+	 * @param $hash	The unique hash of the image
+	 * @param $type	The type of the image
+	 */
 	public function ThumbnailGenerationEvent($hash, $type) {
 		$this->hash = $hash;
 		$this->type = $type;
@@ -95,8 +111,7 @@ class ThumbnailGenerationEvent extends Event {
  *   $image    -- the image who's link is being parsed
  */
 class ParseLinkTemplateEvent extends Event {
-	var $link, $original;
-	var $image;
+	var $link, $original, $image;
 
 	public function ParseLinkTemplateEvent($link, Image $image) {
 		$this->link = $link;
@@ -110,9 +125,8 @@ class ParseLinkTemplateEvent extends Event {
 }
 
 
-/*
- * A class to handle adding / getting / removing image
- * files from the disk
+/**
+ * A class to handle adding / getting / removing image files from the disk.
  */
 class ImageIO extends SimpleExtension {
 	public function onInitExt($event) {

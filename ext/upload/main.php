@@ -5,17 +5,19 @@
  * Description: Allows people to upload files to the website
  */
 
-/*
- * DataUploadEvent:
- *   $user     -- the user uploading the data
- *   $tmpname  -- the temporary file used for upload
- *   $metadata -- info about the file, should contain at least "filename", "extension", "tags" and "source"
- *
- * Some data is being uploaded. Should be caught by a file handler.
+/**
+ * Occurs when some data is being uploaded.
  */
 class DataUploadEvent extends Event {
 	var $user, $tmpname, $metadata, $hash, $type, $image_id = -1;
 
+	/**
+	 * Some data is being uploaded.
+	 * This should be caught by a file handler.
+	 * @param $user The user uploading the data.
+	 * @param $tmpname The temporary file used for upload.
+	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
+	 */
 	public function DataUploadEvent(User $user, $tmpname, $metadata) {
 		assert(file_exists($tmpname));
 
@@ -34,6 +36,11 @@ class DataUploadEvent extends Event {
 
 class UploadException extends SCoreException {}
 
+/**
+ * Main upload class.
+ * All files that are uploaded to the site are handled through this class.
+ * This also includes transloaded files as well.
+ */
 class Upload implements Extension {
 	var $theme;
 // event handling {{{
