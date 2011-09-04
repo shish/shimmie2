@@ -114,6 +114,8 @@ class Upload implements Extension {
 							throw new UploadException("Can not upload more than one image for replacing.");
 						}
 						
+						$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
+						
 						if (count($_FILES)) {
 							foreach($_FILES as $file) {
 								$ok = $this->try_upload($file, $tags, $source, $image_id);
