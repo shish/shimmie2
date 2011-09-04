@@ -463,8 +463,8 @@ class Image {
 	 */
 	public function remove_image_only() {
 		log_info("core-image", "Removed Image File ({$this->hash})");
-		unlink($this->get_image_filename());
-		unlink($this->get_thumb_filename());
+		@unlink($this->get_image_filename());
+		@unlink($this->get_thumb_filename());
 	}
 	
 	/**

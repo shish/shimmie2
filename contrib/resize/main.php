@@ -1,14 +1,15 @@
 <?php
 /*
- * Name: Image Resize
+ * Name: Resize Image
  * Author: jgen <jgen.tech@gmail.com>
- * Description: Allows admins to resize uploaded images.
+ * Description: Allows admins to resize images.
  * License: GPLv2
  * Version: 0.1
  * Notice:
  *  The image resize and resample code is based off of the "smart_resize_image"
  *  function copyright 2008 Maxim Chernyak, released under a MIT-style license.
- *
+ * Documentation:
+ *  This extension allows admins to resize images.
  */
 
 /**
@@ -74,7 +75,7 @@ class ResizeImage extends SimpleExtension {
 			} else {
 			
 				/* Check if options were given to resize an image. */
-				if (isset($_POST['resize'])) {
+				if (isset($_POST['resize_width']) || isset($_POST['resize_height'])) {
 					
 					/* get options */
 					
@@ -84,12 +85,18 @@ class ResizeImage extends SimpleExtension {
 						$width = int_escape($_POST['resize_width']);
 					}
 					if (isset($_POST['resize_height'])) {
-						$width = int_escape($_POST['resize_height']);
+						$height = int_escape($_POST['resize_height']);
 					}
 					
 					/* Attempt to resize the image */
 					try {
-						$this->resize_image($image, $width, $height);
+						$this->resize_image($image_id, $width, $height);
+						
+						//$this->theme->display_resize_page($page, $image_id);
+						
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("post/view/".$image_id));
+						
 					} catch (ImageResizeException $e) {
 						$this->theme->display_resize_error($page, "Error Resizing", $e->error);
 					}
@@ -108,26 +115,29 @@ class ResizeImage extends SimpleExtension {
 		This function could be made much smaller by using the ImageReplaceEvent
 		ie: Pretend that we are replacing the image with a resized copy.
 	*/
-	private function resize_image($image, $width, $height) {
+	private function resize_image($image_id, $width, $height) {
 		global $config;
 		global $user;
 		global $page;
 		global $database;
 		
-		if ( $height <= 0 && $width <= 0 ) {
-			throw new ImageResizeException("Invalid options for height and width.");
+		if ( ($height <= 0) && ($width <= 0) ) {
+			throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
 		}
 		
-		$id = $image->id;
-		$hash = $image->hash;
+		$image_obj = Image::by_id($image_id);
+		$hash = $image_obj->hash;
 		if (is_null($hash)) {
 			throw new ImageResizeException("Image does not have a hash associated with it.");
 		}
 		
 		$image_filename  = warehouse_path("images", $hash);
 		$info = getimagesize($image_filename);
+		/* Get the image file type */
+		$pathinfo = pathinfo($image_obj->filename);
+		$filetype = strtolower($pathinfo['extension']);
 		
-		if (($image->width != $info[0] ) || ($image->height != $info[1])) {
+		if (($image_obj->width != $info[0] ) || ($image_obj->height != $info[1])) {
 			throw new ImageResizeException("The image size does not match what is in the database! - Aborting Resize.");
 		}
 		
@@ -145,12 +155,12 @@ class ResizeImage extends SimpleExtension {
 			$new_width = $width;
 		} else {
 			// Scale the new image
-			if      ($width  == 0)  $factor = $height/$image->height;
-			elseif  ($height == 0)  $factor = $width/$image->width;
-			else                    $factor = min( $width / $image->width, $height / $image->height );
+			if      ($width  == 0)  $factor = $height/$image_obj->height;
+			elseif  ($height == 0)  $factor = $width/$image_obj->width;
+			else                    $factor = min( $width / $image_obj->width, $height / $image_obj->height );
 
-			$new_width  = round( $image->width * $factor );
-			$new_height = round( $image->height * $factor );			
+			$new_width  = round( $image_obj->width * $factor );
+			$new_height = round( $image_obj->height * $factor );			
 		}
 		
 		/* Attempt to load the image */
@@ -181,14 +191,10 @@ class ResizeImage extends SimpleExtension {
 			imagesavealpha($image_resized, true);
 		  }
 		}
-		imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image->width, $image->height);
-		
-		/* Delete original image and thumbnail */
-		log_debug("image", "Removing image with hash ".$hash);
-		$image->remove_image_only();
+		imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image_obj->width, $image_obj->height);
 		
 		/* Temp storage while we resize */
-		$tmp_filename = tempnam("/tmp", 'shimmie_resize_'.time());
+		$tmp_filename = tempnam("/tmp", 'shimmie_resize');
 		if (empty($tmp_filename)) {
 			throw new ImageResizeException("Unable to save temporary image file.");
 		}
@@ -202,32 +208,40 @@ class ResizeImage extends SimpleExtension {
 			throw new ImageResizeException("Unsupported image type.");
 		}
 		
+		/* Move the new image into the main storage location */
+		$new_hash = md5_file($tmp_filename);
+		$new_size = filesize($tmp_filename);
+		$target = warehouse_path("images", $new_hash);
+		if(!file_exists(dirname($target))) mkdir(dirname($target), 0755, true);
+		if(!@copy($tmp_filename, $target)) {
+			throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
+		}
+		$new_filename = 'resized-'.$image_obj->filename;
 		
-		/* Regenerate thumbnail */
-		
+		/* Remove temporary file */
+		@unlink($tmp_filename);
 
-		unlink($tmp_filename);
+		/* Delete original image and thumbnail */
+		log_debug("image", "Removing image with hash ".$hash);
+		$image_obj->remove_image_only();
 		
+		/* Generate new thumbnail */
+		send_event(new ThumbnailGenerationEvent($new_hash, $filetype));
 		
 		/* Update the database */
 		$database->Execute(
 				"UPDATE images SET 
-					filename = :filename, filesize = :filesize,	hash = :hash,
-					ext = :ext, width = :width, height = :height, source = :source
+					filename = :filename, filesize = :filesize,	hash = :hash, width = :width, height = :height
 				WHERE 
 					id = :id
 				",
 				array(
-					"filename"=>$image_new->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
-					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
-					"id"=>$id
+					"filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
+					"width"=>$new_width, "height"=>$new_height,	"id"=>$image_id
 				)
 		);
-
 		
-		
-		log_info("resize", "Resized Image #{$image->id}");
-		
+		log_info("resize", "Resized Image #{$image_id} - New hash: {$new_hash}");
 	}
 }
 ?>
