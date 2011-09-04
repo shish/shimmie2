@@ -86,16 +86,16 @@ class UploadTheme extends Themelet {
 			<tr>
 				<td width='50'>File</td>
 				<td width='250'><input id='data0' name='data0' type='file'></td>
+			</tr>
 		";
 		if($tl_enabled) {
 			$upload_list .= "
+			<tr>
 				<td width='50'>URL</td>
 				<td width='250'><input id='url0' name='url0' type='text'></td>
+			</tr>
 			";
 		}
-		$upload_list .= "
-			</tr>
-		";
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
@@ -103,7 +103,9 @@ class UploadTheme extends Themelet {
 		$image = Image::by_id($image_id);
 		$thumbnail = $this->build_thumb_html($image, null);
 		
-		$html = "<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
+		$html = "
+				<div style='clear:both;'></div>
+				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
 				.$thumbnail."<br>"
 				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
 				<input type='hidden' name='image_id' value='$image_id'>

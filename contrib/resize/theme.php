@@ -36,7 +36,8 @@ class ResizeImageTheme extends Themelet {
 		$image = Image::by_id($image_id);
 		$thumbnail = $this->build_thumb_html($image, null);
 		
-		$html = "<p>Resize Image ID ".$image_id."<br>".$thumbnail."</p>
+		$html = "<div style='clear:both;'></div>
+				<p>Resize Image ID ".$image_id."<br>".$thumbnail."</p>
 				<p>Please note: You will have to refresh the image page, or empty your browser cache.</p>
 				<p>Enter the new size for the image, or leave blank to scale the image automatically.</p><br>"
 				.make_form(make_link('resize/'.$image_id), 'POST', $multipart=True,'form_resize')."
