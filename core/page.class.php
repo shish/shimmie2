@@ -171,7 +171,7 @@ class Page {
 		$this->add_http_header("X-Powered-By: SCore-".SCORE_VERSION, 2);
 
 		if (!headers_sent()) {
-			foreach($this->http_headers as $head)( header($head); )
+			foreach($this->http_headers as $head){ header($head); }
 		} else {
 			print "Error: Headers have already been sent to the client.";
 		}
