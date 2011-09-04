@@ -426,7 +426,7 @@ class ImageIO extends SimpleExtension {
 					id = :id
 				",
 				array(
-					"filename"=>$image_new->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
+					"filename"=>$image->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
 					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
 					"id"=>$id
 				)
