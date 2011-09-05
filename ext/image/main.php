@@ -138,11 +138,12 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_string('thumb_convert_path', 'convert.exe');
 
 		$config->set_default_bool('image_show_meta', false);
-		$config->set_default_bool('jquery_confirm', true);
+		$config->set_default_bool('image_jquery_confirm', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
 		$config->set_default_string('upload_collision_handler', 'error');
+		$config->set_default_int('image_expires', (60*60*24*365) );	// defaults to one year
 	}
 
 	public function onPageRequest($event) {
@@ -242,7 +243,17 @@ class ImageIO extends SimpleExtension {
 		if(!in_array("OS", $_SERVER) || $_SERVER["OS"] != 'Windows_NT') {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
-		$sb->add_bool_option("jquery_confirm", "<br>Confirm Delete with jQuery: ");
+		$sb->add_bool_option("image_jquery_confirm", "<br>Confirm Delete with jQuery: ");
+		
+		$expires = array();
+		$expires['1 Minute'] = 60;
+		$expires['1 Hour'] = 3600;
+		$expires['1 Day'] = 86400;
+		$expires['1 Month (31 days)'] = 2678400; //(60*60*24*31)
+		$expires['1 Year'] = 31536000; // 365 days (60*60*24*365)
+		$expires['Never'] = 3153600000;	// 100 years..
+		$sb->add_choice_option("image_expires", $expires, "<br>Image Expiration: ");
+		
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
@@ -371,9 +382,14 @@ class ImageIO extends SimpleExtension {
 				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
 			}
 			else {
-				/* FIXME: The Expires date Needs to be admin-configurable */
 				$page->add_http_header("Last-Modified: $gmdate_mod");
-				$page->add_http_header("Expires: Fri, 2 Sep 2101 12:42:42 GMT"); // War was beginning
+				
+				if ( $config->get_int("image_expires") ) {
+					$expires = date(DATE_RFC1123, time() + $config->get_int("image_expires"));
+				} else {
+					$expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
+				}
+				$page->add_http_header('Expires: '.$expires);
 			}
 		}
 		else {
