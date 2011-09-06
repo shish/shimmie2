@@ -14,8 +14,8 @@ class Layout {
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
-		ksort($page->headers);
-		foreach($page->headers as $line) {
+		ksort($page->html_headers);
+		foreach($page->html_headers as $line) {
 			$header_html .= "\t\t$line\n";
 		}
 

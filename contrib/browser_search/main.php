@@ -28,7 +28,7 @@ class BrowserSearch implements Extension {
 			global $config;
 			$search_title = $config->get_string('title');
 			$search_file_url = make_link('browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml');
-			$page->add_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
+			$page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
 		}
 
 		// The search.xml file that is generated on the fly

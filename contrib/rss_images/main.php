@@ -13,11 +13,11 @@ class RSS_Images extends SimpleExtension {
 
 		if(count($event->search_terms) > 0) {
 			$search = html_escape(implode(' ', $event->search_terms));
-			$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
+			$page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 				"title=\"$title - Images with tags: $search\" href=\"".make_link("rss/images/$search/1")."\" />");
 		}
 		else {
-			$page->add_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
+			$page->add_html_header("<link id=\"images\" rel=\"alternate\" type=\"application/rss+xml\" ".
 				"title=\"$title - Images\" href=\"".make_link("rss/images/1")."\" />");
 		}
 	}

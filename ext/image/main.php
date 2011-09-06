@@ -1,21 +1,27 @@
 <?php
 /*
  * Name: Image Manager
- * Author: Shish
+ * Author: Shish <webmaster@shishnet.org>
+ * Modified by: jgen <jgen.tech@gmail.com>
  * Description: Handle the image database
  * Visibility: admin
  */
 
-/*
- * ImageAdditionEvent:
- *   $user  -- the user adding the image
- *   $image -- the image being added
- *
- * An image is being added to the database
+ /**
+ * An image is being added to the database.
  */
 class ImageAdditionEvent extends Event {
 	var $user, $image;
-
+	
+	/**
+	 * Inserts a new image into the database with its associated
+	 * information. Also calls TagSetEvent to set the tags for
+	 * this new image.
+	 *
+	 * @sa TagSetEvent
+	 * @param $user	The user adding the image
+	 * @param $image	The new image to add.
+	 */
 	public function ImageAdditionEvent(User $user, Image $image) {
 		$this->image = $image;
 		$this->user = $user;
@@ -30,34 +36,41 @@ class ImageAdditionException extends SCoreException {
 	}
 }
 
-/*
- * ImageDeletionEvent:
- *   $image -- the image being deleted
- *
- * An image is being deleted. Used by things like tags
- * and comments handlers to clean out related rows in
- * their tables
+/**
+ * An image is being deleted.
  */
 class ImageDeletionEvent extends Event {
 	var $image;
-
+	
+	/**
+	 * Deletes an image.
+	 * Used by things like tags and comments handlers to
+	 * clean out related rows in their tables.
+	 *
+	 * @param $image 	The image being deleted
+	*/
 	public function ImageDeletionEvent(Image $image) {
 		$this->image = $image;
 	}
 }
 
-/*
- * ImageReplaceEvent:
- *   $id     -- the ID of the image to replace
- *   $image  -- the image object of the new image to use
- *
- * This function replaces an image. Effectively it only
- * replaces the image file contents and leaves the tags
- * and such the same.
+/**
+ * An image is being replaced.
  */
 class ImageReplaceEvent extends Event {
 	var $id, $image;
-
+	
+	/**
+	 * Replaces an image.
+	 * Updates an existing ID in the database to use a new image
+	 * file, leaving the tags and such unchanged. Also removes 
+	 * the old image file and thumbnail from the disk.
+	 *
+	 * @param $id
+	 *   The ID of the image to replace
+	 * @param $image
+	 *   The image object of the new image to use
+	 */
 	public function ImageReplaceEvent($id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
@@ -72,15 +85,18 @@ class ImageReplaceException extends SCoreException {
 	}
 }
 
-
-/*
- * ThumbnailGenerationEvent:
- * Request a thumb be made for an image
+/**
+ * Request a thumbnail be made for an image object.
  */
 class ThumbnailGenerationEvent extends Event {
-	var $hash;
-	var $type;
-
+	var $hash, $type;
+	
+	/**
+	 * Request a thumbnail be made for an image object
+	 *
+	 * @param $hash	The unique hash of the image
+	 * @param $type	The type of the image
+	 */
 	public function ThumbnailGenerationEvent($hash, $type) {
 		$this->hash = $hash;
 		$this->type = $type;
@@ -95,8 +111,7 @@ class ThumbnailGenerationEvent extends Event {
  *   $image    -- the image who's link is being parsed
  */
 class ParseLinkTemplateEvent extends Event {
-	var $link, $original;
-	var $image;
+	var $link, $original, $image;
 
 	public function ParseLinkTemplateEvent($link, Image $image) {
 		$this->link = $link;
@@ -110,9 +125,8 @@ class ParseLinkTemplateEvent extends Event {
 }
 
 
-/*
- * A class to handle adding / getting / removing image
- * files from the disk
+/**
+ * A class to handle adding / getting / removing image files from the disk.
  */
 class ImageIO extends SimpleExtension {
 	public function onInitExt($event) {
@@ -124,11 +138,12 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_string('thumb_convert_path', 'convert.exe');
 
 		$config->set_default_bool('image_show_meta', false);
-		$config->set_default_bool('jquery_confirm', true);
+		$config->set_default_bool('image_jquery_confirm', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
 		$config->set_default_string('upload_collision_handler', 'error');
+		$config->set_default_int('image_expires', (60*60*24*365) );	// defaults to one year
 	}
 
 	public function onPageRequest($event) {
@@ -172,8 +187,14 @@ class ImageIO extends SimpleExtension {
 
 	public function onImageAdminBlockBuilding($event) {
 		global $user;
+		global $config;
+		
 		if($user->is_admin()) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
+		}
+		/* In the future, could perhaps allow users to replace images that they own as well... */
+		if ($user->is_admin() && $config->get_bool("upload_replace")) {
+			$event->add_part($this->theme->get_replace_html($event->image->id));
 		}
 	}
 
@@ -200,6 +221,9 @@ class ImageIO extends SimpleExtension {
 	}
 	
 	public function onUserPageBuilding($event) {
+		global $user;
+		global $config;
+	
 		$u_id = url_escape($event->display_user->id);
 		$i_image_count = Image::count_images(array("user_id={$event->display_user->id}"));
 		$i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
@@ -219,7 +243,17 @@ class ImageIO extends SimpleExtension {
 		if(!in_array("OS", $_SERVER) || $_SERVER["OS"] != 'Windows_NT') {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
-		$sb->add_bool_option("jquery_confirm", "<br>Confirm Delete with jQuery: ");
+		$sb->add_bool_option("image_jquery_confirm", "<br>Confirm Delete with jQuery: ");
+		
+		$expires = array();
+		$expires['1 Minute'] = 60;
+		$expires['1 Hour'] = 3600;
+		$expires['1 Day'] = 86400;
+		$expires['1 Month (31 days)'] = 2678400; //(60*60*24*31)
+		$expires['1 Year'] = 31536000; // 365 days (60*60*24*365)
+		$expires['Never'] = 3153600000;	// 100 years..
+		$sb->add_choice_option("image_expires", $expires, "<br>Image Expiration: ");
+		
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
@@ -344,13 +378,18 @@ class ImageIO extends SimpleExtension {
 			}
 			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
 
-			// FIXME: should be $page->blah
 			if($if_modified_since == $gmdate_mod) {
-				header("HTTP/1.0 304 Not Modified");
+				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
 			}
 			else {
-				header("Last-Modified: $gmdate_mod");
-				header("Expires: Fri, 2 Sep 2101 12:42:42 GMT"); // War was beginning
+				$page->add_http_header("Last-Modified: $gmdate_mod");
+				
+				if ( $config->get_int("image_expires") ) {
+					$expires = date(DATE_RFC1123, time() + $config->get_int("image_expires"));
+				} else {
+					$expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
+				}
+				$page->add_http_header('Expires: '.$expires);
 			}
 		}
 		else {
@@ -403,7 +442,7 @@ class ImageIO extends SimpleExtension {
 					id = :id
 				",
 				array(
-					"filename"=>$image_new->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
+					"filename"=>$image->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
 					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
 					"id"=>$id
 				)
