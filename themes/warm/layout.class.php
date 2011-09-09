@@ -14,7 +14,7 @@ class Layout {
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
-		foreach($page->headers as $line) {
+		foreach($page->html_headers as $line) {
 			$header_html .= "\t\t$line\n";
 		}
 
