@@ -93,6 +93,7 @@ class Image {
 	public static function by_random($tags=array()) {
 		assert(is_array($tags));
 		$max = Image::count_images($tags);
+		if ($max < 1) return null;		// From Issue #22 - opened by HungryFeline on May 30, 2011.
 		$rand = mt_rand(0, $max-1);
 		$set = Image::find_images($rand, 1, $tags);
 		if(count($set) > 0) return $set[0];
