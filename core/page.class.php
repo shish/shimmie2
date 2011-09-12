@@ -167,8 +167,8 @@ class Page {
 	public function display() {
 		global $page;
 		
-		$this->add_http_header("Content-type: {$this->type}", 1);
-		$this->add_http_header("X-Powered-By: SCore-".SCORE_VERSION, 2);
+		header("Content-type: ".$this->type);
+		header("X-Powered-By: SCore-".SCORE_VERSION);
 
 		if (!headers_sent()) {
 			foreach($this->http_headers as $head){ header($head); }
