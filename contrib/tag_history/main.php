@@ -130,9 +130,9 @@ class Tag_History implements Extension {
 		}
 		
 		// lets get the values out of the result
-		$stored_result_id = $result->fields['id'];
-		$stored_image_id = $result->fields['image_id'];
-		$stored_tags = $result->fields['tags'];
+		$stored_result_id = $result['id'];
+		$stored_image_id = $result['image_id'];
+		$stored_tags = $result['tags'];
 		
 		log_debug("tag_history", "Reverting tags of $stored_image_id to [$stored_tags]");
 		// all should be ok so we can revert by firing the SetUserTags event.
@@ -146,7 +146,7 @@ class Tag_History implements Extension {
 	public function get_tag_history_from_revert($revert_id)
 	{
 		global $database;
-		$row = $database->execute("
+		$row = $database->get_row("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
