@@ -130,9 +130,9 @@ class Tag_History implements Extension {
 		}
 		
 		// lets get the values out of the result
-		$stored_result_id = $result->fields['id'];
-		$stored_image_id = $result->fields['image_id'];
-		$stored_tags = $result->fields['tags'];
+		$stored_result_id = $result['id'];
+		$stored_image_id = $result['image_id'];
+		$stored_tags = $result['tags'];
 		
 		log_debug("tag_history", "Reverting tags of $stored_image_id to [$stored_tags]");
 		// all should be ok so we can revert by firing the SetUserTags event.
@@ -146,7 +146,7 @@ class Tag_History implements Extension {
 	public function get_tag_history_from_revert($revert_id)
 	{
 		global $database;
-		$row = $database->execute("
+		$row = $database->get_row("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
@@ -201,19 +201,28 @@ class Tag_History implements Extension {
 		$old_tags = Tag::implode($image->get_tag_array());
 		log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
 		if($new_tags == $old_tags) return;
-
-		// add a history entry		
 		$allowed = $config->get_int("history_limit");
 		if($allowed == 0) return;
+		
+		// if the image has no history, make one with the old tags
+		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
+		if($entries == 0){
+			$database->execute("
+				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
+				VALUES (?, ?, ?, ?, now())",
+				array($image->id, $old_tags, 1, '127.0.0.1')); // TODO: Pick appropriate user id
+			$entries++;
+		}
 
+		// add a history entry	
 		$row = $database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
 				array($image->id, $new_tags, $user->id, $_SERVER['REMOTE_ADDR']));
+		$entries++;
 		
 		// if needed remove oldest one
 		if($allowed == -1) return;
-		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
