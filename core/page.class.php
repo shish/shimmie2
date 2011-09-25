@@ -151,6 +151,24 @@ class Page {
 	}
 	
 	/**
+	 * Get all the HTML headers that are currently set and return as a string.
+	 */
+	public function get_all_html_headers() {
+		$data = '';
+		foreach ($this->html_headers as $line) {
+			$data .= $line . "\n";
+		}
+		return $data;
+	}
+	
+	/**
+	 * Removes all currently set HTML headers. (Be careful..)
+	 */
+	public function delete_all_html_headers() {
+		$this->html_headers = array();
+	}
+	
+	/**
 	 * Add a Block of data
 	 */
 	public function add_block(Block $block) {
@@ -230,99 +248,139 @@ class Page {
 		}
 	}
 
-	/*
-		This function caches the CSS and JavaScript files.
-		This is done to reduce the number of HTTP requests (recommended by
-		the Yahoo high-performance guidelines). It combines all of the CSS
-		and JavaScript files into one for each type, and stores them in 
-		cached files to serve the client. Changes to the CSS or JavaScript
-		files are caught by taking the md5sum of the concatenated files.
-	*/
+	/**
+	 * Automatic caching of CSS and Javascript files
+	 *
+	 * Allows site admins to have Shimmie automatically cache and minify all CSS and JS files.
+	 * This is done to reduce the number of HTTP requests (recommended by the Yahoo high-performance
+	 * guidelines). It combines all of the CSS and JavaScript files into one for each type, and
+	 * stores them in cached files to serve the client. Changes to the CSS or JavaScript files are
+	 * caught by taking the md5sum of the concatenated files.
+	 *
+	 * Note: This can be somewhat problematic, as it edits the links to your CSS files (as well
+	 * as the links to images inside them).
+	 * Also, the directory cache directory needs to be writeable by the php/webserver user.
+	 * PLEASE: Ensure that you test your site out throughly after enabling this module!
+	 * Either that, or don't use this module unless you are sure of what it is doing.
+	 *
+	 * TODO: Before performing the regex's, compute the md5 of the CSS files and store somewhere to check later. (performance reasons.)
+	 *
+	 * @return
+	 *	This function returns FALSE if it failed to cache the files,
+	 *	and returns TRUE if it was successful.
+	 */
 	private function add_cached_auto_html_headers()
 	{
-		$cache_location = 'data/cache/';
-		$data_href = get_base_href();
+		global $config;
 		
+		if (!$config->get_bool("autocache_css") || !$config->get_bool("autocache_js")) {
+			return false;	// caching disabled
+		}
+		
+		$cache_location = $config->get_string("autocache_location", 'data/cache');
+		// Detect is there is a trailing slash, and add one if not.
+		$cache_location = ((strrpos($cache_location, '/') + 1) == strlen($cache_location)) ? $cache_location : $cache_location.'/'; 
+
+		// Create directory if needed.
 		if(!file_exists($cache_location)) {
-			if (!mkdir($cache_location, 0750, true)) {
+			if (is_writeable($cache_location) && !mkdir($cache_location, 0750, true)) {
 				return false; // failed to create directory
 			}
 		}
 
-		/* ----- CSS Files ----- */
-		// First get all the CSS from the lib directory
-		$data_1 = '';
-		$css_files = glob("lib/*.css");
-		if($css_files) {
-			foreach($css_files as $css_file) {
-				$data_1 .= file_get_contents($css_file);
-			}
-			//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
-			//	We have to adjust the URLs accordingly before saving the cached file.
-			$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-			$replace = 'url("../../lib/${1}")';
-			$data_1 = preg_replace($pattern, $replace, $data_1);
-		}
-		// Next get all the CSS from the extensions
-		$data_2 = '';
-		$css_files = glob("ext/*/style.css");
-		if($css_files) {
-			foreach($css_files as $css_file) {
-				$data_2 .= file_get_contents($css_file);
-			}
-			//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
-			//	We have to adjust the URLs accordingly before saving the cached file.
-			$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-			$replace = 'url("../../${1}")';
-			$data_2 = preg_replace($pattern, $replace, $data_2);
-		}
-		// Combine the two
-		$data = $data_1 . $data_2;
-		// compute the MD5 sum of the concatenated CSS files
-		$md5sum = md5($data);
-		
-		if (!file_exists($cache_location.$md5sum.'.css')) {
-			// remove any old cached CSS files.
-			$mask = '*.css';
-			array_map( 'unlink', glob( $mask ) );
-		
-			// output the combined file
-			if (file_put_contents($cache_location.$md5sum.'.css', $data, LOCK_EX) === FALSE) {
-				return false;
-			}
-		}
-		// tell the client where to get the css cache file
-		$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css'.'" type="text/css">');
+		$data_href = get_base_href();
 
+		/* ----- CSS Files ----- */
+		if ($config->get_bool("autocache_css"))
+		{
+			// First get all the CSS from the lib directory
+			$contents_from_lib = '';
+			$css_files = glob("lib/*.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$contents_from_lib .= file_get_contents($css_file);
+				}
+				//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
+				//	We have to adjust the URLs accordingly before saving the cached file.
+				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
+				$replace = 'url("../../lib/${1}")';
+				$contents_from_lib = preg_replace($pattern, $replace, $contents_from_lib);
+			}
+			// Next get all the CSS from the extensions
+			$contents_from_extensions = '';
+			$css_files = glob("ext/*/style.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$contents_from_extensions .= file_get_contents($css_file);
+				}
+				//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
+				//	We have to adjust the URLs accordingly before saving the cached file.
+				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
+				$replace = 'url("../../${1}")';
+				$contents_from_extensions = preg_replace($pattern, $replace, $contents_from_extensions);
+			}
+			// Combine the two
+			$data = $contents_from_lib .' '. $contents_from_extensions;
+			
+			// Minify the CSS if enabled.
+			if ($config->get_bool("autocache_min_css")){
+				// not supported yet.
+			}
+
+			// compute the MD5 sum of the concatenated CSS files
+			$md5sum = md5($data);
+			
+			if (!file_exists($cache_location.$md5sum.'.css')) {
+				// remove any old cached CSS files.
+				$mask = '*.css';
+				array_map( 'unlink', glob( $mask ) );
+			
+				// output the combined file
+				if (file_put_contents($cache_location.$md5sum.'.css', $data, LOCK_EX) === FALSE) {
+					return false; // failed to write the file
+				}
+			}
+			// tell the client where to get the css cache file
+			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css'.'" type="text/css">');
+		}
+		
 		
 		/* ----- JavaScript Files ----- */
-		$data = '';
-		$js_files = glob("lib/*.js");
-		if($js_files) {
-			foreach($js_files as $js_file) {
-				$data .= file_get_contents($js_file);
+		if ($config->get_bool("autocache_js"))
+		{
+			$data = '';
+			$js_files = glob("lib/*.js");
+			if($js_files) {
+				foreach($js_files as $js_file) {
+					$data .= file_get_contents($js_file);
+				}
 			}
-		}
-		$js_files = glob("ext/*/script.js");
-		if($js_files) {
-			foreach($js_files as $js_file) {
-				$data .= file_get_contents($js_file);
+			$js_files = glob("ext/*/script.js");
+			if($js_files) {
+				foreach($js_files as $js_file) {
+					$data .= file_get_contents($js_file);
+				}
 			}
-		}
-		// compute the MD5 sum of the concatenated JavaScript files
-		$md5sum = md5($data);
-		
-		if (!file_exists($cache_location.$md5sum.'.js')) {
-			// remove any old cached js files.
-			$mask = '*.js';
-			array_map( 'unlink', glob( $mask ) );
-			// output the combined file
-			if (file_put_contents($cache_location.$md5sum.'.js', $data, LOCK_EX) === FALSE) {
-				return false;
+			// Minify the JS if enabled.
+			if ($config->get_bool("autocache_min_js")){
+				// not supported yet.
 			}
+			
+			// compute the MD5 sum of the concatenated JavaScript files
+			$md5sum = md5($data);
+			
+			if (!file_exists($cache_location.$md5sum.'.js')) {
+				// remove any old cached js files.
+				$mask = '*.js';
+				array_map( 'unlink', glob( $mask ) );
+				// output the combined file
+				if (file_put_contents($cache_location.$md5sum.'.js', $data, LOCK_EX) === FALSE) {
+					return false;
+				}
+			}
+			// tell the client where to get the js cache file
+			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js'.'" type="text/javascript"></script>');
 		}
-		// tell the client where to get the js cache file
-		$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js'.'" type="text/javascript"></script>');
 		
 		return true;
 	}

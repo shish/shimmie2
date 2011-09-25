@@ -173,6 +173,12 @@ class Setup extends SimpleExtension {
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_bool("use_captchas", false);
 		$config->set_default_string("autodate_format", "F j, Y");
+		// Automatic caching is disabled by default
+		$config->set_default_string("autocache_location", "data/cache");
+		$config->set_default_bool("autocache_css", false);
+		$config->set_default_bool("autocache_jss", false);
+		$config->set_default_bool("autocache_min_css", false);
+		$config->set_default_bool("autocache_min_js", false);
 	}
 
 	public function onPageRequest($event) {
@@ -279,6 +285,15 @@ class Setup extends SimpleExtension {
 			"'>ReCAPTCHA</a>");
 		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
 		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
+		$event->panel->add_block($sb);
+		
+		$sb = new SetupBlock("Automatic CSS and JavaScript Caching");
+		$sb->add_text_option("autocache_location", "<br>Location: ");
+		$sb->add_label("<br>Needs to be writeable by the webserver");
+		$sb->add_bool_option("autocache_css", "<br>Enable automatic caching of CSS: ");
+		$sb->add_bool_option("autocache_js", "<br>Enable automatic caching of JS: ");
+		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
+		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");	
 		$event->panel->add_block($sb);
 	}
 
