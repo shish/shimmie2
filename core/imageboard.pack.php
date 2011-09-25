@@ -590,6 +590,7 @@ class Image {
 			$sql .= " (" . $iq->qlet->sql . ")";
 			$terms = array_merge($terms, $iq->qlet->variables);
 		}
+		$tag_n = 0;
 		$img_search = new Querylet($sql, $terms);
 
 
