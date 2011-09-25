@@ -14,11 +14,11 @@ class SiteDescription extends SimpleExtension {
 		global $config, $page;
 		if(strlen($config->get_string("site_description")) > 0) {
 			$description = $config->get_string("site_description");
-			$page->add_header("<meta name=\"description\" content=\"$description\">");
+			$page->add_html_header("<meta name=\"description\" content=\"$description\">");
 		}
 		if(strlen($config->get_string("site_keywords")) > 0) {
 			$keywords = $config->get_string("site_keywords");
-			$page->add_header("<meta name=\"keywords\" content=\"$keywords\">");
+			$page->add_html_header("<meta name=\"keywords\" content=\"$keywords\">");
 		}
 	}
 

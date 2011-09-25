@@ -14,8 +14,9 @@ class Handle404 extends SimpleExtension {
 		// hax.
 		if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
 			$h_pagename = html_escape(implode('/', $event->args));
-			header("HTTP/1.0 404 Page Not Found");
 			log_debug("handle_404", "Hit 404: $h_pagename");
+			
+			$page->add_http_header("HTTP/1.0 404 Page Not Found",5);
 			$page->set_title("404");
 			$page->set_heading("404 - No Handler Found");
 			$page->add_block(new NavBlock());

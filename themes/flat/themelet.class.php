@@ -18,7 +18,7 @@ class Themelet {
 	 * A specific, common error message
 	 */
 	public function display_permission_denied(Page $page) {
-		header("HTTP/1.0 403 Permission Denied");
+		$page->add_http_header("HTTP/1.0 403 Permission Denied");
 		$this->display_error($page, "Permission Denied", "You do not have permission to access this page");
 	}
 

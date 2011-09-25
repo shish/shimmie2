@@ -19,7 +19,7 @@ class RegenThumbTheme extends Themelet {
 	public function display_results(Page $page, Image $image) {
 		$page->set_title("Thumbnail Regenerated");
 		$page->set_heading("Thumbnail Regenerated");
-		$page->add_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
+		$page->add_html_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Thumbnail", $this->build_thumb_html($image)));
 	}
