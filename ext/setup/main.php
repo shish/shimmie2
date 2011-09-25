@@ -287,9 +287,9 @@ class Setup extends SimpleExtension {
 		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
 		$event->panel->add_block($sb);
 		
-		$sb = new SetupBlock("Automatic CSS & JS Caching");
+		$sb = new SetupBlock("Automatic Caching of CSS & JS");
 		$sb->add_text_option("autocache_location", "Location: ");
-		$sb->add_label("<br><i>Needs to be writeable by the webserver.</i>");
+		$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
 		$sb->add_bool_option("autocache_css", "<br>Automatic caching of CSS: ");
 		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
 		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");

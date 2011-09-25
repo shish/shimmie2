@@ -263,7 +263,7 @@ class Page {
 	 * PLEASE: Ensure that you test your site out throughly after enabling this module!
 	 * Either that, or don't use this module unless you are sure of what it is doing.
 	 *
-	 * TODO: Before performing the regex's, compute the md5 of the CSS files and store somewhere to check later. (performance reasons.)
+	 * TODO:  For performance reasons: Before performing the regex's, compute the md5 of the CSS & JS files and store somewhere to check later.
 	 *
 	 * @return
 	 *	This function returns FALSE if it failed to cache the files,
