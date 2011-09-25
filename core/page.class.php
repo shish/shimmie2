@@ -273,7 +273,7 @@ class Page {
 	{
 		global $config;
 		
-		if (!$config->get_bool("autocache_css") || !$config->get_bool("autocache_js")) {
+		if (!$config->get_bool("autocache_css") && !$config->get_bool("autocache_js")) {
 			return false;	// caching disabled
 		}
 		
@@ -283,7 +283,7 @@ class Page {
 
 		// Create directory if needed.
 		if(!file_exists($cache_location)) {
-			if (is_writeable($cache_location) && !mkdir($cache_location, 0750, true)) {
+			if (!mkdir($cache_location, 0750, true)) {
 				return false; // failed to create directory
 			}
 		}
@@ -342,6 +342,17 @@ class Page {
 			}
 			// tell the client where to get the css cache file
 			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css'.'" type="text/css">');
+		} else {
+			// Caching of CSS disabled.
+			foreach(glob("lib/*.css") as $css) {
+				$this->add_html_header("<link rel='stylesheet' href='$data_href/$css' type='text/css'>");
+			}
+			$css_files = glob("ext/*/style.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_file' type='text/css'>");
+				}
+			}	
 		}
 		
 		
@@ -380,6 +391,17 @@ class Page {
 			}
 			// tell the client where to get the js cache file
 			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js'.'" type="text/javascript"></script>');
+		} else {
+			// Caching of Javascript disabled.
+			foreach(glob("lib/*.js") as $js) {
+				$this->add_html_header("<script src='$data_href/$js' type='text/javascript'></script>");
+			}
+			$js_files = glob("ext/*/script.js");
+			if($js_files) {
+				foreach($js_files as $js_file) {
+					$this->add_html_header("<script src='$data_href/$js_file' type='text/javascript'></script>");
+				}
+			}
 		}
 		
 		return true;
