@@ -51,11 +51,11 @@
  */
 
 // set up and purify the environment
-define("DEBUG", true);
-define("COVERAGE", true);
+define("DEBUG", false);
+define("COVERAGE", false);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
-define("VERSION", '2.3.0');
+define("VERSION", '2.3.5');
 define("SCORE_VERSION", 's2hack/'.VERSION);
 define("COOKIE_PREFIX", 'shm');
 
