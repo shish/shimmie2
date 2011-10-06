@@ -293,12 +293,11 @@ class Setup extends SimpleExtension {
 			checkbox_css = document.getElementById('autocache_min_css');
 			checkbox_js = document.getElementById('autocache_min_js');
 
-			checkbox_css.disabled = true;
-			checkbox_js.disabled = true;
-
 			$(document).ready(function() {
 				checkbox_css.disabled = true;
+				checkbox_css.checked = false;
 				checkbox_js.disabled = true;
+				checkbox_js.checked = false;
 			});
 		</script>";
 		
@@ -307,9 +306,9 @@ class Setup extends SimpleExtension {
 		$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
 		$sb->add_bool_option("autocache_css", "<br>Automatic caching of CSS: ");
 		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
-		$sb->add_label("<span id='autocache_minify'>Minifying currently not supported.</span>$minifyscript");
 		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
-		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");	
+		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");
+		$sb->add_label("<br><span id='autocache_minify'><i>Minifying currently not supported.</i></span>$minifyscript");
 		$event->panel->add_block($sb);
 	}
 
