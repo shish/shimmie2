@@ -263,7 +263,8 @@ class Page {
 	 * PLEASE: Ensure that you test your site out throughly after enabling this module!
 	 * Either that, or don't use this module unless you are sure of what it is doing.
 	 *
-	 * TODO:  For performance reasons: Before performing the regex's, compute the md5 of the CSS & JS files and store somewhere to check later.
+	 * TODO: Add support for minify-ing CSS and Javascript files. (similar to Minify. See: http://code.google.com/p/minify/ or https://github.com/mrclay/minify)
+	 * TODO: For performance reasons: Before performing the regex's, compute the md5 of the CSS & JS files and store somewhere to check later.
 	 *
 	 * @return
 	 *	This function returns FALSE if it failed to cache the files,
@@ -325,6 +326,7 @@ class Page {
 			// Minify the CSS if enabled.
 			if ($config->get_bool("autocache_min_css")){
 				// not supported yet.
+				// TODO: add support for Minifying CSS files.
 			}
 
 			// compute the MD5 sum of the concatenated CSS files
@@ -375,6 +377,7 @@ class Page {
 			// Minify the JS if enabled.
 			if ($config->get_bool("autocache_min_js")){
 				// not supported yet.
+				// TODO: add support for Minifying CSS files.
 			}
 			
 			// compute the MD5 sum of the concatenated JavaScript files

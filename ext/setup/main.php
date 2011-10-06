@@ -287,11 +287,27 @@ class Setup extends SimpleExtension {
 		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
 		$event->panel->add_block($sb);
 		
+		
+		// Options for Automatic Caching & Minifying
+		$minifyscript = "<script language='javascript'>
+			checkbox_css = document.getElementById('autocache_min_css');
+			checkbox_js = document.getElementById('autocache_min_js');
+
+			checkbox_css.disabled = true;
+			checkbox_js.disabled = true;
+
+			$(document).ready(function() {
+				checkbox_css.disabled = true;
+				checkbox_js.disabled = true;
+			});
+		</script>";
+		
 		$sb = new SetupBlock("Automatic Caching of CSS & JS");
 		$sb->add_text_option("autocache_location", "Location: ");
 		$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
 		$sb->add_bool_option("autocache_css", "<br>Automatic caching of CSS: ");
 		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
+		$sb->add_label("<span id='autocache_minify'>Minifying currently not supported.</span>$minifyscript");
 		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
 		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");	
 		$event->panel->add_block($sb);
