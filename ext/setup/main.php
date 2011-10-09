@@ -173,6 +173,12 @@ class Setup extends SimpleExtension {
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_bool("use_captchas", false);
 		$config->set_default_string("autodate_format", "F j, Y");
+		// Automatic caching is disabled by default
+		$config->set_default_string("autocache_location", "data/cache");
+		$config->set_default_bool("autocache_css", false);
+		$config->set_default_bool("autocache_jss", false);
+		$config->set_default_bool("autocache_min_css", false);
+		$config->set_default_bool("autocache_min_js", false);
 	}
 
 	public function onPageRequest($event) {
@@ -279,6 +285,30 @@ class Setup extends SimpleExtension {
 			"'>ReCAPTCHA</a>");
 		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
 		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
+		$event->panel->add_block($sb);
+		
+		
+		// Options for Automatic Caching & Minifying
+		$minifyscript = "<script language='javascript'>
+			checkbox_css = document.getElementById('autocache_min_css');
+			checkbox_js = document.getElementById('autocache_min_js');
+
+			$(document).ready(function() {
+				checkbox_css.disabled = true;
+				checkbox_css.checked = false;
+				checkbox_js.disabled = true;
+				checkbox_js.checked = false;
+			});
+		</script>";
+		
+		$sb = new SetupBlock("Automatic Caching of CSS & JS");
+		$sb->add_text_option("autocache_location", "Location: ");
+		$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
+		$sb->add_bool_option("autocache_css", "<br>Automatic caching of CSS: ");
+		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
+		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
+		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");
+		$sb->add_label("<br><span id='autocache_minify'><i>Minifying currently not supported.</i></span>$minifyscript");
 		$event->panel->add_block($sb);
 	}
 

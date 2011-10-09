@@ -555,11 +555,15 @@ function array_remove($array, $to_remove) {
 }
 
 /**
- * Add an item to an array
+ * Adds an item to an array.
+ *
+ * Also removes duplicate values from the array.
  *
  * @retval array
  */
 function array_add($array, $element) {
+	// Could we just use array_push() ?
+	//  http://www.php.net/manual/en/function.array-push.php
 	$array[] = $element;
 	$array = array_unique($array);
 	return $array;
