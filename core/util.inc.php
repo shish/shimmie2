@@ -723,12 +723,14 @@ $_event_count = 0;
  */
 function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
+	ctx_log_start("Processing ".get_class($event));
 	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		$listener->receive_event($event);
 	}
 	$_event_count++;
+	ctx_log_endok("Processing ".get_class($event));
 }
 
 
