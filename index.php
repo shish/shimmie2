@@ -53,6 +53,7 @@
 // set up and purify the environment
 define("DEBUG", false);
 define("COVERAGE", false);
+define("CONTEXT", false);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
 define("VERSION", '2.3.5');
@@ -66,6 +67,11 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 
 require_once "config.php";
 require_once "core/util.inc.php";
+require_once "lib/context.php";
+if(CONTEXT) {
+	ctx_set_log(CONTEXT);
+}
+ctx_log_start($_SERVER["REQUEST_URI"], true, true);
 if(COVERAGE) {
 	_start_coverage();
 	register_shutdown_function("_end_coverage");
@@ -76,18 +82,24 @@ _start_cache();
 
 try {
 	// load base files
+	ctx_log_start("Initialisation");
+	ctx_log_start("Opening files");
 	$files = array_merge(glob("core/*.php"), glob("ext/*/main.php"));
 	foreach($files as $filename) {
 		require_once $filename;
 	}
+	ctx_log_endok();
 
 
+	ctx_log_start("Connecting to DB");
 	// connect to the database
 	$database = new Database();
 	$database->db->fnExecute = '_count_execs';
 	$config = new DatabaseConfig($database);
+	ctx_log_endok();
 
 
+	ctx_log_start("Loading themelets");
 	// load the theme parts
 	$_theme = $config->get_string("theme", "default");
 	if(!file_exists("themes/$_theme")) $_theme = "default";
@@ -110,6 +122,7 @@ try {
 			}
 		}
 	}
+	ctx_log_endok();
 
 
 	// initialise the extensions
@@ -120,14 +133,17 @@ try {
 			add_event_listener($c, $c->get_priority());
 		}
 	}
+	ctx_log_endok("Initialisation");
 
 
+	ctx_log_start("Page generation");
 	// start the page generation waterfall
 	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 	$user = _get_user($config, $database);
 	send_event(new InitExtEvent());
 	send_event(_get_page_request());
 	$page->display();
+	ctx_log_endok("Page generation");
 
 
 	// for databases which support transactions
@@ -138,6 +154,7 @@ try {
 	//}
 
 	_end_cache();
+	ctx_log_endok();
 }
 catch(Exception $e) {
 	$version = VERSION;
@@ -154,5 +171,6 @@ catch(Exception $e) {
 	</body>
 </html>
 EOD;
+	ctx_log_ender();
 }
 ?>
