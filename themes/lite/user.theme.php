@@ -114,7 +114,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		</form>
 		";
 		
-		if($user->is_admin()) {
+		if($duser->is_admin()) {
 			$i_user_id = int_escape($duser->id);
 			$h_is_admin = $duser->is_admin() ? " checked" : "";
 			$html .= "
