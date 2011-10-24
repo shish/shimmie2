@@ -745,7 +745,7 @@ function send_event(Event $event) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function get_debug_info() {
-	global $config, $_event_count;
+	global $config, $_event_count, $database, $_execs;
 
 	if(function_exists('memory_get_usage')) {
 		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
@@ -762,15 +762,16 @@ function get_debug_info() {
 		$i_utime = "???";
 		$i_stime = "???";
 	}
+	
 	$i_files = count(get_included_files());
-	global $_execs;
-	global $database;
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
+	
 	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
+	$debug .= "; Shimmie version ". VERSION .", SCore Version ". SCORE_VERSION;
 
 	return $debug;
 }
