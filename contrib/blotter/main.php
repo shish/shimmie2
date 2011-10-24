@@ -123,7 +123,8 @@ class Blotter extends SimpleExtension {
 	private function display_blotter() {
 		global $database, $config;
 		$limit = $config->get_int("blotter_recent", 5);
-		$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC LIMIT :lim", array("lim"=>$limit));
+		$sql = 'SELECT * FROM blotter ORDER BY id DESC LIMIT '.intval($limit);
+		$entries = $database->get_all($sql);
 		$this->theme->display_blotter($entries);
 	}
 }
