@@ -90,7 +90,7 @@ class ViewImageTheme extends Themelet {
 			$html .= " ($h_ip)";
 		}
 		if(!is_null($image->source)) {
-			if(substr($image->source, 0, 7) == "http://") {
+			if(substr($image->source, 0, 7) == "http://" || substr($image->source, 0, 8) == "https://") {
 				$html .= " (<a href='$h_source'>source</a>)";
 			}
 			else {
