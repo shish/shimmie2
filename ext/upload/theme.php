@@ -64,8 +64,15 @@ class UploadTheme extends Themelet {
 		if($tl_enabled) {
 			$link = make_http(make_link("upload"));
 			$title = "Upload to " . $config->get_string('title');
+			
+			if($config->get_bool('nice_urls')){
+				$delimiter = '?';
+			} else {
+				$delimiter = '&amp;';
+			}
+			
 			$html .= '<p><a href="javascript:location.href=&quot;' .
-				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
+				$link . $delimiter . 'url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
 				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
 		}
 
