@@ -179,7 +179,9 @@ class Upload implements Extension {
 					}
 					else
 					{
-						if(!$is_full) {
+						if ($is_full) {
+							$this->theme->display_full($page);
+						} else {
 							$this->theme->display_page($page);
 						}
 					}
