@@ -62,19 +62,29 @@ class UploadTheme extends Themelet {
 		";
 
 		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
+			$link = make_http(make_link("upload"));			
+			if($config->get_bool('nice_urls')){
+				$delimiter = '?';
+			} else {
+				$delimiter = '&amp;';
+			}
+				{
 			$title = "Upload to " . $config->get_string('title');
 			$html .= '<p><a href="javascript:location.href=&quot;' .
-				$link . '?url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
+				$link . $delimiter . 'url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
 				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
-		}
-		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
+			}
+				{
 			$title = "Danbooru to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:if(document.getElementById(&quot;post_old_tags&quot;).value.search(/\bflash\b/)==-1) { location.href=&quot;' .
-				$link . '?url=&quot;+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+document.getElementById(&quot;post_old_tags&quot;).value } else { location.href=&quot;' .
-				$link . '?url=&quot;+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&tags=&quot;+document.getElementById(&quot;post_old_tags&quot;).value } ">' .
+			$html .= '<p><a href="javascript:var img=document.getElementById(&quot;highres&quot;).href;var ste=&quot;' .
+				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
+				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
+				'+&quot;&amp;tags=&quot;+tag;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p;}' .
+				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p;}}">' .
 				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags!))';
+
+			}
+				
 		}
 
 		$page->set_title("Upload");
