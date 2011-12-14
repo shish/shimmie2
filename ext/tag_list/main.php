@@ -15,6 +15,7 @@ class TagList implements Extension {
 
 		if($event instanceof InitExtEvent) {
 			$config->set_default_int("tag_list_length", 15);
+			$config->set_default_int("popular_tag_list_length", 15);
 			$config->set_default_int("tags_min", 3);
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 			$config->set_default_string("tag_list_image_type", 'related');
@@ -85,7 +86,8 @@ class TagList implements Extension {
 			$event->panel->add_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
-			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" tags");
+			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" related tags");
+			$sb->add_int_option("popular_tag_list_length", "<br>Show top "); $sb->add_label(" popular tags");
 			$sb->add_text_option("info_link", "<br>Tag info link: ");
 			$sb->add_choice_option("tag_list_image_type", array(
 				"Image's tags only" => "tags",
@@ -301,9 +303,9 @@ class TagList implements Extension {
 				FROM tags
 				WHERE count > 0
 				ORDER BY count DESC
-				LIMIT :tag_list_length
+				LIMIT :popular_tag_list_length
 				";
-			$args = array("tag_list_length"=>$config->get_int('tag_list_length'));
+			$args = array("popular_tag_list_length"=>$config->get_int('popular_tag_list_length'));
 
 			$tags = $database->get_all($query, $args);
 			$database->cache->set("popular_tags", $tags, 600);
