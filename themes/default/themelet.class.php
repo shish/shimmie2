@@ -31,12 +31,33 @@ class Themelet {
 		global $config;
 		$i_id = int_escape($image->id);
 		$h_view_link = make_link("post/view/$i_id", $query);
-		$h_tip = html_escape($image->get_tooltip());
 		$h_thumb_link = $image->get_thumb_link();
-		if($image->ext == 'swf' || 'svg'){
+
+
+		// Removes the size tag if the file is an mp3 
+		if($image->ext == 'mp3'){
+			$iitip = $image->get_tooltip();
+			$mp3tip = array("0x0");
+			$h_tip = str_replace($mp3tip, " ", $iitip);
+		
+			// Makes it work with a variation of the default tooltips (I.E $tags // $filesize // $size)
+			$justincase = array("   //", "//   ", "  //", "//  ", "  ");
+				if(strstr($h_tip, "  ")){
+					$h_tip = html_escape(str_replace($justincase, "", $h_tip));
+				}else{
+				$h_tip = html_escape($h_tip);
+				}
+		}else{
+		$h_tip = html_escape($image->get_tooltip());
+		}
+		
+
+		// If file is flash or svg then sets thumbnail to max size.
+		if($image->ext == 'swf' || $image->ext == 'svg'){
 		$tsize = get_thumbnail_size('thumb_width', 'thumb_height'); }
 		else{
 		$tsize = get_thumbnail_size($image->width, $image->height); }
+
 		return "
 			<!-- cancel border -->
 			<div class='thumbblock'>
