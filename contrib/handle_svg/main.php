@@ -40,7 +40,6 @@ class SVGFileHandler implements Extension {
 //				exec("convert images/{$ha}/{$hash}[0] -geometry {$w}x{$h} -quality {$q} jpg:thumbs/{$ha}/{$hash}");
 //			}
 //			else {
-				// FIXME: scale image, as not all boards use 192x192
 				copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
 //			}
 		}
