@@ -34,7 +34,10 @@ class Themelet {
 		$h_tip = html_escape($image->get_tooltip());
 		$h_image_link = $image->get_image_link();
 		$h_thumb_link = $image->get_thumb_link();
-		$tsize = get_thumbnail_size($image->width, $image->height);
+		if($image->ext == 'swf'){
+		$tsize = get_thumbnail_size(192, 192); }
+		else{
+		$tsize = get_thumbnail_size($image->width, $image->height); }
 		return "
 			<div class='thumbblock'>
 			<div class='rr thumb'>

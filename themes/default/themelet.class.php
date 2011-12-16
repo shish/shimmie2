@@ -33,7 +33,10 @@ class Themelet {
 		$h_view_link = make_link("post/view/$i_id", $query);
 		$h_tip = html_escape($image->get_tooltip());
 		$h_thumb_link = $image->get_thumb_link();
-		$tsize = get_thumbnail_size($image->width, $image->height);
+		if($image->ext == 'swf'){
+		$tsize = get_thumbnail_size(192, 192); }
+		else{
+		$tsize = get_thumbnail_size($image->width, $image->height); }
 		return "
 			<!-- cancel border -->
 			<div class='thumbblock'>
