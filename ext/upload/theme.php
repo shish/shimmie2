@@ -12,22 +12,28 @@ class UploadTheme extends Themelet {
 	public function display_page(Page $page) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
-
+		
+		// Uploader 2.0!
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
 			$n = $i + 1;
 			$width = $tl_enabled ? "35%" : "80%";
 			$upload_list .= "
 				<tr>
-					<td width='50'>File $n</td>
-					<td width='250'><input id='data$i' name='data$i' type='file'></td>
-			";
-			if($tl_enabled) {
-				$upload_list .= "
-					<td width='50'>URL $n</td>
-					<td width='250'><input id='url$i' name='url$i' type='text'></td>
-				";
-			}
+					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;inline&quot;' /> File<br>";
+				if($tl_enabled) {
+					$upload_list .="
+					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;document.getElementById(&quot;url$i&quot;).style.display = &quot;inline&quot;' /> URL</ br></td></form>
+					
+					<td><input id='data$i' name='data$i' class='wid' type='file'><input id='url$i' name='url$i' class='wid' type='text' style='display:none'></td>
+					";
+					}
+					else { 
+					$upload_list .= "</form></td>
+					<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
+					";
+					}
+					
 			$upload_list .= "
 				</tr>
 			";
@@ -51,7 +57,7 @@ class UploadTheme extends Themelet {
 			});
 			</script>
 			".make_form(make_link("upload"), "POST", $multipart=True)."
-				<table id='large_upload_form'>
+				<table id='large_upload_form' class='vert'>
 					$upload_list
 					<tr><td>Tags</td><td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
@@ -60,7 +66,7 @@ class UploadTheme extends Themelet {
 			</form>
 			<small>(Max file size is $max_kb)</small>
 		";
-
+		
 		if($tl_enabled) {
 			$link = make_http(make_link("upload"));			
 			if($config->get_bool('nice_urls')){
