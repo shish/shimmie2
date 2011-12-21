@@ -253,8 +253,8 @@ function captcha_get_html() {
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return "";
 
 	$captcha = "";
-	if($user->is_anonymous() && $config->get_bool("use_captchas")) {
-		$rpk = $config->get_string("api_recaptcha_pubkey");
+	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
+		$rpk = $config->get_string("api_recaptcha_privkey");
 		if(!empty($rpk)) {
 			$captcha = recaptcha_get_html($rpk);
 		}
@@ -274,8 +274,8 @@ function captcha_check() {
 
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return true;
 
-	if($user->is_anonymous() && $config->get_bool("use_captchas")) {
-		$rpk = $config->get_string('api_recaptcha_privkey');
+	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
+		$rpk = $config->get_string('api_recaptcha_pubkey');
 		if(!empty($rpk)) {
 			$resp = recaptcha_check_answer(
 					$rpk,
