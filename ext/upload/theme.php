@@ -17,7 +17,6 @@ class UploadTheme extends Themelet {
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
 			$n = $i + 1;
-			$width = $tl_enabled ? "35%" : "80%";
 			$upload_list .= "
 				<tr>
 					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;inline&quot;' /> File<br>";
@@ -105,21 +104,18 @@ class UploadTheme extends Themelet {
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
 		$upload_list = '';
-		$width = $tl_enabled ? "35%" : "80%";
 		$upload_list .= "
-			<tr>
-				<td width='50'>File</td>
-				<td width='250'><input id='data0' name='data0' type='file'></td>
-			</tr>
-		";
-		if($tl_enabled) {
-			$upload_list .= "
-			<tr>
-				<td width='50'>URL</td>
-				<td width='250'><input id='url0' name='url0' type='text'></td>
-			</tr>
-			";
-		}
+				<tr>
+					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url0&quot;).value = &quot;&quot;;document.getElementById(&quot;data0&quot;).style.display = &quot;inline&quot;' /> File<br>";
+				if($tl_enabled) {
+					$upload_list .="
+					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data0&quot;).value = &quot;&quot;;document.getElementById(&quot;url0&quot;).style.display = &quot;inline&quot;' /> URL</ br></td></form>
+					<td><input id='data0' name='data0' class='wid' type='file'><input id='url0' name='url0' class='wid' type='text' style='display:none'></td>
+					";
+				} else { 
+					$upload_list .= "</form></td>
+					";
+				}
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
@@ -133,7 +129,7 @@ class UploadTheme extends Themelet {
 				.$thumbnail."<br>"
 				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
 				<input type='hidden' name='image_id' value='$image_id'>
-				<table id='large_upload_form'>
+				<table id='large_upload_form' class='vert'>
 					$upload_list
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
