@@ -55,7 +55,7 @@ class Themelet {
 
 		// If file is flash or svg then sets thumbnail to max size.
 		if($image->ext == 'swf' || $image->ext == 'svg'){
-		$tsize = get_thumbnail_size('thumb_width', 'thumb_height'); }
+		$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height')); }
 		else{
 		$tsize = get_thumbnail_size($image->width, $image->height); }
 
