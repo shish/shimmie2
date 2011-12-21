@@ -171,7 +171,7 @@ class Setup extends SimpleExtension {
 		$config->set_default_string("theme", "default");
 		$config->set_default_bool("use_autodate", true);
 		$config->set_default_bool("word_wrap", true);
-		$config->set_default_bool("use_captchas", false);
+		$config->set_default_bool("comment_captcha", false);
 		$config->set_default_string("autodate_format", "F j, Y");
 		// Automatic caching is disabled by default
 		$config->set_default_string("autocache_location", "data/cache");

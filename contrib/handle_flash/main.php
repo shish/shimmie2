@@ -7,7 +7,6 @@
 
 class FlashFileHandler extends DataHandlerExtension {
 	protected function create_thumb($hash) {
-		// FIXME: scale image, as not all boards use 192x192
 		copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
 	}
 
