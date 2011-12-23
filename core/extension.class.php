@@ -177,6 +177,13 @@ abstract class DataHandlerExtension implements Extension {
 				$iae = new ImageAdditionEvent($event->user, $image);
 				send_event($iae);
 				$event->image_id = $iae->image->id;
+				
+				// Rating Stuff.
+				if(file_exists("ext/rating") && !empty($event->metadata['rating'])){
+					global $database;
+					$rating = $event->metadata['rating'];
+					$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $event->image_id));
+				}
 			}
 		}
 
