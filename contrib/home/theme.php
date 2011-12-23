@@ -7,6 +7,7 @@ class HomeTheme extends Themelet {
 <html>
 	<head>
 		<title>$sitename</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<link rel='stylesheet' href='$data_href/themes/$theme_name/style.css' type='text/css'>
 	</head>
 	<style>
