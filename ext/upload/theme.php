@@ -80,13 +80,17 @@ class UploadTheme extends Themelet {
 				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
 			}
 				{
+			/* Danbooru > Shimmie Bookmarklet.
+				This "should" work on any site running danbooru, unless for some odd reason they switched around the id's or aren't using post/list.
+			*/
 			$title = "Danbooru to " . $config->get_string('title');
 			$html .= '<p><a href="javascript:var img=document.getElementById(&quot;highres&quot;).href;var ste=&quot;' .
-				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
-				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
-				'+&quot;&amp;tags=&quot;+tag;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p;}' .
-				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p;}}">' .
-				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags!))';
+				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;var doc=document.documentElement.innerHTML;var rtg=doc.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname + document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
+				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
+				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag+&quot;&rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
+				'+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
+				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}">' .
+				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags, rating & source!))';
 
 			}
 				
