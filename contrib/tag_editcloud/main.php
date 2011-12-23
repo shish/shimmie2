@@ -87,16 +87,13 @@ class TagEditCloud implements Extension {
 
 		if ((gettype($image) == 'object') && (isset($image->tag_array)) && ($itags=$image->tag_array)) $itags=array_fill_keys(array_values($itags),true);
 
-		$result = $database->execute(" SELECT tag, FLOOR(LOG(2.7, LOG(2.7, count - ? + 1)+1)*1.5*100)/100 AS scaled, count
+		$tag_data = $database->get_all(" SELECT tag, FLOOR(LOG(2.7, LOG(2.7, count - ? + 1)+1)*1.5*100)/100 AS scaled, count
 				FROM tags WHERE count >= ? ORDER BY ".
 				(!$alphasort ? "count DESC":"tag").
 				" limit $maxcount",
 			array($tags_min,$tags_min)
 		);
 		
-
-
-		$tag_data = $result->GetArray();
 		$counter=1;
 		foreach($tag_data as $row) {
 			if((!$alphasort)&&($counter==$defcount)) $cloud .= "<div id=\"tagcloud_extra\" style=\"display: none;\">";
