@@ -1031,14 +1031,14 @@ function _end_cache() {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 function _start_coverage() {
-	if(COVERAGE && function_exists("xdebug_start_code_coverage")) {
+	if(function_exists("xdebug_start_code_coverage")) {
 		#xdebug_start_code_coverage(XDEBUG_CC_UNUSED|XDEBUG_CC_DEAD_CODE);
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
 	}
 }
 
 function _end_coverage() {
-	if(COVERAGE && function_exists("xdebug_get_code_coverage")) {
+	if(function_exists("xdebug_get_code_coverage")) {
 		if(!file_exists("data/coverage")) mkdir("data/coverage");
 		$n = 0;
 		$t = time();
