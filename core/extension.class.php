@@ -179,10 +179,16 @@ abstract class DataHandlerExtension implements Extension {
 				$event->image_id = $iae->image->id;
 				
 				// Rating Stuff.
-				if(file_exists("ext/rating") && !empty($event->metadata['rating'])){
+				if(!empty($event->metadata['rating'])){
 					global $database;
 					$rating = $event->metadata['rating'];
 					$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $event->image_id));
+				}
+				
+				// Locked Stuff.
+				if(!empty($event->metadata['locked'])){
+					$locked = $event->metadata['locked'];
+					send_event(new LockSetEvent($image, !empty($locked)));
 				}
 			}
 		}
