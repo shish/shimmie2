@@ -59,6 +59,8 @@ define("CACHE_DIR", false);
 define("VERSION", 'trunk');
 define("SCORE_VERSION", 's2hack/'.VERSION);
 define("COOKIE_PREFIX", 'shm');
+define("SPEED_HAX", false);
+define("FORCE_NICE_URLS", false);
 
 if(empty($database_dsn) && !file_exists("config.php")) {
 	header("Location: install.php");

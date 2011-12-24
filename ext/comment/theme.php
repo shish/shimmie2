@@ -118,7 +118,15 @@ class CommentListTheme extends Themelet {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
-		send_event($tfe);
+
+		// sending this event to all ~50 exts has a lot of overhead
+		if(SPEED_HAX) {
+			$bb = new BBCode();
+			$bb->receive_event($tfe);
+		}
+		else {
+			send_event($tfe);
+		}
 
 		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
