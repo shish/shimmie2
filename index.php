@@ -50,6 +50,12 @@
  * Each of these can be imported at the start of a function with eg "global $page, $user;"
  */
 
+if(empty($database_dsn) && !file_exists("config.php")) {
+	header("Location: install.php");
+	exit;
+}
+require_once "config.php";
+
 // set up and purify the environment
 define("DEBUG", true);
 define("COVERAGE", true);
@@ -62,12 +68,6 @@ define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
 define("FORCE_NICE_URLS", false);
 
-if(empty($database_dsn) && !file_exists("config.php")) {
-	header("Location: install.php");
-	exit;
-}
-
-require_once "config.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
 if(CONTEXT) {
