@@ -132,13 +132,29 @@ class TagList implements Extension {
 	}
 
 	private function build_az() {
-		$alpha = "abcdefghijklmnopqrstuvwxyz";
+		global $database;
+
+		$tags_min = $this->get_tags_min();
+
+		$cache_key = "data/tag_inits-" . md5("tc" . $tags_min) . ".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
+
+		$tag_data = $database->get_col("
+			SELECT DISTINCT
+				substr(tag, 1, 1)
+			FROM tags
+			WHERE count >= :tags_min
+			ORDER BY tag
+		", array("tags_min"=>$tags_min));
+
 		$html = "";
-		for($n=0; $n<strlen($alpha); $n++) {
-			$a = $alpha[$n];
+		foreach($tag_data as $a) {
 			$html .= " <a href='".modify_current_url(array("starts_with"=>$a))."'>$a</a>";
 		}
 		$html .= "<p><hr>";
+
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 // }}}
