@@ -116,10 +116,10 @@ class TagList implements Extension {
 
 	private function get_starts_with() {
 		if(isset($_GET['starts_with'])) {
-			return $_GET['starts_with'];
+			return $_GET['starts_with'] . "%";
 		}
 		else {
-			return "";
+			return "%";
 		}
 	}
 // }}}
@@ -139,7 +139,7 @@ class TagList implements Extension {
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
-		$cache_key = "data/tag_cloud-"+md5($tags_min + $starts_with)+".html";
+		$cache_key = "data/tag_cloud-" . md5("tc" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_all("
@@ -172,7 +172,7 @@ class TagList implements Extension {
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
-		$cache_key = "data/tag_alpha-"+md5($tags_min + $starts_with)+".html";
+		$cache_key = "data/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_all("
@@ -205,7 +205,7 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$cache_key = "data/tag_popul-"+md5($tags_min)+".html";
+		$cache_key = "data/tag_popul-" . md5("tp" . $tags_min) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_all("
