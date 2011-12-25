@@ -323,25 +323,9 @@ class Upload implements Extension {
 		
 		// Checks if url contains rating, also checks if the rating extension is enabled.
 		if($config->get_string("transload_engine", "none") != "none" && file_exists("ext/rating") && !empty($_GET['rating'])) {
+			// Rating event will validate that this is s/q/e/u
 			$rating = strtolower($_GET['rating']);
-			// There REALLY must be a less messy way to do this.. 
-			if($rating !== "") {
-				if($rating == "s" || $rating == "safe" || $rating == "q" || $rating == "questionable" || $rating == "e" || $rating == "explicit") {
-					if($rating == "s" || $rating == "safe" || $rating == "q" || $rating == "questionable") {
-						if($rating == "s" || $rating == "safe") {
-							$rating = "s";
-						}else{
-							$rating = "q";
-						}
-					}else{
-						$rating = "e";
-						}
-				}else{
-					$rating = "u";
-				}
-			}else{
-				$rating = "u";
-			}
+			$rating = $rating[0];
 		}else{
 			$rating = "";
 		}
