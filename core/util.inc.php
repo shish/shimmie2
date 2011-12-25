@@ -222,6 +222,44 @@ function make_link($page=null, $query=null) {
 	}
 }
 
+
+/**
+ * Take the current URL and modify some paramaters
+ *
+ * @retval string
+ */
+function modify_current_url($changes) {
+	// SHIT: PHP is officially the worst web API ever because it does not
+	// have a built-in function to do this.
+
+	// SHIT: parse_str is magically retarded; not only is it a useless name, it also
+	// didn't return the parsed array, preferring to overwrite global variables with
+	// whatever data the user supplied. Thankfully, 4.0.3 added an extra option to
+	// give it an array to use...
+	$params = array();
+	parse_str($_SERVER['QUERY_STRING'], $params);
+
+	if(isset($changes['q'])) {
+		$base = $changes['q'];
+		unset($changes['q']);
+	}
+	else {
+		$base = $_GET['q'];
+	}
+
+	if(isset($params['q'])) {
+		unset($params['q']);
+	}
+
+	foreach($changes as $k => $v) {
+		if(is_null($v) and isset($params[$k])) unset($params[$k]);
+		$params[$k] = $v;
+	}
+
+	return make_link($base, http_build_query($params));
+}
+
+
 /**
  * Turn a relative link into an absolute one, including hostname
  *
