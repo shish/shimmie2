@@ -19,6 +19,7 @@ class TagList implements Extension {
 			$config->set_default_int("tags_min", 3);
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 			$config->set_default_string("tag_list_image_type", 'related');
+			$config->set_default_bool("tag_list_pages", false);
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("tags")) {
@@ -94,6 +95,7 @@ class TagList implements Extension {
 				"Show related" => "related"
 			), "<br>Image tag list: ");
 			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
+			$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
 			$event->panel->add_block($sb);
 		}
 	}
@@ -115,12 +117,29 @@ class TagList implements Extension {
 	}
 
 	private function get_starts_with() {
+		global $config;
 		if(isset($_GET['starts_with'])) {
 			return $_GET['starts_with'] . "%";
 		}
 		else {
-			return "%";
+			if($config->get_bool("tag_list_pages")) {
+				return "a%";
+			}
+			else {
+				return "%";
+			}
 		}
+	}
+
+	private function build_az() {
+		$alpha = "abcdefghijklmnopqrstuvwxyz";
+		$html = "";
+		for($n=0; $n<strlen($alpha); $n++) {
+			$a = $alpha[$n];
+			$html .= " <a href='".modify_current_url(array("starts_with"=>$a))."'>$a</a>";
+		}
+		$html .= "<p><hr>";
+		return $html;
 	}
 // }}}
 // maps {{{
@@ -130,12 +149,12 @@ class TagList implements Extension {
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
 		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
-		$h_all = "<a href='?mincount=1'>Show All</a>";
+		$h_all = "<a href='".modify_current_url(array("mincount"=>1))."'>Show All</a>";
 		return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
 	}
 
 	private function build_tag_map() {
-		global $database;
+		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
@@ -153,6 +172,7 @@ class TagList implements Extension {
 			", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
+		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$size = sprintf("%.2f", (float)$row['scaled']);
@@ -168,7 +188,7 @@ class TagList implements Extension {
 	}
 
 	private function build_tag_alphabetic() {
-		global $database;
+		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
@@ -184,6 +204,7 @@ class TagList implements Extension {
 				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
+		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
 		$lastLetter = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
