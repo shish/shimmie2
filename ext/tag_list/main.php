@@ -113,6 +113,15 @@ class TagList implements Extension {
 			return $config->get_int('tags_min');
 		}
 	}
+
+	private function get_starts_with() {
+		if(isset($_GET['starts_with'])) {
+			return $_GET['starts_with'];
+		}
+		else {
+			return "";
+		}
+	}
 // }}}
 // maps {{{
 	private function build_navigation() {
@@ -129,7 +138,7 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$starts_with = @$_GET['starts_with'] || "a";
+		$starts_with = $this->get_starts_with();
 		$cache_key = "data/tag_cloud-"+md5($tags_min + $starts_with)+".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
@@ -139,9 +148,9 @@ class TagList implements Extension {
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag ILIKE :starts_with
+				AND tag LIKE :starts_with
 				ORDER BY tag
-			", array("tags_min"=>$tags_min, "starts_with"=>$starts_with+"%"));
+			", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
 		foreach($tag_data as $row) {
@@ -162,7 +171,7 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		$starts_with = @$_GET['starts_with'] || "a";
+		$starts_with = $this->get_starts_with();
 		$cache_key = "data/tag_alpha-"+md5($tags_min + $starts_with)+".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
@@ -170,9 +179,9 @@ class TagList implements Extension {
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag ILIKE :starts_with
+				AND tag LIKE :starts_with
 				ORDER BY tag
-				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with+"%"));
+				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
 		$lastLetter = "";
