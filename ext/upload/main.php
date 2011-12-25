@@ -173,6 +173,7 @@ class Upload implements Extension {
 						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 							$tags = Tag::explode($_GET['tags']);
 						}
+								
 						$ok = $this->try_transload($url, $tags, $url);
 						$this->theme->display_upload_status($page, $ok);
 					}
@@ -299,10 +300,51 @@ class Upload implements Extension {
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page;
 		global $config;
+		global $user;
 
 		$ok = true;
 
-		if(empty($source)) $source = $url;
+		//Allows external source to be set.
+		if(!empty($_GET['source'])){
+			$source = $_GET['source'];
+		}else{
+			$source = $url;
+		}
+		
+		// Checks if user is admin > check if you want locked.
+		if($user->is_admin()){
+			// There must be a less messy way to do this..
+			if($_GET['locked'] == "y" || $_GET['locked'] == "yes" || $_GET['locked'] == "true" || $_GET['locked'] == "on" || $_GET['locked'] == "n" || $_GET['locked'] == "no" || $_GET['locked'] == "false" || $_GET['locked'] == "off"){	
+				if($_GET['locked'] == "y" || $_GET['locked'] == "yes" || $_GET['locked'] == "true" || $_GET['locked'] == "on"){
+					$locked = "on";
+				}
+			}
+		}
+		
+		// Checks if url contains rating, also checks if the rating extension is enabled.
+		if($config->get_string("transload_engine", "none") != "none" && file_exists("ext/rating") && !empty($_GET['rating'])) {
+			$rating = strtolower($_GET['rating']);
+			// There REALLY must be a less messy way to do this.. 
+			if($rating !== "") {
+				if($rating == "s" || $rating == "safe" || $rating == "q" || $rating == "questionable" || $rating == "e" || $rating == "explicit") {
+					if($rating == "s" || $rating == "safe" || $rating == "q" || $rating == "questionable") {
+						if($rating == "s" || $rating == "safe") {
+							$rating = "s";
+						}else{
+							$rating = "q";
+						}
+					}else{
+						$rating = "e";
+						}
+				}else{
+					$rating = "u";
+				}
+			}else{
+				$rating = "u";
+			}
+		}else{
+			$rating = "";
+		}
 
 		// PHP falls back to system default if /tmp fails, can't we just
 		// use the system default to start with? :-/
@@ -362,6 +404,16 @@ class Upload implements Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
+			
+			/* check for locked > adds to metadata if it has */
+			if(!empty($locked)){
+			$metadata['locked'] = $locked;
+			}
+						
+			/* check for rating > adds to metadata if it has */
+			if(!empty($rating)){
+				$metadata['rating'] = $rating;
+			}
 			
 			/* check if we have been given an image ID to replace */
 			if (!empty($replace)) {

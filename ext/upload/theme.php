@@ -16,13 +16,44 @@ class UploadTheme extends Themelet {
 		// Uploader 2.0!
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
-			$n = $i + 1;
-			$upload_list .= "
-				<tr>
-					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;inline&quot;' /> File<br>";
+			$a=$i+1;
+			$s=$i-1;
+			if(!$i==0){
+				$upload_list .="<tr id='row$i' style='display:none'>";
+			}else{
+				$upload_list .= "<tr id='row$i'>";
+			}	
+				$upload_list .= "<td width='15'>";
+					
+					if($i==0){
+						$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
+						"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;javascript:document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;javascript:document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+						"<img src='ext/upload/plus.png'></a></div></td>";
+					}else{
+						$upload_list .="<div id='hide$i'>
+						<a href='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
+						"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
+						"document.getElementById(&quot;hide$s&quot;).style.display = &quot;&quot;;".
+						"document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;".
+						"document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;'>".
+						"<img src='ext/upload/minus.png' /></a>";
+						if($a==$config->get_int('upload_count')){
+							$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
+							}else{
+							$upload_list .=
+							"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
+							"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
+							"document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+							"<img src='ext/upload/plus.png' /></a>";
+							}
+							$upload_list .= "</div></td>";
+					}
+					
+					$upload_list .=
+					"<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;&quot;' /> File<br>";
 				if($tl_enabled) {
-					$upload_list .="
-					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;document.getElementById(&quot;url$i&quot;).style.display = &quot;inline&quot;' /> URL</ br></td></form>
+					$upload_list .=
+					"<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;document.getElementById(&quot;url$i&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
 					
 					<td><input id='data$i' name='data$i' class='wid' type='file'><input id='url$i' name='url$i' class='wid' type='text' style='display:none'></td>
 					";
@@ -58,8 +89,8 @@ class UploadTheme extends Themelet {
 			".make_form(make_link("upload"), "POST", $multipart=True)."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td>Tags</td><td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
-					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
+					<tr><td></td><td>Tags<td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
+					<tr><td></td><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
 			</form>
@@ -80,13 +111,17 @@ class UploadTheme extends Themelet {
 				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
 			}
 				{
+			/* Danbooru > Shimmie Bookmarklet.
+				This "should" work on any site running danbooru, unless for some odd reason they switched around the id's or aren't using post/list.
+			*/
 			$title = "Danbooru to " . $config->get_string('title');
 			$html .= '<p><a href="javascript:var img=document.getElementById(&quot;highres&quot;).href;var ste=&quot;' .
-				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
-				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
-				'+&quot;&amp;tags=&quot;+tag;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p;}' .
-				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p;}}">' .
-				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags!))';
+				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;var doc=document.documentElement.innerHTML;var rtg=doc.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname + document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
+				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
+				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag+&quot;&rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
+				'+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
+				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}">' .
+				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags, rating & source!))';
 
 			}
 				
@@ -106,10 +141,10 @@ class UploadTheme extends Themelet {
 		$upload_list = '';
 		$upload_list .= "
 				<tr>
-					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url0&quot;).value = &quot;&quot;;document.getElementById(&quot;data0&quot;).style.display = &quot;inline&quot;' /> File<br>";
+					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url0&quot;).value = &quot;&quot;;document.getElementById(&quot;data0&quot;).style.display = &quot;&quot;' /> File<br>";
 				if($tl_enabled) {
 					$upload_list .="
-					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data0&quot;).value = &quot;&quot;;document.getElementById(&quot;url0&quot;).style.display = &quot;inline&quot;' /> URL</ br></td></form>
+					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data0&quot;).value = &quot;&quot;;document.getElementById(&quot;url0&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
 					<td><input id='data0' name='data0' class='wid' type='file'><input id='url0' name='url0' class='wid' type='text' style='display:none'></td>
 					";
 				} else { 

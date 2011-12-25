@@ -59,13 +59,13 @@ class Themelet {
 		$tsize = get_thumbnail_size($image->width, $image->height); }
 
 		return "
-			<div class='thumbblock'>
+			<center><div class='thumbblock'>
 			
 				<a href='$h_view_link' style='position: relative; display: block; height: {$tsize[1]}px; width: {$tsize[0]}px;'>
 					<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' class='highlighted' style='height: {$tsize[1]}px; width: {$tsize[0]}px;' src='$h_thumb_link'>
 				</a>
 			
-			</div>
+			</div></center>
 		";
 	}
 
