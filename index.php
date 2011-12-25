@@ -67,6 +67,7 @@ define("SCORE_VERSION", 's2hack/'.VERSION);
 define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
 define("FORCE_NICE_URLS", false);
+define("WH_SPLITS", 1);
 
 require_once "core/util.inc.php";
 require_once "lib/context.php";
