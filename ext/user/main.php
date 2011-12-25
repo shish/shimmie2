@@ -246,7 +246,7 @@ class UserPage extends SimpleExtension {
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
 		else if($user->is_admin() && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {
-			$user_ip = int_escape($matches[2]);
+			$user_ip = $matches[2]; // FIXME: ip_escape?
 			$event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
 		}
 	}
