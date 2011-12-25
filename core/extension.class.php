@@ -180,9 +180,9 @@ abstract class DataHandlerExtension implements Extension {
 				
 				// Rating Stuff.
 				if(!empty($event->metadata['rating'])){
-					global $database;
+					global $user;
 					$rating = $event->metadata['rating'];
-					$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $event->image_id));
+					send_event(new RatingSetEvent($image, $user, $rating));
 				}
 				
 				// Locked Stuff.
