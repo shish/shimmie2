@@ -129,9 +129,9 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_map_$tags_min.html")) {
-			return file_get_contents("data/tag_map_$tags_min.html");
-		}
+		$starts_with = @$_GET['starts_with'] || "a";
+		$cache_key = "data/tag_cloud-"+md5($tags_min + $starts_with)+".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_all("
 				SELECT
@@ -139,8 +139,9 @@ class TagList implements Extension {
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
+				AND tag ILIKE :starts_with
 				ORDER BY tag
-			", array("tags_min"=>$tags_min));
+			", array("tags_min"=>$tags_min, "starts_with"=>$starts_with+"%"));
 
 		$html = "";
 		foreach($tag_data as $row) {
@@ -152,7 +153,8 @@ class TagList implements Extension {
 			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
 		}
 
-		// file_put_contents("data/tag_map_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
@@ -160,28 +162,33 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_alpha_$tags_min.html")) {
-			return file_get_contents("data/tag_alpha_$tags_min.html");
-		}
+		$starts_with = @$_GET['starts_with'] || "a";
+		$cache_key = "data/tag_alpha-"+md5($tags_min + $starts_with)+".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all(
-				"SELECT tag,count FROM tags WHERE count >= :tags_min ORDER BY tag",
-				array("tags_min"=>$tags_min));
+		$tag_data = $database->get_all("
+				SELECT tag, count
+				FROM tags
+				WHERE count >= :tags_min
+				AND tag ILIKE :starts_with
+				ORDER BY tag
+				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with+"%"));
 
 		$html = "";
 		$lastLetter = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
-			if($lastLetter != strtolower(substr($h_tag, 0, 1))) {
-				$lastLetter = strtolower(substr($h_tag, 0, 1));
+			if($lastLetter != strtolower(substr($h_tag, 0, count($starts_with)+1))) {
+				$lastLetter = strtolower(substr($h_tag, 0, count($starts_with)+1));
 				$html .= "<p>$lastLetter<br>";
 			}
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
-		// file_put_contents("data/tag_alpha_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
@@ -189,13 +196,15 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_popul_$tags_min.html")) {
-			return file_get_contents("data/tag_popul_$tags_min.html");
-		}
+		$cache_key = "data/tag_popul-"+md5($tags_min)+".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all(
-				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= :tags_min ORDER BY count DESC, tag ASC",
-				array("tags_min"=>$tags_min));
+		$tag_data = $database->get_all("
+				SELECT tag, count, FLOOR(LOG(count)) AS scaled
+				FROM tags
+				WHERE count >= :tags_min
+				ORDER BY count DESC, tag ASC
+				", array("tags_min"=>$tags_min));
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
 		$lastLog = "";
@@ -211,7 +220,8 @@ class TagList implements Extension {
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
-		// file_put_contents("data/tag_popul_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
