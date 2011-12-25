@@ -313,12 +313,7 @@ class Upload implements Extension {
 		
 		// Checks if user is admin > check if you want locked.
 		if($user->is_admin()){
-			// There must be a less messy way to do this..
-			if($_GET['locked'] == "y" || $_GET['locked'] == "yes" || $_GET['locked'] == "true" || $_GET['locked'] == "on" || $_GET['locked'] == "n" || $_GET['locked'] == "no" || $_GET['locked'] == "false" || $_GET['locked'] == "off"){	
-				if($_GET['locked'] == "y" || $_GET['locked'] == "yes" || $_GET['locked'] == "true" || $_GET['locked'] == "on"){
-					$locked = "on";
-				}
-			}
+			$locked = bool_escape($_GET['locked']);
 		}
 		
 		// Checks if url contains rating, also checks if the rating extension is enabled.
@@ -391,7 +386,7 @@ class Upload implements Extension {
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){
-			$metadata['locked'] = $locked;
+				$metadata['locked'] = $locked ? "on" : "";
 			}
 						
 			/* check for rating > adds to metadata if it has */

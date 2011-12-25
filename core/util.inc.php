@@ -47,6 +47,25 @@ function sql_escape($input) {
 	return $database->db->Quote($input);
 }
 
+
+/**
+ * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
+ *
+ * @retval boolean
+ */
+function bool_escape($input) {
+	$input = strtolower($input);
+	return (
+		$input == "y" ||
+		$input == "yes" ||
+		$input == "t" ||
+		$input == "true" ||
+		$input == "on" ||
+		$input == 1 ||
+		$input == true
+	);
+}
+
 /**
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
