@@ -84,6 +84,7 @@ class TagList implements Extension {
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Tag Map Options");
 			$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
+			$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
 			$event->panel->add_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
@@ -95,7 +96,6 @@ class TagList implements Extension {
 				"Show related" => "related"
 			), "<br>Image tag list: ");
 			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
-			$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
 			$event->panel->add_block($sb);
 		}
 	}
@@ -144,7 +144,7 @@ class TagList implements Extension {
 				substr(tag, 1, 1)
 			FROM tags
 			WHERE count >= :tags_min
-			ORDER BY tag
+			ORDER BY substr(tag, 1, 1)
 		", array("tags_min"=>$tags_min));
 
 		$html = "";
@@ -177,15 +177,16 @@ class TagList implements Extension {
 		$cache_key = "data/tag_cloud-" . md5("tc" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
+		// SHIT: PDO/pgsql has problems using the same named param twice -_-;;
 		$tag_data = $database->get_all("
 				SELECT
 					tag,
-					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
+					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
 				AND tag LIKE :starts_with
 				ORDER BY tag
-			", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
+			", array("tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
 		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
