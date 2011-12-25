@@ -228,6 +228,8 @@ class UserPage extends SimpleExtension {
 	}
 
 	public function onSearchTermParse(Event $event) {
+		global $user;
+
 		$matches = array();
 		if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
 			$user = User::by_name($matches[2]);
@@ -242,6 +244,10 @@ class UserPage extends SimpleExtension {
 		else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
 			$user_id = int_escape($matches[2]);
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
+		}
+		else if($user->is_admin() && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {
+			$user_ip = int_escape($matches[2]);
+			$event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
 		}
 	}
 // }}}
