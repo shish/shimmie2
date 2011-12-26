@@ -3,6 +3,7 @@
 class CustomViewImageTheme extends ViewImageTheme {
 	public function display_page($image, $editor_parts) {
 		global $page;
+		$metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_html_header("<meta name=\"keywords\" content=\"$metatags\">");
