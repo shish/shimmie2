@@ -57,8 +57,8 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 require_once "config.php";
 
 // set up and purify the environment
-define("DEBUG", true);
-define("COVERAGE", true);
+define("DEBUG", false);
+define("COVERAGE", false);
 define("CONTEXT", false);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
