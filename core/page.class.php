@@ -183,7 +183,7 @@ class Page {
 	 * Display the page according to the mode and data given
 	 */
 	public function display() {
-		global $page;
+		global $page, $user;
 		
 		header("Content-type: ".$this->type);
 		header("X-Powered-By: SCore-".SCORE_VERSION);
@@ -196,7 +196,22 @@ class Page {
 
 		switch($this->mode) {
 			case "page":
-				header("Cache-control: no-cache");
+				header("Vary: Cookie, Accept-Encoding");
+				if(CACHE_HTTP) {
+					if($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
+						header("Cache-control: public, max-age=600");
+						header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+					}
+					else {
+						#header("Cache-control: private, max-age=0");
+						header("Cache-control: no-cache");
+						header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
+					}
+				}
+				else {
+					header("Cache-control: no-cache");
+					header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
+				}
 				usort($this->blocks, "blockcmp");
 				$this->add_auto_html_headers();
 				$layout = new Layout();
