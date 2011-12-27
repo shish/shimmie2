@@ -27,11 +27,11 @@ class UploadTheme extends Themelet {
 					
 					if($i==0){
 						$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
-						"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+						"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
 						"<img src='ext/upload/plus.png'></a></div></td>";
 					}else{
 						$upload_list .="<div id='hide$i'>
-						<a href='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
+						<a href='#' onclick='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
 						"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
 						"document.getElementById(&quot;hide$s&quot;).style.display = &quot;&quot;;".
 						"document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;".
@@ -41,7 +41,7 @@ class UploadTheme extends Themelet {
 							$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
 							}else{
 							$upload_list .=
-							"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
+							"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
 							"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
 							"document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
 							"<img src='ext/upload/plus.png' /></a>";
