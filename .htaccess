@@ -30,9 +30,12 @@ DefaultType image/jpeg
 
 <IfModule mod_expires.c>
 	ExpiresActive On
-	ExpiresDefault "access plus 1 month"
-	ExpiresByType text/html "now"
-	ExpiresByType text/plain "now"
+	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|css|js))$">
+		Header set Cache-Control "public, max-age=2629743"
+		ExpiresDefault "access plus 1 month"
+	</FilesMatch>
+	#ExpiresByType text/html "now"
+	#ExpiresByType text/plain "now"
 </IfModule>
 
 <ifmodule mod_deflate.c>

@@ -62,6 +62,7 @@ define("COVERAGE", true);
 define("CONTEXT", false);
 define("CACHE_MEMCACHE", false);
 define("CACHE_DIR", false);
+define("CACHE_HTTP", false);
 define("VERSION", 'trunk');
 define("SCORE_VERSION", 's2hack/'.VERSION);
 define("COOKIE_PREFIX", 'shm');
