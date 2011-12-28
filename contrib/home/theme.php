@@ -47,7 +47,7 @@ EOD
 			$counter_html
 			<div class='space' id='foot'>
 				<small><small>
-				<a href='$contact_link'>Contact</a> &ndash; Serving $num_comma posts &ndash;
+				<a href='mailto:$contact_link'>Contact</a> &ndash; Serving $num_comma posts &ndash;
 				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
 				</small></small>
 			</div>
