@@ -114,6 +114,19 @@ class CommentListTheme extends Themelet {
 	}
 
 
+	/**
+	 * Show comments made by a user
+	 */
+	public function display_user_comments($comments) {
+		global $page;
+		$html = "";
+		foreach($comments as $comment) {
+			$html .= $this->comment_to_html($comment, true);
+		}
+		$page->add_block(new Block("Comments", $html, "left", 70));
+	}
+
+
 	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 
