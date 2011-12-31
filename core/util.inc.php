@@ -129,34 +129,9 @@ function to_shorthand_int($int) {
  * @retval string
  */
 function autodate($date, $html=true) {
-	global $config;
-
-	$format = $config->get_string('autodate_format', "F j, Y");
-	$seconds = time() - strtotime($date);
-	$ago = seconds_to_time($seconds) . " ago";
-	$on = "on " . date($format, strtotime($date));
-
-	if($config->get_bool('use_autodate', true)) {
-		return ($html ? "<span title='$on'>$ago</span>" : $ago);
-	}
-	else {
-		return $on;
-	}
-}
-
-/**
- * Turn a number of seconds into a vague human timespan, eg 142 -> "2 minutes"
- *
- * @retval string
- */
-function seconds_to_time($seconds) {
-	if($seconds<60) return $seconds . " second" . plural($seconds); $seconds = round($seconds/60);
-	if($seconds<60) return $seconds . " minute" . plural($seconds); $seconds = round($seconds/60);
-	if($seconds<24) return $seconds . " hour" . plural($seconds);   $seconds = round($seconds/24);
-	if($seconds<7)  return $seconds . " day" . plural($seconds);    $seconds = round($seconds/7);
-	if($seconds<4)  return $seconds . " week" . plural($seconds);   $seconds = round($seconds/4);
-	if($seconds<12) return $seconds . " month" . plural($seconds);  $seconds = round($seconds/12);
-	                return $seconds . " year" . plural($seconds);
+	$cpu = date('c', strtotime($date));
+	$hum = date('F j, Y', strtotime($date));
+	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
 
