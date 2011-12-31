@@ -27,11 +27,11 @@ class UploadTheme extends Themelet {
 					
 					if($i==0){
 						$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
-						"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;javascript:document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;javascript:document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+						"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
 						"<img src='ext/upload/plus.png'></a></div></td>";
 					}else{
 						$upload_list .="<div id='hide$i'>
-						<a href='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
+						<a href='#' onclick='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
 						"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
 						"document.getElementById(&quot;hide$s&quot;).style.display = &quot;&quot;;".
 						"document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;".
@@ -41,7 +41,7 @@ class UploadTheme extends Themelet {
 							$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
 							}else{
 							$upload_list .=
-							"<a href='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
+							"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
 							"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
 							"document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
 							"<img src='ext/upload/plus.png' /></a>";
@@ -113,15 +113,31 @@ class UploadTheme extends Themelet {
 				{
 			/* Danbooru > Shimmie Bookmarklet.
 				This "should" work on any site running danbooru, unless for some odd reason they switched around the id's or aren't using post/list.
+				Most likely this will stop working when Danbooru updates to v2, all depends if they switch the ids or not >_>.
+				Clicking the link on a danbooru image page should give you something along the lines of:
+				'http://www.website.com/shimmie/upload?url="http://sonohara.donmai.us/data/crazylongurl.jpg&tags="too many tags"&rating="s"&source="http://danbooru.donmai.us/post/show/012345/"'
+				TODO: Possibly make the entire/most of the script into a .js file, and just make the bookmarklet load it on click (Something like that?)
 			*/
 			$title = "Danbooru to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:var img=document.getElementById(&quot;highres&quot;).href;var ste=&quot;' .
-				$link . $delimiter . 'url=&quot;;var tag=document.getElementById(&quot;post_old_tags&quot;).value;var doc=document.documentElement.innerHTML;var rtg=doc.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname + document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
-				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true)' .
-				'{if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+tag+&quot;&rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value' .
-				'+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}else{var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);if(tag.search(/\bflash\b/)==-1){location.href=ste+img+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
-				'else{location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}}">' .
-				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags, rating & source!))';
+			$html .= '<p><a href="javascript:'.
+				/* This should stop the bookmarklet being insanely long...not that it's already huge or anything. */
+				'var ste=&quot;'. $link . $delimiter .'url=&quot;;var tag=document.getElementById(&quot;post_tags&quot;).value;var rtg=document.documentElement.innerHTML.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname+document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
+				//The default confirm sucks, mainly due to being unable to change the text in the Ok/Cancel box (Yes/No would be better.)
+				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true){' . //Just incase some people don't want the insane amount of tags danbooru has.
+					//The flash check is kind of picky, although it should work on "most" images..there will be either some old or extremely new ones that lack the flash tag.
+					'if(tag.search(/\bflash\b/)==-1){'.
+						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+					'else{'.
+						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+				//The following is more or less the same as above, instead using the tags on danbooru, should load a prompt box instead.
+				'}else{'.
+					'var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);'.
+					'if(tag.search(/\bflash\b/)==-1){'.
+						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
+					'else{'.
+						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+				'}">' .
+				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags/rating/source!))';
 
 			}
 				

@@ -52,8 +52,12 @@ class TagListTheme extends Themelet {
 				$html .= " <span class='tag_count'>$count</span>";
 			}
 		}
-
-		$page->add_block(new Block("Related", $html, "left"));
+		
+		if($config->get_string('tag_list_image_type')=="tags"){
+			$page->add_block(new Block("Tags", $html, "left", 10));}
+		else{
+			$page->add_block(new Block("Related Tags", $html, "left", 10));
+		}
 	}
 
 
