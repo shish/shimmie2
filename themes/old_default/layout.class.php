@@ -37,7 +37,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
 		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
