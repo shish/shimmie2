@@ -32,12 +32,36 @@ class AdminPageTheme extends Themelet {
 			</form>
 		";
 		$page->add_block(new Block("Misc Admin Tools", $html));
-
+		
+		/* First check
+		Requires you to click the checkbox to enable the delete by query form */
+		$dbqcheck = "
+			if(document.getElementById(&quot;dbqcheck&quot;).checked == false){
+				document.getElementById(&quot;dbqtags&quot;).disabled = true;
+				document.getElementById(&quot;dbqsubmit&quot;).disabled = true;
+			}else{
+				document.getElementById(&quot;dbqtags&quot;).disabled = false;
+				document.getElementById(&quot;dbqsubmit&quot;).disabled = false;
+			}";
+				
+		/* Second check
+		Requires you to confirm the deletion by clicking ok. */
 		$html = "
-			".make_form(make_link("admin_utils"))."
+			<script type='text/javascript'>
+			function checkform(){
+				if(confirm('Are you sure you wish to delete all images using these tags?')){
+					return true;
+				}else{
+				return false;
+				}
+			}		
+			</script>"
+			
+		.make_form(make_link("admin_utils"),"post",false,false,"return checkform()")."
+				<input type='checkbox' id='dbqcheck' name='action' onclick='$dbqcheck'>
 				<input type='hidden' name='action' value='delete by query'>
-				<input type='text' name='query'>
-				<input type='submit' value='Go'>
+				<input type='text' id='dbqtags' disabled='true' name='query'>
+				<input type='submit' id='dbqsubmit' disabled='true' value='Go'>
 			</form>
 		";
 		$page->add_block(new Block("Delete by Query", $html));

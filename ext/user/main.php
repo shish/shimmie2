@@ -166,8 +166,8 @@ class UserPage extends SimpleExtension {
 	public function onUserPageBuilding(Event $event) {
 		global $page, $user, $config;
 
-		$h_join_date = html_escape($event->display_user->join_date);
-		$event->add_stats("Join date: $h_join_date", 10);
+		$h_join_date = autodate($event->display_user->join_date);
+		$event->add_stats("Joined: $h_join_date", 10);
 
 		$av = $event->display_user->get_avatar_html();
 		if($av) $event->add_stats($av, 0);

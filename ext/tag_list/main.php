@@ -141,7 +141,7 @@ class TagList implements Extension {
 
 		$tag_data = $database->get_col("
 			SELECT DISTINCT
-				substr(tag, 1, 1)
+				SCORE_STRNORM(substr(tag, 1, 1))
 			FROM tags
 			WHERE count >= :tags_min
 			ORDER BY substr(tag, 1, 1)
@@ -184,7 +184,7 @@ class TagList implements Extension {
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag LIKE :starts_with
+				AND tag SCORE_ILIKE :starts_with
 				ORDER BY tag
 			", array("tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with));
 
@@ -216,7 +216,7 @@ class TagList implements Extension {
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag LIKE :starts_with
+				AND tag SCORE_ILIKE :starts_with
 				ORDER BY tag
 				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
