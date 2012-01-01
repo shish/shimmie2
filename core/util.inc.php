@@ -254,12 +254,15 @@ function make_http($link) {
  *
  * @retval string
  */
-function make_form($target, $method="POST", $multipart=False, $form_id="") {
+function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
 	$auth = $user->get_auth_html();
 	$extra = empty($form_id) ? '' : " id='$form_id'";
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
+	}
+	if($onsubmit) {
+		$extra .= " onsubmit='$onsubmit'";
 	}
 	return "<form action='$target' method='$method'$extra>$auth";
 }
