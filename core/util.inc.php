@@ -204,6 +204,10 @@ function make_link($page=null, $query=null) {
  * @retval string
  */
 function modify_current_url($changes) {
+	return modify_url($_SERVER['QUERY_STRING'], $changes);
+}
+
+function modify_url($url, $changes) {
 	// SHIT: PHP is officially the worst web API ever because it does not
 	// have a built-in function to do this.
 
@@ -212,7 +216,7 @@ function modify_current_url($changes) {
 	// whatever data the user supplied. Thankfully, 4.0.3 added an extra option to
 	// give it an array to use...
 	$params = array();
-	parse_str($_SERVER['QUERY_STRING'], $params);
+	parse_str($url, $params);
 
 	if(isset($changes['q'])) {
 		$base = $changes['q'];

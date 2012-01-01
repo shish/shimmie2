@@ -136,24 +136,19 @@ class TagList implements Extension {
 
 		$tags_min = $this->get_tags_min();
 
-		$cache_key = "data/tag_inits-" . md5("tc" . $tags_min) . ".html";
-		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
-
-		$tag_data = $database->get_col("
+		$tag_data = $database->get_col($database->engine->scoreql_to_sql("
 			SELECT DISTINCT
 				SCORE_STRNORM(substr(tag, 1, 1))
 			FROM tags
 			WHERE count >= :tags_min
-			ORDER BY substr(tag, 1, 1)
-		", array("tags_min"=>$tags_min));
+			ORDER BY SCORE_STRNORM(substr(tag, 1, 1))
+		"), array("tags_min"=>$tags_min));
 
 		$html = "";
 		foreach($tag_data as $a) {
 			$html .= " <a href='".modify_current_url(array("starts_with"=>$a))."'>$a</a>";
 		}
 		$html .= "<p><hr>";
-
-		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
 
 		return $html;
 	}
@@ -178,15 +173,15 @@ class TagList implements Extension {
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		// SHIT: PDO/pgsql has problems using the same named param twice -_-;;
-		$tag_data = $database->get_all("
+		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
 				SELECT
 					tag,
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
 				AND tag SCORE_ILIKE :starts_with
-				ORDER BY tag
-			", array("tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with));
+				ORDER BY SCORE_STRNORM(tag)
+			"), array("tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
 		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
@@ -212,13 +207,13 @@ class TagList implements Extension {
 		$cache_key = "data/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all("
+		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
 				AND tag SCORE_ILIKE :starts_with
-				ORDER BY tag
-				", array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
+				ORDER BY SCORE_STRNORM(tag)
+				"), array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
 		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
