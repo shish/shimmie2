@@ -75,6 +75,7 @@ class MySQL extends DBEngine {
 		$data = str_replace("SCORE_DATETIME", "DATETIME", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
 		$data = str_replace("SCORE_STRNORM", "", $data);
+		$data = str_replace("SCORE_ILIKE", "LIKE", $data);
 		return $data;
 	}
 
@@ -96,6 +97,7 @@ class PostgreSQL extends DBEngine {
 		$data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
 		$data = str_replace("SCORE_NOW", "current_time", $data);
 		$data = str_replace("SCORE_STRNORM", "lower", $data);
+		$data = str_replace("SCORE_ILIKE", "ILIKE", $data);
 		return $data;
 	}
 
@@ -142,6 +144,7 @@ class SQLite extends DBEngine {
 		$data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
 		$data = str_replace("SCORE_STRNORM", "", $data);
+		$data = str_replace("SCORE_ILIKE", "LIKE", $data);
 		$cols = array();
 		$extras = "";
 		foreach(explode(",", $data) as $bit) {
