@@ -114,11 +114,32 @@ class CommentListTheme extends Themelet {
 	}
 
 
+	/**
+	 * Show comments made by a user
+	 */
+	public function display_user_comments($comments) {
+		global $page;
+		$html = "";
+		foreach($comments as $comment) {
+			$html .= $this->comment_to_html($comment, true);
+		}
+		$page->add_block(new Block("Comments", $html, "left", 70));
+	}
+
+
 	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
-		send_event($tfe);
+
+		// sending this event to all ~50 exts has a lot of overhead
+		if(SPEED_HAX) {
+			$bb = new BBCode();
+			$bb->receive_event($tfe);
+		}
+		else {
+			send_event($tfe);
+		}
 
 		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
@@ -158,6 +179,7 @@ class CommentListTheme extends Themelet {
 			return "
 				<a name='$i_comment_id'></a>
 				<div class='$oe comment'>
+				<!--<span class='timeago' style='float: right;'>$h_timestamp</span>-->
 				$h_userlink: $h_comment
 				$h_dellink
 				</div>

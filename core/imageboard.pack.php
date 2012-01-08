@@ -500,9 +500,12 @@ class Image {
 		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
 		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
 
-		$plte = new ParseLinkTemplateEvent($tmpl, $this);
-		send_event($plte);
-		$tmpl = $plte->link;
+		// nothing seems to use this, sending the event out to 50 exts is a lot of overhead
+		if(!SPEED_HAX) {
+			$plte = new ParseLinkTemplateEvent($tmpl, $this);
+			send_event($plte);
+			$tmpl = $plte->link;
+		}
 
 		return $tmpl;
 	}
@@ -972,7 +975,8 @@ function move_upload_to_archive($event) {
 	$target = warehouse_path("images", $event->hash);
 	if(!file_exists(dirname($target))) mkdir(dirname($target), 0755, true);
 	if(!@copy($event->tmpname, $target)) {
-		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target)");
+		$errors = error_get_last(); // note: requires php 5.2
+		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
 		return false;
 	}
 	return true;

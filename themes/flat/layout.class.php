@@ -42,7 +42,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
 		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
@@ -71,7 +71,7 @@ $header_html
 		<div id="footer">
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
-			<a href="http://www.shishnet.org/">Shish</a> &amp; Co 2007-2011,
+			<a href="http://www.shishnet.org/">Shish</a> &amp; Co 2007-2012,
 			based on the Danbooru concept.
 			$debug
 			$contact

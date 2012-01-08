@@ -47,6 +47,25 @@ function sql_escape($input) {
 	return $database->db->Quote($input);
 }
 
+
+/**
+ * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
+ *
+ * @retval boolean
+ */
+function bool_escape($input) {
+	$input = strtolower($input);
+	return (
+		$input == "y" ||
+		$input == "yes" ||
+		$input == "t" ||
+		$input == "true" ||
+		$input == "on" ||
+		$input == 1 ||
+		$input == true
+	);
+}
+
 /**
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
@@ -110,34 +129,9 @@ function to_shorthand_int($int) {
  * @retval string
  */
 function autodate($date, $html=true) {
-	global $config;
-
-	$format = $config->get_string('autodate_format', "F j, Y");
-	$seconds = time() - strtotime($date);
-	$ago = seconds_to_time($seconds) . " ago";
-	$on = "on " . date($format, strtotime($date));
-
-	if($config->get_bool('use_autodate', true)) {
-		return ($html ? "<span title='$on'>$ago</span>" : $ago);
-	}
-	else {
-		return $on;
-	}
-}
-
-/**
- * Turn a number of seconds into a vague human timespan, eg 142 -> "2 minutes"
- *
- * @retval string
- */
-function seconds_to_time($seconds) {
-	if($seconds<60) return $seconds . " second" . plural($seconds); $seconds = round($seconds/60);
-	if($seconds<60) return $seconds . " minute" . plural($seconds); $seconds = round($seconds/60);
-	if($seconds<24) return $seconds . " hour" . plural($seconds);   $seconds = round($seconds/24);
-	if($seconds<7)  return $seconds . " day" . plural($seconds);    $seconds = round($seconds/7);
-	if($seconds<4)  return $seconds . " week" . plural($seconds);   $seconds = round($seconds/4);
-	if($seconds<12) return $seconds . " month" . plural($seconds);  $seconds = round($seconds/12);
-	                return $seconds . " year" . plural($seconds);
+	$cpu = date('c', strtotime($date));
+	$hum = date('F j, Y', strtotime($date));
+	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
 
@@ -178,7 +172,7 @@ function make_link($page=null, $query=null) {
 
 	if(is_null($page)) $page = $config->get_string('main_page');
 
-	if($config->get_bool('nice_urls', false)) {
+	if(FORCE_NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
 		$base = str_replace("/index.php", "", $full);
@@ -203,6 +197,48 @@ function make_link($page=null, $query=null) {
 	}
 }
 
+
+/**
+ * Take the current URL and modify some paramaters
+ *
+ * @retval string
+ */
+function modify_current_url($changes) {
+	return modify_url($_SERVER['QUERY_STRING'], $changes);
+}
+
+function modify_url($url, $changes) {
+	// SHIT: PHP is officially the worst web API ever because it does not
+	// have a built-in function to do this.
+
+	// SHIT: parse_str is magically retarded; not only is it a useless name, it also
+	// didn't return the parsed array, preferring to overwrite global variables with
+	// whatever data the user supplied. Thankfully, 4.0.3 added an extra option to
+	// give it an array to use...
+	$params = array();
+	parse_str($url, $params);
+
+	if(isset($changes['q'])) {
+		$base = $changes['q'];
+		unset($changes['q']);
+	}
+	else {
+		$base = $_GET['q'];
+	}
+
+	if(isset($params['q'])) {
+		unset($params['q']);
+	}
+
+	foreach($changes as $k => $v) {
+		if(is_null($v) and isset($params[$k])) unset($params[$k]);
+		$params[$k] = $v;
+	}
+
+	return make_link($base, http_build_query($params));
+}
+
+
 /**
  * Turn a relative link into an absolute one, including hostname
  *
@@ -222,12 +258,15 @@ function make_http($link) {
  *
  * @retval string
  */
-function make_form($target, $method="POST", $multipart=False, $form_id="") {
+function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
 	$auth = $user->get_auth_html();
 	$extra = empty($form_id) ? '' : " id='$form_id'";
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
+	}
+	if($onsubmit) {
+		$extra .= " onsubmit='$onsubmit'";
 	}
 	return "<form action='$target' method='$method'$extra>$auth";
 }
@@ -253,8 +292,8 @@ function captcha_get_html() {
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return "";
 
 	$captcha = "";
-	if($user->is_anonymous() && $config->get_bool("use_captchas")) {
-		$rpk = $config->get_string("api_recaptcha_pubkey");
+	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
+		$rpk = $config->get_string("api_recaptcha_privkey");
 		if(!empty($rpk)) {
 			$captcha = recaptcha_get_html($rpk);
 		}
@@ -274,8 +313,8 @@ function captcha_check() {
 
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return true;
 
-	if($user->is_anonymous() && $config->get_bool("use_captchas")) {
-		$rpk = $config->get_string('api_recaptcha_privkey');
+	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
+		$rpk = $config->get_string('api_recaptcha_pubkey');
 		if(!empty($rpk)) {
 			$resp = recaptcha_check_answer(
 					$rpk,
@@ -504,7 +543,12 @@ function format_text($string) {
 function warehouse_path($base, $hash, $create=true) {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
-	$pa = "$base/$ab/$hash";
+	if(WH_SPLITS == 2) {
+		$pa = "$base/$ab/$cd/$hash";
+	}
+	else {
+		$pa = "$base/$ab/$hash";
+	}
 	if($create && !file_exists(dirname($pa))) mkdir(dirname($pa), 0755, true);
 	return $pa;
 }

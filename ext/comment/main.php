@@ -171,6 +171,10 @@ class CommentList extends SimpleExtension {
 		$i_comment_count = Comment::count_comments_by_user($event->display_user);
 		$h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
 		$event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
+
+		global $user;
+		$recent = $this->get_user_recent_comments($event->display_user->id, 10);
+		$this->theme->display_user_comments($recent);
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
@@ -305,6 +309,28 @@ class CommentList extends SimpleExtension {
 				ORDER BY comments.id DESC
 				LIMIT :limit
 				", array("limit"=>$config->get_int('comment_count')));
+		$comments = array();
+		foreach($rows as $row) {
+			$comments[] = new Comment($row);
+		}
+		return $comments;
+	}
+
+	private function get_user_recent_comments($user_id, $count) {
+		global $config;
+		global $database;
+		$rows = $database->get_all("
+				SELECT
+				users.id as user_id, users.name as user_name, users.email as user_email,
+				comments.comment as comment, comments.id as comment_id,
+				comments.image_id as image_id, comments.owner_ip as poster_ip,
+				comments.posted as posted
+				FROM comments
+				LEFT JOIN users ON comments.owner_id=users.id
+				WHERE users.id = :user_id
+				ORDER BY comments.id DESC
+				LIMIT :limit
+				", array("user_id"=>$user_id, "limit"=>$count));
 		$comments = array();
 		foreach($rows as $row) {
 			$comments[] = new Comment($row);

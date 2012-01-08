@@ -177,6 +177,19 @@ abstract class DataHandlerExtension implements Extension {
 				$iae = new ImageAdditionEvent($event->user, $image);
 				send_event($iae);
 				$event->image_id = $iae->image->id;
+				
+				// Rating Stuff.
+				if(!empty($event->metadata['rating'])){
+					global $user;
+					$rating = $event->metadata['rating'];
+					send_event(new RatingSetEvent($image, $user, $rating));
+				}
+				
+				// Locked Stuff.
+				if(!empty($event->metadata['locked'])){
+					$locked = $event->metadata['locked'];
+					send_event(new LockSetEvent($image, !empty($locked)));
+				}
 			}
 		}
 

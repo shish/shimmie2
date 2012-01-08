@@ -3,10 +3,16 @@
 class CustomViewImageTheme extends ViewImageTheme {
 	public function display_page($image, $editor_parts) {
 		global $page;
+		$metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
+		$page->add_html_header("<meta name=\"keywords\" content=\"$metatags\">");
+		$page->add_html_header("<meta property=\"og:title\" content=\"$metatags\">");
+		$page->add_html_header("<meta property=\"og:type\" content=\"article\">");
+		$page->add_html_header("<meta property=\"og:image\" content=\"".make_http($image->get_thumb_link())."\">");
+		$page->add_html_header("<meta property=\"og:url\" content=\"".make_http(make_link("post/view/{$image->id}"))."\">");
 		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
-		$page->add_block(new Block("Statistics", $this->build_stats($image), "left", 10));
+		$page->add_block(new Block("Statistics", $this->build_stats($image), "left", 15));
 		$page->add_block(new Block(null, $this->build_image_editor($image, $editor_parts), "main", 10));
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}

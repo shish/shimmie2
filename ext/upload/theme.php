@@ -12,22 +12,58 @@ class UploadTheme extends Themelet {
 	public function display_page(Page $page) {
 		global $config;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
-
+		
+		// Uploader 2.0!
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++) {
-			$n = $i + 1;
-			$width = $tl_enabled ? "35%" : "80%";
-			$upload_list .= "
-				<tr>
-					<td width='50'>File $n</td>
-					<td width='250'><input id='data$i' name='data$i' type='file'></td>
-			";
-			if($tl_enabled) {
-				$upload_list .= "
-					<td width='50'>URL $n</td>
-					<td width='250'><input id='url$i' name='url$i' type='text'></td>
-				";
-			}
+			$a=$i+1;
+			$s=$i-1;
+			if(!$i==0){
+				$upload_list .="<tr id='row$i' style='display:none'>";
+			}else{
+				$upload_list .= "<tr id='row$i'>";
+			}	
+				$upload_list .= "<td width='15'>";
+					
+					if($i==0){
+						$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
+						"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+						"<img src='ext/upload/plus.png'></a></div></td>";
+					}else{
+						$upload_list .="<div id='hide$i'>
+						<a href='#' onclick='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
+						"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
+						"document.getElementById(&quot;hide$s&quot;).style.display = &quot;&quot;;".
+						"document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;".
+						"document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;'>".
+						"<img src='ext/upload/minus.png' /></a>";
+						if($a==$config->get_int('upload_count')){
+							$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
+							}else{
+							$upload_list .=
+							"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
+							"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
+							"document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
+							"<img src='ext/upload/plus.png' /></a>";
+							}
+							$upload_list .= "</div></td>";
+					}
+					
+					$upload_list .=
+					"<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;&quot;' /> File<br>";
+				if($tl_enabled) {
+					$upload_list .=
+					"<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;document.getElementById(&quot;url$i&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
+					
+					<td><input id='data$i' name='data$i' class='wid' type='file'><input id='url$i' name='url$i' class='wid' type='text' style='display:none'></td>
+					";
+					}
+					else { 
+					$upload_list .= "</form></td>
+					<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
+					";
+					}
+					
 			$upload_list .= "
 				</tr>
 			";
@@ -51,30 +87,60 @@ class UploadTheme extends Themelet {
 			});
 			</script>
 			".make_form(make_link("upload"), "POST", $multipart=True)."
-				<table id='large_upload_form'>
+				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td>Tags</td><td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
-					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
+					<tr><td></td><td>Tags<td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
+					<tr><td></td><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
 			</form>
 			<small>(Max file size is $max_kb)</small>
 		";
-
+		
 		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
-			$home = make_http(make_link());
-			$title = $config->get_string('title');
-			
+			$link = make_http(make_link("upload"));			
 			if($config->get_bool('nice_urls')){
 				$delimiter = '?';
 			} else {
 				$delimiter = '&amp;';
 			}
-			
-			$js='javascript:(function(){if(typeof window=="undefined"||!window.location||window.location.href=="about:blank"){window.location="'. $home .'";}else if(typeof document=="undefined"||!document.body){window.location="'. $home .'?url="+encodeURIComponent(window.location.href);} else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")){alert("You are already at '. $title .'!");} else{var tags=prompt("Please enter tags","tagme");if(tags!=""&&tags!=null){var link="'. $link . $delimiter .'url="+location.href+"&tags="+tags;var w=window.open(link,"_blank");}}})();';
-			
-			$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+				{
+			$title = "Upload to " . $config->get_string('title');
+			$html .= '<p><a href="javascript:location.href=&quot;' .
+				$link . $delimiter . 'url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
+				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+			}
+				{
+			/* Danbooru > Shimmie Bookmarklet.
+				This "should" work on any site running danbooru, unless for some odd reason they switched around the id's or aren't using post/list.
+				Most likely this will stop working when Danbooru updates to v2, all depends if they switch the ids or not >_>.
+				Clicking the link on a danbooru image page should give you something along the lines of:
+				'http://www.website.com/shimmie/upload?url="http://sonohara.donmai.us/data/crazylongurl.jpg&tags="too many tags"&rating="s"&source="http://danbooru.donmai.us/post/show/012345/"'
+				TODO: Possibly make the entire/most of the script into a .js file, and just make the bookmarklet load it on click (Something like that?)
+			*/
+			$title = "Danbooru to " . $config->get_string('title');
+			$html .= '<p><a href="javascript:'.
+				/* This should stop the bookmarklet being insanely long...not that it's already huge or anything. */
+				'var ste=&quot;'. $link . $delimiter .'url=&quot;;var tag=document.getElementById(&quot;post_tags&quot;).value;var rtg=document.documentElement.innerHTML.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname+document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
+				//The default confirm sucks, mainly due to being unable to change the text in the Ok/Cancel box (Yes/No would be better.)
+				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true){' . //Just incase some people don't want the insane amount of tags danbooru has.
+					//The flash check is kind of picky, although it should work on "most" images..there will be either some old or extremely new ones that lack the flash tag.
+					'if(tag.search(/\bflash\b/)==-1){'.
+						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+					'else{'.
+						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+				//The following is more or less the same as above, instead using the tags on danbooru, should load a prompt box instead.
+				'}else{'.
+					'var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);'.
+					'if(tag.search(/\bflash\b/)==-1){'.
+						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
+					'else{'.
+						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
+				'}">' .
+				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags/rating/source!))';
+
+			}
+				
 		}
 
 		$page->set_title("Upload");
@@ -89,21 +155,18 @@ class UploadTheme extends Themelet {
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
 		$upload_list = '';
-		$width = $tl_enabled ? "35%" : "80%";
 		$upload_list .= "
-			<tr>
-				<td width='50'>File</td>
-				<td width='250'><input id='data0' name='data0' type='file'></td>
-			</tr>
-		";
-		if($tl_enabled) {
-			$upload_list .= "
-			<tr>
-				<td width='50'>URL</td>
-				<td width='250'><input id='url0' name='url0' type='text'></td>
-			</tr>
-			";
-		}
+				<tr>
+					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url0&quot;).value = &quot;&quot;;document.getElementById(&quot;data0&quot;).style.display = &quot;&quot;' /> File<br>";
+				if($tl_enabled) {
+					$upload_list .="
+					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data0&quot;).value = &quot;&quot;;document.getElementById(&quot;url0&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
+					<td><input id='data0' name='data0' class='wid' type='file'><input id='url0' name='url0' class='wid' type='text' style='display:none'></td>
+					";
+				} else { 
+					$upload_list .= "</form></td>
+					";
+				}
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
@@ -117,7 +180,7 @@ class UploadTheme extends Themelet {
 				.$thumbnail."<br>"
 				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
 				<input type='hidden' name='image_id' value='$image_id'>
-				<table id='large_upload_form'>
+				<table id='large_upload_form' class='vert'>
 					$upload_list
 					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>

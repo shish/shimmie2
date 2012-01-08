@@ -173,6 +173,7 @@ class Upload implements Extension {
 						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 							$tags = Tag::explode($_GET['tags']);
 						}
+								
 						$ok = $this->try_transload($url, $tags, $url);
 						$this->theme->display_upload_status($page, $ok);
 					}
@@ -301,10 +302,30 @@ class Upload implements Extension {
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page;
 		global $config;
+		global $user;
 
 		$ok = true;
 
-		if(empty($source)) $source = $url;
+		//Allows external source to be set.
+		if(!empty($_GET['source'])){
+			$source = $_GET['source'];
+		}else{
+			$source = $url;
+		}
+		
+		// Checks if user is admin > check if you want locked.
+		if($user->is_admin()){
+			$locked = bool_escape($_GET['locked']);
+		}
+		
+		// Checks if url contains rating, also checks if the rating extension is enabled.
+		if($config->get_string("transload_engine", "none") != "none" && file_exists("ext/rating") && !empty($_GET['rating'])) {
+			// Rating event will validate that this is s/q/e/u
+			$rating = strtolower($_GET['rating']);
+			$rating = $rating[0];
+		}else{
+			$rating = "";
+		}
 
 		// PHP falls back to system default if /tmp fails, can't we just
 		// use the system default to start with? :-/
@@ -364,6 +385,16 @@ class Upload implements Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
+			
+			/* check for locked > adds to metadata if it has */
+			if(!empty($locked)){
+				$metadata['locked'] = $locked ? "on" : "";
+			}
+						
+			/* check for rating > adds to metadata if it has */
+			if(!empty($rating)){
+				$metadata['rating'] = $rating;
+			}
 			
 			/* check if we have been given an image ID to replace */
 			if (!empty($replace)) {

@@ -15,9 +15,11 @@ class TagList implements Extension {
 
 		if($event instanceof InitExtEvent) {
 			$config->set_default_int("tag_list_length", 15);
+			$config->set_default_int("popular_tag_list_length", 15);
 			$config->set_default_int("tags_min", 3);
 			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 			$config->set_default_string("tag_list_image_type", 'related');
+			$config->set_default_bool("tag_list_pages", false);
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("tags")) {
@@ -82,10 +84,12 @@ class TagList implements Extension {
 		if($event instanceof SetupBuildingEvent) {
 			$sb = new SetupBlock("Tag Map Options");
 			$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
+			$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
 			$event->panel->add_block($sb);
 
 			$sb = new SetupBlock("Popular / Related Tag List");
-			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" tags");
+			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" related tags");
+			$sb->add_int_option("popular_tag_list_length", "<br>Show top "); $sb->add_label(" popular tags");
 			$sb->add_text_option("info_link", "<br>Tag info link: ");
 			$sb->add_choice_option("tag_list_image_type", array(
 				"Image's tags only" => "tags",
@@ -111,6 +115,43 @@ class TagList implements Extension {
 			return $config->get_int('tags_min');
 		}
 	}
+
+	private function get_starts_with() {
+		global $config;
+		if(isset($_GET['starts_with'])) {
+			return $_GET['starts_with'] . "%";
+		}
+		else {
+			if($config->get_bool("tag_list_pages")) {
+				return "a%";
+			}
+			else {
+				return "%";
+			}
+		}
+	}
+
+	private function build_az() {
+		global $database;
+
+		$tags_min = $this->get_tags_min();
+
+		$tag_data = $database->get_col($database->engine->scoreql_to_sql("
+			SELECT DISTINCT
+				SCORE_STRNORM(substr(tag, 1, 1))
+			FROM tags
+			WHERE count >= :tags_min
+			ORDER BY SCORE_STRNORM(substr(tag, 1, 1))
+		"), array("tags_min"=>$tags_min));
+
+		$html = "";
+		foreach($tag_data as $a) {
+			$html .= " <a href='".modify_current_url(array("starts_with"=>$a))."'>$a</a>";
+		}
+		$html .= "<p><hr>";
+
+		return $html;
+	}
 // }}}
 // maps {{{
 	private function build_navigation() {
@@ -119,28 +160,31 @@ class TagList implements Extension {
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
 		$h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
 		$h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
-		$h_all = "<a href='?mincount=1'>Show All</a>";
+		$h_all = "<a href='".modify_current_url(array("mincount"=>1))."'>Show All</a>";
 		return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
 	}
 
 	private function build_tag_map() {
-		global $database;
+		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_map_$tags_min.html")) {
-			return file_get_contents("data/tag_map_$tags_min.html");
-		}
+		$starts_with = $this->get_starts_with();
+		$cache_key = "data/tag_cloud-" . md5("tc" . $tags_min . $starts_with) . ".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all("
+		// SHIT: PDO/pgsql has problems using the same named param twice -_-;;
+		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
 				SELECT
 					tag,
-					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min + 1)+1)*1.5*100)/100 AS scaled
+					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
-				ORDER BY tag
-			", array("tags_min"=>$tags_min));
+				AND tag SCORE_ILIKE :starts_with
+				ORDER BY SCORE_STRNORM(tag)
+			"), array("tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
+		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$size = sprintf("%.2f", (float)$row['scaled']);
@@ -150,36 +194,43 @@ class TagList implements Extension {
 			$html .= "&nbsp;<a style='font-size: ${size}em' href='$link'>$h_tag_no_underscores</a>&nbsp;\n";
 		}
 
-		// file_put_contents("data/tag_map_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
 	private function build_tag_alphabetic() {
-		global $database;
+		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_alpha_$tags_min.html")) {
-			return file_get_contents("data/tag_alpha_$tags_min.html");
-		}
+		$starts_with = $this->get_starts_with();
+		$cache_key = "data/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all(
-				"SELECT tag,count FROM tags WHERE count >= :tags_min ORDER BY tag",
-				array("tags_min"=>$tags_min));
+		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
+				SELECT tag, count
+				FROM tags
+				WHERE count >= :tags_min
+				AND tag SCORE_ILIKE :starts_with
+				ORDER BY SCORE_STRNORM(tag)
+				"), array("tags_min"=>$tags_min, "starts_with"=>$starts_with));
 
 		$html = "";
+		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
 		$lastLetter = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
-			if($lastLetter != strtolower(substr($h_tag, 0, 1))) {
-				$lastLetter = strtolower(substr($h_tag, 0, 1));
+			if($lastLetter != strtolower(substr($h_tag, 0, count($starts_with)+1))) {
+				$lastLetter = strtolower(substr($h_tag, 0, count($starts_with)+1));
 				$html .= "<p>$lastLetter<br>";
 			}
 			$link = $this->tag_link($row['tag']);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
-		// file_put_contents("data/tag_alpha_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
@@ -187,13 +238,15 @@ class TagList implements Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
-		if(file_exists("data/tag_popul_$tags_min.html")) {
-			return file_get_contents("data/tag_popul_$tags_min.html");
-		}
+		$cache_key = "data/tag_popul-" . md5("tp" . $tags_min) . ".html";
+		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all(
-				"SELECT tag,count,FLOOR(LOG(count)) AS scaled FROM tags WHERE count >= :tags_min ORDER BY count DESC, tag ASC",
-				array("tags_min"=>$tags_min));
+		$tag_data = $database->get_all("
+				SELECT tag, count, FLOOR(LOG(count)) AS scaled
+				FROM tags
+				WHERE count >= :tags_min
+				ORDER BY count DESC, tag ASC
+				", array("tags_min"=>$tags_min));
 
 		$html = "Results grouped by log<sub>e</sub>(n)";
 		$lastLog = "";
@@ -209,7 +262,8 @@ class TagList implements Extension {
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
-		// file_put_contents("data/tag_popul_$tags_min.html", $html);
+		if(SPEED_HAX) {file_put_contents($cache_key, $html);}
+
 		return $html;
 	}
 
@@ -301,9 +355,9 @@ class TagList implements Extension {
 				FROM tags
 				WHERE count > 0
 				ORDER BY count DESC
-				LIMIT :tag_list_length
+				LIMIT :popular_tag_list_length
 				";
-			$args = array("tag_list_length"=>$config->get_int('tag_list_length'));
+			$args = array("popular_tag_list_length"=>$config->get_int('popular_tag_list_length'));
 
 			$tags = $database->get_all($query, $args);
 			$database->cache->set("popular_tags", $tags, 600);

@@ -50,22 +50,26 @@
  * Each of these can be imported at the start of a function with eg "global $page, $user;"
  */
 
-// set up and purify the environment
-define("DEBUG", true);
-define("COVERAGE", true);
-define("CONTEXT", false);
-define("CACHE_MEMCACHE", false);
-define("CACHE_DIR", false);
-define("VERSION", 'trunk');
-define("SCORE_VERSION", 's2hack/'.VERSION);
-define("COOKIE_PREFIX", 'shm');
-
 if(empty($database_dsn) && !file_exists("config.php")) {
 	header("Location: install.php");
 	exit;
 }
-
 require_once "config.php";
+
+// set up and purify the environment
+define("DEBUG", false);
+define("COVERAGE", false);
+define("CONTEXT", false);
+define("CACHE_MEMCACHE", false);
+define("CACHE_DIR", false);
+define("CACHE_HTTP", false);
+define("VERSION", 'trunk');
+define("SCORE_VERSION", 's2hack/'.VERSION);
+define("COOKIE_PREFIX", 'shm');
+define("SPEED_HAX", false);
+define("FORCE_NICE_URLS", false);
+define("WH_SPLITS", 1);
+
 require_once "core/util.inc.php";
 require_once "lib/context.php";
 if(CONTEXT) {

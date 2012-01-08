@@ -79,6 +79,11 @@ class UserPage extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "logout") {
 				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				if(CACHE_HTTP) {
+					# to keep as few versions of content as possible,
+					# make cookies all-or-nothing
+					set_prefixed_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				}
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
@@ -161,8 +166,8 @@ class UserPage extends SimpleExtension {
 	public function onUserPageBuilding(Event $event) {
 		global $page, $user, $config;
 
-		$h_join_date = html_escape($event->display_user->join_date);
-		$event->add_stats("Join date: $h_join_date", 10);
+		$h_join_date = autodate($event->display_user->join_date);
+		$event->add_stats("Joined: $h_join_date", 10);
 
 		$av = $event->display_user->get_avatar_html();
 		if($av) $event->add_stats($av, 0);
@@ -228,6 +233,8 @@ class UserPage extends SimpleExtension {
 	}
 
 	public function onSearchTermParse(Event $event) {
+		global $user;
+
 		$matches = array();
 		if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
 			$user = User::by_name($matches[2]);
@@ -242,6 +249,10 @@ class UserPage extends SimpleExtension {
 		else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
 			$user_id = int_escape($matches[2]);
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
+		}
+		else if($user->is_admin() && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {
+			$user_ip = $matches[2]; // FIXME: ip_escape?
+			$event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
 		}
 	}
 // }}}

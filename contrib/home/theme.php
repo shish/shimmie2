@@ -7,6 +7,7 @@ class HomeTheme extends Themelet {
 <html>
 	<head>
 		<title>$sitename</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<link rel='stylesheet' href='$data_href/themes/$theme_name/style.css' type='text/css'>
 	</head>
 	<style>
@@ -46,7 +47,7 @@ EOD
 			$counter_html
 			<div class='space' id='foot'>
 				<small><small>
-				<a href='$contact_link'>Contact</a> &ndash; Serving $num_comma posts &ndash;
+				<a href='mailto:$contact_link'>Contact</a> &ndash; Serving $num_comma posts &ndash;
 				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
 				</small></small>
 			</div>

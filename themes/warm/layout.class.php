@@ -10,7 +10,9 @@ class Layout {
 		global $config;
 
 		$theme_name = $config->get_string('theme', 'default');
+		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
+		$main_page = $config->get_string('main_page');
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
@@ -45,7 +47,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
 		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
@@ -67,7 +69,7 @@ $header_html
 <table id="header" class="bgtop" width="100%" height="113px">
 	<tr>
 		<td><center>
-			<h1><a href="/">{$page->heading}</a></h1>
+			<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
 			<p>[Navigation links go here]
 		</center></td>
 		$head_block_html
@@ -83,7 +85,7 @@ $header_html
 		<div id="footer">
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
-			<a href="http://www.shishnet.org/">Shish</a> &amp; Co 2007-2011,
+			<a href="http://www.shishnet.org/">Shish</a> &amp; Co 2007-2012,
 			based on the Danbooru concept.
 			$debug
 			$contact
