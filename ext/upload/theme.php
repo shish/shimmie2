@@ -98,17 +98,18 @@ class UploadTheme extends Themelet {
 		";
 		
 		if($tl_enabled) {
-			$link = make_http(make_link("upload"));			
+			$link = make_http(make_link("upload"));
+			$main_page = make_http(make_link());
+			$title = $config->get_string('title');
+			
 			if($config->get_bool('nice_urls')){
 				$delimiter = '?';
 			} else {
 				$delimiter = '&amp;';
 			}
-				{
-			$title = "Upload to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:location.href=&quot;' .
-				$link . $delimiter . 'url=&quot;+location.href+&quot;&amp;tags=&quot;+prompt(&quot;enter tags&quot;)">' .
-				$title . '</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+			{
+				$js='javascript:(function(){if(typeof window=="undefined"||!window.location||window.location.href=="about:blank"){window.location="'. $main_page .'";}else if(typeof document=="undefined"||!document.body){window.location="'. $main_page .'?url="+encodeURIComponent(window.location.href);} else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")){alert("You are already at '. $title .'!");} else{var tags=prompt("Please enter tags","tagme");if(tags!=""&&tags!=null){var link="'. $link . $delimiter .'url="+location.href+"&tags="+tags;var w=window.open(link,"_blank");}}})();';
+				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
 			}
 				{
 			/* Danbooru > Shimmie Bookmarklet.
