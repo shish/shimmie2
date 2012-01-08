@@ -126,6 +126,7 @@ class Tag_History implements Extension {
 			// there is no history entry with that id so either the image was deleted
 			// while the user was viewing the history, someone is playing with form
 			// variables or we have messed up in code somewhere.
+			/* calling die() is probably not a good idea, we should throw an Exception */
 			die("Error: No tag history with specified id was found.");
 		}
 		
@@ -177,6 +178,30 @@ class Tag_History implements Extension {
 				ORDER BY tag_histories.id DESC
 				LIMIT 100");
 		return ($row ? $row : array());
+	}
+	
+	/* This doesn't actually get _ALL_ IPs as it limits to 1000. */
+	public function get_all_user_ips()
+	{
+		global $database;
+		$row = $database->get_all("
+				SELECT DISTINCT user_ip
+				FROM tag_histories
+				ORDER BY tag_histories.user_ip DESC
+				LIMIT 1000");
+		return ($row ? $row : array());
+	}
+	
+	public function process_revert_all_changes_by_ip($ip)
+	{
+		global $database;
+		/*
+		
+SELECT * FROM `tag_histories` WHERE image_id IN
+( select image_id from `tag_histories` where user_ip="216.240.14.185" and date_set >= 2011-10-23)
+ORDER BY image_id, date_set
+		
+		*/
 	}
 	
 	/*
