@@ -15,59 +15,87 @@ class UploadTheme extends Themelet {
 		
 		// Uploader 2.0!
 		$upload_list = "";
-		for($i=0; $i<$config->get_int('upload_count'); $i++) {
+		for($i=0; $i<$config->get_int('upload_count'); $i++)
+		{
 			$a=$i+1;
 			$s=$i-1;
+			
 			if(!$i==0){
 				$upload_list .="<tr id='row$i' style='display:none'>";
 			}else{
 				$upload_list .= "<tr id='row$i'>";
-			}	
-				$upload_list .= "<td width='15'>";
+			}
+			
+			$upload_list .= "<td width='15'>";
 					
-					if($i==0){
-						$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
-						"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
-						"<img src='ext/upload/plus.png'></a></div></td>";
-					}else{
-						$upload_list .="<div id='hide$i'>
-						<a href='#' onclick='javascript:document.getElementById(&quot;row$i&quot;).style.display = &quot;none&quot;;".
-						"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
-						"document.getElementById(&quot;hide$s&quot;).style.display = &quot;&quot;;".
-						"document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;".
-						"document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;'>".
-						"<img src='ext/upload/minus.png' /></a>";
-						if($a==$config->get_int('upload_count')){
-							$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
-							}else{
-							$upload_list .=
-							"<a href='#' onclick='javascript:document.getElementById(&quot;row$a&quot;).style.display = &quot;&quot;;".
-							"document.getElementById(&quot;hide$i&quot;).style.display = &quot;none&quot;;".
-							"document.getElementById(&quot;hide$a&quot;).style.display = &quot;&quot;;'>".
-							"<img src='ext/upload/plus.png' /></a>";
-							}
-							$upload_list .= "</div></td>";
-					}
-					
+			if($i==0){
+				$js = 'javascript:$(function() {
+					$("#row'.$a.'").show();
+					$("#hide'.$i.'").hide();
+					$("#hide'.$a.'").show();});';
+				
+				$upload_list .= "<div id='hide$i'><img id='wrapper$i' src='ext/upload/minus.png' />" .
+				"<a href='#' onclick='$js'>".
+				"<img src='ext/upload/plus.png'></a></div></td>";
+			} else {
+				$js = 'javascript:$(function() {
+				$("#row'.$i.'").hide();
+				$("#hide'.$i.'").hide();
+				$("#hide'.$s.'").show();
+				$("#data'.$i.'").val("");
+				$("#url'.$i.'").val("");
+				});';
+				
+				$upload_list .="<div id='hide$i'>
+				<a href='#' onclick='$js'>".
+				"<img src='ext/upload/minus.png' /></a>";
+				
+				if($a==$config->get_int('upload_count')){
+					$upload_list .="<img id='wrapper$i' src='ext/upload/plus.png' />";
+				}else{
+					$js1 = 'javascript:$(function() {
+						$("#row'.$a.'").show();
+						$("#hide'.$i.'").hide();
+						$("#hide'.$a.'").show(); });';
+						
 					$upload_list .=
-					"<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url$i&quot;).value = &quot;&quot;;document.getElementById(&quot;data$i&quot;).style.display = &quot;&quot;' /> File<br>";
-				if($tl_enabled) {
-					$upload_list .=
-					"<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data$i&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data$i&quot;).value = &quot;&quot;;document.getElementById(&quot;url$i&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
+					"<a href='#' onclick='$js1'>".
+					"<img src='ext/upload/plus.png' /></a>";
+				}
+				$upload_list .= "</div></td>";
+			}
 					
-					<td><input id='data$i' name='data$i' class='wid' type='file'><input id='url$i' name='url$i' class='wid' type='text' style='display:none'></td>
-					";
-					}
-					else { 
-					$upload_list .= "</form></td>
-					<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
-					";
-					}
+			$js2 = 'javascript:$(function() {
+						$("#url'.$i.'").show();
+						$("#url'.$i.'").val("");
+						$("#data'.$i.'").show(); });';
+
+			$upload_list .=
+			"<td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
+			
+			if($tl_enabled) {
+				$js = 'javascript:$(function() {
+						$("#data'.$i.'").hide();
+						$("#data'.$i.'").val("");
+						$("#url'.$i.'").show(); });';
+				
+				$upload_list .= 
+				"<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td>
+				<td>
+					<input id='data$i' name='data$i' class='wid' type='file'>
+					<input id='url$i' name='url$i' class='wid' type='text' style='display:none'>
+				</td>";
+			} else {
+				$upload_list .= "</td>
+				<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
+				";
+			}
 					
 			$upload_list .= "
 				</tr>
 			";
 		}
+		
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		$html = "
@@ -86,7 +114,7 @@ class UploadTheme extends Themelet {
 				});
 			});
 			</script>
-			".make_form(make_link("upload"), "POST", $multipart=True)."
+			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
 					<tr><td></td><td>Tags<td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
@@ -109,7 +137,7 @@ class UploadTheme extends Themelet {
 			}
 			{
 				$js='javascript:(function(){if(typeof window=="undefined"||!window.location||window.location.href=="about:blank"){window.location="'. $main_page .'";}else if(typeof document=="undefined"||!document.body){window.location="'. $main_page .'?url="+encodeURIComponent(window.location.href);} else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")){alert("You are already at '. $title .'!");} else{var tags=prompt("Please enter tags","tagme");if(tags!=""&&tags!=null){var link="'. $link . $delimiter .'url="+location.href+"&tags="+tags;var w=window.open(link,"_blank");}}})();';
-				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag & drop onto your bookmarks toolbar, then click when looking at an image)';
+				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
 			}
 				{
 			/* Danbooru > Shimmie Bookmarklet.
