@@ -292,17 +292,17 @@ class Database {
 		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
-		if($db_proto == "mysql") {
+		if($db_proto === "mysql") {
 			$this->engine = new MySQL();
 		}
-		else if($db_proto == "pgsql") {
+		else if($db_proto === "pgsql") {
 			$this->engine = new PostgreSQL();
 		}
-		else if($db_proto == "sqlite") {
+		else if($db_proto === "sqlite") {
 			$this->engine = new SQLite();
 		}
 		else {
-			die("Unknown PDO driver: $db_proto");
+			die('Unknown PDO driver: '.$db_proto);
 		}
 
 		if(isset($cache_dsn) && !empty($cache_dsn)) {
@@ -345,8 +345,8 @@ class Database {
 			return $stmt;
 		}
 		catch(PDOException $pdoe) {
-			print "Message: ".$pdoe->getMessage();
-			print "<p>Error: $query";
+			print 'Message: '.$pdoe->getMessage();
+			print '<p>Error: '.$query;
 			exit;
 		}
 	}

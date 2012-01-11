@@ -194,12 +194,12 @@ class Image {
 		}
 
 		if(count($tags) == 0) {
-			$row = $database->get_row("SELECT images.* FROM images WHERE images.id $gtlt {$this->id} ORDER BY images.id $dir LIMIT 1");
+			$row = $database->get_row('SELECT images.* FROM images WHERE images.id '.$gtlt.' '.$this->id.' ORDER BY images.id '.$dir.' LIMIT 1');
 		}
 		else {
-			$tags[] = "id$gtlt{$this->id}";
+			$tags[] = 'id'. $gtlt . $this->id;
 			$querylet = Image::build_search_querylet($tags);
-			$querylet->append_sql(" ORDER BY images.id $dir LIMIT 1");
+			$querylet->append_sql(' ORDER BY images.id '.$dir.' LIMIT 1');
 			$row = $database->get_row($querylet->sql, $querylet->variables);
 		}
 
@@ -229,14 +229,15 @@ class Image {
 	 */
 	public function get_tag_array() {
 		global $database;
-		$cached = $database->cache->get("image-{$this->id}-tags");
+		$tmp = 'image-'.$this->id.'-tags';
+		$cached = $database->cache->get($tmp);
 		if($cached) return $cached;
 
 		if(!isset($this->tag_array)) {
 			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
 		}
 
-		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
+		$database->cache->set($tmp, $this->tag_array);
 		return $this->tag_array;
 	}
 
