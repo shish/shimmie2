@@ -514,7 +514,7 @@ class Image {
 	private static function build_search_querylet($terms) {
 		assert(is_array($terms));
 		global $database;
-		if($database->engine->name == "mysql")
+		if($database->engine->name === "mysql")
 			return Image::build_ugly_search_querylet($terms);
 		else
 			return Image::build_accurate_search_querylet($terms);
@@ -750,11 +750,13 @@ class Image {
 		foreach($tag_querylets as $tq) {
 			global $tag_n;
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= " $sign (tag LIKE :tag$tag_n)";
-			$terms["tag$tag_n"] = $tq->tag;
+			//$sql .= " $sign (tag LIKE :tag$tag_n)";
+			$sql .= ' '.$sign.' (tag LIKE :tag'.$tag_n.')';
+			//$terms["tag$tag_n"] = $tq->tag;
+			$terms['tag'.$tag_n] = $tq->tag;
 			$tag_n++;
 			
-			if($sign == "+") $positive_tag_count++;
+			if($sign === "+") $positive_tag_count++;
 			else $negative_tag_count++;
 		}
 		$tag_search = new Querylet($sql, $terms);
@@ -783,7 +785,7 @@ class Image {
 		}
 
 		// one positive tag (a common case), do an optimised search
-		else if($positive_tag_count == 1 && $negative_tag_count == 0) {
+		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
 			$query = new Querylet(
 				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
@@ -819,22 +821,22 @@ class Image {
 			if($tags_ok) {
 				$tag_id_list = join(', ', $tag_id_array);
 
-				$subquery = new Querylet("
-					SELECT images.*, SUM({$tag_search->sql}) AS score
+				$subquery = new Querylet('
+					SELECT images.*, SUM('.$tag_search->sql.') AS score
 					FROM images
 					LEFT JOIN image_tags ON image_tags.image_id = images.id
 					JOIN tags ON image_tags.tag_id = tags.id
-					WHERE tags.id IN ({$tag_id_list})
+					WHERE tags.id IN ('.$tag_id_list.')
 					GROUP BY images.id
-					HAVING score = :score",
+					HAVING score = :score',
 					array_merge(
 						$tag_search->variables,
 						array("score"=>$positive_tag_count)
 					)
 				);
-				$query = new Querylet("
+				$query = new Querylet('
 					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
-					FROM ({$subquery->sql}) AS images ", $subquery->variables);
+					FROM ('.$subquery->sql.') AS images ', $subquery->variables);
 
 				if(strlen($img_search->sql) > 0) {
 					$query->append_sql(" WHERE ");
@@ -882,9 +884,9 @@ class Tag {
 		if(is_string($tags)) {
 			$tags = explode(' ', $tags);
 		}
-		else if(is_array($tags)) {
+		//else if(is_array($tags)) {
 			// do nothing
-		}
+		//}
 
 		$tags = array_map("trim", $tags);
 
@@ -907,13 +909,13 @@ class Tag {
 	public static function implode($tags) {
 		assert(is_string($tags) || is_array($tags));
 
-		if(is_string($tags)) {
-			// do nothing
-		}
-		else if(is_array($tags)) {
+		if(is_array($tags)) {
 			sort($tags);
 			$tags = implode(' ', $tags);
 		}
+		//else if(is_string($tags)) {
+			// do nothing
+		//}
 
 		return $tags;
 	}

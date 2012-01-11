@@ -56,7 +56,7 @@ class DBEngine {
 	}
 
 	public function create_table_sql($name, $data) {
-		return "CREATE TABLE $name ($data)";
+		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
 class MySQL extends DBEngine {
@@ -82,7 +82,7 @@ class MySQL extends DBEngine {
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
 		$ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
-		return "CREATE TABLE $name ($data) $ctes";
+		return 'CREATE TABLE '.$name.' ('.$data.') '.$ctes;
 	}
 }
 class PostgreSQL extends DBEngine {
@@ -103,7 +103,7 @@ class PostgreSQL extends DBEngine {
 
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
-		return "CREATE TABLE $name ($data)";
+		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
 
@@ -151,14 +151,14 @@ class SQLite extends DBEngine {
 			$matches = array();
 			if(preg_match("/INDEX\s*\((.*)\)/", $bit, $matches)) {
 				$col = $matches[1];
-				$extras .= "CREATE INDEX {$name}_{$col} on $name($col);";
+				$extras .= 'CREATE INDEX '.$name.'_'.$col.' on '.$name($col).';';
 			}
 			else {
 				$cols[] = $bit;
 			}
 		}
 		$cols_redone = implode(", ", $cols);
-		return "CREATE TABLE $name ($cols_redone); $extras";
+		return 'CREATE TABLE '.$name.' ('.$cols_redone.'); '.$extras;
 	}
 }
 // }}}
@@ -331,10 +331,10 @@ class Database {
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
 					if(is_numeric($value)) {
-						$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+						$stmt->bindValue(':'.$name, $value, PDO::PARAM_INT);
 					}
 					else {
-						$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
+						$stmt->bindValue(':'.$name, $value, PDO::PARAM_STR);
 					}
 				}
 				$stmt->execute();

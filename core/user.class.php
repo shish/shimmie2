@@ -40,7 +40,7 @@ class User {
 
 	public static function by_session($name, $session) {
 		global $config, $database;
-		if($database->engine->name == "mysql") {
+		if($database->engine->name === "mysql") {
 			$query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
 		}
 		else {
@@ -53,12 +53,12 @@ class User {
 	public static function by_id($id) {
 		assert(is_numeric($id));
 		global $database;
-		if($id == 1) {
-			$cached = $database->cache->get("user-id:$id");
+		if($id === 1) {
+			$cached = $database->cache->get('user-id:'.$id);
 			if($cached) return new User($cached);
 		}
 		$row = $database->get_row("SELECT * FROM users WHERE id = :id", array("id"=>$id));
-		if($id == 1) $database->cache->set("user-id:$id", $row, 300);
+		if($id === 1) $database->cache->set('user-id:'.$id, $row, 300);
 		return is_null($row) ? null : new User($row);
 	}
 
@@ -148,7 +148,7 @@ class User {
 	public function get_avatar_html() {
 		// FIXME: configurable
 		global $config;
-		if($config->get_string("avatar_host") == "gravatar") {
+		if($config->get_string("avatar_host") === "gravatar") {
 			if(!empty($this->email)) {
 				$hash = md5(strtolower($this->email));
 				$s = $config->get_string("avatar_gravatar_size");
@@ -180,7 +180,7 @@ class User {
 
 	public function get_auth_html() {
 		$at = $this->get_auth_token();
-		return "<input type='hidden' name='auth_token' value='$at'>";
+		return '<input type="hidden" name="auth_token" value="'.$at.'">';
 	}
 
 	public function check_auth_token() {
