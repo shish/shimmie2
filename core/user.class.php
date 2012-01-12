@@ -98,7 +98,7 @@ class User {
 	 */
 	public function is_anonymous() {
 		global $config;
-		return ($this->id == $config->get_int('anon_id'));
+		return ($this->id === $config->get_int('anon_id'));
 	}
 
 	/**
@@ -108,7 +108,7 @@ class User {
 	 */
 	public function is_logged_in() {
 		global $config;
-		return ($this->id != $config->get_int('anon_id'));
+		return ($this->id !== $config->get_int('anon_id'));
 	}
 
 	/**
@@ -125,20 +125,20 @@ class User {
 		global $database;
 		$yn = $admin ? 'Y' : 'N';
 		$database->Execute("UPDATE users SET admin=:yn WHERE id=:id", array("yn"=>$yn, "id"=>$this->id));
-		log_info("core-user", "Made {$this->name} admin=$yn");
+		log_info("core-user", 'Made '.$this->name.' admin='.$yn);
 	}
 
 	public function set_password($password) {
 		global $database;
 		$hash = md5(strtolower($this->name) . $password);
 		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$hash, "id"=>$this->id));
-		log_info("core-user", "Set password for {$this->name}");
+		log_info("core-user", 'Set password for '.$this->name);
 	}
 
 	public function set_email($address) {
 		global $database;
 		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
-		log_info("core-user", "Set email for {$this->name}");
+		log_info("core-user", 'Set email for '.$this->name);
 	}
 
 	/**

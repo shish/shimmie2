@@ -342,8 +342,8 @@ class Image {
 	 */
 	public function get_mime_type() {
 		$type = strtolower($this->ext);
-		if($type == "jpg") $type = "jpeg";
-		return "image/$type";
+		if($type === "jpg") $type = "jpeg";
+		return 'image/'.$type;
 	}
 
 	/**
@@ -380,7 +380,7 @@ class Image {
 	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
-		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
+		$sln = $database->engine->scoreql_to_sql('SCORE_BOOL_'.$ln);
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
 		$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
@@ -442,8 +442,8 @@ class Image {
 					array("tag"=>$tag));
 		}
 
-		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
-		$database->cache->delete("image-{$this->id}-tags");
+		log_info("core-image", 'Tags for Image #'.$this->id.' set to: '.implode(" ", $tags));
+		$database->cache->delete('image-'.$this->id.'-tags');
 	}
 
 	/**
@@ -453,7 +453,7 @@ class Image {
 		global $database;
 		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=:id", array("id"=>$this->id));
-		log_info("core-image", "Deleted Image #{$this->id} ({$this->hash})");
+		log_info("core-image", 'Deleted Image #'.$this->id.' ('.$this->hash.')');
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
@@ -464,7 +464,7 @@ class Image {
 	 * It DOES NOT remove anything from the database.
 	 */
 	public function remove_image_only() {
-		log_info("core-image", "Removed Image File ({$this->hash})");
+		log_info("core-image", 'Removed Image File ('.$this->hash.')');
 		@unlink($this->get_image_filename());
 		@unlink($this->get_thumb_filename());
 	}
