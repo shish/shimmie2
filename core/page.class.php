@@ -417,7 +417,7 @@ class Page {
 			$js_files = glob("ext/*/script.js");
 			if($js_files) {
 				foreach($js_files as $js_file) {
-					$this->add_html_header('<script src="'.$data_href.'/'.$js_file'" type="text/javascript"></script>');
+					$this->add_html_header('<script src="'.$data_href.'/'.$js_file.'" type="text/javascript"></script>');
 				}
 			}
 		}
