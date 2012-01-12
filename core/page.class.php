@@ -252,12 +252,12 @@ class Page {
 			}
 			
 			foreach(glob("lib/*.js") as $js) {
-				$this->add_html_header('<script src="'.$data_href.'/'.$js'" type="text/javascript"></script>');
+				$this->add_html_header('<script src="'.$data_href.'/'.$js.'" type="text/javascript"></script>');
 			}
 			$js_files = glob("ext/*/script.js");
 			if($js_files) {
 				foreach($js_files as $js_file) {
-					$this->add_html_header('<script src="'.$data_href.'/'.$js_file'" type="text/javascript"></script>');
+					$this->add_html_header('<script src="'.$data_href.'/'.$js_file.'" type="text/javascript"></script>');
 				}
 			}
 		}
@@ -358,7 +358,7 @@ class Page {
 				}
 			}
 			// tell the client where to get the css cache file
-			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css'.'" type="text/css">');
+			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css" type="text/css">');
 		} else {
 			// Caching of CSS disabled.
 			foreach(glob("lib/*.css") as $css) {
@@ -408,11 +408,11 @@ class Page {
 				}
 			}
 			// tell the client where to get the js cache file
-			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js'.'" type="text/javascript"></script>');
+			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js" type="text/javascript"></script>');
 		} else {
 			// Caching of Javascript disabled.
 			foreach(glob("lib/*.js") as $js) {
-				$this->add_html_header('<script src="'.$data_href.'/'.$js'" type="text/javascript"></script>');
+				$this->add_html_header('<script src="'.$data_href.'/'.$js.'" type="text/javascript"></script>');
 			}
 			$js_files = glob("ext/*/script.js");
 			if($js_files) {
