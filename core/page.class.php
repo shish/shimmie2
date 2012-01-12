@@ -225,8 +225,8 @@ class Page {
 				print $this->data;
 				break;
 			case "redirect":
-				header("Location: {$this->redirect}");
-				print "You should be redirected to <a href='{$this->redirect}'>{$this->redirect}</a>";
+				header('Location: '.$this->redirect);
+				print 'You should be redirected to <a href="'.$this->redirect'">'.$this->redirect.'</a>';
 				break;
 			default:
 				print "Invalid page mode";

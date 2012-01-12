@@ -384,7 +384,7 @@ function _count_execs($db, $sql, $inputarray) {
 	if(DEBUG) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
-			if(is_array($inputarray)) {
+			if(isset($inputarray) && is_array($inputarray)) {
 				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
 			}
 			else {

@@ -30,9 +30,9 @@ class UserPageTheme extends Themelet {
 
 	public function display_user_block(Page $page, User $user, $parts) {
 		$h_name = html_escape($user->name);
-		$html = "Logged in as $h_name";
+		$html = 'Logged in as '.$h_name;
 		foreach($parts as $part) {
-			$html .= "<br><a href='{$part["link"]}'>{$part["name"]}</a>";
+			$html .= '<br><a href="'.$part["link"].'">'.$part["name"].'</a>';
 		}
 		$page->add_block(new Block("User Links", $html, "left", 90));
 	}
@@ -48,12 +48,12 @@ class UserPageTheme extends Themelet {
 		}
 
 		if(empty($tac)) {$html = "";}
-		else {$html = "<p>$tac</p>";}
+		else {$html = '<p>'.$tac.'</p>';}
 
 		$reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
-		$html .= "
-		".make_form(make_link("user_admin/create"))."
+		$html .= '
+		'.make_form(make_link("user_admin/create"))."
 			<table style='width: 300px;'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
@@ -81,8 +81,8 @@ class UserPageTheme extends Themelet {
 
 	public function display_login_block(Page $page) {
 		global $config;
-		$html = "
-			".make_form(make_link("user_admin/login"))."
+		$html = '
+			'.make_form(make_link("user_admin/login"))."
 				<table summary='Login Form'>
 					<tr>
 						<td width='70'><label for='user'>Name</label></td>
@@ -107,7 +107,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr><td>Uploaded from: ";
 		$n = 0;
 		foreach($uploads as $ip => $count) {
-			$html .= "<br>$ip ($count)";
+			$html .= '<br>'.$ip.' ('.$count.')';
 			if(++$n >= 20) {
 				$html .= "<br>...";
 				break;
@@ -117,7 +117,7 @@ class UserPageTheme extends Themelet {
 		$html .= "</td><td>Commented from:";
 		$n = 0;
 		foreach($comments as $ip => $count) {
-			$html .= "<br>$ip ($count)";
+			$html .= '<br>'.$ip.' ('.$count.')';
 			if(++$n >= 20) {
 				$html .= "<br>...";
 				break;
@@ -133,10 +133,10 @@ class UserPageTheme extends Themelet {
 	public function display_user_page(User $duser, $stats) {
 		global $page, $user;
 		assert(is_array($stats));
-		$stats[] = "User ID: {$duser->id}";
+		$stats[] = 'User ID: '.$duser->id;
 
-		$page->set_title("{$duser->name}'s Page");
-		$page->set_heading("{$duser->name}'s Page");
+		$page->set_title($duser->name."'s Page");
+		$page->set_heading($duser->name."'s Page");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
 
@@ -150,37 +150,37 @@ class UserPageTheme extends Themelet {
 	protected function build_options(User $duser) {
 		global $config, $database, $user;
 
-		$html = "
-		".make_form(make_link("user_admin/change_pass"))."
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Password</th></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
+		$html = '
+		'.make_form(make_link("user_admin/change_pass")).'
+			<input type="hidden" name="id" value="'.$duser->id.'">
+			<table style="width: 300px;">
+				<tr><th colspan="2">Change Password</th></tr>
+				<tr><td>Password</td><td><input type="password" name="pass1"></td></tr>
+				<tr><td>Repeat Password</td><td><input type="password" name="pass2"></td></tr>
+				<tr><td colspan="2"><input type="Submit" value="Change Password"></td></tr>
 			</table>
 		</form>
 
-		<p>".make_form(make_link("user_admin/change_email"))."
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Email</th></tr>
-				<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
+		<p>'.make_form(make_link("user_admin/change_email")).'
+			<input type="hidden" name="id" value="'.$duser->id.'">
+			<table style="width: 300px;">
+				<tr><th colspan="2">Change Email</th></tr>
+				<tr><td>Address</td><td><input type="text" name="address" value="'.html_escape($duser->email).'"></td></tr>
+				<tr><td colspan="2"><input type="Submit" value="Set"></td></tr>
 			</table>
 		</form>
-		";
+		';
 
 		if($user->is_admin()) {
 			$i_user_id = int_escape($duser->id);
 			$h_is_admin = $duser->is_admin() ? " checked" : "";
-			$html .= "
-				<p>".make_form(make_link("user_admin/set_more"))."
-					<input type='hidden' name='id' value='$i_user_id'>
-					Admin: <input name='admin' type='checkbox'$h_is_admin>
-					<input type='submit' value='Set'>
+			$html .= '
+				<p>'.make_form(make_link("user_admin/set_more")).'
+					<input type="hidden" name="id" value="'.$i_user_id.'">
+					Admin: <input name="admin" type="checkbox'.$h_is_admin.'">
+					<input type="submit" value="Set">
 				</form>
-			";
+			';
 		}
 		return $html;
 	}
