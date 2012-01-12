@@ -97,9 +97,10 @@ class ThumbnailGenerationEvent extends Event {
 	 * @param $hash	The unique hash of the image
 	 * @param $type	The type of the image
 	 */
-	public function ThumbnailGenerationEvent($hash, $type) {
+	public function ThumbnailGenerationEvent($hash, $type, $force=false) {
 		$this->hash = $hash;
 		$this->type = $type;
+		$this->force = $force;
 	}
 }
 
