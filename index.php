@@ -159,17 +159,17 @@ catch(Exception $e) {
 	$message = $e->getMessage();
 	//$trace = var_dump($e->getTrace());
 	header("HTTP/1.0 500 Internal Error");
-	print <<<EOD
+	echo '
 <html>
 	<head>
-		<title>Internal error - SCore-$version</title>
+		<title>Internal error - SCore-'.$version.'</title>
 	</head>
 	<body>
 		<h1>Internal Error</h1>
-		<p>$message
+		<p>'.$message.'
 	</body>
 </html>
-EOD;
+';
 	$database->db->rollback();
 	ctx_log_ender();
 }
