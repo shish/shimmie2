@@ -29,13 +29,13 @@ class Themelet {
 	 */
 	public function build_thumb_html(Image $image, $query=null) {
 		global $config;
-		$i_id = int_escape($image->id);
-		$h_view_link = make_link("post/view/$i_id", $query);
+		$i_id = (int) $image->id;
+		$h_view_link = make_link('post/view/'.$i_id, $query);
 		$h_thumb_link = $image->get_thumb_link();
 
 
 		// Removes the size tag if the file is an mp3 
-		if($image->ext == 'mp3'){
+		if($image->ext === 'mp3'){
 			$iitip = $image->get_tooltip();
 			$mp3tip = array("0x0");
 			$h_tip = str_replace($mp3tip, " ", $iitip);
@@ -45,29 +45,29 @@ class Themelet {
 				if(strstr($h_tip, "  ")){
 					$h_tip = html_escape(str_replace($justincase, "", $h_tip));
 				}else{
-				$h_tip = html_escape($h_tip);
+					$h_tip = html_escape($h_tip);
 				}
 		}else{
-		$h_tip = html_escape($image->get_tooltip());
+			$h_tip = html_escape($image->get_tooltip());
 		}
 		
 
 		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext == 'swf' || $image->ext == 'svg'){
+		if($image->ext === 'swf' || $image->ext === 'svg'){
 		$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height')); }
 		else{
 		$tsize = get_thumbnail_size($image->width, $image->height); }
 
-		return "
+		return '
 			<!-- cancel border -->
-			<div class='thumbblock'>
-			<div class='thumb'>
-				<a href='$h_view_link' style='position: relative; display: block; height: {$tsize[1]}px; width: {$tsize[0]}px;'>
-					<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>
+			<div class="thumbblock">
+			<div class="thumb">
+				<a href="'.$h_view_link.'" style="position: relative; display: block; height: '.$tsize[1].'px; width: '.$tsize[0].'px;">
+					<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'">
 				</a>
 			</div>
 			</div>
-		";
+		';
 	}
 
 
@@ -81,8 +81,8 @@ class Themelet {
 	}
 
 	private function gen_page_link($base_url, $query, $page, $name) {
-		$link = make_link("$base_url/$page", $query);
-	    return "<a href='$link'>$name</a>";
+		$link = make_link($base_url.'/'.$page, $query);
+	    return '<a href="'.$link.'">'.$name.'</a>';
 	}
 	
 	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
@@ -116,8 +116,8 @@ class Themelet {
 		}
 		$pages_html = implode(" | ", $pages);
 
-		return "<p class='paginator'>$first_html | $prev_html | $random_html | $next_html | $last_html".
-				"<br>&lt;&lt; $pages_html &gt;&gt;</p><!-- cancel border -->";
+		return '<p class="paginator">'.$first_html.' | '.$prev_html.' | '.$random_html.' | '.$next_html.' | '.$last_html
+				.'<br>&lt;&lt; '.$pages_html.' &gt;&gt;</p><!-- cancel border -->';
 	}
 }
 ?>

@@ -69,12 +69,12 @@ EOD;
 		$next = $page_number + 1;
 
 		$u_tags = url_escape(implode(" ", $search_terms));
-		$query = empty($u_tags) ? "" : "/$u_tags";
+		$query = empty($u_tags) ? "" : '/'.$u_tags;
 
 
-		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("post/list$query/$prev")."'>Prev</a>";
+		$h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.make_link('post/list'.$query.'/'.$prev).'">Prev</a>';
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list$query/$next")."'>Next</a>";
+		$h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
 
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
@@ -102,7 +102,7 @@ EOD;
 			</form>
 			<div id='search_completions'></div>";
 
-		return "$h_prev | $h_index | $h_next<br>$h_search";
+		return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
 	}
 
 	protected function build_table($images, $query) {

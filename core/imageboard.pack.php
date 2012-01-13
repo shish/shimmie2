@@ -284,8 +284,11 @@ class Image {
 	 */
 	public function get_thumb_link() {
 		global $config;
-		if(strlen($config->get_string('image_tlink')) > 0) {
-			return $this->parse_link_template($config->get_string('image_tlink'));
+		
+		$image_tlink = $config->get_string('image_tlink'); // store a copy for speed.
+		
+		if( !empty($image_tlink) ) {	/* empty is faster than strlen */
+			return $this->parse_link_template($image_tlink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
