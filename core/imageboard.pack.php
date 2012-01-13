@@ -255,8 +255,11 @@ class Image {
 	 */
 	public function get_image_link() {
 		global $config;
-		if(strlen($config->get_string('image_ilink')) > 0) {
-			return $this->parse_link_template($config->get_string('image_ilink'));
+		
+		$image_ilink = $config->get_string('image_ilink');  // store a copy for speed.
+		
+		if( !empty($image_ilink) ) {	/* empty is faster than strlen */
+			return $this->parse_link_template($image_ilink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
@@ -560,7 +563,7 @@ class Image {
 		// various types of querylet
 		foreach($terms as $term) {
 			$positive = true;
-			if((strlen($term) > 0) && ($term[0] == '-')) {
+			if( is_string($term) && !empty($term) && ($term[0] == '-')) {
 				$positive = false;
 				$term = substr($term, 1);
 			}
@@ -605,7 +608,7 @@ class Image {
 		if(count($tag_querylets) == 0) {
 			$query = new Querylet("SELECT images.* FROM images ");
 
-			if(strlen($img_search->sql) > 0) {
+			if(!empty($img_search->sql)) {
 				$query->append_sql(" WHERE ");
 				$query->append($img_search);
 			}
@@ -622,7 +625,7 @@ class Image {
 				)
 				"), array("tag"=>$tag_querylets[0]->tag));
 
-			if(strlen($img_search->sql) > 0) {
+			if(!empty($img_search->sql)) {
 				$query->append_sql(" AND ");
 				$query->append($img_search);
 			}
@@ -724,7 +727,7 @@ class Image {
 		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
 			$negative = false;
-			if((strlen($term) > 0) && ($term[0] == '-')) {
+			if( !empty($term) && ($term[0] == '-')) {
 				$negative = true;
 				$term = substr($term, 1);
 			}
@@ -781,7 +784,7 @@ class Image {
 		if($positive_tag_count + $negative_tag_count == 0) {
 			$query = new Querylet("SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
 
-			if(strlen($img_search->sql) > 0) {
+			if(!empty($img_search->sql)) {
 				$query->append_sql(" WHERE ");
 				$query->append($img_search);
 			}
@@ -802,7 +805,7 @@ class Image {
 				",
 				$tag_search->variables);
 
-			if(strlen($img_search->sql) > 0) {
+			if(!empty($img_search->sql)) {
 				$query->append_sql(" AND ");
 				$query->append($img_search);
 			}
@@ -841,7 +844,7 @@ class Image {
 					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
 					FROM ('.$subquery->sql.') AS images ', $subquery->variables);
 
-				if(strlen($img_search->sql) > 0) {
+				if(!empty($img_search->sql)) {
 					$query->append_sql(" WHERE ");
 					$query->append($img_search);
 				}
@@ -895,7 +898,7 @@ class Tag {
 
 		$tag_array = array();
 		foreach($tags as $tag) {
-			if(is_string($tag) && strlen($tag) > 0) {
+			if(is_string($tag) && !empty($tag)) {
 				$tag_array[] = $tag;
 			}
 		}
