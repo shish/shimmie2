@@ -89,8 +89,8 @@ class ImageReplaceException extends SCoreException {
  * Request a thumbnail be made for an image object.
  */
 class ThumbnailGenerationEvent extends Event {
-	var $hash, $type;
-	
+	var $hash, $type, $force;
+
 	/**
 	 * Request a thumbnail be made for an image object
 	 *
