@@ -180,30 +180,6 @@ class Tag_History implements Extension {
 		return ($row ? $row : array());
 	}
 	
-	/* This doesn't actually get _ALL_ IPs as it limits to 1000. */
-	public function get_all_user_ips()
-	{
-		global $database;
-		$row = $database->get_all("
-				SELECT DISTINCT user_ip
-				FROM tag_histories
-				ORDER BY tag_histories.user_ip DESC
-				LIMIT 1000");
-		return ($row ? $row : array());
-	}
-	
-	public function process_revert_all_changes_by_ip($ip)
-	{
-		global $database;
-		/*
-		
-SELECT * FROM `tag_histories` WHERE image_id IN
-( select image_id from `tag_histories` where user_ip="216.240.14.185" and date_set >= 2011-10-23)
-ORDER BY image_id, date_set
-		
-		*/
-	}
-	
 	/*
 	 * this function is called when an image has been deleted
 	 */
