@@ -134,6 +134,38 @@ function autodate($date, $html=true) {
 	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
+/**
+ * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
+ *
+ * @retval boolean
+ */
+function isValidDateTime($dateTime)
+{
+    if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
+        if (checkdate($matches[2], $matches[3], $matches[1])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
+ *
+ * @retval boolean
+ */
+function isValidDate($date)
+{
+    if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
+		// checkdate wants (month, day, year)
+        if (checkdate($matches[2], $matches[3], $matches[1])) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Return a pluraliser if necessary
