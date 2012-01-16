@@ -163,6 +163,7 @@ class Tag_History implements Extension {
 			// there is no history entry with that id so either the image was deleted
 			// while the user was viewing the history, someone is playing with form
 			// variables or we have messed up in code somewhere.
+			/* calling die() is probably not a good idea, we should throw an Exception */
 			die("Error: No tag history with specified id was found.");
 		}
 		
