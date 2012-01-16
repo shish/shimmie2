@@ -194,7 +194,12 @@ abstract class DataHandlerExtension implements Extension {
 		}
 
 		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
-			$this->create_thumb($event->hash);
+			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
+				 $this->create_thumb_force($event->hash);
+			}
+			else {
+				$this->create_thumb($event->hash);
+			}
 		}
 
 		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
