@@ -197,7 +197,7 @@ class Forum extends SimpleExtension {
                 $hasErrors = true;
                 $errors .= "<div id='error'>You cannot have an empty title.</div>";
             }
-            else if (strlen(mysql_real_escape_string(html_escape($_POST["title"]))) > 255)
+            else if (strlen(html_escape($_POST["title"])) > 255)
             {
                 $hasErrors = true;
                 $errors .= "<div id='error'>Your title is too long.</div>";
@@ -318,7 +318,7 @@ class Forum extends SimpleExtension {
 
         private function save_new_thread($user)
         {
-            $title = mysql_real_escape_string(html_escape($_POST["title"]));
+            $title = html_escape($_POST["title"]);
 			$sticky = html_escape($_POST["sticky"]);
 			
 			if($sticky == ""){
@@ -344,7 +344,7 @@ class Forum extends SimpleExtension {
         {
 			global $config;
             $userID = $user->id;
-            $message = mysql_real_escape_string(html_escape($_POST["message"]));
+            $message = html_escape($_POST["message"]);
 			
 			$max_characters = $config->get_int('forumMaxCharsPerPost');
 			$message = substr($message, 0, $max_characters);
