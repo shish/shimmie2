@@ -56,7 +56,11 @@ class NotesTheme extends Themelet {
 	}
 		
 		// check action POST on form	
-	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions) {
+	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions)
+	{
+		$page->add_html_header("<script src='$base_href/contrib/notes/jquery.qimgareaselect-0.4.js' type='text/javascript'></script>", 100);
+		$page->add_html_header("<script src='$base_href/contrib/notes/jquery.rimgnotes-0.2.js' type='text/javascript'></script>", 101);
+		
 		$html = "<script type='text/javascript'>
         
         notes = [";
