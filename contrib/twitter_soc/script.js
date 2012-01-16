@@ -1,7 +1,6 @@
 // jquery.tweet.js - See http://tweet.seaofclouds.com/ or https://github.com/seaofclouds/tweet for more info
 // Copyright (c) 2008-2011 Todd Matthews & Steve Purcell
 (function($) {
-console.log("Loading tweet");
   $.fn.tweet = function(o){
     var s = $.extend({
       username: null,                           // [string or array] required unless using the 'query' option; one or more twitter screen names (use 'list' option for multiple names, where possible)
