@@ -163,6 +163,7 @@ class Tag_History implements Extension {
 			// there is no history entry with that id so either the image was deleted
 			// while the user was viewing the history, someone is playing with form
 			// variables or we have messed up in code somewhere.
+			/* calling die() is probably not a good idea, we should throw an Exception */
 			die("Error: No tag history with specified id was found.");
 		}
 		
@@ -244,6 +245,68 @@ class Tag_History implements Extension {
 				ORDER BY tag_histories.id DESC
 				LIMIT 100");
 		return ($row ? $row : array());
+	}
+	
+	/* This doesn't actually get _ALL_ IPs as it limits to 1000. */
+	public function get_all_user_ips()
+	{
+		global $database;
+		$row = $database->get_all("
+				SELECT DISTINCT user_ip
+				FROM tag_histories
+				ORDER BY tag_histories.user_ip DESC
+				LIMIT 1000");
+		return ($row ? $row : array());
+	}
+	
+	/*
+	 * This function attempts to revert all changes by a given IP within an (optional) timeframe.
+	 */
+	public function process_revert_all_changes_by_ip($ip, $date=null)
+	{
+		global $database;
+		$date_select = '';
+		
+		if (!empty($date)) {
+			$date_select = 'and date_set >= '.$date;
+		} else {
+			$date = 'forever';
+		}
+		
+		log_info("tag_history", 'Attempting to revert edits by ip='.$ip.' (from '.$date.' to now).');
+		
+		// Get all the images that the given IP has changed tags on (within the timeframe) that were last editied by the given IP
+		$result = $database->get_all('
+				SELECT t1.image_id FROM tag_histories t1 LEFT JOIN tag_histories t2
+				ON (t1.image_id = t2.image_id AND t1.date_set < t2.date_set)
+				WHERE t2.image_id IS NULL AND t1.user_ip="'.$ip.'" AND t1.image_id IN
+				( select image_id from `tag_histories` where user_ip="'.$ip.'" '.$date_select.') 
+				ORDER BY t1.image_id;');
+	
+		if (empty($result)) {
+			log_info("tag_history", 'Nothing to revert! for ip='.$ip.' (from '.$date.' to now).');
+			$this->theme->add_status('Nothing to Revert','Nothing to revert for ip='.$ip.' (from '.$date.' to now)');
+			return; // nothing to do.
+		}
+		
+		for ($i = 0 ; $i < count($result) ; $i++)
+		{
+			$image_id = (int) $result[$i]['image_id'];
+			
+			// Get the first tag history that was done before the given IP edit
+			$row = $database->get_row('
+				SELECT id,tags FROM `tag_histories` WHERE image_id="'.$image_id.'" AND user_ip!="'.$ip.'" '.$date_select.' ORDER BY date_set DESC LIMIT 1');
+			
+			if (empty($row)) {
+				// we can not revert this image based on the date restriction.
+				// Output a message perhaps?
+			} else {
+				$id = (int) $row['id'];
+				$this->process_revert_request_only($id);
+				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$id.' ('.$row['tags'].')');
+			}
+		}
+		log_info("tag_history", 'Reverted '.count($result).' edits by ip='.$ip.' (from '.$date.' to now).');
 	}
 	
 	/*
