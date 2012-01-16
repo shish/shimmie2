@@ -24,6 +24,8 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 $tag_n = 0; // temp hack
+$_flexihash = null;
+$_fh_last_opts = null;
 
 /**
  * An object representing an entry in the images table. As of 2.2, this no
@@ -505,6 +507,26 @@ class Image {
 			$plte = new ParseLinkTemplateEvent($tmpl, $this);
 			send_event($plte);
 			$tmpl = $plte->link;
+		}
+
+		global $_flexihash, $_fh_last_opts;
+		$matches = array();
+		if(preg_match("/(.*){(.*)}(.*)/", $tmpl, &$matches)) {
+			$pre = $matches[1];
+			$opts = $matches[2];
+			$post = $matches[3];
+
+			if($opts != $_fh_last_opts) {
+				$_fh_last_opts = $opts;
+				require_once("lib/flexihash.php");
+				$_flexihash = new Flexihash();
+				foreach(explode(",", $opts) as $opt) {
+					$_flexihash->addTarget($opt);
+				}
+			}
+
+			$choice = $_flexihash->lookup($pre.$post);
+			$tmpl = $pre.$choice.$post;
 		}
 
 		return $tmpl;
