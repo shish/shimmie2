@@ -264,7 +264,7 @@ class Notes extends SimpleExtension {
 		$noteY1     = int_escape($_POST["note_y1"]);
 		$noteHeight = int_escape($_POST["note_height"]);
 		$noteWidth  = int_escape($_POST["note_width"]);
-		$noteText   = mysql_real_escape_string(html_escape($_POST["note_text"]));
+		$noteText   = html_escape($_POST["note_text"]);
 
 		$database->execute("
 				INSERT INTO notes

@@ -130,10 +130,7 @@ class Artists implements Extension {
         }
 
         $database->execute("UPDATE images SET author = ? WHERE id = ?"
-            , array(
-                mysql_real_escape_string($artistName)
-                , $event->image->id
-            ));
+            , array($artistName, $event->image->id));
     }
     public function handle_commands($event)
     {
@@ -434,7 +431,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array($url));
         return ($result != 0);
     }
 
@@ -442,7 +439,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", array($member));
         return ($result != 0);
     }
 
@@ -450,7 +447,7 @@ class Artists implements Extension {
     {
         global $database;
 
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array(mysql_real_escape_string($alias)));
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array($alias));
         return ($result != 0);
     }
 
@@ -460,23 +457,21 @@ class Artists implements Extension {
         global $database;
 
         $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?", array(
-                $artistID
-                , mysql_real_escape_string($alias)
-            ));
+                $artistID, $alias));
         return ($result != 0);
     }
 
     private function get_artistID_by_url($url)
     {
         global $database;
-        $result = $database->get_row("SELECT artist_id FROM artist_urls WHERE url = ?", array(mysql_real_escape_string($url)));
+        $result = $database->get_row("SELECT artist_id FROM artist_urls WHERE url = ?", array($url));
         return $result['artist_id'];
     }
 
     private function get_artistID_by_memberName($member)
     {
         global $database;
-        $result = $database->get_row("SELECT artist_id FROM artist_members WHERE name = ?", array(mysql_real_escape_string($member)));
+        $result = $database->get_row("SELECT artist_id FROM artist_members WHERE name = ?", array($member));
         return $result['artist_id'];
     }
     private function get_artistName_by_artistID($artistID)
@@ -622,12 +617,7 @@ class Artists implements Extension {
 
         global $database;
         $database->execute("UPDATE artists SET name = ?, notes = ?, updated = now(), user_id = ? WHERE id = ? "
-            , array(
-                mysql_real_escape_string($name)
-                , mysql_real_escape_string($notes)
-                , $userID
-                , $artistID
-            ));
+            , array( $name, $notes, $userID, $artistID ));
 
         // ALIAS MATCHING SECTION
         $i = 0;
@@ -718,11 +708,7 @@ class Artists implements Extension {
 
         global $database;
         $database->execute("UPDATE artist_alias SET alias = ?, updated = now(), user_id  = ? WHERE id = ? "
-            , array(
-                mysql_real_escape_string($alias)
-                , $userID
-                , $aliasID
-            ));
+            , array( $alias, $userID, $aliasID ));
     }
 
     private function update_url()
@@ -747,11 +733,7 @@ class Artists implements Extension {
 
         global $database;
         $database->execute("UPDATE artist_urls SET url = ?, updated = now(), user_id = ? WHERE id = ?"
-            , array(
-                mysql_real_escape_string($url)
-                , $userID
-                , $urlID
-            ));
+            , array( $url, $userID, $urlID ));
     }
 
     private function update_member()
@@ -777,11 +759,7 @@ class Artists implements Extension {
         global $database;
 		
         $database->execute("UPDATE artist_members SET name = ?, updated = now(), user_id = ? WHERE id = ?"
-            , array(
-                mysql_real_escape_string($memberName)
-                , $userID
-                , $memberID
-            ));
+            , array( $memberName, $userID, $memberID ));
     }
 
     /*
@@ -853,11 +831,7 @@ class Artists implements Extension {
                     (user_id, name, notes, created, updated)
             VALUES
                     (?, ?, ?, now(), now())",
-            array(
-                $user->id
-                , mysql_real_escape_string($name)
-                , mysql_real_escape_string($notes)
-            ));
+            array( $user->id, $name, $notes ));
 
         $result = $database->get_row("SELECT LAST_INSERT_ID() AS artistID", array());
 
@@ -871,9 +845,7 @@ class Artists implements Extension {
         global $database;
 
         $result = $database->get_one("SELECT COUNT(1) FROM artists WHERE name = ?"
-            , array(
-                mysql_real_escape_string($name)
-            ));
+            , array($name));
         return ($result != 0);
     }
 
@@ -937,9 +909,7 @@ class Artists implements Extension {
 	private function get_artist_id($name){
 		global $database;
 		$artistID = $database->get_row("SELECT id FROM artists WHERE name = ?"
-                    , array(
-                        mysql_real_escape_string($name)
-                    ));
+                    , array( $name ));
 		return $artistID['id'];
 	}
 
@@ -948,9 +918,7 @@ class Artists implements Extension {
             global $database;
 
             $artistID = $database->get_row("SELECT artist_id FROM artist_alias WHERE alias = ?"
-                , array(
-                    mysql_real_escape_string($alias)
-                ));
+                , array( $alias ));
             return $artistID["artist_id"];
         }
 	
@@ -964,9 +932,7 @@ class Artists implements Extension {
 
             global $database;
             $database->execute("DELETE FROM artists WHERE id = ? "
-                , array(
-                    $artistID
-                ));
+                , array( $artistID ));
 	}
 	
 	
@@ -1090,11 +1056,7 @@ class Artists implements Extension {
 
             global $database;
             $database->execute("INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (?, now(), now(), ?, ?)"
-                , array(
-                    $artistID
-                    , mysql_real_escape_string($url)
-                    , $userID
-                ));
+                , array( $artistID, $url, $userID ));
         }
 
 	private function add_alias()
@@ -1124,11 +1086,7 @@ class Artists implements Extension {
 
             global $database;
             $database->execute("INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (?, now(), now(), ?, ?)"
-                        , array(
-                            $artistID
-                            , mysql_real_escape_string($alias)
-                            , $userID
-                        ));
+                        , array( $artistID, $alias, $userID ));
         }
 
         private function add_members()
@@ -1157,11 +1115,7 @@ class Artists implements Extension {
 
             global $database;
             $database->execute("INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (?, ?, now(), now(), ?)"
-                , array(
-                    $artistID
-                    , mysql_real_escape_string($member)
-                    , $userID
-                ));
+                , array( $artistID, $member, $userID ));
         }
 
         private function member_exists($artistID, $member)
@@ -1171,10 +1125,7 @@ class Artists implements Extension {
             global $database;
 
             $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?"
-                , array(
-                    $artistID
-                    , mysql_real_escape_string($member)
-                ));
+                , array( $artistID, $member ));
             return ($result != 0);
         }
 
@@ -1185,10 +1136,7 @@ class Artists implements Extension {
             global $database;
 
             $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?"
-                , array(
-                    $artistID
-                    , mysql_real_escape_string($url)
-                ));
+                , array( $artistID, $url ));
             return ($result != 0);
         }
 
