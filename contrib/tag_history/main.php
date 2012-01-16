@@ -1,8 +1,8 @@
 <?php
 /*
  * Name: Tag History
- * Author: Bzchan <bzchan@animemahou.com>
- * Description: Keep a record of tag changes
+ * Author: Bzchan <bzchan@animemahou.com>, modified by jgen <jgen.tech@gmail.com>
+ * Description: Keep a record of tag changes, and allows you to revert changes.
  */
 
 class Tag_History implements Extension {
@@ -20,8 +20,44 @@ class Tag_History implements Extension {
 				$this->install();
 			}
 		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("tag_history"))
+		
+		if(($event instanceof AdminBuildingEvent))
+		{
+			if(isset($_POST['revert_ip']) && $user->is_admin() && $user->check_auth_token())
+			{
+				$revert_ip = filter_var($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
+				
+				if ($revert_ip === false) {
+					// invalid ip given.
+					$this->theme->display_admin_block('Invalid IP');
+					return;
+				}
+				
+				if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
+					if (isValidDate($_POST['revert_date'])){
+						$revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
+					} else {
+						$this->theme->display_admin_block('Invalid Date');
+						return;
+					}
+				} else {
+					$revert_date = null;
+				}
+				
+				set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
+				
+				// Call the revert function.
+				$this->process_revert_all_changes_by_ip($revert_ip, $revert_date);
+				// output results
+				$this->theme->display_revert_ip_results();
+			}
+			else
+			{				
+				$this->theme->display_admin_block(); // add a block to the admin panel
+			}
+		}
+		
+		if (($event instanceof PageRequestEvent) && ($event->page_matches("tag_history")))
 		{
 			if($event->get_arg(0) == "revert")
 			{
@@ -40,6 +76,7 @@ class Tag_History implements Extension {
 				$this->theme->display_global_page($page, $this->get_global_tag_history());
 			}
 		}
+		
 		if(($event instanceof DisplayingImageEvent))
 		{
 			// handle displaying a link on the view page
@@ -107,7 +144,7 @@ class Tag_History implements Extension {
 	{
 		global $page;
 		// check for the nothing case
-		if($revert_id=="nothing")
+		if(empty($revert_id) || $revert_id=="nothing")
 		{
 			// tried to set it too the same thing so ignore it (might be a bot)
 			// go back to the index page with you
@@ -121,7 +158,7 @@ class Tag_History implements Extension {
 		// lets get this revert id assuming it exists
 		$result = $this->get_tag_history_from_revert($revert_id);
 		
-		if($result==null)
+		if(empty($result))
 		{
 			// there is no history entry with that id so either the image was deleted
 			// while the user was viewing the history, someone is playing with form
@@ -134,13 +171,43 @@ class Tag_History implements Extension {
 		$stored_image_id = $result['image_id'];
 		$stored_tags = $result['tags'];
 		
-		log_debug("tag_history", "Reverting tags of $stored_image_id to [$stored_tags]");
+		log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 		// all should be ok so we can revert by firing the SetUserTags event.
 		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");
-		$page->set_redirect(make_link("post/view/$stored_image_id"));
+		$page->set_redirect(make_link('post/view/'.$stored_image_id));
+	}
+	
+	/*
+	 * This function is used by   process_revert_all_changes_by_ip()
+	 * to just revert an image's tag history.
+	 */
+	private function process_revert_request_only($revert_id)
+	{
+		if(empty($revert_id)) {
+			return;
+		}
+		$id = (int) $revert_id;
+		$result = $this->get_tag_history_from_revert($id);
+		
+		if(empty($result)) {
+			// there is no history entry with that id so either the image was deleted
+			// while the user was viewing the history,  or something messed up
+			/* calling die() is probably not a good idea, we should throw an Exception */
+			die('Error: No tag history with specified id ('.$id.') was found in the database.'."\n\n".
+				'Perhaps the image was deleted while processing this request.');
+		}
+		
+		// lets get the values out of the result
+		$stored_result_id = $result['id'];
+		$stored_image_id = $result['image_id'];
+		$stored_tags = $result['tags'];
+		
+		log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
+		// all should be ok so we can revert by firing the SetUserTags event.
+		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
 	}
 	
 	public function get_tag_history_from_revert($revert_id)
@@ -180,6 +247,56 @@ class Tag_History implements Extension {
 	}
 	
 	/*
+	 * This function attempts to revert all changes by a given IP within an (optional) timeframe.
+	 */
+	public function process_revert_all_changes_by_ip($ip, $date=null)
+	{
+		global $database;
+		$date_select = '';
+		
+		if (!empty($date)) {
+			$date_select = 'and date_set >= '.$date;
+		} else {
+			$date = 'forever';
+		}
+		
+		log_info("tag_history", 'Attempting to revert edits by ip='.$ip.' (from '.$date.' to now).');
+		
+		// Get all the images that the given IP has changed tags on (within the timeframe) that were last editied by the given IP
+		$result = $database->get_all('
+				SELECT t1.image_id FROM tag_histories t1 LEFT JOIN tag_histories t2
+				ON (t1.image_id = t2.image_id AND t1.date_set < t2.date_set)
+				WHERE t2.image_id IS NULL AND t1.user_ip="'.$ip.'" AND t1.image_id IN
+				( select image_id from `tag_histories` where user_ip="'.$ip.'" '.$date_select.') 
+				ORDER BY t1.image_id;');
+	
+		if (empty($result)) {
+			log_info("tag_history", 'Nothing to revert! for ip='.$ip.' (from '.$date.' to now).');
+			$this->theme->add_status('Nothing to Revert','Nothing to revert for ip='.$ip.' (from '.$date.' to now)');
+			return; // nothing to do.
+		}
+		
+		for ($i = 0 ; $i < count($result) ; $i++)
+		{
+			$image_id = (int) $result[$i]['image_id'];
+			
+			// Get the first tag history that was done before the given IP edit
+			$row = $database->get_row('
+				SELECT id,tags FROM `tag_histories` WHERE image_id="'.$image_id.'" AND user_ip!="'.$ip.'" '.$date_select.' ORDER BY date_set DESC LIMIT 1');
+			
+			if (empty($row)) {
+				// we can not revert this image based on the date restriction.
+				// Output a message perhaps?
+			} else {
+				$id = (int) $row['id'];
+				$this->process_revert_request_only($id);
+				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$id.' ('.$row['tags'].')');
+			}
+		}
+		log_info("tag_history", 'Reverted '.count($result).' edits by ip='.$ip.' (from '.$date.' to now).');
+	}
+	
+	/*
 	 * this function is called when an image has been deleted
 	 */
 	private function delete_all_tag_history($image_id)
@@ -207,6 +324,7 @@ class Tag_History implements Extension {
 		// if the image has no history, make one with the old tags
 		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
 		if($entries == 0){
+			/* these two queries could probably be combined */
 			$database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
