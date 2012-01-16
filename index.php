@@ -57,18 +57,18 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 require_once "config.php";
 
 // set up and purify the environment
-define("DEBUG", false);
-define("COVERAGE", false);
-define("CONTEXT", false);
-define("CACHE_MEMCACHE", false);
-define("CACHE_DIR", false);
-define("CACHE_HTTP", false);
-define("VERSION", 'trunk');
-define("SCORE_VERSION", 's2hack/'.VERSION);
-define("COOKIE_PREFIX", 'shm');
-define("SPEED_HAX", false);
-define("FORCE_NICE_URLS", false);
-define("WH_SPLITS", 1);
+if(!defined("DEBUG"))           define("DEBUG", false);
+if(!defined("COVERAGE"))        define("COVERAGE", false);
+if(!defined("CONTEXT"))         define("CONTEXT", false);
+if(!defined("CACHE_MEMCACHE"))  define("CACHE_MEMCACHE", false);
+if(!defined("CACHE_DIR"))       define("CACHE_DIR", false);
+if(!defined("CACHE_HTTP"))      define("CACHE_HTTP", false);
+if(!defined("VERSION"))         define("VERSION", 'trunk');
+if(!defined("SCORE_VERSION"))   define("SCORE_VERSION", 's2hack/'.VERSION);
+if(!defined("COOKIE_PREFIX"))   define("COOKIE_PREFIX", 'shm');
+if(!defined("SPEED_HAX"))       define("SPEED_HAX", false);
+if(!defined("FORCE_NICE_URLS")) define("FORCE_NICE_URLS", false);
+if(!defined("WH_SPLITS"))       define("WH_SPLITS", 1);
 
 require_once "core/util.inc.php";
 require_once "lib/context.php";
