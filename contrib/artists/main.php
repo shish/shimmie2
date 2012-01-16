@@ -904,8 +904,10 @@ class Artists implements Extension {
             , array(
                 $artistID
             ));
-
-        for ($i = 0 ; $i < count($result) ; $i++)
+		
+		$num = count($result);
+		
+        for ($i = 0 ; $i < $num ; $i++)
         {
             $result[$i]["name"] = stripslashes($result[$i]["name"]);
         }
@@ -921,8 +923,10 @@ class Artists implements Extension {
             , array(
                 $artistID
             ));
+			
+		$num = count($result);
 
-        for ($i = 0 ; $i < count($result) ; $i++)
+        for ($i = 0 ; $i < $num ; $i++)
         {
             $result[$i]["url"] = stripslashes($result[$i]["url"]);
         }
@@ -1038,8 +1042,10 @@ class Artists implements Extension {
                     $pageNumber * $artistsPerPage
                     , $artistsPerPage
                 ));
+			
+			$number_of_listings = count($listing);
 
-            for ($i = 0 ; $i < count($listing) ; $i++)
+            for ($i = 0 ; $i < $number_of_listings ; $i++)
             {
                 $listing[$i]["name"] = stripslashes($listing[$i]["name"]);
                 $listing[$i]["user_name"] = stripslashes($listing[$i]["user_name"]);

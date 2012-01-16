@@ -906,7 +906,8 @@ function _sanitise_environment() {
  */
 function _decaret($str) {
 	$out = "";
-	for($i=0; $i<strlen($str); $i++) {
+	$length = strlen($str);
+	for($i=0; $i<$length; $i++) {
 		if($str[$i] == "^") {
 			$i++;
 			if($str[$i] == "^") $out .= "^";
