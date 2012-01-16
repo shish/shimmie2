@@ -511,7 +511,7 @@ class Image {
 
 		global $_flexihash, $_fh_last_opts;
 		$matches = array();
-		if(preg_match("/(.*){(.*)}(.*)/", $tmpl, &$matches)) {
+		if(preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
 			$pre = $matches[1];
 			$opts = $matches[2];
 			$post = $matches[3];
