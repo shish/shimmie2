@@ -24,6 +24,33 @@ class Layout {
 			$header_html .= "\t\t$line\n";
 		}
 		
+		/* Holiday Stuff!
+		If the current day is one of the set holidays, it will use a seperate stylesheet. Aswell as a few extra things depending on the day.
+		This only adds April Fools for now.
+		TODO: Add setup block to make the whole holiday thing "optional". / Choose what holidays you wish to use.
+		*/
+		if(/*date('d/m') == '01/01' || date('d/m') == '14/02' || */date('d/m') == '01/04'/* || date('d/m') == '24/12' || date('d/m') == '25/12' || date('d/m') == '31/12'*/){
+
+			$csssheet = "<link rel='stylesheet' href='$data_href/themes/$theme_name/holidays/";
+
+			// April Fools
+			// Flips the entire page upside down!
+			// TODO: Make it possible for the user to turn this off!
+			if(date('d/m') == '01/04'){
+				$csssheet .= "style_aprilfools.css";
+				$holtag = "april_fools";
+			}
+			$csssheet .= "' type='text/css'>";
+			//Optional! Uses a random image with a size lower then 800x91 & using the holiday tag and sticks it at top of page like a banner.
+			/*$banner = "<div>";
+			if(file_exists("ext/random_image")){
+				$banner .= "<center><img src='$data_href/random_image/download/size<800x91+$holtag'></center>";
+			}
+			$banner .= "</div>";*/
+		}else{
+			$banner = "";
+		}
+
 		$menu = "<div class='menu'>
 			<script type='text/javascript' src='$data_href/themes/$theme_name/wz_tooltip.js'></script>
 			<a href='".make_link()."' onmouseover='Tip(&#39;Home&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img src='$data_href/favicon.ico' style='position: relative; top: 3px;'></a>
@@ -153,6 +180,14 @@ class Layout {
 			$main_block_html = "<div id='body'>$main_block_html</div>";
 		}
 
+		// This is required for the holiday feature.
+		if(empty($csssheet)){
+		$csssheet = "";
+		}
+		if(empty($banner)){
+			$holiday = "";
+		}
+
 		print <<<EOD
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html>
@@ -160,10 +195,12 @@ class Layout {
 		<title>{$page->title}</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<link rel="stylesheet" href="$data_href/themes/$theme_name/style.css" type="text/css">
+		$csssheet
 		$header_html
 	</head>
 
 	<body>
+		$banner
 		$menu
 		$custom_sublinks
 		
