@@ -521,7 +521,18 @@ class Image {
 				require_once("lib/flexihash.php");
 				$_flexihash = new Flexihash();
 				foreach(explode(",", $opts) as $opt) {
-					$_flexihash->addTarget($opt);
+					$parts = explode("=", $opt);
+					$opt_val = "";
+					$opt_weight = 0;
+					if(count($parts) == 2) {
+						$opt_val = $parts[0];
+						$opt_weight = $parts[1];
+					}
+					elseif(count($parts) == 1) {
+						$opt_val = $parts[0];
+						$opt_weight = 1;
+					}
+					$_flexihash->addTarget($opt_val, $opt_weight);
 				}
 			}
 
