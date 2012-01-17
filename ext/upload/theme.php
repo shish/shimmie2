@@ -146,9 +146,15 @@ class UploadTheme extends Themelet {
 				It would also work with Gelbooru but unless someone can figure out how to bypass their hotlinking..meh.
 				The bookmarklet is now also loaded via the .js file in this folder.
 			*/
+			//Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
+			$supported_ext = "jpg jpeg gif png";
+			if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
+			if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
+			if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
+			if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
 			$title = "Booru to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(make_link("ext/upload/bookmarklet.js")).'&quot;)">'.
-				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie or Danbooru. (This also grabs the tags/rating/source!))';
+			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsze=&quot;'.$max_kb.'&quot;; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(make_link("ext/upload/bookmarklet.js")).'&quot;)">'.
+				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
 			}
 				
 		}
