@@ -29,15 +29,15 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	}else{
 		location.href=ste+document.location.hostname+document.getElementsByName("movie")[0].value+"&tags="+tag+"&source="+srx;
 	}
-}/*
+}
 // Gelbooru
 else if(document.getElementById("tags") !== null){
 	//Gelbooru has an annoying anti-hotlinking thing which doesn't seem to like the bookmarklet...
-	//So if someone can figure out how to bypass the hotlinking, please update the code :<
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("tags").value;}
 	var rtg=document.documentElement.innerHTML.match("<li>Rating: (.*)<\/li>")[1];
-	var srx="http://" + document.location.hostname + document.location.href.match("\/index\.php\\?page=post&s=view&id=.*"); //Gelbooru has really ugly urls..
+	//Can't seem to grab source due to url containing a &
+	//var srx="http://" + document.location.hostname + document.location.href.match("\/index\.php?page=post&amp;s=view\\&amp;id=.*");
 	var gmi=document.getElementById("image").src.match(".*img[0-9]+\.gelbooru\.com\/\/images\/[0-9]+\/[a-z0-9]+\.[a-z0-9]+")[0];
 	//Since Gelbooru does not allow flash, no need to search for flash tag.
-		location.href=ste+gmi+"&tags="+tag+"&rating="+rtg[1]+"&source="+srx';
-}*/
+	location.href=ste+gmi+"&tags="+tag+"&rating="+rtg[1];//+"&source="+srx;
+}
