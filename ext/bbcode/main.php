@@ -63,6 +63,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
 		$text = preg_replace("#\[\*\]#s", "<li>", $text);
 		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
+		$text = preg_replace("#\[align=(left|center|right)\](.*?)\[\/align\]#s", "<div style='text-align:\\1;'>\\2</div>", $text);
 		$text = $this->filter_spoiler($text);
 		$text = $this->insert_code($text);
 		return $text;
