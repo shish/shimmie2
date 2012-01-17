@@ -34,7 +34,7 @@ class UploadTheme extends Themelet {
 					$("#hide'.$i.'").hide();
 					$("#hide'.$a.'").show();});';
 				
-				$upload_list .= "<div id='hide$i'><img id='wrapper$i' src='ext/upload/minus.png' />" .
+				$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
 				"<a href='#' onclick='$js'>".
 				"<img src='ext/upload/plus.png'></a></div></td>";
 			} else {
@@ -51,7 +51,7 @@ class UploadTheme extends Themelet {
 				"<img src='ext/upload/minus.png' /></a>";
 				
 				if($a==$config->get_int('upload_count')){
-					$upload_list .="<img id='wrapper$i' src='ext/upload/plus.png' />";
+					$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
 				}else{
 					$js1 = 'javascript:$(function() {
 						$("#row'.$a.'").show();
@@ -66,12 +66,12 @@ class UploadTheme extends Themelet {
 			}
 					
 			$js2 = 'javascript:$(function() {
-						$("#url'.$i.'").show();
+						$("#url'.$i.'").hide();
 						$("#url'.$i.'").val("");
 						$("#data'.$i.'").show(); });';
 
 			$upload_list .=
-			"<td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
+			"<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
 			
 			if($tl_enabled) {
 				$js = 'javascript:$(function() {
@@ -80,7 +80,7 @@ class UploadTheme extends Themelet {
 						$("#url'.$i.'").show(); });';
 				
 				$upload_list .= 
-				"<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td>
+				"<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td></form>
 				<td>
 					<input id='data$i' name='data$i' class='wid' type='file'>
 					<input id='url$i' name='url$i' class='wid' type='text' style='display:none'>
