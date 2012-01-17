@@ -45,7 +45,16 @@ class ImageBanTheme extends Themelet {
 			});
 			</script>
 			<table id='image_bans' class='zebra'>
-				<thead><th>Hash</th><th>Reason</th><th>Action</th></thead>
+				<thead>
+					<th>Hash</th><th>Reason</th><th>Action</th>
+					<tr>
+						<form action='".make_link("image_hash_ban/list/1")."' method='GET'>
+							<td><input type='text' name='hash'></td>
+							<td><input type='text' name='reason'></td>
+							<td><input type='submit' value='Search'></td>
+						</form>
+					</tr>
+				</thead>
 				$h_bans
 				<tfoot><tr>
 					".make_form(make_link("image_hash_ban/add"))."
