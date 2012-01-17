@@ -34,7 +34,7 @@ class UploadTheme extends Themelet {
 					$("#hide'.$i.'").hide();
 					$("#hide'.$a.'").show();});';
 				
-				$upload_list .= "<div id='hide$i'><img id='wrapper$i' src='ext/upload/minus.png' />" .
+				$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
 				"<a href='#' onclick='$js'>".
 				"<img src='ext/upload/plus.png'></a></div></td>";
 			} else {
@@ -51,7 +51,7 @@ class UploadTheme extends Themelet {
 				"<img src='ext/upload/minus.png' /></a>";
 				
 				if($a==$config->get_int('upload_count')){
-					$upload_list .="<img id='wrapper$i' src='ext/upload/plus.png' />";
+					$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
 				}else{
 					$js1 = 'javascript:$(function() {
 						$("#row'.$a.'").show();
@@ -66,12 +66,12 @@ class UploadTheme extends Themelet {
 			}
 					
 			$js2 = 'javascript:$(function() {
-						$("#url'.$i.'").show();
+						$("#url'.$i.'").hide();
 						$("#url'.$i.'").val("");
 						$("#data'.$i.'").show(); });';
 
 			$upload_list .=
-			"<td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
+			"<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
 			
 			if($tl_enabled) {
 				$js = 'javascript:$(function() {
@@ -80,7 +80,7 @@ class UploadTheme extends Themelet {
 						$("#url'.$i.'").show(); });';
 				
 				$upload_list .= 
-				"<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td>
+				"<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td></form>
 				<td>
 					<input id='data$i' name='data$i' class='wid' type='file'>
 					<input id='url$i' name='url$i' class='wid' type='text' style='display:none'>
@@ -140,34 +140,21 @@ class UploadTheme extends Themelet {
 				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
 			}
 				{
-			/* Danbooru > Shimmie Bookmarklet.
-				This "should" work on any site running danbooru, unless for some odd reason they switched around the id's or aren't using post/list.
-				Most likely this will stop working when Danbooru updates to v2, all depends if they switch the ids or not >_>.
-				Clicking the link on a danbooru image page should give you something along the lines of:
-				'http://www.website.com/shimmie/upload?url="http://sonohara.donmai.us/data/crazylongurl.jpg&tags="too many tags"&rating="s"&source="http://danbooru.donmai.us/post/show/012345/"'
-				TODO: Possibly make the entire/most of the script into a .js file, and just make the bookmarklet load it on click (Something like that?)
+			/* Imageboard > Shimmie Bookmarklet
+				This is more or less, an upgraded version of the "Danbooru>Shimmie" bookmarklet.
+				At the moment this works with Shimmie & Danbooru.
+				It would also work with Gelbooru but unless someone can figure out how to bypass their hotlinking..meh.
+				The bookmarklet is now also loaded via the .js file in this folder.
 			*/
-			$title = "Danbooru to " . $config->get_string('title');
-			$html .= '<p><a href="javascript:'.
-				/* This should stop the bookmarklet being insanely long...not that it's already huge or anything. */
-				'var ste=&quot;'. $link . $delimiter .'url=&quot;;var tag=document.getElementById(&quot;post_tags&quot;).value;var rtg=document.documentElement.innerHTML.match(&quot;<li>Rating: (.*)<\/li>&quot;);var srx=&quot;http://&quot; + document.location.hostname+document.location.href.match(&quot;\/post\/show\/.*\/&quot;);' .
-				//The default confirm sucks, mainly due to being unable to change the text in the Ok/Cancel box (Yes/No would be better.)
-				'if (confirm(&quot;OK = Use Current tags.\nCancel = Use new tags.&quot;)==true){' . //Just incase some people don't want the insane amount of tags danbooru has.
-					//The flash check is kind of picky, although it should work on "most" images..there will be either some old or extremely new ones that lack the flash tag.
-					'if(tag.search(/\bflash\b/)==-1){'.
-						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
-					'else{'.
-						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+tag+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
-				//The following is more or less the same as above, instead using the tags on danbooru, should load a prompt box instead.
-				'}else{'.
-					'var p=prompt(&quot;Enter Tags&quot;,&quot;&quot;);'.
-					'if(tag.search(/\bflash\b/)==-1){'.
-						'location.href=ste+document.getElementById(&quot;highres&quot;).href+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}' .
-					'else{'.
-						'location.href=ste+document.getElementsByName(&quot;movie&quot;)[0].value+&quot;&amp;tags=&quot;+p+&quot;&amp;rating=&quot;+rtg[1]+&quot;&amp;source=&quot;+srx;}'.
-				'}">' .
-				$title . '</a> (As above, Click on a Danbooru-run image page. (This also grabs the tags/rating/source!))';
-
+			//Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
+			$supported_ext = "jpg jpeg gif png";
+			if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
+			if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
+			if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
+			if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
+			$title = "Booru to " . $config->get_string('title');
+			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsze=&quot;'.$max_kb.'&quot;; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(make_link("ext/upload/bookmarklet.js")).'&quot;)">'.
+				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
 			}
 				
 		}
