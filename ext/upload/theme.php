@@ -10,9 +10,10 @@ class UploadTheme extends Themelet {
 	}
 
 	public function display_page(Page $page) {
-		global $config;
-		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+		global $config, $page;
+		$page->add_html_header("<link rel='stylesheet' href='".get_base_href()."/ext/upload/_style.css' type='text/css'>");
 		
+		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 		// Uploader 2.0!
 		$upload_list = "";
 		for($i=0; $i<$config->get_int('upload_count'); $i++)
