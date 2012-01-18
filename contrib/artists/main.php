@@ -43,6 +43,14 @@ class Artists implements Extension {
 
         if ($event instanceof PageRequestEvent)
             $this->handle_commands($event);
+
+		if ($event instanceof SearchTermParseEvent) {
+			$matches = array();
+			if(preg_match("/^author=(.*)$/", $event->term, $matches)) {
+				$char = $matches[1];
+				$event->add_querylet(new Querylet("Author = :author_char", array("author_char"=>$char)));
+			}
+		}
     }
 
     public function try_install() {
