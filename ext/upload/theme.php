@@ -168,17 +168,28 @@ class UploadTheme extends Themelet {
 
 	/* only allows 1 file to be uploaded - for replacing another image file */
 	public function display_replace_page(Page $page, $image_id) {
-		global $config;
+		global $config, $page;
+		$page->add_html_header("<link rel='stylesheet' href='".get_base_href()."/ext/upload/_style.css' type='text/css'>");
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+
+		$js2 = 'javascript:$(function() {
+			$("#data").hide();
+			$("#data").val("");
+			$("#url").show(); });';
+
+		$js1 = 'javascript:$(function() {
+			$("#url").hide();
+			$("#url").val("");
+			$("#data").show(); });';
 
 		$upload_list = '';
 		$upload_list .= "
 				<tr>
-					<td width='60'><form><input id='radio_buttona' type='radio' name='method' value='file' checked='checked' onclick='javascript:document.getElementById(&quot;url0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;url0&quot;).value = &quot;&quot;;document.getElementById(&quot;data0&quot;).style.display = &quot;&quot;' /> File<br>";
+					<td width='60'><form><input id='radio_button_a' type='radio' name='method' value='file' checked='checked' onclick='$js1' /> File<br>";
 				if($tl_enabled) {
 					$upload_list .="
-					<input id='radio_buttonb' type='radio' name='method' value='url' onclick='javascript:document.getElementById(&quot;data0&quot;).style.display = &quot;none&quot;;document.getElementById(&quot;data0&quot;).value = &quot;&quot;;document.getElementById(&quot;url0&quot;).style.display = &quot;&quot;' /> URL</ br></td></form>
-					<td><input id='data0' name='data0' class='wid' type='file'><input id='url0' name='url0' class='wid' type='text' style='display:none'></td>
+					<input id='radio_button_b' type='radio' name='method' value='url' onclick='$js2' /> URL</ br></td></form>
+					<td><input id='data' name='data' class='wid' type='file'><input id='url' name='url' class='wid' type='text' style='display:none'></td>
 					";
 				} else { 
 					$upload_list .= "</form></td>
