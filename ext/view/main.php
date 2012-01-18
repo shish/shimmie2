@@ -87,6 +87,10 @@ class ViewImage extends SimpleExtension {
 			}
 
 			$image = Image::by_id($image_id);
+			if(is_null($image)) {
+				$this->theme->display_error($page, "Image not found", "Couldn't find image $image_id");
+			}
+
 			if($event->page_matches("post/next")) {
 				$image = $image->get_next($search_terms);
 			}
@@ -94,13 +98,12 @@ class ViewImage extends SimpleExtension {
 				$image = $image->get_prev($search_terms);
 			}
 
-			if(!is_null($image)) {
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/view/{$image->id}", $query));
-			}
-			else {
+			if(is_null($image)) {
 				$this->theme->display_error($page, "Image not found", "No more images");
 			}
+
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/view/{$image->id}", $query));
 		}
 			
 		if($event->page_matches("post/view")) {
