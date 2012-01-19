@@ -17,7 +17,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr><td>Name</td></tr>";
 		foreach($users as $duser) {
 			$html .= "<tr>";
-			$html .= "<td><a href='".make_link("user/"+$duser->name)."'>".html_escape($duser->name)."</a></td>";
+			$html .= "<td><a href='".make_link("user/".$duser->name)."'>".html_escape($duser->name)."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";
