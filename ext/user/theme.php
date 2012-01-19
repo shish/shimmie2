@@ -181,6 +181,11 @@ class UserPageTheme extends Themelet {
 					<input type='submit' value='Set'>
 				</form>
 			";
+			$html .="
+				<p>".make_form(make_link("user_admin/delete_user"))."
+				<input type='hidden' name='id' value='$i_user_id'>
+				<input type='submit' value='Delete User' onclick='confirm(\"Delete the user?\");' />
+				</form>";
 		}
 		return $html;
 	}
