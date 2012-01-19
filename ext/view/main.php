@@ -89,6 +89,7 @@ class ViewImage extends SimpleExtension {
 			$image = Image::by_id($image_id);
 			if(is_null($image)) {
 				$this->theme->display_error($page, "Image not found", "Couldn't find image $image_id");
+				return;
 			}
 
 			if($event->page_matches("post/next")) {
