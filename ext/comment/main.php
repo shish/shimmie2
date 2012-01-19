@@ -408,8 +408,12 @@ class CommentList extends SimpleExtension {
 			# akismet breaks if there's no referrer in the environment; so if there
 			# isn't, supply one manually
 			if(!isset($_SERVER['HTTP_REFERER'])) {
-				$comment['referrer'] = '';
+				$comment['referrer'] = 'none';
 				log_warning("comment", "User '{$user->name}' commented with no referrer: $text");
+			}
+			if(!isset($_SERVER['HTTP_USER_AGENT'])) {
+				$comment['user_agent'] = 'none';
+				log_warning("comment", "User '{$user->name}' commented with no user-agent: $text");
 			}
 
 			$akismet = new Akismet(
