@@ -405,6 +405,13 @@ class CommentList extends SimpleExtension {
 				'permalink'    => '',
 				);
 
+			# akismet breaks if there's no referrer in the environment; so if there
+			# isn't, supply one manually
+			if(!isset($_SERVER['HTTP_REFERER'])) {
+				$comment['referrer'] = '';
+				log_warning("comment", "User '{$user->name}' commented with no referrer: $text");
+			}
+
 			$akismet = new Akismet(
 					$_SERVER['SERVER_NAME'],
 					$config->get_string('comment_wordpress_key'),
