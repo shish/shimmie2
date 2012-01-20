@@ -277,7 +277,7 @@ class CommentList extends SimpleExtension {
 
 		$total_pages = $database->cache->get("comment_pages");
 		if(empty($total_pages)) {
-			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
+			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
 			$database->cache->set("comment_pages", $total_pages, 600);
 		}
 
