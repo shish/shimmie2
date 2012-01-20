@@ -40,10 +40,10 @@ Installation
 Upgrade from 2.3.X
 ~~~~~~~~~~~~~~~~~~
 The database connection setting in config.php has changed; now using
-PDO DSN format [1] rather than ADODB URI [2]
+PDO DSN format rather than ADODB URI:
 
- [1] <proto>:user=<username>;password=<password>;host=<host>;dbname=<database>
- [2] <proto>://<username>:<password>@<host>/<database>
+ OLD: $database_dsn = "<proto>://<username>:<password>@<host>/<database>";
+ NEW: define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;dbname=<database>");
 
 The rest should be automatic, just unzip into a clean folder and copy across
 config.php, images and thumbs folders from the old version. This

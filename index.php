@@ -57,18 +57,23 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 require_once "config.php";
 
 // set up and purify the environment
-if(!defined("DEBUG"))           define("DEBUG", false);
-if(!defined("COVERAGE"))        define("COVERAGE", false);
-if(!defined("CONTEXT"))         define("CONTEXT", false);
-if(!defined("CACHE_MEMCACHE"))  define("CACHE_MEMCACHE", false);
-if(!defined("CACHE_DIR"))       define("CACHE_DIR", false);
-if(!defined("CACHE_HTTP"))      define("CACHE_HTTP", false);
-if(!defined("VERSION"))         define("VERSION", 'trunk');
-if(!defined("SCORE_VERSION"))   define("SCORE_VERSION", 's2hack/'.VERSION);
-if(!defined("COOKIE_PREFIX"))   define("COOKIE_PREFIX", 'shm');
-if(!defined("SPEED_HAX"))       define("SPEED_HAX", false);
-if(!defined("FORCE_NICE_URLS")) define("FORCE_NICE_URLS", false);
-if(!defined("WH_SPLITS"))       define("WH_SPLITS", 1);
+function _d($name, $value) {
+	if(!defined($name)) define($name, $value);
+}
+_d("DATABASE_DSN", null);    // string   PDO database connection details
+_d("CACHE_DSN", null);       // string   cache connection details
+_d("DEBUG", false);          // boolean  print various debugging details
+_d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
+_d("CONTEXT", null);         // string   file to log performance data into
+_d("CACHE_MEMCACHE", false); // boolean  store complete rendered pages in memcache
+_d("CACHE_DIR", false);      // boolean  store complete rendered pages on disk
+_d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
+_d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes
+_d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance
+_d("NICE_URLS", false);      // boolean  force niceurl mode
+_d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
+_d("VERSION", 'trunk');      // string   shimmie version
+_d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
 
 require_once "core/util.inc.php";
 require_once "lib/context.php";
