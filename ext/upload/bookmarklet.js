@@ -19,12 +19,12 @@ if(document.getElementById("post_tags") !== null){
 
 		if(supext.search(document.getElementById("highres").href.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
 			if(filesze <= maxsze){
-				location.href=ste+document.getElementById("highres").href+"&tags="+tag+"&rating="+rtg[1]+"&source="+srx;
+				location.href=ste+document.getElementById("highres").href+"&tags="+tag+"&rating="+rtg+"&source="+srx;
 			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}else{
 		if(supext.search("swf") !== -1){
-				location.href=ste+document.getElementsByName("movie")[0].value+"&tags="+tag+"&rating="+rtg[1]+"&source="+srx;
+				location.href=ste+document.getElementsByName("movie")[0].value+"&tags="+tag+"&rating="+rtg+"&source="+srx;
 		}else{alert(notsup);}
 	}
 }
