@@ -107,12 +107,20 @@ class CustomUserPageTheme extends UserPageTheme {
 			<input type='hidden' name='name' value='{$duser->name}'>
 			<input type='hidden' name='id' value='{$duser->id}'>
 			<table style='width: 300px;'>
-				<tr><td colspan='2'>Change Password</td></tr>
+				<tr><th colspan='2'>Change Password</th></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
 			</table>
 		</form>
+		<p><form action='".make_link("user_admin/change_email")."' method='POST'>
+			<input type='hidden' name='id' value='{$duser->id}'>
+			<table style='width: 300px;'>
+				<tr><th colspan='2'>Change Email</th></tr>
+				<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
+				<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
+			</table>
+		</form></p>
 		";
 		
 		if($user->is_admin()) {
