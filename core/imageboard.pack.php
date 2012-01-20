@@ -372,6 +372,7 @@ class Image {
 		global $database;
 		if(empty($source)) $source = null;
 		$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
+		log_info("core-image", "Source for Image #{$this->id} set to: ".$source);
 	}
 
 
@@ -385,6 +386,7 @@ class Image {
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
 		$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
+		log_info("core-image", "Locked status of Image #{$this->id} set to: ".$sln);
 	}
 
 	/**

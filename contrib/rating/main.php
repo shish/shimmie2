@@ -208,6 +208,7 @@ class Ratings implements Extension {
 	private function set_rating($image_id, $rating) {
 		global $database;
 		$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));
+		log_info("core-image", "Rating for Image #{$image_id} set to: ".$this->theme->rating_to_name($rating));
 	}
 }
 add_event_listener(new Ratings());
