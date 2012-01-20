@@ -539,7 +539,10 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 }
 
 /**
- * Figure out the path to the shimmie install root.
+ * Figure out the path to the shimmie install directory.
+ *
+ * eg if shimmie is visible at http://foo.com/gallery, this
+ * function should return /gallery
  *
  * PHP really, really sucks.
  *

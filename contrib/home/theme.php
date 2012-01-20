@@ -1,14 +1,14 @@
 <?php
 
 class HomeTheme extends Themelet {
-	public function display_page(Page $page, $sitename, $data_href, $theme_name, $body) {
+	public function display_page(Page $page, $sitename, $base_href, $theme_name, $body) {
 		$page->set_mode("data");
 		$page->set_data(<<<EOD
 <html>
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-		<link rel='stylesheet' href='$data_href/themes/$theme_name/style.css' type='text/css'>
+		<link rel='stylesheet' href='$base_href/themes/$theme_name/style.css' type='text/css'>
 	</head>
 	<style>
 		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
