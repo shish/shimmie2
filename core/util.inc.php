@@ -823,6 +823,10 @@ function send_event(Event $event) {
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// SHIT by default this returns the time as a string. And it's not even a
+// string representation of a number, it's two numbers separated by a space.
+// What the fuck were the PHP developers smoking.
+$_load_start = microtime(true);
 function get_debug_info() {
 	global $config, $_event_count, $database, $_execs;
 
@@ -832,21 +836,12 @@ function get_debug_info() {
 	else {
 		$i_mem = "???";
 	}
-	if(function_exists('getrusage')) {
-		$ru = getrusage();
-		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
-		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
-	}
-	else {
-		$i_utime = "???";
-		$i_stime = "???";
-	}
-	
+	$time = sprintf("%5.2f", microtime(true) - $_load_start);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
 	
-	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
+	$debug = "<br>Took $time seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
