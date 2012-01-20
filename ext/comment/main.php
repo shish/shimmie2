@@ -147,17 +147,7 @@ class CommentList extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "list") {
 				$page_num = int_escape($event->get_arg(1));
-				if($page_num <= 100) {
-					$this->build_page($page_num);
-				}
-				else {
-					header("HTTP/1.0 403 Blocked");
-					$this->theme->display_error($page,
-					"This page is history~",
-					"Only the first 100 pages of comments are visible ".
-					"- 99% of the traffic to older pages was bots, and ".
-					"they were hammering the database o.o");
-				}
+				$this->build_page($page_num);
 			}
 		}
 	}
@@ -275,9 +265,10 @@ class CommentList extends SimpleExtension {
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
+		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		$get_threads = "
 			SELECT image_id,MAX(posted) AS latest
-			FROM comments
+			FROM comments $where
 			GROUP BY image_id
 			ORDER BY latest DESC
 			LIMIT :limit OFFSET :offset
