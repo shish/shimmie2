@@ -12,19 +12,19 @@ if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
 	var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*)<\/li>")[1];
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+\/");
-	var filesze=document.getElementById("stats").innerHTML.match("[0-9] \\(((?:\.*[0-9])) ([a-zA-Z]+)");
-	if(filesze[2] == "MB"){var filesze = filesze[1] * 1024;}else{var filesze = filesze[2].match("[0-9]+");}
-	if(tag.search(/\bflash\b/)==-1){
+
+	if(tag.search(/\bflash\b/)===-1){
+		var filesze=document.getElementById("stats").innerHTML.match("[0-9] \\(((?:\.*[0-9])) ([a-zA-Z]+)");
+		if(filesze[2] == "MB"){var filesze = filesze[1] * 1024;}else{var filesze = filesze[2].match("[0-9]+");}
+
 		if(supext.search(document.getElementById("highres").href.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
 			if(filesze <= maxsze){
 				location.href=ste+document.getElementById("highres").href+"&tags="+tag+"&rating="+rtg[1]+"&source="+srx;
 			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}else{
-		if(supext.search(document.getElementById("highres").href.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
-			if(filesze <= maxsze){
+		if(supext.search("swf") !== -1){
 				location.href=ste+document.getElementsByName("movie")[0].value+"&tags="+tag+"&rating="+rtg[1]+"&source="+srx;
-			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}
 }
@@ -45,7 +45,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 		}else{alert(notsup);}
 	}else{
 		var mov = document.location.hostname+document.getElementsByName("movie")[0].value;
-		if(supext.search(mov.match(".*\\.([a-z0-9]+)")[1]) !== -1){
+		if(supext.search("swf") !== -1){
 			location.href=ste+mov+"&tags="+tag+"&source="+srx;
 		}else{alert(notsup);}
 	}
