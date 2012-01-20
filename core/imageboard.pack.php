@@ -231,14 +231,9 @@ class Image {
 	 */
 	public function get_tag_array() {
 		global $database;
-		$cached = $database->cache->get("image-{$this->id}-tags");
-		if($cached) return $cached;
-
 		if(!isset($this->tag_array)) {
 			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
 		}
-
-		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
 		return $this->tag_array;
 	}
 
@@ -444,7 +439,6 @@ class Image {
 		}
 
 		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
-		$database->cache->delete("image-{$this->id}-tags");
 	}
 
 	/**
