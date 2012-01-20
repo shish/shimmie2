@@ -147,14 +147,14 @@ class CommentList extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "list") {
 				$page_num = int_escape($event->get_arg(1));
-				if($page_num <= 5) {
+				if($page_num <= 100) {
 					$this->build_page($page_num);
 				}
 				else {
 					header("HTTP/1.0 403 Blocked");
 					$this->theme->display_error($page,
 					"This page is history~",
-					"Only the first 5 pages of comments are visible ".
+					"Only the first 100 pages of comments are visible ".
 					"- 99% of the traffic to older pages was bots, and ".
 					"they were hammering the database o.o");
 				}
