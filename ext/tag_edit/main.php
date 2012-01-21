@@ -91,20 +91,19 @@ class TagEdit implements Extension {
 
 		if($event instanceof TagSetEvent) {
 			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_tags($event->tags);
+				$event->image->set_tags($event->tags, $event->image->get_tag_list());
 			}
 		}
 
 		if($event instanceof SourceSetEvent) {
 			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_source($event->source);
+				$event->image->set_source($event->source, $event->image->source);
 			}
 		}
 
 		if($event instanceof LockSetEvent) {
 			if($user->is_admin()) {
-				log_debug("tag_edit", "Setting Image #{$event->image->id} lock to: {$event->locked}");
-				$event->image->set_locked($event->locked);
+				$event->image->set_locked($event->locked, $event->image->locked);
 			}
 		}
 
