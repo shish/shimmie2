@@ -7,6 +7,7 @@ sql.log
 shimmie.log
 !lib/images
 ext/admin
+ext/amazon_s3
 ext/artists
 ext/autocomplete
 ext/ban_words
@@ -28,6 +29,7 @@ ext/handle_flash
 ext/handle_ico
 ext/handle_mp3
 ext/handle_svg
+ext/holiday
 ext/home
 ext/image_hash_ban
 ext/ipban
@@ -44,6 +46,7 @@ ext/random_image
 ext/rating
 ext/regen_thumb
 ext/report_image
+ext/resize
 ext/res_limit
 ext/rss_comments
 ext/rss_images
@@ -56,7 +59,7 @@ ext/tagger
 ext/tag_history
 ext/text_score
 ext/tips
-ext/amazon_s3
+ext/twitter_soc
 ext/upload_cmd
 ext/wiki
 ext/word_filter

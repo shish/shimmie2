@@ -368,23 +368,29 @@ class Image {
 	/**
 	 * Set the image's source URL
 	 */
-	public function set_source($source) {
+	public function set_source($source, $old_source) {
 		global $database;
 		if(empty($source)) $source = null;
-		$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
+		if($old_source != $source){
+			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
+			log_info("core-image", "Source for Image #{$this->id} set to: ".$source);
+		}
 	}
 
 
 	public function is_locked() {
 		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
 	}
-	public function set_locked($tf) {
+	public function set_locked($tf, $old_sln) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
 		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
+		if($old_sln != $sln){
+			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
+			log_info("core-image", "Setting Image #{$this->id} lock to: {$event->locked}".$sln);
+		}
 	}
 
 	/**
@@ -403,48 +409,49 @@ class Image {
 	/**
 	 * Set the tags for this image
 	 */
-	public function set_tags($tags) {
+	public function set_tags($tags, $old_tags) {
 		global $database;
 		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
-
-		// delete old
-		$this->delete_tags_from_image();
-
-		// insert each new tags
-		foreach($tags as $tag) {
-			$id = $database->get_one(
-					$database->engine->scoreql_to_sql(
-						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-					),
-					array("tag"=>$tag));
-			if(empty($id)) {
-				// a new tag
-				$database->execute(
-						"INSERT INTO tags(tag) VALUES (:tag)",
+		$new_tags = implode(" ", $tags);
+		if($old_tags != $new_tags){
+			// delete old
+			$this->delete_tags_from_image();
+			// insert each new tags
+			foreach($tags as $tag) {
+				$id = $database->get_one(
+						$database->engine->scoreql_to_sql(
+							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+						),
 						array("tag"=>$tag));
+				if(empty($id)) {
+					// a new tag
+					$database->execute(
+							"INSERT INTO tags(tag) VALUES (:tag)",
+							array("tag"=>$tag));
+					$database->execute(
+							"INSERT INTO image_tags(image_id, tag_id)
+							VALUES(:id, (SELECT id FROM tags WHERE tag = :tag))",
+							array("id"=>$this->id, "tag"=>$tag));
+				}
+				else {
+					// user of an existing tag
+					$database->execute(
+							"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
+							array("iid"=>$this->id, "tid"=>$id));
+				}
 				$database->execute(
-						"INSERT INTO image_tags(image_id, tag_id)
-						VALUES(:id, (SELECT id FROM tags WHERE tag = :tag))",
-						array("id"=>$this->id, "tag"=>$tag));
+						$database->engine->scoreql_to_sql(
+							"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+						),
+						array("tag"=>$tag));
 			}
-			else {
-				// user of an existing tag
-				$database->execute(
-						"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
-						array("iid"=>$this->id, "tid"=>$id));
-			}
-			$database->execute(
-					$database->engine->scoreql_to_sql(
-						"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-					),
-					array("tag"=>$tag));
-		}
 
-		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
-		$database->cache->delete("image-{$this->id}-tags");
+			log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
+			$database->cache->delete("image-{$this->id}-tags");
+		}
 	}
 
 	/**
