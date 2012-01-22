@@ -17,7 +17,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr><td>Name</td></tr>";
 		foreach($users as $duser) {
 			$html .= "<tr>";
-			$html .= "<td><a href='".make_link("user/"+$duser->name)."'>".html_escape($duser->name)."</a></td>";
+			$html .= "<td><a href='".make_link("user/".$duser->name)."'>".html_escape($duser->name)."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";
@@ -180,7 +180,16 @@ class UserPageTheme extends Themelet {
 					Admin: <input name='admin' type='checkbox'$h_is_admin>
 					<input type='submit' value='Set'>
 				</form>
-			";
+				
+				".make_form(make_link("user_admin/delete_user"))."
+				<input type='hidden' name='id' value='$i_user_id'>
+				<input type='submit' value='Delete User' onclick='confirm(\"Delete the user?\");' />
+				</form>
+				
+				".make_form(make_link("user_admin/delete_user_with_images"))."
+				<input type='hidden' name='id' value='$i_user_id'>
+				<input type='submit' value='Delete User with images' onclick='confirm(\"Delete the user with his uploaded images?\");' />
+				</form>";
 		}
 		return $html;
 	}
