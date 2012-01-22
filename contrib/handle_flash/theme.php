@@ -9,6 +9,7 @@ class FlashFileHandlerTheme extends Themelet {
 			        codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0'
 					height='{$image->height}'
 					width='{$image->width}'
+					wmode='opaque'
 					>
 				<param name='movie' value='$ilink'/>
 				<param name='quality' value='high' />
@@ -16,6 +17,7 @@ class FlashFileHandlerTheme extends Themelet {
 					pluginspage='http://www.macromedia.com/go/getflashplayer'
 					height='{$image->height}'
 					width='{$image->width}'
+					wmode='opaque'
 					type='application/x-shockwave-flash'></embed>
 			</object>";
 		$page->add_block(new Block("Flash Animation", $html, "main", 0));
