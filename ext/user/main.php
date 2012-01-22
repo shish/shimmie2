@@ -147,6 +147,9 @@ class UserPage extends SimpleExtension {
 			else if($event->get_arg(0) == "delete_user") {
 			$this->delete_user($page);
 			}
+			else if($event->get_arg(0) == "delete_user_with_images") {
+			$this->delete_user_with_images($page);
+			}
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
@@ -487,9 +490,44 @@ class UserPage extends SimpleExtension {
 			$database->execute("DELETE FROM users 
 								WHERE id = :id"
 								, array("id"=>$_POST['id']));
+		
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/list"));
 		}
-		$page->set_mode("redirect");
-		$page->set_redirect(make_link("post/list"));
+	}
+	
+	private function delete_user_with_images($page) {
+		global $user;
+		global $config;
+		global $database;
+		
+		$page->set_title("Error");
+		$page->set_heading("Error");
+		$page->add_block(new NavBlock());
+		
+		if (!$user->is_admin()) {
+			$page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
+		}
+		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+			$page->add_block(new Block("No ID Specified",
+					"You need to specify the account number to edit"));
+		}
+		else{
+			$rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
+			foreach ($rows as $key => $value)
+			{
+				$image = Image::by_id($value['id']);
+				if($image) {
+					send_event(new ImageDeletionEvent($image));
+					}
+			}
+			$database->execute("DELETE FROM users 
+								WHERE id = :id"
+								, array("id"=>$_POST['id']));
+				
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/list"));
+		}
 	}
 	
 // }}}
