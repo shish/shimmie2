@@ -130,7 +130,7 @@ function to_shorthand_int($int) {
  */
 function autodate($date, $html=true) {
 	$cpu = date('c', strtotime($date));
-	$hum = date('F j, Y', strtotime($date));
+	$hum = date('F j, Y; H:i', strtotime($date));
 	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
