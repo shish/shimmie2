@@ -52,7 +52,7 @@ if(is_readable("config.php")) {
 			<h1>Shimmie Repair Console</h1>
 <?php
 	include "config.php";
-	if($_SESSION['dsn'] == $database_dsn || $_POST['dsn'] == $database_dsn) {
+	if($_SESSION['dsn'] == DATABASE_DSN || $_POST['dsn'] == DATABASE_DSN) {
 		if($_POST['dsn']) {$_SESSION['dsn'] = $_POST['dsn'];}
 
 		if(empty($_GET["action"])) {
@@ -350,7 +350,9 @@ function build_dirs() { // {{{
 } // }}}
 function write_config() { // {{{
 	global $database_dsn;
-	$file_content = "<?php \$database_dsn='$database_dsn'; ?>";
+	$file_content = "<"+"?php\n"+
+	"define('DATABASE_DSN', '$database_dsn');\n"+
+	"?"+">";
 	
 	if(is_writable("./") && file_put_contents("config.php", $file_content)) {
 		assert(file_exists("config.php"));

@@ -146,7 +146,8 @@ class CommentList extends SimpleExtension {
 				}
 			}
 			else if($event->get_arg(0) == "list") {
-				$this->build_page($event->get_arg(1));
+				$page_num = int_escape($event->get_arg(1));
+				$this->build_page($page_num);
 			}
 		}
 	}
@@ -264,9 +265,10 @@ class CommentList extends SimpleExtension {
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
+		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		$get_threads = "
 			SELECT image_id,MAX(posted) AS latest
-			FROM comments
+			FROM comments $where
 			GROUP BY image_id
 			ORDER BY latest DESC
 			LIMIT :limit OFFSET :offset
@@ -275,7 +277,7 @@ class CommentList extends SimpleExtension {
 
 		$total_pages = $database->cache->get("comment_pages");
 		if(empty($total_pages)) {
-			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments GROUP BY image_id) AS s1") / 10);
+			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
 			$database->cache->set("comment_pages", $total_pages, 600);
 		}
 
@@ -372,9 +374,10 @@ class CommentList extends SimpleExtension {
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
+		// window doesn't work as an SQL param because it's inside quotes >_<
 		$result = $database->get_all("SELECT * FROM comments WHERE owner_ip = :remote_ip ".
-				"AND posted > date_sub(now(), interval :window minute)",
-				Array("remote_ip"=>$_SERVER['REMOTE_ADDR'], "window"=>$window));
+				"AND posted > now() - interval '$window minute'",
+				Array("remote_ip"=>$_SERVER['REMOTE_ADDR']));
 
 		return (count($result) >= $max);
 	}
@@ -404,6 +407,17 @@ class CommentList extends SimpleExtension {
 				'body'         => $text,
 				'permalink'    => '',
 				);
+
+			# akismet breaks if there's no referrer in the environment; so if there
+			# isn't, supply one manually
+			if(!isset($_SERVER['HTTP_REFERER'])) {
+				$comment['referrer'] = 'none';
+				log_warning("comment", "User '{$user->name}' commented with no referrer: $text");
+			}
+			if(!isset($_SERVER['HTTP_USER_AGENT'])) {
+				$comment['user_agent'] = 'none';
+				log_warning("comment", "User '{$user->name}' commented with no user-agent: $text");
+			}
 
 			$akismet = new Akismet(
 					$_SERVER['SERVER_NAME'],

@@ -167,7 +167,6 @@ class Setup extends SimpleExtension {
 		$config->set_default_string("title", "Shimmie");
 		$config->set_default_string("front_page", "post/list");
 		$config->set_default_string("main_page", "post/list");
-		$config->set_default_string("base_href", "./index.php?q=");
 		$config->set_default_string("theme", "default");
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_bool("comment_captcha", false);

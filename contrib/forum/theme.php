@@ -83,8 +83,6 @@ class ForumTheme extends Themelet {
 		global $config, $page/*, $user*/;
 
 		$theme_name = $config->get_string('theme');
-		$data_href = $config->get_string('base_href');
-		$base_href = $config->get_string('base_href');
 		
         $html = "";
         $n = 0;

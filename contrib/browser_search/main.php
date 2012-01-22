@@ -36,7 +36,6 @@ class BrowserSearch implements Extension {
 			// First, we need to build all the variables we'll need
 
 			$search_title = $config->get_string('title');
-			//$search_form_url =  $config->get_string('base_href'); //make_link('post/list');
 			$search_form_url =  make_link('post/list/{searchTerms}');
 			$suggenton_url = make_link('browser_search/')."{searchTerms}";
 			$icon_b64 = base64_encode(file_get_contents("favicon.ico"));
