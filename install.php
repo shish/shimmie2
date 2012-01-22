@@ -285,7 +285,7 @@ function create_tables() { // {{{
 			INDEX(owner_id),
 			INDEX(width),
 			INDEX(height),
-			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+			CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
 		$db->create_table("tags", "
 			id SCORE_AIPK,
@@ -298,8 +298,8 @@ function create_tables() { // {{{
 			INDEX(image_id),
 			INDEX(tag_id),
 			UNIQUE(image_id, tag_id),
-			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+			CONSTRAINT foreign_images_tags_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+			CONSTRAINT foreign_images_tags_tag_id FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 8)");
 	}
