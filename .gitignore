@@ -38,6 +38,7 @@ ext/log_db
 ext/news
 ext/notes
 ext/numeric_score
+ext/oekaki
 ext/piclens
 ext/pm
 ext/pools
