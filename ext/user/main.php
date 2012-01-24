@@ -487,14 +487,14 @@ class UserPage extends SimpleExtension {
 					"You need to specify the account number to edit"));
 		}
 		else{
-			$rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
-			foreach ($rows as $key => $value)
-			{
-				$database->Execute("UPDATE images SET owner_id = :owner_id WHERE id = :id;", array("owner_id" => 1, "id" => $value['id']));
-			}
-			$database->execute("DELETE FROM users 
-								WHERE id = :id"
-								, array("id"=>$_POST['id']));
+			$database->Execute(
+				"UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
+				array("new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id'])
+			);
+			$database->execute(
+				"DELETE FROM users WHERE id = :id",
+				array("id" => $_POST['id'])
+			);
 		
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("post/list"));
