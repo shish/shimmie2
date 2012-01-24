@@ -64,7 +64,12 @@ class Ratings implements Extension {
 		}
 
 		if($event instanceof RatingSetEvent) {
-			$this->set_rating($event->image->id, $event->rating, $event->image->rating);
+			if(empty($event->image->rating)){
+				$old_rating = "";
+			}else{
+				$old_rating = $event->image->rating;
+			}
+			$this->set_rating($event->image->id, $event->rating, $old_rating);
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
