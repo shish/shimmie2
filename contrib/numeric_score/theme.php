@@ -55,6 +55,25 @@ class NumericScoreTheme extends Themelet {
 		";
 		return $html;
 	}
+
+	public function view_popular($images, $dte) {
+		global $user, $page;
+
+		$pop_images = '';
+		foreach($images as $image) {
+			$thumb_html = $this->build_thumb_html($image);
+			$pop_images .= '<span class="thumb">'.
+				'<a href="$image_link">'.$thumb_html.'</a>'.
+				'</span>';
+		}
+
+		$nav_html = "
+			<a href=".make_link().">Index</a>
+		";
+
+		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
+		$page->add_block(new Block("Most popular images of: ".$dte, $pop_images, "main", 30));
+	}
 }
 
 ?>

@@ -104,6 +104,59 @@ class NumericScore implements Extension {
 					$page->set_redirect(make_link());
 				}
 			}
+			if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
+				$t_images = $config->get_int("index_height") * $config->get_int("index_width");
+
+				//TODO: Somehow make popular_by_#/2012/12/31 > popular_by_#?day=31&month=12&year=2012 (So no problems with date formats)
+				//TODO: Add Popular_by_week.
+
+				$sql =
+					"SELECT *
+					FROM IMAGES
+					";
+				if($event->page_matches("popular_by_day")){
+					$year = int_escape($event->get_arg(0));
+					$month = int_escape($event->get_arg(1));
+					$day = int_escape($event->get_arg(2));
+					$sql .=
+						"WHERE YEAR(posted) =".$year."
+						AND MONTH(posted) =".$month."
+						AND DAY(posted) =".$day."
+						AND NOT numeric_score=0
+						";
+					$dte = $year."/".$month."/".$day;
+				}
+				if($event->page_matches("popular_by_month")){
+					$year = int_escape($event->get_arg(0));
+					$month = int_escape($event->get_arg(1));
+					$sql .=
+						"WHERE YEAR(posted) =".$year."
+						AND MONTH(posted) =".$month."
+						AND NOT numeric_score=0
+						";
+					$dte = $year."/".$month;
+				}
+				if($event->page_matches("popular_by_year")){
+					$year = int_escape($event->get_arg(0));
+					$sql .=
+						"WHERE YEAR(posted) =".$year."
+						AND NOT numeric_score=0
+						";
+					$dte = $year;
+				}
+				$sql .=
+					"ORDER BY numeric_score DESC
+					LIMIT 0 , ".$t_images;
+
+				//filter images by year/score != 0 > limit to max images on one page > order from highest to lowest score
+				$result = $database->get_all($sql);
+
+				$images = array();
+				foreach($result as $singleResult) {
+					$images[] = Image::by_id($singleResult["id"]);
+				}
+				$this->theme->view_popular($images, $dte);
+			}
 		}
 
 		if($event instanceof NumericScoreSetEvent) {
