@@ -94,10 +94,11 @@ class Layout {
 				# the subnav links aren't shown, but it would
 				# be nice to be correct
 			case "post":
+				$cs .= "<b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a><b>/</b><a href='".make_link('popular_by_month')."'>Month</a><b>/</b><a href='".make_link('popular_by_year')."'>Year</a> ";
 				$cs .= "<a class='tab' href='".make_link('post/list')."'>All</a>";
 				$cs .= "<a class='tab' href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a>";
 				$cs .= "<a class='tab' href='".make_link('rss/images')."'>Feed</a>";
-				if(file_exists("ext/random_image")) $cs .= "<a class='tab' href='".make_link("random_image/view")."'>Random Image</a>";
+				if(class_exists("random_image")) $cs .= "<a class='tab' href='".make_link("random_image/view")."'>Random Image</a>";
 				if($hw){ $cs .= "<a class='tab' href='".make_link("wiki/posts")."'>Help</a>";
 				}else{ $cs .= "<a class='tab' href='".make_link("ext_doc/index")."'>Help</a>";}
 				break;

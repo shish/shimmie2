@@ -140,9 +140,10 @@ class Layout {
 				# be nice to be correct
 			case "post":
 			case "upload":
+				$custom_sublinks .= "<li><b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a>/<a href='".make_link('popular_by_month')."'>Month</a>/<a href='".make_link('popular_by_year')."'>Year</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
 				$custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";
-				if(file_exists("ext/random_image")) $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random Image</a></li>";
+				if(class_exists("random_image")) $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random Image</a></li>";
 				if($hw){ $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
 				}else{ $custom_sublinks .= "<li><a href='".make_link("ext_doc/index")."'>Help</a></li>";}
 				break;
