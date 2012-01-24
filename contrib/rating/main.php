@@ -214,7 +214,7 @@ class Ratings implements Extension {
 		global $database;
 		if($old_rating != $rating){
 			$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));
-			log_info("core-image", "Rating for Image #{$image_id} set to: ".$this->theme->rating_to_name($rating));
+			log_info("rating", "Rating for Image #{$image_id} set to: ".$this->theme->rating_to_name($rating));
 		}
 	}
 }
