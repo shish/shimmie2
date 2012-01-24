@@ -39,6 +39,9 @@ class Layout {
 		$custom_links .= $this->navlinks(make_link('post/list'), "Posts", array("post", "view"));
 		$custom_links .= $this->navlinks(make_link('comment/list'), "Comments", array("comment"));
 		$custom_links .= $this->navlinks(make_link('tags'), "Tags", array("tags"));
+		if(class_exists("Pools")) {
+			$custom_links .= $this->navlinks(make_link('pool/list'), "Pools", array("pool"));
+		}
 		$custom_links .= $this->navlinks(make_link('upload'), "Upload", array("upload"));
 		if(class_exists("Wiki")) {
 			$custom_links .= $this->navlinks(make_link('wiki/rules'), "Rules", array("wiki/rules"));
