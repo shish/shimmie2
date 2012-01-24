@@ -115,9 +115,21 @@ class NumericScore implements Extension {
 					FROM IMAGES
 					";
 				if($event->page_matches("popular_by_day")){
-					$year = int_escape($event->get_arg(0));
-					$month = int_escape($event->get_arg(1));
-					$day = int_escape($event->get_arg(2));
+					if(int_escape($event->get_arg(0)) == 0){
+						$year = date("Y");
+					}else{
+						$year = int_escape($event->get_arg(0));
+					}
+					if(int_escape($event->get_arg(1)) == 0){
+						$month = date("m");
+					}else{
+						$month = int_escape($event->get_arg(1));
+					}
+					if(int_escape($event->get_arg(2)) == 0){
+						$day = date("d");
+					}else{
+						$day = int_escape($event->get_arg(2));
+					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND MONTH(posted) =".$month."
@@ -127,8 +139,16 @@ class NumericScore implements Extension {
 					$dte = $year."/".$month."/".$day;
 				}
 				if($event->page_matches("popular_by_month")){
-					$year = int_escape($event->get_arg(0));
-					$month = int_escape($event->get_arg(1));
+					if(int_escape($event->get_arg(0)) == 0){
+						$year = date("Y");
+					}else{
+						$year = int_escape($event->get_arg(0));
+					}
+					if(int_escape($event->get_arg(1)) == 0){
+						$month = date("m");
+					}else{
+						$month = int_escape($event->get_arg(1));
+					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND MONTH(posted) =".$month."
@@ -137,7 +157,11 @@ class NumericScore implements Extension {
 					$dte = $year."/".$month;
 				}
 				if($event->page_matches("popular_by_year")){
-					$year = int_escape($event->get_arg(0));
+					if(int_escape($event->get_arg(0)) == 0){
+						$year = date("Y");
+					}else{
+						$year = int_escape($event->get_arg(0));
+					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND NOT numeric_score=0
