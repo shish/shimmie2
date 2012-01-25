@@ -112,7 +112,7 @@ class NumericScore implements Extension {
 
 				$sql =
 					"SELECT *
-					FROM IMAGES
+					FROM images
 					";
 				if($event->page_matches("popular_by_day")){
 					if(int_escape($event->get_arg(0)) == 0){
