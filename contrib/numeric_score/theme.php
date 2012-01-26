@@ -67,12 +67,19 @@ class NumericScoreTheme extends Themelet {
 				'</span>';
 		}
 
-		$nav_html = "
-			<a href=".make_link().">Index</a>
-		";
+		$b_dte = make_link("popular_by_".$dte[3]."/".date($dte[2], (strtotime(('-1 '.$dte[3]), strtotime($dte[0])))));
+		$f_dte = make_link("popular_by_".$dte[3]."/".date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
+
+		$html = '<center><h3><a href="'.$b_dte.'">&laquo;</a> '.$dte[1]
+				.' <a href="'.$f_dte.'">&raquo;</a>'
+				.'</h3></center>
+				<br>'.$pop_images;
+
+
+		$nav_html = "<a href=".make_link().">Index</a>";
 
 		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
-		$page->add_block(new Block("Most popular images of: ".$dte, $pop_images, "main", 30));
+		$page->add_block(new Block(null, $html, "main", 30));
 	}
 }
 

@@ -114,59 +114,51 @@ class NumericScore implements Extension {
 					"SELECT *
 					FROM images
 					";
+
+				//year
+				if(int_escape($event->get_arg(0)) == 0){
+					$year = date("Y");
+				}else{
+					$year = $event->get_arg(0);
+				}
+				//month
+				if(int_escape($event->get_arg(1)) == 0){
+					$month = date("m");
+				}else{
+					$month = $event->get_arg(1);
+				}
+				//day
+				if(int_escape($event->get_arg(2)) == 0){
+					$day = date("d");
+				}else{
+					$day = $event->get_arg(2);
+				}
+				$totaldate = $year."/".$month."/".$day;
+
 				if($event->page_matches("popular_by_day")){
-					if(int_escape($event->get_arg(0)) == 0){
-						$year = date("Y");
-					}else{
-						$year = int_escape($event->get_arg(0));
-					}
-					if(int_escape($event->get_arg(1)) == 0){
-						$month = date("m");
-					}else{
-						$month = int_escape($event->get_arg(1));
-					}
-					if(int_escape($event->get_arg(2)) == 0){
-						$day = date("d");
-					}else{
-						$day = int_escape($event->get_arg(2));
-					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND MONTH(posted) =".$month."
 						AND DAY(posted) =".$day."
 						AND NOT numeric_score=0
 						";
-					$dte = $year."/".$month."/".$day;
+					$dte = array($totaldate, date("F jS, Y", (strtotime($totaldate))), "Y/m/d", "day");
 				}
 				if($event->page_matches("popular_by_month")){
-					if(int_escape($event->get_arg(0)) == 0){
-						$year = date("Y");
-					}else{
-						$year = int_escape($event->get_arg(0));
-					}
-					if(int_escape($event->get_arg(1)) == 0){
-						$month = date("m");
-					}else{
-						$month = int_escape($event->get_arg(1));
-					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND MONTH(posted) =".$month."
 						AND NOT numeric_score=0
 						";
-					$dte = $year."/".$month;
+					$title = date("F Y", (strtotime($totaldate)));
+					$dte = array($totaldate, $title, "Y/m", "month");
 				}
 				if($event->page_matches("popular_by_year")){
-					if(int_escape($event->get_arg(0)) == 0){
-						$year = date("Y");
-					}else{
-						$year = int_escape($event->get_arg(0));
-					}
 					$sql .=
 						"WHERE YEAR(posted) =".$year."
 						AND NOT numeric_score=0
 						";
-					$dte = $year;
+					$dte = array($totaldate, $year, "Y", "year");
 				}
 				$sql .=
 					"ORDER BY numeric_score DESC
