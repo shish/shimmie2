@@ -911,9 +911,10 @@ function _stripslashes_r($arr) {
 function _sanitise_environment() {
 	if(DEBUG) {
 		error_reporting(E_ALL);
-		assert_options(ASSERT_ACTIVE, 1);
-		assert_options(ASSERT_BAIL, 1);
 	}
+
+	assert_options(ASSERT_ACTIVE, 1);
+	assert_options(ASSERT_BAIL, 1);
 
 	ob_start();
 
