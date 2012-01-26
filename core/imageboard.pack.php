@@ -591,9 +591,12 @@ class Image {
 		// various types of querylet
 		foreach($terms as $term) {
 			$positive = true;
-			if((strlen($term) > 0) && ($term[0] == '-')) {
+			if($term[0] == '-') {
 				$positive = false;
 				$term = substr($term, 1);
+			}
+			if(strlen($term) == 0) {
+				continue;
 			}
 
 			$term = Tag::resolve_alias($term);
