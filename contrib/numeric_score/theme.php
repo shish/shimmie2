@@ -67,7 +67,7 @@ class NumericScoreTheme extends Themelet {
 				'</span>';
 		}
 
-		$b_dte = make_link("popular_by_".$dte[3]."/".date($dte[2], (strtotime(('-1 '.$dte[3]), strtotime($dte[0])))));
+		$b_dte = make_link("popular_by_".$dte[3]."/".date($dte[2], (strtotime('-1 '.$dte[3], strtotime($dte[0])))));
 		$f_dte = make_link("popular_by_".$dte[3]."/".date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
 
 		$html = '<center><h3><a href="'.$b_dte.'">&laquo;</a> '.$dte[1]

@@ -122,13 +122,13 @@ class NumericScore implements Extension {
 					$year = $event->get_arg(0);
 				}
 				//month
-				if(int_escape($event->get_arg(1)) == 0){
+				if(int_escape($event->get_arg(1)) == 0 || int_escape($event->get_arg(1)) > 12){
 					$month = date("m");
 				}else{
 					$month = $event->get_arg(1);
 				}
 				//day
-				if(int_escape($event->get_arg(2)) == 0){
+				if(int_escape($event->get_arg(2)) == 0 || int_escape($event->get_arg(2)) > 31){
 					$day = date("d");
 				}else{
 					$day = $event->get_arg(2);
