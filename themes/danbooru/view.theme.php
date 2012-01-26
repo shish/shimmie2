@@ -38,6 +38,14 @@ class CustomViewImageTheme extends ViewImageTheme {
 			$html .= "<br>Source: <a href='$h_source'>link</a>";
 		}
 
+		if(!is_null($image->rating) && file_exists("ext/rating")) {
+			if($image->rating == null || $image->rating == "u"){
+				$image->rating = "u";
+			}
+				$h_rating = Ratings::rating_to_human($image->rating);
+				$html .= "<br>Rating: $h_rating";
+		}
+
 		return $html;
 	}
 }

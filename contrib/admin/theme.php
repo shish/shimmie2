@@ -35,14 +35,15 @@ class AdminPageTheme extends Themelet {
 		
 		/* First check
 		Requires you to click the checkbox to enable the delete by query form */
-		$dbqcheck = "
-			if(document.getElementById(&quot;dbqcheck&quot;).checked == false){
-				document.getElementById(&quot;dbqtags&quot;).disabled = true;
-				document.getElementById(&quot;dbqsubmit&quot;).disabled = true;
+		$dbqcheck = 'javascript:$(function() {
+			if($("#dbqcheck:checked").length != 0){
+				$("#dbqtags").attr("disabled", false);
+				$("#dbqsubmit").attr("disabled", false);
 			}else{
-				document.getElementById(&quot;dbqtags&quot;).disabled = false;
-				document.getElementById(&quot;dbqsubmit&quot;).disabled = false;
-			}";
+				$("#dbqtags").attr("disabled", true);
+				$("#dbqsubmit").attr("disabled", true);
+			}
+		});';
 				
 		/* Second check
 		Requires you to confirm the deletion by clicking ok. */
@@ -52,7 +53,7 @@ class AdminPageTheme extends Themelet {
 				if(confirm('Are you sure you wish to delete all images using these tags?')){
 					return true;
 				}else{
-				return false;
+					return false;
 				}
 			}		
 			</script>"
