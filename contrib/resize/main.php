@@ -31,6 +31,7 @@ class ResizeImage extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config;
 		$config->set_default_bool('resize_enabled', true);
+		$config->set_default_bool('resize_upload', false);
 		$config->set_default_int('resize_default_width', 0);
 		$config->set_default_int('resize_default_height', 0);		
 	}
@@ -46,6 +47,7 @@ class ResizeImage extends SimpleExtension {
 	public function onSetupBuilding($event) {
 		$sb = new SetupBlock("Image Resize");
 		$sb->add_bool_option("resize_enabled", "Allow resizing images: ");
+		$sb->add_bool_option("resize_upload", "<br>Resize on upload: ");
 		$sb->add_label("<br>Preset/Default Width: ");
 		$sb->add_int_option("resize_default_width");
 		$sb->add_label(" px");
@@ -56,6 +58,37 @@ class ResizeImage extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 	
+	public function onDataUpload(DataUploadEvent $event) {
+		global $config;
+		$image_obj = Image::by_id($event->image_id);
+		//No auto resizing for gifs due to animated gif causing errors :(
+		//Also PNG resizing seems to be completely broken.
+		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg")){
+			$width = $height = 0;
+
+			if ($config->get_int("resize_default_width") !== 0) {
+				$height = $config->get_int("resize_default_width");
+			}
+			if ($config->get_int("resize_default_height") !== 0) {
+				$height = $config->get_int("resize_default_height");
+			}
+
+			try {
+				$this->resize_image($event->image_id, $width, $height);
+			} catch (ImageResizeException $e) {
+				$this->theme->display_resize_error($page, "Error Resizing", $e->error);
+			}
+
+			//Need to generate thumbnail again...
+			//This only seems to be an issue if one of the sizes was set to 0.
+			$image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
+			send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->ext, true));
+
+			log_info("core-image", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
+			//TODO: Notify user that image has been resized.
+		}
+	}
+
 	public function onPageRequest($event) {
 		global $page, $user;
 
@@ -167,7 +200,8 @@ class ResizeImage extends SimpleExtension {
 		switch ( $info[2] ) {
 		  case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
 		  case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
+		  /* FIXME: PNG support seems to be broken.
+		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;*/
 		  default:
 			throw new ImageResizeException("Unsupported image type.");
 		}
