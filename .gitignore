@@ -38,6 +38,7 @@ ext/log_db
 ext/news
 ext/notes
 ext/numeric_score
+ext/oekaki
 ext/piclens
 ext/pm
 ext/pools
@@ -64,3 +65,12 @@ ext/upload_cmd
 ext/wiki
 ext/word_filter
 ext/zoom
+
+/ext/resize/main.php
+/ext/resize/style.css
+/ext/resize/theme.php
+/ext/twitter_soc/main.php
+/ext/twitter_soc/script.js
+/ext/twitter_soc/style.css
+/ext/twitter_soc/test.php
+/ext/twitter_soc/theme.php

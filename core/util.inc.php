@@ -1049,7 +1049,7 @@ function _start_cache() {
 			$_cache_hash = md5($_SERVER["QUERY_STRING"]);
 			$ab = substr($_cache_hash, 0, 2);
 			$cd = substr($_cache_hash, 2, 2);
-			$_cache_filename = "data/$ab/$cd/$_cache_hash";
+			$_cache_filename = "data/http_cache/$ab/$cd/$_cache_hash";
 
 			if(!file_exists(dirname($_cache_filename))) {
 				mkdir(dirname($_cache_filename), 0750, true);

@@ -17,7 +17,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr><td>Name</td></tr>";
 		foreach($users as $duser) {
 			$html .= "<tr>";
-			$html .= "<td><a href='".make_link("user/"+$duser->name)."'>".html_escape($duser->name)."</a></td>";
+			$html .= "<td><a href='".make_link("user/".$duser->name)."'>".html_escape($duser->name)."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";
@@ -149,38 +149,50 @@ class UserPageTheme extends Themelet {
 
 	protected function build_options(User $duser) {
 		global $config, $database, $user;
-
-		$html = "
-		".make_form(make_link("user_admin/change_pass"))."
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Password</th></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
-			</table>
-		</form>
-
-		<p>".make_form(make_link("user_admin/change_email"))."
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Email</th></tr>
-				<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
-			</table>
-		</form>
-		";
-
-		if($user->is_admin()) {
-			$i_user_id = int_escape($duser->id);
-			$h_is_admin = $duser->is_admin() ? " checked" : "";
+		$html = "";
+		if($duser->id != 1){  //justa fool-admin protection so they dont mess around with anon users.
+		
 			$html .= "
-				<p>".make_form(make_link("user_admin/set_more"))."
-					<input type='hidden' name='id' value='$i_user_id'>
-					Admin: <input name='admin' type='checkbox'$h_is_admin>
-					<input type='submit' value='Set'>
-				</form>
+			".make_form(make_link("user_admin/change_pass"))."
+				<input type='hidden' name='id' value='{$duser->id}'>
+				<table style='width: 300px;'>
+					<tr><th colspan='2'>Change Password</th></tr>
+					<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
+					<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
+					<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
+				</table>
+			</form>
+
+			<p>".make_form(make_link("user_admin/change_email"))."
+				<input type='hidden' name='id' value='{$duser->id}'>
+				<table style='width: 300px;'>
+					<tr><th colspan='2'>Change Email</th></tr>
+					<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
+					<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
+				</table>
+			</form>
 			";
+
+			if($user->is_admin()) {
+				$i_user_id = int_escape($duser->id);
+				$h_is_admin = $duser->is_admin() ? " checked" : "";
+				$html .= "
+					<p>".make_form(make_link("user_admin/set_more"))."
+						<input type='hidden' name='id' value='$i_user_id'>
+						Admin: <input name='admin' type='checkbox'$h_is_admin>
+						<input type='submit' value='Set'>
+					</form>
+					
+					".make_form(make_link("user_admin/delete_user"))."
+					<input type='hidden' name='id' value='$i_user_id'>
+					<input type='submit' value='Delete User' onclick='confirm(\"Delete the user?\");' />
+					</form>
+					
+					".make_form(make_link("user_admin/delete_user_with_images"))."
+					<input type='hidden' name='id' value='$i_user_id'>
+					<input type='submit' value='Delete User with images' onclick='confirm(\"Delete the user with his uploaded images?\");' />
+					</form>";
+			}
 		}
 		return $html;
 	}
