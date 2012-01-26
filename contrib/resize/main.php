@@ -84,7 +84,7 @@ class ResizeImage extends SimpleExtension {
 			$image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
 			send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->ext, true));
 
-			log_info("core-image", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
+			log_info("resize", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
 			//TODO: Notify user that image has been resized.
 		}
 	}
