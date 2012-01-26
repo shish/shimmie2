@@ -845,7 +845,7 @@ function get_debug_info() {
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
-	$debug .= "; Shimmie version ". VERSION .", SCore Version ". SCORE_VERSION;
+	$debug .= "; Shimmie version ". VERSION; // .", SCore Version ". SCORE_VERSION;
 
 	return $debug;
 }
