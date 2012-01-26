@@ -79,7 +79,7 @@ class UserPage extends SimpleExtension {
 			}
 			else if($event->get_arg(0) == "logout") {
 				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				if(CACHE_HTTP) {
+				if(CACHE_HTTP || SPEED_HAX) {
 					# to keep as few versions of content as possible,
 					# make cookies all-or-nothing
 					set_prefixed_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
