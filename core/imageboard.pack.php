@@ -384,7 +384,7 @@ class Image {
 		$sln = str_replace('"', "", $sln);
 		if($old_sln != $sln){
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
-			log_info("core-image", "Setting Image #{$this->id} lock to: {$event->locked}".$sln);
+			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
 		}
 	}
 
