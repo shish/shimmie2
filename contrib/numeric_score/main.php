@@ -162,7 +162,7 @@ class NumericScore implements Extension {
 				}
 				$sql .=
 					"ORDER BY numeric_score DESC
-					LIMIT 0 , ".$t_images;
+					LIMIT 0 OFFSET ".$t_images;
 
 				//filter images by year/score != 0 > limit to max images on one page > order from highest to lowest score
 				$result = $database->get_all($sql);
