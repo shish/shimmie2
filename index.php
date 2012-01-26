@@ -56,10 +56,8 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 }
 require_once "config.php";
 
-// set up and purify the environment
-function _d($name, $value) {
-	if(!defined($name)) define($name, $value);
-}
+// to change these system-level settings, do define("FOO", 123); in config.php
+function _d($name, $value) {if(!defined($name)) define($name, $value);}
 _d("DATABASE_DSN", null);    // string   PDO database connection details
 _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details
@@ -76,6 +74,7 @@ _d("VERSION", 'trunk');      // string   shimmie version
 _d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
 _d("TIMEZONE", 'UTC');       // string   timezone
 
+// set up and purify the environment
 date_default_timezone_set(TIMEZONE);
 
 require_once "core/util.inc.php";
