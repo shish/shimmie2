@@ -101,6 +101,7 @@ class ViewImage extends SimpleExtension {
 
 			if(is_null($image)) {
 				$this->theme->display_error($page, "Image not found", "No more images");
+				return;
 			}
 
 			$page->set_mode("redirect");
