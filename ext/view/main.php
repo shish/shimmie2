@@ -125,6 +125,8 @@ class ViewImage extends SimpleExtension {
 		}
 
 		if($event->page_matches("post/set")) {
+			if(!isset($_POST['image_id'])) return;
+
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
