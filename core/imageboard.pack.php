@@ -591,7 +591,7 @@ class Image {
 		// various types of querylet
 		foreach($terms as $term) {
 			$positive = true;
-			if($term[0] == '-') {
+			if(strlen($term) > 0 && $term[0] == '-') {
 				$positive = false;
 				$term = substr($term, 1);
 			}
