@@ -150,7 +150,7 @@ class UserPageTheme extends Themelet {
 	protected function build_options(User $duser) {
 		global $config, $database, $user;
 		$html = "";
-		if($duser->id != 1){  //justa fool-admin protection so they dont mess around with anon users.
+		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
 		
 			$html .= "
 			".make_form(make_link("user_admin/change_pass"))."
