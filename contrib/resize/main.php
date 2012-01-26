@@ -200,7 +200,8 @@ class ResizeImage extends SimpleExtension {
 		switch ( $info[2] ) {
 		  case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
 		  case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
+		  /* FIXME: PNG support seems to be broken.
+		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;*/
 		  default:
 			throw new ImageResizeException("Unsupported image type.");
 		}
