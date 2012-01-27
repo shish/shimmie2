@@ -56,13 +56,9 @@ class LockSetEvent extends Event {
 }
 
 class TagEdit implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("tag_edit")) {
+	public function onPageRequest($event) {
+		global $user, $page;
+		if($event->page_matches("tag_edit")) {
 			if($event->get_arg(0) == "replace") {
 				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
 					$search = $_POST['search'];
@@ -73,72 +69,77 @@ class TagEdit implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof ImageInfoSetEvent) {
-			if($this->can_tag($event->image)) {
-				send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
-				if($this->can_source($event->image)) {
-					send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
-				}
-			}
-			else {
-				$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
-			}
-			if($user->is_admin()) {
-				$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
-				send_event(new LockSetEvent($event->image, $locked));
-			}
-		}
-
-		if($event instanceof TagSetEvent) {
-			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_tags($event->tags);
-			}
-		}
-
-		if($event instanceof SourceSetEvent) {
-			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_source($event->source);
-			}
-		}
-
-		if($event instanceof LockSetEvent) {
-			if($user->is_admin()) {
-				$event->image->set_locked($event->locked);
-			}
-		}
-
-		if($event instanceof ImageDeletionEvent) {
-			$event->image->delete_tags_from_image();
-		}
-
-		if($event instanceof AdminBuildingEvent) {
-			$this->theme->display_mass_editor($page);
-		}
-
-		// When an alias is added, oldtag becomes inaccessable
-		if($event instanceof AddAliasEvent) {
-			$this->mass_tag_edit($event->oldtag, $event->newtag);
-		}
-
-		if($event instanceof ImageInfoBoxBuildingEvent) {
-			if($this->can_tag($event->image)) {
-				$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
-			}
+	public function onImageInfoSet($event) {
+		global $user;
+		if($this->can_tag($event->image)) {
+			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 			if($this->can_source($event->image)) {
-				$event->add_part($this->theme->get_source_editor_html($event->image), 41);
-			}
-			if($user->is_admin()) {
-				$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
+				send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
 			}
 		}
+		else {
+			$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
+		}
+		if($user->is_admin()) {
+			$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
+			send_event(new LockSetEvent($event->image, $locked));
+		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Tag Editing");
-			$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
-			$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");
-			$event->panel->add_block($sb);
+	public function onTagSet($event) {
+		global $user;
+		if($user->is_admin() || !$event->image->is_locked()) {
+			$event->image->set_tags($event->tags);
 		}
+	}
+
+	public function onSourceSet($event) {
+		global $user;
+		if($user->is_admin() || !$event->image->is_locked()) {
+			$event->image->set_source($event->source);
+		}
+	}
+
+	public function onLockSet($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->image->set_locked($event->locked);
+		}
+	}
+
+	public function onImageDeletion($event) {
+		$event->image->delete_tags_from_image();
+	}
+
+	public function onAdminBuilding($event) {
+		$this->theme->display_mass_editor();
+	}
+
+	// When an alias is added, oldtag becomes inaccessable
+	public function onAddAlias($event) {
+		$this->mass_tag_edit($event->oldtag, $event->newtag);
+	}
+
+	public function onImageInfoBoxBuilding($event) {
+		global $user;
+		if($this->can_tag($event->image)) {
+			$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
+		}
+		if($this->can_source($event->image)) {
+			$event->add_part($this->theme->get_source_editor_html($event->image), 41);
+		}
+		if($user->is_admin()) {
+			$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
+		}
+	}
+
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Tag Editing");
+		$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
+		$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");
+		$event->panel->add_block($sb);
 	}
 
 
@@ -147,7 +148,7 @@ class TagEdit implements Extension {
 		return (
 			($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) &&
 			($user->is_admin() || !$image->is_locked())
-			);
+		);
 	}
 
 	private function can_source($image) {
@@ -155,7 +156,7 @@ class TagEdit implements Extension {
 		return (
 			($config->get_bool("source_edit_anon") || !$user->is_anonymous()) &&
 			($user->is_admin() || !$image->is_locked())
-			);
+		);
 	}
 
 	private function mass_tag_edit($search, $replace) {
@@ -198,5 +199,4 @@ class TagEdit implements Extension {
 		}
 	}
 }
-add_event_listener(new TagEdit());
 ?>
