@@ -133,7 +133,8 @@ class BBCode extends FormatterExtension {
 		# at the end of this function, the only code! blocks should be
 		# the ones we've added -- others may contain malicious content,
 		# which would only appear after decoding
-		$text = preg_replace("/\[code!\](.*?)\[\/code!\]/s", "[code]\\1[/code]", $text);
+		$text = str_replace("[code!]", "[code]", $text);
+		$text = str_replace("[/code!]", "[/code]", $text);
 
 		$l1 = strlen("[code]");
 		$l2 = strlen("[/code]");
