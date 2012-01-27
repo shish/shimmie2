@@ -416,5 +416,4 @@ class TagList extends SimpleExtension {
 	}
 // }}}
 }
-add_event_listener(new TagList());
 ?>
