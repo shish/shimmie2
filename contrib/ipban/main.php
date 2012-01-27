@@ -37,6 +37,8 @@ class AddIPBanEvent extends Event {
 class IPBan implements Extension {
 	var $theme;
 // event handler {{{
+	public function get_priority() {return 10;}
+
 	public function receive_event(Event $event) {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
@@ -264,5 +266,4 @@ class IPBan implements Extension {
 	}
 // }}}
 }
-add_event_listener(new IPBan(), 10);
 ?>

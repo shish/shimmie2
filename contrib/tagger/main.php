@@ -9,6 +9,8 @@
 class Tagger implements Extension {
 	var $theme;
 
+	public function get_priority() {return 50;}
+
 	public function receive_event(Event $event) {
 		if(is_null($this->theme))
 			$this->theme = get_theme_object($this);
@@ -38,10 +40,10 @@ class Tagger implements Extension {
 	}
 }
 
-add_event_listener(new Tagger());
-
 // Tagger AJAX back-end
 class TaggerXML implements Extension {
+	public function get_priority() {return 10;}
+
 	public function receive_event(Event $event) {
 		if(($event instanceof PageRequestEvent) && $event->page_matches("tagger/tags")) {
 			global $page;
@@ -170,5 +172,5 @@ class TaggerXML implements Extension {
 
 		return $list;
 	}
-} add_event_listener( new taggerXML(),10);
+} 
 ?>

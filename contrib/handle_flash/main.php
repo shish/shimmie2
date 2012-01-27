@@ -100,5 +100,4 @@ class FlashFileHandler extends DataHandlerExtension {
 		return $bounds;
 	}
 }
-add_event_listener(new FlashFileHandler());
 ?>

@@ -138,11 +138,31 @@ try {
 
 
 	// initialise the extensions
+	$all_events = array();
 	foreach(get_declared_classes() as $class) {
-		if(is_subclass_of($class, "SimpleExtension")) {
+		if(is_subclass_of($class, "Event")) {
+			$all_events[] = $class;
+		}
+	}
+	foreach(get_declared_classes() as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {
+			// don't do anything
+		}
+		elseif(is_subclass_of($class, "SimpleExtension")) {
 			$c = new $class();
 			$c->i_am($c);
-			add_event_listener($c, $c->get_priority());
+			$my_events = array();
+			foreach(get_class_methods($c) as $method) {
+				if(substr($method, 0, 2) == "on") {
+					$my_events[] = substr($method, 2) . "Event";
+				}
+			}
+			add_event_listener($c, $c->get_priority(), $my_events);
+		}
+		elseif(is_subclass_of($class, "Extension")) {
+			$c = new $class();
+			add_event_listener($c, $c->get_priority(), $all_events);
 		}
 	}
 	ctx_log_endok("Initialisation");

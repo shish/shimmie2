@@ -67,6 +67,7 @@
  */
 interface Extension {
 	public function receive_event(Event $event);
+	public function get_priority();
 }
 
 /**
@@ -105,18 +106,18 @@ abstract class SimpleExtension implements Extension {
 		}
 	}
 
-	public function get_priority() {return 50;}
+	public function get_priority() {
+		return 50;
+	}
 }
 
 /**
  * Several extensions have this in common, make a common API
  */
-abstract class FormatterExtension implements Extension {
-	public function receive_event(Event $event) {
-		if($event instanceof TextFormattingEvent) {
-			$event->formatted = $this->format($event->formatted);
-			$event->stripped  = $this->strip($event->stripped);
-		}
+abstract class FormatterExtension extends SimpleExtension {
+	public function onTextFormatting($event) {
+		$event->formatted = $this->format($event->formatted);
+		$event->stripped  = $this->strip($event->stripped);
 	}
 
 	abstract public function format($text);
@@ -127,20 +128,14 @@ abstract class FormatterExtension implements Extension {
  * This too is a common class of extension with many methods in common,
  * so we have a base class to extend from
  */
-abstract class DataHandlerExtension implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
-		
+abstract class DataHandlerExtension extends SimpleExtension {
+	public function onDataUpload($event) {
+		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
 			/* Check if we are replacing an image */
-			if (array_key_exists('replace',$event->metadata) && isset($event->metadata['replace']))
-			{
+			if(array_key_exists('replace', $event->metadata) && isset($event->metadata['replace'])) {
 				/* hax: This seems like such a dirty way to do this.. */
 				
 				/* Validate things */
@@ -168,8 +163,7 @@ abstract class DataHandlerExtension implements Extension {
 				send_event($ire);
 				$event->image_id = $image_id;
 			}
-			else
-			{
+			else {
 				$image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
 				if(is_null($image)) {
 					throw new UploadException("Data handler failed to create image object from data");
@@ -192,8 +186,10 @@ abstract class DataHandlerExtension implements Extension {
 				}
 			}
 		}
+	}
 
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
+	public function onThumnbnailGeneration($event) {
+		if($this->supported_ext($event->type)) {
 			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
 				 $this->create_thumb_force($event->hash);
 			}
@@ -201,16 +197,18 @@ abstract class DataHandlerExtension implements Extension {
 				$this->create_thumb($event->hash);
 			}
 		}
+	}
 
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			global $page;
+	public function onDisplayingImage($event) {
+		global $page;
+		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($page, $event->image);
 		}
+	}
 
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = $this->setup();
-			if($sb) $event->panel->add_block($sb);
-		}
+	public function onSetupBuilding($event) {
+		$sb = $this->setup();
+		if($sb) $event->panel->add_block($sb);
 	}
 
 	protected function setup() {}

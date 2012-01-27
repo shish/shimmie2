@@ -8,6 +8,9 @@
 class Tag_History implements Extension {
 	var $theme;
 
+	// in before tags are actually set, so that "get current tags" works
+	public function get_priority() {return 40;}
+
 	public function receive_event(Event $event) {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
@@ -352,5 +355,4 @@ class Tag_History implements Extension {
 		}
 	}
 }
-add_event_listener(new Tag_History(), 40); // in before tags are actually set, so that "get current tags" works
 ?>

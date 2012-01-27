@@ -7,6 +7,9 @@
  */
 
 class WordFilter implements Extension {
+	// before emoticon filter
+	public function get_priority() {return 40;}
+
 	public function receive_event(Event $event) {
 		if($event instanceof TextFormattingEvent) {
 			$event->formatted = $this->filter($event->formatted);
@@ -45,5 +48,4 @@ class WordFilter implements Extension {
 		return $map;
 	}
 }
-add_event_listener(new WordFilter(), 40); // before emoticon filter
 ?>

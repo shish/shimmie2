@@ -14,6 +14,8 @@
  */
 
 class BrowserSearch implements Extension {
+
+	public function get_priority() {return 50;}
 	public function receive_event(Event $event) {
 	global $page;
 	global $config;
@@ -112,5 +114,4 @@ class BrowserSearch implements Extension {
 		}
 	}
 }
-add_event_listener(new BrowserSearch());
 ?>
