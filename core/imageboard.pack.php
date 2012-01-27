@@ -363,10 +363,10 @@ class Image {
 	/**
 	 * Set the image's source URL
 	 */
-	public function set_source($source, $old_source) {
+	public function set_source($source) {
 		global $database;
 		if(empty($source)) $source = null;
-		if($old_source != $source){
+		if($source != $this->source) {
 			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
 			log_info("core-image", "Source for Image #{$this->id} set to: ".$source);
 		}
@@ -376,13 +376,13 @@ class Image {
 	public function is_locked() {
 		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
 	}
-	public function set_locked($tf, $old_sln) {
+	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
 		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		if($old_sln != $sln){
+		if($sln != $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
 			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
 		}
@@ -404,14 +404,16 @@ class Image {
 	/**
 	 * Set the tags for this image
 	 */
-	public function set_tags($tags, $old_tags) {
+	public function set_tags($tags) {
 		global $database;
+
 		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
 		$new_tags = implode(" ", $tags);
-		if($old_tags != $new_tags){
+
+		if($new_tags != $this->get_tag_list()) {
 			// delete old
 			$this->delete_tags_from_image();
 			// insert each new tags

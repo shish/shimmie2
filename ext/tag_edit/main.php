@@ -85,25 +85,26 @@ class TagEdit implements Extension {
 				$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
 			}
 			if($user->is_admin()) {
-				send_event(new LockSetEvent($event->image, $_POST['tag_edit__locked']=="on"));
+				$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
+				send_event(new LockSetEvent($event->image, $locked));
 			}
 		}
 
 		if($event instanceof TagSetEvent) {
 			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_tags($event->tags, $event->image->get_tag_list());
+				$event->image->set_tags($event->tags);
 			}
 		}
 
 		if($event instanceof SourceSetEvent) {
 			if($user->is_admin() || !$event->image->is_locked()) {
-				$event->image->set_source($event->source, $event->image->source);
+				$event->image->set_source($event->source);
 			}
 		}
 
 		if($event instanceof LockSetEvent) {
 			if($user->is_admin()) {
-				$event->image->set_locked($event->locked, $event->image->locked);
+				$event->image->set_locked($event->locked);
 			}
 		}
 
