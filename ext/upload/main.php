@@ -77,20 +77,17 @@ class Upload implements Extension {
 
 		if($event instanceof PageRequestEvent) {
 		
-			if ($event->page_matches("upload/replace"))
-			{
+			if($event->page_matches("upload/replace")) {
 				/* Upload & Replace Image Request */
-				
-				if (!$config->get_bool("upload_replace")) {
+				if(!$config->get_bool("upload_replace")) {
 					throw new UploadException("Upload Replacing Images is not enabled.");
 				}
 				
 				// check if the user is an administrator and can upload files.
-				if (!$user->is_admin()) {
+				if(!$user->is_admin()) {
 					$this->theme->display_permission_denied($page);
 				}
-				else
-				{
+				else {
 					if($is_full) {
 						throw new UploadException("Can not replace Image: disk nearly full");
 					}
@@ -108,21 +105,21 @@ class Upload implements Extension {
 						$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
 					}
 						
-					if(count($_FILES) + count($_POST) > 0)
-					{
-						if (count($_FILES) > 1) {
+					if(count($_FILES) + count($_POST) > 0) {
+						if(count($_FILES) > 1) {
 							throw new UploadException("Can not upload more than one image for replacing.");
 						}
 						
 						$source = isset($_POST['source']) ? $_POST['source'] : null;
 						$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 						
-						if (count($_FILES)) {
+						if(count($_FILES)) {
 							foreach($_FILES as $file) {
 								$ok = $this->try_upload($file, $tags, $source, $image_id);
 								break; // leave the foreach loop.
 							}
-						} else {
+						}
+						else {
 							foreach($_POST as $name => $value) {
 								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 									$ok = $this->try_transload($value, $tags, $source, $image_id);
@@ -132,26 +129,23 @@ class Upload implements Extension {
 						}
 						$this->theme->display_upload_status($page, $ok);
 					}
-					else if(!empty($_GET['url']))
-					{
+					else if(!empty($_GET['url'])) {
 						$url = $_GET['url'];
 						$ok = $this->try_transload($url, $tags, $url, $image_id);
 						$this->theme->display_upload_status($page, $ok);		
 					}
-					else
-					{
+					else {
 						$this->theme->display_replace_page($page, $image_id);
 					}
 				} // END of if admin / can_upload
 			}
-			else if ($event->page_matches("upload"))
-			{
+			else if($event->page_matches("upload")) {
 				if(!$this->can_upload($user)) {
 					$this->theme->display_permission_denied($page);
-				} else {
+				}
+				else {
 					/* Regular Upload Image */
-					if(count($_FILES) + count($_POST) > 0)
-					{
+					if(count($_FILES) + count($_POST) > 0) {
 						$tags = Tag::explode($_POST['tags']);
 						$source = isset($_POST['source']) ? $_POST['source'] : null;
 						$ok = true;
@@ -166,8 +160,7 @@ class Upload implements Extension {
 
 						$this->theme->display_upload_status($page, $ok);
 					}
-					else if(!empty($_GET['url']))
-					{
+					else if(!empty($_GET['url'])) {
 						$url = $_GET['url'];
 						$tags = array('tagme');
 						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
@@ -177,8 +170,7 @@ class Upload implements Extension {
 						$ok = $this->try_transload($url, $tags, $url);
 						$this->theme->display_upload_status($page, $ok);
 					}
-					else
-					{
+					else {
 						if ($is_full) {
 							$this->theme->display_full($page);
 						} else {
