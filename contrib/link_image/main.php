@@ -7,6 +7,8 @@
 class LinkImage implements Extension {
 	var $theme;
 
+	public function get_priority() {return 50;}
+
 	public function receive_event(Event $event) {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
@@ -48,5 +50,4 @@ class LinkImage implements Extension {
 			'text_link' => $text_link);
 	}
 }
-add_event_listener(new LinkImage());
 ?>

@@ -49,6 +49,8 @@ Completely compatibility will probably involve a rewrite with a different URL
 
 class DanbooruApi implements Extension
 {
+
+	public function get_priority() {return 50;}
 	// Receive the event
 	public function receive_event(Event $event)
 	{
@@ -425,5 +427,4 @@ class DanbooruApi implements Extension
 	}
 }
 
-add_event_listener(new DanbooruApi());
 ?>

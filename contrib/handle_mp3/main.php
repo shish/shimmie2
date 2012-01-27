@@ -39,5 +39,4 @@ class MP3FileHandler extends DataHandlerExtension {
 		return (file_exists($file));
 	}
 }
-add_event_listener(new MP3FileHandler());
 ?>

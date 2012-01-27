@@ -32,6 +32,8 @@ class AddReportedImageEvent extends Event {
 class ReportImage implements Extension {
 	var $theme;
 
+	public function get_priority() {return 50;}
+
 	public function receive_event(Event $event) {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
@@ -143,8 +145,6 @@ class ReportImage implements Extension {
 		return $reports;
 	}
 }
-add_event_listener(new ReportImage(), 29); // Not sure what I'm in before.
-
 //  ===== Changelog =====
 // * Version 0.3a / 0.3a_rc - 11/06/07 - I can no longer use the same theme.php file for both SVN and RCx. Sorry.
 // *   Same deal with theme.php as it is with main.php
@@ -154,5 +154,4 @@ add_event_listener(new ReportImage(), 29); // Not sure what I'm in before.
 // * Version 0.2b - 10/27/07 - Now supports Shimmie2 RC2!
 // * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)
 // * Version 0.2 - 10/24/07 - First public release.
-
 ?>

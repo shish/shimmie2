@@ -22,6 +22,8 @@ class AuthorSetEvent extends Event {
 class Artists implements Extension {
     var $theme;
 
+	public function get_priority() {return 50;}
+
     public function receive_event(Event $event)
     {
         global $user;
@@ -1221,5 +1223,4 @@ class Artists implements Extension {
             return $result;
 	}	
 }
-add_event_listener(new Artists());
 ?>

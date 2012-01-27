@@ -14,6 +14,8 @@
 class Downtime implements Extension {
 	var $theme;
 
+	public function get_priority() {return 10;}
+
 	public function receive_event(Event $event) {
 		global $config, $database, $page, $user;
 		if(is_null($this->theme)) $this->theme = get_theme_object($this);
@@ -42,5 +44,4 @@ class Downtime implements Extension {
 		else return false;
 	}
 }
-add_event_listener(new Downtime(), 10);
 ?>

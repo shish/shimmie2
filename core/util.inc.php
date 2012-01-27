@@ -790,12 +790,14 @@ $_event_listeners = array();
 /**
  * Register an Extension
  */
-function add_event_listener(Extension $extension, $pos=50) {
+function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 	global $_event_listeners;
-	while(isset($_event_listeners[$pos])) {
-		$pos++;
+	foreach($events as $event) {
+		while(isset($_event_listeners[$event][$pos])) {
+			$pos++;
+		}
+		$_event_listeners[$event][$pos] = $extension;
 	}
-	$_event_listeners[$pos] = $extension;
 }
 
 /** @private */
@@ -806,8 +808,11 @@ $_event_count = 0;
  */
 function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
+	if(!isset($_event_listeners[get_class($event)])) return;
+
 	ctx_log_start(get_class($event));
-	$my_event_listeners = $_event_listeners; // http://bugs.php.net/bug.php?id=35106
+	// SHIT: http://bugs.php.net/bug.php?id=35106
+	$my_event_listeners = $_event_listeners[get_class($event)];
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		ctx_log_start(get_class($listener));

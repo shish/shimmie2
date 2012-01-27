@@ -28,6 +28,5 @@ class Holiday extends SimpleExtension {
 			}
 		}
 	}
-
 }
 ?>
