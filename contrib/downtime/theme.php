@@ -6,7 +6,7 @@ class DowntimeTheme extends Themelet {
 	 */
 	public function display_notification(Page $page) {
 		$page->add_block(new Block("Downtime",
-			"<span style='font-size: 1.5em'><b>DOWNTIME MODE IS ON!</b></span>", "left", 0));
+			"<span style='font-size: 1.5em'><b><center>DOWNTIME MODE IS ON!</center></b></span>", "left", 0));
 	}
 
 	/**
@@ -28,7 +28,7 @@ class DowntimeTheme extends Themelet {
 	</head>
 	<body>
 		<div id="downtime">
-			<h1>Down for Maintenance</h1>
+			<h1><center>Down for Maintenance</center></h1>
 			<div id="message">
 				$message
 			</div>
