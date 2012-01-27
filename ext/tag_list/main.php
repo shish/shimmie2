@@ -5,24 +5,21 @@
  * Description: Show the tags in various ways
  */
 
-class TagList implements Extension {
-	var $theme = null;
+class TagList extends SimpleExtension {
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_int("tag_list_length", 15);
+		$config->set_default_int("popular_tag_list_length", 15);
+		$config->set_default_int("tags_min", 3);
+		$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
+		$config->set_default_string("tag_list_image_type", 'related');
+		$config->set_default_bool("tag_list_pages", false);
+	}
 
-// event handling {{{
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if($this->theme == null) $this->theme = get_theme_object($this);
+	public function onPageRequest($event) {
+		global $page, $database;
 
-		if($event instanceof InitExtEvent) {
-			$config->set_default_int("tag_list_length", 15);
-			$config->set_default_int("popular_tag_list_length", 15);
-			$config->set_default_int("tags_min", 3);
-			$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
-			$config->set_default_string("tag_list_image_type", 'related');
-			$config->set_default_bool("tag_list_pages", false);
-		}
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("tags")) {
+		if($event->page_matches("tags")) {
 			$this->theme->set_navigation($this->build_navigation());
 			switch($event->get_arg(0)) {
 				default:
@@ -46,7 +43,7 @@ class TagList implements Extension {
 			$this->theme->display_page($page);
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("api/internal/tag_list/complete")) {
+		if($event->page_matches("api/internal/tag_list/complete")) {
 			if(!isset($_GET["s"])) return;
 
 			$all = $database->get_all(
@@ -60,46 +57,48 @@ class TagList implements Extension {
 			$page->set_type("text/plain");
 			$page->set_data(implode("\n", $res));
 		}
+	}
 
-		if($event instanceof PostListBuildingEvent) {
-			if($config->get_int('tag_list_length') > 0) {
-				if(!empty($event->search_terms)) {
-					$this->add_refine_block($page, $event->search_terms);
-				}
-				else {
-					$this->add_popular_block($page);
-				}
+	public function onPostListBuilding($event) {
+		global $config, $page;
+		if($config->get_int('tag_list_length') > 0) {
+			if(!empty($event->search_terms)) {
+				$this->add_refine_block($page, $event->search_terms);
+			}
+			else {
+				$this->add_popular_block($page);
 			}
 		}
+	}
 
-		if($event instanceof DisplayingImageEvent) {
-			if($config->get_int('tag_list_length') > 0) {
-				if($config->get_string('tag_list_image_type') == 'related') {
-					$this->add_related_block($page, $event->image);
-				}
-				else {
-					$this->add_tags_block($page, $event->image);
-				}
+	public function onDisplayingImage($event) {
+		global $config, $page;
+		if($config->get_int('tag_list_length') > 0) {
+			if($config->get_string('tag_list_image_type') == 'related') {
+				$this->add_related_block($page, $event->image);
+			}
+			else {
+				$this->add_tags_block($page, $event->image);
 			}
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Tag Map Options");
-			$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
-			$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
-			$event->panel->add_block($sb);
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Tag Map Options");
+		$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
+		$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");
+		$event->panel->add_block($sb);
 
-			$sb = new SetupBlock("Popular / Related Tag List");
-			$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" related tags");
-			$sb->add_int_option("popular_tag_list_length", "<br>Show top "); $sb->add_label(" popular tags");
-			$sb->add_text_option("info_link", "<br>Tag info link: ");
-			$sb->add_choice_option("tag_list_image_type", array(
-				"Image's tags only" => "tags",
-				"Show related" => "related"
-			), "<br>Image tag list: ");
-			$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
-			$event->panel->add_block($sb);
-		}
+		$sb = new SetupBlock("Popular / Related Tag List");
+		$sb->add_int_option("tag_list_length", "Show top "); $sb->add_label(" related tags");
+		$sb->add_int_option("popular_tag_list_length", "<br>Show top "); $sb->add_label(" popular tags");
+		$sb->add_text_option("info_link", "<br>Tag info link: ");
+		$sb->add_choice_option("tag_list_image_type", array(
+			"Image's tags only" => "tags",
+			"Show related" => "related"
+		), "<br>Image tag list: ");
+		$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
+		$event->panel->add_block($sb);
 	}
 // }}}
 // misc {{{
