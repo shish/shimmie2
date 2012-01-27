@@ -12,23 +12,20 @@
  *  versions of PHP I should test with, etc.
  */
 
-class ET implements Extension {
-	var $theme;
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("system_info")) {
+class ET extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $user;
+		if($event->page_matches("system_info")) {
 			if($user->is_admin()) {
-				$this->theme->display_info_page($page, $this->get_info());
+				$this->theme->display_info_page($this->get_info());
 			}
 		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("System Info", make_link("system_info"));
-			}
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("System Info", make_link("system_info"));
 		}
 	}
 
@@ -72,7 +69,5 @@ class ET implements Extension {
 
 		return $info;
 	}
-// }}}
 }
-add_event_listener(new ET());
 ?>

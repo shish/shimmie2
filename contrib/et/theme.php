@@ -6,7 +6,9 @@ class ETTheme extends Themelet {
 	 *
 	 * $info = an array of ($name => $value)
 	 */
-	public function display_info_page(Page $page, $info) {
+	public function display_info_page($info) {
+		global $page;
+
 		$page->set_title("System Info");
 		$page->set_heading("System Info");
 		$page->add_block(new NavBlock());
