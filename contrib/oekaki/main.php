@@ -83,6 +83,7 @@ class Oekaki extends SimpleExtension {
 
 	// FIXME: "edit this image" button on existing images?
 	function onPostListBuilding($event) {
+		global $user, $page;
 		if($this->can_upload($user)) {
 			$this->theme->display_block($page);
 		}
