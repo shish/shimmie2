@@ -188,7 +188,7 @@ abstract class DataHandlerExtension extends SimpleExtension {
 		}
 	}
 
-	public function onThumnbnailGeneration($event) {
+	public function onThumbnailGeneration($event) {
 		if($this->supported_ext($event->type)) {
 			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
 				 $this->create_thumb_force($event->hash);
