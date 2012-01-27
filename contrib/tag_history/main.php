@@ -63,7 +63,9 @@ class Tag_History implements Extension {
 			{
 				// this is a request to revert to a previous version of the tags
 				if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
-					$this->process_revert_request($_POST['revert']);
+					if(isset($_POST['revert'])) {
+						$this->process_revert_request($_POST['revert']);
+					}
 				}
 			}
 			else if($event->count_args() == 1)
