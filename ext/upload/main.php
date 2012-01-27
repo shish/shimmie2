@@ -41,176 +41,178 @@ class UploadException extends SCoreException {}
  * All files that are uploaded to the site are handled through this class.
  * This also includes transloaded files as well.
  */
-class Upload implements Extension {
-	var $theme;
-// event handling {{{
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+class Upload extends SimpleExtension {
+	// early, so it can stop the DataUploadEvent before any data handlers see it
+	public function get_priority() {return 40;}
 
-		// fucking PHP "security" measures -_-;;;
+	public function onInitExt($event) {
+		global $config;
+		$config->set_default_int('upload_count', 3);
+		$config->set_default_int('upload_size', '1MB');
+		$config->set_default_bool('upload_anon', false);
+		$config->set_default_bool('upload_replace', true);
+
+		// SHIT: fucking PHP "security" measures -_-;;;
 		$free_num = @disk_free_space(realpath("./images/"));
 		if($free_num === FALSE) {
-			$is_full = false;
+			$this->is_full = false;
 		}
 		else {
-			$is_full = $free_num < 100*1024*1024;
+			$this->is_full = $free_num < 100*1024*1024;
 		}
 
-		if($event instanceof InitExtEvent) {
-			$config->set_default_int('upload_count', 3);
-			$config->set_default_int('upload_size', '1MB');
-			$config->set_default_bool('upload_anon', false);
-			$config->set_default_bool('upload_replace', true);
-		}
+	}
 
-		if($event instanceof PostListBuildingEvent) {
-			if($this->can_upload($user)) {
-				if($is_full) {
-					$this->theme->display_full($page);
-				}
-				else {
-					$this->theme->display_block($page);
-				}
+	public function onPostListBuilding($event) {
+		global $user, $page;
+		if($this->can_upload($user)) {
+			if($this->is_full) {
+				$this->theme->display_full($page);
+			}
+			else {
+				$this->theme->display_block($page);
 			}
 		}
+	}
 
-		if($event instanceof PageRequestEvent) {
-		
-			if($event->page_matches("upload/replace")) {
-				/* Upload & Replace Image Request */
-				if(!$config->get_bool("upload_replace")) {
-					throw new UploadException("Upload Replacing Images is not enabled.");
+	public function onSetupBuilding($event) {
+		$tes = array();
+		$tes["Disabled"] = "none";
+		if(function_exists("curl_init")) {
+			$tes["cURL"] = "curl";
+		}
+		$tes["fopen"] = "fopen";
+		$tes["WGet"] = "wget";
+
+		$sb = new SetupBlock("Upload");
+		$sb->position = 10;
+		// Output the limits from PHP so the user has an idea of what they can set.
+		$sb->add_label("<i>PHP's Upload Limit = ".ini_get('max_file_uploads')."</i><br/>");
+		$sb->add_int_option("upload_count", "Max uploads: ");
+		$sb->add_label("<br/><i>PHP's Max Size Upload = ".ini_get('upload_max_filesize')."</i><br/>");
+		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
+		$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
+		$sb->add_bool_option("upload_replace", "<br/>Allow replacing images: ");
+		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
+		$event->panel->add_block($sb);
+	}
+
+	public function onDataUpload($event) {
+		global $config;
+		if($this->is_full) {
+			throw new UploadException("Upload failed; disk nearly full");
+		}
+		if(filesize($event->tmpname) > $config->get_int('upload_size')) {
+			$size = to_shorthand_int(filesize($event->tmpname));
+			$limit = to_shorthand_int($config->get_int('upload_size'));
+			throw new UploadException("File too large ($size &gt; $limit)");
+		}
+	}
+
+// event handling {{{
+	public function onPageRequest($event) {
+		global $config, $page, $user;
+
+		if($event->page_matches("upload/replace")) {
+			/* Upload & Replace Image Request */
+			if(!$config->get_bool("upload_replace")) {
+				throw new UploadException("Upload Replacing Images is not enabled.");
+			}
+			
+			// check if the user is an administrator and can upload files.
+			if(!$user->is_admin()) {
+				$this->theme->display_permission_denied($page);
+			}
+			else {
+				if($this->is_full) {
+					throw new UploadException("Can not replace Image: disk nearly full");
 				}
-				
-				// check if the user is an administrator and can upload files.
-				if(!$user->is_admin()) {
-					$this->theme->display_permission_denied($page);
+				// Try to get the image ID
+				$image_id = int_escape($event->get_arg(0));
+				if(empty($image_id)) {
+					$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
 				}
-				else {
-					if($is_full) {
-						throw new UploadException("Can not replace Image: disk nearly full");
+				if(empty($image_id)) {
+					throw new UploadException("Can not replace Image: No valid Image ID given.");
+				}
+					
+				$image_old = Image::by_id($image_id);
+				if(is_null($image_old)) {
+					$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
+				}
+					
+				if(count($_FILES) + count($_POST) > 0) {
+					if(count($_FILES) > 1) {
+						throw new UploadException("Can not upload more than one image for replacing.");
 					}
-					// Try to get the image ID
-					$image_id = int_escape($event->get_arg(0));
-					if (empty($image_id)) {
-						$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
-					}
-					if (empty($image_id)) {
-						throw new UploadException("Can not replace Image: No valid Image ID given.");
-					}
-						
-					$image_old = Image::by_id($image_id);
-					if(is_null($image_old)) {
-						$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
-					}
-						
-					if(count($_FILES) + count($_POST) > 0) {
-						if(count($_FILES) > 1) {
-							throw new UploadException("Can not upload more than one image for replacing.");
+					
+					$source = isset($_POST['source']) ? $_POST['source'] : null;
+					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
+					
+					if(count($_FILES)) {
+						foreach($_FILES as $file) {
+							$ok = $this->try_upload($file, $tags, $source, $image_id);
+							break; // leave the foreach loop.
 						}
-						
-						$source = isset($_POST['source']) ? $_POST['source'] : null;
-						$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
-						
-						if(count($_FILES)) {
-							foreach($_FILES as $file) {
-								$ok = $this->try_upload($file, $tags, $source, $image_id);
+					}
+					else {
+						foreach($_POST as $name => $value) {
+							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+								$ok = $this->try_transload($value, $tags, $source, $image_id);
 								break; // leave the foreach loop.
 							}
 						}
-						else {
-							foreach($_POST as $name => $value) {
-								if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-									$ok = $this->try_transload($value, $tags, $source, $image_id);
-									break; // leave the foreach loop.
-								}
-							}
-						}
-						$this->theme->display_upload_status($page, $ok);
 					}
-					else if(!empty($_GET['url'])) {
-						$url = $_GET['url'];
-						$ok = $this->try_transload($url, $tags, $url, $image_id);
-						$this->theme->display_upload_status($page, $ok);		
-					}
-					else {
-						$this->theme->display_replace_page($page, $image_id);
-					}
-				} // END of if admin / can_upload
-			}
-			else if($event->page_matches("upload")) {
-				if(!$this->can_upload($user)) {
-					$this->theme->display_permission_denied($page);
+					$this->theme->display_upload_status($page, $ok);
+				}
+				else if(!empty($_GET['url'])) {
+					$url = $_GET['url'];
+					$ok = $this->try_transload($url, $tags, $url, $image_id);
+					$this->theme->display_upload_status($page, $ok);		
 				}
 				else {
-					/* Regular Upload Image */
-					if(count($_FILES) + count($_POST) > 0) {
-						$tags = Tag::explode($_POST['tags']);
-						$source = isset($_POST['source']) ? $_POST['source'] : null;
-						$ok = true;
-						foreach($_FILES as $file) {
-							$ok = $ok & $this->try_upload($file, $tags, $source);
-						}
-						foreach($_POST as $name => $value) {
-							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-								$ok = $ok & $this->try_transload($value, $tags, $source);
-							}
-						}
-
-						$this->theme->display_upload_status($page, $ok);
-					}
-					else if(!empty($_GET['url'])) {
-						$url = $_GET['url'];
-						$tags = array('tagme');
-						if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
-							$tags = Tag::explode($_GET['tags']);
-						}
-								
-						$ok = $this->try_transload($url, $tags, $url);
-						$this->theme->display_upload_status($page, $ok);
-					}
-					else {
-						if ($is_full) {
-							$this->theme->display_full($page);
-						} else {
-							$this->theme->display_page($page);
-						}
-					}
-				} // END of if  can_upload
+					$this->theme->display_replace_page($page, $image_id);
+				}
 			}
-		} // END of if PageRequestEvent
-
-		if($event instanceof SetupBuildingEvent) {
-			$tes = array();
-			$tes["Disabled"] = "none";
-			if(function_exists("curl_init")) {
-				$tes["cURL"] = "curl";
-			}
-			$tes["fopen"] = "fopen";
-			$tes["WGet"] = "wget";
-
-			$sb = new SetupBlock("Upload");
-			$sb->position = 10;
-			// Output the limits from PHP so the user has an idea of what they can set.
-			$sb->add_label("<i>PHP's Upload Limit = ".ini_get('max_file_uploads')."</i><br/>");
-			$sb->add_int_option("upload_count", "Max uploads: ");
-			$sb->add_label("<br/><i>PHP's Max Size Upload = ".ini_get('upload_max_filesize')."</i><br/>");
-			$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
-			$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
-			$sb->add_bool_option("upload_replace", "<br/>Allow replacing images: ");
-			$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
-			$event->panel->add_block($sb);
 		}
-
-		if($event instanceof DataUploadEvent) {
-			if($is_full) {
-				throw new UploadException("Upload failed; disk nearly full");
+		else if($event->page_matches("upload")) {
+			if(!$this->can_upload($user)) {
+				$this->theme->display_permission_denied($page);
 			}
-			if(filesize($event->tmpname) > $config->get_int('upload_size')) {
-				$size = to_shorthand_int(filesize($event->tmpname));
-				$limit = to_shorthand_int($config->get_int('upload_size'));
-				throw new UploadException("File too large ($size &gt; $limit)");
+			else {
+				/* Regular Upload Image */
+				if(count($_FILES) + count($_POST) > 0) {
+					$tags = Tag::explode($_POST['tags']);
+					$source = isset($_POST['source']) ? $_POST['source'] : null;
+					$ok = true;
+					foreach($_FILES as $file) {
+						$ok = $ok & $this->try_upload($file, $tags, $source);
+					}
+					foreach($_POST as $name => $value) {
+						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+							$ok = $ok & $this->try_transload($value, $tags, $source);
+						}
+					}
+
+					$this->theme->display_upload_status($page, $ok);
+				}
+				else if(!empty($_GET['url'])) {
+					$url = $_GET['url'];
+					$tags = array('tagme');
+					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
+						$tags = Tag::explode($_GET['tags']);
+					}
+							
+					$ok = $this->try_transload($url, $tags, $url);
+					$this->theme->display_upload_status($page, $ok);
+				}
+				else {
+					if ($this->is_full) {
+						$this->theme->display_full($page);
+					} else {
+						$this->theme->display_page($page);
+					}
+				}
 			}
 		}
 	}
@@ -410,5 +412,4 @@ class Upload implements Extension {
 	}
 // }}}
 }
-add_event_listener(new Upload(), 40); // early, so it can stop the DataUploadEvent before any data handlers see it
 ?>
