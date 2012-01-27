@@ -177,7 +177,7 @@ catch(Exception $e) {
 	</body>
 </html>
 EOD;
-	$database->db->rollback();
+	if($database && $database->db) $database->db->rollback();
 	ctx_log_ender();
 }
 ?>
