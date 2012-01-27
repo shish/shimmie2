@@ -187,8 +187,8 @@ class UserPage extends SimpleExtension {
 			$this->theme->display_user_links($page, $user, $ubbe->parts);
 		}
 		if(
-			($user->is_admin() || $user->id == $event->display_user->id) &&
-			($user->id != $config->get_int('anon_id'))
+			($user->is_admin() || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
+			($event->display_user->id != $config->get_int('anon_id')) # don't show anon's IP list, it is le huge
 		) {
 			$this->theme->display_ip_list(
 				$page,
