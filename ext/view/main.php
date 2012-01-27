@@ -91,6 +91,7 @@ class ViewImage extends SimpleExtension {
 				$this->theme->display_error($page, "Image not found", "Image $image_id could not be found");
 				return;
 			}
+
 			if($event->page_matches("post/next")) {
 				$image = $image->get_next($search_terms);
 			}
@@ -98,13 +99,13 @@ class ViewImage extends SimpleExtension {
 				$image = $image->get_prev($search_terms);
 			}
 
-			if(!is_null($image)) {
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/view/{$image->id}", $query));
-			}
-			else {
+			if(is_null($image)) {
 				$this->theme->display_error($page, "Image not found", "No more images");
+				return;
 			}
+
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/view/{$image->id}", $query));
 		}
 			
 		if($event->page_matches("post/view")) {
@@ -125,6 +126,8 @@ class ViewImage extends SimpleExtension {
 		}
 
 		if($event->page_matches("post/set")) {
+			if(!isset($_POST['image_id'])) return;
+
 			$image_id = int_escape($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));

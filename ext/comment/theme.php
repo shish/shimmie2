@@ -123,6 +123,9 @@ class CommentListTheme extends Themelet {
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment, true);
 		}
+		if(empty($html)) {
+			$html = '<p>No comments by this user.</p>';
+		}
 		$page->add_block(new Block("Comments", $html, "left", 70));
 	}
 

@@ -48,8 +48,7 @@ class ET implements Extension {
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
-		include "config.php"; // more magical hax
-		$proto = preg_replace("#(.*)://.*#", "$1", $database_dsn);
+		$proto = preg_replace("#(.*)://.*#", "$1", DATABASE_DSN);
 		#$db = $database->db->ServerInfo();
 		#$info['sys_db'] = "$proto / {$db['version']}";
 

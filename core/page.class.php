@@ -208,10 +208,10 @@ class Page {
 						header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
 					}
 				}
-				else {
-					header("Cache-control: no-cache");
-					header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
-				}
+				#else {
+				#	header("Cache-control: no-cache");
+				#	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
+				#}
 				usort($this->blocks, "blockcmp");
 				$this->add_auto_html_headers();
 				$layout = new Layout();

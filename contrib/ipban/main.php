@@ -161,13 +161,29 @@ class IPBan implements Extension {
 // }}}
 // deal with banned person {{{
 	private function check_ip_ban() {
-		global $config;
-		global $database;
+		$remote = $_SERVER['REMOTE_ADDR'];
+		$bans = $this->get_active_bans_sorted();
+
+		// bans[0] = IPs
+		if(isset($bans[0][$remote])) {
+			$this->block($remote);  // never returns
+		}
+
+		// bans[1] = CIDR nets
+		foreach($bans[1] as $ip => $true) {
+			if(ip_in_range($remote, $ip)) {
+				$this->block($remote);  // never returns
+			}
+		}
+	}
+
+	private function block($remote) {
+		global $config, $database;
 
 		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");
 
-		$remote = $_SERVER['REMOTE_ADDR'];
 		$bans = $this->get_active_bans();
+
 		foreach($bans as $row) {
 			$ip = $row[$prefix."ip"];
 			if(
@@ -204,9 +220,6 @@ class IPBan implements Extension {
 	private function get_active_bans() {
 		global $database;
 
-		$cached = $database->cache->get("ip_bans");
-		if($cached) return $cached;
-
 		$bans = $database->get_all("
 			SELECT bans.*, users.name as banner_name
 			FROM bans
@@ -215,10 +228,32 @@ class IPBan implements Extension {
 			ORDER BY end_timestamp, bans.id
 		", array("end_timestamp"=>time()));
 
-		$database->cache->set("ip_bans", $bans, 600);
-
 		if($bans) {return $bans;}
 		else {return array();}
+	}
+
+	// returns [ips, nets]
+	private function get_active_bans_sorted() {
+		global $database;
+
+		$cached = $database->cache->get("ip_bans_sorted");
+		if($cached) return $cached;
+
+		$bans = $this->get_active_bans();
+		$ips = array("0.0.0.0" => false);
+		$nets = array("0.0.0.0/32" => false);
+		foreach($bans as $row) {
+			if(strstr($row['ip'], '/')) {
+				$nets[$row['ip']] = true;
+			}
+			else {
+				$ips[$row['ip']] = true;
+			}
+		}
+
+		$sorted = array($ips, $nets);
+		$database->cache->set("ip_bans_sorted", $sorted, 600);
+		return $sorted;
 	}
 
 	private function add_ip_ban($ip, $reason, $end, $user) {

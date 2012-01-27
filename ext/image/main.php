@@ -89,17 +89,18 @@ class ImageReplaceException extends SCoreException {
  * Request a thumbnail be made for an image object.
  */
 class ThumbnailGenerationEvent extends Event {
-	var $hash, $type;
-	
+	var $hash, $type, $force;
+
 	/**
 	 * Request a thumbnail be made for an image object
 	 *
 	 * @param $hash	The unique hash of the image
 	 * @param $type	The type of the image
 	 */
-	public function ThumbnailGenerationEvent($hash, $type) {
+	public function ThumbnailGenerationEvent($hash, $type, $force=false) {
 		$this->hash = $hash;
 		$this->type = $type;
+		$this->force = $force;
 	}
 }
 
@@ -347,6 +348,7 @@ class ImageIO extends SimpleExtension {
 		$tags_to_set = $image->get_tag_array();
 		$image->tag_array = array();
 		send_event(new TagSetEvent($image, $tags_to_set));
+		log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
 	}
 // }}}  end add
 

@@ -64,7 +64,12 @@ class Ratings implements Extension {
 		}
 
 		if($event instanceof RatingSetEvent) {
-			$this->set_rating($event->image->id, $event->rating);
+			if(empty($event->image->rating)){
+				$old_rating = "";
+			}else{
+				$old_rating = $event->image->rating;
+			}
+			$this->set_rating($event->image->id, $event->rating, $old_rating);
 		}
 
 		if($event instanceof ImageInfoBoxBuildingEvent) {
@@ -116,7 +121,7 @@ class Ratings implements Extension {
 			if(preg_match("/^rating=(safe|questionable|explicit|unknown)$/", strtolower($event->term), $matches)) {
 				$text = $matches[1];
 				$char = $text[0];
-				$event->add_querylet(new Querylet("rating = ?", array($char)));
+				$event->add_querylet(new Querylet("rating = :img_rating", array("img_rating"=>$char)));
 			}
 		}
 		
@@ -205,9 +210,12 @@ class Ratings implements Extension {
 		}
 	}
 
-	private function set_rating($image_id, $rating) {
+	private function set_rating($image_id, $rating, $old_rating) {
 		global $database;
-		$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));
+		if($old_rating != $rating){
+			$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));
+			log_info("rating", "Rating for Image #{$image_id} set to: ".$this->theme->rating_to_name($rating));
+		}
 	}
 }
 add_event_listener(new Ratings());

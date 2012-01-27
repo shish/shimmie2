@@ -130,10 +130,42 @@ function to_shorthand_int($int) {
  */
 function autodate($date, $html=true) {
 	$cpu = date('c', strtotime($date));
-	$hum = date('F j, Y', strtotime($date));
+	$hum = date('F j, Y; H:i', strtotime($date));
 	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
 }
 
+/**
+ * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
+ *
+ * @retval boolean
+ */
+function isValidDateTime($dateTime)
+{
+    if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
+        if (checkdate($matches[2], $matches[3], $matches[1])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
+ *
+ * @retval boolean
+ */
+function isValidDate($date)
+{
+    if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
+		// checkdate wants (month, day, year)
+        if (checkdate($matches[2], $matches[3], $matches[1])) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Return a pluraliser if necessary
@@ -172,7 +204,7 @@ function make_link($page=null, $query=null) {
 
 	if(is_null($page)) $page = $config->get_string('main_page');
 
-	if(FORCE_NICE_URLS || $config->get_bool('nice_urls', false)) {
+	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
 		$base = str_replace("/index.php", "", $full);
@@ -507,7 +539,10 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 }
 
 /**
- * Figure out the path to the shimmie install root.
+ * Figure out the path to the shimmie install directory.
+ *
+ * eg if shimmie is visible at http://foo.com/gallery, this
+ * function should return /gallery
  *
  * PHP really, really sucks.
  *
@@ -788,8 +823,12 @@ function send_event(Event $event) {
 * Debugging functions                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+// SHIT by default this returns the time as a string. And it's not even a
+// string representation of a number, it's two numbers separated by a space.
+// What the fuck were the PHP developers smoking.
+$_load_start = microtime(true);
 function get_debug_info() {
-	global $config, $_event_count, $database, $_execs;
+	global $config, $_event_count, $database, $_execs, $_load_start;
 
 	if(function_exists('memory_get_usage')) {
 		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
@@ -797,25 +836,16 @@ function get_debug_info() {
 	else {
 		$i_mem = "???";
 	}
-	if(function_exists('getrusage')) {
-		$ru = getrusage();
-		$i_utime = sprintf("%5.2f", ($ru["ru_utime.tv_sec"]*1e6+$ru["ru_utime.tv_usec"])/1000000);
-		$i_stime = sprintf("%5.2f", ($ru["ru_stime.tv_sec"]*1e6+$ru["ru_stime.tv_usec"])/1000000);
-	}
-	else {
-		$i_utime = "???";
-		$i_stime = "???";
-	}
-	
+	$time = sprintf("%5.2f", microtime(true) - $_load_start);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
 	
-	$debug = "<br>Took $i_utime + $i_stime seconds and {$i_mem}MB of RAM";
+	$debug = "<br>Took $time seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
-	$debug .= "; Shimmie version ". VERSION .", SCore Version ". SCORE_VERSION;
+	$debug .= "; Shimmie version ". VERSION; // .", SCore Version ". SCORE_VERSION;
 
 	return $debug;
 }
@@ -881,9 +911,10 @@ function _stripslashes_r($arr) {
 function _sanitise_environment() {
 	if(DEBUG) {
 		error_reporting(E_ALL);
-		assert_options(ASSERT_ACTIVE, 1);
-		assert_options(ASSERT_BAIL, 1);
 	}
+
+	assert_options(ASSERT_ACTIVE, 1);
+	assert_options(ASSERT_BAIL, 1);
 
 	ob_start();
 
@@ -1019,7 +1050,7 @@ function _start_cache() {
 			$_cache_hash = md5($_SERVER["QUERY_STRING"]);
 			$ab = substr($_cache_hash, 0, 2);
 			$cd = substr($_cache_hash, 2, 2);
-			$_cache_filename = "data/$ab/$cd/$_cache_hash";
+			$_cache_filename = "data/http_cache/$ab/$cd/$_cache_hash";
 
 			if(!file_exists(dirname($_cache_filename))) {
 				mkdir(dirname($_cache_filename), 0750, true);

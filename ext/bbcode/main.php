@@ -63,6 +63,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "<li>\\1</li>", $text);
 		$text = preg_replace("#\[\*\]#s", "<li>", $text);
 		$text = preg_replace("#<br><(li|ul|ol|/ul|/ol)>#s", "<\\1>", $text);
+		$text = preg_replace("#\[align=(left|center|right)\](.*?)\[\/align\]#s", "<div style='text-align:\\1;'>\\2</div>", $text);
 		$text = $this->filter_spoiler($text);
 		$text = $this->insert_code($text);
 		return $text;
@@ -132,7 +133,8 @@ class BBCode extends FormatterExtension {
 		# at the end of this function, the only code! blocks should be
 		# the ones we've added -- others may contain malicious content,
 		# which would only appear after decoding
-		$text = preg_replace("/\[code!\](.*?)\[\/code!\]/s", "[code]\\1[/code]", $text);
+		$text = str_replace("[code!]", "[code]", $text);
+		$text = str_replace("[/code!]", "[/code]", $text);
 
 		$l1 = strlen("[code]");
 		$l2 = strlen("[/code]");

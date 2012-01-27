@@ -47,6 +47,8 @@ class TagList implements Extension {
 		}
 
 		if(($event instanceof PageRequestEvent) && $event->page_matches("api/internal/tag_list/complete")) {
+			if(!isset($_GET["s"])) return;
+
 			$all = $database->get_all(
 					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 LIMIT 10",
 					array("search"=>$_GET["s"]."%"));

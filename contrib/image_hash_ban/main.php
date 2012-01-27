@@ -128,11 +128,30 @@ class ImageBan extends SimpleExtension {
 	// DB funness
 
 	public function get_image_hash_bans($page, $size=100) {
+		global $database;
+
 		// FIXME: many
 		$size_i = int_escape($size);
 		$offset_i = int_escape($page-1)*$size_i;
-		global $database;
-		$bans = $database->get_all("SELECT * FROM image_bans ORDER BY id DESC LIMIT $size_i OFFSET $offset_i");
+		$where = array("(1=1)");
+		$args = array();
+		if(!empty($_GET['hash'])) {
+			$where[] = 'hash = ?';
+			$args[] = $_GET['hash'];
+		}
+		if(!empty($_GET['reason'])) {
+			$where[] = 'reason SCORE_ILIKE ?';
+			$args[] = "%".$_GET['reason']."%";
+		}
+		$where = implode(" AND ", $where);
+		$bans = $database->get_all($database->engine->scoreql_to_sql("
+			SELECT *
+			FROM image_bans
+			WHERE $where
+			ORDER BY id DESC
+			LIMIT $size_i
+			OFFSET $offset_i
+			"), $args);
 		if($bans) {return $bans;}
 		else {return array();}
 	}

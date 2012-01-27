@@ -1,0 +1,11 @@
+BODY {
+	/* It's a bit crazy but, april fools is supposed to be crazy.
+	This flips the entire page upside down.
+	TODO: Add a way for the user to disable this */
+
+	-webkit-transform: rotate(-180deg); /*Safari*/
+	-moz-transform: rotate(-180deg); /*Firefox*/
+	-o-transform: rotate(-180deg); /*Opera*/
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2); /*IE6*/
+	ms-filter: "progid:DXImageTransform.Microsoft.BasicImage(rotation=2)"; /*IE7+?*/
+}

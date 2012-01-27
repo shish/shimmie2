@@ -52,7 +52,7 @@ if(is_readable("config.php")) {
 			<h1>Shimmie Repair Console</h1>
 <?php
 	include "config.php";
-	if($_SESSION['dsn'] == $database_dsn || $_POST['dsn'] == $database_dsn) {
+	if($_SESSION['dsn'] == DATABASE_DSN || $_POST['dsn'] == DATABASE_DSN) {
 		if($_POST['dsn']) {$_SESSION['dsn'] = $_POST['dsn'];}
 
 		if(empty($_GET["action"])) {
@@ -76,6 +76,15 @@ if(is_readable("config.php")) {
 				</form>
 			";
 			*/
+			echo "<h3>Database quick  fix for User deletion</h3>";
+			echo "just a database fix for those who instaled shimmie before 2012 january the 22rd.<br>";
+			echo "Note: some things needs to be done manually, to work properly.<br>";
+			echo "WARNING: ONLY  PROCEEDS IF YOU KNOW WHAT YOU ARE DOING!";
+			echo "
+				<form action='install.php?action=Database_user_deletion_fix' method='POST'>
+					<input type='submit' value='go!'>
+				</form>
+			";
 
 			echo "<h3>Log Out</h3>";
 			echo "
@@ -86,6 +95,9 @@ if(is_readable("config.php")) {
 		}
 		else if($_GET["action"] == "logout") {
 			session_destroy();
+		}
+		else if($_GET["action"] == "Database_user_deletion_fix") {
+			Database_user_deletion_fix();
 		}
 	} else {
 		echo "
@@ -285,7 +297,7 @@ function create_tables() { // {{{
 			INDEX(owner_id),
 			INDEX(width),
 			INDEX(height),
-			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+			CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
 		$db->create_table("tags", "
 			id SCORE_AIPK,
@@ -298,8 +310,8 @@ function create_tables() { // {{{
 			INDEX(image_id),
 			INDEX(tag_id),
 			UNIQUE(image_id, tag_id),
-			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
+			CONSTRAINT foreign_image_tags_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+			CONSTRAINT foreign_image_tags_tag_id FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 8)");
 	}
@@ -350,7 +362,9 @@ function build_dirs() { // {{{
 } // }}}
 function write_config() { // {{{
 	global $database_dsn;
-	$file_content = "<?php \$database_dsn='$database_dsn'; ?>";
+	$file_content = "<"+"?php\n"+
+	"define('DATABASE_DSN', '$database_dsn');\n"+
+	"?"+">";
 	
 	if(is_writable("./") && file_put_contents("config.php", $file_content)) {
 		assert(file_exists("config.php"));
@@ -370,6 +384,49 @@ EOD;
 		exit;
 	}
 } // }}}
+
+function Database_user_deletion_fix() {
+	try {
+		require_once "core/database.class.php";
+		$db = new Database();
+		
+		echo "Fixing user_favorites table....";
+		
+		($db->Execute("ALTER TABLE user_favorites ENGINE=InnoDB;")) ? print_r("ok<br>") : print_r("failed<br>");
+		echo "adding Foreign key to user ids...";
+		
+		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
+		echo "cleaning, the table from deleted image favorites...<br>";
+		
+		$rows = $db->get_all("SELECT * FROM user_favorites WHERE image_id NOT IN ( SELECT id FROM images );");
+		
+		foreach( $rows as $key => $value)
+			$db->Execute("DELETE FROM user_favorites WHERE image_id = :image_id;", array("image_id" => $value["image_id"]));
+		
+		echo "adding forign key to image ids...";
+		
+		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
+		
+		echo "adding foreign keys to private messages...";
+		
+		($db->Execute("ALTER TABLE private_message 
+		ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+		ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;")) ? print_r("ok<br>"):print_r("failed<br>");
+		
+		echo "Just one more step...which you need to do manually:<br>";
+		echo "You need to go to your database and Delete the foreign key on the owner_id in the images table.<br><br>";
+		echo "<a href='http://www.justin-cook.com/wp/2006/05/09/how-to-remove-foreign-keys-in-mysql/'>How to remove foreign keys</a><br><br>";
+		echo "and finally execute this querry:<br><br>";
+		echo "ALTER TABLE images ADD CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT;<br><br>";
+		echo "if this is all sucesfull you are done!";
+
+	}
+	catch (PDOException $e)
+	{
+		// FIXME: Make the error message user friendly
+		exit($e->getMessage());
+	}
+}
 ?>
 	</body>
 </html>

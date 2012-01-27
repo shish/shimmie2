@@ -179,7 +179,9 @@ class Upload implements Extension {
 					}
 					else
 					{
-						if(!$is_full) {
+						if ($is_full) {
+							$this->theme->display_full($page);
+						} else {
 							$this->theme->display_page($page);
 						}
 					}
@@ -312,7 +314,7 @@ class Upload implements Extension {
 		}
 		
 		// Checks if user is admin > check if you want locked.
-		if($user->is_admin()){
+		if($user->is_admin() && !empty($_GET['locked'])){
 			$locked = bool_escape($_GET['locked']);
 		}
 		

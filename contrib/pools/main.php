@@ -550,12 +550,12 @@ class Pools extends SimpleExtension {
 	private function nuke_pool($poolID) {
 		global $user, $database;
 
+		$p_id = $database->get_one("SELECT user_id FROM pools WHERE id = :pid", array("pid"=>$poolID));
 		if($user->is_admin()) {
 			$database->execute("DELETE FROM pool_history WHERE pool_id = :pid", array("pid"=>$poolID));
 			$database->execute("DELETE FROM pool_images WHERE pool_id = :pid", array("pid"=>$poolID));
 			$database->execute("DELETE FROM pools WHERE id = :pid", array("pid"=>$poolID));
-		} elseif(!$user->is_anonymous()) {
-			// FIXME: WE CHECK IF THE USER IS THE OWNER OF THE POOL IF NOT HE CAN'T DO ANYTHING
+		} elseif($user->id == $p_id) {
 			$database->execute("DELETE FROM pool_history WHERE pool_id = :pid", array("pid"=>$poolID));
 			$database->execute("DELETE FROM pool_images WHERE pool_id = :pid", array("pid"=>$poolID));
 			$database->execute("DELETE FROM pools WHERE id = :pid AND user_id = :uid", array("pid"=>$poolID, "uid"=>$user->id));

@@ -1,6 +1,12 @@
 <?php
+/*
+ * Name: Tag History
+ * Author: Bzchan <bzchan@animemahou.com>, modified by jgen <jgen.tech@gmail.com>
+ */
 
 class Tag_HistoryTheme extends Themelet {
+	var $messages = array();
+
 	public function display_history_page(Page $page, $image_id, $history) {
 		global $user;
 		$start_string = "
@@ -22,11 +28,12 @@ class Tag_HistoryTheme extends Themelet {
 				$setter .= " / " . $fields['user_ip'];
 			}
 			$selected = ($n == 2) ? " checked" : "";
-			$history_list .= "
+			$history_list .= '
 				<li>
-					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
-					<label for='$current_id'>$current_tags (Set by $setter)</label>
-				</li>\n";
+					<input type="radio" name="revert" id="'.$current_id.'" value="'.$current_id.'"$selected>
+					<label for="'.$current_id.'">'.$current_tags.' (Set by '.$setter.')</label>
+				</li>
+				';
 		}
 
 		$end_string = "
@@ -37,8 +44,8 @@ class Tag_HistoryTheme extends Themelet {
 		";
 		$history_html = $start_string . $history_list . $end_string;
 
-		$page->set_title("Image $image_id Tag History");
-		$page->set_heading("Tag History: $image_id");
+		$page->set_title('Image '.$image_id.' Tag History');
+		$page->set_heading('Tag History: '.$image_id);
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
@@ -68,13 +75,13 @@ class Tag_HistoryTheme extends Themelet {
 			if($user->is_admin()) {
 				$setter .= " / " . $fields['user_ip'];
 			}
-			$history_list .= "
+			$history_list .= '
 				<li>
-					<input type='radio' name='revert' value='$current_id'>
-					<a href='".make_link("post/view/$image_id")."'>$image_id</a>:
-					$current_tags (Set by $setter)
+					<input type="radio" name="revert" value="'.$current_id.'">
+					<a href="'.make_link('post/view/'.$image_id).'">'.$image_id.'</a>:
+					'.$current_tags.' (Set by '.$setter.')
 				</li>
-			";
+			';
 		}
 
 		$history_html = $start_string . $history_list . $end_string;
@@ -85,8 +92,46 @@ class Tag_HistoryTheme extends Themelet {
 	}
 
 	public function display_history_link(Page $page, $image_id) {
-		$link = "<a href='".make_link("tag_history/$image_id")."'>Tag History</a>\n";
+		$link = '<a href="'.make_link('tag_history/'.$image_id).'">Tag History</a>';
 		$page->add_block(new Block(null, $link, "main", 5));
+	}
+	
+	/*
+	 * Add a section to the admin page.
+	 */
+	public function display_admin_block($validation_msg='') {
+		global $page;
+		
+		if (!empty($validation_msg)) {
+			$validation_msg = '<br><b>'. $validation_msg .'</b>';
+		}
+		
+		$html = '
+			Revert tag changes/edit by a specific IP address.<br>
+			You can restrict the time frame to revert these edits as well.
+			<br>(Date format: 2011-10-23)
+			'.$validation_msg.'
+
+			<br><br>'.make_form(make_link("admin/revert_ip"),'POST',false,'revert_ip_form')."
+				IP Address: <input type='text' id='revert_ip' name='revert_ip' size='15'><br>
+				Date range: <input type='text' id='revert_date' name='revert_date' size='15'><br><br>
+				<input type='submit' value='Revert' onclick='return confirm(\"Revert all edits by this IP?\");'>
+			</form><br>
+		";
+		$page->add_block(new Block("Revert By IP", $html));
+	}
+	
+	/*
+	 * Show a standard page for results to be put into
+	 */
+	public function display_revert_ip_results() {
+		global $page;
+		$html = implode($this->messages, "\n");
+		$page->add_block(new Block("Revert by IP", $html));
+	}
+	
+	public function add_status($title, $body) {
+		$this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
 	}
 }
 ?>

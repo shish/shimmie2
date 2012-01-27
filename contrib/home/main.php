@@ -28,14 +28,13 @@ class Home extends SimpleExtension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page;
 		if($event->page_matches("home")) {
-			$base_href = $config->get_string('base_href');
-			$data_href = get_base_href();
+			$base_href = get_base_href();
 			$sitename = $config->get_string('title');
 			$theme_name = $config->get_string('theme');
 
 			$body = $this->get_body();
 
-			$this->theme->display_page($page, $sitename, $data_href, $theme_name, $body);
+			$this->theme->display_page($page, $sitename, $base_href, $theme_name, $body);
 		}
 	}
 
@@ -58,8 +57,7 @@ class Home extends SimpleExtension {
 		// returns just the contents of the body
 		global $database;
 		global $config;
-		$base_href = $config->get_string('base_href');
-		$data_href = get_base_href();
+		$base_href = get_base_href();
 		$sitename = $config->get_string('title');
 	    $contact_link = $config->get_string('contact_link');
 		$counter_dir = $config->get_string('home_counter', 'default');
@@ -71,7 +69,7 @@ class Home extends SimpleExtension {
 		$counter_text = "";
 		for($n=0; $n<strlen($strtotal); $n++) {
 			$cur = $strtotal[$n];
-			$counter_text .= " <img alt='$cur' src='$data_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
+			$counter_text .= " <img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
 		}
 
 		// get the homelinks and process them

@@ -24,6 +24,8 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 $tag_n = 0; // temp hack
+$_flexihash = null;
+$_fh_last_opts = null;
 
 /**
  * An object representing an entry in the images table. As of 2.2, this no
@@ -229,14 +231,9 @@ class Image {
 	 */
 	public function get_tag_array() {
 		global $database;
-		$cached = $database->cache->get("image-{$this->id}-tags");
-		if($cached) return $cached;
-
 		if(!isset($this->tag_array)) {
 			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
 		}
-
-		$database->cache->set("image-{$this->id}-tags", $this->tag_array);
 		return $this->tag_array;
 	}
 
@@ -369,7 +366,10 @@ class Image {
 	public function set_source($source) {
 		global $database;
 		if(empty($source)) $source = null;
-		$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
+		if($source != $this->source) {
+			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
+			log_info("core-image", "Source for Image #{$this->id} set to: ".$source);
+		}
 	}
 
 
@@ -382,7 +382,10 @@ class Image {
 		$sln = $database->engine->scoreql_to_sql("SCORE_BOOL_$ln");
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
+		if($sln != $this->locked) {
+			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
+			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
+		}
 	}
 
 	/**
@@ -403,46 +406,49 @@ class Image {
 	 */
 	public function set_tags($tags) {
 		global $database;
+
 		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
+		$new_tags = implode(" ", $tags);
 
-		// delete old
-		$this->delete_tags_from_image();
-
-		// insert each new tags
-		foreach($tags as $tag) {
-			$id = $database->get_one(
-					$database->engine->scoreql_to_sql(
-						"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-					),
-					array("tag"=>$tag));
-			if(empty($id)) {
-				// a new tag
-				$database->execute(
-						"INSERT INTO tags(tag) VALUES (:tag)",
+		if($new_tags != $this->get_tag_list()) {
+			// delete old
+			$this->delete_tags_from_image();
+			// insert each new tags
+			foreach($tags as $tag) {
+				$id = $database->get_one(
+						$database->engine->scoreql_to_sql(
+							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+						),
 						array("tag"=>$tag));
+				if(empty($id)) {
+					// a new tag
+					$database->execute(
+							"INSERT INTO tags(tag) VALUES (:tag)",
+							array("tag"=>$tag));
+					$database->execute(
+							"INSERT INTO image_tags(image_id, tag_id)
+							VALUES(:id, (SELECT id FROM tags WHERE tag = :tag))",
+							array("id"=>$this->id, "tag"=>$tag));
+				}
+				else {
+					// user of an existing tag
+					$database->execute(
+							"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
+							array("iid"=>$this->id, "tid"=>$id));
+				}
 				$database->execute(
-						"INSERT INTO image_tags(image_id, tag_id)
-						VALUES(:id, (SELECT id FROM tags WHERE tag = :tag))",
-						array("id"=>$this->id, "tag"=>$tag));
+						$database->engine->scoreql_to_sql(
+							"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+						),
+						array("tag"=>$tag));
 			}
-			else {
-				// user of an existing tag
-				$database->execute(
-						"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
-						array("iid"=>$this->id, "tid"=>$id));
-			}
-			$database->execute(
-					$database->engine->scoreql_to_sql(
-						"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-					),
-					array("tag"=>$tag));
-		}
 
-		log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
-		$database->cache->delete("image-{$this->id}-tags");
+			log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
+			$database->cache->delete("image-{$this->id}-tags");
+		}
 	}
 
 	/**
@@ -507,6 +513,37 @@ class Image {
 			$tmpl = $plte->link;
 		}
 
+		global $_flexihash, $_fh_last_opts;
+		$matches = array();
+		if(preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
+			$pre = $matches[1];
+			$opts = $matches[2];
+			$post = $matches[3];
+
+			if($opts != $_fh_last_opts) {
+				$_fh_last_opts = $opts;
+				require_once("lib/flexihash.php");
+				$_flexihash = new Flexihash();
+				foreach(explode(",", $opts) as $opt) {
+					$parts = explode("=", $opt);
+					$opt_val = "";
+					$opt_weight = 0;
+					if(count($parts) == 2) {
+						$opt_val = $parts[0];
+						$opt_weight = $parts[1];
+					}
+					elseif(count($parts) == 1) {
+						$opt_val = $parts[0];
+						$opt_weight = 1;
+					}
+					$_flexihash->addTarget($opt_val, $opt_weight);
+				}
+			}
+
+			$choice = $_flexihash->lookup($pre.$post);
+			$tmpl = $pre.$choice.$post;
+		}
+
 		return $tmpl;
 	}
 
@@ -556,9 +593,12 @@ class Image {
 		// various types of querylet
 		foreach($terms as $term) {
 			$positive = true;
-			if((strlen($term) > 0) && ($term[0] == '-')) {
+			if(strlen($term) > 0 && $term[0] == '-') {
 				$positive = false;
 				$term = substr($term, 1);
+			}
+			if(strlen($term) == 0) {
+				continue;
 			}
 
 			$term = Tag::resolve_alias($term);

@@ -274,8 +274,6 @@ class Database {
 	 * stored in config.php in the root shimmie folder
 	 */
 	public function Database() {
-		global $database_dsn, $cache_dsn;
-
 		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
 		/*
@@ -285,11 +283,13 @@ class Database {
 		 * http://stackoverflow.com/questions/237367
 		 */
 		$matches = array(); $db_user=null; $db_pass=null;
-		if(preg_match("/user=([^;]*)/", $database_dsn, $matches)) $db_user=$matches[1];
-		if(preg_match("/password=([^;]*)/", $database_dsn, $matches)) $db_pass=$matches[1];
+		if(preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) $db_user=$matches[1];
+		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
-		$this->db = new PDO($database_dsn, $db_user, $db_pass);
-		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, array(
+			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		));
 
 		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		if($db_proto == "mysql") {
@@ -305,9 +305,8 @@ class Database {
 			die("Unknown PDO driver: $db_proto");
 		}
 
-		if(isset($cache_dsn) && !empty($cache_dsn)) {
-			$matches = array();
-			preg_match("#(memcache|apc)://(.*)#", $cache_dsn, $matches);
+		$matches = array();
+		if(CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
 				$this->cache = new MemcacheCache($matches[2]);
 			}

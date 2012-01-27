@@ -184,7 +184,7 @@ class User {
 	}
 
 	public function check_auth_token() {
-		return ($_POST["auth_token"] == $this->get_auth_token());
+		return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
 	}
 }
 ?>

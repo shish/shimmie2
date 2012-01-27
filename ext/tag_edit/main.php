@@ -85,7 +85,8 @@ class TagEdit implements Extension {
 				$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
 			}
 			if($user->is_admin()) {
-				send_event(new LockSetEvent($event->image, $_POST['tag_edit__locked']=="on"));
+				$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
+				send_event(new LockSetEvent($event->image, $locked));
 			}
 		}
 
@@ -103,7 +104,6 @@ class TagEdit implements Extension {
 
 		if($event instanceof LockSetEvent) {
 			if($user->is_admin()) {
-				log_debug("tag_edit", "Setting Image #{$event->image->id} lock to: {$event->locked}");
 				$event->image->set_locked($event->locked);
 			}
 		}

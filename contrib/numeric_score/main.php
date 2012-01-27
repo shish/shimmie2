@@ -104,6 +104,77 @@ class NumericScore implements Extension {
 					$page->set_redirect(make_link());
 				}
 			}
+			if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
+				$t_images = $config->get_int("index_height") * $config->get_int("index_width");
+
+				//TODO: Somehow make popular_by_#/2012/12/31 > popular_by_#?day=31&month=12&year=2012 (So no problems with date formats)
+				//TODO: Add Popular_by_week.
+
+				$sql = "SELECT * FROM images ";
+				$args = array();
+
+				//year
+				if(int_escape($event->get_arg(0)) == 0){
+					$year = date("Y");
+				}else{
+					$year = $event->get_arg(0);
+				}
+				//month
+				if(int_escape($event->get_arg(1)) == 0 || int_escape($event->get_arg(1)) > 12){
+					$month = date("m");
+				}else{
+					$month = $event->get_arg(1);
+				}
+				//day
+				if(int_escape($event->get_arg(2)) == 0 || int_escape($event->get_arg(2)) > 31){
+					$day = date("d");
+				}else{
+					$day = $event->get_arg(2);
+				}
+				$totaldate = $year."/".$month."/".$day;
+
+				if($event->page_matches("popular_by_day")){
+					$sql .=
+						"WHERE EXTRACT(YEAR FROM posted) = :year
+						AND EXTRACT(MONTH FROM posted) = :month
+						AND EXTRACT(DAY FROM posted) = :day
+						AND NOT numeric_score=0
+						";
+					$dte = array($totaldate, date("F jS, Y", (strtotime($totaldate))), "Y/m/d", "day");
+				}
+				if($event->page_matches("popular_by_month")){
+					$sql .=
+						"WHERE EXTRACT(YEAR FROM posted) = :year
+						AND EXTRACT(MONTH FROM posted) = :month
+						AND NOT numeric_score=0
+						";
+					$title = date("F Y", (strtotime($totaldate)));
+					$dte = array($totaldate, $title, "Y/m", "month");
+				}
+				if($event->page_matches("popular_by_year")){
+					$sql .=
+						"WHERE EXTRACT(YEAR FROM posted) = :year
+						AND NOT numeric_score=0
+						";
+					$dte = array($totaldate, $year, "Y", "year");
+				}
+				$sql .= " ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
+
+				//filter images by year/score != 0 > limit to max images on one page > order from highest to lowest score
+				$args = array(
+					"year" => $year,
+					"month" => $month,
+					"day" => $day,
+					"limit" => $t_images
+				);
+				$result = $database->get_all($sql, $args);
+
+				$images = array();
+				foreach($result as $singleResult) {
+					$images[] = Image::by_id($singleResult["id"]);
+				}
+				$this->theme->view_popular($images, $dte);
+			}
 		}
 
 		if($event instanceof NumericScoreSetEvent) {
