@@ -68,6 +68,7 @@ _d("CACHE_DIR", false);      // boolean  store complete rendered pages on disk
 _d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
 _d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes
 _d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance
+_d("COMPILE_ELS", false);    // boolean  pre-build the list of event listeners
 _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", 'trunk');      // string   shimmie version
@@ -137,34 +138,71 @@ try {
 	ctx_log_endok();
 
 
+	ctx_log_start("Loading extensions");
 	// initialise the extensions
-	$all_events = array();
-	foreach(get_declared_classes() as $class) {
-		if(is_subclass_of($class, "Event")) {
-			$all_events[] = $class;
-		}
+	global $_event_listeners;
+	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
+		require_once("data/event_listeners.php");
 	}
-	foreach(get_declared_classes() as $class) {
-		$rclass = new ReflectionClass($class);
-		if($rclass->isAbstract()) {
-			// don't do anything
+	else {
+		$all_events = array();
+		foreach(get_declared_classes() as $class) {
+			if(is_subclass_of($class, "Event")) {
+				$all_events[] = $class;
+			}
 		}
-		elseif(is_subclass_of($class, "SimpleExtension")) {
-			$c = new $class();
-			$c->i_am($c);
-			$my_events = array();
-			foreach(get_class_methods($c) as $method) {
-				if(substr($method, 0, 2) == "on") {
-					$my_events[] = substr($method, 2) . "Event";
+		foreach(get_declared_classes() as $class) {
+			$rclass = new ReflectionClass($class);
+			if($rclass->isAbstract()) {
+				// don't do anything
+			}
+			elseif(is_subclass_of($class, "SimpleExtension")) {
+				$c = new $class();
+				$c->i_am($c);
+				$my_events = array();
+				foreach(get_class_methods($c) as $method) {
+					if(substr($method, 0, 2) == "on") {
+						$my_events[] = substr($method, 2) . "Event";
+					}
+				}
+				add_event_listener($c, $c->get_priority(), $my_events);
+			}
+			elseif(is_subclass_of($class, "Extension")) {
+				$c = new $class();
+				add_event_listener($c, $c->get_priority(), $all_events);
+			}
+		}
+
+		if(COMPILE_ELS) {
+			$p = "<"."?php\n";
+
+			foreach(get_declared_classes() as $class) {
+				$rclass = new ReflectionClass($class);
+				if($rclass->isAbstract()) {}
+				elseif(is_subclass_of($class, "SimpleExtension")) {
+					$p .= "\$$class = new $class(); ";
+					$p .= "\${$class}->i_am(\$$class);\n";
+				}
+				elseif(is_subclass_of($class, "Extension")) {
+					$p .= "\$$class = new $class();\n";
 				}
 			}
-			add_event_listener($c, $c->get_priority(), $my_events);
-		}
-		elseif(is_subclass_of($class, "Extension")) {
-			$c = new $class();
-			add_event_listener($c, $c->get_priority(), $all_events);
+
+			$p .= "\$_event_listeners = array(\n";
+			foreach($_event_listeners as $event => $listeners) {
+				$p .= "\t'$event' => array(\n";
+				foreach($listeners as $id => $listener) {
+					$p .= "\t\t$id => \$".get_class($listener).",\n";
+				}
+				$p .= "\t),\n";
+			}
+			$p .= ");\n";
+
+			$p .= "?".">";
+			file_put_contents("data/event_listeners.php", $p);
 		}
 	}
+	ctx_log_endok();
 	ctx_log_endok("Initialisation");
 
 
