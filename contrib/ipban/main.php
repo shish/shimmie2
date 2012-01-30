@@ -34,24 +34,20 @@ class AddIPBanEvent extends Event {
 }
 // }}}
 
-class IPBan implements Extension {
-	var $theme;
-// event handler {{{
+class IPBan extends SimpleExtension {
 	public function get_priority() {return 10;}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof InitExtEvent) {
-			if($config->get_int("ext_ipban_version") < 5) {
-				$this->install();
-			}
-
-			$this->check_ip_ban();
+	public function onInitExt($event) {
+		global $config;
+		if($config->get_int("ext_ipban_version") < 5) {
+			$this->install();
 		}
+		$this->check_ip_ban();
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("ip_ban")) {
+	public function onPageRequest($event) {
+		if($event->page_matches("ip_ban")) {
+			global $config, $database, $page, $user;
 			if($user->is_admin()) {
 				if($event->get_arg(0) == "add" && $user->check_auth_token()) {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
@@ -79,23 +75,26 @@ class IPBan implements Extension {
 				$this->theme->display_permission_denied($page);
 			}
 		}
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("IP Bans", make_link("ip_ban/list"));
-			}
-		}
-
-		if($event instanceof AddIPBanEvent) {
-			$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
-		}
-
-		if($event instanceof RemoveIPBanEvent) {
-			$database->Execute("DELETE FROM bans WHERE id = :id", array("id"=>$event->id));
-			$database->cache->delete("ip_bans");
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("IP Bans", make_link("ip_ban/list"));
 		}
 	}
-// }}}
+
+	public function onAddIPBan($event) {
+		global $user;
+		$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
+	}
+
+	public function onRemoveIPBan($event) {
+		global $database;
+		$database->Execute("DELETE FROM bans WHERE id = :id", array("id"=>$event->id));
+		$database->cache->delete("ip_bans");
+	}
+
 // installer {{{
 	protected function install() {
 		global $database;
