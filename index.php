@@ -106,7 +106,6 @@ try {
 	ctx_log_start("Connecting to DB");
 	// connect to the database
 	$database = new Database();
-	//$database->db->fnExecute = '_count_execs'; // FIXME: PDO equivalent
 	$database->db->beginTransaction();
 	$config = new DatabaseConfig($database);
 	ctx_log_endok();

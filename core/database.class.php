@@ -326,6 +326,7 @@ class Database {
 	 */
 	public function execute($query, $args=array()) {
 		try {
+			_count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
