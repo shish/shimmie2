@@ -61,6 +61,7 @@ function _d($name, $value) {if(!defined($name)) define($name, $value);}
 _d("DATABASE_DSN", null);    // string   PDO database connection details
 _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details
+_d("DEBUG_SQL", false);      // boolean  dump SQL queries to data/sql.log
 _d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
 _d("CONTEXT", null);         // string   file to log performance data into
 _d("CACHE_MEMCACHE", false); // boolean  store complete rendered pages in memcache
