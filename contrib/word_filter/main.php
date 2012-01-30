@@ -6,21 +6,20 @@
  * Description: Simple search and replace
  */
 
-class WordFilter implements Extension {
+class WordFilter extends SimpleExtension {
 	// before emoticon filter
 	public function get_priority() {return 40;}
 
-	public function receive_event(Event $event) {
-		if($event instanceof TextFormattingEvent) {
-			$event->formatted = $this->filter($event->formatted);
-			$event->stripped  = $this->filter($event->stripped);
-		}
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = new SetupBlock("Word Filter");
-			$sb->add_longtext_option("word_filter");
-			$sb->add_label("<br>(each line should be search term and replace term, separated by a comma)");
-			$event->panel->add_block($sb);
-		}
+	public function onTextFormatting($event) {
+		$event->formatted = $this->filter($event->formatted);
+		$event->stripped  = $this->filter($event->stripped);
+	}
+
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Word Filter");
+		$sb->add_longtext_option("word_filter");
+		$sb->add_label("<br>(each line should be search term and replace term, separated by a comma)");
+		$event->panel->add_block($sb);
 	}
 
 	private function filter($text) {
