@@ -11,31 +11,26 @@
  *  message specified in the box.
  */
 
-class Downtime implements Extension {
-	var $theme;
-
+class Downtime extends SimpleExtension {
 	public function get_priority() {return 10;}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Downtime");
+		$sb->add_bool_option("downtime", "Disable non-admin access: ");
+		$sb->add_longtext_option("downtime_message", "<br>");
+		$event->panel->add_block($sb);
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Downtime");
-			$sb->add_bool_option("downtime", "Disable non-admin access: ");
-			$sb->add_longtext_option("downtime_message", "<br>");
-			$event->panel->add_block($sb);
-		}
+	public function onPageRequest($event) {
+		global $config, $page, $user;
 
-		if($event instanceof PageRequestEvent) {
-			if($config->get_bool("downtime")) {
-				if(!$user->is_admin() && !$this->is_safe_page($event)) {
-					$msg = $config->get_string("downtime_message");
-					$this->theme->display_message($msg);
-					exit;
-				}
-				$this->theme->display_notification($page);
+		if($config->get_bool("downtime")) {
+			if(!$user->is_admin() && !$this->is_safe_page($event)) {
+				$msg = $config->get_string("downtime_message");
+				$this->theme->display_message($msg);
+				exit;
 			}
+			$this->theme->display_notification($page);
 		}
 	}
 
