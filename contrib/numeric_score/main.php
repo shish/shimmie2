@@ -206,8 +206,8 @@ class NumericScore implements Extension {
 							"Can't find the user named ".html_escape($matches[1]));
 				}
 				$event->add_querylet(new Querylet(
-					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)",
-					array($duser->id)));
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
+					array("ns_user_id"=>$duser->id)));
 			}
 			if(preg_match("/^downvoted_by=(.*)$/", $event->term, $matches)) {
 				$duser = User::by_name($matches[1]);
@@ -216,20 +216,20 @@ class NumericScore implements Extension {
 							"Can't find the user named ".html_escape($matches[1]));
 				}
 				$event->add_querylet(new Querylet(
-					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=-1)",
-					array($duser->id)));
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
+					array("ns_user_id"=>$duser->id)));
 			}
 			if(preg_match("/^upvoted_by_id=(\d+)$/", $event->term, $matches)) {
 				$iid = int_escape($matches[1]);
 				$event->add_querylet(new Querylet(
-					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=1)",
-					array($iid)));
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
+					array("ns_user_id"=>$iid)));
 			}
 			if(preg_match("/^downvoted_by_id=(\d+)$/", $event->term, $matches)) {
 				$iid = int_escape($matches[1]);
 				$event->add_querylet(new Querylet(
-					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=? AND score=-1)",
-					array($iid)));
+					"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
+					array("ns_user_id"=>$iid)));
 			}
 		}
 	}
