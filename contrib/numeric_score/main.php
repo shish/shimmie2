@@ -109,26 +109,25 @@ class NumericScore implements Extension {
 			if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
 				$t_images = $config->get_int("index_height") * $config->get_int("index_width");
 
-				//TODO: Somehow make popular_by_#/2012/12/31 > popular_by_#?day=31&month=12&year=2012 (So no problems with date formats)
 				//TODO: Add Popular_by_week.
 
 				//year
-				if(int_escape($event->get_arg(0)) == 0){
+				if(empty($_GET['year'])){
 					$year = date("Y");
 				}else{
-					$year = $event->get_arg(0);
+					$year = $_GET['year'];
 				}
 				//month
-				if(int_escape($event->get_arg(1)) == 0 || int_escape($event->get_arg(1)) > 12){
+				if(empty($_GET['month']) || int_escape($_GET['month']) > 12){
 					$month = date("m");
 				}else{
-					$month = $event->get_arg(1);
+					$month = $_GET['month'];
 				}
 				//day
-				if(int_escape($event->get_arg(2)) == 0 || int_escape($event->get_arg(2)) > 31){
+				if(empty($_GET['day']) || int_escape($_GET['day']) > 31){
 					$day = date("d");
 				}else{
-					$day = $event->get_arg(2);
+					$day = $_GET['day'];
 				}
 				$totaldate = $year."/".$month."/".$day;
 
@@ -150,7 +149,7 @@ class NumericScore implements Extension {
 					$sgra = array("month" => $month, "day" => $day);
 					$args = array_merge($agrs, $sgra);
 
-					$dte = array($totaldate, date("F jS, Y", (strtotime($totaldate))), "Y/m/d", "day");
+					$dte = array($totaldate, date("F jS, Y", (strtotime($totaldate))), "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d", "day");
 				}
 				if($event->page_matches("popular_by_month")){
 					$sql .=
@@ -161,11 +160,11 @@ class NumericScore implements Extension {
 					$args = array_merge($agrs, $sgra);
 
 					$title = date("F Y", (strtotime($totaldate)));
-					$dte = array($totaldate, $title, "Y/m", "month");
+					$dte = array($totaldate, $title, "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m", "month");
 				}
 				if($event->page_matches("popular_by_year")){
 					$sql .= "AND NOT numeric_score=0";
-					$dte = array($totaldate, $year, "Y", "year");
+					$dte = array($totaldate, $year, "\y\e\a\\r\=Y", "year");
 					$args = $agrs;
 				}
 				$sql .= " ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
