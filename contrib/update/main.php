@@ -4,40 +4,30 @@
  * Author: DakuTree <dakutree@codeanimu.net>
  * Link: http://www.codeanimu.net
  * License: GPLv2
- * Description: Update shimmie!
+ * Description: Shimmie updater!
  */
 class Update extends SimpleExtension {
 	public function onInitExt(Event $event) {
 		global $config;
-		$config->set_default_string("update_url", "http://nodeload.github.com/shish/shimmie2/zipball/master");
-		//TODO: Check current VERSION > use commit hash.
+		$config->set_default_string("update_url", "http://nodeload.github.com/shish/shimmie2/zipball/master"); //best to avoid using https
 		$config->set_default_string("commit_hash", "");
 	}
 
+	public function onSetupBuilding($event) {
+		global $config;
+		//Would prefer to use the admin panel for this.
+		//But since the admin panel is optional...kind of stuck to using this.
+		$sb = new SetupBlock("Update");
+		$sb->position = 75;
+		$sb->add_label("Current Commit: ".$config->get_string('commit_hash'));
+		$sb->add_text_option("update_url", "<br>Update URL: ");
+		$sb->add_label("<br><a href='".make_link('update')."'>Update</a>");
+		$event->panel->add_block($sb);
+	}
+
 	public function onPageRequest(Event $event) {
-		global $config, $page;
-		if($event->page_matches("update/a")) {
-			if($config->get_string("commit_hash") == ""){
-				$c_commit = "Unknown";
-			}else{
-				$c_commit = $config->get_string("commit_hash");
-			}
-			$tmp_filename = tempnam("/tmp", "shimmie_transload");
-
-			//$u_commit = ""; // Get redirected url > grab hash from new filename.
-
-			//Would prefer to use the admin panel for this.
-			//But since the admin panel is optional...kind of stuck to using this.
-			$html = "".make_form(make_link("update/b"))."
-					Current commit hash: $c_commit
-					<br><input id='updatebutton' type='submit' value='Update'>
-					</form>";
-
-			$page->add_block(new Block("Update", $html));
-		}
-
-		if($event->page_matches("update/b")) {
-			$html = "Updating?";
+		global $config, $user;
+		if($event->page_matches("update") && $user->is_admin()) {
 			$ok = $this->update_shimmie();
 		}
 	}
@@ -55,21 +45,29 @@ class Update extends SimpleExtension {
 				$html .= "commit: ".$matches[2];
 				$commit = $matches[2];
 				mkdir("./backup");
-				//Must be better way to do this...
+				$html .= "<br>backup folder created!";
+				$d_dir = "data/cache";
+				//This should empty the /data/cache/ folder.
+				if (is_dir($d_dir)) {
+					$objects = scandir($d_dir);
+					foreach ($objects as $object) {
+						if ($object != "." && $object != "..") {
+							if (filetype($d_dir."/".$object) == "dir") rmdir($d_dir."/".$object); else unlink($d_dir."/".$object);
+						}
+					}
+					reset($objects);
+					$html .= "<br>data folder emptied!";
+				}
+				copy ("./config.php", "./backup/config.php");//Although this stays the same, will keep backup just incase.
 				//FIXME: Somehow get rid of this massive rename list.
 				rename ("./core", "./backup/core");
 				rename ("./".$matches[0]."/core", "./core");
-				rmdir("data");
-				mkdir("data");
-				rename ("./ext", "./backup/ext");
-				rename ("./".$matches[0]."/ext", "./ext");
 				rename ("./lib", "./backup/lib");
 				rename ("./".$matches[0]."/lib", "./lib");
 				rename ("./themes", "./backup/themes");
 				rename ("./".$matches[0]."/themes", "./themes");
 				rename ("./.htaccess", "./backup/.htaccess");
 				rename ("./".$matches[0]."/.htaccess", "./.htaccess");
-				copy ("./config.php", "./backup/config.php");//Although this stays the same, will keep backup just incase.
 				rename ("./doxygen.conf", "./backup/doxygen.conf");
 				rename ("./".$matches[0]."/doxygen.conf", "./doxygen.conf");
 				rename ("./index.php", "./backup/index.php");
@@ -80,8 +78,22 @@ class Update extends SimpleExtension {
 				rename ("./".$matches[0]."/ext", "./ext");
 				rename ("./contrib", "./backup/contrib");
 				rename ("./".$matches[0]."/contrib", "./contrib");
-				rmdir ("./".$matches[0]);
+				$html .= "<br>old shimmie setup has been moved to /backup/ (excluding images/thumbs)!";
+				if (is_dir($matches[0])) {
+					$objects = scandir($matches[0]);
+					foreach ($objects as $object) {
+						if ($object != "." && $object != "..") {
+							if (filetype($matches[0]."/".$object) == "dir") rmdir($matches[0]."/".$object); else unlink($matches[0]."/".$object);
+						}
+					}
+					reset($objects);
+					rmdir($matches[0]);
+					$html .= "<br>".$matches[0]." deleted!";
+				}
+				$html .= "<br>shimmie updated (although you may have gotten errors, it should have worked!";
+				$html .= "<br>due to the way shimmie loads extensions, all optional extensions have been disabled";
 				$config->set_string("commit_hash", $commit);
+				$html .= "<br>new commit_hash has been set!";
 			}else{
 				$html .= "Error! Folder does not exist!?"; //Although this should be impossible, shall have it anyway.
 			}
@@ -91,13 +103,13 @@ class Update extends SimpleExtension {
 				$zip->extractTo('./');
 				$zip->close();
 				$html .= "extracted!";
-				$html .= "<br>refresh the page to continue!";
+				$html .= "<br><a href='javascript:history.go(0)'>refresh</a> the page to continue!";
 				unlink($mfile); //Deletes master.zip
 			} else {
 				$html .= "failed!";
 			}
 		}else{ //#1
-			//TODO: Add other transload_engines!
+			//Taken from the upload ext.
 			if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
 				$ch = curl_init($url);
 				$fp = fopen($mfile, "w");
@@ -110,8 +122,52 @@ class Update extends SimpleExtension {
 				curl_exec($ch);
 				curl_close($ch);
 				fclose($fp);
-				$html .= "downloaded!";
-				$html .= "<br>refresh the page to continue!";
+				if(file_exists($mfile)){
+					$html .= "downloaded!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> the page to continue!";
+				}else{
+					$html .= "download failed!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> to try again!";
+					$html .= "<br>if you keep having this problem, you may have a problem with your transload engine!";
+				}
+			}elseif($config->get_string("transload_engine") == "wget") {
+				//this doesn't work?
+				$s_url = escapeshellarg($url);
+				system("wget $s_url --output-document=$mfile");
+				if(file_exists($mfile)){
+					$html .= "downloaded!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> the page to continue!";
+				}else{
+					$html .= "download failed!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> to try again!";
+					$html .= "<br>if you keep having this problem, you may have a problem with your transload engine!";
+				}
+			}elseif($config->get_string("transload_engine") == "fopen") {
+				$fp = @fopen($url, "r");
+				if(!$fp) {
+					return false;
+				}
+				$data = "";
+				$length = 0;
+				while(!feof($fp) && $length <= $config->get_int('upload_size')) {
+					$data .= fread($fp, 8192);
+					$length = strlen($data);
+				}
+				fclose($fp);
+
+				$fp = fopen($mfile, "w");
+				fwrite($fp, $data);
+				fclose($fp);
+				if(file_exists($mfile)){
+					$html .= "downloaded!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> the page to continue!";
+				}else{
+					$html .= "download failed!";
+					$html .= "<br><a href='javascript:history.go(0)'>refresh</a> to try again!";
+					$html .= "<br>if you keep having this problem, you may have a problem with your transload engine!";
+				}
+			}elseif($config->get_string("transload_engine") == "none"){
+				$html .= "no transload engine set!";
 			}
 		}
 

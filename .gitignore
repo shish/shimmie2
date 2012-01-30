@@ -63,6 +63,7 @@ ext/text_score
 ext/tips
 ext/twitter_soc
 ext/upload_cmd
+ext/update
 ext/wiki
 ext/word_filter
 ext/zoom
