@@ -255,7 +255,10 @@ class Image {
 		$image_ilink = $config->get_string('image_ilink');  // store a copy for speed.
 
 		if( !empty($image_ilink) ) {	/* empty is faster than strlen */
-			return $this->parse_link_template(make_link($image_ilink));
+			if(!startsWith($image_ilink, "http://") && !startsWith($image_ilink, "/")) {
+				$image_ilink = make_link($image_ilink);
+			}
+			return $this->parse_link_template($image_ilink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
@@ -287,6 +290,9 @@ class Image {
 		$image_tlink = $config->get_string('image_tlink'); // store a copy for speed.
 		
 		if( !empty($image_tlink) ) {	/* empty is faster than strlen */
+			if(!startsWith($image_tlink, "http://") && !startsWith($image_tlink, "/")) {
+				$image_tlink = make_link($image_tlink);
+			}
 			return $this->parse_link_template($image_tlink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
