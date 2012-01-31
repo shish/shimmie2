@@ -15,10 +15,6 @@
  */
 
 class MassTagger extends SimpleExtension {
-	public function onInitExt($event) {
-		return;
-	}
-
 	public function onPostListBuilding($event) {
 		global $config, $page, $user;
 		
@@ -36,7 +32,6 @@ class MassTagger extends SimpleExtension {
 	}
 	
 	private function _apply_mass_tags( $config, $page, $user, $event ) {
-		
 		if( !isset($_POST['ids']) or !isset($_POST['tag']) ) return;
 		
 		$tag = $_POST['tag'];
@@ -53,8 +48,6 @@ class MassTagger extends SimpleExtension {
 		
 		$page->set_mode("redirect");
 		$page->set_redirect(make_link("post/list"));
-		
 	}
-	
 }
 ?>
