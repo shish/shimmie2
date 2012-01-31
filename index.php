@@ -74,10 +74,12 @@ _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", 'trunk');      // string   shimmie version
 _d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
-_d("TIMEZONE", 'UTC');       // string   timezone
+_d("TIMEZONE", null);        // string   timezone
 
 // set up and purify the environment
-date_default_timezone_set(TIMEZONE);
+if(TIMEZONE) {
+	date_default_timezone_set(TIMEZONE);
+}
 
 require_once "core/util.inc.php";
 require_once "lib/context.php";
