@@ -45,7 +45,7 @@ class AliasEditor extends SimpleExtension {
 			else if($event->get_arg(0) == "remove") {
 				if($user->is_admin()) {
 					if(isset($_POST['oldtag'])) {
-						$database->Execute("DELETE FROM aliases WHERE oldtag=?", array($_POST['oldtag']));
+						$database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", array("oldtag" => $_POST['oldtag']));
 						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag']);
 
 						$page->set_mode("redirect");
@@ -103,12 +103,12 @@ class AliasEditor extends SimpleExtension {
 
 	public function onAddAlias(AddAliasEvent $event) {
 		global $database;
-		$pair = array($event->oldtag, $event->newtag);
-		if($database->get_row("SELECT * FROM aliases WHERE oldtag=? AND lower(newtag)=lower(?)", $pair)) {
+		$pair = array("oldtag" => $event->oldtag, "newtag" => $event->newtag);
+		if($database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)) {
 			throw new AddAliasException("That alias already exists");
 		}
 		else {
-			$database->Execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $pair);
+			$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
 			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}");
 		}
 	}
@@ -134,7 +134,7 @@ class AliasEditor extends SimpleExtension {
 		foreach(explode("\n", $csv) as $line) {
 			$parts = explode(",", $line);
 			if(count($parts) == 2) {
-				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(?, ?)", $parts);
+				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", array("oldtag" => $parts[0], "newtag" => $parts[1]);
 			}
 		}
 	}

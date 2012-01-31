@@ -185,7 +185,7 @@ class NumericScore implements Extension {
 		}
 
 		if($event instanceof ImageDeletionEvent) {
-			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=?", array($event->image->id));
+			$database->execute("DELETE FROM numeric_score_votes WHERE image_id=:id", array("id" => $event->image->id));
 		}
 
 		if($event instanceof ParseLinkTemplateEvent) {
@@ -239,8 +239,8 @@ class NumericScore implements Extension {
 		global $config;
 
 		if($config->get_int("ext_numeric_score_version") < 1) {
-			$database->Execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");
-			$database->Execute("CREATE INDEX images__numeric_score ON images(numeric_score)");
+			$database->execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");
+			$database->execute("CREATE INDEX images__numeric_score ON images(numeric_score)");
 			$database->create_table("numeric_score_votes", "
 				image_id INTEGER NOT NULL,
 				user_id INTEGER NOT NULL,
@@ -253,24 +253,24 @@ class NumericScore implements Extension {
 			$config->set_int("ext_numeric_score_version", 1);
 		}
 		if($config->get_int("ext_numeric_score_version") < 2) {
-			$database->Execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, score)");
+			$database->execute("CREATE INDEX numeric_score_votes__user_votes ON numeric_score_votes(user_id, score)");
 			$config->set_int("ext_numeric_score_version", 2);
 		}
 	}
 
 	private function add_vote($image_id, $user_id, $score) {
 		global $database;
-		$database->Execute(
-			"DELETE FROM numeric_score_votes WHERE image_id=? AND user_id=?",
-			array($image_id, $user_id));
+		$database->execute(
+			"DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",
+			array("imageid" => $image_id, "userid" => $user_id));
 		if($score != 0) {
-			$database->Execute(
-				"INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(?, ?, ?)",
-				array($image_id, $user_id, $score));
+			$database->execute(
+				"INSERT INTO numeric_score_votes(image_id, user_id, score) VALUES(:imageid, :userid, :score)",
+				array("imageid" => $image_id, "userid" => $user_id, "score" => $score));
 		}
 		$database->Execute(
-			"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=?) WHERE id=?",
-			array($image_id, $image_id));
+			"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=:imageid) WHERE id=:id",
+			array("imageid" => $image_id, "id" => $image_id));
 	}
 }
 ?>
