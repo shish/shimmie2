@@ -4,7 +4,7 @@ class MP3FileHandlerTheme extends Themelet {
 	public function display_image(Page $page, Image $image) {
 		$data_href = get_base_href();
 		$ilink = $image->get_image_link();
-		$fname = $image->filename; //Most of the time this will be the title/artist of the song.
+		$fname = url_escape($image->filename); //Most of the time this will be the title/artist of the song.
 		$html = "
 			<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'
 			        codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0'
