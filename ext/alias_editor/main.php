@@ -134,7 +134,7 @@ class AliasEditor extends SimpleExtension {
 		foreach(explode("\n", $csv) as $line) {
 			$parts = explode(",", $line);
 			if(count($parts) == 2) {
-				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", array("oldtag" => $parts[0], "newtag" => $parts[1]);
+				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", array("oldtag" => $parts[0], "newtag" => $parts[1]));
 			}
 		}
 	}
