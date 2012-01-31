@@ -374,9 +374,12 @@ class CommentList extends SimpleExtension {
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
+		if($database->engine->name == "mysql") $window_sql = "interval $window minute";
+		else $window_sql = "interval '$window minute'";
+
 		// window doesn't work as an SQL param because it's inside quotes >_<
 		$result = $database->get_all("SELECT * FROM comments WHERE owner_ip = :remote_ip ".
-				"AND posted > now() - interval '$window minute'",
+				"AND posted > now() - $window_sql",
 				Array("remote_ip"=>$_SERVER['REMOTE_ADDR']));
 
 		return (count($result) >= $max);
