@@ -262,6 +262,7 @@ class IPBan extends SimpleExtension {
 		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (:ip, :reason, :end, :admin_id)";
 		$database->Execute($sql, array("ip"=>$ip, "reason"=>$reason, "end"=>strtotime($end), "admin_id"=>$user->id));
 		$database->cache->delete("ip_bans");
+		log_info("ipban", "'$user->name' has banned '$ip' because '$reason' until '$end'");
 	}
 // }}}
 }

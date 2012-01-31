@@ -845,6 +845,12 @@ function get_debug_info() {
 	else {
 		$i_mem = "???";
 	}
+
+	if($config->get_string("commit_hash") == ""){
+		$commit = "";
+	}else{
+		$commit = " (".$config->get_string("commit_hash").")";
+	}
 	$time = sprintf("%5.2f", microtime(true) - $_load_start);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
@@ -854,7 +860,7 @@ function get_debug_info() {
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
-	$debug .= "; Shimmie version ". VERSION; // .", SCore Version ". SCORE_VERSION;
+	$debug .= "; Shimmie version ". VERSION . $commit; // .", SCore Version ". SCORE_VERSION;
 
 	return $debug;
 }
