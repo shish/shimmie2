@@ -115,22 +115,22 @@ try {
 	ctx_log_start("Loading themelets");
 	// load the theme parts
 	$_theme = $config->get_string("theme", "default");
-	if(!file_exists("themes/$_theme")) $_theme = "default";
-	if(file_exists("themes/$_theme/custompage.class.php")) require_once "themes/$_theme/custompage.class.php";
-	require_once "themes/$_theme/layout.class.php";
-	require_once "themes/$_theme/themelet.class.php";
+	if(!file_exists('themes/'.$_theme)) $_theme = "default";
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) require_once 'themes/'.$_theme.'/custompage.class.php';
+	require_once 'themes/'.$_theme.'/layout.class.php';
+	require_once 'themes/'.$_theme.'/themelet.class.php';
 
 	$themelets = glob("ext/*/theme.php");
 	foreach($themelets as $filename) {
 		require_once $filename;
 	}
 
-	$custom_themelets = glob("themes/$_theme/*.theme.php");
+	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
 	if($custom_themelets) {
 		$m = array();
 		foreach($custom_themelets as $filename) {
-			if(preg_match("/themes\/$_theme\/(.*)\.theme\.php/",$filename,$m)
-					&& in_array("ext/{$m[1]}/theme.php", $themelets)) {
+			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
+					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
 				require_once $filename;
 			}
 		}
@@ -224,17 +224,17 @@ catch(Exception $e) {
 	$message = $e->getMessage();
 	//$trace = var_dump($e->getTrace());
 	header("HTTP/1.0 500 Internal Error");
-	print <<<EOD
+	echo '
 <html>
 	<head>
-		<title>Internal error - SCore-$version</title>
+		<title>Internal error - SCore-'.$version.'</title>
 	</head>
 	<body>
 		<h1>Internal Error</h1>
-		<p>$message
+		<p>'.$message.'
 	</body>
 </html>
-EOD;
+';
 	if($database && $database->db) $database->db->rollback();
 	ctx_log_ender();
 }

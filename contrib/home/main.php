@@ -67,7 +67,8 @@ class Home extends SimpleExtension {
 		$num_comma = number_format($total);
 
 		$counter_text = "";
-		for($n=0; $n<strlen($strtotal); $n++) {
+		$length = strlen($strtotal);
+		for($n=0; $n<$length; $n++) {
 			$cur = $strtotal[$n];
 			$counter_text .= " <img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
 		}

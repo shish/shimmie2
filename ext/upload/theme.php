@@ -16,7 +16,9 @@ class UploadTheme extends Themelet {
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 		// Uploader 2.0!
 		$upload_list = "";
-		for($i=0; $i<$config->get_int('upload_count'); $i++)
+		$upload_count = $config->get_int('upload_count');
+		
+		for($i=0; $i<$upload_count; $i++)
 		{
 			$a=$i+1;
 			$s=$i-1;
@@ -243,7 +245,9 @@ class UploadTheme extends Themelet {
 		global $config;
 
 		$upload_list = "";
-		for($i=0; $i<$config->get_int('upload_count'); $i++) {
+		$upload_count = $config->get_int('upload_count');
+		
+		for($i=0; $i<$upload_count; $i++) {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
 			$upload_list .= "<input size='10' ".

@@ -147,7 +147,7 @@ class Index extends SimpleExtension {
 				}
 				else {
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("post/list/$search/1"));
+					$page->set_redirect(make_link('post/list/'.$search.'/1'));
 				}
 				return;
 			}
@@ -171,7 +171,7 @@ class Index extends SimpleExtension {
 			}
 			else if(count($search_terms) > 0 && count($images) == 1 && $page_number == 1) {
 				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/view/{$images[0]->id}"));
+				$page->set_redirect(make_link('post/view/'.$images[0]->id));
 			}
 			else {
 				send_event(new PostListBuildingEvent($search_terms));
@@ -197,15 +197,16 @@ class Index extends SimpleExtension {
 
 	public function onSearchTermParse($event) {
 		$matches = array();
-		if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
+		// check for tags first as tag based searches are more common.
+		if(preg_match("/tags(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
-			$event->add_querylet(new Querylet("width $cmp :width AND height $cmp :height", $args));
+			$tags = $matches[2];
+			$event->add_querylet(new Querylet('images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) '.$cmp.' '.$tags.')'));
 		}
 		else if(preg_match("/^ratio(<|>|<=|>=|=)(\d+):(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
 			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
-			$event->add_querylet(new Querylet("width / height $cmp :width / :height", $args));
+			$event->add_querylet(new Querylet('width / height '.$cmp.' :width / :height', $args));
 		}
 		else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
 			$col = $matches[1];
@@ -215,24 +216,24 @@ class Index extends SimpleExtension {
 		}
 		else if(preg_match("/^(hash|md5)=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
 			$hash = strtolower($matches[2]);
-			$event->add_querylet(new Querylet("images.hash = '$hash'"));
+			$event->add_querylet(new Querylet('images.hash = "'.$hash.'"'));
 		}
 		else if(preg_match("/^(filetype|ext)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$ext = strtolower($matches[2]);
-			$event->add_querylet(new Querylet("images.ext = '$ext'"));
+			$event->add_querylet(new Querylet('images.ext = "'.$ext.'"'));
 		}
 		else if(preg_match("/^(filename|name)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$filename = strtolower($matches[2]);
-			$event->add_querylet(new Querylet("images.filename LIKE '%$filename%'"));
+			$event->add_querylet(new Querylet('images.filename LIKE "%'.$filename.'%"'));
 		}
 		else if(preg_match("/^posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)$/", $event->term, $matches)) {
 			$val = str_replace("*", "%", $matches[1]);
-			$event->add_querylet(new Querylet("images.posted LIKE '%$val%'"));
+			$event->add_querylet(new Querylet('images.posted LIKE "%'.$val.'%"'));
 		}
-		else if(preg_match("/tags(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
+		else if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$tags = $matches[2];
-			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) $cmp $tags)"));
+			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
+			$event->add_querylet(new Querylet('width '.$cmp.' :width AND height '.$cmp.' :height', $args));
 		}
 	}
 }

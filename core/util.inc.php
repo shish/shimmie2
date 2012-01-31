@@ -21,6 +21,10 @@ function html_escape($input) {
  * @retval int
  */
 function int_escape($input) {
+	/*
+	 Side note, Casting to an integer is FASTER than using intval.
+	 http://hakre.wordpress.com/2010/05/13/php-casting-vs-intval/
+	*/
 	return (int)$input;
 }
 
@@ -56,13 +60,13 @@ function sql_escape($input) {
 function bool_escape($input) {
 	$input = strtolower($input);
 	return (
-		$input == "y" ||
-		$input == "yes" ||
-		$input == "t" ||
-		$input == "true" ||
-		$input == "on" ||
-		$input == 1 ||
-		$input == true
+		$input === "y" ||
+		$input === "yes" ||
+		$input === "t" ||
+		$input === "true" ||
+		$input === "on" ||
+		$input === 1 ||
+		$input === true
 	);
 }
 
@@ -86,7 +90,7 @@ function parse_shorthand_int($limit) {
 		return (int)$limit;
 	}
 
-	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', "$limit", $m)) {
+	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', (string)$limit, $m)) {
 		$value = $m[1];
 		if (isset($m[2])) {
 			switch(strtolower($m[2])) {
@@ -118,7 +122,7 @@ function to_shorthand_int($int) {
 		return sprintf("%.1fKB", $int / 1024);
 	}
 	else {
-		return "$int";
+		return (string)$int;
 	}
 }
 
@@ -214,17 +218,17 @@ function make_link($page=null, $query=null) {
 	}
 
 	if(is_null($query)) {
-		return str_replace("//", "/", "$base/$page");
+		return str_replace("//", "/", $base.'/'.$page );
 	}
 	else {
 		if(strpos($base, "?")) {
-			return "$base/$page&$query";
+			return $base .'/'. $page .'&'. $query;
 		}
 		else if(strpos($query, "#") === 0) {
-			return "$base/$page$query";
+			return $base .'/'. $page . $query;
 		}
 		else {
-			return "$base/$page?$query";
+			return $base .'/'. $page .'?'. $query;
 		}
 	}
 }
@@ -293,14 +297,14 @@ function make_http($link) {
 function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
 	$auth = $user->get_auth_html();
-	$extra = empty($form_id) ? '' : " id='$form_id'";
+	$extra = empty($form_id) ? '' : 'id="'. $form_id .'"';
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
 	}
 	if($onsubmit) {
-		$extra .= " onsubmit='$onsubmit'";
+		$extra .= ' onsubmit="'.$onsubmit.'"';
 	}
-	return "<form action='$target' method='$method'$extra>$auth";
+	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
 }
 
 /**
@@ -310,7 +314,7 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 function theme_file($filepath) {
 	global $config;
 	$theme = $config->get_string("theme","default");
-	return make_link("themes/$theme/$filepath");
+	return make_link('themes/'.$theme.'/'.$filepath);
 }
 
 
@@ -412,7 +416,7 @@ function _count_execs($db, $sql, $inputarray) {
 	if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
-			if(is_array($inputarray)) {
+			if(isset($inputarray) && is_array($inputarray)) {
 				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
 			}
 			else {
@@ -443,12 +447,12 @@ function _count_execs($db, $sql, $inputarray) {
  */
 function get_theme_object(Extension $class, $fatal=true) {
 	$base = get_class($class);
-	if(class_exists("Custom{$base}Theme")) {
-		$class = "Custom{$base}Theme";
+	if(class_exists('Custom'.$base.'Theme')) {
+		$class = 'Custom'.$base.'Theme';
 		return new $class();
 	}
-	elseif ($fatal || class_exists("{$base}Theme")) {
-		$class = "{$base}Theme";
+	elseif ($fatal || class_exists($base.'Theme')) {
+		$class = $base.'Theme';
 		return new $class();
 	} else {
 		return false;
@@ -552,14 +556,14 @@ function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
 	$ok_var = null;
 	foreach($possible_vars as $var) {
-		if(substr($_SERVER[$var], -4) == '.php') {
+		if(substr($_SERVER[$var], -4) === '.php') {
 			$ok_var = $_SERVER[$var];
 			break;
 		}
 	}
 	assert(!empty($ok_var));
 	$dir = dirname($ok_var);
-	if($dir == "/" || $dir == "\\") $dir = "";
+	if($dir === "/" || $dir === "\\") $dir = "";
 	return $dir;
 }
 
@@ -579,10 +583,10 @@ function warehouse_path($base, $hash, $create=true) {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {
-		$pa = "$base/$ab/$cd/$hash";
+		$pa = $base.'/'.$ab.'/'.$cd.'/'.$hash;
 	}
 	else {
-		$pa = "$base/$ab/$hash";
+		$pa = $base.'/'.$ab.'/'.$hash;
 	}
 	if($create && !file_exists(dirname($pa))) mkdir(dirname($pa), 0755, true);
 	return $pa;
@@ -938,7 +942,8 @@ function _sanitise_environment() {
  */
 function _decaret($str) {
 	$out = "";
-	for($i=0; $i<strlen($str); $i++) {
+	$length = strlen($str);
+	for($i=0; $i<$length; $i++) {
 		if($str[$i] == "^") {
 			$i++;
 			if($str[$i] == "^") $out .= "^";
@@ -985,7 +990,7 @@ function _get_page_request() {
 	global $config;
 	$args = _get_query_parts();
 
-	if(count($args) == 0 || strlen($args[0]) == 0) {
+	if( empty($args) || strlen($args[0]) === 0) {
 		$args = explode('/', $config->get_string('front_page'));
 	}
 
@@ -1074,7 +1079,7 @@ function _start_cache() {
 				}
 				else {
 					header("Content-type: text/html");
-					header("Last-Modified: $gmdate_mod");
+					header('Last-Modified: '.$gmdate_mod);
 					$zdata = @file_get_contents($_cache_filename);
 					if(CACHE_MEMCACHE) {
 						$_cache_memcache->set($_cache_hash, $zdata, 0, 600);

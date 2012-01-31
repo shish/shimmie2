@@ -114,7 +114,7 @@ class CommentList extends SimpleExtension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("comment")) {
-			if($event->get_arg(0) == "add") {
+			if($event->get_arg(0) === "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
 					try {
 						$cpe = new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']);
@@ -127,10 +127,10 @@ class CommentList extends SimpleExtension {
 					}
 				}
 			}
-			else if($event->get_arg(0) == "delete") {
+			else if($event->get_arg(0) === "delete") {
 				if($user->is_admin()) {
 					// FIXME: post, not args
-					if($event->count_args() == 3) {
+					if($event->count_args() === 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
 						$page->set_mode("redirect");
 						if(!empty($_SERVER['HTTP_REFERER'])) {
@@ -145,7 +145,7 @@ class CommentList extends SimpleExtension {
 					$this->theme->display_permission_denied($page);
 				}
 			}
-			else if($event->get_arg(0) == "list") {
+			else if($event->get_arg(0) === "list") {
 				$page_num = int_escape($event->get_arg(1));
 				$this->build_page($page_num);
 			}
@@ -369,7 +369,7 @@ class CommentList extends SimpleExtension {
 		global $database;
 
 		// sqlite fails at intervals
-		if($database->engine->name == "sqlite") return false;
+		if($database->engine->name === "sqlite") return false;
 
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));

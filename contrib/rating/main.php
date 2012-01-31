@@ -114,7 +114,8 @@ class Ratings implements Extension {
 			if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
 				$sqes = $matches[1];
 				$arr = array();
-				for($i=0; $i<strlen($sqes); $i++) {
+				$length = strlen($sqes);
+				for($i=0; $i<$length; $i++) {
 					$arr[] = "'" . $sqes[$i] . "'";
 				}
 				$set = join(', ', $arr);
@@ -157,7 +158,8 @@ class Ratings implements Extension {
 
 	public static function privs_to_sql($sqes) {
 		$arr = array();
-		for($i=0; $i<strlen($sqes); $i++) {
+		$length = strlen($sqes);
+		for($i=0; $i<$length; $i++) {
 			$arr[] = "'" . $sqes[$i] . "'";
 		}
 		$set = join(', ', $arr);

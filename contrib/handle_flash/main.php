@@ -56,7 +56,8 @@ class FlashFileHandler extends DataHandlerExtension {
 
 	private function str_to_binarray($string) {
 		$binary = array();
-		for($j=0; $j<strlen($string); $j++) {
+		$length = strlen($string);
+		for($j=0; $j<$length; $j++) {
 			$c = ord($string[$j]);
 			for($i=7; $i>=0; $i--) {
 				$binary[] = ($c >> $i) & 0x01;
