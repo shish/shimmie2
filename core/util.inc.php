@@ -1119,11 +1119,14 @@ function _start_coverage() {
 
 function _end_coverage() {
 	if(function_exists("xdebug_get_code_coverage")) {
-		if(!file_exists("data/coverage")) mkdir("data/coverage");
+		// Absolute path is necessary because working directory 
+		// inside register_shutdown_function is unpredictable.
+		$absolute_path = dirname(dirname(__FILE__)) . "/data/coverage";
+		if(!file_exists($absolute_path)) mkdir($absolute_path);
 		$n = 0;
 		$t = time();
-		while(file_exists("data/coverage/$t.$n.log")) $n++;
-		file_put_contents("data/coverage/$t.$n.log", serialize(xdebug_get_code_coverage()));
+		while(file_exists("$absolute_path/$t.$n.log")) $n++;
+		file_put_contents("$absolute_path/$t.$n.log", serialize(xdebug_get_code_coverage()));
 	}
 }
 ?>
