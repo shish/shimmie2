@@ -409,7 +409,7 @@ function check_cli() {
  */
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
-	if(DEBUG_SQL) {
+	if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
 			if(is_array($inputarray)) {
