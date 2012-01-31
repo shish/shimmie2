@@ -88,6 +88,10 @@ class MySQL extends DBEngine {
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
 
+	public function init($db) {
+		$db->query("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+	}
+
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "INET", $data);
