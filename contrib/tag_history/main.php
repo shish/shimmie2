@@ -56,7 +56,7 @@ class Tag_History extends SimpleExtension {
 	}
 		
 	public function onPageRequest($event) {
-		global $config, $page;
+		global $config, $page, $user;
 
 		if ($event->page_matches("tag_history")) {
 			if($event->get_arg(0) == "revert") {
