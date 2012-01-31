@@ -1,0 +1,8 @@
+
+.zoom{ position:absolute;display:none;margin:-110px 27px; }
+.thumbblock:hover .zoom{ display:block; }
+.zoom:hover{ border: 3px solid blue; }
+/*.zoom img:hover{ background:url(/contrib/simpletest/data/pbx_screenshot.jpg) no-repeat;}*/
+
+.zoom img { width: 100px; height: 100px; }
+#mass_tagger_controls { display:none; }

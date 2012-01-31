@@ -187,7 +187,7 @@ class MemcacheCache implements CacheEngine {
 	var $memcache=null, $hits=0, $misses=0;
 
 	public function __construct($args) {
-		$hp = split(":", $args);
+		$hp = explode(":", $args);
 		if(class_exists("Memcache")) {
 			$this->memcache = new Memcache;
 			@$this->memcache->pconnect($hp[0], $hp[1]);

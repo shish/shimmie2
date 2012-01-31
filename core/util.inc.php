@@ -990,7 +990,7 @@ function _get_page_request() {
 	global $config;
 	$args = _get_query_parts();
 
-	if( empty($args) || strlen($args[0]) === 0) {
+	if(empty($args) || strlen($args[0]) === 0) {
 		$args = explode('/', $config->get_string('front_page'));
 	}
 

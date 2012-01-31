@@ -106,7 +106,7 @@ class SimpleUrl {
         }
         if (preg_match('/^([^\/]*)@(.*)/', $url, $matches)) {
             $url = $prefix . $matches[2];
-            $parts = split(":", $matches[1]);
+            $parts = explode(":", $matches[1]);
             return array(
                     urldecode($parts[0]),
                     isset($parts[1]) ? urldecode($parts[1]) : false);
