@@ -18,7 +18,7 @@ class Tag_History extends SimpleExtension {
 			$this->install();
 		}
 	}
-		
+
 	public function onAdminBuildingEvent($event) {
 		global $user;
 
@@ -248,6 +248,18 @@ class Tag_History extends SimpleExtension {
 				JOIN users ON tag_histories.user_id = users.id
 				ORDER BY tag_histories.id DESC
 				LIMIT 100");
+		return ($row ? $row : array());
+	}
+	
+	/* This doesn't actually get _ALL_ IPs as it limits to 1000. */
+	public function get_all_user_ips()
+	{
+		global $database;
+		$row = $database->get_all("
+				SELECT DISTINCT user_ip
+				FROM tag_histories
+				ORDER BY tag_histories.user_ip DESC
+				LIMIT 1000");
 		return ($row ? $row : array());
 	}
 	
