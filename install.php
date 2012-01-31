@@ -119,6 +119,7 @@ if(is_readable("config.php")) {
 	exit;
 }
 require_once "core/compat.inc.php";
+require_once "core/util.inc.php";
 require_once "core/database.class.php";
 
 do_install();
@@ -160,6 +161,7 @@ function do_install() { // {{{
 	if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		global $database_dsn;
 		$database_dsn = "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}";
+		define('DATABASE_DSN', $database_dsn);
 		install_process();
 	}
 	else if(file_exists("auto_install.conf")) {
@@ -362,9 +364,10 @@ function build_dirs() { // {{{
 } // }}}
 function write_config() { // {{{
 	global $database_dsn;
-	$file_content = "<"+"?php\n"+
-	"define('DATABASE_DSN', '$database_dsn');\n"+
-	"?"+">";
+
+	$file_content = '<' . '?php' . "\n" .
+			"define('DATABASE_DSN', '$database_dsn');\n" .
+			'?' . '>';
 	
 	if(is_writable("./") && file_put_contents("config.php", $file_content)) {
 		assert(file_exists("config.php"));
