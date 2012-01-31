@@ -251,11 +251,11 @@ class Image {
 	 */
 	public function get_image_link() {
 		global $config;
-		
+
 		$image_ilink = $config->get_string('image_ilink');  // store a copy for speed.
-		
+
 		if( !empty($image_ilink) ) {	/* empty is faster than strlen */
-			return $this->parse_link_template($image_ilink);
+			return $this->parse_link_template(make_link($image_ilink));
 		}
 		else if($config->get_bool('nice_urls', false)) {
 			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));

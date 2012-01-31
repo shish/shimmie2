@@ -29,6 +29,7 @@ EOD
 		$main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
 		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
 		$counter_html = empty($counter_text)  ? "" : "<div class='space' id='counter'>$counter_text</div>";
+		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> &ndash;";
 		$search_html = "
 			<div class='space' id='search'>
 				<form action='".make_link("post/list")."' method='GET'>
@@ -47,7 +48,7 @@ EOD
 			$counter_html
 			<div class='space' id='foot'>
 				<small><small>
-				<a href='mailto:$contact_link'>Contact</a> &ndash; Serving $num_comma posts &ndash;
+				$contact_link Serving $num_comma posts &ndash;
 				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
 				</small></small>
 			</div>
