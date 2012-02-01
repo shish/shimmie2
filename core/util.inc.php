@@ -222,10 +222,10 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace("/index.php", "", $full);
+		$base = str_replace("/".basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
-		$base = "./index.php?q=";
+		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
 	}
 
 	if(is_null($query)) {
@@ -955,16 +955,16 @@ function _sanitise_environment() {
 	}
 }
 
-function _load_themelets($_theme) {
-	ctx_log_start("Loading themelets");
+function _get_themelet_files($_theme) {
+	$themelets = array();
 
-	if(file_exists('themes/'.$_theme.'/custompage.class.php')) require_once 'themes/'.$_theme.'/custompage.class.php';
-	require_once 'themes/'.$_theme.'/layout.class.php';
-	require_once 'themes/'.$_theme.'/themelet.class.php';
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $themelets[] = 'themes/'.$_theme.'/custompage.class.php';
+	$themelets[] = 'themes/'.$_theme.'/layout.class.php';
+	$themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
-	$themelets = glob("ext/*/theme.php");
-	foreach($themelets as $filename) {
-		require_once $filename;
+	$themelet_files = glob("ext/*/theme.php");
+	foreach($themelet_files as $filename) {
+		$themelets[] = $filename;
 	}
 
 	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
@@ -973,12 +973,12 @@ function _load_themelets($_theme) {
 		foreach($custom_themelets as $filename) {
 			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
 					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
-				require_once $filename;
+				$themelets[] = $filename;
 			}
 		}
 	}
 
-	ctx_log_endok();
+	return $themelets;
 }
 
 function _load_extensions() {

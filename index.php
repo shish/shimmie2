@@ -90,9 +90,13 @@ try {
 	ctx_log_endok();
 
 	// load the theme parts
+	ctx_log_start("Loading themelets");
 	$_theme = $config->get_string("theme", "default");
-	if(!file_exists('themes/'.$_theme)) $_theme = "default";
-	_load_themelets($_theme);
+	if(!file_exists("themes/$_theme")) $_theme = "default";
+	foreach(_get_themelet_files($_theme) as $themelet) {
+		require_once $themelet;
+	}
+	ctx_log_endok();
 
 	_load_extensions();
 	ctx_log_endok("Initialisation");
