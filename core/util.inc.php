@@ -935,6 +935,10 @@ function _stripslashes_r($arr) {
 }
 
 function _sanitise_environment() {
+	if(TIMEZONE) {
+		date_default_timezone_set(TIMEZONE);
+	}
+
 	if(DEBUG) {
 		error_reporting(E_ALL);
 	}
@@ -949,6 +953,120 @@ function _sanitise_environment() {
 		$_POST = _stripslashes_r($_POST);
 		$_COOKIE = _stripslashes_r($_COOKIE);
 	}
+}
+
+function _load_themelets($_theme) {
+	ctx_log_start("Loading themelets");
+
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) require_once 'themes/'.$_theme.'/custompage.class.php';
+	require_once 'themes/'.$_theme.'/layout.class.php';
+	require_once 'themes/'.$_theme.'/themelet.class.php';
+
+	$themelets = glob("ext/*/theme.php");
+	foreach($themelets as $filename) {
+		require_once $filename;
+	}
+
+	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
+	if($custom_themelets) {
+		$m = array();
+		foreach($custom_themelets as $filename) {
+			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
+					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
+				require_once $filename;
+			}
+		}
+	}
+
+	ctx_log_endok();
+}
+
+function _load_extensions() {
+	global $_event_listeners;
+
+	ctx_log_start("Loading extensions");
+
+	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
+		require_once("data/event_listeners.php");
+	}
+	else {
+		$all_events = array();
+		foreach(get_declared_classes() as $class) {
+			if(is_subclass_of($class, "Event")) {
+				$all_events[] = $class;
+			}
+		}
+		foreach(get_declared_classes() as $class) {
+			$rclass = new ReflectionClass($class);
+			if($rclass->isAbstract()) {
+				// don't do anything
+			}
+			elseif(is_subclass_of($class, "SimpleExtension")) {
+				$c = new $class();
+				$c->i_am($c);
+				$my_events = array();
+				foreach(get_class_methods($c) as $method) {
+					if(substr($method, 0, 2) == "on") {
+						$my_events[] = substr($method, 2) . "Event";
+					}
+				}
+				add_event_listener($c, $c->get_priority(), $my_events);
+			}
+			elseif(is_subclass_of($class, "Extension")) {
+				$c = new $class();
+				add_event_listener($c, $c->get_priority(), $all_events);
+			}
+		}
+
+		if(COMPILE_ELS) {
+			$p = "<"."?php\n";
+
+			foreach(get_declared_classes() as $class) {
+				$rclass = new ReflectionClass($class);
+				if($rclass->isAbstract()) {}
+				elseif(is_subclass_of($class, "SimpleExtension")) {
+					$p .= "\$$class = new $class(); ";
+					$p .= "\${$class}->i_am(\$$class);\n";
+				}
+				elseif(is_subclass_of($class, "Extension")) {
+					$p .= "\$$class = new $class();\n";
+				}
+			}
+
+			$p .= "\$_event_listeners = array(\n";
+			foreach($_event_listeners as $event => $listeners) {
+				$p .= "\t'$event' => array(\n";
+				foreach($listeners as $id => $listener) {
+					$p .= "\t\t$id => \$".get_class($listener).",\n";
+				}
+				$p .= "\t),\n";
+			}
+			$p .= ");\n";
+
+			$p .= "?".">";
+			file_put_contents("data/event_listeners.php", $p);
+		}
+	}
+
+	ctx_log_endok();
+}
+
+function _fatal_error(Exception $e) {
+	$version = VERSION;
+	$message = $e->getMessage();
+	//$trace = var_dump($e->getTrace());
+	header("HTTP/1.0 500 Internal Error");
+	echo '
+<html>
+	<head>
+		<title>Internal error - SCore-'.$version.'</title>
+	</head>
+	<body>
+		<h1>Internal Error</h1>
+		<p>'.$message.'
+	</body>
+</html>
+';
 }
 
 /**
