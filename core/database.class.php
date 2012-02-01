@@ -1,6 +1,4 @@
 <?php
-require_once "compat.inc.php";
-
 /** @privatesection */
 // Querylet {{{
 class Querylet {

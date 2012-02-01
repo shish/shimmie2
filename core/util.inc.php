@@ -396,11 +396,11 @@ function captcha_check() {
  * @private
  */
 function _version_check() {
-	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
+	if(version_compare(PHP_VERSION, "5.2.6") == -1) {
 		print "
-Currently SCore Engine doesn't support versions of PHP lower than 5.0.0 --
-PHP4 and earlier are officially dead according to their creators,
-please tell your host to upgrade.
+Currently SCore Engine doesn't support versions of PHP lower than 5.2.6 --
+if your web host is running an older version, they are dangerously out of
+date and you should plan on moving elsewhere.
 ";
 		exit;
 	}
