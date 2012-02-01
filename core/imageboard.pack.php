@@ -534,7 +534,7 @@ class Image {
 
 			if($opts != $_fh_last_opts) {
 				$_fh_last_opts = $opts;
-				require_once("lib/flexihash.php");
+				require_once "lib/flexihash.php";
 				$_flexihash = new Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
