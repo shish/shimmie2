@@ -173,7 +173,7 @@ class User {
 	 */
 	public function get_auth_token() {
 		global $config;
-		$salt = file_get_contents("config.php");
+		$salt = DATABASE_DSN;
 		$addr = get_session_ip($config);
 		return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
 	}
