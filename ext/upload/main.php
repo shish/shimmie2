@@ -45,7 +45,7 @@ class Upload extends SimpleExtension {
 	// early, so it can stop the DataUploadEvent before any data handlers see it
 	public function get_priority() {return 40;}
 
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('upload_count', 3);
 		$config->set_default_int('upload_size', '1MB');
@@ -63,7 +63,7 @@ class Upload extends SimpleExtension {
 
 	}
 
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user, $page;
 		if($this->can_upload($user)) {
 			if($this->is_full) {
@@ -75,7 +75,7 @@ class Upload extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$tes = array();
 		$tes["Disabled"] = "none";
 		if(function_exists("curl_init")) {
@@ -97,7 +97,7 @@ class Upload extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onDataUpload($event) {
+	public function onDataUpload(DataUploadEvent $event) {
 		global $config;
 		if($this->is_full) {
 			throw new UploadException("Upload failed; disk nearly full");

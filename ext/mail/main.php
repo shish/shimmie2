@@ -8,7 +8,7 @@
 */
 
 class Mail extends SimpleExtension {	
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Mailing Options");
 		$sb->add_text_option("mail_sub", "<br>Subject prefix: ");
 		$sb->add_text_option("mail_img", "<br>Banner Image URL: ");
@@ -18,7 +18,7 @@ class Mail extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 	
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("mail_sub", $config->get_string("site_title")." - ");
 		$config->set_default_string("mail_img", make_http("ext/mail/banner.png"));
@@ -27,7 +27,7 @@ class Mail extends SimpleExtension {
 	}
 }
 class MailTest extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("mail/test")) {
 			global $page;
 			$page->set_mode("data");

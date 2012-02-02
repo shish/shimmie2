@@ -6,7 +6,7 @@
  */
 
 class TagList extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("tag_list_length", 15);
 		$config->set_default_int("popular_tag_list_length", 15);
@@ -16,7 +16,7 @@ class TagList extends SimpleExtension {
 		$config->set_default_bool("tag_list_pages", false);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $database;
 
 		if($event->page_matches("tags")) {
@@ -59,7 +59,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		if($config->get_int('tag_list_length') > 0) {
 			if(!empty($event->search_terms)) {
@@ -71,7 +71,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config, $page;
 		if($config->get_int('tag_list_length') > 0) {
 			if($config->get_string('tag_list_image_type') == 'related') {
@@ -83,7 +83,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tag Map Options");
 		$sb->add_int_option("tags_min", "Only show tags used at least "); $sb->add_label(" times");
 		$sb->add_bool_option("tag_list_pages", "<br>Paged tag lists: ");

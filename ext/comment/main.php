@@ -61,7 +61,7 @@ class Comment {
 }
 
 class CommentList extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 		$config->set_default_bool('comment_anon', true);
 		$config->set_default_int('comment_window', 5);
