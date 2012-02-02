@@ -20,7 +20,6 @@ if (CA === 0 || CA > 2){ //Default
 if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+\/");
-	var hrs=document.getElementById("highres").href;
 	if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){
 		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*) <span")[1];
 	}else{
@@ -28,6 +27,7 @@ if(document.getElementById("post_tags") !== null){
 	}
 
 	if(tag.search(/\bflash\b/)===-1){
+		var hrs=document.getElementById("highres").href;
 		if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){ //oreno's theme seems to have moved the filesize
 			var filesze = document.getElementById("highres").innerHTML.match("[a-zA-Z0-9]+ \\(+([0-9]+\\.[0-9]+) ([a-zA-Z]+)");
 		}else{
