@@ -4,22 +4,45 @@
 var maxsze = (maxsze.match("(?:\.*[0-9])")) * 1024; //This assumes we are only working with MB.
 var toobig = "The file you are trying to upload is too big to upload!";
 var notsup = "The file you are trying to upload is not supported!";
+if (CA === 0 || CA > 2){ //Default
+	if (confirm("OK = Use Current tags.\nCancel = Use new tags.")==true){
+	}else{
+		var tag=prompt("Enter Tags","");
+		var chk=1; //This makes sure it doesn't use current tags.
+	}
+}else if (CA === 1){ //Current Tags
+}else if (CA === 2){ //New Tags
+	var tag=prompt("Enter Tags","");
+	var chk=1;
+}
 
-if (confirm("OK = Use Current tags.\nCancel = Use new tags.")==true){}else{var tag=prompt("Enter Tags","");var chk=1;};
-
-// Danbooru
+// Danbooru | oreno.imouto
 if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
-	var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*)<\/li>")[1];
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+\/");
+	var hrs=document.getElementById("highres").href;
+	if(srx.search("oreno\\.imouto") >= 0){
+		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*) <span")[1];
+	}else{
+		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*)<\/li>")[1];
+	}
 
 	if(tag.search(/\bflash\b/)===-1){
-		var filesze=document.getElementById("stats").innerHTML.match("[0-9] \\(((?:\.*[0-9])) ([a-zA-Z]+)");
+		if(srx.search("oreno\\.imouto") >= 0){ //oreno's theme seems to have moved the filesize
+			var filesze = document.getElementById("highres").innerHTML.match("[a-zA-Z0-9]+ \\(+([0-9]+\\.[0-9]+) ([a-zA-Z]+)");
+		}else{
+			var filesze=document.getElementById("stats").innerHTML.match("[0-9] \\(((?:\.*[0-9])) ([a-zA-Z]+)");
+		}
 		if(filesze[2] == "MB"){var filesze = filesze[1] * 1024;}else{var filesze = filesze[2].match("[0-9]+");}
 
-		if(supext.search(document.getElementById("highres").href.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
+		if(supext.search(hrs.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
 			if(filesze <= maxsze){
-				location.href=ste+document.getElementById("highres").href+"&tags="+tag+"&rating="+rtg+"&source="+srx;
+				if(srx.search("oreno\\.imouto") >= 0){
+					//this regex tends to be a bit picky with tags -_-;;
+					var hrs=hrs.match("(http\:\/\/[a-z0-9]+\.[a-z]+\.org\/[a-z0-9]+\/[a-z0-9]+)\/[a-z0-9A-Z%_]+(\.[a-zA-Z0-9]+)");
+					var hrs=hrs[1]+hrs[2]; //this should bypass hotlink protection
+				}
+				location.href=ste+hrs+"&tags="+tag+"&rating="+rtg+"&source="+srx;
 			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}else{
@@ -29,6 +52,7 @@ if(document.getElementById("post_tags") !== null){
 	}
 }
 /* Shimmie
+One problem with shimmie is each theme does not show the same info as other themes (I.E only the danbooru & lite themes show statistics)
 Shimmie doesn't seem to have any way to grab tags via id unless you have the ability to edit tags.
 Have to go the round about way of checking the title for tags.
 This crazy way of checking "should" work with older releases though (Seems to work with 2009~ ver) */
@@ -36,7 +60,6 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementsByTagName("title")[0].innerHTML.match("Image [0-9.-]+\: (.*)")[1];}
 	//TODO: Make rating show in statistics.
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/view\/[0-9]+");
-	/*TODO: Figure out regex for shortening file link. I.E http://blah.net/_images/1234abcd/everysingletag.png > http://blah.net/_images/1234abcd.png*/
 	/*TODO: Make file size show on all themes (Only seems to show in lite/Danbooru themes.)*/
 	if(tag.search(/\bflash\b/)==-1){
 		var img = document.getElementById("main_image").src;
@@ -52,7 +75,6 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 }
 // Gelbooru
 else if(document.getElementById("tags") !== null){
-	//Gelbooru has an annoying anti-hotlinking thing which doesn't seem to like the bookmarklet.
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("tags").value;}
 	var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*)<\/li>")[1];
 	//Can't seem to grab source due to url containing a &
