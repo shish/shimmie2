@@ -276,7 +276,7 @@ function modify_url($url, $changes) {
  *
  * @retval string
  */
-function make_http($link) {
+function make_http(/*string*/ $link) {
 	if(strpos($link, "ttp://") > 0) return $link;
 	if(strlen($link) > 0 && $link[0] != '/') $link = get_base_href().'/'.$link;
 	$link = "http://".$_SERVER["HTTP_HOST"].$link;
@@ -504,7 +504,7 @@ function get_memory_limit() {
  *
  * @retval string
  */
-function get_session_ip($config) {
+function get_session_ip(Config $config) {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = $_SERVER['REMOTE_ADDR'];
     $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
@@ -516,7 +516,7 @@ function get_session_ip($config) {
  * prefix prepended to it, eg username -> shm_username, to prevent
  * conflicts from multiple installs within one domain.
  */
-function get_prefixed_cookie($name) {
+function get_prefixed_cookie(/*string*/ $name) {
 	global $config;
 	$full_name = COOKIE_PREFIX."_".$name;
 	if(isset($_COOKIE[$full_name])) {
@@ -569,13 +569,13 @@ function get_base_href() {
  *
  * @retval string
  */
-function format_text($string) {
+function format_text(/*string*/ $string) {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
 	return $tfe->formatted;
 }
 
-function warehouse_path($base, $hash, $create=true) {
+function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=true) {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {

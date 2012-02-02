@@ -66,7 +66,7 @@ class Image {
 	 *
 	 * @retval Image
 	 */
-	public static function by_id($id) {
+	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
 		$image = null;
@@ -79,7 +79,7 @@ class Image {
 	 *
 	 * @retval Image
 	 */
-	public static function by_hash($hash) {
+	public static function by_hash(/*string*/ $hash) {
 		assert(is_string($hash));
 		global $database;
 		$image = null;
@@ -1011,7 +1011,7 @@ class Tag {
  * Move a file from PHP's temporary area into shimmie's image storage
  * heirachy, or throw an exception trying
  */
-function move_upload_to_archive($event) {
+function move_upload_to_archive(DataUploadEvent $event) {
 	$target = warehouse_path("images", $event->hash);
 	if(!file_exists(dirname($target))) mkdir(dirname($target), 0755, true);
 	if(!@copy($event->tmpname, $target)) {
@@ -1026,7 +1026,7 @@ function move_upload_to_archive($event) {
  * Given a full size pair of dimentions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact
  */
-function get_thumbnail_size($orig_width, $orig_height) {
+function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
 
 	if($orig_width == 0) $orig_width = 192;
