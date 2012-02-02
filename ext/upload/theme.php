@@ -145,7 +145,7 @@ class UploadTheme extends Themelet {
 				{
 			/* Imageboard > Shimmie Bookmarklet
 				This is more or less, an upgraded version of the "Danbooru>Shimmie" bookmarklet.
-				At the moment this works with Shimmie/Danbooru/Gelbooru/oreno.imouto.
+				At the moment this is known to work with Shimmie/Danbooru/Gelbooru/oreno.imouto/konachan/sankakucomplex.
 				The bookmarklet is now also loaded via the .js file in this folder.
 			*/
 			//Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
@@ -157,7 +157,7 @@ class UploadTheme extends Themelet {
 			$title = "Booru to " . $config->get_string('title');
 			//CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
 			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsze=&quot;'.$max_kb.'&quot;; var CA=0; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(make_link("ext/upload/bookmarklet.js")).'&quot;)">'.
-				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru/oreno.imouto. (This also grabs the tags/rating/source!))';
+				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
 			}
 				
 		}

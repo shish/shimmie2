@@ -16,19 +16,19 @@ if (CA === 0 || CA > 2){ //Default
 	var chk=1;
 }
 
-// Danbooru | oreno.imouto
+// Danbooru | oreno.imouto | konachan | sankakucomplex
 if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+\/");
 	var hrs=document.getElementById("highres").href;
-	if(srx.search("oreno\\.imouto") >= 0){
+	if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){
 		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*) <span")[1];
 	}else{
 		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*)<\/li>")[1];
 	}
 
 	if(tag.search(/\bflash\b/)===-1){
-		if(srx.search("oreno\\.imouto") >= 0){ //oreno's theme seems to have moved the filesize
+		if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){ //oreno's theme seems to have moved the filesize
 			var filesze = document.getElementById("highres").innerHTML.match("[a-zA-Z0-9]+ \\(+([0-9]+\\.[0-9]+) ([a-zA-Z]+)");
 		}else{
 			var filesze=document.getElementById("stats").innerHTML.match("[0-9] \\(((?:\.*[0-9])) ([a-zA-Z]+)");
@@ -39,10 +39,14 @@ if(document.getElementById("post_tags") !== null){
 			if(filesze <= maxsze){
 				if(srx.search("oreno\\.imouto") >= 0){
 					//this regex tends to be a bit picky with tags -_-;;
-					var hrs=hrs.match("(http\:\/\/[a-z0-9]+\.[a-z]+\.org\/[a-z0-9]+\/[a-z0-9]+)\/[a-z0-9A-Z%_]+(\.[a-zA-Z0-9]+)");
+					var hrs=hrs.match("(http\:\/\/[a-z0-9]+\.[a-z]+\.[a-z]\/[a-z0-9]+\/[a-z0-9]+)\/[a-z0-9A-Z%_-]+(\.[a-zA-Z0-9]+)");
 					var hrs=hrs[1]+hrs[2]; //this should bypass hotlink protection
+				}else if(srx.search("konachan\\.com") >= 0){
+					//konachan affixs konachan.com to the start of the tags, this requires different regex
+					var hrs=hrs.match("(http\:\/\/[a-z0-9]+\.[a-z]+\.[a-z]\/[a-z0-9]+\/[a-z0-9]+)\/[a-z0-9A-Z%_]+\.[a-zA-Z0-9%_-]+(\.[a-z0-9A-Z]+)")
+					var hrs=hrs[1]+hrs[2];
 				}
-				location.href=ste+hrs+"&tags="+tag+"&rating="+rtg+"&source="+srx;
+				location.href="|"+ste+hrs+"&tags="+tag+"&rating="+rtg+"&source="+srx;
 			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}else{
