@@ -104,7 +104,7 @@ try {
 	ctx_log_start("Page generation");
 	// start the page generation waterfall
 	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
-	$user = _get_user($config, $database);
+	$user = _get_user();
 	send_event(new InitExtEvent());
 	send_event(_get_page_request());
 	$page->display();
