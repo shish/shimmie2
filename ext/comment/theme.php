@@ -21,12 +21,12 @@ class CommentListTheme extends Themelet {
 		$next = $page_number + 1;
 
 		$h_prev = ($page_number <= 1) ? "Prev" :
-			"<a href='".make_link("comment/list/$prev")."'>Prev</a>";
+			'<a href="'.make_link('comment/list/'.$prev).'">Prev</a>';
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" :
-			"<a href='".make_link("comment/list/$next")."'>Next</a>";
+			'<a href="'.make_link('comment/list/'.$next).'">Next</a>';
 
-		$nav = "$h_prev | $h_index | $h_next";
+		$nav = $h_prev.' | '.$h_index.' | '.$h_next;
 
 		$page->set_title("Comments");
 		$page->set_heading("Comments");
@@ -46,7 +46,7 @@ class CommentListTheme extends Themelet {
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
 				$hidden = $comment_count - $comment_limit;
-				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
+				$comment_html .= '<p>showing '.$comment_limit.' of '.$comment_count.' comments</p>';
 				$comments = array_slice($comments, -$comment_limit);
 			}
 			$this->anon_id = 1;
@@ -68,14 +68,14 @@ class CommentListTheme extends Themelet {
 				}
 			}
 
-			$html  = "
-				<table class='comment_list_table'><tr>
-					<td>$thumb_html</td>
-					<td>$comment_html</td>
+			$html  = '
+				<table class="comment_list_table"><tr>
+					<td>'.$thumb_html.'</td>
+					<td>'.$comment_html.'</td>
 				</tr></table>
-			";
+			';
 
-			$page->add_block(new Block("{$image->id}: ".($image->get_tag_list()), $html, "main", $position++));
+			$page->add_block(new Block( $image->id.': '.$image->get_tag_list(), $html, "main", $position++));
 		}
 	}
 
@@ -134,15 +134,7 @@ class CommentListTheme extends Themelet {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
-
-		// sending this event to all ~50 exts has a lot of overhead
-		if(SPEED_HAX) {
-			$bb = new BBCode();
-			$bb->receive_event($tfe);
-		}
-		else {
-			send_event($tfe);
-		}
+		send_event($tfe);
 
 		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
@@ -154,23 +146,23 @@ class CommentListTheme extends Themelet {
 
 		$anoncode = "";
 		if($h_name == "Anonymous" && $this->anon_id >= 0) {
-			$anoncode = "<sup>{$this->anon_id}</sup>";
+			$anoncode = '<sup>'.$this->anon_id.'</sup>';
 			$this->anon_id++;
 		}
-		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>$anoncode";
+		$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>'.$anoncode;
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_dellink = $user->is_admin() ?
-			"<br>($h_poster_ip, $h_timestamp, <a ".
-			"onclick=\"return confirm('Delete comment by $h_name:\\n$stripped_nonl');\" ".
-			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
+			'<br>('.$h_poster_ip.', '.$h_timestamp.', <a '.
+			'onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
+			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>)' : '';
 
 		if($trim) {
-			return "
-				$h_userlink: $h_comment
-				<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>
-				$h_dellink
-			";
+			return '
+				'.$h_userlink.': '.$h_comment.'
+				<a href="'.make_link('post/view/'.$i_image_id).'">&gt;&gt;&gt;</a>
+				'.$h_dellink.'
+			';
 		}
 		else {
 			//$avatar = "";
@@ -179,14 +171,14 @@ class CommentListTheme extends Themelet {
 			//	$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			//}
 			$oe = ($this->comments_shown++ % 2 == 0) ? "even" : "odd";
-			return "
-				<a name='$i_comment_id'></a>
-				<div class='$oe comment'>
-				<!--<span class='timeago' style='float: right;'>$h_timestamp</span>-->
-				$h_userlink: $h_comment
-				$h_dellink
+			return '
+				<a name="'.$i_comment_id.'"></a>
+				<div class="'.$oe.' comment">
+				<!--<span class="timeago" style="float: right;">'.$h_timestamp.'</span>-->
+				'.$h_userlink.': '.$h_comment.'
+				'.$h_dellink.'
 				</div>
-			";
+			';
 		}
 	}
 
@@ -197,15 +189,15 @@ class CommentListTheme extends Themelet {
 		$hash = CommentList::get_hash();
 		$captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
-		return "
-			".make_form(make_link("comment/add"))."
-				<input type='hidden' name='image_id' value='$i_image_id' />
-				<input type='hidden' name='hash' value='$hash' />
-				<textarea name='comment' rows='5' cols='50'></textarea>
-				$captcha
-				<br><input type='submit' value='Post Comment' />
+		return '
+			'.make_form(make_link("comment/add")).'
+				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
+				<input type="hidden" name="hash" value="'.$hash.'" />
+				<textarea name="comment" rows="5" cols="50"></textarea>
+				'.$captcha.'
+				<br><input type="submit" value="Post Comment" />
 			</form>
-		";
+		';
 	}
 }
 ?>

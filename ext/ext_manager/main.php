@@ -25,12 +25,13 @@ class ExtensionInfo {
 	function ExtensionInfo($main) {
 		$matches = array();
 		$lines = file($main);
+		$number_of_lines = count($lines);
 		preg_match("#(ext|contrib)/(.*)/main.php#", $main, $matches);
 		$this->ext_name = $matches[2];
 		$this->name = $this->ext_name;
 		$this->enabled = $this->is_enabled($this->ext_name);
 
-		for($i=0; $i<count($lines); $i++) {
+		for($i=0; $i<$number_of_lines; $i++) {
 			$line = $lines[$i];
 			if(preg_match("/Name: (.*)/", $line, $matches)) {
 				$this->name = $matches[1];

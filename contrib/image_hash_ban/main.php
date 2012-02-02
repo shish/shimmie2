@@ -161,6 +161,7 @@ class ImageBan extends SimpleExtension {
 		$database->Execute(
 				"INSERT INTO image_bans (hash, reason, date) VALUES (?, ?, now())",
 				array($hash, $reason));
+		log_info("image_hash_ban", "Banned hash: ($hash) because '$reason'");
 	}
 
 	public function remove_image_hash_ban($hash) {

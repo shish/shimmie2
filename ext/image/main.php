@@ -130,7 +130,7 @@ class ParseLinkTemplateEvent extends Event {
  * A class to handle adding / getting / removing image files from the disk.
  */
 class ImageIO extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('thumb_width', 192);
 		$config->set_default_int('thumb_height', 192);
@@ -147,7 +147,7 @@ class ImageIO extends SimpleExtension {
 		$config->set_default_int('image_expires', (60*60*24*365) );	// defaults to one year
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		$num = $event->get_arg(0);
 		$matches = array();
 		if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
@@ -186,7 +186,7 @@ class ImageIO extends SimpleExtension {
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user;
 		global $config;
 		
@@ -199,7 +199,7 @@ class ImageIO extends SimpleExtension {
 		}
 	}
 
-	public function onImageAddition($event) {
+	public function onImageAddition(ImageAdditionEvent $event) {
 		try {
 			$this->add_image($event->image);
 		}
@@ -208,11 +208,11 @@ class ImageIO extends SimpleExtension {
 		}
 	}
 
-	public function onImageDeletion($event) {
+	public function onImageDeletion(ImageDeletionEvent $event) {
 		$event->image->delete();
 	}
 
-	public function onImageReplace($event) {
+	public function onImageReplace(ImageReplaceEvent $event) {
 		try {
 			$this->replace_image($event->id, $event->image);
 		}
@@ -221,7 +221,7 @@ class ImageIO extends SimpleExtension {
 		}
 	}
 	
-	public function onUserPageBuilding($event) {
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $user;
 		global $config;
 	
@@ -233,7 +233,7 @@ class ImageIO extends SimpleExtension {
 		$event->add_stats("<a href='$images_link'>Images uploaded</a>: $i_image_count, $h_image_rate per day");
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Image Options");
 		$sb->position = 30;
 		// advanced only

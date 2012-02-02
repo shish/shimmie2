@@ -56,7 +56,7 @@ class LockSetEvent extends Event {
 }
 
 class TagEdit extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
 		if($event->page_matches("tag_edit")) {
 			if($event->get_arg(0) == "replace") {
@@ -71,8 +71,8 @@ class TagEdit extends SimpleExtension {
 		}
 	}
 
-	public function onImageInfoSet($event) {
-		global $user;
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
+		global $user, $page;
 		if($this->can_tag($event->image)) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 			if($this->can_source($event->image)) {
@@ -88,41 +88,41 @@ class TagEdit extends SimpleExtension {
 		}
 	}
 
-	public function onTagSet($event) {
+	public function onTagSet(TagSetEvent $event) {
 		global $user;
 		if($user->is_admin() || !$event->image->is_locked()) {
 			$event->image->set_tags($event->tags);
 		}
 	}
 
-	public function onSourceSet($event) {
+	public function onSourceSet(SourceSetEvent $event) {
 		global $user;
 		if($user->is_admin() || !$event->image->is_locked()) {
 			$event->image->set_source($event->source);
 		}
 	}
 
-	public function onLockSet($event) {
+	public function onLockSet(LockSetEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->image->set_locked($event->locked);
 		}
 	}
 
-	public function onImageDeletion($event) {
+	public function onImageDeletion(ImageDeletionEvent $event) {
 		$event->image->delete_tags_from_image();
 	}
 
-	public function onAdminBuilding($event) {
+	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_mass_editor();
 	}
 
 	// When an alias is added, oldtag becomes inaccessable
-	public function onAddAlias($event) {
+	public function onAddAlias(AddAliasEvent $event) {
 		$this->mass_tag_edit($event->oldtag, $event->newtag);
 	}
 
-	public function onImageInfoBoxBuilding($event) {
+	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $user;
 		if($this->can_tag($event->image)) {
 			$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
@@ -135,7 +135,7 @@ class TagEdit extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tag Editing");
 		$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
 		$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");

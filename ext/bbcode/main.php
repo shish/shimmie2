@@ -142,7 +142,7 @@ class BBCode extends FormatterExtension {
 			$start = strpos($text, "[code]");
 			if($start === false) break;
 
-			$end = strpos($text, "[/code]");
+			$end = strpos($text, "[/code]", $start);
 			if($end === false) break;
 
 			$beginning = substr($text, 0, $start);
@@ -173,5 +173,4 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 }
-add_event_listener(new BBCode());
 ?>

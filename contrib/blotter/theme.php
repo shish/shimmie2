@@ -55,7 +55,8 @@ class BlotterTheme extends Themelet {
 
 		// Now, time for entries list.
 		$table_rows = "";
-		for ($i = 0 ; $i < count($entries) ; $i++)
+		$num_entries = count($entries);
+		for ($i = 0 ; $i < $num_entries ; $i++)
 		{
 			/**
 			 * Add table rows
@@ -106,7 +107,8 @@ class BlotterTheme extends Themelet {
 		$html .= "<html><head><title>Blotter</title></head>
 			<body><pre>";
 
-		for ($i = 0 ; $i < count($entries) ; $i++)
+		$num_entries = count($entries);
+		for ($i = 0 ; $i < $num_entries ; $i++)
 		{
 			/**
 			 * Blotter entries
@@ -156,7 +158,8 @@ $(document).ready(function() {
 });
 //--></script>";
 		$entries_list = "";
-		for ($i = 0 ; $i < count($entries) ; $i++)
+		$num_entries = count($entries);
+		for ($i = 0 ; $i < $num_entries ; $i++)
 		{
 			/**
 			 * Blotter entries
@@ -175,8 +178,8 @@ $(document).ready(function() {
 		$in_text = "";
 		$pos_break = "";
 		$pos_align = "text-align: right; position: absolute; right: 0px;";
-		if($position == "left") { $pos_break = "<br />"; $pos_align = ""; }
-		if(count($entries) == 0) { $out_text = "No blotter entries yet."; $in_text = "Empty.";}
+		if($position === "left") { $pos_break = "<br />"; $pos_align = ""; }
+		if(count($entries) === 0) { $out_text = "No blotter entries yet."; $in_text = "Empty.";}
 		else { $clean_date = date("m/d/y",strtotime($entries[0]['entry_date']));
 			$out_text = "Blotter updated: {$clean_date}";
 			$in_text = "<ul>$entries_list</ul>";

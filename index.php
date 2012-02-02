@@ -55,30 +55,11 @@ if(empty($database_dsn) && !file_exists("config.php")) {
 	exit;
 }
 require_once "config.php";
-
-// to change these system-level settings, do define("FOO", 123); in config.php
-function _d($name, $value) {if(!defined($name)) define($name, $value);}
-_d("DATABASE_DSN", null);    // string   PDO database connection details
-_d("CACHE_DSN", null);       // string   cache connection details
-_d("DEBUG", false);          // boolean  print various debugging details
-_d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
-_d("CONTEXT", null);         // string   file to log performance data into
-_d("CACHE_MEMCACHE", false); // boolean  store complete rendered pages in memcache
-_d("CACHE_DIR", false);      // boolean  store complete rendered pages on disk
-_d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
-_d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes
-_d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance
-_d("NICE_URLS", false);      // boolean  force niceurl mode
-_d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
-_d("VERSION", 'trunk');      // string   shimmie version
-_d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
-_d("TIMEZONE", 'UTC');       // string   timezone
-
-// set up and purify the environment
-date_default_timezone_set(TIMEZONE);
-
+require_once "core/default_config.inc.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
+
+// set up and purify the environment
 if(CONTEXT) {
 	ctx_set_log(CONTEXT);
 }
@@ -101,77 +82,29 @@ try {
 	}
 	ctx_log_endok();
 
-
 	ctx_log_start("Connecting to DB");
 	// connect to the database
 	$database = new Database();
-	//$database->db->fnExecute = '_count_execs'; // FIXME: PDO equivalent
 	$database->db->beginTransaction();
 	$config = new DatabaseConfig($database);
 	ctx_log_endok();
 
-
-	ctx_log_start("Loading themelets");
 	// load the theme parts
+	ctx_log_start("Loading themelets");
 	$_theme = $config->get_string("theme", "default");
 	if(!file_exists("themes/$_theme")) $_theme = "default";
-	if(file_exists("themes/$_theme/custompage.class.php")) require_once "themes/$_theme/custompage.class.php";
-	require_once "themes/$_theme/layout.class.php";
-	require_once "themes/$_theme/themelet.class.php";
-
-	$themelets = glob("ext/*/theme.php");
-	foreach($themelets as $filename) {
-		require_once $filename;
-	}
-
-	$custom_themelets = glob("themes/$_theme/*.theme.php");
-	if($custom_themelets) {
-		$m = array();
-		foreach($custom_themelets as $filename) {
-			if(preg_match("/themes\/$_theme\/(.*)\.theme\.php/",$filename,$m)
-					&& in_array("ext/{$m[1]}/theme.php", $themelets)) {
-				require_once $filename;
-			}
-		}
+	foreach(_get_themelet_files($_theme) as $themelet) {
+		require_once $themelet;
 	}
 	ctx_log_endok();
 
-
-	// initialise the extensions
-	$all_events = array();
-	foreach(get_declared_classes() as $class) {
-		if(is_subclass_of($class, "Event")) {
-			$all_events[] = $class;
-		}
-	}
-	foreach(get_declared_classes() as $class) {
-		$rclass = new ReflectionClass($class);
-		if($rclass->isAbstract()) {
-			// don't do anything
-		}
-		elseif(is_subclass_of($class, "SimpleExtension")) {
-			$c = new $class();
-			$c->i_am($c);
-			$my_events = array();
-			foreach(get_class_methods($c) as $method) {
-				if(substr($method, 0, 2) == "on") {
-					$my_events[] = substr($method, 2) . "Event";
-				}
-			}
-			add_event_listener($c, $c->get_priority(), $my_events);
-		}
-		elseif(is_subclass_of($class, "Extension")) {
-			$c = new $class();
-			add_event_listener($c, $c->get_priority(), $all_events);
-		}
-	}
+	_load_extensions();
 	ctx_log_endok("Initialisation");
-
 
 	ctx_log_start("Page generation");
 	// start the page generation waterfall
 	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
-	$user = _get_user($config, $database);
+	$user = _get_user();
 	send_event(new InitExtEvent());
 	send_event(_get_page_request());
 	$page->display();
@@ -182,22 +115,8 @@ try {
 	ctx_log_endok();
 }
 catch(Exception $e) {
-	$version = VERSION;
-	$message = $e->getMessage();
-	//$trace = var_dump($e->getTrace());
-	header("HTTP/1.0 500 Internal Error");
-	print <<<EOD
-<html>
-	<head>
-		<title>Internal error - SCore-$version</title>
-	</head>
-	<body>
-		<h1>Internal Error</h1>
-		<p>$message
-	</body>
-</html>
-EOD;
 	if($database && $database->db) $database->db->rollback();
+	_fatal_error($e);
 	ctx_log_ender();
 }
 ?>

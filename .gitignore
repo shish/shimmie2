@@ -35,6 +35,7 @@ ext/image_hash_ban
 ext/ipban
 ext/link_image
 ext/log_db
+ext/mass_tagger
 ext/news
 ext/notes
 ext/numeric_score
@@ -62,6 +63,7 @@ ext/text_score
 ext/tips
 ext/twitter_soc
 ext/upload_cmd
+ext/update
 ext/wiki
 ext/word_filter
 ext/zoom

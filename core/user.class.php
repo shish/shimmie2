@@ -40,7 +40,7 @@ class User {
 
 	public static function by_session(/*string*/ $name, /*string*/ $session) {
 		global $config, $database;
-		if($database->engine->name == "mysql") {
+		if($database->engine->name === "mysql") {
 			$query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
 		}
 		else {
@@ -53,12 +53,12 @@ class User {
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
-		if($id == 1) {
-			$cached = $database->cache->get("user-id:$id");
+		if($id === 1) {
+			$cached = $database->cache->get('user-id:'.$id);
 			if($cached) return new User($cached);
 		}
 		$row = $database->get_row("SELECT * FROM users WHERE id = :id", array("id"=>$id));
-		if($id == 1) $database->cache->set("user-id:$id", $row, 300);
+		if($id === 1) $database->cache->set('user-id:'.$id, $row, 300);
 		return is_null($row) ? null : new User($row);
 	}
 
@@ -98,7 +98,7 @@ class User {
 	 */
 	public function is_anonymous() {
 		global $config;
-		return ($this->id == $config->get_int('anon_id'));
+		return ($this->id === $config->get_int('anon_id'));
 	}
 
 	/**
@@ -108,7 +108,7 @@ class User {
 	 */
 	public function is_logged_in() {
 		global $config;
-		return ($this->id != $config->get_int('anon_id'));
+		return ($this->id !== $config->get_int('anon_id'));
 	}
 
 	/**
@@ -125,20 +125,20 @@ class User {
 		global $database;
 		$yn = $admin ? 'Y' : 'N';
 		$database->Execute("UPDATE users SET admin=:yn WHERE id=:id", array("yn"=>$yn, "id"=>$this->id));
-		log_info("core-user", "Made {$this->name} admin=$yn");
+		log_info("core-user", 'Made '.$this->name.' admin='.$yn);
 	}
 
 	public function set_password(/*string*/ $password) {
 		global $database;
 		$hash = md5(strtolower($this->name) . $password);
 		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$hash, "id"=>$this->id));
-		log_info("core-user", "Set password for {$this->name}");
+		log_info("core-user", 'Set password for '.$this->name);
 	}
 
 	public function set_email(/*string*/ $address) {
 		global $database;
 		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
-		log_info("core-user", "Set email for {$this->name}");
+		log_info("core-user", 'Set email for '.$this->name);
 	}
 
 	/**
@@ -148,7 +148,7 @@ class User {
 	public function get_avatar_html() {
 		// FIXME: configurable
 		global $config;
-		if($config->get_string("avatar_host") == "gravatar") {
+		if($config->get_string("avatar_host") === "gravatar") {
 			if(!empty($this->email)) {
 				$hash = md5(strtolower($this->email));
 				$s = $config->get_string("avatar_gravatar_size");
@@ -173,14 +173,14 @@ class User {
 	 */
 	public function get_auth_token() {
 		global $config;
-		$salt = file_get_contents("config.php");
+		$salt = DATABASE_DSN;
 		$addr = get_session_ip($config);
 		return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
 	}
 
 	public function get_auth_html() {
 		$at = $this->get_auth_token();
-		return "<input type='hidden' name='auth_token' value='$at'>";
+		return '<input type="hidden" name="auth_token" value="'.$at.'">';
 	}
 
 	public function check_auth_token() {

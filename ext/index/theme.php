@@ -8,8 +8,8 @@ class IndexTheme extends Themelet {
 	}
 
 	public function display_intro(Page $page) {
-		$text = <<<EOD
-<div style="text-align: left;">
+		$text = "
+<div style='text-align: left;'>
 <p>The first thing you'll probably want to do is create a new account; note
 that the first account you create will by default be marked as the board's
 administrator, and any further accounts will be regular users.
@@ -19,7 +19,7 @@ and of course start organising your images :-)
 
 <p>This message will go away once your first image is uploaded~
 </div>
-EOD;
+";
 		$page->set_title("Welcome to Shimmie ".VERSION);
 		$page->set_heading("Welcome to Shimmie");
 		$page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
@@ -69,12 +69,12 @@ EOD;
 		$next = $page_number + 1;
 
 		$u_tags = url_escape(implode(" ", $search_terms));
-		$query = empty($u_tags) ? "" : "/$u_tags";
+		$query = empty($u_tags) ? "" : '/'.$u_tags;
 
 
-		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("post/list$query/$prev")."'>Prev</a>";
+		$h_prev = ($page_number <= 1) ? "Prev" : '<a href="'.make_link('post/list'.$query.'/'.$prev).'">Prev</a>';
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='".make_link("post/list$query/$next")."'>Next</a>";
+		$h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
 
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
@@ -102,7 +102,7 @@ EOD;
 			</form>
 			<div id='search_completions'></div>";
 
-		return "$h_prev | $h_index | $h_next<br>$h_search";
+		return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
 	}
 
 	protected function build_table($images, $query) {

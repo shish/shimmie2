@@ -1,6 +1,4 @@
 <?php
-require_once "compat.inc.php";
-
 /** @privatesection */
 // Querylet {{{
 class Querylet {
@@ -56,7 +54,7 @@ class DBEngine {
 	}
 
 	public function create_table_sql($name, $data) {
-		return "CREATE TABLE $name ($data)";
+		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
 class MySQL extends DBEngine {
@@ -82,11 +80,15 @@ class MySQL extends DBEngine {
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
 		$ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
-		return "CREATE TABLE $name ($data) $ctes";
+		return 'CREATE TABLE '.$name.' ('.$data.') '.$ctes;
 	}
 }
 class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
+
+	public function init($db) {
+		$db->query("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+	}
 
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
@@ -103,7 +105,7 @@ class PostgreSQL extends DBEngine {
 
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
-		return "CREATE TABLE $name ($data)";
+		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
 
@@ -151,14 +153,14 @@ class SQLite extends DBEngine {
 			$matches = array();
 			if(preg_match("/INDEX\s*\((.*)\)/", $bit, $matches)) {
 				$col = $matches[1];
-				$extras .= "CREATE INDEX {$name}_{$col} on $name($col);";
+				$extras .= 'CREATE INDEX '.$name.'_'.$col.' on '.$name($col).';';
 			}
 			else {
 				$cols[] = $bit;
 			}
 		}
 		$cols_redone = implode(", ", $cols);
-		return "CREATE TABLE $name ($cols_redone); $extras";
+		return 'CREATE TABLE '.$name.' ('.$cols_redone.'); '.$extras;
 	}
 }
 // }}}
@@ -183,7 +185,7 @@ class MemcacheCache implements CacheEngine {
 	var $memcache=null, $hits=0, $misses=0;
 
 	public function __construct($args) {
-		$hp = split(":", $args);
+		$hp = explode(":", $args);
 		if(class_exists("Memcache")) {
 			$this->memcache = new Memcache;
 			@$this->memcache->pconnect($hp[0], $hp[1]);
@@ -286,23 +288,25 @@ class Database {
 		if(preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) $db_user=$matches[1];
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
-		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, array(
+		$db_params = array(
 			PDO::ATTR_PERSISTENT => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-		));
+		);
+		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
+		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
 		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
-		if($db_proto == "mysql") {
+		if($db_proto === "mysql") {
 			$this->engine = new MySQL();
 		}
-		else if($db_proto == "pgsql") {
+		else if($db_proto === "pgsql") {
 			$this->engine = new PostgreSQL();
 		}
-		else if($db_proto == "sqlite") {
+		else if($db_proto === "sqlite") {
 			$this->engine = new SQLite();
 		}
 		else {
-			die("Unknown PDO driver: $db_proto");
+			die('Unknown PDO driver: '.$db_proto);
 		}
 
 		$matches = array();
@@ -326,14 +330,15 @@ class Database {
 	 */
 	public function execute($query, $args=array()) {
 		try {
+			_count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
 					if(is_numeric($value)) {
-						$stmt->bindValue(":$name", $value, PDO::PARAM_INT);
+						$stmt->bindValue(':'.$name, $value, PDO::PARAM_INT);
 					}
 					else {
-						$stmt->bindValue(":$name", $value, PDO::PARAM_STR);
+						$stmt->bindValue(':'.$name, $value, PDO::PARAM_STR);
 					}
 				}
 				$stmt->execute();
@@ -344,8 +349,8 @@ class Database {
 			return $stmt;
 		}
 		catch(PDOException $pdoe) {
-			print "Message: ".$pdoe->getMessage();
-			print "<p>Error: $query";
+			print 'Message: '.$pdoe->getMessage();
+			print '<p>Error: '.$query;
 			exit;
 		}
 	}

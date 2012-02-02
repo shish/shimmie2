@@ -5,72 +5,69 @@
  * Description: Keep a record of tag changes, and allows you to revert changes.
  */
 
-class Tag_History implements Extension {
-	var $theme;
-
+class Tag_History extends SimpleExtension {
 	// in before tags are actually set, so that "get current tags" works
 	public function get_priority() {return 40;}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
+	public function onInitExtEvent($event) {
+		global $config;
+		$config->set_default_int("history_limit", -1);
 
-		if(($event instanceof InitExtEvent)) {
-			$config->set_default_int("history_limit", -1);
-
-			// shimmie is being installed so call install to create the table.
-			if($config->get_int("ext_tag_history_version") < 3) {
-				$this->install();
-			}
+		// shimmie is being installed so call install to create the table.
+		if($config->get_int("ext_tag_history_version") < 3) {
+			$this->install();
 		}
-		
-		if(($event instanceof AdminBuildingEvent))
-		{
-			if(isset($_POST['revert_ip']) && $user->is_admin() && $user->check_auth_token())
-			{
-				$revert_ip = filter_var($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
-				
-				if ($revert_ip === false) {
-					// invalid ip given.
-					$this->theme->display_admin_block('Invalid IP');
+	}
+
+	public function onAdminBuildingEvent($event) {
+		global $user;
+
+		if(isset($_POST['revert_ip']) && $user->is_admin() && $user->check_auth_token()) {
+			$revert_ip = filter_var($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
+			
+			if ($revert_ip === false) {
+				// invalid ip given.
+				$this->theme->display_admin_block('Invalid IP');
+				return;
+			}
+			
+			if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
+				if (isValidDate($_POST['revert_date'])){
+					$revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
+				} else {
+					$this->theme->display_admin_block('Invalid Date');
 					return;
 				}
-				
-				if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
-					if (isValidDate($_POST['revert_date'])){
-						$revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
-					} else {
-						$this->theme->display_admin_block('Invalid Date');
-						return;
-					}
-				} else {
-					$revert_date = null;
-				}
-				
-				set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
-				
-				// Call the revert function.
-				$this->process_revert_all_changes_by_ip($revert_ip, $revert_date);
-				// output results
-				$this->theme->display_revert_ip_results();
 			}
-			else
-			{				
-				$this->theme->display_admin_block(); // add a block to the admin panel
+			else {
+				$revert_date = null;
 			}
+			
+			set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
+			
+			// Call the revert function.
+			$this->process_revert_all_changes_by_ip($revert_ip, $revert_date);
+			// output results
+			$this->theme->display_revert_ip_results();
 		}
+		else {				
+			$this->theme->display_admin_block(); // add a block to the admin panel
+		}
+	}
 		
-		if (($event instanceof PageRequestEvent) && ($event->page_matches("tag_history")))
-		{
-			if($event->get_arg(0) == "revert")
-			{
+	public function onPageRequest($event) {
+		global $config, $page, $user;
+
+		if ($event->page_matches("tag_history")) {
+			if($event->get_arg(0) == "revert") {
 				// this is a request to revert to a previous version of the tags
 				if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
-					$this->process_revert_request($_POST['revert']);
+					if(isset($_POST['revert'])) {
+						$this->process_revert_request($_POST['revert']);
+					}
 				}
 			}
-			else if($event->count_args() == 1)
-			{
+			else if($event->count_args() == 1) {
 				// must be an attempt to view a tag history
 				$image_id = int_escape($event->get_arg(0));
 				$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
@@ -79,32 +76,36 @@ class Tag_History implements Extension {
 				$this->theme->display_global_page($page, $this->get_global_tag_history());
 			}
 		}
-		
-		if(($event instanceof DisplayingImageEvent))
-		{
-			// handle displaying a link on the view page
-			$this->theme->display_history_link($page, $event->image->id);
-		}
-		if(($event instanceof ImageDeletionEvent))
-		{
-			// handle removing of history when an image is deleted
-			$this->delete_all_tag_history($event->image->id);
-		}
-		if(($event instanceof SetupBuildingEvent)) {
-			$sb = new SetupBlock("Tag History");
-			$sb->add_label("Limit to ");
-			$sb->add_int_option("history_limit");
-			$sb->add_label(" entires per image");
-			$sb->add_label("<br>(-1 for unlimited)");
-			$event->panel->add_block($sb);
-		}
-		if(($event instanceof TagSetEvent)) {
-			$this->add_tag_history($event->image, $event->tags);
-		}
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Tag Changes", make_link("tag_history"));
-			}
+	}
+	
+	public function onDisplayingImage($event) {
+		global $page;
+		// handle displaying a link on the view page
+		$this->theme->display_history_link($page, $event->image->id);
+	}
+
+	public function onImageDeletion($event) {
+		// handle removing of history when an image is deleted
+		$this->delete_all_tag_history($event->image->id);
+	}
+
+	public function onSetupBuilding($event) {
+		$sb = new SetupBlock("Tag History");
+		$sb->add_label("Limit to ");
+		$sb->add_int_option("history_limit");
+		$sb->add_label(" entires per image");
+		$sb->add_label("<br>(-1 for unlimited)");
+		$event->panel->add_block($sb);
+	}
+
+	public function onTagSetEvent($event) {
+		$this->add_tag_history($event->image, $event->tags);
+	}
+
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Tag Changes", make_link("tag_history"));
 		}
 	}
 	
@@ -247,6 +248,18 @@ class Tag_History implements Extension {
 				JOIN users ON tag_histories.user_id = users.id
 				ORDER BY tag_histories.id DESC
 				LIMIT 100");
+		return ($row ? $row : array());
+	}
+	
+	/* This doesn't actually get _ALL_ IPs as it limits to 1000. */
+	public function get_all_user_ips()
+	{
+		global $database;
+		$row = $database->get_all("
+				SELECT DISTINCT user_ip
+				FROM tag_histories
+				ORDER BY tag_histories.user_ip DESC
+				LIMIT 1000");
 		return ($row ? $row : array());
 	}
 	

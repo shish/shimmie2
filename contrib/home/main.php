@@ -21,8 +21,7 @@ class Home extends SimpleExtension {
 		$config->set_default_string("home_links", '[$base/post/list|Posts]
 [$base/comment/list|Comments]
 [$base/tags|Tags]
-[$base/wiki|Wiki]
-[$base/wiki/more|&raquo;]');
+[$base/ext_doc|&raquo;]');
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -46,7 +45,8 @@ class Home extends SimpleExtension {
 		}
 
 		$sb = new SetupBlock("Home Page");
-		$sb->add_longtext_option("home_links", 'Page Links - Example: [/post/list|Posts]<br>');
+		$sb->add_bool_option("home_choice", "Use custom page links: ");
+		$sb->add_longtext_option("home_links", '<br>Page Links - Example: [/post/list|Posts]<br>');
 		$sb->add_longtext_option("home_text", "<br>Page Text:<br>");
 		$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
 		$event->panel->add_block($sb);
@@ -67,13 +67,21 @@ class Home extends SimpleExtension {
 		$num_comma = number_format($total);
 
 		$counter_text = "";
-		for($n=0; $n<strlen($strtotal); $n++) {
+		$length = strlen($strtotal);
+		for($n=0; $n<$length; $n++) {
 			$cur = $strtotal[$n];
 			$counter_text .= " <img alt='$cur' src='$base_href/ext/home/counters/$counter_dir/$cur.gif' />  ";
 		}
 
 		// get the homelinks and process them
-		$main_links = $config->get_string('home_links');
+		if($config->get_bool('home_choice')){
+			$main_links = $config->get_string('home_links');
+		}else{
+			$main_links = '[$base/post/list|Posts] [$base/comment/list|Comments] [$base/tags|Tags]';
+			if(file_exists("ext/pools")){$main_links .= ' [$base/pools|Pools]';}
+			if(file_exists("ext/wiki")){$main_links .= ' [$base/wiki|Wiki]';}
+			$main_links .= ' [$base/ext_doc|&raquo;]';
+		}
 		$main_links = str_replace('$base',	$base_href, 	$main_links);
 		$main_links = preg_replace('#\[(.*?)\|(.*?)\]#', "<a href='\\1'>\\2</a>", $main_links);
 		$main_links = str_replace('//',	"/", $main_links);

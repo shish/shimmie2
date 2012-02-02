@@ -35,16 +35,11 @@ class AdminBuildingEvent extends Event {
 	}
 }
 
-class AdminPage implements Extension {
-	var $theme;
+class AdminPage extends SimpleExtension {
+	public function onPageRequest($event) {
+		global $page, $user;
 
-	public function get_priority() {return 50;}
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("admin")) {
+		if($event->page_matches("admin")) {
 			if(!$user->is_admin()) {
 				$this->theme->display_permission_denied($page);
 			}
@@ -53,7 +48,7 @@ class AdminPage implements Extension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("admin_utils")) {
+		if($event->page_matches("admin_utils")) {
 			if($user->is_admin() && $user->check_auth_token()) {
 				log_info("admin", "Util: {$_POST['action']}");
 				set_time_limit(0);
@@ -91,16 +86,18 @@ class AdminPage implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof AdminBuildingEvent) {
-			$this->theme->display_page($page);
-			$this->theme->display_form($page);
-		}
+	public function onAdminBuilding($event) {
+		global $page;
+		$this->theme->display_page($page);
+		$this->theme->display_form($page);
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Board Admin", make_link("admin"));
-			}
+	public function onUserBlockBuilding($event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Board Admin", make_link("admin"));
 		}
 	}
 
@@ -134,10 +131,8 @@ class AdminPage implements Extension {
 	}
 
 	private function dbdump($page) {
-		include "config.php";
-
 		$matches = array();
-		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", $database_dsn, $matches);
+		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", DATABASE_DSN, $matches);
 		$software = $matches[1];
 		$username = $matches[2];
 		$password = $matches[3];

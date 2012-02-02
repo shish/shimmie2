@@ -93,13 +93,13 @@ class PrivMsg extends SimpleExtension {
 				switch($event->get_arg(0)) {
 					case "read":
 						$pm_id = int_escape($event->get_arg(1));
-						$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
+						$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 						if(is_null($pm)) {
 							$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
 						}
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$from_user = User::by_id(int_escape($pm["from_id"]));
-							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = ?", array($pm_id));
+							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = :id", array("id" => $pm_id));
 							$this->theme->display_message($page, $from_user, $user, new PM($pm));
 						}
 						else {
@@ -109,12 +109,12 @@ class PrivMsg extends SimpleExtension {
 					case "delete":
 						if($user->check_auth_token()) {
 							$pm_id = int_escape($_POST["pm_id"]);
-							$pm = $database->get_row("SELECT * FROM private_message WHERE id = ?", array($pm_id));
+							$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 							if(is_null($pm)) {
 								$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
 							}
 							else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
-								$database->execute("DELETE FROM private_message WHERE id = ?", array($pm_id));
+								$database->execute("DELETE FROM private_message WHERE id = :id", array("id" => $pm_id));
 								log_info("pm", "Deleted PM #$pm_id");
 								$page->set_mode("redirect");
 								$page->set_redirect($_SERVER["HTTP_REFERER"]);
@@ -146,9 +146,9 @@ class PrivMsg extends SimpleExtension {
 				INSERT INTO private_message(
 					from_id, from_ip, to_id,
 					sent_date, subject, message)
-				VALUES(?, ?, ?, now(), ?, ?)",
-			array($event->pm->from_id, $event->pm->from_ip,
-			$event->pm->to_id, $event->pm->subject, $event->pm->message)
+				VALUES(:fromid, :fromip, :toid, now(), :subject, :message)",
+			array("fromid" => $event->pm->from_id, "fromip" => $event->pm->from_ip,
+			"toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message)
 		);
 		log_info("pm", "Sent PM to User #{$event->pm->to_id}");
 	}
@@ -158,11 +158,11 @@ class PrivMsg extends SimpleExtension {
 		global $database;
 
 		$arr = $database->get_all("
-			SELECT private_message.*,user_from.name AS from_name
-			FROM private_message
-			JOIN users AS user_from ON user_from.id=from_id
-			WHERE to_id = ?
-			", array($user->id));
+				SELECT private_message.*,user_from.name AS from_name
+				FROM private_message
+				JOIN users AS user_from ON user_from.id=from_id
+				WHERE to_id = :toid", 
+			array("toid" => $user->id));
 		$pms = array();
 		foreach($arr as $pm) {
 			$pms[] = new PM($pm);

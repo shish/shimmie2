@@ -43,7 +43,7 @@ class UserCreationEvent extends Event {
 class UserCreationException extends SCoreException {}
 
 class UserPage extends SimpleExtension {
-	public function onInitExt(Event $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);
 		$config->set_default_int("login_memory", 365);
@@ -54,7 +54,7 @@ class UserPage extends SimpleExtension {
 		$config->set_default_bool("login_tac_bbcode", true);
 	}
 
-	public function onPageRequest(Event $event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 
 		// user info is shown on all pages
@@ -152,7 +152,7 @@ class UserPage extends SimpleExtension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
+		if($event->page_matches("user")) {
 			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
 			if($event->count_args() == 0 && $user->is_anonymous()) {
 				$this->theme->display_error($page, "Not Logged In",
@@ -169,7 +169,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	public function onUserPageBuilding(Event $event) {
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user, $config;
 
 		$h_join_date = autodate($event->display_user->join_date);
@@ -197,7 +197,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding(Event $event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 
 		$hosts = array(
@@ -228,17 +228,17 @@ class UserPage extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onUserBlockBuilding(Event $event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		$event->add_link("My Profile", make_link("user"));
 		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 	}
 
-	public function onUserCreation(Event $event) {
+	public function onUserCreation(UserCreationEvent $event) {
 		$this->check_user_creation($event);
 		$this->create_user($event);
 	}
 
-	public function onSearchTermParse(Event $event) {
+	public function onSearchTermParse(SearchTermParseEvent $event) {
 		global $user;
 
 		$matches = array();
@@ -537,5 +537,4 @@ class UserPage extends SimpleExtension {
 	
 // }}}
 }
-add_event_listener(new UserPage());
 ?>

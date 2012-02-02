@@ -21,6 +21,10 @@ function html_escape($input) {
  * @retval int
  */
 function int_escape($input) {
+	/*
+	 Side note, Casting to an integer is FASTER than using intval.
+	 http://hakre.wordpress.com/2010/05/13/php-casting-vs-intval/
+	*/
 	return (int)$input;
 }
 
@@ -56,13 +60,13 @@ function sql_escape($input) {
 function bool_escape($input) {
 	$input = strtolower($input);
 	return (
-		$input == "y" ||
-		$input == "yes" ||
-		$input == "t" ||
-		$input == "true" ||
-		$input == "on" ||
-		$input == 1 ||
-		$input == true
+		$input === "y" ||
+		$input === "yes" ||
+		$input === "t" ||
+		$input === "true" ||
+		$input === "on" ||
+		$input === 1 ||
+		$input === true
 	);
 }
 
@@ -86,7 +90,7 @@ function parse_shorthand_int($limit) {
 		return (int)$limit;
 	}
 
-	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', "$limit", $m)) {
+	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', (string)$limit, $m)) {
 		$value = $m[1];
 		if (isset($m[2])) {
 			switch(strtolower($m[2])) {
@@ -118,7 +122,7 @@ function to_shorthand_int($int) {
 		return sprintf("%.1fKB", $int / 1024);
 	}
 	else {
-		return "$int";
+		return (string)$int;
 	}
 }
 
@@ -186,6 +190,17 @@ function undb_bool($val) {
 	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
 }
 
+function startsWith($haystack, $needle) {
+	$length = strlen($needle);
+	return (substr($haystack, 0, $length) === $needle);
+}
+
+function endsWith($haystack, $needle) {
+	$length = strlen($needle);
+	$start  = $length * -1; //negative
+	return (substr($haystack, $start) === $needle);
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
@@ -207,24 +222,24 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace("/index.php", "", $full);
+		$base = str_replace("/".basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
-		$base = "./index.php?q=";
+		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
 	}
 
 	if(is_null($query)) {
-		return str_replace("//", "/", "$base/$page");
+		return str_replace("//", "/", $base.'/'.$page );
 	}
 	else {
 		if(strpos($base, "?")) {
-			return "$base/$page&$query";
+			return $base .'/'. $page .'&'. $query;
 		}
 		else if(strpos($query, "#") === 0) {
-			return "$base/$page$query";
+			return $base .'/'. $page . $query;
 		}
 		else {
-			return "$base/$page?$query";
+			return $base .'/'. $page .'?'. $query;
 		}
 	}
 }
@@ -293,14 +308,14 @@ function make_http(/*string*/ $link) {
 function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
 	$auth = $user->get_auth_html();
-	$extra = empty($form_id) ? '' : " id='$form_id'";
+	$extra = empty($form_id) ? '' : 'id="'. $form_id .'"';
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
 	}
 	if($onsubmit) {
-		$extra .= " onsubmit='$onsubmit'";
+		$extra .= ' onsubmit="'.$onsubmit.'"';
 	}
-	return "<form action='$target' method='$method'$extra>$auth";
+	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
 }
 
 /**
@@ -310,7 +325,7 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 function theme_file($filepath) {
 	global $config;
 	$theme = $config->get_string("theme","default");
-	return make_link("themes/$theme/$filepath");
+	return make_link('themes/'.$theme.'/'.$filepath);
 }
 
 
@@ -381,11 +396,11 @@ function captcha_check() {
  * @private
  */
 function _version_check() {
-	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
+	if(version_compare(PHP_VERSION, "5.2.6") == -1) {
 		print "
-Currently SCore Engine doesn't support versions of PHP lower than 5.0.0 --
-PHP4 and earlier are officially dead according to their creators,
-please tell your host to upgrade.
+Currently SCore Engine doesn't support versions of PHP lower than 5.2.6 --
+if your web host is running an older version, they are dangerously out of
+date and you should plan on moving elsewhere.
 ";
 		exit;
 	}
@@ -409,10 +424,10 @@ function check_cli() {
  */
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
-	if(DEBUG) {
+	if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
-			if(is_array($inputarray)) {
+			if(isset($inputarray) && is_array($inputarray)) {
 				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
 			}
 			else {
@@ -443,12 +458,12 @@ function _count_execs($db, $sql, $inputarray) {
  */
 function get_theme_object(Extension $class, $fatal=true) {
 	$base = get_class($class);
-	if(class_exists("Custom{$base}Theme")) {
-		$class = "Custom{$base}Theme";
+	if(class_exists('Custom'.$base.'Theme')) {
+		$class = 'Custom'.$base.'Theme';
 		return new $class();
 	}
-	elseif ($fatal || class_exists("{$base}Theme")) {
-		$class = "{$base}Theme";
+	elseif ($fatal || class_exists($base.'Theme')) {
+		$class = $base.'Theme';
 		return new $class();
 	} else {
 		return false;
@@ -552,14 +567,14 @@ function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
 	$ok_var = null;
 	foreach($possible_vars as $var) {
-		if(substr($_SERVER[$var], -4) == '.php') {
+		if(substr($_SERVER[$var], -4) === '.php') {
 			$ok_var = $_SERVER[$var];
 			break;
 		}
 	}
 	assert(!empty($ok_var));
 	$dir = dirname($ok_var);
-	if($dir == "/" || $dir == "\\") $dir = "";
+	if($dir === "/" || $dir === "\\") $dir = "";
 	return $dir;
 }
 
@@ -579,10 +594,10 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {
-		$pa = "$base/$ab/$cd/$hash";
+		$pa = $base.'/'.$ab.'/'.$cd.'/'.$hash;
 	}
 	else {
-		$pa = "$base/$ab/$hash";
+		$pa = $base.'/'.$ab.'/'.$hash;
 	}
 	if($create && !file_exists(dirname($pa))) mkdir(dirname($pa), 0755, true);
 	return $pa;
@@ -841,6 +856,12 @@ function get_debug_info() {
 	else {
 		$i_mem = "???";
 	}
+
+	if($config->get_string("commit_hash") == ""){
+		$commit = "";
+	}else{
+		$commit = " (".$config->get_string("commit_hash").")";
+	}
 	$time = sprintf("%5.2f", microtime(true) - $_load_start);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
@@ -850,7 +871,7 @@ function get_debug_info() {
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
-	$debug .= "; Shimmie version ". VERSION; // .", SCore Version ". SCORE_VERSION;
+	$debug .= "; Shimmie version ". VERSION . $commit; // .", SCore Version ". SCORE_VERSION;
 
 	return $debug;
 }
@@ -914,6 +935,10 @@ function _stripslashes_r($arr) {
 }
 
 function _sanitise_environment() {
+	if(TIMEZONE) {
+		date_default_timezone_set(TIMEZONE);
+	}
+
 	if(DEBUG) {
 		error_reporting(E_ALL);
 	}
@@ -930,6 +955,120 @@ function _sanitise_environment() {
 	}
 }
 
+function _get_themelet_files($_theme) {
+	$themelets = array();
+
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $themelets[] = 'themes/'.$_theme.'/custompage.class.php';
+	$themelets[] = 'themes/'.$_theme.'/layout.class.php';
+	$themelets[] = 'themes/'.$_theme.'/themelet.class.php';
+
+	$themelet_files = glob("ext/*/theme.php");
+	foreach($themelet_files as $filename) {
+		$themelets[] = $filename;
+	}
+
+	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
+	if($custom_themelets) {
+		$m = array();
+		foreach($custom_themelets as $filename) {
+			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
+					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
+				$themelets[] = $filename;
+			}
+		}
+	}
+
+	return $themelets;
+}
+
+function _load_extensions() {
+	global $_event_listeners;
+
+	ctx_log_start("Loading extensions");
+
+	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
+		require_once("data/event_listeners.php");
+	}
+	else {
+		$all_events = array();
+		foreach(get_declared_classes() as $class) {
+			if(is_subclass_of($class, "Event")) {
+				$all_events[] = $class;
+			}
+		}
+		foreach(get_declared_classes() as $class) {
+			$rclass = new ReflectionClass($class);
+			if($rclass->isAbstract()) {
+				// don't do anything
+			}
+			elseif(is_subclass_of($class, "SimpleExtension")) {
+				$c = new $class();
+				$c->i_am($c);
+				$my_events = array();
+				foreach(get_class_methods($c) as $method) {
+					if(substr($method, 0, 2) == "on") {
+						$my_events[] = substr($method, 2) . "Event";
+					}
+				}
+				add_event_listener($c, $c->get_priority(), $my_events);
+			}
+			elseif(is_subclass_of($class, "Extension")) {
+				$c = new $class();
+				add_event_listener($c, $c->get_priority(), $all_events);
+			}
+		}
+
+		if(COMPILE_ELS) {
+			$p = "<"."?php\n";
+
+			foreach(get_declared_classes() as $class) {
+				$rclass = new ReflectionClass($class);
+				if($rclass->isAbstract()) {}
+				elseif(is_subclass_of($class, "SimpleExtension")) {
+					$p .= "\$$class = new $class(); ";
+					$p .= "\${$class}->i_am(\$$class);\n";
+				}
+				elseif(is_subclass_of($class, "Extension")) {
+					$p .= "\$$class = new $class();\n";
+				}
+			}
+
+			$p .= "\$_event_listeners = array(\n";
+			foreach($_event_listeners as $event => $listeners) {
+				$p .= "\t'$event' => array(\n";
+				foreach($listeners as $id => $listener) {
+					$p .= "\t\t$id => \$".get_class($listener).",\n";
+				}
+				$p .= "\t),\n";
+			}
+			$p .= ");\n";
+
+			$p .= "?".">";
+			file_put_contents("data/event_listeners.php", $p);
+		}
+	}
+
+	ctx_log_endok();
+}
+
+function _fatal_error(Exception $e) {
+	$version = VERSION;
+	$message = $e->getMessage();
+	//$trace = var_dump($e->getTrace());
+	header("HTTP/1.0 500 Internal Error");
+	echo '
+<html>
+	<head>
+		<title>Internal error - SCore-'.$version.'</title>
+	</head>
+	<body>
+		<h1>Internal Error</h1>
+		<p>'.$message.'
+	</body>
+</html>
+';
+}
+
 /**
  * Turn ^^ into ^ and ^s into /
  *
@@ -938,7 +1077,8 @@ function _sanitise_environment() {
  */
 function _decaret($str) {
 	$out = "";
-	for($i=0; $i<strlen($str); $i++) {
+	$length = strlen($str);
+	for($i=0; $i<$length; $i++) {
 		if($str[$i] == "^") {
 			$i++;
 			if($str[$i] == "^") $out .= "^";
@@ -985,7 +1125,7 @@ function _get_page_request() {
 	global $config;
 	$args = _get_query_parts();
 
-	if(count($args) == 0 || strlen($args[0]) == 0) {
+	if(empty($args) || strlen($args[0]) === 0) {
 		$args = explode('/', $config->get_string('front_page'));
 	}
 
@@ -1074,7 +1214,7 @@ function _start_cache() {
 				}
 				else {
 					header("Content-type: text/html");
-					header("Last-Modified: $gmdate_mod");
+					header('Last-Modified: '.$gmdate_mod);
 					$zdata = @file_get_contents($_cache_filename);
 					if(CACHE_MEMCACHE) {
 						$_cache_memcache->set($_cache_hash, $zdata, 0, 600);
@@ -1119,11 +1259,14 @@ function _start_coverage() {
 
 function _end_coverage() {
 	if(function_exists("xdebug_get_code_coverage")) {
-		if(!file_exists("data/coverage")) mkdir("data/coverage");
+		// Absolute path is necessary because working directory 
+		// inside register_shutdown_function is unpredictable.
+		$absolute_path = dirname(dirname(__FILE__)) . "/data/coverage";
+		if(!file_exists($absolute_path)) mkdir($absolute_path);
 		$n = 0;
 		$t = time();
-		while(file_exists("data/coverage/$t.$n.log")) $n++;
-		file_put_contents("data/coverage/$t.$n.log", serialize(xdebug_get_code_coverage()));
+		while(file_exists("$absolute_path/$t.$n.log")) $n++;
+		file_put_contents("$absolute_path/$t.$n.log", serialize(xdebug_get_code_coverage()));
 	}
 }
 ?>
