@@ -46,7 +46,7 @@ if(document.getElementById("post_tags") !== null){
 					var hrs=hrs.match("(http\:\/\/[a-z0-9]+\.[a-z]+\.[a-z]\/[a-z0-9]+\/[a-z0-9]+)\/[a-z0-9A-Z%_]+\.[a-zA-Z0-9%_-]+(\.[a-z0-9A-Z]+)")
 					var hrs=hrs[1]+hrs[2];
 				}
-				location.href="|"+ste+hrs+"&tags="+tag+"&rating="+rtg+"&source="+srx;
+				location.href=ste+hrs+"&tags="+tag+"&rating="+rtg+"&source="+srx;
 			}else{alert(toobig);}
 		}else{alert(notsup);}
 	}else{
