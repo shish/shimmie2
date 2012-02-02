@@ -79,7 +79,7 @@ class ExtensionInfo {
 		}
 	}
 
-	private function is_enabled($fname) {
+	private function is_enabled(/*string*/ $fname) {
 		if(file_exists("ext/$fname") && file_exists("contrib/$fname")) return true; // both
 		if(file_exists("contrib/$fname")) return false; // only disabled (optional)
 		return null; // only active (core)
@@ -138,7 +138,7 @@ class ExtManager extends SimpleExtension {
 	}
 
 
-	private function get_extensions($all) {
+	private function get_extensions(/*bool*/ $all) {
 		$extensions = array();
 		if($all) {
 			$exts = glob("ext/*/main.php");
@@ -169,7 +169,7 @@ class ExtManager extends SimpleExtension {
 		}
 	}
 
-	private function set_enabled($fname, $enabled) {
+	private function set_enabled(/*string*/ $fname, /*bool*/ $enabled) {
 		if($enabled) {
 			// enable if currently disabled
 			if(!file_exists("ext/$fname")) {

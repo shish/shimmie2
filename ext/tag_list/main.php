@@ -102,7 +102,7 @@ class TagList extends SimpleExtension {
 	}
 // }}}
 // misc {{{
-	private function tag_link($tag) {
+	private function tag_link(/*string*/ $tag) {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}
@@ -294,7 +294,7 @@ class TagList extends SimpleExtension {
 	}
 // }}}
 // blocks {{{
-	private function add_related_block($page, $image) {
+	private function add_related_block(Page $page, Image $image) {
 		global $database;
 		global $config;
 
@@ -326,7 +326,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	private function add_tags_block($page, $image) {
+	private function add_tags_block(Page $page, Image $image) {
 		global $database;
 		global $config;
 
@@ -345,7 +345,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	private function add_popular_block($page) {
+	private function add_popular_block(Page $page) {
 		global $database;
 		global $config;
 
@@ -368,7 +368,7 @@ class TagList extends SimpleExtension {
 		}
 	}
 
-	private function add_refine_block($page, $search) {
+	private function add_refine_block(Page $page, /*string*/ $search) {
 		global $database;
 		global $config;
 

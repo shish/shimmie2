@@ -14,7 +14,7 @@
 class ConfigSaveEvent extends Event {
 	var $config;
 
-	public function ConfigSaveEvent($config) {
+	public function ConfigSaveEvent(Config $config) {
 		$this->config = $config;
 	}
 }
@@ -26,7 +26,7 @@ class ConfigSaveEvent extends Event {
 class SetupBuildingEvent extends Event {
 	var $panel;
 
-	public function SetupBuildingEvent($panel) {
+	public function SetupBuildingEvent(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
 
@@ -41,7 +41,7 @@ class SetupBuildingEvent extends Event {
 class SetupPanel {
 	var $blocks = array();
 
-	public function add_block($block) {
+	public function add_block(SetupBlock $block) {
 		$this->blocks[] = $block;
 	}
 }

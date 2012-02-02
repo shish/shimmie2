@@ -120,7 +120,7 @@ class AliasEditor extends SimpleExtension {
 		}
 	}
 
-	private function get_alias_csv($database) {
+	private function get_alias_csv(Database $database) {
 		$csv = "";
 		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases");
 		foreach($aliases as $old => $new) {
@@ -129,7 +129,7 @@ class AliasEditor extends SimpleExtension {
 		return $csv;
 	}
 
-	private function add_alias_csv($database, $csv) {
+	private function add_alias_csv(Database $database, /*string*/ $csv) {
 		$csv = str_replace("\r", "\n", $csv);
 		foreach(explode("\n", $csv) as $line) {
 			$parts = explode(",", $line);

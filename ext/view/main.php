@@ -60,7 +60,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 		$this->user = $user;
 	}
 
-	public function add_part($html, $position=50) {
+	public function add_part(/*string*/ $html, /*int*/ $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = $html;
 	}

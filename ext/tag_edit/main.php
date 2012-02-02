@@ -143,7 +143,7 @@ class TagEdit extends SimpleExtension {
 	}
 
 
-	private function can_tag($image) {
+	private function can_tag(Image $image) {
 		global $config, $user;
 		return (
 			($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) &&
@@ -151,7 +151,7 @@ class TagEdit extends SimpleExtension {
 		);
 	}
 
-	private function can_source($image) {
+	private function can_source(Image $image) {
 		global $config, $user;
 		return (
 			($config->get_bool("source_edit_anon") || !$user->is_anonymous()) &&

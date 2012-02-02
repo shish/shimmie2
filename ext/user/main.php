@@ -263,7 +263,7 @@ class UserPage extends SimpleExtension {
 	}
 // }}}
 // Things done *with* the user {{{
-	private function login($page)  {
+	private function login(Page $page)  {
 		global $user;
 
 		$name = $_POST['user'];
@@ -289,7 +289,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function check_user_creation($event) {
+	private function check_user_creation($event) { // FIXME type
 		$name = $event->username;
 		$pass = $event->password;
 		$email = $event->email;
@@ -309,7 +309,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function create_user($event) {
+	private function create_user($event) { // FIXME type
 		global $database;
 
 		$hash = md5(strtolower($event->username) . $event->password);
@@ -326,7 +326,7 @@ class UserPage extends SimpleExtension {
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
-	private function set_login_cookie($name, $pass) {
+	private function set_login_cookie(/*string*/ $name, /*string*/ $pass) {
 		global $config;
 
 		$addr = get_session_ip($config);
@@ -339,7 +339,7 @@ class UserPage extends SimpleExtension {
 	}
 //}}}
 // Things done *to* the user {{{
-	private function change_password_wrapper($page) {
+	private function change_password_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -378,7 +378,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function change_email_wrapper($page) {
+	private function change_email_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -411,7 +411,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function set_more_wrapper($page) {
+	private function set_more_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -443,7 +443,7 @@ class UserPage extends SimpleExtension {
 	}
 // }}}
 // ips {{{
-	private function count_upload_ips($duser) {
+	private function count_upload_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -456,7 +456,7 @@ class UserPage extends SimpleExtension {
 				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
-	private function count_comment_ips($duser) {
+	private function count_comment_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -470,7 +470,7 @@ class UserPage extends SimpleExtension {
 		return $rows;
 	}
 	
-	private function delete_user($page) {
+	private function delete_user(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -501,7 +501,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 	
-	private function delete_user_with_images($page) {
+	private function delete_user_with_images(Page $page) {
 		global $user;
 		global $config;
 		global $database;

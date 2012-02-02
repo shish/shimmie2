@@ -218,7 +218,7 @@ class Upload extends SimpleExtension {
 	}
 // }}}
 // do things {{{
-	private function can_upload($user) {
+	private function can_upload(User $user) {
 		global $config;
 		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}

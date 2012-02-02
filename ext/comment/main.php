@@ -195,7 +195,7 @@ class CommentList extends SimpleExtension {
 
 	// TODO: split akismet into a separate class, which can veto the event
 	public function onCommentPosting(CommentPostingEvent $event) {
-		$this->add_comment_wrapper($event->image_id, $event->user, $event->comment, $event);
+		$this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
 	}
 
 	public function onCommentDeletion(CommentDeletionEvent $event) {
@@ -248,7 +248,7 @@ class CommentList extends SimpleExtension {
 	}
 
 // page building {{{
-	private function build_page($current_page) {
+	private function build_page(/*int*/ $current_page) {
 		global $page;
 		global $config;
 		global $database;
@@ -318,7 +318,7 @@ class CommentList extends SimpleExtension {
 		return $comments;
 	}
 
-	private function get_user_recent_comments($user_id, $count) {
+	private function get_user_recent_comments(/*int*/ $user_id, /*int*/ $count) {
 		global $config;
 		global $database;
 		$rows = $database->get_all("
@@ -340,7 +340,7 @@ class CommentList extends SimpleExtension {
 		return $comments;
 	}
 
-	private function get_comments($image_id) {
+	private function get_comments(/*int*/ $image_id) {
 		global $config;
 		global $database;
 		$i_image_id = int_escape($image_id);
@@ -397,7 +397,7 @@ class CommentList extends SimpleExtension {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
-	private function is_spam_akismet($text) {
+	private function is_spam_akismet(/*string*/ $text) {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
 			$comment = array(
@@ -441,12 +441,12 @@ class CommentList extends SimpleExtension {
 		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
 	}
 
-	private function is_dupe($image_id, $comment) {
+	private function is_dupe(/*int*/ $image_id, /*string*/ $comment) {
 		global $database;
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
 
-	private function add_comment_wrapper($image_id, $user, $comment, $event) {
+	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $database;
 		global $config;
 
