@@ -27,6 +27,8 @@ $tag_n = 0; // temp hack
 $_flexihash = null;
 $_fh_last_opts = null;
 
+require_once "lib/flexihash.php";
+
 /**
  * An object representing an entry in the images table. As of 2.2, this no
  * longer necessarily represents an image per se, but could be a video,
@@ -534,7 +536,6 @@ class Image {
 
 			if($opts != $_fh_last_opts) {
 				$_fh_last_opts = $opts;
-				require_once "lib/flexihash.php";
 				$_flexihash = new Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
