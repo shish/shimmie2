@@ -292,7 +292,7 @@ class Database {
 			PDO::ATTR_PERSISTENT => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
-		if(defined(HIPHOP)) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
+		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
 		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
 		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);

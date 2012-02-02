@@ -162,7 +162,7 @@ class SetupBlock extends Block {
 // }}}
 
 class Setup extends SimpleExtension {
-	public function onInitExt(SetupEvent $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("title", "Shimmie");
 		$config->set_default_string("front_page", "post/list");
