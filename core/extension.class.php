@@ -118,7 +118,7 @@ abstract class SimpleExtension implements Extension {
  * Several extensions have this in common, make a common API
  */
 abstract class FormatterExtension extends SimpleExtension {
-	public function onTextFormatting(TextFormatting $event) {
+	public function onTextFormatting(TextFormattingEvent $event) {
 		$event->formatted = $this->format($event->formatted);
 		$event->stripped  = $this->strip($event->stripped);
 	}
