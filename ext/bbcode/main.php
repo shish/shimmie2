@@ -173,5 +173,4 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 }
-add_event_listener(new BBCode());
 ?>

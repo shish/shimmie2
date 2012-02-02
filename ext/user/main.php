@@ -537,5 +537,4 @@ class UserPage extends SimpleExtension {
 	
 // }}}
 }
-add_event_listener(new UserPage());
 ?>
