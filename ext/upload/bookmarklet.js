@@ -19,7 +19,7 @@ if (CA === 0 || CA > 2){ //Default
 // Danbooru | oreno.imouto | konachan | sankakucomplex
 if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
-	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+\/");
+	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+");
 	if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){
 		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*) <span")[1];
 	}else{
