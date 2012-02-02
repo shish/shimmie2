@@ -288,10 +288,12 @@ class Database {
 		if(preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) $db_user=$matches[1];
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
-		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, array(
+		$db_params = array(
 			PDO::ATTR_PERSISTENT => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-		));
+		);
+		if(defined(HIPHOP)) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
+		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
 		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		if($db_proto === "mysql") {
