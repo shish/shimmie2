@@ -131,10 +131,8 @@ class AdminPage extends SimpleExtension {
 	}
 
 	private function dbdump($page) {
-		include "config.php";
-
 		$matches = array();
-		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", $database_dsn, $matches);
+		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", DATABASE_DSN, $matches);
 		$software = $matches[1];
 		$username = $matches[2];
 		$password = $matches[3];
