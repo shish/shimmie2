@@ -72,7 +72,7 @@ class TagEdit extends SimpleExtension {
 	}
 
 	public function onImageInfoSet($event) {
-		global $user;
+		global $user, $page;
 		if($this->can_tag($event->image)) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 			if($this->can_source($event->image)) {
