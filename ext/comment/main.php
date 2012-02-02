@@ -297,7 +297,7 @@ class CommentList extends SimpleExtension {
 	}
 // }}}
 // get comments {{{
-	private function get_recent_comments() {
+	private function get_recent_comments($count) {
 		global $config;
 		global $database;
 		$rows = $database->get_all("
@@ -310,7 +310,7 @@ class CommentList extends SimpleExtension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				ORDER BY comments.id DESC
 				LIMIT :limit
-				", array("limit"=>$config->get_int('comment_count')));
+				", array("limit"=>$count));
 		$comments = array();
 		foreach($rows as $row) {
 			$comments[] = new Comment($row);
