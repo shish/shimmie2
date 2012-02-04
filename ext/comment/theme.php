@@ -35,14 +35,17 @@ class CommentListTheme extends Themelet {
 
 		// parts for each image
 		$position = 10;
+
+		$comment_limit = $config->get_int("comment_list_count", 10);
+		$comment_captcha = $config->get_bool('comment_captcha');
+		
 		foreach($images as $pair) {
 			$image = $pair[0];
 			$comments = $pair[1];
 
 			$thumb_html = $this->build_thumb_html($image);
-
 			$comment_html = "";
-			$comment_limit = $config->get_int("comment_list_count", 10);
+			
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
 				$hidden = $comment_count - $comment_limit;
@@ -59,7 +62,7 @@ class CommentListTheme extends Themelet {
 				}
 			} else {
 				if ($can_post) {
-					if(!$config->get_bool('comment_captcha')) {
+					if(!$comment_captcha) {
 						$comment_html .= $this->build_postbox($image->id);
 					}
 					else {

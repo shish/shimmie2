@@ -289,7 +289,11 @@ class Page {
 	{
 		global $config;
 		
-		if (!$config->get_bool("autocache_css") && !$config->get_bool("autocache_js")) {
+		// store local copy for speed.
+		$autocache_css = $config->get_bool("autocache_css");
+		$autocache_js  = config->get_bool("autocache_js")
+		
+		if (!$autocache_css && !$autocache_js) {
 			return false;	// caching disabled
 		}
 		
@@ -307,7 +311,7 @@ class Page {
 		$data_href = get_base_href();
 
 		/* ----- CSS Files ----- */
-		if ($config->get_bool("autocache_css"))
+		if ($autocache_css)
 		{
 			// First get all the CSS from the lib directory
 			$contents_from_lib = '';
@@ -374,7 +378,7 @@ class Page {
 		
 		
 		/* ----- JavaScript Files ----- */
-		if ($config->get_bool("autocache_js"))
+		if ($autocache_js)
 		{
 			$data = '';
 			$js_files = glob("lib/*.js");
