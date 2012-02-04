@@ -291,7 +291,7 @@ class Page {
 		
 		// store local copy for speed.
 		$autocache_css = $config->get_bool("autocache_css");
-		$autocache_js  = config->get_bool("autocache_js")
+		$autocache_js  = config->get_bool("autocache_js");
 		
 		if (!$autocache_css && !$autocache_js) {
 			return false;	// caching disabled
