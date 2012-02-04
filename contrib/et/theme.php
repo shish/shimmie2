@@ -28,6 +28,7 @@ Shimmie: {$info['sys_shimmie']}
 Schema: {$info['sys_schema']}
 PHP: {$info['sys_php']}
 OS: {$info['sys_os']}
+Database: {$info['sys_db']}
 Server: {$info['sys_server']}
 Disk use: {$info['sys_disk']}
 

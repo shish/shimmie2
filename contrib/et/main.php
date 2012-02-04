@@ -41,6 +41,7 @@ class ET extends SimpleExtension {
 		$info['sys_shimmie'] = VERSION;
 		$info['sys_schema']  = $config->get_string("db_version");
 		$info['sys_php']     = phpversion();
+		$info['sys_db']      = $database->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		$info['sys_os']      = php_uname();
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
