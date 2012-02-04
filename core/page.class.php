@@ -291,7 +291,7 @@ class Page {
 		
 		// store local copy for speed.
 		$autocache_css = $config->get_bool("autocache_css");
-		$autocache_js  = config->get_bool("autocache_js");
+		$autocache_js  = $config->get_bool("autocache_js");
 		
 		if (!$autocache_css && !$autocache_js) {
 			return false;	// caching disabled
@@ -396,7 +396,7 @@ class Page {
 			// Minify the JS if enabled.
 			if ($config->get_bool("autocache_min_js")){
 				// not supported yet.
-				// TODO: add support for Minifying CSS files.
+				// TODO: add support for Minifying JS files.
 			}
 			
 			// compute the MD5 sum of the concatenated JavaScript files
