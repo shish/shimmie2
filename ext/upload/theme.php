@@ -156,7 +156,7 @@ class UploadTheme extends Themelet {
 			if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
 			$title = "Booru to " . $config->get_string('title');
 			//CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
-			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsze=&quot;'.$max_kb.'&quot;; var CA=0; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(make_link("ext/upload/bookmarklet.js")).'&quot;)">'.
+			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsze=&quot;'.$max_kb.'&quot;; var CA=0; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)">'.
 				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
 			}
 				
