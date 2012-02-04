@@ -69,23 +69,27 @@ class TagListTheme extends Themelet {
 	 */
 	public function display_popular_block(Page $page, $tag_infos) {
 		global $config;
+		
+		$info_link		= $config->get_string('info_link');
+		$tag_list_num	= $config->get_bool("tag_list_numbers");
 
 		$html = "";
 		$n = 0;
+		
 		foreach($tag_infos as $row) {
 			$tag = $row['tag'];
 			$h_tag = html_escape($tag);
 			$h_tag_no_underscores = str_replace("_", " ", $h_tag);
 			$count = $row['count'];
 			if($n++) $html .= "\n<br/>";
-			if(!is_null($config->get_string('info_link'))) {
-				$link = str_replace('$tag', $tag, $config->get_string('info_link'));
-				$html .= " <a class='tag_info_link' href='$link'>?</a>";
+			if(!is_null($info_link)) {
+				$link = str_replace('$tag', $tag, $info_link);
+				$html .= ' <a class="tag_info_link" href="'.$link.'">?</a>';
 			}
 			$link = $this->tag_link($row['tag']);
-			$html .= " <a class='tag_name' href='$link'>$h_tag_no_underscores</a>";
-			if($config->get_bool("tag_list_numbers")) {
-				$html .= " <span class='tag_count'>$count</span>";
+			$html .= ' <a class="tag_name" href="$link">'.$h_tag_no_underscores.'</a>';
+			if($tag_list_num) {
+				$html .= ' <span class="tag_count">'.$count.'</span>';
 			}
 		}
 

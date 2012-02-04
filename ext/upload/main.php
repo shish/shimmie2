@@ -58,6 +58,8 @@ class Upload extends SimpleExtension {
 			$this->is_full = false;
 		}
 		else {
+			// TODO: This size limit should be configureable by the admin...
+			// currently set to 100 MB
 			$this->is_full = $free_num < 100*1024*1024;
 		}
 
