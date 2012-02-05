@@ -144,12 +144,17 @@ class CommentListTheme extends Themelet {
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
-		$anoncode = "";
-		if($h_name == "Anonymous" && $this->anon_id >= 0) {
-			$anoncode = '<sup>'.$this->anon_id.'</sup>';
-			$this->anon_id++;
+		if($h_name == "Anonymous") {
+			$anoncode = "";
+			if($this->anon_id >= 0) {
+				$anoncode = '<sup>'.$this->anon_id.'</sup>';
+				$this->anon_id++;
+			}
+			$h_userlink = $h_name . $anoncode;
 		}
-		$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>'.$anoncode;
+		else {
+			$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
+		}
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_dellink = $user->is_admin() ?
