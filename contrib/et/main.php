@@ -41,6 +41,7 @@ class ET extends SimpleExtension {
 		$info['sys_shimmie'] = VERSION;
 		$info['sys_schema']  = $config->get_string("db_version");
 		$info['sys_php']     = phpversion();
+		$info['sys_db']      = $database->db->getAttribute(PDO::ATTR_DRIVER_NAME);
 		$info['sys_os']      = php_uname();
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
@@ -56,8 +57,14 @@ class ET extends SimpleExtension {
 		$info['stat_image_tags'] = $database->get_one("SELECT COUNT(*) FROM image_tags");
 
 		$els = array();
-		foreach($_event_listeners as $el) {
-			$els[] = get_class($el);
+		foreach(get_declared_classes() as $class) {
+			$rclass = new ReflectionClass($class);
+			if($rclass->isAbstract()) {
+				// don't do anything
+			}
+			elseif(is_subclass_of($class, "Extension")) {
+				$els[] = $class;
+			}
 		}
 		$info['sys_extensions'] = join(', ', $els);
 

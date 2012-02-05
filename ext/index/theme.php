@@ -8,8 +8,8 @@ class IndexTheme extends Themelet {
 	}
 
 	public function display_intro(Page $page) {
-		$text = <<<EOD
-<div style="text-align: left;">
+		$text = "
+<div style='text-align: left;'>
 <p>The first thing you'll probably want to do is create a new account; note
 that the first account you create will by default be marked as the board's
 administrator, and any further accounts will be regular users.
@@ -19,7 +19,7 @@ and of course start organising your images :-)
 
 <p>This message will go away once your first image is uploaded~
 </div>
-EOD;
+";
 		$page->set_title("Welcome to Shimmie ".VERSION);
 		$page->set_heading("Welcome to Shimmie");
 		$page->add_block(new Block("Installation Succeeded!", $text, "main", 0));

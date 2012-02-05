@@ -23,7 +23,6 @@ class Emoticons extends FormatterExtension {
 		return $text;
 	}
 }
-add_event_listener(new Emoticons());
 
 class EmoticonList extends SimpleExtension {
 	public function onPageRequest($event) {

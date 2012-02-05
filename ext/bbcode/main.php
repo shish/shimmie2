@@ -24,7 +24,7 @@
  */
 
 class BBCode extends FormatterExtension {
-	public function format($text) {
+	public function format(/*string*/ $text) {
 		global $config;
 		if($config->get_bool("word_wrap", true)) {
 			$text = wordwrap($text, 80, " ", true);
@@ -73,7 +73,7 @@ class BBCode extends FormatterExtension {
 		return str_replace(' ', '', $matches[1]);
 	}
 
-	public function strip($text) {
+	public function strip(/*string*/ $text) {
 		global $config;
 		if($config->get_bool("word_wrap", true)) {
 			$text = wordwrap($text, 80, " ", true);
@@ -103,14 +103,14 @@ class BBCode extends FormatterExtension {
 	}
 
 
-	private function filter_spoiler($text) {
+	private function filter_spoiler(/*string*/ $text) {
 		return str_replace(
 			array("[spoiler]","[/spoiler]"),
 			array("<span style=\"background-color:#000; color:#000;\">","</span>"),
 			$text);
 	}
 
-	private function strip_spoiler($text) {
+	private function strip_spoiler(/*string*/ $text) {
 		$l1 = strlen("[spoiler]");
 		$l2 = strlen("[/spoiler]");
 		while(true) {
@@ -129,7 +129,7 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	private function extract_code($text) {
+	private function extract_code(/*string*/ $text) {
 		# at the end of this function, the only code! blocks should be
 		# the ones we've added -- others may contain malicious content,
 		# which would only appear after decoding
@@ -154,7 +154,7 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	private function insert_code($text) {
+	private function insert_code(/*string*/ $text) {
 		$l1 = strlen("[code!]");
 		$l2 = strlen("[/code!]");
 		while(true) {
@@ -173,5 +173,4 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 }
-add_event_listener(new BBCode());
 ?>

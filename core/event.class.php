@@ -40,7 +40,7 @@ class PageRequestEvent extends Event {
 	 *
 	 * If it matches, store the remaining path elements in $args
 	 */
-	public function page_matches($name) {
+	public function page_matches(/*string*/ $name) {
 		$parts = explode("/", $name);
 		$this->part_count = count($parts);
 
@@ -57,7 +57,7 @@ class PageRequestEvent extends Event {
 		return true;
 	}
 
-	public function get_arg($n) {
+	public function get_arg(/*int*/ $n) {
 		$offset = $this->part_count + $n;
 		if($offset >= 0 && $offset < $this->arg_count) {
 			return $this->args[$offset];
@@ -120,7 +120,7 @@ class TextFormattingEvent extends Event {
 	 */
 	var $stripped;
 
-	public function __construct($text) {
+	public function __construct(/*string*/ $text) {
 		$h_text = html_escape(trim($text));
 		$this->original  = $h_text;
 		$this->formatted = $h_text;

@@ -129,14 +129,14 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("index_width", 3);
 		$config->set_default_int("index_height", 4);
 		$config->set_default_bool("index_tips", true);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
@@ -182,7 +182,7 @@ class Index extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Index Options");
 		$sb->position = 20;
 
@@ -195,7 +195,7 @@ class Index extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onSearchTermParse($event) {
+	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
 		// check for tags first as tag based searches are more common.
 		if(preg_match("/tags(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {

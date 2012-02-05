@@ -222,10 +222,10 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace("/index.php", "", $full);
+		$base = str_replace("/".basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
-		$base = "./index.php?q=";
+		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
 	}
 
 	if(is_null($query)) {
@@ -291,7 +291,7 @@ function modify_url($url, $changes) {
  *
  * @retval string
  */
-function make_http($link) {
+function make_http(/*string*/ $link) {
 	if(strpos($link, "ttp://") > 0) return $link;
 	if(strlen($link) > 0 && $link[0] != '/') $link = get_base_href().'/'.$link;
 	$link = "http://".$_SERVER["HTTP_HOST"].$link;
@@ -396,11 +396,11 @@ function captcha_check() {
  * @private
  */
 function _version_check() {
-	if(version_compare(PHP_VERSION, "5.0.0") == -1) {
+	if(version_compare(PHP_VERSION, "5.2.6") == -1) {
 		print "
-Currently SCore Engine doesn't support versions of PHP lower than 5.0.0 --
-PHP4 and earlier are officially dead according to their creators,
-please tell your host to upgrade.
+Currently SCore Engine doesn't support versions of PHP lower than 5.2.6 --
+if your web host is running an older version, they are dangerously out of
+date and you should plan on moving elsewhere.
 ";
 		exit;
 	}
@@ -519,7 +519,7 @@ function get_memory_limit() {
  *
  * @retval string
  */
-function get_session_ip($config) {
+function get_session_ip(Config $config) {
     $mask = $config->get_string("session_hash_mask", "255.255.0.0");
     $addr = $_SERVER['REMOTE_ADDR'];
     $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
@@ -531,7 +531,7 @@ function get_session_ip($config) {
  * prefix prepended to it, eg username -> shm_username, to prevent
  * conflicts from multiple installs within one domain.
  */
-function get_prefixed_cookie($name) {
+function get_prefixed_cookie(/*string*/ $name) {
 	global $config;
 	$full_name = COOKIE_PREFIX."_".$name;
 	if(isset($_COOKIE[$full_name])) {
@@ -584,13 +584,13 @@ function get_base_href() {
  *
  * @retval string
  */
-function format_text($string) {
+function format_text(/*string*/ $string) {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
 	return $tfe->formatted;
 }
 
-function warehouse_path($base, $hash, $create=true) {
+function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=true) {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {
@@ -935,6 +935,10 @@ function _stripslashes_r($arr) {
 }
 
 function _sanitise_environment() {
+	if(TIMEZONE) {
+		date_default_timezone_set(TIMEZONE);
+	}
+
 	if(DEBUG) {
 		error_reporting(E_ALL);
 	}
@@ -949,6 +953,120 @@ function _sanitise_environment() {
 		$_POST = _stripslashes_r($_POST);
 		$_COOKIE = _stripslashes_r($_COOKIE);
 	}
+}
+
+function _get_themelet_files($_theme) {
+	$themelets = array();
+
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $themelets[] = 'themes/'.$_theme.'/custompage.class.php';
+	$themelets[] = 'themes/'.$_theme.'/layout.class.php';
+	$themelets[] = 'themes/'.$_theme.'/themelet.class.php';
+
+	$themelet_files = glob("ext/*/theme.php");
+	foreach($themelet_files as $filename) {
+		$themelets[] = $filename;
+	}
+
+	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
+	if($custom_themelets) {
+		$m = array();
+		foreach($custom_themelets as $filename) {
+			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
+					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
+				$themelets[] = $filename;
+			}
+		}
+	}
+
+	return $themelets;
+}
+
+function _load_extensions() {
+	global $_event_listeners;
+
+	ctx_log_start("Loading extensions");
+
+	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
+		require_once("data/event_listeners.php");
+	}
+	else {
+		$all_events = array();
+		foreach(get_declared_classes() as $class) {
+			if(is_subclass_of($class, "Event")) {
+				$all_events[] = $class;
+			}
+		}
+		foreach(get_declared_classes() as $class) {
+			$rclass = new ReflectionClass($class);
+			if($rclass->isAbstract()) {
+				// don't do anything
+			}
+			elseif(is_subclass_of($class, "SimpleExtension")) {
+				$c = new $class();
+				$c->i_am($c);
+				$my_events = array();
+				foreach(get_class_methods($c) as $method) {
+					if(substr($method, 0, 2) == "on") {
+						$my_events[] = substr($method, 2) . "Event";
+					}
+				}
+				add_event_listener($c, $c->get_priority(), $my_events);
+			}
+			elseif(is_subclass_of($class, "Extension")) {
+				$c = new $class();
+				add_event_listener($c, $c->get_priority(), $all_events);
+			}
+		}
+
+		if(COMPILE_ELS) {
+			$p = "<"."?php\n";
+
+			foreach(get_declared_classes() as $class) {
+				$rclass = new ReflectionClass($class);
+				if($rclass->isAbstract()) {}
+				elseif(is_subclass_of($class, "SimpleExtension")) {
+					$p .= "\$$class = new $class(); ";
+					$p .= "\${$class}->i_am(\$$class);\n";
+				}
+				elseif(is_subclass_of($class, "Extension")) {
+					$p .= "\$$class = new $class();\n";
+				}
+			}
+
+			$p .= "\$_event_listeners = array(\n";
+			foreach($_event_listeners as $event => $listeners) {
+				$p .= "\t'$event' => array(\n";
+				foreach($listeners as $id => $listener) {
+					$p .= "\t\t$id => \$".get_class($listener).",\n";
+				}
+				$p .= "\t),\n";
+			}
+			$p .= ");\n";
+
+			$p .= "?".">";
+			file_put_contents("data/event_listeners.php", $p);
+		}
+	}
+
+	ctx_log_endok();
+}
+
+function _fatal_error(Exception $e) {
+	$version = VERSION;
+	$message = $e->getMessage();
+	//$trace = var_dump($e->getTrace());
+	header("HTTP/1.0 500 Internal Error");
+	echo '
+<html>
+	<head>
+		<title>Internal error - SCore-'.$version.'</title>
+	</head>
+	<body>
+		<h1>Internal Error</h1>
+		<p>'.$message.'
+	</body>
+</html>
+';
 }
 
 /**

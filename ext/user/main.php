@@ -43,7 +43,7 @@ class UserCreationEvent extends Event {
 class UserCreationException extends SCoreException {}
 
 class UserPage extends SimpleExtension {
-	public function onInitExt(Event $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);
 		$config->set_default_int("login_memory", 365);
@@ -54,7 +54,7 @@ class UserPage extends SimpleExtension {
 		$config->set_default_bool("login_tac_bbcode", true);
 	}
 
-	public function onPageRequest(Event $event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 
 		// user info is shown on all pages
@@ -152,7 +152,7 @@ class UserPage extends SimpleExtension {
 			}
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("user")) {
+		if($event->page_matches("user")) {
 			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
 			if($event->count_args() == 0 && $user->is_anonymous()) {
 				$this->theme->display_error($page, "Not Logged In",
@@ -169,7 +169,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	public function onUserPageBuilding(Event $event) {
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user, $config;
 
 		$h_join_date = autodate($event->display_user->join_date);
@@ -197,7 +197,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding(Event $event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 
 		$hosts = array(
@@ -228,17 +228,17 @@ class UserPage extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onUserBlockBuilding(Event $event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		$event->add_link("My Profile", make_link("user"));
 		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 	}
 
-	public function onUserCreation(Event $event) {
+	public function onUserCreation(UserCreationEvent $event) {
 		$this->check_user_creation($event);
 		$this->create_user($event);
 	}
 
-	public function onSearchTermParse(Event $event) {
+	public function onSearchTermParse(SearchTermParseEvent $event) {
 		global $user;
 
 		$matches = array();
@@ -263,7 +263,7 @@ class UserPage extends SimpleExtension {
 	}
 // }}}
 // Things done *with* the user {{{
-	private function login($page)  {
+	private function login(Page $page)  {
 		global $user;
 
 		$name = $_POST['user'];
@@ -289,7 +289,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function check_user_creation($event) {
+	private function check_user_creation($event) { // FIXME type
 		$name = $event->username;
 		$pass = $event->password;
 		$email = $event->email;
@@ -309,7 +309,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function create_user($event) {
+	private function create_user($event) { // FIXME type
 		global $database;
 
 		$hash = md5(strtolower($event->username) . $event->password);
@@ -326,7 +326,7 @@ class UserPage extends SimpleExtension {
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
-	private function set_login_cookie($name, $pass) {
+	private function set_login_cookie(/*string*/ $name, /*string*/ $pass) {
 		global $config;
 
 		$addr = get_session_ip($config);
@@ -339,7 +339,7 @@ class UserPage extends SimpleExtension {
 	}
 //}}}
 // Things done *to* the user {{{
-	private function change_password_wrapper($page) {
+	private function change_password_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -378,7 +378,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function change_email_wrapper($page) {
+	private function change_email_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -411,7 +411,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 
-	private function set_more_wrapper($page) {
+	private function set_more_wrapper(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -443,7 +443,7 @@ class UserPage extends SimpleExtension {
 	}
 // }}}
 // ips {{{
-	private function count_upload_ips($duser) {
+	private function count_upload_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -456,7 +456,7 @@ class UserPage extends SimpleExtension {
 				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
-	private function count_comment_ips($duser) {
+	private function count_comment_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -470,7 +470,7 @@ class UserPage extends SimpleExtension {
 		return $rows;
 	}
 	
-	private function delete_user($page) {
+	private function delete_user(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -501,7 +501,7 @@ class UserPage extends SimpleExtension {
 		}
 	}
 	
-	private function delete_user_with_images($page) {
+	private function delete_user_with_images(Page $page) {
 		global $user;
 		global $config;
 		global $database;
@@ -537,5 +537,4 @@ class UserPage extends SimpleExtension {
 	
 // }}}
 }
-add_event_listener(new UserPage());
 ?>

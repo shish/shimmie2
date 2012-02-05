@@ -14,7 +14,7 @@
 class ConfigSaveEvent extends Event {
 	var $config;
 
-	public function ConfigSaveEvent($config) {
+	public function ConfigSaveEvent(Config $config) {
 		$this->config = $config;
 	}
 }
@@ -26,7 +26,7 @@ class ConfigSaveEvent extends Event {
 class SetupBuildingEvent extends Event {
 	var $panel;
 
-	public function SetupBuildingEvent($panel) {
+	public function SetupBuildingEvent(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
 
@@ -41,7 +41,7 @@ class SetupBuildingEvent extends Event {
 class SetupPanel {
 	var $blocks = array();
 
-	public function add_block($block) {
+	public function add_block(SetupBlock $block) {
 		$this->blocks[] = $block;
 	}
 }
@@ -162,7 +162,7 @@ class SetupBlock extends Block {
 // }}}
 
 class Setup extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("title", "Shimmie");
 		$config->set_default_string("front_page", "post/list");
@@ -178,7 +178,7 @@ class Setup extends SimpleExtension {
 		$config->set_default_bool("autocache_min_js", false);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
 		if($event->page_matches("nicetest")) {
@@ -210,7 +210,7 @@ class Setup extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$themes = array();
 		foreach(glob("themes/*") as $theme_dirname) {
 			$name = str_replace("themes/", "", $theme_dirname);
@@ -309,7 +309,7 @@ class Setup extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onConfigSave($event) {
+	public function onConfigSave(ConfigSaveEvent $event) {
 		global $config;
 		foreach($_POST as $_name => $junk) {
 			if(substr($_name, 0, 6) == "_type_") {
@@ -327,7 +327,7 @@ class Setup extends SimpleExtension {
 		log_warning("setup", "Configuration updated");
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Board Config", make_link("setup"));

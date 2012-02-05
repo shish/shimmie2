@@ -92,7 +92,10 @@ abstract class SimpleExtension implements Extension {
 	var $theme;
 	var $_child;
 
-	public function i_am($child) {
+	// in PHP5.3, late static bindings can take care of this; __CLASS__
+	// used here will refer to the subclass
+	// http://php.net/manual/en/language.oop5.late-static-bindings.php
+	public function i_am(Extension $child) {
 		$this->_child = $child;
 		if(is_null($this->theme)) $this->theme = get_theme_object($child, false);
 	}
@@ -115,13 +118,13 @@ abstract class SimpleExtension implements Extension {
  * Several extensions have this in common, make a common API
  */
 abstract class FormatterExtension extends SimpleExtension {
-	public function onTextFormatting($event) {
+	public function onTextFormatting(TextFormattingEvent $event) {
 		$event->formatted = $this->format($event->formatted);
 		$event->stripped  = $this->strip($event->stripped);
 	}
 
-	abstract public function format($text);
-	abstract public function strip($text);
+	abstract public function format(/*string*/ $text);
+	abstract public function strip(/*string*/ $text);
 }
 
 /**
@@ -129,7 +132,7 @@ abstract class FormatterExtension extends SimpleExtension {
  * so we have a base class to extend from
  */
 abstract class DataHandlerExtension extends SimpleExtension {
-	public function onDataUpload($event) {
+	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
@@ -188,7 +191,7 @@ abstract class DataHandlerExtension extends SimpleExtension {
 		}
 	}
 
-	public function onThumbnailGeneration($event) {
+	public function onThumnbnailGeneration(ThumbnailGenerationEvent $event) {
 		if($this->supported_ext($event->type)) {
 			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
 				 $this->create_thumb_force($event->hash);
@@ -199,14 +202,14 @@ abstract class DataHandlerExtension extends SimpleExtension {
 		}
 	}
 
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page;
 		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($page, $event->image);
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = $this->setup();
 		if($sb) $event->panel->add_block($sb);
 	}

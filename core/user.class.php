@@ -38,7 +38,7 @@ class User {
 		$this->passhash = $row['pass'];
 	}
 
-	public static function by_session($name, $session) {
+	public static function by_session(/*string*/ $name, /*string*/ $session) {
 		global $config, $database;
 		if($database->engine->name === "mysql") {
 			$query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
@@ -50,7 +50,7 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
-	public static function by_id($id) {
+	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
 		if($id === 1) {
@@ -62,14 +62,14 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
-	public static function by_name($name) {
+	public static function by_name(/*string*/ $name) {
 		assert(is_string($name));
 		global $database;
 		$row = $database->get_row("SELECT * FROM users WHERE name = :name", array("name"=>$name));
 		return is_null($row) ? null : new User($row);
 	}
 
-	public static function by_name_and_hash($name, $hash) {
+	public static function by_name_and_hash(/*string*/ $name, /*string*/ $hash) {
 		assert(is_string($name));
 		assert(is_string($hash));
 		assert(strlen($hash) == 32);
@@ -78,7 +78,7 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
-	public static function by_list($offset, $limit=50) {
+	public static function by_list(/*int*/ $offset, /*int*/ $limit=50) {
 		assert(is_numeric($offset));
 		assert(is_numeric($limit));
 		global $database;
@@ -120,7 +120,7 @@ class User {
 		return $this->admin;
 	}
 
-	public function set_admin($admin) {
+	public function set_admin(/*bool*/ $admin) {
 		assert(is_bool($admin));
 		global $database;
 		$yn = $admin ? 'Y' : 'N';
@@ -128,14 +128,14 @@ class User {
 		log_info("core-user", 'Made '.$this->name.' admin='.$yn);
 	}
 
-	public function set_password($password) {
+	public function set_password(/*string*/ $password) {
 		global $database;
 		$hash = md5(strtolower($this->name) . $password);
 		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$hash, "id"=>$this->id));
 		log_info("core-user", 'Set password for '.$this->name);
 	}
 
-	public function set_email($address) {
+	public function set_email(/*string*/ $address) {
 		global $database;
 		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
 		log_info("core-user", 'Set email for '.$this->name);
@@ -173,7 +173,7 @@ class User {
 	 */
 	public function get_auth_token() {
 		global $config;
-		$salt = file_get_contents("config.php");
+		$salt = DATABASE_DSN;
 		$addr = get_session_ip($config);
 		return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
 	}

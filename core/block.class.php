@@ -31,7 +31,7 @@ class Block {
 	 */
 	var $position;
 
-	public function __construct($header, $body, $section="main", $position=50) {
+	public function __construct($header, $body, /*string*/ $section="main", /*int*/ $position=50) {
 		$this->header = $header;
 		$this->body = $body;
 		$this->section = $section;
