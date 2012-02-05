@@ -1,7 +1,8 @@
 <?php ob_start(); ?>
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <!--
- - install.php (c) Shish 2007
+ - install.php (c) Shish et all. 2007-2012
  -
  - Initialise the database, check that folder
  - permissions are set properly, set an admin
@@ -12,17 +13,18 @@
 -->
 	<head>
 		<title>Shimmie Installation</title>
-		<style>
-BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
-H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
-H1 {margin-top: 0px;margin-bottom: 0px;padding: 2px;}
-H3 {margin-top: 32px;padding: 1px;}
-FORM {margin: 0px;}
-A {text-decoration: none;}
-A:hover {text-decoration: underline;}
-#block {width: 512px; margin: auto; margin-top: 64px;}
-#iblock {width: 512px; margin: auto; margin-top: 16px;}
-TD INPUT {width: 350px;}
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<style type="text/css">
+			BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
+			H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
+			H1 {margin-top: 0px;margin-bottom: 0px;padding: 2px;}
+			H3 {margin-top: 32px;padding: 1px;}
+			FORM {margin: 0px;}
+			A {text-decoration: none;}
+			A:hover {text-decoration: underline;}
+			#block {width: 512px; margin: auto; margin-top: 64px;}
+			#iblock {width: 512px; margin: auto; margin-top: 16px;}
+			TD INPUT {width: 350px;}
 		</style>
 	</head>
 	<body>
@@ -31,9 +33,10 @@ TD INPUT {width: 350px;}
 			<h1>Install Error</h1>
 			<p>Shimmie needs to be run via a web server with PHP support -- you
 			appear to be either opening the file from your hard disk, or your
-			web server is mis-configured.
+			web server is mis-configured.</p>
 			<p>If you've installed a web server on your desktop PC, you probably
-			want to visit <a href="http://localhost/">the local web server</a>.
+			want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
+			</p>
 		</div>
 		<div style="display: none;">
 			<PLAINTEXT>
@@ -52,6 +55,7 @@ if(is_readable("config.php")) {
 			<h1>Shimmie Repair Console</h1>
 <?php
 	include "config.php";
+	
 	if($_SESSION['dsn'] == DATABASE_DSN || $_POST['dsn'] == DATABASE_DSN) {
 		if($_POST['dsn']) {$_SESSION['dsn'] = $_POST['dsn'];}
 
@@ -76,10 +80,12 @@ if(is_readable("config.php")) {
 				</form>
 			";
 			*/
-			echo "<h3>Database quick  fix for User deletion</h3>";
-			echo "just a database fix for those who instaled shimmie before 2012 january the 22rd.<br>";
-			echo "Note: some things needs to be done manually, to work properly.<br>";
-			echo "WARNING: ONLY  PROCEEDS IF YOU KNOW WHAT YOU ARE DOING!";
+			echo "<h3>Database Fix for User deletion</h3>";
+			echo "This is a database fix for those who instaled shimmie before 2012 January 22rd.<br/>";
+			echo "<b>This is only for users with <u>MySQL</u> databases!</b><br/>";
+			echo "Note: Some things needs to be done manually, to work properly.<br/>";
+			echo "Please BACKUP YOUR DATABASE before performing this fix!<br>";
+			echo "WARNING: ONLY  PROCEEDS IF YOU KNOW WHAT YOU ARE DOING!<br>";
 			echo "
 				<form action='install.php?action=Database_user_deletion_fix' method='POST'>
 					<input type='submit' value='go!'>
@@ -102,8 +108,7 @@ if(is_readable("config.php")) {
 	} else {
 		echo "
 			<h3>Login</h3>
-			Enter the database DSN exactly as in config.php (ie, as originally
-			installed) to access advanced recovery tools:
+			<p>Enter the database DSN exactly as in config.php (ie, as originally installed) to access advanced recovery tools:</p>
 
 			<form action='install.php' method='POST'>
 				<center>
@@ -249,7 +254,7 @@ function begin() { // {{{
 			<h3>Help</h3>
 					
 			<p>Please make sure the database you have chosen exists and is empty.<br>
-			The username provided must have access to create tables within the database.
+			The username provided must have access to create tables within the database.</p>
 			
 		</div>
 EOD;
@@ -354,11 +359,12 @@ function build_dirs() { // {{{
 			!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
 			!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
 	) {
-		print "Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
-		       and they need to be writable by the PHP user (if you see this error,
-			   if probably means the folders are owned by you, and they need to be
-			   writable by the web server).
-			   <p>Once you have created these folders, hit 'refresh' to continue.";
+		print "<p>Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
+		       and they need to be writable by the PHP user.</p>
+			   <p>If you see this error, if probably means the folders are owned by you, and they need to be
+			   writable by the web server.</p>
+			   <p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
+			   <p>Once you have created these folders and/or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>";
 		exit;
 	}
 } // }}}
@@ -393,10 +399,18 @@ function Database_user_deletion_fix() {
 		require_once "core/database.class.php";
 		$db = new Database();
 		
-		echo "Fixing user_favorites table....";
+		if ($database->db->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
+			echo "<br><br>Database is not MySQL - Aborting changes.<br><br>";
+			echo '<a href="install.php">Go Back</a>';
+			return;
+		} else {
+			echo "<h3>Performing Database Fix Operations</h3><br>";
+		}
+		
+		echo "Fixing user_favorites table....<br><br>";
 		
 		($db->Execute("ALTER TABLE user_favorites ENGINE=InnoDB;")) ? print_r("ok<br>") : print_r("failed<br>");
-		echo "adding Foreign key to user ids...";
+		echo "adding Foreign key to user ids...<br><br>";
 		
 		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
 		echo "cleaning, the table from deleted image favorites...<br>";
@@ -406,17 +420,17 @@ function Database_user_deletion_fix() {
 		foreach( $rows as $key => $value)
 			$db->Execute("DELETE FROM user_favorites WHERE image_id = :image_id;", array("image_id" => $value["image_id"]));
 		
-		echo "adding forign key to image ids...";
+		echo "adding forign key to image ids...<br><br>";
 		
 		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
 		
-		echo "adding foreign keys to private messages...";
+		echo "adding foreign keys to private messages...<br><br>";
 		
 		($db->Execute("ALTER TABLE private_message 
 		ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 		ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;")) ? print_r("ok<br>"):print_r("failed<br>");
 		
-		echo "Just one more step...which you need to do manually:<br>";
+		echo "<br><br>Just one more step...which you need to do manually:<br>";
 		echo "You need to go to your database and Delete the foreign key on the owner_id in the images table.<br><br>";
 		echo "<a href='http://www.justin-cook.com/wp/2006/05/09/how-to-remove-foreign-keys-in-mysql/'>How to remove foreign keys</a><br><br>";
 		echo "and finally execute this querry:<br><br>";
