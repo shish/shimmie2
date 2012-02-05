@@ -54,10 +54,32 @@ if(is_readable("config.php")) {
 		<div id="iblock">
 			<h1>Shimmie Repair Console</h1>
 <?php
-	include "config.php";
+
+	/*
+	 * Compute the path to the folder containing "install.php" and 
+	 * store it as the 'Shimmie Root' folder for later on.
+	 *
+	 * Example:
+	 *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
+	 *
+	 */
+	define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . '/' ); 
+
+	// Pull in necessary files
+	require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
+	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
+	require_once __SHIMMIE_ROOT__."core/util.inc.php";
+	require_once __SHIMMIE_ROOT__."core/database.class.php";
 	
-	if($_SESSION['dsn'] == DATABASE_DSN || $_POST['dsn'] == DATABASE_DSN) {
-		if($_POST['dsn']) {$_SESSION['dsn'] = $_POST['dsn'];}
+	if (
+	      ( array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN ) ||
+	      ( array_key_exists('dsn', $_POST)    && $_POST['dsn']    === DATABASE_DSN )
+	   )
+	{
+		if ( array_key_exists('dsn', $_POST) && !empty($_POST['dsn']) )
+		{
+		    $_SESSION['dsn'] = $_POST['dsn'];
+		}
 
 		if(empty($_GET["action"])) {
 			echo "<h3>Basic Checks</h3>";
@@ -81,14 +103,14 @@ if(is_readable("config.php")) {
 			";
 			*/
 			echo "<h3>Database Fix for User deletion</h3>";
-			echo "This is a database fix for those who instaled shimmie before 2012 January 22rd.<br/>";
-			echo "<b>This is only for users with <u>MySQL</u> databases!</b><br/>";
-			echo "Note: Some things needs to be done manually, to work properly.<br/>";
+			echo "<p>This is a database fix for those who instaled shimmie before 2012 January 22rd.</p>";
+			echo "<p><b>This is only for users with <u>MySQL</u> databases!</b></p>";
+			echo "<p>Note: Some things needs to be done manually, to work properly.<br/>";
 			echo "Please BACKUP YOUR DATABASE before performing this fix!<br>";
-			echo "WARNING: ONLY  PROCEEDS IF YOU KNOW WHAT YOU ARE DOING!<br>";
+			echo "WARNING: ONLY PROCEED IF YOU KNOW WHAT YOU ARE DOING!<br></p>";
 			echo "
 				<form action='install.php?action=Database_user_deletion_fix' method='POST'>
-					<input type='submit' value='go!'>
+					<input type='submit' value='Go'>
 				</form>
 			";
 
@@ -101,6 +123,7 @@ if(is_readable("config.php")) {
 		}
 		else if($_GET["action"] == "logout") {
 			session_destroy();
+			echo "<h3>Logged Out</h3><p>You have been logged out.</p><a href='index.php'>Main Shimmie Page</a>";
 		}
 		else if($_GET["action"] == "Database_user_deletion_fix") {
 			Database_user_deletion_fix();
@@ -123,13 +146,24 @@ if(is_readable("config.php")) {
 	echo "\t\t</div>";
 	exit;
 }
-require_once "core/compat.inc.php";
-require_once "core/util.inc.php";
-require_once "core/database.class.php";
 
 do_install();
 
 // utilities {{{
+
+/**
+  * Strips off any kind of slash at the end so as to normalise the path.
+  * @param string $path    Path to normalise.
+  * @return string         Path without trailing slash.
+  */
+function remove_trailing_slash($path) {
+	if ((substr($path, -1) === '/') || (substr($path, -1) === '\\')) {
+		return substr($path, 0, -1);
+	} else {
+		return $path;
+	}
+}
+
 function check_gd_version() {
 	$gdversion = 0;
 
@@ -394,15 +428,14 @@ EOD;
 	}
 } // }}}
 
-function Database_user_deletion_fix() {
+function Database_user_deletion_fix() { // {{{
 	try {
-		require_once "core/database.class.php";
 		$db = new Database();
 		
-		if ($database->db->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
+		if ($db->db->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
 			echo "<br><br>Database is not MySQL - Aborting changes.<br><br>";
 			echo '<a href="install.php">Go Back</a>';
-			return;
+			throw new PDOException("Database is not MySQL.");
 		} else {
 			echo "<h3>Performing Database Fix Operations</h3><br>";
 		}
@@ -443,7 +476,7 @@ function Database_user_deletion_fix() {
 		// FIXME: Make the error message user friendly
 		exit($e->getMessage());
 	}
-}
+} // }}}
 ?>
 	</body>
 </html>
