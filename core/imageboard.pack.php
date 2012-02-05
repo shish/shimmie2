@@ -109,12 +109,18 @@ class Image {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
-		global $database;
+		global $database, $user;
 
 		$images = array();
 
 		if($start < 0) $start = 0;
 		if($limit < 1) $limit = 1;
+
+		if(SPEED_HAX) {
+			if($user->is_anonymous() and count($tags) > 3) {
+				die("Anonymous users may only search for up to 3 tags at a time"); // FIXME: throw an exception?
+			}
+		}
 
 		$querylet = Image::build_search_querylet($tags);
 		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
