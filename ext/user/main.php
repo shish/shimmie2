@@ -158,7 +158,7 @@ class UserPage extends SimpleExtension {
 				$this->theme->display_error($page, "Not Logged In",
 					"You aren't logged in. First do that, then you can see your stats.");
 			}
-			else if(!is_null($display_user)) {
+			else if(!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
 				send_event(new UserPageBuildingEvent($display_user));
 			}
 			else {
