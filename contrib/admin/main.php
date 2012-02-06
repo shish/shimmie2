@@ -82,6 +82,9 @@ class AdminPage extends SimpleExtension {
 						$this->reset_imageids();
 						$redirect = true;
 						break;
+					case 'image dump':
+						$this->imgdump($page);
+						break;
 				}
 
 				if($redirect) {
@@ -217,6 +220,29 @@ class AdminPage extends SimpleExtension {
 		}
 		$count = (count($image)) + 1;
 		$database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
+	}
+
+	private function imgdump($page) {
+		global $database;
+		$zip = new ZipArchive;
+		$images = $database->get_all("SELECT * FROM images");
+		$filename = 'imgdump-'.date('Ymd').'.zip';
+
+		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE)===TRUE){
+			foreach($images as $img){
+				$hash = $img["hash"];
+				preg_match("^[A-Za-z0-9]{2}^", $hash, $matches);
+				$img_loc = "images/".$matches[0]."/".$hash;
+				if(file_exists($img_loc)){
+					$zip->addFile($img_loc, $hash.".".$img["ext"]);
+				}
+
+			}
+			$zip->close();
+		}
+		$page->set_mode("redirect");
+		$page->set_redirect(make_link($filename)); //Fairly sure there is better way to do this..
+		//TODO: Delete file after downloaded?
 	}
 }
 ?>

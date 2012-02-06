@@ -27,6 +27,7 @@ class AdminPageTheme extends Themelet {
 					<option value='purge unused tags'>Purge unused tags</option>
 					<option value='database dump'>Download database contents</option>
 					<option value='reset image ids'>Reset image ids</option>
+					<option value='image dump'>Download all images</option>
 					<!--<option value='convert to innodb'>Convert database to InnoDB (MySQL only)</option>-->
 				</select>
 				<input type='submit' value='Go'>

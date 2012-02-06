@@ -1,8 +1,10 @@
 .svn
+backup
+data
 config.php
 images
+imgdump-*.zip
 thumbs
-data
 sql.log
 shimmie.log
 !lib/images
