@@ -179,7 +179,7 @@ class CommentListTheme extends Themelet {
 			return '
 				<a name="'.$i_comment_id.'"></a>
 				<div class="'.$oe.' comment">
-				<!--<span class="timeago" style="float: right;">'.$h_timestamp.'</span>-->
+				<!--<div class="info" style="float: right;">'.$h_timestamp.'</div>-->
 				'.$h_userlink.': '.$h_comment.'
 				'.$h_dellink.'
 				</div>
