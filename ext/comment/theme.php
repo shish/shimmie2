@@ -175,10 +175,9 @@ class CommentListTheme extends Themelet {
 			//	$hash = md5(strtolower($comment->owner->email));
 			//	$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			//}
-			$oe = ($this->comments_shown++ % 2 == 0) ? "even" : "odd";
 			return '
 				<a name="'.$i_comment_id.'"></a>
-				<div class="'.$oe.' comment">
+				<div class="comment">
 				<!--<div class="info" style="float: right;">'.$h_timestamp.'</div>-->
 				'.$h_userlink.': '.$h_comment.'
 				'.$h_dellink.'
