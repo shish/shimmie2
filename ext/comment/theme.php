@@ -157,33 +157,37 @@ class CommentListTheme extends Themelet {
 		}
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
-		$h_dellink = $user->is_admin() ?
-			'<br>('.$h_poster_ip.', '.$h_timestamp.', <a '.
-			'onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
-			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>)' : '';
 
 		if($trim) {
 			return '
 				'.$h_userlink.': '.$h_comment.'
 				<a href="'.make_link('post/view/'.$i_image_id).'">&gt;&gt;&gt;</a>
-				'.$h_dellink.'
 			';
 		}
 		else {
-			//$avatar = "";
-			//if(!empty($comment->owner->email)) {
-			//	$hash = md5(strtolower($comment->owner->email));
-			//	$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
-			//}
+			$avatar = "";
+			if(!empty($comment->owner_email)) {
+				$hash = md5(strtolower($comment->owner_email));
+				$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
+			}
+			$a = $user->is_admin();
+			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id)'>Reply</a>";
+			$h_ip = $a ? "<br>$h_poster_ip" : "";
+			$h_del = $a ?
+				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
+				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
 			return '
 				<a name="'.$i_comment_id.'"></a>
 				<div class="comment">
-				<!--<div class="info" style="float: right;">'.$h_timestamp.'</div>-->
-				'.$h_userlink.': '.$h_comment.'
-				'.$h_dellink.'
+					<div class="info">
+					'.$avatar.'
+					'.$h_timestamp.$h_reply.$h_ip.$h_del.'
+					</div>
+					'.$h_userlink.': '.$h_comment.'
 				</div>
 			';
 		}
+		return "";
 	}
 
 	protected function build_postbox($image_id) {
@@ -197,7 +201,7 @@ class CommentListTheme extends Themelet {
 			'.make_form(make_link("comment/add")).'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
-				<textarea name="comment" rows="5" cols="50"></textarea>
+				<textarea id="comment_on_'.$i_image_id.'" name="comment" rows="5" cols="50"></textarea>
 				'.$captcha.'
 				<br><input type="submit" value="Post Comment" />
 			</form>
