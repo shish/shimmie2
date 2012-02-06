@@ -1,7 +1,7 @@
 .svn
 backup
-data
 config.php
+data
 images
 imgdump-*.zip
 thumbs
