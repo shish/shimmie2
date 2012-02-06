@@ -87,6 +87,6 @@ else if(document.getElementById("tags") !== null){
 	//Since Gelbooru does not allow flash, no need to search for flash tag.
 	//Gelbooru doesn't show file size in statistics either...
 	if(supext.search(gmi.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
-		location.href=ste+gmi+"&tags="+tag+"&rating="+rtg[1];//+"&source="+srx;
+		location.href=ste+gmi+"&tags="+tag+"&rating="+rtg;//+"&source="+srx;
 	}else{alert(notsup);}
 }
