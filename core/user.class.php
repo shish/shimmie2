@@ -4,6 +4,11 @@ function _new_user($row) {
 	return new User($row);
 }
 
+$_perm_map = array(
+	"override_config" => "admin",
+);
+
+
 /**
  * An object representing a row in the "users" table.
  *
@@ -90,6 +95,15 @@ class User {
 	/*
 	 * useful user object functions start here
 	 */
+	public function can($ability) {
+		global $_perm_map;
+		$needed = $_perm_map[$ability];
+		if($needed == "admin" && $this->is_admin()) return true;
+		if($needed == "user" && $this->is_logged_in()) return true;
+		if($needed == "anon") return true;
+		return false;
+	}
+
 
 	/**
 	 * Test if this user is anonymous (not logged in)

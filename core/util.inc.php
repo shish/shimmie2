@@ -879,7 +879,7 @@ function get_debug_info() {
 // print_obj ($object, $title, $return)
 function print_obj($object,$title="Object Information", $return=false) {
 	global $user;
-	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) {
+	if(DEBUG && isset($_GET['DEBUG']) && $user->can("override_config")) {
 		$pr = print_r($object,true);
 		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
 		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
