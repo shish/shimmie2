@@ -102,17 +102,6 @@ if(is_readable("config.php")) {
 				</form>
 			";
 			*/
-			echo "<h3>Database Fix for User deletion</h3>";
-			echo "<p>This is a database fix for those who instaled shimmie before 2012 January 22rd.</p>";
-			echo "<p><b>This is only for users with <u>MySQL</u> databases!</b></p>";
-			echo "<p>Note: Some things needs to be done manually, to work properly.<br/>";
-			echo "Please BACKUP YOUR DATABASE before performing this fix!<br>";
-			echo "WARNING: ONLY PROCEED IF YOU KNOW WHAT YOU ARE DOING!<br></p>";
-			echo "
-				<form action='install.php?action=Database_user_deletion_fix' method='POST'>
-					<input type='submit' value='Go'>
-				</form>
-			";
 
 			echo "<h3>Log Out</h3>";
 			echo "
@@ -124,9 +113,6 @@ if(is_readable("config.php")) {
 		else if($_GET["action"] == "logout") {
 			session_destroy();
 			echo "<h3>Logged Out</h3><p>You have been logged out.</p><a href='index.php'>Main Shimmie Page</a>";
-		}
-		else if($_GET["action"] == "Database_user_deletion_fix") {
-			Database_user_deletion_fix();
 		}
 	} else {
 		echo "
@@ -425,56 +411,6 @@ function write_config() { // {{{
 		<p>One done, <a href='index.php'>Continue</a>
 EOD;
 		exit;
-	}
-} // }}}
-
-function Database_user_deletion_fix() { // {{{
-	try {
-		$db = new Database();
-		
-		if ($db->db->getAttribute(PDO::ATTR_DRIVER_NAME) !== 'mysql') {
-			echo "<br><br>Database is not MySQL - Aborting changes.<br><br>";
-			echo '<a href="install.php">Go Back</a>';
-			throw new PDOException("Database is not MySQL.");
-		} else {
-			echo "<h3>Performing Database Fix Operations</h3><br>";
-		}
-		
-		echo "Fixing user_favorites table....<br><br>";
-		
-		($db->Execute("ALTER TABLE user_favorites ENGINE=InnoDB;")) ? print_r("ok<br>") : print_r("failed<br>");
-		echo "adding Foreign key to user ids...<br><br>";
-		
-		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
-		echo "cleaning, the table from deleted image favorites...<br>";
-		
-		$rows = $db->get_all("SELECT * FROM user_favorites WHERE image_id NOT IN ( SELECT id FROM images );");
-		
-		foreach( $rows as $key => $value)
-			$db->Execute("DELETE FROM user_favorites WHERE image_id = :image_id;", array("image_id" => $value["image_id"]));
-		
-		echo "adding forign key to image ids...<br><br>";
-		
-		($db->Execute("ALTER TABLE user_favorites ADD CONSTRAINT user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;"))? print_r("ok<br>"):print_r("failed<br>");
-		
-		echo "adding foreign keys to private messages...<br><br>";
-		
-		($db->Execute("ALTER TABLE private_message 
-		ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
-		ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;")) ? print_r("ok<br>"):print_r("failed<br>");
-		
-		echo "<br><br>Just one more step...which you need to do manually:<br>";
-		echo "You need to go to your database and Delete the foreign key on the owner_id in the images table.<br><br>";
-		echo "<a href='http://www.justin-cook.com/wp/2006/05/09/how-to-remove-foreign-keys-in-mysql/'>How to remove foreign keys</a><br><br>";
-		echo "and finally execute this querry:<br><br>";
-		echo "ALTER TABLE images ADD CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT;<br><br>";
-		echo "if this is all sucesfull you are done!";
-
-	}
-	catch (PDOException $e)
-	{
-		// FIXME: Make the error message user friendly
-		exit($e->getMessage());
 	}
 } // }}}
 ?>
