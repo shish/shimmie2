@@ -236,6 +236,8 @@ class Page {
 	
 	protected function add_auto_html_headers() {
 		$data_href = get_base_href();
+
+		$this->add_html_header("<script>base_href = '$data_href';</script>");
 		
 		/* Attempt to cache the CSS & JavaScript files */
 		if ($this->add_cached_auto_html_headers() === FALSE) {
