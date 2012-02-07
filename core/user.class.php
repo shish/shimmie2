@@ -152,7 +152,7 @@ class User {
 			),
 		);
 
-		return $user_classes[$this->get_class()][$action];
+		return $user_classes[$this->get_class()][$ability];
 	}
 
 	// FIXME: this should be a column in the users table
