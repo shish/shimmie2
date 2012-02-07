@@ -196,8 +196,8 @@ class Page {
 
 		switch($this->mode) {
 			case "page":
-				header("Vary: Cookie, Accept-Encoding");
 				if(CACHE_HTTP) {
+					header("Vary: Cookie, Accept-Encoding");
 					if($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
 						header("Cache-control: public, max-age=600");
 						header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
