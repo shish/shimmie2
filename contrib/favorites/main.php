@@ -152,6 +152,17 @@ class Favorites extends SimpleExtension {
 			");
 			$config->set_int("ext_favorites_version", 1);
 		}
+
+		if($config->get_int("ext_favorites_version") < 2) {
+			log_info("favorites", "Cleaning user favourites");
+			$database->Execute("DELETE FROM user_favorites WHERE user_id NOT IN (SELECT id FROM users)");
+			$database->Execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
+
+			log_info("favorites", "Adding foreign keys to user favourites");
+			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
+			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
+			$config->set_int("ext_favorites_version", 2);
+		}
 	}
 
 	private function add_vote($image_id, $user_id, $do_set) {

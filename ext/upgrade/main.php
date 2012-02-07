@@ -51,19 +51,6 @@ class Upgrade extends SimpleExtension {
 		if($config->get_int("db_version") < 10) {
 			$config->set_bool("in_upgrade", true);
 
-			log_info("upgrade", "Cleaning user favourites");
-			$database->Execute("DELETE FROM user_favorites WHERE user_id NOT IN (SELECT id FROM users)");
-			$database->Execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
-
-			log_info("upgrade", "Adding foreign keys to user favourites");
-			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
-			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
-			
-			log_info("upgrade", "Adding foreign keys to private messages");
-			$database->Execute("ALTER TABLE private_message 
-			ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
-			ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
-
 			log_info("upgrade", "Adding foreign keys to images");
 			$database->Execute("ALTER TABLE images ADD CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 		

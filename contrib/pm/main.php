@@ -57,9 +57,20 @@ class PrivMsg extends SimpleExtension {
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-				INDEX (to_id)
+				INDEX (to_id),
+				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("pm_version", 1);
+			log_info("pm", "extension installed");
+		}
+
+		if($config->get_int("pm_version") < 2) {
+			log_info("pm", "Adding foreign keys to private messages");
+			$database->Execute("ALTER TABLE private_message 
+			ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+			ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
+			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}
 	}
