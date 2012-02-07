@@ -8,17 +8,17 @@ interface Config {
 	 * so that the next time a page is loaded it will use the new
 	 * configuration
 	 */
-	public function save($name=null);
+	public function save(/*string*/ $name=null);
 
 	/** @name set_*
 	 * Set a configuration option to a new value, regardless
 	 * of what the value is at the moment
 	 */
 	//@{
-	public function set_int($name, $value);
-	public function set_string($name, $value);
-	public function set_bool($name, $value);
-	public function set_array($name, $value);
+	public function set_int(/*string*/ $name, $value);
+	public function set_string(/*string*/ $name, $value);
+	public function set_bool(/*string*/ $name, $value);
+	public function set_array(/*string*/ $name, $value);
 	//@}
 
 	/** @name set_default_*
@@ -30,10 +30,10 @@ interface Config {
 	 * "default" paramater won't show up.
 	 */
 	//@{
-	public function set_default_int($name, $value);
-	public function set_default_string($name, $value);
-	public function set_default_bool($name, $value);
-	public function set_default_array($name, $value);
+	public function set_default_int(/*string*/ $name, $value);
+	public function set_default_string(/*string*/ $name, $value);
+	public function set_default_bool(/*string*/ $name, $value);
+	public function set_default_array(/*string*/ $name, $value);
 	//@}
 
 	/** @name get_*
@@ -41,10 +41,10 @@ interface Config {
 	 * appropritate data type
 	 */
 	//@{
-	public function get_int($name, $default=null);
-	public function get_string($name, $default=null);
-	public function get_bool($name, $default=null);
-	public function get_array($name, $default=array());
+	public function get_int(/*string*/ $name, $default=null);
+	public function get_string(/*string*/ $name, $default=null);
+	public function get_bool(/*string*/ $name, $default=null);
+	public function get_array(/*string*/ $name, $default=array());
 	//@}
 }
 
@@ -56,60 +56,60 @@ interface Config {
 abstract class BaseConfig implements Config {
 	var $values = array();
 
-	public function set_int($name, $value) {
+	public function set_int(/*string*/ $name, $value) {
 		$this->values[$name] = parse_shorthand_int($value);
 		$this->save($name);
 	}
-	public function set_string($name, $value) {
+	public function set_string(/*string*/ $name, $value) {
 		$this->values[$name] = $value;
 		$this->save($name);
 	}
-	public function set_bool($name, $value) {
+	public function set_bool(/*string*/ $name, $value) {
 		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		$this->save($name);
 	}
-	public function set_array($name, $value) {
+	public function set_array(/*string*/ $name, $value) {
 		assert(is_array($value));
 		$this->values[$name] = implode(",", $value);
 		$this->save($name);
 	}
 
-	public function set_default_int($name, $value) {
+	public function set_default_int(/*string*/ $name, $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = parse_shorthand_int($value);
 		}
 	}
-	public function set_default_string($name, $value) {
+	public function set_default_string(/*string*/ $name, $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = $value;
 		}
 	}
-	public function set_default_bool($name, $value) {
+	public function set_default_bool(/*string*/ $name, $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		}
 	}
-	public function set_default_array($name, $value) {
+	public function set_default_array(/*string*/ $name, $value) {
 		assert(is_array($value));
 		if(is_null($this->get($name))) {
 			$this->values[$name] = implode(",", $value);
 		}
 	}
 
-	public function get_int($name, $default=null) {
+	public function get_int(/*string*/ $name, $default=null) {
 		return (int)($this->get($name, $default));
 	}
-	public function get_string($name, $default=null) {
+	public function get_string(/*string*/ $name, $default=null) {
 		return $this->get($name, $default);
 	}
-	public function get_bool($name, $default=null) {
+	public function get_bool(/*string*/ $name, $default=null) {
 		return undb_bool($this->get($name, $default));
 	}
-	public function get_array($name, $default=array()) {
+	public function get_array(/*string*/ $name, $default=array()) {
 		return explode(",", $this->get($name, ""));
 	}
 
-	private function get($name, $default=null) {
+	private function get(/*string*/ $name, $default=null) {
 		if(isset($this->values[$name])) {
 			return $this->values[$name];
 		}
@@ -144,7 +144,7 @@ class StaticConfig extends BaseConfig {
 		}
 	}
 
-	public function save($name=null) {
+	public function save(/*string*/ $name=null) {
 		// static config is static
 	}
 }
@@ -167,7 +167,7 @@ class DatabaseConfig extends BaseConfig {
 	/*
 	 * Load the config table from a database
 	 */
-	public function DatabaseConfig($database) {
+	public function DatabaseConfig(Database $database) {
 		$this->database = $database;
 
 		$cached = $this->database->cache->get("config");
@@ -186,10 +186,10 @@ class DatabaseConfig extends BaseConfig {
 	/*
 	 * Save the current values as the new config table
 	 */
-	public function save($name=null) {
+	public function save(/*string*/ $name=null) {
 		if(is_null($name)) {
 			foreach($this->values as $name => $value) {
-				$this->save($name);
+				$this->save(/*string*/ $name);
 			}
 		}
 		else {
