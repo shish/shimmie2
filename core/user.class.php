@@ -4,10 +4,6 @@ function _new_user($row) {
 	return new User($row);
 }
 
-$_perm_map = array(
-	"override_config" => "admin",
-);
-
 
 /**
  * An object representing a row in the "users" table.
@@ -96,12 +92,74 @@ class User {
 	 * useful user object functions start here
 	 */
 	public function can($ability) {
-		global $_perm_map;
-		$needed = $_perm_map[$ability];
-		if($needed == "admin" && $this->is_admin()) return true;
-		if($needed == "user" && $this->is_logged_in()) return true;
-		if($needed == "anon") return true;
-		return false;
+		global $config;
+
+		// TODO: make this into an editable database table
+		$user_classes = array(
+			"anonymous" => array(
+				"change_setting" => False,  # web-level settings, eg the config table
+				"override_config" => False, # sys-level config, eg config.php
+				"big_search" => False,      # more than 3 tags (speed mode only)
+				"lock_image" => False,
+				"view_ip" => False,         # view IP addresses associated with things
+				"change_password" => False,
+				"change_user_info" => False,
+				"delete_user" => False,
+				"delete_image" => False,
+				"delete_comment" => False,
+				"replace_image" => False,
+				"manage_extension_list" => False,
+				"manage_alias_list" => False,
+				"edit_tag" => $config->get_bool("tag_edit_anon"),
+				"edit_source" => $config->get_bool("source_edit_anon"),
+				"mass_tag_edit" => False,
+			),
+			"user" => array(
+				"change_setting" => False,
+				"override_config" => False,
+				"big_search" => True,
+				"lock_image" => False,
+				"view_ip" => False,
+				"change_password" => False,
+				"change_user_info" => False,
+				"delete_user" => False,
+				"delete_image" => False,
+				"delete_comment" => False,
+				"replace_image" => False,
+				"manage_extension_list" => False,
+				"manage_alias_list" => False,
+				"edit_tag" => True,
+				"edit_source" => True,
+				"mass_tag_edit" => False,
+			),
+			"admin" => array(
+				"change_setting" => True,
+				"override_config" => True,
+				"big_search" => True,
+				"lock_image" => True,
+				"view_ip" => True,
+				"change_password" => True,
+				"change_user_info" => True,
+				"delete_user" => True,
+				"delete_image" => True,
+				"delete_comment" => True,
+				"replace_image" => True,
+				"manage_extension_list" => True,
+				"manage_alias_list" => True,
+				"edit_tag" => True,
+				"edit_source" => True,
+				"mass_tag_edit" => True,
+			),
+		);
+
+		return $user_classes[$this->get_class()][$action];
+	}
+
+	// FIXME: this should be a column in the users table
+	public function get_class() {
+		if($this->is_admin()) return "admin";
+		else if($this->is_logged_in()) return "user";
+		else return"anonymous";
 	}
 
 

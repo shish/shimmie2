@@ -90,7 +90,7 @@ class ViewImageTheme extends Themelet {
 		$html = "";
 		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a> $h_date";
 
-		if($user->is_admin()) {
+		if($user->can("view_ip")) {
 			$html .= " ($h_ip)";
 		}
 		if(!is_null($image->source)) {

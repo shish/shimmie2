@@ -170,10 +170,9 @@ class CommentListTheme extends Themelet {
 				$hash = md5(strtolower($comment->owner_email));
 				$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			}
-			$a = $user->is_admin();
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id)'>Reply</a>";
-			$h_ip = $a ? "<br>$h_poster_ip" : "";
-			$h_del = $a ?
+			$h_ip = $user->can("view_ip") ? "<br>$h_poster_ip" : "";
+			$h_del = $user->can("delete_comment") ?
 				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
 				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
 			return '

@@ -120,7 +120,7 @@ class Upload extends SimpleExtension {
 			}
 			
 			// check if the user is an administrator and can upload files.
-			if(!$user->is_admin()) {
+			if(!$user->can("replace_image")) {
 				$this->theme->display_permission_denied($page);
 			}
 			else {
@@ -308,7 +308,7 @@ class Upload extends SimpleExtension {
 		}
 		
 		// Checks if user is admin > check if you want locked.
-		if($user->is_admin() && !empty($_GET['locked'])){
+		if($user->can("lock_image") && !empty($_GET['locked'])){
 			$locked = bool_escape($_GET['locked']);
 		}
 		

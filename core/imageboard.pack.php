@@ -119,7 +119,7 @@ class Image {
 		if($limit < 1) $limit = 1;
 
 		if(SPEED_HAX) {
-			if($user->is_anonymous() and count($tags) > 3) {
+			if(!$user->can("big_search") and count($tags) > 3) {
 				die("Anonymous users may only search for up to 3 tags at a time"); // FIXME: throw an exception?
 			}
 		}

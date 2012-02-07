@@ -128,7 +128,7 @@ class CommentList extends SimpleExtension {
 				}
 			}
 			else if($event->get_arg(0) === "delete") {
-				if($user->is_admin()) {
+				if($user->can("delete_comment")) {
 					// FIXME: post, not args
 					if($event->count_args() === 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
