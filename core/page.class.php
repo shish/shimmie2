@@ -39,7 +39,7 @@ class Page {
 	/** @private */
 	var $mode = "page";
 	/** @private */
-	var $type = "text/html";
+	var $type = "text/html; charset=utf-8";
 
 	/**
 	 * Set what this page should do; "page", "data", or "redirect".
