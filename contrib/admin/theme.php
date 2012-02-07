@@ -19,9 +19,20 @@ class AdminPageTheme extends Themelet {
 	public function display_form(Page $page) {
 		global $user;
 
-		$html = "
-			".make_form(make_link("admin_utils"))."
-				<select name='action'>
+		$html = '
+			<script type="text/javascript">
+			function imgidconfirm(){
+				if(document.getElementById("misc").selectedIndex == 4){
+					if(confirm("This function WILL break any bookmarks & links.\n The event log will also not be updated with new ids. \n Are you sure you wish to continue?")){
+						return true;
+					}else{
+						return false;
+					}
+				}
+			}
+			</script>
+			'.make_form(make_link("admin_utils"),"post", false, false, "return imgidconfirm()")."
+				<select name='action' id='misc'>
 					<option value='lowercase all tags'>All tags to lowercase</option>
 					<option value='recount tag use'>Recount tag use</option>
 					<option value='purge unused tags'>Purge unused tags</option>
