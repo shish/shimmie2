@@ -9,7 +9,7 @@
  */
 
 class Forum extends SimpleExtension {
-        public function onInitExt($event) {
+        public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// shortcut to latest
@@ -57,7 +57,7 @@ class Forum extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 	
-	public function onUserPageBuilding($event) {
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user, $database;
 		
 		$threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", array($event->display_user->id));
@@ -73,7 +73,7 @@ class Forum extends SimpleExtension {
 	}
 
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
             global $page, $user;
             
             if($event->page_matches("forum")) {

@@ -6,16 +6,15 @@
  * Description: Allow users to bookmark searches
  */
 
-class Bookmarks implements Extension {
-	var $theme;
+class Bookmarks extends SimpleExtension {
+	public function onInitExt(InitExtEvent $event) {
+		$this->install();
+	}
 
-	public function get_priority() {return 50;}
+	public function onPageRequest(PageRequestEvent $event) {
+		global $page;
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof PageRequestEvent) && $event->page_matches("bookmark")) {
+		if($event->page_matches("bookmark")) {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['url'])) {
 					$page->set_mode("redirect");

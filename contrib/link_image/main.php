@@ -4,29 +4,22 @@
  * Author: Artanis <artanis.00@gmail.com>
  * Description: Show various forms of link to each image, for copy & paste
  */
-class LinkImage implements Extension {
-	var $theme;
+class LinkImage extends SimpleExtension {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $page;
+		$this->theme->links_block($page, $this->data($event->image));
+	}
 
-	public function get_priority() {return 50;}
+	public function onSetupBuildingEvent(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Link to Image");
+		$sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
+		$event->panel->add_block($sb);
+	}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-			if(($event instanceof DisplayingImageEvent)) {
-				$this->theme->links_block($page, $this->data($event->image));
-			}
-			if($event instanceof SetupBuildingEvent) {
-				$sb = new SetupBlock("Link to Image");
-				$sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
-				$event->panel->add_block($sb);
-			}
-			if($event instanceof InitExtEvent) {
-				//just set default if empty.
-				$config->set_default_string("ext_link-img_text-link_format",
-										'$title - $id ($ext $size $filesize)');
-			}
-		}
+	public function onInitExtEvent(InitExtEvent $event) {
+		global $config;
+		$config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
+	}
 
 	private function hostify($str) {
 		$str = str_replace(" ", "%20", $str);
@@ -37,7 +30,8 @@ class LinkImage implements Extension {
 			return "http://" . $_SERVER["HTTP_HOST"] . $str;
 		}
 	}
-	private function data($image) {
+
+	private function data(Image $image) {
 		global $config;
 
 		$text_link = $image->parse_link_template($config->get_string("ext_link-img_text-link_format"));

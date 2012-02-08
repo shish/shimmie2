@@ -8,14 +8,14 @@
  */
 
 class XMLSitemap extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("sitemap.xml")) {
 			$images = Image::find_images(0, 50, array());
 			$this->do_xml($images);
 		}
 	}
 	
-	private function do_xml($images) {
+	private function do_xml(/*array(Image)*/ $images) {
 		global $page;
 		$page->set_mode("data");
 		$page->set_type("application/xml");

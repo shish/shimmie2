@@ -8,7 +8,7 @@
  *              and replace it with a link to google chart APIs
  */
 class QRImage extends SimpleExtension {
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$this->theme->links_block(make_http(make_link('image/'.$event->image->id.'.jpg')));
 	}
 }

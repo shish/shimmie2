@@ -54,7 +54,7 @@ class WikiPage {
 }
 
 class Wiki extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $database;
 		global $config;
 
@@ -80,7 +80,7 @@ class Wiki extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 		if($event->page_matches("wiki")) {
 			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
@@ -153,7 +153,7 @@ class Wiki extends SimpleExtension {
 		}
 	}
 
-	public function onWikiUpdate($event) {
+	public function onWikiUpdate(WikiUpdateEvent $event) {
 		global $database;
 		$wpage = $event->wikipage;
 		try {
@@ -167,7 +167,7 @@ class Wiki extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Wiki");
 		$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
 		$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");

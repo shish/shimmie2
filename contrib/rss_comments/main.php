@@ -7,7 +7,7 @@
  */
 
 class RSS_Comments extends SimpleExtension {
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		$title = $config->get_string('title');
 
@@ -15,7 +15,7 @@ class RSS_Comments extends SimpleExtension {
 			"title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page;
 		if($event->page_matches("rss/comments")) {
 			$page->set_mode("data");

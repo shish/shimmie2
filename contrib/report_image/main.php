@@ -29,24 +29,19 @@ class AddReportedImageEvent extends Event {
 	}
 }
 
-class ReportImage implements Extension {
-	var $theme;
+class ReportImage extends SimpleExtension {
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_bool('report_image_show_thumbs', true);
 
-	public function get_priority() {return 50;}
-
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof InitExtEvent) {
-			$config->set_default_bool('report_image_show_thumbs', true);
-
-			if($config->get_int("ext_report_image_version") < 1) {
-				$this->install();
-			}
+		if($config->get_int("ext_report_image_version") < 1) {
+			$this->install();
 		}
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("image_report")) {
+	public function onPageRequest(PageRequestEvent $event) {
+		global $page, $user;
+		if($event->page_matches("image_report")) {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
 					$image_id = int_escape($_POST['image_id']);
@@ -70,40 +65,45 @@ class ReportImage implements Extension {
 				}
 			}
 		}
+	}
 
-		if($event instanceof AddReportedImageEvent) {
-			$database->Execute(
-					"INSERT INTO image_reports(image_id, reporter_id, reason)
-					VALUES (?, ?, ?)",
-					array($event->image_id, $event->reporter_id, $event->reason));
-		}
+	public function onAddReportedImage(AddReportedImageEvent $event) {
+		global $database;
+		$database->Execute(
+				"INSERT INTO image_reports(image_id, reporter_id, reason)
+				VALUES (?, ?, ?)",
+				array($event->image_id, $event->reporter_id, $event->reason));
+	}
 
-		if($event instanceof RemoveReportedImageEvent) {
-			$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
-		}
+	public function onRemoveReportedImage(RemoveReportedImageEvent $event) {
+		global $database;
+		$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
+	}
 
-		if($event instanceof DisplayingImageEvent) {
-			if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
-				$this->theme->display_image_banner($page, $event->image);
-			}
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $config, $user, $page;
+		if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
+			$this->theme->display_image_banner($page, $event->image);
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Report Image Options");
-			$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
-			$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
-			$event->panel->add_block($sb);
-		}
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Report Image Options");
+		$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
+		$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
+		$event->panel->add_block($sb);
+	}
 
-		if($event instanceof UserBlockBuildingEvent) {
-			if($user->is_admin()) {
-				$event->add_link("Reported Images", make_link("image_report/list"));
-			}
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
+		if($user->is_admin()) {
+			$event->add_link("Reported Images", make_link("image_report/list"));
 		}
+	}
 
-		if($event instanceof ImageDeletionEvent) {
-			$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
-		}
+	public function onImageDeletion(ImageDeletionEvent $event) {
+		global $database;
+		$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
 	}
 
 	protected function install() {

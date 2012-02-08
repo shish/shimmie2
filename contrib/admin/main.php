@@ -30,13 +30,13 @@
  */
 class AdminBuildingEvent extends Event {
 	var $page;
-	public function AdminBuildingEvent($page) {
+	public function AdminBuildingEvent(Page $page) {
 		$this->page = $page;
 	}
 }
 
 class AdminPage extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 
 		if($event->page_matches("admin")) {
@@ -88,20 +88,20 @@ class AdminPage extends SimpleExtension {
 		}
 	}
 
-	public function onAdminBuilding($event) {
+	public function onAdminBuilding(AdminBuildingEvent $event) {
 		global $page;
 		$this->theme->display_page($page);
 		$this->theme->display_form($page);
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Board Admin", make_link("admin"));
 		}
 	}
 
-	private function delete_by_query($query) {
+	private function delete_by_query(/*array(string)*/ $query) {
 		global $page, $user;
 		assert(strlen($query) > 1);
 		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {

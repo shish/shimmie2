@@ -20,7 +20,7 @@
  */
 
 class RandomImage extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 		if($event->page_matches("random_image")) {
 			if($event->count_args() == 1) {
@@ -51,13 +51,13 @@ class RandomImage extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Random Image");
 		$sb->add_bool_option("show_random_block", "Show Random Block: ");
 		$event->panel->add_block($sb);
 	}
 
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		if($config->get_bool("show_random_block")) {
 			$image = Image::by_random($event->search_terms);

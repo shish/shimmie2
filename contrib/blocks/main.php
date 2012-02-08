@@ -28,7 +28,7 @@
  */
 
 class Blocks extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page;
 		$all = $config->get_string("blocks_text");
 		$blocks = explode("----", $all);
@@ -70,7 +70,7 @@ class Blocks extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Blocks");
 		$sb->add_label("See <a href='".make_link("ext_doc/blocks")."'>the docs</a> for formatting");
 		$sb->add_longtext_option("blocks_text");

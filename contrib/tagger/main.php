@@ -6,46 +6,37 @@
  * Do not remove this notice.
  */
 
-class Tagger implements Extension {
-	var $theme;
+class Tagger extends SimpleExtension {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $page, $config, $user;
 
-	public function get_priority() {return 50;}
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme))
-			$this->theme = get_theme_object($this);
-
-		if($event instanceof DisplayingImageEvent) {
-			global $page, $config, $user;
-
-			if($config->get_bool("tag_edit_anon")
-				|| ($user->id != $config->get_int("anon_id"))
-				&& $config->get_bool("ext_tagger_enabled"))
-			{
-				$this->theme->build_tagger($page,$event);
-			}
+		if($config->get_bool("tag_edit_anon")
+			|| ($user->id != $config->get_int("anon_id"))
+			&& $config->get_bool("ext_tagger_enabled"))
+		{
+			$this->theme->build_tagger($page,$event);
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sb = new SetupBlock("Tagger");
-			$sb->add_bool_option("ext_tagger_enabled","Enable Tagger");
-			$sb->add_int_option("ext_tagger_search_delay","<br/>Delay queries by ");
-			$sb->add_label(" milliseconds.");
-			$sb->add_label("<br/>Limit queries returning more than ");
-			$sb->add_int_option("ext_tagger_tag_max");
-			$sb->add_label(" tags to ");
-			$sb->add_int_option("ext_tagger_limit");
-			$event->panel->add_block($sb);
-		}
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Tagger");
+		$sb->add_bool_option("ext_tagger_enabled","Enable Tagger");
+		$sb->add_int_option("ext_tagger_search_delay","<br/>Delay queries by ");
+		$sb->add_label(" milliseconds.");
+		$sb->add_label("<br/>Limit queries returning more than ");
+		$sb->add_int_option("ext_tagger_tag_max");
+		$sb->add_label(" tags to ");
+		$sb->add_int_option("ext_tagger_limit");
+		$event->panel->add_block($sb);
 	}
 }
 
 // Tagger AJAX back-end
-class TaggerXML implements Extension {
+class TaggerXML extends SimpleExtension {
 	public function get_priority() {return 10;}
 
-	public function receive_event(Event $event) {
-		if(($event instanceof PageRequestEvent) && $event->page_matches("tagger/tags")) {
+	public function onPageRequest(PageRequestEvent $event) {
+		if($event->page_matches("tagger/tags")) {
 			global $page;
 
 			//$match_tags = null;

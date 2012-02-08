@@ -15,7 +15,7 @@
  */
 
 class BulkAdd extends SimpleExtension {
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("bulk_add")) {
 			if($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
@@ -26,7 +26,7 @@ class BulkAdd extends SimpleExtension {
 		}
 	}
 
-	public function onAdminBuilding($event) {
+	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_admin_block();
 	}
 

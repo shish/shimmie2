@@ -6,7 +6,7 @@
  */
 
 class IcoFileHandler extends SimpleExtension {
-	public function onDataUpload($event) {
+	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
@@ -22,20 +22,20 @@ class IcoFileHandler extends SimpleExtension {
 		}
 	}
 
-	public function onThumbnailGeneration($event) {
+	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
 		if($this->supported_ext($event->type)) {
 			$this->create_thumb($event->hash);
 		}
 	}
 
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page;
 		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($page, $event->image);
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page;
 		if($event->page_matches("get_ico")) {
 			$id = int_escape($event->get_arg(0));

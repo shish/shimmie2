@@ -19,12 +19,12 @@
  */
 
 class Featured extends SimpleExtension {
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('featured_id', 0);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 		if($event->page_matches("featured_image")) {
 			if($event->get_arg(0) == "set" && $user->check_auth_token()) {
@@ -54,7 +54,7 @@ class Featured extends SimpleExtension {
 		}
 	}
 
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $database, $page, $user;
 		$fid = $config->get_int("featured_id");
 		if($fid > 0) {
@@ -74,7 +74,7 @@ class Featured extends SimpleExtension {
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_part($this->theme->get_buttons_html($event->image->id));

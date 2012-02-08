@@ -9,7 +9,7 @@ class Tag_History extends SimpleExtension {
 	// in before tags are actually set, so that "get current tags" works
 	public function get_priority() {return 40;}
 
-	public function onInitExtEvent($event) {
+	public function onInitExtEvent(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("history_limit", -1);
 
@@ -19,7 +19,7 @@ class Tag_History extends SimpleExtension {
 		}
 	}
 
-	public function onAdminBuildingEvent($event) {
+	public function onAdminBuildingEvent(AdminBuildingEvent $event) {
 		global $user;
 
 		if(isset($_POST['revert_ip']) && $user->is_admin() && $user->check_auth_token()) {
@@ -55,7 +55,7 @@ class Tag_History extends SimpleExtension {
 		}
 	}
 		
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
 		if ($event->page_matches("tag_history")) {
@@ -78,18 +78,18 @@ class Tag_History extends SimpleExtension {
 		}
 	}
 	
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page;
 		// handle displaying a link on the view page
 		$this->theme->display_history_link($page, $event->image->id);
 	}
 
-	public function onImageDeletion($event) {
+	public function onImageDeletion(ImageDeletionEvent $event) {
 		// handle removing of history when an image is deleted
 		$this->delete_all_tag_history($event->image->id);
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tag History");
 		$sb->add_label("Limit to ");
 		$sb->add_int_option("history_limit");
@@ -98,19 +98,18 @@ class Tag_History extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onTagSetEvent($event) {
+	public function onTagSet(TagSetEvent $event) {
 		$this->add_tag_history($event->image, $event->tags);
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuilding $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Tag Changes", make_link("tag_history"));
 		}
 	}
 	
-	protected function install()
-	{
+	protected function install() {
 		global $database;
 		global $config;
 
