@@ -6,7 +6,7 @@
  * Description: Simple search and replace
  */
 
-class WordFilter extends SimpleExtension {
+class WordFilter extends Extension {
 	// before emoticon filter
 	public function get_priority() {return 40;}
 

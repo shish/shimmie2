@@ -8,7 +8,7 @@
  * Documentation:
  */
 
-class Forum extends SimpleExtension {
+class Forum extends Extension {
         public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

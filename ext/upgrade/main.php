@@ -6,7 +6,7 @@
  * Visibility: admin
  */
 
-class Upgrade extends SimpleExtension {
+class Upgrade extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

@@ -60,7 +60,7 @@ class Comment {
 	}
 }
 
-class CommentList extends SimpleExtension {
+class CommentList extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 		$config->set_default_bool('comment_anon', true);

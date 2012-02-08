@@ -6,7 +6,7 @@
  * Description: Allow users to bookmark searches
  */
 
-class Bookmarks extends SimpleExtension {
+class Bookmarks extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		$this->install();
 	}

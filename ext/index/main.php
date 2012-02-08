@@ -128,7 +128,7 @@ class PostListBuildingEvent extends Event {
 	}
 }
 
-class Index extends SimpleExtension {
+class Index extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("index_width", 3);

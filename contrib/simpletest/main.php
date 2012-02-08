@@ -205,7 +205,7 @@ class TestFinder extends TestSuite {
 	}
 }
 
-class SimpleSCoreTest extends SimpleExtension {
+class SimpleSCoreTest extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page;
 		if($event->page_matches("test")) {

@@ -5,7 +5,7 @@
  * Description: Keep a record of tag changes, and allows you to revert changes.
  */
 
-class Tag_History extends SimpleExtension {
+class Tag_History extends Extension {
 	// in before tags are actually set, so that "get current tags" works
 	public function get_priority() {return 40;}
 

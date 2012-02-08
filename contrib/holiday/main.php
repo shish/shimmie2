@@ -6,7 +6,7 @@
  * License: GPLv2
  * Description: Use an additional stylesheet on certain holidays.
  */
-class Holiday extends SimpleExtension {
+class Holiday extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("holiday_aprilfools", false);

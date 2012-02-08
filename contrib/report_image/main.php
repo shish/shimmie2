@@ -29,7 +29,7 @@ class AddReportedImageEvent extends Event {
 	}
 }
 
-class ReportImage extends SimpleExtension {
+class ReportImage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool('report_image_show_thumbs', true);

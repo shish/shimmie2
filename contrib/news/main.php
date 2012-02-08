@@ -8,7 +8,7 @@
  *  Any HTML is allowed
  */
 
-class News extends SimpleExtension {
+class News extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		if(strlen($config->get_string("news_text")) > 0) {

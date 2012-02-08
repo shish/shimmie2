@@ -8,7 +8,7 @@
  *
  *				Development TODO at http://github.com/zshall/shimmie2/issues
  */
-class Blotter extends SimpleExtension {
+class Blotter extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		/**
 		 * I love re-using this installer don't I...

@@ -6,7 +6,7 @@
  * Description: Self explanatory
  */
 
-class RSS_Comments extends SimpleExtension {
+class RSS_Comments extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		$title = $config->get_string('title');

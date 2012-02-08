@@ -27,7 +27,7 @@
  *  </pre>
  */
 
-class Blocks extends SimpleExtension {
+class Blocks extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page;
 		$all = $config->get_string("blocks_text");

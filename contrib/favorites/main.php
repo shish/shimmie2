@@ -26,7 +26,7 @@ class FavoriteSetEvent extends Event {
 	}
 }
 
-class Favorites extends SimpleExtension {
+class Favorites extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		if($config->get_int("ext_favorites_version", 0) < 1) {

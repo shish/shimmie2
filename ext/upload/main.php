@@ -41,7 +41,7 @@ class UploadException extends SCoreException {}
  * All files that are uploaded to the site are handled through this class.
  * This also includes transloaded files as well.
  */
-class Upload extends SimpleExtension {
+class Upload extends Extension {
 	// early, so it can stop the DataUploadEvent before any data handlers see it
 	public function get_priority() {return 40;}
 

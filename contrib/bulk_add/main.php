@@ -14,7 +14,7 @@
  *  <p><b>Note:</b> requires the "admin" extension to be enabled
  */
 
-class BulkAdd extends SimpleExtension {
+class BulkAdd extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("bulk_add")) {

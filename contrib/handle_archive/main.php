@@ -10,7 +10,7 @@
  *  <br>7-zip: <code>7zr x -o"%d" "%f"</code>
  */
 
-class ArchiveFileHandler extends SimpleExtension {
+class ArchiveFileHandler extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string('archive_extract_command', 'unzip -d "%d" "%f"');

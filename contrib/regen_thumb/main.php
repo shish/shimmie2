@@ -12,7 +12,7 @@
  *  since been increased.
  */
 
-class RegenThumb extends SimpleExtension {
+class RegenThumb extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 

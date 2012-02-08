@@ -6,7 +6,7 @@
  * License: GPLv2
  * Description: Shimmie updater!
  */
-class Update extends SimpleExtension {
+class Update extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("update_url", "http://nodeload.github.com/shish/shimmie2/zipball/master"); //best to avoid using https

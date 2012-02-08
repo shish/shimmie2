@@ -7,7 +7,7 @@
  * Documentation:
  */
 
-class Notes extends SimpleExtension {
+class Notes extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

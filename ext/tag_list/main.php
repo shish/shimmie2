@@ -5,7 +5,7 @@
  * Description: Show the tags in various ways
  */
 
-class TagList extends SimpleExtension {
+class TagList extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("tag_list_length", 15);

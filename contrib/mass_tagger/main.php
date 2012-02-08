@@ -14,7 +14,7 @@
  *  As of now only compatible with the lite theme.
  */
 
-class MassTagger extends SimpleExtension {
+class MassTagger extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page, $user;
 		

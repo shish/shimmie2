@@ -53,7 +53,7 @@ class WikiPage {
 	}
 }
 
-class Wiki extends SimpleExtension {
+class Wiki extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $database;
 		global $config;

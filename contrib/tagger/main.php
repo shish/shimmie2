@@ -6,7 +6,7 @@
  * Do not remove this notice.
  */
 
-class Tagger extends SimpleExtension {
+class Tagger extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page, $config, $user;
 
@@ -32,7 +32,7 @@ class Tagger extends SimpleExtension {
 }
 
 // Tagger AJAX back-end
-class TaggerXML extends SimpleExtension {
+class TaggerXML extends Extension {
 	public function get_priority() {return 10;}
 
 	public function onPageRequest(PageRequestEvent $event) {

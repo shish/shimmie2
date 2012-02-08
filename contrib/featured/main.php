@@ -18,7 +18,7 @@
  *  every couple of hours.
  */
 
-class Featured extends SimpleExtension {
+class Featured extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('featured_id', 0);

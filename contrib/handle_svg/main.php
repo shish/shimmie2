@@ -5,7 +5,7 @@
  * Description: Handle SVG files
  */
 
-class SVGFileHandler extends SimpleExtension {
+class SVGFileHandler extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;

@@ -17,7 +17,7 @@ class RatingSetEvent extends Event {
 	}
 }
 
-class Ratings extends SimpleExtension {
+class Ratings extends Extension {
 	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_bulk_rater();
 	}

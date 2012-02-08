@@ -11,7 +11,7 @@
  *  message specified in the box.
  */
 
-class Downtime extends SimpleExtension {
+class Downtime extends Extension {
 	public function get_priority() {return 10;}
 
 	public function onSetupBuilding($event) {

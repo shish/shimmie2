@@ -19,7 +19,7 @@ class AuthorSetEvent extends Event {
     }
 }
 
-class Artists extends SimpleExtension {
+class Artists extends Extension {
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
         global $user;
 		if (isset($_POST["tag_edit__author"])) {

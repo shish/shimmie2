@@ -47,7 +47,7 @@ Completely compatibility will probably involve a rewrite with a different URL
 
 */
 
-class DanbooruApi extends SimpleExtension {
+class DanbooruApi extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("api") && ($event->get_arg(0) == 'danbooru')) {
 			$this->api_danbooru($event);

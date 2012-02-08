@@ -26,7 +26,7 @@ class ImageResizeException extends SCoreException {
 /**
  *	This class handles image resize requests.
  */
-class ResizeImage extends SimpleExtension {
+class ResizeImage extends Extension {
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;

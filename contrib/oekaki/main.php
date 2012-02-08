@@ -5,7 +5,7 @@
  * Description: ChibiPaint-based Oekaki uploader
  */
 
-class Oekaki extends SimpleExtension {
+class Oekaki extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
 

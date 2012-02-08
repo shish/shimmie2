@@ -12,7 +12,7 @@
  *  versions of PHP I should test with, etc.
  */
 
-class ET extends SimpleExtension {
+class ET extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user;
 		if($event->page_matches("system_info")) {

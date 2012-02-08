@@ -34,7 +34,7 @@ class AddIPBanEvent extends Event {
 }
 // }}}
 
-class IPBan extends SimpleExtension {
+class IPBan extends Extension {
 	public function get_priority() {return 10;}
 
 	public function onInitExt(InitExtEvent $event) {

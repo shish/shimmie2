@@ -42,7 +42,7 @@ class UserCreationEvent extends Event {
 
 class UserCreationException extends SCoreException {}
 
-class UserPage extends SimpleExtension {
+class UserPage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);

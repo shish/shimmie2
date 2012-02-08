@@ -13,7 +13,7 @@
  *  engine" notification they have
  */
 
-class BrowserSearch extends SimpleExtension {
+class BrowserSearch extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("search_suggestions_results_order", 'a');

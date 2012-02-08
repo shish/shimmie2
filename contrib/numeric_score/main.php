@@ -19,7 +19,7 @@ class NumericScoreSetEvent extends Event {
 	}
 }
 
-class NumericScore extends SimpleExtension {
+class NumericScore extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		if($config->get_int("ext_numeric_score_version", 0) < 1) {

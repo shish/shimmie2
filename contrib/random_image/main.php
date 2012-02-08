@@ -19,7 +19,7 @@
  *  <code>/random_image/download/size=1024x768+cute</code>
  */
 
-class RandomImage extends SimpleExtension {
+class RandomImage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 		if($event->page_matches("random_image")) {

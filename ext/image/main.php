@@ -129,7 +129,7 @@ class ParseLinkTemplateEvent extends Event {
 /**
  * A class to handle adding / getting / removing image files from the disk.
  */
-class ImageIO extends SimpleExtension {
+class ImageIO extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('thumb_width', 192);

@@ -26,7 +26,7 @@ class _SafeImage {
 	}
 }
 
-class ShimmieApi extends SimpleExtension {
+class ShimmieApi extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page;
 

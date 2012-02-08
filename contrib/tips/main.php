@@ -8,7 +8,7 @@
  *  Formatting is done with HTML
  */
 
-class Tips extends SimpleExtension {
+class Tips extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

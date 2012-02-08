@@ -4,7 +4,7 @@
  * Author: Artanis <artanis.00@gmail.com>
  * Description: Show various forms of link to each image, for copy & paste
  */
-class LinkImage extends SimpleExtension {
+class LinkImage extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page;
 		$this->theme->links_block($page, $this->data($event->image));

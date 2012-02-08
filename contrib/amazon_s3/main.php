@@ -9,7 +9,7 @@
 
 require_once "lib/S3.php";
 
-class UploadS3 extends SimpleExtension {
+class UploadS3 extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("amazon_s3_access", "");

@@ -10,7 +10,7 @@
 class PoolCreationException extends SCoreException {
 }
 
-class Pools extends SimpleExtension {
+class Pools extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

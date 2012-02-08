@@ -42,7 +42,7 @@ class PM {
 	}
 }
 
-class PrivMsg extends SimpleExtension {
+class PrivMsg extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 

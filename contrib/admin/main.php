@@ -35,7 +35,7 @@ class AdminBuildingEvent extends Event {
 	}
 }
 
-class AdminPage extends SimpleExtension {
+class AdminPage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 

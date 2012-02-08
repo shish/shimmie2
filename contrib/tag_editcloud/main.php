@@ -12,7 +12,7 @@
  *	colorize used tags in cloud || always show used tags in front of cloud
  *	theme junk
  */
-class TagEditCloud extends SimpleExtension {
+class TagEditCloud extends Extension {
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $config;
 

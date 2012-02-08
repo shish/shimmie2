@@ -6,7 +6,7 @@
  * Visibility: admin
  */
 
-class LogDatabase extends SimpleExtension {
+class LogDatabase extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $database;
 		global $config;

@@ -6,7 +6,7 @@
  * Description: Show a twitter feed with the Sea of Clouds script
  */
 
-class TwitterSoc extends SimpleExtension {
+class TwitterSoc extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		if(strlen($config->get_string("twitter_soc_username")) > 0) {

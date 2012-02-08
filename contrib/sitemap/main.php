@@ -7,7 +7,7 @@
  * Documentation:
  */
 
-class XMLSitemap extends SimpleExtension {
+class XMLSitemap extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("sitemap.xml")) {
 			$images = Image::find_images(0, 50, array());

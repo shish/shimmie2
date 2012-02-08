@@ -19,7 +19,7 @@
  *  from Essex"
  */
 
-class BanWords extends SimpleExtension {
+class BanWords extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string('banned_words', "
