@@ -53,6 +53,7 @@ class Pools extends SimpleExtension {
 					INDEX (id)
 					");
 
+			// Set the defaults for the pools extension
 			$config->set_int("ext_pools_version", 1);
 
 			$config->set_int("poolsMaxImportResults", 1000);
@@ -66,6 +67,7 @@ class Pools extends SimpleExtension {
 		}
 	}
 
+	// Add a block to the Board Config / Setup
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Pools");
 		$sb->add_int_option("poolsMaxImportResults", "Max results on import: ");
@@ -224,8 +226,9 @@ class Pools extends SimpleExtension {
 	}
 
 
-	/*
-	 * HERE WE GET THE POOLS WHERE THE IMAGE APPEARS WHEN THE IMAGE IS DISPLAYED
+	/**
+	 * When displaying an image, optionally list all the pools that the
+	 * image is currently a member of on a side panel.
 	 */
 	public function onDisplayingImage($event) {
 		global $config, $database, $page;
@@ -328,26 +331,39 @@ class Pools extends SimpleExtension {
 				INSERT INTO pools (user_id, public, title, description, date)
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
-
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID"); # FIXME database specific?
+		
+		//$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID"); # FIXME database specific?
+		$result['poolID'] = $database->get_last_insert_id();
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
 
 		return $result["poolID"];
 	}
 
+	/**
+	 * Retrieve information about pools given mulitiple pool IDs.
+	 * @param $poolID Array of integers
+	 * @retval 2D Array
+	 */
 	private function get_pool($poolID) {
 		global $database;
 		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
-
+	
+	/**
+	 * Retrieve information about a pool given a pool ID.
+	 * @param $poolID Integer
+	 * @retval 2D array (with only 1 element in the one dimension)
+	 */
 	private function get_single_pool($poolID) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
 
-	/*
-	 * HERE WE GET THE ID OF THE POOL FROM AN IMAGE
+	/**
+	 * Get all of the pool IDs that an image is in, given an image ID.
+	 * @param $imageID Integer
+	 * @retval 2D array
 	 */
 	private function get_pool_id($imageID) {
 		global $database;
@@ -455,8 +471,8 @@ class Pools extends SimpleExtension {
 	}
 
 
-	/*
-	 * HERE WE GET ALL IMAGES FOR THE POOL
+	/**
+	 * Retrieve all the images in a pool, given a pool ID.
 	 */
 	private function get_posts($event, $poolID) {
 		global $config, $user, $database;
@@ -470,6 +486,7 @@ class Pools extends SimpleExtension {
 			$pageNumber--;
 
 		$poolID = int_escape($poolID);
+		$pool = $this->get_pool($poolID);
 
 		$imagesPerPage = $config->get_int("poolsImagesPerPage");
 
@@ -477,6 +494,8 @@ class Pools extends SimpleExtension {
 		// WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
 		if(class_exists("Ratings")) {
 			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
+		}
+		if (isset($rating) && !is_null($rating)) {
 
 			$result = $database->get_all("
 					SELECT p.image_id
@@ -493,8 +512,8 @@ class Pools extends SimpleExtension {
 					INNER JOIN images AS i ON i.id = p.image_id
 					WHERE pool_id=:pid AND i.rating IN ($rating)",
 					array("pid"=>$poolID)) / $imagesPerPage);
-		}
-		else {
+		} else {
+		
 			$result = $database->get_all("
 					SELECT image_id
 					FROM pool_images
@@ -502,6 +521,7 @@ class Pools extends SimpleExtension {
 					ORDER BY image_order ASC
 					LIMIT :l OFFSET :o",
 					array("pid"=>$poolID, "l"=>$imagesPerPage, "o"=>$pageNumber * $imagesPerPage));
+					
 			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID)) / $imagesPerPage);
 		}
 
@@ -510,7 +530,6 @@ class Pools extends SimpleExtension {
 			$images[] = Image::by_id($singleResult["image_id"]);
 		}
 
-		$pool = $this->get_pool($poolID);
 		$this->theme->view_pool($pool, $images, $pageNumber + 1, $totalPages);
 	}
 
