@@ -1,7 +1,8 @@
 <?php
+
 class PoolsTheme extends Themelet {
-	/*
-	 * HERE WE ADD THE POOL INFO ON IMAGE
+	/**
+	 * Adds a block to the panel with information on the pool(s) the image is in.
 	 */
 	public function pool_info($linksPools) {
 		global $page;
@@ -59,7 +60,6 @@ class PoolsTheme extends Themelet {
 		}
 
 		$html .= "</tbody></table>";
-
 
 		$nav_html = "
 			<a href=".make_link().">Index</a>
@@ -154,9 +154,7 @@ class PoolsTheme extends Themelet {
 		$pool_images = '';
 		foreach($images as $image) {
 			$thumb_html = $this->build_thumb_html($image);
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
-				'</span>';
+			$pool_images .= "\n".$thumb_html."\n";
 		}
 
 		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));		
@@ -172,17 +170,17 @@ class PoolsTheme extends Themelet {
 
 		$editor = "
 			".make_form(make_link("pool/import"))."
-			<input type='text' name='pool_tag' id='edit' value='Please enter a tag' onclick='this.value=\"\";'/>
-			<input type='submit' name='edit' id='edit' value='Import'/>
+			<input type='text' name='pool_tag' id='edit_pool_tag' value='Please enter a tag' onclick='this.value=\"\";'/>
+			<input type='submit' name='edit' id='edit_pool_import_btn' value='Import'/>
 			<input type='hidden' name='pool_id' value='".$pool['id']."'>
 			</form>
 
 			<form method='GET' action='".make_link("pool/edit/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit' value='Edit Pool'/>
+			<input type='submit' name='edit' id='edit_pool_btn' value='Edit Pool'/>
 			</form>
 
 			<form method='GET' action='".make_link("pool/order/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit' value='Order Pool'/>
+			<input type='submit' name='edit' id='edit_pool_order_btn' value='Order Pool'/>
 			</form>
 			";
 
@@ -195,7 +193,7 @@ class PoolsTheme extends Themelet {
 				</script>
 
 				".make_form(make_link("pool/nuke"))."
-				<input type='submit' name='delete' id='delete' value='Delete Pool' onclick='return confirm_action()' />
+				<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
 				<input type='hidden' name='pool_id' value='".$pool['id']."'>
 				</form>
 				";
@@ -225,6 +223,7 @@ class PoolsTheme extends Themelet {
 	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT
 	 */
 	public function pool_result(Page $page, $images, $pool_id) {
+		// TODO: this could / should be done using jQuery
 		$pool_images = "
 			<script language='JavaScript' type='text/javascript'>
 			function setAll(value) {
@@ -247,14 +246,12 @@ class PoolsTheme extends Themelet {
 		foreach($images as $image) {
 			$thumb_html = $this->build_thumb_html($image);
 
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
-				'<br>'.
+			$pool_images .= '<span class="thumb">'. $thumb_html .'<br>'.
 				'<input name="check[]" type="checkbox" value="'.$image->id.'" />'.
 				'</span>';
 		}
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Add Selected' onclick='return confirm_action()'/>".
+			"<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>".
 			"<input type='hidden' name='pool_id' value='".$pool_id."'>".
 			"</form>";
 
@@ -278,13 +275,12 @@ class PoolsTheme extends Themelet {
 
 		$this->display_top($pools, "Sorting Pool");
 
-		$pool_images = "<form action='".make_link("pool/order")."' method='POST' name='checks'>";
+		$pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
 		$n = 0;
 		foreach($images as $pair) {
 			$image = $pair[0];
 			$thumb_html = $this->build_thumb_html($image);
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
+			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
 				'<br><input name="imgs['.$n.'][]" type="text" style="max-width:50px;" value="'.$image->image_order.'" />'.
 				'<input name="imgs['.$n.'][]" type="hidden" value="'.$image->id.'" />'.
 				'</span>';
@@ -292,7 +288,7 @@ class PoolsTheme extends Themelet {
 		}
 
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Order'/>".
+			"<input type='submit' name='edit' id='edit_pool_order' value='Order'/>".
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
@@ -310,24 +306,20 @@ class PoolsTheme extends Themelet {
 
 		$this->display_top($pools, "Editing Pool", true);
 
-		$pool_images = "
-		";
-
-		$pool_images = "<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
+		$pool_images = "\n<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
 
 		foreach($images as $pair) {
 			$image = $pair[0];
 
 			$thumb_html = $this->build_thumb_html($image);
 
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
+			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
 				'<br><input name="check[]" type="checkbox" value="'.$image->id.'" />'.
 				'</span>';
 		}
 
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Remove Selected'/>".
+			"<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>".
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
@@ -392,8 +384,8 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE ERROR
+	/**
+	 * Display an error message to the user.
 	 */
 	public function display_error($errMessage) {
 		global $page;

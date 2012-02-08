@@ -1,16 +1,28 @@
 <?php
 /**
  * Name: Pools System
- * Author: Sein Kraft <mail@seinkraft.info>
+ * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>
  * License: GPLv2
- * Description: Allow users to create groups of images
- * Documentation:
+ * Description: Allow users to create groups of images and order them.
+ * Documentation: This extension allows users to created named groups of
+ *   images, and order the images within the group.
+ *   Useful for related images like in a comic, etc.
  */
 
+/**
+ * This class is just a wrapper around SCoreException.
+ */
 class PoolCreationException extends SCoreException {
+	var $error;
+
+	public function __construct($error) {
+		$this->error = $error;
+	}
 }
 
+
 class Pools extends SimpleExtension {
+
 	public function onInitExt($event) {
 		global $config, $database;
 
@@ -67,8 +79,16 @@ class Pools extends SimpleExtension {
 
 	public function onPageRequest($event) {
 		global $config, $page, $user;
+		
+		if ($event->page_matches("pool")) {
 
-		if($event->page_matches("pool")) {
+			var $pool_id, $pool;
+			// Check if we have pool id, since this is most often the case.
+			if (isset($_POST["pool_id"])) {
+				$pool_id = int_escape($_POST["pool_id"]);
+				$pool = $this->get_single_pool($pool_id);
+			}
+		
 			switch($event->get_arg(0)) {
 				case "list": //index
 					$this->list_pools($page, int_escape($event->get_arg(1)));
@@ -89,8 +109,8 @@ class Pools extends SimpleExtension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$newPoolID));
 					}
-					catch(PoolCreationException $pce) {
-						$this->theme->display_error($pce->getMessage());
+					catch(PoolCreationException $e) {
+						$this->theme->display_error($e->error);
 					}
 					break;
 
@@ -117,8 +137,7 @@ class Pools extends SimpleExtension {
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
-						// if the pool is public and user is logged OR if the user is admin OR the user is the owner
-						if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+						if (have_permission($user, $pool)) {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
@@ -133,8 +152,7 @@ class Pools extends SimpleExtension {
 						$pools = $this->get_pool($poolID);
 
 						foreach($pools as $pool) {
-							//if the pool is public and user is logged OR if the user is admin
-							if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+							if (have_permission($user, $pool)) {
 								$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
 							} else {
 								$page->set_mode("redirect");
@@ -143,10 +161,7 @@ class Pools extends SimpleExtension {
 						}
 					}
 					else {
-						$pool_id = int_escape($_POST["pool_id"]);
-						$pool = $this->get_single_pool($pool_id);
-
-						if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+						if (have_permission($user, $pool)) {
 							$this->order_posts();
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -157,10 +172,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "import":
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
-
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+					if (have_permission($user, $pool)) {
 						$this->import_posts();
 					} else {
 						$this->theme->display_error("Permssion denied.");
@@ -168,10 +180,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "add_posts":
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
-
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+					if (have_permission($user, $pool)) {
 						$this->add_posts();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -181,10 +190,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "remove_posts":
-					$pool_id = int_escape($_POST["pool_id"]);
-					$pool = $this->get_single_pool($pool_id);
-
-					if(($pool['public'] == "Y" && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+					if (have_permission($user, $pool)) {
 						$this->remove_posts();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -195,11 +201,8 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "nuke":
-					$pool_id = int_escape($_POST['pool_id']);
-					$pool = $this->get_single_pool($pool_id);
-
-					// only admins and owners may do this
-					if($user->is_admin() || $user->id == $pool['user_id']) {
+					// only admins and owners may do this	
+					if($user->is_admin() || $user->id == $pool['user_id']) {	
 						$this->nuke_pool($pool_id);
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/list"));
@@ -257,7 +260,24 @@ class Pools extends SimpleExtension {
 		}
 	}
 
-
+	/* ------------------------------------------------- */
+	/* --------------  Private Functions  -------------- */
+	/* ------------------------------------------------- */
+	
+	/**
+	 * Check if the given user has permission to edit/change the pool.
+	 * @retval bool
+	 */
+	private function have_permission($user, $pool) {
+		// If the pool is public and user is logged OR if the user is admin OR if the pool is owned by the user.
+		if ( (($pool['public'] == "Y" || $pool['public'] == "y") && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id'])
+		{
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	/*
 	 * HERE WE GET THE LIST OF POOLS
 	 */
@@ -420,7 +440,7 @@ class Pools extends SimpleExtension {
 
 		$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
 		$this->add_history($poolID, 0, $images, $count);
-		return $poolID;	 
+		return $poolID;
 	}
 
 
