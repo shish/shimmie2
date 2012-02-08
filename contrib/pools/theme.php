@@ -17,8 +17,7 @@ class PoolsTheme extends Themelet {
 		foreach($pools as $pool) {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
 		}
-		$editor = "
-			".make_form(make_link("pool/add_post"))."
+		$editor = "\n".make_form(make_link("pool/add_post"))."
 				<select name='pool_id'>
 					$h
 				</select>
@@ -35,15 +34,18 @@ class PoolsTheme extends Themelet {
 	 */
 	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user;
-		$html = '<table id="poolsList" class="zebra">'.
-			"<thead><tr>".
-			"<th>Name</th>".
-			"<th>Creator</th>".
-			"<th>Posts</th>".
-			"<th>Public</th>".
-			"</tr></thead>";
+		$html = '
+				<table id="poolsList" class="zebra">
+					<thead><tr>
+						<th>Name</th>
+						<th>Creator</th>
+						<th>Posts</th>
+						<th>Public</th>
+					</tr></thead>';
 
 		$n = 0;
+		
+		// Build up the list of pools.
 		foreach($pools as $pool) {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
@@ -61,11 +63,11 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
-		$nav_html = "
-			<a href=".make_link().">Index</a>
-			<br><a href=".make_link("pool/new").">Create Pool</a>
-			<br><a href=".make_link("pool/updated").">Pool Changes</a>
-		";
+		$nav_html = '
+			<a href="'.make_link().'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
 
 		$blockTitle = "Pools";
 		$page->set_title(html_escape($blockTitle));
@@ -114,11 +116,12 @@ class PoolsTheme extends Themelet {
 			$page->add_block(new Block(html_escape($pool['title']), html_escape($pool['description']), "main", 10));
 		}
 		else {
-			$pool_info = "<table id='poolsList' class='zebra'>".
-				"<thead><tr>".
-				"<th class='left'>Title</th>".
-				"<th class='left'>Description</th>".
-				"</tr></thead>";
+			$pool_info = '
+						<table id="poolsList" class="zebra">
+							<thead><tr>
+								<th class="left">Title</th>
+								<th class="left">Description</th>
+							</tr></thead>';
 
 			$n = 0;
 			foreach($pools as $pool) {
@@ -189,10 +192,12 @@ class PoolsTheme extends Themelet {
 
 		if($user->id == $pool['user_id'] || $user->is_admin()){
 			$editor .= "
-				<script type='text/javascript'>
+				<script language='javascript' type='text/javascript'>
+				<!--
 				function confirm_action() {
 					return confirm('Are you sure that you want to delete this pool?');
 				}
+				//-->
 				</script>
 
 				".make_form(make_link("pool/nuke"))."
@@ -204,7 +209,8 @@ class PoolsTheme extends Themelet {
 
 		if($check_all) {
 			$editor .= "
-				<script language='JavaScript' type='text/javascript'>
+				<script language='javascript' type='text/javascript'>
+				<!--
 				function setAll(value) {
 					var a=new Array();
 					a=document.getElementsByName('check[]');
@@ -213,6 +219,7 @@ class PoolsTheme extends Themelet {
 						a[i].checked = value;
 					}
 				}
+				//-->
 				</script>
 				<br><input type='button' name='CheckAll' value='Check All' onClick='setAll(true)'>
 				<input type='button' name='UnCheckAll' value='Uncheck All' onClick='setAll(false)'>
@@ -228,7 +235,8 @@ class PoolsTheme extends Themelet {
 	public function pool_result(Page $page, /*array*/ $images, /*int*/ $pool_id) {
 		// TODO: this could / should be done using jQuery
 		$pool_images = "
-			<script language='JavaScript' type='text/javascript'>
+			<script language='javascript' type='text/javascript'>
+			<!--
 			function setAll(value) {
 				var a=new Array();
 				a=document.getElementsByName('check[]');
@@ -241,6 +249,7 @@ class PoolsTheme extends Themelet {
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');
 			}
+			//-->
 			</script>
 		";
 
@@ -335,15 +344,16 @@ class PoolsTheme extends Themelet {
 	 */
 	public function show_history($histories, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $page;
-		$html = "<table id='poolsList' class='zebra'>".
-			"<thead><tr>".
-			"<th>Pool</th>".
-			"<th>Post Count</th>".
-			"<th>Changes</th>".
-			"<th>Updater</th>".
-			"<th>Date</th>".
-			"<th>Action</th>".
-			"</tr></thead>";
+		$html = '
+			<table id="poolsList" class="zebra">
+				<thead><tr>
+					<th>Pool</th>
+					<th>Post Count</th>
+					<th>Changes</th>
+					<th>Updater</th>
+					<th>Date</th>
+					<th>Action</th>
+				</tr></thead>';
 
 		$n = 0;
 		foreach($histories as $history) {
