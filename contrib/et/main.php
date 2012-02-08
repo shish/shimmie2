@@ -29,6 +29,9 @@ class ET extends SimpleExtension {
 		}
 	}
 
+	/**
+	 * Collect the information and return it in a keyed array.
+	 */
 	private function get_info() {
 		global $config, $database;
 		global $_event_listeners; // yay for using secret globals \o/
