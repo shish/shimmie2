@@ -26,6 +26,7 @@ class Pools extends SimpleExtension {
 	public function onInitExt($event) {
 		global $config, $database;
 
+		// Create the database tables
 		if ($config->get_int("ext_pools_version") < 1){
 			$database->create_table("pools", "
 					id SCORE_AIPK,
@@ -92,7 +93,8 @@ class Pools extends SimpleExtension {
 				$pool_id = int_escape($_POST["pool_id"]);
 				$pool = $this->get_single_pool($pool_id);
 			}
-		
+			
+			// What action are we trying to perform?
 			switch($event->get_arg(0)) {
 				case "list": //index
 					$this->list_pools($page, int_escape($event->get_arg(1)));
@@ -136,33 +138,23 @@ class Pools extends SimpleExtension {
 					}
 					break;
 
-				case "edit":
-					//$poolID = int_escape($event->get_arg(1));
-					//$pools = $this->get_pool($poolID);
+				case "edit": // Edit the pool (remove images)
+					if ($this->have_permission($user, $pool)) {
+						$this->theme->edit_pool($page, $this->get_pool($pool_id), $this->edit_posts($pool_id));
+					} else {
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("pool/view/".$pool_id));
+					}
+					break;
 
-					//foreach($pools as $pool) {
+				case "order": // Order the pool (view and change the order of images within the pool)
+					if (isset($_POST["order_view"])) {
 						if ($this->have_permission($user, $pool)) {
-							$this->theme->edit_pool($page, $this->get_pool($pool_id), $this->edit_posts($pool_id));
+							$this->theme->edit_order($page, $this->get_pool($pool_id), $this->edit_order($pool_id));
 						} else {
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$pool_id));
 						}
-					//}
-					break;
-
-				case "order":
-					if (isset($_POST["order_view"])) {
-						//$poolID = int_escape($event->get_arg(1));
-						//$pools = $this->get_pool($poolID);
-
-						//foreach($pools as $pool) {
-							if ($this->have_permission($user, $pool)) {
-								$this->theme->edit_order($page, $this->get_pool($pool_id), $this->edit_order($pool_id));
-							} else {
-								$page->set_mode("redirect");
-								$page->set_redirect(make_link("pool/view/".$pool_id));
-							}
-						//}
 					}
 					else {
 						if ($this->have_permission($user, $pool)) {
@@ -205,7 +197,8 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "nuke":
-					// only admins and owners may do this	
+					// Completely remove the given pool.
+					//  -> Only admins and owners may do this	
 					if($user->is_admin() || $user->id == $pool['user_id']) {	
 						$this->nuke_pool($pool_id);
 						$page->set_mode("redirect");
@@ -286,7 +279,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE LIST OF POOLS
 	 */
-	private function list_pools(Page $page, $pageNumber) {
+	private function list_pools(Page $page, /*int*/ $pageNumber) {
 		global $config, $database;
 
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
@@ -678,7 +671,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL
 	 */
-	private function revert_history($historyID) {
+	private function revert_history(/*int*/ $historyID) {
 		global $database;
 		$status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", array("hid"=>$historyID));
 
@@ -720,7 +713,7 @@ class Pools extends SimpleExtension {
 	 * HERE WE ADD A SIMPLE POST FROM POOL
 	 * USED WITH FOREACH IN revert_history()
 	 */
-	private function add_post($poolID, $imageID) {
+	private function add_post(/*int*/ $poolID, /*int*/ $imageID) {
 		global $database;
 
 		if(!$this->check_post($poolID, $imageID)) {
@@ -739,7 +732,7 @@ class Pools extends SimpleExtension {
 	 * HERE WE REMOVE A SIMPLE POST FROM POOL
 	 * USED WITH FOREACH IN revert_history()
 	 */
-	private function delete_post($poolID, $imageID) {
+	private function delete_post(/*int*/ $poolID, /*int*/ $imageID) {
 		global $database;
 
 		$database->execute("DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid", array("pid"=>$poolID, "iid"=>$imageID));

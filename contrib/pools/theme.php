@@ -11,7 +11,7 @@ class PoolsTheme extends Themelet {
 		}
 	}
 
-	public function get_adder_html(Image $image, $pools) {
+	public function get_adder_html(Image $image, /*array*/ $pools) {
 		$editor = "";
 		$h = "";
 		foreach($pools as $pool) {
@@ -33,7 +33,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE SHOWS THE LIST OF POOLS
 	 */
-	public function list_pools(Page $page, $pools, $pageNumber, $totalPages) {
+	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user;
 		$html = '<table id="poolsList" class="zebra">'.
 			"<thead><tr>".
@@ -99,7 +99,7 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	private function display_top($pools, $heading, $check_all=false) {
+	private function display_top(/*array*/ $pools, /*string*/ $heading, $check_all=false) {
 		global $page, $user;
 
 		$page->set_title($heading);
@@ -146,7 +146,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION
 	 */
-	public function view_pool($pools, $images, $pageNumber, $totalPages) {
+	public function view_pool(/*array*/ $pools, /*array*/ $images, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user, $page;
 
 		$this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
@@ -165,7 +165,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN
 	 */
-	public function sidebar_options(Page $page, $pool, $check_all) {
+	public function sidebar_options(Page $page, $pool, /*bool*/ $check_all) {
 		global $user;
 
 		$editor = "\n".make_form( make_link('pool/import') ).'
@@ -225,7 +225,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT
 	 */
-	public function pool_result(Page $page, $images, $pool_id) {
+	public function pool_result(Page $page, /*array*/ $images, /*int*/ $pool_id) {
 		// TODO: this could / should be done using jQuery
 		$pool_images = "
 			<script language='JavaScript' type='text/javascript'>
@@ -273,7 +273,7 @@ class PoolsTheme extends Themelet {
 	 * HERE WE DISPLAY THE POOL ORDERER
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
 	 */
-	public function edit_order(Page $page, $pools, $images) {
+	public function edit_order(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
 		$this->display_top($pools, "Sorting Pool");
@@ -304,7 +304,7 @@ class PoolsTheme extends Themelet {
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
 	 * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
 	 */
-	public function edit_pool(Page $page, $pools, $images) {
+	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
 		$this->display_top($pools, "Editing Pool", true);
@@ -333,7 +333,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE HISTORY LIST
 	 */
-	public function show_history($histories, $pageNumber, $totalPages) {
+	public function show_history($histories, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $page;
 		$html = "<table id='poolsList' class='zebra'>".
 			"<thead><tr>".
@@ -390,7 +390,7 @@ class PoolsTheme extends Themelet {
 	/**
 	 * Display an error message to the user.
 	 */
-	public function display_error($errMessage) {
+	public function display_error(/*string*/ $errMessage) {
 		global $page;
 
 		$page->set_title("Error");
