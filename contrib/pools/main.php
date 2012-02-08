@@ -177,7 +177,7 @@ class Pools extends SimpleExtension {
 
 				case "import":
 					if ($this->have_permission($user, $pool)) {
-						$this->import_posts();
+						$this->import_posts($pool_id);
 					} else {
 						$this->theme->display_error("Permssion denied.");
 					}
@@ -347,7 +347,7 @@ class Pools extends SimpleExtension {
 	 * @param $poolID Array of integers
 	 * @retval 2D Array
 	 */
-	private function get_pool($poolID) {
+	private function get_pool(/*int*/ $poolID) {
 		global $database;
 		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
@@ -357,7 +357,7 @@ class Pools extends SimpleExtension {
 	 * @param $poolID Integer
 	 * @retval 2D array (with only 1 element in the one dimension)
 	 */
-	private function get_single_pool($poolID) {
+	private function get_single_pool(/*int*/ $poolID) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
@@ -367,7 +367,7 @@ class Pools extends SimpleExtension {
 	 * @param $imageID Integer
 	 * @retval 2D array
 	 */
-	private function get_pool_id($imageID) {
+	private function get_pool_id(/*int*/ $imageID) {
 		global $database;
 		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
 	}
@@ -376,13 +376,11 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE IMAGES FROM THE TAG ON IMPORT
 	 */
-	private function import_posts() {
+	private function import_posts(/*int*/ $pool_id) {
 		global $page, $config, $database;
 
-		$pool_id = int_escape($_POST["pool_id"]);
-
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
-
+		
 		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($_POST["pool_tag"]));
 		$this->theme->pool_result($page, $images, $pool_id);
 	}
@@ -390,6 +388,8 @@ class Pools extends SimpleExtension {
 
 	/*
 	 * HERE WE ADD CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
+	 *
+	 * TODO: Fix this so that the pool ID and images are passed as Arguments to the function.
 	 */
 	private function add_posts() {
 		global $database;
@@ -423,6 +423,9 @@ class Pools extends SimpleExtension {
 		return $poolID;	 
 	}
 
+	/*
+	 * TODO: Fix this so that the pool ID and images are passed as Arguments to the function.
+	 */
 	private function order_posts() {
 		global $database;
 
@@ -444,6 +447,8 @@ class Pools extends SimpleExtension {
 
 	/*
 	 * HERE WE REMOVE CHECKED IMAGES FROM POOL AND UPDATE THE HISTORY
+	 *
+	 * TODO: Fix this so that the pool ID and images are passed as Arguments to the function.
 	 */
 	private function remove_posts() {
 		global $database;
@@ -462,11 +467,16 @@ class Pools extends SimpleExtension {
 	}
 
 
-	/*
-	 * HERE WE CHECK IF THE POST IS ALREADY ON POOL
-	 * USED IN add_posts()
+	/**
+	 * This function checks if a given image is contained within a given pool.
+	 * Used by add_posts()
+	 *
+	 * @see add_posts()
+	 * @param $poolID integer
+	 * @param $imageID integer
+	 * @retval bool
 	 */
-	private function check_post($poolID, $imageID) {
+	private function check_post(/*int*/ $poolID, /*int*/ $imageID) {
 		global $database;
 		$result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid", array("pid"=>$poolID, "iid"=>$imageID));
 		return ($result != 0);
@@ -476,7 +486,7 @@ class Pools extends SimpleExtension {
 	/**
 	 * Retrieve all the images in a pool, given a pool ID.
 	 */
-	private function get_posts($event, $poolID) {
+	private function get_posts($event, /*int*/ $poolID) {
 		global $config, $user, $database;
 
 		$pageNumber = int_escape($event->get_arg(2));
@@ -536,21 +546,22 @@ class Pools extends SimpleExtension {
 	}
 
 
-	/*
-	 * WE GET THE ORDER OF THE IMAGES
+	/**
+	 * This function gets the current order of images from a given pool.
+	 * @param $poolID integer
+	 * @retval Array of image objects.
 	 */
-	private function edit_posts($poolID) {
+	private function edit_posts(/*int*/ $poolID) {
 		global $database;
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));
-
 		$images = array();
-		while(!$result->EOF) {
-			$image = Image::by_id($result->fields["image_id"]);
+		
+		while($row = $result->fetch()) {
+			$image = Image::by_id($row["image_id"]);
 			$images[] = array($image);
-			$result->MoveNext();
 		}
-
+		
 		return $images;
 	}
 
@@ -558,11 +569,23 @@ class Pools extends SimpleExtension {
 	/*
 	 * WE GET THE ORDER OF THE IMAGES BUT HERE WE SEND KEYS ADDED IN ARRAY TO GET THE ORDER IN THE INPUT VALUE
 	 */
-	private function edit_order($poolID) {
+	private function edit_order(/*int*/ $poolID) {
 		global $database;
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));									
 		$images = array();
+		
+		while($row = $result->fetch())
+		{
+			$image = $database->get_row("
+					SELECT * FROM images AS i
+					INNER JOIN pool_images AS p ON i.id = p.image_id
+					WHERE pool_id=:pid AND i.id=:iid",
+					array("pid"=>$poolID, "iid"=>$row['image_id']));
+			$image = ($image ? new Image($image) : null);
+			$images[] = array($image);
+		}
+		
 		while(!$result->EOF) {
 			$image = $database->get_row("
 					SELECT * FROM images AS i
@@ -588,7 +611,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE NUKE ENTIRE POOL. WE REMOVE POOLS AND POSTS FROM REMOVED POOL AND HISTORIES ENTRIES FROM REMOVED POOL
 	 */
-	private function nuke_pool($poolID) {
+	private function nuke_pool(/*int*/ $poolID) {
 		global $user, $database;
 
 		$p_id = $database->get_one("SELECT user_id FROM pools WHERE id = :pid", array("pid"=>$poolID));
@@ -608,7 +631,7 @@ class Pools extends SimpleExtension {
 	 * HERE WE ADD A HISTORY ENTRY
 	 * FOR $action 1 (one) MEANS ADDED, 0 (zero) MEANS REMOVED
 	 */
-	private function add_history($poolID, $action, $images, $count) {
+	private function add_history(/*int*/ $poolID, $action, $images, $count) {
 		global $user, $database;
 		$database->execute("
 				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
@@ -620,7 +643,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE HISTORY LIST
 	 */
-	private function get_history($pageNumber) {
+	private function get_history(/*int*/ $pageNumber) {
 		global $config, $database;
 
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
