@@ -84,7 +84,9 @@ class Pools extends SimpleExtension {
 		
 		if ($event->page_matches("pool")) {
 
-			var $pool_id, $pool;
+			$pool_id = 0;
+			$pool = array();
+			
 			// Check if we have pool id, since this is most often the case.
 			if (isset($_POST["pool_id"])) {
 				$pool_id = int_escape($_POST["pool_id"]);
@@ -139,7 +141,7 @@ class Pools extends SimpleExtension {
 					$pools = $this->get_pool($poolID);
 
 					foreach($pools as $pool) {
-						if (have_permission($user, $pool)) {
+						if ($this->have_permission($user, $pool)) {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
@@ -154,7 +156,7 @@ class Pools extends SimpleExtension {
 						$pools = $this->get_pool($poolID);
 
 						foreach($pools as $pool) {
-							if (have_permission($user, $pool)) {
+							if ($this->have_permission($user, $pool)) {
 								$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
 							} else {
 								$page->set_mode("redirect");
@@ -163,7 +165,7 @@ class Pools extends SimpleExtension {
 						}
 					}
 					else {
-						if (have_permission($user, $pool)) {
+						if ($this->have_permission($user, $pool)) {
 							$this->order_posts();
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -174,7 +176,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "import":
-					if (have_permission($user, $pool)) {
+					if ($this->have_permission($user, $pool)) {
 						$this->import_posts();
 					} else {
 						$this->theme->display_error("Permssion denied.");
@@ -182,7 +184,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "add_posts":
-					if (have_permission($user, $pool)) {
+					if ($this->have_permission($user, $pool)) {
 						$this->add_posts();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -192,7 +194,7 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "remove_posts":
-					if (have_permission($user, $pool)) {
+					if ($this->have_permission($user, $pool)) {
 						$this->remove_posts();
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
@@ -495,7 +497,7 @@ class Pools extends SimpleExtension {
 		if(class_exists("Ratings")) {
 			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 		}
-		if (isset($rating) && !is_null($rating)) {
+		if (isset($rating) && !empty($rating)) {
 
 			$result = $database->get_all("
 					SELECT p.image_id
