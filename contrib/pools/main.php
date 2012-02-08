@@ -142,10 +142,10 @@ class Pools extends SimpleExtension {
 
 					//foreach($pools as $pool) {
 						if ($this->have_permission($user, $pool)) {
-							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
+							$this->theme->edit_pool($page, $this->get_pool($pool_id), $this->edit_posts($pool_id));
 						} else {
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("pool/view/".$poolID));
+							$page->set_redirect(make_link("pool/view/".$pool_id));
 						}
 					//}
 					break;
@@ -157,10 +157,10 @@ class Pools extends SimpleExtension {
 
 						//foreach($pools as $pool) {
 							if ($this->have_permission($user, $pool)) {
-								$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
+								$this->theme->edit_order($page, $this->get_pool($pool_id), $this->edit_order($pool_id));
 							} else {
 								$page->set_mode("redirect");
-								$page->set_redirect(make_link("pool/view/".$poolID));
+								$page->set_redirect(make_link("pool/view/".$pool_id));
 							}
 						//}
 					}
