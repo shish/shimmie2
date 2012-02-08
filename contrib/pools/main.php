@@ -63,6 +63,7 @@ class Pools extends SimpleExtension {
 			$config->set_int("poolsUpdatedPerPage", 20);
 			$config->set_bool("poolsInfoOnViewImage", "N");
 			$config->set_bool("poolsAdderOnViewImage", "N");
+			$config->set_bool("poolsShowNextLink","N");
 
 			log_info("pools", "extension installed");
 		}
@@ -76,6 +77,7 @@ class Pools extends SimpleExtension {
 		$sb->add_int_option("poolsListsPerPage", "<br>Index list items per page: ");
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
+		$sb->add_bool_option("poolsShowNextLink", "<br>Show 'Next' link when viewing pool images: ");
 		//$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
 		$event->panel->add_block($sb);
 	}
@@ -223,7 +225,8 @@ class Pools extends SimpleExtension {
 
 	/**
 	 * When displaying an image, optionally list all the pools that the
-	 * image is currently a member of on a side panel.
+	 * image is currently a member of on a side panel, as well as a link
+	 * to the Next image in the pool.
 	 */
 	public function onDisplayingImage($event) {
 		global $config, $database, $page;
@@ -231,16 +234,22 @@ class Pools extends SimpleExtension {
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
 			$poolsIDs = $this->get_pool_id($imageID);
+			
+			$show_next = $config->get_bool("poolsShowNextLink", false);
+			
 
 			$linksPools = array();
 			foreach($poolsIDs as $poolID) {
 				$pools = $this->get_pool($poolID['pool_id']);
 				foreach ($pools as $pool){
 					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
-					// TODO: make a config for this
-					$next_image_in_pool = get_next_post($pool['id'], $imageID);
-					if (!empty($next_image_in_pool)) {
-						$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
+					
+					// Optionally show a link the Next image in the Pool.
+					if ($show_next) {
+						$next_image_in_pool = $this->get_next_post($pool['id'], $imageID);
+						if (!empty($next_image_in_pool)) {
+							$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
+						}
 					}
 				}
 			}
