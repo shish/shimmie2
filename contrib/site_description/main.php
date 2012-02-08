@@ -2,6 +2,7 @@
 /*
  * Name: Site Description
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Visibility: admin
  * Description: A description for search engines

@@ -106,8 +106,10 @@ class Image {
 
 	/**
 	 * Search for an array of images
+	 *
+	 * @retval Array
 	 */
-	public static function find_images($start, $limit, $tags=array()) {
+	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
@@ -383,7 +385,7 @@ class Image {
 	/**
 	 * Set the image's source URL
 	 */
-	public function set_source($source) {
+	public function set_source(/*string*/ $source) {
 		global $database;
 		if(empty($source)) $source = null;
 		if($source != $this->source) {
@@ -392,7 +394,10 @@ class Image {
 		}
 	}
 
-
+	/**
+	 * Check if the image is locked.
+	 * @retval bool
+	 */
 	public function is_locked() {
 		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
 	}
