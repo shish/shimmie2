@@ -18,6 +18,7 @@ class UploadTheme extends Themelet {
 		$upload_list = "";
 		$upload_count = $config->get_int('upload_count');
 		
+		
 		for($i=0; $i<$upload_count; $i++)
 		{
 			$a=$i+1;
@@ -53,7 +54,7 @@ class UploadTheme extends Themelet {
 				<a href='#' onclick='$js'>".
 				"<img src='ext/upload/minus.png' /></a>";
 				
-				if($a==$config->get_int('upload_count')){
+				if($a == $upload_count){
 					$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
 				}else{
 					$js1 = 'javascript:$(function() {

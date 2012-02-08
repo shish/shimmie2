@@ -41,6 +41,8 @@ class LogDatabaseTheme extends Themelet {
 	</thead>
 	<tbody>\n";
 		$n = 0;
+		reset($events); // rewind to first element in array.
+		
 		foreach($events as $event) {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$c = $this->pri_to_col($event['priority']);

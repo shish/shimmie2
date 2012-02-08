@@ -58,6 +58,8 @@ class Upload extends SimpleExtension {
 			$this->is_full = false;
 		}
 		else {
+			// TODO: This size limit should be configureable by the admin...
+			// currently set to 100 MB
 			$this->is_full = $free_num < 100*1024*1024;
 		}
 
@@ -150,12 +152,14 @@ class Upload extends SimpleExtension {
 					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 					
 					if(count($_FILES)) {
+						reset($_FILES);	// rewind to first element in array.
 						foreach($_FILES as $file) {
 							$ok = $this->try_upload($file, $tags, $source, $image_id);
 							break; // leave the foreach loop.
 						}
 					}
 					else {
+						reset($_POST);	// rewind to first element in array.
 						foreach($_POST as $name => $value) {
 							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 								$ok = $this->try_transload($value, $tags, $source, $image_id);
@@ -186,9 +190,11 @@ class Upload extends SimpleExtension {
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$ok = true;
 					foreach($_FILES as $file) {
+						reset($_FILES);	// rewind to first element in array.
 						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
+						reset($_POST);	// rewind to first element in array.
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
