@@ -579,24 +579,6 @@ class Pools extends SimpleExtension {
 			$images[] = array($image);
 		}
 		
-		while(!$result->EOF) {
-			$image = $database->get_row("
-					SELECT * FROM images AS i
-					INNER JOIN pool_images AS p ON i.id = p.image_id
-					WHERE pool_id=:pid AND i.id=:iid",
-					array("pid"=>$poolID, "iid"=>$result->fields["image_id"]));
-			$image = ($image ? new Image($image) : null);
-			$images[] = array($image);
-			$result->MoveNext();
-		}
-		//		Original code
-		//		
-		//		$images = array();
-		//		while(!$result->EOF) {
-		//			$image = Image::by_id($result->fields["image_id"]);
-		//			$images[] = array($image);
-		//			$result->MoveNext();
-		//		}
 		return $images;
 	}
 
