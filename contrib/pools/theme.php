@@ -168,21 +168,24 @@ class PoolsTheme extends Themelet {
 	public function sidebar_options(Page $page, $pool, $check_all) {
 		global $user;
 
-		$editor = "
-			".make_form(make_link("pool/import"))."
-			<input type='text' name='pool_tag' id='edit_pool_tag' value='Please enter a tag' onclick='this.value=\"\";'/>
-			<input type='submit' name='edit' id='edit_pool_import_btn' value='Import'/>
-			<input type='hidden' name='pool_id' value='".$pool['id']."'>
+		$editor = "\n".make_form( make_link('pool/import') ).'
+				<input type="text" name="pool_tag" id="edit_pool_tag" value="Please enter a tag" onclick="this.value=\'\';"/>
+				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-
-			<form method='GET' action='".make_link("pool/edit/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit_pool_btn' value='Edit Pool'/>
+			
+			'.make_form( make_link('pool/edit') ).'
+				<input type="submit" name="edit" id="edit_pool_btn" value="Edit Pool"/>
+				<input type="hidden" name="edit_pool" value="yes">
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-
-			<form method='GET' action='".make_link("pool/order/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit_pool_order_btn' value='Order Pool'/>
+			
+			'.make_form( make_link('pool/order') ).'
+				<input type="submit" name="edit" id="edit_pool_order_btn" value="Order Pool"/>
+				<input type="hidden" name="order_view" value="yes">
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-			";
+			';
 
 		if($user->id == $pool['user_id'] || $user->is_admin()){
 			$editor .= "
@@ -193,8 +196,8 @@ class PoolsTheme extends Themelet {
 				</script>
 
 				".make_form(make_link("pool/nuke"))."
-				<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
-				<input type='hidden' name='pool_id' value='".$pool['id']."'>
+					<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
+					<input type='hidden' name='pool_id' value='".$pool['id']."'>
 				</form>
 				";
 		}

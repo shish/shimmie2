@@ -137,32 +137,32 @@ class Pools extends SimpleExtension {
 					break;
 
 				case "edit":
-					$poolID = int_escape($event->get_arg(1));
-					$pools = $this->get_pool($poolID);
+					//$poolID = int_escape($event->get_arg(1));
+					//$pools = $this->get_pool($poolID);
 
-					foreach($pools as $pool) {
+					//foreach($pools as $pool) {
 						if ($this->have_permission($user, $pool)) {
 							$this->theme->edit_pool($page, $this->get_pool($poolID), $this->edit_posts($poolID));
 						} else {
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$poolID));
 						}
-					}
+					//}
 					break;
 
 				case "order":
-					if($_SERVER["REQUEST_METHOD"] == "GET") {
-						$poolID = int_escape($event->get_arg(1));
-						$pools = $this->get_pool($poolID);
+					if (isset($_POST["order_view"])) {
+						//$poolID = int_escape($event->get_arg(1));
+						//$pools = $this->get_pool($poolID);
 
-						foreach($pools as $pool) {
+						//foreach($pools as $pool) {
 							if ($this->have_permission($user, $pool)) {
 								$this->theme->edit_order($page, $this->get_pool($poolID), $this->edit_order($poolID));
 							} else {
 								$page->set_mode("redirect");
 								$page->set_redirect(make_link("pool/view/".$poolID));
 							}
-						}
+						//}
 					}
 					else {
 						if ($this->have_permission($user, $pool)) {
