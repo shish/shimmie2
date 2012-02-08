@@ -25,6 +25,10 @@ class CustomCommentListTheme extends CommentListTheme {
 
 		// parts for each image
 		$position = 10;
+		
+		$comment_captcha = $config->get_bool('comment_captcha');
+		$comment_limit = $config->get_int("comment_list_count", 10);
+		
 		foreach($images as $pair) {
 			$image = $pair[0];
 			$comments = $pair[1];
@@ -42,7 +46,7 @@ class CustomCommentListTheme extends CommentListTheme {
 
 			$r = class_exists("Ratings") ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
 			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
-			$comment_limit = $config->get_int("comment_list_count", 10);
+
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
 				$hidden = $comment_count - $comment_limit;
@@ -57,7 +61,7 @@ class CustomCommentListTheme extends CommentListTheme {
 					$comment_html .= $this->build_postbox($image->id);
 				}
 				else {
-					if(!$config->get_bool('comment_captcha')) {
+					if(!$comment_captcha) {
 						$comment_html .= $this->build_postbox($image->id);
 					}
 					else {

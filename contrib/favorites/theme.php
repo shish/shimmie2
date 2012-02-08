@@ -24,6 +24,8 @@ class FavoritesTheme extends Themelet {
 		$i_favorites = count($username_array);
 		$html = "$i_favorites people:";
 
+		reset($username_array); // rewind to first element in array.
+		
 		foreach($username_array as $row) {
 			$username = html_escape($row);
 			$html .= "<br><a href='".make_link("user/$username")."'>$username</a>";
