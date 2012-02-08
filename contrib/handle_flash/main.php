@@ -2,7 +2,8 @@
 /*
  * Name: Handle Flash
  * Author: Shish <webmaster@shishnet.org>
- * Description: Handle Flash files
+ * Link: http://code.shishnet.org/shimmie2/
+ * Description: Handle Flash files. (No thumbnail is generated for flash files)
  */
 
 class FlashFileHandler extends DataHandlerExtension {

@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Name: Uploader
  * Author: Shish
  * Description: Allows people to upload files to the website
@@ -218,14 +218,28 @@ class Upload extends SimpleExtension {
 	}
 // }}}
 // do things {{{
+
+	/**
+	 * Check if a given user can upload.
+	 * @param $user The user to check.
+	 * @retval bool
+	 */
 	private function can_upload(User $user) {
 		global $config;
 		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}
 
-	// Helper function based on the one from the online PHP Documentation
-	// which is licensed under Creative Commons Attribution 3.0 License
-	// TODO: Make these messages user/admin editable
+	/**
+	 * Returns a descriptive error message for the specified PHP error code.
+	 *
+	 * This is a helper function based on the one from the online PHP Documentation
+	 * which is licensed under Creative Commons Attribution 3.0 License
+	 *
+	 * TODO: Make these messages user/admin editable
+	 *
+	 * @param $error_code PHP error code (int)
+	 * @retval String
+	 */
 	private function upload_error_message($error_code) {
 		switch ($error_code) {
 			case UPLOAD_ERR_INI_SIZE:
@@ -247,6 +261,10 @@ class Upload extends SimpleExtension {
 		}
 	}
 	
+	/**
+	 * Handle an upload.
+	 * @retval bool TRUE on upload successful.
+	 */
 	private function try_upload($file, $tags, $source, $replace='') {
 		global $page;
 		global $config;
@@ -293,6 +311,10 @@ class Upload extends SimpleExtension {
 		return $ok;
 	}
 
+	/**
+	 * Handle an transload.
+	 * @retval bool TRUE on transload successful.
+	 */
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page;
 		global $config;
