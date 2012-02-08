@@ -100,7 +100,7 @@ class Pools extends SimpleExtension {
 					$this->list_pools($page, int_escape($event->get_arg(1)));
 					break;
 
-				case "new": // Show form
+				case "new": // Show form for new pools
 					if(!$user->is_anonymous()){
 						$this->theme->new_pool_composer($page);
 					} else {
@@ -237,6 +237,11 @@ class Pools extends SimpleExtension {
 				$pools = $this->get_pool($poolID['pool_id']);
 				foreach ($pools as $pool){
 					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
+					// TODO: make a config for this
+					$next_image_in_pool = get_next_post($pool['id'], $imageID);
+					if (!empty($next_image_in_pool)) {
+						$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
+					}
 				}
 			}
 			$this->theme->pool_info($linksPools);
@@ -475,6 +480,30 @@ class Pools extends SimpleExtension {
 		return ($result != 0);
 	}
 
+	/**
+	 * Gets the next successive image from a pool, given a pool ID and an image ID.
+	 */
+	private function get_next_post(/*int*/ $poolID, /*int*/ $imageID) {
+		global $database;
+		
+		$poolID = int_escape($poolID);
+		$pool = $this->get_pool($poolID);
+		
+		$result = $database->get_one("
+					SELECT image_id
+					FROM pool_images
+					WHERE pool_id=:pid
+					AND image_order > (SELECT image_order FROM pool_images WHERE pool_id=:pid AND image_id =:iid LIMIT 1 )
+					ORDER BY image_order ASC LIMIT 1",
+					array("pid"=>$poolID, "iid"=>$imageID) );
+		
+		if (empty($result)) {
+			// assume that we are at the end of the pool
+			return null;
+		} else {
+			return $result;
+		}
+	}
 
 	/**
 	 * Retrieve all the images in a pool, given a pool ID.
