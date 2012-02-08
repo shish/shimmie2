@@ -236,7 +236,6 @@ class Pools extends SimpleExtension {
 			$poolsIDs = $this->get_pool_id($imageID);
 			
 			$show_next = $config->get_bool("poolsShowNextLink", false);
-			
 
 			$linksPools = array();
 			foreach($poolsIDs as $poolID) {
@@ -246,7 +245,7 @@ class Pools extends SimpleExtension {
 					
 					// Optionally show a link the Next image in the Pool.
 					if ($show_next) {
-						$next_image_in_pool = $this->get_next_post($pool['id'], $imageID);
+						$next_image_in_pool = $this->get_next_post($pool, $imageID);
 						if (!empty($next_image_in_pool)) {
 							$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
 						}
@@ -491,12 +490,16 @@ class Pools extends SimpleExtension {
 
 	/**
 	 * Gets the next successive image from a pool, given a pool ID and an image ID.
+	 *
+	 * @param $pool Array for the given pool
+	 * @param $imageID Integer
+	 * @retval Integer which is the next Image ID or NULL if none.
 	 */
-	private function get_next_post(/*int*/ $poolID, /*int*/ $imageID) {
+	private function get_next_post(/*array*/ $pool, /*int*/ $imageID) {
 		global $database;
-		
-		$poolID = int_escape($poolID);
-		$pool = $this->get_pool($poolID);
+
+		if (empty($pool) || empty($imageID))
+			return null;
 		
 		$result = $database->get_one("
 					SELECT image_id
@@ -504,7 +507,7 @@ class Pools extends SimpleExtension {
 					WHERE pool_id=:pid
 					AND image_order > (SELECT image_order FROM pool_images WHERE pool_id=:pid AND image_id =:iid LIMIT 1 )
 					ORDER BY image_order ASC LIMIT 1",
-					array("pid"=>$poolID, "iid"=>$imageID) );
+					array("pid"=>$pool['id'], "iid"=>$imageID) );
 		
 		if (empty($result)) {
 			// assume that we are at the end of the pool
