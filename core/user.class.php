@@ -4,6 +4,7 @@ function _new_user($row) {
 	return new User($row);
 }
 
+
 /**
  * An object representing a row in the "users" table.
  *
@@ -90,6 +91,77 @@ class User {
 	/*
 	 * useful user object functions start here
 	 */
+	public function can($ability) {
+		global $config;
+
+		// TODO: make this into an editable database table
+		$user_classes = array(
+			"anonymous" => array(
+				"change_setting" => False,  # web-level settings, eg the config table
+				"override_config" => False, # sys-level config, eg config.php
+				"big_search" => False,      # more than 3 tags (speed mode only)
+				"lock_image" => False,
+				"view_ip" => False,         # view IP addresses associated with things
+				"change_password" => False,
+				"change_user_info" => False,
+				"delete_user" => False,
+				"delete_image" => False,
+				"delete_comment" => False,
+				"replace_image" => False,
+				"manage_extension_list" => False,
+				"manage_alias_list" => False,
+				"edit_tag" => $config->get_bool("tag_edit_anon"),
+				"edit_source" => $config->get_bool("source_edit_anon"),
+				"mass_tag_edit" => False,
+			),
+			"user" => array(
+				"change_setting" => False,
+				"override_config" => False,
+				"big_search" => True,
+				"lock_image" => False,
+				"view_ip" => False,
+				"change_password" => False,
+				"change_user_info" => False,
+				"delete_user" => False,
+				"delete_image" => False,
+				"delete_comment" => False,
+				"replace_image" => False,
+				"manage_extension_list" => False,
+				"manage_alias_list" => False,
+				"edit_tag" => True,
+				"edit_source" => True,
+				"mass_tag_edit" => False,
+			),
+			"admin" => array(
+				"change_setting" => True,
+				"override_config" => True,
+				"big_search" => True,
+				"lock_image" => True,
+				"view_ip" => True,
+				"change_password" => True,
+				"change_user_info" => True,
+				"delete_user" => True,
+				"delete_image" => True,
+				"delete_comment" => True,
+				"replace_image" => True,
+				"manage_extension_list" => True,
+				"manage_alias_list" => True,
+				"edit_tag" => True,
+				"edit_source" => True,
+				"mass_tag_edit" => True,
+			),
+		);
+
+		return $user_classes[$this->get_class()][$ability];
+	}
+
+	// FIXME: this should be a column in the users table
+	public function get_class() {
+		if($this->is_admin()) return "admin";
+		else if($this->is_logged_in()) return "user";
+		else return"anonymous";
+	}
+
 
 	/**
 	 * Test if this user is anonymous (not logged in)
@@ -144,6 +216,7 @@ class User {
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
 	 * a local file, a remote file, a gravatar, a something else, etc
+	 * @retval String of HTML
 	 */
 	public function get_avatar_html() {
 		// FIXME: configurable
@@ -170,6 +243,8 @@ class User {
 	 * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
+	 *
+	 * @retval String containing auth token (MD5sum)
 	 */
 	public function get_auth_token() {
 		global $config;

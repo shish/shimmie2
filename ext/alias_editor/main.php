@@ -28,7 +28,7 @@ class AliasEditor extends SimpleExtension {
 
 		if($event->page_matches("alias")) {
 			if($event->get_arg(0) == "add") {
-				if($user->is_admin()) {
+				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
 						try {
 							$aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
@@ -43,7 +43,7 @@ class AliasEditor extends SimpleExtension {
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
-				if($user->is_admin()) {
+				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag'])) {
 						$database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", array("oldtag" => $_POST['oldtag']));
 						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag']);
@@ -74,7 +74,7 @@ class AliasEditor extends SimpleExtension {
 
 				$total_pages = ceil($database->get_one("SELECT COUNT(*) FROM aliases") / $alias_per_page);
 
-				$this->theme->display_aliases($page, $alias, $user->is_admin(), $page_number + 1, $total_pages);
+				$this->theme->display_aliases($alias, $page_number + 1, $total_pages);
 			}
 			else if($event->get_arg(0) == "export") {
 				$page->set_mode("data");
@@ -82,7 +82,7 @@ class AliasEditor extends SimpleExtension {
 				$page->set_data($this->get_alias_csv($database));
 			}
 			else if($event->get_arg(0) == "import") {
-				if($user->is_admin()) {
+				if($user->can("manage_alias_list")) {
 					if(count($_FILES) > 0) {
 						$tmp = $_FILES['alias_file']['tmp_name'];
 						$contents = file_get_contents($tmp);
@@ -115,7 +115,7 @@ class AliasEditor extends SimpleExtension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("manage_alias_list")) {
 			$event->add_link("Alias Editor", make_link("alias/list"));
 		}
 	}

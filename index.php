@@ -50,7 +50,7 @@
  * Each of these can be imported at the start of a function with eg "global $page, $user;"
  */
 
-if(empty($database_dsn) && !file_exists("config.php")) {
+if(!file_exists("config.php")) {
 	header("Location: install.php");
 	exit;
 }

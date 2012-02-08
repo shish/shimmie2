@@ -310,7 +310,7 @@ class Database {
 		}
 
 		$matches = array();
-		if(CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
+		if( defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
 				$this->cache = new MemcacheCache($matches[2]);
 			}

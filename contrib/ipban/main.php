@@ -2,6 +2,7 @@
 /*
  * Name: IP Ban
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Ban IP addresses
  * Documentation:
@@ -92,7 +93,7 @@ class IPBan extends SimpleExtension {
 	public function onRemoveIPBan($event) {
 		global $database;
 		$database->Execute("DELETE FROM bans WHERE id = :id", array("id"=>$event->id));
-		$database->cache->delete("ip_bans");
+		$database->cache->delete("ip_bans_sorted");
 	}
 
 // installer {{{
@@ -261,7 +262,7 @@ class IPBan extends SimpleExtension {
 		global $database;
 		$sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (:ip, :reason, :end, :admin_id)";
 		$database->Execute($sql, array("ip"=>$ip, "reason"=>$reason, "end"=>strtotime($end), "admin_id"=>$user->id));
-		$database->cache->delete("ip_bans");
+		$database->cache->delete("ip_bans_sorted");
 		log_info("ipban", "'$user->name' has banned '$ip' because '$reason' until '$end'");
 	}
 // }}}

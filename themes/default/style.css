@@ -128,9 +128,8 @@ UL {
 .comment {
 	text-align: left;
 }
-.comment .timeago {
-	float: right;
-	font-size: 75%;
+.comment .info {
+	display: none;
 }
 
 .more:after {

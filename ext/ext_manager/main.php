@@ -91,7 +91,7 @@ class ExtManager extends SimpleExtension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("ext_manager")) {
-			if($user->is_admin()) {
+			if($user->can("manage_extension_list")) {
 				if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 					if(is_writable("ext")) {
 						$this->set_things($_POST);
@@ -130,7 +130,7 @@ class ExtManager extends SimpleExtension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("manage_extension_list")) {
 			$event->add_link("Extension Manager", make_link("ext_manager"));
 		}
 		else {

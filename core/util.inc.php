@@ -190,12 +190,26 @@ function undb_bool($val) {
 	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
 }
 
-function startsWith($haystack, $needle) {
+/**
+ * Checks if a given string contains another at the beginning.
+ *
+ * @param $haystack String to examine.
+ * @param $needle String to look for.
+ * @retval bool
+ */
+function startsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$length = strlen($needle);
 	return (substr($haystack, 0, $length) === $needle);
 }
 
-function endsWith($haystack, $needle) {
+/**
+ * Checks if a given string contains another at the end.
+ *
+ * @param $haystack String to examine.
+ * @param $needle String to look for.
+ * @retval bool
+ */
+function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$length = strlen($needle);
 	$start  = $length * -1; //negative
 	return (substr($haystack, $start) === $needle);
@@ -621,6 +635,7 @@ function log_msg($section, $priority, $message) {
 	send_event(new LogEvent($section, $priority, $message));
 }
 
+// More shorthand ways of logging
 function log_debug($section, $message) {log_msg($section, SCORE_LOG_DEBUG, $message);}
 function log_info($section, $message)  {log_msg($section, SCORE_LOG_INFO, $message);}
 function log_warning($section, $message) {log_msg($section, SCORE_LOG_WARNING, $message);}
@@ -847,6 +862,13 @@ function send_event(Event $event) {
 // string representation of a number, it's two numbers separated by a space.
 // What the fuck were the PHP developers smoking.
 $_load_start = microtime(true);
+
+/**
+ * Collects some debug information (execution time, memory usage, queries, etc)
+ * and formats it to stick in the footer of the page.
+ *
+ * @retval String of debug info to add to the page.
+ */
 function get_debug_info() {
 	global $config, $_event_count, $database, $_execs, $_load_start;
 
@@ -879,7 +901,7 @@ function get_debug_info() {
 // print_obj ($object, $title, $return)
 function print_obj($object,$title="Object Information", $return=false) {
 	global $user;
-	if(DEBUG && isset($_GET['debug']) && $user->is_admin()) {
+	if(DEBUG && isset($_GET['DEBUG']) && $user->can("override_config")) {
 		$pr = print_r($object,true);
 		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
 		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
@@ -1051,6 +1073,9 @@ function _load_extensions() {
 	ctx_log_endok();
 }
 
+/**
+ * Used to display fatal errors to the web user.
+ */
 function _fatal_error(Exception $e) {
 	$version = VERSION;
 	$message = $e->getMessage();

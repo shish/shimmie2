@@ -2,6 +2,7 @@
 /*
  * Name: News
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Show a short amount of text in a block on the post list
  * Documentation:

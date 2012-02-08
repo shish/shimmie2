@@ -143,46 +143,53 @@ class CommentListTheme extends Themelet {
 		$h_name = html_escape($comment->owner_name);
 		$h_poster_ip = html_escape($comment->poster_ip);
 		$h_timestamp = autodate($comment->posted);
-		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
+		$h_comment = ($trim ? substr($tfe->stripped, 0, 50) . (strlen($tfe->stripped) > 50 ? "..." : "") : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
-		$anoncode = "";
-		if($h_name == "Anonymous" && $this->anon_id >= 0) {
-			$anoncode = '<sup>'.$this->anon_id.'</sup>';
-			$this->anon_id++;
+		if($h_name == "Anonymous") {
+			$anoncode = "";
+			if($this->anon_id >= 0) {
+				$anoncode = '<sup>'.$this->anon_id.'</sup>';
+				$this->anon_id++;
+			}
+			$h_userlink = $h_name . $anoncode;
 		}
-		$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>'.$anoncode;
+		else {
+			$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
+		}
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
-		$h_dellink = $user->is_admin() ?
-			'<br>('.$h_poster_ip.', '.$h_timestamp.', <a '.
-			'onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
-			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>)' : '';
 
 		if($trim) {
 			return '
 				'.$h_userlink.': '.$h_comment.'
 				<a href="'.make_link('post/view/'.$i_image_id).'">&gt;&gt;&gt;</a>
-				'.$h_dellink.'
 			';
 		}
 		else {
-			//$avatar = "";
-			//if(!empty($comment->owner->email)) {
-			//	$hash = md5(strtolower($comment->owner->email));
-			//	$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
-			//}
-			$oe = ($this->comments_shown++ % 2 == 0) ? "even" : "odd";
+			$avatar = "";
+			if(!empty($comment->owner_email)) {
+				$hash = md5(strtolower($comment->owner_email));
+				$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
+			}
+			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id)'>Reply</a>";
+			$h_ip = $user->can("view_ip") ? "<br>$h_poster_ip" : "";
+			$h_del = $user->can("delete_comment") ?
+				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
+				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
 			return '
 				<a name="'.$i_comment_id.'"></a>
-				<div class="'.$oe.' comment">
-				<!--<span class="timeago" style="float: right;">'.$h_timestamp.'</span>-->
-				'.$h_userlink.': '.$h_comment.'
-				'.$h_dellink.'
+				<div class="comment">
+					<div class="info">
+					'.$avatar.'
+					'.$h_timestamp.$h_reply.$h_ip.$h_del.'
+					</div>
+					'.$h_userlink.': '.$h_comment.'
 				</div>
 			';
 		}
+		return "";
 	}
 
 	protected function build_postbox($image_id) {
@@ -196,7 +203,7 @@ class CommentListTheme extends Themelet {
 			'.make_form(make_link("comment/add")).'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
-				<textarea name="comment" rows="5" cols="50"></textarea>
+				<textarea id="comment_on_'.$i_image_id.'" name="comment" rows="5" cols="50"></textarea>
 				'.$captcha.'
 				<br><input type="submit" value="Post Comment" />
 			</form>

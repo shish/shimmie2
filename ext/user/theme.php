@@ -141,7 +141,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
 
 		if(!$user->is_anonymous()) {
-			if($user->id == $duser->id || $user->is_admin()) {
+			if($user->id == $duser->id || $user->can("change_user_info")) {
 				$page->add_block(new Block("Options", $this->build_options($duser), "main", 20));
 			}
 		}
@@ -173,7 +173,7 @@ class UserPageTheme extends Themelet {
 			</form>
 			";
 
-			if($user->is_admin()) {
+			if($user->can("change_user_info")) {
 				$i_user_id = int_escape($duser->id);
 				$h_is_admin = $duser->is_admin() ? " checked" : "";
 				$html .= "

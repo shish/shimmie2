@@ -79,23 +79,8 @@ and of course start organising your images :-)
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
-			<script type='text/javascript'><!--
-			$(document).ready(function() {
-				$('#search_input').DefaultValue('Search');
-				$('#search_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {
-					width: 320,
-					max: 15,
-					highlight: false,
-					multiple: true,
-					multipleSeparator: ' ',
-					scroll: true,
-					scrollHeight: 300,
-					selectFirst: false
-				});
-			});
-			//--></script>
 			<p><form action='$h_search_link' method='GET'>
-				<input id='search_input' name='search' type='text'
+				<input class='search_input' id='search_input' name='search' type='text'
 						value='$h_search_string' autocomplete='off' />
 				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />

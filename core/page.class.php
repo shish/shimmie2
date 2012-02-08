@@ -39,7 +39,7 @@ class Page {
 	/** @private */
 	var $mode = "page";
 	/** @private */
-	var $type = "text/html";
+	var $type = "text/html; charset=utf-8";
 
 	/**
 	 * Set what this page should do; "page", "data", or "redirect".
@@ -196,8 +196,8 @@ class Page {
 
 		switch($this->mode) {
 			case "page":
-				header("Vary: Cookie, Accept-Encoding");
 				if(CACHE_HTTP) {
+					header("Vary: Cookie, Accept-Encoding");
 					if($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
 						header("Cache-control: public, max-age=600");
 						header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
@@ -236,6 +236,8 @@ class Page {
 	
 	protected function add_auto_html_headers() {
 		$data_href = get_base_href();
+
+		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>");
 		
 		/* Attempt to cache the CSS & JavaScript files */
 		if ($this->add_cached_auto_html_headers() === FALSE) {

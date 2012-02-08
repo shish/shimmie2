@@ -128,7 +128,7 @@ class CommentList extends SimpleExtension {
 				}
 			}
 			else if($event->get_arg(0) === "delete") {
-				if($user->is_admin()) {
+				if($user->can("delete_comment")) {
 					// FIXME: post, not args
 					if($event->count_args() === 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
@@ -173,7 +173,6 @@ class CommentList extends SimpleExtension {
 		$h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
 		$event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
 
-		global $user;
 		$recent = $this->get_user_recent_comments($event->display_user->id, 10);
 		$this->theme->display_user_comments($recent);
 	}
