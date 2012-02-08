@@ -39,6 +39,8 @@ class PageRequestEvent extends Event {
 	 * Test if the requested path matches a given pattern.
 	 *
 	 * If it matches, store the remaining path elements in $args
+	 *
+	 * @retval bool
 	 */
 	public function page_matches(/*string*/ $name) {
 		$parts = explode("/", $name);
@@ -57,6 +59,11 @@ class PageRequestEvent extends Event {
 		return true;
 	}
 
+	/**
+	 * Get the n th argument of the page request (if it exists.)
+	 * @param $n integer
+	 * @retval The argmuent (string) or NULL
+	 */
 	public function get_arg(/*int*/ $n) {
 		$offset = $this->part_count + $n;
 		if($offset >= 0 && $offset < $this->arg_count) {
@@ -67,6 +74,10 @@ class PageRequestEvent extends Event {
 		}
 	}
 
+	/**
+	 * Returns the number of arguments the page request has.
+	 * @retval int
+	 */
 	public function count_args() {
 		return (int)($this->arg_count - $this->part_count);
 	}
