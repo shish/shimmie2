@@ -12,56 +12,50 @@
  *	colorize used tags in cloud || always show used tags in front of cloud
  *	theme junk
  */
-class TagEditCloud implements Extension {
-        var $theme;
+class TagEditCloud extends SimpleExtension {
+	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
+		global $config;
 
-	public function get_priority() {return 50;}
-
-        public function receive_event(Event $event) {
-                global $config, $database, $page, $user;
-                //if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof ImageInfoBoxBuildingEvent) {
-			if(!$config->get_bool("tageditcloud_disable")) {
-				if($this->can_tag($event->image)) {
-					if(!$cfg_minusage=$config->get_int("tageditcloud_minusage")) $cfg_minusage=2;
-					if(!$cfg_defcount=$config->get_int("tageditcloud_defcount")) $cfg_defcount=40;
-					if(!$cfg_maxcount=$config->get_int("tageditcloud_maxcount")) $cfg_maxcount=4096;
-					if($config->get_string("tageditcloud_sort") != "p") {
-						$event->add_part($this->build_tag_map($event->image,$cfg_minusage,false),40);
-					} else {
-						$event->add_part($this->build_tag_map($event->image,$cfg_defcount,$cfg_maxcount),40);
-					}
+		if(!$config->get_bool("tageditcloud_disable")) {
+			if($this->can_tag($event->image)) {
+				if(!$cfg_minusage=$config->get_int("tageditcloud_minusage")) $cfg_minusage=2;
+				if(!$cfg_defcount=$config->get_int("tageditcloud_defcount")) $cfg_defcount=40;
+				if(!$cfg_maxcount=$config->get_int("tageditcloud_maxcount")) $cfg_maxcount=4096;
+				if($config->get_string("tageditcloud_sort") != "p") {
+					$event->add_part($this->build_tag_map($event->image,$cfg_minusage,false),40);
+				} else {
+					$event->add_part($this->build_tag_map($event->image,$cfg_defcount,$cfg_maxcount),40);
 				}
 			}
 		}
+	}
 		
-		if($event instanceof InitExtEvent) {
-			$config->set_default_bool("tageditcloud_disable",false);
-			$config->set_default_bool("tageditcloud_usedfirst",true);
-			$config->set_default_string("tageditcloud_sort",'a');
-			$config->set_default_int("tageditcloud_minusage",2);
-			$config->set_default_int("tageditcloud_defcount",40);
-			$config->set_default_int("tageditcloud_maxcount",4096);
-		}
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_bool("tageditcloud_disable",false);
+		$config->set_default_bool("tageditcloud_usedfirst",true);
+		$config->set_default_string("tageditcloud_sort",'a');
+		$config->set_default_int("tageditcloud_minusage",2);
+		$config->set_default_int("tageditcloud_defcount",40);
+		$config->set_default_int("tageditcloud_maxcount",4096);
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sort_by = array('Alphabetical'=>'a','Popularity'=>'p');
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sort_by = array('Alphabetical'=>'a','Popularity'=>'p');
 
-			$sb = new SetupBlock("Tag Edit Cloud");
-			$sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
-			$sb->add_choice_option("tageditcloud_sort", $sort_by, "<br>Sort the tags by:");
-			$sb->add_bool_option("tageditcloud_usedfirst","<br>Always show used tags first: ");
-			$sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
-			$sb->add_int_option("tageditcloud_minusage");
-			$sb->add_label(" times.<br><b>Popularity sort</b>:<br>Show ");
-			$sb->add_int_option("tageditcloud_defcount");
-			$sb->add_label(" tags by default.<br>Show a maximum of ");
-			$sb->add_int_option("tageditcloud_maxcount");
-			$sb->add_label(" tags.");
+		$sb = new SetupBlock("Tag Edit Cloud");
+		$sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
+		$sb->add_choice_option("tageditcloud_sort", $sort_by, "<br>Sort the tags by:");
+		$sb->add_bool_option("tageditcloud_usedfirst","<br>Always show used tags first: ");
+		$sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
+		$sb->add_int_option("tageditcloud_minusage");
+		$sb->add_label(" times.<br><b>Popularity sort</b>:<br>Show ");
+		$sb->add_int_option("tageditcloud_defcount");
+		$sb->add_label(" tags by default.<br>Show a maximum of ");
+		$sb->add_int_option("tageditcloud_maxcount");
+		$sb->add_label(" tags.");
 
-			$event->panel->add_block($sb);
-		}
+		$event->panel->add_block($sb);
 	}
 
         private function tag_link($tag) {
