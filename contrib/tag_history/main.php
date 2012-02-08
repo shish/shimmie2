@@ -98,7 +98,7 @@ class Tag_History extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onTagSetEvent($event) {
+	public function onTagSet($event) {
 		$this->add_tag_history($event->image, $event->tags);
 	}
 
