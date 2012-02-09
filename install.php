@@ -45,6 +45,22 @@ assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
 
 /*
+ * Compute the path to the folder containing "install.php" and 
+ * store it as the 'Shimmie Root' folder for later on.
+ *
+ * Example:
+ *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
+ *
+ */
+define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . '/' ); 
+
+// Pull in necessary files
+require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
+require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
+require_once __SHIMMIE_ROOT__."core/util.inc.php";
+require_once __SHIMMIE_ROOT__."core/database.class.php";
+
+/*
  * This file lets anyone destroy the database -- disable it
  * as soon as the admin is done installing for the first time
  */
@@ -54,22 +70,6 @@ if(is_readable("config.php")) {
 		<div id="iblock">
 			<h1>Shimmie Repair Console</h1>
 <?php
-
-	/*
-	 * Compute the path to the folder containing "install.php" and 
-	 * store it as the 'Shimmie Root' folder for later on.
-	 *
-	 * Example:
-	 *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
-	 *
-	 */
-	define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . '/' ); 
-
-	// Pull in necessary files
-	require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
-	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
-	require_once __SHIMMIE_ROOT__."core/util.inc.php";
-	require_once __SHIMMIE_ROOT__."core/database.class.php";
 	
 	if (
 	      ( array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN ) ||
