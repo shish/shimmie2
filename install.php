@@ -55,8 +55,6 @@ assert_options(ASSERT_BAIL, 1);
 define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . '/' ); 
 
 // Pull in necessary files
-require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
-require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
 
@@ -70,7 +68,10 @@ if(is_readable("config.php")) {
 		<div id="iblock">
 			<h1>Shimmie Repair Console</h1>
 <?php
-	
+	// Load the config
+	require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
+	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
+
 	if (
 	      ( array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN ) ||
 	      ( array_key_exists('dsn', $_POST)    && $_POST['dsn']    === DATABASE_DSN )
