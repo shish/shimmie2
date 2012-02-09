@@ -37,8 +37,7 @@ class TagEditTheme extends Themelet {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_av = $image->get_owner()->get_avatar_html();
 		$h_date = autodate($image->posted);
-		$ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip={$image->owner_ip}&reason=Image%20posted%20{$image->posted}#add")."'>Ban</a>" : "";
-		$ip = $user->can("view_ip") ? " ({$image->owner_ip}$ban)" : "";
+		$ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
 		return "
 			<tr>
 				<td>User</td>
