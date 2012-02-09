@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Name: Uploader
  * Author: Shish
  * Description: Allows people to upload files to the website
@@ -58,6 +58,8 @@ class Upload extends Extension {
 			$this->is_full = false;
 		}
 		else {
+			// TODO: This size limit should be configureable by the admin...
+			// currently set to 100 MB
 			$this->is_full = $free_num < 100*1024*1024;
 		}
 
@@ -150,12 +152,14 @@ class Upload extends Extension {
 					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 					
 					if(count($_FILES)) {
+						reset($_FILES);	// rewind to first element in array.
 						foreach($_FILES as $file) {
 							$ok = $this->try_upload($file, $tags, $source, $image_id);
 							break; // leave the foreach loop.
 						}
 					}
 					else {
+						reset($_POST);	// rewind to first element in array.
 						foreach($_POST as $name => $value) {
 							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 								$ok = $this->try_transload($value, $tags, $source, $image_id);
@@ -186,9 +190,11 @@ class Upload extends Extension {
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$ok = true;
 					foreach($_FILES as $file) {
+						reset($_FILES);	// rewind to first element in array.
 						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
+						reset($_POST);	// rewind to first element in array.
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
@@ -218,14 +224,28 @@ class Upload extends Extension {
 	}
 // }}}
 // do things {{{
+
+	/**
+	 * Check if a given user can upload.
+	 * @param $user The user to check.
+	 * @retval bool
+	 */
 	private function can_upload(User $user) {
 		global $config;
 		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}
 
-	// Helper function based on the one from the online PHP Documentation
-	// which is licensed under Creative Commons Attribution 3.0 License
-	// TODO: Make these messages user/admin editable
+	/**
+	 * Returns a descriptive error message for the specified PHP error code.
+	 *
+	 * This is a helper function based on the one from the online PHP Documentation
+	 * which is licensed under Creative Commons Attribution 3.0 License
+	 *
+	 * TODO: Make these messages user/admin editable
+	 *
+	 * @param $error_code PHP error code (int)
+	 * @retval String
+	 */
 	private function upload_error_message($error_code) {
 		switch ($error_code) {
 			case UPLOAD_ERR_INI_SIZE:
@@ -247,6 +267,10 @@ class Upload extends Extension {
 		}
 	}
 	
+	/**
+	 * Handle an upload.
+	 * @retval bool TRUE on upload successful.
+	 */
 	private function try_upload($file, $tags, $source, $replace='') {
 		global $page;
 		global $config;
@@ -293,6 +317,10 @@ class Upload extends Extension {
 		return $ok;
 	}
 
+	/**
+	 * Handle an transload.
+	 * @retval bool TRUE on transload successful.
+	 */
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page;
 		global $config;

@@ -106,8 +106,10 @@ class Image {
 
 	/**
 	 * Search for an array of images
+	 *
+	 * @retval Array
 	 */
-	public static function find_images($start, $limit, $tags=array()) {
+	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
@@ -383,7 +385,7 @@ class Image {
 	/**
 	 * Set the image's source URL
 	 */
-	public function set_source($source) {
+	public function set_source(/*string*/ $source) {
 		global $database;
 		if(empty($source)) $source = null;
 		if($source != $this->source) {
@@ -392,7 +394,10 @@ class Image {
 		}
 	}
 
-
+	/**
+	 * Check if the image is locked.
+	 * @retval bool
+	 */
 	public function is_locked() {
 		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
 	}
@@ -776,6 +781,8 @@ class Image {
 			}
 		}
 
+		reset($terms); // rewind to first element in array.
+		
 		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
 			$negative = false;
@@ -1008,8 +1015,15 @@ class Tag {
 		}
 	}
 
+	/**
+	 * This function takes a list (array) of tags and changes any tags that have aliases
+	 *
+	 * @param $tags Array of tags
+	 * @return Array of tags
+	 */
 	public static function resolve_list($tags) {
 		$tags = Tag::explode($tags);
+		reset($tags); // rewind array to the first element.
 		$new = array();
 		foreach($tags as $tag) {
 			$new_set = explode(' ', Tag::resolve_alias($tag));

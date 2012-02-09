@@ -188,6 +188,7 @@ class DatabaseConfig extends BaseConfig {
 	 */
 	public function save(/*string*/ $name=null) {
 		if(is_null($name)) {
+			reset($this->values); // rewind the array to the first element
 			foreach($this->values as $name => $value) {
 				$this->save(/*string*/ $name);
 			}

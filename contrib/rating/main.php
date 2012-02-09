@@ -2,6 +2,7 @@
 /*
  * Name: Image Ratings
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allow users to rate images "safe", "questionable" or "explicit"
  */
@@ -33,6 +34,9 @@ class Ratings extends Extension {
 				while(true) {
 					$images = Image::find_images($n, 100, Tag::explode($_POST["query"]));
 					if(count($images) == 0) break;
+					
+					reset($images); // rewind to first element in array.
+					
 					foreach($images as $image) {
 						send_event(new RatingSetEvent($image, $user, $_POST['rating']));
 					}

@@ -216,6 +216,7 @@ class User {
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
 	 * a local file, a remote file, a gravatar, a something else, etc
+	 * @retval String of HTML
 	 */
 	public function get_avatar_html() {
 		// FIXME: configurable
@@ -242,6 +243,8 @@ class User {
 	 * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
+	 *
+	 * @retval String containing auth token (MD5sum)
 	 */
 	public function get_auth_token() {
 		global $config;

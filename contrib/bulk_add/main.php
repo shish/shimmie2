@@ -2,6 +2,7 @@
 /*
  * Name: Bulk Add
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Bulk add server-side images
  * Documentation:
@@ -30,7 +31,9 @@ class BulkAdd extends Extension {
 		$this->theme->display_admin_block();
 	}
 
-
+	/**
+	 * Generate the necessary DataUploadEvent for a given image and tags.
+	 */
 	private function add_image($tmpname, $filename, $tags) {
 		assert(file_exists($tmpname));
 

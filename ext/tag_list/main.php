@@ -1,7 +1,8 @@
 <?php
-/*
+/**
  * Name: Tag List
- * Author: Shish
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * Description: Show the tags in various ways
  */
 
@@ -107,13 +108,18 @@ class TagList extends Extension {
 		return make_link("post/list/$u_tag/1");
 	}
 
+	/**
+	 * Get the minimum number of times a tag needs to be used
+	 * in order to be considered in the tag list.
+	 * @retval int
+	 */
 	private function get_tags_min() {
 		if(isset($_GET['mincount'])) {
 			return int_escape($_GET['mincount']);
 		}
 		else {
 			global $config;
-			return $config->get_int('tags_min');
+			return $config->get_int('tags_min');	// get the default.
 		}
 	}
 
@@ -170,6 +176,8 @@ class TagList extends Extension {
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
+		
+		// check if we have a cached version
 		$cache_key = "data/tag_cloud-" . md5("tc" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
@@ -205,6 +213,8 @@ class TagList extends Extension {
 
 		$tags_min = $this->get_tags_min();
 		$starts_with = $this->get_starts_with();
+		
+		// check if we have a cached version
 		$cache_key = "data/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
@@ -239,6 +249,8 @@ class TagList extends Extension {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
+		
+		// check if we have a cached version
 		$cache_key = "data/tag_popul-" . md5("tp" . $tags_min) . ".html";
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 

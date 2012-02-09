@@ -1,8 +1,9 @@
 <?php
 /*
  * Name: Logging (Database)
- * Author: Shish
- * Description: Keep a record of SCore events
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
+ * Description: Keep a record of SCore events (in the database).
  * Visibility: admin
  */
 

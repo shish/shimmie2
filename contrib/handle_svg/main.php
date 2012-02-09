@@ -2,7 +2,8 @@
 /*
  * Name: Handle SVG
  * Author: Shish <webmaster@shishnet.org>
- * Description: Handle SVG files
+ * Link: http://code.shishnet.org/shimmie2/
+ * Description: Handle SVG files. (No thumbnail is generated for SVG files)
  */
 
 class SVGFileHandler extends Extension {

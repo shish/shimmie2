@@ -2,6 +2,7 @@
 /*
  * Name: Random Image
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Do things with a random image
  * Documentation:

@@ -1,7 +1,8 @@
 <?php
 /*
  * Name: Database Upgrader
- * Author: Shish
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * Description: Keeps things happy behind the scenes
  * Visibility: admin
  */
