@@ -471,6 +471,7 @@ class CommentList extends Extension {
 			throw new CommentPostingException("Comment too repetitive~");
 		}
 		else if($user->is_anonymous() && !$this->hash_match()) {
+			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24*$config->get_int('login_memory'), "/");
 			throw new CommentPostingException(
 					"Comment submission form is out of date; refresh the ".
 					"comment form to show you aren't a spammer~");
@@ -499,7 +500,6 @@ class CommentList extends Extension {
 					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
 					array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
 			$cid = $database->get_last_insert_id();
-			setcookie("nocache", "true", time()+60*60);
 			log_info("comment", "Comment #$cid added to Image #$image_id");
 		}
 	}
