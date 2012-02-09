@@ -68,15 +68,21 @@ class ViewImageTheme extends Themelet {
 		$i_owner_id = int_escape($owner->id);
 		$h_date = autodate($image->posted);
 
-		$html = "";
-		$html .= "<p>Uploaded by <a href='".make_link("user/$h_owner")."'>$h_owner</a> $h_date";
+		$html = "<table style='width: 700px;'><tr><td>";
+		$html .= "Uploaded by:";
+		//$html .= "<br>".$owner->get_avatar_html();
+		$html .= "<br><a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 
 		if($user->can("view_ip")) {
 			$html .= " ($h_ip)";
 		}
+		$html .= "<br><small>$h_date";
 		$html .= $this->format_source($image->source);
+		$html .= "</small>";
 
+		$html .= "</td><td>";
 		$html .= $this->build_image_editor($image, $editor_parts);
+		$html .= "</td></tr></table>";
 
 		return $html;
 	}
