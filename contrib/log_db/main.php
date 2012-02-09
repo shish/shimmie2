@@ -7,8 +7,8 @@
  * Visibility: admin
  */
 
-class LogDatabase extends SimpleExtension {
-	public function onInitExt($event) {
+class LogDatabase extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $database;
 		global $config;
 
@@ -29,7 +29,7 @@ class LogDatabase extends SimpleExtension {
 		$config->set_default_int("log_db_priority", SCORE_LOG_INFO);
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Logging (Database)");
 		$sb->add_choice_option("log_db_priority", array(
 			"Debug" => SCORE_LOG_DEBUG,
@@ -41,7 +41,7 @@ class LogDatabase extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $user;
 		if($event->page_matches("log/view")) {
 			if($user->is_admin()) {
@@ -105,14 +105,14 @@ class LogDatabase extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Event Log", make_link("log/view"));
 		}
 	}
 
-	public function onLog($event) {
+	public function onLog(LogEvent $event) {
 		global $config, $database, $user;
 
 		$username = ($user && $user->name) ? $user->name : "null";

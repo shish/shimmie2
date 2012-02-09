@@ -14,8 +14,8 @@
  *  As of now only compatible with the lite theme.
  */
 
-class MassTagger extends SimpleExtension {
-	public function onPostListBuilding($event) {
+class MassTagger extends Extension {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page, $user;
 		
 		if( !$user->is_admin() ) return;
@@ -23,7 +23,7 @@ class MassTagger extends SimpleExtension {
 		$this->theme->display_mass_tagger( $page, $event, $config );
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 		if( !$event->page_matches("mass_tagger") ) return;
 		if( !$user->is_admin() ) return;

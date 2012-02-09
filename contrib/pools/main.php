@@ -20,10 +20,9 @@ class PoolCreationException extends SCoreException {
 	}
 }
 
+class Pools extends Extension {
 
-class Pools extends SimpleExtension {
-
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// Create the database tables
@@ -82,7 +81,7 @@ class Pools extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 		
 		if ($event->page_matches("pool")) {
@@ -218,7 +217,7 @@ class Pools extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		$event->add_link("Pools", make_link("pool/list"));
 	}
 
@@ -228,7 +227,7 @@ class Pools extends SimpleExtension {
 	 * image is currently a member of on a side panel, as well as a link
 	 * to the Next image in the pool.
 	 */
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config, $database, $page;
 
 		if($config->get_bool("poolsInfoOnViewImage")) {
@@ -256,7 +255,7 @@ class Pools extends SimpleExtension {
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $config, $database, $user;
 		if($config->get_bool("poolsAdderOnViewImage") && !$user->is_anonymous()) {
 			if($user->is_admin()) {

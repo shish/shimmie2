@@ -6,8 +6,8 @@
  * Description: Self explanatory
  */
 
-class RSS_Images extends SimpleExtension {
-	public function onPostListBuilding($event) {
+class RSS_Images extends Extension {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		$title = $config->get_string('title');
 
@@ -22,7 +22,7 @@ class RSS_Images extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("rss/images")) {
 			$search_terms = $event->get_search_terms();
 			$page_number = $event->get_page_number();

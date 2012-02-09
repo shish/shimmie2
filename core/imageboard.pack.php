@@ -781,6 +781,8 @@ class Image {
 			}
 		}
 
+		reset($terms); // rewind to first element in array.
+		
 		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
 			$negative = false;
@@ -1013,8 +1015,15 @@ class Tag {
 		}
 	}
 
+	/**
+	 * This function takes a list (array) of tags and changes any tags that have aliases
+	 *
+	 * @param $tags Array of tags
+	 * @return Array of tags
+	 */
 	public static function resolve_list($tags) {
 		$tags = Tag::explode($tags);
+		reset($tags); // rewind array to the first element.
 		$new = array();
 		foreach($tags as $tag) {
 			$new_set = explode(' ', Tag::resolve_alias($tag));

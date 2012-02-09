@@ -11,7 +11,7 @@
  */
 
 class SendPMEvent extends Event {
-	public function __construct($pm) {
+	public function __construct(PM $pm) {
 		$this->pm = $pm;
 	}
 }
@@ -42,8 +42,8 @@ class PM {
 	}
 }
 
-class PrivMsg extends SimpleExtension {
-	public function onInitExt($event) {
+class PrivMsg extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// shortcut to latest
@@ -78,7 +78,7 @@ class PrivMsg extends SimpleExtension {
 	}
 
 	/*
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuilding $event) {
 		global $user;
 		if(!$user->is_anonymous()) {
 			$event->add_link("Private Messages", make_link("pm"));
@@ -86,7 +86,7 @@ class PrivMsg extends SimpleExtension {
 	}
 	*/
 
-	public function onUserPageBuilding($event) {
+	public function onUserPageBuilding(UserPageBuilding $event) {
 		global $page, $user;
 		$duser = $event->display_user;
 		if(!$user->is_anonymous() && !$duser->is_anonymous()) {
@@ -99,7 +99,7 @@ class PrivMsg extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page, $user;
 		if($event->page_matches("pm")) {
 			if(!$user->is_anonymous()) {
@@ -153,7 +153,7 @@ class PrivMsg extends SimpleExtension {
 		}
 	}
 
-	public function onSendPM($event) {
+	public function onSendPM(SendPMEvent $event) {
 		global $database;
 		$database->execute("
 				INSERT INTO private_message(

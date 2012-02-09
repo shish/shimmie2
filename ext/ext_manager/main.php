@@ -87,7 +87,7 @@ class ExtensionInfo {
 	}
 }
 
-class ExtManager extends SimpleExtension {
+class ExtManager extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("ext_manager")) {

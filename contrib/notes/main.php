@@ -7,8 +7,8 @@
  * Documentation:
  */
 
-class Notes extends SimpleExtension {
-	public function onInitExt($event) {
+class Notes extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// shortcut to latest
@@ -66,9 +66,7 @@ class Notes extends SimpleExtension {
 		}
 	}
 	
-	
-	
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("note")) {
 			
@@ -179,7 +177,7 @@ class Notes extends SimpleExtension {
 	/*
 	 * HERE WE LOAD THE NOTES IN THE IMAGE
 	 */
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page, $user;
 
 		//display form on image event
@@ -191,7 +189,7 @@ class Notes extends SimpleExtension {
 	/*
 	 * HERE WE ADD THE BUTTONS ON SIDEBAR
 	 */
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user;
 		if(!$user->is_anonymous()) {
 			$event->add_part($this->theme->note_button($event->image->id));
@@ -207,7 +205,7 @@ class Notes extends SimpleExtension {
 	/*
 	 * HERE WE ADD QUERYLETS TO ADD SEARCH SYSTEM
 	 */
-	public function onSearchTermParse($event) {
+	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
 		if(preg_match("/note=(.*)/i", $event->term, $matches)) {
 			$notes = int_escape($matches[1]);

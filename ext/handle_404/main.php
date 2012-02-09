@@ -8,7 +8,7 @@
  * Description: Shows an error message when the user views a page with no content
  */
 
-class Handle404 extends SimpleExtension {
+class Handle404 extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page;
 		// hax.

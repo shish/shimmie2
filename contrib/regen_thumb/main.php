@@ -13,8 +13,8 @@
  *  since been increased.
  */
 
-class RegenThumb extends SimpleExtension {
-	public function onPageRequest($event) {
+class RegenThumb extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 
 		if($event->page_matches("regen_thumb") && $user->is_admin() && isset($_POST['image_id'])) {
@@ -24,7 +24,7 @@ class RegenThumb extends SimpleExtension {
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_part($this->theme->get_buttons_html($event->image->id));

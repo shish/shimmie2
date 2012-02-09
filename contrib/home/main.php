@@ -15,7 +15,7 @@
 *  alongside the default choices.
 */
 
-class Home extends SimpleExtension {
+class Home extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("home_links", '[$base/post/list|Posts]

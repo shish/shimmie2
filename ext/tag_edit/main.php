@@ -55,7 +55,7 @@ class LockSetEvent extends Event {
 	}
 }
 
-class TagEdit extends SimpleExtension {
+class TagEdit extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
 		if($event->page_matches("tag_edit")) {

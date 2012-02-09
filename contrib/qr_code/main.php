@@ -7,8 +7,8 @@
  *              Further modified by Shish to remove the 7MB local QR generator
  *              and replace it with a link to google chart APIs
  */
-class QRImage extends SimpleExtension {
-	public function onDisplayingImage($event) {
+class QRImage extends Extension {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$this->theme->links_block(make_http(make_link('image/'.$event->image->id.'.jpg')));
 	}
 }

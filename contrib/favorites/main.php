@@ -16,7 +16,7 @@
 class FavoriteSetEvent extends Event {
 	var $image_id, $user, $do_set;
 
-	public function FavoriteSetEvent($image_id, User $user, $do_set) {
+	public function FavoriteSetEvent(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
 		assert(is_numeric($image_id));
 		assert(is_bool($do_set));
 
@@ -26,15 +26,15 @@ class FavoriteSetEvent extends Event {
 	}
 }
 
-class Favorites extends SimpleExtension {
-	public function onInitExt($event) {
+class Favorites extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		if($config->get_int("ext_favorites_version", 0) < 1) {
 			$this->install();
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $database, $page, $user;
 		if(!$user->is_anonymous()) {
 			$user_id = $user->id;
@@ -48,14 +48,14 @@ class Favorites extends SimpleExtension {
 		}
 	}
 
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$people = $this->list_persons_who_have_favorited($event->image);
 		if(count($people) > 0) {
 			$html = $this->theme->display_people($people);
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("change_favorite") && !$user->is_anonymous() && $user->check_auth_token()) {
 			$image_id = int_escape($_POST['image_id']);
@@ -67,7 +67,7 @@ class Favorites extends SimpleExtension {
 		}
 	}
 
-	public function onUserPageBuilding($event) {
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		$i_favorites_count = Image::count_images(array("favorited_by={$event->display_user->name}"));
 		$i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
 		$h_favorites_rate = sprintf("%.1f", ($i_favorites_count / $i_days_old));
@@ -75,7 +75,7 @@ class Favorites extends SimpleExtension {
 		$event->add_stats("<a href='$favorites_link'>Images favorited</a>: $i_favorites_count, $h_favorites_rate per day");
 	}
 
-	public function onImageInfoSet($event) {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		global $user;
 		if(
 			in_array('favorite_action', $_POST) &&
@@ -85,28 +85,30 @@ class Favorites extends SimpleExtension {
 		}
 	}
 
-	public function onFavoriteSet($event) {
+	public function onFavoriteSet(FavoriteSetEvent $event) {
 		global $user;
 		$this->add_vote($event->image_id, $user->id, $event->do_set);
 	}
 
-	public function onImageDeletion($event) {
+	// FIXME: this should be handled by the foreign key. Check that it
+	// is, and then remove this
+	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 		$database->execute("DELETE FROM user_favorites WHERE image_id=:image_id", array("image_id"=>$event->image->id));
 	}
 
-	public function onParseLinkTemplate($event) {
+	public function onParseLinkTemplate(ParseLinkTemplateEvent $event) {
 		$event->replace('$favorites', $event->image->favorites);
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 
 		$username = url_escape($user->name);
 		$event->add_link("My Favorites", make_link("post/list/favorited_by=$username/1"), 20);
 	}
 
-	public function onSearchTermParse($event) {
+	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
 		if(preg_match("/favorites(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
 			$cmp = $matches[1];
@@ -181,7 +183,7 @@ class Favorites extends SimpleExtension {
 			array("image_id"=>$image_id, "user_id"=>$user_id));
 	}
 	
-	private function list_persons_who_have_favorited($image) {
+	private function list_persons_who_have_favorited(Image $image) {
 		global $database;
 
 		return $database->get_col(

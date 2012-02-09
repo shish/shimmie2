@@ -205,8 +205,8 @@ class TestFinder extends TestSuite {
 	}
 }
 
-class SimpleSCoreTest extends SimpleExtension {
-	public function onPageRequest($event) {
+class SimpleSCoreTest extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page;
 		if($event->page_matches("test")) {
 			set_time_limit(0);
@@ -220,7 +220,7 @@ class SimpleSCoreTest extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Run Tests", make_link("test/all"));

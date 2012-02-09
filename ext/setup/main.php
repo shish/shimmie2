@@ -161,7 +161,7 @@ class SetupBlock extends Block {
 }
 // }}}
 
-class Setup extends SimpleExtension {
+class Setup extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("title", "Shimmie");

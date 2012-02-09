@@ -839,6 +839,7 @@ $_event_count = 0;
 function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
 	if(!isset($_event_listeners[get_class($event)])) return;
+	$method_name = "on".str_replace("Event", "", get_class($event));
 
 	ctx_log_start(get_class($event));
 	// SHIT: http://bugs.php.net/bug.php?id=35106
@@ -846,7 +847,7 @@ function send_event(Event $event) {
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		ctx_log_start(get_class($listener));
-		$listener->receive_event($event);
+		$listener->$method_name($event);
 		ctx_log_endok();
 	}
 	$_event_count++;
@@ -1023,7 +1024,7 @@ function _load_extensions() {
 			if($rclass->isAbstract()) {
 				// don't do anything
 			}
-			elseif(is_subclass_of($class, "SimpleExtension")) {
+			elseif(is_subclass_of($class, "Extension")) {
 				$c = new $class();
 				$c->i_am($c);
 				$my_events = array();
@@ -1034,10 +1035,6 @@ function _load_extensions() {
 				}
 				add_event_listener($c, $c->get_priority(), $my_events);
 			}
-			elseif(is_subclass_of($class, "Extension")) {
-				$c = new $class();
-				add_event_listener($c, $c->get_priority(), $all_events);
-			}
 		}
 
 		if(COMPILE_ELS) {
@@ -1046,12 +1043,9 @@ function _load_extensions() {
 			foreach(get_declared_classes() as $class) {
 				$rclass = new ReflectionClass($class);
 				if($rclass->isAbstract()) {}
-				elseif(is_subclass_of($class, "SimpleExtension")) {
+				elseif(is_subclass_of($class, "Extension")) {
 					$p .= "\$$class = new $class(); ";
 					$p .= "\${$class}->i_am(\$$class);\n";
-				}
-				elseif(is_subclass_of($class, "Extension")) {
-					$p .= "\$$class = new $class();\n";
 				}
 			}
 

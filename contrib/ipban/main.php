@@ -35,10 +35,10 @@ class AddIPBanEvent extends Event {
 }
 // }}}
 
-class IPBan extends SimpleExtension {
+class IPBan extends Extension {
 	public function get_priority() {return 10;}
 
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		if($config->get_int("ext_ipban_version") < 5) {
 			$this->install();
@@ -46,7 +46,7 @@ class IPBan extends SimpleExtension {
 		$this->check_ip_ban();
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("ip_ban")) {
 			global $config, $database, $page, $user;
 			if($user->is_admin()) {
@@ -78,19 +78,19 @@ class IPBan extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("IP Bans", make_link("ip_ban/list"));
 		}
 	}
 
-	public function onAddIPBan($event) {
+	public function onAddIPBan(AddIPBanEvent $event) {
 		global $user;
 		$this->add_ip_ban($event->ip, $event->reason, $event->end, $user);
 	}
 
-	public function onRemoveIPBan($event) {
+	public function onRemoveIPBan(RemoveIPBanEvent $event) {
 		global $database;
 		$database->Execute("DELETE FROM bans WHERE id = :id", array("id"=>$event->id));
 		$database->cache->delete("ip_bans_sorted");
@@ -179,7 +179,7 @@ class IPBan extends SimpleExtension {
 		}
 	}
 
-	private function block($remote) {
+	private function block(/*string*/ $remote) {
 		global $config, $database;
 
 		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");

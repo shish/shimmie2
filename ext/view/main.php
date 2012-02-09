@@ -66,7 +66,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 	}
 }
 
-class ViewImage extends SimpleExtension {
+class ViewImage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 

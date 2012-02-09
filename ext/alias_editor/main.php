@@ -22,7 +22,7 @@ class AddAliasEvent extends Event {
 
 class AddAliasException extends SCoreException {}
 
-class AliasEditor extends SimpleExtension {
+class AliasEditor extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 

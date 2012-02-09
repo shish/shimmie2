@@ -26,9 +26,9 @@ class ImageResizeException extends SCoreException {
 /**
  *	This class handles image resize requests.
  */
-class ResizeImage extends SimpleExtension {
+class ResizeImage extends Extension {
 
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool('resize_enabled', true);
 		$config->set_default_bool('resize_upload', false);
@@ -36,7 +36,7 @@ class ResizeImage extends SimpleExtension {
 		$config->set_default_int('resize_default_height', 0);		
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user, $config;
 		if($user->is_admin() && $config->get_bool("resize_enabled")) {
 			/* Add a link to resize the image */
@@ -44,7 +44,7 @@ class ResizeImage extends SimpleExtension {
 		}
 	}
 	
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Image Resize");
 		$sb->add_bool_option("resize_enabled", "Allow resizing images: ");
 		$sb->add_bool_option("resize_upload", "<br>Resize on upload: ");
@@ -89,7 +89,7 @@ class ResizeImage extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 
 		if ( $event->page_matches("resize") && $user->is_admin() ) {

@@ -13,20 +13,14 @@
  * $formatted_text = $tfe->formatted;
  * \endcode
  * 
- * An extension is something which is capable of reacting to events. They
- * register themselves using the add_event_listener() function, after which
- * events will be sent to the object's recieve_event() function.
- * 
- * SimpleExtension subclasses are slightly different -- they are registered
- * automatically, and events are sent to a named method, eg PageRequestEvent
- * will be sent to onPageRequest()
+ * An extension is something which is capable of reacting to events.
  *
  *
  * \page hello The Hello World Extension
  *
  * \code
  * // ext/hello/main.php
- * public class Hello extends SimpleExtension {
+ * public class Hello extends Extension {
  *     public void onPageRequest(PageRequestEvent $event) {
  *         global $page, $user;
  *         $this->theme->display_hello($page, $user);
@@ -63,32 +57,16 @@
  */
 
 /**
- * A generic extension class, for subclassing
- */
-interface Extension {
-	public function receive_event(Event $event);
-	public function get_priority();
-}
-
-/**
  * send_event(BlahEvent()) -> onBlah($event)
  *
  * Also loads the theme object into $this->theme if available
  *
- * index.php will load all SimpleExtension subclasses,
- * so no need for register_extension(new Foo())
- *
- * Automatic registration is done with priority returned by get_priority()
- *
- * Hopefully this removes as much copy & paste code from the extension
- * files as possible~
- *
- * The original concept came from Artanis's SimpleExtension extension
+ * The original concept came from Artanis's Extension extension
  * --> http://github.com/Artanis/simple-extension/tree/master
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
  */
-abstract class SimpleExtension implements Extension {
+abstract class Extension {
 	var $theme;
 	var $_child;
 
@@ -100,15 +78,6 @@ abstract class SimpleExtension implements Extension {
 		if(is_null($this->theme)) $this->theme = get_theme_object($child, false);
 	}
 
-	public function receive_event(Event $event) {
-		$name = get_class($event);
-		// this is rather clever..
-		$name = "on".str_replace("Event", "", $name);
-		if(method_exists($this->_child, $name)) {
-			$this->_child->$name($event);
-		}
-	}
-
 	public function get_priority() {
 		return 50;
 	}
@@ -117,7 +86,7 @@ abstract class SimpleExtension implements Extension {
 /**
  * Several extensions have this in common, make a common API
  */
-abstract class FormatterExtension extends SimpleExtension {
+abstract class FormatterExtension extends Extension {
 	public function onTextFormatting(TextFormattingEvent $event) {
 		$event->formatted = $this->format($event->formatted);
 		$event->stripped  = $this->strip($event->stripped);
@@ -131,7 +100,7 @@ abstract class FormatterExtension extends SimpleExtension {
  * This too is a common class of extension with many methods in common,
  * so we have a base class to extend from
  */
-abstract class DataHandlerExtension extends SimpleExtension {
+abstract class DataHandlerExtension extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			if(!move_upload_to_archive($event)) return;
