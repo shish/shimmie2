@@ -80,8 +80,7 @@ and of course start organising your images :-)
 		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>
-				<input class='tag_autocomplete search_input' id='search_input' name='search' type='text'
-						value='$h_search_string' autocomplete='off' />
+				<input class='autocomplete_tags' name='search' type='text' placeholder='Search' value='$h_search_string' />
 				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>

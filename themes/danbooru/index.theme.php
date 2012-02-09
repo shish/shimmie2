@@ -39,8 +39,7 @@ class CustomIndexTheme extends IndexTheme {
 		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>
-				<input name='search' type='text'
-						value='$h_search_string' autocomplete='off' />
+				<input name='search' type='text' value='$h_search_string' class='autocomplete_tags' placeholder='Search' />
 				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>

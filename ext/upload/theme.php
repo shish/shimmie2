@@ -103,25 +103,10 @@ class UploadTheme extends Themelet {
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		$html = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$('#tag_box').DefaultValue('tagme');
-				$('#tag_box').autocomplete('".make_link("api/internal/tag_list/complete")."', {
-					width: 320,
-					max: 15,
-					highlight: false,
-					multiple: true,
-					multipleSeparator: ' ',
-					scroll: true,
-					scrollHeight: 300,
-					selectFirst: false
-				});
-			});
-			</script>
 			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td></td><td>Tags<td colspan='3'><input id='tag_box' name='tags' type='text'></td></tr>
+					<tr><td></td><td>Tags<td colspan='3'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
 					<tr><td></td><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
 					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
@@ -258,24 +243,9 @@ class UploadTheme extends Themelet {
 		$max_kb = to_shorthand_int($max_size);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$('#tag_input').DefaultValue('tagme');
-				$('#tag_input').autocomplete('".make_link("api/internal/tag_list/complete")."', {
-					width: 320,
-					max: 15,
-					highlight: false,
-					multiple: true,
-					multipleSeparator: ' ',
-					scroll: true,
-					scrollHeight: 300,
-					selectFirst: false
-				});
-			});
-			</script>
 			".make_form(make_link("upload"), "POST", $multipart=True)."
 				$upload_list
-				<input id='tag_input' name='tags' type='text' autocomplete='off'>
+				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'>
 				<input type='submit' value='Post'>
 			</form>
 			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>

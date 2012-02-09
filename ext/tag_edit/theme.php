@@ -24,7 +24,7 @@ class TagEditTheme extends Themelet {
 		return "
 			<tr>
 				<td width='50px'>Tags</td>
-				<td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags' class='tag_autocomplete' id='tag_editor'></td>
+				<td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'></td>
 			</tr>
 		";
 	}
