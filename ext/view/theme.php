@@ -43,37 +43,19 @@ class ViewImageTheme extends Themelet {
 		$h_prev = "<a id='prevlink' href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = "<a id='nextlink' href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
-		$script = "
-		<script type='text/javascript'><!--
-		$(document).ready(function() {
-			if(document.location.hash.length > 3) {
-				query = document.location.hash.substring(1);
-				a = document.getElementById(\"prevlink\");
-				a.href = a.href + '?' + query;
-				a = document.getElementById(\"nextlink\");
-				a.href = a.href + '?' + query;
-			}
-		});
-		//--></script>
-			";
 
-		return "$h_prev | $h_index | $h_next$script";
+		return "$h_prev | $h_index | $h_next";
 	}
 
 	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
-			<script type='text/javascript'><!--
-			$(document).ready(function() {
-				$(\"#search_input\").DefaultValue(\"Search\");
-			});
-			//--></script>
 			<p><form action='".make_link()."' method='GET'>
 				<input type='hidden' name='q' value='/post/list'>
-				<input id='search_input' name='search' type='text'>
+				<input placeholder='Search' id='search_input' name='search' type='text'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
-			<div id='search_completions'></div>";
+		";
 
 		return "$h_pin<br>$h_search";
 	}
