@@ -18,21 +18,110 @@ class RatingSetEvent extends Event {
 	}
 }
 
-class Ratings implements Extension {
-	var $theme;
+class Ratings extends Extension {
 
 	public function get_priority() {return 50;}
 
-	public function receive_event(Event $event) {
-		global $config, $database, $page, $user;
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if($event instanceof AdminBuildingEvent) {
-			$this->theme->display_bulk_rater();
+	public function onInitExt($event) {
+		global $config;
+		
+		if($config->get_int("ext_ratings2_version") < 2) {
+			$this->install();
 		}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("admin/bulk_rate")) {
-			global $database, $user, $page;
+		$config->set_default_string("ext_rating_anon_privs", 'squ');
+		$config->set_default_string("ext_rating_user_privs", 'sqeu');
+		$config->set_default_string("ext_rating_admin_privs", 'sqeu');
+	}
+	
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$privs = array();
+		$privs['Safe Only'] = 's';
+		$privs['Safe and Unknown'] = 'su';
+		$privs['Safe and Questionable'] = 'sq';
+		$privs['Safe, Questionable, Unknown'] = 'squ';
+		$privs['All'] = 'sqeu';
+
+		$sb = new SetupBlock("Image Ratings");
+		$sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
+		$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Users: ");
+		$sb->add_choice_option("ext_rating_admin_privs", $privs, "<br>Admins: ");
+		$event->panel->add_block($sb);
+	}
+	
+	public function onAdminBuilding(AdminBuildingEvent $event) {
+		$this->theme->display_bulk_rater();
+	}
+	
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $user, $database, $page;
+		/**
+		 * Deny images upon insufficient permissions.
+		 **/
+		$user_view_level = Ratings::get_user_privs($user);
+		$user_view_level = preg_split('//', $user_view_level, -1);
+		if(!in_array($event->image->rating, $user_view_level)) {
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("post/list"));
+		}
+	}
+	
+	public function onRatingSet(RatingSetEvent $event) {
+		if(empty($event->image->rating)){
+			$old_rating = "";
+		}else{
+			$old_rating = $event->image->rating;
+		}
+		$this->set_rating($event->image->id, $event->rating, $old_rating);
+	}
+	
+	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
+		if($this->can_rate()) {
+			$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
+		}
+	}
+	
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
+		global $user;
+		
+		if($this->can_rate() && isset($_POST["rating"])) {
+			send_event(new RatingSetEvent($event->image, $user, $_POST['rating']));
+		}
+	}
+
+	public function onParseLinkTemplate(ParseLinkTemplateEvent $event) {
+		$event->replace('$rating', $this->theme->rating_to_name($event->image->rating));
+	}
+
+	public function onSearchTermParse(SearchTermParseEvent $event) {
+		global $user;
+		
+		$matches = array();
+		if(is_null($event->term) && $this->no_rating_query($event->context)) {
+			$set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
+			$event->add_querylet(new Querylet("rating IN ($set)"));
+		}
+		if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
+			$sqes = $matches[1];
+			$arr = array();
+			$length = strlen($sqes);
+			for($i=0; $i<$length; $i++) {
+				$arr[] = "'" . $sqes[$i] . "'";
+			}
+			$set = join(', ', $arr);
+			$event->add_querylet(new Querylet("rating IN ($set)"));
+		}
+		if(preg_match("/^rating=(safe|questionable|explicit|unknown)$/", strtolower($event->term), $matches)) {
+			$text = $matches[1];
+			$char = $text[0];
+			$event->add_querylet(new Querylet("rating = :img_rating", array("img_rating"=>$char)));
+		}
+	}
+
+	public function onPageRequest(PageRequestEvent $event) {
+		global $database, $user, $page;
+		
+		if ($event->page_matches("admin/bulk_rate")) {
 			if(!$user->is_admin()) {
 				throw PermissionDeniedException();
 			}
@@ -58,93 +147,11 @@ class Ratings implements Extension {
 				$page->set_redirect(make_link("admin"));
 			}
 		}
-
-		if($event instanceof InitExtEvent) {
-			if($config->get_int("ext_ratings2_version") < 2) {
-				$this->install();
-			}
-
-			$config->set_default_string("ext_rating_anon_privs", 'squ');
-			$config->set_default_string("ext_rating_user_privs", 'sqeu');
-			$config->set_default_string("ext_rating_admin_privs", 'sqeu');
-		}
-
-		if($event instanceof RatingSetEvent) {
-			if(empty($event->image->rating)){
-				$old_rating = "";
-			}else{
-				$old_rating = $event->image->rating;
-			}
-			$this->set_rating($event->image->id, $event->rating, $old_rating);
-		}
-
-		if($event instanceof ImageInfoBoxBuildingEvent) {
-			if($this->can_rate()) {
-				$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
-			}
-		}
-
-		if($event instanceof ImageInfoSetEvent) {
-			if($this->can_rate() && isset($_POST["rating"])) {
-				send_event(new RatingSetEvent($event->image, $user, $_POST['rating']));
-			}
-		}
-
-		if($event instanceof SetupBuildingEvent) {
-			$privs = array();
-			$privs['Safe Only'] = 's';
-			$privs['Safe and Unknown'] = 'su';
-			$privs['Safe and Questionable'] = 'sq';
-			$privs['Safe, Questionable, Unknown'] = 'squ';
-			$privs['All'] = 'sqeu';
-
-			$sb = new SetupBlock("Image Ratings");
-			$sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
-			$sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Users: ");
-			$sb->add_choice_option("ext_rating_admin_privs", $privs, "<br>Admins: ");
-			$event->panel->add_block($sb);
-		}
-
-		if($event instanceof ParseLinkTemplateEvent) {
-			$event->replace('$rating', $this->theme->rating_to_name($event->image->rating));
-		}
-
-		if($event instanceof SearchTermParseEvent) {
-			$matches = array();
-			if(is_null($event->term) && $this->no_rating_query($event->context)) {
-				$set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
-				$event->add_querylet(new Querylet("rating IN ($set)"));
-			}
-			if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
-				$sqes = $matches[1];
-				$arr = array();
-				$length = strlen($sqes);
-				for($i=0; $i<$length; $i++) {
-					$arr[] = "'" . $sqes[$i] . "'";
-				}
-				$set = join(', ', $arr);
-				$event->add_querylet(new Querylet("rating IN ($set)"));
-			}
-			if(preg_match("/^rating=(safe|questionable|explicit|unknown)$/", strtolower($event->term), $matches)) {
-				$text = $matches[1];
-				$char = $text[0];
-				$event->add_querylet(new Querylet("rating = :img_rating", array("img_rating"=>$char)));
-			}
-		}
-		
-		if($event instanceof DisplayingImageEvent) {
-			/**
-			 * Deny images upon insufficient permissions.
-			 **/
-			global $user, $database, $page;
-			$user_view_level = Ratings::get_user_privs($user);
-			$user_view_level = preg_split('//', $user_view_level, -1);
-			if(!in_array($event->image->rating, $user_view_level)) {
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("post/list"));
-			}
-		}
 	}
+	
+	
+	
+	
 
 	public static function get_user_privs($user) {
 		global $config;
