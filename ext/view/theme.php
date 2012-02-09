@@ -72,7 +72,10 @@ class ViewImageTheme extends Themelet {
 		foreach($editor_parts as $part) {
 			$html .= $part;
 		}
-		if(!$image->is_locked() || $user->can("lock_image")) {
+		if(
+			(!$image->is_locked() || $user->can("lock_image")) &&
+			$user->can("edit_image_tag")
+		) {
 			$html .= "
 						<tr><td colspan='4'>
 							<input class='view' type='button' value='Edit' onclick='$(\".view\").hide(); $(\".edit\").show();'>
