@@ -1,7 +1,8 @@
 <?php
+
 class PoolsTheme extends Themelet {
-	/*
-	 * HERE WE ADD THE POOL INFO ON IMAGE
+	/**
+	 * Adds a block to the panel with information on the pool(s) the image is in.
 	 */
 	public function pool_info($linksPools) {
 		global $page;
@@ -10,14 +11,13 @@ class PoolsTheme extends Themelet {
 		}
 	}
 
-	public function get_adder_html(Image $image, $pools) {
+	public function get_adder_html(Image $image, /*array*/ $pools) {
 		$editor = "";
 		$h = "";
 		foreach($pools as $pool) {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
 		}
-		$editor = "
-			".make_form(make_link("pool/add_post"))."
+		$editor = "\n".make_form(make_link("pool/add_post"))."
 				<select name='pool_id'>
 					$h
 				</select>
@@ -32,17 +32,20 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE SHOWS THE LIST OF POOLS
 	 */
-	public function list_pools(Page $page, $pools, $pageNumber, $totalPages) {
+	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user;
-		$html = '<table id="poolsList" class="zebra">'.
-			"<thead><tr>".
-			"<th>Name</th>".
-			"<th>Creator</th>".
-			"<th>Posts</th>".
-			"<th>Public</th>".
-			"</tr></thead>";
+		$html = '
+				<table id="poolsList" class="zebra">
+					<thead><tr>
+						<th>Name</th>
+						<th>Creator</th>
+						<th>Posts</th>
+						<th>Public</th>
+					</tr></thead><tbody>';
 
 		$n = 0;
+		
+		// Build up the list of pools.
 		foreach($pools as $pool) {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
@@ -60,12 +63,11 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
-
-		$nav_html = "
-			<a href=".make_link().">Index</a>
-			<br><a href=".make_link("pool/new").">Create Pool</a>
-			<br><a href=".make_link("pool/updated").">Pool Changes</a>
-		";
+		$nav_html = '
+			<a href="'.make_link().'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
 
 		$blockTitle = "Pools";
 		$page->set_title(html_escape($blockTitle));
@@ -99,7 +101,7 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	private function display_top($pools, $heading, $check_all=false) {
+	private function display_top(/*array*/ $pools, /*string*/ $heading, $check_all=false) {
 		global $page, $user;
 
 		$page->set_title($heading);
@@ -114,11 +116,12 @@ class PoolsTheme extends Themelet {
 			$page->add_block(new Block(html_escape($pool['title']), html_escape($pool['description']), "main", 10));
 		}
 		else {
-			$pool_info = "<table id='poolsList' class='zebra'>".
-				"<thead><tr>".
-				"<th class='left'>Title</th>".
-				"<th class='left'>Description</th>".
-				"</tr></thead>";
+			$pool_info = '
+						<table id="poolsList" class="zebra">
+							<thead><tr>
+								<th class="left">Title</th>
+								<th class="left">Description</th>
+							</tr></thead><tbody>';
 
 			$n = 0;
 			foreach($pools as $pool) {
@@ -146,7 +149,7 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION
 	 */
-	public function view_pool($pools, $images, $pageNumber, $totalPages) {
+	public function view_pool(/*array*/ $pools, /*array*/ $images, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user, $page;
 
 		$this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
@@ -154,9 +157,7 @@ class PoolsTheme extends Themelet {
 		$pool_images = '';
 		foreach($images as $image) {
 			$thumb_html = $this->build_thumb_html($image);
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
-				'</span>';
+			$pool_images .= "\n".$thumb_html."\n";
 		}
 
 		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));		
@@ -167,43 +168,49 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN
 	 */
-	public function sidebar_options(Page $page, $pool, $check_all) {
+	public function sidebar_options(Page $page, $pool, /*bool*/ $check_all) {
 		global $user;
 
-		$editor = "
-			".make_form(make_link("pool/import"))."
-			<input type='text' name='pool_tag' id='edit' value='Please enter a tag' onclick='this.value=\"\";'/>
-			<input type='submit' name='edit' id='edit' value='Import'/>
-			<input type='hidden' name='pool_id' value='".$pool['id']."'>
+		$editor = "\n".make_form( make_link('pool/import') ).'
+				<input type="text" name="pool_tag" id="edit_pool_tag" value="Please enter a tag" onclick="this.value=\'\';"/>
+				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-
-			<form method='GET' action='".make_link("pool/edit/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit' value='Edit Pool'/>
+			
+			'.make_form( make_link('pool/edit') ).'
+				<input type="submit" name="edit" id="edit_pool_btn" value="Edit Pool"/>
+				<input type="hidden" name="edit_pool" value="yes">
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-
-			<form method='GET' action='".make_link("pool/order/".$pool['id'])."'>
-			<input type='submit' name='edit' id='edit' value='Order Pool'/>
+			
+			'.make_form( make_link('pool/order') ).'
+				<input type="submit" name="edit" id="edit_pool_order_btn" value="Order Pool"/>
+				<input type="hidden" name="order_view" value="yes">
+				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
-			";
+			';
 
 		if($user->id == $pool['user_id'] || $user->is_admin()){
 			$editor .= "
-				<script type='text/javascript'>
+				<script language='javascript' type='text/javascript'>
+				<!--
 				function confirm_action() {
 					return confirm('Are you sure that you want to delete this pool?');
 				}
+				//-->
 				</script>
 
 				".make_form(make_link("pool/nuke"))."
-				<input type='submit' name='delete' id='delete' value='Delete Pool' onclick='return confirm_action()' />
-				<input type='hidden' name='pool_id' value='".$pool['id']."'>
+					<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
+					<input type='hidden' name='pool_id' value='".$pool['id']."'>
 				</form>
 				";
 		}
 
 		if($check_all) {
 			$editor .= "
-				<script language='JavaScript' type='text/javascript'>
+				<script language='javascript' type='text/javascript'>
+				<!--
 				function setAll(value) {
 					var a=new Array();
 					a=document.getElementsByName('check[]');
@@ -212,6 +219,7 @@ class PoolsTheme extends Themelet {
 						a[i].checked = value;
 					}
 				}
+				//-->
 				</script>
 				<br><input type='button' name='CheckAll' value='Check All' onClick='setAll(true)'>
 				<input type='button' name='UnCheckAll' value='Uncheck All' onClick='setAll(false)'>
@@ -224,9 +232,11 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT
 	 */
-	public function pool_result(Page $page, $images, $pool_id) {
+	public function pool_result(Page $page, /*array*/ $images, /*int*/ $pool_id) {
+		// TODO: this could / should be done using jQuery
 		$pool_images = "
-			<script language='JavaScript' type='text/javascript'>
+			<script language='javascript' type='text/javascript'>
+			<!--
 			function setAll(value) {
 				var a=new Array();
 				a=document.getElementsByName('check[]');
@@ -239,6 +249,7 @@ class PoolsTheme extends Themelet {
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');
 			}
+			//-->
 			</script>
 		";
 
@@ -247,14 +258,12 @@ class PoolsTheme extends Themelet {
 		foreach($images as $image) {
 			$thumb_html = $this->build_thumb_html($image);
 
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
-				'<br>'.
+			$pool_images .= '<span class="thumb">'. $thumb_html .'<br>'.
 				'<input name="check[]" type="checkbox" value="'.$image->id.'" />'.
 				'</span>';
 		}
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Add Selected' onclick='return confirm_action()'/>".
+			"<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>".
 			"<input type='hidden' name='pool_id' value='".$pool_id."'>".
 			"</form>";
 
@@ -273,18 +282,17 @@ class PoolsTheme extends Themelet {
 	 * HERE WE DISPLAY THE POOL ORDERER
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
 	 */
-	public function edit_order(Page $page, $pools, $images) {
+	public function edit_order(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
 		$this->display_top($pools, "Sorting Pool");
 
-		$pool_images = "<form action='".make_link("pool/order")."' method='POST' name='checks'>";
+		$pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
 		$n = 0;
 		foreach($images as $pair) {
 			$image = $pair[0];
 			$thumb_html = $this->build_thumb_html($image);
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
+			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
 				'<br><input name="imgs['.$n.'][]" type="text" style="max-width:50px;" value="'.$image->image_order.'" />'.
 				'<input name="imgs['.$n.'][]" type="hidden" value="'.$image->id.'" />'.
 				'</span>';
@@ -292,7 +300,7 @@ class PoolsTheme extends Themelet {
 		}
 
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Order'/>".
+			"<input type='submit' name='edit' id='edit_pool_order' value='Order'/>".
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
@@ -305,29 +313,25 @@ class PoolsTheme extends Themelet {
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
 	 * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
 	 */
-	public function edit_pool(Page $page, $pools, $images) {
+	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
 		$this->display_top($pools, "Editing Pool", true);
 
-		$pool_images = "
-		";
-
-		$pool_images = "<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
+		$pool_images = "\n<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
 
 		foreach($images as $pair) {
 			$image = $pair[0];
 
 			$thumb_html = $this->build_thumb_html($image);
 
-			$pool_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
+			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
 				'<br><input name="check[]" type="checkbox" value="'.$image->id.'" />'.
 				'</span>';
 		}
 
 		$pool_images .= "<br>".
-			"<input type='submit' name='edit' id='edit' value='Remove Selected'/>".
+			"<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>".
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
@@ -338,17 +342,18 @@ class PoolsTheme extends Themelet {
 	/*
 	 * HERE WE DISPLAY THE HISTORY LIST
 	 */
-	public function show_history($histories, $pageNumber, $totalPages) {
+	public function show_history($histories, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $page;
-		$html = "<table id='poolsList' class='zebra'>".
-			"<thead><tr>".
-			"<th>Pool</th>".
-			"<th>Post Count</th>".
-			"<th>Changes</th>".
-			"<th>Updater</th>".
-			"<th>Date</th>".
-			"<th>Action</th>".
-			"</tr></thead>";
+		$html = '
+			<table id="poolsList" class="zebra">
+				<thead><tr>
+					<th>Pool</th>
+					<th>Post Count</th>
+					<th>Changes</th>
+					<th>Updater</th>
+					<th>Date</th>
+					<th>Action</th>
+				</tr></thead><tbody>';
 
 		$n = 0;
 		foreach($histories as $history) {
@@ -392,10 +397,10 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE ERROR
+	/**
+	 * Display an error message to the user.
 	 */
-	public function display_error($errMessage) {
+	public function display_error(/*string*/ $errMessage) {
 		global $page;
 
 		$page->set_title("Error");
