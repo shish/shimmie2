@@ -2,18 +2,13 @@
 /*
  * Name: Handle SVG
  * Author: Shish <webmaster@shishnet.org>
- * Description: Handle SVG files
+ * Link: http://code.shishnet.org/shimmie2/
+ * Description: Handle SVG files. (No thumbnail is generated for SVG files)
  */
 
-class SVGFileHandler implements Extension {
-	var $theme;
-
-	public function get_priority() {return 50;}
-
-	public function receive_event(Event $event) {
-		if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-		if(($event instanceof DataUploadEvent) && $this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+class SVGFileHandler extends Extension {
+	public function onDataUpload(DataUploadEvent $event) {
+		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
@@ -26,33 +21,28 @@ class SVGFileHandler implements Extension {
 			send_event($iae);
 			$event->image_id = $iae->image->id;
 		}
+	}
 
-		if(($event instanceof ThumbnailGenerationEvent) && $this->supported_ext($event->type)) {
+	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
+		global $config;
+		if($this->supported_ext($event->type)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
 
-			global $config;
-
-//			if($config->get_string("thumb_engine") == "convert") {
-//				$w = $config->get_int("thumb_width");
-//				$h = $config->get_int("thumb_height");
-//				$q = $config->get_int("thumb_quality");
-//				$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
-//
-//				exec("convert images/{$ha}/{$hash}[0] -geometry {$w}x{$h} -quality {$q} jpg:thumbs/{$ha}/{$hash}");
-//			}
-//			else {
-				copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
-//			}
+			copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
 		}
+	}
 
-		if(($event instanceof DisplayingImageEvent) && $this->supported_ext($event->image->ext)) {
-			global $page;
+	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $page;
+		if($this->supported_ext($event->image->ext)) {
 			$this->theme->display_image($page, $event->image);
 		}
+	}
 
-		if(($event instanceof PageRequestEvent) && $event->page_matches("get_svg")) {
-			global $config, $database, $page;
+	public function onPageRequest(PageRequestEvent $event) {
+		global $config, $database, $page;
+		if($event->page_matches("get_svg")) {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
 			$hash = $image->hash;

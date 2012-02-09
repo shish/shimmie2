@@ -47,33 +47,23 @@ Completely compatibility will probably involve a rewrite with a different URL
 
 */
 
-class DanbooruApi implements Extension
-{
-
-	public function get_priority() {return 50;}
-	// Receive the event
-	public function receive_event(Event $event)
-	{
-		// Check if someone is accessing /api/danbooru (us)
-		if(($event instanceof PageRequestEvent) && ($event->page_matches("api")) && ($event->get_arg(0) == 'danbooru'))
-		{
-			// execute the danbooru processing code
+class DanbooruApi extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
+		if($event->page_matches("api") && ($event->get_arg(0) == 'danbooru')) {
 			$this->api_danbooru($event);
 		}
-		if($event instanceof SearchTermParseEvent)
-		{
-			$matches = array();
-			if(preg_match("/^md5:([0-9a-fA-F]*)$/i", $event->term, $matches))
-			{
-				$hash = strtolower($matches[1]);
-				$event->add_querylet(new Querylet("images.hash = '$hash'"));	// :-O
-//				$event->set_querylet(new Querylet("images.hash = '$hash'"));
-			}
+	}
+
+	public function onSearchTermParse(SearchTermParseEvent $event) {
+		$matches = array();
+		if(preg_match("/^md5:([0-9a-fA-F]*)$/i", $event->term, $matches)) {
+			$hash = strtolower($matches[1]);
+			$event->add_querylet(new Querylet("images.hash = '$hash'"));	// :-O
 		}
 	}
 
 	// Danbooru API
-	private function api_danbooru($event)
+	private function api_danbooru(PageRequestEvent $event)
 	{
 		global $page;
 		global $config;

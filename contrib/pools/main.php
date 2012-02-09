@@ -10,8 +10,8 @@
 class PoolCreationException extends SCoreException {
 }
 
-class Pools extends SimpleExtension {
-	public function onInitExt($event) {
+class Pools extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		if ($config->get_int("ext_pools_version") < 1){
@@ -65,7 +65,7 @@ class Pools extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
 		if($event->page_matches("pool")) {
@@ -216,7 +216,7 @@ class Pools extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		$event->add_link("Pools", make_link("pool/list"));
 	}
 
@@ -224,7 +224,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE POOLS WHERE THE IMAGE APPEARS WHEN THE IMAGE IS DISPLAYED
 	 */
-	public function onDisplayingImage($event) {
+	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config, $database, $page;
 
 		if($config->get_bool("poolsInfoOnViewImage")) {
@@ -242,7 +242,7 @@ class Pools extends SimpleExtension {
 		}
 	}
 
-	public function onImageAdminBlockBuilding($event) {
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $config, $database, $user;
 		if($config->get_bool("poolsAdderOnViewImage") && !$user->is_anonymous()) {
 			if($user->is_admin()) {
@@ -261,7 +261,7 @@ class Pools extends SimpleExtension {
 	/*
 	 * HERE WE GET THE LIST OF POOLS
 	 */
-	private function list_pools(Page $page, $pageNumber) {
+	private function list_pools(Page $page, /*int*/ $pageNumber) {
 		global $config, $database;
 
 		if(is_null($pageNumber) || !is_numeric($pageNumber))

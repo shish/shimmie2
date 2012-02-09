@@ -11,7 +11,7 @@
 class AuthorSetEvent extends Event {
     var $image, $user, $author;
 
-    public function AuthorSetEvent(Image $image, User $user, $author)
+    public function AuthorSetEvent(Image $image, User $user, /*string*/ $author)
     {
         $this->image = $image;
         $this->user = $user;
@@ -19,41 +19,37 @@ class AuthorSetEvent extends Event {
     }
 }
 
-class Artists implements Extension {
-    var $theme;
-
-	public function get_priority() {return 50;}
-
-    public function receive_event(Event $event)
-    {
+class Artists extends Extension {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
         global $user;
-
-        if(is_null($this->theme)) $this->theme = get_theme_object($this);
-
-        if ($event instanceof ImageInfoSetEvent)
-            if (isset($_POST["tag_edit__author"]))
-                send_event(new AuthorSetEvent($event->image, $user, $_POST["tag_edit__author"]));
-
-        if ($event instanceof AuthorSetEvent)
-            $this->update_author($event);
-
-        if($event instanceof InitExtEvent)
-            $this->try_install();
-
-        if ($event instanceof ImageInfoBoxBuildingEvent)
-            $this->add_author_field_to_image($event);
-
-        if ($event instanceof PageRequestEvent)
-            $this->handle_commands($event);
-
-		if ($event instanceof SearchTermParseEvent) {
-			$matches = array();
-			if(preg_match("/^author=(.*)$/", $event->term, $matches)) {
-				$char = $matches[1];
-				$event->add_querylet(new Querylet("Author = :author_char", array("author_char"=>$char)));
-			}
+		if (isset($_POST["tag_edit__author"])) {
+			send_event(new AuthorSetEvent($event->image, $user, $_POST["tag_edit__author"]));
 		}
-    }
+	}
+
+	public function onAuthorSet(AuthorSetEvent $event) {
+		$this->update_author($event);
+	}
+
+	public function onInitExt(InitExtEvent $event) {
+		$this->try_install();
+	}
+
+	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
+		$this->add_author_field_to_image($event);
+	}
+
+	public function onPageRequest(PageRequestEvent $event) {
+		$this->handle_commands($event);
+	}
+
+	public function onSearchTermParse(SearchTermParseEvent $event) {
+		$matches = array();
+		if(preg_match("/^author=(.*)$/", $event->term, $matches)) {
+			$char = $matches[1];
+			$event->add_querylet(new Querylet("Author = :author_char", array("author_char"=>$char)));
+		}
+	}
 
     public function try_install() {
     	global $config, $database;

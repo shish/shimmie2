@@ -129,7 +129,7 @@ class ParseLinkTemplateEvent extends Event {
 /**
  * A class to handle adding / getting / removing image files from the disk.
  */
-class ImageIO extends SimpleExtension {
+class ImageIO extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('thumb_width', 192);
@@ -162,7 +162,7 @@ class ImageIO extends SimpleExtension {
 		}
 		if($event->page_matches("image_admin/delete")) {
 			global $page, $user;
-			if($user->is_admin() && isset($_POST['image_id']) && $user->check_auth_token()) {
+			if($user->can("delete_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
 				$image = Image::by_id($_POST['image_id']);
 				if($image) {
 					send_event(new ImageDeletionEvent($image));
@@ -173,7 +173,7 @@ class ImageIO extends SimpleExtension {
 		}
 		if($event->page_matches("image_admin/replace")) {
 			global $page, $user;
-			if($user->is_admin() && isset($_POST['image_id']) && $user->check_auth_token()) {
+			if($user->can("replace_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
 				$image = Image::by_id($_POST['image_id']);
 				if($image) {
 					$page->set_mode("redirect");
@@ -190,11 +190,11 @@ class ImageIO extends SimpleExtension {
 		global $user;
 		global $config;
 		
-		if($user->is_admin()) {
+		if($user->can("delete_image")) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
 		}
 		/* In the future, could perhaps allow users to replace images that they own as well... */
-		if ($user->is_admin() && $config->get_bool("upload_replace")) {
+		if ($user->can("replace_image") && $config->get_bool("upload_replace")) {
 			$event->add_part($this->theme->get_replace_html($event->image->id));
 		}
 	}

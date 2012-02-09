@@ -11,7 +11,7 @@
  */
 
 class SendPMEvent extends Event {
-	public function __construct($pm) {
+	public function __construct(PM $pm) {
 		$this->pm = $pm;
 	}
 }
@@ -42,8 +42,8 @@ class PM {
 	}
 }
 
-class PrivMsg extends SimpleExtension {
-	public function onInitExt($event) {
+class PrivMsg extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// shortcut to latest
@@ -57,15 +57,28 @@ class PrivMsg extends SimpleExtension {
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-				INDEX (to_id)
+				INDEX (to_id),
+				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("pm_version", 1);
+			log_info("pm", "extension installed");
+		}
+
+		if($config->get_int("pm_version") < 2) {
+			log_info("pm", "Adding foreign keys to private messages");
+			$database->Execute("delete from private_message where to_id not in (select id from users);");
+			$database->Execute("delete from private_message where from_id not in (select id from users);");
+			$database->Execute("ALTER TABLE private_message 
+			ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+			ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
+			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}
 	}
 
 	/*
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuilding $event) {
 		global $user;
 		if(!$user->is_anonymous()) {
 			$event->add_link("Private Messages", make_link("pm"));
@@ -73,7 +86,7 @@ class PrivMsg extends SimpleExtension {
 	}
 	*/
 
-	public function onUserPageBuilding($event) {
+	public function onUserPageBuilding(UserPageBuilding $event) {
 		global $page, $user;
 		$duser = $event->display_user;
 		if(!$user->is_anonymous() && !$duser->is_anonymous()) {
@@ -86,7 +99,7 @@ class PrivMsg extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page, $user;
 		if($event->page_matches("pm")) {
 			if(!$user->is_anonymous()) {
@@ -140,7 +153,7 @@ class PrivMsg extends SimpleExtension {
 		}
 	}
 
-	public function onSendPM($event) {
+	public function onSendPM(SendPMEvent $event) {
 		global $database;
 		$database->execute("
 				INSERT INTO private_message(

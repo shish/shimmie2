@@ -55,12 +55,12 @@ class LockSetEvent extends Event {
 	}
 }
 
-class TagEdit extends SimpleExtension {
+class TagEdit extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
 		if($event->page_matches("tag_edit")) {
 			if($event->get_arg(0) == "replace") {
-				if($user->is_admin() && isset($_POST['search']) && isset($_POST['replace'])) {
+				if($user->can("mass_tag_edit") && isset($_POST['search']) && isset($_POST['replace'])) {
 					$search = $_POST['search'];
 					$replace = $_POST['replace'];
 					$this->mass_tag_edit($search, $replace);
@@ -82,7 +82,7 @@ class TagEdit extends SimpleExtension {
 		else {
 			$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
 		}
-		if($user->is_admin()) {
+		if($user->can("lock_image")) {
 			$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
 			send_event(new LockSetEvent($event->image, $locked));
 		}
@@ -90,21 +90,21 @@ class TagEdit extends SimpleExtension {
 
 	public function onTagSet(TagSetEvent $event) {
 		global $user;
-		if($user->is_admin() || !$event->image->is_locked()) {
+		if($user->can("edit_tag") || !$event->image->is_locked()) {
 			$event->image->set_tags($event->tags);
 		}
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
 		global $user;
-		if($user->is_admin() || !$event->image->is_locked()) {
+		if($user->can("edit_tag") || !$event->image->is_locked()) {
 			$event->image->set_source($event->source);
 		}
 	}
 
 	public function onLockSet(LockSetEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("lock_image")) {
 			$event->image->set_locked($event->locked);
 		}
 	}
@@ -130,7 +130,7 @@ class TagEdit extends SimpleExtension {
 		if($this->can_source($event->image)) {
 			$event->add_part($this->theme->get_source_editor_html($event->image), 41);
 		}
-		if($user->is_admin()) {
+		if($user->can("lock_image")) {
 			$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
 		}
 	}
@@ -147,7 +147,7 @@ class TagEdit extends SimpleExtension {
 		global $config, $user;
 		return (
 			($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) &&
-			($user->is_admin() || !$image->is_locked())
+			($user->can("edit_tag") || !$image->is_locked())
 		);
 	}
 
@@ -155,7 +155,7 @@ class TagEdit extends SimpleExtension {
 		global $config, $user;
 		return (
 			($config->get_bool("source_edit_anon") || !$user->is_anonymous()) &&
-			($user->is_admin() || !$image->is_locked())
+			($user->can("edit_source") || !$image->is_locked())
 		);
 	}
 

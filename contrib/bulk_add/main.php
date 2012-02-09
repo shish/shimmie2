@@ -2,6 +2,7 @@
 /*
  * Name: Bulk Add
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Bulk add server-side images
  * Documentation:
@@ -14,8 +15,8 @@
  *  <p><b>Note:</b> requires the "admin" extension to be enabled
  */
 
-class BulkAdd extends SimpleExtension {
-	public function onPageRequest($event) {
+class BulkAdd extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("bulk_add")) {
 			if($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
@@ -26,11 +27,13 @@ class BulkAdd extends SimpleExtension {
 		}
 	}
 
-	public function onAdminBuilding($event) {
+	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_admin_block();
 	}
 
-
+	/**
+	 * Generate the necessary DataUploadEvent for a given image and tags.
+	 */
 	private function add_image($tmpname, $filename, $tags) {
 		assert(file_exists($tmpname));
 

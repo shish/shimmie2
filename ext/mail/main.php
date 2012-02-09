@@ -7,7 +7,7 @@
 * Description: Provides an interface for sending and receiving mail.
 */
 
-class Mail extends SimpleExtension {	
+class Mail extends Extension {	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Mailing Options");
 		$sb->add_text_option("mail_sub", "<br>Subject prefix: ");
@@ -26,7 +26,7 @@ class Mail extends SimpleExtension {
 		$config->set_default_string("mail_fot", "<a href='".make_http(make_link())."'>".$config->get_string("site_title")."</a>");
 	}
 }
-class MailTest extends SimpleExtension {
+class MailTest extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("mail/test")) {
 			global $page;

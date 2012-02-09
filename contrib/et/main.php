@@ -12,8 +12,8 @@
  *  versions of PHP I should test with, etc.
  */
 
-class ET extends SimpleExtension {
-	public function onPageRequest($event) {
+class ET extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $user;
 		if($event->page_matches("system_info")) {
 			if($user->is_admin()) {
@@ -22,13 +22,16 @@ class ET extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("System Info", make_link("system_info"));
 		}
 	}
 
+	/**
+	 * Collect the information and return it in a keyed array.
+	 */
 	private function get_info() {
 		global $config, $database;
 		global $_event_listeners; // yay for using secret globals \o/
@@ -46,9 +49,6 @@ class ET extends SimpleExtension {
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
-		$proto = preg_replace("#(.*)://.*#", "$1", DATABASE_DSN);
-		#$db = $database->db->ServerInfo();
-		#$info['sys_db'] = "$proto / {$db['version']}";
 
 		$info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
 		$info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");

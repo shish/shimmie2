@@ -13,35 +13,28 @@
  *  engine" notification they have
  */
 
-class BrowserSearch implements Extension {
+class BrowserSearch extends Extension {
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_string("search_suggestions_results_order", 'a');
+	}
 
-	public function get_priority() {return 50;}
-	public function receive_event(Event $event) {
-	global $page;
-	global $config;
-
-		if($event instanceof InitExtEvent) {
-			$config->set_default_string("search_suggestions_results_order", 'a');
-		}
+	public function onPageRequest(PageRequestEvent $event) {
+		global $config, $database, $page;
 
 		// Add in header code to let the browser know that the search plugin exists
-		if($event instanceof PageRequestEvent) {
-			// We need to build the data for the header
-			global $config;
-			$search_title = $config->get_string('title');
-			$search_file_url = make_link('browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml');
-			$page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
-		}
+		// We need to build the data for the header
+		$search_title = $config->get_string('title');
+		$search_file_url = make_link('browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml');
+		$page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
 
 		// The search.xml file that is generated on the fly
-		if(($event instanceof PageRequestEvent) && $event->page_matches("browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml")) {
+		if($event->page_matches("browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml")) {
 			// First, we need to build all the variables we'll need
-
 			$search_title = $config->get_string('title');
 			$search_form_url =  make_link('post/list/{searchTerms}');
 			$suggenton_url = make_link('browser_search/')."{searchTerms}";
 			$icon_b64 = base64_encode(file_get_contents("favicon.ico"));
-
 
 			// Now for the XML
 			$xml = "
@@ -63,12 +56,10 @@ class BrowserSearch implements Extension {
 			$page->set_data($xml);
 		}
 
-		else if(($event instanceof PageRequestEvent) && (
-				$event->page_matches("browser_search") &&
-				!$config->get_bool("disable_search_suggestions")
-		)) {
-			global $database;
-
+		else if(
+			$event->page_matches("browser_search") &&
+			!$config->get_bool("disable_search_suggestions")
+		) {
 			// We have to build some json stuff
 			$tag_search = $event->get_arg(0);
 
@@ -89,29 +80,25 @@ class BrowserSearch implements Extension {
 				array_push($tags_array,$tag['tag']);
 			}
 
-
 			$json_tag_list .= implode("\",\"", $tags_array);
-//			$json_tag_list = implode($tags_array,", ");
-//			$json_tag_list = "\"".implode($tags_array,"\", \"")."\"";
-
 
 			// And now for the final output
 			$json_string = "[\"$tag_search\",[\"$json_tag_list\"],[],[]]";
 			$page->set_mode("data");
 			$page->set_data($json_string);
 		}
+	}
 
-		if($event instanceof SetupBuildingEvent) {
-			$sort_by = array();
-			$sort_by['Alphabetical'] = 'a';
-			$sort_by['Tag Count'] = 't';
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sort_by = array();
+		$sort_by['Alphabetical'] = 'a';
+		$sort_by['Tag Count'] = 't';
 
-			$sb = new SetupBlock("Browser Search");
-			$sb->add_bool_option("disable_search_suggestions", "Disable search suggestions: ");
-			$sb->add_label("<br>");
-			$sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
-			$event->panel->add_block($sb);
-		}
+		$sb = new SetupBlock("Browser Search");
+		$sb->add_bool_option("disable_search_suggestions", "Disable search suggestions: ");
+		$sb->add_label("<br>");
+		$sb->add_choice_option("search_suggestions_results_order", $sort_by, "Sort the suggestions by:");
+		$event->panel->add_block($sb);
 	}
 }
 ?>

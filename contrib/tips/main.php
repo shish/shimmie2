@@ -8,8 +8,8 @@
  *  Formatting is done with HTML
  */
 
-class Tips extends SimpleExtension {
-	public function onInitExt($event) {
+class Tips extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		if ($config->get_int("ext_tips_version") < 1){
@@ -31,7 +31,7 @@ class Tips extends SimpleExtension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 
 		$this->getTip();
@@ -67,7 +67,7 @@ class Tips extends SimpleExtension {
 		}
 	}
 
-	public function onUserBlockBuilding($event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Tips Editor", make_link("tips/list"));

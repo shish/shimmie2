@@ -2,6 +2,7 @@
 /*
  * Name: Comment Word Ban
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: For stopping spam and other comment abuse
  * Documentation:
@@ -19,7 +20,7 @@
  *  from Essex"
  */
 
-class BanWords extends SimpleExtension {
+class BanWords extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string('banned_words', "

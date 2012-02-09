@@ -5,8 +5,8 @@
  * Description: ChibiPaint-based Oekaki uploader
  */
 
-class Oekaki extends SimpleExtension {
-	public function onPageRequest($event) {
+class Oekaki extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
 
 		if($event->page_matches("oekaki")) {
@@ -82,7 +82,7 @@ class Oekaki extends SimpleExtension {
 	}
 
 	// FIXME: "edit this image" button on existing images?
-	function onPostListBuilding($event) {
+	function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user, $page;
 		if($this->can_upload($user)) {
 			$this->theme->display_block($page);

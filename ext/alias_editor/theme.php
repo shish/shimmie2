@@ -5,10 +5,13 @@ class AliasEditorTheme extends Themelet {
 	 * Show a page of aliases:
 	 *
 	 * $aliases = an array of ($old_tag => $new_tag)
-	 * $is_admin = whether things like "add new alias" should be shown
+	 * $can_manage = whether things like "add new alias" should be shown
 	 */
-	public function display_aliases(Page $page, $aliases, $is_admin, $pageNumber, $totalPages) {
-		if($is_admin) {
+	public function display_aliases($aliases, $pageNumber, $totalPages) {
+		global $page, $user;
+
+		$can_manage = $user->can("manage_alias_list");
+		if($can_manage) {
 			$action = "<th width='10%'>Action</th>";
 			$add = "
 				<tr>
@@ -33,7 +36,7 @@ class AliasEditorTheme extends Themelet {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			
 			$h_aliases .= "<tr class='$oe'><td>$h_old</td><td>$h_new</td>";
-			if($is_admin) {
+			if($can_manage) {
 				$h_aliases .= "
 					<td>
 						".make_form(make_link("alias/remove"))."
@@ -70,7 +73,7 @@ class AliasEditorTheme extends Themelet {
 		$page->set_heading("Alias List");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Aliases", $html));
-		if($is_admin) {
+		if($can_manage) {
 			$page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
 		}
 

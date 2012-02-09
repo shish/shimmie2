@@ -161,7 +161,7 @@ class SetupBlock extends Block {
 }
 // }}}
 
-class Setup extends SimpleExtension {
+class Setup extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("title", "Shimmie");
@@ -187,7 +187,7 @@ class Setup extends SimpleExtension {
 		}
 
 		if($event->page_matches("setup")) {
-			if(!$user->is_admin()) {
+			if(!$user->can("change_setting")) {
 				$this->theme->display_permission_denied($page);
 			}
 			else {
@@ -329,7 +329,7 @@ class Setup extends SimpleExtension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("change_setting")) {
 			$event->add_link("Board Config", make_link("setup"));
 		}
 	}

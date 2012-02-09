@@ -2,6 +2,7 @@
 /*
  * Name: Random Image
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Do things with a random image
  * Documentation:
@@ -19,8 +20,8 @@
  *  <code>/random_image/download/size=1024x768+cute</code>
  */
 
-class RandomImage extends SimpleExtension {
-	public function onPageRequest($event) {
+class RandomImage extends Extension {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page, $user;
 		if($event->page_matches("random_image")) {
 			if($event->count_args() == 1) {
@@ -51,13 +52,13 @@ class RandomImage extends SimpleExtension {
 		}
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Random Image");
 		$sb->add_bool_option("show_random_block", "Show Random Block: ");
 		$event->panel->add_block($sb);
 	}
 
-	public function onPostListBuilding($event) {
+	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		if($config->get_bool("show_random_block")) {
 			$image = Image::by_random($event->search_terms);

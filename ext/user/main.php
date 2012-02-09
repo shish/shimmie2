@@ -42,7 +42,7 @@ class UserCreationEvent extends Event {
 
 class UserCreationException extends SCoreException {}
 
-class UserPage extends SimpleExtension {
+class UserPage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("login_signup_enabled", true);
@@ -187,7 +187,7 @@ class UserPage extends SimpleExtension {
 			$this->theme->display_user_links($page, $user, $ubbe->parts);
 		}
 		if(
-			($user->is_admin() || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
+			($user->can("view_ip") || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
 			($event->display_user->id != $config->get_int('anon_id')) # don't show anon's IP list, it is le huge
 		) {
 			$this->theme->display_ip_list(
@@ -256,7 +256,7 @@ class UserPage extends SimpleExtension {
 			$user_id = int_escape($matches[2]);
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
-		else if($user->is_admin() && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {
+		else if($user->can("view_ip") && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {
 			$user_ip = $matches[2]; // FIXME: ip_escape?
 			$event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
 		}
@@ -354,7 +354,7 @@ class UserPage extends SimpleExtension {
 
 			$duser = User::by_id($id);
 
-			if((!$user->is_admin()) && ($duser->name != $user->name)) {
+			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
 				$this->theme->display_error($page, "Error",
 						"You need to be an admin to change other people's passwords");
 			}
@@ -392,7 +392,7 @@ class UserPage extends SimpleExtension {
 
 			$duser = User::by_id($id);
 
-			if((!$user->is_admin()) && ($duser->name != $user->name)) {
+			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
 				$this->theme->display_error($page, "Error",
 						"You need to be an admin to change other people's addressess");
 			}
@@ -419,7 +419,7 @@ class UserPage extends SimpleExtension {
 		$page->set_title("Error");
 		$page->set_heading("Error");
 		$page->add_block(new NavBlock());
-		if(!$user->is_admin()) {
+		if(!$user->can("change_user_info")) {
 			$page->add_block(new Block("Not Admin", "Only admins can edit accounts"));
 		}
 		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
@@ -479,7 +479,7 @@ class UserPage extends SimpleExtension {
 		$page->set_heading("Error");
 		$page->add_block(new NavBlock());
 		
-		if (!$user->is_admin()) {
+		if (!$user->can("delete_user")) {
 			$page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
 		}
 		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
@@ -510,7 +510,7 @@ class UserPage extends SimpleExtension {
 		$page->set_heading("Error");
 		$page->add_block(new NavBlock());
 		
-		if (!$user->is_admin()) {
+		if (!$user->can("delete_user") || !$user->can("delete_image")) {
 			$page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
 		}
 		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {

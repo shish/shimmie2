@@ -8,8 +8,8 @@
  *
  *				Development TODO at http://github.com/zshall/shimmie2/issues
  */
-class Blotter extends SimpleExtension {
-	public function onInitExt(Event $event) {
+class Blotter extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		/**
 		 * I love re-using this installer don't I...
 		 */
@@ -43,7 +43,7 @@ class Blotter extends SimpleExtension {
 		$config->set_default_string("blotter_position", "subheading");
 
 	}
-	public function onSetupBuilding(Event $event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 		$sb = new SetupBlock("Blotter");
 		$sb->add_int_option("blotter_recent", "<br />Number of recent entries to display: ");
@@ -51,13 +51,13 @@ class Blotter extends SimpleExtension {
 		$sb->add_choice_option("blotter_position", array("Top of page" => "subheading", "In navigation bar" => "left"), "<br>Position: ");
 		$event->panel->add_block($sb);
 	}
-	public function onUserBlockBuilding(Event $event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Blotter Editor", make_link("blotter/editor"));
 		}
 	}
-	public function onPageRequest(Event $event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $database, $user;
 		if($event->page_matches("blotter")) {
 			switch($event->get_arg(0)) {

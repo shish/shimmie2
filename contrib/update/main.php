@@ -6,14 +6,14 @@
  * License: GPLv2
  * Description: Shimmie updater!
  */
-class Update extends SimpleExtension {
-	public function onInitExt(Event $event) {
+class Update extends Extension {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("update_url", "http://nodeload.github.com/shish/shimmie2/zipball/master"); //best to avoid using https
 		$config->set_default_string("commit_hash", "");
 	}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 		//Would prefer to use the admin panel for this.
 		//But since the admin panel is optional...kind of stuck to using this.
@@ -25,7 +25,7 @@ class Update extends SimpleExtension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onPageRequest(Event $event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $user;
 		if($event->page_matches("update") && $user->is_admin()) {
 			$ok = $this->update_shimmie();
