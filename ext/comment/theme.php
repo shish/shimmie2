@@ -174,7 +174,8 @@ class CommentListTheme extends Themelet {
 				$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id)'>Reply</a>";
-			$h_ip = $user->can("view_ip") ? "<br>$h_poster_ip" : "";
+			$ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip={$h_poster_ip}&reason=Comment%20posted%20{$comment->posted}#add")."'>Ban</a>" : "";
+			$h_ip = $user->can("view_ip") ? "<br>$h_poster_ip, $ban" : "";
 			$h_del = $user->can("delete_comment") ?
 				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
 				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
