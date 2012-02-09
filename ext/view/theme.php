@@ -65,7 +65,6 @@ class ViewImageTheme extends Themelet {
 		$owner = $image->get_owner();
 		$h_owner = html_escape($owner->name);
 		$h_ip = html_escape($image->owner_ip);
-		$h_source = html_escape($image->source);
 		$i_owner_id = int_escape($owner->id);
 		$h_date = autodate($image->posted);
 
@@ -75,26 +74,30 @@ class ViewImageTheme extends Themelet {
 		if($user->can("view_ip")) {
 			$html .= " ($h_ip)";
 		}
-		if(!is_null($image->source)) {
-			if(substr($image->source, 0, 7) == "http://" || substr($image->source, 0, 8) == "https://") {
-				$html .= " (<a href='$h_source'>source</a>)";
-			}
-			else {
-				$html .= " (<a href='http://$h_source'>source</a>)";
-			}
-		}
+		$html .= $this->format_source($image->source);
 
 		$html .= $this->build_image_editor($image, $editor_parts);
 
 		return $html;
 	}
 
+	private function format_source($source) {
+		if(!is_null($source)) {
+			$h_source = html_escape($source);
+			if(startsWith($source, "http://") || startsWith($source, "https://")) {
+				return " (<a href='$h_source'>source</a>)";
+			}
+			else {
+				return " (<a href='http://$h_source'>source</a>)";
+			}
+		}
+		return "";
+	}
+
 	protected function build_image_editor(Image $image, $editor_parts) {
 		if(count($editor_parts) == 0) return ($image->is_locked() ? "<br>[Image Locked]" : "");
 
-		$html = "
-			<div id='imgdata'>
-				".make_form(make_link("post/set"))."
+		$html = make_form(make_link("post/set"))."
 					<input type='hidden' name='image_id' value='{$image->id}'>
 					<table style='width: 500px;'>
 		";
@@ -105,8 +108,6 @@ class ViewImageTheme extends Themelet {
 						<tr><td colspan='2'><input type='submit' value='Set'></td></tr>
 					</table>
 				</form>
-				<br>
-			</div>
 		";
 		return $html;
 	}
