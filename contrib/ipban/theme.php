@@ -45,12 +45,12 @@ class IPBanTheme extends Themelet {
 			<p><table id='bans' class='zebra'>
 				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></tr></thead>
 				$h_bans
-				<tfoot><tr>
+				<tfoot><tr id='add'>
 					".make_form(make_link("ip_ban/add"))."
-						<td><input type='text' name='ip'></td>
-						<td><input type='text' name='reason'></td>
+						<td><input type='text' name='ip' value='".html_escape(@$_GET['ip'])."'></td>
+						<td><input type='text' name='reason' value='".html_escape(@$_GET['reason'])."'></td>
 						<td>{$user->name}</td>
-						<td><input type='text' name='end'></td>
+						<td><input type='text' name='end' value='".html_escape(@$_GET['end'])."'></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>
 				</tr></tfoot>
