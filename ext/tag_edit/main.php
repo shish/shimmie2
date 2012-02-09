@@ -6,6 +6,23 @@
  */
 
 /*
+ * OwnerSetEvent:
+ *   $image_id
+ *   $source
+ *
+ */
+class OwnerSetEvent extends Event {
+	var $image;
+	var $owner;
+
+	public function OwnerSetEvent(Image $image, User $owner) {
+		$this->image = $image;
+		$this->owner = $owner;
+	}
+}
+
+
+/*
  * SourceSetEvent:
  *   $image_id
  *   $source
@@ -73,14 +90,15 @@ class TagEdit extends Extension {
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		global $user, $page;
+		if($user->can("edit_image_owner")) {
+			$owner = User::by_name($_POST['tag_edit__owner']);
+			send_event(new OwnerSetEvent($event->image, $owner));
+		}
 		if($this->can_tag($event->image)) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
-			if($this->can_source($event->image)) {
-				send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
-			}
 		}
-		else {
-			$this->theme->display_error($page, "Error", "Anonymous tag editing is disabled");
+		if($this->can_source($event->image)) {
+			send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
 		}
 		if($user->can("lock_image")) {
 			$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
@@ -88,16 +106,23 @@ class TagEdit extends Extension {
 		}
 	}
 
+	public function onOwnerSet(OwnerSetEvent $event) {
+		global $user;
+		if($user->can("edit_image_owner") || !$event->image->is_locked()) {
+			$event->image->set_owner($event->owner);
+		}
+	}
+
 	public function onTagSet(TagSetEvent $event) {
 		global $user;
-		if($user->can("edit_tag") || !$event->image->is_locked()) {
+		if($user->can("edit_image_tag") || !$event->image->is_locked()) {
 			$event->image->set_tags($event->tags);
 		}
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
 		global $user;
-		if($user->can("edit_tag") || !$event->image->is_locked()) {
+		if($user->can("edit_image_source") || !$event->image->is_locked()) {
 			$event->image->set_source($event->source);
 		}
 	}
@@ -124,15 +149,10 @@ class TagEdit extends Extension {
 
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $user;
-		if($this->can_tag($event->image)) {
-			$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
-		}
-		if($this->can_source($event->image)) {
-			$event->add_part($this->theme->get_source_editor_html($event->image), 41);
-		}
-		if($user->can("lock_image")) {
-			$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
-		}
+		$event->add_part($this->theme->get_user_editor_html($event->image), 39);
+		$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
+		$event->add_part($this->theme->get_source_editor_html($event->image), 41);
+		$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
@@ -145,18 +165,12 @@ class TagEdit extends Extension {
 
 	private function can_tag(Image $image) {
 		global $config, $user;
-		return (
-			($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) &&
-			($user->can("edit_tag") || !$image->is_locked())
-		);
+		return ($user->can("edit_image_tag") || !$image->is_locked());
 	}
 
 	private function can_source(Image $image) {
 		global $config, $user;
-		return (
-			($config->get_bool("source_edit_anon") || !$user->is_anonymous()) &&
-			($user->can("edit_source") || !$image->is_locked())
-		);
+		return ($user->can("edit_image_source") || !$image->is_locked());
 	}
 
 	private function mass_tag_edit($search, $replace) {

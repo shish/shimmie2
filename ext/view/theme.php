@@ -52,7 +52,7 @@ class ViewImageTheme extends Themelet {
 		$h_search = "
 			<p><form action='".make_link()."' method='GET'>
 				<input type='hidden' name='q' value='/post/list'>
-				<input placeholder='Search' id='search_input' name='search' type='text'>
+				<input placeholder='Search' name='search' type='text'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
 		";
@@ -62,58 +62,32 @@ class ViewImageTheme extends Themelet {
 
 	protected function build_info(Image $image, $editor_parts) {
 		global $user;
-		$owner = $image->get_owner();
-		$h_owner = html_escape($owner->name);
-		$h_ip = html_escape($image->owner_ip);
-		$i_owner_id = int_escape($owner->id);
-		$h_date = autodate($image->posted);
 
-		$html = "<table style='width: 700px;'><tr><td>";
-		$html .= "Uploaded by:";
-		//$html .= "<br>".$owner->get_avatar_html();
-		$html .= "<br><a href='".make_link("user/$h_owner")."'>$h_owner</a>";
-
-		if($user->can("view_ip")) {
-			$html .= " ($h_ip)";
-		}
-		$html .= "<br><small>$h_date";
-		$html .= $this->format_source($image->source);
-		$html .= "</small>";
-
-		$html .= "</td><td>";
-		$html .= $this->build_image_editor($image, $editor_parts);
-		$html .= "</td></tr></table>";
-
-		return $html;
-	}
-
-	private function format_source($source) {
-		if(!is_null($source)) {
-			$h_source = html_escape($source);
-			if(startsWith($source, "http://") || startsWith($source, "https://")) {
-				return " (<a href='$h_source'>source</a>)";
-			}
-			else {
-				return " (<a href='http://$h_source'>source</a>)";
-			}
-		}
-		return "";
-	}
-
-	protected function build_image_editor(Image $image, $editor_parts) {
 		if(count($editor_parts) == 0) return ($image->is_locked() ? "<br>[Image Locked]" : "");
 
 		$html = make_form(make_link("post/set"))."
 					<input type='hidden' name='image_id' value='{$image->id}'>
-					<table style='width: 500px;'>
+					<table style='width: 500px;' class='image_info'>
 		";
 		foreach($editor_parts as $part) {
 			$html .= $part;
 		}
+		if(!$image->is_locked() || $user->can("lock_image")) {
+			$html .= "
+						<tr><td colspan='4'>
+							<input class='view' type='button' value='Edit' onclick='$(\".view\").hide(); $(\".edit\").show();'>
+							<input class='edit' type='submit' value='Set'>
+						</td></tr>
+			";
+		}
 		$html .= "
-						<tr><td colspan='2'><input type='submit' value='Set'></td></tr>
 					</table>
 				</form>
+				<script>
+				$(function() {
+					$('.edit').hide();
+				});
+				</script>
 		";
 		return $html;
 	}

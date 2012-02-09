@@ -24,19 +24,71 @@ class TagEditTheme extends Themelet {
 		return "
 			<tr>
 				<td width='50px'>Tags</td>
-				<td width='300px'><input type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'></td>
+				<td width='300px'>
+					<span class='view'>$h_tags</span>
+					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'>
+				</td>
+			</tr>
+		";
+	}
+
+	public function get_user_editor_html(Image $image) {
+		global $user;
+		$h_owner = html_escape($image->get_owner()->name);
+		$h_av = $image->get_owner()->get_avatar_html();
+		$h_date = autodate($image->posted);
+		$ip = $user->can("view_ip") ? " ({$image->owner_ip})" : "";
+		return "
+			<tr>
+				<td>User</td>
+				<td>
+					<span class='view'><a href='".make_link("user/$h_owner")."'>$h_owner</a>$ip, $h_date</span>
+					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
+				</td>
+				<td width='80px' rowspan='4'>$h_av</td>
 			</tr>
 		";
 	}
 
 	public function get_source_editor_html(Image $image) {
 		$h_source = html_escape($image->get_source());
-		return "<tr><td>Source</td><td><input type='text' name='tag_edit__source' value='$h_source'></td></tr>";
+		$f_source = $this->format_source($image->get_source());
+		return "
+			<tr>
+				<td>Source</td>
+				<td>
+					<span class='view' style='overflow: hidden; white-space: nowrap;'>$f_source</span>
+					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
+				</td>
+			</tr>
+		";
+	}
+
+	private function format_source($source) {
+		if(!empty($source)) {
+			$h_source = html_escape($source);
+			if(startsWith($source, "http://") || startsWith($source, "https://")) {
+				return "<a href='$h_source'>$h_source</a>";
+			}
+			else {
+				return "<a href='http://$h_source'>$h_source</a>";
+			}
+		}
+		return "Unknown";
 	}
 
 	public function get_lock_editor_html(Image $image) {
+		$b_locked = $image->is_locked() ? "Yes (Only admins may edit these details)" : "No";
 		$h_locked = $image->is_locked() ? " checked" : "";
-		return "<tr><td>Locked</td><td><input type='checkbox' name='tag_edit__locked'$h_locked></td></tr>";
+		return "
+			<tr>
+				<td>Locked</td>
+				<td>
+					<span class='view'>$b_locked</span>
+					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
+				</td>
+			</tr>
+		";
 	}
 }
 ?>

@@ -237,6 +237,17 @@ class Image {
 	}
 
 	/**
+	 * Set the image's owner
+	 */
+	public function set_owner(User $owner) {
+		global $database;
+		if($owner->id != $this->owner_id) {
+			$database->execute("UPDATE images SET owner_id=:owner_id WHERE id=:id", array("owner_id"=>$owner->id, "id"=>$this->id));
+			log_info("core-image", "Owner for Image #{$this->id} set to: ".$owner->username);
+		}
+	}
+
+	/**
 	 * Get this image's tags as an array
 	 */
 	public function get_tag_array() {
