@@ -92,15 +92,10 @@ class ViewImageTheme extends Themelet {
 	protected function build_image_editor(Image $image, $editor_parts) {
 		if(count($editor_parts) == 0) return ($image->is_locked() ? "<br>[Image Locked]" : "");
 
-		if(isset($_GET['search'])) {$h_query = "search=".url_escape($_GET['search']);}
-		else {$h_query = "";}
-
-		$html = " (<a href=\"javascript: toggle('imgdata')\">edit info</a>)";
-		$html .= "
+		$html = "
 			<div id='imgdata'>
 				".make_form(make_link("post/set"))."
 					<input type='hidden' name='image_id' value='{$image->id}'>
-					<input type='hidden' name='query' value='$h_query'>
 					<table style='width: 500px;'>
 		";
 		foreach($editor_parts as $part) {
