@@ -340,7 +340,6 @@ class Pools extends Extension {
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
 		
-		//$result = $database->get_row("SELECT LAST_INSERT_ID() AS poolID"); # FIXME database specific?
 		$result['poolID'] = $database->get_last_insert_id();
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
