@@ -276,6 +276,7 @@ class Pools extends Extension {
 	
 	/**
 	 * Check if the given user has permission to edit/change the pool.
+	 * TODO: Should the user variable be global?
 	 * @retval bool
 	 */
 	private function have_permission($user, $pool) {
