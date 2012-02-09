@@ -74,7 +74,6 @@ _start_cache();
 
 try {
 	// load base files
-	ctx_log_start("Initialisation");
 	ctx_log_start("Opening files");
 	$files = array_merge(glob("core/*.php"), glob("ext/*/main.php"));
 	foreach($files as $filename) {
@@ -99,16 +98,13 @@ try {
 	ctx_log_endok();
 
 	_load_extensions();
-	ctx_log_endok("Initialisation");
 
-	ctx_log_start("Page generation");
 	// start the page generation waterfall
 	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 	$user = _get_user();
 	send_event(new InitExtEvent());
 	send_event(_get_page_request());
 	$page->display();
-	ctx_log_endok("Page generation");
 
 	$database->db->commit();
 	_end_cache();
