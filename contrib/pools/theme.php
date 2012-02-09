@@ -41,7 +41,7 @@ class PoolsTheme extends Themelet {
 						<th>Creator</th>
 						<th>Posts</th>
 						<th>Public</th>
-					</tr></thead>';
+					</tr></thead><tbody>';
 
 		$n = 0;
 		
@@ -121,7 +121,7 @@ class PoolsTheme extends Themelet {
 							<thead><tr>
 								<th class="left">Title</th>
 								<th class="left">Description</th>
-							</tr></thead>';
+							</tr></thead><tbody>';
 
 			$n = 0;
 			foreach($pools as $pool) {
@@ -353,7 +353,7 @@ class PoolsTheme extends Themelet {
 					<th>Updater</th>
 					<th>Date</th>
 					<th>Action</th>
-				</tr></thead>';
+				</tr></thead><tbody>';
 
 		$n = 0;
 		foreach($histories as $history) {
