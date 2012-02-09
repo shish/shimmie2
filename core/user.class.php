@@ -102,6 +102,7 @@ class User {
 				"big_search" => False,      # more than 3 tags (speed mode only)
 				"lock_image" => False,
 				"view_ip" => False,         # view IP addresses associated with things
+				"ban_ip" => False,
 				"change_password" => False,
 				"change_user_info" => False,
 				"delete_user" => False,
@@ -121,6 +122,7 @@ class User {
 				"big_search" => True,
 				"lock_image" => False,
 				"view_ip" => False,
+				"ban_ip" => False,
 				"change_password" => False,
 				"change_user_info" => False,
 				"delete_user" => False,
@@ -141,6 +143,7 @@ class User {
 				"big_search" => True,
 				"lock_image" => True,
 				"view_ip" => True,
+				"ban_ip" => True,
 				"change_password" => True,
 				"change_user_info" => True,
 				"delete_user" => True,
