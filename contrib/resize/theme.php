@@ -4,9 +4,8 @@ class ResizeImageTheme extends Themelet {
 	/*
 	 * Display a link to resize an image
 	 */
-	public function get_resize_html($image_id) {
-		global $user;
-		global $config;
+	public function get_resize_html(/*int*/ $image_id) {
+		global $user, $config;
 
 		$i_image_id = int_escape($image_id);
 		
@@ -20,14 +19,14 @@ class ResizeImageTheme extends Themelet {
 		return $html;
 	}
 	
-	public function display_resize_error(Page $page, $title, $message) {
+	public function display_resize_error(Page $page, /*string*/ $title, /*string*/ $message) {
 		$page->set_title("Resize Image");
 		$page->set_heading("Resize Image");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block($title, $message));
 	}
 	
-	public function display_resize_page(Page $page, $image_id) {
+	public function display_resize_page(Page $page, /*int*/ $image_id) {
 		global $config;
 		
 		$default_width = $config->get_int('resize_default_width');

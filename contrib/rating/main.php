@@ -167,7 +167,7 @@ class Ratings extends Extension {
 		return $sqes;
 	}
 
-	public static function privs_to_sql($sqes) {
+	public static function privs_to_sql(/*string*/ $sqes) {
 		$arr = array();
 		$length = strlen($sqes);
 		for($i=0; $i<$length; $i++) {
@@ -177,7 +177,7 @@ class Ratings extends Extension {
 		return $set;
 	}
 
-	public static function rating_to_human($rating) {
+	public static function rating_to_human(/*string*/ $rating) {
 		switch($rating) {
 			case "s": return "Safe";
 			case "q": return "Questionable";
@@ -225,7 +225,7 @@ class Ratings extends Extension {
 		}
 	}
 
-	private function set_rating($image_id, $rating, $old_rating) {
+	private function set_rating(/*int*/ $image_id, /*string*/ $rating, /*string*/ $old_rating) {
 		global $database;
 		if($old_rating != $rating){
 			$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));

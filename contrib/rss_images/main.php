@@ -2,6 +2,7 @@
 /*
  * Name: RSS for Images
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Self explanatory
  */
@@ -33,7 +34,7 @@ class RSS_Images extends Extension {
 	}
 
 
-	private function do_rss($images, $search_terms, $page_number) {
+	private function do_rss($images, $search_terms, /*int*/ $page_number) {
 		global $page;
 		global $config;
 		$page->set_mode("data");

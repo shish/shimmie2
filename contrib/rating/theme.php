@@ -1,7 +1,7 @@
 <?php
 
 class RatingsTheme extends Themelet {
-	public function get_rater_html($image_id, $rating) {
+	public function get_rater_html(/*int*/ $image_id, /*string*/ $rating) {
 		$i_image_id = int_escape($image_id);
 		$s_checked = $rating == 's' ? " checked" : "";
 		$q_checked = $rating == 'q' ? " checked" : "";
@@ -50,7 +50,7 @@ class RatingsTheme extends Themelet {
 		$page->add_block(new Block("Bulk Rating", $html));
 	}
 
-	public function rating_to_name($rating) {
+	public function rating_to_name(/*string*/ $rating) {
 		switch($rating) {
 			case 's': return "Safe";
 			case 'q': return "Questionable";
