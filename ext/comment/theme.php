@@ -153,7 +153,11 @@ class CommentListTheme extends Themelet {
 				$anoncode = '<sup>'.$this->anon_id.'</sup>';
 				$this->anon_id++;
 			}
-			$h_userlink = "<span class='username'>" . $h_name . $anoncode . "</span>";
+			$style = "";
+			#if($user->can("view_ip")) {
+			#	$style = " style='color: ".ip2color($comment->poster_ip).";'";
+			#}
+			$h_userlink = "<span class='username'$style>" . $h_name . $anoncode . "</span>";
 		}
 		else {
 			$h_userlink = '<a class="username" href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';

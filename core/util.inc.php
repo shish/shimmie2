@@ -197,6 +197,18 @@ function show_ip($ip, $ban_reason) {
 	return $ip;
 }
 
+/**
+ * Turn an IP address into a colour, for easily spotting samefags
+ *
+ * NOTE: this should only be shown to admins, as it can be reversed
+ * to get an original IP address
+ */
+function ip2color($ip) {
+	$b = explode(".", $ip);
+	#return sprintf("#%02x%02x%02x", $b[0]/2, $b[1]/2, $b[2]/2);
+	return sprintf("hsl(%d, %d%%, %d%%)", $b[3]*360/256, $b[2]*100/256, $b[1]*100/256/2);
+}
+
 
 /**
  * Different databases have different ways to represent booleans; this
