@@ -366,6 +366,13 @@ class Tag_History extends Extension {
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
+			/*
+				MySQL does NOT allow you to modify the same table which you use in the SELECT part.
+				Which means that these will probably have to stay as TWO separate queries...
+				
+				http://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
+				http://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
+			*/
 			$min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image->id));
 			$database->execute("DELETE FROM tag_histories WHERE id = ?", array($min_id));
 		}
