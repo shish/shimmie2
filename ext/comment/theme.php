@@ -153,10 +153,10 @@ class CommentListTheme extends Themelet {
 				$anoncode = '<sup>'.$this->anon_id.'</sup>';
 				$this->anon_id++;
 			}
-			$h_userlink = $h_name . $anoncode;
+			$h_userlink = "<span class='username'>" . $h_name . $anoncode . "</span>";
 		}
 		else {
-			$h_userlink = '<a href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
+			$h_userlink = '<a class="username" href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
 		}
 		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
 		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);

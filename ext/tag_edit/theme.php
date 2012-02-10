@@ -42,7 +42,7 @@ class TagEditTheme extends Themelet {
 			<tr>
 				<td>User</td>
 				<td>
-					<span class='view'><a href='".make_link("user/$h_owner")."'>$h_owner</a>$ip, $h_date</span>
+					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
 				</td>
 				<td width='80px' rowspan='4'>$h_av</td>
