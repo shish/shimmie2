@@ -57,12 +57,12 @@ class NotesTheme extends Themelet {
             $parsedNote = str_replace("\r", "\\r", $parsedNote);
 
             $to_json[] = array(
-				'x1': $note["x1"],
-                'y1': $note["y1"],
-                'height': $note["height"],
-                'width': $note["width"],
-                'note': $parsedNote,
-                'note_id': $note["id"],
+				'x1' => $note["x1"],
+                'y1' => $note["y1"],
+                'height' => $note["height"],
+                'width' => $note["width"],
+                'note' => $parsedNote,
+                'note_id' => $note["id"],
 			);
         }
 
