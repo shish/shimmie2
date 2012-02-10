@@ -40,7 +40,7 @@ class TagEditTheme extends Themelet {
 		$ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
 		return "
 			<tr>
-				<td>User</td>
+				<td>Uploader</td>
 				<td>
 					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>

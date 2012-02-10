@@ -471,7 +471,7 @@ class CommentList extends Extension {
 			throw new CommentPostingException("Comment too repetitive~");
 		}
 		else if($user->is_anonymous() && !$this->hash_match()) {
-			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24*$config->get_int('login_memory'), "/");
+			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
 			throw new CommentPostingException(
 					"Comment submission form is out of date; refresh the ".
 					"comment form to show you aren't a spammer~");
