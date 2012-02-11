@@ -241,3 +241,6 @@ UL {
 	text-align: right;
 	padding-right: 4px;
 }
+.image_info .edit {
+	display: none;
+}

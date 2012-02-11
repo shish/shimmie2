@@ -25,8 +25,8 @@ class TagEditTheme extends Themelet {
 			<tr>
 				<td width='50px'>Tags</td>
 				<td width='300px'>
-					<span class='view'>$h_tags</span>
-					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'>
+					<!--<span class='view'>$h_tags</span>-->
+					<input type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor' onfocus='$(\".view\").hide(); $(\".edit\").show();'>
 				</td>
 			</tr>
 		";

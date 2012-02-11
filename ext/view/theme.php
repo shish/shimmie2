@@ -86,11 +86,6 @@ class ViewImageTheme extends Themelet {
 		$html .= "
 					</table>
 				</form>
-				<script>
-				$(function() {
-					$('.edit').hide();
-				});
-				</script>
 		";
 		return $html;
 	}
