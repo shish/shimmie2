@@ -9,7 +9,7 @@ class Tag_History extends Extension {
 	// in before tags are actually set, so that "get current tags" works
 	public function get_priority() {return 40;}
 
-	public function onInitExtEvent(InitExtEvent $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("history_limit", -1);
 
@@ -19,7 +19,7 @@ class Tag_History extends Extension {
 		}
 	}
 
-	public function onAdminBuildingEvent(AdminBuildingEvent $event) {
+	public function onAdminBuilding(AdminBuildingEvent $event) {
 		global $user;
 
 		if(isset($_POST['revert_ip']) && $user->is_admin() && $user->check_auth_token()) {
@@ -110,8 +110,7 @@ class Tag_History extends Extension {
 	}
 	
 	protected function install() {
-		global $database;
-		global $config;
+		global $database, $config;
 
 		if($config->get_int("ext_tag_history_version") < 1) {
 			$database->create_table("tag_histories", "
@@ -188,7 +187,7 @@ class Tag_History extends Extension {
 	 * This function is used by   process_revert_all_changes_by_ip()
 	 * to just revert an image's tag history.
 	 */
-	private function process_revert_request_only($revert_id)
+	private function process_revert_request_only(/*int*/ $revert_id)
 	{
 		if(empty($revert_id)) {
 			return;
@@ -214,7 +213,7 @@ class Tag_History extends Extension {
 		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
 	}
 	
-	public function get_tag_history_from_revert($revert_id)
+	public function get_tag_history_from_revert(/*int*/ $revert_id)
 	{
 		global $database;
 		$row = $database->get_row("
@@ -225,7 +224,7 @@ class Tag_History extends Extension {
 		return ($row ? $row : null);
 	}
 	
-	public function get_tag_history_from_id($image_id)
+	public function get_tag_history_from_id(/*int*/ $image_id)
 	{
 		global $database;
 		$row = $database->get_all("
@@ -315,7 +314,7 @@ class Tag_History extends Extension {
 	/*
 	 * this function is called when an image has been deleted
 	 */
-	private function delete_all_tag_history($image_id)
+	private function delete_all_tag_history(/*int*/ $image_id)
 	{
 		global $database;
 		$database->execute("DELETE FROM tag_histories WHERE image_id = ?", array($image_id));
@@ -326,25 +325,32 @@ class Tag_History extends Extension {
 	 */
 	private function add_tag_history($image, $tags)
 	{
-		global $database;
-		global $config;
-		global $user;
+		global $database, $config, $user;
 
 		$new_tags = Tag::implode($tags);
 		$old_tags = Tag::implode($image->get_tag_array());
-		log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
+		
 		if($new_tags == $old_tags) return;
+		
+		if (empty($old_tags)) {
+			/* no old tags, so we are probably adding the image for the first time */
+			log_debug("tag_history", "adding new tag history: [$new_tags]");
+		} else {
+			log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
+		}
+		
 		$allowed = $config->get_int("history_limit");
 		if($allowed == 0) return;
 		
 		// if the image has no history, make one with the old tags
 		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
 		if($entries == 0){
+			/* We have no tag history for this image, so we will use the new_tags as the starting tags for this image. */
 			/* these two queries could probably be combined */
 			$database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
-				array($image->id, $old_tags, 1, '127.0.0.1')); // TODO: Pick appropriate user id
+				array($image->id, $new_tags, 1, '127.0.0.1')); // TODO: Pick appropriate user id
 			$entries++;
 		}
 
@@ -360,6 +366,13 @@ class Tag_History extends Extension {
 		if($entries > $allowed)
 		{
 			// TODO: Make these queries better
+			/*
+				MySQL does NOT allow you to modify the same table which you use in the SELECT part.
+				Which means that these will probably have to stay as TWO separate queries...
+				
+				http://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
+				http://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
+			*/
 			$min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", array($image->id));
 			$database->execute("DELETE FROM tag_histories WHERE id = ?", array($min_id));
 		}
