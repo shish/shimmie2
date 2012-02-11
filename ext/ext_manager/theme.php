@@ -1,7 +1,7 @@
 <?php
 
 class ExtManagerTheme extends Themelet {
-	public function display_table(Page $page, $extensions, $editable) {
+	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
 		global $user;
 		$en = $editable ? "<th>Enabled</th>" : "";
 		$html = "

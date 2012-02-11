@@ -16,7 +16,7 @@ class FlashFileHandler extends DataHandlerExtension {
 		return in_array(strtolower($ext), $exts);
 	}
 
-	protected function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
 		global $config;
 
 		$image = new Image();
@@ -44,7 +44,7 @@ class FlashFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
-	protected function check_contents($file) {
+	protected function check_contents(/*string*/ $file) {
 		if(!file_exists($file)) return false;
 
 		$fp = fopen($file, "r");
@@ -55,7 +55,7 @@ class FlashFileHandler extends DataHandlerExtension {
 		return true;
 	}
 
-	private function str_to_binarray($string) {
+	private function str_to_binarray(/*string*/ $string) {
 		$binary = array();
 		$length = strlen($string);
 		for($j=0; $j<$length; $j++) {
@@ -76,7 +76,7 @@ class FlashFileHandler extends DataHandlerExtension {
 		return $int;
 	}
 
-	private function swf_get_bounds($filename) {
+	private function swf_get_bounds(/*string*/ $filename) {
 		$fp = fopen($filename, "r");
 		$head = fread($fp, 3);
 		$version = fread($fp, 1);

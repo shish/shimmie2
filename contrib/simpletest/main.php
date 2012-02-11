@@ -2,6 +2,7 @@
 /*
  * Name: SimpleTest integration
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: adds unit testing to SCore
  */

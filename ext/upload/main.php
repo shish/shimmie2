@@ -1,7 +1,8 @@
 <?php
 /**
  * Name: Uploader
- * Author: Shish
+ * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * Description: Allows people to upload files to the website
  */
 
@@ -18,7 +19,7 @@ class DataUploadEvent extends Event {
 	 * @param $tmpname The temporary file used for upload.
 	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
-	public function DataUploadEvent(User $user, $tmpname, $metadata) {
+	public function DataUploadEvent(User $user, /*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
 
 		$this->user = $user;
@@ -272,9 +273,7 @@ class Upload extends Extension {
 	 * @retval bool TRUE on upload successful.
 	 */
 	private function try_upload($file, $tags, $source, $replace='') {
-		global $page;
-		global $config;
-		global $user;
+		global $page, $config, $user;
 
 		if(empty($source)) $source = null;
 
@@ -322,9 +321,7 @@ class Upload extends Extension {
 	 * @retval bool TRUE on transload successful.
 	 */
 	private function try_transload($url, $tags, $source, $replace='') {
-		global $page;
-		global $config;
-		global $user;
+		global $page, $config, $user;
 
 		$ok = true;
 

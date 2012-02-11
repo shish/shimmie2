@@ -671,16 +671,16 @@ define("SCORE_LOG_NOTSET", 0);
 /**
  * A shorthand way to send a LogEvent
  */
-function log_msg($section, $priority, $message) {
+function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message) {
 	send_event(new LogEvent($section, $priority, $message));
 }
 
 // More shorthand ways of logging
-function log_debug($section, $message) {log_msg($section, SCORE_LOG_DEBUG, $message);}
-function log_info($section, $message)  {log_msg($section, SCORE_LOG_INFO, $message);}
-function log_warning($section, $message) {log_msg($section, SCORE_LOG_WARNING, $message);}
-function log_error($section, $message) {log_msg($section, SCORE_LOG_ERROR, $message);}
-function log_critical($section, $message) {log_msg($section, SCORE_LOG_CRITICAL, $message);}
+function log_debug(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_DEBUG, $message);}
+function log_info(/*string*/ $section, /*string*/ $message)  {log_msg($section, SCORE_LOG_INFO, $message);}
+function log_warning(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_WARNING, $message);}
+function log_error(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_ERROR, $message);}
+function log_critical(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_CRITICAL, $message);}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\

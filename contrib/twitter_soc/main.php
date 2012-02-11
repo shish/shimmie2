@@ -2,6 +2,7 @@
 /*
  * Name: Tweet!
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Show a twitter feed with the Sea of Clouds script
  */

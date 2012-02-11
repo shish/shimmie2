@@ -53,7 +53,7 @@ class BulkAdd extends Extension {
 		}
 	}
 
-	private function add_dir($base, $subdir="") {
+	private function add_dir(/*string*/ $base, $subdir="") {
 		global $page;
 
 		if(!is_dir($base)) {

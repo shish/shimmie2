@@ -2,6 +2,7 @@
 /*
  * Name: Resolution Limiter
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allows the admin to set min / max image dimentions
  */

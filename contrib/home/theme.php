@@ -25,7 +25,7 @@ EOD
 );
 	}
 
-	public function build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text) {
+	public function build_body(/*string*/ $sitename, /*string*/ $main_links, /*string*/ $main_text, /*string*/ $contact_link, $num_comma, /*string*/ $counter_text) {
 		$main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
 		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
 		$counter_html = empty($counter_text)  ? "" : "<div class='space' id='counter'>$counter_text</div>";

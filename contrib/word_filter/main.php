@@ -2,6 +2,7 @@
 /*
  * Name: Word Filter
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Simple search and replace
  */
@@ -22,7 +23,7 @@ class WordFilter extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	private function filter($text) {
+	private function filter(/*string*/ $text) {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {
 			$search = trim($search);
