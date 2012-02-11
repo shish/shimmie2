@@ -129,13 +129,14 @@ UL {
 }
 .comment {
 	text-align: left;
+	position: relative;
 }
 .comment .info {
 	visibility: hidden;
 	text-align: center;
 	padding: 8px;
-	background: #ACE4A3;
-	border: 1px solid #7EB977;
+	background: #DDD;
+	border: 1px solid #CCC;
 	position: absolute;
 	top: 0px;
 	right: 0px;
