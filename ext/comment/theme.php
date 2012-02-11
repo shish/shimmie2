@@ -73,7 +73,7 @@ class CommentListTheme extends Themelet {
 
 			$html  = '
 				<table class="comment_list_table"><tr>
-					<td>'.$thumb_html.'</td>
+					<td width="220">'.$thumb_html.'</td>
 					<td>'.$comment_html.'</td>
 				</tr></table>
 			';
