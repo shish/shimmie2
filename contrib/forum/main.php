@@ -173,7 +173,7 @@ class Forum extends Extension {
             }
 	}
 
-        private function get_total_pages_for_thread($threadID)
+        private function get_total_pages_for_thread(/*int*/ $threadID)
         {
             global $database, $config;
             $result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = ?", array($threadID));

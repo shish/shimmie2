@@ -21,7 +21,7 @@ class LinkImage extends Extension {
 		$config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
 	}
 
-	private function hostify($str) {
+	private function hostify(/*string*/ $str) {
 		$str = str_replace(" ", "%20", $str);
 		if(strpos($str, "ttp://") > 0) {
 			return $str;

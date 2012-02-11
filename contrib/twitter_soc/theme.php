@@ -4,7 +4,7 @@ class TwitterSocTheme extends Themelet {
 	/*
 	 * Show $text on the $page
 	 */
-	public function display_feed(Page $page, $username) {
+	public function display_feed(Page $page, /*string*/ $username) {
 		$page->add_block(new Block("Tweets", '
 			<div class="tweet_soc"></div>
 			<p><a href="http://twitter.com/'.url_escape($username).'">Follow us on Twitter</a>

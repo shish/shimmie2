@@ -2,6 +2,7 @@
 /*
  * Name: RSS for Comments
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Self explanatory
  */

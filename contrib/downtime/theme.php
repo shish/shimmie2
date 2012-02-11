@@ -12,7 +12,7 @@ class DowntimeTheme extends Themelet {
 	/**
 	 * Display $message and exit
 	 */
-	public function display_message($message) {
+	public function display_message(/*string*/ $message) {
 		global $config, $user;
 		$theme_name = $config->get_string('theme');
 		$data_href = get_base_href();

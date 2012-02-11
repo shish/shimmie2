@@ -1,7 +1,7 @@
 <?php
 class ArtistsTheme extends Themelet {
 
-	public function get_author_editor_html($author) {
+	public function get_author_editor_html(/*string*/ $author) {
 		$h_author = html_escape($author);
 		return "<tr><td>Author</td><td><input class='editor_author' type='text' name='tag_edit__author' value='$h_author'></td></tr>";
 	}
@@ -16,7 +16,7 @@ class ArtistsTheme extends Themelet {
 		//$this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
 	}
 	
-	public function sidebar_options($mode, $artistID=NULL, $is_admin=FALSE){
+	public function sidebar_options(/*string*/ $mode, $artistID=NULL, $is_admin=FALSE){
 		global $page;
 		
 		if($mode == "neutral"){

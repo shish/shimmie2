@@ -137,7 +137,7 @@ class AdminPage extends Extension {
 		$database->Execute("DELETE FROM tags WHERE count=0");
 	}
 
-	private function dbdump($page) {
+	private function dbdump(Page $page) {
 		$matches = array();
 		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", DATABASE_DSN, $matches);
 		$software = $matches[1];
@@ -146,6 +146,7 @@ class AdminPage extends Extension {
 		$hostname = $matches[4];
 		$database = $matches[5];
 
+		// TODO: Support more than just MySQL..
 		switch($software) {
 			case 'mysql':
 				$cmd = "mysqldump -h$hostname -u$username -p$password $database";
@@ -222,7 +223,7 @@ class AdminPage extends Extension {
 		$database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
 	}
 
-	private function imgdump($page) {
+	private function imgdump(Page $page) {
 		global $database;
 		$zip = new ZipArchive;
 		$images = $database->get_all("SELECT * FROM images");

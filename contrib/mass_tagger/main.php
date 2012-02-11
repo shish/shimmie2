@@ -31,7 +31,7 @@ class MassTagger extends Extension {
 		if($event->get_arg(0) == "tag") $this->_apply_mass_tags( $config, $page, $user, $event );
 	}
 	
-	private function _apply_mass_tags( $config, $page, $user, $event ) {
+	private function _apply_mass_tags( $config, Page $page, $user, $event ) {
 		if( !isset($_POST['ids']) or !isset($_POST['tag']) ) return;
 		
 		$tag = $_POST['tag'];

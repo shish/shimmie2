@@ -7,7 +7,7 @@
 class Tag_HistoryTheme extends Themelet {
 	var $messages = array();
 
-	public function display_history_page(Page $page, $image_id, $history) {
+	public function display_history_page(Page $page, /*int*/ $image_id, /*array*/ $history) {
 		global $user;
 		$start_string = "
 			<div style='text-align: left'>
@@ -50,7 +50,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_global_page(Page $page, $history) {
+	public function display_global_page(Page $page, /*array*/ $history) {
 		$start_string = "
 			<div style='text-align: left'>
 				".make_form(make_link("tag_history/revert"))."
@@ -91,7 +91,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_history_link(Page $page, $image_id) {
+	public function display_history_link(Page $page, /*int*/ $image_id) {
 		$link = '<a href="'.make_link('tag_history/'.$image_id).'">Tag History</a>';
 		$page->add_block(new Block(null, $link, "main", 5));
 	}
@@ -99,7 +99,7 @@ class Tag_HistoryTheme extends Themelet {
 	/*
 	 * Add a section to the admin page.
 	 */
-	public function display_admin_block($validation_msg='') {
+	public function display_admin_block(/*string*/ $validation_msg='') {
 		global $page;
 		
 		if (!empty($validation_msg)) {
@@ -130,7 +130,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Revert by IP", $html));
 	}
 	
-	public function add_status($title, $body) {
+	public function add_status(/*string*/ $title, /*string*/ $body) {
 		$this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
 	}
 }
