@@ -22,27 +22,22 @@ class IPBanTheme extends Themelet {
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
 				<tr class='$oe'>
-					<td width='10%'>{$ban[$prefix.'ip']}</td>
+					<td width='12%'>{$ban[$prefix.'ip']}</td>
 					<td>{$ban[$prefix.'reason']}</td>
 					<td width='10%'>{$ban['banner_name']}</td>
 					<td width='15%'>{$end_human}</td>
-					<td width='10%'>
-						".make_form(make_link("ip_ban/remove"))."
+					".make_form(make_link("ip_ban/remove"))."
+					<td width='8%'>
 							<input type='hidden' name='id' value='{$ban[$prefix.'id']}'>
 							<input type='submit' value='Remove'>
-						</form>
 					</td>
+					</form>
 				</tr>
 			";
 		}
 		$html = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$(\"#bans\").tablesorter();
-			});
-			</script>
 			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
-			<p><table id='bans' class='zebra'>
+			<p><table id='bans' class='sortable zebra'>
 				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>Until</th><th>Action</th></tr></thead>
 				$h_bans
 				<tfoot><tr id='add'>
