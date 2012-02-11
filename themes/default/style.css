@@ -131,7 +131,20 @@ UL {
 	text-align: left;
 }
 .comment .info {
-	display: none;
+	visibility: hidden;
+	text-align: center;
+	padding: 8px;
+	background: #ACE4A3;
+	border: 1px solid #7EB977;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	z-index: 1;
+	box-shadow: 0px 0px 4px #000;
+	border-radius: 4px;
+}
+.comment:hover .info {
+	visibility: visible;
 }
 
 .more:after {
