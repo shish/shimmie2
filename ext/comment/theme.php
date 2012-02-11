@@ -2,6 +2,26 @@
 class CommentListTheme extends Themelet {
 	var $comments_shown = 0;
 	var $anon_id = 1;
+	var $anon_cid = 0;
+	var $anon_map = array();
+	var $ct = null;
+
+	private function get_anon_colour($ip) {
+		if(is_null($this->ct)) {
+			$ct = Array();
+			$s = 100; $l = 25; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$s = 100; $l = 50; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$s =  50; $l = 25; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$s = 100; $l = 25; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$s = 100; $l = 50; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$s =  50; $l = 25; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
+			$this->ct = $ct;
+		}
+		if(!array_key_exists($ip, $this->anon_map)) {
+			$this->anon_map[$ip] = $this->ct[$this->anon_cid++ % count($this->ct)];
+		}
+		return $this->anon_map[$ip];
+	}
 
 	/**
 	 * Display a page with a list of images, and for each image,
@@ -51,8 +71,11 @@ class CommentListTheme extends Themelet {
 				$hidden = $comment_count - $comment_limit;
 				$comment_html .= '<p>showing '.$comment_limit.' of '.$comment_count.' comments</p>';
 				$comments = array_slice($comments, -$comment_limit);
+				$this->anon_id = -1;
 			}
-			$this->anon_id = 1;
+			else {
+				$this->anon_id = 1;
+			}
 			foreach($comments as $comment) {
 				$comment_html .= $this->comment_to_html($comment);
 			}
@@ -134,7 +157,7 @@ class CommentListTheme extends Themelet {
 
 
 	protected function comment_to_html($comment, $trim=false) {
-		global $user;
+		global $config, $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
 		send_event($tfe);
@@ -147,16 +170,16 @@ class CommentListTheme extends Themelet {
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
-		if($h_name == "Anonymous") {
+		if($i_uid == $config->get_int("anon_id")) {
 			$anoncode = "";
 			if($this->anon_id >= 0) {
 				$anoncode = '<sup>'.$this->anon_id.'</sup>';
 				$this->anon_id++;
 			}
 			$style = "";
-			#if($user->can("view_ip")) {
-			#	$style = " style='color: ".ip2color($comment->poster_ip).";'";
-			#}
+			if($user->can("view_ip")) {
+				$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
+			}
 			$h_userlink = "<span class='username'$style>" . $h_name . $anoncode . "</span>";
 		}
 		else {
