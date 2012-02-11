@@ -2,6 +2,7 @@
 /*
  * Name: Generic Blocks
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Add HTML to some space
  * Documentation:

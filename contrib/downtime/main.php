@@ -2,6 +2,7 @@
 /*
  * Name: Downtime
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Show a "down for maintenance" page
  * Documentation:
@@ -14,14 +15,14 @@
 class Downtime extends Extension {
 	public function get_priority() {return 10;}
 
-	public function onSetupBuilding($event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Downtime");
 		$sb->add_bool_option("downtime", "Disable non-admin access: ");
 		$sb->add_longtext_option("downtime_message", "<br>");
 		$event->panel->add_block($sb);
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
 		if($config->get_bool("downtime")) {

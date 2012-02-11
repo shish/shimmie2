@@ -8,7 +8,7 @@ class FeaturedTheme extends Themelet {
 		$page->add_block(new Block("Featured Image", $this->build_featured_html($image), "left", 3));
 	}
 
-	public function get_buttons_html($image_id) {
+	public function get_buttons_html(/*int*/ $image_id) {
 		global $user;
 		return "
 			".make_form(make_link("featured_image/set"))."

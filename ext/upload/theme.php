@@ -155,7 +155,7 @@ class UploadTheme extends Themelet {
 	}
 
 	/* only allows 1 file to be uploaded - for replacing another image file */
-	public function display_replace_page(Page $page, $image_id) {
+	public function display_replace_page(Page $page, /*int*/ $image_id) {
 		global $config, $page;
 		$page->add_html_header("<link rel='stylesheet' href='".get_base_href()."/ext/upload/_style.css' type='text/css'>");
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
@@ -211,7 +211,7 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block("Upload Replacement Image", $html, "main", 20));
 	}
 	
-	public function display_upload_status(Page $page, $ok) {
+	public function display_upload_status(Page $page, /*bool*/ $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link());
@@ -223,7 +223,7 @@ class UploadTheme extends Themelet {
 		}
 	}
 
-	public function display_upload_error(Page $page, $title, $message) {
+	public function display_upload_error(Page $page, /*string*/ $title, /*string*/ $message) {
 		$page->add_block(new Block($title, $message));
 	}
 

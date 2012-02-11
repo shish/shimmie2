@@ -2,6 +2,7 @@
 /**
  * Name: Handle Pixel
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * Description: Handle JPEG, PNG, GIF, etc files
  */
 
@@ -17,7 +18,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		return in_array(strtolower($ext), $exts);
 	}
 
-	protected function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
 		global $config;
 
 		$image = new Image();
@@ -38,7 +39,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
-	protected function check_contents($file) {
+	protected function check_contents(/*string*/ $file) {
 		$valid = Array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG);
 		if(!file_exists($file)) return false;
 		$info = getimagesize($file);
@@ -47,7 +48,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		return false;
 	}
 
-	protected function create_thumb($hash) {
+	protected function create_thumb(/*string*/ $hash) {
 		$outname = warehouse_path("thumbs", $hash);
 		if(file_exists($outname)) {
 			return true;
@@ -55,7 +56,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $this->create_thumb_force($hash);
 	}
 
-	protected function create_thumb_force($hash) {
+	protected function create_thumb_force(/*string*/ $hash) {
 		$inname  = warehouse_path("images", $hash);
 		$outname = warehouse_path("thumbs", $hash);
 		global $config;
@@ -76,7 +77,7 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 // IM thumber {{{
-	private function make_thumb_convert($inname, $outname) {
+	private function make_thumb_convert(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 
 		$w = $config->get_int("thumb_width");
@@ -113,7 +114,7 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 // }}}
 // epeg thumber {{{
-	private function make_thumb_epeg($inname, $outname) {
+	private function make_thumb_epeg(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 		$w = $config->get_int("thumb_width");
 		exec("epeg $inname -c 'Created by EPEG' --max $w $outname");
@@ -121,7 +122,7 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 	// }}}
 // GD thumber {{{
-	private function make_thumb_gd($inname, $outname) {
+	private function make_thumb_gd(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 		$thumb = $this->get_thumb($inname);
 		$ok = imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
@@ -129,7 +130,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $ok;
 	}
 
-	private function get_thumb($tmpname) {
+	private function get_thumb(/*string*/ $tmpname) {
 		global $config;
 
 		$info = getimagesize($tmpname);
@@ -165,7 +166,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		}
 	}
 
-	private function read_file($fname) {
+	private function read_file(/*string*/ $fname) {
 		$fp = fopen($fname, "r");
 		if(!$fp) return false;
 

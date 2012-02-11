@@ -3,6 +3,7 @@
  * Name: Image Manager
  * Author: Shish <webmaster@shishnet.org>
  * Modified by: jgen <jgen.tech@gmail.com>
+ * Link: http://code.shishnet.org/shimmie2/
  * Description: Handle the image database
  * Visibility: admin
  */
@@ -280,10 +281,7 @@ class ImageIO extends Extension {
 
 // add image {{{
 	private function add_image($image) {
-		global $page;
-		global $user;
-		global $database;
-		global $config;
+		global $page, $user, $database, $config;
 
 		/*
 		 * Validate things

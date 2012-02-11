@@ -51,7 +51,7 @@ class LinkImageTheme extends Themelet {
 			50));
 	}
 
-	protected function url ($url,$content,$type) {
+	protected function url (/*string*/ $url, /*string*/ $content, /*string*/ $type) {
 		if ($content == NULL) {$content=$url;}
 
 		switch ($type) {
@@ -67,7 +67,7 @@ class LinkImageTheme extends Themelet {
 		return $text;
 	}
 
-	protected function img ($src,$type) {
+	protected function img (/*string*/ $src, /*string*/ $type) {
 		switch ($type) {
 			case "html":
 				$text = "<img src=\"$src\" />";
@@ -81,7 +81,7 @@ class LinkImageTheme extends Themelet {
 		return $text;
 	}
 
-	protected function link_code($label,$content,$id=NULL) {
+	protected function link_code(/*string*/ $label, /*string*/ $content, $id=NULL) {
 		return	"
 			<tr>
 				<td><label for='".$id."' title='Click to select the textbox'>$label</label></td>

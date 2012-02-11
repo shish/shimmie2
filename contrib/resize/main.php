@@ -143,16 +143,14 @@ class ResizeImage extends Extension {
 	
 	
 	// Private functions
+	/* ----------------------------- */
 	
 	/*
 		This function could be made much smaller by using the ImageReplaceEvent
 		ie: Pretend that we are replacing the image with a resized copy.
 	*/
-	private function resize_image($image_id, $width, $height) {
-		global $config;
-		global $user;
-		global $page;
-		global $database;
+	private function resize_image(/*int*/ $image_id, /*int*/ $width, /*int*/ $height) {
+		global $config, $user, $page, $database;
 		
 		if ( ($height <= 0) && ($width <= 0) ) {
 			throw new ImageResizeException("Invalid options for height and width. ($width x $height)");

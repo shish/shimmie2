@@ -2,6 +2,7 @@
 /**
  * Name: Bookmarks
  * Author: Shish <webmaster@shishnet.org>
+ * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allow users to bookmark searches
  */
@@ -59,7 +60,7 @@ class Bookmarks extends Extension {
 		else {return array();}
 	}
 
-	private function add_bookmark($url, $title) {
+	private function add_bookmark(/*string*/ $url, /*string*/ $title) {
 		global $database;
 		$sql = "INSERT INTO bookmark(owner_id, url, title) VALUES (?, ?, ?)";
 		$database->Execute($sql, array($user->id, $url, $title));
