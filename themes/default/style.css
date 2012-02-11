@@ -50,6 +50,7 @@ CODE {
 	font-size: 0.8em;
 }
 #body SELECT {width: 150px;}
+TD>INPUT {box-sizing: border-box;}
 TD>INPUT[type="button"] {width: 100%;}
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
