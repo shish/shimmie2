@@ -52,7 +52,7 @@ class ReportImage extends Extension {
 			}
 			else if($event->get_arg(0) == "remove") {
 				if(isset($_POST['id'])) {
-					if($user->can("view_image_reort")) {
+					if($user->can("view_image_report")) {
 						send_event(new RemoveReportedImageEvent($_POST['id']));
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_report/list"));
