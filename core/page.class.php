@@ -235,7 +235,10 @@ class Page {
 	}
 	
 	protected function add_auto_html_headers() {
+		global $config;
+
 		$data_href = get_base_href();
+		$theme_name = $config->get_string('theme', 'default');
 
 		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>");
 		
@@ -247,6 +250,12 @@ class Page {
 				$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css.'" type="text/css">');
 			}
 			$css_files = glob("ext/*/style.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
+				}
+			}
+			$css_files = glob("themes/$theme_name/style.css");
 			if($css_files) {
 				foreach($css_files as $css_file) {
 					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
