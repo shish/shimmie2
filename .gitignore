@@ -40,6 +40,7 @@ ext/log_db
 ext/mass_tagger
 ext/news
 ext/notes
+ext/not_a_tag
 ext/numeric_score
 ext/oekaki
 ext/piclens
