@@ -90,10 +90,10 @@ class Upload extends Extension {
 		$sb = new SetupBlock("Upload");
 		$sb->position = 10;
 		// Output the limits from PHP so the user has an idea of what they can set.
-		$sb->add_label("<i>PHP's Upload Limit = ".ini_get('max_file_uploads')."</i><br/>");
 		$sb->add_int_option("upload_count", "Max uploads: ");
-		$sb->add_label("<br/><i>PHP's Max Size Upload = ".ini_get('upload_max_filesize')."</i><br/>");
+		$sb->add_label("<i>PHP Limit = ".ini_get('max_file_uploads')."</i>");
 		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
+		$sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
 		$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
 		$sb->add_bool_option("upload_replace", "<br/>Allow replacing images: ");
 		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
