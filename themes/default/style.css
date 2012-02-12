@@ -121,33 +121,6 @@ UL {
 	padding: 0px;
 }
 
-#comments P {
-	text-align: left;
-	width: 150px;
-	max-width: 150px;
-	overflow: hidden;
-}
-.comment {
-	text-align: left;
-	position: relative;
-}
-.comment .info {
-	visibility: hidden;
-	text-align: center;
-	padding: 8px;
-	background: #DDD;
-	border: 1px solid #CCC;
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	z-index: 1;
-	box-shadow: 0px 0px 4px #000;
-	border-radius: 4px;
-}
-.comment:hover .info {
-	visibility: visible;
-}
-
 .more:after {
 	content: " >>>";
 }
@@ -200,42 +173,6 @@ UL {
 	padding: 8px 4px 8px 4px;
 }
 
-.setupblocks {
-	column-width: 400px;
-	-moz-column-width: 400px;
-	-webkit-column-width: 400px;
-	max-width: 1200px;
-	margin: auto;
-}
-.setupblocks .rr {
-	break-inside: avoid;
-	-moz-break-inside: avoid;
-	-webkit-break-inside: avoid;
-	column-break-inside: avoid;
-	-moz-column-break-inside: avoid;
-	-webkit-column-break-inside: avoid;
-}
-.setupblock {
-	text-align: center;
-	width: 100%;
-}
-.setupblock TEXTAREA {
-	width: 100%;
-	font-size: 0.75em;
-	resize: vertical;
-}
-
-.helpable {
-	border-bottom: 1px dashed gray;
-}
-
-.ok {
-	background: #AFA;
-}
-.bad {
-	background: #FAA;
-}
-
 #nav .thumbblock {
 	float: none;
 	height: auto;
@@ -265,13 +202,3 @@ UL {
 	margin: auto;
 }
 
-.image_info TD {
-	text-align: left;
-}
-.image_info TD:first-child {
-	text-align: right;
-	padding-right: 4px;
-}
-.image_info .edit {
-	display: none;
-}

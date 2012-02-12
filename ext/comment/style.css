@@ -1,0 +1,27 @@
+
+#comments P {
+	text-align: left;
+	width: 150px;
+	max-width: 150px;
+	overflow: hidden;
+}
+.comment {
+	text-align: left;
+	position: relative;
+}
+.comment .info {
+	visibility: hidden;
+	text-align: center;
+	padding: 8px;
+	background: #DDD;
+	border: 1px solid #CCC;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	z-index: 1;
+	box-shadow: 0px 0px 4px #000;
+	border-radius: 4px;
+}
+.comment:hover .info {
+	visibility: visible;
+}

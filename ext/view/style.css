@@ -1,0 +1,12 @@
+
+.image_info TD {
+	text-align: left;
+}
+.image_info TD:first-child {
+	text-align: right;
+	padding-right: 4px;
+}
+.image_info .edit {
+	display: none;
+}
+
