@@ -82,8 +82,9 @@ class ReportImage extends Extension {
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config, $user, $page;
-		if($config->get_bool('report_image_anon') || !$user->is_anonymous()) {
-			$this->theme->display_image_banner($page, $event->image);
+		if($user->can('report_image')) {
+			$reps = $this->get_reporters($event->image);
+			$this->theme->display_image_banner($event->image, $reps);
 		}
 	}
 
@@ -120,6 +121,16 @@ class ReportImage extends Extension {
 			");
 			$config->set_int("ext_report_image_version", 1);
 		}
+	}
+
+	public function get_reporters(Image $image) {
+		global $database;
+		return $database->get_col("
+			SELECT users.name
+			FROM image_reports
+			JOIN users ON reporter_id = users.id
+			WHERE image_reports.image_id = :image_id
+		", array("image_id" => $image->id));
 	}
 
 	public function get_reported_images() {

@@ -115,6 +115,7 @@ class User {
 				"edit_image_source" => $config->get_bool("source_edit_anon"),
 				"edit_image_owner" => False,
 				"mass_tag_edit" => False,
+				"report_image" => $config->get_bool('report_image_anon'),
 			),
 			"user" => array(
 				"change_setting" => False,
@@ -136,6 +137,7 @@ class User {
 				"edit_image_source" => True,
 				"edit_image_owner" => False,
 				"mass_tag_edit" => False,
+				"report_image" => True,
 			),
 			"admin" => array(
 				"change_setting" => True,
@@ -156,6 +158,7 @@ class User {
 				"edit_image_source" => True,
 				"edit_image_owner" => True,
 				"mass_tag_edit" => True,
+				"report_image" => True,
 			),
 		);
 

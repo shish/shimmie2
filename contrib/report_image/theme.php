@@ -68,11 +68,15 @@ class ReportImageTheme extends Themelet {
 
 	}
 
-	public function display_image_banner(Page $page, Image $image) {
-		global $config;
+	public function display_image_banner(Image $image, /*array*/ $reporters) {
+		global $config, $page;
 
 		$i_image = int_escape($image->id);
-		$html = "
+		$html = "";
+		if(count($reporters) > 0) {
+			$html .= "<b>Image reported by ".html_escape(implode(", ", $reporters))."</b><p>";
+		}
+		$html .= "
 			".make_form(make_link("image_report/add"))."
 				<input type='hidden' name='image_id' value='$i_image'>
 				<input type='text' name='reason' value='Please enter a reason' onclick='this.value=\"\";'>
