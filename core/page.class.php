@@ -241,6 +241,11 @@ class Page {
 		$theme_name = $config->get_string('theme', 'default');
 
 		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>");
+
+		if(file_exists("themes/$theme_name/favicon.ico")) {
+			$this->add_html_header("<link rel='icon' href='$data_href/themes/$theme_name/favicon.ico'>");
+			$this->add_html_header("<link rel='shortcut icon' href='$data_href/themes/$theme_name/favicon.ico'>");
+		}
 		
 		/* Attempt to cache the CSS & JavaScript files */
 		if ($this->add_cached_auto_html_headers() === FALSE) {
