@@ -248,7 +248,7 @@ class UploadTheme extends Themelet {
 				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'>
 				<input type='submit' value='Post'>
 			</form>
-			<small>(Max file size is $max_kb)</small></div>
+			<small>(Max file size is $max_kb)</small>
 			<noscript><a href='".make_link("upload")."'>Larger Form</a></noscript>
 			</div>
 		";
