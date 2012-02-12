@@ -15,8 +15,6 @@ class SetupTheme extends Themelet {
 	public function display_page(Page $page, SetupPanel $panel) {
 		global $user;
 
-		$setupblock_html1 = "";
-		$setupblock_html2 = "";
 
 		usort($panel->blocks, "blockcmp");
 
@@ -24,29 +22,16 @@ class SetupTheme extends Themelet {
 		 * Try and keep the two columns even; count the line breaks in
 		 * each an calculate where a block would work best
 		 */
-		$len1 = 0;
-		$len2 = 0;
+		$setupblock_html = "";
 		foreach($panel->blocks as $block) {
-			if($block instanceof SetupBlock) {
-				$html = $this->sb_to_html($block);
-				$len = count(explode("<br>", $html))+1;
-				if($len1 <= $len2) {
-					$setupblock_html1 .= $this->sb_to_html($block);
-					$len1 += $len;
-				}
-				else {
-					$setupblock_html2 .= $this->sb_to_html($block);
-					$len2 += $len;
-				}
-			}
+			$html = $this->sb_to_html($block);
+			$setupblock_html .= $this->sb_to_html($block);
 		}
 
 		$table = "
 			".make_form(make_link("setup/save"))."
-				<table style='max-width: 1000px;'>
-				<tr><td width='50%'>$setupblock_html1</td><td>$setupblock_html2</td></tr>
-				<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
-				</table>
+				<div class='setupblocks'>$setupblock_html</div>
+				<input type='submit' value='Save Settings'>
 			</form>
 			";
 

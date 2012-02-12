@@ -200,6 +200,18 @@ UL {
 	padding: 8px 4px 8px 4px;
 }
 
+.setupblocks {
+	column-width: 400px;
+	-moz-column-width: 400px;
+	-webkit-column-width: 400px;
+	max-width: 1200px;
+	margin: auto;
+}
+.setupblocks .rr {
+	column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	-webkit-column-break-inside: avoid;
+}
 .setupblock {
 	text-align: center;
 	width: 100%;
@@ -207,6 +219,7 @@ UL {
 .setupblock TEXTAREA {
 	width: 100%;
 	font-size: 0.75em;
+	resize: vertical;
 }
 
 .helpable {
