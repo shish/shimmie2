@@ -1,4 +1,16 @@
 <?php
+/**
+ * These are the default configuration options for Shimmie.
+ *
+ * All of these can be over-ridden by placing a 'define' in config.php
+ *
+ * Do NOT change them in this file. These are the defaults only!
+ *
+ * Example:
+ *  define("SPEED_HAX", true);
+ *
+ */
+
 // to change these system-level settings, do define("FOO", 123); in config.php
 function _d($name, $value) {if(!defined($name)) define($name, $value);}
 _d("DATABASE_DSN", null);    // string   PDO database connection details
@@ -18,4 +30,5 @@ _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in
 _d("VERSION", 'trunk');      // string   shimmie version
 _d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
 _d("TIMEZONE", null);        // string   timezone
+
 ?>
