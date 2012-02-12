@@ -45,10 +45,6 @@ TD {
 	vertical-align: top;
 	text-align: center;
 }
-CODE {
-	background: #DEDEDE;
-	font-size: 0.8em;
-}
 #body SELECT {width: 150px;}
 TD>INPUT, TEXTAREA {box-sizing: border-box;}
 TD>INPUT[type="button"] {width: 100%;}
@@ -80,12 +76,6 @@ IMG {border: none;}
 FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
-
-BLOCKQUOTE {
-	border: 1px solid black;
-	padding: 8px;
-	background: #DDD;
-}
 
 UL {
 	text-align: left;
