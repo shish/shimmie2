@@ -52,7 +52,7 @@ class ReportImage extends Extension {
 			}
 			else if($event->get_arg(0) == "remove") {
 				if(isset($_POST['id'])) {
-					if($user->is_admin()) {
+					if($user->can("view_image_reort")) {
 						send_event(new RemoveReportedImageEvent($_POST['id']));
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_report/list"));
@@ -60,7 +60,7 @@ class ReportImage extends Extension {
 				}
 			}
 			else if($event->get_arg(0) == "list") {
-				if($user->is_admin()) {
+				if($user->can("view_image_report")) {
 					$this->theme->display_reported_images($page, $this->get_reported_images());
 				}
 			}
@@ -97,8 +97,10 @@ class ReportImage extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
-			$event->add_link("Reported Images", make_link("image_report/list"));
+		if($user->can("view_image_report")) {
+			$count = $this->count_reported_images();
+			$h_count = $count > 0 ? " ($count)" : "";
+			$event->add_link("Reported Images$h_count", make_link("image_report/list"));
 		}
 	}
 
@@ -154,6 +156,11 @@ class ReportImage extends Extension {
 		}
 
 		return $reports;
+	}
+
+	public function count_reported_images() {
+		global $database;
+		return $database->get_one("SELECT count(*) FROM image_reports");
 	}
 }
 //  ===== Changelog =====
