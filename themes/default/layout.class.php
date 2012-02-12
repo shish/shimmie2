@@ -54,7 +54,6 @@ class Layout {
 <html>
 	<head>
 		<title>{$page->title}</title>
-		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 $header_html
 	</head>
