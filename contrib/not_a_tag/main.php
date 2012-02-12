@@ -17,15 +17,20 @@ class NotATag extends Extension {
 		$this->scan($event->tags);
 	}
 
-	private function scan($tags) {
+	private function scan(/*array*/ $tags_mixed) {
 		global $config;
+
 		$text = $config->get_string("not_a_tag_untags");
 		if(empty($text)) return;
+
+		$tags = array();
+		foreach($tags_mixed as $tag) $tags[] = strtolower($tag);
+
 		$pairs = explode("\n", $text);
 		foreach($pairs as $pair) {
 			$tag_url = explode(",", $pair);
 			if(count($tag_url) != 2) continue;
-			$tag = $tag_url[0];
+			$tag = strtolower($tag_url[0]);
 			$url = $tag_url[1];
 			if(in_array($tag, $tags)) {
 				header("Location: $url");
