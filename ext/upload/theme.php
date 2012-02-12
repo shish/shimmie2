@@ -236,20 +236,21 @@ class UploadTheme extends Themelet {
 		for($i=0; $i<$upload_count; $i++) {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
-			$upload_list .= "<input size='10' ".
-				"id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" type='file'>\n";
+			$upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" type='file'>\n";
 		}
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
+			<div class='mini_upload'>
 			".make_form(make_link("upload"), "POST", $multipart=True)."
 				$upload_list
 				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'>
 				<input type='submit' value='Post'>
 			</form>
-			<div id='upload_completions' style='clear: both;'><small>(Max file size is $max_kb)</small></div>
+			<small>(Max file size is $max_kb)</small></div>
 			<noscript><a href='".make_link("upload")."'>Larger Form</a></noscript>
+			</div>
 		";
 	}
 }
