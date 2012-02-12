@@ -157,9 +157,10 @@ class Image {
 			return $total;
 		}
 		else if(count($tags) == 1 && !preg_match("/[:=><]/", $tags[0])) {
+			$term = Tag::resolve_alias($tags[0]);
 			return $database->get_one(
 				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
-				array("tag"=>$tags[0]));
+				array("tag"=>$term));
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
