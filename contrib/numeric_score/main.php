@@ -37,9 +37,11 @@ class NumericScore extends Extension {
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page;
-		$html = $this->theme->get_nuller_html($event->display_user);
-		$page->add_block(new Block("Votes", $html, "main", 60));
+		global $page, $user;
+		if($user->is_admin()) {
+			$html = $this->theme->get_nuller_html($event->display_user);
+			$page->add_block(new Block("Votes", $html, "main", 60));
+		}
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
