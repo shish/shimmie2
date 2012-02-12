@@ -79,8 +79,8 @@ class SetupBlock extends Block {
 		if(!is_null($label)) {
 			$this->body .= "<label for='$name'>$label</label>";
 		}
-		$this->body .= "<textarea rows='5' id='$name' name='_config_$name'>$val</textarea>\n";
-		$this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
+		$rows = max(3, min(10, count(explode("\n", $val))));
+		$this->body .= "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
 		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
 
