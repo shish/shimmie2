@@ -211,6 +211,9 @@ UL {
 	break-inside: avoid;
 	-moz-break-inside: avoid;
 	-webkit-break-inside: avoid;
+	column-break-inside: avoid;
+	-moz-column-break-inside: avoid;
+	-webkit-column-break-inside: avoid;
 }
 .setupblock {
 	text-align: center;
