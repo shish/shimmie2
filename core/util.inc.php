@@ -1053,12 +1053,6 @@ function _load_extensions() {
 		require_once("data/event_listeners.php");
 	}
 	else {
-		$all_events = array();
-		foreach(get_declared_classes() as $class) {
-			if(is_subclass_of($class, "Event")) {
-				$all_events[] = $class;
-			}
-		}
 		foreach(get_declared_classes() as $class) {
 			$rclass = new ReflectionClass($class);
 			if($rclass->isAbstract()) {
