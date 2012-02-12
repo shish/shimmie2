@@ -43,8 +43,8 @@ class SetupTheme extends Themelet {
 
 		$table = "
 			".make_form(make_link("setup/save"))."
-				<table>
-				<tr><td>$setupblock_html1</td><td>$setupblock_html2</td></tr>
+				<table style='max-width: 1000px;'>
+				<tr><td width='50%'>$setupblock_html1</td><td>$setupblock_html2</td></tr>
 				<tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr>
 				</table>
 			</form>
