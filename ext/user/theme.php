@@ -83,10 +83,10 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = '
 			'.make_form(make_link("user_admin/login"))."
-				<table summary='Login Form'>
+				<table summary='Login Form' class='login'>
 					<tr>
-						<td width='70'><label for='user'>Name</label></td>
-						<td width='70'><input id='user' type='text' name='user'></td>
+						<td><label for='user'>Name</label></td>
+						<td><input id='user' type='text' name='user'></td>
 					</tr>
 					<tr>
 						<td><label for='pass'>Password</label></td>
