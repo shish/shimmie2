@@ -10,13 +10,13 @@ class LinkImage extends Extension {
 		$this->theme->links_block($page, $this->data($event->image));
 	}
 
-	public function onSetupBuildingEvent(SetupBuildingEvent $event) {
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Link to Image");
 		$sb->add_text_option("ext_link-img_text-link_format", "Text Link Format: ");
 		$event->panel->add_block($sb);
 	}
 
-	public function onInitExtEvent(InitExtEvent $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string("ext_link-img_text-link_format", '$title - $id ($ext $size $filesize)');
 	}

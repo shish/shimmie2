@@ -22,7 +22,7 @@ class Ratings extends Extension {
 
 	public function get_priority() {return 50;}
 
-	public function onInitExt($event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		
 		if($config->get_int("ext_ratings2_version") < 2) {
@@ -149,10 +149,6 @@ class Ratings extends Extension {
 		}
 	}
 	
-	
-	
-	
-
 	public static function get_user_privs($user) {
 		global $config;
 		if($user->is_anonymous()) {
