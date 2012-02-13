@@ -17,7 +17,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr><td>Name</td></tr>";
 		foreach($users as $duser) {
 			$html .= "<tr>";
-			$html .= "<td><a href='".make_link("user/".$duser->name)."'>".html_escape($duser->name)."</a></td>";
+			$html .= "<td><a href='".make_link("user/".url_escape($duser->name))."'>".html_escape($duser->name)."</a></td>";
 			$html .= "</tr>";
 		}
 		$html .= "</table>";
@@ -50,7 +50,7 @@ class UserPageTheme extends Themelet {
 		if(empty($tac)) {$html = "";}
 		else {$html = '<p>'.$tac.'</p>';}
 
-		$reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
+		$h_reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
 		$html .= '
 		'.make_form(make_link("user_admin/create"))."
@@ -59,7 +59,7 @@ class UserPageTheme extends Themelet {
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
 				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
 				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				$reca
+				$h_reca
 				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
 			</table>
 		</form>
@@ -135,8 +135,8 @@ class UserPageTheme extends Themelet {
 		assert(is_array($stats));
 		$stats[] = 'User ID: '.$duser->id;
 
-		$page->set_title($duser->name."'s Page");
-		$page->set_heading($duser->name."'s Page");
+		$page->set_title(html_escape($duser->name)."'s Page");
+		$page->set_heading(html_escape($duser->name)."'s Page");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
 

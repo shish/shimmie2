@@ -3,7 +3,7 @@
 class ExtManagerTheme extends Themelet {
 	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
 		global $user;
-		$en = $editable ? "<th>Enabled</th>" : "";
+		$h_en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			".make_form(make_link("ext_manager/set"))."
 				<script type='text/javascript'>
@@ -13,7 +13,7 @@ class ExtManagerTheme extends Themelet {
 				</script>
 				<table id='extensions' class='zebra'>
 					<thead>
-						<tr>$en<th>Name</th><th>Description</th></tr>
+						<tr>$h_en<th>Name</th><th>Description</th></tr>
 					</thead>
 					<tbody>
 		";
@@ -21,27 +21,26 @@ class ExtManagerTheme extends Themelet {
 		foreach($extensions as $extension) {
 			if(!$editable && $extension->visibility == "admin") continue;
 
-			$ext_name = $extension->ext_name;
-			$h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
+			$h_name = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
 			$h_description = html_escape($extension->description);
 			if($extension->enabled === TRUE) $h_enabled = " checked='checked'";
 			else if($extension->enabled === FALSE) $h_enabled = "";
 			else $h_enabled = " disabled checked='checked'";
-			$h_link = make_link("ext_doc/".html_escape($extension->ext_name));
+			$h_link = make_link("ext_doc/".url_escape($extension->ext_name));
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
-			$en = $editable ? "<td><input type='checkbox' name='ext_$ext_name'$h_enabled></td>" : "";
+			$h_en = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
 			$html .= "
 				<tr class='$oe'>
-					$en
+					$h_en
 					<td><a href='$h_link'>$h_name</a></td>
 					<td style='text-align: left;'>$h_description</td>
 				</tr>";
 		}
-		$set = $editable ? "<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>" : "";
+		$h_set = $editable ? "<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>" : "";
 		$html .= "
 					</tbody>
-					$set
+					$h_set
 				</table>
 			</form>
 		";

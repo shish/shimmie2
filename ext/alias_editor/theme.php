@@ -12,8 +12,8 @@ class AliasEditorTheme extends Themelet {
 
 		$can_manage = $user->can("manage_alias_list");
 		if($can_manage) {
-			$action = "<th width='10%'>Action</th>";
-			$add = "
+			$h_action = "<th width='10%'>Action</th>";
+			$h_add = "
 				<tr>
 					".make_form(make_link("alias/add"))."
 						<td><input type='text' name='oldtag'></td>
@@ -24,8 +24,8 @@ class AliasEditorTheme extends Themelet {
 			";
 		}
 		else {
-			$action = "";
-			$add = "";
+			$h_action = "";
+			$h_add = "";
 		}
 
 		$h_aliases = "";
@@ -49,15 +49,10 @@ class AliasEditorTheme extends Themelet {
 			$h_aliases .= "</tr>";
 		}
 		$html = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$(\"#aliases\").tablesorter();
-			});
-			</script>
-			<table id='aliases' class='zebra'>
-				<thead><tr><th>From</th><th>To</th>$action</tr></thead>
+			<table id='aliases' class='sortable zebra'>
+				<thead><tr><th>From</th><th>To</th>$h_action</tr></thead>
 				<tbody>$h_aliases</tbody>
-				<tfoot>$add</tfoot>
+				<tfoot>$h_add</tfoot>
 			</table>
 			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
 		";

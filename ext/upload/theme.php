@@ -11,7 +11,6 @@ class UploadTheme extends Themelet {
 
 	public function display_page(Page $page) {
 		global $config, $page;
-		$page->add_html_header("<link rel='stylesheet' href='".get_base_href()."/ext/upload/_style.css' type='text/css'>");
 		
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 		// Uploader 2.0!
@@ -157,7 +156,6 @@ class UploadTheme extends Themelet {
 	/* only allows 1 file to be uploaded - for replacing another image file */
 	public function display_replace_page(Page $page, /*int*/ $image_id) {
 		global $config, $page;
-		$page->add_html_header("<link rel='stylesheet' href='".get_base_href()."/ext/upload/_style.css' type='text/css'>");
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
 		$js2 = 'javascript:$(function() {

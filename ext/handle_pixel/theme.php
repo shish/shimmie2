@@ -4,8 +4,8 @@ class PixelFileHandlerTheme extends Themelet {
 	public function display_image(Page $page, Image $image) {
 		global $config;
 
-		$ilink = $image->get_image_link();
-		$html = "<img id='main_image' src='$ilink'>";
+		$u_ilink = $image->get_image_link();
+		$html = "<img id='main_image' src='$u_ilink'>";
 		if($config->get_bool("image_show_meta")) {
 			# FIXME: only read from jpegs?
 			$exif = @exif_read_data($image->get_image_filename(), 0, true);
