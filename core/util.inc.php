@@ -547,24 +547,48 @@ function get_memory_limit() {
 	global $config;
 
 	// thumbnail generation requires lots of memory
-	$default_limit = 8*1024*1024;
+	$default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
 	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
+	
 	if($shimmie_limit < 3*1024*1024) {
 		// we aren't going to fit, override
 		$shimmie_limit = $default_limit;
 	}
-
-	ini_set("memory_limit", $shimmie_limit);
+	
+	/*
+	Get PHP's configured memory limit.
+	Note that this is set to -1 for NO memory limit.
+	
+	http://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
+	*/
 	$memory = parse_shorthand_int(ini_get("memory_limit"));
-
-	// changing of memory limit is disabled / failed
-	if($memory == -1) {
-		$memory = $default_limit;
+	
+	if ($memory == -1) {
+		// No memory limit.
+		
+		// Return the larger of the set limits.
+		if ($shimmie_limit > $default_limit) {
+			return $shimmie_limit;
+		} else {
+			return $default_limit; // return the default memory limit
+		}
+	} else {
+		// PHP has a memory limit set.
+		
+		if ($shimmie_limit > $memory) {
+			// Shimmie wants more memory than what PHP is currently set for.
+			
+			// Attempt to set PHP's memory limit.
+			if ( ini_set("memory_limit", $shimmie_limit) === FALSE ) {
+				/*  We can't change PHP's limit, oh well, return whatever its currently set to */
+				return $memory;
+			}
+			$memory = parse_shorthand_int(ini_get("memory_limit"));
+		}
+		
+		// PHP's memory limit is more than Shimmie needs.
+		return $memory; // return the current setting
 	}
-
-	assert($memory > 0);
-
-	return $memory;
 }
 
 /**
