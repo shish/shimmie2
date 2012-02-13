@@ -172,8 +172,19 @@ class ResizeImage extends Extension {
 			throw new ImageResizeException("The image size does not match what is in the database! - Aborting Resize.");
 		}
 		
-		/* Check memory usage limits */
-		$memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
+		/*
+			Check Memory usage limits
+		
+			Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
+			New check:    memory_use = width * height * (bits per channel) * channels * 2.5
+			
+			It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
+			We need to consider the size that we are GOING TO instead.
+			
+			The factor of 2.5 is simply a rough guideline.
+			http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
+		*/
+		$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
 		$memory_limit = get_memory_limit();
 		
 		if ($memory_use > $memory_limit) {
@@ -191,7 +202,7 @@ class ResizeImage extends Extension {
 			else                    $factor = min( $width / $image_obj->width, $height / $image_obj->height );
 
 			$new_width  = round( $image_obj->width * $factor );
-			$new_height = round( $image_obj->height * $factor );			
+			$new_height = round( $image_obj->height * $factor );
 		}
 		
 		/* Attempt to load the image */
