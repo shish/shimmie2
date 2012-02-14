@@ -15,7 +15,7 @@ class User {
 	var $name;
 	var $email;
 	var $join_date;
-	var $admin;
+	var $class;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	* Initialisation                                               *
@@ -35,8 +35,12 @@ class User {
 		$this->name = $row['name'];
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
-		$this->admin = ($row['admin'] == 'Y');
 		$this->passhash = $row['pass'];
+
+		global $config;
+		if($row['admin'] == 'Y') $this->class = "admin";
+		else if($this->id != $config->get_int('anon_id')) $this->class = "user";
+		else $this->class = "anonymous";
 	}
 
 	public static function by_session(/*string*/ $name, /*string*/ $session) {
@@ -165,14 +169,7 @@ class User {
 			),
 		);
 
-		return $user_classes[$this->get_class()][$ability];
-	}
-
-	// FIXME: this should be a column in the users table
-	public function get_class() {
-		if($this->is_admin()) return "admin";
-		else if($this->is_logged_in()) return "user";
-		else return"anonymous";
+		return $user_classes[$this->class][$ability];
 	}
 
 
@@ -202,7 +199,7 @@ class User {
 	 * @retval bool
 	 */
 	public function is_admin() {
-		return $this->admin;
+		return ($this->class === "admin");
 	}
 
 	public function set_admin(/*bool*/ $admin) {
