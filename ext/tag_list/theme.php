@@ -53,9 +53,10 @@ class TagListTheme extends Themelet {
 			}
 		}
 		
-		if($config->get_string('tag_list_image_type')=="tags"){
-			$page->add_block(new Block("Tags", $html, "left", 10));}
-		else{
+		if($config->get_string('tag_list_image_type')=="tags") {
+			$page->add_block(new Block("Tags", $html, "left", 10));
+		}
+		else {
 			$page->add_block(new Block("Related Tags", $html, "left", 10));
 		}
 	}
@@ -109,7 +110,7 @@ class TagListTheme extends Themelet {
 		global $config;
 
 		// store local copy for speed.
-		$info_link		= $config->get_string('info_link');
+		$info_link = $config->get_string('info_link');
 		
 		$html = "";
 		$n = 0;

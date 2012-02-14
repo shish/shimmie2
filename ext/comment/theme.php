@@ -167,7 +167,6 @@ class CommentListTheme extends Themelet {
 
 		if($i_uid == $config->get_int("anon_id")) {
 			$anoncode = "";
-			$style = "";
 			$anoncode2 = "";
 			if($this->show_anon_id) {
 				$anoncode = '<sup>'.$this->anon_id.'</sup>';
@@ -181,7 +180,7 @@ class CommentListTheme extends Themelet {
 					}
 				}
 			}
-			$h_userlink = "<span class='username'$style>" . $h_name . $anoncode . $anoncode2 . "</span>";
+			$h_userlink = "<span class='username'>" . $h_name . $anoncode . $anoncode2 . "</span>";
 			$this->anon_id++;
 		}
 		else {
@@ -197,10 +196,10 @@ class CommentListTheme extends Themelet {
 			';
 		}
 		else {
-			$avatar = "";
+			$h_avatar = "";
 			if(!empty($comment->owner_email)) {
 				$hash = md5(strtolower($comment->owner_email));
-				$avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
+				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id)'>Reply</a>";
 			$h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
@@ -211,7 +210,7 @@ class CommentListTheme extends Themelet {
 				<a name="'.$i_comment_id.'"></a>
 				<div class="comment">
 					<div class="info">
-					'.$avatar.'
+					'.$h_avatar.'
 					'.$h_timestamp.$h_reply.$h_ip.$h_del.'
 					</div>
 					'.$h_userlink.': '.$h_comment.'
@@ -221,19 +220,19 @@ class CommentListTheme extends Themelet {
 		return "";
 	}
 
-	protected function build_postbox($image_id) {
+	protected function build_postbox(/*int*/ $image_id) {
 		global $config;
 
 		$i_image_id = int_escape($image_id);
 		$hash = CommentList::get_hash();
-		$captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
+		$h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
 		return '
 			'.make_form(make_link("comment/add")).'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
 				<textarea id="comment_on_'.$i_image_id.'" name="comment" rows="5" cols="50"></textarea>
-				'.$captcha.'
+				'.$h_captcha.'
 				<br><input type="submit" value="Post Comment" />
 			</form>
 		';

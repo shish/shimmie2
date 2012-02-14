@@ -1,10 +1,13 @@
 
-          _________.__    .__                .__       ________  
-         /   _____/|  |__ |__| _____   _____ |__| ____ \_____  \ 
-         \_____  \ |  |  \|  |/     \ /     \|  |/ __ \ /  ____/ 
-         /        \|   Y  \  |  Y Y  \  Y Y  \  \  ___//       \ 
-        /_______  /|___|  /__|__|_|  /__|_|  /__|\___  >_______ \
-                \/      \/         \/      \/        \/        \/
+     _________.__     .__                   .__         ________   
+    /   _____/|  |__  |__|  _____    _____  |__|  ____  \_____  \  
+    \_____  \ |  |  \ |  | /     \  /     \ |  |_/ __ \  /  ____/  
+    /        \|   Y  \|  ||  Y Y  \|  Y Y  \|  |\  ___/ /       \  
+   /_______  /|___|  /|__||__|_|  /|__|_|  /|__| \___  >\_______ \ 
+           \/      \/           \/       \/          \/         \/ 
+                                                                
+_________________________________________________________________________
+
 
 Shimmie Alpha
 ~~~~~~~~~~~~~
@@ -58,6 +61,15 @@ database and file formats haven't changed *completely*, it's different
 enough to be a pain.
 
 
+Custom Configuration
+~~~~~~~~~~~~~~~~~~~~
+
+Various aspects of Shimmie can be configured to suit your site specific
+needs via the file "config.php" (created after installation).
+Take a look at "core/default_config.inc.php" for the available options
+that can used.
+
+
 Development Info
 ~~~~~~~~~~~~~~~~
 http://shimmie.shishnet.org/doc/
@@ -70,7 +82,7 @@ Contact
 ~~~~~~~
 #shimmie on Freenode -- IRC
 webmaster at shishnet.org -- email
-https://github.com/shish/shimmie2 -- bug tracker
+https://github.com/shish/shimmie2/issues -- bug tracker
 
 
 Licence

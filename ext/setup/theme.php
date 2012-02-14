@@ -15,7 +15,6 @@ class SetupTheme extends Themelet {
 	public function display_page(Page $page, SetupPanel $panel) {
 		global $user;
 
-
 		usort($panel->blocks, "blockcmp");
 
 		/*
@@ -44,35 +43,31 @@ class SetupTheme extends Themelet {
 	public function display_advanced(Page $page, $options) {
 		global $user;
 
-		$rows = "";
+		$h_rows = "";
 		$n = 0;
 		ksort($options);
 		foreach($options as $name => $value) {
+			$h_name = html_escape($name);
 			$h_value = html_escape($value);
 			$len = strlen($h_value);
 			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
-			$box = "";
+			$h_box = "";
 			if(strpos($value, "\n") > 0) {
-				$box .= "<textarea cols='50' rows='4' name='_config_$name'>$h_value</textarea>";
+				$h_box .= "<textarea cols='50' rows='4' name='_config_$h_name'>$h_value</textarea>";
 			}
 			else {
-				$box .= "<input type='text' name='_config_$name' value='$h_value'>";
+				$h_box .= "<input type='text' name='_config_$h_name' value='$h_value'>";
 			}
-			$box .= "<input type='hidden' name='_type_$name' value='string'>";
-			$rows .= "<tr class='$oe'><td>$name</td><td>$box</td></tr>";
+			$h_box .= "<input type='hidden' name='_type_$h_name' value='string'>";
+			$h_rows .= "<tr class='$oe'><td>$h_name</td><td>$h_box</td></tr>";
 		}
 
 		$table = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$(\"#settings\").tablesorter();
-			});
-			</script>
 			".make_form(make_link("setup/save"))."
-				<table id='settings' class='zebra'>
+				<table id='settings' class='sortable zebra'>
 					<thead><tr><th width='25%'>Name</th><th>Value</th></tr></thead>
-					<tbody>$rows</tbody>
+					<tbody>$h_rows</tbody>
 					<tfoot><tr><td colspan='2'><input type='submit' value='Save Settings'></td></tr></tfoot>
 				</table>
 			</form>

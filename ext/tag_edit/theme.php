@@ -37,12 +37,12 @@ class TagEditTheme extends Themelet {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_av = $image->get_owner()->get_avatar_html();
 		$h_date = autodate($image->posted);
-		$ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
+		$h_ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
 		return "
 			<tr>
 				<td>Uploader</td>
 				<td>
-					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$ip, $h_date</span>
+					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
 				</td>
 				<td width='80px' rowspan='4'>$h_av</td>
@@ -64,7 +64,7 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
-	private function format_source($source) {
+	private function format_source(/*string*/ $source) {
 		if(!empty($source)) {
 			$h_source = html_escape($source);
 			if(startsWith($source, "http://") || startsWith($source, "https://")) {

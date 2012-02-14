@@ -1,3 +1,17 @@
+/* Only need to change the file/url inputs */
+#large_upload_form INPUT.wid {
+	width: 100%;
+}
+#radio_button {
+	width: auto;
+}
+#wrapper {
+    opacity : 0.4;
+    filter: alpha(opacity=40); // msie
+}
+
+/* This is needed since the theme style.css forcibly sets vertical align to "top". */
+TABLE.vert TD, TABLE.vert TH {vertical-align: middle;}
 .mini_upload INPUT {
 	width: 100%;
 }
