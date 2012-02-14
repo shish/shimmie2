@@ -62,6 +62,19 @@ class Upgrade extends Extension {
 			log_info("upgrade", "Database at version 10");
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") < 11) {
+			$config->set_bool("in_upgrade", true);
+			$config->set_int("db_version", 11);
+
+			log_info("upgrade", "Converting user flags to classes");
+			$database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", array("user" => "user"));
+			$database->execute("UPDATE users SET class = :name WHERE id=:id", array("name"=>"anonymous", "id"=>$config->get_int('anon_id')));
+			$database->execute("UPDATE users SET class = :name WHERE admin=:admin", array("name"=>"admin", "admin"=>'Y'));
+
+			log_info("upgrade", "Database at version 11");
+			$config->set_bool("in_upgrade", false);
+		}
 	}
 
 	public function get_priority() {return 5;}

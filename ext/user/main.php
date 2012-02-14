@@ -131,7 +131,7 @@ class UserPage extends Extension {
 				}
 			}
 			else if($event->get_arg(0) == "set_more") {
-				$this->set_more_wrapper($page);
+				$this->set_more_wrapper();
 			}
 			else if($event->get_arg(0) == "list") {
 // select users.id,name,joindate,admin,
@@ -411,10 +411,8 @@ class UserPage extends Extension {
 		}
 	}
 
-	private function set_more_wrapper(Page $page) {
-		global $user;
-		global $config;
-		global $database;
+	private function set_more_wrapper() {
+		global $config, $database, $page, $user;
 
 		$page->set_title("Error");
 		$page->set_heading("Error");
@@ -427,10 +425,14 @@ class UserPage extends Extension {
 					"You need to specify the account number to edit"));
 		}
 		else {
-			$admin = (isset($_POST['admin']) && ($_POST['admin'] == "on"));
+			global $_user_classes;
+			$class = $_POST['class'];
+			if(!array_key_exists($class, $_user_classes)) {
+				throw Exception("Invalid user class: ".html_escape($class));
+			}
 
 			$duser = User::by_id($_POST['id']);
-			$duser->set_admin($admin);
+			$duser->set_class($class);
 
 			$page->set_mode("redirect");
 			if($duser->id == $user->id) {

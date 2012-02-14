@@ -179,7 +179,17 @@ class UserPageTheme extends Themelet {
 				$html .= "
 					<p>".make_form(make_link("user_admin/set_more"))."
 						<input type='hidden' name='id' value='$i_user_id'>
-						Admin: <input name='admin' type='checkbox'$h_is_admin>
+						Class: <select name='class'>
+				";
+				global $_user_classes;
+				foreach($_user_classes as $name => $values) {
+					$h_name = html_escape($name);
+					$h_title = html_escape(ucwords($name));
+					$h_selected = ($name == $duser->class->name ? " selected" : "");
+					$html .= "<option value='$h_name'$h_selected>$h_title</option>\n";
+				}
+				$html .= "
+						</select>
 						<input type='submit' value='Set'>
 					</form>
 					
@@ -191,7 +201,8 @@ class UserPageTheme extends Themelet {
 					".make_form(make_link("user_admin/delete_user_with_images"))."
 					<input type='hidden' name='id' value='$i_user_id'>
 					<input type='submit' value='Delete User with images' onclick='confirm(\"Delete the user with his uploaded images?\");' />
-					</form>";
+					</form>
+				";
 			}
 		}
 		return $html;
