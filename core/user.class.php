@@ -124,7 +124,7 @@ class User {
 	 * @retval bool
 	 */
 	public function is_admin() {
-		return ($this->class === "admin");
+		return ($this->class->name === "admin");
 	}
 
 	public function set_class(/*string*/ $class) {
