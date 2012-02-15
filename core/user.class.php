@@ -15,7 +15,7 @@ class User {
 	var $name;
 	var $email;
 	var $join_date;
-	var $admin;
+	var $class;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	* Initialisation                                               *
@@ -31,12 +31,14 @@ class User {
 	 * would be to use User::by_id, User::by_session, etc
 	 */
 	public function User($row) {
+		global $_user_classes;
+
 		$this->id = int_escape($row['id']);
 		$this->name = $row['name'];
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
-		$this->admin = ($row['admin'] == 'Y');
 		$this->passhash = $row['pass'];
+		$this->class = $_user_classes[$row["class"]];
 	}
 
 	public static function by_session(/*string*/ $name, /*string*/ $session) {
@@ -92,87 +94,7 @@ class User {
 	 * useful user object functions start here
 	 */
 	public function can($ability) {
-		global $config;
-
-		// TODO: make this into an editable database table
-		$user_classes = array(
-			"anonymous" => array(
-				"change_setting" => False,  # web-level settings, eg the config table
-				"override_config" => False, # sys-level config, eg config.php
-				"big_search" => False,      # more than 3 tags (speed mode only)
-				"lock_image" => False,
-				"view_ip" => False,         # view IP addresses associated with things
-				"ban_ip" => False,
-				"change_password" => False,
-				"change_user_info" => False,
-				"delete_user" => False,
-				"delete_image" => False,
-				"delete_comment" => False,
-				"replace_image" => False,
-				"manage_extension_list" => False,
-				"manage_alias_list" => False,
-				"edit_image_tag" => $config->get_bool("tag_edit_anon"),
-				"edit_image_source" => $config->get_bool("source_edit_anon"),
-				"edit_image_owner" => False,
-				"mass_tag_edit" => False,
-				"report_image" => $config->get_bool('report_image_anon'),
-				"view_image_report" => False,
-			),
-			"user" => array(
-				"change_setting" => False,
-				"override_config" => False,
-				"big_search" => True,
-				"lock_image" => False,
-				"view_ip" => False,
-				"ban_ip" => False,
-				"change_password" => False,
-				"change_user_info" => False,
-				"delete_user" => False,
-				"delete_image" => False,
-				"delete_comment" => False,
-				"change_image_owner" => False,
-				"replace_image" => False,
-				"manage_extension_list" => False,
-				"manage_alias_list" => False,
-				"edit_image_tag" => True,
-				"edit_image_source" => True,
-				"edit_image_owner" => False,
-				"mass_tag_edit" => False,
-				"report_image" => True,
-				"view_image_report" => False,
-			),
-			"admin" => array(
-				"change_setting" => True,
-				"override_config" => True,
-				"big_search" => True,
-				"lock_image" => True,
-				"view_ip" => True,
-				"ban_ip" => True,
-				"change_password" => True,
-				"change_user_info" => True,
-				"delete_user" => True,
-				"delete_image" => True,
-				"delete_comment" => True,
-				"replace_image" => True,
-				"manage_extension_list" => True,
-				"manage_alias_list" => True,
-				"edit_image_tag" => True,
-				"edit_image_source" => True,
-				"edit_image_owner" => True,
-				"mass_tag_edit" => True,
-				"report_image" => True,
-				"view_image_report" => True,
-			),
-		);
-
-		return $user_classes[$this->get_class()][$ability];
-	}
-
-	// FIXME: this should be a column in the users table
-	public function get_class() {
-		if($this->is_admin()) return "admin";
-		else if($this->is_logged_in()) return "user";
-		else return"anonymous";
+		return $this->class->can($ability);
 	}
 
 
@@ -202,15 +124,14 @@ class User {
 	 * @retval bool
 	 */
 	public function is_admin() {
-		return $this->admin;
+		return ($this->class->name === "admin");
 	}
 
-	public function set_admin(/*bool*/ $admin) {
-		assert(is_bool($admin));
+	public function set_class(/*string*/ $class) {
+		assert(is_string($class));
 		global $database;
-		$yn = $admin ? 'Y' : 'N';
-		$database->Execute("UPDATE users SET admin=:yn WHERE id=:id", array("yn"=>$yn, "id"=>$this->id));
-		log_info("core-user", 'Made '.$this->name.' admin='.$yn);
+		$database->Execute("UPDATE users SET class=:class WHERE id=:id", array("class"=>$class, "id"=>$this->id));
+		log_info("core-user", 'Set class for '.$this->name.' to '.$class);
 	}
 
 	public function set_password(/*string*/ $password) {

@@ -195,7 +195,9 @@ class IPBan extends Extension {
 				$reason = $row[$prefix.'reason'];
 				$admin = User::by_id($row[$prefix.'banner_id']);
 				$date = date("Y-m-d", $row[$prefix.'end_timestamp']);
-				print "IP <b>$ip</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>$reason</b>";
+				header("HTTP/1.0 403 Forbidden");
+				print "IP <b>$ip</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>$reason</b>\n";
+				print "<p>If you couldn't possibly be guilty of what you're banned for, the person we banned probably had a dynamic IP address and so do you. See <a href='http://whatismyipaddress.com/dynamic-static'>http://whatismyipaddress.com/dynamic-static</a> for more information.\n";
 
 				$contact_link = $config->get_string("contact_link");
 				if(!empty($contact_link)) {
