@@ -62,8 +62,7 @@ class ResizeImage extends Extension {
 		global $config;
 		$image_obj = Image::by_id($event->image_id);
 		//No auto resizing for gifs due to animated gif causing errors :(
-		//Also PNG resizing seems to be completely broken.
-		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg")){
+		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png")){
 			$width = $height = 0;
 
 			if ($config->get_int("resize_default_width") !== 0) {
@@ -209,8 +208,7 @@ class ResizeImage extends Extension {
 		switch ( $info[2] ) {
 		  case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
 		  case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-		  /* FIXME: PNG support seems to be broken.
-		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;*/
+		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
 		  default:
 			throw new ImageResizeException("Unsupported image type.");
 		}
