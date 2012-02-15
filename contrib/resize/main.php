@@ -61,8 +61,20 @@ class ResizeImage extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		global $config;
 		$image_obj = Image::by_id($event->image_id);
-		//No auto resizing for gifs due to animated gif causing errors :(
-		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png")){
+
+		$isanigif = 0;
+		if($image_obj->ext == "gif"){
+			$image_filename = warehouse_path("images", $image_obj->hash);
+			if(!($fh = @fopen($image_filename, 'rb'))){ //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+				return false;
+			}
+			while(!feof($fh) && $isanigif < 2) {
+				$chunk = fread($fh, 1024 * 100);
+				$isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+			}
+		}
+
+		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $isanigif === 0)){
 			$width = $height = 0;
 
 			if ($config->get_int("resize_default_width") !== 0) {
