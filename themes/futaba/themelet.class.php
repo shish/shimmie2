@@ -13,6 +13,16 @@ class Themelet {
 
 
 	/**
+	 * A specific, common error message
+	 */
+	public function display_permission_denied() {
+		global $page;
+		$page->add_http_header("HTTP/1.0 403 Permission Denied");
+		$this->display_error($page, "Permission Denied", "You do not have permission to access this page");
+	}
+
+
+	/**
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
 	 */

@@ -124,7 +124,7 @@ class Upload extends Extension {
 			
 			// check if the user is an administrator and can upload files.
 			if(!$user->can("replace_image")) {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_permission_denied();
 			}
 			else {
 				if($this->is_full) {
@@ -182,7 +182,7 @@ class Upload extends Extension {
 		}
 		else if($event->page_matches("upload")) {
 			if(!$this->can_upload($user)) {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_permission_denied();
 			}
 			else {
 				/* Regular Upload Image */

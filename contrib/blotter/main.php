@@ -66,7 +66,7 @@ class Blotter extends Extension {
 					 * Displays the blotter editor.
 					 */
 					if(!$user->is_admin()) {
-						$this->theme->display_permission_denied($page);
+						$this->theme->display_permission_denied();
 					} else {
 						$entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
 						$this->theme->display_editor($entries);
@@ -77,7 +77,7 @@ class Blotter extends Extension {
 					 * Adds an entry
 					 */
 					if(!$user->is_admin() || !$user->check_auth_token()) {
-						$this->theme->display_permission_denied($page);
+						$this->theme->display_permission_denied();
 					} else {
 						$entry_text = $_POST['entry_text'];
 						if($entry_text == "") { die("No entry message!"); }
@@ -95,7 +95,7 @@ class Blotter extends Extension {
 					 * Removes an entry
 					 */
 					if(!$user->is_admin() || !$user->check_auth_token()) {
-						$this->theme->display_permission_denied($page);
+						$this->theme->display_permission_denied();
 					} else {
 						$id = int_escape($_POST['id']);
 						if(!isset($id)) { die("No ID!"); }

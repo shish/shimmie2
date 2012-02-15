@@ -188,7 +188,7 @@ class Setup extends Extension {
 
 		if($event->page_matches("setup")) {
 			if(!$user->can("change_setting")) {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_permission_denied();
 			}
 			else {
 				if($event->get_arg(0) == "save" && $user->check_auth_token()) {

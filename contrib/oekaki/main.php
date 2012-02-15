@@ -11,7 +11,7 @@ class Oekaki extends Extension {
 
 		if($event->page_matches("oekaki")) {
 			if(!$this->can_upload($user)) {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_permission_denied();
 			}
 
 			if($event->get_arg(0) == "create") {

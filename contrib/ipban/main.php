@@ -73,7 +73,7 @@ class IPBan extends Extension {
 				}
 			}
 			else {
-				$this->theme->display_permission_denied($page);
+				$this->theme->display_permission_denied();
 			}
 		}
 	}

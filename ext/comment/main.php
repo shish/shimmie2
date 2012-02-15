@@ -142,7 +142,7 @@ class CommentList extends Extension {
 					}
 				}
 				else {
-					$this->theme->display_permission_denied($page);
+					$this->theme->display_permission_denied();
 				}
 			}
 			else if($event->get_arg(0) === "list") {
