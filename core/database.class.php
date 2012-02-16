@@ -349,9 +349,7 @@ class Database {
 			return $stmt;
 		}
 		catch(PDOException $pdoe) {
-			print 'Message: '.$pdoe->getMessage();
-			print '<p>Error: '.$query;
-			exit;
+			throw new SCoreException($pdoe->getMessage()."<p>Query: ".$query);
 		}
 	}
 
