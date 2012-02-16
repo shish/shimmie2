@@ -1040,6 +1040,15 @@ function _sanitise_environment() {
 		$_POST = _stripslashes_r($_POST);
 		$_COOKIE = _stripslashes_r($_COOKIE);
 	}
+
+	if(php_sapi_name() === "cli") {
+		global $argc, $argv;
+		$_SERVER['REMOTE_ADDR'] = "0.0.0.0";
+		$_SERVER['HTTP_HOST'] = "<cli command>";
+		if($argc > 1) {
+			$_GET['q'] = $argv[1];
+		}
+	}
 }
 
 function _get_themelet_files($_theme) {
