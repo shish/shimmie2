@@ -62,19 +62,7 @@ class ResizeImage extends Extension {
 		global $config;
 		$image_obj = Image::by_id($event->image_id);
 
-		$isanigif = 0;
-		if($image_obj->ext == "gif"){
-			$image_filename = warehouse_path("images", $image_obj->hash);
-			if(!($fh = @fopen($image_filename, 'rb'))){ //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-				return false;
-			}
-			while(!feof($fh) && $isanigif < 2) {
-				$chunk = fread($fh, 1024 * 100);
-				$isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
-			}
-		}
-
-		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $isanigif === 0)){
+		if($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif")){
 			$width = $height = 0;
 
 			if ($config->get_int("resize_default_width") !== 0) {
@@ -83,20 +71,32 @@ class ResizeImage extends Extension {
 			if ($config->get_int("resize_default_height") !== 0) {
 				$height = $config->get_int("resize_default_height");
 			}
-
-			try {
-				$this->resize_image($event->image_id, $width, $height);
-			} catch (ImageResizeException $e) {
-				$this->theme->display_resize_error($page, "Error Resizing", $e->error);
+			$isanigif = 0;
+			if($image_obj->ext == "gif"){
+				$image_filename = warehouse_path("images", $image_obj->hash);
+				if(!($fh = @fopen($image_filename, 'rb'))){ //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+					return false;
+				}
+				while(!feof($fh) && $isanigif < 2) {
+					$chunk = fread($fh, 1024 * 100);
+					$isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+				}
 			}
+			if($isanigif == 0){
+				try {
+					$this->resize_image($event->image_id, $width, $height);
+				} catch (ImageResizeException $e) {
+					$this->theme->display_resize_error($page, "Error Resizing", $e->error);
+				}
 
-			//Need to generate thumbnail again...
-			//This only seems to be an issue if one of the sizes was set to 0.
-			$image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
-			send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->ext, true));
+				//Need to generate thumbnail again...
+				//This only seems to be an issue if one of the sizes was set to 0.
+				$image_obj = Image::by_id($event->image_id); //Must be a better way to grab the new hash than setting this again..
+				send_event(new ThumbnailGenerationEvent($image_obj->hash, $image_obj->ext, true));
 
-			log_info("resize", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
-			//TODO: Notify user that image has been resized.
+				log_info("resize", "Image #{$event->image_id} has been resized to: ".$width."x".$height);
+				//TODO: Notify user that image has been resized.
+			}
 		}
 	}
 
