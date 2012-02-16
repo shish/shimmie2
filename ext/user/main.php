@@ -97,7 +97,7 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "recover") {
 				$user = User::by_name($_POST['username']);
 				if(is_null($user)) {
-					$this->theme->display_error($page, "Error", "There's no user with that name");
+					$this->theme->display_error(404, "Error", "There's no user with that name");
 				}
 				if(is_null($user->email)) {
 					//
@@ -111,7 +111,7 @@ class UserPage extends Extension {
 					$this->theme->display_signup_page($page);
 				}
 				else if($_POST['pass1'] != $_POST['pass2']) {
-					$this->theme->display_error($page, "Password Mismatch", "Passwords don't match");
+					$this->theme->display_error(400, "Password Mismatch", "Passwords don't match");
 				}
 				else {
 					try {
@@ -126,7 +126,7 @@ class UserPage extends Extension {
 						$page->set_redirect(make_link("user"));
 					}
 					catch(UserCreationException $ex) {
-						$this->theme->display_error($page, "User Creation Error", $ex->getMessage());
+						$this->theme->display_error(400, "User Creation Error", $ex->getMessage());
 					}
 				}
 			}
@@ -155,14 +155,14 @@ class UserPage extends Extension {
 		if($event->page_matches("user")) {
 			$display_user = ($event->count_args() == 0) ? $user : User::by_name($event->get_arg(0));
 			if($event->count_args() == 0 && $user->is_anonymous()) {
-				$this->theme->display_error($page, "Not Logged In",
+				$this->theme->display_error(401, "Not Logged In",
 					"You aren't logged in. First do that, then you can see your stats.");
 			}
 			else if(!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
 				send_event(new UserPageBuildingEvent($display_user));
 			}
 			else {
-				$this->theme->display_error($page, "No Such User",
+				$this->theme->display_error(404, "No Such User",
 					"If you typed the ID by hand, try again; if you came from a link on this ".
 					"site, it might be bug report time...");
 			}
@@ -285,7 +285,7 @@ class UserPage extends Extension {
 		}
 		else {
 			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
-			$this->theme->display_error($page, "Error", "No user with those details was found");
+			$this->theme->display_error(401, "Error", "No user with those details was found");
 		}
 	}
 
@@ -345,7 +345,7 @@ class UserPage extends Extension {
 		global $database;
 
 		if($user->is_anonymous()) {
-			$this->theme->display_error($page, "Error", "You aren't logged in");
+			$this->theme->display_error(401, "Error", "You aren't logged in");
 		}
 		else if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 			$id = $_POST['id'];
@@ -355,11 +355,11 @@ class UserPage extends Extension {
 			$duser = User::by_id($id);
 
 			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
-				$this->theme->display_error($page, "Error",
+				$this->theme->display_error(401, "Error",
 						"You need to be an admin to change other people's passwords");
 			}
 			else if($pass1 != $pass2) {
-				$this->theme->display_error($page, "Error", "Passwords don't match");
+				$this->theme->display_error(400, "Error", "Passwords don't match");
 			}
 			else {
 				// FIXME: send_event()
@@ -384,7 +384,7 @@ class UserPage extends Extension {
 		global $database;
 
 		if($user->is_anonymous()) {
-			$this->theme->display_error($page, "Error", "You aren't logged in");
+			$this->theme->display_error(401, "Error", "You aren't logged in");
 		}
 		else if(isset($_POST['id']) && isset($_POST['address'])) {
 			$id = $_POST['id'];
@@ -393,7 +393,7 @@ class UserPage extends Extension {
 			$duser = User::by_id($id);
 
 			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
-				$this->theme->display_error($page, "Error",
+				$this->theme->display_error(401, "Error",
 						"You need to be an admin to change other people's addressess");
 			}
 			else {

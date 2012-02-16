@@ -88,7 +88,7 @@ class ViewImage extends Extension {
 
 			$image = Image::by_id($image_id);
 			if(is_null($image)) {
-				$this->theme->display_error($page, "Image not found", "Image $image_id could not be found");
+				$this->theme->display_error(404, "Image not found", "Image $image_id could not be found");
 				return;
 			}
 
@@ -100,7 +100,7 @@ class ViewImage extends Extension {
 			}
 
 			if(is_null($image)) {
-				$this->theme->display_error($page, "Image not found", "No more images");
+				$this->theme->display_error(404, "Image not found", "No more images");
 				return;
 			}
 
@@ -121,7 +121,7 @@ class ViewImage extends Extension {
 				$this->theme->display_admin_block($page, $iabbe->parts);
 			}
 			else {
-				$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
+				$this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
 			}
 		}
 

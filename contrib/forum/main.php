@@ -109,7 +109,7 @@ class Forum extends Extension {
 
                             if($hasErrors)
                             {
-                                $this->theme->display_error($page, "Error", $errors);
+                                $this->theme->display_error(500, "Error", $errors);
                                 $this->theme->display_new_thread_composer($page, $_POST["message"], $_POST["title"], false);
                                 break;
                             }
@@ -149,7 +149,7 @@ class Forum extends Extension {
 
                             if ($hasErrors)
                             {
-                                $this->theme->display_error($page, "Error", $errors);
+                                $this->theme->display_error(500, "Error", $errors);
                                 $this->theme->display_new_post_composer($page, $_POST["threadID"], $_POST["message"], $_POST["title"], false);
                                 break;
                             }
@@ -166,7 +166,7 @@ class Forum extends Extension {
                     {
                         $page->set_mode("redirect");
                         $page->set_redirect(make_link("forum/index"));
-                        //$this->theme->display_error($page, "Invalid action", "You should check forum/index.");
+                        //$this->theme->display_error(400, "Invalid action", "You should check forum/index.");
                         break;
                     }
                 }

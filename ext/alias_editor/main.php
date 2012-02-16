@@ -37,7 +37,7 @@ class AliasEditor extends Extension {
 							$page->set_redirect(make_link("alias/list"));
 						}
 						catch(AddAliasException $ex) {
-							$this->theme->display_error($page, "Error adding alias", $ex->getMessage());
+							$this->theme->display_error(500, "Error adding alias", $ex->getMessage());
 						}
 					}
 				}
@@ -91,11 +91,11 @@ class AliasEditor extends Extension {
 						$page->set_redirect(make_link("alias/list"));
 					}
 					else {
-						$this->theme->display_error($page, "No File Specified", "You have to upload a file");
+						$this->theme->display_error(400, "No File Specified", "You have to upload a file");
 					}
 				}
 				else {
-					$this->theme->display_error($page, "Admins Only", "Only admins can edit the alias list");
+					$this->theme->display_error(401, "Admins Only", "Only admins can edit the alias list");
 				}
 			}
 		}

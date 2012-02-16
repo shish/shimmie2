@@ -123,7 +123,7 @@ class CommentList extends Extension {
 						$page->set_redirect(make_link("post/view/".int_escape($_POST['image_id'])));
 					}
 					catch(CommentPostingException $ex) {
-						$this->theme->display_error($page, "Comment Blocked", $ex->getMessage());
+						$this->theme->display_error(403, "Comment Blocked", $ex->getMessage());
 					}
 				}
 			}

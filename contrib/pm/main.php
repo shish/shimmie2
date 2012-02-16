@@ -108,7 +108,7 @@ class PrivMsg extends Extension {
 						$pm_id = int_escape($event->get_arg(1));
 						$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 						if(is_null($pm)) {
-							$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
+							$this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
 						}
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$from_user = User::by_id(int_escape($pm["from_id"]));
@@ -124,7 +124,7 @@ class PrivMsg extends Extension {
 							$pm_id = int_escape($_POST["pm_id"]);
 							$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 							if(is_null($pm)) {
-								$this->theme->display_error($page, "No such PM", "There is no PM #$pm_id");
+								$this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
 							}
 							else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 								$database->execute("DELETE FROM private_message WHERE id = :id", array("id" => $pm_id));
@@ -146,7 +146,7 @@ class PrivMsg extends Extension {
 						}
 						break;
 					default:
-						$this->theme->display_error($page, "Invalid action", "That's not something you can do with a PM");
+						$this->theme->display_error(400, "Invalid action", "That's not something you can do with a PM");
 						break;
 				}
 			}

@@ -161,8 +161,7 @@ class Artists extends Extension {
                     if(!$user->is_anonymous()){
                     	$this->theme->new_artist_composer();
                     }else{
-                        $errMessage = "You must be registered and logged in to create a new artist.";
-                        $this->theme->display_error($page, "Error", $errMessage);
+                        $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
                     }
                     break;
                 }
@@ -179,8 +178,7 @@ class Artists extends Extension {
                         $newArtistID = $this->add_artist();
                         if ($newArtistID == -1)
                         {
-                            $errMessage = "Error when entering artist data.";
-                            $this->theme->display_error($page, "Error", $errMessage);
+                            $this->theme->display_error(400, "Error", "Error when entering artist data.");
                         }
                         else
                         {
@@ -190,8 +188,7 @@ class Artists extends Extension {
                     }
                     else
                     {
-                        $errMessage = "You must be registered and logged in to create a new artist.";
-                        $this->theme->display_error($page, "Error", $errMessage);
+                        $this->theme->display_error(401, "Error", "You must be registered and logged in to create a new artist.");
                     }
                     break;
                 }
@@ -236,8 +233,7 @@ class Artists extends Extension {
                         $userIsAdmin = $user->is_admin();
                         $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
                     }else{
-                        $errMessage = "You must be registered and logged in to edit an artist.";
-                        $this->theme->display_error($page, "Error", $errMessage);
+                        $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");
                     }
                     break;
                 }

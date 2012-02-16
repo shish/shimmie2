@@ -115,7 +115,7 @@ class ResizeImage extends Extension {
 			
 			$image = Image::by_id($image_id);
 			if(is_null($image)) {
-				$this->theme->display_error($page, "Image not found", "No image in the database has the ID #$image_id");
+				$this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
 			} else {
 			
 				/* Check if options were given to resize an image. */
