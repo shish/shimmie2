@@ -30,8 +30,8 @@
  *      </ul>
  *    <li>filesize (=, &lt;, &gt;, &lt;=, &gt;=) size, eg
  *      <ul>
- *        <li>filesize>1024 -- no images under 1KB
- *        <li>filesize<=3MB -- shorthand filesizes are supported too
+ *        <li>filesize&gt;1024 -- no images under 1KB
+ *        <li>filesize&lt=3MB -- shorthand filesizes are supported too
  *      </ul>
  *    <li>id (=, &lt;, &gt;, &lt;=, &gt;=) number, eg
  *      <ul>
@@ -54,9 +54,9 @@
  *      <ul>
  *        <li>filename=kitten -- find all images with "kitten" in the original filename
  *      </ul>
- *    <li>posted=date, eg
+ *    <li>posted (=, &lt;, &gt;, &lt;=, &gt;=) date, eg
  *      <ul>
- *        <li>posted=2009-12-25 -- find images posted on the 25th December
+ *        <li>posted&gt;=2009-12-25 posted&lt;=2010-01-01 -- find images posted between christmas and new year
  *      </ul>
  *  </ul>
  *  <p>Search items can be combined to search for images which match both,
