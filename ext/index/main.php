@@ -226,9 +226,10 @@ class Index extends Extension {
 			$filename = strtolower($matches[2]);
 			$event->add_querylet(new Querylet('images.filename LIKE "%'.$filename.'%"'));
 		}
-		else if(preg_match("/^posted=(([0-9\*]*)?(-[0-9\*]*)?(-[0-9\*]*)?)$/", $event->term, $matches)) {
-			$val = str_replace("*", "%", $matches[1]);
-			$event->add_querylet(new Querylet('images.posted LIKE "%'.$val.'%"'));
+		else if(preg_match("/^posted(<|>|<=|>=|=)([0-9-]*)$/", $event->term, $matches)) {
+			$cmp = $matches[1];
+			$val = $matches[2];
+			$event->add_querylet(new Querylet("images.posted $cmp :val", array("val"=>$val)));
 		}
 		else if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
