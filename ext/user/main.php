@@ -316,12 +316,12 @@ class UserPage extends Extension {
 		$email = (!empty($event->email)) ? $event->email : null;
 
 		// if there are currently no admins, the new user should be one
-		$need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE admin IN ('Y', 't', '1')") == 0);
-		$admin = $need_admin ? 'Y' : 'N';
+		$need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
+		$admin = $need_admin ? 'admin' : 'user';
 
 		$database->Execute(
-				"INSERT INTO users (name, pass, joindate, email, admin) VALUES (:username, :hash, now(), :email, :admin)",
-				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "admin"=>$admin));
+				"INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
+				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "class"=>$class));
 		$uid = $database->get_last_insert_id();
 		log_info("user", "Created User #$uid ({$event->username})");
 	}

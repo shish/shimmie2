@@ -306,7 +306,7 @@ function create_tables() { // {{{
 			name VARCHAR(32) UNIQUE NOT NULL,
 			pass CHAR(32),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
-			admin SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+			class VARCHAR(32) NOT NULL DEFAULT 'user',
 			email VARCHAR(128)
 		");
 		$db->create_table("images", "
@@ -353,7 +353,7 @@ function insert_defaults() { // {{{
 	try {
 		$db = new Database();
 	
-		$db->execute("INSERT INTO users(name, pass, joindate, admin) VALUES(:name, :pass, now(), :admin)", Array("name" => 'Anonymous', "pass" => null, "admin" => 'N'));
+		$db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", Array("name" => 'Anonymous', "pass" => null, "class" => 'anonymous'));
 		$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'anon_id', "value" => $db->get_last_insert_id()));
 
 		if(check_im_version() > 0) {
