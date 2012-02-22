@@ -44,9 +44,8 @@ class LogDatabaseTheme extends Themelet {
 		reset($events); // rewind to first element in array.
 		
 		foreach($events as $event) {
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$c = $this->pri_to_col($event['priority']);
-			$table .= "<tr style='color: $c' class='$oe'>";
+			$table .= "<tr style='color: $c'>";
 			$table .= "<td>".str_replace(" ", "&nbsp;", $event['date_sent'])."</td>";
 			$table .= "<td>".$event['section']."</td>";
 			if($event['username'] == "Anonymous") {

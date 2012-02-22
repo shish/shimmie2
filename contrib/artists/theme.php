@@ -186,10 +186,7 @@ class ArtistsTheme extends Themelet {
                     , 'member' => 'Member'
                 );
 
-            foreach ($artists as $artist)
-            {
-                $oe = ($n++ % 2 == 0) ? "even" : "odd";
-
+            foreach ($artists as $artist) {
                 if ($artist['type'] != 'artist')
                     $artist['name'] = str_replace("_", " ", $artist['name']);
 
@@ -199,7 +196,7 @@ class ArtistsTheme extends Themelet {
                 $edit_link = "<a href='".make_link($editionLinkActionArray[$artist['type']].$artist['id'])."'>Edit</a>";
                 $del_link = "<a href='".make_link($deletionLinkActionArray[$artist['type']].$artist['id'])."'>Delete</a>";
 
-                $html .= "<tr class='$oe'>".
+                $html .= "<tr>".
                     "<td class='left'>".$elementLink;
 
                 //if ($artist['type'] == 'member')
@@ -352,7 +349,7 @@ class ArtistsTheme extends Themelet {
             $html .= "  <tr>
                     </thead>
 
-                    <tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                    <tr>
                         <td class='left'>Name:</td>
                         <td class='left'>".$artist_link."</td>";
             if ($userIsLogged) $html .= "<td></td>";
@@ -365,7 +362,7 @@ class ArtistsTheme extends Themelet {
                 $aliasEditLink = "<a href='".make_link("artist/alias/edit/".$aliases[0]['alias_id'])."'>Edit</a>";
                 $aliasDeleteLink = "<a href='".make_link("artist/alias/delete/".$aliases[0]['alias_id'])."'>Delete</a>";
                 
-                $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                $html .= "<tr>
                               <td class='left'>Aliases:</td>
                               <td class='left'>".$aliasViewLink."</td>";
                 
@@ -385,7 +382,7 @@ class ArtistsTheme extends Themelet {
                         $aliasEditLink = "<a href='".make_link("artist/alias/edit/".$aliases[$i]['alias_id'])."'>Edit</a>";
                         $aliasDeleteLink = "<a href='".make_link("artist/alias/delete/".$aliases[$i]['alias_id'])."'>Delete</a>";
 
-                        $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                        $html .= "<tr>
                                       <td class='left'>&nbsp;</td>
                                       <td class='left'>".$aliasViewLink."</td>";
                         if ($userIsLogged)
@@ -404,7 +401,7 @@ class ArtistsTheme extends Themelet {
                 $memberEditLink = "<a href='".make_link("artist/member/edit/".$members[0]['id'])."'>Edit</a>";
                 $memberDeleteLink = "<a href='".make_link("artist/member/delete/".$members[0]['id'])."'>Delete</a>";
 
-                $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                $html .= "<tr>
                             <td class='left'>Members:</td>
                             <td class='left'>".$memberViewLink."</td>";
                 if ($userIsLogged)
@@ -422,7 +419,7 @@ class ArtistsTheme extends Themelet {
                         $memberEditLink = "<a href='".make_link("artist/member/edit/".$members[$i]['id'])."'>Edit</a>";
                         $memberDeleteLink = "<a href='".make_link("artist/member/delete/".$members[$i]['id'])."'>Delete</a>";
 
-                        $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                        $html .= "<tr>
                                 <td class='left'>&nbsp;</td>
                                 <td class='left'>".$memberViewLink."</td>";
                         if ($userIsLogged)
@@ -441,7 +438,7 @@ class ArtistsTheme extends Themelet {
                 $urlEditLink = "<a href='".make_link("artist/url/edit/".$urls[0]['id'])."'>Edit</a>";
                 $urlDeleteLink = "<a href='".make_link("artist/url/delete/".$urls[0]['id'])."'>Delete</a>";
 
-                $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                $html .= "<tr>
                             <td class='left'>URLs:</td>
                             <td class='left'>".$urlViewLink."</td>";
                 
@@ -461,7 +458,7 @@ class ArtistsTheme extends Themelet {
                         $urlEditLink = "<a href='".make_link("artist/url/edit/".$urls[$i]['id'])."'>Edit</a>";
                         $urlDeleteLink = "<a href='".make_link("artist/url/delete/".$urls[$i]['id'])."'>Delete</a>";
 
-                        $html .= "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                        $html .= "<tr>
                                 <td class='left'>&nbsp;</td>
                                 <td class='left'>".$urlViewLink."</td>";
                         if ($userIsLogged)
@@ -476,7 +473,7 @@ class ArtistsTheme extends Themelet {
             }
 
             $html .=
-                    "<tr class='".(($n++ % 2 == 0) ? "even" : "odd")."'>
+                    "<tr>
                         <td class='left'>Notes:</td>
                         <td class='left'>".$artist["notes"]."</td>";
             if ($userIsLogged) $html .= "<td></td>";

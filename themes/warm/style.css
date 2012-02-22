@@ -61,8 +61,8 @@ TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
 TABLE.zebra THEAD TD, TABLE.zebra THEAD TH {border-bottom: 2px solid #B89F7C;}
 TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
 TABLE.zebra TD {border-top: 1px solid #B89F7C;}
-TABLE.zebra TR.odd {background: #FCD9A9;}
-TABLE.zebra TR.even {background: #DABC92;}
+TABLE.zebra TR:nth-child(odd) {background: #FCD9A9;}
+TABLE.zebra TR:nth-child(even) {background: #DABC92;}
 
 #footer {
 	clear: both;

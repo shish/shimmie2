@@ -23,10 +23,6 @@ class BlotterTheme extends Themelet {
 		$page->add_block(new Block(null, $html, $position, 20));
 	}
 
-	private function is_odd($number) {
-		return $number & 1; // 0 = even, 1 = odd
-	}
-
 	private function get_html_for_blotter_editor($entries) {
 		global $user;
 
@@ -66,11 +62,9 @@ class BlotterTheme extends Themelet {
 			$entry_text = $entries[$i]['entry_text'];
 			if($entries[$i]['important'] == 'Y') { $important = 'Y'; } else { $important = 'N'; }
 
-			if(!$this->is_odd($i)) {$tr_class = "odd";}
-			if($this->is_odd($i)) {$tr_class = "even";}
 			// Add the new table row(s)
 			$table_rows .= 
-				"<tr class='{$tr_class}'>
+				"<tr>
 				<td>$entry_date</td>
 				<td>$entry_text</td>
 				<td>$important</td>

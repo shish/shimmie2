@@ -24,9 +24,8 @@ class ImageBanTheme extends Themelet {
 		$h_bans = "";
 		$n = 0;
 		foreach($bans as $ban) {
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
-				<tr class='$oe'>
+				<tr>
 					<td width='30%'>{$ban['hash']}</td>
 					<td>{$ban['reason']}</td>
 					<td width='10%'>

@@ -27,11 +27,10 @@ class ExtManagerTheme extends Themelet {
 			else if($extension->enabled === FALSE) $h_enabled = "";
 			else $h_enabled = " disabled checked='checked'";
 			$h_link = make_link("ext_doc/".url_escape($extension->ext_name));
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
 			$h_en = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
 			$html .= "
-				<tr class='$oe'>
+				<tr>
 					$h_en
 					<td><a href='$h_link'>$h_name</a></td>
 					<td style='text-align: left;'>$h_description</td>

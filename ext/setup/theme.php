@@ -50,7 +50,6 @@ class SetupTheme extends Themelet {
 			$h_name = html_escape($name);
 			$h_value = html_escape($value);
 			$len = strlen($h_value);
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 
 			$h_box = "";
 			if(strpos($value, "\n") > 0) {
@@ -60,7 +59,7 @@ class SetupTheme extends Themelet {
 				$h_box .= "<input type='text' name='_config_$h_name' value='$h_value'>";
 			}
 			$h_box .= "<input type='hidden' name='_type_$h_name' value='string'>";
-			$h_rows .= "<tr class='$oe'><td>$h_name</td><td>$h_box</td></tr>";
+			$h_rows .= "<tr><td>$h_name</td><td>$h_box</td></tr>";
 		}
 
 		$table = "

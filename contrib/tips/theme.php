@@ -66,14 +66,11 @@ class TipsTheme extends Themelet {
 		$html .= "</tr></thead>";
 
 		$n = 0;
-		foreach ($tips as $tip)
-		{
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
-
+		foreach ($tips as $tip) {
 			$tip_enable = ($tip['enable'] == "Y") ? "Yes" : "No";
 			$set_link = "<a href='".make_link("tips/status/".$tip['id'])."'>".$tip_enable."</a>";
 
-			$html .= "<tr class='$oe'>".
+			$html .= "<tr>".
 				"<td>".$tip['id']."</td>".
 				"<td>".$set_link."</td>".
 				(

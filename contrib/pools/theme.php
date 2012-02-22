@@ -47,13 +47,11 @@ class PoolsTheme extends Themelet {
 		
 		// Build up the list of pools.
 		foreach($pools as $pool) {
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
-
 			$pool_link = '<a href="'.make_link("pool/view/".$pool['id']).'">'.html_escape($pool['title'])."</a>";
 			$user_link = '<a href="'.make_link("user/".url_escape($pool['user_name'])).'">'.html_escape($pool['user_name'])."</a>";
 			$public = ($pool['public'] == "Y" ? "Yes" : "No");
 
-			$html .= "<tr class='$oe'>".
+			$html .= "<tr>".
 				"<td class='left'>".$pool_link."</td>".
 				"<td>".$user_link."</td>".
 				"<td>".$pool['posts']."</td>".
@@ -125,9 +123,7 @@ class PoolsTheme extends Themelet {
 
 			$n = 0;
 			foreach($pools as $pool) {
-				$oe = ($n++ % 2 == 0) ? "even" : "odd";
-
-				$pool_info .= "<tr class='$oe'>".
+				$pool_info .= "<tr>".
 					"<td class='left'>".html_escape($pool['title'])."</td>".
 					"<td class='left'>".html_escape($pool['description'])."</td>".
 					"</tr>";
@@ -357,8 +353,6 @@ class PoolsTheme extends Themelet {
 
 		$n = 0;
 		foreach($histories as $history) {
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
-
 			$pool_link = "<a href='".make_link("pool/view/".$history['pool_id'])."'>".html_escape($history['title'])."</a>";
 			$user_link = "<a href='".make_link("user/".url_escape($history['user_name']))."'>".html_escape($history['user_name'])."</a>";
 			$revert_link = "<a href='".make_link("pool/revert/".$history['id'])."'>Revert</a>";
@@ -377,7 +371,7 @@ class PoolsTheme extends Themelet {
 				$image_link .= "<a href='".make_link("post/view/".$image)."'>".$prefix.$image." </a>";
 			}
 
-			$html .= "<tr class='$oe'>".
+			$html .= "<tr>".
 				"<td class='left'>".$pool_link."</td>".
 				"<td>".$history['count']."</td>".
 				"<td>".$image_link."</td>".

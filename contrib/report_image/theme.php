@@ -36,9 +36,8 @@ class ReportImageTheme extends Themelet {
 			ksort($iabbe->parts);
 			$actions = join("<br>", $iabbe->parts);
 
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_reportedimages .= "
-				<tr class='$oe'>
+				<tr>
 					<td>{$image_link}</td>
 					<td>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>

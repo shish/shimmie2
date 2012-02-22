@@ -15,7 +15,6 @@ class PrivMsgTheme extends Themelet {
 				<tbody>";
 		$n = 0;
 		foreach($pms as $pm) {
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_subject = html_escape($pm->subject);
 			if(strlen(trim($h_subject)) == 0) $h_subject = "(No subject)";
 			$from_name = User::by_id($pm->from_id)->name;
@@ -25,7 +24,7 @@ class PrivMsgTheme extends Themelet {
 			$del_url = make_link("pm/delete");
 			$h_date = html_escape($pm->sent_date);
 			if($pm->is_read) $h_subject = "<b>$h_subject</b>";
-			$html .= "<tr class='$oe'><td><a href='$pm_url'>$h_subject</a></td>
+			$html .= "<tr><td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
 			<td><form action='$del_url' method='POST'>
 				<input type='hidden' name='pm_id' value='{$pm->id}'>

@@ -113,8 +113,6 @@ class ForumTheme extends Themelet {
             $poster = User::by_name($post["user_name"]);
 			$gravatar = $poster->get_avatar_html();
 
-            $oe = ($n++ % 2 == 0) ? "even" : "odd";
-			
 			if ($post["user_admin"] == "Y") {
 			$rank = "<sup>admin</sup>";
 			} else {
@@ -135,7 +133,7 @@ class ForumTheme extends Themelet {
 			$delete_link = "";
 			}
             
-            $html .= "<tr class='$oe'>".
+            $html .= "<tr>".
                 "<td class='forum_user'>".$user."<br>".$rank."<br>".$gravatar."</td>".
                 "<td class='forum_message'>".$message."</td>"."</tr>
 				<tr class='$oe'>

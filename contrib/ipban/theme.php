@@ -19,9 +19,8 @@ class IPBanTheme extends Themelet {
 		$prefix2 = ($database->engine->name == "sqlite" ? "users." : "");
 		foreach($bans as $ban) {
 			$end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
-			$oe = ($n++ % 2 == 0) ? "even" : "odd";
 			$h_bans .= "
-				<tr class='$oe'>
+				<tr>
 					<td width='12%'>{$ban[$prefix.'ip']}</td>
 					<td>{$ban[$prefix.'reason']}</td>
 					<td width='10%'>{$ban['banner_name']}</td>
