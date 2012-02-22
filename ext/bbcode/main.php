@@ -38,7 +38,7 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
 		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "<s>\\1</s>", $text);
-		$text = preg_replace("/&gt;&gt;(\d+)(#c?(\d+))?/s", "<a href=\"".make_link("post/view/\\1\\2")."\" onclick=\"$('#c\\3]').effect('highlight', {}, 5000);\">&gt;&gt;\\1\\2</a>", $text);
+		$text = preg_replace("/&gt;&gt;(\d+)(#c?(\d+))?/s", "<a href=\"".make_link("post/view/\\1\\2")."\" onclick=\"$('#c\\3').effect('highlight', {}, 5000);\">&gt;&gt;\\1\\2</a>", $text);
 		$text = preg_replace("/(^|\s)#(\d+)/s", "\\1<a href=\"#\\2\">#\\2</a>", $text);
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
