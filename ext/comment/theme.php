@@ -207,8 +207,7 @@ class CommentListTheme extends Themelet {
 				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
 				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
 			return '
-				<a name="'.$i_comment_id.'"></a>
-				<div class="comment">
+				<div class="comment" id="'.$i_comment_id.'">
 					<div class="info">
 					'.$h_avatar.'
 					'.$h_timestamp.$h_reply.$h_ip.$h_del.'
