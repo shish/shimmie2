@@ -944,7 +944,7 @@ function get_debug_info() {
 		$i_mem = "???";
 	}
 
-	if($config->get_string("commit_hash") == "unknown"){
+	if($config->get_string("commit_hash", "unknown") == "unknown"){
 		$commit = "";
 	}else{
 		$commit = " (".$config->get_string("commit_hash").")";
