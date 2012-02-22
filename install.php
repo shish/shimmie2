@@ -341,7 +341,7 @@ function create_tables() { // {{{
 			CONSTRAINT foreign_image_tags_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			CONSTRAINT foreign_image_tags_tag_id FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
-		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 10)");
+		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 	}
 	catch (PDOException $e)
 	{

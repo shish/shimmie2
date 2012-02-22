@@ -334,7 +334,7 @@ class UserPage extends Extension {
 
 		// if there are currently no admins, the new user should be one
 		$need_admin = ($database->get_one("SELECT COUNT(*) FROM users WHERE class='admin'") == 0);
-		$admin = $need_admin ? 'admin' : 'user';
+		$class = $need_admin ? 'admin' : 'user';
 
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
