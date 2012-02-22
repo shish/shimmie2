@@ -242,10 +242,9 @@ class Page {
 
 		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>");
 
-		if(file_exists("themes/$theme_name/favicon.ico")) {
-			$this->add_html_header("<link rel='icon' href='$data_href/themes/$theme_name/favicon.ico'>");
-			$this->add_html_header("<link rel='shortcut icon' href='$data_href/themes/$theme_name/favicon.ico'>");
-		}
+		# 404/static handler will map these to themes/foo/bar.ico or lib/static/bar.ico
+		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>");
+		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>");
 		
 		/* Attempt to cache the CSS & JavaScript files */
 		if ($this->add_cached_auto_html_headers() === FALSE) {
