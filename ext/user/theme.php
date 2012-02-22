@@ -173,11 +173,11 @@ class UserPageTheme extends Themelet {
 			</form>
 			";
 
-			if($user->can("change_user_info")) {
+			if($user->class->name == "admin") {
 				$i_user_id = int_escape($duser->id);
 				$h_is_admin = $duser->is_admin() ? " checked" : "";
 				$html .= "
-					<p>".make_form(make_link("user_admin/set_more"))."
+					<p>".make_form(make_link("user_admin/change_class"))."
 						<input type='hidden' name='id' value='$i_user_id'>
 						Class: <select name='class'>
 				";

@@ -89,10 +89,30 @@ class UserPage extends Extension {
 				$page->set_redirect(make_link());
 			}
 			else if($event->get_arg(0) == "change_pass") {
-				$this->change_password_wrapper($page);
+				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
+					$duser = User::by_id($_POST['id']);
+					$pass1 = $_POST['pass1'];
+					$pass2 = $_POST['pass2'];
+					$this->change_password_wrapper($duser, $pass1, $pass2);
+				}
 			}
 			else if($event->get_arg(0) == "change_email") {
-				$this->change_email_wrapper($page);
+				if(isset($_POST['id']) && isset($_POST['address'])) {
+					$duser = User::by_id($_POST['id']);
+					$address = $_POST['address'];
+					$this->change_email_wrapper($duser, $address);
+				}
+			}
+			else if($event->get_arg(0) == "change_class") {
+				global $_user_classes;
+				if(isset($_POST['id']) && isset($_POST['class'])) {
+					$duser = User::by_id($_POST['id']);
+					$class = $_POST['class'];
+					if(!array_key_exists($class, $_user_classes)) {
+						throw Exception("Invalid user class: ".html_escape($class));
+					}
+					$this->change_class_wrapper($duser, $class);
+				}
 			}
 			else if($event->get_arg(0) == "recover") {
 				$user = User::by_name($_POST['username']);
@@ -129,9 +149,6 @@ class UserPage extends Extension {
 						$this->theme->display_error(400, "User Creation Error", $ex->getMessage());
 					}
 				}
-			}
-			else if($event->get_arg(0) == "set_more") {
-				$this->set_more_wrapper();
 			}
 			else if($event->get_arg(0) == "list") {
 // select users.id,name,joindate,admin,
@@ -339,26 +356,50 @@ class UserPage extends Extension {
 	}
 //}}}
 // Things done *to* the user {{{
-	private function change_password_wrapper(Page $page) {
-		global $user;
-		global $config;
-		global $database;
-
-		if($user->is_anonymous()) {
+	private function user_can_edit_user(User $a, User $b) {
+		if($a->is_anonymous()) {
 			$this->theme->display_error(401, "Error", "You aren't logged in");
 		}
-		else if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
-			$id = $_POST['id'];
-			$pass1 = $_POST['pass1'];
-			$pass2 = $_POST['pass2'];
-
-			$duser = User::by_id($id);
-
-			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
-				$this->theme->display_error(401, "Error",
-						"You need to be an admin to change other people's passwords");
+		if($a->name == $b->name) {
+			return true;
+		}
+		if($b->can("protected")) {
+			if($a->class->name == "admin") {
+				return true;
 			}
-			else if($pass1 != $pass2) {
+			else {
+				$this->theme->display_error(401, "Error", "You need to be an admin to change other people's details");
+			}
+		}
+		else {
+			if($a->can("edit_user_info")) {
+				return true;
+			}
+			else {
+				$this->theme->display_error(401, "Error", "You need to be an admin to change other people's details");
+			}
+		}
+		return false;
+	}
+
+	private function redirect_to_user(User $duser) {
+		global $page, $user;
+
+		if($user->id == $duser->id) {
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("user"));
+		}
+		else {
+			$page->set_mode("redirect");
+			$page->set_redirect(make_link("user/{$duser->name}"));
+		}
+	}
+
+	private function change_password_wrapper(User $duser, $pass1, $pass2) {
+		global $user;
+
+		if($this->user_can_edit_user($user, $duser)) {
+			if($pass1 != $pass2) {
 				$this->theme->display_error(400, "Error", "Passwords don't match");
 			}
 			else {
@@ -367,80 +408,28 @@ class UserPage extends Extension {
 
 				if($id == $user->id) {
 					$this->set_login_cookie($duser->name, $pass1);
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("user"));
 				}
-				else {
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("user/{$duser->name}"));
-				}
+				$this->redirect_to_user($duser);
 			}
 		}
 	}
 
-	private function change_email_wrapper(Page $page) {
+	private function change_email_wrapper(User $duser, /*string(email)*/ $address) {
 		global $user;
-		global $config;
-		global $database;
 
-		if($user->is_anonymous()) {
-			$this->theme->display_error(401, "Error", "You aren't logged in");
-		}
-		else if(isset($_POST['id']) && isset($_POST['address'])) {
-			$id = $_POST['id'];
-			$address = $_POST['address'];
-
-			$duser = User::by_id($id);
-
-			if((!$user->can("change_user_info")) && ($duser->name != $user->name)) {
-				$this->theme->display_error(401, "Error",
-						"You need to be an admin to change other people's addressess");
-			}
-			else {
-				$duser->set_email($address);
-
-				if($id == $user->id) {
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("user"));
-				}
-				else {
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("user/{$duser->name}"));
-				}
-			}
+		if($this->user_can_edit_user($user, $duser)) {
+			$duser->set_email($address);
+			$this->redirect_to_user($duser);
 		}
 	}
 
-	private function set_more_wrapper() {
-		global $config, $database, $page, $user;
+	private function change_class_wrapper(User $duser, /*string(class)*/ $class) {
+		global $user;
 
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
-		if(!$user->can("change_user_info")) {
-			$page->add_block(new Block("Not Admin", "Only admins can edit accounts"));
-		}
-		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-			$page->add_block(new Block("No ID Specified",
-					"You need to specify the account number to edit"));
-		}
-		else {
-			global $_user_classes;
-			$class = $_POST['class'];
-			if(!array_key_exists($class, $_user_classes)) {
-				throw Exception("Invalid user class: ".html_escape($class));
-			}
-
+		if($user->class->name == "admin") {
 			$duser = User::by_id($_POST['id']);
 			$duser->set_class($class);
-
-			$page->set_mode("redirect");
-			if($duser->id == $user->id) {
-				$page->set_redirect(make_link("user"));
-			}
-			else {
-				$page->set_redirect(make_link("user/{$duser->name}"));
-			}
+			$this->redirect_to_user($duser);
 		}
 	}
 // }}}

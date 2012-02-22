@@ -50,6 +50,7 @@ $_user_class_base = new UserClass("base", null, array(
 	"mass_tag_edit" => False,
 	"report_image" => False,
 	"view_image_report" => False,
+	"protected" => False,
 ));
 $_user_classes["anonymous"] = new UserClass("anonymous", $_user_class_base, array(
 	"edit_image_tag" => "tag_edit_anon",
@@ -83,6 +84,7 @@ $_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
 	"mass_tag_edit" => True,
 	"report_image" => True,
 	"view_image_report" => True,
+	"protected" => True,
 ));
 
 foreach(unserialize(EXTRA_USER_CLASSES) as $class_info) {
