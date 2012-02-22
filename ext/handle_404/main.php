@@ -17,17 +17,17 @@ class Handle404 extends Extension {
 			$f_pagename = preg_replace("/[^a-z\.]+/", "_", $h_pagename);
 			$theme_name = $config->get_string("theme", "default");
 
-			if(file_exists("themes/$theme_name/$f_pagename")) {
+			if(file_exists("themes/$theme_name/$f_pagename") || file_exists("lib/static/$f_pagename")) {
+				$filename = file_exists("themes/$theme_name/$f_pagename") ?
+						"themes/$theme_name/$f_pagename" : "lib/static/$f_pagename";
+
 				header("Cache-control: public, max-age=600");
 				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
 				$page->set_mode("data");
-				$page->set_data(file_get_contents("themes/$theme_name/$f_pagename"));
-			}
-			else if(file_exists("lib/static/$f_pagename")) {
-				header("Cache-control: public, max-age=600");
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
-				$page->set_mode("data");
-				$page->set_data(file_get_contents("lib/static/$f_pagename"));
+				$page->set_data(file_get_contents($filename));
+				if(endsWith($filename, ".ico")) $page->set_type("image/x-icon");
+				if(endsWith($filename, ".png")) $page->set_type("image/png");
+				if(endsWith($filename, ".txt")) $page->set_type("text/plain");
 			}
 			else {
 				log_debug("handle_404", "Hit 404: $h_pagename");
