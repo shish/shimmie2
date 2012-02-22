@@ -30,14 +30,13 @@ class UserClass {
 }
 
 $_user_class_base = new UserClass("base", null, array(
-	"change_setting" => False,  # web-level settings, eg the config table
-	"override_config" => False, # sys-level config, eg config.php
-	"big_search" => False,      # more than 3 tags (speed mode only)
-	"lock_image" => False,
+	"change_setting" => False,  # modify web-level settings, eg the config table
+	"override_config" => False, # modify sys-level settings, eg config.php
+	"big_search" => False,      # search for more than 3 tags at once (speed mode only)
 	"view_ip" => False,         # view IP addresses associated with things
 	"ban_ip" => False,
 	"change_password" => False,
-	"change_user_info" => False,
+	"change_user_info" => False,  # email address, etc
 	"delete_user" => False,
 	"delete_image" => False,
 	"delete_comment" => False,
@@ -47,10 +46,11 @@ $_user_class_base = new UserClass("base", null, array(
 	"edit_image_tag" => False,
 	"edit_image_source" => False,
 	"edit_image_owner" => False,
+	"lock_image" => False,
 	"mass_tag_edit" => False,
 	"report_image" => False,
-	"view_image_report" => False,
-	"protected" => False,
+	"view_image_report" => False,  # deal with reported images
+	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
 $_user_classes["anonymous"] = new UserClass("anonymous", $_user_class_base, array(
 	"edit_image_tag" => "tag_edit_anon",
