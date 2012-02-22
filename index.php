@@ -63,7 +63,7 @@ require_once "lib/context.php";
 if(CONTEXT) {
 	ctx_set_log(CONTEXT);
 }
-ctx_log_start($_SERVER["REQUEST_URI"], true, true);
+ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
 if(COVERAGE) {
 	_start_coverage();
 	register_shutdown_function("_end_coverage");
