@@ -1,0 +1,8 @@
+User-agent: *
+# comment lists change all the time, crawlers should
+# index individual image's comments
+Disallow: /comment/
+# next and prev are just CPU-heavier ways of getting
+# to the same images that the index shows
+Disallow: /post/next/
+Disallow: /post/prev/

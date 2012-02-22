@@ -5,22 +5,38 @@
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Visibility: admin
- * Description: Shows an error message when the user views a page with no content
+ * Description: If Shimmie can't handle a request, check static files; if that fails, show a 404
  */
 
 class Handle404 extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page;
+		global $config, $page;
 		// hax.
 		if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
 			$h_pagename = html_escape(implode('/', $event->args));
-			log_debug("handle_404", "Hit 404: $h_pagename");
-			
-			$page->add_http_header("HTTP/1.0 404 Page Not Found",5);
-			$page->set_title("404");
-			$page->set_heading("404 - No Handler Found");
-			$page->add_block(new NavBlock());
-			$page->add_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
+			$f_pagename = preg_replace("/[^a-z\.]+/", "_", $h_pagename);
+			$theme_name = $config->get_string("theme", "default");
+
+			if(file_exists("themes/$theme_name/$f_pagename")) {
+				header("Cache-control: public, max-age=600");
+				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+				$page->set_mode("data");
+				$page->set_data(file_get_contents("themes/$theme_name/$f_pagename"));
+			}
+			else if(file_exists("lib/static/$f_pagename")) {
+				header("Cache-control: public, max-age=600");
+				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+				$page->set_mode("data");
+				$page->set_data(file_get_contents("lib/static/$f_pagename"));
+			}
+			else {
+				log_debug("handle_404", "Hit 404: $h_pagename");
+				$page->add_http_header("HTTP/1.0 404 Page Not Found",5);
+				$page->set_title("404");
+				$page->set_heading("404 - No Handler Found");
+				$page->add_block(new NavBlock());
+				$page->add_block(new Block("Explanation", "No handler could be found for the page '$h_pagename'"));
+			}
 		}
 	}
 
