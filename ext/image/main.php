@@ -307,6 +307,8 @@ class ImageIO extends Extension {
 				return null;
 			}
 			else {
+				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array()); //TODO: Make this only work if &update=1 is set
+				send_event(new TagSetEvent($existing, $merged)); //Update tags even if image exists
 				$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
 						"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
 				throw new ImageAdditionException($error);
