@@ -346,7 +346,10 @@ class ImageIO extends Extension {
 		$tags_to_set = $image->get_tag_array();
 		$image->tag_array = array();
 		send_event(new TagSetEvent($image, $tags_to_set));
-		log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
+
+		if($image->source) {
+			log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
+		}
 	}
 // }}}  end add
 
