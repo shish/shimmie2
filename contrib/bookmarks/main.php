@@ -41,7 +41,7 @@ class Bookmarks extends Extension {
 				id SCORE_AIPK,
 				owner_id INTEGER NOT NULL,
 				url TEXT NOT NULL,
-				title TET NOT NULL,
+				title TEXT NOT NULL,
 				INDEX (owner_id),
 				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
