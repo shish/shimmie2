@@ -14,6 +14,8 @@ class TagList extends Extension {
 		$config->set_default_int("tags_min", 3);
 		$config->set_default_string("info_link", 'http://en.wikipedia.org/wiki/$tag');
 		$config->set_default_string("tag_list_image_type", 'related');
+		$config->set_default_string("tag_list_related_sort", 'alphabetical');
+		$config->set_default_string("tag_list_popular_sort", 'tagcount');
 		$config->set_default_bool("tag_list_pages", false);
 	}
 
@@ -98,6 +100,14 @@ class TagList extends Extension {
 			"Image's tags only" => "tags",
 			"Show related" => "related"
 		), "<br>Image tag list: ");
+		$sb->add_choice_option("tag_list_related_sort", array(
+			"Tag Count" => "tagcount",
+			"Alphabetical" => "alphabetical"
+		), "<br>Sort related list by: ");
+		$sb->add_choice_option("tag_list_popular_sort", array(
+			"Tag Count" => "tagcount",
+			"Alphabetical" => "alphabetical"
+		), "<br>Sort popular list by: ");
 		$sb->add_bool_option("tag_list_numbers", "<br>Show tag counts: ");
 		$event->panel->add_block($sb);
 	}
