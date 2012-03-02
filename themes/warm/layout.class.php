@@ -103,27 +103,8 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if($hidable) $html .= "
-			<script type='text/javascript'><!--
-			$(document).ready(function() {
-				$(\"#$i-toggle\").click(function() {
-					$(\"#$i\").slideToggle(\"slow\", function() {
-						if($(\"#$i\").is(\":hidden\")) {
-							$.cookie(\"$i-hidden\", 'true', {path: '/'});
-						}
-						else {
-							$.cookie(\"$i-hidden\", 'false', {path: '/'});
-						}
-					});
-				});
-				if($.cookie(\"$i-hidden\") == 'true') {
-					$(\"#$i\").hide();
-				}
-			});
-			//--></script>
-		";
 		if(!is_null($h)) $html .= "
-			<div class='hrr' id='$i-toggle'>
+			<div class='hrr' data-toggle-id='$i' class='shm-toggler'>
 				<div class='hrrtop'><div></div></div>
 				<div class='hrrcontent'><h3>$h</h3></div>
 				<div class='hrrbot'><div></div></div>

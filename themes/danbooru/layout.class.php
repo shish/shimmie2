@@ -13,7 +13,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 Danbooru Theme - Notes (Bzchan)
 
-Files: default.php, sidebar.js, style.css
+Files: default.php, style.css
 
 How to use a theme
 - Copy the danbooru folder with all its contained files into the "themes"
@@ -197,7 +197,6 @@ class Layout {
 	<head>
 		<title>{$page->title}</title>
 $header_html
-		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 		<script src='$data_href/themes/$theme_name/script.js' type='text/javascript'></script>
 	</head>
 
@@ -241,13 +240,13 @@ EOD;
 		$html = "";
 		if($hidable) {
 			$i = str_replace(' ', '_', $h.$s);
-			if(!is_null($h)) $html .= "\n<h3 id='$i-toggle' onclick=\"toggle('$i')\">$h</h3>\n";
+			if(!is_null($h)) $html .= "\n<h3 class='shm-toggler' data-toggle-id='$i'>$h</h3>\n";
 			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
 		}
 		else {
 			$i = str_replace(' ', '_', $h.$s);
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
-			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n"; 
+			if(!is_null($b)) $html .= "<div>$b</div>\n"; 
 		}
 		return $html;
 	}

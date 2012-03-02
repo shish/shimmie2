@@ -202,30 +202,11 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if($hidable) $html .= "
-			<script type='text/javascript'><!--
-			$(document).ready(function() {
-				$(\"#$i-toggle\").click(function() {
-					$(\"#$i\").slideToggle(\"slow\", function() {
-						if($(\"#$i\").is(\":hidden\")) {
-							$.cookie(\"$i-hidden\", 'true', {path: '/'});
-						}
-						else {
-							$.cookie(\"$i-hidden\", 'false', {path: '/'});
-						}
-					});
-				});
-				if($.cookie(\"$i-hidden\") == 'true') {
-					$(\"#$i\").hide();
-				}
-			});
-			//--></script>
-		";
 		if(!is_null($h)) {
 			if($salt == "main") {
-				$html .= "<div class='maintop navside tab' id='$i-toggle'>$h</div>";
+				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-id='$i'>$h</div>";
 			} else {
-				$html .= "<div class='navtop navside tab' id='$i-toggle'>$h</div>";
+				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-id='$i'>$h</div>";
 			}
 			}
 		if(!is_null($b)) {

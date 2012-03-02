@@ -51,7 +51,6 @@ class Layout {
 	<head>
 		<title>{$page->title}</title>
 $header_html
-		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 		<script src='$data_href/themes/$theme_name/script.js' type='text/javascript'></script>
 	</head>
 
@@ -84,13 +83,7 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if($hidable) {
-			$toggle = " onclick=\"toggle('$i')\"";
-		}
-		else {
-			$toggle = "";
-		}
-		if(!is_null($h)) $html .= "\n<h3 id='$i-toggle'$toggle>$h</h3>\n";
+		if(!is_null($h)) $html .= "\n<h3 data-toggle-id='$i' class='shm-toggler'>$h</h3>\n";
 		if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
 		return $html;
 	}

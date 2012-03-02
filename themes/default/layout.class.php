@@ -54,7 +54,6 @@ class Layout {
 <html>
 	<head>
 		<title>{$page->title}</title>
-		<script src='$data_href/themes/$theme_name/sidebar.js' type='text/javascript'></script>
 $header_html
 	</head>
 
@@ -89,27 +88,8 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if($hidable) $html .= "
-			<script type='text/javascript'><!--
-			$(document).ready(function() {
-				$(\"#$i-toggle\").click(function() {
-					$(\"#$i\").slideToggle(\"slow\", function() {
-						if($(\"#$i\").is(\":hidden\")) {
-							$.cookie(\"$i-hidden\", 'true', {path: '/'});
-						}
-						else {
-							$.cookie(\"$i-hidden\", 'false', {path: '/'});
-						}
-					});
-				});
-				if($.cookie(\"$i-hidden\") == 'true') {
-					$(\"#$i\").hide();
-				}
-			});
-			//--></script>
-		";
 		if(!is_null($h)) $html .= "
-			<h3 id='$i-toggle' class='hrr'>$h</h3>
+			<h3 data-toggle-id='$i' class='hrr shm-toggler'>$h</h3>
 		";
 		if(!is_null($b)) {
 			if(strpos($b, "<!-- cancel border -->") === FALSE) {
