@@ -192,7 +192,7 @@ class CommentListTheme extends Themelet {
 		if($trim) {
 			return '
 				'.$h_userlink.': '.$h_comment.'
-				<a href="'.make_link('post/view/'.$i_image_id).'">&gt;&gt;&gt;</a>
+				<a href="'.make_link('post/view/'.$i_image_id.'#c'.$i_comment_id).'">&gt;&gt;&gt;</a>
 			';
 		}
 		else {
