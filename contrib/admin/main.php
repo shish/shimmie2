@@ -139,12 +139,12 @@ class AdminPage extends Extension {
 
 	private function dbdump(Page $page) {
 		$matches = array();
-		preg_match("#(\w+)://(\w+):(\w+)@([\w\.\-]+)/([\w_]+)(\?.*)?#", DATABASE_DSN, $matches);
-		$software = $matches[1];
-		$username = $matches[2];
-		$password = $matches[3];
-		$hostname = $matches[4];
-		$database = $matches[5];
+		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w+)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
+		$software = $matches['proto'];
+		$username = $matches['user'];
+		$password = $matches['password'];
+		$hostname = $matches['host'];
+		$database = $matches['dbname'];
 
 		// TODO: Support more than just MySQL..
 		switch($software) {
