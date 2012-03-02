@@ -82,7 +82,7 @@ class PrivMsg extends Extension {
 		if(!$user->is_anonymous()) {
 			$count = $this->count_pms($user);
 			$h_count = $count > 0 ? " ($count)" : "";
-			$event->add_link("Private Messages", make_link("user"));
+			$event->add_link("Private Messages$h_count", make_link("user"));
 		}
 	}
 
@@ -190,13 +190,13 @@ class PrivMsg extends Extension {
 		global $database;
 
 		$count = $database->cache->get("pm-count-{$user->id}");
-		if(is_null($count)) {
+		if(is_null($count) || $count === false) {
 			$count = $database->get_one("
 					SELECT count(*)
 					FROM private_message
-					WHERE to_id = :toid
+					WHERE to_id = :to_id
 					AND is_read = :is_read
-			", array("toid" => $user->id, "is_read" => "N"));
+			", array("to_id" => $user->id, "is_read" => "N"));
 			$database->cache->set("pm-count-{$user->id}", $count, 60);
 		}
 		return $count;
