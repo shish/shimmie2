@@ -89,7 +89,7 @@ class TagListTheme extends Themelet {
 				$html .= ' <a class="tag_info_link" href="'.$link.'">?</a>';
 			}
 			$link = $this->tag_link($row['tag']);
-			$html .= ' <a class="tag_name" href="$link">'.$h_tag_no_underscores.'</a>';
+			$html .= ' <a class="tag_name" href="'.$link.'">'.$h_tag_no_underscores.'</a>';
 			if($tag_list_num) {
 				$html .= ' <span class="tag_count">'.$count.'</span>';
 			}

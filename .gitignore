@@ -37,6 +37,7 @@ ext/image_hash_ban
 ext/ipban
 ext/link_image
 ext/log_db
+ext/log_net
 ext/mass_tagger
 ext/news
 ext/notes
