@@ -77,14 +77,14 @@ class PrivMsg extends Extension {
 		}
 	}
 
-	/*
-	public function onUserBlockBuilding(UserBlockBuilding $event) {
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if(!$user->is_anonymous()) {
-			$event->add_link("Private Messages", make_link("pm"));
+			$count = $this->count_pms($user);
+			$h_count = $count > 0 ? " ($count)" : "";
+			$event->add_link("Private Messages", make_link("user"));
 		}
 	}
-	*/
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user;
@@ -113,6 +113,7 @@ class PrivMsg extends Extension {
 						else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 							$from_user = User::by_id(int_escape($pm["from_id"]));
 							$database->get_row("UPDATE private_message SET is_read='Y' WHERE id = :id", array("id" => $pm_id));
+							$database->cache->delete("pm-count-{$user->id}");
 							$this->theme->display_message($page, $from_user, $user, new PM($pm));
 						}
 						else {
@@ -128,6 +129,7 @@ class PrivMsg extends Extension {
 							}
 							else if(($pm["to_id"] == $user->id) || $user->is_admin()) {
 								$database->execute("DELETE FROM private_message WHERE id = :id", array("id" => $pm_id));
+								$database->cache->delete("pm-count-{$user->id}");
 								log_info("pm", "Deleted PM #$pm_id");
 								$page->set_mode("redirect");
 								$page->set_redirect($_SERVER["HTTP_REFERER"]);
@@ -163,6 +165,7 @@ class PrivMsg extends Extension {
 			array("fromid" => $event->pm->from_id, "fromip" => $event->pm->from_ip,
 			"toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message)
 		);
+		$database->cache->delete("pm-count-{$event->pm->to_id}");
 		log_info("pm", "Sent PM to User #{$event->pm->to_id}");
 	}
 
@@ -181,6 +184,22 @@ class PrivMsg extends Extension {
 			$pms[] = new PM($pm);
 		}
 		return $pms;
+	}
+
+	private function count_pms(User $user) {
+		global $database;
+
+		$count = $database->cache->get("pm-count-{$user->id}");
+		if(is_null($count)) {
+			$count = $database->get_one("
+					SELECT count(*)
+					FROM private_message
+					WHERE to_id = :toid
+					AND is_read = :is_read
+			", array("toid" => $user->id, "is_read" => "N"));
+			$database->cache->set("pm-count-{$user->id}", $count, 60);
+		}
+		return $count;
 	}
 }
 ?>
