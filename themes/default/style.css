@@ -144,6 +144,7 @@ UL {
 	margin-right: 16px;
 	text-align: center;
 	height: 1%;
+	word-wrap: break-word;
 }
 #body TABLE {
 	width: 90%;
