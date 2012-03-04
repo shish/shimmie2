@@ -1,16 +1,19 @@
 /* Imageboard to Shimmie */
 // This should work with "most" sites running Danbooru/Gelbooru/Shimmie
+//TODO: Make this use jQuery!
 
 var maxsze = (maxsze.match("(?:\.*[0-9])")) * 1024; //This assumes we are only working with MB.
 var toobig = "The file you are trying to upload is too big to upload!";
 var notsup = "The file you are trying to upload is not supported!";
 if (CA === 0 || CA > 2){ //Default
 	if (confirm("OK = Use Current tags.\nCancel = Use new tags.")==true){
+		//Do nothing
 	}else{
 		var tag=prompt("Enter Tags","");
 		var chk=1; //This makes sure it doesn't use current tags.
 	}
 }else if (CA === 1){ //Current Tags
+	//Do nothing
 }else if (CA === 2){ //New Tags
 	var tag=prompt("Enter Tags","");
 	var chk=1;
@@ -19,6 +22,7 @@ if (CA === 0 || CA > 2){ //Default
 // Danbooru | oreno.imouto | konachan | sankakucomplex
 if(document.getElementById("post_tags") !== null){
 	if (typeof tag !=="ftp://ftp." && chk !==1){var tag=document.getElementById("post_tags").value;}
+	tag = tag.replace(/\+/g, "%2B"); //This should stop + not showing in tags :x
 	var srx="http://" + document.location.hostname + document.location.href.match("\/post\/show\/[0-9]+");
 	if(srx.search("oreno\\.imouto") >= 0 || srx.search("konachan\\.com") >= 0){
 		var rtg=document.getElementById("stats").innerHTML.match("<li>Rating: (.*) <span")[1];

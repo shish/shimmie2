@@ -36,6 +36,8 @@ class TagListTheme extends Themelet {
 
 		$html = "";
 		$n = 0;
+		if($config->get_string('tag_list_related_sort') == 'alphabetical') asort($tag_infos);
+
 		foreach($tag_infos as $row) {
 			$tag = $row['tag'];
 			$h_tag = html_escape($tag);
@@ -77,6 +79,7 @@ class TagListTheme extends Themelet {
 
 		$html = "";
 		$n = 0;
+		if($config->get_string('tag_list_popular_sort') == 'alphabetical') asort($tag_infos);
 		
 		foreach($tag_infos as $row) {
 			$tag = $row['tag'];
