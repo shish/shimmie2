@@ -27,18 +27,18 @@
  * }
  * 
  * public class Hello extends Extension {
- *     public void onPageRequest(PageRequestEvent $event) {
+ *     public function onPageRequest(PageRequestEvent $event) {
  *         global $page, $user;
  *         send_event(new HelloEvent($user->name));
  *     }
- *     public void onHello(HelloEvent $event) {
+ *     public function onHello(HelloEvent $event) {
  *         $this->theme->display_hello($event->username);
  *     }
  * }
  *
  * // ext/hello/theme.php
  * public class HelloTheme extends Themelet {
- *     public void display_hello($username) {
+ *     public function display_hello($username) {
  *         global $page;
  *         $page->add_block(new Block("Hello!", "Hello there ".html_escape($username));
  *     }
@@ -46,7 +46,7 @@
  *
  * // ext/hello/test.php
  * public class HelloTest extends SCoreWebTestCase {
- *     public void testHello() {
+ *     public function testHello() {
  *         $this->get_page("post/list");
  *         $this->assert_text("Hello there");
  *     }
