@@ -27,12 +27,12 @@
  * }
  * 
  * public class Hello extends Extension {
- *     public function onPageRequest(PageRequestEvent $event) {
- *         global $page, $user;
- *         send_event(new HelloEvent($user->name));
+ *     public function onPageRequest(PageRequestEvent $event) {   // Every time a page request is sent
+ *         global $user;                                          // Look at the global "currently logged in user" object
+ *         send_event(new HelloEvent($user->name));               // Broadcast a signal saying hello to that user
  *     }
- *     public function onHello(HelloEvent $event) {
- *         $this->theme->display_hello($event->username);
+ *     public function onHello(HelloEvent $event) {               // When the "Hello" signal is recieved
+ *         $this->theme->display_hello($event->username);         // Display a message on the web page
  *     }
  * }
  *
@@ -40,22 +40,25 @@
  * public class HelloTheme extends Themelet {
  *     public function display_hello($username) {
  *         global $page;
- *         $page->add_block(new Block("Hello!", "Hello there ".html_escape($username));
+ *         $h_user = html_escape($username);                     // Escape the data before adding it to the page
+ *         $block = new Block("Hello!", "Hello there $h_user");  // HTML-safe variables start with "h_"
+ *         $page->add_block($block);                             // Add the block to the page
  *     }
  * }
  *
  * // ext/hello/test.php
  * public class HelloTest extends SCoreWebTestCase {
  *     public function testHello() {
- *         $this->get_page("post/list");
- *         $this->assert_text("Hello there");
+ *         $this->get_page("post/list");                   // View a page, any page
+ *         $this->assert_text("Hello there");              // Check that the specified text is in that page
  *     }
  * }
  *
  * // themes/mytheme/hello.theme.php
- * public class CustomHelloTheme extends HelloTheme {
- *     public function display_hello(Page $page, User $user) {
- *         $h_user = html_escape($user->name);
+ * public class CustomHelloTheme extends HelloTheme {     // CustomHelloTheme overrides HelloTheme
+ *     public function display_hello($username) {         // the display_hello() function is customised
+ *         global $page;
+ *         $h_user = html_escape($username);
  *         $page->add_block(new Block(
  *             "Hello!",
  *             "Hello there $h_user, look at my snazzy custom theme!"
