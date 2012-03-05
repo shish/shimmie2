@@ -260,9 +260,9 @@ class UserPage extends Extension {
 
 		$matches = array();
 		if(preg_match("/^(poster|user)=(.*)$/i", $event->term, $matches)) {
-			$user = User::by_name($matches[2]);
-			if(!is_null($user)) {
-				$user_id = $user->id;
+			$duser = User::by_name($matches[2]);
+			if(!is_null($duser)) {
+				$user_id = $duser->id;
 			}
 			else {
 				$user_id = -1;
