@@ -8,6 +8,7 @@
 .comment {
 	text-align: left;
 	position: relative;
+	word-wrap: break-word;
 }
 .comment .info {
 	visibility: hidden;
