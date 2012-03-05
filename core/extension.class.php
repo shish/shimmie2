@@ -89,7 +89,24 @@ abstract class Extension {
 	/** @private */
 	public function i_am(Extension $child) {
 		$this->_child = $child;
-		if(is_null($this->theme)) $this->theme = get_theme_object($child, false);
+		if(is_null($this->theme)) $this->theme = $this->get_theme_object($child, false);
+	}
+
+	/**
+	 * Find the theme object for a given extension
+	 */
+	private function get_theme_object(Extension $class, $fatal=true) {
+		$base = get_class($class);
+		if(class_exists('Custom'.$base.'Theme')) {
+			$class = 'Custom'.$base.'Theme';
+			return new $class();
+		}
+		elseif ($fatal || class_exists($base.'Theme')) {
+			$class = $base.'Theme';
+			return new $class();
+		} else {
+			return false;
+		}
 	}
 
 	/**
