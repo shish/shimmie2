@@ -12,20 +12,14 @@
  * which links to images on an image board, with no wiki or messaging, and so
  * on and so on...
  * 
- * To learn about the innards of SCore, start with the \ref overview.
- *
- *
- * \page overview High Level Overview
- *
  * Dijkstra will kill me for personifying my architecture, but I can't think
  * of a better way without going into all the little details.
- *
  * There are a bunch of Extension subclasses, they talk to eachother by sending
- * and recieving Event subclasses. The topic of conversation is decided by the
- * initial PageRequestEvent, and each extension puts its notes into the shared
- * Page data store. Once the conversation is over, the Page is passed to the
+ * and recieving Event subclasses. The primary driver for each conversation is the
+ * initial PageRequestEvent. If an Extension wants to display something to the
+ * user, it adds a block to the Page data store. Once the conversation is over, the Page is passed to the
  * current theme's Layout class which will tidy up the data and present it to
- * the user.
+ * the user. To see this in a more practical sense, see \ref hello.
  *
  * To learn more about the architecture:
  *
@@ -36,7 +30,6 @@
  *
  * \li \ref scglobals
  * \li \ref unittests
- * \li \ref hello
  *
  * \page scglobals SCore Globals
  * 
