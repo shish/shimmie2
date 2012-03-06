@@ -344,7 +344,6 @@ function make_http(/*string*/ $link) {
 
 /**
  * Make a form tag with relevant auth token and stuff
- * (Added optional Form ID field for helping jquery.)
  *
  * @retval string
  */
@@ -505,23 +504,6 @@ function _count_execs($db, $sql, $inputarray) {
 	else $_execs++;
 	# in PHP4.4 and PHP5, we need to return a value by reference
 	$null = null; return $null;
-}
-
-/**
- * Find the theme object for a given extension
- */
-function get_theme_object(Extension $class, $fatal=true) {
-	$base = get_class($class);
-	if(class_exists('Custom'.$base.'Theme')) {
-		$class = 'Custom'.$base.'Theme';
-		return new $class();
-	}
-	elseif ($fatal || class_exists($base.'Theme')) {
-		$class = $base.'Theme';
-		return new $class();
-	} else {
-		return false;
-	}
 }
 
 /**

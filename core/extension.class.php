@@ -20,23 +20,33 @@
  *
  * \code
  * // ext/hello/main.php
+ * public class HelloEvent extends Event {
+ *     public function __construct($username) {
+ *         $this->username = $username;
+ *     }
+ * }
+ * 
  * public class Hello extends Extension {
- *     public void onPageRequest(PageRequestEvent $event) {
+ *     public function onPageRequest(PageRequestEvent $event) {
  *         global $page, $user;
- *         $this->theme->display_hello($page, $user);
+ *         send_event(new HelloEvent($user->name));
+ *     }
+ *     public function onHello(HelloEvent $event) {
+ *         $this->theme->display_hello($event->username);
  *     }
  * }
  *
  * // ext/hello/theme.php
  * public class HelloTheme extends Themelet {
- *     public void display_hello(Page $page, User $user) {
- *         $page->add_block(new Block("Hello!", "Hello there ".html_escape($user->name));
+ *     public function display_hello($username) {
+ *         global $page;
+ *         $page->add_block(new Block("Hello!", "Hello there ".html_escape($username));
  *     }
  * }
  *
  * // ext/hello/test.php
  * public class HelloTest extends SCoreWebTestCase {
- *     public void testHello() {
+ *     public function testHello() {
  *         $this->get_page("post/list");
  *         $this->assert_text("Hello there");
  *     }
@@ -67,17 +77,42 @@
  * find the thread where the original was posted >_<
  */
 abstract class Extension {
+	/** this theme's Themelet object */
 	var $theme;
+
+	/** @private */
 	var $_child;
 
 	// in PHP5.3, late static bindings can take care of this; __CLASS__
 	// used here will refer to the subclass
 	// http://php.net/manual/en/language.oop5.late-static-bindings.php
+	/** @private */
 	public function i_am(Extension $child) {
 		$this->_child = $child;
-		if(is_null($this->theme)) $this->theme = get_theme_object($child, false);
+		if(is_null($this->theme)) $this->theme = $this->get_theme_object($child, false);
 	}
 
+	/**
+	 * Find the theme object for a given extension
+	 */
+	private function get_theme_object(Extension $class, $fatal=true) {
+		$base = get_class($class);
+		if(class_exists('Custom'.$base.'Theme')) {
+			$class = 'Custom'.$base.'Theme';
+			return new $class();
+		}
+		elseif ($fatal || class_exists($base.'Theme')) {
+			$class = $base.'Theme';
+			return new $class();
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Override this to change the priority of the extension,
+	 * lower numbered ones will recieve events first
+	 */
 	public function get_priority() {
 		return 50;
 	}
