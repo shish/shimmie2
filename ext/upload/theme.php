@@ -18,8 +18,7 @@ class UploadTheme extends Themelet {
 		$upload_count = $config->get_int('upload_count');
 		
 		
-		for($i=0; $i<$upload_count; $i++)
-		{
+		for($i=0; $i<$upload_count; $i++) {
 			$a=$i+1;
 			$s=$i-1;
 			
@@ -114,43 +113,65 @@ class UploadTheme extends Themelet {
 		";
 		
 		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
-			$main_page = make_http(make_link());
-			$title = $config->get_string('title');
-			
-			if($config->get_bool('nice_urls')){
-				$delimiter = '?';
-			} else {
-				$delimiter = '&amp;';
-			}
-			{
-				$js='javascript:(function(){if(typeof window=="undefined"||!window.location||window.location.href=="about:blank"){window.location="'. $main_page .'";}else if(typeof document=="undefined"||!document.body){window.location="'. $main_page .'?url="+encodeURIComponent(window.location.href);} else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")){alert("You are already at '. $title .'!");} else{var tags=prompt("Please enter tags","tagme");if(tags!=""&&tags!=null){var link="'. $link . $delimiter .'url="+location.href+"&tags="+tags;var w=window.open(link,"_blank");}}})();';
-				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
-			}
-				{
-			/* Imageboard > Shimmie Bookmarklet
-				This is more or less, an upgraded version of the "Danbooru>Shimmie" bookmarklet.
-				At the moment this is known to work with Shimmie/Danbooru/Gelbooru/oreno.imouto/konachan/sankakucomplex.
-				The bookmarklet is now also loaded via the .js file in this folder.
-			*/
-			//Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
-			$supported_ext = "jpg jpeg gif png";
-			if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
-			if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
-			if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
-			if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
-			$title = "Booru to " . $config->get_string('title');
-			//CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
-			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsize=&quot;'.$max_kb.'&quot;; var CA=0; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)">'.
-				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
-			}
-				
+			$html .= $this->h_bookmarklets();
 		}
 
 		$page->set_title("Upload");
 		$page->set_heading("Upload");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Upload", $html, "main", 20));
+	}
+
+	protected function h_bookmarklets() {
+		global $config;
+		$link = make_http(make_link("upload"));
+		$main_page = make_http(make_link());
+		$title = $config->get_string('title');
+		$max_size = $config->get_int('upload_size');
+		$max_kb = to_shorthand_int($max_size);
+		$delimiter = $config->get_bool('nice_urls') ? '?' : '&amp;';
+		$html = '';
+
+		$js='javascript:(
+			function() {
+				if(typeof window=="undefined" || !window.location || window.location.href=="about:blank") {
+					window.location = "'. $main_page .'";
+				}
+				else if(typeof document=="undefined" || !document.body) {
+					window.location = "'. $main_page .'?url="+encodeURIComponent(window.location.href);
+				}
+				else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")) {
+					alert("You are already at '. $title .'!");
+				}
+				else {
+					var tags = prompt("Please enter tags", "tagme");
+					if(tags != "" && tags != null) {
+						var link = "'. $link . $delimiter .'url="+location.href+"&tags="+tags;
+						var w = window.open(link, "_blank");
+					}
+				}
+			}
+		)();';
+		$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a>';
+		$html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
+
+		// Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
+		$supported_ext = "jpg jpeg gif png";
+		if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
+		if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
+		if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
+		if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
+		$title = "Booru to " . $config->get_string('title');
+		// CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
+		$html .= '<p><a href="javascript:
+			var ste=&quot;'. $link . $delimiter .'url=&quot;;
+			var supext=&quot;'.$supported_ext.'&quot;;
+			var maxsize=&quot;'.$max_kb.'&quot;;
+			var CA=0;
+			void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)
+		">'. $title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
+
+		return $html;
 	}
 
 	/* only allows 1 file to be uploaded - for replacing another image file */
