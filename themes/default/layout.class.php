@@ -91,8 +91,9 @@ EOD;
 		$b = $block->body;
 		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
+		$h_toggler = $hidable ? " shm-toggler" : "";
 		if(!is_null($h)) $html .= "
-			<h3 data-toggle-id='$i' class='hrr shm-toggler'>$h</h3>
+			<h3 data-toggle-id='$i' class='hrr$h_toggler'>$h</h3>
 		";
 		if(!is_null($b)) {
 			if(strpos($b, "<!-- cancel border -->") === FALSE) {
