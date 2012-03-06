@@ -11,19 +11,81 @@ class UploadTheme extends Themelet {
 
 	public function display_page(Page $page) {
 		global $config, $page;
+
+		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+		$max_size = $config->get_int('upload_size');
+		$max_kb = to_shorthand_int($max_size);
+		$upload_list = $this->h_upload_list_1();
+		$html = "
+			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
+				<table id='large_upload_form' class='vert'>
+					$upload_list
+					<tr><td width='20'>Tags<td colspan='3'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
+					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
+					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
+				</table>
+			</form>
+			<small>(Max file size is $max_kb)</small>
+		";
 		
+		$page->set_title("Upload");
+		$page->set_heading("Upload");
+		$page->add_block(new NavBlock());
+		$page->add_block(new Block("Upload", $html, "main", 20));
+		if($tl_enabled) {
+			$page->add_block(new Block("Bookmarklets", $this->h_bookmarklets(), "left", 20));
+		}
+	}
+
+	protected function h_upload_list_1() {
+		global $config;
+		$upload_list = "";
+		$upload_count = $config->get_int('upload_count');
+		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+
+		if($tl_enabled) {
+			$upload_list .= "
+				<tr>
+					<td colspan='2'>Files</td>
+					<td colspan='2'>URLs</td>
+				</tr>
+			";
+
+			for($i=0; $i<$upload_count; $i++) {
+				$upload_list .= "
+					<tr>
+						<td colspan='2'><input type='file' name='data$i'></td>
+						<td colspan='2'><input type='text' name='url$i'</td>
+					</tr>
+				";
+			}
+		}
+		else {
+			for($i=0; $i<$upload_count; $i++) {
+				$upload_list .= "
+					<tr>
+						<td colspan='4'><input type='file' name='data$i'></td>
+					</tr>
+				";
+			}
+		}
+
+		return $upload_list;
+	}
+
+	protected function h_upload_List_2() {
+		global $config;
+
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 		// Uploader 2.0!
 		$upload_list = "";
 		$upload_count = $config->get_int('upload_count');
 		
-		
-		for($i=0; $i<$upload_count; $i++)
-		{
-			$a=$i+1;
-			$s=$i-1;
+		for($i=0; $i<$upload_count; $i++) {
+			$a = $i+1;
+			$s = $i-1;
 			
-			if(!$i==0){
+			if($i != 0) {
 				$upload_list .="<tr id='row$i' style='display:none'>";
 			}else{
 				$upload_list .= "<tr id='row$i'>";
@@ -31,15 +93,18 @@ class UploadTheme extends Themelet {
 			
 			$upload_list .= "<td width='15'>";
 					
-			if($i==0){
+			if($i == 0) {
 				$js = 'javascript:$(function() {
 					$("#row'.$a.'").show();
 					$("#hide'.$i.'").hide();
 					$("#hide'.$a.'").show();});';
 				
-				$upload_list .= "<div id='hide$i'><img id='wrapper' src='ext/upload/minus.png' />" .
-				"<a href='#' onclick='$js'>".
-				"<img src='ext/upload/plus.png'></a></div></td>";
+				$upload_list .= "
+					<div id='hide$i'>
+						<img id='wrapper' src='ext/upload/minus.png' />
+						<a href='#' onclick='$js'><img src='ext/upload/plus.png'></a>
+					</div>
+				";
 			} else {
 				$js = 'javascript:$(function() {
 				$("#row'.$i.'").hide();
@@ -49,13 +114,15 @@ class UploadTheme extends Themelet {
 				$("#url'.$i.'").val("");
 				});';
 				
-				$upload_list .="<div id='hide$i'>
-				<a href='#' onclick='$js'>".
-				"<img src='ext/upload/minus.png' /></a>";
+				$upload_list .="
+					<div id='hide$i'>
+						<a href='#' onclick='$js'><img src='ext/upload/minus.png' /></a>
+				";
 				
 				if($a == $upload_count){
 					$upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
-				}else{
+				}
+				else{
 					$js1 = 'javascript:$(function() {
 						$("#row'.$a.'").show();
 						$("#hide'.$i.'").hide();
@@ -65,16 +132,17 @@ class UploadTheme extends Themelet {
 					"<a href='#' onclick='$js1'>".
 					"<img src='ext/upload/plus.png' /></a>";
 				}
-				$upload_list .= "</div></td>";
+				$upload_list .= "</div>";
 			}
+			$upload_list .= "</td>";
 					
 			$js2 = 'javascript:$(function() {
 						$("#url'.$i.'").hide();
 						$("#url'.$i.'").val("");
 						$("#data'.$i.'").show(); });';
 
-			$upload_list .=
-			"<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
+			$upload_list .= "
+				<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
 			
 			if($tl_enabled) {
 				$js = 'javascript:$(function() {
@@ -98,59 +166,60 @@ class UploadTheme extends Themelet {
 				</tr>
 			";
 		}
-		
+
+		return $upload_list;
+	}
+
+	protected function h_bookmarklets() {
+		global $config;
+		$link = make_http(make_link("upload"));
+		$main_page = make_http(make_link());
+		$title = $config->get_string('title');
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
-		$html = "
-			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
-				<table id='large_upload_form' class='vert'>
-					$upload_list
-					<tr><td></td><td>Tags<td colspan='3'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
-					<tr><td></td><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
-					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
-				</table>
-			</form>
-			<small>(Max file size is $max_kb)</small>
-		";
-		
-		if($tl_enabled) {
-			$link = make_http(make_link("upload"));
-			$main_page = make_http(make_link());
-			$title = $config->get_string('title');
-			
-			if($config->get_bool('nice_urls')){
-				$delimiter = '?';
-			} else {
-				$delimiter = '&amp;';
-			}
-			{
-				$js='javascript:(function(){if(typeof window=="undefined"||!window.location||window.location.href=="about:blank"){window.location="'. $main_page .'";}else if(typeof document=="undefined"||!document.body){window.location="'. $main_page .'?url="+encodeURIComponent(window.location.href);} else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")){alert("You are already at '. $title .'!");} else{var tags=prompt("Please enter tags","tagme");if(tags!=""&&tags!=null){var link="'. $link . $delimiter .'url="+location.href+"&tags="+tags;var w=window.open(link,"_blank");}}})();';
-				$html .= '<p><a href=\''.$js.'\'>Upload to '.$title.'</a> (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
-			}
-				{
-			/* Imageboard > Shimmie Bookmarklet
-				This is more or less, an upgraded version of the "Danbooru>Shimmie" bookmarklet.
-				At the moment this is known to work with Shimmie/Danbooru/Gelbooru/oreno.imouto/konachan/sankakucomplex.
-				The bookmarklet is now also loaded via the .js file in this folder.
-			*/
-			//Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
-			$supported_ext = "jpg jpeg gif png";
-			if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
-			if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
-			if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
-			if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
-			$title = "Booru to " . $config->get_string('title');
-			//CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
-			$html .= '<p><a href="javascript:var ste=&quot;'. $link . $delimiter .'url=&quot;; var supext=&quot;'.$supported_ext.'&quot;; var maxsize=&quot;'.$max_kb.'&quot;; var CA=0; void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)">'.
-				$title . '</a> (Click when looking at an image page. Works on sites running Shimmie/Danbooru/Gelbooru. (This also grabs the tags/rating/source!))';
-			}
-				
-		}
+		$delimiter = $config->get_bool('nice_urls') ? '?' : '&amp;';
+		$html = '';
 
-		$page->set_title("Upload");
-		$page->set_heading("Upload");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Upload", $html, "main", 20));
+		$js='javascript:(
+			function() {
+				if(typeof window=="undefined" || !window.location || window.location.href=="about:blank") {
+					window.location = "'. $main_page .'";
+				}
+				else if(typeof document=="undefined" || !document.body) {
+					window.location = "'. $main_page .'?url="+encodeURIComponent(window.location.href);
+				}
+				else if(window.location.href.match("\/\/'. $_SERVER["HTTP_HOST"] .'.*")) {
+					alert("You are already at '. $title .'!");
+				}
+				else {
+					var tags = prompt("Please enter tags", "tagme");
+					if(tags != "" && tags != null) {
+						var link = "'. $link . $delimiter .'url="+location.href+"&tags="+tags;
+						var w = window.open(link, "_blank");
+					}
+				}
+			}
+		)();';
+		$html .= '<a href=\''.$js.'\'>Upload to '.$title.'</a>';
+		$html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
+
+		// Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
+		$supported_ext = "jpg jpeg gif png";
+		if(file_exists("ext/handle_flash")){$supported_ext .= " swf";}
+		if(file_exists("ext/handle_ico")){$supported_ext .= " ico ani cur";}
+		if(file_exists("ext/handle_mp3")){$supported_ext .= " mp3";}
+		if(file_exists("ext/handle_svg")){$supported_ext .= " svg";}
+		$title = "Booru to " . $config->get_string('title');
+		// CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
+		$html .= '<p><a href="javascript:
+			var ste=&quot;'. $link . $delimiter .'url=&quot;;
+			var supext=&quot;'.$supported_ext.'&quot;;
+			var maxsize=&quot;'.$max_kb.'&quot;;
+			var CA=0;
+			void(document.body.appendChild(document.createElement(&quot;script&quot;)).src=&quot;'.make_http(get_base_href())."/ext/upload/bookmarklet.js".'&quot;)
+		">'. $title . '</a> (Click when looking at an image page. Works on sites running Shimmie / Danbooru / Gelbooru. (This also grabs the tags / rating / source!))';
+
+		return $html;
 	}
 
 	/* only allows 1 file to be uploaded - for replacing another image file */
