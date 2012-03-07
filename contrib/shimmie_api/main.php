@@ -30,11 +30,11 @@ class ShimmieApi extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page;
 
-		if($event->page_matches("api/shimmie")) {
+		if($event->page_matches("api")) {
 			$page->set_mode("data");
 			$page->set_type("text/plain");
 
-			if($event->page_matches("api/shimmie/get_tags")) {
+			if($event->page_matches("api/get_tags")) {
 				if($event->count_args() == 2) {
 					$all = $database->get_all(
 						"SELECT tag FROM tags WHERE tag LIKE ?",
@@ -48,14 +48,14 @@ class ShimmieApi extends Extension {
 				$page->set_data(json_encode($res));
 			}
 
-			if($event->page_matches("api/shimmie/get_image")) {
+			if($event->page_matches("api/get_image")) {
 				$image = Image::by_id(int_escape($event->get_arg(0)));
 				$image->get_tag_array(); // tag data isn't loaded into the object until necessary
 				$safe_image = new _SafeImage($image);
 				$page->set_data(json_encode($safe_image));
 			}
 
-			if($event->page_matches("api/shimmie/find_images")) {
+			if($event->page_matches("api/find_images")) {
 				$search_terms = $event->get_search_terms();
 				$page_number = $event->get_page_number();
 				$page_size = $event->get_page_size();
@@ -66,6 +66,39 @@ class ShimmieApi extends Extension {
 					$safe_images[] = new _SafeImage($image);
 				}
 				$page->set_data(json_encode($safe_images));
+			}
+
+			if($event->page_matches("api/get_user")) {
+				if(isset($_GET['name'])){
+					$all = $database->get_all(
+						"SELECT id,name,joindate,class FROM users WHERE name=?",
+						array($_GET['name']));
+				}
+
+				if(isset($_GET['id'])){
+					$all = $database->get_all(
+						"SELECT id,name,joindate,class FROM users WHERE id=?",
+						array($_GET['id']));
+				}
+
+				if(!isset($_GET['id']) && !isset($_GET['name'])){
+					$all = $database->get_all(
+						"SELECT id,name,joindate,class FROM users WHERE id=?",
+						array("2")); //In 99% of cases, this will be the admin.
+				}
+
+				$all = $all[0];
+				//FIXME?: For some weird reason, get_all seems to return twice. Unsetting second value to make things look nice..
+				/*TODO: Might be worth making it possible just to get a certain stat (Using &stat=uploadcount or something)
+					This would lessen strain on DB? */
+				for($i=0; $i<4; $i++) unset($all[$i]);
+				$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
+				$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
+				$all['commentcount'] = $database->get_one(
+					"SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id",
+					array("owner_id"=>$all['id']));
+				$all['commentperday'] = sprintf("%.1f", ($all['commentcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
+				$page->set_data(json_encode($all));
 			}
 		}
 	}
