@@ -6,6 +6,15 @@
  * Documentation:
  *   <b>Admin Warning:</b> this exposes private data, eg IP addresses
  *   <p><b>Developer Warning:</b> the API is unstable; notably, private data may get hidden
+ *   <p><b><u>Usage:</b></u>
+ *   <p><b>get_tags</b> - List of all tags. (May contain unused tags)
+ *   <br><ul>tags - <i>Optional</i> - Search for more specific tags (Searchs TAG*)</ul>
+ *   <p><b>get_image</b> - Get image via id.
+ *   <br><ul>id - <i>Required</i> - User id. (Defaults to id=1 if empty)</ul>
+ *   <p><b>find_images</b> - List of latest 12(?) images.
+ *   <p><b>get_user</b> - Get user info. (Defaults to id=2 if both are empty)
+ *   <br><ul>id - <i>Optional</i> - User id.</ul>
+ *   <ul>name - <i>Optional</i> - User name.</ul>
  */
 
 
@@ -33,12 +42,16 @@ class ShimmieApi extends Extension {
 		if($event->page_matches("api")) {
 			$page->set_mode("data");
 			$page->set_type("text/plain");
+			if(!$event->page_matches("api/get_tags") && !$event->page_matches("api/get_image") && !$event->page_matches("api/find_images") && !$event->page_matches("api/get_user")){
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link("ext_doc/shimmie_api"));
+			}
 
 			if($event->page_matches("api/get_tags")) {
-				if($event->count_args() == 2) {
+				if(isset($_GET['tag'])) {
 					$all = $database->get_all(
 						"SELECT tag FROM tags WHERE tag LIKE ?",
-						array($event->get_arg(0)."%"));
+						array($_GET['tag']."%"));
 				}
 				else {
 					$all = $database->get_all("SELECT tag FROM tags");
@@ -49,7 +62,11 @@ class ShimmieApi extends Extension {
 			}
 
 			if($event->page_matches("api/get_image")) {
-				$image = Image::by_id(int_escape($event->get_arg(0)));
+				if(isset($_GET['id'])){
+					$image = Image::by_id(int_escape($_GET['id']));
+				}else{
+					$image = Image::by_id(int_escape("1")); //Default to id=1
+				}
 				$image->get_tag_array(); // tag data isn't loaded into the object until necessary
 				$safe_image = new _SafeImage($image);
 				$page->set_data(json_encode($safe_image));
@@ -89,9 +106,9 @@ class ShimmieApi extends Extension {
 
 				$all = $all[0];
 				//FIXME?: For some weird reason, get_all seems to return twice. Unsetting second value to make things look nice..
+				for($i=0; $i<4; $i++) unset($all[$i]);
 				/*TODO: Might be worth making it possible just to get a certain stat (Using &stat=uploadcount or something)
 					This would lessen strain on DB? */
-				for($i=0; $i<4; $i++) unset($all[$i]);
 				$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
 				$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
 				$all['commentcount'] = $database->get_one(
