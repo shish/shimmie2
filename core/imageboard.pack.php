@@ -419,7 +419,7 @@ class Image {
 		$sln = $database->engine->scoreql_to_sql('SCORE_BOOL_'.$ln);
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		if($sln != $this->locked) {
+		if(undb_bool($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
 			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
 		}

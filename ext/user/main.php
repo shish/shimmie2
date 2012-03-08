@@ -339,7 +339,7 @@ class UserPage extends Extension {
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
 				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "class"=>$class));
-		$uid = $database->get_last_insert_id();
+		$uid = $database->get_last_insert_id('users_id_seq');
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 

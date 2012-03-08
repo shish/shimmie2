@@ -60,16 +60,20 @@ class LogDatabase extends Extension {
 				if(!empty($_GET["user"])) {
 					if($database->engine->name == "pgsql") {
 						if(preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-							$wheres[] = "(username = :user OR address << :user)";
+							$wheres[] = "(username = :user1 OR text(address) = :user2)";
+							$args["user1"] = $_GET["user"];
+							$args["user2"] = $_GET["user"] . "/32";
 						}
 						else {
 							$wheres[] = "lower(username) = lower(:user)";
+							$args["user"] = $_GET["user"];
 						}
 					}
 					else {
-						$wheres[] = "(username = :user OR address = :user)";
+						$wheres[] = "(username = :user1 OR address = :user2)";
+						$args["user1"] = $_GET["user"];
+						$args["user2"] = $_GET["user"];
 					}
-					$args["user"] = $_GET["user"];
 				}
 				if(!empty($_GET["priority"])) {
 					$wheres[] = "priority >= :priority";

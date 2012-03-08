@@ -328,13 +328,7 @@ class ImageIO extends Extension {
 					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
 				)
 		);
-		//$database->Execute("UPDATE users SET image_count = image_count+1 WHERE id = :id ", array("id"=>$user->id));
-		if($database->engine->name == "pgsql") {
-			$image->id = $database->get_one("SELECT id FROM images WHERE hash=:hash", array("hash"=>$image->hash));
-		}
-		else {
-			$image->id = $database->get_last_insert_id();
-		}
+		$image->id = $database->get_last_insert_id('images_id_seq');
 
 		log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
 
