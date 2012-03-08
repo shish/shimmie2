@@ -344,13 +344,13 @@ class Tag_History extends Extension {
 		
 		// if the image has no history, make one with the old tags
 		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
-		if($entries == 0){
-			/* We have no tag history for this image, so we will use the new_tags as the starting tags for this image. */
+		if($entries == 0 && !empty($old_tags)) {
+			/* We have no tag history for this image, so we will use the old_tags as the starting tags for this image. */
 			/* these two queries could probably be combined */
 			$database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
-				array($image->id, $new_tags, 1, '127.0.0.1')); // TODO: Pick appropriate user id
+				array($image->id, $old_tags, 1, '127.0.0.1')); // TODO: Pick appropriate user id
 			$entries++;
 		}
 
