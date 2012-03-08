@@ -287,6 +287,11 @@ class UserPage extends Extension {
 		$pass = $_POST['pass'];
 		$hash = md5(strtolower($name) . $pass);
 
+		if(empty($name) || empty($pass)) {
+			$this->theme->display_error(400, "Error", "Username or password left blank");
+			return;
+		}
+
 		$duser = User::by_name_and_hash($name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
