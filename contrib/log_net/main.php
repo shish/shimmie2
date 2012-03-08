@@ -14,7 +14,7 @@ class LogNet extends Extension {
 		if($event->priority > 10) {
 			// TODO: colour based on event->priority
 			$username = ($user && $user->name) ? $user->name : "Anonymous";
-			$str = sprintf("%15s (%s): %s", $_SERVER['REMOTE_ADDR'], $username, $event->message);
+			$str = sprintf("%-15s %-10s: %s", $_SERVER['REMOTE_ADDR'], $username, $event->message);
 			system("echo ".escapeshellarg($str)." | nc -q 0 localhost 5000");
 		}
 	}
