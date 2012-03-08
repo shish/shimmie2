@@ -340,7 +340,7 @@ class Pools extends Extension {
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
 		
-		$result['poolID'] = $database->get_last_insert_id();
+		$result['poolID'] = $database->get_last_insert_id('pools_id_seq');
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
 
