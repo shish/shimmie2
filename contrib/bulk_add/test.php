@@ -24,6 +24,10 @@ class BulkAddTest extends ShimmieWebTestCase {
 		$this->assert_title(new PatternExpectation("/^Image \d+: data/"));
 		$this->click("Delete");
 
+		$this->get_page("post/list/hash=e106ea2983e1b77f11e00c0c54e53805/1");
+		$this->assert_title(new PatternExpectation("/^Image \d+: data/"));
+		$this->click("Delete");
+
 		$this->log_out();
 	}
 }
