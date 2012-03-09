@@ -50,7 +50,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_global_page(Page $page, /*array*/ $history) {
+	public function display_global_page(Page $page, /*array*/ $history, /*int*/ $page_number) {
 		$start_string = "
 			<div style='text-align: left'>
 				".make_form(make_link("tag_history/revert"))."
@@ -71,10 +71,9 @@ class Tag_HistoryTheme extends Themelet {
 			$image_id = $fields['image_id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
-			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>";
-			if($user->is_admin()) {
-				$setter .= " / " . $fields['user_ip'];
-			}
+			$h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
+			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
+
 			$history_list .= '
 				<li>
 					<input type="radio" name="revert" value="'.$current_id.'">
@@ -87,8 +86,16 @@ class Tag_HistoryTheme extends Themelet {
 		$history_html = $start_string . $history_list . $end_string;
 		$page->set_title("Global Tag History");
 		$page->set_heading("Global Tag History");
-		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
+
+
+		$h_prev = ($page_number <= 1) ? "Prev" :
+			'<a href="'.make_link('tag_history/all/'.($page_number-1)).'">Prev</a>';
+		$h_index = "<a href='".make_link()."'>Index</a>";
+		$h_next = '<a href="'.make_link('tag_history/all/'.($page_number+1)).'">Next</a>';
+
+		$nav = $h_prev.' | '.$h_index.' | '.$h_next;
+		$page->add_block(new Block("Navigation", $nav, "left"));
 	}
 
 	public function display_history_link(Page $page, /*int*/ $image_id) {
