@@ -73,7 +73,7 @@ class Tag_History extends Extension {
 		else if($event->page_matches("tag_history") && $event->count_args() == 1) {
 			// must be an attempt to view a tag history
 			$image_id = int_escape($event->get_arg(0));
-			$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id, $page_id));
+			$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
 		}
 	}
 	

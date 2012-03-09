@@ -98,7 +98,7 @@ class Tag_HistoryTheme extends Themelet {
 	}
 
 	public function display_history_link(Page $page, /*int*/ $image_id) {
-		$link = '<a href="'.make_link("tag_history/$image_id/1").'">Tag History</a>';
+		$link = '<a href="'.make_link("tag_history/$image_id").'">Tag History</a>';
 		$page->add_block(new Block(null, $link, "main", 5));
 	}
 	
