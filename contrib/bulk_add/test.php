@@ -3,13 +3,13 @@ class BulkAddTest extends ShimmieWebTestCase {
 	function testBulkAdd() {
 		$this->log_in_as_admin();
 
-        $this->get_page('admin');
+		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
 		$this->set_field('dir', "asdf");
 		$this->click("Add");
 		$this->assert_text("is not a directory");
 
-        $this->get_page('admin');
+		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
 		$this->set_field('dir', "contrib/simpletest");
 		$this->click("Add");

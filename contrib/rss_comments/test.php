@@ -9,7 +9,7 @@ class RSSCommentsTest extends ShimmieWebTestCase {
 		$this->assert_text("ASDFASDF");
 		$this->log_out();
 
-        $this->get_page('rss/comments');
+		$this->get_page('rss/comments');
 		$this->assert_mime("application/rss+xml");
 		$this->assert_no_text("Exception");
 		$this->assert_text("ASDFASDF");
