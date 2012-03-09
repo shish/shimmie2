@@ -71,10 +71,9 @@ class Tag_HistoryTheme extends Themelet {
 			$image_id = $fields['image_id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
-			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>";
-			if($user->is_admin()) {
-				$setter .= " / " . $fields['user_ip'];
-			}
+			$h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
+			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
+
 			$history_list .= '
 				<li>
 					<input type="radio" name="revert" value="'.$current_id.'">
