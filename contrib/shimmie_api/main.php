@@ -39,16 +39,23 @@ class ShimmieApi extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page;
 
-		if($event->page_matches("api")) {
+		if($event->page_matches("api/shimmie")) {
 			$page->set_mode("data");
 			$page->set_type("text/plain");
-			if(!$event->page_matches("api/get_tags") && !$event->page_matches("api/get_image") && !$event->page_matches("api/find_images") && !$event->page_matches("api/get_user")){
+			if(!$event->page_matches("api/shimmie/get_tags") && !$event->page_matches("api/shimmie/get_image") && !$event->page_matches("api/shimmie/find_images") && !$event->page_matches("api/shimmie/get_user")){
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link("ext_doc/shimmie_api"));
 			}
 
-			if($event->page_matches("api/get_tags")) {
-				if(isset($_GET['tag'])) {
+			if($event->page_matches("api/shimmie/get_tags")){
+				$arg = $event->get_arg(0);
+
+				if(!empty($arg)){
+					$all = $database->get_all(
+						"SELECT tag FROM tags WHERE tag LIKE ?",
+						array($arg."%"));
+				}
+				elseif(isset($_GET['id'])){
 					$all = $database->get_all(
 						"SELECT tag FROM tags WHERE tag LIKE ?",
 						array($_GET['tag']."%"));
@@ -61,10 +68,15 @@ class ShimmieApi extends Extension {
 				$page->set_data(json_encode($res));
 			}
 
-			if($event->page_matches("api/get_image")) {
-				if(isset($_GET['id'])){
+			if($event->page_matches("api/shimmie/get_image")) {
+				$arg = $event->get_arg(0);
+				if(!empty($arg)){
+					$image = Image::by_id(int_escape($event->get_arg(0)));
+				}
+				elseif(isset($_GET['id'])){
 					$image = Image::by_id(int_escape($_GET['id']));
-				}else{
+				}
+				else{
 					$image = Image::by_id(int_escape("1")); //Default to id=1
 				}
 				$image->get_tag_array(); // tag data isn't loaded into the object until necessary
@@ -72,7 +84,7 @@ class ShimmieApi extends Extension {
 				$page->set_data(json_encode($safe_image));
 			}
 
-			if($event->page_matches("api/find_images")) {
+			if($event->page_matches("api/shimmie/find_images")) {
 				$search_terms = $event->get_search_terms();
 				$page_number = $event->get_page_number();
 				$page_size = $event->get_page_size();
@@ -85,7 +97,7 @@ class ShimmieApi extends Extension {
 				$page->set_data(json_encode($safe_images));
 			}
 
-			if($event->page_matches("api/get_user")) {
+			if($event->page_matches("api/shimmie/get_user")) {
 				if(isset($_GET['name'])){
 					$all = $database->get_all(
 						"SELECT id,name,joindate,class FROM users WHERE name=?",
