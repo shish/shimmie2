@@ -666,6 +666,56 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	return $pa;
 }
 
+function transload($url, $file) {
+	global $config;
+
+	if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
+		$ch = curl_init($url);
+		$fp = fopen($mfile, "w");
+
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_REFERER, $url);
+		curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
+
+		curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+
+		return true;
+	}
+
+	if($config->get_string("transload_engine") == "wget") {
+		$s_url = escapeshellarg($url);
+		$s_mfile = escapeshellarg($mfile);
+		system("wget $s_url --output-document=$s_mfile");
+
+		return file_exists($mfile);
+	}
+
+	if($config->get_string("transload_engine") == "fopen") {
+		$fp = @fopen($url, "r");
+		if(!$fp) {
+			return false;
+		}
+		$data = "";
+		$length = 0;
+		while(!feof($fp) && $length <= $config->get_int('upload_size')) {
+			$data .= fread($fp, 8192);
+			$length = strlen($data);
+		}
+		fclose($fp);
+
+		$fp = fopen($mfile, "w");
+		fwrite($fp, $data);
+		fclose($fp);
+
+		return true;
+	}
+
+	return false;
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Logging convenience                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

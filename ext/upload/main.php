@@ -359,45 +359,10 @@ class Upload extends Extension {
 		$tmp_filename = tempnam("/tmp", "shimmie_transload");
 		$filename = basename($url);
 
-		if($config->get_string("transload_engine") == "fopen") {
-			$fp = @fopen($url, "r");
-			if(!$fp) {
-				$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
-					"Error reading from ".html_escape($url));
-				return false;
-			}
-			$data = "";
-			$length = 0;
-			while(!feof($fp) && $length <= $config->get_int('upload_size')) {
-				$data .= fread($fp, 8192);
-				$length = strlen($data);
-			}
-			fclose($fp);
-
-			$fp = fopen($tmp_filename, "w");
-			fwrite($fp, $data);
-			fclose($fp);
-		}
-
-		if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
-			$ch = curl_init($url);
-			$fp = fopen($tmp_filename, "w");
-
-			curl_setopt($ch, CURLOPT_FILE, $fp);
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_REFERER, $url);
-			curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
-
-			curl_exec($ch);
-			curl_close($ch);
-			fclose($fp);
-		}
-
-		if($config->get_string("transload_engine") == "wget") {
-			$ua = "Shimmie-".VERSION;
-			$s_url = escapeshellarg($url);
-			$s_tmp = escapeshellarg($tmp_filename);
-			system("wget $s_url --output-document=$s_tmp --user-agent=$ua --referer=$s_url");
+		if(!transload($url, $tmp_filename)) {
+			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
+				"Error reading from ".html_escape($url));
+			return false;
 		}
 
 		if(filesize($tmp_filename) == 0) {
