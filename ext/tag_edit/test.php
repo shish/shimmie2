@@ -30,13 +30,13 @@ class TagEditTest extends ShimmieWebTestCase {
 
 		$this->set_field("tag_edit__source", "example.com");
 		$this->click("Set");
-		$this->click("source");
+		$this->click("example.com");
 		$this->assert_title("Example Web Page");
 		$this->back();
 
 		$this->set_field("tag_edit__source", "http://example.com");
 		$this->click("Set");
-		$this->click("source");
+		$this->click("example.com");
 		$this->assert_title("Example Web Page");
 		$this->back();
 
