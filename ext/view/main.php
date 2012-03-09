@@ -133,12 +133,7 @@ class ViewImage extends Extension {
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 
 			$page->set_mode("redirect");
-			if(isset($_POST['query'])) {
-				$page->set_redirect(make_link("post/view/$image_id", url_escape($_POST['query'])));
-			}
-			else {
-				$page->set_redirect(make_link("post/view/$image_id"));
-			}
+			$page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
 		}
 	}
 

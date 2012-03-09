@@ -34,6 +34,9 @@ function int_escape($input) {
  * @retval string
  */
 function url_escape($input) {
+	if(is_null($input)) {
+		return "";
+	}
 	$input = str_replace('^', '^^', $input);
 	$input = str_replace('/', '^s', $input);
 	$input = str_replace('\\', '^b', $input);
