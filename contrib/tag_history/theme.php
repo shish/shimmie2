@@ -23,22 +23,21 @@ class Tag_HistoryTheme extends Themelet {
 			$current_id = $fields['id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
-			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>";
-			if($user->is_admin()) {
-				$setter .= " / " . $fields['user_ip'];
-			}
+			$h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
+			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
+
 			$selected = ($n == 2) ? " checked" : "";
-			$history_list .= '
+			$history_list .= "
 				<li>
-					<input type="radio" name="revert" id="'.$current_id.'" value="'.$current_id.'"$selected>
-					<label for="'.$current_id.'">'.$current_tags.' (Set by '.$setter.')</label>
+					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
+					<label for='$current_id'>$current_tags (Set by $setter)</label>
 				</li>
-				';
+				";
 		}
 
 		$end_string = "
 					</ul>
-					<input type='submit' value='Revert'>
+					<input type='submit' value='Revert To'>
 				</form>
 			</div>
 		";
@@ -58,7 +57,7 @@ class Tag_HistoryTheme extends Themelet {
 		";
 		$end_string = "
 					</ul>
-					<input type='submit' value='Revert'>
+					<input type='submit' value='Revert To'>
 				</form>
 			</div>
 		";
