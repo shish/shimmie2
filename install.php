@@ -56,6 +56,7 @@ define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . 
 
 // Pull in necessary files
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
+require_once __SHIMMIE_ROOT__."core/exceptions.class.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
 
 /*
