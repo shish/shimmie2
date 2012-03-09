@@ -84,11 +84,6 @@ class Tag_History extends Extension {
 		$this->theme->display_history_link($page, $event->image->id);
 	}
 
-	public function onImageDeletion(ImageDeletionEvent $event) {
-		// handle removing of history when an image is deleted
-		$this->delete_all_tag_history($event->image->id);
-	}
-
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tag History");
 		$sb->add_label("Limit to ");
@@ -311,15 +306,6 @@ class Tag_History extends Extension {
 		log_info("tag_history", 'Reverted '.count($result).' edits by ip='.$ip.' (from '.$date.' to now).');
 	}
 	
-	/*
-	 * this function is called when an image has been deleted
-	 */
-	private function delete_all_tag_history(/*int*/ $image_id)
-	{
-		global $database;
-		$database->execute("DELETE FROM tag_histories WHERE image_id = ?", array($image_id));
-	}
-
 	/*
 	 * this function is called just before an images tag are changed
 	 */
