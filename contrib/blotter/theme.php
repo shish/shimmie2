@@ -130,31 +130,9 @@ class BlotterTheme extends Themelet {
 		global $config;
 		$i_color = $config->get_string("blotter_color","#FF0000");
 		$position = $config->get_string("blotter_position", "subheading");
-		$html = "<style type='text/css'>
-#blotter1 {font-size: 80%; position: relative;}
-#blotter2 {font-size: 80%;}
-</style>";
-		$html .= "<script type='text/javascript'><!--
-$(document).ready(function() {
-	$(\"#blotter2-toggle\").click(function() {
-		$(\"#blotter2\").slideToggle(\"slow\", function() {
-			if($(\"#blotter2\").is(\":hidden\")) {
-				$.cookie(\"blotter2-hidden\", 'true', {path: '/'});
-			}
-			else {
-				$.cookie(\"blotter2-hidden\", 'false', {path: '/'});
-			}
-		});
-	});
-	if($.cookie(\"blotter2-hidden\") == 'true') {
-		$(\"#blotter2\").hide();
-	}
-});
-//--></script>";
 		$entries_list = "";
 		$num_entries = count($entries);
-		for ($i = 0 ; $i < $num_entries ; $i++)
-		{
+		for ($i = 0 ; $i < $num_entries ; $i++) {
 			/**
 			 * Blotter entries
 			 */
