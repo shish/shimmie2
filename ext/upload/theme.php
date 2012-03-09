@@ -20,9 +20,9 @@ class UploadTheme extends Themelet {
 			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td width='20'>Tags<td colspan='3'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
-					<tr><td>Source</td><td colspan='3'><input name='source' type='text'></td></tr>
-					<tr><td colspan='4'><input id='uploadbutton' type='submit' value='Post'></td></tr>
+					<tr><td width='20'>Tags<td colspan='5'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
+					<tr><td>Source</td><td colspan='5'><input name='source' type='text'></td></tr>
+					<tr><td colspan='6'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
 			</form>
 			<small>(Max file size is $max_kb)</small>
@@ -48,6 +48,7 @@ class UploadTheme extends Themelet {
 				<tr>
 					<td colspan='2'>Files</td>
 					<td colspan='2'>URLs</td>
+					<td colspan='2'>Image-Specific Tags</td>
 				</tr>
 			";
 
@@ -56,15 +57,24 @@ class UploadTheme extends Themelet {
 					<tr>
 						<td colspan='2'><input type='file' name='data$i'></td>
 						<td colspan='2'><input type='text' name='url$i'</td>
+						<td colspan='2'><input type='text' name='tags$i'></td>
 					</tr>
 				";
 			}
 		}
 		else {
+			$upload_list .= "
+				<tr>
+					<td colspan='4'>Files</td>
+					<td colspan='2'>Image-Specific Tags</td>
+				</tr>
+			";
+
 			for($i=0; $i<$upload_count; $i++) {
 				$upload_list .= "
 					<tr>
 						<td colspan='4'><input type='file' name='data$i'></td>
+						<td colspan='2'><input type='text' name='tags$i'></td>
 					</tr>
 				";
 			}

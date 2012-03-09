@@ -47,7 +47,7 @@ class ImageBan extends Extension {
 		global $database;
 		$row = $database->get_row("SELECT * FROM image_bans WHERE hash = :hash", array("hash"=>$event->hash));
 		if($row) {
-			log_info("image_hash_ban", "Blocked image ({$event->hash})");
+			log_info("image_hash_ban", "Attempted to upload a blocked image ({$event->hash} - {$row['reason']})");
 			throw new UploadException("Image ".html_escape($row["hash"])." has been banned, reason: ".format_text($row["reason"]));
 		}
 	}

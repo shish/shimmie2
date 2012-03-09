@@ -112,7 +112,6 @@ class Upload extends Extension {
 		}
 	}
 
-// event handling {{{
 	public function onPageRequest($event) {
 		global $config, $page, $user;
 
@@ -187,16 +186,15 @@ class Upload extends Extension {
 			else {
 				/* Regular Upload Image */
 				if(count($_FILES) + count($_POST) > 0) {
-					$tags = Tag::explode($_POST['tags']);
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$ok = true;
-					foreach($_FILES as $file) {
-						reset($_FILES);	// rewind to first element in array.
+					foreach($_FILES as $name => $file) {
+						$tags = $this->tags_for_upload_slot(int_escape(substr($name, 4)));
 						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
-						reset($_POST);	// rewind to first element in array.
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
+							$tags = $this->tags_for_upload_slot(int_escape(substr($name, 3)));
 							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
 					}
@@ -223,7 +221,17 @@ class Upload extends Extension {
 			}
 		}
 	}
-// }}}
+
+	private function tags_for_upload_slot($id) {
+		if(isset($_POST["tags$id"])) {
+			$tags = array_merge(Tag::explode($_POST['tags']), Tag::explode($_POST["tags$id"]));
+		}
+		else {
+			$tags = Tag::explode($_POST['tags']);
+		}
+		return $tags;
+	}
+
 // do things {{{
 
 	/**

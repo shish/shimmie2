@@ -500,8 +500,11 @@ class CommentList extends Extension {
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
 					array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
-			$cid = $database->get_last_insert_id();
-			log_info("comment", "Comment #$cid added to Image #$image_id");
+			$cid = $database->get_last_insert_id('comments_id_seq');
+			$snippet = substr($comment, 0, 100);
+			$snippet = str_replace("\n", " ", $snippet);
+			$snippet = str_replace("\r", " ", $snippet);
+			log_info("comment", "Comment #$cid added to Image #$image_id: $snippet");
 		}
 	}
 // }}}
