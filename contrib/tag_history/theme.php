@@ -86,15 +86,13 @@ class Tag_HistoryTheme extends Themelet {
 		$history_html = $start_string . $history_list . $end_string;
 		$page->set_title("Global Tag History");
 		$page->set_heading("Global Tag History");
-		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 
 
 		$h_prev = ($page_number <= 1) ? "Prev" :
-			'<a href="'.make_link('comment/list/'.$prev).'">Prev</a>';
+			'<a href="'.make_link('tag_history/all/'.($page_number-1)).'">Prev</a>';
 		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = ($page_number >= $total_pages) ? "Next" :
-			'<a href="'.make_link('comment/list/'.$next).'">Next</a>';
+		$h_next = '<a href="'.make_link('tag_history/all/'.($page_number+1)).'">Next</a>';
 
 		$nav = $h_prev.' | '.$h_index.' | '.$h_next;
 		$page->add_block(new Block("Navigation", $nav, "left"));

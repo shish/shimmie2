@@ -67,7 +67,7 @@ class Tag_History extends Extension {
 			}
 		}
 		else if($event->page_matches("tag_history/all")) {
-			$page_id = int_escape($event->get_arg(1));
+			$page_id = int_escape($event->get_arg(0));
 			$this->theme->display_global_page($page, $this->get_global_tag_history($page_id), $page_id);
 		}
 		else if($event->page_matches("tag_history") && $event->count_args() == 1) {
