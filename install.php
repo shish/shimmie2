@@ -59,34 +59,34 @@ require_once __SHIMMIE_ROOT__."core/util.inc.php";
 require_once __SHIMMIE_ROOT__."core/exceptions.class.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
 
+// repair console {{{
 /*
  * This file lets anyone destroy the database -- disable it
  * as soon as the admin is done installing for the first time
  */
 if(is_readable("config.php")) {
 	session_start();
-?>
-		<div id="iblock">
-			<h1>Shimmie Repair Console</h1>
-<?php
+	echo '<div id="iblock">';
+	echo '<h1>Shimmie Repair Console</h1>';
+
 	// Load the config
 	require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
 	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
 
-	if (
-	      ( array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN ) ||
-	      ( array_key_exists('dsn', $_POST)    && $_POST['dsn']    === DATABASE_DSN )
-	   )
-	{
-		if ( array_key_exists('dsn', $_POST) && !empty($_POST['dsn']) )
-		{
+	if(
+		(array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN) ||
+		(array_key_exists('dsn', $_POST)    && $_POST['dsn']    === DATABASE_DSN)
+	) {
+		if (array_key_exists('dsn', $_POST) && !empty($_POST['dsn'])) {
 		    $_SESSION['dsn'] = $_POST['dsn'];
 		}
 
 		if(empty($_GET["action"])) {
-			echo "<h3>Basic Checks</h3>";
-			echo "If these checks fail, something is broken; if they all pass, ";
-			echo "something <i>might</i> be broken, just not checked for...";
+			echo "
+				<h3>Basic Checks</h3>
+				If these checks fail, something is broken; if they all pass, 
+				something <i>might</i> be broken, just not checked for...
+			";
 			eok("Images writable", is_writable("images"));
 			eok("Thumbs writable", is_writable("thumbs"));
 			eok("Data writable", is_writable("data"));
@@ -105,8 +105,8 @@ if(is_readable("config.php")) {
 			";
 			*/
 
-			echo "<h3>Log Out</h3>";
 			echo "
+				<h3>Log Out</h3>
 				<form action='install.php?action=logout' method='POST'>
 					<input type='submit' value='Leave'>
 				</form>
@@ -116,7 +116,8 @@ if(is_readable("config.php")) {
 			session_destroy();
 			echo "<h3>Logged Out</h3><p>You have been logged out.</p><a href='index.php'>Main Shimmie Page</a>";
 		}
-	} else {
+	}
+	else {
 		echo "
 			<h3>Login</h3>
 			<p>Enter the database DSN exactly as in config.php (ie, as originally installed) to access advanced recovery tools:</p>
@@ -134,6 +135,7 @@ if(is_readable("config.php")) {
 	echo "\t\t</div>";
 	exit;
 }
+// }}}
 
 do_install();
 
@@ -205,15 +207,19 @@ function begin() { // {{{
 	$dberr = "";
 
 	if(check_gd_version() == 0 && check_im_version() == 0) {
-		$thumberr = "<p>PHP's GD extension seems to be missing, ".
-		      "and imagemagick's \"convert\" command cannot be found - ".
-			  "no thumbnailing engines are available.";
+		$thumberr = "
+			<p>PHP's GD extension seems to be missing, 
+			and imagemagick's \"convert\" command cannot be found - 
+			no thumbnailing engines are available.
+		";
 	}
 
 	if(!function_exists("mysql_connect")) {
-		$dberr = "<p>PHP's MySQL extension seems to be missing; you may ".
-				"be able to use an unofficial alternative, checking ".
-				"for libraries...";
+		$dberr = "
+			<p>PHP's MySQL extension seems to be missing; you may
+			be able to use an unofficial alternative, checking 
+			for libraries...
+		";
 		if(!function_exists("pg_connect")) {
 			$dberr .= "<br>PgSQL is missing";
 		}
@@ -378,15 +384,17 @@ function build_dirs() { // {{{
 	if(!is_writable("data")  ) @chmod("data", 0755);
 
 	if(
-			!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
-			!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
+		!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
+		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
 	) {
-		print "<p>Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
-		       and they need to be writable by the PHP user.</p>
-			   <p>If you see this error, if probably means the folders are owned by you, and they need to be
-			   writable by the web server.</p>
-			   <p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
-			   <p>Once you have created these folders and/or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>";
+		print "
+			<p>Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
+			and they need to be writable by the PHP user.</p>
+			<p>If you see this error, if probably means the folders are owned by you, and they need to be
+			writable by the web server.</p>
+			<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
+			<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
+		";
 		exit;
 	}
 } // }}}
@@ -401,14 +409,14 @@ function write_config() { // {{{
 	else {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
-		The web server isn't allowed to write to the config file; please copy
-	    the text below, save it as 'config.php', and upload it into the shimmie
-	    folder manually. Make sure that when you save it, there is no whitespace
-		before the "&lt;?php" or after the "?&gt;"
+		    The web server isn't allowed to write to the config file; please copy
+		    the text below, save it as 'config.php', and upload it into the shimmie
+		    folder manually. Make sure that when you save it, there is no whitespace
+		    before the "&lt;?php" or after the "?&gt;"
 
-		<p><textarea cols="80" rows="2">$file_content</textarea>
+		    <p><textarea cols="80" rows="2">$file_content</textarea>
 						
-		<p>One done, <a href='index.php'>Continue</a>
+		    <p>One done, <a href='index.php'>Continue</a>
 EOD;
 		exit;
 	}

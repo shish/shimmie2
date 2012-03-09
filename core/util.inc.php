@@ -146,15 +146,14 @@ function autodate($date, $html=true) {
  *
  * @retval boolean
  */
-function isValidDateTime($dateTime)
-{
-    if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
-        if (checkdate($matches[2], $matches[3], $matches[1])) {
-            return true;
-        }
-    }
+function isValidDateTime($dateTime) {
+	if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
+		if (checkdate($matches[2], $matches[3], $matches[1])) {
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -162,16 +161,15 @@ function isValidDateTime($dateTime)
  *
  * @retval boolean
  */
-function isValidDate($date)
-{
-    if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
+function isValidDate($date) {
+	if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
 		// checkdate wants (month, day, year)
-        if (checkdate($matches[2], $matches[3], $matches[1])) {
-            return true;
-        }
-    }
+		if (checkdate($matches[2], $matches[3], $matches[1])) {
+			return true;
+		}
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -420,10 +418,11 @@ function captcha_check() {
 		$rpk = $config->get_string('api_recaptcha_pubkey');
 		if(!empty($rpk)) {
 			$resp = recaptcha_check_answer(
-					$rpk,
-					$_SERVER["REMOTE_ADDR"],
-					$_POST["recaptcha_challenge_field"],
-					$_POST["recaptcha_response_field"]);
+				$rpk,
+				$_SERVER["REMOTE_ADDR"],
+				$_POST["recaptcha_challenge_field"],
+				$_POST["recaptcha_response_field"]
+			);
 
 			if(!$resp->is_valid) {
 				log_info("core", "Captcha failed (ReCaptcha): " . $resp->error);
@@ -548,21 +547,16 @@ function get_memory_limit() {
 	*/
 	$memory = parse_shorthand_int(ini_get("memory_limit"));
 	
-	if ($memory == -1) {
+	if($memory == -1) {
 		// No memory limit.
-		
 		// Return the larger of the set limits.
-		if ($shimmie_limit > $default_limit) {
-			return $shimmie_limit;
-		} else {
-			return $default_limit; // return the default memory limit
-		}
-	} else {
+		return max($shimmie_limit, $default_limit);
+	}
+	else {
 		// PHP has a memory limit set.
-		
 		if ($shimmie_limit > $memory) {
 			// Shimmie wants more memory than what PHP is currently set for.
-			
+
 			// Attempt to set PHP's memory limit.
 			if ( ini_set("memory_limit", $shimmie_limit) === FALSE ) {
 				/*  We can't change PHP's limit, oh well, return whatever its currently set to */
@@ -570,7 +564,7 @@ function get_memory_limit() {
 			}
 			$memory = parse_shorthand_int(ini_get("memory_limit"));
 		}
-		
+
 		// PHP's memory limit is more than Shimmie needs.
 		return $memory; // return the current setting
 	}
@@ -583,10 +577,10 @@ function get_memory_limit() {
  * @retval string
  */
 function get_session_ip(Config $config) {
-    $mask = $config->get_string("session_hash_mask", "255.255.0.0");
-    $addr = $_SERVER['REMOTE_ADDR'];
-    $addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
-    return $addr;
+	$mask = $config->get_string("session_hash_mask", "255.255.0.0");
+	$addr = $_SERVER['REMOTE_ADDR'];
+	$addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
+	return $addr;
 }
 
 /**
@@ -826,18 +820,18 @@ function ip_in_range($IP, $CIDR) {
  */
 function deltree($f) {
 	//Because Windows (I know, bad excuse)
-	if (PHP_OS === 'WINNT') {
+	if(PHP_OS === 'WINNT') {
 		$real = realpath($f);
 		$path = realpath('./').'\\'.str_replace('/', '\\', $f);
-		if ($path != $real) {
+		if($path != $real) {
 			rmdir($path);
 		}
-		else
-		{
+		else {
 			foreach(glob($f.'/*') as $sf) {
 				if (is_dir($sf) && !is_link($sf)) {
 					deltree($sf);
-				} else {
+				}
+				else {
 					unlink($sf);
 				}
 			}
@@ -852,7 +846,8 @@ function deltree($f) {
 			foreach(glob($f.'/*') as $sf) {
 				if (is_dir($sf) && !is_link($sf)) {
 					deltree($sf);
-				} else {
+				}
+				else {
 					unlink($sf);
 				}
 			}
@@ -981,7 +976,8 @@ function get_debug_info() {
 
 	if($config->get_string("commit_hash", "unknown") == "unknown"){
 		$commit = "";
-	}else{
+	}
+	else {
 		$commit = " (".$config->get_string("commit_hash").")";
 	}
 	$time = sprintf("%5.2f", microtime(true) - $_load_start);
@@ -998,53 +994,6 @@ function get_debug_info() {
 	return $debug;
 }
 
-// print_obj ($object, $title, $return)
-function print_obj($object,$title="Object Information", $return=false) {
-	global $user;
-	if(DEBUG && isset($_GET['DEBUG']) && $user->can("override_config")) {
-		$pr = print_r($object,true);
-		$count = substr_count($pr,"\n")<=25?substr_count($pr,"\n"):25;
-		$pr = "<textarea rows='".$count."' cols='80'>$pr</textarea>";
-
-		if($return) {
-			return $pr;
-		} else {
-			global $page;
-			$page->add_block(new Block($title,$pr,"main",1000));
-			return true;
-		}
-	}
-}
-
-// preset tests.
-
-// Prints the contents of $event->args, even though they are clearly visible in
-// the URL bar.
-function print_url_args() {
-	global $event;
-	print_obj($event->args,"URL Arguments");
-}
-
-// Prints all the POST data.
-function print_POST() {
-	print_obj($_POST,"\$_POST");
-}
-
-// Prints GET, though this is also visible in the url ( url?var&var&var)
-function print_GET() {
-	print_obj($_GET,"\$_GET");
-}
-
-$_last_time = microtime(true);
-$_last_msg = null;
-function timeline($text) {
-	if(empty($_GET["timeline"])) return;
-	global $_last_time, $_last_msg;
-	$time = microtime(true);
-	if($_last_msg) printf("TL: %s (%dms)<br>", $_last_msg, (int)(($time-$_last_time)*1000));
-	$_last_time = $time;
-	$_last_msg = $text;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *

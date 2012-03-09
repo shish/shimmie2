@@ -113,7 +113,7 @@ Copyright (C) <a href="'.$this->sitedomain.'">'.$this->sitename.'</a><br />
 			log_info("mail", "Error sending message '$this->subject' to '$this->to'");
 		}
 		
-	return $sent;
+		return $sent;
 	}
 }
 ?>

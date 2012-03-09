@@ -300,8 +300,7 @@ class Page {
 	 *	This function returns FALSE if it failed to cache the files,
 	 *	and returns TRUE if it was successful.
 	 */
-	private function add_cached_auto_html_headers()
-	{
+	private function add_cached_auto_html_headers() {
 		global $config;
 		
 		// store local copy for speed.
@@ -326,8 +325,7 @@ class Page {
 		$data_href = get_base_href();
 
 		/* ----- CSS Files ----- */
-		if ($autocache_css)
-		{
+		if($autocache_css) {
 			// First get all the CSS from the lib directory
 			$contents_from_lib = '';
 			$css_files = glob("lib/*.css");
@@ -358,7 +356,7 @@ class Page {
 			$data = $contents_from_lib .' '. $contents_from_extensions;
 			
 			// Minify the CSS if enabled.
-			if ($config->get_bool("autocache_min_css")){
+			if($config->get_bool("autocache_min_css")) {
 				// not supported yet.
 				// TODO: add support for Minifying CSS files.
 			}
@@ -366,19 +364,20 @@ class Page {
 			// compute the MD5 sum of the concatenated CSS files
 			$md5sum = md5($data);
 			
-			if (!file_exists($cache_location.$md5sum.'.css')) {
+			if(!file_exists($cache_location.$md5sum.'.css')) {
 				// remove any old cached CSS files.
 				$mask = '*.css';
 				array_map( 'unlink', glob( $mask ) );
 			
 				// output the combined file
-				if (file_put_contents($cache_location.$md5sum.'.css', $data, LOCK_EX) === FALSE) {
+				if(file_put_contents($cache_location.$md5sum.'.css', $data, LOCK_EX) === FALSE) {
 					return false; // failed to write the file
 				}
 			}
 			// tell the client where to get the css cache file
 			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css" type="text/css">');
-		} else {
+		}
+		else {
 			// Caching of CSS disabled.
 			foreach(glob("lib/*.css") as $css) {
 				$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css.'" type="text/css">');
@@ -393,8 +392,7 @@ class Page {
 		
 		
 		/* ----- JavaScript Files ----- */
-		if ($autocache_js)
-		{
+		if($autocache_js) {
 			$data = '';
 			$js_files = glob("lib/*.js");
 			if($js_files) {
@@ -428,7 +426,8 @@ class Page {
 			}
 			// tell the client where to get the js cache file
 			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js" type="text/javascript"></script>');
-		} else {
+		}
+		else {
 			// Caching of Javascript disabled.
 			foreach(glob("lib/*.js") as $js) {
 				$this->add_html_header('<script src="'.$data_href.'/'.$js.'" type="text/javascript"></script>');
@@ -443,6 +442,5 @@ class Page {
 		
 		return true;
 	}
-
 }
 ?>
