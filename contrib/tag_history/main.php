@@ -58,23 +58,22 @@ class Tag_History extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
-		if ($event->page_matches("tag_history")) {
-			if($event->get_arg(0) == "revert") {
-				// this is a request to revert to a previous version of the tags
-				if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
-					if(isset($_POST['revert'])) {
-						$this->process_revert_request($_POST['revert']);
-					}
+		if($event->page_matches("tag_history/revert")) {
+			// this is a request to revert to a previous version of the tags
+			if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
+				if(isset($_POST['revert'])) {
+					$this->process_revert_request($_POST['revert']);
 				}
 			}
-			else if($event->count_args() == 1) {
-				// must be an attempt to view a tag history
-				$image_id = int_escape($event->get_arg(0));
-				$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
-			}
-			else {
-				$this->theme->display_global_page($page, $this->get_global_tag_history());
-			}
+		}
+		else if($event->page_matches("tag_history/all")) {
+			$page_id = int_escape($event->get_arg(1));
+			$this->theme->display_global_page($page, $this->get_global_tag_history($page_id), $page_id);
+		}
+		else if($event->page_matches("tag_history") && $event->count_args() == 1) {
+			// must be an attempt to view a tag history
+			$image_id = int_escape($event->get_arg(0));
+			$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id, $page_id));
 		}
 	}
 	
@@ -100,7 +99,7 @@ class Tag_History extends Extension {
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
-			$event->add_link("Tag Changes", make_link("tag_history"));
+			$event->add_link("Tag Changes", make_link("tag_history/all/1"));
 		}
 	}
 	
@@ -232,7 +231,7 @@ class Tag_History extends Extension {
 		return ($row ? $row : array());
 	}
 	
-	public function get_global_tag_history()
+	public function get_global_tag_history($page_id)
 	{
 		global $database;
 		$row = $database->get_all("
@@ -240,7 +239,8 @@ class Tag_History extends Extension {
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
 				ORDER BY tag_histories.id DESC
-				LIMIT 100");
+				LIMIT 100 OFFSET :offset
+		", array("offset" => ($page_id-1)*100));
 		return ($row ? $row : array());
 	}
 	

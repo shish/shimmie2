@@ -50,7 +50,7 @@ class Tag_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
 	}
 
-	public function display_global_page(Page $page, /*array*/ $history) {
+	public function display_global_page(Page $page, /*array*/ $history, /*int*/ $page_number) {
 		$start_string = "
 			<div style='text-align: left'>
 				".make_form(make_link("tag_history/revert"))."
@@ -89,6 +89,16 @@ class Tag_HistoryTheme extends Themelet {
 		$page->set_heading("Global Tag History");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Tag History", $history_html, "main", 10));
+
+
+		$h_prev = ($page_number <= 1) ? "Prev" :
+			'<a href="'.make_link('comment/list/'.$prev).'">Prev</a>';
+		$h_index = "<a href='".make_link()."'>Index</a>";
+		$h_next = ($page_number >= $total_pages) ? "Next" :
+			'<a href="'.make_link('comment/list/'.$next).'">Next</a>';
+
+		$nav = $h_prev.' | '.$h_index.' | '.$h_next;
+		$page->add_block(new Block("Navigation", $nav, "left"));
 	}
 
 	public function display_history_link(Page $page, /*int*/ $image_id) {
