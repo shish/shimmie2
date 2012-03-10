@@ -86,12 +86,12 @@ class CommentList extends Extension {
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 				");
-				$config->set_int("ext_comments_version", 2);
+				$config->set_int("ext_comments_version", 3);
 			}
 
-			// ===
+			// the whole history
 			if($config->get_int("ext_comments_version") < 1) {
-				$database->Execute("CREATE TABLE comments (
+				$database->create_table("comments", "
 					id {$database->engine->auto_increment},
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
@@ -99,7 +99,7 @@ class CommentList extends Extension {
 					posted DATETIME DEFAULT NULL,
 					comment TEXT NOT NULL,
 					INDEX (image_id)
-				) {$database->engine->create_table_extras}");
+				");
 				$config->set_int("ext_comments_version", 1);
 			}
 
@@ -108,6 +108,8 @@ class CommentList extends Extension {
 				$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
 				$config->set_int("ext_comments_version", 2);
 			}
+
+			// FIXME: add foreign keys, bump to v3
 		}
 	}
 
