@@ -84,7 +84,7 @@ class CommentList extends Extension {
 					INDEX (owner_ip),
 					INDEX (posted),
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 				");
 				$config->set_int("ext_comments_version", 3);
 			}
@@ -107,6 +107,12 @@ class CommentList extends Extension {
 				$database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
 				$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
 				$config->set_int("ext_comments_version", 2);
+			}
+
+			if($config->get_int("ext_comments_version") == 2) {
+				$config->set_int("ext_comments_version", 3);
+				$database->Execute("ALTER TABLE comments ADD CONSTRAINT foreign_comments_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
+				$database->Execute("ALTER TABLE comments ADD CONSTRAINT foreign_comments_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 			}
 
 			// FIXME: add foreign keys, bump to v3
