@@ -7,19 +7,19 @@ class TwitterSocTest extends SCoreWebTestCase {
 		$this->set_field("_config_twitter_soc_username", "shish2k");
 		$this->click("Save Settings");
 
-		/*
 		$this->get_page("post/list");
-		$this->assert_text("Note");
-		$this->assert_text("kittens");
+		$this->assert_text("Tweets");
+		/*
+		$this->assert_text("kittens"); // this is loaded with javascript
 		*/
 
 		$this->get_page("setup");
 		$this->set_field("_config_twitter_soc_username", "");
 		$this->click("Save Settings");
 
-		/*
 		$this->get_page("post/list");
-		$this->assert_no_text("Note");
+		$this->assert_no_text("Tweets");
+		/*
 		$this->assert_no_text("kittens");
 		*/
 
