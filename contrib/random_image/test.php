@@ -5,13 +5,13 @@ class RandomTest extends ShimmieWebTestCase {
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
 		$this->log_out();
 
-        $this->get_page("random_image/view");
-        $this->assert_title("Image $image_id: test");
+		$this->get_page("random_image/view");
+		$this->assert_title("Image $image_id: test");
 
-        $this->get_page("random_image/view/test");
-        $this->assert_title("Image $image_id: test");
+		$this->get_page("random_image/view/test");
+		$this->assert_title("Image $image_id: test");
 
-        $raw = $this->get_page("random_image/download");
+		$raw = $this->get_page("random_image/download");
 		# FIXME: assert($raw == file(blah.jpg))
 
 		$this->log_in_as_admin();

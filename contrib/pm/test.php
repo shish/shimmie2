@@ -19,8 +19,9 @@ class PrivMsgTest extends SCoreWebTestCase {
 
 		$this->get_page("pm/read/0");
 		$this->assert_text("No such PM");
-		$this->get_page("pm/delete/0");
-		$this->assert_text("No such PM");
+		// GET doesn't work due to auth token check
+		//$this->get_page("pm/delete/0");
+		//$this->assert_text("No such PM");
 		$this->get_page("pm/waffle/0");
 		$this->assert_text("Invalid action");
 

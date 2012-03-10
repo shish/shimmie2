@@ -66,13 +66,13 @@ class TagEditTheme extends Themelet {
 
 	private function format_source(/*string*/ $source) {
 		if(!empty($source)) {
-			$h_source = html_escape($source);
-			if(startsWith($source, "http://") || startsWith($source, "https://")) {
-				return "<a href='$h_source'>$h_source</a>";
+			if(!startsWith($source, "http://") && !startsWith($source, "https://")) {
+				$source = "http://" . $source;
 			}
-			else {
-				return "<a href='http://$h_source'>$h_source</a>";
-			}
+			$proto_domain = explode("://", $source);
+			$h_source = html_escape($proto_domain[1]);
+			$u_source = html_escape($source);
+			return "<a href='$u_source'>$h_source</a>";
 		}
 		return "Unknown";
 	}

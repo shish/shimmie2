@@ -1,13 +1,13 @@
 <?php
 class IPBanTest extends SCoreWebTestCase {
 	function testIPBan() {
-        $this->get_page('ip_ban/list');
+		$this->get_page('ip_ban/list');
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");
 
-        $this->log_in_as_admin();
+		$this->log_in_as_admin();
 
-        $this->get_page('ip_ban/list');
+		$this->get_page('ip_ban/list');
 		$this->assert_no_text("42.42.42.42");
 		$this->set_field('ip', '42.42.42.42');
 		$this->set_field('reason', 'unit testing');
@@ -18,7 +18,7 @@ class IPBanTest extends SCoreWebTestCase {
 		$this->click("Remove"); // FIXME: remove which ban? :S
 		$this->assert_no_text("42.42.42.42");
 
-        $this->get_page('ip_ban/list?all=on'); // just test it doesn't crash for now
+		$this->get_page('ip_ban/list?all=on'); // just test it doesn't crash for now
 
 		$this->log_out();
 

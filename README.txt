@@ -25,7 +25,7 @@ because the feature doesn't work yet :P
 
 Requirements
 ~~~~~~~~~~~~
-MySQL 4.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
+MySQL 5.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
 PHP 5.2+
 GD or ImageMagick
 

@@ -62,7 +62,7 @@ class BBCodeUnitTest extends UnitTestCase {
 			"<a href=\"http://shishnet.org\">ShishNet</a>");
 		$this->assertEqual(
 			$this->filter("[url=javascript:alert(\"owned\")]click to fail[/url]"),
-			"[url=javascript:alert(&quot;owned&quot;)]click to fail[/url]");
+			"[url=javascript:alert(\"owned\")]click to fail[/url]");
 	}
 
 	public function testEmailURL() {
@@ -73,16 +73,12 @@ class BBCodeUnitTest extends UnitTestCase {
 
 	private function filter($in) {
 		$bb = new BBCode();
-		$tfe = new TextFormattingEvent($in);
-		$bb->receive_event($tfe);
-		return $tfe->formatted;
+		return $bb->format($in);
 	}
 
 	private function strip($in) {
 		$bb = new BBCode();
-		$tfe = new TextFormattingEvent($in);
-		$bb->receive_event($tfe);
-		return $tfe->stripped;
+		return $bb->strip($in);
 	}
 }
 ?>

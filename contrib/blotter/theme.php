@@ -52,8 +52,7 @@ class BlotterTheme extends Themelet {
 		// Now, time for entries list.
 		$table_rows = "";
 		$num_entries = count($entries);
-		for ($i = 0 ; $i < $num_entries ; $i++)
-		{
+		for ($i = 0 ; $i < $num_entries ; $i++) {
 			/**
 			 * Add table rows
 			 */
@@ -102,8 +101,7 @@ class BlotterTheme extends Themelet {
 			<body><pre>";
 
 		$num_entries = count($entries);
-		for ($i = 0 ; $i < $num_entries ; $i++)
-		{
+		for ($i = 0 ; $i < $num_entries ; $i++) {
 			/**
 			 * Blotter entries
 			 */
@@ -123,38 +121,12 @@ class BlotterTheme extends Themelet {
 	}
 
 	private function get_html_for_blotter($entries) {
-		/**
-		 * Show the blotter widget
-		 * Although I am starting to learn PHP, I got no idea how to do javascript... to the tutorials!
-		 */
 		global $config;
-		$i_color = $config->get_string("blotter_color","#FF0000");
+		$i_color = $config->get_string("blotter_color", "#FF0000");
 		$position = $config->get_string("blotter_position", "subheading");
-		$html = "<style type='text/css'>
-#blotter1 {font-size: 80%; position: relative;}
-#blotter2 {font-size: 80%;}
-</style>";
-		$html .= "<script type='text/javascript'><!--
-$(document).ready(function() {
-	$(\"#blotter2-toggle\").click(function() {
-		$(\"#blotter2\").slideToggle(\"slow\", function() {
-			if($(\"#blotter2\").is(\":hidden\")) {
-				$.cookie(\"blotter2-hidden\", 'true', {path: '/'});
-			}
-			else {
-				$.cookie(\"blotter2-hidden\", 'false', {path: '/'});
-			}
-		});
-	});
-	if($.cookie(\"blotter2-hidden\") == 'true') {
-		$(\"#blotter2\").hide();
-	}
-});
-//--></script>";
 		$entries_list = "";
 		$num_entries = count($entries);
-		for ($i = 0 ; $i < $num_entries ; $i++)
-		{
+		for ($i = 0 ; $i < $num_entries ; $i++) {
 			/**
 			 * Blotter entries
 			 */
@@ -163,21 +135,32 @@ $(document).ready(function() {
 			$i_close = "";
 			$id = $entries[$i]['id'];
 			$messy_date = $entries[$i]['entry_date'];
-			$clean_date = date("m/d/y",strtotime($messy_date));
+			$clean_date = date("m/d/y", strtotime($messy_date));
 			$entry_text = $entries[$i]['entry_text'];
-			if($entries[$i]['important'] == 'Y') { $i_open = "<font color='#{$i_color}'>"; $i_close="</font>"; }
+			if($entries[$i]['important'] == 'Y') {
+				$i_open = "<font color='#{$i_color}'>";
+				$i_close="</font>"; 
+			}
 			$entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";			
 		}
 		$out_text = "";
 		$in_text = "";
 		$pos_break = "";
 		$pos_align = "text-align: right; position: absolute; right: 0px;";
-		if($position === "left") { $pos_break = "<br />"; $pos_align = ""; }
-		if(count($entries) === 0) { $out_text = "No blotter entries yet."; $in_text = "Empty.";}
-		else { $clean_date = date("m/d/y",strtotime($entries[0]['entry_date']));
+		if($position === "left") {
+			$pos_break = "<br />";
+			$pos_align = ""; 
+		}
+		if(count($entries) === 0) {
+			$out_text = "No blotter entries yet.";
+			$in_text = "Empty.";
+		}
+		else {
+			$clean_date = date("m/d/y", strtotime($entries[0]['entry_date']));
 			$out_text = "Blotter updated: {$clean_date}";
 			$in_text = "<ul>$entries_list</ul>";
 		}
+		$html = "";
 		$html .= "<div id='blotter1'><span>$out_text</span>{$pos_break}<span style='{$pos_align}'><a href='#' id='blotter2-toggle'>Show/Hide</a> <a href='".make_link("blotter")."'>Show All</a></span></div>";
 		$html .= "<div id='blotter2'>$in_text</div>";
 		return $html;

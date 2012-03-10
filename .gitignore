@@ -62,6 +62,7 @@ ext/site_description
 ext/sitemap
 ext/svn_update
 ext/tagger
+ext/tag_editcloud
 ext/tag_history
 ext/text_score
 ext/tips

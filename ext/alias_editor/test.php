@@ -1,13 +1,13 @@
 <?php
 class AliasEditorTest extends ShimmieWebTestCase {
 	function testAliasEditor() {
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 
 		$this->log_in_as_admin();
 
 		# test one to one
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->set_field('oldtag', "test1");
 		$this->set_field('newtag', "test2");
@@ -26,13 +26,13 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->assert_title("Image $image_id: test2");
 		$this->delete_image($image_id);
 
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->click("Remove");
 		$this->assert_title("Alias List");
 		$this->assert_no_text("test1");
 
 		# test one to many
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->set_field('oldtag', "onetag");
 		$this->set_field('newtag', "multi tag");
@@ -58,7 +58,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->delete_image($image_id_1);
 		$this->delete_image($image_id_2);
 
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->click("Remove");
 		$this->assert_title("Alias List");
 		$this->assert_no_text("test1");
@@ -66,7 +66,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 
-        $this->get_page('alias/list');
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("Add");
 	}
