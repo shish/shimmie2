@@ -62,11 +62,7 @@ class AdminPageTheme extends Themelet {
 		$html = "
 			<script type='text/javascript'>
 			function checkform(){
-				if(confirm('Are you sure you wish to delete all images using these tags?')){
-					return true;
-				}else{
-					return false;
-				}
+				return confirm('Are you sure you wish to delete all images using these tags?');
 			}		
 			</script>"
 			
