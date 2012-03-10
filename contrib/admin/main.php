@@ -35,6 +35,14 @@ class AdminBuildingEvent extends Event {
 	}
 }
 
+class AdminActionEvent extends Event {
+	var $action;
+	var $redirect = true;
+	public function __construct(/*string*/ $action) {
+		$this->action = $action;
+	}
+}
+
 class AdminPage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
@@ -44,52 +52,23 @@ class AdminPage extends Extension {
 				$this->theme->display_permission_denied();
 			}
 			else {
-				send_event(new AdminBuildingEvent($page));
-			}
-		}
-
-		if($event->page_matches("admin_utils")) {
-			if($user->is_admin() && $user->check_auth_token()) {
-				log_info("admin", "Util: {$_POST['action']}");
-				set_time_limit(0);
-				$redirect = false;
-
-				switch($_POST['action']) {
-					case 'delete by query':
-						$this->delete_by_query($_POST['query']);
-						$redirect = true;
-						break;
-					case 'lowercase all tags':
-						$this->lowercase_all_tags();
-						$redirect = true;
-						break;
-					case 'recount tag use':
-						$this->recount_tag_use();
-						$redirect = true;
-						break;
-					case 'purge unused tags':
-						$this->purge_unused_tags();
-						$redirect = true;
-						break;
-					case 'convert to innodb':
-						$this->convert_to_innodb();
-						$redirect = true;
-						break;
-					case 'database dump':
-						$this->dbdump($page);
-						break;
-					case 'reset image ids':
-						$this->reset_imageids();
-						$redirect = true;
-						break;
-					case 'image dump':
-						$this->imgdump($page);
-						break;
+				if($event->count_args() == 0) {
+					send_event(new AdminBuildingEvent($page));
 				}
+				else {
+					$action = $event->get_arg(0);
+					$aae = new AdminActionEvent($action);
 
-				if($redirect) {
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("admin"));
+					if($user->check_auth_token()) {
+						log_info("admin", "Util: $action");
+						set_time_limit(0);
+						send_event($aae);
+					}
+
+					if($aae->redirect) {
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("admin"));
+					}
 				}
 			}
 		}
@@ -108,17 +87,30 @@ class AdminPage extends Extension {
 		}
 	}
 
-	private function delete_by_query(/*array(string)*/ $query) {
+	public function onAdminAction(AdminActionEvent $event) {
+		$action = $event->action;
+		if(function_exists($this, $action)) {
+			$event->redirect = $this->$action();
+		}
+	}
+
+
+	private function delete_by_query() {
 		global $page, $user;
+		$query = $_POST['query'];
 		assert(strlen($query) > 1);
+
 		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
 			send_event(new ImageDeletionEvent($image));
 		}
+
+		return true;
 	}
 
 	private function lowercase_all_tags() {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
+		return true;
 	}
 
 	private function recount_tag_use() {
@@ -128,16 +120,21 @@ class AdminPage extends Extension {
 			SET count = COALESCE(
 				(SELECT COUNT(image_id) FROM image_tags WHERE tag_id=tags.id GROUP BY tag_id),
 				0
-			)");
+			)
+		");
+		return true;
 	}
 
 	private function purge_unused_tags() {
 		global $database;
 		$this->recount_tag_use();
 		$database->Execute("DELETE FROM tags WHERE count=0");
+		return true;
 	}
 
-	private function dbdump(Page $page) {
+	private function dump_database() {
+		global $page;
+
 		$matches = array();
 		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w+)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
 		$software = $matches['proto'];
@@ -157,6 +154,8 @@ class AdminPage extends Extension {
 		$page->set_type("application/x-unknown");
 		$page->set_filename('shimmie-'.date('Ymd').'.sql');
 		$page->set_data(shell_exec($cmd));
+
+		return false;
 	}
 
 	private function check_for_orphanned_images() {
@@ -169,23 +168,29 @@ class AdminPage extends Extension {
 				}
 			}
 		}
+		return true;
 	}
 
 	/*
 	private function convert_to_innodb() {
 		global $database;
-		if($database->engine->name == "mysql") {
-			$tables = $database->db->MetaTables();
-			foreach($tables as $table) {
-				log_info("upgrade", "converting $table to innodb");
-				$database->execute("ALTER TABLE $table TYPE=INNODB");
-			}
+
+		if($database->engine->name != "mysql") return;
+
+		$tables = $database->db->MetaTables();
+		foreach($tables as $table) {
+			log_info("upgrade", "converting $table to innodb");
+			$database->execute("ALTER TABLE $table TYPE=INNODB");
 		}
+		return true;
 	}
 	*/
 
-	private function reset_imageids() {
+	private function reset_image_ids() {
 		global $database;
+
+		if($database->engine->name != "mysql") return;
+
 		//This might be a bit laggy on boards with lots of images (?)
 		//Seems to work fine with 1.2k~ images though.
 		$i = 0;
@@ -221,15 +226,17 @@ class AdminPage extends Extension {
 		}
 		$count = (count($image)) + 1;
 		$database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
+		return true;
 	}
 
-	private function imgdump(Page $page) {
-		global $database;
+	private function download_all_images() {
+		global $database, $page;
+
 		$zip = new ZipArchive;
 		$images = $database->get_all("SELECT * FROM images");
 		$filename = 'imgdump-'.date('Ymd').'.zip';
 
-		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE)===TRUE){
+		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE) === TRUE){
 			foreach($images as $img){
 				$hash = $img["hash"];
 				preg_match("^[A-Za-z0-9]{2}^", $hash, $matches);
@@ -241,9 +248,11 @@ class AdminPage extends Extension {
 			}
 			$zip->close();
 		}
+
 		$page->set_mode("redirect");
 		$page->set_redirect(make_link($filename)); //Fairly sure there is better way to do this..
 		//TODO: Delete file after downloaded?
+		return false;  // we do want a redirect, but a manual one
 	}
 }
 ?>
