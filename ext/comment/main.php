@@ -194,13 +194,6 @@ class CommentList extends Extension {
 		);
 	}
 
-	public function onImageDeletion(ImageDeletionEvent $event) {
-		global $database;
-		$image_id = $event->image->id;
-		$database->Execute("DELETE FROM comments WHERE image_id=:image_id", array("image_id"=>$image_id));
-		log_info("comment", "Deleting all comments for Image #$image_id");
-	}
-
 	// TODO: split akismet into a separate class, which can veto the event
 	public function onCommentPosting(CommentPostingEvent $event) {
 		$this->add_comment_wrapper($event->image_id, $event->user, $event->comment);
