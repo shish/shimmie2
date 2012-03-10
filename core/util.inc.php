@@ -173,15 +173,6 @@ function isValidDate($date) {
 }
 
 /**
- * Return a pluraliser if necessary
- *
- * @retval string
- */
-function plural($num, $single_form="", $plural_form="s") {
-	return ($num == 1) ? $single_form : $plural_form;
-}
-
-/**
  * Give a HTML string which shows an IP (if the user is allowed to see IPs),
  * and a link to ban that IP (if the user is allowed to ban IPs)
  *
