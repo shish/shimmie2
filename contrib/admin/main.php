@@ -75,9 +75,8 @@ class AdminPage extends Extension {
 	}
 
 	public function onAdminBuilding(AdminBuildingEvent $event) {
-		global $page;
-		$this->theme->display_page($page);
-		$this->theme->display_form($page);
+		$this->theme->display_page();
+		$this->theme->display_form();
 	}
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
@@ -89,11 +88,17 @@ class AdminPage extends Extension {
 
 	public function onAdminAction(AdminActionEvent $event) {
 		$action = $event->action;
-		if(function_exists($this, $action)) {
+		if(method_exists($this, $action)) {
 			$event->redirect = $this->$action();
 		}
 	}
 
+	public function onPostListBuilding(PostListBuildingEvent $event) {
+		global $user;
+		if($user->is_admin() && !empty($event->search_terms)) {
+			$this->theme->display_dbq(implode(" ", $event->search_terms));
+		}
+	}
 
 	private function delete_by_query() {
 		global $page, $user;
@@ -104,7 +109,9 @@ class AdminPage extends Extension {
 			send_event(new ImageDeletionEvent($image));
 		}
 
-		return true;
+		$page->set_mode("redirect");
+		$page->set_redirect(make_link("post/list"));
+		return false;
 	}
 
 	private function lowercase_all_tags() {
