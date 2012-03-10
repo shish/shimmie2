@@ -13,14 +13,21 @@ class FeaturedTest extends ShimmieWebTestCase {
 		$this->click("Feature This");
 		$this->get_page("post/list");
 		$this->assert_text("Featured Image");
+
+		# FIXME: test changing from one feature to another
+
+		$this->get_page("featured_image/download");
+		$this->assert_response(200);
+
+		$this->get_page("featured_image/view");
+		$this->assert_response(200);
+
 		$this->delete_image($image_id);
 		$this->log_out();
 
 		# after deletion, there should be no feature
 		$this->get_page("post/list");
 		$this->assert_no_text("Featured Image");
-
-		# FIXME: test changing from one feature to another
 	}
 }
 ?>
