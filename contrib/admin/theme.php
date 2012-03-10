@@ -21,13 +21,9 @@ class AdminPageTheme extends Themelet {
 
 		$html = '
 			<script type="text/javascript">
-			function imgidconfirm(){
-				if(document.getElementById("misc").selectedIndex == 4){
-					if(confirm("This function WILL break any bookmarks & links.\n The event log will also not be updated with new ids. \n Are you sure you wish to continue?")){
-						return true;
-					}else{
-						return false;
-					}
+			function imgidconfirm() {
+				if(document.getElementById("misc").selectedIndex == 4) {
+					return confirm("This function WILL break any bookmarks & links.\n The event log will also not be updated with new ids. \n Are you sure you wish to continue?");
 				}
 			}
 			</script>
