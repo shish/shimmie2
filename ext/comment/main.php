@@ -83,8 +83,8 @@ class CommentList extends Extension {
 					INDEX (image_id),
 					INDEX (owner_ip),
 					INDEX (posted),
-					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
+					CONSTRAINT foreign_comments_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+					CONSTRAINT foreign_comments_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 				");
 				$config->set_int("ext_comments_version", 3);
 			}
