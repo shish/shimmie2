@@ -29,10 +29,6 @@ class SetupBuildingEvent extends Event {
 	public function SetupBuildingEvent(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
-
-	public function get_panel() {
-		return $this->panel;
-	}
 }
 // }}}
 /* SetupPanel {{{
