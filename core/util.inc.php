@@ -173,15 +173,6 @@ function isValidDate($date) {
 }
 
 /**
- * Return a pluraliser if necessary
- *
- * @retval string
- */
-function plural($num, $single_form="", $plural_form="s") {
-	return ($num == 1) ? $single_form : $plural_form;
-}
-
-/**
  * Give a HTML string which shows an IP (if the user is allowed to see IPs),
  * and a link to ban that IP (if the user is allowed to ban IPs)
  *
@@ -197,19 +188,6 @@ function show_ip($ip, $ban_reason) {
 	$ip = $user->can("view_ip") ? $ip.$ban : "";
 	return $ip;
 }
-
-/**
- * Turn an IP address into a colour, for easily spotting samefags
- *
- * NOTE: this should only be shown to admins, as it can be reversed
- * to get an original IP address
- */
-function ip2color($ip) {
-	$b = explode(".", $ip);
-	#return sprintf("#%02x%02x%02x", $b[0]/2, $b[1]/2, $b[2]/2);
-	return sprintf("hsl(%d, %d%%, %d%%)", $b[3]*360/256, $b[2]*100/256, $b[1]*100/256/2);
-}
-
 
 /**
  * Different databases have different ways to represent booleans; this
@@ -361,27 +339,6 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
 }
 
-/**
- * Make a link to a static file in the current theme's
- * directory
- */
-function theme_file($filepath) {
-	global $config;
-	$theme = $config->get_string("theme","default");
-	return make_link('themes/'.$theme.'/'.$filepath);
-}
-
-
-function hsl_rainbow() {
-	$ct = Array();
-	$s = 100; $l = 25; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	$s = 100; $l = 50; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	$s =  50; $l = 25; for($h= 0; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	$s = 100; $l = 25; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	$s = 100; $l = 50; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	$s =  50; $l = 25; for($h=30; $h<360; $h+=60) {$ct[] = "hsl($h, $s%, $l%);";}
-	return $ct;
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * CAPTCHA abstraction                                                       *
@@ -886,23 +843,6 @@ function full_copy($source, $target) {
 	}
 }
 
-/**
- * @private
- */
-function weighted_random($weights) {
-	$total = 0;
-	foreach($weights as $k => $w) {
-		$total += $w;
-	}
-
-	$r = mt_rand(0, $total);
-	foreach($weights as $k => $w) {
-		$r -= $w;
-		if($r <= 0) {
-			return $k;
-		}
-	}
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *

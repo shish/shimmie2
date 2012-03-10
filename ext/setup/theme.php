@@ -87,7 +87,17 @@ class SetupTheme extends Themelet {
 	}
 
 	protected function sb_to_html(SetupBlock $block) {
-		return "<div class='setupblock'><b>{$block->header}</b><br>{$block->body}</div>\n";
+		$h = $block->header;
+		$b = $block->body;
+		$i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
+		$html = "
+			<div class='setupblock brr'>
+				<b class='shm-toggler' data-toggle-id='$i'>$h</b>
+				<br><div id='$i'>$b</div>
+			</div>
+			<!-- cancel border -->
+		";
+		return $html;
 	}
 }
 ?>

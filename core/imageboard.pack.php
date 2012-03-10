@@ -56,6 +56,7 @@ class Image {
 				$this->$name = $value; // hax
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
+			$this->locked = undb_bool($this->locked);
 
 			assert(is_numeric($this->id));
 			assert(is_numeric($this->height));
@@ -411,8 +412,9 @@ class Image {
 	 * @retval bool
 	 */
 	public function is_locked() {
-		return ($this->locked === true || $this->locked == "Y" || $this->locked == "t");
+		return $this->locked;
 	}
+
 	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";

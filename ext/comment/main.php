@@ -70,7 +70,7 @@ class CommentList extends Extension {
 		$config->set_default_int('comment_count', 5);
 		$config->set_default_bool('comment_captcha', false);
 
-		if($config->get_int("ext_comments_version") < 2) {
+		if($config->get_int("ext_comments_version") < 3) {
 			// shortcut to latest
 			if($config->get_int("ext_comments_version") < 1) {
 				$database->create_table("comments", "
@@ -84,14 +84,14 @@ class CommentList extends Extension {
 					INDEX (owner_ip),
 					INDEX (posted),
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 				");
-				$config->set_int("ext_comments_version", 2);
+				$config->set_int("ext_comments_version", 3);
 			}
 
-			// ===
+			// the whole history
 			if($config->get_int("ext_comments_version") < 1) {
-				$database->Execute("CREATE TABLE comments (
+				$database->create_table("comments", "
 					id {$database->engine->auto_increment},
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
@@ -99,7 +99,7 @@ class CommentList extends Extension {
 					posted DATETIME DEFAULT NULL,
 					comment TEXT NOT NULL,
 					INDEX (image_id)
-				) {$database->engine->create_table_extras}");
+				");
 				$config->set_int("ext_comments_version", 1);
 			}
 
@@ -108,6 +108,14 @@ class CommentList extends Extension {
 				$database->Execute("CREATE INDEX comments_posted ON comments(posted)");
 				$config->set_int("ext_comments_version", 2);
 			}
+
+			if($config->get_int("ext_comments_version") == 2) {
+				$config->set_int("ext_comments_version", 3);
+				$database->Execute("ALTER TABLE comments ADD CONSTRAINT foreign_comments_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
+				$database->Execute("ALTER TABLE comments ADD CONSTRAINT foreign_comments_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
+			}
+
+			// FIXME: add foreign keys, bump to v3
 		}
 	}
 
@@ -184,13 +192,6 @@ class CommentList extends Extension {
 			$this->get_comments($event->image->id),
 			$this->can_comment()
 		);
-	}
-
-	public function onImageDeletion(ImageDeletionEvent $event) {
-		global $database;
-		$image_id = $event->image->id;
-		$database->Execute("DELETE FROM comments WHERE image_id=:image_id", array("image_id"=>$image_id));
-		log_info("comment", "Deleting all comments for Image #$image_id");
 	}
 
 	// TODO: split akismet into a separate class, which can veto the event

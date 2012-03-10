@@ -19,7 +19,7 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function tesPostListBlock() {
+	function testPostListBlock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_show_random_block", true);

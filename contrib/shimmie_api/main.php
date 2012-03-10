@@ -37,7 +37,7 @@ class _SafeImage {
 
 class ShimmieApi extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $database, $page;
+		global $database, $page, $user;
 
 		if($event->page_matches("api/shimmie")) {
 			$page->set_mode("data");
@@ -55,7 +55,7 @@ class ShimmieApi extends Extension {
 						"SELECT tag FROM tags WHERE tag LIKE ?",
 						array($arg."%"));
 				}
-				elseif(isset($_GET['id'])){
+				elseif(isset($_GET['tag'])){
 					$all = $database->get_all(
 						"SELECT tag FROM tags WHERE tag LIKE ?",
 						array($_GET['tag']."%"));
@@ -76,9 +76,7 @@ class ShimmieApi extends Extension {
 				elseif(isset($_GET['id'])){
 					$image = Image::by_id(int_escape($_GET['id']));
 				}
-				else{
-					$image = Image::by_id(int_escape("1")); //Default to id=1
-				}
+				// FIXME: handle null image
 				$image->get_tag_array(); // tag data isn't loaded into the object until necessary
 				$safe_image = new _SafeImage($image);
 				$page->set_data(json_encode($safe_image));
@@ -98,29 +96,24 @@ class ShimmieApi extends Extension {
 			}
 
 			if($event->page_matches("api/shimmie/get_user")) {
-				if(isset($_GET['name'])){
-					$all = $database->get_all(
-						"SELECT id,name,joindate,class FROM users WHERE name=?",
-						array($_GET['name']));
+				$query = $user->id;
+				if($event->count_args() == 1) {
+					$query = $event->get_arg(0);
+				}
+				if(isset($_GET['name'])) {
+					$query = $_GET['name'];
+				}
+				if(isset($_GET['id'])) {
+					$query = $_GET['id'];
 				}
 
-				if(isset($_GET['id'])){
-					$all = $database->get_all(
-						"SELECT id,name,joindate,class FROM users WHERE id=?",
-						array($_GET['id']));
-				}
+				$all = $database->get_row(
+					"SELECT id,name,joindate,class FROM users WHERE name=? OR id=?",
+					array($_GET['name'], int_escape($_GET['id'])));
 
-				if(!isset($_GET['id']) && !isset($_GET['name'])){
-					$all = $database->get_all(
-						"SELECT id,name,joindate,class FROM users WHERE id=?",
-						array("2")); //In 99% of cases, this will be the admin.
-				}
-
-				$all = $all[0];
 				//FIXME?: For some weird reason, get_all seems to return twice. Unsetting second value to make things look nice..
+				// - it returns data as eg  array(0=>1234, 'id'=>1234, 1=>'bob', 'name'=>bob, ...);
 				for($i=0; $i<4; $i++) unset($all[$i]);
-				/*TODO: Might be worth making it possible just to get a certain stat (Using &stat=uploadcount or something)
-					This would lessen strain on DB? */
 				$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
 				$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
 				$all['commentcount'] = $database->get_one(
