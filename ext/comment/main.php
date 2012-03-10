@@ -70,7 +70,7 @@ class CommentList extends Extension {
 		$config->set_default_int('comment_count', 5);
 		$config->set_default_bool('comment_captcha', false);
 
-		if($config->get_int("ext_comments_version") < 2) {
+		if($config->get_int("ext_comments_version") < 3) {
 			// shortcut to latest
 			if($config->get_int("ext_comments_version") < 1) {
 				$database->create_table("comments", "
