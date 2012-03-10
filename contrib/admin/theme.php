@@ -10,6 +10,23 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new NavBlock());
 	}
 
+	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
+		$c_protected = $protected ? " protected" : "";
+		$html = make_form(make_link("admin_utils"), "POST", false, false, false, "admin$c_protected");
+		if($protected) {
+			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
+		}
+		$html .= "<input type='hidden' value='$action'>";
+		if($protected) {
+			$html .= "<input type='submit' id='$action' value='$name' disabled='true'>";
+		}
+		else {
+			$html .= "<input type='submit' id='$action' value='$name'>";
+		}
+		$html .= "</form>\n";
+		return $html;
+	}
+
 	/*
 	 * Show a form which links to admin_utils with POST[action] set to one of:
 	 *  'lowercase all tags'
@@ -19,27 +36,13 @@ class AdminPageTheme extends Themelet {
 	public function display_form(Page $page) {
 		global $user;
 
-		$html = '
-			<script type="text/javascript">
-			function imgidconfirm() {
-				if(document.getElementById("misc").selectedIndex == 4) {
-					return confirm("This function WILL break any bookmarks & links.\n The event log will also not be updated with new ids. \n Are you sure you wish to continue?");
-				}
-			}
-			</script>
-			'.make_form(make_link("admin_utils"),"post", false, false, "return imgidconfirm()")."
-				<select name='action' id='misc'>
-					<option value='lowercase all tags'>All tags to lowercase</option>
-					<option value='recount tag use'>Recount tag use</option>
-					<option value='purge unused tags'>Purge unused tags</option>
-					<option value='database dump'>Download database contents</option>
-					<option value='reset image ids'>Reset image ids</option>
-					<option value='image dump'>Download all images</option>
-					<!--<option value='convert to innodb'>Convert database to InnoDB (MySQL only)</option>-->
-				</select>
-				<input type='submit' value='Go'>
-			</form>
-		";
+		$html = "";
+		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
+		$html .= $this->button("Recount tag use", "recount_tag_user", false);
+		$html .= $this->button("Purge unused tags", "purge_unused_tags", true);
+		$html .= $this->button("Download database contents", "database_dump", false);
+		$html .= $this->button("Reset image IDs", "reset_image_ids", true);
+		$html .= $this->button("Download all images", "image_dump", false);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 		
 		/* First check
