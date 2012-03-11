@@ -10,7 +10,7 @@ class NotATag extends Extension {
 	public function get_priority() {return 30;} // before ImageUploadEvent and tag_history
 
 	public function onImageAddition(ImageAdditionEvent $event) {
-		$this->scan($event->image->tags);
+		$this->scan($event->image->get_tag_array());
 	}
 
 	public function onTagSet(TagSetEvent $event) {
