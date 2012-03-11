@@ -54,47 +54,50 @@ class Artists extends Extension {
     public function try_install() {
     	global $config, $database;
                 
-    	if ($config->get_int("ext_artists_version") < 1)
-        {
-            $database->create_table("artists",
-                "id SCORE_AIPK
-                 , user_id INTEGER NOT NULL
-                 , name VARCHAR(255) NOT NULL
-                 , created DATETIME NOT NULL
-                 , updated DATETIME NOT NULL
-                 , notes TEXT
-                 , INDEX(id)
-                ");
-            $database->create_table("artist_members",
-               "id SCORE_AIPK
-                , artist_id INTEGER NOT NULL
-                , user_id INTEGER NOT NULL
-                , name VARCHAR(255) NOT NULL
-                , created DATETIME NOT NULL
-                , updated DATETIME NOT NULL
-                , INDEX (id)
-                , FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
-                ");
-            $database->create_table("artist_alias",
-                "id SCORE_AIPK
-                 , artist_id INTEGER NOT NULL
-                 , user_id INTEGER NOT NULL
-                 , created DATETIME
-                 , updated DATETIME
-                 , alias VARCHAR(255)
-                 , INDEX (id)
-                 , FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
-                ");
-            $database->create_table("artist_urls",
-                "id SCORE_AIPK
-                , artist_id INTEGER NOT NULL
-                , user_id INTEGER NOT NULL
-                , created DATETIME NOT NULL
-                , updated DATETIME NOT NULL
-                , url VARCHAR(1000) NOT NULL
-                , INDEX (id)
-                , FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
-                ");
+    	if ($config->get_int("ext_artists_version") < 1) {
+            $database->create_table("artists", "
+					id SCORE_AIPK,
+					user_id INTEGER NOT NULL,
+					name VARCHAR(255) NOT NULL,
+					created DATETIME NOT NULL,
+					updated DATETIME NOT NULL,
+					notes TEXT,
+					INDEX(id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+					");
+            $database->create_table("artist_members", "
+					id SCORE_AIPK,
+					artist_id INTEGER NOT NULL,
+					user_id INTEGER NOT NULL,
+					name VARCHAR(255) NOT NULL,
+					created DATETIME NOT NULL,
+					updated DATETIME NOT NULL,
+					INDEX (id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
+					");
+            $database->create_table("artist_alias", "
+					id SCORE_AIPK,
+					artist_id INTEGER NOT NULL,
+					user_id INTEGER NOT NULL,
+					created DATETIME,
+					updated DATETIME,
+					alias VARCHAR(255),
+					INDEX (id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
+					");
+            $database->create_table("artist_urls", "
+					id SCORE_AIPK,
+					artist_id INTEGER NOT NULL,
+					user_id INTEGER NOT NULL,
+					created DATETIME NOT NULL,
+					updated DATETIME NOT NULL,
+					url VARCHAR(1000) NOT NULL,
+					INDEX (id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
+					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
+					");
             $database->execute("ALTER TABLE images ADD COLUMN author VARCHAR(255) NULL", array());
 
             $config->set_int("artistsPerPage", 20);
