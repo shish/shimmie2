@@ -161,7 +161,7 @@ class IPBan extends Extension {
 		}
 
 		if($config->get_int("ext_ipban_version") == 6) {
-			$database->Execute("ALTER TABLE bans ADD CONSTRAINT foreign_bans_banner_id FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
+			$database->Execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
 			$config->set_int("ext_ipban_version", 7);
 		}
 	}

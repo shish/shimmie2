@@ -252,8 +252,8 @@ class NumericScore extends Extension {
 				score INTEGER NOT NULL,
 				UNIQUE(image_id, user_id),
 				INDEX(image_id),
-				CONSTRAINT foreign_numeric_score_votes_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-				CONSTRAINT foreign_numeric_score_votes_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_numeric_score_version", 1);
 		}

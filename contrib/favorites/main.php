@@ -148,8 +148,8 @@ class Favorites extends Extension {
 					created_at DATETIME NOT NULL,
 					INDEX(image_id),
 					UNIQUE(image_id, user_id),
-					CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-					CONSTRAINT foreign_user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
+					FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 				)
 			");
 			$config->set_int("ext_favorites_version", 1);
@@ -161,8 +161,8 @@ class Favorites extends Extension {
 			$database->Execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
 
 			log_info("favorites", "Adding foreign keys to user favourites");
-			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
-			$database->Execute("ALTER TABLE user_favorites ADD CONSTRAINT foreign_user_favorites_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
+			$database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
+			$database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
 			$config->set_int("ext_favorites_version", 2);
 		}
 	}

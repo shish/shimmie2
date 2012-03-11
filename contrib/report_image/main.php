@@ -118,8 +118,8 @@ class ReportImage extends Extension {
 				image_id INTEGER NOT NULL,
 				reporter_id INTEGER NOT NULL,
 				reason TEXT NOT NULL,
-				CONSTRAINT foreign_image_reports_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-				CONSTRAINT foreign_image_reports_reporter_id FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
+				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_report_image_version", 1);
 		}
