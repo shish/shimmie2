@@ -907,12 +907,7 @@ $_load_start = microtime(true);
 function get_debug_info() {
 	global $config, $_event_count, $database, $_execs, $_load_start;
 
-	if(function_exists('memory_get_usage')) {
-		$i_mem = sprintf("%5.2f", ((memory_get_usage()+512)/1024)/1024);
-	}
-	else {
-		$i_mem = "???";
-	}
+	$i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
 
 	if($config->get_string("commit_hash", "unknown") == "unknown"){
 		$commit = "";
@@ -1276,7 +1271,7 @@ function _end_coverage() {
 		$n = 0;
 		$t = time();
 		while(file_exists("$absolute_path/$t.$n.log")) $n++;
-		file_put_contents("$absolute_path/$t.$n.log", serialize(xdebug_get_code_coverage()));
+		file_put_contents("$absolute_path/$t.$n.log", gzdeflate(serialize(xdebug_get_code_coverage())));
 	}
 }
 ?>

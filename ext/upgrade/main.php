@@ -57,7 +57,7 @@ class Upgrade extends Extension {
 			$config->set_int("db_version", 10);
 
 			log_info("upgrade", "Adding foreign keys to images");
-			$database->Execute("ALTER TABLE images ADD CONSTRAINT foreign_images_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
+			$database->Execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 		
 			log_info("upgrade", "Database at version 10");
 			$config->set_bool("in_upgrade", false);

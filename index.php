@@ -100,6 +100,8 @@ try {
 	$page->display();
 
 	$database->db->commit();
+	// saving cache data and profiling data to disk can happen later
+	if(function_exists("fastcgi_finish_request")) fastcgi_finish_request();
 	_end_cache();
 	ctx_log_endok();
 }

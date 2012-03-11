@@ -61,7 +61,7 @@ class PrivMsg extends Extension {
 				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
-			$config->set_int("pm_version", 1);
+			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}
 
@@ -70,8 +70,8 @@ class PrivMsg extends Extension {
 			$database->Execute("delete from private_message where to_id not in (select id from users);");
 			$database->Execute("delete from private_message where from_id not in (select id from users);");
 			$database->Execute("ALTER TABLE private_message 
-			ADD CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
-			ADD CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
+			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
 			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}

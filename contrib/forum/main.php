@@ -9,42 +9,48 @@
  */
 
 class Forum extends Extension {
-        public function onInitExt(InitExtEvent $event) {
+	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// shortcut to latest
-                
-                if ($config->get_int("forum_version") < 1)
-                {
-                    $database->create_table("forum_threads", "
-                            id SCORE_AIPK,
-							sticky SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-                            title VARCHAR(255) NOT NULL,
-                            user_id INTEGER NOT NULL,
-                            date DATETIME NOT NULL,
-							uptodate DATETIME NOT NULL,
-                            INDEX (date)
-                    ");
 
-                    $database->create_table("forum_posts",
-                        " id SCORE_AIPK,
-                          thread_id INTEGER NOT NULL,
-                          user_id INTEGER NOT NULL,
-                          date DATETIME NOT NULL,
-                          message TEXT,
-                          INDEX (date),
-                          FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
-                    ");
+		if ($config->get_int("forum_version") < 1) {
+			$database->create_table("forum_threads", "
+					id SCORE_AIPK,
+					sticky SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
+					title VARCHAR(255) NOT NULL,
+					user_id INTEGER NOT NULL,
+					date DATETIME NOT NULL,
+					uptodate DATETIME NOT NULL,
+					INDEX (date),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
+					");
 
-                    $config->set_int("forum_version", 1);
-                    $config->set_int("forumTitleSubString", 25);
-                    $config->set_int("forumThreadsPerPage", 15);
-                    $config->set_int("forumPostsPerPage", 15);
-					
-					$config->set_int("forumMaxCharsPerPost", 512);
-					
-                    log_info("forum", "extension installed");
-                }
+			$database->create_table("forum_posts", "
+					id SCORE_AIPK,
+					thread_id INTEGER NOT NULL,
+					user_id INTEGER NOT NULL,
+					date DATETIME NOT NULL,
+					message TEXT,
+					INDEX (date),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
+					");
+
+			$config->set_int("forum_version", 2);
+			$config->set_int("forumTitleSubString", 25);
+			$config->set_int("forumThreadsPerPage", 15);
+			$config->set_int("forumPostsPerPage", 15);
+
+			$config->set_int("forumMaxCharsPerPost", 512);
+
+			log_info("forum", "extension installed");
+		}
+		if ($config->get_int("forum_version") < 2) {
+			$database->execute("ALTER TABLE forum_threads ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+			$database->execute("ALTER TABLE forum_posts ADD FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT");
+			$config->set_int("forum_version", 2);
+		}
 	}
 	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
