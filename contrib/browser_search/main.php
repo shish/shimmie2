@@ -34,7 +34,7 @@ class BrowserSearch extends Extension {
 			$search_title = $config->get_string('title');
 			$search_form_url =  make_link('post/list/{searchTerms}');
 			$suggenton_url = make_link('browser_search/')."{searchTerms}";
-			$icon_b64 = base64_encode(file_get_contents("favicon.ico"));
+			$icon_b64 = base64_encode(file_get_contents("lib/static/favicon.ico"));
 
 			// Now for the XML
 			$xml = "
