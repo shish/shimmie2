@@ -21,7 +21,7 @@ H1 {
 	display: none;
 }
 
-#footer {
+FOOTER {
 	clear: both;
 	padding-top: 8px;
 	font-size: 0.7em;
@@ -35,26 +35,26 @@ A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
 HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}
 
-#nav {
+NAV {
 	width: 150px;
 	float: left;
 	text-align:left;
 }
-#nav TABLE {
+NAV TABLE {
 	width: 150px;
 }
-#nav TD {
+NAV TD {
 	vertical-align: middle;
 }
-#nav INPUT {
+NAV INPUT {
 	width: 100%;
 	padding: 0px;
 }
-#nav SELECT {
+NAV SELECT {
 	width: 100%;
 	padding: 0px;
 }
-#nav H3 {
+NAV H3 {
 	text-align: left;
 }
 .withleft {

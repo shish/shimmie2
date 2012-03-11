@@ -67,23 +67,25 @@ $header_html
 	</head>
 
 	<body>
-<table id="header" class="bgtop" width="100%" height="113px">
-	<tr>
-		<td><center>
-			<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
-			<p>[Navigation links go here]
-		</center></td>
-		$head_block_html
-	</tr>
-</table>
-
-		$sub_block_html
-
-		
-		<div id="nav">$left_block_html</div>
-		<div id="body">$main_block_html</div>
-
-		<div id="footer">
+		<header>
+			<table id="header" class="bgtop" width="100%" height="113px">
+				<tr>
+					<td><center>
+						<h1><a href="$data_href/$main_page">{$site_name}</a></h1>
+						<p>[Navigation links go here]
+					</center></td>
+					$head_block_html
+				</tr>
+			</table>
+			$sub_block_html
+		</header>
+		<nav>
+			$left_block_html
+		</nav>
+		<article>
+			$main_block_html
+		</article>
+		<footer>
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
@@ -92,7 +94,7 @@ $header_html
 			based on the Danbooru concept.
 			$debug
 			$contact
-		</div>
+		</footer>
 	</body>
 </html>
 EOD;

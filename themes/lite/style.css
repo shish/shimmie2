@@ -133,7 +133,7 @@ CODE {
 	border-top: none;
 	background: #DDD;
 }
-#body SELECT {width: 150px;}
+ARTICLE SELECT {width: 150px;}
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
@@ -164,7 +164,7 @@ INPUT:hover, TEXTAREA:hover {
 	text-decoration:none;
 }
 
-#footer {
+FOOTER {
 	clear: both;
 	padding: 8px;
 	font-size: 0.7em;
@@ -193,27 +193,27 @@ UL {
 *             the navigation bar, and all its blocks             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#nav {
+NAV {
 	width: 200px;
 	float: left;
 	text-align: center;
 	margin-left: 16px;
 }
-#nav .blockbody {
+NAV .blockbody {
 	font-size: 0.85em;
 	text-align: center;
 }
-#nav TABLE {
+NAV TABLE {
 	width: 190px;
 }
-#nav TD {
+NAV TD {
 	vertical-align: middle;
 }
-#nav INPUT {
+NAV INPUT {
 	width: 95%;
 	padding: 0px;
 }
-#nav SELECT {
+NAV SELECT {
 	width: 100%;
 	padding: 0px;
 }
@@ -264,13 +264,13 @@ UL {
 *                 the main part of each page                     *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#body {
+ARTICLE {
 	margin-left: 226px;
 	margin-right: 16px;
 	text-align: left;
 	height: 1%;
 }
-#body_noleft {
+ARTICLE_noleft {
 	margin-left: 4px;
 	margin-right: 16px;
 	margin-bottom:16px;
@@ -279,7 +279,7 @@ UL {
 	text-align: left;
 	height: 1%;
 }
-#body TABLE {
+ARTICLE TABLE {
 	width: 90%;
 }
 
@@ -332,11 +332,11 @@ UL {
 	background: #FAA;
 }
 
-#nav .thumbblock {
+NAV .thumbblock {
 	float: none;
 	height: auto;
 }
-#nav .thumb {
+NAV .thumb {
 	margin-bottom: 0px;
 }
 .thumbblock {

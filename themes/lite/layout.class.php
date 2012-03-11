@@ -153,10 +153,10 @@ class Layout {
 		}
 		if($page->left_enabled==false) {
 			$left_block_html = "";
-			$main_block_html = "<div id='body_noleft'>$main_block_html</div>";
+			$main_block_html = "<article id='body_noleft'>$main_block_html</article>";
 		} else {
-			$left_block_html = "<div id='nav'>$left_block_html</div>";
-			$main_block_html = "<div id='body'>$main_block_html</div>";
+			$left_block_html = "<nav>$left_block_html</nav>";
+			$main_block_html = "<article>$main_block_html</article>";
 		}
 
 		print <<<EOD
@@ -171,17 +171,14 @@ class Layout {
 	</head>
 
 	<body>
-
-		$menu
-		$custom_sublinks
-		
-		$sub_block_html
-
+		<header>
+			$menu
+			$custom_sublinks
+			$sub_block_html
+		</header>
 		$left_block_html
 		$main_block_html
-		
-
-		<div id="footer">
+		<footer>
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
@@ -191,7 +188,7 @@ class Layout {
 			Lite Theme by <a href="http://seemslegit.com">Zach</a>
 			$debug
 			$contact
-		</div>
+		</footer>
 	</body>
 </html>
 EOD;

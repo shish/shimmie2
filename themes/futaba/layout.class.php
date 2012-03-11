@@ -47,7 +47,7 @@ class Layout {
 		}
 
 		if($page->left_enabled) {
-			$left = "<div id='nav'>$left_block_html</div>";
+			$left = "<nav>$left_block_html</nav>";
 			$withleft = "withleft";
 		}
 		else {
@@ -68,14 +68,16 @@ $header_html
 	</head>
 
 	<body>
-		<h1>{$page->heading}</h1>
-		$subheading
-		$sub_block_html
-		
+		<header>
+			<h1>{$page->heading}</h1>
+			$subheading
+			$sub_block_html
+		</header>
 		$left
-		<div id="body" class="$withleft">$main_block_html</div>
-
-		<div id="footer">
+		<article class="$withleft">
+			$main_block_html
+		</article>
+		<footer>
 			<hr>
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
@@ -86,7 +88,7 @@ $header_html
 			<br>Futaba theme based on 4chan's layout and CSS :3
 			$debug
 			$contact
-		</div>
+		</footer>
 	</body>
 </html>
 EOD;

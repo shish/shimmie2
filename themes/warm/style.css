@@ -9,7 +9,7 @@ BODY {
 	font-size: 14px;
 	margin: 0px;
 }
-#header {
+HEADER {
 	border-bottom: 1px solid #B89F7C;
 	margin-top: 0px;
 	margin-bottom: 16px;
@@ -50,7 +50,7 @@ CODE {
 	border-top: none;
 	background: #DDD;
 }
-#body SELECT {width: 150px;}
+ARTICLE SELECT {width: 150px;}
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
@@ -64,7 +64,7 @@ TABLE.zebra TD {border-top: 1px solid #B89F7C;}
 TABLE.zebra TR:nth-child(odd) {background: #FCD9A9;}
 TABLE.zebra TR:nth-child(even) {background: #DABC92;}
 
-#footer {
+FOOTER {
 	clear: both;
 	padding: 8px;
 	font-size: 0.7em;
@@ -95,27 +95,27 @@ UL {
 *             the navigation bar, and all its blocks             *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#nav {
+NAV {
 	width: 250px;
 	float: left;
 	text-align: center;
 	margin-left: 16px;
 }
-#nav .blockbody {
+NAV .blockbody {
 	font-size: 0.85em;
 	text-align: center;
 }
-#nav TABLE {
+NAV TABLE {
 	width: 150px;
 }
-#nav TD {
+NAV TD {
 	vertical-align: middle;
 }
-#nav INPUT {
+NAV INPUT {
 	width: 100%;
 	padding: 0px;
 }
-#nav SELECT {
+NAV SELECT {
 	width: 100%;
 	padding: 0px;
 }
@@ -152,13 +152,13 @@ UL {
 *                 the main part of each page                     *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-#body {
+ARTICLE {
 	margin-left: 276px;
 	margin-right: 16px;
 	text-align: center;
 	height: 1%;
 }
-#body TABLE {
+ARTICLE TABLE {
 	width: 90%;
 	margin: auto;
 }
@@ -204,11 +204,11 @@ UL {
 	background: #FAA;
 }
 
-#nav .thumbblock {
+NAV .thumbblock {
 	float: none;
 	height: auto;
 }
-#nav .thumb {
+NAV .thumb {
 	margin-bottom: 0px;
 }
 .thumbblock {

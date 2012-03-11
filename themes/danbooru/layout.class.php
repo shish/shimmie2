@@ -183,7 +183,7 @@ class Layout {
 		$title_link = "<h1 id='site-title'><a href='".make_link($main_page)."'>$site_name</a></h1>";
 
 		if($page->left_enabled) {
-			$left = "<div id='nav'>$left_block_html</div>";
+			$left = "<nav>$left_block_html</nav>";
 			$withleft = "withleft";
 		}
 		else {
@@ -204,23 +204,22 @@ $header_html
 	</head>
 
 	<body>
-		<div id="header">
-		$title_link
-		<ul id="navbar" class="flat-list">
-			$custom_links
-		</ul>
-		<ul id="subnavbar" class="flat-list">
-			$custom_sublinks
-		</ul>
-		</div>
+		<header>
+			$title_link
+			<ul id="navbar" class="flat-list">
+				$custom_links
+			</ul>
+			<ul id="subnavbar" class="flat-list">
+				$custom_sublinks
+			</ul>
+		</header>
 		$subheading
 		$sub_block_html
-		
 		$left
-		<div id="body" class="$withleft">$main_block_html</div>
-
-		<div id="footer">
-        <em>
+		<article class="$withleft">
+			$main_block_html
+		</article>
+		<footer><em>
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
@@ -229,8 +228,7 @@ $header_html
 			based on the Danbooru concept.
 			$debug
 			$contact
-        </em>
-		</div>
+        </em></footer>
 	</body>
 </html>
 EOD;

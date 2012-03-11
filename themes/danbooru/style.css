@@ -1,36 +1,36 @@
 .noleft{
 padding-left:20px;
 }
-div#header {
+HEADER {
 margin-bottom:1em;
 }
-div#header #site-title {
+HEADER #site-title {
 padding:10px 20px 0;
 }
-div#header ul#navbar {
+HEADER ul#navbar {
 margin:0;
 padding:5px 20px 2px 10px;
 }
-div#header ul#navbar li {
+HEADER ul#navbar li {
 font-size:120%;
 margin:0;
 padding:0 10px 2px;
 }
-div#header ul#navbar li.current-page {
+HEADER ul#navbar li.current-page {
 background-color:#F7F7FF;
 }
-div#header ul#navbar li.current-page a {
+HEADER ul#navbar li.current-page a {
 font-weight:bold;
 }
-div#header ul#subnavbar {
+HEADER ul#subnavbar {
 background-color:#F7F7FF;
 margin:0 0 1em;
 padding:5px 20px 5px 15px;
 }
-div#header ul#subnavbar li {
+HEADER ul#subnavbar li {
 padding:0 5px;
 }
-div#header #site-title {
+HEADER #site-title {
 padding:10px 20px 0;
 }
 body {
@@ -87,13 +87,13 @@ margin:auto;
 text-align:center;
 width:256px;
 }
-#body select {
+ARTICLE select {
 width:150px;
 }
 td > input[type="submit"] {width: 100%;}
 td > input[type="text"] {width: 100%;}
 td > input[type="password"] {width: 100%;}
-#footer {
+FOOTER {
 clear:both;
 color:#CCCCCC;
 font-size:0.9em;
@@ -115,27 +115,27 @@ text-decoration:none;
 a:hover {
 text-decoration:underline;
 }
-#nav {
+NAV {
 float:left;
 text-align:left;
 width:150px;
 padding:5px 20px 2px 10px;
 }
-#nav table {
+NAV table {
 width:150px;
 }
-#nav td {
+NAV td {
 vertical-align:middle;
 }
-#nav input {
+NAV input {
 padding:0;
 width:100%;
 }
-#nav select {
+NAV select {
 padding:0;
 width:100%;
 }
-#nav h3 {
+NAV h3 {
 text-align:left;
 }
 #comments p {
@@ -233,10 +233,10 @@ background:#FFAAAA none repeat scroll 0 0;
 font-size:1.5em;
 font-weight:bold;
 }
-div#header {
+HEADER {
 text-align:left;
 }
-div#header h1 {
+HEADER h1 {
 text-align:left;
 }
 * {
