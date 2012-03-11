@@ -1276,7 +1276,7 @@ function _end_coverage() {
 		$n = 0;
 		$t = time();
 		while(file_exists("$absolute_path/$t.$n.log")) $n++;
-		file_put_contents("$absolute_path/$t.$n.log", serialize(xdebug_get_code_coverage()));
+		file_put_contents("$absolute_path/$t.$n.log", gzdeflate(serialize(xdebug_get_code_coverage())));
 	}
 }
 ?>
