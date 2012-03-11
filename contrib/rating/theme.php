@@ -8,7 +8,7 @@ class RatingsTheme extends Themelet {
 		$e_checked = $rating == 'e' ? " checked" : "";
 		$html = "
 			<tr>
-				<td>Rating</td>
+				<th>Rating</th>
 				<td>
 					<input type='radio' name='rating' value='s' id='s'$s_checked><label for='s'>Safe</label>
 					<input type='radio' name='rating' value='q' id='q'$q_checked><label for='q'>Questionable</label>

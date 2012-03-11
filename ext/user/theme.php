@@ -54,13 +54,17 @@ class UserPageTheme extends Themelet {
 
 		$html .= '
 		'.make_form(make_link("user_admin/create"))."
-			<table style='width: 300px;'>
-				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
-				$h_reca
-				<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
+			<table style='width: 300px;' class='form'>
+				<tbody>
+					<tr><td>Name</td><td><input type='text' name='name'></td></tr>
+					<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
+					<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
+					<tr><td>Email (Optional)</td><td><input type='text' name='email'></td></tr>
+					$h_reca
+				</tbody>
+				<tfoot>
+					<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
+				</tfoot>
 			</table>
 		</form>
 		";
@@ -83,16 +87,20 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = '
 			'.make_form(make_link("user_admin/login"))."
-				<table summary='Login Form' class='login'>
-					<tr>
-						<td><label for='user'>Name</label></td>
-						<td><input id='user' type='text' name='user'></td>
-					</tr>
-					<tr>
-						<td><label for='pass'>Password</label></td>
-						<td><input id='pass' type='password' name='pass'></td>
-					</tr>
-					<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
+				<table class='form'>
+					<tbody>
+						<tr>
+							<th><label for='user'>Name</label></th>
+							<td><input id='user' type='text' name='user'></td>
+						</tr>
+						<tr>
+							<th><label for='pass'>Password</label></th>
+							<td><input id='pass' type='password' name='pass'></td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
+					</tfoot>
 				</table>
 			</form>
 		";
@@ -155,20 +163,26 @@ class UserPageTheme extends Themelet {
 			$html .= "
 			".make_form(make_link("user_admin/change_pass"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
-				<table style='width: 300px;'>
-					<tr><th colspan='2'>Change Password</th></tr>
-					<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-					<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-					<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
+				<table style='width: 300px;' class='form'>
+					<thead>
+						<tr><th colspan='2'>Change Password</th></tr>
+					</thead>
+					<tbody>
+						<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
+						<tr><th>Repeat Password</th><td><input type='password' name='pass2'></td></tr>
+					</tbody>
+					<tfoot>
+						<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
+					</tfoot>
 				</table>
 			</form>
 
 			<p>".make_form(make_link("user_admin/change_email"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
-				<table style='width: 300px;'>
-					<tr><th colspan='2'>Change Email</th></tr>
-					<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
-					<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
+				<table style='width: 300px;' class='form'>
+					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
+					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr></tbody>
+					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
 				</table>
 			</form>
 			";

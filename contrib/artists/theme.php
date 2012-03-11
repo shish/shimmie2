@@ -5,7 +5,7 @@ class ArtistsTheme extends Themelet {
 		$h_author = html_escape($author);
 		return "
 			<tr>
-				<td>Author</td>
+				<th>Author</th>
 				<td>
 					<span class='view'>$h_author</span>
 					<input class='edit' type='text' name='tag_edit__author' value='$h_author'>

@@ -23,7 +23,7 @@ class TagEditTheme extends Themelet {
 		$h_tags = html_escape($image->get_tag_list());
 		return "
 			<tr>
-				<td width='50px'>Tags</td>
+				<th width='50px'>Tags</th>
 				<td>
 					<span class='view'>$h_tags</span>
 					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'>
@@ -40,7 +40,7 @@ class TagEditTheme extends Themelet {
 		$h_ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
 		return "
 			<tr>
-				<td>Uploader</td>
+				<th>Uploader</th>
 				<td>
 					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
@@ -55,7 +55,7 @@ class TagEditTheme extends Themelet {
 		$f_source = $this->format_source($image->get_source());
 		return "
 			<tr>
-				<td>Source</td>
+				<th>Source</th>
 				<td>
 					<span class='view' style='overflow: hidden; white-space: nowrap;'>$f_source</span>
 					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
@@ -82,7 +82,7 @@ class TagEditTheme extends Themelet {
 		$h_locked = $image->is_locked() ? " checked" : "";
 		return "
 			<tr>
-				<td>Locked</td>
+				<th>Locked</th>
 				<td>
 					<span class='view'>$b_locked</span>
 					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>

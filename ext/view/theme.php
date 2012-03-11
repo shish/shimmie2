@@ -67,7 +67,7 @@ class ViewImageTheme extends Themelet {
 
 		$html = make_form(make_link("post/set"))."
 					<input type='hidden' name='image_id' value='{$image->id}'>
-					<table style='width: 500px;' class='image_info'>
+					<table style='width: 500px;' class='image_info form'>
 		";
 		foreach($editor_parts as $part) {
 			$html .= $part;
