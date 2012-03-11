@@ -27,6 +27,7 @@ class Notes extends Extension {
 					width INTEGER NOT NULL,
 					note TEXT NOT NULL,
 					INDEX (image_id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
 
@@ -36,6 +37,7 @@ class Notes extends Extension {
 					user_id INTEGER NOT NULL,
 					date DATETIME NOT NULL,
 					INDEX (image_id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
 
@@ -54,6 +56,7 @@ class Notes extends Extension {
 					width INTEGER NOT NULL,
 					note TEXT NOT NULL,
 					INDEX (image_id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 					");
 

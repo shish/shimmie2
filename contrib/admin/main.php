@@ -139,7 +139,7 @@ class AdminPage extends Extension {
 		return true;
 	}
 
-	private function dump_database() {
+	private function database_dump() {
 		global $page;
 
 		$matches = array();
@@ -150,10 +150,16 @@ class AdminPage extends Extension {
 		$hostname = $matches['host'];
 		$database = $matches['dbname'];
 
-		// TODO: Support more than just MySQL..
 		switch($software) {
 			case 'mysql':
 				$cmd = "mysqldump -h$hostname -u$username -p$password $database";
+				break;
+			case 'pgsql':
+				putenv("PGPASSWORD=$password");
+				$cmd = "pg_dump -h $hostname -U $username $database";
+				break;
+			case 'sqlite':
+				$cmd = "sqlite3 $database .dump";
 				break;
 		}
 

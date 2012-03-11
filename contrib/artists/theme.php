@@ -3,7 +3,15 @@ class ArtistsTheme extends Themelet {
 
 	public function get_author_editor_html(/*string*/ $author) {
 		$h_author = html_escape($author);
-		return "<tr><td>Author</td><td><input class='editor_author' type='text' name='tag_edit__author' value='$h_author'></td></tr>";
+		return "
+			<tr>
+				<td>Author</td>
+				<td>
+					<span class='view'>$h_author</span>
+					<input class='edit' type='text' name='tag_edit__author' value='$h_author'>
+				</td>
+			</tr>
+		";
 	}
 
 	public function display_artists(){
@@ -11,7 +19,7 @@ class ArtistsTheme extends Themelet {
 		
 		$page->set_title("Artists");
 		$page->set_heading("Artists");
-                $page->add_block(new Block("Artists", $html, "main", 10));
+		$page->add_block(new Block("Artists", $html, "main", 10));
 		
 		//$this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
 	}

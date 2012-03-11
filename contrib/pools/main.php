@@ -35,12 +35,15 @@ class Pools extends Extension {
 					description TEXT,
 					date DATETIME NOT NULL,
 					posts INTEGER NOT NULL DEFAULT 0,
-					INDEX (id)
+					INDEX (id),
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
 			$database->create_table("pool_images", "
 					pool_id INTEGER NOT NULL,
 					image_id INTEGER NOT NULL,
-					image_order INTEGER NOT NULL DEFAULT 0
+					image_order INTEGER NOT NULL DEFAULT 0,
+					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
+					FOREIGN KEY (image_id) REFERENCES images(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
 			$database->create_table("pool_history", "
 					id SCORE_AIPK,
@@ -50,7 +53,9 @@ class Pools extends Extension {
 					images TEXT,
 					count INTEGER NOT NULL DEFAULT 0,
 					date DATETIME NOT NULL,
-					INDEX (id)
+					INDEX (id),
+					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
+					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
 
 			// Set the defaults for the pools extension
