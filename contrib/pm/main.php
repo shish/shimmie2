@@ -58,8 +58,8 @@ class PrivMsg extends Extension {
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 				INDEX (to_id),
-				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
-				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
+				CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
+				CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("pm_version", 1);
 			log_info("pm", "extension installed");

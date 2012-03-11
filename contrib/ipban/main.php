@@ -159,6 +159,11 @@ class IPBan extends Extension {
 			$database->execute("ALTER TABLE bans CHANGE ip ip VARCHAR(15)");
 			$config->set_int("ext_ipban_version", 6);
 		}
+
+		if($config->get_int("ext_ipban_version") == 6) {
+			$database->Execute("ALTER TABLE bans ADD CONSTRAINT foreign_bans_banner_id FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
+			$config->set_int("ext_ipban_version", 7);
+		}
 	}
 // }}}
 // deal with banned person {{{

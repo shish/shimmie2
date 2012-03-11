@@ -69,7 +69,7 @@ class Wiki extends Extension {
 				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 				body TEXT NOT NULL,
 				UNIQUE (title, revision),
-				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+				CONSTRAINT foreign_wiki_pages_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 			");
 			$config->set_int("ext_wiki_version", 2);
 		}

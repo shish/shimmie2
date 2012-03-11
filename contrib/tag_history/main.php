@@ -115,8 +115,8 @@ class Tag_History extends Extension {
 	    		tags TEXT NOT NULL,
 				date_set DATETIME NOT NULL,
 				INDEX(image_id),
-				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+				CONSTRAINT foreign_tag_histories_image_id FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
+				CONSTRAINT foreign_tag_histories_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_tag_history_version", 3);
 		}
