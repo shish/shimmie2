@@ -43,7 +43,7 @@ class Pools extends Extension {
 					image_id INTEGER NOT NULL,
 					image_order INTEGER NOT NULL DEFAULT 0,
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
-					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
+					FOREIGN KEY (image_id) REFERENCES images(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
 			$database->create_table("pool_history", "
 					id SCORE_AIPK,
