@@ -4,8 +4,8 @@
  * Author: Shish <webmaster@shishnet.org>
  * Description: A JSON interface to shimmie data [WARNING]
  * Documentation:
- *   <b>Admin Warning:</b> this exposes private data, eg IP addresses
- *   <p><b>Developer Warning:</b> the API is unstable; notably, private data may get hidden
+ *   <b>Admin Warning -</b> this exposes private data, eg IP addresses
+ *   <p><b>Developer Warning -</b> the API is unstable; notably, private data may get hidden
  *   <p><b><u>Usage:</b></u>
  *   <p><b>get_tags</b> - List of all tags. (May contain unused tags)
  *   <br><ul>tags - <i>Optional</i> - Search for more specific tags (Searchs TAG*)</ul>
