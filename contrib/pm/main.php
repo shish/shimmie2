@@ -61,7 +61,7 @@ class PrivMsg extends Extension {
 				CONSTRAINT foreign_private_message_from_id FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 				CONSTRAINT foreign_private_message_to_id FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
-			$config->set_int("pm_version", 1);
+			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}
 
