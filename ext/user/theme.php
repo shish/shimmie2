@@ -202,20 +202,26 @@ class UserPageTheme extends Themelet {
 					<p>".make_form(make_link("user_admin/change_class"))."
 						<input type='hidden' name='id' value='$i_user_id'>
 						<table style='width: 300px;'>
-							<tr><th colspan='2'>Change Class</th></tr>
-							<tr><td><select name='class'>$class_html</select></td></tr>
-							<tr><td><input type='submit' value='Set'></td></tr>
+							<thead><tr><th colspan='2'>Change Class</th></tr></thead>
+							<tbody><tr><td><select name='class'>$class_html</select></td></tr></tbody>
+							<tfoot><tr><td><input type='submit' value='Set'></td></tr></tfoot>
 						</table>
 					</form>
 					
 					<p>".make_form(make_link("user_admin/delete_user"))."
 						<input type='hidden' name='id' value='$i_user_id'>
 						<table style='width: 300px;'>
-							<tr><th colspan='2'>Delete User</th></tr>
-							<tr><td><input type='checkbox' name='images'> Delete images</td></tr>
-							<tr><td><input type='checkbox' name='comments'> Delete comments</td></tr>
-							<tr><td><input type='button' class='shm-unlocker' data-unlock-sel='.deluser' value='Unlock'></td></tr>
-							<tr><td><input type='submit' class='deluser' value='Delete User' disabled='true'/></td></tr>
+							<thead>
+								<tr><th colspan='2'>Delete User</th></tr>
+							</thead>
+							<tbody>
+								<tr><td><input type='checkbox' name='images'> Delete images</td></tr>
+								<tr><td><input type='checkbox' name='comments'> Delete comments</td></tr>
+							</tbody>
+							<tfoot>
+								<tr><td><input type='button' class='shm-unlocker' data-unlock-sel='.deluser' value='Unlock'></td></tr>
+								<tr><td><input type='submit' class='deluser' value='Delete User' disabled='true'/></td></tr>
+							</tfoot>
 						</table>
 					</form>
 				";
