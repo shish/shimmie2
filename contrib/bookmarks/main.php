@@ -43,7 +43,7 @@ class Bookmarks extends Extension {
 				url TEXT NOT NULL,
 				title TEXT NOT NULL,
 				INDEX (owner_id),
-				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+				CONSTRAINT foreign_bookmark_owner_id FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
 			$config->set_int("ext_bookmarks_version", 1);
 		}
