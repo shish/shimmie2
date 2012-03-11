@@ -967,10 +967,9 @@ class Tag {
 			// do nothing
 		//}
 
-		$tags = array_map("trim", $tags);
-
 		$tag_array = array();
 		foreach($tags as $tag) {
+			$tag = trim($tag, ", \t\n\r\0\x0B");
 			if(is_string($tag) && !empty($tag)) {
 				$tag_array[] = $tag;
 			}
