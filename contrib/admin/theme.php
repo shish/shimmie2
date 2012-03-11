@@ -53,7 +53,7 @@ class AdminPageTheme extends Themelet {
 		$h_terms = html_escape($terms);
 
 		$html = make_form(make_link("admin/delete_by_query"), "POST") . "
-				<input type='button' class='shm-unlocker' data-unlock-id='dbqsubmit' value='Unlock'>
+				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
 				<input type='submit' id='dbqsubmit' disabled='true' value='Delete All These Images'>
 			</form>
