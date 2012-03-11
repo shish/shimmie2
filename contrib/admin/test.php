@@ -54,6 +54,27 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
 		$this->click("Download database contents");
+		$this->assert_response(200);
+		$this->log_out();
+	}
+
+	function testDBQ() {
+		$this->log_in_as_user();
+		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "test2");
+		$image_id_3 = $this->post_image("ext/simpletest/data/favicon.png", "test");
+
+		$this->get_page("post/list/test/1");
+		$this->click("Delete All These Images");
+
+		$this->get_page("post/view/$image_id_1");
+		$this->assert_response(404);
+		$this->get_page("post/view/$image_id_2");
+		$this->assert_response(200);
+		$this->get_page("post/view/$image_id_3");
+		$this->assert_response(404);
+
+		$this->delete_image($image_id_2);
 		$this->log_out();
 	}
 }
