@@ -292,10 +292,6 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-#tagmap A {
-	padding: 8px 4px 8px 4px;
-}
-
 /*.rr {text-align: left; background: #E3EFFA; margin: 8px;}
 .rrtop     {background: url("circle-tl.png") no-repeat top left;}
 .rrtop div {background: url("circle-tr.png") no-repeat top right;}

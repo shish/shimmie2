@@ -161,25 +161,10 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-#tagmap A {
-	padding: 8px 4px 8px 4px;
-}
-
-NAV .thumbblock {
-	float: none;
-	height: auto;
-}
-NAV .thumb {
-	margin-bottom: 0px;
-}
 .thumbblock {
 	width: 220px;
-	height: 220px;
 	display: inline-block;
+	zoom: 1; /* ie6 */
+	*display: inline; /* ie6 */
 	text-align: center;
-	float: left;
-}
-.thumb {
-	display: inline-block;
-	margin-bottom: 32px;
 }

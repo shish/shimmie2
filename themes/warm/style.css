@@ -172,10 +172,6 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-#tagmap A {
-	padding: 8px 4px 8px 4px;
-}
-
 .rr {text-align: left; background: #FCD9A9; margin: 8px; border: 1px solid #B89F7C;}
 .rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
 .rrcontent {margin: 0px 8px; text-align: center;}
