@@ -50,11 +50,11 @@ and of course start organising your images :-)
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
 		if(count($images) > 0) {
 			if($query) {
-				$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10));
+				$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
 				$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
 			}
 			else {
-				$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10));
+				$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
 				$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
 			}
 		}
