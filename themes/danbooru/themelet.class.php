@@ -1,21 +1,5 @@
 <?php
-
-class Themelet {
-	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
-		global $page;
-		$page->add_http_header("HTTP/1.0 $code $title");
-		$page->set_title($title);
-		$page->set_heading($title);
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Error", $message));
-	}
-
-
-	public function display_permission_denied() {
-		$this->display_error(403, "Permission Denied", "You do not have permission to access this page");
-	}
-
-
+class Themelet extends BaseThemelet {
 	public function build_thumb_html(Image $image, $query=null) {
 		global $config;
 		$h_view_link = make_link("post/view/{$image->id}", $query);

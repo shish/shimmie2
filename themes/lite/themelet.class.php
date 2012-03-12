@@ -1,29 +1,5 @@
 <?php
-/**
- * A collection of common functions for theme parts
- */
-class Themelet {
-	/**
-	 * Generic error message display
-	 */
-	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
-		global $page;
-		$page->add_http_header("HTTP/1.0 $code $title");
-		$page->set_title($title);
-		$page->set_heading($title);
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Error", $message));
-	}
-
-
-	/**
-	 * A specific, common error message
-	 */
-	public function display_permission_denied() {
-		$this->display_error(403, "Permission Denied", "You do not have permission to access this page");
-	}
-
-
+class Themelet extends BaseThemelet {
 	/**
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
