@@ -97,31 +97,34 @@ class ShimmieApi extends Extension {
 
 			if($event->page_matches("api/shimmie/get_user")) {
 				$query = $user->id;
+				$type = "id";
 				if($event->count_args() == 1) {
 					$query = $event->get_arg(0);
 				}
-				if(isset($_GET['name'])) {
-					$query = $_GET['name'];
-				}
-				if(isset($_GET['id'])) {
+				elseif(isset($_GET['id'])) {
 					$query = $_GET['id'];
+				}
+				elseif(isset($_GET['name'])) {
+					$query = $_GET['name'];
+					$type = "name";
 				}
 
 				$all = $database->get_row(
-					"SELECT id,name,joindate,class FROM users WHERE name=? OR id=?",
-					array($_GET['name'], int_escape($_GET['id'])));
+					"SELECT id,name,joindate,class FROM users WHERE ".$type."=?",
+					array($query));
 
-				//FIXME?: For some weird reason, get_all seems to return twice. Unsetting second value to make things look nice..
-				// - it returns data as eg  array(0=>1234, 'id'=>1234, 1=>'bob', 'name'=>bob, ...);
-				for($i=0; $i<4; $i++) unset($all[$i]);
-				$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
-				$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
-				$all['commentcount'] = $database->get_one(
-					"SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id",
-					array("owner_id"=>$all['id']));
-				$all['commentperday'] = sprintf("%.1f", ($all['commentcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
+				if(!empty($all)){
+					//FIXME?: For some weird reason, get_all seems to return twice. Unsetting second value to make things look nice..
+					// - it returns data as eg  array(0=>1234, 'id'=>1234, 1=>'bob', 'name'=>bob, ...);
+					for($i=0; $i<4; $i++) unset($all[$i]);
+					$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
+					$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
+					$all['commentcount'] = $database->get_one(
+						"SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id",
+						array("owner_id"=>$all['id']));
+					$all['commentperday'] = sprintf("%.1f", ($all['commentcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
 
-				if(isset($_GET['recent'])){
+					if(isset($_GET['recent'])){
 						$recent = $database->get_all(
 						"SELECT * FROM images WHERE owner_id=? ORDER BY id DESC LIMIT 0, 5",
 						array($all['id']));
@@ -138,6 +141,7 @@ class ShimmieApi extends Extension {
 							unset($all['recentposts'][$i]['notes']);
 							$i += 1;
 						}
+					}
 				}
 				$page->set_data(json_encode($all));
 			}
