@@ -178,7 +178,7 @@ ARTICLE TABLE {
 	zoom: 1; /* ie6 */
 	*display: inline; /* ie6 */
 	text-align: center;
-	margin: 8px;
+	margin-bottom: 8px;
 }
 .thumb IMG {
 	border: 1px solid #B89F7C;
