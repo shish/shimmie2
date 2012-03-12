@@ -204,9 +204,9 @@ EOD;
 		$html = "<section id='$i'>";
 		if(!is_null($h)) {
 			if($salt == "main") {
-				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-id='$i'>$h</div>";
+				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
 			} else {
-				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-id='$i'>$h</div>";
+				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
 			}
 			}
 		if(!is_null($b)) {

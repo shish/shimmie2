@@ -99,7 +99,7 @@ EOD;
 		$b = $block->body;
 		$i = str_replace(' ', '_', $h) . $salt;
 		$html = "<section id='$i'>";
-		if(!is_null($h)) $html .= "\n<h3 data-toggle-id='$i' class='shm-toggler'>$h</h3>\n";
+		if(!is_null($h)) $html .= "\n<h3 data-toggle-sel='#$i' class='shm-toggler'>$h</h3>\n";
 		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>\n";
 		$html .= "</section>";
 		return $html;

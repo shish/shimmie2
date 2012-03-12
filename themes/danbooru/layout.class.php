@@ -241,7 +241,7 @@ EOD;
 		$i = str_replace(' ', '_', $h.$s);
 		$html = "<section id='$i'>";
 		if($hidable) {
-			if(!is_null($h)) $html .= "\n<h3 class='shm-toggler' data-toggle-id='$i'>$h</h3>\n";
+			if(!is_null($h)) $html .= "\n<h3 class='shm-toggler' data-toggle-sel='#$i'>$h</h3>\n";
 		}
 		else {
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
