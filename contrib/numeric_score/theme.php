@@ -38,7 +38,7 @@ class NumericScoreTheme extends Themelet {
 			<input type='submit' value='Remove All Votes'>
 			</form>
 
-			<p><a href='".make_link("numeric_score_votes/$i_image_id")."'>See All Votes</a>
+			<br><a href='".make_link("numeric_score_votes/$i_image_id")."'>See All Votes</a>
 			";
 		}
 		return $html;
