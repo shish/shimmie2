@@ -29,14 +29,17 @@ class UserClass {
 	}
 }
 
+// action_object_attribute
+// action = create / view / edit / delete
+// object = image / user / tag / setting
 $_user_class_base = new UserClass("base", null, array(
 	"change_setting" => False,  # modify web-level settings, eg the config table
 	"override_config" => False, # modify sys-level settings, eg config.php
 	"big_search" => False,      # search for more than 3 tags at once (speed mode only)
 	"view_ip" => False,         # view IP addresses associated with things
 	"ban_ip" => False,
-	"change_password" => False,
-	"change_user_info" => False,  # email address, etc
+	"edit_user_password" => False,
+	"edit_user_info" => False,  # email address, etc
 	"delete_user" => False,
 	"delete_image" => False,
 	"delete_comment" => False,
@@ -70,8 +73,8 @@ $_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
 	"lock_image" => True,
 	"view_ip" => True,
 	"ban_ip" => True,
-	"change_password" => True,
-	"change_user_info" => True,
+	"edit_user_password" => True,
+	"edit_user_info" => True,
 	"delete_user" => True,
 	"delete_image" => True,
 	"delete_comment" => True,
