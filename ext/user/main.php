@@ -124,12 +124,7 @@ class UserPage extends Extension {
 // join (select owner_id,count(*) as comment_count from comments group by owner_id) as _comments on _comments.owner_id=users.id;
 				$this->theme->display_user_list($page, User::by_list(0), $user);
 			}
-
-			if(!$user->check_auth_token()) {
-				return;
-			}
-
-			if($event->get_arg(0) == "logout") {
+			else if($event->get_arg(0) == "logout") {
 				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				if(CACHE_HTTP || SPEED_HAX) {
 					# to keep as few versions of content as possible,
@@ -140,6 +135,11 @@ class UserPage extends Extension {
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
+
+			if(!$user->check_auth_token()) {
+				return;
+			}
+
 			else if($event->get_arg(0) == "change_pass") {
 				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 					$duser = User::by_id($_POST['id']);
