@@ -123,10 +123,10 @@ NAV SELECT {
 	content: ")";
 }
 
-.paginator {
-	clear: both;
-	padding: 4px;
-	margin-bottom: 32px;
+#paginator .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
 }
 
 .pools_next_img {

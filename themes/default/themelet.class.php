@@ -71,7 +71,7 @@ class Themelet {
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
-		$page->add_block(new Block(null, $body, "main", 90));
+		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 	}
 
 	private function gen_page_link($base_url, $query, $page, $name) {
@@ -110,8 +110,8 @@ class Themelet {
 		}
 		$pages_html = implode(" | ", $pages);
 
-		return '<p class="paginator">'.$first_html.' | '.$prev_html.' | '.$random_html.' | '.$next_html.' | '.$last_html
-				.'<br>&lt;&lt; '.$pages_html.' &gt;&gt;</p><!-- cancel border -->';
+		return $first_html.' | '.$prev_html.' | '.$random_html.' | '.$next_html.' | '.$last_html
+				.'<br>&lt;&lt; '.$pages_html.' &gt;&gt;';
 	}
 }
 ?>
