@@ -77,43 +77,6 @@ class UserPage extends Extension {
 					$this->theme->display_login_page($page);
 				}
 			}
-			else if($event->get_arg(0) == "logout") {
-				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				if(CACHE_HTTP || SPEED_HAX) {
-					# to keep as few versions of content as possible,
-					# make cookies all-or-nothing
-					set_prefixed_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
-				}
-				log_info("user", "Logged out");
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link());
-			}
-			else if($event->get_arg(0) == "change_pass") {
-				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
-					$duser = User::by_id($_POST['id']);
-					$pass1 = $_POST['pass1'];
-					$pass2 = $_POST['pass2'];
-					$this->change_password_wrapper($duser, $pass1, $pass2);
-				}
-			}
-			else if($event->get_arg(0) == "change_email") {
-				if(isset($_POST['id']) && isset($_POST['address'])) {
-					$duser = User::by_id($_POST['id']);
-					$address = $_POST['address'];
-					$this->change_email_wrapper($duser, $address);
-				}
-			}
-			else if($event->get_arg(0) == "change_class") {
-				global $_user_classes;
-				if(isset($_POST['id']) && isset($_POST['class'])) {
-					$duser = User::by_id($_POST['id']);
-					$class = $_POST['class'];
-					if(!array_key_exists($class, $_user_classes)) {
-						throw Exception("Invalid user class: ".html_escape($class));
-					}
-					$this->change_class_wrapper($duser, $class);
-				}
-			}
 			else if($event->get_arg(0) == "recover") {
 				$user = User::by_name($_POST['username']);
 				if(is_null($user)) {
@@ -161,11 +124,50 @@ class UserPage extends Extension {
 // join (select owner_id,count(*) as comment_count from comments group by owner_id) as _comments on _comments.owner_id=users.id;
 				$this->theme->display_user_list($page, User::by_list(0), $user);
 			}
-			else if($event->get_arg(0) == "delete_user") {
-			$this->delete_user($page);
+
+			if(!$user->check_auth_token()) {
+				return;
 			}
-			else if($event->get_arg(0) == "delete_user_with_images") {
-			$this->delete_user_with_images($page);
+
+			if($event->get_arg(0) == "logout") {
+				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				if(CACHE_HTTP || SPEED_HAX) {
+					# to keep as few versions of content as possible,
+					# make cookies all-or-nothing
+					set_prefixed_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				}
+				log_info("user", "Logged out");
+				$page->set_mode("redirect");
+				$page->set_redirect(make_link());
+			}
+			else if($event->get_arg(0) == "change_pass") {
+				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
+					$duser = User::by_id($_POST['id']);
+					$pass1 = $_POST['pass1'];
+					$pass2 = $_POST['pass2'];
+					$this->change_password_wrapper($duser, $pass1, $pass2);
+				}
+			}
+			else if($event->get_arg(0) == "change_email") {
+				if(isset($_POST['id']) && isset($_POST['address'])) {
+					$duser = User::by_id($_POST['id']);
+					$address = $_POST['address'];
+					$this->change_email_wrapper($duser, $address);
+				}
+			}
+			else if($event->get_arg(0) == "change_class") {
+				global $_user_classes;
+				if(isset($_POST['id']) && isset($_POST['class'])) {
+					$duser = User::by_id($_POST['id']);
+					$class = $_POST['class'];
+					if(!array_key_exists($class, $_user_classes)) {
+						throw Exception("Invalid user class: ".html_escape($class));
+					}
+					$this->change_class_wrapper($duser, $class);
+				}
+			}
+			else if($event->get_arg(0) == "delete_user") {
+				$this->delete_user($page, isset($_POST["with_images"]), isset($_POST["with_comments"]));
 			}
 		}
 
@@ -466,7 +468,7 @@ class UserPage extends Extension {
 		return $rows;
 	}
 	
-	private function delete_user(Page $page) {
+	private function delete_user(Page $page, /*boolean*/ $with_images=false, /*boolean*/ $with_comments=false) {
 		global $user;
 		global $config;
 		global $database;
@@ -482,11 +484,33 @@ class UserPage extends Extension {
 			$page->add_block(new Block("No ID Specified",
 					"You need to specify the account number to edit"));
 		}
-		else{
-			$database->Execute(
-				"UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
-				array("new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id'])
-			);
+		else {
+			if($with_images) {
+				$rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
+				foreach ($rows as $key => $value) {
+					$image = Image::by_id($value['id']);
+					if($image) {
+						send_event(new ImageDeletionEvent($image));
+					}
+				}
+			}
+			else {
+				$database->Execute(
+					"UPDATE images SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
+					array("new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id'])
+				);
+			}
+
+			if($with_comments) {
+				$database->execute("DELETE FROM comments WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
+			}
+			else {
+				$database->Execute(
+					"UPDATE comments SET owner_id = :new_owner_id WHERE owner_id = :old_owner_id",
+					array("new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id'])
+				);
+			}
+
 			$database->execute(
 				"DELETE FROM users WHERE id = :id",
 				array("id" => $_POST['id'])
@@ -496,41 +520,6 @@ class UserPage extends Extension {
 			$page->set_redirect(make_link("post/list"));
 		}
 	}
-	
-	private function delete_user_with_images(Page $page) {
-		global $user;
-		global $config;
-		global $database;
-		
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new NavBlock());
-		
-		if (!$user->can("delete_user") || !$user->can("delete_image")) {
-			$page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
-		}
-		else if(!isset($_POST['id']) || !is_numeric($_POST['id'])) {
-			$page->add_block(new Block("No ID Specified",
-					"You need to specify the account number to edit"));
-		}
-		else{
-			$rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
-			foreach ($rows as $key => $value)
-			{
-				$image = Image::by_id($value['id']);
-				if($image) {
-					send_event(new ImageDeletionEvent($image));
-					}
-			}
-			$database->execute("DELETE FROM users 
-								WHERE id = :id"
-								, array("id"=>$_POST['id']));
-				
-			$page->set_mode("redirect");
-			$page->set_redirect(make_link("post/list"));
-		}
-	}
-	
 // }}}
 }
 ?>

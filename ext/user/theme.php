@@ -215,8 +215,8 @@ class UserPageTheme extends Themelet {
 								<tr><th colspan='2'>Delete User</th></tr>
 							</thead>
 							<tbody>
-								<tr><td><input type='checkbox' name='images'> Delete images</td></tr>
-								<tr><td><input type='checkbox' name='comments'> Delete comments</td></tr>
+								<tr><td><input type='checkbox' name='with_images'> Delete images</td></tr>
+								<tr><td><input type='checkbox' name='with_comments'> Delete comments</td></tr>
 							</tbody>
 							<tfoot>
 								<tr><td><input type='button' class='shm-unlocker' data-unlock-sel='.deluser' value='Unlock'></td></tr>
