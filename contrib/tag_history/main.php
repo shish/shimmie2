@@ -77,10 +77,12 @@ class Tag_History extends Extension {
 		}
 	}
 	
-	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $page;
-		// handle displaying a link on the view page
-		$this->theme->display_history_link($page, $event->image->id);
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
+		$event->add_part("
+			<form action='".make_link("tag_history/{$event->image->id}")."' method='GET'>
+				<input type='submit' value='View Tag History'>
+			</form>
+		", 20);
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {

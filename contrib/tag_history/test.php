@@ -8,7 +8,7 @@ class TagHistoryTest extends ShimmieWebTestCase {
 		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");
 		$this->assert_title("Image $image_id: new");
-		$this->click("Tag History");
+		$this->click("View Tag History");
 		$this->assert_text("new (Set by demo");
 		$this->click("Revert To");
 		$this->assert_title("Image $image_id: pbx");
