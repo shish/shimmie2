@@ -147,7 +147,7 @@ class CommentListTheme extends Themelet {
 		if(empty($html)) {
 			$html = '<p>No comments by this user.</p>';
 		}
-		$page->add_block(new Block("Comments", $html, "left", 70));
+		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list"));
 	}
 
 
