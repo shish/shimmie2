@@ -238,19 +238,19 @@ EOD;
 		$h = $block->header;
 		$s = $block->section;
 		$b = $block->body;
-		$html = "";
+		$i = str_replace(' ', '_', $h.$s);
+		$html = "<section id='$i'>";
 		if($hidable) {
-			$i = str_replace(' ', '_', $h.$s);
 			if(!is_null($h)) $html .= "\n<h3 class='shm-toggler' data-toggle-id='$i'>$h</h3>\n";
-			if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
 		}
 		else {
-			$i = str_replace(' ', '_', $h.$s);
 			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
-			if(!is_null($b)) $html .= "<div>$b</div>\n"; 
 		}
+		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>\n"; 
+		$html .= "</section>";
 		return $html;
 	}
+
 	private function navlinks($link, $desc, $pages_matched) {
 	/**
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)

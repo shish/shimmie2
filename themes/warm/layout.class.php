@@ -106,30 +106,11 @@ EOD;
 	private function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
-		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
-		if(!is_null($h)) $html .= "
-			<div class='hrr' data-toggle-id='$i' class='shm-toggler'>
-				<div class='hrrtop'><div></div></div>
-				<div class='hrrcontent'><h3>$h</h3></div>
-				<div class='hrrbot'><div></div></div>
-			</div>
-		";
-		if(!is_null($b)) {
-			if(strpos($b, "<!-- cancel border -->")) {
-				$html .= "<div class='blockbody' id='$i'>$b</div>";
-			}
-			else {
-				$html .= "
-					<div class='rr' id='$i'>
-						<div class='rrtop'><div></div></div>
-						<div class='rrcontent'><div class='blockbody'>$b</div></div>
-						<div class='rrbot'><div></div></div>
-					</div>
-				";
-			}
-		}
-
+		$html = "<section id='$i'>";
+		if(!is_null($h)) $html .= "<h3 data-toggle-id='$i' class='shm-toggler'>$h</h3>";
+		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>";
+		$html .= "</section>";
 		return $html;
 	}
 }

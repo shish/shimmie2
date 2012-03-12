@@ -97,10 +97,11 @@ EOD;
 	function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
-		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
+		$html = "<section id='$i'>";
 		if(!is_null($h)) $html .= "\n<h3 data-toggle-id='$i' class='shm-toggler'>$h</h3>\n";
-		if(!is_null($b)) $html .= "<div id='$i'>$b</div>\n";
+		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>\n";
+		$html .= "</section>";
 		return $html;
 	}
 }

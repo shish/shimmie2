@@ -92,21 +92,12 @@ EOD;
 	private function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
-		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
+		$html = "<section id='$i'>";
 		$h_toggler = $hidable ? " shm-toggler" : "";
-		if(!is_null($h)) $html .= "
-			<h3 data-toggle-id='$i' class='hrr$h_toggler'>$h</h3>
-		";
-		if(!is_null($b)) {
-			if(strpos($b, "<!-- cancel border -->") === FALSE) {
-				$html .= "<div class='blockbody brr' id='$i'>$b</div>";
-			}
-			else {
-				$html .= "<div class='blockbody' id='$i'>$b</div>";
-			}
-		}
-
+		if(!is_null($h)) $html .= "<h3 data-toggle-id='$i' class='$h_toggler'>$h</h3>";
+		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>";
+		$html .= "</section>";
 		return $html;
 	}
 }

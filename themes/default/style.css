@@ -21,15 +21,15 @@ H3 {
 	text-align: center;
 	margin: 0px;
 }
-.hrr {
+SECTION>H3 {
 	background: #CCC;
 	border: 1px solid #BBB;
 }
-.brr, .thumb {
+SECTION>.blockbody, .thumb {
 	background: #DDD;
 	border: 1px solid #CCC;
 }
-.brr, .hrr, H1, FOOTER, .thumb {
+SECTION>.blockbody, SECTION>H3, H1, FOOTER, .thumb {
 	margin: 8px;
 	padding: 8px;
 	border-radius: 12px; /* standard, webkit, opera */
@@ -102,9 +102,6 @@ NAV .blockbody {
 }
 NAV TABLE {
 	width: 100%;
-}
-NAV TD {
-	vertical-align: middle;
 }
 NAV INPUT {
 	width: 100%;

@@ -200,8 +200,8 @@ EOD;
 	private function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
-		$html = "";
 		$i = str_replace(' ', '_', $h) . $salt;
+		$html = "<section id='$i'>";
 		if(!is_null($h)) {
 			if($salt == "main") {
 				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-id='$i'>$h</div>";
@@ -210,17 +210,16 @@ EOD;
 			}
 			}
 		if(!is_null($b)) {
-			//if(strpos($b, "<!-- cancel border -->")) {
 			if($salt =="main") {
-				$html .= "<div class='blockbody' id='$i'>$b</div>";
+				$html .= "<div class='blockbody'>$b</div>";
 			}
 			else {
 				$html .= "
-					<div class='navside tab' id='$i'>$b</div>
+					<div class='navside tab'>$b</div>
 				";
 			}
 		}
-
+		$html .= "</section>";
 		return $html;
 	}
 	
