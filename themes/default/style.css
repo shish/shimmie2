@@ -63,7 +63,7 @@ TABLE.zebra TR TD {border-bottom: 1px solid #DDD;}
 TABLE.zebra TR:nth-child(odd) {background: #EFEFEF;}
 TABLE.zebra TR:nth-child(even) {background: #E0E0E0;}
 
-TABLE.form TD, TABLE.form TH {vertical-align: center;}
+TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TD {text-align: left;}
 TABLE.form TBODY TH {text-align: right; padding-right: 4px;}
 
@@ -101,7 +101,7 @@ NAV .blockbody {
 	overflow: hidden;
 }
 NAV TABLE {
-	width: 150px;
+	width: 100%;
 }
 NAV TD {
 	vertical-align: middle;
