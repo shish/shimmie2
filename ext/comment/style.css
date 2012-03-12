@@ -1,10 +1,4 @@
 
-#comments P {
-	text-align: left;
-	width: 150px;
-	max-width: 150px;
-	overflow: hidden;
-}
 .comment {
 	text-align: left;
 	position: relative;
@@ -25,4 +19,12 @@
 }
 .comment:hover .info {
 	visibility: visible;
+}
+
+#comment-list .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
+	margin: 0px;
+	padding: 0px;
 }

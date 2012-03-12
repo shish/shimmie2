@@ -96,7 +96,7 @@ class CommentListTheme extends Themelet {
 				</tr></table>
 			';
 
-			$page->add_block(new Block( $image->id.': '.$image->get_tag_list(), $html, "main", $position++));
+			$page->add_block(new Block( $image->id.': '.$image->get_tag_list(), $html, "main", $position++, "comment-list"));
 		}
 	}
 
@@ -111,10 +111,10 @@ class CommentListTheme extends Themelet {
 		$this->show_anon_id = false;
 		$html = "";
 		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment, true)."<hr>";
+			$html .= $this->comment_to_html($comment, true);
 		}
 		$html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-		$page->add_block(new Block("Comments", $html, "left"));
+		$page->add_block(new Block("Comments", $html, "left", 50, "comment-list"));
 	}
 
 
@@ -126,12 +126,12 @@ class CommentListTheme extends Themelet {
 		$this->show_anon_id = true;
 		$html = "";
 		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment)."<hr>";
+			$html .= $this->comment_to_html($comment);
 		}
 		if($postbox) {
 			$html .= $this->build_postbox($image->id);
 		}
-		$page->add_block(new Block("Comments", $html, "main", 30));
+		$page->add_block(new Block("Comments", $html, "main", 30, "comment-list"));
 	}
 
 
@@ -229,6 +229,7 @@ class CommentListTheme extends Themelet {
 		$h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
 		return '
+		<div class="comment">
 			'.make_form(make_link("comment/add")).'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
@@ -236,6 +237,7 @@ class CommentListTheme extends Themelet {
 				'.$h_captcha.'
 				<br><input type="submit" value="Post Comment" />
 			</form>
+		</div>
 		';
 	}
 }

@@ -25,11 +25,11 @@ SECTION>H3 {
 	background: #CCC;
 	border: 1px solid #BBB;
 }
-SECTION>.blockbody {
+SECTION>.blockbody, .comment {
 	background: #DDD;
 	border: 1px solid #CCC;
 }
-SECTION>.blockbody, H1, SECTION>H3, FOOTER{
+SECTION>.blockbody, H1, SECTION>H3, FOOTER, .comment {
 	margin: 8px;
 	padding: 8px;
 	border-radius: 12px; /* standard, webkit, opera */
