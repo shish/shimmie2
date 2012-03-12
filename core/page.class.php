@@ -251,28 +251,28 @@ class Page {
 			// caching failed, add all files to html_headers.
 			
 			foreach(glob("lib/*.css") as $css) {
-				$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css.'" type="text/css">');
+				$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css).'" type="text/css">');
 			}
 			$css_files = glob("ext/*/style.css");
 			if($css_files) {
 				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
+					$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css_file).'" type="text/css">');
 				}
 			}
 			$css_files = glob("themes/$theme_name/style.css");
 			if($css_files) {
 				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
+					$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css_file).'" type="text/css">');
 				}
 			}
 			
 			foreach(glob("lib/*.js") as $js) {
-				$this->add_html_header('<script src="'.$data_href.'/'.$js.'" type="text/javascript"></script>');
+				$this->add_html_header('<script src="'.mtimefile($js).'" type="text/javascript"></script>');
 			}
 			$js_files = glob("ext/*/script.js");
 			if($js_files) {
 				foreach($js_files as $js_file) {
-					$this->add_html_header('<script src="'.$data_href.'/'.$js_file.'" type="text/javascript"></script>');
+					$this->add_html_header('<script src="'.mtimefile($js_file).'" type="text/javascript"></script>');
 				}
 			}
 		}
