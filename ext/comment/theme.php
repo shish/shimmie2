@@ -111,9 +111,9 @@ class CommentListTheme extends Themelet {
 		$this->show_anon_id = false;
 		$html = "";
 		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment, true);
+			$html .= $this->comment_to_html($comment, true)."<hr>";
 		}
-		$html .= "<p><a class='more' href='".make_link("comment/list")."'>Full List</a>";
+		$html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
 		$page->add_block(new Block("Comments", $html, "left"));
 	}
 
@@ -126,7 +126,7 @@ class CommentListTheme extends Themelet {
 		$this->show_anon_id = true;
 		$html = "";
 		foreach($comments as $comment) {
-			$html .= $this->comment_to_html($comment);
+			$html .= $this->comment_to_html($comment)."<hr>";
 		}
 		if($postbox) {
 			$html .= $this->build_postbox($image->id);
@@ -191,8 +191,10 @@ class CommentListTheme extends Themelet {
 
 		if($trim) {
 			return '
+			<div class="comment">
 				'.$h_userlink.': '.$h_comment.'
 				<a href="'.make_link('post/view/'.$i_image_id.'#c'.$i_comment_id).'">&gt;&gt;&gt;</a>
+			</div>
 			';
 		}
 		else {

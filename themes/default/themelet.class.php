@@ -59,16 +59,9 @@ class Themelet {
 		else{
 		$tsize = get_thumbnail_size($image->width, $image->height); }
 
-		return '
-			<!-- cancel border -->
-			<div class="thumbblock">
-			<div class="thumb">
-				<a href="'.$h_view_link.'" style="position: relative; display: block; height: '.$tsize[1].'px; width: '.$tsize[0].'px;">
-					<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'">
-				</a>
-			</div>
-			</div>
-		';
+		return '<a href="'.$h_view_link.'" class="thumb">'.
+		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'">'.
+			   '</a>';
 	}
 
 

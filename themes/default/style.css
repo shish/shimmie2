@@ -25,11 +25,11 @@ SECTION>H3 {
 	background: #CCC;
 	border: 1px solid #BBB;
 }
-SECTION>.blockbody, .thumb {
+SECTION>.blockbody {
 	background: #DDD;
 	border: 1px solid #CCC;
 }
-SECTION>.blockbody, SECTION>H3, H1, FOOTER, .thumb {
+SECTION>.blockbody, H1, SECTION>H3, FOOTER{
 	margin: 8px;
 	padding: 8px;
 	border-radius: 12px; /* standard, webkit, opera */
@@ -161,10 +161,27 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-.thumbblock {
-	width: 220px;
+.thumb {
+	width: 226px;
 	display: inline-block;
 	zoom: 1; /* ie6 */
 	*display: inline; /* ie6 */
 	text-align: center;
+	margin: 8px;
+}
+.thumb IMG {
+	border: 1px solid #CCC;
+	background: #DDD;
+	padding: 8px;
+	border-radius: 12px; /* standard, webkit, opera */
+	-moz-border-radius: 12px; /* mozilla haven't committed yet */
+	box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* standard, opera */
+	-webkit-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* webkit haven't committed yet */
+	-moz-box-shadow: 2px 2px 6px rgba(0,0,0,0.6); /* mozilla haven't committed yet */
+}
+
+#Imagesmain .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
 }
