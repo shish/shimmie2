@@ -1,0 +1,10 @@
+#downtime #message, #downtime #login {
+	text-align: center;
+}
+#downtime H3 {
+	margin-top: 32px;
+}
+#downtime #login_table {
+	margin: auto;
+}
+
