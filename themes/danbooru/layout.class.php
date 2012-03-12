@@ -66,7 +66,7 @@ class Layout {
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
-					$left_block_html .= $this->block_to_html($block, true);
+					$left_block_html .= $block->get_html(true);
 					break;
 				case "user":
 					$user_block_html .= $block->body; // $this->block_to_html($block, true);
@@ -78,7 +78,7 @@ class Layout {
 					if($block->header == "Images") {
 						$block->header = "&nbsp;";
 					}
-					$main_block_html .= $this->block_to_html($block, false);
+					$main_block_html .= $block->get_html(false);
 					break;
 				default:
 					print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -234,23 +234,6 @@ $header_html
 EOD;
 	}
 	
-	function block_to_html($block, $hidable=false) {
-		$h = $block->header;
-		$s = $block->section;
-		$b = $block->body;
-		$i = str_replace(' ', '_', $h.$s);
-		$html = "<section id='$i'>";
-		if($hidable) {
-			if(!is_null($h)) $html .= "\n<h3 class='shm-toggler' data-toggle-sel='#$i'>$h</h3>\n";
-		}
-		else {
-			if(!is_null($h)) $html .= "\n<h3>$h</h3>\n";
-		}
-		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>\n"; 
-		$html .= "</section>";
-		return $html;
-	}
-
 	private function navlinks($link, $desc, $pages_matched) {
 	/**
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)

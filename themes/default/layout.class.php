@@ -26,13 +26,13 @@ class Layout {
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
-					$left_block_html .= $this->block_to_html($block, true, "left");
+					$left_block_html .= $block->get_html(true);
 					break;
 				case "main":
-					$main_block_html .= $this->block_to_html($block, false, "main");
+					$main_block_html .= $block->get_html(false);
 					break;
 				case "subheading":
-					$sub_block_html .= $this->block_to_html($block, false, "main");
+					$sub_block_html .= $block->get_html(false);
 					break;
 				default:
 					print "<p>error: {$block->header} using an unknown section ({$block->section})";
@@ -84,21 +84,6 @@ $header_html
 	</body>
 </html>
 EOD;
-	}
-
-	/**
-	 * A handy function which does exactly what it says in the method name
-	 */
-	private function block_to_html($block, $hidable=false, $salt="") {
-		$h = $block->header;
-		$b = $block->body;
-		$i = str_replace(' ', '_', $h) . $salt;
-		$html = "<section id='$i'>";
-		$h_toggler = $hidable ? " shm-toggler" : "";
-		if(!is_null($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
-		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>";
-		$html .= "</section>";
-		return $html;
 	}
 }
 ?>

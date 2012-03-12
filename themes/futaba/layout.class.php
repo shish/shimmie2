@@ -21,10 +21,10 @@ class Layout {
 		foreach($page->blocks as $block) {
 			switch($block->section) {
 				case "left":
-					$left_block_html .= $this->block_to_html($block, true, "left");
+					$left_block_html .= $block->get_html(true);
 					break;
 				case "main":
-					$main_block_html .= $this->block_to_html($block, false, "main");
+					$main_block_html .= $block->get_html(false);
 					break;
 				case "subheading":
 					$sub_block_html .= $block->body; // $this->block_to_html($block, true);
@@ -92,17 +92,6 @@ $header_html
 	</body>
 </html>
 EOD;
-	}
-
-	function block_to_html($block, $hidable=false, $salt="") {
-		$h = $block->header;
-		$b = $block->body;
-		$i = str_replace(' ', '_', $h) . $salt;
-		$html = "<section id='$i'>";
-		if(!is_null($h)) $html .= "\n<h3 data-toggle-sel='#$i' class='shm-toggler'>$h</h3>\n";
-		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>\n";
-		$html .= "</section>";
-		return $html;
 	}
 }
 ?>
