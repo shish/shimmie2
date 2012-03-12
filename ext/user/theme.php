@@ -149,7 +149,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
 
 		if(!$user->is_anonymous()) {
-			if($user->id == $duser->id || $user->can("change_user_info")) {
+			if($user->id == $duser->id || $user->can("edit_user_info")) {
 				$page->add_block(new Block("Options", $this->build_options($duser), "main", 20));
 			}
 		}

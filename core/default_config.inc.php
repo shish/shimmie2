@@ -64,8 +64,8 @@ define("EXTRA_USER_CLASSES", serialize(array(
 		"admin",   # class to base it on
 		array(     # parts of the base class to override
 			"override_config" => False,
-			"change_password" => False,
-			"change_user_info" => False,
+			"edit_user_password" => False,
+			"edit_user_info" => False,
 			"delete_user" => False,
 			"manage_extension_list" => False,
 		)
