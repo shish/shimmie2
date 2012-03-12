@@ -334,7 +334,26 @@ class Image {
 	 */
 	public function get_tooltip() {
 		global $config;
-		return $this->parse_link_template($config->get_string('image_tip'), "no_escape");
+		$tt = $this->parse_link_template($config->get_string('image_tip'), "no_escape");
+
+		// Removes the size tag if the file is an mp3 
+		if($this->ext === 'mp3'){
+			$iitip = $tt;
+			$mp3tip = array("0x0");
+			$h_tip = str_replace($mp3tip, " ", $iitip);
+
+			// Makes it work with a variation of the default tooltips (I.E $tags // $filesize // $size)
+			$justincase = array("   //", "//   ", "  //", "//  ", "  ");
+			if(strstr($h_tip, "  ")) {
+				$h_tip = html_escape(str_replace($justincase, "", $h_tip));
+			}else{
+				$h_tip = html_escape($h_tip);
+			}
+			return $h_tip;
+		}
+		else {
+			return $tt;
+		}
 	}
 
 	/**
