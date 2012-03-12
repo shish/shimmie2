@@ -51,6 +51,7 @@ CODE {
 	background: #DDD;
 }
 ARTICLE SELECT {width: 150px;}
+INPUT, TEXTAREA {box-sizing: border-box;}
 TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
@@ -63,6 +64,10 @@ TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
 TABLE.zebra TD {border-top: 1px solid #B89F7C;}
 TABLE.zebra TR:nth-child(odd) {background: #FCD9A9;}
 TABLE.zebra TR:nth-child(even) {background: #DABC92;}
+
+TABLE.form TD, TABLE.form TH {vertical-align: middle;}
+TABLE.form TBODY TD {text-align: left;}
+TABLE.form TBODY TH {text-align: right; padding-right: 4px;}
 
 FOOTER {
 	clear: both;
@@ -90,6 +95,11 @@ BLOCKQUOTE {
 UL {
 	text-align: left;
 }
+
+SECTION>H3, SECTION>.blockbody, .comment {margin: 8px; padding: 8px; border: 1px solid #B89F7C;}
+SECTION>.blockbody, .comment {background: #FCD9A9;}
+SECTION>H3 {background: #DABC92;}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *             the navigation bar, and all its blocks             *
@@ -120,16 +130,6 @@ NAV SELECT {
 	padding: 0px;
 }
 
-#comments P {
-	text-align: left;
-	width: 150px;
-	max-width: 150px;
-	overflow: hidden;
-}
-.comment {
-	text-align: left;
-}
-
 .more:after {
 	content: " >>>";
 }
@@ -141,10 +141,10 @@ NAV SELECT {
 	content: ")";
 }
 
-.paginator {
-	clear: both;
-	padding: 4px;
-	margin-bottom: 32px;
+#paginator .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
 }
 
 
@@ -172,50 +172,16 @@ ARTICLE TABLE {
 	margin-top: 32px;
 }
 
-.rr {text-align: left; background: #FCD9A9; margin: 8px; border: 1px solid #B89F7C;}
-.rrtop, .rrtop div, .rrbot, .rrbot div {height: 8px; width: 100%;}
-.rrcontent {margin: 0px 8px; text-align: center;}
-
-.hrr {text-align: left; background: #DABC92; margin: 8px; border: 1px solid #B89F7C;}
-.hrrtop, .hrrtop div, .hrrbot, .hrrbot div {height: 8px; width: 100%;}
-.hrrcontent {margin: 0px 8px;}
-
-.setupblock {
-	text-align: center;
-	width: 350px;
-}
-.setupblock TEXTAREA {
-	width: 300px;
-	font-size: 0.75em;
-}
-
-.helpable {
-	border-bottom: 1px dashed gray;
-}
-
-.ok {
-	background: #AFA;
-}
-.bad {
-	background: #FAA;
-}
-
-NAV .thumbblock {
-	float: none;
-	height: auto;
-}
-NAV .thumb {
-	margin-bottom: 0px;
-}
-.thumbblock {
-	width: 220px;
-	height: 220px;
-	display: inline-block;
-	float: left;
-}
 .thumb {
+	width: 226px;
 	display: inline-block;
+	zoom: 1; /* ie6 */
+	*display: inline; /* ie6 */
 	text-align: center;
-	margin-bottom: 32px;
+	margin: 8px;
 }
-
+.thumb IMG {
+	border: 1px solid #B89F7C;
+	background: #FCD9A9;
+	padding: 8px;
+}

@@ -5,15 +5,13 @@
 	max-width: 1200px;
 	margin: auto;
 }
-.setupblocks .rr {
+.setupblock {
 	break-inside: avoid;
 	-moz-break-inside: avoid;
 	-webkit-break-inside: avoid;
 	column-break-inside: avoid;
 	-moz-column-break-inside: avoid;
 	-webkit-column-break-inside: avoid;
-}
-.setupblock {
 	text-align: center;
 	width: 100%;
 }
@@ -34,4 +32,10 @@
 	background: #FAA;
 }
 
-
+#Setupmain .blockbody {
+	background: none;
+	border: none;
+	box-shadow: none;
+	margin: 0px;
+	padding: 0px;
+}

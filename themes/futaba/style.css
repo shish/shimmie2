@@ -75,7 +75,7 @@ TD {
 	float: left;
 }
 .comment {
-	background: #FFFFEE;
+	/*background: #FFFFEE;*/
 	border-width: 0px;
 }
 .reply, .paginator {
