@@ -29,6 +29,9 @@ class UserClass {
 	}
 }
 
+// action_object_attribute
+// action = create / view / edit / delete
+// object = image / user / tag / setting
 $_user_class_base = new UserClass("base", null, array(
 	"change_setting" => False,  # modify web-level settings, eg the config table
 	"override_config" => False, # modify sys-level settings, eg config.php
