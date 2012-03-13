@@ -113,11 +113,12 @@ class Tag_HistoryTheme extends Themelet {
 			<br>(Date format: 2011-10-23)
 			'.$validation_msg.'
 
-			<br><br>'.make_form(make_link("admin/revert_ip"),'POST',false,'revert_ip_form')."
-				IP Address: <input type='text' id='revert_ip' name='revert_ip' size='15'><br>
-				Date range: <input type='text' id='revert_date' name='revert_date' size='15'><br><br>
+			<br><br>'.make_form(make_link("admin/bulk_revert"),'POST',false,'revert_ip_form')."
+				Username:   <input type='text' name='revert_name' size='15'><br>
+				IP Address: <input type='text' name='revert_ip' size='15'><br>
+				Date range: <input type='text' name='revert_date' size='15'><br><br>
 				<input type='submit' value='Revert' onclick='return confirm(\"Revert all edits by this IP?\");'>
-			</form><br>
+			</form>
 		";
 		$page->add_block(new Block("Revert By IP", $html));
 	}
