@@ -563,6 +563,7 @@ class Image {
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
 		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
 		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
+		$tmpl = str_replace(' ', '%20', $tmpl);
 
 		// nothing seems to use this, sending the event out to 50 exts is a lot of overhead
 		if(!SPEED_HAX) {
