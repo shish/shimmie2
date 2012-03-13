@@ -28,9 +28,6 @@ FOOTER {
 	text-align: center;
 }
 
-*[onclick] {cursor: pointer;}
-IMG {border: none;}
-FORM {margin: 0px;}
 A, A:visited {text-decoration: none; color: #0000EE;}
 A:hover {text-decoration: underline; color: #DD0000;}
 HR {border: none; border-top: 1px solid #D9BFB7; height: 0px; clear: both;}

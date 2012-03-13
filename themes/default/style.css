@@ -45,15 +45,6 @@ TD {
 	vertical-align: top;
 	text-align: center;
 }
-ARTICLE SELECT {width: 150px;}
-INPUT, TEXTAREA {box-sizing: border-box;}
-TD>INPUT[type="button"] {width: 100%;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>TEXTAREA {width: 100%;}
-TD>SELECT {width: 100%;}
-[onclick] {cursor:pointer;}
 
 TABLE.zebra {border-spacing: 0px; border: 2px solid #CCC;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
@@ -63,10 +54,6 @@ TABLE.zebra TR TD {border-bottom: 1px solid #DDD;}
 TABLE.zebra TR:nth-child(odd) {background: #EFEFEF;}
 TABLE.zebra TR:nth-child(even) {background: #E0E0E0;}
 
-TABLE.form TD, TABLE.form TH {vertical-align: middle;}
-TABLE.form TBODY TD {text-align: left;}
-TABLE.form TBODY TH {text-align: right; padding-right: 4px;}
-
 FOOTER {
 	clear: both;
 	font-size: 0.7em;
@@ -75,9 +62,6 @@ FOOTER {
 	border: 1px solid #AAA;
 }
 
-*[onclick] {cursor: pointer;}
-IMG {border: none;}
-FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 

@@ -161,7 +161,7 @@ class CommentListTheme extends Themelet {
 		$h_name = html_escape($comment->owner_name);
 		$h_poster_ip = html_escape($comment->poster_ip);
 		$h_timestamp = autodate($comment->posted);
-		$h_comment = ($trim ? substr($tfe->stripped, 0, 50) . (strlen($tfe->stripped) > 50 ? "..." : "") : $tfe->formatted);
+		$h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 

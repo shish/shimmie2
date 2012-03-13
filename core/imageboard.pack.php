@@ -284,7 +284,7 @@ class Image {
 			return $this->parse_link_template($image_ilink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
+			return $this->parse_link_template(make_link('_images/$hash/$id%20-%20$tags.$ext'));
 		}
 		else {
 			return $this->parse_link_template(make_link('image/$id.$ext'));
