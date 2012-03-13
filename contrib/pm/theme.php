@@ -31,7 +31,7 @@ class PrivMsgTheme extends Themelet {
 				</tbody>
 			</table>
 		";
-		$page->add_block(new Block("Private Messages", $html, "main", 10));
+		$page->add_block(new Block("Private Messages", $html, "main", 10, "private-messages"));
 	}
 
 	public function display_composer(Page $page, User $from, User $to, $subject="") {
