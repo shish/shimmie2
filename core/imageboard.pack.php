@@ -245,7 +245,7 @@ class Image {
 		global $database;
 		if($owner->id != $this->owner_id) {
 			$database->execute("UPDATE images SET owner_id=:owner_id WHERE id=:id", array("owner_id"=>$owner->id, "id"=>$this->id));
-			log_info("core-image", "Owner for Image #{$this->id} set to: ".$owner->username);
+			log_info("core-image", "Owner for Image #{$this->id} set to {$owner->name}");
 		}
 	}
 
