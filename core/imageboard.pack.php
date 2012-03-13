@@ -284,7 +284,7 @@ class Image {
 			return $this->parse_link_template($image_ilink);
 		}
 		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_images/$hash/$id - $tags.$ext'));
+			return $this->parse_link_template(make_link('_images/$hash/$id%20-%20$tags.$ext'));
 		}
 		else {
 			return $this->parse_link_template(make_link('image/$id.$ext'));
@@ -563,7 +563,6 @@ class Image {
 		$tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
 		$tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
 		$tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
-		$tmpl = str_replace(' ', '%20', $tmpl);
 
 		// nothing seems to use this, sending the event out to 50 exts is a lot of overhead
 		if(!SPEED_HAX) {
