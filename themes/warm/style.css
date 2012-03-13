@@ -1,6 +1,6 @@
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-3                  things common to all pages                    *
+*                  things common to all pages                    *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 BODY {
@@ -50,12 +50,6 @@ CODE {
 	border-top: none;
 	background: #DDD;
 }
-ARTICLE SELECT {width: 150px;}
-INPUT, TEXTAREA {box-sizing: border-box;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>SELECT {width: 100%;}
 
 TABLE.zebra {border-spacing: 0px; border: 1px solid #B89F7C; }
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
@@ -64,10 +58,6 @@ TABLE.zebra TFOOT TD, TABLE.zebra TFOOT TH {border-top: 2px solid #B89F7C;}
 TABLE.zebra TD {border-top: 1px solid #B89F7C;}
 TABLE.zebra TR:nth-child(odd) {background: #FCD9A9;}
 TABLE.zebra TR:nth-child(even) {background: #DABC92;}
-
-TABLE.form TD, TABLE.form TH {vertical-align: middle;}
-TABLE.form TBODY TD {text-align: left;}
-TABLE.form TBODY TH {text-align: right; padding-right: 4px;}
 
 FOOTER {
 	clear: both;
@@ -78,9 +68,6 @@ FOOTER {
 	background: #FCD9A9;
 }
 
-*[onclick] {cursor: pointer;}
-IMG {border: none;}
-FORM {margin: 0px;}
 A         {color: #665844; text-decoration: none; font-weight: bold;}
 A:hover   {color: #665844; text-decoration: underline;}
 A:visited {color: #665844; text-decoration: none}

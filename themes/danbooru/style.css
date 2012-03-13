@@ -87,24 +87,12 @@ margin:auto;
 text-align:center;
 width:256px;
 }
-ARTICLE select {
-width:150px;
-}
-td > input[type="submit"] {width: 100%;}
-td > input[type="text"] {width: 100%;}
-td > input[type="password"] {width: 100%;}
 FOOTER {
 clear:both;
 color:#CCCCCC;
 font-size:0.9em;
 padding-left:10px;
 padding-top:8px;
-}
-[onclick] {
-cursor:pointer;
-}
-img {
-border:medium none;
 }
 form {
 margin:0;
@@ -148,7 +136,7 @@ width:150px;
 color:#AAAAAA;
 }
 .more {
-content:"More Å‚";
+content:"More ¬Å√¢";
 }
 .comment {
 margin-bottom:8px;

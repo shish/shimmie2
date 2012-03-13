@@ -133,13 +133,6 @@ CODE {
 	border-top: none;
 	background: #DDD;
 }
-ARTICLE SELECT {width: 150px;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>TEXTAREA {width: 100%;}
-TD>SELECT {width: 100%;}
-[onclick] {cursor:pointer;}
 
 TABLE.zebra {border-spacing: 0px; border: 2px solid #C3D2E0;}
 TABLE.zebra TD, TABLE.zebra TH {vertical-align: middle; padding: 4px;}
@@ -173,9 +166,6 @@ FOOTER {
 	background: #E3EFFA;
 }
 
-*[onclick] {cursor: pointer;}
-IMG {border: none;}
-FORM {margin: 0px;}
 A {text-decoration: none;}
 A:hover {text-decoration: underline;}
 
