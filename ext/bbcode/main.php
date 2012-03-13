@@ -15,6 +15,8 @@
  *    <li>[i]<i>italic</i>[/i]
  *    <li>[u]<u>underline</u>[/u]
  *    <li>[s]<s>strikethrough</s>[/s]
+ *    <li>[sup]<sup>superscript</sup>[/sup]
+ *    <li>[sub]<sub>subscript</sub>[/sub]
  *    <li>[[wiki article]]
  *    <li>[[wiki article|with some text]]
  *    <li>[quote]text[/quote]
@@ -34,6 +36,8 @@ class BBCode extends FormatterExtension {
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
 		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "<s>\\1</s>", $text);
+		$text = preg_replace("/\[sup\](.*?)\[\/sup\]/s", "<sup>\\1</sup>", $text);
+		$text = preg_replace("/\[sub\](.*?)\[\/sub\]/s", "<sub>\\1</sub>", $text);
 		$text = preg_replace("/&gt;&gt;(\d+)(#c?(\d+))?/s", "<a class='comment_link' href=\"".make_link("post/view/\\1#c\\3")."\" onclick=\"$('#c\\3').effect('highlight', {}, 5000);\">&gt;&gt;\\1\\2</a>", $text);
 		$text = preg_replace("/(^|\s)#(\d+)/s", "\\1<a href=\"#\\2\">#\\2</a>", $text);
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
