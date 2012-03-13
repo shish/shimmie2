@@ -108,21 +108,21 @@ class TagEdit extends Extension {
 
 	public function onOwnerSet(OwnerSetEvent $event) {
 		global $user;
-		if($user->can("edit_image_owner") || !$event->image->is_locked()) {
+		if($user->can("edit_image_owner") && (!$event->image->is_locked() || $user->can("lock_image"))) {
 			$event->image->set_owner($event->owner);
 		}
 	}
 
 	public function onTagSet(TagSetEvent $event) {
 		global $user;
-		if($user->can("edit_image_tag") || !$event->image->is_locked()) {
+		if($user->can("edit_image_tag") && (!$event->image->is_locked() || $user->can("lock_image"))) {
 			$event->image->set_tags($event->tags);
 		}
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
 		global $user;
-		if($user->can("edit_image_source") || !$event->image->is_locked()) {
+		if($user->can("edit_image_source") && (!$event->image->is_locked() || $user->can("lock_image"))) {
 			$event->image->set_source($event->source);
 		}
 	}

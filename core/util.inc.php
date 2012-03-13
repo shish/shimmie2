@@ -339,6 +339,13 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
 }
 
+function mtimefile($file) {
+	$data_href = get_base_href();
+	$mtime = filemtime($file);
+	return "$data_href/$file?$mtime";
+}
+
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * CAPTCHA abstraction                                                       *
