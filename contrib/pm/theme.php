@@ -5,12 +5,7 @@ class PrivMsgTheme extends Themelet {
 		global $user;
 
 		$html = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$(\"#pms\").tablesorter();
-			});
-			</script>
-			<table id='pms' class='zebra'>
+			<table id='pms' class='zebra sortable'>
 				<thead><tr><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
 				<tbody>";
 		$n = 0;
@@ -49,8 +44,8 @@ class PrivMsgTheme extends Themelet {
 <form action="$post_url" method="POST">
 $auth
 <input type="hidden" name="to_id" value="$to_id">
-<table style="width: 400px;">
-<tr><td>Subject:</td><td><input type="text" name="subject" value="$h_subject"></td></tr>
+<table style="width: 400px;" class="form">
+<tr><th>Subject:</th><td><input type="text" name="subject" value="$h_subject"></td></tr>
 <tr><td colspan="2"><textarea style="width: 100%" rows="6" name="message"></textarea></td></tr>
 <tr><td colspan="2"><input type="submit" value="Send"></td></tr>
 </table>

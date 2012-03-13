@@ -65,7 +65,7 @@ TABLE.zebra TR:nth-child(even) {background: #E0E0E0;}
 
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TD {text-align: left;}
-TABLE.form TBODY TH {text-align: right; padding-right: 4px;}
+TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%;}
 
 FOOTER {
 	clear: both;
