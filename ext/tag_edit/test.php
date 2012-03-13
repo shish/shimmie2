@@ -12,14 +12,6 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->click("Set");
 		$this->assert_title("Image $image_id: tagme");
 		$this->log_out();
-
-		$this->log_in_as_admin();
-		$this->get_page("admin");
-		$this->assert_text("Mass Tag Edit"); // just test it exists
-		$this->delete_image($image_id);
-		$this->log_out();
-
-		# FIXME: test mass tag editor
 	}
 
 	function testSourceEdit() {
@@ -45,6 +37,16 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
 		$this->log_out();
+	}
+
+	function testMassEdit() {
+		$this->log_in_as_admin();
+		$this->get_page("admin");
+		$this->assert_text("Mass Tag Edit"); // just test it exists
+		$this->delete_image($image_id);
+		$this->log_out();
+
+		# FIXME: test mass tag editor
 	}
 }
 ?>
