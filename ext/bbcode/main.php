@@ -15,6 +15,8 @@
  *    <li>[i]<i>italic</i>[/i]
  *    <li>[u]<u>underline</u>[/u]
  *    <li>[s]<s>strikethrough</s>[/s]
+ *    <li>[sup]<sup>superscript</sup>[/sup]
+ *    <li>[sub]<sub>subscript</sub>[/sub]
  *    <li>[[wiki article]]
  *    <li>[[wiki article|with some text]]
  *    <li>[quote]text[/quote]
@@ -25,20 +27,19 @@
 
 class BBCode extends FormatterExtension {
 	public function format(/*string*/ $text) {
-		$text = preg_replace_callback("/(\[img\]https?:\/\/.*?\[\/img\])/s", array($this, "unwrap"), $text);
-		$text = preg_replace_callback("/(\[url=(?:https?|ftp|irc|mailto):\/\/.*?\])/s", array($this, "unwrap"), $text);
-		$text = preg_replace_callback("/(\[url\](?:https?|ftp|irc|mailto):\/\/.*?\[\/url\])/s", array($this, "unwrap"), $text);
-
 		$text = $this->extract_code($text);
+		$text = preg_replace("/site:\/\//s", make_http(get_base_href())."/", $text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
 		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
 		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "<s>\\1</s>", $text);
+		$text = preg_replace("/\[sup\](.*?)\[\/sup\]/s", "<sup>\\1</sup>", $text);
+		$text = preg_replace("/\[sub\](.*?)\[\/sub\]/s", "<sub>\\1</sub>", $text);
 		$text = preg_replace("/&gt;&gt;(\d+)(#c?(\d+))?/s", "<a class='comment_link' href=\"".make_link("post/view/\\1#c\\3")."\" onclick=\"$('#c\\3').effect('highlight', {}, 5000);\">&gt;&gt;\\1\\2</a>", $text);
 		$text = preg_replace("/(^|\s)#(\d+)/s", "\\1<a href=\"#\\2\">#\\2</a>", $text);
 		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
-		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
-		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto):\/\/.*?)\[\/url\]/s", "<a href=\"\\1\">\\1</a>", $text);
+		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto|site):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
+		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto|site):\/\/.*?)\[\/url\]/s", "<a href=\"\\1\">\\1</a>", $text);
 		$text = preg_replace("/\[email\](.*?)\[\/email\]/s", "<a href=\"mailto:\\1\">\\1</a>", $text);
 		$text = preg_replace("/\[img\](https?:\/\/.*?)\[\/img\]/s", "<img src=\"\\1\">", $text);
 		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\2</a>", $text);
@@ -64,10 +65,6 @@ class BBCode extends FormatterExtension {
 		$text = $this->filter_spoiler($text);
 		$text = $this->insert_code($text);
 		return $text;
-	}
-
-	private function unwrap($matches) {
-		return str_replace(' ', '', $matches[1]);
 	}
 
 	public function strip(/*string*/ $text) {
