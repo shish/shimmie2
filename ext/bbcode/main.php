@@ -27,10 +27,6 @@
 
 class BBCode extends FormatterExtension {
 	public function format(/*string*/ $text) {
-		$text = preg_replace_callback("/(\[img\]https?:\/\/.*?\[\/img\])/s", array($this, "unwrap"), $text);
-		$text = preg_replace_callback("/(\[url=(?:https?|ftp|irc|mailto):\/\/.*?\])/s", array($this, "unwrap"), $text);
-		$text = preg_replace_callback("/(\[url\](?:https?|ftp|irc|mailto):\/\/.*?\[\/url\])/s", array($this, "unwrap"), $text);
-
 		$text = $this->extract_code($text);
 		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
 		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
@@ -68,10 +64,6 @@ class BBCode extends FormatterExtension {
 		$text = $this->filter_spoiler($text);
 		$text = $this->insert_code($text);
 		return $text;
-	}
-
-	private function unwrap($matches) {
-		return str_replace(' ', '', $matches[1]);
 	}
 
 	public function strip(/*string*/ $text) {
