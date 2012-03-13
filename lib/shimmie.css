@@ -7,6 +7,7 @@ TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
 TD>SELECT {width: 100%;}
 
+TABLE.form {width: 300px;}
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}
 TABLE.form TBODY TD {text-align: left;}
 TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%;}

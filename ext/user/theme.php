@@ -54,7 +54,7 @@ class UserPageTheme extends Themelet {
 
 		$html .= '
 		'.make_form(make_link("user_admin/create"))."
-			<table style='width: 300px;' class='form'>
+			<table class='form'>
 				<tbody>
 					<tr><th>Name</th><td><input type='text' name='name'></td></tr>
 					<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
@@ -87,7 +87,7 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = '
 			'.make_form(make_link("user_admin/login"))."
-				<table class='form'>
+				<table width='100%' class='form'>
 					<tbody>
 						<tr>
 							<th><label for='user'>Name</label></th>
@@ -163,7 +163,7 @@ class UserPageTheme extends Themelet {
 			$html .= "
 			".make_form(make_link("user_admin/change_pass"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
-				<table style='width: 300px;' class='form'>
+				<table class='form'>
 					<thead>
 						<tr><th colspan='2'>Change Password</th></tr>
 					</thead>
@@ -179,7 +179,7 @@ class UserPageTheme extends Themelet {
 
 			<p>".make_form(make_link("user_admin/change_email"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
-				<table style='width: 300px;' class='form'>
+				<table class='form'>
 					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
 					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr></tbody>
 					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>

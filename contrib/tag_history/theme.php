@@ -114,10 +114,12 @@ class Tag_HistoryTheme extends Themelet {
 			'.$validation_msg.'
 
 			<br><br>'.make_form(make_link("admin/bulk_revert"),'POST',false,'revert_ip_form')."
-				Username:   <input type='text' name='revert_name' size='15'><br>
-				IP Address: <input type='text' name='revert_ip' size='15'><br>
-				Date range: <input type='text' name='revert_date' size='15'><br><br>
-				<input type='submit' value='Revert' onclick='return confirm(\"Revert all edits by this IP?\");'>
+				<table class='form'>
+					<tr><th>Username</th>   <td><input type='text' name='revert_name' size='15'></td></tr>
+					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>
+					<tr><th>Date&nbsp;range</th> <td><input type='text' name='revert_date' size='15'></td></tr>
+					<tr><td colspan='2'><input type='submit' value='Revert' onclick='return confirm(\"Revert all edits by this IP?\");'></td></tr>
+				</table>
 			</form>
 		";
 		$page->add_block(new Block("Revert By IP", $html));

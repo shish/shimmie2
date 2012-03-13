@@ -23,15 +23,15 @@ class RatingsTheme extends Themelet {
 		global $page;
 		$html = "
 			".make_form(make_link("admin/bulk_rate"))."
-				<table style='width: 300px'>
+				<table class='form'>
 					<tr>
-						<td>Search</td>
+						<th>Search</th>
 						<td>
 							<input type='text' name='query'>
 						</td>
 					</tr>
 					<tr>
-						<td>Rating</td>
+						<th>Rating</th>
 						<td>
 							<select name='rating'>
 								<option value='s'>Safe</option>

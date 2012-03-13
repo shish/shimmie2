@@ -9,9 +9,9 @@ class TagEditTheme extends Themelet {
 		global $page;
 		$html = "
 		".make_form(make_link("tag_edit/replace"))."
-			<table style='width: 400px;'>
-				<tr><td>Search</td><td><input type='text' name='search'></tr>
-				<tr><td>Replace</td><td><input type='text' name='replace'></td></tr>
+			<table class='form'>
+				<tr><th>Search</th><td><input type='text' name='search'></tr>
+				<tr><th>Replace</th><td><input type='text' name='replace'></td></tr>
 				<tr><td colspan='2'><input type='submit' value='Replace'></td></tr>
 			</table>
 		</form>
