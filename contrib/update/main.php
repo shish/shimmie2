@@ -23,7 +23,7 @@ class Update extends Extension {
 	}
 
 	public function onAdminBuilding(AdminBuildingEvent $event) {
-		global $config;
+		global $config, $page;
 
 		$latestCommit = $this->get_latest_commit();
 		if(is_null($latestCommit)) return;
@@ -34,7 +34,7 @@ class Update extends Extension {
 		$commitDateTime = $commitDT[0]." (".$commitTD[0].")";
 		$commitSHA = substr($latestCommit["sha"],0,7);
 
-		$html .= "".
+		$html = "".
 			"Current Commit: ".$config->get_string('commit_hash')." | ".$config->get_string('commit_time').
 			"<br>Latest Commit: ".$commitSHA." | ".$commitDateTime." | ".$commitMessage.
 			"<br><a href='" . make_link('update') . "'>Update</a>".
