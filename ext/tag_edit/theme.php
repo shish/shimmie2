@@ -20,13 +20,18 @@ class TagEditTheme extends Themelet {
 	}
 
 	public function get_tag_editor_html(Image $image) {
+		global $user;
 		$h_tags = html_escape($image->get_tag_list());
 		return "
 			<tr>
 				<th width='50px'>Tags</th>
 				<td>
+		".($user->can("edit_image_tag") ? "
 					<span class='view'>$h_tags</span>
 					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'>
+		" : "
+					$h_tags
+		")."
 				</td>
 			</tr>
 		";
@@ -42,8 +47,12 @@ class TagEditTheme extends Themelet {
 			<tr>
 				<th>Uploader</th>
 				<td>
+		".($user->can("edit_image_owner") ? "
 					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
+		" : "
+					<a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date
+		")."
 				</td>
 				<td width='80px' rowspan='4'>$h_av</td>
 			</tr>
@@ -51,14 +60,19 @@ class TagEditTheme extends Themelet {
 	}
 
 	public function get_source_editor_html(Image $image) {
+		global $user;
 		$h_source = html_escape($image->get_source());
 		$f_source = $this->format_source($image->get_source());
 		return "
 			<tr>
 				<th>Source</th>
 				<td>
+		".($user->can("edit_image_source") ? "
 					<span class='view' style='overflow: hidden; white-space: nowrap;'>$f_source</span>
 					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
+		" : "
+					<span style='overflow: hidden; white-space: nowrap;'>$f_source</span>
+		")."
 				</td>
 			</tr>
 		";
@@ -78,14 +92,19 @@ class TagEditTheme extends Themelet {
 	}
 
 	public function get_lock_editor_html(Image $image) {
+		global $user;
 		$b_locked = $image->is_locked() ? "Yes (Only admins may edit these details)" : "No";
 		$h_locked = $image->is_locked() ? " checked" : "";
 		return "
 			<tr>
 				<th>Locked</th>
 				<td>
+		".($user->can("lock_image") ? "
 					<span class='view'>$b_locked</span>
 					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
+		" : "
+					$b_locked
+		")."
 				</td>
 			</tr>
 		";
