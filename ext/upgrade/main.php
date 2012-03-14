@@ -44,7 +44,7 @@ class Upgrade extends Extension {
 				$tables = $database->get_col("SHOW TABLES");
 				foreach($tables as $table) {
 					log_info("upgrade", "converting $table to innodb");
-					$database->execute("ALTER TABLE $table TYPE=INNODB");
+					$database->execute("ALTER TABLE $table ENGINE=INNODB");
 				}
 			}
 
