@@ -28,30 +28,25 @@
 class BBCode extends FormatterExtension {
 	public function format(/*string*/ $text) {
 		$text = $this->extract_code($text);
-		$text = preg_replace("/site:\/\//s", make_http(get_base_href())."/", $text);
-		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "<b>\\1</b>", $text);
-		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "<i>\\1</i>", $text);
-		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "<u>\\1</u>", $text);
-		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "<s>\\1</s>", $text);
-		$text = preg_replace("/\[sup\](.*?)\[\/sup\]/s", "<sup>\\1</sup>", $text);
-		$text = preg_replace("/\[sub\](.*?)\[\/sub\]/s", "<sub>\\1</sub>", $text);
-		$text = preg_replace("/&gt;&gt;(\d+)(#c?(\d+))?/s", "<a class='comment_link' href=\"".make_link("post/view/\\1#c\\3")."\" onclick=\"$('#c\\3').effect('highlight', {}, 5000);\">&gt;&gt;\\1\\2</a>", $text);
-		$text = preg_replace("/(^|\s)#(\d+)/s", "\\1<a href=\"#\\2\">#\\2</a>", $text);
-		$text = preg_replace("/&gt;&gt;([^\d].+)/", "<blockquote><small>\\1</small></blockquote>", $text);
-		$text = preg_replace("/\[url=((?:https?|ftp|irc|mailto|site):\/\/.*?)\](.*?)\[\/url\]/s", "<a href=\"\\1\">\\2</a>", $text);
-		$text = preg_replace("/\[url\]((?:https?|ftp|irc|mailto|site):\/\/.*?)\[\/url\]/s", "<a href=\"\\1\">\\1</a>", $text);
-		$text = preg_replace("/\[email\](.*?)\[\/email\]/s", "<a href=\"mailto:\\1\">\\1</a>", $text);
-		$text = preg_replace("/\[img\](https?:\/\/.*?)\[\/img\]/s", "<img src=\"\\1\">", $text);
-		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\2</a>", $text);
-		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "<a href=\"".make_link("wiki/\\1")."\">\\1</a>", $text);
-		$text = preg_replace("/\n\s*\n/", "\n\n", $text);
+		foreach(array(
+			"b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
+		) as $el) {
+			$text = preg_replace("!\[$el\](.*?)\[/$el\]!s", "<$el>$1</$el>", $text);
+		}
+		$text = preg_replace('!&gt;&gt;([^\d].+)!s', '<blockquote><small>$1</small></blockquote>', $text);
+		$text = preg_replace('!&gt;&gt;(\d+)(#c?\d+)?!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('post/view/$1$2').'">&gt;&gt;$1$2</a>', $text);
+		$text = preg_replace('!\[url=site://(.*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
+		$text = preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
+		$text = preg_replace('!\[url=((?:https?|ftp|irc|mailto)://.*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
+		$text = preg_replace('!\[url\]((?:https?|ftp|irc|mailto)://.*?)\[/url\]!s', '<a href="$1">$1</a>', $text);
+		$text = preg_replace('!\[email\](.*?)\[/email\]!s', '<a href="mailto:$1">$1</a>', $text);
+		$text = preg_replace('!\[img\](https?:\/\/.*?)\[/img\]!s', '<img src="$1">', $text);
+		$text = preg_replace('!\[\[([^\|\]]+)\|([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$2</a>', $text);
+		$text = preg_replace('!\[\[([^\]]+)\]\]!s', '<a href="'.make_link('wiki/$1').'">$1</a>', $text);
+		$text = preg_replace("!\n\s*\n!", "\n\n", $text);
 		$text = str_replace("\n", "\n<br>", $text);
 		$text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "<blockquote><small>\\1</small></blockquote>", $text);
 		$text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "<blockquote><em>\\1 said:</em><br><small>\\2</small></blockquote>", $text);
-		$text = preg_replace("/\[h1\](.*?)\[\/h1\]/s", "<h1>\\1</h1>", $text);
-		$text = preg_replace("/\[h2\](.*?)\[\/h2\]/s", "<h2>\\1</h2>", $text);
-		$text = preg_replace("/\[h3\](.*?)\[\/h3\]/s", "<h3>\\1</h3>", $text);
-		$text = preg_replace("/\[h4\](.*?)\[\/h4\]/s", "<h4>\\1</h4>", $text);
 		while(preg_match("/\[list\](.*?)\[\/list\]/s", $text))
 			$text = preg_replace("/\[list\](.*?)\[\/list\]/s", "<ul>\\1</ul>", $text);
 		while(preg_match("/\[ul\](.*?)\[\/ul\]/s", $text))
@@ -68,26 +63,20 @@ class BBCode extends FormatterExtension {
 	}
 
 	public function strip(/*string*/ $text) {
-		$text = preg_replace("/\[b\](.*?)\[\/b\]/s", "\\1", $text);
-		$text = preg_replace("/\[i\](.*?)\[\/i\]/s", "\\1", $text);
-		$text = preg_replace("/\[u\](.*?)\[\/u\]/s", "\\1", $text);
-		$text = preg_replace("/\[s\](.*?)\[\/s\]/s", "\\1", $text);
-		$text = preg_replace("/\[code\](.*?)\[\/code\]/s", "\\1", $text);
-		$text = preg_replace("/\[url=(.*?)\](.*?)\[\/url\]/s", "\\2", $text);
-		$text = preg_replace("/\[url\](.*?)\[\/url\]/s", "\\1", $text);
-		$text = preg_replace("/\[email\](.*?)\[\/email\]/s", "\\1", $text);
-		$text = preg_replace("/\[img\](.*?)\[\/img\]/s", "", $text);
-		$text = preg_replace("/\[\[([^\|\]]+)\|([^\]]+)\]\]/s", "\\2", $text);
-		$text = preg_replace("/\[\[([^\]]+)\]\]/s", "\\1", $text);
-		$text = preg_replace("/\[quote\](.*?)\[\/quote\]/s", "", $text);
-		$text = preg_replace("/\[quote=(.*?)\](.*?)\[\/quote\]/s", "", $text);
-		$text = preg_replace("/\[h1\](.*?)\[\/h1\]/s", "\\1", $text);
-		$text = preg_replace("/\[h2\](.*?)\[\/h2\]/s", "\\1", $text);
-		$text = preg_replace("/\[h3\](.*?)\[\/h3\]/s", "\\1", $text);
-		$text = preg_replace("/\[h4\](.*?)\[\/h4\]/s", "\\1", $text);
-		$text = preg_replace("/\[\/?(list|ul|ol)\]/", "", $text);
-		$text = preg_replace("/\[li\](.*?)\[\/li\]/s", "\\1", $text);
-		$text = preg_replace("/\[\*\](.*?)/s", "\\1", $text);
+		foreach(array(
+			"b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
+			"code", "url", "email", "li",
+		) as $el) {
+			$text = preg_replace("!\[$el\](.*?)\[/$el\]!s", '$1', $text);
+		}
+		$text = preg_replace("!\[url=(.*?)\](.*?)\[/url\]!s", '$2', $text);
+		$text = preg_replace("!\[img\](.*?)\[/img\]!s", "", $text);
+		$text = preg_replace("!\[\[([^\|\]]+)\|([^\]]+)\]\]!s", '$2', $text);
+		$text = preg_replace("!\[\[([^\]]+)\]\]!s", '$1', $text);
+		$text = preg_replace("!\[quote\](.*?)\[/quote\]!s", "", $text);
+		$text = preg_replace("!\[quote=(.*?)\](.*?)\[/quote\]!s", "", $text);
+		$text = preg_replace("!\[/?(list|ul|ol)\]!", "", $text);
+		$text = preg_replace("!\[\*\](.*?)!s", '$1', $text);
 		$text = $this->strip_spoiler($text);
 		return $text;
 	}
