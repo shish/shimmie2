@@ -36,41 +36,48 @@ $_user_class_base = new UserClass("base", null, array(
 	"change_setting" => False,  # modify web-level settings, eg the config table
 	"override_config" => False, # modify sys-level settings, eg config.php
 	"big_search" => False,      # search for more than 3 tags at once (speed mode only)
+
+	"manage_extension_list" => False,
+	"manage_alias_list" => False,
+	"mass_tag_edit" => False,
+
 	"view_ip" => False,         # view IP addresses associated with things
 	"ban_ip" => False,
+
 	"edit_user_password" => False,
 	"edit_user_info" => False,  # email address, etc
 	"delete_user" => False,
-	"delete_image" => False,
+
 	"delete_comment" => False,
+
 	"replace_image" => False,
-	"manage_extension_list" => False,
-	"manage_alias_list" => False,
 	"edit_image_tag" => False,
 	"edit_image_source" => False,
 	"edit_image_owner" => False,
-	"lock_image" => False,
-	"mass_tag_edit" => False,
-	"report_image" => False,
+	"edit_image_lock" => False,
+	"delete_image" => False,
+
+	"create_image_report" => False,
 	"view_image_report" => False,  # deal with reported images
+
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
 $_user_classes["anonymous"] = new UserClass("anonymous", $_user_class_base, array(
 	"edit_image_tag" => "tag_edit_anon",
 	"edit_image_source" => "source_edit_anon",
-	"report_image" => "report_image_anon",
+	"create_image_report" => "create_image_report_anon",
 ));
 $_user_classes["user"] = new UserClass("user", $_user_class_base, array(
 	"big_search" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
-	"report_image" => True,
+	"create_image_report" => True,
 ));
 $_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
 	"change_setting" => True,
 	"override_config" => True,
 	"big_search" => True,
-	"lock_image" => True,
+	"edit_image_lock" => True,
 	"view_ip" => True,
 	"ban_ip" => True,
 	"edit_user_password" => True,
@@ -85,7 +92,7 @@ $_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
 	"edit_image_source" => True,
 	"edit_image_owner" => True,
 	"mass_tag_edit" => True,
-	"report_image" => True,
+	"create_image_report" => True,
 	"view_image_report" => True,
 	"protected" => True,
 ));

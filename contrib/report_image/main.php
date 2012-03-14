@@ -82,7 +82,7 @@ class ReportImage extends Extension {
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config, $user, $page;
-		if($user->can('report_image')) {
+		if($user->can('create_image_report')) {
 			$reps = $this->get_reporters($event->image);
 			$this->theme->display_image_banner($event->image, $reps);
 		}

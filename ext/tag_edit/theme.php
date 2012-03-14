@@ -99,7 +99,7 @@ class TagEditTheme extends Themelet {
 			<tr>
 				<th>Locked</th>
 				<td>
-		".($user->can("lock_image") ? "
+		".($user->can("edit_image_lock") ? "
 					<span class='view'>$b_locked</span>
 					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
 		" : "

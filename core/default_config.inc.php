@@ -45,7 +45,7 @@ define("EXTRA_USER_CLASSES", serialize(array(
 		"moderator", # name for the new class
 		"user",      # class to base it on
 		array(       # parts of the base class to override
-			"lock_image" => True,
+			"edit_image_lock" => True,
 			"view_ip" => True,
 			"ban_ip" => True,
 			"delete_image" => True,

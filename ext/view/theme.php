@@ -73,7 +73,7 @@ class ViewImageTheme extends Themelet {
 			$html .= $part;
 		}
 		if(
-			(!$image->is_locked() || $user->can("lock_image")) &&
+			(!$image->is_locked() || $user->can("edit_image_lock")) &&
 			$user->can("edit_image_tag")
 		) {
 			$html .= "

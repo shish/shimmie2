@@ -341,7 +341,7 @@ class Upload extends Extension {
 		}
 		
 		// Checks if user is admin > check if you want locked.
-		if($user->can("lock_image") && !empty($_GET['locked'])){
+		if($user->can("edit_image_lock") && !empty($_GET['locked'])){
 			$locked = bool_escape($_GET['locked']);
 		}
 		
