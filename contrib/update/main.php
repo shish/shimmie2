@@ -50,6 +50,8 @@ class Update extends Extension {
 	}
 
 	private function get_latest_commit() {
+		global $config;
+
 		if(!function_exists("curl_init")) return null;
 
 		//Grab latest info via JSON.
