@@ -640,7 +640,7 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	return $pa;
 }
 
-function transload($url, $file) {
+function transload($url, $mfile) {
 	global $config;
 
 	if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
