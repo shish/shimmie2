@@ -52,6 +52,11 @@ The rest should be automatic, just unzip into a clean folder and copy across
 config.php, images and thumbs folders from the old version. This
 includes automatically messing with the database -- back it up first!
 
+If there are any errors with the upgrade process, "in_upgrade=true" will
+be left in the config table and the process will be paused for the admin
+to investigate. Deleting this config entry and refreshing the page should
+continue the upgrade from where it left off.
+
 
 Upgrade from earlier versions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,7 +68,6 @@ enough to be a pain.
 
 Custom Configuration
 ~~~~~~~~~~~~~~~~~~~~
-
 Various aspects of Shimmie can be configured to suit your site specific
 needs via the file "config.php" (created after installation).
 Take a look at "core/default_config.inc.php" for the available options
