@@ -87,7 +87,7 @@ class UserPageTheme extends Themelet {
 		global $config;
 		$html = '
 			'.make_form(make_link("user_admin/login"))."
-				<table width='100%' class='form'>
+				<table style='width: 100%;' class='form'>
 					<tbody>
 						<tr>
 							<th><label for='user'>Name</label></th>
