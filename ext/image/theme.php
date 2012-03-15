@@ -9,21 +9,12 @@ class ImageIOTheme {
 	public function get_deleter_html(/*int*/ $image_id) {
 		global $config;
 
-		if($config->get_bool("image_jquery_confirm")) {
-			$html = "
-				".make_form(make_link("image_admin/delete"),'POST',false,'delete_image')."
-					<input type='hidden' name='image_id' value='$image_id' />
-					<input type='submit' value='Delete' id='delete_image_submit' />
-				</form>
-			";
-		} else {
-			$html = "
-				".make_form(make_link("image_admin/delete"))."
-					<input type='hidden' name='image_id' value='$image_id' />
-					<input type='submit' value='Delete' onclick='return confirm(\"Delete the image?\");' />
-				</form>
-			";
-		}
+		$html = "
+			".make_form(make_link("image_admin/delete"))."
+				<input type='hidden' name='image_id' value='$image_id' />
+				<input type='submit' value='Delete' onclick='return confirm(\"Delete the image?\");' />
+			</form>
+		";
 		
 		return $html;
 	}

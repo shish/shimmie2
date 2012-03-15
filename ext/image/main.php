@@ -142,7 +142,6 @@ class ImageIO extends Extension {
 		if(function_exists("exif_read_data")) {
 			$config->set_default_bool('image_show_meta', false);
 		}
-		$config->set_default_bool('image_jquery_confirm', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
@@ -252,7 +251,6 @@ class ImageIO extends Extension {
 		if(function_exists("exif_read_data")) {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
-		$sb->add_bool_option("image_jquery_confirm", "<br>Confirm Delete with jQuery: ");
 		
 		$expires = array();
 		$expires['1 Minute'] = 60;
