@@ -170,7 +170,12 @@ class ImageIO extends Extension {
 				if($image) {
 					send_event(new ImageDeletionEvent($image));
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("post/list"));
+					if(isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], 'post/view')) {
+						$page->set_redirect($_SERVER['HTTP_REFERER']);
+					}
+					else {
+						$page->set_redirect(make_link("post/list"));
+					}
 				}
 			}
 		}
