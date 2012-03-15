@@ -168,7 +168,7 @@ class CommentList extends Extension {
 			$recent = $database->cache->get("recent_comments");
 			if(empty($recent)) {
 				$recent = $this->get_recent_comments($cc);
-				$database->cache->set("recent_comments", $recent, 600);
+				$database->cache->set("recent_comments", $recent, 60);
 			}
 			if(count($recent) > 0) {
 				$this->theme->display_recent_comments($recent);
