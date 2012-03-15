@@ -142,7 +142,6 @@ class ImageIO extends Extension {
 		if(function_exists("exif_read_data")) {
 			$config->set_default_bool('image_show_meta', false);
 		}
-		$config->set_default_bool('image_jquery_confirm', true);
 		$config->set_default_string('image_ilink', '');
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
@@ -170,7 +169,12 @@ class ImageIO extends Extension {
 				if($image) {
 					send_event(new ImageDeletionEvent($image));
 					$page->set_mode("redirect");
-					$page->set_redirect(make_link("post/list"));
+					if(isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], 'post/view')) {
+						$page->set_redirect($_SERVER['HTTP_REFERER']);
+					}
+					else {
+						$page->set_redirect(make_link("post/list"));
+					}
 				}
 			}
 		}
@@ -244,10 +248,9 @@ class ImageIO extends Extension {
 		//$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
 		$sb->add_text_option("image_tip", "Image tooltip: ");
 		$sb->add_choice_option("upload_collision_handler", array('Error'=>'error', 'Merge'=>'merge'), "<br>Upload collision handler: ");
-		if(!in_array("OS", $_SERVER) || $_SERVER["OS"] != 'Windows_NT') {
+		if(function_exists("exif_read_data")) {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
-		$sb->add_bool_option("image_jquery_confirm", "<br>Confirm Delete with jQuery: ");
 		
 		$expires = array();
 		$expires['1 Minute'] = 60;
