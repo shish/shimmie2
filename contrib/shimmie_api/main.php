@@ -118,11 +118,9 @@ class ShimmieApi extends Extension {
 					// - it returns data as eg  array(0=>1234, 'id'=>1234, 1=>'bob', 'name'=>bob, ...);
 					for($i=0; $i<4; $i++) unset($all[$i]);
 					$all['uploadcount'] = Image::count_images(array("user_id=".$all['id']));
-					$all['uploadperday'] = sprintf("%.1f", ($all['uploadcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
 					$all['commentcount'] = $database->get_one(
 						"SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id",
 						array("owner_id"=>$all['id']));
-					$all['commentperday'] = sprintf("%.1f", ($all['commentcount'] / (((time() - strtotime($all['joindate'])) / 86400) + 1)));
 
 					if(isset($_GET['recent'])){
 						$recent = $database->get_all(
