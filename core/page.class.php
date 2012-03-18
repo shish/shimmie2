@@ -306,6 +306,7 @@ class Page {
 		// store local copy for speed.
 		$autocache_css = $config->get_bool("autocache_css");
 		$autocache_js  = $config->get_bool("autocache_js");
+		$theme_name = $config->get_string('theme', 'default');
 		
 		if (!$autocache_css && !$autocache_js) {
 			return false;	// caching disabled
@@ -352,8 +353,21 @@ class Page {
 				$replace = 'url("../../${1}")';
 				$contents_from_extensions = preg_replace($pattern, $replace, $contents_from_extensions);
 			}
-			// Combine the two
-			$data = $contents_from_lib .' '. $contents_from_extensions;
+			// Get CSS from theme
+			$contents_from_theme = '';
+			$css_files = glob("themes/$theme_name/style.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$contents_from_theme .= file_get_contents($css_file);
+				}
+				//      Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
+				//      We have to adjust the URLs accordingly before saving the cached file.
+				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
+				$replace = 'url("../../${1}")';
+				$contents_from_theme = preg_replace($pattern, $replace, $contents_from_theme);
+			}
+			// Combine the three
+			$data = $contents_from_lib .' '. $contents_from_extensions .' '. $contents_from_theme;
 			
 			// Minify the CSS if enabled.
 			if($config->get_bool("autocache_min_css")) {
@@ -387,7 +401,13 @@ class Page {
 				foreach($css_files as $css_file) {
 					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
 				}
-			}	
+			}
+			$css_files = glob("themes/$theme_name/style.css");
+			if($css_files) {
+				foreach($css_files as $css_file) {
+					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
+				}
+			}
 		}
 		
 		
