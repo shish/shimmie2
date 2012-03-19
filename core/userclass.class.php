@@ -68,6 +68,9 @@ new UserClass("base", null, array(
 	"create_image_report" => False,
 	"view_image_report" => False,  # deal with reported images
 
+	"edit_wiki_page" => False,
+	"delete_wiki_page" => False,
+
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
 
@@ -106,6 +109,8 @@ new UserClass("admin", "base", array(
 	"mass_tag_edit" => True,
 	"create_image_report" => True,
 	"view_image_report" => True,
+	"edit_wiki_page" => True,
+	"delete_wiki_page" => True,
 	"protected" => True,
 ));
 

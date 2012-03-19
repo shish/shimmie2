@@ -167,13 +167,6 @@ class Wiki extends Extension {
 		}
 	}
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Wiki");
-		$sb->add_bool_option("wiki_edit_anon", "Allow anonymous edits: ");
-		$sb->add_bool_option("wiki_edit_user", "<br>Allow user edits: ");
-		$event->panel->add_block($sb);
-	}
-
 	/**
 	 * See if the given user is allowed to edit the given page
 	 *
@@ -189,8 +182,7 @@ class Wiki extends Extension {
 		if($page->is_locked()) return false;
 
 		// anon / user can edit if allowed by config
-		if($config->get_bool("wiki_edit_anon", false) && $user->is_anonymous()) return true;
-		if($config->get_bool("wiki_edit_user", false) && !$user->is_anonymous()) return true;
+		if($user->can("edit_wiki_page")) return true;
 
 		return false;
 	}
