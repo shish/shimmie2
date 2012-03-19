@@ -10,7 +10,7 @@ class Tagger extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page, $config, $user;
 
-		if($user->can("edit_image_tag") && ($event->image->is_locked() || $user->can("edit_image_lock")) {
+		if($user->can("edit_image_tag") && ($event->image->is_locked() || $user->can("edit_image_lock"))) {
 			$this->theme->build_tagger($page,$event);
 		}
 	}
