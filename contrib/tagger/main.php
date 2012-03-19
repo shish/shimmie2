@@ -10,18 +10,14 @@ class Tagger extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page, $config, $user;
 
-		if($config->get_bool("tag_edit_anon")
-			|| ($user->id != $config->get_int("anon_id"))
-			&& $config->get_bool("ext_tagger_enabled"))
-		{
+		if($user->can("edit_image_tag") && ($event->image->is_locked() || $user->can("edit_image_lock")) {
 			$this->theme->build_tagger($page,$event);
 		}
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tagger");
-		$sb->add_bool_option("ext_tagger_enabled","Enable Tagger");
-		$sb->add_int_option("ext_tagger_search_delay","<br/>Delay queries by ");
+		$sb->add_int_option("ext_tagger_search_delay", "Delay queries by ");
 		$sb->add_label(" milliseconds.");
 		$sb->add_label("<br/>Limit queries returning more than ");
 		$sb->add_int_option("ext_tagger_tag_max");
