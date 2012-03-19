@@ -6,6 +6,8 @@
  * License: GPLv2
  * Description: Various things to make admins' lives easier
  * Documentation:
+ *  Various moderate-level tools for admins; for advanced, obscure, and
+ *  possibly dangerous tools see the shimmie2-utils script set
  *  <p>Lowercase all tags:
  *  <br>Set all tags to lowercase for consistency
  *  <p>Recount tag use:
@@ -14,6 +16,8 @@
  *  <p>Database dump:
  *  <br>Download the contents of the database in plain text format, useful
  *  for backups.
+ *  <p>Image dump:
+ *  <br>Download all the images as a .zip file
  */
 
 /**
