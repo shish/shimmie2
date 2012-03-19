@@ -18,6 +18,9 @@ class BlocksTheme extends Themelet {
 			$html .= "<tr>";
 			$html .= "<td colspan='11'><textarea rows='5' name='content'>".html_escape($block['content'])."</textarea></td>";
 			$html .= "</tr>\n";
+			$html .= "<tr>";
+			$html .= "<td colspan='11'>&nbsp;</td>";
+			$html .= "</tr>\n";
 			$html .= "</form>\n";
 		}
 		$html .= make_form(make_link("blocks/add"));

@@ -17,7 +17,7 @@ class MP3FileHandlerTheme extends Themelet {
 					type='application/x-shockwave-flash'></embed>
 			</object>
 			<p><a href='$ilink'>Download</a>";
-		$page->add_block(new Block("Music", $html, "main", 0));
+		$page->add_block(new Block("Music", $html, "main", 10));
 	}
 }
 ?>

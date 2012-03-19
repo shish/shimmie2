@@ -56,7 +56,7 @@ class PixelFileHandlerTheme extends Themelet {
 					}
 				</script>";
 		
-		$page->add_block(new Block("Image", $html.$zoom, "main", 0));
+		$page->add_block(new Block("Image", $html.$zoom, "main", 10));
 	}
 }
 ?>

@@ -6,7 +6,7 @@ class IcoFileHandlerTheme extends Themelet {
 		$html = "
 			<img id='main_image' src='$ilink'>
 		";
-		$page->add_block(new Block("Image", $html, "main", 0));
+		$page->add_block(new Block("Image", $html, "main", 10));
 	}
 }
 ?>
