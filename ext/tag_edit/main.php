@@ -155,13 +155,6 @@ class TagEdit extends Extension {
 		$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
 	}
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Tag Editing");
-		$sb->add_bool_option("tag_edit_anon", "Allow anonymous tag editing: ");
-		$sb->add_bool_option("source_edit_anon", "<br>Allow anonymous source editing: ");
-		$event->panel->add_block($sb);
-	}
-
 
 	private function can_tag(Image $image) {
 		global $config, $user;
