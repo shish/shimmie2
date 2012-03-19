@@ -28,7 +28,7 @@ class Tag_History extends Extension {
 
 		if($event->page_matches("tag_history/revert")) {
 			// this is a request to revert to a previous version of the tags
-			if($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) {
+			if($user->can("edit_image_tag")) {
 				if(isset($_POST['revert'])) {
 					$this->process_revert_request($_POST['revert']);
 				}

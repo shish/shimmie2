@@ -123,9 +123,9 @@ class TagEditCloud extends Extension {
 	private function can_tag($image) {
 		global $config, $user;
 		return (
-			($config->get_bool("tag_edit_anon") || !$user->is_anonymous()) &&
-			($user->is_admin() || !$image->is_locked())
-			);
+			$user->can("edit_image_tag") &&
+			(!$image->is_locked() || $user->can("edit_image_lock"))
+		);
 	}
 
 }
