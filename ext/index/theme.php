@@ -59,7 +59,7 @@ and of course start organising your images :-)
 			}
 		}
 		else {
-			$page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));
+			$this->display_error(404, "No Images Found", "No images were found to match the search criteria");
 		}
 	}
 
