@@ -53,8 +53,8 @@ class Block {
 		$i = $this->id;
 		$html = "<section id='$i'>";
 		$h_toggler = $hidable ? " shm-toggler" : "";
-		if(!is_null($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
-		if(!is_null($b)) $html .= "<div class='blockbody'>$b</div>";
+		if(!empty($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
+		if(!empty($b)) $html .= "<div class='blockbody'>$b</div>";
 		$html .= "</section>\n";
 		return $html;
 	}
