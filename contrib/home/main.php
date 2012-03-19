@@ -16,14 +16,6 @@
 */
 
 class Home extends Extension {
-	public function onInitExt(InitExtEvent $event) {
-		global $config;
-		$config->set_default_string("home_links", '[url=site://post/list]Posts[/url]
-[site://comment/list]Comments[/url]
-[site://tags]Tags[/url]
-[site://ext_doc]>>[/url]');
-	}
-
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page;
 		if($event->page_matches("home")) {
@@ -77,10 +69,10 @@ class Home extends Extension {
 			$main_links = $config->get_string('home_links');
 		}
 		else {
-			$main_links = '[site://post/list]Posts[/url] [site://comment/list]Comments[/url] [site://tags]Tags[/url]';
-			if(file_exists("ext/pools")) {$main_links .= ' [site://pools]Pools[/url]';}
-			if(file_exists("ext/wiki")) {$main_links .= ' [site://wiki]Wiki[/url]';}
-			$main_links .= ' [site://ext_doc]>>[/url]';
+			$main_links = '[url=site://post/list]Posts[/url] [url=site://comment/list]Comments[/url] [url=site://tags]Tags[/url]';
+			if(file_exists("ext/pools")) {$main_links .= ' [url=site://pools]Pools[/url]';}
+			if(file_exists("ext/wiki")) {$main_links .= ' [url=site://wiki]Wiki[/url]';}
+			$main_links .= ' [url=site://ext_doc]>>[/url]';
 		}
 		$main_links = format_text($main_links);
 		$main_text = $config->get_string('home_text');
