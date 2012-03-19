@@ -19,35 +19,21 @@ class RatingsTheme extends Themelet {
 		return $html;
 	}
 
-	public function display_bulk_rater() {
+	public function display_bulk_rater($terms) {
 		global $page;
 		$html = "
 			".make_form(make_link("admin/bulk_rate"))."
-				<table class='form'>
-					<tr>
-						<th>Search</th>
-						<td>
-							<input type='text' name='query'>
-						</td>
-					</tr>
-					<tr>
-						<th>Rating</th>
-						<td>
-							<select name='rating'>
-								<option value='s'>Safe</option>
-								<option value='q'>Questionable</option>
-								<option value='e'>Explicit</option>
-								<option value='u'>Unrated</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td colspan='2'><input type='submit' value='Go'></td>
-					</tr>
-				</table>
+				<input type='hidden' name='query' value='".html_escape($terms)."'>
+				<select name='rating'>
+					<option value='s'>Safe</option>
+					<option value='q'>Questionable</option>
+					<option value='e'>Explicit</option>
+					<option value='u'>Unrated</option>
+				</select>
+				<input type='submit' value='Go'>
 			</form>
 		";
-		$page->add_block(new Block("Bulk Rating", $html));
+		$page->add_block(new Block("List Controls", $html, "left"));
 	}
 
 	public function rating_to_name(/*string*/ $rating) {

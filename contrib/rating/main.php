@@ -49,9 +49,13 @@ class Ratings extends Extension {
 		$event->panel->add_block($sb);
 	}
 	
-	public function onAdminBuilding(AdminBuildingEvent $event) {
-		$this->theme->display_bulk_rater();
+	public function onPostListBuilding(PostListBuildingEvent $event) {
+		global $user;
+		if($user->is_admin() && !empty($event->search_terms)) {
+			$this->theme->display_bulk_rater(implode(" ", $event->search_terms));
+		}
 	}
+
 	
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $user, $database, $page;
@@ -144,7 +148,7 @@ class Ratings extends Extension {
 				#		on image_tags.tag_id = tags.id where tags.tag = ?);
 				#	", array($_POST["rating"], $_POST["tag"]));
 				$page->set_mode("redirect");
-				$page->set_redirect(make_link("admin"));
+				$page->set_redirect(make_link("post/list"));
 			}
 		}
 	}
