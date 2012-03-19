@@ -29,53 +29,81 @@
  */
 
 class Blocks extends Extension {
-	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $page;
-		$all = $config->get_string("blocks_text");
-		$blocks = explode("----", $all);
-		foreach($blocks as $block) {
-			$title = "";
-			$text = "";
-			$area = "left";
-			$pri = 50;
-			$pages = "*";
-
-			$lines = explode("\n", $block);
-			foreach($lines as $line) {
-				if(strpos($line, ":")) {
-					$parts = explode(":", $line, 2);
-					$parts[0] = trim($parts[0]);
-					$parts[1] = trim($parts[1]);
-					if($parts[0] == "Title") {
-						$title = $parts[1];
-						continue;
-					}
-					if($parts[0] == "Area") {
-						$area = $parts[1];
-						continue;
-					}
-					if($parts[0] == "Priority") {
-						$pri = (int)$parts[1];
-						continue;
-					}
-					if($parts[0] == "Pages") {
-						$pages = $parts[1];
-						continue;
-					}
-				}
-				$text = $text . "\n" . $line;
-			}
-			if(fnmatch($pages, implode("/", $event->args))) {
-				$page->add_block(new Block($title, $text, $area, $pri));
-			}
+	public function onInitExt(InitExtEvent $event) {
+		global $config, $database;
+		if($config->get_int("ext_blocks_version") < 1) {
+			$database->create_table("blocks", "
+				id SCORE_AIPK,
+				pages VARCHAR(128) NOT NULL,
+				title VARCHAR(128) NOT NULL,
+				area VARCHAR(16) NOT NULL,
+				priority INTEGER NOT NULL,
+				content TEXT NOT NULL,
+				INDEX (pages)
+			");
+			$config->set_int("ext_blocks_version", 1);
 		}
 	}
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Blocks");
-		$sb->add_label("See <a href='".make_link("ext_doc/blocks")."'>the docs</a> for formatting");
-		$sb->add_longtext_option("blocks_text");
-		$event->panel->add_block($sb);
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
+		if($user->can("manage_blocks")) {
+			$event->add_link("Blocks Editor", make_link("blocks/list"));
+		}
+	}
+
+	public function onPageRequest(PageRequestEvent $event) {
+		global $config, $database, $page, $user;
+
+		$blocks = $database->get_all("SELECT * FROM blocks");
+		foreach($blocks as $block) {
+			if(fnmatch($block['pages'], implode("/", $event->args))) {
+				$page->add_block(new Block($block['title'], $block['content'], $block['area'], $block['priority']));
+			}
+		}
+
+		if($event->page_matches("blocks") && $user->can("manage_blocks")) {
+			if($event->get_arg(0) == "add") {
+				if($user->check_auth_token()) {
+					$database->execute("
+						INSERT INTO blocks (pages, title, area, priority, content)
+						VALUES (?, ?, ?, ?, ?)
+					", array($_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content']));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("blocks/list"));
+				}
+			}
+			if($event->get_arg(0) == "update") {
+				if($user->check_auth_token()) {
+					if(!empty($_POST['delete'])) {
+						$database->execute("
+							DELETE FROM blocks
+							WHERE id=?
+						", array($_POST['id']));
+					}
+					else {
+						$database->execute("
+							UPDATE blocks SET pages=?, title=?, area=?, priority=?, content=?
+							WHERE id=?
+						", array($_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content'], $_POST['id']));
+					}
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("blocks/list"));
+				}
+			}
+			else if($event->get_arg(0) == "remove") {
+				if($user->check_auth_token()) {
+					$database->execute("DELETE FROM blocks WHERE id=:id", array("id" => $_POST['id']));
+					log_info("alias_editor", "Deleted Block #".$_POST['id']);
+
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("blocks/list"));
+				}
+			}
+			else if($event->get_arg(0) == "list") {
+				$this->theme->display_blocks($database->get_all("SELECT * FROM blocks"));
+			}
+		}
 	}
 }
 ?>

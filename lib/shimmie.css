@@ -6,6 +6,7 @@ TD>INPUT[type="submit"] {width: 100%;}
 TD>INPUT[type="text"] {width: 100%;}
 TD>INPUT[type="password"] {width: 100%;}
 TD>SELECT {width: 100%;}
+TD>TEXTAREA {width: 100%;}
 
 TABLE.form {width: 300px;}
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}

@@ -71,6 +71,8 @@ new UserClass("base", null, array(
 	"edit_wiki_page" => False,
 	"delete_wiki_page" => False,
 
+	"manage_blocks" => False,
+
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
 
@@ -111,6 +113,7 @@ new UserClass("admin", "base", array(
 	"view_image_report" => True,
 	"edit_wiki_page" => True,
 	"delete_wiki_page" => True,
+	"manage_blocks" => True,
 	"protected" => True,
 ));
 
