@@ -38,12 +38,9 @@ class AdminPageTheme extends Themelet {
 		$html = "";
 		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
-		$html .= $this->button("Purge unused tags", "purge_unused_tags", true);
 		$html .= $this->button("Download all images", "image_dump", false);
-		if($database->engine->name == "mysql") {
-			$html .= $this->button("Download database contents", "database_dump", false);
-			$html .= $this->button("Reset image IDs", "reset_image_ids", true);
-		}
+		$html .= $this->button("Download database contents", "database_dump", false);
+
 		$page->add_block(new Block("Misc Admin Tools", $html));
 	}
 

@@ -9,17 +9,8 @@
  *  <p>Lowercase all tags:
  *  <br>Set all tags to lowercase for consistency
  *  <p>Recount tag use:
- *  <br>If the counts of images per tag get messed up somehow, this will reset them
- *  <p>Purge unused tags:
- *  <br>Get rid of all the tags that don't have any images associated with
- *  them (normally they were created as typos or spam); this is mostly for
- *  neatness, the performance gain is tiny...
- *  <p>Convert to InnoDB:
- *  <br>Convert your database tables to InnoDB, thus allowing shimmie to
- *  take advantage of useful InnoDB-only features (this should be done
- *  automatically, this button only exists as a backup). This only applies
- *  to MySQL -- all other databases come with useful features enabled
- *  as standard.
+ *  <br>If the counts of images per tag get messed up somehow, this will
+ *  reset them, and remove any unused tags
  *  <p>Database dump:
  *  <br>Download the contents of the database in plain text format, useful
  *  for backups.
@@ -130,15 +121,10 @@ class AdminPage extends Extension {
 				0
 			)
 		");
-		return true;
-	}
-
-	private function purge_unused_tags() {
-		global $database;
-		$this->recount_tag_use();
 		$database->Execute("DELETE FROM tags WHERE count=0");
 		return true;
 	}
+
 
 	private function database_dump() {
 		global $page;
@@ -170,77 +156,6 @@ class AdminPage extends Extension {
 		$page->set_data(shell_exec($cmd));
 
 		return false;
-	}
-
-	private function check_for_orphanned_images() {
-		$orphans = array();
-		foreach(glob("images/*") as $dir) {
-			foreach(glob("$dir/*") as $file) {
-				$hash = str_replace("$dir/", "", $file);
-				if(!$this->db_has_hash($hash)) {
-					$orphans[] = $hash;
-				}
-			}
-		}
-		return true;
-	}
-
-	/*
-	private function convert_to_innodb() {
-		global $database;
-
-		if($database->engine->name != "mysql") return;
-
-		$tables = $database->db->MetaTables();
-		foreach($tables as $table) {
-			log_info("upgrade", "converting $table to innodb");
-			$database->execute("ALTER TABLE $table TYPE=INNODB");
-		}
-		return true;
-	}
-	*/
-
-	private function reset_image_ids() {
-		global $database;
-
-		if($database->engine->name != "mysql") return;
-
-		//This might be a bit laggy on boards with lots of images (?)
-		//Seems to work fine with 1.2k~ images though.
-		$i = 0;
-		$image = $database->get_all("SELECT * FROM images ORDER BY images.id ASC");
-		/*$score_log = $database->get_all("SELECT message FROM score_log");*/
-		foreach($image as $img){
-			$xid = $img[0];
-			$i = $i + 1;
-			$table = array( //Might be missing some tables?
-				"image_tags", "tag_histories", "image_reports", "comments", "user_favorites", "tag_histories",
-				"numeric_score_votes", "pool_images", "slext_progress_cache", "notes");
-
-			$sql =
-				"SET FOREIGN_KEY_CHECKS=0;
-				UPDATE images
-				SET id=".$i.
-				" WHERE id=".$xid.";"; //id for images
-
-			foreach($table as $tbl){
-				$sql .= "
-					UPDATE ".$tbl."
-					SET image_id=".$i."
-					WHERE image_id=".$xid.";";
-			}
-
-			/*foreach($score_log as $sl){
-				//This seems like a bad idea.
-				//TODO: Might be better for log_info to have an $id option (which would then affix the id to the table?)
-				preg_replace(".Image \\#[0-9]+.", "Image #".$i, $sl);
-			}*/
-			$sql .= " SET FOREIGN_KEY_CHECKS=1;";
-			$database->execute($sql);
-		}
-		$count = (count($image)) + 1;
-		$database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
-		return true;
 	}
 
 	private function download_all_images() {
