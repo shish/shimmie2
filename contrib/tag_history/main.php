@@ -155,7 +155,7 @@ class Tag_History extends Extension {
 
 	protected function process_bulk_revert_request() {
 		if (isset($_POST['revert_name']) && !empty($_POST['revert_name'])) {
-			$revert_name = $_POST['revert_ip'];
+			$revert_name = $_POST['revert_name'];
 		}
 		else {
 			$revert_name = null;
@@ -241,6 +241,7 @@ class Tag_History extends Extension {
 		if(!is_null($name)) {
 			$duser = User::by_name($name);
 			if(is_null($duser)) {
+				$this->theme->add_status($name, "user not found");
 				return;
 			}
 			else {

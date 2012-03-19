@@ -113,16 +113,16 @@ class Tag_HistoryTheme extends Themelet {
 			<br>(Date format: 2011-10-23)
 			'.$validation_msg.'
 
-			<br><br>'.make_form(make_link("admin/bulk_revert"),'POST',false,'revert_ip_form')."
+			<br><br>'.make_form(make_link("tag_history/bulk_revert"), 'POST')."
 				<table class='form'>
-					<tr><th>Username</th>   <td><input type='text' name='revert_name' size='15'></td></tr>
+					<tr><th>Username</th>        <td><input type='text' name='revert_name' size='15'></td></tr>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>
 					<tr><th>Date&nbsp;range</th> <td><input type='text' name='revert_date' size='15'></td></tr>
-					<tr><td colspan='2'><input type='submit' value='Revert' onclick='return confirm(\"Revert all edits by this IP?\");'></td></tr>
+					<tr><td colspan='2'><input type='submit' value='Revert'></td></tr>
 				</table>
 			</form>
 		";
-		$page->add_block(new Block("Revert By IP", $html));
+		$page->add_block(new Block("Mass Tag Revert", $html));
 	}
 	
 	/*
@@ -131,7 +131,7 @@ class Tag_HistoryTheme extends Themelet {
 	public function display_revert_ip_results() {
 		global $page;
 		$html = implode($this->messages, "\n");
-		$page->add_block(new Block("Revert by IP", $html));
+		$page->add_block(new Block("Bulk Revert Results", $html));
 	}
 	
 	public function add_status(/*string*/ $title, /*string*/ $body) {
