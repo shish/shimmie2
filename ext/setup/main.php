@@ -281,27 +281,16 @@ class Setup extends Extension {
 		$event->panel->add_block($sb);
 		
 		
-		// Options for Automatic Caching & Minifying
-		$minifyscript = "<script language='javascript'>
-			checkbox_css = document.getElementById('autocache_min_css');
-			checkbox_js = document.getElementById('autocache_min_js');
-
-			$(document).ready(function() {
-				checkbox_css.disabled = true;
-				checkbox_css.checked = false;
-				checkbox_js.disabled = true;
-				checkbox_js.checked = false;
-			});
-		</script>";
-		
 		$sb = new SetupBlock("Automatic Caching of CSS & JS");
-		$sb->add_text_option("autocache_location", "Location: ");
-		$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
-		$sb->add_bool_option("autocache_css", "<br>Automatic caching of CSS: ");
+		// the default is fine for just about everyone
+		//$sb->add_text_option("autocache_location", "Location: ");
+		//$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
+		$sb->add_bool_option("autocache_css", "Automatic caching of CSS: ");
 		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
-		$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
-		$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");
-		$sb->add_label("<br><span id='autocache_minify'><i>Minifying currently not supported.</i></span>$minifyscript");
+		// if the option does nothing, there's no point showing a
+		// "hey look, nothing!" message...
+		//$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
+		//$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");
 		$event->panel->add_block($sb);
 	}
 
