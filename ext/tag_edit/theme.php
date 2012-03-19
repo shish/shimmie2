@@ -100,6 +100,9 @@ class TagEditTheme extends Themelet {
 			$proto_domain = explode("://", $source);
 			$h_source = html_escape($proto_domain[1]);
 			$u_source = html_escape($source);
+			if(endsWith($h_source, "/")) {
+				$h_source = substr($h_source, 0, -1);
+			}
 			return "<a href='$u_source'>$h_source</a>";
 		}
 		return "Unknown";
