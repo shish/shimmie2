@@ -93,8 +93,8 @@ class DanbooruApi extends Extension {
 		Notes
 		* The only necessary parameter is tags and either file or source.
 		* If you want to sign your post, you need a way to authenticate your account, either by supplying login and password, or by supplying a cookie.
-		* If an account is not supplied or if it doesn‘t authenticate, he post will be added anonymously.
-		* If the md5 parameter is supplied and does not match the hash of what‘s on the server, the post is rejected.
+		* If an account is not supplied or if it doesnÂ‘t authenticate, he post will be added anonymously.
+		* If the md5 parameter is supplied and does not match the hash of whatÂ‘s on the server, the post is rejected.
 		Response
 		The response depends on the method used:
 		Post
@@ -379,7 +379,8 @@ class DanbooruApi extends Extension {
 		if(($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show'))
 		{
 			$fixedlocation = make_link("post/view/" . $event->get_arg(3));
-			$page->add_http_header("Location: $fixedlocation");
+			$page->set_mode("redirect");
+			$page->set_redirect($fixedlocation);
 		}
 	}
 
