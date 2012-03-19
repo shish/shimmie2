@@ -58,6 +58,10 @@ class Tag_History extends Extension {
 		", 20);
 	}
 
+	/*
+	// disk space is cheaper than manually rebuilding history,
+	// so let's default to -1 and the user can go advanced if
+	// they /really/ want to
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Tag History");
 		$sb->add_label("Limit to ");
@@ -66,6 +70,7 @@ class Tag_History extends Extension {
 		$sb->add_label("<br>(-1 for unlimited)");
 		$event->panel->add_block($sb);
 	}
+	*/
 
 	public function onTagSet(TagSetEvent $event) {
 		$this->add_tag_history($event->image, $event->tags);
