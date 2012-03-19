@@ -17,7 +17,7 @@ class ViewImageTheme extends Themelet {
 		$page->add_html_header("<meta property=\"og:url\" content=\"".make_http(make_link("post/view/{$image->id}"))."\">");
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
-		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
+		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20));
 		//$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 

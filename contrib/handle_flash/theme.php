@@ -20,7 +20,7 @@ class FlashFileHandlerTheme extends Themelet {
 					wmode='opaque'
 					type='application/x-shockwave-flash'></embed>
 			</object>";
-		$page->add_block(new Block("Flash Animation", $html, "main", 0));
+		$page->add_block(new Block("Flash Animation", $html, "main", 10));
 	}
 }
 ?>

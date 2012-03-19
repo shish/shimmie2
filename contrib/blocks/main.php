@@ -74,7 +74,7 @@ class Blocks extends Extension {
 				}
 			}
 			else if($event->get_arg(0) == "list") {
-				$this->theme->display_blocks($database->get_all("SELECT * FROM blocks"));
+				$this->theme->display_blocks($database->get_all("SELECT * FROM blocks ORDER BY area, priority"));
 			}
 		}
 	}

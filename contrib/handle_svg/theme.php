@@ -9,7 +9,7 @@ class SVGFileHandlerTheme extends Themelet {
 			    <embed src='$ilink' type='image/svg+xml' width='{$image->width}' height='{$image->height}' />
 			</object>
 		";
-		$page->add_block(new Block("Image", $html, "main", 0));
+		$page->add_block(new Block("Image", $html, "main", 10));
 	}
 }
 ?>
