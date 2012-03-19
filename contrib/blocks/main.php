@@ -48,6 +48,7 @@ class Blocks extends Extension {
 						INSERT INTO blocks (pages, title, area, priority, content)
 						VALUES (?, ?, ?, ?, ?)
 					", array($_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content']));
+					log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("blocks/list"));
 				}
@@ -59,22 +60,15 @@ class Blocks extends Extension {
 							DELETE FROM blocks
 							WHERE id=?
 						", array($_POST['id']));
+						log_info("blocks", "Deleted Block #".$_POST['id']);
 					}
 					else {
 						$database->execute("
 							UPDATE blocks SET pages=?, title=?, area=?, priority=?, content=?
 							WHERE id=?
 						", array($_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content'], $_POST['id']));
+						log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
 					}
-					$page->set_mode("redirect");
-					$page->set_redirect(make_link("blocks/list"));
-				}
-			}
-			else if($event->get_arg(0) == "remove") {
-				if($user->check_auth_token()) {
-					$database->execute("DELETE FROM blocks WHERE id=:id", array("id" => $_POST['id']));
-					log_info("alias_editor", "Deleted Block #".$_POST['id']);
-
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("blocks/list"));
 				}
