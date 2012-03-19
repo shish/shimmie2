@@ -18,10 +18,10 @@
 class Home extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_string("home_links", '[$base/post/list|Posts]
-[$base/comment/list|Comments]
-[$base/tags|Tags]
-[$base/ext_doc|&raquo;]');
+		$config->set_default_string("home_links", '[url=site://post/list]Posts[/url]
+[site://comment/list]Comments[/url]
+[site://tags]Tags[/url]
+[site://ext_doc]>>[/url]');
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -45,8 +45,7 @@ class Home extends Extension {
 		}
 
 		$sb = new SetupBlock("Home Page");
-		$sb->add_bool_option("home_choice", "Use custom page links: ");
-		$sb->add_longtext_option("home_links", '<br>Page Links - Example: [/post/list|Posts]<br>');
+		$sb->add_longtext_option("home_links", 'Page Links (Use BBCode, leave blank for defaults)');
 		$sb->add_longtext_option("home_text", "<br>Page Text:<br>");
 		$sb->add_choice_option("home_counter", $counters, "<br>Counter: ");
 		$event->panel->add_block($sb);
@@ -74,18 +73,16 @@ class Home extends Extension {
 		}
 
 		// get the homelinks and process them
-		if($config->get_bool('home_choice')){
+		if(strlen($config->get_string('home_links', '')) > 0) {
 			$main_links = $config->get_string('home_links');
-		}else{
-			$main_links = '[$base/post/list|Posts] [$base/comment/list|Comments] [$base/tags|Tags]';
-			if(file_exists("ext/pools")){$main_links .= ' [$base/pools|Pools]';}
-			if(file_exists("ext/wiki")){$main_links .= ' [$base/wiki|Wiki]';}
-			$main_links .= ' [$base/ext_doc|&raquo;]';
 		}
-		$main_links = str_replace('$base',	$base_href, 	$main_links);
-		$main_links = preg_replace('#\[(.*?)\|(.*?)\]#', "<a href='\\1'>\\2</a>", $main_links);
-		$main_links = str_replace('//',	"/", $main_links);
-
+		else {
+			$main_links = '[site://post/list]Posts[/url] [site://comment/list]Comments[/url] [site://tags]Tags[/url]';
+			if(file_exists("ext/pools")) {$main_links .= ' [site://pools]Pools[/url]';}
+			if(file_exists("ext/wiki")) {$main_links .= ' [site://wiki]Wiki[/url]';}
+			$main_links .= ' [site://ext_doc]>>[/url]';
+		}
+		$main_links = format_text($main_links);
 		$main_text = $config->get_string('home_text');
 
 		return $this->theme->build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text);
