@@ -241,6 +241,8 @@ class ImageIO extends Extension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
+		global $config;
+
 		$sb = new SetupBlock("Image Options");
 		$sb->position = 30;
 		// advanced only
@@ -251,15 +253,17 @@ class ImageIO extends Extension {
 		if(function_exists("exif_read_data")) {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
-		
-		$expires = array();
-		$expires['1 Minute'] = 60;
-		$expires['1 Hour'] = 3600;
-		$expires['1 Day'] = 86400;
-		$expires['1 Month (31 days)'] = 2678400; //(60*60*24*31)
-		$expires['1 Year'] = 31536000; // 365 days (60*60*24*365)
-		$expires['Never'] = 3153600000;	// 100 years..
-		$sb->add_choice_option("image_expires", $expires, "<br>Image Expiration: ");
+
+		if(!$config->get_bool("nice_urls")) {
+			$expires = array();
+			$expires['1 Minute'] = 60;
+			$expires['1 Hour'] = 3600;
+			$expires['1 Day'] = 86400;
+			$expires['1 Month (31 days)'] = 2678400; //(60*60*24*31)
+			$expires['1 Year'] = 31536000; // 365 days (60*60*24*365)
+			$expires['Never'] = 3153600000;	// 100 years..
+			$sb->add_choice_option("image_expires", $expires, "<br>Image Expiration: ");
+		}
 		
 		$event->panel->add_block($sb);
 
