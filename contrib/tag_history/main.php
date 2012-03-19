@@ -310,7 +310,7 @@ class Tag_History extends Extension {
 				log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 				// all should be ok so we can revert by firing the SetTags event.
 				send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
-				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$id.' ('.$row['tags'].')');
+				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
 			}
 		}
 
