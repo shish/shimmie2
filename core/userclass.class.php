@@ -10,8 +10,11 @@ class UserClass {
 		global $_user_classes;
 
 		$this->name = $name;
-		$this->parent = $parent;
 		$this->abilities = $abilities;
+
+		if(!is_null($parent)) {
+			$this->parent = $_user_classes[$parent];
+		}
 
 		$_user_classes[$name] = $this;
 	}
