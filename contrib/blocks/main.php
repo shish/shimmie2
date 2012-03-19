@@ -4,28 +4,7 @@
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
- * Description: Add HTML to some space
- * Documentation:
- *  Any HTML is allowed
- *  <br>Separate different blocks with a line of 4 dashes
- *  <br>Within each block, some settings can be set.
- *  <br>Example settings
- *  <pre>
- *  Title: some text
- *  Area: main
- *  Priority: 100
- *  Pages: *
- *  
- *  Here is some &lt;b&gt;html&lt;/b&gt;
- *  ----
- *  Title: another block, on the left this time
- *  Priority: 0
- *  Pages: post/view/*
- *  
- *  Area can be "left" or "main" in the default theme
- *  other themes may have more areas. Priority has 0
- *  near the top of the screen and 100 near the bottom
- *  </pre>
+ * Description: Add HTML to some space (News, Ads, etc)
  */
 
 class Blocks extends Extension {
