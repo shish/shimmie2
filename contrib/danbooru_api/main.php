@@ -112,7 +112,7 @@ class DanbooruApi extends Extension {
 			// Now we check if a file was uploaded or a url was provided to transload
 			// Much of this code is borrowed from /ext/upload
 
-			if($config->get_bool("upload_anon") || !$user->is_anonymous())
+			if($user->can("create_image"))
 			{
 				$file = null;
 				$filename = "";

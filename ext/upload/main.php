@@ -50,7 +50,6 @@ class Upload extends Extension {
 		global $config;
 		$config->set_default_int('upload_count', 3);
 		$config->set_default_int('upload_size', '1MB');
-		$config->set_default_bool('upload_anon', false);
 
 		// SHIT: fucking PHP "security" measures -_-;;;
 		$free_num = @disk_free_space(realpath("./images/"));
@@ -67,7 +66,7 @@ class Upload extends Extension {
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user, $page;
-		if($this->can_upload($user)) {
+		if($user->can("create_image")) {
 			if($this->is_full) {
 				$this->theme->display_full($page);
 			}
@@ -93,7 +92,6 @@ class Upload extends Extension {
 		$sb->add_label("<i>PHP Limit = ".ini_get('max_file_uploads')."</i>");
 		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
 		$sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
-		$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
 		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
 		$event->panel->add_block($sb);
 	}
@@ -173,7 +171,7 @@ class Upload extends Extension {
 			}
 		}
 		else if($event->page_matches("upload")) {
-			if(!$this->can_upload($user)) {
+			if(!$user->can("create_image")) {
 				$this->theme->display_permission_denied();
 			}
 			else {
@@ -226,16 +224,6 @@ class Upload extends Extension {
 	}
 
 // do things {{{
-
-	/**
-	 * Check if a given user can upload.
-	 * @param $user The user to check.
-	 * @retval bool
-	 */
-	private function can_upload(User $user) {
-		global $config;
-		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
-	}
 
 	/**
 	 * Returns a descriptive error message for the specified PHP error code.

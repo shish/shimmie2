@@ -10,7 +10,7 @@ class Oekaki extends Extension {
 		global $user, $page;
 
 		if($event->page_matches("oekaki")) {
-			if(!$this->can_upload($user)) {
+			if(!$user->can("create_image")) {
 				$this->theme->display_permission_denied();
 			}
 
@@ -84,14 +84,9 @@ class Oekaki extends Extension {
 	// FIXME: "edit this image" button on existing images?
 	function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user, $page;
-		if($this->can_upload($user)) {
+		if($user->can("create_image")) {
 			$this->theme->display_block($page);
 		}
-	}
-
-	private function can_upload($user) {
-		global $config;
-		return ($config->get_bool("upload_anon") || !$user->is_anonymous());
 	}
 }
 ?>
