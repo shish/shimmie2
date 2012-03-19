@@ -487,6 +487,9 @@ class CommentList extends Extension {
 
 		// all checks passed
 		else {
+			if($user->is_anonymous()) {
+				set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+			}
 			$database->Execute(
 					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
 					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
