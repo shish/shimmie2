@@ -26,7 +26,7 @@ class BlocksTheme extends Themelet {
 			$html .= "<th>Area</th><td><select name='area'><option>left<option>main</select></td>";
 			$html .= "<th>Priority</th><td><input type='text' name='priority' value='50'></td>";
 			$html .= "<th>Pages</th><td><input type='text' name='pages' value='post/list*'></td>";
-			$html .= "<td><input type='submit' value='Add'></td>";
+			$html .= "<td colspan='3'><input type='submit' value='Add'></td>";
 			$html .= "</tr>";
 			$html .= "<tr>";
 			$html .= "<td colspan='11'><textarea rows='5' name='content'></textarea></td>";
