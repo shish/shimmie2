@@ -201,7 +201,7 @@ class ImageIO extends Extension {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
 		}
 		/* In the future, could perhaps allow users to replace images that they own as well... */
-		if ($user->can("replace_image") && $config->get_bool("upload_replace")) {
+		if ($user->can("replace_image")) {
 			$event->add_part($this->theme->get_replace_html($event->image->id));
 		}
 	}

@@ -51,7 +51,6 @@ class Upload extends Extension {
 		$config->set_default_int('upload_count', 3);
 		$config->set_default_int('upload_size', '1MB');
 		$config->set_default_bool('upload_anon', false);
-		$config->set_default_bool('upload_replace', true);
 
 		// SHIT: fucking PHP "security" measures -_-;;;
 		$free_num = @disk_free_space(realpath("./images/"));
@@ -95,7 +94,6 @@ class Upload extends Extension {
 		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
 		$sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
 		$sb->add_bool_option("upload_anon", "<br/>Allow anonymous uploads: ");
-		$sb->add_bool_option("upload_replace", "<br/>Allow replacing images: ");
 		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
 		$event->panel->add_block($sb);
 	}
@@ -116,11 +114,6 @@ class Upload extends Extension {
 		global $config, $page, $user;
 
 		if($event->page_matches("upload/replace")) {
-			/* Upload & Replace Image Request */
-			if(!$config->get_bool("upload_replace")) {
-				throw new UploadException("Upload Replacing Images is not enabled.");
-			}
-			
 			// check if the user is an administrator and can upload files.
 			if(!$user->can("replace_image")) {
 				$this->theme->display_permission_denied();
