@@ -105,7 +105,7 @@ class AdminPage extends Extension {
 		$query = $_POST['query'];
 		assert(strlen($query) > 1);
 
-		log_warning("Mass deleting: $query");
+		log_warning("admin", "Mass deleting: $query");
 		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
 			send_event(new ImageDeletionEvent($image));
 		}

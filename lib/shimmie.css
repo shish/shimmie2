@@ -15,3 +15,4 @@ TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%;}
 *[onclick],H3[class~="shm-toggler"] {cursor: pointer;}
 IMG {border: none;}
 FORM {margin: 0px;}
+IMG.lazy {display: none;}
