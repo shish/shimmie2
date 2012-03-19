@@ -54,6 +54,7 @@ new UserClass("base", null, array(
 	"edit_user_info" => False,  # email address, etc
 	"delete_user" => False,
 
+	"create_comment" => False,
 	"delete_comment" => False,
 
 	"replace_image" => False,
@@ -76,6 +77,7 @@ new UserClass("anonymous", "base", array(
 new UserClass("user", "base", array(
 	"big_search" => True,
 	"create_image" => True,
+	"create_comment" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"create_image_report" => True,
@@ -93,6 +95,7 @@ new UserClass("admin", "base", array(
 	"delete_user" => True,
 	"create_image" => True,
 	"delete_image" => True,
+	"create_comment" => True,
 	"delete_comment" => True,
 	"replace_image" => True,
 	"manage_extension_list" => True,

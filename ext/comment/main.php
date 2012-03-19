@@ -63,7 +63,6 @@ class Comment {
 class CommentList extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
-		$config->set_default_bool('comment_anon', true);
 		$config->set_default_int('comment_window', 5);
 		$config->set_default_int('comment_limit', 10);
 		$config->set_default_int('comment_list_count', 10);
@@ -187,10 +186,11 @@ class CommentList extends Extension {
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
+		global $user;
 		$this->theme->display_image_comments(
 			$event->image,
 			$this->get_comments($event->image->id),
-			$this->can_comment()
+			$user->can("create_comment")
 		);
 	}
 
@@ -207,8 +207,7 @@ class CommentList extends Extension {
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Comment Options");
-		$sb->add_bool_option("comment_anon", "Allow anonymous comments: ");
-		$sb->add_bool_option("comment_captcha", "<br>Require CAPTCHA for anonymous comments: ");
+		$sb->add_bool_option("comment_captcha", "Require CAPTCHA for anonymous comments: ");
 		$sb->add_label("<br>Limit to ");
 		$sb->add_int_option("comment_limit");
 		$sb->add_label(" comments per ");
@@ -250,12 +249,9 @@ class CommentList extends Extension {
 
 // page building {{{
 	private function build_page(/*int*/ $current_page) {
-		global $page;
-		global $config;
-		global $database;
+		global $page, $config, $database, $user;
 
 		if(class_exists("Ratings")) {
-			global $user;
 			$user_ratings = Ratings::get_user_privs($user);
 		}
 
@@ -294,7 +290,7 @@ class CommentList extends Extension {
 			if(!is_null($image)) $images[] = array($image, $comments);
 		}
 
-		$this->theme->display_comment_list($images, $current_page, $total_pages, $this->can_comment());
+		$this->theme->display_comment_list($images, $current_page, $total_pages, $user->can("create_comment"));
 	}
 // }}}
 // get comments {{{
@@ -439,12 +435,6 @@ class CommentList extends Extension {
 		return false;
 	}
 
-	private function can_comment() {
-		global $config;
-		global $user;
-		return ($config->get_bool('comment_anon') || !$user->is_anonymous());
-	}
-
 	private function is_dupe(/*int*/ $image_id, /*string*/ $comment) {
 		global $database;
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
@@ -455,7 +445,7 @@ class CommentList extends Extension {
 		global $config;
 
 		// basic sanity checks
-		if(!$config->get_bool('comment_anon') && $user->is_anonymous()) {
+		if(!$user->can("create_comment")) {
 			throw new CommentPostingException("Anonymous posting has been disabled");
 		}
 		else if(is_null(Image::by_id($image_id))) {
