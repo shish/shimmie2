@@ -85,6 +85,20 @@ class TagEdit extends Extension {
 					$page->set_redirect(make_link("admin"));
 				}
 			}
+			if($event->get_arg(0) == "mass_source_set") {
+				if($user->can("mass_tag_edit") && isset($_POST['tags']) && isset($_POST['source'])) {
+					$this->mass_source_edit($_POST['tags'], $_POST['source']);
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("post/list"));
+				}
+			}
+		}
+	}
+
+	public function onPostListBuilding(PostListBuildingEvent $event) {
+		global $user;
+		if($user->is_admin() && !empty($event->search_terms)) {
+			$this->theme->display_mss(implode(" ", $event->search_terms));
 		}
 	}
 
@@ -201,6 +215,30 @@ class TagEdit extends Extension {
 
 				$image->set_tags($after);
 
+				$last_id = $image->id;
+			}
+		}
+	}
+
+	private function mass_source_edit($tags, $source) {
+		global $database;
+		global $config;
+
+		$tags = Tag::explode($tags);
+
+		$last_id = -1;
+		while(true) {
+			// make sure we don't look at the same images twice.
+			// search returns high-ids first, so we want to look
+			// at images with lower IDs than the previous.
+			$search_forward = $tags;
+			if($last_id >= 0) $search_forward[] = "id<$last_id";
+
+			$images = Image::find_images(0, 100, $search_forward);
+			if(count($images) == 0) break;
+
+			foreach($images as $image) {
+				$image->set_source($source);
 				$last_id = $image->id;
 			}
 		}

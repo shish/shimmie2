@@ -19,6 +19,20 @@ class TagEditTheme extends Themelet {
 		$page->add_block(new Block("Mass Tag Edit", $html));
 	}
 
+	public function display_mss($terms) {
+		global $page;
+
+		$h_terms = html_escape($terms);
+
+		$html = make_form(make_link("tag_edit/mass_source_set"), "POST") . "
+				<input type='hidden' name='tags' value='$h_terms'>
+				<input type='text' name='source' value=''>
+				<input type='submit' value='Set Source For All'>
+			</form>
+		";
+		$page->add_block(new Block("List Controls", $html, "left"));
+	}
+
 	public function get_tag_editor_html(Image $image) {
 		global $user;
 		$h_tags = html_escape($image->get_tag_list());
