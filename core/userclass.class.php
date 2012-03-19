@@ -7,9 +7,13 @@ class UserClass {
 	var $abilities = array();
 
 	public function __construct($name, $parent=null, $abilities=array()) {
+		global $_user_classes;
+
 		$this->name = $name;
 		$this->parent = $parent;
 		$this->abilities = $abilities;
+
+		$_user_classes[$name] = $this;
 	}
 
 	public function can(/*string*/ $ability) {
@@ -17,8 +21,7 @@ class UserClass {
 
 		if(array_key_exists($ability, $this->abilities)) {
 			$val = $this->abilities[$ability];
-			if(is_bool($val)) return $val;
-			else return $config->get_bool($val, false);
+			return $val;
 		}
 		else if(!is_null($this->parent)) {
 			return $this->parent->can($ability);
@@ -32,7 +35,7 @@ class UserClass {
 // action_object_attribute
 // action = create / view / edit / delete
 // object = image / user / tag / setting
-$_user_class_base = new UserClass("base", null, array(
+new UserClass("base", null, array(
 	"change_setting" => False,  # modify web-level settings, eg the config table
 	"override_config" => False, # modify sys-level settings, eg config.php
 	"big_search" => False,      # search for more than 3 tags at once (speed mode only)
@@ -62,18 +65,21 @@ $_user_class_base = new UserClass("base", null, array(
 
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
-$_user_classes["anonymous"] = new UserClass("anonymous", $_user_class_base, array(
-	"edit_image_tag" => "tag_edit_anon",
-	"edit_image_source" => "source_edit_anon",
-	"create_image_report" => "create_image_report_anon",
+
+new UserClass("anonymous", "base", array(
+	"edit_image_tag" => True,
+	"edit_image_source" => True,
+	"create_image_report" => True,
 ));
-$_user_classes["user"] = new UserClass("user", $_user_class_base, array(
+
+new UserClass("user", "base", array(
 	"big_search" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"create_image_report" => True,
 ));
-$_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
+
+new UserClass("admin", "base", array(
 	"change_setting" => True,
 	"override_config" => True,
 	"big_search" => True,
@@ -97,10 +103,7 @@ $_user_classes["admin"] = new UserClass("admin", $_user_class_base, array(
 	"protected" => True,
 ));
 
-foreach(unserialize(EXTRA_USER_CLASSES) as $class_info) {
-	$name = $class_info[0];
-	$base = $_user_classes[$class_info[1]];
-	$abilities = $class_info[2];
-	$_user_classes[$name] = new UserClass($name, $base, $abilities);
+if(file_exists("data/config/user-classes.conf.php")) {
+	require_once("data/config/user-classes.conf.php");
 }
 ?>
