@@ -32,7 +32,6 @@ class AddReportedImageEvent extends Event {
 class ReportImage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_bool('report_image_show_thumbs', true);
 
 		if($config->get_int("ext_report_image_version") < 1) {
 			$this->install();
@@ -86,13 +85,6 @@ class ReportImage extends Extension {
 			$reps = $this->get_reporters($event->image);
 			$this->theme->display_image_banner($event->image, $reps);
 		}
-	}
-
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Report Image Options");
-		$sb->add_bool_option("report_image_anon", "Allow anonymous image reporting: ");
-		$sb->add_bool_option("report_image_show_thumbs", "<br>Show thumbnails in admin panel: ");
-		$event->panel->add_block($sb);
 	}
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
