@@ -10,7 +10,7 @@
 class Mail extends Extension {	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Mailing Options");
-		$sb->add_text_option("mail_sub", "<br>Subject prefix: ");
+		$sb->add_text_option("mail_sub", "Subject prefix: ");
 		$sb->add_text_option("mail_img", "<br>Banner Image URL: ");
 		$sb->add_text_option("mail_style", "<br>Style URL: ");
 		$sb->add_longtext_option("mail_fot", "<br>Footer (Use HTML)");
