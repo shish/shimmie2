@@ -245,222 +245,46 @@ class Page {
 		# 404/static handler will map these to themes/foo/bar.ico or lib/static/bar.ico
 		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>");
 		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>");
-		
-		/* Attempt to cache the CSS & JavaScript files */
-		if ($this->add_cached_auto_html_headers() === FALSE) {
-			// caching failed, add all files to html_headers.
-			
-			foreach(glob("lib/*.css") as $css) {
-				$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css).'" type="text/css">');
-			}
-			$css_files = glob("ext/*/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css_file).'" type="text/css">');
-				}
-			}
-			$css_files = glob("themes/$theme_name/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.mtimefile($css_file).'" type="text/css">');
-				}
-			}
-			
-			foreach(glob("lib/*.js") as $js) {
-				$this->add_html_header('<script src="'.mtimefile($js).'" type="text/javascript"></script>');
-			}
-			$js_files = glob("ext/*/script.js");
-			if($js_files) {
-				foreach($js_files as $js_file) {
-					$this->add_html_header('<script src="'.mtimefile($js_file).'" type="text/javascript"></script>');
-				}
-			}
-		}
-	}
 
-	/**
-	 * Automatic caching of CSS and Javascript files
-	 *
-	 * Allows site admins to have Shimmie automatically cache and minify all CSS and JS files.
-	 * This is done to reduce the number of HTTP requests (recommended by the Yahoo high-performance
-	 * guidelines). It combines all of the CSS and JavaScript files into one for each type, and
-	 * stores them in cached files to serve the client. Changes to the CSS or JavaScript files are
-	 * caught by taking the md5sum of the concatenated files.
-	 *
-	 * Note: This can be somewhat problematic, as it edits the links to your CSS files (as well
-	 * as the links to images inside them).
-	 * Also, the directory cache directory needs to be writeable by the php/webserver user.
-	 * PLEASE: Ensure that you test your site out throughly after enabling this module!
-	 * Either that, or don't use this module unless you are sure of what it is doing.
-	 *
-	 * TODO: Add support for minify-ing CSS and Javascript files. (similar to Minify. See: http://code.google.com/p/minify/ or https://github.com/mrclay/minify)
-	 * TODO: For performance reasons: Before performing the regex's, compute the md5 of the CSS & JS files and store somewhere to check later.
-	 *
-	 * @return
-	 *	This function returns FALSE if it failed to cache the files,
-	 *	and returns TRUE if it was successful.
-	 */
-	private function add_cached_auto_html_headers() {
-		global $config;
-		
-		// store local copy for speed.
-		$autocache_css = $config->get_bool("autocache_css");
-		$autocache_js  = $config->get_bool("autocache_js");
-		$theme_name = $config->get_string('theme', 'default');
-		
-		if (!$autocache_css && !$autocache_js) {
-			return false;	// caching disabled
+		if(!file_exists("data/cache")) {
+			mkdir("data/cache");
 		}
 		
-		$cache_location = $config->get_string("autocache_location", 'data/cache');
-		// Detect is there is a trailing slash, and add one if not.
-		$cache_location = ((strrpos($cache_location, '/') + 1) == strlen($cache_location)) ? $cache_location : $cache_location.'/'; 
-
-		// Create directory if needed.
-		if(!file_exists($cache_location)) {
-			if (!mkdir($cache_location, 0750, true)) {
-				return false; // failed to create directory
-			}
+		$css_files = array();
+		$css_latest = 0;
+		foreach(array_merge(zglob("lib/*.css"), zglob("ext/*/style.css"), zglob("themes/$theme_name/style.css")) as $css) {
+			$css_files[] = $css;
+			$css_latest = max($css_latest, filemtime($css));
 		}
-
-		$data_href = get_base_href();
-
-		/* ----- CSS Files ----- */
-		if($autocache_css) {
-			// First get all the CSS from the lib directory
-			$contents_from_lib = '';
-			$css_files = glob("lib/*.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$contents_from_lib .= file_get_contents($css_file);
-				}
-				//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
-				//	We have to adjust the URLs accordingly before saving the cached file.
+		$css_cache_file = "data/cache/style.$css_latest.css";
+		if(!file_exists($css_cache_file)) {
+			$css_data = "";
+			foreach($css_files as $file) {
+				$file_data = file_get_contents($file);
 				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../lib/${1}")';
-				$contents_from_lib = preg_replace($pattern, $replace, $contents_from_lib);
+				$replace = 'url("../../'.dirname($file).'/$1")';
+				$file_data = preg_replace($pattern, $replace, $file_data);
+				$css_data .= $file_data . "\n";
 			}
-			// Next get all the CSS from the extensions
-			$contents_from_extensions = '';
-			$css_files = glob("ext/*/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$contents_from_extensions .= file_get_contents($css_file);
-				}
-				//	Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
-				//	We have to adjust the URLs accordingly before saving the cached file.
-				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../${1}")';
-				$contents_from_extensions = preg_replace($pattern, $replace, $contents_from_extensions);
-			}
-			// Get CSS from theme
-			$contents_from_theme = '';
-			$css_files = glob("themes/$theme_name/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$contents_from_theme .= file_get_contents($css_file);
-				}
-				//      Can't directly cache the CSS files, as they might have relative locations to images, etc. in them.
-				//      We have to adjust the URLs accordingly before saving the cached file.
-				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../${1}")';
-				$contents_from_theme = preg_replace($pattern, $replace, $contents_from_theme);
-			}
-			// Combine the three
-			$data = $contents_from_lib .' '. $contents_from_extensions .' '. $contents_from_theme;
-			
-			// Minify the CSS if enabled.
-			if($config->get_bool("autocache_min_css")) {
-				// not supported yet.
-				// TODO: add support for Minifying CSS files.
-			}
+			file_put_contents($css_cache_file, $css_data)
+		}
+		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>");
 
-			// compute the MD5 sum of the concatenated CSS files
-			$md5sum = md5($data);
-			
-			if(!file_exists($cache_location.$md5sum.'.css')) {
-				// remove any old cached CSS files.
-				$mask = '*.css';
-				array_map( 'unlink', glob( $mask ) );
-			
-				// output the combined file
-				if(file_put_contents($cache_location.$md5sum.'.css', $data, LOCK_EX) === FALSE) {
-					return false; // failed to write the file
-				}
-			}
-			// tell the client where to get the css cache file
-			$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$cache_location.$md5sum.'.css" type="text/css">');
+		$js_files = array();
+		$js_latest = 0;
+		foreach(array_merge(zglob("lib/*.js"), zglob("ext/*/style.js"), zglob("themes/$theme_name/style.js")) as $js) {
+			$js_files[] = $js;
+			$js_latest = max($js_latest, filemtime($js));
 		}
-		else {
-			// Caching of CSS disabled.
-			foreach(glob("lib/*.css") as $css) {
-				$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css.'" type="text/css">');
+		$js_cache_file = "data/cache/style.$js_latest.js";
+		if(!file_exists($js_cache_file)) {
+			$js_data = "";
+			foreach($js_files as $file) {
+				$js_data .= file_get_contents($file) . "\n";
 			}
-			$css_files = glob("ext/*/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
-				}
-			}
-			$css_files = glob("themes/$theme_name/style.css");
-			if($css_files) {
-				foreach($css_files as $css_file) {
-					$this->add_html_header('<link rel="stylesheet" href="'.$data_href.'/'.$css_file.'" type="text/css">');
-				}
-			}
+			file_put_contents($js_cache_file, $js_data)
 		}
-		
-		
-		/* ----- JavaScript Files ----- */
-		if($autocache_js) {
-			$data = '';
-			$js_files = glob("lib/*.js");
-			if($js_files) {
-				foreach($js_files as $js_file) {
-					$data .= file_get_contents($js_file);
-				}
-			}
-			$js_files = glob("ext/*/script.js");
-			if($js_files) {
-				foreach($js_files as $js_file) {
-					$data .= file_get_contents($js_file);
-				}
-			}
-			// Minify the JS if enabled.
-			if ($config->get_bool("autocache_min_js")){
-				// not supported yet.
-				// TODO: add support for Minifying JS files.
-			}
-			
-			// compute the MD5 sum of the concatenated JavaScript files
-			$md5sum = md5($data);
-			
-			if (!file_exists($cache_location.$md5sum.'.js')) {
-				// remove any old cached js files.
-				$mask = '*.js';
-				array_map( 'unlink', glob( $mask ) );
-				// output the combined file
-				if (file_put_contents($cache_location.$md5sum.'.js', $data, LOCK_EX) === FALSE) {
-					return false;
-				}
-			}
-			// tell the client where to get the js cache file
-			$this->add_html_header('<script src="'.$data_href.'/'.$cache_location.$md5sum.'.js" type="text/javascript"></script>');
-		}
-		else {
-			// Caching of Javascript disabled.
-			foreach(glob("lib/*.js") as $js) {
-				$this->add_html_header('<script src="'.$data_href.'/'.$js.'" type="text/javascript"></script>');
-			}
-			$js_files = glob("ext/*/script.js");
-			if($js_files) {
-				foreach($js_files as $js_file) {
-					$this->add_html_header('<script src="'.$data_href.'/'.$js_file.'" type="text/javascript"></script>');
-				}
-			}
-		}
-		
-		return true;
+		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>");
 	}
 }
 ?>

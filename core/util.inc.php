@@ -361,6 +361,11 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+function zglob($pattern) {
+	$r = glob($pattern);
+	if($r) return $r;
+	else return array();
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
