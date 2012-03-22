@@ -14,7 +14,7 @@ $(function() {
 function select_blocked_tags() {
 	var blocked_tags = prompt("Enter tags to ignore", $.cookie("blocked-tags") || "My_Little_Pony");
 	if(blocked_tags) {
-		$.cookie("blocked-tags", blocked_tags.toLowerCase(), {path: '/'});
+		$.cookie("blocked-tags", blocked_tags.toLowerCase(), {path: '/', expires: 365});
 		location.reload(true);
 	}
 }
