@@ -4,9 +4,11 @@ $(function() {
 		var tag = blocked_tags[i];
 		if(tag) $(".thumb[data-tags~='"+tag+"']").hide();
 	}
-	// FIXME: need to trigger a reflow in opera, because opera implements
+	// need to trigger a reflow in opera, because opera implements
 	// text-align: justify with element margins and doesn't recalculate
 	// these margins when part of the line disappears...
+	$('#image-list').hide();
+	$('#image-list').show();
 });
 
 function select_blocked_tags() {
