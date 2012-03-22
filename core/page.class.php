@@ -272,7 +272,7 @@ class Page {
 
 		$js_files = array();
 		$js_latest = 0;
-		foreach(array_merge(zglob("lib/*.js"), zglob("ext/*/style.js"), zglob("themes/$theme_name/style.js")) as $js) {
+		foreach(array_merge(zglob("lib/*.js"), zglob("ext/*/script.js"), zglob("themes/$theme_name/script.js")) as $js) {
 			$js_files[] = $js;
 			$js_latest = max($js_latest, filemtime($js));
 		}
