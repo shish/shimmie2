@@ -266,7 +266,7 @@ class Page {
 				$file_data = preg_replace($pattern, $replace, $file_data);
 				$css_data .= $file_data . "\n";
 			}
-			file_put_contents($css_cache_file, $css_data)
+			file_put_contents($css_cache_file, $css_data);
 		}
 		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>");
 
@@ -276,13 +276,13 @@ class Page {
 			$js_files[] = $js;
 			$js_latest = max($js_latest, filemtime($js));
 		}
-		$js_cache_file = "data/cache/style.$js_latest.js";
+		$js_cache_file = "data/cache/script.$js_latest.js";
 		if(!file_exists($js_cache_file)) {
 			$js_data = "";
 			foreach($js_files as $file) {
 				$js_data .= file_get_contents($file) . "\n";
 			}
-			file_put_contents($js_cache_file, $js_data)
+			file_put_contents($js_cache_file, $js_data);
 		}
 		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>");
 	}
