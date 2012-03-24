@@ -11,7 +11,6 @@ $(function() {
 	});
 
 	if($.cookie("ui-image-zoom")) {
-		$("#zoomer").val($.cookie("ui-image-zoom"));
 		zoom($.cookie("ui-image-zoom"));
 	}
 });
@@ -34,5 +33,8 @@ function zoom(zoom) {
 		img.css('max-width', '95%');
 		img.css('max-height', (window.innerHeight * 0.95) + 'px');
 	}
+
+	$("#zoomer").val(zoom);
+
 	$.cookie("ui-image-zoom", zoom, {path: '/', expires: 365});
 }
