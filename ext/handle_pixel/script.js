@@ -5,6 +5,7 @@ $(function() {
 	});
 
 	if($.cookie("ui-image-zoom")) {
+		$("#zoomer").val($.cookie("ui-image-zoom"));
 		zoom($.cookie("ui-image-zoom"));
 	}
 });
