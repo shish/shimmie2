@@ -1,5 +1,5 @@
 $(function() {
-	var blocked_tags = ($.cookie("blocked-tags") || "").split(" ");
+	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
 	var needs_refresh = false;
 	for(i in blocked_tags) {
 		var tag = blocked_tags[i];
@@ -18,9 +18,9 @@ $(function() {
 });
 
 function select_blocked_tags() {
-	var blocked_tags = prompt("Enter tags to ignore", $.cookie("blocked-tags") || "My_Little_Pony");
+	var blocked_tags = prompt("Enter tags to ignore", $.cookie("ui-blocked-tags") || "My_Little_Pony");
 	if(blocked_tags) {
-		$.cookie("blocked-tags", blocked_tags.toLowerCase(), {path: '/', expires: 365});
+		$.cookie("ui-blocked-tags", blocked_tags.toLowerCase(), {path: '/', expires: 365});
 		location.reload(true);
 	}
 }
