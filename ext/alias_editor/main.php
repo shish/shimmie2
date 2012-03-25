@@ -122,7 +122,7 @@ class AliasEditor extends Extension {
 
 	private function get_alias_csv(Database $database) {
 		$csv = "";
-		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases");
+		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
 		foreach($aliases as $old => $new) {
 			$csv .= "$old,$new\n";
 		}
