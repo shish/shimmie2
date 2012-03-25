@@ -298,11 +298,6 @@ class ImageIO extends Extension {
 		if(strlen(trim($image->source)) == 0) {
 			$image->source = null;
 		}
-		if(!empty($image->source)) {
-			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
-				throw new ImageAdditionException("Image's source isn't a valid URL");
-			}
-		}
 
 		/*
 		 * Check for an existing image
@@ -430,12 +425,6 @@ class ImageIO extends Extension {
 		
 		if(strlen(trim($image->source)) == 0) {
 			$image->source = $existing->get_source();
-		}
-		if(!empty($image->source)) {
-			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
-				$h_url = html_escape($image->source);
-				throw new ImageReplaceException("Image's source isn't a valid URL ($h_url)");
-			}
 		}
 		
 		/*
