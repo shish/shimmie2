@@ -97,11 +97,10 @@ class NumericScore extends Extension {
 				$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
 
 				$database->execute(
-						"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN ?",
-						array($user_id, $image_ids));
+						"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
+						array($user_id));
 				$database->execute(
-						"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN ?",
-						array($image_ids));
+						"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN (".implode(",", $image_ids).")");
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
