@@ -433,7 +433,8 @@ class ImageIO extends Extension {
 		}
 		if(!empty($image->source)) {
 			if(!preg_match("#^(https?|ftp)://#", $image->source)) {
-				throw new ImageReplaceException("Image's source isn't a valid URL");
+				$h_url = html_escape($image->source);
+				throw new ImageReplaceException("Image's source isn't a valid URL ($h_url)");
 			}
 		}
 		
