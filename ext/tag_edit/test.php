@@ -45,11 +45,23 @@ class TagEditTest extends ShimmieWebTestCase {
 
 	function testMassEdit() {
 		$this->log_in_as_admin();
+
+		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$this->get_page("post/view/$image_id");
+		$this->assert_title("Image $image_id: pbx");
+
 		$this->get_page("admin");
 		$this->assert_text("Mass Tag Edit"); // just test it exists
-		$this->log_out();
+		$this->set_field("search", "pbx");
+		$this->set_field("replace", "pox");
+		$this->click("Set");
 
-		# FIXME: test mass tag editor
+		$this->get_page("post/view/$image_id");
+		$this->assert_title("Image $image_id: pox");
+
+		$this->delete_image($image_id);
+
+		$this->log_out();
 	}
 }
 ?>
