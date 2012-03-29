@@ -187,6 +187,8 @@ class TagEdit extends Extension {
 		$search_set = Tag::explode($search);
 		$replace_set = Tag::explode($replace);
 
+		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
+
 		$last_id = -1;
 		while(true) {
 			// make sure we don't look at the same images twice.
