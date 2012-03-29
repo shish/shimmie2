@@ -195,8 +195,17 @@ class NumericScore extends Extension {
 		$database->execute(
 				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
 				array($user_id));
-		$database->execute(
-				"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN (".implode(",", $image_ids).")");
+		$database->execute("
+				UPDATE images
+				SET numeric_score=COALESCE(
+					(
+						SELECT SUM(score)
+						FROM numeric_score_votes
+						WHERE image_id=images.id
+					),
+					0
+				)
+				WHERE images.id IN (".implode(",", $image_ids).")");
 	}
 
 	// FIXME: on user deletion
