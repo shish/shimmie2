@@ -273,7 +273,7 @@ class Database {
 
 	/**
 	 * Create a new database object using connection info
-	 * stored in config.php in the root shimmie folder
+	 * stored in the config file
 	 */
 	public function Database() {
 		# FIXME: detect ADODB URI, automatically translate PDO DSN

@@ -103,7 +103,7 @@ class Update extends Extension {
 					reset($objects);
 					$html .= "<br>data folder emptied!";
 				}
-				copy ("./config.php", "./backup/config.php");//Although this stays the same, will keep backup just incase.
+				copy ("./data/config/shimmie.conf.php", "./backup/shimmie.conf.php");//Although this stays the same, will keep backup just incase.
 				$folders = array("./core", "./lib", "./themes", "./.htaccess", "./doxygen.conf", "./index.php", "./install.php", "./ext", "./contrib");
 				foreach($folders as $folder){
 					//TODO: Check MD5 of each file, don't rename if same.

@@ -42,6 +42,8 @@ Installation
 
 Upgrade from 2.3.X
 ~~~~~~~~~~~~~~~~~~
+config.php has been moved from /config.php to /data/config/shimmie.conf.php
+
 The database connection setting in config.php has changed; now using
 PDO DSN format rather than ADODB URI:
 

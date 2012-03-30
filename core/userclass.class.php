@@ -40,7 +40,7 @@ class UserClass {
 // object = image / user / tag / setting
 new UserClass("base", null, array(
 	"change_setting" => False,  # modify web-level settings, eg the config table
-	"override_config" => False, # modify sys-level settings, eg config.php
+	"override_config" => False, # modify sys-level settings, eg shimmie.conf.php
 	"big_search" => False,      # search for more than 3 tags at once (speed mode only)
 
 	"manage_extension_list" => False,
