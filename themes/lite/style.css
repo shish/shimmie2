@@ -70,7 +70,7 @@ a.tab:hover, a.tab:active, .tab-selected {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 }
-.highlighted {
+.lazy{
 	background:none repeat scroll 0 0 #CEDFF0;
 	padding:4px;
 	border:1px solid #C3D2E0;

@@ -6,28 +6,26 @@ class Themelet extends BaseThemelet {
 	 */
 	public function build_thumb_html(Image $image, $query=null) {
 		global $config;
-		$i_id = int_escape($image->id);
-		$h_view_link = make_link("post/view/$i_id", $query);
+		$i_id = (int) $image->id;
+		$h_view_link = make_link('post/view/'.$i_id, $query);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
+		$h_tags = strtolower($image->get_tag_list());
+		$base = get_base_href();
 
 		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext == 'swf' || $image->ext == 'svg') {
+		if($image->ext === 'swf' || $image->ext === 'svg'){
 			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
 		}
-		else {
+		else{
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return "
-			<center><div class='thumbblock'>
-			
-				<a href='$h_view_link' style='position: relative; display: block; height: {$tsize[1]}px; width: {$tsize[0]}px;'>
-					<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' class='highlighted' style='height: {$tsize[1]}px; width: {$tsize[0]}px;' src='$h_thumb_link'>
-				</a>
-			
-			</div></center>
-		";
+		return '<center><div class="thumbblock">'.
+		       '<a href="'.$h_view_link.'" class="thumb" data-tags="'.$h_tags.'">'.
+		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" class="lazy" data-original="'.$h_thumb_link.'" src="'.$base.'/lib/static/grey.gif">'.
+		       '<noscript><img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'"></noscript>'.
+			   "</a></div></center>\n";
 	}
 
 
