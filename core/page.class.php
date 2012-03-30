@@ -246,17 +246,13 @@ class Page {
 		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>");
 		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>");
 
-		if(!file_exists("data/cache")) {
-			mkdir("data/cache");
-		}
-		
 		$css_files = array();
 		$css_latest = 0;
 		foreach(array_merge(zglob("lib/*.css"), zglob("ext/*/style.css"), zglob("themes/$theme_name/style.css")) as $css) {
 			$css_files[] = $css;
 			$css_latest = max($css_latest, filemtime($css));
 		}
-		$css_cache_file = "data/cache/style.$css_latest.css";
+		$css_cache_file = data_path("cache/style.$css_latest.css");
 		if(!file_exists($css_cache_file)) {
 			$css_data = "";
 			foreach($css_files as $file) {
@@ -276,7 +272,7 @@ class Page {
 			$js_files[] = $js;
 			$js_latest = max($js_latest, filemtime($js));
 		}
-		$js_cache_file = "data/cache/script.$js_latest.js";
+		$js_cache_file = data_path("cache/script.$js_latest.js");
 		if(!file_exists($js_cache_file)) {
 			$js_data = "";
 			foreach($js_files as $file) {

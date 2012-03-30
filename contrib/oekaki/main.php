@@ -24,12 +24,10 @@ class Oekaki extends Extension {
 				if(isset($_FILES["picture"])) {
 					header('Content-type: text/plain');
 
-					$uploaddir = './data/oekaki_unclaimed/';
-					if(!file_exists($uploaddir)) mkdir($uploaddir, 0755, true);
 					$file = $_FILES['picture']['name'];
 					$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
 					$uploadname = $_SERVER['REMOTE_ADDR'] . "." . time();
-					$uploadfile = $uploaddir . $uploadname;
+					$uploadfile = data_path('oekaki_unclaimed/'.$uploadname);
 
 					log_info("oekaki", "Uploading file [$uploadname]");
 
@@ -53,7 +51,7 @@ class Oekaki extends Extension {
 				// FIXME: move .chi to data/oekaki/$ha/$hash mirroring images and thumbs
 				// FIXME: .chi viewer?
 				// FIXME: clean out old unclaimed images?
-				$pattern = './data/oekaki_unclaimed/' . $_SERVER['REMOTE_ADDR'] . ".*.png";
+				$pattern = data_path('oekaki_unclaimed/' . $_SERVER['REMOTE_ADDR'] . ".*.png");
 				foreach(glob($pattern) as $tmpname) {
 					assert(file_exists($tmpname));
 

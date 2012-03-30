@@ -91,7 +91,7 @@ class Update extends Extension {
 				$commit = $matches[2];
 				mkdir("./backup");
 				$html .= "<br>backup folder created!";
-				$d_dir = "data/cache";
+				$d_dir = data_path("cache");
 				//This should empty the /data/cache/ folder.
 				if (is_dir($d_dir)) {
 					$objects = scandir($d_dir);
