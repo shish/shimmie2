@@ -1030,8 +1030,8 @@ function _load_extensions() {
 
 	ctx_log_start("Loading extensions");
 
-	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
-		require_once("data/event_listeners.php");
+	if(COMPILE_ELS && file_exists("data/cache/event_listeners.php")) {
+		require_once("data/cache/event_listeners.php");
 	}
 	else {
 		foreach(get_declared_classes() as $class) {
@@ -1075,7 +1075,10 @@ function _load_extensions() {
 			$p .= ");\n";
 
 			$p .= "?".">";
-			file_put_contents("data/event_listeners.php", $p);
+			if(!file_exists("data/cache")) {
+				mkdir("data/cache", 755, true);
+			}
+			file_put_contents("data/cache/event_listeners.php", $p);
 		}
 	}
 
