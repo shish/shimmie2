@@ -111,6 +111,3 @@ someone else, you have to give them the source (which should be easy, as PHP
 is an interpreted language...). If you want to add customisations to your own
 site, then those customisations belong to you, and you can do what you want
 with them.
-
-
-
