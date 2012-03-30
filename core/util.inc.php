@@ -647,7 +647,7 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 
 function data_path($filename) {
 	$filename = "data/" . $filename;
-	if($create && !file_exists(dirname($filename))) mkdir(dirname($filename), 0755, true);
+	if(!file_exists(dirname($filename))) mkdir(dirname($filename), 0755, true);
 	return $filename;
 }
 
