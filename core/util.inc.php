@@ -884,9 +884,10 @@ $_event_listeners = array();
  */
 function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 	global $_event_listeners;
+	$pos *= 100;
 	foreach($events as $event) {
 		while(isset($_event_listeners[$event][$pos])) {
-			$pos++;
+			$pos += 1;
 		}
 		$_event_listeners[$event][$pos] = $extension;
 	}
