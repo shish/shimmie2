@@ -1,11 +1,7 @@
-.svn
 backup
 data
 images
-imgdump-*.zip
 thumbs
-sql.log
-shimmie.log
 !lib/images
 ext/admin
 ext/amazon_s3
