@@ -1,10 +1,14 @@
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
+	var themecheck = $(".thumb[data-tags~='tagme']").parent().attr('class');
 	var needs_refresh = false;
 	for(i in blocked_tags) {
 		var tag = blocked_tags[i];
 		if(tag) {
 			$(".thumb[data-tags~='"+tag+"']").hide();
+			if(themecheck == "thumbblock") {
+				$(".thumb[data-tags~='tagme']").parent().height(0); //required for lite theme
+			}
 			needs_refresh = true;
 		}
 	}
