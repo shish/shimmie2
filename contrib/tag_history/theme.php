@@ -28,12 +28,12 @@ class Tag_HistoryTheme extends Themelet {
 
 			$selected = ($n == 2) ? " checked" : "";
 
-			$current_tags = explode(" ", $current_tags);
+			$current_tags = Tag::explode($current_tags);
 			$taglinks = array();
 			foreach($current_tags as $tag){
 				$taglinks[] = "<a href='".make_link("post/list/".$tag."/1")."'>".$tag."</a>";
 			}
-			$current_tags = implode(" ", $taglinks);
+			$current_tags = Tag::implode($taglinks);
 
 			$history_list .= "
 				<li>
