@@ -44,7 +44,7 @@ class LogDatabase extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $user;
 		if($event->page_matches("log/view")) {
-			if($user->is_admin()) {
+			if($user->can("view_eventlog")) {
 				$wheres = array();
 				$args = array();
 				$page_num = int_escape($event->get_arg(0));
@@ -111,7 +111,7 @@ class LogDatabase extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("view_eventlog")) {
 			$event->add_link("Event Log", make_link("log/view"));
 		}
 	}

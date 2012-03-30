@@ -43,7 +43,7 @@ class AdminPage extends Extension {
 		global $page, $user;
 
 		if($event->page_matches("admin")) {
-			if(!$user->is_admin()) {
+			if(!$user->can("manage_admintools")) {
 				$this->theme->display_permission_denied();
 			}
 			else {
@@ -76,7 +76,7 @@ class AdminPage extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("manage_admintools")) {
 			$event->add_link("Board Admin", make_link("admin"));
 		}
 	}
@@ -90,7 +90,7 @@ class AdminPage extends Extension {
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user;
-		if($user->is_admin() && !empty($event->search_terms)) {
+		if($user->can("manage_admintools") && !empty($event->search_terms)) {
 			$this->theme->display_dbq(implode(" ", $event->search_terms));
 		}
 	}

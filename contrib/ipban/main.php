@@ -80,7 +80,7 @@ class IPBan extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("ban_ip")) {
 			$event->add_link("IP Bans", make_link("ip_ban/list"));
 		}
 	}

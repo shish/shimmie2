@@ -65,6 +65,10 @@ new UserClass("base", null, array(
 	"edit_image_lock" => False,
 	"delete_image" => False,
 
+	"ban_image" => False,
+
+	"view_eventlog" => False,
+
 	"create_image_report" => False,
 	"view_image_report" => False,  # deal with reported images
 
@@ -72,6 +76,8 @@ new UserClass("base", null, array(
 	"delete_wiki_page" => False,
 
 	"manage_blocks" => False,
+
+	"manage_admintools" => False,
 
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
@@ -100,6 +106,7 @@ new UserClass("admin", "base", array(
 	"delete_user" => True,
 	"create_image" => True,
 	"delete_image" => True,
+	"ban_image" => True,
 	"create_comment" => True,
 	"delete_comment" => True,
 	"replace_image" => True,
@@ -113,7 +120,9 @@ new UserClass("admin", "base", array(
 	"view_image_report" => True,
 	"edit_wiki_page" => True,
 	"delete_wiki_page" => True,
+	"view_eventlog" => True,
 	"manage_blocks" => True,
+	"manage_admintools" => True,
 	"protected" => True,
 ));
 
