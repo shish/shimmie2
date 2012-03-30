@@ -167,7 +167,7 @@ class AdminPage extends Extension {
 
 		$zip = new ZipArchive;
 		$images = $database->get_all("SELECT * FROM images");
-		$filename = 'imgdump-'.date('Ymd').'.zip';
+		$filename = 'data/imgdump-'.date('Ymd').'.zip';
 
 		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE) === TRUE){
 			foreach($images as $img){
