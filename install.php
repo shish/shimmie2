@@ -14,6 +14,7 @@
 	<head>
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
 		<style type="text/css">
 			BODY {background: #EEE;font-family: "Arial", sans-serif;font-size: 14px;}
 			H1, H3 {border: 1px solid black;background: #DDD;text-align: center;}
@@ -58,6 +59,7 @@ define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . 
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
 require_once __SHIMMIE_ROOT__."core/exceptions.class.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
+
 
 // repair console {{{
 /*
@@ -124,8 +126,8 @@ if(is_readable("data/config/shimmie.conf.php")) {
 
 			<form action='install.php' method='POST'>
 				<center>
-					<table>
-						<tr><td>Database:</td><td><input type='text' name='dsn' size='40'></td></tr>
+					<table class='form'>
+						<tr><th>Database:</th><td><input type='text' name='dsn' size='40'></td></tr>
 						<tr><td colspan='2'><center><input type='submit' value='Go!'></center></td></tr>
 					</table>
 				</center>
@@ -249,9 +251,9 @@ function begin() { // {{{
 			<h3>Database Install</h3>
 			<form action="install.php" method="POST">
 				<center>
-					<table>
+					<table class='form'>
 						<tr>
-							<td>Type:</td>
+							<th>Type:</th>
 							<td><select name="database_type">
 								<option value="mysql" selected>MySQL</option>
 								<option value="pgsql">PostgreSQL</option>
@@ -259,19 +261,19 @@ function begin() { // {{{
 							</td>
 						</tr>
 						<tr>
-							<td>Host:</td>
+							<th>Host:</th>
 							<td><input type="text" name="database_host" size="40" value="localhost"></td>
 						</tr>
 						<tr>
-							<td>Username:</td>
+							<th>Username:</th>
 							<td><input type="text" name="database_user" size="40"></td>
 						</tr>
 						<tr>
-							<td>Password:</td>
+							<th>Password:</th>
 							<td><input type="password" name="database_password" size="40"></td>
 						</tr>
 						<tr>
-							<td>Name:</td>
+							<th>DB Name:</th>
 							<td><input type="text" name="database_name" size="40" value="shimmie"></td>
 						</tr>
 						<tr><td colspan="2"><center><input type="submit" value="Go!"></center></td></tr>
