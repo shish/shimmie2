@@ -68,6 +68,7 @@ new UserClass("base", null, array(
 	"ban_image" => False,
 
 	"view_eventlog" => False,
+	"ignore_downtime" => False,
 
 	"create_image_report" => False,
 	"view_image_report" => False,  # deal with reported images
@@ -78,6 +79,11 @@ new UserClass("base", null, array(
 	"manage_blocks" => False,
 
 	"manage_admintools" => False,
+
+	"view_other_pms" => False,
+	"edit_feature" => False,
+	"bulk_edit_vote" => False,
+	"edit_other_vote" => False,
 
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
@@ -123,6 +129,11 @@ new UserClass("admin", "base", array(
 	"view_eventlog" => True,
 	"manage_blocks" => True,
 	"manage_admintools" => True,
+	"ignore_downtime" => True,
+	"view_other_pms" => True,
+	"edit_feature" => True,
+	"bulk_edit_vote" => True,
+	"edit_other_vote" => True,
 	"protected" => True,
 ));
 

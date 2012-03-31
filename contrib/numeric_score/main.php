@@ -38,7 +38,7 @@ class NumericScore extends Extension {
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user;
-		if($user->is_admin()) {
+		if($user->can("edit_other_votes")) {
 			$html = $this->theme->get_nuller_html($event->display_user);
 			$page->add_block(new Block("Votes", $html, "main", 60));
 		}
@@ -79,7 +79,7 @@ class NumericScore extends Extension {
 			}
 		}
 		if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
-			if($user->is_admin()) {
+			if($user->can("edit_other_vote")) {
 				$image_id = int_escape($_POST['image_id']);
 				$database->execute(
 						"DELETE FROM numeric_score_votes WHERE image_id=?",
@@ -92,7 +92,7 @@ class NumericScore extends Extension {
 			}
 		}
 		if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
-			if($user->is_admin()) {
+			if($user->can("edit_other_vote")) {
 				$this->delete_votes_by(int_escape($_POST['user_id']));
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
