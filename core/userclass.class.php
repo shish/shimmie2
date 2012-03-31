@@ -63,6 +63,7 @@ new UserClass("base", null, array(
 	"edit_image_source" => False,
 	"edit_image_owner" => False,
 	"edit_image_lock" => False,
+	"bulk_edit_image_tag" => False,
 	"delete_image" => False,
 
 	"ban_image" => False,
@@ -121,6 +122,7 @@ new UserClass("admin", "base", array(
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"edit_image_owner" => True,
+	"bulk_edit_image_tag" => True,
 	"mass_tag_edit" => True,
 	"create_image_report" => True,
 	"view_image_report" => True,
