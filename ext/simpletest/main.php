@@ -78,9 +78,9 @@
  *
  */
 
-require_once('simpletest/web_tester.php');
-require_once('simpletest/unit_tester.php');
-require_once('simpletest/reporter.php');
+require_once('lib/simpletest/web_tester.php');
+require_once('lib/simpletest/unit_tester.php');
+require_once('lib/simpletest/reporter.php');
 
 define('USER_NAME', "test");
 define('USER_PASS', "test");
