@@ -306,12 +306,7 @@ class UserPage extends Extension {
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($name, $pass);
-			if($user->is_admin()) {
-				log_warning("user", "Admin logged in");
-			}
-			else {
-				log_info("user", "User logged in");
-			}
+			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("user"));
 		}
