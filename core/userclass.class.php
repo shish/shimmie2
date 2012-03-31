@@ -62,6 +62,7 @@ new UserClass("base", null, array(
 
 	"edit_user_password" => False,
 	"edit_user_info" => False,  # email address, etc
+	"edit_user_class" => False,
 	"delete_user" => False,
 
 	"create_comment" => False,
@@ -122,6 +123,7 @@ new UserClass("admin", "base", array(
 	"ban_ip" => True,
 	"edit_user_password" => True,
 	"edit_user_info" => True,
+	"edit_user_class" => True,
 	"delete_user" => True,
 	"create_image" => True,
 	"delete_image" => True,

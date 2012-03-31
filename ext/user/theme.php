@@ -187,9 +187,10 @@ class UserPageTheme extends Themelet {
 			</form>
 			";
 
-			if($user->class->name == "admin") {
+			$i_user_id = int_escape($duser->id);
+
+			if($user->can("edit_user_class")) {
 				global $_user_classes;
-				$i_user_id = int_escape($duser->id);
 				$class_html = "";
 				foreach($_user_classes as $name => $values) {
 					$h_name = html_escape($name);
@@ -206,7 +207,11 @@ class UserPageTheme extends Themelet {
 							<tfoot><tr><td><input type='submit' value='Set'></td></tr></tfoot>
 						</table>
 					</form>
-					
+				";
+			}
+
+			if($user->can("delete_user")) {
+				$html .= "
 					<p>".make_form(make_link("user_admin/delete_user"))."
 						<input type='hidden' name='id' value='$i_user_id'>
 						<table style='width: 300px;'>
