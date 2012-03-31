@@ -1006,29 +1006,14 @@ function _sanitise_environment() {
 }
 
 function _get_themelet_files($_theme) {
-	$themelets = array();
+	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
+	$base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
+	$base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
-	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $themelets[] = 'themes/'.$_theme.'/custompage.class.php';
-	$themelets[] = 'themes/'.$_theme.'/layout.class.php';
-	$themelets[] = 'themes/'.$_theme.'/themelet.class.php';
+	$ext_themelets = glob("ext/{".ENABLED_EXTS."}/theme.php", GLOB_BRACE);
+	$custom_themelets = glob('themes/'.$_theme.'/{'.ENABLED_EXTS.'}.theme.php', GLOB_BRACE);
 
-	$themelet_files = glob("ext/*/theme.php");
-	foreach($themelet_files as $filename) {
-		$themelets[] = $filename;
-	}
-
-	$custom_themelets = glob('themes/'.$_theme.'/*.theme.php');
-	if($custom_themelets) {
-		$m = array();
-		foreach($custom_themelets as $filename) {
-			if(preg_match('/themes\/'.$_theme.'\/(.*)\.theme\.php/',$filename,$m)
-					&& in_array('ext/'.$m[1].'/theme.php', $themelets)) {
-				$themelets[] = $filename;
-			}
-		}
-	}
-
-	return $themelets;
+	return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }
 
 function _load_extensions() {

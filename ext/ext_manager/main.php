@@ -26,8 +26,8 @@ class ExtensionInfo {
 		$matches = array();
 		$lines = file($main);
 		$number_of_lines = count($lines);
-		preg_match("#(ext|contrib)/(.*)/main.php#", $main, $matches);
-		$this->ext_name = $matches[2];
+		preg_match("#ext/(.*)/main.php#", $main, $matches);
+		$this->ext_name = $matches[1];
 		$this->name = $this->ext_name;
 		$this->enabled = $this->is_enabled($this->ext_name);
 
@@ -81,9 +81,12 @@ class ExtensionInfo {
 	}
 
 	private function is_enabled(/*string*/ $fname) {
-		if(file_exists("ext/$fname") && file_exists("contrib/$fname")) return true; // both
-		if(file_exists("contrib/$fname")) return false; // only disabled (optional)
-		return null; // only active (core)
+		$core = explode(",", CORE_EXTS);
+		$extra = explode(",", EXTRA_EXTS);
+
+		if(in_array($fname, $extra)) return true; // enabled
+		if(in_array($fname, $core)) return null; // core
+		return false; // not enabled
 	}
 }
 
@@ -93,14 +96,14 @@ class ExtManager extends Extension {
 		if($event->page_matches("ext_manager")) {
 			if($user->can("manage_extension_list")) {
 				if($event->get_arg(0) == "set" && $user->check_auth_token()) {
-					if(is_writable("ext")) {
+					if(is_writable("data/config")) {
 						$this->set_things($_POST);
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("ext_manager"));
 					}
 					else {
 						$this->theme->display_error(500, "File Operation Failed",
-							"The extension folder isn't writable by the web server :(");
+							"The config file (data/config/extensions.conf.php) isn't writable by the web server :(");
 					}
 				}
 				else {
@@ -116,10 +119,6 @@ class ExtManager extends Extension {
 			$ext = $event->get_arg(0);
 			if(file_exists("ext/$ext/main.php")) {
 				$info = new ExtensionInfo("ext/$ext/main.php");
-				$this->theme->display_doc($page, $info);
-			}
-			else if(file_exists("contrib/$ext/main.php")) {
-				$info = new ExtensionInfo("contrib/$ext/main.php");
 				$this->theme->display_doc($page, $info);
 			}
 			else {
@@ -142,15 +141,10 @@ class ExtManager extends Extension {
 	private function get_extensions(/*bool*/ $all) {
 		$extensions = array();
 		if($all) {
-			$exts = glob("ext/*/main.php");
-			foreach(glob("contrib/*/main.php") as $ae) {
-				if(!in_array("ext".substr($ae, 7), $exts)) {
-					$exts[] = $ae;
-				}
-			}
+			$exts = glob("ext/*/main.php", GLOB_BRACE);
 		}
 		else {
-			$exts = glob("ext/*/main.php");
+			$exts = glob("ext/{".ENABLED_EXTS."}/main.php", GLOB_BRACE);
 		}
 		foreach($exts as $main) {
 			$extensions[] = new ExtensionInfo($main);
@@ -160,46 +154,24 @@ class ExtManager extends Extension {
 	}
 
 	private function set_things($settings) {
-		foreach(glob("contrib/*/main.php") as $main) {
+		$core = explode(",", CORE_EXTS);
+
+		foreach(glob("ext/*/main.php") as $main) {
 			$matches = array();
-			preg_match("#contrib/(.*)/main.php#", $main, $matches);
+			preg_match("#ext/(.*)/main.php#", $main, $matches);
 			$fname = $matches[1];
 
-			if(!isset($settings["ext_$fname"])) $settings["ext_$fname"] = 0;
-			$this->set_enabled($fname, $settings["ext_$fname"]);
+			if(!in_array($fname, $core) && isset($settings["ext_$fname"])) {
+				$extras[] = $fname;
+			}
 		}
-	}
 
-	private function set_enabled(/*string*/ $fname, /*bool*/ $enabled) {
-		if($enabled) {
-			// enable if currently disabled
-			if(!file_exists("ext/$fname")) {
-				if(function_exists("symlink")) {
-					// yes, even though we are in /, and thus the path to contrib is
-					// ./contrib, the link needs to be ../ because it is literal data
-					// which will be interpreted relative to ./ext/ by the OS
-					
-					//Because Windows (I know, bad excuse)
-					if (PHP_OS === 'WINNT') {
-						symlink(realpath("./contrib/$fname"), realpath("./ext/").'/'.$fname);
-					}
-					else {
-						symlink("../contrib/$fname", "ext/$fname");
-					}
-				}
-				else {
-					full_copy("contrib/$fname", "ext/$fname");
-				}
-				log_info("ext_manager", "Enabling $fname");
-			}
-		}
-		else {
-			// disable if currently enabled
-			if(file_exists("ext/$fname")) {
-				deltree("ext/$fname");
-				log_info("ext_manager", "Disabling $fname");
-			}
-		}
+		file_put_contents(
+			"data/config/extensions.conf.php",
+			'<'.'?php'."\n".
+			'define("EXTRA_EXTS", "'.implode(",", $extras).'");'."\n".
+			'?'.">"
+		);
 	}
 }
 ?>

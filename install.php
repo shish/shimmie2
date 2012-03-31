@@ -70,8 +70,7 @@ if(is_readable("data/config/shimmie.conf.php")) {
 	echo '<h1>Shimmie Repair Console</h1>';
 
 	// Load the config
-	require_once __SHIMMIE_ROOT__."data/config/shimmie.conf.php";	// Load user/site specifics First
-	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
+	require_once __SHIMMIE_ROOT__."core/sys_config.inc.php";
 
 	if(
 		(array_key_exists('dsn', $_SESSION) && $_SESSION['dsn'] === DATABASE_DSN) ||
