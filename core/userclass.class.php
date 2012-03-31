@@ -30,7 +30,17 @@ class UserClass {
 			return $this->parent->can($ability);
 		}
 		else {
-			die("Unknown ability: ".html_escape($ability));
+			global $_user_classes;
+			$min_dist = 9999;
+			$min_ability = null;
+			foreach($_user_classes['base']->abilities as $a => $cando) {
+				$v = levenshtein($ability, $a);
+				if($v < $min_dist) {
+					$min_dist = $v;
+					$min_ability = $a;
+				}
+			}
+			throw new SCoreException("Unknown ability '".html_escape($ability)."'. Did the developer mean '".html_escape($min_ability)."'?");
 		}
 	}
 }
