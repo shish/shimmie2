@@ -85,6 +85,7 @@ new UserClass("base", null, array(
 	"edit_feature" => False,
 	"bulk_edit_vote" => False,
 	"edit_other_vote" => False,
+	"view_sysinfo" => False,
 
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
@@ -136,6 +137,7 @@ new UserClass("admin", "base", array(
 	"edit_feature" => True,
 	"bulk_edit_vote" => True,
 	"edit_other_vote" => True,
+	"view_sysinfo" => True,
 	"protected" => True,
 ));
 

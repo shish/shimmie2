@@ -16,7 +16,7 @@ class ET extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user;
 		if($event->page_matches("system_info")) {
-			if($user->is_admin()) {
+			if($user->can("view_sysinfo")) {
 				$this->theme->display_info_page($this->get_info());
 			}
 		}
@@ -24,7 +24,7 @@ class ET extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("view_sysinfo")) {
 			$event->add_link("System Info", make_link("system_info"));
 		}
 	}
