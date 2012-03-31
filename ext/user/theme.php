@@ -190,7 +190,6 @@ class UserPageTheme extends Themelet {
 			if($user->class->name == "admin") {
 				global $_user_classes;
 				$i_user_id = int_escape($duser->id);
-				$h_is_admin = $duser->is_admin() ? " checked" : "";
 				$class_html = "";
 				foreach($_user_classes as $name => $values) {
 					$h_name = html_escape($name);
