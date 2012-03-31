@@ -52,7 +52,7 @@ assert_options(ASSERT_BAIL, 1);
  *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
  *
  */
-define('__SHIMMIE_ROOT__', trim( remove_trailing_slash( dirname(__FILE__) ) ) . '/' ); 
+define('__SHIMMIE_ROOT__', trim(remove_trailing_slash(dirname(__FILE__))) . '/');
 
 // Pull in necessary files
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
