@@ -1094,7 +1094,13 @@ function _load_extensions() {
 function _fatal_error(Exception $e) {
 	$version = VERSION;
 	$message = $e->getMessage();
+
 	//$trace = var_dump($e->getTrace());
+
+	//$hash = exec("git rev-parse HEAD");
+	//$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
+	//'.$h_hash.'
+
 	header("HTTP/1.0 500 Internal Error");
 	echo '
 <html>
@@ -1103,7 +1109,8 @@ function _fatal_error(Exception $e) {
 	</head>
 	<body>
 		<h1>Internal Error</h1>
-		<p>'.$message.'
+		<p><b>Message:</b> '.$message.'
+		<p><b>Version:</b> '.$version.'
 	</body>
 </html>
 ';
