@@ -38,7 +38,7 @@ class NumericScore extends Extension {
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user;
-		if($user->can("edit_other_votes")) {
+		if($user->can("edit_other_vote")) {
 			$html = $this->theme->get_nuller_html($event->display_user);
 			$page->add_block(new Block("Votes", $html, "main", 60));
 		}
