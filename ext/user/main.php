@@ -203,7 +203,15 @@ class UserPage extends Extension {
 		$event->add_stats("Joined: $h_join_date", 10);
 
 		$av = $event->display_user->get_avatar_html();
-		if($av) $event->add_stats($av, 0);
+		if($av) {
+			$event->add_stats($av, 0);
+		}
+		else if((
+			$config->get_string("avatar_host") == "gravatar") &&
+			($user->id == $event->display_user->id)
+		) {
+			$event->add_stats("No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the same email address here and there to have your avatar synced", 0);
+		}
 
 		ksort($event->stats);
 		$this->theme->display_user_page($event->display_user, $event->stats);
