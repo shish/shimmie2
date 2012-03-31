@@ -56,7 +56,7 @@ class ImageBan extends Extension {
 		global $config, $database, $page, $user;
 
 		if($event->page_matches("image_hash_ban")) {
-			if($user->is_admin()) {
+			if($user->can("ban_image")) {
 				if($event->get_arg(0) == "dnp") {
 					$image = Image::by_id(int_escape($event->get_arg(1)));
 					if($image) {
@@ -105,7 +105,7 @@ class ImageBan extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("ban_image")) {
 			$event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
 		}
 	}
@@ -120,7 +120,7 @@ class ImageBan extends Extension {
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("ban_image")) {
 			$event->add_part($this->theme->get_buttons_html($event->image));
 		}
 	}

@@ -34,6 +34,7 @@ class BaseThemelet {
 		$h_view_link = make_link('post/view/'.$i_id, $query);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
+		$h_tags = strtolower($image->get_tag_list());
 		$base = get_base_href();
 		
 		// If file is flash or svg then sets thumbnail to max size.
@@ -44,7 +45,7 @@ class BaseThemelet {
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return '<a href="'.$h_view_link.'" class="thumb">'.
+		return '<a href="'.$h_view_link.'" class="thumb" data-tags="'.$h_tags.'">'.
 		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" class="lazy" data-original="'.$h_thumb_link.'" src="'.$base.'/lib/static/grey.gif">'.
 		       '<noscript><img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'"></noscript>'.
 			   "</a>\n";

@@ -40,6 +40,14 @@ class UserCreationEvent extends Event {
 	}
 }
 
+class UserDeletionEvent extends Event {
+	var $id;
+
+	public function __construct($id) {
+		$this->id = $id;
+	}
+}
+
 class UserCreationException extends SCoreException {}
 
 class UserPage extends Extension {
@@ -518,6 +526,8 @@ class UserPage extends Extension {
 					array("new_owner_id" => $config->get_int('anon_id'), "old_owner_id" => $_POST['id'])
 				);
 			}
+
+			send_event(new UserDeletionEvent($_POST['id']));
 
 			$database->execute(
 				"DELETE FROM users WHERE id = :id",

@@ -64,13 +64,13 @@ require_once __SHIMMIE_ROOT__."core/database.class.php";
  * This file lets anyone destroy the database -- disable it
  * as soon as the admin is done installing for the first time
  */
-if(is_readable("config.php")) {
+if(is_readable("data/config/shimmie.conf.php")) {
 	session_start();
 	echo '<div id="iblock">';
 	echo '<h1>Shimmie Repair Console</h1>';
 
 	// Load the config
-	require_once __SHIMMIE_ROOT__."config.php";			// Load user/site specifics First
+	require_once __SHIMMIE_ROOT__."data/config/shimmie.conf.php";	// Load user/site specifics First
 	require_once __SHIMMIE_ROOT__."core/default_config.inc.php";	// Defaults for the rest.
 
 	if(
@@ -120,7 +120,7 @@ if(is_readable("config.php")) {
 	else {
 		echo "
 			<h3>Login</h3>
-			<p>Enter the database DSN exactly as in config.php (ie, as originally installed) to access advanced recovery tools:</p>
+			<p>Enter the database DSN exactly as in shimmie.conf.php (ie, as originally installed) to access advanced recovery tools:</p>
 
 			<form action='install.php' method='POST'>
 				<center>
@@ -403,14 +403,15 @@ function write_config() { // {{{
 			"define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
 			'?' . '>';
 	
-	if(is_writable("./") && file_put_contents("config.php", $file_content)) {
-		assert(file_exists("config.php"));
+	if(!file_exists("data/config")) {
+		mkdir("data/config", 0755, true);
 	}
-	else {
+	
+	if(!file_put_contents("data/config/shimmie.conf.php", $file_content)) {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
 		    The web server isn't allowed to write to the config file; please copy
-		    the text below, save it as 'config.php', and upload it into the shimmie
+		    the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
 		    folder manually. Make sure that when you save it, there is no whitespace
 		    before the "&lt;?php" or after the "?&gt;"
 

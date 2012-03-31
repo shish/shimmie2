@@ -166,12 +166,6 @@ class Setup extends Extension {
 		$config->set_default_string("theme", "default");
 		$config->set_default_bool("word_wrap", true);
 		$config->set_default_bool("comment_captcha", false);
-		// Automatic caching is disabled by default
-		$config->set_default_string("autocache_location", "data/cache");
-		$config->set_default_bool("autocache_css", false);
-		$config->set_default_bool("autocache_jss", false);
-		$config->set_default_bool("autocache_min_css", false);
-		$config->set_default_bool("autocache_min_js", false);
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -278,19 +272,6 @@ class Setup extends Extension {
 			"'>ReCAPTCHA</a>");
 		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
 		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
-		$event->panel->add_block($sb);
-		
-		
-		$sb = new SetupBlock("Automatic Caching of CSS & JS");
-		// the default is fine for just about everyone
-		//$sb->add_text_option("autocache_location", "Location: ");
-		//$sb->add_label("<br><i>This location needs to be writeable by the webserver.</i>");
-		$sb->add_bool_option("autocache_css", "Automatic caching of CSS: ");
-		$sb->add_bool_option("autocache_js",  "<br>Automatic caching of JS: ");
-		// if the option does nothing, there's no point showing a
-		// "hey look, nothing!" message...
-		//$sb->add_bool_option("autocache_min_css", "<br>Minimize CSS files: ");
-		//$sb->add_bool_option("autocache_min_js",  "<br>Minimize JS files: ");
 		$event->panel->add_block($sb);
 	}
 

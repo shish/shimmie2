@@ -122,7 +122,7 @@ class AliasEditor extends Extension {
 
 	private function get_alias_csv(Database $database) {
 		$csv = "";
-		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases");
+		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
 		foreach($aliases as $old => $new) {
 			$csv .= "$old,$new\n";
 		}
@@ -138,5 +138,10 @@ class AliasEditor extends Extension {
 			}
 		}
 	}
+
+	// add alias *after* mass tag editing, else the MTE will
+	// search for the images and be redirected to the alias,
+	// missing out the images tagged with the oldtag
+	public function get_priority() {return 60;}
 }
 ?>

@@ -2,7 +2,7 @@
 /**
  * These are the default configuration options for Shimmie.
  *
- * All of these can be over-ridden by placing a 'define' in config.php
+ * All of these can be over-ridden by placing a 'define' in data/config/shimmie.conf.php
  *
  * Do NOT change them in this file. These are the defaults only!
  *

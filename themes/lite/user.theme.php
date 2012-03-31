@@ -95,47 +95,5 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->disable_left();
 		parent::display_user_page($duser, $stats);
 	}
-
-	protected function build_options($duser) {
-		global $database;
-		global $config;
-		global $user;
-
-		$html = "";
-		$html .= "
-		<form action='".make_link("user_admin/change_pass")."' method='POST'>
-			<input type='hidden' name='name' value='{$duser->name}'>
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Password</th></tr>
-				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>
-				<tr><td>Repeat Password</td><td><input type='password' name='pass2'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
-			</table>
-		</form>
-		<p><form action='".make_link("user_admin/change_email")."' method='POST'>
-			<input type='hidden' name='id' value='{$duser->id}'>
-			<table style='width: 300px;'>
-				<tr><th colspan='2'>Change Email</th></tr>
-				<tr><td>Address</td><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr>
-				<tr><td colspan='2'><input type='Submit' value='Set'></td></tr>
-			</table>
-		</form></p>
-		";
-		
-		if($user->is_admin()) {
-			$i_user_id = int_escape($duser->id);
-			$h_is_admin = $duser->is_admin() ? " checked" : "";
-			$html .= "
-				<p>".make_form(make_link("user_admin/set_more"))."
-					<input type='hidden' name='id' value='$i_user_id'>
-					Admin: <input name='admin' type='checkbox'$h_is_admin>
-					<input type='submit' value='Set'>
-				</form>
-			";
-		}
-		
-		return $html;
-	}
 }
 ?>

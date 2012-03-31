@@ -75,6 +75,19 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		return $ok;
 	}
+	
+	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
+		$event->add_part("
+			<form>
+				<select id='zoomer'>
+					<option value='full'>Full Size</option>
+					<option value='width'>Fit Width</option>
+					<option value='height'>Fit Height</option>
+					<option value='both'>Fit Both</option>
+				</select>
+			</form>
+		", 20);
+	}
 
 // IM thumber {{{
 	private function make_thumb_convert(/*string*/ $inname, /*string*/ $outname) {

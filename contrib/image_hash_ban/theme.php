@@ -26,24 +26,19 @@ class ImageBanTheme extends Themelet {
 		foreach($bans as $ban) {
 			$h_bans .= "
 				<tr>
-					<td width='30%'>{$ban['hash']}</td>
-					<td>{$ban['reason']}</td>
-					<td width='10%'>
-						".make_form(make_link("image_hash_ban/remove"))."
+					".make_form(make_link("image_hash_ban/remove"))."
+						<td width='30%'>{$ban['hash']}</td>
+						<td>{$ban['reason']}</td>
+						<td width='10%'>
 							<input type='hidden' name='hash' value='{$ban['hash']}'>
 							<input type='submit' value='Remove'>
-						</form>
-					</td>
+						</td>
+					</form>
 				</tr>
 			";
 		}
 		$html = "
-			<script type='text/javascript'>
-			$(document).ready(function() {
-				$(\"#image_bans\").tablesorter();
-			});
-			</script>
-			<table id='image_bans' class='zebra'>
+			<table id='image_bans' class='zebra sortable'>
 				<thead>
 					<th>Hash</th><th>Reason</th><th>Action</th>
 					<tr>

@@ -265,7 +265,6 @@ class ResizeImage extends Extension {
 		$new_hash = md5_file($tmp_filename);
 		$new_size = filesize($tmp_filename);
 		$target = warehouse_path("images", $new_hash);
-		if(!file_exists(dirname($target))) mkdir(dirname($target), 0755, true);
 		if(!@copy($tmp_filename, $target)) {
 			throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
 		}

@@ -361,6 +361,11 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+function zglob($pattern) {
+	$r = glob($pattern);
+	if($r) return $r;
+	else return array();
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -640,6 +645,12 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	return $pa;
 }
 
+function data_path($filename) {
+	$filename = "data/" . $filename;
+	if(!file_exists(dirname($filename))) mkdir(dirname($filename), 0755, true);
+	return $filename;
+}
+
 function transload($url, $mfile) {
 	global $config;
 
@@ -879,9 +890,10 @@ $_event_listeners = array();
  */
 function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 	global $_event_listeners;
+	$pos *= 100;
 	foreach($events as $event) {
 		while(isset($_event_listeners[$event][$pos])) {
-			$pos++;
+			$pos += 1;
 		}
 		$_event_listeners[$event][$pos] = $extension;
 	}
@@ -1024,8 +1036,8 @@ function _load_extensions() {
 
 	ctx_log_start("Loading extensions");
 
-	if(COMPILE_ELS && file_exists("data/event_listeners.php")) {
-		require_once("data/event_listeners.php");
+	if(COMPILE_ELS && file_exists("data/cache/event_listeners.php")) {
+		require_once("data/cache/event_listeners.php");
 	}
 	else {
 		foreach(get_declared_classes() as $class) {
@@ -1069,7 +1081,7 @@ function _load_extensions() {
 			$p .= ");\n";
 
 			$p .= "?".">";
-			file_put_contents("data/event_listeners.php", $p);
+			file_put_contents(data_path("cache/event_listeners.php"), $p);
 		}
 	}
 
@@ -1223,11 +1235,9 @@ function _start_cache() {
 			$_cache_hash = md5($_SERVER["QUERY_STRING"]);
 			$ab = substr($_cache_hash, 0, 2);
 			$cd = substr($_cache_hash, 2, 2);
-			$_cache_filename = "data/http_cache/$ab/$cd/$_cache_hash";
+			$_cache_filename = data_path("http_cache/$ab/$cd/$_cache_hash");
+			@chmod(data_path('http_cache'), 750);
 
-			if(!file_exists(dirname($_cache_filename))) {
-				mkdir(dirname($_cache_filename), 0750, true);
-			}
 			if(file_exists($_cache_filename) && (filemtime($_cache_filename) > time() - 3600)) {
 				$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($_cache_filename)) . ' GMT';
 

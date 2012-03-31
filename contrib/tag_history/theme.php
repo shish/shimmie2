@@ -27,6 +27,14 @@ class Tag_HistoryTheme extends Themelet {
 			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
 			$selected = ($n == 2) ? " checked" : "";
+
+			$current_tags = Tag::explode($current_tags);
+			$taglinks = array();
+			foreach($current_tags as $tag){
+				$taglinks[] = "<a href='".make_link("post/list/".$tag."/1")."'>".$tag."</a>";
+			}
+			$current_tags = Tag::implode($taglinks);
+
 			$history_list .= "
 				<li>
 					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>

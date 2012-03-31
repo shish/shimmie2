@@ -38,7 +38,7 @@ class NumericScore extends Extension {
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user;
-		if($user->is_admin()) {
+		if($user->can("edit_other_votes")) {
 			$html = $this->theme->get_nuller_html($event->display_user);
 			$page->add_block(new Block("Votes", $html, "main", 60));
 		}
@@ -79,7 +79,7 @@ class NumericScore extends Extension {
 			}
 		}
 		if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
-			if($user->is_admin()) {
+			if($user->can("edit_other_vote")) {
 				$image_id = int_escape($_POST['image_id']);
 				$database->execute(
 						"DELETE FROM numeric_score_votes WHERE image_id=?",
@@ -92,16 +92,8 @@ class NumericScore extends Extension {
 			}
 		}
 		if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
-			if($user->is_admin()) {
-				$user_id = int_escape($_POST['user_id']);
-				$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
-
-				$database->execute(
-						"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN ?",
-						array($user_id, $image_ids));
-				$database->execute(
-						"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=images.id) WHERE images.id IN ?",
-						array($image_ids));
+			if($user->can("edit_other_vote")) {
+				$this->delete_votes_by(int_escape($_POST['user_id']));
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
@@ -191,6 +183,31 @@ class NumericScore extends Extension {
 		$database->execute("DELETE FROM numeric_score_votes WHERE image_id=:id", array("id" => $event->image->id));
 	}
 
+	public function onUserDeletion(UserDeletionEvent $event) {
+		$this->delete_votes_by($event->id);
+	}
+
+	public function delete_votes_by(/*int*/ $user_id) {
+		global $database;
+
+		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
+
+		$database->execute(
+				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
+				array($user_id));
+		$database->execute("
+				UPDATE images
+				SET numeric_score=COALESCE(
+					(
+						SELECT SUM(score)
+						FROM numeric_score_votes
+						WHERE image_id=images.id
+					),
+					0
+				)
+				WHERE images.id IN (".implode(",", $image_ids).")");
+	}
+
 	// FIXME: on user deletion
 	// FIXME: on user vote nuke
 
@@ -274,7 +291,12 @@ class NumericScore extends Extension {
 				array("imageid" => $image_id, "userid" => $user_id, "score" => $score));
 		}
 		$database->Execute(
-			"UPDATE images SET numeric_score=(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=:imageid) WHERE id=:id",
+			"UPDATE images SET numeric_score=(
+				COALESCE(
+					(SELECT SUM(score) FROM numeric_score_votes WHERE image_id=:imageid),
+					0
+				)
+			) WHERE id=:id",
 			array("imageid" => $image_id, "id" => $image_id));
 	}
 }

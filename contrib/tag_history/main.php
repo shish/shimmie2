@@ -35,7 +35,7 @@ class Tag_History extends Extension {
 			}
 		}
 		else if($event->page_matches("tag_history/bulk_revert")) {
-			if($user->is_admin() && $user->check_auth_token()) {
+			if($user->can("bulk_edit_image_tag") && $user->check_auth_token()) {
 				$this->process_bulk_revert_request();
 			}
 		}
@@ -78,7 +78,7 @@ class Tag_History extends Extension {
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("bulk_edit_image_tag")) {
 			$event->add_link("Tag Changes", make_link("tag_history/all/1"));
 		}
 	}

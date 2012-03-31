@@ -33,7 +33,7 @@ class BBCode extends FormatterExtension {
 		) as $el) {
 			$text = preg_replace("!\[$el\](.*?)\[/$el\]!s", "<$el>$1</$el>", $text);
 		}
-		$text = preg_replace('!&gt;&gt;([^\d].+)!s', '<blockquote><small>$1</small></blockquote>', $text);
+		$text = preg_replace('!&gt;&gt;([^\d].+)!', '<blockquote><small>$1</small></blockquote>', $text);
 		$text = preg_replace('!&gt;&gt;(\d+)(#c?\d+)?!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('post/view/$1$2').'">&gt;&gt;$1$2</a>', $text);
 		$text = preg_replace('!\[url=site://(.*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
 		$text = preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);

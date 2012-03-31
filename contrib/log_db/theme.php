@@ -20,7 +20,7 @@ class LogDatabaseTheme extends Themelet {
 </style>
 <table class='zebra'>
 	<thead>
-		<tr><th>Time</th><th>Module</th><th>User</th><th>Message</th></tr>
+		<tr><th>Time</th><th>Module</th><th>User</th><th colspan='2'>Message</th></tr>
 		<form action='".make_link("log/view")."' method='GET'>
 			<tr class='sizedinputs'>
 				<td><input type='text' name='time' value='".$this->heie("time")."'></td>
@@ -34,8 +34,8 @@ class LogDatabaseTheme extends Themelet {
 						<option value='".SCORE_LOG_ERROR."'>Error</option>
 						<option value='".SCORE_LOG_CRITICAL."'>Critical</option>
 					</select>
-					<input type='submit' value='Search' style='width: 20%'>
 				</td>
+				<td><input type='submit' value='Search'></td>
 			</tr>
 		</form>
 	</thead>
@@ -56,7 +56,7 @@ class LogDatabaseTheme extends Themelet {
 					"<a href='".make_link("user/".url_escape($event['username']))."'>".html_escape($event['username'])."</a>".
 					"</span></td>";
 			}
-			$table .= "<td>".$this->scan_entities(html_escape($event['message']))."</td>";
+			$table .= "<td colspan='2'>".$this->scan_entities(html_escape($event['message']))."</td>";
 			$table .= "</tr>\n";
 		}
 		$table .= "</tbody></table>";
