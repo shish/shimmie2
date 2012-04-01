@@ -10,7 +10,8 @@ class SCoreReporter extends HtmlReporter {
 
 	public function SCoreReporter(Page $page) {
 		$this->page = $page;
-		$this->_fails = 0;
+		$this->fails = 0;
+		$this->exceptions = 0;
 	}
 
 	function paintHeader($test_name) {
@@ -20,7 +21,7 @@ class SCoreReporter extends HtmlReporter {
 
 	function paintFooter($test_name) {
 		//parent::paintFooter($test_name);
-		if(($this->getFailCount() + $this->getExceptionCount()) > 0) {
+		if(($this->fails + $this->exceptions) > 0) {
 			$style = "background: red;";
 		}
 		else {
@@ -28,8 +29,8 @@ class SCoreReporter extends HtmlReporter {
 		}
 		$html = "<div style=\"padding: 4px; $style\">".
 			$this->getPassCount() . " passes, " .
-			$this->getFailCount() . " failures, " .
-			$this->getExceptionCount() . " exceptions" .
+			$this->fails . " failures, " .
+			$this->exceptions . " exceptions" .
 			"<br>Passed modules: " . implode(", ", $this->clear_modules) .
 			"</div>";
 		$this->page->add_block(new Block("Results", $html, "main", 40));
