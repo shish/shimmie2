@@ -20,7 +20,7 @@ class SCoreReporter extends HtmlReporter {
 
 	function paintFooter($test_name) {
 		//parent::paintFooter($test_name);
-		if($this->getFailCount() > 0) {
+		if(($this->getFailCount() + $this->getExceptionCount()) > 0) {
 			$style = "background: red;";
 		}
 		else {
@@ -28,7 +28,8 @@ class SCoreReporter extends HtmlReporter {
 		}
 		$html = "<div style=\"padding: 4px; $style\">".
 			$this->getPassCount() . " passes, " .
-			$this->getFailCount() . " failures" .
+			$this->getFailCount() . " failures, " .
+			$this->getExceptionCount() . " exceptions" .
 			"<br>Passed modules: " . implode(", ", $this->clear_modules) .
 			"</div>";
 		$this->page->add_block(new Block("Results", $html, "main", 40));
@@ -58,10 +59,18 @@ class SCoreReporter extends HtmlReporter {
 
 	function paintFail($message) {
 		//parent::paintFail($message);
-		$this->_fails++; // manually do the grandparent behaviour
+		$this->fails++; // manually do the grandparent behaviour
 
 		$message = str_replace(getcwd(), "...", $message);
 		$this->current_html .= "<p style='text-align: left;'><b>Fail</b>: $message";
+	}
+
+	function paintException($message) {
+		//parent::paintFail($message);
+		$this->exceptions++; // manually do the grandparent behaviour
+
+		$message = str_replace(getcwd(), "...", $message);
+		$this->current_html .= "<p style='text-align: left;'><b>Exception</b>: $message";
 	}
 }
 ?>
