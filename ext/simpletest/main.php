@@ -197,10 +197,10 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 class TestFinder extends TestSuite {
 	function TestFinder($hint) {
 		if(strpos($hint, "..") !== FALSE) return;
-		$dir = "*";
+		$dir = "{".ENABLED_EXTS."}";
 		if(file_exists("ext/$hint/test.php")) $dir = $hint;
 		$this->TestSuite('All tests');
-		foreach(glob("ext/$dir/test.php") as $file) {
+		foreach(glob("ext/$dir/test.php", GLOB_BRACE) as $file) {
 			$this->addFile($file);
 		}
 	}
