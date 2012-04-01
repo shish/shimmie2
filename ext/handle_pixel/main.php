@@ -7,12 +7,6 @@
  */
 
 class PixelFileHandler extends DataHandlerExtension {
-	public function setup() {
-		$sb = new SetupBlock("Image Zoom");
-		$sb->add_bool_option("image_zoom", "Zoom by default: ");
-		return $sb;
-	}
-	
 	protected function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
 		return in_array(strtolower($ext), $exts);
