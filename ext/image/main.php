@@ -146,7 +146,7 @@ class ImageIO extends Extension {
 		$config->set_default_string('image_tlink', '');
 		$config->set_default_string('image_tip', '$tags // $size // $filesize');
 		$config->set_default_string('upload_collision_handler', 'error');
-		$config->set_default_int('image_expires', (60*60*24*365) );	// defaults to one year
+		$config->set_default_int('image_expires', (60*60*24*31) );	// defaults to one month
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -250,17 +250,6 @@ class ImageIO extends Extension {
 			$sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
 		}
 
-		if(!$config->get_bool("nice_urls")) {
-			$expires = array();
-			$expires['1 Minute'] = 60;
-			$expires['1 Hour'] = 3600;
-			$expires['1 Day'] = 86400;
-			$expires['1 Month (31 days)'] = 2678400; //(60*60*24*31)
-			$expires['1 Year'] = 31536000; // 365 days (60*60*24*365)
-			$expires['Never'] = 3153600000;	// 100 years..
-			$sb->add_choice_option("image_expires", $expires, "<br>Image Expiration: ");
-		}
-		
 		$event->panel->add_block($sb);
 
 		$thumbers = array();
