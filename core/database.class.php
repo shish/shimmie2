@@ -66,7 +66,7 @@ class MySQL extends DBEngine {
 
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
-		$data = str_replace("SCORE_INET", "CHAR(15)", $data);
+		$data = str_replace("SCORE_INET", "CHAR(45)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
@@ -140,7 +140,7 @@ class SQLite extends DBEngine {
 
 	public function create_table_sql($name, $data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
-		$data = str_replace("SCORE_INET", "VARCHAR(15)", $data);
+		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
