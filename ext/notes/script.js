@@ -1,5 +1,7 @@
 $(function() {
-	$('#main_image').imgNotes(); //If your notes data is is not named notes pass it
+	if(window.notes) {
+		$('#main_image').imgNotes(window.notes);
+	}
 
 	$('#cancelnote').click(function(){
 		$('#main_image').imgAreaSelect({ hide: true });
