@@ -23,7 +23,7 @@ class IndexTest extends ShimmieWebTestCase {
 		$this->assert_title("Shimmie");
 
 		$this->get_page('post/list/99999');
-		$this->assert_title("Shimmie");
+		$this->assert_title("No Images Found");
 
 		$this->log_in_as_admin();
 		$this->delete_image($image_id);
@@ -44,7 +44,7 @@ class IndexTest extends ShimmieWebTestCase {
 
 		# regular tag, no results
 		$this->get_page('post/list/maumaumau/1');
-		$this->assert_title("maumaumau");
+		$this->assert_title("No Images Found");
 		$this->assert_text("No Images Found");
 
 		# regular tag, many results

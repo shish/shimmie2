@@ -51,10 +51,10 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->assert_title("Image $image_id: pbx");
 
 		$this->get_page("admin");
-		$this->assert_text("Mass Tag Edit"); // just test it exists
+		$this->assert_text("Mass Tag Edit");
 		$this->set_field("search", "pbx");
 		$this->set_field("replace", "pox");
-		$this->click("Set");
+		$this->click("Replace");
 
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pox");
