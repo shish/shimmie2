@@ -150,17 +150,13 @@ class ImageIO extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		$num = $event->get_arg(0);
-		$matches = array();
-		if(!is_null($num) && preg_match("/(\d+)/", $num, $matches)) {
-			$num = $matches[1];
-
-			if($event->page_matches("image")) {
-				$this->send_file($num, "image");
-			}
-			else if($event->page_matches("thumb")) {
-				$this->send_file($num, "thumb");
-			}
+		if($event->page_matches("image")) {
+			$num = int_escape($event->get_arg(0));
+			$this->send_file($num, "image");
+		}
+		if($event->page_matches("thumb")) {
+			$num = int_escape($event->get_arg(0));
+			$this->send_file($num, "thumb");
 		}
 		if($event->page_matches("image_admin/delete")) {
 			global $page, $user;
