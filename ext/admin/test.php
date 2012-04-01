@@ -74,7 +74,9 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->get_page("post/view/$image_id_3");
 		$this->assert_response(404);
 
+		$this->delete_image($image_id_1);
 		$this->delete_image($image_id_2);
+		$this->delete_image($image_id_3);
 		$this->log_out();
 	}
 }
