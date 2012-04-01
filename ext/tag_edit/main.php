@@ -97,7 +97,7 @@ class TagEdit extends Extension {
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user;
-		if($user->is_admin() && !empty($event->search_terms)) {
+		if($user->can("bulk_edit_image_source") && !empty($event->search_terms)) {
 			$this->theme->display_mss(implode(" ", $event->search_terms));
 		}
 	}

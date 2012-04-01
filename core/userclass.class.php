@@ -30,7 +30,17 @@ class UserClass {
 			return $this->parent->can($ability);
 		}
 		else {
-			die("Unknown ability: ".html_escape($ability));
+			global $_user_classes;
+			$min_dist = 9999;
+			$min_ability = null;
+			foreach($_user_classes['base']->abilities as $a => $cando) {
+				$v = levenshtein($ability, $a);
+				if($v < $min_dist) {
+					$min_dist = $v;
+					$min_ability = $a;
+				}
+			}
+			throw new SCoreException("Unknown ability '".html_escape($ability)."'. Did the developer mean '".html_escape($min_ability)."'?");
 		}
 	}
 }
@@ -52,6 +62,7 @@ new UserClass("base", null, array(
 
 	"edit_user_password" => False,
 	"edit_user_info" => False,  # email address, etc
+	"edit_user_class" => False,
 	"delete_user" => False,
 
 	"create_comment" => False,
@@ -64,6 +75,7 @@ new UserClass("base", null, array(
 	"edit_image_owner" => False,
 	"edit_image_lock" => False,
 	"bulk_edit_image_tag" => False,
+	"bulk_edit_image_source" => False,
 	"delete_image" => False,
 
 	"ban_image" => False,
@@ -85,6 +97,7 @@ new UserClass("base", null, array(
 	"edit_feature" => False,
 	"bulk_edit_vote" => False,
 	"edit_other_vote" => False,
+	"view_sysinfo" => False,
 
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
@@ -110,6 +123,7 @@ new UserClass("admin", "base", array(
 	"ban_ip" => True,
 	"edit_user_password" => True,
 	"edit_user_info" => True,
+	"edit_user_class" => True,
 	"delete_user" => True,
 	"create_image" => True,
 	"delete_image" => True,
@@ -123,6 +137,7 @@ new UserClass("admin", "base", array(
 	"edit_image_source" => True,
 	"edit_image_owner" => True,
 	"bulk_edit_image_tag" => True,
+	"bulk_edit_image_source" => True,
 	"mass_tag_edit" => True,
 	"create_image_report" => True,
 	"view_image_report" => True,
@@ -136,6 +151,7 @@ new UserClass("admin", "base", array(
 	"edit_feature" => True,
 	"bulk_edit_vote" => True,
 	"edit_other_vote" => True,
+	"view_sysinfo" => True,
 	"protected" => True,
 ));
 

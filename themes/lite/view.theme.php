@@ -25,7 +25,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$h_filesize = to_shorthand_int($image->filesize);
 
 		global $user;
-		if($user->is_admin()) {
+		if($user->can("view_ip")) {
 			$h_ownerlink .= " ($h_ip)";
 		}
 

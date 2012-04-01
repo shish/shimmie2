@@ -47,8 +47,7 @@ if(!file_exists("data/config/shimmie.conf.php")) {
 	header("Location: install.php");
 	exit;
 }
-require_once "data/config/shimmie.conf.php";
-require_once "core/default_config.inc.php";
+require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
 
@@ -68,7 +67,7 @@ _start_cache();
 try {
 	// load base files
 	ctx_log_start("Opening files");
-	$files = array_merge(glob("core/*.php"), glob("ext/*/main.php"));
+	$files = array_merge(glob("core/*.php"), glob("ext/{".ENABLED_EXTS."}/main.php", GLOB_BRACE));
 	foreach($files as $filename) {
 		require_once $filename;
 	}

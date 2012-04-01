@@ -42,17 +42,16 @@ Installation
 
 Upgrade from 2.3.X
 ~~~~~~~~~~~~~~~~~~
-config.php has been moved from /config.php to /data/config/shimmie.conf.php
-
-The database connection setting in config.php has changed; now using
-PDO DSN format rather than ADODB URI:
+- Backup your current files and database!
+- Unzip into a clean folder
+- Copy across the images, thumbs, and data folders
+- Move old/config.php to new/data/config/shimmie.conf.php
+- Edit shimmie.conf.php to use the new database connection format:
 
  OLD: $database_dsn = "<proto>://<username>:<password>@<host>/<database>";
  NEW: define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;dbname=<database>");
 
-The rest should be automatic, just unzip into a clean folder and copy across
-config.php, images and thumbs folders from the old version. This
-includes automatically messing with the database -- back it up first!
+The rest should be automatic~
 
 If there are any errors with the upgrade process, "in_upgrade=true" will
 be left in the config table and the process will be paused for the admin
@@ -70,10 +69,10 @@ enough to be a pain.
 
 Custom Configuration
 ~~~~~~~~~~~~~~~~~~~~
-Various aspects of Shimmie can be configured to suit your site specific
-needs via the file "config.php" (created after installation).
-Take a look at "core/default_config.inc.php" for the available options
-that can used.
+Various aspects of Shimmie can be configured to suit your site specific needs
+via the file "data/config/shimmie.conf.php" (created after installation).
+Take a look at "core/sys_config.inc.php" for the available options that can
+be used.
 
 
 Custom User Classes

@@ -66,20 +66,21 @@ class CustomCommentListTheme extends CommentListTheme {
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
+		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
+		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_date = $comment->posted;
-		$h_dellink = $user->is_admin() ? 
-			" ($h_poster_ip, <a ".
-			"onclick=\"return confirm('Delete comment by $h_name:\\n".$tfe->stripped."');\" ".
-			"href='".make_link("comment/delete/$i_comment_id/$i_image_id")."'>Del</a>)" : "";
+		$h_del = $user->can("delete_comment") ?
+			' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
+			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
 		$h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
 
 		if($inner_id == 0) {
-			return "<div class='comment' style='margin-top: 8px;'>$h_userlink$h_dellink $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>";
+			return "<div class='comment' style='margin-top: 8px;'>$h_userlink$h_del $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>";
 		}
 		else {
 			return "<table><tr><td nowrap class='doubledash'>&gt;&gt;</td><td>".
-				"<div class='reply'>$h_userlink$h_dellink $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>" .
+				"<div class='reply'>$h_userlink$h_del $h_date No.$i_comment_id $h_reply<p>$h_comment</p></div>" .
 				"</td></tr></table>";
 		}
 	}
