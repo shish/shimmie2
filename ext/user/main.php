@@ -186,7 +186,9 @@ class UserPage extends Extension {
 					"You aren't logged in. First do that, then you can see your stats.");
 			}
 			else if(!is_null($display_user) && ($display_user->id != $config->get_int("anon_id"))) {
-				send_event(new UserPageBuildingEvent($display_user));
+				$e = new UserPageBuildingEvent($display_user);
+				send_event($e);
+				$this->display_stats($e);
 			}
 			else {
 				$this->theme->display_error(404, "No Such User",
@@ -212,6 +214,10 @@ class UserPage extends Extension {
 		) {
 			$event->add_stats("No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the same email address here and there to have your avatar synced", 0);
 		}
+	}
+
+	private function display_stats(UserPageBuildingEvent $event) {
+		global $user, $page, $config;
 
 		ksort($event->stats);
 		$this->theme->display_user_page($event->display_user, $event->stats);
