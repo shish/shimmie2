@@ -150,15 +150,7 @@ class ImageIO extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		if($event->page_matches("image")) {
-			$num = int_escape($event->get_arg(0));
-			$this->send_file($num, "image");
-		}
-		if($event->page_matches("thumb")) {
-			$num = int_escape($event->get_arg(0));
-			$this->send_file($num, "thumb");
-		}
-		if($event->page_matches("image_admin/delete")) {
+		if($event->page_matches("image/delete")) {
 			global $page, $user;
 			if($user->can("delete_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
 				$image = Image::by_id($_POST['image_id']);
@@ -174,7 +166,7 @@ class ImageIO extends Extension {
 				}
 			}
 		}
-		if($event->page_matches("image_admin/replace")) {
+		else if($event->page_matches("image/replace")) {
 			global $page, $user;
 			if($user->can("replace_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
 				$image = Image::by_id($_POST['image_id']);
@@ -186,6 +178,14 @@ class ImageIO extends Extension {
 					throw new ImageReplaceException("Image to replace does not exist.");
 				}
 			}
+		}
+		else if($event->page_matches("image")) {
+			$num = int_escape($event->get_arg(0));
+			$this->send_file($num, "image");
+		}
+		else if($event->page_matches("thumb")) {
+			$num = int_escape($event->get_arg(0));
+			$this->send_file($num, "thumb");
 		}
 	}
 

@@ -10,7 +10,7 @@ class ImageIOTheme {
 		global $config;
 
 		$html = "
-			".make_form(make_link("image_admin/delete"))."
+			".make_form(make_link("image/delete"))."
 				<input type='hidden' name='image_id' value='$image_id' />
 				<input type='submit' value='Delete' onclick='return confirm(\"Delete the image?\");' />
 			</form>
@@ -25,7 +25,7 @@ class ImageIOTheme {
 	 * @param $image_id The image to replace
 	 */
 	public function get_replace_html(/*int*/ $image_id) {
-		$html = make_form(make_link("image_admin/replace"))."
+		$html = make_form(make_link("image/replace"))."
 					<input type='hidden' name='image_id' value='$image_id' />
 					<input type='submit' value='Replace' />
 				</form>";
