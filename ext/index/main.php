@@ -131,8 +131,7 @@ class PostListBuildingEvent extends Event {
 class Index extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_int("index_width", 3);
-		$config->set_default_int("index_height", 4);
+		$config->set_default_int("index_images", 24);
 		$config->set_default_bool("index_tips", true);
 	}
 
@@ -186,11 +185,9 @@ class Index extends Extension {
 		$sb = new SetupBlock("Index Options");
 		$sb->position = 20;
 
-		$sb->add_label("Index table size ");
-		$sb->add_int_option("index_width");
-		$sb->add_label(" x ");
-		$sb->add_int_option("index_height");
-		$sb->add_label(" images");
+		$sb->add_label("Show ");
+		$sb->add_int_option("index_images");
+		$sb->add_label(" images on the post list");
 
 		$event->panel->add_block($sb);
 	}

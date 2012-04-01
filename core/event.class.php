@@ -105,8 +105,7 @@ class PageRequestEvent extends Event {
 	}
 	public function get_page_size() {
 		global $config;
-		$count = $config->get_int('index_width') * $config->get_int('index_height');
-		return $count;
+		return $config->get_int('index_images');
 	}
 }
 

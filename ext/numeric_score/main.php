@@ -99,7 +99,7 @@ class NumericScore extends Extension {
 			}
 		}
 		if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
-			$t_images = $config->get_int("index_height") * $config->get_int("index_width");
+			$t_images = $config->get_int("index_images");
 
 			//TODO: Add Popular_by_week.
 

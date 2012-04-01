@@ -176,8 +176,7 @@ class Image {
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
 		global $config, $database;
-		$images_per_page = $config->get_int('index_width') * $config->get_int('index_height');
-		return ceil(Image::count_images($tags) / $images_per_page);
+		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
 
 
