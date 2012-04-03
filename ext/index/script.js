@@ -2,7 +2,7 @@ $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
 	var themecheck = $(".thumb[data-tags~='tagme']").parent().attr('class');
 	var needs_refresh = false;
-	for(i in blocked_tags) {
+	for(i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
 		if(tag) {
 			$(".thumb[data-tags~='"+tag+"']").hide();
