@@ -224,7 +224,11 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^(filename|name)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$filename = strtolower($matches[2]);
-			$event->add_querylet(new Querylet('images.filename LIKE "%'.$filename.'%"'));
+			$event->add_querylet(new Querylet('images.filename LIKE :fn', array("fn"=>"%$filename%")));
+		}
+		else if(preg_match("/^(source)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
+			$filename = strtolower($matches[2]);
+			$event->add_querylet(new Querylet('images.source LIKE :src', array("src"=>"%$filename%")));
 		}
 		else if(preg_match("/^posted(<|>|<=|>=|=)([0-9-]*)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
