@@ -300,6 +300,14 @@ function create_tables() { // {{{
 	try {
 		$db = new Database();
 		
+		if ( count($db->get_all("SHOW TABLES")) > 0 ) {
+			echo "
+				<p>Warning: The Database schema is not empty!</p>
+				<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
+				<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>";
+			exit;
+		}
+		
 		$db->create_table("aliases", "
 			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
 			newtag VARCHAR(128) NOT NULL,
