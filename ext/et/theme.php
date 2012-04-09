@@ -32,6 +32,13 @@ Database: {$info['sys_db']}
 Server: {$info['sys_server']}
 Disk use: {$info['sys_disk']}
 
+Thumbnail Generation:
+Engine: {$info['thumb_engine']}
+Memory: {$info['thumb_mem']}
+Quality: {$info['thumb_quality']}
+Width: {$info['thumb_width']}
+Height: {$info['thumb_height']}
+
 Shimmie stats:
 Images: {$info['stat_images']}
 Comments: {$info['stat_comments']}
