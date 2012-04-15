@@ -40,12 +40,12 @@ class Tag_History extends Extension {
 			}
 		}
 		else if($event->page_matches("tag_history/all")) {
-			$page_id = int_escape($event->get_arg(0));
+			$page_id = (int)($event->get_arg(0));
 			$this->theme->display_global_page($page, $this->get_global_tag_history($page_id), $page_id);
 		}
 		else if($event->page_matches("tag_history") && $event->count_args() == 1) {
 			// must be an attempt to view a tag history
-			$image_id = int_escape($event->get_arg(0));
+			$image_id = (int)($event->get_arg(0));
 			$this->theme->display_history_page($page, $image_id, $this->get_tag_history_from_id($image_id));
 		}
 	}
@@ -119,7 +119,7 @@ class Tag_History extends Extension {
 	private function process_revert_request($revert_id) {
 		global $page;
 
-		$revert_id = int_escape($revert_id);
+		$revert_id = (int)($revert_id);
 
 		// check for the nothing case
 		if($revert_id < 1) {

@@ -100,7 +100,7 @@ class LogDatabaseTheme extends Themelet {
 	}
 
 	protected function link_image($id) {
-		$iid = int_escape($id[1]);
+		$iid = (int)($id[1]);
 		return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
 	}
 }

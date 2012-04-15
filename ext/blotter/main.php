@@ -97,7 +97,7 @@ class Blotter extends Extension {
 					if(!$user->is_admin() || !$user->check_auth_token()) {
 						$this->theme->display_permission_denied();
 					} else {
-						$id = int_escape($_POST['id']);
+						$id = (int)($_POST['id']);
 						if(!isset($id)) { die("No ID!"); }
 						$database->Execute("DELETE FROM blotter WHERE id=:id", array("id"=>$id));
 						log_info("blotter", "Removed Entry #$id");

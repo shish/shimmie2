@@ -105,7 +105,7 @@ class ResizeImage extends Extension {
 
 		if ( $event->page_matches("resize") && $user->is_admin() ) {
 			// Try to get the image ID
-			$image_id = int_escape($event->get_arg(0));
+			$image_id = (int)($event->get_arg(0));
 			if (empty($image_id)) {
 				$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
 			}
@@ -126,10 +126,10 @@ class ResizeImage extends Extension {
 					$width = $height = 0;
 					
 					if (isset($_POST['resize_width'])) {
-						$width = int_escape($_POST['resize_width']);
+						$width = (int)($_POST['resize_width']);
 					}
 					if (isset($_POST['resize_height'])) {
-						$height = int_escape($_POST['resize_height']);
+						$height = (int)($_POST['resize_height']);
 					}
 					
 					/* Attempt to resize the image */

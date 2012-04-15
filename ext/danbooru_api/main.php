@@ -287,8 +287,8 @@ class DanbooruApi extends Extension {
 				}
 			} else
 			{
-				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
-				$start = isset($_GET['offset']) ? int_escape($_GET['offset']) : 0;
+				$limit = isset($_GET['limit']) ? (int)($_GET['limit']) : 100;
+				$start = isset($_GET['offset']) ? (int)($_GET['offset']) : 0;
 				$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : array();
 				$results = Image::find_images($start, $limit, $tags);
 			}
@@ -346,14 +346,14 @@ class DanbooruApi extends Extension {
 			/* Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
 			elseif(isset($_GET['tags']))
 			{
-				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
+				$start = isset($_GET['after_id']) ? (int)($_GET['offset']) : 0;
 				$tags = Tag::explode($_GET['tags']);
 
 			}
 			*/
 			else
 			{
-				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
+				$start = isset($_GET['after_id']) ? (int)($_GET['offset']) : 0;
 				$sqlresult = $database->execute("SELECT id,tag,count FROM tags WHERE count > 0 AND id >= ? ORDER BY id DESC",array($start));
 				while(!$sqlresult->EOF)
 				{
