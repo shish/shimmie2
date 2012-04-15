@@ -28,7 +28,7 @@ class PM {
 			$this->sent_date = $a["sent_date"];
 			$this->subject = $a["subject"];
 			$this->message = $a["message"];
-			$this->is_read = undb_bool($a["is_read"]);
+			$this->is_read = bool_escape($a["is_read"]);
 		}
 		else {
 			$this->id      = -1;

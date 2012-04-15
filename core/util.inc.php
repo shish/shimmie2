@@ -65,16 +65,31 @@ function sql_escape($input) {
  * @retval boolean
  */
 function bool_escape($input) {
-	$input = strtolower($input);
-	return (
-		$input === "y" ||
-		$input === "yes" ||
-		$input === "t" ||
-		$input === "true" ||
-		$input === "on" ||
-		$input === 1 ||
-		$input === true
-	);
+	/*
+	 Sometimes, I don't like PHP -- this, is one of those times...
+	  "a boolean FALSE is not considered a valid boolean value by this function."
+	 Yay for Got'chas!	
+	 http://php.net/manual/en/filter.filters.validate.php
+	*/
+	if (is_bool($value)) {
+		return $value;
+	} else {
+		$value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+		if (!is_null($value)) {
+			return $value;
+		} else {
+			$input = strtolower($input);
+			return (
+				$input === "y" ||
+				$input === "yes" ||
+				$input === "t" ||
+				$input === "true" ||
+				$input === "on" ||
+				$input === 1 ||
+				$input === true
+			);
+		}
+	}
 }
 
 /**
@@ -207,16 +222,6 @@ function show_ip($ip, $ban_reason) {
 	$ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
 	$ip = $user->can("view_ip") ? $ip.$ban : "";
 	return $ip;
-}
-
-/**
- * Different databases have different ways to represent booleans; this
- * will try and standardise them
- */
-function undb_bool($val) {
-	// Could this be combined with  bool_escape() ? 
-	if($val === true  || $val == 'Y' || $val == 'y' || $val == 'T' || $val == 't' || $val === 1) return true;
-	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
 }
 
 /**
