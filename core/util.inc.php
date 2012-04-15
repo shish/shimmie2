@@ -34,14 +34,18 @@ function int_escape($input) {
  * @retval string
  */
 function url_escape($input) {
-	if(is_null($input)) {
+	/* The function idn_to_ascii is used to support Unicode domains / URLs as well.
+	   See here for more:  http://php.net/manual/en/function.filter-var.php   */
+	return filter_var(idn_to_ascii($input), FILTER_SANITIZE_URL);
+	
+	/*if(is_null($input)) {
 		return "";
 	}
 	$input = str_replace('^', '^^', $input);
 	$input = str_replace('/', '^s', $input);
 	$input = str_replace('\\', '^b', $input);
 	$input = rawurlencode($input);
-	return $input;
+	return $input;*/
 }
 
 /**
@@ -210,6 +214,7 @@ function show_ip($ip, $ban_reason) {
  * will try and standardise them
  */
 function undb_bool($val) {
+	// Could this be combined with  bool_escape() ? 
 	if($val === true  || $val == 'Y' || $val == 'y' || $val == 'T' || $val == 't' || $val === 1) return true;
 	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
 }
