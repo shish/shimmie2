@@ -211,7 +211,7 @@ class Notes extends Extension {
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
 		if(preg_match("/note=(.*)/i", $event->term, $matches)) {
-			$notes = int_escape($matches[1]);
+			$notes = (int)($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE note = $notes)"));
 		}
 		else if(preg_match("/notes(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
@@ -232,7 +232,7 @@ class Notes extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
 		}
 		else if(preg_match("/notes_by_userno=([0-9]+)/i", $event->term, $matches)) {
-			$user_id = int_escape($matches[1]);
+			$user_id = (int)($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
 		}
 	}
@@ -259,12 +259,12 @@ class Notes extends Extension {
 	private function add_new_note() {
 		global $database, $user;
 
-		$imageID    = int_escape($_POST["image_id"]);
+		$imageID    = (int)($_POST["image_id"]);
 		$user_id    = $user->id;
-		$noteX1     = int_escape($_POST["note_x1"]);
-		$noteY1     = int_escape($_POST["note_y1"]);
-		$noteHeight = int_escape($_POST["note_height"]);
-		$noteWidth  = int_escape($_POST["note_width"]);
+		$noteX1     = (int)($_POST["note_x1"]);
+		$noteY1     = (int)($_POST["note_y1"]);
+		$noteHeight = (int)($_POST["note_height"]);
+		$noteWidth  = (int)($_POST["note_width"]);
 		$noteText   = html_escape($_POST["note_text"]);
 
 		$database->execute("
@@ -292,7 +292,7 @@ class Notes extends Extension {
 	private function add_note_request() {
 		global $database, $user;
 
-		$image_id = int_escape($_POST["image_id"]);
+		$image_id = (int)($_POST["image_id"]);
 		$user_id = $user->id;
 
 		$database->execute("
@@ -314,12 +314,12 @@ class Notes extends Extension {
 	*/
 	private function update_note()
 	{
-		$imageID = int_escape($_POST["image_id"]);
-		$noteID  = int_escape($_POST["note_id"]);
-		$noteX1 = int_escape($_POST["note_x1"]);
-		$noteY1 = int_escape($_POST["note_y1"]);
-		$noteHeight = int_escape($_POST["note_height"]);
-		$noteWidth = int_escape($_POST["note_width"]);
+		$imageID = (int)($_POST["image_id"]);
+		$noteID  = (int)($_POST["note_id"]);
+		$noteX1 = (int)($_POST["note_x1"]);
+		$noteY1 = (int)($_POST["note_y1"]);
+		$noteHeight = (int)($_POST["note_height"]);
+		$noteWidth = (int)($_POST["note_width"]);
 		$noteText = mysql_real_escape_string(html_escape($_POST["note_text"]));
 
 		// validate parameters
@@ -363,8 +363,8 @@ class Notes extends Extension {
 	*/
 	private function delete_note()
 	{
-		$imageID = int_escape($_POST["image_id"]);
-		$noteID = int_escape($_POST["note_id"]);
+		$imageID = (int)($_POST["image_id"]);
+		$noteID = (int)($_POST["note_id"]);
 
 		// validate parameters
 		if(is_null($imageID) || !is_numeric($imageID))
@@ -389,7 +389,7 @@ class Notes extends Extension {
 	*/
 	private function nuke_notes() {
 		global $database;
-		$image_id = int_escape($_POST["image_id"]);
+		$image_id = (int)($_POST["image_id"]);
 		$database->execute("DELETE FROM notes WHERE image_id = ?", array($image_id));
 		log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
 	}
@@ -401,7 +401,7 @@ class Notes extends Extension {
 	*/
 	private function nuke_requests() {
 		global $database;
-		$image_id = int_escape($_POST["image_id"]);
+		$image_id = (int)($_POST["image_id"]);
 
 		$database->execute("DELETE FROM note_request WHERE image_id = ?", array($image_id));
 

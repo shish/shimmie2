@@ -43,7 +43,7 @@ class ReportImage extends Extension {
 		if($event->page_matches("image_report")) {
 			if($event->get_arg(0) == "add") {
 				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
-					$image_id = int_escape($_POST['image_id']);
+					$image_id = (int)($_POST['image_id']);
 					send_event(new AddReportedImageEvent($image_id, $user->id, $_POST['reason']));
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$image_id"));
@@ -137,7 +137,7 @@ class ReportImage extends Extension {
 
 		$reports = array();
 		foreach($all_reports as $report) {
-			$image_id = int_escape($report['image_id']);
+			$image_id = (int)($report['image_id']);
 			$image = Image::by_id($image_id);
 			if(is_null($image)) {
 				send_event(new RemoveReportedImageEvent($report['id']));

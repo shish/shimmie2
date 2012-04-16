@@ -48,7 +48,7 @@ class NumericScore extends Extension {
 		global $config, $database, $user, $page;
 
 		if($event->page_matches("numeric_score_votes")) {
-			$image_id = int_escape($event->get_arg(0));
+			$image_id = (int)($event->get_arg(0));
 			$x = $database->get_all(
 				"SELECT users.name as username, user_id, score 
 				FROM numeric_score_votes 
@@ -67,7 +67,7 @@ class NumericScore extends Extension {
 		}
 		if($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
 			if(!$user->is_anonymous()) {
-				$image_id = int_escape($_POST['image_id']);
+				$image_id = (int)($_POST['image_id']);
 				$char = $_POST['vote'];
 				$score = null;
 				if($char == "up") $score = 1;
@@ -80,7 +80,7 @@ class NumericScore extends Extension {
 		}
 		if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
 			if($user->can("edit_other_vote")) {
-				$image_id = int_escape($_POST['image_id']);
+				$image_id = (int)($_POST['image_id']);
 				$database->execute(
 						"DELETE FROM numeric_score_votes WHERE image_id=?",
 						array($image_id));
@@ -93,7 +93,7 @@ class NumericScore extends Extension {
 		}
 		if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
 			if($user->can("edit_other_vote")) {
-				$this->delete_votes_by(int_escape($_POST['user_id']));
+				$this->delete_votes_by((int)($_POST['user_id']));
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
@@ -110,13 +110,13 @@ class NumericScore extends Extension {
 				$year = $_GET['year'];
 			}
 			//month
-			if(empty($_GET['month']) || int_escape($_GET['month']) > 12){
+			if(empty($_GET['month']) || (int)($_GET['month']) > 12){
 				$month = date("m");
 			}else{
 				$month = $_GET['month'];
 			}
 			//day
-			if(empty($_GET['day']) || int_escape($_GET['day']) > 31){
+			if(empty($_GET['day']) || (int)($_GET['day']) > 31){
 				$day = date("d");
 			}else{
 				$day = $_GET['day'];
@@ -245,13 +245,13 @@ class NumericScore extends Extension {
 				array("ns_user_id"=>$duser->id)));
 		}
 		if(preg_match("/^upvoted_by_id=(\d+)$/", $event->term, $matches)) {
-			$iid = int_escape($matches[1]);
+			$iid = (int)($matches[1]);
 			$event->add_querylet(new Querylet(
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
 				array("ns_user_id"=>$iid)));
 		}
 		if(preg_match("/^downvoted_by_id=(\d+)$/", $event->term, $matches)) {
-			$iid = int_escape($matches[1]);
+			$iid = (int)($matches[1]);
 			$event->add_querylet(new Querylet(
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
 				array("ns_user_id"=>$iid)));

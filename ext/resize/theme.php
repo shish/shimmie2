@@ -7,7 +7,7 @@ class ResizeImageTheme extends Themelet {
 	public function get_resize_html(/*int*/ $image_id) {
 		global $user, $config;
 
-		$i_image_id = int_escape($image_id);
+		$i_image_id = (int)($image_id);
 		
 		$html = "
 			".make_form(make_link("resize"),'POST',false,'resize_image')."

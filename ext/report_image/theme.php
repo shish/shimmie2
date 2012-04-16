@@ -64,7 +64,7 @@ class ReportImageTheme extends Themelet {
 	public function display_image_banner(Image $image, /*array*/ $reporters) {
 		global $config, $page;
 
-		$i_image = int_escape($image->id);
+		$i_image = (int)($image->id);
 		$html = "";
 		if(count($reporters) > 0) {
 			$html .= "<b>Image reported by ".html_escape(implode(", ", $reporters))."</b><p>";

@@ -204,7 +204,7 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^ratio(<|>|<=|>=|=)(\d+):(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
+			$args = array("width"=>(int)($matches[2]), "height"=>(int)($matches[3]));
 			$event->add_querylet(new Querylet('width / height '.$cmp.' :width / :height', $args));
 		}
 		else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
@@ -233,7 +233,7 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
+			$args = array("width"=>(int)($matches[2]), "height"=>(int)($matches[3]));
 			$event->add_querylet(new Querylet('width '.$cmp.' :width AND height '.$cmp.' :height', $args));
 		}
 	}

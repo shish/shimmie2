@@ -173,7 +173,7 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 		foreach($headers as $header) {
 			$parts = explode(":", $header);
 			if(trim($parts[0]) == "X-Shimmie-Image-ID") {
-				$image_id = int_escape(trim($parts[1]));
+				$image_id = (int)(trim($parts[1]));
 			}
 		}
 

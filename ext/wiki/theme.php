@@ -40,7 +40,7 @@ class WikiTheme extends Themelet {
 	protected function create_edit_html(WikiPage $page) {
 		$h_title = html_escape($page->title);
 		$u_title = url_escape($page->title);
-		$i_revision = int_escape($page->revision) + 1;
+		$i_revision = (int)($page->revision) + 1;
 
 		global $user;
 		if($user->is_admin()) {
@@ -73,7 +73,7 @@ class WikiTheme extends Themelet {
 			"
 				<td>".make_form(make_link("wiki_admin/edit"))."
 					<input type='hidden' name='title' value='".html_escape($page->title)."'>
-					<input type='hidden' name='revision' value='".int_escape($page->revision)."'>
+					<input type='hidden' name='revision' value='".(int)($page->revision)."'>
 					<input type='submit' value='Edit'>
 				</form></td>
 			" :
@@ -82,7 +82,7 @@ class WikiTheme extends Themelet {
 			$edit .= "
 				<td>".make_form(make_link("wiki_admin/delete_revision"))."
 					<input type='hidden' name='title' value='".html_escape($page->title)."'>
-					<input type='hidden' name='revision' value='".int_escape($page->revision)."'>
+					<input type='hidden' name='revision' value='".(int)($page->revision)."'>
 					<input type='submit' value='Delete This Version'>
 				</form></td>
 				<td>".make_form(make_link("wiki_admin/delete_all"))."

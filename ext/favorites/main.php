@@ -58,7 +58,7 @@ class Favorites extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("change_favorite") && !$user->is_anonymous() && $user->check_auth_token()) {
-			$image_id = int_escape($_POST['image_id']);
+			$image_id = (int)($_POST['image_id']);
 			if((($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) && ($image_id > 0)) {
 				send_event(new FavoriteSetEvent($image_id, $user, ($_POST['favorite_action'] == "set")));
 			}
@@ -128,7 +128,7 @@ class Favorites extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
 		}
 		else if(preg_match("/favorited_by_userno=([0-9]+)/i", $event->term, $matches)) {
-			$user_id = int_escape($matches[1]);
+			$user_id = (int)($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
 		}
 	}

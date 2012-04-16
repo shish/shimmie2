@@ -96,14 +96,14 @@ class Pools extends Extension {
 			
 			// Check if we have pool id, since this is most often the case.
 			if (isset($_POST["pool_id"])) {
-				$pool_id = int_escape($_POST["pool_id"]);
+				$pool_id = (int)($_POST["pool_id"]);
 				$pool = $this->get_single_pool($pool_id);
 			}
 			
 			// What action are we trying to perform?
 			switch($event->get_arg(0)) {
 				case "list": //index
-					$this->list_pools($page, int_escape($event->get_arg(1)));
+					$this->list_pools($page, (int)($event->get_arg(1)));
 					break;
 
 				case "new": // Show form for new pools
@@ -127,17 +127,17 @@ class Pools extends Extension {
 					break;
 
 				case "view":
-					$poolID = int_escape($event->get_arg(1));
+					$poolID = (int)($event->get_arg(1));
 					$this->get_posts($event, $poolID);
 					break;
 
 				case "updated":
-					$this->get_history(int_escape($event->get_arg(1)));
+					$this->get_history((int)($event->get_arg(1)));
 					break;
 
 				case "revert":
 					if(!$user->is_anonymous()) {
-						$historyID = int_escape($event->get_arg(1));
+						$historyID = (int)($event->get_arg(1));
 						$this->revert_history($historyID);
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/updated"));
@@ -404,7 +404,7 @@ class Pools extends Extension {
 	private function add_posts() {
 		global $database;
 
-		$poolID = int_escape($_POST['pool_id']);
+		$poolID = (int)($_POST['pool_id']);
 		$images = "";
 
 		foreach ($_POST['check'] as $imageID){
@@ -439,7 +439,7 @@ class Pools extends Extension {
 	private function order_posts() {
 		global $database;
 
-		$poolID = int_escape($_POST['pool_id']);
+		$poolID = (int)($_POST['pool_id']);
 
 		foreach($_POST['imgs'] as $data) {
 			list($imageORDER, $imageID) = $data;
@@ -463,7 +463,7 @@ class Pools extends Extension {
 	private function remove_posts() {
 		global $database;
 
-		$poolID = int_escape($_POST['pool_id']);
+		$poolID = (int)($_POST['pool_id']);
 		$images = "";
 
 		foreach($_POST['check'] as $imageID) {
@@ -527,7 +527,7 @@ class Pools extends Extension {
 	private function get_posts($event, /*int*/ $poolID) {
 		global $config, $user, $database;
 
-		$pageNumber = int_escape($event->get_arg(2));
+		$pageNumber = (int)($event->get_arg(2));
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
 			$pageNumber = 0;
 		else if ($pageNumber <= 0)
@@ -535,7 +535,7 @@ class Pools extends Extension {
 		else
 			$pageNumber--;
 
-		$poolID = int_escape($poolID);
+		$poolID = (int)($poolID);
 		$pool = $this->get_pool($poolID);
 
 		$imagesPerPage = $config->get_int("poolsImagesPerPage");

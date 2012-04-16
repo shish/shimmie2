@@ -3,8 +3,8 @@
 class NumericScoreTheme extends Themelet {
 	public function get_voter_html(Image $image) {
 		global $user;
-		$i_image_id = int_escape($image->id);
-		$i_score = int_escape($image->numeric_score);
+		$i_image_id = (int)($image->id);
+		$i_score = (int)($image->numeric_score);
 
 		$html = "
 			Current Score: $i_score
