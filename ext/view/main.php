@@ -75,7 +75,7 @@ class ViewImage extends Extension {
 			$event->page_matches("post/next")
 		) {
 
-			$image_id = int_escape($event->get_arg(0));
+			$image_id = (int)($event->get_arg(0));
 
 			if(isset($_GET['search'])) {
 				$search_terms = explode(' ', $_GET['search']);
@@ -109,7 +109,7 @@ class ViewImage extends Extension {
 		}
 			
 		if($event->page_matches("post/view")) {
-			$image_id = int_escape($event->get_arg(0));
+			$image_id = (int)($event->get_arg(0));
 
 			$image = Image::by_id($image_id);
 
@@ -128,7 +128,7 @@ class ViewImage extends Extension {
 		if($event->page_matches("post/set")) {
 			if(!isset($_POST['image_id'])) return;
 
-			$image_id = int_escape($_POST['image_id']);
+			$image_id = (int)($_POST['image_id']);
 
 			send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 

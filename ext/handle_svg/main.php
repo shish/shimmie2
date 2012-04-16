@@ -43,7 +43,7 @@ class SVGFileHandler extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $database, $page;
 		if($event->page_matches("get_svg")) {
-			$id = int_escape($event->get_arg(0));
+			$id = (int)($event->get_arg(0));
 			$image = Image::by_id($id);
 			$hash = $image->hash;
 
@@ -97,8 +97,8 @@ class MiniSVGParser {
 
 	function startElement($parser, $name, $attrs) {
 		if($name == "SVG") {
-			$this->width = int_escape($attrs["WIDTH"]);
-			$this->height = int_escape($attrs["HEIGHT"]);
+			$this->width = (int)($attrs["WIDTH"]);
+			$this->height = (int)($attrs["HEIGHT"]);
 		}
 	}
 

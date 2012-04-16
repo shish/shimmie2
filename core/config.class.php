@@ -103,7 +103,7 @@ abstract class BaseConfig implements Config {
 		return $this->get($name, $default);
 	}
 	public function get_bool(/*string*/ $name, $default=null) {
-		return undb_bool($this->get($name, $default));
+		return bool_escape($this->get($name, $default));
 	}
 	public function get_array(/*string*/ $name, $default=array()) {
 		return explode(",", $this->get($name, ""));
