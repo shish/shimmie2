@@ -35,9 +35,15 @@ function int_escape($input) {
  */
 function url_escape($input) {
 	/* The function idn_to_ascii is used to support Unicode domains / URLs as well.
-	   See here for more:  http://php.net/manual/en/function.filter-var.php   */
-	return filter_var(idn_to_ascii($input), FILTER_SANITIZE_URL);
-	
+	   See here for more:  http://php.net/manual/en/function.filter-var.php
+	   However, it is only supported by PHP version 5.3 and up
+	*/
+	if (function_exists('idn_to_ascii')) {
+			return filter_var(idn_to_ascii($input), FILTER_SANITIZE_URL);
+	} else {
+			return filter_var($input, FILTER_SANITIZE_URL);
+	}
+
 	/*if(is_null($input)) {
 		return "";
 	}
@@ -71,8 +77,8 @@ function bool_escape($input) {
 	 Yay for Got'chas!	
 	 http://php.net/manual/en/filter.filters.validate.php
 	*/
-	if (is_bool($value)) {
-		return $value;
+	if (is_bool($input)) {
+		return $input;
 	} else {
 		$value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 		if (!is_null($value)) {
