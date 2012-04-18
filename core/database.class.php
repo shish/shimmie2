@@ -412,12 +412,34 @@ class Database {
 		}
 	}
 
-
 	/**
 	 * Create a table from pseudo-SQL
 	 */
 	public function create_table($name, $data) {
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
+	
+	/**
+	 * Returns the number of tables present in the current database.
+	 */
+	public function count_tables() {
+		if($this->engine->name === "mysql") {
+			return count(
+						$this->get_all("SHOW TABLES")
+					);
+		} else if ($this->engine->name === "pgsql") {
+			return count(
+						$this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+					);
+		} else if ($this->engine->name === "sqlite") {
+			return count(
+						$this->get_all(".tables")
+					);
+		} else {
+			// Hard to find a universal way to do this...
+			return NULL;
+		}
+	}
+	
 }
 ?>

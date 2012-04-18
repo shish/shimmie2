@@ -300,7 +300,7 @@ function create_tables() { // {{{
 	try {
 		$db = new Database();
 		
-		if ( count($db->get_all("SHOW TABLES")) > 0 ) {
+		if ( $db->count_tables() > 0 ) {
 			echo "
 				<p>Warning: The Database schema is not empty!</p>
 				<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
