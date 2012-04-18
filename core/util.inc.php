@@ -34,6 +34,14 @@ function int_escape($input) {
  * @retval string
  */
 function url_escape($input) {
+	/*
+		Shish: I have a feeling that these three lines are important, possibly for searching for tags with slashes in them like fate/stay_night
+		green-ponies: indeed~
+	*/
+	$input = str_replace('^', '^^', $input);
+	$input = str_replace('/', '^s', $input);
+	$input = str_replace('\\', '^b', $input);
+
 	/* The function idn_to_ascii is used to support Unicode domains / URLs as well.
 	   See here for more:  http://php.net/manual/en/function.filter-var.php
 	   However, it is only supported by PHP version 5.3 and up
@@ -79,20 +87,21 @@ function bool_escape($input) {
 	*/
 	if (is_bool($input)) {
 		return $input;
+	} else if (is_numeric($input)) {
+		return ($input === 1);
 	} else {
 		$value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 		if (!is_null($value)) {
 			return $value;
 		} else {
-			$input = strtolower($input);
+			$input = strtolower( trim($input) );
 			return (
 				$input === "y" ||
 				$input === "yes" ||
 				$input === "t" ||
 				$input === "true" ||
 				$input === "on" ||
-				$input === 1 ||
-				$input === true
+				$input === "1" ||
 			);
 		}
 	}
