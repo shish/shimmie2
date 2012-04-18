@@ -157,13 +157,13 @@ class CommentListTheme extends Themelet {
 		$tfe = new TextFormattingEvent($comment->comment);
 		send_event($tfe);
 
-		$i_uid = (int)($comment->owner_id);
+		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
 		$h_poster_ip = html_escape($comment->poster_ip);
 		$h_timestamp = autodate($comment->posted);
 		$h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
-		$i_comment_id = (int)($comment->comment_id);
-		$i_image_id = (int)($comment->image_id);
+		$i_comment_id = int_escape($comment->comment_id);
+		$i_image_id = int_escape($comment->image_id);
 
 		if($i_uid == $config->get_int("anon_id")) {
 			$anoncode = "";
@@ -224,7 +224,7 @@ class CommentListTheme extends Themelet {
 	protected function build_postbox(/*int*/ $image_id) {
 		global $config;
 
-		$i_image_id = (int)($image_id);
+		$i_image_id = int_escape($image_id);
 		$hash = CommentList::get_hash();
 		$h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 

@@ -33,7 +33,7 @@ class User {
 	public function User($row) {
 		global $_user_classes;
 
-		$this->id = (int)($row['id']);
+		$this->id = int_escape($row['id']);
 		$this->name = $row['name'];
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];

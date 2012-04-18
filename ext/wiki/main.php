@@ -99,7 +99,7 @@ class Wiki extends Extension {
 		}
 		else if($event->page_matches("wiki_admin/save")) {
 			$title = $_POST['title'];
-			$rev = (int)($_POST['revision']);
+			$rev = int_escape($_POST['revision']);
 			$body = $_POST['body'];
 			$lock = $user->is_admin() && isset($_POST['lock']) && ($_POST['lock'] == "on");
 

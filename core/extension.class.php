@@ -149,7 +149,7 @@ abstract class DataHandlerExtension extends Extension {
 				/* hax: This seems like such a dirty way to do this.. */
 				
 				/* Validate things */
-				$image_id = (int)($event->metadata['replace']);
+				$image_id = int_escape($event->metadata['replace']);
 				
 				/* Check to make sure the image exists. */
 				$existing = Image::by_id($image_id);

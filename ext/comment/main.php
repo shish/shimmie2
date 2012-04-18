@@ -124,7 +124,7 @@ class CommentList extends Extension {
 			if($event->get_arg(0) === "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
 					try {
-						$i_iid = (int)($_POST['image_id']);
+						$i_iid = int_escape($_POST['image_id']);
 						$cpe = new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']);
 						send_event($cpe);
 						$page->set_mode("redirect");
@@ -154,7 +154,7 @@ class CommentList extends Extension {
 				}
 			}
 			else if($event->get_arg(0) === "list") {
-				$page_num = (int)($event->get_arg(1));
+				$page_num = int_escape($event->get_arg(1));
 				$this->build_page($page_num);
 			}
 		}
@@ -242,7 +242,7 @@ class CommentList extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
 		}
 		else if(preg_match("/commented_by_userid=([0-9]+)/i", $event->term, $matches)) {
-			$user_id = (int)($matches[1]);
+			$user_id = int_escape($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
 		}
 	}
@@ -340,7 +340,7 @@ class CommentList extends Extension {
 	private function get_comments(/*int*/ $image_id) {
 		global $config;
 		global $database;
-		$i_image_id = (int)($image_id);
+		$i_image_id = int_escape($image_id);
 		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email,
@@ -368,8 +368,8 @@ class CommentList extends Extension {
 		// sqlite fails at intervals
 		if($database->engine->name === "sqlite") return false;
 
-		$window = (int)($config->get_int('comment_window'));
-		$max = (int)($config->get_int('comment_limit'));
+		$window = int_escape($config->get_int('comment_window'));
+		$max = int_escape($config->get_int('comment_limit'));
 
 		if($database->engine->name == "mysql") $window_sql = "interval $window minute";
 		else $window_sql = "interval '$window minute'";

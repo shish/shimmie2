@@ -187,7 +187,7 @@ class UserPageTheme extends Themelet {
 			</form>
 			";
 
-			$i_user_id = (int)($duser->id);
+			$i_user_id = int_escape($duser->id);
 
 			if($user->can("edit_user_class")) {
 				global $_user_classes;

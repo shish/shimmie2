@@ -7,7 +7,7 @@ class RandomImageTheme extends Themelet {
 
 		public function build_random_html(Image $image, $query=null) {
 		global $config;
-		$i_id = (int)($image->id);
+		$i_id = int_escape($image->id);
 		$h_view_link = make_link("post/view/$i_id", $query);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());

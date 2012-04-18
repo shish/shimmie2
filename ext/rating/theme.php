@@ -2,7 +2,7 @@
 
 class RatingsTheme extends Themelet {
 	public function get_rater_html(/*int*/ $image_id, /*string*/ $rating) {
-		$i_image_id = (int)($image_id);
+		$i_image_id = int_escape($image_id);
 		$s_checked = $rating == 's' ? " checked" : "";
 		$q_checked = $rating == 'q' ? " checked" : "";
 		$e_checked = $rating == 'e' ? " checked" : "";

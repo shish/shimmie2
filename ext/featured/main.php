@@ -30,7 +30,7 @@ class Featured extends Extension {
 		if($event->page_matches("featured_image")) {
 			if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 				if($user->can("edit_feature") && isset($_POST['image_id'])) {
-					$id = (int)($_POST['image_id']);
+					$id = int_escape($_POST['image_id']);
 					if($id > 0) {
 						$config->set_int("featured_id", $id);
 						$page->set_mode("redirect");

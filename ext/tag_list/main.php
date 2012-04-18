@@ -125,7 +125,7 @@ class TagList extends Extension {
 	 */
 	private function get_tags_min() {
 		if(isset($_GET['mincount'])) {
-			return (int)($_GET['mincount']);
+			return int_escape($_GET['mincount']);
 		}
 		else {
 			global $config;

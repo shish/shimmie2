@@ -58,7 +58,7 @@ class ImageBan extends Extension {
 		if($event->page_matches("image_hash_ban")) {
 			if($user->can("ban_image")) {
 				if($event->get_arg(0) == "dnp") {
-					$image = Image::by_id((int)($event->get_arg(1)));
+					$image = Image::by_id(int_escape($event->get_arg(1)));
 					if($image) {
 						send_event(new AddImageHashBanEvent($image->hash, "DNP"));
 						send_event(new ImageDeletionEvent($image));
@@ -74,7 +74,7 @@ class ImageBan extends Extension {
 						$page->set_redirect(make_link("image_hash_ban/list/1"));
 					}
 					if(isset($_POST['image_id'])) {
-						$image = Image::by_id((int)($_POST['image_id']));
+						$image = Image::by_id(int_escape($_POST['image_id']));
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
 							$page->set_mode("redirect");
@@ -93,7 +93,7 @@ class ImageBan extends Extension {
 				else if($event->get_arg(0) == "list") {
 					$page_num = 0;
 					if($event->count_args() == 2) {
-						$page_num = (int)($event->get_arg(1));
+						$page_num = int_escape($event->get_arg(1));
 					}
 					$page_size = 100;
 					$page_count = ceil($database->get_one("SELECT COUNT(id) FROM image_bans")/$page_size);
@@ -131,8 +131,8 @@ class ImageBan extends Extension {
 		global $database;
 
 		// FIXME: many
-		$size_i = (int)($size);
-		$offset_i = (int)($page-1)*$size_i;
+		$size_i = int_escape($size);
+		$offset_i = int_escape($page-1)*$size_i;
 		$where = array("(1=1)");
 		$args = array();
 		if(!empty($_GET['hash'])) {

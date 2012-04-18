@@ -95,10 +95,10 @@ class PageRequestEvent extends Event {
 	public function get_page_number() {
 		$page_number = 1;
 		if($this->count_args() === 1) {
-			$page_number = (int)($this->get_arg(0));
+			$page_number = int_escape($this->get_arg(0));
 		}
 		else if($this->count_args() === 2) {
-			$page_number = (int)($this->get_arg(1));
+			$page_number = int_escape($this->get_arg(1));
 		}
 		if($page_number === 0) $page_number = 1; // invalid -> 0
 		return $page_number;

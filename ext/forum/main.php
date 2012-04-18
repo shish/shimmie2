@@ -92,8 +92,8 @@ class Forum extends Extension {
                     }
                     case "view":
                     {
-                        $threadID = (int)($event->get_arg(1));
-                        $pageNumber = (int)($event->get_arg(2));
+                        $threadID = int_escape($event->get_arg(1));
+                        $pageNumber = int_escape($event->get_arg(2));
 
                         $this->show_posts($event, $user->is_admin());
                         if($user->is_admin()) $this->theme->add_actions_block($page, $threadID);
@@ -131,8 +131,8 @@ class Forum extends Extension {
                         break;
                     }
 					case "delete":
-						$threadID = (int)($event->get_arg(1));
-						$postID = (int)($event->get_arg(2));
+						$threadID = int_escape($event->get_arg(1));
+						$postID = int_escape($event->get_arg(2));
 
                         if ($user->is_admin()) {$this->delete_post($postID);}
 
@@ -140,7 +140,7 @@ class Forum extends Extension {
                         $page->set_redirect(make_link("forum/view/".$threadID));
                         break;
                     case "nuke":
-                        $threadID = (int)($event->get_arg(1));
+                        $threadID = int_escape($event->get_arg(1));
 
                         if ($user->is_admin())
                             $this->delete_thread($threadID);
@@ -160,7 +160,7 @@ class Forum extends Extension {
                                 break;
                             }
 
-                            $threadID = (int)($_POST["threadID"]);
+                            $threadID = int_escape($_POST["threadID"]);
                             
                             $this->save_new_post($threadID, $user);
                         }

@@ -71,10 +71,10 @@ class ShimmieApi extends Extension {
 			if($event->page_matches("api/shimmie/get_image")) {
 				$arg = $event->get_arg(0);
 				if(!empty($arg)){
-					$image = Image::by_id((int)($event->get_arg(0)));
+					$image = Image::by_id(int_escape($event->get_arg(0)));
 				}
 				elseif(isset($_GET['id'])){
-					$image = Image::by_id((int)($_GET['id']));
+					$image = Image::by_id(int_escape($_GET['id']));
 				}
 				// FIXME: handle null image
 				$image->get_tag_array(); // tag data isn't loaded into the object until necessary

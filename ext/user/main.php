@@ -294,7 +294,7 @@ class UserPage extends Extension {
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
 		else if(preg_match("/^(poster|user)_id=([0-9]+)$/i", $event->term, $matches)) {
-			$user_id = (int)($matches[2]);
+			$user_id = int_escape($matches[2]);
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
 		else if($user->can("view_ip") && preg_match("/^(poster|user)_ip=([0-9\.]+)$/i", $event->term, $matches)) {

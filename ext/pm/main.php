@@ -105,13 +105,13 @@ class PrivMsg extends Extension {
 			if(!$user->is_anonymous()) {
 				switch($event->get_arg(0)) {
 					case "read":
-						$pm_id = (int)($event->get_arg(1));
+						$pm_id = int_escape($event->get_arg(1));
 						$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 						if(is_null($pm)) {
 							$this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
 						}
 						else if(($pm["to_id"] == $user->id) || $user->can("view_other_pms")) {
-							$from_user = User::by_id((int)($pm["from_id"]));
+							$from_user = User::by_id(int_escape($pm["from_id"]));
 							$database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", array("id" => $pm_id));
 							$database->cache->delete("pm-count-{$user->id}");
 							$this->theme->display_message($page, $from_user, $user, new PM($pm));
@@ -122,7 +122,7 @@ class PrivMsg extends Extension {
 						break;
 					case "delete":
 						if($user->check_auth_token()) {
-							$pm_id = (int)($_POST["pm_id"]);
+							$pm_id = int_escape($_POST["pm_id"]);
 							$pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", array("id" => $pm_id));
 							if(is_null($pm)) {
 								$this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
@@ -138,7 +138,7 @@ class PrivMsg extends Extension {
 						break;
 					case "send":
 						if($user->check_auth_token()) {
-							$to_id = (int)($_POST["to_id"]);
+							$to_id = int_escape($_POST["to_id"]);
 							$from_id = $user->id;
 							$subject = $_POST["subject"];
 							$message = $_POST["message"];

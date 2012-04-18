@@ -24,7 +24,7 @@ class taggerTheme extends Themelet {
 	}
 	private function html(Image $image) {
 		global $config;
-		$i_image_id = (int)($image->id);
+		$i_image_id = int_escape($image->id);
 		$h_source = html_escape($image->source);
 		$h_query = isset($_GET['search'])? $h_query= "search=".url_escape($_GET['search']) : "";
 

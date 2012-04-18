@@ -47,7 +47,7 @@ class LogDatabase extends Extension {
 			if($user->can("view_eventlog")) {
 				$wheres = array();
 				$args = array();
-				$page_num = (int)($event->get_arg(0));
+				$page_num = int_escape($event->get_arg(0));
 				if($page_num <= 0) $page_num = 1;
 				if(!empty($_GET["time"])) {
 					$wheres[] = "date_sent LIKE :time";
@@ -77,7 +77,7 @@ class LogDatabase extends Extension {
 				}
 				if(!empty($_GET["priority"])) {
 					$wheres[] = "priority >= :priority";
-					$args["priority"] = (int)($_GET["priority"]);
+					$args["priority"] = int_escape($_GET["priority"]);
 				}
 				else {
 					$wheres[] = "priority >= :priority";

@@ -51,14 +51,14 @@ class Tips extends Extension {
 					break;
 				case "status":
 					// FIXME: HTTP GET CSRF
-					$tipID = (int)($event->get_arg(1));
+					$tipID = int_escape($event->get_arg(1));
 					$this->setStatus($tipID);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("tips/list"));
 					break;
 				case "delete":
 					// FIXME: HTTP GET CSRF
-					$tipID = (int)($event->get_arg(1));
+					$tipID = int_escape($event->get_arg(1));
 					$this->deleteTip($tipID);
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("tips/list"));

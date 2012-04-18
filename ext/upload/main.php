@@ -121,7 +121,7 @@ class Upload extends Extension {
 					throw new UploadException("Can not replace Image: disk nearly full");
 				}
 				// Try to get the image ID
-				$image_id = (int)($event->get_arg(0));
+				$image_id = int_escape($event->get_arg(0));
 				if(empty($image_id)) {
 					$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
 				}
@@ -180,12 +180,12 @@ class Upload extends Extension {
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$ok = true;
 					foreach($_FILES as $name => $file) {
-						$tags = $this->tags_for_upload_slot((int)(substr($name, 4)));
+						$tags = $this->tags_for_upload_slot(int_escape(substr($name, 4)));
 						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
-							$tags = $this->tags_for_upload_slot((int)(substr($name, 3)));
+							$tags = $this->tags_for_upload_slot(int_escape(substr($name, 3)));
 							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
 					}
@@ -292,8 +292,8 @@ class Upload extends Extension {
 				if($event->image_id == -1) {
 					throw new UploadException("File type not recognised");
 				}
-				//header("X-Shimmie-Image-ID: ".(int)($event->image_id));
-				$page->add_http_header("X-Shimmie-Image-ID: ".(int)($event->image_id));
+				//header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
+				$page->add_http_header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
 			}
 			catch(UploadException $ex) {
 				$this->theme->display_upload_error($page, "Error with ".html_escape($file['name']),

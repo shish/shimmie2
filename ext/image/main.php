@@ -180,11 +180,11 @@ class ImageIO extends Extension {
 			}
 		}
 		else if($event->page_matches("image")) {
-			$num = (int)($event->get_arg(0));
+			$num = int_escape($event->get_arg(0));
 			$this->send_file($num, "image");
 		}
 		else if($event->page_matches("thumb")) {
-			$num = (int)($event->get_arg(0));
+			$num = int_escape($event->get_arg(0));
 			$this->send_file($num, "thumb");
 		}
 	}
