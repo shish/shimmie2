@@ -101,7 +101,7 @@ function bool_escape($input) {
 				$input === "t" ||
 				$input === "true" ||
 				$input === "on" ||
-				$input === "1" ||
+				$input === "1"
 			);
 		}
 	}
