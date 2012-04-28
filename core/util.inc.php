@@ -34,6 +34,24 @@ function int_escape($input) {
  * @retval string
  */
 function url_escape($input) {
+	/*
+		Shish: I have a feeling that these three lines are important, possibly for searching for tags with slashes in them like fate/stay_night
+		green-ponies: indeed~
+
+	$input = str_replace('^', '^^', $input);
+	$input = str_replace('/', '^s', $input);
+	$input = str_replace('\\', '^b', $input);
+
+	/* The function idn_to_ascii is used to support Unicode domains / URLs as well.
+	   See here for more:  http://php.net/manual/en/function.filter-var.php
+	   However, it is only supported by PHP version 5.3 and up
+
+	if (function_exists('idn_to_ascii')) {
+			return filter_var(idn_to_ascii($input), FILTER_SANITIZE_URL);
+	} else {
+			return filter_var($input, FILTER_SANITIZE_URL);
+	}
+	*/
 	if(is_null($input)) {
 		return "";
 	}
@@ -61,16 +79,32 @@ function sql_escape($input) {
  * @retval boolean
  */
 function bool_escape($input) {
-	$input = strtolower($input);
-	return (
-		$input === "y" ||
-		$input === "yes" ||
-		$input === "t" ||
-		$input === "true" ||
-		$input === "on" ||
-		$input === 1 ||
-		$input === true
-	);
+	/*
+	 Sometimes, I don't like PHP -- this, is one of those times...
+	  "a boolean FALSE is not considered a valid boolean value by this function."
+	 Yay for Got'chas!	
+	 http://php.net/manual/en/filter.filters.validate.php
+	*/
+	if (is_bool($input)) {
+		return $input;
+	} else if (is_numeric($input)) {
+		return ($input === 1);
+	} else {
+		$value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+		if (!is_null($value)) {
+			return $value;
+		} else {
+			$input = strtolower( trim($input) );
+			return (
+				$input === "y" ||
+				$input === "yes" ||
+				$input === "t" ||
+				$input === "true" ||
+				$input === "on" ||
+				$input === "1"
+			);
+		}
+	}
 }
 
 /**
@@ -203,15 +237,6 @@ function show_ip($ip, $ban_reason) {
 	$ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
 	$ip = $user->can("view_ip") ? $ip.$ban : "";
 	return $ip;
-}
-
-/**
- * Different databases have different ways to represent booleans; this
- * will try and standardise them
- */
-function undb_bool($val) {
-	if($val === true  || $val == 'Y' || $val == 'y' || $val == 'T' || $val == 't' || $val === 1) return true;
-	if($val === false || $val == 'N' || $val == 'n' || $val == 'F' || $val == 'f' || $val === 0) return false;
 }
 
 /**
