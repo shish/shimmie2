@@ -1,6 +1,6 @@
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
-	var themecheck = $(".thumb[data-tags~='tagme']").parent().attr('class');
+	var themecheck = $(".thumb[data-tags]").parent().attr('class');
 	var needs_refresh = false;
 	for(i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
