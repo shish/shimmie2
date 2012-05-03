@@ -82,6 +82,7 @@ User classes can be added to or altered by placing them in
 default anonymous "allow nothing" permissions like so:
 
 new UserClass("anonymous", "base", array(
+	"create_comment" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"create_image_report" => True,
