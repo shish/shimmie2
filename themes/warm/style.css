@@ -83,8 +83,8 @@ UL {
 	text-align: left;
 }
 
-SECTION>H3, SECTION>.blockbody, .comment {margin: 8px; padding: 8px; border: 1px solid #B89F7C;}
-SECTION>.blockbody, .comment {background: #FCD9A9;}
+SECTION>H3, SECTION>.blockbody, .comment, .setupblock {margin: 8px; padding: 8px; border: 1px solid #B89F7C;}
+SECTION>.blockbody, .comment, .setupblock {background: #FCD9A9;}
 SECTION>H3 {background: #DABC92;}
 
 
