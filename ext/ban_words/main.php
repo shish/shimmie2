@@ -54,9 +54,29 @@ xanax
 	}
 
 	public function onCommentPosting(CommentPostingEvent $event) {
+		$this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
+	}
+
+	public function onSourceSet(SourceSetEvent $event) {
+		$this->test_text($event->source, new SCoreException("Source contains banned terms"));
+	}
+
+	public function onTagSet(TagSetEvent $event) {
+		$this->test_text(Tag::implode($event->tags), new SCoreException("Tags contain banned terms"));
+	}
+
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Banned Phrases");
+		$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
+		$sb->add_longtext_option("banned_words");
+		$event->panel->add_block($sb);
+	}
+
+	private function test_text($comment, $ex) {
 		global $config;
+
 		$banned = $config->get_string("banned_words");
-		$comment = strtolower($event->comment);
+		$comment = strtolower($comment);
 
 		foreach(explode("\n", $banned) as $word) {
 			$word = trim(strtolower($word));
@@ -67,23 +87,16 @@ xanax
 			else if($word[0] == '/') {
 				// lines that start with slash are regex
 				if(preg_match($word, $comment)) {
-					throw new CommentPostingException("Comment contains banned terms");
+					throw $ex;
 				}
 			}
 			else {
 				// other words are literal
 				if(strpos($comment, $word) !== false) {
-					throw new CommentPostingException("Comment contains banned terms");
+					throw $ex;
 				}
 			}
 		}
-	}
-
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Banned Phrases");
-		$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
-		$sb->add_longtext_option("banned_words");
-		$event->panel->add_block($sb);
 	}
 
 	public function get_priority() {return 30;}

@@ -1,13 +1,15 @@
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
-	var themecheck = $(".thumb[data-tags~='tagme']").parent().attr('class');
+	var themecheck = $(".thumb[data-tags]").parent().attr('class');
 	var needs_refresh = false;
-	for(i in blocked_tags) {
+	for(i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
 		if(tag) {
-			$(".thumb[data-tags~='"+tag+"']").hide();
 			if(themecheck == "thumbblock") {
-				$(".thumb[data-tags~='tagme']").parent().height(0); //required for lite theme
+				$(".thumb[data-tags~='"+tag+"']").parent().hide();
+				$(".thumb[data-tags~='"+tag+"']").parent().height(0); //required for lite theme
+			}else{
+				$(".thumb[data-tags~='"+tag+"']").hide();
 			}
 			needs_refresh = true;
 		}
@@ -16,8 +18,13 @@ $(function() {
 	// text-align: justify with element margins and doesn't recalculate
 	// these margins when part of the line disappears...
 	if(needs_refresh) {
-		$('#image-list').hide();
-		$('#image-list').show();
+		if(themecheck == "thumbblock") {
+			$('.blockbody').hide();
+			$('.blockbody').show();
+		}else{
+			$('#image-list').hide();
+			$('#image-list').show();
+		}
 	}
 });
 

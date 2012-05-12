@@ -74,6 +74,14 @@ new UserClass("anonymous", "base", array(
 	"create_image_report" => True,
 ));
 
+For a moderator class, being a regular user who can delete images and
+comments:
+
+new UserClass("moderator", "user", array(
+	"delete_image" => True,
+	"delete_comment" => True,
+));
+
 For a list of permissions, see core/userclass.class.php
 
 

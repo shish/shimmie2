@@ -49,6 +49,12 @@ class ET extends Extension {
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
 		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
+		
+		$info['thumb_engine']	= $config->get_string("thumb_engine");
+		$info['thumb_quality']	= $config->get_int('thumb_quality');
+		$info['thumb_width']	= $config->get_int('thumb_width');
+		$info['thumb_height']	= $config->get_int('thumb_height');
+		$info['thumb_mem']		= $config->get_int("thumb_max_memory");
 
 		$info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
 		$info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");

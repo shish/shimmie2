@@ -56,7 +56,7 @@ class Image {
 				$this->$name = $value; // hax
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
-			$this->locked = undb_bool($this->locked);
+			$this->locked = bool_escape($this->locked);
 
 			assert(is_numeric($this->id));
 			assert(is_numeric($this->height));
@@ -385,16 +385,66 @@ class Image {
 	/**
 	 * Get the image's mime type
 	 *
-	 * FIXME: now we handle more than just images
-	 *
 	 * @retval string
 	 */
 	public function get_mime_type() {
-		$type = strtolower($this->ext);
-		if($type === "jpg") $type = "jpeg";
-		return 'image/'.$type;
+		return __getMimeType( get_image_filename() );
 	}
 
+	/**
+	* Get MIME type for file
+	*
+	* The contents of this function are taken from the __getMimeType() function
+	* from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
+	* and released under the 'Simplified BSD License'.
+	*
+	* @internal Used to get mime types
+	* @param string &$file File path
+	* @return string
+	*/
+	public static function __getMimeType(&$file)
+	{
+		$type = false;
+		// Fileinfo documentation says fileinfo_open() will use the
+		// MAGIC env var for the magic file
+		if (extension_loaded('fileinfo') && isset($_ENV['MAGIC']) &&
+		($finfo = finfo_open(FILEINFO_MIME, $_ENV['MAGIC'])) !== false)
+		{
+			if (($type = finfo_file($finfo, $file)) !== false)
+			{
+				// Remove the charset and grab the last content-type
+				$type = explode(' ', str_replace('; charset=', ';charset=', $type));
+				$type = array_pop($type);
+				$type = explode(';', $type);
+				$type = trim(array_shift($type));
+			}
+			finfo_close($finfo);
+
+		// If anyone is still using mime_content_type()
+		} elseif (function_exists('mime_content_type'))
+			$type = trim(mime_content_type($file));
+
+		if ($type !== false && strlen($type) > 0) return $type;
+
+		// Otherwise do it the old fashioned way
+		static $exts = array(
+			'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
+			'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
+			'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
+			'zip' => 'application/zip', 'gz' => 'application/x-gzip',
+			'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
+			'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
+			'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
+			'css' => 'text/css', 'js' => 'text/javascript',
+			'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
+			'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
+			'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
+			'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php'
+		);
+		$ext = strtolower(pathInfo($file, PATHINFO_EXTENSION));
+		return isset($exts[$ext]) ? $exts[$ext] : 'application/octet-stream';
+	}
+	
 	/**
 	 * Get the image's filename extension
 	 *
@@ -439,7 +489,7 @@ class Image {
 		$sln = $database->engine->scoreql_to_sql('SCORE_BOOL_'.$ln);
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		if(undb_bool($sln) !== $this->locked) {
+		if(bool_escape($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
 			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
 		}

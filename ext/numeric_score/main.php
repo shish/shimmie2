@@ -192,6 +192,8 @@ class NumericScore extends Extension {
 
 		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
 
+		if(count($image_ids) == 0) return;
+
 		$database->execute(
 				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
 				array($user_id));

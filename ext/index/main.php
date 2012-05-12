@@ -129,6 +129,8 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends Extension {
+	var $val_id = 0;
+
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int("index_images", 24);
@@ -206,10 +208,11 @@ class Index extends Extension {
 			$event->add_querylet(new Querylet('width / height '.$cmp.' :width / :height', $args));
 		}
 		else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
+			$this->val_id++;
 			$col = $matches[1];
 			$cmp = $matches[2];
 			$val = parse_shorthand_int($matches[3]);
-			$event->add_querylet(new Querylet("images.$col $cmp :val", array("val"=>$val)));
+			$event->add_querylet(new Querylet("images.$col $cmp :val{$this->val_id}", array("val{$this->val_id}"=>$val)));
 		}
 		else if(preg_match("/^(hash|md5)=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
 			$hash = strtolower($matches[2]);

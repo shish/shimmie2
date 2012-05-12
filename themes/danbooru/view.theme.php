@@ -42,8 +42,10 @@ class CustomViewImageTheme extends ViewImageTheme {
 			if($image->rating == null || $image->rating == "u"){
 				$image->rating = "u";
 			}
+			if(class_exists("Ratings")) {
 				$h_rating = Ratings::rating_to_human($image->rating);
 				$html .= "<br>Rating: $h_rating";
+			}
 		}
 
 		return $html;
