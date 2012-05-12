@@ -291,6 +291,10 @@ class Setup extends Extension {
 			}
 		}
 		log_warning("setup", "Configuration updated");
+		foreach(glob("data/cache/*.css") as $css_cache) {
+			unlink($css_cache);
+		}
+		log_warning("setup", "Cache cleared");
 	}
 
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
