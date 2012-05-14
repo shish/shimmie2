@@ -388,7 +388,7 @@ class Image {
 	 * @retval string
 	 */
 	public function get_mime_type() {
-		return getMimeType(get_image_filename());
+		return getMimeType($this->get_image_filename());
 	}
 
 	/**
