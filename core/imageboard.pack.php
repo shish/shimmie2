@@ -613,6 +613,9 @@ class Image {
 	}
 
 	/**
+	 * WARNING: this description is no longer accurate, though it does get across
+	 * the general idea - the actual method has a few extra optimisiations
+	 *
 	 * "foo bar -baz user=foo" becomes
 	 *
 	 * SELECT * FROM images WHERE
@@ -746,32 +749,29 @@ class Image {
 				$have_pos = count($positive_tag_id_array) > 0;
 				$have_neg = count($negative_tag_id_array) > 0;
 
-				$sql = "SELECT images.* FROM images WHERE ";
+				$sql = "SELECT images.* FROM images WHERE images.id IN (";
 				if($have_pos) {
 					$positive_tag_id_list = join(', ', $positive_tag_id_array);
 					$sql .= "
-						images.id IN (
-							SELECT image_id
-							FROM image_tags
-							WHERE tag_id IN ($positive_tag_id_list)
-							GROUP BY image_id
-							HAVING COUNT(image_id)>=$positive_tag_count
-						)
+						SELECT image_id
+						FROM image_tags
+						WHERE tag_id IN ($positive_tag_id_list)
+						GROUP BY image_id
+						HAVING COUNT(image_id)>=$positive_tag_count
 					";
 				}
 				if($have_pos && $have_neg) {
-					$sql .= " AND ";
+					$sql .= " EXCEPT ";
 				}
 				if($have_neg) {
 					$negative_tag_id_list = join(', ', $negative_tag_id_array);
 					$sql .= "
-						images.id NOT IN (
-							SELECT image_id
-							FROM image_tags
-							WHERE tag_id IN ($negative_tag_id_list)
-						)
+						SELECT image_id
+						FROM image_tags
+						WHERE tag_id IN ($negative_tag_id_list)
 					";
 				}
+				$sql .= ")";
 				$query = new Querylet($sql);
 
 				if(strlen($img_search->sql) > 0) {
