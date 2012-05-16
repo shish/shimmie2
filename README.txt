@@ -82,9 +82,18 @@ User classes can be added to or altered by placing them in
 default anonymous "allow nothing" permissions like so:
 
 new UserClass("anonymous", "base", array(
+	"create_comment" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"create_image_report" => True,
+));
+
+For a moderator class, being a regular user who can delete images and
+comments:
+
+new UserClass("moderator", "user", array(
+	"delete_image" => True,
+	"delete_comment" => True,
 ));
 
 For a list of permissions, see core/userclass.class.php

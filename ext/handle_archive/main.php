@@ -35,6 +35,7 @@ class ArchiveFileHandler extends Extension {
 			exec($cmd);
 			$this->add_dir($tmpdir);
 			deltree($tmpdir);
+			$event->image_id = -2; // default -1 = upload wasn't handled
 		}
 	}
 

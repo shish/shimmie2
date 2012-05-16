@@ -56,7 +56,7 @@ class Image {
 				$this->$name = $value; // hax
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
-			$this->locked = undb_bool($this->locked);
+			$this->locked = bool_escape($this->locked);
 
 			assert(is_numeric($this->id));
 			assert(is_numeric($this->height));
@@ -385,14 +385,10 @@ class Image {
 	/**
 	 * Get the image's mime type
 	 *
-	 * FIXME: now we handle more than just images
-	 *
 	 * @retval string
 	 */
 	public function get_mime_type() {
-		$type = strtolower($this->ext);
-		if($type === "jpg") $type = "jpeg";
-		return 'image/'.$type;
+		return getMimeType($this->get_image_filename());
 	}
 
 	/**
@@ -439,7 +435,7 @@ class Image {
 		$sln = $database->engine->scoreql_to_sql('SCORE_BOOL_'.$ln);
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
-		if(undb_bool($sln) !== $this->locked) {
+		if(bool_escape($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
 			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
 		}
