@@ -706,11 +706,9 @@ class Image {
 		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
 			$query = new Querylet($database->engine->scoreql_to_sql("
 				SELECT images.* FROM images
-				WHERE images.id IN (
-					SELECT image_id FROM image_tags WHERE tag_id = (
-						SELECT tags.id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
-					)
-				)
+				JOIN image_tags ON images.id=image_tags.image_id
+				JOIN tags ON image_tags.tag_id=tags.id
+				WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
 				"), array("tag"=>$tag_querylets[0]->tag));
 
 			if(!empty($img_search->sql)) {
