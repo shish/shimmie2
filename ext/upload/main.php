@@ -215,7 +215,9 @@ class Upload extends Extension {
 
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {
-			$tags = array_merge(Tag::explode($_POST['tags']), Tag::explode($_POST["tags$id"]));
+			# merge then explode, not explode then merge - else
+			# one of the merges may create a surplus "tagme"
+			$tags = Tag::explode($_POST['tags'] . " " . $_POST["tags$id"]);
 		}
 		else {
 			$tags = Tag::explode($_POST['tags']);
