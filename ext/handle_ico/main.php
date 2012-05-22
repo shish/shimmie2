@@ -97,7 +97,7 @@ class IcoFileHandler extends Extension {
 		$w = $config->get_int("thumb_width");
 		$h = $config->get_int("thumb_height");
 		$q = $config->get_int("thumb_quality");
-		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
+		$mem = $config->get_int("thumb_mem_limit") / 1024 / 1024; // IM takes memory in MB
 
 		if($config->get_bool("ico_convert")) {
 			// "-limit memory $mem" broken?

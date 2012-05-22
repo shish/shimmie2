@@ -54,7 +54,7 @@ class ET extends Extension {
 		$info['thumb_quality']	= $config->get_int('thumb_quality');
 		$info['thumb_width']	= $config->get_int('thumb_width');
 		$info['thumb_height']	= $config->get_int('thumb_height');
-		$info['thumb_mem']		= $config->get_int("thumb_max_memory");
+		$info['thumb_mem']		= $config->get_int("thumb_mem_limit");
 
 		$info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
 		$info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");
