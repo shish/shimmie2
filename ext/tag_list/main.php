@@ -394,46 +394,52 @@ class TagList extends Extension {
 		global $database;
 		global $config;
 
-		$wild_tags = Tag::explode($search);
-		// $search_tags = array();
+		$related_tags = $database->cache->get("related_tags:$search");
 
-		$tag_id_array = array();
-		$tags_ok = true;
-		foreach($wild_tags as $tag) {
-			$tag = str_replace("*", "%", $tag);
-			$tag = str_replace("?", "_", $tag);
-			$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
-			// $search_tags = array_merge($search_tags,
-			//                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
-			$tag_id_array = array_merge($tag_id_array, $tag_ids);
-			$tags_ok = count($tag_ids) > 0;
-			if(!$tags_ok) break;
-		}
-		$tag_id_list = join(', ', $tag_id_array);
+		if(empty($related_tags)) {
+			$wild_tags = Tag::explode($search);
+			// $search_tags = array();
 
-		if($tags_ok) {
-			$query = "
-				SELECT t2.tag AS tag, COUNT(it2.image_id) AS calc_count
-				FROM
-					image_tags AS it1,
-					image_tags AS it2,
-					tags AS t1,
-					tags AS t2
-				WHERE
-					t1.id IN($tag_id_list)
-					AND it1.image_id=it2.image_id
-					AND it1.tag_id = t1.id
-					AND it2.tag_id = t2.id
-				GROUP BY t2.tag
-				ORDER BY calc_count
-				DESC LIMIT :limit
-			";
-			$args = array("limit"=>$config->get_int('tag_list_length'));
-
-			$related_tags = $database->get_all($query, $args);
-			if(count($related_tags) > 0) {
-				$this->theme->display_refine_block($page, $related_tags, $wild_tags);
+			$tag_id_array = array();
+			$tags_ok = true;
+			foreach($wild_tags as $tag) {
+				$tag = str_replace("*", "%", $tag);
+				$tag = str_replace("?", "_", $tag);
+				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
+				// $search_tags = array_merge($search_tags,
+				//                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
+				$tag_id_array = array_merge($tag_id_array, $tag_ids);
+				$tags_ok = count($tag_ids) > 0;
+				if(!$tags_ok) break;
 			}
+			$tag_id_list = join(', ', $tag_id_array);
+
+			if($tags_ok) {
+				$query = "
+					SELECT t2.tag AS tag, COUNT(it2.image_id) AS calc_count
+					FROM
+						image_tags AS it1,
+						image_tags AS it2,
+						tags AS t1,
+						tags AS t2
+					WHERE
+						t1.id IN($tag_id_list)
+						AND it1.image_id=it2.image_id
+						AND it1.tag_id = t1.id
+						AND it2.tag_id = t2.id
+					GROUP BY t2.tag
+					ORDER BY calc_count
+					DESC LIMIT :limit
+				";
+				$args = array("limit"=>$config->get_int('tag_list_length'));
+
+				$related_tags = $database->get_all($query, $args);
+				$database->cache->set("related_tags:$search", $related_tags, 60*60);
+			}
+		}
+
+		if(count($related_tags) > 0) {
+			$this->theme->display_refine_block($page, $related_tags, $wild_tags);
 		}
 	}
 // }}}
