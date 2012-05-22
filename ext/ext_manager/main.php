@@ -141,10 +141,10 @@ class ExtManager extends Extension {
 	private function get_extensions(/*bool*/ $all) {
 		$extensions = array();
 		if($all) {
-			$exts = glob("ext/*/main.php", GLOB_BRACE);
+			$exts = zglob("ext/*/main.php");
 		}
 		else {
-			$exts = glob("ext/{".ENABLED_EXTS."}/main.php", GLOB_BRACE);
+			$exts = zglob("ext/{".ENABLED_EXTS."}/main.php");
 		}
 		foreach($exts as $main) {
 			$extensions[] = new ExtensionInfo($main);
