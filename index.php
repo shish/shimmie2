@@ -67,7 +67,7 @@ _start_cache();
 try {
 	// load base files
 	ctx_log_start("Opening files");
-	$files = array_merge(glob("core/*.php"), glob("ext/{".ENABLED_EXTS."}/main.php", GLOB_BRACE));
+	$files = array_merge(zglob("core/*.php"), zglob("ext/{".ENABLED_EXTS."}/main.php"));
 	foreach($files as $filename) {
 		require_once $filename;
 	}
