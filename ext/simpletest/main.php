@@ -200,7 +200,7 @@ class TestFinder extends TestSuite {
 		$dir = "{".ENABLED_EXTS."}";
 		if(file_exists("ext/$hint/test.php")) $dir = $hint;
 		$this->TestSuite('All tests');
-		foreach(glob("ext/$dir/test.php", GLOB_BRACE) as $file) {
+		foreach(zglob("ext/$dir/test.php") as $file) {
 			$this->addFile($file);
 		}
 	}
