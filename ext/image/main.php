@@ -267,7 +267,9 @@ class ImageIO extends Extension {
 		$sb->add_int_option("thumb_quality");
 		$sb->add_label(" % quality ");
 
-		$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
+		if($config->get_string("thumb_engine") == "gd") {
+			$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
+		}
 
 		$event->panel->add_block($sb);
 	}
@@ -293,7 +295,7 @@ class ImageIO extends Extension {
 			if($handler == "merge" || isset($_GET['update'])) {
 				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
 				send_event(new TagSetEvent($existing, $merged));
-				if(isset($_GET['rating']) && isset($_GET['update']) && file_exists("ext/rating")){
+				if(isset($_GET['rating']) && isset($_GET['update']) && class_exists("Ratings")){
 					send_event(new RatingSetEvent($existing, $user, $_GET['rating']));
 				}
 				if(isset($_GET['source']) && isset($_GET['update'])){
