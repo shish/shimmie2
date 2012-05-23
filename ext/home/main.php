@@ -70,8 +70,8 @@ class Home extends Extension {
 		}
 		else {
 			$main_links = '[url=site://post/list]Posts[/url] [url=site://comment/list]Comments[/url] [url=site://tags]Tags[/url]';
-			if(file_exists("ext/pools")) {$main_links .= ' [url=site://pools]Pools[/url]';}
-			if(file_exists("ext/wiki")) {$main_links .= ' [url=site://wiki]Wiki[/url]';}
+			if(class_exists("Pools")) {$main_links .= ' [url=site://pools]Pools[/url]';}
+			if(class_exists("Wiki")) {$main_links .= ' [url=site://wiki]Wiki[/url]';}
 			$main_links .= ' [url=site://ext_doc]>>[/url]';
 		}
 		$main_links = format_text($main_links);

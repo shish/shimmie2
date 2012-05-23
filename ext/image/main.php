@@ -295,7 +295,7 @@ class ImageIO extends Extension {
 			if($handler == "merge" || isset($_GET['update'])) {
 				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
 				send_event(new TagSetEvent($existing, $merged));
-				if(isset($_GET['rating']) && isset($_GET['update']) && file_exists("ext/rating")){
+				if(isset($_GET['rating']) && isset($_GET['update']) && class_exists("Ratings")){
 					send_event(new RatingSetEvent($existing, $user, $_GET['rating']));
 				}
 				if(isset($_GET['source']) && isset($_GET['update'])){
