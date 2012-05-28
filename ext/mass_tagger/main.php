@@ -38,13 +38,11 @@ class MassTagger extends Extension {
 		$ids = explode( ':', $_POST['ids'] );
 		$ids = array_filter ( $ids , 'is_numeric' );
 		
-		$ids = array_map( "Image::by_id", $ids );
+		$images = array_map( "Image::by_id", $ids );
 		
-		$func = function( $image ) use ( $tag ) {
-			$tag .= " " . $image->get_tag_list();
-			$image->set_tags( $tag );
-		};
-		array_walk( $ids, $func );
+		foreach($images as $image) {
+			$image->set_tags($tag . " " . $image->get_tag_list());
+		}
 		
 		$page->set_mode("redirect");
 		$page->set_redirect(make_link("post/list"));
