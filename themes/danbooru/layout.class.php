@@ -140,11 +140,11 @@ class Layout {
 				# be nice to be correct
 			case "post":
 			case "upload":
-				if(file_exists("ext/numeric_score")){ $custom_sublinks .= "<li><b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a>/<a href='".make_link('popular_by_month')."'>Month</a>/<a href='".make_link('popular_by_year')."'>Year</a></li>";}
+				if(class_exists("NumericScore")){ $custom_sublinks .= "<li><b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a>/<a href='".make_link('popular_by_month')."'>Month</a>/<a href='".make_link('popular_by_year')."'>Year</a></li>";}
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
-				if(file_exists("ext/favorites")){ $custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";}
-				if(file_exists("ext/rss_images")){ $custom_sublinks .= "<li><a href='".make_link('rss/images')."'>Feed</a></li>";}
-				if(file_exists("ext/random_image")){ $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random Image</a></li>";}
+				if(class_exists("Favorites")){ $custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";}
+				if(class_exists("RSS_Images")){ $custom_sublinks .= "<li><a href='".make_link('rss/images')."'>Feed</a></li>";}
+				if(class_exists("RandomImage")){ $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random Image</a></li>";}
 				if($hw){ $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
 				}else{ $custom_sublinks .= "<li><a href='".make_link("ext_doc/index")."'>Help</a></li>";}
 				break;

@@ -11,7 +11,16 @@ class BaseThemelet {
 		$page->add_http_header("HTTP/1.0 $code $title");
 		$page->set_title($title);
 		$page->set_heading($title);
-		$page->add_block(new NavBlock());
+		$has_nav = false;
+		foreach($page->blocks as $block) {
+			if($block->header == "Navigation") {
+				$has_nav = true;
+				break;
+			}
+		}
+		if(!$has_nav) {
+			$page->add_block(new NavBlock());
+		}
 		$page->add_block(new Block("Error", $message));
 	}
 

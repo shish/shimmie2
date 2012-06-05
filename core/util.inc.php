@@ -386,10 +386,24 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+/*
+ * like glob, with support for matching very long patterns with braces
+ */
 function zglob($pattern) {
-	$r = glob($pattern);
-	if($r) return $r;
-	else return array();
+	$results = array();
+	if(preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
+		$braced = explode(",", $matches[2]);
+		foreach($braced as $b) {
+			$sub_pattern = $matches[1].$b.$matches[3];
+			$results = array_merge($results, zglob($sub_pattern));
+		}
+		return $results;
+	}
+	else {
+		$r = glob($pattern);
+		if($r) return $r;
+		else return array();
+	}
 }
 
 
@@ -1088,8 +1102,8 @@ function _get_themelet_files($_theme) {
 	$base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
-	$ext_themelets = glob("ext/{".ENABLED_EXTS."}/theme.php", GLOB_BRACE);
-	$custom_themelets = glob('themes/'.$_theme.'/{'.ENABLED_EXTS.'}.theme.php', GLOB_BRACE);
+	$ext_themelets = zglob("ext/{".ENABLED_EXTS."}/theme.php");
+	$custom_themelets = zglob('themes/'.$_theme.'/{'.ENABLED_EXTS.'}.theme.php');
 
 	return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }

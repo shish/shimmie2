@@ -215,7 +215,9 @@ class Upload extends Extension {
 
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {
-			$tags = array_merge(Tag::explode($_POST['tags']), Tag::explode($_POST["tags$id"]));
+			# merge then explode, not explode then merge - else
+			# one of the merges may create a surplus "tagme"
+			$tags = Tag::explode($_POST['tags'] . " " . $_POST["tags$id"]);
 		}
 		else {
 			$tags = Tag::explode($_POST['tags']);
@@ -327,7 +329,7 @@ class Upload extends Extension {
 		}
 		
 		// Checks if url contains rating, also checks if the rating extension is enabled.
-		if($config->get_string("transload_engine", "none") != "none" && file_exists("ext/rating") && !empty($_GET['rating'])) {
+		if($config->get_string("transload_engine", "none") != "none" && class_exists("Ratings") && !empty($_GET['rating'])) {
 			// Rating event will validate that this is s/q/e/u
 			$rating = strtolower($_GET['rating']);
 			$rating = $rating[0];

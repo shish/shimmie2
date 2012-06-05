@@ -438,7 +438,7 @@ class TagList extends Extension {
 			}
 		}
 
-		if(count($related_tags) > 0) {
+		if(!empty($related_tags)) {
 			$this->theme->display_refine_block($page, $related_tags, $wild_tags);
 		}
 	}

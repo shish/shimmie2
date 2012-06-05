@@ -90,7 +90,6 @@ class PixelFileHandler extends DataHandlerExtension {
 		$w = $config->get_int("thumb_width");
 		$h = $config->get_int("thumb_height");
 		$q = $config->get_int("thumb_quality");
-		$mem = $config->get_int("thumb_max_memory") / 1024 / 1024; // IM takes memory in MB
 
 		// Windows is a special case
 		if(in_array("OS", $_SERVER) && $_SERVER["OS"] == 'Windows_NT') {
