@@ -96,7 +96,7 @@ class CommentListTheme extends Themelet {
 				</tr></table>
 			';
 
-			$page->add_block(new Block( $image->id.': '.$image->get_tag_list(), $html, "main", $position++, "comment-list"));
+			$page->add_block(new Block( $image->id.': '.$image->get_tag_list(), $html, "main", $position++, "comment-list-list"));
 		}
 	}
 
@@ -114,7 +114,7 @@ class CommentListTheme extends Themelet {
 			$html .= $this->comment_to_html($comment, true);
 		}
 		$html .= "<a class='more' href='".make_link("comment/list")."'>Full List</a>";
-		$page->add_block(new Block("Comments", $html, "left", 50, "comment-list"));
+		$page->add_block(new Block("Comments", $html, "left", 50, "comment-list-recent"));
 	}
 
 
@@ -131,7 +131,7 @@ class CommentListTheme extends Themelet {
 		if($postbox) {
 			$html .= $this->build_postbox($image->id);
 		}
-		$page->add_block(new Block("Comments", $html, "main", 30, "comment-list"));
+		$page->add_block(new Block("Comments", $html, "main", 30, "comment-list-image"));
 	}
 
 
@@ -147,7 +147,7 @@ class CommentListTheme extends Themelet {
 		if(empty($html)) {
 			$html = '<p>No comments by this user.</p>';
 		}
-		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list"));
+		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
 	}
 
 
@@ -201,7 +201,7 @@ class CommentListTheme extends Themelet {
 			$h_avatar = "";
 			if(!empty($comment->owner_email)) {
 				$hash = md5(strtolower($comment->owner_email));
-				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg\"><br>";
+				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?1\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
 			$h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
