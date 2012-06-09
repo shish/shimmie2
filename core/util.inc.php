@@ -688,6 +688,19 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 }
 
 /**
+ * Set (or extend) a flash-message cookie
+ */
+function flash_message(/*string*/ $text) {
+	$current = get_prefixed_cookie("flash_message");
+	if($current) {
+		$text = $current . "\n" . $text;
+	}
+	# the message should be viewed pretty much immediately,
+	# so 60s timeout should be more than enough
+	set_prefixed_cookie("flash_message", $text, time()+60, "/");
+}
+
+/**
  * Figure out the path to the shimmie install directory.
  *
  * eg if shimmie is visible at http://foo.com/gallery, this

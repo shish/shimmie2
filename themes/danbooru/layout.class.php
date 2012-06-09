@@ -191,6 +191,13 @@ class Layout {
 			$withleft = "noleft";
 		}
 
+		$flash = get_prefixed_cookie("flash_message");
+		$flash_html = "";
+		if($flash) {
+			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
+			set_prefixed_cookie("flash_message", "", -1, "/");
+		}
+
 		print <<<EOD
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
@@ -217,6 +224,7 @@ $header_html
 		$sub_block_html
 		$left
 		<article class="$withleft">
+			$flash_html
 			$main_block_html
 		</article>
 		<footer><em>
