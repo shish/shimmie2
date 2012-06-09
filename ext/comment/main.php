@@ -119,7 +119,7 @@ class CommentList extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+		global $page, $user, $database;
 		if($event->page_matches("comment")) {
 			if($event->get_arg(0) === "add") {
 				if(isset($_POST['image_id']) && isset($_POST['comment'])) {
@@ -153,11 +153,33 @@ class CommentList extends Extension {
 					$this->theme->display_permission_denied();
 				}
 			}
+			else if($event->get_arg(0) === "bulk_delete") {
+				if($user->can("delete_comment") && !empty($_POST["ip"])) {
+					$ip = $_POST['ip'];
+
+					$cids = $database->get_col("SELECT id FROM comments WHERE owner_ip=:ip", array("ip"=>$ip));
+					$num = count($cids);
+					log_warning("comment", "Deleting $num comments from $ip");
+					foreach($cids as $cid) {
+						send_event(new CommentDeletionEvent($cid));
+					}
+
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("admin"));
+				}
+				else {
+					$this->theme->display_permission_denied();
+				}
+			}
 			else if($event->get_arg(0) === "list") {
 				$page_num = int_escape($event->get_arg(1));
 				$this->build_page($page_num);
 			}
 		}
+	}
+
+	public function onAdminBuilding(AdminBuildingEvent $event) {
+		$this->theme->display_admin_block();
 	}
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {

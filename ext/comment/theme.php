@@ -101,6 +101,23 @@ class CommentListTheme extends Themelet {
 	}
 
 
+	public function display_admin_block() {
+		global $page;
+
+		$html = '
+			Delete comments by IP.
+
+			<br><br>'.make_form(make_link("comment/bulk_delete"), 'POST')."
+				<table class='form'>
+					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='ip' size='15'></td></tr>
+					<tr><td colspan='2'><input type='submit' value='Delete'></td></tr>
+				</table>
+			</form>
+		";
+		$page->add_block(new Block("Mass Comment Delete", $html));
+	}
+
+
 	/**
 	 * Add some comments to the page, probably in a sidebar
 	 *
