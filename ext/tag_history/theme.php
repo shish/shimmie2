@@ -116,8 +116,8 @@ class Tag_HistoryTheme extends Themelet {
 		}
 		
 		$html = '
-			Revert tag changes/edit by a specific IP address.<br>
-			You can restrict the time frame to revert these edits as well.
+			Revert tag changes/edit by a specific IP address or username.
+			<br>You can restrict the time frame to revert these edits as well.
 			<br>(Date format: 2011-10-23)
 			'.$validation_msg.'
 
