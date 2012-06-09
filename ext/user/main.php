@@ -203,6 +203,7 @@ class UserPage extends Extension {
 
 		$h_join_date = autodate($event->display_user->join_date);
 		$event->add_stats("Joined: $h_join_date", 10);
+		$event->add_stats("Class: {$event->display_user->class->name}", 90);
 
 		$av = $event->display_user->get_avatar_html();
 		if($av) {
