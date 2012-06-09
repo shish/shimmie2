@@ -46,7 +46,7 @@ class LogDatabaseTheme extends Themelet {
 		foreach($events as $event) {
 			$c = $this->pri_to_col($event['priority']);
 			$table .= "<tr style='color: $c'>";
-			$table .= "<td>".str_replace(" ", "&nbsp;", $event['date_sent'])."</td>";
+			$table .= "<td>".str_replace(" ", "&nbsp;", substr($event['date_sent'], 0, 19))."</td>";
 			$table .= "<td>".$event['section']."</td>";
 			if($event['username'] == "Anonymous") {
 				$table .= "<td>".$event['address']."</td>";
