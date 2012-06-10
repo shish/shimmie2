@@ -90,8 +90,11 @@ class UserPage extends Extension {
 				if(is_null($user)) {
 					$this->theme->display_error(404, "Error", "There's no user with that name");
 				}
-				if(is_null($user->email)) {
-					//
+				else if(is_null($user->email)) {
+					$this->theme->display_error(400, "Error", "That user has no registered email address");
+				}
+				else {
+					// send email
 				}
 			}
 			else if($event->get_arg(0) == "create") {
@@ -213,7 +216,11 @@ class UserPage extends Extension {
 			$config->get_string("avatar_host") == "gravatar") &&
 			($user->id == $event->display_user->id)
 		) {
-			$event->add_stats("No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the same email address here and there to have your avatar synced", 0);
+			$event->add_stats(
+				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar "+
+				"hosting, use the same email address here and there to have your avatar synced",
+				0
+			);
 		}
 	}
 
@@ -434,6 +441,8 @@ class UserPage extends Extension {
 				if($id == $user->id) {
 					$this->set_login_cookie($duser->name, $pass1);
 				}
+
+				flash_message("Password changed");
 				$this->redirect_to_user($duser);
 			}
 		}
@@ -444,6 +453,8 @@ class UserPage extends Extension {
 
 		if($this->user_can_edit_user($user, $duser)) {
 			$duser->set_email($address);
+
+			flash_message("Email changed");
 			$this->redirect_to_user($duser);
 		}
 	}
@@ -454,6 +465,8 @@ class UserPage extends Extension {
 		if($user->class->name == "admin") {
 			$duser = User::by_id($_POST['id']);
 			$duser->set_class($class);
+
+			flash_message("Class changed");
 			$this->redirect_to_user($duser);
 		}
 	}
