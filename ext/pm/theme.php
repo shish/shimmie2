@@ -18,7 +18,7 @@ class PrivMsgTheme extends Themelet {
 			$pm_url = make_link("pm/read/".$pm->id);
 			$del_url = make_link("pm/delete");
 			$h_date = html_escape($pm->sent_date);
-			if($pm->is_read) $h_subject = "<b>$h_subject</b>";
+			if(!$pm->is_read) $h_subject = "<b>$h_subject</b>";
 			$html .= "<tr><td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
 			<td><form action='$del_url' method='POST'>
