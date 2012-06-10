@@ -184,6 +184,7 @@ class Setup extends Extension {
 				if($event->get_arg(0) == "save" && $user->check_auth_token()) {
 					send_event(new ConfigSaveEvent($config));
 					$config->save();
+					flash_message("Config saved");
 
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("setup"));

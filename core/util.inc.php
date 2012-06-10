@@ -689,6 +689,12 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 
 /**
  * Set (or extend) a flash-message cookie
+ *
+ * This can optionally be done at the same time as saving a log message with log_*()
+ *
+ * Generally one should flash a message in onPageRequest and log a message wherever
+ * the action actually takes place (eg onWhateverElse) - but much of the time, actions
+ * are taken from within onPageRequest...
  */
 function flash_message(/*string*/ $text, /*string*/ $type="info") {
 	$current = get_prefixed_cookie("flash_message");
@@ -819,17 +825,31 @@ define("SCORE_LOG_NOTSET", 0);
 
 /**
  * A shorthand way to send a LogEvent
+ *
+ * When parsing a user request, a flash message should give info to the user
+ * When taking action, a log event should be stored by the server
+ * Quite often, both of these happen at once, hence log_*() having $flash
+ *
+ * $flash = null (default) - log to server only, no flash message
+ * $flash = true           - show the message to the user as well
+ * $flash = "some string"  - log the message, flash the string
  */
-function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message) {
+function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
 	send_event(new LogEvent($section, $priority, $message));
+	if($flash === True) {
+		flash_message($message);
+	}
+	else if(!is_null($flash)) {
+		flash_message($flash);
+	}
 }
 
 // More shorthand ways of logging
-function log_debug(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_DEBUG, $message);}
-function log_info(/*string*/ $section, /*string*/ $message)  {log_msg($section, SCORE_LOG_INFO, $message);}
-function log_warning(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_WARNING, $message);}
-function log_error(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_ERROR, $message);}
-function log_critical(/*string*/ $section, /*string*/ $message) {log_msg($section, SCORE_LOG_CRITICAL, $message);}
+function log_debug(   /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash);}
+function log_info(    /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_INFO, $message, $flash);}
+function log_warning( /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_WARNING, $message, $flash);}
+function log_error(   /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_ERROR, $message, $flash);}
+function log_critical(/*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash);}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\

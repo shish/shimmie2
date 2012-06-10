@@ -60,7 +60,14 @@ class Favorites extends Extension {
 		if($event->page_matches("change_favorite") && !$user->is_anonymous() && $user->check_auth_token()) {
 			$image_id = int_escape($_POST['image_id']);
 			if((($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset")) && ($image_id > 0)) {
-				send_event(new FavoriteSetEvent($image_id, $user, ($_POST['favorite_action'] == "set")));
+				if($_POST['favorite_action'] == "set") {
+					send_event(new FavoriteSetEvent($image_id, $user, true));
+					log_debug("favourite", "Favourite set for $image_id", "Favourite added");
+				}
+				else {
+					send_event(new FavoriteSetEvent($image_id, $user, false));
+					log_debug("favourite", "Favourite removed for $image_id", "Favourite removed");
+				}
 			}
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("post/view/$image_id"));

@@ -98,6 +98,7 @@ class ExtManager extends Extension {
 				if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 					if(is_writable("data/config")) {
 						$this->set_things($_POST);
+						log_warning("ext_manager", "Active extensions changed", true);
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("ext_manager"));
 					}

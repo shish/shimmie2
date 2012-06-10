@@ -130,7 +130,7 @@ class PrivMsg extends Extension {
 							else if(($pm["to_id"] == $user->id) || $user->can("view_other_pms")) {
 								$database->execute("DELETE FROM private_message WHERE id = :id", array("id" => $pm_id));
 								$database->cache->delete("pm-count-{$user->id}");
-								log_info("pm", "Deleted PM #$pm_id");
+								log_info("pm", "Deleted PM #$pm_id", "PM deleted");
 								$page->set_mode("redirect");
 								$page->set_redirect($_SERVER["HTTP_REFERER"]);
 							}
@@ -143,6 +143,7 @@ class PrivMsg extends Extension {
 							$subject = $_POST["subject"];
 							$message = $_POST["message"];
 							send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
+							flash_message("PM sent");
 							$page->set_mode("redirect");
 							$page->set_redirect($_SERVER["HTTP_REFERER"]);
 						}

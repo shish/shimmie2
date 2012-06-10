@@ -33,6 +33,7 @@ class Featured extends Extension {
 					$id = int_escape($_POST['image_id']);
 					if($id > 0) {
 						$config->set_int("featured_id", $id);
+						log_info("featured", "Featured image set to $id", "Featured image set");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("post/view/$id"));
 					}

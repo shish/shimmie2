@@ -140,6 +140,7 @@ class CommentList extends Extension {
 					// FIXME: post, not args
 					if($event->count_args() === 3) {
 						send_event(new CommentDeletionEvent($event->get_arg(1)));
+						flash_message("Deleted comment");
 						$page->set_mode("redirect");
 						if(!empty($_SERVER['HTTP_REFERER'])) {
 							$page->set_redirect($_SERVER['HTTP_REFERER']);
@@ -163,6 +164,7 @@ class CommentList extends Extension {
 					foreach($cids as $cid) {
 						send_event(new CommentDeletionEvent($cid));
 					}
+					flash_message("Deleted $num comments");
 
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("admin"));

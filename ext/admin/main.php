@@ -101,9 +101,12 @@ class AdminPage extends Extension {
 		assert(strlen($query) > 1);
 
 		log_warning("admin", "Mass deleting: $query");
+		$count = 0;
 		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
 			send_event(new ImageDeletionEvent($image));
+			$count++;
 		}
+		log_debug("admin", "Deleted $count images", true);
 
 		$page->set_mode("redirect");
 		$page->set_redirect(make_link("post/list"));
@@ -113,6 +116,7 @@ class AdminPage extends Extension {
 	private function lowercase_all_tags() {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
+		log_warning("admin", "Set all tags to lowercase", true);
 		return true;
 	}
 
@@ -126,6 +130,7 @@ class AdminPage extends Extension {
 			)
 		");
 		$database->Execute("DELETE FROM tags WHERE count=0");
+		log_warning("admin", "Re-counted tags", true);
 		return true;
 	}
 

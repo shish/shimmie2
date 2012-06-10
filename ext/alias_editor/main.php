@@ -46,7 +46,7 @@ class AliasEditor extends Extension {
 				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag'])) {
 						$database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", array("oldtag" => $_POST['oldtag']));
-						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag']);
+						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], true);
 
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("alias/list"));
@@ -87,6 +87,7 @@ class AliasEditor extends Extension {
 						$tmp = $_FILES['alias_file']['tmp_name'];
 						$contents = file_get_contents($tmp);
 						$this->add_alias_csv($database, $contents);
+						log_info("alias_editor", "Imported aliases from file", true); # FIXME: how many?
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("alias/list"));
 					}
@@ -109,7 +110,7 @@ class AliasEditor extends Extension {
 		}
 		else {
 			$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
-			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}");
+			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", true);
 		}
 	}
 
