@@ -18,3 +18,12 @@ TABLE.form TD + TH {padding-left: 8px;}
 IMG {border: none;}
 FORM {margin: 0px;}
 IMG.lazy {display: none;}
+
+#flash {
+	background: #FF7;
+	display: block;
+	padding: 8px;
+	margin: 8px;
+	border: 1px solid #882;
+}
+
