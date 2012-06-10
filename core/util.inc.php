@@ -690,7 +690,7 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 /**
  * Set (or extend) a flash-message cookie
  */
-function flash_message(/*string*/ $text) {
+function flash_message(/*string*/ $text, /*string*/ $type="info") {
 	$current = get_prefixed_cookie("flash_message");
 	if($current) {
 		$text = $current . "\n" . $text;
