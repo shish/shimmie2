@@ -63,6 +63,8 @@ class ImageBan extends Extension {
 						send_event(new AddImageHashBanEvent($image->hash, "DNP"));
 						send_event(new ImageDeletionEvent($image));
 					}
+
+					flash_message("Image deleted and added to DNP list");
 					$page->set_mode("redirect");
 					$page->set_redirect($_SERVER["HTTP_REFERER"]);
 				}
@@ -70,6 +72,7 @@ class ImageBan extends Extension {
 					if(isset($_POST['hash']) && isset($_POST['reason'])) {
 						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
 
+						flash_message("Image ban added");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_hash_ban/list/1"));
 					}
@@ -77,6 +80,8 @@ class ImageBan extends Extension {
 						$image = Image::by_id(int_escape($_POST['image_id']));
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
+
+							flash_message("Image deleted");
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("post/list"));
 						}
@@ -86,6 +91,7 @@ class ImageBan extends Extension {
 					if(isset($_POST['hash'])) {
 						send_event(new RemoveImageHashBanEvent($_POST['hash']));
 
+						flash_message("Image ban removed");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_hash_ban/list/1"));
 					}
@@ -111,11 +117,16 @@ class ImageBan extends Extension {
 	}
 
 	public function onAddImageHashBan(AddImageHashBanEvent $event) {
-		$this->add_image_hash_ban($event->hash, $event->reason);
+		global $database;
+		$database->Execute(
+				"INSERT INTO image_bans (hash, reason, date) VALUES (?, ?, now())",
+				array($event->hash, $event->reason));
+		log_info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
 	}
 
 	public function onRemoveImageHashBan(RemoveImageHashBanEvent $event) {
-		$this->remove_image_hash_ban($event->hash);
+		global $database;
+		$database->Execute("DELETE FROM image_bans WHERE hash = ?", array($event->hash));
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
@@ -154,19 +165,6 @@ class ImageBan extends Extension {
 			"), $args);
 		if($bans) {return $bans;}
 		else {return array();}
-	}
-
-	public function add_image_hash_ban($hash, $reason) {
-		global $database;
-		$database->Execute(
-				"INSERT INTO image_bans (hash, reason, date) VALUES (?, ?, now())",
-				array($hash, $reason));
-		log_info("image_hash_ban", "Banned hash: ($hash) because '$reason'");
-	}
-
-	public function remove_image_hash_ban($hash) {
-		global $database;
-		$database->Execute("DELETE FROM image_bans WHERE hash = ?", array($hash));
 	}
 
 	// in before resolution limit plugin
