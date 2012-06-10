@@ -59,7 +59,7 @@ EOD;
 		$page->set_title("Private Message");
 		$page->set_heading(html_escape($pm->subject));
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Message", format_text($pm->message), "main", 10));
+		$page->add_block(new Block("Message from {$from->name}", format_text($pm->message), "main", 10));
 	}
 }
 ?>
