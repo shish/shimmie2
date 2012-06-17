@@ -95,8 +95,14 @@ try {
 	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 	$user = _get_user();
 	send_event(new InitExtEvent());
-	send_event(_get_page_request());
-	$page->display();
+	if(!is_cli()) { // web request
+		send_event(_get_page_request());
+		$page->display();
+	}
+	else { // command line request
+		global $argv;
+		send_event(new CommandEvent($argv));
+	}
 
 	$database->db->commit();
 	// saving cache data and profiling data to disk can happen later

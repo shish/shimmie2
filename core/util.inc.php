@@ -541,12 +541,8 @@ date and you should plan on moving elsewhere.
 /**
  * @private
  */
-function check_cli() {
-	if(isset($_SERVER['REMOTE_ADDR'])) {
-		print "This script is to be run from the command line only.";
-		exit;
-	}
-	$_SERVER['REMOTE_ADDR'] = "127.0.0.1";
+function is_cli() {
+	return (PHP_SAPI === 'cli');
 }
 
 /**
@@ -836,6 +832,9 @@ define("SCORE_LOG_NOTSET", 0);
  */
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
 	send_event(new LogEvent($section, $priority, $message));
+	if(is_cli() && ($priority >= CLI_LOG_LEVEL)) {
+		print date("c")." $section: $message\n";
+	}
 	if($flash === True) {
 		flash_message($message);
 	}
@@ -1120,13 +1119,12 @@ function _sanitise_environment() {
 		$_COOKIE = _stripslashes_r($_COOKIE);
 	}
 
-	if(php_sapi_name() === "cli") {
-		global $argc, $argv;
+	if(is_cli()) {
+		if(isset($_SERVER['REMOTE_ADDR'])) {
+			die("CLI with remote addr? Confused, not taking the risk.");
+		}
 		$_SERVER['REMOTE_ADDR'] = "0.0.0.0";
 		$_SERVER['HTTP_HOST'] = "<cli command>";
-		if($argc > 1) {
-			$_GET['q'] = $argv[1];
-		}
 	}
 }
 
@@ -1280,6 +1278,7 @@ function _get_query_parts() {
 
 function _get_page_request() {
 	global $config;
+
 	$args = _get_query_parts();
 
 	if(empty($args) || strlen($args[0]) === 0) {

@@ -27,6 +27,18 @@ class BulkAdd extends Extension {
 		}
 	}
 
+	public function onCommand(CommandEvent $event) {
+		if($event->cmd == "help") {
+			print "  bulk-add [directory]\n";
+			print "    Import this directory\n\n";
+		}
+		if($event->cmd == "bulk-add") {
+			if(count($event->args) == 1) {
+				$this->add_dir($event->args[0]);
+			}
+		}
+	}
+
 	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_admin_block();
 	}

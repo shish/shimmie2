@@ -111,6 +111,60 @@ class PageRequestEvent extends Event {
 
 
 /**
+ * Sent when index.php is called from the command line
+ */
+class CommandEvent extends Event {
+	public $cmd = "help";
+	public $args = array();
+
+	public function __construct(/*array(string)*/ $args) {
+		global $user;
+
+		$opts = array();
+		$log_level = SCORE_LOG_WARNING;
+		for($i=1; $i<count($args); $i++) {
+			switch($args[$i]) {
+				case '-u':
+					$user = User::by_name($args[++$i]);
+					if(is_null($user)) {
+						die("Unknown user");
+					}
+					break;
+				case '-q':
+					$log_level += 10;
+					break;
+				case '-v':
+					$log_level -= 10;
+					break;
+				default:
+					$opts[] = $args[$i];
+					break;
+			}
+		}
+
+		define("CLI_LOG_LEVEL", $log_level);
+
+		if(count($opts) > 0) {
+			$this->cmd = $opts[0];
+			$this->args = array_slice($opts, 1);
+		}
+		else {
+			print "\nUsage: php index.php [flags] [command]\n\n";
+			print "Flags:\n";
+			print "  -u [username]\n";
+			print "    Log in as the specified user\n";
+			print "  -q / -v\n";
+			print "    Be quieter / more verbose\n";
+			print "    (scale is debug / info / warning / error / critical)\n";
+			print "    default is to show warnings or above\n";
+			print "    \n";
+			print "\nCurrently know commands:\n";
+		}
+	}
+}
+
+
+/**
  * A signal that some text needs formatting, the event carries
  * both the text and the result
  */
