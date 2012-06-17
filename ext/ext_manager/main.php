@@ -128,6 +128,17 @@ class ExtManager extends Extension {
 		}
 	}
 
+	public function onCommand(CommandEvent $event) {
+		if($event->cmd == "help") {
+			print "  disable-all-ext\n";
+			print "    disable all extensions\n\n";
+		}
+		if($event->cmd == "disable-all-ext") {
+			$this->write_config(array());
+		}
+	}
+
+
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->can("manage_extension_list")) {
@@ -167,6 +178,10 @@ class ExtManager extends Extension {
 			}
 		}
 
+		$this->write_config($extras);
+	}
+
+	private function write_config($extras) {
 		file_put_contents(
 			"data/config/extensions.conf.php",
 			'<'.'?php'."\n".
