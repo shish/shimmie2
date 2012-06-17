@@ -30,7 +30,32 @@ class PageRequestEvent extends Event {
 	var $arg_count;
 	var $part_count;
 
-	public function __construct($args) {
+	public function __construct($path) {
+		global $config;
+
+		// trim starting slashes
+		while(strlen($path) > 0 && $path[0] == '/') {
+			$path = substr($path, 1);
+		}
+
+		// if path is not specified, use the default front page
+		if(strlen($path) === 0) {
+			$path = $config->get_string('front_page');
+		}
+
+		// break the path into parts
+		$args = explode('/', $path);
+
+		// voodoo so that an arg can contain a slash; is
+		// this still needed?
+		if(strpos($path, "^") !== FALSE) {
+			$unescaped = array();
+			foreach($parts as $part) {
+				$unescaped[] = _decaret($part);
+			}
+			$args = $unescaped;
+		}
+
 		$this->args = $args;
 		$this->arg_count = count($args);
 	}
@@ -149,16 +174,18 @@ class CommandEvent extends Event {
 			$this->args = array_slice($opts, 1);
 		}
 		else {
-			print "\nUsage: php index.php [flags] [command]\n\n";
+			print "\n";
+			print "Usage: php {$args[0]} [flags] [command]\n";
+			print "\n";
 			print "Flags:\n";
 			print "  -u [username]\n";
 			print "    Log in as the specified user\n";
 			print "  -q / -v\n";
 			print "    Be quieter / more verbose\n";
-			print "    (scale is debug / info / warning / error / critical)\n";
-			print "    default is to show warnings or above\n";
+			print "    Scale is debug - info - warning - error - critical\n";
+			print "    Default is to show warnings and above\n";
 			print "    \n";
-			print "\nCurrently know commands:\n";
+			print "Currently known commands:\n";
 		}
 	}
 }

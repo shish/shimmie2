@@ -76,8 +76,7 @@ class AdminPage extends Extension {
 		}
 		if($event->cmd == "get-page") {
 			global $page;
-			$_GET['q'] = $event->args[0];
-			send_event(_get_page_request());
+			send_event(new PageRequestEvent($event->args[0]));
 			$page->display();
 		}
 	}

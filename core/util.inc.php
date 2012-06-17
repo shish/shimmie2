@@ -386,6 +386,13 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+function get_theme() {
+	global $config;
+	$theme = $config->get_string("theme", "default");
+	if(!file_exists("themes/$theme")) $theme = "default";
+	return $theme;
+}
+
 /*
  * like glob, with support for matching very long patterns with braces
  */
@@ -1245,47 +1252,6 @@ function _decaret($str) {
 		}
 	}
 	return $out;
-}
-
-function _get_query_parts() {
-	if(isset($_GET["q"])) {
-		$path = $_GET["q"];
-	}
-	else if(isset($_SERVER["PATH_INFO"])) {
-		$path = $_SERVER["PATH_INFO"];
-	}
-	else {
-		$path = "";
-	}
-
-	while(strlen($path) > 0 && $path[0] == '/') {
-		$path = substr($path, 1);
-	}
-
-	$parts = explode('/', $path);
-
-	if(strpos($path, "^") === FALSE) {
-		return $parts;
-	}
-	else {
-		$unescaped = array();
-		foreach($parts as $part) {
-			$unescaped[] = _decaret($part);
-		}
-		return $unescaped;
-	}
-}
-
-function _get_page_request() {
-	global $config;
-
-	$args = _get_query_parts();
-
-	if(empty($args) || strlen($args[0]) === 0) {
-		$args = explode('/', $config->get_string('front_page'));
-	}
-
-	return new PageRequestEvent($args);
 }
 
 function _get_user() {
