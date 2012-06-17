@@ -100,9 +100,9 @@ try {
 		send_event(new CommandEvent($argv));
 	}
 
-	$database->db->commit();
 	// saving cache data and profiling data to disk can happen later
 	if(function_exists("fastcgi_finish_request")) fastcgi_finish_request();
+	$database->db->commit();
 	ctx_log_endok();
 }
 catch(Exception $e) {
