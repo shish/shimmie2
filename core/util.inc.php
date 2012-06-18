@@ -821,6 +821,8 @@ $_included = array();
  * Get the active contents of a .php file
  */
 function manual_include($fname) {
+	if(!file_exists($fname)) return;
+
 	global $_included;
 	if(in_array($fname, $_included)) return;
 	$_included[] = $fname;
@@ -828,15 +830,20 @@ function manual_include($fname) {
 	print "$fname\n";
 
 	$text = file_get_contents($fname);
-	$text = preg_replace('/^<\?php/', '', $text);
-	$text = preg_replace('/\?>$/', '', $text);
+
+	// we want one continuous file
+	$text = str_replace('<'.'?php', '', $text);
+	$text = str_replace('?'.'>',    '', $text);
+
 	// most requires are built-in, but we want /lib separately
 	$text = str_replace('require_', '// require_', $text);
-	$text = str_replace('function _d(', '// function _messed_d(', $text);
 	$text = str_replace('// require_once "lib', 'require_once "lib', $text);
-	#if(RECURSE_INCLUDE) {
-	#	text = preg_replace('/require_once "(.*)";/e', "manual_include('$1')", $text);
-	#}
+
+	// @include_once is used for user-creatable config files
+	$text = preg_replace('/@include_once "(.*)";/e', "manual_include('$1')", $text);
+
+	// wibble the defines for HipHop's sake
+	#$text = str_replace('function _d(', '// function _messed_d(', $text);
 	#$text = preg_replace('/_d\(([^,]*), (.*)\);/', 'if(!defined(\1)) define(\1, \2);', $text);
 
 	return $text;

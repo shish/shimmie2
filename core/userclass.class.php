@@ -155,7 +155,5 @@ new UserClass("admin", "base", array(
 	"protected" => True,
 ));
 
-if(file_exists("data/config/user-classes.conf.php")) {
-	require_once("data/config/user-classes.conf.php");
-}
+@include_once "data/config/user-classes.conf.php";
 ?>
