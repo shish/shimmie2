@@ -285,7 +285,7 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace("/".basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
+		$base = str_replace(basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
 		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
