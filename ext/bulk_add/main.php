@@ -87,10 +87,16 @@ class BulkAdd extends Extension {
 			}
 			else {
 				$pathinfo = pathinfo($fullpath);
-				$tags = $subdir;
-				$tags = str_replace("/", " ", $tags);
-				$tags = str_replace("__", " ", $tags);
-				$tags = trim($tags);
+				$matches = array();
+				if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", $pathinfo["basename"], $matches)) {
+					$tags = $matches[1];
+				}
+				else {
+					$tags = $subdir;
+					$tags = str_replace("/", " ", $tags);
+					$tags = str_replace("__", " ", $tags);
+					$tags = trim($tags);
+				}
 				$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
 				try{
 					$this->add_image($fullpath, $pathinfo["basename"], $tags);
