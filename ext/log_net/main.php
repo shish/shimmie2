@@ -19,11 +19,29 @@ class LogNet extends Extension {
 				// TODO: colour based on event->priority
 				$username = ($user && $user->name) ? $user->name : "Anonymous";
 				$str = sprintf("%-15s %-10s: %s", $_SERVER['REMOTE_ADDR'], $username, $event->message);
-				system("echo ".escapeshellarg($str)." | nc -q 0 localhost 5000");
+				$this->msg($str);
 			}
 			else if($this->count == 10) {
-				system("echo 'suppressing flood, check the web log' | nc -q 0 localhost 5000");
+				$this->msg('suppressing flood, check the web log');
 			}
+		}
+	}
+
+	private function msg($data) {
+		global $config;
+		$host = $config->get_string("log_net_host", "127.0.0.1:35353");
+
+		if(!$host) { return; }
+
+		try {
+			$parts = explode(":", $host);
+			$host = $parts[0];
+			$port = $parts[1];
+			$fp = fsockopen("udp://$host", $port, $errno, $errstr);
+			if (! $fp) { return; }
+			fwrite($fp, "$data\n");
+			fclose($fp);
+		} catch (Exception $e) {
 		}
 	}
 }
