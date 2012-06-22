@@ -16,12 +16,12 @@ class LiveFeed extends Extension {
 	}
 
 	public function onUserCreation($event) {
-		$this->msg("New user created: {$event->user}");
+		$this->msg("New user created: {$event->username}");
 	}
 
 	public function onImageAddition($event) {
 		$this->msg("Image posted: ".make_http(make_link("post/view/".$event->image->id)));
-		$this->msg("- tagged ".$event->image->get_tag_list());
+		#$this->msg("- tagged ".$event->image->get_tag_list());
 	}
 
 	public function onCommentPosting($event) {
