@@ -30,7 +30,32 @@ class PageRequestEvent extends Event {
 	var $arg_count;
 	var $part_count;
 
-	public function __construct($args) {
+	public function __construct($path) {
+		global $config;
+
+		// trim starting slashes
+		while(strlen($path) > 0 && $path[0] == '/') {
+			$path = substr($path, 1);
+		}
+
+		// if path is not specified, use the default front page
+		if(strlen($path) === 0) {
+			$path = $config->get_string('front_page');
+		}
+
+		// break the path into parts
+		$args = explode('/', $path);
+
+		// voodoo so that an arg can contain a slash; is
+		// this still needed?
+		if(strpos($path, "^") !== FALSE) {
+			$unescaped = array();
+			foreach($parts as $part) {
+				$unescaped[] = _decaret($part);
+			}
+			$args = $unescaped;
+		}
+
 		$this->args = $args;
 		$this->arg_count = count($args);
 	}
@@ -106,6 +131,62 @@ class PageRequestEvent extends Event {
 	public function get_page_size() {
 		global $config;
 		return $config->get_int('index_images');
+	}
+}
+
+
+/**
+ * Sent when index.php is called from the command line
+ */
+class CommandEvent extends Event {
+	public $cmd = "help";
+	public $args = array();
+
+	public function __construct(/*array(string)*/ $args) {
+		global $user;
+
+		$opts = array();
+		$log_level = SCORE_LOG_WARNING;
+		for($i=1; $i<count($args); $i++) {
+			switch($args[$i]) {
+				case '-u':
+					$user = User::by_name($args[++$i]);
+					if(is_null($user)) {
+						die("Unknown user");
+					}
+					break;
+				case '-q':
+					$log_level += 10;
+					break;
+				case '-v':
+					$log_level -= 10;
+					break;
+				default:
+					$opts[] = $args[$i];
+					break;
+			}
+		}
+
+		define("CLI_LOG_LEVEL", $log_level);
+
+		if(count($opts) > 0) {
+			$this->cmd = $opts[0];
+			$this->args = array_slice($opts, 1);
+		}
+		else {
+			print "\n";
+			print "Usage: php {$args[0]} [flags] [command]\n";
+			print "\n";
+			print "Flags:\n";
+			print "  -u [username]\n";
+			print "    Log in as the specified user\n";
+			print "  -q / -v\n";
+			print "    Be quieter / more verbose\n";
+			print "    Scale is debug - info - warning - error - critical\n";
+			print "    Default is to show warnings and above\n";
+			print "    \n";
+			print "Currently known commands:\n";
+		}
 	}
 }
 

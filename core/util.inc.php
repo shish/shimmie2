@@ -285,7 +285,7 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace("/".basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
+		$base = str_replace(basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
 		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
@@ -384,6 +384,13 @@ function mtimefile($file) {
 	$data_href = get_base_href();
 	$mtime = filemtime($file);
 	return "$data_href/$file?$mtime";
+}
+
+function get_theme() {
+	global $config;
+	$theme = $config->get_string("theme", "default");
+	if(!file_exists("themes/$theme")) $theme = "default";
+	return $theme;
 }
 
 /*
@@ -541,12 +548,8 @@ date and you should plan on moving elsewhere.
 /**
  * @private
  */
-function check_cli() {
-	if(isset($_SERVER['REMOTE_ADDR'])) {
-		print "This script is to be run from the command line only.";
-		exit;
-	}
-	$_SERVER['REMOTE_ADDR'] = "127.0.0.1";
+function is_cli() {
+	return (PHP_SAPI === 'cli');
 }
 
 /**
@@ -812,6 +815,41 @@ function transload($url, $mfile) {
 	return false;
 }
 
+
+$_included = array();
+/**
+ * Get the active contents of a .php file
+ */
+function manual_include($fname) {
+	if(!file_exists($fname)) return;
+
+	global $_included;
+	if(in_array($fname, $_included)) return;
+	$_included[] = $fname;
+
+	print "$fname\n";
+
+	$text = file_get_contents($fname);
+
+	// we want one continuous file
+	$text = str_replace('<'.'?php', '', $text);
+	$text = str_replace('?'.'>',    '', $text);
+
+	// most requires are built-in, but we want /lib separately
+	$text = str_replace('require_', '// require_', $text);
+	$text = str_replace('// require_once "lib', 'require_once "lib', $text);
+
+	// @include_once is used for user-creatable config files
+	$text = preg_replace('/@include_once "(.*)";/e', "manual_include('$1')", $text);
+
+	// wibble the defines for HipHop's sake
+	$text = str_replace('function _d(', '// function _messed_d(', $text);
+	$text = preg_replace('/_d\("(.*)", (.*)\);/', 'if(!defined("$1")) define("$1", $2);', $text);
+
+	return $text;
+}
+
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Logging convenience                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -836,6 +874,9 @@ define("SCORE_LOG_NOTSET", 0);
  */
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
 	send_event(new LogEvent($section, $priority, $message));
+	if(is_cli() && ($priority >= CLI_LOG_LEVEL)) {
+		print date("c")." $section: $message\n";
+	}
 	if($flash === True) {
 		flash_message($message);
 	}
@@ -1120,13 +1161,12 @@ function _sanitise_environment() {
 		$_COOKIE = _stripslashes_r($_COOKIE);
 	}
 
-	if(php_sapi_name() === "cli") {
-		global $argc, $argv;
+	if(is_cli()) {
+		if(isset($_SERVER['REMOTE_ADDR'])) {
+			die("CLI with remote addr? Confused, not taking the risk.");
+		}
 		$_SERVER['REMOTE_ADDR'] = "0.0.0.0";
 		$_SERVER['HTTP_HOST'] = "<cli command>";
-		if($argc > 1) {
-			$_GET['q'] = $argv[1];
-		}
 	}
 }
 
@@ -1249,46 +1289,6 @@ function _decaret($str) {
 	return $out;
 }
 
-function _get_query_parts() {
-	if(isset($_GET["q"])) {
-		$path = $_GET["q"];
-	}
-	else if(isset($_SERVER["PATH_INFO"])) {
-		$path = $_SERVER["PATH_INFO"];
-	}
-	else {
-		$path = "";
-	}
-
-	while(strlen($path) > 0 && $path[0] == '/') {
-		$path = substr($path, 1);
-	}
-
-	$parts = explode('/', $path);
-
-	if(strpos($path, "^") === FALSE) {
-		return $parts;
-	}
-	else {
-		$unescaped = array();
-		foreach($parts as $part) {
-			$unescaped[] = _decaret($part);
-		}
-		return $unescaped;
-	}
-}
-
-function _get_page_request() {
-	global $config;
-	$args = _get_query_parts();
-
-	if(empty($args) || strlen($args[0]) === 0) {
-		$args = explode('/', $config->get_string('front_page'));
-	}
-
-	return new PageRequestEvent($args);
-}
-
 function _get_user() {
 	global $config, $database;
 	$user = null;
@@ -1306,100 +1306,6 @@ function _get_user() {
 	return $user;
 }
 
-
-$_cache_memcache = false;
-$_cache_key = null;
-$_cache_filename = null;
-
-function _cache_active() {
-	return (
-		(CACHE_MEMCACHE || CACHE_DIR) &&
-		$_SERVER["REQUEST_METHOD"] == "GET" &&
-		!get_prefixed_cookie("session") &&
-		!get_prefixed_cookie("nocache")
-	);
-}
-
-function _cache_log($text) {
-	$fp = @fopen("data/cache.log", "a");
-	if($fp) {
-		fputs($fp, $text);
-		fclose($fp);
-	}
-}
-
-function _start_cache() {
-	global $_cache_memcache, $_cache_key, $_cache_filename;
-
-	if(_cache_active()) {
-		if(CACHE_MEMCACHE) {
-			$_cache_memcache = new Memcache;
-			$_cache_memcache->pconnect('localhost', 11211);
-			$_cache_key = "uri:".$_SERVER["REQUEST_URI"];
-			$data = $_cache_memcache->get($_cache_key);
-			if(DEBUG) {
-				$stat = $zdata ? "hit" : "miss";
-				_cache_log(time() . " " . sprintf(" %-4s ", $stat) . $_cache_key . "\n");
-			}
-			if($data) {
-				header("Content-type: text/html");
-				print $data;
-				exit;
-			}
-		}
-
-		if(CACHE_DIR) {
-			$_cache_hash = md5($_SERVER["QUERY_STRING"]);
-			$ab = substr($_cache_hash, 0, 2);
-			$cd = substr($_cache_hash, 2, 2);
-			$_cache_filename = data_path("http_cache/$ab/$cd/$_cache_hash");
-			@chmod(data_path('http_cache'), 750);
-
-			if(file_exists($_cache_filename) && (filemtime($_cache_filename) > time() - 3600)) {
-				$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($_cache_filename)) . ' GMT';
-
-				if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
-					$if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
-
-					if($if_modified_since == $gmdate_mod) {
-						header("HTTP/1.0 304 Not Modified");
-						header("Content-type: text/html");
-						exit;
-					}
-				}
-				else {
-					header("Content-type: text/html");
-					header('Last-Modified: '.$gmdate_mod);
-					$zdata = @file_get_contents($_cache_filename);
-					if(CACHE_MEMCACHE) {
-						$_cache_memcache->set($_cache_hash, $zdata, 0, 600);
-					}
-					$data = @gzuncompress($zdata);
-					if($data) {
-						print $data;
-						exit;
-					}
-				}
-			}
-			ob_start();
-		}
-	}
-}
-
-function _end_cache() {
-	global $_cache_memcache, $_cache_key, $_cache_filename;
-
-	if(_cache_active()) {
-		$data = ob_get_contents();
-		if(CACHE_MEMCACHE) {
-			$_cache_memcache->set($_cache_key, $data, 0, 600);
-		}
-		if(CACHE_DIR) {
-			$zdata = gzcompress($data, 2);
-			file_put_contents($_cache_filename, $zdata);
-		}
-	}
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Code coverage                                                             *

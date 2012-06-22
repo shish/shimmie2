@@ -221,7 +221,7 @@ class IPBan extends Extension {
 				exit;
 			}
 		}
-		log_error("ipban", "block() called but no bans matched");
+		log_error("ipban", "block($remote) called but no bans matched");
 		exit;
 	}
 // }}}
@@ -261,8 +261,8 @@ class IPBan extends Extension {
 		if($cached) return $cached;
 
 		$bans = $this->get_active_bans();
-		$ips = array("0.0.0.0" => false);
-		$nets = array("0.0.0.0/32" => false);
+		$ips = array(); # "0.0.0.0" => false);
+		$nets = array(); # "0.0.0.0/32" => false);
 		foreach($bans as $row) {
 			if(strstr($row['ip'], '/')) {
 				$nets[$row['ip']] = true;

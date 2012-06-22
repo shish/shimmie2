@@ -69,6 +69,18 @@ class AdminPage extends Extension {
 		}
 	}
 
+	public function onCommand(CommandEvent $event) {
+		if($event->cmd == "help") {
+			print "  get-page [query string]\n";
+			print "    eg 'get-page post/list'\n\n";
+		}
+		if($event->cmd == "get-page") {
+			global $page;
+			send_event(new PageRequestEvent($event->args[0]));
+			$page->display();
+		}
+	}
+
 	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_page();
 		$this->theme->display_form();
