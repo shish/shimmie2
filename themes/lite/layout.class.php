@@ -80,7 +80,7 @@ class Layout {
 		global $user;
 		$username = url_escape($user->name);
 		// hack
-		$qp = _get_query_parts();
+		$qp = explode("/", @$_GET["q"]);
 		$hw = class_exists("Wiki");
 		// php sucks
 		switch($qp[0]) {
