@@ -40,7 +40,7 @@ class Upgrade extends Extension {
 			$config->set_bool("in_upgrade", true);
 			$config->set_int("db_version", 9);
 
-			if($database->db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') {
+			if($database->engine->name == 'mysql') {
 				$tables = $database->get_col("SHOW TABLES");
 				foreach($tables as $table) {
 					log_info("upgrade", "converting $table to innodb");
