@@ -153,7 +153,7 @@ class TagList extends Extension {
 
 		$tags_min = $this->get_tags_min();
 
-		$tag_data = $database->get_col($database->engine->scoreql_to_sql("
+		$tag_data = $database->get_col($database->scoreql_to_sql("
 			SELECT DISTINCT
 				SCORE_STRNORM(substr(tag, 1, 1))
 			FROM tags
@@ -192,7 +192,7 @@ class TagList extends Extension {
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		// SHIT: PDO/pgsql has problems using the same named param twice -_-;;
-		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
+		$tag_data = $database->get_all($database->scoreql_to_sql("
 				SELECT
 					tag,
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
@@ -228,7 +228,7 @@ class TagList extends Extension {
 		$cache_key = data_path("cache/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html");
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all($database->engine->scoreql_to_sql("
+		$tag_data = $database->get_all($database->scoreql_to_sql("
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min

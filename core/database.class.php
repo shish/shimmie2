@@ -269,31 +269,15 @@ class Database {
 	/**
 	 * The currently active cache engine
 	 */
-	private $cache = null;
+	public $cache = null;
 
 	/**
-	 * Don't do anything yet; DB and cache connections will be created as
-	 * and when they're needed
+	 * For now, only connect to the cache, as we will pretty much certainly
+	 * need it. There are some pages where all the data is in cache, so the
+	 * DB connection is on-demand.
 	 */
 	public function Database() {
-	}
-
-	public function __get($name) {
-		if($name == "engine") {
-			if(is_null($this->engine)) {
-				$this->connect_engine();
-			}
-			return $this->engine;
-		}
-		else if($name == "cache") {
-			if(is_null($this->cache)) {
-				$this->connect_cache();
-			}
-			return $this->cache;
-		}
-		else {
-			return $this->$name;
-		}
+		$this->connect_cache();
 	}
 
 	private function connect_cache() {
@@ -356,16 +340,26 @@ class Database {
 	}
 
 	public function commit() {
-		if(!is_null($this->db)) $this->db->commit();
+		if(!is_null($this->db)) return $this->db->commit();
 	}
 
 	public function rollback() {
-		if(!is_null($this->db)) $this->db->rollback();
+		if(!is_null($this->db)) return $this->db->rollback();
 	}
 
 	public function escape($input) {
 		if(is_null($this->db)) $this->connect_db();
-		$this->db->Quote($input);
+		return $this->db->Quote($input);
+	}
+
+	public function scoreql_to_sql($input) {
+		if(is_null($this->engine)) $this->connect_engine();
+		return $this->engine->scoreql_to_sql($input);
+	}
+
+	public function get_driver_name() {
+		if(is_null($this->engine)) $this->connect_engine();
+		return $this->engine->name;
 	}
 
 	/**

@@ -44,7 +44,7 @@ class ET extends Extension {
 		$info['sys_shimmie'] = VERSION;
 		$info['sys_schema']  = $config->get_string("db_version");
 		$info['sys_php']     = phpversion();
-		$info['sys_db']      = $database->engine->name;
+		$info['sys_db']      = $database->get_driver_name();
 		$info['sys_os']      = php_uname();
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));

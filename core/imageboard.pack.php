@@ -160,7 +160,7 @@ class Image {
 		else if(count($tags) == 1 && !preg_match("/[:=><]/", $tags[0])) {
 			$term = Tag::resolve_alias($tags[0]);
 			return $database->get_one(
-				$database->engine->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
 				array("tag"=>$term));
 		}
 		else {
@@ -432,7 +432,7 @@ class Image {
 	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
-		$sln = $database->engine->scoreql_to_sql('SCORE_BOOL_'.$ln);
+		$sln = $database->scoreql_to_sql('SCORE_BOOL_'.$ln);
 		$sln = str_replace("'", "", $sln);
 		$sln = str_replace('"', "", $sln);
 		if(bool_escape($sln) !== $this->locked) {
@@ -472,7 +472,7 @@ class Image {
 			// insert each new tags
 			foreach($tags as $tag) {
 				$id = $database->get_one(
-						$database->engine->scoreql_to_sql(
+						$database->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 						),
 						array("tag"=>$tag));
@@ -493,7 +493,7 @@ class Image {
 							array("iid"=>$this->id, "tid"=>$id));
 				}
 				$database->execute(
-						$database->engine->scoreql_to_sql(
+						$database->scoreql_to_sql(
 							"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 						),
 						array("tag"=>$tag));
@@ -602,7 +602,7 @@ class Image {
 	private static function build_search_querylet($terms) {
 		assert(is_array($terms));
 		global $database;
-		if($database->engine->name === "mysql")
+		if($database->get_driver_name() === "mysql")
 			return Image::build_ugly_search_querylet($terms);
 		else
 			return Image::build_accurate_search_querylet($terms);
@@ -704,7 +704,7 @@ class Image {
 
 		// one positive tag (a common case), do an optimised search
 		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
-			$query = new Querylet($database->engine->scoreql_to_sql("
+			$query = new Querylet($database->scoreql_to_sql("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id=image_tags.image_id
 				JOIN tags ON image_tags.tag_id=tags.id
@@ -725,7 +725,7 @@ class Image {
 
 			foreach($tag_querylets as $tq) {
 				$tag_ids = $database->get_col(
-						$database->engine->scoreql_to_sql(
+						$database->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
 						),
 						array("tag"=>$tq->tag));
@@ -1015,7 +1015,7 @@ class Tag {
 
 		global $database;
 		$newtag = $database->get_one(
-			$database->engine->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)"),
+			$database->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)"),
 			array("tag"=>$tag));
 		if(!empty($newtag)) {
 			return $newtag;

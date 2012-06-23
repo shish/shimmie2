@@ -197,7 +197,7 @@ class IPBan extends Extension {
 	private function block(/*string*/ $remote) {
 		global $config, $database;
 
-		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");
+		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
 
 		$bans = $this->get_active_bans();
 
