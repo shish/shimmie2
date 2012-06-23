@@ -195,7 +195,7 @@ class MemcacheCache implements CacheEngine {
 	public function get($key) {
 		assert(!is_null($key));
 		$val = $this->memcache->get($key);
-		if($val) {
+		if($val !== false) {
 			$this->hits++;
 			return $val;
 		}
