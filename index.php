@@ -75,7 +75,6 @@ try {
 	ctx_log_start("Connecting to DB");
 	// connect to the database
 	$database = new Database();
-	$database->db->beginTransaction();
 	$config = new DatabaseConfig($database);
 	ctx_log_endok();
 
@@ -102,11 +101,11 @@ try {
 
 	// saving cache data and profiling data to disk can happen later
 	if(function_exists("fastcgi_finish_request")) fastcgi_finish_request();
-	$database->db->commit();
+	$database->commit();
 	ctx_log_endok();
 }
 catch(Exception $e) {
-	if($database && $database->db) $database->db->rollback();
+	if($database) $database->rollback();
 	_fatal_error($e);
 	ctx_log_ender();
 }
