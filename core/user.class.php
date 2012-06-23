@@ -49,7 +49,11 @@ class User {
 		else {
 			$query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
 		}
-		$row = $database->get_row($query, array("name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session));
+		$row = $database->cache->get("user-session-$name-$session");
+		if(!$row) {
+			$row = $database->get_row($query, array("name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session));
+			$database->cache->set("user-session-$name-$session", $row, 300);
+		}
 		return is_null($row) ? null : new User($row);
 	}
 
