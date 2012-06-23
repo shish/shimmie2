@@ -276,6 +276,30 @@ class Database {
 	 * stored in the config file
 	 */
 	public function Database() {
+		$this->connect_cache();
+		$this->connect_db();
+	}
+
+	private function connect_cache() {
+		if(!is_null($this->cache)) return;
+
+		$matches = array();
+		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
+			if($matches[1] == "memcache") {
+				$this->cache = new MemcacheCache($matches[2]);
+			}
+			else if($matches[1] == "apc") {
+				$this->cache = new APCCache($matches[2]);
+			}
+		}
+		else {
+			$this->cache = new NoCache();
+		}
+	}
+
+	private function connect_db() {
+		if(!is_null($this->db)) return;
+
 		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
 		/*
@@ -289,7 +313,7 @@ class Database {
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
 		$db_params = array(
-			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_PERSISTENT => DATABASE_KA,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
@@ -307,19 +331,6 @@ class Database {
 		}
 		else {
 			die('Unknown PDO driver: '.$db_proto);
-		}
-
-		$matches = array();
-		if( defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
-			if($matches[1] == "memcache") {
-				$this->cache = new MemcacheCache($matches[2]);
-			}
-			else if($matches[1] == "apc") {
-				$this->cache = new APCCache($matches[2]);
-			}
-		}
-		else {
-			$this->cache = new NoCache();
 		}
 
 		$this->engine->init($this->db);
