@@ -552,6 +552,8 @@ function is_cli() {
 	return (PHP_SAPI === 'cli');
 }
 
+
+$_execs = 0;
 /**
  * $db is the connection object
  *
