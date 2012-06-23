@@ -116,6 +116,10 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		log_debug('handle_pixel', "Generating thumnail with command `$cmd`, returns $ret");
 
+		if($config->get_bool("thumb_optim", false)) {
+			exec("jpegoptim $outname", $output, $ret);
+		}
+
 		return true;
 	}
 // }}}
