@@ -69,7 +69,7 @@ function url_escape($input) {
  */
 function sql_escape($input) {
 	global $database;
-	return $database->db->Quote($input);
+	return $database->escape($input);
 }
 
 

@@ -259,30 +259,44 @@ class Database {
 	/**
 	 * The PDO database connection object, for anyone who wants direct access
 	 */
-	var $db;
+	private $db = null;
 
 	/**
 	 * Meta info about the database engine
 	 */
-	var $engine = null;
+	private $engine = null;
 
 	/**
 	 * The currently active cache engine
 	 */
-	var $cache = null;
+	private $cache = null;
 
 	/**
-	 * Create a new database object using connection info
-	 * stored in the config file
+	 * Don't do anything yet; DB and cache connections will be created as
+	 * and when they're needed
 	 */
 	public function Database() {
-		$this->connect_cache();
-		$this->connect_db();
+	}
+
+	public function __get($name) {
+		if($name == "engine") {
+			if(is_null($this->engine)) {
+				$this->connect_engine();
+			}
+			return $this->engine;
+		}
+		else if($name == "cache") {
+			if(is_null($this->cache)) {
+				$this->connect_cache();
+			}
+			return $this->cache;
+		}
+		else {
+			return $this->$name;
+		}
 	}
 
 	private function connect_cache() {
-		if(!is_null($this->cache)) return;
-
 		$matches = array();
 		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
@@ -298,8 +312,6 @@ class Database {
 	}
 
 	private function connect_db() {
-		if(!is_null($this->db)) return;
-
 		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
 		/*
@@ -319,7 +331,16 @@ class Database {
 		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
 		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
-		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+		$this->connect_engine();
+		$this->engine->init($this->db);
+
+		$this->db->beginTransaction();
+	}
+
+	private function connect_engine() {
+		if(preg_match("/^([^:]*)/", DATABASE_DSN, $matches)) $db_proto=$matches[1];
+		else throw new SCoreException("Can't figure out database engine");
+
 		if($db_proto === "mysql") {
 			$this->engine = new MySQL();
 		}
@@ -332,8 +353,19 @@ class Database {
 		else {
 			die('Unknown PDO driver: '.$db_proto);
 		}
+	}
 
-		$this->engine->init($this->db);
+	public function commit() {
+		if(!is_null($this->db)) $this->db->commit();
+	}
+
+	public function rollback() {
+		if(!is_null($this->db)) $this->db->rollback();
+	}
+
+	public function escape($input) {
+		if(is_null($this->db)) $this->connect_db();
+		$this->db->Quote($input);
 	}
 
 	/**
@@ -341,6 +373,7 @@ class Database {
 	 */
 	public function execute($query, $args=array()) {
 		try {
+			if(is_null($this->db)) $this->connect_db();
 			_count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
