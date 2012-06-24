@@ -149,7 +149,6 @@ class Image {
 		assert(is_array($tags));
 		global $database;
 		if(count($tags) == 0) {
-			#return $database->get_one("SELECT COUNT(*) FROM images");
 			$total = $database->cache->get("image-count");
 			if(!$total) {
 				$total = $database->get_one("SELECT COUNT(*) FROM images");
