@@ -50,7 +50,7 @@ class PageRequestEvent extends Event {
 		// this still needed?
 		if(strpos($path, "^") !== FALSE) {
 			$unescaped = array();
-			foreach($parts as $part) {
+			foreach($args as $part) {
 				$unescaped[] = _decaret($part);
 			}
 			$args = $unescaped;
