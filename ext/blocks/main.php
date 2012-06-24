@@ -37,7 +37,7 @@ class Blocks extends Extension {
 		$blocks = $database->cache->get("blocks");
 		if($blocks === false) {
 			$blocks = $database->get_all("SELECT * FROM blocks");
-			$database->cache->set("blocks", $blocks, 300);
+			$database->cache->set("blocks", $blocks, 600);
 		}
 		foreach($blocks as $block) {
 			if(fnmatch($block['pages'], implode("/", $event->args))) {

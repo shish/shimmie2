@@ -66,7 +66,7 @@ class Featured extends Extension {
 				if($image) { // make sure the object is fully populated before saving
 					$image->get_tag_array();
 				}
-				$database->cache->set("featured_image_object-$fid", $image, 60);
+				$database->cache->set("featured_image_object-$fid", $image, 600);
 			}
 			if(!is_null($image)) {
 				if(class_exists("Ratings")) {
