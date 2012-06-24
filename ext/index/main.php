@@ -158,7 +158,16 @@ class Index extends Extension {
 			$page_size = $event->get_page_size();
 			try {
 				$total_pages = Image::count_pages($search_terms);
-				$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+				if(SPEED_HAX && count($search_terms) == 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
+					$images = $database->cache->get("post-list-$page_number");
+					if(!$images) {
+						$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+						$database->cache->set("post-list-$page_number", $images, 600);
+					}
+				}
+				else {
+					$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+				}
 			}
 			catch(SearchTermParseException $stpe) {
 				// FIXME: display the error somewhere
@@ -192,6 +201,24 @@ class Index extends Extension {
 		$sb->add_label(" images on the post list");
 
 		$event->panel->add_block($sb);
+	}
+
+	public function onImageAddition(ImageAdditionEvent $event) {
+		global $database;
+		if(SPEED_HAX) {
+			for($i=1; $i<10; $i++) {
+				$database->cache->delete("post-list-$i");
+			}
+		}
+	}
+
+	public function onImageDeletion(ImageDeletionEvent $event) {
+		global $database;
+		if(SPEED_HAX) {
+			for($i=1; $i<10; $i++) {
+				$database->cache->delete("post-list-$i");
+			}
+		}
 	}
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
