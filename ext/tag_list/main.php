@@ -390,14 +390,15 @@ class TagList extends Extension {
 		}
 	}
 
-	private function add_refine_block(Page $page, /*string*/ $search) {
+	private function add_refine_block(Page $page, /*array(string)*/ $search) {
 		global $database;
 		global $config;
 
-		$related_tags = $database->cache->get("related_tags:$search");
+		$wild_tags = Tag::explode($search);
+		$str_search = Tag::implode($search);
+		$related_tags = $database->cache->get("related_tags:$str_search");
 
 		if(empty($related_tags)) {
-			$wild_tags = Tag::explode($search);
 			// $search_tags = array();
 
 			$tag_id_array = array();
@@ -434,7 +435,7 @@ class TagList extends Extension {
 				$args = array("limit"=>$config->get_int('tag_list_length'));
 
 				$related_tags = $database->get_all($query, $args);
-				$database->cache->set("related_tags:$search", $related_tags, 60*60);
+				$database->cache->set("related_tags:$str_search", $related_tags, 60*60);
 			}
 		}
 
