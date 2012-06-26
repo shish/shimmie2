@@ -10,12 +10,10 @@ class Oekaki extends Extension {
 		global $user, $page;
 
 		if($event->page_matches("oekaki")) {
-			if(!$user->can("create_image")) {
-				$this->theme->display_permission_denied();
-			}
-
-			if($event->get_arg(0) == "create") {
+			if($event->get_arg(0) == "create" and $user->can("create_image")){
 				$this->theme->display_page();
+			}else{
+				$this->theme->display_permission_denied();
 			}
 			if($event->get_arg(0) == "upload") {
 				// FIXME: this allows anyone to upload anything to /data ...
