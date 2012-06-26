@@ -11,7 +11,7 @@
 class LiveFeed extends Extension {
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Live Feed");
-		$sb->add_string_option("IP/port to send events to");
+		$sb->add_text_option("livefeed_host", "IP:port to send events to: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -20,13 +20,24 @@ class LiveFeed extends Extension {
 	}
 
 	public function onImageAddition($event) {
-		$this->msg("Image posted: ".make_http(make_link("post/view/".$event->image->id)));
-		#$this->msg("- tagged ".$event->image->get_tag_list());
+		$this->msg(
+			make_http(make_link("post/view/".$event->image->id))." - ".
+			"new post by ".$event->user->name
+		);
+	}
+
+	public function onTagSet($event) {
+		$this->msg(
+			make_http(make_link("post/view/".$event->image->id))." - ".
+			"tags set to: ".Tag::implode($event->tags)
+		);
 	}
 
 	public function onCommentPosting($event) {
-		$this->msg("Comment posted on ".make_http(make_link("post/view/".$event->image_id))." :");
-		$this->msg("- {$event->user->name}: {$event->comment}");
+		$this->msg(
+			make_http(make_link("post/view/".$event->image_id))." - ".
+			$event->user->name . ": " . str_replace("\n", " ", $event->comment)
+		);
 	}
 
 	public function onImageInfoSet($event) {

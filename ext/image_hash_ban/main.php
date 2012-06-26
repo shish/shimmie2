@@ -155,7 +155,7 @@ class ImageBan extends Extension {
 			$args[] = "%".$_GET['reason']."%";
 		}
 		$where = implode(" AND ", $where);
-		$bans = $database->get_all($database->engine->scoreql_to_sql("
+		$bans = $database->get_all($database->scoreql_to_sql("
 			SELECT *
 			FROM image_bans
 			WHERE $where

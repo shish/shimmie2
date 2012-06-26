@@ -135,7 +135,9 @@ class TagListTheme extends Themelet {
 		$page->add_block(new Block("Refine Search", $html, "left", 60));
 	}
 
-	protected function ars($tag, $tags) {
+	protected function ars(/*string*/ $tag, /*array(string)*/ $tags) {
+		assert(is_array($tags));
+
 		// FIXME: a better fix would be to make sure the inputs are correct
 		$tag = strtolower($tag);
 		$tags = array_map("strtolower", $tags);

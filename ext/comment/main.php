@@ -91,7 +91,7 @@ class CommentList extends Extension {
 			// the whole history
 			if($config->get_int("ext_comments_version") < 1) {
 				$database->create_table("comments", "
-					id {$database->engine->auto_increment},
+					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
 					owner_ip CHAR(16) NOT NULL,
@@ -390,12 +390,12 @@ class CommentList extends Extension {
 		global $database;
 
 		// sqlite fails at intervals
-		if($database->engine->name === "sqlite") return false;
+		if($database->get_driver_name() === "sqlite") return false;
 
 		$window = int_escape($config->get_int('comment_window'));
 		$max = int_escape($config->get_int('comment_limit'));
 
-		if($database->engine->name == "mysql") $window_sql = "interval $window minute";
+		if($database->get_driver_name() == "mysql") $window_sql = "interval $window minute";
 		else $window_sql = "interval '$window minute'";
 
 		// window doesn't work as an SQL param because it's inside quotes >_<

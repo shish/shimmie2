@@ -69,7 +69,7 @@ function url_escape($input) {
  */
 function sql_escape($input) {
 	global $database;
-	return $database->db->Quote($input);
+	return $database->escape($input);
 }
 
 
@@ -285,7 +285,7 @@ function make_link($page=null, $query=null) {
 	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		#$full = "http://" . $_SERVER["SERVER_NAME"] . $_SERVER["PHP_SELF"];
 		$full = $_SERVER["PHP_SELF"];
-		$base = str_replace(basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
+		$base = str_replace('/'.basename($_SERVER["SCRIPT_FILENAME"]), "", $full);
 	}
 	else {
 		$base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
@@ -552,6 +552,8 @@ function is_cli() {
 	return (PHP_SAPI === 'cli');
 }
 
+
+$_execs = 0;
 /**
  * $db is the connection object
  *

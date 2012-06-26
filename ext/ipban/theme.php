@@ -15,8 +15,8 @@ class IPBanTheme extends Themelet {
 		global $database, $user;
 		$h_bans = "";
 		$n = 0;
-		$prefix = ($database->engine->name == "sqlite" ? "bans." : "");
-		$prefix2 = ($database->engine->name == "sqlite" ? "users." : "");
+		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
+		$prefix2 = ($database->get_driver_name() == "sqlite" ? "users." : "");
 		foreach($bans as $ban) {
 			$end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
 			$h_bans .= "

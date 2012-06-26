@@ -195,7 +195,7 @@ class MemcacheCache implements CacheEngine {
 	public function get($key) {
 		assert(!is_null($key));
 		$val = $this->memcache->get($key);
-		if($val) {
+		if($val !== false) {
 			$this->hits++;
 			return $val;
 		}
@@ -259,23 +259,43 @@ class Database {
 	/**
 	 * The PDO database connection object, for anyone who wants direct access
 	 */
-	var $db;
+	private $db = null;
 
 	/**
 	 * Meta info about the database engine
 	 */
-	var $engine = null;
+	private $engine = null;
 
 	/**
 	 * The currently active cache engine
 	 */
-	var $cache = null;
+	public $cache = null;
 
 	/**
-	 * Create a new database object using connection info
-	 * stored in the config file
+	 * For now, only connect to the cache, as we will pretty much certainly
+	 * need it. There are some pages where all the data is in cache, so the
+	 * DB connection is on-demand.
 	 */
 	public function Database() {
+		$this->connect_cache();
+	}
+
+	private function connect_cache() {
+		$matches = array();
+		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
+			if($matches[1] == "memcache") {
+				$this->cache = new MemcacheCache($matches[2]);
+			}
+			else if($matches[1] == "apc") {
+				$this->cache = new APCCache($matches[2]);
+			}
+		}
+		else {
+			$this->cache = new NoCache();
+		}
+	}
+
+	private function connect_db() {
 		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
 		/*
@@ -289,13 +309,22 @@ class Database {
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
 		$db_params = array(
-			PDO::ATTR_PERSISTENT => true,
+			PDO::ATTR_PERSISTENT => DATABASE_KA,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
 		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
-		$db_proto = $this->db->getAttribute(PDO::ATTR_DRIVER_NAME);
+		$this->connect_engine();
+		$this->engine->init($this->db);
+
+		$this->db->beginTransaction();
+	}
+
+	private function connect_engine() {
+		if(preg_match("/^([^:]*)/", DATABASE_DSN, $matches)) $db_proto=$matches[1];
+		else throw new SCoreException("Can't figure out database engine");
+
 		if($db_proto === "mysql") {
 			$this->engine = new MySQL();
 		}
@@ -308,21 +337,29 @@ class Database {
 		else {
 			die('Unknown PDO driver: '.$db_proto);
 		}
+	}
 
-		$matches = array();
-		if( defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
-			if($matches[1] == "memcache") {
-				$this->cache = new MemcacheCache($matches[2]);
-			}
-			else if($matches[1] == "apc") {
-				$this->cache = new APCCache($matches[2]);
-			}
-		}
-		else {
-			$this->cache = new NoCache();
-		}
+	public function commit() {
+		if(!is_null($this->db)) return $this->db->commit();
+	}
 
-		$this->engine->init($this->db);
+	public function rollback() {
+		if(!is_null($this->db)) return $this->db->rollback();
+	}
+
+	public function escape($input) {
+		if(is_null($this->db)) $this->connect_db();
+		return $this->db->Quote($input);
+	}
+
+	public function scoreql_to_sql($input) {
+		if(is_null($this->engine)) $this->connect_engine();
+		return $this->engine->scoreql_to_sql($input);
+	}
+
+	public function get_driver_name() {
+		if(is_null($this->engine)) $this->connect_engine();
+		return $this->engine->name;
 	}
 
 	/**
@@ -330,6 +367,7 @@ class Database {
 	 */
 	public function execute($query, $args=array()) {
 		try {
+			if(is_null($this->db)) $this->connect_db();
 			_count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {

@@ -28,7 +28,7 @@ class Upgrade extends Extension {
 			$config->set_bool("in_upgrade", true);
 			$config->set_int("db_version", 8);
 
-			$database->execute($database->engine->scoreql_to_sql(
+			$database->execute($database->scoreql_to_sql(
 				"ALTER TABLE images ADD COLUMN locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
 			));
 
@@ -40,7 +40,7 @@ class Upgrade extends Extension {
 			$config->set_bool("in_upgrade", true);
 			$config->set_int("db_version", 9);
 
-			if($database->db->getAttribute(PDO::ATTR_DRIVER_NAME) == 'mysql') {
+			if($database->get_driver_name() == 'mysql') {
 				$tables = $database->get_col("SHOW TABLES");
 				foreach($tables as $table) {
 					log_info("upgrade", "converting $table to innodb");

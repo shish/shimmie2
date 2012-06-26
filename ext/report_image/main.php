@@ -72,11 +72,13 @@ class ReportImage extends Extension {
 				"INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",
 				array($event->image_id, $event->reporter_id, $event->reason));
+		$database->cache->delete("image-report-count");
 	}
 
 	public function onRemoveReportedImage(RemoveReportedImageEvent $event) {
 		global $database;
 		$database->Execute("DELETE FROM image_reports WHERE id = ?", array($event->id));
+		$database->cache->delete("image-report-count");
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
@@ -99,6 +101,7 @@ class ReportImage extends Extension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 		$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
+		$database->cache->delete("image-report-count");
 	}
 
 	protected function install() {
@@ -152,7 +155,14 @@ class ReportImage extends Extension {
 
 	public function count_reported_images() {
 		global $database;
-		return $database->get_one("SELECT count(*) FROM image_reports");
+
+		$count = $database->cache->get("image-report-count");
+		if(is_null($count) || $count === false) {
+			$count = $database->get_one("SELECT count(*) FROM image_reports");
+			$database->cache->set("image-report-count", $count, 600);
+		}
+
+		return $count;
 	}
 }
 //  ===== Changelog =====

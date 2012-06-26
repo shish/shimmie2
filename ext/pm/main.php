@@ -198,7 +198,7 @@ class PrivMsg extends Extension {
 					WHERE to_id = :to_id
 					AND is_read = :is_read
 			", array("to_id" => $user->id, "is_read" => "N"));
-			$database->cache->set("pm-count-{$user->id}", $count, 60);
+			$database->cache->set("pm-count-{$user->id}", $count, 600);
 		}
 		return $count;
 	}
