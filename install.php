@@ -252,7 +252,8 @@ function create_tables() { // {{{
 			pass CHAR(32),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			class VARCHAR(32) NOT NULL DEFAULT 'user',
-			email VARCHAR(128)
+			email VARCHAR(128),
+			INDEX(name)
 		");
 		$db->create_table("images", "
 			id SCORE_AIPK,
@@ -270,12 +271,14 @@ function create_tables() { // {{{
 			INDEX(owner_id),
 			INDEX(width),
 			INDEX(height),
+			INDEX(hash),
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
-			count INTEGER NOT NULL DEFAULT 0
+			count INTEGER NOT NULL DEFAULT 0,
+			INDEX(tag)
 		");
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
@@ -287,9 +290,9 @@ function create_tables() { // {{{
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
+		$db->commit();
 	}
-	catch (PDOException $e)
-	{
+	catch(PDOException $e) {
 		// FIXME: Make the error message user friendly
 		exit($e->getMessage());
 	}
@@ -304,9 +307,9 @@ function insert_defaults() { // {{{
 		if(check_im_version() > 0) {
 			$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'thumb_engine', "value" => 'convert'));
 		}
+		$db->commit();
 	}
-	catch (PDOException $e)
-	{
+	catch(PDOException $e) {
 		// FIXME: Make the error message user friendly
 		exit($e->getMessage());
 	}

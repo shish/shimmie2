@@ -138,7 +138,7 @@ class SQLite extends DBEngine {
 		$db->sqliteCreateFunction('lower', '_lower', 1);
 	}
 
-	public function create_table_sql($name, $data) {
+	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
@@ -147,6 +147,10 @@ class SQLite extends DBEngine {
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
 		$data = str_replace("SCORE_STRNORM", "", $data);
 		$data = str_replace("SCORE_ILIKE", "LIKE", $data);
+	}
+
+	public function create_table_sql($name, $data) {
+		$data = $this->scoreql_to_sql($data);
 		$cols = array();
 		$extras = "";
 		foreach(explode(",", $data) as $bit) {
