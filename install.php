@@ -134,20 +134,21 @@ function ask_questions() { // {{{
 		";
 	}
 
+	$drivers = PDO::getAvailableDrivers();
 	if(
-		!function_exists("mysql_connect") &&
-		!function_exists("pg_connect") &&
-		!function_exists("sqlite_open")
+		!in_array("mysql", $drivers) &&
+		!in_array("pgsql", $drivers) &&
+		!in_array("sqlite", $drivers)
 	) {
 		$errors[] = "
 			No database connection library could be found; shimmie needs
-			php-pgsql, php-mysql, or php-sqlite
+			PDO with either Postgres, MySQL, or SQLite drivers
 		";
 	}
 
-	$db_m = function_exists("mysql_connect") ? '<option value="mysql">MySQL</option>' : "";
-	$db_p = function_exists("pg_connect") ? '<option value="pgsql">PostgreSQL</option>' : "";
-	$db_s = function_exists("sqlite_open") ? '<option value="sqlite">SQLite</option>' : "";
+	$db_m = in_array("mysql", $drivers)  ? '<option value="mysql">MySQL</option>' : "";
+	$db_p = in_array("pgsql", $drivers)  ? '<option value="pgsql">PostgreSQL</option>' : "";
+	$db_s = in_array("sqlite", $drivers) ? '<option value="sqlite">SQLite</option>' : "";
 
 	$warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<br>", $warnings) : "";
 	$err_msg = $errors ? "<h3>Errors</h3>".implode("\n<br>", $errors) : "";
