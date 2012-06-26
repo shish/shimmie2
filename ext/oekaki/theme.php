@@ -36,22 +36,6 @@ class OekakiTheme extends Themelet {
 		$page->set_heading("Oekaki");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Oekaki", $html, "main", 20));
-		$page->add_block(new Block(null, 
-			"
-			Change canvas size.
-			<br>
-			<form form enctype='multipart/form-data' action='".make_link("oekaki/create")."' method='POST'>
-				<div style='display: inline; margin: 0; width: auto;'>
-					<input autocomplete='off' style='display: inline; margin: 0; width: auto;font-size: 90%' name='oekW' type='text' size='3' value='".$oekW."'/>
-					x
-					<input autocomplete='off' style='display: inline; margin: 0; width: auto;font-size: 90%' name='oekH' type='text' size='3' value='".$oekH."'/>
-					<input autocomplete='off' style='display: inline; margin: 0; width: auto;font-size: 90%' type='submit' value='Go!' />
-				</div>
-			</form>
-			<br>
-			<b>WARNING: Resets canvas!</b>
-			"
-			, "left", 21)); // upload is 20
 	}
 
 	public function display_block() {

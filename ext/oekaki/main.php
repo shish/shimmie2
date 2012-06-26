@@ -13,6 +13,7 @@ class Oekaki extends Extension {
 			if($user->can("create_image")) {
 				if($event->get_arg(0) == "create") {
 					$this->theme->display_page();
+					$this->theme->display_block();
 				}
 				if($event->get_arg(0) == "claim") {
 					// FIXME: move .chi to data/oekaki/$ha/$hash mirroring images and thumbs
@@ -79,9 +80,9 @@ class Oekaki extends Extension {
 
 	// FIXME: "edit this image" button on existing images?
 	function onPostListBuilding(PostListBuildingEvent $event) {
-		global $user, $page;
+		global $user;
 		if($user->can("create_image")) {
-			$this->theme->display_block($page);
+			$this->theme->display_block();
 		}
 	}
 }
