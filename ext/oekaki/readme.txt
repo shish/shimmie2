@@ -1,6 +1,24 @@
     ChibiPaint
 
+    Original version of ChibiPaint:
     Copyright (c) 2006-2008 Marc Schefer
+    http://www.chibipaint.com/
+
+    Some icons taken from the GNU Image Manipulation Program.
+    Art contributors: http://git.gnome.org/browse/gimp/tree/AUTHORS
+      Lapo Calamandrei
+      Paul Davey
+      Alexia Death
+      Aurore Derriennic
+      Tuomas Kuosmanen
+      Karl La Rocca
+      Andreas Nilsson
+      Ville Pätsi
+      Mike Schaeffer
+      Carol Spears
+      Jakub Steiner
+      William Szilveszter    
+
 
     This file is part of ChibiPaint.
 
@@ -66,7 +84,7 @@
   
   The form data name for the png file is 'picture' and 'chibifile' for the multilayer file. The recommended extension
   for chibifiles is '.chi'
-  
+
   The applet expects the server to answer with the single line reply "CHIBIOK" followed by a newline character.
   
   "CHIBIERROR" followed by an error message on the same list is the planned way to report an error but currently the

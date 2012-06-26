@@ -72,7 +72,7 @@ class Home extends Extension {
 			$main_links = '[url=site://post/list]Posts[/url] [url=site://comment/list]Comments[/url] [url=site://tags]Tags[/url]';
 			if(class_exists("Pools")) {$main_links .= ' [url=site://pools]Pools[/url]';}
 			if(class_exists("Wiki")) {$main_links .= ' [url=site://wiki]Wiki[/url]';}
-			$main_links .= ' [url=site://ext_doc]>>[/url]';
+			$main_links .= ' [url=site://ext_doc]Documentation[/url]';
 		}
 		$main_links = format_text($main_links);
 		$main_text = $config->get_string('home_text');

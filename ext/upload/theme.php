@@ -313,7 +313,7 @@ class UploadTheme extends Themelet {
 		for($i=0; $i<$upload_count; $i++) {
 			if($i == 0) $style = ""; // "style='display:visible'";
 			else $style = "style='display:none'";
-			$upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" type='file'>\n";
+			$upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" size='16' type='file'>\n";
 		}
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);

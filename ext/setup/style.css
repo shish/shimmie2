@@ -13,7 +13,7 @@
 	-moz-column-break-inside: avoid;
 	-webkit-column-break-inside: avoid;
 	text-align: center;
-	width: 100%;
+	width: 90%;
 }
 .setupblock TEXTAREA {
 	width: 100%;
