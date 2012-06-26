@@ -61,7 +61,7 @@ class MySQL extends DBEngine {
 	var $name = "mysql";
 
 	public function init($db) {
-		$db->query("SET NAMES utf8;");
+		$db->exec("SET NAMES utf8;");
 	}
 
 	public function scoreql_to_sql($data) {
@@ -87,7 +87,7 @@ class PostgreSQL extends DBEngine {
 	var $name = "pgsql";
 
 	public function init($db) {
-		$db->query("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
 	}
 
 	public function scoreql_to_sql($data) {
@@ -127,15 +127,15 @@ class SQLite extends DBEngine {
 
 	public function init($db) {
 		ini_set('sqlite.assoc_case', 0);
-		$db->execute("PRAGMA foreign_keys = ON;");
-		@sqlite_create_function($db->_connectionID, 'UNIX_TIMESTAMP', '_unix_timestamp', 1);
-		@sqlite_create_function($db->_connectionID, 'now', '_now', 0);
-		@sqlite_create_function($db->_connectionID, 'floor', '_floor', 1);
-		@sqlite_create_function($db->_connectionID, 'log', '_log');
-		@sqlite_create_function($db->_connectionID, 'isnull', '_isnull', 1);
-		@sqlite_create_function($db->_connectionID, 'md5', '_md5', 1);
-		@sqlite_create_function($db->_connectionID, 'concat', '_concat', 2);
-		@sqlite_create_function($db->_connectionID, 'lower', '_lower', 1);
+		$db->exec("PRAGMA foreign_keys = ON;");
+		$db->sqliteCreateFunction('UNIX_TIMESTAMP', '_unix_timestamp', 1);
+		$db->sqliteCreateFunction('now', '_now', 0);
+		$db->sqliteCreateFunction('floor', '_floor', 1);
+		$db->sqliteCreateFunction('log', '_log');
+		$db->sqliteCreateFunction('isnull', '_isnull', 1);
+		$db->sqliteCreateFunction('md5', '_md5', 1);
+		$db->sqliteCreateFunction('concat', '_concat', 2);
+		$db->sqliteCreateFunction('lower', '_lower', 1);
 	}
 
 	public function create_table_sql($name, $data) {
@@ -153,14 +153,14 @@ class SQLite extends DBEngine {
 			$matches = array();
 			if(preg_match("/INDEX\s*\((.*)\)/", $bit, $matches)) {
 				$col = $matches[1];
-				$extras .= 'CREATE INDEX '.$name.'_'.$col.' on '.$name($col).';';
+				$extras .= "CREATE INDEX {$name}_{$col} on {$name}({$col});";
 			}
 			else {
 				$cols[] = $bit;
 			}
 		}
 		$cols_redone = implode(", ", $cols);
-		return 'CREATE TABLE '.$name.' ('.$cols_redone.'); '.$extras;
+		return "CREATE TABLE $name ($cols_redone); $extras";
 	}
 }
 // }}}
@@ -454,6 +454,7 @@ class Database {
 	 * Create a table from pseudo-SQL
 	 */
 	public function create_table($name, $data) {
+		if(is_null($this->engine)) $this->connect_engine();
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
 	
