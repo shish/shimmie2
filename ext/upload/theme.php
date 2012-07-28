@@ -314,7 +314,7 @@ class UploadTheme extends Themelet {
 				<input type='submit' value='Post'>
 			</form>
 			<small>(Max file size is $max_kb)</small>
-			<noscript><a href='".make_link("upload")."'>Larger Form</a></noscript>
+			<noscript><br><a href='".make_link("upload")."'>Larger Form</a></noscript>
 			</div>
 		";
 	}
