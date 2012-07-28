@@ -27,7 +27,7 @@ class AddIPBanEvent extends Event {
 	var $reason;
 	var $end;
 
-	public function AddIPBanEvent(/*string(ip)*/ $ip, /*sintrg*/ $reason, /*string*/ $end) {
+	public function AddIPBanEvent(/*string(ip)*/ $ip, /*string*/ $reason, /*string*/ $end) {
 		$this->ip = trim($ip);
 		$this->reason = trim($reason);
 		$this->end = trim($end);
@@ -173,6 +173,12 @@ class IPBan extends Extension {
 		if($config->get_int("ext_ipban_version") == 6) {
 			$database->Execute("ALTER TABLE bans ADD FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE");
 			$config->set_int("ext_ipban_version", 7);
+		}
+
+		if($config->get_int("ext_ipban_version") == 7) {
+			$database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
+			$database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW"));
+			$config->set_int("ext_ipban_version", 8);
 		}
 	}
 // }}}
