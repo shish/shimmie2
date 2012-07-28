@@ -72,7 +72,7 @@ class ImageReplaceEvent extends Event {
 	 * @param $image
 	 *   The image object of the new image to use
 	 */
-	public function ImageReplaceEvent($id, Image $image) {
+	public function ImageReplaceEvent(/*int*/ $id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
 	}
@@ -81,7 +81,7 @@ class ImageReplaceEvent extends Event {
 class ImageReplaceException extends SCoreException {
 	var $error;
 
-	public function __construct($error) {
+	public function __construct(/*string*/ $error) {
 		$this->error = $error;
 	}
 }

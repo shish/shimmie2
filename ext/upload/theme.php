@@ -237,29 +237,18 @@ class UploadTheme extends Themelet {
 		global $config, $page;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
-		$js2 = 'javascript:$(function() {
-			$("#data").hide();
-			$("#data").val("");
-			$("#url").show(); });';
-
-		$js1 = 'javascript:$(function() {
-			$("#url").hide();
-			$("#url").val("");
-			$("#data").show(); });';
-
-		$upload_list = '';
-		$upload_list .= "
+		$upload_list = "
 				<tr>
-					<td width='60'><form><input id='radio_button_a' type='radio' name='method' value='file' checked='checked' onclick='$js1' /> File<br>";
-				if($tl_enabled) {
-					$upload_list .="
-					<input id='radio_button_b' type='radio' name='method' value='url' onclick='$js2' /> URL</ br></td></form>
-					<td><input id='data' name='data' class='wid' type='file'><input id='url' name='url' class='wid' type='text' style='display:none'></td>
+					<td>File</td>
+					<td><input name='data' type='file'></td>
 					";
-				} else { 
-					$upload_list .= "</form></td>
-					";
-				}
+		if($tl_enabled) {
+			$upload_list .="
+			<td>or URL</td>
+			<td><input name='url' type='text'></td>
+			";
+		}
+		$upload_list .= "</tr>";
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
@@ -268,7 +257,6 @@ class UploadTheme extends Themelet {
 		$thumbnail = $this->build_thumb_html($image, null);
 		
 		$html = "
-				<div style='clear:both;'></div>
 				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
 				.$thumbnail."<br>"
 				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
