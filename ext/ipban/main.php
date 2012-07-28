@@ -27,10 +27,10 @@ class AddIPBanEvent extends Event {
 	var $reason;
 	var $end;
 
-	public function AddIPBanEvent($ip, $reason, $end) {
-		$this->ip = $ip;
-		$this->reason = $reason;
-		$this->end = $end;
+	public function AddIPBanEvent(/*string(ip)*/ $ip, /*sintrg*/ $reason, /*string*/ $end) {
+		$this->ip = trim($ip);
+		$this->reason = trim($reason);
+		$this->end = trim($end);
 	}
 }
 // }}}
