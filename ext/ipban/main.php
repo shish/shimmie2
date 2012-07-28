@@ -40,7 +40,7 @@ class IPBan extends Extension {
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		if($config->get_int("ext_ipban_version") < 5) {
+		if($config->get_int("ext_ipban_version") < 8) {
 			$this->install();
 		}
 		$this->check_ip_ban();
