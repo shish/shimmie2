@@ -238,7 +238,7 @@ class IPBan extends Extension {
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			ORDER BY end_timestamp, bans.id
+			ORDER BY added, end_timestamp, bans.id
 		");
 		if($bans) {return $bans;}
 		else {return array();}
