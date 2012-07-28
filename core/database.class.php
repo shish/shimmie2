@@ -97,7 +97,7 @@ class PostgreSQL extends DBEngine {
 		$data = str_replace("SCORE_BOOL_N", "'f'", $data);
 		$data = str_replace("SCORE_BOOL", "BOOL", $data);
 		$data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
-		$data = str_replace("SCORE_NOW", "current_time", $data);
+		$data = str_replace("SCORE_NOW", "current_timestamp", $data);
 		$data = str_replace("SCORE_STRNORM", "lower", $data);
 		$data = str_replace("SCORE_ILIKE", "ILIKE", $data);
 		return $data;
