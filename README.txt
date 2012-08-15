@@ -101,6 +101,12 @@ For a list of permissions, see core/userclass.class.php
 
 Development Info
 ~~~~~~~~~~~~~~~~
+ui-* cookies are for the client-side scripts only; in some configurations
+(eg with varnish cache) they will be stripped before they reach the server
+
+shm-* CSS classes are for javascript to hook into; if you're customising
+themes, be careful with these, and avoid styling them
+
 http://shimmie.shishnet.org/doc/
 
 Please tell me if those docs are lacking in any way, so that they can be
