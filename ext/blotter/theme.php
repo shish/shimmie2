@@ -161,8 +161,8 @@ class BlotterTheme extends Themelet {
 			$in_text = "<ul>$entries_list</ul>";
 		}
 		$html = "";
-		$html .= "<div id='blotter1'><span>$out_text</span>{$pos_break}<span style='{$pos_align}'><a href='#' id='blotter2-toggle'>Show/Hide</a> <a href='".make_link("blotter")."'>Show All</a></span></div>";
-		$html .= "<div id='blotter2'>$in_text</div>";
+		$html .= "<div id='blotter1' class='shm-blotter1'><span>$out_text</span>{$pos_break}<span style='{$pos_align}'><a href='#' id='blotter2-toggle' class='shm-blotter2-toggle'>Show/Hide</a> <a href='".make_link("blotter")."'>Show All</a></span></div>";
+		$html .= "<div id='blotter2' class='shm-blotter2'>$in_text</div>";
 		return $html;
 	}
 }
