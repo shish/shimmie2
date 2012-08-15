@@ -12,8 +12,9 @@ class BlotterTheme extends Themelet {
 	public function display_blotter_page($entries) {
 		global $page;
 		$html = $this->get_html_for_blotter_page($entries);
-		$page->set_mode("data");
-		$page->set_data($html);
+		$page->set_title("Blotter");
+		$page->set_heading("Blotter");
+		$page->add_block(new Block("Blotter Entries", $html, "main", 10));
 	}
 
 	public function display_blotter($entries) {
@@ -95,10 +96,8 @@ class BlotterTheme extends Themelet {
 		 * This one displays a list of all blotter entries.
 		 */
 		global $config;
-		$i_color = $config->get_string("blotter_color","#FF0000");
-		$html = "";
-		$html .= "<html><head><title>Blotter</title></head>
-			<body><pre>";
+		$i_color = $config->get_string("blotter_color", "#FF0000");
+		$html = "<pre>";
 
 		$num_entries = count($entries);
 		for ($i = 0 ; $i < $num_entries ; $i++) {
@@ -110,13 +109,15 @@ class BlotterTheme extends Themelet {
 			$i_close = "";
 			$id = $entries[$i]['id'];
 			$messy_date = $entries[$i]['entry_date'];
-			$clean_date = date("m/d/y",strtotime($messy_date));
+			$clean_date = date("y/m/d", strtotime($messy_date));
 			$entry_text = $entries[$i]['entry_text'];
-			if($entries[$i]['important'] == 'Y') { $i_open = "<font color='#{$i_color}'>"; $i_close="</font>"; }
+			if($entries[$i]['important'] == 'Y') {
+				$i_open = "<font color='#{$i_color}'>";
+				$i_close="</font>";
+			}
 			$html .= "{$i_open}{$clean_date} - {$entry_text}{$i_close}<br /><br />";			
 		}
-
-		$html .= "</pre></body></html>";
+		$html .= "</pre>";
 		return $html;
 	}
 
@@ -143,14 +144,17 @@ class BlotterTheme extends Themelet {
 			}
 			$entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";			
 		}
+
 		$out_text = "";
 		$in_text = "";
 		$pos_break = "";
 		$pos_align = "text-align: right; position: absolute; right: 0px;";
+
 		if($position === "left") {
 			$pos_break = "<br />";
 			$pos_align = ""; 
 		}
+
 		if(count($entries) === 0) {
 			$out_text = "No blotter entries yet.";
 			$in_text = "Empty.";
@@ -160,9 +164,18 @@ class BlotterTheme extends Themelet {
 			$out_text = "Blotter updated: {$clean_date}";
 			$in_text = "<ul>$entries_list</ul>";
 		}
-		$html = "";
-		$html .= "<div id='blotter1' class='shm-blotter1'><span>$out_text</span>{$pos_break}<span style='{$pos_align}'><a href='#' id='blotter2-toggle' class='shm-blotter2-toggle'>Show/Hide</a> <a href='".make_link("blotter")."'>Show All</a></span></div>";
-		$html .= "<div id='blotter2' class='shm-blotter2'>$in_text</div>";
+
+		$html = "
+			<div id='blotter1' class='shm-blotter1'>
+				<span>$out_text</span>
+				{$pos_break}
+				<span style='{$pos_align}'>
+					<a href='#' id='blotter2-toggle' class='shm-blotter2-toggle'>Show/Hide</a>
+					<a href='".make_link("blotter/list")."'>Show All</a>
+				</span>
+			</div>
+			<div id='blotter2' class='shm-blotter2'>$in_text</div>
+		";
 		return $html;
 	}
 }

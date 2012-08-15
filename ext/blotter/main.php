@@ -43,6 +43,7 @@ class Blotter extends Extension {
 		$config->set_default_string("blotter_position", "subheading");
 
 	}
+
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 		$sb = new SetupBlock("Blotter");
@@ -51,12 +52,14 @@ class Blotter extends Extension {
 		$sb->add_choice_option("blotter_position", array("Top of page" => "subheading", "In navigation bar" => "left"), "<br>Position: ");
 		$event->panel->add_block($sb);
 	}
+
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		if($user->is_admin()) {
 			$event->add_link("Blotter Editor", make_link("blotter/editor"));
 		}
 	}
+
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $database, $user;
 		if($event->page_matches("blotter")) {
@@ -105,7 +108,7 @@ class Blotter extends Extension {
 						$page->set_redirect(make_link("blotter/editor"));
 					}
 					break;
-				case "":
+				case "list":
 					/**
 					 * Displays all blotter entries
 					 */
