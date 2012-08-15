@@ -1,57 +1,34 @@
+function activate_mass_tagger ( image_link ) {
+    $(".shm-thumb").each(
+        function ( index, block ) {
+            add_mass_tag_button( $(block), image_link );
+        }
+    );
+    $('#mass_tagger_controls').show();
+    $('#mass_tagger_activate').hide();
+}
+
+function add_mass_tag_button($block, image_link) {
+	
+    var c = function() { toggle_tag(this, $block.data("post-id")); return false; };
+
+    $block.find("A").click(c);
+    $block.click(c); // sometimes the thumbs *is* the A
+}
+
 function toggle_tag( button, id ) {
     id += ":";
     var list = $('#mass_tagger_ids');
     var string = list.val();
     
-    if( string.indexOf( id ) > -1 ) return remove_mass_tag_id( button, list, id, string );
-    
-    return add_mass_tag_id( button, list, id, string );
-}
-
-function add_mass_tag_id( button, list, id, string ) {
-    $(button).attr( 'style', 'display:block;border: 3px solid blue;' );
-    string += id;
-    list.val( string );
-    return false;
-}
-
-function remove_mass_tag_id( button, list, id, string ) {
-    $(button).attr( 'style', '' );
-    string = string.replace( id, '' );
-    list.val( string );
-    return false;
-}
-
-function activate_mass_tagger ( image_link ) {
-    $(".shm-thumb").each(
-        function ( index, block ) {
-            add_mass_tag_button( block, image_link );
-        }
-    );
-    $('#mass_tagger_controls').show();
-    $('#mass_tagger_activate').hide();
-    return false;
-}
-
-function add_mass_tag_button ( block, image_link ) {
-    var id = $(block).data("post-id");
-    
-    var button = create_mass_tag_button( id, image_link );
-    $(block).append( button );
-    
-    return;
-}
-
-function create_mass_tag_button ( id, image_link ) {
-    var img = $('<img />');
-    img.attr( "src", image_link+'/ext/mass_tagger/toggle.gif' );
-    
-    var link = $('<a />');
-    link.attr("class",'zoom');
-    link.attr("onclick",'return toggle_tag( this, "'+id+'")');
-    link.attr("href",'#');
-    
-    link.append( img );
-    
-    return link;
+    if( string.indexOf( id ) > -1 ) {
+		$(button).css('border', 'none');
+		string = string.replace(id, '');
+		list.val(string);
+	}
+	else {
+		$(button).css('border', '3px solid blue');
+		string += id;
+		list.val(string);
+	}
 }

@@ -10,8 +10,6 @@
  *  add buttons to each image to mark them for tagging, and a field for
  *  inputting tags will appear. Once the "Tag" button is clicked, the tags in
  *  the text field will be added to marked images.
- *
- *  As of now only compatible with the lite theme.
  */
 
 class MassTagger extends Extension {

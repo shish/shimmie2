@@ -9,7 +9,7 @@ class MassTaggerTheme extends Themelet {
 		$body = "
 			<form action='".make_link("mass_tagger/tag")."' method='POST'>
 				<input id='mass_tagger_activate' type='button' onclick='activate_mass_tagger(\"$data_href\");' value='Activate'/>
-				<div id='mass_tagger_controls'>
+				<div id='mass_tagger_controls' style='display: none;'>
 					Click on images to mark them. Use the 'Index Options' in the Board Config to increase the amount of shown images.
 					<br />
 					<input type='hidden' name='ids' id='mass_tagger_ids' />
