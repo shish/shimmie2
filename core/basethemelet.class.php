@@ -54,9 +54,9 @@ class BaseThemelet {
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return '<a href="'.$h_view_link.'" class="thumb" data-tags="'.$h_tags.'">'.
-		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" class="lazy" data-original="'.$h_thumb_link.'" src="'.$base.'/lib/static/grey.gif">'.
-		       '<noscript><img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'"></noscript>'.
+		return "<a href='$h_view_link' class='thumb shm-thumb' data-tags='$h_tags' data-post-id='$i_id'>".
+		       "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' class='lazy' data-original='$h_thumb_link' src='$base/lib/static/grey.gif'>".
+		       "<noscript><img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'></noscript>".
 			   "</a>\n";
 	}
 

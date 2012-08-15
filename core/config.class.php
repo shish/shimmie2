@@ -121,6 +121,20 @@ abstract class BaseConfig implements Config {
 
 
 /**
+ * For testing, mostly
+ */
+class HardcodeConfig extends BaseConfig {
+	public function __construct($dict) {
+		$this->values = $dict;
+	}
+
+	public function save(/*string*/ $name=null) {
+		// static config is static
+	}
+}
+
+
+/**
  * Loads the config list from a PHP file; the file should be in the format:
  *
  *  <?php

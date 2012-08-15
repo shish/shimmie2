@@ -1,9 +1,9 @@
 $(function() {
-	$("#zoomer").change(function(e) {
+	$(".shm-zoomer").change(function(e) {
 		zoom(this.options[this.selectedIndex].value);
 	});
 
-	$("#main_image").click(function(e) {
+	$(".shm-main-image").click(function(e) {
 		switch($.cookie("ui-image-zoom")) {
 			case "full": zoom("width"); break;
 			default: zoom("full"); break;
@@ -16,7 +16,7 @@ $(function() {
 });
 
 function zoom(zoom) {
-	var img = $('#main_image');
+	var img = $('.shm-main-image');
 	if(zoom == "full") {
 		img.css('max-width', img.data('width') + 'px');
 		img.css('max-height', img.data('height') + 'px');
@@ -34,7 +34,7 @@ function zoom(zoom) {
 		img.css('max-height', (window.innerHeight * 0.95) + 'px');
 	}
 
-	$("#zoomer").val(zoom);
+	$(".shm-zoomer").val(zoom);
 
 	$.cookie("ui-image-zoom", zoom, {path: '/', expires: 365});
 }
