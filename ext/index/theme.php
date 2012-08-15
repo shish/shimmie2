@@ -90,10 +90,11 @@ and of course start organising your images :-)
 	}
 
 	protected function build_table($images, $query) {
-		$table = "";
+		$table = "<div class='shm-image-list'>";
 		foreach($images as $image) {
 			$table .= $this->build_thumb_html($image, $query);
 		}
+		$table .= "</div>";
 		return $table;
 	}
 }

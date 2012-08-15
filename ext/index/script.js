@@ -1,5 +1,5 @@
 $(function() {
-	var blocked_tags = ($.cookie("ui-blocked-tags") || $.cookie("blocked-tags") || "").split(" ");
+	var blocked_tags = ($.cookie("ui-blocked-tags") || "").split(" ");
 	var themecheck = $(".thumb[data-tags]").parent().attr('class');
 	var needs_refresh = false;
 	for(i=0; i<blocked_tags.length; i++) {
@@ -18,13 +18,8 @@ $(function() {
 	// text-align: justify with element margins and doesn't recalculate
 	// these margins when part of the line disappears...
 	if(needs_refresh) {
-		if(themecheck == "thumbblock") {
-			$('.blockbody').hide();
-			$('.blockbody').show();
-		}else{
-			$('#image-list').hide();
-			$('#image-list').show();
-		}
+		$('.shm-image-list').hide();
+		$('.shm-image-list').show();
 	}
 });
 
