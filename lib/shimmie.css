@@ -44,7 +44,7 @@ IMG.lazy {display: none;}
 #installer A:hover {
 	text-decoration: underline;
 }
-#installer H1, H3 {
+#installer H1, #installer H3 {
 	background: #DDD;
 	text-align: center;
 	margin: 0px;
