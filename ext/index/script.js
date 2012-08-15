@@ -1,16 +1,10 @@
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || "").split(" ");
-	var themecheck = $(".thumb[data-tags]").parent().attr('class');
 	var needs_refresh = false;
 	for(i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
 		if(tag) {
-			if(themecheck == "thumbblock") {
-				$(".thumb[data-tags~='"+tag+"']").parent().hide();
-				$(".thumb[data-tags~='"+tag+"']").parent().height(0); //required for lite theme
-			}else{
-				$(".thumb[data-tags~='"+tag+"']").hide();
-			}
+			$(".shm-thumb[data-tags~='"+tag+"']").hide();
 			needs_refresh = true;
 		}
 	}

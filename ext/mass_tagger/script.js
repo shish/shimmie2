@@ -1,17 +1,3 @@
-function find_thumb_link_containers () {
-    
-    var post_link = "a[href*='/post/view/']";
-    var has_thumb_img = ":has(img[src*='/thumb/'])";
-    var list = $( post_link + has_thumb_img ).parent();
-
-	if (list) { return list; }
-	
-    has_thumb_img = ":has(img[src*='_thumbs/'])";
-    list = $( post_link + has_thumb_img ).parent();
-	
-	return list;
-}
-
 function toggle_tag( button, id ) {
     id += ":";
     var list = $('#mass_tagger_ids');
@@ -37,33 +23,23 @@ function remove_mass_tag_id( button, list, id, string ) {
 }
 
 function activate_mass_tagger ( image_link ) {
-    
-    find_thumb_link_containers().each(
+    $(".shm-thumb").each(
         function ( index, block ) {
             add_mass_tag_button( block, image_link );
         }
     );
-    $('#mass_tagger_controls').attr( 'style', 'display:block' );
-    $('#mass_tagger_activate').attr( 'style', 'display:none' );
-    
+    $('#mass_tagger_controls').show();
+    $('#mass_tagger_activate').hide();
     return false;
 }
 
 function add_mass_tag_button ( block, image_link ) {
-    
-    var id = get_image_id( block );
+    var id = $(block).data("post-id");
     
     var button = create_mass_tag_button( id, image_link );
     $(block).append( button );
     
     return;
-}
-
-function get_image_id ( block ) {
-    var link = $(block).children(":first").attr('href');
-    var id = link.split('/').pop();
-    
-    return id;
 }
 
 function create_mass_tag_button ( id, image_link ) {

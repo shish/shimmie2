@@ -107,6 +107,10 @@ ui-* cookies are for the client-side scripts only; in some configurations
 shm-* CSS classes are for javascript to hook into; if you're customising
 themes, be careful with these, and avoid styling them
 
+- shm-thumb = outermost element of a thumbnail
+   - data-tags
+   - data-post-id
+
 http://shimmie.shishnet.org/doc/
 
 Please tell me if those docs are lacking in any way, so that they can be
