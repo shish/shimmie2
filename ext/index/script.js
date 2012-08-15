@@ -12,14 +12,16 @@ $(function() {
 	// text-align: justify with element margins and doesn't recalculate
 	// these margins when part of the line disappears...
 	if(needs_refresh) {
-		$('.shm-image-list').hide();
-		$('.shm-image-list').show();
+		$('.shm-image-list').hide(
+			0,
+			function() {$('.shm-image-list').show();}
+		);
 	}
 });
 
 function select_blocked_tags() {
 	var blocked_tags = prompt("Enter tags to ignore", $.cookie("ui-blocked-tags") || "My_Little_Pony");
-	if(blocked_tags) {
+	if(blocked_tags !== null) {
 		$.cookie("ui-blocked-tags", blocked_tags.toLowerCase(), {path: '/', expires: 365});
 		location.reload(true);
 	}
