@@ -113,11 +113,7 @@ class ForumTheme extends Themelet {
             $poster = User::by_name($post["user_name"]);
 			$gravatar = $poster->get_avatar_html();
 
-			if ($post["user_admin"] == "Y") {
-			$rank = "<sup>admin</sup>";
-			} else {
-			$rank = "<sup>user</sup>";
-			}
+			$rank = "<sup>{$post["user_class"]}</sup>";
 			
 			$postID = $post['id'];
 			

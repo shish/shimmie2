@@ -273,15 +273,15 @@ class Forum extends Extension {
             $threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
 
             $threads = $database->get_all(
-                "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.admin AS user_admin, sum(1) - 1 AS response_count ".
+                "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count ".
                 "FROM forum_threads AS f ".
                 "INNER JOIN users AS u ".
                 "ON f.user_id = u.id ".
                 "INNER JOIN forum_posts AS p ".
                 "ON p.thread_id = f.id ".
-                "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.admin ".
-                "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT ?, ?"
-                , array($pageNumber * $threadsPerPage, $threadsPerPage)
+                "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class ".
+                "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset"
+                , array("limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage)
             );
 			
             $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
@@ -305,14 +305,14 @@ class Forum extends Extension {
             $postsPerPage = $config->get_int('forumPostsPerPage', 15);
 
             $posts = $database->get_all(
-                "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.admin AS user_admin ".
+                "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
                 "FROM forum_posts AS p ".
                 "INNER JOIN users AS u ".
                 "ON p.user_id = u.id ".
-                "WHERE thread_id = ? ".
+                "WHERE thread_id = :thread_id ".
 				"ORDER BY p.date ASC ".
-                "LIMIT ?, ? "
-                , array($threadID, $pageNumber * $postsPerPage, $postsPerPage)
+                "LIMIT :limit OFFSET :offset"
+                , array("thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage)
             );
 			
             $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
@@ -375,14 +375,14 @@ class Forum extends Extension {
             $postsPerPage = $config->get_int('forumPostsPerPage', 15);
 
             return $database->get_all(
-                "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.admin AS user_admin ".
+                "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
                 "FROM forum_posts AS p ".
                 "INNER JOIN users AS u ".
                 "ON p.user_id = u.id ".
-                "WHERE thread_id = ? ".
+                "WHERE thread_id = :thread_id ".
 				"ORDER BY p.date ASC ".
-                "LIMIT ?, ? "
-                , array($threadID, ($pageNumber - 1) * $postsPerPage, $postsPerPage));
+                "LIMIT :limit OFFSET :offset "
+                , array("thread_id"=>$threadID, "offset"=>($pageNumber - 1) * $postsPerPage, "limit"=>$postsPerPage));
         }
 
         private function delete_thread($threadID)
