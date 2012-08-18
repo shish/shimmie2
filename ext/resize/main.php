@@ -144,9 +144,6 @@ class ResizeImage extends Extension {
 					} catch (ImageResizeException $e) {
 						$this->theme->display_resize_error($page, "Error Resizing", $e->error);
 					}
-				} else {
-					/* Display options for resizing */
-					$this->theme->display_resize_page($page, $image_id);
 				}
 			}
 		}
