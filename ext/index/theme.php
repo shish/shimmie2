@@ -63,6 +63,11 @@ and of course start organising your images :-)
 		}
 	}
 
+	public function display_admin_block(/*array(string)*/ $parts) {
+		global $page;
+		$page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
+	}
+
 
 	protected function build_navigation($page_number, $total_pages, $search_terms) {
 		$prev = $page_number - 1;

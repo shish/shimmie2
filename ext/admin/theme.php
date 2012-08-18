@@ -44,18 +44,15 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new Block("Misc Admin Tools", $html));
 	}
 
-	public function display_dbq($terms) {
-		global $page;
-
+	public function dbq_html($terms) {
 		$h_terms = html_escape($terms);
-
 		$html = make_form(make_link("admin/delete_by_query"), "POST") . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
 				<input type='submit' id='dbqsubmit' disabled='true' value='Delete All These Images'>
 			</form>
 		";
-		$page->add_block(new Block("List Controls", $html, "left"));
+		return $html;
 	}
 }
 ?>

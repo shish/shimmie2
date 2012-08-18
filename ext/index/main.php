@@ -122,9 +122,15 @@ class SearchTermParseException extends SCoreException {
 
 class PostListBuildingEvent extends Event {
 	var $search_terms = null;
+	var $parts = array();
 
 	public function __construct($search) {
 		$this->search_terms = $search;
+	}
+
+	public function add_control(/*string*/ $html, /*int*/ $position=50) {
+		while(isset($this->parts[$position])) $position++;
+		$this->parts[$position] = $html;
 	}
 }
 
@@ -184,10 +190,14 @@ class Index extends Extension {
 				$page->set_redirect(make_link('post/view/'.$images[0]->id));
 			}
 			else {
-				send_event(new PostListBuildingEvent($search_terms));
+				$plbe = new PostListBuildingEvent($search_terms);
+				send_event($plbe);
 
 				$this->theme->set_page($page_number, $total_pages, $search_terms);
 				$this->theme->display_page($page, $images);
+				if(count($plbe->parts) > 0) {
+					$this->theme->display_admin_block($plbe->parts);
+				}
 			}
 		}
 	}
