@@ -49,7 +49,6 @@ class BulkAdd extends Extension {
 	private function add_image($tmpname, $filename, $tags) {
 		assert(file_exists($tmpname));
 
-		global $user;
 		$pathinfo = pathinfo($filename);
 		if(!array_key_exists('extension', $pathinfo)) {
 			throw new UploadException("File has no extension");
@@ -58,7 +57,7 @@ class BulkAdd extends Extension {
 		$metadata['extension'] = $pathinfo['extension'];
 		$metadata['tags'] = $tags;
 		$metadata['source'] = null;
-		$event = new DataUploadEvent($user, $tmpname, $metadata);
+		$event = new DataUploadEvent($tmpname, $metadata);
 		send_event($event);
 		if($event->image_id == -1) {
 			throw new UploadException("File type not recognised");

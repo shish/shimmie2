@@ -10,7 +10,7 @@
  * Occurs when some data is being uploaded.
  */
 class DataUploadEvent extends Event {
-	var $user, $tmpname, $metadata, $hash, $type, $image_id = -1;
+	var $tmpname, $metadata, $hash, $type, $image_id = -1;
 
 	/**
 	 * Some data is being uploaded.
@@ -19,10 +19,9 @@ class DataUploadEvent extends Event {
 	 * @param $tmpname The temporary file used for upload.
 	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
-	public function DataUploadEvent(User $user, /*string*/ $tmpname, /*array*/ $metadata) {
+	public function DataUploadEvent(/*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
 
-		$this->user = $user;
 		$this->tmpname = $tmpname;
 
 		$this->metadata = $metadata;
@@ -289,7 +288,7 @@ class Upload extends Extension {
 					$metadata['replace'] = $replace;
 				}
 				
-				$event = new DataUploadEvent($user, $file['tmp_name'], $metadata);
+				$event = new DataUploadEvent($file['tmp_name'], $metadata);
 				send_event($event);
 				if($event->image_id == -1) {
 					throw new UploadException("File type not recognised");
@@ -376,7 +375,7 @@ class Upload extends Extension {
 				$metadata['replace'] = $replace;
 			}
 			
-			$event = new DataUploadEvent($user, $tmp_filename, $metadata);
+			$event = new DataUploadEvent($tmp_filename, $metadata);
 			try {
 				send_event($event);
 			}

@@ -20,12 +20,10 @@ class ImageAdditionEvent extends Event {
 	 * this new image.
 	 *
 	 * @sa TagSetEvent
-	 * @param $user	The user adding the image
 	 * @param $image	The new image to add.
 	 */
-	public function ImageAdditionEvent(User $user, Image $image) {
+	public function ImageAdditionEvent(Image $image) {
 		$this->image = $image;
-		$this->user = $user;
 	}
 }
 
@@ -296,7 +294,7 @@ class ImageIO extends Extension {
 				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
 				send_event(new TagSetEvent($existing, $merged));
 				if(isset($_GET['rating']) && isset($_GET['update']) && class_exists("Ratings")){
-					send_event(new RatingSetEvent($existing, $user, $_GET['rating']));
+					send_event(new RatingSetEvent($existing, $_GET['rating']));
 				}
 				if(isset($_GET['source']) && isset($_GET['update'])){
 					send_event(new SourceSetEvent($existing, $_GET['source']));

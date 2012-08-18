@@ -20,9 +20,10 @@ class LiveFeed extends Extension {
 	}
 
 	public function onImageAddition($event) {
+		global $user;
 		$this->msg(
 			make_http(make_link("post/view/".$event->image->id))." - ".
-			"new post by ".$event->user->name
+			"new post by ".$user->name
 		);
 	}
 
@@ -34,9 +35,10 @@ class LiveFeed extends Extension {
 	}
 
 	public function onCommentPosting($event) {
+		global $user;
 		$this->msg(
 			make_http(make_link("post/view/".$event->image_id))." - ".
-			$event->user->name . ": " . str_replace("\n", " ", $event->comment)
+			$user->name . ": " . str_replace("\n", " ", $event->comment)
 		);
 	}
 

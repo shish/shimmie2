@@ -140,6 +140,8 @@ abstract class FormatterExtension extends Extension {
  */
 abstract class DataHandlerExtension extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
+		global $user;
+
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
@@ -178,15 +180,14 @@ abstract class DataHandlerExtension extends Extension {
 				if(is_null($image)) {
 					throw new UploadException("Data handler failed to create image object from data");
 				}
-				$iae = new ImageAdditionEvent($event->user, $image);
+				$iae = new ImageAdditionEvent($image);
 				send_event($iae);
 				$event->image_id = $iae->image->id;
 				
 				// Rating Stuff.
 				if(!empty($event->metadata['rating'])){
-					global $user;
 					$rating = $event->metadata['rating'];
-					send_event(new RatingSetEvent($image, $user, $rating));
+					send_event(new RatingSetEvent($image, $rating));
 				}
 				
 				// Locked Stuff.

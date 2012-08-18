@@ -16,7 +16,7 @@ class IcoFileHandler extends Extension {
 			if(is_null($image)) {
 				throw new UploadException("Icon handler failed to create image object from data");
 			}
-			$iae = new ImageAdditionEvent($event->user, $image);
+			$iae = new ImageAdditionEvent($image);
 			send_event($iae);
 			$event->image_id = $iae->image->id;
 		}

@@ -8,12 +8,11 @@
  */
 
 class RatingSetEvent extends Event {
-	var $image, $user, $rating;
+	var $image, $rating;
 
-	public function RatingSetEvent(Image $image, User $user, $rating) {
+	public function RatingSetEvent(Image $image, /*char*/ $rating) {
 		assert(in_array($rating, array("s", "q", "e", "u")));
 		$this->image = $image;
-		$this->user = $user;
 		$this->rating = $rating;
 	}
 }
@@ -89,7 +88,7 @@ class Ratings extends Extension {
 		global $user;
 		
 		if($this->can_rate() && isset($_POST["rating"])) {
-			send_event(new RatingSetEvent($event->image, $user, $_POST['rating']));
+			send_event(new RatingSetEvent($event->image, $_POST['rating']));
 		}
 	}
 
@@ -138,7 +137,7 @@ class Ratings extends Extension {
 					reset($images); // rewind to first element in array.
 					
 					foreach($images as $image) {
-						send_event(new RatingSetEvent($image, $user, $_POST['rating']));
+						send_event(new RatingSetEvent($image, $_POST['rating']));
 					}
 					$n += 100;
 				}

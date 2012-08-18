@@ -32,7 +32,7 @@ class Oekaki extends Extension {
 						$metadata['extension'] = $pathinfo['extension'];
 						$metadata['tags'] = 'oekaki tagme';
 						$metadata['source'] = null;
-						$event = new DataUploadEvent($user, $tmpname, $metadata);
+						$event = new DataUploadEvent($tmpname, $metadata);
 						send_event($event);
 						if($event->image_id == -1) {
 							throw new UploadException("File type not recognised");
