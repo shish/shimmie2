@@ -111,7 +111,7 @@ class SCoreWebTestCase extends WebTestCase {
 	 */
 	protected function get_page($page) {
 		if($_SERVER['HTTP_HOST'] == "<cli command>") {
-			print "http://127.0.0.1/2.Xm/index.php?q=$page";
+			//print "http://127.0.0.1/2.Xm/index.php?q=$page";
 			$raw = $this->get("http://127.0.0.1/2.Xm/index.php?q=$page");
 		}
 		else {
