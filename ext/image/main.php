@@ -303,7 +303,7 @@ class ImageIO extends Extension {
 			}
 			else {
 				$error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-						"already has hash {$image->hash}:<p>".Themelet::build_thumb_html($existing);
+						"already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
 				throw new ImageAdditionException($error);
 			}
 		}
