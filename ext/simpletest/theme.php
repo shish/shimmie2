@@ -3,7 +3,7 @@ class SimpleSCoreTestTheme extends Themelet {
 }
 
 /** @private */
-class SCoreReporter extends HtmlReporter {
+class SCoreWebReporter extends HtmlReporter {
 	var $current_html = "";
 	var $clear_modules = array();
 	var $page;
@@ -73,5 +73,9 @@ class SCoreReporter extends HtmlReporter {
 		$message = str_replace(getcwd(), "...", $message);
 		$this->current_html .= "<p style='text-align: left;'><b>Exception</b>: $message";
 	}
+}
+
+/** @private */
+class SCoreCLIReporter extends TextReporter {
 }
 ?>

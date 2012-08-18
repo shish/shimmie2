@@ -110,7 +110,13 @@ class SCoreWebTestCase extends WebTestCase {
 	 * the right thing; no need for http:// or any such
 	 */
 	protected function get_page($page) {
-		$raw = $this->get(make_http(make_link($page)));
+		if($_SERVER['HTTP_HOST'] == "<cli command>") {
+			print "http://127.0.0.1/2.Xm/index.php?q=$page";
+			$raw = $this->get("http://127.0.0.1/2.Xm/index.php?q=$page");
+		}
+		else {
+			$raw = $this->get(make_http(make_link($page)));
+		}
 		$this->assertNoText("Exception:");
 		$this->assertNoText("Error:");
 		$this->assertNoText("Warning:");
@@ -217,7 +223,18 @@ class SimpleSCoreTest extends Extension {
 			$page->add_block(new NavBlock());
 
 			$all = new TestFinder($event->get_arg(0));
-			$all->run(new SCoreReporter($page));
+			$all->run(new SCoreWebReporter($page));
+		}
+	}
+
+	public function onCommand(CommandEvent $event) {
+		if($event->cmd == "help") {
+			print "  test [extension]\n";
+			print "    run automated tests for the name extension\n\n";
+		}
+		if($event->cmd == "test") {
+			$all = new TestFinder($event->args[0]);
+			$all->run(new SCoreCLIReporter());
 		}
 	}
 
