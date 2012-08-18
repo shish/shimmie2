@@ -1,5 +1,5 @@
 <?php
-class ImageIOTheme {
+class ImageIOTheme extends Themelet {
 	/**
 	 * Display a link to delete an image
 	 * (Added inline Javascript to confirm the deletion)
