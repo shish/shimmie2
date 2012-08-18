@@ -117,6 +117,7 @@ class SCoreWebTestCase extends WebTestCase {
 		else {
 			$raw = $this->get(make_http(make_link($page)));
 		}
+		$this->assertNoText("Internal Error");
 		$this->assertNoText("Exception:");
 		$this->assertNoText("Error:");
 		$this->assertNoText("Warning:");
