@@ -92,9 +92,6 @@ class RotateImage extends Extension {
 					} catch (ImageRotateException $e) {
 						$this->theme->display_rotate_error($page, "Error Rotating", $e->error);
 					}
-				} else {
-					/* Display options for resizing */
-					$this->theme->display_rotate_page($page, $image_id);
 				}
 			}
 		}
