@@ -1,6 +1,8 @@
 <?php
 
 class CustomCommentListTheme extends CommentListTheme {
+	var $inner_id = 0;
+
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
 		global $config, $page;
 
@@ -29,7 +31,8 @@ class CustomCommentListTheme extends CommentListTheme {
 			$comment_html = "";
 			$comment_id = 0;
 			foreach($comments as $comment) {
-				$comment_html .= $this->comment_to_html($comment, false, $comment_id++);
+				$this->inner_id = $comment_id++;
+				$comment_html .= $this->comment_to_html($comment, false);
 			}
 
 			$html  = "<p style='clear:both'>&nbsp;</p><hr height='1'>";
@@ -53,7 +56,8 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 
-	protected function comment_to_html(Comment $comment, $trim=false, $inner_id=0) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
+		$inner_id = $this->inner_id; // because custom themes can't add params, because PHP
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
