@@ -90,14 +90,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		$w = $config->get_int("thumb_width");
 		$h = $config->get_int("thumb_height");
 		$q = $config->get_int("thumb_quality");
-
-		// Windows is a special case
-		if(in_array("OS", $_SERVER) && $_SERVER["OS"] == 'Windows_NT') {
-			$convert = $config->get_string("thumb_convert_path");
-		}
-		else {
-			$convert = "convert";
-		}
+		$convert = $config->get_string("thumb_convert_path");
 
 		//  ffff imagemagic fails sometimes, not sure why
 		//$format = "'%s' '%s[0]' -format '%%[fx:w] %%[fx:h]' info:";
