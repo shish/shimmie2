@@ -264,8 +264,11 @@ class ImageIO extends Extension {
 		$sb->add_label(" px at ");
 		$sb->add_int_option("thumb_quality");
 		$sb->add_label(" % quality ");
-		$sb->add_label("<br>ImageMagick Binary: ");
-		$sb->add_text_option("thumb_convert_path");
+		
+		if($config->get_string("thumb_engine") == "convert") {
+			$sb->add_label("<br>ImageMagick Binary: ");
+			$sb->add_text_option("thumb_convert_path");
+		}
 
 		if($config->get_string("thumb_engine") == "gd") {
 			$sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
