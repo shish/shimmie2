@@ -31,6 +31,7 @@ class AdminPageTheme extends Themelet {
 	 *  'lowercase all tags'
 	 *  'recount tag use'
 	 *  'purge unused tags'
+	 *  etc
 	 */
 	public function display_form() {
 		global $page, $database;
@@ -40,8 +41,13 @@ class AdminPageTheme extends Themelet {
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
 		$html .= $this->button("Download all images", "image_dump", false);
 		$html .= $this->button("Download database contents", "database_dump", false);
-
 		$page->add_block(new Block("Misc Admin Tools", $html));
+
+		$html = make_form(make_link("admin/set_tag_case"), "POST");
+		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case'>";
+		$html .= "<input type='submit' value='Set Tag Case'>";
+		$html .= "</form>\n";
+		$page->add_block(new Block("Set Tag Case", $html));
 	}
 
 	public function dbq_html($terms) {
