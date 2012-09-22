@@ -513,6 +513,7 @@ function getMimeType($file, $ext="") {
 	if ($type !== false && strlen($type) > 0) return $type;
 
 	// Otherwise do it the old fashioned way
+	$ext = strtolower($ext);
 	static $exts = array(
 		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
 		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
