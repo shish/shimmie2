@@ -1,7 +1,7 @@
 <?php
 /*
  * Name: Mass Tagger
- * Author: Christian Walde <walde.christian@googlemail.com>
+ * Author: Christian Walde <walde.christian@googlemail.com>, contributions by Shish and Agasa
  * License: WTFPL
  * Description: Tag a bunch of images at once
  * Documentation:
@@ -38,8 +38,18 @@ class MassTagger extends Extension {
 		
 		$images = array_map( "Image::by_id", $ids );
 		
-		foreach($images as $image) {
-			$image->set_tags($tag . " " . $image->get_tag_list());
+		if(isset($_POST['setadd']) &&
+		$_POST['setadd'] == 'set')
+		{
+			foreach($images as $image) {
+				$image->set_tags($tag);
+			}
+		}
+		else
+		{
+			foreach($images as $image) {
+				$image->set_tags($tag . " " . $image->get_tag_list());
+			}
 		}
 		
 		$page->set_mode("redirect");
