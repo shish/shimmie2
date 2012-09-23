@@ -72,7 +72,7 @@ class VideoFileHandler extends DataHandlerExtension {
 			require_once('lib/getid3/getid3/getid3.php');
 			$getID3 = new getID3;
 			$ThisFileInfo = $getID3->analyze($file);
-			if ($ThisFileInfo['mime_type'] == "video/webm" || $ThisFileInfo['mime_type'] == "video/quicktime" || $ThisFileInfo['mime_type'] == "application/ogg" || $ThisFileInfo['mime_type'] == 'video/x-flv') {
+			if (isset($ThisFileInfo['mime_type']) && ($ThisFileInfo['mime_type'] == "video/webm" || $ThisFileInfo['mime_type'] == "video/quicktime" || $ThisFileInfo['mime_type'] == "application/ogg" || $ThisFileInfo['mime_type'] == 'video/x-flv')) {
 				return TRUE;
 			}
 		}
