@@ -39,7 +39,7 @@ class MP3FileHandler extends DataHandlerExtension {
 			require_once('lib/getid3/getid3/getid3.php');
 			$getID3 = new getID3;
 			$ThisFileInfo = $getID3->analyze($file);
-			if ($ThisFileInfo['fileformat'] == "mp3") {
+			if (isset($ThisFileInfo['fileformat']) && $ThisFileInfo['fileformat'] == "mp3") {
 				return TRUE;
 			}
 		}
