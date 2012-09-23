@@ -11,6 +11,8 @@
  *  <b>e.g.</b> "/tmp/cat.png","shish oekaki","shimmie.shishnet.org","s","tmp/custom.jpg" <br><br>
  *  Any value but the first may be omitted, but there must be five values per line.<br>
  *  <b>e.g.</b> "/why/not/try/bulk_add.jpg","","","",""<br><br>
+ *  Image thumbnails will be displayed at the AR of the full image. Thumbnails that are
+ *  normally static (e.g. SWF) will be displayed at the board's max thumbnail size<br><br>
  *  Useful for importing tagged images without having to do database manipulation.<br>
  *  <p><b>Note:</b> requires "Admin Controls" and optionally "Image Ratings" to be enabled<br><br>
  *  
