@@ -6,11 +6,11 @@
  * Description: Bulk add server-side images with metadata from CSV file
  * Documentation:
  *  Modification of "Bulk Add" by Shish.<br><br>
- *  Adds images from a CSV with the four following values: <br>
- *  "/path/to/image.jpg","space separated tags","source","rating (s, q, or e)" <br>
- *  <b>e.g.</b> "/tmp/cat.png","shish oekaki","shimmie.shishnet.org/v2/post/view/3051","s" <br><br>
- *  Any value but the first may be omitted, but there must be four values per line.<br>
- *  <b>e.g.</b> "/why/not/try/bulk_add.jpg","","",""<br><br>
+ *  Adds images from a CSV with the five following values: <br>
+ *  "/path/to/image.jpg","spaced tags","source","rating s/q/e","/path/thumbnail.jpg" <br>
+ *  <b>e.g.</b> "/tmp/cat.png","shish oekaki","shimmie.shishnet.org","s","tmp/custom.jpg" <br><br>
+ *  Any value but the first may be omitted, but there must be five values per line.<br>
+ *  <b>e.g.</b> "/why/not/try/bulk_add.jpg","","","",""<br><br>
  *  Useful for importing tagged images without having to do database manipulation.<br>
  *  <p><b>Note:</b> requires "Admin Controls" and optionally "Image Ratings" to be enabled<br><br>
  *  
@@ -53,7 +53,7 @@ class BulkAddCSV extends Extension {
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
 	 */
-	private function add_image($tmpname, $filename, $tags, $source, $rating) {
+	private function add_image($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
 		assert(file_exists($tmpname));
 
 		$pathinfo = pathinfo($filename);
@@ -68,9 +68,14 @@ class BulkAddCSV extends Extension {
 		send_event($event);
 		if($event->image_id == -1) {
 			throw new UploadException("File type not recognised");
-		} elseif(class_exists("RatingSetEvent") && in_array($rating, array("s", "q", "e"))) {
-			$ratingevent = new RatingSetEvent(Image::by_id($event->image_id), $rating);
-			send_event($ratingevent);
+		} else {
+			if(class_exists("RatingSetEvent") && in_array($rating, array("s", "q", "e"))) {
+				$ratingevent = new RatingSetEvent(Image::by_id($event->image_id), $rating);
+				send_event($ratingevent);
+			}
+			if (file_exists($thumbfile)) {
+				copy($thumbfile, warehouse_path("thumbs", $event->hash));
+			}
 		}
 	}
 
@@ -91,7 +96,7 @@ class BulkAddCSV extends Extension {
 		$csvhandle = fopen($csvfile, "r");
 		
 		while (($csvdata = fgetcsv($csvhandle, 0, ",")) !== FALSE) {
-			if(count($csvdata) != 4) {
+			if(count($csvdata) != 5) {
 				if(strlen($list) > 0) {
 					$this->theme->add_status("Error", "<b>Encountered malformed data. Line $linenum $csvfile</b><br>".$list);
 					fclose($csvhandle);
@@ -106,12 +111,13 @@ class BulkAddCSV extends Extension {
 			$tags = trim($csvdata[1]);
 			$source = $csvdata[2];
 			$rating = $csvdata[3];
+			$thumbfile = $csvdata[4];
 			$pathinfo = pathinfo($fullpath);
 			$shortpath = $pathinfo["basename"];
 			$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
 			if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
 				try{
-					$this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating);
+					$this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating, $thumbfile);
 					$list .= "ok\n";
 				}
 				catch(Exception $ex) {
