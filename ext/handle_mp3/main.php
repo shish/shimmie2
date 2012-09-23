@@ -35,8 +35,15 @@ class MP3FileHandler extends DataHandlerExtension {
 	}
 
 	protected function check_contents($file) {
-		// FIXME: mp3 magic header?
-		return (file_exists($file));
+		if (file_exists($file)) {
+			require_once('lib/getid3/getid3/getid3.php');
+			$getID3 = new getID3;
+			$ThisFileInfo = $getID3->analyze($file);
+			if ($ThisFileInfo['fileformat'] == "mp3") {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 }
 ?>
