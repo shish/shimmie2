@@ -1,4 +1,7 @@
 <?php
+//Modified from its original version - September 23, 2012
+//$forcemp3 added to analyze to force MP3 detection even if extension isn't .mp3
+
 /////////////////////////////////////////////////////////////////
 /// getID3() by James Heinrich <info@getid3.org>               //
 //  available at http://getid3.sourceforge.net                 //
@@ -343,7 +346,7 @@ class getID3
 	}
 
 	// public: analyze file
-	function analyze($filename) {
+	function analyze($filename, $forcemp3 = FALSE) {
 		try {
 			if (!$this->openfile($filename)) {
 				return $this->info;
@@ -390,7 +393,7 @@ class getID3
 			$formattest = fread($this->fp, 32774);
 
 			// determine format
-			$determined_format = $this->GetFileFormat($formattest, $filename);
+			$determined_format = $this->GetFileFormat($formattest, $filename, $forcemp3);
 
 			// unable to determine file format
 			if (!$determined_format) {
@@ -1102,7 +1105,7 @@ class getID3
 
 
 
-	function GetFileFormat(&$filedata, $filename='') {
+	function GetFileFormat(&$filedata, $filename='', $forcemp3) {
 		// this function will determine the format of a file based on usually
 		// the first 2-4 bytes of the file (8 bytes for PNG, 16 bytes for JPG,
 		// and in the case of ISO CD image, 6 bytes offset 32kb from the start
@@ -1119,7 +1122,7 @@ class getID3
 		}
 
 
-		if (preg_match('#\.mp[123a]$#i', $filename)) {
+		if (preg_match('#\.mp[123a]$#i', $filename) || $forcemp3 == TRUE) {
 			// Too many mp3 encoders on the market put gabage in front of mpeg files
 			// use assume format on these if format detection failed
 			$GetFileFormatArray = $this->GetFileFormatArray();

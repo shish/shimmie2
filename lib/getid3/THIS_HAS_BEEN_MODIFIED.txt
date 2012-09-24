@@ -1,0 +1,5 @@
+In compliance with GPL, this message is to notify you that getID3 has been modified.
+
+getid3.php was modified September 23, 2012 to add a boolean to force MP3 checking.
+
+It carries the same license as its original.
