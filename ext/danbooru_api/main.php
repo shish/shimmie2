@@ -288,9 +288,9 @@ class DanbooruApi extends Extension {
 			} else
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
-				$start = isset($_GET['offset']) ? int_escape($_GET['offset']) : 0;
+				$start = (isset($_GET['page']) ? int_escape($_GET['page'])-1 : 0) * $limit;
 				$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : array();
-				$results = Image::find_images($start, $limit, $tags);
+				$results = Image::find_images(max($start, 0), min($limit, 100), $tags);
 			}
 
 			// Now we have the array $results filled with Image objects
@@ -304,7 +304,22 @@ class DanbooruApi extends Extension {
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
-				$xml .= "<post md5=\"$img->hash\" rating=\"Questionable\" date=\"$img->posted\" is_warehoused=\"false\" file_name=\"$img->filename\" tags=\"" . $this->xmlspecialchars($taglist) . "\" source=\"" . $this->xmlspecialchars($img->source) . "\" score=\"0\" id=\"$img->id\" author=\"$owner->name\"/>\n";
+				$xml .= xml_tag("post", array(
+					"id"            => $img->id,
+					"md5"           => $img->hash,
+					"file_name"     => $img->filename,
+					"file_url"      => $img->get_image_link(),
+					"height"        => $img->height,
+					"width"         => $img->width,
+					"preview_url"   => $img->get_thumb_link(),
+					"rating"        => "u",
+					"date"          => $img->posted,
+					"is_warehoused" => false,
+					"tags"          => $taglist,
+					"source"        => $img->source,
+					"score"         => 0,
+					"author"        => $owner->name
+				));
 			}
 			$xml .= "</posts>";
 			$page->set_data($xml);

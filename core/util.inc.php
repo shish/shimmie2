@@ -117,6 +117,25 @@ function no_escape($input) {
 	return $input;
 }
 
+function xml_tag($name, $attrs=array(), $children=array()) {
+	$xml = "<$name ";
+	foreach($attrs as $k => $v) {
+		$xv = str_replace('&#039;', '&apos;', htmlspecialchars($v, ENT_QUOTES));
+		$xml .= "$k=\"$xv\" ";
+	}
+	if(count($children) > 0) {
+		$xml .= ">\n";
+		foreach($children as $child) {
+			$xml .= xml_tag($child);
+		}
+		$xml .= "</$name>\n";
+	}
+	else {
+		$xml .= "/>\n";
+	}
+	return $xml;
+}
+
 // Original PHP code by Chirp Internet: www.chirp.com.au
 // Please acknowledge use of this code by including this header.
 function truncate($string, $limit, $break=" ", $pad="...") {
