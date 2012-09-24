@@ -365,8 +365,6 @@ class ImageIO extends Extension {
 				$file = $image->get_image_filename();
 			}
 
-			$page->set_data(file_get_contents($file));
-
 			if(isset($_SERVER["HTTP_IF_MODIFIED_SINCE"])) {
 				$if_modified_since = preg_replace('/;.*$/', '', $_SERVER["HTTP_IF_MODIFIED_SINCE"]);
 			}
@@ -377,9 +375,11 @@ class ImageIO extends Extension {
 
 			if($if_modified_since == $gmdate_mod) {
 				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
+				$page->set_data("");
 			}
 			else {
 				$page->add_http_header("Last-Modified: $gmdate_mod");
+				$page->set_data(file_get_contents($file));
 				
 				if ( $config->get_int("image_expires") ) {
 					$expires = date(DATE_RFC1123, time() + $config->get_int("image_expires"));

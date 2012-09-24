@@ -508,7 +508,7 @@ function captcha_check() {
 * @param string &$file File path
 * @return string
 */
-function getMimeType($file) {
+function getMimeType($file, $ext="") {
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
 	// MAGIC env var for the magic file
@@ -532,6 +532,7 @@ function getMimeType($file) {
 	if ($type !== false && strlen($type) > 0) return $type;
 
 	// Otherwise do it the old fashioned way
+	$ext = strtolower($ext);
 	static $exts = array(
 		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
 		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
@@ -546,7 +547,6 @@ function getMimeType($file) {
 		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
 		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php'
 	);
-	$ext = strtolower(pathInfo($file, PATHINFO_EXTENSION));
 	return isset($exts[$ext]) ? $exts[$ext] : 'application/octet-stream';
 }
 

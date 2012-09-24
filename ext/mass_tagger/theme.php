@@ -13,6 +13,7 @@ class MassTaggerTheme extends Themelet {
 					Click on images to mark them. Use the 'Index Options' in the Board Config to increase the amount of shown images.
 					<br />
 					<input type='hidden' name='ids' id='mass_tagger_ids' />
+					Set instead of add? <input type='checkbox' name='setadd' value='set' />
 					<label>Tags: <input type='text' name='tag' /></label>
 
 					<input type='submit' value='Tag Marked Images' />
