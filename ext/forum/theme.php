@@ -46,7 +46,7 @@ class ForumTheme extends Themelet {
         $blockTitle = "Write a new thread";
 		$page->set_title(html_escape($blockTitle));
 		$page->set_heading(html_escape($blockTitle));
-        $page->add_block(new Block($blockTitle, $html, "main", 20));
+        $page->add_block(new Block($blockTitle, $html, "main", 120));
     }
 	
 	
@@ -73,7 +73,7 @@ class ForumTheme extends Themelet {
 				";
 
         $blockTitle = "Answer to this thread";
-        $page->add_block(new Block($blockTitle, $html, "main", 30));
+        $page->add_block(new Block($blockTitle, $html, "main", 130));
     }
 
 
@@ -81,20 +81,24 @@ class ForumTheme extends Themelet {
     public function display_thread($posts, $showAdminOptions,  $threadTitle, $threadID, $pageNumber, $totalPages)
     {
 		global $config, $page/*, $user*/;
-
+		
+		$posts_per_page = $config->get_int('forumPostsPerPage');
 		$theme_name = $config->get_string('theme');
 		
         $html = "";
-        $n = 0;
+        $current_post = 0;
 
-        $html = "<table id='postList' class='zebra'>".
+        $html =
+			"<div id=returnLink>[<a href=".make_link("forum/index/").">Return</a>]</div><br><br>".
+			"<table id='threadPosts' class='zebra'>".
 			"<thead><tr>".
-            "<th>User</th>".
+            "<th id=threadHeadUser>User</th>".
             "<th>Message</th>".
 			"</tr></thead>";
 		
         foreach ($posts as $post)
         {
+			$current_post++;
             $message = $post["message"];
 
             $tfe = new TextFormattingEvent($message);
@@ -113,7 +117,7 @@ class ForumTheme extends Themelet {
             $poster = User::by_name($post["user_name"]);
 			$gravatar = $poster->get_avatar_html();
 
-			$rank = "<sup>{$post["user_class"]}</sup>";
+			$rank = "<sup class='user_rank'>{$post["user_class"]}</sup>";
 			
 			$postID = $post['id'];
 			
@@ -128,14 +132,25 @@ class ForumTheme extends Themelet {
 			}else{
 			$delete_link = "";
 			}
-            
-            $html .= "<tr>".
-                "<td class='forum_user'>".$user."<br>".$rank."<br>".$gravatar."</td>".
-                "<td class='forum_message'>".$message."</td>"."</tr>
-				<tr class='$oe'>
-					<td class='forum_subuser'><small>".autodate($post["date"])."</small></td>
-					<td class='forum_submessage'>".$delete_link."</td>
-				</tr>";
+
+			$post_number = (($pageNumber-1)*$posts_per_page)+$current_post;
+            $html .= "<tr >
+			<tr class='postHead'>
+				<td class='forumSupuser'></td>
+				<td class='forumSupmessage'><div class=deleteLink>".$delete_link."</div></td>
+			</tr>
+			<tr class='posBody'>
+				<td class='forumUser'>".$user."<br>".$rank."<br>".$gravatar."<br></td>
+				<td class='forumMessage'>
+					<div class=postDate><small>".autodate($post['date'])."</small></div>
+					<div class=postNumber> #".$post_number."</div>
+					<br>
+					<div class=postMessage>".$message."</td>
+			</tr>
+			<tr class='postFoot'>
+				<td class='forumSubuser'></td>
+				<td class='forumSubmessage'></td>
+			</tr>";
 
         }
 		
@@ -145,7 +160,7 @@ class ForumTheme extends Themelet {
 
 		$page->set_title(html_escape($threadTitle));
 		$page->set_heading(html_escape($threadTitle));
-        $page->add_block(new Block("Thread", $html, "main", 20));
+        $page->add_block(new Block($threadTitle, $html, "main", 20));
 
     }
 	
@@ -155,7 +170,7 @@ class ForumTheme extends Themelet {
     {
         $html = '<a href="'.make_link("forum/nuke/".$threadID).'">Delete this thread and its posts.</a>';
 
-        $page->add_block(new Block("Admin Actions", $html, "main", 40));
+        $page->add_block(new Block("Admin Actions", $html, "main", 140));
     }
 
 
@@ -177,10 +192,10 @@ class ForumTheme extends Themelet {
         $html .= "</tr></thead><tbody>";
 
 
-        $n = 0;
+        $current_post = 0;
         foreach($threads as $thread)
         {
-            $oe = ($n++ % 2 == 0) ? "even" : "odd";
+            $oe = ($current_post++ % 2 == 0) ? "even" : "odd";
 			
 			global $config;
 			$titleSubString = $config->get_int('forumTitleSubString');
