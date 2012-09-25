@@ -53,7 +53,7 @@ class MassTagger extends Extension {
 		}
 		
 		$page->set_mode("redirect");
-		$page->set_redirect(make_link("post/list"));
+		$page->set_redirect($_SERVER['HTTP_REFERER']);
 	}
 }
 ?>
