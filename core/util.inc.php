@@ -490,6 +490,27 @@ function captcha_check() {
 * @return string
 */
 function getMimeType($file, $ext="") {
+
+	// Static extension lookup
+	$ext = strtolower($ext);
+	static $exts = array(
+		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
+		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
+		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
+		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
+		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
+		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
+		'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
+		'css' => 'text/css', 'js' => 'text/javascript',
+		'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
+		'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
+		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
+		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
+		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
+	);
+
+	if (isset($exts[$ext])) { return $exts[$ext]; }
+
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
 	// MAGIC env var for the magic file
@@ -511,25 +532,8 @@ function getMimeType($file, $ext="") {
 		$type = trim(mime_content_type($file));
 
 	if ($type !== false && strlen($type) > 0) return $type;
-
-	// Otherwise do it the old fashioned way
-	$ext = strtolower($ext);
-	static $exts = array(
-		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
-		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
-		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
-		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
-		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
-		'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
-		'css' => 'text/css', 'js' => 'text/javascript',
-		'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
-		'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
-		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
-		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
-		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
-	);
-	return isset($exts[$ext]) ? $exts[$ext] : 'application/octet-stream';
+	
+	return 'application/octet-stream';
 }
 
 /**
