@@ -31,7 +31,7 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$image = new Image();
 
-		require_once('/lib/getid3/getid3/getid3.php');
+		require_once('lib/getid3/getid3/getid3.php');
 		$getID3 = new getID3;
 		$ThisFileInfo = $getID3->analyze($filename);
 		
