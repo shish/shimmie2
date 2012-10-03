@@ -187,11 +187,12 @@ class CommentListTheme extends Themelet {
 			$anoncode2 = "";
 			if($this->show_anon_id) {
 				$anoncode = '<sup>'.$this->anon_id.'</sup>';
-				if($user->can("view_ip")) {
+				if(!array_key_exists($comment->poster_ip, $this->anon_map)) {
+					$this->anon_map[$comment->poster_ip] = $this->anon_id;
+				}
+				#if($user->can("view_ip")) {
 					#$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-					if(!array_key_exists($comment->poster_ip, $this->anon_map)) {
-						$this->anon_map[$comment->poster_ip] = $this->anon_id;
-					}
+				if($user->can("view_ip") || $config->get_bool("comment_samefags_public", false)) {
 					if($this->anon_map[$comment->poster_ip] != $this->anon_id) {
 						$anoncode2 = '<sup>('.$this->anon_map[$comment->poster_ip].')</sup>';
 					}
