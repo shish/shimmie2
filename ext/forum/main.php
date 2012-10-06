@@ -276,7 +276,7 @@ class Forum extends Extension {
                 $pageNumber = 0;
             else if ($pageNumber <= 0)
                 $pageNumber = 0;
-			else if ($pageNumber > $totalPages)
+			else if ($pageNumber >= $totalPages)
                 $pageNumber = $totalPages - 1;
             else
                 $pageNumber--;
@@ -309,7 +309,7 @@ class Forum extends Extension {
                 $pageNumber = 0;
             else if ($pageNumber <= 0)
                 $pageNumber = 0;
-			else if ($pageNumber > $totalPages)
+			else if ($pageNumber >= $totalPages)
 				$pageNumber = $totalPages - 1;
             else
                 $pageNumber--;
