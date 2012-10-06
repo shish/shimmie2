@@ -7,7 +7,14 @@
  * Description: Rough forum extension
  * Documentation:
  */
+/*
+Todo:
+*Quote buttons on posts
+*Move delete and quote buttons away from each other
+*Bring us on par with comment extension(post linking, image linking, thumb links, URL autolink)
+*Smiley filter, word filter, etc should work with our extension
 
+*/
 class Forum extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
@@ -92,12 +99,19 @@ class Forum extends Extension {
                     }
                     case "view":
                     {
-                        $threadID = int_escape($event->get_arg(1));
-                        $pageNumber = int_escape($event->get_arg(2));
-
-                        $this->show_posts($event, $user->is_admin());
-                        if($user->is_admin()) $this->theme->add_actions_block($page, $threadID);
-                        if(!$user->is_anonymous()) $this->theme->display_new_post_composer($page, $threadID);
+						$threadID = int_escape($event->get_arg(1));
+						$pageNumber = int_escape($event->get_arg(2));
+						list($errors) = $this->sanity_check_viewed_thread($threadID);
+						
+						if($errors!=null)
+                        {
+                            $this->theme->display_error(500, "Error", $errors);
+                            break;
+                        }
+						
+						$this->show_posts($event, $user->is_admin());
+						if($user->is_admin()) $this->theme->add_actions_block($page, $threadID);
+						if(!$user->is_anonymous()) $this->theme->display_new_post_composer($page, $threadID);
                         break;
                     }
                     case "new":
@@ -111,12 +125,11 @@ class Forum extends Extension {
                         $redirectTo = "forum/index";
                         if (!$user->is_anonymous())
                         {
-                            list($hasErrors, $errors) = $this->valid_values_for_new_thread();
+                            list($errors) = $this->sanity_check_new_thread();
 
-                            if($hasErrors)
+                            if($errors!=null)
                             {
                                 $this->theme->display_error(500, "Error", $errors);
-                                $this->theme->display_new_thread_composer($page, $_POST["message"], $_POST["title"], false);
                                 break;
                             }
 
@@ -149,24 +162,21 @@ class Forum extends Extension {
                         $page->set_redirect(make_link("forum/index"));
                         break;
                     case "answer":
+						$threadID = int_escape($_POST["threadID"]);
+						$total_pages = $this->get_total_pages_for_thread($threadID);
                         if (!$user->is_anonymous())
                         {
-                            list($hasErrors, $errors) = $this->valid_values_for_new_post();
+                            list($errors) = $this->sanity_check_new_post();
 
-                            if ($hasErrors)
+                            if ($errors!=null)
                             {
                                 $this->theme->display_error(500, "Error", $errors);
-                                $this->theme->display_new_post_composer($page, $_POST["threadID"], $_POST["message"], $_POST["title"], false);
                                 break;
                             }
-
-                            $threadID = int_escape($_POST["threadID"]);
-                            
                             $this->save_new_post($threadID, $user);
                         }
-
                         $page->set_mode("redirect");
-                        $page->set_redirect(make_link("forum/view/".$threadID."/1"));
+                        $page->set_redirect(make_link("forum/view/".$threadID."/".$total_pages));
                         break;
                     default:
                     {
@@ -187,70 +197,66 @@ class Forum extends Extension {
             return ceil($result["count"] / $config->get_int("forumPostsPerPage"));
         }
 
-        private function valid_values_for_new_thread()
+        private function sanity_check_new_thread()
         {
-            $hasErrors = false;
-
-            $errors = "";
-            
+            $errors = null;
             if (!array_key_exists("title", $_POST))
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>No title supplied.</div>";
             }
             else if (strlen($_POST["title"]) == 0)
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>You cannot have an empty title.</div>";
             }
             else if (strlen(html_escape($_POST["title"])) > 255)
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>Your title is too long.</div>";
             }
 
             if (!array_key_exists("message", $_POST))
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>No message supplied.</div>";
             }
             else if (strlen($_POST["message"]) == 0)
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>You cannot have an empty message.</div>";
             }
 
-            return array($hasErrors, $errors);
+            return array($errors);
         }
-        private function valid_values_for_new_post()
+        private function sanity_check_new_post()
         {
-            $hasErrors = false;
-
-            $errors = "";
+            $errors = null;
             if (!array_key_exists("threadID", $_POST))
             {
-                $hasErrors = true;
                 $errors = "<div id='error'>No thread ID supplied.</div>";
             }
             else if (strlen($_POST["threadID"]) == 0)
             {
-                $hasErrors = true;
                 $errors = "<div id='error'>No thread ID supplied.</div>";
             }
             else if (is_numeric($_POST["threadID"]))
 
             if (!array_key_exists("message", $_POST))
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>No message supplied.</div>";
             }
             else if (strlen($_POST["message"]) == 0)
             {
-                $hasErrors = true;
                 $errors .= "<div id='error'>You cannot have an empty message.</div>";
             }
             
-            return array($hasErrors, $errors);
+            return array($errors);
+        }
+		private function sanity_check_viewed_thread($threadID)
+        {
+			global $database;
+            $errors = null;
+            if (!$this->threadExists($threadID))
+            {
+                $errors = "<div id='error'>Inexistent thread.</div>";
+            }            
+            return array($errors);
         }
         private function get_thread_title($threadID)
         {
@@ -263,14 +269,17 @@ class Forum extends Extension {
         {
 			global $config, $database;
             $pageNumber = $event->get_arg(1);
+			$threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
+			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
+			
             if(is_null($pageNumber) || !is_numeric($pageNumber))
                 $pageNumber = 0;
             else if ($pageNumber <= 0)
                 $pageNumber = 0;
+			else if ($pageNumber > $totalPages)
+                $pageNumber = $totalPages - 1;
             else
                 $pageNumber--;
-            
-            $threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
 
             $threads = $database->get_all(
                 "SELECT f.id, f.sticky, f.title, f.date, f.uptodate, u.name AS user_name, u.email AS user_email, u.class AS user_class, sum(1) - 1 AS response_count ".
@@ -284,25 +293,26 @@ class Forum extends Extension {
                 , array("limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage)
             );
 			
-            $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
-			
             $this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
         }
 		
 		private function show_posts($event, $showAdminOptions = false)
         {
 			global $config, $database, $user;
-			
 			$threadID = $event->get_arg(1);
             $pageNumber = $event->get_arg(2);
+			$postsPerPage = $config->get_int('forumPostsPerPage', 15);
+			$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
+			$threadTitle = $this->get_thread_title($threadID);
+			
             if(is_null($pageNumber) || !is_numeric($pageNumber))
                 $pageNumber = 0;
             else if ($pageNumber <= 0)
                 $pageNumber = 0;
+			else if ($pageNumber > $totalPages)
+				$pageNumber = $totalPages - 1;
             else
                 $pageNumber--;
-				
-            $postsPerPage = $config->get_int('forumPostsPerPage', 15);
 
             $posts = $database->get_all(
                 "SELECT p.id, p.date, p.message, u.name as user_name, u.email AS user_email, u.class AS user_class ".
@@ -314,11 +324,6 @@ class Forum extends Extension {
                 "LIMIT :limit OFFSET :offset"
                 , array("thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage)
             );
-			
-            $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", array($threadID)) / $postsPerPage);
-			
-			$threadTitle = $this->get_thread_title($threadID);
-			
 			$this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
         }
 
@@ -397,5 +402,14 @@ class Forum extends Extension {
             global $database;
             $database->execute("DELETE FROM forum_posts WHERE id = ?", array($postID));
         }
+		private function threadExists($threadID){
+			global $database;
+			$result=$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id= ?)", array($threadID));
+			if ($result==1){
+				return true;
+			}else{
+				return false;
+			}
+		}
 }
 ?>

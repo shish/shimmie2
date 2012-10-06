@@ -1,0 +1,27 @@
+TABLE#threadPosts {
+	table-layout:fixed;
+	word-wrap:break-word;
+	text-align:left;
+	width: 100%;
+}
+TH#threadHeadUser{
+	width: 15%;
+	overflow: hidden;
+}
+DIV#returnLink{
+	float:left;
+	font-size:150%;
+}
+TD.forumUser, TD.forumMessage{
+	vertical-align:top !important; /*Someone, somewhere will hate me*/
+	text-align:left !important; /*Someone, somewhere will hate me*/
+}
+DIV.postDate {
+	float:left;
+}
+DIV.deleteLink , DIV.postNumber{
+	float:right;
+}
+DIV.postMessage {
+	text-align:left;
+}
