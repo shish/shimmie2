@@ -142,14 +142,12 @@ class Upload extends Extension {
 					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 					
 					if(count($_FILES)) {
-						reset($_FILES);	// rewind to first element in array.
 						foreach($_FILES as $file) {
 							$ok = $this->try_upload($file, $tags, $source, $image_id);
 							break; // leave the foreach loop.
 						}
 					}
 					else {
-						reset($_POST);	// rewind to first element in array.
 						foreach($_POST as $name => $value) {
 							if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 								$ok = $this->try_transload($value, $tags, $source, $image_id);
@@ -161,7 +159,8 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
-					$ok = $this->try_transload($url, $tags, $url, $image_id);
+					$source = isset($_GET['source']) ? $_GET['source'] : $url;
+					$ok = $this->try_transload($url, $tags, $source, $image_id);
 					$this->theme->display_upload_status($page, $ok);		
 				}
 				else {
@@ -176,15 +175,16 @@ class Upload extends Extension {
 			else {
 				/* Regular Upload Image */
 				if(count($_FILES) + count($_POST) > 0) {
-					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$ok = true;
 					foreach($_FILES as $name => $file) {
 						$tags = $this->tags_for_upload_slot(int_escape(substr($name, 4)));
+						$source = isset($_POST['source']) ? $_POST['source'] : null;
 						$ok = $ok & $this->try_upload($file, $tags, $source);
 					}
 					foreach($_POST as $name => $value) {
 						if(substr($name, 0, 3) == "url" && strlen($value) > 0) {
 							$tags = $this->tags_for_upload_slot(int_escape(substr($name, 3)));
+							$source = isset($_POST['source']) ? $_POST['source'] : $value;
 							$ok = $ok & $this->try_transload($value, $tags, $source);
 						}
 					}
@@ -193,12 +193,13 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
+					$source = isset($_POST['source']) ? $_POST['source'] : $url;
 					$tags = array('tagme');
 					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 						$tags = Tag::explode($_GET['tags']);
 					}
 							
-					$ok = $this->try_transload($url, $tags, $url);
+					$ok = $this->try_transload($url, $tags, $source);
 					$this->theme->display_upload_status($page, $ok);
 				}
 				else {
@@ -315,13 +316,6 @@ class Upload extends Extension {
 
 		$ok = true;
 
-		//Allows external source to be set.
-		if(!empty($_GET['source'])){
-			$source = $_GET['source'];
-		}else{
-			$source = $url;
-		}
-		
 		// Checks if user is admin > check if you want locked.
 		if($user->can("edit_image_lock") && !empty($_GET['locked'])){
 			$locked = bool_escape($_GET['locked']);
