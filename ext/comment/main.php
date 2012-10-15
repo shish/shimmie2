@@ -177,6 +177,15 @@ class CommentList extends Extension {
 				$page_num = int_escape($event->get_arg(1));
 				$this->build_page($page_num);
 			}
+			else if($event->get_arg(0) === "beta-search") {
+				$search = $event->get_arg(1);
+				$page_num = int_escape($event->get_arg(2));
+
+				$duser = User::by_name($search);
+
+				$comments = $this->get_user_comments($duser->id, 50, ($page_num-1) * 50);
+				$this->theme->display_all_user_comments($comments, $page_num, 10);
+			}
 		}
 	}
 
@@ -205,8 +214,8 @@ class CommentList extends Extension {
 		$h_comment_rate = sprintf("%.1f", ($i_comment_count / $i_days_old));
 		$event->add_stats("Comments made: $i_comment_count, $h_comment_rate per day");
 
-		$recent = $this->get_user_recent_comments($event->display_user->id, 10);
-		$this->theme->display_user_comments($recent);
+		$recent = $this->get_user_comments($event->display_user->id, 10);
+		$this->theme->display_recent_user_comments($recent, $event->display_user);
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
@@ -341,7 +350,7 @@ class CommentList extends Extension {
 		return $comments;
 	}
 
-	private function get_user_recent_comments(/*int*/ $user_id, /*int*/ $count) {
+	private function get_user_comments(/*int*/ $user_id, /*int*/ $count, /*int*/ $offset=0) {
 		global $config;
 		global $database;
 		$rows = $database->get_all("
@@ -354,8 +363,8 @@ class CommentList extends Extension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				WHERE users.id = :user_id
 				ORDER BY comments.id DESC
-				LIMIT :limit
-				", array("user_id"=>$user_id, "limit"=>$count));
+				OFFSET :offset LIMIT :limit
+				", array("user_id"=>$user_id, "offset"=>$offset, "limit"=>$count));
 		$comments = array();
 		foreach($rows as $row) {
 			$comments[] = new Comment($row);

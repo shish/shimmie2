@@ -155,7 +155,7 @@ class CommentListTheme extends Themelet {
 	/**
 	 * Show comments made by a user
 	 */
-	public function display_user_comments($comments) {
+	public function display_recent_user_comments($comments, $user) {
 		global $page;
 		$html = "";
 		foreach($comments as $comment) {
@@ -164,8 +164,37 @@ class CommentListTheme extends Themelet {
 		if(empty($html)) {
 			$html = '<p>No comments by this user.</p>';
 		}
+		else {
+			$html .= "<p><a href='".make_link("comment/beta-search/{$user->name}/1")."'>More</a></p>";
+		}
 		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
 	}
+
+	public function display_all_user_comments($comments, $page_number, $total_pages) {
+		global $page;
+		$html = "";
+		foreach($comments as $comment) {
+			$html .= $this->comment_to_html($comment, true);
+		}
+		if(empty($html)) {
+			$html = '<p>No comments by this user.</p>';
+		}
+		$page->add_block(new Block("Comments", $html, "main", 70, "comment-list-user"));
+
+
+		$prev = $page_number - 1;
+		$next = $page_number + 1;
+
+		$u_tags = url_escape(implode(" ", $search_terms));
+		$query = empty($u_tags) ? "" : '/'.$u_tags;
+
+
+		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";
+		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
+
+		$page->add_block(new Block("Navigation", $h_prev.' | '.$h_next, "left", 0));
+	}
+
 
 
 	protected function comment_to_html($comment, $trim=false) {
