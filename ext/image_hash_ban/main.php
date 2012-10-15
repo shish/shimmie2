@@ -57,27 +57,18 @@ class ImageBan extends Extension {
 
 		if($event->page_matches("image_hash_ban")) {
 			if($user->can("ban_image")) {
-				if($event->get_arg(0) == "dnp") {
-					$image = Image::by_id(int_escape($event->get_arg(1)));
-					if($image) {
-						send_event(new AddImageHashBanEvent($image->hash, "DNP"));
-						send_event(new ImageDeletionEvent($image));
-					}
+				if($event->get_arg(0) == "add") {
+					$image = isset($_POST['image_id']) ? Image::by_id(int_escape($_POST['image_id'])) : null;
+					$hash = isset($_POST["hash"]) ? $_POST["hash"] : $image->hash;
+					$reason = isset($_POST['reason']) ? $_POST['reason'] : "DNP";
 
-					flash_message("Image deleted and added to DNP list");
-					$page->set_mode("redirect");
-					$page->set_redirect($_SERVER["HTTP_REFERER"]);
-				}
-				else if($event->get_arg(0) == "add") {
-					if(isset($_POST['hash']) && isset($_POST['reason'])) {
-						send_event(new AddImageHashBanEvent($_POST['hash'], $_POST['reason']));
+					if($hash) {
+						send_event(new AddImageHashBanEvent($hash, $reason));
 
 						flash_message("Image ban added");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_hash_ban/list/1"));
-					}
-					if(isset($_POST['image_id'])) {
-						$image = Image::by_id(int_escape($_POST['image_id']));
+
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
 
