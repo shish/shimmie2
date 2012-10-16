@@ -900,7 +900,8 @@ define("SCORE_LOG_NOTSET", 0);
  */
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
 	send_event(new LogEvent($section, $priority, $message));
-	if(is_cli() && ($priority >= CLI_LOG_LEVEL)) {
+	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
+	if(is_cli() && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
 	}
 	if($flash === True) {
