@@ -363,7 +363,7 @@ class CommentList extends Extension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				WHERE users.id = :user_id
 				ORDER BY comments.id DESC
-				OFFSET :offset LIMIT :limit
+				LIMIT :limit OFFSET :offset
 				", array("user_id"=>$user_id, "offset"=>$offset, "limit"=>$count));
 		$comments = array();
 		foreach($rows as $row) {
