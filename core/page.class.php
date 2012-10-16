@@ -283,4 +283,7 @@ class Page {
 		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>");
 	}
 }
+
+class MockPage extends Page {
+}
 ?>

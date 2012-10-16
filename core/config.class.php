@@ -214,4 +214,12 @@ class DatabaseConfig extends BaseConfig {
 		$this->database->cache->delete("config");
 	}
 }
+
+class MockConfig extends HardcodeConfig {
+	public function __construct($config=array()) {
+		$config["db_version"] = "999";
+		$config["anon_id"] = "0";
+		parent::__construct($config);
+	}
+}
 ?>

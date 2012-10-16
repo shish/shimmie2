@@ -483,6 +483,35 @@ class Database {
 			return NULL;
 		}
 	}
-	
+}
+
+class MockDatabase extends Database {
+	var $query_id = 0;
+	var $responses = array();
+	var $cache = null;
+
+	public function __construct($responses = array()) {
+		$this->cache = new NoCache();
+		$this->responses = $responses;
+	}
+	public function execute($query, $params=array()) {
+		log_debug("mock-database",
+			"QUERY: " . $query .
+			"\nARGS: " . var_export($params, true) .
+			"\nRETURN: " . var_export($this->responses[$this->query_id], true)
+		);
+		return $this->responses[$this->query_id++];
+	}
+
+	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_last_insert_id($seq) {return $this->query_id;}
+
+	public function scoreql_to_sql($sql) {return $sql;}
+	public function create_table($name, $def) {}
+	public function connect_engine() {}
 }
 ?>
