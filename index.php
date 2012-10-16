@@ -49,17 +49,8 @@ if(!file_exists("data/config/shimmie.conf.php")) {
 }
 require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
-require_once "lib/context.php";
 
 // set up and purify the environment
-if(CONTEXT) {
-	ctx_set_log(CONTEXT);
-}
-ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
-if(COVERAGE) {
-	_start_coverage();
-	register_shutdown_function("_end_coverage");
-}
 _version_check();
 _sanitise_environment();
 

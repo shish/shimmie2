@@ -1,6 +1,7 @@
 <?php
 require_once "lib/recaptchalib.php";
 require_once "lib/securimage/securimage.php";
+require_once "lib/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
@@ -1175,6 +1176,16 @@ function _sanitise_environment() {
 
 	if(DEBUG) {
 		error_reporting(E_ALL);
+	}
+
+	if(CONTEXT) {
+		ctx_set_log(CONTEXT);
+		ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
+	}
+
+	if(COVERAGE) {
+		_start_coverage();
+		register_shutdown_function("_end_coverage");
 	}
 
 	assert_options(ASSERT_ACTIVE, 1);
