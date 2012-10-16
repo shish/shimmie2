@@ -1207,6 +1207,55 @@ function _get_themelet_files($_theme) {
 	return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }
 
+function _set_event_listeners($classes) {
+	global $_event_listeners;
+	$_event_listeners = array();
+
+	foreach($classes as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {
+			// don't do anything
+		}
+		elseif(is_subclass_of($class, "Extension")) {
+			$c = new $class();
+			$c->i_am($c);
+			$my_events = array();
+			foreach(get_class_methods($c) as $method) {
+				if(substr($method, 0, 2) == "on") {
+					$my_events[] = substr($method, 2) . "Event";
+				}
+			}
+			add_event_listener($c, $c->get_priority(), $my_events);
+		}
+	}
+}
+
+function _dump_event_listeners($event_listeners, $path) {
+	$p = "<"."?php\n";
+
+	foreach(get_declared_classes() as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {}
+		elseif(is_subclass_of($class, "Extension")) {
+			$p .= "\$$class = new $class(); ";
+			$p .= "\${$class}->i_am(\$$class);\n";
+		}
+	}
+
+	$p .= "\$_event_listeners = array(\n";
+	foreach($event_listeners as $event => $listeners) {
+		$p .= "\t'$event' => array(\n";
+		foreach($listeners as $id => $listener) {
+			$p .= "\t\t$id => \$".get_class($listener).",\n";
+		}
+		$p .= "\t),\n";
+	}
+	$p .= ");\n";
+
+	$p .= "?".">";
+	file_put_contents($path, $p);
+}
+
 function _load_extensions() {
 	global $_event_listeners;
 
@@ -1216,48 +1265,10 @@ function _load_extensions() {
 		require_once("data/cache/event_listeners.php");
 	}
 	else {
-		foreach(get_declared_classes() as $class) {
-			$rclass = new ReflectionClass($class);
-			if($rclass->isAbstract()) {
-				// don't do anything
-			}
-			elseif(is_subclass_of($class, "Extension")) {
-				$c = new $class();
-				$c->i_am($c);
-				$my_events = array();
-				foreach(get_class_methods($c) as $method) {
-					if(substr($method, 0, 2) == "on") {
-						$my_events[] = substr($method, 2) . "Event";
-					}
-				}
-				add_event_listener($c, $c->get_priority(), $my_events);
-			}
-		}
+		_set_event_listeners(get_declared_classes());
 
 		if(COMPILE_ELS) {
-			$p = "<"."?php\n";
-
-			foreach(get_declared_classes() as $class) {
-				$rclass = new ReflectionClass($class);
-				if($rclass->isAbstract()) {}
-				elseif(is_subclass_of($class, "Extension")) {
-					$p .= "\$$class = new $class(); ";
-					$p .= "\${$class}->i_am(\$$class);\n";
-				}
-			}
-
-			$p .= "\$_event_listeners = array(\n";
-			foreach($_event_listeners as $event => $listeners) {
-				$p .= "\t'$event' => array(\n";
-				foreach($listeners as $id => $listener) {
-					$p .= "\t\t$id => \$".get_class($listener).",\n";
-				}
-				$p .= "\t),\n";
-			}
-			$p .= ");\n";
-
-			$p .= "?".">";
-			file_put_contents(data_path("cache/event_listeners.php"), $p);
+			_dump_event_listeners($_event_listeners, data_path("cache/event_listeners.php"));
 		}
 	}
 
