@@ -324,7 +324,7 @@ class ImageIO extends Extension {
 					:hash, :ext, :width, :height, now(), :source
 				)",
 				array(
-					"owner_id"=>$user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'], "filename"=>$image->filename, "filesize"=>$image->filesize,
+					"owner_id"=>$user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'], "filename"=>substr($image->filename, 0, 60), "filesize"=>$image->filesize,
 					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
 				)
 		);
