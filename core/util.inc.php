@@ -1,6 +1,7 @@
 <?php
 require_once "lib/recaptchalib.php";
 require_once "lib/securimage/securimage.php";
+require_once "lib/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
@@ -444,9 +445,9 @@ function captcha_get_html() {
 
 	$captcha = "";
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
-		$rpk = $config->get_string("api_recaptcha_privkey");
-		if(!empty($rpk)) {
-			$captcha = recaptcha_get_html($rpk);
+		$r_publickey = $config->get_string("api_recaptcha_pubkey");
+		if(!empty($r_publickey)) {
+			$captcha = recaptcha_get_html($r_publickey);
 		}
 		else {
 			session_start();
@@ -465,10 +466,10 @@ function captcha_check() {
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return true;
 
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
-		$rpk = $config->get_string('api_recaptcha_pubkey');
-		if(!empty($rpk)) {
+		$r_privatekey = $config->get_string('api_recaptcha_privkey');
+		if(!empty($r_privatekey)) {
 			$resp = recaptcha_check_answer(
-				$rpk,
+				$r_privatekey,
 				$_SERVER["REMOTE_ADDR"],
 				$_POST["recaptcha_challenge_field"],
 				$_POST["recaptcha_response_field"]
@@ -509,6 +510,27 @@ function captcha_check() {
 * @return string
 */
 function getMimeType($file, $ext="") {
+
+	// Static extension lookup
+	$ext = strtolower($ext);
+	static $exts = array(
+		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
+		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
+		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
+		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
+		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
+		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
+		'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
+		'css' => 'text/css', 'js' => 'text/javascript',
+		'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
+		'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
+		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
+		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
+		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
+	);
+
+	if (isset($exts[$ext])) { return $exts[$ext]; }
+
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
 	// MAGIC env var for the magic file
@@ -530,24 +552,8 @@ function getMimeType($file, $ext="") {
 		$type = trim(mime_content_type($file));
 
 	if ($type !== false && strlen($type) > 0) return $type;
-
-	// Otherwise do it the old fashioned way
-	$ext = strtolower($ext);
-	static $exts = array(
-		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
-		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
-		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
-		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
-		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
-		'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
-		'css' => 'text/css', 'js' => 'text/javascript',
-		'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
-		'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
-		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
-		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php'
-	);
-	return isset($exts[$ext]) ? $exts[$ext] : 'application/octet-stream';
+	
+	return 'application/octet-stream';
 }
 
 /**
@@ -895,7 +901,8 @@ define("SCORE_LOG_NOTSET", 0);
  */
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
 	send_event(new LogEvent($section, $priority, $message));
-	if(is_cli() && ($priority >= CLI_LOG_LEVEL)) {
+	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
+	if(is_cli() && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
 	}
 	if($flash === True) {
@@ -1171,6 +1178,16 @@ function _sanitise_environment() {
 		error_reporting(E_ALL);
 	}
 
+	if(CONTEXT) {
+		ctx_set_log(CONTEXT);
+		ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
+	}
+
+	if(COVERAGE) {
+		_start_coverage();
+		register_shutdown_function("_end_coverage");
+	}
+
 	assert_options(ASSERT_ACTIVE, 1);
 	assert_options(ASSERT_BAIL, 1);
 
@@ -1202,6 +1219,55 @@ function _get_themelet_files($_theme) {
 	return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }
 
+function _set_event_listeners($classes) {
+	global $_event_listeners;
+	$_event_listeners = array();
+
+	foreach($classes as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {
+			// don't do anything
+		}
+		elseif(is_subclass_of($class, "Extension")) {
+			$c = new $class();
+			$c->i_am($c);
+			$my_events = array();
+			foreach(get_class_methods($c) as $method) {
+				if(substr($method, 0, 2) == "on") {
+					$my_events[] = substr($method, 2) . "Event";
+				}
+			}
+			add_event_listener($c, $c->get_priority(), $my_events);
+		}
+	}
+}
+
+function _dump_event_listeners($event_listeners, $path) {
+	$p = "<"."?php\n";
+
+	foreach(get_declared_classes() as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {}
+		elseif(is_subclass_of($class, "Extension")) {
+			$p .= "\$$class = new $class(); ";
+			$p .= "\${$class}->i_am(\$$class);\n";
+		}
+	}
+
+	$p .= "\$_event_listeners = array(\n";
+	foreach($event_listeners as $event => $listeners) {
+		$p .= "\t'$event' => array(\n";
+		foreach($listeners as $id => $listener) {
+			$p .= "\t\t$id => \$".get_class($listener).",\n";
+		}
+		$p .= "\t),\n";
+	}
+	$p .= ");\n";
+
+	$p .= "?".">";
+	file_put_contents($path, $p);
+}
+
 function _load_extensions() {
 	global $_event_listeners;
 
@@ -1211,48 +1277,10 @@ function _load_extensions() {
 		require_once("data/cache/event_listeners.php");
 	}
 	else {
-		foreach(get_declared_classes() as $class) {
-			$rclass = new ReflectionClass($class);
-			if($rclass->isAbstract()) {
-				// don't do anything
-			}
-			elseif(is_subclass_of($class, "Extension")) {
-				$c = new $class();
-				$c->i_am($c);
-				$my_events = array();
-				foreach(get_class_methods($c) as $method) {
-					if(substr($method, 0, 2) == "on") {
-						$my_events[] = substr($method, 2) . "Event";
-					}
-				}
-				add_event_listener($c, $c->get_priority(), $my_events);
-			}
-		}
+		_set_event_listeners(get_declared_classes());
 
 		if(COMPILE_ELS) {
-			$p = "<"."?php\n";
-
-			foreach(get_declared_classes() as $class) {
-				$rclass = new ReflectionClass($class);
-				if($rclass->isAbstract()) {}
-				elseif(is_subclass_of($class, "Extension")) {
-					$p .= "\$$class = new $class(); ";
-					$p .= "\${$class}->i_am(\$$class);\n";
-				}
-			}
-
-			$p .= "\$_event_listeners = array(\n";
-			foreach($_event_listeners as $event => $listeners) {
-				$p .= "\t'$event' => array(\n";
-				foreach($listeners as $id => $listener) {
-					$p .= "\t\t$id => \$".get_class($listener).",\n";
-				}
-				$p .= "\t),\n";
-			}
-			$p .= ");\n";
-
-			$p .= "?".">";
-			file_put_contents(data_path("cache/event_listeners.php"), $p);
+			_dump_event_listeners($_event_listeners, data_path("cache/event_listeners.php"));
 		}
 	}
 

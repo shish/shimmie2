@@ -45,9 +45,10 @@ class BaseThemelet {
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
 		$base = get_base_href();
+		$ext = strtolower($image->ext);
 		
-		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext === 'swf' || $image->ext === 'svg'){
+		// If the file doesn't support thumbnail generation, show it at max size.
+		if($ext === 'swf' || $ext === 'svg' || $ext === 'mp4' || $ext === 'ogv' || $ext === 'webm' || $ext === 'flv'){
 			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
 		}
 		else{

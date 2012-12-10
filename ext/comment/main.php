@@ -178,13 +178,16 @@ class CommentList extends Extension {
 				$this->build_page($page_num);
 			}
 			else if($event->get_arg(0) === "beta-search") {
+				$i_comment_count = Comment::count_comments_by_user($user);
+				$com_per_page = 50;
+				$total_pages = ceil($i_comment_count/$com_per_page);
 				$search = $event->get_arg(1);
 				$page_num = int_escape($event->get_arg(2));
-
+				$page_num = $this->sanity_check_pagenumber($page_num, $total_pages);
 				$duser = User::by_name($search);
 
-				$comments = $this->get_user_comments($duser->id, 50, ($page_num-1) * 50);
-				$this->theme->display_all_user_comments($comments, $page_num, 10);
+				$comments = $this->get_user_comments($duser->id, $com_per_page, ($page_num-1) * $com_per_page);
+				$this->theme->display_all_user_comments($comments, $page_num, $total_pages);
 			}
 		}
 	}
@@ -289,11 +292,11 @@ class CommentList extends Extension {
 		if(class_exists("Ratings")) {
 			$user_ratings = Ratings::get_user_privs($user);
 		}
-
+		$total_pages = $database->cache->get("comment_pages");
 		if(is_null($current_page) || $current_page <= 0) {
 			$current_page = 1;
 		}
-
+		$current_page = $this->sanity_check_pagenumber($current_page, $total_pages);
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
@@ -307,7 +310,6 @@ class CommentList extends Extension {
 			";
 		$result = $database->Execute($get_threads, array("limit"=>$threads_per_page, "offset"=>$start));
 
-		$total_pages = $database->cache->get("comment_pages");
 		if(empty($total_pages)) {
 			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
 			$database->cache->set("comment_pages", $total_pages, 600);
@@ -363,7 +365,7 @@ class CommentList extends Extension {
 				LEFT JOIN users ON comments.owner_id=users.id
 				WHERE users.id = :user_id
 				ORDER BY comments.id DESC
-				OFFSET :offset LIMIT :limit
+				LIMIT :limit OFFSET :offset
 				", array("user_id"=>$user_id, "offset"=>$offset, "limit"=>$count));
 		$comments = array();
 		foreach($rows as $row) {
@@ -474,7 +476,19 @@ class CommentList extends Extension {
 		global $database;
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
-
+// do some checks
+	private function sanity_check_pagenumber($pagenum, $maxpage){
+		if (!is_numeric($pagenum)){
+			$pagenum=1;
+		}
+		if ($pagenum>$maxpage){
+			$pagenum=$maxpage;
+		}
+		if ($pagenum<=0){
+			$pagenum=1;
+		}
+		return $pagenum;
+	}
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $database;
 		global $config;

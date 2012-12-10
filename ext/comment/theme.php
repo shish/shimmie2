@@ -36,7 +36,7 @@ class CommentListTheme extends Themelet {
 
 		$h_prev = ($page_number <= 1) ? "Prev" :
 			'<a href="'.make_link('comment/list/'.$prev).'">Prev</a>';
-		$h_index = "<a href='".make_link("comment/list")."'>Index</a>";
+		$h_index = "<a href='".make_link("post/list")."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" :
 			'<a href="'.make_link('comment/list/'.$next).'">Next</a>';
 
@@ -171,7 +171,11 @@ class CommentListTheme extends Themelet {
 	}
 
 	public function display_all_user_comments($comments, $page_number, $total_pages) {
-		global $page;
+		global $page, $user;
+		
+		assert(is_numeric($page_number));
+		assert(is_numeric($total_pages));
+		
 		$html = "";
 		foreach($comments as $comment) {
 			$html .= $this->comment_to_html($comment, true);
@@ -184,18 +188,19 @@ class CommentListTheme extends Themelet {
 
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
-
-		$u_tags = url_escape(implode(" ", $search_terms));
-		$query = empty($u_tags) ? "" : '/'.$u_tags;
+		
+		//$search_terms = array('I','have','no','idea','what','this','does!');
+		//$u_tags = url_escape(implode(" ", $search_terms));
+		//$query = empty($u_tags) ? "" : '/'.$u_tags;
 
 
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";
+		$h_index = "<a href='".make_link("post/list")."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
 
-		$page->add_block(new Block("Navigation", $h_prev.' | '.$h_next, "left", 0));
+		$page->add_block(new Block("Navigation", $h_prev.' | '.$h_index.' | '.$h_next, "left", 0));
+		$this->display_paginator($page, 'comment/beta-search/'.$user->name, null, $page_number, $total_pages);
 	}
-
-
 
 	protected function comment_to_html($comment, $trim=false) {
 		global $config, $user;
