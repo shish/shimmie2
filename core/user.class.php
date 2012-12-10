@@ -72,7 +72,7 @@ class User {
 	public static function by_name(/*string*/ $name) {
 		assert(is_string($name));
 		global $database;
-		$row = $database->get_row("SELECT * FROM users WHERE name = :name", array("name"=>$name));
+		$row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), array("name"=>$name));
 		return is_null($row) ? null : new User($row);
 	}
 
@@ -81,7 +81,7 @@ class User {
 		assert(is_string($hash));
 		assert(strlen($hash) == 32);
 		global $database;
-		$row = $database->get_row("SELECT * FROM users WHERE name = :name AND pass = :hash", array("name"=>$name, "hash"=>$hash));
+		$row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name) AND pass = :hash"), array("name"=>$name, "hash"=>$hash));
 		return is_null($row) ? null : new User($row);
 	}
 

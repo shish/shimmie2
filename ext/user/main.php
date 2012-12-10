@@ -327,7 +327,7 @@ class UserPage extends Extension {
 		$duser = User::by_name_and_hash($name, $hash);
 		if(!is_null($duser)) {
 			$user = $duser;
-			$this->set_login_cookie($name, $pass);
+			$this->set_login_cookie($duser->name, $pass);
 			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("user"));
@@ -353,7 +353,7 @@ class UserPage extends Extension {
 					"Username contains invalid characters. Allowed characters are ".
 					"letters, numbers, dash, and underscore");
 		}
-		else if($database->get_row("SELECT * FROM users WHERE name = :name", array("name"=>$name))) {
+		else if($database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), array("name"=>$name))) {
 			throw new UserCreationException("That username is already taken");
 		}
 	}
