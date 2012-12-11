@@ -9,18 +9,12 @@
 _________________________________________________________________________
 
 
-Shimmie Alpha
-~~~~~~~~~~~~~
-If you're reading this on github and looking for the stable version, go
-to the top of the page -> switch branches -> pick a stable branch. To do
-similarly with a git clone, "git checkout -b my_2.X origin/branch_2.X"
-
-This code is for people who want to write extensions compatible with the
-next version of shimmie. You can run a production site with it if you're
-feeling brave, but it's not recommended.
-
-If there is a feature here, and not in the stable branch, that's probably
-because the feature doesn't work yet :P
+Shimmie Development
+~~~~~~~~~~~~~~~~~~~
+This is the main branch of Shimmie, if you know anything at all about
+running websites, this is the version to use. Alternatively if you want
+a version that will never have significant changes, check out one of the
+versioned branches.
 
 
 Requirements
