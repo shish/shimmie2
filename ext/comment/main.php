@@ -178,16 +178,15 @@ class CommentList extends Extension {
 				$this->build_page($page_num);
 			}
 			else if($event->get_arg(0) === "beta-search") {
-				$i_comment_count = Comment::count_comments_by_user($user);
-				$com_per_page = 50;
-				$total_pages = ceil($i_comment_count/$com_per_page);
 				$search = $event->get_arg(1);
 				$page_num = int_escape($event->get_arg(2));
-				$page_num = $this->sanity_check_pagenumber($page_num, $total_pages);
 				$duser = User::by_name($search);
-
+				$i_comment_count = Comment::count_comments_by_user($duser);
+				$com_per_page = 50;
+				$total_pages = ceil($i_comment_count/$com_per_page);
+				$page_num = $this->sanity_check_pagenumber($page_num, $total_pages);
 				$comments = $this->get_user_comments($duser->id, $com_per_page, ($page_num-1) * $com_per_page);
-				$this->theme->display_all_user_comments($comments, $page_num, $total_pages);
+				$this->theme->display_all_user_comments($comments, $page_num, $total_pages, $duser);
 			}
 		}
 	}
