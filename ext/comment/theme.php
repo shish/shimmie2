@@ -170,8 +170,8 @@ class CommentListTheme extends Themelet {
 		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
 	}
 
-	public function display_all_user_comments($comments, $page_number, $total_pages) {
-		global $page, $user;
+	public function display_all_user_comments($comments, $page_number, $total_pages, $user) {
+		global $page;
 		
 		assert(is_numeric($page_number));
 		assert(is_numeric($total_pages));
@@ -199,7 +199,7 @@ class CommentListTheme extends Themelet {
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
 
 		$page->add_block(new Block("Navigation", $h_prev.' | '.$h_index.' | '.$h_next, "left", 0));
-		$this->display_paginator($page, 'comment/beta-search/'.$user->name, null, $page_number, $total_pages);
+		$this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
 	}
 
 	protected function comment_to_html($comment, $trim=false) {
