@@ -394,8 +394,11 @@ class PoolsTheme extends Themelet {
 	/**
 	 * Display an error message to the user.
 	 */
-	public function display_error(/*string*/ $errMessage) {
+	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
 		global $page;
+		
+		// Quick n' Dirty fix
+		$message = $code;
 
 		$page->set_title("Error");
 		$page->set_heading("Error");
