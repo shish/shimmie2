@@ -1,7 +1,7 @@
 <?php
 
 class CustomViewImageTheme extends ViewImageTheme {
-	public function display_page($image, $editor_parts) {
+	public function display_page(Image $image, $editor_parts) {
 		global $page;
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
 		$page->set_heading(html_escape($image->get_tag_list()));
@@ -11,7 +11,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
 	
-	private function build_stats($image) {
+	private function build_stats(Image $image) {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		$h_ip = html_escape($image->owner_ip);
