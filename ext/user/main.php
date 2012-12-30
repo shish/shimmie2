@@ -359,7 +359,7 @@ class UserPage extends Extension {
 	}
 
 	private function create_user($event) { // FIXME type
-		global $database;
+		global $database, $user;
 
 		$hash = md5(strtolower($event->username) . $event->password);
 		$email = (!empty($event->email)) ? $event->email : null;
@@ -372,6 +372,7 @@ class UserPage extends Extension {
 				"INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
 				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "class"=>$class));
 		$uid = $database->get_last_insert_id('users_id_seq');
+		$user = $user::by_name($event->username);
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
