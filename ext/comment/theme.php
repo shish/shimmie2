@@ -253,7 +253,8 @@ class CommentListTheme extends Themelet {
 			$h_avatar = "";
 			if(!empty($comment->owner_email)) {
 				$hash = md5(strtolower($comment->owner_email));
-				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?1\"><br>";
+				$cb = date("Y-m-d");
+				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
 			$h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
