@@ -42,20 +42,26 @@ class ReportImage extends Extension {
 		global $page, $user;
 		if($event->page_matches("image_report")) {
 			if($event->get_arg(0) == "add") {
-				if(isset($_POST['image_id']) && isset($_POST['reason'])) {
+				if(!empty($_POST['image_id']) && !empty($_POST['reason'])) {
 					$image_id = int_escape($_POST['image_id']);
 					send_event(new AddReportedImageEvent($image_id, $user->id, $_POST['reason']));
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$image_id"));
 				}
+				else {
+					$this->theme->display_error(500, "Missing input", "Missing image ID or report reason");
+				}
 			}
 			else if($event->get_arg(0) == "remove") {
-				if(isset($_POST['id'])) {
+				if(!empty($_POST['id'])) {
 					if($user->can("view_image_report")) {
 						send_event(new RemoveReportedImageEvent($_POST['id']));
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("image_report/list"));
 					}
+				}
+				else {
+					$this->theme->display_error(500, "Missing input", "Missing image ID");
 				}
 			}
 			else if($event->get_arg(0) == "list") {
@@ -68,6 +74,7 @@ class ReportImage extends Extension {
 
 	public function onAddReportedImage(AddReportedImageEvent $event) {
 		global $database;
+		log_info("report_image", "Adding report of Image #{$event->image_id} with reason '{$event->reason}'");
 		$database->Execute(
 				"INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",
