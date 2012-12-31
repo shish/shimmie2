@@ -87,7 +87,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 
-	protected function comment_to_html(Comment $comment, $trim=false) {
+	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
