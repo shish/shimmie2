@@ -197,7 +197,7 @@ function ask_questions() { // {{{
 				});
 				function update_qs() {
 					$(".dbconf").hide();
-					var seldb = $("#database_type").val();
+					var seldb = $("#database_type").val() || "none";
 					$("."+seldb).show();
 				}
 				</script>
@@ -212,6 +212,10 @@ function ask_questions() { // {{{
 			<p class="dbconf sqlite">
 				For SQLite the database name will be a filename on disk, relative to
 				where shimmie was installed.
+			</p>
+			<p class="dbconf none">
+				Drivers can generally be downloaded with your OS package manager;
+				for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
 			</p>
 			
 		</div>
