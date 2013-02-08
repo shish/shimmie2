@@ -26,7 +26,7 @@ class google_analytics extends Extension {
                 global $page;
                 
                 $google_analytics_id = $config->get_string('google_analytics_id','');
-                if (stristr($google_analytics_id, "UA-") && $google_analytics_id != "")
+                if (stristr($google_analytics_id, "UA-"))
                 {
                     $page->add_html_header("<script type='text/javascript'>
                     var _gaq = _gaq || [];
