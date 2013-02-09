@@ -178,7 +178,8 @@ class PrivMsg extends Extension {
 				SELECT private_message.*,user_from.name AS from_name
 				FROM private_message
 				JOIN users AS user_from ON user_from.id=from_id
-				WHERE to_id = :toid", 
+				WHERE to_id = :toid
+				ORDER BY sent_date DESC",
 			array("toid" => $user->id));
 		$pms = array();
 		foreach($arr as $pm) {
