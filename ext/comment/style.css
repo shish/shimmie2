@@ -4,6 +4,9 @@
 	position: relative;
 	word-wrap: break-word;
 }
+.comment IMG {
+	max-width: 100%;
+}
 .comment .info {
 	visibility: hidden;
 	text-align: center;
