@@ -757,7 +757,9 @@ function get_base_href() {
 	}
 	assert(!empty($ok_var));
 	$dir = dirname($ok_var);
-	if($dir === "/" || $dir === "\\") $dir = "";
+	$dir = str_replace("\\", "/", $dir);
+	$dir = str_replace("//", "/", $dir);
+	$dir = rtrim($dir, "/");
 	return $dir;
 }
 
