@@ -112,8 +112,10 @@ class PrivMsg extends Extension {
 						}
 						else if(($pm["to_id"] == $user->id) || $user->can("view_other_pms")) {
 							$from_user = User::by_id(int_escape($pm["from_id"]));
-							$database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", array("id" => $pm_id));
-							$database->cache->delete("pm-count-{$user->id}");
+							if($pm["to_id"] == $user->id) {
+								$database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", array("id" => $pm_id));
+								$database->cache->delete("pm-count-{$user->id}");
+							}
 							$this->theme->display_message($page, $from_user, $user, new PM($pm));
 						}
 						else {
