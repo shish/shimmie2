@@ -144,7 +144,12 @@ class UserPage extends Extension {
 				}
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
-				$page->set_redirect(make_link());
+                                
+                                // Try forwarding to same page on logout unless user comes from registration page
+				if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], "user_admin/create"))
+                                    $page->set_redirect ($_SERVER['HTTP_REFERER']);
+                                else
+                                    $page->set_redirect(make_link());
 			}
 
 			if(!$user->check_auth_token()) {
@@ -330,7 +335,12 @@ class UserPage extends Extension {
 			$this->set_login_cookie($duser->name, $pass);
 			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("user"));
+                        
+                        // Try returning to previous page
+                        if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], "user_admin/create"))
+                            $page->set_redirect ($_SERVER['HTTP_REFERER']);
+			else
+                            $page->set_redirect(make_link("user"));
 		}
 		else {
 			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
