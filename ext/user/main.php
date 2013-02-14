@@ -337,7 +337,8 @@ class UserPage extends Extension {
 			$page->set_mode("redirect");
                         
                         // Try returning to previous page
-                        if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], "user_admin/create"))
+                        if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], "user_admin/create") &&
+                        !strstr($_SERVER['HTTP_REFERER'], "user_admin/login"))
                             $page->set_redirect ($_SERVER['HTTP_REFERER']);
 			else
                             $page->set_redirect(make_link("user"));
