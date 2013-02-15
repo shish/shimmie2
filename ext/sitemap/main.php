@@ -2,29 +2,37 @@
 /*
  * Name: XML Sitemap
  * Author: Sein Kraft <mail@seinkraft.info>
+ * Author: Drudex Software <support@drudexsoftware.com>
  * License: GPLv2
- * Description: Adds sitemap.xml on request.
+ * Description: Sitemap with caching & advanced priorities
  * Documentation:
  */
 
 class XMLSitemap extends Extension {
         private $sitemap_queue = "";
+        private $sitemap_filepath = ""; // set onPageRequest
     
 	public function onPageRequest(PageRequestEvent $event) { 
             if($event->page_matches("sitemap.xml")) 
             {
                 global $config;
                 
-                if ($config->get_bool("sitemap_generatefull",false))
-                    $this->handle_full_sitemap(); // default false until cache fixed
-                else
-                    $this->handle_smaller_sitemap();
-            }
-            
+                $this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT']."/ext/sitemap/generated_sitemap.xml";
+                // determine if new sitemap needs to be generated
+                if ($this->new_sitemap_needed())
+                {
+                    // determine which type of sitemap to generate
+                    if ($config->get_bool("sitemap_generatefull",false))
+                        $this->handle_full_sitemap(); // default false until cache fixed
+                    else
+                        $this->handle_smaller_sitemap();
+                }
+                else $this->display_existing_sitemap();
+            }    
 	}
         
         public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Sitemap (Beta)"); // beta until sitemap cache fixed
+		$sb = new SetupBlock("Sitemap");
                 
 		$sb->add_bool_option("sitemap_generatefull", "Generate full sitemap");
                 $sb->add_label("<br>(Enabled: every image and tag in sitemap, generation takes longer)");
@@ -46,7 +54,7 @@ class XMLSitemap extends Extension {
                 
                 /* --- Display page --- */
                 // when sitemap is ok, display it from the file
-                $this->display_sitemap();
+                $this->generate_display_sitemap();
         }
         
         // Full sitemap
@@ -93,7 +101,7 @@ class XMLSitemap extends Extension {
                 
                 /* --- Display page --- */
                 // when sitemap is ok, display it from the file
-                $this->display_sitemap();
+                $this->generate_display_sitemap();
         }
 	
         // Adds an array of urls to the sitemap with the given information
@@ -111,10 +119,10 @@ class XMLSitemap extends Extension {
 	}
         
         // sets sitemap with entries in the queue
-        // todo: cache sitemap for a config specified amount of time
-        private function display_sitemap()
+        private function generate_display_sitemap()
         {
-            global $page;
+            global $page, $config;
+            
             $page->set_mode("data");
             $page->set_type("application/xml");
              
@@ -124,6 +132,33 @@ class XMLSitemap extends Extension {
                 </urlset>";
             
             // sets
+            $config->set_int("sitemap_lastgenerated", time());
+            file_put_contents($this->sitemap_filepath, $xml);
+            $page->set_data($xml);
+        }
+        
+        // returns true if a new sitemap is needed
+        private function new_sitemap_needed()
+        {
+            global $config;
+            
+            $sitemap_generation_interval = 86400; // allow new site map every day
+            $last_generated_time = $config->get_int("sitemap_lastgenerated",0);
+            
+            if (!file_exists($this->sitemap_filepath) ||
+                ($last_generated_time + $sitemap_generation_interval < time()))
+                    return true;
+            else    return false;
+        }
+        
+        private function display_existing_sitemap()
+        {
+            global $page;
+            
+            $page->set_mode("data");
+            $page->set_type("application/xml");
+            
+            $xml = file_get_contents($this->sitemap_filepath);
             $page->set_data($xml);
         }
 }
