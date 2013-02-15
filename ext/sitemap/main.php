@@ -11,9 +11,48 @@ class XMLSitemap extends Extension {
         private $sitemap_queue = "";
     
 	public function onPageRequest(PageRequestEvent $event) { 
-            global $database, $config;
             if($event->page_matches("sitemap.xml")) 
-            {            
+            {
+                global $config;
+                
+                if ($config->get_bool("sitemap_generatefull",false))
+                    $this->handle_full_sitemap(); // default false until cache fixed
+                else
+                    $this->handle_smaller_sitemap();
+            }
+            
+	}
+        
+        public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Sitemap (Beta)"); // beta until sitemap cache fixed
+                
+		$sb->add_bool_option("sitemap_generatefull", "Generate full sitemap");
+                $sb->add_label("<br>(Enabled: every image and tag in sitemap, generation takes longer)");
+                $sb->add_label("<br>(Disabled: only display the last 50 uploads in the sitemap)");
+		
+		$event->panel->add_block($sb);
+	}
+        
+        // sitemap with only the latest 50 images
+        private function handle_smaller_sitemap()
+        {
+                /* --- Add latest images to sitemap with higher priority --- */
+                $latestimages = Image::find_images(0, 50, array());
+                $latestimages_urllist = array();
+                foreach($latestimages as $arrayid => $image)
+                    // create url from image id's
+                    $latestimages_urllist[$arrayid] = "post/view/$image->id";
+                $this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", $image->posted_timestamp));
+                
+                /* --- Display page --- */
+                // when sitemap is ok, display it from the file
+                $this->display_sitemap();
+        }
+        
+        // Full sitemap
+        private function handle_full_sitemap()
+        {
+                global $database, $config;
                 // add index
                 $index[0] = $base_href = $config->get_string("front_page");
                 $this->add_sitemap_queue($index, "weekly", "1");
@@ -55,8 +94,7 @@ class XMLSitemap extends Extension {
                 /* --- Display page --- */
                 // when sitemap is ok, display it from the file
                 $this->display_sitemap();
-            } 
-	}
+        }
 	
         // Adds an array of urls to the sitemap with the given information
 	private function add_sitemap_queue(/*array(urls)*/ $urls, $changefreq="monthly", $priority="0.5", $date="2013-02-01") {
@@ -73,6 +111,7 @@ class XMLSitemap extends Extension {
 	}
         
         // sets sitemap with entries in the queue
+        // todo: cache sitemap for a config specified amount of time
         private function display_sitemap()
         {
             global $page;
