@@ -261,10 +261,11 @@ class Tag_History extends Extension {
 		}
 
 		if(count($select_code) == 0) {
+			log_error("tag_history", "Tried to mass revert without any conditions");
 			return;
 		}
 
-		log_info("tag_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." / ".implode(" and ", $select_args));
+		log_info("tag_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
 		
 		// Get all the images that the given IP has changed tags on (within the timeframe) that were last editied by the given IP
 		$result = $database->get_col('

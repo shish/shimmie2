@@ -14,7 +14,11 @@ TABLE.form TBODY TD {text-align: left;}
 TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%;}
 TABLE.form TD + TH {padding-left: 8px;}
 
-*[onclick],H3[class~="shm-toggler"] {cursor: pointer;}
+*[onclick],
+H3[class~="shm-toggler"],
+.sortable TH {
+	cursor: pointer;
+}
 IMG {border: none;}
 FORM {margin: 0px;}
 IMG.lazy {display: none;}
