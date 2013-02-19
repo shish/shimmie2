@@ -17,7 +17,7 @@ class XMLSitemap extends Extension {
             {
                 global $config;
                 
-                $this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT']."/ext/sitemap/generated_sitemap.xml";
+                $this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT']."/data/cache/sitemap.xml";
                 // determine if new sitemap needs to be generated
                 if ($this->new_sitemap_needed())
                 {
@@ -121,7 +121,7 @@ class XMLSitemap extends Extension {
         // sets sitemap with entries in the queue
         private function generate_display_sitemap()
         {
-            global $page, $config;
+            global $page;
             
             $page->set_mode("data");
             $page->set_type("application/xml");
@@ -131,8 +131,7 @@ class XMLSitemap extends Extension {
                     $this->sitemap_queue
                 </urlset>";
             
-            // sets
-            $config->set_int("sitemap_lastgenerated", time());
+            // Generate new sitemap & display       
             file_put_contents($this->sitemap_filepath, $xml);
             $page->set_data($xml);
         }
@@ -140,13 +139,14 @@ class XMLSitemap extends Extension {
         // returns true if a new sitemap is needed
         private function new_sitemap_needed()
         {
-            global $config;
-            
             $sitemap_generation_interval = 86400; // allow new site map every day
-            $last_generated_time = $config->get_int("sitemap_lastgenerated",0);
+            $last_generated_time = filemtime($this->sitemap_filepath);
             
-            if (!file_exists($this->sitemap_filepath) ||
-                ($last_generated_time + $sitemap_generation_interval < time()))
+            // if file doesn't exist, return true
+            if ($last_generated_time == false) return true;
+            
+            // if it's been a day since last sitemap creation, return true
+            if ($last_generated_time + $sitemap_generation_interval < time())
                     return true;
             else    return false;
         }
