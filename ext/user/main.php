@@ -144,7 +144,14 @@ class UserPage extends Extension {
 				}
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
-				$page->set_redirect(make_link());
+                                
+                                // Try forwarding to same page on logout unless user comes from registration page
+				if ($config->get_int("user_loginshowprofile",0) == 0 && 
+                                    isset($_SERVER['HTTP_REFERER']) &&
+                                strstr($_SERVER['HTTP_REFERER'], "post/"))
+                                    $page->set_redirect ($_SERVER['HTTP_REFERER']);
+                                else
+                                    $page->set_redirect(make_link());
 			}
 
 			if(!$user->check_auth_token()) {
@@ -273,7 +280,11 @@ class UserPage extends Extension {
 				array('G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'),
 				"<br>Rating: ");
 		}
-
+                
+                $sb->add_choice_option("user_loginshowprofile", array(
+                    "return to previous page" => 0, // 0 is default
+                    "send to user profile" => 1),
+                        "<br>When user logs in/out");
 		$event->panel->add_block($sb);
 	}
 
@@ -314,6 +325,7 @@ class UserPage extends Extension {
 // Things done *with* the user {{{
 	private function login(Page $page)  {
 		global $user;
+                global $config;
 
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
@@ -330,7 +342,13 @@ class UserPage extends Extension {
 			$this->set_login_cookie($duser->name, $pass);
 			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
-			$page->set_redirect(make_link("user"));
+                        
+                        // Try returning to previous page  
+                        if ($config->get_int("user_loginshowprofile",0) == 0 && 
+                            isset($_SERVER['HTTP_REFERER']) && 
+                            strstr($_SERVER['HTTP_REFERER'], "post/"))
+                                $page->set_redirect($_SERVER['HTTP_REFERER']);
+			else    $page->set_redirect(make_link("user"));
 		}
 		else {
 			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
