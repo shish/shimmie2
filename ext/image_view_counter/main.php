@@ -2,7 +2,7 @@
 /**
  * Name: Image View Counter
  * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://drudexsoftware.com
+ * Link: http://www.drudexsoftware.com/
  * License: GPLv2
  * Description: Tracks & displays how many times an image is viewed
  * Documentation:
@@ -32,7 +32,7 @@ class image_view_counter extends Extension {
         public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $user, $config;
                 
-                $adminonly = $config->get_bool("image_viewcounter_adminonly");
+                $adminonly = $config->get_bool("image_viewcounter_adminonly"); // todo0
                 if ($adminonly == false ||  ($adminonly && $user->is_admin()))
                     $event->add_part("<tr><th>Views:</th><td>". 
                         $this->get_view_count($event->image->id) ."</th></tr>", 38);
@@ -43,14 +43,13 @@ class image_view_counter extends Extension {
             global $database, $config;
             
             // if the sql table doesn't exist yet, create it
-            if($config->get_bool("image_viewcounter_installed") == false) {
-                $database->execute("CREATE TABLE image_views (
-                id bigint(20) NOT NULL AUTO_INCREMENT,
-                image_id int(11) NOT NULL,
-                user_id int(11) NOT NULL,
-                timestamp int(11) NOT NULL,
-                ipaddress varchar(255) NOT NULL, 
-                PRIMARY KEY (id))"); 
+            if($config->get_bool("image_viewcounter_installed") == false) { //todo
+                $database->create_table("image_views","
+                    id bigint(20) SCORE_AIPK,
+                    image_id INTEGER NOT NULL,
+                    user_id INTEGER NOT NULL,
+                    timestamp INTEGER NOT NULL,
+                    ipaddress SCORE_INET NOT NULL");
                 $config->set_bool("image_viewcounter_installed", true);
             }
         }
@@ -79,14 +78,14 @@ class image_view_counter extends Extension {
             global $database;
             
             // counts views from current IP in the last hour
-            $recent_from_ip = $database->get_row("SELECT COUNT(*) FROM image_views WHERE
+            $recent_from_ip = (int)$database->get_one("SELECT COUNT(*) FROM image_views WHERE
                 ipaddress=:ipaddress AND timestamp >:lasthour AND image_id =:image_id", 
                     array(  "ipaddress" => $_SERVER['REMOTE_ADDR'],
                             "lasthour" => time() - $this->view_interval,
                             "image_id" => $imgid));
             
             // if no views were found with the set criteria, return true
-            if($recent_from_ip["COUNT(*)"] == "0") return true;
+            if($recent_from_ip == 0) return true;
             else return false;
         }
         
@@ -97,13 +96,13 @@ class image_view_counter extends Extension {
             global $database;
             
             if ($imgid == 0) // return view count of all images
-                $view_count = $database->get_row("SELECT COUNT(*) FROM image_views");
+                $view_count = (int)$database->get_one("SELECT COUNT(*) FROM image_views");
             else // return view count of specified image
-                $view_count = $database->get_row("SELECT COUNT(*) FROM image_views WHERE ".
+                $view_count = (int)$database->get_one("SELECT COUNT(*) FROM image_views WHERE ".
                     "image_id =:image_id", array("image_id" => $imgid));
             
             // returns the count as int
-            return intval($view_count["COUNT(*)"]);
+            return $view_count;
         }
 }
 ?>
