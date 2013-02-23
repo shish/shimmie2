@@ -22,10 +22,20 @@ class image_view_counter extends Extension {
             $event->panel->add_block($sb);
 	}
         
-        # Load Analytics tracking code on page request
+        # Adds view to database if needed
         public function onDisplayingImage(DisplayingImageEvent $event) {
             $imgid = $event->image->id; // determines image id
             $this->addview($imgid); // adds a view
+        }
+        
+        # display views to user or admin below image if allowed
+        public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
+		global $user, $config;
+                
+                $adminonly = $config->get_bool("image_viewcounter_adminonly");
+                if ($adminonly == false ||  ($adminonly && $user->is_admin()))
+                    $event->add_part("<tr><th>Views:</th><td>". 
+                        $this->get_view_count($event->image->id) ."</th></tr>", 38);
         }
         
         # Installs DB table
