@@ -47,6 +47,7 @@ class image_view_counter extends Extension {
                 $database->execute("CREATE TABLE image_views (
                 id bigint(20) NOT NULL AUTO_INCREMENT,
                 image_id int(11) NOT NULL,
+                user_id int(11) NOT NULL,
                 timestamp int(11) NOT NULL,
                 ipaddress varchar(255) NOT NULL, 
                 PRIMARY KEY (id))"); 
@@ -57,14 +58,16 @@ class image_view_counter extends Extension {
         # Adds a view to the item if needed
         private function addview($imgid)
         {
-            global $database;
+            global $database, $user;
+            
             // don't add view if person already viewed recently
             if ($this->can_add_view($imgid) == false) return;
             
             // Add view for current IP
-            $database->execute("INSERT INTO image_views (image_id, timestamp, ipaddress)
-                VALUES (:image_id, :timestamp, :ipaddress)", array(
-                    "image_id" => $imgid,
+            $database->execute("INSERT INTO image_views (image_id, user_id, timestamp, ipaddress)
+                VALUES (:image_id, :user_id, :timestamp, :ipaddress)", array(
+                    "image_id" => $imgid,  
+                    "user_id" => $user->id,
                     "timestamp" => time(),
                     "ipaddress" => $_SERVER['REMOTE_ADDR'],
                 ));
