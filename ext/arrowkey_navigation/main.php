@@ -50,36 +50,39 @@ class arrowkey_navigation extends Extension {
     # returns info about the current page number
     private function get_list_pageinfo($event) {
         global $config, $database;
+        
+        // get the amount of images per page
+        $images_per_page = $config->get_int('index_images');
   
-        // determine if post/list with tag, add prefix if needed
-        $prefix = "";
-        $page_number = (int)$event->get_arg(0);
-        if ($page_number == 0) {
-            $prefix = $event->get_arg(0)."/";
-            $page_number = (int)$event->get_arg(1);
+        // if there are no tags, use default
+        if ($event->get_arg(1) == null){
+            $prefix = ""; 
+            $page_number = (int)$event->get_arg(0);
+            $total_pages = ceil($database->get_one(
+                "SELECT COUNT(*) FROM images") / $images_per_page);
         }
         
-        // if the page number is still invalid, set it to 1
-        if(is_null($page_number) || $page_number <= 0)
-            $page_number = 1;
-
-        // Determine the amount of pages
-        $images_per_page = $config->get_int('index_images');
-        $total_pages = ceil($database->get_one("SELECT COUNT(*) FROM images") / $images_per_page);
-
+        else { // if there are tags, use pages with tags
+            $prefix = $event->get_arg(0)."/";
+            $page_number = (int)$event->get_arg(1);
+            $total_pages = ceil($database->get_one(
+                "SELECT count FROM tags WHERE tag=:tag", 
+                    array("tag"=>$event->get_arg(0))) / $images_per_page);
+        }
+        
         // creates previous & next values     
         // When previous first page, go to last page
         if ($page_number <= 1) $prev = $total_pages;
         else $prev = $page_number-1;
         if ($page_number >= $total_pages) $next = 1;
         else $next = $page_number+1;
-
+        
         // Create return array
         $pageinfo = array(
             "prev" => $prefix.$prev,
             "next" => $prefix.$next,
         );
-
+        
         return $pageinfo;
     }
 }
