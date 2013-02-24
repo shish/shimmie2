@@ -13,8 +13,8 @@ class arrowkey_navigation extends Extension {
     public function onPageRequest(PageRequestEvent $event) {
         if ($event->page_matches("post/view")) {
             $pageinfo = $this->get_view_pageinfo($event);
-            $prev_url = make_http(make_link("post/prev/".$pageinfo["current"]));
-            $next_url = make_http(make_link("post/next/".$pageinfo["current"]));
+            $prev_url = make_http(make_link("post/prev/".$pageinfo));
+            $next_url = make_http(make_link("post/next/".$pageinfo));
             $this->add_arrowkeys_code($prev_url, $next_url);
         }
         
@@ -99,7 +99,7 @@ class arrowkey_navigation extends Extension {
         // if there are no tags, use default
         if ($event->get_arg(1) == null){
             $prefix = ""; 
-            $image_id = (int)$event->get_arg(0);
+            $image_id = (int)$event->get_arg(0);        
         }
         
         else { // if there are tags, use pages with tags
