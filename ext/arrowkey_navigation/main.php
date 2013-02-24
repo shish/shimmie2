@@ -9,16 +9,16 @@
  *  Simply enable this extention in the extention manager to enable arrow key navigation.
  */
 class arrowkey_navigation extends Extension {  
-    # Adds functionality for post/view on images
-    public function onDisplayingImage(DisplayingImageEvent $event) { 
-        $prev_url = make_http(make_link("post/prev/".$event->image->id));
-        $next_url = make_http(make_link("post/next/".$event->image->id));
-        $this->add_arrowkeys_code($prev_url, $next_url);
-    }  
-    
     # Adds functionality for post/list
     public function onPageRequest(PageRequestEvent $event) {
-        if($event->page_matches("post/list")) {
+        if ($event->page_matches("post/view")) {
+            $pageinfo = $this->get_view_pageinfo($event);
+            $prev_url = make_http(make_link("post/prev/".$pageinfo["current"]));
+            $next_url = make_http(make_link("post/next/".$pageinfo["current"]));
+            $this->add_arrowkeys_code($prev_url, $next_url);
+        }
+        
+        else if ($event->page_matches("post/list")) {
             $pageinfo = $this->get_list_pageinfo($event);
             $prev_url = make_http(make_link("post/list/".$pageinfo["prev"]));
             $next_url = make_http(make_link("post/list/".$pageinfo["next"]));
@@ -40,8 +40,8 @@ class arrowkey_navigation extends Extension {
 
                 if (e.srcElement.tagName != \"INPUT\")
                 {
-                    if(keycode==\"37\") window.location.href='$prev_url';
-                    else if(keycode==\"39\") window.location.href='$next_url';
+                    if(keycode==\"37\") window.location.href='$prev_url' + window.location.hash;
+                    else if(keycode==\"39\") window.location.href='$next_url' + window.location.hash;
                 }
             }
             </script>");
@@ -87,11 +87,28 @@ class arrowkey_navigation extends Extension {
         
         // Create return array
         $pageinfo = array(
-            "prev" => $prefix.$prev,
-            "next" => $prefix.$next,
+            "prev" => $prefix.$prev.$after,
+            "next" => $prefix.$next.$after,
         );
         
         return $pageinfo;
+    }
+    
+    # returns url ext with any tags
+    private function get_view_pageinfo($event) {
+        // if there are no tags, use default
+        if ($event->get_arg(1) == null){
+            $prefix = ""; 
+            $image_id = (int)$event->get_arg(0);
+        }
+        
+        else { // if there are tags, use pages with tags
+            $prefix = $event->get_arg(0)."/";
+            $image_id = (int)$event->get_arg(1);
+        }
+        
+        // returns result
+        return $prefix.$image_id;
     }
 }
 ?>
