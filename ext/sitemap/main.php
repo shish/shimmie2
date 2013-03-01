@@ -3,6 +3,7 @@
  * Name: XML Sitemap
  * Author: Sein Kraft <mail@seinkraft.info>
  * Author: Drudex Software <support@drudexsoftware.com>
+ * Link: http://drudexsoftware.com
  * License: GPLv2
  * Description: Sitemap with caching & advanced priorities
  * Documentation:
@@ -118,21 +119,20 @@ class XMLSitemap extends Extension {
             }	
 	}
         
-        // sets sitemap with entries in the queue
+        // sets sitemap with entries in sitemap_queue
         private function generate_display_sitemap()
         {
             global $page;
             
-            $page->set_mode("data");
-            $page->set_type("application/xml");
-             
             $xml = "<"."?xml version=\"1.0\" encoding=\"utf-8\"?".">
                 <urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"> 
                     $this->sitemap_queue
                 </urlset>";
             
-            // Generate new sitemap & display       
-            file_put_contents($this->sitemap_filepath, $xml);
+            // Generate new sitemap  
+            file_put_contents($this->sitemap_filepath, $xml);   
+            $page->set_mode("data");
+            $page->set_type("application/xml");
             $page->set_data($xml);
         }
         
@@ -154,11 +154,11 @@ class XMLSitemap extends Extension {
         private function display_existing_sitemap()
         {
             global $page;
+
+            $xml = file_get_contents($this->sitemap_filepath);
             
             $page->set_mode("data");
             $page->set_type("application/xml");
-            
-            $xml = file_get_contents($this->sitemap_filepath);
             $page->set_data($xml);
         }
 }

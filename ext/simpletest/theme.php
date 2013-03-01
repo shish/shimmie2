@@ -42,6 +42,8 @@ class SCoreWebReporter extends HtmlReporter {
 	}
 
 	function paintGroupEnd($name) {
+                global $page;
+            
 		$matches = array();
 		if(preg_match("#ext/(.*)/test.php#", $name, $matches)) {
 			$name = $matches[1];
