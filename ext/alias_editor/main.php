@@ -108,6 +108,9 @@ class AliasEditor extends Extension {
 		if($database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)) {
 			throw new AddAliasException("That alias already exists");
 		}
+		else if($database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", $pair)) {
+			throw new AddAliasException("{$event->newtag} is itself an alias");
+		}
 		else {
 			$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
 			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", true);
