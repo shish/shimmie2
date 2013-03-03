@@ -1026,7 +1026,7 @@ class Tag {
 		}
 
 		// if the whole match is wild, return null to save the database
-		else if(str_replace("*", "", $tag) == "")) {
+		else if(str_replace("*", "", $tag) == "") {
 			return array();
 		}
 
