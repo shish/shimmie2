@@ -108,7 +108,7 @@ class AliasEditor extends Extension {
 		if($database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)) {
 			throw new AddAliasException("That alias already exists");
 		}
-		else if($database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", $pair)) {
+		else if($database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", array("newtag" => $event->newtag))) {
 			throw new AddAliasException("{$event->newtag} is itself an alias");
 		}
 		else {
