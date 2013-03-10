@@ -24,6 +24,13 @@ class arrowkey_navigation extends Extension {
             $next_url = make_http(make_link("post/list/".$pageinfo["next"]));
             $this->add_arrowkeys_code($prev_url, $next_url);
         }
+        
+        // for random_list extension
+        else if ($event->page_matches("random")) {
+            $prev_url = make_http(make_link("random"));
+            $next_url = make_http(make_link("random"));
+            $this->add_arrowkeys_code($prev_url, $next_url);
+        }
     }
     
     # adds the javascript to the page with the given urls
