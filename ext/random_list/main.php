@@ -5,7 +5,9 @@
  * Link: http://www.drudexsoftware.com
  * License: GPLv2
  * Description: Allows displaying a page with random images
- * Documentation:
+ * Documentation: 
+ * Random image list can be accessed through www.yoursite.com/random
+ * It is recommended that you create a link to this page so users know it exists.
  */
 
 class RandomList extends Extension {
@@ -32,6 +34,21 @@ class RandomList extends Extension {
                     $random_html .= "</div>";
                     $page->add_block(new Block("Random Images", $random_html));
 		}
+	}
+        
+        public function onInitExt(InitExtEvent $event) {
+            global $config;
+            $config->set_default_int("random_images_list_count", 12);
+        }
+        
+        public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Random Images List");
+                
+                // custom headers
+		$sb->add_int_option("random_images_list_count", 
+                        "Amount of Random images to display");
+                
+		$event->panel->add_block($sb);
 	}
         
         private function build_random_html(Image $image, $query=null) {
