@@ -14,6 +14,7 @@ class RandomList extends Extension {
                 
                 if($event->page_matches("random")) {
                     // set vars
+                    $page->title = "Random Images";
                     $images_per_page = $config->get_int("random_images_list_count", 12);
                     $random_images = array();
                     $random_html = "<b>Refresh the page to view more images</b>
