@@ -146,7 +146,7 @@ class UserPageTheme extends Themelet {
 		$page->set_title(html_escape($duser->name)."'s Page");
 		$page->set_heading(html_escape($duser->name)."'s Page");
 		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 0));
+		$page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
 
 		if(!$user->is_anonymous()) {
 			if($user->id == $duser->id || $user->can("edit_user_info")) {

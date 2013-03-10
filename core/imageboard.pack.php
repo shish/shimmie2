@@ -665,14 +665,10 @@ class Image {
 				}
 			}
 			else {
-				$term = str_replace("*", "%", $term);
-				$term = str_replace("?", "_", $term);
-				if(!preg_match("/^[%_]+$/", $term)) {
-					$expansions = Tag::resolve_wildcard($term);
-					if($positive) $positive_tag_count++;
-					foreach($expansions as $term) {
-						$tag_querylets[] = new TagQuerylet($term, $positive);
-					}
+				$expansions = Tag::resolve_wildcard($term);
+				if($expansions && $positive) $positive_tag_count++;
+				foreach($expansions as $term) {
+					$tag_querylets[] = new TagQuerylet($term, $positive);
 				}
 			}
 		}
@@ -1024,12 +1020,22 @@ class Tag {
 	}
 
 	public static function resolve_wildcard($tag) {
-		if(strpos($tag, "%") === false && strpos($tag, "_") === false) {
+		// if there is no wildcard, return the tag
+		if(strpos($tag, "*") === false) {
 			return array($tag);
 		}
+
+		// if the whole match is wild, return null to save the database
+		else if(str_replace("*", "", $tag) == "") {
+			return array();
+		}
+
+		// else find some matches
 		else {
 			global $database;
-			$newtags = $database->get_col("SELECT tag FROM tags WHERE tag LIKE ?", array($tag));
+			$db_wild_tag = str_replace("%", "\%", $tag);
+			$db_wild_tag = str_replace("*", "%", $tag);
+			$newtags = $database->get_col($database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"), array($db_wild_tag));
 			if(count($newtags) > 0) {
 				$resolved = $newtags;
 			} else {
