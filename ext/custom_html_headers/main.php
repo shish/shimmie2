@@ -4,15 +4,15 @@
  * Author: Drudex Software <support@drudexsoftware.com>
  * Link: http://www.drudexsoftware.com
  * License: GPLv2
- * Description: Allows admins to modify & set custom <head> content
+ * Description: Allows admins to modify & set custom &lt;head&gt; content
  * Documentation:
  *  When you go to board config you can find a block named Custom HTML Headers.
- *  In that block you can simply place any thing you can place within <head></head>
+ *  In that block you can simply place any thing you can place within &lt;head&gt;&lt;/head&gt;
  *  
  *  This can be useful if you want to add website tracking code or other javascript.
- *  NOTE: Only use if you know what you're doing.
+ *  NOTE: Only use if you know what you're doing. 
  *  
- *  You can now also add a prefix or suffix to your page title for SEO purposes
+ *  You can also add your website name as prefix or suffix to the title of each page on your website.
  */
 class custom_html_headers extends Extension {
         # Adds setup block for custom <head> content
@@ -26,17 +26,18 @@ class custom_html_headers extends Extension {
                         "HTML Code to place within &lt;head&gt;&lt;/head&gt; on all pages<br>");
                 
                 // modified title
-                $sb->add_text_option("title_prefix", "<br>Page Title Prefix ");              
-                $sb->add_text_option("title_suffix", "<br>Page Title Suffix ");
+                $sb->add_choice_option("sitename_in_title", array(
+                    "none" => 0,
+                    "as prefix" => 1,
+                    "as suffix" => 2
+                ), "<br>Add website name in title");
                 
 		$event->panel->add_block($sb);
 	}
         
         public function onInitExt(InitExtEvent $event) {
             global $config;
-            
-            $config->set_default_string("title_prefix", "");
-            $config->set_default_string("title_suffix", " - {$config->get_string("title")}");
+            $config->set_default_int("sitename_in_title", 0);
         }
         
         # Load Analytics tracking code on page request
@@ -55,8 +56,19 @@ class custom_html_headers extends Extension {
         private function handle_modified_page_title() {
             global $config, $page;
             
-            $page->title = $config->get_string("title_prefix") . 
-                    $page->title . $config->get_string("title_suffix");
+            // get config values
+            $site_title = $config->get_string("title");
+            $sitename_in_title = $config->get_int("sitename_in_title");
+            
+            // if feature is enabled & sitename isn't already in title 
+            // (can occur on index & other pages)
+            if ($sitename_in_title != 0 && !strstr($page->title, $site_title))
+            {
+                if ($sitename_in_title == 1) 
+                    $page->title = "$site_title - $page->title"; // as prefix
+                else if ($sitename_in_title == 2) 
+                    $page->title = "$page->title - $site_title"; // as suffix
+            }
         }
 }
 ?>
