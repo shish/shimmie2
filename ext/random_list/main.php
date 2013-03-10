@@ -46,7 +46,7 @@ class RandomList extends Extension {
                 
                 // custom headers
 		$sb->add_int_option("random_images_list_count", 
-                        "Amount of Random images to display");
+                        "Amount of Random images to display ");
                 
 		$event->panel->add_block($sb);
 	}
