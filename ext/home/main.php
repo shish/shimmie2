@@ -70,7 +70,7 @@ class Home extends Extension {
 		}
 		else {
 			$main_links = '[url=site://post/list]Posts[/url] [url=site://comment/list]Comments[/url] [url=site://tags]Tags[/url]';
-			if(class_exists("Pools")) {$main_links .= ' [url=site://pools]Pools[/url]';}
+			if(class_exists("Pools")) {$main_links .= ' [url=site://pool]Pools[/url]';}
 			if(class_exists("Wiki")) {$main_links .= ' [url=site://wiki]Wiki[/url]';}
 			$main_links .= ' [url=site://ext_doc]Documentation[/url]';
 		}
