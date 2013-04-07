@@ -58,7 +58,7 @@ class NumericScore extends Extension {
 			$html = "<table>";
 			foreach($x as $vote) {
 				$html .= "<tr><td>";
-				$html .= "<a href='/user/{$vote['username']}'>{$vote['username']}</a>";
+				$html .= "<a href='".make_link("user/{$vote['username']}")."'>{$vote['username']}</a>";
 				$html .= "</td><td>";
 				$html .= $vote['score'];
 				$html .= "</td></tr>";
