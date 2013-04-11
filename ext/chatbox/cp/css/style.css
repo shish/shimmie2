@@ -1,0 +1,386 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html, body {height: 100%;}
+
+body {
+	background: #1a1a1a url(../images/bg.gif) center center no-repeat;
+	color: #a7a7a7;
+	font: 11px/1 Tahoma, Arial, sans-serif;
+	text-shadow: 0 0 0 #273541;
+	overflow: hidden;
+}
+
+a {
+	outline: none;
+	color: #fff;
+	text-decoration: none;
+}
+
+a:hover{
+	color: #fff;
+}
+
+input {
+	font-size: 11px;
+	background: #e5e5e5;
+	border: 1px solid #f5f5f5;
+	padding: 2px;
+}
+
+select {
+	font-size: 11px;
+}
+
+#cp {
+	height: 440px;
+	width: 620px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -220px;
+	margin-left: -310px;
+}
+
+#nav {
+	height: 65px;
+	width: 100%;
+	background: url(../images/bg-nav.gif) repeat-x;
+	position: absolute;
+	bottom: 0;
+}
+	
+	#nav ul {
+		display: none;
+		width: 240px;
+		height: 65px;
+		margin: 0 auto;
+		list-style: none;
+	}
+	
+	#nav li {
+		width: 80px;
+		float: left;
+		text-align: center;
+	}
+	
+	#nav a {
+		display: block;
+		height: 65px;
+		text-indent: -4200px;
+		outline: none;
+	}
+	
+	#nav a:active {
+		background-position: 0 -65px;
+	}
+	
+	#n-prefs a { background: 0 0 url("../images/n-prefs.gif") no-repeat; }
+	#n-bans a { background: 0 0 url("../images/n-bans.gif") no-repeat; }
+	#n-about a { background: 0 0 url("../images/n-about.gif") no-repeat; }
+
+.subnav {
+	height: 25px;
+	background: url(../images/bg-subnav.gif) repeat-x;
+	list-style: none;
+}
+
+	.subnav input {
+		float: left;
+		margin-top: 2px;
+		margin-right: 10px;
+	}
+	
+	.subnav li {
+		width: 85px;
+		float: left;
+		text-indent: -4200px;
+	}
+
+	.subnav a {
+		display: block;
+		height: 25px;
+	}
+	
+	.subnav a:hover {
+		background-position: bottom left !important;
+	}
+
+	#sn-administration a { background: url(../images/sn-administration.gif) no-repeat; }
+	#sn-display a { background: url(../images/sn-display.gif) no-repeat; }
+	#sn-form a { background: url(../images/sn-form.gif) no-repeat; }
+	#sn-resetall a { background: url(../images/sn-resetall.gif) no-repeat; }
+	#sn-ban a { background: url(../images/sn-ban.gif) no-repeat; }
+	#sn-unbanall a { background: url(../images/sn-unbanall.gif) no-repeat; }
+	#sn-deleteall a { background: url(../images/sn-deleteall.gif) no-repeat; }
+	#sn-about a { background: url(../images/sn-about.gif) no-repeat; }
+	#sn-contact a { background: url(../images/sn-contact.gif) no-repeat; }
+
+
+
+	.sn-loading {
+		display: block;
+		height: 25px;
+		width: 25px;
+		float: right;
+		text-indent: -4200px;
+		background: url(../images/sn-spinny.gif) no-repeat;
+		_position: absolute;
+		_right: 20px;
+		_top: 50px;
+	}
+	
+	@media { .sn-loading {
+		position: absolute;
+		right: 15px;
+		top: 41px;
+	}}
+
+#content {
+	position: relative;
+	height: 375px;
+	overflow: hidden;
+}
+
+	.header {
+		height: 33px;
+		padding-bottom: 2px;
+		border-bottom: 1px solid #444;
+	}
+
+	#login .header { border-bottom: 1px solid #4c657b; }
+	
+	h1 {
+		float: left;
+		height: 32px;
+		width: 185px;
+		text-indent: -4200px;
+	}
+
+	#login h1 {	background: url(../images/h-login.gif) no-repeat;	}
+	#preferences h1 { background: url(../images/h-preferences.gif) no-repeat; }
+	#bans h1 { background: url(../images/h-bans.gif) no-repeat; }
+	#about h1 { background: url(../images/h-about.gif) no-repeat; }
+	
+	.logout {
+		display: block;
+		height: 32px;
+		width: 45px;
+		float: right;
+		text-indent: -4200px;
+		background: url(../images/a-logout.gif) no-repeat;
+	}
+
+	.logout:hover {
+		background-position: bottom left;
+	}
+	
+	.section {
+		clear: both;
+		width: 590px;
+		height: 355px;
+		padding: 15px;
+		padding-top: 5px;
+		position: absolute;
+	}
+	
+#login {
+	left: 0;
+	background: url(../images/bg-login.gif) repeat-x;
+	z-index: 5;
+}
+
+	#login-form {
+		height: 45px;
+		width: 300px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin-top: -45px;
+		margin-left: -150px;
+		background: url(../images/bg-login-form.gif) no-repeat;
+	}
+
+		#login-form label {
+			display: none;
+		}
+
+		#login-form input {
+			position: absolute;
+			left: 127px;
+			top: 13px;
+			width: 153px;
+			z-index: 2;
+			border: 1px solid #d4e7fa;
+			background: #e7eef6;
+		}
+
+		#login-loading {
+			display: block;
+			position: absolute;
+			top: 12px;
+			right: 8px;
+			height: 25px;
+			width: 25px;
+			text-indent: -4200px;
+			background: url(../images/login-spinny.gif) no-repeat;
+			z-index: 1;
+		}
+
+#preferences {
+	left: 0;
+	background: url(../images/bg-prefs.gif) repeat-x; 
+}
+
+	#preferences-form { }
+
+		#preferences-form fieldset {
+			margin-top: 10px;
+			width: 295px;
+			border: none;
+		}
+
+		#preferences-form fieldset.odd {
+			float: right;
+		}
+
+		#preferences-form fieldset.even {
+			float: left;
+		}
+
+		#preferences-form .legend {
+			display: block;
+			width: 265px;
+			color: #fff;
+			padding-bottom: 3px;
+			border-bottom: 1px solid #80a147;
+		}
+
+		/* IE7 */
+		@media {#preferences-form legend {
+			margin-left: -7px;
+		}}
+		
+		#preferences-form ol {
+			list-style: none;
+			margin-top: 15px;
+		}
+		
+		#preferences-form li {
+			width: 295px;
+			padding-bottom: 10px;
+		}
+
+		#preferences-form label {
+			display: block;
+			width: 130px;
+			float: left;
+		}
+
+		#preferences-form input {
+			width: 129px;
+		}
+		
+		#preferences-form select {
+			width: 135px;
+		}
+		
+		.cp-pane {
+			position: absolute;
+			width: 590px;
+			display: none;
+		}
+		
+		#cp-pane-administration {
+			display: block;
+		}
+		
+#bans {
+	left: 0;
+	background: url(../images/bg-bans.gif) repeat-x;
+	line-height: 1.3;
+}
+
+	#cp #bans-list a {
+		color: #d9d9d9;
+		border-bottom: 1px solid transparent;
+		_border-bottom: none;
+	}
+	
+	#cp #bans-list a:hover {
+		color: #fff;
+		border-bottom: 1px solid #de4147;
+	}
+
+	#bans-list {
+		padding-top: 10px;
+		list-style: none;
+		height: 280px;
+		overflow: auto;
+	}
+
+	#bans-list li {
+		clear: both;
+		padding: 3px 5px;
+		
+	}
+
+	#bans-list .nickname {
+		color: #fff;
+		font-size: 12px;
+	}
+
+	#bans-list .unban-link {
+		position: absolute;
+		right: 20px;
+		
+	}
+	
+	#no-bans {
+		margin-top: 100px;
+		text-align: center;
+		font-size: 22px;
+		color: #383838;
+	}
+
+#about {
+	left: 0;
+	background: url(../images/bg-about.gif) repeat-x;
+	line-height: 1.6;
+}
+	
+	#about h2 {
+		color: #fff;
+		font: Arial, sans-serif;
+		font-size: 14px;
+		font-weight: normal;
+		margin-bottom: 5px;
+	}
+	
+	#about p {
+		margin-bottom: 5px;
+	}
+
+
+	#cp-pane-about {
+		margin-top: 10px;
+		display: block;
+	}
+	
+	#cp-pane-contact {
+		margin-top: 10px;
+	}
+	
+	#cp-pane-about a,
+	#cp-pane-contact a {
+		color: #d9d9d9;
+		padding-bottom: 2px;
+	}
+	
+	#cp-pane-about a:hover,
+	#cp-pane-contact a:hover {
+		color: #fff;
+		border-bottom: 1px solid #f3982d;
+	}
