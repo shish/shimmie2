@@ -129,7 +129,7 @@ YShout.prototype = {
 
 		var postForm = 
 			'<form id="ys-post-form"' + (this.prefs.inverse ? 'class="ys-inverse"' : '' ) + '><fieldset>' +
-				'<input id="ys-input-nickname" value="' + this.prefs.defaultNickname + '" type="text" accesskey="N" maxlength="' + this.prefs.nicknameLength + '" class="ys-before-focus" />' +
+				'<input id="ys-input-nickname" value="' + nickname + '" type="hidden" accesskey="N" maxlength="' + this.prefs.nicknameLength + '" class="ys-before-focus" />' +
 				'<input id="ys-input-message" value="' + this.prefs.defaultMessage + '" type="text" accesskey="M" maxlength="' + this.prefs.messageLength + '" class="ys-before-focus" />' +
 				(this.prefs.showSubmit ? '<input id="ys-input-submit" value="' + this.prefs.defaultSubmit + '" accesskey="S" type="submit" />' : '') +
 				(this.prefs.postFormLink == 'cp' ? '<a title="View YShout Control Panel" class="ys-post-form-link" id="ys-cp-link" href="' + this.options.yPath + 'cp/index.php">Admin CP</a>' : '') +
