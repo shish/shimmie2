@@ -22,7 +22,7 @@ class chatbox extends Extension {
         
         # Load Analytics tracking code on page request
         public function onPageRequest(PageRequestEvent $event) {
-                global $page;
+                global $page, $user;
 
                 // Adds header to enable chatbox
                 $root = make_http();
@@ -34,7 +34,8 @@ class chatbox extends Extension {
                 <link rel=\"stylesheet\" href=\"$root/ext/chatbox/css/dark.yshout.css\" />
 
                 <script type=\"text/javascript\">
-                   new YShout({ yPath: '$yPath' });
+			nickname = '{$user->name}';
+                   	new YShout({ yPath: '$yPath' });
                 </script>");
                 
                 // loads the chatbox at the set location    
