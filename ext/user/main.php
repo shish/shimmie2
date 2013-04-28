@@ -535,7 +535,10 @@ class UserPage extends Extension {
 					"You need to specify the account number to edit"));
 		}
 		else {
+			log_warning("user", "Deleting user #{$_POST['id']}");
+
 			if($with_images) {
+				log_warning("user", "Deleting user #{$_POST['id']}'s uploads");
 				$rows = $database->get_all("SELECT * FROM images WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
 				foreach ($rows as $key => $value) {
 					$image = Image::by_id($value['id']);
@@ -552,6 +555,7 @@ class UserPage extends Extension {
 			}
 
 			if($with_comments) {
+				log_warning("user", "Deleting user #{$_POST['id']}'s comments");
 				$database->execute("DELETE FROM comments WHERE owner_id = :owner_id", array("owner_id" => $_POST['id']));
 			}
 			else {
