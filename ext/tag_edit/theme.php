@@ -89,7 +89,7 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
-	private function format_source(/*string*/ $source) {
+	protected function format_source(/*string*/ $source) {
 		if(!empty($source)) {
 			if(!startsWith($source, "http://") && !startsWith($source, "https://")) {
 				$source = "http://" . $source;
