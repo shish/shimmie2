@@ -411,12 +411,13 @@ class Image {
 	/**
 	 * Set the image's source URL
 	 */
-	public function set_source(/*string*/ $source) {
+	public function set_source(/*string*/ $new_source) {
 		global $database;
-		if(empty($source)) $source = null;
-		if($source != $this->source) {
-			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$source, "id"=>$this->id));
-			log_info("core-image", "Source for Image #{$this->id} set to: ".$source);
+		$old_source = $this->source;
+		if(empty($new_source)) $new_source = null;
+		if($new_source != $old_source) {
+			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$new_source, "id"=>$this->id));
+			log_info("core-image", "Source for Image #{$this->id} set to: $new_source (was $old_source)");
 		}
 	}
 
