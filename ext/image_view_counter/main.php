@@ -45,7 +45,7 @@ class image_view_counter extends Extension {
             // if the sql table doesn't exist yet, create it
             if($config->get_bool("image_viewcounter_installed") == false) { //todo
                 $database->create_table("image_views","
-                    id bigint(20) SCORE_AIPK,
+                    id SCORE_AIPK,
                     image_id INTEGER NOT NULL,
                     user_id INTEGER NOT NULL,
                     timestamp INTEGER NOT NULL,
