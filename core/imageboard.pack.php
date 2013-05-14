@@ -148,7 +148,9 @@ class Image {
 	public static function count_images($tags=array()) {
 		assert(is_array($tags));
 		global $database;
-		if(count($tags) == 0) {
+        $tag_count = count($tags);
+        
+		if($tag_count == 0) {
 			$total = $database->cache->get("image-count");
 			if(!$total) {
 				$total = $database->get_one("SELECT COUNT(*) FROM images");
@@ -156,7 +158,7 @@ class Image {
 			}
 			return $total;
 		}
-		else if(count($tags) == 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+		else if($tag_count == 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
 			$term = Tag::resolve_alias($tags[0]);
 			return $database->get_one(
 				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
@@ -578,13 +580,14 @@ class Image {
 				$_flexihash = new Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
+                    $parts_count = count($parts);
 					$opt_val = "";
 					$opt_weight = 0;
-					if(count($parts) == 2) {
+					if($parts_count == 2) {
 						$opt_val = $parts[0];
 						$opt_weight = $parts[1];
 					}
-					elseif(count($parts) == 1) {
+					elseif($parts_count == 1) {
 						$opt_val = $parts[0];
 						$opt_weight = 1;
 					}
@@ -652,7 +655,7 @@ class Image {
 				$positive = false;
 				$term = substr($term, 1);
 			}
-			if(strlen($term) == 0) {
+			if(strlen($term) === 0) {
 				continue;
 			}
 
