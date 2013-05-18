@@ -40,7 +40,7 @@ class ResizeImage extends Extension {
 		global $user, $config;
 		if($user->is_admin() && $config->get_bool("resize_enabled")) {
 			/* Add a link to resize the image */
-			$event->add_part($this->theme->get_resize_html($event->image->id));
+			$event->add_part($this->theme->get_resize_html($event->image));
 		}
 	}
 	
