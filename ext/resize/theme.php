@@ -17,9 +17,12 @@ class ResizeImageTheme extends Themelet {
 		$html = "
 			".make_form(make_link("resize/{$image->id}"), 'POST')."
 				<input type='hidden' name='image_id' value='{$image->id}'>
-				<input id='resize_width'  style='width: auto;' size='5' name='resize_width' type='text' value='".$default_width."'> x
-				<input id='resize_height' style='width: auto;' size='5' name='resize_height' type='text' value='".$default_height."'>
-				<input id='resizebutton' type='submit' value='Resize'>
+				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
+				<input id='original_height' name='original_height' type='hidden' value='{$image->height}'>
+				<input id='resize_width'  style='width: 70px;' name='resize_width'  type='number' min='1' value='".$default_width."'> x
+				<input id='resize_height' style='width: 70px;' name='resize_height' type='number' min='1' value='".$default_height."'>
+				<br><label><input type='checkbox' id='resize_aspect' name='resize_aspect' style='max-width: 20px;' checked='checked'> Keep Aspect</label>
+				<br><input id='resizebutton' type='submit' value='Resize'>
 			</form>
 		";
 		
