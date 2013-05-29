@@ -41,6 +41,7 @@ class AdminPageTheme extends Themelet {
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
 		$html .= $this->button("Download all images", "image_dump", false);
 		$html .= $this->button("Download database contents", "database_dump", false);
+		$html .= $this->button("Reset image IDs", "reset_image_ids", false);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
