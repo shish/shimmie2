@@ -16,8 +16,8 @@ class AdminPageTheme extends Themelet {
 		$c_protected = $protected ? " protected" : "";
 		$html = make_form(make_link("admin/$action"), "POST", false, false, false, "admin$c_protected");
 		if($protected) {
-			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
 			$html .= "<input type='submit' id='$action' value='$name' disabled='true'>";
+			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
 		}
 		else {
 			$html .= "<input type='submit' id='$action' value='$name'>";
@@ -41,7 +41,7 @@ class AdminPageTheme extends Themelet {
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
 		$html .= $this->button("Download all images", "image_dump", false);
 		$html .= $this->button("Download database contents", "database_dump", false);
-		$html .= $this->button("Reset image IDs", "reset_image_ids", false);
+		$html .= $this->button("Reset image IDs", "reset_image_ids", true);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
