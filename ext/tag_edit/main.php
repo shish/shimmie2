@@ -108,10 +108,10 @@ class TagEdit extends Extension {
 			$owner = User::by_name($_POST['tag_edit__owner']);
 			send_event(new OwnerSetEvent($event->image, $owner));
 		}
-		if($this->can_tag($event->image)) {
+		if($this->can_tag($event->image) && isset($_POST['tag_edit__tags'])) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 		}
-		if($this->can_source($event->image)) {
+		if($this->can_source($event->image) && isset($_POST['tag_edit__source'])) {
 			send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
 		}
 		if($user->can("edit_image_lock")) {
