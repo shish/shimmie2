@@ -80,7 +80,7 @@ class Layout {
 		global $user;
 		$username = url_escape($user->name);
 		// hack
-		$qp = explode("/", @$_GET["q"]);
+		$qp = explode("/", ltrim(@$_GET["q"], "/"));
 		$hw = class_exists("Wiki");
 		// php sucks
 		switch($qp[0]) {
@@ -236,10 +236,10 @@ EOD;
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 	 */
 		$html = null;
-		$url = $_GET['q'];
+		$url = ltrim($_GET['q'], "/");
 
 		$re1='.*?';
-		$re2='((?:[a-z][a-z]+))';
+		$re2='((?:[a-z][a-z_]+))';
 
 		if ($c=preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
 			$url=$matches[1][0];
