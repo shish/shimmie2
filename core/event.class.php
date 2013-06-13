@@ -34,9 +34,7 @@ class PageRequestEvent extends Event {
 		global $config;
 
 		// trim starting slashes
-		while(strlen($path) > 0 && $path[0] == '/') {
-			$path = substr($path, 1);
-		}
+		$path = ltrim($path, "/");
 
 		// if path is not specified, use the default front page
 		if(strlen($path) === 0) {
