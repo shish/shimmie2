@@ -145,7 +145,7 @@ class SQLite extends DBEngine {
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-		$data = str_replace("SCORE_STRNORM", "", $data);
+		$data = str_replace("SCORE_STRNORM", "lower", $data);
 		$data = str_replace("SCORE_ILIKE", "LIKE", $data);
 		return $data;
 	}
