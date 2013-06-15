@@ -330,8 +330,6 @@ class Upload extends Extension {
 			$rating = "";
 		}
 
-		// PHP falls back to system default if /tmp fails, can't we just
-		// use the system default to start with? :-/
 		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 		$filename = basename($url);
 
