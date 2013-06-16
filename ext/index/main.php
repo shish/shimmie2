@@ -135,7 +135,7 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends Extension {
-	var $val_id = 0;
+	var $stpen = 0;  // search term parse event number
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -241,27 +241,26 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^ratio(<|>|<=|>=|=)(\d+):(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
-			$event->add_querylet(new Querylet('width / height '.$cmp.' :width / :height', $args));
+			$args = array("width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3]));
+			$event->add_querylet(new Querylet("width / height $cmp :width{$this->stpen} / :height{$this->stpen}", $args));
 		}
 		else if(preg_match("/^(filesize|id)(<|>|<=|>=|=)(\d+[kmg]?b?)$/i", $event->term, $matches)) {
-			$this->val_id++;
 			$col = $matches[1];
 			$cmp = $matches[2];
 			$val = parse_shorthand_int($matches[3]);
-			$event->add_querylet(new Querylet("images.$col $cmp :val{$this->val_id}", array("val{$this->val_id}"=>$val)));
+			$event->add_querylet(new Querylet("images.$col $cmp :val{$this->stpen}", array("val{$this->stpen}"=>$val)));
 		}
 		else if(preg_match("/^(hash|md5)=([0-9a-fA-F]*)$/i", $event->term, $matches)) {
 			$hash = strtolower($matches[2]);
-			$event->add_querylet(new Querylet('images.hash = "'.$hash.'"'));
+			$event->add_querylet(new Querylet('images.hash = :hash', array("hash" => $hash)));
 		}
 		else if(preg_match("/^(filetype|ext)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$ext = strtolower($matches[2]);
-			$event->add_querylet(new Querylet('images.ext = "'.$ext.'"'));
+			$event->add_querylet(new Querylet('images.ext = :ext', array("ext" => $ext)));
 		}
 		else if(preg_match("/^(filename|name)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$filename = strtolower($matches[2]);
-			$event->add_querylet(new Querylet('images.filename LIKE :fn', array("fn"=>"%$filename%")));
+			$event->add_querylet(new Querylet("images.filename LIKE :filename{$this->stpen}", array("filename{$this->stpen}"=>"%$filename%")));
 		}
 		else if(preg_match("/^(source)=([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$filename = strtolower($matches[2]);
@@ -270,13 +269,15 @@ class Index extends Extension {
 		else if(preg_match("/^posted(<|>|<=|>=|=)([0-9-]*)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
 			$val = $matches[2];
-			$event->add_querylet(new Querylet("images.posted $cmp :val", array("val"=>$val)));
+			$event->add_querylet(new Querylet("images.posted $cmp :posted{$this->stpen}", array("posted{$this->stpen}"=>$val)));
 		}
 		else if(preg_match("/^size(<|>|<=|>=|=)(\d+)x(\d+)$/", $event->term, $matches)) {
 			$cmp = $matches[1];
-			$args = array("width"=>int_escape($matches[2]), "height"=>int_escape($matches[3]));
-			$event->add_querylet(new Querylet('width '.$cmp.' :width AND height '.$cmp.' :height', $args));
+			$args = array("width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3]));
+			$event->add_querylet(new Querylet("width $cmp :width{$this->stpen} AND height $cmp :height{$this->stpen}", $args));
 		}
+
+		$this->stpen++;
 	}
 }
 ?>
