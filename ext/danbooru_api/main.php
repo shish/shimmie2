@@ -313,21 +313,24 @@ class DanbooruApi extends Extension {
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
+				$previewsize = get_thumbnail_size($img->width, $img->height);
 				$xml .= xml_tag("post", array(
-					"id"            => $img->id,
-					"md5"           => $img->hash,
-					"file_name"     => $img->filename,
-					"file_url"      => $img->get_image_link(),
-					"height"        => $img->height,
-					"width"         => $img->width,
-					"preview_url"   => $img->get_thumb_link(),
-					"rating"        => "u",
-					"date"          => $img->posted,
-					"is_warehoused" => false,
-					"tags"          => $taglist,
-					"source"        => $img->source,
-					"score"         => 0,
-					"author"        => $owner->name
+					"id"             => $img->id,
+					"md5"            => $img->hash,
+					"file_name"      => $img->filename,
+					"file_url"       => $img->get_image_link(),
+					"height"         => $img->height,
+					"width"          => $img->width,
+					"preview_url"    => $img->get_thumb_link(),
+					"preview_height" => $previewsize[1],
+					"preview_width"  => $previewsize[0],
+					"rating"         => "u",
+					"date"           => $img->posted,
+					"is_warehoused"  => false,
+					"tags"           => $taglist,
+					"source"         => $img->source,
+					"score"          => 0,
+					"author"         => $owner->name
 				));
 			}
 			$xml .= "</posts>";
