@@ -288,7 +288,15 @@ class DanbooruApi extends Extension {
 			} else
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
-				$start = (isset($_GET['page']) ? int_escape($_GET['page'])-1 : 0) * $limit;
+				
+				// Calculate start offset.
+				if (isset($_GET['page'])) // Danbooru API uses 'page' >= 1
+					$start = (int_escape($_GET['page'])-1) * $limit;
+				else if (isset($_GET['pid'])) // Gelbooru API uses 'pid' >= 0
+					$start = int_escape($_GET['pid']) * $limit;
+				else 
+					$start = 0;
+
 				$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : array();
 				$count = Image::count_images($tags);
 				$results = Image::find_images(max($start, 0), min($limit, 100), $tags);
