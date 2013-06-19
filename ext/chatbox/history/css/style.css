@@ -1,0 +1,85 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	background: #202020 url(../images/bg.gif) fixed repeat-x;
+	color: #5c5c5c;
+	font: 11px/1.6 Arial, Helvetica, sans-serif;
+}
+
+#top {
+	height: 25px;
+	width: 510px;
+	margin: 0 auto;
+	margin-top: 20px;
+	border-bottom: 1px solid #444;
+	overflow: none;
+	line-height: 1.0;
+}
+
+	h1 {
+		text-indent: -4200px;
+		background: url(../images/h-history.gif) no-repeat;
+		width: 105px;
+		height: 17px;
+		margin-top: 5px;
+		float: left;
+		overflow: none;
+		_position: absolute;
+	}
+	
+	#top a, #bottom a {
+		color: #7d7d7d;
+		text-decoration: none;
+	}
+	
+	#top a {
+		line-height: 25px;
+	}
+	
+	#top a:hover, #bottom a:hover {
+		color: #fff;
+		border-bottom-color: #5e5e5e;
+	}
+		
+		
+	#log {
+		font-size: 11px;
+		margin-left: 10px;
+		border: 1px solid #767676;
+		border-right: none;
+		width: 60px;
+		
+	}
+	
+	#controls {
+		float: right;
+	}
+
+
+#yshout {
+	margin: 0 auto;
+	margin-top: 10px;
+}
+
+#bottom {
+	width:510px;
+	margin: 10px auto;
+}
+
+	#bottom #to-top {
+		margin-left: 5px;
+	}
+	
+/* Inane IE Compatibility PNG fixes
+------------------------------------- */
+
+#yshout #ys-before-posts { _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader (src='../example/images/ys-bg-posts-top.png',sizingMethod='crop'); }
+#yshout #ys-posts { _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader (src='../example/images/bg-posts.png',sizingMethod='scale'); }
+#yshout #ys-after-posts { _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader (src='../example/images/ys-bg-posts-bottom.png',sizingMethod='crop'); }
+#yshout #ys-banned { _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader (src='../example/images/bg-banned.png',sizingMethod='scale'); }
+#yshout #ys-post-form { _filter:progid:DXImageTransform.Microsoft.AlphaImageLoader (src='../example/images/bg-form.png',sizingMethod='crop'); }	
+#yshout .ys-post { _height: 1%; }
+
