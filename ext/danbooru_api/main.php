@@ -265,7 +265,7 @@ class DanbooruApi extends Extension {
 		* id: id to search for (comma delimited)
 		* tags: what tags to search for
 		* limit: limit
-		* offset: offset
+		* page: page number
 		* after_id: limit results to posts added after this id
 		*/
 		if(($event->get_arg(1) == 'find_posts') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'index.xml')))
@@ -288,14 +288,23 @@ class DanbooruApi extends Extension {
 			} else
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
-				$start = (isset($_GET['page']) ? int_escape($_GET['page'])-1 : 0) * $limit;
+				
+				// Calculate start offset.
+				if (isset($_GET['page'])) // Danbooru API uses 'page' >= 1
+					$start = (int_escape($_GET['page'])-1) * $limit;
+				else if (isset($_GET['pid'])) // Gelbooru API uses 'pid' >= 0
+					$start = int_escape($_GET['pid']) * $limit;
+				else 
+					$start = 0;
+
 				$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : array();
+				$count = Image::count_images($tags);
 				$results = Image::find_images(max($start, 0), min($limit, 100), $tags);
 			}
 
 			// Now we have the array $results filled with Image objects
 			// Let's display them
-			$xml = "<posts>\n";
+			$xml = "<posts count=\"$count\" offset=\"$start\">\n";
 			foreach($results as $img)
 			{
 				// Sanity check to see if $img is really an image object
@@ -304,21 +313,24 @@ class DanbooruApi extends Extension {
 					continue;
 				$taglist = $img->get_tag_list();
 				$owner = $img->get_owner();
+				$previewsize = get_thumbnail_size($img->width, $img->height);
 				$xml .= xml_tag("post", array(
-					"id"            => $img->id,
-					"md5"           => $img->hash,
-					"file_name"     => $img->filename,
-					"file_url"      => $img->get_image_link(),
-					"height"        => $img->height,
-					"width"         => $img->width,
-					"preview_url"   => $img->get_thumb_link(),
-					"rating"        => "u",
-					"date"          => $img->posted,
-					"is_warehoused" => false,
-					"tags"          => $taglist,
-					"source"        => $img->source,
-					"score"         => 0,
-					"author"        => $owner->name
+					"id"             => $img->id,
+					"md5"            => $img->hash,
+					"file_name"      => $img->filename,
+					"file_url"       => $img->get_image_link(),
+					"height"         => $img->height,
+					"width"          => $img->width,
+					"preview_url"    => $img->get_thumb_link(),
+					"preview_height" => $previewsize[1],
+					"preview_width"  => $previewsize[0],
+					"rating"         => "u",
+					"date"           => $img->posted,
+					"is_warehoused"  => false,
+					"tags"           => $taglist,
+					"source"         => $img->source,
+					"score"          => 0,
+					"author"         => $owner->name
 				));
 			}
 			$xml .= "</posts>";
