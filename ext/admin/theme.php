@@ -40,8 +40,9 @@ class AdminPageTheme extends Themelet {
 		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
 		$html .= $this->button("Download all images", "image_dump", false);
-		$html .= $this->button("Download database contents", "database_dump", false);
-		$html .= $this->button("Reset image IDs", "reset_image_ids", true);
+        $html .= $this->button("Download database contents", "database_dump", false);
+		if($database->get_driver_name() == "mysql")
+			$html .= $this->button("Reset image IDs", "reset_image_ids", true);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
