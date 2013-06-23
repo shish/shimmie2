@@ -40,7 +40,7 @@ class TagList extends Extension {
 					break;
 				case 'categories':
 					$this->theme->set_heading("Popular Categories");
-					$this->theme->set_tag_list($this->build_tag_categories());
+					$this->theme->set_tag_list($this->build_tag_list());
 					break;
 			}
 			$this->theme->display_page($page);
@@ -81,7 +81,12 @@ class TagList extends Extension {
 				$this->add_related_block($page, $event->image);
 			}
 			else {
-				$this->add_tags_block($page, $event->image);
+				if(class_exists("TagCategories") and $config->get_bool('tag_categories_split_on_view')) {
+					$this->add_split_tags_block($page, $event->image);
+				}
+				else {
+					$this->add_tags_block($page, $event->image);
+				}
 			}
 		}
 	}
@@ -290,7 +295,7 @@ class TagList extends Extension {
 		return $html;
 	}
 
-	private function build_tag_categories() {
+	private function build_tag_list() {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
@@ -348,6 +353,25 @@ class TagList extends Extension {
 		}
 	}
 
+	private function add_split_tags_block(Page $page, Image $image) {
+		global $database;
+		global $config;
+
+		$query = "
+			SELECT tags.tag, tags.count as calc_count
+			FROM tags, image_tags
+			WHERE tags.id = image_tags.tag_id
+			AND image_tags.image_id = :image_id
+			ORDER BY calc_count DESC
+		";
+		$args = array("image_id"=>$image->id);
+
+		$tags = $database->get_all($query, $args);
+		if(count($tags) > 0) {
+			$this->theme->display_split_related_block($page, $tags);
+		}
+	}
+
 	private function add_tags_block(Page $page, Image $image) {
 		global $database;
 		global $config;
@@ -374,7 +398,7 @@ class TagList extends Extension {
 		$tags = $database->cache->get("popular_tags");
 		if(empty($tags)) {
 			$query = "
-				SELECT tag, count
+				SELECT tag, count as calc_count
 				FROM tags
 				WHERE count > 0
 				ORDER BY count DESC
