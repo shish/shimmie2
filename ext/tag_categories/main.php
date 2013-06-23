@@ -9,16 +9,27 @@
 class TagCategories extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
-
+		
 		// whether we split out separate categories on post view by default
 		//  note: only takes effect if /post/view shows the image's exact tags
 		$config->set_default_bool("tag_categories_split_on_view", true);
 
-		$database->execute('CREATE TABLE IF NOT EXISTS image_tag_categories (category TEXT PRIMARY KEY, display_singular TEXT, display_multiple SINGULAR, color TEXT(7));');
+		if($config->get_int("ext_tag_categories_version") < 1) {
+			// primary extension database, holds all our stuff!
+			$database->create_table('image_tag_categories',
+				'category VARCHAR(60) PRIMARY KEY,
+				display_singular TEXT(60),
+				display_multiple TEXT(60),
+				color TEXT(7)');
 
-		$number_of_db_rows = $database->execute('SELECT COUNT(*) FROM image_tag_categories;')->fetchColumn();
+            $config->set_int("ext_tag_categories_version", 1);
+
+            log_info("tag_categories", "extension installed");
+		}
 
 		// if empty, add our default values
+		$number_of_db_rows = $database->execute('SELECT COUNT(*) FROM image_tag_categories;')->fetchColumn();
+
 		if ($number_of_db_rows == 0) {
 			$database->execute('INSERT INTO image_tag_categories VALUES ("artist", "Artist", "Artists", "#BB6666");');
 			$database->execute('INSERT INTO image_tag_categories VALUES ("series", "Series", "Series", "#AA00AA");');
@@ -29,14 +40,10 @@ class TagCategories extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $database, $user;
 
-		if($event->page_matches("tags")) {
-			switch($event->get_arg(0)) {
-				case 'categories':
-					if(class_exists("TagCategories") and ($user->is_admin())) {
-						$this->page_update();
-						$this->show_tag_categories($page);
-					}
-					break;
+		if($event->page_matches("tags/categories")) {
+			if($user->is_admin()) {
+				$this->page_update();
+				$this->show_tag_categories($page);
 			}
 		}
 	}
@@ -83,27 +90,27 @@ class TagCategories extends Extension {
 					color=:color
 				WHERE category=:category',
 				array(
-					'category' => html_escape($_POST['tc_category']),
-					'display_singular' => html_escape($_POST['tc_display_singular']),
-					'display_multiple' => html_escape($_POST['tc_display_multiple']),
-					'color' => html_escape($_POST['tc_color']),
+					'category' => $_POST['tc_category'],
+					'display_singular' => $_POST['tc_display_singular'],
+					'display_multiple' => $_POST['tc_display_multiple'],
+					'color' => $_POST['tc_color'],
 				));
 		}
 		else if($_POST['tc_status'] == 'new') {
 			$is_success = $database->execute('INSERT INTO image_tag_categories
 				VALUES (:category, :display_singular, :display_multiple, :color)',
 				array(
-					'category' => html_escape($_POST['tc_category']),
-					'display_singular' => html_escape($_POST['tc_display_singular']),
-					'display_multiple' => html_escape($_POST['tc_display_multiple']),
-					'color' => html_escape($_POST['tc_color']),
+					'category' => $_POST['tc_category'],
+					'display_singular' => $_POST['tc_display_singular'],
+					'display_multiple' => $_POST['tc_display_multiple'],
+					'color' => $_POST['tc_color'],
 				));
 		}
 		else if($_POST['tc_status'] == 'delete') {
 			$is_success = $database->execute('DELETE FROM image_tag_categories
 				WHERE category=:category',
 				array(
-					'category' => html_escape($_POST['tc_category'])
+					'category' => $_POST['tc_category']
 				));
 		}
 

@@ -67,10 +67,10 @@ class TagListTheme extends Themelet {
 
 		foreach(array_keys($tag_categories_html) as $category) {
 			if($tag_categories_count[$category] < 2) {
-				$category_display_name = $tag_category_dict[$category]['display_singular'];
+				$category_display_name = html_escape($tag_category_dict[$category]['display_singular']);
 			}
 			else{
-				$category_display_name = $tag_category_dict[$category]['display_multiple'];
+				$category_display_name = html_escape($tag_category_dict[$category]['display_multiple']);
 			}
 			$page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
 		}
@@ -199,7 +199,7 @@ class TagListTheme extends Themelet {
 			$category = $h_tag_split[0];
 			$h_tag = $h_tag_split[1];
 			$tag_category_css .= ' tag_category_'.$category;
-			$tag_category_style .= 'style="color:'.$tag_category_dict[$category]['color'].';" ';
+			$tag_category_style .= 'style="color:'.html_escape($tag_category_dict[$category]['color']).';" ';
 		}
 
 		$h_tag_no_underscores = str_replace("_", " ", $h_tag);
