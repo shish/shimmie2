@@ -216,7 +216,7 @@ class TagListTheme extends Themelet {
 			$display_html .= " <span class='tag_count'>$count</span>";
 		}
 
-		return [$category, $display_html];
+		return ($category, $display_html);
 	}
 
 	protected function ars(/*string*/ $tag, /*array(string)*/ $tags) {
