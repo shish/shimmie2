@@ -805,6 +805,7 @@ function transload($url, $mfile) {
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_REFERER, $url);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
 		curl_exec($ch);
 		curl_close($ch);
@@ -816,7 +817,7 @@ function transload($url, $mfile) {
 	if($config->get_string("transload_engine") == "wget") {
 		$s_url = escapeshellarg($url);
 		$s_mfile = escapeshellarg($mfile);
-		system("wget $s_url --output-document=$s_mfile");
+		system("wget --no-check-certificate $s_url --output-document=$s_mfile");
 
 		return file_exists($mfile);
 	}
