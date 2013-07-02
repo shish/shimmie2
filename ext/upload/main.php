@@ -193,7 +193,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
-					$source = isset($_POST['source']) ? $_POST['source'] : $url;
+					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$tags = array('tagme');
 					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 						$tags = Tag::explode($_GET['tags']);
