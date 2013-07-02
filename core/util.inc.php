@@ -713,7 +713,7 @@ function get_prefixed_cookie(/*string*/ $name) {
  */
 function set_prefixed_cookie($name, $value, $time, $path) {
 	global $config;
-	$full_name = $config->get_string('cookie_prefix','shm')."_".$name;
+	$full_name = COOKIE_PREFIX."_".$name;
 	setcookie($full_name, $value, $time, $path);
 }
 
