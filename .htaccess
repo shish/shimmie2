@@ -31,7 +31,9 @@ DefaultType image/jpeg
 <IfModule mod_expires.c>
 	ExpiresActive On
 	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|css|js))$">
-		Header set Cache-Control "public, max-age=2629743"
+		<IfModule mod_headers.c>
+			Header set Cache-Control "public, max-age=2629743"
+		</IfModule>
 		ExpiresDefault "access plus 1 month"
 	</FilesMatch>
 	#ExpiresByType text/html "now"
