@@ -49,9 +49,10 @@ class CustomIndexTheme extends IndexTheme {
 	}
 
 	protected function build_table($images, $query) {
-		$table = "<div class='shm-image-list'>";
+		$h_query = html_escape($query);
+		$table = "<div class='shm-image-list' data-query='$h_query'>";
 		foreach($images as $image) {
-			$table .= "\t<span class=\"thumb\">" . $this->build_thumb_html($image, $query) . "</span>\n";
+			$table .= "\t<span class=\"thumb\">" . $this->build_thumb_html($image) . "</span>\n";
 		}
 		$table .= "</div>";
 		return $table;

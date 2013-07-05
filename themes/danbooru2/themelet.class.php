@@ -1,6 +1,6 @@
 <?php
 class Themelet extends BaseThemelet {
-	public function build_thumb_html(Image $image, $query=null) {
+	public function build_thumb_html(Image $image) {
 		global $config;
 		$h_view_link = make_link("post/view/{$image->id}", $query);
 		$h_thumb_link = $image->get_thumb_link();
@@ -16,7 +16,7 @@ class Themelet extends BaseThemelet {
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return "<a href='$h_view_link' class='shm-thumb' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
+		return "<a href='$h_view_link' class='shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
 				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
 	}
 
