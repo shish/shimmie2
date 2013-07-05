@@ -138,7 +138,12 @@ class AliasEditor extends Extension {
 		foreach(explode("\n", $csv) as $line) {
 			$parts = explode(",", $line);
 			if(count($parts) == 2) {
-				$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", array("oldtag" => $parts[0], "newtag" => $parts[1]));
+				$pair = array("oldtag" => $parts[0], "newtag" => $parts[1]);
+				if(!$database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)){
+					if(!$database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", array("newtag" => $pair['newtag']))){
+						$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
+					}
+				}
 			}
 		}
 	}
