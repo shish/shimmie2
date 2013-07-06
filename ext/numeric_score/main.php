@@ -52,14 +52,15 @@ class NumericScore extends Extension {
 			$x = $database->get_all(
 				"SELECT users.name as username, user_id, score 
 				FROM numeric_score_votes 
+				ORDER BY score
 				JOIN users ON numeric_score_votes.user_id=users.id
 				WHERE image_id=?",
 				array($image_id));
-			$html = "<table>";
+			$html = "<table style='width: 100%;'>";
 			foreach($x as $vote) {
 				$html .= "<tr><td>";
 				$html .= "<a href='".make_link("user/{$vote['username']}")."'>{$vote['username']}</a>";
-				$html .= "</td><td>";
+				$html .= "</td><td width='10'>";
 				$html .= $vote['score'];
 				$html .= "</td></tr>";
 			}
