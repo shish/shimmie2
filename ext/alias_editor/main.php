@@ -15,8 +15,8 @@ class AddAliasEvent extends Event {
 	var $newtag;
 
 	public function AddAliasEvent($oldtag, $newtag) {
-		$this->oldtag = $oldtag;
-		$this->newtag = $newtag;
+		$this->oldtag = trim($oldtag);
+		$this->newtag = trim($newtag);
 	}
 }
 
