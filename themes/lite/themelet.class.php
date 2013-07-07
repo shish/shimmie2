@@ -5,7 +5,7 @@ class Themelet extends BaseThemelet {
 	 * a block since thumbs tend to go inside blocks...
 	 */
 	public function build_thumb_html(Image $image) {
-		global $config;
+		global $config, $query;
 		$i_id = (int) $image->id;
 		$h_view_link = make_link('post/view/'.$i_id, $query);
 		$h_thumb_link = $image->get_thumb_link();
