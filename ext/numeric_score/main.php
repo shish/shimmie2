@@ -52,7 +52,6 @@ class NumericScore extends Extension {
 			$x = $database->get_all(
 				"SELECT users.name as username, user_id, score 
 				FROM numeric_score_votes 
-				ORDER BY score
 				JOIN users ON numeric_score_votes.user_id=users.id
 				WHERE image_id=?",
 				array($image_id));
