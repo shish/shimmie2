@@ -2,7 +2,7 @@
 class Themelet extends BaseThemelet {
 	public function build_thumb_html(Image $image) {
 		global $config;
-		$h_view_link = make_link("post/view/{$image->id}", $query);
+		$h_view_link = make_link("post/view/{$image->id}");
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$i_id = int_escape($image->id);

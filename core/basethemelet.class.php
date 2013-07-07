@@ -40,7 +40,7 @@ class BaseThemelet {
 	public function build_thumb_html(Image $image) {
 		global $config;
 		$i_id = (int) $image->id;
-		$h_view_link = make_link('post/view/'.$i_id, $query);
+		$h_view_link = make_link('post/view/'.$i_id);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
