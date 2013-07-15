@@ -20,7 +20,7 @@ class NotATagTheme extends Themelet {
 		$html = "
 			<table id='image_bans' class='zebra sortable'>
 				<thead>
-					<th>Hash</th><th>Reason</th><th>Action</th>
+					<th>Tag</th><th>Redirect</th><th>Action</th>
 					<tr>
 						<form action='".make_link("untag/list/1")."' method='GET'>
 							<td><input type='text' name='tag'></td>
