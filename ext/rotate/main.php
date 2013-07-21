@@ -179,7 +179,7 @@ class RotateImage extends Extension {
 		$image_rotated = imagerotate($image, $deg, 0);
 		
 		/* Temp storage while we rotate */
-		$tmp_filename = tempnam("/tmp", 'shimmie_rotate');
+		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), 'shimmie_rotate');
 		if (empty($tmp_filename)) {
 			throw new ImageRotateException("Unable to save temporary image file.");
 		}
