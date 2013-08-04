@@ -1011,15 +1011,20 @@ class Tag {
 	public static function resolve_alias($tag) {
 		assert(is_string($tag));
 
+		$negative = false;
+		if(!empty($tag) && ($tag[0] == '-')) {
+			$negative = true;
+			$tag = substr($tag, 1);
+		}
+
 		global $database;
 		$newtag = $database->get_one(
 			$database->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)"),
 			array("tag"=>$tag));
-		if(!empty($newtag)) {
-			return $newtag;
-		} else {
-			return $tag;
+		if(empty($newtag)) {
+			$newtag = $tag;
 		}
+		return $negative ? "-$newtag" : $newtag;
 	}
 
 	public static function resolve_wildcard($tag) {
