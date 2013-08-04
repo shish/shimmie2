@@ -462,6 +462,7 @@ class Image {
 
 		assert(is_array($tags));
 
+		$tags = array_map(array('Tag', 'sanitise'), $tags);
 		$tags = Tag::resolve_aliases($tags);
 
 		assert(is_array($tags));
@@ -1070,7 +1071,6 @@ class Tag {
 			}
 		}
 
-		$new = array_map(array('Tag', 'sanitise'), $new);
 		$new = array_iunique($new); // remove any duplicate tags
 		return $new;
 	}
