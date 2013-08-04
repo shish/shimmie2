@@ -147,7 +147,7 @@ class Index extends Extension {
 		global $config, $database, $page, $user;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
-				$search = url_escape(implode(" ", Tag::resolve_list(trim($_GET['search']))));
+				$search = url_escape(Tag::implode(Tag::resolve_list(Tag::explode($_GET['search'], false))));
 				if(empty($search)) {
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/list/1"));

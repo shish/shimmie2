@@ -460,6 +460,8 @@ class Image {
 	public function set_tags($tags) {
 		global $database;
 
+		assert(is_array($tags));
+
 		$tags = Tag::resolve_list($tags);
 
 		assert(is_array($tags));
@@ -965,11 +967,11 @@ class Tag {
 	/**
 	 * Turn any string or array into a valid tag array
 	 */
-	public static function explode($tags) {
+	public static function explode($tags, $tagme=true) {
 		assert(is_string($tags) || is_array($tags));
 	
 		if(is_string($tags)) {
-			$tags = explode(' ', $tags);
+			$tags = explode(' ', trim($tags));
 		}
 		//else if(is_array($tags)) {
 			// do nothing
@@ -983,7 +985,7 @@ class Tag {
 			}
 		}
 
-		if(count($tag_array) == 0) {
+		if(count($tag_array) == 0 && $tagme) {
 			$tag_array = array("tagme");
 		}
 
@@ -1053,8 +1055,8 @@ class Tag {
 	 * @return Array of tags
 	 */
 	public static function resolve_list($tags) {
-		$tags = Tag::explode($tags);
-		reset($tags); // rewind array to the first element.
+		assert(is_array($tags));
+
 		$new = array();
 		foreach($tags as $tag) {
 			$new_set = explode(' ', Tag::resolve_alias($tag));
@@ -1062,6 +1064,7 @@ class Tag {
 				$new[] = $new_one;
 			}
 		}
+
 		$new = array_map(array('Tag', 'sanitise'), $new);
 		$new = array_iunique($new); // remove any duplicate tags
 		return $new;
