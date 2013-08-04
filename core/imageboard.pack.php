@@ -462,7 +462,7 @@ class Image {
 
 		assert(is_array($tags));
 
-		$tags = Tag::resolve_list($tags);
+		$tags = Tag::resolve_aliases($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
@@ -1054,7 +1054,7 @@ class Tag {
 	 * @param $tags Array of tags
 	 * @return Array of tags
 	 */
-	public static function resolve_list($tags) {
+	public static function resolve_aliases($tags) {
 		assert(is_array($tags));
 
 		$new = array();
