@@ -54,9 +54,14 @@ class AdminPageTheme extends Themelet {
 
 	public function dbq_html($terms) {
 		$h_terms = html_escape($terms);
+		$h_reason = "";
+		if(class_exists("ImageBan")) {
+			$h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
+		}
 		$html = make_form(make_link("admin/delete_by_query"), "POST") . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
+				$h_reason
 				<input type='submit' id='dbqsubmit' disabled='true' value='Delete All These Images'>
 			</form>
 		";

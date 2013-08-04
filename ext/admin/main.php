@@ -110,11 +110,15 @@ class AdminPage extends Extension {
 	private function delete_by_query() {
 		global $page, $user;
 		$query = $_POST['query'];
+		$reason = @$_POST['reason'];
 		assert(strlen($query) > 1);
 
 		log_warning("admin", "Mass deleting: $query");
 		$count = 0;
 		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
+			if($reason && class_exists("ImageBan")) {
+				send_event(new AddImageHashBanEvent($image->hash, $reason));
+			}
 			send_event(new ImageDeletionEvent($image));
 			$count++;
 		}
