@@ -211,7 +211,9 @@ class DatabaseConfig extends BaseConfig {
 			$this->database->Execute("DELETE FROM config WHERE name = :name", array("name"=>$name));
 			$this->database->Execute("INSERT INTO config VALUES (:name, :value)", array("name"=>$name, "value"=>$this->values[$name]));
 		}
-		$this->database->cache->delete("config");
+		// rather than deleting and having some other request(s) do a thundering
+		// herd of race-conditioned updates, just save the updated version once here
+		$this->database->cache->set("config", $this->values);
 	}
 }
 
