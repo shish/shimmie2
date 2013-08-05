@@ -81,7 +81,7 @@ class SetupTheme extends Themelet {
 	protected function build_navigation() {
 		return "
 			<a href='".make_link()."'>Index</a>
-			<br><a href='http://redmine.shishnet.org/wiki/shimmie2/Settings'>Help</a>
+			<br><a href='https://github.com/shish/shimmie2/wiki/Settings'>Help</a>
 			<br><a href='".make_link("setup/advanced")."'>Advanced</a>
 		";
 	}
