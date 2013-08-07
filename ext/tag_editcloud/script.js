@@ -29,23 +29,18 @@ function tageditcloud_toggle_extra(hide) {
 	hide.innerHTML = (el.style.display != 'none' ? 'show fewer tags' : hide_text );
 }
 
-function tageditcloud_toggle_tag(ele) {
-    var thisTag = ele.innerHTML;
+function tageditcloud_toggle_tag(ele,fullTag) {
     var taglist = document.getElementById('tag_editor');
     var tags = taglist.value.split(' ');
-    
-    // If tag is already listed, remove it
-    if (tags.editcloud_contains(thisTag)) {
-        tags = tags.editcloud_remove(thisTag);
+
+    if (tags.editcloud_contains(fullTag)) {
+        tags = tags.editcloud_remove(fullTag);
         ele.className = 'tag-unselected';
-        
-    // Otherwise add it
     } else {
-        tags.splice(0, 0, thisTag);
+        tags.splice(0, 0, fullTag);
         ele.className = 'tag-selected';
     }
-     
+
     taglist.value = tags.join(' ');
-    
     document.getElementById('tags').focus();
 }

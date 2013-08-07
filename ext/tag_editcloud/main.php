@@ -71,6 +71,14 @@ class TagEditCloud extends Extension {
 
 		$ignore_tags = explode(' ',$config->get_string("tageditcloud_ignoretags"));
 
+		if(class_exists("TagCategories")){
+			$categories = $database->get_all("SELECT category, color FROM image_tag_categories");
+			$cat_color = array();
+			foreach($categories as $row){
+				$cat_color[$row['category']] = $row['color'];
+			}
+		}
+
 		switch($sort_method){
 		case 'a':
 		case 'p':
@@ -93,19 +101,34 @@ class TagEditCloud extends Extension {
 				$cloud .= "<div id='tagcloud_extra' style='display: none;'>\n";
 			}
 
-			$h_tag = html_escape($row['tag']);
+			if(class_exists("TagCategories")){
+				$full_tag = $row['tag'];
+				$tc = explode(':',$full_tag);
+				if(isset($tc[1]) && isset($cat_color[$tc[0]])){
+					$h_tag = html_escape($tc[1]);
+					$color = '; color:'.$cat_color[$tc[0]];
+				} else {
+					$h_tag = html_escape($full_tag);
+					$color = '';
+				}
+			} else {
+				$full_tag = $row['tag'];
+				$h_tag = html_escape($full_tag);
+				$color = '';
+			}
+
 			$size = sprintf("%.2f", max($row['scaled'],0.5));
 			
 			if(array_search($row['tag'],$image->tag_array) !== FALSE) {
 				if($used_first) {
-					$precloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' class='tag-selected' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$precloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				} else {
 					$counter++;
-					$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' class='tag-selected' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				}
 			} else {
 				$counter++;
-				$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+				$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 			}
 		}
 
