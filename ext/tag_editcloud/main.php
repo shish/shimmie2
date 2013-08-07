@@ -28,6 +28,7 @@ class TagEditCloud extends Extension {
 		$config->set_default_int("tageditcloud_minusage",2);
 		$config->set_default_int("tageditcloud_defcount",40);
 		$config->set_default_int("tageditcloud_maxcount",4096);
+		$config->set_default_string("tageditcloud_ignoretags",'tagme');
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
@@ -39,11 +40,13 @@ class TagEditCloud extends Extension {
 		$sb->add_bool_option("tageditcloud_usedfirst","<br>Always show used tags first: ");
 		$sb->add_label("<br><b>Alpha sort</b>:<br>Only show tags used at least ");
 		$sb->add_int_option("tageditcloud_minusage");
-		$sb->add_label(" times.<br><b>Popularity sort</b>:<br>Show ");
+		$sb->add_label(" times.<br><b>Popularity/Relevance sort</b>:<br>Show ");
 		$sb->add_int_option("tageditcloud_defcount");
 		$sb->add_label(" tags by default.<br>Show a maximum of ");
 		$sb->add_int_option("tageditcloud_maxcount");
 		$sb->add_label(" tags.");
+		$sb->add_label("<br><b>Relevance sort</b>:<br>Ignore tags (space separated): ");
+		$sb->add_text_option("tageditcloud_ignoretags");
 
 		$event->panel->add_block($sb);
 	}
@@ -66,6 +69,8 @@ class TagEditCloud extends Extension {
 		$max_count = $config->get_int("tageditcloud_maxcount");
 		$def_count = $config->get_int("tageditcloud_defcount");
 
+		$ignore_tags = explode(' ',$config->get_string("tageditcloud_ignoretags"));
+
 		switch($sort_method){
 		case 'a':
 		case 'p':
@@ -74,7 +79,7 @@ class TagEditCloud extends Extension {
 				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 			break;
 		case 'r':
-			$relevant_tags = "'".implode("','",array_diff($image->tag_array,array('tagme')))."'"; //TODO: Make this configurable
+			$relevant_tags = "'".implode("','",array_diff($image->tag_array,$ignore_tags))."'";
 			$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
 				FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
 				WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
