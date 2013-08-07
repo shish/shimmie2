@@ -31,7 +31,7 @@ class TagEditCloud extends Extension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sort_by = array('Alphabetical'=>'a','Popularity'=>'p');
+		$sort_by = array('Alphabetical'=>'a','Popularity'=>'p','Relevance'=>'r');
 
 		$sb = new SetupBlock("Tag Edit Cloud");
 		$sb->add_bool_option("tageditcloud_disable", "Disable Tag Selection Cloud: ");
@@ -71,6 +71,13 @@ class TagEditCloud extends Extension {
 		case 'p':
 			$tag_data = $database->get_all("SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
 				FROM tags WHERE count >= :tag_min2 ORDER BY ".($sort_method == 'a' ? "tag" : "count DESC")." LIMIT :limit",
+				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
+			break;
+		case 'r':
+			$relevant_tags = "'".implode("','",array_diff($image->tag_array,array('tagme')))."'"; //TODO: Make this configurable
+			$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
+				FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
+				WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
 				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 			break;
 		}
