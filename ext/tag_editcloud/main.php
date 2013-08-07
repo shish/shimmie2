@@ -2,13 +2,13 @@
 /*
  * Name: Tag EditCloud
  * Author: AtomicDryad
+ * Contributors:
+ *   Schizius (Relevance Sort, Category Integration, Cleanup)
  * Description: Add or remove tags to the editor via clicking.
  */
 
 /* Todo:
- *	Be less kludgy
- * 	$cfgstub->board prefs
- * 	toggle sorting method via javascript || usepref(todo2: port userpref)
+ * 	usepref(todo2: port userpref)
  *	theme junk
  */
 class TagEditCloud extends Extension {
@@ -51,12 +51,7 @@ class TagEditCloud extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-        private function tag_link($tag) {
-                $u_tag = url_escape($tag);
-                return make_link("post/list/$u_tag/1");
-        }
-
-	private function build_tag_map($image) { // 
+	private function build_tag_map($image) {
 		global $database, $config;
 
 		$html = "";
@@ -146,14 +141,9 @@ class TagEditCloud extends Extension {
 		return "<div id='tageditcloud' class='tageditcloud'>$html</div>"; // FIXME: stupidasallhell
 	}
 
-
 	private function can_tag($image) {
-		global $config, $user;
-		return (
-			$user->can("edit_image_tag") &&
-			(!$image->is_locked() || $user->can("edit_image_lock"))
-		);
+		global $user;
+		return ($user->can("edit_image_tag") && (!$image->is_locked() || $user->can("edit_image_lock")));
 	}
-
 }
 ?>
