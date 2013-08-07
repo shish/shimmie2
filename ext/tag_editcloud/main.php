@@ -9,24 +9,14 @@
  *	Be less kludgy
  * 	$cfgstub->board prefs
  * 	toggle sorting method via javascript || usepref(todo2: port userpref)
- *	colorize used tags in cloud || always show used tags in front of cloud
  *	theme junk
  */
 class TagEditCloud extends Extension {
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $config;
 
-		if(!$config->get_bool("tageditcloud_disable")) {
-			if($this->can_tag($event->image)) {
-				if(!$cfg_minusage=$config->get_int("tageditcloud_minusage")) $cfg_minusage=2;
-				if(!$cfg_defcount=$config->get_int("tageditcloud_defcount")) $cfg_defcount=40;
-				if(!$cfg_maxcount=$config->get_int("tageditcloud_maxcount")) $cfg_maxcount=4096;
-				if($config->get_string("tageditcloud_sort") != "p") {
-					$event->add_part($this->build_tag_map($event->image,$cfg_minusage,false),40);
-				} else {
-					$event->add_part($this->build_tag_map($event->image,$cfg_defcount,$cfg_maxcount),40);
-				}
-			}
+		if(!$config->get_bool("tageditcloud_disable") && $this->can_tag($event->image)) {
+			$event->add_part($this->build_tag_map($event->image),40);
 		}
 	}
 		
@@ -62,61 +52,63 @@ class TagEditCloud extends Extension {
                 $u_tag = url_escape($tag);
                 return make_link("post/list/$u_tag/1");
         }
-/////	build_tag_map: output cloud of clickable tags
-//	build_tag_map($image|false, $defcount, $maxcount|false)	-- taglist sorted by usage, displaying $defcount by default, up to $maxcount via toggle.
-//	build_tag_map($image|false, $minusage|false)		-- taglist sorted by alpha, only showing tags with usage >= $minusage 
 
-	private function build_tag_map($image,$defcount,$maxcount) { // 
-		global $database,$config;
-		$html="";$cloud="";$precloud="";
-		$itags=Array();
-		$tags_min=1;
-		$alphasort=false;
-		$usedfirst=$config->get_bool("tageditcloud_usedfirst");
+	private function build_tag_map($image) { // 
+		global $database, $config;
 
-		if(!is_int($defcount)) $defcount=20;
-		if(!is_int($maxcount)) {	// Derp this is pretty cheesy.
-			$maxcount=4096;		// Hurrrr
-			$tags_min=$defcount;
-			$alphasort=true;
+		$html = "";
+		$cloud = "";
+		$precloud = "";
+
+		$sort_method = $config->get_string("tageditcloud_sort");
+		$tags_min = $config->get_int("tageditcloud_minusage");
+		$used_first = $config->get_bool("tageditcloud_usedfirst");
+		$max_count = $config->get_int("tageditcloud_maxcount");
+		$def_count = $config->get_int("tageditcloud_defcount");
+
+		switch($sort_method){
+		case 'a':
+		case 'p':
+			$tag_data = $database->get_all("SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+				FROM tags WHERE count >= :tag_min2 ORDER BY ".($sort_method == 'a' ? "tag" : "count DESC")." LIMIT :limit",
+				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
+			break;
 		}
-
-		if ((gettype($image) == 'object') && (isset($image->tag_array)) && ($itags=$image->tag_array)) $itags=array_fill_keys(array_values($itags),true);
-
-		$tag_data = $database->get_all(" SELECT tag, FLOOR(LOG(2.7, LOG(2.7, count - ? + 1)+1)*1.5*100)/100 AS scaled, count
-				FROM tags WHERE count >= ? ORDER BY ".
-				(!$alphasort ? "count DESC":"tag").
-				" limit $maxcount",
-			array($tags_min,$tags_min)
-		);
 		
-		$counter=1;
+		$counter = 1;
 		foreach($tag_data as $row) {
-			if((!$alphasort)&&($counter==$defcount)) $cloud .= "<div id=\"tagcloud_extra\" style=\"display: none;\">";
+			if($sort_method != 'a' && $counter == $def_count) {
+				$cloud .= "<div id='tagcloud_extra' style='display: none;'>\n";
+			}
+
 			$h_tag = html_escape($row['tag']);
-			$size = sprintf("%.2f", (float)$row['scaled']/2);
-			$usecount=$row['count'];
-			$link = $this->tag_link($row['tag']);
-			if($size<0.5) $size = 0.5;
+			$size = sprintf("%.2f", max($row['scaled'],0.5));
 			
-			if(isset($itags[$row['tag']])) {
-				if($usedfirst) {
-					$precloud .= "&nbsp;<span onclick=\"tageditcloud_toggle_tag(this)\" class=\"tag-selected\" style='font-size: ${size}em' title='$usecount'>$h_tag</span>&nbsp;\n";
+			if(array_search($row['tag'],$image->tag_array) !== FALSE) {
+				if($used_first) {
+					$precloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' class='tag-selected' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				} else {
 					$counter++;
-					$cloud .= "&nbsp;<span onclick=\"tageditcloud_toggle_tag(this)\" class=\"tag-selected\" style='font-size: ${size}em' title='$usecount'>$h_tag</span>&nbsp;\n";
+					$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' class='tag-selected' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				}
 			} else {
 				$counter++;
-				$cloud .= "&nbsp;<span onclick=\"tageditcloud_toggle_tag(this)\" style='font-size: ${size}em' title='$usecount'>$h_tag</span>&nbsp;\n";
+				$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this)' style='font-size: ${size}em' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 			}
 		}
-		if ($precloud != '') $html .= "<div id=\"tagcloud_set\">$precloud</div>";
-		$html .="<div id=\"tagcloud_unset\">$cloud</div>";
-		$rem=count($tag_data)-$defcount;
-		if((!$alphasort)&&($counter>=$defcount)) $html .= "</div><br>[<span onclick=\"tageditcloud_toggle_extra('tagcloud_extra',this);\" style=\"color: #0000EF; font-weight:bold;\">show $rem more tags</span>]";
-//		$html.='<pre>'.var_export($itags,true).'</pre>';
-		return "<div id=\"tageditcloud\" class=\"tageditcloud\">$html</div>"; // FIXME: stupidasallhell
+
+		if($precloud != '') {
+			$html .= "<div id='tagcloud_set'>$precloud</div>";
+		}
+
+		$html .= "<div id='tagcloud_unset'>$cloud</div>";
+
+		$rem = count($tag_data) - $def_count;
+		if($sort_method != 'a' && $counter >= $defcount) {
+			$html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show $rem more tags</span>]";
+		}
+
+		return "<div id='tageditcloud' class='tageditcloud'>$html</div>"; // FIXME: stupidasallhell
 	}
 
 
