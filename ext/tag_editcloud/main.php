@@ -133,8 +133,8 @@ class TagEditCloud extends Extension {
 
 		$html .= "<div id='tagcloud_unset'>$cloud</div>";
 
-		$rem = count($tag_data) - $def_count;
-		if($sort_method != 'a' && $counter >= $defcount) {
+		if($sort_method != 'a' && $counter > $def_count) {
+			$rem = $counter - $def_count;
 			$html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show $rem more tags</span>]";
 		}
 
