@@ -59,7 +59,7 @@ class ArchiveFileHandler extends Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = null;
-			$event = new DataUploadEvent($user, $tmpname, $metadata);
+			$event = new DataUploadEvent($tmpname, $metadata);
 			send_event($event);
 		}
 		catch(UploadException $ex) {
@@ -74,7 +74,14 @@ class ArchiveFileHandler extends Extension {
 		$list = "";
 
 		$dir = opendir("$base/$subdir");
-		while($filename = readdir($dir)) {
+
+		$files = array();
+		while($f = readdir($dir)) {
+			$files[] = $f;
+		}
+		sort($files);
+
+		foreach($files as $filename) {
 			$fullpath = "$base/$subdir/$filename";
 
 			if(is_link($fullpath)) {
