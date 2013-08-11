@@ -59,7 +59,7 @@ class ArchiveFileHandler extends Extension {
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = null;
-			$event = new DataUploadEvent($user, $tmpname, $metadata);
+			$event = new DataUploadEvent($tmpname, $metadata);
 			send_event($event);
 		}
 		catch(UploadException $ex) {
