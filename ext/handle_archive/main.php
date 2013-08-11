@@ -74,7 +74,14 @@ class ArchiveFileHandler extends Extension {
 		$list = "";
 
 		$dir = opendir("$base/$subdir");
-		while($filename = readdir($dir)) {
+
+		$files = array();
+		while($f = readdir($dir)) {
+			$files[] = $f;
+		}
+		sort($files);
+
+		foreach($files as $filename) {
 			$fullpath = "$base/$subdir/$filename";
 
 			if(is_link($fullpath)) {
