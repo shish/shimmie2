@@ -85,7 +85,7 @@ class CronUploader extends Extension {
 	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
-		$this->root_dir = $config->get_string("cron_uploader_dir", "");
+		$this->root_dir = $this->set_dir();
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
 		$cron_cmd = "wget $cron_url";
 		
