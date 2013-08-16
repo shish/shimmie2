@@ -5,29 +5,7 @@
  * Link: http://www.yaoifox.com/
  * License: GPLv2
  * Description: Uploads images automatically using Cron Jobs
- * Documentation:
- * 	This cron uploader is fairly easy to use but has to be configured first.
- * 	1. Install & activate this plugin.
- * 	
- * 	2. Upload your images you want to be uploaded to the queue directory. (default: shimmie2/data/cron_uploader/queue/)
- * 		You can find the queue Directory Path of your queue in your Board Config.
- * 		This also supports directory names to be used as tags.
- * 	
- * 	3. Go to the Board Config to the Cron Uploader menu and copy the "Cron Command".
- * 	
- * 	4. Create a cron job or something else that can open a url on specified times.
- * 		You can find the Cron Command in the Board Config.
- * 		If you're not sure how to do this, you can give the command to your web host and you can ask them to create the cron job for you.
- * 		When you create the cron job, you choose how often to upload a new image.
- * 
- * 	5. When the cron command is set up, your image queue will upload x file(s) at the specified times.
- * 		You can see any uploads or failed uploads in the log file. (default: shimmie2/data/cron_uploader/uploads.log)
- * 		Your uploaded images will be moved to the "uploaded" directory, it's recommended that you remove everything out of this directory from time to time.
- * 		(default: shimmie2/data/cron_uploader/uploaded/)
- * 		
- * 	Whenever the url in that cron job command is opened, a new file will upload from the queue.
- * 	So when you want to manually upload an image, all you have to do is open the link once.
- * 	This link can be found under "Cron Command" in the board config, just remove the "wget " part and only the url remains.
+ * Documentation: Installation guide: activate this extension and navigate to www.yoursite.com/cron_upload
  */
 class CronUploader extends Extension {
 	
@@ -55,11 +33,12 @@ class CronUploader extends Extension {
 	 * @param PageRequestEvent $event
 	 */
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config;
+		global $config, $user;
 		
 		if ($event->page_matches ( "cron_upload" )) {
 			$key = $config->get_string ( "cron_uploader_key", "" );
 			
+			// If the key is in the url, upload
 			if ($key != "" && $event->get_arg ( 0 ) == $key) {
 				set_time_limit ( 0 );
 				
@@ -69,10 +48,90 @@ class CronUploader extends Extension {
 				// Process upload & log
 				$this->process_upload(); // Start upload
 				$this->handle_log(); // Display & save upload log
+			} // else explain how it works
+			else if ($user->is_admin()) {
+				$this->display_documentation();
 			}
+			
 		}
 	}
 	
+	private function display_documentation() {
+		global $config, $page;
+		
+		$this->root_dir = $this->set_dir();
+		$queue_dir = $this->root_dir . "/queue";
+		$uploaded_dir = $this->root_dir . "/uploaded";
+		$failed_dir = $this->root_dir . "/failed_to_upload";
+		
+		$queue_dirinfo = $this->scan_dir($queue_dir);
+		$uploaded_dirinfo = $this->scan_dir($uploaded_dir);
+		$failed_dirinfo = $this->scan_dir($failed_dir);
+		
+		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
+		$cron_cmd = "wget $cron_url";
+		$log_path = $this->root_dir . "/uploads.log";
+		
+		$info_html = "<b>Information</b>
+			<br>
+			<table style='width:470px;'>
+			<tr>
+			<td style='width:90px;'><b>Directory</b></td>
+			<td style='width:90px;'><b>Files</b></td>
+			<td style='width:90px;'><b>Size (MB)</b></td>
+			<td style='width:200px;'><b>Directory Path</b></td>
+			</tr><tr>
+			<td>Queue</td>
+			<td>{$queue_dirinfo['total_files']}</td>
+			<td>{$queue_dirinfo['total_mb']}</td>
+			<td><input type='text' style='width:150px;' value='$queue_dir'></td>
+			</tr><tr>
+			<td>Uploaded</td>
+			<td>{$uploaded_dirinfo['total_files']}</td>
+			<td>{$uploaded_dirinfo['total_mb']}</td>
+			<td><input type='text' style='width:150px;' value='$uploaded_dir'></td>
+			</tr><tr>
+			<td>Failed</td>
+			<td>{$failed_dirinfo['total_files']}</td>
+			<td>{$failed_dirinfo['total_mb']}</td>
+			<td><input type='text' style='width:150px;' value='$failed_dir'></td>
+			</tr></table>
+	
+			<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
+			Create a cron job with the command above.<br/>
+				Read the documentation if you're not sure what to do.<br>";
+		
+		$install_html = "
+			This cron uploader is fairly easy to use but has to be configured first.
+			<br />1. Install & activate this plugin.
+			<br />
+			<br />2. Upload your images you want to be uploaded to the queue directory using your FTP client. 
+			<br />(<b>$queue_dir</b>)
+			<br />This also supports directory names to be used as tags.
+			<br />	
+			<br />3. Go to the Board Config to the Cron Uploader menu and copy the Cron Command.
+			<br />(<b>$cron_cmd</b>)
+			<br />
+			<br />4. Create a cron job or something else that can open a url on specified times.
+			<br />If you're not sure how to do this, you can give the command to your web host and you can ask them to create the cron job for you.
+			<br />When you create the cron job, you choose when to upload new images.
+			<br />
+			<br />5. When the cron command is set up, your image queue will upload x file(s) at the specified times.
+			<br />You can see any uploads or failed uploads in the log file. (<b>$log_path</b>)
+			<br />Your uploaded images will be moved to the 'uploaded' directory, it's recommended that you remove everything out of this directory from time to time.
+			<br />(<b>$uploaded_dir</b>)
+			<br />		
+			<br />Whenever the url in that cron job command is opened, a new file will upload from the queue.
+			<br />So when you want to manually upload an image, all you have to do is open the link once.
+			<br />This link can be found under 'Cron Command' in the board config, just remove the 'wget ' part and only the url remains.
+			<br />(<b>$cron_url</b>)";
+		
+		
+		$block = new Block("Cron Uploader", $info_html, "main", 10);
+		$block_install = new Block("Installation Guide", $install_html, "main", 20);
+		$page->add_block($block);
+		$page->add_block($block_install);
+	}
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -89,47 +148,15 @@ class CronUploader extends Extension {
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
 		$cron_cmd = "wget $cron_url";
 		
-		$queue_dir = $this->root_dir . "/queue";
-		$uploaded_dir = $this->root_dir . "/uploaded";
-		$failed_dir = $this->root_dir . "/failed_to_upload";
-		
-		$queue_dirinfo = $this->scan_dir($queue_dir);
-		$uploaded_dirinfo = $this->scan_dir($uploaded_dir);
-		$failed_dirinfo = $this->scan_dir($failed_dir);
-
 		$sb = new SetupBlock ( "Cron Uploader" );
 		$sb->add_label ( "<b>Settings</b><br>" );
 		$sb->add_int_option ( "cron_uploader_count", "How many to upload each time" );
 		$sb->add_text_option ( "cron_uploader_dir", "<br>Set Cron Uploader root directory<br>");
-		$sb->add_label ( "<br><br>
-				<b>Information</b>
-				<br>
-				<table style='width:470px;'>
-				<tr>
-				<td style='width:90px;'><b>Directory</b></td>
-				<td style='width:90px;'><b>Files</b></td>
-				<td style='width:90px;'><b>Size (MB)</b></td>
-				<td style='width:200px;'><b>Directory Path</b></td>
-				</tr><tr>
-				<td>Queue</td>
-				<td>{$queue_dirinfo['total_files']}</td>
-				<td>{$queue_dirinfo['total_mb']}</td>
-				<td><input type='text' style='width:150px;' value='$queue_dir'></td>
-				</tr><tr>
-				<td>Uploaded</td>
-				<td>{$uploaded_dirinfo['total_files']}</td>
-				<td>{$uploaded_dirinfo['total_mb']}</td>
-				<td><input type='text' style='width:150px;' value='$uploaded_dir'></td>
-				</tr><tr>
-				<td>Failed</td>
-				<td>{$failed_dirinfo['total_files']}</td>
-				<td>{$failed_dirinfo['total_mb']}</td>
-				<td><input type='text' style='width:150px;' value='$failed_dir'></td>
-				</tr></table>
-				
-				<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
-				Create a cron job with the command above.<br/>
-				Read the documentation if you're not sure what to do.<br>");
+		
+		$sb->add_label ("<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
+		Create a cron job with the command above.<br/>
+		<a href=''>Read the documentation</a> if you're not sure what to do.");
+
 		$event->panel->add_block ( $sb );
 	}
 	
