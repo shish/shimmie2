@@ -147,6 +147,7 @@ class CronUploader extends Extension {
 		$this->root_dir = $this->set_dir();
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
 		$cron_cmd = "wget $cron_url";
+		$documentation_link = make_http(make_link("cron_upload"));
 		
 		$sb = new SetupBlock ( "Cron Uploader" );
 		$sb->add_label ( "<b>Settings</b><br>" );
@@ -155,7 +156,7 @@ class CronUploader extends Extension {
 		
 		$sb->add_label ("<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
 		Create a cron job with the command above.<br/>
-		<a href=''>Read the documentation</a> if you're not sure what to do.");
+		<a href='$documentation_link'>Read the documentation</a> if you're not sure what to do.");
 
 		$event->panel->add_block ( $sb );
 	}
