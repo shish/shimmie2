@@ -18,7 +18,8 @@ class XMLSitemap extends Extension {
             {
                 global $config;
                 
-                $this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT']."/data/cache/sitemap.xml";
+                $this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT'].dirname($_SERVER['PHP_SELF'])."/data/cache/sitemap.xml";
+
                 // determine if new sitemap needs to be generated
                 if ($this->new_sitemap_needed())
                 {
@@ -63,11 +64,11 @@ class XMLSitemap extends Extension {
         {
                 global $database, $config;
                 // add index
-                $index[0] = $base_href = $config->get_string("front_page");
-                $this->add_sitemap_queue($index, "weekly", "1");
+                $index[0] = $config->get_string("front_page");
+                $this->add_sitemap_queue($index, "daily", "1");
 
                 /* --- Add 20 most used tags --- */
-                $popular_tags = $database->get_all("SELECT tag, count FROM tags ORDER BY `count` DESC LIMIT 0,20");
+                $popular_tags = $database->get_all("SELECT tag, count FROM tags where count >= 1 ORDER BY `count` DESC LIMIT 0,20");
                 foreach($popular_tags as $arrayid => $tag) {
                     $tag = $tag['tag'];
                     $popular_tags[$arrayid] = "post/list/$tag/";
@@ -83,12 +84,12 @@ class XMLSitemap extends Extension {
                 $this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", $image->posted_timestamp));
 
                 /* --- Add other tags --- */
-                $other_tags = $database->get_all("SELECT tag, count FROM tags ORDER BY `count` DESC LIMIT 21,10000000");
+                $other_tags = $database->get_all("SELECT tag FROM tags where count >= 1 ORDER BY `count` DESC LIMIT 21,10000000");
                 foreach($other_tags as $arrayid => $tag) {
                     $tag = $tag['tag'];
                     // create url from tags (tagme ignored)
                     if ($tag != "tagme")
-                        $other_tags[$arrayid] = "post/list/$tag/";
+                        $other_tags[$arrayid] = "post/list/$tag/1";
                 }
                 $this->add_sitemap_queue($other_tags, "monthly", "0.7" /* not sure how to deal with date here */);
 
@@ -106,7 +107,7 @@ class XMLSitemap extends Extension {
         }
 	
         // Adds an array of urls to the sitemap with the given information
-	private function add_sitemap_queue(/*array(urls)*/ $urls, $changefreq="monthly", $priority="0.5", $date="2013-02-01") {
+	private function add_sitemap_queue(/*array(urls)*/ $urls, $changefreq="monthly", $priority="0.5", $date="2013-08-15") {
                 foreach($urls as $url) {
                     $link = make_http(make_link("$url"));
                     $this->sitemap_queue .= "
@@ -129,7 +130,10 @@ class XMLSitemap extends Extension {
                     $this->sitemap_queue
                 </urlset>";
             
-            // Generate new sitemap  
+            // Generate new sitemap
+            if (!is_dir(dirname($this->sitemap_filepath)))
+            	mkdir(dirname($this->sitemap_filepath));
+            
             file_put_contents($this->sitemap_filepath, $xml);   
             $page->set_mode("data");
             $page->set_type("application/xml");
@@ -140,10 +144,9 @@ class XMLSitemap extends Extension {
         private function new_sitemap_needed()
         {
             $sitemap_generation_interval = 86400; // allow new site map every day
-            $last_generated_time = filemtime($this->sitemap_filepath);
             
-            // if file doesn't exist, return true
-            if ($last_generated_time == false) return true;
+            if (!file_exists($this->sitemap_filepath)) $last_generated_time = 0;
+            else $last_generated_time = filemtime($this->sitemap_filepath);
             
             // if it's been a day since last sitemap creation, return true
             if ($last_generated_time + $sitemap_generation_interval < time())
