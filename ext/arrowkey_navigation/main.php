@@ -17,13 +17,11 @@ class ArrowKeyNavigation extends Extension {
     	
         if ($event->page_matches("post/view")) {
             $pageinfo = $this->get_view_pageinfo($event);
-            $prev_url = make_http(make_link("post/prev/".$pageinfo));
-            $next_url = make_http(make_link("post/next/".$pageinfo));
-            $this->add_arrowkeys_code($prev_url, $next_url);
+            $this->add_arrowkeys_code($pageinfo["prev"], $pageinfo["next"]);
         }
         
         else if ($event->page_matches("post/list") ||
-			$event->page_matches("")) {
+		$event->page_matches("")) {
             $pageinfo = $this->get_list_pageinfo($event);
             $this->add_arrowkeys_code($pageinfo["prev"], $pageinfo["next"]);
         }
@@ -108,20 +106,12 @@ class ArrowKeyNavigation extends Extension {
     }
     
     # returns url ext with any tags
-    private function get_view_pageinfo($event) {
-        // if there are no tags, use default
-        if ($event->args(1) == ""){
-            $prefix = ""; 
-            $image_id = (int)$event->get_arg(0);        
-        }
-        
-        else { // if there are tags, use pages with tags
-            $prefix = $event->get_arg(0)."/";
-            $image_id = (int)$event->get_arg(1);
-        }
-        
-        // returns result
-        return $prefix.$image_id;
+    private function get_view_pageinfo($event) {   
+        $pageinfo = array(
+        	"prev" => make_http(make_link("post/prev/".(int)$event->args[2])),
+        	"next" => make_http(make_link("post/next/".(int)$event->args[2])),
+        );
+        return $pageinfo;
     }
     
 }
