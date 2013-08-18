@@ -191,7 +191,7 @@ class CronUploader extends Extension {
 		// Sets new default dir if not in config yet/anymore
 		if ($dir == "") {
 			$dir = $_SERVER ['DOCUMENT_ROOT'] . "/data/cron_uploader";
-			$config->set__string ('cron_uploader_dir', $dir);
+			$config->set_string ('cron_uploader_dir', $dir);
 		}
 			
 		// Make the directory if it doesn't exist yet
@@ -240,7 +240,7 @@ class CronUploader extends Extension {
 		$this->generate_image_queue();
 		
 		// Gets amount of imgs to upload
-		$upload_count = $config->get_int ("cron_uploader_count", 1);
+		if ($count == 0) $upload_count = $config->get_int ("cron_uploader_count", 1);
 		
 		// Throw exception if there's nothing in the queue
 		if (count($this->image_queue) == 0) {
