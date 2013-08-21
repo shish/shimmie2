@@ -43,9 +43,7 @@ class CronUploader extends Extension {
 			
 			// If the key is in the url, upload
 			if ($key != "" && $event->get_arg ( 0 ) == $key) {
-							
-				
-				// Process upload & log
+				// log in as admin
 				$this->process_upload(); // Start upload
 			} 
 			else if ($user->is_admin()) {
@@ -70,7 +68,7 @@ class CronUploader extends Extension {
 		$failed_dirinfo = $this->scan_dir($failed_dir);
 		
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
-		$cron_cmd = "wget $cron_url";
+		$cron_cmd = "curl -f $cron_url";
 		$log_path = $this->root_dir . "/uploads.log";
 		
 		$info_html = "<b>Information</b>
@@ -234,13 +232,12 @@ class CronUploader extends Extension {
 	 */
 	public function process_upload($upload_count = 0) {
 		global $config;
-		
 		set_time_limit(0);
 		$this->set_dir();
 		$this->generate_image_queue();
 		
 		// Gets amount of imgs to upload
-		if ($count == 0) $upload_count = $config->get_int ("cron_uploader_count", 1);
+		if ($upload_count == 0) $upload_count = $config->get_int ("cron_uploader_count", 1);
 		
 		// Throw exception if there's nothing in the queue
 		if (count($this->image_queue) == 0) {
@@ -322,6 +319,7 @@ class CronUploader extends Extension {
 	 * Generate the necessary DataUploadEvent for a given image and tags.
 	 */
 	private function add_image($tmpname, $filename, $tags) {
+		global $user, $image;
 		assert ( file_exists ( $tmpname ) );
 		
 		$pathinfo = pathinfo ( $filename );
@@ -341,6 +339,10 @@ class CronUploader extends Extension {
 			$infomsg = "File type not recognised. Filename: {$filename}";
 		else $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
 		$msgNumber = $this->add_upload_info($infomsg);
+		
+		// Set tags
+		$img = Image::by_id($event->image_id);
+		$img->set_tags($tags);
 		
 	}
 	
@@ -433,6 +435,6 @@ class CronUploader extends Extension {
 		 
 		$content = $prev_content ."\r\n".$this->upload_info;
 		file_put_contents ($log_path, $content);
-	}	
+	}
 }
 ?>

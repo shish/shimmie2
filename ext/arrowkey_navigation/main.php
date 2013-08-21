@@ -61,9 +61,8 @@ class ArrowKeyNavigation extends Extension {
         // get the amount of images per page
         $images_per_page = $config->get_int('index_images');
         $prefix = "post/list/";
-        
         // this occurs when viewing post/list without page number
-        if ($event->args[0] == "") {// no page listed
+        if (!isset($event->args[2])) {// no page listed 
             $page_number = 1;
             $total_pages = floor($database->get_one(
                 "SELECT COUNT(*) FROM images") / $images_per_page);
