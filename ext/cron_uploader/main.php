@@ -328,7 +328,7 @@ class CronUploader extends Extension {
 		}
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
-		$metadata ['tags'] = $tags;
+		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
 		$metadata ['source'] = null;
 		$event = new DataUploadEvent ( $tmpname, $metadata );
 		send_event ( $event );
