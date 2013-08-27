@@ -57,6 +57,7 @@ class TagEditCloud extends Extension {
 		$html = "";
 		$cloud = "";
 		$precloud = "";
+		$postcloud = "";
 
 		$sort_method = $config->get_string("tageditcloud_sort");
 		$tags_min = $config->get_int("tageditcloud_minusage");
@@ -92,10 +93,6 @@ class TagEditCloud extends Extension {
 		
 		$counter = 1;
 		foreach($tag_data as $row) {
-			if($sort_method != 'a' && $counter == $def_count) {
-				$cloud .= "<div id='tagcloud_extra' style='display: none;'>\n";
-			}
-
 			if(class_exists("TagCategories")){
 				$full_tag = $row['tag'];
 				$tc = explode(':',$full_tag);
@@ -117,13 +114,18 @@ class TagEditCloud extends Extension {
 			if(array_search($row['tag'],$image->tag_array) !== FALSE) {
 				if($used_first) {
 					$precloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					continue;
 				} else {
-					$counter++;
-					$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$entry = "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				}
 			} else {
-				$counter++;
-				$cloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+				$entry = "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+			}
+
+			if($counter++ <= $def_count) {
+				$cloud .= $entry;
+			} else {
+				$postcloud .= $entry;
 			}
 		}
 
@@ -131,7 +133,11 @@ class TagEditCloud extends Extension {
 			$html .= "<div id='tagcloud_set'>$precloud</div>";
 		}
 
-		$html .= "<div id='tagcloud_unset'>$cloud</div>";
+		if($postcloud != '') {
+			$postcloud = "<div id='tagcloud_extra' style='display: none;'>$postcloud</div>";
+		}
+
+		$html .= "<div id='tagcloud_unset'>$cloud$postcloud</div>";
 
 		if($sort_method != 'a' && $counter > $def_count) {
 			$rem = $counter - $def_count;
