@@ -902,8 +902,8 @@ define("SCORE_LOG_NOTSET", 0);
  * $flash = true           - show the message to the user as well
  * $flash = "some string"  - log the message, flash the string
  */
-function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null) {
-	send_event(new LogEvent($section, $priority, $message));
+function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null, $args=array()) {
+	send_event(new LogEvent($section, $priority, $message, $args));
 	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 	if(is_cli() && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
@@ -917,11 +917,11 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
 }
 
 // More shorthand ways of logging
-function log_debug(   /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash);}
-function log_info(    /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_INFO, $message, $flash);}
-function log_warning( /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_WARNING, $message, $flash);}
-function log_error(   /*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_ERROR, $message, $flash);}
-function log_critical(/*string*/ $section, /*string*/ $message, $flash=null) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash);}
+function log_debug(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+function log_info(    /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+function log_warning( /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+function log_error(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+function log_critical(/*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\

@@ -250,10 +250,16 @@ class LogEvent extends Event {
 	 */
 	var $time;
 
-	public function __construct($section, $priority, $message) {
+	/**
+	 * Extra data to be held separate
+	 */
+	var $args;
+
+	public function __construct($section, $priority, $message, $args) {
 		$this->section = $section;
 		$this->priority = $priority;
 		$this->message = $message;
+		$this->args = $args;
 		$this->time = time();
 	}
 }
