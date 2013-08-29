@@ -243,7 +243,7 @@ class Image {
 		global $database;
 		if($owner->id != $this->owner_id) {
 			$database->execute("UPDATE images SET owner_id=:owner_id WHERE id=:id", array("owner_id"=>$owner->id, "id"=>$this->id));
-			log_info("core-image", "Owner for Image #{$this->id} set to {$owner->name}");
+			log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}");
 		}
 	}
 
@@ -417,7 +417,7 @@ class Image {
 		if(empty($new_source)) $new_source = null;
 		if($new_source != $old_source) {
 			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$new_source, "id"=>$this->id));
-			log_info("core-image", "Source for Image #{$this->id} set to: $new_source (was $old_source)");
+			log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)");
 		}
 	}
 
@@ -437,7 +437,7 @@ class Image {
 		$sln = str_replace('"', "", $sln);
 		if(bool_escape($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
-			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
+			log_info("core_image", "Setting Image #{$this->id} lock to: $ln");
 		}
 	}
 
@@ -502,7 +502,7 @@ class Image {
 						array("tag"=>$tag));
 			}
 
-			log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
+			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
 			$database->cache->delete("image-{$this->id}-tags");
 		}
 	}
@@ -514,7 +514,7 @@ class Image {
 		global $database;
 		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=:id", array("id"=>$this->id));
-		log_info("core-image", 'Deleted Image #'.$this->id.' ('.$this->hash.')');
+		log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')');
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
@@ -525,7 +525,7 @@ class Image {
 	 * It DOES NOT remove anything from the database.
 	 */
 	public function remove_image_only() {
-		log_info("core-image", 'Removed Image File ('.$this->hash.')');
+		log_info("core_image", 'Removed Image File ('.$this->hash.')');
 		@unlink($this->get_image_filename());
 		@unlink($this->get_thumb_filename());
 	}
