@@ -174,7 +174,7 @@ class NumericScore extends Extension {
 
 	public function onNumericScoreSet(NumericScoreSetEvent $event) {
 		global $user;
-		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", true);
+		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", true, array("image_id"=>$event->image_id));
 		$this->add_vote($event->image_id, $user->id, $event->score);
 	}
 

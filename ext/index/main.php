@@ -163,6 +163,7 @@ class Index extends Extension {
 			$page_number = $event->get_page_number();
 			$page_size = $event->get_page_size();
 			try {
+				#log_debug("index", "Search for ".implode(" ", $search_terms), false, array("terms"=>$search_terms));
 				$total_pages = Image::count_pages($search_terms);
 				if(SPEED_HAX && count($search_terms) == 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
 					$images = $database->cache->get("post-list-$page_number");

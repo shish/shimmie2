@@ -546,7 +546,7 @@ class CommentList extends Extension {
 			$snippet = substr($comment, 0, 100);
 			$snippet = str_replace("\n", " ", $snippet);
 			$snippet = str_replace("\r", " ", $snippet);
-			log_info("comment", "Comment #$cid added to Image #$image_id: $snippet");
+			log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", false, array("image_id"=>$image_id, "comment_id"=>$cid));
 		}
 	}
 // }}}
