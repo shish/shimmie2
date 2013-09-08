@@ -56,8 +56,7 @@ class BaseThemelet {
 		}
 
 		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'>".
-		       "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' class='lazy' data-original='$h_thumb_link' src='$base/lib/static/grey.gif'>".
-		       "<noscript><img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'></noscript>".
+		       "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>".
 			   "</a>\n";
 	}
 
