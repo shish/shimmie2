@@ -231,8 +231,8 @@ class UserPage extends Extension {
 			($user->id == $event->display_user->id)
 		) {
 			$event->add_stats(
-				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar "+
-				"hosting, use the same email address here and there to have your avatar synced",
+				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the".
+				"<br>same email address here and there to have your avatar synced<br>",
 				0
 			);
 		}
