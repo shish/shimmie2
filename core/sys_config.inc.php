@@ -36,7 +36,7 @@ _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in
 _d("VERSION", 'trunk');      // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("MIN_FREE_SPACE",100*1024*1024); // int      disable uploading if there's less than MIN_FREE_SPACE bytes free space
-_d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
+_d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor,hellban"); // extensions to always enable
 _d("EXTRA_EXTS", "");        // optional extra extensions
 
 

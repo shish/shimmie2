@@ -212,8 +212,15 @@ class UserPage extends Extension {
 		global $page, $user, $config;
 
 		$h_join_date = autodate($event->display_user->join_date);
+		if($event->display_user->can("hellbanned")) {
+			$h_class = $event->display_user->class->parent->name;
+		}
+		else {
+			$h_class = $event->display_user->class->name;
+		}
+
 		$event->add_stats("Joined: $h_join_date", 10);
-		$event->add_stats("Class: {$event->display_user->class->name}", 90);
+		$event->add_stats("Class: $h_class", 90);
 
 		$av = $event->display_user->get_avatar_html();
 		if($av) {
