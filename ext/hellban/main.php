@@ -7,14 +7,14 @@ class HellBan extends Extension {
 			$s = "";
 		}
 		else if($user->can("view_hellbanned")) {
-			$s = "border: 1px solid red !important;";
+			$s = "DIV.hb, TR.hb TD {border: 1px solid red !important;}";
 		}
 		else {
-			$s = "display: none !important;";
+			$s = ".hb {display: none !important;}";
 		}
 
 		if($s) {
-			$page->add_html_header("<style>.hb { $s }</style>");
+			$page->add_html_header("<style>$s</style>");
 		}
 	}
 }
