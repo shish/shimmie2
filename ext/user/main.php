@@ -464,7 +464,7 @@ class UserPage extends Extension {
 				// FIXME: send_event()
 				$duser->set_password($pass1);
 
-				if($id == $user->id) {
+				if($duser->id == $user->id) {
 					$this->set_login_cookie($duser->name, $pass1);
 				}
 
