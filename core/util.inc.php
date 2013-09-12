@@ -923,6 +923,24 @@ function log_warning( /*string*/ $section, /*string*/ $message, $flash=null, $ar
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
+/**
+ * Get a unique ID for this request, useful for grouping log messages
+ */
+$_request_id = null;
+function get_request_id() {
+	global $_request_id;
+	if(!$_request_id) {
+		// not completely trustworthy, as a user can spoof this
+		if(@$_SERVER['HTTP_X_VARNISH']) {
+			$_request_id = $_SERVER['HTTP_X_VARNISH'];
+		}
+		else {
+			$_request_id = "P" . uniqid();
+		}
+	}
+	return $_request_id;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
