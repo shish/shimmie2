@@ -87,7 +87,7 @@ class ImageBanTheme extends Themelet {
 				<input type='hidden' name='hash' value='{$image->hash}'>
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input type='text' name='reason'>
-				<input type='submit' value='Ban and Delete'>
+				<input type='submit' value='Ban Hash and Delete Image'>
 			</form>
 		";
 		return $html;
