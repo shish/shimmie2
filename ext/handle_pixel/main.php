@@ -82,6 +82,13 @@ class PixelFileHandler extends DataHandlerExtension {
 				</select>
 			</form>
 		", 20);
+
+		$u_ilink = $event->image->get_image_link();
+		$event->add_part("
+			<form action='{$u_ilink}'>
+				<input type='submit' value='Image Only'>
+			</form>
+		", 21);
 	}
 
 // IM thumber {{{
