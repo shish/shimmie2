@@ -3,3 +3,4 @@ data
 images
 thumbs
 !lib/images
+*.un~
