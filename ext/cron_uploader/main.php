@@ -8,6 +8,9 @@
  * Documentation: Installation guide: activate this extension and navigate to www.yoursite.com/cron_upload
  */
 class CronUploader extends Extension {
+	// TODO: Checkbox option to only allow localhost + a list of additional IP adresses that can be set in /cron_upload
+	// TODO: Change logging to MySQL + display log at /cron_upload
+	// TODO: Move stuff to theme.php
 	
 	/**
 	 * Lists all log events this session
@@ -40,16 +43,11 @@ class CronUploader extends Extension {
 			
 			// If the key is in the url, upload
 			if ($key != "" && $event->get_arg ( 0 ) == $key) {
-				set_time_limit ( 0 );
-				
-				// Set vars
-				$this->root_dir = $config->get_string("cron_uploader_dir", "");
-				
-				// Process upload & log
+				// log in as admin
 				$this->process_upload(); // Start upload
-				$this->handle_log(); // Display & save upload log
-			} // else explain how it works
+			} 
 			else if ($user->is_admin()) {
+				$this->set_dir();
 				$this->display_documentation();
 			}
 			
@@ -58,8 +56,9 @@ class CronUploader extends Extension {
 	
 	private function display_documentation() {
 		global $config, $page;
+		$this->set_dir(); // Determines path to cron_uploader_dir
 		
-		$this->root_dir = $this->set_dir();
+		
 		$queue_dir = $this->root_dir . "/queue";
 		$uploaded_dir = $this->root_dir . "/uploaded";
 		$failed_dir = $this->root_dir . "/failed_to_upload";
@@ -69,7 +68,7 @@ class CronUploader extends Extension {
 		$failed_dirinfo = $this->scan_dir($failed_dir);
 		
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
-		$cron_cmd = "wget $cron_url";
+		$cron_cmd = "curl -f $cron_url";
 		$log_path = $this->root_dir . "/uploads.log";
 		
 		$info_html = "<b>Information</b>
@@ -137,14 +136,16 @@ class CronUploader extends Extension {
 		global $config;
 		// Set default values
 		$key = $this->generate_key ();
-		$dir = $this->set_dir ();
+	
 		$config->set_default_int ( 'cron_uploader_count', 1 );
 		$config->set_default_string ( 'cron_uploader_key', $key );
+		$this->set_dir();
 	}
 	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
-		$this->root_dir = $this->set_dir();
+		$this->set_dir();
+		
 		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
 		$cron_cmd = "wget $cron_url";
 		$documentation_link = make_http(make_link("cron_upload"));
@@ -182,12 +183,13 @@ class CronUploader extends Extension {
 	private function set_dir() {
 		global $config;
 		// Determine directory (none = default)
-		$dir = $this->root_dir;
 		
-		if ($dir == "")
-		{
+		$dir = $config->get_string("cron_uploader_dir", "");
+		
+		// Sets new default dir if not in config yet/anymore
+		if ($dir == "") {
 			$dir = $_SERVER ['DOCUMENT_ROOT'] . "/data/cron_uploader";
-			$config->set_default_string ('cron_uploader_dir', $dir);
+			$config->set_string ('cron_uploader_dir', $dir);
 		}
 			
 		// Make the directory if it doesn't exist yet
@@ -198,6 +200,7 @@ class CronUploader extends Extension {
 		if (!is_dir($dir . "/failed_to_upload/")) 
 			mkdir ( $dir . "/failed_to_upload/", 0755, true );
 		
+		$this->root_dir = $dir;
 		return $dir;
 	}
 	
@@ -224,15 +227,17 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Uploads the image & handles everything
-	 * @param number $count to upload a non-config amount of imgs
+	 * @param number $upload_count to upload a non-config amount of imgs
 	 * @return boolean returns true if the upload was successful
 	 */
-	public function process_upload($count = 0) {
+	public function process_upload($upload_count = 0) {
 		global $config;
-		$this->generate_image_queue ();
+		set_time_limit(0);
+		$this->set_dir();
+		$this->generate_image_queue();
 		
 		// Gets amount of imgs to upload
-		if ($count == 0) $count = $config->get_int ( "cron_uploader_count", 1 );
+		if ($upload_count == 0) $upload_count = $config->get_int ("cron_uploader_count", 1);
 		
 		// Throw exception if there's nothing in the queue
 		if (count($this->image_queue) == 0) {
@@ -242,10 +247,9 @@ class CronUploader extends Extension {
 		
 		// Randomize Images
 		shuffle($this->image_queue);
-		
 
 		// Upload the file(s)
-		for ($i = 0; $i < $count; $i++) {
+		for ($i = 0; $i < $upload_count; $i++) {
 			$img = $this->image_queue[$i];
 			
 			try {
@@ -261,11 +265,12 @@ class CronUploader extends Extension {
 			unset($this->image_queue[$i]);
 		}
 		
+		// Display & save upload log
+		$this->handle_log(); 
+		
 		return true;
 	}
 	
-	
-	private $attempt_count = 0;
 	private function move_uploaded($path, $filename,  $corrupt = false) {
 		global $config;
 		
@@ -289,7 +294,6 @@ class CronUploader extends Extension {
 		
 		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newPath\".");
 	}
-	
 
 	 /**
 	 * moves a directory up or gets the directory of a file
@@ -315,6 +319,7 @@ class CronUploader extends Extension {
 	 * Generate the necessary DataUploadEvent for a given image and tags.
 	 */
 	private function add_image($tmpname, $filename, $tags) {
+		global $user, $image;
 		assert ( file_exists ( $tmpname ) );
 		
 		$pathinfo = pathinfo ( $filename );
@@ -323,7 +328,7 @@ class CronUploader extends Extension {
 		}
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
-		$metadata ['tags'] = $tags;
+		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
 		$metadata ['source'] = null;
 		$event = new DataUploadEvent ( $tmpname, $metadata );
 		send_event ( $event );
@@ -335,13 +340,17 @@ class CronUploader extends Extension {
 		else $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
 		$msgNumber = $this->add_upload_info($infomsg);
 		
+		// Set tags
+		$img = Image::by_id($event->image_id);
+		$img->set_tags($tags);
+		
 	}
 	
 	private function generate_image_queue($base = "", $subdir = "") {
 		global $config;
 		
 		if ($base == "")
-			$base = $this->set_dir() . "/queue";
+			$base = $this->root_dir . "/queue";
 		
 		if (! is_dir ( $base )) {
 			$this->add_upload_info("Image Queue Directory could not be found at \"$base\".");
