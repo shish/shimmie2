@@ -93,33 +93,34 @@ class TagEditCloud extends Extension {
 		
 		$counter = 1;
 		foreach($tag_data as $row) {
+			$full_tag = $row['tag'];
+
 			if(class_exists("TagCategories")){
-				$full_tag = $row['tag'];
-				$tc = explode(':',$full_tag);
+				$tc = explode(':',$row['tag']);
 				if(isset($tc[1]) && isset($cat_color[$tc[0]])){
 					$h_tag = html_escape($tc[1]);
 					$color = '; color:'.$cat_color[$tc[0]];
 				} else {
-					$h_tag = html_escape($full_tag);
+					$h_tag = html_escape($row['tag']);
 					$color = '';
 				}
 			} else {
-				$full_tag = $row['tag'];
-				$h_tag = html_escape($full_tag);
+				$h_tag = html_escape($row['tag']);
 				$color = '';
 			}
 
 			$size = sprintf("%.2f", max($row['scaled'],0.5));
-			
+			$js = htmlspecialchars('tageditcloud_toggle_tag(this,'.json_encode($full_tag).')',ENT_QUOTES); //Ugly, but it works
+
 			if(array_search($row['tag'],$image->tag_array) !== FALSE) {
 				if($used_first) {
-					$precloud .= "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$precloud .= "&nbsp;<span onclick='$js' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 					continue;
 				} else {
-					$entry = "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$entry = "&nbsp;<span onclick='$js' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 				}
 			} else {
-				$entry = "&nbsp;<span onclick='tageditcloud_toggle_tag(this,\"$full_tag\")' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+				$entry = "&nbsp;<span onclick='$js' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
 			}
 
 			if($counter++ <= $def_count) {
