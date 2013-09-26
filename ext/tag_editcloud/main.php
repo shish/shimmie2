@@ -83,7 +83,7 @@ class TagEditCloud extends Extension {
 				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 			break;
 		case 'r':
-			$relevant_tags = "'".implode("','",array_diff($image->get_tag_array(),$ignore_tags))."'";
+			$relevant_tags = implode(",",array_map(array($database,"escape"),array_diff($image->get_tag_array(),$ignore_tags)));
 			$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
 				FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
 				WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
