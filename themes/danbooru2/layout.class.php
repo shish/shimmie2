@@ -233,7 +233,6 @@ class Layout {
 	<head>
 		<title>{$page->title}</title>
 $header_html
-		<script src='$data_href/themes/$theme_name/script.js' type='text/javascript'></script>
 	</head>
 
 	<body>
