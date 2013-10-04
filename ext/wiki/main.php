@@ -83,7 +83,7 @@ class Wiki extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 		if($event->page_matches("wiki")) {
-			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) == 0) {
+			if(is_null($event->get_arg(0)) || strlen(trim($event->get_arg(0))) === 0) {
 				$title = "Index";
 			}
 			else {

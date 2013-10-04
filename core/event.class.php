@@ -37,7 +37,7 @@ class PageRequestEvent extends Event {
 		$path = ltrim($path, "/");
 
 		// if path is not specified, use the default front page
-		if(strlen($path) === 0) {
+		if(empty($path)) {   /* empty is faster than strlen */
 			$path = $config->get_string('front_page');
 		}
 
@@ -145,7 +145,9 @@ class CommandEvent extends Event {
 
 		$opts = array();
 		$log_level = SCORE_LOG_WARNING;
-		for($i=1; $i<count($args); $i++) {
+        $arg_count = count($args);
+        
+		for($i=1; $i<$arg_count; $i++) {
 			switch($args[$i]) {
 				case '-u':
 					$user = User::by_name($args[++$i]);
