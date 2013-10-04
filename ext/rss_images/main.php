@@ -33,7 +33,6 @@ class RSS_Images extends Extension {
 		}
 	}
 
-
 	private function do_rss($images, $search_terms, /*int*/ $page_number) {
 		global $page;
 		global $config;
@@ -42,28 +41,7 @@ class RSS_Images extends Extension {
 
 		$data = "";
 		foreach($images as $image) {
-			$link = make_http(make_link("post/view/{$image->id}"));
-			$tags = html_escape($image->get_tag_list());
-			$owner = $image->get_owner();
-			$thumb_url = $image->get_thumb_link();
-			$image_url = $image->get_image_link();
-			$posted = date(DATE_RSS, $image->posted_timestamp);
-			$content = html_escape(
-				"<p>" . $this->theme->build_thumb_html($image) . "</p>" .
-				"<p>Uploaded by " . html_escape($owner->name) . "</p>"
-			);
-
-			$data .= "
-		<item>
-			<title>{$image->id} - $tags</title>
-			<link>$link</link>
-			<guid isPermaLink=\"true\">$link</guid>
-			<pubDate>$posted</pubDate>
-			<description>$content</description>
-			<media:thumbnail url=\"$thumb_url\"/>
-			<media:content url=\"$image_url\"/>
-		</item>
-			";
+			$data .= $this->thumb($image);
 		}
 
 		$title = $config->get_string('title');
@@ -98,6 +76,40 @@ class RSS_Images extends Extension {
 	</channel>
 </rss>";
 		$page->set_data($xml);
+	}
+
+	private function thumb(Image $image) {
+		global $database;
+
+		$cached = $database->cache->get("rss-thumb:{$image->id}");
+		if($cached) return $cached;
+
+		$link = make_http(make_link("post/view/{$image->id}"));
+		$tags = html_escape($image->get_tag_list());
+		$owner = $image->get_owner();
+		$thumb_url = $image->get_thumb_link();
+		$image_url = $image->get_image_link();
+		$posted = date(DATE_RSS, $image->posted_timestamp);
+		$content = html_escape(
+			"<p>" . $this->theme->build_thumb_html($image) . "</p>" .
+			"<p>Uploaded by " . html_escape($owner->name) . "</p>"
+		);
+
+		$data = "
+		<item>
+			<title>{$image->id} - $tags</title>
+			<link>$link</link>
+			<guid isPermaLink=\"true\">$link</guid>
+			<pubDate>$posted</pubDate>
+			<description>$content</description>
+			<media:thumbnail url=\"$thumb_url\"/>
+			<media:content url=\"$image_url\"/>
+		</item>
+		";
+
+		$database->cache->set("rss-thumb:{$image->id}", $data, 3600);
+
+		return $data;
 	}
 }
 ?>

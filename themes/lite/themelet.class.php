@@ -4,10 +4,10 @@ class Themelet extends BaseThemelet {
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
 	 */
-	public function build_thumb_html(Image $image, $query=null) {
+	public function build_thumb_html(Image $image) {
 		global $config;
 		$i_id = (int) $image->id;
-		$h_view_link = make_link('post/view/'.$i_id, $query);
+		$h_view_link = make_link('post/view/'.$i_id);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
@@ -22,7 +22,7 @@ class Themelet extends BaseThemelet {
 		}
 
 		return '<center class="shm-thumb" data-tags="'.$h_tags.'" data-post-id="'.$i_id.'"><div class="thumbblock">'.
-		       '<a href="'.$h_view_link.'" class="thumb">'.
+		       '<a href="'.$h_view_link.'" class="thumb shm-thumb-link">'.
 		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" class="lazy" data-original="'.$h_thumb_link.'" src="'.$base.'/lib/static/grey.gif">'.
 		       '<noscript><img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'"></noscript>'.
 			   "</a></div></center>\n";

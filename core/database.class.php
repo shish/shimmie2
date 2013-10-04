@@ -145,7 +145,7 @@ class SQLite extends DBEngine {
 		$data = str_replace("SCORE_BOOL_N", "'N'", $data);
 		$data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
 		$data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-		$data = str_replace("SCORE_STRNORM", "", $data);
+		$data = str_replace("SCORE_STRNORM", "lower", $data);
 		$data = str_replace("SCORE_ILIKE", "LIKE", $data);
 		return $data;
 	}
@@ -199,6 +199,9 @@ class MemcacheCache implements CacheEngine {
 
 	public function get($key) {
 		assert(!is_null($key));
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache lookup: $key\n", FILE_APPEND);
+		}
 		$val = $this->memcache->get($key);
 		if($val !== false) {
 			$this->hits++;

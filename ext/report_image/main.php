@@ -74,7 +74,7 @@ class ReportImage extends Extension {
 
 	public function onAddReportedImage(AddReportedImageEvent $event) {
 		global $database;
-		log_info("report_image", "Adding report of Image #{$event->image_id} with reason '{$event->reason}'");
+		log_info("report_image", "Adding report of Image #{$event->image_id} with reason '{$event->reason}'", false, array("image_id" => $event->image_id));
 		$database->Execute(
 				"INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",

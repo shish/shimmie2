@@ -212,8 +212,15 @@ class UserPage extends Extension {
 		global $page, $user, $config;
 
 		$h_join_date = autodate($event->display_user->join_date);
+		if($event->display_user->can("hellbanned")) {
+			$h_class = $event->display_user->class->parent->name;
+		}
+		else {
+			$h_class = $event->display_user->class->name;
+		}
+
 		$event->add_stats("Joined: $h_join_date", 10);
-		$event->add_stats("Class: {$event->display_user->class->name}", 90);
+		$event->add_stats("Class: $h_class", 90);
 
 		$av = $event->display_user->get_avatar_html();
 		if($av) {
@@ -224,8 +231,8 @@ class UserPage extends Extension {
 			($user->id == $event->display_user->id)
 		) {
 			$event->add_stats(
-				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar "+
-				"hosting, use the same email address here and there to have your avatar synced",
+				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the".
+				"<br>same email address here and there to have your avatar synced<br>",
 				0
 			);
 		}
@@ -457,7 +464,7 @@ class UserPage extends Extension {
 				// FIXME: send_event()
 				$duser->set_password($pass1);
 
-				if($id == $user->id) {
+				if($duser->id == $user->id) {
 					$this->set_login_cookie($duser->name, $pass1);
 				}
 

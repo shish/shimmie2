@@ -8,27 +8,21 @@
  * Documentation:
  *  Simply enable this extention in the extention manager to enable arrow key navigation.
  */
-class arrowkey_navigation extends Extension {  
+class ArrowkeyNavigation extends Extension {  
+    # Adds functionality for post/view on images
+    public function onDisplayingImage(DisplayingImageEvent $event) { 
+        $prev_url = make_http(make_link("post/prev/".$event->image->id));
+        $next_url = make_http(make_link("post/next/".$event->image->id));
+        $this->add_arrowkeys_code($prev_url, $next_url);
+    }  
+    
     # Adds functionality for post/list
     public function onPageRequest(PageRequestEvent $event) {
-        if ($event->page_matches("post/view")) {
-            $pageinfo = $this->get_view_pageinfo($event);
-            $prev_url = make_http(make_link("post/prev/".$pageinfo));
-            $next_url = make_http(make_link("post/next/".$pageinfo));
-            $this->add_arrowkeys_code($prev_url, $next_url);
-        }
-        
-        else if ($event->page_matches("post/list")) {
+        if($event->page_matches("post/list")) {
             $pageinfo = $this->get_list_pageinfo($event);
             $prev_url = make_http(make_link("post/list/".$pageinfo["prev"]));
             $next_url = make_http(make_link("post/list/".$pageinfo["next"]));
             $this->add_arrowkeys_code($prev_url, $next_url);
-        }
-        
-        // for random_list extension
-        else if ($event->page_matches("random")) {
-            $randomurl = make_http(make_link("random"));
-            $this->add_arrowkeys_code($randomurl, $randomurl);
         }
     }
     
@@ -46,8 +40,8 @@ class arrowkey_navigation extends Extension {
 
                 if (e.srcElement.tagName != \"INPUT\")
                 {
-                    if(keycode==\"37\") window.location.href='$prev_url' + window.location.hash;
-                    else if(keycode==\"39\") window.location.href='$next_url' + window.location.hash;
+                    if(keycode==\"37\") window.location.href='$prev_url';
+                    else if(keycode==\"39\") window.location.href='$next_url';
                 }
             }
             </script>");
@@ -60,16 +54,8 @@ class arrowkey_navigation extends Extension {
         // get the amount of images per page
         $images_per_page = $config->get_int('index_images');
   
-        // this occurs when viewing post/list without page number
-        if ($event->get_arg(0) == null) {// no page listed
-            $prefix = ""; 
-            $page_number = 1;
-            $total_pages = ceil($database->get_one(
-                "SELECT COUNT(*) FROM images") / $images_per_page);
-        }
-        
         // if there are no tags, use default
-        else if ($event->get_arg(1) == null){
+        if ($event->get_arg(1) == null){
             $prefix = ""; 
             $page_number = (int)$event->get_arg(0);
             $total_pages = ceil($database->get_one(
@@ -93,28 +79,11 @@ class arrowkey_navigation extends Extension {
         
         // Create return array
         $pageinfo = array(
-            "prev" => $prefix.$prev.$after,
-            "next" => $prefix.$next.$after,
+            "prev" => $prefix.$prev,
+            "next" => $prefix.$next,
         );
         
         return $pageinfo;
-    }
-    
-    # returns url ext with any tags
-    private function get_view_pageinfo($event) {
-        // if there are no tags, use default
-        if ($event->get_arg(1) == null){
-            $prefix = ""; 
-            $image_id = (int)$event->get_arg(0);        
-        }
-        
-        else { // if there are tags, use pages with tags
-            $prefix = $event->get_arg(0)."/";
-            $image_id = (int)$event->get_arg(1);
-        }
-        
-        // returns result
-        return $prefix.$image_id;
     }
 }
 ?>

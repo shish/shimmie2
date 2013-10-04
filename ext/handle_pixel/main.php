@@ -9,6 +9,7 @@
 class PixelFileHandler extends DataHandlerExtension {
 	protected function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
+		$ext = (($pos = strpos($ext,'?')) !== false) ? substr($ext,0,$pos) : $ext;
 		return in_array(strtolower($ext), $exts);
 	}
 
@@ -25,8 +26,8 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
-		$image->filename  = $metadata['filename'];
-		$image->ext       = $metadata['extension'];
+		$image->filename  = (($pos = strpos($metadata['filename'],'?')) !== false) ? substr($metadata['filename'],0,$pos) : $metadata['filename'];
+		$image->ext       = (($pos = strpos($metadata['extension'],'?')) !== false) ? substr($metadata['extension'],0,$pos) : $metadata['extension'];
 		$image->tag_array = Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
@@ -81,6 +82,13 @@ class PixelFileHandler extends DataHandlerExtension {
 				</select>
 			</form>
 		", 20);
+
+		$u_ilink = $event->image->get_image_link();
+		$event->add_part("
+			<form action='{$u_ilink}'>
+				<input type='submit' value='Image Only'>
+			</form>
+		", 21);
 	}
 
 // IM thumber {{{

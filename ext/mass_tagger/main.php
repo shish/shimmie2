@@ -42,13 +42,13 @@ class MassTagger extends Extension {
 		$_POST['setadd'] == 'set')
 		{
 			foreach($images as $image) {
-				$image->set_tags($tag);
+				$image->set_tags(Tag::explode($tag));
 			}
 		}
 		else
 		{
 			foreach($images as $image) {
-				$image->set_tags($tag . " " . $image->get_tag_list());
+				$image->set_tags(Tag::explode($tag . " " . $image->get_tag_list()));
 			}
 		}
 		

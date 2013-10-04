@@ -9,6 +9,17 @@
 class NotATag extends Extension {
 	public function get_priority() {return 30;} // before ImageUploadEvent and tag_history
 
+	public function onInitExt(InitExtEvent $event) {
+		global $config, $database;
+		if($config->get_int("ext_notatag_version") < 1) {
+			$database->create_table("untags", "
+				tag VARCHAR(128) NOT NULL PRIMARY KEY,
+				redirect VARCHAR(255) NOT NULL
+			");
+			$config->set_int("ext_notatag_version", 1);
+		}
+	}
+
 	public function onImageAddition(ImageAdditionEvent $event) {
 		$this->scan($event->image->get_tag_array());
 	}
@@ -18,18 +29,13 @@ class NotATag extends Extension {
 	}
 
 	private function scan(/*array*/ $tags_mixed) {
-		global $config;
-
-		$text = $config->get_string("not_a_tag_untags");
-		if(empty($text)) return;
+		global $config, $database;
 
 		$tags = array();
 		foreach($tags_mixed as $tag) $tags[] = strtolower($tag);
 
-		$pairs = explode("\n", $text);
-		foreach($pairs as $pair) {
-			$tag_url = explode(",", $pair);
-			if(count($tag_url) != 2) continue;
+		$pairs = $database->get_all("SELECT * FROM untags");
+		foreach($pairs as $tag_url) {
 			$tag = strtolower($tag_url[0]);
 			$url = $tag_url[1];
 			if(in_array($tag, $tags)) {
@@ -39,14 +45,78 @@ class NotATag extends Extension {
 		}
 	}
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Un-Tags");
+	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
+		if($user->can("ban_image")) {
+			$event->add_link("UnTags", make_link("untag/list/1"));
+		}
+	}
 
-		$sb->add_label("List tag,url pairs");
-		$sb->add_longtext_option("not_a_tag_untags");
-		$sb->add_label("<br>(eg. 'deleteme,/wiki/reporting-images')");
+	public function onPageRequest(PageRequestEvent $event) {
+		global $config, $database, $page, $user;
 
-		$event->panel->add_block($sb);
+		if($event->page_matches("untag")) {
+			if($user->can("ban_image")) {
+				if($event->get_arg(0) == "add") {
+					$tag = isset($_POST["tag"]) ? $_POST["tag"] : $image->tag;
+					$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";
+
+					$database->Execute(
+							"INSERT INTO untags(tag, redirect) VALUES (?, ?)",
+							array($tag, $redirect));
+
+					$page->set_mode("redirect");
+					$page->set_redirect($_SERVER['HTTP_REFERER']);
+				}
+				else if($event->get_arg(0) == "remove") {
+					if(isset($_POST['tag'])) {
+						$database->Execute("DELETE FROM untags WHERE tag = ?", array($_POST['tag']));
+
+						flash_message("Image ban removed");
+						$page->set_mode("redirect");
+						$page->set_redirect($_SERVER['HTTP_REFERER']);
+					}
+				}
+				else if($event->get_arg(0) == "list") {
+					$page_num = 0;
+					if($event->count_args() == 2) {
+						$page_num = int_escape($event->get_arg(1));
+					}
+					$page_size = 100;
+					$page_count = ceil($database->get_one("SELECT COUNT(tag) FROM untags")/$page_size);
+					$this->theme->display_untags($page, $page_num, $page_count, $this->get_untags($page_num, $page_size));
+				}
+			}
+		}
+	}
+
+	public function get_untags($page, $size=100) {
+		global $database;
+
+		// FIXME: many
+		$size_i = int_escape($size);
+		$offset_i = int_escape($page-1)*$size_i;
+		$where = array("(1=1)");
+		$args = array();
+		if(!empty($_GET['tag'])) {
+			$where[] = 'tag SCORE_ILIKE ?';
+			$args[] = "%".$_GET['tag']."%";
+		}
+		if(!empty($_GET['redirect'])) {
+			$where[] = 'redirect SCORE_ILIKE ?';
+			$args[] = "%".$_GET['redirect']."%";
+		}
+		$where = implode(" AND ", $where);
+		$bans = $database->get_all($database->scoreql_to_sql("
+			SELECT *
+			FROM untags
+			WHERE $where
+			ORDER BY tag
+			LIMIT $size_i
+			OFFSET $offset_i
+			"), $args);
+		if($bans) {return $bans;}
+		else {return array();}
 	}
 }
 ?>

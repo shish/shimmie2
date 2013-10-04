@@ -99,6 +99,9 @@ new UserClass("base", null, array(
 	"edit_other_vote" => False,
 	"view_sysinfo" => False,
 
+	"hellbanned" => False,
+	"view_hellbanned" => False,
+
 	"protected" => False,          # only admins can modify protected users (stops a moderator changing an admin's password)
 ));
 
@@ -152,7 +155,12 @@ new UserClass("admin", "base", array(
 	"bulk_edit_vote" => True,
 	"edit_other_vote" => True,
 	"view_sysinfo" => True,
+	"view_hellbanned" => True,
 	"protected" => True,
+));
+
+new UserClass("hellbanned", "user", array(
+	"hellbanned" => True,
 ));
 
 @include_once "data/config/user-classes.conf.php";

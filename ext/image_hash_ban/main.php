@@ -64,18 +64,15 @@ class ImageBan extends Extension {
 
 					if($hash) {
 						send_event(new AddImageHashBanEvent($hash, $reason));
-
 						flash_message("Image ban added");
-						$page->set_mode("redirect");
-						$page->set_redirect(make_link("image_hash_ban/list/1"));
 
 						if($image) {
 							send_event(new ImageDeletionEvent($image));
-
 							flash_message("Image deleted");
-							$page->set_mode("redirect");
-							$page->set_redirect(make_link("post/list"));
 						}
+
+						$page->set_mode("redirect");
+						$page->set_redirect($_SERVER['HTTP_REFERER']);
 					}
 				}
 				else if($event->get_arg(0) == "remove") {
@@ -84,7 +81,7 @@ class ImageBan extends Extension {
 
 						flash_message("Image ban removed");
 						$page->set_mode("redirect");
-						$page->set_redirect(make_link("image_hash_ban/list/1"));
+						$page->set_redirect($_SERVER['HTTP_REFERER']);
 					}
 				}
 				else if($event->get_arg(0) == "list") {

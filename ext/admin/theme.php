@@ -16,8 +16,8 @@ class AdminPageTheme extends Themelet {
 		$c_protected = $protected ? " protected" : "";
 		$html = make_form(make_link("admin/$action"), "POST", false, false, false, "admin$c_protected");
 		if($protected) {
-			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
 			$html .= "<input type='submit' id='$action' value='$name' disabled='true'>";
+			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
 		}
 		else {
 			$html .= "<input type='submit' id='$action' value='$name'>";
@@ -40,7 +40,9 @@ class AdminPageTheme extends Themelet {
 		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
 		$html .= $this->button("Recount tag use", "recount_tag_user", false);
 		$html .= $this->button("Download all images", "image_dump", false);
-		$html .= $this->button("Download database contents", "database_dump", false);
+        $html .= $this->button("Download database contents", "database_dump", false);
+		if($database->get_driver_name() == "mysql")
+			$html .= $this->button("Reset image IDs", "reset_image_ids", true);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
@@ -52,9 +54,14 @@ class AdminPageTheme extends Themelet {
 
 	public function dbq_html($terms) {
 		$h_terms = html_escape($terms);
+		$h_reason = "";
+		if(class_exists("ImageBan")) {
+			$h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
+		}
 		$html = make_form(make_link("admin/delete_by_query"), "POST") . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
+				$h_reason
 				<input type='submit' id='dbqsubmit' disabled='true' value='Delete All These Images'>
 			</form>
 		";

@@ -4,9 +4,9 @@ class Themelet extends BaseThemelet {
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
 	 */
-	public function build_thumb_html(Image $image, $query=null) {
+	public function build_thumb_html(Image $image) {
 		global $config;
-		$h_view_link = make_link("post/view/{$image->id}", $query);
+		$h_view_link = make_link("post/view/{$image->id}");
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$i_id = int_escape($image->id);
@@ -20,7 +20,7 @@ class Themelet extends BaseThemelet {
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return "<a href='$h_view_link' class='thumb shm-thumb' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
+		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
 				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
 	}
 

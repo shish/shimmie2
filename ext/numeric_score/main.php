@@ -55,11 +55,11 @@ class NumericScore extends Extension {
 				JOIN users ON numeric_score_votes.user_id=users.id
 				WHERE image_id=?",
 				array($image_id));
-			$html = "<table>";
+			$html = "<table style='width: 100%;'>";
 			foreach($x as $vote) {
 				$html .= "<tr><td>";
 				$html .= "<a href='".make_link("user/{$vote['username']}")."'>{$vote['username']}</a>";
-				$html .= "</td><td>";
+				$html .= "</td><td width='10'>";
 				$html .= $vote['score'];
 				$html .= "</td></tr>";
 			}
@@ -174,7 +174,7 @@ class NumericScore extends Extension {
 
 	public function onNumericScoreSet(NumericScoreSetEvent $event) {
 		global $user;
-		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", true);
+		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", true, array("image_id"=>$event->image_id));
 		$this->add_vote($event->image_id, $user->id, $event->score);
 	}
 

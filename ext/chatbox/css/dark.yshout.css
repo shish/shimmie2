@@ -1,0 +1,389 @@
+/*
+
+YShout HTML Structure:
+
+<div id="yshout">
+	<div id="ys-before-posts"></div>
+	<div id="ys-posts>
+	
+		<div id="ys-post-1" class="ys-post ys-first [ys-admin-post] [ys-banned-post]">
+			<span class="ys-post-timestamp">12:56</span>
+			<span class="ys-post-nickname">Yurivish:<span>
+			<span class="ys-post-message">Hey!</span>
+			<span class="ys-post-info ys-info-[inline|overlay]">
+				<em>IP:</em> 127.0.0.1
+				<em>Posted:</em> Sunday Apr. 29, 2007 at 12:56.
+			</span>
+			<span class="ys-post-actions">
+				<a title="Show post information" class="ys-info-link" href="#">Info</a> |
+				<a title="Delete post" class="ys-delete-link" href="#">Delete</a> |
+				<a title="Ban Yurivish" class="ys-ban-link" href="#">Ban</a>
+			</span>
+		</div>
+		
+		<div id="ys-post-2" class="ys-post [ys-admin-post] [ys-banned-post]">
+			<span class="ys-post-timestamp">12:57</span>
+			<span class="ys-post-nickname>Travis:<span>
+			<span class="ys-post-message>Hello.</span>
+			<span class="ys-post-info ys-info-[inline|overlay]">
+				<em>IP:</em> 127.0.0.2
+				<em>Posted:</em> Sunday Apr. 29, 2007 at 12:57.
+			</span>
+			<span class="ys-post-actions">
+				<a title="Show post information" class="ys-info-link" href="#">Info</a> |
+				<a title="Delete post" class="ys-delete-link" href="#">Delete</a> |
+				<a title="Ban Travis" class="ys-ban-link" href="#">Ban</a>
+			</span>
+		</div>
+
+		<div id="ys-post-3" class="ys-post ys-last [ys-admin-post] [ys-banned-post]">
+			<span class="ys-post-timestamp">12:57</span>
+			<span class="ys-post-nickname>Yurivish:<span>
+			<span class="ys-post-message>Yup...</span>
+			<span class="ys-post-info ys-info-[inline|overlay]">
+				<em>IP:</em> 127.0.0.1
+				<em>Posted:</em> Sunday Apr. 29, 2007 at 12:57.
+			</span>
+			<span class="ys-post-actions">
+				<a title="Show post information" class="ys-info-link" href="#">Info</a> |
+				<a title="Delete post" class="ys-delete-link" href="#">Delete</a> |
+				<a title="Ban Yurivish" class="ys-ban-link" href="#">Ban</a>
+			</span>
+		</div>
+	</div>
+	<div id="ys-after-posts"></div>
+	
+	<div id="ys-before-post-form"></div>
+	<div id="ys-post-form">
+		<form id="ys-post-form>
+			<fieldset>
+				<input id="ys-input-nickname" value="Nickname" type="text" accesskey="N" maxlength="25" class="[ys-before-focus|ys-after-focus]" />
+				<input id="ys-input-message" value="Message Text" type="text" accesskey="M" maxlength="175" class="[ys-before-focus|ys-after-focus]" />
+				<input id="ys-input-submit" value="Shout!" accesskey="S" type="submit" />
+				<a title="[View YShout History|Open Admin CP]" class="ys-post-form-link" id="[ys-history-link|ys-cp-link]" href="[history/|cp/]">[View History|Admin CP]</a>
+			</fieldset>
+		</form>
+	</div>
+	<div id="ys-after-post-form"></div>
+</div>
+
+
+*/
+
+
+#yshout * {
+	margin: 0;
+	padding: 0;
+}
+
+#yshout a {
+	text-decoration: none;
+	color: #989898;
+}
+
+#yshout a:hover {
+	color: #fff;
+}
+
+#yshout a:active {
+	color: #e5e5e5;
+}
+
+/* Adjust the width here
+-------------------------- */
+
+#yshout {
+	position: relative;
+	overflow: hidden;
+	font: 11px/1.4 Arial, Helvetica, sans-serif;
+}
+
+/* Posts
+------------------------------------- */
+
+#yshout #ys-posts {
+	position: relative;
+	background: #1a1a1a;
+}
+
+#yshout .ys-post {
+	border-bottom: 1px solid #212121;
+	margin: 0 5px;
+	padding: 5px;
+	position: relative;
+	overflow: hidden;
+        text-align: left;
+}
+
+
+#yshout .ys-admin-post .ys-post-nickname {
+	padding-left: 11px;
+	background: url(../images/star-dark.gif) 0 2px no-repeat;
+}
+
+
+#yshout .ys-post-timestamp {
+	color: #333;
+}
+
+#yshout .ys-post-nickname {
+	color: #e5e5e5;
+} 
+
+#yshout .ys-post-message {
+	color: #595959;
+}
+
+
+/* Banned
+------------------------------------- */
+
+#yshout .ys-banned-post .ys-post-nickname,
+#yshout .ys-banned-post .ys-post-message, 
+#yshout .ys-banned-post {
+	color: #b3b3b3 !important;
+}
+
+#yshout #ys-banned {
+	position: absolute;
+	z-index: 75;
+	height: 100%;
+	_height: 430px;
+	top: 0;
+	left: 0;
+	margin: 0 5px;
+	background: #1a1a1a;
+}
+
+#yshout #ys-banned span {
+	position: absolute;
+	display: block;
+	height: 20px;
+	margin-top: -10px;
+	top: 50%;
+	padding: 0 20px;
+	color: #666;
+	text-align: center;
+	font-size: 13px;
+	z-index: 80;
+}
+
+#yshout #ys-banned a {
+	color: #999;
+}
+
+#yshout #ys-banned a:hover {
+	color: #666;
+}
+	
+/* Hover Controls
+------------------------------------- */
+
+#yshout .ys-post-actions {
+	display: none;
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 5px;
+	font-size: 11px;
+	z-index: 50;
+	background: #1a1a1a;
+	color: #666;
+}
+
+#yshout .ys-post-actions a {
+	color: #989898;
+}
+
+#yshout .ys-post-actions a:hover {
+	color: #fff;
+}
+
+#yshout .ys-post:hover .ys-post-actions {
+	display: block;
+}
+
+#yshout .ys-post-info {
+	color: #595959;
+}
+
+#yshout .ys-post-info em {
+	font-style: normal;
+	color: #1a1a1a;
+}
+
+#yshout .ys-info-overlay {
+	display: none;
+	position: absolute;
+	z-index: 45;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #1a1a1a;
+	padding: 5px;
+}
+
+#yshout .ys-info-inline {
+	display: none;
+	margin-top: 2px;
+	padding-top: 3px; 
+	border-top: 1px solid #f2f2f2;
+}
+
+/* Post Form
+------------------------------------- */
+
+#yshout #ys-post-form {
+	height: 40px;
+	line-height: 40px;
+	background: #262626;
+        text-align: left;
+}
+
+	#yshout #ys-input-nickname,
+	#yshout #ys-input-message {
+		font-size: 11px;
+		padding: 2px;
+		background: #333;
+		border: 1px solid #404040;
+	}
+	
+	#yshout #ys-post-form fieldset {
+		_position: absolute;
+		border: none;
+		padding: 0 10px;
+		_margin-top: 10px;
+	}
+
+	#yshout #ys-input-nickname {
+		width: 105px;
+		margin-left: 5px;
+	}
+	
+	#yshout #ys-input-message {
+		margin-left: 5px;
+		width: 400px;
+	}
+	
+	#yshout #ys-input-submit {
+		font-size: 11px;
+		width: 64px;
+		margin-left: 5px;
+	}
+	
+	#yshout #ys-input-submit:hover {
+		cursor: pointer;
+	}
+
+	#yshout .ys-before-focus {
+		color: #4d4d4d;
+	}
+	
+	#yshout .ys-after-focus {
+		color: #e5e5e5;
+	}
+	
+	#yshout .ys-input-invalid {
+
+	}
+
+	#yshout .ys-post-form-link {
+		margin-left: 5px;
+		
+	}
+
+
+/* Overlays - This should go in all YShout styles
+------------------------------------- */
+
+#ys-overlay {
+	position: fixed;
+	_position: absolute;
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	background-color: #000;
+	filter: alpha(opacity=60);
+	-moz-opacity: 0.6;
+	opacity: 0.6;
+}
+
+* html body {
+	height: 100%;
+	width: 100%;
+}
+
+#ys-closeoverlay-link,
+#ys-switchoverlay-link {
+	display: block;
+	font-weight: bold;
+	height: 13px;
+	font: 11px/1 Arial, Helvetica, sans-serif;
+	color: #fff;
+	text-decoration: none;
+	margin-bottom: 1px;
+	outline: none;
+	float: left;
+}
+
+#ys-switchoverlay-link {
+	float: right;
+}
+
+.ys-window {
+	z-index: 102;
+	position: fixed;
+	_position: absolute;
+	top: 50%;
+	left: 50%;
+}
+	
+	#ys-cp {
+		margin-top: -220px;
+		margin-left: -310px;
+		width: 620px;
+	}
+	
+	#ys-yshout {
+		margin-top: -250px;
+		margin-left: -255px;
+		width: 500px;
+	}
+	
+	#ys-history {
+		margin-top: -220px;
+		margin-left: -270px;
+		width: 540px;
+	}
+
+#yshout .ys-browser {
+	border: none !important;
+	outline: none !important;
+	z-index: 102;
+	overflow: auto;
+	background: transparent !important;
+}
+
+	#yshout-browser {
+		height: 580px;
+		width: 510px;
+	}
+	
+	#cp-browser {
+		height: 440px;
+		width: 620px;
+		_height: 450px;
+		_width: 440px;
+	}
+	
+	#history-browser {
+		height: 440px;
+		width: 540px;
+		border-top: 1px solid #545454;
+		border-left: 1px solid #545454;
+		border-bottom: 1px solid #444;
+		border-right: 1px solid #444;
+	}

@@ -1,0 +1,1 @@
+a:2:{s:4:"info";a:1:{s:15:"latestTimestamp";d:1365655195.8733589649200439453125;}s:5:"posts";a:1:{i:0;a:6:{s:8:"nickname";s:7:"YaoiFox";s:7:"message";s:42:"I hope enjoy this chatbox based on YShout!";s:9:"timestamp";d:1365655195.8733589649200439453125;s:5:"admin";b:0;s:3:"uid";s:32:"ee9e9a7a01909be8065571655dad044d";s:9:"adminInfo";a:1:{s:2:"ip";s:11:"84.193.78.8";}}}}

@@ -34,13 +34,25 @@ class StatsDInterface extends Extension {
 	public function onPageRequest($event) {
 		$this->_stats("overall");
 
-		if($event->page_matches("post/list")) {
-			$this->_stats("post-list");
-		}
-		else if($event->page_matches("post/view")) {
+		if($event->page_matches("post/view")) {  # 40%
 			$this->_stats("post-view");
 		}
+		else if($event->page_matches("post/list")) {  # 30%
+			$this->_stats("post-list");
+		}
+		else if($event->page_matches("user")) {
+			$this->_stats("user");
+		}
+		else if($event->page_matches("upload")) {
+			$this->_stats("upload");
+		}
+		else if($event->page_matches("rss")) {
+			$this->_stats("rss");
+		}
 		else {
+			#global $_load_start;
+			#$time = microtime(true) - $_load_start;
+			#file_put_contents("data/other.log", "{$_SERVER['REQUEST_URI']} $time\n", FILE_APPEND);
 			$this->_stats("other");
 		}
 

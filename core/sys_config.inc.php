@@ -24,6 +24,7 @@ _d("DATABASE_KA", true);     // string   Keep database connection alive
 _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details
 _d("DEBUG_SQL", false);      // boolean  dump SQL queries to data/sql.log
+_d("DEBUG_CACHE", false);    // boolean  dump cache queries to data/cache.log
 _d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
 _d("CONTEXT", null);         // string   file to log performance data into
 _d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
@@ -34,7 +35,8 @@ _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", 'trunk');      // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
-_d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
+_d("MIN_FREE_SPACE",100*1024*1024); // int      disable uploading if there's less than MIN_FREE_SPACE bytes free space
+_d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor,hellban"); // extensions to always enable
 _d("EXTRA_EXTS", "");        // optional extra extensions
 
 

@@ -245,7 +245,7 @@ class Image {
 		global $database;
 		if($owner->id != $this->owner_id) {
 			$database->execute("UPDATE images SET owner_id=:owner_id WHERE id=:id", array("owner_id"=>$owner->id, "id"=>$this->id));
-			log_info("core-image", "Owner for Image #{$this->id} set to {$owner->name}");
+			log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}", false, array("image_id" => $this->id));
 		}
 	}
 
@@ -419,7 +419,7 @@ class Image {
 		if(empty($new_source)) $new_source = null;
 		if($new_source != $old_source) {
 			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$new_source, "id"=>$this->id));
-			log_info("core-image", "Source for Image #{$this->id} set to: $new_source (was $old_source)");
+			log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)", false, array("image_id" => $this->id));
 		}
 	}
 
@@ -439,7 +439,7 @@ class Image {
 		$sln = str_replace('"', "", $sln);
 		if(bool_escape($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
-			log_info("core-image", "Setting Image #{$this->id} lock to: $ln");
+			log_info("core_image", "Setting Image #{$this->id} lock to: $ln", false, array("image_id" => $this->id));
 		}
 	}
 
@@ -462,7 +462,10 @@ class Image {
 	public function set_tags($tags) {
 		global $database;
 
-		$tags = Tag::resolve_list($tags);
+		assert(is_array($tags));
+
+		$tags = array_map(array('Tag', 'sanitise'), $tags);
+		$tags = Tag::resolve_aliases($tags);
 
 		assert(is_array($tags));
 		assert(count($tags) > 0);
@@ -501,7 +504,7 @@ class Image {
 						array("tag"=>$tag));
 			}
 
-			log_info("core-image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags));
+			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), false, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
 		}
 	}
@@ -513,7 +516,7 @@ class Image {
 		global $database;
 		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=:id", array("id"=>$this->id));
-		log_info("core-image", 'Deleted Image #'.$this->id.' ('.$this->hash.')');
+		log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')', false, array("image_id" => $this->id));
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
@@ -524,7 +527,7 @@ class Image {
 	 * It DOES NOT remove anything from the database.
 	 */
 	public function remove_image_only() {
-		log_info("core-image", 'Removed Image File ('.$this->hash.')');
+		log_info("core_image", 'Removed Image File ('.$this->hash.')', false, array("image_id" => $this->id));
 		@unlink($this->get_image_filename());
 		@unlink($this->get_thumb_filename());
 	}
@@ -968,11 +971,11 @@ class Tag {
 	/**
 	 * Turn any string or array into a valid tag array
 	 */
-	public static function explode($tags) {
+	public static function explode($tags, $tagme=true) {
 		assert(is_string($tags) || is_array($tags));
 	
 		if(is_string($tags)) {
-			$tags = explode(' ', $tags);
+			$tags = explode(' ', trim($tags));
 		}
 		//else if(is_array($tags)) {
 			// do nothing
@@ -986,7 +989,7 @@ class Tag {
 			}
 		}
 
-		if(count($tag_array) == 0) {
+		if(count($tag_array) == 0 && $tagme) {
 			$tag_array = array("tagme");
 		}
 
@@ -1012,15 +1015,20 @@ class Tag {
 	public static function resolve_alias($tag) {
 		assert(is_string($tag));
 
+		$negative = false;
+		if(!empty($tag) && ($tag[0] == '-')) {
+			$negative = true;
+			$tag = substr($tag, 1);
+		}
+
 		global $database;
 		$newtag = $database->get_one(
 			$database->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)"),
 			array("tag"=>$tag));
-		if(!empty($newtag)) {
-			return $newtag;
-		} else {
-			return $tag;
+		if(empty($newtag)) {
+			$newtag = $tag;
 		}
+		return $negative ? "-$newtag" : $newtag;
 	}
 
 	public static function resolve_wildcard($tag) {
@@ -1055,9 +1063,9 @@ class Tag {
 	 * @param $tags Array of tags
 	 * @return Array of tags
 	 */
-	public static function resolve_list($tags) {
-		$tags = Tag::explode($tags);
-		reset($tags); // rewind array to the first element.
+	public static function resolve_aliases($tags) {
+		assert(is_array($tags));
+
 		$new = array();
 		foreach($tags as $tag) {
 			$new_set = explode(' ', Tag::resolve_alias($tag));
@@ -1065,7 +1073,7 @@ class Tag {
 				$new[] = $new_one;
 			}
 		}
-		$new = array_map(array('Tag', 'sanitise'), $new);
+
 		$new = array_iunique($new); // remove any duplicate tags
 		return $new;
 	}

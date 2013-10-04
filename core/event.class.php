@@ -34,9 +34,7 @@ class PageRequestEvent extends Event {
 		global $config;
 
 		// trim starting slashes
-		while(strlen($path) > 0 && $path[0] == '/') {
-			$path = substr($path, 1);
-		}
+		$path = ltrim($path, "/");
 
 		// if path is not specified, use the default front page
 		if(empty($path)) {   /* empty is faster than strlen */
@@ -254,10 +252,16 @@ class LogEvent extends Event {
 	 */
 	var $time;
 
-	public function __construct($section, $priority, $message) {
+	/**
+	 * Extra data to be held separate
+	 */
+	var $args;
+
+	public function __construct($section, $priority, $message, $args) {
 		$this->section = $section;
 		$this->priority = $priority;
 		$this->message = $message;
+		$this->args = $args;
 		$this->time = time();
 	}
 }

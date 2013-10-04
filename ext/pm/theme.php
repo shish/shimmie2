@@ -12,7 +12,8 @@ class PrivMsgTheme extends Themelet {
 		foreach($pms as $pm) {
 			$h_subject = html_escape($pm->subject);
 			if(strlen(trim($h_subject)) == 0) $h_subject = "(No subject)";
-			$from_name = User::by_id($pm->from_id)->name;
+			$from = User::by_id($pm->from_id);
+			$from_name = $from->name;
 			$h_from = html_escape($from_name);
 			$from_url = make_link("user/".url_escape($from_name));
 			$pm_url = make_link("pm/read/".$pm->id);
@@ -23,7 +24,8 @@ class PrivMsgTheme extends Themelet {
 				$h_subject = "<b>$h_subject</b>";
 				$readYN = "N";
 			}
-			$html .= "<tr>
+			$hb = $from->can("hellbanned") ? "hb" : "";
+			$html .= "<tr class='$hb'>
 			<td>$readYN</td>
 			<td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>

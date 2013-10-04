@@ -32,16 +32,26 @@ class TagEditTheme extends Themelet {
 
 	public function get_tag_editor_html(Image $image) {
 		global $user;
+
+		$tag_links = array();
+		foreach($image->get_tag_array() as $tag) {
+			$h_tag = html_escape($tag);
+			$u_tag = url_escape($tag);
+			$h_link = make_link("post/list/$u_tag/1");
+			$tag_links[] = "<a href='$h_link'>$h_tag</a>";
+		}
+		$h_tag_links = implode(" ", $tag_links);
 		$h_tags = html_escape($image->get_tag_list());
+
 		return "
 			<tr>
 				<th width='50px'>Tags</th>
 				<td>
 		".($user->can("edit_image_tag") ? "
-					<span class='view'>$h_tags</span>
+					<span class='view'>$h_tag_links</span>
 					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor'>
 		" : "
-					$h_tags
+					$h_tag_links
 		")."
 				</td>
 			</tr>

@@ -56,9 +56,7 @@ class Upload extends Extension {
 			$this->is_full = false;
 		}
 		else {
-			// TODO: This size limit should be configureable by the admin...
-			// currently set to 100 MB
-			$this->is_full = $free_num < 100*1024*1024;
+			$this->is_full = $free_num < MIN_FREE_SPACE;
 		}
 
 	}
@@ -193,7 +191,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
-					$source = isset($_POST['source']) ? $_POST['source'] : $url;
+					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$tags = array('tagme');
 					if(!empty($_GET['tags']) && $_GET['tags'] != "null") {
 						$tags = Tag::explode($_GET['tags']);
@@ -330,9 +328,7 @@ class Upload extends Extension {
 			$rating = "";
 		}
 
-		// PHP falls back to system default if /tmp fails, can't we just
-		// use the system default to start with? :-/
-		$tmp_filename = tempnam("/tmp", "shimmie_transload");
+		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 		$filename = basename($url);
 
 		if(!transload($url, $tmp_filename)) {
