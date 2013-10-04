@@ -112,7 +112,7 @@ class Artists extends Extension {
         global $database;
 
         $author = strtolower($event->author);
-        if (strlen($author) == 0 || strpos($author, " "))
+        if (strlen($author) === 0 || strpos($author, " "))
            return;
 
         $paddedAuthor = str_replace(" ", "_", $author);
@@ -709,7 +709,7 @@ class Artists extends Extension {
         if (is_null($aliasID) || !is_numeric($aliasID))
             return;
 
-        if (is_null($alias) || strlen($alias) == 0)
+        if (is_null($alias) || strlen($alias) === 0)
             return;
 
         global $user;
@@ -767,7 +767,7 @@ class Artists extends Extension {
         if (is_null($memberID) || !is_numeric($memberID))
             return;
 
-        if (is_null($memberName) || strlen($memberName) == 0)
+        if (is_null($memberName) || strlen($memberName) === 0)
             return;
 
          global $user;
@@ -796,7 +796,7 @@ class Artists extends Extension {
         global $user;
 
         $name = html_escape(strtolower($_POST["name"]));
-        if (is_null($name) || (strlen($name) == 0) || strpos($name, " "))
+        if (is_null($name) || (strlen($name) === 0) || strpos($name, " "))
             return -1;
 
         $notes = html_escape(ucfirst($_POST["notes"]));

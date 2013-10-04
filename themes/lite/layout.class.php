@@ -216,7 +216,7 @@ EOD;
 			} else {
 				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
 			}
-			}
+		}
 		if(!is_null($b)) {
 			if($salt =="main") {
 				$html .= "<div class='blockbody'>$b</div>";
@@ -245,12 +245,16 @@ EOD;
 			$url=$matches[1][0];
 		}
 		
-		for($i=0;$i<count($pages_matched);$i++) {
+		$count_pages_matched = count($pages_matched);
+		
+		for($i=0; $i < $count_pages_matched; $i++) {
 			if($url == $pages_matched[$i]) {
 				$html = "<a class='tab-selected' href='$link'>$desc</a>";
 			}
 		}
+		
 		if(is_null($html)) {$html = "<a class='tab' href='$link'>$desc</a>";}
+		
 		return $html;
 	}
 }

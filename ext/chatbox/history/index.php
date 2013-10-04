@@ -23,7 +23,7 @@
 	$ys = ys($log);
 	$posts = $ys->posts();
 
-	if (sizeof($posts) == 0)
+	if (sizeof($posts) === 0)
 		$html .= '
 			<div id="ys-post-1" class="ys-post ys-first ys-admin-post">
 				<span class="ys-post-timestamp">13:37</span>
