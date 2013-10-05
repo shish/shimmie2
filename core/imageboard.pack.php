@@ -698,7 +698,7 @@ class Image {
 		$count_tag_querylets = count($tag_querylets);
 
 		// no tags, do a simple search (+image metadata if we have any)
-		if(count_tag_querylets === 0) {
+		if($count_tag_querylets === 0) {
 			$query = new Querylet("SELECT images.* FROM images ");
 
 			if(!empty($img_search->sql)) {
@@ -708,7 +708,7 @@ class Image {
 		}
 
 		// one positive tag (a common case), do an optimised search
-		else if(count_tag_querylets === 1 && $tag_querylets[0]->positive) {
+		else if($count_tag_querylets === 1 && $tag_querylets[0]->positive) {
 			$query = new Querylet($database->scoreql_to_sql("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id=image_tags.image_id
