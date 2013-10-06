@@ -104,20 +104,11 @@ class Ratings extends Extension {
 			$set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 			$event->add_querylet(new Querylet("rating IN ($set)"));
 		}
-		if(preg_match("/^rating=([sqeu]+)$/", $event->term, $matches)) {
-			$sqes = $matches[1];
-			$arr = array();
-			$length = strlen($sqes);
-			for($i=0; $i<$length; $i++) {
-				$arr[] = "'" . $sqes[$i] . "'";
-			}
-			$set = join(', ', $arr);
+		if(preg_match("/^rating=(?:([sqeu]+)|(safe|questionable|explicit|unknown))$", strtolower($event->term), $matches)) {
+			$ratings = $matches[1] ? $matches[1] : array($matches[2][0]);
+			$ratings = array_intersect($ratings, str_split(Ratings::get_user_privs($user)));
+			$set = "'" . join("', '", $ratings) . "'";
 			$event->add_querylet(new Querylet("rating IN ($set)"));
-		}
-		if(preg_match("/^rating=(safe|questionable|explicit|unknown)$/", strtolower($event->term), $matches)) {
-			$text = $matches[1];
-			$char = $text[0];
-			$event->add_querylet(new Querylet("rating = :img_rating", array("img_rating"=>$char)));
 		}
 	}
 
