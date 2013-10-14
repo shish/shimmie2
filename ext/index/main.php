@@ -162,10 +162,13 @@ class Index extends Extension {
 			$search_terms = $event->get_search_terms();
 			$page_number = $event->get_page_number();
 			$page_size = $event->get_page_size();
+            
+			$count_search_terms = count($search_terms);
+            
 			try {
 				#log_debug("index", "Search for ".implode(" ", $search_terms), false, array("terms"=>$search_terms));
 				$total_pages = Image::count_pages($search_terms);
-				if(SPEED_HAX && count($search_terms) == 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
+				if(SPEED_HAX && $count_search_terms === 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
 					$images = $database->cache->get("post-list-$page_number");
 					if(!$images) {
 						$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
@@ -182,11 +185,13 @@ class Index extends Extension {
 				$images = array();
 			}
 
-			if(count($search_terms) == 0 && count($images) == 0 && $page_number == 1) {
+			$count_images = count($images);
+            
+			if($count_search_terms === 0 && $count_images === 0 && $page_number === 1) {
 				$this->theme->display_intro($page);
 				send_event(new PostListBuildingEvent($search_terms));
 			}
-			else if(count($search_terms) > 0 && count($images) == 1 && $page_number == 1) {
+			else if($count_search_terms > 0 && $count_images === 1 && $page_number === 1) {
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link('post/view/'.$images[0]->id));
 			}
