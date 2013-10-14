@@ -797,7 +797,7 @@ function data_path($filename) {
 function transload($url, $mfile) {
 	global $config;
 
-	if($config->get_string("transload_engine") == "curl" && function_exists("curl_init")) {
+	if($config->get_string("transload_engine") === "curl" && function_exists("curl_init")) {
 		$ch = curl_init($url);
 		$fp = fopen($mfile, "w");
 
@@ -814,7 +814,7 @@ function transload($url, $mfile) {
 		return true;
 	}
 
-	if($config->get_string("transload_engine") == "wget") {
+	if($config->get_string("transload_engine") === "wget") {
 		$s_url = escapeshellarg($url);
 		$s_mfile = escapeshellarg($mfile);
 		system("wget --no-check-certificate $s_url --output-document=$s_mfile");
@@ -822,7 +822,7 @@ function transload($url, $mfile) {
 		return file_exists($mfile);
 	}
 
-	if($config->get_string("transload_engine") == "fopen") {
+	if($config->get_string("transload_engine") === "fopen") {
 		$fp = @fopen($url, "r");
 		if(!$fp) {
 			return false;

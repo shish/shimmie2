@@ -69,7 +69,7 @@ abstract class BaseConfig implements Config {
 		$this->save($name);
 	}
 	public function set_array(/*string*/ $name, $value) {
-		assert(is_array($value));
+		assert(isset($value) && is_array($value));
 		$this->values[$name] = implode(",", $value);
 		$this->save($name);
 	}
@@ -90,7 +90,7 @@ abstract class BaseConfig implements Config {
 		}
 	}
 	public function set_default_array(/*string*/ $name, $value) {
-		assert(is_array($value));
+		assert(isset($value) && is_array($value));
 		if(is_null($this->get($name))) {
 			$this->values[$name] = implode(",", $value);
 		}

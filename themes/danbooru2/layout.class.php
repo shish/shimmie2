@@ -282,7 +282,9 @@ EOD;
 			$url=$matches[1][0];
 		}
 		
-		for($i=0;$i<count($pages_matched);$i++) {
+		$count_pages_matched = count($pages_matched);
+		
+		for($i=0; $i < $count_pages_matched; $i++) {
 			if($url == $pages_matched[$i]) {
 				$html = "<li class='current-page'><a href='$link'>$desc</a></li>";
 			}

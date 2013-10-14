@@ -148,9 +148,9 @@ class Image {
 	public static function count_images($tags=array()) {
 		assert(is_array($tags));
 		global $database;
-        $tag_count = count($tags);
-        
-		if($tag_count == 0) {
+		$tag_count = count($tags);
+		
+		if($tag_count === 0) {
 			$total = $database->cache->get("image-count");
 			if(!$total) {
 				$total = $database->get_one("SELECT COUNT(*) FROM images");
@@ -158,7 +158,7 @@ class Image {
 			}
 			return $total;
 		}
-		else if($tag_count == 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+		else if($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
 			$term = Tag::resolve_alias($tags[0]);
 			return $database->get_one(
 				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
@@ -207,7 +207,7 @@ class Image {
 			$dir = "ASC";
 		}
 
-		if(count($tags) == 0) {
+		if(count($tags) === 0) {
 			$row = $database->get_row('SELECT images.* FROM images WHERE images.id '.$gtlt.' '.$this->id.' ORDER BY images.id '.$dir.' LIMIT 1');
 		}
 		else {
@@ -584,14 +584,14 @@ class Image {
 				$_flexihash = new Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
-                    $parts_count = count($parts);
+					$parts_count = count($parts);
 					$opt_val = "";
 					$opt_weight = 0;
-					if($parts_count == 2) {
+					if($parts_count === 2) {
 						$opt_val = $parts[0];
 						$opt_weight = $parts[1];
 					}
-					elseif($parts_count == 1) {
+					elseif($parts_count === 1) {
 						$opt_val = $parts[0];
 						$opt_weight = 1;
 					}
@@ -694,9 +694,11 @@ class Image {
 		}
 		$img_search = new Querylet($sql, $terms);
 
+		// How many tag querylets are there?
+		$count_tag_querylets = count($tag_querylets);
 
 		// no tags, do a simple search (+image metadata if we have any)
-		if(count($tag_querylets) == 0) {
+		if($count_tag_querylets === 0) {
 			$query = new Querylet("SELECT images.* FROM images ");
 
 			if(!empty($img_search->sql)) {
@@ -706,7 +708,7 @@ class Image {
 		}
 
 		// one positive tag (a common case), do an optimised search
-		else if(count($tag_querylets) == 1 && $tag_querylets[0]->positive) {
+		else if($count_tag_querylets === 1 && $tag_querylets[0]->positive) {
 			$query = new Querylet($database->scoreql_to_sql("
 				SELECT images.* FROM images
 				JOIN image_tags ON images.id=image_tags.image_id
@@ -990,7 +992,7 @@ class Tag {
 			}
 		}
 
-		if(count($tag_array) == 0 && $tagme) {
+		if(count($tag_array) === 0 && $tagme) {
 			$tag_array = array("tagme");
 		}
 
@@ -1106,8 +1108,8 @@ function move_upload_to_archive(DataUploadEvent $event) {
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
 
-	if($orig_width == 0) $orig_width = 192;
-	if($orig_height == 0) $orig_height = 192;
+	if($orig_width === 0) $orig_width = 192;
+	if($orig_height === 0) $orig_height = 192;
 
 	if($orig_width > $orig_height * 5) $orig_width = $orig_height * 5;
 	if($orig_height > $orig_width * 5) $orig_height = $orig_width * 5;
