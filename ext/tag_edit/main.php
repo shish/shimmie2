@@ -184,8 +184,8 @@ class TagEdit extends Extension {
 		global $database;
 		global $config;
 
-		$search_set = Tag::explode($search);
-		$replace_set = Tag::explode($replace);
+		$search_set = Tag::explode(strtolower($search));
+		$replace_set = Tag::explode(strtolower($replace));
 
 		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
@@ -205,6 +205,7 @@ class TagEdit extends Extension {
 				$before = $image->get_tag_array();
 				$after = array();
 				foreach($before as $tag) {
+					$tag = strtolower($tag);
 					if(!in_array($tag, $search_set)) {
 						$after[] = $tag;
 					}
