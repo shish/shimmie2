@@ -5,6 +5,18 @@
  * Link: http://code.shishnet.org/shimmie2/
  * License: GPLv2
  * Description: Allow users to rate images "safe", "questionable" or "explicit"
+ * Documentation:
+ *  This shimmie extension provides filter:
+ *  <ul>
+ *    <li>rating = (safe|questionable|explicit|unknown)
+ *      <ul>
+ *        <li>rating=s -- safe images
+ *        <li>rating=q -- questionable images
+ *        <li>rating=e -- explicit images
+ *        <li>rating=u -- Unknown rating
+ *        <li>rating=sq -- safe and questionable images
+ *      </ul>
+ *  </ul>
  */
 
 class RatingSetEvent extends Event {
@@ -104,9 +116,9 @@ class Ratings extends Extension {
 			$set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 			$event->add_querylet(new Querylet("rating IN ($set)"));
 		}
-		if(preg_match("/^rating=(?:([sqeu]+)|(safe|questionable|explicit|unknown))$", strtolower($event->term), $matches)) {
+		if(preg_match("/^rating=(?:([sqeu]+)|(safe|questionable|explicit|unknown))$/D", strtolower($event->term), $matches)) {
 			$ratings = $matches[1] ? $matches[1] : array($matches[2][0]);
-			$ratings = array_intersect($ratings, str_split(Ratings::get_user_privs($user)));
+			$ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
 			$set = "'" . join("', '", $ratings) . "'";
 			$event->add_querylet(new Querylet("rating IN ($set)"));
 		}
