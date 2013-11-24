@@ -142,14 +142,23 @@ else if(document.getElementById("tags") !== null) {
 
 	// Can't seem to grab source due to url containing a &
 	// var source="http://" + document.location.hostname + document.location.href.match("\/index\.php?page=post&amp;s=view\\&amp;id=.*");
-	var gmi = document.getElementById("image").src.match(".*img[0-9]+\.gelbooru\.com\/\/images\/[0-9]+\/[a-z0-9]+\.[a-z0-9]+")[0];
-
-	// Since Gelbooru does not allow flash, no need to search for flash tag.
-	// Gelbooru doesn't show file size in statistics either...
-	if(supext.search(gmi.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
-		location.href = ste+gmi+"&tags="+tag+"&rating="+rating;//+"&source="+source;
+	
+	// Updated Nov. 24, 2013 by jgen.
+	var gmi;	
+	try {
+		gmi = document.getElementById("image").src.match(".*img[0-9]*\.gelbooru\.com[\/]+images[\/]+[0-9]+[\/]+[a-z0-9]+\.[a-z0-9]+")[0];
+		
+		// Since Gelbooru does not allow flash, no need to search for flash tag.
+		// Gelbooru doesn't show file size in statistics either...
+		if(supext.search(gmi.match("http\:\/\/.*\\.([a-z0-9]+)")[1]) !== -1){
+			location.href = ste+gmi+"&tags="+tag+"&rating="+rating;//+"&source="+source;
+		}
+		else{
+			alert(notsup);
+		}
 	}
-	else{
-		alert(notsup);
+	catch (err)
+	{
+		alert("Unable to locate the image on the page!\n(Gelbooru may have changed the structure of their page, please file a bug.)");
 	}
 }
