@@ -1,8 +1,14 @@
-<?php ob_start(); ?>
+<?php
+
+// TODO: Rewrite the entire installer and make it more readable.
+
+ob_start();
+
+?>
 <!DOCTYPE html>
 <html>
 <!--
- - install.php (c) Shish et all. 2007-2012
+ - install.php (c) Shish et all. 2007-2013
  -
  - Initialise the database, check that folder
  - permissions are set properly.
@@ -14,7 +20,7 @@
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
-		<script src="lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="lib/jquery-1.7.1.min.js"></script>
 	</head>
 	<body>
 <?php if(false) { ?>
@@ -48,11 +54,12 @@ require_once __SHIMMIE_ROOT__."core/util.inc.php";
 require_once __SHIMMIE_ROOT__."core/exceptions.class.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
 
-if(is_readable("data/config/shimmie.conf.php")) die("Already installed");
+if(is_readable("data/config/shimmie.conf.php")) die("Shimmie is already installed.");
 
 do_install();
 
 // utilities {{{
+	// TODO: Can some of these be pushed into "core/util.inc.php" ?
 
 /**
   * Strips off any kind of slash at the end so as to normalise the path.
@@ -99,6 +106,7 @@ function eok($name, $value) {
 	}
 }
 // }}}
+
 function do_install() { // {{{
 	if(file_exists("data/config/auto_install.conf.php")) {
 		require_once "data/config/auto_install.conf.php";
@@ -116,6 +124,7 @@ function do_install() { // {{{
 		ask_questions();
 	}
 } // }}}
+
 function ask_questions() { // {{{
 	$warnings = array();
 	$errors = array();
@@ -138,6 +147,7 @@ function ask_questions() { // {{{
 	if(
 		!in_array("mysql", $drivers) &&
 		!in_array("pgsql", $drivers) &&
+
 		!in_array("sqlite", $drivers)
 	) {
 		$errors[] = "
@@ -221,6 +231,10 @@ function ask_questions() { // {{{
 		</div>
 EOD;
 } // }}}
+
+/**
+ * This is where the install really takes place.
+ */
 function install_process() { // {{{
 	build_dirs();
 	create_tables();
@@ -229,15 +243,21 @@ function install_process() { // {{{
 	
 	header("Location: index.php");
 } // }}}
+
 function create_tables() { // {{{
 	try {
 		$db = new Database();
 		
 		if ( $db->count_tables() > 0 ) {
-			echo "
-				<p>Warning: The Database schema is not empty!</p>
+			print <<<EOD
+			<div id="installer">
+				<h1>Shimmie Installer</h1>
+				<h3>Warning: The Database schema is not empty!</h3>
 				<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
-				<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>";
+				<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
+				<br/><br/>
+			</div>
+EOD;
 			exit;
 		}
 		
@@ -296,11 +316,35 @@ function create_tables() { // {{{
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
-	catch(PDOException $e) {
-		// FIXME: Make the error message user friendly
+	catch(PDOException $e)
+	{
+		print <<<EOD
+			<div id="installer">
+				<h1>Shimmie Installer</h1>
+				<h3>Database Error:</h3>
+				<p>An error occured while trying to create the database tables necessary for Shimmie.</p>
+				<p>Please check and ensure that the database configuration options are all correct.</p>
+				<br/><br/>
+			</div>
+EOD;
 		exit($e->getMessage());
 	}
+	catch (Exception $e)
+	{
+		print <<<EOD
+			<div id="installer">
+				<h1>Shimmie Installer</h1>
+				<h3>Unknown Error:</h3>
+				<p>An unknown error occured while trying to create the database tables necessary for Shimmie.</p>
+				<p>Please check the server log files for more information.</p>
+				<br/><br/>
+			</div>
+EOD;
+		exit($e->getMessage());
+	}
+	
 } // }}}
+
 function insert_defaults() { // {{{
 	try {
 		$db = new Database();
@@ -313,11 +357,34 @@ function insert_defaults() { // {{{
 		}
 		$db->commit();
 	}
-	catch(PDOException $e) {
-		// FIXME: Make the error message user friendly
+	catch(PDOException $e)
+	{
+		print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>Database Error:</h3>
+			<p>An error occured while trying to insert data into the database.</p>
+			<p>Please check and ensure that the database configuration options are all correct.</p>
+			<br/><br/>
+		</div>
+EOD;
+		exit($e->getMessage());
+	}
+	catch (Exception $e)
+	{
+		print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>Unknown Error:</h3>
+			<p>An unknown error occured while trying to insert data into the database.</p>
+			<p>Please check the server log files for more information.</p>
+			<br/><br/>
+		</div>
+EOD;
 		exit($e->getMessage());
 	}
 } // }}}
+
 function build_dirs() { // {{{
 	// *try* and make default dirs. Ignore any errors --
 	// if something is amiss, we'll tell the user later
@@ -333,16 +400,20 @@ function build_dirs() { // {{{
 		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
 	) {
 		print "
-			<p>Shimmie needs three folders in it's directory, 'images', 'thumbs', and 'data',
-			and they need to be writable by the PHP user.</p>
-			<p>If you see this error, if probably means the folders are owned by you, and they need to be
-			writable by the web server.</p>
+		<div id='installer'>
+			<h1>Shimmie Installer</h1>
+			<h3>Directory Permissions Error:</h3>
+			<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
+			<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
 			<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
 			<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
+			<br/><br/>
+		</div>
 		";
 		exit;
 	}
 } // }}}
+
 function write_config() { // {{{
 	$file_content = '<' . '?php' . "\n" .
 			"define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
@@ -355,6 +426,9 @@ function write_config() { // {{{
 	if(!file_put_contents("data/config/shimmie.conf.php", $file_content)) {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>File Permissions Error:</h3>
 		    The web server isn't allowed to write to the config file; please copy
 		    the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
 		    folder manually. Make sure that when you save it, there is no whitespace
@@ -362,7 +436,9 @@ function write_config() { // {{{
 
 		    <p><textarea cols="80" rows="2">$file_content</textarea>
 						
-		    <p>One done, <a href='index.php'>Continue</a>
+		    <p>Once done, <a href="index.php">Continue</a>
+			<br/><br/>
+		</div>
 EOD;
 		exit;
 	}

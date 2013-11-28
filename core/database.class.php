@@ -470,6 +470,8 @@ class Database {
 	 * Returns the number of tables present in the current database.
 	 */
 	public function count_tables() {
+		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
+		
 		if($this->engine->name === "mysql") {
 			return count(
 						$this->get_all("SHOW TABLES")
