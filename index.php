@@ -3,7 +3,7 @@
  * \mainpage Shimmie2 / SCore Documentation
  *
  * SCore is a framework designed for writing flexible, extendable applications.
- * Whereas most PHP apps are built monolithicly, score's event-based nature
+ * Whereas most PHP apps are built monolithically, score's event-based nature
  * allows parts to be mixed and matched. For instance, the most famous
  * collection of score extensions is the Shimmie image board, which includes
  * user management, a wiki, a private messaging system, etc. But one could
@@ -14,8 +14,8 @@
  * 
  * Dijkstra will kill me for personifying my architecture, but I can't think
  * of a better way without going into all the little details.
- * There are a bunch of Extension subclasses, they talk to eachother by sending
- * and recieving Event subclasses. The primary driver for each conversation is the
+ * There are a bunch of Extension subclasses, they talk to each other by sending
+ * and receiving  Event subclasses. The primary driver for each conversation is the
  * initial PageRequestEvent. If an Extension wants to display something to the
  * user, it adds a block to the Page data store. Once the conversation is over, the Page is passed to the
  * current theme's Layout class which will tidy up the data and present it to

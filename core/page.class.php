@@ -234,6 +234,17 @@ class Page {
 		}
 	}
 	
+	/**
+	 * This function grabs all the CSS and JavaScript files sprinkled throughout Shimmie's folders,
+	 * concatenates them together into two large files (one for CSS and one for JS) and then stores
+	 * them in the /cache/ directory for serving to the user.
+	 * 
+	 * Why do this? Two reasons:
+	 *  1. Reduces the number of files the user's browser needs to download.
+	 *  2. Allows these cached files to be compressed/minified by the admin.
+	 * 
+	 * TODO: This should really be configurable somehow...
+	 */
 	protected function add_auto_html_headers() {
 		global $config;
 
