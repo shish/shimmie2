@@ -377,19 +377,25 @@ class OuroborosAPI extends Extension
                 if ($this->match('create')) {
                     // Create
                     // @TODO Should move the validation logic into OuroborosPost instead?
-                    $post = array(
-                        'tags' => !empty($_REQUEST['post']['tags']) ? filter_var($_REQUEST['post']['tags'], FILTER_SANITIZE_STRING) : 'tagme',
-                        'file' => !empty($_REQUEST['post']['file']) ? filter_var($_REQUEST['post']['file'], FILTER_UNSAFE_RAW) : null,
-                        'rating' => !empty($_REQUEST['post']['rating']) ? filter_var($_REQUEST['post']['rating'], FILTER_SANITIZE_NUMBER_INT) : 'q',
-                        'source' => !empty($_REQUEST['post']['source']) ? filter_var(urldecode($_REQUEST['post']['source']), FILTER_SANITIZE_URL) : null,
-                        'sourceurl' => !empty($_REQUEST['post']['sourceurl']) ? filter_var(urldecode($_REQUEST['post']['sourceurl']), FILTER_SANITIZE_URL) : '',
-                        'description' => !empty($_REQUEST['post']['description']) ? filter_var($_REQUEST['post']['description'], FILTER_SANITIZE_STRING) : '',
-                        'is_rating_locked' => !empty($_REQUEST['post']['is_rating_locked']) ? filter_var($_REQUEST['post']['is_rating_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
-                        'is_note_locked' => !empty($_REQUEST['post']['is_note_locked']) ? filter_var($_REQUEST['post']['is_note_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
-                        'parent_id' => !empty($_REQUEST['post']['parent_id']) ? filter_var($_REQUEST['post']['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null,
-                    );
-                    $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
-                    $this->postCreate(new OuroborosPost($post), $md5);
+                    if($user->can("create_image")) {
+                        $post = array(
+                            'tags' => !empty($_REQUEST['post']['tags']) ? filter_var($_REQUEST['post']['tags'], FILTER_SANITIZE_STRING) : 'tagme',
+                            'file' => !empty($_REQUEST['post']['file']) ? filter_var($_REQUEST['post']['file'], FILTER_UNSAFE_RAW) : null,
+                            'rating' => !empty($_REQUEST['post']['rating']) ? filter_var($_REQUEST['post']['rating'], FILTER_SANITIZE_NUMBER_INT) : 'q',
+                            'source' => !empty($_REQUEST['post']['source']) ? filter_var(urldecode($_REQUEST['post']['source']), FILTER_SANITIZE_URL) : null,
+                            'sourceurl' => !empty($_REQUEST['post']['sourceurl']) ? filter_var(urldecode($_REQUEST['post']['sourceurl']), FILTER_SANITIZE_URL) : '',
+                            'description' => !empty($_REQUEST['post']['description']) ? filter_var($_REQUEST['post']['description'], FILTER_SANITIZE_STRING) : '',
+                            'is_rating_locked' => !empty($_REQUEST['post']['is_rating_locked']) ? filter_var($_REQUEST['post']['is_rating_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
+                            'is_note_locked' => !empty($_REQUEST['post']['is_note_locked']) ? filter_var($_REQUEST['post']['is_note_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
+                            'parent_id' => !empty($_REQUEST['post']['parent_id']) ? filter_var($_REQUEST['post']['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null,
+                        );
+                        $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
+                        $this->postCreate(new OuroborosPost($post), $md5);
+                    }
+                    else {
+                        $this->sendResponse(403, 'You cannot create new posts');
+                    }
+
                 }
                 elseif ($this->match('update')) {
                     // Update
