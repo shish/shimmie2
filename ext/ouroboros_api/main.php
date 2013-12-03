@@ -11,6 +11,7 @@
  *       <ul>
  *         <li>Index/List</li>
  *         <li>Show</li>
+ *         <li>Create</li>
  *       </ul>
  *     </li>
  *     <li>Tag:
@@ -269,10 +270,12 @@ class OuroborosPost extends _SafeOuroborosImage {
             $this->tags = $post['tags'];
         }
         if (array_key_exists('file', $post)) {
-            assert(is_array($post['file']));
-            assert(array_key_exists('tmp_name', $post['file']));
-            assert(array_key_exists('name', $post['file']));
-            $this->file = $post['file'];
+            if (!is_null($post['file'])) {
+                assert(is_array($post['file']));
+                assert(array_key_exists('tmp_name', $post['file']));
+                assert(array_key_exists('name', $post['file']));
+                $this->file = $post['file'];
+            }
         }
         if (array_key_exists('rating', $post)) {
             assert(
