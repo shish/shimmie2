@@ -292,11 +292,18 @@ class CommentList extends Extension {
 		if(class_exists("Ratings")) {
 			$user_ratings = Ratings::get_user_privs($user);
 		}
+		
 		$total_pages = $database->cache->get("comment_pages");
+		if(empty($total_pages)) {
+			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
+			$database->cache->set("comment_pages", $total_pages, 600);
+		}
+		
 		if(is_null($current_page) || $current_page <= 0) {
 			$current_page = 1;
 		}
 		$current_page = $this->sanity_check_pagenumber($current_page, $total_pages);
+		
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
@@ -309,11 +316,6 @@ class CommentList extends Extension {
 			LIMIT :limit OFFSET :offset
 			";
 		$result = $database->Execute($get_threads, array("limit"=>$threads_per_page, "offset"=>$start));
-
-		if(empty($total_pages)) {
-			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
-			$database->cache->set("comment_pages", $total_pages, 600);
-		}
 
 		$images = array();
 		while($row = $result->fetch()) {
@@ -330,6 +332,7 @@ class CommentList extends Extension {
 		$this->theme->display_comment_list($images, $current_page, $total_pages, $user->can("create_comment"));
 	}
 // }}}
+
 // get comments {{{
 	private function get_recent_comments($count) {
 		global $config;
@@ -396,6 +399,7 @@ class CommentList extends Extension {
 		return $comments;
 	}
 // }}}
+
 // add / remove / edit comments {{{
 	private function is_comment_limit_hit() {
 		global $user;
@@ -477,7 +481,7 @@ class CommentList extends Extension {
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
 // do some checks
-	private function sanity_check_pagenumber($pagenum, $maxpage){
+	private function sanity_check_pagenumber(/*int*/ $pagenum, /*int*/ $maxpage){
 		if (!is_numeric($pagenum)){
 			$pagenum=1;
 		}
