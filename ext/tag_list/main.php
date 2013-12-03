@@ -243,12 +243,28 @@ class TagList extends Extension {
 
 		$html = "";
 		if($config->get_bool("tag_list_pages")) $html .= $this->build_az();
+		
+		/*
+		  strtolower() vs. mb_strtolower()
+		  ( See http://www.php.net/manual/en/function.mb-strtolower.php for more info )
+		 
+		  PHP5's strtolower function does not support Unicode (UTF-8) properly, so
+		  you have to use another function, mb_strtolower, to handle UTF-8 strings.
+		  
+		  What's worse is that mb_strtolower is horribly SLOW.
+		  
+		  It would probably be better to have a config option for the Tag List that
+		  would allow you to specify if there are UTF-8 tags.
+		  
+		*/ 
+		mb_internal_encoding('UTF-8');
+		
 		$lastLetter = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
 			$count = $row['count'];
-			if($lastLetter != strtolower(substr($h_tag, 0, count($starts_with)+1))) {
-				$lastLetter = strtolower(substr($h_tag, 0, count($starts_with)+1));
+			if($lastLetter != mb_strtolower(substr($h_tag, 0, count($starts_with)+1))) {
+				$lastLetter = mb_strtolower(substr($h_tag, 0, count($starts_with)+1));
 				$html .= "<p>$lastLetter<br>";
 			}
 			$link = $this->tag_link($row['tag']);
