@@ -99,6 +99,8 @@ class BBCode extends FormatterExtension {
 			$end = strpos($text, "[/spoiler]");
 			if($end === false) break;
 
+			if($end < $start) break;
+
 			$beginning = substr($text, 0, $start);
 			$middle = str_rot13(substr($text, $start+$l1, ($end-$start-$l1)));
 			$ending = substr($text, $end + $l2, (strlen($text)-$end+$l2));
@@ -123,6 +125,8 @@ class BBCode extends FormatterExtension {
 
 			$end = strpos($text, "[/code]", $start);
 			if($end === false) break;
+
+			if($end < $start) break;
 
 			$beginning = substr($text, 0, $start);
 			$middle = base64_encode(substr($text, $start+$l1, ($end-$start-$l1)));
