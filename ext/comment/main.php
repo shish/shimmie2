@@ -293,6 +293,8 @@ class CommentList extends Extension {
 			$user_ratings = Ratings::get_user_privs($user);
 		}
 		
+		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
+		
 		$total_pages = $database->cache->get("comment_pages");
 		if(empty($total_pages)) {
 			$total_pages = (int)($database->get_one("SELECT COUNT(c1) FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1") / 10);
@@ -307,7 +309,6 @@ class CommentList extends Extension {
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
-		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		$get_threads = "
 			SELECT image_id,MAX(posted) AS latest
 			FROM comments $where
