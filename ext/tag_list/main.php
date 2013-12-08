@@ -292,7 +292,7 @@ class TagList extends Extension {
 				ORDER BY count DESC, tag ASC
 				", array("tags_min"=>$tags_min));
 
-		$html = "Results grouped by log<sub>e</sub>(n)";
+		$html = "Results grouped by log<sub>10</sub>(n)";
 		$lastLog = "";
 		foreach($tag_data as $row) {
 			$h_tag = html_escape($row['tag']);
