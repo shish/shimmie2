@@ -389,20 +389,5 @@ class PoolsTheme extends Themelet {
 
 		$this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
 	}
-
-
-	/**
-	 * Display an error message to the user.
-	 */
-	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
-		global $page;
-		
-		// Quick n' Dirty fix
-		$message = $code;
-
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new Block("Error", $errMessage, "main", 10));
-	}
 }
 ?>

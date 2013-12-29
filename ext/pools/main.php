@@ -116,7 +116,7 @@ class Pools extends Extension {
 						$this->theme->new_pool_composer($page);
 					} else {
 						$errMessage = "You must be registered and logged in to create a new pool.";
-						$this->theme->display_error($errMessage);
+						$this->theme->display_error(401, "Error", $errMessage);
 					}
 					break;
 
@@ -127,7 +127,7 @@ class Pools extends Extension {
 						$page->set_redirect(make_link("pool/view/".$newPoolID));
 					}
 					catch(PoolCreationException $e) {
-						$this->theme->display_error($e->error);
+						$this->theme->display_error(400, "Error", $e->error);
 					}
 					break;
 
@@ -173,7 +173,7 @@ class Pools extends Extension {
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$pool_id));
 						} else {
-							$this->theme->display_error("Permssion denied.");
+							$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 						}
 					}
 					break;
@@ -182,7 +182,7 @@ class Pools extends Extension {
 					if ($this->have_permission($user, $pool)) {
 						$this->import_posts($pool_id);
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -192,7 +192,7 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -202,7 +202,7 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 
 					break;
@@ -215,7 +215,7 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/list"));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -336,14 +336,16 @@ class Pools extends Extension {
 	 */
 	private function add_pool() {
 		global $user, $database;
-
+		#throw new PoolCreationException("Pool needs a title");
 		if($user->is_anonymous()) {
 			throw new PoolCreationException("You must be registered and logged in to add a image.");
 		}
 		if(empty($_POST["title"])) {
-			throw new PoolCreationException("Pool needs a title");
+			throw new PoolCreationException("Pool title is empty.");
 		}
-
+		if($this->get_single_pool_from_title($_POST["title"])) {
+			throw new PoolCreationException("A pool using this title already exists.");
+		}
 		$public = $_POST["public"] == "Y" ? "Y" : "N";
 		$database->execute("
 				INSERT INTO pools (user_id, public, title, description, date)
@@ -366,7 +368,7 @@ class Pools extends Extension {
 		global $database;
 		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
-	
+
 	/**
 	 * Retrieve information about a pool given a pool ID.
 	 * @param $poolID Integer
@@ -375,6 +377,16 @@ class Pools extends Extension {
 	private function get_single_pool(/*int*/ $poolID) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
+	}
+
+	/**
+	 * Retrieve information about a pool given a pool title.
+	 * @param $poolTitle Integer
+	 * @retval 2D array (with only 1 element in the one dimension)
+	 */
+	private function get_single_pool_from_title(/*string*/ $poolTitle) {
+		global $database;
+		return $database->get_row("SELECT * FROM pools WHERE title=:title", array("title"=>$poolTitle));
 	}
 
 	/**
