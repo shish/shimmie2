@@ -71,6 +71,11 @@ class Pools extends Extension {
 
 			log_info("pools", "extension installed");
 		}
+
+		if ($config->get_int("ext_pools_version") < 2){
+			$database->Execute("ALTER TABLE `pools`	ADD UNIQUE INDEX (`title`);");
+			$config->set_int("ext_pools_version", 2);
+		}
 	}
 
 	// Add a block to the Board Config / Setup
