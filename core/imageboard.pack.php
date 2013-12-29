@@ -484,7 +484,7 @@ class Image {
 				if(empty($id)) {
 					// a new tag
 					$database->execute(
-							"INSERT INTO tags(tag) VALUES (:tag)",
+							"INSERT IGNORE INTO tags(tag) VALUES (:tag)",
 							array("tag"=>$tag));
 					$database->execute(
 							"INSERT INTO image_tags(image_id, tag_id)
