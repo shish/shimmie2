@@ -1,5 +1,5 @@
 $(function() {
-	var order_pool = $.cookie("shm_ui-order-pool");
+	var order_pool = $.cookie("shm_ui-order-pool") || "created";
 	$("#order_pool option[value="+order_pool+"]").attr("selected", true);
 
 	$('#order_pool').change(function(){
