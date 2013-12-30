@@ -166,6 +166,13 @@ class PoolsTheme extends Themelet {
 			$pool_images .= "\n".$thumb_html."\n";
 		}
 
+		$nav_html = '
+			<a href="'.make_link().'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
+
+		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
 		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));		
 		$this->display_paginator($page, "pool/view/".$pools[0]['id'], null, $pageNumber, $totalPages);
 	}
