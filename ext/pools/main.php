@@ -73,8 +73,8 @@ class Pools extends Extension {
 		}
 
 		if ($config->get_int("ext_pools_version") < 2){
-			$database->Execute("ALTER TABLE `pools`	ADD UNIQUE INDEX (`title`);");
-			$database->Execute("ALTER TABLE `pools`	ADD `lastupdated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
+			$database->Execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
+			$database->Execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
 
 			$config->set_int("ext_pools_version", 2);
 		}
