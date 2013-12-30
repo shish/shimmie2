@@ -476,6 +476,18 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
+				if(preg_match("/^source=(.*)$/i", $tag, $matches)) {
+					$this->set_source($matches[1]);
+					continue;
+				}
+				if(preg_match("/^pool=(.*)$/i", $tag, $matches)) {
+					if(class_exists("Pools")) {
+						$pls = new Pools();
+						$pls->add_post_from_tag($matches[1], $this->id);
+					}
+					continue;
+				}
+
 				$id = $database->get_one(
 						$database->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"

@@ -71,6 +71,13 @@ class Pools extends Extension {
 
 			log_info("pools", "extension installed");
 		}
+
+		if ($config->get_int("ext_pools_version") < 2){
+			$database->Execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
+			$database->Execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
+
+			$config->set_int("ext_pools_version", 2);
+		}
 	}
 
 	// Add a block to the Board Config / Setup
@@ -111,7 +118,7 @@ class Pools extends Extension {
 						$this->theme->new_pool_composer($page);
 					} else {
 						$errMessage = "You must be registered and logged in to create a new pool.";
-						$this->theme->display_error($errMessage);
+						$this->theme->display_error(401, "Error", $errMessage);
 					}
 					break;
 
@@ -122,7 +129,7 @@ class Pools extends Extension {
 						$page->set_redirect(make_link("pool/view/".$newPoolID));
 					}
 					catch(PoolCreationException $e) {
-						$this->theme->display_error($e->error);
+						$this->theme->display_error(400, "Error", $e->error);
 					}
 					break;
 
@@ -168,7 +175,7 @@ class Pools extends Extension {
 							$page->set_mode("redirect");
 							$page->set_redirect(make_link("pool/view/".$pool_id));
 						} else {
-							$this->theme->display_error("Permssion denied.");
+							$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 						}
 					}
 					break;
@@ -177,7 +184,7 @@ class Pools extends Extension {
 					if ($this->have_permission($user, $pool)) {
 						$this->import_posts($pool_id);
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -187,7 +194,7 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -197,7 +204,18 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/view/".$pool_id));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
+					}
+
+					break;
+
+				case "edit_description":
+					if ($this->have_permission($user, $pool)) {
+						$this->edit_description();
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("pool/view/".$pool_id));
+					} else {
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 
 					break;
@@ -210,7 +228,7 @@ class Pools extends Extension {
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("pool/list"));
 					} else {
-						$this->theme->display_error("Permssion denied.");
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
 					}
 					break;
 
@@ -275,6 +293,23 @@ class Pools extends Extension {
 		}
 	}
 
+	public function add_post_from_tag(/*str*/ $poolTag, /*int*/ $imageID){
+		$poolTag = str_replace("_", " ", $poolTag);
+		//First check if pool tag is a title
+		if(ctype_digit($poolTag)){
+			//If string only contains numeric characters, assume it is $poolID
+			if($this->get_single_pool($poolTag)){ //Make sure pool exists
+				$this->add_post($poolTag, $imageID);
+			}
+		}else{
+			//If string doesn't contain only numeric characters, check to see if tag is title.
+			$pool = $this->get_single_pool_from_title($poolTag);
+			if($pool){
+				$this->add_post($pool['id'], $imageID);
+			}
+		}
+	}
+
 	/* ------------------------------------------------- */
 	/* --------------  Private Functions  -------------- */
 	/* ------------------------------------------------- */
@@ -309,13 +344,26 @@ class Pools extends Extension {
 
 		$poolsPerPage = $config->get_int("poolsListsPerPage");
 
+
+		$order_by = "";
+		$order = get_prefixed_cookie("ui-order-pool");
+		if($order == "created" || is_null($order)){
+			$order_by = "ORDER BY p.date DESC";
+		}elseif($order == "updated"){
+			$order_by = "ORDER BY p.lastupdated DESC";
+		}elseif($order == "name"){
+			$order_by = "ORDER BY p.title ASC";
+		}elseif($order == "count"){
+			$order_by = "ORDER BY p.posts DESC";
+		}
+
 		$pools = $database->get_all("
 				SELECT p.id, p.user_id, p.public, p.title, p.description,
 				       p.posts, u.name as user_name
 				FROM pools AS p
 				INNER JOIN users AS u
 				ON p.user_id = u.id
-				ORDER BY p.date DESC
+				$order_by
 				LIMIT :l OFFSET :o
 				", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage)
 				);
@@ -336,7 +384,10 @@ class Pools extends Extension {
 			throw new PoolCreationException("You must be registered and logged in to add a image.");
 		}
 		if(empty($_POST["title"])) {
-			throw new PoolCreationException("Pool needs a title");
+			throw new PoolCreationException("Pool title is empty.");
+		}
+		if($this->get_single_pool_from_title($_POST["title"])) {
+			throw new PoolCreationException("A pool using this title already exists.");
 		}
 
 		$public = $_POST["public"] == "Y" ? "Y" : "N";
@@ -361,7 +412,7 @@ class Pools extends Extension {
 		global $database;
 		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
-	
+
 	/**
 	 * Retrieve information about a pool given a pool ID.
 	 * @param $poolID Integer
@@ -370,6 +421,16 @@ class Pools extends Extension {
 	private function get_single_pool(/*int*/ $poolID) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
+	}
+
+	/**
+	 * Retrieve information about a pool given a pool title.
+	 * @param $poolTitle Integer
+	 * @retval 2D array (with only 1 element in the one dimension)
+	 */
+	private function get_single_pool_from_title(/*string*/ $poolTitle) {
+		global $database;
+		return $database->get_row("SELECT * FROM pools WHERE title=:title", array("title"=>$poolTitle));
 	}
 
 	/**
@@ -476,6 +537,17 @@ class Pools extends Extension {
 		return $poolID;
 	}
 
+	/*
+	 * Allows editing of pool description.
+	 */
+	private function edit_description() {
+		global $database;
+
+		$poolID = int_escape($_POST['pool_id']);
+		$database->execute("UPDATE pools SET description=:dsc WHERE id=:pid", array("dsc"=>$_POST['description'], "pid"=>$poolID));
+
+		return $poolID;
+	}
 
 	/**
 	 * This function checks if a given image is contained within a given pool.
