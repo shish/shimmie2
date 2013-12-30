@@ -3,6 +3,7 @@
  * Name: Ouroboros API
  * Author: Diftraku <diftraku[at]derpy.me>
  * Description: Ouroboros-like API for Shimmie
+ * Version: 0.2
  * Documentation:
  *   Currently working features
  *   <ul>
@@ -10,6 +11,7 @@
  *       <ul>
  *         <li>Index/List</li>
  *         <li>Show</li>
+ *         <li>Create</li>
  *       </ul>
  *     </li>
  *     <li>Tag:
@@ -210,7 +212,10 @@ class _SafeOuroborosImage
         $this->parent_id = null;
         if (defined('ENABLED_EXTS')) {
             if (strstr(ENABLED_EXTS, 'rating') !== false) {
-                //$this->rating = $img->rating;
+                // 'u' is not a "valid" rating
+                if($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
+                    $this->rating = $img->rating;
+                }
             }
             if (strstr(ENABLED_EXTS, 'numeric_score') !== false) {
                 $this->score = $img->numeric_score;
@@ -234,6 +239,72 @@ class _SafeOuroborosImage
         $this->sample_url = make_http($img->get_image_link());
     }
 }
+class OuroborosPost extends _SafeOuroborosImage {
+    /**
+     * Multipart File
+     * @var array
+     */
+    public $file = array();
+
+    /**
+     * Create with rating locked
+     * @var bool
+     */
+    public $is_rating_locked = false;
+
+    /**
+     * Create with notes locked
+     * @var bool
+     */
+    public $is_note_locked = false;
+
+
+    /**
+     * Initialize an OuroborosPost for creation
+     * Mainly just acts as a wrapper and validation layer
+     * @TODO implement more validation from OuroborosAPI
+     * @param array $post
+     */
+    public function __construct(array $post) {
+        if (array_key_exists('tags', $post)) {
+            $this->tags = $post['tags'];
+        }
+        if (array_key_exists('file', $post)) {
+            if (!is_null($post['file'])) {
+                assert(is_array($post['file']));
+                assert(array_key_exists('tmp_name', $post['file']));
+                assert(array_key_exists('name', $post['file']));
+                $this->file = $post['file'];
+            }
+        }
+        if (array_key_exists('rating', $post)) {
+            assert(
+                $post['rating'] == 's' ||
+                $post['rating'] == 'q' ||
+                $post['rating'] == 'e'
+            );
+            $this->rating = $post['rating'];
+        }
+        if (array_key_exists('source', $post)) {
+            $this->file_url = $post['source'];
+        }
+        if (array_key_exists('sourceurl', $post)) {
+            $this->source = $post['sourceurl'];
+        }
+        if (array_key_exists('description', $post)) {
+            $this->description = $post['description'];
+        }
+        if (array_key_exists('is_rating_locked', $post)) {
+            $this->is_rating_locked = $post['is_rating_locked'];
+        }
+        if (array_key_exists('is_note_locked', $post)) {
+            $this->is_note_locked = $post['is_note_locked'];
+        }
+        if (array_key_exists('parent_id', $post)) {
+            $this->parent_id = $post['parent_id'];
+        }
+    }
+}
 class _SafeOuroborosTag
 {
     public $ambiguous = false;
@@ -252,16 +323,39 @@ class _SafeOuroborosTag
 class OuroborosAPI extends Extension
 {
     private $event;
-    const ERROR_HTTP_200 = 'Request was successful';
-    const ERROR_HTTP_403 = 'Access denied';
-    const ERROR_HTTP_404 = 'Not found';
-    const ERROR_HTTP_420 = 'Record could not be saved';
-    const ERROR_HTTP_421 = 'User is throttled, try again later';
-    const ERROR_HTTP_422 = 'The resource is locked and cannot be modified';
-    const ERROR_HTTP_423 = 'Resource already exists';
-    const ERROR_HTTP_424 = 'The given parameters were invalid';
-    const ERROR_HTTP_500 = 'Some unknown error occurred on the server';
-    const ERROR_HTTP_503 = 'Server cannot currently handle the request, try again later';
+    private $type;
+    const HEADER_HTTP_200 = 'OK';
+    const MSG_HTTP_200 = 'Request was successful';
+
+    const HEADER_HTTP_403 = 'Forbidden';
+    const MSG_HTTP_403 = 'Access denied';
+
+    const HEADER_HTTP_404 = 'Not found';
+    const MSG_HTTP_404 = 'Not found';
+
+    const HEADER_HTTP_418 = 'I\'m a teapot';
+    const MSG_HTTP_418 = 'Short and stout';
+
+    const HEADER_HTTP_420 = 'Invalid Record';
+    const MSG_HTTP_420 = 'Record could not be saved';
+
+    const HEADER_HTTP_421 = 'User Throttled';
+    const MSG_HTTP_421 = 'User is throttled, try again later';
+
+    const HEADER_HTTP_422 = 'Locked';
+    const MSG_HTTP_422 = 'The resource is locked and cannot be modified';
+
+    const HEADER_HTTP_423 = 'Already Exists';
+    const MSG_HTTP_423 = 'Resource already exists';
+
+    const HEADER_HTTP_424 = 'Invalid Parameters';
+    const MSG_HTTP_424 = 'The given parameters were invalid';
+
+    const HEADER_HTTP_500 = 'Internal Server Error';
+    const MSG_HTTP_500 = 'Some unknown error occurred on the server';
+
+    const HEADER_HTTP_503 = 'Service Unavailable';
+    const MSG_HTTP_503 = 'Server cannot currently handle the request, try again later';
 
     const ERROR_POST_CREATE_MD5 = 'MD5 mismatch';
     const ERROR_POST_CREATE_DUPE = 'Duplicate';
@@ -272,46 +366,48 @@ class OuroborosAPI extends Extension
 
         if (preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
             $this->event = $event;
-            $type = $matches[1];
-            if ($type == 'json') {
+            $this->type = $matches[1];
+            if ($this->type == 'json') {
                 $page->set_type('application/json; charset=utf-8');
             }
-            elseif ($type == 'xml') {
-                $page->set_type('text/xml');
+            elseif ($this->type == 'xml') {
+                $page->set_type('text/xml; charset=utf-8');
             }
             $page->set_mode('data');
+            $this->tryAuth();
 
             if ($event->page_matches('post')) {
                 if ($this->match('create')) {
                     // Create
-                    $post = array(
-                        'tags' => !empty($_REQUEST['post']['tags']) ? filter_var($_REQUEST['post']['tags'], FILTER_SANITIZE_STRING) : 'tagme',
-                        'file' => !empty($_REQUEST['post']['file']) ? filter_var($_REQUEST['post']['file'], FILTER_UNSAFE_RAW) : null,
-                        'rating' => !empty($_REQUEST['post']['rating']) ? filter_var($_REQUEST['post']['rating'], FILTER_SANITIZE_NUMBER_INT) : null,
-                        'source' => !empty($_REQUEST['post']['source']) ? filter_var($_REQUEST['post']['source'], FILTER_SANITIZE_URL) : null,
-                        'sourceurl' => !empty($_REQUEST['post']['sourceurl']) ? filter_var($_REQUEST['post']['sourceurl'], FILTER_SANITIZE_URL) : '',
-                        'description' => !empty($_REQUEST['post']['description']) ? filter_var($_REQUEST['post']['description'], FILTER_SANITIZE_STRING) : '',
-                        'is_rating_locked' => !empty($_REQUEST['post']['is_rating_locked']) ? filter_var($_REQUEST['post']['is_rating_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
-                        'is_note_locked' => !empty($_REQUEST['post']['is_note_locked']) ? filter_var($_REQUEST['post']['is_note_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
-                        'parent_id' => !empty($_REQUEST['post']['parent_id']) ? filter_var($_REQUEST['post']['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null,
-                    );
-                    $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
+                    // @TODO Should move the validation logic into OuroborosPost instead?
+                    if($user->can("create_image")) {
+                        $post = array(
+                            'tags' => !empty($_REQUEST['post']['tags']) ? filter_var($_REQUEST['post']['tags'], FILTER_SANITIZE_STRING) : 'tagme',
+                            'file' => !empty($_REQUEST['post']['file']) ? filter_var($_REQUEST['post']['file'], FILTER_UNSAFE_RAW) : null,
+                            'rating' => !empty($_REQUEST['post']['rating']) ? filter_var($_REQUEST['post']['rating'], FILTER_SANITIZE_NUMBER_INT) : 'q',
+                            'source' => !empty($_REQUEST['post']['source']) ? filter_var(urldecode($_REQUEST['post']['source']), FILTER_SANITIZE_URL) : null,
+                            'sourceurl' => !empty($_REQUEST['post']['sourceurl']) ? filter_var(urldecode($_REQUEST['post']['sourceurl']), FILTER_SANITIZE_URL) : '',
+                            'description' => !empty($_REQUEST['post']['description']) ? filter_var($_REQUEST['post']['description'], FILTER_SANITIZE_STRING) : '',
+                            'is_rating_locked' => !empty($_REQUEST['post']['is_rating_locked']) ? filter_var($_REQUEST['post']['is_rating_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
+                            'is_note_locked' => !empty($_REQUEST['post']['is_note_locked']) ? filter_var($_REQUEST['post']['is_note_locked'], FILTER_SANITIZE_NUMBER_INT) : false,
+                            'parent_id' => !empty($_REQUEST['post']['parent_id']) ? filter_var($_REQUEST['post']['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null,
+                        );
+                        $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
+                        $this->postCreate(new OuroborosPost($post), $md5);
+                    }
+                    else {
+                        $this->sendResponse(403, 'You cannot create new posts');
+                    }
 
                 }
                 elseif ($this->match('update')) {
                     // Update
+                    //@todo add post update
                 }
                 elseif ($this->match('show')) {
                     // Show
-                    if (isset($_REQUEST['id'])) {
-                        $id = $_REQUEST['id'];
-                        $posts = array();
-                        $posts[] = new _SafeOuroborosImage(Image::by_id($id));
-                        $page->set_data(json_encode($posts));
-                    }
-                    else {
-                        $page->set_data(json_encode(array()));
-                    }
+                    $id = !empty($_REQUEST['id']) ? filter_var($_REQUEST['id'], FILTER_SANITIZE_NUMBER_INT) : null;
+                    $this->postShow($id);
                 }
                 elseif ($this->match('index') || $this->match('list')) {
                     // List
@@ -321,17 +417,7 @@ class OuroborosAPI extends Extension
                     if (!empty($tags)) {
                         $tags = Tag::explode($tags);
                     }
-                    $start = ( $p - 1 ) * $limit;
-                    //var_dump($limit, $p, $tags, $start);die();
-                    $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
-                    $posts = array();
-                    foreach ($results as $img) {
-                        if (!is_object($img)) {
-                            continue;
-                        }
-                        $posts[] = new _SafeOuroborosImage($img);
-                    }
-                    $page->set_data(json_encode($posts));
+                    $this->postIndex($limit, $p, $tags);
                 }
             }
             elseif ($event->page_matches('tag')) {
@@ -343,48 +429,365 @@ class OuroborosAPI extends Extension
                     $after_id = !empty($_REQUEST['after_id']) ? intval(filter_var($_REQUEST['after_id'], FILTER_SANITIZE_NUMBER_INT)) : null;
                     $name = !empty($_REQUEST['name']) ? filter_var($_REQUEST['name'], FILTER_SANITIZE_STRING) : '';
                     $name_pattern = !empty($_REQUEST['name_pattern']) ? filter_var($_REQUEST['name_pattern'], FILTER_SANITIZE_STRING) : '';
-                    $start = ( $p - 1 ) * $limit;
-                    $tag_data = array();
-                    switch ($order) {
-                        case 'name':
-                            $tag_data = $database->get_col($database->scoreql_to_sql("
-                                SELECT DISTINCT
-                                    id, SCORE_STRNORM(substr(tag, 1, 1)), count
-                                FROM tags
-                                WHERE count >= :tags_min
-                                ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
-                            "), array("tags_min" => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
-                            break;
-                        case 'count':
-                            $tag_data = $database->get_all("
-                                SELECT id, tag, count
-                                FROM tags
-                                WHERE count >= :tags_min
-                                ORDER BY count DESC, tag ASC LIMIT :start, :max_items
-                                ", array("tags_min" => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
-                            break;
-                        case 'date':
-                            $tag_data = $database->get_all("
-                                SELECT id, tag, count
-                                FROM tags
-                                WHERE count >= :tags_min
-                                ORDER BY count DESC, tag ASC LIMIT :start, :max_items
-                                ", array("tags_min" => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
-                            break;
-                    }
-                    $tags = array();
-                    foreach ($tag_data as $tag) {
-                        if (!is_array($tag)) {
-                            continue;
-                        }
-                        $tags[] = new _SafeOuroborosTag($tag);
-                    }
-                    $page->set_data(json_encode($tags));
+                    $this->tagIndex($limit, $p, $order, $id, $after_id, $name, $name_pattern);
                 }
             }
         }
     }
 
+    /**
+     * Post
+     */
+
+    /**
+     * Wrapper for post creation
+     * @param OuroborosPost $post
+     * @param string $md5
+     */
+    protected function postCreate(OuroborosPost $post, $md5 = '') {
+        global $page, $config, $user;
+        if (!empty($md5)) {
+            $img = Image::by_hash($md5);
+            if (!is_null($img)) {
+                $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
+            }
+        }
+        $meta = array();
+        $meta['tags'] = $post->tags;
+        $meta['source'] = $post->source;
+        if (defined('ENABLED_EXTS')) {
+            if (strstr(ENABLED_EXTS, 'rating') !== false) {
+                $meta['rating'] = $post->rating;
+            }
+        }
+        // Check where we should try for the file
+        if (empty($post->file) && !empty($post->file_url) && filter_var($post->file_url, FILTER_VALIDATE_URL) !== false) {
+            // Transload from source
+            $meta['file'] = tempnam('/tmp', 'shimmie_transload_'.$config->get_string('transload_engine'));
+            $meta['filename'] = basename($post->file_url);
+            if ($config->get_string('transload_engine') == 'fopen') {
+                $fp = fopen($post->file_url, 'r');
+                if (!$fp) {
+                    $this->sendResponse(500, 'fopen failed');
+                }
+
+                $data = "";
+                $length = 0;
+                while (!feof($fp) && $length <= $config->get_int('upload_size')) {
+                    $data .= fread($fp, 8192);
+                    $length = strlen($data);
+                }
+                fclose($fp);
+
+                $fp = fopen($meta['file'], 'w');
+                fwrite($fp, $data);
+                fclose($fp);
+            }
+            elseif ($config->get_string('transload_engine') == 'curl') {
+                $ch = curl_init($post->file_url);
+                $fp = fopen($meta['file'], 'w');
+
+                curl_setopt($ch, CURLOPT_FILE, $fp);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+
+                curl_exec($ch);
+                curl_close($ch);
+                fclose($fp);
+            }
+            $meta['hash'] = md5_file($meta['file']);
+        }
+        else {
+            // Use file
+            $meta['file'] = $post->file['tmp_name'];
+            $meta['filename'] = $post->file['name'];
+            $meta['hash'] = md5_file($meta['file']);
+        }
+        if (!empty($md5) && $md5 !== $meta['hash']) {
+            $this->sendResponse(420, self::ERROR_POST_CREATE_MD5);
+        }
+        if (!empty($meta['hash'])) {
+            $img = Image::by_hash($meta['hash']);
+            if (!is_null($img)) {
+                $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
+            }
+        }
+        $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
+        try {
+            $upload = new DataUploadEvent($meta['file'], $meta);
+            send_event($upload);
+            $image = Image::by_hash($meta['hash']);
+            if (!is_null($image)) {
+                $this->sendResponse(200, make_link('post/view/'.$image->id), true);
+            }
+            else {
+                // Fail, unsupported file?
+                $this->sendResponse(500, 'Unknown error');
+            }
+        } catch (UploadException $e) {
+            // Cleanup in case shit hit the fan
+            $this->sendResponse(500, $e->getMessage());
+        }
+    }
+
+    /**
+     * Wrapper for getting a single post
+     * @param int $id
+     */
+    protected function postShow($id = null) {
+        if (!is_null($id)) {
+            $post = new _SafeOuroborosImage(Image::by_id($id));
+            $this->sendData('post', $post);
+        }
+        else {
+            $this->sendResponse(424, 'ID is mandatory');
+        }
+    }
+
+    /**
+     * Wrapper for getting a list of posts
+     * @param $limit
+     * @param $page
+     * @param $tags
+     */
+    protected function postIndex($limit, $page, $tags) {
+        $start = ( $page - 1 ) * $limit;
+        $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
+        $posts = array();
+        foreach ($results as $img) {
+            if (!is_object($img)) {
+                continue;
+            }
+            $posts[] = new _SafeOuroborosImage($img);
+        }
+        $this->sendData('post', $posts, max($start, 0));
+    }
+
+    /**
+     * Tag
+     */
+
+    /**
+     * Wrapper for getting a list of tags
+     * @param $limit
+     * @param $page
+     * @param $order
+     * @param $id
+     * @param $after_id
+     * @param $name
+     * @param $name_pattern
+     */
+    protected function tagIndex($limit, $page, $order, $id, $after_id, $name, $name_pattern) {
+        global $database, $config;
+        $start = ( $page - 1 ) * $limit;
+        $tag_data = array();
+        switch ($order) {
+            case 'name':
+                $tag_data = $database->get_col($database->scoreql_to_sql("
+                                SELECT DISTINCT
+                                    id, SCORE_STRNORM(substr(tag, 1, 1)), count
+                                FROM tags
+                                WHERE count >= :tags_min
+                                ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
+                            "), array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
+                break;
+            case 'count':
+                $tag_data = $database->get_all("
+                                SELECT id, tag, count
+                                FROM tags
+                                WHERE count >= :tags_min
+                                ORDER BY count DESC, tag ASC LIMIT :start, :max_items
+                                ", array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
+                break;
+            case 'date':
+                $tag_data = $database->get_all("
+                                SELECT id, tag, count
+                                FROM tags
+                                WHERE count >= :tags_min
+                                ORDER BY count DESC, tag ASC LIMIT :start, :max_items
+                                ", array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit));
+                break;
+        }
+        $tags = array();
+        foreach ($tag_data as $tag) {
+            if (!is_array($tag)) {
+                continue;
+            }
+            $tags[] = new _SafeOuroborosTag($tag);
+        }
+        $this->sendData('tag', $tags, $start);
+    }
+
+    /**
+     * Utility methods
+     */
+
+    /**
+     * Sends a simple {success,reason} message to browser
+     *
+     * @param int $code HTTP equivalent code for the message
+     * @param string $reason Reason for the code
+     * @param bool $location Is $reason a location? (used mainly for post/create)
+     */
+    private function sendResponse($code = 200, $reason = '', $location = false) {
+        global $page;
+        if ($code == 200) {
+            $success = true;
+        }
+        else {
+            $success = false;
+        }
+        if (empty($reason)) {
+            if (defined("self::MSG_HTTP_{$code}")) {
+                $reason = constant("self::MSG_HTTP_{$code}");
+            }
+            else {
+                $reason = self::MSG_HTTP_418;
+            }
+        }
+        if ($code != 200) {
+            $proto = $_SERVER['SERVER_PROTOCOL'];
+            if (defined("self::HEADER_HTTP_{$code}")) {
+                $header = constant("self::HEADER_HTTP_{$code}");
+            }
+            else {
+                // I'm a teapot!
+                $code = 418;
+                $header = self::HEADER_HTTP_418;
+            }
+            header("{$proto} {$code} {$header}", true);
+        }
+        $response = array('success' => $success, 'reason' => $reason);
+        if ($this->type == 'json') {
+            if ($location !== false) {
+                $response['location'] = $response['reason'];
+                unset($response['reason']);
+            }
+            $response = json_encode($response);
+        }
+        elseif ($this->type == 'xml') {
+            // Seriously, XML sucks...
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'utf-8');
+            $xml->startElement('response');
+            $xml->writeAttribute('success', var_export($success, true));
+            if ($location !== false) {
+                $xml->writeAttribute('location', $reason);
+            }
+            else {
+                $xml->writeAttribute('reason', $reason);
+            }
+            $xml->endElement();
+            $xml->endDocument();
+            $response = $xml->outputMemory(true);
+            unset($xml);
+        }
+        $page->set_data($response);
+        $page->display();
+    }
+
+    /**
+     * Send data to the browser
+     * @param string $type
+     * @param mixed $data
+     * @param int $offset
+     */
+    private function sendData($type = '', $data = array(), $offset = 0) {
+        global $page;
+        $response = '';
+        if ($this->type == 'json') {
+            $response = json_encode($data);
+        }
+        elseif ($this->type == 'xml') {
+            $xml = new XMLWriter();
+            $xml->openMemory();
+            $xml->startDocument('1.0', 'utf-8');
+            if (array_key_exists(0, $data)) {
+                $xml->startElement($type.'s');
+                if ($type == 'post') {
+                    $xml->writeAttribute('count', count($data));
+                    $xml->writeAttribute('offset', $offset);
+                }
+                if ($type == 'tag') {
+                    $xml->writeAttribute('type', 'array');
+                }
+                foreach ($data as $item) {
+                    $this->createItemXML($xml, $type, $item);
+                }
+                $xml->endElement();
+            }
+            else {
+                $this->createItemXML($xml, $type, $data);
+            }
+            $xml->endDocument();
+            $response = $xml->outputMemory(true);
+            unset($xml);
+        }
+        $page->set_data($response);
+        $page->display();
+        exit;
+    }
+
+    private function createItemXML(XMLWriter &$xml, $type, $item) {
+        $xml->startElement($type);
+        foreach ($item as $key => $val) {
+            if ($key == 'created_at' && $type == 'post') {
+                $xml->writeAttribute($key, $val['s']);
+            }
+            else {
+                if (is_bool($val)) {
+                    $val = $val ? 'true' : 'false';
+                }
+                $xml->writeAttribute($key, $val);
+            }
+        }
+        $xml->endElement();
+    }
+
+    /**
+     * Try to figure who is uploading
+     *
+     * Currently checks for either user & session in request or cookies
+     * and initializes a global User
+     * @param void
+     * @return void
+     */
+    private function tryAuth() {
+        global $config, $user;
+
+        if (isset($_REQUEST['user']) && isset($_REQUEST['session'])) {
+            //Auth by session data from query
+            $name = $_REQUEST['user'];
+            $session = $_REQUEST['session'];
+            $duser = User::by_session($name, $session);
+            if (!is_null($duser)) {
+                $user = $duser;
+            }
+            else {
+                $user = User::by_id($config->get_int("anon_id", 0));
+            }
+        }
+        elseif (isset($_COOKIE[$config->get_string('cookie_prefix', 'shm').'_'.'session']) &&
+            isset($_COOKIE[$config->get_string('cookie_prefix', 'shm').'_'.'user'])
+        ) {
+            //Auth by session data from cookies
+            $session = $_COOKIE[$config->get_string('cookie_prefix', 'shm').'_'.'session'];
+            $user = $_COOKIE[$config->get_string('cookie_prefix', 'shm').'_'.'user'];
+            $duser = User::by_session($user, $session);
+            if (!is_null($duser)) {
+                $user = $duser;
+            }
+            else {
+                $user = User::by_id($config->get_int("anon_id", 0));
+            }
+        }
+    }
+
+    /**
+     * Helper for matching API methods from event
+     * @param $page
+     * @return bool
+     */
     private function match($page) {
         return (preg_match("%{$page}\.(xml|json)$%", implode('/', $this->event->args), $matches) === 1);
     }
