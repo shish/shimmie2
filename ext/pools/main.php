@@ -209,6 +209,17 @@ class Pools extends Extension {
 
 					break;
 
+				case "edit_description":
+					if ($this->have_permission($user, $pool)) {
+						$this->edit_description();
+						$page->set_mode("redirect");
+						$page->set_redirect(make_link("pool/view/".$pool_id));
+					} else {
+						$this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
+					}
+
+					break;
+
 				case "nuke":
 					// Completely remove the given pool.
 					//  -> Only admins and owners may do this	
@@ -508,6 +519,17 @@ class Pools extends Extension {
 		return $poolID;
 	}
 
+	/*
+	 * Allows editing of pool description.
+	 */
+	private function edit_description() {
+		global $database;
+
+		$poolID = int_escape($_POST['pool_id']);
+		$database->execute("UPDATE pools SET description=:dsc WHERE id=:pid", array("dsc"=>$_POST['description'], "pid"=>$poolID));
+
+		return $poolID;
+	}
 
 	/**
 	 * This function checks if a given image is contained within a given pool.

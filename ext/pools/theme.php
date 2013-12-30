@@ -322,8 +322,17 @@ class PoolsTheme extends Themelet {
 	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
-		$this->display_top($pools, "Editing Pool", true);
 
+		/* EDIT POOL DESCRIPTION */
+		$desc_html = "
+			".make_form(make_link("pool/edit_description"))."
+					<textarea name='description'>".$pools[0]['description']."</textarea><br />
+					<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>
+					<input type='submit' value='Change Description' />
+			</form>
+		";
+
+		/* REMOVE POOLS */
 		$pool_images = "\n<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
 
 		foreach($images as $pair) {
@@ -341,6 +350,9 @@ class PoolsTheme extends Themelet {
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
+		$pools[0]['description'] = ""; //This is a rogue fix to avoid showing the description twice.
+		$this->display_top($pools, "Editing Pool", true);
+		$page->add_block(new Block("Editing Description", $desc_html, "main", 28));
 		$page->add_block(new Block("Editing Posts", $pool_images, "main", 30));
 	}
 
