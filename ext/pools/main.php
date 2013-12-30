@@ -74,6 +74,8 @@ class Pools extends Extension {
 
 		if ($config->get_int("ext_pools_version") < 2){
 			$database->Execute("ALTER TABLE `pools`	ADD UNIQUE INDEX (`title`);");
+			$database->Execute("ALTER TABLE `pools`	ADD `lastupdated` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
+
 			$config->set_int("ext_pools_version", 2);
 		}
 	}
@@ -314,13 +316,26 @@ class Pools extends Extension {
 
 		$poolsPerPage = $config->get_int("poolsListsPerPage");
 
+
+		$order_by = "";
+		$order = get_prefixed_cookie("ui-order-pool");
+		if($order == "created" || is_null($order)){
+			$order_by = "ORDER BY p.date DESC";
+		}elseif($order == "updated"){
+			$order_by = "ORDER BY p.lastupdated DESC";
+		}elseif($order == "name"){
+			$order_by = "ORDER BY p.title ASC";
+		}elseif($order == "count"){
+			$order_by = "ORDER BY p.posts DESC";
+		}
+
 		$pools = $database->get_all("
 				SELECT p.id, p.user_id, p.public, p.title, p.description,
 				       p.posts, u.name as user_name
 				FROM pools AS p
 				INNER JOIN users AS u
 				ON p.user_id = u.id
-				ORDER BY p.date DESC
+				$order_by
 				LIMIT :l OFFSET :o
 				", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage)
 				);

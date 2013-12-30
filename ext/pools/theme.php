@@ -67,11 +67,21 @@ class PoolsTheme extends Themelet {
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
 
+		$order_html = '
+			<select id="order_pool">
+			  <option value="created">Recently created</option>
+			  <option value="updated">Last updated</option>
+			  <option value="name">Name</option>
+			  <option value="count">Post count</option>
+			</select>
+		';
+
 		$blockTitle = "Pools";
 		$page->set_title(html_escape($blockTitle));
 		$page->set_heading(html_escape($blockTitle));
 		$page->add_block(new Block($blockTitle, $html, "main", 10));
 		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
+		$page->add_block(new Block("Order By", $order_html, "left", 15));
 
 		$this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
 	}
