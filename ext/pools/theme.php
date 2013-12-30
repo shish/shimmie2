@@ -350,7 +350,7 @@ class PoolsTheme extends Themelet {
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
-		$pools[0]['description'] = ""; //This is a rogue fix to avoid showing the description twice.
+		$pools[0]['description'] = ""; //This is a rough fix to avoid showing the description twice.
 		$this->display_top($pools, "Editing Pool", true);
 		$page->add_block(new Block("Editing Description", $desc_html, "main", 28));
 		$page->add_block(new Block("Editing Posts", $pool_images, "main", 30));

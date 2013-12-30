@@ -293,6 +293,23 @@ class Pools extends Extension {
 		}
 	}
 
+	public function add_post_from_tag(/*str*/ $poolTag, /*int*/ $imageID){
+		$poolTag = str_replace("_", " ", $poolTag);
+		//First check if pool tag is a title
+		if(ctype_digit($poolTag)){
+			//If string only contains numeric characters, assume it is $poolID
+			if($this->get_single_pool($poolTag)){ //Make sure pool exists
+				$this->add_post($poolTag, $imageID);
+			}
+		}else{
+			//If string doesn't contain only numeric characters, check to see if tag is title.
+			$pool = $this->get_single_pool_from_title($poolTag);
+			if($pool){
+				$this->add_post($pool['id'], $imageID);
+			}
+		}
+	}
+
 	/* ------------------------------------------------- */
 	/* --------------  Private Functions  -------------- */
 	/* ------------------------------------------------- */
@@ -362,7 +379,7 @@ class Pools extends Extension {
 	 */
 	private function add_pool() {
 		global $user, $database;
-		#throw new PoolCreationException("Pool needs a title");
+
 		if($user->is_anonymous()) {
 			throw new PoolCreationException("You must be registered and logged in to add a image.");
 		}
@@ -372,6 +389,7 @@ class Pools extends Extension {
 		if($this->get_single_pool_from_title($_POST["title"])) {
 			throw new PoolCreationException("A pool using this title already exists.");
 		}
+
 		$public = $_POST["public"] == "Y" ? "Y" : "N";
 		$database->execute("
 				INSERT INTO pools (user_id, public, title, description, date)
