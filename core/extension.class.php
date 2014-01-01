@@ -197,6 +197,9 @@ abstract class DataHandlerExtension extends Extension {
 				}
 			}
 		}
+		else{
+			throw new UploadException("Unsupported extension or file isn't an image");
+		}
 	}
 
 	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
