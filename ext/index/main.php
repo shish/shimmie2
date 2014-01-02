@@ -21,6 +21,16 @@
  *        <li>size&gt;=500x500 -- no small images
  *        <li>size&lt;1000x1000 -- no large images
  *      </ul>
+ *    <li>width (=, &lt;, &gt;, &lt;=, &gt;=) width, eg
+ *      <ul>
+ *        <li>width=1024 -- find images with 1024 width
+ *        <li>width>2000 -- find images bigger than 2000 width
+ *      </ul>
+ *    <li>height (=, &lt;, &gt;, &lt;=, &gt;=) height, eg
+ *      <ul>
+ *        <li>height=768 -- find images with 768 height
+ *        <li>height>1000 -- find images bigger than 1000 height
+ *      </ul>
  *    <li>ratio (=, &lt;, &gt;, &lt;=, &gt;=) width : height, eg
  *      <ul>
  *        <li>ratio=4:3, ratio=16:9 -- standard wallpaper
@@ -301,6 +311,14 @@ class Index extends Extension {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$args = array("width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3]));
 			$event->add_querylet(new Querylet("width $cmp :width{$this->stpen} AND height $cmp :height{$this->stpen}", $args));
+		}
+		else if(preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+			$cmp = ltrim($matches[1], ":") ?: "=";
+			$event->add_querylet(new Querylet("width $cmp :width{$this->stpen}", array("width{$this->stpen}"=>int_escape($matches[2]))));
+		}
+		else if(preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+			$cmp = ltrim($matches[1], ":") ?: "=";
+			$event->add_querylet(new Querylet("height $cmp :height{$this->stpen}",array("height{$this->stpen}"=>int_escape($matches[2]))));
 		}
 
 		$this->stpen++;
