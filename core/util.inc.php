@@ -801,17 +801,24 @@ function transload($url, $mfile) {
 		$ch = curl_init($url);
 		$fp = fopen($mfile, "w");
 
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_VERBOSE, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
 		curl_setopt($ch, CURLOPT_REFERER, $url);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-		curl_exec($ch);
+		$response = curl_exec($ch);
+
+		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$headers = http_parse_headers(implode("\n", preg_split('/\R/', rtrim(substr($response, 0, $header_size)))));
+		$body = substr($response, $header_size);
+
 		curl_close($ch);
+		fwrite($fp, $body);
 		fclose($fp);
 
-		return true;
+		return $headers;
 	}
 
 	if($config->get_string("transload_engine") === "wget") {
@@ -839,12 +846,59 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
-		return true;
+		$headers = http_parse_headers(implode("\n", $http_response_header));
+
+		return $headers;
 	}
 
 	return false;
 }
 
+if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
+	function http_parse_headers ($raw_headers){
+		$headers = array(); // $headers = [];
+
+		foreach (explode("\n", $raw_headers) as $i => $h) {
+			$h = explode(':', $h, 2);
+
+			if (isset($h[1])){
+				if(!isset($headers[$h[0]])){
+					$headers[$h[0]] = trim($h[1]);
+				}else if(is_array($headers[$h[0]])){
+					$tmp = array_merge($headers[$h[0]],array(trim($h[1])));
+					$headers[$h[0]] = $tmp;
+				}else{
+					$tmp = array_merge(array($headers[$h[0]]),array(trim($h[1])));
+					$headers[$h[0]] = $tmp;
+				}
+			}
+		}
+		return $headers;
+	}
+}
+
+function getExtension ($mime_type){
+	if(empty($mime_type)){
+		return false;
+	}
+
+	$extensions = array(
+		'image/jpeg' => 'jpg',
+		'image/gif' => 'gif',
+		'image/png' => 'png',
+		'application/x-shockwave-flash' => 'swf',
+		'image/x-icon' => 'ico',
+		'image/svg+xml' => 'svg',
+		'audio/mpeg' => 'mp3',
+		'video/x-flv' => 'flv',
+		'audio/mp4' => 'mp4',
+		'video/mp4' => 'mp4',
+		'audio/webm' => 'webm',
+		'video/webm' => 'webm'
+	);
+
+    return $extensions[$mime_type];
+}
 
 $_included = array();
 /**
