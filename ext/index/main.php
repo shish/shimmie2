@@ -176,6 +176,7 @@ class Index extends Extension {
 		global $config;
 		$config->set_default_int("index_images", 24);
 		$config->set_default_bool("index_tips", true);
+		$config->set_default_string("index_order", "id DESC");
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -327,11 +328,10 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^order[=|:](id|width|height|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)){
 			global $order_sql;
-			$order = strtolower($matches[1]);
+			$ord = strtolower($matches[1]);
 			$sort = isset($matches[2]) ? strtoupper($matches[2]) : (preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC");
-			// $event->add_querylet(new Querylet("ORDER BY images.:order :sort", array("order" => $order, "sort" => $sort)));
+			$order_sql = "$ord $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
-			$order_sql = " ORDER BY images.$order $sort";
 		}
 
 		$this->stpen++;

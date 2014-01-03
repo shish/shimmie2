@@ -115,7 +115,7 @@ class Image {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
-		global $database, $user, $order_sql;
+		global $database, $user, $config, $order_sql;
 
 		$images = array();
 
@@ -129,7 +129,7 @@ class Image {
 		}
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet($order_sql ?: " ORDER BY images.id DESC"));
+		$querylet->append(new Querylet(" ORDER BY images.".($order_sql ?: $config->get_string("index_order"))));
 		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
