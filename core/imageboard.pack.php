@@ -26,6 +26,7 @@
 $tag_n = 0; // temp hack
 $_flexihash = null;
 $_fh_last_opts = null;
+$order_sql = null; // this feels ugly
 
 require_once "lib/flexihash.php";
 
@@ -114,7 +115,7 @@ class Image {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
-		global $database, $user;
+		global $database, $user, $order_sql;
 
 		$images = array();
 
@@ -128,13 +129,15 @@ class Image {
 		}
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
+		$querylet->append(new Querylet($order_sql ?: " ORDER BY images.id DESC"));
+		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
 		while($row = $result->fetch()) {
 			$images[] = new Image($row);
 		}
+		$order_sql = null;
 		return $images;
 	}
 
@@ -663,8 +666,6 @@ class Image {
 			}
 		}
 
-		$terms = Tag::resolve_aliases($terms);
-
 		// parse the words that are searched for into
 		// various types of querylet
 		foreach($terms as $term) {
@@ -676,6 +677,15 @@ class Image {
 			if(strlen($term) === 0) {
 				continue;
 			}
+
+			$aliases = explode(" ", Tag::resolve_alias($term));
+			$found = array_search($term, $aliases);
+			if($found !== false){
+				unset($aliases[$found]);
+			}else{
+				$term = array_shift($aliases);
+			}
+			foreach($aliases as $alias)	array_push($terms, $alias);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
@@ -824,8 +834,6 @@ class Image {
 			}
 		}
 
-		$terms = Tag::resolve_aliases($terms);
-
 		reset($terms); // rewind to first element in array.
 		
 		// turn each term into a specific type of querylet
@@ -835,6 +843,15 @@ class Image {
 				$negative = true;
 				$term = substr($term, 1);
 			}
+			
+			$aliases = explode(" ", Tag::resolve_alias($term));
+			$found = array_search($term, $aliases);
+			if($found !== false){
+				unset($aliases[$found]);
+			}else{
+				$term = array_shift($aliases);
+			}
+			foreach($aliases as $alias)	array_push($terms, $alias);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
@@ -1082,22 +1099,11 @@ class Tag {
 		assert(is_array($tags));
 
 		$new = array();
-
-		$i = 0;
-		$tag_count = count($tags);
-		while($i<$tag_count) {
-			$aliases = explode(' ', Tag::resolve_alias($tags[$i]));
-			foreach($aliases as $alias){
-				if(!in_array($alias, $new)){
-					if($tags[$i] == $alias){
-						$new[] = $alias;
-					}elseif(!in_array($alias, $tags)){
-						$tags[] = $alias;
-						$tag_count++;
-					}
-				}
+		foreach($tags as $tag) {
+			$new_set = explode(' ', Tag::resolve_alias($tag));
+			foreach($new_set as $new_one) {
+				$new[] = $new_one;
 			}
-			$i++;
 		}
 
 		$new = array_iunique($new); // remove any duplicate tags

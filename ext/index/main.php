@@ -87,6 +87,11 @@
  *      <ul>
  *        <li>source=http://example.com -- find all images with "http://example.com" in the source
  *      </ul>
+ *    <li>order (id, width, height, filesize, filename)_(ASC, DESC), eg
+ *      <ul>
+ *        <li>order=width -- find all images sorted from highest > lowest width
+ *        <li>order=filesize_asc -- find all images sorted from lowest > highest filesize
+ *      </ul>
  *  </ul>
  *  <p>Search items can be combined to search for images which match both,
  *  or you can stick "-" in front of an item to search for things that don't
@@ -319,6 +324,14 @@ class Index extends Extension {
 		else if(preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$event->add_querylet(new Querylet("height $cmp :height{$this->stpen}",array("height{$this->stpen}"=>int_escape($matches[2]))));
+		}
+		else if(preg_match("/^order[=|:](id|width|height|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)){
+			global $order_sql;
+			$order = strtolower($matches[1]);
+			$sort = isset($matches[2]) ? strtoupper($matches[2]) : (preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC");
+			// $event->add_querylet(new Querylet("ORDER BY images.:order :sort", array("order" => $order, "sort" => $sort)));
+			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
+			$order_sql = " ORDER BY images.$order $sort";
 		}
 
 		$this->stpen++;
