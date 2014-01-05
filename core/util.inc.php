@@ -556,6 +556,30 @@ function getMimeType($file, $ext="") {
 	return 'application/octet-stream';
 }
 
+
+function getExtension ($mime_type){
+	if(empty($mime_type)){
+		return false;
+	}
+
+	$extensions = array(
+		'image/jpeg' => 'jpg',
+		'image/gif' => 'gif',
+		'image/png' => 'png',
+		'application/x-shockwave-flash' => 'swf',
+		'image/x-icon' => 'ico',
+		'image/svg+xml' => 'svg',
+		'audio/mpeg' => 'mp3',
+		'video/x-flv' => 'flv',
+		'audio/mp4' => 'mp4',
+		'video/mp4' => 'mp4',
+		'audio/webm' => 'webm',
+		'video/webm' => 'webm'
+	);
+
+    return $extensions[$mime_type];
+}
+
 /**
  * @private
  */
@@ -875,29 +899,6 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 		}
 		return $headers;
 	}
-}
-
-function getExtension ($mime_type){
-	if(empty($mime_type)){
-		return false;
-	}
-
-	$extensions = array(
-		'image/jpeg' => 'jpg',
-		'image/gif' => 'gif',
-		'image/png' => 'png',
-		'application/x-shockwave-flash' => 'swf',
-		'image/x-icon' => 'ico',
-		'image/svg+xml' => 'svg',
-		'audio/mpeg' => 'mp3',
-		'video/x-flv' => 'flv',
-		'audio/mp4' => 'mp4',
-		'video/mp4' => 'mp4',
-		'audio/webm' => 'webm',
-		'video/webm' => 'webm'
-	);
-
-    return $extensions[$mime_type];
 }
 
 $_included = array();

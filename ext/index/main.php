@@ -87,7 +87,7 @@
  *      <ul>
  *        <li>source=http://example.com -- find all images with "http://example.com" in the source
  *      </ul>
- *    <li>order (id, width, height, filesize, filename)_(ASC, DESC), eg
+ *    <li>order=(id, width, height, filesize, filename)_(ASC, DESC), eg
  *      <ul>
  *        <li>order=width -- find all images sorted from highest > lowest width
  *        <li>order=filesize_asc -- find all images sorted from lowest > highest filesize
@@ -329,7 +329,8 @@ class Index extends Extension {
 		else if(preg_match("/^order[=|:](id|width|height|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)){
 			global $order_sql;
 			$ord = strtolower($matches[1]);
-			$sort = isset($matches[2]) ? strtoupper($matches[2]) : (preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC");
+			$default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
+			$sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
 			$order_sql = "$ord $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
