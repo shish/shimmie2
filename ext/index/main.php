@@ -105,6 +105,8 @@
  *        <li>score (=, &lt;, &gt;, &lt;=, &gt;=) number -- seach by score
  *        <li>upvoted_by=Username -- search for a user's likes
  *        <li>downvoted_by=Username -- search for a user's dislikes
+ *        <li>upvoted_by_id=UserID -- search for a user's likes by user ID
+ *        <li>downvoted_by_id=UserID -- search for a user's dislikes by user ID
  *      </ul>
  *    <li>Image Rating
  *      <ul>
@@ -121,6 +123,16 @@
  *        <li>notes (=, &lt;, &gt;, &lt;=, &gt;=) number -- search by the number of notes an image has
  *        <li>notes_by=Username -- search for a notes created by username
  *        <li>notes_by_userno=UserID -- search for a notes created by userID
+ *      </ul>
+ *    <li>Artists
+ *      <ul>
+ *        <li>author=ArtistName -- search for images by artist
+ *      </ul>
+ *    <li>Image Comments
+ *      <ul>
+ *        <li>comments (=, &lt;, &gt;, &lt;=, &gt;=) number -- search for images by number of comments
+ *        <li>commented_by=Username -- search for a user's comments by username
+ *        <li>commented_by_userno=UserID -- search for a user's comments by userID
  *      </ul>
  *  </ul>
  */
