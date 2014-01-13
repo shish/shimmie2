@@ -509,14 +509,15 @@ function captcha_check() {
 * @param string &$file File path
 * @return string
 */
-function getMimeType($file, $ext="") {
+function getMimeType($file, $ext="", $list=false) {
 
 	// Static extension lookup
 	$ext = strtolower($ext);
 	static $exts = array(
 		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
 		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
+		'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
+		'svg' => 'image/svg+xml', 'pdf' => 'application/pdf',
 		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
 		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
 		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
@@ -528,6 +529,8 @@ function getMimeType($file, $ext="") {
 		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
 		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
 	);
+
+	if ($list == true){ return $exts; }
 
 	if (isset($exts[$ext])) { return $exts[$ext]; }
 
@@ -562,22 +565,9 @@ function getExtension ($mime_type){
 		return false;
 	}
 
-	$extensions = array(
-		'image/jpeg' => 'jpg',
-		'image/gif' => 'gif',
-		'image/png' => 'png',
-		'application/x-shockwave-flash' => 'swf',
-		'image/x-icon' => 'ico',
-		'image/svg+xml' => 'svg',
-		'audio/mpeg' => 'mp3',
-		'video/x-flv' => 'flv',
-		'audio/mp4' => 'mp4',
-		'video/mp4' => 'mp4',
-		'audio/webm' => 'webm',
-		'video/webm' => 'webm'
-	);
-
-    return $extensions[$mime_type];
+	$extensions = getMimeType(null, null, true);
+	$ext = array_search($mime_type, $extensions);
+	return ($ext ?: false);
 }
 
 /**
