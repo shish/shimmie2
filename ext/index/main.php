@@ -83,9 +83,11 @@
  *        <li>tags>=10 -- search for images with 10 or more tags
  *        <li>tags<25 -- search for images with less than 25 tags
  *      </ul>
- *    <li>source=url, eg
+ *    <li>source=(URL, any, none) eg
  *      <ul>
  *        <li>source=http://example.com -- find all images with "http://example.com" in the source
+ *        <li>source=any -- find all images with a source
+ *        <li>source=none -- find all images without a source
  *      </ul>
  *    <li>order=(id, width, height, filesize, filename)_(ASC, DESC), eg
  *      <ul>
@@ -136,7 +138,7 @@
  *      </ul>
  *    <li>Pools
  *      <ul>
- *        <li>pool=PoolID -- search for images in a pool by PoolID
+ *        <li>pool=(PoolID, any, none) -- search for images in a pool by PoolID.
  *        <li>pool_by_name=PoolName -- search for images in a pool by PoolName. underscores are replaced with spaces
  *      </ul>
  *  </ul>
@@ -323,7 +325,13 @@ class Index extends Extension {
 		}
 		else if(preg_match("/^(source)[=|:]([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$source = strtolower($matches[2]);
-			$event->add_querylet(new Querylet('images.source LIKE :src', array("src"=>"%$source%")));
+
+			if(preg_match("/^(any|none)$/", $source)){
+				$not = ($source == "any" ? "NOT" : "");
+				$event->add_querylet(new Querylet("images.source IS $not NULL"));
+			}else{
+				$event->add_querylet(new Querylet('images.source LIKE :src', array("src"=>"%$source%")));
+			}
 		}
 		else if(preg_match("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";

@@ -295,9 +295,15 @@ class Pools extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/^pool[=|:]([0-9]+)$/", $event->term, $matches)) {
+		if(preg_match("/^pool[=|:]([0-9]+|any|none)$/", $event->term, $matches)) {
 			$poolID = $matches[1];
-			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+
+			if(preg_match("/^(any|none)$/", $poolID)){
+				$not = ($poolID == "none" ? "NOT" : "");
+				$event->add_querylet(new Querylet("images.id $not IN (SELECT DISTINCT image_id FROM pool_images)"));
+			}else{
+				$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+			}
 		}
 		else if(preg_match("/^pool_by_name[=|:](.*)$/", $event->term, $matches)) {
 			$poolTitle = str_replace("_", " ", $matches[1]);
