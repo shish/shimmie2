@@ -123,8 +123,8 @@
  *    <li>Notes
  *      <ul>
  *        <li>notes (=, &lt;, &gt;, &lt;=, &gt;=) number -- search by the number of notes an image has
- *        <li>notes_by=Username -- search for images contains notes created by username
- *        <li>notes_by_userno=UserID -- search for images contains notes created by userID
+ *        <li>notes_by=Username -- search for images containing notes created by username
+ *        <li>notes_by_userno=UserID -- search for images containing notes created by userID
  *      </ul>
  *    <li>Artists
  *      <ul>
@@ -133,8 +133,8 @@
  *    <li>Image Comments
  *      <ul>
  *        <li>comments (=, &lt;, &gt;, &lt;=, &gt;=) number -- search for images by number of comments
- *        <li>commented_by=Username -- search for images contains user's comments by username
- *        <li>commented_by_userno=UserID -- search for images contains user's comments by userID
+ *        <li>commented_by=Username -- search for images containing user's comments by username
+ *        <li>commented_by_userno=UserID -- search for images containing user's comments by userID
  *      </ul>
  *    <li>Pools
  *      <ul>
@@ -323,7 +323,7 @@ class Index extends Extension {
 			$filename = strtolower($matches[2]);
 			$event->add_querylet(new Querylet("images.filename LIKE :filename{$this->stpen}", array("filename{$this->stpen}"=>"%$filename%")));
 		}
-		else if(preg_match("/^(source)[=|:]([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
+		else if(preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
 			$source = strtolower($matches[2]);
 
 			if(preg_match("/^(any|none)$/", $source)){
