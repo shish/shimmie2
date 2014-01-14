@@ -293,6 +293,22 @@ class Pools extends Extension {
 		}
 	}
 
+	public function onSearchTermParse(SearchTermParseEvent $event) {
+		$matches = array();
+		if(preg_match("/^pool[=|:]([0-9]+)$/", $event->term, $matches)) {
+			$poolID = $matches[1];
+			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+		}
+		else if(preg_match("/^pool_by_name[=|:](.*)$/", $event->term, $matches)) {
+			$poolTitle = str_replace("_", " ", $matches[1]);
+
+			$pool = $this->get_single_pool_from_title($poolTitle);
+			$poolID = 0;
+			if ($pool){ $poolID = $pool['id']; }
+			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
+		}
+	}
+
 	public function add_post_from_tag(/*str*/ $poolTag, /*int*/ $imageID){
 		$poolTag = str_replace("_", " ", $poolTag);
 		//First check if pool tag is a title

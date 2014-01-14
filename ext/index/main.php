@@ -121,8 +121,8 @@
  *    <li>Notes
  *      <ul>
  *        <li>notes (=, &lt;, &gt;, &lt;=, &gt;=) number -- search by the number of notes an image has
- *        <li>notes_by=Username -- search for a notes created by username
- *        <li>notes_by_userno=UserID -- search for a notes created by userID
+ *        <li>notes_by=Username -- search for images contains notes created by username
+ *        <li>notes_by_userno=UserID -- search for images contains notes created by userID
  *      </ul>
  *    <li>Artists
  *      <ul>
@@ -131,8 +131,13 @@
  *    <li>Image Comments
  *      <ul>
  *        <li>comments (=, &lt;, &gt;, &lt;=, &gt;=) number -- search for images by number of comments
- *        <li>commented_by=Username -- search for a user's comments by username
- *        <li>commented_by_userno=UserID -- search for a user's comments by userID
+ *        <li>commented_by=Username -- search for images contains user's comments by username
+ *        <li>commented_by_userno=UserID -- search for images contains user's comments by userID
+ *      </ul>
+ *    <li>Pools
+ *      <ul>
+ *        <li>pool=PoolID -- search for images in a pool by PoolID
+ *        <li>pool_by_name=PoolName -- search for images in a pool by PoolName. underscores are replaced with spaces
  *      </ul>
  *  </ul>
  */
