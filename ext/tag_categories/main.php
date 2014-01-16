@@ -48,6 +48,30 @@ class TagCategories extends Extension {
 		}
 	}
 
+	public function onSearchTermParse(SearchTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/", $event->term, $matches)) {
+			global $database;
+			$type = $matches[1];
+			$cmp = ltrim($matches[2], ":") ?: "=";
+			$count = $matches[3];
+
+			$types = $database->get_col('SELECT category FROM image_tag_categories');
+			if(in_array($type, $types)) {
+				$event->add_querylet(new Querylet("images.id IN (
+													SELECT * FROM (
+														SELECT it.image_id
+														FROM image_tags it
+														LEFT JOIN tags t ON it.tag_id = t.id
+														GROUP BY image_id
+														HAVING SUM(CASE WHEN t.tag LIKE '$type:%' THEN 1 ELSE 0 END) $cmp $count
+													) AS subquery
+												   )"));
+			}
+		}
+	}
+
 	public function getDict() {
 		global $database;
 
