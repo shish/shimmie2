@@ -509,14 +509,15 @@ function captcha_check() {
 * @param string &$file File path
 * @return string
 */
-function getMimeType($file, $ext="") {
+function getMimeType($file, $ext="", $list=false) {
 
 	// Static extension lookup
 	$ext = strtolower($ext);
 	static $exts = array(
 		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
 		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-		'swf' => 'application/x-shockwave-flash', 'pdf' => 'application/pdf',
+		'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
+		'svg' => 'image/svg+xml', 'pdf' => 'application/pdf',
 		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
 		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
 		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
@@ -528,6 +529,8 @@ function getMimeType($file, $ext="") {
 		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
 		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
 	);
+
+	if ($list == true){ return $exts; }
 
 	if (isset($exts[$ext])) { return $exts[$ext]; }
 
@@ -554,6 +557,17 @@ function getMimeType($file, $ext="") {
 	if ($type !== false && strlen($type) > 0) return $type;
 	
 	return 'application/octet-stream';
+}
+
+
+function getExtension ($mime_type){
+	if(empty($mime_type)){
+		return false;
+	}
+
+	$extensions = getMimeType(null, null, true);
+	$ext = array_search($mime_type, $extensions);
+	return ($ext ?: false);
 }
 
 /**
@@ -801,17 +815,24 @@ function transload($url, $mfile) {
 		$ch = curl_init($url);
 		$fp = fopen($mfile, "w");
 
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_VERBOSE, 1);
+		curl_setopt($ch, CURLOPT_HEADER, 1);
 		curl_setopt($ch, CURLOPT_REFERER, $url);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Shimmie-".VERSION);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
-		curl_exec($ch);
+		$response = curl_exec($ch);
+
+		$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+		$headers = http_parse_headers(implode("\n", preg_split('/\R/', rtrim(substr($response, 0, $header_size)))));
+		$body = substr($response, $header_size);
+
 		curl_close($ch);
+		fwrite($fp, $body);
 		fclose($fp);
 
-		return true;
+		return $headers;
 	}
 
 	if($config->get_string("transload_engine") === "wget") {
@@ -839,12 +860,36 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
-		return true;
+		$headers = http_parse_headers(implode("\n", $http_response_header));
+
+		return $headers;
 	}
 
 	return false;
 }
 
+if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
+	function http_parse_headers ($raw_headers){
+		$headers = array(); // $headers = [];
+
+		foreach (explode("\n", $raw_headers) as $i => $h) {
+			$h = explode(':', $h, 2);
+
+			if (isset($h[1])){
+				if(!isset($headers[$h[0]])){
+					$headers[$h[0]] = trim($h[1]);
+				}else if(is_array($headers[$h[0]])){
+					$tmp = array_merge($headers[$h[0]],array(trim($h[1])));
+					$headers[$h[0]] = $tmp;
+				}else{
+					$tmp = array_merge(array($headers[$h[0]]),array(trim($h[1])));
+					$headers[$h[0]] = $tmp;
+				}
+			}
+		}
+		return $headers;
+	}
+}
 
 $_included = array();
 /**
