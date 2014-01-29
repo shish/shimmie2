@@ -72,6 +72,25 @@ class LockSetEvent extends Event {
 	}
 }
 
+/*
+ * TagTermParseEvent:
+ * Signal that a tag term needs parsing
+ */
+class TagTermParseEvent extends Event {
+	var $term = null;
+	var $id = null;
+	var $metatag = false;
+
+	public function TagTermParseEvent($term, $id) {
+		$this->term = $term;
+		$this->id = $id;
+	}
+
+	public function is_metatag() {
+		return $this->metatag;
+	}
+}
+
 class TagEdit extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
@@ -169,6 +188,15 @@ class TagEdit extends Extension {
 		$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
 	}
 
+	public function onTagTermParse(TagTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
+			send_event(new SourceSetEvent(Image::by_id($event->id), $matches[1]));
+		}
+
+		if(!empty($matches)) $event->metatag = true;
+	}
 
 	private function can_tag(Image $image) {
 		global $config, $user;

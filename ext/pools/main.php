@@ -315,6 +315,16 @@ class Pools extends Extension {
 		}
 	}
 
+	public function onTagTermParse(TagTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^pool[=|:](.*)$/i", $event->term, $matches)) {
+			$this->add_post_from_tag($matches[1], $event->id);
+		}
+
+		if(!empty($matches)) $event->metatag = true;
+	}
+
 	public function add_post_from_tag(/*str*/ $poolTag, /*int*/ $imageID){
 		$poolTag = str_replace("_", " ", $poolTag);
 		//First check if pool tag is a title
