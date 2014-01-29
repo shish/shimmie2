@@ -192,7 +192,8 @@ class TagEdit extends Extension {
 		$matches = array();
 
 		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
-			send_event(new SourceSetEvent(Image::by_id($event->id), $matches[1]));
+			$source = ($matches[1] !== "none" ? $matches[1] : null);
+			send_event(new SourceSetEvent(Image::by_id($event->id), $source));
 		}
 
 		if(!empty($matches)) $event->metatag = true;
