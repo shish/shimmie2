@@ -142,7 +142,7 @@ abstract class DataHandlerExtension extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		global $user;
 
-		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
+		if(($supported_ext = $this->supported_ext($event->type)) && ($check_contents = $this->check_contents($event->tmpname))) {
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
@@ -196,6 +196,9 @@ abstract class DataHandlerExtension extends Extension {
 					send_event(new LockSetEvent($image, !empty($locked)));
 				}
 			}
+		}
+		elseif($supported_ext && !$check_contents){
+			throw new UploadException("Invalid or corrupted file");
 		}
 	}
 

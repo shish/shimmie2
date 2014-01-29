@@ -31,16 +31,14 @@ class NumericScore extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $user, $page;
 		if(!$user->is_anonymous()) {
-			$html = $this->theme->get_voter_html($event->image);
-			$page->add_block(new Block("Image Score", $html, "left", 20));
+			$this->theme->get_voter($event->image);
 		}
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $page, $user;
 		if($user->can("edit_other_vote")) {
-			$html = $this->theme->get_nuller_html($event->display_user);
-			$page->add_block(new Block("Votes", $html, "main", 60));
+			$this->theme->get_nuller($event->display_user);
 		}
 	}
 
@@ -219,12 +217,12 @@ class NumericScore extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/^score(<|<=|=|>=|>)(-?\d+)$/", $event->term, $matches)) {
-			$cmp = $matches[1];
+		if(preg_match("/^score([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(-?\d+)$/", $event->term, $matches)) {
+			$cmp = ltrim($matches[1], ":") ?: "=";
 			$score = $matches[2];
 			$event->add_querylet(new Querylet("numeric_score $cmp $score"));
 		}
-		if(preg_match("/^upvoted_by=(.*)$/", $event->term, $matches)) {
+		if(preg_match("/^upvoted_by[=|:](.*)$/", $event->term, $matches)) {
 			$duser = User::by_name($matches[1]);
 			if(is_null($duser)) {
 				throw new SearchTermParseException(
@@ -234,7 +232,7 @@ class NumericScore extends Extension {
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
 				array("ns_user_id"=>$duser->id)));
 		}
-		if(preg_match("/^downvoted_by=(.*)$/", $event->term, $matches)) {
+		if(preg_match("/^downvoted_by[=|:](.*)$/", $event->term, $matches)) {
 			$duser = User::by_name($matches[1]);
 			if(is_null($duser)) {
 				throw new SearchTermParseException(
@@ -244,13 +242,13 @@ class NumericScore extends Extension {
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
 				array("ns_user_id"=>$duser->id)));
 		}
-		if(preg_match("/^upvoted_by_id=(\d+)$/", $event->term, $matches)) {
+		if(preg_match("/^upvoted_by_id[=|:](\d+)$/", $event->term, $matches)) {
 			$iid = int_escape($matches[1]);
 			$event->add_querylet(new Querylet(
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=1)",
 				array("ns_user_id"=>$iid)));
 		}
-		if(preg_match("/^downvoted_by_id=(\d+)$/", $event->term, $matches)) {
+		if(preg_match("/^downvoted_by_id[=|:](\d+)$/", $event->term, $matches)) {
 			$iid = int_escape($matches[1]);
 			$event->add_querylet(new Querylet(
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",

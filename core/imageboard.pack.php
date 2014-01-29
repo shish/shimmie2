@@ -26,6 +26,7 @@
 $tag_n = 0; // temp hack
 $_flexihash = null;
 $_fh_last_opts = null;
+$order_sql = null; // this feels ugly
 
 require_once "lib/flexihash.php";
 
@@ -114,7 +115,7 @@ class Image {
 		assert(is_numeric($start));
 		assert(is_numeric($limit));
 		assert(is_array($tags));
-		global $database, $user;
+		global $database, $user, $config, $order_sql;
 
 		$images = array();
 
@@ -128,13 +129,15 @@ class Image {
 		}
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet("ORDER BY images.id DESC LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
+		$querylet->append(new Querylet(" ORDER BY images.".($order_sql ?: $config->get_string("index_order"))));
+		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
 
 		while($row = $result->fetch()) {
 			$images[] = new Image($row);
 		}
+		$order_sql = null;
 		return $images;
 	}
 
@@ -476,6 +479,18 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
+				if(preg_match("/^source[=|:](.*)$/i", $tag, $matches)) {
+					$this->set_source($matches[1]);
+					continue;
+				}
+				if(preg_match("/^pool[=|:](.*)$/i", $tag, $matches)) {
+					if(class_exists("Pools")) {
+						$pls = new Pools();
+						$pls->add_post_from_tag($matches[1], $this->id);
+					}
+					continue;
+				}
+
 				$id = $database->get_one(
 						$database->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
@@ -651,6 +666,8 @@ class Image {
 			}
 		}
 
+		$terms = Tag::resolve_aliases($terms);
+
 		// parse the words that are searched for into
 		// various types of querylet
 		foreach($terms as $term) {
@@ -662,8 +679,6 @@ class Image {
 			if(strlen($term) === 0) {
 				continue;
 			}
-
-			$term = Tag::resolve_alias($term);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
@@ -812,6 +827,8 @@ class Image {
 			}
 		}
 
+		$terms = Tag::resolve_aliases($terms);
+
 		reset($terms); // rewind to first element in array.
 		
 		// turn each term into a specific type of querylet
@@ -821,8 +838,6 @@ class Image {
 				$negative = true;
 				$term = substr($term, 1);
 			}
-			
-			$term = Tag::resolve_alias($term);
 
 			$stpe = new SearchTermParseEvent($term, $terms);
 			send_event($stpe);
@@ -1070,11 +1085,22 @@ class Tag {
 		assert(is_array($tags));
 
 		$new = array();
-		foreach($tags as $tag) {
-			$new_set = explode(' ', Tag::resolve_alias($tag));
-			foreach($new_set as $new_one) {
-				$new[] = $new_one;
+
+		$i = 0;
+		$tag_count = count($tags);
+		while($i<$tag_count) {
+			$aliases = explode(' ', Tag::resolve_alias($tags[$i]));
+			foreach($aliases as $alias){
+				if(!in_array($alias, $new)){
+					if($tags[$i] == $alias){
+						$new[] = $alias;
+					}elseif(!in_array($alias, $tags)){
+						$tags[] = $alias;
+						$tag_count++;
+					}
+				}
 			}
+			$i++;
 		}
 
 		$new = array_iunique($new); // remove any duplicate tags

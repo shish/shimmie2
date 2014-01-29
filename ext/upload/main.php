@@ -329,9 +329,12 @@ class Upload extends Extension {
 		}
 
 		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
-		$filename = basename($url);
 
-		if(!transload($url, $tmp_filename)) {
+		$headers = transload($url, $tmp_filename);
+		$h_filename = (isset($headers['Content-Disposition']) ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $headers['Content-Disposition']) : null);
+		$filename = $h_filename ?: basename($url);
+
+		if(!$headers) {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"Error reading from ".html_escape($url));
 			return false;
@@ -341,12 +344,11 @@ class Upload extends Extension {
 			$this->theme->display_upload_error($page, "Error with ".html_escape($filename),
 				"No data found -- perhaps the site has hotlink protection?");
 			$ok = false;
-		}
-		else {
+		}else{
 			global $user;
 			$pathinfo = pathinfo($url);
-			$metadata['filename'] = $pathinfo['basename'];
-			$metadata['extension'] = $pathinfo['extension'];
+			$metadata['filename'] = $filename;
+			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = $source;
 			
