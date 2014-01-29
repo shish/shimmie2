@@ -67,11 +67,21 @@ class PoolsTheme extends Themelet {
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
 
+		$order_html = '
+			<select id="order_pool">
+			  <option value="created">Recently created</option>
+			  <option value="updated">Last updated</option>
+			  <option value="name">Name</option>
+			  <option value="count">Post count</option>
+			</select>
+		';
+
 		$blockTitle = "Pools";
 		$page->set_title(html_escape($blockTitle));
 		$page->set_heading(html_escape($blockTitle));
 		$page->add_block(new Block($blockTitle, $html, "main", 10));
 		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
+		$page->add_block(new Block("Order By", $order_html, "left", 15));
 
 		$this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
 	}
@@ -156,6 +166,13 @@ class PoolsTheme extends Themelet {
 			$pool_images .= "\n".$thumb_html."\n";
 		}
 
+		$nav_html = '
+			<a href="'.make_link().'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
+
+		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
 		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));		
 		$this->display_paginator($page, "pool/view/".$pools[0]['id'], null, $pageNumber, $totalPages);
 	}
@@ -312,8 +329,17 @@ class PoolsTheme extends Themelet {
 	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
 
-		$this->display_top($pools, "Editing Pool", true);
 
+		/* EDIT POOL DESCRIPTION */
+		$desc_html = "
+			".make_form(make_link("pool/edit_description"))."
+					<textarea name='description'>".$pools[0]['description']."</textarea><br />
+					<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>
+					<input type='submit' value='Change Description' />
+			</form>
+		";
+
+		/* REMOVE POOLS */
 		$pool_images = "\n<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
 
 		foreach($images as $pair) {
@@ -331,6 +357,9 @@ class PoolsTheme extends Themelet {
 			"<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
 			"</form>";
 
+		$pools[0]['description'] = ""; //This is a rough fix to avoid showing the description twice.
+		$this->display_top($pools, "Editing Pool", true);
+		$page->add_block(new Block("Editing Description", $desc_html, "main", 28));
 		$page->add_block(new Block("Editing Posts", $pool_images, "main", 30));
 	}
 
@@ -388,21 +417,6 @@ class PoolsTheme extends Themelet {
 		$page->add_block(new Block("Recent Changes", $html, "main", 10));
 
 		$this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
-	}
-
-
-	/**
-	 * Display an error message to the user.
-	 */
-	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
-		global $page;
-		
-		// Quick n' Dirty fix
-		$message = $code;
-
-		$page->set_title("Error");
-		$page->set_heading("Error");
-		$page->add_block(new Block("Error", $errMessage, "main", 10));
 	}
 }
 ?>

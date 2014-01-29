@@ -262,12 +262,12 @@ class CommentList extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/comments(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
-			$cmp = $matches[1];
+		if(preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+			$cmp = ltrim($matches[1], ":") ?: "=";
 			$comments = $matches[2];
 			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
 		}
-		else if(preg_match("/commented_by=(.*)/i", $event->term, $matches)) {
+		else if(preg_match("/^commented_by[=|:](.*)$/i", $event->term, $matches)) {
 			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
@@ -279,7 +279,7 @@ class CommentList extends Extension {
 
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
 		}
-		else if(preg_match("/commented_by_userid=([0-9]+)/i", $event->term, $matches)) {
+		else if(preg_match("/^commented_by_userno[=|:]([0-9]+)$/i", $event->term, $matches)) {
 			$user_id = int_escape($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM comments WHERE owner_id = $user_id)"));
 		}
@@ -292,6 +292,8 @@ class CommentList extends Extension {
 		if(class_exists("Ratings")) {
 			$user_ratings = Ratings::get_user_privs($user);
 		}
+		
+		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		
 		$total_pages = $database->cache->get("comment_pages");
 		if(empty($total_pages)) {
@@ -307,7 +309,6 @@ class CommentList extends Extension {
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
 
-		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		$get_threads = "
 			SELECT image_id,MAX(posted) AS latest
 			FROM comments $where
@@ -320,13 +321,15 @@ class CommentList extends Extension {
 		$images = array();
 		while($row = $result->fetch()) {
 			$image = Image::by_id($row["image_id"]);
-			$comments = $this->get_comments($image->id);
-			if(class_exists("Ratings")) {
-				if(strpos($user_ratings, $image->rating) === FALSE) {
-					$image = null; // this is "clever", I may live to regret it
+			if (!is_null($image)) {
+				$comments = $this->get_comments($image->id);
+				if(class_exists("Ratings")) {
+					if(strpos($user_ratings, $image->rating) === FALSE) {
+						$image = null; // this is "clever", I may live to regret it
+					}
 				}
+				if(!is_null($image)) $images[] = array($image, $comments);				
 			}
-			if(!is_null($image)) $images[] = array($image, $comments);
 		}
 
 		$this->theme->display_comment_list($images, $current_page, $total_pages, $user->can("create_comment"));
@@ -335,8 +338,7 @@ class CommentList extends Extension {
 
 // get comments {{{
 	private function get_recent_comments($count) {
-		global $config;
-		global $database;
+		global $config, $database;
 		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -356,8 +358,7 @@ class CommentList extends Extension {
 	}
 
 	private function get_user_comments(/*int*/ $user_id, /*int*/ $count, /*int*/ $offset=0) {
-		global $config;
-		global $database;
+		global $config, $database;
 		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -378,8 +379,7 @@ class CommentList extends Extension {
 	}
 
 	private function get_comments(/*int*/ $image_id) {
-		global $config;
-		global $database;
+		global $config, $database;
 		$i_image_id = int_escape($image_id);
 		$rows = $database->get_all("
 				SELECT
@@ -402,9 +402,7 @@ class CommentList extends Extension {
 
 // add / remove / edit comments {{{
 	private function is_comment_limit_hit() {
-		global $user;
-		global $config;
-		global $database;
+		global $user, $config, $database;
 
 		// sqlite fails at intervals
 		if($database->get_driver_name() === "sqlite") return false;
@@ -493,9 +491,9 @@ class CommentList extends Extension {
 		}
 		return $pagenum;
 	}
+
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
-		global $database;
-		global $config;
+		global $database, $config;
 
 		// basic sanity checks
 		if(!$user->can("create_comment")) {

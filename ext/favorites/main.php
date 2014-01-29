@@ -117,12 +117,12 @@ class Favorites extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/favorites(<|>|<=|>=|=)(\d+)/", $event->term, $matches)) {
-			$cmp = $matches[1];
+		if(preg_match("/^favorites([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+			$cmp = ltrim($matches[1], ":") ?: "=";
 			$favorites = $matches[2];
 			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
 		}
-		else if(preg_match("/favorited_by=(.*)/i", $event->term, $matches)) {
+		else if(preg_match("/^favorited_by[=|:](.*)$/i", $event->term, $matches)) {
 			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
@@ -134,7 +134,7 @@ class Favorites extends Extension {
 
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
 		}
-		else if(preg_match("/favorited_by_userno=([0-9]+)/i", $event->term, $matches)) {
+		else if(preg_match("/^favorited_by_userno[=|:](\d+)$/i", $event->term, $matches)) {
 			$user_id = int_escape($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
 		}

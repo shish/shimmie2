@@ -1,8 +1,8 @@
 <?php
 
 class NumericScoreTheme extends Themelet {
-	public function get_voter_html(Image $image) {
-		global $user;
+	public function get_voter(Image $image) {
+		global $user, $page;
 		$i_image_id = int_escape($image->id);
 		$i_score = int_escape($image->numeric_score);
 
@@ -46,11 +46,11 @@ class NumericScoreTheme extends Themelet {
 			</div>
 			";
 		}
-		return $html;
+		$page->add_block(new Block("Image Score", $html, "left", 20));
 	}
 
-	public function get_nuller_html(User $duser) {
-		global $user;
+	public function get_nuller(User $duser) {
+		global $user, $page;
 		$html = "
 			<form action='".make_link("numeric_score/remove_votes_by")."' method='POST'>
 			".$user->get_auth_html()."
@@ -58,7 +58,7 @@ class NumericScoreTheme extends Themelet {
 			<input type='submit' value='Delete all votes by this user'>
 			</form>
 		";
-		return $html;
+		$page->add_block(new Block("Votes", $html, "main", 60));
 	}
 
 	public function view_popular($images, $dte) {

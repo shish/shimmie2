@@ -54,14 +54,6 @@ class DanbooruApi extends Extension {
 		}
 	}
 
-	public function onSearchTermParse(SearchTermParseEvent $event) {
-		$matches = array();
-		if(preg_match("/^md5:([0-9a-fA-F]*)$/i", $event->term, $matches)) {
-			$hash = strtolower($matches[1]);
-			$event->add_querylet(new Querylet("images.hash = '$hash'"));	// :-O
-		}
-	}
-
 	// Danbooru API
 	private function api_danbooru(PageRequestEvent $event)
 	{
