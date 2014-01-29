@@ -189,6 +189,18 @@ class TagEdit extends Extension {
 
 		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
+		if(count($search_set) == 1 && count($replace_set) == 1) {
+			$images = Image::find_images(0, 10, $replace_set);
+			if(count($images) == 0) {
+				log_info("tag_edit", "No images found with target tag, doing in-place rename");
+				$database->execute("DELETE FROM tags WHERE tag=:replace",
+					array("replace" => $replace_set[0]));
+				$database->execute("UPDATE tags SET tag=:replace WHERE tag=:search",
+					array("replace" => $replace_set[0], "search" => $search_set[0]));
+				return;
+			}
+		}
+
 		$last_id = -1;
 		while(true) {
 			// make sure we don't look at the same images twice.
