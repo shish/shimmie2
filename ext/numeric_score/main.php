@@ -256,6 +256,18 @@ class NumericScore extends Extension {
 		}
 	}
 
+	public function onTagTermParse(TagTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
+			global $user;
+			$score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
+			send_event(new NumericScoreSetEvent($event->id, $user, $score));
+		}
+
+		if(!empty($matches)) $event->metatag = true;
+	}
+
 	private function install() {
 		global $database;
 		global $config;
