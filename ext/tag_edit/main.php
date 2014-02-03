@@ -131,7 +131,9 @@ class TagEdit extends Extension {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 		}
 		if($this->can_source($event->image) && isset($_POST['tag_edit__source'])) {
-			send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
+			if(isset($_POST['tag_edit__tags']) ? !preg_match('/source[=|:]/', $_POST["tag_edit__tags"]) : TRUE){
+				send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
+			}
 		}
 		if($user->can("edit_image_lock")) {
 			$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
