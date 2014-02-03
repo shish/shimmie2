@@ -141,6 +141,11 @@
  *        <li>pool=(PoolID, any, none) -- search for images in a pool by PoolID.
  *        <li>pool_by_name=PoolName -- search for images in a pool by PoolName. underscores are replaced with spaces
  *      </ul>
+ *    <li>Post Relationships
+ *      <ul>
+ *        <li>parent=(parentID, any, none) -- search for images by parentID / if they have, do not have a parent
+ *        <li>child=(any, none) -- search for images which have, or do not have children
+ *      </ul>
  *  </ul>
  */
 

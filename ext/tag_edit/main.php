@@ -3,6 +3,34 @@
  * Name: Tag Editor
  * Author: Shish
  * Description: Allow images to have tags assigned to them
+ * Documentation:
+ *  Here is a list of the tagging metatags available out of the box;
+ *  Shimmie extensions may provide other metatags:
+ *  <ul>
+ *    <li>source=(*, none) eg -- using this metatag will ignore anything set in the "Source" box
+ *      <ul>
+ *        <li>source=http://example.com -- set source to http://example.com
+ *        <li>source=none -- set source to NULL
+ *      </ul>
+ *  </ul>
+ *  <p>Metatags can be followed by ":" rather than "=" if you prefer.
+ *  <br />I.E: "source:http://example.com", "source=http://example.com" etc.
+ *  <p>Some tagging metatags provided by extensions:
+ *  <ul>
+ *    <li>Numeric Score
+ *      <ul>
+ *        <li>vote=(up, down, remove) -- vote, or remove your vote on an image
+ *      </ul>
+ *    <li>Pools
+ *      <ul>
+ *        <li>pool=(PoolID, PoolTitle) -- add post to pool (if exists)
+ *      </ul>
+ *    <li>Post Relationships
+ *      <ul>
+ *        <li>parent=(parentID, none) -- set parent ID of current image
+ *        <li>child=(childID) -- set parent ID of child image to current image ID
+ *      </ul>
+ *  </ul>
  */
 
 /*
