@@ -319,16 +319,18 @@ class Pools extends Extension {
 		$matches = array();
 
 		if(preg_match("/^pool[=|:](.*)$/i", $event->term, $matches)) {
+			global $user;
 			$poolTag = (string) str_replace("_", " ", $matches[1]);
 
-			if(ctype_digit($poolTag)){ //Assume tag is poolID
-				if($this->get_single_pool($poolTag)){
-					$this->add_post($poolTag, $event->id, true);
-				}
-			}else{ //Assume tag is poolTitle
-				if($pool = $this->get_single_pool_from_title($poolTag)){
-					$this->add_post($pool['id'], $event->id, true);
-				}
+			$pool = null;
+			if(ctype_digit($poolTag)){ //If only digits, assume PoolID
+				$pool = $this->get_single_pool($poolTag);
+			}else{ //assume PoolTitle
+				$pool = $this->get_single_pool_from_title($poolTag);
+			}
+
+			if($pool ? $this->have_permission($user, $pool) : FALSE){
+				$this->add_post($pool['id'], $event->id, true);
 			}
 		}
 

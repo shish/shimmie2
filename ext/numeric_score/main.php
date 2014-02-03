@@ -262,7 +262,9 @@ class NumericScore extends Extension {
 		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
 			global $user;
 			$score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
-			send_event(new NumericScoreSetEvent($event->id, $user, $score));
+			if(!$user->is_anonymous()) {
+				send_event(new NumericScoreSetEvent($event->id, $user, $score));
+			}
 		}
 
 		if(!empty($matches)) $event->metatag = true;

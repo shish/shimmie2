@@ -22,10 +22,8 @@ class Relationships extends Extension {
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
         global $user;
-		if (isset($_POST["tag_edit__parent"])) {
-			if(ctype_digit($_POST["tag_edit__parent"])){
-				$this->set_parent($event->image->id, (int) $_POST["tag_edit__parent"]);
-			}
+		if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : FALSE) {
+			$this->set_parent($event->image->id, (int) $_POST["tag_edit__parent"]);
 		}
 	}
 
