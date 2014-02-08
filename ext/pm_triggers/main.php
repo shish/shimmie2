@@ -11,7 +11,7 @@ class PMTrigger extends Extension {
 		$this->send(
 			$event->image->owner_id,
 			"[System] An image you uploaded has been deleted",
-			"Image le gone~ (#{$image->id}, {$image->get_tag_list()})"
+			"Image le gone~ (#{$event->image->id}, {$event->image->get_tag_list()})"
 		);
 	}
 
