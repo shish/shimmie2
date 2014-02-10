@@ -9,11 +9,11 @@ class ShimmieTestCase extends UnitTestCase {
 	var $options;
 	
 	function ShimmieTestCase() {
-		$options = getopt("database:url:"); 
+		$this->options = getopt("database:url:"); 
 	}
 	
 	function testOptions() {
-		print_r($options);
+		print_r($this->options);
 		$this->assertTrue(true);
 	}
 	
