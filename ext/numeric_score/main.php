@@ -254,6 +254,13 @@ class NumericScore extends Extension {
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
 				array("ns_user_id"=>$iid)));
 		}
+		else if(preg_match("/^order[=|:](numeric_)?(score)[_]?(desc|asc)?$/i", $event->term, $matches)){
+			global $order_sql;
+			$default_order_for_column = "DESC";
+			$sort = isset($matches[3]) ? strtoupper($matches[3]) : $default_order_for_column;
+			$order_sql = "numeric_score $sort";
+			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
+		}
 	}
 
 	private function install() {

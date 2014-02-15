@@ -109,6 +109,7 @@
  *        <li>downvoted_by=Username -- search for a user's dislikes
  *        <li>upvoted_by_id=UserID -- search for a user's likes by user ID
  *        <li>downvoted_by_id=UserID -- search for a user's dislikes by user ID
+ *        <li>order=score_(ASC, DESC) -- find all images sorted from by score
  *      </ul>
  *    <li>Image Rating
  *      <ul>
