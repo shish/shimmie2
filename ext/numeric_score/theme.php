@@ -62,27 +62,28 @@ class NumericScoreTheme extends Themelet {
 	}
 
 	public function view_popular($images, $dte) {
-		global $user, $page;
+		global $page, $config;
 
-		$pop_images = '';
+		$pop_images = "";
 		foreach($images as $image) {
-			$thumb_html = $this->build_thumb_html($image);
-			$pop_images .= '<span class="thumb">'.
-				'<a href="$image_link">'.$thumb_html.'</a>'.
-				'</span>';
+			$pop_images .= $this->build_thumb_html($image)."\n";
 		}
 
 		$b_dte = make_link("popular_by_".$dte[3]."?".date($dte[2], (strtotime('-1 '.$dte[3], strtotime($dte[0])))));
 		$f_dte = make_link("popular_by_".$dte[3]."?".date($dte[2], (strtotime('+1 '.$dte[3], strtotime($dte[0])))));
 
-		$html = '<center><h3><a href="'.$b_dte.'">&laquo;</a> '.$dte[1]
-				.' <a href="'.$f_dte.'">&raquo;</a>'
-				.'</h3></center>
-				<br>'.$pop_images;
+		$html = "\n".
+			"<center>\n".
+			"	<h3>\n".
+			"		<a href='{$b_dte}'>&laquo;</a> {$dte[1]} <a href='{$f_dte}'>&raquo;</a>\n".
+			"	</h3>\n".
+			"</center>\n".
+			"<br/>\n".$pop_images;
 
 
 		$nav_html = "<a href=".make_link().">Index</a>";
 
+		$page->set_heading($config->get_string('title'));
 		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
 		$page->add_block(new Block(null, $html, "main", 30));
 	}

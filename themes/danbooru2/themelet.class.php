@@ -42,7 +42,7 @@ class Themelet extends BaseThemelet {
 	private function build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = rand(1, $total_pages);
+		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 3 || $total_pages <= 3);
 		$at_end = ($current_page >= $total_pages -2);

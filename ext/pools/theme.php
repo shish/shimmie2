@@ -121,7 +121,9 @@ class PoolsTheme extends Themelet {
 					$this->sidebar_options($page, $pool, $check_all);
 				}
 			}
-			$page->add_block(new Block(html_escape($pool['title']), html_escape($pool['description']), "main", 10));
+
+			$bb = new BBCode();
+			$page->add_block(new Block(html_escape($pool['title']), $bb->format($pool['description']), "main", 10));
 		}
 		else {
 			$pool_info = '

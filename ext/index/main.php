@@ -109,6 +109,7 @@
  *        <li>downvoted_by=Username -- search for a user's dislikes
  *        <li>upvoted_by_id=UserID -- search for a user's likes by user ID
  *        <li>downvoted_by_id=UserID -- search for a user's dislikes by user ID
+ *        <li>order=score_(ASC, DESC) -- find all images sorted from by score
  *      </ul>
  *    <li>Image Rating
  *      <ul>
@@ -295,12 +296,12 @@ class Index extends Extension {
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
 		// check for tags first as tag based searches are more common.
-		if(preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+		if(preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$tags = $matches[2];
 			$event->add_querylet(new Querylet('images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) '.$cmp.' '.$tags.')'));
 		}
-		else if(preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/", $event->term, $matches)) {
+		else if(preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
 			$cmp = preg_replace('/^:/', '=', $matches[1]);
 			$args = array("width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3]));
 			$event->add_querylet(new Querylet("width / height $cmp :width{$this->stpen} / :height{$this->stpen}", $args));
@@ -326,28 +327,28 @@ class Index extends Extension {
 		else if(preg_match("/^(source)[=|:](.*)$/i", $event->term, $matches)) {
 			$source = strtolower($matches[2]);
 
-			if(preg_match("/^(any|none)$/", $source)){
+			if(preg_match("/^(any|none)$/i", $source)){
 				$not = ($source == "any" ? "NOT" : "");
 				$event->add_querylet(new Querylet("images.source IS $not NULL"));
 			}else{
 				$event->add_querylet(new Querylet('images.source LIKE :src', array("src"=>"%$source%")));
 			}
 		}
-		else if(preg_match("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/", $event->term, $matches)) {
+		else if(preg_match("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$val = $matches[2];
 			$event->add_querylet(new Querylet("images.posted $cmp :posted{$this->stpen}", array("posted{$this->stpen}"=>$val)));
 		}
-		else if(preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/", $event->term, $matches)) {
+		else if(preg_match("/^size([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)x(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$args = array("width{$this->stpen}"=>int_escape($matches[2]), "height{$this->stpen}"=>int_escape($matches[3]));
 			$event->add_querylet(new Querylet("width $cmp :width{$this->stpen} AND height $cmp :height{$this->stpen}", $args));
 		}
-		else if(preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+		else if(preg_match("/^width([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$event->add_querylet(new Querylet("width $cmp :width{$this->stpen}", array("width{$this->stpen}"=>int_escape($matches[2]))));
 		}
-		else if(preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+		else if(preg_match("/^height([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$event->add_querylet(new Querylet("height $cmp :height{$this->stpen}",array("height{$this->stpen}"=>int_escape($matches[2]))));
 		}
