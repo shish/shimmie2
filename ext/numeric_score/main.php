@@ -63,7 +63,7 @@ class NumericScore extends Extension {
 			}
 			die($html);
 		}
-		if($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
+		else if($event->page_matches("numeric_score_vote") && $user->check_auth_token()) {
 			if(!$user->is_anonymous()) {
 				$image_id = int_escape($_POST['image_id']);
 				$char = $_POST['vote'];
@@ -76,7 +76,7 @@ class NumericScore extends Extension {
 				$page->set_redirect(make_link("post/view/$image_id"));
 			}
 		}
-		if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
+		else if($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
 			if($user->can("edit_other_vote")) {
 				$image_id = int_escape($_POST['image_id']);
 				$database->execute(
@@ -89,83 +89,62 @@ class NumericScore extends Extension {
 				$page->set_redirect(make_link("post/view/$image_id"));
 			}
 		}
-		if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
+		else if($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
 			if($user->can("edit_other_vote")) {
 				$this->delete_votes_by(int_escape($_POST['user_id']));
 				$page->set_mode("redirect");
 				$page->set_redirect(make_link());
 			}
 		}
-		if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
-			$t_images = $config->get_int("index_images");
+		else if($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
+			//FIXME: popular_by isn't linked from anywhere
+			list($day, $month, $year) = array(date("d"), date("m"), date("Y"));
 
-			//TODO: Add Popular_by_week.
+			if(!empty($_GET['day'])){
+				$D = (int) $_GET['day'];
+				if($D >= 1 && $D <= 31) $day = $D;
+			}
+			if(!empty($_GET['month'])){
+				$M = (int) $_GET['month'];
+				if($M >= 1 && $M <= 12) $month = $M;
+			}
+			if(!empty($_GET['year'])){
+				$Y = (int) $_GET['year'];
+				if($Y >= 1970 && $Y < 2100) $year = $Y;
+			}
 
-			//year
-			if(empty($_GET['year'])){
-				$year = date("Y");
-			}else{
-				$year = $_GET['year'];
-			}
-			//month
-			if(empty($_GET['month']) || int_escape($_GET['month']) > 12){
-				$month = date("m");
-			}else{
-				$month = $_GET['month'];
-			}
-			//day
-			if(empty($_GET['day']) || int_escape($_GET['day']) > 31){
-				$day = date("d");
-			}else{
-				$day = $_GET['day'];
-			}
 			$totaldate = $year."/".$month."/".$day;
 
-			$sql =
-				"SELECT * FROM images
-				WHERE EXTRACT(YEAR FROM posted) = :year
-				";
-
-			$agrs = array("limit" => $t_images, "year" => $year);
+			$sql = "SELECT id FROM images
+			        WHERE EXTRACT(YEAR FROM posted) = :year
+					";
+			$args = array("limit" => $config->get_int("index_images"), "year" => $year);
 
 			if($event->page_matches("popular_by_day")){
 				$sql .=
 					"AND EXTRACT(MONTH FROM posted) = :month
-					AND EXTRACT(DAY FROM posted) = :day
-					AND NOT numeric_score=0
-					";
-				//array_push doesn't seem to like using double arrows
-				//this requires us to instead create two arrays and merge
-				$sgra = array("month" => $month, "day" => $day);
-				$args = array_merge($agrs, $sgra);
+					AND EXTRACT(DAY FROM posted) = :day";
 
+				$args = array_merge($args, array("month" => $month, "day" => $day));
 				$dte = array($totaldate, date("F jS, Y", (strtotime($totaldate))), "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m\\&\\d\\a\\y\\=d", "day");
 			}
-			if($event->page_matches("popular_by_month")){
-				$sql .=
-					"AND EXTRACT(MONTH FROM posted) = :month
-					AND NOT numeric_score=0
-					";
-				$sgra = array("month" => $month);
-				$args = array_merge($agrs, $sgra);
+			else if($event->page_matches("popular_by_month")){
+				$sql .=	"AND EXTRACT(MONTH FROM posted) = :month";
 
-				$title = date("F Y", (strtotime($totaldate)));
-				$dte = array($totaldate, $title, "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m", "month");
+				$args = array_merge($args, array("month" => $month));
+				$dte = array($totaldate, date("F Y", (strtotime($totaldate))), "\\y\\e\\a\\r\\=Y\\&\\m\\o\\n\\t\\h\\=m", "month");
 			}
-			if($event->page_matches("popular_by_year")){
-				$sql .= "AND NOT numeric_score=0";
-				$dte = array($totaldate, $year, "\y\e\a\\r\=Y", "year");
-				$args = $agrs;
+			else if($event->page_matches("popular_by_year")){
+				$dte = array($totaldate, $year, "\\y\\e\\a\\r\=Y", "year");
 			}
-			$sql .= " ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
+			$sql .= " AND NOT numeric_score=0 ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
 
-			//filter images by year/score != 0 > limit to max images on one page > order from highest to lowest score
-			$result = $database->get_all($sql, $args);
+			//filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
 
+			$result = $database->get_col($sql, $args);
 			$images = array();
-			foreach($result as $singleResult) {
-				$images[] = Image::by_id($singleResult["id"]);
-			}
+			foreach($result as $id) { $images[] = Image::by_id($id); }
+
 			$this->theme->view_popular($images, $dte);
 		}
 	}
