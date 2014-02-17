@@ -7,6 +7,8 @@ class SCoreWebReporter extends HtmlReporter {
 	var $current_html = "";
 	var $clear_modules = array();
 	var $page;
+	var $fails;
+	var $exceptions;
 
 	public function SCoreReporter(Page $page) {
 		$this->page = $page;
