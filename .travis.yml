@@ -15,7 +15,7 @@ before_install:
 install:
   - sudo apt-get install -y nginx --fix-missing
   - sudo apt-get install -y php5-fpm php5-mysql --fix-missing
-  - cp travis_nginx.conf /etc/nginx/nginx.conf
+  - cp tests/travis_nginx.conf /etc/nginx/nginx.conf
   - /etc/init.d/nginx restart
   - /etc/init.d/php5-fpm restart
 
