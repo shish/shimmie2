@@ -18,7 +18,7 @@ before_script:
   #  (permissions of 777 are bad, but it definitely works)
   - chmod -R 777 .
 
-script: php tests/simple_test.php -d $DB -u http://127.0.0.1/
+script: php tests/test_install.php -d $DB
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
