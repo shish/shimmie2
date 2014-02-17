@@ -28,6 +28,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 
 		$this->get_page('alias/list');
 		$this->click("Remove");
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("test1");
 

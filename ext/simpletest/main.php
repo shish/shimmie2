@@ -195,7 +195,10 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 	protected function delete_image($image_id) {
 		if($image_id > 0) {
 	        $this->get_page('post/view/'.$image_id);
-			$this->click("Delete");
+			$this->clickSubmit("Delete");
+			// Make sure that the image is really deleted.
+			//$this->get_page('post/view/'.$image_id);
+			//$this->assert_response(404);
 		}
 	}
 }
