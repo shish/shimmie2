@@ -114,7 +114,7 @@ class SCoreWebTestCase extends WebTestCase {
 			// FIXME: this should be a command line option.
 			
 			//print "http://127.0.0.1/2.Xm/index.php?q=$page";
-			$raw = $this->get("http://127.0.0.1/2.Xm/index.php?q=".str_replace("?", "&", $page));
+			$raw = $this->get("http://127.0.0.1/index.php?q=".str_replace("?", "&", $page));
 		}
 		else {
 			$raw = $this->get(make_http(make_link($page)));
