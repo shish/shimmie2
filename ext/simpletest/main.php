@@ -111,6 +111,8 @@ class SCoreWebTestCase extends WebTestCase {
 	 */
 	protected function get_page($page) {
 		if($_SERVER['HTTP_HOST'] == "<cli command>") {
+			// FIXME: this should be a command line option.
+			
 			//print "http://127.0.0.1/2.Xm/index.php?q=$page";
 			$raw = $this->get("http://127.0.0.1/2.Xm/index.php?q=".str_replace("?", "&", $page));
 		}
@@ -207,9 +209,15 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 class TestFinder extends TestSuite {
 	function TestFinder($hint) {
 		if(strpos($hint, "..") !== FALSE) return;
+		
+		// Select the test cases for "All" extensions.
 		$dir = "{".ENABLED_EXTS."}";
+		
+		// Unless the user specified just a specific extension.
 		if(file_exists("ext/$hint/test.php")) $dir = $hint;
+		
 		$this->TestSuite('All tests');
+		
 		foreach(zglob("ext/$dir/test.php") as $file) {
 			$this->addFile($file);
 		}

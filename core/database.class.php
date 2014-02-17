@@ -326,6 +326,7 @@ class Database {
 		$this->connect_engine();
 		$this->engine->init($this->db);
 
+		// FIXME: this causes problems with running via the PHP CLI
 		$this->db->beginTransaction();
 	}
 
