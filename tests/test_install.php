@@ -24,12 +24,7 @@ class ShimmieSimpleTestCase extends WebTestCase {
 		}
 	}
 	
-	function testOptions() {
-		echo $this->database;
-		//$this->assertFalse(is_null($this->database));
-	}
-	
-	function installShimmie()
+	function testInstallShimmie()
 	{
 		$this->get('http://127.0.0.1/');
 		$this->assertResponse(200);
