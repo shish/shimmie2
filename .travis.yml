@@ -16,7 +16,7 @@ before_script:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
   - chmod -R 777 .
 
-script: php tests/simple_test.php -database $DB -url http://127.0.0.1/
+script: php tests/simple_test.php -d $DB -u http://127.0.0.1/
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:

@@ -4,12 +4,12 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/reporter.php');
 
-class ShimmieTestCase extends UnitTestCase {
+class ShimmieSimpleTestCase extends UnitTestCase {
 	
 	var $options;
 	
 	function ShimmieTestCase() {
-		$this->options = getopt("database:url:"); 
+		$this->options = getopt("d:u:"); 
 	}
 	
 	function testOptions() {
