@@ -7,7 +7,15 @@ php:
 # optionally specify a list of environments, for example to test different RDBMS
 env:
   - DB=mysql
-  - DB=pgsql
+#  - DB=pgsql
+
+before_install:
+  - sudo apt-get update > /dev/null
+
+install:
+  - sudo apt-get install -y --force-yes nginx php-fpm php5-mysql
+  - cp .travis_nginx.conf /etc/nginx/nginx.conf
+  /etc/init.d/nginx restart
 
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
