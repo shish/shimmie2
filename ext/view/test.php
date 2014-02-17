@@ -26,11 +26,15 @@ class ViewTest extends ShimmieWebTestCase {
 		$this->get_page('post/view/-1');
 		$this->assert_title('Image not found');
 
+		/*
+		 * FIXME: this is broken as it assumes Nice URLs.
+		 * 
 		# note: skips image #2
 		$this->get_page("post/view/$image_id_1?search=test"); // FIXME: assumes niceurls
 		$this->click("Prev");
 		$this->assert_title("Image $image_id_3: test");
-
+		*/
+		
 		$this->log_in_as_admin();
 		$this->delete_image($image_id_1);
 		$this->delete_image($image_id_2);
