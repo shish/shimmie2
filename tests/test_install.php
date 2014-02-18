@@ -8,19 +8,7 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
-$options = getopt("d:");
-$db = $options["d"];
-
-if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
-
-define("_TRAVIS_DATABASE", $db);
-
-require_once('lib/simpletest/autorun.php');
-require_once('lib/simpletest/unit_tester.php');
-require_once('lib/simpletest/web_tester.php');
-require_once('lib/simpletest/reporter.php');
-
-class ShimmieSimpleTestCase extends WebTestCase {
+class ShimmieInstallerTest extends WebTestCase {
 	function testInstallShimmie()
 	{
 		$db = constant("_TRAVIS_DATABASE");
