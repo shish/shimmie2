@@ -25,6 +25,8 @@ sudo chmod -R 0777 $SHIMMIE_ROOT
 
 NGINX_CONF="/etc/nginx/sites-enabled/default"
 
+sudo cat /etc/nginx/nginx.conf
+
 # nginx configuration
 echo "
 server {
@@ -38,12 +40,12 @@ server {
 	}
 	
 	# For the Nice URLs in Shimmie.
-	location / {
-		if (!-e $request_filename) {
-			rewrite  ^(.*)$  /index.php?q=$1  last;
-			break;
-		}
-	}
+	#location / {
+	#	if (!-e $request_filename) {
+	#		rewrite  ^(.*)$  /index.php?q=$1  last;
+	#		break;
+	#	}
+	#}
 	
 	location ~ \.php($|/) {
 		fastcgi_pass          127.0.0.1:9000;
