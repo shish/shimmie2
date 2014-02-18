@@ -41,12 +41,8 @@ class ShimmieSimpleTestCase extends WebTestCase {
 		$this->assertField("database_name", "shimmie");
 		$this->clickSubmit("Go!");
 		
-		if (!$this->assertTitle("Welcome to Shimmie")) {
+		if (!$this->assertText("Installation Succeeded!")) {
 			$this->showSource();
 		}
-		
-		$this->assertText("Welcome to Shimmie");
-		$this->assertText("This message will go away once your first image");
 	}
-	
 }
