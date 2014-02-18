@@ -11,6 +11,7 @@ env:
 
 before_install:
   - sudo apt-get update > /dev/null
+  - sudo cat /etc/nginx/nginx.conf
 
 install:
   - sudo chmod u+x tests/setup_test_env.sh
