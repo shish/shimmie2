@@ -12,7 +12,7 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
-
+require_once('test_install.php');
 
 $options = getopt("d:");
 $db = $options["d"];
