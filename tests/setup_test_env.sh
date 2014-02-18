@@ -31,18 +31,26 @@ server {
     listen   80 default;
     
     root        $SHIMMIE_ROOT/;
-
 	index			index.php;
     
 	location ~ /_?(images|thumbs)/ {
 			default_type image/jpeg;
 	}
-
+	
+	# For the Nice URLs in Shimmie.
+	location / {
+		if (!-e $request_filename) {
+			rewrite  ^(.*)$  /index.php?q=$1  last;
+			break;
+		}
+	}
+	
 	location ~ \.php($|/) {
-		fastcgi_pass   127.0.0.1:9000;
+		fastcgi_pass          127.0.0.1:9000;
+		include               fastcgi_params;
+		fastcgi_index         index.php;
+		fastcgi_read_timeout  600;
 		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-		fastcgi_param PATH_INFO $fastcgi_script_name;
-		include        fastcgi_params;
 	}
 }
 " | sudo tee $NGINX_CONF > /dev/null
