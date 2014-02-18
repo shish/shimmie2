@@ -25,8 +25,6 @@ sudo chmod -R 0777 $SHIMMIE_ROOT
 
 NGINX_CONF="/etc/nginx/sites-enabled/default"
 
-sudo cat /etc/nginx/nginx.conf
-
 # nginx configuration
 echo "
 server {
@@ -48,11 +46,9 @@ server {
 	#}
 	
 	location ~ \.php($|/) {
-		fastcgi_pass          127.0.0.1:9000;
-		include               fastcgi_params;
+		fastcgi_pass          unix:/var/run/php5-fpm.sock;
 		fastcgi_index         index.php;
-		fastcgi_read_timeout  600;
-		fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+		include               fastcgi_params;
 	}
 }
 " | sudo tee $NGINX_CONF > /dev/null
