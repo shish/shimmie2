@@ -37,7 +37,11 @@ class ShimmieSimpleTestCase extends WebTestCase {
 		$this->setFieldByName("database_password", $this->db_pass);
 		$this->assertFieldByName("database_name", "shimmie");
 		$this->clickSubmit("Go!");
-		$this->assertTitle("Welcome to Shimmie");
+		
+		if (!$this->assertTitle("Welcome to Shimmie")) {
+			$this->showSource();
+		}
+		
 		$this->assertText("Welcome to Shimmie");
 		$this->assertText("This message will go away once your first image");
 	}

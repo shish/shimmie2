@@ -29,8 +29,8 @@ after_failure:
   - sudo cat /etc/nginx/sites-enabled/default
   - sudo cat /var/log/nginx/error.log
   - sudo cat /var/log/php5-fpm.log
-  - sudo cat /var/log/mysql.*
-  - sudo ls /var/log/nginx
+  - sudo cat /var/log/mysql.log
+  - sudo cat /var/log/mysql.err
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
