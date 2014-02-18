@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Set up the Travis-CI test enviroment for Shimmie.
+# Set up the Travis-CI test environment for Shimmie.
 #  (this script should be run as root via sudo)
 #
 # @copyright (c) 2014 jgen

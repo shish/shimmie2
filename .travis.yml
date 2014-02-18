@@ -13,7 +13,8 @@ before_install:
   - sudo apt-get update > /dev/null
 
 install:
-  - sudo ./test/setup_test_enviroment.sh $TRAVIS_BUILD_DIR
+  - sudo chmod u+x test/setup_test_env.sh
+  - sudo ./test/setup_test_env.sh $TRAVIS_BUILD_DIR
 
 # execute any number of scripts before the test run, custom env's are available as variables
 before_script:
