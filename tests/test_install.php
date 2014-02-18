@@ -3,7 +3,7 @@
 $options = getopt("d:");
 $db = $options["d"];
 
-if (is_empty($db)){
+if (empty($db)){
 	die("Error: need to specifiy a database for the test environment.");
 }
 
@@ -22,7 +22,7 @@ class ShimmieSimpleTestCase extends WebTestCase {
 	function testInstallShimmie()
 	{
 		// Make sure that we know what database to use.
-		$this->assertFalse(is_empty($this->database));
+		$this->assertFalse(empty($this->database));
 		
 		$this->get('http://127.0.0.1/');
 		$this->assertResponse(200);
