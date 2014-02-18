@@ -4,6 +4,7 @@
  * 
  * @package    Shimmie
  * @author     Shish et al. <webmaster at shishnet.org>
+ * @link       http://code.shishnet.org/shimmie2/
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  * @copyright  Copyright (c) 2007-2014, Shish et al.
  */
