@@ -17,21 +17,19 @@ sudo apt-get install -y nginx realpath php5-fpm php5-mysql --fix-missing
 sudo service nginx stop
 sudo /etc/init.d/php5-fpm stop
 
-SHIMMIE_ROOT=$(realpath "$0")
-
 # shimmie needs to be able to create directories for images, etc.
 #  (permissions of 777 are bad, but it definitely works)
-sudo chmod -R 0777 $SHIMMIE_ROOT
+sudo chmod -R 0777 $0
 
 NGINX_CONF="/etc/nginx/sites-enabled/default"
 
 # nginx configuration
 echo "
 server {
-    listen   80 default;
-    
-    root        $SHIMMIE_ROOT/;
-	index			index.php;
+    listen        80;
+    server_name   localhost 127.0.0.1 \"\";
+    root          $0/;
+	index         index.php;
     
 	location ~ /_?(images|thumbs)/ {
 			default_type image/jpeg;
