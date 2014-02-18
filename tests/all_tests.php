@@ -12,6 +12,7 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
+
 require_once('test_install.php');
 
 $options = getopt("d:");
@@ -24,5 +25,6 @@ define("_TRAVIS_DATABASE", $db);
 $test_suite = new TestSuite('Shimmie tests');
 $test_suite->add(new ShimmieInstallerTest());
 
-$tr = new TextReporter();
-$test_suite->run( $tr );
+
+//$tr = new TextReporter();
+//$test_suite->run( $tr );
