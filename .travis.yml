@@ -10,9 +10,13 @@ env:
 #  - DB=pgsql
 
 before_install:
+  - pwd
+  - sudo pwd
   - sudo apt-get update > /dev/null
 
 install:
+  - pwd
+  - sudo pwd
   - sudo chmod u+x test/setup_test_env.sh
   - sudo ./test/setup_test_env.sh $TRAVIS_BUILD_DIR
 
