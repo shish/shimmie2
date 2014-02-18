@@ -1,4 +1,12 @@
 <?php
+/**
+ * Shimmie Installer
+ * 
+ * @package    Shimmie
+ * @author     Shish et al. <webmaster at shishnet.org>
+ * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ * @copyright  Copyright (c) 2007-2014, Shish et al.
+ */
 
 // TODO: Rewrite the entire installer and make it more readable.
 

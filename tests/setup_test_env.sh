@@ -3,8 +3,8 @@
 # Set up the Travis-CI test environment for Shimmie.
 #  (this script should be run as root via sudo)
 #
-# @copyright (c) 2014 jgen
-# @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+# @author jgen <jeffgenovy@gmail.com>
+# @license http://opensource.org/licenses/GPL-2.0 GNU General Public License v2
 #
 
 # Exit immediately if a command exits with a non-zero status.

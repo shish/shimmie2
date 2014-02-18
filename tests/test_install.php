@@ -1,11 +1,17 @@
 <?php
+/**
+ * SimpleTest integration with Travis CI for Shimmie
+ * 
+ * @package    Shimmie
+ * @author     jgen <jeffgenovy@gmail.com>
+ * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ * @copyright  Copyright (c) 2014, jgen
+ */
 
 $options = getopt("d:");
 $db = $options["d"];
 
-if (empty($db)){
-	die("Error: need to specifiy a database for the test environment.");
-}
+if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
 
 define("_TRAVIS_DATABASE", $db);
 
