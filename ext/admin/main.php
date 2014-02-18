@@ -164,7 +164,7 @@ class AdminPage extends Extension {
 		global $page;
 
 		$matches = array();
-		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w+)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
+		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
 		$software = $matches['proto'];
 		$username = $matches['user'];
 		$password = $matches['password'];
@@ -183,6 +183,8 @@ class AdminPage extends Extension {
 				$cmd = "sqlite3 $database .dump";
 				break;
 		}
+
+		//FIXME: .SQL dump is empty if cmd doesn't exist
 
 		$page->set_mode("data");
 		$page->set_type("application/x-unknown");
