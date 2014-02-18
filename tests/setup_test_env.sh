@@ -28,7 +28,7 @@ echo "
 server {
     listen        80;
     server_name   localhost 127.0.0.1 \"\";
-    root          $1/;
+    root          $1;
     index         index.php;
     
 	location ~ /_?(images|thumbs)/ {
@@ -44,9 +44,11 @@ server {
 	#}
 	
 	location ~ \.php($|/) {
-		fastcgi_pass          unix:/var/run/php5-fpm.sock;
 		fastcgi_index         index.php;
+		fastcgi_pass          127.0.0.1:9000;
 		include               fastcgi_params;
+		fastcgi_param   SCRIPT_FILENAME    $1$fastcgi_script_name;
+		fastcgi_param   SCRIPT_NAME        $fastcgi_script_name;
 	}
 }
 " | sudo tee $NGINX_CONF > /dev/null
