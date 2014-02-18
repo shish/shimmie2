@@ -9,20 +9,6 @@ require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
 
 class ShimmieSimpleTestCase extends WebTestCase {
-	var $database;
-	var $db_user, $db_pass;
-	
-	function ShimmieTestCase() {
-		$this->database = $db;
-		
-		if ($db === "mysql") {
-			$this->db_user = "root";
-			$this->db_pass = "";
-		} elseif ($db === "pgsql") {
-			$this->db_user = "postgres";
-			$this->db_pass = "";
-		}
-	}
 	
 	function testInstallShimmie()
 	{
@@ -31,11 +17,18 @@ class ShimmieSimpleTestCase extends WebTestCase {
 		$this->assertTitle("Shimmie Installation");
 		$this->assertText("Database Install");
 		
-		$this->setFieldById("database_type", $this->database);
-		$this->assertFieldByName("database_host", "localhost");
-		$this->setFieldByName("database_user", $this->db_user);
-		$this->setFieldByName("database_password", $this->db_pass);
-		$this->assertFieldByName("database_name", "shimmie");
+		$this->setField("database_type", $this->database);
+		$this->assertField("database_host", "localhost");
+		
+		if ($db === "mysql") {
+			$this->setField("database_user", "root");
+			$this->setField("database_password", "");
+		} elseif ($db === "pgsql") {
+			$this->setField("database_user", "postgres");
+			$this->setField("database_password", "");
+		}		
+		
+		$this->assertField("database_name", "shimmie");
 		$this->clickSubmit("Go!");
 		
 		if (!$this->assertTitle("Welcome to Shimmie")) {
