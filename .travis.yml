@@ -28,9 +28,9 @@ script: php tests/test_install.php -d $DB
 after_failure:
   - sudo cat /etc/nginx/sites-enabled/default
   - sudo cat /var/log/nginx/error.log
-  - sudo cat /var/log/php_errors.log
-  - ls /var/log
-  - sudo php -i
+  - sudo cat /var/log/php5-fpm.log
+  - sudo cat /var/log/mysql.*
+  - sudo ls /var/log/nginx
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:

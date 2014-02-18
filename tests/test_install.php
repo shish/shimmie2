@@ -16,7 +16,7 @@ class ShimmieSimpleTestCase extends WebTestCase {
 		$this->database = $db;
 		
 		if ($db === "mysql") {
-			$this->db_user = "travis";
+			$this->db_user = "root";
 			$this->db_pass = "";
 		} elseif ($db === "pgsql") {
 			$this->db_user = "postgres";
