@@ -19,7 +19,7 @@ sudo /etc/init.d/php5-fpm stop
 
 # shimmie needs to be able to create directories for images, etc.
 #  (permissions of 777 are bad, but it definitely works)
-sudo chmod -R 0777 $0
+sudo chmod -R 0777 $1
 
 NGINX_CONF="/etc/nginx/sites-enabled/default"
 
@@ -28,8 +28,8 @@ echo "
 server {
     listen        80;
     server_name   localhost 127.0.0.1 \"\";
-    root          $0/;
-	index         index.php;
+    root          $1/;
+    index         index.php;
     
 	location ~ /_?(images|thumbs)/ {
 			default_type image/jpeg;
