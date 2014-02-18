@@ -32,7 +32,7 @@ server {
     
     root        $SHIMMIE_ROOT/;
 
-	index			index.php
+	index			index.php;
     
 	location ~ /_?(images|thumbs)/ {
 			default_type image/jpeg;
