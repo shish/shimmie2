@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: [beta] PM triggers
+ * Name: [Beta] PM triggers
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Send PMs in response to certain events (eg image deletion)

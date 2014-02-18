@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: Bulk Remove (Beta)
+ * Name: [Beta] Bulk Remove
  * Author: Drudex Software <support@drudexsoftware.com>
  * Link: http://www.drudexsoftware.com/
  * License: GPLv2
