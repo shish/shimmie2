@@ -21,9 +21,6 @@ before_script:
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database shimmie;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
-  # shimmie needs to be able to create directories for images, etc.
-  #  (permissions of 777 are bad, but it definitely works)
-  - chmod -R 777 .
 
 script: php tests/test_install.php -d $DB
 
