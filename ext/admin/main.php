@@ -197,26 +197,21 @@ class AdminPage extends Extension {
 	private function download_all_images() {
 		global $database, $page;
 
-		$zip = new ZipArchive;
-		$images = $database->get_all("SELECT * FROM images");
+		$images = $database->get_all("SELECT hash, ext FROM images");
 		$filename = data_path('imgdump-'.date('Ymd').'.zip');
 
-		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE) === TRUE){
+		$zip = new ZipArchive;
+		if($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE){
 			foreach($images as $img){
-				$hash = $img["hash"];
-				preg_match("^[A-Za-z0-9]{2}^", $hash, $matches);
-				$img_loc = "images/".$matches[0]."/".$hash;
-				if(file_exists($img_loc)){
-					$zip->addFile($img_loc, $hash.".".$img["ext"]);
-				}
-
+				$img_loc = warehouse_path("images", $img["hash"], FALSE);
+				$zip->addFile($img_loc, $img["hash"].".".$img["ext"]);
 			}
 			$zip->close();
 		}
 
 		$page->set_mode("redirect");
-		$page->set_redirect(make_link($filename)); //Fairly sure there is better way to do this..
-		//TODO: Delete file after downloaded?
+		$page->set_redirect(make_link($filename)); //TODO: Delete file after downloaded?
+
 		return false;  // we do want a redirect, but a manual one
 	}
 
