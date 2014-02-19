@@ -357,6 +357,7 @@ class Database {
 	public function beginTransaction() {
 		if ($this->transaction === false) {
 			$this->db->beginTransaction();
+			$this->transaction = true;
 		}
 	}
 	
