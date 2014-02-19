@@ -11,16 +11,13 @@ env:
 
 before_install:
   - sudo apt-get update > /dev/null
-
-install:
   - sudo chmod u+x tests/setup_test_env.sh
   - sudo ./tests/setup_test_env.sh $TRAVIS_BUILD_DIR
-
-# execute any number of scripts before the test run, custom env's are available as variables
-before_script:
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database shimmie;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
+
+install:
   - php tests/test_install.php -d $DB
 
 script: php tests/all_tests.php

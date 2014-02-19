@@ -12,8 +12,6 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
-require_once('tests/test_install.php');
-require_once("core/util.inc.php");
 
 // Enable all errors.
 error_reporting(E_ALL);
