@@ -53,18 +53,21 @@ foreach(_get_themelet_files(get_theme()) as $themelet) {
 
 _load_extensions();
 
+// Put the database into autocommit mode.
+$database->commit();
+
 // Create the necessary users for the tests.
 
 $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
-$database->commit(); // Need to commit the new user to the database.
+//$database->commit(); // Need to commit the new user to the database.
 
-$database->beginTransaction();
+//$database->beginTransaction();
 
 $userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
-$database->commit(); // Need to commit the new user to the database.
+//$database->commit(); // Need to commit the new user to the database.
 
-$database->beginTransaction();
+//$database->beginTransaction();
 
 // Continue
 
@@ -77,6 +80,6 @@ $all = new TestFinder("");
 $results = $all->run(new TextReporter());
 
 // At this point this isn't really necessary as the test machines are stateless.
-$database->commit();
+//$database->commit();
 
 exit ($results ? 0 : 1);
