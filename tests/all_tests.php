@@ -30,14 +30,22 @@ define("_TRAVIS_DATABASE", $db);
 $test_suite = new TestSuite('Shimmie tests');
 $test_suite->add(new ShimmieInstallerTest());
 
-// 
-// From index.php
-//
+// Wait for the config file to be written.
 
-clearstatcache();
+$timeout = 5;
+
+while ($timeout > 0 && !file_exists("data/config/shimmie.conf.php")) {
+	sleep(1);
+	$timout--;
+	clearstatcache();
+}
 
 require_once("core/sys_config.inc.php");
 include "data/config/shimmie.conf.php";
+
+// 
+// The code below is from index.php
+//
 
 // set up and purify the environment
 _version_check();

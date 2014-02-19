@@ -435,8 +435,8 @@ function write_config() { // {{{
 		mkdir("data/config", 0755, true);
 	}
 	
-	if(!file_put_contents("data/config/shimmie.conf.php", $file_content)) {
-		$h_file_content = htmlentities($file_content);
+	if(!file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
+		$h_file_content = htmlentities($file_content);[
 		print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
