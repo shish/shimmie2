@@ -12,15 +12,16 @@ env:
 before_install:
   - sudo apt-get update > /dev/null
   - sudo chmod u+x tests/setup_test_env.sh
+
+install:
   - sudo ./tests/setup_test_env.sh $TRAVIS_BUILD_DIR
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database shimmie;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
 
-install:
+script:
   - php tests/test_install.php -d $DB
-
-script: php tests/all_tests.php
+  - php tests/all_tests.php
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
