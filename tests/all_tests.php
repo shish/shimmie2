@@ -44,7 +44,13 @@ foreach($files as $filename) {
 
 // connect to the database
 $database = new Database();
+try {
 $config = new DatabaseConfig($database);
+}
+catch(Exception $e)
+{
+	die(var_dump($e));
+}
 
 // load the theme parts
 foreach(_get_themelet_files(get_theme()) as $themelet) {
