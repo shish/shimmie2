@@ -111,8 +111,8 @@ class SCoreWebTestCase extends WebTestCase {
 	 */
 	protected function get_page($page) {
 		// Check if we are running on the command line
-		if(php_sapi_name() === 'cli' || $_SERVER['HTTP_HOST'] == "<cli command>") {
-			$host = rtrim(trim(constant("_TRAVIS_WEBHOST")), "/");
+		if(php_sapi_name() == 'cli' || $_SERVER['HTTP_HOST'] == "<cli command>") {
+			$host = constant("_TRAVIS_WEBHOST");
 			$this->assertFalse(empty($host)); // Make sure that we know the host address.
 			$raw = $this->get($host."/index.php?q=".str_replace("?", "&", $page));
 		}

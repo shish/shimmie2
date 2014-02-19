@@ -16,12 +16,12 @@ require_once('lib/simpletest/reporter.php');
 error_reporting(E_ALL);
 
 // Get the command line option telling us what database to use.
-$options = getopt("d:h::");
+$options = getopt("d:h:");
 $db = $options["d"];
-$host = trim($options["h"], "'\"");
+$host = rtrim(trim($options["h"], "/");
 
 if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
-if (empty($host)){ $host = "http://127.0.0.1/"; }
+if (empty($host)){ $host = "http://127.0.0.1"; }
 
 define("_TRAVIS_DATABASE", $db);
 define("_TRAVIS_WEBHOST", $host);
