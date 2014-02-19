@@ -404,6 +404,9 @@ function build_dirs() { // {{{
 	if(!is_writable("thumbs")) @chmod("thumbs", 0755);
 	if(!is_writable("data")  ) @chmod("data", 0755);
 
+	// Clear file status cache before checking again.
+	clearstatcache();
+	
 	if(
 		!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
 		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")

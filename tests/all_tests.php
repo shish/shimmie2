@@ -15,6 +15,10 @@ require_once('lib/simpletest/reporter.php');
 require_once('tests/test_install.php');
 require_once("core/util.inc.php");
 
+// Enable all errors.
+error_reporting(E_ALL);
+
+// Get the command line option telling us what database to use.
 $options = getopt("d:");
 $db = $options["d"];
 
@@ -29,6 +33,8 @@ $test_suite->add(new ShimmieInstallerTest());
 // 
 // From index.php
 //
+
+clearstatcache();
 
 require_once("core/sys_config.inc.php");
 include "data/config/shimmie.conf.php";

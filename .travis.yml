@@ -28,6 +28,8 @@ script: php tests/all_tests.php -d $DB
 after_failure:
   - sudo cat /etc/nginx/sites-enabled/default
   - sudo cat /var/log/nginx/error.log
+  - sudo ls -al 
+  - sudo ls -al data/config/
   - sudo cat data/config/shimmie.conf.php
   - sudo cat data/config/extensions.conf.php
   - sudo cat /var/log/php5-fpm.log
