@@ -8,7 +8,6 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
-//require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
@@ -51,12 +50,19 @@ $user = _get_user();
 send_event(new InitExtEvent());
 
 // Create the necessary users for the tests.
+
 send_event(new UserCreationEvent("demo", "demo", ""));
+$database->commit(); // Need to commit the new user to the database.
+
 send_event(new UserCreationEvent("test", "test", ""));
+$database->commit(); // Need to commit the new user to the database.
 
-// Run all the tests
+
+// Now we can run all the tests.
 $all = new TestFinder("");
-$all->run(new TextReporter());
+$results = $all->run(new TextReporter());
 
-// Is this really needed?
+// At this point this isn't really necessary as the test machines are stateless.
 $database->commit();
+
+exit ($results ? 0 : 1);
