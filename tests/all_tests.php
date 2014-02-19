@@ -8,7 +8,7 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
-require_once('lib/simpletest/autorun.php');
+//require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
@@ -55,7 +55,7 @@ send_event(new UserCreationEvent("demo", "demo", ""));
 send_event(new UserCreationEvent("test", "test", ""));
 
 // Run all the tests
-$all = new TestFinder();
+$all = new TestFinder("");
 $all->run(new TextReporter());
 
 // Is this really needed?
