@@ -12,6 +12,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->set_field('oldtag', "test1");
 		$this->set_field('newtag', "test2");
 		$this->click("Add");
+		$this->get_page('alias/list');
 		$this->assert_text("test1");
 
 		$this->get_page("alias/export/aliases.csv");
@@ -38,6 +39,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->set_field('oldtag', "onetag");
 		$this->set_field('newtag', "multi tag");
 		$this->click("Add");
+		$this->get_page('alias/list');
 		$this->assert_text("multi");
 		$this->assert_text("tag");
 
@@ -61,11 +63,11 @@ class AliasEditorTest extends ShimmieWebTestCase {
 
 		$this->get_page('alias/list');
 		$this->click("Remove");
+		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("test1");
 
 		$this->log_out();
-
 
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
