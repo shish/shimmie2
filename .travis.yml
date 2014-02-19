@@ -1,6 +1,7 @@
 language: php
-# list the versions of PHP you want to test against
+
 php:
+# Here is where we can list the versions of PHP you want to test against
 # using major version aliases
   - 5.3
 
@@ -14,10 +15,13 @@ before_install:
   - sudo chmod u+x tests/setup_test_env.sh
 
 install:
+  # Install nginx, php5-fpm and configure them
   - sudo ./tests/setup_test_env.sh $TRAVIS_BUILD_DIR
+  
+  # Create the database schema for shimmie.
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "create database shimmie;" -U postgres; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
 
 script:
   - php tests/test_install.php -d $DB

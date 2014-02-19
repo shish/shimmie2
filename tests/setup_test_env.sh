@@ -11,7 +11,7 @@
 set -e
 
 # Install the necessary packages
-sudo apt-get install -y nginx realpath php5-fpm php5-mysql --fix-missing
+sudo apt-get install -y nginx php5-fpm php5-mysql realpath --fix-missing
 
 # Stop the daemons
 sudo service nginx stop

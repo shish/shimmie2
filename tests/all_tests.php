@@ -12,14 +12,12 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
-require_once('ext/simpletest/main.php');
 
 // Enable all errors.
 error_reporting(E_ALL);
 
-// 
-// The code below is from index.php
-//
+// The code below is based on the code in index.php
+//--------------------------------------------------
 
 require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
@@ -33,6 +31,9 @@ $files = array_merge(zglob("core/*.php"), zglob("ext/{".ENABLED_EXTS."}/main.php
 foreach($files as $filename) {
 	require_once $filename;
 }
+
+// We also need to pull in the SimpleTest extension.
+require_once('ext/simpletest/main.php');
 
 // connect to the database
 $database = new Database();
