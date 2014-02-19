@@ -4,6 +4,13 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 
+		// Check that normal users can't add aliases.
+		$this->log_in_as_user();
+		$this->get_page('alias/list');
+		$this->assert_title("Alias List");
+		$this->assertFalse($this->assertFieldByName('oldtag', ''));		
+		$this->log_out();
+		
 		$this->log_in_as_admin();
 
 		# test one to one
@@ -11,8 +18,8 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->assert_title("Alias List");
 		$this->set_field('oldtag', "test1");
 		$this->set_field('newtag', "test2");
-		$this->clickSubmit("Add");
-		$this->assertResponse(302);
+		$this->click("Add");
+		//$this->assertResponse(302);
 		
 		$this->get_page('alias/list');
 		if (!$this->assert_text("test1")) {
