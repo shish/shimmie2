@@ -31,15 +31,12 @@ script:
 after_failure:
   - sudo cat /etc/nginx/sites-enabled/default
   - sudo cat /var/log/nginx/error.log
-  - sudo ls -al 
+  - sudo ls -al
   - sudo ls -al data/config/
   - sudo cat data/config/shimmie.conf.php
   - sudo cat data/config/extensions.conf.php
-  - sudo cat /var/log/php5-fpm.log
-  - sudo cat /var/log/mysql.log
-  - sudo cat /var/log/mysql.err
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
-#  irc: "irc.freenode.org#travis"
+#  irc: "irc.freenode.org#shimmie"
 #
