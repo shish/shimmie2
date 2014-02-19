@@ -49,7 +49,7 @@ $config = new DatabaseConfig($database);
 }
 catch(Exception $e)
 {
-	die(var_dump($e));
+	die(DATABASE_DSN+ "\n\n" + var_dump($e));
 }
 
 // load the theme parts
