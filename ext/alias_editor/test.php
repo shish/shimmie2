@@ -8,7 +8,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
-		$this->assertFalse($this->assertFieldByName('oldtag', ''));		
+		$this->assert_no_text("Add");		
 		$this->log_out();
 		
 		$this->log_in_as_admin();
