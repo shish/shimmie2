@@ -54,9 +54,13 @@ send_event(new InitExtEvent());
 send_event(new UserCreationEvent("demo", "demo", ""));
 $database->commit(); // Need to commit the new user to the database.
 
+$database->beginTransaction();
+
 send_event(new UserCreationEvent("test", "test", ""));
 $database->commit(); // Need to commit the new user to the database.
 
+
+$database->beginTransaction();
 
 // Now we can run all the tests.
 $all = new TestFinder("");

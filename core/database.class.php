@@ -280,6 +280,12 @@ class Database {
 	public $cache = null;
 
 	/**
+	 * A boolean flag to track if we already have an active transaction.
+	 * (ie: True if beginTransaction() already called)
+	 */
+	public $transaction = false;
+	
+	/**
 	 * For now, only connect to the cache, as we will pretty much certainly
 	 * need it. There are some pages where all the data is in cache, so the
 	 * DB connection is on-demand.
@@ -327,7 +333,7 @@ class Database {
 		$this->engine->init($this->db);
 
 		// FIXME: this causes problems with running via the PHP CLI
-		$this->db->beginTransaction();
+		$this->beginTransaction();
 	}
 
 	private function connect_engine() {
@@ -348,12 +354,23 @@ class Database {
 		}
 	}
 
+	public function beginTransaction() {
+		if ($this->transaction === false) {
+			$this->db->beginTransaction();
+		}
+	}
+	
 	public function commit() {
-		if(!is_null($this->db)) return $this->db->commit();
+		if(!is_null($this->db) && $this->transaction === true) {
+			$this->transaction = false;
+			return $this->db->commit();
+		}
 	}
 
 	public function rollback() {
-		if(!is_null($this->db)) return $this->db->rollback();
+		if(!is_null($this->db) && $this->transaction === true) {
+			$this->transaction = false;
+			return $this->db->rollback();
 	}
 
 	public function escape($input) {
