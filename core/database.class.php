@@ -371,6 +371,7 @@ class Database {
 		if(!is_null($this->db) && $this->transaction === true) {
 			$this->transaction = false;
 			return $this->db->rollback();
+		}
 	}
 
 	public function escape($input) {
