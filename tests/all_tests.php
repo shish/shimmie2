@@ -18,7 +18,7 @@ define("CLI_LOG_LEVEL", -100); // output everything.
 
 // Get the command line option telling us where the webserver is.
 $options = getopt("h:");
-$host = rtrim(trim($options["h"], "/"));
+$host = rtrim(trim(trim($options["h"], '"')), "/");
 
 if (empty($host)){ $host = "http://127.0.0.1"; }
 
