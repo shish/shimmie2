@@ -25,7 +25,7 @@ install:
 
 script:
   - php tests/test_install.php -d $DB -h "http://127.0.0.1/"
-  - php tests/all_tests.php -h "http://127.0.0.1/"
+  - php tests/test_all.php -h "http://127.0.0.1/"
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
