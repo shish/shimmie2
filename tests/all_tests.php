@@ -12,6 +12,7 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
+require_once('ext/simpletest/main.php');
 
 // Enable all errors.
 error_reporting(E_ALL);
@@ -47,6 +48,10 @@ _load_extensions();
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
+
+// Create the necessary users for the tests.
+send_event(new UserCreationEvent("demo", "demo", ""));
+send_event(new UserCreationEvent("test", "test", ""));
 
 // Run all the tests
 $all = new TestFinder();
