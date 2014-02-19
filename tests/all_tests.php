@@ -12,8 +12,6 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
-require_once("core/sys_config.inc.php");
-require_once("core/util.inc.php");
 require_once('tests/test_install.php');
 
 $options = getopt("d:");
@@ -30,6 +28,9 @@ $test_suite->add(new ShimmieInstallerTest());
 // 
 // From index.php
 //
+
+require_once("core/sys_config.inc.php");
+require_once("core/util.inc.php");
 
 // set up and purify the environment
 _version_check();
