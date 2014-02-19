@@ -14,6 +14,7 @@ require_once('lib/simpletest/reporter.php');
 
 // Enable all errors.
 error_reporting(E_ALL);
+define("CLI_LOG_LEVEL", -100); // output everything.
 
 // Get the command line option telling us where the webserver is.
 $options = getopt("h::");
