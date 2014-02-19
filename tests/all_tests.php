@@ -34,14 +34,14 @@ $test_suite->add(new ShimmieInstallerTest());
 
 $timeout = 5;
 
-while ($timeout > 0 && !file_exists("data/config/shimmie.conf.php")) {
+while ($timeout > 0 && !file_exists("../data/config/shimmie.conf.php")) {
 	sleep(1);
-	$timout--;
+	$timeout--;
 	clearstatcache();
 }
 
 require_once("core/sys_config.inc.php");
-include "data/config/shimmie.conf.php";
+include "../data/config/shimmie.conf.php";
 
 // 
 // The code below is from index.php
