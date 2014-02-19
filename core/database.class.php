@@ -306,6 +306,8 @@ class Database {
 	private function connect_db() {
 		# FIXME: detect ADODB URI, automatically translate PDO DSN
 
+		die("DSN : " + DATABASE_DSN);
+		
 		/*
 		 * Why does the abstraction layer act differently depending on the
 		 * back-end? Because PHP is deliberately retarded.
