@@ -375,7 +375,7 @@ class Database {
 	 * Execute an SQL query and return an PDO resultset
 	 */
 	public function execute($query, $args=array()) {
-		try {
+		//try {
 			if(is_null($this->db)) $this->connect_db();
 			_count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
@@ -394,10 +394,10 @@ class Database {
 				$stmt->execute($args);
 			}
 			return $stmt;
-		}
+		/*}
 		catch(PDOException $pdoe) {
 			throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
-		}
+		}*/
 	}
 
 	/**
