@@ -35,14 +35,14 @@ server {
 	location / {
 		index	index.php;
 		# For the Nice URLs in Shimmie.
-		if (!-e $request_filename) {
+		if (!-e \$request_filename) {
 			rewrite  ^(.*)\$  /index.php?q=\$1  last;
 			break;
 		}
 	}
 	
 	location ~ \.php\$ {
-		try_files $uri =404;
+		try_files \$uri =404;
 		fastcgi_index         index.php;
 		fastcgi_pass          127.0.0.1:9000;
 		include               fastcgi_params;
