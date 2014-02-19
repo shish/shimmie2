@@ -8,7 +8,6 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
-require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
@@ -62,3 +61,7 @@ class ShimmieInstallerTest extends WebTestCase {
 		}
 	}
 }
+
+$test = new TestSuite('Install Shimmie');
+$test->add(new ShimmieInstallerTest());
+exit ($test->run(new TextReporter()) ? 0 : 1);
