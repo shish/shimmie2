@@ -13,6 +13,7 @@ require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
 require_once('tests/test_install.php');
+require_once("core/util.inc.php");
 
 $options = getopt("d:");
 $db = $options["d"];
@@ -30,7 +31,7 @@ $test_suite->add(new ShimmieInstallerTest());
 //
 
 require_once("core/sys_config.inc.php");
-require_once("core/util.inc.php");
+include "data/config/shimmie.conf.php";
 
 // set up and purify the environment
 _version_check();
@@ -44,13 +45,7 @@ foreach($files as $filename) {
 
 // connect to the database
 $database = new Database();
-try {
 $config = new DatabaseConfig($database);
-}
-catch(Exception $e)
-{
-	die(DATABASE_DSN+ "\n\n" + var_dump($e));
-}
 
 // load the theme parts
 foreach(_get_themelet_files(get_theme()) as $themelet) {
