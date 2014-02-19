@@ -35,6 +35,7 @@ after_failure:
   - sudo ls -al data/config/
   - sudo cat data/config/shimmie.conf.php
   - sudo cat data/config/extensions.conf.php
+  - sudo cat /var/log/php5-fpm.log
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:

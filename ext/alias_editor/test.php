@@ -12,9 +12,12 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->set_field('oldtag', "test1");
 		$this->set_field('newtag', "test2");
 		$this->click("Add");
+		
 		$this->get_page('alias/list');
-		$this->assert_text("test1");
-
+		if (!$this->assert_text("test1")) {
+			$this->showSource();
+		}
+		
 		$this->get_page("alias/export/aliases.csv");
 		$this->assert_text("test1,test2");
 
