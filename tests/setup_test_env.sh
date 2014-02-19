@@ -28,22 +28,21 @@ echo "
 server {
     listen        80;
     server_name   localhost 127.0.0.1 \"\";
+	server_tokens off;
     root          $1;
     index         index.php;
     
-	location ~ /_?(images|thumbs)/ {
-			default_type image/jpeg;
+	location / {
+		index	index.php;
+		# For the Nice URLs in Shimmie.
+		if (!-e $request_filename) {
+			rewrite  ^(.*)\$  /index.php?q=\$1  last;
+			break;
+		}
 	}
 	
-	# For the Nice URLs in Shimmie.
-	#location / {
-	#	if (!-e $request_filename) {
-	#		rewrite  ^(.*)$  /index.php?q=$1  last;
-	#		break;
-	#	}
-	#}
-	
-	location ~ \.php($|/) {
+	location ~ \.php\$ {
+		try_files $uri =404;
 		fastcgi_index         index.php;
 		fastcgi_pass          127.0.0.1:9000;
 		include               fastcgi_params;
