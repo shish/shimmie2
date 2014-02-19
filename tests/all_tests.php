@@ -41,7 +41,7 @@ $files = array_merge(zglob("core/*.php"), zglob("ext/{".ENABLED_EXTS."}/main.php
 foreach($files as $filename) {
 	require_once $filename;
 }
-	
+
 // connect to the database
 $database = new Database();
 $config = new DatabaseConfig($database);
