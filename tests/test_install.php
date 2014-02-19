@@ -8,6 +8,24 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
+require_once('lib/simpletest/autorun.php');
+require_once('lib/simpletest/unit_tester.php');
+require_once('lib/simpletest/web_tester.php');
+require_once('lib/simpletest/reporter.php');
+require_once('tests/test_install.php');
+require_once("core/util.inc.php");
+
+// Enable all errors.
+error_reporting(E_ALL);
+
+// Get the command line option telling us what database to use.
+$options = getopt("d:");
+$db = $options["d"];
+
+if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
+
+define("_TRAVIS_DATABASE", $db);
+
 class ShimmieInstallerTest extends WebTestCase {
 	function testInstallShimmie()
 	{

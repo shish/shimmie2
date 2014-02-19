@@ -21,8 +21,9 @@ before_script:
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "create database shimmie;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "create database shimmie;" -uroot; fi
+  - php tests/test_install.php -d $DB
 
-script: php tests/all_tests.php -d $DB
+script: php tests/all_tests.php
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:

@@ -12,40 +12,16 @@ require_once('lib/simpletest/autorun.php');
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
-require_once('tests/test_install.php');
-require_once("core/util.inc.php");
 
 // Enable all errors.
 error_reporting(E_ALL);
 
-// Get the command line option telling us what database to use.
-$options = getopt("d:");
-$db = $options["d"];
-
-if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
-
-define("_TRAVIS_DATABASE", $db);
-
-// Install Shimmie
-$test_suite = new TestSuite('Shimmie tests');
-$test_suite->add(new ShimmieInstallerTest());
-
-// Wait for the config file to be written.
-
-$timeout = 5;
-
-while ($timeout > 0 && !file_exists("../data/config/shimmie.conf.php")) {
-	sleep(1);
-	$timeout--;
-	clearstatcache();
-}
-
-require_once("core/sys_config.inc.php");
-include "../data/config/shimmie.conf.php";
-
 // 
 // The code below is from index.php
 //
+
+require_once "core/sys_config.inc.php";
+require_once "core/util.inc.php";
 
 // set up and purify the environment
 _version_check();
