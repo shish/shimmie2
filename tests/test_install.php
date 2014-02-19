@@ -18,7 +18,7 @@ error_reporting(E_ALL);
 // Get the command line option telling us what database to use.
 $options = getopt("d:h:");
 $db = $options["d"];
-$host = rtrim(trim($options["h"], "/");
+$host = rtrim(trim($options["h"], "/"));
 
 if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
 if (empty($host)){ $host = "http://127.0.0.1"; }
