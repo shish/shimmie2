@@ -218,41 +218,38 @@ class AdminPage extends Extension {
     private function reset_image_ids() {
         global $database;
 
-        //This might be a bit laggy on boards with lots of images (?)
-        //Seems to work fine with 1.2k~ images though.
-        $i = 0;
-        $image = $database->get_all("SELECT * FROM images ORDER BY images.id ASC");
-        /*$score_log = $database->get_all("SELECT message FROM score_log");*/
-        foreach($image as $img){
-            $xid = $img[0];
-            $i = $i + 1;
-            $table = array( //Might be missing some tables?
-                "image_tags", "tag_histories", "image_reports", "comments", "user_favorites", "tag_histories",
-                "numeric_score_votes", "pool_images", "slext_progress_cache", "notes");
-    
-            $sql =
-                "SET FOREIGN_KEY_CHECKS=0;
-                UPDATE images
-                SET id=".$i.
-                " WHERE id=".$xid.";"; //id for images
-    
-            foreach($table as $tbl){
-                $sql .= "
-                    UPDATE ".$tbl."
-                    SET image_id=".$i."
-                    WHERE image_id=".$xid.";";
-            }
-    
-            /*foreach($score_log as $sl){
-                //This seems like a bad idea.
-                //TODO: Might be better for log_info to have an $id option (which would then affix the id to the table?)
-                preg_replace(".Image \\#[0-9]+.", "Image #".$i, $sl);
-            }*/
-            $sql .= " SET FOREIGN_KEY_CHECKS=1;";
-            $database->execute($sql);
-        }
-        $count = (count($image)) + 1;
-        $database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
+		//TODO: Make work with PostgreSQL + SQLite
+		//TODO: Update score_log (Having an optional ID column for score_log would be nice..)
+		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
+
+		if($matches['proto'] == "mysql"){
+			$tables = $database->get_col("SELECT TABLE_NAME
+			                              FROM information_schema.KEY_COLUMN_USAGE
+			                              WHERE TABLE_SCHEMA = :db
+			                              AND REFERENCED_COLUMN_NAME = 'id'
+			                              AND REFERENCED_TABLE_NAME = 'images'", array("db" => $matches['dbname']));
+
+			$i = 1;
+			$ids = $database->get_col("SELECT id FROM images ORDER BY images.id ASC");
+			foreach($ids as $id){
+				$sql = "SET FOREIGN_KEY_CHECKS=0;
+				        UPDATE images SET id={$i} WHERE image_id={$id};";
+
+				foreach($tables as $table){
+					$sql .= "UPDATE {$table} SET image_id={$i} WHERE image_id={$id};";
+				}
+
+				$sql .= " SET FOREIGN_KEY_CHECKS=1;";
+				$database->execute($sql);
+
+				$i++;
+			}
+			$database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
+		}elseif($matches['proto'] == "pgsql"){
+			//TODO: Make this work with PostgreSQL
+		}elseif($matches['proto'] == "sqlite"){
+			//TODO: Make this work with SQLite
+		}
         return true;
     }
 }
