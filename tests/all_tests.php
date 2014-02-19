@@ -45,22 +45,24 @@ foreach(_get_themelet_files(get_theme()) as $themelet) {
 
 _load_extensions();
 
+// Create the necessary users for the tests.
+
+$userPage = new UserPage();
+$userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
+$database->commit(); // Need to commit the new user to the database.
+
+$database->beginTransaction();
+
+$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
+$database->commit(); // Need to commit the new user to the database.
+
+$database->beginTransaction();
+
+// Continue
+
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
-
-// Create the necessary users for the tests.
-
-send_event(new UserCreationEvent("demo", "demo", ""));
-$database->commit(); // Need to commit the new user to the database.
-
-$database->beginTransaction();
-
-send_event(new UserCreationEvent("test", "test", ""));
-$database->commit(); // Need to commit the new user to the database.
-
-
-$database->beginTransaction();
 
 // Now we can run all the tests.
 $all = new TestFinder("");
