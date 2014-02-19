@@ -24,8 +24,8 @@ install:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
 
 script:
-  - php tests/test_install.php -d $DB
-  - php tests/all_tests.php
+  - php tests/test_install.php -d $DB -h "http://127.0.0.1/"
+  - php tests/all_tests.php -h "http://127.0.0.1/"
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:

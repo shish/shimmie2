@@ -111,10 +111,14 @@ class SCoreWebTestCase extends WebTestCase {
 	 */
 	protected function get_page($page) {
 		if($_SERVER['HTTP_HOST'] == "<cli command>") {
-			// FIXME: this should be a command line option.
 			
 			//print "http://127.0.0.1/2.Xm/index.php?q=$page";
-			$raw = $this->get("http://127.0.0.1/index.php?q=".str_replace("?", "&", $page));
+			
+			$host = constant("_TRAVIS_WEBHOST");
+			// Make sure that we know where the host is.
+			$this->assertFalse(empty($host));
+			
+			$raw = $this->get($host."index.php?q=".str_replace("?", "&", $page));
 		}
 		else {
 			$raw = $this->get(make_http(make_link($page)));

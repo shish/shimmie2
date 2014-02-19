@@ -15,6 +15,14 @@ require_once('lib/simpletest/reporter.php');
 // Enable all errors.
 error_reporting(E_ALL);
 
+// Get the command line option telling us where the webserver is.
+$options = getopt("h::");
+$host = trim($options["h"], "'\"");
+
+if (empty($host)){ $host = "http://127.0.0.1/"; }
+
+define("_TRAVIS_WEBHOST", $host);
+
 // The code below is based on the code in index.php
 //--------------------------------------------------
 
