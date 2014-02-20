@@ -28,7 +28,7 @@ echo "
 server {
     listen        80;
     server_name   localhost 127.0.0.1 \"\";
-	server_tokens off;
+    server_tokens off;
     root          $1;
     index         index.php;
     
