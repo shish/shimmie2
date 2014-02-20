@@ -1,6 +1,6 @@
 <?php
 /**
- * Name: Chatbox (Beta)
+ * Name: [Beta] Chatbox
  * Author: Drudex Software <support@drudexsoftware.com>
  * Link: http://www.drudexsoftware.com
  * License: GPLv2

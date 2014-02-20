@@ -1,0 +1,2 @@
+/** imgnotes jQuery plugin v1.0.0 **/
+.notesicon{background:url(notes.png) no-repeat #fff;overflow:hidden;position:absolute;height:27px;width:22px;z-index:1000000;cursor:pointer}.note{display:none;background:url(spacer.gif);border:2px solid #fff;overflow:hidden;position:absolute;z-index:0;cursor:default}.notep{display:none;background:#eee;font-size:8pt;margin-top:0;padding:2px;position:absolute;width:175px;cursor:default}#noteform{display:none;position:absolute;width:250px}#noteform textarea{width:100%}

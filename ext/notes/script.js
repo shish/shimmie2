@@ -1,6 +1,6 @@
 $(function() {
 	if(window.notes) {
-		$('#main_image').imgNotes(window.notes);
+		$('#main_image').imgNotes({notes: window.notes});
 	}
 
 	$('#cancelnote').click(function(){
