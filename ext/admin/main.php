@@ -164,7 +164,7 @@ class AdminPage extends Extension {
 		global $page;
 
 		$matches = array();
-		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w+)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
+		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
 		$software = $matches['proto'];
 		$username = $matches['user'];
 		$password = $matches['password'];
@@ -184,6 +184,8 @@ class AdminPage extends Extension {
 				break;
 		}
 
+		//FIXME: .SQL dump is empty if cmd doesn't exist
+
 		$page->set_mode("data");
 		$page->set_type("application/x-unknown");
 		$page->set_filename('shimmie-'.date('Ymd').'.sql');
@@ -195,67 +197,59 @@ class AdminPage extends Extension {
 	private function download_all_images() {
 		global $database, $page;
 
-		$zip = new ZipArchive;
-		$images = $database->get_all("SELECT * FROM images");
+		$images = $database->get_all("SELECT hash, ext FROM images");
 		$filename = data_path('imgdump-'.date('Ymd').'.zip');
 
-		if($zip->open($filename, 1 ? ZIPARCHIVE::OVERWRITE:ZIPARCHIVE::CREATE) === TRUE){
+		$zip = new ZipArchive;
+		if($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === TRUE){
 			foreach($images as $img){
-				$hash = $img["hash"];
-				preg_match("^[A-Za-z0-9]{2}^", $hash, $matches);
-				$img_loc = "images/".$matches[0]."/".$hash;
-				if(file_exists($img_loc)){
-					$zip->addFile($img_loc, $hash.".".$img["ext"]);
-				}
-
+				$img_loc = warehouse_path("images", $img["hash"], FALSE);
+				$zip->addFile($img_loc, $img["hash"].".".$img["ext"]);
 			}
 			$zip->close();
 		}
 
 		$page->set_mode("redirect");
-		$page->set_redirect(make_link($filename)); //Fairly sure there is better way to do this..
-		//TODO: Delete file after downloaded?
+		$page->set_redirect(make_link($filename)); //TODO: Delete file after downloaded?
+
 		return false;  // we do want a redirect, but a manual one
 	}
 
     private function reset_image_ids() {
         global $database;
 
-        //This might be a bit laggy on boards with lots of images (?)
-        //Seems to work fine with 1.2k~ images though.
-        $i = 0;
-        $image = $database->get_all("SELECT * FROM images ORDER BY images.id ASC");
-        /*$score_log = $database->get_all("SELECT message FROM score_log");*/
-        foreach($image as $img){
-            $xid = $img[0];
-            $i = $i + 1;
-            $table = array( //Might be missing some tables?
-                "image_tags", "tag_histories", "image_reports", "comments", "user_favorites", "tag_histories",
-                "numeric_score_votes", "pool_images", "slext_progress_cache", "notes");
-    
-            $sql =
-                "SET FOREIGN_KEY_CHECKS=0;
-                UPDATE images
-                SET id=".$i.
-                " WHERE id=".$xid.";"; //id for images
-    
-            foreach($table as $tbl){
-                $sql .= "
-                    UPDATE ".$tbl."
-                    SET image_id=".$i."
-                    WHERE image_id=".$xid.";";
-            }
-    
-            /*foreach($score_log as $sl){
-                //This seems like a bad idea.
-                //TODO: Might be better for log_info to have an $id option (which would then affix the id to the table?)
-                preg_replace(".Image \\#[0-9]+.", "Image #".$i, $sl);
-            }*/
-            $sql .= " SET FOREIGN_KEY_CHECKS=1;";
-            $database->execute($sql);
-        }
-        $count = (count($image)) + 1;
-        $database->execute("ALTER TABLE images AUTO_INCREMENT=".$count);
+		//TODO: Make work with PostgreSQL + SQLite
+		//TODO: Update score_log (Having an optional ID column for score_log would be nice..)
+		preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
+
+		if($matches['proto'] == "mysql"){
+			$tables = $database->get_col("SELECT TABLE_NAME
+			                              FROM information_schema.KEY_COLUMN_USAGE
+			                              WHERE TABLE_SCHEMA = :db
+			                              AND REFERENCED_COLUMN_NAME = 'id'
+			                              AND REFERENCED_TABLE_NAME = 'images'", array("db" => $matches['dbname']));
+
+			$i = 1;
+			$ids = $database->get_col("SELECT id FROM images ORDER BY images.id ASC");
+			foreach($ids as $id){
+				$sql = "SET FOREIGN_KEY_CHECKS=0;
+				        UPDATE images SET id={$i} WHERE image_id={$id};";
+
+				foreach($tables as $table){
+					$sql .= "UPDATE {$table} SET image_id={$i} WHERE image_id={$id};";
+				}
+
+				$sql .= " SET FOREIGN_KEY_CHECKS=1;";
+				$database->execute($sql);
+
+				$i++;
+			}
+			$database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
+		}elseif($matches['proto'] == "pgsql"){
+			//TODO: Make this work with PostgreSQL
+		}elseif($matches['proto'] == "sqlite"){
+			//TODO: Make this work with SQLite
+		}
         return true;
     }
 }
