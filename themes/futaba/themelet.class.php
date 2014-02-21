@@ -1,31 +1,6 @@
 <?php
 class Themelet extends BaseThemelet {
 	/**
-	 * Generic thumbnail code; returns HTML rather than adding
-	 * a block since thumbs tend to go inside blocks...
-	 */
-	public function build_thumb_html(Image $image) {
-		global $config;
-		$h_view_link = make_link("post/view/{$image->id}");
-		$h_thumb_link = $image->get_thumb_link();
-		$h_tip = html_escape($image->get_tooltip());
-		$i_id = int_escape($image->id);
-		$h_tags = strtolower($image->get_tag_list());
-
-		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext == 'swf' || $image->ext == 'svg') {
-			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
-		}
-		else {
-			$tsize = get_thumbnail_size($image->width, $image->height);
-		}
-
-		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
-				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
-	}
-
-
-	/**
 	 * Add a generic paginator
 	 */
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $position=90) {

@@ -1,0 +1,15 @@
+.thumb IMG {
+	border-width: 2px !important;
+}
+
+.shm-thumb-has_child img {
+	border-color: lime !important;
+}
+
+.shm-thumb-has_parent img {
+	border-color: #cc0 !important;
+}
+
+.shm-thumb-has_child.shm-thumb-has_parent img {
+	border-color: lime #cc0 #cc0 lime !important;
+}
