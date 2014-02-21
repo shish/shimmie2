@@ -45,7 +45,7 @@ class Artists extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/^author[=|:](.*)$/", $event->term, $matches)) {
+		if(preg_match("/^author[=|:](.*)$/i", $event->term, $matches)) {
 			$char = $matches[1];
 			$event->add_querylet(new Querylet("Author = :author_char", array("author_char"=>$char)));
 		}

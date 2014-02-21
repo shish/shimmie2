@@ -45,9 +45,16 @@ class RandomImage extends Extension {
 					$page->set_data(file_get_contents($image->get_image_filename()));
 				}
 			}
-			if($action === "view") {
+			else if($action === "view") {
 				if(!is_null($image)) {
 					send_event(new DisplayingImageEvent($image, $page));
+				}
+			}
+			else if($action === "widget") {
+				if(!is_null($image)) {
+					$page->set_mode("data");
+					$page->set_type("text/html");
+					$page->set_data($this->theme->build_thumb_html($image));
 				}
 			}
 		}
