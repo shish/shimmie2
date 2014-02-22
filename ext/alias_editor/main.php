@@ -37,7 +37,7 @@ class AliasEditor extends Extension {
 							$page->set_redirect(make_link("alias/list"));
 						}
 						catch(AddAliasException $ex) {
-							die("error adding : ", $ex->getMessage());
+							die("error adding : "+ $ex->getMessage());
 							$this->theme->display_error(500, "Error adding alias", $ex->getMessage());
 						}
 					}
