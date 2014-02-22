@@ -11,14 +11,6 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->assert_no_text("Add");
 		$this->log_out();
 
-		$this->log_in_as_admin();
-
-		$this->get_page('alias/list');
-		$this->assert_title("Alias List");
-		$this->assert_text("Add");
-
-		$this->log_out();
-
 		/*
 		 **********************************************************************
 		 * FIXME: TODO:
@@ -30,6 +22,8 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		 *  dig into this and determine exactly what is happening.
 		 *
 		 *********************************************************************
+
+		$this->log_in_as_admin();
 
 		# test one to one
 		$this->get_page('alias/list');
