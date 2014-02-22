@@ -20,7 +20,7 @@ install:
 
   # Enable logging of all queries (for debugging) and create the database schema for shimmie.
   - if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie; CREATE DATABASE shimmie;" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
 
