@@ -30,15 +30,14 @@ script:
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
-  - sudo cat /etc/nginx/sites-enabled/default
-  - sudo cat /var/log/nginx/error.log
   - sudo ls -al
   - sudo ls -al data/config/
   - sudo cat data/config/shimmie.conf.php
   - sudo cat data/config/extensions.conf.php
+  - sudo cat /etc/nginx/sites-enabled/default
+  - sudo cat /var/log/nginx/error.log
   - sudo cat /var/log/php5-fpm.log
-  - sudo cat /var/log/mysql.log
-  - sudo cat /var/log/mysql.err
+  - sudo cat /var/log/*mysql*
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
