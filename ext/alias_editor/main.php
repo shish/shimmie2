@@ -37,9 +37,14 @@ class AliasEditor extends Extension {
 							$page->set_redirect(make_link("alias/list"));
 						}
 						catch(AddAliasException $ex) {
+							die("error adding : ", $ex->getMessage());
 							$this->theme->display_error(500, "Error adding alias", $ex->getMessage());
 						}
 					}
+					else {die("No post data");}
+				}
+				else {
+					die("error: add alias called and user test failed.");
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
