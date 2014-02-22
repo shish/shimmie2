@@ -28,7 +28,6 @@ class AliasEditor extends Extension {
 
 		if($event->page_matches("alias")) {
 			if($event->get_arg(0) == "add") {
-				die(var_dump($_POST));
 				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
 						try {
