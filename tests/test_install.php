@@ -28,10 +28,10 @@ define("_TRAVIS_DATABASE", $db);
 define("_TRAVIS_WEBHOST", $host);
 
 // Currently the tests only support MySQL and PostgreSQL.
-if ($db == "mysql") {
+if ($db === "mysql") {
 	define("_TRAVIS_DATABASE_USERNAME", "root");
 	define("_TRAVIS_DATABASE_PASSWORD", "");
-} elseif ($db == "pgsql") {
+} elseif ($db === "pgsql") {
 	define("_TRAVIS_DATABASE_USERNAME", "postgres");
 	define("_TRAVIS_DATABASE_PASSWORD", "");
 } else {

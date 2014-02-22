@@ -338,7 +338,7 @@ EOD;
 				<br/><br/>
 			</div>
 EOD;
-		if (defined('DATABASE_DSN')) { print "DATABASE_DSN = " + DATABASE_DSN; }
+		print "DATABASE_DSN = '" + DATABASE_DSN + "'";
 		exit($e->getMessage());
 	}
 	catch (Exception $e)
