@@ -18,7 +18,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->assert_title("Alias List");
 		$this->set_field('oldtag', "test1");
 		$this->set_field('newtag', "test2");
-		$this->click("Add");
+		$this->clickSubmit('Add');
 		$this->assert_no_text("Error adding alias");
 		
 		$this->get_page('alias/list');
