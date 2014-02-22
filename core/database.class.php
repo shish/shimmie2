@@ -361,16 +361,26 @@ class Database {
 	}
 	
 	public function commit() {
-		if(!is_null($this->db) && $this->transaction === true) {
-			$this->transaction = false;
-			return $this->db->commit();
+		if(!is_null($this->db)) {
+			if ($this->transaction === true) {
+				$this->transaction = false;
+				return $this->db->commit();
+			}
+			else {
+				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no transaction currently open.");
+			}
 		}
 	}
 
 	public function rollback() {
-		if(!is_null($this->db) && $this->transaction === true) {
-			$this->transaction = false;
-			return $this->db->rollback();
+		if(!is_null($this->db)) {
+			if ($this->transaction === true) {
+				$this->transaction = false;
+				return $this->db->rollback();
+			}
+			else {
+				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no transaction currently open.");
+			}
 		}
 	}
 
