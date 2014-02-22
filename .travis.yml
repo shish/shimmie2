@@ -39,7 +39,10 @@ after_failure:
   - sudo cat /var/log/php5-fpm.log
   - sudo ls /var/run/mysql*
   - sudo ls /var/log/*mysql*
-  - sudo cat /var/log/mysql
+  - sudo cat /var/log/mysql.err
+  - sudo cat /var/log/mysql.log
+  - sudo cat /var/log/mysql/error.log
+  - sudo cat /var/log/mysql/slow.log
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
