@@ -28,6 +28,7 @@ class AliasEditor extends Extension {
 
 		if($event->page_matches("alias")) {
 			if($event->get_arg(0) == "add") {
+				die(var_dump($_POST));
 				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag']) && isset($_POST['newtag'])) {
 						try {
@@ -37,14 +38,9 @@ class AliasEditor extends Extension {
 							$page->set_redirect(make_link("alias/list"));
 						}
 						catch(AddAliasException $ex) {
-							die("error adding : "+ $ex->getMessage());
 							$this->theme->display_error(500, "Error adding alias", $ex->getMessage());
 						}
 					}
-					else {die("No post data");}
-				}
-				else {
-					die("error: add alias called and user test failed.");
 				}
 			}
 			else if($event->get_arg(0) == "remove") {
