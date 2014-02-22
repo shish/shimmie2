@@ -8,7 +8,7 @@ php:
 # optionally specify a list of environments, for example to test different RDBMS
 env:
   - DB=mysql
-#  - DB=pgsql
+  - DB=pgsql
 
 before_install:
   - sudo apt-get update > /dev/null
