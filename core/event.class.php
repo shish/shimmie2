@@ -146,7 +146,7 @@ class CommandEvent extends Event {
 		$opts = array();
 		$log_level = SCORE_LOG_WARNING;
         $arg_count = count($args);
-        
+
 		for($i=1; $i<$arg_count; $i++) {
 			switch($args[$i]) {
 				case '-u':

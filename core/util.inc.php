@@ -83,7 +83,7 @@ function bool_escape($input) {
 	/*
 	 Sometimes, I don't like PHP -- this, is one of those times...
 	  "a boolean FALSE is not considered a valid boolean value by this function."
-	 Yay for Got'chas!	
+	 Yay for Got'chas!
 	 http://php.net/manual/en/filter.filters.validate.php
 	*/
 	if (is_bool($input)) {
@@ -555,7 +555,7 @@ function getMimeType($file, $ext="", $list=false) {
 		$type = trim(mime_content_type($file));
 
 	if ($type !== false && strlen($type) > 0) return $type;
-	
+
 	return 'application/octet-stream';
 }
 
@@ -654,20 +654,20 @@ function get_memory_limit() {
 	// thumbnail generation requires lots of memory
 	$default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
 	$shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
-	
+
 	if($shimmie_limit < 3*1024*1024) {
 		// we aren't going to fit, override
 		$shimmie_limit = $default_limit;
 	}
-	
+
 	/*
 	Get PHP's configured memory limit.
 	Note that this is set to -1 for NO memory limit.
-	
+
 	http://ca2.php.net/manual/en/ini.core.php#ini.memory-limit
 	*/
 	$memory = parse_shorthand_int(ini_get("memory_limit"));
-	
+
 	if($memory == -1) {
 		// No memory limit.
 		// Return the larger of the set limits.
@@ -1214,7 +1214,7 @@ function get_debug_info() {
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
-	
+
 	$debug = "<br>Took $time seconds and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
@@ -1435,7 +1435,7 @@ function _start_coverage() {
 
 function _end_coverage() {
 	if(function_exists("xdebug_get_code_coverage")) {
-		// Absolute path is necessary because working directory 
+		// Absolute path is necessary because working directory
 		// inside register_shutdown_function is unpredictable.
 		$absolute_path = dirname(dirname(__FILE__)) . "/data/coverage";
 		if(!file_exists($absolute_path)) mkdir($absolute_path);

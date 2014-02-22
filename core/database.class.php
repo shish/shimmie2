@@ -284,7 +284,7 @@ class Database {
 	 * (ie: True if beginTransaction() already called)
 	 */
 	public $transaction = false;
-	
+
 	/**
 	 * For now, only connect to the cache, as we will pretty much certainly
 	 * need it. There are some pages where all the data is in cache, so the
@@ -359,7 +359,7 @@ class Database {
 			$this->transaction = true;
 		}
 	}
-	
+
 	public function commit() {
 		if(!is_null($this->db)) {
 			if ($this->transaction === true) {
@@ -417,7 +417,7 @@ class Database {
 					}
 				}
 				$stmt->execute();
-			} 
+			}
 			else {
 				$stmt->execute($args);
 			}
@@ -494,13 +494,13 @@ class Database {
 		if(is_null($this->engine)) $this->connect_engine();
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
-	
+
 	/**
 	 * Returns the number of tables present in the current database.
 	 */
 	public function count_tables() {
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
-		
+
 		if($this->engine->name === "mysql") {
 			return count(
 						$this->get_all("SHOW TABLES")
