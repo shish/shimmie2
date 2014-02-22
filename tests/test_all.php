@@ -54,7 +54,12 @@ foreach(_get_themelet_files(get_theme()) as $themelet) {
 
 _load_extensions();
 
-// Put the database into autocommit mode. (We don't really need transactions for the test setup)
+// Fire off the InitExtEvent()
+$page = class_exists("CustomPage") ? new CustomPage() : new Page();
+$user = _get_user();
+send_event(new InitExtEvent());
+
+// Put the database into autocommit mode for making the users.
 $database->commit();
 
 // Create the necessary users for the tests.
@@ -62,7 +67,7 @@ $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 
-// Fire off the InitExtEvent()
+// Fire off the InitExtEvent() again after we have made the users.
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $user = _get_user();
 send_event(new InitExtEvent());

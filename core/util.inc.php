@@ -600,7 +600,7 @@ $_execs = 0;
  */
 function _count_execs($db, $sql, $inputarray) {
 	global $_execs;
-	if (defined(DEBUG_SQL) && (DEBUG_SQL === true || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL']))) {
+	if ((defined(DEBUG_SQL) && DEBUG_SQL === true) || (!defined(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
 			if(isset($inputarray) && is_array($inputarray)) {
