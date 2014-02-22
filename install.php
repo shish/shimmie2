@@ -123,10 +123,12 @@ function do_install() { // {{{
 	}
 	else if(@$_POST["database_type"] == "sqlite" && isset($_POST["database_name"])) {
 		define('DATABASE_DSN', "sqlite:{$_POST["database_name"]}");
+		define("DATABASE_KA", true);     // Keep database connection alive
 		install_process();
 	}
 	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
+		define("DATABASE_KA", true);     // Keep database connection alive
 		install_process();
 	}
 	else {

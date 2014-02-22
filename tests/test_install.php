@@ -51,7 +51,9 @@ class ShimmieInstallerTest extends WebTestCase {
 		} elseif ($db === "pgsql") {
 			$this->setField("database_user", "postgres");
 			$this->setField("database_password", "");
-		}		
+		} else {
+			die("Unsupported Database Option");
+		}
 		
 		$this->assertField("database_name", "shimmie");
 		$this->clickSubmit("Go!");
