@@ -43,6 +43,8 @@ after_failure:
   - sudo cat /var/log/mysql.log
   - sudo cat /var/log/mysql/error.log
   - sudo cat /var/log/mysql/slow.log
+  - sudo ls /var/log/postgresql
+  - sudo cat /var/log/postgresql/postgresql*
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
