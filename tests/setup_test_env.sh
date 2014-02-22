@@ -31,7 +31,7 @@ server {
     server_tokens off;
     root          $1;
     index         index.php;
-    
+
 	location / {
 		index	index.php;
 		# For the Nice URLs in Shimmie.
@@ -40,7 +40,7 @@ server {
 			break;
 		}
 	}
-	
+
 	location ~ \.php\$ {
 		try_files \$uri =404;
 		fastcgi_index         index.php;

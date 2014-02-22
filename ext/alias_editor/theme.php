@@ -33,7 +33,7 @@ class AliasEditorTheme extends Themelet {
 		foreach($aliases as $old => $new) {
 			$h_old = html_escape($old);
 			$h_new = "<a href='".make_link("post/list/".url_escape($new)."/1")."'>".html_escape($new)."</a>";
-			
+
 			$h_aliases .= "<tr><td>$h_old</td><td>$h_new</td>";
 			if($can_manage) {
 				$h_aliases .= "

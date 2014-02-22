@@ -1,7 +1,7 @@
 <?php
 /**
  * SimpleTest integration with Travis CI for Shimmie
- * 
+ *
  * @package    Shimmie
  * @author     jgen <jeffgenovy@gmail.com>
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
@@ -31,20 +31,20 @@ class ShimmieInstallerTest extends WebTestCase {
 	{
 		$db = constant("_TRAVIS_DATABASE");
 		$host = constant("_TRAVIS_WEBHOST");
-		
+
 		// Make sure that we know where the host is.
 		$this->assertFalse(empty($host));
 		// Make sure that we know what database to use.
 		$this->assertFalse(empty($db));
-		
+
 		$this->get($host);
 		$this->assertResponse(200);
 		$this->assertTitle("Shimmie Installation");
 		$this->assertText("Database Install");
-		
+
 		$this->setField("database_type", $db);
 		$this->assertField("database_host", "localhost");
-		
+
 		if ($db === "mysql") {
 			$this->setField("database_user", "root");
 			$this->setField("database_password", "");
@@ -54,10 +54,10 @@ class ShimmieInstallerTest extends WebTestCase {
 		} else {
 			die("Unsupported Database Option");
 		}
-		
+
 		$this->assertField("database_name", "shimmie");
 		$this->clickSubmit("Go!");
-		
+
 		if (!$this->assertText("Installation Succeeded!")) {
 			$this->showSource();
 		}

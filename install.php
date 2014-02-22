@@ -1,7 +1,7 @@
 <?php
 /**
  * Shimmie Installer
- * 
+ *
  * @package    Shimmie
  * @author     Shish et al. <webmaster at shishnet.org>
  * @link       http://code.shishnet.org/shimmie2/
@@ -49,7 +49,7 @@ assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
 
 /*
- * Compute the path to the folder containing "install.php" and 
+ * Compute the path to the folder containing "install.php" and
  * store it as the 'Shimmie Root' folder for later on.
  *
  * Example:
@@ -225,7 +225,7 @@ function ask_questions() { // {{{
 			</form>
 
 			<h3>Help</h3>
-					
+
 			<p class="dbconf mysql pgsql">
 				Please make sure the database you have chosen exists and is empty.<br>
 				The username provided must have access to create tables within the database.
@@ -238,7 +238,7 @@ function ask_questions() { // {{{
 				Drivers can generally be downloaded with your OS package manager;
 				for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
 			</p>
-			
+
 		</div>
 EOD;
 } // }}}
@@ -251,14 +251,14 @@ function install_process() { // {{{
 	create_tables();
 	insert_defaults();
 	write_config();
-	
+
 	header("Location: index.php");
 } // }}}
 
 function create_tables() { // {{{
 	try {
 		$db = new Database();
-		
+
 		if ( $db->count_tables() > 0 ) {
 			print <<<EOD
 			<div id="installer">
@@ -271,7 +271,7 @@ function create_tables() { // {{{
 EOD;
 			exit;
 		}
-		
+
 		$db->create_table("aliases", "
 			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
 			newtag VARCHAR(128) NOT NULL,
@@ -353,13 +353,13 @@ EOD;
 EOD;
 		exit($e->getMessage());
 	}
-	
+
 } // }}}
 
 function insert_defaults() { // {{{
 	try {
 		$db = new Database();
-	
+
 		$db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", Array("name" => 'Anonymous', "pass" => null, "class" => 'anonymous'));
 		$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')));
 
@@ -408,7 +408,7 @@ function build_dirs() { // {{{
 
 	// Clear file status cache before checking again.
 	clearstatcache();
-	
+
 	if(
 		!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
 		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
@@ -432,11 +432,11 @@ function write_config() { // {{{
 	$file_content = '<' . '?php' . "\n" .
 			"define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
 			'?' . '>';
-	
+
 	if(!file_exists("data/config")) {
 		mkdir("data/config", 0755, true);
 	}
-	
+
 	if(!file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
@@ -449,7 +449,7 @@ function write_config() { // {{{
 		    before the "&lt;?php" or after the "?&gt;"
 
 		    <p><textarea cols="80" rows="2">$file_content</textarea>
-						
+
 		    <p>Once done, <a href="index.php">Continue</a>
 			<br/><br/>
 		</div>

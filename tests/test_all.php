@@ -1,7 +1,7 @@
 <?php
 /**
  * SimpleTest integration with Travis CI for Shimmie
- * 
+ *
  * @package    Shimmie
  * @author     jgen <jeffgenovy@gmail.com>
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2

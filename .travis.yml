@@ -17,7 +17,7 @@ before_install:
 install:
   # Install nginx, php5-fpm and configure them
   - sudo ./tests/setup_test_env.sh $TRAVIS_BUILD_DIR
-  
+
   # Create the database schema for shimmie.
   - if [[ "$DB" == "pgsql" ]]; then psql -c "DROP DATABASE IF EXISTS shimmie;" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
