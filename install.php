@@ -117,6 +117,8 @@ function eok($name, $value) {
 // }}}
 
 function do_install() { // {{{
+	print(var_dump($_POST));
+	
 	if(file_exists("data/config/auto_install.conf.php")) {
 		require_once "data/config/auto_install.conf.php";
 		install_process();
@@ -329,6 +331,8 @@ EOD;
 	}
 	catch(PDOException $e)
 	{
+		print "DATABASE_DSN = '" + DATABASE_DSN + "'";
+		
 		print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
@@ -338,7 +342,6 @@ EOD;
 				<br/><br/>
 			</div>
 EOD;
-		print "DATABASE_DSN = '" + DATABASE_DSN + "'";
 		exit($e->getMessage());
 	}
 	catch (Exception $e)
