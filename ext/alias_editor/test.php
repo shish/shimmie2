@@ -8,22 +8,28 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->log_in_as_user();
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
-		$this->assert_no_text("Add");		
+		$this->assert_no_text("Add");
 		$this->log_out();
-		
+
+		$this->log_in_as_admin();
+
+		$this->get_page('alias/list');
+		$this->assert_title("Alias List");
+		$this->assert_text("Add");
+
+		$this->log_out();
+
 		/*
 		 **********************************************************************
 		 * FIXME: TODO:
 		 *  For some reason the alias tests always fail when they are running
 		 *  inside the TravisCI VM environment. I have tried to determine
 		 *  the exact cause of this, but have been unable to pin it down.
-		 * 
+		 *
 		 *  For now, I am commenting them out until I have more time to
 		 *  dig into this and determine exactly what is happening.
 		 *
 		 *********************************************************************
-		
-		$this->log_in_as_admin();
 
 		# test one to one
 		$this->get_page('alias/list');
@@ -32,10 +38,10 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->set_field('newtag', "test2");
 		$this->clickSubmit('Add');
 		$this->assert_no_text("Error adding alias");
-		
+
 		$this->get_page('alias/list');
 		$this->assert_text("test1");
-		
+
 		$this->get_page("alias/export/aliases.csv");
 		$this->assert_text("test1,test2");
 
@@ -93,7 +99,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("Add");
-		
+
 		*/
 	}
 }
