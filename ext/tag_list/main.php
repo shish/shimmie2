@@ -281,6 +281,10 @@ class TagList extends Extension {
 
 		$tags_min = $this->get_tags_min();
 		
+		// Make sure that the value of $tags_min is at least 1.
+		// Otherwise the database will complain if you try to do: LOG(0)
+		if ($tags_min < 1){ $tags_min = 1; }
+		
 		// check if we have a cached version
 		$cache_key = data_path("cache/tag_popul-" . md5("tp" . $tags_min) . ".html");
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
