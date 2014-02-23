@@ -3,28 +3,32 @@
  * Shimmie Installer
  *
  * @package    Shimmie
- * @author     Shish et al. <webmaster at shishnet.org>
+ * @copyright  Copyright (c) 2007-2014, Shish et al.
+ * @author     Shish <webmaster at shishnet.org>, jgen <jeffgenovy at gmail.com>
  * @link       http://code.shishnet.org/shimmie2/
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
- * @copyright  Copyright (c) 2007-2014, Shish et al.
+ * 
  */
 
 // TODO: Rewrite the entire installer and make it more readable.
 
 ob_start();
 
+/*
+<!--
+- install.php (c) Shish et all. 2007-2013
+-
+- Initialise the database, check that folder
+- permissions are set properly.
+-
+- This file should be independant of the database
+- and other such things that aren't ready yet
+-->
+*/
 ?>
 <!DOCTYPE html>
 <html>
-<!--
- - install.php (c) Shish et all. 2007-2013
- -
- - Initialise the database, check that folder
- - permissions are set properly.
- -
- - This file should be independant of the database
- - and other such things that aren't ready yet
--->
+<!-- Shimmie (c) Shish et all. 2007-2013 -->
 	<head>
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
@@ -37,7 +41,7 @@ ob_start();
 			<h1>Install Error</h1>
 			<p>Shimmie needs to be run via a web server with PHP support -- you
 			appear to be either opening the file from your hard disk, or your
-			web server is mis-configured.</p>
+			web server is mis-configured and doesn't know how to handle PHP files.</p>
 			<p>If you've installed a web server on your desktop PC, you probably
 			want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
 			</p>
@@ -454,7 +458,7 @@ function write_config() { // {{{
 
 		    <p><textarea cols="80" rows="2">$file_content</textarea>
 
-		    <p>Once done, <a href="index.php">Continue</a>
+		    <p>Once done, <a href="index.php">Click here to Continue</a>.
 			<br/><br/>
 		</div>
 EOD;
