@@ -277,13 +277,16 @@ EOD;
 		}
 
 		$db->create_table("aliases", "
-			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
+			oldtag VARCHAR(128) NOT NULL,
 			newtag VARCHAR(128) NOT NULL,
-			INDEX(newtag)
+			PRIMARY KEY (oldtag)
 		");
+		$db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", array());
+		
 		$db->create_table("config", "
-			name VARCHAR(128) NOT NULL PRIMARY KEY,
-			value TEXT
+			name VARCHAR(128) NOT NULL,
+			value TEXT,
+			PRIMARY KEY (name)
 		");
 		$db->create_table("users", "
 			id SCORE_AIPK,
@@ -291,9 +294,10 @@ EOD;
 			pass CHAR(32),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			class VARCHAR(32) NOT NULL DEFAULT 'user',
-			email VARCHAR(128),
-			INDEX(name)
+			email VARCHAR(128)
 		");
+		$db->execute("CREATE INDEX users_name_idx ON users(name)", array());
+		
 		$db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
@@ -307,18 +311,20 @@ EOD;
 			height INTEGER NOT NULL,
 			posted SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-			INDEX(owner_id),
-			INDEX(width),
-			INDEX(height),
-			INDEX(hash),
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
+		$db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", array());
+		$db->execute("CREATE INDEX images_width_idx ON images(width)", array());
+		$db->execute("CREATE INDEX images_height_idx ON images(height)", array());
+		$db->execute("CREATE INDEX images_hash_idx ON images(hash)", array());
+		
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
 			count INTEGER NOT NULL DEFAULT 0,
-			INDEX(tag)
 		");
+		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
+		
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
@@ -328,6 +334,9 @@ EOD;
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
+		$db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", array());
+		$db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", array());
+		
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
