@@ -44,7 +44,6 @@ class BaseThemelet {
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
-		$base = get_base_href();
 		$ext = strtolower($image->ext);
 		
 		// If the file doesn't support thumbnail generation, show it at max size.
@@ -55,7 +54,13 @@ class BaseThemelet {
 			$tsize = get_thumbnail_size($image->width, $image->height);
 		}
 
-		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'>".
+		$custom_classes = "";
+		if(class_exists("Relationships")){
+			if($image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
+			if($image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
+		}
+
+		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-post-id='$i_id'>".
 		       "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>".
 			   "</a>\n";
 	}
@@ -86,7 +91,7 @@ class BaseThemelet {
 	private function build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = rand(1, $total_pages);
+		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);

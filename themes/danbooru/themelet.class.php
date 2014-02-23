@@ -1,26 +1,5 @@
 <?php
 class Themelet extends BaseThemelet {
-	public function build_thumb_html(Image $image) {
-		global $config;
-		$h_view_link = make_link("post/view/{$image->id}");
-		$h_thumb_link = $image->get_thumb_link();
-		$h_tip = html_escape($image->get_tooltip());
-		$i_id = int_escape($image->id);
-		$h_tags = strtolower($image->get_tag_list());
-
-		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext == 'swf' || $image->ext == 'svg') {
-			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
-		}
-		else{
-			$tsize = get_thumbnail_size($image->width, $image->height);
-		}
-
-		return "<a href='$h_view_link' class='shm-thumb shm-thumb-link' data-tags='$h_tags' data-post-id='$i_id'><img title='$h_tip' alt='$h_tip' ".
-				"width='{$tsize[0]}' height='{$tsize[1]}' src='$h_thumb_link' /></a>";
-	}
-
-
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
@@ -42,7 +21,7 @@ class Themelet extends BaseThemelet {
 	private function build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = rand(1, $total_pages);
+		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 3 || $total_pages <= 3);
 		$at_end = ($current_page >= $total_pages -2);

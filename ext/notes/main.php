@@ -214,7 +214,7 @@ class Notes extends Extension {
 			$notes = int_escape($matches[1]);
 			$event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE note = $notes)"));
 		}
-		else if(preg_match("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)%/", $event->term, $matches)) {
+		else if(preg_match("/^notes([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)%/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$notes = $matches[2];
 			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE notes $cmp $notes)"));

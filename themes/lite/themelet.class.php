@@ -1,35 +1,6 @@
 <?php
 class Themelet extends BaseThemelet {
 	/**
-	 * Generic thumbnail code; returns HTML rather than adding
-	 * a block since thumbs tend to go inside blocks...
-	 */
-	public function build_thumb_html(Image $image) {
-		global $config;
-		$i_id = (int) $image->id;
-		$h_view_link = make_link('post/view/'.$i_id);
-		$h_thumb_link = $image->get_thumb_link();
-		$h_tip = html_escape($image->get_tooltip());
-		$h_tags = strtolower($image->get_tag_list());
-		$base = get_base_href();
-
-		// If file is flash or svg then sets thumbnail to max size.
-		if($image->ext === 'swf' || $image->ext === 'svg'){
-			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
-		}
-		else{
-			$tsize = get_thumbnail_size($image->width, $image->height);
-		}
-
-		return '<center class="shm-thumb" data-tags="'.$h_tags.'" data-post-id="'.$i_id.'"><div class="thumbblock">'.
-		       '<a href="'.$h_view_link.'" class="thumb shm-thumb-link">'.
-		       '<img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" class="lazy" data-original="'.$h_thumb_link.'" src="'.$base.'/lib/static/grey.gif">'.
-		       '<noscript><img id="thumb_'.$i_id.'" title="'.$h_tip.'" alt="'.$h_tip.'" height="'.$tsize[1].'" width="'.$tsize[0].'" src="'.$h_thumb_link.'"></noscript>'.
-			   "</a></div></center>\n";
-	}
-
-
-	/**
 	 * Put something in a rounded rectangle box; specific to the default theme
 	 */
 	public function rr($html) {
@@ -39,7 +10,6 @@ class Themelet extends BaseThemelet {
 			</div>
 		";
 	}
-
 
 	/**
 	 * Add a generic paginator
@@ -67,7 +37,7 @@ class Themelet extends BaseThemelet {
 	private function build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = rand(1, $total_pages);
+		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);

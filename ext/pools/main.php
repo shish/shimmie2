@@ -293,7 +293,7 @@ class Pools extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/^pool[=|:]([0-9]+|any|none)$/", $event->term, $matches)) {
+		if(preg_match("/^pool[=|:]([0-9]+|any|none)$/i", $event->term, $matches)) {
 			$poolID = $matches[1];
 
 			if(preg_match("/^(any|none)$/", $poolID)){
@@ -303,7 +303,7 @@ class Pools extends Extension {
 				$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM pool_images WHERE pool_id = $poolID)"));
 			}
 		}
-		else if(preg_match("/^pool_by_name[=|:](.*)$/", $event->term, $matches)) {
+		else if(preg_match("/^pool_by_name[=|:](.*)$/i", $event->term, $matches)) {
 			$poolTitle = str_replace("_", " ", $matches[1]);
 
 			$pool = $this->get_single_pool_from_title($poolTitle);
@@ -313,21 +313,26 @@ class Pools extends Extension {
 		}
 	}
 
-	public function add_post_from_tag(/*str*/ $poolTag, /*int*/ $imageID){
-		$poolTag = str_replace("_", " ", $poolTag);
-		//First check if pool tag is a title
-		if(ctype_digit($poolTag)){
-			//If string only contains numeric characters, assume it is $poolID
-			if($this->get_single_pool($poolTag)){ //Make sure pool exists
-				$this->add_post($poolTag, $imageID);
+	public function onTagTermParse(TagTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^pool[=|:](.*)$/i", $event->term, $matches)) {
+			global $user;
+			$poolTag = (string) str_replace("_", " ", $matches[1]);
+
+			$pool = null;
+			if(ctype_digit($poolTag)){ //If only digits, assume PoolID
+				$pool = $this->get_single_pool($poolTag);
+			}else{ //assume PoolTitle
+				$pool = $this->get_single_pool_from_title($poolTag);
 			}
-		}else{
-			//If string doesn't contain only numeric characters, check to see if tag is title.
-			$pool = $this->get_single_pool_from_title($poolTag);
-			if($pool){
-				$this->add_post($pool['id'], $imageID);
+
+			if($pool ? $this->have_permission($user, $pool) : FALSE){
+				$this->add_post($pool['id'], $event->id, true);
 			}
 		}
+
+		if(!empty($matches)) $event->metatag = true;
 	}
 
 	/* ------------------------------------------------- */
@@ -830,9 +835,9 @@ class Pools extends Extension {
 
 	/*
 	 * HERE WE ADD A SIMPLE POST FROM POOL
-	 * USED WITH FOREACH IN revert_history()
+	 * USED WITH FOREACH IN revert_history() & onTagTermParse()
 	 */
-	private function add_post(/*int*/ $poolID, /*int*/ $imageID) {
+	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
 		global $database;
 
 		if(!$this->check_post($poolID, $imageID)) {
@@ -843,19 +848,29 @@ class Pools extends Extension {
 		}
 
 		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));
+
+		if($history){
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
+			$this->add_history($poolID, 1, $imageID, $count);
+		}
 	}
 
 
 
 	/*
 	 * HERE WE REMOVE A SIMPLE POST FROM POOL
-	 * USED WITH FOREACH IN revert_history()
+	 * USED WITH FOREACH IN revert_history() & onTagTermParse()
 	 */
-	private function delete_post(/*int*/ $poolID, /*int*/ $imageID) {
+	private function delete_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
 		global $database;
 
 		$database->execute("DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid", array("pid"=>$poolID, "iid"=>$imageID));
 		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));
+
+		if($history){
+			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
+			$this->add_history($poolID, 0, $imageID, $count);
+		}
 	}
 
 }

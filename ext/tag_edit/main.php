@@ -3,6 +3,34 @@
  * Name: Tag Editor
  * Author: Shish
  * Description: Allow images to have tags assigned to them
+ * Documentation:
+ *  Here is a list of the tagging metatags available out of the box;
+ *  Shimmie extensions may provide other metatags:
+ *  <ul>
+ *    <li>source=(*, none) eg -- using this metatag will ignore anything set in the "Source" box
+ *      <ul>
+ *        <li>source=http://example.com -- set source to http://example.com
+ *        <li>source=none -- set source to NULL
+ *      </ul>
+ *  </ul>
+ *  <p>Metatags can be followed by ":" rather than "=" if you prefer.
+ *  <br />I.E: "source:http://example.com", "source=http://example.com" etc.
+ *  <p>Some tagging metatags provided by extensions:
+ *  <ul>
+ *    <li>Numeric Score
+ *      <ul>
+ *        <li>vote=(up, down, remove) -- vote, or remove your vote on an image
+ *      </ul>
+ *    <li>Pools
+ *      <ul>
+ *        <li>pool=(PoolID, PoolTitle) -- add post to pool (if exists)
+ *      </ul>
+ *    <li>Post Relationships
+ *      <ul>
+ *        <li>parent=(parentID, none) -- set parent ID of current image
+ *        <li>child=(childID) -- set parent ID of child image to current image ID
+ *      </ul>
+ *  </ul>
  */
 
 /*
@@ -72,6 +100,25 @@ class LockSetEvent extends Event {
 	}
 }
 
+/*
+ * TagTermParseEvent:
+ * Signal that a tag term needs parsing
+ */
+class TagTermParseEvent extends Event {
+	var $term = null;
+	var $id = null;
+	var $metatag = false;
+
+	public function TagTermParseEvent($term, $id) {
+		$this->term = $term;
+		$this->id = $id;
+	}
+
+	public function is_metatag() {
+		return $this->metatag;
+	}
+}
+
 class TagEdit extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $user, $page;
@@ -112,7 +159,9 @@ class TagEdit extends Extension {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
 		}
 		if($this->can_source($event->image) && isset($_POST['tag_edit__source'])) {
-			send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
+			if(isset($_POST['tag_edit__tags']) ? !preg_match('/source[=|:]/', $_POST["tag_edit__tags"]) : TRUE){
+				send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
+			}
 		}
 		if($user->can("edit_image_lock")) {
 			$locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
@@ -169,6 +218,16 @@ class TagEdit extends Extension {
 		$event->add_part($this->theme->get_lock_editor_html($event->image), 42);
 	}
 
+	public function onTagTermParse(TagTermParseEvent $event) {
+		$matches = array();
+
+		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
+			$source = ($matches[1] !== "none" ? $matches[1] : null);
+			send_event(new SourceSetEvent(Image::by_id($event->id), $source));
+		}
+
+		if(!empty($matches)) $event->metatag = true;
+	}
 
 	private function can_tag(Image $image) {
 		global $config, $user;
@@ -188,6 +247,18 @@ class TagEdit extends Extension {
 		$replace_set = Tag::explode(strtolower($replace));
 
 		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
+
+		if(count($search_set) == 1 && count($replace_set) == 1) {
+			$images = Image::find_images(0, 10, $replace_set);
+			if(count($images) == 0) {
+				log_info("tag_edit", "No images found with target tag, doing in-place rename");
+				$database->execute("DELETE FROM tags WHERE tag=:replace",
+					array("replace" => $replace_set[0]));
+				$database->execute("UPDATE tags SET tag=:replace WHERE tag=:search",
+					array("replace" => $replace_set[0], "search" => $search_set[0]));
+				return;
+			}
+		}
 
 		$last_id = -1;
 		while(true) {

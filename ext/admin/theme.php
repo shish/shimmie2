@@ -38,8 +38,8 @@ class AdminPageTheme extends Themelet {
 
 		$html = "";
 		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
-		$html .= $this->button("Recount tag use", "recount_tag_user", false);
-		$html .= $this->button("Download all images", "image_dump", false);
+		$html .= $this->button("Recount tag use", "recount_tag_use", false);
+		$html .= $this->button("Download all images", "download_all_images", false);
         $html .= $this->button("Download database contents", "database_dump", false);
 		if($database->get_driver_name() == "mysql")
 			$html .= $this->button("Reset image IDs", "reset_image_ids", true);

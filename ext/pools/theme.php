@@ -121,7 +121,9 @@ class PoolsTheme extends Themelet {
 					$this->sidebar_options($page, $pool, $check_all);
 				}
 			}
-			$page->add_block(new Block(html_escape($pool['title']), html_escape($pool['description']), "main", 10));
+
+			$bb = new BBCode();
+			$page->add_block(new Block(html_escape($pool['title']), $bb->format($pool['description']), "main", 10));
 		}
 		else {
 			$pool_info = '
@@ -412,8 +414,15 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
+		$nav_html = '
+			<a href="'.make_link().'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
+
 		$page->set_title("Recent Changes");
 		$page->set_heading("Recent Changes");
+		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
 		$page->add_block(new Block("Recent Changes", $html, "main", 10));
 
 		$this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);

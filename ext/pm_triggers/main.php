@@ -1,6 +1,6 @@
 <?php
 /*
- * Name: [beta] PM triggers
+ * Name: [Beta] PM triggers
  * Author: Shish <webmaster@shishnet.org>
  * License: GPLv2
  * Description: Send PMs in response to certain events (eg image deletion)
@@ -11,7 +11,7 @@ class PMTrigger extends Extension {
 		$this->send(
 			$event->image->owner_id,
 			"[System] An image you uploaded has been deleted",
-			"Image le gone~ (#{$image->id}, {$image->get_tag_list()})"
+			"Image le gone~ (#{$event->image->id}, {$event->image->get_tag_list()})"
 		);
 	}
 

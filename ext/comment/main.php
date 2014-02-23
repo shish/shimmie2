@@ -262,7 +262,7 @@ class CommentList extends Extension {
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		$matches = array();
-		if(preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/", $event->term, $matches)) {
+		if(preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$comments = $matches[2];
 			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));

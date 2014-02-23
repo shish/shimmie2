@@ -1,4 +1,8 @@
 <?php
+/*
+ * Name: [Beta] Hellban
+ */
+
 class HellBan extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
