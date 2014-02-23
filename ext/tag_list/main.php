@@ -342,7 +342,7 @@ class TagList extends Extension {
 		global $config;
 
 		$query = "
-			SELECT t3.tag AS tag, t3.count AS calc_count
+			SELECT t3.tag AS tag, t3.count AS calc_count, it3.tag_id
 			FROM
 				image_tags AS it1,
 				image_tags AS it2,
