@@ -58,6 +58,7 @@ class ShimmieInstallerTest extends WebTestCase {
 		$this->assertText("Database Install");
 
 		$this->setField("database_type", $db);
+		$this->assertField("database_type", $db);
 		$this->assertField("database_host", "localhost");
 		$this->setField("database_user", $username);
 		$this->setField("database_password", $password);
@@ -65,6 +66,7 @@ class ShimmieInstallerTest extends WebTestCase {
 		$this->clickSubmit("Go!");
 
 		if (!$this->assertText("Installation Succeeded!")) {
+			print "ERROR --- '" + $db + "'";
 			$this->showSource();
 		}
 	}
