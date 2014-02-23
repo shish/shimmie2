@@ -4,6 +4,8 @@ php:
 # Here is where we can list the versions of PHP you want to test against
 # using major version aliases
   - 5.3
+  - 5.4
+  - 5.5
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
