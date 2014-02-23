@@ -357,7 +357,7 @@ class TagList extends Extension {
 				AND t3.tag != 'tagme'
 				AND t1.id = it1.tag_id
 				AND t3.id = it3.tag_id
-			GROUP BY it3.tag_id
+			GROUP BY it3.tag_id, t3.tag, t3.count
 			ORDER BY calc_count DESC
 			LIMIT :tag_list_length
 		";
