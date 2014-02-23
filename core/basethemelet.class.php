@@ -44,7 +44,7 @@ class BaseThemelet {
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
-		$ext = strtolower($image->ext);
+		$ext = $image->ext;
 		
 		// If the file doesn't support thumbnail generation, show it at max size.
 		if($ext === 'swf' || $ext === 'svg' || $ext === 'mp4' || $ext === 'ogv' || $ext === 'webm' || $ext === 'flv'){
