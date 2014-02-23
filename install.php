@@ -321,7 +321,7 @@ EOD;
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
-			count INTEGER NOT NULL DEFAULT 0,
+			count INTEGER NOT NULL DEFAULT 0
 		");
 		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
 		
