@@ -328,8 +328,6 @@ EOD;
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
-			INDEX(image_id),
-			INDEX(tag_id),
 			UNIQUE(image_id, tag_id),
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
