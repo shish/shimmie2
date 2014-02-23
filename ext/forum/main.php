@@ -29,20 +29,20 @@ class Forum extends Extension {
 					user_id INTEGER NOT NULL,
 					date DATETIME NOT NULL,
 					uptodate DATETIME NOT NULL,
-					INDEX (date),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
 					");
-
+			$database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", array());
+			
 			$database->create_table("forum_posts", "
 					id SCORE_AIPK,
 					thread_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					date DATETIME NOT NULL,
 					message TEXT,
-					INDEX (date),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
 					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
+			$database->execute("CREATE INDEX forum_posts_date_idx ON forum_posts(date)", array());
 
 			$config->set_int("forum_version", 2);
 			$config->set_int("forumTitleSubString", 25);

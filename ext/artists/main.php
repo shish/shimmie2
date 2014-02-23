@@ -62,9 +62,9 @@ class Artists extends Extension {
 					created DATETIME NOT NULL,
 					updated DATETIME NOT NULL,
 					notes TEXT,
-					INDEX(id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
+			
             $database->create_table("artist_members", "
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
@@ -72,7 +72,6 @@ class Artists extends Extension {
 					name VARCHAR(255) NOT NULL,
 					created DATETIME NOT NULL,
 					updated DATETIME NOT NULL,
-					INDEX (id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -83,7 +82,6 @@ class Artists extends Extension {
 					created DATETIME,
 					updated DATETIME,
 					alias VARCHAR(255),
-					INDEX (id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -94,7 +92,6 @@ class Artists extends Extension {
 					created DATETIME NOT NULL,
 					updated DATETIME NOT NULL,
 					url VARCHAR(1000) NOT NULL,
-					INDEX (id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");

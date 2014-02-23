@@ -18,7 +18,6 @@ class Tips extends Extension {
 					enable SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					image TEXT NOT NULL,
 					text TEXT NOT NULL,
-					INDEX (id)
 					");
 
 			$database->execute("

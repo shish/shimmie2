@@ -17,9 +17,9 @@ class Blocks extends Extension {
 				title VARCHAR(128) NOT NULL,
 				area VARCHAR(16) NOT NULL,
 				priority INTEGER NOT NULL,
-				content TEXT NOT NULL,
-				INDEX (pages)
+				content TEXT NOT NULL
 			");
+			$database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", array());
 			$config->set_int("ext_blocks_version", 1);
 		}
 	}

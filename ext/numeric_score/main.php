@@ -268,10 +268,10 @@ class NumericScore extends Extension {
 				user_id INTEGER NOT NULL,
 				score INTEGER NOT NULL,
 				UNIQUE(image_id, user_id),
-				INDEX(image_id),
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
+			$database->execute("CREATE INDEX numeric_score_votes_image_id_idx ON numeric_score_votes(image_id)", array());
 			$config->set_int("ext_numeric_score_version", 1);
 		}
 		if($config->get_int("ext_numeric_score_version") < 2) {
