@@ -85,7 +85,7 @@ class CommentList extends Extension {
 				");
 				$database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", array());
 				$database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", array());
-				$database->execute("CREATE INDEX comments_posted_idx ON bookmark(posted)", array());
+				$database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", array());
 				$config->set_int("ext_comments_version", 3);
 			}
 
