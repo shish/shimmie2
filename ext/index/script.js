@@ -17,6 +17,18 @@ $(function() {
 			function() {$('.shm-image-list').show();}
 		);
 	}
+
+	//Generate a random seed when using order:random
+	$('form[action="/shimmie/post/list"]').submit(function(e){
+		var input = $('form[action="/shimmie/post/list"] input[name=search]');
+		var tagArr = input.val().split(" ");
+
+		var rand = (($.inArray("order:random", tagArr) + 1) || ($.inArray("order=random", tagArr) + 1)) - 1;
+		if(rand !== -1){
+			tagArr[rand] = "order:random_"+Math.floor((Math.random()*9999)+1);
+			input.val(tagArr.join(" "));
+		}
+	});
 });
 
 function select_blocked_tags() {

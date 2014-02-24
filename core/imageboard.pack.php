@@ -129,7 +129,7 @@ class Image {
 		}
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet(" ORDER BY images.".($order_sql ?: $config->get_string("index_order"))));
+		$querylet->append(new Querylet(" ORDER BY ".($order_sql ?: "images.".$config->get_string("index_order"))));
 		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
