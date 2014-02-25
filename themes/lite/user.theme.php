@@ -1,7 +1,7 @@
 <?php
 
 class CustomUserPageTheme extends UserPageTheme {
-	public function display_login_page($page) {
+	public function display_login_page(Page $page) {
 		global $config;
 		$page->set_title("Login");
 		$page->set_heading("Login");
@@ -27,14 +27,14 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("Login", $html, "main", 90));
 	}
 
-	public function display_user_links($page, $user, $parts) {
+	public function display_user_links(Page $page, User $user, $parts) {
 		// no block in this theme
 	}
 	public function display_login_block(Page $page) {
 		// no block in this theme
 	}
 
-	public function display_user_block($page, $user, $parts) {
+	public function display_user_block(Page $page, User $user, $parts) {
 		$h_name = html_escape($user->name);
 		$html = "";
 		$blocked = array("Pools", "Pool Changes", "Alias Editor", "My Profile");
@@ -45,7 +45,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("User Links", $html, "user", 90));
 	}
 
-	public function display_signup_page($page) {
+	public function display_signup_page(Page $page) {
 		global $config;
 		$tac = $config->get_string("login_tac", "");
 
@@ -74,7 +74,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("Signup", $html));
 	}
 
-	public function display_ip_list($page, $uploads, $comments) {
+	public function display_ip_list(Page $page, $uploads, $comments) {
 		$html = "<table id='ip-history' style='width: 400px;'>";
 		$html .= "<tr><td>Uploaded from: ";
 		foreach($uploads as $ip => $count) {

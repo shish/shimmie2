@@ -1,7 +1,7 @@
 <?php
 
 class Layout {
-	function display_page($page) {
+	function display_page(Page $page) {
 		global $config;
 
 		$theme_name = $config->get_string('theme', 'default');
