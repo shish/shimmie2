@@ -26,21 +26,21 @@ class Notes extends Extension {
 					height INTEGER NOT NULL,
 					width INTEGER NOT NULL,
 					note TEXT NOT NULL,
-					INDEX (image_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
-
+			$database->execute("CREATE INDEX notes_image_id_idx ON notes(image_id)", array());
+			
 			$database->create_table("note_request", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					date DATETIME NOT NULL,
-					INDEX (image_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
-
+			$database->execute("CREATE INDEX note_request_image_id_idx ON note_request(image_id)", array());
+					
 			$database->create_table("note_histories", "
 					id SCORE_AIPK,
 					note_enable INTEGER NOT NULL,
@@ -55,10 +55,10 @@ class Notes extends Extension {
 					height INTEGER NOT NULL,
 					width INTEGER NOT NULL,
 					note TEXT NOT NULL,
-					INDEX (image_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (note_id) REFERENCES notes(id) ON DELETE CASCADE
 					");
+			$database->execute("CREATE INDEX note_histories_image_id_idx ON note_histories(image_id)", array());
 
 			$config->set_int("notesNotesPerPage", 20);
 			$config->set_int("notesRequestsPerPage", 20);

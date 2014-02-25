@@ -94,10 +94,10 @@ class Source_History extends Extension {
 				user_ip SCORE_INET NOT NULL,
 	    		source TEXT NOT NULL,
 				date_set DATETIME NOT NULL,
-				INDEX(image_id),
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
+			$database->execute("CREATE INDEX source_histories_image_id_idx ON source_histories(image_id)", array());
 			$config->set_int("ext_source_history_version", 3);
 		}
 		

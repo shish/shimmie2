@@ -19,7 +19,7 @@ versioned branches.
 
 Requirements
 ~~~~~~~~~~~~
-MySQL 5.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
+MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
 PHP 5.3+
 GD or ImageMagick
 

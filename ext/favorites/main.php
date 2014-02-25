@@ -153,12 +153,12 @@ class Favorites extends Extension {
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					created_at DATETIME NOT NULL,
-					INDEX(image_id),
 					UNIQUE(image_id, user_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 				)
 			");
+			$database->execute("CREATE INDEX user_favorites_image_id_idx ON user_favorites(image_id)", array());
 			$config->set_int("ext_favorites_version", 1);
 		}
 

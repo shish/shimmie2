@@ -7,6 +7,8 @@ class SCoreWebReporter extends HtmlReporter {
 	var $current_html = "";
 	var $clear_modules = array();
 	var $page;
+	var $fails;
+	var $exceptions;
 
 	public function SCoreReporter(Page $page) {
 		$this->page = $page;
@@ -20,6 +22,8 @@ class SCoreWebReporter extends HtmlReporter {
 	}
 
 	function paintFooter($test_name) {
+		global $page;
+		
 		//parent::paintFooter($test_name);
 		if(($this->fails + $this->exceptions) > 0) {
 			$style = "background: red;";
@@ -33,7 +37,7 @@ class SCoreWebReporter extends HtmlReporter {
 			$this->exceptions . " exceptions" .
 			"<br>Passed modules: " . implode(", ", $this->clear_modules) .
 			"</div>";
-		$this->page->add_block(new Block("Results", $html, "main", 40));
+			$page->add_block(new Block("Results", $html, "main", 40));
 	}
 
 	function paintGroupStart($name, $size) {
@@ -42,7 +46,7 @@ class SCoreWebReporter extends HtmlReporter {
 	}
 
 	function paintGroupEnd($name) {
-                global $page;
+		global $page;
             
 		$matches = array();
 		if(preg_match("#ext/(.*)/test.php#", $name, $matches)) {
@@ -55,7 +59,7 @@ class SCoreWebReporter extends HtmlReporter {
 		}
 		else {
 			$this->current_html .= "<p>$link";
-			$this->page->add_block(new Block($name, $this->current_html, "main", 50));
+			$page->add_block(new Block($name, $this->current_html, "main", 50));
 			$this->current_html = "";
 		}
 	}

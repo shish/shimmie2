@@ -281,6 +281,10 @@ class TagList extends Extension {
 
 		$tags_min = $this->get_tags_min();
 		
+		// Make sure that the value of $tags_min is at least 1.
+		// Otherwise the database will complain if you try to do: LOG(0)
+		if ($tags_min < 1){ $tags_min = 1; }
+		
 		// check if we have a cached version
 		$cache_key = data_path("cache/tag_popul-" . md5("tp" . $tags_min) . ".html");
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
@@ -342,7 +346,7 @@ class TagList extends Extension {
 		global $config;
 
 		$query = "
-			SELECT t3.tag AS tag, t3.count AS calc_count
+			SELECT t3.tag AS tag, t3.count AS calc_count, it3.tag_id
 			FROM
 				image_tags AS it1,
 				image_tags AS it2,
@@ -357,7 +361,7 @@ class TagList extends Extension {
 				AND t3.tag != 'tagme'
 				AND t1.id = it1.tag_id
 				AND t3.id = it3.tag_id
-			GROUP BY it3.tag_id
+			GROUP BY it3.tag_id, t3.tag, t3.count
 			ORDER BY calc_count DESC
 			LIMIT :tag_list_length
 		";

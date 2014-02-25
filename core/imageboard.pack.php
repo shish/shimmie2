@@ -6,13 +6,13 @@
 
 /**
  * \page search Shimmie2: Searching
- * 
+ *
  * The current search system is built of several search item -> image ID list
  * translators, eg:
- * 
+ *
  * \li the item "fred" will search the image_tags table to find image IDs with the fred tag
  * \li the item "size=640x480" will search the images table to find image IDs of 640x480 images
- * 
+ *
  * So the search "fred size=640x480" will calculate two lists and take the
  * intersection. (There are some optimisations in there making it more
  * complicated behind the scenes, but as long as you can turn a single word
@@ -144,7 +144,7 @@ class Image {
 	/*
 	 * Image-related utility functions
 	 */
-	
+
 	/**
 	 * Count the number of image results for a given search
 	 */
@@ -152,7 +152,7 @@ class Image {
 		assert(is_array($tags));
 		global $database;
 		$tag_count = count($tags);
-		
+
 		if($tag_count === 0) {
 			$total = $database->cache->get("image-count");
 			if(!$total) {
@@ -312,9 +312,9 @@ class Image {
 	 */
 	public function get_thumb_link() {
 		global $config;
-		
+
 		$image_tlink = $config->get_string('image_tlink'); // store a copy for speed.
-		
+
 		if( !empty($image_tlink) ) {	/* empty is faster than strlen */
 			if(!startsWith($image_tlink, "http://") && !startsWith($image_tlink, "/")) {
 				$image_tlink = make_link($image_tlink);
@@ -339,7 +339,7 @@ class Image {
 		global $config;
 		$tt = $this->parse_link_template($config->get_string('image_tip'), "no_escape");
 
-		// Removes the size tag if the file is an mp3 
+		// Removes the size tag if the file is an mp3
 		if($this->ext === 'mp3'){
 			$iitip = $tt;
 			$mp3tip = array("0x0");
@@ -540,7 +540,7 @@ class Image {
 		@unlink($this->get_image_filename());
 		@unlink($this->get_thumb_filename());
 	}
-	
+
 	/**
 	 * Someone please explain this
 	 *
@@ -824,7 +824,7 @@ class Image {
 		$terms = Tag::resolve_aliases($terms);
 
 		reset($terms); // rewind to first element in array.
-		
+
 		// turn each term into a specific type of querylet
 		foreach($terms as $term) {
 			$negative = false;
@@ -860,7 +860,7 @@ class Image {
 			//$terms["tag$tag_n"] = $tq->tag;
 			$terms['tag'.$tag_n] = $tq->tag;
 			$tag_n++;
-			
+
 			if($sign === "+") $positive_tag_count++;
 			else $negative_tag_count++;
 		}
@@ -914,7 +914,7 @@ class Image {
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
 			$s_tag_list = join(', ', $s_tag_array);
-			
+
 			$tag_id_array = array();
 			$tags_ok = true;
 			foreach($tag_search->variables as $tag) {
@@ -985,7 +985,7 @@ class Tag {
 	 */
 	public static function explode($tags, $tagme=true) {
 		assert(is_string($tags) || is_array($tags));
-	
+
 		if(is_string($tags)) {
 			$tags = explode(' ', trim($tags));
 		}

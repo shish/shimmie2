@@ -1,21 +1,34 @@
 <?php
+/**
+ * Shimmie Installer
+ *
+ * @package    Shimmie
+ * @copyright  Copyright (c) 2007-2014, Shish et al.
+ * @author     Shish <webmaster at shishnet.org>, jgen <jeffgenovy at gmail.com>
+ * @link       http://code.shishnet.org/shimmie2/
+ * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
+ * 
+ */
 
 // TODO: Rewrite the entire installer and make it more readable.
 
 ob_start();
 
+/*
+<!--
+- install.php (c) Shish et all. 2007-2013
+-
+- Initialise the database, check that folder
+- permissions are set properly.
+-
+- This file should be independant of the database
+- and other such things that aren't ready yet
+-->
+*/
 ?>
 <!DOCTYPE html>
 <html>
-<!--
- - install.php (c) Shish et all. 2007-2013
- -
- - Initialise the database, check that folder
- - permissions are set properly.
- -
- - This file should be independant of the database
- - and other such things that aren't ready yet
--->
+<!-- Shimmie (c) Shish et all. 2007-2013 -->
 	<head>
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
@@ -28,7 +41,7 @@ ob_start();
 			<h1>Install Error</h1>
 			<p>Shimmie needs to be run via a web server with PHP support -- you
 			appear to be either opening the file from your hard disk, or your
-			web server is mis-configured.</p>
+			web server is mis-configured and doesn't know how to handle PHP files.</p>
 			<p>If you've installed a web server on your desktop PC, you probably
 			want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
 			</p>
@@ -40,7 +53,7 @@ assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
 
 /*
- * Compute the path to the folder containing "install.php" and 
+ * Compute the path to the folder containing "install.php" and
  * store it as the 'Shimmie Root' folder for later on.
  *
  * Example:
@@ -114,10 +127,12 @@ function do_install() { // {{{
 	}
 	else if(@$_POST["database_type"] == "sqlite" && isset($_POST["database_name"])) {
 		define('DATABASE_DSN', "sqlite:{$_POST["database_name"]}");
+		define("DATABASE_KA", true);     // Keep database connection alive
 		install_process();
 	}
 	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
+		define("DATABASE_KA", true);     // Keep database connection alive
 		install_process();
 	}
 	else {
@@ -214,7 +229,7 @@ function ask_questions() { // {{{
 			</form>
 
 			<h3>Help</h3>
-					
+
 			<p class="dbconf mysql pgsql">
 				Please make sure the database you have chosen exists and is empty.<br>
 				The username provided must have access to create tables within the database.
@@ -227,7 +242,7 @@ function ask_questions() { // {{{
 				Drivers can generally be downloaded with your OS package manager;
 				for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
 			</p>
-			
+
 		</div>
 EOD;
 } // }}}
@@ -240,14 +255,14 @@ function install_process() { // {{{
 	create_tables();
 	insert_defaults();
 	write_config();
-	
+
 	header("Location: index.php");
 } // }}}
 
 function create_tables() { // {{{
 	try {
 		$db = new Database();
-		
+
 		if ( $db->count_tables() > 0 ) {
 			print <<<EOD
 			<div id="installer">
@@ -260,15 +275,18 @@ function create_tables() { // {{{
 EOD;
 			exit;
 		}
-		
+
 		$db->create_table("aliases", "
-			oldtag VARCHAR(128) NOT NULL PRIMARY KEY,
+			oldtag VARCHAR(128) NOT NULL,
 			newtag VARCHAR(128) NOT NULL,
-			INDEX(newtag)
+			PRIMARY KEY (oldtag)
 		");
+		$db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", array());
+		
 		$db->create_table("config", "
-			name VARCHAR(128) NOT NULL PRIMARY KEY,
-			value TEXT
+			name VARCHAR(128) NOT NULL,
+			value TEXT,
+			PRIMARY KEY (name)
 		");
 		$db->create_table("users", "
 			id SCORE_AIPK,
@@ -276,9 +294,10 @@ EOD;
 			pass CHAR(32),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			class VARCHAR(32) NOT NULL DEFAULT 'user',
-			email VARCHAR(128),
-			INDEX(name)
+			email VARCHAR(128)
 		");
+		$db->execute("CREATE INDEX users_name_idx ON users(name)", array());
+		
 		$db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
@@ -292,27 +311,30 @@ EOD;
 			height INTEGER NOT NULL,
 			posted SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-			INDEX(owner_id),
-			INDEX(width),
-			INDEX(height),
-			INDEX(hash),
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
+		$db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", array());
+		$db->execute("CREATE INDEX images_width_idx ON images(width)", array());
+		$db->execute("CREATE INDEX images_height_idx ON images(height)", array());
+		$db->execute("CREATE INDEX images_hash_idx ON images(hash)", array());
+		
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
-			count INTEGER NOT NULL DEFAULT 0,
-			INDEX(tag)
+			count INTEGER NOT NULL DEFAULT 0
 		");
+		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
+		
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
-			INDEX(image_id),
-			INDEX(tag_id),
 			UNIQUE(image_id, tag_id),
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
+		$db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", array());
+		$db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", array());
+		
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
@@ -342,13 +364,13 @@ EOD;
 EOD;
 		exit($e->getMessage());
 	}
-	
+
 } // }}}
 
 function insert_defaults() { // {{{
 	try {
 		$db = new Database();
-	
+
 		$db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", Array("name" => 'Anonymous', "pass" => null, "class" => 'anonymous'));
 		$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')));
 
@@ -395,6 +417,9 @@ function build_dirs() { // {{{
 	if(!is_writable("thumbs")) @chmod("thumbs", 0755);
 	if(!is_writable("data")  ) @chmod("data", 0755);
 
+	// Clear file status cache before checking again.
+	clearstatcache();
+
 	if(
 		!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
 		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
@@ -418,12 +443,12 @@ function write_config() { // {{{
 	$file_content = '<' . '?php' . "\n" .
 			"define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
 			'?' . '>';
-	
+
 	if(!file_exists("data/config")) {
 		mkdir("data/config", 0755, true);
 	}
-	
-	if(!file_put_contents("data/config/shimmie.conf.php", $file_content)) {
+
+	if(!file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
 		<div id="installer">
@@ -435,8 +460,8 @@ function write_config() { // {{{
 		    before the "&lt;?php" or after the "?&gt;"
 
 		    <p><textarea cols="80" rows="2">$file_content</textarea>
-						
-		    <p>Once done, <a href="index.php">Continue</a>
+
+		    <p>Once done, <a href="index.php">Click here to Continue</a>.
 			<br/><br/>
 		</div>
 EOD;

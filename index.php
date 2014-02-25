@@ -11,7 +11,7 @@
  * PMs; or one could replace it with a blog module; or one could have a blog
  * which links to images on an image board, with no wiki or messaging, and so
  * on and so on...
- * 
+ *
  * Dijkstra will kill me for personifying my architecture, but I can't think
  * of a better way without going into all the little details.
  * There are a bunch of Extension subclasses, they talk to each other by sending
@@ -32,9 +32,9 @@
  * \li \ref unittests
  *
  * \page scglobals SCore Globals
- * 
+ *
  * There are four global variables which are pretty essential to most extensions:
- * 
+ *
  * \li $config -- some variety of Config subclass
  * \li $database -- a Database object used to get raw SQL access
  * \li $page -- a Page to holds all the loose bits of extension output

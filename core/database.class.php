@@ -280,6 +280,12 @@ class Database {
 	public $cache = null;
 
 	/**
+	 * A boolean flag to track if we already have an active transaction.
+	 * (ie: True if beginTransaction() already called)
+	 */
+	public $transaction = false;
+
+	/**
 	 * For now, only connect to the cache, as we will pretty much certainly
 	 * need it. There are some pages where all the data is in cache, so the
 	 * DB connection is on-demand.
@@ -326,7 +332,7 @@ class Database {
 		$this->connect_engine();
 		$this->engine->init($this->db);
 
-		$this->db->beginTransaction();
+		$this->beginTransaction();
 	}
 
 	private function connect_engine() {
@@ -347,12 +353,35 @@ class Database {
 		}
 	}
 
+	public function beginTransaction() {
+		if ($this->transaction === false) {
+			$this->db->beginTransaction();
+			$this->transaction = true;
+		}
+	}
+
 	public function commit() {
-		if(!is_null($this->db)) return $this->db->commit();
+		if(!is_null($this->db)) {
+			if ($this->transaction === true) {
+				$this->transaction = false;
+				return $this->db->commit();
+			}
+			else {
+				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no transaction currently open.");
+			}
+		}
 	}
 
 	public function rollback() {
-		if(!is_null($this->db)) return $this->db->rollback();
+		if(!is_null($this->db)) {
+			if ($this->transaction === true) {
+				$this->transaction = false;
+				return $this->db->rollback();
+			}
+			else {
+				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no transaction currently open.");
+			}
+		}
 	}
 
 	public function escape($input) {
@@ -388,7 +417,7 @@ class Database {
 					}
 				}
 				$stmt->execute();
-			} 
+			}
 			else {
 				$stmt->execute($args);
 			}
@@ -465,13 +494,13 @@ class Database {
 		if(is_null($this->engine)) $this->connect_engine();
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
-	
+
 	/**
 	 * Returns the number of tables present in the current database.
 	 */
 	public function count_tables() {
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
-		
+
 		if($this->engine->name === "mysql") {
 			return count(
 						$this->get_all("SHOW TABLES")

@@ -42,9 +42,9 @@ class Bookmarks extends Extension {
 				owner_id INTEGER NOT NULL,
 				url TEXT NOT NULL,
 				title TEXT NOT NULL,
-				INDEX (owner_id),
 				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
 			");
+			$database->execute("CREATE INDEX bookmark_owner_id_idx ON bookmark(owner_id)", array());
 			$config->set_int("ext_bookmarks_version", 1);
 		}
 	}

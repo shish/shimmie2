@@ -110,9 +110,11 @@ class SCoreWebTestCase extends WebTestCase {
 	 * the right thing; no need for http:// or any such
 	 */
 	protected function get_page($page) {
-		if($_SERVER['HTTP_HOST'] == "<cli command>") {
-			//print "http://127.0.0.1/2.Xm/index.php?q=$page";
-			$raw = $this->get("http://127.0.0.1/2.Xm/index.php?q=".str_replace("?", "&", $page));
+		// Check if we are running on the command line
+		if(php_sapi_name() == 'cli' || $_SERVER['HTTP_HOST'] == "<cli command>") {
+			$host = constant("_TRAVIS_WEBHOST");
+			$this->assertFalse(empty($host)); // Make sure that we know the host address.
+			$raw = $this->get($host."/index.php?q=".str_replace("?", "&", $page));
 		}
 		else {
 			$raw = $this->get(make_http(make_link($page)));
@@ -195,7 +197,10 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 	protected function delete_image($image_id) {
 		if($image_id > 0) {
 	        $this->get_page('post/view/'.$image_id);
-			$this->click("Delete");
+			$this->clickSubmit("Delete");
+			// Make sure that the image is really deleted.
+			//$this->get_page('post/view/'.$image_id);
+			//$this->assert_response(404);
 		}
 	}
 }
@@ -204,9 +209,15 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 class TestFinder extends TestSuite {
 	function TestFinder($hint) {
 		if(strpos($hint, "..") !== FALSE) return;
+		
+		// Select the test cases for "All" extensions.
 		$dir = "{".ENABLED_EXTS."}";
+		
+		// Unless the user specified just a specific extension.
 		if(file_exists("ext/$hint/test.php")) $dir = $hint;
+		
 		$this->TestSuite('All tests');
+		
 		foreach(zglob("ext/$dir/test.php") as $file) {
 			$this->addFile($file);
 		}

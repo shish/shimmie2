@@ -35,7 +35,6 @@ class Pools extends Extension {
 					description TEXT,
 					date DATETIME NOT NULL,
 					posts INTEGER NOT NULL DEFAULT 0,
-					INDEX (id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
 			$database->create_table("pool_images", "
@@ -53,7 +52,6 @@ class Pools extends Extension {
 					images TEXT,
 					count INTEGER NOT NULL DEFAULT 0,
 					date DATETIME NOT NULL,
-					INDEX (id),
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");

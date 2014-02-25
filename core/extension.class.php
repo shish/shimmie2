@@ -1,18 +1,18 @@
 <?php
 /**
  * \page eande Events and Extensions
- * 
+ *
  * An event is a little blob of data saying "something happened", possibly
  * "something happened, here's the specific data". Events are sent with the
  * send_event() function. Since events can store data, they can be used to
  * return data to the extension which sent them, for example:
- * 
+ *
  * \code
  * $tfe = new TextFormattingEvent($original_text);
  * send_event($tfe);
  * $formatted_text = $tfe->formatted;
  * \endcode
- * 
+ *
  * An extension is something which is capable of reacting to events.
  *
  *
@@ -25,7 +25,7 @@
  *         $this->username = $username;
  *     }
  * }
- * 
+ *
  * public class Hello extends Extension {
  *     public function onPageRequest(PageRequestEvent $event) {   // Every time a page request is sent
  *         global $user;                                          // Look at the global "currently logged in user" object
@@ -149,13 +149,13 @@ abstract class DataHandlerExtension extends Extension {
 			/* Check if we are replacing an image */
 			if(array_key_exists('replace', $event->metadata) && isset($event->metadata['replace'])) {
 				/* hax: This seems like such a dirty way to do this.. */
-				
+
 				/* Validate things */
 				$image_id = int_escape($event->metadata['replace']);
-				
+
 				/* Check to make sure the image exists. */
 				$existing = Image::by_id($image_id);
-				
+
 				if(is_null($existing)) {
 					throw new UploadException("Image to replace does not exist!");
 				}
@@ -166,7 +166,7 @@ abstract class DataHandlerExtension extends Extension {
 				// even more hax..
 				$event->metadata['tags'] = $existing->get_tag_list();
 				$image = $this->create_image_from_data(warehouse_path("images", $event->metadata['hash']), $event->metadata);
-				
+
 				if(is_null($image)) {
 					throw new UploadException("Data handler failed to create image object from data");
 				}
@@ -183,13 +183,13 @@ abstract class DataHandlerExtension extends Extension {
 				$iae = new ImageAdditionEvent($image);
 				send_event($iae);
 				$event->image_id = $iae->image->id;
-				
+
 				// Rating Stuff.
 				if(!empty($event->metadata['rating'])){
 					$rating = $event->metadata['rating'];
 					send_event(new RatingSetEvent($image, $rating));
 				}
-				
+
 				// Locked Stuff.
 				if(!empty($event->metadata['locked'])){
 					$locked = $event->metadata['locked'];

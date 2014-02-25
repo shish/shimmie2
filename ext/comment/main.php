@@ -78,14 +78,14 @@ class CommentList extends Extension {
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
 					owner_ip SCORE_INET NOT NULL,
-					posted DATETIME DEFAULT NULL,
+					posted SCORE_DATETIME DEFAULT NULL,
 					comment TEXT NOT NULL,
-					INDEX (image_id),
-					INDEX (owner_ip),
-					INDEX (posted),
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 				");
+				$database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", array());
+				$database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", array());
+				$database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", array());
 				$config->set_int("ext_comments_version", 3);
 			}
 
@@ -96,10 +96,10 @@ class CommentList extends Extension {
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
 					owner_ip CHAR(16) NOT NULL,
-					posted DATETIME DEFAULT NULL,
-					comment TEXT NOT NULL,
-					INDEX (image_id)
+					posted SCORE_DATETIME DEFAULT NULL,
+					comment TEXT NOT NULL
 				");
+				$database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", array());
 				$config->set_int("ext_comments_version", 1);
 			}
 
