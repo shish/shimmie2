@@ -90,8 +90,8 @@ $header_html
 			Images &copy; their respective owners,
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
-			<a href="https://github.com/shish/shimmie2/contributors">The Team</a>
-			2007-2012,
+			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
+			2007-2014,
 			based on the Danbooru concept.
 			<br>Futaba theme based on 4chan's layout and CSS :3
 			$debug
