@@ -49,12 +49,16 @@ class TagList extends Extension {
 		if($event->page_matches("api/internal/tag_list/complete")) {
 			if(!isset($_GET["s"])) return;
 
-			$all = $database->get_all(
-					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 LIMIT 10",
-					array("search"=>$_GET["s"]."%"));
+			$limit = 0;
+			$limitSQL = "";
+			$SQLarr = array("search"=>$_GET["s"]."%");
+			if(isset($_GET["limit"]) && $_GET["limit"] !== 0){
+				$limitSQL = "LIMIT :limit";
+				$SQLarr['limit'] = $_GET["limit"];
+			}
 
-			$res = array();
-			foreach($all as $row) {$res[] = $row["tag"];}
+			$res = $database->get_col(
+					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 $limitSQL", $SQLarr);
 
 			$page->set_mode("data");
 			$page->set_type("text/plain");
