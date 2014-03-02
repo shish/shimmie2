@@ -45,8 +45,7 @@ class TagList extends Extension {
 			}
 			$this->theme->display_page($page);
 		}
-
-		if($event->page_matches("api/internal/tag_list/complete")) {
+		else if($event->page_matches("api/internal/tag_list/complete")) {
 			if(!isset($_GET["s"])) return;
 
 			$limit = 0;
