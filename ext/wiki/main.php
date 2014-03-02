@@ -63,7 +63,7 @@ class Wiki extends Extension {
 				id SCORE_AIPK,
 				owner_id INTEGER NOT NULL,
 				owner_ip SCORE_INET NOT NULL,
-				date DATETIME DEFAULT NULL,
+				date SCORE_DATETIME DEFAULT NULL,
 				title VARCHAR(255) NOT NULL,
 				revision INTEGER NOT NULL DEFAULT 1,
 				locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,

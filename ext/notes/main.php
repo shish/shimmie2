@@ -20,7 +20,7 @@ class Notes extends Extension {
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					user_ip CHAR(15) NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
 					height INTEGER NOT NULL,
@@ -35,7 +35,7 @@ class Notes extends Extension {
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
@@ -49,7 +49,7 @@ class Notes extends Extension {
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					user_ip CHAR(15) NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
 					height INTEGER NOT NULL,
