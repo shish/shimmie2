@@ -567,7 +567,7 @@ function getExtension ($mime_type){
 
 	$extensions = getMimeType(null, null, true);
 	$ext = array_search($mime_type, $extensions);
-	return ($ext ?: false);
+	return ($ext ? $ext : false);
 }
 
 /**
