@@ -53,7 +53,7 @@ class PrivMsg extends Extension {
 				from_id INTEGER NOT NULL,
 				from_ip SCORE_INET NOT NULL,
 				to_id INTEGER NOT NULL,
-				sent_date DATETIME NOT NULL,
+				sent_date SCORE_DATETIME NOT NULL,
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,

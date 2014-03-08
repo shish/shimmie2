@@ -325,7 +325,7 @@ class ImageIO extends Extension {
 				)",
 				array(
 					"owner_id"=>$user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'], "filename"=>substr($image->filename, 0, 60), "filesize"=>$image->filesize,
-					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
+					"hash"=>$image->hash, "ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
 				)
 		);
 		$image->id = $database->get_last_insert_id('images_id_seq');
@@ -435,7 +435,7 @@ class ImageIO extends Extension {
 				",
 				array(
 					"filename"=>$image->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
-					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
+					"ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
 					"id"=>$id
 				)
 		);

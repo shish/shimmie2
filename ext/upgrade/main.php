@@ -75,6 +75,22 @@ class Upgrade extends Extension {
 			log_info("upgrade", "Database at version 11");
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") < 12) {
+			$config->set_bool("in_upgrade", true);
+			$config->set_int("db_version", 12);
+
+			if($database->get_driver_name() == 'pgsql') {
+				log_info("upgrade", "Changing ext column to VARCHAR");
+				$database->execute("ALTER TABLE images ALTER COLUMN ext SET DATA TYPE VARCHAR(4)");
+			}
+
+			log_info("upgrade", "Lowering case of all exts");
+			$database->execute("UPDATE images SET ext = LOWER(ext)");
+
+			log_info("upgrade", "Database at version 12");
+			$config->set_bool("in_upgrade", false);
+		}
 	}
 
 	public function get_priority() {return 5;}

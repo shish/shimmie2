@@ -130,8 +130,8 @@ class IPBan extends Extension {
 			$database->Execute("CREATE TABLE bans (
 				id int(11) NOT NULL auto_increment,
 				ip char(15) default NULL,
-				date datetime default NULL,
-				end datetime default NULL,
+				date SCORE_DATETIME default NULL,
+				end SCORE_DATETIME default NULL,
 				reason varchar(255) default NULL,
 				PRIMARY KEY (id)
 			)");

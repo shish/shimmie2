@@ -27,8 +27,8 @@ class Forum extends Extension {
 					sticky SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					title VARCHAR(255) NOT NULL,
 					user_id INTEGER NOT NULL,
-					date DATETIME NOT NULL,
-					uptodate DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
+					uptodate SCORE_DATETIME NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
 					");
 			$database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", array());
@@ -37,7 +37,7 @@ class Forum extends Extension {
 					id SCORE_AIPK,
 					thread_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					message TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
 					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -330,7 +330,7 @@ class Forum extends Extension {
         private function save_new_thread($user)
         {
             $title = html_escape($_POST["title"]);
-			$sticky = html_escape($_POST["sticky"]);
+			$sticky = !empty($_POST["sticky"]) ? html_escape($_POST["sticky"]) : "N";
 			
 			if($sticky == ""){
 			$sticky = "N";
@@ -344,11 +344,11 @@ class Forum extends Extension {
                     (?, ?, ?, now(), now())",
                 array($title, $sticky, $user->id));
 				
-            $result = $database->get_row("SELECT LAST_INSERT_ID() AS threadID", array());
+            $threadID = $database->get_last_insert_id("forum_threads_id_seq");
 			
-			log_info("forum", "Thread {$result["threadID"]} created by {$user->name}");
+			log_info("forum", "Thread {$threadID} created by {$user->name}");
 			
-            return $result["threadID"];
+            return $threadID;
         }
 
         private function save_new_post($threadID, $user)
@@ -367,9 +367,9 @@ class Forum extends Extension {
                     (?, ?, now(), ?)"
                 , array($threadID, $userID, $message));
 			
-			$result = $database->get_row("SELECT LAST_INSERT_ID() AS postID", array());
+			$postID = $database->get_last_insert_id("forum_posts_id_seq");
 			
-			log_info("forum", "Post {$result["postID"]} created by {$user->name}");
+			log_info("forum", "Post {$postID} created by {$user->name}");
 			
 			$database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=?", array ($threadID));
         }

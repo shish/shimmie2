@@ -39,19 +39,19 @@ class BaseThemelet {
 	 */
 	public function build_thumb_html(Image $image) {
 		global $config;
+
 		$i_id = (int) $image->id;
 		$h_view_link = make_link('post/view/'.$i_id);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
 		$h_tags = strtolower($image->get_tag_list());
-		$ext = strtolower($image->ext);
-		
-		// If the file doesn't support thumbnail generation, show it at max size.
-		if($ext === 'swf' || $ext === 'svg' || $ext === 'mp4' || $ext === 'ogv' || $ext === 'webm' || $ext === 'flv'){
-			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
-		}
-		else{
+
+		$extArr = array_flip(array('swf', 'svg', 'mp4', 'ogv', 'webm', 'flv')); //List of thumbless filetypes
+		if(!isset($extArr[$image->ext])){
 			$tsize = get_thumbnail_size($image->width, $image->height);
+		}else{
+			//Use max thumbnail size if using thumbless filetype
+			$tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
 		}
 
 		$custom_classes = "";
