@@ -84,6 +84,10 @@ class Upgrade extends Extension {
 				log_info("upgrade", "Changing ext column to VARCHAR");
 				$database->execute("ALTER TABLE images ALTER COLUMN ext SET DATA TYPE VARCHAR(4)");
 			}
+
+			log_info("upgrade", "Lowering case of all exts");
+			$database->execute("UPDATE images SET ext = LOWER(ext)");
+
 			log_info("upgrade", "Database at version 12");
 			$config->set_bool("in_upgrade", false);
 		}
