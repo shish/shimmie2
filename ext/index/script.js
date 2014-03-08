@@ -19,8 +19,8 @@ $(function() {
 	}
 
 	//Generate a random seed when using order:random
-	$('form[action="/shimmie/post/list"]').submit(function(e){
-		var input = $('form[action="/shimmie/post/list"] input[name=search]');
+	$('form > input[placeholder="Search"]').parent().submit(function(e){
+		var input = $('form > input[placeholder="Search"]');
 		var tagArr = input.val().split(" ");
 
 		var rand = (($.inArray("order:random", tagArr) + 1) || ($.inArray("order=random", tagArr) + 1)) - 1;
