@@ -73,7 +73,6 @@ class Image {
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
-		$image = null;
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
 	}
@@ -86,7 +85,6 @@ class Image {
 	public static function by_hash(/*string*/ $hash) {
 		assert(is_string($hash));
 		global $database;
-		$image = null;
 		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
@@ -913,7 +911,6 @@ class Image {
 		// more than one positive tag, or more than zero negative tags
 		else {
 			$s_tag_array = array_map("sql_escape", $tag_search->variables);
-			$s_tag_list = join(', ', $s_tag_array);
 
 			$tag_id_array = array();
 			$tags_ok = true;
@@ -1058,7 +1055,7 @@ class Tag {
 		else {
 			global $database;
 			$db_wild_tag = str_replace("%", "\%", $tag);
-			$db_wild_tag = str_replace("*", "%", $tag);
+			$db_wild_tag = str_replace("*", "%", $db_wild_tag);
 			$newtags = $database->get_col($database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"), array($db_wild_tag));
 			if(count($newtags) > 0) {
 				$resolved = $newtags;

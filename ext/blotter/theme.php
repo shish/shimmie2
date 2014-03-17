@@ -31,7 +31,6 @@ class BlotterTheme extends Themelet {
 		 * Long function name, but at least I won't confuse it with something else ^_^
 		 */
 
-		$html = "";
 		// Add_new stuff goes here.
 		$table_header =  "
 			<tr>
