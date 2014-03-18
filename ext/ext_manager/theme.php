@@ -17,7 +17,6 @@ class ExtManagerTheme extends Themelet {
 					</thead>
 					<tbody>
 		";
-		$n = 0;
 		foreach($extensions as $extension) {
 			if(!$editable && $extension->visibility == "admin") continue;
 
@@ -53,7 +52,6 @@ class ExtManagerTheme extends Themelet {
 	/*
 	public function display_blocks(Page $page, $extensions) {
 		global $user;
-		$n = 0;
 		$col_1 = "";
 		$col_2 = "";
 		foreach($extensions as $extension) {

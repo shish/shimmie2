@@ -14,7 +14,7 @@
 class ConfigSaveEvent extends Event {
 	var $config;
 
-	public function ConfigSaveEvent(Config $config) {
+	public function __construct(Config $config) {
 		$this->config = $config;
 	}
 }
@@ -26,7 +26,7 @@ class ConfigSaveEvent extends Event {
 class SetupBuildingEvent extends Event {
 	var $panel;
 
-	public function SetupBuildingEvent(SetupPanel $panel) {
+	public function __construct(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
 }
@@ -49,10 +49,11 @@ class SetupBlock extends Block {
 	var $header;
 	var $body;
 
-	public function SetupBlock($title) {
+	public function __construct($title) {
 		$this->header = $title;
 		$this->section = "main";
 		$this->position = 50;
+		$this->body = "";
 	}
 
 	public function add_label($text) {

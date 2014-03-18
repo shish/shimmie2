@@ -29,7 +29,6 @@ class AliasEditorTheme extends Themelet {
 		}
 
 		$h_aliases = "";
-		$n = 0;
 		foreach($aliases as $old => $new) {
 			$h_old = html_escape($old);
 			$h_new = "<a href='".make_link("post/list/".url_escape($new)."/1")."'>".html_escape($new)."</a>";

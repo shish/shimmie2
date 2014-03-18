@@ -175,7 +175,6 @@ class ArtistsTheme extends Themelet {
             
             $html .= "</tr></thead>";
 
-            $n = 0;
             $deletionLinkActionArray =
                 array('artist' => 'artist/nuke/'
                     , 'alias' => 'artist/alias/delete/'
@@ -339,8 +338,6 @@ class ArtistsTheme extends Themelet {
             global $user, $event, $page;
 
             $artist_link = "<a href='".make_link("post/list/".$artist['name']."/1")."'>".str_replace("_", " ", $artist['name'])."</a>";
-
-            $n = 0;
 
             $html = "<table id='poolsList' class='zebra'>
                     <thead>

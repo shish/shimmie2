@@ -75,7 +75,6 @@ class Layout {
 		}
 
 		$custom_sublinks = "<div class='sbar'>";
-		$cs = null;
 		// hack
 		global $user;
 		$username = url_escape($user->name);

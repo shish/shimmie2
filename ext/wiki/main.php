@@ -12,7 +12,7 @@ class WikiUpdateEvent extends Event {
 	var $user;
 	var $wikipage;
 
-	public function WikiUpdateEvent(User $user, WikiPage $wikipage) {
+	public function __construct(User $user, WikiPage $wikipage) {
 		$this->user = $user;
 		$this->wikipage = $wikipage;
 	}
@@ -31,7 +31,7 @@ class WikiPage {
 	var $locked;
 	var $body;
 
-	public function WikiPage($row) {
+	public function __construct($row) {
 		assert(!empty($row));
 
 		$this->id = $row['id'];
@@ -157,7 +157,7 @@ class Wiki extends Extension {
 		global $database;
 		$wpage = $event->wikipage;
 		try {
-			$row = $database->Execute("
+			$database->Execute("
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (?, ?, now(), ?, ?, ?, ?)", array($event->user->id, $_SERVER['REMOTE_ADDR'],
 				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
