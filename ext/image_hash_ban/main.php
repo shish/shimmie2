@@ -13,7 +13,7 @@
 class RemoveImageHashBanEvent extends Event {
 	var $hash;
 
-	public function RemoveImageHashBanEvent($hash) {
+	public function __construct($hash) {
 		$this->hash = $hash;
 	}
 }
@@ -23,7 +23,7 @@ class AddImageHashBanEvent extends Event {
 	var $hash;
 	var $reason;
 
-	public function AddImageHashBanEvent($hash, $reason) {
+	public function __construct($hash, $reason) {
 		$this->hash = $hash;
 		$this->reason = $reason;
 	}

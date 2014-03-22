@@ -19,7 +19,7 @@ class DataUploadEvent extends Event {
 	 * @param $tmpname The temporary file used for upload.
 	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
-	public function DataUploadEvent(/*string*/ $tmpname, /*array*/ $metadata) {
+	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
 
 		$this->tmpname = $tmpname;

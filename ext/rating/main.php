@@ -22,7 +22,7 @@
 class RatingSetEvent extends Event {
 	var $image, $rating;
 
-	public function RatingSetEvent(Image $image, /*char*/ $rating) {
+	public function __construct(Image $image, /*char*/ $rating) {
 		assert(in_array($rating, array("s", "q", "e", "u")));
 		$this->image = $image;
 		$this->rating = $rating;

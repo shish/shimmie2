@@ -11,7 +11,7 @@
 class AuthorSetEvent extends Event {
     var $image, $user, $author;
 
-    public function AuthorSetEvent(Image $image, User $user, /*string*/ $author)
+    public function __construct(Image $image, User $user, /*string*/ $author)
     {
         $this->image = $image;
         $this->user = $user;

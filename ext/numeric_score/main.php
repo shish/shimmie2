@@ -13,7 +13,7 @@
 class NumericScoreSetEvent extends Event {
 	var $image_id, $user, $score;
 
-	public function NumericScoreSetEvent(/*int*/ $image_id, User $user, /*int*/ $score) {
+	public function __construct(/*int*/ $image_id, User $user, /*int*/ $score) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->score = $score;

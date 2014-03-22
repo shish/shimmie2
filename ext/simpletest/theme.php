@@ -10,7 +10,7 @@ class SCoreWebReporter extends HtmlReporter {
 	var $fails;
 	var $exceptions;
 
-	public function SCoreReporter(Page $page) {
+	public function __construct(Page $page) {
 		$this->page = $page;
 		$this->fails = 0;
 		$this->exceptions = 0;

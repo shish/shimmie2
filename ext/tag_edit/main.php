@@ -43,7 +43,7 @@ class OwnerSetEvent extends Event {
 	var $image;
 	var $owner;
 
-	public function OwnerSetEvent(Image $image, User $owner) {
+	public function __construct(Image $image, User $owner) {
 		$this->image = $image;
 		$this->owner = $owner;
 	}
@@ -60,7 +60,7 @@ class SourceSetEvent extends Event {
 	var $image;
 	var $source;
 
-	public function SourceSetEvent(Image $image, $source) {
+	public function __construct(Image $image, $source) {
 		$this->image = $image;
 		$this->source = $source;
 	}
@@ -77,7 +77,7 @@ class TagSetEvent extends Event {
 	var $image;
 	var $tags;
 
-	public function TagSetEvent(Image $image, $tags) {
+	public function __construct(Image $image, $tags) {
 		$this->image = $image;
 		$this->tags = Tag::explode($tags);
 	}
@@ -93,7 +93,7 @@ class LockSetEvent extends Event {
 	var $image;
 	var $locked;
 
-	public function LockSetEvent(Image $image, $locked) {
+	public function __construct(Image $image, $locked) {
 		assert(is_bool($locked));
 		$this->image = $image;
 		$this->locked = $locked;
@@ -109,7 +109,7 @@ class TagTermParseEvent extends Event {
 	var $id = null;
 	var $metatag = false;
 
-	public function TagTermParseEvent($term, $id) {
+	public function __construct($term, $id) {
 		$this->term = $term;
 		$this->id = $id;
 	}

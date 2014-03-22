@@ -22,7 +22,7 @@ class ImageAdditionEvent extends Event {
 	 * @sa TagSetEvent
 	 * @param $image	The new image to add.
 	 */
-	public function ImageAdditionEvent(Image $image) {
+	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -48,7 +48,7 @@ class ImageDeletionEvent extends Event {
 	 *
 	 * @param $image 	The image being deleted
 	*/
-	public function ImageDeletionEvent(Image $image) {
+	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -70,7 +70,7 @@ class ImageReplaceEvent extends Event {
 	 * @param $image
 	 *   The image object of the new image to use
 	 */
-	public function ImageReplaceEvent(/*int*/ $id, Image $image) {
+	public function __construct(/*int*/ $id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
 	}
@@ -96,7 +96,7 @@ class ThumbnailGenerationEvent extends Event {
 	 * @param $hash	The unique hash of the image
 	 * @param $type	The type of the image
 	 */
-	public function ThumbnailGenerationEvent($hash, $type, $force=false) {
+	public function __construct($hash, $type, $force=false) {
 		$this->hash = $hash;
 		$this->type = $type;
 		$this->force = $force;
@@ -113,7 +113,7 @@ class ThumbnailGenerationEvent extends Event {
 class ParseLinkTemplateEvent extends Event {
 	var $link, $original, $image;
 
-	public function ParseLinkTemplateEvent($link, Image $image) {
+	public function __construct($link, Image $image) {
 		$this->link = $link;
 		$this->original = $link;
 		$this->image = $image;
