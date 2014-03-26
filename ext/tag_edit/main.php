@@ -243,8 +243,8 @@ class TagEdit extends Extension {
 		global $database;
 		global $config;
 
-		$search_set = Tag::explode(strtolower($search));
-		$replace_set = Tag::explode(strtolower($replace));
+		$search_set = Tag::explode(strtolower($search), false);
+		$replace_set = Tag::explode(strtolower($replace), false);
 
 		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
@@ -266,17 +266,19 @@ class TagEdit extends Extension {
 			// search returns high-ids first, so we want to look
 			// at images with lower IDs than the previous.
 			$search_forward = $search_set;
-			if($last_id >= 0) $search_forward[] = "id<$last_id";
+			$search_forward[] = "order=id_desc"; //Default order can be changed, so make sure we order high > low ID
+			if($last_id >= 0){
+				$search_forward[] = "id<$last_id";
+			}
 
 			$images = Image::find_images(0, 100, $search_forward);
 			if(count($images) == 0) break;
 
 			foreach($images as $image) {
 				// remove the search'ed tags
-				$before = $image->get_tag_array();
+				$before = array_map('strtolower', $image->get_tag_array());
 				$after = array();
 				foreach($before as $tag) {
-					$tag = strtolower($tag);
 					if(!in_array($tag, $search_set)) {
 						$after[] = $tag;
 					}
