@@ -91,7 +91,7 @@ class Upload extends Extension {
 		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
 		$sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
 		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
-		$sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source: ");
+		$sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -352,7 +352,7 @@ class Upload extends Extension {
 			$metadata['filename'] = $filename;
 			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
-			$metadata['source'] = ($config->get_bool('upload_tlsource') ? $source : "");
+			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){
