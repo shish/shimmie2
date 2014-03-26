@@ -266,9 +266,9 @@ class TagEdit extends Extension {
 			// search returns high-ids first, so we want to look
 			// at images with lower IDs than the previous.
 			$search_forward = $search_set;
+			$search_forward[] = "order=id_desc"; //Default order can be changed, so make sure we order high > low ID
 			if($last_id >= 0){
 				$search_forward[] = "id<$last_id";
-				$search_forward[] = "order=id_desc"; //Force high > low ID search
 			}
 
 			$images = Image::find_images(0, 100, $search_forward);
