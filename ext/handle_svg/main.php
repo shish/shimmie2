@@ -88,7 +88,7 @@ class SVGFileHandler extends Extension {
 class MiniSVGParser {
 	var $valid=false, $width=0, $height=0;
 
-	function MiniSVGParser($file) {
+	function __construct($file) {
 		$xml_parser = xml_parser_create();
 		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));
 		$this->valid = xml_parse($xml_parser, file_get_contents($file), true);

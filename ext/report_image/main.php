@@ -12,7 +12,7 @@
 class RemoveReportedImageEvent extends Event {
 	var $id;
 
-	public function RemoveReportedImageEvent($id) {
+	public function __construct($id) {
 		$this->id = $id;
 	}
 }
@@ -22,7 +22,7 @@ class AddReportedImageEvent extends Event {
 	var $image_id;
 	var $reason;
 
-	public function AddReportedImageEvent($image_id, $reporter_id, $reason) {
+	public function __construct($image_id, $reporter_id, $reason) {
 		$this->reporter_id = $reporter_id;
 		$this->image_id = $image_id;
 		$this->reason = $reason;

@@ -25,7 +25,7 @@
  */
 class AdminBuildingEvent extends Event {
 	var $page;
-	public function AdminBuildingEvent(Page $page) {
+	public function __construct(Page $page) {
 		$this->page = $page;
 	}
 }

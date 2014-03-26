@@ -163,7 +163,7 @@ class SearchTermParseEvent extends Event {
 	var $context = null;
 	var $querylets = array();
 
-	public function SearchTermParseEvent($term, $context) {
+	public function __construct($term, $context) {
 		$this->term = $term;
 		$this->context = $context;
 	}

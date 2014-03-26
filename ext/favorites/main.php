@@ -16,7 +16,7 @@
 class FavoriteSetEvent extends Event {
 	var $image_id, $user, $do_set;
 
-	public function FavoriteSetEvent(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
+	public function __construct(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
 		assert(is_numeric($image_id));
 		assert(is_bool($do_set));
 

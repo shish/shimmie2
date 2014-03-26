@@ -49,7 +49,7 @@ class Image {
 	 * One will very rarely construct an image directly, more common
 	 * would be to use Image::by_id, Image::by_hash, etc
 	 */
-	public function Image($row=null) {
+	public function __construct($row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name

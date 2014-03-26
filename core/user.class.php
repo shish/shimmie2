@@ -30,7 +30,7 @@ class User {
 	 * One will very rarely construct a user directly, more common
 	 * would be to use User::by_id, User::by_session, etc
 	 */
-	public function User($row) {
+	public function __construct($row) {
 		global $_user_classes;
 
 		$this->id = int_escape($row['id']);

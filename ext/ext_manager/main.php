@@ -22,7 +22,7 @@ class ExtensionInfo {
 	var $ext_name, $name, $link, $author, $email;
 	var $description, $documentation, $version, $visibility;
 
-	function ExtensionInfo($main) {
+	function __construct($main) {
 		$matches = array();
 		$lines = file($main);
 		$number_of_lines = count($lines);
