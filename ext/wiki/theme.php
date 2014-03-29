@@ -39,7 +39,6 @@ class WikiTheme extends Themelet {
 
 	protected function create_edit_html(WikiPage $page) {
 		$h_title = html_escape($page->title);
-		$u_title = url_escape($page->title);
 		$i_revision = int_escape($page->revision) + 1;
 
 		global $user;

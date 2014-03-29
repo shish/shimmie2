@@ -18,8 +18,8 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		$image = new Image();
 
-		$info = "";
-		if(!($info = getimagesize($filename))) return null;
+		$info = getimagesize($filename);
+		if(!$info) return null;
 
 		$image->width = $info[0];
 		$image->height = $info[1];

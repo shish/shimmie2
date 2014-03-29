@@ -588,7 +588,6 @@ class Notes extends Extension {
 		$noteEnable = $history['note_enable'];
 		$noteID = $history['note_id'];
 		$imageID = $history['image_id'];
-		$userID = $user->id;
 		$noteX1 = $history['x1'];
 		$noteY1 = $history['y1'];
 		$noteHeight = $history['height'];

@@ -63,7 +63,7 @@ class XMLSitemap extends Extension {
         {
                 global $database, $config;
                 // add index
-                $index[0] = $base_href = $config->get_string("front_page");
+                $index[0] = $config->get_string("front_page");
                 $this->add_sitemap_queue($index, "weekly", "1");
 
                 /* --- Add 20 most used tags --- */

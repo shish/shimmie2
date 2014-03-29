@@ -51,7 +51,7 @@ class Favorites extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$people = $this->list_persons_who_have_favorited($event->image);
 		if(count($people) > 0) {
-			$html = $this->theme->display_people($people);
+			$this->theme->display_people($people);
 		}
 	}
 

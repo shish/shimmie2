@@ -189,7 +189,6 @@ class NotesTheme extends Themelet {
 		$html .= "</tr></thead>".
 				 "<tbody>";
 		
-		$n = 0;		
 		foreach($histories as $history) {
 			$image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
 			$history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";
@@ -237,7 +236,6 @@ class NotesTheme extends Themelet {
 		$html .= "</tr></thead>".
 				 "<tbody>";
 		
-		$n = 0;		
 		foreach($histories as $history) {
 			$image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
 			$history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";

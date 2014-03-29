@@ -198,7 +198,7 @@ class ArtistsTheme extends Themelet {
                     $artist['name'] = str_replace("_", " ", $artist['name']);
 
                 $elementLink = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['name'])."</a>";
-                $artist_link = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['artist_name'])."</a>";
+                //$artist_link = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['artist_name'])."</a>";
                 $user_link = "<a href='".make_link("user/".$artist['user_name'])."'>".$artist['user_name']."</a>";
                 $edit_link = "<a href='".make_link($editionLinkActionArray[$artist['type']].$artist['id'])."'>Edit</a>";
                 $del_link = "<a href='".make_link($deletionLinkActionArray[$artist['type']].$artist['id'])."'>Delete</a>";

@@ -451,7 +451,7 @@ function captcha_get_html() {
 		}
 		else {
 			session_start();
-			$securimg = new Securimage();
+			//$securimg = new Securimage();
 			$base = get_base_href();
 			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
 				"<br/>CAPTCHA: <input type='text' name='code' value='' />";

@@ -23,7 +23,6 @@ class SetupTheme extends Themelet {
 		 */
 		$setupblock_html = "";
 		foreach($panel->blocks as $block) {
-			$html = $this->sb_to_html($block);
 			$setupblock_html .= $this->sb_to_html($block);
 		}
 
@@ -44,12 +43,10 @@ class SetupTheme extends Themelet {
 		global $user;
 
 		$h_rows = "";
-		$n = 0;
 		ksort($options);
 		foreach($options as $name => $value) {
 			$h_name = html_escape($name);
 			$h_value = html_escape($value);
-			$len = strlen($h_value);
 
 			$h_box = "";
 			if(strpos($value, "\n") > 0) {

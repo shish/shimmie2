@@ -60,7 +60,6 @@ class IcoFileHandler extends Extension {
 
 		$image = new Image();
 
-		$info = "";
 		$fp = fopen($filename, "r");
 		$header = unpack("snull/stype/scount", fread($fp, 6));
 
