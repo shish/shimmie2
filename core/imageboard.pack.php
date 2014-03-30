@@ -122,7 +122,7 @@ class Image {
 
 		if(SPEED_HAX) {
 			if(!$user->can("big_search") and count($tags) > 3) {
-				die("Anonymous users may only search for up to 3 tags at a time"); // FIXME: throw an exception?
+				throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
 			}
 		}
 
@@ -644,7 +644,7 @@ class Image {
 	 *      images table. Yes, MySQL does suck this much.
 	 */
 	private static function build_accurate_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();
@@ -804,7 +804,7 @@ class Image {
 	 * build_accurate_search_querylet() for a full explanation
 	 */
 	private static function build_ugly_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();

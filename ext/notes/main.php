@@ -363,6 +363,8 @@ class Notes extends Extension {
 	*/
 	private function delete_note()
 	{
+        global $user;
+
 		$imageID = int_escape($_POST["image_id"]);
 		$noteID = int_escape($_POST["note_id"]);
 
@@ -388,7 +390,7 @@ class Notes extends Extension {
 	* HERE WE DELETE ALL NOTES FROM IMAGE
 	*/
 	private function nuke_notes() {
-		global $database;
+		global $database, $user;
 		$image_id = int_escape($_POST["image_id"]);
 		$database->execute("DELETE FROM notes WHERE image_id = ?", array($image_id));
 		log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
@@ -400,7 +402,7 @@ class Notes extends Extension {
 	* HERE WE DELETE ALL REQUESTS FOR IMAGE
 	*/
 	private function nuke_requests() {
-		global $database;
+		global $database, $user;
 		$image_id = int_escape($_POST["image_id"]);
 
 		$database->execute("DELETE FROM note_request WHERE image_id = ?", array($image_id));

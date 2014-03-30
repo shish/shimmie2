@@ -35,7 +35,7 @@ class Favorites extends Extension {
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $database, $page, $user;
+		global $database, $user;
 		if(!$user->is_anonymous()) {
 			$user_id = $user->id;
 			$image_id = $event->image->id;
@@ -88,7 +88,7 @@ class Favorites extends Extension {
 			in_array('favorite_action', $_POST) &&
 			(($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset"))
 		) {
-			send_event(new FavoriteSetEvent($event->image_id, $user, ($_POST['favorite_action'] == "set")));
+			send_event(new FavoriteSetEvent($event->image->id, $user, ($_POST['favorite_action'] == "set")));
 		}
 	}
 

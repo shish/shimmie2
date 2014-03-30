@@ -62,7 +62,7 @@ class LinkImageTheme extends Themelet {
 				$text = "[url=".$url."]".$content."[/url]";
 				break;
 			default:
-				$text = $link." - ".$content;
+				$text = $url." - ".$content;
 		}
 		return $text;
 	}

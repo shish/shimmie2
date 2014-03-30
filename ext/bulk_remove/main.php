@@ -12,7 +12,7 @@
 
 class BulkRemove extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+		global $user;
 		if($event->page_matches("bulk_remove") && $user->is_admin() && $user->check_auth_token()) {
 			if ($event->get_arg(0) == "confirm") $this->do_bulk_remove(); 
 			else $this->show_confirm();
@@ -20,7 +20,7 @@ class BulkRemove extends Extension {
 	}
  
 	public function onAdminBuilding(AdminBuildingEvent $event) {
-		global $page, $user;
+		global $page;
 		$html = "<b>Be extremely careful when using this!</b><br>
                     Once an image is removed there is no way to recover it so it is recommended that
                     you first take when removing a large amount of images.<br>
@@ -83,10 +83,10 @@ class BulkRemove extends Extension {
             
             
             // if no images were found with the given info
-            if (count($images_for_removal) == 0 && $html == "")
+            if (count($images_for_removal) == 0)
                 $error = "No images selected for removal";
             
-            var_dump($tags_arr); 
+            //var_dump($tags_arr);
             return array(
                 "error" => $error, 
                 "images_for_removal" => $images_for_removal);
@@ -119,6 +119,7 @@ class BulkRemove extends Extension {
         
         private function do_bulk_remove()
         {
+            global $page;
             // display error if user didn't go through admin board
             if (!isset($_POST["bulk_remove_images"])) {
                 $page->add_block(new Block("Bulk Remove Error", 

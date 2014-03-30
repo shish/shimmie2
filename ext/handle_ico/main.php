@@ -36,7 +36,7 @@ class IcoFileHandler extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page;
+		global $page;
 		if($event->page_matches("get_ico")) {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
@@ -56,8 +56,6 @@ class IcoFileHandler extends Extension {
 	}
 
 	private function create_image_from_data($filename, $metadata) {
-		global $config;
-
 		$image = new Image();
 
 		$fp = fopen($filename, "r");

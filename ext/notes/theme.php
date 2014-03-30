@@ -42,7 +42,7 @@ class NotesTheme extends Themelet {
         $page->add_block(new Block("Search Note", $html, "main", 10));
 	}
 		
-		// check action POST on form	
+	// check action POST on form
 	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions)
 	{
 		$to_json = array();
@@ -169,94 +169,66 @@ class NotesTheme extends Themelet {
 		$page->set_heading("Note Requests");
 		$page->add_block(new Block("Note Requests", $pool_images, "main", 20));
 	}
-	
+
+    private function get_history($histories) {
+        global $user;
+
+        $html = "<table id='poolsList' class='zebra'>".
+            "<thead><tr>".
+            "<th>Image</th>".
+            "<th>Note</th>".
+            "<th>Body</th>".
+            "<th>Updater</th>".
+            "<th>Date</th>";
+
+        if(!$user->is_anonymous()){
+            $html .= "<th>Action</th>";
+        }
+
+        $html .= "</tr></thead>".
+            "<tbody>";
+
+        foreach($histories as $history) {
+            $image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
+            $history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";
+            $user_link = "<a href='".make_link("user/".$history['user_name'])."'>".$history['user_name']."</a>";
+            $revert_link = "<a href='".make_link("note/revert/".$history['note_id']."/".$history['review_id'])."'>Revert</a>";
+
+            $html .= "<tr>".
+                "<td>".$image_link."</td>".
+                "<td>".$history_link."</td>".
+                "<td style='text-align:left;'>".$history['note']."</td>".
+                "<td>".$user_link."</td>".
+                "<td>".autodate($history['date'])."</td>";
+
+            if(!$user->is_anonymous()){
+                $html .= "<td>".$revert_link."</td>";
+            }
+
+        }
+
+        $html .= "</tr></tbody></table>";
+
+        return $html;
+    }
+
 	public function display_histories($histories, $pageNumber, $totalPages) {
-		global $user, $page;
-		
-		$html = "<table id='poolsList' class='zebra'>".
-				"<thead><tr>".
-            	"<th>Image</th>".
-				"<th>Note</th>".
-				"<th>Body</th>".
-				"<th>Updater</th>".
-            	"<th>Date</th>";
-				
-		
-		if(!$user->is_anonymous()){
-			$html .= "<th>Action</th>";
-		}
-		
-		$html .= "</tr></thead>".
-				 "<tbody>";
-		
-		foreach($histories as $history) {
-			$image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
-			$history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";
-			$user_link = "<a href='".make_link("user/".$history['user_name'])."'>".$history['user_name']."</a>";
-			$revert_link = "<a href='".make_link("note/revert/".$history['note_id']."/".$history['review_id'])."'>Revert</a>";
-		
-			$html .= "<tr>".
-                	 "<td>".$image_link."</td>".
-					 "<td>".$history_link."</td>".
-					 "<td style='text-align:left;'>".$history['note']."</td>".
-                	 "<td>".$user_link."</td>".
-					 "<td>".autodate($history['date'])."</td>";
-					 
-			if(!$user->is_anonymous()){
-				$html .= "<td>".$revert_link."</td>";
-			}
-                	 
-		}
-		
-		$html .= "</tr></tbody></table>";
-					
-		$page->set_title("Note Updates");
-		$page->set_heading("Note Updates");
-		$page->add_block(new Block("Note Updates", $html, "main", 10));
-		
-		$this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
+        global $page;
+
+        $html = $this->get_history($histories);
+
+        $page->set_title("Note Updates");
+        $page->set_heading("Note Updates");
+        $page->add_block(new Block("Note Updates", $html, "main", 10));
+
+        $this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
 	}
 	
 	public function display_history($histories, $pageNumber, $totalPages) {
-		global $user, $page;
-		
-		$html = "<table id='poolsList' class='zebra'>".
-				"<thead><tr>".
-            	"<th>Image</th>".
-				"<th>Note</th>".
-				"<th>Body</th>".
-				"<th>Updater</th>".
-            	"<th>Date</th>";
-				
-		
-		if(!$user->is_anonymous()){
-			$html .= "<th>Action</th>";
-		}
-		
-		$html .= "</tr></thead>".
-				 "<tbody>";
-		
-		foreach($histories as $history) {
-			$image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
-			$history_link = "<a href='".make_link("note/history/".$history['note_id'])."'>".$history['note_id'].".".$history['review_id']."</a>";
-			$user_link = "<a href='".make_link("user/".$history['user_name'])."'>".$history['user_name']."</a>";
-			$revert_link = "<a href='".make_link("note/revert/".$history['note_id']."/".$history['review_id'])."'>Revert</a>";
-		
-			$html .= "<tr>".
-                	 "<td>".$image_link."</td>".
-					 "<td>".$history_link."</td>".
-					 "<td style='text-align:left;'>".$history['note']."</td>".
-                	 "<td>".$user_link."</td>".
-					 "<td>".autodate($history['date'])."</td>";
-					 
-			if(!$user->is_anonymous()){
-				$html .= "<td>".$revert_link."</td>";
-			}
-                	 
-		}
-		
-		$html .= "</tr></tbody></table>";
-					
+        global $page;
+
+        $html = $this->get_history($histories);
+
 		$page->set_title("Note History");
 		$page->set_heading("Note History");
 		$page->add_block(new Block("Note History", $html, "main", 10));
