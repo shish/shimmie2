@@ -14,12 +14,10 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
-		global $config;
-
 		$image = new Image();
 
-		$info = "";
-		if(!($info = getimagesize($filename))) return null;
+		$info = getimagesize($filename);
+		if(!$info) return null;
 
 		$image->width = $info[0];
 		$image->height = $info[1];
@@ -52,9 +50,10 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 	protected function create_thumb_force(/*string*/ $hash) {
+        global $config;
+
 		$inname  = warehouse_path("images", $hash);
 		$outname = warehouse_path("thumbs", $hash);
-		global $config;
 
 		$ok = false;
 
@@ -165,7 +164,7 @@ class PixelFileHandler extends DataHandlerExtension {
 			if($width > $height*5) $width = $height*5;
 			if($height > $width*5) $height = $width*5;
 
-			$image = imagecreatefromstring($this->read_file($tmpname));
+			$image = imagecreatefromstring(file_get_contents($tmpname));
 			$tsize = get_thumbnail_size($width, $height);
 
 			$thumb = imagecreatetruecolor($tsize[0], $tsize[1]);
@@ -175,16 +174,6 @@ class PixelFileHandler extends DataHandlerExtension {
 					);
 			return $thumb;
 		}
-	}
-
-	private function read_file(/*string*/ $fname) {
-		$fp = fopen($fname, "r");
-		if(!$fp) return false;
-
-		$data = fread($fp, filesize($fname));
-		fclose($fp);
-
-		return $data;
 	}
 // }}}
 }

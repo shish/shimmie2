@@ -351,7 +351,7 @@ class Source_History extends Extension {
 		}
 
 		// add a history entry	
-		$row = $database->execute("
+		$database->execute("
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
 				array($image->id, $new_source, $user->id, $_SERVER['REMOTE_ADDR']));

@@ -29,7 +29,7 @@ class NotATag extends Extension {
 	}
 
 	private function scan(/*array*/ $tags_mixed) {
-		global $config, $database;
+		global $database;
 
 		$tags = array();
 		foreach($tags_mixed as $tag) $tags[] = strtolower($tag);
@@ -53,12 +53,12 @@ class NotATag extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page, $user;
 
 		if($event->page_matches("untag")) {
 			if($user->can("ban_image")) {
 				if($event->get_arg(0) == "add") {
-					$tag = isset($_POST["tag"]) ? $_POST["tag"] : $image->tag;
+					$tag = $_POST["tag"];
 					$redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";
 
 					$database->Execute(

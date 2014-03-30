@@ -14,7 +14,6 @@ class IPBanTheme extends Themelet {
 	public function display_bans(Page $page, $bans) {
 		global $database, $user;
 		$h_bans = "";
-		$n = 0;
 		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
 		$prefix2 = ($database->get_driver_name() == "sqlite" ? "users." : "");
 		foreach($bans as $ban) {

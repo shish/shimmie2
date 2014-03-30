@@ -50,11 +50,11 @@ class ArchiveFileHandler extends Extension {
 		assert(file_exists($tmpname));
 
 		try {
-			global $user;
 			$pathinfo = pathinfo($filename);
 			if(!array_key_exists('extension', $pathinfo)) {
 				throw new UploadException("File has no extension");
 			}
+            $metadata = array();
 			$metadata['filename'] = $pathinfo['basename'];
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;
@@ -69,8 +69,6 @@ class ArchiveFileHandler extends Extension {
 
 	// copied from bulk add extension
 	private function add_dir($base, $subdir="") {
-		global $page;
-
 		$list = "";
 
 		$dir = opendir("$base/$subdir");

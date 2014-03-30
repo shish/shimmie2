@@ -133,7 +133,7 @@ class BlotterTheme extends Themelet {
 			// Reset variables:
 			$i_open = "";
 			$i_close = "";
-			$id = $entries[$i]['id'];
+			//$id = $entries[$i]['id'];
 			$messy_date = $entries[$i]['entry_date'];
 			$clean_date = date("m/d/y", strtotime($messy_date));
 			$entry_text = $entries[$i]['entry_text'];
@@ -144,8 +144,6 @@ class BlotterTheme extends Themelet {
 			$entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";			
 		}
 
-		$out_text = "";
-		$in_text = "";
 		$pos_break = "";
 		$pos_align = "text-align: right; position: absolute; right: 0px;";
 

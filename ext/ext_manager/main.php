@@ -21,6 +21,7 @@ function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
 class ExtensionInfo {
 	var $ext_name, $name, $link, $author, $email;
 	var $description, $documentation, $version, $visibility;
+    var $enabled;
 
 	function __construct($main) {
 		$matches = array();
@@ -167,6 +168,7 @@ class ExtManager extends Extension {
 
 	private function set_things($settings) {
 		$core = explode(",", CORE_EXTS);
+        $extras = array();
 
 		foreach(glob("ext/*/main.php") as $main) {
 			$matches = array();

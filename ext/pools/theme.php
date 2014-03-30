@@ -12,7 +12,6 @@ class PoolsTheme extends Themelet {
 	}
 
 	public function get_adder_html(Image $image, /*array*/ $pools) {
-		$editor = "";
 		$h = "";
 		foreach($pools as $pool) {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
@@ -43,8 +42,6 @@ class PoolsTheme extends Themelet {
 						<th>Public</th>
 					</tr></thead><tbody>';
 
-		$n = 0;
-		
 		// Build up the list of pools.
 		foreach($pools as $pool) {
 			$pool_link = '<a href="'.make_link("pool/view/".$pool['id']).'">'.html_escape($pool['title'])."</a>";
@@ -133,7 +130,6 @@ class PoolsTheme extends Themelet {
 								<th class="left">Description</th>
 							</tr></thead><tbody>';
 
-			$n = 0;
 			foreach($pools as $pool) {
 				$pool_info .= "<tr>".
 					"<td class='left'>".html_escape($pool['title'])."</td>".
@@ -303,15 +299,15 @@ class PoolsTheme extends Themelet {
 		$this->display_top($pools, "Sorting Pool");
 
 		$pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
-		$n = 0;
+		$i = 0;
 		foreach($images as $pair) {
 			$image = $pair[0];
 			$thumb_html = $this->build_thumb_html($image);
 			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
-				'<br><input name="imgs['.$n.'][]" type="text" style="max-width:50px;" value="'.$image->image_order.'" />'.
-				'<input name="imgs['.$n.'][]" type="hidden" value="'.$image->id.'" />'.
+				'<br><input name="imgs['.$i.'][]" type="text" style="max-width:50px;" value="'.$image->image_order.'" />'.
+				'<input name="imgs['.$i.'][]" type="hidden" value="'.$image->id.'" />'.
 				'</span>';
-			$n++;
+			$i++;
 		}
 
 		$pool_images .= "<br>".
@@ -382,7 +378,6 @@ class PoolsTheme extends Themelet {
 					<th>Action</th>
 				</tr></thead><tbody>';
 
-		$n = 0;
 		foreach($histories as $history) {
 			$pool_link = "<a href='".make_link("pool/view/".$history['pool_id'])."'>".html_escape($history['title'])."</a>";
 			$user_link = "<a href='".make_link("user/".url_escape($history['user_name']))."'>".html_escape($history['user_name'])."</a>";

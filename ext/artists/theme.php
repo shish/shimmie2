@@ -14,19 +14,11 @@ class ArtistsTheme extends Themelet {
 		";
 	}
 
-	public function display_artists(){
-		global $page;
-		
-		$page->set_title("Artists");
-		$page->set_heading("Artists");
-		$page->add_block(new Block("Artists", $html, "main", 10));
-		
-		//$this->display_paginator($page, "artist/list", null, $pageNumber, $totalPages);
-	}
-	
 	public function sidebar_options(/*string*/ $mode, $artistID=NULL, $is_admin=FALSE){
-		global $page;
-		
+		global $page, $user;
+
+        $html = "";
+
 		if($mode == "neutral"){
 			$html = "<form method='post' action='".make_link("artist/new_artist")."'>
 						".$user->get_auth_html()."
@@ -72,11 +64,14 @@ class ArtistsTheme extends Themelet {
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
 		}
-		$page->add_block(new Block("Manage Artists", $html, "left", 10));
+
+        if($html) $page->add_block(new Block("Manage Artists", $html, "left", 10));
 	}
 
         public function show_artist_editor($artist, $aliases, $members, $urls)
         {
+            global $user;
+
             $artistName = $artist['name'];
             $artistNotes = $artist['notes'];
             $artistID = $artist['id'];
@@ -140,7 +135,7 @@ class ArtistsTheme extends Themelet {
 	
 	public function new_artist_composer()
         {
-            global $page;
+            global $page, $user;
 
             $html = "<form action=".make_link("artist/create")." method='POST'>
 							".$user->get_auth_html()."
@@ -198,7 +193,7 @@ class ArtistsTheme extends Themelet {
                     $artist['name'] = str_replace("_", " ", $artist['name']);
 
                 $elementLink = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['name'])."</a>";
-                $artist_link = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['artist_name'])."</a>";
+                //$artist_link = "<a href='".make_link("artist/view/".$artist['artist_id'])."'>".str_replace("_", " ", $artist['artist_name'])."</a>";
                 $user_link = "<a href='".make_link("user/".$artist['user_name'])."'>".$artist['user_name']."</a>";
                 $edit_link = "<a href='".make_link($editionLinkActionArray[$artist['type']].$artist['id'])."'>Edit</a>";
                 $del_link = "<a href='".make_link($deletionLinkActionArray[$artist['type']].$artist['id'])."'>Delete</a>";
@@ -234,6 +229,8 @@ class ArtistsTheme extends Themelet {
 
         public function show_new_alias_composer($artistID)
         {
+            global $user;
+
             $html =
             '<form method="POST" action='.make_link("artist/alias/add").'>
 				'.$user->get_auth_html().'
@@ -250,6 +247,8 @@ class ArtistsTheme extends Themelet {
         }
         public function show_new_member_composer($artistID)
         {
+            global $user;
+
             $html =
             '   <form method="POST" action='.make_link("artist/member/add").'>					
 				'.$user->get_auth_html().'
@@ -267,6 +266,8 @@ class ArtistsTheme extends Themelet {
 
         public function show_new_url_composer($artistID)
         {
+            global $user;
+
             $html =
             '   <form method="POST" action='.make_link("artist/url/add").'>					
 				'.$user->get_auth_html().'
@@ -284,6 +285,8 @@ class ArtistsTheme extends Themelet {
 
         public function show_alias_editor($alias)
         {
+            global $user;
+
             $html =
             '
                 <form method="POST" action="'.make_link("artist/alias/edited/".$alias['id']).'">
@@ -301,6 +304,8 @@ class ArtistsTheme extends Themelet {
 
         public function show_url_editor($url)
         {
+            global $user;
+
             $html =
             '
                 <form method="POST" action="'.make_link("artist/url/edited/".$url['id']).'">
@@ -318,6 +323,8 @@ class ArtistsTheme extends Themelet {
 
         public function show_member_editor($member)
         {
+            global $user;
+
             $html =
             '
                 <form method="POST" action="'.make_link("artist/member/edited/".$member['id']).'">
@@ -335,7 +342,7 @@ class ArtistsTheme extends Themelet {
 
 	public function show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin)
         {
-            global $user, $event, $page;
+            global $page;
 
             $artist_link = "<a href='".make_link("post/list/".$artist['name']."/1")."'>".str_replace("_", " ", $artist['name'])."</a>";
 
