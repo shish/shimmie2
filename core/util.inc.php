@@ -567,16 +567,17 @@ function getExtension ($mime_type){
 
 	$extensions = getMimeType(null, null, true);
 	$ext = array_search($mime_type, $extensions);
-	return ($ext ?: false);
+	return ($ext ? $ext : false);
 }
 
 /**
  * @private
  */
 function _version_check() {
-	if(version_compare(PHP_VERSION, "5.2.6") == -1) {
+	$min_version = "5.3.0";
+	if(version_compare(PHP_VERSION, $min_version) == -1) {
 		print "
-Currently SCore Engine doesn't support versions of PHP lower than 5.2.6 --
+Currently SCore Engine doesn't support versions of PHP lower than $min_version --
 if your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";
