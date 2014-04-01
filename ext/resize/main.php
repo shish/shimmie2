@@ -223,24 +223,37 @@ class ResizeImage extends Extension {
 		}
 		
 		/* Resize and resample the image */
+		
 		$image_resized = imagecreatetruecolor( $new_width, $new_height );
 		
-		if ( ($info[2] == IMAGETYPE_GIF) || ($info[2] == IMAGETYPE_PNG) ) {
-		  $transparency = imagecolortransparent($image);
+		if ($info[2] == IMAGETYPE_GIF) {
+			$transparency = imagecolortransparent($image);
 
-		  if ($transparency >= 0) {
-			$transparent_color  = imagecolorsforindex($image, $trnprt_indx);
-			$transparency       = imagecolorallocate($image_resized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-			imagefill($image_resized, 0, 0, $transparency);
-			imagecolortransparent($image_resized, $transparency);
-		  }
-		  elseif ($info[2] == IMAGETYPE_PNG) {
+			// If we have a specific transparent color
+			if ($transparency >= 0) {
+				// Get the original image's transparent color's RGB values
+				$transparent_color = imagecolorsforindex($image, $transparency);
+
+				// Allocate the same color in the new image resource
+				$transparency = imagecolorallocate($image_resized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+
+				// Completely fill the background of the new image with allocated color.
+				imagefill($image_resized, 0, 0, $transparency);
+
+				// Set the background color for new image to transparent
+				imagecolortransparent($image_resized, $transparency);
+			}
+		} elseif ($info[2] == IMAGETYPE_PNG) {
+			// 
+			// More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
+			// 
 			imagealphablending($image_resized, false);
-			$color = imagecolorallocatealpha($image_resized, 0, 0, 0, 127);
-			imagefill($image_resized, 0, 0, $color);
 			imagesavealpha($image_resized, true);
-		  }
+			$transparent_color = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
+			imagefilledrectangle($new_image, 0, 0, $width, $height, $transparent_color);
 		}
+		
+		// Resize the image.
 		imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image_obj->width, $image_obj->height);
 		
 		/* Temp storage while we resize */
@@ -249,6 +262,7 @@ class ResizeImage extends Extension {
 			throw new ImageResizeException("Unable to save temporary image file.");
 		}
 		
+		// TODO: Are these checks below necessary? They seem redundant?
 		/* Output to the same format as the original image */
 		switch ( $info[2] ) {
 		  case IMAGETYPE_GIF:   imagegif($image_resized, $tmp_filename);    break;
