@@ -262,16 +262,6 @@ class ResizeImage extends Extension {
 			throw new ImageResizeException("Unable to save temporary image file.");
 		}
 		
-		// TODO: Are these checks below necessary? They seem redundant?
-		/* Output to the same format as the original image */
-		switch ( $info[2] ) {
-		  case IMAGETYPE_GIF:   imagegif($image_resized, $tmp_filename);    break;
-		  case IMAGETYPE_JPEG:  imagejpeg($image_resized, $tmp_filename);   break;
-		  case IMAGETYPE_PNG:   imagepng($image_resized, $tmp_filename);    break;
-		  default:
-			throw new ImageResizeException("Unsupported image type.");
-		}
-		
 		/* Move the new image into the main storage location */
 		$new_hash = md5_file($tmp_filename);
 		$new_size = filesize($tmp_filename);
