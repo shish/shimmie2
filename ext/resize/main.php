@@ -167,7 +167,7 @@ class ResizeImage extends Extension {
 		$image_obj = Image::by_id($image_id);
 		$hash = $image_obj->hash;
 		if (is_null($hash)) {
-			throw new ImageResizeException("Image does not have a hash associated with it.");
+			throw new ImageResizeException("Image does not have a hash associated with it - Aborting Resize.");
 		}
 		
 		$image_filename  = warehouse_path("images", $hash);
@@ -177,7 +177,7 @@ class ResizeImage extends Extension {
 		$filetype = strtolower($pathinfo['extension']);
 		
 		if (($image_obj->width != $info[0] ) || ($image_obj->height != $info[1])) {
-			throw new ImageResizeException("The image size does not match what is in the database! - Aborting Resize.");
+			throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
 		}
 		
 		/*
@@ -192,7 +192,18 @@ class ResizeImage extends Extension {
 			The factor of 2.5 is simply a rough guideline.
 			http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
 		*/
-		$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+		
+		if (isset($info['bits']) && isset($info['channels']))
+		{
+			$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+		} else {
+			//
+			// If we don't have bits and channel info from the image then assume default values
+			// of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
+			//
+			$memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
+		}
+		
 		$memory_limit = get_memory_limit();
 		
 		if ($memory_use > $memory_limit) {
@@ -219,28 +230,41 @@ class ResizeImage extends Extension {
 		  case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
 		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
 		  default:
-			throw new ImageResizeException("Unsupported image type.");
+			throw new ImageResizeException("Unsupported image type (Only GIF, JPEG, and PNG are supported).");
 		}
 		
-		/* Resize and resample the image */
+		// Handle transparent images
+		
 		$image_resized = imagecreatetruecolor( $new_width, $new_height );
 		
-		if ( ($info[2] == IMAGETYPE_GIF) || ($info[2] == IMAGETYPE_PNG) ) {
-		  $transparency = imagecolortransparent($image);
+		if ($info[2] == IMAGETYPE_GIF) {
+			$transparency = imagecolortransparent($image);
 
-		  if ($transparency >= 0) {
-			$transparent_color  = imagecolorsforindex($image, $trnprt_indx);
-			$transparency       = imagecolorallocate($image_resized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-			imagefill($image_resized, 0, 0, $transparency);
-			imagecolortransparent($image_resized, $transparency);
-		  }
-		  elseif ($info[2] == IMAGETYPE_PNG) {
+			// If we have a specific transparent color
+			if ($transparency >= 0) {
+				// Get the original image's transparent color's RGB values
+				$transparent_color = imagecolorsforindex($image, $transparency);
+
+				// Allocate the same color in the new image resource
+				$transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
+
+				// Completely fill the background of the new image with allocated color.
+				imagefill($image_resized, 0, 0, $transparency);
+
+				// Set the background color for new image to transparent
+				imagecolortransparent($image_resized, $transparency);
+			}
+		} elseif ($info[2] == IMAGETYPE_PNG) {
+			// 
+			// More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
+			// 
 			imagealphablending($image_resized, false);
-			$color = imagecolorallocatealpha($image_resized, 0, 0, 0, 127);
-			imagefill($image_resized, 0, 0, $color);
 			imagesavealpha($image_resized, true);
-		  }
+			$transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
+			imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color);
 		}
+		
+		// Actually resize the image.
 		imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image_obj->width, $image_obj->height);
 		
 		/* Temp storage while we resize */
@@ -255,7 +279,7 @@ class ResizeImage extends Extension {
 		  case IMAGETYPE_JPEG:  imagejpeg($image_resized, $tmp_filename);   break;
 		  case IMAGETYPE_PNG:   imagepng($image_resized, $tmp_filename);    break;
 		  default:
-			throw new ImageResizeException("Unsupported image type.");
+			throw new ImageResizeException("Failed to save the new image - Unsupported image type.");
 		}
 		
 		/* Move the new image into the main storage location */
