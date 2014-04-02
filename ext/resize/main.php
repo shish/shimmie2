@@ -192,7 +192,18 @@ class ResizeImage extends Extension {
 			The factor of 2.5 is simply a rough guideline.
 			http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
 		*/
-		$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+		
+		if (isset($info['bits']) && isset($info['channels']))
+		{
+			$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+		} else {
+			//
+			// If we don't have bits and channel info from the image then assume default values
+			// of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
+			//
+			$memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
+		}
+		
 		$memory_limit = get_memory_limit();
 		
 		if ($memory_use > $memory_limit) {
