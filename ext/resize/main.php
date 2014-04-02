@@ -230,10 +230,10 @@ class ResizeImage extends Extension {
 		  case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
 		  case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
 		  default:
-			throw new ImageResizeException("Unsupported image type.");
+			throw new ImageResizeException("Unsupported image type (Only GIF, JPEG, and PNG are supported).");
 		}
 		
-		/* Resize and resample the image */
+		// Handle transparent images
 		
 		$image_resized = imagecreatetruecolor( $new_width, $new_height );
 		
@@ -246,7 +246,7 @@ class ResizeImage extends Extension {
 				$transparent_color = imagecolorsforindex($image, $transparency);
 
 				// Allocate the same color in the new image resource
-				$transparency = imagecolorallocate($image_resized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+				$transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
 
 				// Completely fill the background of the new image with allocated color.
 				imagefill($image_resized, 0, 0, $transparency);
@@ -261,16 +261,25 @@ class ResizeImage extends Extension {
 			imagealphablending($image_resized, false);
 			imagesavealpha($image_resized, true);
 			$transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
-			imagefilledrectangle($image_resized, 0, 0, $width, $height, $transparent_color);
+			imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color);
 		}
 		
-		// Resize the image.
+		// Actually resize the image.
 		imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image_obj->width, $image_obj->height);
 		
 		/* Temp storage while we resize */
 		$tmp_filename = tempnam("/tmp", 'shimmie_resize');
 		if (empty($tmp_filename)) {
 			throw new ImageResizeException("Unable to save temporary image file.");
+		}
+		
+		/* Output to the same format as the original image */
+		switch ( $info[2] ) {
+		  case IMAGETYPE_GIF:   imagegif($image_resized, $tmp_filename);    break;
+		  case IMAGETYPE_JPEG:  imagejpeg($image_resized, $tmp_filename);   break;
+		  case IMAGETYPE_PNG:   imagepng($image_resized, $tmp_filename);    break;
+		  default:
+			throw new ImageResizeException("Failed to save the new image - Unsupported image type.");
 		}
 		
 		/* Move the new image into the main storage location */
