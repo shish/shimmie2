@@ -249,8 +249,8 @@ class ResizeImage extends Extension {
 			// 
 			imagealphablending($image_resized, false);
 			imagesavealpha($image_resized, true);
-			$transparent_color = imagecolorallocatealpha($new_image, 255, 255, 255, 127);
-			imagefilledrectangle($new_image, 0, 0, $width, $height, $transparent_color);
+			$transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
+			imagefilledrectangle($image_resized, 0, 0, $width, $height, $transparent_color);
 		}
 		
 		// Resize the image.
