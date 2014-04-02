@@ -167,7 +167,7 @@ class ResizeImage extends Extension {
 		$image_obj = Image::by_id($image_id);
 		$hash = $image_obj->hash;
 		if (is_null($hash)) {
-			throw new ImageResizeException("Image does not have a hash associated with it.");
+			throw new ImageResizeException("Image does not have a hash associated with it - Aborting Resize.");
 		}
 		
 		$image_filename  = warehouse_path("images", $hash);
@@ -177,7 +177,7 @@ class ResizeImage extends Extension {
 		$filetype = strtolower($pathinfo['extension']);
 		
 		if (($image_obj->width != $info[0] ) || ($image_obj->height != $info[1])) {
-			throw new ImageResizeException("The image size does not match what is in the database! - Aborting Resize.");
+			throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
 		}
 		
 		/*
