@@ -84,7 +84,7 @@ class ResizeImage extends Extension {
 			}
 			if($isanigif == 0){
 				try {
-					$this->resize_image($event->image_id, $width, $height);
+					$this->resize_image($image_obj, $width, $height);
 				} catch (ImageResizeException $e) {
 					$this->theme->display_resize_error($page, "Error Resizing", $e->error);
 				}
@@ -107,7 +107,7 @@ class ResizeImage extends Extension {
 			// Try to get the image ID
 			$image_id = int_escape($event->get_arg(0));
 			if (empty($image_id)) {
-				$image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
+				$image_id = isset($_POST['image_id']) ? int_escape($_POST['image_id']) : null;
 			}
 			if (empty($image_id)) {
 				throw new ImageResizeException("Can not resize Image: No valid Image ID given.");
@@ -134,7 +134,7 @@ class ResizeImage extends Extension {
 					
 					/* Attempt to resize the image */
 					try {
-						$this->resize_image($image_id, $width, $height);
+						$this->resize_image($image, $width, $height);
 						
 						//$this->theme->display_resize_page($page, $image_id);
 						
@@ -157,19 +157,14 @@ class ResizeImage extends Extension {
 		This function could be made much smaller by using the ImageReplaceEvent
 		ie: Pretend that we are replacing the image with a resized copy.
 	*/
-	private function resize_image(/*int*/ $image_id, /*int*/ $width, /*int*/ $height) {
+	private function resize_image(Image $image_obj, /*int*/ $width, /*int*/ $height) {
 		global $config, $user, $page, $database;
 		
 		if ( ($height <= 0) && ($width <= 0) ) {
 			throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
 		}
 		
-		$image_obj = Image::by_id($image_id);
 		$hash = $image_obj->hash;
-		if (is_null($hash)) {
-			throw new ImageResizeException("Image does not have a hash associated with it - Aborting Resize.");
-		}
-		
 		$image_filename  = warehouse_path("images", $hash);
 		$info = getimagesize($image_filename);
 		/* Get the image file type */
@@ -310,11 +305,11 @@ class ResizeImage extends Extension {
 				",
 				array(
 					"filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
-					"width"=>$new_width, "height"=>$new_height,	"id"=>$image_id
+					"width"=>$new_width, "height"=>$new_height,	"id"=>$image_obj->id
 				)
 		);
 		
-		log_info("resize", "Resized Image #{$image_id} - New hash: {$new_hash}");
+		log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_hash}");
 	}
 }
 ?>
