@@ -292,7 +292,7 @@ class Page {
 			$css_files[] = $css;
 			$css_latest = max($css_latest, filemtime($css));
 		}
-		$css_cache_file = data_path("cache/style.$css_latest.css");
+		$css_cache_file = data_path("cache/style.$theme_name.$css_latest.css");
 		if(!file_exists($css_cache_file)) {
 			$css_data = "";
 			foreach($css_files as $file) {
@@ -312,7 +312,7 @@ class Page {
 			$js_files[] = $js;
 			$js_latest = max($js_latest, filemtime($js));
 		}
-		$js_cache_file = data_path("cache/script.$js_latest.js");
+		$js_cache_file = data_path("cache/script.$theme_name.$js_latest.js");
 		if(!file_exists($js_cache_file)) {
 			$js_data = "";
 			foreach($js_files as $file) {
