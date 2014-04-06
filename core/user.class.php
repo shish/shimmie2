@@ -15,9 +15,9 @@ class User {
 	var $name;
 	var $email;
 	var $join_date;
-    var $passhash;
+	var $passhash;
 
-    /* @var UserClass */
+	/* @var UserClass */
 	var $class;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

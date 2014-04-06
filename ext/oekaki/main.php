@@ -28,7 +28,7 @@ class Oekaki extends Extension {
 							throw new UploadException("File has no extension");
 						}
 						log_info("oekaki", "Processing file [{$pathinfo['filename']}]");
-                        $metadata = array();
+						$metadata = array();
 						$metadata['filename'] = 'oekaki.png';
 						$metadata['extension'] = $pathinfo['extension'];
 						$metadata['tags'] = 'oekaki tagme';

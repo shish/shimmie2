@@ -271,13 +271,13 @@ class Database {
 
 	/**
 	 * Meta info about the database engine
-     * @var DBEngine
+	 * @var DBEngine
 	 */
 	private $engine = null;
 
 	/**
 	 * The currently active cache engine
-     * @var CacheEngine
+	 * @var CacheEngine
 	 */
 	public $cache = null;
 

@@ -94,8 +94,8 @@ class ThumbnailGenerationEvent extends Event {
 	 * Request a thumbnail be made for an image object
 	 *
 	 * @param $hash	string The unique hash of the image
-     * @param $type	string The type of the image
-     * @param $force boolean Regenerate the thumbnail even if one already exists
+	 * @param $type	string The type of the image
+	 * @param $force boolean Regenerate the thumbnail even if one already exists
 	 */
 	public function __construct($hash, $type, $force=false) {
 		$this->hash = $hash;

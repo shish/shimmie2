@@ -54,7 +54,7 @@ class ArchiveFileHandler extends Extension {
 			if(!array_key_exists('extension', $pathinfo)) {
 				throw new UploadException("File has no extension");
 			}
-            $metadata = array();
+			$metadata = array();
 			$metadata['filename'] = $pathinfo['basename'];
 			$metadata['extension'] = $pathinfo['extension'];
 			$metadata['tags'] = $tags;

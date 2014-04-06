@@ -23,11 +23,11 @@ class PixelFileHandler extends DataHandlerExtension {
 		$image->height = $info[1];
 
 		$image->filesize  = $metadata['size'];
-		$image->hash      = $metadata['hash'];
+		$image->hash	  = $metadata['hash'];
 		$image->filename  = (($pos = strpos($metadata['filename'],'?')) !== false) ? substr($metadata['filename'],0,$pos) : $metadata['filename'];
-		$image->ext       = (($pos = strpos($metadata['extension'],'?')) !== false) ? substr($metadata['extension'],0,$pos) : $metadata['extension'];
+		$image->ext	   = (($pos = strpos($metadata['extension'],'?')) !== false) ? substr($metadata['extension'],0,$pos) : $metadata['extension'];
 		$image->tag_array = Tag::explode($metadata['tags']);
-		$image->source    = $metadata['source'];
+		$image->source	= $metadata['source'];
 
 		return $image;
 	}
@@ -50,7 +50,7 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 	protected function create_thumb_force(/*string*/ $hash) {
-        global $config;
+		global $config;
 
 		$inname  = warehouse_path("images", $hash);
 		$outname = warehouse_path("thumbs", $hash);

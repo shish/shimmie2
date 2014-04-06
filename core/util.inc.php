@@ -1282,7 +1282,7 @@ function _sanitise_environment() {
 }
 
 function _get_themelet_files($_theme) {
-    $base_themelets = array();
+	$base_themelets = array();
 	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';

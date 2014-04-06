@@ -140,8 +140,8 @@ abstract class FormatterExtension extends Extension {
  */
 abstract class DataHandlerExtension extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
-        $supported_ext = $this->supported_ext($event->type);
-        $check_contents = $this->check_contents($event->tmpname);
+		$supported_ext = $this->supported_ext($event->type);
+		$check_contents = $this->check_contents($event->tmpname);
 		if($supported_ext && $check_contents) {
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));

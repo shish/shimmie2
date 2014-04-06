@@ -42,7 +42,7 @@ class LogNet extends Extension {
 			fwrite($fp, "$data\n");
 			fclose($fp);
 		} catch (Exception $e) {
-            /* logging errors shouldn't break everything */
+			/* logging errors shouldn't break everything */
 		}
 	}
 }

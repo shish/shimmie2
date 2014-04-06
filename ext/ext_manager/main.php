@@ -21,7 +21,7 @@ function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
 class ExtensionInfo {
 	var $ext_name, $name, $link, $author, $email;
 	var $description, $documentation, $version, $visibility;
-    var $enabled;
+	var $enabled;
 
 	function __construct($main) {
 		$matches = array();
@@ -132,7 +132,7 @@ class ExtManager extends Extension {
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
 			print "  disable-all-ext\n";
-			print "    disable all extensions\n\n";
+			print "	disable all extensions\n\n";
 		}
 		if($event->cmd == "disable-all-ext") {
 			$this->write_config(array());
@@ -168,7 +168,7 @@ class ExtManager extends Extension {
 
 	private function set_things($settings) {
 		$core = explode(",", CORE_EXTS);
-        $extras = array();
+		$extras = array();
 
 		foreach(glob("ext/*/main.php") as $main) {
 			$matches = array();

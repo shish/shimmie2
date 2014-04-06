@@ -305,7 +305,7 @@ class CronUploader extends Extension {
 		if (! array_key_exists ( 'extension', $pathinfo )) {
 			throw new UploadException ( "File has no extension" );
 		}
-        $metadata = array();
+		$metadata = array();
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
 		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
@@ -370,7 +370,7 @@ class CronUploader extends Extension {
 	 * Adds a message to the info being published at the end
 	 * @param $text string
 	 * @param $addon int Enter a value to modify an existing value (enter value number)
-     * @return int
+	 * @return int
 	 */
 	private function add_upload_info($text, $addon = 0) {
 		$info = $this->upload_info;

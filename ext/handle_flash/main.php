@@ -20,13 +20,13 @@ class FlashFileHandler extends DataHandlerExtension {
 		$image = new Image();
 
 		$image->filesize  = $metadata['size'];
-		$image->hash      = $metadata['hash'];
+		$image->hash	  = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
 		$image->tag_array = Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
-        $info = getimagesize($filename);
+		$info = getimagesize($filename);
 		if(!$info) return null;
 
 		$image->width = $info[0];
@@ -36,14 +36,14 @@ class FlashFileHandler extends DataHandlerExtension {
 	}
 
 	protected function check_contents(/*string*/ $file) {
-        if (!file_exists($file)) return false;
+		if (!file_exists($file)) return false;
 
-        $fp = fopen($file, "r");
-        $head = fread($fp, 3);
-        fclose($fp);
-        if (!in_array($head, array("CWS", "FWS"))) return false;
+		$fp = fopen($file, "r");
+		$head = fread($fp, 3);
+		fclose($fp);
+		if (!in_array($head, array("CWS", "FWS"))) return false;
 
-        return true;
-    }
+		return true;
+	}
 }
 ?>
