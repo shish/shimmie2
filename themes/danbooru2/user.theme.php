@@ -35,7 +35,6 @@ class CustomUserPageTheme extends UserPageTheme {
 	}
 
 	public function display_user_block(Page $page, User $user, $parts) {
-		$h_name = html_escape($user->name);
 		$html = "";
 		$blocked = array("Pools", "Pool Changes", "Alias Editor", "My Profile");
 		foreach($parts as $part) {

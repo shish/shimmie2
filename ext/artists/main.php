@@ -143,7 +143,7 @@ class Artists extends Extension {
     }
     public function handle_commands($event)
     {
-        global $config, $page, $user;
+        global $page, $user;
 
         if($event->page_matches("artist"))
         {

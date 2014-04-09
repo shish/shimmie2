@@ -8,7 +8,6 @@ class PrivMsgTheme extends Themelet {
 			<table id='pms' class='zebra sortable'>
 				<thead><tr><th>R?</th><th>Subject</th><th>From</th><th>Date</th><th>Action</th></tr></thead>
 				<tbody>";
-		$n = 0;
 		foreach($pms as $pm) {
 			$h_subject = html_escape($pm->subject);
 			if(strlen(trim($h_subject)) == 0) $h_subject = "(No subject)";

@@ -7,8 +7,6 @@ class RotateImageTheme extends Themelet {
 	public function get_rotate_html(/*int*/ $image_id) {
 		global $user, $config;
 
-		$i_image_id = int_escape($image_id);
-		
 		$html = "
 			".make_form(make_link('rotate/'.$image_id), 'POST')."
 				<input type='hidden' name='image_id' value='$image_id'>

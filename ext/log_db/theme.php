@@ -40,7 +40,6 @@ class LogDatabaseTheme extends Themelet {
 		</form>
 	</thead>
 	<tbody>\n";
-		$n = 0;
 		reset($events); // rewind to first element in array.
 		
 		foreach($events as $event) {

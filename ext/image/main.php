@@ -20,7 +20,7 @@ class ImageAdditionEvent extends Event {
 	 * this new image.
 	 *
 	 * @sa TagSetEvent
-	 * @param $image	The new image to add.
+	 * @param $image Image	The new image to add.
 	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
@@ -46,7 +46,7 @@ class ImageDeletionEvent extends Event {
 	 * Used by things like tags and comments handlers to
 	 * clean out related rows in their tables.
 	 *
-	 * @param $image 	The image being deleted
+	 * @param $image Image	The image being deleted
 	*/
 	public function __construct(Image $image) {
 		$this->image = $image;
@@ -93,8 +93,9 @@ class ThumbnailGenerationEvent extends Event {
 	/**
 	 * Request a thumbnail be made for an image object
 	 *
-	 * @param $hash	The unique hash of the image
-	 * @param $type	The type of the image
+	 * @param $hash	string The unique hash of the image
+	 * @param $type	string The type of the image
+	 * @param $force boolean Regenerate the thumbnail even if one already exists
 	 */
 	public function __construct($hash, $type, $force=false) {
 		$this->hash = $hash;
@@ -223,9 +224,6 @@ class ImageIO extends Extension {
 	}
 	
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $user;
-		global $config;
-	
 		$u_id = url_escape($event->display_user->id);
 		$i_image_count = Image::count_images(array("user_id={$event->display_user->id}"));
 		$i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
@@ -279,7 +277,7 @@ class ImageIO extends Extension {
 
 
 // add image {{{
-	private function add_image($image) {
+	private function add_image(Image $image) {
 		global $page, $user, $database, $config;
 
 		/*
@@ -401,11 +399,8 @@ class ImageIO extends Extension {
 
 // replace image {{{
 	private function replace_image($id, $image) {
-		global $page;
-		global $user;
 		global $database;
-		global $config;
-		
+
 		/* Check to make sure the image exists. */
 		$existing = Image::by_id($id);
 		

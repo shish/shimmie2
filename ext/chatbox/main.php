@@ -13,7 +13,7 @@ class Chatbox extends Extension {
 		global $page, $user;
 
 		// Adds header to enable chatbox
-		$root = make_http();
+		$root = get_base_href();
 		$yPath = "$root/ext/chatbox/";
 		$page->add_html_header("
 				<script src=\"$root/ext/chatbox/js/jquery.js\" type=\"text/javascript\"></script>

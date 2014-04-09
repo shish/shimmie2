@@ -80,7 +80,6 @@ class TaggerXML extends Extension {
 		$q_where = "WHERE {$match} {$hidden} AND count > 0";
 
 		// FROM based on return count
-		$q_from = null;
 		$count = $this->count($q_where,$values);
 		if ($count > $max_rows) {
 			$q_from = "FROM (SELECT * FROM `tags` {$q_where} ".
@@ -138,26 +137,6 @@ class TaggerXML extends Extension {
 		global $database;
 		return $database->Execute(
 			"SELECT COUNT(*) FROM `tags` $query",$values)->fields['COUNT(*)'];
-	}
-
-	private function image_tags ($image_id) {
-		global $database;
-		$list = "(";
-		$i_tags = $database->Execute(
-			"SELECT tag_id FROM `image_tags` WHERE image_id=?",
-			array($image_id));
-
-		$b = false;
-		foreach($i_tags as $tag) {
-			if($b)
-				$list .= ",";
-			$b = true;
-			$list .= $tag['tag_id'];
-
-		}
-		$list .= ")";
-
-		return $list;
 	}
 } 
 ?>

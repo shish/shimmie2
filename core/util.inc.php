@@ -385,7 +385,13 @@ function make_http(/*string*/ $link) {
 /**
  * Make a form tag with relevant auth token and stuff
  *
- * @retval string
+ * @param target string
+ * @param method string
+ * @param multipart boolean
+ * @param form_id string
+ * @param onsubmit string
+ *
+ * @return string
  */
 function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
@@ -451,7 +457,7 @@ function captcha_get_html() {
 		}
 		else {
 			session_start();
-			$securimg = new Securimage();
+			//$securimg = new Securimage();
 			$base = get_base_href();
 			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
 				"<br/>CAPTCHA: <input type='text' name='code' value='' />";
@@ -1276,6 +1282,7 @@ function _sanitise_environment() {
 }
 
 function _get_themelet_files($_theme) {
+	$base_themelets = array();
 	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
@@ -1406,7 +1413,7 @@ function _decaret($str) {
 }
 
 function _get_user() {
-	global $config, $database;
+	global $config;
 	$user = null;
 	if(get_prefixed_cookie("user") && get_prefixed_cookie("session")) {
 	    $tmp_user = User::by_session(get_prefixed_cookie("user"), get_prefixed_cookie("session"));

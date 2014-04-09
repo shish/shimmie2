@@ -15,7 +15,6 @@ class ReportImageTheme extends Themelet {
 		global $config;
 
 		$h_reportedimages = "";
-		$n = 0;
 		foreach($reports as $report) {
 			$image = $report['image'];
 			$h_reason = format_text($report['reason']);

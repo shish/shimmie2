@@ -106,9 +106,6 @@ class DanbooruApi extends Extension {
 
 			if($user->can("create_image"))
 			{
-				$file = null;
-				$filename = "";
-				$source = "";
 				if(isset($_FILES['file']))
 				{	// A file was POST'd in
 					$file = $_FILES['file']['tmp_name'];
