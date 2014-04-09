@@ -122,7 +122,7 @@ class Image {
 
 		if(SPEED_HAX) {
 			if(!$user->can("big_search") and count($tags) > 3) {
-				die("Anonymous users may only search for up to 3 tags at a time"); // FIXME: throw an exception?
+				throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
 			}
 		}
 
@@ -644,7 +644,7 @@ class Image {
 	 *      images table. Yes, MySQL does suck this much.
 	 */
 	private static function build_accurate_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();
@@ -804,7 +804,7 @@ class Image {
 	 * build_accurate_search_querylet() for a full explanation
 	 */
 	private static function build_ugly_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();
@@ -910,8 +910,6 @@ class Image {
 
 		// more than one positive tag, or more than zero negative tags
 		else {
-			$s_tag_array = array_map("sql_escape", $tag_search->variables);
-
 			$tag_id_array = array();
 			$tags_ok = true;
 			foreach($tag_search->variables as $tag) {
@@ -1113,7 +1111,6 @@ function move_upload_to_archive(DataUploadEvent $event) {
 	if(!@copy($event->tmpname, $target)) {
 		$errors = error_get_last(); // note: requires php 5.2
 		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
-		return false;
 	}
 	return true;
 }

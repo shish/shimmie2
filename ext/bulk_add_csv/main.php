@@ -33,7 +33,7 @@ class BulkAddCSV extends Extension {
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
 			print "  bulk-add-csv [/path/to.csv]\n";
-			print "    Import this .csv file (refer to documentation)\n\n";
+			print "	Import this .csv file (refer to documentation)\n\n";
 		}
 		if($event->cmd == "bulk-add-csv") {
 			global $user;
@@ -62,6 +62,7 @@ class BulkAddCSV extends Extension {
 		if(!array_key_exists('extension', $pathinfo)) {
 			throw new UploadException("File has no extension");
 		}
+		$metadata = array();
 		$metadata['filename'] = $pathinfo['basename'];
 		$metadata['extension'] = $pathinfo['extension'];
 		$metadata['tags'] = $tags;
@@ -82,8 +83,6 @@ class BulkAddCSV extends Extension {
 	}
 
 	private function add_csv(/*string*/ $csvfile) {
-		global $page;
-
 		if(!file_exists($csvfile)) {
 			$this->theme->add_status("Error", "$csvfile not found");
 			return;

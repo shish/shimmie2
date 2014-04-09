@@ -22,7 +22,6 @@ class ImageBanTheme extends Themelet {
 	 */
 	public function display_image_hash_bans(Page $page, $page_number, $page_count, $bans) {
 		$h_bans = "";
-		$n = 0;
 		foreach($bans as $ban) {
 			$h_bans .= "
 				<tr>

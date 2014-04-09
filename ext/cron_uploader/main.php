@@ -206,7 +206,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Returns amount of files & total size of dir.
-	 * @param unknown $path
+	 * @param $path string
 	 * @return multitype:number
 	 */
 	function scan_dir($path){
@@ -227,7 +227,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Uploads the image & handles everything
-	 * @param number $upload_count to upload a non-config amount of imgs
+	 * @param $upload_count int to upload a non-config amount of imgs
 	 * @return boolean returns true if the upload was successful
 	 */
 	public function process_upload($upload_count = 0) {
@@ -254,11 +254,11 @@ class CronUploader extends Extension {
 			
 			try {
 				$this->add_image($img[0], $img[1], $img[2]);
-				$newPath = $this->move_uploaded($img[0], $img[1], false);
+				$this->move_uploaded($img[0], $img[1], false);
 				
 			}
 			catch (Exception $e) {
-				$newPath = $this->move_uploaded($img[0], $img[1], true);
+				$this->move_uploaded($img[0], $img[1], true);
 			}
 			
 			// Remove img from queue array
@@ -295,37 +295,17 @@ class CronUploader extends Extension {
 		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newPath\".");
 	}
 
-	 /**
-	 * moves a directory up or gets the directory of a file
-	 *
-	 * @param string $path	Path to modify
-	 * @param int $depth	Amount of directories to go up
-	 * @return unknown		Path to correct Directory
-	 */
-	private function move_directory_up($path, $depth=1)
-	{
-		$path = str_replace("//", "/", $path);
-		$array = explode("/", $path);
-		
-		for ($i = 0; $i < $depth; $i++) {
-			$to_remove = count($array) -1; // Gets number of element to remove
-			unset($array[$to_remove]);
-		}
-	
-		return implode("/", $array);
-	}
-	
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
 	 */
 	private function add_image($tmpname, $filename, $tags) {
-		global $user, $image;
 		assert ( file_exists ( $tmpname ) );
 		
 		$pathinfo = pathinfo ( $filename );
 		if (! array_key_exists ( 'extension', $pathinfo )) {
 			throw new UploadException ( "File has no extension" );
 		}
+		$metadata = array();
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
 		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
@@ -343,12 +323,9 @@ class CronUploader extends Extension {
 		// Set tags
 		$img = Image::by_id($event->image_id);
 		$img->set_tags($tags);
-		
 	}
 	
 	private function generate_image_queue($base = "", $subdir = "") {
-		global $config;
-		
 		if ($base == "")
 			$base = $this->root_dir . "/queue";
 		
@@ -391,8 +368,9 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Adds a message to the info being published at the end
-	 * @param string $text
-	 * @param int $addon Enter a value to modify an existing value (enter value number)
+	 * @param $text string
+	 * @param $addon int Enter a value to modify an existing value (enter value number)
+	 * @return int
 	 */
 	private function add_upload_info($text, $addon = 0) {
 		$info = $this->upload_info;
@@ -409,7 +387,7 @@ class CronUploader extends Extension {
 		
 		// else if addon function is used, select the line & modify it
 		$lines = substr($info, "\n"); // Seperate the string to array in lines
-		$lines[$addon] = "$line[$addon] $text"; // Add the content to the line
+		$lines[$addon] = "$lines[$addon] $text"; // Add the content to the line
 		$this->upload_info = implode("\n", $lines); // Put string back together & update
 		
 		return $addon; // Return line number
@@ -419,7 +397,7 @@ class CronUploader extends Extension {
 	 * This is run at the end to display & save the log.
 	 */
 	private function handle_log() {
-		global $page, $config;
+		global $page;
 		
 		// Display message
 		$page->set_mode("data");

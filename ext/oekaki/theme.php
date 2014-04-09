@@ -9,7 +9,6 @@ class OekakiTheme extends Themelet {
 		global $config, $page;
 
 		$base_href = get_base_href();
-		$http_base = make_http($base_href);
 
 		$oekW = $config->get_int("oekaki_width", 400);
 		$oekH = $config->get_int("oekaki_height", 400);
