@@ -387,9 +387,11 @@ class OuroborosAPI extends Extension
                     // @TODO Should move the validation logic into OuroborosPost instead?
                     if ($user->can("create_image")) {
                         $post = array(
-                            'tags' => !empty($_REQUEST['post']['tags']) ? filter_var(
-                                    urldecode($_REQUEST['post']['tags']),
-                                    FILTER_SANITIZE_STRING
+                            'tags' => !empty($_REQUEST['post']['tags']) ? Tag::implode(
+                                    array_map(
+                                        array('Tag', 'sanitise'),
+                                        Tag::explode(urldecode($_REQUEST['post']['tags']))
+                                    )
                                 ) : 'tagme',
                             'file' => !empty($_REQUEST['post']['file']) ? filter_var(
                                     $_REQUEST['post']['file'],
