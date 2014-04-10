@@ -18,7 +18,27 @@
 
 class VideoFileHandler extends DataHandlerExtension {
 	protected function create_thumb($hash) {
-		copy("ext/handle_video/thumb.jpg", warehouse_path("thumbs", $hash));
+		global $config;
+
+		$w = $config->get_int("thumb_width");
+		$h = $config->get_int("thumb_height");
+		$q = $config->get_int("thumb_quality");
+
+		$inname  = warehouse_path("images", $hash);
+		$outname = warehouse_path("thumbs", $hash);
+
+		switch($config->get_string("video_thumb_engine")) {
+			default:
+			case 'static':
+				copy("ext/handle_video/thumb.jpg", $outname);
+				break;
+			case 'ffmpeg':
+				$ffmpeg = $config->get_string("thumb_ffmpeg_path");
+				$cmd = "$ffmpeg -i $inname -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 $outname"
+				exec($cmd, $output, $ret);
+				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+				break;
+		}
 	}
 
 	protected function supported_ext($ext) {
