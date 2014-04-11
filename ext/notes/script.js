@@ -3,6 +3,7 @@
 $(function() {
 	if(window.notes) {
 		$('#main_image').imgNotes({notes: window.notes});
+		$(window).resize(); //Simulate window resize to fix note positioning
 	}
 
 	$('#cancelnote').click(function(){
