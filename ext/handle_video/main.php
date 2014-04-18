@@ -2,6 +2,7 @@
 /*
  * Name: Handle Video
  * Author: velocity37 <velocity37@gmail.com>
+ * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>
  * License: GPLv2
  * Description: Handle FLV, MP4, OGV and WEBM video files.
  * Documentation:
@@ -44,8 +45,8 @@ class VideoFileHandler extends DataHandlerExtension {
     protected function create_thumb($hash) {
 		global $config;
 
-		$w = $config->get_int("thumb_width");
-		$h = $config->get_int("thumb_height");
+		$w = (int)$config->get_int("thumb_width");
+		$h = (int)$config->get_int("thumb_height");
         // this is never used...
 		//$q = $config->get_int("thumb_quality");
 
@@ -65,11 +66,9 @@ class VideoFileHandler extends DataHandlerExtension {
                 $outname = escapeshellarg($outname);
 
 				$cmd = "{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
-
 				exec($cmd, $output, $ret);
 
 				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
-
 				break;
 		}
 	}
