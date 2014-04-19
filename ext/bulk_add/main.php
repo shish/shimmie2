@@ -30,7 +30,7 @@ class BulkAdd extends Extension {
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
 			print "  bulk-add [directory]\n";
-			print "    Import this directory\n\n";
+			print "	Import this directory\n\n";
 		}
 		if($event->cmd == "bulk-add") {
 			if(count($event->args) == 1) {
@@ -53,6 +53,7 @@ class BulkAdd extends Extension {
 		if(!array_key_exists('extension', $pathinfo)) {
 			throw new UploadException("File has no extension");
 		}
+		$metadata = array();
 		$metadata['filename'] = $pathinfo['basename'];
 		$metadata['extension'] = $pathinfo['extension'];
 		$metadata['tags'] = $tags;
@@ -65,8 +66,6 @@ class BulkAdd extends Extension {
 	}
 
 	private function add_dir(/*string*/ $base, $subdir="") {
-		global $page;
-
 		if(!is_dir($base)) {
 			$this->theme->add_status("Error", "$base is not a directory");
 			return;

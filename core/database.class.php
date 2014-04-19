@@ -5,7 +5,7 @@ class Querylet {
 	var $sql;
 	var $variables;
 
-	public function Querylet($sql, $variables=array()) {
+	public function __construct($sql, $variables=array()) {
 		$this->sql = $sql;
 		$this->variables = $variables;
 	}
@@ -28,7 +28,7 @@ class TagQuerylet {
 	var $tag;
 	var $positive;
 
-	public function TagQuerylet($tag, $positive) {
+	public function __construct($tag, $positive) {
 		$this->tag = $tag;
 		$this->positive = $positive;
 	}
@@ -37,7 +37,7 @@ class ImgQuerylet {
 	var $qlet;
 	var $positive;
 
-	public function ImgQuerylet($qlet, $positive) {
+	public function __construct($qlet, $positive) {
 		$this->qlet = $qlet;
 		$this->positive = $positive;
 	}
@@ -271,11 +271,13 @@ class Database {
 
 	/**
 	 * Meta info about the database engine
+	 * @var DBEngine
 	 */
 	private $engine = null;
 
 	/**
 	 * The currently active cache engine
+	 * @var CacheEngine
 	 */
 	public $cache = null;
 
@@ -290,7 +292,7 @@ class Database {
 	 * need it. There are some pages where all the data is in cache, so the
 	 * DB connection is on-demand.
 	 */
-	public function Database() {
+	public function __construct() {
 		$this->connect_cache();
 	}
 

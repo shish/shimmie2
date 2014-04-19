@@ -83,9 +83,7 @@ class ForumTheme extends Themelet {
 		global $config, $page/*, $user*/;
 		
 		$posts_per_page = $config->get_int('forumPostsPerPage');
-		$theme_name = $config->get_string('theme');
 		
-        $html = "";
         $current_post = 0;
 
         $html =

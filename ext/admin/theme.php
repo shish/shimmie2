@@ -14,9 +14,9 @@ class AdminPageTheme extends Themelet {
 
 	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
 		$c_protected = $protected ? " protected" : "";
-		$html = make_form(make_link("admin/$action"), "POST", false, false, false, "admin$c_protected");
+		$html = make_form(make_link("admin/$action"), "POST", false, null, null, "admin$c_protected");
 		if($protected) {
-			$html .= "<input type='submit' id='$action' value='$name' disabled='true'>";
+			$html .= "<input type='submit' id='$action' value='$name' disabled='disabled'>";
 			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
 		}
 		else {

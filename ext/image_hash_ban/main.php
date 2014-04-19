@@ -13,7 +13,7 @@
 class RemoveImageHashBanEvent extends Event {
 	var $hash;
 
-	public function RemoveImageHashBanEvent($hash) {
+	public function __construct($hash) {
 		$this->hash = $hash;
 	}
 }
@@ -23,7 +23,7 @@ class AddImageHashBanEvent extends Event {
 	var $hash;
 	var $reason;
 
-	public function AddImageHashBanEvent($hash, $reason) {
+	public function __construct($hash, $reason) {
 		$this->hash = $hash;
 		$this->reason = $reason;
 	}
@@ -36,7 +36,7 @@ class ImageBan extends Extension {
 			$database->create_table("image_bans", "
 				id SCORE_AIPK,
 				hash CHAR(32) NOT NULL,
-				date DATETIME DEFAULT SCORE_NOW,
+				date SCORE_DATETIME DEFAULT SCORE_NOW,
 				reason TEXT NOT NULL
 			");
 			$config->set_int("ext_imageban_version", 1);

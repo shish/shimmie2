@@ -93,7 +93,7 @@ class Source_History extends Extension {
 				user_id INTEGER NOT NULL,
 				user_ip SCORE_INET NOT NULL,
 	    		source TEXT NOT NULL,
-				date_set DATETIME NOT NULL,
+				date_set SCORE_DATETIME NOT NULL,
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
@@ -351,7 +351,7 @@ class Source_History extends Extension {
 		}
 
 		// add a history entry	
-		$row = $database->execute("
+		$database->execute("
 				INSERT INTO source_histories(image_id, source, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
 				array($image->id, $new_source, $user->id, $_SERVER['REMOTE_ADDR']));

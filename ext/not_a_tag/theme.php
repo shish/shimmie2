@@ -2,7 +2,6 @@
 class NotATagTheme extends Themelet {
 	public function display_untags(Page $page, $page_number, $page_count, $bans) {
 		$h_bans = "";
-		$n = 0;
 		foreach($bans as $ban) {
 			$h_bans .= "
 				<tr>

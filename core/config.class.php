@@ -181,7 +181,7 @@ class DatabaseConfig extends BaseConfig {
 	/*
 	 * Load the config table from a database
 	 */
-	public function DatabaseConfig(Database $database) {
+	public function __construct(Database $database) {
 		$this->database = $database;
 
 		$cached = $this->database->cache->get("config");

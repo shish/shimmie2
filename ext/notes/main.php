@@ -20,7 +20,7 @@ class Notes extends Extension {
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					user_ip CHAR(15) NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
 					height INTEGER NOT NULL,
@@ -35,7 +35,7 @@ class Notes extends Extension {
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
@@ -49,7 +49,7 @@ class Notes extends Extension {
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					user_ip CHAR(15) NOT NULL,
-					date DATETIME NOT NULL,
+					date SCORE_DATETIME NOT NULL,
 					x1 INTEGER NOT NULL,
 					y1 INTEGER NOT NULL,
 					height INTEGER NOT NULL,
@@ -363,6 +363,8 @@ class Notes extends Extension {
 	*/
 	private function delete_note()
 	{
+        global $user;
+
 		$imageID = int_escape($_POST["image_id"]);
 		$noteID = int_escape($_POST["note_id"]);
 
@@ -388,7 +390,7 @@ class Notes extends Extension {
 	* HERE WE DELETE ALL NOTES FROM IMAGE
 	*/
 	private function nuke_notes() {
-		global $database;
+		global $database, $user;
 		$image_id = int_escape($_POST["image_id"]);
 		$database->execute("DELETE FROM notes WHERE image_id = ?", array($image_id));
 		log_info("notes", "Notes deleted from {$image_id} by {$user->name}");
@@ -400,7 +402,7 @@ class Notes extends Extension {
 	* HERE WE DELETE ALL REQUESTS FOR IMAGE
 	*/
 	private function nuke_requests() {
-		global $database;
+		global $database, $user;
 		$image_id = int_escape($_POST["image_id"]);
 
 		$database->execute("DELETE FROM note_request WHERE image_id = ?", array($image_id));
@@ -588,7 +590,6 @@ class Notes extends Extension {
 		$noteEnable = $history['note_enable'];
 		$noteID = $history['note_id'];
 		$imageID = $history['image_id'];
-		$userID = $user->id;
 		$noteX1 = $history['x1'];
 		$noteY1 = $history['y1'];
 		$noteHeight = $history['height'];

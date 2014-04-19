@@ -20,9 +20,9 @@ class ImageAdditionEvent extends Event {
 	 * this new image.
 	 *
 	 * @sa TagSetEvent
-	 * @param $image	The new image to add.
+	 * @param $image Image	The new image to add.
 	 */
-	public function ImageAdditionEvent(Image $image) {
+	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -46,9 +46,9 @@ class ImageDeletionEvent extends Event {
 	 * Used by things like tags and comments handlers to
 	 * clean out related rows in their tables.
 	 *
-	 * @param $image 	The image being deleted
+	 * @param $image Image	The image being deleted
 	*/
-	public function ImageDeletionEvent(Image $image) {
+	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -70,7 +70,7 @@ class ImageReplaceEvent extends Event {
 	 * @param $image
 	 *   The image object of the new image to use
 	 */
-	public function ImageReplaceEvent(/*int*/ $id, Image $image) {
+	public function __construct(/*int*/ $id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
 	}
@@ -93,10 +93,11 @@ class ThumbnailGenerationEvent extends Event {
 	/**
 	 * Request a thumbnail be made for an image object
 	 *
-	 * @param $hash	The unique hash of the image
-	 * @param $type	The type of the image
+	 * @param $hash	string The unique hash of the image
+	 * @param $type	string The type of the image
+	 * @param $force boolean Regenerate the thumbnail even if one already exists
 	 */
-	public function ThumbnailGenerationEvent($hash, $type, $force=false) {
+	public function __construct($hash, $type, $force=false) {
 		$this->hash = $hash;
 		$this->type = $type;
 		$this->force = $force;
@@ -113,7 +114,7 @@ class ThumbnailGenerationEvent extends Event {
 class ParseLinkTemplateEvent extends Event {
 	var $link, $original, $image;
 
-	public function ParseLinkTemplateEvent($link, Image $image) {
+	public function __construct($link, Image $image) {
 		$this->link = $link;
 		$this->original = $link;
 		$this->image = $image;
@@ -223,9 +224,6 @@ class ImageIO extends Extension {
 	}
 	
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $user;
-		global $config;
-	
 		$u_id = url_escape($event->display_user->id);
 		$i_image_count = Image::count_images(array("user_id={$event->display_user->id}"));
 		$i_days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
@@ -279,7 +277,7 @@ class ImageIO extends Extension {
 
 
 // add image {{{
-	private function add_image($image) {
+	private function add_image(Image $image) {
 		global $page, $user, $database, $config;
 
 		/*
@@ -325,7 +323,7 @@ class ImageIO extends Extension {
 				)",
 				array(
 					"owner_id"=>$user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'], "filename"=>substr($image->filename, 0, 60), "filesize"=>$image->filesize,
-					"hash"=>$image->hash, "ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
+					"hash"=>$image->hash, "ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
 				)
 		);
 		$image->id = $database->get_last_insert_id('images_id_seq');
@@ -401,11 +399,8 @@ class ImageIO extends Extension {
 
 // replace image {{{
 	private function replace_image($id, $image) {
-		global $page;
-		global $user;
 		global $database;
-		global $config;
-		
+
 		/* Check to make sure the image exists. */
 		$existing = Image::by_id($id);
 		
@@ -435,7 +430,7 @@ class ImageIO extends Extension {
 				",
 				array(
 					"filename"=>$image->filename, "filesize"=>$image->filesize, "hash"=>$image->hash,
-					"ext"=>$image->ext, "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
+					"ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
 					"id"=>$id
 				)
 		);

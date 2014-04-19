@@ -31,6 +31,9 @@ else {
 			<source src='" . make_link("/image/" . $image->id) . "' type='video/webm' />
 			</video>";
 		}
+		else {
+			$html = "Video type '$ext' not recognised";
+		}
 		$page->add_block(new Block("Video", $html, "main", 10));
 	}
 }

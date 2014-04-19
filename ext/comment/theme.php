@@ -244,7 +244,7 @@ class CommentListTheme extends Themelet {
 
 		$hb = ($comment->owner_class == "hellbanned" ? "hb" : "");
 		if($trim) {
-			return "
+			$html = "
 			<div class=\"comment $hb\">
 				$h_userlink: $h_comment
 				<a href=\"".make_link("post/view/$i_image_id#c$i_comment_id")."\">&gt;&gt;&gt;</a>
@@ -263,7 +263,7 @@ class CommentListTheme extends Themelet {
 			$h_del = $user->can("delete_comment") ?
 				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
 				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
-			return "
+			$html = "
 				<div class=\"comment $hb\" id=\"c$i_comment_id\">
 					<div class=\"info\">
 					$h_avatar
@@ -273,7 +273,7 @@ class CommentListTheme extends Themelet {
 				</div>
 			";
 		}
-		return "";
+		return $html;
 	}
 
 	protected function build_postbox(/*int*/ $image_id) {

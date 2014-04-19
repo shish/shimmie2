@@ -19,7 +19,7 @@ class DataUploadEvent extends Event {
 	 * @param $tmpname The temporary file used for upload.
 	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
-	public function DataUploadEvent(/*string*/ $tmpname, /*array*/ $metadata) {
+	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
 
 		$this->tmpname = $tmpname;
@@ -49,6 +49,7 @@ class Upload extends Extension {
 		global $config;
 		$config->set_default_int('upload_count', 3);
 		$config->set_default_int('upload_size', '1MB');
+		$config->set_default_bool('upload_tlsource', TRUE);
 
 		// SHIT: fucking PHP "security" measures -_-;;;
 		$free_num = @disk_free_space(realpath("./images/"));
@@ -90,6 +91,7 @@ class Upload extends Extension {
 		$sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
 		$sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
 		$sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
+		$sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
 		$event->panel->add_block($sb);
 	}
 
@@ -350,7 +352,7 @@ class Upload extends Extension {
 			$metadata['filename'] = $filename;
 			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
-			$metadata['source'] = $source;
+			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){

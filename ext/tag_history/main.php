@@ -93,7 +93,7 @@ class Tag_History extends Extension {
 				user_id INTEGER NOT NULL,
 				user_ip SCORE_INET NOT NULL,
 	    		tags TEXT NOT NULL,
-				date_set DATETIME NOT NULL,
+				date_set SCORE_DATETIME NOT NULL,
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
@@ -103,7 +103,7 @@ class Tag_History extends Extension {
 		
 		if($config->get_int("ext_tag_history_version") == 1) {
 			$database->Execute("ALTER TABLE tag_histories ADD COLUMN user_id INTEGER NOT NULL");
-			$database->Execute("ALTER TABLE tag_histories ADD COLUMN date_set DATETIME NOT NULL");
+			$database->Execute($database->scoreql_to_sql("ALTER TABLE tag_histories ADD COLUMN date_set SCORE_DATETIME NOT NULL"));
 			$config->set_int("ext_tag_history_version", 2);
 		}
 

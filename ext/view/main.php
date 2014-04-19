@@ -31,7 +31,7 @@ class ImageInfoBoxBuildingEvent extends Event {
 	var $image;
 	var $user;
 
-	public function ImageInfoBoxBuildingEvent(Image $image, User $user) {
+	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
@@ -45,7 +45,7 @@ class ImageInfoBoxBuildingEvent extends Event {
 class ImageInfoSetEvent extends Event {
 	var $image;
 
-	public function ImageInfoSetEvent(Image $image) {
+	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
@@ -55,7 +55,7 @@ class ImageAdminBlockBuildingEvent extends Event {
 	var $image = null;
 	var $user = null;
 
-	public function ImageAdminBlockBuildingEvent(Image $image, User $user) {
+	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
@@ -70,11 +70,7 @@ class ViewImage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 
-		if(
-			$event->page_matches("post/prev") ||
-			$event->page_matches("post/next")
-		) {
-
+		if($event->page_matches("post/prev") ||	$event->page_matches("post/next")) {
 			$image_id = int_escape($event->get_arg(0));
 
 			if(isset($_GET['search'])) {
@@ -107,8 +103,7 @@ class ViewImage extends Extension {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("post/view/{$image->id}", $query));
 		}
-			
-		if($event->page_matches("post/view")) {
+		else if($event->page_matches("post/view")) {
 			$image_id = int_escape($event->get_arg(0));
 
 			$image = Image::by_id($image_id);
@@ -124,8 +119,7 @@ class ViewImage extends Extension {
 				$this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
 			}
 		}
-
-		if($event->page_matches("post/set")) {
+		else if($event->page_matches("post/set")) {
 			if(!isset($_POST['image_id'])) return;
 
 			$image_id = int_escape($_POST['image_id']);

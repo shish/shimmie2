@@ -13,7 +13,7 @@
 class NumericScoreSetEvent extends Event {
 	var $image_id, $user, $score;
 
-	public function NumericScoreSetEvent(/*int*/ $image_id, User $user, /*int*/ $score) {
+	public function __construct(/*int*/ $image_id, User $user, /*int*/ $score) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->score = $score;
@@ -237,7 +237,7 @@ class NumericScore extends Extension {
 			global $order_sql;
 			$default_order_for_column = "DESC";
 			$sort = isset($matches[3]) ? strtoupper($matches[3]) : $default_order_for_column;
-			$order_sql = "numeric_score $sort";
+			$order_sql = "images.numeric_score $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
 	}

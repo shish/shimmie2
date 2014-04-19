@@ -10,7 +10,6 @@ class SVGFileHandler extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
 			if(!move_upload_to_archive($event)) return;
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
@@ -27,7 +26,6 @@ class SVGFileHandler extends Extension {
 		global $config;
 		if($this->supported_ext($event->type)) {
 			$hash = $event->hash;
-			$ha = substr($hash, 0, 2);
 
 			copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
 		}
@@ -88,7 +86,7 @@ class SVGFileHandler extends Extension {
 class MiniSVGParser {
 	var $valid=false, $width=0, $height=0;
 
-	function MiniSVGParser($file) {
+	function __construct($file) {
 		$xml_parser = xml_parser_create();
 		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));
 		$this->valid = xml_parse($xml_parser, file_get_contents($file), true);

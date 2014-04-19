@@ -94,6 +94,10 @@
  *        <li>order=width -- find all images sorted from highest > lowest width
  *        <li>order=filesize_asc -- find all images sorted from lowest > highest filesize
  *      </ul>
+ *    <li>order=random_####, eg
+ *      <ul>
+ *        <li>order=random_8547 -- find all images sorted randomly using 8547 as a seed
+ *      </ul>
  *  </ul>
  *  <p>Search items can be combined to search for images which match both,
  *  or you can stick "-" in front of an item to search for things that don't
@@ -159,7 +163,7 @@ class SearchTermParseEvent extends Event {
 	var $context = null;
 	var $querylets = array();
 
-	public function SearchTermParseEvent($term, $context) {
+	public function __construct($term, $context) {
 		$this->term = $term;
 		$this->context = $context;
 	}
@@ -362,7 +366,15 @@ class Index extends Extension {
 			$ord = strtolower($matches[1]);
 			$default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
 			$sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
-			$order_sql = "$ord $sort";
+			$order_sql = "images.$ord $sort";
+			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
+		}
+		else if(preg_match("/^order[=|:]random[_]([0-9]{1,4})$/i", $event->term, $matches)){
+			global $order_sql;
+			//order[=|:]random requires a seed to avoid duplicates
+			//since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
+			$seed = $matches[1];
+			$order_sql = "RAND($seed)";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
 

@@ -43,7 +43,7 @@ class OwnerSetEvent extends Event {
 	var $image;
 	var $owner;
 
-	public function OwnerSetEvent(Image $image, User $owner) {
+	public function __construct(Image $image, User $owner) {
 		$this->image = $image;
 		$this->owner = $owner;
 	}
@@ -60,7 +60,7 @@ class SourceSetEvent extends Event {
 	var $image;
 	var $source;
 
-	public function SourceSetEvent(Image $image, $source) {
+	public function __construct(Image $image, $source) {
 		$this->image = $image;
 		$this->source = $source;
 	}
@@ -77,7 +77,7 @@ class TagSetEvent extends Event {
 	var $image;
 	var $tags;
 
-	public function TagSetEvent(Image $image, $tags) {
+	public function __construct(Image $image, $tags) {
 		$this->image = $image;
 		$this->tags = Tag::explode($tags);
 	}
@@ -93,7 +93,7 @@ class LockSetEvent extends Event {
 	var $image;
 	var $locked;
 
-	public function LockSetEvent(Image $image, $locked) {
+	public function __construct(Image $image, $locked) {
 		assert(is_bool($locked));
 		$this->image = $image;
 		$this->locked = $locked;
@@ -109,7 +109,7 @@ class TagTermParseEvent extends Event {
 	var $id = null;
 	var $metatag = false;
 
-	public function TagTermParseEvent($term, $id) {
+	public function __construct($term, $id) {
 		$this->term = $term;
 		$this->id = $id;
 	}
@@ -243,8 +243,8 @@ class TagEdit extends Extension {
 		global $database;
 		global $config;
 
-		$search_set = Tag::explode(strtolower($search));
-		$replace_set = Tag::explode(strtolower($replace));
+		$search_set = Tag::explode(strtolower($search), false);
+		$replace_set = Tag::explode(strtolower($replace), false);
 
 		log_info("tag_edit", "Mass editing tags: '$search' -> '$replace'");
 
@@ -266,17 +266,19 @@ class TagEdit extends Extension {
 			// search returns high-ids first, so we want to look
 			// at images with lower IDs than the previous.
 			$search_forward = $search_set;
-			if($last_id >= 0) $search_forward[] = "id<$last_id";
+			$search_forward[] = "order=id_desc"; //Default order can be changed, so make sure we order high > low ID
+			if($last_id >= 0){
+				$search_forward[] = "id<$last_id";
+			}
 
 			$images = Image::find_images(0, 100, $search_forward);
 			if(count($images) == 0) break;
 
 			foreach($images as $image) {
 				// remove the search'ed tags
-				$before = $image->get_tag_array();
+				$before = array_map('strtolower', $image->get_tag_array());
 				$after = array();
 				foreach($before as $tag) {
-					$tag = strtolower($tag);
 					if(!in_array($tag, $search_set)) {
 						$after[] = $tag;
 					}

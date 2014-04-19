@@ -11,7 +11,7 @@
 class AuthorSetEvent extends Event {
     var $image, $user, $author;
 
-    public function AuthorSetEvent(Image $image, User $user, /*string*/ $author)
+    public function __construct(Image $image, User $user, /*string*/ $author)
     {
         $this->image = $image;
         $this->user = $user;
@@ -59,8 +59,8 @@ class Artists extends Extension {
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created DATETIME NOT NULL,
-					updated DATETIME NOT NULL,
+					created SCORE_DATETIME NOT NULL,
+					updated SCORE_DATETIME NOT NULL,
 					notes TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -70,8 +70,8 @@ class Artists extends Extension {
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created DATETIME NOT NULL,
-					updated DATETIME NOT NULL,
+					created SCORE_DATETIME NOT NULL,
+					updated SCORE_DATETIME NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -79,8 +79,8 @@ class Artists extends Extension {
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created DATETIME,
-					updated DATETIME,
+					created SCORE_DATETIME,
+					updated SCORE_DATETIME,
 					alias VARCHAR(255),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -89,8 +89,8 @@ class Artists extends Extension {
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created DATETIME NOT NULL,
-					updated DATETIME NOT NULL,
+					created SCORE_DATETIME NOT NULL,
+					updated SCORE_DATETIME NOT NULL,
 					url VARCHAR(1000) NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -143,7 +143,7 @@ class Artists extends Extension {
     }
     public function handle_commands($event)
     {
-        global $config, $page, $user;
+        global $page, $user;
 
         if($event->page_matches("artist"))
         {

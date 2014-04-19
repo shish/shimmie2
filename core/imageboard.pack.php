@@ -49,7 +49,7 @@ class Image {
 	 * One will very rarely construct an image directly, more common
 	 * would be to use Image::by_id, Image::by_hash, etc
 	 */
-	public function Image($row=null) {
+	public function __construct($row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name
@@ -73,7 +73,6 @@ class Image {
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
-		$image = null;
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
 	}
@@ -86,7 +85,6 @@ class Image {
 	public static function by_hash(/*string*/ $hash) {
 		assert(is_string($hash));
 		global $database;
-		$image = null;
 		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
@@ -124,12 +122,12 @@ class Image {
 
 		if(SPEED_HAX) {
 			if(!$user->can("big_search") and count($tags) > 3) {
-				die("Anonymous users may only search for up to 3 tags at a time"); // FIXME: throw an exception?
+				throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
 			}
 		}
 
 		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet(" ORDER BY images.".($order_sql ?: $config->get_string("index_order"))));
+		$querylet->append(new Querylet(" ORDER BY ".($order_sql ?: "images.".$config->get_string("index_order"))));
 		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
 		#var_dump($querylet->sql); var_dump($querylet->variables);
 		$result = $database->execute($querylet->sql, $querylet->variables);
@@ -646,7 +644,7 @@ class Image {
 	 *      images table. Yes, MySQL does suck this much.
 	 */
 	private static function build_accurate_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();
@@ -806,7 +804,7 @@ class Image {
 	 * build_accurate_search_querylet() for a full explanation
 	 */
 	private static function build_ugly_search_querylet($terms) {
-		global $config, $database;
+		global $database;
 
 		$tag_querylets = array();
 		$img_querylets = array();
@@ -912,9 +910,6 @@ class Image {
 
 		// more than one positive tag, or more than zero negative tags
 		else {
-			$s_tag_array = array_map("sql_escape", $tag_search->variables);
-			$s_tag_list = join(', ', $s_tag_array);
-
 			$tag_id_array = array();
 			$tags_ok = true;
 			foreach($tag_search->variables as $tag) {
@@ -1058,7 +1053,7 @@ class Tag {
 		else {
 			global $database;
 			$db_wild_tag = str_replace("%", "\%", $tag);
-			$db_wild_tag = str_replace("*", "%", $tag);
+			$db_wild_tag = str_replace("*", "%", $db_wild_tag);
 			$newtags = $database->get_col($database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"), array($db_wild_tag));
 			if(count($newtags) > 0) {
 				$resolved = $newtags;
@@ -1116,7 +1111,6 @@ function move_upload_to_archive(DataUploadEvent $event) {
 	if(!@copy($event->tmpname, $target)) {
 		$errors = error_get_last(); // note: requires php 5.2
 		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
-		return false;
 	}
 	return true;
 }

@@ -14,7 +14,7 @@ require_once "lib/akismet.class.php";
 class CommentPostingEvent extends Event {
 	var $image_id, $user, $comment;
 
-	public function CommentPostingEvent($image_id, $user, $comment) {
+	public function __construct($image_id, $user, $comment) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->comment = $comment;
@@ -29,7 +29,7 @@ class CommentPostingEvent extends Event {
 class CommentDeletionEvent extends Event {
 	var $comment_id;
 
-	public function CommentDeletionEvent($comment_id) {
+	public function __construct($comment_id) {
 		$this->comment_id = $comment_id;
 	}
 }
@@ -37,7 +37,11 @@ class CommentDeletionEvent extends Event {
 class CommentPostingException extends SCoreException {}
 
 class Comment {
-	public function Comment($row) {
+	var $owner, $owner_id, $owner_name, $owner_email, $owner_class;
+	var $comment, $comment_id;
+	var $image_id, $poster_ip, $posted;
+
+	public function __construct($row) {
 		$this->owner = null;
 		$this->owner_id = $row['user_id'];
 		$this->owner_name = $row['user_name'];

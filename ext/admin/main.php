@@ -25,7 +25,7 @@
  */
 class AdminBuildingEvent extends Event {
 	var $page;
-	public function AdminBuildingEvent(Page $page) {
+	public function __construct(Page $page) {
 		$this->page = $page;
 	}
 }
@@ -182,14 +182,18 @@ class AdminPage extends Extension {
 			case 'sqlite':
 				$cmd = "sqlite3 $database .dump";
 				break;
+			default:
+				$cmd = false;
 		}
 
 		//FIXME: .SQL dump is empty if cmd doesn't exist
 
-		$page->set_mode("data");
-		$page->set_type("application/x-unknown");
-		$page->set_filename('shimmie-'.date('Ymd').'.sql');
-		$page->set_data(shell_exec($cmd));
+		if($cmd) {
+			$page->set_mode("data");
+			$page->set_type("application/x-unknown");
+			$page->set_filename('shimmie-'.date('Ymd').'.sql');
+			$page->set_data(shell_exec($cmd));
+		}
 
 		return false;
 	}

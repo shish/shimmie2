@@ -11,12 +11,16 @@
  */
 
 class SendPMEvent extends Event {
+	var $pm;
+
 	public function __construct(PM $pm) {
 		$this->pm = $pm;
 	}
 }
 
 class PM {
+	var $id, $from_id, $from_ip, $to_id, $sent_date, $subject, $message, $is_read;
+
 	public function __construct($from_id=0, $from_ip="0.0.0.0", $to_id=0, $subject="A Message", $message="Some Text", $read=False) {
 		# PHP: the P stands for "really", the H stands for "awful" and the other P stands for "language"
 		if(is_array($from_id)) {
@@ -53,7 +57,7 @@ class PrivMsg extends Extension {
 				from_id INTEGER NOT NULL,
 				from_ip SCORE_INET NOT NULL,
 				to_id INTEGER NOT NULL,
-				sent_date DATETIME NOT NULL,
+				sent_date SCORE_DATETIME NOT NULL,
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,

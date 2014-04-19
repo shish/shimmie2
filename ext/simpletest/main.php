@@ -207,7 +207,7 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 
 /** @private */
 class TestFinder extends TestSuite {
-	function TestFinder($hint) {
+	function __construct($hint) {
 		if(strpos($hint, "..") !== FALSE) return;
 		
 		// Select the test cases for "All" extensions.

@@ -16,7 +16,7 @@
 class RemoveIPBanEvent extends Event {
 	var $id;
 
-	public function RemoveIPBanEvent($id) {
+	public function __construct($id) {
 		$this->id = $id;
 	}
 }
@@ -27,7 +27,7 @@ class AddIPBanEvent extends Event {
 	var $reason;
 	var $end;
 
-	public function AddIPBanEvent(/*string(ip)*/ $ip, /*string*/ $reason, /*string*/ $end) {
+	public function __construct(/*string(ip)*/ $ip, /*string*/ $reason, /*string*/ $end) {
 		$this->ip = trim($ip);
 		$this->reason = trim($reason);
 		$this->end = trim($end);
@@ -130,8 +130,8 @@ class IPBan extends Extension {
 			$database->Execute("CREATE TABLE bans (
 				id int(11) NOT NULL auto_increment,
 				ip char(15) default NULL,
-				date datetime default NULL,
-				end datetime default NULL,
+				date SCORE_DATETIME default NULL,
+				end SCORE_DATETIME default NULL,
 				reason varchar(255) default NULL,
 				PRIMARY KEY (id)
 			)");

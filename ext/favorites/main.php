@@ -16,7 +16,7 @@
 class FavoriteSetEvent extends Event {
 	var $image_id, $user, $do_set;
 
-	public function FavoriteSetEvent(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
+	public function __construct(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
 		assert(is_numeric($image_id));
 		assert(is_bool($do_set));
 
@@ -35,7 +35,7 @@ class Favorites extends Extension {
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $database, $page, $user;
+		global $database, $user;
 		if(!$user->is_anonymous()) {
 			$user_id = $user->id;
 			$image_id = $event->image->id;
@@ -51,7 +51,7 @@ class Favorites extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$people = $this->list_persons_who_have_favorited($event->image);
 		if(count($people) > 0) {
-			$html = $this->theme->display_people($people);
+			$this->theme->display_people($people);
 		}
 	}
 
@@ -88,7 +88,7 @@ class Favorites extends Extension {
 			in_array('favorite_action', $_POST) &&
 			(($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset"))
 		) {
-			send_event(new FavoriteSetEvent($event->image_id, $user, ($_POST['favorite_action'] == "set")));
+			send_event(new FavoriteSetEvent($event->image->id, $user, ($_POST['favorite_action'] == "set")));
 		}
 	}
 
@@ -148,16 +148,14 @@ class Favorites extends Extension {
 		if($config->get_int("ext_favorites_version") < 1) {
 			$database->Execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");
 			$database->Execute("CREATE INDEX images__favorites ON images(favorites)");
-			$database->Execute("
-				CREATE TABLE user_favorites (
+			$database->create_table("user_favorites", "
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created_at DATETIME NOT NULL,
+					created_at SCORE_DATETIME NOT NULL,
 					UNIQUE(image_id, user_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
-				)
-			");
+					");
 			$database->execute("CREATE INDEX user_favorites_image_id_idx ON user_favorites(image_id)", array());
 			$config->set_int("ext_favorites_version", 1);
 		}
