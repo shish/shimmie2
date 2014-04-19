@@ -1,4 +1,4 @@
-<?
+<?php
 	error_reporting(E_ALL);
 
 	include '../php/filestorage.class.php';
@@ -39,6 +39,9 @@
 
 		$banned = $ys->banned($post['adminInfo']['ip']);
 		$html .= '<div ' . ($admin ? 'rel="' . $post['adminInfo']['ip'] . '" '  : '') . 'id="ys-post-' . $id . '" class="ys-post' . ($post['admin'] ? ' ys-admin-post' : '') . ($banned ? ' ys-banned-post' : '') . '">' . "\n";
+		
+			$ts = '';
+			
 			switch($prefs['timestamp']) {
 				case 12:
 					$ts = date('h:i', $post['timestamp']);
