@@ -28,27 +28,31 @@ class DowntimeTheme extends Themelet {
 	</head>
 	<body>
 		<div id="downtime">
-			<h1><center>Down for Maintenance</center></h1>
-			<div id="message">
-				$message
-			</div>
-			<h3>Admin Login</h3>
-			<div id="login">
-				<form action="$login_link" method="POST">
-					$auth
-					<table id="login_table" summary="Login Form">
-						<tr>
-							<td width="70"><label for="user">Name</label></td>
-							<td width="70"><input id="user" type="text" name="user"></td>
-						</tr>
-						<tr>
-							<td><label for="pass">Password</label></td>
-							<td><input id="pass" type="password" name="pass"></td>
-						</tr>
-						<tr><td colspan="2"><input type="submit" value="Log In"></td></tr>
-					</table>
-				</form>
-			</div>
+			<section>
+				<h1><center>Down for Maintenance</center></h1>
+				<div id="message" class="blockbody">
+					$message
+				</div>
+			</section>
+			<section>
+				<h3>Admin Login</h3>
+				<div id="login" class="blockbody">
+					<form action="$login_link" method="POST">
+						$auth
+						<table id="login_table" summary="Login Form">
+							<tr>
+								<td width="70"><label for="user">Name</label></td>
+								<td width="70"><input id="user" type="text" name="user"></td>
+							</tr>
+							<tr>
+								<td><label for="pass">Password</label></td>
+								<td><input id="pass" type="password" name="pass"></td>
+							</tr>
+							<tr><td colspan="2"><input type="submit" value="Log In"></td></tr>
+						</table>
+					</form>
+				</div>
+			</section>
 		</div>
 	</body>
 </html>
