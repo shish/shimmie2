@@ -342,7 +342,7 @@ class Pools extends Extension {
 	/**
 	 * Check if the given user has permission to edit/change the pool.
 	 * TODO: Should the user variable be global?
-	 * @retval bool
+	 * @return bool
 	 */
 	private function have_permission($user, $pool) {
 		// If the pool is public and user is logged OR if the user is admin OR if the pool is owned by the user.
@@ -415,12 +415,13 @@ class Pools extends Extension {
 			throw new PoolCreationException("A pool using this title already exists.");
 		}
 
-		$public = $_POST["public"] == "Y" ? "Y" : "N";
+		$public = $_POST["public"] === "Y" ? "Y" : "N";
 		$database->execute("
 				INSERT INTO pools (user_id, public, title, description, date)
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
-		
+
+		$result = array();
 		$result['poolID'] = $database->get_last_insert_id('pools_id_seq');
 
 		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
@@ -429,9 +430,9 @@ class Pools extends Extension {
 	}
 
 	/**
-	 * Retrieve information about pools given mulitiple pool IDs.
+	 * Retrieve information about pools given multiple pool IDs.
 	 * @param $poolID Array of integers
-	 * @retval 2D Array
+	 * @return 2D Array
 	 */
 	private function get_pool(/*int*/ $poolID) {
 		global $database;
@@ -441,7 +442,7 @@ class Pools extends Extension {
 	/**
 	 * Retrieve information about a pool given a pool ID.
 	 * @param $poolID Integer
-	 * @retval 2D array (with only 1 element in the one dimension)
+	 * @return 2D array (with only 1 element in the one dimension)
 	 */
 	private function get_single_pool(/*int*/ $poolID) {
 		global $database;
@@ -451,7 +452,7 @@ class Pools extends Extension {
 	/**
 	 * Retrieve information about a pool given a pool title.
 	 * @param $poolTitle Integer
-	 * @retval 2D array (with only 1 element in the one dimension)
+	 * @return 2D array (with only 1 element in the one dimension)
 	 */
 	private function get_single_pool_from_title(/*string*/ $poolTitle) {
 		global $database;
@@ -461,7 +462,7 @@ class Pools extends Extension {
 	/**
 	 * Get all of the pool IDs that an image is in, given an image ID.
 	 * @param $imageID Integer
-	 * @retval 2D array
+	 * @return 2D array
 	 */
 	private function get_pool_id(/*int*/ $imageID) {
 		global $database;
@@ -581,7 +582,7 @@ class Pools extends Extension {
 	 * @see add_posts()
 	 * @param $poolID integer
 	 * @param $imageID integer
-	 * @retval bool
+	 * @return bool
 	 */
 	private function check_post(/*int*/ $poolID, /*int*/ $imageID) {
 		global $database;
@@ -594,7 +595,7 @@ class Pools extends Extension {
 	 *
 	 * @param $pool Array for the given pool
 	 * @param $imageID Integer
-	 * @retval Integer which is the next Image ID or NULL if none.
+	 * @return Integer which is the next Image ID or NULL if none.
 	 */
 	private function get_next_post(/*array*/ $pool, /*int*/ $imageID) {
 		global $database;
@@ -684,7 +685,7 @@ class Pools extends Extension {
 	/**
 	 * This function gets the current order of images from a given pool.
 	 * @param $poolID integer
-	 * @retval Array of image objects.
+	 * @return Array of image objects.
 	 */
 	private function edit_posts(/*int*/ $poolID) {
 		global $database;
@@ -750,6 +751,7 @@ class Pools extends Extension {
 	 */
 	private function add_history(/*int*/ $poolID, $action, $images, $count) {
 		global $user, $database;
+
 		$database->execute("
 				INSERT INTO pool_history (pool_id, user_id, action, images, count, date)
 				VALUES (:pid, :uid, :act, :img, :count, now())",
