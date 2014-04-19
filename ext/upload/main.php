@@ -279,6 +279,7 @@ class Upload extends Extension {
 				}
 				
 				$pathinfo = pathinfo($file['name']);
+				$metadata = array();
 				$metadata['filename'] = $pathinfo['basename'];
 				$metadata['extension'] = $pathinfo['extension'];
 				$metadata['tags'] = $tags;
@@ -349,6 +350,7 @@ class Upload extends Extension {
 		}else{
 			global $user;
 			$pathinfo = pathinfo($url);
+			$metadata = array();
 			$metadata['filename'] = $filename;
 			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;

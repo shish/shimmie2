@@ -135,13 +135,13 @@ class Tag_History extends Extension {
 			// there is no history entry with that id so either the image was deleted
 			// while the user was viewing the history, someone is playing with form
 			// variables or we have messed up in code somewhere.
-			/* calling die() is probably not a good idea, we should throw an Exception */
+			/* FIXME: calling die() is probably not a good idea, we should throw an Exception */
 			die("Error: No tag history with specified id was found.");
 		}
 		
 		// lets get the values out of the result
 		$stored_result_id = $result['id'];
-		$stored_image_id = $result['image_id'];
+		$stored_image_id = int_escape($result['image_id']);
 		$stored_tags = $result['tags'];
 		
 		log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
@@ -267,7 +267,7 @@ class Tag_History extends Extension {
 
 		log_info("tag_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
 		
-		// Get all the images that the given IP has changed tags on (within the timeframe) that were last editied by the given IP
+		// Get all the images that the given IP has changed tags on (within the timeframe) that were last edited by the given IP
 		$result = $database->get_col('
 				SELECT t1.image_id
 				FROM tag_histories t1
@@ -304,8 +304,8 @@ class Tag_History extends Extension {
 				}
 				
 				// lets get the values out of the result
-				$stored_result_id = $result['id'];
-				$stored_image_id = $result['image_id'];
+				$stored_result_id = int_escape($result['id']);
+				$stored_image_id = int_escape($result['image_id']);
 				$stored_tags = $result['tags'];
 				
 				log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
@@ -350,8 +350,8 @@ class Tag_History extends Extension {
 			$entries++;
 		}
 
-		// add a history entry	
-		$row = $database->execute("
+		// add a history entry
+		$database->execute("
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
 				VALUES (?, ?, ?, ?, now())",
 				array($image->id, $new_tags, $user->id, $_SERVER['REMOTE_ADDR']));

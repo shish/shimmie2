@@ -47,7 +47,7 @@ class Layout {
 		global $config, $user;
 
 		$theme_name = $config->get_string('theme');
-		$base_href = $config->get_string('base_href');
+		//$base_href = $config->get_string('base_href');
 		$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
 
@@ -122,11 +122,9 @@ class Layout {
 
 		$custom_sublinks = "";
 		// hack
-		global $user;
 		$username = url_escape($user->name);
 		// hack
 		$qp = explode("/", ltrim(@$_GET["q"], "/"));
-		$hw = class_exists("Wiki");
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -142,10 +140,10 @@ class Layout {
 			case "upload":
 				if(class_exists("NumericScore")){ $custom_sublinks .= "<li><b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a>/<a href='".make_link('popular_by_month')."'>Month</a>/<a href='".make_link('popular_by_year')."'>Year</a></li>";}
 				$custom_sublinks .= "<li><a href='".make_link('post/list')."'>All</a></li>";
-				if(class_exists("Favorites")){ $custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a></li>";}
+				if(class_exists("Favorites")){ $custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by={$username}/1")."'>My Favorites</a></li>";}
 				if(class_exists("RSS_Images")){ $custom_sublinks .= "<li><a href='".make_link('rss/images')."'>Feed</a></li>";}
 				if(class_exists("RandomImage")){ $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random Image</a></li>";}
-				if($hw){ $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
+				if(class_exists("Wiki")){ $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
 				}else{ $custom_sublinks .= "<li><a href='".make_link("ext_doc/index")."'>Help</a></li>";}
 				break;
 			case "comment":
@@ -252,7 +250,7 @@ EOD;
 		$re1='.*?';
 		$re2='((?:[a-z][a-z_]+))';
 
-		if ($c=preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
+		if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
 			$url=$matches[1][0];
 		}
 		

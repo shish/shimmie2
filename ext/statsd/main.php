@@ -99,7 +99,7 @@ class StatsDInterface extends Extension {
 
         // Wrap this in a try/catch - failures in any of this should be silently ignored
         try {
-			$parts = explode(":", STATSD_HOST);
+            $parts = explode(":", STATSD_HOST);
             $host = $parts[0];
             $port = $parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
@@ -109,6 +109,7 @@ class StatsDInterface extends Extension {
             }
             fclose($fp);
         } catch (Exception $e) {
+            // ignore any failures.
         }
     }
 }

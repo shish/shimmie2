@@ -374,12 +374,13 @@ YShout.prototype = {
 		if (!$.browser.safari) return;
 		
 		var same = [];
-		for (var i = 0; i < this.p.length; i++)
+		for (var i = 0; i < this.p.length; i++) {
 			if (this.p[i].adminInfo.ip == ip) 
 				same.push(this.p[i]);
-		
-		for (var i = 0; i < same.length; i++) {
-			$('#' + same[i].id).fadeTo(this.animSpeed, .8).fadeTo(this.animSpeed, 1);
+		}
+
+		for (var j = 0; j < same.length; j++) {
+			$('#' + same[j].id).fadeTo(this.animSpeed, 0.8).fadeTo(this.animSpeed, 1);
 		}
 	},
 	

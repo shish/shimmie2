@@ -20,7 +20,7 @@ Array.prototype.editcloud_remove = function (ele) {
 
 var hide_text = null;
 function tageditcloud_toggle_extra(hide) {
-	if (hide_text == null) {
+	if (hide_text === null) {
 		hide_text = hide.innerHTML;
 	}
 

@@ -10,7 +10,7 @@ require_once "lib/context.php";
 /**
  * Make some data safe for printing into HTML
  *
- * @retval string
+ * @return string
  */
 function html_escape($input) {
 	return htmlentities($input, ENT_QUOTES, "UTF-8");
@@ -19,7 +19,7 @@ function html_escape($input) {
 /**
  * Make sure some data is safe to be used in integer context
  *
- * @retval int
+ * @return int
  */
 function int_escape($input) {
 	/*
@@ -32,7 +32,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
- * @retval string
+ * @return string
  */
 function url_escape($input) {
 	/*
@@ -66,7 +66,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
- * @retval string
+ * @return string
  */
 function sql_escape($input) {
 	global $database;
@@ -77,7 +77,7 @@ function sql_escape($input) {
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
- * @retval boolean
+ * @return boolean
  */
 function bool_escape($input) {
 	/*
@@ -112,7 +112,7 @@ function bool_escape($input) {
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
  *
- * @retval string
+ * @return string
  */
 function no_escape($input) {
 	return $input;
@@ -156,7 +156,7 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @retval int
+ * @return int
  */
 function parse_shorthand_int($limit) {
 	if(is_numeric($limit)) {
@@ -167,8 +167,8 @@ function parse_shorthand_int($limit) {
 		$value = $m[1];
 		if (isset($m[2])) {
 			switch(strtolower($m[2])) {
-				case 'g': $value *= 1024;  # fallthrough
-				case 'm': $value *= 1024;  # fallthrough
+				case 'g': $value *= 1024;  // fall through
+				case 'm': $value *= 1024;  // fall through
 				case 'k': $value *= 1024; break;
 				default: $value = -1;
 			}
@@ -182,7 +182,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
- * @retval string
+ * @return string
  */
 function to_shorthand_int($int) {
 	if($int >= pow(1024, 3)) {
@@ -203,7 +203,7 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
- * @retval string
+ * @return string
  */
 function autodate($date, $html=true) {
 	$cpu = date('c', strtotime($date));
@@ -214,7 +214,7 @@ function autodate($date, $html=true) {
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
- * @retval boolean
+ * @return boolean
  */
 function isValidDateTime($dateTime) {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
@@ -229,7 +229,7 @@ function isValidDateTime($dateTime) {
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
- * @retval boolean
+ * @return boolean
  */
 function isValidDate($date) {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
@@ -248,7 +248,7 @@ function isValidDate($date) {
  *
  * FIXME: also check that IP ban ext is installed
  *
- * @retval string
+ * @return string
  */
 function show_ip($ip, $ban_reason) {
 	global $user;
@@ -264,7 +264,7 @@ function show_ip($ip, $ban_reason) {
  *
  * @param $haystack String to examine.
  * @param $needle String to look for.
- * @retval bool
+ * @return bool
  */
 function startsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$length = strlen($needle);
@@ -276,7 +276,7 @@ function startsWith(/*string*/ $haystack, /*string*/ $needle) {
  *
  * @param $haystack String to examine.
  * @param $needle String to look for.
- * @retval bool
+ * @return bool
  */
 function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$length = strlen($needle);
@@ -295,7 +295,7 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
  *
  * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
  *
- * @retval string
+ * @return string
  */
 function make_link($page=null, $query=null) {
 	global $config;
@@ -331,7 +331,7 @@ function make_link($page=null, $query=null) {
 /**
  * Take the current URL and modify some paramaters
  *
- * @retval string
+ * @return string
  */
 function modify_current_url($changes) {
 	return modify_url($_SERVER['QUERY_STRING'], $changes);
@@ -372,7 +372,7 @@ function modify_url($url, $changes) {
 /**
  * Turn a relative link into an absolute one, including hostname
  *
- * @retval string
+ * @return string
  */
 function make_http(/*string*/ $link) {
 	if(strpos($link, "ttp://") > 0) return $link;
@@ -639,7 +639,7 @@ function _count_execs($db, $sql, $inputarray) {
 /**
  * Compare two Block objects, used to sort them before being displayed
  *
- * @retval int
+ * @return int
  */
 function blockcmp(Block $a, Block $b) {
 	if($a->position == $b->position) {
@@ -653,7 +653,7 @@ function blockcmp(Block $a, Block $b) {
 /**
  * Figure out PHP's internal memory limit
  *
- * @retval int
+ * @return int
  */
 function get_memory_limit() {
 	global $config;
@@ -702,7 +702,7 @@ function get_memory_limit() {
  * Get the currently active IP, masked to make it not change when the last
  * octet or two change, for use in session cookies and such
  *
- * @retval string
+ * @return string
  */
 function get_session_ip(Config $config) {
 	$mask = $config->get_string("session_hash_mask", "255.255.0.0");
@@ -765,7 +765,7 @@ function flash_message(/*string*/ $text, /*string*/ $type="info") {
  *
  * PHP really, really sucks.
  *
- * @retval string
+ * @return string
  */
 function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
@@ -788,7 +788,7 @@ function get_base_href() {
  * A shorthand way to send a TextFormattingEvent and get the
  * results
  *
- * @retval string
+ * @return string
  */
 function format_text(/*string*/ $string) {
 	$tfe = new TextFormattingEvent($string);
@@ -867,6 +867,9 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
+		// Scrutinizer-ci complains that $http_response_header not defined.
+		// However, it is auto defined by PHP.
+		// See: http://us2.php.net/manual/en/reserved.variables.httpresponseheader.php
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
 		return $headers;
@@ -1001,7 +1004,7 @@ function get_request_id() {
 /**
  * Remove an item from an array
  *
- * @retval array
+ * @return array
  */
 function array_remove($array, $to_remove) {
 	$array = array_unique($array);
@@ -1019,7 +1022,7 @@ function array_remove($array, $to_remove) {
  *
  * Also removes duplicate values from the array.
  *
- * @retval array
+ * @return array
  */
 function array_add($array, $element) {
 	// Could we just use array_push() ?
@@ -1032,7 +1035,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @retval array
+ * @return array
  */
 function array_iunique($array) {
 	$ok = array();
@@ -1055,7 +1058,7 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
- * @retval bool
+ * @return bool
  */
 function ip_in_range($IP, $CIDR) {
 	list ($net, $mask) = explode("/", $CIDR);
@@ -1204,7 +1207,7 @@ $_load_start = microtime(true);
  * Collects some debug information (execution time, memory usage, queries, etc)
  * and formats it to stick in the footer of the page.
  *
- * @retval String of debug info to add to the page.
+ * @return String of debug info to add to the page.
  */
 function get_debug_info() {
 	global $config, $_event_count, $database, $_execs, $_load_start;
