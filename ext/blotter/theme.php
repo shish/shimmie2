@@ -106,7 +106,7 @@ class BlotterTheme extends Themelet {
 			// Reset variables:
 			$i_open = "";
 			$i_close = "";
-			$id = $entries[$i]['id'];
+			//$id = $entries[$i]['id'];
 			$messy_date = $entries[$i]['entry_date'];
 			$clean_date = date("y/m/d", strtotime($messy_date));
 			$entry_text = $entries[$i]['entry_text'];

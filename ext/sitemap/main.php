@@ -62,7 +62,9 @@ class XMLSitemap extends Extension {
         private function handle_full_sitemap()
         {
                 global $database, $config;
+
                 // add index
+                $index = array();
                 $index[0] = $config->get_string("front_page");
                 $this->add_sitemap_queue($index, "weekly", "1");
 

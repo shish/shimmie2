@@ -805,7 +805,7 @@ class Artists extends Extension {
         $urls = $_POST["urls"];
         $userID = $user->id;
 
-        $artistID = "";
+        //$artistID = "";
 
         //// WE CHECK IF THE ARTIST ALREADY EXISTS ON DATABASE; IF NOT WE CREATE
         if(!$this->artist_exists($name))

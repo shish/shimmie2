@@ -208,6 +208,7 @@ class DanbooruApi extends Extension {
 
 				// Fire off an event which should process the new file and add it to the db
 				$fileinfo = pathinfo($filename);
+				$metadata = array();
 				$metadata['filename'] = $fileinfo['basename'];
 				$metadata['extension'] = $fileinfo['extension'];
 				$metadata['tags'] = $posttags;

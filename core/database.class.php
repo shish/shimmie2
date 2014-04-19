@@ -229,7 +229,9 @@ class MemcacheCache implements CacheEngine {
 class APCCache implements CacheEngine {
 	var $hits=0, $misses=0;
 
-	public function __construct($args) {}
+	public function __construct($args) {
+		// $args is not used, but is passed in when APC cache is created.
+	}
 
 	public function get($key) {
 		assert(!is_null($key));
