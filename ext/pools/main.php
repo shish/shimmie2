@@ -806,6 +806,7 @@ class Pools extends Extension {
 			$images = explode(" ", $images);
 			$poolID = $entry['pool_id'];
 			$imageArray = "";
+			$newAction = -1;
 
 			if($entry['action'] == 0) {
 				// READ ENTRIES
@@ -826,6 +827,10 @@ class Pools extends Extension {
 					$imageArray .= " ".$imageID;
 					$newAction = 0;
 				}
+			} else {
+				// FIXME: should this throw an exception instead?
+				log_error("pools", "Invalid history action.");
+				continue; // go on to the next one.
 			}
 
 			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));

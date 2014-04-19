@@ -867,6 +867,9 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
+		// Scrutinizer-ci complains that $http_response_header not defined.
+		// However, it is auto defined by PHP.
+		// See: http://us2.php.net/manual/en/reserved.variables.httpresponseheader.php
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
 		return $headers;

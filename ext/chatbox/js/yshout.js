@@ -380,7 +380,7 @@ YShout.prototype = {
 		}
 
 		for (var j = 0; j < same.length; j++) {
-			$('#' + same[j].id).fadeTo(this.animSpeed, .8).fadeTo(this.animSpeed, 1);
+			$('#' + same[j].id).fadeTo(this.animSpeed, 0.8).fadeTo(this.animSpeed, 1);
 		}
 	},
 	

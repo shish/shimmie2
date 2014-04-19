@@ -48,7 +48,7 @@ class TagList extends Extension {
 		else if($event->page_matches("api/internal/tag_list/complete")) {
 			if(!isset($_GET["s"])) return;
 
-			$limit = 0;
+			//$limit = 0;
 			$limitSQL = "";
 			$SQLarr = array("search"=>$_GET["s"]."%");
 			if(isset($_GET["limit"]) && $_GET["limit"] !== 0){
@@ -321,7 +321,7 @@ class TagList extends Extension {
 	private function build_tag_list() {
 		global $database;
 
-		$tags_min = $this->get_tags_min();
+		//$tags_min = $this->get_tags_min();
 		$tag_data = $database->get_all("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
 
 		$html = "<table>";
