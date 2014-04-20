@@ -16,7 +16,6 @@ class Chatbox extends Extension {
 		$root = get_base_href();
 		$yPath = make_http("") . "/ext/chatbox/";
 		$page->add_html_header("
-				<script src=\"$root/ext/chatbox/js/jquery.js\" type=\"text/javascript\"></script>
 				<script src=\"$root/ext/chatbox/js/yshout.js\" type=\"text/javascript\"></script>
 
 				<link rel=\"stylesheet\" href=\"$root/ext/chatbox/css/dark.yshout.css\" />
