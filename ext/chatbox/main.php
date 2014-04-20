@@ -14,7 +14,7 @@ class Chatbox extends Extension {
 
 		// Adds header to enable chatbox
 		$root = get_base_href();
-		$yPath = "$root/ext/chatbox/";
+		$yPath = make_http("") . "/ext/chatbox/";
 		$page->add_html_header("
 				<script src=\"$root/ext/chatbox/js/jquery.js\" type=\"text/javascript\"></script>
 				<script src=\"$root/ext/chatbox/js/yshout.js\" type=\"text/javascript\"></script>
