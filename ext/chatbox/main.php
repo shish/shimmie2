@@ -14,18 +14,18 @@ class Chatbox extends Extension {
 
 		// Adds header to enable chatbox
 		$root = get_base_href();
-		$yPath = "$root/ext/chatbox/";
+		$yPath = make_http("") . "/ext/chatbox/";
 		$page->add_html_header("
-				<script src=\"$root/ext/chatbox/js/jquery.js\" type=\"text/javascript\"></script>
+				<script src=\"http://code.jquery.com/jquery-migrate-1.2.1.js\" type=\"text/javascript\"></script>
 				<script src=\"$root/ext/chatbox/js/yshout.js\" type=\"text/javascript\"></script>
 
 				<link rel=\"stylesheet\" href=\"$root/ext/chatbox/css/dark.yshout.css\" />
 
 				<script type=\"text/javascript\">
-				nickname = '{$user->name}';
-				new YShout({ yPath: '$yPath' });
+					nickname = '{$user->name}';
+					new YShout({ yPath: '$yPath' });
 				</script>
-		");
+		", 500);
 
 		// loads the chatbox at the set location    
 		$html = "<div id=\"yshout\"></div>";

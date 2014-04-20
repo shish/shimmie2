@@ -1,4 +1,4 @@
-<?
+<?php
 	include 'ajax.php'; 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -8,7 +8,8 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>YShout: Admin CP</title>
 		<link rel="stylesheet" type="text/css" href="css/style.css" />
-		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript" src="js/admincp.js"></script>
 	</head>
 	<body>
@@ -33,7 +34,7 @@
 						<span id="login-loading">Loading...</span>
 					</form>
 				</div>
-				<?
+				<?php
 					if (loggedIn()) echo cp();
 				?>
 			</div>
