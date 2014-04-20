@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, devel:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 String.prototype.sReplace = function(find, replace) {
 	return this.split(find).join(replace);
 };
@@ -5,7 +7,7 @@ String.prototype.sReplace = function(find, replace) {
 String.prototype.repeat = function(times) {
 	var rep = new Array(times + 1);
 	return rep.join(this);
-}
+};
 
 var YShout = function() {
 	var self = this;
@@ -13,7 +15,7 @@ var YShout = function() {
 	$(document).ready(function() {
 		self.init.apply(self, args);
 	});
-} 
+};
 
 var yShout;
 
@@ -35,15 +37,17 @@ YShout.prototype = {
 		this.options = jQuery.extend(dOptions, options);
 
 		this.postNum = 0;
-		this.floodAttempt = 0;	
+		this.floodAttempt = 0;
 		
 		// Correct for missing trailing /
-		if ((this.options.yPath.length > 0) && (this.options.yPath.charAt(this.options.yPath.length - 1) != '/'))
+		if ((this.options.yPath.length > 0) && (this.options.yPath.charAt(this.options.yPath.length - 1) !== '/')) {
 			this.options.yPath += '/';
+		}
 		
 		if (this.options.yLink) {
-			if (this.options.yLink.charAt(0) != '#')
+			if (this.options.yLink.charAt(0) !== '#') {
 				this.options.yLink = '#' + this.options.yLink;
+			}
 		
 			$(this.options.yLink).click(function() {
 				self.openYShout.apply(self);
@@ -59,21 +63,16 @@ YShout.prototype = {
 				return false;
 			});
 			this.load(true);
-		} else
+		} else {
 			this.load();
-		
-
+		}
 	},
 	
 	load: function(hidden) {
-		if ($('#yshout').length == 0) return;
+		if ($('#yshout').length === 0) { return; }
 
-		if (hidden) $('#yshout').css('display', 'none');
-		
-		
-	
-			
-			
+		if (hidden) { $('#yshout').css('display', 'none'); }
+
 		this.ajax(this.initialLoad, { 
 			reqType: 'init',
 			yPath: this.options.yPath,
@@ -83,32 +82,28 @@ YShout.prototype = {
 	
 	initialLoad: function(updates) {
 		
-	
-		
-		
-		if (updates.yError) alert('There appears to be a problem: \n' + updates.yError + '\n\nIf you haven\'t already, try chmodding everything inside the YShout directory to 777.');
-		
-		
-	
-		var self = this;
-		
+		if (updates.yError) {
+			alert('There appears to be a problem: \n' + updates.yError + '\n\nIf you haven\'t already, try chmodding everything inside the YShout directory to 777.');
+		}
 
-		
+		var self = this;
+
 		this.prefs = jQuery.extend(updates.prefs, this.options.prefs);
 		this.initForm();
 		this.initRefresh();
 		this.initLinks();
-		if (this.prefs.flood) this.initFlood();
+		if (this.prefs.flood) { this.initFlood(); }
 
-		if (updates.nickname)
+		if (updates.nickname) {
 			$('#ys-input-nickname')
 				.removeClass('ys-before-focus')
 				.addClass( 'ys-after-focus')
 				.val(updates.nickname);
+		}
 
-		if (updates)
+		if (updates) {
 			this.updates(updates);
-	
+		}
 		
 		if (!this.prefs.doTruncate) {
 			$('#ys-posts').css('height', $('#ys-posts').height + 'px');
@@ -132,14 +127,14 @@ YShout.prototype = {
 				'<input id="ys-input-nickname" value="' + nickname + '" type="hidden" accesskey="N" maxlength="' + this.prefs.nicknameLength + '" class="ys-before-focus" />' +
 				'<input id="ys-input-message" value="' + this.prefs.defaultMessage + '" type="text" accesskey="M" maxlength="' + this.prefs.messageLength + '" class="ys-before-focus" />' +
 				(this.prefs.showSubmit ? '<input id="ys-input-submit" value="' + this.prefs.defaultSubmit + '" accesskey="S" type="submit" />' : '') +
-				(this.prefs.postFormLink == 'cp' ? '<a title="View YShout Control Panel" class="ys-post-form-link" id="ys-cp-link" href="' + this.options.yPath + 'cp/index.php">Admin CP</a>' : '') +
-				(this.prefs.postFormLink == 'history' ? '<a title="View YShout History" class="ys-post-form-link" id="ys-history-link" href="' + this.options.yPath + 'history/index.php?log=' + this.options.log + '">View History</a>' : '') +
+				(this.prefs.postFormLink === 'cp' ? '<a title="View YShout Control Panel" class="ys-post-form-link" id="ys-cp-link" href="' + this.options.yPath + 'cp/index.php">Admin CP</a>' : '') +
+				(this.prefs.postFormLink === 'history' ? '<a title="View YShout History" class="ys-post-form-link" id="ys-history-link" href="' + this.options.yPath + 'history/index.php?log=' + this.options.log + '">View History</a>' : '') +
 			'</fieldset></form>';
 
 		var postsDiv = '<div id="ys-posts"></div>';
 
-		if (this.prefs.inverse) $('#yshout').html(postForm + postsDiv);
-		else $('#yshout').html(postsDiv + postForm);
+		if (this.prefs.inverse) { $('#yshout').html(postForm + postsDiv); }
+		else { $('#yshout').html(postsDiv + postForm); }
 		
 		$('#ys-posts')
 			.before('<div id="ys-before-posts"></div>')
@@ -158,32 +153,35 @@ YShout.prototype = {
 
 		var keypress = function(e) { 
 			var key = window.event ? e.keyCode : e.which; 
-			if (key == 13 || key == 3) {
+			if (key === 13 || key === 3) {
 				self.send.apply(self);
 				return false;
 			}
 		};
 
 		var focus = function() { 
-			if (this.value == defaults[this.id])
+			if (this.value === defaults[this.id]) {
 				$(this).removeClass('ys-before-focus').addClass( 'ys-after-focus').val('');
+			}
 		};
 
 		var blur = function() { 
-			if (this.value == '')
-				$(this).removeClass('ys-after-focus').addClass('ys-before-focus').val(defaults[this.id]); 
+			if (this.value === '') {
+				$(this).removeClass('ys-after-focus').addClass('ys-before-focus').val(defaults[this.id]);
+			}
 		};
 
 		$('#ys-input-message').keypress(keypress).focus(focus).blur(blur);
 		$('#ys-input-nickname').keypress(keypress).focus(focus).blur(blur);
 
-		$('#ys-input-submit').click(function(){ self.send.apply(self) });
-		$('#ys-post-form').submit(function(){ return false });
+		$('#ys-input-submit').click(function(){ self.send.apply(self); });
+		$('#ys-post-form').submit(function(){ return false; });
 	},
 
 	initRefresh: function() {
 		var self = this;
-		if (this.refreshTimer) clearInterval(this.refreshTimer)
+		if (this.refreshTimer) { clearInterval(this.refreshTimer); }
+
 		this.refreshTimer = setInterval(function() {
 			self.ajax(self.updates, { reqType: 'refresh' });
 		}, this.prefs.refresh); // ! 3000..?
@@ -201,7 +199,7 @@ YShout.prototype = {
 	},
 
 	initLinks: function() {
-		if ($.browser.msie) return;
+		if ($.browser.msie) { return; }
 		
 		var self = this;
 
@@ -219,7 +217,7 @@ YShout.prototype = {
 	
 	openCP: function() {
 		var self = this;
-		if (this.cpOpen) return;
+		if (this.cpOpen) { return; }
 		this.cpOpen = true;
 		
 		var url = this.options.yPath + 'cp/index.php';
@@ -247,7 +245,7 @@ YShout.prototype = {
 
 	openHistory: function() {
 		var self = this;
-		if (this.hOpen) return;
+		if (this.hOpen) { return; }
 		this.hOpen = true;
 		var url = this.options.yPath + 'history/index.php?log='+ this.options.log;
 		$('body').append('<div id="ys-overlay"></div><div class="ys-window" id="ys-history"><a title="Close history" href="#" id="ys-closeoverlay-link">Close</a><a title="View Admin CP" href="#" id="ys-switchoverlay-link">View Admin CP</a><object class="ys-browser" id="history-browser" data="' + url +'" type="text/html">Something went horribly wrong.</object></div>');
@@ -273,9 +271,9 @@ YShout.prototype = {
 	
 	openYShout: function() {
 		var self = this;
-		if (this.ysOpen) return;
+		if (this.ysOpen) { return; }
 		this.ysOpen = true;
-		url = this.options.yPath + 'example/yshout.html';
+		var url = this.options.yPath + 'example/yshout.html';
 
 		$('body').append('<div id="ys-overlay"></div><div class="ys-window" id="ys-yshout"><a title="Close YShout" href="#" id="ys-closeoverlay-link">Close</a><object class="ys-browser" id="yshout-browser" data="' + url +'" type="text/html">Something went horribly wrong.</object></div>');
 	
@@ -292,25 +290,26 @@ YShout.prototype = {
 	},
 	
 	send: function() {
-		if (!this.validate()) return;
-		if (this.prefs.flood && this.floodControl) return;
+		if (!this.validate()) { return; }
+		if (this.prefs.flood && this.floodControl) { return; }
 
 		var  postNickname = $('#ys-input-nickname').val(), postMessage = $('#ys-input-message').val();
 
-		if (postMessage == '/cp')
+		if (postMessage === '/cp') {
 			this.openCP();
-		else if (postMessage == '/history')
+		} else if (postMessage === '/history') {
 			this.openHistory();
-		else
+		} else {
 			this.ajax(this.updates, {
 				reqType: 'post',
 				nickname: postNickname,
 				message: postMessage
 			});
+		}
 
-		$('#ys-input-message').val('')
+		$('#ys-input-message').val('');
 
-		if (this.prefs.flood) this.flood();
+		if (this.prefs.flood) { this.flood(); }
 	},
 
 	validate: function() {
@@ -321,21 +320,23 @@ YShout.prototype = {
 		var showInvalid = function(input) {
 			$(input).removeClass('ys-input-valid').addClass('ys-input-invalid')[0].focus();
 			error = true;
-		}
+		};
 
 		var showValid = function(input) {
 			$(input).removeClass('ys-input-invalid').addClass('ys-input-valid');
+		};
+
+		if (nickname === '' ||	nickname === this.prefs.defaultNickname) {
+			showInvalid('#ys-input-nickname');
+		} else {
+			showValid('#ys-input-nickname');
 		}
 
-		if (nickname == '' ||	nickname == this.prefs.defaultNickname)
-			showInvalid('#ys-input-nickname');
-		else
-			showValid('#ys-input-nickname');
-
-		if (message == '' || message == this.prefs.defaultMessage)
+		if (message === '' || message === this.prefs.defaultMessage) {
 			showInvalid('#ys-input-message');
-		else
+		} else {
 			showValid('#ys-input-message');
+		}
 
 		return !error;
 	},
@@ -351,8 +352,9 @@ YShout.prototype = {
 		this.floodAttempt++;
 		this.disable();
 
-		if (this.floodAttempt == this.prefs.autobanFlood)
+		if (this.floodAttempt === this.prefs.autobanFlood) {
 			this.banSelf('You have been banned for flooding the shoutbox!');
+		}
 			
 		setTimeout(function() {
 			self.floodCount = 0;
@@ -371,12 +373,13 @@ YShout.prototype = {
 	},
 	
 	findBySame: function(ip) {
-		if (!$.browser.safari) return;
+		if (!$.browser.safari) {return;}
 		
 		var same = [];
 		for (var i = 0; i < this.p.length; i++) {
-			if (this.p[i].adminInfo.ip == ip) 
+			if (this.p[i].adminInfo.ip === ip) {
 				same.push(this.p[i]);
+			}
 		}
 
 		for (var j = 0; j < same.length; j++) {
@@ -385,22 +388,23 @@ YShout.prototype = {
 	},
 	
 	updates: function(updates) {
-		if (!updates) return;
-		if (updates.prefs) this.prefs = updates.prefs;
-		if (updates.posts) this.posts(updates.posts);
-		if (updates.banned) this.banned();
+		if (!updates) {return;}
+		if (updates.prefs) {this.prefs = updates.prefs;}
+		if (updates.posts) {this.posts(updates.posts);}
+		if (updates.banned) {this.banned();}
 	},
 
 	banned: function() {
 		var self = this;
 		clearInterval(this.refreshTimer);
 		clearInterval(this.floodTimer);
-		if (this.initializing)
+		if (this.initializing) {
 			$('#ys-post-form').css('display', 'none');
-		else
+		} else {
 			$('#ys-post-form').fadeOut(this.animSpeed);
-		
-		if ($('#ys-banned').length == 0) {
+		}
+
+		if ($('#ys-banned').length === 0) {
 			$('#ys-input-message')[0].blur();
 			$('#ys-posts').append('<div id="ys-banned"><span>You\'re banned. Click <a href="#" id="ys-unban-self">here</a> to unban yourself if you\'re an admin. If you\'re not, go <a href="' + this.options.yPath + 'cp/index.php" id="ys-banned-cp-link">log in</a>!</span></div>');
 
@@ -411,14 +415,15 @@ YShout.prototype = {
 			
 			$('#ys-unban-self').click(function() {
 				self.ajax(function(json) {
-					if (!json.error)
+					if (!json.error) {
 						self.unbanned();
-					 else if (json.error == 'admin')
+					} else if (json.error === 'admin') {
 						alert('You can only unban yourself if you\'re an admin.');
+					}
 				}, { reqType: 'unbanself' });
 				return false;
 			});
-		}		
+		}
 	},
 
 	unbanned: function() {
@@ -452,9 +457,9 @@ YShout.prototype = {
 			var d = date(ts);
 			var h = d.getHours(), m = d.getMinutes();
 
-			if (self.prefs.timestamp == 12) {
+			if (self.prefs.timestamp === 12) {
 				h = (h > 12 ? h - 12 : h);
-				if (h == 0) h = 12;
+				if (h === 0) { h = 12; }
 			}
 
 			return pad(h) + ':' + pad(m);
@@ -463,15 +468,15 @@ YShout.prototype = {
 		var dateStr = function(ts) {
 			var t = date(ts);
 
-		  var Y = t.getFullYear();
-		  var M = t.getMonth();
-		  var D = t.getDay();
-		  var d = t.getDate();
-		  var day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][D];
-		  var mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-		             'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][M];
+			var Y = t.getFullYear();
+			var M = t.getMonth();
+			var D = t.getDay();
+			var d = t.getDate();
+			var day = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][D];
+			var mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+						'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][M];
 
-		  return day + ' ' + mon + '. ' + d + ', ' + Y;
+			return day + ' ' + mon + '. ' + d + ', ' + Y;
 		};
 
 		var self = this;
@@ -488,18 +493,19 @@ YShout.prototype = {
 				(this.prefs.timestamp> 0 ? '<span class="ys-post-timestamp">' + time(post.timestamp) + '</span> ' : '') +
 				'<span class="ys-post-nickname">' + post.nickname + this.prefs.nicknameSeparator + '</span> ' +
 				'<span class="ys-post-message">' + post.message + '</span> ' +
-				'<span class="ys-post-info' + (this.prefs.info == 'overlay' ? ' ys-info-overlay' : ' ys-info-inline') + '">' + (post.adminInfo ? '<em>IP:</em> ' + post.adminInfo.ip + ', ' : '') + '<em>Posted:</em> ' + dateStr(post.timestamp) + ' at ' + time(post.timestamp)  + '.</span>' +
+				'<span class="ys-post-info' + (this.prefs.info === 'overlay' ? ' ys-info-overlay' : ' ys-info-inline') + '">' + (post.adminInfo ? '<em>IP:</em> ' + post.adminInfo.ip + ', ' : '') + '<em>Posted:</em> ' + dateStr(post.timestamp) + ' at ' + time(post.timestamp)  + '.</span>' +
 				'<span class="ys-post-actions"><a title="Show post information" class="ys-info-link" href="#">Info</a>'  + (post.adminInfo ? ' | <a title="Delete post" class="ys-delete-link" href="#">Delete</a> | ' + (post.banned ? '<a title="Unban user" class="ys-ban-link" href="#">Unban</a>' : '<a title="Ban user" class="ys-ban-link" href="#">Ban</a>') : '') + '</span>' +
 			'</div>';
-		if (this.prefs.inverse) $('#ys-posts').prepend(html);
-		else $('#ys-posts').append(html);
+		if (this.prefs.inverse) { $('#ys-posts').prepend(html); }
+		else { $('#ys-posts').append(html); }
 		
 		this.p.push(post);
 
 		$('#' + id)
 			.find('.ys-post-nickname').click(function() {
-				if (post.adminInfo)
+				if (post.adminInfo) {
 					self.findBySame(post.adminInfo.ip);
+				}
 			}).end()
 			.find('.ys-info-link').toggle(
 				function() { self.showInfo.apply(self, [id, this]); return false; },
@@ -515,22 +521,24 @@ YShout.prototype = {
 	
 	showInfo: function(id, el) {
 		var jEl = $('#' + id + ' .ys-post-info');
-		if (this.prefs.info == 'overlay')
+		if (this.prefs.info === 'overlay') {
 			jEl.css('display', 'block').fadeIn(this.animSpeed);
-		else
+		} else {
 			jEl.slideDown(this.animSpeed);
+		}
 		
-		el.innerHTML ='Close Info'
+		el.innerHTML = 'Close Info';
 		return false;
 	},
 	
 	hideInfo: function(id, el) {
 		var jEl = $('#' + id + ' .ys-post-info');
-		if (this.prefs.info == 'overlay')
+		if (this.prefs.info === 'overlay') {
 			jEl.fadeOut(this.animSpeed);
-		else
+		} else {
 			jEl.slideUp(this.animSpeed);
-			
+		}
+
 		el.innerHTML = 'Info';
 		return false;
 	}, 
@@ -558,26 +566,24 @@ YShout.prototype = {
 						return;
 					}
 					//alert('p: ' + this.p + ' / ' + this.p.length);
-					if (json.bannedSelf)
+					if (json.bannedSelf) {
 						self.banned(); // ?
-						
-					else 						
+					} else {
 						$.each(self.p, function(i) {
-							if (this.adminInfo && this.adminInfo.ip == post.adminInfo.ip) 
+							if (this.adminInfo && this.adminInfo.ip === post.adminInfo.ip) {
 									$('#' + this.id)
 										.addClass('ys-banned-post')
 										.find('.ys-ban-link').html('Unban');
+							}
 						});
-						
+					}
 				}, pars);
 				
 				link.innerHTML = 'Banning...';
 				return false;
-				break;
 			
 			case 'Banning...':
 				return false;
-				break;
 			
 			case 'Unban':
 				var pars = {
@@ -591,26 +597,24 @@ YShout.prototype = {
 							case 'admin':
 								self.error('You\'re not an admin. Log in through the Admin CP to unban people.');
 								return;
-								break;
 						}
 					}
 					
 					$.each(self.p, function(i) {
-						if (this.adminInfo && this.adminInfo.ip == post.adminInfo.ip) 
+						if (this.adminInfo && this.adminInfo.ip === post.adminInfo.ip) {
 							$('#' + this.id)
 								.removeClass('ys-banned-post')
 								.find('.ys-ban-link').html('Ban');
+						}
 					});
 					
 				}, pars);
 	
 				link.innerHTML = 'Unbanning...';
 				return false;
-				break;
 				
 			case 'Unbanning...':
 				return false;
-				break;
 		}
 	},
 	
@@ -618,7 +622,7 @@ YShout.prototype = {
 		var self = this;
 		var link = $('#' + id).find('.ys-delete-link')[0];
 
-		if (link.innerHTML == 'Deleting...') return;
+		if (link.innerHTML === 'Deleting...') { return; }
 	
 		var pars = {
 			reqType: 'delete',
@@ -631,7 +635,6 @@ YShout.prototype = {
 					case 'admin':
 						self.error('You\'re not an admin. Log in through the Admin CP to ban people.');
 						return;
-						break;
 				}
 			}
 			self.reload();
@@ -639,15 +642,15 @@ YShout.prototype = {
 
 		link.innerHTML = 'Deleting...';
 		return false;
-
 	},
 	
 	banSelf: function(reason) {
 		var self = this;
 
 		this.ajax(function(json) {
-			if (json.error == false)
+			if (json.error === false) {
 				self.banned();
+			}
 		}, {
 			reqType: 'banself',
 			nickname: $('#ys-input-nickname').val() 
@@ -711,22 +714,24 @@ YShout.prototype = {
 	truncate: function(clearAll) {
 		var truncateTo = clearAll ? 0 : this.prefs.truncate;
 		var posts = $('#ys-posts .ys-post').length;
-		if (posts <= truncateTo) return;
+		if (posts <= truncateTo) { return; }
 		//alert(this.initializing);
 		if (this.prefs.doTruncate || this.initializing) {
 			var diff = posts - truncateTo;
-			for (var i = 0; i < diff; i++)
+			for (var i = 0; i < diff; i++) {
 				this.p.shift();
+			}
 			
 			//	$('#ys-posts .ys-post:gt(' + truncateTo + ')').remove();
 
-			if (this.prefs.inverse) 
+			if (this.prefs.inverse) {
 				$('#ys-posts .ys-post:gt(' + (truncateTo - 1) + ')').remove();
-				else 
+			} else {
 				$('#ys-posts .ys-post:lt(' + (posts - truncateTo) + ')').remove();
+			}
 		}
 		
-		this.markEnds();		
+		this.markEnds();
 	},
 	
 	markEnds: function() {
@@ -767,11 +772,11 @@ YShout.prototype = {
 	json: function(parse) {
 		this.d('In json: ' + parse);
 		var json = eval('(' + parse + ')');
-		if (!this.checkError(json)) return json;
+		if (!this.checkError(json)) { return json; }
 	},
 
 	checkError: function(json) {
-		if (!json.yError) return false;
+		if (!json.yError) { return false; }
 
 		this.d('Error: ' + json.yError);
 		return true;
@@ -790,10 +795,8 @@ YShout.prototype = {
 			dataType: html ? 'text' : 'json',
 			data: pars,
 			success: function(parse) {
-var arr = [parse];
-
+					var arr = [parse];
 					callback.apply(self, arr);
-	
 			}
 		});
 	},
