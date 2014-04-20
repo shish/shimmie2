@@ -1,4 +1,4 @@
-<?
+<?php
 error_reporting(E_ALL);
 ob_start();
 set_error_handler('errorOccurred');

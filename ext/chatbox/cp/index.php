@@ -1,4 +1,4 @@
-<?
+<?php
 	include 'ajax.php'; 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -33,7 +33,7 @@
 						<span id="login-loading">Loading...</span>
 					</form>
 				</div>
-				<?
+				<?php
 					if (loggedIn()) echo cp();
 				?>
 			</div>
