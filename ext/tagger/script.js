@@ -44,7 +44,7 @@ var Tagger = {
 		var id = "tagger_alert-"+type
 		var t_alert = byId(id);
 		if (t_alert) {
-			if(text == false) {
+			if(text === false) {
 				// remove
 				t_alert.parentNode.removeChild(t_alert);
 			} else {

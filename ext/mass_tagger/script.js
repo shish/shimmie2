@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 function activate_mass_tagger ( image_link ) {
     $(".shm-thumb").each(
         function ( index, block ) {

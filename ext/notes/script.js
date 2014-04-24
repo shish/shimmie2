@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 $(function() {
 	if(window.notes) {
 		$('#main_image').imgNotes({notes: window.notes});
@@ -36,9 +38,9 @@ $(function() {
 });
 		
 function showaddnote (img, area) {
-	imgOffset = $(img).offset();
-	form_left  = parseInt(imgOffset.left) + parseInt(area.x1);
-	form_top   = parseInt(imgOffset.top) + parseInt(area.y1) + parseInt(area.height)+5;
+	var imgOffset = $(img).offset();
+	var form_left  = parseInt(imgOffset.left) + parseInt(area.x1);
+	var form_top   = parseInt(imgOffset.top) + parseInt(area.y1) + parseInt(area.height)+5;
 
 	$('#noteform').css({ left: form_left + 'px', top: form_top + 'px'});
 	$('#noteform').show();
@@ -50,9 +52,9 @@ function showaddnote (img, area) {
 }
 
 function showeditnote (img, area) {
-	imgOffset = $(img).offset();
-	form_left  = parseInt(imgOffset.left) + area.x1;
-	form_top   = parseInt(imgOffset.top) + area.y2;
+	var imgOffset = $(img).offset();
+	var form_left  = parseInt(imgOffset.left) + area.x1;
+	var form_top   = parseInt(imgOffset.top) + area.y2;
 
 	$('#noteEditForm').css({ left: form_left + 'px', top: form_top + 'px'});
 	$('#noteEditForm').show();
