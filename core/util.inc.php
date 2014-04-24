@@ -167,8 +167,11 @@ function parse_shorthand_int($limit) {
 		$value = $m[1];
 		if (isset($m[2])) {
 			switch(strtolower($m[2])) {
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'g': $value *= 1024;  // fall through
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'm': $value *= 1024;  // fall through
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'k': $value *= 1024; break;
 				default: $value = -1;
 			}
