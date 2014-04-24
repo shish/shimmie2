@@ -1,4 +1,4 @@
-<?
+<?php
 
 	function cookie($name, $data) {
 		return setcookie($name, $data, time() + 60 * 60 * 24 * 30, '/');

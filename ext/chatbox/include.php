@@ -1,4 +1,4 @@
-<?
+<?php
 	$null = null;
 	include 'php/filestorage.class.php';
 	include 'preferences.php';

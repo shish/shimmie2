@@ -1,4 +1,4 @@
-<?
+<?php
 	class AjaxCall {
 		function AjaxCall($log = null) {
 			header('Content-type: application/json');

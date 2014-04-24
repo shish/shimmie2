@@ -83,14 +83,14 @@ if (isset($_POST['p'])) {
 }
 
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<title>YShout: History</title>
-		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 		<script type="text/javascript" src="js/history.js"></script>
 
 		<link rel="stylesheet" href="../example/css/example.yshout.css" />
@@ -108,13 +108,13 @@ if (isset($_POST['p'])) {
 		<div id="top">
 			<h1>YShout.History</h1>
 			<div id="controls">
-				<? if($admin) : ?>
+				<?php if($admin) : ?>
 					<a id="clear-log" href="#">Clear this log</a>, or
 					<a id="clear-logs" href="#">Clear all logs</a>.
-				<? endif; ?>
+				<?php endif; ?>
 
 				<select id="log">
-					<?
+					<?php
 						for ($i = 1; $i <= $prefs['logs']; $i++)
 							echo '<option' . ($log == $i ? ' selected' : '') . ' rel="' . $i . '">Log ' . $i . '</option>' . "\n";
 					?>

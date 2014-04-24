@@ -1,4 +1,4 @@
-<?
+<?php
 	// If you want to change the nickname, the line below is the one to modify.
 	// Simply set $overrideNickname to whatever variable you want to appear as the nickname,
 	// or leave it null to use the set nicknames.
