@@ -6,8 +6,8 @@ class CustomCommentListTheme extends CommentListTheme {
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
 		global $config, $page;
 
-		$prev = $page_number - 1;
-		$next = $page_number + 1;
+		//$prev = $page_number - 1;
+		//$next = $page_number + 1;
 
 		$page_title = $config->get_string('title');
 		$page->set_title($page_title);
@@ -63,9 +63,9 @@ class CustomCommentListTheme extends CommentListTheme {
 		$tfe = new TextFormattingEvent($comment->comment);
 		send_event($tfe);
 
-		$i_uid = int_escape($comment->owner_id);
+		//$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
-		$h_poster_ip = html_escape($comment->poster_ip);
+		//$h_poster_ip = html_escape($comment->poster_ip);
 		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
