@@ -49,7 +49,7 @@ class CustomCommentListTheme extends CommentListTheme {
 
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
-				$hidden = $comment_count - $comment_limit;
+				//$hidden = $comment_count - $comment_limit;
 				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
 				$comments = array_slice($comments, -$comment_limit);
 			}
@@ -93,9 +93,9 @@ class CustomCommentListTheme extends CommentListTheme {
 		$tfe = new TextFormattingEvent($comment->comment);
 		send_event($tfe);
 
-		$i_uid = int_escape($comment->owner_id);
+		//$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
-		$h_poster_ip = html_escape($comment->poster_ip);
+		//$h_poster_ip = html_escape($comment->poster_ip);
 		$h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
@@ -107,7 +107,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$h_del = $user->can("delete_comment") ?
 			' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
 			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
-		$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
+		//$h_imagelink = $trim ? "<a href='".make_link("post/view/$i_image_id")."'>&gt;&gt;&gt;</a>\n" : "";
 		if($trim) {
 			return "<p class='comment'>$h_userlink $h_del<br/>$h_posted<br/>$h_comment</p>";
 		}
