@@ -20,9 +20,9 @@ var DragHandler = {
         oElem.onmousedown = DragHandler._dragBegin;
 
         // callbacks
-        oElem.dragBegin = new Function();
-        oElem.drag = new Function();
-        oElem.dragEnd = new Function();
+        oElem.dragBegin = function () {};
+        oElem.drag = function () {};
+        oElem.dragEnd = function () {};
 
         return oElem;
     },
