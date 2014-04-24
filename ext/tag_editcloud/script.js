@@ -44,5 +44,5 @@ function tageditcloud_toggle_tag(ele,fullTag) {
     }
 
     taglist.value = tags.join(' ');
-    document.getElementById('tags').focus();
+    document.getElementById('tag_editor').focus();
 }
