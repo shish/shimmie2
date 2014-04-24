@@ -56,13 +56,13 @@ class BaseThemelet {
 
 		$custom_classes = "";
 		if(class_exists("Relationships")){
-			if($image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
-			if($image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
+			if(property_exists('Image', 'parent_id') && $image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
+			if(property_exists('Image', 'has_children') && $image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
 		}
 
 		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-post-id='$i_id'>".
-		       "<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>".
-			   "</a>\n";
+				"<img id='thumb_$i_id' title='$h_tip' alt='$h_tip' height='{$tsize[1]}' width='{$tsize[0]}' src='$h_thumb_link'>".
+				"</a>\n";
 	}
 
 
