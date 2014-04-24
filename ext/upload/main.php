@@ -15,9 +15,9 @@ class DataUploadEvent extends Event {
 	/**
 	 * Some data is being uploaded.
 	 * This should be caught by a file handler.
-	 * @param $user The user uploading the data.
-	 * @param $tmpname The temporary file used for upload.
-	 * @param $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
+	 *  -- Removed: param $user The user uploading the data.
+	 * @param $tmpname string The temporary file used for upload.
+	 * @param $metadata array Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
@@ -59,7 +59,6 @@ class Upload extends Extension {
 		else {
 			$this->is_full = $free_num < MIN_FREE_SPACE;
 		}
-
 	}
 
 	public function onPostListBuilding(PostListBuildingEvent $event) {
@@ -235,8 +234,8 @@ class Upload extends Extension {
 	 *
 	 * TODO: Make these messages user/admin editable
 	 *
-	 * @param $error_code PHP error code (int)
-	 * @retval String
+	 * @param $error_code integer PHP error code
+	 * @return String
 	 */
 	private function upload_error_message($error_code) {
 		switch ($error_code) {
@@ -258,10 +257,14 @@ class Upload extends Extension {
 				return 'Unknown upload error';
 		}
 	}
-	
+
 	/**
 	 * Handle an upload.
-	 * @retval bool TRUE on upload successful.
+	 * @param $file
+	 * @param $tags
+	 * @param $source
+	 * @param string $replace
+	 * @return bool TRUE on upload successful.
 	 */
 	private function try_upload($file, $tags, $source, $replace='') {
 		global $page, $config, $user;
@@ -310,7 +313,11 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an transload.
-	 * @retval bool TRUE on transload successful.
+	 * @param $url
+	 * @param $tags
+	 * @param $source
+	 * @param string $replace
+	 * @return bool TRUE on transload successful.
 	 */
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page, $config, $user;
