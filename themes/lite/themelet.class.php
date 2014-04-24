@@ -66,4 +66,4 @@ class Themelet extends BaseThemelet {
 			</div>";
 	}
 }
-?>
+

@@ -71,4 +71,4 @@ class NavBlock extends Block {
 		parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
 	}
 }
-?>
+

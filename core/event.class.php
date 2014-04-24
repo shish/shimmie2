@@ -265,4 +265,4 @@ class LogEvent extends Event {
 		$this->time = time();
 	}
 }
-?>
+

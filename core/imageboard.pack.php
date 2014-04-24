@@ -1143,4 +1143,4 @@ function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	}
 }
 
-?>
+

@@ -116,4 +116,4 @@ Copyright (C) <a href="'.$this->sitedomain.'">'.$this->sitename.'</a><br />
 		return $sent;
 	}
 }
-?>
+

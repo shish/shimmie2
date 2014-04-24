@@ -8,4 +8,4 @@ class SCoreException extends Exception {}
  * A fairly common, generic exception
  */
 class PermissionDeniedException extends SCoreException {}
-?>
+

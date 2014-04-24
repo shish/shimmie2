@@ -46,4 +46,5 @@ _d("EXTRA_EXTS", "");        // optional extra extensions
  */
 _d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
 _d("ENABLED_EXTS", CORE_EXTS.",".EXTRA_EXTS);
-?>
+
+

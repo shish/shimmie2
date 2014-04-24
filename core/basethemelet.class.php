@@ -115,4 +115,4 @@ class BaseThemelet {
 				.'<br>&lt;&lt; '.$pages_html.' &gt;&gt;';
 	}
 }
-?>
+

@@ -164,4 +164,4 @@ new UserClass("hellbanned", "user", array(
 ));
 
 @include_once "data/config/user-classes.conf.php";
-?>
+

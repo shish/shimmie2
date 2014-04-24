@@ -224,4 +224,4 @@ class MockConfig extends HardcodeConfig {
 		parent::__construct($config);
 	}
 }
-?>
+

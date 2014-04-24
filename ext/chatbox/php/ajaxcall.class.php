@@ -272,8 +272,8 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);		
+			echo jsonEncode($send);
 		}
 	}
 
-?>
+

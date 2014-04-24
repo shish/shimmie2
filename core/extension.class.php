@@ -231,4 +231,4 @@ abstract class DataHandlerExtension extends Extension {
 	abstract protected function create_image_from_data($filename, $metadata);
 	abstract protected function create_thumb($hash);
 }
-?>
+

@@ -96,4 +96,4 @@ class CustomUserPageTheme extends UserPageTheme {
 		parent::display_user_page($duser, $stats);
 	}
 }
-?>
+

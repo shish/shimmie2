@@ -553,4 +553,4 @@ class MockDatabase extends Database {
 	public function create_table($name, $def) {}
 	public function connect_engine() {}
 }
-?>
+

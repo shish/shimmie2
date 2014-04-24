@@ -1461,4 +1461,4 @@ function _end_coverage() {
 		file_put_contents("$absolute_path/$t.$n.log", gzdeflate(serialize(xdebug_get_code_coverage())));
 	}
 }
-?>
+

@@ -319,4 +319,4 @@ class UploadTheme extends Themelet {
 		";
 	}
 }
-?>
+

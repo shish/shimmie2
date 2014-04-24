@@ -388,4 +388,4 @@ class Upload extends Extension {
 	}
 // }}}
 }
-?>
+

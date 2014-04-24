@@ -218,4 +218,4 @@ class MockUser extends User {
 		parent::__construct($row);
 	}
 }
-?>
+
