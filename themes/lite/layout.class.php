@@ -82,6 +82,8 @@ class Layout {
 		// hack
 		$qp = explode("/", ltrim(@$_GET["q"], "/"));
 		$hw = class_exists("Wiki");
+		$cs = "";
+
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -145,12 +147,12 @@ class Layout {
 		$debug = get_debug_info();
 
 		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
-		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
+		//$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
-		$wrapper = "";
+		/*$wrapper = "";
 		if(strlen($page->heading) > 100) {
 			$wrapper = ' style="height: 3em; overflow: auto;"';
-		}
+		}*/
 		if($page->left_enabled==false) {
 			$left_block_html = "";
 			$main_block_html = "<article id='body_noleft'>$main_block_html</article>";
@@ -241,7 +243,7 @@ EOD;
 		$re1='.*?';
 		$re2='((?:[a-z][a-z_]+))';
 
-		if ($c=preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
+		if (preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
 			$url=$matches[1][0];
 		}
 		
