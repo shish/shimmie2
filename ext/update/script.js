@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 $(function() {
 	if($('#updatecheck').length !== 0){
 		$.getJSON('https://api.github.com/repos/shish/shimmie2/commits', function(data){

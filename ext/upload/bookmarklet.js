@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 /* Imageboard to Shimmie */
 // This should work with "most" sites running Danbooru/Gelbooru/Shimmie
 // maxsize, supext, CA are set inside the bookmarklet (see theme.php)
