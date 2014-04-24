@@ -40,7 +40,7 @@ class Image {
 	public $height, $width;
 	public $hash, $filesize;
 	public $filename, $ext;
-	public $owner_ip;
+	public $owner_id, $owner_ip;
 	public $posted;
 	public $source;
 	public $locked;
