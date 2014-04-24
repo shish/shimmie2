@@ -682,8 +682,8 @@ class Image {
 			else {
 				$expansions = Tag::resolve_wildcard($term);
 				if($expansions && $positive) $positive_tag_count++;
-				foreach($expansions as $term) {
-					$tag_querylets[] = new TagQuerylet($term, $positive);
+				foreach($expansions as $expanded_term) {
+					$tag_querylets[] = new TagQuerylet($expanded_term, $positive);
 				}
 			}
 		}
