@@ -382,7 +382,7 @@ YShout.prototype = {
 				same.push(this.p[i]);
 			}
 		}
-		
+
 		for (var j = 0; j < same.length; j++) {
 			$('#' + same[j].id).fadeTo(this.animSpeed, 0.8).fadeTo(this.animSpeed, 1);
 		}
