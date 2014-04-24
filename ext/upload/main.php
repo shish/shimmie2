@@ -42,6 +42,9 @@ class UploadException extends SCoreException {}
  * This also includes transloaded files as well.
  */
 class Upload extends Extension {
+
+	public $is_full;
+
 	// early, so it can stop the DataUploadEvent before any data handlers see it
 	public function get_priority() {return 40;}
 
