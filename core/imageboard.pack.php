@@ -36,14 +36,14 @@ require_once "lib/flexihash.php";
  * sound file, or any other supported upload type.
  */
 class Image {
-	var $id = null;
-	var $height, $width;
-	var $hash, $filesize;
-	var $filename, $ext;
-	var $owner_ip;
-	var $posted;
-	var $source;
-	var $locked;
+	public $id = null;
+	public $height, $width;
+	public $hash, $filesize;
+	public $filename, $ext;
+	public $owner_ip;
+	public $posted;
+	public $source;
+	public $locked;
 
 	/**
 	 * One will very rarely construct an image directly, more common
