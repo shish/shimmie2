@@ -8,6 +8,63 @@
 * 	       some other sites, packaged in a light blue color.
 */
 class Layout {
+
+	/**
+	 * A handy function which does exactly what it says in the method name
+	 */
+	private function block_to_html($block, $hidable=false, $salt="") {
+		$h = $block->header;
+		$b = $block->body;
+		$i = str_replace(' ', '_', $h) . $salt;
+		$html = "<section id='$i'>";
+		if(!is_null($h)) {
+			if($salt == "main") {
+				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
+			} else {
+				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
+			}
+		}
+		if(!is_null($b)) {
+			if($salt =="main") {
+				$html .= "<div class='blockbody'>$b</div>";
+			}
+			else {
+				$html .= "
+					<div class='navside tab'>$b</div>
+				";
+			}
+		}
+		$html .= "</section>";
+		return $html;
+	}
+
+	private function navlinks($link, $desc, $pages_matched) {
+		/**
+		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+		 */
+		$html = null;
+		$url = ltrim($_GET['q'], "/");
+
+		$re1='.*?';
+		$re2='((?:[a-z][a-z_]+))';
+
+		if (preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
+			$url=$matches[1][0];
+		}
+
+		$count_pages_matched = count($pages_matched);
+
+		for($i=0; $i < $count_pages_matched; $i++) {
+			if($url == $pages_matched[$i]) {
+				$html = "<a class='tab-selected' href='$link'>$desc</a>";
+			}
+		}
+
+		if(is_null($html)) {$html = "<a class='tab' href='$link'>$desc</a>";}
+
+		return $html;
+	}
+
 	/**
 	 * turns the Page into HTML
 	 */
@@ -203,61 +260,4 @@ class Layout {
 </html>
 EOD;
 	}
-
-	/**
-	 * A handy function which does exactly what it says in the method name
-	 */
-	private function block_to_html($block, $hidable=false, $salt="") {
-		$h = $block->header;
-		$b = $block->body;
-		$i = str_replace(' ', '_', $h) . $salt;
-		$html = "<section id='$i'>";
-		if(!is_null($h)) {
-			if($salt == "main") {
-				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
-			} else {
-				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
-			}
-		}
-		if(!is_null($b)) {
-			if($salt =="main") {
-				$html .= "<div class='blockbody'>$b</div>";
-			}
-			else {
-				$html .= "
-					<div class='navside tab'>$b</div>
-				";
-			}
-		}
-		$html .= "</section>";
-		return $html;
-	}
-	
-	private function navlinks($link, $desc, $pages_matched) {
-	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
-	 */
-		$html = null;
-		$url = ltrim($_GET['q'], "/");
-
-		$re1='.*?';
-		$re2='((?:[a-z][a-z_]+))';
-
-		if (preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
-			$url=$matches[1][0];
-		}
-		
-		$count_pages_matched = count($pages_matched);
-		
-		for($i=0; $i < $count_pages_matched; $i++) {
-			if($url == $pages_matched[$i]) {
-				$html = "<a class='tab-selected' href='$link'>$desc</a>";
-			}
-		}
-		
-		if(is_null($html)) {$html = "<a class='tab' href='$link'>$desc</a>";}
-		
-		return $html;
-	}
 }
-?>
