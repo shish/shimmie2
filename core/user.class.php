@@ -11,11 +11,11 @@ function _new_user($row) {
  * The currently logged in user will always be accessable via the global variable $user
  */
 class User {
-	var $id;
-	var $name;
-	var $email;
-	var $join_date;
-	var $passhash;
+	public $id;
+	public $name;
+	public $email;
+	public $join_date;
+	public $passhash;
 
 	/* @var UserClass */
 	var $class;

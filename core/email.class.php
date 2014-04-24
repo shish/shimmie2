@@ -4,17 +4,17 @@ class Email {
 	/**
 	 * A generic email.
 	 */
-	var $to;
-	var $subject;
-	var $header;
-	var $style;
-	var $header_img;
-	var $sitename;
-	var $sitedomain;
-	var $siteemail;
-	var $date;
-	var $body;
-	var $footer;
+	public $to;
+	public $subject;
+	public $header;
+	public $style;
+	public $header_img;
+	public $sitename;
+	public $sitedomain;
+	public $siteemail;
+	public $date;
+	public $body;
+	public $footer;
 		
 	public function __construct($to, $subject, $header, $body) {
 		global $config;

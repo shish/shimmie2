@@ -2,9 +2,9 @@
 $_user_classes = array();
 
 class UserClass {
-	var $name = null;
-	var $parent = null;
-	var $abilities = array();
+	public $name = null;
+	public $parent = null;
+	public $abilities = array();
 
 	public function __construct($name, $parent=null, $abilities=array()) {
 		global $_user_classes;

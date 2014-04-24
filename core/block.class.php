@@ -8,14 +8,14 @@ class Block {
 	 *
 	 * @retval string
 	 */
-	var $header;
+	public $header;
 
 	/**
 	 * The content
 	 *
 	 * @retval string
 	 */
-	var $body;
+	public $body;
 
 	/** 
 	 * Where the block should be placed. The default theme supports
@@ -23,7 +23,7 @@ class Block {
 	 *
 	 * @retval string
 	 */
-	var $section;
+	public $section;
 
 	/**
 	 * How far down the section the block should appear, higher
@@ -32,12 +32,12 @@ class Block {
 	 *
 	 * @retval int
 	 */
-	var $position;
+	public $position;
 
 	/**
 	 *
 	 */
-	var $id;
+	public $id;
 
 	public function __construct($header, $body, /*string*/ $section="main", /*int*/ $position=50, $id=null) {
 		$this->header = $header;

@@ -81,7 +81,7 @@
  */
 abstract class Extension {
 	/** this theme's Themelet object */
-	var $theme;
+	public $theme;
 
 	/** @private */
 	var $_child;

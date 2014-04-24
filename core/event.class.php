@@ -26,9 +26,9 @@ class InitExtEvent extends Event {}
  * $event->get_arg(0) = "42"
  */
 class PageRequestEvent extends Event {
-	var $args;
-	var $arg_count;
-	var $part_count;
+	public $args;
+	public $arg_count;
+	public $part_count;
 
 	public function __construct($path) {
 		global $config;
