@@ -25,7 +25,7 @@ class Chatbox extends Extension {
 					nickname = '{$user->name}';
 					new YShout({ yPath: '$yPath' });
 				</script>
-		", 5000);
+		", 500);
 
 		// loads the chatbox at the set location    
 		$html = "<div id=\"yshout\"></div>";
