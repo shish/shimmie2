@@ -84,4 +84,4 @@ var DragHandler = {
         DragHandler._oElem = null;
     }
 
-}
+};
