@@ -6,4 +6,4 @@ class CustomPage extends Page {
 		$this->left_enabled = false;
 	}
 }
-?>
+

@@ -11,4 +11,4 @@ class CustomExtManagerTheme extends ExtManagerTheme {
 	}
 }
 
-?>
+

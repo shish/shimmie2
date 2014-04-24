@@ -100,4 +100,4 @@ catch(Exception $e) {
 	_fatal_error($e);
 	ctx_log_ender();
 }
-?>
+

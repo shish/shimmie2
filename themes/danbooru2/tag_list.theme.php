@@ -6,4 +6,4 @@ class CustomTagListTheme extends TagListTheme {
 		parent::display_page($page);
 	}
 }
-?>
+

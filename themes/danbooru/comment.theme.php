@@ -121,4 +121,4 @@ class CustomCommentListTheme extends CommentListTheme {
 		}
 	}
 }
-?>
+

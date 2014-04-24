@@ -48,4 +48,4 @@ class Themelet extends BaseThemelet {
 		return "<div id='paginator'>$prev_html $first_html $pdots $pages_html $ndots $last_html $next_html</div>";
 	}
 }
-?>
+

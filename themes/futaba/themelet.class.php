@@ -50,4 +50,4 @@ class Themelet extends BaseThemelet {
 		return "<p class='paginator'>$prev_html $pages_html $next_html</p>";
 	}
 }
-?>
+

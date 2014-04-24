@@ -51,4 +51,4 @@ class CustomViewImageTheme extends ViewImageTheme {
 		return $html;
 	}
 }
-?>
+

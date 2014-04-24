@@ -89,4 +89,4 @@ class CustomCommentListTheme extends CommentListTheme {
 		}
 	}
 }
-?>
+

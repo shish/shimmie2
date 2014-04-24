@@ -64,4 +64,4 @@ class CustomViewImageTheme extends ViewImageTheme {
 		return "$h_search";
 	}
 }
-?>
+

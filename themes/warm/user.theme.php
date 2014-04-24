@@ -27,4 +27,4 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("Login", $html, "head", 90));
 	}
 }
-?>
+
