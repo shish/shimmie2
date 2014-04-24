@@ -63,7 +63,7 @@ class PageRequestEvent extends Event {
 	 *
 	 * If it matches, store the remaining path elements in $args
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function page_matches(/*string*/ $name) {
 		$parts = explode("/", $name);
@@ -85,7 +85,7 @@ class PageRequestEvent extends Event {
 	/**
 	 * Get the n th argument of the page request (if it exists.)
 	 * @param $n integer
-	 * @retval The argmuent (string) or NULL
+	 * @return The argmuent (string) or NULL
 	 */
 	public function get_arg(/*int*/ $n) {
 		$offset = $this->part_count + $n;
@@ -99,7 +99,7 @@ class PageRequestEvent extends Event {
 
 	/**
 	 * Returns the number of arguments the page request has.
-	 * @retval int
+	 * @return int
 	 */
 	public function count_args() {
 		return (int)($this->arg_count - $this->part_count);
@@ -227,28 +227,28 @@ class LogEvent extends Event {
 	/**
 	 * a category, normally the extension name
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	var $section;
 
 	/**
 	 * See python...
 	 *
-	 * @retval int
+	 * @return int
 	 */
 	var $priority = 0;
 
 	/**
 	 * Free text to be logged
 	 *
-	 * @retval text
+	 * @return text
 	 */
 	var $message;
 
 	/**
 	 * The time that the event was created
 	 *
-	 * @retval int
+	 * @return int
 	 */
 	var $time;
 

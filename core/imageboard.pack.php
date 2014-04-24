@@ -68,7 +68,8 @@ class Image {
 	/**
 	 * Find an image by ID
 	 *
-	 * @retval Image
+	 * @param $id
+	 * @return Image
 	 */
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
@@ -80,7 +81,8 @@ class Image {
 	/**
 	 * Find an image by hash
 	 *
-	 * @retval Image
+	 * @param $hash
+	 * @return Image
 	 */
 	public static function by_hash(/*string*/ $hash) {
 		assert(is_string($hash));
@@ -92,7 +94,8 @@ class Image {
 	/**
 	 * Pick a random image out of a set
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @return Image
 	 */
 	public static function by_random($tags=array()) {
 		assert(is_array($tags));
@@ -107,7 +110,11 @@ class Image {
 	/**
 	 * Search for an array of images
 	 *
-	 * @retval Array
+	 * @param $start
+	 * @param $limit
+	 * @param array $tags
+	 * @throws SCoreException
+	 * @return Array
 	 */
 	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));
@@ -192,7 +199,9 @@ class Image {
 	 * Rather than simply $this_id + 1, one must take into account
 	 * deleted images and search queries
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @param bool $next
+	 * @return Image
 	 */
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
@@ -224,7 +233,8 @@ class Image {
 	/**
 	 * The reverse of get_next
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @return Image
 	 */
 	public function get_prev($tags=array()) {
 		return $this->get_next($tags, false);
@@ -233,7 +243,7 @@ class Image {
 	/**
 	 * Find the User who owns this Image
 	 *
-	 * @retval User
+	 * @return User
 	 */
 	public function get_owner() {
 		return User::by_id($this->owner_id);
@@ -271,7 +281,7 @@ class Image {
 	/**
 	 * Get the URL for the full size image
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_image_link() {
 		global $config;
@@ -296,7 +306,7 @@ class Image {
 	 * Get a short link to the full size image
 	 *
 	 * @deprecated
-	 * @retval string
+	 * @return string
 	 */
 	public function get_short_link() {
 		global $config;
@@ -306,7 +316,7 @@ class Image {
 	/**
 	 * Get the URL for the thumbnail
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_thumb_link() {
 		global $config;
@@ -331,7 +341,7 @@ class Image {
 	 * Get the tooltip for this image, formatted according to the
 	 * configured template
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_tooltip() {
 		global $config;
@@ -360,7 +370,7 @@ class Image {
 	/**
 	 * Figure out where the full size image is on disk
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_image_filename() {
 		return warehouse_path("images", $this->hash);
@@ -369,7 +379,7 @@ class Image {
 	/**
 	 * Figure out where the thumbnail is on disk
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_thumb_filename() {
 		return warehouse_path("thumbs", $this->hash);
@@ -378,7 +388,7 @@ class Image {
 	/**
 	 * Get the original filename
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_filename() {
 		return $this->filename;
@@ -387,7 +397,7 @@ class Image {
 	/**
 	 * Get the image's mime type
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_mime_type() {
 		return getMimeType($this->get_image_filename(), $this->get_ext());
@@ -396,7 +406,7 @@ class Image {
 	/**
 	 * Get the image's filename extension
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_ext() {
 		return $this->ext;
@@ -405,7 +415,7 @@ class Image {
 	/**
 	 * Get the image's source URL
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_source() {
 		return $this->source;
@@ -426,7 +436,7 @@ class Image {
 
 	/**
 	 * Check if the image is locked.
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_locked() {
 		return $this->locked;
@@ -542,7 +552,9 @@ class Image {
 	/**
 	 * Someone please explain this
 	 *
-	 * @retval string
+	 * @param $tmpl
+	 * @param string $_escape
+	 * @return string
 	 */
 	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
@@ -1104,7 +1116,7 @@ class Tag {
 
 /**
  * Move a file from PHP's temporary area into shimmie's image storage
- * heirachy, or throw an exception trying
+ * hierarchy, or throw an exception trying
  */
 function move_upload_to_archive(DataUploadEvent $event) {
 	$target = warehouse_path("images", $event->hash);
@@ -1116,7 +1128,7 @@ function move_upload_to_archive(DataUploadEvent $event) {
 }
 
 /**
- * Given a full size pair of dimentions, return a pair scaled down to fit
+ * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {

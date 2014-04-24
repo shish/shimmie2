@@ -108,7 +108,7 @@ class User {
 	/**
 	 * Test if this user is anonymous (not logged in)
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_anonymous() {
 		global $config;
@@ -118,7 +118,7 @@ class User {
 	/**
 	 * Test if this user is logged in
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_logged_in() {
 		global $config;
@@ -128,7 +128,7 @@ class User {
 	/**
 	 * Test if this user is an administrator
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_admin() {
 		return ($this->class->name === "admin");
@@ -157,7 +157,7 @@ class User {
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
 	 * a local file, a remote file, a gravatar, a something else, etc
-	 * @retval String of HTML
+	 * @return String of HTML
 	 */
 	public function get_avatar_html() {
 		// FIXME: configurable
@@ -186,7 +186,7 @@ class User {
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
 	 *
-	 * @retval String containing auth token (MD5sum)
+	 * @return String containing auth token (MD5sum)
 	 */
 	public function get_auth_token() {
 		global $config;

@@ -259,5 +259,5 @@ class Layout {
 	</body>
 </html>
 EOD;
-	}
-}
+	} /* end of function display_page() */
+} /* end of class Layout */
