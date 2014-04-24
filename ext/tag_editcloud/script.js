@@ -1,16 +1,18 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 Array.prototype.editcloud_contains = function (ele) {
     for (var i = 0; i < this.length; i++) {
-        if (this[i] == ele) {
+        if (this[i] === ele) {
             return true;
         }
     }
     return false;
 };
 Array.prototype.editcloud_remove = function (ele) {
-    var arr = new Array();
+    var arr = [];
     var count = 0;
     for (var i = 0; i < this.length; i++) {
-        if (this[i] != ele) {
+        if (this[i] !== ele) {
             arr[count] = this[i];
             count++;
         }
@@ -25,8 +27,8 @@ function tageditcloud_toggle_extra(hide) {
 	}
 
 	var el = document.getElementById('tagcloud_extra');
-	el.style.display = (el.style.display != 'none' ? 'none' : '' );
-	hide.innerHTML = (el.style.display != 'none' ? 'show fewer tags' : hide_text );
+	el.style.display = (el.style.display !== 'none' ? 'none' : '' );
+	hide.innerHTML = (el.style.display !== 'none' ? 'show fewer tags' : hide_text );
 }
 
 function tageditcloud_toggle_tag(ele,fullTag) {

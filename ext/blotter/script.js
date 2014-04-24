@@ -11,7 +11,7 @@ $(document).ready(function() {
 			}
 		});
 	});
-	if($.cookie("ui-blotter2-hidden") == 'true') {
+	if($.cookie("ui-blotter2-hidden") === 'true') {
 		$(".shm-blotter2").hide();
 	}
 });
