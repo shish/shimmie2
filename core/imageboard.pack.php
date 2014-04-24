@@ -41,7 +41,7 @@ class Image {
 	public $hash, $filesize;
 	public $filename, $ext;
 	public $owner_id, $owner_ip;
-	public $posted;
+	public $posted, $posted_timestamp;
 	public $source;
 	public $locked;
 
@@ -54,7 +54,7 @@ class Image {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name
 				$name = str_replace("images.", "", $name);
-				$this->$name = $value; // hax
+				$this->$name = $value; // hax, this is likely the cause of much scrutinizer-ci complaints.
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
 			$this->locked = bool_escape($this->locked);
