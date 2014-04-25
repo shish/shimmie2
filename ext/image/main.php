@@ -418,7 +418,7 @@ class ImageIO extends Extension {
 			inspected later by an admin?
 		*/
 		log_debug("image", "Removing image with hash ".$existing->hash);
-		$existing->remove_image_only();	// Actually delete the old image file from disk
+		$existing->remove_image_only(); // Actually delete the old image file from disk
 		
 		// Update the data in the database.
 		$database->Execute(

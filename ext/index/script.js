@@ -1,3 +1,5 @@
+/*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true, jquery:true */
+
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || "").split(" ");
 	var needs_refresh = false;
