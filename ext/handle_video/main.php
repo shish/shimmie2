@@ -79,4 +79,4 @@ class VideoFileHandler extends DataHandlerExtension {
 			return FALSE;
 	}
 }
-?>
+

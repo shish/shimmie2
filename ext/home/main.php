@@ -80,4 +80,4 @@ class Home extends Extension {
 		return $this->theme->build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text);
 	}
 }
-?>
+

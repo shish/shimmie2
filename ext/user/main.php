@@ -585,4 +585,4 @@ class UserPage extends Extension {
 	}
 // }}}
 }
-?>
+

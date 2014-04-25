@@ -8,4 +8,4 @@ class HomeTest extends ShimmieWebTestCase {
 		# FIXME: test search box
 	}
 }
-?>
+

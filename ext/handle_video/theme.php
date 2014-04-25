@@ -37,4 +37,4 @@ else {
 		$page->add_block(new Block("Video", $html, "main", 10));
 	}
 }
-?>
+

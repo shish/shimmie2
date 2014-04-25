@@ -32,4 +32,4 @@ class ImageIOTheme extends Themelet {
 		return $html;
 	}
 }
-?>
+

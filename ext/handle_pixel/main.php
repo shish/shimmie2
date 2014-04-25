@@ -177,4 +177,4 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 // }}}
 }
-?>
+
