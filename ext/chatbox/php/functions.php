@@ -16,8 +16,8 @@
 	}
 
 	function getVar($name) {
-		if (isset($_POST[$name])) return $_POST[$name];
-		if (isset($_GET[$name])) return $_GET[$name];
+		if (isset($_POST[$name])) { return $_POST[$name]; }
+		if (isset($_GET[$name])) { return $_GET[$name]; }
 		return null;
 	}
 	
@@ -28,7 +28,7 @@
 	}
 
 	function magic($s) {
-		if (get_magic_quotes_gpc()) $s = stripslashes($s);
+		if (get_magic_quotes_gpc()) { $s = stripslashes($s); }
 		return $s;
 	}
 	
@@ -147,6 +147,5 @@
 			return $_SESSION['yLoginHash'] == md5($prefs['password']);
 
 		return false;
-		
 	}
-?>
+
