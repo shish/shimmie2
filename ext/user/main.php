@@ -147,11 +147,13 @@ class UserPage extends Extension {
                                 
                                 // Try forwarding to same page on logout unless user comes from registration page
 				if ($config->get_int("user_loginshowprofile",0) == 0 && 
-                                    isset($_SERVER['HTTP_REFERER']) &&
-                                strstr($_SERVER['HTTP_REFERER'], "post/"))
-                                    $page->set_redirect ($_SERVER['HTTP_REFERER']);
-                                else
-                                    $page->set_redirect(make_link());
+							isset($_SERVER['HTTP_REFERER']) &&
+							strstr($_SERVER['HTTP_REFERER'], "post/"))
+				{
+					$page->set_redirect ($_SERVER['HTTP_REFERER']);
+				} else {
+					$page->set_redirect(make_link());
+				}
 			}
 
 			if(!$user->check_auth_token()) {
@@ -349,13 +351,16 @@ class UserPage extends Extension {
 			$this->set_login_cookie($duser->name, $pass);
 			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
-                        
-                        // Try returning to previous page  
-                        if ($config->get_int("user_loginshowprofile",0) == 0 && 
-                            isset($_SERVER['HTTP_REFERER']) && 
-                            strstr($_SERVER['HTTP_REFERER'], "post/"))
-                                $page->set_redirect($_SERVER['HTTP_REFERER']);
-			else    $page->set_redirect(make_link("user"));
+
+			// Try returning to previous page
+			if ($config->get_int("user_loginshowprofile",0) == 0 &&
+							isset($_SERVER['HTTP_REFERER']) &&
+							strstr($_SERVER['HTTP_REFERER'], "post/"))
+			{
+				$page->set_redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$page->set_redirect(make_link("user"));
+			}
 		}
 		else {
 			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
