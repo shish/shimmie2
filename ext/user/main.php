@@ -50,6 +50,8 @@ class UserDeletionEvent extends Event {
 
 class UserCreationException extends SCoreException {}
 
+class NullUserException extends SCoreException {}
+
 class UserPage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -163,6 +165,9 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "change_pass") {
 				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$pass1 = $_POST['pass1'];
 					$pass2 = $_POST['pass2'];
 					$this->change_password_wrapper($duser, $pass1, $pass2);
@@ -171,6 +176,9 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "change_email") {
 				if(isset($_POST['id']) && isset($_POST['address'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$address = $_POST['address'];
 					$this->change_email_wrapper($duser, $address);
 				}
@@ -179,6 +187,9 @@ class UserPage extends Extension {
 				global $_user_classes;
 				if(isset($_POST['id']) && isset($_POST['class'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$class = $_POST['class'];
 					if(!array_key_exists($class, $_user_classes)) {
 						throw Exception("Invalid user class: ".html_escape($class));
@@ -495,6 +506,9 @@ class UserPage extends Extension {
 
 		if($user->class->name == "admin") {
 			$duser = User::by_id($_POST['id']);
+			if ( ! $duser instanceof User) {
+				throw new NullUserException("Error: the user id does not exist!");
+			}
 			$duser->set_class($class);
 
 			flash_message("Class changed");
