@@ -30,11 +30,11 @@ class Themelet extends BaseThemelet {
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
-		//$first_html  = $at_start ? "First" : $this->gen_page_link($base_url, $query, 1,            "First");
-		$prev_html   = $at_start ? "Prev"  : $this->gen_page_link($base_url, $query, $prev,        "Prev");
-		//$random_html =                       $this->gen_page_link($base_url, $query, $rand,        "Random");
-		$next_html   = $at_end   ? "Next"  : $this->gen_page_link($base_url, $query, $next,        "Next");
-		//$last_html   = $at_end   ? "Last"  : $this->gen_page_link($base_url, $query, $total_pages, "Last");
+		//$first_html   = $at_start ? "First" : $this->litetheme_gen_page_link($base_url, $query, 1,            "First");
+		$prev_html      = $at_start ? "Prev"  : $this->gen_page_link($base_url, $query, $prev,        "Prev");
+		//$random_html  =                       $this->litetheme_gen_page_link($base_url, $query, $rand,        "Random");
+		$next_html      = $at_end   ? "Next"  : $this->gen_page_link($base_url, $query, $next,        "Next");
+		//$last_html    = $at_end   ? "Last"  : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
 
 		$start = $current_page-5 > 1 ? $current_page-5 : 1;
 		$end = $start+10 < $total_pages ? $start+10 : $total_pages;
