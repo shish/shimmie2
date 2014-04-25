@@ -212,7 +212,7 @@ EOD;
 	/**
 	 * A handy function which does exactly what it says in the method name
 	 */
-	private function block_to_html($block, $hidable=false, $salt="") {
+	public function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
 		$i = str_replace(' ', '_', $h) . $salt;
@@ -238,7 +238,7 @@ EOD;
 		return $html;
 	}
 
-	private function navlinks($link, $desc, $pages_matched) {
+	public function navlinks($link, $desc, $pages_matched) {
 		/**
 		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 		 */
