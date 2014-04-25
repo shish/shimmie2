@@ -21,7 +21,7 @@ $db = $options["d"];
 $host = rtrim(trim(trim($options["h"], '"')), "/");
 
 // Check if they are empty.
-if (empty($db)){ die("Error: need to specifiy a database for the test environment."); }
+if (empty($db)){ die("Error: need to specify a database for the test environment."); }
 if (empty($host)){ $host = "http://127.0.0.1"; }
 
 define("_TRAVIS_DATABASE", $db);
