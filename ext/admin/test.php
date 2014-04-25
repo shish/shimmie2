@@ -80,4 +80,4 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

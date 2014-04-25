@@ -101,4 +101,4 @@ class BrowserSearch extends Extension {
 		$event->panel->add_block($sb);
 	}
 }
-?>
+

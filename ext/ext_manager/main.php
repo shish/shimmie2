@@ -199,4 +199,4 @@ class ExtManager extends Extension {
 		}
 	}
 }
-?>
+

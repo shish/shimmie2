@@ -79,4 +79,4 @@ class ArrowkeyNavigation extends Extension {
 		return $pageinfo;
 	}
 }
-?>
+

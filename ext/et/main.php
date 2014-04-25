@@ -83,4 +83,4 @@ class ET extends Extension {
 		return $info;
 	}
 }
-?>
+

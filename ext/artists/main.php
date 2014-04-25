@@ -1221,4 +1221,4 @@ class Artists extends Extension {
             return $result;
 	}	
 }
-?>
+

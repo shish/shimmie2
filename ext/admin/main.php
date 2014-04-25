@@ -257,4 +257,4 @@ class AdminPage extends Extension {
         return true;
     }
 }
-?>
+

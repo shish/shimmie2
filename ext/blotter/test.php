@@ -34,4 +34,4 @@ class BlotterTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

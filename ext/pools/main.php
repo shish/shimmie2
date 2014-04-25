@@ -881,4 +881,4 @@ class Pools extends Extension {
 	}
 
 }
-?>
+

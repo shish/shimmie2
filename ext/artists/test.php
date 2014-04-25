@@ -5,4 +5,4 @@ class ArtistTest extends ShimmieWebTestCase {
 		$this->get_page("post/list/author=bob/1");
 	}
 }
-?>
+

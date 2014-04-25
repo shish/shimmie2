@@ -5,4 +5,4 @@ class BrowserSearchTest extends SCoreWebTestCase {
 		$this->get_page("browser_search/test");
 	}
 }
-?>
+
