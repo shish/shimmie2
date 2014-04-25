@@ -2,6 +2,7 @@
 	class AjaxCall {
 
 		public $reqType;
+		public $updates;
 
 		function AjaxCall($log = null) {
 			header('Content-type: application/json');
