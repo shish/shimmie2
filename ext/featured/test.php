@@ -30,4 +30,4 @@ class FeaturedTest extends ShimmieWebTestCase {
 		$this->assert_no_text("Featured Image");
 	}
 }
-?>
+

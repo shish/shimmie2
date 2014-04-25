@@ -101,4 +101,4 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

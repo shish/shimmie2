@@ -558,4 +558,4 @@ class CommentList extends Extension {
 	}
 // }}}
 }
-?>
+

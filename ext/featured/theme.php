@@ -34,4 +34,4 @@ class FeaturedTheme extends Themelet {
 		";
 	}
 }
-?>
+
