@@ -300,4 +300,4 @@ class NumericScore extends Extension {
 			array("imageid" => $image_id, "id" => $image_id));
 	}
 }
-?>
+

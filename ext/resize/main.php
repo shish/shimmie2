@@ -312,4 +312,4 @@ class ResizeImage extends Extension {
 		log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_hash}");
 	}
 }
-?>
+

@@ -435,4 +435,4 @@ class DanbooruApi extends Extension {
 	}
 }
 
-?>
+

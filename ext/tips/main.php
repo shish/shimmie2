@@ -151,4 +151,4 @@ class Tips extends Extension {
 		$database->execute("DELETE FROM tips WHERE id = ?", array($tipID));
 	}
 }
-?>
+
