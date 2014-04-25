@@ -261,6 +261,8 @@ class DanbooruApi extends Extension {
 		if(($event->get_arg(1) == 'find_posts') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'index.xml')))
 		{
 			$this->authenticate_user();
+			$start = 0;
+
 			if(isset($_GET['md5']))
 			{
 				$md5list = explode(",",$_GET['md5']);
@@ -268,6 +270,7 @@ class DanbooruApi extends Extension {
 				{
 					$results[] = Image::by_hash($md5);
 				}
+				$count = count($results);
 			} elseif(isset($_GET['id']))
 			{
 				$idlist = explode(",",$_GET['id']);
@@ -275,6 +278,7 @@ class DanbooruApi extends Extension {
 				{
 					$results[] = Image::by_id($id);
 				}
+				$count = count($results);
 			} else
 			{
 				$limit = isset($_GET['limit']) ? int_escape($_GET['limit']) : 100;
@@ -294,7 +298,7 @@ class DanbooruApi extends Extension {
 
 			// Now we have the array $results filled with Image objects
 			// Let's display them
-			$xml = "<posts count=\"$count\" offset=\"$start\">\n";
+			$xml = "<posts count=\"{$count}\" offset=\"{$start}\">\n";
 			foreach($results as $img)
 			{
 				// Sanity check to see if $img is really an image object
