@@ -1,7 +1,7 @@
 <?php
 
 class CustomCommentListTheme extends CommentListTheme {
-	var $inner_id = 0;
+	public $inner_id = 0;
 
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
 		global $config, $page;
@@ -51,7 +51,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		// sidebar fails in this theme
 	}
 
-	private function build_upload_box() {
+	public function build_upload_box() {
 		return "[[ insert upload-and-comment extension here ]]";
 	}
 

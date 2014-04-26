@@ -20,12 +20,12 @@ class Themelet extends BaseThemelet {
 		$page->add_block(new Block(null, $body, "main", 90));
 	}
 
-	private function litetheme_gen_page_link($base_url, $query, $page, $name, $link_class=null) {
+	public function litetheme_gen_page_link($base_url, $query, $page, $name, $link_class=null) {
 		$link = make_link("$base_url/$page", $query);
 		return "<a class='$link_class' href='$link'>$name</a>";
 	}
 	
-	private function litetheme_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
+	public function litetheme_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
 
 		if($page == $current_page) {$link_class = "tab-selected";} else {$link_class = "";}
@@ -34,7 +34,7 @@ class Themelet extends BaseThemelet {
 		return $paginator;
 	}
 					
-	private function litetheme_build_paginator($current_page, $total_pages, $base_url, $query) {
+	public function litetheme_build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
 		$rand = mt_rand(1, $total_pages);

@@ -9,12 +9,12 @@ class Themelet extends BaseThemelet {
 		$page->add_block(new Block(null, $body, "main", $position));
 	}
 
-	private function futaba_gen_page_link($base_url, $query, $page, $name) {
+	public function futaba_gen_page_link($base_url, $query, $page, $name) {
 		$link = make_link("$base_url/$page", $query);
 	    return "[<a href='$link'>{$name}</a>]";
 	}
 	
-	private function futaba_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
+	public function futaba_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
 	    if($page == $current_page) $paginator .= "<b>";
 	    $paginator .= $this->futaba_gen_page_link($base_url, $query, $page, $name);
@@ -22,7 +22,7 @@ class Themelet extends BaseThemelet {
 	    return $paginator;
 	}
 					
-	private function futaba_build_paginator($current_page, $total_pages, $base_url, $query) {
+	public function futaba_build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
 		//$rand = mt_rand(1, $total_pages);
@@ -30,11 +30,11 @@ class Themelet extends BaseThemelet {
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
-		//$first_html   = $at_start ? "First" : $this->litetheme_gen_page_link($base_url, $query, 1,            "First");
-		$prev_html      = $at_start ? "Prev"  : $this->futaba_gen_page_link($base_url, $query, $prev,           "Prev");
-		//$random_html  =                       $this->litetheme_gen_page_link($base_url, $query, $rand,        "Random");
-		$next_html      = $at_end   ? "Next"  : $this->futaba_gen_page_link($base_url, $query, $next,           "Next");
-		//$last_html    = $at_end   ? "Last"  : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
+		//$first_html   = $at_start ? "First" : $this->futaba_gen_page_link($base_url, $query, 1,            "First");
+		$prev_html      = $at_start ? "Prev"  : $this->futaba_gen_page_link($base_url, $query, $prev,        "Prev");
+		//$random_html  =                       $this->futaba_gen_page_link($base_url, $query, $rand,        "Random");
+		$next_html      = $at_end   ? "Next"  : $this->futaba_gen_page_link($base_url, $query, $next,        "Next");
+		//$last_html    = $at_end   ? "Last"  : $this->futaba_gen_page_link($base_url, $query, $total_pages, "Last");
 
 		$start = $current_page-5 > 1 ? $current_page-5 : 1;
 		$end = $start+10 < $total_pages ? $start+10 : $total_pages;
