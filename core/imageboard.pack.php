@@ -68,7 +68,7 @@ class Image {
 	/**
 	 * Find an image by ID
 	 *
-	 * @param $id
+	 * @param int $id
 	 * @return Image
 	 */
 	public static function by_id(/*int*/ $id) {
@@ -81,7 +81,7 @@ class Image {
 	/**
 	 * Find an image by hash
 	 *
-	 * @param $hash
+	 * @param string $hash
 	 * @return Image
 	 */
 	public static function by_hash(/*string*/ $hash) {
@@ -110,8 +110,8 @@ class Image {
 	/**
 	 * Search for an array of images
 	 *
-	 * @param $start
-	 * @param $limit
+	 * @param int $start
+	 * @param int $limit
 	 * @param array $tags
 	 * @throws SCoreException
 	 * @return Array
@@ -423,6 +423,8 @@ class Image {
 
 	/**
 	 * Set the image's source URL
+	 *
+	 * @param string $new_source
 	 */
 	public function set_source(/*string*/ $new_source) {
 		global $database;
@@ -978,6 +980,9 @@ class Image {
 class Tag {
 	/**
 	 * Remove any excess fluff from a user-input tag
+	 *
+	 * @param string $tag
+	 * @return mixed
 	 */
 	public static function sanitise($tag) {
 		assert(is_string($tag));
