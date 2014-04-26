@@ -1,8 +1,10 @@
 <?php
+
 error_reporting(E_ALL);
 ob_start();
 set_error_handler('errorOccurred');
 include 'include.php';
+
 if (isset($_POST['reqFor']))
 	switch($_POST['reqFor']) {
 		case 'shout':
@@ -20,20 +22,17 @@ if (isset($_POST['reqFor']))
 
 		default:
 			exit;
+	} else {
+		include 'example.html';
 	}
-else
-	include 'example.html';
 
 function errorOccurred($num, $str, $file, $line) {
 	$err = array (
 		'yError' => "$str. \n File: $file \n Line: $line"
 	);
 
-	if (function_exists('jsonEncode'))
-		echo jsonEncode($err);
-	else
-		echo $err['yError'];
+	echo json_encode($err);
+
 	exit;
 }
 
-?>

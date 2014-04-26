@@ -45,19 +45,6 @@
 		return false;
 	}
 
-	function jsonEncode(&$array) {
-		if ($array) {
-			$json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
-			return $json->encode($array);
-		} else
-			return 'ar';
-	}
-
-	function jsonDecode($encoded) {
-		$json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
-		return $json->decode($encoded);
-	}
-
 	function validIP($ip) {
 		if ($ip == long2ip(ip2long($ip)))
 			return true;
