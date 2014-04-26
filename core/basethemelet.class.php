@@ -1,10 +1,18 @@
 <?php
+
 /**
+ * Class BaseThemelet
+ *
  * A collection of common functions for theme parts
  */
 class BaseThemelet {
+
 	/**
 	 * Generic error message display
+	 *
+	 * @param int $code
+	 * @param string $title
+	 * @param string $message
 	 */
 	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
 		global $page;
@@ -24,7 +32,6 @@ class BaseThemelet {
 		$page->add_block(new Block("Error", $message));
 	}
 
-
 	/**
 	 * A specific, common error message
 	 */
@@ -36,6 +43,9 @@ class BaseThemelet {
 	/**
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
+	 *
+	 * @param Image $image
+	 * @return string
 	 */
 	public function build_thumb_html(Image $image) {
 		global $config;
@@ -65,9 +75,14 @@ class BaseThemelet {
 				"</a>\n";
 	}
 
-
 	/**
-	 * Add a generic paginator
+	 * Add a generic paginator.
+	 *
+	 * @param Page $page
+	 * @param string $base
+	 * @param string $query
+	 * @param int $page_number
+	 * @param int $total_pages
 	 */
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
 		if($total_pages == 0) $total_pages = 1;
@@ -75,11 +90,28 @@ class BaseThemelet {
 		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 	}
 
+	/**
+	 * Generate a single HTML link.
+	 *
+	 * @param string $base_url
+	 * @param string $query
+	 * @param int|string $page
+	 * @param string $name
+	 * @return string
+	 */
 	private function gen_page_link($base_url, $query, $page, $name) {
 		$link = make_link($base_url.'/'.$page, $query);
 	    return '<a href="'.$link.'">'.$name.'</a>';
 	}
-	
+
+	/**
+	 * @param string $base_url
+	 * @param string $query
+	 * @param int|string $page
+	 * @param int|string $current_page
+	 * @param string $name
+	 * @return string
+	 */
 	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
 	    if($page == $current_page) $paginator .= "<b>";
@@ -87,7 +119,16 @@ class BaseThemelet {
 	    if($page == $current_page) $paginator .= "</b>";
 	    return $paginator;
 	}
-					
+
+	/**
+	 * Build the paginator.
+	 *
+	 * @param int $current_page
+	 * @param int $total_pages
+	 * @param string $base_url
+	 * @param string $query
+	 * @return string
+	 */
 	private function build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;

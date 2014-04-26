@@ -1,11 +1,11 @@
-/*jshint dojo:true, forin:false, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+/*jshint forin:false, nonew:true, undef:true, strict:false, browser:true, jquery:true */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Tagger - Advanced Tagging v2                                                *
 * Author: Artanis (Erik Youngren <artanis.00@gmail.com>)                      *
 * Do not remove this notice.                                                  *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
- 
+
 var Tagger = {
 	initialize : function (image_id) {
 	// object navigation

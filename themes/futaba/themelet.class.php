@@ -1,7 +1,15 @@
 <?php
 class Themelet extends BaseThemelet {
+
 	/**
-	 * Add a generic paginator
+	 * Add a generic paginator.
+	 *
+	 * @param Page $page
+	 * @param string $base
+	 * @param string $query
+	 * @param int $page_number
+	 * @param int $total_pages
+	 * @param int $position
 	 */
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $position=90) {
 		if($total_pages == 0) $total_pages = 1;
@@ -9,11 +17,28 @@ class Themelet extends BaseThemelet {
 		$page->add_block(new Block(null, $body, "main", $position));
 	}
 
+	/**
+	 * Generate a single HTML link.
+	 *
+	 * @param string $base_url
+	 * @param string $query
+	 * @param int|string $page
+	 * @param string $name
+	 * @return string
+	 */
 	public function futaba_gen_page_link($base_url, $query, $page, $name) {
 		$link = make_link("$base_url/$page", $query);
 	    return "[<a href='$link'>{$name}</a>]";
 	}
-	
+
+	/**
+	 * @param string $base_url
+	 * @param string $query
+	 * @param int|string $page
+	 * @param int|string $current_page
+	 * @param string $name
+	 * @return string
+	 */
 	public function futaba_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
 	    if($page == $current_page) $paginator .= "<b>";
@@ -21,7 +46,16 @@ class Themelet extends BaseThemelet {
 	    if($page == $current_page) $paginator .= "</b>";
 	    return $paginator;
 	}
-					
+
+	/**
+	 * Build the paginator.
+	 *
+	 * @param int $current_page
+	 * @param int $total_pages
+	 * @param string $base_url
+	 * @param string $query
+	 * @return string
+	 */
 	public function futaba_build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
