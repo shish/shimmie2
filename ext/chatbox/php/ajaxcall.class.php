@@ -95,7 +95,7 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 
 		function doUnban() {
@@ -115,7 +115,7 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 
 		function doDelete() {
@@ -132,7 +132,7 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 
 		function banSelf() {
@@ -143,7 +143,7 @@
 			$send = array();
 			$send['error'] = false;
 			
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 
 		function unbanSelf() {
@@ -158,7 +158,7 @@
 				$send['error'] = 'admin';
 			}
 			
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 		
 		function reload() {
@@ -168,7 +168,7 @@
 			$posts = $ys->latestPosts($prefs['truncate']);
 			$this->setSessTimestamp($posts);
 			$this->updates['posts'] = $posts;						
-			echo jsonEncode($this->updates);
+			echo json_encode($this->updates);
 		}
 
 		function initSession() {
@@ -186,7 +186,7 @@
 				'banned' => true
 			);
 
-			echo jsonEncode($this->updates);
+			echo json_encode($this->updates);
 		}
 		
 		function sendUpdates() {
@@ -199,7 +199,7 @@
 
 			$this->updates['posts'] = $posts;
 
-			echo jsonEncode($this->updates);
+			echo json_encode($this->updates);
 		}
 
 		function setSessTimestamp(&$posts) {
@@ -231,7 +231,7 @@
 			if ($ys->banned(ip()))
 				$this->updates['banned'] = true;
 
-			echo jsonEncode($this->updates);
+			echo json_encode($this->updates);
 		}
 		
 		function cleanPrefs($prefs) {
@@ -253,7 +253,7 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 		
 		function clearLogs() {
@@ -277,7 +277,7 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);
+			echo json_encode($send);
 		}
 	}
 

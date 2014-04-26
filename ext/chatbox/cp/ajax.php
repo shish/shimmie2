@@ -4,7 +4,6 @@ $kioskMode = false;
 
 include '../php/filestorage.class.php';
 include '../preferences.php';
-include '../php/json.class.php';
 include '../php/functions.php';
 include '../php/yshout.class.php';
 include '../php/ajaxcall.class.php';
@@ -41,7 +40,7 @@ function doLogin() {
 			'html' => cp()
 		);
 		
-		echo jsonEncode($result);
+		echo json_encode($result);
 		return;
 	}
 	
@@ -53,7 +52,7 @@ function doLogin() {
 	} else
 		$result['error'] = 'invalid';
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 function doLogout() {
@@ -63,7 +62,7 @@ function doLogout() {
 		'error' => false
 	);
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 function doUnban() {
@@ -74,7 +73,7 @@ function doUnban() {
 			'error' => false
 		);
 		
-		echo jsonEncode($result);
+		echo json_encode($result);
 		return;
 	}
 	
@@ -92,7 +91,7 @@ function doUnban() {
 		$result['error'] = 'notbanned';
 
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 function doUnbanAll() {
@@ -103,7 +102,7 @@ function doUnbanAll() {
 			'error' => false
 		);
 		
-		echo jsonEncode($result);
+		echo json_encode($result);
 		return;
 	}
 	
@@ -116,7 +115,7 @@ function doUnbanAll() {
 		'error' => false
 	);
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 
@@ -128,7 +127,7 @@ function doSetPreference() {
 			'error' => false
 		);
 		
-		echo jsonEncode($result);
+		echo json_encode($result);
 		return;
 	}
 	
@@ -150,7 +149,7 @@ function doSetPreference() {
 		'error' => false
 	);
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 
@@ -162,7 +161,7 @@ function doResetPreferences() {
 			'error' => false
 		);
 		
-		echo jsonEncode($result);
+		echo json_encode($result);
 		return;
 	}
 	
@@ -177,7 +176,7 @@ function doResetPreferences() {
 		'prefs' => $prefs
 	);
 
-	echo jsonEncode($result);
+	echo json_encode($result);
 }
 
 /* CP Display */
@@ -456,4 +455,3 @@ function about() {
 	return $html;
 }
 
-?>
