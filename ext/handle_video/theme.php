@@ -27,7 +27,8 @@ else {
 			<source src='" . make_link("/image/" . $image->id) . "' type='video/ogg' />
 			</video>";
 		} elseif ($ext == "webm") {
-			$html = "Video not playing? <a href='" . $image->parse_link_template(make_link('image/$id/$id%20-%20$tags.$ext')) . "'>Click here</a> to download the file.<br><video controls='controls' autoplay='autoplay'>
+			$ie_only = "<!--[if IE]><p>To view webm files with IE, please <a href='http://tools.google.com/dlpage/webmmf/' target='_blank'>download this plugin</a>.</p><![endif]-->";
+			$html = $ie_only ."Video not playing? <a href='" . $image->parse_link_template(make_link('image/$id/$id%20-%20$tags.$ext')) . "'>Click here</a> to download the file.<br><video controls='controls' autoplay='autoplay'>
 			<source src='" . make_link("/image/" . $image->id) . "' type='video/webm' />
 			</video>";
 		}

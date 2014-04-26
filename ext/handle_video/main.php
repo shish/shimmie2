@@ -2,6 +2,7 @@
 /*
  * Name: Handle Video
  * Author: velocity37 <velocity37@gmail.com>
+ * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>
  * License: GPLv2
  * Description: Handle FLV, MP4, OGV and WEBM video files.
  * Documentation:
@@ -17,8 +18,59 @@
  */
 
 class VideoFileHandler extends DataHandlerExtension {
-	protected function create_thumb($hash) {
-		copy("ext/handle_video/thumb.jpg", warehouse_path("thumbs", $hash));
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_string('video_thumb_engine', 'static');
+		$config->set_default_string('thumb_ffmpeg_path', '');
+	}
+
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		global $config;
+
+		$thumbers = array();
+		$thumbers['None'] = "static";
+		$thumbers['ffmpeg'] = "ffmpeg";
+
+		$sb = new SetupBlock("Video Thumbnail Options");
+
+		$sb->add_choice_option("video_thumb_engine", $thumbers, "Engine: ");
+
+		if($config->get_string("video_thumb_engine") == "ffmpeg") {
+			$sb->add_label("<br>Path to ffmpeg: ");
+			$sb->add_text_option("thumb_ffmpeg_path");
+		}
+		$event->panel->add_block($sb);
+	}
+
+    protected function create_thumb($hash) {
+		global $config;
+
+		$w = (int)$config->get_int("thumb_width");
+		$h = (int)$config->get_int("thumb_height");
+		// this is never used...
+		//$q = $config->get_int("thumb_quality");
+
+		$inname  = warehouse_path("images", $hash);
+		$outname = warehouse_path("thumbs", $hash);
+
+		switch($config->get_string("video_thumb_engine"))
+		{
+			default:
+			case 'static':
+				copy("ext/handle_video/thumb.jpg", $outname);
+				break;
+			case 'ffmpeg':
+				$ffmpeg = $config->get_string("thumb_ffmpeg_path");
+
+				$inname = escapeshellarg($inname);
+				$outname = escapeshellarg($outname);
+
+				$cmd = "{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
+				exec($cmd, $output, $ret);
+
+				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+				break;
+		}
 	}
 
 	protected function supported_ext($ext) {
@@ -27,7 +79,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	protected function create_image_from_data($filename, $metadata) {
-		global $config;
+		//global $config;
 
 		$image = new Image();
 
