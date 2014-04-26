@@ -3,4 +3,4 @@ imports:
     - php
 
 filter:
-    excluded_paths: [lib/*,ext/chatbox/js/jquery.js]
+    excluded_paths: [lib/*]
