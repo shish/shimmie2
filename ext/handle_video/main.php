@@ -35,37 +35,35 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$sb->add_choice_option("video_thumb_engine", $thumbers, "Engine: ");
 
-		if($config->get_string("video_thumb_engine") == "ffmpeg") {
+		//if($config->get_string("video_thumb_engine") == "ffmpeg") {
 			$sb->add_label("<br>Path to ffmpeg: ");
 			$sb->add_text_option("thumb_ffmpeg_path");
-		}
+		//}
 		$event->panel->add_block($sb);
 	}
 
-    protected function create_thumb($hash) {
+	protected function create_thumb($hash) {
 		global $config;
 
-		$w = (int)$config->get_int("thumb_width");
-		$h = (int)$config->get_int("thumb_height");
 		// this is never used...
 		//$q = $config->get_int("thumb_quality");
-
-		$inname  = warehouse_path("images", $hash);
-		$outname = warehouse_path("thumbs", $hash);
 
 		switch($config->get_string("video_thumb_engine"))
 		{
 			default:
 			case 'static':
+				$outname = warehouse_path("thumbs", $hash);
 				copy("ext/handle_video/thumb.jpg", $outname);
 				break;
 			case 'ffmpeg':
-				$ffmpeg = $config->get_string("thumb_ffmpeg_path");
+				$ffmpeg = escapeshellarg($config->get_string("thumb_ffmpeg_path"));
 
-				$inname = escapeshellarg($inname);
-				$outname = escapeshellarg($outname);
+				$w = (int)$config->get_int("thumb_width");
+				$h = (int)$config->get_int("thumb_height");
+				$inname  = escapeshellarg(warehouse_path("images", $hash));
+				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
 
-				$cmd = "{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
+				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
 				exec($cmd, $output, $ret);
 
 				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
