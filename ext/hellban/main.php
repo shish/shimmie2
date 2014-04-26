@@ -22,4 +22,4 @@ class HellBan extends Extension {
 		}
 	}
 }
-?>
+

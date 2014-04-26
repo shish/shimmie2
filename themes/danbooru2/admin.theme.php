@@ -8,4 +8,4 @@ class CustomAdminPageTheme extends AdminPageTheme {
 	}
 }
 
-?>
+

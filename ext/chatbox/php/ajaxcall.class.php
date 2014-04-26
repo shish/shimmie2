@@ -1,5 +1,9 @@
 <?php
 	class AjaxCall {
+
+		public $reqType;
+		public $updates;
+
 		function AjaxCall($log = null) {
 			header('Content-type: application/json');
 			session_start();
@@ -24,8 +28,10 @@
 					$ys = ys($_SESSION['yLog']);
 					
 					if ($ys->banned(ip())) { $this->sendBanned(); break; }
-					if ($post = $ys->post($nickname, $message))	// To use $post somewheres later
-							$this->sendUpdates();
+					if ($post = $ys->post($nickname, $message)) {
+						// To use $post somewheres later
+						$this->sendUpdates();
+					}
 					break;
 
 				case 'refresh':
@@ -138,7 +144,6 @@
 			$send['error'] = false;
 			
 			echo jsonEncode($send);
-
 		}
 
 		function unbanSelf() {
@@ -235,7 +240,7 @@
 		}
 		
 		function clearLog() {
-			$log = $_POST['log'];
+			//$log = $_POST['log'];
 			$send = array();
 			$ys = ys($_SESSION['yLog']);
 
@@ -254,10 +259,10 @@
 		function clearLogs() {
 			global $prefs;
 		
-			$log = $_POST['log'];
+			//$log = $_POST['log'];
 			$send = array();
 
-			$ys = ys($_SESSION['yLog']);
+			//$ys = ys($_SESSION['yLog']);
 
 			switch(true) {
 				case !loggedIn():
@@ -272,8 +277,8 @@
 					$send['error'] = false;
 			}
 
-			echo jsonEncode($send);		
+			echo jsonEncode($send);
 		}
 	}
 
-?>
+

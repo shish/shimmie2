@@ -6,39 +6,48 @@ class Block {
 	/**
 	 * The block's title
 	 *
-	 * @retval string
+	 * @var string
 	 */
-	var $header;
+	public $header;
 
 	/**
 	 * The content
 	 *
-	 * @retval string
+	 * @var string
 	 */
-	var $body;
+	public $body;
 
 	/** 
 	 * Where the block should be placed. The default theme supports
 	 * "main" and "left", other themes can add their own areas
 	 *
-	 * @retval string
+	 * @var string
 	 */
-	var $section;
+	public $section;
 
 	/**
 	 * How far down the section the block should appear, higher
 	 * numbers appear lower. The scale is 0-100 by convention,
 	 * though any number or string will work.
 	 *
-	 * @retval int
+	 * @var int
 	 */
-	var $position;
+	public $position;
 
 	/**
-	 *
+	 * @var int
 	 */
-	var $id;
+	public $id;
 
+	/**
+	 * Construct a block.
+	 *
+	 * @param string $header
+	 * @param string $body
+	 * @param string $section
+	 * @param int $position
+	 * @param null|int $id
+	 */
 	public function __construct($header, $body, /*string*/ $section="main", /*int*/ $position=50, $id=null) {
 		$this->header = $header;
 		$this->body = $body;
@@ -47,6 +56,12 @@ class Block {
 		$this->id = str_replace(' ', '_', is_null($id) ? (is_null($header) ? md5($body) : $header) . $section : $id);
 	}
 
+	/**
+	 * Get the HTML for this block.
+	 *
+	 * @param bool $hidable
+	 * @return string
+	 */
 	public function get_html($hidable=false) {
 		$h = $this->header;
 		$b = $this->body;
@@ -71,4 +86,4 @@ class NavBlock extends Block {
 		parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
 	}
 }
-?>
+

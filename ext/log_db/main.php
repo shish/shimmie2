@@ -135,4 +135,4 @@ class LogDatabase extends Extension {
 		}
 	}
 }
-?>
+

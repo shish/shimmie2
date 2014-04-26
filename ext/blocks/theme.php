@@ -43,4 +43,4 @@ class BlocksTheme extends Themelet {
 		$page->add_block(new Block("Block Editor", $html));
 	}
 }
-?>
+

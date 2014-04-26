@@ -45,4 +45,4 @@ class RatingsTheme extends Themelet {
 	}
 }
 
-?>
+

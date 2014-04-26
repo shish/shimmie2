@@ -85,4 +85,4 @@ class Blocks extends Extension {
 		}
 	}
 }
-?>
+

@@ -9,13 +9,14 @@ class Layout {
 	public function display_page(Page $page) {
 		global $config;
 
-		$theme_name = $config->get_string('theme', 'default');
+		//$theme_name = $config->get_string('theme', 'default');
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
 		$main_page = $config->get_string('main_page');
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
+		ksort($page->html_headers);
 		foreach($page->html_headers as $line) {
 			$header_html .= "\t\t$line\n";
 		}
@@ -48,12 +49,13 @@ class Layout {
 		$debug = get_debug_info();
 
 		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
-		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
+		/*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
 		if(strlen($page->heading) > 100) {
 			$wrapper = ' style="height: 3em; overflow: auto;"';
 		}
+		*/
 
 		$flash = get_prefixed_cookie("flash_message");
 		$flash_html = "";
@@ -108,4 +110,4 @@ $header_html
 EOD;
 	}
 }
-?>
+

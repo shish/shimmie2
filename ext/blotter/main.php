@@ -131,4 +131,4 @@ class Blotter extends Extension {
 		$this->theme->display_blotter($entries);
 	}
 }
-?>
+

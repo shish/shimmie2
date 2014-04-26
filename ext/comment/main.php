@@ -332,7 +332,7 @@ class CommentList extends Extension {
 						$image = null; // this is "clever", I may live to regret it
 					}
 				}
-				if(!is_null($image)) $images[] = array($image, $comments);				
+				if(!is_null($image)) $images[] = array($image, $comments);
 			}
 		}
 
@@ -558,4 +558,4 @@ class CommentList extends Extension {
 	}
 // }}}
 }
-?>
+

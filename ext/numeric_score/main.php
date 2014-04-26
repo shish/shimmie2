@@ -137,6 +137,10 @@ class NumericScore extends Extension {
 			else if($event->page_matches("popular_by_year")){
 				$dte = array($totaldate, $year, "\\y\\e\\a\\r\=Y", "year");
 			}
+			else {
+				// this should never happen due to the fact that the page event is already matched against earlier.
+				throw new UnexpectedValueException("Error: Invalid page event.");
+			}
 			$sql .= " AND NOT numeric_score=0 ORDER BY numeric_score DESC LIMIT :limit OFFSET 0";
 
 			//filter images by score != 0 + date > limit to max images on one page > order from highest to lowest score
@@ -300,4 +304,4 @@ class NumericScore extends Extension {
 			array("imageid" => $image_id, "id" => $image_id));
 	}
 }
-?>
+

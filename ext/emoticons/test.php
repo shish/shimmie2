@@ -19,4 +19,4 @@ class EmoticonTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

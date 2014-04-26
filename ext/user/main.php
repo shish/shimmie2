@@ -50,6 +50,8 @@ class UserDeletionEvent extends Event {
 
 class UserCreationException extends SCoreException {}
 
+class NullUserException extends SCoreException {}
+
 class UserPage extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -147,11 +149,13 @@ class UserPage extends Extension {
                                 
                                 // Try forwarding to same page on logout unless user comes from registration page
 				if ($config->get_int("user_loginshowprofile",0) == 0 && 
-                                    isset($_SERVER['HTTP_REFERER']) &&
-                                strstr($_SERVER['HTTP_REFERER'], "post/"))
-                                    $page->set_redirect ($_SERVER['HTTP_REFERER']);
-                                else
-                                    $page->set_redirect(make_link());
+							isset($_SERVER['HTTP_REFERER']) &&
+							strstr($_SERVER['HTTP_REFERER'], "post/"))
+				{
+					$page->set_redirect ($_SERVER['HTTP_REFERER']);
+				} else {
+					$page->set_redirect(make_link());
+				}
 			}
 
 			if(!$user->check_auth_token()) {
@@ -161,6 +165,9 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "change_pass") {
 				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$pass1 = $_POST['pass1'];
 					$pass2 = $_POST['pass2'];
 					$this->change_password_wrapper($duser, $pass1, $pass2);
@@ -169,6 +176,9 @@ class UserPage extends Extension {
 			else if($event->get_arg(0) == "change_email") {
 				if(isset($_POST['id']) && isset($_POST['address'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$address = $_POST['address'];
 					$this->change_email_wrapper($duser, $address);
 				}
@@ -177,6 +187,9 @@ class UserPage extends Extension {
 				global $_user_classes;
 				if(isset($_POST['id']) && isset($_POST['class'])) {
 					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
 					$class = $_POST['class'];
 					if(!array_key_exists($class, $_user_classes)) {
 						throw Exception("Invalid user class: ".html_escape($class));
@@ -349,13 +362,16 @@ class UserPage extends Extension {
 			$this->set_login_cookie($duser->name, $pass);
 			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
-                        
-                        // Try returning to previous page  
-                        if ($config->get_int("user_loginshowprofile",0) == 0 && 
-                            isset($_SERVER['HTTP_REFERER']) && 
-                            strstr($_SERVER['HTTP_REFERER'], "post/"))
-                                $page->set_redirect($_SERVER['HTTP_REFERER']);
-			else    $page->set_redirect(make_link("user"));
+
+			// Try returning to previous page
+			if ($config->get_int("user_loginshowprofile",0) == 0 &&
+							isset($_SERVER['HTTP_REFERER']) &&
+							strstr($_SERVER['HTTP_REFERER'], "post/"))
+			{
+				$page->set_redirect($_SERVER['HTTP_REFERER']);
+			} else {
+				$page->set_redirect(make_link("user"));
+			}
 		}
 		else {
 			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
@@ -490,6 +506,9 @@ class UserPage extends Extension {
 
 		if($user->class->name == "admin") {
 			$duser = User::by_id($_POST['id']);
+			if ( ! $duser instanceof User) {
+				throw new NullUserException("Error: the user id does not exist!");
+			}
 			$duser->set_class($class);
 
 			flash_message("Class changed");
@@ -585,4 +604,4 @@ class UserPage extends Extension {
 	}
 // }}}
 }
-?>
+

@@ -23,4 +23,4 @@ class ExtManagerTest extends SCoreWebTestCase {
 		# FIXME: test that some extensions can be added and removed? :S
 	}
 }
-?>
+

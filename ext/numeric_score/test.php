@@ -54,4 +54,4 @@ class NumericScoreTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

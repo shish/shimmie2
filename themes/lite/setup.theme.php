@@ -34,4 +34,4 @@ class CustomSetupTheme extends SetupTheme {
 		return $this->rr($html);
 	}
 }
-?>
+

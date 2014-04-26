@@ -323,26 +323,16 @@ class Notes extends Extension {
 		$noteText = mysql_real_escape_string(html_escape($_POST["note_text"]));
 
 		// validate parameters
-		if(is_null($imageID) || !is_numeric($imageID))
+		if (is_null($imageID)    || !is_numeric($imageID)        ||
+			is_null($noteID)     || !is_numeric($noteID)         ||
+			is_null($noteX1)     || !is_numeric($noteX1)         ||
+			is_null($noteY1)     || !is_numeric($noteY1)         ||
+			is_null($noteHeight) || !is_numeric($noteHeight)     ||
+			is_null($noteWidth)  || !is_numeric($noteWidth)      ||
+			is_null($noteText)   || strlen($noteText) == 0)
+		{
 			return;
-
-		if(is_null($noteID) || !is_numeric($noteID))
-			return;
-
-		if(is_null($noteX1) || !is_numeric($noteX1))
-			return;
-
-		if(is_null($noteY1) || !is_numeric($noteY1))
-			return;
-
-		if(is_null($noteHeight) || !is_numeric($noteHeight))
-			return;
-
-		if(is_null($noteWidth) || !is_numeric($noteWidth))
-			return;
-
-		if(is_null($noteText) || strlen($noteText) == 0)
-			return;
+		}
 
 		global $database;
 		$database->execute("UPDATE notes ".
@@ -369,11 +359,11 @@ class Notes extends Extension {
 		$noteID = int_escape($_POST["note_id"]);
 
 		// validate parameters
-		if(is_null($imageID) || !is_numeric($imageID))
+		if( is_null($imageID) || !is_numeric($imageID) ||
+			is_null($noteID)  || !is_numeric($noteID))
+		{
 			return;
-
-		if(is_null($noteID) || !is_numeric($noteID))
-			return;
+		}
 
 		global $database;
 		
@@ -609,4 +599,4 @@ class Notes extends Extension {
 		
 	}
 }
-?>
+

@@ -18,4 +18,4 @@ class EmoticonListTheme extends Themelet {
 		$page->set_data($html);
 	}
 }
-?>
+

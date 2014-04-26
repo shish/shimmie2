@@ -40,4 +40,4 @@ class Downtime extends Extension {
 		else return false;
 	}
 }
-?>
+

@@ -136,4 +136,4 @@ class ExtManagerTheme extends Themelet {
 		$page->add_block(new Block("Documentation", $html));
 	}
 }
-?>
+

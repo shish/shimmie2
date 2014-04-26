@@ -210,4 +210,4 @@ class PrivMsg extends Extension {
 		return $count;
 	}
 }
-?>
+

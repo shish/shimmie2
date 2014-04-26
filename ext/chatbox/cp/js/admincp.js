@@ -1,7 +1,11 @@
+/*jshint bitwise:true, curly:true, devel:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 Array.prototype.inArray = function (value) {
-	for (var i = 0; i < this.length; i++)
-		if (this[i] === value)
+	for (var i = 0; i < this.length; i++) {
+		if (this[i] === value) {
 			return true;
+		}
+	}
 
 	return false;
 };
@@ -25,8 +29,9 @@ AdminCP.prototype = {
 		this.initializing = true;
 		this.loginForm();
 		this.initEvents();
-		if (this.loaded()) this.afterLogin();
-		else {
+		if (this.loaded()) {
+			this.afterLogin();
+		} else {
 			$('#login-password')[0].focus();
 		}
 
@@ -54,10 +59,11 @@ AdminCP.prototype = {
 		$('.logout').click(function() { self.logout(); return false; });
 
 		// Show the nav
-		if (this.initializing)
+		if (this.initializing) {
 			$('#nav ul').css('display', 'block');
-		else
+		} else {
 			$('#nav ul').slideDown();
+		}
 
 		// Some css for betterlookingness
 		$('#preferences-form fieldset:odd').addClass('odd');
@@ -75,10 +81,11 @@ AdminCP.prototype = {
 		// If they want to go directly to a section
 		var anchor = this.getAnchor();
 
-		if (anchor.length > 0 && ['preferences', 'bans', 'about'].inArray(anchor))
+		if (anchor.length > 0 && ['preferences', 'bans', 'about'].inArray(anchor)) {
 			self.show(anchor);
-		else
+		} else {
 			self.show('preferences');
+		}
 	},
 
 	initEventsAfter: function() {
@@ -101,15 +108,16 @@ AdminCP.prototype = {
 		// Preferences
 		$('#preferences-form input').keypress(function(e) {
 			var key = window.event ? e.keyCode : e.which;
-			if (key == 13 || key == 3) {
+			if (key === 13 || key === 3) {
 				self.changePref.apply(self, [$(this).attr('rel'), this.value]);
 				return false;
 			}
 		}).focus(function() {
 			this.name = this.value;
 		}).blur(function() {
-			if (this.name != this.value)
+			if (this.name !== this.value) {
 				self.changePref.apply(self, [$(this).attr('rel'), this.value]);
+			}
 		});
 
 		$('#preferences-form select').change(function() {
@@ -125,10 +133,11 @@ AdminCP.prototype = {
 			'value': value
 		};
 		this.ajax(function(json) {
-			if (!json.error)
+			if (!json.error) {
 				this.done();
-			else
+			} else {
 				alert(json.error);
+			}
 		}, pars);
 	},
 
@@ -137,20 +146,20 @@ AdminCP.prototype = {
 
 		var pars = {
 			mode: 'resetpreferences'
-		}
+		};
 
 		this.ajax(function(json) {
 			this.done();
-			if (json.prefs)
-				for(pref in json.prefs) {
+			if (json.prefs) {
+				for (pref in json.prefs) {
 					var value = json.prefs[pref];
 					var el = $('#preferences-form input[@rel=' + pref + '], select[@rel=' + pref + ']')[0];
 	
-					if (el.type == 'text')
+					if (el.type === 'text') {
 						el.value = value;
-					else  {
-						if (value == true) value = 'true';
-						if (value == false) value = 'false';
+					} else {
+						if (value === true) { value = 'true'; }
+						if (value === false) { value = 'false'; }
 	
 						$('#preferences-form select[@rel=' + pref + ']')
 							.find('option')
@@ -158,11 +167,10 @@ AdminCP.prototype = {
 							.end()
 							.find('option[@rel=' + value + ']')
 							.attr('selected', 'yeah');
-	
 					}
 				}
-			}, pars);
-
+			}
+		}, pars);
 	},
 
 	invalidPassword: function() {
@@ -230,49 +238,53 @@ AdminCP.prototype = {
 //		if (!sections.inArray(section)) section = 'preferences';
 		
 		if ($.browser.msie) {
-			if (section == 'preferences')
+			if (section === 'preferences') {
 				$('#preferences select').css('display', 'block');
-			else
+			} else {
 				$('#preferences select').css('display', 'none');
+			}
 		}
 		
-		if (section == this.curSection) return;
+		if (section === this.curSection) { return; }
+
 		this.curSection = section;
 		
 		$('#' + section)[0].style.zIndex = ++this.z;
-		if (this.initializing)
+
+		if (this.initializing) {
 			$('#' + section).css('display', 'block');
-		else
+		} else {
 			$('#' + section).fadeIn(this.animSpeed, callback);
+		}
 	},
 
 	showPrefPane: function(pane) {
 		var self = this;
 
-		if (pane == this.curPrefPane) return;
+		if (pane === this.curPrefPane) { return; }
 		this.curPrefPane = pane;
 		$('#preferences .cp-pane').css('display', 'none');
 		$('#cp-pane-' + pane).css('display', 'block').fadeIn(this.animSpeed, function() {
-			if (self.curPrefPane == pane)
+			if (self.curPrefPane === pane) {
 				$('#preferences .cp-pane').not('#cp-pane-' + pane).css('display', 'none');
-			else
+			} else {
 				$('#cp-pane-' + pane).css('display', 'none');
-
+			}
 		});
 	},
 
 	showAboutPane: function(pane) {
 		var self = this;
 
-		if (pane == this.curAboutPane) return;
+		if (pane === this.curAboutPane) { return; }
 		this.curAboutPane = pane;
 		$('#about .cp-pane').css('display', 'none');
 		$('#cp-pane-' + pane).css('display', 'block').fadeIn(this.animSpeed, function() {
-			if (self.curAboutPane == pane)
+			if (self.curAboutPane === pane) {
 				$('#about .cp-pane').not('#cp-pane-' + pane).css('display', 'none');
-			else
+			} else {
 				$('#cp-pane-' + pane).css('display', 'none');
-
+			}
 		});
 	},
 
@@ -281,13 +293,15 @@ AdminCP.prototype = {
 
 		$.post('ajax.php', pars, function(parse) {
 		//	alert(parse);
-				if (parse)
-					if (html)
+				if (parse) {
+					if (html) {
 						callback.apply(self, [parse]);
-					else
+					} else {
 						callback.apply(self, [self.json(parse)]);
-				else
+					}
+				} else {
 					callback.apply(self);
+				}
 		});
 	},
 
@@ -297,7 +311,7 @@ AdminCP.prototype = {
 	},
 
 	loaded: function() {
-		return ($('#cp-loaded').length == 1);
+		return ($('#cp-loaded').length === 1);
 	},
 
 	loading: function() {
@@ -325,10 +339,11 @@ AdminCP.prototype = {
 	},
 
 	getAnchor: function() {
-	  var href = window.location.href;
-	  if (href.indexOf('#') > -1 )
-	   	return href.substr(href.indexOf('#') + 1).toLowerCase();
-	  return '';
+		var href = window.location.href;
+		if (href.indexOf('#') > -1 ) {
+			return href.substr(href.indexOf('#') + 1).toLowerCase();
+		}
+		return '';
 	},
 
 	unban: function(ip, el) {
@@ -357,7 +372,7 @@ AdminCP.prototype = {
 
 		var pars = {
 			mode: 'unbanall'
-		}
+		};
 
 		this.ajax(function(json) {
 			this.done();

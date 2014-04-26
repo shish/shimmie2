@@ -235,4 +235,4 @@ class UserPageTheme extends Themelet {
 	}
 // }}}
 }
-?>
+

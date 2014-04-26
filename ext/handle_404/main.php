@@ -50,4 +50,4 @@ class Handle404 extends Extension {
 
 	public function get_priority() {return 99;}
 }
-?>
+

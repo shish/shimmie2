@@ -33,4 +33,4 @@ class RSSImagesTest extends ShimmieWebTestCase {
 		$this->log_out();
     }
 }
-?>
+

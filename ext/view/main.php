@@ -139,4 +139,4 @@ class ViewImage extends Extension {
 		$this->theme->display_page($event->get_image(), $iibbe->parts);
 	}
 }
-?>
+

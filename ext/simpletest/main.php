@@ -91,6 +91,7 @@ define('ADMIN_PASS', "demo");
  * A set of common SCore activities to test
  */
 class SCoreWebTestCase extends WebTestCase {
+
  	/**
 	 * Click on a link or a button
 	 */
@@ -257,4 +258,4 @@ class SimpleSCoreTest extends Extension {
 		}
 	}
 }
-?>
+

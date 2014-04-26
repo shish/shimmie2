@@ -59,4 +59,4 @@ class MP3FileHandler extends DataHandlerExtension {
 		return FALSE;
 	}
 }
-?>
+

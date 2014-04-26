@@ -12,4 +12,4 @@ class QRImage extends Extension {
 		$this->theme->links_block(make_http(make_link('image/'.$event->image->id.'.jpg')));
 	}
 }
-?>
+

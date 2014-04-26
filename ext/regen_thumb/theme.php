@@ -24,4 +24,4 @@ class RegenThumbTheme extends Themelet {
 		$page->add_block(new Block("Thumbnail", $this->build_thumb_html($image)));
 	}
 }
-?>
+

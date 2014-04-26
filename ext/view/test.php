@@ -42,4 +42,4 @@ class ViewTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

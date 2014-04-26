@@ -153,4 +153,4 @@ class AliasEditor extends Extension {
 	// missing out the images tagged with the oldtag
 	public function get_priority() {return 60;}
 }
-?>
+

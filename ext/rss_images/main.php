@@ -112,4 +112,4 @@ class RSS_Images extends Extension {
 		return $data;
 	}
 }
-?>
+

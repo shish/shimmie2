@@ -59,4 +59,4 @@ class DowntimeTheme extends Themelet {
 EOD;
 	}
 }
-?>
+

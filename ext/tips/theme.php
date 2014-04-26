@@ -92,4 +92,4 @@ class TipsTheme extends Themelet {
 		$page->add_block(new Block("All Tips", $html, "main", 20));
 	}
 }
-?>
+

@@ -272,4 +272,4 @@ class TagListTheme extends Themelet {
 		return make_link("post/list/$u_tag/1");
 	}
 }
-?>
+

@@ -32,8 +32,7 @@ class Bookmarks extends Extension {
 	}
 
 	protected function install() {
-		global $database;
-		global $config;
+		global $database, $config;
 
 		// shortcut to latest
 		if($config->get_int("ext_bookmarks_version") < 1) {
@@ -61,9 +60,9 @@ class Bookmarks extends Extension {
 	}
 
 	private function add_bookmark(/*string*/ $url, /*string*/ $title) {
-		global $database;
+		global $database, $user;
 		$sql = "INSERT INTO bookmark(owner_id, url, title) VALUES (?, ?, ?)";
 		$database->Execute($sql, array($user->id, $url, $title));
 	}
 }
-?>
+

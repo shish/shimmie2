@@ -26,4 +26,4 @@ class PMTrigger extends Extension {
 		)));
 	}
 }
-?>
+

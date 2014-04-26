@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, devel:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 var History = function() {
 	var self = this;
 	var args = arguments;
@@ -17,12 +19,10 @@ History.prototype = {
 		$('body').ScrollToAnchors({	duration: 800 });
 	},
 
-
 	initEvents: function() {
 		var self = this;
 		
 		this.initLogEvents();
-
 
 		// Select log
 		$('#log').change(function() {
@@ -31,15 +31,13 @@ History.prototype = {
 			var pars = {
 				p: 'yes',
 				log: logIndex
-			}
+			};
 			
 			self.ajax(function(html) {
-				$('#ys-posts').html(html)
+				$('#ys-posts').html(html);
 				$('#yshout').fadeIn();
 				self.initLogEvents();
 			}, pars, true, 'index.php');
-
-			
 		});
 
 		// Clear the log
@@ -56,13 +54,12 @@ History.prototype = {
 							self.error('You\'re not an admin. Log in through the admin CP to clear the log.');
 							el.innerHTML = 'Clear this log';
 							return;
-							break;
 					}
 				}
 
 				$('#ys-posts').html(self.noPosts);
 				self.initLogEvents();
-				el.innerHTML = 'Clear this log'
+				el.innerHTML = 'Clear this log';
 			}, pars);
 
 			this.innerHTML = 'Clearing...';
@@ -80,16 +77,15 @@ History.prototype = {
 				if (json.error) {
 					switch(json.error) {
 						case 'admin':
-							el.innerHTML = 'Clear all logs'
+							el.innerHTML = 'Clear all logs';
 							self.error('You\'re not an admin. Log in through the admin CP to clear logs.');
 							return;
-							break;
 					}
 				}
 
 				$('#ys-posts').html(self.noPosts);
 				self.initLogEvents();
-				el.innerHTML = 'Clear all logs'
+				el.innerHTML = 'Clear all logs';
 			}, pars);
 
 			this.innerHTML = 'Clearing...';
@@ -115,27 +111,29 @@ History.prototype = {
 	showInfo: function(id, el) {
 		var jEl = $('#' + id + ' .ys-post-info');
 
-		if (jEl.length == 0) return false;
+		if (jEl.length === 0) { return false; }
 		
-		if (this.prefsInfo == 'overlay')
+		if (this.prefsInfo === 'overlay') {
 			jEl.css('display', 'block').fadeIn(this.animSpeed);
-		else
+		} else {
 			jEl.slideDown(this.animSpeed);
+		}
 		
-		el.innerHTML ='Close Info'
+		el.innerHTML ='Close Info';
 		return false;
 	},
 	
 	hideInfo: function(id, el) {
 		var jEl = $('#' + id + ' .ys-post-info');
 
-		if (jEl.length == 0) return false;
+		if (jEl.length === 0) { return false; }
 
-		if (this.prefsInfo == 'overlay')
+		if (this.prefsInfo === 'overlay') {
 			jEl.fadeOut(this.animSpeed);
-		else
+		} else {
 			jEl.slideUp(this.animSpeed);
-			
+		}
+
 		el.innerHTML = 'Info';
 		return false;
 	}, 
@@ -144,7 +142,8 @@ History.prototype = {
 		var self = this;
 		var link = $('#' + post.id).find('.ys-ban-link')[0];
 		
-		switch(link.innerHTML) {
+		switch(link.innerHTML)
+		{
 			case 'Ban':
 				var pIP = $(post).find('.ys-h-ip').html();
 				var pNickname = $(post).find('.ys-h-nickname').html();
@@ -175,11 +174,9 @@ History.prototype = {
 				
 				link.innerHTML = 'Banning...';
 				return false;
-				break;
 			
 			case 'Banning...':
 				return false;
-				break;
 			
 			case 'Unban':
 				var pIP = $(post).find('.ys-h-ip').html();
@@ -194,7 +191,6 @@ History.prototype = {
 							case 'admin':
 								self.error('You\'re not an admin. Log in through the admin CP to unban people.');
 								return;
-								break;
 						}
 					}
 					
@@ -207,11 +203,9 @@ History.prototype = {
 	
 				link.innerHTML = 'Unbanning...';
 				return false;
-				break;
 				
 			case 'Unbanning...':
 				return false;
-				break;
 		}
 	},
 	
@@ -219,7 +213,7 @@ History.prototype = {
 		var self = this;
 
 		var link = $('#' + post.id).find('.ys-delete-link')[0];
-		if (link.innerHTML == 'Deleting...') return;
+		if (link.innerHTML === 'Deleting...') { return; }
 
 		var pUID = $(post).find('.ys-h-uid').html();
 
@@ -234,7 +228,6 @@ History.prototype = {
 					case 'admin':
 						self.error('You\'re not an admin. Log in through the admin CP to ban people.');
 						return;
-						break;
 				}
 			}
 			
@@ -260,16 +253,18 @@ History.prototype = {
 
 		var self = this;
 		
-		if (page == null) page = '../yshout.php';
+		if (page === null) { page = '../yshout.php'; }
 		
 		$.post(page, pars, function(parse) {
-				if (parse)
-					if (html)
+				if (parse) {
+					if (html) {
 						callback.apply(self, [parse]);
-					else
+					} else {
 						callback.apply(self, [self.json(parse)]);
-				else
+					}
+				} else {
 					callback.apply(self);
+				}
 		});
 	},
 

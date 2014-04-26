@@ -112,4 +112,4 @@ class IndexTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

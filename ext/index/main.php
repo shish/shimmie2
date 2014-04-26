@@ -381,4 +381,4 @@ class Index extends Extension {
 		$this->stpen++;
 	}
 }
-?>
+

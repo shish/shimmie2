@@ -143,10 +143,15 @@ class Tag_History extends Extension {
 		$stored_result_id = $result['id'];
 		$stored_image_id = int_escape($result['image_id']);
 		$stored_tags = $result['tags'];
-		
+
+		$image = Image::by_id($stored_image_id);
+		if ( ! $image instanceof Image) {
+			throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
+		}
+
 		log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 		// all should be ok so we can revert by firing the SetUserTags event.
-		send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
+		send_event(new TagSetEvent($image, $stored_tags));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");
@@ -307,10 +312,15 @@ class Tag_History extends Extension {
 				$stored_result_id = int_escape($result['id']);
 				$stored_image_id = int_escape($result['image_id']);
 				$stored_tags = $result['tags'];
-				
+
+				$image = Image::by_id($stored_image_id);
+				if ( ! $image instanceof Image) {
+					throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
+				}
+
 				log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 				// all should be ok so we can revert by firing the SetTags event.
-				send_event(new TagSetEvent(Image::by_id($stored_image_id), $stored_tags));
+				send_event(new TagSetEvent($image, $stored_tags));
 				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
 			}
 		}
@@ -373,4 +383,4 @@ class Tag_History extends Extension {
 		}
 	}
 }
-?>
+

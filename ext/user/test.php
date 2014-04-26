@@ -37,4 +37,4 @@ class UserPageTest extends SCoreWebTestCase {
 		$this->assert_text("demo");
 	}
 }
-?>
+

@@ -41,4 +41,4 @@ class BulkAddCSVTheme extends Themelet {
 		$this->messages[] = new Block($title, $body);
 	}
 }
-?>
+

@@ -30,4 +30,4 @@ class FavoritesTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

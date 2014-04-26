@@ -8,16 +8,23 @@ function _new_user($row) {
 /**
  * An object representing a row in the "users" table.
  *
- * The currently logged in user will always be accessable via the global variable $user
+ * The currently logged in user will always be accessible via the global variable $user
  */
 class User {
-	var $id;
-	var $name;
-	var $email;
-	var $join_date;
-	var $passhash;
+	/** @var int */
+	public $id;
 
-	/* @var UserClass */
+	/** @var string */
+	public $name;
+
+	/** @var string */
+	public $email;
+
+	public $join_date;
+
+	public $passhash;
+
+	/** @var UserClass */
 	var $class;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -44,6 +51,13 @@ class User {
 		$this->class = $_user_classes[$row["class"]];
 	}
 
+	/**
+	 * Construct a User by session.
+	 *
+	 * @param string $name
+	 * @param string $session
+	 * @return null|User
+	 */
 	public static function by_session(/*string*/ $name, /*string*/ $session) {
 		global $config, $database;
 		$row = $database->cache->get("user-session-$name-$session");
@@ -60,6 +74,11 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
+	/**
+	 * Construct a User by session.
+	 * @param int $id
+	 * @return null|User
+	 */
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
 		global $database;
@@ -72,6 +91,11 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
+	/**
+	 * Construct a User by name.
+	 * @param string $name
+	 * @return null|User
+	 */
 	public static function by_name(/*string*/ $name) {
 		assert(is_string($name));
 		global $database;
@@ -79,6 +103,12 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
+	/**
+	 * Construct a User by name and hash.
+	 * @param string $name
+	 * @param string $hash
+	 * @return null|User
+	 */
 	public static function by_name_and_hash(/*string*/ $name, /*string*/ $hash) {
 		assert(is_string($name));
 		assert(is_string($hash));
@@ -88,6 +118,11 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
+	/**
+	 * @param int $offset
+	 * @param int $limit
+	 * @return array
+	 */
 	public static function by_list(/*int*/ $offset, /*int*/ $limit=50) {
 		assert(is_numeric($offset));
 		assert(is_numeric($limit));
@@ -97,8 +132,12 @@ class User {
 	}
 
 
-	/*
-	 * useful user object functions start here
+	/* useful user object functions start here */
+
+
+	/**
+	 * @param string $ability
+	 * @return bool
 	 */
 	public function can($ability) {
 		return $this->class->can($ability);
@@ -108,7 +147,7 @@ class User {
 	/**
 	 * Test if this user is anonymous (not logged in)
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_anonymous() {
 		global $config;
@@ -118,7 +157,7 @@ class User {
 	/**
 	 * Test if this user is logged in
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_logged_in() {
 		global $config;
@@ -128,12 +167,15 @@ class User {
 	/**
 	 * Test if this user is an administrator
 	 *
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_admin() {
 		return ($this->class->name === "admin");
 	}
 
+	/**
+	 * @param string $class
+	 */
 	public function set_class(/*string*/ $class) {
 		assert(is_string($class));
 		global $database;
@@ -141,6 +183,9 @@ class User {
 		log_info("core-user", 'Set class for '.$this->name.' to '.$class);
 	}
 
+	/**
+	 * @param string $password
+	 */
 	public function set_password(/*string*/ $password) {
 		global $database;
 		$hash = md5(strtolower($this->name) . $password);
@@ -157,7 +202,7 @@ class User {
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
 	 * a local file, a remote file, a gravatar, a something else, etc
-	 * @retval String of HTML
+	 * @return String of HTML
 	 */
 	public function get_avatar_html() {
 		// FIXME: configurable
@@ -186,7 +231,7 @@ class User {
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
 	 *
-	 * @retval String containing auth token (MD5sum)
+	 * @return String containing auth token (MD5sum)
 	 */
 	public function get_auth_token() {
 		global $config;
@@ -218,4 +263,4 @@ class MockUser extends User {
 		parent::__construct($row);
 	}
 }
-?>
+

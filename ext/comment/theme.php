@@ -296,4 +296,4 @@ class CommentListTheme extends Themelet {
 		';
 	}
 }
-?>
+

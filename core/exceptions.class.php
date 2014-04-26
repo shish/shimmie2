@@ -8,4 +8,12 @@ class SCoreException extends Exception {}
  * A fairly common, generic exception
  */
 class PermissionDeniedException extends SCoreException {}
-?>
+
+/**
+ * Class ImageDoesNotExist
+ *
+ * This exception is used when an Image cannot be found by ID.
+ *
+ * Example: Image::by_id(-1) returns null
+ */
+class ImageDoesNotExist extends SCoreException {}

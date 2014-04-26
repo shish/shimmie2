@@ -28,4 +28,4 @@ class SetupTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

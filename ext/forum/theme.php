@@ -229,4 +229,4 @@ class ForumTheme extends Themelet {
         return $html;
     }
 }
-?>
+

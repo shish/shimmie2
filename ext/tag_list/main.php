@@ -492,4 +492,4 @@ class TagList extends Extension {
 	}
 // }}}
 }
-?>
+

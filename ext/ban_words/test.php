@@ -42,4 +42,4 @@ class BanWordsTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

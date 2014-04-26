@@ -46,4 +46,4 @@ class FlashFileHandler extends DataHandlerExtension {
 		return true;
 	}
 }
-?>
+

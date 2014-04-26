@@ -23,4 +23,4 @@ class FlashFileHandlerTheme extends Themelet {
 		$page->add_block(new Block("Flash Animation", $html, "main", 10));
 	}
 }
-?>
+

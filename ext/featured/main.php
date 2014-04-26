@@ -86,4 +86,4 @@ class Featured extends Extension {
 		}
 	}
 }
-?>
+

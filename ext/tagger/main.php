@@ -139,4 +139,4 @@ class TaggerXML extends Extension {
 			"SELECT COUNT(*) FROM `tags` $query",$values)->fields['COUNT(*)'];
 	}
 } 
-?>
+

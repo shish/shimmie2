@@ -415,4 +415,4 @@ class CronUploader extends Extension {
 		file_put_contents ($log_path, $content);
 	}
 }
-?>
+

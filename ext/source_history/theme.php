@@ -134,4 +134,4 @@ class Source_HistoryTheme extends Themelet {
 		$this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
 	}
 }
-?>
+

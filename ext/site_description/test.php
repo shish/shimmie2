@@ -15,4 +15,4 @@ class SiteDescriptionTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

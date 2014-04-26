@@ -423,4 +423,4 @@ class PoolsTheme extends Themelet {
 		$this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
 	}
 }
-?>
+

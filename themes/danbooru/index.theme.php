@@ -58,4 +58,4 @@ class CustomIndexTheme extends IndexTheme {
 		return $table;
 	}
 }
-?>
+

@@ -22,4 +22,4 @@ class LinkImageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -23,4 +23,4 @@ class ImageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -306,4 +306,4 @@ class Setup extends Extension {
 		}
 	}
 }
-?>
+

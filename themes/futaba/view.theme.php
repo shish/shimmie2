@@ -8,4 +8,4 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
 	}
 }
-?>
+

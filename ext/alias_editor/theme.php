@@ -73,4 +73,4 @@ class AliasEditorTheme extends Themelet {
 		$this->display_paginator($page, "alias/list", null, $pageNumber, $totalPages);
 	}
 }
-?>
+

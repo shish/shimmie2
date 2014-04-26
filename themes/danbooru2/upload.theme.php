@@ -11,4 +11,4 @@ class CustomUploadTheme extends UploadTheme {
 		parent::display_page($page);
 	}
 }
-?>
+

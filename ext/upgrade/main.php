@@ -95,4 +95,4 @@ class Upgrade extends Extension {
 
 	public function get_priority() {return 5;}
 }
-?>
+

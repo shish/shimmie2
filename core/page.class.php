@@ -251,11 +251,11 @@ class Page {
 		$data_href = get_base_href();
 		$theme_name = $config->get_string('theme', 'default');
 
-		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>");
+		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
 
 		# 404/static handler will map these to themes/foo/bar.ico or lib/static/bar.ico
-		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>");
-		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>");
+		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
+		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
 
 		$css_files = array();
 		$css_latest = 0;
@@ -275,7 +275,7 @@ class Page {
 			}
 			file_put_contents($css_cache_file, $css_data);
 		}
-		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>");
+		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
 		$js_files = array();
 		$js_latest = 0;
@@ -291,10 +291,10 @@ class Page {
 			}
 			file_put_contents($js_cache_file, $js_data);
 		}
-		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>");
+		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
 	}
 }
 
 class MockPage extends Page {
 }
-?>
+

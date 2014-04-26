@@ -10,4 +10,4 @@ class Handle404Test extends SCoreWebTestCase {
 		$this->assert_response(200);
 	}
 }
-?>
+

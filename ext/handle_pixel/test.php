@@ -14,4 +14,4 @@ class PixelHandlerTest extends ShimmieWebTestCase {
 		# FIXME: test that it gets displayed properly
 	}
 }
-?>
+

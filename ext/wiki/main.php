@@ -483,4 +483,4 @@ class Wiki extends Extension {
 	}
 // }}}
 }
-?>
+

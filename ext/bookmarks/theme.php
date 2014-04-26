@@ -2,4 +2,4 @@
 
 class BookmarksTheme extends Themelet {
 }
-?>
+

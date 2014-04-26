@@ -140,13 +140,20 @@ class Source_History extends Extension {
 		}
 		
 		// lets get the values out of the result
-		$stored_result_id = $result['id'];
+		//$stored_result_id = $result['id'];
 		$stored_image_id = $result['image_id'];
 		$stored_source = $result['source'];
 		
 		log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
+
+		$image = Image::by_id($stored_image_id);
+		
+		if (is_null($image)) {
+			die('Error: No image with the id ('.$stored_image_id.') was found. Perhaps the image was deleted while processing this request.');
+		}
+
 		// all should be ok so we can revert by firing the SetUserSources event.
-		send_event(new SourceSetEvent(Image::by_id($stored_image_id), $stored_source));
+		send_event(new SourceSetEvent($image, $stored_source));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");
@@ -309,8 +316,15 @@ class Source_History extends Extension {
 				$stored_source = $result['source'];
 				
 				log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
+
+				$image = Image::by_id($stored_image_id);
+
+				if (is_null($image)) {
+					die('Error: No image with the id ('.$stored_image_id.') was found. Perhaps the image was deleted while processing this request.');
+				}
+
 				// all should be ok so we can revert by firing the SetSources event.
-				send_event(new SourceSetEvent(Image::by_id($stored_image_id), $stored_source));
+				send_event(new SourceSetEvent($image, $stored_source));
 				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Source History #'.$stored_result_id.' ('.$row['source'].')');
 			}
 		}
@@ -373,4 +387,4 @@ class Source_History extends Extension {
 		}
 	}
 }
-?>
+

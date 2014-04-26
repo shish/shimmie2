@@ -9,4 +9,3 @@ class CustomCommentListTheme extends CommentListTheme {
 		return $this->rr(parent::build_postbox($image_id));
 	}
 }
-?>

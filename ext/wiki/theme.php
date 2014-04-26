@@ -106,4 +106,4 @@ class WikiTheme extends Themelet {
 		";
 	}
 }
-?>
+

@@ -45,7 +45,7 @@ class ImgQuerylet {
 // }}}
 // {{{ db engines
 class DBEngine {
-	var $name = null;
+	public $name = null;
 
 	public function init($db) {}
 
@@ -58,7 +58,7 @@ class DBEngine {
 	}
 }
 class MySQL extends DBEngine {
-	var $name = "mysql";
+	public $name = "mysql";
 
 	public function init($db) {
 		$db->exec("SET NAMES utf8;");
@@ -84,7 +84,7 @@ class MySQL extends DBEngine {
 	}
 }
 class PostgreSQL extends DBEngine {
-	var $name = "pgsql";
+	public $name = "pgsql";
 
 	public function init($db) {
 		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
@@ -123,7 +123,7 @@ function _concat($a, $b) { return $a . $b; }
 function _lower($a) { return strtolower($a); }
 
 class SQLite extends DBEngine {
-	var $name = "sqlite";
+	public $name = "sqlite";
 
 	public function init($db) {
 		ini_set('sqlite.assoc_case', 0);
@@ -553,4 +553,4 @@ class MockDatabase extends Database {
 	public function create_table($name, $def) {}
 	public function connect_engine() {}
 }
-?>
+

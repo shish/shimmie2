@@ -89,4 +89,4 @@ class NumericScoreTheme extends Themelet {
 	}
 }
 
-?>
+

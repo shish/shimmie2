@@ -110,4 +110,4 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

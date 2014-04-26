@@ -103,4 +103,4 @@ class MiniSVGParser {
 	function endElement($parser, $name) {
 	}
 }
-?>
+

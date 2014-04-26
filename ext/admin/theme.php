@@ -68,4 +68,4 @@ class AdminPageTheme extends Themelet {
 		return $html;
 	}
 }
-?>
+

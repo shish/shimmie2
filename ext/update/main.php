@@ -109,4 +109,4 @@ class Update extends Extension {
 	}
 }
 
-?>
+

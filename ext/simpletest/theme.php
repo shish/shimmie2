@@ -84,4 +84,4 @@ class SCoreWebReporter extends HtmlReporter {
 /** @private */
 class SCoreCLIReporter extends TextReporter {
 }
-?>
+

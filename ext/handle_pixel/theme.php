@@ -31,4 +31,4 @@ class PixelFileHandlerTheme extends Themelet {
 		$page->add_block(new Block("Image", $html, "main", 10));
 	}
 }
-?>
+

@@ -21,6 +21,17 @@
 class _SafeImage {
 #{"id":"2","height":"768","width":"1024","hash":"71cdfaabbcdad3f777e0b60418532e94","filesize":"439561","filename":"HeilAmu.png","ext":"png","owner_ip":"0.0.0.0","posted":"0000-00-00 00:00:00","source":null,"locked":"N","owner_id":"0","rating":"u","numeric_score":"0","text_score":"0","notes":"0","favorites":"0","posted_timestamp":-62169955200,"tag_array":["cat","kunimitsu"]}
 
+	public $id;
+	public $height;
+	public $width;
+	public $hash;
+	public $filesize;
+	public $ext;
+	public $posted;
+	public $source;
+	public $owner_id;
+	public $tags;
+
 	function __construct(Image $img) {
 		$this->id       = $img->id;
 		$this->height   = $img->height;
@@ -146,4 +157,4 @@ class ShimmieApi extends Extension {
 		}
 	}
 }
-?>
+

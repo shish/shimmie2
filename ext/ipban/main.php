@@ -284,4 +284,4 @@ class IPBan extends Extension {
 	}
 // }}}
 }
-?>
+

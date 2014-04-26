@@ -176,4 +176,4 @@ class BlotterTheme extends Themelet {
 		return $html;
 	}
 }
-?>
+

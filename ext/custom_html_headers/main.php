@@ -71,4 +71,4 @@ class custom_html_headers extends Extension {
             }
         }
 }
-?>
+

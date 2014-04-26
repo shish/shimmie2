@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, eqeqeq: false, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 Array.prototype.editcloud_contains = function (ele) {
     for (var i = 0; i < this.length; i++) {
         if (this[i] == ele) {
@@ -7,7 +9,7 @@ Array.prototype.editcloud_contains = function (ele) {
     return false;
 };
 Array.prototype.editcloud_remove = function (ele) {
-    var arr = new Array();
+    var arr = [];
     var count = 0;
     for (var i = 0; i < this.length; i++) {
         if (this[i] != ele) {
@@ -25,8 +27,8 @@ function tageditcloud_toggle_extra(hide) {
 	}
 
 	var el = document.getElementById('tagcloud_extra');
-	el.style.display = (el.style.display != 'none' ? 'none' : '' );
-	hide.innerHTML = (el.style.display != 'none' ? 'show fewer tags' : hide_text );
+	el.style.display = (el.style.display !== 'none' ? 'none' : '' );
+	hide.innerHTML = (el.style.display !== 'none' ? 'show fewer tags' : hide_text );
 }
 
 function tageditcloud_toggle_tag(ele,fullTag) {
@@ -42,5 +44,5 @@ function tageditcloud_toggle_tag(ele,fullTag) {
     }
 
     taglist.value = tags.join(' ');
-    document.getElementById('tags').focus();
+    document.getElementById('tag_editor').focus();
 }

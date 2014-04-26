@@ -72,4 +72,4 @@ class UploadS3 extends Extension {
 		}
 	}
 }
-?>
+

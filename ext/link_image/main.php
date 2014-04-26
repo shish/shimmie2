@@ -34,4 +34,4 @@ class LinkImage extends Extension {
 			'text_link' => $text_link);
 	}
 }
-?>
+

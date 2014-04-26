@@ -20,4 +20,4 @@ class TagHistoryTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -8,6 +8,7 @@
 * 	       some other sites, packaged in a light blue color.
 */
 class Layout {
+
 	/**
 	 * turns the Page into HTML
 	 */
@@ -20,13 +21,14 @@ class Layout {
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
+		ksort($page->html_headers);
 		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t$line\n";
+			$header_html .= "\t\t{$line}\n";
 		}
 
 		$menu = "<div class='menu'>
-			<script type='text/javascript' src='$data_href/themes/$theme_name/wz_tooltip.js'></script>
-			<a href='".make_link()."' onmouseover='Tip(&#39;Home&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img src='$data_href/favicon.ico' style='position: relative; top: 3px;'></a>
+			<script type='text/javascript' src='{$data_href}/themes/{$theme_name}/wz_tooltip.js'></script>
+			<a href='".make_link()."' onmouseover='Tip(&#39;Home&#39;, BGCOLOR, &#39;#C3D2E0&#39;, FADEIN, 100)' onmouseout='UnTip()'><img src='{$data_href}/favicon.ico' style='position: relative; top: 3px;'></a>
 			<b>{$site_name}</b> ";
 		
 		// Custom links: These appear on the menu.
@@ -47,7 +49,7 @@ class Layout {
 			$custom_links .= $this->navlinks(make_link('wiki/rules'), "Rules", array("wiki/rules"));
 			$custom_links .= $this->navlinks(make_link('wiki'), "Wiki", array("wiki"));
 		}
-		$menu .= "$custom_links</div>";
+		$menu .= "{$custom_links}</div>";
 		
 		$left_block_html = "";
 		$main_block_html = "";
@@ -76,11 +78,11 @@ class Layout {
 
 		$custom_sublinks = "<div class='sbar'>";
 		// hack
-		global $user;
 		$username = url_escape($user->name);
 		// hack
 		$qp = explode("/", ltrim(@$_GET["q"], "/"));
-		$hw = class_exists("Wiki");
+		$cs = "";
+
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -93,12 +95,14 @@ class Layout {
 				# the subnav links aren't shown, but it would
 				# be nice to be correct
 			case "post":
-				if(class_exists("NumericScore")){ $cs .= "<b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a><b>/</b><a href='".make_link('popular_by_month')."'>Month</a><b>/</b><a href='".make_link('popular_by_year')."'>Year</a> ";}
+				if(class_exists("NumericScore")){
+					$cs .= "<b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a><b>/</b><a href='".make_link('popular_by_month')."'>Month</a><b>/</b><a href='".make_link('popular_by_year')."'>Year</a> ";
+				}
 				$cs .= "<a class='tab' href='".make_link('post/list')."'>All</a>";
-				if(class_exists("Favorites")){ $cs .= "<a class='tab' href='".make_link("post/list/favorited_by=$username/1")."'>My Favorites</a>";}
+				if(class_exists("Favorites")){ $cs .= "<a class='tab' href='".make_link("post/list/favorited_by={$username}/1")."'>My Favorites</a>";}
 				if(class_exists("RSS_Images")){ $cs .= "<a class='tab' href='".make_link('rss/images')."'>Feed</a>";}
 				if(class_exists("Random_Image")){ $cs .= "<a class='tab' href='".make_link("random_image/view")."'>Random Image</a>";}
-				if($hw){ $cs .= "<a class='tab' href='".make_link("wiki/posts")."'>Help</a>";
+				if(class_exists("Wiki")){ $cs .= "<a class='tab' href='".make_link("wiki/posts")."'>Help</a>";
 				}else{ $cs .= "<a class='tab' href='".make_link("ext_doc/index")."'>Help</a>";}
 				break;
 			case "comment":
@@ -127,7 +131,7 @@ class Layout {
 				$cs .= "<a class='tab' href='".make_link("ext_doc/tag_edit")."'>Help</a>";
 				break;
 			case "upload":
-				if($hw) $cs .= "<a class='tab' href='".make_link("wiki/upload_guidelines")."'>Guidelines</a>";
+				if(class_exists("Wiki")) { $cs .= "<a class='tab' href='".make_link("wiki/upload_guidelines")."'>Guidelines</a>"; }
 				break;
 			case "random":
 				$cs .= "<a class='tab' href='".make_link('random/view')."'>Shuffle</a>";
@@ -137,25 +141,28 @@ class Layout {
 				$cs .= "<a class='tab' href='".make_link('featured/download')."'>Download</a>";
 				break;
 		}
-		if($cs == "") {$custom_sublinks = "";} else {
-		$custom_sublinks .= "$cs</div>";}
 
+		if($cs == "") {
+			$custom_sublinks = "";
+		} else {
+			$custom_sublinks .= "$cs</div>";
+		}
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
-		$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
+		$contact = empty($contact_link) ? "" : "<br><a href='mailto:{$contact_link}'>Contact</a>";
+		//$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
-		$wrapper = "";
+		/*$wrapper = "";
 		if(strlen($page->heading) > 100) {
 			$wrapper = ' style="height: 3em; overflow: auto;"';
-		}
-		if($page->left_enabled==false) {
+		}*/
+		if($page->left_enabled == false) {
 			$left_block_html = "";
-			$main_block_html = "<article id='body_noleft'>$main_block_html</article>";
+			$main_block_html = "<article id='body_noleft'>{$main_block_html}</article>";
 		} else {
-			$left_block_html = "<nav>$left_block_html</nav>";
-			$main_block_html = "<article>$main_block_html</article>";
+			$left_block_html = "<nav>{$left_block_html}</nav>";
+			$main_block_html = "<article>{$main_block_html}</article>";
 		}
 
 		$flash = get_prefixed_cookie("flash_message");
@@ -199,62 +206,63 @@ class Layout {
 	</body>
 </html>
 EOD;
-	}
+	} /* end of function display_page() */
+
 
 	/**
 	 * A handy function which does exactly what it says in the method name
 	 */
-	private function block_to_html($block, $hidable=false, $salt="") {
+	public function block_to_html($block, $hidable=false, $salt="") {
 		$h = $block->header;
 		$b = $block->body;
 		$i = str_replace(' ', '_', $h) . $salt;
-		$html = "<section id='$i'>";
+		$html = "<section id='{$i}'>";
 		if(!is_null($h)) {
 			if($salt == "main") {
-				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
+				$html .= "<div class='maintop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";
 			} else {
-				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#$i'>$h</div>";
+				$html .= "<div class='navtop navside tab shm-toggler' data-toggle-sel='#{$i}'>{$h}</div>";
 			}
 		}
 		if(!is_null($b)) {
 			if($salt =="main") {
-				$html .= "<div class='blockbody'>$b</div>";
+				$html .= "<div class='blockbody'>{$b}</div>";
 			}
 			else {
 				$html .= "
-					<div class='navside tab'>$b</div>
+					<div class='navside tab'>{$b}</div>
 				";
 			}
 		}
 		$html .= "</section>";
 		return $html;
 	}
-	
-	private function navlinks($link, $desc, $pages_matched) {
-	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
-	 */
+
+	public function navlinks($link, $desc, $pages_matched) {
+		/**
+		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+		 */
 		$html = null;
 		$url = ltrim($_GET['q'], "/");
 
 		$re1='.*?';
 		$re2='((?:[a-z][a-z_]+))';
 
-		if ($c=preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
+		if (preg_match_all ("/".$re1.$re2."/is", $url, $matches)) {
 			$url=$matches[1][0];
 		}
-		
+
 		$count_pages_matched = count($pages_matched);
-		
+
 		for($i=0; $i < $count_pages_matched; $i++) {
 			if($url == $pages_matched[$i]) {
-				$html = "<a class='tab-selected' href='$link'>$desc</a>";
+				$html = "<a class='tab-selected' href='{$link}'>{$desc}</a>";
 			}
 		}
-		
-		if(is_null($html)) {$html = "<a class='tab' href='$link'>$desc</a>";}
-		
+
+		if(is_null($html)) {$html = "<a class='tab' href='{$link}'>{$desc}</a>";}
+
 		return $html;
 	}
-}
-?>
+
+} /* end of class Layout */

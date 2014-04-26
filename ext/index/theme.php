@@ -106,4 +106,4 @@ and of course start organising your images :-)
 		return $table;
 	}
 }
-?>
+

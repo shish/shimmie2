@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 // jquery.tweet.js - See http://tweet.seaofclouds.com/ or https://github.com/seaofclouds/tweet for more info
 // Copyright (c) 2008-2011 Todd Matthews & Steve Purcell
 (function($) {
@@ -27,7 +29,7 @@
       twitter_search_url: "search.twitter.com", // [string]   custom twitter search url, if any (apigee, etc.)
       template: "{avatar}{time}{join}{text}",   // [string or function] template used to construct each tweet <li> - see code for available vars
       comparator: function(tweet1, tweet2) {    // [function] comparator used to sort tweets (see Array.sort)
-        return tweet2["tweet_time"] - tweet1["tweet_time"];
+        return tweet2.tweet_time - tweet1.tweet_time;
       },
       filter: function(tweet) {                 // [function] whether or not to include a particular tweet (be sure to also set 'fetch')
         return true;
@@ -46,7 +48,7 @@
           result = result.replace(new RegExp('{'+key+'}','g'), val === null ? '' : val);
         }
         return result;
-      } else return template(info);
+      } else { return template(info); }
     }
     // Export the t function for use when passing a function as the 'template' option
     $.extend({tweet: {t: t}});
@@ -69,7 +71,7 @@
       linkUser: replacer(/(^|[\W])@(\w+)/gi, "$1@<a href=\"http://"+s.twitter_url+"/$2\">$2</a>"),
       // Support various latin1 (\u00**) and arabic (\u06**) alphanumeric chars
       linkHash: replacer(/(?:^| )[\#]+([\w\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u00ff\u0600-\u06ff]+)/gi,
-                         ' <a href="http://'+s.twitter_search_url+'/search?q=&tag=$1&lang=all'+((s.username && s.username.length == 1 && !s.list) ? '&from='+s.username.join("%2BOR%2B") : '')+'">#$1</a>'),
+                         ' <a href="http://'+s.twitter_search_url+'/search?q=&tag=$1&lang=all'+((s.username && s.username.length === 1 && !s.list) ? '&from='+s.username.join("%2BOR%2B") : '')+'">#$1</a>'),
       capAwesome: replacer(/\b(awesome)\b/gi, '<span class="awesome">$1</span>'),
       capEpic: replacer(/\b(epic)\b/gi, '<span class="epic">$1</span>'),
       makeHeart: replacer(/(&lt;)+[3]/gi, "<tt class='heart'>&#x2665;</tt>")
@@ -81,7 +83,7 @@
         var text = match;
         for(var i = 0; i < entities.length; ++i) {
           var entity = entities[i];
-          if (entity.url == url && entity.expanded_url) {
+          if (entity.url === url && entity.expanded_url) {
             url = entity.expanded_url;
             text = entity.display_url;
             break;
@@ -137,14 +139,14 @@
     }
 
     function build_api_url() {
-      var proto = ('https:' == document.location.protocol ? 'https:' : 'http:');
+      var proto = ('https:' === document.location.protocol ? 'https:' : 'http:');
       var count = (s.fetch === null) ? s.count : s.fetch;
       var common_params = '&include_entities=1&callback=?';
       if (s.list) {
         return proto+"//"+s.twitter_api_url+"/1/"+s.username[0]+"/lists/"+s.list+"/statuses.json?page="+s.page+"&per_page="+count+common_params;
       } else if (s.favorites) {
         return proto+"//"+s.twitter_api_url+"/favorites/"+s.username[0]+".json?page="+s.page+"&count="+count+common_params;
-      } else if (s.query === null && s.username.length == 1) {
+      } else if (s.query === null && s.username.length === 1) {
         return proto+'//'+s.twitter_api_url+'/1/statuses/user_timeline.json?screen_name='+s.username[0]+'&count='+count+(s.retweets ? '&include_rts=1' : '')+'&page='+s.page+common_params;
       } else {
         var query = (s.query || 'from:'+s.username.join(' OR from:'));
@@ -172,9 +174,9 @@
       o.screen_name = item.from_user || item.user.screen_name;
       o.avatar_size = s.avatar_size;
       o.avatar_url = extract_avatar_url(item, (document.location.protocol === 'https:'));
-      o.retweet = typeof(item.retweeted_status) != 'undefined';
+      o.retweet = typeof(item.retweeted_status) !== 'undefined';
       o.tweet_time = parse_date(item.created_at);
-      o.join_text = s.join_text == "auto" ? build_auto_join_text(item.text) : s.join_text;
+      o.join_text = s.join_text === "auto" ? build_auto_join_text(item.text) : s.join_text;
       o.tweet_id = item.id_str;
       o.twitter_base = "http://"+s.twitter_url+"/";
       o.user_url = o.twitter_base+o.screen_name;
@@ -213,10 +215,10 @@
       }
 
       $(widget).bind("tweet:load", function(){
-        if (s.loading_text) $(widget).empty().append(loading);
+        if (s.loading_text) { $(widget).empty().append(loading); }
         $.getJSON(build_api_url(), function(data){
           $(widget).empty().append(list);
-          if (s.intro_text) list.before(intro);
+          if (s.intro_text) { list.before(intro); }
           list.empty();
 
           var tweets = $.map(data.results || data, extract_template_data);
@@ -226,7 +228,7 @@
               children('li:odd').addClass('tweet_even').end().
               children('li:even').addClass('tweet_odd');
 
-          if (s.outro_text) list.after(outro);
+          if (s.outro_text) { list.after(outro); }
           $(widget).trigger("loaded").trigger((tweets.length === 0 ? "empty" : "full"));
           if (s.refresh_interval) {
             window.setTimeout(function() { $(widget).trigger("tweet:load"); }, 1000 * s.refresh_interval);

@@ -46,4 +46,4 @@ class LogNet extends Extension {
 		}
 	}
 }
-?>
+

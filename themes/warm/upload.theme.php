@@ -9,4 +9,4 @@ class CustomUploadTheme extends UploadTheme {
 		$page->add_block(new Block("Upload", "Disk nearly full, uploads disabled", "head", 20));
 	}
 }
-?>
+

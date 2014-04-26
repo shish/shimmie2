@@ -52,4 +52,4 @@ class RatingTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

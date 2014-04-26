@@ -6,4 +6,4 @@ class QRImageTheme extends Themelet {
 			"QR Code","<img alt='QR Code' src='http://chart.apis.google.com/chart?chs=150x150&amp;cht=qr&amp;chl=$link' />","left",50));
 	}
 }
-?>
+

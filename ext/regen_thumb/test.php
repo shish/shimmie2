@@ -12,4 +12,4 @@ class RegenThumbTest extends ShimmieWebTestCase {
 		# FIXME: test that the thumb's modified time has been updated
 	}
 }
-?>
+

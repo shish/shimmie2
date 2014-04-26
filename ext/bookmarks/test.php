@@ -1,4 +1,3 @@
-
 <?php
 class BookmarksTest extends ShimmieWebTestCase {
 	function testBookmarks() {
@@ -6,4 +5,4 @@ class BookmarksTest extends ShimmieWebTestCase {
 		$this->get_page("bookmark/remove");
 	}
 }
-?>
+

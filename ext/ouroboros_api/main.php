@@ -573,12 +573,17 @@ class OuroborosAPI extends Extension
     protected function postShow($id = null)
     {
         if (!is_null($id)) {
-            $post = new _SafeOuroborosImage(Image::by_id($id));
-            $this->sendData('post', $post);
-        } else {
-            $this->sendResponse(424, 'ID is mandatory');
-        }
-    }
+			$image = Image::by_id($id);
+			if ( ! $image instanceof Image) {
+				$this->sendResponse(404, 'ID not found');
+			} else {
+				$post = new _SafeOuroborosImage($image);
+				$this->sendData('post', $post);
+			}
+		} else {
+			$this->sendResponse(424, 'ID is mandatory');
+		}
+	}
 
     /**
      * Wrapper for getting a list of posts

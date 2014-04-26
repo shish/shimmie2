@@ -134,4 +134,4 @@ class TagEditTheme extends Themelet {
 		";
 	}
 }
-?>
+

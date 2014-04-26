@@ -33,4 +33,4 @@ class Chatbox extends Extension {
 		$page->add_block($chatblock);
 	}
 }
-?>
+

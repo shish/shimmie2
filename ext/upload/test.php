@@ -39,4 +39,4 @@ class UploadTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -101,4 +101,4 @@ xanax
 
 	public function get_priority() {return 30;}
 }
-?>
+

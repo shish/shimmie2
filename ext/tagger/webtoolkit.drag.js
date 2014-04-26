@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, forin:false, noarg:true, noempty:true, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 /**
 *
 * Crossbrowser Drag Handler
@@ -18,9 +20,9 @@ var DragHandler = {
         oElem.onmousedown = DragHandler._dragBegin;
 
         // callbacks
-        oElem.dragBegin = new Function();
-        oElem.drag = new Function();
-        oElem.dragEnd = new Function();
+        oElem.dragBegin = function () {};
+        oElem.drag = function () {};
+        oElem.dragEnd = function () {};
 
         return oElem;
     },
@@ -82,4 +84,4 @@ var DragHandler = {
         DragHandler._oElem = null;
     }
 
-}
+};

@@ -36,14 +36,14 @@ require_once "lib/flexihash.php";
  * sound file, or any other supported upload type.
  */
 class Image {
-	var $id = null;
-	var $height, $width;
-	var $hash, $filesize;
-	var $filename, $ext;
-	var $owner_ip;
-	var $posted;
-	var $source;
-	var $locked;
+	public $id = null;
+	public $height, $width;
+	public $hash, $filesize;
+	public $filename, $ext;
+	public $owner_id, $owner_ip;
+	public $posted, $posted_timestamp;
+	public $source;
+	public $locked;
 
 	/**
 	 * One will very rarely construct an image directly, more common
@@ -54,7 +54,7 @@ class Image {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name
 				$name = str_replace("images.", "", $name);
-				$this->$name = $value; // hax
+				$this->$name = $value; // hax, this is likely the cause of much scrutinizer-ci complaints.
 			}
 			$this->posted_timestamp = strtotime($this->posted); // pray
 			$this->locked = bool_escape($this->locked);
@@ -68,7 +68,8 @@ class Image {
 	/**
 	 * Find an image by ID
 	 *
-	 * @retval Image
+	 * @param int $id
+	 * @return Image
 	 */
 	public static function by_id(/*int*/ $id) {
 		assert(is_numeric($id));
@@ -80,7 +81,8 @@ class Image {
 	/**
 	 * Find an image by hash
 	 *
-	 * @retval Image
+	 * @param string $hash
+	 * @return Image
 	 */
 	public static function by_hash(/*string*/ $hash) {
 		assert(is_string($hash));
@@ -92,7 +94,8 @@ class Image {
 	/**
 	 * Pick a random image out of a set
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @return Image
 	 */
 	public static function by_random($tags=array()) {
 		assert(is_array($tags));
@@ -107,7 +110,11 @@ class Image {
 	/**
 	 * Search for an array of images
 	 *
-	 * @retval Array
+	 * @param int $start
+	 * @param int $limit
+	 * @param array $tags
+	 * @throws SCoreException
+	 * @return Array
 	 */
 	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));
@@ -145,6 +152,9 @@ class Image {
 
 	/**
 	 * Count the number of image results for a given search
+	 *
+	 * @param array $tags
+	 * @return mixed
 	 */
 	public static function count_images($tags=array()) {
 		assert(is_array($tags));
@@ -174,6 +184,9 @@ class Image {
 
 	/**
 	 * Count the number of pages for a given search
+	 *
+	 * @param array $tags
+	 * @return float
 	 */
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
@@ -192,7 +205,9 @@ class Image {
 	 * Rather than simply $this_id + 1, one must take into account
 	 * deleted images and search queries
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @param bool $next
+	 * @return Image
 	 */
 	public function get_next($tags=array(), $next=true) {
 		assert(is_array($tags));
@@ -224,7 +239,8 @@ class Image {
 	/**
 	 * The reverse of get_next
 	 *
-	 * @retval Image
+	 * @param array $tags
+	 * @return Image
 	 */
 	public function get_prev($tags=array()) {
 		return $this->get_next($tags, false);
@@ -233,14 +249,16 @@ class Image {
 	/**
 	 * Find the User who owns this Image
 	 *
-	 * @retval User
+	 * @return User
 	 */
 	public function get_owner() {
 		return User::by_id($this->owner_id);
 	}
 
 	/**
-	 * Set the image's owner
+	 * Set the image's owner.
+	 *
+	 * @param User $owner
 	 */
 	public function set_owner(User $owner) {
 		global $database;
@@ -262,7 +280,9 @@ class Image {
 	}
 
 	/**
-	 * Get this image's tags as a string
+	 * Get this image's tags as a string.
+	 *
+	 * @return string
 	 */
 	public function get_tag_list() {
 		return Tag::implode($this->get_tag_array());
@@ -271,7 +291,7 @@ class Image {
 	/**
 	 * Get the URL for the full size image
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_image_link() {
 		global $config;
@@ -296,7 +316,7 @@ class Image {
 	 * Get a short link to the full size image
 	 *
 	 * @deprecated
-	 * @retval string
+	 * @return string
 	 */
 	public function get_short_link() {
 		global $config;
@@ -306,7 +326,7 @@ class Image {
 	/**
 	 * Get the URL for the thumbnail
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_thumb_link() {
 		global $config;
@@ -331,7 +351,7 @@ class Image {
 	 * Get the tooltip for this image, formatted according to the
 	 * configured template
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_tooltip() {
 		global $config;
@@ -360,7 +380,7 @@ class Image {
 	/**
 	 * Figure out where the full size image is on disk
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_image_filename() {
 		return warehouse_path("images", $this->hash);
@@ -369,7 +389,7 @@ class Image {
 	/**
 	 * Figure out where the thumbnail is on disk
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_thumb_filename() {
 		return warehouse_path("thumbs", $this->hash);
@@ -378,7 +398,7 @@ class Image {
 	/**
 	 * Get the original filename
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_filename() {
 		return $this->filename;
@@ -387,7 +407,7 @@ class Image {
 	/**
 	 * Get the image's mime type
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_mime_type() {
 		return getMimeType($this->get_image_filename(), $this->get_ext());
@@ -396,7 +416,7 @@ class Image {
 	/**
 	 * Get the image's filename extension
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_ext() {
 		return $this->ext;
@@ -405,7 +425,7 @@ class Image {
 	/**
 	 * Get the image's source URL
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	public function get_source() {
 		return $this->source;
@@ -413,6 +433,8 @@ class Image {
 
 	/**
 	 * Set the image's source URL
+	 *
+	 * @param string $new_source
 	 */
 	public function set_source(/*string*/ $new_source) {
 		global $database;
@@ -426,7 +448,7 @@ class Image {
 
 	/**
 	 * Check if the image is locked.
-	 * @retval bool
+	 * @return bool
 	 */
 	public function is_locked() {
 		return $this->locked;
@@ -542,7 +564,9 @@ class Image {
 	/**
 	 * Someone please explain this
 	 *
-	 * @retval string
+	 * @param $tmpl
+	 * @param string $_escape
+	 * @return string
 	 */
 	public function parse_link_template($tmpl, $_escape="url_escape") {
 		global $config;
@@ -682,8 +706,8 @@ class Image {
 			else {
 				$expansions = Tag::resolve_wildcard($term);
 				if($expansions && $positive) $positive_tag_count++;
-				foreach($expansions as $term) {
-					$tag_querylets[] = new TagQuerylet($term, $positive);
+				foreach($expansions as $expanded_term) {
+					$tag_querylets[] = new TagQuerylet($expanded_term, $positive);
 				}
 			}
 		}
@@ -966,6 +990,9 @@ class Image {
 class Tag {
 	/**
 	 * Remove any excess fluff from a user-input tag
+	 *
+	 * @param string $tag
+	 * @return mixed
 	 */
 	public static function sanitise($tag) {
 		assert(is_string($tag));
@@ -1005,6 +1032,10 @@ class Tag {
 		return $tag_array;
 	}
 
+	/**
+	 * @param $tags
+	 * @return string
+	 */
 	public static function implode($tags) {
 		assert(is_string($tags) || is_array($tags));
 
@@ -1019,6 +1050,10 @@ class Tag {
 		return $tags;
 	}
 
+	/**
+	 * @param string $tag
+	 * @return string
+	 */
 	public static function resolve_alias($tag) {
 		assert(is_string($tag));
 
@@ -1067,8 +1102,8 @@ class Tag {
 	/**
 	 * This function takes a list (array) of tags and changes any tags that have aliases
 	 *
-	 * @param $tags Array of tags
-	 * @return Array of tags
+	 * @param array $tags Array of tags
+	 * @return array of tags
 	 */
 	public static function resolve_aliases($tags) {
 		assert(is_array($tags));
@@ -1104,7 +1139,7 @@ class Tag {
 
 /**
  * Move a file from PHP's temporary area into shimmie's image storage
- * heirachy, or throw an exception trying
+ * hierarchy, or throw an exception trying
  */
 function move_upload_to_archive(DataUploadEvent $event) {
 	$target = warehouse_path("images", $event->hash);
@@ -1116,8 +1151,12 @@ function move_upload_to_archive(DataUploadEvent $event) {
 }
 
 /**
- * Given a full size pair of dimentions, return a pair scaled down to fit
+ * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact
+ *
+ * @param int $orig_width
+ * @param int $orig_height
+ * @return array
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
@@ -1143,4 +1182,4 @@ function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	}
 }
 
-?>
+

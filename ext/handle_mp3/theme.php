@@ -20,4 +20,4 @@ class MP3FileHandlerTheme extends Themelet {
 		$page->add_block(new Block("Music", $html, "main", 10));
 	}
 }
-?>
+

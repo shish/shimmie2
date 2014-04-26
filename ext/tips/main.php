@@ -137,9 +137,9 @@ class Tips extends Extension {
 
 		$tip = $database->get_row("SELECT * FROM tips WHERE id = ? ", array($tipID));
 
-		if($tip['enable'] == "Y") {
+		if (bool_escape($tip['enable'])) {
 			$enable = "N";
-		} elseif($tip['enable'] == "N") {
+		} else {
 			$enable = "Y";
 		}
 
@@ -151,4 +151,4 @@ class Tips extends Extension {
 		$database->execute("DELETE FROM tips WHERE id = ?", array($tipID));
 	}
 }
-?>
+

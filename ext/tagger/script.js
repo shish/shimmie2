@@ -1,9 +1,11 @@
+/*jshint forin:false, nonew:true, undef:true, strict:false, browser:true, jquery:true */
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Tagger - Advanced Tagging v2                                                *
 * Author: Artanis (Erik Youngren <artanis.00@gmail.com>)                      *
 * Do not remove this notice.                                                  *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
- 
+
 var Tagger = {
 	initialize : function (image_id) {
 	// object navigation
@@ -25,7 +27,7 @@ var Tagger = {
 		this.tag.suggest      = null;
 		this.tag.image_tags();
 		
-	// reveal		
+	// reveal
 		this.editor.container.style.display = "";
 	
 	// dragging
@@ -39,10 +41,10 @@ var Tagger = {
 	},
 	
 	alert : function (type,text,timeout) {
-		var id = "tagger_alert-"+type
+		var id = "tagger_alert-"+type;
 		var t_alert = byId(id);
 		if (t_alert) {
-			if(text == false) {
+			if(text === false) {
 				// remove
 				t_alert.parentNode.removeChild(t_alert);
 			} else {
@@ -150,10 +152,10 @@ var Tagger = {
 		},
 		
 		ajax : function (url, callback) {
-			var http = (new XMLHttpRequest || new ActiveXObject("Microsoft.XMLHTTP"));
+			var http = (new XMLHttpRequest() || new ActiveXObject("Microsoft.XMLHTTP"));
 			http.open("GET",url,true);
 			http.onreadystatechange = function () {
-				if(http.readyState == 4) callback(http);
+				if(http.readyState == 4) { callback(http); }
 			};
 			http.send(null);
 		}
@@ -162,22 +164,19 @@ var Tagger = {
 	position : {
 		set : function (x,y) {
 			if (!x || !y) {
-				with(this.parent.editor.container.style) {
-					top = "25px";
-					left = "";
-					right = "25px";
-					bottom = "";
-				}
+				this.parent.editor.container.style.top = "25px";
+				this.parent.editor.container.style.left = "";
+				this.parent.editor.container.style.right = "25px";
+				this.parent.editor.container.style.bottom = "";
+
 				var xy = this.get();
 				x = xy[0];
 				y = xy[1];
 			}
-			with(this.parent.editor.container.style) {
-					top = y+"px";
-					left = x+"px";
-					right = "";
-					bottom = "";
-			}
+			this.parent.editor.container.style.top = y+"px";
+			this.parent.editor.container.style.left = x+"px";
+			this.parent.editor.container.style.right = "";
+			this.parent.editor.container.style.bottom = "";
 		},
 		
 		get : function () {

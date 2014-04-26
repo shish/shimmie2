@@ -55,4 +55,4 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->assert_no_text("Random Image");
 	}
 }
-?>
+

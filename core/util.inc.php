@@ -10,6 +10,7 @@ require_once "lib/context.php";
 /**
  * Make some data safe for printing into HTML
  *
+ * @param $input
  * @return string
  */
 function html_escape($input) {
@@ -19,6 +20,7 @@ function html_escape($input) {
 /**
  * Make sure some data is safe to be used in integer context
  *
+ * @param $input
  * @return int
  */
 function int_escape($input) {
@@ -32,6 +34,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
+ * @param $input
  * @return string
  */
 function url_escape($input) {
@@ -66,6 +69,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
+ * @param $input
  * @return string
  */
 function sql_escape($input) {
@@ -77,6 +81,7 @@ function sql_escape($input) {
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
+ * @param $input
  * @return boolean
  */
 function bool_escape($input) {
@@ -112,6 +117,7 @@ function bool_escape($input) {
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
  *
+ * @param $input
  * @return string
  */
 function no_escape($input) {
@@ -156,6 +162,7 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
+ * @param $limit
  * @return int
  */
 function parse_shorthand_int($limit) {
@@ -167,8 +174,11 @@ function parse_shorthand_int($limit) {
 		$value = $m[1];
 		if (isset($m[2])) {
 			switch(strtolower($m[2])) {
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'g': $value *= 1024;  // fall through
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'm': $value *= 1024;  // fall through
+				/** @noinspection PhpMissingBreakStatementInspection */
 				case 'k': $value *= 1024; break;
 				default: $value = -1;
 			}
@@ -182,6 +192,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
+ * @param $int
  * @return string
  */
 function to_shorthand_int($int) {
@@ -203,6 +214,8 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
+ * @param $date
+ * @param bool $html
  * @return string
  */
 function autodate($date, $html=true) {
@@ -214,6 +227,7 @@ function autodate($date, $html=true) {
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
+ * @param $dateTime
  * @return boolean
  */
 function isValidDateTime($dateTime) {
@@ -229,6 +243,7 @@ function isValidDateTime($dateTime) {
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
+ * @param $date
  * @return boolean
  */
 function isValidDate($date) {
@@ -248,6 +263,8 @@ function isValidDate($date) {
  *
  * FIXME: also check that IP ban ext is installed
  *
+ * @param $ip
+ * @param $ban_reason
  * @return string
  */
 function show_ip($ip, $ban_reason) {
@@ -295,6 +312,8 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
  *
  * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
  *
+ * @param null|string $page
+ * @param null|string $query
  * @return string
  */
 function make_link($page=null, $query=null) {
@@ -329,8 +348,9 @@ function make_link($page=null, $query=null) {
 
 
 /**
- * Take the current URL and modify some paramaters
+ * Take the current URL and modify some parameters
  *
+ * @param $changes
  * @return string
  */
 function modify_current_url($changes) {
@@ -372,6 +392,7 @@ function modify_url($url, $changes) {
 /**
  * Turn a relative link into an absolute one, including hostname
  *
+ * @param string $link
  * @return string
  */
 function make_http(/*string*/ $link) {
@@ -385,11 +406,11 @@ function make_http(/*string*/ $link) {
 /**
  * Make a form tag with relevant auth token and stuff
  *
- * @param target string
- * @param method string
- * @param multipart boolean
- * @param form_id string
- * @param onsubmit string
+ * @param string $target
+ * @param string $method
+ * @param bool $multipart
+ * @param string $form_id
+ * @param string $onsubmit
  *
  * @return string
  */
@@ -412,6 +433,11 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+/**
+ * Return the current theme as a string
+ *
+ * @return string
+ */
 function get_theme() {
 	global $config;
 	$theme = $config->get_string("theme", "default");
@@ -505,16 +531,18 @@ function captcha_check() {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
-* Get MIME type for file
-*
-* The contents of this function are taken from the __getMimeType() function
-* from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
-* and released under the 'Simplified BSD License'.
-*
-* @internal Used to get mime types
-* @param string &$file File path
-* @return string
-*/
+ * Get MIME type for file
+ *
+ * The contents of this function are taken from the __getMimeType() function
+ * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
+ * and released under the 'Simplified BSD License'.
+ *
+ * @internal Used to get mime types
+ * @param string &$file File path
+ * @param string $ext
+ * @param bool $list
+ * @return string
+ */
 function getMimeType($file, $ext="", $list=false) {
 
 	// Static extension lookup
@@ -639,6 +667,8 @@ function _count_execs($db, $sql, $inputarray) {
 /**
  * Compare two Block objects, used to sort them before being displayed
  *
+ * @param Block $a
+ * @param Block $b
  * @return int
  */
 function blockcmp(Block $a, Block $b) {
@@ -702,6 +732,7 @@ function get_memory_limit() {
  * Get the currently active IP, masked to make it not change when the last
  * octet or two change, for use in session cookies and such
  *
+ * @param Config $config
  * @return string
  */
 function get_session_ip(Config $config) {
@@ -788,6 +819,7 @@ function get_base_href() {
  * A shorthand way to send a TextFormattingEvent and get the
  * results
  *
+ * @param $string
  * @return string
  */
 function format_text(/*string*/ $string) {
@@ -867,9 +899,11 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
-		// Scrutinizer-ci complains that $http_response_header not defined.
-		// However, it is auto defined by PHP.
-		// See: http://us2.php.net/manual/en/reserved.variables.httpresponseheader.php
+		//
+		// Scrutinizer-ci complains that $http_response_header does not exist,
+		// however, $http_response_header is actually a super-global.
+		// I have filed a bug with PHP-Analyzer here: https://github.com/scrutinizer-ci/php-analyzer/issues/212
+		//
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
 		return $headers;
@@ -1004,6 +1038,8 @@ function get_request_id() {
 /**
  * Remove an item from an array
  *
+ * @param $array
+ * @param $to_remove
  * @return array
  */
 function array_remove($array, $to_remove) {
@@ -1022,6 +1058,8 @@ function array_remove($array, $to_remove) {
  *
  * Also removes duplicate values from the array.
  *
+ * @param $array
+ * @param $element
  * @return array
  */
 function array_add($array, $element) {
@@ -1035,6 +1073,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
+ * @param $array
  * @return array
  */
 function array_iunique($array) {
@@ -1058,6 +1097,8 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
+ * @param $IP
+ * @param $CIDR
  * @return bool
  */
 function ip_in_range($IP, $CIDR) {
@@ -1118,7 +1159,7 @@ function deltree($f) {
 }
 
 /**
- * Copy an entire file heirachy
+ * Copy an entire file hierarchy
  *
  * from a comment on http://uk.php.net/copy
  */
@@ -1456,4 +1497,4 @@ function _end_coverage() {
 		file_put_contents("$absolute_path/$t.$n.log", gzdeflate(serialize(xdebug_get_code_coverage())));
 	}
 }
-?>
+

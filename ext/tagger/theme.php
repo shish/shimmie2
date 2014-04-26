@@ -11,10 +11,14 @@ class taggerTheme extends Themelet {
 		// Initialization code
 		$base_href = get_base_href();
 		// TODO: AJAX test and fallback.
+
 		$page->add_html_header("<script src='$base_href/ext/tagger/webtoolkit.drag.js' type='text/javascript'></script>");
 		$page->add_block(new Block(null,
-			"<script type='text/javascript'>Tagger.initialize("
-				.$event->get_image()->id.");</script>","main",1000));
+			"<script type='text/javascript'>
+				$( document ).ready(function() {
+					Tagger.initialize(".$event->get_image()->id.");
+				});
+			</script>","main",1000));
 
 		// Tagger block
 		$page->add_block( new Block(
@@ -62,4 +66,4 @@ EOD;
 		return $html;
 	}
 }
-?>
+

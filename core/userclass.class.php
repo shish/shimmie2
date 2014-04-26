@@ -2,9 +2,9 @@
 $_user_classes = array();
 
 class UserClass {
-	var $name = null;
-	var $parent = null;
-	var $abilities = array();
+	public $name = null;
+	public $parent = null;
+	public $abilities = array();
 
 	public function __construct($name, $parent=null, $abilities=array()) {
 		global $_user_classes;
@@ -19,6 +19,13 @@ class UserClass {
 		$_user_classes[$name] = $this;
 	}
 
+	/**
+	 * Determine if this class of user can perform an action or has ability.
+	 *
+	 * @param string $ability
+	 * @return bool
+	 * @throws SCoreException
+	 */
 	public function can(/*string*/ $ability) {
 		global $config;
 
@@ -164,4 +171,4 @@ new UserClass("hellbanned", "user", array(
 ));
 
 @include_once "data/config/user-classes.conf.php";
-?>
+

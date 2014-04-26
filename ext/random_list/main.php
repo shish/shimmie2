@@ -51,4 +51,4 @@ class RandomList extends Extension {
 		$event->panel->add_block($sb);
 	}
 }
-?>
+

@@ -2,6 +2,8 @@
 
 class FileStorage {
 
+	public $shoutLog, $path, $handle;
+
 	function FileStorage($path, $shoutLog = false) {
 		$this->shoutLog = $shoutLog;
 		$folder = 'logs';
@@ -56,7 +58,6 @@ class FileStorage {
 		fseek($this->handle, 0);
 		//return stream_get_contents($this->handle);
 		return file_get_contents($this->path);
-
 	}
 
 	function write($contents) {
@@ -79,7 +80,5 @@ class FileStorage {
 		$this->save($default, false);
 		return $default;
 	}
-
 }
 
-?>

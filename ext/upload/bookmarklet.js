@@ -1,3 +1,5 @@
+/*jshint bitwise:true, curly:true, devel:true, forin:false, noarg:true, undef:true, strict:false, browser:true, jquery:true */
+
 /* Imageboard to Shimmie */
 // This should work with "most" sites running Danbooru/Gelbooru/Shimmie
 // maxsize, supext, CA are set inside the bookmarklet (see theme.php)
@@ -7,10 +9,7 @@ var toobig = "The file you are trying to upload is too big to upload!";
 var notsup = "The file you are trying to upload is not supported!";
 
 if(CA === 0 || CA > 2) { // Default
-	if(confirm("Keep existing tags?\n(Cancel will prompt for new tags)")) {
-		// Do nothing
-	}
-	else {
+	if (confirm("Keep existing tags?\n(Cancel will prompt for new tags)") === false) {
 		var tag = prompt("Enter Tags", "");
 		var chk = 1; // This makes sure it doesn't use current tags.
 	}
@@ -39,14 +38,14 @@ if(document.getElementById("post_tag_string") !== null) {
 	var source = "http://" + document.location.hostname + document.location.href.match("\/posts\/[0-9]+");
 
 	var rlist = $('[name="post[rating]"]');
-	for(x=0;x<3;x++){
-		var rating = (rlist[x].checked == true ? rlist[x].value : rating);
+	for( var x=0; x < 3; x++){
+		var rating = (rlist[x].checked === true ? rlist[x].value : rating);
 	}
 
 	var fileinfo = $('#sidebar > section:eq(3) > ul > :contains("Size") > a');
 	var furl = "http://" + document.location.hostname + fileinfo.attr('href');
 	var fs = fileinfo.text().split(" ");
-	var filesize = (fs[1] == "MB" ? fs[0] * 1024 : fs[0]);
+	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
@@ -84,12 +83,12 @@ else if(document.getElementById('tag-sidebar') !== null) {
 	}else if(source.search("gelbooru\\.com") >= 0){
 		var fileinfo = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[0];
 		//gelbooru has no easy way to select the original image link, so we need to double check it is the correct link.
-		fileinfo = (fileinfo.getAttribute('href') == "#" ? document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[1] : fileinfo);
+		fileinfo = (fileinfo.getAttribute('href') === "#" ? document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[1] : fileinfo);
 	}
 	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then image is most likely flash.
 	var furl = fileinfo.href || fileinfo.src;
 	var fs = (fileinfo.innerText.match(/[0-9]+ (KB|MB)/) || ["0 KB"])[0].split(" ");
-	var filesize = (fs[1] == "MB" ? fs[0] * 1024 : fs[0]);
+	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
@@ -116,8 +115,8 @@ else if(document.getElementById('tag-sidebar') !== null) {
  * This crazy way of checking "should" work with older releases though
  * (Seems to work with 2009~ ver)
  */
-else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-]+\: ") == 0) {
-	if(typeof tag !=="ftp://ftp." && chk !==1) {
+else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-]+\: ") === 0) {
+	if(typeof tag !== "ftp://ftp." && chk !==1) {
 		var tag = document.getElementsByTagName("title")[0].innerHTML.match("Image [0-9.-]+\: (.*)")[1];
 	}
 
@@ -126,7 +125,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 
 	// TODO: Make file size show on all themes
 	// (Only seems to show in lite/Danbooru themes.)
-	if(tag.search(/\bflash\b/) == -1) {
+	if(tag.search(/\bflash\b/) === -1) {
 		var img = document.getElementById("main_image").src;
 		if(supext.search(img.match(".*\\.([a-z0-9]+)")[1]) !== -1) {
 			location.href = ste+img+"&tags="+tag+"&source="+source;

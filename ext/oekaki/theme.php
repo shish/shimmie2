@@ -61,4 +61,4 @@ class OekakiTheme extends Themelet {
 			, "left", 21)); // upload is 20
 	}
 }
-?>
+

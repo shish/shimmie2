@@ -32,4 +32,4 @@ class EmoticonList extends Extension {
 		}
 	}
 }
-?>
+

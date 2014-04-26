@@ -26,10 +26,13 @@ class InitExtEvent extends Event {}
  * $event->get_arg(0) = "42"
  */
 class PageRequestEvent extends Event {
-	var $args;
-	var $arg_count;
-	var $part_count;
+	public $args;
+	public $arg_count;
+	public $part_count;
 
+	/**
+	 * @param string $path
+	 */
 	public function __construct($path) {
 		global $config;
 
@@ -63,7 +66,8 @@ class PageRequestEvent extends Event {
 	 *
 	 * If it matches, store the remaining path elements in $args
 	 *
-	 * @retval bool
+	 * @param string $name
+	 * @return bool
 	 */
 	public function page_matches(/*string*/ $name) {
 		$parts = explode("/", $name);
@@ -84,8 +88,9 @@ class PageRequestEvent extends Event {
 
 	/**
 	 * Get the n th argument of the page request (if it exists.)
-	 * @param $n integer
-	 * @retval The argmuent (string) or NULL
+	 *
+	 * @param int $n
+	 * @return string|null The argmuent (string) or NULL
 	 */
 	public function get_arg(/*int*/ $n) {
 		$offset = $this->part_count + $n;
@@ -99,7 +104,7 @@ class PageRequestEvent extends Event {
 
 	/**
 	 * Returns the number of arguments the page request has.
-	 * @retval int
+	 * @return int
 	 */
 	public function count_args() {
 		return (int)($this->arg_count - $this->part_count);
@@ -108,6 +113,10 @@ class PageRequestEvent extends Event {
 	/*
 	 * Many things use these functions
 	 */
+
+	/**
+	 * @return array
+	 */
 	public function get_search_terms() {
 		$search_terms = array();
 		if($this->count_args() === 2) {
@@ -115,6 +124,10 @@ class PageRequestEvent extends Event {
 		}
 		return $search_terms;
 	}
+
+	/**
+	 * @return int
+	 */
 	public function get_page_number() {
 		$page_number = 1;
 		if($this->count_args() === 1) {
@@ -126,6 +139,10 @@ class PageRequestEvent extends Event {
 		if($page_number === 0) $page_number = 1; // invalid -> 0
 		return $page_number;
 	}
+
+	/**
+	 * @return int
+	 */
 	public function get_page_size() {
 		global $config;
 		return $config->get_int('index_images');
@@ -227,28 +244,28 @@ class LogEvent extends Event {
 	/**
 	 * a category, normally the extension name
 	 *
-	 * @retval string
+	 * @return string
 	 */
 	var $section;
 
 	/**
 	 * See python...
 	 *
-	 * @retval int
+	 * @return int
 	 */
 	var $priority = 0;
 
 	/**
 	 * Free text to be logged
 	 *
-	 * @retval text
+	 * @return text
 	 */
 	var $message;
 
 	/**
 	 * The time that the event was created
 	 *
-	 * @retval int
+	 * @return int
 	 */
 	var $time;
 
@@ -265,4 +282,4 @@ class LogEvent extends Event {
 		$this->time = time();
 	}
 }
-?>
+

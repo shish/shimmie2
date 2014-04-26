@@ -31,4 +31,4 @@ class RegenThumb extends Extension {
 		}
 	}
 }
-?>
+

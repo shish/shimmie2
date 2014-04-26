@@ -158,4 +158,4 @@ class ImageBan extends Extension {
 	// in before resolution limit plugin
 	public function get_priority() {return 30;}
 }
-?>
+

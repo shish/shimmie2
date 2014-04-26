@@ -320,4 +320,4 @@ class TagEdit extends Extension {
 		}
 	}
 }
-?>
+

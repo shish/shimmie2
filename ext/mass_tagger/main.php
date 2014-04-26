@@ -57,4 +57,4 @@ class MassTagger extends Extension {
 		$page->set_redirect($_SERVER['HTTP_REFERER']);
 	}
 }
-?>
+

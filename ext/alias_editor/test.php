@@ -97,4 +97,4 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		*/
 	}
 }
-?>
+

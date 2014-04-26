@@ -8,4 +8,4 @@ class BlocksTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

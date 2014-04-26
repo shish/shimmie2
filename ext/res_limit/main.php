@@ -70,4 +70,4 @@ class ResolutionLimit extends Extension {
 		$event->panel->add_block($sb);
 	}
 }
-?>
+
