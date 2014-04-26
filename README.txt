@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
+
 
      _________.__     .__                   .__         ________   
     /   _____/|  |__  |__|  _____    _____  |__|  ____  \_____  \  
