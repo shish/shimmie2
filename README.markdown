@@ -12,10 +12,9 @@ Shimmie
 
 [![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
 
-This is the main branch of Shimmie, if you know anything at all about
-running websites, this is the version to use. Alternatively if you want
-a version that will never have significant changes, check out one of the
-versioned branches.
+This is the main branch of Shimmie, if you know anything at all about running websites, this is the version to use.
+
+Alternatively if you want a version that will never have significant changes, check out one of the versioned branches.
 
 
 Requirements
@@ -43,33 +42,34 @@ Upgrade from 2.3.X
 1. Backup your current files and database!
 2. Unzip into a clean folder
 3. Copy across the images, thumbs, and data folders
-4. Move old/config.php to new/data/config/shimmie.conf.php
-5. Edit shimmie.conf.php to use the new database connection format:
+4. Move `old/config.php` to `new/data/config/shimmie.conf.php`
+5. Edit `shimmie.conf.php` to use the new database connection format:
 
- OLD Format:
+OLD Format:
 ```php
 $database_dsn = "<proto>://<username>:<password>@<host>/<database>";
 ```
 
- NEW Format:
+NEW Format:
 ```php
 define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;dbname=<database>");
 ```
 
 The rest should be automatic~
 
-If there are any errors with the upgrade process, "in_upgrade=true" will
-be left in the config table and the process will be paused for the admin
-to investigate. Deleting this config entry and refreshing the page should
-continue the upgrade from where it left off.
+If there are any errors with the upgrade process, `in_upgrade=true` will be left in the config table
+and the process will be paused for the admin to investigate.
+
+Deleting this config entry and refreshing the page should continue the upgrade from where it left off.
 
 
 Upgrade from earlier versions
 -----------------------------
 
 I very much recommend going via each major release in turn (eg, 2.0.6
--> 2.1.3 -> 2.2.4 -> 2.3.0 rather than 2.0.6 -> 2.3.0). While the basic
-database and file formats haven't changed *completely*, it's different
+-> 2.1.3 -> 2.2.4 -> 2.3.0 rather than 2.0.6 -> 2.3.0).
+
+While the basic database and file formats haven't changed *completely*, it's different
 enough to be a pain.
 
 
@@ -86,9 +86,9 @@ be used.
 Custom User Classes
 -------------------
 
-User classes can be added to or altered by placing them in
-`data/config/user-classes.conf.php`. For example, one can override the
-default anonymous "allow nothing" permissions like so:
+User classes can be added to or altered by placing them in `data/config/user-classes.conf.php`.
+
+For example, one can override the default anonymous "allow nothing" permissions like so:
 
 ```php
 new UserClass("anonymous", "base", array(
@@ -99,8 +99,7 @@ new UserClass("anonymous", "base", array(
 ));
 ```
 
-For a moderator class, being a regular user who can delete images and
-comments:
+For a moderator class, being a regular user who can delete images and comments:
 
 ```php
 new UserClass("moderator", "user", array(
