@@ -50,4 +50,4 @@ class PrivMsgTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

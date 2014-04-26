@@ -26,4 +26,4 @@ class TwitterSocTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -57,4 +57,4 @@ class IPBanTheme extends Themelet {
 		$page->add_block(new Block("Edit IP Bans", $html));
 	}
 }
-?>
+

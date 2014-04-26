@@ -119,4 +119,4 @@ class NotATag extends Extension {
 		else {return array();}
 	}
 }
-?>
+

@@ -87,4 +87,4 @@ class Oekaki extends Extension {
 		}
 	}
 }
-?>
+

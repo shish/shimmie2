@@ -26,4 +26,4 @@ class ShimmieApiTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

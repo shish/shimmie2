@@ -20,4 +20,4 @@ class DowntimeTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

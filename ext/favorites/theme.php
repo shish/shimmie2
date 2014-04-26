@@ -35,4 +35,4 @@ class FavoritesTheme extends Themelet {
 	}
 }
 
-?>
+

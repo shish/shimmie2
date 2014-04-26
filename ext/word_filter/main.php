@@ -48,4 +48,4 @@ class WordFilter extends Extension {
 		return $map;
 	}
 }
-?>
+

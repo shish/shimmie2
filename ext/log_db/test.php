@@ -10,4 +10,4 @@ class LogDatabaseTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

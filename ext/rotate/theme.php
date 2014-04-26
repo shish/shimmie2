@@ -25,4 +25,4 @@ class RotateImageTheme extends Themelet {
 		$page->add_block(new Block($title, $message));
 	}
 }
-?>
+

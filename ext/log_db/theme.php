@@ -103,4 +103,4 @@ class LogDatabaseTheme extends Themelet {
 		return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
 	}
 }
-?>
+

@@ -181,4 +181,4 @@ class ReportImage extends Extension {
 // * Version 0.2b - 10/27/07 - Now supports Shimmie2 RC2!
 // * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)
 // * Version 0.2 - 10/24/07 - First public release.
-?>
+

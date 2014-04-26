@@ -156,4 +156,4 @@ class TagEditCloud extends Extension {
 		return ($user->can("edit_image_tag") && (!$image->is_locked() || $user->can("edit_image_lock")));
 	}
 }
-?>
+

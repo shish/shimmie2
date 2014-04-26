@@ -7,4 +7,4 @@ class ETTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

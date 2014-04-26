@@ -78,4 +78,4 @@ class ReportImageTheme extends Themelet {
 		$page->add_block(new Block("Report Image", $html, "left"));
 	}
 }
-?>
+

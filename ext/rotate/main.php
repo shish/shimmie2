@@ -231,4 +231,4 @@ class RotateImage extends Extension {
 		log_info("rotate", "Rotated Image #{$image_id} - New hash: {$new_hash}");
 	}
 }
-?>
+

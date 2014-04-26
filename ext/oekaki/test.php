@@ -6,4 +6,4 @@ class OekakiTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

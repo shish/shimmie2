@@ -35,4 +35,4 @@ class google_analytics extends Extension {
                 }
         }
 }
-?>
+

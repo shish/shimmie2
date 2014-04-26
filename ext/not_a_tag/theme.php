@@ -55,4 +55,4 @@ class NotATagTheme extends Themelet {
 		$this->display_paginator($page, "untag/list", null, $page_number, $page_count);
 	}
 }
-?>
+

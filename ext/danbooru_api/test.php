@@ -23,4 +23,4 @@ class DanbooruApiTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

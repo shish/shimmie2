@@ -17,4 +17,4 @@ class HolidayTheme extends Themelet {
 		}
 	}
 }
-?>
+

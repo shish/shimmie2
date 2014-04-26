@@ -111,4 +111,4 @@ class BulkAdd extends Extension {
 		}
 	}
 }
-?>
+

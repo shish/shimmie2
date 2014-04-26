@@ -96,4 +96,4 @@ class SetupTheme extends Themelet {
 		return $html;
 	}
 }
-?>
+

@@ -120,4 +120,4 @@ class Relationships extends Extension {
 		}
 	}
 }
-?>
+

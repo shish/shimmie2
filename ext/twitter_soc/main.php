@@ -21,4 +21,4 @@ class TwitterSoc extends Extension {
 		$event->panel->add_block($sb);
 	}
 }
-?>
+

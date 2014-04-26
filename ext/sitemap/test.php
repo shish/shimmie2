@@ -6,4 +6,4 @@ class XMLSitemapTest extends ShimmieWebTestCase {
 		$this->get_page('sitemap.xml');
 	}
 }
-?>
+

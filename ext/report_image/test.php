@@ -37,4 +37,4 @@ class ReportImageTest extends ShimmieWebTestCase {
 		# FIXME: test that >>123 works
 	}
 }
-?>
+

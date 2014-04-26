@@ -164,4 +164,4 @@ class XMLSitemap extends Extension {
             $page->set_data($xml);
         }
 }
-?>
+

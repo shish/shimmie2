@@ -156,4 +156,4 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 }
-?>
+

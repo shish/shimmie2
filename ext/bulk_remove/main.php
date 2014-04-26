@@ -130,4 +130,4 @@ class BulkRemove extends Extension {
             $image_arr = $_POST["bulk_remove_images"];
         }
 }
-?>
+

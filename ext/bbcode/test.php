@@ -81,4 +81,4 @@ class BBCodeUnitTest extends UnitTestCase {
 		return $bb->strip($in);
 	}
 }
-?>
+

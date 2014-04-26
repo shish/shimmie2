@@ -17,4 +17,4 @@ class IcoHandlerTest extends ShimmieWebTestCase {
 		# FIXME: test that it gets displayed properly
 	}
 }
-?>
+

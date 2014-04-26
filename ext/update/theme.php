@@ -11,4 +11,4 @@ class UpdateTheme extends Themelet {
 		$page->add_block(new Block("Software Update", $html, "main", 75));
 	}
 }
-?>
+

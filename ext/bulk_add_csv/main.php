@@ -136,4 +136,4 @@ class BulkAddCSV extends Extension {
 		fclose($csvhandle);
 	}
 }
-?>
+

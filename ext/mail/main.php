@@ -42,4 +42,4 @@ class MailTest extends Extension {
 		}
 	}
 }
-?>
+

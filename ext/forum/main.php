@@ -412,4 +412,4 @@ class Forum extends Extension {
 			}
 		}
 }
-?>
+

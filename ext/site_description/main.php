@@ -30,4 +30,4 @@ class SiteDescription extends Extension {
 		$event->panel->add_block($sb);
 	}
 }
-?>
+

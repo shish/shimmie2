@@ -387,4 +387,4 @@ class Source_History extends Extension {
 		}
 	}
 }
-?>
+

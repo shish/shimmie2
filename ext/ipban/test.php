@@ -25,5 +25,5 @@ class IPBanTest extends SCoreWebTestCase {
 		# FIXME: test that the IP is actually banned
 	}
 }
-?>
+
 

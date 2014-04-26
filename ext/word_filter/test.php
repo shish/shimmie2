@@ -53,4 +53,4 @@ class WordFilterTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

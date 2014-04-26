@@ -236,4 +236,4 @@ class NotesTheme extends Themelet {
 		$this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
 	}
 }		
-?>
+

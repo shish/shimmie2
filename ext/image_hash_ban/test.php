@@ -34,4 +34,4 @@ class HashBanTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

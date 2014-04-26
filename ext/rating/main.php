@@ -235,4 +235,4 @@ class Ratings extends Extension {
 		}
 	}
 }
-?>
+

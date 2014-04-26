@@ -38,4 +38,4 @@ class PoolsTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

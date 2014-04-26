@@ -24,4 +24,4 @@ class MassTaggerTheme extends Themelet {
 		$page->add_block( $block );
 	}
 }
-?>
+

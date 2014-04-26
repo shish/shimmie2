@@ -68,4 +68,4 @@ class TipsTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

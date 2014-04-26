@@ -68,4 +68,4 @@ class TagEditTest extends ShimmieWebTestCase {
 	}
 */
 }
-?>
+

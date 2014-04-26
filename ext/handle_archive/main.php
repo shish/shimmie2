@@ -110,4 +110,4 @@ class ArchiveFileHandler extends Extension {
 		// $this->theme->add_status("Adding $subdir", $list);
 	}
 }
-?>
+

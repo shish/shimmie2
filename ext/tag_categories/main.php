@@ -146,4 +146,4 @@ class TagCategories extends Extension {
 	}
 }
 
-?>
+

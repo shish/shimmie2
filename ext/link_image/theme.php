@@ -91,4 +91,4 @@ class LinkImageTheme extends Themelet {
 		";
 	}
 }
-?>
+

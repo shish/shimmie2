@@ -258,4 +258,4 @@ class SimpleSCoreTest extends Extension {
 		}
 	}
 }
-?>
+

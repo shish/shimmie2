@@ -19,4 +19,4 @@ class RSSCommentsTest extends ShimmieWebTestCase {
 		$this->log_out();
     }
 }
-?>
+

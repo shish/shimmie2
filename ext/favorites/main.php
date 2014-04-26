@@ -196,4 +196,4 @@ class Favorites extends Extension {
 				array("image_id"=>$image->id));
 	}
 }
-?>
+

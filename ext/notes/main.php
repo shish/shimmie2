@@ -609,4 +609,4 @@ class Notes extends Extension {
 		
 	}
 }
-?>
+

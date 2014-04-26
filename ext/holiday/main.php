@@ -29,4 +29,4 @@ class Holiday extends Extension {
 		}
 	}
 }
-?>
+

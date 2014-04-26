@@ -111,4 +111,4 @@ class WikiTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 }
-?>
+

@@ -24,4 +24,4 @@ class RandomImageTheme extends Themelet {
 		";
 	}
 }
-?>
+

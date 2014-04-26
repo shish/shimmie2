@@ -34,4 +34,4 @@ class TagListTest extends ShimmieWebTestCase {
 		}
 	}
 }
-?>
+

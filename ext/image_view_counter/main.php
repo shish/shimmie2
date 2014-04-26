@@ -105,4 +105,4 @@ class image_view_counter extends Extension {
             return $view_count;
         }
 }
-?>
+

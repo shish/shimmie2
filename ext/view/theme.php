@@ -90,4 +90,4 @@ class ViewImageTheme extends Themelet {
 		return $html;
 	}
 }
-?>
+

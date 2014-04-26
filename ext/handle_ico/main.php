@@ -107,4 +107,4 @@ class IcoFileHandler extends Extension {
 		return true;
 	}
 }
-?>
+
