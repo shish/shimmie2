@@ -152,6 +152,9 @@ class Image {
 
 	/**
 	 * Count the number of image results for a given search
+	 *
+	 * @param array $tags
+	 * @return mixed
 	 */
 	public static function count_images($tags=array()) {
 		assert(is_array($tags));
@@ -181,6 +184,9 @@ class Image {
 
 	/**
 	 * Count the number of pages for a given search
+	 *
+	 * @param array $tags
+	 * @return float
 	 */
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
@@ -250,7 +256,9 @@ class Image {
 	}
 
 	/**
-	 * Set the image's owner
+	 * Set the image's owner.
+	 *
+	 * @param User $owner
 	 */
 	public function set_owner(User $owner) {
 		global $database;
@@ -272,7 +280,9 @@ class Image {
 	}
 
 	/**
-	 * Get this image's tags as a string
+	 * Get this image's tags as a string.
+	 *
+	 * @return string
 	 */
 	public function get_tag_list() {
 		return Tag::implode($this->get_tag_array());
@@ -1022,6 +1032,10 @@ class Tag {
 		return $tag_array;
 	}
 
+	/**
+	 * @param $tags
+	 * @return string
+	 */
 	public static function implode($tags) {
 		assert(is_string($tags) || is_array($tags));
 
@@ -1036,6 +1050,10 @@ class Tag {
 		return $tags;
 	}
 
+	/**
+	 * @param string $tag
+	 * @return string
+	 */
 	public static function resolve_alias($tag) {
 		assert(is_string($tag));
 
@@ -1084,8 +1102,8 @@ class Tag {
 	/**
 	 * This function takes a list (array) of tags and changes any tags that have aliases
 	 *
-	 * @param $tags Array of tags
-	 * @return Array of tags
+	 * @param array $tags Array of tags
+	 * @return array of tags
 	 */
 	public static function resolve_aliases($tags) {
 		assert(is_array($tags));
@@ -1135,6 +1153,10 @@ function move_upload_to_archive(DataUploadEvent $event) {
 /**
  * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact
+ *
+ * @param int $orig_width
+ * @param int $orig_height
+ * @return array
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
