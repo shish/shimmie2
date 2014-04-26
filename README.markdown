@@ -4,29 +4,27 @@
     \_____  \ |  |  \ |  | /     \  /     \ |  |_/ __ \  /  ____/  
     /        \|   Y  \|  ||  Y Y  \|  Y Y  \|  |\  ___/ /       \  
    /_______  /|___|  /|__||__|_|  /|__|_|  /|__| \___  >\_______ \ 
-           \/      \/           \/       \/          \/         \/
+           \/      \/           \/       \/          \/         \/ 
+                                                                
 ```
 
-Shimmie
-=======
+# Shimmie
 
 [![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
 
-This is the main branch of Shimmie, if you know anything at all about running websites, this is the version to use.
+This is the main branch of Shimmie, if you know anything at all about running
+websites, this is the version to use.
 
-Alternatively if you want a version that will never have significant changes, check out one of the versioned branches.
+Alternatively if you want a version that will never have significant changes,
+check out one of the versioned branches.
 
-
-Requirements
-============
+# Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
 - PHP 5.3+
 - GD or ImageMagick
 
-
-Installation
-============
+# Installation
 
 1. Create a blank database
 2. Unzip shimmie into a folder on the web host
@@ -35,9 +33,7 @@ Installation
 5. Click "install". Hopefully you'll end up at the welcome screen; if
    not, you should be given instructions on how to fix any errors~
 
-
-Upgrade from 2.3.X
-------------------
+## Upgrade from 2.3.X
 
 1. Backup your current files and database!
 2. Unzip into a clean folder
@@ -57,14 +53,14 @@ define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;
 
 The rest should be automatic~
 
-If there are any errors with the upgrade process, `in_upgrade=true` will be left in the config table
-and the process will be paused for the admin to investigate.
+If there are any errors with the upgrade process, `in_upgrade=true` will
+be left in the config table and the process will be paused for the admin
+to investigate.
 
 Deleting this config entry and refreshing the page should continue the upgrade from where it left off.
 
 
-Upgrade from earlier versions
------------------------------
+### Upgrade from earlier versions
 
 I very much recommend going via each major release in turn (eg, 2.0.6
 -> 2.1.3 -> 2.2.4 -> 2.3.0 rather than 2.0.6 -> 2.3.0).
@@ -73,8 +69,7 @@ While the basic database and file formats haven't changed *completely*, it's dif
 enough to be a pain.
 
 
-Custom Configuration
-====================
+## Custom Configuration
 
 Various aspects of Shimmie can be configured to suit your site specific needs
 via the file `data/config/shimmie.conf.php` (created after installation).
@@ -83,10 +78,10 @@ Take a look at `core/sys_config.inc.php` for the available options that can
 be used.
 
 
-Custom User Classes
--------------------
+#### Custom User Classes
 
-User classes can be added to or altered by placing them in `data/config/user-classes.conf.php`.
+User classes can be added to or altered by placing them in
+`data/config/user-classes.conf.php`.
 
 For example, one can override the default anonymous "allow nothing" permissions like so:
 
@@ -111,8 +106,7 @@ new UserClass("moderator", "user", array(
 For a list of permissions, see `core/userclass.class.php`
 
 
-Development Info
-================
+# Development Info
 
 ui-* cookies are for the client-side scripts only; in some configurations
 (eg with varnish cache) they will be stripped before they reach the server
@@ -136,8 +130,7 @@ Please tell me if those docs are lacking in any way, so that they can be
 improved for the next person who uses them
 
 
-Contact
-=======
+# Contact
 
 IRC: `#shimmie` on [Freenode](irc.freenode.net)
 
@@ -146,8 +139,7 @@ Email: webmaster at shishnet.org
 Issue/Bug tracker: http://github.com/shish/shimmie2/issues
 
 
-Licence
-=======
+# Licence
 
 All code is released under the [GNU GPL Version 2](http://www.gnu.org/licenses/gpl-2.0.html) unless mentioned otherwise.
 
