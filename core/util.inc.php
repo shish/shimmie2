@@ -312,8 +312,8 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
  *
  * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
  *
- * @param null $page
- * @param null $query
+ * @param null|string $page
+ * @param null|string $query
  * @return string
  */
 function make_link($page=null, $query=null) {
@@ -348,7 +348,7 @@ function make_link($page=null, $query=null) {
 
 
 /**
- * Take the current URL and modify some paramaters
+ * Take the current URL and modify some parameters
  *
  * @param $changes
  * @return string
@@ -392,7 +392,7 @@ function modify_url($url, $changes) {
 /**
  * Turn a relative link into an absolute one, including hostname
  *
- * @param $link
+ * @param string $link
  * @return string
  */
 function make_http(/*string*/ $link) {
@@ -433,6 +433,11 @@ function mtimefile($file) {
 	return "$data_href/$file?$mtime";
 }
 
+/**
+ * Return the current theme as a string
+ *
+ * @return string
+ */
 function get_theme() {
 	global $config;
 	$theme = $config->get_string("theme", "default");
