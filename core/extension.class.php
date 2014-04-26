@@ -220,12 +220,15 @@ abstract class DataHandlerExtension extends Extension {
 		}
 	}
 
+	/*
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = $this->setup();
 		if($sb) $event->panel->add_block($sb);
 	}
 
 	protected function setup() {}
+	*/
+
 	abstract protected function supported_ext($ext);
 	abstract protected function check_contents($tmpname);
 	abstract protected function create_image_from_data($filename, $metadata);
