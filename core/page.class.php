@@ -36,20 +36,22 @@
 class Page {
 	/** @name Overall */
 	//@{
-	/** @private */
-	var $mode = "page";
-	/** @private */
-	var $type = "text/html; charset=utf-8";
+	/** @var string */
+	public $mode = "page";
+	/** @var string */
+	public $type = "text/html; charset=utf-8";
 
 	/**
 	 * Set what this page should do; "page", "data", or "redirect".
+	 * @param string $mode
 	 */
 	public function set_mode($mode) {
 		$this->mode = $mode;
 	}
 
 	/**
-	 * Set the page's MIME type
+	 * Set the page's MIME type.
+	 * @param string $type
 	 */
 	public function set_type($type) {
 		$this->type = $type;
@@ -61,20 +63,23 @@ class Page {
 	/** @name "data" mode */
 	//@{
 
-	/** @private */
-	var $data = "";
-	/** @private */
-	var $filename = null;
+	/** @var string */
+	private $data = "";
+
+	/** @var string */
+	private $filename = null;
 
 	/**
-	 * Set the raw data to be sent
+	 * Set the raw data to be sent.
+	 * @param string $data
 	 */
 	public function set_data($data) {
 		$this->data = $data;
 	}
 
 	/**
-	 * Set the recommended download filename
+	 * Set the recommended download filename.
+	 * @param string $filename
 	 */
 	public function set_filename($filename) {
 		$this->filename = $filename;
@@ -86,12 +91,13 @@ class Page {
 	/** @name "redirect" mode */
 	//@{
 
-	/** @private */
-	var $redirect = "";
+	/** @var string */
+	private $redirect = "";
 
 	/**
 	 * Set the URL to redirect to (remember to use make_link() if linking
-	 * to a page in the same site)
+	 * to a page in the same site).
+	 * @param string $redirect
 	 */
 	public function set_redirect($redirect) {
 		$this->redirect = $redirect;
@@ -103,55 +109,75 @@ class Page {
 	/** @name "page" mode */
 	//@{
 
-	/** @privatesection */
-	var $title = "";
-	var $heading = "";
-	var $subheading = "";
-	var $quicknav = "";
-	var $html_headers = array();
-	var $http_headers = array();
-	var $blocks = array();
-	/** @publicsection */
+	/** @var string */
+	public $title = "";
+
+	/** @var string */
+	public $heading = "";
+
+	/** @var string */
+	public $subheading = "";
+
+	/** @var string */
+	public $quicknav = "";
+
+	/** @var string[] */
+	public $html_headers = array();
+
+	/** @var string[] */
+	public $http_headers = array();
+
+	/** @var Block[] */
+	public $blocks = array();
+
 
 	/**
-	 * Set the window title
+	 * Set the window title.
+	 * @param string $title
 	 */
 	public function set_title($title) {
 		$this->title = $title;
 	}
 
 	/**
-	 * Set the main heading
+	 * Set the main heading.
+	 * @param string $heading
 	 */
 	public function set_heading($heading) {
 		$this->heading = $heading;
 	}
 
 	/**
-	 * Set the sub heading
+	 * Set the sub heading.
+	 * @param string $subheading
 	 */
 	public function set_subheading($subheading) {
 		$this->subheading = $subheading;
 	}
 
 	/**
-	 * Add a line to the HTML head section
+	 * Add a line to the HTML head section.
+	 * @param string $line
+	 * @param int $position
 	 */
 	public function add_html_header($line, $position=50) {
 		while(isset($this->html_headers[$position])) $position++;
 		$this->html_headers[$position] = $line;
 	}
-	
+
 	/**
 	 * Add a http header to be sent to the client.
+	 * @param string $line
+	 * @param int $position
 	 */
 	public function add_http_header($line, $position=50) {
 		while(isset($this->http_headers[$position])) $position++;
 		$this->http_headers[$position] = $line;
 	}
-	
+
 	/**
 	 * Get all the HTML headers that are currently set and return as a string.
+	 * @return string
 	 */
 	public function get_all_html_headers() {
 		$data = '';
@@ -162,14 +188,15 @@ class Page {
 	}
 	
 	/**
-	 * Removes all currently set HTML headers. (Be careful..)
+	 * Removes all currently set HTML headers (Be careful..).
 	 */
 	public function delete_all_html_headers() {
 		$this->html_headers = array();
 	}
-	
+
 	/**
-	 * Add a Block of data
+	 * Add a Block of data to the page.
+	 * @param Block $block
 	 */
 	public function add_block(Block $block) {
 		$this->blocks[] = $block;
@@ -180,7 +207,7 @@ class Page {
 	// ==============================================
 
 	/**
-	 * Display the page according to the mode and data given
+	 * Display the page according to the mode and data given.
 	 */
 	public function display() {
 		global $page, $user;

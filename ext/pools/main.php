@@ -353,9 +353,12 @@ class Pools extends Extension {
 			return false;
 		}
 	}
-	
-	/*
-	 * HERE WE GET THE LIST OF POOLS
+
+	/**
+	 * HERE WE GET THE LIST OF POOLS.
+	 *
+	 * @param Page $page
+	 * @param int $pageNumber
 	 */
 	private function list_pools(Page $page, /*int*/ $pageNumber) {
 		global $config, $database;
@@ -399,8 +402,11 @@ class Pools extends Extension {
 	}
 
 
-	/*
+	/**
 	 * HERE WE CREATE A NEW POOL
+	 *
+	 * @return mixed
+	 * @throws PoolCreationException
 	 */
 	private function add_pool() {
 		global $user, $database;
@@ -431,7 +437,7 @@ class Pools extends Extension {
 
 	/**
 	 * Retrieve information about pools given multiple pool IDs.
-	 * @param $poolID Array of integers
+	 * @param int $poolID Array of integers
 	 * @return 2D Array
 	 */
 	private function get_pool(/*int*/ $poolID) {
@@ -441,7 +447,7 @@ class Pools extends Extension {
 
 	/**
 	 * Retrieve information about a pool given a pool ID.
-	 * @param $poolID Integer
+	 * @param int $poolID the pool id
 	 * @return 2D array (with only 1 element in the one dimension)
 	 */
 	private function get_single_pool(/*int*/ $poolID) {

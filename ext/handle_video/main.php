@@ -42,11 +42,17 @@ class VideoFileHandler extends DataHandlerExtension {
 		$event->panel->add_block($sb);
 	}
 
+	/**
+	 * @param string $hash
+	 * @return bool
+	 */
 	protected function create_thumb($hash) {
 		global $config;
 
 		// this is never used...
 		//$q = $config->get_int("thumb_quality");
+
+		$ok = false;
 
 		switch($config->get_string("video_thumb_engine"))
 		{
@@ -54,6 +60,7 @@ class VideoFileHandler extends DataHandlerExtension {
 			case 'static':
 				$outname = warehouse_path("thumbs", $hash);
 				copy("ext/handle_video/thumb.jpg", $outname);
+				$ok = true;
 				break;
 			case 'ffmpeg':
 				$ffmpeg = escapeshellarg($config->get_string("thumb_ffmpeg_path"));
@@ -66,16 +73,30 @@ class VideoFileHandler extends DataHandlerExtension {
 				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
 				exec($cmd, $output, $ret);
 
+				// TODO: We should really check the result of the exec to see if it really succeeded.
+				$ok = true;
+
 				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
 				break;
 		}
+
+		return $ok;
 	}
 
+	/**
+	 * @param string $ext
+	 * @return bool
+	 */
 	protected function supported_ext($ext) {
 		$exts = array("flv", "mp4", "m4v", "ogv", "webm");
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param string $filename
+	 * @param array $metadata
+	 * @return Image|null
+	 */
 	protected function create_image_from_data($filename, $metadata) {
 		//global $config;
 
@@ -117,6 +138,10 @@ class VideoFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
 	protected function check_contents($file) {
 		if (file_exists($file)) {
 			require_once('lib/getid3/getid3/getid3.php');

@@ -1,9 +1,23 @@
 <?php
+/**
+ * @global UserClass[]
+ */
 $_user_classes = array();
 
 class UserClass {
+	/**
+	 * @var null|string
+	 */
 	public $name = null;
+
+	/**
+	 * @var mixed
+	 */
 	public $parent = null;
+
+	/**
+	 * @var array
+	 */
 	public $abilities = array();
 
 	public function __construct($name, $parent=null, $abilities=array()) {
