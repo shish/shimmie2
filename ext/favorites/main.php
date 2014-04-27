@@ -14,8 +14,18 @@
  */
 
 class FavoriteSetEvent extends Event {
-	var $image_id, $user, $do_set;
+	/** @var int */
+	public $image_id;
+	/** @var \User */
+	public $user;
+	/** @var bool */
+	public $do_set;
 
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param bool $do_set
+	 */
 	public function __construct(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
 		assert(is_numeric($image_id));
 		assert(is_bool($do_set));
@@ -172,6 +182,11 @@ class Favorites extends Extension {
 		}
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param int $user_id
+	 * @param bool $do_set
+	 */
 	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*bool*/ $do_set) {
 		global $database;
 		if ($do_set) {
@@ -187,7 +202,11 @@ class Favorites extends Extension {
 			"UPDATE images SET favorites=(SELECT COUNT(*) FROM user_favorites WHERE image_id=:image_id) WHERE id=:user_id",
 			array("image_id"=>$image_id, "user_id"=>$user_id));
 	}
-	
+
+	/**
+	 * @param Image $image
+	 * @return array
+	 */
 	private function list_persons_who_have_favorited(Image $image) {
 		global $database;
 

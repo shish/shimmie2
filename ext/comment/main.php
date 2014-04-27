@@ -425,6 +425,9 @@ class CommentList extends Extension {
 		return (count($result) >= $max);
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function hash_match() {
 		return ($_POST['hash'] == $this->get_hash());
 	}
@@ -440,6 +443,10 @@ class CommentList extends Extension {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
+	/**
+	 * @param string $text
+	 * @return bool
+	 */
 	private function is_spam_akismet(/*string*/ $text) {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
@@ -478,11 +485,22 @@ class CommentList extends Extension {
 		return false;
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param int $comment
+	 * @return null
+	 */
 	private function is_dupe(/*int*/ $image_id, /*string*/ $comment) {
 		global $database;
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
 // do some checks
+
+	/**
+	 * @param int $pagenum
+	 * @param int $maxpage
+	 * @return int
+	 */
 	private function sanity_check_pagenumber(/*int*/ $pagenum, /*int*/ $maxpage){
 		if (!is_numeric($pagenum)){
 			$pagenum=1;
@@ -496,6 +514,12 @@ class CommentList extends Extension {
 		return $pagenum;
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param string $comment
+	 * @throws CommentPostingException
+	 */
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $database, $config;
 

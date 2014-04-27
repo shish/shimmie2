@@ -2,6 +2,7 @@
 /*
  * Name: Handle Video
  * Author: velocity37 <velocity37@gmail.com>
+ * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>
  * License: GPLv2
  * Description: Handle FLV, MP4, OGV and WEBM video files.
  * Documentation:
@@ -17,17 +18,87 @@
  */
 
 class VideoFileHandler extends DataHandlerExtension {
-	protected function create_thumb($hash) {
-		copy("ext/handle_video/thumb.jpg", warehouse_path("thumbs", $hash));
+	public function onInitExt(InitExtEvent $event) {
+		global $config;
+		$config->set_default_string('video_thumb_engine', 'static');
+		$config->set_default_string('thumb_ffmpeg_path', '');
 	}
 
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		global $config;
+
+		$thumbers = array();
+		$thumbers['None'] = "static";
+		$thumbers['ffmpeg'] = "ffmpeg";
+
+		$sb = new SetupBlock("Video Thumbnail Options");
+
+		$sb->add_choice_option("video_thumb_engine", $thumbers, "Engine: ");
+
+		//if($config->get_string("video_thumb_engine") == "ffmpeg") {
+			$sb->add_label("<br>Path to ffmpeg: ");
+			$sb->add_text_option("thumb_ffmpeg_path");
+		//}
+		$event->panel->add_block($sb);
+	}
+
+	/**
+	 * @param string $hash
+	 * @return bool
+	 */
+	protected function create_thumb($hash) {
+		global $config;
+
+		// this is never used...
+		//$q = $config->get_int("thumb_quality");
+
+		$ok = false;
+
+		switch($config->get_string("video_thumb_engine"))
+		{
+			default:
+			case 'static':
+				$outname = warehouse_path("thumbs", $hash);
+				copy("ext/handle_video/thumb.jpg", $outname);
+				$ok = true;
+				break;
+			case 'ffmpeg':
+				$ffmpeg = escapeshellarg($config->get_string("thumb_ffmpeg_path"));
+
+				$w = (int)$config->get_int("thumb_width");
+				$h = (int)$config->get_int("thumb_height");
+				$inname  = escapeshellarg(warehouse_path("images", $hash));
+				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
+
+				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				exec($cmd, $output, $ret);
+
+				// TODO: We should really check the result of the exec to see if it really succeeded.
+				$ok = true;
+
+				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+				break;
+		}
+
+		return $ok;
+	}
+
+	/**
+	 * @param string $ext
+	 * @return bool
+	 */
 	protected function supported_ext($ext) {
 		$exts = array("flv", "mp4", "m4v", "ogv", "webm");
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param string $filename
+	 * @param array $metadata
+	 * @return Image|null
+	 */
 	protected function create_image_from_data($filename, $metadata) {
-		global $config;
+		//global $config;
 
 		$image = new Image();
 
@@ -67,6 +138,10 @@ class VideoFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
 	protected function check_contents($file) {
 		if (file_exists($file)) {
 			require_once('lib/getid3/getid3/getid3.php');

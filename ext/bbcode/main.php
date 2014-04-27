@@ -26,6 +26,10 @@
  */
 
 class BBCode extends FormatterExtension {
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	public function format(/*string*/ $text) {
 		$text = $this->extract_code($text);
 		foreach(array(
@@ -62,6 +66,10 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	public function strip(/*string*/ $text) {
 		foreach(array(
 			"b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
@@ -81,7 +89,10 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-
+	/**
+	 * @param string $text
+	 * @return mixed
+	 */
 	private function filter_spoiler(/*string*/ $text) {
 		return str_replace(
 			array("[spoiler]","[/spoiler]"),
@@ -89,6 +100,10 @@ class BBCode extends FormatterExtension {
 			$text);
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	private function strip_spoiler(/*string*/ $text) {
 		$l1 = strlen("[spoiler]");
 		$l2 = strlen("[/spoiler]");
@@ -110,6 +125,10 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	private function extract_code(/*string*/ $text) {
 		# at the end of this function, the only code! blocks should be
 		# the ones we've added -- others may contain malicious content,
@@ -137,6 +156,10 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	private function insert_code(/*string*/ $text) {
 		$l1 = strlen("[code!]");
 		$l2 = strlen("[/code!]");

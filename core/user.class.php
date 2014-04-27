@@ -22,10 +22,11 @@ class User {
 
 	public $join_date;
 
+	/** @var string */
 	public $passhash;
 
 	/** @var UserClass */
-	var $class;
+	public $class;
 
 	/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 	* Initialisation                                               *
@@ -38,7 +39,9 @@ class User {
 
 	/**
 	 * One will very rarely construct a user directly, more common
-	 * would be to use User::by_id, User::by_session, etc
+	 * would be to use User::by_id, User::by_session, etc.
+	 *
+	 * @param mixed $row
 	 */
 	public function __construct($row) {
 		global $_user_classes;
@@ -145,7 +148,7 @@ class User {
 
 
 	/**
-	 * Test if this user is anonymous (not logged in)
+	 * Test if this user is anonymous (not logged in).
 	 *
 	 * @return bool
 	 */
@@ -155,7 +158,7 @@ class User {
 	}
 
 	/**
-	 * Test if this user is logged in
+	 * Test if this user is logged in.
 	 *
 	 * @return bool
 	 */
@@ -165,7 +168,7 @@ class User {
 	}
 
 	/**
-	 * Test if this user is an administrator
+	 * Test if this user is an administrator.
 	 *
 	 * @return bool
 	 */
@@ -193,6 +196,9 @@ class User {
 		log_info("core-user", 'Set password for '.$this->name);
 	}
 
+	/**
+	 * @param string $address
+	 */
 	public function set_email(/*string*/ $address) {
 		global $database;
 		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
@@ -201,7 +207,8 @@ class User {
 
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
-	 * a local file, a remote file, a gravatar, a something else, etc
+	 * a local file, a remote file, a gravatar, a something else, etc.
+	 *
 	 * @return String of HTML
 	 */
 	public function get_avatar_html() {
@@ -231,7 +238,7 @@ class User {
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
 	 *
-	 * @return String containing auth token (MD5sum)
+	 * @return string A string containing auth token (MD5sum)
 	 */
 	public function get_auth_token() {
 		global $config;
