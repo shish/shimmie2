@@ -12,7 +12,7 @@ class UserClass {
 	public $name = null;
 
 	/**
-	 * @var null|string
+	 * @var \UserClass|null
 	 */
 	public $parent = null;
 

@@ -19,7 +19,7 @@
  * For Shimmie2 specific extensions, there is a ShimmieWebTestCase class which
  * includes functions to upload and delete images.
  *
- * For a quick guide on the spcifics of how to write tests, see \ref wut
+ * For a quick guide on the specifics of how to write tests, see \ref wut
  *
  *
  * \page wut Writing Unit Tests

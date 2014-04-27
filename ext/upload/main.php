@@ -54,7 +54,11 @@ class Upload extends Extension {
 	/** @var bool */
 	public $is_full;
 
-	// early, so it can stop the DataUploadEvent before any data handlers see it
+	/**
+	 * Early, so it can stop the DataUploadEvent before any data handlers see it.
+	 *
+	 * @return int
+	 */
 	public function get_priority() {return 40;}
 
 	public function onInitExt(InitExtEvent $event) {
@@ -118,7 +122,7 @@ class Upload extends Extension {
 		}
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $page, $user;
 
 		if($event->page_matches("upload/replace")) {
@@ -224,6 +228,10 @@ class Upload extends Extension {
 		}
 	}
 
+	/**
+	 * @param string|int $id
+	 * @return array
+	 */
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {
 			# merge then explode, not explode then merge - else
@@ -246,8 +254,8 @@ class Upload extends Extension {
 	 *
 	 * TODO: Make these messages user/admin editable
 	 *
-	 * @param $error_code integer PHP error code
-	 * @return String
+	 * @param int $error_code PHP error code
+	 * @return string
 	 */
 	private function upload_error_message($error_code) {
 		switch ($error_code) {
