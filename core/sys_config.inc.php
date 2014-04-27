@@ -33,7 +33,7 @@ _d("SPEED_HAX", false);      // boolean  do some questionable things in the name
 _d("COMPILE_ELS", false);    // boolean  pre-build the list of event listeners
 _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
-_d("VERSION", 'trunk');      // string   shimmie version
+_d("VERSION", '2.5.1-e9d8ae7'); // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("MIN_FREE_SPACE",100*1024*1024); // int      disable uploading if there's less than MIN_FREE_SPACE bytes free space
 _d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
@@ -44,7 +44,7 @@ _d("EXTRA_EXTS", "");        // optional extra extensions
  * Calculated settings - you should never need to change these
  * directly, only the things they're built from
  */
-_d("SCORE_VERSION", 's2hack/'.VERSION); // string SCore version
+_d("SCORE_VERSION", 'develop/'.VERSION); // string SCore version
 _d("ENABLED_EXTS", CORE_EXTS.",".EXTRA_EXTS);
 
 
