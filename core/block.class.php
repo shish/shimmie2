@@ -11,7 +11,7 @@ class Block {
 	public $header;
 
 	/**
-	 * The content for the block.
+	 * The content of the block.
 	 *
 	 * @var string
 	 */

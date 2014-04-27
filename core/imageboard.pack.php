@@ -66,7 +66,8 @@ class Image {
 	/**
 	 * One will very rarely construct an image directly, more common
 	 * would be to use Image::by_id, Image::by_hash, etc.
-	 * @param mixed $row
+	 *
+	 * @param null|mixed $row
 	 */
 	public function __construct($row=null) {
 		if(!is_null($row)) {

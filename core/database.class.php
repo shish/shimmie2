@@ -2,28 +2,44 @@
 /** @privatesection */
 // Querylet {{{
 class Querylet {
-	var $sql;
-	var $variables;
+	/** @var string */
+	public $sql;
+	/** @var array */
+	public $variables;
 
+	/**
+	 * @param string $sql
+	 * @param array $variables
+	 */
 	public function __construct($sql, $variables=array()) {
 		$this->sql = $sql;
 		$this->variables = $variables;
 	}
 
+	/**
+	 * @param \Querylet $querylet
+	 */
 	public function append($querylet) {
 		assert(!is_null($querylet));
 		$this->sql .= $querylet->sql;
 		$this->variables = array_merge($this->variables, $querylet->variables);
 	}
 
+	/**
+	 * @param string $sql
+	 */
 	public function append_sql($sql) {
 		$this->sql .= $sql;
 	}
 
+	/**
+	 * @param mixed $var
+	 */
 	public function add_variable($var) {
 		$this->variables[] = $var;
 	}
 }
+
 class TagQuerylet {
 	var $tag;
 	var $positive;
@@ -33,6 +49,7 @@ class TagQuerylet {
 		$this->positive = $positive;
 	}
 }
+
 class ImgQuerylet {
 	var $qlet;
 	var $positive;
@@ -45,25 +62,40 @@ class ImgQuerylet {
 // }}}
 // {{{ db engines
 class DBEngine {
+	/** @var null|string */
 	public $name = null;
 
 	public function init($db) {}
 
+	/**
+	 * @param string $scoreql
+	 * @return string
+	 */
 	public function scoreql_to_sql($scoreql) {
 		return $scoreql;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $data
+	 * @return string
+	 */
 	public function create_table_sql($name, $data) {
 		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
 class MySQL extends DBEngine {
+	/** @var string */
 	public $name = "mysql";
 
 	public function init($db) {
 		$db->exec("SET NAMES utf8;");
 	}
 
+	/**
+	 * @param string $data
+	 * @return string
+	 */
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
 		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
@@ -77,6 +109,11 @@ class MySQL extends DBEngine {
 		return $data;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $data
+	 * @return string
+	 */
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
 		$ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
@@ -84,12 +121,17 @@ class MySQL extends DBEngine {
 	}
 }
 class PostgreSQL extends DBEngine {
+	/** @var string */
 	public $name = "pgsql";
 
 	public function init($db) {
 		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
 	}
 
+	/**
+	 * @param string $data
+	 * @return string
+	 */
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "INET", $data);
@@ -103,6 +145,11 @@ class PostgreSQL extends DBEngine {
 		return $data;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $data
+	 * @return string
+	 */
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
 		return 'CREATE TABLE '.$name.' ('.$data.')';
@@ -123,6 +170,7 @@ function _concat($a, $b) { return $a . $b; }
 function _lower($a) { return strtolower($a); }
 
 class SQLite extends DBEngine {
+	/** @var string  */
 	public $name = "sqlite";
 
 	public function init($db) {
@@ -138,6 +186,10 @@ class SQLite extends DBEngine {
 		$db->sqliteCreateFunction('lower', '_lower', 1);
 	}
 
+	/**
+	 * @param string $data
+	 * @return string
+	 */
 	public function scoreql_to_sql($data) {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
@@ -150,6 +202,11 @@ class SQLite extends DBEngine {
 		return $data;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $data
+	 * @return string
+	 */
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
 		$cols = array();
@@ -187,8 +244,16 @@ class NoCache implements CacheEngine {
 	public function get_misses() {return 0;}
 }
 class MemcacheCache implements CacheEngine {
-	var $memcache=null, $hits=0, $misses=0;
+	/** @var \Memcache|null */
+	public $memcache=null;
+	/** @var int */
+	private $hits=0;
+	/** @var int */
+	private $misses=0;
 
+	/**
+	 * @param string $args
+	 */
 	public function __construct($args) {
 		$hp = explode(":", $args);
 		if(class_exists("Memcache")) {
@@ -197,6 +262,10 @@ class MemcacheCache implements CacheEngine {
 		}
 	}
 
+	/**
+	 * @param string $key
+	 * @return array|bool|string
+	 */
 	public function get($key) {
 		assert(!is_null($key));
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
@@ -213,19 +282,35 @@ class MemcacheCache implements CacheEngine {
 		}
 	}
 
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @param int $time
+	 */
 	public function set($key, $val, $time=0) {
 		assert(!is_null($key));
 		$this->memcache->set($key, $val, false, $time);
 	}
 
+	/**
+	 * @param string $key
+	 */
 	public function delete($key) {
 		assert(!is_null($key));
 		$this->memcache->delete($key);
 	}
 
+	/**
+	 * @return int
+	 */
 	public function get_hits() {return $this->hits;}
+
+	/**
+	 * @return int
+	 */
 	public function get_misses() {return $this->misses;}
 }
+
 class APCCache implements CacheEngine {
 	var $hits=0, $misses=0;
 
@@ -267,25 +352,28 @@ class APCCache implements CacheEngine {
  */
 class Database {
 	/**
-	 * The PDO database connection object, for anyone who wants direct access
+	 * The PDO database connection object, for anyone who wants direct access.
+	 * @var null|PDO
 	 */
 	private $db = null;
 
 	/**
-	 * Meta info about the database engine
-	 * @var DBEngine
+	 * Meta info about the database engine.
+	 * @var DBEngine|null
 	 */
 	private $engine = null;
 
 	/**
-	 * The currently active cache engine
-	 * @var CacheEngine
+	 * The currently active cache engine.
+	 * @var CacheEngine|null
 	 */
 	public $cache = null;
 
 	/**
 	 * A boolean flag to track if we already have an active transaction.
 	 * (ie: True if beginTransaction() already called)
+	 *
+	 * @var bool
 	 */
 	public $transaction = false;
 
@@ -364,6 +452,10 @@ class Database {
 		}
 	}
 
+	/**
+	 * @return bool
+	 * @throws SCoreException
+	 */
 	public function commit() {
 		if(!is_null($this->db)) {
 			if ($this->transaction === true) {
@@ -376,6 +468,10 @@ class Database {
 		}
 	}
 
+	/**
+	 * @return bool
+	 * @throws SCoreException
+	 */
 	public function rollback() {
 		if(!is_null($this->db)) {
 			if ($this->transaction === true) {
@@ -388,23 +484,39 @@ class Database {
 		}
 	}
 
+	/**
+	 * @param string $input
+	 * @return string
+	 */
 	public function escape($input) {
 		if(is_null($this->db)) $this->connect_db();
 		return $this->db->Quote($input);
 	}
 
+	/**
+	 * @param string $input
+	 * @return string
+	 */
 	public function scoreql_to_sql($input) {
 		if(is_null($this->engine)) $this->connect_engine();
 		return $this->engine->scoreql_to_sql($input);
 	}
 
+	/**
+	 * @return null|string
+	 */
 	public function get_driver_name() {
 		if(is_null($this->engine)) $this->connect_engine();
 		return $this->engine->name;
 	}
 
 	/**
-	 * Execute an SQL query and return an PDO resultset
+	 * Execute an SQL query and return an PDO result-set.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return PDOStatement
+	 * @throws SCoreException
 	 */
 	public function execute($query, $args=array()) {
 		try {
@@ -433,14 +545,22 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return a 2D array
+	 * Execute an SQL query and return a 2D array.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return array
 	 */
 	public function get_all($query, $args=array()) {
 		return $this->execute($query, $args)->fetchAll();
 	}
 
 	/**
-	 * Execute an SQL query and return a single row
+	 * Execute an SQL query and return a single row.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return mixed|null
 	 */
 	public function get_row($query, $args=array()) {
 		$row = $this->execute($query, $args)->fetch();
@@ -448,7 +568,11 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return the first column of each row
+	 * Execute an SQL query and return the first column of each row.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return array
 	 */
 	public function get_col($query, $args=array()) {
 		$stmt = $this->execute($query, $args);
@@ -460,7 +584,11 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return the the first row => the second rown
+	 * Execute an SQL query and return the the first row => the second rown.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return array
 	 */
 	public function get_pairs($query, $args=array()) {
 		$stmt = $this->execute($query, $args);
@@ -472,7 +600,11 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return a single value
+	 * Execute an SQL query and return a single value.
+	 *
+	 * @param string $query
+	 * @param array $args
+	 * @return mixed
 	 */
 	public function get_one($query, $args=array()) {
 		$row = $this->execute($query, $args)->fetch();
@@ -480,7 +612,10 @@ class Database {
 	}
 
 	/**
-	 * get the ID of the last inserted row
+	 * Get the ID of the last inserted row.
+	 *
+	 * @param string|null $seq
+	 * @return string
 	 */
 	public function get_last_insert_id($seq) {
 		if($this->engine->name == "pgsql") {
@@ -492,15 +627,20 @@ class Database {
 	}
 
 	/**
-	 * Create a table from pseudo-SQL
+	 * Create a table from pseudo-SQL.
+	 *
+	 * @param string $name
+	 * @param string $data
 	 */
 	public function create_table($name, $data) {
-		if(is_null($this->engine)) $this->connect_engine();
+		if(is_null($this->engine)) { $this->connect_engine(); }
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
 
 	/**
 	 * Returns the number of tables present in the current database.
+	 *
+	 * @return int|null
 	 */
 	public function count_tables() {
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
@@ -525,14 +665,26 @@ class Database {
 }
 
 class MockDatabase extends Database {
+	/** @var int */
 	var $query_id = 0;
+	/** @var array */
 	var $responses = array();
+	/** @var \NoCache|null  */
 	var $cache = null;
 
+	/**
+	 * @param array $responses
+	 */
 	public function __construct($responses = array()) {
 		$this->cache = new NoCache();
 		$this->responses = $responses;
 	}
+
+	/**
+	 * @param string $query
+	 * @param array $params
+	 * @return PDOStatement
+	 */
 	public function execute($query, $params=array()) {
 		log_debug("mock-database",
 			"QUERY: " . $query .
