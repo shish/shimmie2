@@ -16,8 +16,12 @@
  * This class is just a wrapper around SCoreException.
  */
 class ImageRotateException extends SCoreException {
-	var $error;
+	/** @var string */
+	public $error;
 
+	/**
+	 * @param string $error
+	 */
 	public function __construct($error) {
 		$this->error = $error;
 	}
