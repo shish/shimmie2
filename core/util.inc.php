@@ -1438,6 +1438,9 @@ function _fatal_error(Exception $e) {
  *
  * Necessary because various servers and various clients
  * think that / is special...
+ *
+ * @param string $str
+ * @return string
  */
 function _decaret($str) {
 	$out = "";
@@ -1456,6 +1459,9 @@ function _decaret($str) {
 	return $out;
 }
 
+/**
+ * @return User
+ */
 function _get_user() {
 	global $config;
 	$user = null;
