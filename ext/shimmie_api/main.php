@@ -42,7 +42,7 @@ class _SafeImage {
 		$this->posted   = $img->posted_timestamp;
 		$this->source   = $img->source;
 		$this->owner_id = $img->owner_id;
-		$this->tags     = $img->tag_array;
+		$this->tags     = $img->get_tag_array();
 	}
 }
 

@@ -376,7 +376,6 @@ class Upload extends Extension {
 				"No data found -- perhaps the site has hotlink protection?");
 			$ok = false;
 		}else{
-			global $user;
 			$pathinfo = pathinfo($url);
 			$metadata = array();
 			$metadata['filename'] = $filename;

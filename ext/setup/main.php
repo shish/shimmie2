@@ -12,8 +12,12 @@
  * activated; new config options are in $_POST
  */
 class ConfigSaveEvent extends Event {
-	var $config;
+	/** @var \Config */
+	public $config;
 
+	/**
+	 * @param Config $config
+	 */
 	public function __construct(Config $config) {
 		$this->config = $config;
 	}

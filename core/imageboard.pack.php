@@ -58,6 +58,9 @@ class Image {
 	/** @var string */
 	public $ext;
 
+	/** @var string[]|null */
+	public $tag_array;
+
 	public $owner_id, $owner_ip;
 	public $posted, $posted_timestamp;
 	public $source;

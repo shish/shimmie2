@@ -347,7 +347,7 @@ class Tag_History extends Extension {
 	 * This function is called just before an images tag are changed.
 	 *
 	 * @param Image $image
-	 * @param null|string|string[] $tags
+	 * @param string|string[] $tags
 	 */
 	private function add_tag_history(Image $image, $tags) {
 		global $database, $config, $user;
@@ -355,7 +355,7 @@ class Tag_History extends Extension {
 		$new_tags = Tag::implode($tags);
 		$old_tags = Tag::implode($image->get_tag_array());
 		
-		if($new_tags == $old_tags) return;
+		if($new_tags == $old_tags) { return; }
 		
 		if(empty($old_tags)) {
 			/* no old tags, so we are probably adding the image for the first time */
@@ -366,7 +366,7 @@ class Tag_History extends Extension {
 		}
 		
 		$allowed = $config->get_int("history_limit");
-		if($allowed == 0) return;
+		if($allowed == 0) { return; }
 		
 		// if the image has no history, make one with the old tags
 		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
@@ -386,7 +386,7 @@ class Tag_History extends Extension {
 		$entries++;
 		
 		// if needed remove oldest one
-		if($allowed == -1) return;
+		if($allowed == -1) { return; }
 		if($entries > $allowed) {
 			// TODO: Make these queries better
 			/*
