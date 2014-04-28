@@ -1,14 +1,16 @@
 <?php
 
 class WikiTheme extends Themelet {
-	/*
-	 * Show a page
+	/**
+	 * Show a page.
 	 *
-	 * $page = the shimmie page object
-	 * $wiki_page = the wiki page, has ->title and ->body
-	 * $nav_page = a wiki page object with navigation, has ->body
+	 * @param Page $page The shimmie page object
+	 * @param WikiPage $wiki_page The wiki page, has ->title and ->body
+	 * @param WikiPage|null $nav_page A wiki page object with navigation, has ->body
 	 */
-	public function display_page(Page $page, WikiPage $wiki_page, $nav_page) { // $nav_page = WikiPage or null
+	public function display_page(Page $page, WikiPage $wiki_page, $nav_page) {
+		global $user;
+
 		if(is_null($nav_page)) {
 			$nav_page = new WikiPage();
 			$nav_page->body = "";
@@ -18,7 +20,6 @@ class WikiTheme extends Themelet {
 		send_event($tfe);
 
 		// only the admin can edit the sidebar
-		global $user;
 		if($user->is_admin()) {
 			$tfe->formatted .= "<p>(<a href='".make_link("wiki/wiki:sidebar", "edit=on")."'>Edit</a>)";
 		}
@@ -61,12 +62,13 @@ class WikiTheme extends Themelet {
 	}
 
 	protected function create_display_html(WikiPage $page) {
+		global $user;
+
 		$owner = $page->get_owner();
 
 		$tfe = new TextFormattingEvent($page->body);
 		send_event($tfe);
 
-		global $user;
 		$edit = "<table><tr>";
 		$edit .= Wiki::can_edit($user, $page) ?
 			"

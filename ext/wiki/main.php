@@ -9,9 +9,15 @@
  */
 
 class WikiUpdateEvent extends Event {
-	var $user;
-	var $wikipage;
+	/** @var \User  */
+	public $user;
+	/** @var \WikiPage  */
+	public $wikipage;
 
+	/**
+	 * @param User $user
+	 * @param WikiPage $wikipage
+	 */
 	public function __construct(User $user, WikiPage $wikipage) {
 		$this->user = $user;
 		$this->wikipage = $wikipage;
@@ -22,32 +28,52 @@ class WikiUpdateException extends SCoreException {
 }
 
 class WikiPage {
-	var $id;
+	/** @var int|string */
+	public $id;
+
 	var $owner_id;
 	var $owner_ip;
 	var $date;
-	var $title;
+
+	/** @var string */
+	public $title;
+
 	var $revision;
-	var $locked;
-	var $body;
 
-	public function __construct($row) {
-		assert(!empty($row));
+	/** @var bool */
+	public $locked;
 
-		$this->id = $row['id'];
-		$this->owner_id = $row['owner_id'];
-		$this->owner_ip = $row['owner_ip'];
-		$this->date = $row['date'];
-		$this->title = $row['title'];
-		$this->revision = $row['revision'];
-		$this->locked = ($row['locked'] == 'Y');
-		$this->body = $row['body'];
+	/** @var string */
+	public $body;
+
+	/**
+	 * @param mixed $row
+	 */
+	public function __construct($row=null) {
+		//assert(!empty($row));
+
+		if (!is_null($row)) {
+			$this->id = $row['id'];
+			$this->owner_id = $row['owner_id'];
+			$this->owner_ip = $row['owner_ip'];
+			$this->date = $row['date'];
+			$this->title = $row['title'];
+			$this->revision = $row['revision'];
+			$this->locked = ($row['locked'] == 'Y');
+			$this->body = $row['body'];
+		}
 	}
 
+	/**
+	 * @return null|User
+	 */
 	public function get_owner() {
 		return User::by_id($this->owner_id);
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_locked() {
 		return $this->locked;
 	}
@@ -55,8 +81,7 @@ class WikiPage {
 
 class Wiki extends Extension {
 	public function onInitExt(InitExtEvent $event) {
-		global $database;
-		global $config;
+		global $database, $config;
 
 		if($config->get_int("ext_wiki_version", 0) < 1) {
 			$database->create_table("wiki_pages", "
@@ -105,7 +130,7 @@ class Wiki extends Extension {
 
 			if($this->can_edit($user, $this->get_page($title))) {
 				$wikipage = $this->get_page($title);
-				$wikipage->rev = $rev;
+				$wikipage->revision = $rev;
 				$wikipage->body = $body;
 				$wikipage->locked = $lock;
 				try {
@@ -160,7 +185,7 @@ class Wiki extends Extension {
 			$database->Execute("
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (?, ?, now(), ?, ?, ?, ?)", array($event->user->id, $_SERVER['REMOTE_ADDR'],
-				$wpage->title, $wpage->rev, $wpage->locked?'Y':'N', $wpage->body));
+				$wpage->title, $wpage->revision, $wpage->locked?'Y':'N', $wpage->body));
 		}
 		catch(Exception $e) {
 			throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
@@ -168,13 +193,13 @@ class Wiki extends Extension {
 	}
 
 	/**
-	 * See if the given user is allowed to edit the given page
+	 * See if the given user is allowed to edit the given page.
 	 *
-	 * @retval boolean
+	 * @param User $user
+	 * @param WikiPage $page
+	 * @return bool
 	 */
 	public static function can_edit(User $user, WikiPage $page) {
-		global $config;
-
 		// admins can edit everything
 		if($user->is_admin()) return true;
 
@@ -187,6 +212,11 @@ class Wiki extends Extension {
 		return false;
 	}
 
+	/**
+	 * @param string $title
+	 * @param int|null $revision
+	 * @return WikiPage
+	 */
 	private function get_page($title, $revision=-1) {
 		global $database;
 		// first try and get the actual page
