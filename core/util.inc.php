@@ -124,6 +124,12 @@ function no_escape($input) {
 	return $input;
 }
 
+/**
+ * @param string $name
+ * @param array $attrs
+ * @param array $children
+ * @return string
+ */
 function xml_tag($name, $attrs=array(), $children=array()) {
 	$xml = "<$name ";
 	foreach($attrs as $k => $v) {
@@ -427,6 +433,10 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
 }
 
+/**
+ * @param string $file The filename
+ * @return string
+ */
 function mtimefile($file) {
 	$data_href = get_base_href();
 	$mtime = filemtime($file);
@@ -445,8 +455,11 @@ function get_theme() {
 	return $theme;
 }
 
-/*
- * like glob, with support for matching very long patterns with braces
+/**
+ * Like glob, with support for matching very long patterns with braces.
+ *
+ * @param string $pattern
+ * @return array
  */
 function zglob($pattern) {
 	$results = array();
@@ -470,6 +483,9 @@ function zglob($pattern) {
 * CAPTCHA abstraction                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/**
+ * @return string
+ */
 function captcha_get_html() {
 	global $config, $user;
 
@@ -492,6 +508,9 @@ function captcha_get_html() {
 	return $captcha;
 }
 
+/**
+ * @return bool
+ */
 function captcha_check() {
 	global $config, $user;
 
@@ -593,7 +612,10 @@ function getMimeType($file, $ext="", $list=false) {
 	return 'application/octet-stream';
 }
 
-
+/**
+ * @param string $mime_type
+ * @return bool|string
+ */
 function getExtension ($mime_type){
 	if(empty($mime_type)){
 		return false;
@@ -762,6 +784,11 @@ function get_prefixed_cookie(/*string*/ $name) {
  * The counterpart for get_prefixed_cookie, this works like php's
  * setcookie method, but prepends the site-wide cookie prefix to
  * the $name argument before doing anything.
+ *
+ * @param string $name
+ * @param string $value
+ * @param int $time
+ * @param string $path
  */
 function set_prefixed_cookie($name, $value, $time, $path) {
 	global $config;
@@ -770,13 +797,16 @@ function set_prefixed_cookie($name, $value, $time, $path) {
 }
 
 /**
- * Set (or extend) a flash-message cookie
+ * Set (or extend) a flash-message cookie.
  *
  * This can optionally be done at the same time as saving a log message with log_*()
  *
  * Generally one should flash a message in onPageRequest and log a message wherever
  * the action actually takes place (eg onWhateverElse) - but much of the time, actions
  * are taken from within onPageRequest...
+ *
+ * @param string $text
+ * @param string $type
  */
 function flash_message(/*string*/ $text, /*string*/ $type="info") {
 	$current = get_prefixed_cookie("flash_message");
@@ -816,10 +846,9 @@ function get_base_href() {
 }
 
 /**
- * A shorthand way to send a TextFormattingEvent and get the
- * results
+ * A shorthand way to send a TextFormattingEvent and get the results.
  *
- * @param $string
+ * @param string $string
  * @return string
  */
 function format_text(/*string*/ $string) {
@@ -828,6 +857,12 @@ function format_text(/*string*/ $string) {
 	return $tfe->formatted;
 }
 
+/**
+ * @param string $base
+ * @param string $hash
+ * @param bool $create
+ * @return string
+ */
 function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=true) {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
@@ -841,12 +876,21 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	return $pa;
 }
 
+/**
+ * @param string $filename
+ * @return string
+ */
 function data_path($filename) {
 	$filename = "data/" . $filename;
 	if(!file_exists(dirname($filename))) mkdir(dirname($filename), 0755, true);
 	return $filename;
 }
 
+/**
+ * @param string $url
+ * @param string $mfile
+ * @return array|bool
+ */
 function transload($url, $mfile) {
 	global $config;
 
@@ -938,12 +982,17 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 $_included = array();
 /**
  * Get the active contents of a .php file
+ *
+ * @param string $fname
+ * @return string|null
  */
 function manual_include($fname) {
-	if(!file_exists($fname)) return;
-
 	global $_included;
-	if(in_array($fname, $_included)) return;
+
+	if(!file_exists($fname)) return null;
+
+	if(in_array($fname, $_included)) return null;
+
 	$_included[] = $fname;
 
 	print "$fname\n";
@@ -990,6 +1039,12 @@ define("SCORE_LOG_NOTSET", 0);
  * $flash = null (default) - log to server only, no flash message
  * $flash = true           - show the message to the user as well
  * $flash = "some string"  - log the message, flash the string
+ *
+ * @param string $section
+ * @param int $priority
+ * @param string $message
+ * @param null|bool|string $flash
+ * @param array $args
  */
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null, $args=array()) {
 	send_event(new LogEvent($section, $priority, $message, $args));
@@ -1012,10 +1067,13 @@ function log_warning( /*string*/ $section, /*string*/ $message, $flash=null, $ar
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
-/**
- * Get a unique ID for this request, useful for grouping log messages
- */
+
 $_request_id = null;
+/**
+ * Get a unique ID for this request, useful for grouping log messages.
+ *
+ * @return null|string
+ */
 function get_request_id() {
 	global $_request_id;
 	if(!$_request_id) {
@@ -1197,7 +1255,11 @@ function full_copy($source, $target) {
 $_event_listeners = array();
 
 /**
- * Register an Extension
+ * Register an Extension.
+ *
+ * @param Extension $extension
+ * @param int $pos
+ * @param array $events
  */
 function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 	global $_event_listeners;
@@ -1214,7 +1276,9 @@ function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 $_event_count = 0;
 
 /**
- * Send an event to all registered Extensions
+ * Send an event to all registered Extensions.
+ *
+ * @param Event $event
  */
 function send_event(Event $event) {
 	global $_event_listeners, $_event_count;
@@ -1248,7 +1312,7 @@ $_load_start = microtime(true);
  * Collects some debug information (execution time, memory usage, queries, etc)
  * and formats it to stick in the footer of the page.
  *
- * @return String of debug info to add to the page.
+ * @return string debug info to add to the page.
  */
 function get_debug_info() {
 	global $config, $_event_count, $database, $_execs, $_load_start;
@@ -1282,6 +1346,10 @@ function get_debug_info() {
 
 /** @privatesection */
 
+/**
+ * @param array|string $arr
+ * @return array|string
+ */
 function _stripslashes_r($arr) {
 	return is_array($arr) ? array_map('_stripslashes_r', $arr) : stripslashes($arr);
 }
@@ -1325,6 +1393,10 @@ function _sanitise_environment() {
 	}
 }
 
+/**
+ * @param string $_theme
+ * @return array
+ */
 function _get_themelet_files($_theme) {
 	$base_themelets = array();
 	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
@@ -1407,6 +1479,7 @@ function _load_extensions() {
 
 /**
  * Used to display fatal errors to the web user.
+ * @param Exception $e
  */
 function _fatal_error(Exception $e) {
 	$version = VERSION;
