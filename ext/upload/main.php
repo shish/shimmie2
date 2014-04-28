@@ -123,7 +123,7 @@ class Upload extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $page, $user;
+		global $page, $user;
 
 		if($event->page_matches("upload/replace")) {
 			// check if the user is an administrator and can upload files.
@@ -333,6 +333,7 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an transload.
+	 *
 	 * @param string $url
 	 * @param mixed $tags
 	 * @param string $source

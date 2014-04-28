@@ -344,8 +344,7 @@ class UserPage extends Extension {
 // }}}
 // Things done *with* the user {{{
 	private function login(Page $page)  {
-		global $user;
-                global $config;
+		global $user, $config;
 
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
@@ -380,11 +379,11 @@ class UserPage extends Extension {
 	}
 
 	private function check_user_creation($event) { // FIXME type
+		global $database;
+
 		$name = $event->username;
 		$pass = $event->password;
 		$email = $event->email;
-
-		global $database;
 
 		if(strlen($name) < 1) {
 			throw new UserCreationException("Username must be at least 1 character");
@@ -417,6 +416,10 @@ class UserPage extends Extension {
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $pass
+	 */
 	private function set_login_cookie(/*string*/ $name, /*string*/ $pass) {
 		global $config;
 
@@ -543,11 +546,14 @@ class UserPage extends Extension {
 				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
-	
+
+	/**
+	 * @param Page $page
+	 * @param bool $with_images
+	 * @param bool $with_comments
+	 */
 	private function delete_user(Page $page, /*boolean*/ $with_images=false, /*boolean*/ $with_comments=false) {
-		global $user;
-		global $config;
-		global $database;
+		global $user, $config, $database;
 		
 		$page->set_title("Error");
 		$page->set_heading("Error");

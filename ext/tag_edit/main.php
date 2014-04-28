@@ -40,9 +40,15 @@
  *
  */
 class OwnerSetEvent extends Event {
-	var $image;
-	var $owner;
+	/** @var \Image  */
+	public $image;
+	/** @var \User  */
+	public $owner;
 
+	/**
+	 * @param Image $image
+	 * @param User $owner
+	 */
 	public function __construct(Image $image, User $owner) {
 		$this->image = $image;
 		$this->owner = $owner;
@@ -150,7 +156,7 @@ class TagEdit extends Extension {
 	}
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
-		global $user, $page;
+		global $user;
 		if($user->can("edit_image_owner")) {
 			$owner = User::by_name($_POST['tag_edit__owner']);
 			send_event(new OwnerSetEvent($event->image, $owner));
@@ -211,7 +217,6 @@ class TagEdit extends Extension {
 	}
 
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
-		global $user;
 		$event->add_part($this->theme->get_user_editor_html($event->image), 39);
 		$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
 		$event->add_part($this->theme->get_source_editor_html($event->image), 41);
@@ -230,18 +235,17 @@ class TagEdit extends Extension {
 	}
 
 	private function can_tag(Image $image) {
-		global $config, $user;
+		global $user;
 		return ($user->can("edit_image_tag") || !$image->is_locked());
 	}
 
 	private function can_source(Image $image) {
-		global $config, $user;
+		global $user;
 		return ($user->can("edit_image_source") || !$image->is_locked());
 	}
 
 	private function mass_tag_edit($search, $replace) {
 		global $database;
-		global $config;
 
 		$search_set = Tag::explode(strtolower($search), false);
 		$replace_set = Tag::explode(strtolower($replace), false);
@@ -297,9 +301,6 @@ class TagEdit extends Extension {
 	}
 
 	private function mass_source_edit($tags, $source) {
-		global $database;
-		global $config;
-
 		$tags = Tag::explode($tags);
 
 		$last_id = -1;
