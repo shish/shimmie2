@@ -37,6 +37,9 @@ class UploadTheme extends Themelet {
 		}
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_upload_list_1() {
 		global $config;
 		$upload_list = "";
@@ -83,6 +86,9 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_upload_List_2() {
 		global $config;
 
@@ -180,6 +186,9 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_bookmarklets() {
 		global $config;
 		$link = make_http(make_link("upload"));
@@ -306,6 +315,9 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block($title, $message));
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function build_upload_block() {
 		global $config;
 

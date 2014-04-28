@@ -11,6 +11,10 @@
  */
 
 class ReportImageTheme extends Themelet {
+	/**
+	 * @param Page $page
+	 * @param array $reports
+	 */
 	public function display_reported_images(Page $page, $reports) {
 		global $config;
 

@@ -153,7 +153,11 @@ class XMLSitemap extends Extension
 		$page->set_data($xml);
 	}
 
-	// returns true if a new sitemap is needed
+	/**
+	 * Returns true if a new sitemap is needed.
+	 *
+	 * @return bool
+	 */
 	private function new_sitemap_needed()
 	{
 		$sitemap_generation_interval = 86400; // allow new site map every day

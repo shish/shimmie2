@@ -11,6 +11,11 @@ class PoolsTheme extends Themelet {
 		}
 	}
 
+	/**
+	 * @param Image $image
+	 * @param array $pools
+	 * @return string
+	 */
 	public function get_adder_html(Image $image, /*array*/ $pools) {
 		$h = "";
 		foreach($pools as $pool) {
@@ -27,9 +32,13 @@ class PoolsTheme extends Themelet {
 		return $editor;
 	}
 
-
-	/*
-	 * HERE WE SHOWS THE LIST OF POOLS
+	/**
+	 * HERE WE SHOWS THE LIST OF POOLS.
+	 *
+	 * @param Page $page
+	 * @param array $pools
+	 * @param int $pageNumber
+	 * @param int $totalPages
 	 */
 	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user;
@@ -105,7 +114,11 @@ class PoolsTheme extends Themelet {
 		$page->add_block(new Block("Create Pool", $create_html, "main", 20));
 	}
 
-
+	/**
+	 * @param array $pools
+	 * @param string $heading
+	 * @param bool $check_all
+	 */
 	private function display_top(/*array*/ $pools, /*string*/ $heading, $check_all=false) {
 		global $page, $user;
 
@@ -150,8 +163,13 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION
+	/**
+	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION.
+	 *
+	 * @param array $pools
+	 * @param array $images
+	 * @param int $pageNumber
+	 * @param int $totalPages
 	 */
 	public function view_pool(/*array*/ $pools, /*array*/ $images, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $user, $page;
@@ -176,8 +194,12 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN
+	/**
+	 * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN.
+	 *
+	 * @param Page $page
+	 * @param array $pool
+	 * @param bool $check_all
 	 */
 	public function sidebar_options(Page $page, $pool, /*bool*/ $check_all) {
 		global $user;
@@ -240,8 +262,12 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT
+	/**
+	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT.
+	 *
+	 * @param Page $page
+	 * @param array $images
+	 * @param int $pool_id
 	 */
 	public function pool_result(Page $page, /*array*/ $images, /*int*/ $pool_id) {
 		// TODO: this could / should be done using jQuery
@@ -289,9 +315,13 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE POOL ORDERER
+	/**
+	 * HERE WE DISPLAY THE POOL ORDERER.
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
+	 *
+	 * @param Page $page
+	 * @param array $pools
+	 * @param array $images
 	 */
 	public function edit_order(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
@@ -318,15 +348,18 @@ class PoolsTheme extends Themelet {
 		$page->add_block(new Block("Sorting Posts", $pool_images, "main", 30));
 	}
 
-
-	/*
-	 * HERE WE DISPLAY THE POOL EDITOR
+	/**
+	 * HERE WE DISPLAY THE POOL EDITOR.
+	 *
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
 	 * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
+	 *
+	 * @param Page $page
+	 * @param array $pools
+	 * @param array $images
 	 */
 	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
 		global $user;
-
 
 		/* EDIT POOL DESCRIPTION */
 		$desc_html = "
@@ -362,8 +395,12 @@ class PoolsTheme extends Themelet {
 	}
 
 
-	/*
-	 * HERE WE DISPLAY THE HISTORY LIST
+	/**
+	 * HERE WE DISPLAY THE HISTORY LIST.
+	 *
+	 * @param array $histories
+	 * @param int $pageNumber
+	 * @param int $totalPages
 	 */
 	public function show_history($histories, /*int*/ $pageNumber, /*int*/ $totalPages) {
 		global $page;
@@ -393,7 +430,7 @@ class PoolsTheme extends Themelet {
 			$images = explode(" ", $images);
 
 			$image_link = "";
-			foreach ($images as $image) {		
+			foreach ($images as $image) {
 				$image_link .= "<a href='".make_link("post/view/".$image)."'>".$prefix.$image." </a>";
 			}
 

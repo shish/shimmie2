@@ -349,7 +349,7 @@ class Pools extends Extension {
 	 * TODO: Should the user variable be global?
 	 *
 	 * @param \User $user
-	 * @param $pool
+	 * @param array $pool
 	 * @return bool
 	 */
 	private function have_permission($user, $pool) {
@@ -522,11 +522,10 @@ class Pools extends Extension {
 
 				$images .= " ".$imageID;
 			}
-
 		}
 
 		if(!strlen($images) == 0) {
-			$count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID));
+			$count = int_escape($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", array("pid"=>$poolID)));
 			$this->add_history($poolID, 1, $images, $count);
 		}
 
@@ -774,10 +773,13 @@ class Pools extends Extension {
 		}
 	}
 
-
-	/*
-	 * HERE WE ADD A HISTORY ENTRY
-	 * FOR $action 1 (one) MEANS ADDED, 0 (zero) MEANS REMOVED
+	/**
+	 * HERE WE ADD A HISTORY ENTRY.
+	 *
+	 * @param int $poolID
+	 * @param int $action Action=1 (one) MEANS ADDED, Action=0 (zero) MEANS REMOVED
+	 * @param string $images
+	 * @param int $count
 	 */
 	private function add_history(/*int*/ $poolID, $action, $images, $count) {
 		global $user, $database;
@@ -787,7 +789,6 @@ class Pools extends Extension {
 				VALUES (:pid, :uid, :act, :img, :count, now())",
 				array("pid"=>$poolID, "uid"=>$user->id, "act"=>$action, "img"=>$images, "count"=>$count));
 	}
-
 
 	/**
 	 * HERE WE GET THE HISTORY LIST.
@@ -821,7 +822,6 @@ class Pools extends Extension {
 
 		$this->theme->show_history($history, $pageNumber + 1, $totalPages);
 	}
-
 
 	/**
 	 * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL.
@@ -868,8 +868,6 @@ class Pools extends Extension {
 		}
 	}
 
-
-
 	/**
 	 * HERE WE ADD A SIMPLE POST FROM POOL.
 	 * USED WITH FOREACH IN revert_history() & onTagTermParse().
@@ -895,7 +893,6 @@ class Pools extends Extension {
 			$this->add_history($poolID, 1, $imageID, $count);
 		}
 	}
-
 
 	/**
 	 * HERE WE REMOVE A SIMPLE POST FROM POOL.

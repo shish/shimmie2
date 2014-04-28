@@ -66,7 +66,7 @@ class ShimmieInstallerTest extends WebTestCase {
 		$this->clickSubmit("Go!");
 
 		if (!$this->assertText("Installation Succeeded!")) {
-			print "ERROR --- '" + $db + "'";
+			print "ERROR --- '" . $db . "'";
 			$this->showSource();
 		}
 	}

@@ -139,6 +139,10 @@ class ReportImage extends Extension {
 		}
 	}
 
+	/**
+	 * @param Image $image
+	 * @return array
+	 */
 	public function get_reporters(Image $image) {
 		global $database;
 
@@ -150,6 +154,9 @@ class ReportImage extends Extension {
 		", array("image_id" => $image->id));
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_reported_images() {
 		global $database;
 
@@ -174,6 +181,9 @@ class ReportImage extends Extension {
 		return $reports;
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function count_reported_images() {
 		global $database;
 

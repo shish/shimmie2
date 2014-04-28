@@ -6,8 +6,14 @@
  */
 
 class UserBlockBuildingEvent extends Event {
-	var $parts = array();
+	/** @var array  */
+	public $parts = array();
 
+	/**
+	 * @param string $name
+	 * @param string $link
+	 * @param int $position
+	 */
 	public function add_link($name, $link, $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = array("name" => $name, "link" => $link);
@@ -15,24 +21,41 @@ class UserBlockBuildingEvent extends Event {
 }
 
 class UserPageBuildingEvent extends Event {
-	var $display_user;
-	var $stats = array();
+	/** @var \User */
+	public $display_user;
+	/** @var array  */
+	public $stats = array();
 
+	/**
+	 * @param User $display_user
+	 */
 	public function __construct(User $display_user) {
 		$this->display_user = $display_user;
 	}
 
+	/**
+	 * @param string $html
+	 * @param int $position
+	 */
 	public function add_stats($html, $position=50) {
-		while(isset($this->stats[$position])) $position++;
+		while(isset($this->stats[$position])) { $position++; }
 		$this->stats[$position] = $html;
 	}
 }
 
 class UserCreationEvent extends Event {
-	var $username;
-	var $password;
-	var $email;
+	/** @var  string */
+	public $username;
+	/** @var  string */
+	public $password;
+	/** @var  string */
+	public $email;
 
+	/**
+	 * @param string $name
+	 * @param string $pass
+	 * @param string $email
+	 */
 	public function __construct($name, $pass, $email) {
 		$this->username = $name;
 		$this->password = $pass;
@@ -41,8 +64,12 @@ class UserCreationEvent extends Event {
 }
 
 class UserDeletionEvent extends Event {
-	var $id;
+	/** @var  int */
+	public $id;
 
+	/**
+	 * @param int $id
+	 */
 	public function __construct($id) {
 		$this->id = $id;
 	}
@@ -221,8 +248,11 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param UserPageBuildingEvent $event
+	 */
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page, $user, $config;
+		global $user, $config;
 
 		$h_join_date = autodate($event->display_user->join_date);
 		if($event->display_user->can("hellbanned")) {
@@ -251,6 +281,9 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param UserPageBuildingEvent $event
+	 */
 	private function display_stats(UserPageBuildingEvent $event) {
 		global $user, $page, $config;
 
@@ -273,6 +306,9 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param SetupBuildingEvent $event
+	 */
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 
@@ -300,24 +336,33 @@ class UserPage extends Extension {
 				array('G'=>'g', 'PG'=>'pg', 'R'=>'r', 'X'=>'x'),
 				"<br>Rating: ");
 		}
-                
-                $sb->add_choice_option("user_loginshowprofile", array(
-                    "return to previous page" => 0, // 0 is default
-                    "send to user profile" => 1),
-                        "<br>When user logs in/out");
+
+		$sb->add_choice_option("user_loginshowprofile", array(
+							"return to previous page" => 0, // 0 is default
+							"send to user profile" => 1),
+							"<br>When user logs in/out");
 		$event->panel->add_block($sb);
 	}
 
+	/**
+	 * @param UserBlockBuildingEvent $event
+	 */
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		$event->add_link("My Profile", make_link("user"));
 		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 	}
 
+	/**
+	 * @param UserCreationEvent $event
+	 */
 	public function onUserCreation(UserCreationEvent $event) {
 		$this->check_user_creation($event);
 		$this->create_user($event);
 	}
 
+	/**
+	 * @param SearchTermParseEvent $event
+	 */
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		global $user;
 
@@ -343,6 +388,9 @@ class UserPage extends Extension {
 	}
 // }}}
 // Things done *with* the user {{{
+	/**
+	 * @param Page $page
+	 */
 	private function login(Page $page)  {
 		global $user, $config;
 
@@ -378,6 +426,10 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param UserCreationEvent $event
+	 * @throws UserCreationException
+	 */
 	private function check_user_creation(UserCreationEvent $event)
 	{
 		global $database;
@@ -435,6 +487,11 @@ class UserPage extends Extension {
 	}
 //}}}
 // Things done *to* the user {{{
+	/**
+	 * @param User $a
+	 * @param User $b
+	 * @return bool
+	 */
 	private function user_can_edit_user(User $a, User $b) {
 		if($a->is_anonymous()) {
 			$this->theme->display_error(401, "Error", "You aren't logged in");
@@ -474,6 +531,11 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param User $duser
+	 * @param string $pass1
+	 * @param string $pass2
+	 */
 	private function change_password_wrapper(User $duser, $pass1, $pass2) {
 		global $user;
 
@@ -495,6 +557,10 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param User $duser
+	 * @param string $address
+	 */
 	private function change_email_wrapper(User $duser, /*string(email)*/ $address) {
 		global $user;
 
@@ -506,6 +572,11 @@ class UserPage extends Extension {
 		}
 	}
 
+	/**
+	 * @param User $duser
+	 * @param string $class
+	 * @throws NullUserException
+	 */
 	private function change_class_wrapper(User $duser, /*string(class)*/ $class) {
 		global $user;
 
@@ -522,6 +593,10 @@ class UserPage extends Extension {
 	}
 // }}}
 // ips {{{
+	/**
+	 * @param User $duser
+	 * @return array
+	 */
 	private function count_upload_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
@@ -535,6 +610,11 @@ class UserPage extends Extension {
 				ORDER BY most_recent DESC", array("id"=>$duser->id));
 		return $rows;
 	}
+
+	/**
+	 * @param User $duser
+	 * @return array
+	 */
 	private function count_comment_ips(User $duser) {
 		global $database;
 		$rows = $database->get_pairs("
