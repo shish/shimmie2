@@ -63,9 +63,15 @@ class OwnerSetEvent extends Event {
  *
  */
 class SourceSetEvent extends Event {
-	var $image;
-	var $source;
+	/** @var \Image */
+	public $image;
+	/** @var string */
+	public $source;
 
+	/**
+	 * @param Image $image
+	 * @param string $source
+	 */
 	public function __construct(Image $image, $source) {
 		$this->image = $image;
 		$this->source = $source;
@@ -80,7 +86,8 @@ class SourceSetEvent extends Event {
  *
  */
 class TagSetEvent extends Event {
-	var $image;
+	/** @var \Image */
+	public $image;
 	var $tags;
 
 	public function __construct(Image $image, $tags) {
@@ -96,9 +103,15 @@ class TagSetEvent extends Event {
  *
  */
 class LockSetEvent extends Event {
-	var $image;
-	var $locked;
+	/** @var \Image */
+	public $image;
+	/** @var bool */
+	public $locked;
 
+	/**
+	 * @param Image $image
+	 * @param bool $locked
+	 */
 	public function __construct(Image $image, $locked) {
 		assert(is_bool($locked));
 		$this->image = $image;

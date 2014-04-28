@@ -65,7 +65,7 @@ class UserPage extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $config, $page, $user;
 
 		// user info is shown on all pages
 		if($user->is_anonymous()) {
@@ -378,7 +378,8 @@ class UserPage extends Extension {
 		}
 	}
 
-	private function check_user_creation($event) { // FIXME type
+	private function check_user_creation(UserCreationEvent $event)
+	{
 		global $database;
 
 		$name = $event->username;
@@ -398,7 +399,8 @@ class UserPage extends Extension {
 		}
 	}
 
-	private function create_user($event) { // FIXME type
+	private function create_user(UserCreationEvent $event)
+	{
 		global $database, $user;
 
 		$hash = md5(strtolower($event->username) . $event->password);
