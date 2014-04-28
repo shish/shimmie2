@@ -10,18 +10,30 @@
  */
 
 class RemoveReportedImageEvent extends Event {
-	var $id;
+	/** @var  int */
+	public $id;
 
+	/**
+	 * @param int $id
+	 */
 	public function __construct($id) {
 		$this->id = $id;
 	}
 }
 
 class AddReportedImageEvent extends Event {
-	var $reporter_id;
-	var $image_id;
-	var $reason;
+	/** @var int  */
+	public $reporter_id;
+	/** @var int  */
+	public $image_id;
+	/** @var string  */
+	public $reason;
 
+	/**
+	 * @param int $image_id
+	 * @param int $reporter_id
+	 * @param string $reason
+	 */
 	public function __construct($image_id, $reporter_id, $reason) {
 		$this->reporter_id = $reporter_id;
 		$this->image_id = $image_id;
@@ -89,7 +101,7 @@ class ReportImage extends Extension {
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $config, $user, $page;
+		global $user, $page;
 		if($user->can('create_image_report')) {
 			$reps = $this->get_reporters($event->image);
 			$this->theme->display_image_banner($event->image, $reps);
@@ -112,8 +124,8 @@ class ReportImage extends Extension {
 	}
 
 	protected function install() {
-		global $database;
-		global $config;
+		global $database, $config;
+
 		if($config->get_int("ext_report_image_version") < 1) {
 			$database->create_table("image_reports", "
 				id SCORE_AIPK,
@@ -129,6 +141,7 @@ class ReportImage extends Extension {
 
 	public function get_reporters(Image $image) {
 		global $database;
+
 		return $database->get_col("
 			SELECT users.name
 			FROM image_reports
@@ -138,7 +151,8 @@ class ReportImage extends Extension {
 	}
 
 	public function get_reported_images() {
-		global $config, $database;
+		global $database;
+
 		$all_reports = $database->get_all("
 			SELECT image_reports.*, users.name AS reporter_name
 			FROM image_reports

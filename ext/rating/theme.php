@@ -1,6 +1,11 @@
 <?php
 
 class RatingsTheme extends Themelet {
+	/**
+	 * @param int $image_id
+	 * @param string $rating
+	 * @return string
+	 */
 	public function get_rater_html(/*int*/ $image_id, /*string*/ $rating) {
 		$s_checked = $rating == 's' ? " checked" : "";
 		$q_checked = $rating == 'q' ? " checked" : "";
@@ -35,6 +40,10 @@ class RatingsTheme extends Themelet {
 		$page->add_block(new Block("List Controls", $html, "left"));
 	}
 
+	/**
+	 * @param string $rating
+	 * @return string
+	 */
 	public function rating_to_name(/*string*/ $rating) {
 		switch($rating) {
 			case 's': return "Safe";
