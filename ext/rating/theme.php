@@ -39,19 +39,6 @@ class RatingsTheme extends Themelet {
 		";
 		$page->add_block(new Block("List Controls", $html, "left"));
 	}
-
-	/**
-	 * @param string $rating
-	 * @return string
-	 */
-	public function rating_to_name(/*string*/ $rating) {
-		switch($rating) {
-			case 's': return "Safe";
-			case 'q': return "Questionable";
-			case 'e': return "Explicit";
-			default: return "Unknown";
-		}
-	}
 }
 
 
