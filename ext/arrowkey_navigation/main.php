@@ -9,14 +9,22 @@
  *  Simply enable this extention in the extention manager to enable arrow key navigation.
  */
 class ArrowkeyNavigation extends Extension {
-	# Adds functionality for post/view on images
+	/**
+	 * Adds functionality for post/view on images.
+	 *
+	 * @param DisplayingImageEvent $event
+	 */
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$prev_url = make_http(make_link("post/prev/".$event->image->id));
 		$next_url = make_http(make_link("post/next/".$event->image->id));
 		$this->add_arrowkeys_code($prev_url, $next_url);
 	}
 
-	# Adds functionality for post/list
+	/**
+	 * Adds functionality for post/list.
+	 *
+	 * @param PageRequestEvent $event
+	 */
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("post/list")) {
 			$pageinfo = $this->get_list_pageinfo($event);
@@ -26,7 +34,12 @@ class ArrowkeyNavigation extends Extension {
 		}
 	}
 
-	# adds the javascript to the page with the given urls
+	/**
+	 * Adds the javascript to the page with the given urls.
+	 *
+	 * @param string $prev_url
+	 * @param string $next_url
+	 */
 	private function add_arrowkeys_code($prev_url, $next_url) {
 		global $page;
 
@@ -41,8 +54,13 @@ class ArrowkeyNavigation extends Extension {
 			</script>", 60);
 	}
 
-	# returns info about the current page number
-	private function get_list_pageinfo($event) {
+	/**
+	 * Returns info about the current page number.
+	 *
+	 * @param PageRequestEvent $event
+	 * @return array
+	 */
+	private function get_list_pageinfo(PageRequestEvent $event) {
 		global $config, $database;
 
 		// get the amount of images per page

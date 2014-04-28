@@ -1,6 +1,10 @@
 <?php
 class ArtistsTheme extends Themelet {
 
+	/**
+	 * @param string $author
+	 * @return string
+	 */
 	public function get_author_editor_html(/*string*/ $author) {
 		$h_author = html_escape($author);
 		return "
@@ -14,6 +18,11 @@ class ArtistsTheme extends Themelet {
 		";
 	}
 
+	/**
+	 * @param string $mode
+	 * @param null|int $artistID
+	 * @param bool $is_admin
+	 */
 	public function sidebar_options(/*string*/ $mode, $artistID=NULL, $is_admin=FALSE){
 		global $page, $user;
 
