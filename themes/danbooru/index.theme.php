@@ -3,7 +3,7 @@
 class CustomIndexTheme extends IndexTheme {
 	/**
 	 * @param Page $page
-	 * @param null|array $images
+	 * @param null|Image[] $images
 	 */
 	public function display_page(Page $page, $images) {
 		global $config;

@@ -1,5 +1,10 @@
 <?php
+
+/**
+ * Class Themelet
+ */
 class Themelet extends BaseThemelet {
+
 	/**
 	 * Put something in a rounded rectangle box; specific to the default theme.
 	 *
