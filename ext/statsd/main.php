@@ -76,6 +76,9 @@ class StatsDInterface extends Extension {
 		StatsDInterface::$stats["shimmie.events.info-sets"] = "1|c";
 	}
 
+	/**
+	 * @return int
+	 */
 	public function get_priority() {return 99;}
 
 

@@ -126,13 +126,17 @@ class LockSetEvent extends Event {
 class TagTermParseEvent extends Event {
 	var $term = null;
 	var $id = null;
-	var $metatag = false;
+	/** @var bool */
+	public $metatag = false;
 
 	public function __construct($term, $id) {
 		$this->term = $term;
 		$this->id = $id;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_metatag() {
 		return $this->metatag;
 	}
@@ -172,7 +176,11 @@ class TagEdit extends Extension {
 		global $user;
 		if($user->can("edit_image_owner")) {
 			$owner = User::by_name($_POST['tag_edit__owner']);
-			send_event(new OwnerSetEvent($event->image, $owner));
+			if ($owner instanceof User) {
+				send_event(new OwnerSetEvent($event->image, $owner));
+			} else {
+				throw new NullUserException("Error: No user with that name was found.");
+			}
 		}
 		if($this->can_tag($event->image) && isset($_POST['tag_edit__tags'])) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
@@ -224,7 +232,10 @@ class TagEdit extends Extension {
 		$this->theme->display_mass_editor();
 	}
 
-	// When an alias is added, oldtag becomes inaccessable
+	/**
+	 * When an alias is added, oldtag becomes inaccessible.
+	 * @param AddAliasEvent $event
+	 */
 	public function onAddAlias(AddAliasEvent $event) {
 		$this->mass_tag_edit($event->oldtag, $event->newtag);
 	}
@@ -247,16 +258,28 @@ class TagEdit extends Extension {
 		if(!empty($matches)) $event->metatag = true;
 	}
 
+	/**
+	 * @param Image $image
+	 * @return bool
+	 */
 	private function can_tag(Image $image) {
 		global $user;
 		return ($user->can("edit_image_tag") || !$image->is_locked());
 	}
 
+	/**
+	 * @param Image $image
+	 * @return bool
+	 */
 	private function can_source(Image $image) {
 		global $user;
 		return ($user->can("edit_image_source") || !$image->is_locked());
 	}
 
+	/**
+	 * @param string $search
+	 * @param string $replace
+	 */
 	private function mass_tag_edit($search, $replace) {
 		global $database;
 
@@ -313,6 +336,10 @@ class TagEdit extends Extension {
 		}
 	}
 
+	/**
+	 * @param string|string[] $tags
+	 * @param string $source
+	 */
 	private function mass_source_edit($tags, $source) {
 		$tags = Tag::explode($tags);
 

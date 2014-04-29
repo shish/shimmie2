@@ -139,7 +139,7 @@ class Image {
 	 * @param int $limit
 	 * @param string[] $tags
 	 * @throws SCoreException
-	 * @return Array
+	 * @return Image[]
 	 */
 	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));

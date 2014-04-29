@@ -1,5 +1,8 @@
 <?php
 class EmoticonListTheme extends Themelet {
+	/**
+	 * @param array $list
+	 */
 	public function display_emotes(/*array*/ $list) {
 		global $page;
 		$data_href = get_base_href();
