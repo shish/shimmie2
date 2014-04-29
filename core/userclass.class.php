@@ -4,6 +4,9 @@
  */
 $_user_classes = array();
 
+/**
+ * Class UserClass
+ */
 class UserClass {
 
 	/**

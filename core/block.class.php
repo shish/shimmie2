@@ -1,6 +1,9 @@
 <?php
+
 /**
- * A basic chunk of a page
+ * Class Block
+ *
+ * A basic chunk of a page.
  */
 class Block {
 	/**
@@ -79,9 +82,12 @@ class Block {
 
 
 /**
+ * Class NavBlock
+ *
  * A generic navigation block with a link to the main page.
  *
  * Used because "new NavBlock()" is easier than "new Block('Navigation', ..."
+ *
  */
 class NavBlock extends Block {
 	public function __construct() {

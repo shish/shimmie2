@@ -718,13 +718,51 @@ class MockDatabase extends Database {
 		return $this->responses[$this->query_id++];
 	}
 
+	/**
+	 * @param string $query
+	 * @param array $args
+	 * @return array|PDOStatement
+	 */
 	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
+
+	/**
+	 * @param string $query
+	 * @param array $args
+	 * @return mixed|null|PDOStatement
+	 */
 	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
+
+	/**
+	 * @param string $query
+	 * @param array $args
+	 * @return array|PDOStatement
+	 */
 	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
+
+	/**
+	 * @param string $query
+	 * @param array $args
+	 * @return array|PDOStatement
+	 */
 	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
+
+	/**
+	 * @param string $query
+	 * @param array $args
+	 * @return mixed|PDOStatement
+	 */
 	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
+
+	/**
+	 * @param null|string $seq
+	 * @return int|string
+	 */
 	public function get_last_insert_id($seq) {return $this->query_id;}
 
+	/**
+	 * @param string $sql
+	 * @return string
+	 */
 	public function scoreql_to_sql($sql) {return $sql;}
 	public function create_table($name, $def) {}
 	public function connect_engine() {}

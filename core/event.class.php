@@ -301,6 +301,8 @@ class LogEvent extends Event {
 
 	/**
 	 * Extra data to be held separate
+	 *
+	 * @var array
 	 */
 	public $args;
 
@@ -308,7 +310,7 @@ class LogEvent extends Event {
 	 * @param string $section
 	 * @param int $priority
 	 * @param string $message
-	 * @param $args
+	 * @param array $args
 	 */
 	public function __construct($section, $priority, $message, $args) {
 		$this->section = $section;

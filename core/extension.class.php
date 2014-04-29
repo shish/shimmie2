@@ -70,6 +70,8 @@
  */
 
 /**
+ * Class Extension
+ *
  * send_event(BlahEvent()) -> onBlah($event)
  *
  * Also loads the theme object into $this->theme if available
@@ -128,7 +130,9 @@ abstract class Extension {
 }
 
 /**
- * Several extensions have this in common, make a common API
+ * Class FormatterExtension
+ *
+ * Several extensions have this in common, make a common API.
  */
 abstract class FormatterExtension extends Extension {
 	/**
@@ -153,8 +157,10 @@ abstract class FormatterExtension extends Extension {
 }
 
 /**
+ * Class DataHandlerExtension
+ *
  * This too is a common class of extension with many methods in common,
- * so we have a base class to extend from
+ * so we have a base class to extend from.
  */
 abstract class DataHandlerExtension extends Extension {
 	/**

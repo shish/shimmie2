@@ -6,9 +6,11 @@ function _new_user($row) {
 
 
 /**
+ * Class User
+ *
  * An object representing a row in the "users" table.
  *
- * The currently logged in user will always be accessible via the global variable $user
+ * The currently logged in user will always be accessible via the global variable $user.
  */
 class User {
 	/** @var int */

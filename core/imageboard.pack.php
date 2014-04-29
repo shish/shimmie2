@@ -31,6 +31,8 @@ $order_sql = null; // this feels ugly
 require_once "lib/flexihash.php";
 
 /**
+ * Class Image
+ *
  * An object representing an entry in the images table.
  *
  * As of 2.2, this no longer necessarily represents an
@@ -1017,9 +1019,12 @@ class Image {
 }
 
 /**
+ * Class Tag
+ *
  * A class for organising the tag related functions.
  *
  * All the methods are static, one should never actually use a tag object.
+ *
  */
 class Tag {
 	/**

@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * Class Email
+ *
  * A generic email.
  */
 class Email {
