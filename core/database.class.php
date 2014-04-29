@@ -41,9 +41,15 @@ class Querylet {
 }
 
 class TagQuerylet {
-	var $tag;
-	var $positive;
+	/** @var string  */
+	public $tag;
+	/** @var bool  */
+	public $positive;
 
+	/**
+	 * @param string $tag
+	 * @param bool $positive
+	 */
 	public function __construct($tag, $positive) {
 		$this->tag = $tag;
 		$this->positive = $positive;
@@ -51,9 +57,15 @@ class TagQuerylet {
 }
 
 class ImgQuerylet {
-	var $qlet;
-	var $positive;
+	/** @var \Querylet */
+	public $qlet;
+	/** @var bool */
+	public $positive;
 
+	/**
+	 * @param \Querylet $qlet
+	 * @param bool $positive
+	 */
 	public function __construct($qlet, $positive) {
 		$this->qlet = $qlet;
 		$this->positive = $positive;
@@ -65,6 +77,9 @@ class DBEngine {
 	/** @var null|string */
 	public $name = null;
 
+	/**
+	 * @param \PDO $db
+	 */
 	public function init($db) {}
 
 	/**
@@ -88,6 +103,9 @@ class MySQL extends DBEngine {
 	/** @var string */
 	public $name = "mysql";
 
+	/**
+	 * @param \PDO $db
+	 */
 	public function init($db) {
 		$db->exec("SET NAMES utf8;");
 	}
@@ -124,6 +142,9 @@ class PostgreSQL extends DBEngine {
 	/** @var string */
 	public $name = "pgsql";
 
+	/**
+	 * @param \PDO $db
+	 */
 	public function init($db) {
 		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
 	}
@@ -173,6 +194,9 @@ class SQLite extends DBEngine {
 	/** @var string  */
 	public $name = "sqlite";
 
+	/**
+	 * @param \PDO $db
+	 */
 	public function init($db) {
 		ini_set('sqlite.assoc_case', 0);
 		$db->exec("PRAGMA foreign_keys = ON;");
