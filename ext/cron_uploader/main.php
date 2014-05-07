@@ -300,7 +300,7 @@ class CronUploader extends Extension {
 		// move file to correct dir
 		rename($path, $newDir.$filename);
 		
-		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$$newDir\".");
+		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newDir\".");
 	}
 
 	/**
