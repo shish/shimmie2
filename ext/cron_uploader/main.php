@@ -74,7 +74,7 @@ class CronUploader extends Extension {
 		$failed_dirinfo = $this->scan_dir($failed_dir);
 		
 		$cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
-		$cron_cmd = "curl -f $cron_url";
+		$cron_cmd = "curl --silent $cron_url";
 		$log_path = $this->root_dir . "/uploads.log";
 		
 		$info_html = "<b>Information</b>
@@ -155,7 +155,7 @@ class CronUploader extends Extension {
 		$this->set_dir();
 		
 		$cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
-		$cron_cmd = "curl -f $cron_url";
+		$cron_cmd = "curl --silent $cron_url";
 		$documentation_link = make_http(make_link("cron_upload"));
 		
 		$sb = new SetupBlock ( "Cron Uploader" );
