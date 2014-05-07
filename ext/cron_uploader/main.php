@@ -31,6 +31,12 @@ class CronUploader extends Extension {
 	private $root_dir = "";
 	
 	/**
+	 * Key used to identify uploader
+	 * @var string
+	 */
+	private $upload_key = "";
+	
+	/**
 	 * Checks if the cron upload page has been accessed
 	 * and initializes the upload.
 	 * @param PageRequestEvent $event
@@ -39,10 +45,10 @@ class CronUploader extends Extension {
 		global $config, $user;
 		
 		if ($event->page_matches ( "cron_upload" )) {
-			$key = $config->get_string ( "cron_uploader_key", "" );
+			$this->upload_key = $config->get_string ( "cron_uploader_key", "" );
 			
 			// If the key is in the url, upload
-			if ($key != "" && $event->get_arg ( 0 ) == $key) {
+			if ($this->upload_key != "" && $event->get_arg ( 0 ) == $this->upload_key) {
 				// log in as admin
 				$this->process_upload(); // Start upload
 			} 
@@ -67,8 +73,8 @@ class CronUploader extends Extension {
 		$uploaded_dirinfo = $this->scan_dir($uploaded_dir);
 		$failed_dirinfo = $this->scan_dir($failed_dir);
 		
-		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
-		$cron_cmd = "curl -f $cron_url";
+		$cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
+		$cron_cmd = "curl --silent $cron_url";
 		$log_path = $this->root_dir . "/uploads.log";
 		
 		$info_html = "<b>Information</b>
@@ -135,19 +141,21 @@ class CronUploader extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		// Set default values
-		$key = $this->generate_key ();
+		if ($config->get_string("cron_uploader_key", "")) {
+			$this->upload_key = $this->generate_key ();
 	
-		$config->set_default_int ( 'cron_uploader_count', 1 );
-		$config->set_default_string ( 'cron_uploader_key', $key );
-		$this->set_dir();
+			$config->set_default_int ( 'cron_uploader_count', 1 );
+			$config->set_default_string ( 'cron_uploader_key', $this->upload_key );
+			$this->set_dir();
+		}
 	}
 	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 		$this->set_dir();
 		
-		$cron_url = make_http(make_link("/cron_upload/" . $config->get_string('cron_uploader_key', 'invalid key' )));
-		$cron_cmd = "wget $cron_url";
+		$cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
+		$cron_cmd = "curl --silent $cron_url";
 		$documentation_link = make_http(make_link("cron_upload"));
 		
 		$sb = new SetupBlock ( "Cron Uploader" );
@@ -194,11 +202,11 @@ class CronUploader extends Extension {
 			
 		// Make the directory if it doesn't exist yet
 		if (!is_dir($dir . "/queue/")) 
-			mkdir ( $dir . "/queue/", 0755, true );
+			mkdir ( $dir . "/queue/", 775, true );
 		if (!is_dir($dir . "/uploaded/")) 
-			mkdir ( $dir . "/uploaded/", 0755, true );
+			mkdir ( $dir . "/uploaded/", 775, true );
 		if (!is_dir($dir . "/failed_to_upload/")) 
-			mkdir ( $dir . "/failed_to_upload/", 0755, true );
+			mkdir ( $dir . "/failed_to_upload/", 0775, true );
 		
 		$this->root_dir = $dir;
 		return $dir;
@@ -242,6 +250,7 @@ class CronUploader extends Extension {
 		// Throw exception if there's nothing in the queue
 		if (count($this->image_queue) == 0) {
 			$this->add_upload_info("Your queue is empty so nothing could be uploaded.");
+			$this->handle_log();
 			return false;
 		}
 		
@@ -289,10 +298,9 @@ class CronUploader extends Extension {
 		}
 		
 		// move file to correct dir
-		$newPath = $newDir . $filename;
-		rename($path, $newPath);
+		rename($path, $newDir.$filename);
 		
-		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newPath\".");
+		$this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newDir\".");
 	}
 
 	/**
