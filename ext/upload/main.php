@@ -344,7 +344,9 @@ class Upload extends Extension {
 		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 
 		$headers = transload($url, $tmp_filename);
-		$h_filename = (isset($headers['Content-Disposition']) ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $headers['Content-Disposition']) : null);
+
+		$s_filename = findHeader($headers, 'Content-Disposition');
+		$h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
 		$filename = $h_filename ?: basename($url);
 
 		if(!$headers) {
@@ -362,7 +364,7 @@ class Upload extends Extension {
 			$pathinfo = pathinfo($url);
 			$metadata = array();
 			$metadata['filename'] = $filename;
-			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
+			$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type')) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
