@@ -935,6 +935,23 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 	}
 }
 
+function findHeader ($headers, $name){
+	//HTTP Headers can sometimes be lowercase which will cause issues.
+	//In cases like these, we need to make sure to check for them if the camelcase version does not exist.
+	$header = FALSE;
+
+	if(array_key_exists($name, $headers)){
+		$header = $headers[$name];
+	}else{
+		$headers = array_change_key_case($headers);
+		if(array_key_exists(strtolower($name), $headers)){
+			$header = $headers[strtolower($name)];
+		}
+	}
+
+	return $header;
+}
+
 $_included = array();
 /**
  * Get the active contents of a .php file
