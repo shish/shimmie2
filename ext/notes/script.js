@@ -2,8 +2,9 @@
 
 $(function() {
 	if(window.notes) {
-		$('#main_image').imgNotes({notes: window.notes});
-		$(window).resize(); //Simulate window resize to fix note positioning
+		$('#main_image').load(function(){
+			$('#main_image').imgNotes({notes: window.notes});
+		});
 	}
 
 	$('#cancelnote').click(function(){
