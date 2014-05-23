@@ -132,10 +132,13 @@ class Tips extends Extension {
 		$this->theme->showAll($url, $tips);
 	}
 
+	/**
+	 * @param int $tipID
+	 */
 	private function setStatus($tipID) {
 		global $database;
 
-		$tip = $database->get_row("SELECT * FROM tips WHERE id = ? ", array($tipID));
+		$tip = $database->get_row("SELECT * FROM tips WHERE id = ? ", array(int_escape($tipID)));
 
 		if (bool_escape($tip['enable'])) {
 			$enable = "N";
@@ -143,12 +146,15 @@ class Tips extends Extension {
 			$enable = "Y";
 		}
 
-		$database->execute("UPDATE tips SET enable = ? WHERE id = ?", array ($enable, $tipID));
+		$database->execute("UPDATE tips SET enable = ? WHERE id = ?", array ($enable, int_escape($tipID)));
 	}
 
+	/**
+	 * @param int $tipID
+	 */
 	private function deleteTip($tipID) {
 		global $database;
-		$database->execute("DELETE FROM tips WHERE id = ?", array($tipID));
+		$database->execute("DELETE FROM tips WHERE id = ?", array(int_escape($tipID)));
 	}
 }
 

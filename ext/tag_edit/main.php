@@ -40,9 +40,15 @@
  *
  */
 class OwnerSetEvent extends Event {
-	var $image;
-	var $owner;
+	/** @var \Image  */
+	public $image;
+	/** @var \User  */
+	public $owner;
 
+	/**
+	 * @param Image $image
+	 * @param User $owner
+	 */
 	public function __construct(Image $image, User $owner) {
 		$this->image = $image;
 		$this->owner = $owner;
@@ -57,9 +63,15 @@ class OwnerSetEvent extends Event {
  *
  */
 class SourceSetEvent extends Event {
-	var $image;
-	var $source;
+	/** @var \Image */
+	public $image;
+	/** @var string */
+	public $source;
 
+	/**
+	 * @param Image $image
+	 * @param string $source
+	 */
 	public function __construct(Image $image, $source) {
 		$this->image = $image;
 		$this->source = $source;
@@ -74,7 +86,8 @@ class SourceSetEvent extends Event {
  *
  */
 class TagSetEvent extends Event {
-	var $image;
+	/** @var \Image */
+	public $image;
 	var $tags;
 
 	public function __construct(Image $image, $tags) {
@@ -90,9 +103,15 @@ class TagSetEvent extends Event {
  *
  */
 class LockSetEvent extends Event {
-	var $image;
-	var $locked;
+	/** @var \Image */
+	public $image;
+	/** @var bool */
+	public $locked;
 
+	/**
+	 * @param Image $image
+	 * @param bool $locked
+	 */
 	public function __construct(Image $image, $locked) {
 		assert(is_bool($locked));
 		$this->image = $image;
@@ -107,13 +126,17 @@ class LockSetEvent extends Event {
 class TagTermParseEvent extends Event {
 	var $term = null;
 	var $id = null;
-	var $metatag = false;
+	/** @var bool */
+	public $metatag = false;
 
 	public function __construct($term, $id) {
 		$this->term = $term;
 		$this->id = $id;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function is_metatag() {
 		return $this->metatag;
 	}
@@ -150,10 +173,14 @@ class TagEdit extends Extension {
 	}
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
-		global $user, $page;
+		global $user;
 		if($user->can("edit_image_owner")) {
 			$owner = User::by_name($_POST['tag_edit__owner']);
-			send_event(new OwnerSetEvent($event->image, $owner));
+			if ($owner instanceof User) {
+				send_event(new OwnerSetEvent($event->image, $owner));
+			} else {
+				throw new NullUserException("Error: No user with that name was found.");
+			}
 		}
 		if($this->can_tag($event->image) && isset($_POST['tag_edit__tags'])) {
 			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
@@ -205,13 +232,15 @@ class TagEdit extends Extension {
 		$this->theme->display_mass_editor();
 	}
 
-	// When an alias is added, oldtag becomes inaccessable
+	/**
+	 * When an alias is added, oldtag becomes inaccessible.
+	 * @param AddAliasEvent $event
+	 */
 	public function onAddAlias(AddAliasEvent $event) {
 		$this->mass_tag_edit($event->oldtag, $event->newtag);
 	}
 
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
-		global $user;
 		$event->add_part($this->theme->get_user_editor_html($event->image), 39);
 		$event->add_part($this->theme->get_tag_editor_html($event->image), 40);
 		$event->add_part($this->theme->get_source_editor_html($event->image), 41);
@@ -229,19 +258,30 @@ class TagEdit extends Extension {
 		if(!empty($matches)) $event->metatag = true;
 	}
 
+	/**
+	 * @param Image $image
+	 * @return bool
+	 */
 	private function can_tag(Image $image) {
-		global $config, $user;
+		global $user;
 		return ($user->can("edit_image_tag") || !$image->is_locked());
 	}
 
+	/**
+	 * @param Image $image
+	 * @return bool
+	 */
 	private function can_source(Image $image) {
-		global $config, $user;
+		global $user;
 		return ($user->can("edit_image_source") || !$image->is_locked());
 	}
 
+	/**
+	 * @param string $search
+	 * @param string $replace
+	 */
 	private function mass_tag_edit($search, $replace) {
 		global $database;
-		global $config;
 
 		$search_set = Tag::explode(strtolower($search), false);
 		$replace_set = Tag::explode(strtolower($replace), false);
@@ -296,10 +336,11 @@ class TagEdit extends Extension {
 		}
 	}
 
+	/**
+	 * @param string|string[] $tags
+	 * @param string $source
+	 */
 	private function mass_source_edit($tags, $source) {
-		global $database;
-		global $config;
-
 		$tags = Tag::explode($tags);
 
 		$last_id = -1;

@@ -2,6 +2,11 @@
 class Source_HistoryTheme extends Themelet {
 	var $messages = array();
 
+	/**
+	 * @param Page $page
+	 * @param int $image_id
+	 * @param array $history
+	 */
 	public function display_history_page(Page $page, /*int*/ $image_id, /*array*/ $history) {
 		global $user;
 		$start_string = "
@@ -45,6 +50,11 @@ class Source_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Source History", $history_html, "main", 10));
 	}
 
+	/**
+	 * @param Page $page
+	 * @param array $history
+	 * @param int $page_number
+	 */
 	public function display_global_page(Page $page, /*array*/ $history, /*int*/ $page_number) {
 		$start_string = "
 			<div style='text-align: left'>
@@ -93,8 +103,9 @@ class Source_HistoryTheme extends Themelet {
 		$page->add_block(new Block("Navigation", $nav, "left"));
 	}
 
-	/*
+	/**
 	 * Add a section to the admin page.
+	 * @param string $validation_msg
 	 */
 	public function display_admin_block(/*string*/ $validation_msg='') {
 		global $page;
@@ -129,7 +140,11 @@ class Source_HistoryTheme extends Themelet {
 		$html = implode($this->messages, "\n");
 		$page->add_block(new Block("Bulk Revert Results", $html));
 	}
-	
+
+	/**
+	 * @param string $title
+	 * @param string $body
+	 */
 	public function add_status(/*string*/ $title, /*string*/ $body) {
 		$this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
 	}

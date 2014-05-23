@@ -13,18 +13,32 @@
  *  add more emoticons by uploading images into that folder.
  */
 
+/**
+ * Class Emoticons
+ */
 class Emoticons extends FormatterExtension {
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	public function format(/*string*/ $text) {
 		$data_href = get_base_href();
 		$text = preg_replace("/:([a-z]*?):/s", "<img src='$data_href/ext/emoticons/default/\\1.gif'>", $text);
 		return $text;
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	public function strip(/*string*/ $text) {
 		return $text;
 	}
 }
 
+/**
+ * Class EmoticonList
+ */
 class EmoticonList extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("emote/list")) {

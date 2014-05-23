@@ -15,7 +15,7 @@
 
 class RegenThumb extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $page, $user;
 
 		if($event->page_matches("regen_thumb") && $user->can("delete_image") && isset($_POST['image_id'])) {
 			$image = Image::by_id(int_escape($_POST['image_id']));

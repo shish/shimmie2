@@ -1,17 +1,20 @@
 <?php
+
 /**
- * A basic chunk of a page
+ * Class Block
+ *
+ * A basic chunk of a page.
  */
 class Block {
 	/**
-	 * The block's title
+	 * The block's title.
 	 *
 	 * @var string
 	 */
 	public $header;
 
 	/**
-	 * The content
+	 * The content of the block.
 	 *
 	 * @var string
 	 */
@@ -19,7 +22,7 @@ class Block {
 
 	/** 
 	 * Where the block should be placed. The default theme supports
-	 * "main" and "left", other themes can add their own areas
+	 * "main" and "left", other themes can add their own areas.
 	 *
 	 * @var string
 	 */
@@ -35,7 +38,9 @@ class Block {
 	public $position;
 
 	/**
-	 * @var int
+	 * A unique ID for the block.
+	 *
+	 * @var string
 	 */
 	public $id;
 
@@ -46,7 +51,7 @@ class Block {
 	 * @param string $body
 	 * @param string $section
 	 * @param int $position
-	 * @param null|int $id
+	 * @param null|int $id A unique ID for the block (generated automatically if null).
 	 */
 	public function __construct($header, $body, /*string*/ $section="main", /*int*/ $position=50, $id=null) {
 		$this->header = $header;
@@ -77,9 +82,12 @@ class Block {
 
 
 /**
+ * Class NavBlock
+ *
  * A generic navigation block with a link to the main page.
  *
  * Used because "new NavBlock()" is easier than "new Block('Navigation', ..."
+ *
  */
 class NavBlock extends Block {
 	public function __construct() {

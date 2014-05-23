@@ -24,7 +24,7 @@ class Tag_History extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $page, $user;
+		global $page, $user;
 
 		if($event->page_matches("tag_history/revert")) {
 			// this is a request to revert to a previous version of the tags
@@ -112,9 +112,12 @@ class Tag_History extends Extension {
 			$config->set_int("ext_tag_history_version", 3);
 		}
 	}
-	
-	/*
-	 * this function is called when a revert request is received
+
+	/**
+	 * This function is called when a revert request is received.
+	 *
+	 * @param int $revert_id
+	 * @throws ImageDoesNotExist
 	 */
 	private function process_revert_request($revert_id) {
 		global $page;
@@ -199,7 +202,11 @@ class Tag_History extends Extension {
 		// output results
 		$this->theme->display_revert_ip_results();
 	}
-	
+
+	/**
+	 * @param int $revert_id
+	 * @return mixed|null
+	 */
 	public function get_tag_history_from_revert(/*int*/ $revert_id) {
 		global $database;
 		$row = $database->get_row("
@@ -210,6 +217,10 @@ class Tag_History extends Extension {
 		return ($row ? $row : null);
 	}
 
+	/**
+	 * @param int $image_id
+	 * @return array
+	 */
 	public function get_tag_history_from_id(/*int*/ $image_id) {
 		global $database;
 		$row = $database->get_all("
@@ -222,6 +233,10 @@ class Tag_History extends Extension {
 		return ($row ? $row : array());
 	}
 
+	/**
+	 * @param int $page_id
+	 * @return array
+	 */
 	public function get_global_tag_history($page_id) {
 		global $database;
 		$row = $database->get_all("
@@ -327,17 +342,20 @@ class Tag_History extends Extension {
 
 		log_info("tag_history", 'Reverted '.count($result).' edits.');
 	}
-	
-	/*
-	 * this function is called just before an images tag are changed
+
+	/**
+	 * This function is called just before an images tag are changed.
+	 *
+	 * @param Image $image
+	 * @param string|string[] $tags
 	 */
-	private function add_tag_history($image, $tags) {
+	private function add_tag_history(Image $image, $tags) {
 		global $database, $config, $user;
 
 		$new_tags = Tag::implode($tags);
 		$old_tags = Tag::implode($image->get_tag_array());
 		
-		if($new_tags == $old_tags) return;
+		if($new_tags == $old_tags) { return; }
 		
 		if(empty($old_tags)) {
 			/* no old tags, so we are probably adding the image for the first time */
@@ -348,7 +366,7 @@ class Tag_History extends Extension {
 		}
 		
 		$allowed = $config->get_int("history_limit");
-		if($allowed == 0) return;
+		if($allowed == 0) { return; }
 		
 		// if the image has no history, make one with the old tags
 		$entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", array($image->id));
@@ -368,7 +386,7 @@ class Tag_History extends Extension {
 		$entries++;
 		
 		// if needed remove oldest one
-		if($allowed == -1) return;
+		if($allowed == -1) { return; }
 		if($entries > $allowed) {
 			// TODO: Make these queries better
 			/*

@@ -37,6 +37,9 @@ class UploadTheme extends Themelet {
 		}
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_upload_list_1() {
 		global $config;
 		$upload_list = "";
@@ -83,6 +86,9 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_upload_List_2() {
 		global $config;
 
@@ -180,6 +186,9 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function h_bookmarklets() {
 		global $config;
 		$link = make_http(make_link("upload"));
@@ -232,7 +241,12 @@ class UploadTheme extends Themelet {
 		return $html;
 	}
 
-	/* only allows 1 file to be uploaded - for replacing another image file */
+	/**
+	 * Only allows 1 file to be uploaded - for replacing another image file.
+	 *
+	 * @param Page $page
+	 * @param int $image_id
+	 */
 	public function display_replace_page(Page $page, /*int*/ $image_id) {
 		global $config, $page;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
@@ -275,7 +289,11 @@ class UploadTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Upload Replacement Image", $html, "main", 20));
 	}
-	
+
+	/**
+	 * @param Page $page
+	 * @param bool $ok
+	 */
 	public function display_upload_status(Page $page, /*bool*/ $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
@@ -288,10 +306,18 @@ class UploadTheme extends Themelet {
 		}
 	}
 
+	/**
+	 * @param Page $page
+	 * @param string $title
+	 * @param string $message
+	 */
 	public function display_upload_error(Page $page, /*string*/ $title, /*string*/ $message) {
 		$page->add_block(new Block($title, $message));
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function build_upload_block() {
 		global $config;
 

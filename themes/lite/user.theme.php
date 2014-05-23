@@ -74,6 +74,11 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->add_block(new Block("Signup", $html));
 	}
 
+	/**
+	 * @param Page $page
+	 * @param array $uploads
+	 * @param array $comments
+	 */
 	public function display_ip_list(Page $page, $uploads, $comments) {
 		$html = "<table id='ip-history' style='width: 400px;'>";
 		$html .= "<tr><td>Uploaded from: ";

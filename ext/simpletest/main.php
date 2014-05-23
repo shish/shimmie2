@@ -19,7 +19,7 @@
  * For Shimmie2 specific extensions, there is a ShimmieWebTestCase class which
  * includes functions to upload and delete images.
  *
- * For a quick guide on the spcifics of how to write tests, see \ref wut
+ * For a quick guide on the specifics of how to write tests, see \ref wut
  *
  *
  * \page wut Writing Unit Tests
@@ -88,19 +88,24 @@ define('ADMIN_NAME', "demo");
 define('ADMIN_PASS', "demo");
 
 /**
- * A set of common SCore activities to test
+ * Class SCoreWebTestCase
+ *
+ * A set of common SCore activities to test.
  */
 class SCoreWebTestCase extends WebTestCase {
 
- 	/**
-	 * Click on a link or a button
+	/**
+	 * Click on a link or a button.
+	 * @param string $text
+	 * @return string
 	 */
- 	public function click($text) {
+	public function click($text) {
 		return parent::click($text);
 	}
 
 	/**
-	 * Click the virtual browser's back button
+	 * Click the virtual browser's back button.
+	 * @return bool
 	 */
 	public function back() {
 		return parent::back();
@@ -165,9 +170,16 @@ class SCoreWebTestCase extends WebTestCase {
 }
 
 /**
- * A set of common Shimmie activities to test
+ * Class ShimmieWebTestCase
+ *
+ * A set of common Shimmie activities to test.
  */
 class ShimmieWebTestCase extends SCoreWebTestCase {
+	/**
+	 * @param string $filename
+	 * @param string|string[] $tags
+	 * @return int
+	 */
 	protected function post_image($filename, $tags) {
 		$image_id = -1;
 		$this->setMaximumRedirects(0);
@@ -195,6 +207,9 @@ class ShimmieWebTestCase extends SCoreWebTestCase {
 		return $image_id;
 	}
 
+	/**
+	 * @param int $image_id
+	 */
 	protected function delete_image($image_id) {
 		if($image_id > 0) {
 	        $this->get_page('post/view/'.$image_id);

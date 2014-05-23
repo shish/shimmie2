@@ -24,15 +24,26 @@
  * Sent when the admin page is ready to be added to
  */
 class AdminBuildingEvent extends Event {
-	var $page;
+	/** @var \Page */
+	public $page;
+
+	/**
+	 * @param Page $page
+	 */
 	public function __construct(Page $page) {
 		$this->page = $page;
 	}
 }
 
 class AdminActionEvent extends Event {
-	var $action;
-	var $redirect = true;
+	/** @var string */
+	public $action;
+	/** @var bool */
+	public $redirect = true;
+
+	/**
+	 * @param string $action
+	 */
 	public function __construct(/*string*/ $action) {
 		$this->action = $action;
 	}

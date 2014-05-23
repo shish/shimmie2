@@ -7,12 +7,21 @@
  */
 
 class PixelFileHandler extends DataHandlerExtension {
+	/**
+	 * @param string $ext
+	 * @return bool
+	 */
 	protected function supported_ext($ext) {
 		$exts = array("jpg", "jpeg", "gif", "png");
 		$ext = (($pos = strpos($ext,'?')) !== false) ? substr($ext,0,$pos) : $ext;
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param string $filename
+	 * @param array $metadata
+	 * @return Image|null
+	 */
 	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
 		$image = new Image();
 
@@ -32,6 +41,10 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	/**
+	 * @param string $file
+	 * @return bool
+	 */
 	protected function check_contents(/*string*/ $file) {
 		$valid = Array(IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG);
 		if(!file_exists($file)) return false;
@@ -41,6 +54,10 @@ class PixelFileHandler extends DataHandlerExtension {
 		return false;
 	}
 
+	/**
+	 * @param string $hash
+	 * @return bool
+	 */
 	protected function create_thumb(/*string*/ $hash) {
 		$outname = warehouse_path("thumbs", $hash);
 		if(file_exists($outname)) {
@@ -49,6 +66,10 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $this->create_thumb_force($hash);
 	}
 
+	/**
+	 * @param $hash
+	 * @return bool
+	 */
 	protected function create_thumb_force(/*string*/ $hash) {
 		global $config;
 
@@ -69,7 +90,10 @@ class PixelFileHandler extends DataHandlerExtension {
 
 		return $ok;
 	}
-	
+
+	/**
+	 * @param ImageAdminBlockBuildingEvent $event
+	 */
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		$event->add_part("
 			<form>
@@ -91,6 +115,12 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 // IM thumber {{{
+
+	/**
+	 * @param string $inname
+	 * @param string $outname
+	 * @return bool
+	 */
 	private function make_thumb_convert(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 
@@ -124,6 +154,11 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 // }}}
 // epeg thumber {{{
+	/**
+	 * @param string $inname
+	 * @param string $outname
+	 * @return bool
+	 */
 	private function make_thumb_epeg(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 		$w = $config->get_int("thumb_width");
@@ -132,6 +167,11 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 	// }}}
 // GD thumber {{{
+	/**
+	 * @param string $inname
+	 * @param string $outname
+	 * @return bool
+	 */
 	private function make_thumb_gd(/*string*/ $inname, /*string*/ $outname) {
 		global $config;
 		$thumb = $this->get_thumb($inname);
@@ -140,6 +180,10 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $ok;
 	}
 
+	/**
+	 * @param string $tmpname
+	 * @return resource
+	 */
 	private function get_thumb(/*string*/ $tmpname) {
 		global $config;
 

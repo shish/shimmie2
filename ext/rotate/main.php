@@ -16,8 +16,12 @@
  * This class is just a wrapper around SCoreException.
  */
 class ImageRotateException extends SCoreException {
-	var $error;
+	/** @var string */
+	public $error;
 
+	/**
+	 * @param string $error
+	 */
 	public function __construct($error) {
 		$this->error = $error;
 	}
@@ -100,11 +104,15 @@ class RotateImage extends Extension {
 	
 	// Private functions
 	/* ----------------------------- */
-	
-	/*
-		This function could be made much smaller by using the ImageReplaceEvent
-		ie: Pretend that we are replacing the image with a rotated copy.
-	*/
+
+	/**
+	 * This function could be made much smaller by using the ImageReplaceEvent
+	 * ie: Pretend that we are replacing the image with a rotated copy.
+	 *
+	 * @param int $image_id
+	 * @param int $deg
+	 * @throws ImageRotateException
+	 */
 	private function rotate_image(/*int*/ $image_id, /*int*/ $deg) {
 		global $config, $user, $page, $database;
 		
