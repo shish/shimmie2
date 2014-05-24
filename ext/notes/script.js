@@ -2,7 +2,9 @@
 
 $(function() {
 	if(window.notes) {
-		$('#main_image').imgNotes({notes: window.notes});
+		$('#main_image').load(function(){
+			$('#main_image').imgNotes({notes: window.notes});
+		});
 	}
 
 	$('#cancelnote').click(function(){
