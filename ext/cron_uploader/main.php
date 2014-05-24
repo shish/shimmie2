@@ -202,9 +202,9 @@ class CronUploader extends Extension {
 			
 		// Make the directory if it doesn't exist yet
 		if (!is_dir($dir . "/queue/")) 
-			mkdir ( $dir . "/queue/", 775, true );
+			mkdir ( $dir . "/queue/", 0775, true );
 		if (!is_dir($dir . "/uploaded/")) 
-			mkdir ( $dir . "/uploaded/", 775, true );
+			mkdir ( $dir . "/uploaded/", 0775, true );
 		if (!is_dir($dir . "/failed_to_upload/")) 
 			mkdir ( $dir . "/failed_to_upload/", 0775, true );
 		
