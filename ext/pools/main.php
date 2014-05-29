@@ -80,6 +80,12 @@ class Pools extends Extension {
 
 			$config->set_int("ext_pools_version", 2);
 		}
+
+		if ($config->get_int("ext_pools_version") < 3){
+			$config->set_bool("poolsShowNavLinks","N"); //A $config->rename() function would be nice here...
+
+			$config->set_int("ext_pools_version", 3);
+		}
 	}
 
 	// Add a block to the Board Config / Setup
@@ -90,7 +96,7 @@ class Pools extends Extension {
 		$sb->add_int_option("poolsListsPerPage", "<br>Index list items per page: ");
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
-		$sb->add_bool_option("poolsShowNextLink", "<br>Show 'Next' link when viewing pool images: ");
+		$sb->add_bool_option("poolsShowNavLinks", "<br>Show 'Prev' & 'Next' links when viewing pool images: ");
 		//$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
 		$event->panel->add_block($sb);
 	}
@@ -258,8 +264,8 @@ class Pools extends Extension {
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
 			$poolsIDs = $this->get_pool_id($imageID);
-			
-			$show_next = $config->get_bool("poolsShowNextLink", false);
+
+			$show_nav = $config->get_bool("poolsShowNavLinks", false);
 
 			$linksPools = array();
 			foreach($poolsIDs as $poolID) {
@@ -267,11 +273,18 @@ class Pools extends Extension {
 				foreach ($pools as $pool){
 					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
 					
-					// Optionally show a link the Next image in the Pool.
-					if ($show_next) {
-						$next_image_in_pool = $this->get_next_post($pool, $imageID);
-						if (!empty($next_image_in_pool)) {
-							$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
+					// Optionally show a link the Prev/Next image in the Pool.
+					if ($show_nav) {
+						$nav = $this->get_nav_posts($pool, $imageID);
+						$navlinks = "";
+						if (!empty($nav['prev'])) {
+							$navlinks .= '<a href="'.make_link('post/view/'.$nav['prev']).'" class="pools_prev_img">Prev</a>';
+						}
+						if (!empty($nav['next'])) {
+							$navlinks .= '<a href="'.make_link('post/view/'.$nav['next']).'" class="pools_next_img">Next</a>';
+						}
+						if(!empty($navlinks)){
+							$linksPools[] = $navlinks;
 						}
 					}
 				}
@@ -612,26 +625,49 @@ class Pools extends Extension {
 	}
 
 	/**
-	 * Gets the next successive image from a pool, given a pool ID and an image ID.
+	 * Gets the previous and next successive images from a pool, given a pool ID and an image ID.
 	 *
 	 * @param array $pool Array for the given pool
 	 * @param int $imageID Integer
-	 * @return int Integer which is the next Image ID or NULL if none.
+	 * @return array Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
 	 */
-	private function get_next_post(/*array*/ $pool, /*int*/ $imageID) {
+	private function get_nav_posts(/*array*/ $pool, /*int*/ $imageID) {
 		global $database;
 
 		if (empty($pool) || empty($imageID))
 			return null;
 		
-		$result = $database->get_one("
-					SELECT image_id
-					FROM pool_images
-					WHERE pool_id=:pid
-					AND image_order > (SELECT image_order FROM pool_images WHERE pool_id=:pid AND image_id =:iid LIMIT 1 )
-					ORDER BY image_order ASC LIMIT 1",
+		$result = $database->get_row("
+						SELECT (
+							SELECT image_id
+							FROM pool_images
+							WHERE pool_id = :pid
+							AND image_order < (
+								SELECT image_order
+								FROM pool_images
+								WHERE pool_id = :pid
+								AND image_id = :iid
+								LIMIT 1
+							)
+							ORDER BY image_order DESC LIMIT 1
+						) AS prev,
+						(
+							SELECT image_id
+							FROM pool_images
+							WHERE pool_id = :pid
+							AND image_order > (
+								SELECT image_order
+								FROM pool_images
+								WHERE pool_id = :pid
+								AND image_id = :iid
+								LIMIT 1
+							)
+							ORDER BY image_order ASC LIMIT 1
+						) AS next
+
+						LIMIT 1",
 					array("pid"=>$pool['id'], "iid"=>$imageID) );
-		
+
 		if (empty($result)) {
 			// assume that we are at the end of the pool
 			return null;
