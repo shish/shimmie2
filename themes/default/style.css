@@ -113,20 +113,6 @@ NAV SELECT {
 	box-shadow: none;
 }
 
-.pools_next_img {
-	display: block;
-	font-size: 77%;
-	text-align: right;
-	float: right;
-}
-
-.pools_prev_img {
-	display: block;
-	font-size: 77%;
-	text-align: left;
-	float: left;
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 *                 the main part of each page                     *
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
