@@ -83,6 +83,7 @@ class Pools extends Extension {
 
 		if ($config->get_int("ext_pools_version") < 3){
 			$config->set_bool("poolsShowNavLinks","N"); //A $config->rename() function would be nice here...
+			$config->set_bool("poolsAutoIncrementOrder","N");
 
 			$config->set_int("ext_pools_version", 3);
 		}
@@ -97,7 +98,9 @@ class Pools extends Extension {
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
 		$sb->add_bool_option("poolsShowNavLinks", "<br>Show 'Prev' & 'Next' links when viewing pool images: ");
+		$sb->add_bool_option("poolsAutoIncrementOrder", "<br>Autoincrement order when post is added to pool:");
 		//$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
+
 		$event->panel->add_block($sb);
 	}
 
@@ -903,13 +906,23 @@ class Pools extends Extension {
 	 * @param bool $history
 	 */
 	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
-		global $database;
+		global $database, $config;
 
 		if(!$this->check_post($poolID, $imageID)) {
+			$imageOrder = 0;
+
+			if($config->get_bool("poolsAutoIncrementOrder")){
+				$imageOrder = $database->get_one("
+						SELECT CASE WHEN image_order IS NOT NULL THEN MAX(image_order) + 1 ELSE 0 END
+						FROM pool_images
+						WHERE pool_id = :pid",
+						array("pid"=>$poolID));
+			}
+
 			$database->execute("
-					INSERT INTO pool_images (pool_id, image_id)
-					VALUES (:pid, :iid)",
-					array("pid"=>$poolID, "iid"=>$imageID));
+					INSERT INTO pool_images (pool_id, image_id, image_order)
+					VALUES (:pid, :iid, :ord)",
+					array("pid"=>$poolID, "iid"=>$imageID, "ord"=>$imageOrder));
 		}
 
 		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));
