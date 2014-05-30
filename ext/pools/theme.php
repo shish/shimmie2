@@ -87,12 +87,6 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
-		$nav_html = '
-			<a href="'.make_link().'">Index</a>
-			<br><a href="'.make_link("pool/new").'">Create Pool</a>
-			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
-		';
-
 		$order_html = '
 			<select id="order_pool">
 			  <option value="created">Recently created</option>
@@ -102,16 +96,15 @@ class PoolsTheme extends Themelet {
 			</select>
 		';
 
-		$blockTitle = "Pools";
-		$page->set_title(html_escape($blockTitle));
-		$page->set_heading(html_escape($blockTitle));
-		$page->add_block(new Block($blockTitle, $html, "main", 10));
-		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
+		$this->display_top(null, "Pools");
 		$page->add_block(new Block("Order By", $order_html, "left", 15));
+
+		$page->add_block(new Block("Pools", $html, "main", 10));
+
+
 
 		$this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
 	}
-
 
 	/*
 	 * HERE WE DISPLAY THE NEW POOL COMPOSER
@@ -128,9 +121,7 @@ class PoolsTheme extends Themelet {
 			</form>
 		";
 
-		$blockTitle = "Create Pool";
-		$page->set_title(html_escape($blockTitle));
-		$page->set_heading(html_escape($blockTitle));
+		$this->display_top(null, "Create Pool");
 		$page->add_block(new Block("Create Pool", $create_html, "main", 20));
 	}
 
@@ -144,6 +135,17 @@ class PoolsTheme extends Themelet {
 
 		$page->set_title($heading);
 		$page->set_heading($heading);
+
+		$nav_html = '<a href="'.make_link().'">Index</a>';
+		$poolnav_html = '
+			<a href="'.make_link("pool/list").'">Index</a>
+			<br><a href="'.make_link("pool/new").'">Create Pool</a>
+			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+		';
+
+		$page->add_block(new Block($nav_html, null, "left", 5));
+		$page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
+
 		if(count($pools) == 1) {
 			$pool = $pools[0];
 			if($pool['public'] == "Y" || $user->is_admin()) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
@@ -155,33 +157,7 @@ class PoolsTheme extends Themelet {
 			$bb = new BBCode();
 			$page->add_block(new Block(html_escape($pool['title']), $bb->format($pool['description']), "main", 10));
 		}
-		else {
-			$pool_info = '
-						<table id="poolsList" class="zebra">
-							<thead><tr>
-								<th class="left">Title</th>
-								<th class="left">Description</th>
-							</tr></thead><tbody>';
-
-			foreach($pools as $pool) {
-				$pool_info .= "<tr>".
-					"<td class='left'>".html_escape($pool['title'])."</td>".
-					"<td class='left'>".html_escape($pool['description'])."</td>".
-					"</tr>";
-
-				// this will make disasters if more than one pool comes in the parameter
-				if($pool['public'] == "Y" || $user->is_admin()) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
-					if(!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
-						$this->sidebar_options($page, $pool, $check_all);
-					}
-				}
-			}
-
-			$pool_info .= "</tbody></table>";
-			$page->add_block(new Block($heading, $pool_info, "main", 10));
-		}
 	}
-
 
 	/**
 	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION.
@@ -202,14 +178,7 @@ class PoolsTheme extends Themelet {
 			$pool_images .= "\n".$thumb_html."\n";
 		}
 
-		$nav_html = '
-			<a href="'.make_link().'">Index</a>
-			<br><a href="'.make_link("pool/new").'">Create Pool</a>
-			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
-		';
-
-		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
-		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));		
+		$page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));
 		$this->display_paginator($page, "pool/view/".$pools[0]['id'], null, $pageNumber, $totalPages);
 	}
 
@@ -265,12 +234,7 @@ class PoolsTheme extends Themelet {
 				<script language='javascript' type='text/javascript'>
 				<!--
 				function setAll(value) {
-					var a=new Array();
-					a=document.getElementsByName('check[]');
-					var p=0;
-					for(i=0;i<a.length;i++){
-						a[i].checked = value;
-					}
+					$('[name=\"check[]\"]').attr('checked', value);
 				}
 				//-->
 				</script>
@@ -278,7 +242,7 @@ class PoolsTheme extends Themelet {
 				<input type='button' name='UnCheckAll' value='Uncheck All' onClick='setAll(false)'>
 			";
 		}
-		$page->add_block(new Block("Manage Pool", $editor, "left", 10));
+		$page->add_block(new Block("Manage Pool", $editor, "left", 15));
 	}
 
 
@@ -287,22 +251,14 @@ class PoolsTheme extends Themelet {
 	 *
 	 * @param Page $page
 	 * @param array $images
-	 * @param int $pool_id
+	 * @param array $pool
 	 */
-	public function pool_result(Page $page, /*array*/ $images, /*int*/ $pool_id) {
-		// TODO: this could / should be done using jQuery
+	public function pool_result(Page $page, /*array*/ $images, /*array*/ $pool) {
+
+		$this->display_top($pool, "Importing Posts", true);
 		$pool_images = "
 			<script language='javascript' type='text/javascript'>
 			<!--
-			function setAll(value) {
-				var a=new Array();
-				a=document.getElementsByName('check[]');
-				var p=0;
-				for(i=0;i<a.length;i++) {
-					a[i].checked = value;
-				}
-			}
-
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');
 			}
@@ -319,19 +275,13 @@ class PoolsTheme extends Themelet {
 				'<input name="check[]" type="checkbox" value="'.$image->id.'" />'.
 				'</span>';
 		}
+
 		$pool_images .= "<br>".
 			"<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>".
-			"<input type='hidden' name='pool_id' value='".$pool_id."'>".
+			"<input type='hidden' name='pool_id' value='".$pool[0]['id']."'>".
 			"</form>";
 
-		$page->add_block(new Block("Import", $pool_images, "main", 10));
-
-		$editor = "
-			<input type='button' name='CheckAll' value='Check All' onClick='setAll(true)'>
-			<input type='button' name='UnCheckAll' value='Uncheck All' onClick='setAll(false)'>
-			";
-
-		$page->add_block(new Block("Manage Pool", $editor, "left", 10));
+		$page->add_block(new Block("Import", $pool_images, "main", 30));
 	}
 
 
@@ -466,15 +416,7 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
-		$nav_html = '
-			<a href="'.make_link().'">Index</a>
-			<br><a href="'.make_link("pool/new").'">Create Pool</a>
-			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
-		';
-
-		$page->set_title("Recent Changes");
-		$page->set_heading("Recent Changes");
-		$page->add_block(new Block("Navigation", $nav_html, "left", 10));
+		$this->display_top(null, "Recent Changes");
 		$page->add_block(new Block("Recent Changes", $html, "main", 10));
 
 		$this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);

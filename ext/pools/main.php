@@ -108,10 +108,9 @@ class Pools extends Extension {
 		global $page, $user;
 		
 		if ($event->page_matches("pool")) {
-
 			$pool_id = 0;
 			$pool = array();
-			
+
 			// Check if we have pool id, since this is most often the case.
 			if (isset($_POST["pool_id"])) {
 				$pool_id = int_escape($_POST["pool_id"]);
@@ -502,7 +501,7 @@ class Pools extends Extension {
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
 		
 		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($_POST["pool_tag"]));
-		$this->theme->pool_result($page, $images, $pool_id);
+		$this->theme->pool_result($page, $images, $this->get_pool($pool_id));
 	}
 
 
