@@ -325,16 +325,20 @@ class Pools extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^pool[=|:]([^:]*):?([0-9]*)$/i", $event->term, $matches)) {
+		if(preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term, $matches)) {
 			global $user;
 			$poolTag = (string) str_replace("_", " ", $matches[1]);
 
 			$pool = null;
-			if(ctype_digit($poolTag)){ //If only digits, assume PoolID
+			if($poolTag == 'lastcreated'){
+				$pool = $this->get_last_userpool($user->id);
+			}
+			elseif(ctype_digit($poolTag)){ //If only digits, assume PoolID
 				$pool = $this->get_single_pool($poolTag);
 			}else{ //assume PoolTitle
 				$pool = $this->get_single_pool_from_title($poolTag);
 			}
+
 
 			if($pool ? $this->have_permission($user, $pool) : FALSE){
 				$image_order = ($matches[2] ?: 0);
@@ -490,6 +494,16 @@ class Pools extends Extension {
 	private function get_pool_id(/*int*/ $imageID) {
 		global $database;
 		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
+	}
+
+	/**
+	 * Retrieve information about the last pool the given userID created
+	 * @param int $userID
+	 * @return array
+	 */
+	private function get_last_userpool(/*int*/ $userID){
+		global $database;
+		return $database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", array("uid"=>$userID));
 	}
 
 	/**
