@@ -1,7 +1,7 @@
 <?php
 /**
  * Name: Pools System
- * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>
+ * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>, Daku <admin@codeanimu.net>
  * License: GPLv2
  * Description: Allow users to create groups of images and order them.
  * Documentation: This extension allows users to created named groups of
@@ -903,14 +903,13 @@ class Pools extends Extension {
 	 * @param int $poolID
 	 * @param int $imageID
 	 * @param bool $history
+	 * @param int $imageOrder
 	 */
-	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
+	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false, $imageOrder=0) {
 		global $database, $config;
 
 		if(!$this->check_post($poolID, $imageID)) {
-			$imageOrder = 0;
-
-			if($config->get_bool("poolsAutoIncrementOrder")){
+			if($config->get_bool("poolsAutoIncrementOrder") && $imageOrder === 0){
 				$imageOrder = $database->get_one("
 						SELECT CASE WHEN image_order IS NOT NULL THEN MAX(image_order) + 1 ELSE 0 END
 						FROM pool_images
