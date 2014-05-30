@@ -267,29 +267,19 @@ class Pools extends Extension {
 
 			$show_nav = $config->get_bool("poolsShowNavLinks", false);
 
-			$linksPools = array();
+			$navInfo = array();
 			foreach($poolsIDs as $poolID) {
-				$pools = $this->get_pool($poolID['pool_id']);
-				foreach ($pools as $pool){
-					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
-					
-					// Optionally show a link the Prev/Next image in the Pool.
-					if ($show_nav) {
-						$nav = $this->get_nav_posts($pool, $imageID);
-						$navlinks = "";
-						if (!empty($nav['prev'])) {
-							$navlinks .= '<a href="'.make_link('post/view/'.$nav['prev']).'" class="pools_prev_img">Prev</a>';
-						}
-						if (!empty($nav['next'])) {
-							$navlinks .= '<a href="'.make_link('post/view/'.$nav['next']).'" class="pools_next_img">Next</a>';
-						}
-						if(!empty($navlinks)){
-							$linksPools[] = $navlinks;
-						}
-					}
+				$pool = $this->get_single_pool($poolID['pool_id']);
+
+				$navInfo[$pool['id']] = array();
+				$navInfo[$pool['id']]['info'] = $pool;
+
+				// Optionally show a link the Prev/Next image in the Pool.
+				if ($show_nav) {
+					$navInfo[$pool['id']]['nav'] = $this->get_nav_posts($pool, $imageID);
 				}
 			}
-			$this->theme->pool_info($linksPools);
+			$this->theme->pool_info($navInfo);
 		}
 	}
 

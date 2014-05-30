@@ -3,9 +3,29 @@
 class PoolsTheme extends Themelet {
 	/**
 	 * Adds a block to the panel with information on the pool(s) the image is in.
+	 * @param array Multidimensional array containing pool id, info & nav IDs.
 	 */
-	public function pool_info($linksPools) {
+	public function pool_info(/*array*/ $navIDs) {
 		global $page;
+
+		$linksPools = array();
+		foreach($navIDs as $poolID => $pool){
+			$linksPools[] = "<a href='".make_link("pool/view/".$poolID)."'>".html_escape($pool['info']['title'])."</a>";
+
+			if (array_key_exists('nav', $pool)){
+				$navlinks = "";
+				if (!empty($pool['nav']['prev'])) {
+					$navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['prev']).'" class="pools_prev_img">Prev</a>';
+				}
+				if (!empty($pool['nav']['next'])) {
+					$navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['next']).'" class="pools_next_img">Next</a>';
+				}
+				if(!empty($navlinks)){
+					$linksPools[] = $navlinks;
+				}
+			}
+		}
+
 		if(count($linksPools) > 0) {
 			$page->add_block(new Block("Pools", implode("<br>", $linksPools), "left"));
 		}
