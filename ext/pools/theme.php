@@ -138,7 +138,7 @@ class PoolsTheme extends Themelet {
 
 		$nav_html = '<a href="'.make_link().'">Index</a>';
 		$poolnav_html = '
-			<a href="'.make_link("pool/list").'">Index</a>
+			<a href="'.make_link("pool/list").'">Pool Index</a>
 			<br><a href="'.make_link("pool/new").'">Create Pool</a>
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
