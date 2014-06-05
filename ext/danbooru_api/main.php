@@ -420,8 +420,7 @@ class DanbooruApi extends Extension {
 			// Code borrowed from /ext/user
 			$name = $_REQUEST['login'];
 			$pass = $_REQUEST['password'];
-			$hash = md5( strtolower($name) . $pass );
-			$duser = User::by_name_and_hash($name, $hash);
+			$duser = User::by_name_and_pass($name, $pass);
 			if(!is_null($duser)) {
 				$user = $duser;
 			} else

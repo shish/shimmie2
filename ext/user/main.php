@@ -392,18 +392,17 @@ class UserPage extends Extension {
 	 * @param Page $page
 	 */
 	private function login(Page $page)  {
-		global $user, $config;
+		global $config, $user;
 
 		$name = $_POST['user'];
 		$pass = $_POST['pass'];
-		$hash = md5(strtolower($name) . $pass);
 
 		if(empty($name) || empty($pass)) {
 			$this->theme->display_error(400, "Error", "Username or password left blank");
 			return;
 		}
 
-		$duser = User::by_name_and_hash($name, $hash);
+		$duser = User::by_name_and_pass($name, $pass);
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($duser->name, $pass);
@@ -421,7 +420,7 @@ class UserPage extends Extension {
 			}
 		}
 		else {
-			log_warning("user", "Failed to log in as ".html_escape($name)." [$hash]");
+			log_warning("user", "Failed to log in as ".html_escape($name));
 			$this->theme->display_error(401, "Error", "No user with those details was found");
 		}
 	}
@@ -455,7 +454,6 @@ class UserPage extends Extension {
 	{
 		global $database, $user;
 
-		$hash = md5(strtolower($event->username) . $event->password);
 		$email = (!empty($event->email)) ? $event->email : null;
 
 		// if there are currently no admins, the new user should be one
@@ -464,9 +462,10 @@ class UserPage extends Extension {
 
 		$database->Execute(
 				"INSERT INTO users (name, pass, joindate, email, class) VALUES (:username, :hash, now(), :email, :class)",
-				array("username"=>$event->username, "hash"=>$hash, "email"=>$email, "class"=>$class));
+				array("username"=>$event->username, "hash"=>'', "email"=>$email, "class"=>$class));
 		$uid = $database->get_last_insert_id('users_id_seq');
 		$user = User::by_name($event->username);
+		$user->set_password($event->password);
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
@@ -478,7 +477,7 @@ class UserPage extends Extension {
 		global $config;
 
 		$addr = get_session_ip($config);
-		$hash = md5(strtolower($name) . $pass);
+		$hash = User::by_name($name)->passhash;
 
 		set_prefixed_cookie("user", $name,
 				time()+60*60*24*365, '/');

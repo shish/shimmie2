@@ -630,7 +630,7 @@ function getExtension ($mime_type){
  * @private
  */
 function _version_check() {
-	$min_version = "5.3.0";
+	$min_version = "5.3.7";
 	if(version_compare(PHP_VERSION, $min_version) == -1) {
 		print "
 Currently SCore Engine doesn't support versions of PHP lower than $min_version --
