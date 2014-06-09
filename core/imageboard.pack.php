@@ -968,16 +968,22 @@ class Image {
 			}
 		}
 
-		// more than one positive tag, or more than zero negative tags
-		else {
+		// more than one positive tag, and zero or more negative tags
+		else if($positive_tag_count >= 1) {
 			$tag_id_array = array();
 			$tags_ok = true;
+
+			$x = 0;
 			foreach($tag_search->variables as $tag) {
 				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
-				$tags_ok = count($tag_ids) > 0;
+
+				$tags_ok = count($tag_ids) > 0 || !$tag_querylets[$x]->positive;
 				if(!$tags_ok) break;
+
+				$x++;
 			}
+
 			if($tags_ok) {
 				$tag_id_list = join(', ', $tag_id_array);
 
@@ -1013,6 +1019,15 @@ class Image {
 			}
 		}
 
+		//zero positive tags and one or more negative tags
+		//TODO: This isn't currently implemented. SEE: https://github.com/shish/shimmie2/issues/66
+		else{
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=0
+			");
+		}
 		$tag_n = 0;
 		return $query;
 	}
