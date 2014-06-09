@@ -1,7 +1,7 @@
 <?php
 /**
  * Name: Pools System
- * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>
+ * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>, Daku <admin@codeanimu.net>
  * License: GPLv2
  * Description: Allow users to create groups of images and order them.
  * Documentation: This extension allows users to created named groups of
@@ -80,6 +80,13 @@ class Pools extends Extension {
 
 			$config->set_int("ext_pools_version", 2);
 		}
+
+		if ($config->get_int("ext_pools_version") < 3){
+			$config->set_bool("poolsShowNavLinks","N"); //A $config->rename() function would be nice here...
+			$config->set_bool("poolsAutoIncrementOrder","N");
+
+			$config->set_int("ext_pools_version", 3);
+		}
 	}
 
 	// Add a block to the Board Config / Setup
@@ -90,8 +97,10 @@ class Pools extends Extension {
 		$sb->add_int_option("poolsListsPerPage", "<br>Index list items per page: ");
 		$sb->add_int_option("poolsUpdatedPerPage", "<br>Updated list items per page: ");
 		$sb->add_bool_option("poolsInfoOnViewImage", "<br>Show pool info on image: ");
-		$sb->add_bool_option("poolsShowNextLink", "<br>Show 'Next' link when viewing pool images: ");
+		$sb->add_bool_option("poolsShowNavLinks", "<br>Show 'Prev' & 'Next' links when viewing pool images: ");
+		$sb->add_bool_option("poolsAutoIncrementOrder", "<br>Autoincrement order when post is added to pool:");
 		//$sb->add_bool_option("poolsAdderOnViewImage", "<br>Show pool adder on image: ");
+
 		$event->panel->add_block($sb);
 	}
 
@@ -99,10 +108,9 @@ class Pools extends Extension {
 		global $page, $user;
 		
 		if ($event->page_matches("pool")) {
-
 			$pool_id = 0;
 			$pool = array();
-			
+
 			// Check if we have pool id, since this is most often the case.
 			if (isset($_POST["pool_id"])) {
 				$pool_id = int_escape($_POST["pool_id"]);
@@ -258,25 +266,22 @@ class Pools extends Extension {
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
 			$poolsIDs = $this->get_pool_id($imageID);
-			
-			$show_next = $config->get_bool("poolsShowNextLink", false);
 
-			$linksPools = array();
+			$show_nav = $config->get_bool("poolsShowNavLinks", false);
+
+			$navInfo = array();
 			foreach($poolsIDs as $poolID) {
-				$pools = $this->get_pool($poolID['pool_id']);
-				foreach ($pools as $pool){
-					$linksPools[] = "<a href='".make_link("pool/view/".$pool['id'])."'>".html_escape($pool['title'])."</a>";
-					
-					// Optionally show a link the Next image in the Pool.
-					if ($show_next) {
-						$next_image_in_pool = $this->get_next_post($pool, $imageID);
-						if (!empty($next_image_in_pool)) {
-							$linksPools[] = '<a href="'.make_link('post/view/'.$next_image_in_pool).'" class="pools_next_img">Next</a>';
-						}
-					}
+				$pool = $this->get_single_pool($poolID['pool_id']);
+
+				$navInfo[$pool['id']] = array();
+				$navInfo[$pool['id']]['info'] = $pool;
+
+				// Optionally show a link the Prev/Next image in the Pool.
+				if ($show_nav) {
+					$navInfo[$pool['id']]['nav'] = $this->get_nav_posts($pool, $imageID);
 				}
 			}
-			$this->theme->pool_info($linksPools);
+			$this->theme->pool_info($navInfo);
 		}
 	}
 
@@ -320,19 +325,24 @@ class Pools extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^pool[=|:](.*)$/i", $event->term, $matches)) {
+		if(preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term, $matches)) {
 			global $user;
 			$poolTag = (string) str_replace("_", " ", $matches[1]);
 
 			$pool = null;
-			if(ctype_digit($poolTag)){ //If only digits, assume PoolID
+			if($poolTag == 'lastcreated'){
+				$pool = $this->get_last_userpool($user->id);
+			}
+			elseif(ctype_digit($poolTag)){ //If only digits, assume PoolID
 				$pool = $this->get_single_pool($poolTag);
 			}else{ //assume PoolTitle
 				$pool = $this->get_single_pool_from_title($poolTag);
 			}
 
+
 			if($pool ? $this->have_permission($user, $pool) : FALSE){
-				$this->add_post($pool['id'], $event->id, true);
+				$image_order = ($matches[2] ?: 0);
+				$this->add_post($pool['id'], $event->id, true, $image_order);
 			}
 		}
 
@@ -487,6 +497,16 @@ class Pools extends Extension {
 	}
 
 	/**
+	 * Retrieve information about the last pool the given userID created
+	 * @param int $userID
+	 * @return array
+	 */
+	private function get_last_userpool(/*int*/ $userID){
+		global $database;
+		return $database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", array("uid"=>$userID));
+	}
+
+	/**
 	 * HERE WE GET THE IMAGES FROM THE TAG ON IMPORT
 	 * @param int $pool_id
 	 */
@@ -496,7 +516,7 @@ class Pools extends Extension {
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
 		
 		$images = $images = Image::find_images(0, $poolsMaxResults, Tag::explode($_POST["pool_tag"]));
-		$this->theme->pool_result($page, $images, $pool_id);
+		$this->theme->pool_result($page, $images, $this->get_pool($pool_id));
 	}
 
 
@@ -612,26 +632,49 @@ class Pools extends Extension {
 	}
 
 	/**
-	 * Gets the next successive image from a pool, given a pool ID and an image ID.
+	 * Gets the previous and next successive images from a pool, given a pool ID and an image ID.
 	 *
 	 * @param array $pool Array for the given pool
 	 * @param int $imageID Integer
-	 * @return int Integer which is the next Image ID or NULL if none.
+	 * @return array Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
 	 */
-	private function get_next_post(/*array*/ $pool, /*int*/ $imageID) {
+	private function get_nav_posts(/*array*/ $pool, /*int*/ $imageID) {
 		global $database;
 
 		if (empty($pool) || empty($imageID))
 			return null;
 		
-		$result = $database->get_one("
-					SELECT image_id
-					FROM pool_images
-					WHERE pool_id=:pid
-					AND image_order > (SELECT image_order FROM pool_images WHERE pool_id=:pid AND image_id =:iid LIMIT 1 )
-					ORDER BY image_order ASC LIMIT 1",
+		$result = $database->get_row("
+						SELECT (
+							SELECT image_id
+							FROM pool_images
+							WHERE pool_id = :pid
+							AND image_order < (
+								SELECT image_order
+								FROM pool_images
+								WHERE pool_id = :pid
+								AND image_id = :iid
+								LIMIT 1
+							)
+							ORDER BY image_order DESC LIMIT 1
+						) AS prev,
+						(
+							SELECT image_id
+							FROM pool_images
+							WHERE pool_id = :pid
+							AND image_order > (
+								SELECT image_order
+								FROM pool_images
+								WHERE pool_id = :pid
+								AND image_id = :iid
+								LIMIT 1
+							)
+							ORDER BY image_order ASC LIMIT 1
+						) AS next
+
+						LIMIT 1",
 					array("pid"=>$pool['id'], "iid"=>$imageID) );
-		
+
 		if (empty($result)) {
 			// assume that we are at the end of the pool
 			return null;
@@ -875,15 +918,24 @@ class Pools extends Extension {
 	 * @param int $poolID
 	 * @param int $imageID
 	 * @param bool $history
+	 * @param int $imageOrder
 	 */
-	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
-		global $database;
+	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false, $imageOrder=0) {
+		global $database, $config;
 
 		if(!$this->check_post($poolID, $imageID)) {
+			if($config->get_bool("poolsAutoIncrementOrder") && $imageOrder === 0){
+				$imageOrder = $database->get_one("
+						SELECT CASE WHEN image_order IS NOT NULL THEN MAX(image_order) + 1 ELSE 0 END
+						FROM pool_images
+						WHERE pool_id = :pid",
+						array("pid"=>$poolID));
+			}
+
 			$database->execute("
-					INSERT INTO pool_images (pool_id, image_id)
-					VALUES (:pid, :iid)",
-					array("pid"=>$poolID, "iid"=>$imageID));
+					INSERT INTO pool_images (pool_id, image_id, image_order)
+					VALUES (:pid, :iid, :ord)",
+					array("pid"=>$poolID, "iid"=>$imageID, "ord"=>$imageOrder));
 		}
 
 		$database->execute("UPDATE pools SET posts=(SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid) WHERE id=:pid", array("pid"=>$poolID));

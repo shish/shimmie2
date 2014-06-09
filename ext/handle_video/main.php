@@ -70,7 +70,8 @@ class VideoFileHandler extends DataHandlerExtension {
 				$inname  = escapeshellarg(warehouse_path("images", $hash));
 				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
 
-				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -s {$w}x{$h} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -vf scale='if(gt(a,{$w}/{$h}),{$w},-1)':'if(gt(a,{$w}/{$h}),-1,{$h})' -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+
 				exec($cmd, $output, $ret);
 
 				// TODO: We should really check the result of the exec to see if it really succeeded.

@@ -23,7 +23,14 @@
  *      </ul>
  *    <li>Pools
  *      <ul>
- *        <li>pool=(PoolID, PoolTitle) -- add post to pool (if exists)
+ *        <li>pool=(PoolID, PoolTitle, lastcreated) -- add post to pool (if exists)
+ *        <li>pool=(PoolID, PoolTitle, lastcreated):(PoolOrder) -- add post to pool (if exists) with set pool order
+ *        <ul>
+ *          <li>pool=50 -- add post to pool with ID of 50
+ *          <li>pool=10:25 -- add post to pool with ID of 10 and with order 25
+ *          <li>pool=This_is_a_Pool -- add post to pool with a title of "This is a Pool"
+ *          <li>pool=lastcreated -- add post to the last pool the user created
+ *        </ul>
  *      </ul>
  *    <li>Post Relationships
  *      <ul>
