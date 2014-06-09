@@ -1,4 +1,6 @@
 <?php
+require_once "lib/password.php";
+
 /** @private */
 function _new_user($row) {
 	return new User($row);
@@ -109,18 +111,23 @@ class User {
 	}
 
 	/**
-	 * Construct a User by name and hash.
+	 * Construct a User by name and password.
 	 * @param string $name
-	 * @param string $hash
+	 * @param string $pass
 	 * @return null|User
 	 */
-	public static function by_name_and_hash(/*string*/ $name, /*string*/ $hash) {
+	public static function by_name_and_pass(/*string*/ $name, /*string*/ $pass) {
 		assert(is_string($name));
-		assert(is_string($hash));
-		assert(strlen($hash) == 32);
-		global $database;
-		$row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name) AND pass = :hash"), array("name"=>$name, "hash"=>$hash));
-		return is_null($row) ? null : new User($row);
+		assert(is_string($pass));
+		$user = User::by_name($name);
+		if($user) {
+			if($user->passhash == md5(strtolower($name) . $pass)) {
+				$user->set_password($pass);
+			}
+			if(password_verify($pass, $user->passhash)) {
+				return $user;
+			}
+		}
 	}
 
 	/**
@@ -193,8 +200,8 @@ class User {
 	 */
 	public function set_password(/*string*/ $password) {
 		global $database;
-		$hash = md5(strtolower($this->name) . $password);
-		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$hash, "id"=>$this->id));
+		$this->passhash = password_hash($password, PASSWORD_BCRYPT);
+		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$this->passhash, "id"=>$this->id));
 		log_info("core-user", 'Set password for '.$this->name);
 	}
 
@@ -233,7 +240,7 @@ class User {
 	 * Get an auth token to be used in POST forms
 	 *
 	 * password = secret, avoid storing directly
-	 * passhash = md5(password), so someone who gets to the database can't get passwords
+	 * passhash = bcrypt(password), so someone who gets to the database can't get passwords
 	 * sesskey  = md5(passhash . IP), so if it gets sniffed it can't be used from another IP,
 	 *            and it can't be used to get the passhash to generate new sesskeys
 	 * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that

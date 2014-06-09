@@ -291,7 +291,7 @@ EOD;
 		$db->create_table("users", "
 			id SCORE_AIPK,
 			name VARCHAR(32) UNIQUE NOT NULL,
-			pass CHAR(32),
+			pass VARCHAR(250),
 			joindate SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 			class VARCHAR(32) NOT NULL DEFAULT 'user',
 			email VARCHAR(128)
