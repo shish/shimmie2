@@ -689,6 +689,7 @@ class Database {
 	 * @return int|null
 	 */
 	public function count_tables() {
+
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
 
 		if($this->engine->name === "mysql") {
@@ -701,7 +702,7 @@ class Database {
 					);
 		} else if ($this->engine->name === "sqlite") {
 			return count(
-						$this->get_all(".tables")
+						$this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
 					);
 		} else {
 			// Hard to find a universal way to do this...
