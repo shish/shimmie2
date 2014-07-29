@@ -33,6 +33,17 @@ class MassTagger extends Extension {
 		if( !isset($_POST['ids']) or !isset($_POST['tag']) ) return;
 		
 		$tag = $_POST['tag'];
+		
+		$tag_array = explode(" ",$tag);
+		$pos_tag_array = array();
+		$neg_tag_array = array();
+		foreach($tag_array as $new_tag) {
+			if (strpos($new_tag, '-') === 0)
+				$neg_tag_array[] = substr($new_tag,1);
+			else
+				$pos_tag_array[] = $new_tag;
+		}
+		
 		$ids = explode( ':', $_POST['ids'] );
 		$ids = array_filter ( $ids , 'is_numeric' );
 		
@@ -48,7 +59,13 @@ class MassTagger extends Extension {
 		else
 		{
 			foreach($images as $image) {
-				$image->set_tags(Tag::explode($tag . " " . $image->get_tag_list()));
+				if (!empty($neg_tag_array)) {
+					$img_tags = array_merge($pos_tag_array, explode(" ",$image->get_tag_list()));
+					$img_tags = array_diff($img_tags, $neg_tag_array);
+					$image->set_tags(Tag::explode($img_tags));
+				}
+				else
+					$image->set_tags(Tag::explode($tag . " " . $image->get_tag_list()));
 			}
 		}
 		
