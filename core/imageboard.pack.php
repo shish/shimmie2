@@ -534,6 +534,11 @@ class Image {
 					continue;
 				}
 
+				if(mb_strlen($tag, 'UTF-8') > 255){
+					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+					continue;
+				}
+
 				$id = $database->get_one(
 						$database->scoreql_to_sql(
 							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
@@ -562,7 +567,7 @@ class Image {
 						array("tag"=>$tag));
 			}
 
-			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), false, array("image_id" => $this->id));
+			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
 		}
 	}
