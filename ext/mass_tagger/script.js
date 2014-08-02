@@ -23,7 +23,7 @@ function toggle_tag( button, id ) {
     var list = $('#mass_tagger_ids');
     var string = list.val();
     
-    if( string.indexOf( id ) > -1 ) {
+    if( (string.indexOf(id) == 0) || (string.indexOf(":"+id) > -1) ) {
 		$(button).css('border', 'none');
 		string = string.replace(id, '');
 		list.val(string);
