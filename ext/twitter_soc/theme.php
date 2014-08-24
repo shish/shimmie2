@@ -4,7 +4,7 @@ class TwitterSocTheme extends Themelet {
 	/*
 	 * Show $text on the $page
 	 */
-	public function display_feed(Page $page, /*string*/ $username) {
+	public function display_feed(Page $page, /*string*/ $username, /*int*/ $count) {
 		$page->add_block(new Block("Tweets", '
 			<div class="tweet_soc"></div>
 			<p><a href="http://twitter.com/'.url_escape($username).'">Follow us on Twitter</a>
@@ -14,7 +14,7 @@ $(function() {
 		 username: "'.html_escape($username).'",
 		 join_text: "auto",
 		 template: "{text} -- {time}",
-		 count: 6,
+		 count: '.int_escape($count).',
 		 loading_text: "loading tweets..."
 	 });
 });
