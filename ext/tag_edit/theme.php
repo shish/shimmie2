@@ -99,6 +99,10 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
+	/**
+	 * @param string $source
+	 * @return string
+	 */
 	protected function format_source(/*string*/ $source) {
 		if(!empty($source)) {
 			if(!startsWith($source, "http://") && !startsWith($source, "https://")) {

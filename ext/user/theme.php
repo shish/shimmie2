@@ -110,6 +110,11 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
 
+	/**
+	 * @param Page $page
+	 * @param array $uploads
+	 * @param array $comments
+	 */
 	public function display_ip_list(Page $page, $uploads, $comments) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";

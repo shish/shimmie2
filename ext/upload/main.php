@@ -10,14 +10,23 @@
  * Occurs when some data is being uploaded.
  */
 class DataUploadEvent extends Event {
-	var $tmpname, $metadata, $hash, $type, $image_id = -1;
+	/** @var string */
+	public $tmpname;
+	/** @var array */
+	public $metadata;
+	/** @var string */
+	public $hash;
+	/** @var string */
+	public $type;
+	/** @var int */
+	public $image_id = -1;
 
 	/**
 	 * Some data is being uploaded.
 	 * This should be caught by a file handler.
 	 *  -- Removed: param $user The user uploading the data.
-	 * @param $tmpname string The temporary file used for upload.
-	 * @param $metadata array Info about the file, should contain at least "filename", "extension", "tags" and "source".
+	 * @param string $tmpname The temporary file used for upload.
+	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
 		assert(file_exists($tmpname));
@@ -42,10 +51,14 @@ class UploadException extends SCoreException {}
  * This also includes transloaded files as well.
  */
 class Upload extends Extension {
-
+	/** @var bool */
 	public $is_full;
 
-	// early, so it can stop the DataUploadEvent before any data handlers see it
+	/**
+	 * Early, so it can stop the DataUploadEvent before any data handlers see it.
+	 *
+	 * @return int
+	 */
 	public function get_priority() {return 40;}
 
 	public function onInitExt(InitExtEvent $event) {
@@ -109,8 +122,8 @@ class Upload extends Extension {
 		}
 	}
 
-	public function onPageRequest($event) {
-		global $config, $page, $user;
+	public function onPageRequest(PageRequestEvent $event) {
+		global $page, $user;
 
 		if($event->page_matches("upload/replace")) {
 			// check if the user is an administrator and can upload files.
@@ -129,12 +142,12 @@ class Upload extends Extension {
 				if(empty($image_id)) {
 					throw new UploadException("Can not replace Image: No valid Image ID given.");
 				}
-					
+
 				$image_old = Image::by_id($image_id);
 				if(is_null($image_old)) {
 					$this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
 				}
-					
+
 				if(count($_FILES) + count($_POST) > 0) {
 					if(count($_FILES) > 1) {
 						throw new UploadException("Can not upload more than one image for replacing.");
@@ -163,7 +176,7 @@ class Upload extends Extension {
 					$url = $_GET['url'];
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
-					$this->theme->display_upload_status($page, $ok);		
+					$this->theme->display_upload_status($page, $ok);
 				}
 				else {
 					$this->theme->display_replace_page($page, $image_id);
@@ -215,6 +228,10 @@ class Upload extends Extension {
 		}
 	}
 
+	/**
+	 * @param string|int $id
+	 * @return array
+	 */
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {
 			# merge then explode, not explode then merge - else
@@ -237,8 +254,8 @@ class Upload extends Extension {
 	 *
 	 * TODO: Make these messages user/admin editable
 	 *
-	 * @param $error_code integer PHP error code
-	 * @return String
+	 * @param int $error_code PHP error code
+	 * @return string
 	 */
 	private function upload_error_message($error_code) {
 		switch ($error_code) {
@@ -316,11 +333,12 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an transload.
-	 * @param $url
-	 * @param $tags
-	 * @param $source
+	 *
+	 * @param string $url
+	 * @param mixed $tags
+	 * @param string $source
 	 * @param string $replace
-	 * @return bool TRUE on transload successful.
+	 * @return bool Returns TRUE on transload successful.
 	 */
 	private function try_transload($url, $tags, $source, $replace='') {
 		global $page, $config, $user;
@@ -344,7 +362,9 @@ class Upload extends Extension {
 		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 
 		$headers = transload($url, $tmp_filename);
-		$h_filename = (isset($headers['Content-Disposition']) ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $headers['Content-Disposition']) : null);
+
+		$s_filename = findHeader($headers, 'Content-Disposition');
+		$h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
 		$filename = $h_filename ?: basename($url);
 
 		if(!$headers) {
@@ -358,11 +378,10 @@ class Upload extends Extension {
 				"No data found -- perhaps the site has hotlink protection?");
 			$ok = false;
 		}else{
-			global $user;
 			$pathinfo = pathinfo($url);
 			$metadata = array();
 			$metadata['filename'] = $filename;
-			$metadata['extension'] = getExtension($headers['Content-Type']) ?: $pathinfo['extension'];
+			$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type')) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
@@ -370,7 +389,7 @@ class Upload extends Extension {
 			if(!empty($locked)){
 				$metadata['locked'] = $locked ? "on" : "";
 			}
-						
+
 			/* check for rating > adds to metadata if it has */
 			if(!empty($rating)){
 				$metadata['rating'] = $rating;

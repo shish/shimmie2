@@ -12,8 +12,18 @@
 require_once "lib/akismet.class.php";
 
 class CommentPostingEvent extends Event {
-	var $image_id, $user, $comment;
+	/** @var  int */
+	public $image_id;
+	/** @var \User */
+	public $user;
+	/** @var string  */
+	public $comment;
 
+	/**
+	 * @param int $image_id
+	 * @param \User $user
+	 * @param string $comment
+	 */
 	public function __construct($image_id, $user, $comment) {
 		$this->image_id = $image_id;
 		$this->user = $user;
@@ -27,8 +37,12 @@ class CommentPostingEvent extends Event {
  * and what should be kept?
  */
 class CommentDeletionEvent extends Event {
-	var $comment_id;
+	/** @var  int */
+	public $comment_id;
 
+	/**
+	 * @param int $comment_id
+	 */
 	public function __construct($comment_id) {
 		$this->comment_id = $comment_id;
 	}
@@ -54,11 +68,18 @@ class Comment {
 		$this->posted =  $row['posted'];
 	}
 
+	/**
+	 * @param \User $user
+	 * @return mixed
+	 */
 	public static function count_comments_by_user($user) {
 		global $database;
 		return $database->get_one("SELECT COUNT(*) AS count FROM comments WHERE owner_id=:owner_id", array("owner_id"=>$user->id));
 	}
 
+	/**
+	 * @return null|User
+	 */
 	public function get_owner() {
 		if(empty($this->owner)) $this->owner = User::by_id($this->owner_id);
 		return $this->owner;
@@ -265,19 +286,20 @@ class CommentList extends Extension {
 	}
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
+		global $database;
+
 		$matches = array();
+
 		if(preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
 			$comments = $matches[2];
 			$event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
 		}
 		else if(preg_match("/^commented_by[=|:](.*)$/i", $event->term, $matches)) {
-			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
 				$user_id = $user->id;
-			}
-			else {
+			} else {
 				$user_id = -1;
 			}
 
@@ -290,13 +312,18 @@ class CommentList extends Extension {
 	}
 
 // page building {{{
+	/**
+	 * @param int $current_page
+	 */
 	private function build_page(/*int*/ $current_page) {
-		global $page, $config, $database, $user;
+		global $database, $user;
 
 		if(class_exists("Ratings")) {
 			$user_ratings = Ratings::get_user_privs($user);
+		} else {
+			$user_ratings = "";
 		}
-		
+
 		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 		
 		$total_pages = $database->cache->get("comment_pages");
@@ -341,8 +368,12 @@ class CommentList extends Extension {
 // }}}
 
 // get comments {{{
+	/**
+	 * @param int $count
+	 * @return array
+	 */
 	private function get_recent_comments($count) {
-		global $config, $database;
+		global $database;
 		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -361,8 +392,14 @@ class CommentList extends Extension {
 		return $comments;
 	}
 
+	/**
+	 * @param int $user_id
+	 * @param int $count
+	 * @param int $offset
+	 * @return array
+	 */
 	private function get_user_comments(/*int*/ $user_id, /*int*/ $count, /*int*/ $offset=0) {
-		global $config, $database;
+		global $database;
 		$rows = $database->get_all("
 				SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -382,8 +419,12 @@ class CommentList extends Extension {
 		return $comments;
 	}
 
+	/**
+	 * @param int $image_id
+	 * @return array
+	 */
 	private function get_comments(/*int*/ $image_id) {
-		global $config, $database;
+		global $database;
 		$i_image_id = int_escape($image_id);
 		$rows = $database->get_all("
 				SELECT
@@ -425,6 +466,9 @@ class CommentList extends Extension {
 		return (count($result) >= $max);
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function hash_match() {
 		return ($_POST['hash'] == $this->get_hash());
 	}
@@ -440,6 +484,10 @@ class CommentList extends Extension {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
+	/**
+	 * @param string $text
+	 * @return bool
+	 */
 	private function is_spam_akismet(/*string*/ $text) {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
@@ -478,11 +526,22 @@ class CommentList extends Extension {
 		return false;
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param int $comment
+	 * @return null
+	 */
 	private function is_dupe(/*int*/ $image_id, /*string*/ $comment) {
 		global $database;
 		return ($database->get_row("SELECT * FROM comments WHERE image_id=:image_id AND comment=:comment", array("image_id"=>$image_id, "comment"=>$comment)));
 	}
 // do some checks
+
+	/**
+	 * @param int $pagenum
+	 * @param int $maxpage
+	 * @return int
+	 */
 	private function sanity_check_pagenumber(/*int*/ $pagenum, /*int*/ $maxpage){
 		if (!is_numeric($pagenum)){
 			$pagenum=1;
@@ -496,6 +555,12 @@ class CommentList extends Extension {
 		return $pagenum;
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param string $comment
+	 * @throws CommentPostingException
+	 */
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $database, $config;
 

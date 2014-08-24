@@ -49,12 +49,20 @@ class IcoFileHandler extends Extension {
 		}
 	}
 
-
+	/**
+	 * @param $ext
+	 * @return bool
+	 */
 	private function supported_ext($ext) {
 		$exts = array("ico", "ani", "cur");
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param $filename
+	 * @param $metadata
+	 * @return Image
+	 */
 	private function create_image_from_data($filename, $metadata) {
 		$image = new Image();
 
@@ -77,6 +85,10 @@ class IcoFileHandler extends Extension {
 		return $image;
 	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
 	private function check_contents($file) {
 		if(!file_exists($file)) return false;
 		$fp = fopen($file, "r");
@@ -85,6 +97,10 @@ class IcoFileHandler extends Extension {
 		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
 	}
 
+	/**
+	 * @param $hash
+	 * @return bool
+	 */
 	private function create_thumb($hash) {
 		global $config;
 

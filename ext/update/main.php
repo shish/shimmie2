@@ -46,6 +46,9 @@ class Update extends Extension {
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function download_shimmie() {
 		global $config;
 
@@ -70,6 +73,9 @@ class Update extends Extension {
 		return false;
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function update_shimmie() {
 		global $config, $page;
 

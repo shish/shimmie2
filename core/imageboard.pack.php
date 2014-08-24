@@ -31,15 +31,38 @@ $order_sql = null; // this feels ugly
 require_once "lib/flexihash.php";
 
 /**
- * An object representing an entry in the images table. As of 2.2, this no
- * longer necessarily represents an image per se, but could be a video,
- * sound file, or any other supported upload type.
+ * Class Image
+ *
+ * An object representing an entry in the images table.
+ *
+ * As of 2.2, this no longer necessarily represents an
+ * image per se, but could be a video, sound file, or any
+ * other supported upload type.
  */
 class Image {
+	/** @var null|int */
 	public $id = null;
-	public $height, $width;
-	public $hash, $filesize;
-	public $filename, $ext;
+
+	/** @var int */
+	public $height;
+
+	/** @var int */
+	public $width;
+
+	/** @var string */
+	public $hash;
+
+	public $filesize;
+
+	/** @var string */
+	public $filename;
+
+	/** @var string */
+	public $ext;
+
+	/** @var string[]|null */
+	public $tag_array;
+
 	public $owner_id, $owner_ip;
 	public $posted, $posted_timestamp;
 	public $source;
@@ -47,7 +70,9 @@ class Image {
 
 	/**
 	 * One will very rarely construct an image directly, more common
-	 * would be to use Image::by_id, Image::by_hash, etc
+	 * would be to use Image::by_id, Image::by_hash, etc.
+	 *
+	 * @param null|mixed $row
 	 */
 	public function __construct($row=null) {
 		if(!is_null($row)) {
@@ -66,7 +91,7 @@ class Image {
 	}
 
 	/**
-	 * Find an image by ID
+	 * Find an image by ID.
 	 *
 	 * @param int $id
 	 * @return Image
@@ -79,7 +104,7 @@ class Image {
 	}
 
 	/**
-	 * Find an image by hash
+	 * Find an image by hash.
 	 *
 	 * @param string $hash
 	 * @return Image
@@ -92,9 +117,9 @@ class Image {
 	}
 
 	/**
-	 * Pick a random image out of a set
+	 * Pick a random image out of a set.
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @return Image
 	 */
 	public static function by_random($tags=array()) {
@@ -112,9 +137,9 @@ class Image {
 	 *
 	 * @param int $start
 	 * @param int $limit
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @throws SCoreException
-	 * @return Array
+	 * @return Image[]
 	 */
 	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
 		assert(is_numeric($start));
@@ -153,7 +178,7 @@ class Image {
 	/**
 	 * Count the number of image results for a given search
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @return mixed
 	 */
 	public static function count_images($tags=array()) {
@@ -185,7 +210,7 @@ class Image {
 	/**
 	 * Count the number of pages for a given search
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @return float
 	 */
 	public static function count_pages($tags=array()) {
@@ -205,7 +230,7 @@ class Image {
 	 * Rather than simply $this_id + 1, one must take into account
 	 * deleted images and search queries
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @param bool $next
 	 * @return Image
 	 */
@@ -239,7 +264,7 @@ class Image {
 	/**
 	 * The reverse of get_next
 	 *
-	 * @param array $tags
+	 * @param string[] $tags
 	 * @return Image
 	 */
 	public function get_prev($tags=array()) {
@@ -269,7 +294,9 @@ class Image {
 	}
 
 	/**
-	 * Get this image's tags as an array
+	 * Get this image's tags as an array.
+	 *
+	 * @return string[]
 	 */
 	public function get_tag_array() {
 		global $database;
@@ -349,7 +376,7 @@ class Image {
 
 	/**
 	 * Get the tooltip for this image, formatted according to the
-	 * configured template
+	 * configured template.
 	 *
 	 * @return string
 	 */
@@ -378,7 +405,7 @@ class Image {
 	}
 
 	/**
-	 * Figure out where the full size image is on disk
+	 * Figure out where the full size image is on disk.
 	 *
 	 * @return string
 	 */
@@ -387,7 +414,7 @@ class Image {
 	}
 
 	/**
-	 * Figure out where the thumbnail is on disk
+	 * Figure out where the thumbnail is on disk.
 	 *
 	 * @return string
 	 */
@@ -396,7 +423,7 @@ class Image {
 	}
 
 	/**
-	 * Get the original filename
+	 * Get the original filename.
 	 *
 	 * @return string
 	 */
@@ -405,7 +432,7 @@ class Image {
 	}
 
 	/**
-	 * Get the image's mime type
+	 * Get the image's mime type.
 	 *
 	 * @return string
 	 */
@@ -480,7 +507,9 @@ class Image {
 	}
 
 	/**
-	 * Set the tags for this image
+	 * Set the tags for this image.
+	 *
+	 * @param string[] $tags
 	 */
 	public function set_tags($tags) {
 		global $database;
@@ -502,6 +531,11 @@ class Image {
 				$ttpe = new TagTermParseEvent($tag, $this->id);
 				send_event($ttpe);
 				if($ttpe->is_metatag()) {
+					continue;
+				}
+
+				if(mb_strlen($tag, 'UTF-8') > 255){
+					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
 					continue;
 				}
 
@@ -533,7 +567,7 @@ class Image {
 						array("tag"=>$tag));
 			}
 
-			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), false, array("image_id" => $this->id));
+			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
 		}
 	}
@@ -564,7 +598,7 @@ class Image {
 	/**
 	 * Someone please explain this
 	 *
-	 * @param $tmpl
+	 * @param string $tmpl
 	 * @param string $_escape
 	 * @return string
 	 */
@@ -637,6 +671,10 @@ class Image {
 		return $tmpl;
 	}
 
+	/**
+	 * @param string[] $terms
+	 * @return \Querylet
+	 */
 	private static function build_search_querylet($terms) {
 		assert(is_array($terms));
 		global $database;
@@ -666,6 +704,9 @@ class Image {
 	 *   C) Runs really slow on bad databases:
 	 *      All the subqueries are executed every time for every row in the
 	 *      images table. Yes, MySQL does suck this much.
+	 *
+	 * @param string[] $terms
+	 * @return \Querylet
 	 */
 	private static function build_accurate_search_querylet($terms) {
 		global $database;
@@ -932,16 +973,22 @@ class Image {
 			}
 		}
 
-		// more than one positive tag, or more than zero negative tags
-		else {
+		// more than one positive tag, and zero or more negative tags
+		else if($positive_tag_count >= 1) {
 			$tag_id_array = array();
 			$tags_ok = true;
+
+			$x = 0;
 			foreach($tag_search->variables as $tag) {
 				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
-				$tags_ok = count($tag_ids) > 0;
+
+				$tags_ok = count($tag_ids) > 0 || !$tag_querylets[$x]->positive;
 				if(!$tags_ok) break;
+
+				$x++;
 			}
+
 			if($tags_ok) {
 				$tag_id_list = join(', ', $tag_id_array);
 
@@ -977,15 +1024,27 @@ class Image {
 			}
 		}
 
+		//zero positive tags and one or more negative tags
+		//TODO: This isn't currently implemented. SEE: https://github.com/shish/shimmie2/issues/66
+		else{
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=0
+			");
+		}
 		$tag_n = 0;
 		return $query;
 	}
 }
 
 /**
+ * Class Tag
+ *
  * A class for organising the tag related functions.
  *
  * All the methods are static, one should never actually use a tag object.
+ *
  */
 class Tag {
 	/**
@@ -1003,7 +1062,11 @@ class Tag {
 	}
 
 	/**
-	 * Turn any string or array into a valid tag array
+	 * Turn any string or array into a valid tag array.
+	 *
+	 * @param string|string[] $tags
+	 * @param bool $tagme
+	 * @return array
 	 */
 	public static function explode($tags, $tagme=true) {
 		assert(is_string($tags) || is_array($tags));
@@ -1033,7 +1096,7 @@ class Tag {
 	}
 
 	/**
-	 * @param $tags
+	 * @param string|string[] $tags
 	 * @return string
 	 */
 	public static function implode($tags) {
@@ -1073,6 +1136,10 @@ class Tag {
 		return $negative ? "-$newtag" : $newtag;
 	}
 
+	/**
+	 * @param string $tag
+	 * @return array
+	 */
 	public static function resolve_wildcard($tag) {
 		// if there is no wildcard, return the tag
 		if(strpos($tag, "*") === false) {
@@ -1102,8 +1169,8 @@ class Tag {
 	/**
 	 * This function takes a list (array) of tags and changes any tags that have aliases
 	 *
-	 * @param array $tags Array of tags
-	 * @return array of tags
+	 * @param string[] $tags Array of tags
+	 * @return array
 	 */
 	public static function resolve_aliases($tags) {
 		assert(is_array($tags));
@@ -1139,7 +1206,11 @@ class Tag {
 
 /**
  * Move a file from PHP's temporary area into shimmie's image storage
- * hierarchy, or throw an exception trying
+ * hierarchy, or throw an exception trying.
+ *
+ * @param DataUploadEvent $event
+ * @return bool
+ * @throws UploadException
  */
 function move_upload_to_archive(DataUploadEvent $event) {
 	$target = warehouse_path("images", $event->hash);

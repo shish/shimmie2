@@ -33,7 +33,7 @@ class ResizeImage extends Extension {
 		$config->set_default_bool('resize_enabled', true);
 		$config->set_default_bool('resize_upload', false);
 		$config->set_default_int('resize_default_width', 0);
-		$config->set_default_int('resize_default_height', 0);		
+		$config->set_default_int('resize_default_height', 0);
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
@@ -153,11 +153,16 @@ class ResizeImage extends Extension {
 	
 	// Private functions
 	/* ----------------------------- */
-	
-	/*
-		This function could be made much smaller by using the ImageReplaceEvent
-		ie: Pretend that we are replacing the image with a resized copy.
-	*/
+
+	/**
+	 * This function could be made much smaller by using the ImageReplaceEvent
+	 * ie: Pretend that we are replacing the image with a resized copy.
+	 *
+	 * @param Image $image_obj
+	 * @param int $width
+	 * @param int $height
+	 * @throws ImageResizeException
+	 */
 	private function resize_image(Image $image_obj, /*int*/ $width, /*int*/ $height) {
 		global $config, $user, $page, $database;
 		

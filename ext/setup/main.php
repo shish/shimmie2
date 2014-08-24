@@ -12,8 +12,12 @@
  * activated; new config options are in $_POST
  */
 class ConfigSaveEvent extends Event {
-	var $config;
+	/** @var \Config */
+	public $config;
 
+	/**
+	 * @param Config $config
+	 */
 	public function __construct(Config $config) {
 		$this->config = $config;
 	}
@@ -24,8 +28,12 @@ class ConfigSaveEvent extends Event {
  * Sent when the setup page is ready to be added to
  */
 class SetupBuildingEvent extends Event {
-	var $panel;
+	/** @var \SetupPanel */
+	public $panel;
 
+	/**
+	 * @param SetupPanel $panel
+	 */
 	public function __construct(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
@@ -35,8 +43,12 @@ class SetupBuildingEvent extends Event {
  *
  */
 class SetupPanel {
-	var $blocks = array();
+	/** @var \SetupBlock[]  */
+	public $blocks = array();
 
+	/**
+	 * @param SetupBlock $block
+	 */
 	public function add_block(SetupBlock $block) {
 		$this->blocks[] = $block;
 	}
@@ -46,9 +58,14 @@ class SetupPanel {
  *
  */
 class SetupBlock extends Block {
-	var $header;
-	var $body;
+	/** @var string  */
+	public $header;
+	/** @var string  */
+	public $body;
 
+	/**
+	 * @param string $title
+	 */
 	public function __construct($title) {
 		$this->header = $title;
 		$this->section = "main";
@@ -56,20 +73,31 @@ class SetupBlock extends Block {
 		$this->body = "";
 	}
 
+	/**
+	 * @param string $text
+	 */
 	public function add_label($text) {
 		$this->body .= $text;
 	}
 
+	/**
+	 * @param string $name
+	 * @param null|string $label
+	 */
 	public function add_text_option($name, $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
-			$this->body .= "<label for='$name'>$label</label>";
+			$this->body .= "<label for='{$name}'>{$label}</label>";
 		}
-		$this->body .= "<input type='text' id='$name' name='_config_$name' value='$val'>\n";
-		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
+		$this->body .= "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
+		$this->body .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 	}
 
+	/**
+	 * @param string $name
+	 * @param null|string $label
+	 */
 	public function add_longtext_option($name, $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
@@ -81,6 +109,10 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
 
+	/**
+	 * @param string $name
+	 * @param null|string $label
+	 */
 	public function add_bool_option($name, $label=null) {
 		global $config;
 		$checked = $config->get_bool($name) ? " checked" : "";
@@ -97,6 +129,10 @@ class SetupBlock extends Block {
 //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
 //	}
 
+	/**
+	 * @param string $name
+	 * @param null|string $label
+	 */
 	public function add_int_option($name, $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
@@ -107,6 +143,10 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
+	/**
+	 * @param string $name
+	 * @param null|string $label
+	 */
 	public function add_shorthand_int_option($name, $label=null) {
 		global $config;
 		$val = to_shorthand_int($config->get_string($name));

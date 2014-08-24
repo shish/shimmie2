@@ -109,7 +109,7 @@ class Notes extends Extension {
 					}
 					
 					$page->set_mode("redirect");
-                    $page->set_redirect(make_link("note/updated"));
+					$page->set_redirect(make_link("note/updated"));
 					break;
 				}
 				case "add_note":
@@ -118,7 +118,7 @@ class Notes extends Extension {
 						$this->add_new_note();
 						
 						$page->set_mode("redirect");
-                        $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+						$page->set_redirect(make_link("post/view/".$_POST["image_id"]));
 					break;
 				}
 				case "add_request":
@@ -127,7 +127,7 @@ class Notes extends Extension {
 						$this->add_note_request();
 						
 						$page->set_mode("redirect");
-                        $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+						$page->set_redirect(make_link("post/view/".$_POST["image_id"]));
 					break;
 				}
 				case "nuke_notes":
@@ -136,7 +136,7 @@ class Notes extends Extension {
 						$this->nuke_notes();
 						
 						$page->set_mode("redirect");
-                        $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+						$page->set_redirect(make_link("post/view/".$_POST["image_id"]));
 					break;
 				}
 				case "nuke_requests":
@@ -145,7 +145,7 @@ class Notes extends Extension {
 						$this->nuke_requests();
 						
 						$page->set_mode("redirect");
-                        $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
+						$page->set_redirect(make_link("post/view/".$_POST["image_id"]));
 					break;
 				}
 				case "edit_note":
@@ -238,18 +238,21 @@ class Notes extends Extension {
 	}
 
 
-	/*
-	 * HERE WE GET ALL NOTES FOR DISPLAYED IMAGE
+	/**
+	 * HERE WE GET ALL NOTES FOR DISPLAYED IMAGE.
+	 *
+	 * @param int $imageID
+	 * @return array
 	 */
 	private function get_notes($imageID) {
 		global $database;
 
-	    return $database->get_all(
-                "SELECT * ".
-                "FROM notes ".
-                "WHERE enable = ? AND image_id = ? ".
-				"ORDER BY date ASC"
-                , array('1', $imageID));
+		return $database->get_all(
+			"SELECT * ".
+			"FROM notes ".
+			"WHERE enable = ? AND image_id = ? ".
+			"ORDER BY date ASC"
+			, array('1', $imageID));
 	}
 
 
@@ -345,7 +348,6 @@ class Notes extends Extension {
 			
 		$this->add_history(1, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
 	}
-	
 
 
 	/*
@@ -353,7 +355,7 @@ class Notes extends Extension {
 	*/
 	private function delete_note()
 	{
-        global $user;
+		global $user;
 
 		$imageID = int_escape($_POST["image_id"]);
 		$noteID = int_escape($_POST["note_id"]);
@@ -399,28 +401,27 @@ class Notes extends Extension {
 
 		log_info("notes", "Requests deleted from {$image_id} by {$user->name}");
 	}
-		
-		
-		
-	/*
-	* HERE WE ALL IMAGES THAT HAVE NOTES
-	*/
-	private function get_notes_list($event) {
-		$pageNumber = $event->get_arg(1);
-            if(is_null($pageNumber) || !is_numeric($pageNumber))
-                $pageNumber = 0;
-            else if ($pageNumber <= 0)
-                $pageNumber = 0;
-            else
-                $pageNumber--;
 
-            global $config;
-            
+	/**
+	 * HERE WE ALL IMAGES THAT HAVE NOTES
+	 * @param PageRequestEvent $event
+	 */
+	private function get_notes_list(PageRequestEvent $event) {
+		global $database, $config;
+
+		$pageNumber = $event->get_arg(1);
+
+		if(is_null($pageNumber) || !is_numeric($pageNumber))
+		$pageNumber = 0;
+		else if ($pageNumber <= 0)
+		$pageNumber = 0;
+		else
+		$pageNumber--;
+
 		$notesPerPage = $config->get_int('notesNotesPerPage');
 	
-				
 		//$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=?", array($poolID));
-		global $database;
+
 		$get_notes = "
 			SELECT DISTINCT image_id ".
 			"FROM notes ".
@@ -440,26 +441,26 @@ class Notes extends Extension {
 		
 		$this->theme->display_note_list($images, $pageNumber + 1, $totalPages);
 	}
-	
-	
-	
-	/*
-	* HERE WE GET ALL NOTE REQUESTS
-	*/
-	private function get_notes_requests($event) {
-		$pageNumber = $event->get_arg(1);
-            if(is_null($pageNumber) || !is_numeric($pageNumber))
-                $pageNumber = 0;
-            else if ($pageNumber <= 0)
-                $pageNumber = 0;
-            else
-                $pageNumber--;
 
-            global $config;
-            
+	/**
+	 * HERE WE GET ALL NOTE REQUESTS
+	 * @param PageRequestEvent $event
+	 */
+	private function get_notes_requests(PageRequestEvent $event) {
+		global $config;
+
+		$pageNumber = $event->get_arg(1);
+
+		if(is_null($pageNumber) || !is_numeric($pageNumber))
+			$pageNumber = 0;
+		else if ($pageNumber <= 0)
+			$pageNumber = 0;
+		else
+			$pageNumber--;
+
 		$requestsPerPage = $config->get_int('notesRequestsPerPage');
-	
-				
+
+
 		//$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=?", array($poolID));
 		global $database;
 		$get_requests = "
@@ -501,13 +502,13 @@ class Notes extends Extension {
 								(?, ?, ?, ?, ?, ?, now(), ?, ?, ?, ?, ?)",
 							array($noteEnable, $noteID, $reviewID, $imageID, $userID, $_SERVER['REMOTE_ADDR'], $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText));
 	}
-	
-	
-	
-	/*
-	* HERE WE GET ALL HISTORIES.
-	*/
-	private function get_histories($event){
+
+
+	/**
+	 * HERE WE GET ALL HISTORIES.
+	 * @param PageRequestEvent $event
+	 */
+	private function get_histories(PageRequestEvent $event){
 		$pageNumber = $event->get_arg(1);
             if(is_null($pageNumber) || !is_numeric($pageNumber))
                 $pageNumber = 0;
@@ -533,13 +534,13 @@ class Notes extends Extension {
 		
 		$this->theme->display_histories($histories, $pageNumber + 1, $totalPages);
 	}
-	
-	
-	
-	/*
-	* HERE WE THE HISTORY FOR A SPECIFIC NOTE.
-	*/
-	private function get_history($event){
+
+
+	/**
+	 * HERE WE THE HISTORY FOR A SPECIFIC NOTE.
+	 * @param PageRequestEvent $event
+	 */
+	private function get_history(PageRequestEvent $event){
 		$noteID = $event->get_arg(1);
 		$pageNumber = $event->get_arg(2);
             if(is_null($pageNumber) || !is_numeric($pageNumber))
@@ -566,14 +567,14 @@ class Notes extends Extension {
 		
 		$this->theme->display_history($histories, $pageNumber + 1, $totalPages);
 	}
-	
-	
-	
-	/*
-	* HERE GO BACK IN HISTORY AND SET THE OLD NOTE. IF WAS REMOVED WE READD IT.
-	*/
+
+	/**
+	 * HERE GO BACK IN HISTORY AND SET THE OLD NOTE. IF WAS REMOVED WE RE-ADD IT.
+	 * @param int $noteID
+	 * @param int $reviewID
+	 */
 	private function revert_history($noteID, $reviewID){
-		global $user, $database;
+		global $database;
 		
 		$history = $database->get_row("SELECT * FROM note_histories WHERE note_id = ? AND review_id = ?",array($noteID, $reviewID));
 		
@@ -596,7 +597,6 @@ class Notes extends Extension {
 						   "WHERE image_id = ? AND id = ?", array(1, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText, $imageID, $noteID));
 								  
 		$this->add_history($noteEnable, $noteID, $imageID, $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText);
-		
 	}
 }
 

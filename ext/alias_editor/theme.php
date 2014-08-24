@@ -1,11 +1,14 @@
 <?php
 
 class AliasEditorTheme extends Themelet {
-	/*
-	 * Show a page of aliases:
+	/**
+	 * Show a page of aliases.
 	 *
-	 * $aliases = an array of ($old_tag => $new_tag)
-	 * $can_manage = whether things like "add new alias" should be shown
+	 * Note: $can_manage = whether things like "add new alias" should be shown
+	 *
+	 * @param array $aliases An array of ($old_tag => $new_tag)
+	 * @param int $pageNumber
+	 * @param int $totalPages
 	 */
 	public function display_aliases($aliases, $pageNumber, $totalPages) {
 		global $page, $user;

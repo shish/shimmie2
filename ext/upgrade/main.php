@@ -91,6 +91,42 @@ class Upgrade extends Extension {
 			log_info("upgrade", "Database at version 12");
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") < 13) {
+			$config->set_bool("in_upgrade", true);
+			$config->set_int("db_version", 13);
+
+			log_info("upgrade", "Changing password column to VARCHAR(250)");
+			if($database->get_driver_name() == 'pgsql') {
+				$database->execute("ALTER TABLE users ALTER COLUMN pass SET DATA TYPE VARCHAR(250)");
+			}
+			else if($database->get_driver_name() == 'mysql') {
+				$database->execute("ALTER TABLE users CHANGE pass pass VARCHAR(250)");
+			}
+
+			log_info("upgrade", "Database at version 13");
+			$config->set_bool("in_upgrade", false);
+		}
+
+		if($config->get_int("db_version") < 14) {
+			$config->set_bool("in_upgrade", true);
+			$config->set_int("db_version", 14);
+
+			log_info("upgrade", "Changing tag column to VARCHAR(255)");
+			if($database->get_driver_name() == 'pgsql') {
+				$database->execute('ALTER TABLE tags ALTER COLUMN tag SET DATA TYPE VARCHAR(255)');
+				$database->execute('ALTER TABLE aliases ALTER COLUMN oldtag SET DATA TYPE VARCHAR(255)');
+				$database->execute('ALTER TABLE aliases ALTER COLUMN newtag SET DATA TYPE VARCHAR(255)');
+			}
+			else if($database->get_driver_name() == 'mysql') {
+				$database->execute('ALTER TABLE tags MODIFY COLUMN tag VARCHAR(255) NOT NULL');
+				$database->execute('ALTER TABLE aliases MODIFY COLUMN oldtag VARCHAR(255) NOT NULL');
+				$database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
+			}
+
+			log_info("upgrade", "Database at version 14");
+			$config->set_bool("in_upgrade", false);
+		}
 	}
 
 	public function get_priority() {return 5;}

@@ -51,7 +51,11 @@ class TagEditCloud extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	private function build_tag_map($image) {
+	/**
+	 * @param Image $image
+	 * @return string
+	 */
+	private function build_tag_map(Image $image) {
 		global $database, $config;
 
 		$html = "";
@@ -75,23 +79,26 @@ class TagEditCloud extends Extension {
 			}
 		}
 
+		$tag_data = null;
+
 		switch($sort_method){
-		case 'a':
-		case 'p':
-			$tag_data = $database->get_all("SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
-				FROM tags WHERE count >= :tag_min2 ORDER BY ".($sort_method == 'a' ? "tag" : "count DESC")." LIMIT :limit",
-				array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
-			break;
-		case 'r':
-			$relevant_tags = array_diff($image->get_tag_array(),$ignore_tags);
-			if(count($relevant_tags) > 0) {
-				$relevant_tags = implode(",",array_map(array($database,"escape"),$relevant_tags));
-				$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
-					FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
-					WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
+			case 'a':
+			case 'p':
+			default:
+				$tag_data = $database->get_all("SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+					FROM tags WHERE count >= :tag_min2 ORDER BY ".($sort_method == 'a' ? "tag" : "count DESC")." LIMIT :limit",
 					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
-			}
-			break;
+				break;
+			case 'r':
+				$relevant_tags = array_diff($image->get_tag_array(),$ignore_tags);
+				if(count($relevant_tags) > 0) {
+					$relevant_tags = implode(",",array_map(array($database,"escape"),$relevant_tags));
+					$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
+						FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
+						WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
+						array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
+				}
+				break;
 		}
 		
 		$counter = 1;
@@ -115,15 +122,15 @@ class TagEditCloud extends Extension {
 			$size = sprintf("%.2f", max($row['scaled'],0.5));
 			$js = htmlspecialchars('tageditcloud_toggle_tag(this,'.json_encode($full_tag).')',ENT_QUOTES); //Ugly, but it works
 
-			if(array_search($row['tag'],$image->tag_array) !== FALSE) {
+			if(array_search($row['tag'],$image->get_tag_array()) !== FALSE) {
 				if($used_first) {
-					$precloud .= "&nbsp;<span onclick='$js' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$precloud .= "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
 					continue;
 				} else {
-					$entry = "&nbsp;<span onclick='$js' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+					$entry = "&nbsp;<span onclick='{$js}' class='tag-selected' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
 				}
 			} else {
-				$entry = "&nbsp;<span onclick='$js' style='font-size: ${size}em$color' title='${row['count']}'>$h_tag</span>&nbsp;\n";
+				$entry = "&nbsp;<span onclick='{$js}' style='font-size: ${size}em$color' title='${row['count']}'>{$h_tag}</span>&nbsp;\n";
 			}
 
 			if($counter++ <= $def_count) {
@@ -134,24 +141,28 @@ class TagEditCloud extends Extension {
 		}
 
 		if($precloud != '') {
-			$html .= "<div id='tagcloud_set'>$precloud</div>";
+			$html .= "<div id='tagcloud_set'>{$precloud}</div>";
 		}
 
 		if($postcloud != '') {
-			$postcloud = "<div id='tagcloud_extra' style='display: none;'>$postcloud</div>";
+			$postcloud = "<div id='tagcloud_extra' style='display: none;'>{$postcloud}</div>";
 		}
 
-		$html .= "<div id='tagcloud_unset'>$cloud$postcloud</div>";
+		$html .= "<div id='tagcloud_unset'>{$cloud}{$postcloud}</div>";
 
 		if($sort_method != 'a' && $counter > $def_count) {
 			$rem = $counter - $def_count;
-			$html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show $rem more tags</span>]";
+			$html .= "</div><br>[<span onclick='tageditcloud_toggle_extra(this);' style='color: #0000EF; font-weight:bold;'>show {$rem} more tags</span>]";
 		}
 
-		return "<div id='tageditcloud' class='tageditcloud'>$html</div>"; // FIXME: stupidasallhell
+		return "<div id='tageditcloud' class='tageditcloud'>{$html}</div>"; // FIXME: stupidasallhell
 	}
 
-	private function can_tag($image) {
+	/**
+	 * @param Image $image
+	 * @return bool
+	 */
+	private function can_tag(Image $image) {
 		global $user;
 		return ($user->can("edit_image_tag") && (!$image->is_locked() || $user->can("edit_image_lock")));
 	}

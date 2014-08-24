@@ -1,6 +1,9 @@
 <?php
 
 class RelationshipsTheme extends Themelet {
+	/**
+	 * @param \Image $image
+	 */
 	public function relationship_info($image) {
 		global $page, $database;
 
@@ -25,6 +28,7 @@ class RelationshipsTheme extends Themelet {
 
 	public function get_parent_editor_html(Image $image) {
 		global $user;
+
 		$h_parent_id = $image->parent_id;
 		$s_parent_id = $h_parent_id ?: "None.";
 

@@ -246,7 +246,6 @@ class YShout {
 			}
 		}
 	}
-
 }
 
 

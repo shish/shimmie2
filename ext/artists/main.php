@@ -9,9 +9,19 @@
  *
  */
 class AuthorSetEvent extends Event {
-    var $image, $user, $author;
+	/** @var \Image  */
+	public $image;
+	/** @var \User  */
+	public $user;
+	/** @var string */
+	public $author;
 
-    public function __construct(Image $image, User $user, /*string*/ $author)
+	/**
+	 * @param Image $image
+	 * @param User $user
+	 * @param string $author
+	 */
+	public function __construct(Image $image, User $user, /*string*/ $author)
     {
         $this->image = $image;
         $this->user = $user;
@@ -937,9 +947,12 @@ class Artists extends Extension {
         return $result;
     }
 
-	/*
-	* HERE WE GET THE ID OF THE ARTIST
-	*/
+	/**
+	 * HERE WE GET THE ID OF THE ARTIST.
+	 *
+	 * @param string $name
+	 * @return string|int
+	 */
 	private function get_artist_id($name){
 		global $database;
 		$artistID = $database->get_row("SELECT id FROM artists WHERE name = ?"
@@ -1203,7 +1216,8 @@ class Artists extends Extension {
 	/*
 	* HERE WE GET THE INFO OF THE ALIAS
 	*/
-	private function get_alias($artistID){
+	private function get_alias($artistID)
+	{
             if (!is_numeric($artistID)) return;
 
             global $database;

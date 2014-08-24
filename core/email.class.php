@@ -1,21 +1,40 @@
 <?php
 
+/**
+ * Class Email
+ *
+ * A generic email.
+ */
 class Email {
-	/**
-	 * A generic email.
-	 */
+	/** @var string */
 	public $to;
+	/** @var string  */
 	public $subject;
+	/** @var string  */
 	public $header;
+	/** @var null|string  */
 	public $style;
+	/** @var null|string  */
 	public $header_img;
+	/** @var null|string  */
 	public $sitename;
+	/** @var null|string  */
 	public $sitedomain;
+	/** @var null|string */
 	public $siteemail;
+	/** @var string */
 	public $date;
+	/** @var string */
 	public $body;
+	/** @var null|string */
 	public $footer;
-		
+
+	/**
+	 * @param string $to
+	 * @param string $subject
+	 * @param string $header
+	 * @param string $body
+	 */
 	public function __construct($to, $subject, $header, $body) {
 		global $config;
 		$this->to = $to;
