@@ -17,7 +17,7 @@
  *  <br>Download the contents of the database in plain text format, useful
  *  for backups.
  *  <p>Image dump:
- *  <br>Download all the images as a .zip file
+ *  <br>Download all the images as a .zip file (Requires ZipArchive)
  */
 
 /**
