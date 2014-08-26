@@ -1308,7 +1308,9 @@ function send_event(Event $event) {
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		ctx_log_start(get_class($listener));
-		$listener->$method_name($event);
+		if(method_exists($listener, $method_name)) {
+			$listener->$method_name($event);
+		}
 		ctx_log_endok();
 	}
 	$_event_count++;
