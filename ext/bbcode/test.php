@@ -71,6 +71,12 @@ class BBCodeUnitTest extends UnitTestCase {
 			"<a href=\"mailto:spam@shishnet.org\">spam@shishnet.org</a>");
 	}
 
+	public function testAnchor() {
+		$this->assertEqual(
+			$this->filter("[anchor=rules]Rules[/anchor]"),
+			'<span class="anchor">Rules <a class="alink" href="#bb-rules" name="bb-rules" title="link to this anchor"> ¶ </a></span>');
+	}
+
 	private function filter($in) {
 		$bb = new BBCode();
 		return $bb->format($in);

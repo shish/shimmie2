@@ -39,6 +39,7 @@ class BBCode extends FormatterExtension {
 		}
 		$text = preg_replace('!^&gt;&gt;([^\d].+)!', '<blockquote><small>$1</small></blockquote>', $text);
 		$text = preg_replace('!&gt;&gt;(\d+)(#c?\d+)?!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('post/view/$1$2').'">&gt;&gt;$1$2</a>', $text);
+		$text = preg_replace('!\[anchor=(.*?)\](.*?)\[/anchor\]!s', '<span class="anchor">$2 <a class="alink" href="#bb-$1" name="bb-$1" title="link to this anchor"> ¶ </a></span>', $text);  // add "bb-" to avoid clashing with eg #top
 		$text = preg_replace('!\[url=site://(.*?)(#c\d+)?\](.*?)\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$3</a>', $text);
 		$text = preg_replace('!\[url\]site://(.*?)(#c\d+)?\[/url\]!s', '<a class="shm-clink" data-clink-sel="$2" href="'.make_link('$1$2').'">$1$2</a>', $text);
 		$text = preg_replace('!\[url=((?:https?|ftp|irc|mailto)://.*?)\](.*?)\[/url\]!s', '<a href="$1">$2</a>', $text);
@@ -77,6 +78,7 @@ class BBCode extends FormatterExtension {
 		) as $el) {
 			$text = preg_replace("!\[$el\](.*?)\[/$el\]!s", '$1', $text);
 		}
+		$text = preg_replace("!\[anchor=(.*?)\](.*?)\[/anchor\]!s", '$2', $text);
 		$text = preg_replace("!\[url=(.*?)\](.*?)\[/url\]!s", '$2', $text);
 		$text = preg_replace("!\[img\](.*?)\[/img\]!s", "", $text);
 		$text = preg_replace("!\[\[([^\|\]]+)\|([^\]]+)\]\]!s", '$2', $text);
