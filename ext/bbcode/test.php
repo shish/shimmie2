@@ -74,7 +74,7 @@ class BBCodeUnitTest extends UnitTestCase {
 	public function testAnchor() {
 		$this->assertEqual(
 			$this->filter("[anchor=rules]Rules[/anchor]"),
-			"<a name=\"bb-rules\">Rules</a>");
+			'<span class="anchor">Rules <a class="alink" href="#bb-rules" name="bb-rules" title="link to this anchor"> ¶ </a></span>');
 	}
 
 	private function filter($in) {
