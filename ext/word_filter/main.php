@@ -32,8 +32,13 @@ class WordFilter extends Extension {
 		foreach($map as $search => $replace) {
 			$search = trim($search);
 			$replace = trim($replace);
-			$search = "/\\b$search\\b/i";
-			$text = preg_replace($search, $replace, $text);
+			if($search[0] == '/') {
+				$text = preg_replace($search, $replace, $text);
+			}
+			else {
+				$search = "/\\b" . str_replace("/", "\\/", $search) . "\\b/i";
+				$text = preg_replace($search, $replace, $text);
+			}
 		}
 		return $text;
 	}
