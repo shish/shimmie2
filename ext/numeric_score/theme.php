@@ -58,7 +58,7 @@ class NumericScoreTheme extends Themelet {
 			<input type='submit' value='Delete all votes by this user'>
 			</form>
 		";
-		$page->add_block(new Block("Votes", $html, "main", 60));
+		$page->add_block(new Block("Votes", $html, "main", 80));
 	}
 
 	public function view_popular($images, $dte) {
