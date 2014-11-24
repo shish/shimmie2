@@ -284,6 +284,9 @@ class MemcacheCache implements CacheEngine {
 			$this->memcache = new Memcache;
 			@$this->memcache->pconnect($hp[0], $hp[1]);
 		}
+		else {
+			print "no memcache"; exit;
+		}
 	}
 
 	/**
