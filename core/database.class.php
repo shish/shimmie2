@@ -295,10 +295,11 @@ class MemcacheCache implements CacheEngine {
 	 */
 	public function get($key) {
 		assert(!is_null($key));
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			file_put_contents("data/cache.log", "Cache lookup: $key\n", FILE_APPEND);
-		}
 		$val = $this->memcache->get($key);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			$hit = $val === false ? "miss" : "hit";
+			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
+		}
 		if($val !== false) {
 			$this->hits++;
 			return $val;
