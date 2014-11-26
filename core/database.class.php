@@ -384,6 +384,7 @@ class Database {
 	 * @var null|PDO
 	 */
 	private $db = null;
+	public $dbtime = 0.0;
 
 	/**
 	 * Meta info about the database engine.
@@ -580,7 +581,10 @@ class Database {
 	 * @return array
 	 */
 	public function get_all($query, $args=array()) {
-		return $this->execute($query, $args)->fetchAll();
+		$_start = microtime(true);
+		$data = $this->execute($query, $args)->fetchAll();
+		$this->dbtime += microtime(true) - $_start;
+		return $data;
 	}
 
 	/**
@@ -591,7 +595,9 @@ class Database {
 	 * @return mixed|null
 	 */
 	public function get_row($query, $args=array()) {
+		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
+		$this->dbtime += microtime(true) - $_start;
 		return $row ? $row : null;
 	}
 
@@ -603,11 +609,13 @@ class Database {
 	 * @return array
 	 */
 	public function get_col($query, $args=array()) {
+		$_start = microtime(true);
 		$stmt = $this->execute($query, $args);
 		$res = array();
 		foreach($stmt as $row) {
 			$res[] = $row[0];
 		}
+		$this->dbtime += microtime(true) - $_start;
 		return $res;
 	}
 
@@ -619,11 +627,13 @@ class Database {
 	 * @return array
 	 */
 	public function get_pairs($query, $args=array()) {
+		$_start = microtime(true);
 		$stmt = $this->execute($query, $args);
 		$res = array();
 		foreach($stmt as $row) {
 			$res[$row[0]] = $row[1];
 		}
+		$this->dbtime += microtime(true) - $_start;
 		return $res;
 	}
 
@@ -635,7 +645,9 @@ class Database {
 	 * @return mixed
 	 */
 	public function get_one($query, $args=array()) {
+		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
+		$this->dbtime += microtime(true) - $_start;
 		return $row[0];
 	}
 
