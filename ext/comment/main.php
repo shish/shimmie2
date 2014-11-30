@@ -564,6 +564,29 @@ class CommentList extends Extension {
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $database, $config;
 
+		if(!$user->can("bypass_comment_checks")) {
+			// will raise an exception if anything is wrong
+			$this->comment_checks($image_id, $user, $comment);
+		}
+
+		// all checks passed
+		if($user->is_anonymous()) {
+			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+		}
+		$database->Execute(
+				"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
+				"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
+				array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
+		$cid = $database->get_last_insert_id('comments_id_seq');
+		$snippet = substr($comment, 0, 100);
+		$snippet = str_replace("\n", " ", $snippet);
+		$snippet = str_replace("\r", " ", $snippet);
+		log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", false, array("image_id"=>$image_id, "comment_id"=>$cid));
+	}
+
+	private function comment_checks(/*int*/ $image_id, User $user, /*string*/ $comment) {
+		global $config;
+
 		// basic sanity checks
 		if(!$user->can("create_comment")) {
 			throw new CommentPostingException("Anonymous posting has been disabled");
@@ -603,22 +626,6 @@ class CommentList extends Extension {
 		}
 		else if($user->is_anonymous() && $this->is_spam_akismet($comment)) {
 			throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
-		}
-
-		// all checks passed
-		else {
-			if($user->is_anonymous()) {
-				set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
-			}
-			$database->Execute(
-					"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
-					"VALUES(:image_id, :user_id, :remote_addr, now(), :comment)",
-					array("image_id"=>$image_id, "user_id"=>$user->id, "remote_addr"=>$_SERVER['REMOTE_ADDR'], "comment"=>$comment));
-			$cid = $database->get_last_insert_id('comments_id_seq');
-			$snippet = substr($comment, 0, 100);
-			$snippet = str_replace("\n", " ", $snippet);
-			$snippet = str_replace("\r", " ", $snippet);
-			log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", false, array("image_id"=>$image_id, "comment_id"=>$cid));
 		}
 	}
 // }}}
