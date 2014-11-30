@@ -54,7 +54,9 @@ xanax
 	}
 
 	public function onCommentPosting(CommentPostingEvent $event) {
-		$this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
+		if(!$user->can("bypass_comment_checks")) {
+			$this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
+		}
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
