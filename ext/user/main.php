@@ -348,7 +348,11 @@ class UserPage extends Extension {
 	 * @param UserBlockBuildingEvent $event
 	 */
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
+		global $user;
 		$event->add_link("My Profile", make_link("user"));
+		if($user->can("edit_user_class")) {
+			$event->add_link("User List", make_link("user_admin/list"), 98);
+		}
 		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 	}
 
