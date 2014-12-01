@@ -1344,12 +1344,13 @@ function get_debug_info() {
 	else {
 		$commit = " (".$config->get_string("commit_hash").")";
 	}
-	$time = sprintf("%5.2f", microtime(true) - $_load_start);
+	$time = sprintf("%.2f", microtime(true) - $_load_start);
+	$dbtime = sprintf("%.2f", $database->dbtime);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
 
-	$debug = "<br>Took $time seconds and {$i_mem}MB of RAM";
+	$debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
 	$debug .= "; Used $i_files files and $_execs queries";
 	$debug .= "; Sent $_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";

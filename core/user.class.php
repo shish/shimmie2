@@ -67,7 +67,7 @@ class User {
 	 */
 	public static function by_session(/*string*/ $name, /*string*/ $session) {
 		global $config, $database;
-		$row = $database->cache->get("user-session-$name-$session");
+		$row = $database->cache->get("user-session:$name-$session");
 		if(!$row) {
 			if($database->get_driver_name() === "mysql") {
 				$query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
@@ -76,7 +76,7 @@ class User {
 				$query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
 			}
 			$row = $database->get_row($query, array("name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session));
-			$database->cache->set("user-session-$name-$session", $row, 600);
+			$database->cache->set("user-session:$name-$session", $row, 600);
 		}
 		return is_null($row) ? null : new User($row);
 	}
