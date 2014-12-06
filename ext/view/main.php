@@ -15,27 +15,46 @@
  * which only appears when an image actually exists.
  */
 class DisplayingImageEvent extends Event {
-	var $image, $page, $context;
+	/** @var \Image  */
+	public $image;
+	public $page, $context;
 
+	/**
+	 * @param Image $image
+	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 
+	/**
+	 * @return Image
+	 */
 	public function get_image() {
 		return $this->image;
 	}
 }
 
 class ImageInfoBoxBuildingEvent extends Event {
-	var $parts = array();
-	var $image;
-	var $user;
+	/** @var array  */
+	public $parts = array();
+	/** @var \Image  */
+	public $image;
+	/** @var \User  */
+	public $user;
 
+	/**
+	 * @param Image $image
+	 * @param User $user
+	 */
 	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
 
+	/**
+	 * @param string $html
+	 * @param int $position
+	 */
 	public function add_part($html, $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = $html;
@@ -43,23 +62,38 @@ class ImageInfoBoxBuildingEvent extends Event {
 }
 
 class ImageInfoSetEvent extends Event {
-	var $image;
+	/** @var \Image */
+	public $image;
 
+	/**
+	 * @param Image $image
+	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 }
 
 class ImageAdminBlockBuildingEvent extends Event {
+	/** @var array  */
 	var $parts = array();
-	var $image = null;
-	var $user = null;
+	/** @var \Image|null  */
+	public $image = null;
+	/** @var null|\User  */
+	public $user = null;
 
+	/**
+	 * @param Image $image
+	 * @param User $user
+	 */
 	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
 
+	/**
+	 * @param string $html
+	 * @param int $position
+	 */
 	public function add_part(/*string*/ $html, /*int*/ $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = $html;

@@ -23,13 +23,22 @@ class WordFilter extends Extension {
 		$event->panel->add_block($sb);
 	}
 
+	/**
+	 * @param string $text
+	 * @return string
+	 */
 	private function filter(/*string*/ $text) {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {
 			$search = trim($search);
 			$replace = trim($replace);
-			$search = "/\\b$search\\b/i";
-			$text = preg_replace($search, $replace, $text);
+			if($search[0] == '/') {
+				$text = preg_replace($search, $replace, $text);
+			}
+			else {
+				$search = "/\\b" . str_replace("/", "\\/", $search) . "\\b/i";
+				$text = preg_replace($search, $replace, $text);
+			}
 		}
 		return $text;
 	}

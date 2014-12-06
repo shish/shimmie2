@@ -284,6 +284,11 @@ class NumericScore extends Extension {
 		}
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param int $user_id
+	 * @param int $score
+	 */
 	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*int*/ $score) {
 		global $database;
 		$database->execute(

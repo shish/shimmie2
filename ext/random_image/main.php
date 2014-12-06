@@ -22,7 +22,8 @@
 
 class RandomImage extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $page;
+
 		if($event->page_matches("random_image")) {
 			$action = '';
 			if($event->count_args() == 1) {
@@ -34,7 +35,7 @@ class RandomImage extends Extension {
 				$search_terms = explode(' ', $event->get_arg(1));
 			}
 			else {
-				# FIXME: throw exception
+				throw new SCoreException("Error: too many arguments.");
 			}
 			$image = Image::by_random($search_terms);
 

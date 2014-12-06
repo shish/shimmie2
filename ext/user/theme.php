@@ -110,6 +110,11 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
 
+	/**
+	 * @param Page $page
+	 * @param array $uploads
+	 * @param array $comments
+	 */
 	public function display_ip_list(Page $page, $uploads, $comments) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";
@@ -135,7 +140,7 @@ class UserPageTheme extends Themelet {
 		$html .= "</td></tr>";
 		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
 
-		$page->add_block(new Block("IPs", $html));
+		$page->add_block(new Block("IPs", $html, "main", 70));
 	}
 
 	public function display_user_page(User $duser, $stats) {
@@ -150,7 +155,7 @@ class UserPageTheme extends Themelet {
 
 		if(!$user->is_anonymous()) {
 			if($user->id == $duser->id || $user->can("edit_user_info")) {
-				$page->add_block(new Block("Options", $this->build_options($duser), "main", 20));
+				$page->add_block(new Block("Options", $this->build_options($duser), "main", 60));
 			}
 		}
 	}

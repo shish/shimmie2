@@ -1,7 +1,15 @@
 <?php
+
+/**
+ * Class Themelet
+ */
 class Themelet extends BaseThemelet {
+
 	/**
-	 * Put something in a rounded rectangle box; specific to the default theme
+	 * Put something in a rounded rectangle box; specific to the default theme.
+	 *
+	 * @param string $html
+	 * @return string
 	 */
 	public function rr($html) {
 		return "
@@ -12,7 +20,13 @@ class Themelet extends BaseThemelet {
 	}
 
 	/**
-	 * Add a generic paginator
+	 * Add a generic paginator.
+	 *
+	 * @param Page $page
+	 * @param string $base
+	 * @param string $query
+	 * @param int $page_number
+	 * @param int $total_pages
 	 */
 	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
 		if($total_pages == 0) $total_pages = 1;
@@ -20,11 +34,27 @@ class Themelet extends BaseThemelet {
 		$page->add_block(new Block(null, $body, "main", 90));
 	}
 
+	/**
+	 * @param string $base_url
+	 * @param string $query
+	 * @param string $page
+	 * @param string $name
+	 * @param null|string $link_class
+	 * @return string
+	 */
 	public function litetheme_gen_page_link($base_url, $query, $page, $name, $link_class=null) {
 		$link = make_link("$base_url/$page", $query);
 		return "<a class='$link_class' href='$link'>$name</a>";
 	}
-	
+
+	/**
+	 * @param string $base_url
+	 * @param string $query
+	 * @param string $page
+	 * @param string $current_page
+	 * @param string $name
+	 * @return string
+	 */
 	public function litetheme_gen_page_link_block($base_url, $query, $page, $current_page, $name) {
 		$paginator = "";
 
@@ -33,7 +63,14 @@ class Themelet extends BaseThemelet {
 
 		return $paginator;
 	}
-					
+
+	/**
+	 * @param int $current_page
+	 * @param int $total_pages
+	 * @param string $base_url
+	 * @param string $query
+	 * @return string
+	 */
 	public function litetheme_build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;

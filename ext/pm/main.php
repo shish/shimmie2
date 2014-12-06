@@ -197,7 +197,7 @@ class PrivMsg extends Extension {
 	private function count_pms(User $user) {
 		global $database;
 
-		$count = $database->cache->get("pm-count-{$user->id}");
+		$count = $database->cache->get("pm-count:{$user->id}");
 		if(is_null($count) || $count === false) {
 			$count = $database->get_one("
 					SELECT count(*)
@@ -205,7 +205,7 @@ class PrivMsg extends Extension {
 					WHERE to_id = :to_id
 					AND is_read = :is_read
 			", array("to_id" => $user->id, "is_read" => "N"));
-			$database->cache->set("pm-count-{$user->id}", $count, 600);
+			$database->cache->set("pm-count:{$user->id}", $count, 600);
 		}
 		return $count;
 	}

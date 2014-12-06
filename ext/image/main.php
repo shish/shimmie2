@@ -12,15 +12,17 @@
  * An image is being added to the database.
  */
 class ImageAdditionEvent extends Event {
-	var $user, $image;
+	var $user;
+	/** @var \Image */
+	public $image;
 	
 	/**
 	 * Inserts a new image into the database with its associated
 	 * information. Also calls TagSetEvent to set the tags for
 	 * this new image.
 	 *
-	 * @sa TagSetEvent
-	 * @param $image Image	The new image to add.
+	 * @see TagSetEvent
+	 * @param Image $image The new image to add.
 	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
@@ -39,14 +41,16 @@ class ImageAdditionException extends SCoreException {
  * An image is being deleted.
  */
 class ImageDeletionEvent extends Event {
-	var $image;
+	/** @var \Image */
+	public $image;
 	
 	/**
 	 * Deletes an image.
+	 *
 	 * Used by things like tags and comments handlers to
 	 * clean out related rows in their tables.
 	 *
-	 * @param $image Image	The image being deleted
+	 * @param Image $image The image being deleted.
 	*/
 	public function __construct(Image $image) {
 		$this->image = $image;
@@ -57,18 +61,20 @@ class ImageDeletionEvent extends Event {
  * An image is being replaced.
  */
 class ImageReplaceEvent extends Event {
-	var $id, $image;
+	/** @var int */
+	public $id;
+	/** @var \Image */
+	public $image;
 	
 	/**
 	 * Replaces an image.
+	 *
 	 * Updates an existing ID in the database to use a new image
 	 * file, leaving the tags and such unchanged. Also removes 
 	 * the old image file and thumbnail from the disk.
 	 *
-	 * @param $id
-	 *   The ID of the image to replace
-	 * @param $image
-	 *   The image object of the new image to use
+	 * @param int $id The ID of the image to replace.
+	 * @param Image $image The image object of the new image to use.
 	 */
 	public function __construct(/*int*/ $id, Image $image) {
 		$this->id = $id;
@@ -77,8 +83,12 @@ class ImageReplaceEvent extends Event {
 }
 
 class ImageReplaceException extends SCoreException {
-	var $error;
+	/** @var string */
+	public $error;
 
+	/**
+	 * @param string $error
+	 */
 	public function __construct(/*string*/ $error) {
 		$this->error = $error;
 	}
@@ -88,14 +98,19 @@ class ImageReplaceException extends SCoreException {
  * Request a thumbnail be made for an image object.
  */
 class ThumbnailGenerationEvent extends Event {
-	var $hash, $type, $force;
+	/** @var string */
+	public $hash;
+	/** @var string */
+	public $type;
+	/** @var bool */
+	public $force;
 
 	/**
 	 * Request a thumbnail be made for an image object
 	 *
-	 * @param $hash	string The unique hash of the image
-	 * @param $type	string The type of the image
-	 * @param $force boolean Regenerate the thumbnail even if one already exists
+	 * @param string $hash The unique hash of the image
+	 * @param string $type The type of the image
+	 * @param bool $force Regenerate the thumbnail even if one already exists
 	 */
 	public function __construct($hash, $type, $force=false) {
 		$this->hash = $hash;
@@ -112,14 +127,27 @@ class ThumbnailGenerationEvent extends Event {
  *   $image    -- the image who's link is being parsed
  */
 class ParseLinkTemplateEvent extends Event {
-	var $link, $original, $image;
+	/** @var string */
+	public $link;
+	/** @var string */
+	public $original;
+	/** @var \Image */
+	public $image;
 
+	/**
+	 * @param string $link The formatted link
+	 * @param Image $image The image who's link is being parsed
+	 */
 	public function __construct($link, Image $image) {
 		$this->link = $link;
 		$this->original = $link;
 		$this->image = $image;
 	}
 
+	/**
+	 * @param string $needle
+	 * @param string $replace
+	 */
 	public function replace($needle, $replace) {
 		$this->link = str_replace($needle, $replace, $this->link);
 	}
@@ -189,8 +217,7 @@ class ImageIO extends Extension {
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $user;
-		global $config;
+		global $user, $config;
 		
 		if($user->can("delete_image")) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
@@ -277,6 +304,11 @@ class ImageIO extends Extension {
 
 
 // add image {{{
+	/**
+	 * @param Image $image
+	 * @return null
+	 * @throws ImageAdditionException
+	 */
 	private function add_image(Image $image) {
 		global $page, $user, $database, $config;
 
@@ -346,6 +378,10 @@ class ImageIO extends Extension {
 // }}}  end add
 
 // fetch image {{{
+	/**
+	 * @param int $image_id
+	 * @param string $type
+	 */
 	private function send_file($image_id, $type) {
 		global $config;
 		global $database;
@@ -398,6 +434,11 @@ class ImageIO extends Extension {
 // }}} end fetch
 
 // replace image {{{
+	/**
+	 * @param int $id
+	 * @param Image $image
+	 * @throws ImageReplaceException
+	 */
 	private function replace_image($id, $image) {
 		global $database;
 

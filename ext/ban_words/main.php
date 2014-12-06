@@ -69,24 +69,27 @@ xanax
 		$sb = new SetupBlock("Banned Phrases");
 		$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
 		$sb->add_longtext_option("banned_words");
+		$failed = array();
+		foreach($this->get_words() as $word) {
+			if($word[0] == '/') {
+				if(preg_match($word, "") === false) {
+					$failed[] = $word;
+				}
+			}
+		}
+		if($failed) {
+			$sb->add_label("Failed regexes: ".join(", ", $failed));
+		}
 		$event->panel->add_block($sb);
 	}
 
 	private function test_text($comment, $ex) {
-		global $config;
-
-		$banned = $config->get_string("banned_words");
 		$comment = strtolower($comment);
 
-		foreach(explode("\n", $banned) as $word) {
-			$word = trim(strtolower($word));
-			if(strlen($word) == 0) {
-				// line is blank
-				continue;
-			}
-			else if($word[0] == '/') {
+		foreach($this->get_words() as $word) {
+			if($word[0] == '/') {
 				// lines that start with slash are regex
-				if(preg_match($word, $comment)) {
+				if(preg_match($word, $comment) === 1) {
 					throw $ex;
 				}
 			}
@@ -97,6 +100,23 @@ xanax
 				}
 			}
 		}
+	}
+
+	private function get_words() {
+		global $config;
+		$words = array();
+
+		$banned = $config->get_string("banned_words");
+		foreach(explode("\n", $banned) as $word) {
+			$word = trim(strtolower($word));
+			if(strlen($word) == 0) {
+				// line is blank
+				continue;
+			}
+			$words[] = $word;
+		}
+
+		return $words;
 	}
 
 	public function get_priority() {return 30;}

@@ -23,6 +23,7 @@ class StatsDInterface extends Extension {
 		$time = microtime(true) - $_load_start;
 		StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
 		StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
+		StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";
 		StatsDInterface::$stats["shimmie.$type.memory"] = memory_get_peak_usage(true)."|c";
 		StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
 		StatsDInterface::$stats["shimmie.$type.queries"] = $_execs."|c";
@@ -76,6 +77,9 @@ class StatsDInterface extends Extension {
 		StatsDInterface::$stats["shimmie.events.info-sets"] = "1|c";
 	}
 
+	/**
+	 * @return int
+	 */
 	public function get_priority() {return 99;}
 
 

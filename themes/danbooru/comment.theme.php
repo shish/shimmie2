@@ -1,6 +1,12 @@
 <?php
 
 class CustomCommentListTheme extends CommentListTheme {
+	/**
+	 * @param array $images
+	 * @param int $page_number
+	 * @param int $total_pages
+	 * @param bool $can_post
+	 */
 	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
 		global $config, $page, $user;
 
@@ -86,7 +92,11 @@ class CustomCommentListTheme extends CommentListTheme {
 		// no recent comments in this theme
 	}
 
-
+	/**
+	 * @param Comment $comment
+	 * @param bool $trim
+	 * @return string
+	 */
 	protected function comment_to_html($comment, $trim=false) {
 		global $user;
 

@@ -32,7 +32,7 @@ class Blocks extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page, $user;
 
 		$blocks = $database->cache->get("blocks");
 		if($blocks === false) {

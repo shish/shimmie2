@@ -7,15 +7,29 @@
  */
 
 class FlashFileHandler extends DataHandlerExtension {
+	/**
+	 * @param string $hash
+	 * @return bool
+	 */
 	protected function create_thumb($hash) {
 		copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
+		return true;
 	}
 
+	/**
+	 * @param string $ext
+	 * @return bool
+	 */
 	protected function supported_ext($ext) {
 		$exts = array("swf");
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param string $filename
+	 * @param array $metadata
+	 * @return Image|null
+	 */
 	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
 		$image = new Image();
 
@@ -35,6 +49,10 @@ class FlashFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
 	protected function check_contents(/*string*/ $file) {
 		if (!file_exists($file)) return false;
 

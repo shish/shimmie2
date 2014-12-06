@@ -28,37 +28,13 @@ and of course start organising your images :-)
 	}
 
 	public function display_page(Page $page, $images) {
-		global $config;
-
-		if(count($this->search_terms) == 0) {
-			$query = null;
-			$page_title = $config->get_string('title');
-		}
-		else {
-			$search_string = implode(' ', $this->search_terms);
-			$query = url_escape($search_string);
-			$page_title = html_escape($search_string);
-			if(count($images) > 0) {
-				$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
-			}
-		}
-		if($this->page_number > 1 || count($this->search_terms) > 0) {
-			// $page_title .= " / $page_number";
-		}
+		$this->display_page_header($page, $images);
 
 		$nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
-		$page->set_title($page_title);
-		$page->set_heading($page_title);
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
+
 		if(count($images) > 0) {
-			if($query) {
-				$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
-				$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
-			}
-			else {
-				$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
-				$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
-			}
+			$this->display_page_images($page, $images);
 		}
 		else {
 			$this->display_error(404, "No Images Found", "No images were found to match the search criteria");
@@ -104,6 +80,37 @@ and of course start organising your images :-)
 		}
 		$table .= "</div>";
 		return $table;
+	}
+
+	protected function display_page_header(Page $page, $images) {
+		global $config;
+
+		if (count($this->search_terms) == 0) {
+			$page_title = $config->get_string('title');
+		} else {
+			$search_string = implode(' ', $this->search_terms);
+			$page_title = html_escape($search_string);
+			if (count($images) > 0) {
+				$page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
+			}
+		}
+		if ($this->page_number > 1 || count($this->search_terms) > 0) {
+			// $page_title .= " / $page_number";
+		}
+
+		$page->set_title($page_title);
+		$page->set_heading($page_title);
+	}
+
+	protected function display_page_images(Page $page, $images) {
+		if (count($this->search_terms) > 0) {
+			$query = url_escape(implode(' ', $this->search_terms));
+			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
+			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
+		} else {
+			$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
+			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
+		}
 	}
 }
 

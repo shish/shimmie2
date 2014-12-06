@@ -26,8 +26,19 @@ class InitExtEvent extends Event {}
  * $event->get_arg(0) = "42"
  */
 class PageRequestEvent extends Event {
+	/**
+	 * @var array
+	 */
 	public $args;
+
+	/**
+	 * @var int
+	 */
 	public $arg_count;
+
+	/**
+	 * @var int
+	 */
 	public $part_count;
 
 	/**
@@ -90,7 +101,7 @@ class PageRequestEvent extends Event {
 	 * Get the n th argument of the page request (if it exists.)
 	 *
 	 * @param int $n
-	 * @return string|null The argmuent (string) or NULL
+	 * @return string|null The argument (string) or NULL
 	 */
 	public function get_arg(/*int*/ $n) {
 		$offset = $this->part_count + $n;
@@ -154,9 +165,19 @@ class PageRequestEvent extends Event {
  * Sent when index.php is called from the command line
  */
 class CommandEvent extends Event {
+	/**
+	 * @var string
+	 */
 	public $cmd = "help";
+
+	/**
+	 * @var array
+	 */
 	public $args = array();
 
+	/**
+	 * @param string[] $args
+	 */
 	public function __construct(/*array(string)*/ $args) {
 		global $user;
 
@@ -215,19 +236,28 @@ class CommandEvent extends Event {
 class TextFormattingEvent extends Event {
 	/**
 	 * For reference
+	 *
+	 * @var string
 	 */
-	var $original;
+	public $original;
 
 	/**
 	 * with formatting applied
+	 *
+	 * @var string
 	 */
-	var $formatted;
+	public $formatted;
 
 	/**
 	 * with formatting removed
+	 *
+	 * @var string
 	 */
-	var $stripped;
+	public $stripped;
 
+	/**
+	 * @param string $text
+	 */
 	public function __construct(/*string*/ $text) {
 		$h_text = html_escape(trim($text));
 		$this->original  = $h_text;
@@ -244,36 +274,44 @@ class LogEvent extends Event {
 	/**
 	 * a category, normally the extension name
 	 *
-	 * @return string
+	 * @var string
 	 */
-	var $section;
+	public $section;
 
 	/**
 	 * See python...
 	 *
-	 * @return int
+	 * @var int
 	 */
-	var $priority = 0;
+	public $priority = 0;
 
 	/**
 	 * Free text to be logged
 	 *
-	 * @return text
+	 * @var string
 	 */
-	var $message;
+	public $message;
 
 	/**
 	 * The time that the event was created
 	 *
-	 * @return int
+	 * @var int
 	 */
-	var $time;
+	public $time;
 
 	/**
 	 * Extra data to be held separate
+	 *
+	 * @var array
 	 */
-	var $args;
+	public $args;
 
+	/**
+	 * @param string $section
+	 * @param int $priority
+	 * @param string $message
+	 * @param array $args
+	 */
 	public function __construct($section, $priority, $message, $args) {
 		$this->section = $section;
 		$this->priority = $priority;

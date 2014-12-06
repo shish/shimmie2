@@ -12,6 +12,12 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new NavBlock());
 	}
 
+	/**
+	 * @param string $name
+	 * @param string $action
+	 * @param bool $protected
+	 * @return string
+	 */
 	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
 		$c_protected = $protected ? " protected" : "";
 		$html = make_form(make_link("admin/$action"), "POST", false, null, null, "admin$c_protected");
@@ -39,7 +45,8 @@ class AdminPageTheme extends Themelet {
 		$html = "";
 		$html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
 		$html .= $this->button("Recount tag use", "recount_tag_use", false);
-		$html .= $this->button("Download all images", "download_all_images", false);
+		if(class_exists('ZipArchive'))
+			$html .= $this->button("Download all images", "download_all_images", false);
         $html .= $this->button("Download database contents", "database_dump", false);
 		if($database->get_driver_name() == "mysql")
 			$html .= $this->button("Reset image IDs", "reset_image_ids", true);

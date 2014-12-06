@@ -8,3 +8,9 @@ BLOCKQUOTE {
 	padding: 8px;
 	background: #DDD;
 }
+.anchor A.alink {
+	visibility: hidden;
+}
+.anchor:hover A.alink {
+	visibility: visible;
+}

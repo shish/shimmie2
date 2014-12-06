@@ -6,15 +6,29 @@
  */
 
 class MP3FileHandler extends DataHandlerExtension {
+	/**
+	 * @param string $hash
+	 * @return bool
+	 */
 	protected function create_thumb($hash) {
 		copy("ext/handle_mp3/thumb.jpg", warehouse_path("thumbs", $hash));
+		return true;
 	}
 
+	/**
+	 * @param string $ext
+	 * @return bool
+	 */
 	protected function supported_ext($ext) {
 		$exts = array("mp3");
 		return in_array(strtolower($ext), $exts);
 	}
 
+	/**
+	 * @param string $filename
+	 * @param array $metadata
+	 * @return Image|null
+	 */
 	protected function create_image_from_data($filename, $metadata) {
 		global $config;
 
@@ -47,6 +61,10 @@ class MP3FileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
+	/**
+	 * @param $file
+	 * @return bool
+	 */
 	protected function check_contents($file) {
 		if (file_exists($file)) {
 			require_once('lib/getid3/getid3/getid3.php');

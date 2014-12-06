@@ -11,9 +11,15 @@
  */
 
 class AddAliasEvent extends Event {
-	var $oldtag;
-	var $newtag;
+	/** @var string  */
+	public $oldtag;
+	/** @var string  */
+	public $newtag;
 
+	/**
+	 * @param string $oldtag
+	 * @param string $newtag
+	 */
 	public function __construct($oldtag, $newtag) {
 		$this->oldtag = trim($oldtag);
 		$this->newtag = trim($newtag);
@@ -124,6 +130,10 @@ class AliasEditor extends Extension {
 		}
 	}
 
+	/**
+	 * @param Database $database
+	 * @return string
+	 */
 	private function get_alias_csv(Database $database) {
 		$csv = "";
 		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
@@ -133,6 +143,10 @@ class AliasEditor extends Extension {
 		return $csv;
 	}
 
+	/**
+	 * @param Database $database
+	 * @param string $csv
+	 */
 	private function add_alias_csv(Database $database, /*string*/ $csv) {
 		$csv = str_replace("\r", "\n", $csv);
 		foreach(explode("\n", $csv) as $line) {
@@ -148,9 +162,15 @@ class AliasEditor extends Extension {
 		}
 	}
 
-	// add alias *after* mass tag editing, else the MTE will
-	// search for the images and be redirected to the alias,
-	// missing out the images tagged with the oldtag
+	/**
+	 * Get the priority for this extension.
+	 *
+	 * Add alias *after* mass tag editing, else the MTE will
+	 * search for the images and be redirected to the alias,
+	 * missing out the images tagged with the old tag.
+	 *
+	 * @return int
+	 */
 	public function get_priority() {return 60;}
 }
 

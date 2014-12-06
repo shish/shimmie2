@@ -1,11 +1,16 @@
 <?php
+
 /**
- * A base exception to be caught by the upper levels
+ * Class SCoreException
+ *
+ * A base exception to be caught by the upper levels.
  */
 class SCoreException extends Exception {}
 
 /**
- * A fairly common, generic exception
+ * Class PermissionDeniedException
+ *
+ * A fairly common, generic exception.
  */
 class PermissionDeniedException extends SCoreException {}
 
