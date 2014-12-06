@@ -310,21 +310,10 @@ class Index extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onImageAddition(ImageAdditionEvent $event) {
+	public function onImageInfoSet($event) {
 		global $database;
 		if(SPEED_HAX) {
-			for($i=1; $i<10; $i++) {
-				$database->cache->delete("post-list-$i");
-			}
-		}
-	}
-
-	public function onImageDeletion(ImageDeletionEvent $event) {
-		global $database;
-		if(SPEED_HAX) {
-			for($i=1; $i<10; $i++) {
-				$database->cache->delete("post-list-$i");
-			}
+			$database->cache->delete("thumb-block:{$event->image->id}");
 		}
 	}
 
