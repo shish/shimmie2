@@ -55,7 +55,13 @@ class User {
 		$this->email = $row['email'];
 		$this->join_date = $row['joindate'];
 		$this->passhash = $row['pass'];
-		$this->class = $_user_classes[$row["class"]];
+
+		if(array_key_exists($row["class"], $_user_classes)) {
+			$this->class = $_user_classes[$row["class"]];
+		}
+		else {
+			throw SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
+		}
 	}
 
 	/**
