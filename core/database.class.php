@@ -453,8 +453,7 @@ class Database {
 			PDO::ATTR_PERSISTENT => DATABASE_KA,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
-		if(defined("HIPHOP")) $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass);
-		else $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
+		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
 		$this->connect_engine();
 		$this->engine->init($this->db);
