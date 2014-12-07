@@ -60,7 +60,7 @@ class User {
 			$this->class = $_user_classes[$row["class"]];
 		}
 		else {
-			throw SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
+			throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
 		}
 	}
 
