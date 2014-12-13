@@ -126,7 +126,7 @@ class Ratings extends Extension {
 			$event->add_querylet(new Querylet("rating IN ($set)"));
 		}
 		if(preg_match("/^rating[=|:](?:([sqeu]+)|(safe|questionable|explicit|unknown))$/D", strtolower($event->term), $matches)) {
-			$ratings = $matches[1] ? $matches[1] : array($matches[2][0]);
+			$ratings = $matches[1] ? $matches[1] : $matches[2][0];
 			$ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
 			$set = "'" . join("', '", $ratings) . "'";
 			$event->add_querylet(new Querylet("rating IN ($set)"));
