@@ -26,8 +26,8 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		global $config;
-
+		//global $config;
+		
 		$thumbers = array();
 		$thumbers['None'] = "static";
 		$thumbers['ffmpeg'] = "ffmpeg";
@@ -108,7 +108,6 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @return Image|null
 	 */
 	protected function create_image_from_data($filename, $metadata) {
-		//global $config;
 
 		$image = new Image();
 
