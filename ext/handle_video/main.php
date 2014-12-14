@@ -47,21 +47,22 @@ class VideoFileHandler extends DataHandlerExtension {
 			$sb->add_text_option("thumb_ffmpeg_path");
 		//}
 
-		// Some versions of ffmpeg have trouble with the automatic aspect ratio scaling.
+		// Some older versions of ffmpeg have trouble with the automatic aspect ratio scaling.
+		// This adds an option in the Board Config to disable the aspect ratio scaling.
+		$sb->add_label("<br>");
 		$sb->add_bool_option("video_thumb_ignore_aspect_ratio", "Ignore aspect ratio when creating thumbnails: ");
 
 		$event->panel->add_block($sb);
 	}
 
 	/**
+	 * Generate the Thumbnail image for particular file.
+	 *
 	 * @param string $hash
-	 * @return bool
+	 * @return bool Returns true on successful thumbnail creation.
 	 */
 	protected function create_thumb($hash) {
 		global $config;
-
-		// this is never used...
-		//$q = $config->get_int("thumb_quality");
 
 		$ok = false;
 
@@ -73,26 +74,33 @@ class VideoFileHandler extends DataHandlerExtension {
 				copy("ext/handle_video/thumb.jpg", $outname);
 				$ok = true;
 				break;
+			
 			case 'ffmpeg':
-				$ffmpeg = escapeshellarg($config->get_string("thumb_ffmpeg_path"));
+				$ffmpeg = escapeshellcmd($config->get_string("thumb_ffmpeg_path"));
 
 				$w = (int)$config->get_int("thumb_width");
 				$h = (int)$config->get_int("thumb_height");
 				$inname  = escapeshellarg(warehouse_path("images", $hash));
 				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
-
-				if ($config->get_bool("video_thumb_ignore_aspect_ratio", true) == true) {
+			
+				if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
+				{
 					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
-				} else {
-					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -vf scale='if(gt(a,{$w}/{$h}),{$w},-1)':'if(gt(a,{$w}/{$h}),-1,{$h})' -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				}
+				else
+				{
+					$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
+					$cmd = "{$ffmpeg} -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
 				}
 
-				exec($cmd, $output, $ret);
+				exec($cmd, $output, $returnValue);
 
-				// TODO: We should really check the result of the exec to see if it really succeeded.
-				$ok = true;
+				if ((int)$returnValue == (int)1)
+				{
+					$ok = true;
+				}
 
-				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $returnValue");
 				break;
 		}
 
