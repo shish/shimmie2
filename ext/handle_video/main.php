@@ -21,8 +21,14 @@ class VideoFileHandler extends DataHandlerExtension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string('video_thumb_engine', 'static');
-		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
 		$config->set_default_string('thumb_ffmpeg_path', '');
+
+		// By default we generate thumbnails ignoring the aspect ratio of the video file.
+		//
+		// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
+		// rather than completely failing out of the box. If people complain that their
+		// thumbnails are distorted, then they can turn this feature on manually later.
+		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
