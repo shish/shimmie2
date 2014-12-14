@@ -21,6 +21,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_string('video_thumb_engine', 'static');
+		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
 		$config->set_default_string('thumb_ffmpeg_path', '');
 	}
 
@@ -39,6 +40,10 @@ class VideoFileHandler extends DataHandlerExtension {
 			$sb->add_label("<br>Path to ffmpeg: ");
 			$sb->add_text_option("thumb_ffmpeg_path");
 		//}
+
+		// Some versions of ffmpeg have trouble with the automatic aspect ratio scaling.
+		$sb->add_bool_option("video_thumb_ignore_aspect_ratio", "Ignore aspect ratio when creating thumbnails: ");
+
 		$event->panel->add_block($sb);
 	}
 
@@ -70,7 +75,11 @@ class VideoFileHandler extends DataHandlerExtension {
 				$inname  = escapeshellarg(warehouse_path("images", $hash));
 				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
 
-				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -vf scale='if(gt(a,{$w}/{$h}),{$w},-1)':'if(gt(a,{$w}/{$h}),-1,{$h})' -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				if ($config->get_bool("video_thumb_ignore_aspect_ratio", true) == true) {
+					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				} else {
+					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -vf scale='if(gt(a,{$w}/{$h}),{$w},-1)':'if(gt(a,{$w}/{$h}),-1,{$h})' -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				}
 
 				exec($cmd, $output, $ret);
 
