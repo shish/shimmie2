@@ -27,7 +27,7 @@ class FavoriteSetEvent extends Event {
 	 * @param bool $do_set
 	 */
 	public function __construct(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
-		assert(is_numeric($image_id));
+		assert(is_int($image_id));
 		assert(is_bool($do_set));
 
 		$this->image_id = $image_id;

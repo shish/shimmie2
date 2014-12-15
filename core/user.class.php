@@ -46,6 +46,7 @@ class User {
 	 * would be to use User::by_id, User::by_session, etc.
 	 *
 	 * @param mixed $row
+	 * @throws SCoreException
 	 */
 	public function __construct($row) {
 		global $_user_classes;
