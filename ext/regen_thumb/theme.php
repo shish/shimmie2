@@ -11,7 +11,7 @@ class RegenThumbTheme extends Themelet {
 		return "
 			".make_form(make_link("regen_thumb"))."
 			<input type='hidden' name='image_id' value='$image_id'>
-			<input type='submit' value='Regenerate'>
+			<input type='submit' value='Regenerate Thumbnail'>
 			</form>
 		";
 	}
