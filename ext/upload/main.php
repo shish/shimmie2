@@ -65,15 +65,18 @@ class Upload extends Extension {
 		global $config;
 		$config->set_default_int('upload_count', 3);
 		$config->set_default_int('upload_size', '1MB');
+		$config->set_default_int('upload_min_free_space', '100MB');
 		$config->set_default_bool('upload_tlsource', TRUE);
 
-		// SHIT: fucking PHP "security" measures -_-;;;
-		$free_num = @disk_free_space(realpath("./images/"));
-		if($free_num === FALSE) {
-			$this->is_full = false;
-		}
-		else {
-			$this->is_full = $free_num < MIN_FREE_SPACE;
+		$this->is_full = false;
+
+		$min_free_space = $config->get_int("upload_min_free_space");
+		if($min_free_space > 0) {
+			// SHIT: fucking PHP "security" measures -_-;;;
+			$free_num = @disk_free_space(realpath("./images/"));
+			if($free_num !== FALSE) {
+				$this->is_full = $free_num < $min_free_space;
+			}
 		}
 	}
 
