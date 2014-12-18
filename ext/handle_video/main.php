@@ -22,11 +22,18 @@ class VideoFileHandler extends DataHandlerExtension {
 		global $config;
 		$config->set_default_string('video_thumb_engine', 'static');
 		$config->set_default_string('thumb_ffmpeg_path', '');
+
+		// By default we generate thumbnails ignoring the aspect ratio of the video file.
+		//
+		// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
+		// rather than completely failing out of the box. If people complain that their
+		// thumbnails are distorted, then they can turn this feature on manually later.
+		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		global $config;
-
+		//global $config;
+		
 		$thumbers = array();
 		$thumbers['None'] = "static";
 		$thumbers['ffmpeg'] = "ffmpeg";
@@ -39,18 +46,23 @@ class VideoFileHandler extends DataHandlerExtension {
 			$sb->add_label("<br>Path to ffmpeg: ");
 			$sb->add_text_option("thumb_ffmpeg_path");
 		//}
+
+		// Some older versions of ffmpeg have trouble with the automatic aspect ratio scaling.
+		// This adds an option in the Board Config to disable the aspect ratio scaling.
+		$sb->add_label("<br>");
+		$sb->add_bool_option("video_thumb_ignore_aspect_ratio", "Ignore aspect ratio when creating thumbnails: ");
+
 		$event->panel->add_block($sb);
 	}
 
 	/**
+	 * Generate the Thumbnail image for particular file.
+	 *
 	 * @param string $hash
-	 * @return bool
+	 * @return bool Returns true on successful thumbnail creation.
 	 */
 	protected function create_thumb($hash) {
 		global $config;
-
-		// this is never used...
-		//$q = $config->get_int("thumb_quality");
 
 		$ok = false;
 
@@ -62,22 +74,33 @@ class VideoFileHandler extends DataHandlerExtension {
 				copy("ext/handle_video/thumb.jpg", $outname);
 				$ok = true;
 				break;
+			
 			case 'ffmpeg':
-				$ffmpeg = escapeshellarg($config->get_string("thumb_ffmpeg_path"));
+				$ffmpeg = escapeshellcmd($config->get_string("thumb_ffmpeg_path"));
 
 				$w = (int)$config->get_int("thumb_width");
 				$h = (int)$config->get_int("thumb_height");
 				$inname  = escapeshellarg(warehouse_path("images", $hash));
 				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
+			
+				if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
+				{
+					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				}
+				else
+				{
+					$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
+					$cmd = "{$ffmpeg} -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
+				}
 
-				$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -vf scale='if(gt(a,{$w}/{$h}),{$w},-1)':'if(gt(a,{$w}/{$h}),-1,{$h})' -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+				exec($cmd, $output, $returnValue);
 
-				exec($cmd, $output, $ret);
+				if ((int)$returnValue == (int)1)
+				{
+					$ok = true;
+				}
 
-				// TODO: We should really check the result of the exec to see if it really succeeded.
-				$ok = true;
-
-				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $returnValue");
 				break;
 		}
 
@@ -99,7 +122,6 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @return Image|null
 	 */
 	protected function create_image_from_data($filename, $metadata) {
-		//global $config;
 
 		$image = new Image();
 
