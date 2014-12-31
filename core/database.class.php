@@ -147,6 +147,7 @@ class PostgreSQL extends DBEngine {
 	 */
 	public function init($db) {
 		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		$db->exec("SET statement_timeout TO 10000;");
 	}
 
 	/**
