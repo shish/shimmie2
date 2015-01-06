@@ -304,7 +304,7 @@ class PoolsTheme extends Themelet {
 			$image = $pair[0];
 			$thumb_html = $this->build_thumb_html($image);
 			$pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
-				'<br><input name="imgs['.$i.'][]" type="text" style="max-width:50px;" value="'.$image->image_order.'" />'.
+				'<br><input name="imgs['.$i.'][]" type="number" style="max-width:50px;" value="'.$image->image_order.'" />'.
 				'<input name="imgs['.$i.'][]" type="hidden" value="'.$image->id.'" />'.
 				'</span>';
 			$i++;

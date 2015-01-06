@@ -14,7 +14,7 @@ class MassTaggerTheme extends Themelet {
 					<br />
 					<input type='hidden' name='ids' id='mass_tagger_ids' />
 					Set instead of add? <input type='checkbox' name='setadd' value='set' />
-					<label>Tags: <input type='text' name='tag' /></label>
+					<label>Tags: <input type='text' name='tag' class='autocomplete_tags' autocomplete='off' /></label>
 
 					<input type='submit' value='Tag Marked Images' />
 				</div>

@@ -38,7 +38,7 @@ EOD
 		$search_html = "
 			<div class='space' id='search'>
 				<form action='".make_link("post/list")."' method='GET'>
-				<input name='search' size='30' type='text' value='' class='autocomplete_tags' autofocus='autofocus' autocomplete='off' />
+				<input name='search' size='30' type='search' value='' class='autocomplete_tags' autofocus='autofocus' autocomplete='off' />
 				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Search'/>
 				</form>
