@@ -11,7 +11,7 @@ class RotateImageTheme extends Themelet {
 		$html = "
 			".make_form(make_link('rotate/'.$image_id), 'POST')."
 				<input type='hidden' name='image_id' value='$image_id'>
-				<input id='rotate_deg' name='rotate_deg' type='text' placeholder='Rotation degrees'>
+				<input id='rotate_deg' name='rotate_deg' type='number' placeholder='Rotation degrees'>
 				<input id='rotatebutton' type='submit' value='Rotate'>
 			</form>
 		";

@@ -53,7 +53,7 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
-		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case'>";
+		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case' class='autocomplete_tags' autocomplete='off'>";
 		$html .= "<input type='submit' value='Set Tag Case'>";
 		$html .= "</form>\n";
 		$page->add_block(new Block("Set Tag Case", $html));

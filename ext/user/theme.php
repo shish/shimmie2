@@ -56,10 +56,10 @@ class UserPageTheme extends Themelet {
 		'.make_form(make_link("user_admin/create"))."
 			<table class='form'>
 				<tbody>
-					<tr><th>Name</th><td><input type='text' name='name'></td></tr>
-					<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
-					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2'></td></tr>
-					<tr><th>Email&nbsp;(Optional)</th><td><input type='text' name='email'></td></tr>
+					<tr><th>Name</th><td><input type='text' name='name' required></td></tr>
+					<tr><th>Password</th><td><input type='password' name='pass1' required></td></tr>
+					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2' required></td></tr>
+					<tr><th>Email&nbsp;(Optional)</th><td><input type='email' name='email'></td></tr>
 					$h_reca
 				</tbody>
 				<tfoot>

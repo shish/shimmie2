@@ -19,8 +19,8 @@ class AliasEditorTheme extends Themelet {
 			$h_add = "
 				<tr>
 					".make_form(make_link("alias/add"))."
-						<td><input type='text' name='oldtag'></td>
-						<td><input type='text' name='newtag'></td>
+						<td><input type='text' name='oldtag' class='autocomplete_tags' autocomplete='off'></td>
+						<td><input type='text' name='newtag' class='autocomplete_tags' autocomplete='off'></td>
 						<td><input type='submit' value='Add'></td>
 					</form>
 				</tr>
