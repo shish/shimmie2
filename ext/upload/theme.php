@@ -20,7 +20,7 @@ class UploadTheme extends Themelet {
 			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td width='20'>Tags<td colspan='5'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
+					<tr><td width='20'>Tags<td colspan='5'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' autocomplete='off'></td></tr>
 					<tr><td>Source</td><td colspan='5'><input name='source' type='text'></td></tr>
 					<tr><td colspan='6'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
@@ -336,7 +336,7 @@ class UploadTheme extends Themelet {
 			<div class='mini_upload'>
 			".make_form(make_link("upload"), "POST", $multipart=True)."
 				$upload_list
-				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' required='required'>
+				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' required='required' autocomplete='off'>
 				<input type='submit' value='Post'>
 			</form>
 			<small>(Max file size is $max_kb)</small>
