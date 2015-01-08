@@ -8,6 +8,7 @@ class HomeTheme extends Themelet {
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel='stylesheet' href='$base_href/themes/$theme_name/style.css' type='text/css'>
 	</head>
 	<style>
@@ -16,6 +17,10 @@ class HomeTheme extends Themelet {
 		.space {margin-bottom: 1em;}
 		div#front-page div#links a {margin: 0 0.5em;}
 		div#front-page li {list-style-type: none; margin: 0;}
+		@media (max-width: 800px) {
+			div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
+			#counter {display: none;}
+		}
 	</style>
 	<body>
 		$body
