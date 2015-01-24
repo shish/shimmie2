@@ -123,7 +123,7 @@ class _SafeOuroborosImage
      * Post tags
      * @var string
      */
-    public $tags = '';
+    public $tags = 'tagme';
     /**
      * Flag if the post has child posts
      * @var bool
@@ -265,13 +265,18 @@ class OuroborosPost extends _SafeOuroborosImage
     /**
      * Initialize an OuroborosPost for creation
      * Mainly just acts as a wrapper and validation layer
-     * @TODO implement more validation from OuroborosAPI
-     * @param array $post
+     * @param   array   $post
+     * @param   string  $md5
      */
-    public function __construct(array $post)
+    public function __construct(array $post, $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
-            $this->tags = $post['tags'];
+            $this->tags = Tag::implode(
+                array_map(
+                    array('Tag', 'sanitise'),
+                    Tag::explode(urldecode($post['tags']))
+                )
+            );
         }
         if (array_key_exists('file', $post)) {
             if (!is_null($post['file'])) {
@@ -290,22 +295,46 @@ class OuroborosPost extends _SafeOuroborosImage
             $this->rating = $post['rating'];
         }
         if (array_key_exists('source', $post)) {
-            $this->file_url = $post['source'];
+            $this->file_url = filter_var(
+                urldecode($post['source']),
+                FILTER_SANITIZE_URL
+            );
         }
         if (array_key_exists('sourceurl', $post)) {
-            $this->source = $post['sourceurl'];
+            $this->source = filter_var(
+                urldecode($post['sourceurl']),
+                FILTER_SANITIZE_URL
+            );
         }
         if (array_key_exists('description', $post)) {
-            $this->description = $post['description'];
+            $this->description = filter_var(
+                $post['description'],
+                FILTER_SANITIZE_STRING
+            );
         }
         if (array_key_exists('is_rating_locked', $post)) {
+            assert(
+                $post['is_rating_locked'] == 'true' ||
+                $post['is_rating_locked'] == 'false' ||
+                $post['is_rating_locked'] == '1' ||
+                $post['is_rating_locked'] == '0'
+            );
             $this->is_rating_locked = $post['is_rating_locked'];
         }
         if (array_key_exists('is_note_locked', $post)) {
+            assert(
+                $post['is_note_locked'] == 'true' ||
+                $post['is_note_locked'] == 'false' ||
+                $post['is_note_locked'] == '1' ||
+                $post['is_note_locked'] == '0'
+            );
             $this->is_note_locked = $post['is_note_locked'];
         }
         if (array_key_exists('parent_id', $post)) {
-            $this->parent_id = $post['parent_id'];
+            $this->parent_id = filter_var(
+                $post['parent_id'],
+                FILTER_SANITIZE_NUMBER_INT
+            );
         }
     }
 }
@@ -330,6 +359,7 @@ class OuroborosAPI extends Extension
 {
     private $event;
     private $type;
+
     const HEADER_HTTP_200 = 'OK';
     const MSG_HTTP_200 = 'Request was successful';
 
@@ -365,6 +395,7 @@ class OuroborosAPI extends Extension
 
     const ERROR_POST_CREATE_MD5 = 'MD5 mismatch';
     const ERROR_POST_CREATE_DUPE = 'Duplicate';
+    const OK_POST_CREATE_UPDATE = 'Updated';
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -384,50 +415,9 @@ class OuroborosAPI extends Extension
             if ($event->page_matches('post')) {
                 if ($this->match('create')) {
                     // Create
-                    // @TODO Should move the validation logic into OuroborosPost instead?
                     if ($user->can("create_image")) {
-                        $post = array(
-                            'tags' => !empty($_REQUEST['post']['tags']) ? Tag::implode(
-                                    array_map(
-                                        array('Tag', 'sanitise'),
-                                        Tag::explode(urldecode($_REQUEST['post']['tags']))
-                                    )
-                                ) : 'tagme',
-                            'file' => !empty($_REQUEST['post']['file']) ? filter_var(
-                                    $_REQUEST['post']['file'],
-                                    FILTER_UNSAFE_RAW
-                                ) : null,
-                            'rating' => !empty($_REQUEST['post']['rating']) ? filter_var(
-                                    $_REQUEST['post']['rating'],
-                                    FILTER_SANITIZE_NUMBER_INT
-                                ) : 'q',
-                            'source' => !empty($_REQUEST['post']['source']) ? filter_var(
-                                    urldecode($_REQUEST['post']['source']),
-                                    FILTER_SANITIZE_URL
-                                ) : null,
-                            'sourceurl' => !empty($_REQUEST['post']['sourceurl']) ? filter_var(
-                                    urldecode($_REQUEST['post']['sourceurl']),
-                                    FILTER_SANITIZE_URL
-                                ) : '',
-                            'description' => !empty($_REQUEST['post']['description']) ? filter_var(
-                                    $_REQUEST['post']['description'],
-                                    FILTER_SANITIZE_STRING
-                                ) : '',
-                            'is_rating_locked' => !empty($_REQUEST['post']['is_rating_locked']) ? filter_var(
-                                    $_REQUEST['post']['is_rating_locked'],
-                                    FILTER_SANITIZE_NUMBER_INT
-                                ) : false,
-                            'is_note_locked' => !empty($_REQUEST['post']['is_note_locked']) ? filter_var(
-                                    $_REQUEST['post']['is_note_locked'],
-                                    FILTER_SANITIZE_NUMBER_INT
-                                ) : false,
-                            'parent_id' => !empty($_REQUEST['post']['parent_id']) ? filter_var(
-                                    $_REQUEST['post']['parent_id'],
-                                    FILTER_SANITIZE_NUMBER_INT
-                                ) : null,
-                        );
                         $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
-                        $this->postCreate(new OuroborosPost($post), $md5);
+                        $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                     } else {
                         $this->sendResponse(403, 'You cannot create new posts');
                     }
@@ -500,7 +490,8 @@ class OuroborosAPI extends Extension
     protected function postCreate(OuroborosPost $post, $md5 = '')
     {
         global $page, $config, $user;
-        if (!empty($md5)) {
+        $handler = $config->get_string("upload_collision_handler");
+        if (!empty($md5) && !($handler == 'merge')) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
                 $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
@@ -542,8 +533,22 @@ class OuroborosAPI extends Extension
         if (!empty($meta['hash'])) {
             $img = Image::by_hash($meta['hash']);
             if (!is_null($img)) {
-                $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
-                return;
+                $handler = $config->get_string("upload_collision_handler");
+                if($handler == "merge") {
+                    $merged = array_merge(Tag::explode($post->tags), $img->get_tag_array());
+                    send_event(new TagSetEvent($img, $merged));
+
+                    // This is really the only thing besides tags we should care
+                    if(isset($meta['source'])){
+                        send_event(new SourceSetEvent($img, $meta['source']));
+                    }
+                    $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
+                    return;
+                }
+                else {
+                    $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
+                    return;
+                }
             }
         }
         $meta['extension'] = pathinfo($meta['filename'], PATHINFO_EXTENSION);
@@ -573,17 +578,12 @@ class OuroborosAPI extends Extension
     protected function postShow($id = null)
     {
         if (!is_null($id)) {
-			$image = Image::by_id($id);
-			if ( ! $image instanceof Image) {
-				$this->sendResponse(404, 'ID not found');
-			} else {
-				$post = new _SafeOuroborosImage($image);
-				$this->sendData('post', $post);
-			}
-		} else {
-			$this->sendResponse(424, 'ID is mandatory');
-		}
-	}
+            $post = new _SafeOuroborosImage(Image::by_id($id));
+            $this->sendData('post', $post);
+        } else {
+            $this->sendResponse(424, 'ID is mandatory');
+        }
+    }
 
     /**
      * Wrapper for getting a list of posts
