@@ -180,11 +180,11 @@ class TagList extends Extension {
 			ORDER BY SCORE_STRNORM(substr(tag, 1, 1))
 		"), array("tags_min"=>$tags_min));
 
-		$html = "";
+		$html = "<span class='atoz'>";
 		foreach($tag_data as $a) {
 			$html .= " <a href='".modify_current_url(array("starts_with"=>$a))."'>$a</a>";
 		}
-		$html .= "<p><hr>";
+		$html .= "</span>\n<p><hr>";
 
 		return $html;
 	}
