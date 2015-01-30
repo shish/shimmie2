@@ -14,7 +14,7 @@ class Handle404 extends Extension {
 		// hax.
 		if($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
 			$h_pagename = html_escape(implode('/', $event->args));
-			$f_pagename = preg_replace("/[^a-z\.]+/", "_", $h_pagename);
+			$f_pagename = preg_replace("/[^a-z_\-\.]+/", "_", $h_pagename);
 			$theme_name = $config->get_string("theme", "default");
 
 			if(file_exists("themes/$theme_name/$f_pagename") || file_exists("lib/static/$f_pagename")) {
