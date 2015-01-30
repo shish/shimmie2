@@ -138,7 +138,7 @@ class AliasEditor extends Extension {
 		$csv = "";
 		$aliases = $database->get_pairs("SELECT oldtag, newtag FROM aliases ORDER BY newtag");
 		foreach($aliases as $old => $new) {
-			$csv .= "$old,$new\n";
+			$csv .= "\"$old\",\"$new\"\n";
 		}
 		return $csv;
 	}
@@ -150,7 +150,7 @@ class AliasEditor extends Extension {
 	private function add_alias_csv(Database $database, /*string*/ $csv) {
 		$csv = str_replace("\r", "\n", $csv);
 		foreach(explode("\n", $csv) as $line) {
-			$parts = explode(",", $line);
+			$parts = str_getcsv($line);
 			if(count($parts) == 2) {
 				$pair = array("oldtag" => $parts[0], "newtag" => $parts[1]);
 				if(!$database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)){
