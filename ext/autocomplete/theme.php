@@ -21,6 +21,44 @@ class AutoCompleteTheme extends Themelet {
 						}else{
 							ui.tag.addClass('tag-positive');
 						}
+					},
+					autocomplete : ({
+						source: function (request, response) {
+							var isNegative = (request.term[0] === '-');
+							$.ajax({
+								url: base_href + '/api/internal/autocomplete',
+								data: {'s': (isNegative ? request.term.substring(1) : request.term)},
+								dataType : 'json',
+								type : 'GET',
+								success : function (data) {
+									response($.map(data, function (item) {
+										item = (isNegative ? '-'+item : item);
+										return {
+											label : item,
+											value : item
+										}
+									}));
+								},
+								error : function (request, status, error) {
+									alert(error);
+								}
+							});
+						},
+						minLength: 1
+					})
+				});
+
+				$('.ui-autocomplete-input').keydown(function(e) {
+					var keyCode = e.keyCode || e.which;
+
+					if (keyCode == 9) {
+						e.preventDefault();
+
+						var tag = $('.tagit-autocomplete:not([style*=\"display: none\"]) > li:first').text();
+						if(tag){
+							$('[name=search]').tagit('createTag', tag);
+							$('.ui-autocomplete-input').autocomplete('close');
+						}
 					}
 				});
 			});
