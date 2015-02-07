@@ -84,15 +84,16 @@ class TagEditTheme extends Themelet {
 		global $user;
 		$h_source = html_escape($image->get_source());
 		$f_source = $this->format_source($image->get_source());
+		$style = "overflow: hidden; white-space: nowrap; max-width: 350px; text-overflow: ellipsis;";
 		return "
 			<tr>
 				<th>Source</th>
 				<td>
 		".($user->can("edit_image_source") ? "
-					<span class='view' style='overflow: hidden; white-space: nowrap;'>$f_source</span>
+					<div class='view' style='$style'>$f_source</div>
 					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
 		" : "
-					<span style='overflow: hidden; white-space: nowrap;'>$f_source</span>
+					<div style='$style'>$f_source</div>
 		")."
 				</td>
 			</tr>
