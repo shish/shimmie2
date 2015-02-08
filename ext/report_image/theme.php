@@ -84,5 +84,17 @@ class ReportImageTheme extends Themelet {
 		";
 		$page->add_block(new Block("Report Image", $html, "left"));
 	}
+
+	public function get_nuller(User $duser) {
+		global $user, $page;
+		$html = "
+			<form action='".make_link("image_report/remove_reports_by")."' method='POST'>
+			".$user->get_auth_html()."
+			<input type='hidden' name='user_id' value='{$duser->id}'>
+			<input type='submit' value='Delete all reports by this user'>
+			</form>
+		";
+		$page->add_block(new Block("Reports", $html, "main", 80));
+	}
 }
 

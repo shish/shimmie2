@@ -76,6 +76,13 @@ class ReportImage extends Extension {
 					$this->theme->display_error(500, "Missing input", "Missing image ID");
 				}
 			}
+			else if($event->get_arg(0) == "remove_reports_by" && $user->check_auth_token()) {
+				if($user->can("view_image_report")) {
+					$this->delete_reports_by(int_escape($_POST['user_id']));
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link());
+				}
+			}
 			else if($event->get_arg(0) == "list") {
 				if($user->can("view_image_report")) {
 					$this->theme->display_reported_images($page, $this->get_reported_images());
@@ -100,6 +107,13 @@ class ReportImage extends Extension {
 		$database->cache->delete("image-report-count");
 	}
 
+	public function onUserPageBuilding(UserPageBuildingEvent $event) {
+		global $page, $user;
+		if($user->can("view_image_report")) {
+			$this->theme->get_nuller($event->display_user);
+		}
+	}
+
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $user, $page;
 		if($user->can('create_image_report')) {
@@ -120,6 +134,16 @@ class ReportImage extends Extension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 		$database->Execute("DELETE FROM image_reports WHERE image_id = ?", array($event->image->id));
+		$database->cache->delete("image-report-count");
+	}
+
+	public function onUserDeletion(UserDeletionEvent $event) {
+		$this->delete_reports_by($event->id);
+	}
+
+	public function delete_reports_by(/*int*/ $user_id) {
+		global $database;
+		$database->execute("DELETE FROM image_reports WHERE reporter_id=?", array($user_id));
 		$database->cache->delete("image-report-count");
 	}
 
