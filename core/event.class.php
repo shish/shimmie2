@@ -118,7 +118,7 @@ class PageRequestEvent extends Event {
 	 * @return int
 	 */
 	public function count_args() {
-		return (int)($this->arg_count - $this->part_count);
+		return int_escape($this->arg_count - $this->part_count);
 	}
 
 	/*
