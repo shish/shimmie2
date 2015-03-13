@@ -74,7 +74,7 @@ class ArrowkeyNavigation extends Extension {
 				"SELECT COUNT(*) FROM images") / $images_per_page);
 		}
 		else { // if there are tags, use pages with tags
-			$prefix = $event->get_arg(0)."/";
+			$prefix = url_escape($event->get_arg(0)) . "/";
 			$page_number = int_escape($event->get_arg(1));
 			$total_pages = ceil($database->get_one(
 				"SELECT count FROM tags WHERE tag=:tag",
