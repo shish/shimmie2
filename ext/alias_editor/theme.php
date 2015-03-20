@@ -55,7 +55,7 @@ class AliasEditorTheme extends Themelet {
 				<tbody>$h_aliases</tbody>
 				<tfoot>$h_add</tfoot>
 			</table>
-			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
+			<p><a href='".make_link("alias/export/aliases.csv")."' download='aliases.csv'>Download as CSV</a></p>
 		";
 
 		$bulk_html = "
