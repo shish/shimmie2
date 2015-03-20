@@ -84,7 +84,8 @@ class AliasEditor extends Extension {
 			}
 			else if($event->get_arg(0) == "export") {
 				$page->set_mode("data");
-				$page->set_type("text/plain");
+				$page->set_type("text/csv");
+				$page->set_filename("aliases.csv");
 				$page->set_data($this->get_alias_csv($database));
 			}
 			else if($event->get_arg(0) == "import") {
