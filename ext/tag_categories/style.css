@@ -1,0 +1,33 @@
+.tagcategoryblock {
+	margin:0.6rem 1rem 0.6rem 0;
+	padding:0.5rem 0.6rem 0.7rem;
+	width:18rem;
+	border:1px solid #AAAAAA;
+	border-radius:0.25rem;
+	display:inline-block;
+}
+.tagcategoryblock table {
+	width:100%;
+	border-spacing:0;
+}
+.tagcategoryblock input, .tagcategoryblock span {
+	width:100%;
+	height:100%;
+}
+.tagcategoryblock td:first-child {
+	padding:0.3rem 0.7rem 0.4rem 0;
+	text-align:right;
+	width:40%;
+}
+.tagcategoryblock td:last-child {
+	width:60%;
+}
+.tagcategoryblock td:last-child span {
+	padding:0.24rem 0.7rem 0.5rem 0;
+	display:block;
+}
+.tagcategoryblock button {
+	width:100%;
+	margin-top:0.4rem;
+	padding:0.2rem 0.6rem;
+}
