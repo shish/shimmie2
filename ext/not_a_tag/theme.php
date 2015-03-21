@@ -5,7 +5,7 @@ class NotATagTheme extends Themelet {
 		foreach($bans as $ban) {
 			$h_bans .= "
 				<tr>
-					".make_form(make_link("untag/remove"))."
+					".make_form("untag/remove")."
 						<td width='30%'>{$ban['tag']}</td>
 						<td>{$ban['redirect']}</td>
 						<td width='10%'>
@@ -21,7 +21,7 @@ class NotATagTheme extends Themelet {
 				<thead>
 					<th>Tag</th><th>Redirect</th><th>Action</th>
 					<tr>
-						<form action='".make_link("untag/list/1")."' method='GET'>
+						".make_form("untag/list/1", "GET")."
 							<td><input type='text' name='tag' class='autocomplete_tags' autocomplete='off'></td>
 							<td><input type='text' name='redirect'></td>
 							<td><input type='submit' value='Search'></td>
@@ -30,7 +30,7 @@ class NotATagTheme extends Themelet {
 				</thead>
 				$h_bans
 				<tfoot><tr>
-					".make_form(make_link("untag/add"))."
+					".make_form("untag/add")."
 						<td><input type='text' name='tag' class='autocomplete_tags' autocomplete='off'></td>
 						<td><input type='text' name='redirect'></td>
 						<td><input type='submit' value='Ban'></td>

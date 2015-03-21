@@ -62,9 +62,8 @@ and of course start organising your images :-)
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
-			<p><form action='$h_search_link' method='GET'>
+			<p>".make_form(NULL, "GET")."
 				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />
-				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		";

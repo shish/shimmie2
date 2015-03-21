@@ -25,7 +25,7 @@ class ImageBanTheme extends Themelet {
 		foreach($bans as $ban) {
 			$h_bans .= "
 				<tr>
-					".make_form(make_link("image_hash_ban/remove"))."
+					".make_form("image_hash_ban/remove")."
 						<td width='30%'>{$ban['hash']}</td>
 						<td>{$ban['reason']}</td>
 						<td width='10%'>
@@ -41,7 +41,7 @@ class ImageBanTheme extends Themelet {
 				<thead>
 					<th>Hash</th><th>Reason</th><th>Action</th>
 					<tr>
-						<form action='".make_link("image_hash_ban/list/1")."' method='GET'>
+						".make_form("image_hash_ban/list/1", "GET")."
 							<td><input type='text' name='hash'></td>
 							<td><input type='text' name='reason'></td>
 							<td><input type='submit' value='Search'></td>
@@ -50,7 +50,7 @@ class ImageBanTheme extends Themelet {
 				</thead>
 				$h_bans
 				<tfoot><tr>
-					".make_form(make_link("image_hash_ban/add"))."
+					".make_form("image_hash_ban/add")."
 						<td><input type='text' name='hash'></td>
 						<td><input type='text' name='reason'></td>
 						<td><input type='submit' value='Ban'></td>
@@ -82,7 +82,7 @@ class ImageBanTheme extends Themelet {
 	 */
 	public function get_buttons_html(Image $image) {
 		$html = "
-			".make_form(make_link("image_hash_ban/add"))."
+			".make_form("image_hash_ban/add")."
 				<input type='hidden' name='hash' value='{$image->hash}'>
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input type='text' name='reason'>

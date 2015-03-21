@@ -5,7 +5,7 @@ class BlocksTheme extends Themelet {
 
 		$html = "<table class='form' style='width: 100%;'>";
 		foreach($blocks as $block) {
-			$html .= make_form(make_link("blocks/update"));
+			$html .= make_form("blocks/update", "POST", array(), TRUE);
 			$html .= "<input type='hidden' name='id' value='".html_escape($block['id'])."'>";
 			$html .= "<tr>";
 			$html .= "<th>Title</th><td><input type='text' name='title' value='".html_escape($block['title'])."'></td>";
@@ -23,7 +23,7 @@ class BlocksTheme extends Themelet {
 			$html .= "</tr>\n";
 			$html .= "</form>\n";
 		}
-		$html .= make_form(make_link("blocks/add"));
+		$html .= make_form("blocks/add", "POST", array(), TRUE);
 			$html .= "<tr>";
 			$html .= "<th>Title</th><td><input type='text' name='title' value=''></td>";
 			$html .= "<th>Area</th><td><select name='area'><option>left<option>main</select></td>";

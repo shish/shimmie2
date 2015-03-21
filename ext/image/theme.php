@@ -11,7 +11,7 @@ class ImageIOTheme extends Themelet {
 		global $config;
 
 		$html = "
-			".make_form(make_link("image/delete"))."
+			".make_form("image/delete", "POST", array(), TRUE)."
 				<input type='hidden' name='image_id' value='$image_id' />
 				<input type='submit' value='Delete' onclick='return confirm(\"Delete the image?\");' />
 			</form>
@@ -27,7 +27,7 @@ class ImageIOTheme extends Themelet {
 	 * @return string
 	 */
 	public function get_replace_html(/*int*/ $image_id) {
-		$html = make_form(make_link("image/replace"))."
+		$html = make_form("image/replace", "POST", array(), TRUE)."
 					<input type='hidden' name='image_id' value='$image_id' />
 					<input type='submit' value='Replace' />
 				</form>";

@@ -34,18 +34,18 @@ class BlotterTheme extends Themelet {
 		// Add_new stuff goes here.
 		$table_header =  "
 			<tr>
-			<th>Date</th>
-			<th>Message</th>
-			<th>Important?</th>
-			<th>Action</th>
+				<th>Date</th>
+				<th>Message</th>
+				<th>Important?</th>
+				<th>Action</th>
 			</tr>";
 		$add_new = "
 			<tr class='even'>
-			".make_form(make_link("blotter/add"))."
-			<td colspan='2'><textarea style='text-align:left;' name='entry_text' rows='2' /></textarea></td>
-			<td><input type='checkbox' name='important' /></td>
-			<td><input type='submit' value='Add'></td>
-			</form>
+				".make_form("blotter/add", "POST", array(), TRUE)."
+					<td colspan='2'><textarea style='text-align:left;' name='entry_text' rows='2' /></textarea></td>
+					<td><input type='checkbox' name='important' /></td>
+					<td><input type='submit' value='Add'></td>
+				</form>
 			</tr>";
 
 
@@ -62,17 +62,17 @@ class BlotterTheme extends Themelet {
 			if($entries[$i]['important'] == 'Y') { $important = 'Y'; } else { $important = 'N'; }
 
 			// Add the new table row(s)
-			$table_rows .= 
-				"<tr>
-				<td>$entry_date</td>
-				<td>$entry_text</td>
-				<td>$important</td>
-				<td><form name='remove$id' method='post' action='".make_link("blotter/remove")."'>
-				".$user->get_auth_html()."
-				<input type='hidden' name='id' value='$id' />
-				<input type='submit' style='width: 100%;' value='Remove' />
-				</form>
-				</td>
+			$table_rows .= "
+				<tr>
+					<td>$entry_date</td>
+					<td>$entry_text</td>
+					<td>$important</td>
+					<td>
+					".make_form("blotter/remove", "POST", array("name" => "remove$id"), TRUE)."
+						<input type='hidden' name='id' value='$id' />
+						<input type='submit' style='width: 100%;' value='Remove' />
+					</form>
+					</td>
 				</tr>";
 		}
 

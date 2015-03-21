@@ -29,46 +29,39 @@ class ArtistsTheme extends Themelet {
 		$html = "";
 
 		if($mode == "neutral"){
-			$html = "<form method='post' action='".make_link("artist/new_artist")."'>
-						".$user->get_auth_html()."
+			$html = make_form("artist/new_artist", "POST", array(), TRUE)."
 						<input type='submit' name='edit' id='edit' value='New Artist'/>
 					</form>";
 		}
 		
 		if($mode == "editor"){
-			$html = "<form method='post' action='".make_link("artist/new_artist")."'>
-						".$user->get_auth_html()."
+			$html = make_form("artist/new_artist", "POST", array(), TRUE)."
 						<input type='submit' name='edit' id='edit' value='New Artist'/>
 					</form>
 					
-					<form method='post' action='".make_link("artist/edit_artist")."'>
-						".$user->get_auth_html()."
+					".make_form("artist/edit_artist", "POST", array(), TRUE)."
 						<input type='submit' name='edit' id='edit' value='Edit Artist'/>
 						<input type='hidden' name='artist_id' value='".$artistID."'>
 					</form>";
 					
 			if($is_admin){
-				$html .= "<form method='post' action='".make_link("artist/nuke_artist")."'>
-							".$user->get_auth_html()."
+				$html .= make_form("artist/nuke_artist", "POST", array(), TRUE)."
 							<input type='submit' name='edit' id='edit' value='Delete Artist'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
 			}
 			
-			$html .= "<form method='post' action='".make_link("artist/add_alias")."'>
-							".$user->get_auth_html()."
+			$html .= make_form("artist/add_alias", "POST", array(), TRUE)."
 							<input type='submit' name='edit' id='edit' value='Add Alias'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
 						
-						<form method='post' action='".make_link("artist/add_member")."'>
-							".$user->get_auth_html()."
+						".make_form("artist/add_member", "POST", array(), TRUE)."
 							<input type='submit' name='edit' id='edit' value='Add Member'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
 						
-						<form method='post' action='".make_link("artist/add_url")."'>
-							".$user->get_auth_html()."
+						".make_form("artist/add_url", "POST", array(), TRUE)."
 							<input type='submit' name='edit' id='edit' value='Add Url'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
@@ -118,10 +111,8 @@ class ArtistsTheme extends Themelet {
 			$urlsString = substr($urlsString, 0, strlen($urlsString) -1);
 			$urlsIDsString = rtrim($urlsIDsString);
 
-			$html =
-'
-			<form method="POST" action="'.make_link("artist/edited/".$artist['id']).'">
-				'.$user->get_auth_html().'
+			$html = '
+			'.make_form("artist/edited/".$artist['id'], "POST", array(), TRUE).'
 				<table>
 					<tr><td>Name:</td><td><input type="text" name="name" value="'.$artistName.'" />
 										  <input type="hidden" name="id" value="'.$artistID.'" /></td></tr>
@@ -134,9 +125,7 @@ class ArtistsTheme extends Themelet {
 					<tr><td>Notes:</td><td><textarea name="notes">'.$artistNotes.'</textarea></td></tr>
 					<tr><td colspan="2"><input type="submit" value="Submit" /></td></tr>
 				</table>
-			</form>
-				
-';
+			</form>';
 
 			global $page;
 			$page->add_block(new Block("Edit artist", $html, "main", 10));
@@ -146,8 +135,7 @@ class ArtistsTheme extends Themelet {
 		{
 			global $page, $user;
 
-			$html = "<form action=".make_link("artist/create")." method='POST'>
-							".$user->get_auth_html()."
+			$html = make_form("artist/create", "POST", array(), TRUE)."
 							<table>
 									<tr><td>Name:</td><td><input type='text' name='name' /></td></tr>
 									<tr><td>Aliases:</td><td><input type='text' name='aliases' /></td></tr>
@@ -241,8 +229,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'<form method="POST" action='.make_link("artist/alias/add").'>
-				'.$user->get_auth_html().'
+			make_form("artist/alias/add", "POST", array(), TRUE).'
 				  <table>
 					<tr><td>Alias:</td><td><input type="text" name="aliases" />
 										   <input type="hidden" name="artistID" value='.$artistID.' /></td></tr>
@@ -259,8 +246,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'   <form method="POST" action='.make_link("artist/member/add").'>					
-				'.$user->get_auth_html().'
+			make_form("artist/member/add", "POST", array(), TRUE).'
 					<table>
 						<tr><td>Members:</td><td><input type="text" name="members" />
 											   <input type="hidden" name="artistID" value='.$artistID.' /></td></tr>
@@ -278,8 +264,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'   <form method="POST" action='.make_link("artist/url/add").'>					
-				'.$user->get_auth_html().'
+			make_form("artist/url/add", "POST", array(), TRUE).'
 					<table>
 						<tr><td>URL:</td><td><textarea name="urls"></textarea>
 											   <input type="hidden" name="artistID" value='.$artistID.' /></td></tr>
@@ -297,9 +282,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'
-				<form method="POST" action="'.make_link("artist/alias/edited/".$alias['id']).'">
-					'.$user->get_auth_html().'
+			make_form("artist/alias/edited/".$alias['id'], "POST", array(), TRUE).'
 					<label for="alias">Alias:</label>
 					<input type="text" name="alias" value="'.$alias['alias'].'" />
 					<input type="hidden" name="aliasID" value="'.$alias['id'].'" />
@@ -316,9 +299,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'
-				<form method="POST" action="'.make_link("artist/url/edited/".$url['id']).'">
-					'.$user->get_auth_html().'
+			make_form("artist/url/edited/".$url['id'], "POST", array(), TRUE).'
 					<label for="url">URL:</label>
 					<input type="text" name="url" value="'.$url['url'].'" />
 					<input type="hidden" name="urlID" value="'.$url['id'].'" />
@@ -335,9 +316,7 @@ class ArtistsTheme extends Themelet {
 			global $user;
 
 			$html =
-			'
-				<form method="POST" action="'.make_link("artist/member/edited/".$member['id']).'">
-					'.$user->get_auth_html().'
+			make_form("artist/member/edited/".$member['id'], "POST", array(), TRUE).'
 					<label for="member">Member name:</label>
 					<input type="text" name="name" value="'.$member['name'].'" />
 					<input type="hidden" name="memberID" value="'.$member['id'].'" />

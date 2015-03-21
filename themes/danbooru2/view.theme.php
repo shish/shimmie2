@@ -65,10 +65,9 @@ class CustomViewImageTheme extends ViewImageTheme {
 	protected function build_navigation(Image $image) {
 		//$h_pin = $this->build_pin($image);
 		$h_search = "
-			<form action='".make_link()."' method='GET'>
+			".make_form(NULL, "GET")."
 				<input name='search' type='text'  style='width:75%'>
 				<input type='submit' value='Go' style='width:20%'>
-				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
 		";

@@ -9,7 +9,7 @@ class RegenThumbTheme extends Themelet {
 	 */
 	public function get_buttons_html($image_id) {
 		return "
-			".make_form(make_link("regen_thumb"))."
+			".make_form("regen_thumb")."
 			<input type='hidden' name='image_id' value='$image_id'>
 			<input type='submit' value='Regenerate Thumbnail'>
 			</form>

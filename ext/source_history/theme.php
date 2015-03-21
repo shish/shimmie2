@@ -11,7 +11,7 @@ class Source_HistoryTheme extends Themelet {
 		global $user;
 		$start_string = "
 			<div style='text-align: left'>
-				".make_form(make_link("source_history/revert"))."
+				".make_form("source_history/revert", "POST", array(), TRUE)."
 					<ul style='list-style-type:none;'>
 		";
 
@@ -58,7 +58,7 @@ class Source_HistoryTheme extends Themelet {
 	public function display_global_page(Page $page, /*array*/ $history, /*int*/ $page_number) {
 		$start_string = "
 			<div style='text-align: left'>
-				".make_form(make_link("source_history/revert"))."
+				".make_form("source_history/revert", "POST", array(), TRUE)."
 					<ul style='list-style-type:none;'>
 		";
 		$end_string = "
@@ -120,7 +120,7 @@ class Source_HistoryTheme extends Themelet {
 			<br>(Date format: 2011-10-23)
 			'.$validation_msg.'
 
-			<br><br>'.make_form(make_link("source_history/bulk_revert"), 'POST')."
+			<br><br>'.make_form("source_history/bulk_revert", "POST", array(), TRUE)."
 				<table class='form'>
 					<tr><th>Username</th>        <td><input type='text' name='revert_name' size='15'></td></tr>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>

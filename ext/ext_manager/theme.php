@@ -5,7 +5,7 @@ class ExtManagerTheme extends Themelet {
 		global $user;
 		$h_en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
-			".make_form(make_link("ext_manager/set"))."
+			".make_form("ext_manager/set", "POST", array(), TRUE)."
 				<script type='text/javascript'>
 				$(document).ready(function() {
 					$(\"#extensions\").tablesorter();
@@ -91,8 +91,7 @@ class ExtManagerTheme extends Themelet {
 			}
 		}
 		$html = "
-			".make_form(make_link("ext_manager/set"))."
-				".$user->get_auth_html()."
+			".make_form("ext_manager/set", "POST", array(), TRUE)."
 				<table border='0'>
 					<tr><td width='50%'>$col_1</td><td>$col_2</td></tr>
 					<tr><td colspan='2'><input type='submit' value='Set Extensions'></td></tr>

@@ -49,9 +49,8 @@ class OekakiTheme extends Themelet {
 			$oekH = int_escape($_POST['oekH']);
 		}
 
-		$page->add_block(new Block("Oekaki", 
-			"
-			<form form enctype='multipart/form-data' action='".make_link("oekaki/create")."' method='POST'>
+		$page->add_block(new Block("Oekaki",
+			make_form("oekaki/create", "POST", array("enctype" => "multipart/form-data"))."
 				<input autocomplete='off' style='width: auto;' name='oekW' type='text' size='3' value='".$oekW."'/>".
 				"x".
 				"<input autocomplete='off' style='width: auto;' name='oekH' type='text' size='3' value='".$oekH."'/>".

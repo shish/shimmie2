@@ -21,7 +21,7 @@ class LogDatabaseTheme extends Themelet {
 <table class='zebra'>
 	<thead>
 		<tr><th>Time</th><th>Module</th><th>User</th><th colspan='2'>Message</th></tr>
-		<form action='".make_link("log/view")."' method='GET'>
+		".make_form("log/view", "GET")."
 			<tr class='sizedinputs'>
 				<td><input type='time' name='time' value='".$this->heie("time")."'></td>
 				<td><input type='text' name='module' value='".$this->heie("module")."'></td>

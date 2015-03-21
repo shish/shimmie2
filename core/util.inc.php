@@ -422,23 +422,34 @@ function make_http(/*string*/ $link) {
  *
  * @param string $target
  * @param string $method
- * @param bool $multipart
- * @param string $form_id
- * @param string $onsubmit
+ * @param array  $extra_attributes
+ * @param bool   $auth_required
  *
  * @return string
  */
-function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
+function make_form($target=NULL, $method="POST", $extra_attributes=array(), $auth_required=FALSE) {
 	global $user;
-	$auth = $user->get_auth_html();
-	$extra = empty($form_id) ? '' : 'id="'. $form_id .'"';
-	if($multipart) {
-		$extra .= " enctype='multipart/form-data'";
+
+	$action      = make_link($target);
+	$nl_enabled  = "";
+	$extra       = "";
+
+	//Check for nice_urls. This assumes make_link is used.
+	//IDEA: Would it be better to just check for nice_urls properly (like in make_link), and generate the URL here instead?
+	if(strpos($action, '?q=') !== false){
+		list($action, $query) = explode('?q=', $action);
+		$nl_enabled = "<input type='hidden' name='q' value='{$query}' />";
 	}
-	if($onsubmit) {
-		$extra .= ' onsubmit="'.$onsubmit.'"';
-	}
-	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
+
+	//http://stackoverflow.com/a/507195
+	array_walk($extra_attributes, create_function('&$i,$k', '$i=" $k=\"$i\"";'));
+	$extra = implode($extra_attributes, "");
+
+	$auth = ($auth_required ? $user->get_auth_html() : "");
+
+	return '<form action="'.$action.'" method="'.$method.'" '.$extra.'>'.
+	        $nl_enabled.
+	        $auth;
 }
 
 /**

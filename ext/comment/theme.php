@@ -111,7 +111,7 @@ class CommentListTheme extends Themelet {
 		$html = '
 			Delete comments by IP.
 
-			<br><br>'.make_form(make_link("comment/bulk_delete"), 'POST')."
+			<br><br>'.make_form("comment/bulk_delete")."
 				<table class='form'>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='ip' size='15'></td></tr>
 					<tr><td colspan='2'><input type='submit' value='Delete'></td></tr>
@@ -311,7 +311,7 @@ class CommentListTheme extends Themelet {
 
 		return '
 		<div class="comment">
-			'.make_form(make_link("comment/add")).'
+			'.make_form("comment/add").'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
 				<textarea id="comment_on_'.$i_image_id.'" name="comment" rows="5" cols="50"></textarea>

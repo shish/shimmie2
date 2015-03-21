@@ -20,7 +20,7 @@ class AdminPageTheme extends Themelet {
 	 */
 	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
 		$c_protected = $protected ? " protected" : "";
-		$html = make_form(make_link("admin/$action"), "POST", false, null, null, "admin$c_protected");
+		$html = make_form("admin/$action", "POST", array("class" => "admin$c_protected"), TRUE);
 		if($protected) {
 			$html .= "<input type='submit' id='$action' value='$name' disabled='disabled'>";
 			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
@@ -52,7 +52,7 @@ class AdminPageTheme extends Themelet {
 			$html .= $this->button("Reset image IDs", "reset_image_ids", true);
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
-		$html = make_form(make_link("admin/set_tag_case"), "POST");
+		$html = make_form("admin/set_tag_case", "POST", array(), TRUE);
 		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case' class='autocomplete_tags' autocomplete='off'>";
 		$html .= "<input type='submit' value='Set Tag Case'>";
 		$html .= "</form>\n";
@@ -65,7 +65,7 @@ class AdminPageTheme extends Themelet {
 		if(class_exists("ImageBan")) {
 			$h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
 		}
-		$html = make_form(make_link("admin/delete_by_query"), "POST") . "
+		$html = make_form("admin/delete_by_query", "POST", array(), TRUE) . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
 				$h_reason

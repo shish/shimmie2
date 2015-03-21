@@ -28,7 +28,7 @@ class BulkAddTheme extends Themelet {
 			<br>Note: this is the folder as seen by the server -- you need to
 			upload via FTP or something first.
 
-			<p>".make_form(make_link("bulk_add"))."
+			<p>".make_form("bulk_add", "POST", array(), TRUE)."
 				<table class='form'>
 					<tr><th>Folder</th><td><input type='text' name='dir' size='40'></td></tr>
 					<tr><td colspan='2'><input type='submit' value='Add'></td></tr>

@@ -53,7 +53,7 @@ class UserPageTheme extends Themelet {
 		$h_reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
 
 		$html .= '
-		'.make_form(make_link("user_admin/create"))."
+		'.make_form("user_admin/create", "POST", array(), TRUE)."
 			<table class='form'>
 				<tbody>
 					<tr><th>Name</th><td><input type='text' name='name' required></td></tr>
@@ -86,7 +86,7 @@ class UserPageTheme extends Themelet {
 	public function display_login_block(Page $page) {
 		global $config;
 		$html = '
-			'.make_form(make_link("user_admin/login"))."
+			'.make_form("user_admin/login", "POST", array(), TRUE)."
 				<table style='width: 100%;' class='form'>
 					<tbody>
 						<tr>
@@ -166,7 +166,7 @@ class UserPageTheme extends Themelet {
 		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
 		
 			$html .= "
-			".make_form(make_link("user_admin/change_pass"))."
+			".make_form("user_admin/change_pass", "POST", array(), TRUE)."
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
 					<thead>
@@ -182,7 +182,7 @@ class UserPageTheme extends Themelet {
 				</table>
 			</form>
 
-			<p>".make_form(make_link("user_admin/change_email"))."
+			<p>".make_form("user_admin/change_email", "POST", array(), TRUE)."
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
 					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
@@ -204,7 +204,7 @@ class UserPageTheme extends Themelet {
 					$class_html .= "<option value='$h_name'$h_selected>$h_title</option>\n";
 				}
 				$html .= "
-					<p>".make_form(make_link("user_admin/change_class"))."
+					<p>".make_form("user_admin/change_class", "POST", array(), TRUE)."
 						<input type='hidden' name='id' value='$i_user_id'>
 						<table style='width: 300px;'>
 							<thead><tr><th colspan='2'>Change Class</th></tr></thead>
@@ -217,7 +217,7 @@ class UserPageTheme extends Themelet {
 
 			if($user->can("delete_user")) {
 				$html .= "
-					<p>".make_form(make_link("user_admin/delete_user"))."
+					<p>".make_form("user_admin/delete_user", "POST", array(), TRUE)."
 						<input type='hidden' name='id' value='$i_user_id'>
 						<table style='width: 300px;'>
 							<thead>

@@ -7,7 +7,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		$page->set_heading("Login");
 		$page->disable_left();
 		$html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
+			".make_form("user_admin/login")."
 				<table summary='Login Form'>
 					<tr>
 						<td width='70'><label for='user'>Name</label></td>
@@ -57,7 +57,7 @@ class CustomUserPageTheme extends UserPageTheme {
 		else {$html = "<p>$tac</p>";}
 
 		$html .= "
-		<form action='".make_link("user_admin/create")."' method='POST'>
+		".make_form("user_admin/create")."
 			<table style='width: 300px;'>
 				<tr><td>Name</td><td><input type='text' name='name'></td></tr>
 				<tr><td>Password</td><td><input type='password' name='pass1'></td></tr>

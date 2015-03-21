@@ -8,10 +8,10 @@ class FavoritesTheme extends Themelet {
 		$name  = $is_favorited ? "unset" : "set";
 		$label = $is_favorited ? "Un-Favorite" : "Favorite";
 		$html  = "
-			".make_form(make_link("change_favorite"))."
-			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='favorite_action' value='$name'>
-			<input type='submit' value='$label'>
+			".make_form("change_favorite", "POST", array(), TRUE)."
+				<input type='hidden' name='image_id' value='$i_image_id'>
+				<input type='hidden' name='favorite_action' value='$name'>
+				<input type='submit' value='$label'>
 			</form>
 		";
 
