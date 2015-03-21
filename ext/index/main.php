@@ -232,6 +232,7 @@ class Index extends Extension {
 		$config->set_default_int("index_images", 24);
 		$config->set_default_bool("index_tips", true);
 		$config->set_default_string("index_order", "id DESC");
+		$config->set_default_bool("list_controls", false);
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
@@ -292,7 +293,9 @@ class Index extends Extension {
 
 				$this->theme->set_page($page_number, $total_pages, $search_terms);
 				$this->theme->display_page($page, $images);
-				if(count($plbe->parts) > 0) {
+
+				//List Controls
+				if($config->get_bool("list_controls") && count($plbe->parts) > 0) {
 					$this->theme->display_admin_block($plbe->parts);
 				}
 			}
@@ -306,6 +309,8 @@ class Index extends Extension {
 		$sb->add_label("Show ");
 		$sb->add_int_option("index_images");
 		$sb->add_label(" images on the post list");
+
+		$sb->add_bool_option("list_controls", "<br>Show admin list controls: ");
 
 		$event->panel->add_block($sb);
 	}
