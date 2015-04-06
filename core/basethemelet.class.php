@@ -84,7 +84,7 @@ class BaseThemelet {
 	 * @param int $page_number
 	 * @param int $total_pages
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
 		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
@@ -129,7 +129,7 @@ class BaseThemelet {
 	 * @param string $query
 	 * @return string
 	 */
-	private function build_paginator($current_page, $total_pages, $base_url, $query, $show_random = FALSE) {
+	private function build_paginator($current_page, $total_pages, $base_url, $query, $show_random) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
 

@@ -11,7 +11,7 @@ class Themelet extends BaseThemelet {
 	 * @param int $total_pages
 	 * @param int $position
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->futaba_build_paginator($page_number, $total_pages, $base, $query);
 		$page->add_block(new Block(null, $body, "main", 90));
