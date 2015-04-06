@@ -84,9 +84,9 @@ class BaseThemelet {
 	 * @param int $page_number
 	 * @param int $total_pages
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random) {
 		if($total_pages == 0) $total_pages = 1;
-		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
+		$body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
 		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 	}
 
@@ -129,17 +129,22 @@ class BaseThemelet {
 	 * @param string $query
 	 * @return string
 	 */
-	private function build_paginator($current_page, $total_pages, $base_url, $query) {
+	private function build_paginator($current_page, $total_pages, $base_url, $query, $show_random = FALSE) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
 		$first_html  = $at_start ? "First" : $this->gen_page_link($base_url, $query, 1,            "First");
 		$prev_html   = $at_start ? "Prev"  : $this->gen_page_link($base_url, $query, $prev,        "Prev");
-		$random_html =                       $this->gen_page_link($base_url, $query, $rand,        "Random");
+
+		$random_html = "-";
+		if($show_random) {
+			$rand = mt_rand(1, $total_pages);
+			$random_html =                   $this->gen_page_link($base_url, $query, $rand,        "Random");
+		}
+
 		$next_html   = $at_end   ? "Next"  : $this->gen_page_link($base_url, $query, $next,        "Next");
 		$last_html   = $at_end   ? "Last"  : $this->gen_page_link($base_url, $query, $total_pages, "Last");
 
