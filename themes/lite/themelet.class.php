@@ -28,9 +28,9 @@ class Themelet extends BaseThemelet {
 	 * @param int $page_number
 	 * @param int $total_pages
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random) {
 		if($total_pages == 0) $total_pages = 1;
-		$body = $this->litetheme_build_paginator($page_number, $total_pages, $base, $query);
+		$body = $this->litetheme_build_paginator($page_number, $total_pages, $base, $query, $show_random);
 		$page->add_block(new Block(null, $body, "main", 90));
 	}
 
@@ -74,14 +74,19 @@ class Themelet extends BaseThemelet {
 	public function litetheme_build_paginator($current_page, $total_pages, $base_url, $query) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
 		$first_html  = $at_start ? "<span class='tab'>First</span>" : $this->litetheme_gen_page_link($base_url, $query, 1,            "First");
 		$prev_html   = $at_start ? "<span class='tab'>Prev</span>"  : $this->litetheme_gen_page_link($base_url, $query, $prev,        "Prev");
-		$random_html =                                                $this->litetheme_gen_page_link($base_url, $query, $rand,        "Random");
+
+		$random_html = "";
+		if($show_random) {
+			$rand = mt_rand(1, $total_pages);
+			$random_html =                                            $this->litetheme_gen_page_link($base_url, $query, $rand,        "Random");
+		}
+
 		$next_html   = $at_end   ? "<span class='tab'>Next</span>"  : $this->litetheme_gen_page_link($base_url, $query, $next,        "Next");
 		$last_html   = $at_end   ? "<span class='tab'>Last</span>"  : $this->litetheme_gen_page_link($base_url, $query, $total_pages, "Last");
 
