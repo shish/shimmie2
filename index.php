@@ -83,7 +83,7 @@ try {
 	$user = _get_user();
 	send_event(new InitExtEvent());
 	if(!is_cli()) { // web request
-		send_event(new PageRequestEvent(@$_GET["q"]?:@$_POST["q"]));
+		send_event(new PageRequestEvent(($_SERVER['REQUEST_METHOD'] !== "POST" ? @$_GET["q"] : @$_POST["q"])));
 		$page->display();
 	}
 	else { // command line request
