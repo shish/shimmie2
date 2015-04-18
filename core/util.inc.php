@@ -1537,7 +1537,7 @@ function _fatal_error(Exception $e) {
 	<body>
 		<h1>Internal Error</h1>
 		<p><b>Message:</b> '.$message.'
-		<p><b>Version:</b> '.$version.'
+		<p><b>Version:</b> '.$version.' (on '.phpversion().')
 	</body>
 </html>
 ';
