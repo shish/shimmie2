@@ -16,7 +16,7 @@ class TagCategoriesTheme extends Themelet {
             $tag_color = $row['color'];
             $html .= '
             <div class="tagcategoryblock">
-            <form name="input" action="'.make_link("tags/categories").'" method="post">
+            '.make_form("tags/categories", "POST", array("name" => "input")).'
                 <table>
                 <tr>
                     <td>Category</td>
@@ -64,7 +64,7 @@ class TagCategoriesTheme extends Themelet {
         $tag_color = '#EE5542';
         $html .= '
         <div class="tagcategoryblock">
-        <form name="input" action="'.make_link("tags/categories").'" method="post">
+        '.make_form("tags/categories", "POST", array("name" => "input")).'
             <table>
             <tr>
                 <td>Category</td>
@@ -87,7 +87,7 @@ class TagCategoriesTheme extends Themelet {
             <tr>
                 <td>Color</td>
                 <td>
-                    <input type="text" name="tc_color" value="'.$tag_color.'">
+                    <input type="color" name="tc_color" value="'.$tag_color.'">
                 </td>
             </tr>
             </table>

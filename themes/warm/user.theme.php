@@ -13,12 +13,12 @@ class CustomUserPageTheme extends UserPageTheme {
 	public function display_login_block(Page $page) {
 		global $config;
 		$html = "
-			<form action='".make_link("user_admin/login")."' method='POST'>
-			<table summary='Login Form' align='center'>
-			<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
-			<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
-			<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
-			</table>
+			".make_form("user_admin/login")."
+				<table summary='Login Form' align='center'>
+					<tr><td width='70'>Name</td><td width='70'><input type='text' name='user'></td></tr>
+					<tr><td>Password</td><td><input type='password' name='pass'></td></tr>
+					<tr><td colspan='2'><input type='submit' name='gobu' value='Log In'></td></tr>
+				</table>
 			</form>
 		";
 		if($config->get_bool("login_signup_enabled")) {

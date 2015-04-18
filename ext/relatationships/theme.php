@@ -37,7 +37,7 @@ class RelationshipsTheme extends Themelet {
 		        "	<td>\n".
 		        (!$user->is_anonymous() ?
 		            "		<span class='view' style='overflow: hidden; white-space: nowrap;'>{$s_parent_id}</span>\n".
-		            "		<input class='edit' type='text' name='tag_edit__parent' type='number' value='{$h_parent_id}'>\n"
+		            "		<input class='edit' type='number' name='tag_edit__parent' type='number' value='{$h_parent_id}'>\n"
 		        :
 		            $s_parent_id
 		        ).

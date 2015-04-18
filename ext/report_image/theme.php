@@ -38,7 +38,7 @@ class ReportImageTheme extends Themelet {
 					<td>{$image_link}</td>
 					<td>Report by $userlink: $h_reason</td>
 					<td class='formstretch'>
-						".make_form(make_link("image_report/remove"))."
+						".make_form("image_report/remove", "POST", array(), TRUE)."
 							<input type='hidden' name='id' value='{$report['id']}'>
 							<input type='submit' value='Remove Report'>
 						</form>
@@ -76,7 +76,7 @@ class ReportImageTheme extends Themelet {
 			$html .= "<b>Image reported by ".html_escape(implode(", ", $reporters))."</b><p>";
 		}
 		$html .= "
-			".make_form(make_link("image_report/add"))."
+			".make_form("image_report/add", "POST", array(), TRUE)."
 				<input type='hidden' name='image_id' value='$i_image'>
 				<input type='text' name='reason' placeholder='Please enter a reason'>
 				<input type='submit' value='Report'>
@@ -88,10 +88,9 @@ class ReportImageTheme extends Themelet {
 	public function get_nuller(User $duser) {
 		global $user, $page;
 		$html = "
-			<form action='".make_link("image_report/remove_reports_by")."' method='POST'>
-			".$user->get_auth_html()."
-			<input type='hidden' name='user_id' value='{$duser->id}'>
-			<input type='submit' value='Delete all reports by this user'>
+			".make_form("image_report/remove_reports_by", "POST", array(), TRUE)."
+				<input type='hidden' name='user_id' value='{$duser->id}'>
+				<input type='submit' value='Delete all reports by this user'>
 			</form>
 		";
 		$page->add_block(new Block("Reports", $html, "main", 80));

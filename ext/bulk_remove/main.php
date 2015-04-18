@@ -26,7 +26,7 @@ class BulkRemove extends Extension {
                     you first take when removing a large amount of images.<br>
                     <b>Note:</b> Entering both an ID range and tags will only remove images between the given ID's that have the given tags.
 
-			<p>".make_form(make_link("bulk_remove"))."
+			<p>".make_form("bulk_remove", "POST", array(), TRUE)."
                             <table class='form'>
                                 <tr><td colspan='2'><b>Remove images by ID</b></td></tr>
                                 <tr><th>From</th><td> <input type='text' name='remove_id_min' size='2'></td></tr>
@@ -111,7 +111,7 @@ class BulkRemove extends Extension {
             $_POST["bulk_remove_images"] = $images_for_removal;
             
             // Display confirmation message 
-            $html = make_form(make_link("bulk_remove")).
+            $html = make_form("bulk_remove", "POST", array(), TRUE).
                     "Are you sure you want to PERMANENTLY remove ". 
                     count($images_for_removal) ." images?<br></form>";
             $page->add_block(new Block("Confirm Removal", $html));

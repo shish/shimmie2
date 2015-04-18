@@ -16,7 +16,6 @@ class PrivMsgTheme extends Themelet {
 			$h_from = html_escape($from_name);
 			$from_url = make_link("user/".url_escape($from_name));
 			$pm_url = make_link("pm/read/".$pm->id);
-			$del_url = make_link("pm/delete");
 			$h_date = html_escape($pm->sent_date);
 			$readYN = "Y";
 			if(!$pm->is_read) {
@@ -28,9 +27,8 @@ class PrivMsgTheme extends Themelet {
 			<td>$readYN</td>
 			<td><a href='$pm_url'>$h_subject</a></td>
 			<td><a href='$from_url'>$h_from</a></td><td>$h_date</td>
-			<td><form action='$del_url' method='POST'>
+			<td>".make_form("pm/delete", "POST", array(), TRUE)."
 				<input type='hidden' name='pm_id' value='{$pm->id}'>
-				".$user->get_auth_html()."
 				<input type='submit' value='Delete'>
 			</form></td>
 			</tr>";
@@ -44,21 +42,18 @@ class PrivMsgTheme extends Themelet {
 
 	public function display_composer(Page $page, User $from, User $to, $subject="") {
 		global $user;
-		$post_url = make_link("pm/send");
 		$h_subject = html_escape($subject);
 		$to_id = $to->id;
-		$auth = $user->get_auth_html();
-		$html = <<<EOD
-<form action="$post_url" method="POST">
-$auth
-<input type="hidden" name="to_id" value="$to_id">
-<table style="width: 400px;" class="form">
-<tr><th>Subject:</th><td><input type="text" name="subject" value="$h_subject"></td></tr>
-<tr><td colspan="2"><textarea style="width: 100%" rows="6" name="message"></textarea></td></tr>
-<tr><td colspan="2"><input type="submit" value="Send"></td></tr>
-</table>
-</form>
-EOD;
+		$html = "
+		".make_form("pm/send", "POST", array(), TRUE)."
+			<input type='hidden' name='to_id' value='$to_id'>
+			<table style='width: 400px;' class='form'>
+				<tr><th>Subject:</th><td><input type='text' name='subject' value='$h_subject'></td></tr>
+				<tr><td colspan='2'><textarea style='width: 100%' rows='6' name='message'></textarea></td></tr>
+				<tr><td colspan='2'><input type='submit' value='Send'></td></tr>
+			</table>
+		</form>
+		";
 		$page->add_block(new Block("Write a PM", $html, "main", 50));
 	}
 

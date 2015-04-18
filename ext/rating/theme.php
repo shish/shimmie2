@@ -26,7 +26,7 @@ class RatingsTheme extends Themelet {
 	public function display_bulk_rater($terms) {
 		global $page;
 		$html = "
-			".make_form(make_link("admin/bulk_rate"))."
+			".make_form("admin/bulk_rate")."
 				<input type='hidden' name='query' value='".html_escape($terms)."'>
 				<select name='rating'>
 					<option value='s'>Safe</option>

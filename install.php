@@ -302,7 +302,7 @@ EOD;
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
 			owner_ip SCORE_INET NOT NULL,
-			filename VARCHAR(64) NOT NULL,
+			filename VARCHAR(255) NOT NULL,
 			filesize INTEGER NOT NULL,
 			hash CHAR(32) UNIQUE NOT NULL,
 			ext CHAR(4) NOT NULL,

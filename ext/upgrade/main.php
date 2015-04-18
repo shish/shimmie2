@@ -127,6 +127,25 @@ class Upgrade extends Extension {
 			log_info("upgrade", "Database at version 14");
 			$config->set_bool("in_upgrade", false);
 		}
+
+		if($config->get_int("db_version") < 15) {
+			$config->set_bool("in_upgrade", true);
+			$config->set_int("db_version", 15);
+
+			log_info("upgrade", "Changing filename column to VARCHAR(255)");
+			if($database->get_driver_name() == 'mysql') {
+				$database->execute("ALTER TABLE images MODIFY COLUMN filename VARCHAR(255)");
+			}
+			else if($database->get_driver_name() == 'pgsql') {
+				$database->execute("ALTER TABLE images ALTER COLUMN filename SET DATA TYPE VARCHAR(255)");
+			}
+
+			log_info("upgrade", "Creating index for filename");
+			$database->execute("CREATE INDEX images_filename_idx ON images(filename)");
+
+			log_info("upgrade", "Database at version 15");
+			$config->set_bool("in_upgrade", false);
+		}
 	}
 
 	public function get_priority() {return 5;}

@@ -107,10 +107,8 @@ class PixelFileHandler extends DataHandlerExtension {
 		", 20);
 
 		$u_ilink = $event->image->get_image_link();
-		$nu_enabled = (strpos($u_ilink, '?') !== false ? "<input type='hidden' name='q' value='image/{$event->image->id}.{$event->image->ext}' />" : "");
 		$event->add_part("
-			<form action='{$u_ilink}'>
-				$nu_enabled
+			".make_form($u_ilink, "GET")."
 				<input type='submit' value='Image Only'>
 			</form>
 		", 21);

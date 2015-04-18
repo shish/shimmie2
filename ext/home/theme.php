@@ -37,10 +37,9 @@ EOD
 		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> &ndash;";
 		$search_html = "
 			<div class='space' id='search'>
-				<form action='".make_link("post/list")."' method='GET'>
-				<input name='search' size='30' type='text' value='' class='autocomplete_tags' autofocus='autofocus'/>
-				<input type='hidden' name='q' value='/post/list'>
-				<input type='submit' value='Search'/>
+				".make_form("post/list", "GET")."
+					<input name='search' size='30' type='search' value='' class='autocomplete_tags' autofocus='autofocus' autocomplete='off' />
+					<input type='submit' value='Search'/>
 				</form>
 			</div>
 		";

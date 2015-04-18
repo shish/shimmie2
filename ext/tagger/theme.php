@@ -34,7 +34,7 @@ class taggerTheme extends Themelet {
 
 		$delay = $config->get_string("ext_tagger_search_delay","250");
 
-		$url_form = make_link("tag_edit/set");
+		$url_form = make_form("tag_edit/set", "POST", array("onsubmit" => '"Tagger.tag.submit();"'));
 
 		// TODO: option for initial Tagger window placement.
 		$html = <<< EOD
@@ -44,7 +44,7 @@ class taggerTheme extends Themelet {
 	<div id="tagger_toolbar">
 		<input type="text" value="" id="tagger_filter" onkeyup="Tagger.tag.search(this.value, $delay);"></input>
 		<input type="button" value="Add" onclick="Tagger.tag.create(byId('tagger_filter').value);"></input>
-		<form action="$url_form" method="POST" onsubmit="Tagger.tag.submit();">
+		$url_form
 			<input type='hidden' name='image_id' value='$i_image_id' id="image_id"></input>
 			<input type='hidden' name='query' value='$h_query'></input>
 			<input type='hidden' name='source' value='$h_source'></input>

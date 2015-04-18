@@ -17,10 +17,10 @@ class UploadTheme extends Themelet {
 		$max_kb = to_shorthand_int($max_size);
 		$upload_list = $this->h_upload_list_1();
 		$html = "
-			".make_form(make_link("upload"), "POST", $multipart=True, 'file_upload')."
+			".make_form("upload", "POST", array("enctype" => "multipart/form-data", "id" => "file_upload"))."
 				<table id='large_upload_form' class='vert'>
 					$upload_list
-					<tr><td width='20'>Tags<td colspan='5'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags'></td></tr>
+					<tr><td width='20'>Tags<td colspan='5'><input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' autocomplete='off'></td></tr>
 					<tr><td>Source</td><td colspan='5'><input name='source' type='text'></td></tr>
 					<tr><td colspan='6'><input id='uploadbutton' type='submit' value='Post'></td></tr>
 				</table>
@@ -60,7 +60,7 @@ class UploadTheme extends Themelet {
 					<tr>
 						<td colspan='2'><input type='file' name='data$i'></td>
 						<td colspan='2'><input type='text' name='url$i'</td>
-						<td colspan='2'><input type='text' name='tags$i'></td>
+						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
 			}
@@ -77,7 +77,7 @@ class UploadTheme extends Themelet {
 				$upload_list .= "
 					<tr>
 						<td colspan='4'><input type='file' name='data$i'></td>
-						<td colspan='2'><input type='text' name='tags$i'></td>
+						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
 			}
@@ -273,7 +273,7 @@ class UploadTheme extends Themelet {
 		$html = "
 				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
 				.$thumbnail."<br>"
-				.make_form(make_link("upload/replace/".$image_id), "POST", $multipart=True)."
+				.make_form("upload/replace/".$image_id, "POST", array("enctype" => "multipart/form-data"))."
 				<input type='hidden' name='image_id' value='$image_id'>
 				<table id='large_upload_form' class='vert'>
 					$upload_list
@@ -334,9 +334,9 @@ class UploadTheme extends Themelet {
 		// <input type='hidden' name='max_file_size' value='$max_size' />
 		return "
 			<div class='mini_upload'>
-			".make_form(make_link("upload"), "POST", $multipart=True)."
+			".make_form("upload", "POST", array("enctype" => "multipart/form-data"))."
 				$upload_list
-				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' required='required'>
+				<input name='tags' type='text' placeholder='tagme' class='autocomplete_tags' required='required' autocomplete='off'>
 				<input type='submit' value='Post'>
 			</form>
 			<small>(Max file size is $max_kb)</small>

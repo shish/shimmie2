@@ -62,9 +62,8 @@ and of course start organising your images :-)
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
-			<p><form action='$h_search_link' method='GET'>
-				<input class='autocomplete_tags' name='search' type='text' placeholder='Search' value='$h_search_string' />
-				<input type='hidden' name='q' value='/post/list'>
+			<p>".make_form(NULL, "GET")."
+				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
 		";
@@ -106,10 +105,10 @@ and of course start organising your images :-)
 		if (count($this->search_terms) > 0) {
 			$query = url_escape(implode(' ', $this->search_terms));
 			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
+			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, TRUE);
 		} else {
 			$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
+			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, TRUE);
 		}
 	}
 }

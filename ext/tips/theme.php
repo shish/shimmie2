@@ -11,7 +11,7 @@ class TipsTheme extends Themelet {
 		$select .= "</select>";
 
 		$html = "
-".make_form(make_link("tips/save"))."
+".make_form("tips/save", "POST", array(), TRUE)."
 <table>
   <tr>
     <td>Enable:</td>

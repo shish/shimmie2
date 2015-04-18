@@ -50,9 +50,8 @@ class ViewImageTheme extends Themelet {
 	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
-			<p><form action='".make_link()."' method='GET'>
-				<input type='hidden' name='q' value='/post/list'>
-				<input placeholder='Search' name='search' type='text'>
+			<p>".make_form(NULL, "GET")."
+				<input type='search' name='search' placeholder='Search' class='autocomplete_tags' autocomplete='off'>
 				<input type='submit' value='Find' style='display: none;'>
 			</form>
 		";
@@ -65,7 +64,7 @@ class ViewImageTheme extends Themelet {
 
 		if(count($editor_parts) == 0) return ($image->is_locked() ? "<br>[Image Locked]" : "");
 
-		$html = make_form(make_link("post/set"))."
+		$html = make_form("post/set")."
 					<input type='hidden' name='image_id' value='{$image->id}'>
 					<table style='width: 500px;' class='image_info form'>
 		";

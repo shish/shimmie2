@@ -18,9 +18,9 @@ class AliasEditorTheme extends Themelet {
 			$h_action = "<th width='10%'>Action</th>";
 			$h_add = "
 				<tr>
-					".make_form(make_link("alias/add"))."
-						<td><input type='text' name='oldtag'></td>
-						<td><input type='text' name='newtag'></td>
+					".make_form("alias/add")."
+						<td><input type='text' name='oldtag' class='autocomplete_tags' autocomplete='off'></td>
+						<td><input type='text' name='newtag' class='autocomplete_tags' autocomplete='off'></td>
 						<td><input type='submit' value='Add'></td>
 					</form>
 				</tr>
@@ -40,7 +40,7 @@ class AliasEditorTheme extends Themelet {
 			if($can_manage) {
 				$h_aliases .= "
 					<td>
-						".make_form(make_link("alias/remove"))."
+						".make_form("alias/remove")."
 							<input type='hidden' name='oldtag' value='$h_old'>
 							<input type='submit' value='Remove'>
 						</form>
@@ -55,11 +55,11 @@ class AliasEditorTheme extends Themelet {
 				<tbody>$h_aliases</tbody>
 				<tfoot>$h_add</tfoot>
 			</table>
-			<p><a href='".make_link("alias/export/aliases.csv")."'>Download as CSV</a></p>
+			<p><a href='".make_link("alias/export/aliases.csv")."' download='aliases.csv'>Download as CSV</a></p>
 		";
 
 		$bulk_html = "
-			".make_form(make_link("alias/import"), 'post', true)."
+			".make_form("alias/import", "POST", array("enctype" => "multipart/form-data"))."
 				<input type='file' name='alias_file'>
 				<input type='submit' value='Upload List'>
 			</form>

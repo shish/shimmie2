@@ -14,7 +14,7 @@ class ResizeImageTheme extends Themelet {
 		if(!$default_height) $default_height = $image->height;
 		
 		$html = "
-			".make_form(make_link("resize/{$image->id}"), 'POST')."
+			".make_form("resize/{$image->id}")."
 				<input type='hidden' name='image_id' value='{$image->id}'>
 				<input id='original_width'  name='original_width'  type='hidden' value='{$image->width}'>
 				<input id='original_height' name='original_height' type='hidden' value='{$image->height}'>
