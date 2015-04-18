@@ -85,7 +85,7 @@ class PrivMsg extends Extension {
 		global $user;
 		if(!$user->is_anonymous()) {
 			$count = $this->count_pms($user);
-			$h_count = $count > 0 ? " ($count)" : "";
+			$h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
 			$event->add_link("Private Messages$h_count", make_link("user#private-messages"));
 		}
 	}
