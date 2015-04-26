@@ -28,6 +28,7 @@ class Tag_HistoryTheme extends Themelet {
 			$current_id = $fields['id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
+			$date_set = autodate($fields['date_set']);
 			$h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
 			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
@@ -43,7 +44,11 @@ class Tag_HistoryTheme extends Themelet {
 			$history_list .= "
 				<li>
 					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
-					<label for='$current_id'>$current_tags (Set by $setter)</label>
+					<label for='$current_id'>
+						$current_tags
+						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						Set by $setter $date_set
+					</label>
 				</li>
 				";
 		}
