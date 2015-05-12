@@ -33,7 +33,7 @@ class ArchiveFileHandler extends Extension {
 			$cmd = str_replace('%f', $event->tmpname, $cmd);
 			$cmd = str_replace('%d', $tmpdir, $cmd);
 			exec($cmd);
-			$this->add_dir($tmpdir);
+			$this->add_dir($tmpdir, "", $event->metadata['tags']);
 			deltree($tmpdir);
 			$event->image_id = -2; // default -1 = upload wasn't handled
 		}
@@ -71,7 +71,7 @@ class ArchiveFileHandler extends Extension {
 	}
 
 	// copied from bulk add extension
-	private function add_dir($base, $subdir="") {
+	private function add_dir($base, $subdir="", $tagsEvent = "") {
 		$list = "";
 
 		$dir = opendir("$base/$subdir");
@@ -99,7 +99,7 @@ class ArchiveFileHandler extends Extension {
 				$tags = str_replace("/", " ", $tags);
 				$tags = str_replace("__", " ", $tags);
 				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ",", $tags).")...");
-				$error = $this->add_image($tmpfile, $filename, $tags);
+				$error = $this->add_image($tmpfile, $filename, $tagsEvent);
 				if(is_null($error)) {
 					$list .= "ok\n";
 				}
