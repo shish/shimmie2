@@ -175,10 +175,14 @@ class NumericScore extends Extension {
 
 		if(count($image_ids) == 0) return;
 
-		$database->execute(
-				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
+		// vote recounting is pretty heavy, and often hits statement timeouts
+		// if you try to recount all the images in one go
+		foreach(array_chunk($image_ids, 20) as $chunk) {
+			$id_list = implode(",", $chunk);
+			$database->execute(
+				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".$id_list.")",
 				array($user_id));
-		$database->execute("
+			$database->execute("
 				UPDATE images
 				SET numeric_score=COALESCE(
 					(
@@ -188,11 +192,9 @@ class NumericScore extends Extension {
 					),
 					0
 				)
-				WHERE images.id IN (".implode(",", $image_ids).")");
+				WHERE images.id IN (".$id_list.")");
+		}
 	}
-
-	// FIXME: on user deletion
-	// FIXME: on user vote nuke
 
 	public function onParseLinkTemplate(ParseLinkTemplateEvent $event) {
 		$event->replace('$score', $event->image->numeric_score);
