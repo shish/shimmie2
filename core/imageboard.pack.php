@@ -215,7 +215,7 @@ class Image {
 	 */
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
-		global $config, $database;
+		global $config;
 		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
 
@@ -1220,6 +1220,58 @@ function move_upload_to_archive(DataUploadEvent $event) {
 		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
 	}
 	return true;
+}
+
+/**
+ * Add a directory full of images
+ *
+ * @param $base string
+ * @return string
+ */
+function add_dir(/*string*/ $base) {
+    $list = "";
+
+    foreach(list_files($base) as $full_path) {
+        $short_path = str_replace($base, "", $full_path);
+        $filename = basename($full_path);
+
+        $tags = path_to_tags($short_path);
+        $list .= "<br>".html_escape("$short_path (".str_replace(" ", ", ", $tags).")... ");
+        try {
+            add_image($full_path, $filename, $tags);
+            $list .= "ok\n";
+        }
+        catch(UploadException $ex) {
+            $list .= "failed: ".$ex->getMessage()."\n";
+        }
+    }
+
+    return $list;
+}
+
+/**
+ * @param $tmpname
+ * @param $filename
+ * @param $tags
+ * @throws UploadException
+ */
+function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) {
+    assert(file_exists($tmpname));
+
+    $pathinfo = pathinfo($filename);
+    if(!array_key_exists('extension', $pathinfo)) {
+        throw new UploadException("File has no extension");
+    }
+    $metadata = array();
+    $metadata['filename'] = $pathinfo['basename'];
+    $metadata['extension'] = $pathinfo['extension'];
+    $metadata['tags'] = $tags;
+    $metadata['source'] = null;
+    $event = new DataUploadEvent($tmpname, $metadata);
+    send_event($event);
+    if($event->image_id == -1) {
+        throw new UploadException("File type not recognised");
+    }
 }
 
 /**
