@@ -364,9 +364,10 @@ class Upload extends Extension {
 
 		$tmp_filename = tempnam(ini_get('upload_tmp_dir'), "shimmie_transload");
 
+		// transload() returns Array or Bool, depending on the transload_engine.
 		$headers = transload($url, $tmp_filename);
-
-		$s_filename = findHeader($headers, 'Content-Disposition');
+		
+		$s_filename = is_array($headers) ? findHeader($headers, 'Content-Disposition') : null;
 		$h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
 		$filename = $h_filename ?: basename($url);
 
