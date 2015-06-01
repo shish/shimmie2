@@ -49,7 +49,7 @@ class TagEditTheme extends Themelet {
 				<td>
 		".($user->can("edit_image_tag") ? "
 					<span class='view'>$h_tag_links</span>
-					<input class='edit' type='text' name='tag_edit__tags' value='$h_tags' class='autocomplete_tags' id='tag_editor' autocomplete='off'>
+					<input class='edit autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor' autocomplete='off'>
 		" : "
 					$h_tag_links
 		")."
