@@ -384,7 +384,6 @@ class ImageIO extends Extension {
 	 */
 	private function send_file($image_id, $type) {
 		global $config;
-		global $database;
 		$image = Image::by_id($image_id);
 
 		global $page;
