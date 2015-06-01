@@ -1288,7 +1288,7 @@ function full_copy($source, $target) {
 function list_files(/*string*/ $base, $_sub_dir="") {
     assert(is_dir($base));
 
-    $file_list = [];
+    $file_list = array();
 
     $files = array();
     $dir = opendir("$base/$_sub_dir");
