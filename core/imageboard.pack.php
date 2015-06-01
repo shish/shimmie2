@@ -321,33 +321,7 @@ class Image {
 	 * @return string
 	 */
 	public function get_image_link() {
-		global $config;
-
-		$image_ilink = $config->get_string('image_ilink');  // store a copy for speed.
-
-		if( !empty($image_ilink) ) {	/* empty is faster than strlen */
-			if(!startsWith($image_ilink, "http://") && !startsWith($image_ilink, "/")) {
-				$image_ilink = make_link($image_ilink);
-			}
-			return $this->parse_link_template($image_ilink);
-		}
-		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_images/$hash/$id%20-%20$tags.$ext'));
-		}
-		else {
-			return $this->parse_link_template(make_link('image/$id.$ext'));
-		}
-	}
-
-	/**
-	 * Get a short link to the full size image
-	 *
-	 * @deprecated
-	 * @return string
-	 */
-	public function get_short_link() {
-		global $config;
-		return $this->parse_link_template($config->get_string('image_slink'));
+		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.jpg');
 	}
 
 	/**
@@ -356,21 +330,33 @@ class Image {
 	 * @return string
 	 */
 	public function get_thumb_link() {
+		return $this->get_link('image_tlink', '_thumbs/$hash/thumb.jpg', 'thumb/$id.jpg');
+	}
+
+	/**
+	 * Check configured template for a link, then try nice URL, then plain URL
+	 *
+	 * @param $template
+	 * @param $nice
+	 * @param $plain
+	 * @return string
+	 */
+	private function get_link($template, $nice, $plain) {
 		global $config;
 
-		$image_tlink = $config->get_string('image_tlink'); // store a copy for speed.
+		$image_link = $config->get_string($template);
 
-		if( !empty($image_tlink) ) {	/* empty is faster than strlen */
-			if(!startsWith($image_tlink, "http://") && !startsWith($image_tlink, "/")) {
-				$image_tlink = make_link($image_tlink);
+		if(!empty($image_link)) {
+			if(!(strpos($link, "://") > 0) && !startsWith($image_link, "/")) {
+				$image_link = make_link($image_link);
 			}
-			return $this->parse_link_template($image_tlink);
+			return $this->parse_link_template($image_link);
 		}
 		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
+			return $this->parse_link_template(make_link($nice));
 		}
 		else {
-			return $this->parse_link_template(make_link('thumb/$id.jpg'));
+			return $this->parse_link_template(make_link($plain));
 		}
 	}
 

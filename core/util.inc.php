@@ -402,7 +402,7 @@ function modify_url($url, $changes) {
  * @return string
  */
 function make_http(/*string*/ $link) {
-	if(strpos($link, "ttp://") > 0) {
+	if(strpos($link, "://") > 0) {
 		return $link;
 	}
 
