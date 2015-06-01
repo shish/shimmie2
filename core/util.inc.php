@@ -960,11 +960,6 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
-		//
-		// Scrutinizer-ci complains that $http_response_header does not exist,
-		// however, $http_response_header is actually a super-global.
-		// I have filed a bug with PHP-Analyzer here: https://github.com/scrutinizer-ci/php-analyzer/issues/212
-		//
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
 		return $headers;
