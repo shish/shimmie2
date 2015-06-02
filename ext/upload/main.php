@@ -385,9 +385,14 @@ class Upload extends Extension {
 			$pathinfo = pathinfo($url);
 			$metadata = array();
 			$metadata['filename'] = $filename;
-			$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type')) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
+			
+			if (is_array($headers)) {
+				$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type'));
+			} else {
+				$metadata['extension'] = $pathinfo['extension'];
+			}
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){
