@@ -1000,7 +1000,7 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * @return mixed
  */
 function findHeader ($headers, $name) {
-	if (!is_array($headers) {
+	if (!is_array($headers)) {
 		return false;
 	}
 	
