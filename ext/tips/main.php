@@ -17,7 +17,7 @@ class Tips extends Extension {
 					id SCORE_AIPK,
 					enable SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					image TEXT NOT NULL,
-					text TEXT NOT NULL,
+					text TEXT NOT NULL
 					");
 
 			$database->execute("
