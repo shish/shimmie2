@@ -680,6 +680,7 @@ class Database {
 	 */
 	public function create_table($name, $data) {
 		if(is_null($this->engine)) { $this->connect_engine(); }
+		$data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
 		$this->execute($this->engine->create_table_sql($name, $data));
 	}
 
