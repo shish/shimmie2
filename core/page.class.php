@@ -274,7 +274,7 @@ class Page {
 	 * 
 	 * TODO: This should really be configurable somehow...
 	 */
-	protected function add_auto_html_headers() {
+	public function add_auto_html_headers() {
 		global $config;
 
 		$data_href = get_base_href();

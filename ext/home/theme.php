@@ -3,13 +3,16 @@
 class HomeTheme extends Themelet {
 	public function display_page(Page $page, $sitename, $base_href, $theme_name, $body) {
 		$page->set_mode("data");
+		$hh = "";
+		$page->add_auto_html_headers();
+		foreach($page->html_headers as $h) {$hh .= $h;}
 		$page->set_data(<<<EOD
 <html>
 	<head>
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel='stylesheet' href='$base_href/themes/$theme_name/style.css' type='text/css'>
+		$hh
 	</head>
 	<style>
 		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
