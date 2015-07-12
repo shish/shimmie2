@@ -960,11 +960,6 @@ function transload($url, $mfile) {
 		fwrite($fp, $data);
 		fclose($fp);
 
-		//
-		// Scrutinizer-ci complains that $http_response_header does not exist,
-		// however, $http_response_header is actually a super-global.
-		// I have filed a bug with PHP-Analyzer here: https://github.com/scrutinizer-ci/php-analyzer/issues/212
-		//
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
 		return $headers;
@@ -996,17 +991,29 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 	}
 }
 
-function findHeader ($headers, $name){
-	//HTTP Headers can sometimes be lowercase which will cause issues.
-	//In cases like these, we need to make sure to check for them if the camelcase version does not exist.
-	$header = FALSE;
+/**
+ * HTTP Headers can sometimes be lowercase which will cause issues.
+ * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
+ * 
+ * @param array $headers
+ * @param mixed $key
+ * @return mixed
+ */
+function findHeader ($headers, $name) {
+	if (!is_array($headers)) {
+		return false;
+	}
+	
+	$header = false;
 
-	if(array_key_exists($name, $headers)){
+	if(array_key_exists($name, $headers)) {
 		$header = $headers[$name];
-	}else{
-		$headers = array_change_key_case($headers);
-		if(array_key_exists(strtolower($name), $headers)){
-			$header = $headers[strtolower($name)];
+	} else {
+		$headers = array_change_key_case($headers); // convert all to lower case.
+		$lc_name = strtolower($name);
+		
+		if(array_key_exists($lc_name, $headers)) {
+			$header = $headers[$lc_name];
 		}
 	}
 
