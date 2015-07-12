@@ -96,7 +96,7 @@ class LogDatabase extends Extension {
 					$page_total = $database->get_one("SELECT count(*) FROM score_log $where", $args);
 					// don't cache a length of zero when the extension is first installed
 					if($page_total > 10) {
-						$database->cache->set("event_log_length", 600);
+						$database->cache->set("event_log_length", $page_total, 600);
 					}
 				}
 
