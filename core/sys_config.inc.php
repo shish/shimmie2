@@ -32,6 +32,7 @@ _d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-
 _d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance
 _d("COMPILE_ELS", false);    // boolean  pre-build the list of event listeners
 _d("NICE_URLS", false);      // boolean  force niceurl mode
+_d("SEARCH_ACCEL", false);   // boolean  use search accelerator
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", '2.5.4+');     // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone

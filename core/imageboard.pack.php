@@ -158,17 +158,81 @@ class Image {
 			}
 		}
 
-		$querylet = Image::build_search_querylet($tags);
-		$querylet->append(new Querylet(" ORDER BY ".($order_sql ?: "images.".$config->get_string("index_order"))));
-		$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
-		#var_dump($querylet->sql); var_dump($querylet->variables);
-		$result = $database->execute($querylet->sql, $querylet->variables);
+		$result = null;
+		if(SEARCH_ACCEL) {
+			$result = Image::get_accelerated_result($tags, $start, $limit);
+		}
+
+		if(!$result) {
+			$querylet = Image::build_search_querylet($tags);
+			$querylet->append(new Querylet(" ORDER BY ".($order_sql ?: "images.".$config->get_string("index_order"))));
+			$querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", array("limit"=>$limit, "offset"=>$start)));
+			#var_dump($querylet->sql); var_dump($querylet->variables);
+			$result = $database->execute($querylet->sql, $querylet->variables);
+		}
 
 		while($row = $result->fetch()) {
 			$images[] = new Image($row);
 		}
 		$order_sql = null;
 		return $images;
+	}
+
+	public function validate_accel($tags) {
+		$yays = 0;
+		$nays = 0;
+		foreach($tags as $tag) {
+			if(!preg_match("/^-?[a-zA-Z0-9_]+$/", $tag)) {
+				return false;
+			}
+			if($tag[0] == "-") $nays++;
+			else $yays++;
+		}
+		return ($yays > 1 || $nays > 0);
+	}
+
+	public function get_accelerated_result($tags, $offset, $limit) {
+		global $database;
+
+		$tags = Tag::resolve_aliases($tags);
+		if(!Image::validate_accel($tags)) {
+			return null;
+		}
+
+		$yays = array();
+		$nays = array();
+		foreach($tags as $tag) {
+			if($tag[0] == "-") {
+				$nays[] = substr($tag, 1);
+			}
+			else {
+				$yays[] = $tag;
+			}
+		}
+		$req = array(
+			"yays" => $yays,
+			"nays" => $nays,
+			"offset" => $offset,
+			"limit" => $limit,
+		);
+
+		$fp = fsockopen("127.0.0.1", 21212);
+		if (!$fp) {
+			return null;
+		}
+		fwrite($fp, json_encode($req));
+		$data = fgets($fp, 1024);
+		fclose($fp);
+
+		$response = json_decode($data);
+		$list = implode(",", $response);
+		if($list) {
+			$result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
+		}
+		else {
+			$result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
+		}
+		return $result;
 	}
 
 	/*
