@@ -90,6 +90,7 @@ new UserClass("base", null, array(
 	"view_ip" => False,         # view IP addresses associated with things
 	"ban_ip" => False,
 
+	"edit_user_name" => False,
 	"edit_user_password" => False,
 	"edit_user_info" => False,  # email address, etc
 	"edit_user_class" => False,
@@ -155,6 +156,7 @@ new UserClass("admin", "base", array(
 	"edit_image_lock" => True,
 	"view_ip" => True,
 	"ban_ip" => True,
+	"edit_user_name" => True,
 	"edit_user_password" => True,
 	"edit_user_info" => True,
 	"edit_user_class" => True,

@@ -189,6 +189,16 @@ class UserPage extends Extension {
 				return;
 			}
 
+			else if($event->get_arg(0) == "change_name") {
+				if(isset($_POST['id']) && isset($_POST['name'])) {
+					$duser = User::by_id($_POST['id']);
+					if ( ! $duser instanceof User) {
+						throw new NullUserException("Error: the user id does not exist!");
+					}
+					$name = $_POST['name'];
+					$this->change_name_wrapper($duser, $name);
+				}
+			}
 			else if($event->get_arg(0) == "change_pass") {
 				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
 					$duser = User::by_id($_POST['id']);
@@ -524,6 +534,20 @@ class UserPage extends Extension {
 		else {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link("user/{$duser->name}"));
+		}
+	}
+
+	private function change_name_wrapper(User $duser, $name) {
+		global $user;
+
+		if($user->can('edit_user_name') && $this->user_can_edit_user($user, $duser)) {
+			$duser->set_name($name);
+			flash_message("Username changed");
+			// TODO: set login cookie if user changed themselves
+			$this->redirect_to_user($duser);
+		}
+		else {
+			$this->theme->display_error(400, "Error", "Permission denied");
 		}
 	}
 

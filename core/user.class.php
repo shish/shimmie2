@@ -203,6 +203,20 @@ class User {
 	}
 
 	/**
+	 * @param string $name
+	 */
+	public function set_name(/*string*/ $name) {
+		global $database;
+		if(User::by_name($name)) {
+			throw new Exception("Desired username is already in use");
+		}
+		$old_name = $this->name;
+		$this->name = $name;
+		$database->Execute("UPDATE users SET name=:name WHERE id=:id", array("name"=>$this->name, "id"=>$this->id));
+		log_info("core-user", "Changed username for {$old_name} to {$this->name}");
+	}
+
+	/**
 	 * @param string $password
 	 */
 	public function set_password(/*string*/ $password) {

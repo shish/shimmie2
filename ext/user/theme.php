@@ -165,8 +165,21 @@ class UserPageTheme extends Themelet {
 		$html = "";
 		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
 		
+			if($user->can('edit_user_name')) {
+				$html .= "
+				<p>".make_form(make_link("user_admin/change_name"))."
+					<input type='hidden' name='id' value='{$duser->id}'>
+					<table class='form'>
+						<thead><tr><th colspan='2'>Change Name</th></tr></thead>
+						<tbody><tr><th>New name</th><td><input type='text' name='name' value='".html_escape($duser->name)."'></td></tr></tbody>
+						<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
+					</table>
+				</form>
+				";
+			}
+
 			$html .= "
-			".make_form(make_link("user_admin/change_pass"))."
+			<p>".make_form(make_link("user_admin/change_pass"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
 					<thead>
