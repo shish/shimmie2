@@ -97,7 +97,7 @@ class Image {
 	 * @return Image
 	 */
 	public static function by_id(/*int*/ $id) {
-		assert(is_numeric($id));
+		assert('is_numeric($id)');
 		global $database;
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
@@ -110,7 +110,7 @@ class Image {
 	 * @return Image
 	 */
 	public static function by_hash(/*string*/ $hash) {
-		assert(is_string($hash));
+		assert('is_string($hash)');
 		global $database;
 		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
@@ -123,7 +123,7 @@ class Image {
 	 * @return Image
 	 */
 	public static function by_random($tags=array()) {
-		assert(is_array($tags));
+		assert('is_array($tags)');
 		$max = Image::count_images($tags);
 		if ($max < 1) return null;		// From Issue #22 - opened by HungryFeline on May 30, 2011.
 		$rand = mt_rand(0, $max-1);
@@ -142,9 +142,9 @@ class Image {
 	 * @return Image[]
 	 */
 	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
-		assert(is_numeric($start));
-		assert(is_numeric($limit));
-		assert(is_array($tags));
+		assert('is_numeric($start)');
+		assert('is_numeric($limit)');
+		assert('is_array($tags)');
 		global $database, $user, $config, $order_sql;
 
 		$images = array();
@@ -246,7 +246,7 @@ class Image {
 	 * @return mixed
 	 */
 	public static function count_images($tags=array()) {
-		assert(is_array($tags));
+		assert('is_array($tags)');
 		global $database;
 		$tag_count = count($tags);
 
@@ -278,7 +278,7 @@ class Image {
 	 * @return float
 	 */
 	public static function count_pages($tags=array()) {
-		assert(is_array($tags));
+		assert('is_array($tags)');
 		global $config;
 		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
@@ -299,8 +299,8 @@ class Image {
 	 * @return Image
 	 */
 	public function get_next($tags=array(), $next=true) {
-		assert(is_array($tags));
-		assert(is_bool($next));
+		assert('is_array($tags)');
+		assert('is_bool($next)');
 		global $database;
 
 		if($next) {
@@ -562,18 +562,17 @@ class Image {
 	 * @param string[] $tags
 	 */
 	public function set_tags($tags) {
+		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
 		global $database;
-
-		assert(is_array($tags));
 
 		$tags = array_map(array('Tag', 'sanitise'), $tags);
 		$tags = Tag::resolve_aliases($tags);
 
-		assert(is_array($tags));
-		assert(count($tags) > 0);
-		$new_tags = implode(" ", $tags);
+		if(count($tags) <= 0) {
+			throw new SCoreException('Tried to set zero tags');
+		}
 
-		if($new_tags != $this->get_tag_list()) {
+		if(implode(" ", $tags) != $this->get_tag_list()) {
 			// delete old
 			$this->delete_tags_from_image();
 			// insert each new tags
@@ -726,7 +725,7 @@ class Image {
 	 * @return \Querylet
 	 */
 	private static function build_search_querylet($terms) {
-		assert(is_array($terms));
+		assert('is_array($terms)');
 		global $database;
 		if($database->get_driver_name() === "mysql")
 			return Image::build_ugly_search_querylet($terms);
@@ -1104,7 +1103,7 @@ class Tag {
 	 * @return mixed
 	 */
 	public static function sanitise($tag) {
-		assert(is_string($tag));
+		assert('is_string($tag)');
 		$tag = preg_replace("/[\s?*]/", "", $tag);            # whitespace
 		$tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
 		$tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
@@ -1120,7 +1119,7 @@ class Tag {
 	 * @return array
 	 */
 	public static function explode($tags, $tagme=true) {
-		assert(is_string($tags) || is_array($tags));
+		assert('is_string($tags) || is_array($tags)');
 
 		if(is_string($tags)) {
 			$tags = explode(' ', trim($tags));
@@ -1151,7 +1150,7 @@ class Tag {
 	 * @return string
 	 */
 	public static function implode($tags) {
-		assert(is_string($tags) || is_array($tags));
+		assert('is_string($tags) || is_array($tags)');
 
 		if(is_array($tags)) {
 			sort($tags);
@@ -1169,7 +1168,7 @@ class Tag {
 	 * @return string
 	 */
 	public static function resolve_alias($tag) {
-		assert(is_string($tag));
+		assert('is_string($tag)');
 
 		$negative = false;
 		if(!empty($tag) && ($tag[0] == '-')) {
@@ -1224,7 +1223,7 @@ class Tag {
 	 * @return array
 	 */
 	public static function resolve_aliases($tags) {
-		assert(is_array($tags));
+		assert('is_array($tags)');
 
 		$new = array();
 

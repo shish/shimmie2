@@ -174,7 +174,7 @@ class UserPage extends Extension {
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
                                 
-                                // Try forwarding to same page on logout unless user comes from registration page
+				// Try forwarding to same page on logout unless user comes from registration page
 				if ($config->get_int("user_loginshowprofile",0) == 0 && 
 							isset($_SERVER['HTTP_REFERER']) &&
 							strstr($_SERVER['HTTP_REFERER'], "post/"))
@@ -190,49 +190,37 @@ class UserPage extends Extension {
 			}
 
 			else if($event->get_arg(0) == "change_name") {
-				if(isset($_POST['id']) && isset($_POST['name'])) {
-					$duser = User::by_id($_POST['id']);
-					if ( ! $duser instanceof User) {
-						throw new NullUserException("Error: the user id does not exist!");
-					}
-					$name = $_POST['name'];
-					$this->change_name_wrapper($duser, $name);
-				}
+				$input = validate_input(array(
+					'id' => 'user_id,exists',
+					'name' => 'user_name',
+				));
+				$duser = User::by_id($input['id']);
+				$this->change_name_wrapper($duser, $input['name']);
 			}
 			else if($event->get_arg(0) == "change_pass") {
-				if(isset($_POST['id']) && isset($_POST['pass1']) && isset($_POST['pass2'])) {
-					$duser = User::by_id($_POST['id']);
-					if ( ! $duser instanceof User) {
-						throw new NullUserException("Error: the user id does not exist!");
-					}
-					$pass1 = $_POST['pass1'];
-					$pass2 = $_POST['pass2'];
-					$this->change_password_wrapper($duser, $pass1, $pass2);
-				}
+				$input = validate_input(array(
+					'id' => 'user_id,exists',
+					'pass1' => 'password',
+					'pass2' => 'password',
+				));
+				$duser = User::by_id($input['id']);
+				$this->change_password_wrapper($duser, $input['pass1'], $input['pass2']);
 			}
 			else if($event->get_arg(0) == "change_email") {
-				if(isset($_POST['id']) && isset($_POST['address'])) {
-					$duser = User::by_id($_POST['id']);
-					if ( ! $duser instanceof User) {
-						throw new NullUserException("Error: the user id does not exist!");
-					}
-					$address = $_POST['address'];
-					$this->change_email_wrapper($duser, $address);
-				}
+				$input = validate_input(array(
+					'id' => 'user_id,exists',
+					'address' => 'email',
+				));
+				$duser = User::by_id($input['id']);
+				$this->change_email_wrapper($duser, $input['address']);
 			}
 			else if($event->get_arg(0) == "change_class") {
-				global $_user_classes;
-				if(isset($_POST['id']) && isset($_POST['class'])) {
-					$duser = User::by_id($_POST['id']);
-					if ( ! $duser instanceof User) {
-						throw new NullUserException("Error: the user id does not exist!");
-					}
-					$class = $_POST['class'];
-					if(!array_key_exists($class, $_user_classes)) {
-						throw Exception("Invalid user class: ".html_escape($class));
-					}
-					$this->change_class_wrapper($duser, $class);
-				}
+				$input = validate_input(array(
+					'id' => 'user_id,exists',
+					'class' => 'user_class',
+				));
+				$duser = User::by_id($input['id']);
+				$this->change_class_wrapper($duser, $input['class']);
 			}
 			else if($event->get_arg(0) == "delete_user") {
 				$this->delete_user($page, isset($_POST["with_images"]), isset($_POST["with_comments"]));
@@ -459,7 +447,7 @@ class UserPage extends Extension {
 					"Username contains invalid characters. Allowed characters are ".
 					"letters, numbers, dash, and underscore");
 		}
-		else if($database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), array("name"=>$name))) {
+		else if(User::by_name($name)) {
 			throw new UserCreationException("That username is already taken");
 		}
 	}
@@ -601,12 +589,7 @@ class UserPage extends Extension {
 		global $user;
 
 		if($user->class->name == "admin") {
-			$duser = User::by_id($_POST['id']);
-			if ( ! $duser instanceof User) {
-				throw new NullUserException("Error: the user id does not exist!");
-			}
 			$duser->set_class($class);
-
 			flash_message("Class changed");
 			$this->redirect_to_user($duser);
 		}

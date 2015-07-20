@@ -20,7 +20,7 @@ class Querylet {
 	 * @param \Querylet $querylet
 	 */
 	public function append($querylet) {
-		assert(!is_null($querylet));
+		assert('!is_null($querylet)');
 		$this->sql .= $querylet->sql;
 		$this->variables = array_merge($this->variables, $querylet->variables);
 	}
@@ -295,7 +295,7 @@ class MemcacheCache implements CacheEngine {
 	 * @return array|bool|string
 	 */
 	public function get($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$val = $this->memcache->get($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			$hit = $val === false ? "miss" : "hit";
@@ -317,7 +317,7 @@ class MemcacheCache implements CacheEngine {
 	 * @param int $time
 	 */
 	public function set($key, $val, $time=0) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$this->memcache->set($key, $val, false, $time);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
@@ -328,7 +328,7 @@ class MemcacheCache implements CacheEngine {
 	 * @param string $key
 	 */
 	public function delete($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$this->memcache->delete($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
@@ -354,7 +354,7 @@ class APCCache implements CacheEngine {
 	}
 
 	public function get($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$val = apc_fetch($key);
 		if($val) {
 			$this->hits++;
@@ -367,12 +367,12 @@ class APCCache implements CacheEngine {
 	}
 
 	public function set($key, $val, $time=0) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		apc_store($key, $val, $time);
 	}
 
 	public function delete($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		apc_delete($key);
 	}
 

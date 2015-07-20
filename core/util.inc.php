@@ -263,6 +263,64 @@ function isValidDate($date) {
 	return false;
 }
 
+function validate_input($inputs) {
+	$outputs = array();
+
+	foreach($inputs as $key => $validations) {
+		$flags = explode(',', $validations);
+		if(in_array('optional', $flags)) {
+			if(!isset($_POST[$key])) {
+				continue;
+			}
+		}
+
+		if(!isset($_POST[$key])) {
+			throw new InvalidInput("Input '$key' not set");
+		}
+
+		$value = $_POST[$key];
+
+		if(in_array('user_id', $flags)) {
+			$id = int_escape($value);
+			if(in_array('exists', $flags)) {
+				if(is_null(User::by_id($id))) {
+					throw new InvalidInput("User #$id does not exist");
+				}
+			}
+			$outputs[$key] = $id;
+		}
+		else if(in_array('user_name', $flags)) {
+			if(strlen($value) < 1) {
+				throw new InvalidInput("Username must be at least 1 character");
+			}
+			else if(!preg_match('/^[a-zA-Z0-9-_]+$/', $value)) {
+				throw new InvalidInput(
+						"Username contains invalid characters. Allowed characters are ".
+						"letters, numbers, dash, and underscore");
+			}
+			$outputs[$key] = $value;
+		}
+		else if(in_array('user_class', $flags)) {
+			global $_user_classes;
+			if(!array_key_exists($value, $_user_classes)) {
+				throw new InvalidInput("Invalid user class: ".html_escape($class));
+			}
+			$outputs[$key] = $value;
+		}
+		else if(in_array('email', $flags)) {
+			$outputs[$key] = $value;
+		}
+		else if(in_array('password', $flags)) {
+			$outputs[$key] = $value;
+		}
+		else {
+			throw new InvalidInput("Unknown validation '$validations'");
+		}
+	}
+
+	return $outputs;
+}
+
 /**
  * Give a HTML string which shows an IP (if the user is allowed to see IPs),
  * and a link to ban that IP (if the user is allowed to ban IPs)
@@ -1439,6 +1497,19 @@ function get_debug_info() {
 	return $debug;
 }
 
+function score_assert_handler($file, $line, $code, $desc = null) {
+	$file = basename($file);
+	print("Assertion failed at $file:$line: $code ($desc)");
+	/*
+	print("<pre>");
+	debug_print_backtrace();
+	print("</pre>");
+	*/
+}
+//assert_options(ASSERT_ACTIVE, 1);
+assert_options(ASSERT_WARNING, 0);
+assert_options(ASSERT_QUIET_EVAL, 1);
+assert_options(ASSERT_CALLBACK, 'score_assert_handler');
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
