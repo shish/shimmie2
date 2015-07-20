@@ -21,7 +21,10 @@ class BulkAdd extends Extension {
 		if($event->page_matches("bulk_add")) {
 			if($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
 				set_time_limit(0);
-				$this->add_dir($_POST['dir']);
+				$list = add_dir($_POST['dir']);
+				if(strlen($list) > 0) {
+					$this->theme->add_status("Adding files", $list);
+				}
 				$this->theme->display_upload_results($page);
 			}
 		}
@@ -34,81 +37,16 @@ class BulkAdd extends Extension {
 		}
 		if($event->cmd == "bulk-add") {
 			if(count($event->args) == 1) {
-				$this->add_dir($event->args[0]);
+				$list = add_dir($event->args[0]);
+				if(strlen($list) > 0) {
+					$this->theme->add_status("Adding files", $list);
+				}
 			}
 		}
 	}
 
 	public function onAdminBuilding(AdminBuildingEvent $event) {
 		$this->theme->display_admin_block();
-	}
-
-	/**
-	 * Generate the necessary DataUploadEvent for a given image and tags.
-	 */
-	private function add_image($tmpname, $filename, $tags) {
-		assert(file_exists($tmpname));
-
-		$pathinfo = pathinfo($filename);
-		if(!array_key_exists('extension', $pathinfo)) {
-			throw new UploadException("File has no extension");
-		}
-		$metadata = array();
-		$metadata['filename'] = $pathinfo['basename'];
-		$metadata['extension'] = $pathinfo['extension'];
-		$metadata['tags'] = $tags;
-		$metadata['source'] = null;
-		$event = new DataUploadEvent($tmpname, $metadata);
-		send_event($event);
-		if($event->image_id == -1) {
-			throw new UploadException("File type not recognised");
-		}
-	}
-
-	private function add_dir(/*string*/ $base, $subdir="") {
-		if(!is_dir($base)) {
-			$this->theme->add_status("Error", "$base is not a directory");
-			return;
-		}
-
-		$list = "";
-
-		foreach(glob("$base/$subdir/*") as $fullpath) {
-			$fullpath = str_replace("//", "/", $fullpath);
-			$shortpath = str_replace($base, "", $fullpath);
-
-			if(is_link($fullpath)) {
-				// ignore
-			}
-			else if(is_dir($fullpath)) {
-				$this->add_dir($base, str_replace($base, "", $fullpath));
-			}
-			else {
-				$pathinfo = pathinfo($fullpath);
-				$matches = array();
-				if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", $pathinfo["basename"], $matches)) {
-					$tags = $matches[1];
-				}
-				else {
-					$tags = $subdir;
-					$tags = str_replace("/", " ", $tags);
-					$tags = str_replace("__", " ", $tags);
-					$tags = trim($tags);
-				}
-				$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
-				try{
-					$this->add_image($fullpath, $pathinfo["basename"], $tags);
-					$list .= "ok\n";
-				}
-				catch(Exception $ex) {
-					$list .= "failed:<br>". $ex->getMessage();
-				}
-			}
-		}
-
-		if(strlen($list) > 0) {
-			$this->theme->add_status("Adding $subdir", $list);
-		}
 	}
 }
 

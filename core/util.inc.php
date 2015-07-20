@@ -402,7 +402,7 @@ function modify_url($url, $changes) {
  * @return string
  */
 function make_http(/*string*/ $link) {
-	if(strpos($link, "ttp://") > 0) {
+	if(strpos($link, "://") > 0) {
 		return $link;
 	}
 
@@ -787,7 +787,6 @@ function get_session_ip(Config $config) {
  * conflicts from multiple installs within one domain.
  */
 function get_prefixed_cookie(/*string*/ $name) {
-	global $config;
 	$full_name = COOKIE_PREFIX."_".$name;
 	if(isset($_COOKIE[$full_name])) {
 		return $_COOKIE[$full_name];
@@ -808,7 +807,6 @@ function get_prefixed_cookie(/*string*/ $name) {
  * @param string $path
  */
 function set_prefixed_cookie($name, $value, $time, $path) {
-	global $config;
 	$full_name = COOKIE_PREFIX."_".$name;
 	setcookie($full_name, $value, $time, $path);
 }
@@ -1285,6 +1283,64 @@ function full_copy($source, $target) {
 	else {
 		copy($source, $target);
 	}
+}
+
+/**
+ * Return a list of all the regular files in a directory and subdirectories
+ *
+ * @param string $base
+ * @param string $_sub_dir
+ * @return array file list
+ */
+function list_files(/*string*/ $base, $_sub_dir="") {
+    assert(is_dir($base));
+
+    $file_list = array();
+
+    $files = array();
+    $dir = opendir("$base/$_sub_dir");
+    while($f = readdir($dir)) {
+        $files[] = $f;
+    }
+    closedir($dir);
+    sort($files);
+
+    foreach($files as $filename) {
+        $full_path = "$base/$_sub_dir/$filename";
+
+        if(is_link($full_path)) {
+            // ignore
+        }
+        else if(is_dir($full_path)) {
+            if($filename == "." || $filename == "..") {
+                $file_list = array_merge(
+                    $file_list,
+                    list_files($base, "$_sub_dir/$filename")
+                );
+            }
+        }
+        else {
+            $full_path = str_replace("//", "/", $full_path);
+            $file_list[] = $full_path;
+        }
+    }
+
+    return $file_list;
+}
+
+
+function path_to_tags($path) {
+    $matches = array();
+    if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
+        $tags = $matches[1];
+    }
+    else {
+        $tags = dirname($path);
+        $tags = str_replace("/", " ", $tags);
+        $tags = str_replace("__", " ", $tags);
+        $tags = trim($tags);
+    }
+    return $tags;
 }
 
 

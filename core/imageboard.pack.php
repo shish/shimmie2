@@ -279,7 +279,7 @@ class Image {
 	 */
 	public static function count_pages($tags=array()) {
 		assert(is_array($tags));
-		global $config, $database;
+		global $config;
 		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
 
@@ -385,33 +385,7 @@ class Image {
 	 * @return string
 	 */
 	public function get_image_link() {
-		global $config;
-
-		$image_ilink = $config->get_string('image_ilink');  // store a copy for speed.
-
-		if( !empty($image_ilink) ) {	/* empty is faster than strlen */
-			if(!startsWith($image_ilink, "http://") && !startsWith($image_ilink, "/")) {
-				$image_ilink = make_link($image_ilink);
-			}
-			return $this->parse_link_template($image_ilink);
-		}
-		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_images/$hash/$id%20-%20$tags.$ext'));
-		}
-		else {
-			return $this->parse_link_template(make_link('image/$id.$ext'));
-		}
-	}
-
-	/**
-	 * Get a short link to the full size image
-	 *
-	 * @deprecated
-	 * @return string
-	 */
-	public function get_short_link() {
-		global $config;
-		return $this->parse_link_template($config->get_string('image_slink'));
+		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.jpg');
 	}
 
 	/**
@@ -420,21 +394,33 @@ class Image {
 	 * @return string
 	 */
 	public function get_thumb_link() {
+		return $this->get_link('image_tlink', '_thumbs/$hash/thumb.jpg', 'thumb/$id.jpg');
+	}
+
+	/**
+	 * Check configured template for a link, then try nice URL, then plain URL
+	 *
+	 * @param $template
+	 * @param $nice
+	 * @param $plain
+	 * @return string
+	 */
+	private function get_link($template, $nice, $plain) {
 		global $config;
 
-		$image_tlink = $config->get_string('image_tlink'); // store a copy for speed.
+		$image_link = $config->get_string($template);
 
-		if( !empty($image_tlink) ) {	/* empty is faster than strlen */
-			if(!startsWith($image_tlink, "http://") && !startsWith($image_tlink, "/")) {
-				$image_tlink = make_link($image_tlink);
+		if(!empty($image_link)) {
+			if(!(strpos($link, "://") > 0) && !startsWith($image_link, "/")) {
+				$image_link = make_link($image_link);
 			}
-			return $this->parse_link_template($image_tlink);
+			return $this->parse_link_template($image_link);
 		}
 		else if($config->get_bool('nice_urls', false)) {
-			return $this->parse_link_template(make_link('_thumbs/$hash/thumb.jpg'));
+			return $this->parse_link_template(make_link($nice));
 		}
 		else {
-			return $this->parse_link_template(make_link('thumb/$id.jpg'));
+			return $this->parse_link_template(make_link($plain));
 		}
 	}
 
@@ -1284,6 +1270,58 @@ function move_upload_to_archive(DataUploadEvent $event) {
 		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
 	}
 	return true;
+}
+
+/**
+ * Add a directory full of images
+ *
+ * @param $base string
+ * @return string
+ */
+function add_dir(/*string*/ $base) {
+    $list = "";
+
+    foreach(list_files($base) as $full_path) {
+        $short_path = str_replace($base, "", $full_path);
+        $filename = basename($full_path);
+
+        $tags = path_to_tags($short_path);
+        $list .= "<br>".html_escape("$short_path (".str_replace(" ", ", ", $tags).")... ");
+        try {
+            add_image($full_path, $filename, $tags);
+            $list .= "ok\n";
+        }
+        catch(UploadException $ex) {
+            $list .= "failed: ".$ex->getMessage()."\n";
+        }
+    }
+
+    return $list;
+}
+
+/**
+ * @param $tmpname
+ * @param $filename
+ * @param $tags
+ * @throws UploadException
+ */
+function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) {
+    assert(file_exists($tmpname));
+
+    $pathinfo = pathinfo($filename);
+    if(!array_key_exists('extension', $pathinfo)) {
+        throw new UploadException("File has no extension");
+    }
+    $metadata = array();
+    $metadata['filename'] = $pathinfo['basename'];
+    $metadata['extension'] = $pathinfo['extension'];
+    $metadata['tags'] = $tags;
+    $metadata['source'] = null;
+    $event = new DataUploadEvent($tmpname, $metadata);
+    send_event($event);
+    if($event->image_id == -1) {
+        throw new UploadException("File type not recognised");
+    }
 }
 
 /**
