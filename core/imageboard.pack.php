@@ -411,7 +411,7 @@ class Image {
 		$image_link = $config->get_string($template);
 
 		if(!empty($image_link)) {
-			if(!(strpos($link, "://") > 0) && !startsWith($image_link, "/")) {
+			if(!(strpos($image_link, "://") > 0) && !startsWith($image_link, "/")) {
 				$image_link = make_link($image_link);
 			}
 			return $this->parse_link_template($image_link);
