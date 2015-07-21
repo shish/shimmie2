@@ -82,7 +82,7 @@ function sql_escape($input) {
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
  * @param $input
- * @return boolean
+ * @return bool
  */
 function bool_escape($input) {
 	/*
@@ -234,7 +234,7 @@ function autodate($date, $html=true) {
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
  * @param $dateTime
- * @return boolean
+ * @return bool
  */
 function isValidDateTime($dateTime) {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
@@ -250,7 +250,7 @@ function isValidDateTime($dateTime) {
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
  * @param $date
- * @return boolean
+ * @return bool
  */
 function isValidDate($date) {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
@@ -1052,7 +1052,7 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
  * 
  * @param array $headers
- * @param mixed $key
+ * @param mixed $name
  * @return mixed
  */
 function findHeader ($headers, $name) {
@@ -1140,29 +1140,29 @@ define("SCORE_LOG_NOTSET", 0);
  * @param string $section
  * @param int $priority
  * @param string $message
- * @param null|bool|string $flash
+ * @param bool|string $flash
  * @param array $args
  */
-function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=null, $args=array()) {
+function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=false, $args=array()) {
 	send_event(new LogEvent($section, $priority, $message, $args));
 	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 	if(is_cli() && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
 	}
-	if($flash === True) {
+	if($flash === true) {
 		flash_message($message);
 	}
-	else if(!is_null($flash)) {
+	else if(is_string($flash)) {
 		flash_message($flash);
 	}
 }
 
 // More shorthand ways of logging
-function log_debug(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
-function log_info(    /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
-function log_warning( /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
-function log_error(   /*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
-function log_critical(/*string*/ $section, /*string*/ $message, $flash=null, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
+function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
 $_request_id = null;

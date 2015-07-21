@@ -75,6 +75,8 @@ class Image {
 	 * @param null|mixed $row
 	 */
 	public function __construct($row=null) {
+		assert('is_null($row) || is_array($row)');
+
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name

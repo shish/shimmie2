@@ -159,6 +159,7 @@ class Upload extends Extension {
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 					
+					$ok = false;
 					if(count($_FILES)) {
 						foreach($_FILES as $file) {
 							$ok = $this->try_upload($file, $tags, $source, $image_id);
@@ -177,6 +178,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
+					$tags = isset($_GET['tags']) ? $_GET['tags'] : 'tagme';
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
 					$this->theme->display_upload_status($page, $ok);
