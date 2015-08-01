@@ -1724,12 +1724,7 @@ function _get_user() {
 }
 
 function _get_query() {
-	if(php_sapi_name() == 'cli-server') {
-		return $_SERVER["REQUEST_URI"];
-	}
-	else {
-		return @$_POST["q"]?:@$_GET["q"];
-	}
+	return @$_POST["q"]?:@$_GET["q"];
 }
 
 
