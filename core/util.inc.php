@@ -905,7 +905,7 @@ function get_base_href() {
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
 	$ok_var = null;
 	foreach($possible_vars as $var) {
-		if(substr($_SERVER[$var], -4) === '.php') {
+		if(isset($_SERVER[$var]) && substr($_SERVER[$var], -4) === '.php') {
 			$ok_var = $_SERVER[$var];
 			break;
 		}
