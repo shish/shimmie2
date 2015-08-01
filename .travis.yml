@@ -27,6 +27,8 @@ install:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
 
 script:
+  - php tests/test_info.php
+  - curl http://127.0.0.1/tests/test_info.php
   - php tests/test_install.php -d $DB -h "http://127.0.0.1/"
   - php tests/test_all.php -h "http://127.0.0.1/"
 
