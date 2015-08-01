@@ -6,6 +6,7 @@ php:
   - 5.4
   - 5.5
   - 5.6
+  - nightly
 
 # optionally specify a list of environments, for example to test different RDBMS
 env:
