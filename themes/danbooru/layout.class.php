@@ -124,7 +124,7 @@ class Layout {
 		// hack
 		$username = url_escape($user->name);
 		// hack
-		$qp = explode("/", ltrim(@$_GET["q"], "/"));
+		$qp = explode("/", ltrim(_get_query(), "/"));
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -245,7 +245,7 @@ EOD;
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 	 */
 		$html = null;
-		$url = ltrim($_GET['q'], "/");
+		$url = ltrim(_get_query(), "/");
 
 		$re1='.*?';
 		$re2='((?:[a-z][a-z_]+))';

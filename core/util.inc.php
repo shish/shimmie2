@@ -437,7 +437,7 @@ function modify_url($url, $changes) {
 		unset($changes['q']);
 	}
 	else {
-		$base = $_GET['q'];
+		$base = _get_query();
 	}
 
 	if(isset($params['q'])) {
@@ -1722,6 +1722,16 @@ function _get_user() {
 
 	return $user;
 }
+
+function _get_query() {
+	if(php_sapi_name() == 'cli-server') {
+		return $_SERVER["REQUEST_URI"];
+	}
+	else {
+		return @$_POST["q"]?:@$_GET["q"];
+	}
+}
+
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
