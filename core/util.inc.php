@@ -1725,26 +1725,6 @@ function _get_query() {
 	return @$_POST["q"]?:@$_GET["q"];
 }
 
-function _router() {
-	// custom routing for stand-alone mode
-	if(php_sapi_name() == 'cli-server') {
-		// warehouse files
-		$matches = array();
-		if(preg_match('/\/_(images|thumbs)\/([0-9a-f]{32}).*$/', $_SERVER["REQUEST_URI"], $matches)) {
-			header('Content-Type: image/jpeg');
-			print(file_get_contents(warehouse_path($matches[1], $matches[2])));
-			exit;
-		}
-
-		// static files
-		if(preg_match('/\.(?:png|jpg|jpeg|gif|css|js)$/', $_SERVER["REQUEST_URI"])) {
-			return true;
-		}
-
-		$_SERVER["PHP_SELF"] = '/';
-		$_GET['q'] = $_SERVER["REQUEST_URI"];
-	}
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Code coverage                                                             *

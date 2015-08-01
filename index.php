@@ -53,7 +53,6 @@ require_once "core/util.inc.php";
 // set up and purify the environment
 _version_check();
 _sanitise_environment();
-if(_router()) return false;
 
 try {
 	// load base files
