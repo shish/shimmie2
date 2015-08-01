@@ -12,13 +12,9 @@ env:
   - DB=mysql
   - DB=pgsql
 
-before_install:
-  - sudo apt-get update > /dev/null
-  - sudo chmod u+x tests/setup_test_env.sh
-
 install:
-  # Install nginx, php5-fpm and configure them
-  - sudo ./tests/setup_test_env.sh $TRAVIS_BUILD_DIR
+  - mkdir -p data
+  - php -S 127.0.0.1:8080 tests/router.php >>data/php.log 2>>data/php.log & sleep 3
 
   # Enable logging of all queries (for debugging) and create the database schema for shimmie.
   - if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
@@ -27,10 +23,8 @@ install:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
 
 script:
-  - php tests/test_info.php
-  - curl http://127.0.0.1/tests/test_info.php
-  - php tests/test_install.php -d $DB -h "http://127.0.0.1/"
-  - php tests/test_all.php -h "http://127.0.0.1/"
+  - php tests/install.php -d $DB -h "http://127.0.0.1:8080/"
+  - php tests/all.php -h "http://127.0.0.1:8080/"
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
@@ -38,9 +32,7 @@ after_failure:
   - sudo ls -al data/config/
   - sudo cat data/config/shimmie.conf.php
   - sudo cat data/config/extensions.conf.php
-  - sudo cat /etc/nginx/sites-enabled/default
-  - sudo cat /var/log/nginx/error.log
-  - sudo cat /var/log/php5-fpm.log
+  - sudo cat data/php.log
   - sudo ls /var/run/mysql*
   - sudo ls /var/log/*mysql*
   - sudo cat /var/log/mysql.err

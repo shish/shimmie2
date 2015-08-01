@@ -8,6 +8,8 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
+if(PHP_SAPI !== 'cli') die('cli only');
+
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
@@ -59,13 +61,13 @@ $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $user = _get_user();
 send_event(new InitExtEvent());
 
-// Put the database into autocommit mode for making the users.
-$database->commit();
-
 // Create the necessary users for the tests.
 $userPage = new UserPage();
 $userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
 $userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
+
+// Commit the users.
+$database->commit();
 
 // Fire off the InitExtEvent() again after we have made the users.
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();

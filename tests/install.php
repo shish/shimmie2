@@ -8,6 +8,8 @@
  * @copyright  Copyright (c) 2014, jgen
  */
 
+if(PHP_SAPI !== 'cli') die('cli only');
+
 require_once('lib/simpletest/unit_tester.php');
 require_once('lib/simpletest/web_tester.php');
 require_once('lib/simpletest/reporter.php');
@@ -66,7 +68,6 @@ class ShimmieInstallerTest extends WebTestCase {
 		$this->clickSubmit("Go!");
 
 		if (!$this->assertText("Installation Succeeded!")) {
-			print "ERROR --- '" . $db . "'";
 			$this->showSource();
 		}
 	}
