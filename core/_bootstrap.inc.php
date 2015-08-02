@@ -45,4 +45,4 @@ $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 ctx_log_endok();
 
 // hook up event handlers
-_load_extensions();
+_load_event_listeners();

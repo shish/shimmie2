@@ -1381,6 +1381,78 @@ function path_to_tags($path) {
 global $_event_listeners;
 $_event_listeners = array();
 
+function _load_event_listeners() {
+	global $_event_listeners;
+
+	ctx_log_start("Loading extensions");
+
+	if(COMPILE_ELS && file_exists("data/cache/event_listeners.php")) {
+		require_once("data/cache/event_listeners.php");
+	}
+	else {
+		_set_event_listeners();
+
+		if(COMPILE_ELS) {
+			_dump_event_listeners($_event_listeners, data_path("cache/event_listeners.php"));
+		}
+	}
+
+	ctx_log_endok();
+}
+
+function _set_event_listeners() {
+	global $_event_listeners;
+	$_event_listeners = array();
+
+	foreach(get_declared_classes() as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {
+			// don't do anything
+		}
+		elseif(is_subclass_of($class, "Extension")) {
+			$extension = new $class();
+			$extension->i_am($extension);
+			$my_events = array();
+			foreach(get_class_methods($extension) as $method) {
+				if(substr($method, 0, 2) == "on") {
+					$event = substr($method, 2) . "Event";
+					$pos = $extension->get_priority() * 100;
+					while(isset($_event_listeners[$event][$pos])) {
+						$pos += 1;
+					}
+					$_event_listeners[$event][$pos] = $extension;
+				}
+			}
+		}
+	}
+}
+
+function _dump_event_listeners($event_listeners, $path) {
+	$p = "<"."?php\n";
+
+	foreach(get_declared_classes() as $class) {
+		$rclass = new ReflectionClass($class);
+		if($rclass->isAbstract()) {}
+		elseif(is_subclass_of($class, "Extension")) {
+			$p .= "\$$class = new $class(); ";
+			$p .= "\${$class}->i_am(\$$class);\n";
+		}
+	}
+
+	$p .= "\$_event_listeners = array(\n";
+	foreach($event_listeners as $event => $listeners) {
+		$p .= "\t'$event' => array(\n";
+		foreach($listeners as $id => $listener) {
+			$p .= "\t\t$id => \$".get_class($listener).",\n";
+		}
+		$p .= "\t),\n";
+	}
+	$p .= ");\n";
+
+	$p .= "?".">";
+	file_put_contents($path, $p);
+}
+
 
 /** @private */
 global $_shm_event_count;
@@ -1533,77 +1605,6 @@ function _get_themelet_files($_theme) {
 	return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }
 
-function _set_event_listeners($classes) {
-	global $_event_listeners;
-	$_event_listeners = array();
-
-	foreach($classes as $class) {
-		$rclass = new ReflectionClass($class);
-		if($rclass->isAbstract()) {
-			// don't do anything
-		}
-		elseif(is_subclass_of($class, "Extension")) {
-			$extension = new $class();
-			$extension->i_am($extension);
-			$my_events = array();
-			foreach(get_class_methods($extension) as $method) {
-				if(substr($method, 0, 2) == "on") {
-					$event = substr($method, 2) . "Event";
-					$pos = $extension->get_priority() * 100;
-					while(isset($_event_listeners[$event][$pos])) {
-						$pos += 1;
-					}
-					$_event_listeners[$event][$pos] = $extension;
-				}
-			}
-		}
-	}
-}
-
-function _dump_event_listeners($event_listeners, $path) {
-	$p = "<"."?php\n";
-
-	foreach(get_declared_classes() as $class) {
-		$rclass = new ReflectionClass($class);
-		if($rclass->isAbstract()) {}
-		elseif(is_subclass_of($class, "Extension")) {
-			$p .= "\$$class = new $class(); ";
-			$p .= "\${$class}->i_am(\$$class);\n";
-		}
-	}
-
-	$p .= "\$_event_listeners = array(\n";
-	foreach($event_listeners as $event => $listeners) {
-		$p .= "\t'$event' => array(\n";
-		foreach($listeners as $id => $listener) {
-			$p .= "\t\t$id => \$".get_class($listener).",\n";
-		}
-		$p .= "\t),\n";
-	}
-	$p .= ");\n";
-
-	$p .= "?".">";
-	file_put_contents($path, $p);
-}
-
-function _load_extensions() {
-	global $_event_listeners;
-
-	ctx_log_start("Loading extensions");
-
-	if(COMPILE_ELS && file_exists("data/cache/event_listeners.php")) {
-		require_once("data/cache/event_listeners.php");
-	}
-	else {
-		_set_event_listeners(get_declared_classes());
-
-		if(COMPILE_ELS) {
-			_dump_event_listeners($_event_listeners, data_path("cache/event_listeners.php"));
-		}
-	}
-
-	ctx_log_endok();
-}
 
 /**
  * Used to display fatal errors to the web user.
