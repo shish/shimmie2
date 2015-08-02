@@ -33,7 +33,7 @@ ob_start();
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
-		<script type="text/javascript" src="lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
 	</head>
 	<body>
 <?php if(false) { ?>
