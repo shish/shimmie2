@@ -1381,24 +1381,6 @@ function path_to_tags($path) {
 global $_event_listeners;
 $_event_listeners = array();
 
-/**
- * Register an Extension.
- *
- * @param Extension $extension
- * @param int $pos
- * @param array $events
- */
-function add_event_listener(Extension $extension, $pos=50, $events=array()) {
-	global $_event_listeners;
-	$pos *= 100;
-	foreach($events as $event) {
-		while(isset($_event_listeners[$event][$pos])) {
-			$pos += 1;
-		}
-		$_event_listeners[$event][$pos] = $extension;
-	}
-}
-
 
 /** @private */
 global $_shm_event_count;
@@ -1561,15 +1543,19 @@ function _set_event_listeners($classes) {
 			// don't do anything
 		}
 		elseif(is_subclass_of($class, "Extension")) {
-			$c = new $class();
-			$c->i_am($c);
+			$extension = new $class();
+			$extension->i_am($extension);
 			$my_events = array();
-			foreach(get_class_methods($c) as $method) {
+			foreach(get_class_methods($extension) as $method) {
 				if(substr($method, 0, 2) == "on") {
-					$my_events[] = substr($method, 2) . "Event";
+					$event = substr($method, 2) . "Event";
+					$pos = $extension->get_priority() * 100;
+					while(isset($_event_listeners[$event][$pos])) {
+						$pos += 1;
+					}
+					$_event_listeners[$event][$pos] = $extension;
 				}
 			}
-			add_event_listener($c, $c->get_priority(), $my_events);
 		}
 	}
 }
