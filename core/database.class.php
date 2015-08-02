@@ -414,6 +414,11 @@ class Database {
 	public $transaction = false;
 
 	/**
+	 * How many queries this DB object has run
+	 */
+	public $query_count = 0;
+
+	/**
 	 * For now, only connect to the cache, as we will pretty much certainly
 	 * need it. There are some pages where all the data is in cache, so the
 	 * DB connection is on-demand.
@@ -545,6 +550,25 @@ class Database {
 		return $this->engine->name;
 	}
 
+	private function count_execs($db, $sql, $inputarray) {
+		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
+			$fp = @fopen("data/sql.log", "a");
+			if($fp) {
+				if(isset($inputarray) && is_array($inputarray)) {
+					fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
+				}
+				else {
+					fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+				}
+				fclose($fp);
+			}
+		}
+		if(!is_array($inputarray)) $this->query_count++;
+		# handle 2-dimensional input arrays
+		else if(is_array(reset($inputarray))) $this->query_count += sizeof($inputarray);
+		else $this->query_count++;
+	}
+
 	/**
 	 * Execute an SQL query and return an PDO result-set.
 	 *
@@ -556,7 +580,7 @@ class Database {
 	public function execute($query, $args=array()) {
 		try {
 			if(is_null($this->db)) $this->connect_db();
-			_count_execs($this->db, $query, $args);
+			$this->count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {

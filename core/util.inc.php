@@ -699,44 +699,6 @@ function getExtension ($mime_type){
 	return ($ext ? $ext : false);
 }
 
-
-$_shm_query_count = 0;
-/**
- * $db is the connection object
- *
- * @private
- */
-function _count_execs($db, $sql, $inputarray) {
-	global $_shm_query_count;
-	if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
-		$fp = @fopen("data/sql.log", "a");
-		if($fp) {
-			if(isset($inputarray) && is_array($inputarray)) {
-				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
-			}
-			else {
-				fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
-			}
-			fclose($fp);
-		}
-		else {
-			# WARNING:
-			# SQL queries happen before the event system is fully initialised
-			# (eg, "select theme from config" happens before "load themes"),
-			# so using the event system to report an error will create some
-			# really weird looking bugs.
-			#
-			#log_error("core", "failed to open sql.log for appending");
-		}
-	}
-	if (!is_array($inputarray)) $_shm_query_count++;
-	# handle 2-dimensional input arrays
-	else if (is_array(reset($inputarray))) $_shm_query_count += sizeof($inputarray);
-	else $_shm_query_count++;
-	# in PHP4.4 and PHP5, we need to return a value by reference
-	$null = null; return $null;
-}
-
 /**
  * Compare two Block objects, used to sort them before being displayed
  *
@@ -1501,7 +1463,7 @@ $_shm_load_start = microtime(true);
  * @return string debug info to add to the page.
  */
 function get_debug_info() {
-	global $config, $_shm_event_count, $database, $_shm_query_count, $_shm_load_start;
+	global $config, $_shm_event_count, $database, $_shm_load_start;
 
 	$i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
 
@@ -1518,7 +1480,7 @@ function get_debug_info() {
 	$miss = $database->cache->get_misses();
 
 	$debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
-	$debug .= "; Used $i_files files and $_shm_query_count queries";
+	$debug .= "; Used $i_files files and {$database->query_count} queries";
 	$debug .= "; Sent $_shm_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
 	$debug .= "; Shimmie version ". VERSION . $commit; // .", SCore Version ". SCORE_VERSION;

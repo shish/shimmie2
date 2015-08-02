@@ -19,14 +19,14 @@ class StatsDInterface extends Extension {
 	public static $stats = array();
 
 	private function _stats($type) {
-		global $config, $_shm_event_count, $database, $_shm_query_count, $_shm_load_start;
+		global $config, $_shm_event_count, $database, $_shm_load_start;
 		$time = microtime(true) - $_shm_load_start;
 		StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
 		StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
 		StatsDInterface::$stats["shimmie.$type.time-db"] = "{$database->dbtime}|ms";
 		StatsDInterface::$stats["shimmie.$type.memory"] = memory_get_peak_usage(true)."|c";
 		StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
-		StatsDInterface::$stats["shimmie.$type.queries"] = $_shm_query_count."|c";
+		StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
 		StatsDInterface::$stats["shimmie.$type.events"] = $_shm_event_count."|c";
 		StatsDInterface::$stats["shimmie.$type.cache-hits"] = $database->cache->get_hits()."|c";
 		StatsDInterface::$stats["shimmie.$type.cache-misses"] = $database->cache->get_misses()."|c";
