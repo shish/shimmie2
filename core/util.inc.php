@@ -1378,22 +1378,23 @@ function path_to_tags($path) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /** @private */
-global $_event_listeners;
-$_event_listeners = array();
+global $_shm_event_listeners;
+$_shm_event_listeners = array();
 
 function _load_event_listeners() {
-	global $_event_listeners;
+	global $_shm_event_listeners;
 
 	ctx_log_start("Loading extensions");
 
-	if(COMPILE_ELS && file_exists("data/cache/event_listeners.php")) {
-		require_once("data/cache/event_listeners.php");
+	$cache_path = data_path("cache/shm_event_listeners.php");
+	if(COMPILE_ELS && file_exists($cache_path)) {
+		require_once($cache_path);
 	}
 	else {
 		_set_event_listeners();
 
 		if(COMPILE_ELS) {
-			_dump_event_listeners($_event_listeners, data_path("cache/event_listeners.php"));
+			_dump_event_listeners($_shm_event_listeners, $cache_path);
 		}
 	}
 
@@ -1401,8 +1402,8 @@ function _load_event_listeners() {
 }
 
 function _set_event_listeners() {
-	global $_event_listeners;
-	$_event_listeners = array();
+	global $_shm_event_listeners;
+	$_shm_event_listeners = array();
 
 	foreach(get_declared_classes() as $class) {
 		$rclass = new ReflectionClass($class);
@@ -1417,10 +1418,10 @@ function _set_event_listeners() {
 				if(substr($method, 0, 2) == "on") {
 					$event = substr($method, 2) . "Event";
 					$pos = $extension->get_priority() * 100;
-					while(isset($_event_listeners[$event][$pos])) {
+					while(isset($_shm_event_listeners[$event][$pos])) {
 						$pos += 1;
 					}
-					$_event_listeners[$event][$pos] = $extension;
+					$_shm_event_listeners[$event][$pos] = $extension;
 				}
 			}
 		}
@@ -1439,7 +1440,7 @@ function _dump_event_listeners($event_listeners, $path) {
 		}
 	}
 
-	$p .= "\$_event_listeners = array(\n";
+	$p .= "\$_shm_event_listeners = array(\n";
 	foreach($event_listeners as $event => $listeners) {
 		$p .= "\t'$event' => array(\n";
 		foreach($listeners as $id => $listener) {
@@ -1464,13 +1465,13 @@ $_shm_event_count = 0;
  * @param Event $event
  */
 function send_event(Event $event) {
-	global $_event_listeners, $_shm_event_count;
-	if(!isset($_event_listeners[get_class($event)])) return;
+	global $_shm_event_listeners, $_shm_event_count;
+	if(!isset($_shm_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));
 
 	ctx_log_start(get_class($event));
 	// SHIT: http://bugs.php.net/bug.php?id=35106
-	$my_event_listeners = $_event_listeners[get_class($event)];
+	$my_event_listeners = $_shm_event_listeners[get_class($event)];
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
 		ctx_log_start(get_class($listener));
