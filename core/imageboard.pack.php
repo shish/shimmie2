@@ -23,7 +23,6 @@
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-$tag_n = 0; // temp hack
 $_flexihash = null;
 $_fh_last_opts = null;
 $order_sql = null; // this feels ugly
@@ -40,6 +39,8 @@ require_once "lib/flexihash.php";
  * other supported upload type.
  */
 class Image {
+	private static $tag_n = 0; // temp hack
+
 	/** @var null|int */
 	public $id = null;
 
@@ -967,13 +968,10 @@ class Image {
 		$sql = "0";
 		$terms = array();
 		foreach($tag_querylets as $tq) {
-			global $tag_n;
 			$sign = $tq->positive ? "+" : "-";
-			//$sql .= " $sign (tag LIKE :tag$tag_n)";
-			$sql .= ' '.$sign.' (tag LIKE :tag'.$tag_n.')';
-			//$terms["tag$tag_n"] = $tq->tag;
-			$terms['tag'.$tag_n] = $tq->tag;
-			$tag_n++;
+			$sql .= ' '.$sign.' (tag LIKE :tag'.Image::$tag_n.')';
+			$terms['tag'.Image::$tag_n] = $tq->tag;
+			Image::$tag_n++;
 
 			if($sign === "+") $positive_tag_count++;
 			else $negative_tag_count++;
@@ -1084,7 +1082,7 @@ class Image {
 				WHERE 1=0
 			");
 		}
-		$tag_n = 0;
+		Image::$tag_n = 0;
 		return $query;
 	}
 }

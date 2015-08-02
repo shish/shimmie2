@@ -4,6 +4,8 @@
  * actually do anything as far as the app is concerned
  */
 
+global $config, $database, $user, $page;
+
 require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
@@ -23,6 +25,8 @@ foreach($files as $filename) {
 		require_once $filename;
 	}
 }
+unset($files);
+unset($filename);
 ctx_log_endok();
 
 // connect to the database
@@ -36,6 +40,7 @@ ctx_log_start("Loading themelets");
 foreach(_get_themelet_files(get_theme()) as $themelet) {
 	require_once $themelet;
 }
+unset($themelet);
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 ctx_log_endok();
 

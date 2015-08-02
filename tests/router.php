@@ -9,6 +9,7 @@ if(preg_match('/\/_(images|thumbs)\/([0-9a-f]{32}).*$/', $_SERVER["REQUEST_URI"]
 	print(file_get_contents(warehouse_path($matches[1], $matches[2])));
 	return true;
 }
+unset($matches);
 
 // use the default handler (serve static files, interpret php files)
 if(preg_match('/\.(?:png|jpg|jpeg|gif|css|js|php)(\?.*)?$/', $_SERVER["REQUEST_URI"])) {

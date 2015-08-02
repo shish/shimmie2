@@ -1052,7 +1052,6 @@ function findHeader ($headers, $name) {
 	return $header;
 }
 
-$_included = array();
 /**
  * Get the active contents of a .php file
  *
@@ -1060,13 +1059,13 @@ $_included = array();
  * @return string|null
  */
 function manual_include($fname) {
-	global $_included;
+	static $included = array();
 
 	if(!file_exists($fname)) return null;
 
-	if(in_array($fname, $_included)) return null;
+	if(in_array($fname, $included)) return null;
 
-	$_included[] = $fname;
+	$included[] = $fname;
 
 	print "$fname\n";
 
@@ -1380,6 +1379,7 @@ function path_to_tags($path) {
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /** @private */
+global $_event_listeners;
 $_event_listeners = array();
 
 /**
@@ -1401,6 +1401,7 @@ function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 }
 
 /** @private */
+global $_event_count;
 $_event_count = 0;
 
 /**

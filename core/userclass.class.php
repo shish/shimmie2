@@ -2,6 +2,7 @@
 /**
  * @global UserClass[] $_user_classes
  */
+global $_user_classes;
 $_user_classes = array();
 
 /**
