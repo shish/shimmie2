@@ -31,7 +31,7 @@ class Handle404 extends Extension {
 			}
 			else {
 				log_debug("handle_404", "Hit 404: $h_pagename");
-				$page->add_http_header("HTTP/1.0 404 Page Not Found",5);
+				$page->set_code(404);
 				$page->set_title("404");
 				$page->set_heading("404 - No Handler Found");
 				$page->add_block(new NavBlock());

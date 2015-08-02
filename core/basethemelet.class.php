@@ -16,7 +16,7 @@ class BaseThemelet {
 	 */
 	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
 		global $page;
-		$page->add_http_header("HTTP/1.0 $code $title");
+		$page->set_code($code);
 		$page->set_title($title);
 		$page->set_heading($title);
 		$has_nav = false;

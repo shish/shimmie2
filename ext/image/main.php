@@ -407,7 +407,7 @@ class ImageIO extends Extension {
 			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
 
 			if($if_modified_since == $gmdate_mod) {
-				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
+				$page->set_code(304);
 				$page->set_data("");
 			}
 			else {

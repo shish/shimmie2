@@ -140,7 +140,7 @@ class DanbooruApi extends Extension {
 					{
 						$fp = fopen($url, "r");
 						if(!$fp) {
-							$page->add_http_header("HTTP/1.0 409 Conflict");
+							$page->set_code(409);
 							$page->add_http_header("X-Danbooru-Errors: fopen read error");
 						}
 
@@ -174,7 +174,7 @@ class DanbooruApi extends Extension {
 					$filename = basename($url);
 				} else
 				{	// Nothing was specified at all
-					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->set_code(409);
 					$page->add_http_header("X-Danbooru-Errors: no input files");
 					return;
 				}
@@ -187,7 +187,7 @@ class DanbooruApi extends Extension {
 				{
 					if(strtolower($_REQUEST['md5']) != $hash)
 					{
-						$page->add_http_header("HTTP/1.0 409 Conflict");
+						$page->set_code(409);
 						$page->add_http_header("X-Danbooru-Errors: md5 mismatch");
 						return;
 					}
@@ -198,7 +198,7 @@ class DanbooruApi extends Extension {
 				// Does it exist already?
 				$existing = Image::by_hash($hash);
 				if(!is_null($existing)) {
-					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->set_code(409);
 					$page->add_http_header("X-Danbooru-Errors: duplicate");
 					$existinglink = make_link("post/view/" . $existing->id);
 					if($danboorup_kludge) $existinglink=make_http($existinglink);
@@ -235,13 +235,13 @@ class DanbooruApi extends Extension {
 				}
 				catch(UploadException $ex) {
 					// Did something screw up?
-					$page->add_http_header("HTTP/1.0 409 Conflict");
+					$page->set_code(409);
 					$page->add_http_header("X-Danbooru-Errors: exception - " . $ex->getMessage());
 					return;
 				}
 			} else
 			{
-				$page->add_http_header("HTTP/1.0 409 Conflict");
+				$page->set_code(409);
 				$page->add_http_header("X-Danbooru-Errors: authentication error");
 				return;
 			}

@@ -111,6 +111,9 @@ class Page {
 	/** @name "page" mode */
 	//@{
 
+	/** @var int */
+	public $code = 200;
+
 	/** @var string */
 	public $title = "";
 
@@ -132,6 +135,13 @@ class Page {
 	/** @var Block[] */
 	public $blocks = array();
 
+	/**
+	 * Set the HTTP status code
+	 * @param int $code
+	 */
+	public function set_code($code) {
+		$this->code = $code;
+	}
 
 	/**
 	 * Set the window title.
@@ -225,6 +235,7 @@ class Page {
 
 		switch($this->mode) {
 			case "page":
+				header("HTTP/1.0 {$this->code} Shimmie");
 				if(CACHE_HTTP) {
 					header("Vary: Cookie, Accept-Encoding");
 					if($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
