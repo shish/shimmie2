@@ -1083,10 +1083,6 @@ function manual_include($fname) {
 	// @include_once is used for user-creatable config files
 	$text = preg_replace('/@include_once "(.*)";/e', "manual_include('$1')", $text);
 
-	// wibble the defines for HipHop's sake
-	$text = str_replace('function _d(', '// function _messed_d(', $text);
-	$text = preg_replace('/_d\("(.*)", (.*)\);/', 'if(!defined("$1")) define("$1", $2);', $text);
-
 	return $text;
 }
 
