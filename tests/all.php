@@ -29,32 +29,8 @@ define("_TRAVIS_WEBHOST", $host);
 // The code below is based on the code in index.php
 //--------------------------------------------------
 
-require_once "core/sys_config.inc.php";
-require_once "core/util.inc.php";
-
-// set up and purify the environment
-_version_check();
-_sanitise_environment();
-
-// load base files
-$files = array_merge(zglob("core/*.php"), zglob("ext/{".ENABLED_EXTS."}/main.php"));
-foreach($files as $filename) {
-	require_once $filename;
-}
-
-// We also need to pull in the SimpleTest extension.
+require_once('core/_bootstrap.inc.php');
 require_once('ext/simpletest/main.php');
-
-// connect to the database
-$database = new Database();
-$config = new DatabaseConfig($database);
-
-// load the theme parts
-foreach(_get_themelet_files(get_theme()) as $themelet) {
-	require_once $themelet;
-}
-
-_load_extensions();
 
 // Fire off the InitExtEvent()
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();

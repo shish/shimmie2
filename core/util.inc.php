@@ -699,28 +699,6 @@ function getExtension ($mime_type){
 	return ($ext ? $ext : false);
 }
 
-/**
- * @private
- */
-function _version_check() {
-	$min_version = "5.4.8";
-	if(version_compare(PHP_VERSION, $min_version) == -1) {
-		print "
-Currently SCore Engine doesn't support versions of PHP lower than $min_version --
-if your web host is running an older version, they are dangerously out of
-date and you should plan on moving elsewhere.
-";
-		exit;
-	}
-}
-
-/**
- * @private
- */
-function is_cli() {
-	return (PHP_SAPI === 'cli');
-}
-
 
 $_execs = 0;
 /**
@@ -1144,7 +1122,8 @@ define("SCORE_LOG_NOTSET", 0);
 function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=false, $args=array()) {
 	send_event(new LogEvent($section, $priority, $message, $args));
 	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
-	if(is_cli() && ($priority >= $threshold)) {
+
+	if((PHP_SAPI === 'cli') && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
 	}
 	if($flash === true) {
@@ -1504,10 +1483,7 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 	print("</pre>");
 	*/
 }
-//assert_options(ASSERT_ACTIVE, 1);
-assert_options(ASSERT_WARNING, 0);
-assert_options(ASSERT_QUIET_EVAL, 1);
-assert_options(ASSERT_CALLBACK, 'score_assert_handler');
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
@@ -1515,12 +1491,16 @@ assert_options(ASSERT_CALLBACK, 'score_assert_handler');
 
 /** @privatesection */
 
-/**
- * @param array|string $arr
- * @return array|string
- */
-function _stripslashes_r($arr) {
-	return is_array($arr) ? array_map('_stripslashes_r', $arr) : stripslashes($arr);
+function _version_check() {
+	$min_version = "5.4.8";
+	if(version_compare(PHP_VERSION, $min_version) == -1) {
+		print "
+Currently SCore Engine doesn't support versions of PHP lower than $min_version --
+if your web host is running an older version, they are dangerously out of
+date and you should plan on moving elsewhere.
+";
+		exit;
+	}
 }
 
 function _sanitise_environment() {
@@ -1530,11 +1510,15 @@ function _sanitise_environment() {
 
 	if(DEBUG) {
 		error_reporting(E_ALL);
+		assert_options(ASSERT_ACTIVE, 1);
+		assert_options(ASSERT_BAIL, 1);
+		assert_options(ASSERT_WARNING, 0);
+		assert_options(ASSERT_QUIET_EVAL, 1);
+		assert_options(ASSERT_CALLBACK, 'score_assert_handler');
 	}
 
 	if(CONTEXT) {
 		ctx_set_log(CONTEXT);
-		ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
 	}
 
 	if(COVERAGE) {
@@ -1542,18 +1526,9 @@ function _sanitise_environment() {
 		register_shutdown_function("_end_coverage");
 	}
 
-	assert_options(ASSERT_ACTIVE, 1);
-	assert_options(ASSERT_BAIL, 1);
-
 	ob_start();
 
-	if(get_magic_quotes_gpc()) {
-		$_GET = _stripslashes_r($_GET);
-		$_POST = _stripslashes_r($_POST);
-		$_COOKIE = _stripslashes_r($_COOKIE);
-	}
-
-	if(is_cli()) {
+	if(PHP_SAPI === 'cli') {
 		if(isset($_SERVER['REMOTE_ADDR'])) {
 			die("CLI with remote addr? Confused, not taking the risk.");
 		}
@@ -1561,6 +1536,7 @@ function _sanitise_environment() {
 		$_SERVER['HTTP_HOST'] = "<cli command>";
 	}
 }
+
 
 /**
  * @param string $_theme
