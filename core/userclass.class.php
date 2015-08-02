@@ -1,9 +1,9 @@
 <?php
 /**
- * @global UserClass[] $_user_classes
+ * @global UserClass[] $_shm_user_classes
  */
-global $_user_classes;
-$_user_classes = array();
+global $_shm_user_classes;
+$_shm_user_classes = array();
 
 /**
  * Class UserClass
@@ -31,16 +31,16 @@ class UserClass {
 	 * @param array $abilities
 	 */
 	public function __construct($name, $parent=null, $abilities=array()) {
-		global $_user_classes;
+		global $_shm_user_classes;
 
 		$this->name = $name;
 		$this->abilities = $abilities;
 
 		if(!is_null($parent)) {
-			$this->parent = $_user_classes[$parent];
+			$this->parent = $_shm_user_classes[$parent];
 		}
 
-		$_user_classes[$name] = $this;
+		$_shm_user_classes[$name] = $this;
 	}
 
 	/**
@@ -61,10 +61,10 @@ class UserClass {
 			return $this->parent->can($ability);
 		}
 		else {
-			global $_user_classes;
+			global $_shm_user_classes;
 			$min_dist = 9999;
 			$min_ability = null;
-			foreach($_user_classes['base']->abilities as $a => $cando) {
+			foreach($_shm_user_classes['base']->abilities as $a => $cando) {
 				$v = levenshtein($ability, $a);
 				if($v < $min_dist) {
 					$min_dist = $v;

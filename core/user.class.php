@@ -49,7 +49,7 @@ class User {
 	 * @throws SCoreException
 	 */
 	public function __construct($row) {
-		global $_user_classes;
+		global $_shm_user_classes;
 
 		$this->id = int_escape($row['id']);
 		$this->name = $row['name'];
@@ -57,8 +57,8 @@ class User {
 		$this->join_date = $row['joindate'];
 		$this->passhash = $row['pass'];
 
-		if(array_key_exists($row["class"], $_user_classes)) {
-			$this->class = $_user_classes[$row["class"]];
+		if(array_key_exists($row["class"], $_shm_user_classes)) {
+			$this->class = $_shm_user_classes[$row["class"]];
 		}
 		else {
 			throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");

@@ -301,8 +301,8 @@ function validate_input($inputs) {
 			$outputs[$key] = $value;
 		}
 		else if(in_array('user_class', $flags)) {
-			global $_user_classes;
-			if(!array_key_exists($value, $_user_classes)) {
+			global $_shm_user_classes;
+			if(!array_key_exists($value, $_shm_user_classes)) {
 				throw new InvalidInput("Invalid user class: ".html_escape($class));
 			}
 			$outputs[$key] = $value;
@@ -700,14 +700,14 @@ function getExtension ($mime_type){
 }
 
 
-$_execs = 0;
+$_shm_execs = 0;
 /**
  * $db is the connection object
  *
  * @private
  */
 function _count_execs($db, $sql, $inputarray) {
-	global $_execs;
+	global $_shm_execs;
 	if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
 		$fp = @fopen("data/sql.log", "a");
 		if($fp) {
@@ -729,10 +729,10 @@ function _count_execs($db, $sql, $inputarray) {
 			#log_error("core", "failed to open sql.log for appending");
 		}
 	}
-	if (!is_array($inputarray)) $_execs++;
+	if (!is_array($inputarray)) $_shm_execs++;
 	# handle 2-dimensional input arrays
-	else if (is_array(reset($inputarray))) $_execs += sizeof($inputarray);
-	else $_execs++;
+	else if (is_array(reset($inputarray))) $_shm_execs += sizeof($inputarray);
+	else $_shm_execs++;
 	# in PHP4.4 and PHP5, we need to return a value by reference
 	$null = null; return $null;
 }
@@ -1137,24 +1137,23 @@ function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $a
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
-$_request_id = null;
 /**
  * Get a unique ID for this request, useful for grouping log messages.
  *
  * @return null|string
  */
 function get_request_id() {
-	global $_request_id;
-	if(!$_request_id) {
+	static $request_id = null;
+	if(!$request_id) {
 		// not completely trustworthy, as a user can spoof this
 		if(@$_SERVER['HTTP_X_VARNISH']) {
-			$_request_id = $_SERVER['HTTP_X_VARNISH'];
+			$request_id = $_SERVER['HTTP_X_VARNISH'];
 		}
 		else {
-			$_request_id = "P" . uniqid();
+			$request_id = "P" . uniqid();
 		}
 	}
-	return $_request_id;
+	return $request_id;
 }
 
 
@@ -1400,9 +1399,10 @@ function add_event_listener(Extension $extension, $pos=50, $events=array()) {
 	}
 }
 
+
 /** @private */
-global $_event_count;
-$_event_count = 0;
+global $_shm_event_count;
+$_shm_event_count = 0;
 
 /**
  * Send an event to all registered Extensions.
@@ -1410,7 +1410,7 @@ $_event_count = 0;
  * @param Event $event
  */
 function send_event(Event $event) {
-	global $_event_listeners, $_event_count;
+	global $_event_listeners, $_shm_event_count;
 	if(!isset($_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));
 
@@ -1425,7 +1425,7 @@ function send_event(Event $event) {
 		}
 		ctx_log_endok();
 	}
-	$_event_count++;
+	$_shm_event_count++;
 	ctx_log_endok();
 }
 
@@ -1437,7 +1437,7 @@ function send_event(Event $event) {
 // SHIT by default this returns the time as a string. And it's not even a
 // string representation of a number, it's two numbers separated by a space.
 // What the fuck were the PHP developers smoking.
-$_load_start = microtime(true);
+$_shm_load_start = microtime(true);
 
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
@@ -1446,7 +1446,7 @@ $_load_start = microtime(true);
  * @return string debug info to add to the page.
  */
 function get_debug_info() {
-	global $config, $_event_count, $database, $_execs, $_load_start;
+	global $config, $_shm_event_count, $database, $_shm_execs, $_shm_load_start;
 
 	$i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
 
@@ -1456,15 +1456,15 @@ function get_debug_info() {
 	else {
 		$commit = " (".$config->get_string("commit_hash").")";
 	}
-	$time = sprintf("%.2f", microtime(true) - $_load_start);
+	$time = sprintf("%.2f", microtime(true) - $_shm_load_start);
 	$dbtime = sprintf("%.2f", $database->dbtime);
 	$i_files = count(get_included_files());
 	$hits = $database->cache->get_hits();
 	$miss = $database->cache->get_misses();
 
 	$debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
-	$debug .= "; Used $i_files files and $_execs queries";
-	$debug .= "; Sent $_event_count events";
+	$debug .= "; Used $i_files files and $_shm_execs queries";
+	$debug .= "; Sent $_shm_event_count events";
 	$debug .= "; $hits cache hits and $miss misses";
 	$debug .= "; Shimmie version ". VERSION . $commit; // .", SCore Version ". SCORE_VERSION;
 

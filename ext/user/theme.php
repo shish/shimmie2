@@ -208,9 +208,9 @@ class UserPageTheme extends Themelet {
 			$i_user_id = int_escape($duser->id);
 
 			if($user->can("edit_user_class")) {
-				global $_user_classes;
+				global $_shm_user_classes;
 				$class_html = "";
-				foreach($_user_classes as $name => $values) {
+				foreach($_shm_user_classes as $name => $values) {
 					$h_name = html_escape($name);
 					$h_title = html_escape(ucwords($name));
 					$h_selected = ($name == $duser->class->name ? " selected" : "");

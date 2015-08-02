@@ -34,7 +34,6 @@ class ET extends Extension {
 	 */
 	private function get_info() {
 		global $config, $database;
-		global $_event_listeners; // yay for using secret globals \o/
 
 		$info = array();
 		$info['site_title'] = $config->get_string("title");
