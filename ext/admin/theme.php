@@ -36,7 +36,6 @@ class AdminPageTheme extends Themelet {
 	 * Show a form which links to admin_utils with POST[action] set to one of:
 	 *  'lowercase all tags'
 	 *  'recount tag use'
-	 *  'purge unused tags'
 	 *  etc
 	 */
 	public function display_form() {
