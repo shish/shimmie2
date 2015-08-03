@@ -392,7 +392,7 @@ class Pools extends Extension {
 
 
 		$order_by = "";
-		$order = get_prefixed_cookie("ui-order-pool");
+		$order = $page->get_cookie("ui-order-pool");
 		if($order == "created" || is_null($order)){
 			$order_by = "ORDER BY p.date DESC";
 		}elseif($order == "updated"){

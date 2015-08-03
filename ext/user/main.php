@@ -165,11 +165,11 @@ class UserPage extends Extension {
 				$this->theme->display_user_list($page, User::by_list(0), $user);
 			}
 			else if($event->get_arg(0) == "logout") {
-				set_prefixed_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+				$page->add_cookie("session", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				if(CACHE_HTTP || SPEED_HAX) {
 					# to keep as few versions of content as possible,
 					# make cookies all-or-nothing
-					set_prefixed_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
+					$page->add_cookie("user", "", time()+60*60*24*$config->get_int('login_memory'), "/");
 				}
 				log_info("user", "Logged out");
 				$page->set_mode("redirect");
@@ -476,14 +476,14 @@ class UserPage extends Extension {
 	 * @param string $pass
 	 */
 	private function set_login_cookie(/*string*/ $name, /*string*/ $pass) {
-		global $config;
+		global $config, $page;
 
 		$addr = get_session_ip($config);
 		$hash = User::by_name($name)->passhash;
 
-		set_prefixed_cookie("user", $name,
+		$page->add_cookie("user", $name,
 				time()+60*60*24*365, '/');
-		set_prefixed_cookie("session", md5($hash.$addr),
+		$page->add_cookie("session", md5($hash.$addr),
 				time()+60*60*24*$config->get_int('login_memory'), '/');
 	}
 //}}}

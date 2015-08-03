@@ -132,6 +132,9 @@ class Page {
 	/** @var string[] */
 	public $http_headers = array();
 
+	/** @var string[][] */
+	public $cookies = array();
+
 	/** @var Block[] */
 	public $blocks = array();
 
@@ -188,6 +191,31 @@ class Page {
 	}
 
 	/**
+	 * The counterpart for get_cookie, this works like php's
+	 * setcookie method, but prepends the site-wide cookie prefix to
+	 * the $name argument before doing anything.
+	 *
+	 * @param string $name
+	 * @param string $value
+	 * @param int $time
+	 * @param string $path
+	 */
+	public function add_cookie($name, $value, $time, $path) {
+		$full_name = COOKIE_PREFIX."_".$name;
+		$this->cookies[] = array($full_name, $value, $time, $path);
+	}
+
+	public function get_cookie(/*string*/ $name) {
+		$full_name = COOKIE_PREFIX."_".$name;
+		if(isset($_COOKIE[$full_name])) {
+			return $_COOKIE[$full_name];
+		}
+		else {
+			return null;
+		}
+	}
+
+	/**
 	 * Get all the HTML headers that are currently set and return as a string.
 	 * @return string
 	 */
@@ -228,7 +256,12 @@ class Page {
 		header("X-Powered-By: SCore-".SCORE_VERSION);
 
 		if (!headers_sent()) {
-			foreach($this->http_headers as $head){ header($head); }
+			foreach($this->http_headers as $head) {
+				header($head);
+			}
+			foreach($this->cookies as $c) {
+				setcookie($c[0], $c[1], $c[2], $c[3]);
+			}
 		} else {
 			print "Error: Headers have already been sent to the client.";
 		}
@@ -252,6 +285,9 @@ class Page {
 				#	header("Cache-control: no-cache");
 				#	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
 				#}
+				if($this->get_cookie("flash_message")) {
+					$this->add_cookie("flash_message", "", -1, "/");
+				}
 				usort($this->blocks, "blockcmp");
 				$this->add_auto_html_headers();
 				$layout = new Layout();

@@ -562,7 +562,7 @@ class CommentList extends Extension {
 	 * @throws CommentPostingException
 	 */
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
-		global $database, $config;
+		global $database, $config, $page;
 
 		if(!$user->can("bypass_comment_checks")) {
 			// will raise an exception if anything is wrong
@@ -571,7 +571,7 @@ class CommentList extends Extension {
 
 		// all checks passed
 		if($user->is_anonymous()) {
-			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+			$page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
 		}
 		$database->Execute(
 				"INSERT INTO comments(image_id, owner_id, owner_ip, posted, comment) ".
@@ -585,7 +585,7 @@ class CommentList extends Extension {
 	}
 
 	private function comment_checks(/*int*/ $image_id, User $user, /*string*/ $comment) {
-		global $config;
+		global $config, $page;
 
 		// basic sanity checks
 		if(!$user->can("create_comment")) {
@@ -606,7 +606,7 @@ class CommentList extends Extension {
 			throw new CommentPostingException("Comment too repetitive~");
 		}
 		else if($user->is_anonymous() && !$this->hash_match()) {
-			set_prefixed_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
+			$page->add_cookie("nocache", "Anonymous Commenter", time()+60*60*24, "/");
 			throw new CommentPostingException(
 					"Comment submission form is out of date; refresh the ".
 					"comment form to show you aren't a spammer~");

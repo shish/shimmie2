@@ -777,35 +777,6 @@ function get_session_ip(Config $config) {
 	return $addr;
 }
 
-/**
- * similar to $_COOKIE[$name], but $name has the site-wide cookie
- * prefix prepended to it, eg username -> shm_username, to prevent
- * conflicts from multiple installs within one domain.
- */
-function get_prefixed_cookie(/*string*/ $name) {
-	$full_name = COOKIE_PREFIX."_".$name;
-	if(isset($_COOKIE[$full_name])) {
-		return $_COOKIE[$full_name];
-	}
-	else {
-		return null;
-	}
-}
-
-/**
- * The counterpart for get_prefixed_cookie, this works like php's
- * setcookie method, but prepends the site-wide cookie prefix to
- * the $name argument before doing anything.
- *
- * @param string $name
- * @param string $value
- * @param int $time
- * @param string $path
- */
-function set_prefixed_cookie($name, $value, $time, $path) {
-	$full_name = COOKIE_PREFIX."_".$name;
-	setcookie($full_name, $value, $time, $path);
-}
 
 /**
  * Set (or extend) a flash-message cookie.
@@ -820,13 +791,14 @@ function set_prefixed_cookie($name, $value, $time, $path) {
  * @param string $type
  */
 function flash_message(/*string*/ $text, /*string*/ $type="info") {
-	$current = get_prefixed_cookie("flash_message");
+	global $page;
+	$current = $page->get_cookie("flash_message");
 	if($current) {
 		$text = $current . "\n" . $text;
 	}
 	# the message should be viewed pretty much immediately,
 	# so 60s timeout should be more than enough
-	set_prefixed_cookie("flash_message", $text, time()+60, "/");
+	$page->add_cookie("flash_message", $text, time()+60, "/");
 }
 
 /**
@@ -1628,10 +1600,10 @@ function _decaret($str) {
  * @return User
  */
 function _get_user() {
-	global $config;
+	global $config, $page;
 	$user = null;
-	if(get_prefixed_cookie("user") && get_prefixed_cookie("session")) {
-	    $tmp_user = User::by_session(get_prefixed_cookie("user"), get_prefixed_cookie("session"));
+	if($page->get_cookie("user") && $page->get_cookie("session")) {
+	    $tmp_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
 		if(!is_null($tmp_user)) {
 			$user = $tmp_user;
 		}
