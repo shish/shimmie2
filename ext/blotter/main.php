@@ -41,7 +41,6 @@ class Blotter extends Extension {
 		$config->set_default_int("blotter_recent", 5);
 		$config->set_default_string("blotter_color", "FF0000");
 		$config->set_default_string("blotter_position", "subheading");
-
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {

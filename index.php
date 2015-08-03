@@ -54,7 +54,6 @@ try {
 
 	// start the page generation waterfall
 	$user = _get_user();
-	send_event(new InitExtEvent());
 	if(PHP_SAPI === 'cli') {
 		send_event(new CommandEvent($argv));
 	}

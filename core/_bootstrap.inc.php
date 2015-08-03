@@ -46,3 +46,4 @@ ctx_log_endok();
 
 // hook up event handlers
 _load_event_listeners();
+send_event(new InitExtEvent());
