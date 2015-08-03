@@ -812,6 +812,7 @@ function flash_message(/*string*/ $text, /*string*/ $type="info") {
  * @return string
  */
 function get_base_href() {
+	if(defined("BASE_HREF")) return BASE_HREF;
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
 	$ok_var = null;
 	foreach($possible_vars as $var) {
