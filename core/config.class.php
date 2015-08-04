@@ -328,8 +328,9 @@ class StaticConfig extends BaseConfig {
 	 */
 	public function __construct($filename) {
 		if(file_exists($filename)) {
+			$config = array();
 			require_once $filename;
-			if(isset($config)) {
+			if(!empty($config)) {
 				$this->values = $config;
 			}
 			else {

@@ -66,7 +66,6 @@ class CommentListTheme extends Themelet {
 			
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
-				$hidden = $comment_count - $comment_limit;
 				$comment_html .= '<p>showing '.$comment_limit.' of '.$comment_count.' comments</p>';
 				$comments = array_slice($comments, -$comment_limit);
 				$this->show_anon_id = false;
@@ -233,7 +232,6 @@ class CommentListTheme extends Themelet {
 
 		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
-		$h_poster_ip = html_escape($comment->poster_ip);
 		$h_timestamp = autodate($comment->posted);
 		$h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);

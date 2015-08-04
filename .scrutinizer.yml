@@ -3,4 +3,4 @@ imports:
     - php
 
 filter:
-    excluded_paths: [lib/*,ext/tagger/script.js]
+    excluded_paths: [lib/*,ext/tagger/script.js,ext/chatbox/*]

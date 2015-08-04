@@ -143,7 +143,6 @@ class Tag_History extends Extension {
 		}
 		
 		// lets get the values out of the result
-		$stored_result_id = $result['id'];
 		$stored_image_id = int_escape($result['image_id']);
 		$stored_tags = $result['tags'];
 

@@ -459,7 +459,7 @@ function write_config() { // {{{
 		    folder manually. Make sure that when you save it, there is no whitespace
 		    before the "&lt;?php" or after the "?&gt;"
 
-		    <p><textarea cols="80" rows="2">$file_content</textarea>
+		    <p><textarea cols="80" rows="2">$h_file_content</textarea>
 
 		    <p>Once done, <a href="index.php">Click here to Continue</a>.
 			<br/><br/>

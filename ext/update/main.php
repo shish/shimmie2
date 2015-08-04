@@ -80,7 +80,6 @@ class Update extends Extension {
 		global $config, $page;
 
 		$commitSHA = $_GET['sha'];
-		$g_userrepo = $config->get_string('update_guserrepo');
 
 		log_info("update", "Download succeeded. Attempting to update Shimmie.");
 		$config->set_bool("in_upgrade", TRUE);
