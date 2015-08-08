@@ -167,7 +167,7 @@ class Favorites extends Extension {
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
 			$database->execute("CREATE INDEX user_favorites_image_id_idx ON user_favorites(image_id)", array());
-			$config->set_int("ext_favorites_version", 1);
+			$config->set_int("ext_favorites_version", 2);
 		}
 
 		if($config->get_int("ext_favorites_version") < 2) {
