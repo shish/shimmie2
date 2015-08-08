@@ -29,6 +29,16 @@ class Pools extends Extension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
+		// Set the defaults for the pools extension
+		$config->set_default_int("poolsMaxImportResults", 1000);
+		$config->set_default_int("poolsImagesPerPage", 20);
+		$config->set_default_int("poolsListsPerPage", 20);
+		$config->set_default_int("poolsUpdatedPerPage", 20);
+		$config->set_default_bool("poolsInfoOnViewImage", false);
+		$config->set_default_bool("poolsAdderOnViewImage", false);
+		$config->set_default_bool("poolsShowNavLinks", false);
+		$config->set_default_bool("poolsAutoIncrementOrder", false);
+
 		// Create the database tables
 		if ($config->get_int("ext_pools_version") < 1){
 			$database->create_table("pools", "
@@ -59,17 +69,7 @@ class Pools extends Extension {
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-
-			// Set the defaults for the pools extension
-			$config->set_int("ext_pools_version", 1);
-
-			$config->set_int("poolsMaxImportResults", 1000);
-			$config->set_int("poolsImagesPerPage", 20);
-			$config->set_int("poolsListsPerPage", 20);
-			$config->set_int("poolsUpdatedPerPage", 20);
-			$config->set_bool("poolsInfoOnViewImage", "N");
-			$config->set_bool("poolsAdderOnViewImage", "N");
-			$config->set_bool("poolsShowNextLink","N");
+			$config->set_int("ext_pools_version", 3);
 
 			log_info("pools", "extension installed");
 		}
@@ -78,14 +78,7 @@ class Pools extends Extension {
 			$database->Execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
 			$database->Execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
 
-			$config->set_int("ext_pools_version", 2);
-		}
-
-		if ($config->get_int("ext_pools_version") < 3){
-			$config->set_bool("poolsShowNavLinks","N"); //A $config->rename() function would be nice here...
-			$config->set_bool("poolsAutoIncrementOrder","N");
-
-			$config->set_int("ext_pools_version", 3);
+			$config->set_int("ext_pools_version", 3); // skip 2
 		}
 	}
 
