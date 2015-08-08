@@ -1348,7 +1348,15 @@ function _set_event_listeners() {
 		elseif(is_subclass_of($class, "Extension")) {
 			$extension = new $class();
 			$extension->i_am($extension);
-			$my_events = array();
+
+			// skip extensions which don't support our current database
+			if(property_exists($extension, 'db_support')) {
+				global $database;
+				if(!in_array($database->get_driver_name(), $extension->db_support)) {
+					continue;
+				}
+			}
+
 			foreach(get_class_methods($extension) as $method) {
 				if(substr($method, 0, 2) == "on") {
 					$event = substr($method, 2) . "Event";
