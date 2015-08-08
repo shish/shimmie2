@@ -190,6 +190,8 @@ function _isnull($a) { return is_null($a); }
 function _md5($a) { return md5($a); }
 function _concat($a, $b) { return $a . $b; }
 function _lower($a) { return strtolower($a); }
+function _rand() { return rand(); }
+function _ln($n) { return log($n); }
 
 class SQLite extends DBEngine {
 	/** @var string  */
@@ -209,6 +211,8 @@ class SQLite extends DBEngine {
 		$db->sqliteCreateFunction('md5', '_md5', 1);
 		$db->sqliteCreateFunction('concat', '_concat', 2);
 		$db->sqliteCreateFunction('lower', '_lower', 1);
+		$db->sqliteCreateFunction('rand', '_rand', 0);
+		$db->sqliteCreateFunction('ln', '_ln', 1);
 	}
 
 	/**
