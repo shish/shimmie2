@@ -238,9 +238,10 @@ class SQLite extends DBEngine {
 		$extras = "";
 		foreach(explode(",", $data) as $bit) {
 			$matches = array();
-			if(preg_match("/INDEX\s*\((.*)\)/", $bit, $matches)) {
-				$col = $matches[1];
-				$extras .= "CREATE INDEX {$name}_{$col} on {$name}({$col});";
+			if(preg_match("/(UNIQUE)? ?INDEX\s*\((.*)\)/", $bit, $matches)) {
+				$uni = $matches[1];
+				$col = $matches[2];
+				$extras .= "CREATE $uni INDEX {$name}_{$col} ON {$name}({$col});";
 			}
 			else {
 				$cols[] = $bit;
