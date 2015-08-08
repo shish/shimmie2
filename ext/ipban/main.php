@@ -119,7 +119,7 @@ class IPBan extends Extension {
 				ip SCORE_INET NOT NULL,
 				end_timestamp INTEGER,
 				reason TEXT NOT NULL,
-				added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW
+				added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
 				INDEX (end_timestamp),
 				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
