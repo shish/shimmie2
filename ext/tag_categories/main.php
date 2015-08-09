@@ -18,9 +18,9 @@ class TagCategories extends Extension {
 			// primary extension database, holds all our stuff!
 			$database->create_table('image_tag_categories',
 				'category VARCHAR(60) PRIMARY KEY,
-				display_singular TEXT(60),
-				display_multiple TEXT(60),
-				color TEXT(7)');
+				display_singular VARCHAR(60),
+				display_multiple VARCHAR(60),
+				color VARCHAR(7)');
 
             $config->set_int("ext_tag_categories_version", 1);
 
@@ -31,9 +31,18 @@ class TagCategories extends Extension {
 		$number_of_db_rows = $database->execute('SELECT COUNT(*) FROM image_tag_categories;')->fetchColumn();
 
 		if ($number_of_db_rows == 0) {
-			$database->execute('INSERT INTO image_tag_categories VALUES ("artist", "Artist", "Artists", "#BB6666");');
-			$database->execute('INSERT INTO image_tag_categories VALUES ("series", "Series", "Series", "#AA00AA");');
-			$database->execute('INSERT INTO image_tag_categories VALUES ("character", "Character", "Characters", "#66BB66");');
+			$database->execute(
+				'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
+				array("artist", "Artist", "Artists", "#BB6666")
+			);
+			$database->execute(
+				'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
+				array("series", "Series", "Series", "#AA00AA")
+			);
+			$database->execute(
+				'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
+				array("character", "Character", "Characters", "#66BB66")
+			);
 		}
 	}
 

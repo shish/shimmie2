@@ -120,9 +120,9 @@ class IPBan extends Extension {
 				end_timestamp INTEGER,
 				reason TEXT NOT NULL,
 				added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
-				INDEX (end_timestamp),
 				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
+			$database->execute("CREATE INDEX bans__end_timestamp ON bans(end_timestamp)");
 			$config->set_int("ext_ipban_version", 8);
 		}
 

@@ -38,6 +38,7 @@ class RatingSetEvent extends Event {
 }
 
 class Ratings extends Extension {
+	public $db_support = ['mysql'];  // ?
 
 	/**
 	 * @return int

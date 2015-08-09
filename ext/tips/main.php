@@ -9,6 +9,8 @@
  */
 
 class Tips extends Extension {
+	public $db_support = ['mysql', 'sqlite'];  // rand() ?
+
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
