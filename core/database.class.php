@@ -465,8 +465,14 @@ class Database {
 		if(preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) $db_user=$matches[1];
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
+		// https://bugs.php.net/bug.php?id=70221
+		$ka = DATABASE_KA;
+		if(version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == "sqlite") {
+			$ka = false;
+		}
+
 		$db_params = array(
-			PDO::ATTR_PERSISTENT => DATABASE_KA,
+			PDO::ATTR_PERSISTENT => $ka,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
