@@ -21,8 +21,8 @@ class Handle404 extends Extension {
 				$filename = file_exists("themes/$theme_name/$f_pagename") ?
 						"themes/$theme_name/$f_pagename" : "lib/static/$f_pagename";
 
-				header("Cache-control: public, max-age=600");
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+				$page->add_http_header("Cache-control: public, max-age=600");
+				$page->add_http_header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
 				$page->set_mode("data");
 				$page->set_data(file_get_contents($filename));
 				if(endsWith($filename, ".ico")) $page->set_type("image/x-icon");
@@ -44,6 +44,9 @@ class Handle404 extends Extension {
 		$n = 0;
 		foreach($blocks as $block) {
 			if($block->section == "main") $n++; // more hax.
+		}
+		if(class_exists("Blotter")) {
+			$n--; // even more hax.
 		}
 		return $n;
 	}
