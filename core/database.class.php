@@ -146,7 +146,12 @@ class PostgreSQL extends DBEngine {
 	 * @param \PDO $db
 	 */
 	public function init($db) {
-		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		if(array_key_exists('REMOTE_ADDR', $_SERVER)) {
+			$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		}
+		else {
+			$db->exec("SET application_name TO 'shimmie [local]';");
+		}
 		$db->exec("SET statement_timeout TO 10000;");
 	}
 
@@ -174,7 +179,7 @@ class PostgreSQL extends DBEngine {
 	 */
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
-		return 'CREATE TABLE '.$name.' ('.$data.')';
+		return "CREATE TABLE $name ($data)";
 	}
 }
 
