@@ -1,8 +1,8 @@
 <?php
-class RandomTest extends ShimmieWebTestCase {
+class RandomTest {
 	function testRandom() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$this->log_out();
 
 		$this->get_page("random_image/view");
@@ -31,7 +31,7 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->assert_no_text("Random Image");
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$this->log_out();
 
 		# enabled, image = text

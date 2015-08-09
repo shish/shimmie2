@@ -25,6 +25,7 @@ class CommentPostingEvent extends Event {
 	 * @param string $comment
 	 */
 	public function __construct($image_id, $user, $comment) {
+		assert('is_numeric($image_id)');
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->comment = $comment;
@@ -44,6 +45,7 @@ class CommentDeletionEvent extends Event {
 	 * @param int $comment_id
 	 */
 	public function __construct($comment_id) {
+		assert('is_numeric($comment_id)');
 		$this->comment_id = $comment_id;
 	}
 }

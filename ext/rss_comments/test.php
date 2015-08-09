@@ -1,8 +1,8 @@
 <?php
-class RSSCommentsTest extends ShimmieWebTestCase {
+class RSSCommentsTest {
     function testImageFeed() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->set_field('comment', "Test Comment ASDFASDF");
 		$this->click("Post Comment");

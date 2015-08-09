@@ -1,5 +1,5 @@
 <?php
-class TagListTest extends ShimmieWebTestCase {
+class TagListTest extends ShimmiePHPUnitTestCase {
 	var $pages = array("map", "alphabetic", "popularity", "categories");
 
 	function testTagList() {
@@ -34,4 +34,3 @@ class TagListTest extends ShimmieWebTestCase {
 		}
 	}
 }
-

@@ -1,5 +1,5 @@
 <?php
-class WikiTest extends SCoreWebTestCase {
+class WikiTest {
 	function testIndex() {
 		$this->get_page("wiki");
 		$this->assert_title("Index");

@@ -1,7 +1,7 @@
 <?php
-class SVGHandlerTest extends ShimmieWebTestCase {
+class SVGHandlerTest {  // extends ShimmiePHPUnitTestCase {
 	function testSVGHander() {
-		file_put_contents("test.svg", '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+		file_put_contents("tests/test.svg", '<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    xmlns="http://www.w3.org/2000/svg"
    width="128"
@@ -17,18 +17,13 @@ class SVGHandlerTest extends ShimmieWebTestCase {
 </svg>');
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("test.svg", "something");
+		$image_id = $this->post_image("tests/test.svg", "something");
 		$this->assert_response(302);
-		$this->log_out();
 
 		$raw = $this->get_page("get_svg/$image_id");
 		$this->assertTrue(strpos($raw, "www.w3.org") > 0);
 
-		$this->log_in_as_admin();
-		$this->delete_image($image_id);
-		$this->log_out();
-
-		unlink("test.svg");
+		unlink("tests/test.svg");
 
 		# FIXME: test that the thumb works
 		# FIXME: test that it gets displayed properly

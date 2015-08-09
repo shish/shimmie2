@@ -1,8 +1,8 @@
 <?php
-class FavoritesTest extends ShimmieWebTestCase {
+class FavoritesTest {
 	function testFavorites() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: test");

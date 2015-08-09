@@ -1,5 +1,5 @@
 <?php
-class ResLimitTest extends ShimmieWebTestCase {
+class ResLimitTest {
 	function testResLimitOK() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
@@ -12,7 +12,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(302);
 		$this->assert_no_text("Image too large");
 		$this->assert_no_text("Image too small");
@@ -36,7 +36,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(200);
 		$this->assert_title("Upload Status");
 		$this->assert_text("Image too small");
@@ -60,7 +60,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(200);
 		$this->assert_title("Upload Status");
 		$this->assert_text("Image too large");
@@ -84,7 +84,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(200);
 		$this->assert_title("Upload Status");
 		$this->assert_text("Image needs to be in one of these ratios");

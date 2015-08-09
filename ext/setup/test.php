@@ -1,5 +1,5 @@
 <?php
-class SetupTest extends SCoreWebTestCase {
+class SetupTest {
 	function testAuth() {
 		$this->get_page('setup');
 		$this->assert_response(403);

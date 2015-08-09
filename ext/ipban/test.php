@@ -1,5 +1,5 @@
 <?php
-class IPBanTest extends SCoreWebTestCase {
+class IPBanTest {
 	function testIPBan() {
 		$this->get_page('ip_ban/list');
 		$this->assert_response(403);

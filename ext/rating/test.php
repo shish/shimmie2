@@ -1,8 +1,8 @@
 <?php
-class RatingTest extends ShimmieWebTestCase {
+class RatingTest {
 	function testRating() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
 		# test for bug #735: user forced to set rating, can't
 		# set tags and leave unrated

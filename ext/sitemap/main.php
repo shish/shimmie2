@@ -20,7 +20,7 @@ class XMLSitemap extends Extension
 		if ($event->page_matches("sitemap.xml")) {
 			global $config;
 
-			$this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT'] . "/data/cache/sitemap.xml";
+			$this->sitemap_filepath = data_path("cache/sitemap.xml");
 			// determine if new sitemap needs to be generated
 			if ($this->new_sitemap_needed()) {
 				// determine which type of sitemap to generate
@@ -49,6 +49,7 @@ class XMLSitemap extends Extension
 	{
 		/* --- Add latest images to sitemap with higher priority --- */
 		$latestimages = Image::find_images(0, 50, array());
+		if(empty($latestimages)) return;
 		$latestimages_urllist = array();
 		foreach ($latestimages as $arrayid => $image) {
 			// create url from image id's
@@ -160,6 +161,10 @@ class XMLSitemap extends Extension
 	 */
 	private function new_sitemap_needed()
 	{
+		if(!file_exists($this->sitemap_filepath)) {
+			return true;
+		}
+
 		$sitemap_generation_interval = 86400; // allow new site map every day
 		$last_generated_time = filemtime($this->sitemap_filepath);
 

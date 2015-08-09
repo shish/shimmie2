@@ -1,10 +1,10 @@
 <?php
-class ViewTest extends ShimmieWebTestCase {
+class ViewTest {
 	function testViewPage() {
 		$this->log_in_as_user();
-		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
-		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "test2");
-		$image_id_3 = $this->post_image("ext/simpletest/data/favicon.png", "test");
+		$image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
+		$image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "test2");
+		$image_id_3 = $this->post_image("tests/favicon.png", "test");
 		$idp1 = $image_id_3 + 1;
 		$this->log_out();
 

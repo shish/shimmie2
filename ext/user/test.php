@@ -1,5 +1,5 @@
 <?php
-class UserPageTest extends SCoreWebTestCase {
+class UserPageTest extends ShimmiePHPUnitTestCase {
 	function testUserPage() {
 		$this->get_page('user');
 		$this->assert_title("Not Logged In");
@@ -15,7 +15,8 @@ class UserPageTest extends SCoreWebTestCase {
 
 		$this->log_in_as_user();
 		// should be on the user page
-		$this->assert_title(USER_NAME+"'s Page");
+		$this->get_page('user/test');
+		$this->assert_title("test's Page");
 		$this->assert_text("Options");
 		// FIXME: check class
 		//$this->assert_no_text("Admin:");
@@ -23,7 +24,8 @@ class UserPageTest extends SCoreWebTestCase {
 
 		$this->log_in_as_admin();
 		// should be on the user page
-		$this->assert_title(ADMIN_NAME+"'s Page");
+		$this->get_page('user/demo');
+		$this->assert_title("demo's Page");
 		$this->assert_text("Options");
 		// FIXME: check class
 		//$this->assert_text("Admin:");
@@ -37,4 +39,3 @@ class UserPageTest extends SCoreWebTestCase {
 		$this->assert_text("demo");
 	}
 }
-

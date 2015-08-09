@@ -1,8 +1,8 @@
 <?php
-class RegenThumbTest extends ShimmieWebTestCase {
+class RegenThumbTest {
 	function testRegenThumb() {
 		$this->log_in_as_admin();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
 		$this->click("Regenerate");
 		$this->assert_title("Thumbnail Regenerated");

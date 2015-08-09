@@ -1,8 +1,8 @@
 <?php
-class TagEditTest extends ShimmieWebTestCase {
+class TagEditTest {
 	function testTagEdit() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 		$this->set_field("tag_edit__tags", "new");
@@ -20,7 +20,7 @@ class TagEditTest extends ShimmieWebTestCase {
 
 	function testSourceEdit() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 
@@ -49,7 +49,7 @@ class TagEditTest extends ShimmieWebTestCase {
 	function testMassEdit() {
 		$this->log_in_as_admin();
 
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 

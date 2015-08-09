@@ -1,4 +1,5 @@
 language: php
+sudo: false
 
 php:
 # Here is where we can list the versions of PHP you want to test against
@@ -14,34 +15,31 @@ env:
   - DB=pgsql
 
 install:
-  - mkdir -p data
-  - php -S 127.0.0.1:8080 tests/router.php >>data/php.log 2>>data/php.log & sleep 3
-
   # Enable logging of all queries (for debugging) and create the database schema for shimmie.
+  - mkdir -p data/config
   - if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
   - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
+  - if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
+  - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
 
 script:
-  - php tests/install.php -d $DB -h "http://127.0.0.1:8080/"
-  - php tests/all.php -h "http://127.0.0.1:8080/"
+  - php install.php
+  - phpunit --configuration tests/phpunit.xml
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
-  - sudo ls -al
-  - sudo ls -al data/config/
-  - sudo cat data/config/shimmie.conf.php
-  - sudo cat data/config/extensions.conf.php
-  - sudo cat data/php.log
-  - sudo ls /var/run/mysql*
-  - sudo ls /var/log/*mysql*
-  - sudo cat /var/log/mysql.err
-  - sudo cat /var/log/mysql.log
-  - sudo cat /var/log/mysql/error.log
-  - sudo cat /var/log/mysql/slow.log
-  - sudo ls /var/log/postgresql
-  - sudo cat /var/log/postgresql/postgresql*
+  - head -n 100 data/config/*
+  - ls /var/run/mysql*
+  - ls /var/log/*mysql*
+  - cat /var/log/mysql.err
+  - cat /var/log/mysql.log
+  - cat /var/log/mysql/error.log
+  - cat /var/log/mysql/slow.log
+  - ls /var/log/postgresql
+  - cat /var/log/postgresql/postgresql*
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:

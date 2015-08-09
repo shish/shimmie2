@@ -1,5 +1,5 @@
 <?php
-class Handle404Test extends SCoreWebTestCase {
+class Handle404Test extends ShimmiePHPUnitTestCase {
 	function test404Handler() {
 		$this->get_page('not/a/page');
 		$this->assert_response(404);

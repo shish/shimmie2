@@ -1,5 +1,5 @@
 <?php
-class TipsTest extends SCoreWebTestCase {
+class TipsTest {
 	function setUp() {
 		$this->log_in_as_admin();
 		$raw = $this->get_page("tips/list");

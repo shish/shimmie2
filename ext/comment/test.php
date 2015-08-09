@@ -1,5 +1,5 @@
 <?php
-class CommentListTest extends ShimmieWebTestCase {
+class CommentListTest {
 	function setUp() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
@@ -18,7 +18,7 @@ class CommentListTest extends ShimmieWebTestCase {
 
 	function testCommentsPage() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
 		# a good comment
 		$this->get_page("post/view/$image_id");
@@ -82,7 +82,7 @@ class CommentListTest extends ShimmieWebTestCase {
 
 	function testSingleDel() {
 		$this->log_in_as_admin();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
 		# make a comment
 		$this->get_page("post/view/$image_id");

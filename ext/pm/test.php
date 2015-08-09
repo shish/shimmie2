@@ -1,5 +1,5 @@
 <?php
-class PrivMsgTest extends SCoreWebTestCase {
+class PrivMsgTest {
 	function testPM() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");

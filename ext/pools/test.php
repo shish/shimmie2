@@ -1,5 +1,5 @@
 <?php
-class PoolsTest extends ShimmieWebTestCase {
+class PoolsTest {
 	function testPools() {
 		$this->get_page('pool/list');
 		$this->assert_title("Pools");

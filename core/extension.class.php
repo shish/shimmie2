@@ -47,7 +47,7 @@
  * }
  *
  * // ext/hello/test.php
- * public class HelloTest extends SCoreWebTestCase {
+ * public class HelloTest extends SCorePHPUnitTestCase {
  *     public function testHello() {
  *         $this->get_page("post/list");                   // View a page, any page
  *         $this->assert_text("Hello there");              // Check that the specified text is in that page

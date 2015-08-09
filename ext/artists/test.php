@@ -1,8 +1,9 @@
 <?php
-class ArtistTest extends ShimmieWebTestCase {
+class ArtistTest extends ShimmiePHPUnitTestCase {
 	function testSearch() {
 		# FIXME: check that the results are there
 		$this->get_page("post/list/author=bob/1");
+		#$this->assert_response(200);
 	}
 }
 

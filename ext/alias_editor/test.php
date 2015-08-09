@@ -1,16 +1,20 @@
 <?php
-class AliasEditorTest extends ShimmieWebTestCase {
-	function testAliasEditor() {
+class AliasEditorTest extends ShimmiePHPUnitTestCase {
+	function testAliasList() {
 		$this->get_page('alias/list');
+		$this->assert_response(200);
 		$this->assert_title("Alias List");
+	}
 
+	function testAliasListReadOnly() {
 		// Check that normal users can't add aliases.
 		$this->log_in_as_user();
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("Add");
-		$this->log_out();
+	}
 
+	function testAliasEditor() {
 		/*
 		 **********************************************************************
 		 * FIXME: TODO:
@@ -39,7 +43,7 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->get_page("alias/export/aliases.csv");
 		$this->assert_text("test1,test2");
 
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test1");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test1");
 		$this->get_page("post/view/$image_id"); # check that the tag has been replaced
 		$this->assert_title("Image $image_id: test2");
 		$this->get_page("post/list/test1/1"); # searching for an alias should find the master tag
@@ -67,8 +71,8 @@ class AliasEditorTest extends ShimmieWebTestCase {
 		$this->get_page("alias/export/aliases.csv");
 		$this->assert_text("onetag,multi tag");
 
-		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "onetag");
-		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "onetag");
+		$image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "onetag");
+		$image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "onetag");
 		// FIXME: known broken
 		//$this->get_page("post/list/onetag/1"); # searching for an aliased tag should find its aliases
 		//$this->assert_title("onetag");

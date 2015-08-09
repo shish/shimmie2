@@ -1,5 +1,5 @@
 <?php
-class WordFilterTest extends ShimmieWebTestCase {
+class WordFilterTest {
 	function testWordFilter() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
@@ -8,7 +8,7 @@ class WordFilterTest extends ShimmieWebTestCase {
 		$this->log_out();
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
 
 		# regular

@@ -1,8 +1,8 @@
 <?php
-class LinkImageTest extends ShimmieWebTestCase {
+class LinkImageTest {
 	function testLinkImage() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pie");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pie");
 
 		# look in the "plain text link to post" box, follow the link
 		# in there, see if it takes us to the right page

@@ -1,5 +1,5 @@
 <?php
-class BulkAddTest extends ShimmieWebTestCase {
+class BulkAddTest {
 	function testBulkAdd() {
 		$this->log_in_as_admin();
 
@@ -11,7 +11,7 @@ class BulkAddTest extends ShimmieWebTestCase {
 
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
-		$this->set_field('dir', "contrib/simpletest");
+		$this->set_field('dir', "tests");
 		$this->click("Add");
 
 		# FIXME: test that the output here makes sense, no "adding foo.php ... ok"

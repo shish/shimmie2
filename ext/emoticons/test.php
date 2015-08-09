@@ -1,8 +1,8 @@
 <?php
-class EmoticonTest extends ShimmieWebTestCase {
+class EmoticonTest {
 	function testEmoticons() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
 
 		$this->set_field('comment', ":cool: :beans:");

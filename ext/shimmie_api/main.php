@@ -111,6 +111,7 @@ class ShimmieApi extends Extension {
 				$type = "id";
 				if($event->count_args() == 1) {
 					$query = $event->get_arg(0);
+					$type = "name";
 				}
 				elseif(isset($_GET['id'])) {
 					$query = $_GET['id'];
@@ -121,7 +122,7 @@ class ShimmieApi extends Extension {
 				}
 
 				$all = $database->get_row(
-					"SELECT id,name,joindate,class FROM users WHERE ".$type."=?",
+					"SELECT id,name,joindate,class FROM users WHERE $type=?",
 					array($query));
 
 				if(!empty($all)){

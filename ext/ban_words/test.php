@@ -1,45 +1,33 @@
 <?php
-class BanWordsTest extends ShimmieWebTestCase {
+class BanWordsTest extends ShimmiePHPUnitTestCase {
+	function check_blocked($image_id, $words) {
+		global $user;
+		try {
+			send_event(new CommentPostingEvent($image_id, $user, $words));
+			$this->fail("Exception not thrown");
+		}
+		catch(CommentPostingException $e) {
+			$this->assertEquals($e->getMessage(), "Comment contains banned terms");
+		}
+	}
+
 	function testWordBan() {
-		$this->log_in_as_admin();
-		$this->get_page("setup");
-		$this->set_field("_config_banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
-		$this->click("Save Settings");
-		$this->log_out();
+		global $config;
+		$config->set_string("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
-		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "kittens and viagra");
-		$this->click("Post Comment");
-		$this->assert_title("Comment Blocked");
-
-		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "kittens and ViagrA");
-		$this->click("Post Comment");
-		$this->assert_title("Comment Blocked");
-
-		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "kittens and viagra!");
-		$this->click("Post Comment");
-		$this->assert_title("Comment Blocked");
-
-		$this->get_page("post/view/$image_id");
-		$this->set_field('comment', "some link to http://something.cn/");
-		$this->click("Post Comment");
-		$this->assert_title("Comment Blocked");
+		$this->check_blocked($image_id, "kittens and viagra");
+		$this->check_blocked($image_id, "kittens and ViagrA");
+		$this->check_blocked($image_id, "kittens and viagra!");
+		$this->check_blocked($image_id, "some link to http://something.cn/");
 
 		$this->get_page('comment/list');
 		$this->assert_title('Comments');
 		$this->assert_no_text('viagra');
 		$this->assert_no_text('ViagrA');
 		$this->assert_no_text('http://something.cn/');
-		$this->log_out();
-
-		$this->log_in_as_admin();
-		$this->delete_image($image_id);
-		$this->log_out();
 	}
 }
 

@@ -1,12 +1,12 @@
 <?php
-class IndexTest extends ShimmieWebTestCase {
+class IndexTest {
 	function testIndexPage() {
 		$this->get_page('post/list');
 		$this->assert_title("Welcome to Shimmie ".VERSION);
 		$this->assert_no_text("Prev | Index | Next");
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->log_out();
 
 		$this->get_page('post/list');
@@ -34,8 +34,8 @@ class IndexTest extends ShimmieWebTestCase {
 
 	function testSearches() {
 		$this->log_in_as_user();
-		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
-		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "computer bedroom workshop");
+		$image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "computer bedroom workshop");
 		$this->log_out();
 
 		# make sure both uploads were ok
