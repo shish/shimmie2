@@ -13,6 +13,7 @@ php:
 env:
   - DB=mysql
   - DB=pgsql
+  - DB=sqlite
 
 install:
   # Enable logging of all queries (for debugging) and create the database schema for shimmie.
