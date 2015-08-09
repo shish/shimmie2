@@ -14,17 +14,7 @@
 
 ob_start();
 
-/*
-<!--
-- install.php (c) Shish et all. 2007-2013
--
-- Initialise the database, check that folder
-- permissions are set properly.
--
-- This file should be independant of the database
-- and other such things that aren't ready yet
--->
-*/
+date_default_timezone_set('UTC');
 ?>
 <!DOCTYPE html>
 <html>
@@ -273,7 +263,7 @@ function create_tables() { // {{{
 				<br/><br/>
 			</div>
 EOD;
-			exit;
+			exit(2);
 		}
 
 		$db->create_table("aliases", "
@@ -338,33 +328,30 @@ EOD;
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
-	catch(PDOException $e)
-	{
+	catch(PDOException $e) {
 		print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Database Error:</h3>
 				<p>An error occured while trying to create the database tables necessary for Shimmie.</p>
 				<p>Please check and ensure that the database configuration options are all correct.</p>
-				<br/><br/>
+				<p>{$e->getMessage()}</p>
 			</div>
 EOD;
-		exit($e->getMessage());
+		exit(3);
 	}
-	catch (Exception $e)
-	{
+	catch (Exception $e) {
 		print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Unknown Error:</h3>
 				<p>An unknown error occured while trying to create the database tables necessary for Shimmie.</p>
 				<p>Please check the server log files for more information.</p>
-				<br/><br/>
+				<p>{$e->getMessage()}</p>
 			</div>
 EOD;
-		exit($e->getMessage());
+		exit(4);
 	}
-
 } // }}}
 
 function insert_defaults() { // {{{
@@ -387,10 +374,10 @@ function insert_defaults() { // {{{
 			<h3>Database Error:</h3>
 			<p>An error occured while trying to insert data into the database.</p>
 			<p>Please check and ensure that the database configuration options are all correct.</p>
-			<br/><br/>
+			<p>{$e->getMessage()}</p>
 		</div>
 EOD;
-		exit($e->getMessage());
+		exit(5);
 	}
 	catch (Exception $e)
 	{
@@ -400,10 +387,10 @@ EOD;
 			<h3>Unknown Error:</h3>
 			<p>An unknown error occured while trying to insert data into the database.</p>
 			<p>Please check the server log files for more information.</p>
-			<br/><br/>
+			<p>{$e->getMessage()}</p>
 		</div>
 EOD;
-		exit($e->getMessage());
+		exit(6);
 	}
 } // }}}
 
@@ -435,7 +422,7 @@ function build_dirs() { // {{{
 			<br/><br/>
 		</div>
 		";
-		exit;
+		exit(7);
 	}
 } // }}}
 
