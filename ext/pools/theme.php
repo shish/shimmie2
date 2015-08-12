@@ -143,7 +143,7 @@ class PoolsTheme extends Themelet {
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
 
-		$page->add_block(new Block($nav_html, null, "left", 5));
+		$page->add_block(new Block($nav_html, null, "left", 5, "indexnavleft"));
 		$page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
 
 		if(count($pools) == 1) {

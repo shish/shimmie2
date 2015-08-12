@@ -24,6 +24,12 @@ class BulkAdd extends Extension {
 				$list = add_dir($_POST['dir']);
 				if(strlen($list) > 0) {
 					$this->theme->add_status("Adding files", $list);
+				} else {
+					if(is_dir($_POST['dir'])) {
+						$this->theme->add_status("No files in directory", "No files exists in specified directory ({$_POST['dir']}).");
+					} else {
+						$this->theme->add_status("Directory does not exist", "Specified directory does not exist ({$_POST['dir']}).");
+					}
 				}
 				$this->theme->display_upload_results($page);
 			}
