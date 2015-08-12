@@ -1276,7 +1276,8 @@ function list_files(/*string*/ $base, $_sub_dir="") {
 			// ignore
 		}
 		else if(is_dir($full_path)) {
-			if($filename == "." || $filename == "..") {
+			if(!($filename == "." || $filename == "..")) {
+				//subdirectory found
 				$file_list = array_merge(
 					$file_list,
 					list_files($base, "$_sub_dir/$filename")
