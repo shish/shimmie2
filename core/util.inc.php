@@ -1257,39 +1257,39 @@ function full_copy($source, $target) {
  * @return array file list
  */
 function list_files(/*string*/ $base, $_sub_dir="") {
-    assert(is_dir($base));
+	assert(is_dir($base));
 
-    $file_list = array();
+	$file_list = array();
 
-    $files = array();
-    $dir = opendir("$base/$_sub_dir");
-    while($f = readdir($dir)) {
-        $files[] = $f;
-    }
-    closedir($dir);
-    sort($files);
+	$files = array();
+	$dir = opendir("$base/$_sub_dir");
+	while($f = readdir($dir)) {
+		$files[] = $f;
+	}
+	closedir($dir);
+	sort($files);
 
-    foreach($files as $filename) {
-        $full_path = "$base/$_sub_dir/$filename";
+	foreach($files as $filename) {
+		$full_path = "$base/$_sub_dir/$filename";
 
-        if(is_link($full_path)) {
-            // ignore
-        }
-        else if(is_dir($full_path)) {
-            if($filename == "." || $filename == "..") {
-                $file_list = array_merge(
-                    $file_list,
-                    list_files($base, "$_sub_dir/$filename")
-                );
-            }
-        }
-        else {
-            $full_path = str_replace("//", "/", $full_path);
-            $file_list[] = $full_path;
-        }
-    }
+		if(is_link($full_path)) {
+			// ignore
+		}
+		else if(is_dir($full_path)) {
+			if($filename == "." || $filename == "..") {
+				$file_list = array_merge(
+					$file_list,
+					list_files($base, "$_sub_dir/$filename")
+				);
+			}
+		}
+		else {
+			$full_path = str_replace("//", "/", $full_path);
+			$file_list[] = $full_path;
+		}
+	}
 
-    return $file_list;
+	return $file_list;
 }
 
 
