@@ -135,8 +135,8 @@ class ExtManager extends Extension {
 
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
-			print "  disable-all-ext\n";
-			print "	disable all extensions\n\n";
+			print "\tdisable-all-ext\n";
+			print "\t\tdisable all extensions\n\n";
 		}
 		if($event->cmd == "disable-all-ext") {
 			$this->write_config(array());
@@ -206,4 +206,3 @@ class ExtManager extends Extension {
 		}
 	}
 }
-

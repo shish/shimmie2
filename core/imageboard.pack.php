@@ -1282,27 +1282,28 @@ function move_upload_to_archive(DataUploadEvent $event) {
  * Add a directory full of images
  *
  * @param $base string
- * @return string
+ * @return array
  */
 function add_dir(/*string*/ $base) {
-    $list = "";
+    $results = array();
 
     foreach(list_files($base) as $full_path) {
         $short_path = str_replace($base, "", $full_path);
         $filename = basename($full_path);
 
         $tags = path_to_tags($short_path);
-        $list .= "<br>".html_escape("$short_path (".str_replace(" ", ", ", $tags).")... ");
+        $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
             add_image($full_path, $filename, $tags);
-            $list .= "ok\n";
+            $result .= "ok";
         }
         catch(UploadException $ex) {
-            $list .= "failed: ".$ex->getMessage()."\n";
+            $result .= "failed: ".$ex->getMessage();
         }
+        $results[] = $result;
     }
 
-    return $list;
+    return $results;
 }
 
 /**

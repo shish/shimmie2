@@ -17,14 +17,15 @@ class DowntimeTheme extends Themelet {
 	 * @param string $message
 	 */
 	public function display_message(/*string*/ $message) {
-		global $config, $user;
+		global $config, $user, $page;
 		$theme_name = $config->get_string('theme');
 		$data_href = get_base_href();
 		$login_link = make_link("user_admin/login");
-		header("HTTP/1.0 503 Service Temporarily Unavailable");
-
 		$auth = $user->get_auth_html();
-		print <<<EOD
+
+		$page->set_mode('data');
+		$page->set_code(503);
+		$page->set_data(<<<EOD
 <html>
 	<head>
 		<title>Downtime</title>
@@ -60,7 +61,7 @@ class DowntimeTheme extends Themelet {
 		</div>
 	</body>
 </html>
-EOD;
+EOD
+);
 	}
 }
-

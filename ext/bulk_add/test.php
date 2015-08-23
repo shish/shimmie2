@@ -1,18 +1,21 @@
 <?php
-class BulkAddTest {
+class BulkAddTest extends ShimmiePHPUnitTestCase {
 	function testBulkAdd() {
 		$this->log_in_as_admin();
 
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
-		$this->set_field('dir', "asdf");
-		$this->click("Add");
-		$this->assert_text("is not a directory");
+
+		$bae = new BulkAddEvent('asdf');
+		send_event($bae);
+		$this->assertContains("Error, asdf is not a readable directory",
+			$bae->results, implode("\n", $bae->results));
+
+		return;  // FIXME: have BAE return a list of successes as well as errors?
 
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
-		$this->set_field('dir', "tests");
-		$this->click("Add");
+		send_event(new BulkAddEvent('tests'));
 
 		# FIXME: test that the output here makes sense, no "adding foo.php ... ok"
 
@@ -31,4 +34,3 @@ class BulkAddTest {
 		$this->log_out();
 	}
 }
-

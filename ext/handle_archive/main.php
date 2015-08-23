@@ -33,9 +33,10 @@ class ArchiveFileHandler extends Extension {
 			$cmd = str_replace('%f', $event->tmpname, $cmd);
 			$cmd = str_replace('%d', $tmpdir, $cmd);
 			exec($cmd);
-			$list = add_dir($tmpdir);
-			if(strlen($list) > 0) {
-				$this->theme->add_status("Adding files", $list);
+			$results = add_dir($tmpdir);
+			if(count($results) > 0) {
+        // FIXME no theme?
+				$this->theme->add_status("Adding files", $results);
 			}
 			deltree($tmpdir);
 			$event->image_id = -2; // default -1 = upload wasn't handled

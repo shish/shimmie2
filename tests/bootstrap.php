@@ -1,4 +1,5 @@
 <?php
+define("UNITTEST", true);
 define("TIMEZONE", 'UTC');
 define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
 define("BASE_HREF", "/");
@@ -48,21 +49,34 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertEquals($code, $page->code);
 	}
 
-	protected function has_text($text) {
+	protected function page_to_text($section=null) {
 		global $page;
+    $text = "";
 		foreach($page->blocks as $block) {
-			if(strpos($block->header, $text) !== false) return true;
-			if(strpos($block->body, $text) !== false) return true;
+      if(is_null($section) || $section == $block->section) {
+        $text .= $block->header . "\n";
+        $text .= $block->body . "\n\n";
+      }
 		}
-		return false;
+		return $text;
 	}
 
-	protected function assert_text($text) {
-		$this->assertTrue($this->has_text($text));
+	protected function assert_text($text, $section=null) {
+		$this->assertContains($text, $this->page_to_text($section));
 	}
 
-	protected function assert_no_text($text) {
-		$this->assertFalse($this->has_text($text));
+	protected function assert_no_text($text, $section=null) {
+    $this->assertNotContains($text, $this->page_to_text($section));
+	}
+
+	protected function assert_content($content) {
+    global $page;
+    $this->assertContains($content, $page->data);
+	}
+
+	protected function assert_no_content($content) {
+    global $page;
+		$this->assertNotContains($content, $page->data);
 	}
 
 	// user things
