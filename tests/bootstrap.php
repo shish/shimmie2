@@ -7,6 +7,7 @@ define("CLI_LOG_LEVEL", 50);
 
 $_SERVER['QUERY_STRING'] = '/';
 
+chdir(dirname(dirname(__FILE__)));
 require_once "core/_bootstrap.inc.php";
 
 if(is_null(User::by_name("demo"))) {
