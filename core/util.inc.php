@@ -303,7 +303,7 @@ function validate_input($inputs) {
 		else if(in_array('user_class', $flags)) {
 			global $_shm_user_classes;
 			if(!array_key_exists($value, $_shm_user_classes)) {
-				throw new InvalidInput("Invalid user class: ".html_escape($class));
+				throw new InvalidInput("Invalid user class: ".html_escape($value));
 			}
 			$outputs[$key] = $value;
 		}
