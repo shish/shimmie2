@@ -31,9 +31,11 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		}
 	}
 
-	protected function get_page($page_name) {
+	protected function get_page($page_name, $args=null) {
 		// use a fresh page
 		global $page;
+		if(!$args) $args = array();
+		$_GET = $args;
 		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 		send_event(new PageRequestEvent($page_name));
 	}
@@ -51,12 +53,12 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 
 	protected function page_to_text($section=null) {
 		global $page;
-    $text = "";
+		$text = "";
 		foreach($page->blocks as $block) {
-      if(is_null($section) || $section == $block->section) {
-        $text .= $block->header . "\n";
-        $text .= $block->body . "\n\n";
-      }
+			if(is_null($section) || $section == $block->section) {
+				$text .= $block->header . "\n";
+				$text .= $block->body . "\n\n";
+			}
 		}
 		return $text;
 	}
@@ -66,16 +68,16 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	protected function assert_no_text($text, $section=null) {
-    $this->assertNotContains($text, $this->page_to_text($section));
+		$this->assertNotContains($text, $this->page_to_text($section));
 	}
 
 	protected function assert_content($content) {
-    global $page;
-    $this->assertContains($content, $page->data);
+		global $page;
+		$this->assertContains($content, $page->data);
 	}
 
 	protected function assert_no_content($content) {
-    global $page;
+		global $page;
 		$this->assertNotContains($content, $page->data);
 	}
 
