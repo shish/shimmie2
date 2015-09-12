@@ -5,7 +5,6 @@ class EmoticonTest extends ShimmiePHPUnitTestCase {
 
 		$this->log_in_as_user();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
-		$this->get_page("post/view/$image_id");
 
 		send_event(new CommentPostingEvent($image_id, $user, ":cool: :beans:"));
 
