@@ -5,12 +5,14 @@
 class Layout {
 	/**
 	 * turns the Page into HTML
+	 *
+	 * @param Page $page
 	 */
 	public function display_page(Page $page) {
 		global $config;
 
-		$theme_name = $config->get_string('theme', 'default');
-		$data_href = get_base_href();
+		//$theme_name = $config->get_string('theme', 'default');
+		//$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";

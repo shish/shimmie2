@@ -28,7 +28,7 @@ class Update extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $user, $page;
+		global $user, $page;
 		if($user->is_admin() && isset($_GET['sha'])){
 			if($event->page_matches("update/download")){
 				$ok = $this->download_shimmie();
@@ -77,7 +77,7 @@ class Update extends Extension {
 	 * @return bool
 	 */
 	private function update_shimmie() {
-		global $config, $page;
+		global $config;
 
 		$commitSHA = $_GET['sha'];
 

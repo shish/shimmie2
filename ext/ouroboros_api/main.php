@@ -399,7 +399,7 @@ class OuroborosAPI extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $config, $user;
+        global $page, $user;
 
         if (preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
             $this->event = $event;
@@ -489,7 +489,7 @@ class OuroborosAPI extends Extension
      */
     protected function postCreate(OuroborosPost $post, $md5 = '')
     {
-        global $page, $config, $user;
+        global $config;
         $handler = $config->get_string("upload_collision_handler");
         if (!empty($md5) && !($handler == 'merge')) {
             $img = Image::by_hash($md5);

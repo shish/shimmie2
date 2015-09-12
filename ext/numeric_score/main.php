@@ -29,14 +29,14 @@ class NumericScore extends Extension {
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $user, $page;
+		global $user;
 		if(!$user->is_anonymous()) {
 			$this->theme->get_voter($event->image);
 		}
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page, $user;
+		global $user;
 		if($user->can("edit_other_vote")) {
 			$this->theme->get_nuller($event->display_user);
 		}

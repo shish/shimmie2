@@ -3,7 +3,7 @@
 $(function() {
 	var blocked_tags = ($.cookie("ui-blocked-tags") || "").split(" ");
 	var needs_refresh = false;
-	for(i=0; i<blocked_tags.length; i++) {
+	for(var i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
 		if(tag) {
 			$(".shm-thumb[data-tags~='"+tag+"']").hide();

@@ -217,7 +217,7 @@ class ImageIO extends Extension {
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $user, $config;
+		global $user;
 		
 		if($user->can("delete_image")) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
@@ -310,7 +310,7 @@ class ImageIO extends Extension {
 	 * @throws ImageAdditionException
 	 */
 	private function add_image(Image $image) {
-		global $page, $user, $database, $config;
+		global $user, $database, $config;
 
 		/*
 		 * Validate things

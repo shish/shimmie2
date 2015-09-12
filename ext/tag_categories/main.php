@@ -47,7 +47,7 @@ class TagCategories extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $database, $user;
+		global $page, $user;
 
 		if($event->page_matches("tags/categories")) {
 			if($user->is_admin()) {

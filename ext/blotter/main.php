@@ -44,7 +44,6 @@ class Blotter extends Extension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		global $config;
 		$sb = new SetupBlock("Blotter");
 		$sb->add_int_option("blotter_recent", "<br />Number of recent entries to display: ");
 		$sb->add_text_option("blotter_color", "<br />Color of important updates: (ABCDEF format) ");

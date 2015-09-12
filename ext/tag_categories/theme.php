@@ -100,4 +100,3 @@ class TagCategoriesTheme extends Themelet {
         $page->add_block(new Block("Editing", $html, "main", 10));
     }
 }
-?>

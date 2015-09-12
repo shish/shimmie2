@@ -119,7 +119,7 @@ class AdminPage extends Extension {
 	}
 
 	private function delete_by_query() {
-		global $page, $user;
+		global $page;
 		$query = $_POST['query'];
 		$reason = @$_POST['reason'];
 		assert(strlen($query) > 1);

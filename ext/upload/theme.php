@@ -268,7 +268,7 @@ class UploadTheme extends Themelet {
 		$max_kb = to_shorthand_int($max_size);
 		
 		$image = Image::by_id($image_id);
-		$thumbnail = $this->build_thumb_html($image, null);
+		$thumbnail = $this->build_thumb_html($image);
 		
 		$html = "
 				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"

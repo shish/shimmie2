@@ -8,7 +8,7 @@
 
 class Tagger extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $page, $config, $user;
+		global $page, $user;
 
 		if($user->can("edit_image_tag") && ($event->image->is_locked() || $user->can("edit_image_lock"))) {
 			$this->theme->build_tagger($page,$event);
@@ -58,7 +58,7 @@ class TaggerXML extends Extension {
 	}
 
 	private function match_tag_list ($s) {
-		global $database, $config, $event;
+		global $database, $config;
 
 		$max_rows = $config->get_int("ext_tagger_tag_max",30);
 		$limit_rows = $config->get_int("ext_tagger_limit",30);
@@ -67,7 +67,7 @@ class TaggerXML extends Extension {
 
 		// Match
 		$p = strlen($s) == 1? " ":"\_";
-		$sq = "%".$p.mysql_real_escape_string($s)."%";
+		$sq = "%".$p.sql_escape($s)."%";
 		$match = "concat(?,tag) LIKE ?";
 		array_push($values,$p,$sq);
 		// Exclude

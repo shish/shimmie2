@@ -53,7 +53,7 @@ class ImageBan extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page, $user;
 
 		if($event->page_matches("image_hash_ban")) {
 			if($user->can("ban_image")) {

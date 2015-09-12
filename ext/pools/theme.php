@@ -61,7 +61,6 @@ class PoolsTheme extends Themelet {
 	 * @param int $totalPages
 	 */
 	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
-		global $user;
 		$html = '
 				<table id="poolsList" class="zebra">
 					<thead><tr>
@@ -168,7 +167,7 @@ class PoolsTheme extends Themelet {
 	 * @param int $totalPages
 	 */
 	public function view_pool(/*array*/ $pools, /*array*/ $images, /*int*/ $pageNumber, /*int*/ $totalPages) {
-		global $user, $page;
+		global $page;
 
 		$this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
 
@@ -294,8 +293,6 @@ class PoolsTheme extends Themelet {
 	 * @param array $images
 	 */
 	public function edit_order(Page $page, /*array*/ $pools, /*array*/ $images) {
-		global $user;
-
 		$this->display_top($pools, "Sorting Pool");
 
 		$pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
@@ -329,8 +326,6 @@ class PoolsTheme extends Themelet {
 	 * @param array $images
 	 */
 	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
-		global $user;
-
 		/* EDIT POOL DESCRIPTION */
 		$desc_html = "
 			".make_form(make_link("pool/edit_description"))."

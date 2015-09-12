@@ -433,11 +433,9 @@ class UserPage extends Extension {
 	 */
 	private function check_user_creation(UserCreationEvent $event)
 	{
-		global $database;
-
 		$name = $event->username;
-		$pass = $event->password;
-		$email = $event->email;
+		//$pass = $event->password;
+		//$email = $event->email;
 
 		if(strlen($name) < 1) {
 			throw new UserCreationException("Username must be at least 1 character");

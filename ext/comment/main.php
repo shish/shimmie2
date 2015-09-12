@@ -286,8 +286,6 @@ class CommentList extends Extension {
 	}
 
 	public function onSearchTermParse(SearchTermParseEvent $event) {
-		global $database;
-
 		$matches = array();
 
 		if(preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
@@ -447,7 +445,7 @@ class CommentList extends Extension {
 
 // add / remove / edit comments {{{
 	private function is_comment_limit_hit() {
-		global $user, $config, $database;
+		global $config, $database;
 
 		// sqlite fails at intervals
 		if($database->get_driver_name() === "sqlite") return false;
@@ -562,7 +560,7 @@ class CommentList extends Extension {
 	 * @throws CommentPostingException
 	 */
 	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
-		global $database, $config, $page;
+		global $database, $page;
 
 		if(!$user->can("bypass_comment_checks")) {
 			// will raise an exception if anything is wrong

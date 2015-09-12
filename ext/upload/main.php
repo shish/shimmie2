@@ -292,7 +292,7 @@ class Upload extends Extension {
 	 * @return bool TRUE on upload successful.
 	 */
 	private function try_upload($file, $tags, $source, $replace='') {
-		global $page, $config, $user;
+		global $page;
 
 		if(empty($source)) $source = null;
 

@@ -561,6 +561,7 @@ class Image {
 	 * Set the tags for this image.
 	 *
 	 * @param string[] $tags
+	 * @throws Exception
 	 */
 	public function set_tags($tags) {
 		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
@@ -918,6 +919,8 @@ class Image {
 	/**
 	 * this function exists because mysql is a turd, see the docs for
 	 * build_accurate_search_querylet() for a full explanation
+	 *
+	 * @param array $terms
 	 */
 	private static function build_ugly_search_querylet($terms) {
 		global $database;

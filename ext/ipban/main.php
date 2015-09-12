@@ -48,7 +48,7 @@ class IPBan extends Extension {
 
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("ip_ban")) {
-			global $config, $database, $page, $user;
+			global $page, $user;
 			if($user->can("ban_ip")) {
 				if($event->get_arg(0) == "add" && $user->check_auth_token()) {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {

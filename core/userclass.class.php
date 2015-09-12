@@ -51,8 +51,6 @@ class UserClass {
 	 * @throws SCoreException
 	 */
 	public function can(/*string*/ $ability) {
-		global $config;
-
 		if(array_key_exists($ability, $this->abilities)) {
 			$val = $this->abilities[$ability];
 			return $val;

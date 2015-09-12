@@ -164,7 +164,7 @@ class ResizeImage extends Extension {
 	 * @throws ImageResizeException
 	 */
 	private function resize_image(Image $image_obj, /*int*/ $width, /*int*/ $height) {
-		global $config, $user, $page, $database;
+		global $database;
 		
 		if ( ($height <= 0) && ($width <= 0) ) {
 			throw new ImageResizeException("Invalid options for height and width. ($width x $height)");

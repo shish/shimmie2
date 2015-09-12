@@ -673,7 +673,7 @@ class Artists extends Extension {
                 $this->save_existing_member($membersIDsAsArray[$i], $membersAsArray[$i], $userID);
             else
                 // if we already updated all, save new ones
-                $this->save_new_member($artistID, $membersAsArray[$i], "", $userID);
+                $this->save_new_member($artistID, $membersAsArray[$i], $userID);
 
             $i++;
         }
@@ -839,7 +839,7 @@ class Artists extends Extension {
             $membersArray = explode(" ", $members);
             foreach ($membersArray as $member)
                 if (!$this->member_exists($artistID, $member))
-                    $this->save_new_member($artistID, $member, "", $userID);
+                    $this->save_new_member($artistID, $member, $userID);
         }
 
         if (strlen($urls))
@@ -1132,7 +1132,6 @@ class Artists extends Extension {
                 return;
 
             $aliasArray = explode(" ", $aliases);
-            global $database;
             foreach ($aliasArray as $alias)
                 if (!$this->alias_exists($artistID, $alias))
                     $this->save_new_alias($artistID, $alias, $userID);

@@ -161,7 +161,7 @@ class UserPageTheme extends Themelet {
 	}
 
 	protected function build_options(User $duser) {
-		global $config, $database, $user;
+		global $config, $user;
 		$html = "";
 		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
 		

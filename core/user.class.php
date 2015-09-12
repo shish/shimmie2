@@ -204,6 +204,7 @@ class User {
 
 	/**
 	 * @param string $name
+	 * @throws Exception
 	 */
 	public function set_name(/*string*/ $name) {
 		global $database;

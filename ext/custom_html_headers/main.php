@@ -15,10 +15,8 @@
  *  You can also add your website name as prefix or suffix to the title of each page on your website.
  */
 class custom_html_headers extends Extension {
-# Adds setup block for custom <head> content
+    # Adds setup block for custom <head> content
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		global $config;
-
 		$sb = new SetupBlock("Custom HTML Headers");
 
 		// custom headers

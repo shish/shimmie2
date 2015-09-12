@@ -24,7 +24,7 @@ class Source_History extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $page, $user;
+		global $page, $user;
 
 		if($event->page_matches("source_history/revert")) {
 			// this is a request to revert to a previous version of the source

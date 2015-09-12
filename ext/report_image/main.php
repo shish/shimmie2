@@ -108,14 +108,14 @@ class ReportImage extends Extension {
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page, $user;
+		global $user;
 		if($user->can("view_image_report")) {
 			$this->theme->get_nuller($event->display_user);
 		}
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $user, $page;
+		global $user;
 		if($user->can('create_image_report')) {
 			$reps = $this->get_reporters($event->image);
 			$this->theme->display_image_banner($event->image, $reps);

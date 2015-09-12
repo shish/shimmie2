@@ -133,7 +133,6 @@ class Favorites extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
 		}
 		else if(preg_match("/^favorited_by[=|:](.*)$/i", $event->term, $matches)) {
-			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
 				$user_id = $user->id;

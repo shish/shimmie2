@@ -21,7 +21,7 @@ class BulkAddCSVTheme extends Themelet {
 	 * csv file
 	 */
 	public function display_admin_block() {
-		global $page, $user;
+		global $page;
 		$html = "
 			Add images from a csv. Images will be tagged and have their
 			source and rating set (if \"Image Ratings\" is enabled)

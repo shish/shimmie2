@@ -235,7 +235,7 @@ class Index extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
 				$search = url_escape(Tag::implode(Tag::resolve_aliases(Tag::explode($_GET['search'], false))));

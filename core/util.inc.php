@@ -629,7 +629,6 @@ function is_https_enabled() {
  * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
  * and released under the 'Simplified BSD License'.
  *
- * @internal Used to get mime types
  * @param string &$file File path
  * @param string $ext
  * @param bool $list
@@ -1180,6 +1179,8 @@ function ip_in_range($IP, $CIDR) {
  *
  * from a patch by Christian Walde; only intended for use in the
  * "extension manager" extension, but it seems to fit better here
+ *
+ * @param string $f
  */
 function deltree($f) {
 	//Because Windows (I know, bad excuse)
@@ -1223,6 +1224,9 @@ function deltree($f) {
  * Copy an entire file hierarchy
  *
  * from a comment on http://uk.php.net/copy
+ *
+ * @param string $source
+ * @param string $target
  */
 function full_copy($source, $target) {
 	if(is_dir($source)) {

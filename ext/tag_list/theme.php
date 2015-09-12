@@ -115,7 +115,7 @@ class TagListTheme extends Themelet {
 
 		foreach($tag_infos as $row) {
 			$split = $this->return_tag($row, $tag_category_dict);
-			$category = $split[0];
+			//$category = $split[0];
 			$tag_html = $split[1];
 			$main_html .= $tag_html . '<br />';
 		}
@@ -151,7 +151,7 @@ class TagListTheme extends Themelet {
 
 		foreach($tag_infos as $row) {
 			$split = self::return_tag($row, $tag_category_dict);
-			$category = $split[0];
+			//$category = $split[0];
 			$tag_html = $split[1];
 			$main_html .= $tag_html . '<br />';
 		}
@@ -183,7 +183,7 @@ class TagListTheme extends Themelet {
 
 		foreach($tag_infos as $row) {
 			$split = self::return_tag($row, $tag_category_dict);
-			$category = $split[0];
+			//$category = $split[0];
 			$tag_html = $split[1];
 			$main_html .= $tag_html . '<br />';
 		}

@@ -411,7 +411,6 @@ class DanbooruApi extends Extension {
 	private function authenticate_user()
 	{
 		global $config;
-		global $database;
 		global $user;
 
 		if(isset($_REQUEST['login']) && isset($_REQUEST['password']))

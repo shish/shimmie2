@@ -279,7 +279,7 @@ class Setup extends Extension {
 			out_span.innerHTML = '(testing...)';
 
 			$(document).ready(function() {
-				http_request = getHTTPObject();
+				var http_request = getHTTPObject();
 				http_request.open('GET', '$test_url', false);
 				http_request.send(null);
 

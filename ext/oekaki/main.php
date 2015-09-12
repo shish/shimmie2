@@ -54,7 +54,7 @@ class Oekaki extends Extension {
 					header('Content-type: text/plain');
 
 					$file = $_FILES['picture']['name'];
-					$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
+					//$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
 					$uploadname = $_SERVER['REMOTE_ADDR'] . "." . time();
 					$uploadfile = data_path('oekaki_unclaimed/'.$uploadname);
 
