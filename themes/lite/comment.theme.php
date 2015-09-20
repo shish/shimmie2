@@ -6,7 +6,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	 * @param bool $trim
 	 * @return string
 	 */
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
 		return $this->rr(parent::comment_to_html($comment, $trim));
 	}
 
