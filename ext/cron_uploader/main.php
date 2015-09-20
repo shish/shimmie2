@@ -195,7 +195,7 @@ class CronUploader extends Extension {
 		
 		// Sets new default dir if not in config yet/anymore
 		if ($dir == "") {
-			$dir = $_SERVER ['DOCUMENT_ROOT'] . "/data/cron_uploader";
+			$dir = data_path("cron_uploader");
 			$config->set_string ('cron_uploader_dir', $dir);
 		}
 			
