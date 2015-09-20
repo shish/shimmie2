@@ -570,11 +570,12 @@ class Database {
 		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
 			$fp = @fopen("data/sql.log", "a");
 			if($fp) {
-				if(isset($inputarray) && is_array($inputarray)) {
-					fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)." -- ".join(", ", $inputarray)."\n");
+				$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
+				if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
+					fwrite($fp, $sql." -- ".join(", ", $inputarray)."\n");
 				}
 				else {
-					fwrite($fp, preg_replace('/\s+/msi', ' ', $sql)."\n");
+					fwrite($fp, $sql."\n");
 				}
 				fclose($fp);
 			}
