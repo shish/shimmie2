@@ -71,7 +71,7 @@ class ResLimitTest extends ShimmiePHPUnitTestCase {
 	# other extensions' test suites
 	public function tearDown() {
 		parent::tearDown();
-		
+
 		global $config;
 		$config->set_int("upload_min_height", -1);
 		$config->set_int("upload_min_width", -1);
