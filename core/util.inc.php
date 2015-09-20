@@ -1426,19 +1426,23 @@ function send_event(Event $event) {
 	if(!isset($_shm_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));
 
-	ctx_log_start(get_class($event));
+	// send_event() is performance sensitive, and with the number
+	// of times context gets called the time starts to add up
+	$ctx = constant('CONTEXT');
+
+	if($ctx) ctx_log_start(get_class($event));
 	// SHIT: http://bugs.php.net/bug.php?id=35106
 	$my_event_listeners = $_shm_event_listeners[get_class($event)];
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
-		ctx_log_start(get_class($listener));
+		if($ctx) ctx_log_start(get_class($listener));
 		if(method_exists($listener, $method_name)) {
 			$listener->$method_name($event);
 		}
-		ctx_log_endok();
+		if($ctx) ctx_log_endok();
 	}
 	$_shm_event_count++;
-	ctx_log_endok();
+	if($ctx) ctx_log_endok();
 }
 
 
