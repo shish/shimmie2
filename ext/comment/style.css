@@ -25,6 +25,13 @@
 	visibility: visible;
 }
 
+.comment_add TEXTAREA {
+	width: 100%;
+}
+.comment_add INPUT {
+	width: 100%;
+}
+
 #comment-list-list .blockbody,
 #comment-list-recent .blockbody,
 #comment-list-image .blockbody,
