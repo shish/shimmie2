@@ -109,10 +109,10 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 	 */
 	protected function post_image($filename, $tags) {
 		$dae = new DataUploadEvent($filename, array(
-			"filename"=>$filename,
-			"extension"=>'jpg', // fixme
-			"tags"=>$tags,
-			"source"=>null,
+			"filename" => $filename,
+			"extension" => pathinfo($filename, PATHINFO_EXTENSION),
+			"tags" => $tags,
+			"source" => null,
 		));
 		send_event($dae);
 		$this->images[] = $dae->image_id;
