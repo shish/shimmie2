@@ -16,19 +16,22 @@ class TagEditCloud extends Extension {
 		global $config;
 
 		if(!$config->get_bool("tageditcloud_disable") && $this->can_tag($event->image)) {
-			$event->add_part($this->build_tag_map($event->image),40);
+			$html = $this->build_tag_map($event->image);
+			if(!is_null($html)) {
+				$event->add_part($html, 40);
+			}
 		}
 	}
 		
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_bool("tageditcloud_disable",false);
-		$config->set_default_bool("tageditcloud_usedfirst",true);
-		$config->set_default_string("tageditcloud_sort",'a');
-		$config->set_default_int("tageditcloud_minusage",2);
-		$config->set_default_int("tageditcloud_defcount",40);
-		$config->set_default_int("tageditcloud_maxcount",4096);
-		$config->set_default_string("tageditcloud_ignoretags",'tagme');
+		$config->set_default_bool("tageditcloud_disable", false);
+		$config->set_default_bool("tageditcloud_usedfirst", true);
+		$config->set_default_string("tageditcloud_sort", 'a');
+		$config->set_default_int("tageditcloud_minusage", 2);
+		$config->set_default_int("tageditcloud_defcount", 40);
+		$config->set_default_int("tageditcloud_maxcount", 4096);
+		$config->set_default_string("tageditcloud_ignoretags", 'tagme');
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
@@ -81,24 +84,39 @@ class TagEditCloud extends Extension {
 
 		$tag_data = null;
 
-		switch($sort_method){
+		switch($sort_method) {
 			case 'a':
 			case 'p':
 			default:
-				$tag_data = $database->get_all("SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
-					FROM tags WHERE count >= :tag_min2 ORDER BY ".($sort_method == 'a' ? "tag" : "count DESC")." LIMIT :limit",
+				$order_by = $sort_method == 'a' ? "tag" : "count DESC";
+				$tag_data = $database->get_all("
+					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+					FROM tags
+					WHERE count >= :tag_min2
+					ORDER BY $order_by
+					LIMIT :limit",
 					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 				break;
 			case 'r':
 				$relevant_tags = array_diff($image->get_tag_array(),$ignore_tags);
 				if(count($relevant_tags) > 0) {
 					$relevant_tags = implode(",",array_map(array($database,"escape"),$relevant_tags));
-					$tag_data = $database->get_all("SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
-						FROM image_tags it1 JOIN image_tags it2 USING(image_id) JOIN tags t1 ON it1.tag_id = t1.id JOIN tags t2 ON it2.tag_id = t2.id
-						WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags) GROUP BY t2.tag ORDER BY count DESC LIMIT :limit",
+					$tag_data = $database->get_all("
+						SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
+						FROM image_tags it1
+						JOIN image_tags it2 USING(image_id)
+						JOIN tags t1 ON it1.tag_id = t1.id
+						JOIN tags t2 ON it2.tag_id = t2.id
+						WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags)
+						GROUP BY t2.tag
+						ORDER BY count DESC
+						LIMIT :limit",
 						array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 				}
 				break;
+		}
+		if(is_null($tag_data)) {
+			return null;
 		}
 		
 		$counter = 1;
