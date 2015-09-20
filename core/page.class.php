@@ -333,8 +333,13 @@ class Page {
 		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
 		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
 
+		$config_latest = 0;
+		foreach(zglob("data/config/*") as $conf) {
+			$config_latest = max($config_latest, filemtime($conf));
+		}
+
 		$css_files = array();
-		$css_latest = 0;
+		$css_latest = $config_latest;
 		foreach(array_merge(zglob("lib/*.css"), zglob("ext/*/style.css"), zglob("themes/$theme_name/style.css")) as $css) {
 			$css_files[] = $css;
 			$css_latest = max($css_latest, filemtime($css));
@@ -354,7 +359,7 @@ class Page {
 		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
 
 		$js_files = array();
-		$js_latest = 0;
+		$js_latest = $config_latest;
 		foreach(array_merge(zglob("lib/*.js"), zglob("ext/*/script.js"), zglob("themes/$theme_name/script.js")) as $js) {
 			$js_files[] = $js;
 			$js_latest = max($js_latest, filemtime($js));
