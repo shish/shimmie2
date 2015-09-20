@@ -339,54 +339,49 @@ class DanbooruApi extends Extension {
 		* tags: any typical tag query. See Tag#parse_query for details.
 		* after_id: limit results to tags with an id number after after_id. Useful if you only want to refresh
 		*/
-		if($event->get_arg(1) == 'find_tags')
-		{
-			if(isset($_GET['id']))
-			{
+		if($event->get_arg(1) == 'find_tags') {
+			if(isset($_GET['id'])) {
 				$idlist = explode(",",$_GET['id']);
-				foreach($idlist as $id)
-				{
-					$sqlresult = $database->execute("SELECT id,tag,count FROM tags WHERE id = ?", array($id));
-					if(!$sqlresult->EOF)
-					{
-						$results[] = array($sqlresult->fields['count'], $sqlresult->fields['tag'], $sqlresult->fields['id']);
+				foreach($idlist as $id) {
+					$sqlresult = $database->get_all(
+						"SELECT id,tag,count FROM tags WHERE id = ?",
+						array($id));
+					foreach($sqlresult as $row) {
+						$results[] = array($row['count'], $row['tag'], $row['id']);
 					}
 				}
-			} elseif(isset($_GET['name']))
-			{
+			}
+			elseif(isset($_GET['name'])) {
 				$namelist = explode(",",$_GET['name']);
-				foreach($namelist as $name)
-				{
-					$sqlresult = $database->execute("SELECT id,tag,count FROM tags WHERE tag = ?", array($name));
-					if(!$sqlresult->EOF)
-					{
-						$results[] = array($sqlresult->fields['count'], $sqlresult->fields['tag'], $sqlresult->fields['id']);
+				foreach($namelist as $name) {
+					$sqlresult = $database->get_all(
+						"SELECT id,tag,count FROM tags WHERE tag = ?",
+						array($name));
+					foreach($sqlresult as $row) {
+						$results[] = array($row['count'], $row['tag'], $row['id']);
 					}
 				}
 			}
 			/* Currently disabled to maintain identical functionality to danbooru 1.0's own "broken" find_tags
-			elseif(isset($_GET['tags']))
-			{
+			elseif(isset($_GET['tags'])) {
 				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
 				$tags = Tag::explode($_GET['tags']);
 
 			}
 			*/
-			else
-			{
+			else {
 				$start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
-				$sqlresult = $database->execute("SELECT id,tag,count FROM tags WHERE count > 0 AND id >= ? ORDER BY id DESC",array($start));
-				while(!$sqlresult->EOF)
-				{
-					$results[] = array($sqlresult->fields['count'], $sqlresult->fields['tag'], $sqlresult->fields['id']);
-					$sqlresult->MoveNext();
+				$sqlresult = $database->get_all(
+					"SELECT id,tag,count FROM tags WHERE count > 0 AND id >= ? ORDER BY id DESC",
+					array($start));
+				foreach($sqlresult as $row) {
+					$results[] = array($row['count'], $row['tag'], $row['id']);
 				}
 			}
 
 			// Tag results collected, build XML output
 			$xml = "<tags>\n";
-			foreach($results as $tag)
-			{
+			foreach($results as $tag) {
 				$xml .= "<tag type=\"0\" count=\"$tag[0]\" name=\"" . $this->xmlspecialchars($tag[1]) . "\" id=\"$tag[2]\"/>\n";
 			}
 			$xml .= "</tags>";
@@ -397,8 +392,7 @@ class DanbooruApi extends Extension {
 		// Shimmie view page
 		// Example: danbooruup says the url is http://shimmie/api/danbooru/post/show/123
 		// This redirects that to http://shimmie/post/view/123
-		if(($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show'))
-		{
+		if(($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show')) {
 			$fixedlocation = make_link("post/view/" . $event->get_arg(3));
 			$page->set_mode("redirect");
 			$page->set_redirect($fixedlocation);
