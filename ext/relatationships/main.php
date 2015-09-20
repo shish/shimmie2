@@ -7,7 +7,7 @@
  */
 
 class Relationships extends Extension {
-	public $db_support = ['mysql', 'pgsql'];
+	protected $db_support = ['mysql', 'pgsql'];
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;

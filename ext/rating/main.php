@@ -38,7 +38,7 @@ class RatingSetEvent extends Event {
 }
 
 class Ratings extends Extension {
-	public $db_support = ['mysql'];  // ?
+	protected $db_support = ['mysql'];  // ?
 
 	/**
 	 * @return int
@@ -167,7 +167,7 @@ class Ratings extends Extension {
 
 	/**
 	 * @param \User $user
-	 * @return null|string
+	 * @return string
 	 */
 	public static function get_user_privs(User $user) {
 		global $config;

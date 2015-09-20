@@ -1351,16 +1351,12 @@ function _set_event_listeners() {
 			// don't do anything
 		}
 		elseif(is_subclass_of($class, "Extension")) {
+			/** @var Extension $extension */
 			$extension = new $class();
 			$extension->i_am($extension);
 
 			// skip extensions which don't support our current database
-			if(property_exists($extension, 'db_support')) {
-				global $database;
-				if(!in_array($database->get_driver_name(), $extension->db_support)) {
-					continue;
-				}
-			}
+			if(!$extension->is_live()) continue;
 
 			foreach(get_class_methods($extension) as $method) {
 				if(substr($method, 0, 2) == "on") {
@@ -1400,6 +1396,19 @@ function _dump_event_listeners($event_listeners, $path) {
 
 	$p .= "?".">";
 	file_put_contents($path, $p);
+}
+
+/**
+ * @param $ext_name string
+ * @return bool
+ */
+function ext_is_live($ext_name) {
+	if (class_exists($ext_name)) {
+		/** @var Extension $ext */
+		$ext = new $ext_name();
+		return $ext->is_live();
+	}
+	return false;
 }
 
 

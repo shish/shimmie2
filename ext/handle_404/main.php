@@ -45,7 +45,7 @@ class Handle404 extends Extension {
 		foreach($blocks as $block) {
 			if($block->section == "main") $n++; // more hax.
 		}
-		if(class_exists("Blotter")) {
+		if(ext_is_live("Chatbox")) {
 			$n--; // even more hax.
 		}
 		return $n;

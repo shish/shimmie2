@@ -700,7 +700,7 @@ class Pools extends Extension {
 
 		// WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
 		// WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
-		if(class_exists("Ratings")) {
+		if(ext_is_live("Ratings")) {
 			$rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
 		}
 		if (isset($rating) && !empty($rating)) {
