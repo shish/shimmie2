@@ -8,6 +8,8 @@
  */
 
 class RSS_Comments extends Extension {
+	protected $db_support = ['mysql', 'sqlite'];  // pgsql has no UNIX_TIMESTAMP
+
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		$title = $config->get_string('title');
