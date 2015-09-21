@@ -19,7 +19,7 @@ class RandomTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field("_config_show_random_block", true);
 		$this->click("Save Settings");

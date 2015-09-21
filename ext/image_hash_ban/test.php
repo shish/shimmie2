@@ -8,7 +8,7 @@ class HashBanTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_admin();
 		$this->get_page("post/view/$image_id");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->click("Ban and Delete");
 		$this->log_out();

@@ -8,7 +8,8 @@ class FavoritesTest extends ShimmiePHPUnitTestCase {
 		$this->assert_title("Image $image_id: test");
 		$this->assert_no_text("Favorited By");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
+
 		$this->click("Favorite");
 		$this->assert_text("Favorited By");
 

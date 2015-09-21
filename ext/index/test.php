@@ -63,7 +63,7 @@ class IndexTest extends ShimmiePHPUnitTestCase {
 		//$this->assert_title(new PatternExpectation("/^Image $image_id_1: /"));
 		$this->assert_no_text("No Images Found");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		# multiple tags, many results
 		$this->get_page('post/list/computer%20size=640x480/1');

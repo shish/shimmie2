@@ -10,7 +10,8 @@ class FeaturedTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
+
 		$this->click("Feature This");
 		$this->get_page("post/list");
 		$this->assert_text("Featured Image");

@@ -9,7 +9,7 @@ class RatingTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");

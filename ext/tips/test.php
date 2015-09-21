@@ -6,7 +6,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_admin();
 		$this->get_page("tips/list");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		// get rid of the default data if it's there
 		if(strpos($raw, "Delete")) {
@@ -21,7 +21,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("tips/list");
 		$this->assert_title("Tips List");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field("image", "");
 		$this->set_field("text", "an imageless tip");
@@ -43,7 +43,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("tips/list");
 		$this->assert_title("Tips List");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field("image", "coins.png");
 		$this->set_field("text", "an imaged tip");
@@ -65,7 +65,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("tips/list");
 		$this->assert_title("Tips List");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field("image", "coins.png");
 		$this->set_field("text", "an imaged tip");

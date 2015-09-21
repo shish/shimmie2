@@ -10,7 +10,7 @@ class PoolsTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_user();
 		$this->get_page('pool/list');
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->click("Create Pool");
 		$this->assert_title("Create Pool");

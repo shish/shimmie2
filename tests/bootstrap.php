@@ -21,6 +21,11 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 	private $images = array();
 
 	public function setUp() {
+		$class = str_replace("Test", "", get_class($this));
+		if(!method_exists($class, "is_live") || !ext_is_live($class)) {
+			$this->markTestSkipped("$class not supported with this database");
+		}
+
 		// things to do after bootstrap and before request
 		// log in as anon
 		$this->log_out();

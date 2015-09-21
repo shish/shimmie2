@@ -5,7 +5,7 @@ class NumericScoreTest extends ShimmiePHPUnitTestCase {
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->assert_text("Current Score: 0");
 		$this->click("Vote Down");

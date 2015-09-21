@@ -5,7 +5,7 @@ class ReportImageTest extends ShimmiePHPUnitTestCase {
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field('reason', "report details");
 		$this->click("Report");

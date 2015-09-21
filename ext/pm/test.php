@@ -4,7 +4,7 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field('subject', "message demo to test");
 		$this->set_field('message', "message contents");
@@ -35,7 +35,7 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 
-		return;  // FIXME
+		$this->markTestIncomplete();
 
 		$this->set_field('subject', "message demo to test");
 		$this->set_field('message', "message contents");
