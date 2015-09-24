@@ -6,7 +6,8 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 
-		/*
+		$this->markTestIncomplete();
+
 		// FIXME
 		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");
@@ -15,7 +16,6 @@ class TagHistoryTest extends ShimmiePHPUnitTestCase {
 		$this->assert_text("new (Set by demo");
 		$this->click("Revert To");
 		$this->assert_title("Image $image_id: pbx");
-		*/
 
 		$this->get_page("tag_history/all/1");
 		$this->assert_title("Global Tag History");

@@ -26,6 +26,8 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase {
 		 *  dig into this and determine exactly what is happening.
 		 *
 		 *********************************************************************
+		*/
+		$this->markTestIncomplete();
 
 		$this->log_in_as_admin();
 
@@ -97,8 +99,6 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase {
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("Add");
-
-		*/
 	}
 }
 

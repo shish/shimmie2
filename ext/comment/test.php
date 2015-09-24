@@ -85,8 +85,9 @@ class CommentListTest extends ShimmiePHPUnitTestCase {
 		$this->assert_no_text('ASDFASDF');
 	}
 
-	/*
 	function testSingleDel() {
+		$this->markTestIncomplete();
+
 		$this->log_in_as_admin();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
@@ -106,5 +107,4 @@ class CommentListTest extends ShimmiePHPUnitTestCase {
 		$this->delete_image($image_id);
 		$this->log_out();
 	}
-	*/
 }

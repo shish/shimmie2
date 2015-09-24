@@ -9,7 +9,8 @@ class LinkImageTest extends ShimmiePHPUnitTestCase {
 		# in there, see if it takes us to the right page
 		$this->get_page("post/view/$image_id");
 
-		/*
+		$this->markTestIncomplete();
+
 		// FIXME
 		$matches = array();
 		preg_match("#value='(http://.*(/|%2F)post(/|%2F)view(/|%2F)[0-9]+)'#", $raw, $matches);
@@ -18,7 +19,6 @@ class LinkImageTest extends ShimmiePHPUnitTestCase {
 			$this->get($matches[1]);
 			$this->assert_title("Image $image_id: pie");
 		}
-		*/
 	}
 }
 

@@ -48,10 +48,12 @@ class TagEditTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
  
-/*
- * FIXME: Mass Tagger seems to be broken, and this test case always fails.
- * 
+	/*
+ 	 * FIXME: Mass Tagger seems to be broken, and this test case always fails.
+	 */
 	function testMassEdit() {
+		$this->markTestIncomplete();
+
 		$this->log_in_as_admin();
 
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -71,6 +73,5 @@ class TagEditTest extends ShimmiePHPUnitTestCase {
 
 		$this->log_out();
 	}
-*/
 }
 
