@@ -3,7 +3,14 @@
 </IfModule>
 
 <FilesMatch "\.(sqlite|sdb|s3db|db)$">
-	Deny from all
+	# Apache 2.4
+	<IfVersion >= 2.4>
+		Require all denied
+	</IfVersion>
+	# Apache 2.2
+	<IfVersion < 2.4>
+		Deny from all
+	</IfVersion>
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
