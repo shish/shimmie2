@@ -125,6 +125,23 @@ function no_escape($input) {
 }
 
 /**
+ * @param int $val
+ * @param int|null $min
+ * @param int|null $max
+ * @return int
+ */
+function clamp($val, $min, $max) {
+	if(!is_numeric($val) || (!is_null($min) && $val < $min)) {
+		$val = $min;
+	}
+	if(!is_null($max) && $val > $max) {
+		$val = $max;
+	}
+	assert('$val <= $min && $val >= $max', "$min <= $val <= $max");
+	return $val;
+}
+
+/**
  * @param string $name
  * @param array $attrs
  * @param array $children

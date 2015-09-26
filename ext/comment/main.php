@@ -155,20 +155,12 @@ class CommentList extends Extension {
 
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("comment")) {
-			if($event->get_arg(0) === "add") {
-				$this->onPageRequest_add();
-			}
-			else if($event->get_arg(0) === "delete") {
-				$this->onPageRequest_delete($event);
-			}
-			else if($event->get_arg(0) === "bulk_delete") {
-				$this->onPageRequest_bulk_delete();
-			}
-			else if($event->get_arg(0) === "list") {
-				$this->onPageRequest_list($event);
-			}
-			else if($event->get_arg(0) === "beta-search") {
-				$this->onPageRequest_beta_search($event);
+			switch($event->get_arg(0)) {
+				case "add": $this->onPageRequest_add(); break;
+				case "delete": $this->onPageRequest_delete($event); break;
+				case "bulk_delete": $this->onPageRequest_bulk_delete(); break;
+				case "list": $this->onPageRequest_list($event); break;
+				case "beta-search": $this->onPageRequest_beta_search($event); break;
 			}
 		}
 	}
@@ -243,7 +235,7 @@ class CommentList extends Extension {
 		$i_comment_count = Comment::count_comments_by_user($duser);
 		$com_per_page = 50;
 		$total_pages = ceil($i_comment_count / $com_per_page);
-		$page_num = $this->sanity_check_pagenumber($page_num, $total_pages);
+		$page_num = clamp($page_num, 1, $total_pages);
 		$comments = $this->get_user_comments($duser->id, $com_per_page, ($page_num - 1) * $com_per_page);
 		$this->theme->display_all_user_comments($comments, $page_num, $total_pages, $duser);
 	}
@@ -361,7 +353,7 @@ class CommentList extends Extension {
 			$database->cache->set("comment_pages", $total_pages, 600);
 		}
 		
-		$current_page = $this->sanity_check_pagenumber($current_page, $total_pages);
+		$current_page = clamp($current_page, 1, $total_pages);
 		
 		$threads_per_page = 10;
 		$start = $threads_per_page * ($current_page - 1);
@@ -567,21 +559,6 @@ class CommentList extends Extension {
 		", array("image_id"=>$image_id, "comment"=>$comment));
 	}
 // do some checks
-
-	/**
-	 * @param int $pagenum
-	 * @param int $maxpage
-	 * @return int
-	 */
-	private function sanity_check_pagenumber(/*int*/ $pagenum, /*int*/ $maxpage) {
-		if(!is_numeric($pagenum) || $pagenum <= 0) {
-			$pagenum = 1;
-		}
-		if($pagenum > $maxpage) {
-			$pagenum = $maxpage;
-		}
-		return $pagenum;
-	}
 
 	/**
 	 * @param int $image_id

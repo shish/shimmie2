@@ -252,6 +252,8 @@ class Pools extends Extension {
 	 * When displaying an image, optionally list all the pools that the
 	 * image is currently a member of on a side panel, as well as a link
 	 * to the Next image in the pool.
+	 *
+	 * @var DisplayingImageEvent $event
 	 */
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config;
@@ -374,15 +376,9 @@ class Pools extends Extension {
 	private function list_pools(Page $page, /*int*/ $pageNumber) {
 		global $config, $database;
 
-		if(is_null($pageNumber) || !is_numeric($pageNumber))
-			$pageNumber = 0;
-		else if ($pageNumber <= 0)
-			$pageNumber = 0;
-		else
-			$pageNumber--;
+		$pageNumber = clamp($pageNumber, 1, null) - 1;
 
 		$poolsPerPage = $config->get_int("poolsListsPerPage");
-
 
 		$order_by = "";
 		$order = $page->get_cookie("ui-order-pool");
@@ -397,15 +393,14 @@ class Pools extends Extension {
 		}
 
 		$pools = $database->get_all("
-				SELECT p.id, p.user_id, p.public, p.title, p.description,
-				       p.posts, u.name as user_name
-				FROM pools AS p
-				INNER JOIN users AS u
-				ON p.user_id = u.id
-				$order_by
-				LIMIT :l OFFSET :o
-				", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage)
-				);
+			SELECT p.id, p.user_id, p.public, p.title, p.description,
+			       p.posts, u.name as user_name
+			FROM pools AS p
+			INNER JOIN users AS u
+			ON p.user_id = u.id
+			$order_by
+			LIMIT :l OFFSET :o
+		", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage));
 
 		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
 
