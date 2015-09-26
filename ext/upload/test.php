@@ -1,6 +1,6 @@
 <?php
 class UploadTest extends ShimmieWebTestCase {
-	function testUpload() {
+	public function testUpload() {
 		$this->log_in_as_user();
 
 		$this->get_page("upload");

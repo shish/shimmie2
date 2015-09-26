@@ -1,6 +1,6 @@
 <?php
 class RatingTest extends ShimmieWebTestCase {
-	function testRating() {
+	public function testRating() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
 

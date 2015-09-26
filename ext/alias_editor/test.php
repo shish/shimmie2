@@ -1,6 +1,6 @@
 <?php
 class AliasEditorTest extends ShimmieWebTestCase {
-	function testAliasEditor() {
+	public function testAliasEditor() {
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 

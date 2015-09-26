@@ -1,6 +1,6 @@
 <?php
 class BanWordsTest extends ShimmieWebTestCase {
-	function testWordBan() {
+	public function testWordBan() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_banned_words", "viagra\nporn\n\n/http:.*\.cn\//");

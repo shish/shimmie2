@@ -1,6 +1,6 @@
 <?php
 class Handle404Test extends SCoreWebTestCase {
-	function test404Handler() {
+	public function test404Handler() {
 		$this->get_page('not/a/page');
 		$this->assert_response(404);
 		$this->assert_title('404');

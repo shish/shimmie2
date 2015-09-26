@@ -1,6 +1,6 @@
 <?php
 class DowntimeTest extends SCoreWebTestCase {
-	function testDowntime() {
+	public function testDowntime() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_downtime", true);

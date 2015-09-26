@@ -1,6 +1,6 @@
 <?php
 class SetupTest extends SCoreWebTestCase {
-	function testAuth() {
+	public function testAuth() {
 		$this->get_page('setup');
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");

@@ -1,6 +1,6 @@
 <?php
 class PixelHandlerTest extends ShimmieWebTestCase {
-	function testPixelHander() {
+	public function testPixelHander() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->assert_response(302);

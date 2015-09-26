@@ -1,6 +1,6 @@
 <?php
 class AdminPageTest extends ShimmieWebTestCase {
-	function testAuth() {
+	public function testAuth() {
 		$this->get_page('admin');
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");
@@ -12,7 +12,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testLowercase() {
+	public function testLowercase() {
 		$ts = time(); // we need a tag that hasn't been used before
 
 		$this->log_in_as_admin();
@@ -33,7 +33,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 	}
 
 	# FIXME: make sure the admin tools actually work
-	function testRecount() {
+	public function testRecount() {
 		$this->log_in_as_admin();
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
@@ -41,7 +41,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testPurge() {
+	public function testPurge() {
 		$this->log_in_as_admin();
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
@@ -49,7 +49,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testDump() {
+	public function testDump() {
 		$this->log_in_as_admin();
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");
@@ -58,7 +58,7 @@ class AdminPageTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testDBQ() {
+	public function testDBQ() {
 		$this->log_in_as_user();
 		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
 		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "test2");

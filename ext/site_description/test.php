@@ -1,6 +1,6 @@
 <?php
 class SiteDescriptionTest extends SCoreWebTestCase {
-	function testSiteDescription() {
+	public function testSiteDescription() {
 		$this->log_in_as_admin();
 		$this->get_page('setup');
 		$this->assert_title("Shimmie Setup");

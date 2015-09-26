@@ -1,12 +1,12 @@
 <?php
 class WikiTest extends SCoreWebTestCase {
-	function testIndex() {
+	public function testIndex() {
 		$this->get_page("wiki");
 		$this->assert_title("Index");
 		$this->assert_text("This is a default page");
 	}
 
-	function testAccess() {
+	public function testAccess() {
 		foreach(array("anon", "user", "admin") as $user) {
 			foreach(array(false, true) as $allowed) {
 				// admin has no settings to set
@@ -38,7 +38,7 @@ class WikiTest extends SCoreWebTestCase {
 		}
 	}
 
-	function testLock() {
+	public function testLock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_wiki_edit_anon", false);
@@ -72,7 +72,7 @@ class WikiTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testDefault() {
+	public function testDefault() {
 		$this->log_in_as_admin();
 		$this->get_page("wiki/wiki:default");
 		$this->assert_title("wiki:default");
@@ -89,7 +89,7 @@ class WikiTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testRevisions() {
+	public function testRevisions() {
 		$this->log_in_as_admin();
 		$this->get_page("wiki/test");
 		$this->assert_title("test");

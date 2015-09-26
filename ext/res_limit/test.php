@@ -1,6 +1,6 @@
 <?php
 class ResLimitTest extends ShimmieWebTestCase {
-	function testResLimitOK() {
+	public function testResLimitOK() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_upload_min_height", "0");
@@ -24,7 +24,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testResLimitSmall() {
+	public function testResLimitSmall() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_upload_min_height", "900");
@@ -48,7 +48,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testResLimitLarge() {
+	public function testResLimitLarge() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_upload_min_height", "0");
@@ -72,7 +72,7 @@ class ResLimitTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testResLimitRatio() {
+	public function testResLimitRatio() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_upload_min_height", "-1");

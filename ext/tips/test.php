@@ -1,6 +1,6 @@
 <?php
 class TipsTest extends SCoreWebTestCase {
-	function setUp() {
+	public function setUp() {
 		$this->log_in_as_admin();
 		$raw = $this->get_page("tips/list");
 		// get rid of the default data if it's there
@@ -10,7 +10,7 @@ class TipsTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testImageless() {
+	public function testImageless() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");
@@ -29,7 +29,7 @@ class TipsTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testImaged() {
+	public function testImaged() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");
@@ -48,7 +48,7 @@ class TipsTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testDisabled() {
+	public function testDisabled() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");

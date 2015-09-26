@@ -1,6 +1,6 @@
 <?php
 class CommentListTest extends ShimmieWebTestCase {
-	function setUp() {
+	public function setUp() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_comment_limit", "100");
@@ -8,7 +8,7 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function tearDown() {
+	public function tearDown() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 		$this->set_field("_config_comment_limit", "10");
@@ -16,7 +16,7 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
 
-	function testCommentsPage() {
+	public function testCommentsPage() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
 
@@ -80,7 +80,7 @@ class CommentListTest extends ShimmieWebTestCase {
 		$this->assert_no_text('ASDFASDF');
 	}
 
-	function testSingleDel() {
+	public function testSingleDel() {
 		$this->log_in_as_admin();
 		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
 

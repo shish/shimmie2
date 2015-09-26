@@ -1,6 +1,6 @@
 <?php
 class ViewTest extends ShimmieWebTestCase {
-	function testViewPage() {
+	public function testViewPage() {
 		$this->log_in_as_user();
 		$image_id_1 = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
 		$image_id_2 = $this->post_image("ext/simpletest/data/bedroom_workshop.jpg", "test2");

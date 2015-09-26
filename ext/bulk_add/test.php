@@ -1,6 +1,6 @@
 <?php
 class BulkAddTest extends ShimmieWebTestCase {
-	function testBulkAdd() {
+	public function testBulkAdd() {
 		$this->log_in_as_admin();
 
 		$this->get_page('admin');

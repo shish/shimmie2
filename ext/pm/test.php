@@ -1,6 +1,6 @@
 <?php
 class PrivMsgTest extends SCoreWebTestCase {
-	function testPM() {
+	public function testPM() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 		$this->set_field('subject', "message demo to test");
@@ -28,7 +28,7 @@ class PrivMsgTest extends SCoreWebTestCase {
 		$this->log_out();
 	}
 
-	function testAdminAccess() {
+	public function testAdminAccess() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 		$this->set_field('subject', "message demo to test");

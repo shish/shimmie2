@@ -1,6 +1,6 @@
 <?php
 class BlocksTest extends SCoreWebTestCase {
-	function testBlocks() {
+	public function testBlocks() {
 		$this->log_in_as_admin();
 
 		$this->get_page("blocks/list");
