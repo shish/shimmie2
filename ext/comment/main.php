@@ -352,7 +352,8 @@ class CommentList extends Extension {
 			") / 10);
 			$database->cache->set("comment_pages", $total_pages, 600);
 		}
-		
+		$total_pages = max($total_pages, 1);
+
 		$current_page = clamp($current_page, 1, $total_pages);
 		
 		$threads_per_page = 10;
