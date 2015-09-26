@@ -12,8 +12,6 @@ env:
   - DB=mysql
   - DB=pgsql
   - DB=sqlite
-  global:
-    secure: rKSbYXalj/HkcomwfKup9VAAenr3Dx2HQ5Imdn8dA/9CAh403jjAWDQ93Ddzxj7pPpUVnOWGE3mN/tyuUUU7BUOEXtm1xNkuvUPMgMIfsM+OpDnTysKmM6ZFR4KIwrFqv+uipL4sCQVuAbZ6j34LRKpAMwMw0aORj0OL6qrhvfA=
 
 install:
 - mkdir -p data/config
@@ -42,4 +40,4 @@ after_failure:
 - cat /var/log/postgresql/postgresql*
 
 after_script:
-- php ocular.phar code-coverage:upload --access-token=$SCI_TOKEN --format=php-clover --repository=shish/shimmie2 data/coverage.clover
+- php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover
