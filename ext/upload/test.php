@@ -1,18 +1,18 @@
 <?php
 class UploadTest extends ShimmiePHPUnitTestCase {
-	function testUploadPage() {
+	public function testUploadPage() {
 		$this->log_in_as_user();
 
 		$this->get_page("upload");
 		$this->assert_title("Upload");
 	}
 
-	function testUpload() {
+	public function testUpload() {
 		$this->log_in_as_user();
 		$this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 	}
 
-	function testRejectDupe() {
+	public function testRejectDupe() {
 		$this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 
 		try {
@@ -23,7 +23,7 @@ class UploadTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testRejectUnknownFiletype() {
+	public function testRejectUnknownFiletype() {
 		try {
 			$this->post_image("index.php", "test");
 		}
@@ -32,7 +32,7 @@ class UploadTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testRejectHuge() {
+	public function testRejectHuge() {
 		$this->markTestIncomplete();
 
 		// FIXME: huge.dat is rejected for other reasons; manual testing shows that this works

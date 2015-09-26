@@ -1,6 +1,6 @@
 <?php
 class ShimmieApiTest extends ShimmiePHPUnitTestCase {
-	function testAPI() {
+	public function testAPI() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 

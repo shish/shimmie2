@@ -1,12 +1,12 @@
 <?php
 class WikiTest extends ShimmiePHPUnitTestCase {
-	function testIndex() {
+	public function testIndex() {
 		$this->get_page("wiki");
 		$this->assert_title("Index");
 		$this->assert_text("This is a default page");
 	}
 
-	function testAccess() {
+	public function testAccess() {
 		$this->markTestIncomplete();
 
 		global $config;
@@ -40,7 +40,7 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testLock() {
+	public function testLock() {
 		$this->markTestIncomplete();
 
 		global $config;
@@ -76,7 +76,7 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testDefault() {
+	public function testDefault() {
 		$this->markTestIncomplete();
 
 		$this->log_in_as_admin();
@@ -95,7 +95,7 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testRevisions() {
+	public function testRevisions() {
 		$this->markTestIncomplete();
 
 		$this->log_in_as_admin();

@@ -1,6 +1,6 @@
 <?php
 class DanbooruApiTest extends ShimmiePHPUnitTestCase {
-	function testSearch() {
+	public function testSearch() {
 		$this->log_in_as_admin();
 
 		$image_id = $this->post_image("tests/bedroom_workshop.jpg", "data");

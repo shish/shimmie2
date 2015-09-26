@@ -1,6 +1,6 @@
 <?php
 class Handle404Test extends ShimmiePHPUnitTestCase {
-	function test404Handler() {
+	public function test404Handler() {
 		$this->get_page('not/a/page');
 		// most descriptive error first
 		$this->assert_text("No handler could be found for the page 'not/a/page'");

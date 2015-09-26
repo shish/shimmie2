@@ -1,19 +1,19 @@
 <?php
 class CommentListTest extends ShimmiePHPUnitTestCase {
-	function setUp() {
+	public function setUp() {
 		global $config;
 		parent::setUp();
 		$config->set_int("comment_limit", 100);
 		$this->log_out();
 	}
 
-	function tearDown() {
+	public function tearDown() {
 		global $config;
 		$config->set_int("comment_limit", 10);
 		parent::tearDown();
 	}
 
-	function testCommentsPage() {
+	public function testCommentsPage() {
 		global $user;
 
 		$this->log_in_as_user();
@@ -85,7 +85,7 @@ class CommentListTest extends ShimmiePHPUnitTestCase {
 		$this->assert_no_text('ASDFASDF');
 	}
 
-	function testSingleDel() {
+	public function testSingleDel() {
 		$this->markTestIncomplete();
 
 		$this->log_in_as_admin();

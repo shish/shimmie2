@@ -1,6 +1,6 @@
 <?php
 class TipsTest extends ShimmiePHPUnitTestCase {
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 
 		$this->log_in_as_admin();
@@ -15,7 +15,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testImageless() {
+	public function testImageless() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");
@@ -37,7 +37,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testImaged() {
+	public function testImaged() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");
@@ -59,7 +59,7 @@ class TipsTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testDisabled() {
+	public function testDisabled() {
 		$this->log_in_as_admin();
 
 		$this->get_page("tips/list");

@@ -1,6 +1,6 @@
 <?php
 class RandomTest extends ShimmiePHPUnitTestCase {
-	function testRandom() {
+	public function testRandom() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$this->log_out();
@@ -15,7 +15,7 @@ class RandomTest extends ShimmiePHPUnitTestCase {
 		# FIXME: assert($raw == file(blah.jpg))
 	}
 
-	function testPostListBlock() {
+	public function testPostListBlock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
 

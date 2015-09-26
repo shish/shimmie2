@@ -1,11 +1,11 @@
 <?php
 class ViewTest extends ShimmiePHPUnitTestCase {
-	function setUp() {
+	public function setUp() {
 		parent::setUp();
 		// FIXME: upload images
 	}
 
-	function testViewPage() {
+	public function testViewPage() {
 		$this->log_in_as_user();
 		$image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "test2");
@@ -16,7 +16,7 @@ class ViewTest extends ShimmiePHPUnitTestCase {
 		$this->assert_title("Image $image_id_1: test");
 	}
 
-	function testPrevNext() {
+	public function testPrevNext() {
 		$this->markTestIncomplete();
 
 		$this->log_in_as_user();

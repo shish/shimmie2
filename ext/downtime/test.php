@@ -1,11 +1,11 @@
 <?php
 class DowntimeTest extends ShimmiePHPUnitTestCase {
-	function tearDown() {
+	public function tearDown() {
 		global $config;
 		$config->set_bool("downtime", false);
 	}
 
-	function testDowntime() {
+	public function testDowntime() {
 		global $config;
 
 		$config->set_string("downtime_message", "brb, unit testing");

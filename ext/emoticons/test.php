@@ -1,6 +1,6 @@
 <?php
 class EmoticonTest extends ShimmiePHPUnitTestCase {
-	function testEmoticons() {
+	public function testEmoticons() {
 		global $user;
 
 		$this->log_in_as_user();

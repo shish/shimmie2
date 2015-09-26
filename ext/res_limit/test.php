@@ -1,6 +1,6 @@
 <?php
 class ResLimitTest extends ShimmiePHPUnitTestCase {
-	function testResLimitOK() {
+	public function testResLimitOK() {
 		global $config;
 		$config->set_int("upload_min_height", 0);
 		$config->set_int("upload_min_width", 0);
@@ -16,7 +16,7 @@ class ResLimitTest extends ShimmiePHPUnitTestCase {
 		$this->assert_no_text("ratio");
 	}
 
-	function testResLimitSmall() {
+	public function testResLimitSmall() {
 		global $config;
 		$config->set_int("upload_min_height", 900);
 		$config->set_int("upload_min_width", 900);
@@ -33,7 +33,7 @@ class ResLimitTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testResLimitLarge() {
+	public function testResLimitLarge() {
 		global $config;
 		$config->set_int("upload_min_height", 0);
 		$config->set_int("upload_min_width", 0);
@@ -50,7 +50,7 @@ class ResLimitTest extends ShimmiePHPUnitTestCase {
 
 	}
 
-	function testResLimitRatio() {
+	public function testResLimitRatio() {
 		global $config;
 		$config->set_int("upload_min_height", -1);
 		$config->set_int("upload_min_width", -1);

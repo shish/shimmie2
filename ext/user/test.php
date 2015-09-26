@@ -1,6 +1,6 @@
 <?php
 class UserPageTest extends ShimmiePHPUnitTestCase {
-	function testUserPage() {
+	public function testUserPage() {
 		$this->get_page('user');
 		$this->assert_title("Not Logged In");
 		$this->assert_no_text("Options");

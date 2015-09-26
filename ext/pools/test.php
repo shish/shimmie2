@@ -1,6 +1,6 @@
 <?php
 class PoolsTest extends ShimmiePHPUnitTestCase {
-	function testPools() {
+	public function testPools() {
 		$this->get_page('pool/list');
 		$this->assert_title("Pools");
 

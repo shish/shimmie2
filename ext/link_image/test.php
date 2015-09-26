@@ -1,6 +1,6 @@
 <?php
 class LinkImageTest extends ShimmiePHPUnitTestCase {
-	function testLinkImage() {
+	public function testLinkImage() {
 		$this->log_in_as_user();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pie");
 

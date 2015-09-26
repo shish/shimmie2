@@ -1,6 +1,6 @@
 <?php
 class IPBanTest extends ShimmiePHPUnitTestCase {
-	function testIPBan() {
+	public function testIPBan() {
 		$this->get_page('ip_ban/list');
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");
