@@ -1,53 +1,45 @@
 language: php
 sudo: false
-secure: "Td0VfHgdSGrTR96To/OScKikV/kohRclUj1AFi9m0prdFc0q/xP8jZ1EQ0qVtqwkySa9OXsekOBeiQfoqQm+e+aYH6LdBDchqtqYPzl1VAadTAPtk28M9nazl+n7Qf8ftH11WsXTl4JmbjHiwooWV8cRPUM4pQyLBc64Dg8t3vI="
 
 php:
-# Here is where we can list the versions of PHP you want to test against
-# using major version aliases
-  - 5.4
-  - 5.5
-  - 5.6
-  - nightly
+- 5.4
+- 5.5
+- 5.6
+- nightly
 
-# optionally specify a list of environments, for example to test different RDBMS
 env:
+  matrix:
   - DB=mysql
   - DB=pgsql
   - DB=sqlite
+  global:
+    secure: rKSbYXalj/HkcomwfKup9VAAenr3Dx2HQ5Imdn8dA/9CAh403jjAWDQ93Ddzxj7pPpUVnOWGE3mN/tyuUUU7BUOEXtm1xNkuvUPMgMIfsM+OpDnTysKmM6ZFR4KIwrFqv+uipL4sCQVuAbZ6j34LRKpAMwMw0aORj0OL6qrhvfA=
 
 install:
-  # Enable logging of all queries (for debugging) and create the database schema for shimmie.
-  - mkdir -p data/config
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
-  - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
-  - if [[ "$DB" == "pgsql" ]]; then echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
-  - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
-  - if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
-  - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
-  - wget https://scrutinizer-ci.com/ocular.phar
+- mkdir -p data/config
+- if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
+- if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
+- if [[ "$DB" == "pgsql" ]]; then echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
+- if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
+- if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
+- if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
+- if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+- wget https://scrutinizer-ci.com/ocular.phar
 
 script:
-  - php install.php
-  - phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+- php install.php
+- phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
 
-# If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
-  - head -n 100 data/config/*
-  - ls /var/run/mysql*
-  - ls /var/log/*mysql*
-  - cat /var/log/mysql.err
-  - cat /var/log/mysql.log
-  - cat /var/log/mysql/error.log
-  - cat /var/log/mysql/slow.log
-  - ls /var/log/postgresql
-  - cat /var/log/postgresql/postgresql*
+- head -n 100 data/config/*
+- ls /var/run/mysql*
+- ls /var/log/*mysql*
+- cat /var/log/mysql.err
+- cat /var/log/mysql.log
+- cat /var/log/mysql/error.log
+- cat /var/log/mysql/slow.log
+- ls /var/log/postgresql
+- cat /var/log/postgresql/postgresql*
 
 after_script:
-  - php ocular.phar code-coverage:upload --access-token=$SCI_TOKEN --format=php-clover --repository=shish/shimmie2 data/coverage.clover
-
-# configure notifications (email, IRC, campfire etc)
-#notifications:
-#  irc: "irc.freenode.org#shimmie"
-#
+- php ocular.phar code-coverage:upload --access-token=$SCI_TOKEN --format=php-clover --repository=shish/shimmie2 data/coverage.clover
