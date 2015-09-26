@@ -1,5 +1,6 @@
 language: php
 sudo: false
+secure: "Td0VfHgdSGrTR96To/OScKikV/kohRclUj1AFi9m0prdFc0q/xP8jZ1EQ0qVtqwkySa9OXsekOBeiQfoqQm+e+aYH6LdBDchqtqYPzl1VAadTAPtk28M9nazl+n7Qf8ftH11WsXTl4JmbjHiwooWV8cRPUM4pQyLBc64Dg8t3vI="
 
 php:
 # Here is where we can list the versions of PHP you want to test against
@@ -25,10 +26,11 @@ install:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
   - if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
   - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+  - wget https://scrutinizer-ci.com/ocular.phar
 
 script:
   - php install.php
-  - phpunit --configuration tests/phpunit.xml
+  - phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
 
 # If a failure occured then dump out a bunch of logs for debugging purposes.
 after_failure:
@@ -41,6 +43,9 @@ after_failure:
   - cat /var/log/mysql/slow.log
   - ls /var/log/postgresql
   - cat /var/log/postgresql/postgresql*
+
+after_script:
+  - php ocular.phar code-coverage:upload --access-token=$SCI_TOKEN --format=php-clover --repository=shish/shimmie2 data/coverage.clover
 
 # configure notifications (email, IRC, campfire etc)
 #notifications:
