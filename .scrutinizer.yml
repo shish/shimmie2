@@ -6,4 +6,6 @@ filter:
   excluded_paths: [lib/*,ext/tagger/script.js,ext/chatbox/*]
 
 tools:
-  external_code_coverage: true
+  external_code_coverage:
+    runs: 12
+    timeout: 1800
