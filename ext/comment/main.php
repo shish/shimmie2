@@ -71,7 +71,7 @@ class Comment {
 	}
 
 	/**
-	 * @param \User $user
+	 * @param User $user
 	 * @return mixed
 	 */
 	public static function count_comments_by_user($user) {
@@ -393,7 +393,7 @@ class CommentList extends Extension {
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array
+	 * @return Comment[]
 	 */
 	private function get_generic_comments($query, $args) {
 		global $database;
@@ -407,7 +407,7 @@ class CommentList extends Extension {
 
 	/**
 	 * @param int $count
-	 * @return array
+	 * @return Comment[]
 	 */
 	private function get_recent_comments($count) {
 		return $this->get_generic_comments("
@@ -427,7 +427,7 @@ class CommentList extends Extension {
 	 * @param int $user_id
 	 * @param int $count
 	 * @param int $offset
-	 * @return array
+	 * @return Comment[]
 	 */
 	private function get_user_comments(/*int*/ $user_id, /*int*/ $count, /*int*/ $offset=0) {
 		return $this->get_generic_comments("
@@ -446,7 +446,7 @@ class CommentList extends Extension {
 
 	/**
 	 * @param int $image_id
-	 * @return array
+	 * @return Comment[]
 	 */
 	private function get_comments(/*int*/ $image_id) {
 		return $this->get_generic_comments("
@@ -464,6 +464,9 @@ class CommentList extends Extension {
 // }}}
 
 // add / remove / edit comments {{{
+	/**
+	 * @return bool
+	 */
 	private function is_comment_limit_hit() {
 		global $config, $database;
 
@@ -499,6 +502,8 @@ class CommentList extends Extension {
 	 * many times.
 	 *
 	 * FIXME: assumes comments are posted via HTTP...
+	 *
+	 * @return string
 	 */
 	public static function get_hash() {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
@@ -590,6 +595,12 @@ class CommentList extends Extension {
 		log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", false, array("image_id"=>$image_id, "comment_id"=>$cid));
 	}
 
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param string $comment
+	 * @throws CommentPostingException
+	 */
 	private function comment_checks(/*int*/ $image_id, User $user, /*string*/ $comment) {
 		global $config, $page;
 

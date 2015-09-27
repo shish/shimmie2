@@ -205,6 +205,10 @@ class Page {
 		$this->cookies[] = array($full_name, $value, $time, $path);
 	}
 
+	/**
+	 * @param string $name
+	 * @return string|null
+	 */
 	public function get_cookie(/*string*/ $name) {
 		$full_name = COOKIE_PREFIX."_".$name;
 		if(isset($_COOKIE[$full_name])) {

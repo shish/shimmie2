@@ -96,7 +96,7 @@ class BaseThemelet {
 	 *
 	 * @param string $base_url
 	 * @param string $query
-	 * @param int|string $page
+	 * @param string $page
 	 * @param string $name
 	 * @return string
 	 */
@@ -108,8 +108,8 @@ class BaseThemelet {
 	/**
 	 * @param string $base_url
 	 * @param string $query
-	 * @param int|string $page
-	 * @param int|string $current_page
+	 * @param string $page
+	 * @param int $current_page
 	 * @param string $name
 	 * @return string
 	 */

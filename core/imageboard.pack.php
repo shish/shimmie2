@@ -192,6 +192,13 @@ class Image {
 		return ($yays > 1 || $nays > 0);
 	}
 
+	/**
+	 * @param string[] $tags
+	 * @param int $offset
+	 * @param int $limit
+	 * @return null|PDOStatement
+	 * @throws SCoreException
+	 */
 	public function get_accelerated_result($tags, $offset, $limit) {
 		global $database;
 
@@ -244,7 +251,7 @@ class Image {
 	 * Count the number of image results for a given search
 	 *
 	 * @param string[] $tags
-	 * @return mixed
+	 * @return int
 	 */
 	public static function count_images($tags=array()) {
 		assert('is_array($tags)');
@@ -401,9 +408,9 @@ class Image {
 	/**
 	 * Check configured template for a link, then try nice URL, then plain URL
 	 *
-	 * @param $template
-	 * @param $nice
-	 * @param $plain
+	 * @param string $template
+	 * @param string $nice
+	 * @param string $plain
 	 * @return string
 	 */
 	private function get_link($template, $nice, $plain) {
@@ -532,6 +539,10 @@ class Image {
 		return $this->locked;
 	}
 
+	/**
+	 * @param bool $tf
+	 * @throws SCoreException
+	 */
 	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
@@ -1102,7 +1113,7 @@ class Tag {
 	 * Remove any excess fluff from a user-input tag
 	 *
 	 * @param string $tag
-	 * @return mixed
+	 * @return string
 	 */
 	public static function sanitise($tag) {
 		assert('is_string($tag)');
@@ -1118,7 +1129,7 @@ class Tag {
 	 *
 	 * @param string|string[] $tags
 	 * @param bool $tagme
-	 * @return array
+	 * @return string[]
 	 */
 	public static function explode($tags, $tagme=true) {
 		assert('is_string($tags) || is_array($tags)');
@@ -1307,9 +1318,9 @@ function add_dir(/*string*/ $base) {
 }
 
 /**
- * @param $tmpname
- * @param $filename
- * @param $tags
+ * @param string $tmpname
+ * @param string $filename
+ * @param string $tags
  * @throws UploadException
  */
 function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) {
@@ -1337,7 +1348,7 @@ function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) 
  *
  * @param int $orig_width
  * @param int $orig_height
- * @return array
+ * @return int[]
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;

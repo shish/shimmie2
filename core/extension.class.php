@@ -282,7 +282,7 @@ abstract class DataHandlerExtension extends Extension {
 	abstract protected function supported_ext($ext);
 
 	/**
-	 * @param $tmpname
+	 * @param string $tmpname
 	 * @return bool
 	 */
 	abstract protected function check_contents($tmpname);
