@@ -291,7 +291,7 @@ class ResizeImage extends Extension {
 	 * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
 	 *
 	 * @param $info
-	 * @return array
+	 * @return int
 	 */
 	private function calc_memory_use($info) {
 		if (isset($info['bits']) && isset($info['channels'])) {
@@ -308,7 +308,7 @@ class ResizeImage extends Extension {
 	 * @param Image $image_obj
 	 * @param $width
 	 * @param $height
-	 * @return array
+	 * @return int[]
 	 */
 	private function calc_new_size(Image $image_obj, $width, $height) {
 		/* Calculate the new size of the image */

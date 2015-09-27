@@ -23,7 +23,7 @@ class ExtensionInfo {
 	var $description, $documentation, $version, $visibility;
 	var $enabled;
 
-	function __construct($main) {
+	public function __construct($main) {
 		$matches = array();
 		$lines = file($main);
 		$number_of_lines = count($lines);
@@ -156,7 +156,7 @@ class ExtManager extends Extension {
 
 	/**
 	 * @param bool $all
-	 * @return array
+	 * @return ExtensionInfo[]
 	 */
 	private function get_extensions(/*bool*/ $all) {
 		$extensions = array();

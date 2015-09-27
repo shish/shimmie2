@@ -260,13 +260,13 @@ class Pools extends Extension {
 
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
-			$poolsIDs = $this->get_pool_id($imageID);
+			$poolsIDs = $this->get_pool_ids($imageID);
 
 			$show_nav = $config->get_bool("poolsShowNavLinks", false);
 
 			$navInfo = array();
 			foreach($poolsIDs as $poolID) {
-				$pool = $this->get_single_pool($poolID['pool_id']);
+				$pool = $this->get_single_pool($poolID);
 
 				$navInfo[$pool['id']] = array();
 				$navInfo[$pool['id']]['info'] = $pool;
@@ -411,7 +411,7 @@ class Pools extends Extension {
 	/**
 	 * HERE WE CREATE A NEW POOL
 	 *
-	 * @return mixed
+	 * @return int
 	 * @throws PoolCreationException
 	 */
 	private function add_pool() {
@@ -433,12 +433,9 @@ class Pools extends Extension {
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
 
-		$result = array();
-		$result['poolID'] = $database->get_last_insert_id('pools_id_seq');
-
-		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
-
-		return $result["poolID"];
+		$poolID = $database->get_last_insert_id('pools_id_seq');
+		log_info("pools", "Pool {$poolID} created by {$user->name}");
+		return $poolID;
 	}
 
 	/**
@@ -477,11 +474,11 @@ class Pools extends Extension {
 	/**
 	 * Get all of the pool IDs that an image is in, given an image ID.
 	 * @param int $imageID Integer ID for the image
-	 * @return array
+	 * @return int[]
 	 */
-	private function get_pool_id(/*int*/ $imageID) {
+	private function get_pool_ids(/*int*/ $imageID) {
 		global $database;
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
+		return $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
 	}
 
 	/**

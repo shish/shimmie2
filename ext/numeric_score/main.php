@@ -13,7 +13,12 @@
 class NumericScoreSetEvent extends Event {
 	var $image_id, $user, $score;
 
-	public function __construct(/*int*/ $image_id, User $user, /*int*/ $score) {
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param int $score
+	 */
+	public function __construct($image_id, User $user, $score) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->score = $score;
@@ -168,7 +173,10 @@ class NumericScore extends Extension {
 		$this->delete_votes_by($event->id);
 	}
 
-	public function delete_votes_by(/*int*/ $user_id) {
+	/**
+	 * @param int $user_id
+	 */
+	public function delete_votes_by($user_id) {
 		global $database;
 
 		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
@@ -290,7 +298,7 @@ class NumericScore extends Extension {
 	 * @param int $user_id
 	 * @param int $score
 	 */
-	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*int*/ $score) {
+	private function add_vote($image_id, $user_id, $score) {
 		global $database;
 		$database->execute(
 			"DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",

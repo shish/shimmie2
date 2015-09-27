@@ -1,6 +1,10 @@
 <?php
 
 class CustomIndexTheme extends IndexTheme {
+	/**
+	 * @param Page $page
+	 * @param Image[] $images
+	 */
 	public function display_page(Page $page, $images) {
 		global $config;
 
@@ -33,7 +37,12 @@ class CustomIndexTheme extends IndexTheme {
 		}
 	}
 
-
+	/**
+	 * @param int $page_number
+	 * @param int $total_pages
+	 * @param string[] $search_terms
+	 * @return string
+	 */
 	protected function build_navigation($page_number, $total_pages, $search_terms) {
 		$h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
@@ -48,6 +57,11 @@ class CustomIndexTheme extends IndexTheme {
 		return $h_search;
 	}
 
+	/**
+	 * @param Image[] $images
+	 * @param string $query
+	 * @return string
+	 */
 	protected function build_table($images, $query) {
 		$h_query = html_escape($query);
 		$table = "<div class='shm-image-list' data-query='$h_query'>";

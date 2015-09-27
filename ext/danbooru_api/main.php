@@ -321,44 +321,15 @@ class DanbooruApi extends Extension {
 				$source = null;
 			}
 		} elseif (isset($_REQUEST['source']) || isset($_REQUEST['post']['source'])) {    // A url was provided
-			$url = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
-			$source = $url;
-			$tmp_filename = tempnam("/tmp", "shimmie_transload");
-
-			// Are we using fopen wrappers or curl?
-			if ($config->get_string("transload_engine") == "fopen") {
-				$fp = fopen($url, "r");
-				if (!$fp) {
-					$page->set_code(409);
-					$page->add_http_header("X-Danbooru-Errors: fopen read error");
-				}
-
-				$data = "";
-				$length = 0;
-				while (!feof($fp) && $length <= $config->get_int('upload_size')) {
-					$data .= fread($fp, 8192);
-					$length = strlen($data);
-				}
-				fclose($fp);
-
-				$fp = fopen($tmp_filename, "w");
-				fwrite($fp, $data);
-				fclose($fp);
+			$source = isset($_REQUEST['source']) ? $_REQUEST['source'] : $_REQUEST['post']['source'];
+			$file = tempnam("/tmp", "shimmie_transload");
+			$ok = transload($source, $file);
+			if (!$ok) {
+				$page->set_code(409);
+				$page->add_http_header("X-Danbooru-Errors: fopen read error");
+				return;
 			}
-
-			if ($config->get_string("transload_engine") == "curl") {
-				$ch = curl_init($url);
-				$fp = fopen($tmp_filename, "w");
-
-				curl_setopt($ch, CURLOPT_FILE, $fp);
-				curl_setopt($ch, CURLOPT_HEADER, 0);
-
-				curl_exec($ch);
-				curl_close($ch);
-				fclose($fp);
-			}
-			$file = $tmp_filename;
-			$filename = basename($url);
+			$filename = basename($source);
 		} else {    // Nothing was specified at all
 			$page->set_code(409);
 			$page->add_http_header("X-Danbooru-Errors: no input files");
@@ -367,8 +338,9 @@ class DanbooruApi extends Extension {
 
 		// Get tags out of url
 		$posttags = Tag::explode(isset($_REQUEST['tags']) ? $_REQUEST['tags'] : $_REQUEST['post']['tags']);
-		$hash = md5_file($file);
+
 		// Was an md5 supplied? Does it match the file hash?
+		$hash = md5_file($file);
 		if (isset($_REQUEST['md5']) && strtolower($_REQUEST['md5']) != $hash) {
 			$page->set_code(409);
 			$page->add_http_header("X-Danbooru-Errors: md5 mismatch");

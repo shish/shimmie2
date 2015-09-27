@@ -204,7 +204,7 @@ class Favorites extends Extension {
 
 	/**
 	 * @param Image $image
-	 * @return array
+	 * @return string[]
 	 */
 	private function list_persons_who_have_favorited(Image $image) {
 		global $database;

@@ -113,7 +113,7 @@ class ShimmieApi extends Extension {
 
 	/**
 	 * @param string $arg
-	 * @return array
+	 * @return string[]
 	 */
 	private function api_get_tags($arg) {
 		global $database;

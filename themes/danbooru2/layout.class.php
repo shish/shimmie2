@@ -264,12 +264,18 @@ $header_html
 </html>
 EOD;
 	}
-	
+
+	/**
+	 * @param string $link
+	 * @param string $desc
+	 * @param string[] $pages_matched
+	 * @return string
+	 */
 	private function navlinks($link, $desc, $pages_matched) {
 	/**
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 	 */
-		$html = null;
+		$html = "";
 		$url = _get_query();
 
 		$re1='.*?';
@@ -286,7 +292,7 @@ EOD;
 				$html = "<li class='current-page'><a href='$link'>$desc</a></li>";
 			}
 		}
-		if(is_null($html)) {$html = "<li><a class='tab' href='$link'>$desc</a></li>";}
+		if(empty($html)) {$html = "<li><a class='tab' href='$link'>$desc</a></li>";}
 		return $html;
 	}
 }

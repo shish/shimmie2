@@ -234,8 +234,8 @@ class Upload extends Extension {
 	}
 
 	/**
-	 * @param string|int $id
-	 * @return array
+	 * @param int $id
+	 * @return string[]
 	 */
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {

@@ -44,7 +44,7 @@ class ArchiveFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $ext
+	 * @param string $ext
 	 * @return bool
 	 */
 	private function supported_ext($ext) {

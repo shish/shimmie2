@@ -32,6 +32,9 @@ class ImageAdditionEvent extends Event {
 class ImageAdditionException extends SCoreException {
 	var $error;
 
+	/**
+	 * @param string $error
+	 */
 	public function __construct($error) {
 		$this->error = $error;
 	}

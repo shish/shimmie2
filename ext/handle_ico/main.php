@@ -50,7 +50,7 @@ class IcoFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $ext
+	 * @param string $ext
 	 * @return bool
 	 */
 	private function supported_ext($ext) {
@@ -59,8 +59,8 @@ class IcoFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $filename
-	 * @param $metadata
+	 * @param string $filename
+	 * @param mixed[] $metadata
 	 * @return Image
 	 */
 	private function create_image_from_data($filename, $metadata) {
