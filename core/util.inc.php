@@ -285,17 +285,18 @@ function validate_input($inputs) {
 
 	foreach($inputs as $key => $validations) {
 		$flags = explode(',', $validations);
+
 		if(in_array('optional', $flags)) {
-			if(!isset($_POST[$key])) {
+			if(!isset($_POST[$key]) || trim($_POST[$key]) == "") {
+				$outputs[$key] = null;
 				continue;
 			}
 		}
-
-		if(!isset($_POST[$key])) {
+		if(!isset($_POST[$key]) || trim($_POST[$key]) == "") {
 			throw new InvalidInput("Input '$key' not set");
 		}
 
-		$value = $_POST[$key];
+		$value = trim($_POST[$key]);
 
 		if(in_array('user_id', $flags)) {
 			$id = int_escape($value);
@@ -325,9 +326,31 @@ function validate_input($inputs) {
 			$outputs[$key] = $value;
 		}
 		else if(in_array('email', $flags)) {
-			$outputs[$key] = $value;
+			$outputs[$key] = trim($value);
 		}
 		else if(in_array('password', $flags)) {
+			$outputs[$key] = $value;
+		}
+		else if(in_array('int', $flags)) {
+			$value = trim($value);
+			if(empty($value) || !is_numeric($value)) {
+				throw new InvalidInput("Invalid int: ".html_escape($value));
+			}
+			$outputs[$key] = (int)$value;
+		}
+		else if(in_array('string', $flags)) {
+			if(in_array('trim', $flags)) {
+				$value = trim($value);
+			}
+			if(in_array('lower', $flags)) {
+				$value = strtolower($value);
+			}
+			if(in_array('not-empty', $flags)) {
+				throw new InvalidInput("$key must not be blank");
+			}
+			if(in_array('nullify', $flags)) {
+				if(empty($value)) $value = null;
+			}
 			$outputs[$key] = $value;
 		}
 		else {

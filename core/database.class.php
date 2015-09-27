@@ -639,7 +639,7 @@ class Database {
 	 *
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|null
+	 * @return array|null
 	 */
 	public function get_row($query, $args=array()) {
 		$_start = microtime(true);
@@ -702,7 +702,7 @@ class Database {
 	 * Get the ID of the last inserted row.
 	 *
 	 * @param string|null $seq
-	 * @return string
+	 * @return int
 	 */
 	public function get_last_insert_id($seq) {
 		if($this->engine->name == "pgsql") {
