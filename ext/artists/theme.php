@@ -343,11 +343,8 @@ class ArtistsTheme extends Themelet {
 							<th></th>
 							<th></th>";
 			
-		if ($userIsLogged)
-			$html .= "<th></th>";
-
-		if ($userIsAdmin)
-			$html .= "<th></th>";
+		if ($userIsLogged) $html .= "<th></th>";
+		if ($userIsAdmin) $html .= "<th></th>";
 
 		$html .= "  <tr>
 					</thead>
@@ -359,17 +356,9 @@ class ArtistsTheme extends Themelet {
 		if ($userIsAdmin) $html .= "<td></td>";
 		$html .= "</tr>";
 
-		if (count($aliases) > 0) {
-			$html .= $this->render_aliases($aliases, $userIsLogged, $userIsAdmin);
-		}
-
-		if (count($members) > 0) {
-			$html .= $this->render_members($members, $userIsLogged, $userIsAdmin);
-		}
-
-		if (count($urls) > 0) {
-			$html .= $this->render_urls($urls, $userIsLogged, $userIsAdmin);
-		}
+		$html .= $this->render_aliases($aliases, $userIsLogged, $userIsAdmin);
+		$html .= $this->render_members($members, $userIsLogged, $userIsAdmin);
+		$html .= $this->render_urls($urls, $userIsLogged, $userIsAdmin);
 
 		$html .= "<tr>
 						<td class='left'>Notes:</td>
@@ -406,37 +395,39 @@ class ArtistsTheme extends Themelet {
 	 */
 	private function render_aliases($aliases, $userIsLogged, $userIsAdmin) {
 		$html = "";
-		$aliasViewLink = str_replace("_", " ", $aliases[0]['alias_name']); // no link anymore
-		$aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[0]['alias_id']) . "'>Edit</a>";
-		$aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[0]['alias_id']) . "'>Delete</a>";
+		if(count($aliases) > 0) {
+			$aliasViewLink = str_replace("_", " ", $aliases[0]['alias_name']); // no link anymore
+			$aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[0]['alias_id']) . "'>Edit</a>";
+			$aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[0]['alias_id']) . "'>Delete</a>";
 
-		$html .= "<tr>
+			$html .= "<tr>
 							  <td class='left'>Aliases:</td>
 							  <td class='left'>" . $aliasViewLink . "</td>";
 
-		if ($userIsLogged)
-			$html .= "<td class='left'>" . $aliasEditLink . "</td>";
+			if ($userIsLogged)
+				$html .= "<td class='left'>" . $aliasEditLink . "</td>";
 
-		if ($userIsAdmin)
-			$html .= "<td class='left'>" . $aliasDeleteLink . "</td>";
+			if ($userIsAdmin)
+				$html .= "<td class='left'>" . $aliasDeleteLink . "</td>";
 
-		$html .= "</tr>";
+			$html .= "</tr>";
 
-		if (count($aliases) > 1) {
-			for ($i = 1; $i < count($aliases); $i++) {
-				$aliasViewLink = str_replace("_", " ", $aliases[$i]['alias_name']); // no link anymore
-				$aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[$i]['alias_id']) . "'>Edit</a>";
-				$aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[$i]['alias_id']) . "'>Delete</a>";
+			if (count($aliases) > 1) {
+				for ($i = 1; $i < count($aliases); $i++) {
+					$aliasViewLink = str_replace("_", " ", $aliases[$i]['alias_name']); // no link anymore
+					$aliasEditLink = "<a href='" . make_link("artist/alias/edit/" . $aliases[$i]['alias_id']) . "'>Edit</a>";
+					$aliasDeleteLink = "<a href='" . make_link("artist/alias/delete/" . $aliases[$i]['alias_id']) . "'>Delete</a>";
 
-				$html .= "<tr>
+					$html .= "<tr>
 									  <td class='left'>&nbsp;</td>
 									  <td class='left'>" . $aliasViewLink . "</td>";
-				if ($userIsLogged)
-					$html .= "<td class='left'>" . $aliasEditLink . "</td>";
-				if ($userIsAdmin)
-					$html .= "<td class='left'>" . $aliasDeleteLink . "</td>";
+					if ($userIsLogged)
+						$html .= "<td class='left'>" . $aliasEditLink . "</td>";
+					if ($userIsAdmin)
+						$html .= "<td class='left'>" . $aliasDeleteLink . "</td>";
 
-				$html .= "</tr>";
+					$html .= "</tr>";
+				}
 			}
 		}
 		return $html;
@@ -450,35 +441,37 @@ class ArtistsTheme extends Themelet {
 	 */
 	private function render_members($members, $userIsLogged, $userIsAdmin) {
 		$html = "";
-		$memberViewLink = str_replace("_", " ", $members[0]['name']); // no link anymore
-		$memberEditLink = "<a href='" . make_link("artist/member/edit/" . $members[0]['id']) . "'>Edit</a>";
-		$memberDeleteLink = "<a href='" . make_link("artist/member/delete/" . $members[0]['id']) . "'>Delete</a>";
+		if(count($members) > 0) {
+			$memberViewLink = str_replace("_", " ", $members[0]['name']); // no link anymore
+			$memberEditLink = "<a href='" . make_link("artist/member/edit/" . $members[0]['id']) . "'>Edit</a>";
+			$memberDeleteLink = "<a href='" . make_link("artist/member/delete/" . $members[0]['id']) . "'>Delete</a>";
 
-		$html .= "<tr>
+			$html .= "<tr>
 							<td class='left'>Members:</td>
 							<td class='left'>" . $memberViewLink . "</td>";
-		if ($userIsLogged)
-			$html .= "<td class='left'>" . $memberEditLink . "</td>";
-		if ($userIsAdmin)
-			$html .= "<td class='left'>" . $memberDeleteLink . "</td>";
+			if ($userIsLogged)
+				$html .= "<td class='left'>" . $memberEditLink . "</td>";
+			if ($userIsAdmin)
+				$html .= "<td class='left'>" . $memberDeleteLink . "</td>";
 
-		$html .= "</tr>";
+			$html .= "</tr>";
 
-		if (count($members) > 1) {
-			for ($i = 1; $i < count($members); $i++) {
-				$memberViewLink = str_replace("_", " ", $members[$i]['name']); // no link anymore
-				$memberEditLink = "<a href='" . make_link("artist/member/edit/" . $members[$i]['id']) . "'>Edit</a>";
-				$memberDeleteLink = "<a href='" . make_link("artist/member/delete/" . $members[$i]['id']) . "'>Delete</a>";
+			if (count($members) > 1) {
+				for ($i = 1; $i < count($members); $i++) {
+					$memberViewLink = str_replace("_", " ", $members[$i]['name']); // no link anymore
+					$memberEditLink = "<a href='" . make_link("artist/member/edit/" . $members[$i]['id']) . "'>Edit</a>";
+					$memberDeleteLink = "<a href='" . make_link("artist/member/delete/" . $members[$i]['id']) . "'>Delete</a>";
 
-				$html .= "<tr>
+					$html .= "<tr>
 							<td class='left'>&nbsp;</td>
 							<td class='left'>" . $memberViewLink . "</td>";
-				if ($userIsLogged)
-					$html .= "<td class='left'>" . $memberEditLink . "</td>";
-				if ($userIsAdmin)
-					$html .= "<td class='left'>" . $memberDeleteLink . "</td>";
+					if ($userIsLogged)
+						$html .= "<td class='left'>" . $memberEditLink . "</td>";
+					if ($userIsAdmin)
+						$html .= "<td class='left'>" . $memberDeleteLink . "</td>";
 
-				$html .= "</tr>";
+					$html .= "</tr>";
+				}
 			}
 		}
 		return $html;
@@ -492,40 +485,42 @@ class ArtistsTheme extends Themelet {
 	 */
 	private function render_urls($urls, $userIsLogged, $userIsAdmin) {
 		$html = "";
-		$urlViewLink = "<a href='" . str_replace("_", " ", $urls[0]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[0]['url']) . "</a>";
-		$urlEditLink = "<a href='" . make_link("artist/url/edit/" . $urls[0]['id']) . "'>Edit</a>";
-		$urlDeleteLink = "<a href='" . make_link("artist/url/delete/" . $urls[0]['id']) . "'>Delete</a>";
+		if(count($urls) > 0) {
+			$urlViewLink = "<a href='" . str_replace("_", " ", $urls[0]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[0]['url']) . "</a>";
+			$urlEditLink = "<a href='" . make_link("artist/url/edit/" . $urls[0]['id']) . "'>Edit</a>";
+			$urlDeleteLink = "<a href='" . make_link("artist/url/delete/" . $urls[0]['id']) . "'>Delete</a>";
 
-		$html .= "<tr>
+			$html .= "<tr>
 							<td class='left'>URLs:</td>
 							<td class='left'>" . $urlViewLink . "</td>";
 
-		if ($userIsLogged)
-			$html .= "<td class='left'>" . $urlEditLink . "</td>";
+			if ($userIsLogged)
+				$html .= "<td class='left'>" . $urlEditLink . "</td>";
 
-		if ($userIsAdmin)
-			$html .= "<td class='left'>" . $urlDeleteLink . "</td>";
+			if ($userIsAdmin)
+				$html .= "<td class='left'>" . $urlDeleteLink . "</td>";
 
-		$html .= "</tr>";
+			$html .= "</tr>";
 
-		if (count($urls) > 1) {
-			for ($i = 1; $i < count($urls); $i++) {
-				$urlViewLink = "<a href='" . str_replace("_", " ", $urls[$i]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[$i]['url']) . "</a>";
-				$urlEditLink = "<a href='" . make_link("artist/url/edit/" . $urls[$i]['id']) . "'>Edit</a>";
-				$urlDeleteLink = "<a href='" . make_link("artist/url/delete/" . $urls[$i]['id']) . "'>Delete</a>";
+			if (count($urls) > 1) {
+				for ($i = 1; $i < count($urls); $i++) {
+					$urlViewLink = "<a href='" . str_replace("_", " ", $urls[$i]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[$i]['url']) . "</a>";
+					$urlEditLink = "<a href='" . make_link("artist/url/edit/" . $urls[$i]['id']) . "'>Edit</a>";
+					$urlDeleteLink = "<a href='" . make_link("artist/url/delete/" . $urls[$i]['id']) . "'>Delete</a>";
 
-				$html .= "<tr>
+					$html .= "<tr>
 								<td class='left'>&nbsp;</td>
 								<td class='left'>" . $urlViewLink . "</td>";
-				if ($userIsLogged)
-					$html .= "<td class='left'>" . $urlEditLink . "</td>";
+					if ($userIsLogged)
+						$html .= "<td class='left'>" . $urlEditLink . "</td>";
 
-				if ($userIsAdmin)
-					$html .= "<td class='left'>" . $urlDeleteLink . "</td>";
+					if ($userIsAdmin)
+						$html .= "<td class='left'>" . $urlDeleteLink . "</td>";
 
-				$html .= "</tr>";
+					$html .= "</tr>";
+				}
+				return $html;
 			}
-			return $html;
 		}
 		return $html;
 	}

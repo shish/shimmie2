@@ -107,15 +107,15 @@ class NumericScore extends Extension {
 
 			if(!empty($_GET['day'])){
 				$D = (int) $_GET['day'];
-				if($D >= 1 && $D <= 31) $day = $D;
+				$day = clamp($D, 1, 31);
 			}
 			if(!empty($_GET['month'])){
 				$M = (int) $_GET['month'];
-				if($M >= 1 && $M <= 12) $month = $M;
+				$month = clamp($M, 1 ,12);
 			}
 			if(!empty($_GET['year'])){
 				$Y = (int) $_GET['year'];
-				if($Y >= 1970 && $Y < 2100) $year = $Y;
+				$year = clamp($Y, 1970, 2100);
 			}
 
 			$totaldate = $year."/".$month."/".$day;
