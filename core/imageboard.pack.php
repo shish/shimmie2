@@ -627,8 +627,9 @@ class Image {
 	 * Send list of metatags to be parsed.
 	 *
 	 * @param [] $metatags
+	 * @param int $image_id
 	 */
-	public function parse_metatags(/*arr*/ $metatags, $image_id) {
+	public function parse_metatags($metatags, $image_id) {
 		foreach($metatags as $tag) {
 			$ttpe = new TagTermParseEvent($tag, $image_id, TRUE);
 			send_event($ttpe);
