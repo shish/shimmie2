@@ -110,6 +110,13 @@ class TagSetEvent extends Event {
 		$tag_array = Tag::resolve_aliases($tag_array);
 
 		foreach($tag_array as $tag) {
+			if((strpos($tag, ':') === FALSE) && (strpos($tag, '=') === FALSE)) {
+				//Tag doesn't contain : or =, meaning it can't possibly be a metatag.
+				//This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
+				array_push($this->tags, $tag);
+				continue;
+			}
+
 			$ttpe = new TagTermParseEvent($tag, $this->image->id, FALSE); //Only check for metatags, don't parse. Parsing is done after set_tags.
 			send_event($ttpe);
 
