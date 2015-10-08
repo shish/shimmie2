@@ -1147,6 +1147,8 @@ class Tag {
 			$tag_array = array("tagme");
 		}
 
+		$tag_array = array_iunique($tag_array); //remove duplicate tags
+
 		sort($tag_array);
 
 		return $tag_array;
