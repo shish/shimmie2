@@ -110,8 +110,7 @@ class TagSetEvent extends Event {
 		$tag_array = Tag::resolve_aliases($tag_array);
 
 		foreach($tag_array as $tag) {
-			//TODO: Parsing metatags BEFORE set_tags is sent seems like a bad idea?
-			$ttpe = new TagTermParseEvent($tag, $image->id);
+			$ttpe = new TagTermParseEvent($tag, $this->image->id, FALSE); //Only check for metatags, don't parse. Parsing is done after set_tags.
 			send_event($ttpe);
 
 			//seperate tags from metatags
@@ -152,14 +151,17 @@ class LockSetEvent extends Event {
  * Signal that a tag term needs parsing
  */
 class TagTermParseEvent extends Event {
-	var $term = null;
-	var $id = null;
+	public $term = NULL; //tag
+	public $id   = NULL; //image_id
 	/** @var bool */
-	public $metatag = false;
+	public $metatag = FALSE;
+	/** @var bool */
+	public $parse  = TRUE; //marks the tag to be parsed, and not just checked if valid metatag
 
-	public function __construct($term, $id) {
-		$this->term = $term;
-		$this->id = $id;
+	public function __construct($term, $id, $parse) {
+		$this->term  = $term;
+		$this->id    = $id;
+		$this->parse = $parse;
 	}
 
 	/**
@@ -236,6 +238,7 @@ class TagEdit extends Extension {
 		if($user->can("edit_image_tag") && (!$event->image->is_locked() || $user->can("edit_image_lock"))) {
 			$event->image->set_tags($event->tags);
 		}
+		$event->image->parse_metatags($event->metatags, $event->image->id);
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
@@ -278,7 +281,7 @@ class TagEdit extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
+		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches) && $event->parse) {
 			$source = ($matches[1] !== "none" ? $matches[1] : null);
 			send_event(new SourceSetEvent(Image::by_id($event->id), $source));
 		}

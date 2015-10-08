@@ -58,7 +58,7 @@ class Relationships extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^parent[=|:]([0-9]+|none)$/", $event->term, $matches)) {
+		if(preg_match("/^parent[=|:]([0-9]+|none)$/", $event->term, $matches) && $event->parse) {
 			$parentID = $matches[1];
 
 			if($parentID == "none" || $parentID == "0"){
@@ -67,7 +67,7 @@ class Relationships extends Extension {
 				$this->set_parent($event->id, $parentID);
 			}
 		}
-		else if(preg_match("/^child[=|:]([0-9]+)$/", $event->term, $matches)) {
+		else if(preg_match("/^child[=|:]([0-9]+)$/", $event->term, $matches) && $event->parse) {
 			$childID = $matches[1];
 
 			$this->set_child($event->id, $childID);

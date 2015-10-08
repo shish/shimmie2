@@ -624,6 +624,18 @@ class Image {
 	}
 
 	/**
+	 * Send list of metatags to be parsed.
+	 *
+	 * @param [] $metatags
+	 */
+	public function parse_metatags(/*arr*/ $metatags, $image_id) {
+		foreach($metatags as $tag) {
+			$ttpe = new TagTermParseEvent($tag, $image_id, TRUE);
+			send_event($ttpe);
+		}
+	}
+
+	/**
 	 * Delete this image from the database and disk
 	 */
 	public function delete() {
