@@ -576,9 +576,6 @@ class Image {
 		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
 		global $database;
 
-		$tags = array_map(array('Tag', 'sanitise'), $tags);
-		$tags = Tag::resolve_aliases($tags);
-
 		if(count($tags) <= 0) {
 			throw new SCoreException('Tried to set zero tags');
 		}
@@ -588,12 +585,6 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
-				$ttpe = new TagTermParseEvent($tag, $this->id);
-				send_event($ttpe);
-				if($ttpe->is_metatag()) {
-					continue;
-				}
-
 				if(mb_strlen($tag, 'UTF-8') > 255){
 					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
 					continue;

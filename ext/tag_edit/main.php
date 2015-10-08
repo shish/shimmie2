@@ -95,11 +95,32 @@ class SourceSetEvent extends Event {
 class TagSetEvent extends Event {
 	/** @var \Image */
 	public $image;
-	var $tags;
+	public $tags;
+	public $metatags;
 
 	public function __construct(Image $image, $tags) {
-		$this->image = $image;
-		$this->tags = Tag::explode($tags);
+		$this->image    = $image;
+
+		$this->tags     = array();
+		$this->metatags = array();
+
+		//tags need to be sanitised, alias checked & have metatags removed before being passed to onTagSet
+		$tag_array = Tag::explode($tags);
+		$tag_array = array_map(array('Tag', 'sanitise'), $tag_array);
+		$tag_array = Tag::resolve_aliases($tag_array);
+
+		foreach($tag_array as $tag) {
+			//TODO: Parsing metatags BEFORE set_tags is sent seems like a bad idea?
+			$ttpe = new TagTermParseEvent($tag, $image->id);
+			send_event($ttpe);
+
+			//seperate tags from metatags
+			if(!$ttpe->is_metatag()) {
+				array_push($this->tags, $tag);
+			}else{
+				array_push($this->metatags, $tag);
+			}
+		}
 	}
 }
 
