@@ -276,8 +276,7 @@ class Notes extends Extension {
 				(?, ?, ?, ?, now(), ?, ?, ?, ?, ?)",
 				array(1, $imageID, $user_id, $_SERVER['REMOTE_ADDR'], $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS noteID", array());
-		$noteID = $result["noteID"];
+		$noteID = $database->get_last_insert_id('notes_id_seq');
 
 		log_info("notes", "Note added {$noteID} by {$user->name}");
 
@@ -304,9 +303,9 @@ class Notes extends Extension {
 				(?, ?, now())",
 				array($image_id, $user_id));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS requestID", array());
+		$resultID = $database->get_last_insert_id('note_request_id_seq');
 
-		log_info("notes", "Note requested {$result["requestID"]} by {$user->name}");
+		log_info("notes", "Note requested {$requestID} by {$user->name}");
 	}
 	
 	
