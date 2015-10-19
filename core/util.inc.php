@@ -286,6 +286,10 @@ function validate_input($inputs) {
 	foreach($inputs as $key => $validations) {
 		$flags = explode(',', $validations);
 
+		if(in_array('bool', $flags) && !isset($_POST[$key])) {
+			$_POST[$key] = 'off';
+		}
+
 		if(in_array('optional', $flags)) {
 			if(!isset($_POST[$key]) || trim($_POST[$key]) == "") {
 				$outputs[$key] = null;
