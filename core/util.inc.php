@@ -137,7 +137,7 @@ function clamp($val, $min, $max) {
 	if(!is_null($max) && $val > $max) {
 		$val = $max;
 	}
-	assert('$val <= $min && $val >= $max', "$min <= $val <= $max");
+	assert('$val >= $min && $val <= $max', "$min <= $val <= $max");
 	return $val;
 }
 
@@ -337,6 +337,9 @@ function validate_input($inputs) {
 				throw new InvalidInput("Invalid int: ".html_escape($value));
 			}
 			$outputs[$key] = (int)$value;
+		}
+		else if(in_array('bool', $flags)) {
+			$outputs[$key] = bool_escape($value);
 		}
 		else if(in_array('string', $flags)) {
 			if(in_array('trim', $flags)) {
