@@ -46,7 +46,6 @@ class Home extends Extension {
 
 	private function get_body() {
 		// returns just the contents of the body
-		global $database;
 		global $config;
 		$base_href = get_base_href();
 		$sitename = $config->get_string('title');

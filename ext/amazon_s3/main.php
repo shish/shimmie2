@@ -67,8 +67,8 @@ class UploadS3 extends Extension {
 		if(!empty($bucket)) {
 			log_debug("amazon_s3", "Deleting Image #".$event->image->id." from S3");
 			$s3 = new S3($access, $secret);
-			$s3->deleteObject($bucket, "images/"+$event->image->hash);
-			$s3->deleteObject($bucket, "thumbs/"+$event->image->hash);
+			$s3->deleteObject($bucket, "images/" . $event->image->hash);
+			$s3->deleteObject($bucket, "thumbs/" . $event->image->hash);
 		}
 	}
 }

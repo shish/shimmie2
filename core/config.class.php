@@ -88,10 +88,10 @@ interface Config {
 	 * parameter won't show up.
 	 *
 	 * @param string $name
-	 * @param bool|string|null $value
+	 * @param bool $value
 	 * @return void
 	 */
-	public function set_default_bool(/*string*/ $name, $value);
+	public function set_default_bool(/*string*/ $name, /*bool*/ $value);
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -218,10 +218,10 @@ abstract class BaseConfig implements Config {
 
 	/**
 	 * @param string $name
-	 * @param bool|null|string $value
+	 * @param bool $value
 	 * @return void
 	 */
-	public function set_default_bool(/*string*/ $name, $value) {
+	public function set_default_bool(/*string*/ $name, /*bool*/ $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
 		}
@@ -328,8 +328,9 @@ class StaticConfig extends BaseConfig {
 	 */
 	public function __construct($filename) {
 		if(file_exists($filename)) {
+			$config = array();
 			require_once $filename;
-			if(isset($config)) {
+			if(!empty($config)) {
 				$this->values = $config;
 			}
 			else {

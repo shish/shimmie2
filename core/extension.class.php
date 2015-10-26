@@ -47,7 +47,7 @@
  * }
  *
  * // ext/hello/test.php
- * public class HelloTest extends SCoreWebTestCase {
+ * public class HelloTest extends SCorePHPUnitTestCase {
  *     public function testHello() {
  *         $this->get_page("post/list");                   // View a page, any page
  *         $this->assert_text("Hello there");              // Check that the specified text is in that page
@@ -82,6 +82,9 @@
  * find the thread where the original was posted >_<
  */
 abstract class Extension {
+	/** @var array which DBs this ext supports (blank for 'all') */
+	protected $db_support = [];
+
 	/** this theme's Themelet object */
 	public $theme;
 
@@ -95,6 +98,15 @@ abstract class Extension {
 	public function i_am(Extension $child) {
 		$this->_child = $child;
 		if(is_null($this->theme)) $this->theme = $this->get_theme_object($child, false);
+	}
+
+
+	public function is_live() {
+		global $database;
+		return (
+			empty($this->db_support) ||
+			in_array($database->get_driver_name(), $this->db_support)
+		);
 	}
 
 	/**
@@ -270,7 +282,7 @@ abstract class DataHandlerExtension extends Extension {
 	abstract protected function supported_ext($ext);
 
 	/**
-	 * @param $tmpname
+	 * @param string $tmpname
 	 * @return bool
 	 */
 	abstract protected function check_contents($tmpname);

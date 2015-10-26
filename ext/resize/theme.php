@@ -5,7 +5,7 @@ class ResizeImageTheme extends Themelet {
 	 * Display a link to resize an image
 	 */
 	public function get_resize_html(Image $image) {
-		global $user, $config;
+		global $config;
 
 		$default_width = $config->get_int('resize_default_width');
 		$default_height = $config->get_int('resize_default_height');

@@ -1,8 +1,11 @@
 <?php
-class PrivMsgTest extends SCoreWebTestCase {
+class PrivMsgTest extends ShimmiePHPUnitTestCase {
 	public function testPM() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
+
+		$this->markTestIncomplete();
+
 		$this->set_field('subject', "message demo to test");
 		$this->set_field('message', "message contents");
 		$this->click("Send");
@@ -31,6 +34,9 @@ class PrivMsgTest extends SCoreWebTestCase {
 	public function testAdminAccess() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
+
+		$this->markTestIncomplete();
+
 		$this->set_field('subject', "message demo to test");
 		$this->set_field('message', "message contents");
 		$this->click("Send");

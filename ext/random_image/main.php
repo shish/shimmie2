@@ -25,7 +25,6 @@ class RandomImage extends Extension {
 		global $page;
 
 		if($event->page_matches("random_image")) {
-			$action = '';
 			if($event->count_args() == 1) {
 				$action = $event->get_arg(0);
 				$search_terms = array();

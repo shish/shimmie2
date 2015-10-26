@@ -2,8 +2,6 @@
 
 class FavoritesTheme extends Themelet {
 	public function get_voter_html(Image $image, $is_favorited) {
-		global $page, $user;
-
 		$i_image_id = int_escape($image->id);
 		$name  = $is_favorited ? "unset" : "set";
 		$label = $is_favorited ? "Un-Favorite" : "Favorite";

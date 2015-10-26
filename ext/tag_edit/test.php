@@ -1,10 +1,13 @@
 <?php
-class TagEditTest extends ShimmieWebTestCase {
+class TagEditTest extends ShimmiePHPUnitTestCase {
 	public function testTagEdit() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
+
+		$this->markTestIncomplete();
+
 		$this->set_field("tag_edit__tags", "new");
 		$this->click("Set");
 		$this->assert_title("Image $image_id: new");
@@ -20,9 +23,11 @@ class TagEditTest extends ShimmieWebTestCase {
 
 	public function testSourceEdit() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
+
+		$this->markTestIncomplete();
 
 		$this->set_field("tag_edit__source", "example.com");
 		$this->click("Set");
@@ -43,13 +48,15 @@ class TagEditTest extends ShimmieWebTestCase {
 		$this->log_out();
 	}
  
-/*
- * FIXME: Mass Tagger seems to be broken, and this test case always fails.
- * 
+	/*
+ 	 * FIXME: Mass Tagger seems to be broken, and this test case always fails.
+	 */
 	public function testMassEdit() {
+		$this->markTestIncomplete();
+
 		$this->log_in_as_admin();
 
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
 
@@ -66,6 +73,5 @@ class TagEditTest extends ShimmieWebTestCase {
 
 		$this->log_out();
 	}
-*/
 }
 

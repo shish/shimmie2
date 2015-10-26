@@ -48,7 +48,7 @@ class IPBan extends Extension {
 
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("ip_ban")) {
-			global $config, $database, $page, $user;
+			global $page, $user;
 			if($user->can("ban_ip")) {
 				if($event->get_arg(0) == "add" && $user->check_auth_token()) {
 					if(isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
@@ -119,9 +119,11 @@ class IPBan extends Extension {
 				ip SCORE_INET NOT NULL,
 				end_timestamp INTEGER,
 				reason TEXT NOT NULL,
-				INDEX (end_timestamp)
+				added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
+				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
-			$config->set_int("ext_ipban_version", 6);
+			$database->execute("CREATE INDEX bans__end_timestamp ON bans(end_timestamp)");
+			$config->set_int("ext_ipban_version", 8);
 		}
 
 		// ===

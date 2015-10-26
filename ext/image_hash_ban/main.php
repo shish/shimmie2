@@ -13,6 +13,9 @@
 class RemoveImageHashBanEvent extends Event {
 	var $hash;
 
+	/**
+	 * @param string $hash
+	 */
 	public function __construct($hash) {
 		$this->hash = $hash;
 	}
@@ -23,6 +26,10 @@ class AddImageHashBanEvent extends Event {
 	var $hash;
 	var $reason;
 
+	/**
+	 * @param string $hash
+	 * @param string $reason
+	 */
 	public function __construct($hash, $reason) {
 		$this->hash = $hash;
 		$this->reason = $reason;
@@ -53,7 +60,7 @@ class ImageBan extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page, $user;
 
 		if($event->page_matches("image_hash_ban")) {
 			if($user->can("ban_image")) {
@@ -126,6 +133,11 @@ class ImageBan extends Extension {
 
 	// DB funness
 
+	/**
+	 * @param int $page
+	 * @param int $size
+	 * @return array
+	 */
 	public function get_image_hash_bans($page, $size=100) {
 		global $database;
 

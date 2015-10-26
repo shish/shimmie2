@@ -44,7 +44,7 @@ class CustomCommentListTheme extends CommentListTheme {
 			}
 			$p = autodate($image->posted);
 
-			$r = class_exists("Ratings") ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
+			$r = ext_is_live("Ratings") ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
 			$comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
 			$comment_count = count($comments);
@@ -87,7 +87,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
 		global $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);

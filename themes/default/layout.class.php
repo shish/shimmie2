@@ -5,12 +5,14 @@
 class Layout {
 	/**
 	 * turns the Page into HTML
+	 *
+	 * @param Page $page
 	 */
 	public function display_page(Page $page) {
 		global $config;
 
-		$theme_name = $config->get_string('theme', 'default');
-		$data_href = get_base_href();
+		//$theme_name = $config->get_string('theme', 'default');
+		//$data_href = get_base_href();
 		$contact_link = $config->get_string('contact_link');
 
 		$header_html = "";
@@ -49,11 +51,10 @@ class Layout {
 			$wrapper = ' style="height: 3em; overflow: auto;"';
 		}
 
-		$flash = get_prefixed_cookie("flash_message");
+		$flash = $page->get_cookie("flash_message");
 		$flash_html = "";
 		if($flash) {
 			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-			set_prefixed_cookie("flash_message", "", -1, "/");
 		}
 
 		print <<<EOD

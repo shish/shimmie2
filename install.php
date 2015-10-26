@@ -3,37 +3,31 @@
  * Shimmie Installer
  *
  * @package    Shimmie
- * @copyright  Copyright (c) 2007-2014, Shish et al.
+ * @copyright  Copyright (c) 2007-2015, Shish et al.
  * @author     Shish <webmaster at shishnet.org>, jgen <jeffgenovy at gmail.com>
  * @link       http://code.shishnet.org/shimmie2/
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  * 
+ * Initialise the database, check that folder
+ * permissions are set properly.
+ *
+ * This file should be independant of the database
+ * and other such things that aren't ready yet
  */
 
 // TODO: Rewrite the entire installer and make it more readable.
 
 ob_start();
 
-/*
-<!--
-- install.php (c) Shish et all. 2007-2013
--
-- Initialise the database, check that folder
-- permissions are set properly.
--
-- This file should be independant of the database
-- and other such things that aren't ready yet
--->
-*/
+date_default_timezone_set('UTC');
 ?>
 <!DOCTYPE html>
 <html>
-<!-- Shimmie (c) Shish et all. 2007-2013 -->
 	<head>
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
-		<script type="text/javascript" src="lib/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
 	</head>
 	<body>
 <?php if(false) { ?>
@@ -123,21 +117,20 @@ function eok($name, $value) {
 function do_install() { // {{{
 	if(file_exists("data/config/auto_install.conf.php")) {
 		require_once "data/config/auto_install.conf.php";
-		install_process();
 	}
 	else if(@$_POST["database_type"] == "sqlite" && isset($_POST["database_name"])) {
 		define('DATABASE_DSN', "sqlite:{$_POST["database_name"]}");
-		define("DATABASE_KA", true);     // Keep database connection alive
-		install_process();
 	}
 	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
-		define("DATABASE_KA", true);     // Keep database connection alive
-		install_process();
 	}
 	else {
 		ask_questions();
+		return;
 	}
+
+	define("DATABASE_KA", true);
+	install_process();
 } // }}}
 
 function ask_questions() { // {{{
@@ -255,8 +248,6 @@ function install_process() { // {{{
 	create_tables();
 	insert_defaults();
 	write_config();
-
-	header("Location: index.php");
 } // }}}
 
 function create_tables() { // {{{
@@ -273,7 +264,7 @@ function create_tables() { // {{{
 				<br/><br/>
 			</div>
 EOD;
-			exit;
+			exit(2);
 		}
 
 		$db->create_table("aliases", "
@@ -338,33 +329,30 @@ EOD;
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
-	catch(PDOException $e)
-	{
+	catch(PDOException $e) {
 		print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Database Error:</h3>
 				<p>An error occured while trying to create the database tables necessary for Shimmie.</p>
 				<p>Please check and ensure that the database configuration options are all correct.</p>
-				<br/><br/>
+				<p>{$e->getMessage()}</p>
 			</div>
 EOD;
-		exit($e->getMessage());
+		exit(3);
 	}
-	catch (Exception $e)
-	{
+	catch (Exception $e) {
 		print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Unknown Error:</h3>
 				<p>An unknown error occured while trying to create the database tables necessary for Shimmie.</p>
 				<p>Please check the server log files for more information.</p>
-				<br/><br/>
+				<p>{$e->getMessage()}</p>
 			</div>
 EOD;
-		exit($e->getMessage());
+		exit(4);
 	}
-
 } // }}}
 
 function insert_defaults() { // {{{
@@ -387,10 +375,10 @@ function insert_defaults() { // {{{
 			<h3>Database Error:</h3>
 			<p>An error occured while trying to insert data into the database.</p>
 			<p>Please check and ensure that the database configuration options are all correct.</p>
-			<br/><br/>
+			<p>{$e->getMessage()}</p>
 		</div>
 EOD;
-		exit($e->getMessage());
+		exit(5);
 	}
 	catch (Exception $e)
 	{
@@ -400,10 +388,10 @@ EOD;
 			<h3>Unknown Error:</h3>
 			<p>An unknown error occured while trying to insert data into the database.</p>
 			<p>Please check the server log files for more information.</p>
-			<br/><br/>
+			<p>{$e->getMessage()}</p>
 		</div>
 EOD;
-		exit($e->getMessage());
+		exit(6);
 	}
 } // }}}
 
@@ -435,7 +423,7 @@ function build_dirs() { // {{{
 			<br/><br/>
 		</div>
 		";
-		exit;
+		exit(7);
 	}
 } // }}}
 
@@ -448,7 +436,17 @@ function write_config() { // {{{
 		mkdir("data/config", 0755, true);
 	}
 
-	if(!file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
+	if(file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
+		header("Location: index.php");
+		print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>Things are OK \o/</h3>
+			<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
+		</div>
+EOD;
+	}
+	else {
 		$h_file_content = htmlentities($file_content);
 		print <<<EOD
 		<div id="installer">
@@ -459,14 +457,14 @@ function write_config() { // {{{
 		    folder manually. Make sure that when you save it, there is no whitespace
 		    before the "&lt;?php" or after the "?&gt;"
 
-		    <p><textarea cols="80" rows="2">$file_content</textarea>
+		    <p><textarea cols="80" rows="2">$h_file_content</textarea>
 
-		    <p>Once done, <a href="index.php">Click here to Continue</a>.
+		    <p>Once done, <a href="index.php">click here to Continue</a>.
 			<br/><br/>
 		</div>
 EOD;
-		exit;
 	}
+	echo "\n";
 } // }}}
 ?>
 	</body>

@@ -21,8 +21,8 @@ class Handle404 extends Extension {
 				$filename = file_exists("themes/$theme_name/$f_pagename") ?
 						"themes/$theme_name/$f_pagename" : "lib/static/$f_pagename";
 
-				header("Cache-control: public, max-age=600");
-				header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+				$page->add_http_header("Cache-control: public, max-age=600");
+				$page->add_http_header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
 				$page->set_mode("data");
 				$page->set_data(file_get_contents($filename));
 				if(endsWith($filename, ".ico")) $page->set_type("image/x-icon");
@@ -31,7 +31,7 @@ class Handle404 extends Extension {
 			}
 			else {
 				log_debug("handle_404", "Hit 404: $h_pagename");
-				$page->add_http_header("HTTP/1.0 404 Page Not Found",5);
+				$page->set_code(404);
 				$page->set_title("404");
 				$page->set_heading("404 - No Handler Found");
 				$page->add_block(new NavBlock());
@@ -44,6 +44,9 @@ class Handle404 extends Extension {
 		$n = 0;
 		foreach($blocks as $block) {
 			if($block->section == "main") $n++; // more hax.
+		}
+		if(ext_is_live("Chatbox")) {
+			$n--; // even more hax.
 		}
 		return $n;
 	}

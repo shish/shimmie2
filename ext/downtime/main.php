@@ -29,7 +29,11 @@ class Downtime extends Extension {
 			if(!$user->can("ignore_downtime") && !$this->is_safe_page($event)) {
 				$msg = $config->get_string("downtime_message");
 				$this->theme->display_message($msg);
-				exit;
+				if(!defined("UNITTEST")) {  // hax D:
+					header("HTTP/1.0 {$page->code} Downtime");
+					print($page->data);
+					exit;
+				}
 			}
 			$this->theme->display_notification($page);
 		}
@@ -40,4 +44,3 @@ class Downtime extends Extension {
 		else return false;
 	}
 }
-

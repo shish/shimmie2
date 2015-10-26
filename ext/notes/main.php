@@ -220,7 +220,6 @@ class Notes extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE notes $cmp $notes)"));
 		}
 		else if(preg_match("/^notes_by[=|:](.*)$/i", $event->term, $matches)) {
-			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
 				$user_id = $user->id;
@@ -277,8 +276,7 @@ class Notes extends Extension {
 				(?, ?, ?, ?, now(), ?, ?, ?, ?, ?)",
 				array(1, $imageID, $user_id, $_SERVER['REMOTE_ADDR'], $noteX1, $noteY1, $noteHeight, $noteWidth, $noteText));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS noteID", array());
-		$noteID = $result["noteID"];
+		$noteID = $database->get_last_insert_id('notes_id_seq');
 
 		log_info("notes", "Note added {$noteID} by {$user->name}");
 
@@ -305,9 +303,9 @@ class Notes extends Extension {
 				(?, ?, now())",
 				array($image_id, $user_id));
 
-		$result = $database->get_row("SELECT LAST_INSERT_ID() AS requestID", array());
+		$resultID = $database->get_last_insert_id('note_request_id_seq');
 
-		log_info("notes", "Note requested {$result["requestID"]} by {$user->name}");
+		log_info("notes", "Note requested {$requestID} by {$user->name}");
 	}
 	
 	
@@ -323,7 +321,7 @@ class Notes extends Extension {
 		$noteY1 = int_escape($_POST["note_y1"]);
 		$noteHeight = int_escape($_POST["note_height"]);
 		$noteWidth = int_escape($_POST["note_width"]);
-		$noteText = mysql_real_escape_string(html_escape($_POST["note_text"]));
+		$noteText = sql_escape(html_escape($_POST["note_text"]));
 
 		// validate parameters
 		if (is_null($imageID)    || !is_numeric($imageID)        ||

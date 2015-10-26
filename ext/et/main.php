@@ -34,7 +34,6 @@ class ET extends Extension {
 	 */
 	private function get_info() {
 		global $config, $database;
-		global $_event_listeners; // yay for using secret globals \o/
 
 		$info = array();
 		$info['site_title'] = $config->get_string("title");
@@ -48,7 +47,7 @@ class ET extends Extension {
 		$info['sys_os']      = php_uname();
 		$info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
 		                       to_shorthand_int(disk_total_space("./"));
-		$info['sys_server']  = $_SERVER["SERVER_SOFTWARE"];
+		$info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
 		
 		$info['thumb_engine']	= $config->get_string("thumb_engine");
 		$info['thumb_quality']	= $config->get_int('thumb_quality');

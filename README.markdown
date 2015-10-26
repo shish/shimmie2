@@ -20,8 +20,8 @@ check out one of the versioned branches.
 
 # Requirements
 
-- MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 8+ and SQLite 3)
-- PHP 5.3.7+
+- MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
+- PHP 5.4.8+
 - GD or ImageMagick
 
 # Installation

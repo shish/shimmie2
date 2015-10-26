@@ -67,7 +67,7 @@ class ArrowkeyNavigation extends Extension {
 		$images_per_page = $config->get_int('index_images');
 
 		// if there are no tags, use default
-		if ($event->get_arg(1) == null){
+		if (is_null($event->get_arg(1))){
 			$prefix = "";
 			$page_number = int_escape($event->get_arg(0));
 			$total_pages = ceil($database->get_one(

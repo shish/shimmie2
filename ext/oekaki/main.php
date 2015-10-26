@@ -33,15 +33,15 @@ class Oekaki extends Extension {
 						$metadata['extension'] = $pathinfo['extension'];
 						$metadata['tags'] = 'oekaki tagme';
 						$metadata['source'] = null;
-						$event = new DataUploadEvent($tmpname, $metadata);
-						send_event($event);
-						if($event->image_id == -1) {
+						$duev = new DataUploadEvent($tmpname, $metadata);
+						send_event($duev);
+						if($duev->image_id == -1) {
 							throw new UploadException("File type not recognised");
 						}
 						else {
 							unlink($tmpname);
 							$page->set_mode("redirect");
-							$page->set_redirect(make_link("post/view/".$event->image_id));
+							$page->set_redirect(make_link("post/view/".$duev->image_id));
 						}
 					}
 				}
@@ -54,7 +54,7 @@ class Oekaki extends Extension {
 					header('Content-type: text/plain');
 
 					$file = $_FILES['picture']['name'];
-					$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
+					//$ext = (strpos($file, '.') === FALSE) ? '' : substr($file, strrpos($file, '.'));
 					$uploadname = $_SERVER['REMOTE_ADDR'] . "." . time();
 					$uploadfile = data_path('oekaki_unclaimed/'.$uploadname);
 

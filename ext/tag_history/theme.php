@@ -28,6 +28,7 @@ class Tag_HistoryTheme extends Themelet {
 			$current_id = $fields['id'];
 			$current_tags = html_escape($fields['tags']);
 			$name = $fields['name'];
+			$date_set = autodate($fields['date_set']);
 			$h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
 			$setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
@@ -43,7 +44,11 @@ class Tag_HistoryTheme extends Themelet {
 			$history_list .= "
 				<li>
 					<input type='radio' name='revert' id='$current_id' value='$current_id'$selected>
-					<label for='$current_id'>$current_tags (Set by $setter)</label>
+					<label for='$current_id'>
+						$current_tags
+						<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						Set by $setter $date_set
+					</label>
 				</li>
 				";
 		}
@@ -137,7 +142,7 @@ class Tag_HistoryTheme extends Themelet {
 				<table class='form'>
 					<tr><th>Username</th>        <td><input type='text' name='revert_name' size='15'></td></tr>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>
-					<tr><th>Date&nbsp;range</th> <td><input type='text' name='revert_date' size='15'></td></tr>
+					<tr><th>Date&nbsp;range</th> <td><input type='date' name='revert_date' size='15'></td></tr>
 					<tr><td colspan='2'><input type='submit' value='Revert'></td></tr>
 				</table>
 			</form>

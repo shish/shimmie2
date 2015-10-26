@@ -114,7 +114,7 @@ class RotateImage extends Extension {
 	 * @throws ImageRotateException
 	 */
 	private function rotate_image(/*int*/ $image_id, /*int*/ $deg) {
-		global $config, $user, $page, $database;
+		global $database;
 		
 		if ( ($deg <= -360) || ($deg >= 360) ) {
 			throw new ImageRotateException("Invalid options for rotation angle. ($deg)");

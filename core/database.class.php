@@ -20,7 +20,7 @@ class Querylet {
 	 * @param \Querylet $querylet
 	 */
 	public function append($querylet) {
-		assert(!is_null($querylet));
+		assert('!is_null($querylet)');
 		$this->sql .= $querylet->sql;
 		$this->variables = array_merge($this->variables, $querylet->variables);
 	}
@@ -146,7 +146,12 @@ class PostgreSQL extends DBEngine {
 	 * @param \PDO $db
 	 */
 	public function init($db) {
-		$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		if(array_key_exists('REMOTE_ADDR', $_SERVER)) {
+			$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
+		}
+		else {
+			$db->exec("SET application_name TO 'shimmie [local]';");
+		}
 		$db->exec("SET statement_timeout TO 10000;");
 	}
 
@@ -174,7 +179,7 @@ class PostgreSQL extends DBEngine {
 	 */
 	public function create_table_sql($name, $data) {
 		$data = $this->scoreql_to_sql($data);
-		return 'CREATE TABLE '.$name.' ('.$data.')';
+		return "CREATE TABLE $name ($data)";
 	}
 }
 
@@ -190,6 +195,8 @@ function _isnull($a) { return is_null($a); }
 function _md5($a) { return md5($a); }
 function _concat($a, $b) { return $a . $b; }
 function _lower($a) { return strtolower($a); }
+function _rand() { return rand(); }
+function _ln($n) { return log($n); }
 
 class SQLite extends DBEngine {
 	/** @var string  */
@@ -209,6 +216,8 @@ class SQLite extends DBEngine {
 		$db->sqliteCreateFunction('md5', '_md5', 1);
 		$db->sqliteCreateFunction('concat', '_concat', 2);
 		$db->sqliteCreateFunction('lower', '_lower', 1);
+		$db->sqliteCreateFunction('rand', '_rand', 0);
+		$db->sqliteCreateFunction('ln', '_ln', 1);
 	}
 
 	/**
@@ -238,9 +247,10 @@ class SQLite extends DBEngine {
 		$extras = "";
 		foreach(explode(",", $data) as $bit) {
 			$matches = array();
-			if(preg_match("/INDEX\s*\((.*)\)/", $bit, $matches)) {
-				$col = $matches[1];
-				$extras .= "CREATE INDEX {$name}_{$col} on {$name}({$col});";
+			if(preg_match("/(UNIQUE)? ?INDEX\s*\((.*)\)/", $bit, $matches)) {
+				$uni = $matches[1];
+				$col = $matches[2];
+				$extras .= "CREATE $uni INDEX {$name}_{$col} ON {$name}({$col});";
 			}
 			else {
 				$cols[] = $bit;
@@ -295,7 +305,7 @@ class MemcacheCache implements CacheEngine {
 	 * @return array|bool|string
 	 */
 	public function get($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$val = $this->memcache->get($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			$hit = $val === false ? "miss" : "hit";
@@ -317,7 +327,7 @@ class MemcacheCache implements CacheEngine {
 	 * @param int $time
 	 */
 	public function set($key, $val, $time=0) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$this->memcache->set($key, $val, false, $time);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
@@ -328,7 +338,7 @@ class MemcacheCache implements CacheEngine {
 	 * @param string $key
 	 */
 	public function delete($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$this->memcache->delete($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
@@ -354,7 +364,7 @@ class APCCache implements CacheEngine {
 	}
 
 	public function get($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		$val = apc_fetch($key);
 		if($val) {
 			$this->hits++;
@@ -367,12 +377,12 @@ class APCCache implements CacheEngine {
 	}
 
 	public function set($key, $val, $time=0) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		apc_store($key, $val, $time);
 	}
 
 	public function delete($key) {
-		assert(!is_null($key));
+		assert('!is_null($key)');
 		apc_delete($key);
 	}
 
@@ -414,6 +424,11 @@ class Database {
 	public $transaction = false;
 
 	/**
+	 * How many queries this DB object has run
+	 */
+	public $query_count = 0;
+
+	/**
 	 * For now, only connect to the cache, as we will pretty much certainly
 	 * need it. There are some pages where all the data is in cache, so the
 	 * DB connection is on-demand.
@@ -450,8 +465,14 @@ class Database {
 		if(preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) $db_user=$matches[1];
 		if(preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) $db_pass=$matches[1];
 
+		// https://bugs.php.net/bug.php?id=70221
+		$ka = DATABASE_KA;
+		if(version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == "sqlite") {
+			$ka = false;
+		}
+
 		$db_params = array(
-			PDO::ATTR_PERSISTENT => DATABASE_KA,
+			PDO::ATTR_PERSISTENT => $ka,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
 		$this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
@@ -545,6 +566,26 @@ class Database {
 		return $this->engine->name;
 	}
 
+	private function count_execs($db, $sql, $inputarray) {
+		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
+			$fp = @fopen("data/sql.log", "a");
+			if($fp) {
+				$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
+				if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
+					fwrite($fp, $sql." -- ".join(", ", $inputarray)."\n");
+				}
+				else {
+					fwrite($fp, $sql."\n");
+				}
+				fclose($fp);
+			}
+		}
+		if(!is_array($inputarray)) $this->query_count++;
+		# handle 2-dimensional input arrays
+		else if(is_array(reset($inputarray))) $this->query_count += sizeof($inputarray);
+		else $this->query_count++;
+	}
+
 	/**
 	 * Execute an SQL query and return an PDO result-set.
 	 *
@@ -556,7 +597,7 @@ class Database {
 	public function execute($query, $args=array()) {
 		try {
 			if(is_null($this->db)) $this->connect_db();
-			_count_execs($this->db, $query, $args);
+			$this->count_execs($this->db, $query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
@@ -598,7 +639,7 @@ class Database {
 	 *
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|null
+	 * @return array|null
 	 */
 	public function get_row($query, $args=array()) {
 		$_start = microtime(true);
@@ -661,7 +702,7 @@ class Database {
 	 * Get the ID of the last inserted row.
 	 *
 	 * @param string|null $seq
-	 * @return string
+	 * @return int
 	 */
 	public function get_last_insert_id($seq) {
 		if($this->engine->name == "pgsql") {
@@ -690,6 +731,7 @@ class Database {
 	 * @return int|null
 	 */
 	public function count_tables() {
+
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
 
 		if($this->engine->name === "mysql") {
@@ -702,7 +744,7 @@ class Database {
 					);
 		} else if ($this->engine->name === "sqlite") {
 			return count(
-						$this->get_all(".tables")
+						$this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
 					);
 		} else {
 			// Hard to find a universal way to do this...

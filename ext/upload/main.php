@@ -159,6 +159,7 @@ class Upload extends Extension {
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
 					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
 					
+					$ok = false;
 					if(count($_FILES)) {
 						foreach($_FILES as $file) {
 							$ok = $this->try_upload($file, $tags, $source, $image_id);
@@ -177,6 +178,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
+					$tags = isset($_GET['tags']) ? $_GET['tags'] : 'tagme';
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
 					$this->theme->display_upload_status($page, $ok);
@@ -232,8 +234,8 @@ class Upload extends Extension {
 	}
 
 	/**
-	 * @param string|int $id
-	 * @return array
+	 * @param int $id
+	 * @return string[]
 	 */
 	private function tags_for_upload_slot($id) {
 		if(isset($_POST["tags$id"])) {
@@ -290,7 +292,7 @@ class Upload extends Extension {
 	 * @return bool TRUE on upload successful.
 	 */
 	private function try_upload($file, $tags, $source, $replace='') {
-		global $page, $config, $user;
+		global $page;
 
 		if(empty($source)) $source = null;
 
@@ -321,7 +323,6 @@ class Upload extends Extension {
 				if($event->image_id == -1) {
 					throw new UploadException("File type not recognised");
 				}
-				//header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
 				$page->add_http_header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
 			}
 			catch(UploadException $ex) {
@@ -354,7 +355,7 @@ class Upload extends Extension {
 		}
 		
 		// Checks if url contains rating, also checks if the rating extension is enabled.
-		if($config->get_string("transload_engine", "none") != "none" && class_exists("Ratings") && !empty($_GET['rating'])) {
+		if($config->get_string("transload_engine", "none") != "none" && ext_is_live("Ratings") && !empty($_GET['rating'])) {
 			// Rating event will validate that this is s/q/e/u
 			$rating = strtolower($_GET['rating']);
 			$rating = $rating[0];
@@ -385,9 +386,14 @@ class Upload extends Extension {
 			$pathinfo = pathinfo($url);
 			$metadata = array();
 			$metadata['filename'] = $filename;
-			$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type')) ?: $pathinfo['extension'];
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
+			
+			if (is_array($headers)) {
+				$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type'));
+			} else {
+				$metadata['extension'] = $pathinfo['extension'];
+			}
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){

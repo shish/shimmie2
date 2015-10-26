@@ -56,8 +56,13 @@ class TagList extends Extension {
 				$SQLarr['limit'] = $_GET["limit"];
 			}
 
-			$res = $database->get_col(
-					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 $limitSQL", $SQLarr);
+			$res = $database->get_col($database->scoreql_to_sql("
+				SELECT tag
+				FROM tags
+				WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
+					AND count > 0
+				$limitSQL
+			"), $SQLarr);
 
 			$page->set_mode("data");
 			$page->set_type("text/plain");

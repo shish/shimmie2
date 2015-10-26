@@ -50,7 +50,7 @@ class FlashFileHandler extends DataHandlerExtension {
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	protected function check_contents(/*string*/ $file) {

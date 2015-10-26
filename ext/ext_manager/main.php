@@ -23,7 +23,7 @@ class ExtensionInfo {
 	var $description, $documentation, $version, $visibility;
 	var $enabled;
 
-	function __construct($main) {
+	public function __construct($main) {
 		$matches = array();
 		$lines = file($main);
 		$number_of_lines = count($lines);
@@ -37,26 +37,26 @@ class ExtensionInfo {
 			if(preg_match("/Name: (.*)/", $line, $matches)) {
 				$this->name = $matches[1];
 			}
-			if(preg_match("/Visibility: (.*)/", $line, $matches)) {
+			else if(preg_match("/Visibility: (.*)/", $line, $matches)) {
 				$this->visibility = $matches[1];
 			}
-			if(preg_match("/Link: (.*)/", $line, $matches)) {
+			else if(preg_match("/Link: (.*)/", $line, $matches)) {
 				$this->link = $matches[1];
 				if($this->link[0] == "/") {
 					$this->link = make_link(substr($this->link, 1));
 				}
 			}
-			if(preg_match("/Version: (.*)/", $line, $matches)) {
+			else if(preg_match("/Version: (.*)/", $line, $matches)) {
 				$this->version = $matches[1];
 			}
-			if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
+			else if(preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
 				$this->author = $matches[1];
 				$this->email = $matches[2];
 			}
 			else if(preg_match("/Author: (.*)/", $line, $matches)) {
 				$this->author = $matches[1];
 			}
-			if(preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
+			else if(preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
 				$this->description = $matches[2];
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
@@ -65,7 +65,7 @@ class ExtensionInfo {
 					$i++;
 				}
 			}
-			if(preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
+			else if(preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
 				$this->documentation = $matches[2];
 				$start = $matches[1]." ";
 				$start_len = strlen($start);
@@ -75,7 +75,7 @@ class ExtensionInfo {
 				}
 				$this->documentation = str_replace('$site', make_http(get_base_href()), $this->documentation);
 			}
-			if(preg_match("/\*\//", $line, $matches)) {
+			else if(preg_match("/\*\//", $line, $matches)) {
 				break;
 			}
 		}
@@ -135,8 +135,8 @@ class ExtManager extends Extension {
 
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
-			print "  disable-all-ext\n";
-			print "	disable all extensions\n\n";
+			print "\tdisable-all-ext\n";
+			print "\t\tdisable all extensions\n\n";
 		}
 		if($event->cmd == "disable-all-ext") {
 			$this->write_config(array());
@@ -156,7 +156,7 @@ class ExtManager extends Extension {
 
 	/**
 	 * @param bool $all
-	 * @return array
+	 * @return ExtensionInfo[]
 	 */
 	private function get_extensions(/*bool*/ $all) {
 		$extensions = array();
@@ -206,4 +206,3 @@ class ExtManager extends Extension {
 		}
 	}
 }
-

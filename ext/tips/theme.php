@@ -1,7 +1,7 @@
 <?php
 class TipsTheme extends Themelet {
 	public function manageTips($url, $images) {
-		global $page, $user;
+		global $page;
 		$select = "<select name='image'><option value=''>- Select Image -</option>";
 
 		foreach($images as $image){

@@ -67,7 +67,7 @@ class PixelFileHandler extends DataHandlerExtension {
 	}
 
 	/**
-	 * @param $hash
+	 * @param string $hash
 	 * @return bool
 	 */
 	protected function create_thumb_force(/*string*/ $hash) {
@@ -91,9 +91,6 @@ class PixelFileHandler extends DataHandlerExtension {
 		return $ok;
 	}
 
-	/**
-	 * @param ImageAdminBlockBuildingEvent $event
-	 */
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
 		$event->add_part("
 			<form>

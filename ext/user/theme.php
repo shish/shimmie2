@@ -56,10 +56,10 @@ class UserPageTheme extends Themelet {
 		'.make_form(make_link("user_admin/create"))."
 			<table class='form'>
 				<tbody>
-					<tr><th>Name</th><td><input type='text' name='name'></td></tr>
-					<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
-					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2'></td></tr>
-					<tr><th>Email&nbsp;(Optional)</th><td><input type='text' name='email'></td></tr>
+					<tr><th>Name</th><td><input type='text' name='name' required></td></tr>
+					<tr><th>Password</th><td><input type='password' name='pass1' required></td></tr>
+					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2' required></td></tr>
+					<tr><th>Email&nbsp;(Optional)</th><td><input type='email' name='email'></td></tr>
 					$h_reca
 				</tbody>
 				<tfoot>
@@ -161,12 +161,25 @@ class UserPageTheme extends Themelet {
 	}
 
 	protected function build_options(User $duser) {
-		global $config, $database, $user;
+		global $config, $user;
 		$html = "";
 		if($duser->id != $config->get_int('anon_id')){  //justa fool-admin protection so they dont mess around with anon users.
 		
+			if($user->can('edit_user_name')) {
+				$html .= "
+				<p>".make_form(make_link("user_admin/change_name"))."
+					<input type='hidden' name='id' value='{$duser->id}'>
+					<table class='form'>
+						<thead><tr><th colspan='2'>Change Name</th></tr></thead>
+						<tbody><tr><th>New name</th><td><input type='text' name='name' value='".html_escape($duser->name)."'></td></tr></tbody>
+						<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
+					</table>
+				</form>
+				";
+			}
+
 			$html .= "
-			".make_form(make_link("user_admin/change_pass"))."
+			<p>".make_form(make_link("user_admin/change_pass"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
 					<thead>
@@ -195,9 +208,9 @@ class UserPageTheme extends Themelet {
 			$i_user_id = int_escape($duser->id);
 
 			if($user->can("edit_user_class")) {
-				global $_user_classes;
+				global $_shm_user_classes;
 				$class_html = "";
-				foreach($_user_classes as $name => $values) {
+				foreach($_shm_user_classes as $name => $values) {
 					$h_name = html_escape($name);
 					$h_title = html_escape(ucwords($name));
 					$h_selected = ($name == $duser->class->name ? " selected" : "");

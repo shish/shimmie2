@@ -5,6 +5,8 @@
 	max-width: 1200px;
 	margin: auto;
 }
+.setupblocks > .setupblock:first-of-type { margin-top: 0; }
+
 .setupblock {
 	break-inside: avoid;
 	-moz-break-inside: avoid;

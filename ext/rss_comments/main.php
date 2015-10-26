@@ -8,6 +8,8 @@
  */
 
 class RSS_Comments extends Extension {
+	protected $db_support = ['mysql', 'sqlite'];  // pgsql has no UNIX_TIMESTAMP
+
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $config, $page;
 		$title = $config->get_string('title');
@@ -23,16 +25,16 @@ class RSS_Comments extends Extension {
 			$page->set_type("application/rss+xml");
 
 			$comments = $database->get_all("
-					SELECT
+				SELECT
 					users.id as user_id, users.name as user_name,
 					comments.comment as comment, comments.id as comment_id,
 					comments.image_id as image_id, comments.owner_ip as poster_ip,
-					UNIX_TIMESTAMP(posted) AS posted_timestamp
-					FROM comments
-					LEFT JOIN users ON comments.owner_id=users.id
-					ORDER BY comments.id DESC
-					LIMIT 10
-					");
+					comments.posted as posted
+				FROM comments
+				LEFT JOIN users ON comments.owner_id=users.id
+			  	ORDER BY comments.id DESC
+		  		LIMIT 10
+			");
 
 			$data = "";
 			foreach($comments as $comment) {
@@ -40,7 +42,7 @@ class RSS_Comments extends Extension {
 				$comment_id = $comment['comment_id'];
 				$link = make_http(make_link("post/view/$image_id"));
 				$owner = html_escape($comment['user_name']);
-				$posted = date(DATE_RSS, $comment['posted_timestamp']);
+				$posted = date(DATE_RSS, strtotime($comment['posted']));
 				$comment = html_escape($comment['comment']);
 				$content = html_escape("$owner: $comment");
 

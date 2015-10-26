@@ -126,7 +126,7 @@ class Layout {
 		// hack
 		$username = url_escape($user->name);
 		// hack
-		$qp = explode("/", ltrim(@$_GET["q"], "/"));
+		$qp = explode("/", ltrim(_get_query(), "/"));
 		// php sucks
 		switch($qp[0]) {
 			default:
@@ -215,11 +215,10 @@ class Layout {
 			$withleft = "noleft";
 		}
 
-		$flash = get_prefixed_cookie("flash_message");
+		$flash = $page->get_cookie("flash_message");
 		$flash_html = "";
 		if($flash) {
 			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-			set_prefixed_cookie("flash_message", "", -1, "/");
 		}
 
 		print <<<EOD
@@ -265,13 +264,19 @@ $header_html
 </html>
 EOD;
 	}
-	
+
+	/**
+	 * @param string $link
+	 * @param string $desc
+	 * @param string[] $pages_matched
+	 * @return string
+	 */
 	private function navlinks($link, $desc, $pages_matched) {
 	/**
 	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 	 */
-		$html = null;
-		$url = $_GET['q'];
+		$html = "";
+		$url = _get_query();
 
 		$re1='.*?';
 		$re2='((?:[a-z][a-z_]+))';
@@ -287,7 +292,7 @@ EOD;
 				$html = "<li class='current-page'><a href='$link'>$desc</a></li>";
 			}
 		}
-		if(is_null($html)) {$html = "<li><a class='tab' href='$link'>$desc</a></li>";}
+		if(empty($html)) {$html = "<li><a class='tab' href='$link'>$desc</a></li>";}
 		return $html;
 	}
 }

@@ -15,23 +15,21 @@
  *  You can also add your website name as prefix or suffix to the title of each page on your website.
  */
 class custom_html_headers extends Extension {
-        # Adds setup block for custom <head> content
-        public function onSetupBuilding(SetupBuildingEvent $event) {
-                global $config;
-            
+    # Adds setup block for custom <head> content
+	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Custom HTML Headers");
-                
-                // custom headers
+
+		// custom headers
 		$sb->add_longtext_option("custom_html_headers", 
-                        "HTML Code to place within &lt;head&gt;&lt;/head&gt; on all pages<br>");
-                
-                // modified title
-                $sb->add_choice_option("sitename_in_title", array(
-                    "none" => 0,
-                    "as prefix" => 1,
-                    "as suffix" => 2
-                ), "<br>Add website name in title");
-                
+				"HTML Code to place within &lt;head&gt;&lt;/head&gt; on all pages<br>");
+
+		// modified title
+		$sb->add_choice_option("sitename_in_title", array(
+					"none" => 0,
+					"as prefix" => 1,
+					"as suffix" => 2
+					), "<br>Add website name in title");
+
 		$event->panel->add_block($sb);
 	}
         

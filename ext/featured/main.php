@@ -69,7 +69,7 @@ class Featured extends Extension {
 				$database->cache->set("featured_image_object:$fid", $image, 600);
 			}
 			if(!is_null($image)) {
-				if(class_exists("Ratings")) {
+				if(ext_is_live("Ratings")) {
 					if(strpos(Ratings::get_user_privs($user), $image->rating) === FALSE) {
 						return;
 					}

@@ -208,7 +208,7 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = array('n' => 123456789, 's' => $img->posted_timestamp, 'json_class' => 'Time');
+        $this->created_at = array('n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time');
         $this->id = intval($img->id);
         $this->parent_id = null;
         if (defined('ENABLED_EXTS')) {
@@ -399,7 +399,7 @@ class OuroborosAPI extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $config, $user;
+        global $page, $user;
 
         if (preg_match("%\.(xml|json)$%", implode('/', $event->args), $matches) === 1) {
             $this->event = $event;
@@ -489,7 +489,7 @@ class OuroborosAPI extends Extension
      */
     protected function postCreate(OuroborosPost $post, $md5 = '')
     {
-        global $page, $config, $user;
+        global $config;
         $handler = $config->get_string("upload_collision_handler");
         if (!empty($md5) && !($handler == 'merge')) {
             $img = Image::by_hash($md5);

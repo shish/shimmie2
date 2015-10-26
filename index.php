@@ -47,47 +47,19 @@ if(!file_exists("data/config/shimmie.conf.php")) {
 	header("Location: install.php");
 	exit;
 }
-require_once "core/sys_config.inc.php";
-require_once "core/util.inc.php";
-
-// set up and purify the environment
-_version_check();
-_sanitise_environment();
 
 try {
-	// load base files
-	ctx_log_start("Opening files");
-	$files = array_merge(zglob("core/*.php"), zglob("ext/{".ENABLED_EXTS."}/main.php"));
-	foreach($files as $filename) {
-		require_once $filename;
-	}
-	ctx_log_endok();
-
-	ctx_log_start("Connecting to DB");
-	// connect to the database
-	$database = new Database();
-	$config = new DatabaseConfig($database);
-	ctx_log_endok();
-
-	// load the theme parts
-	ctx_log_start("Loading themelets");
-	foreach(_get_themelet_files(get_theme()) as $themelet) {
-		require_once $themelet;
-	}
-	ctx_log_endok();
-
-	_load_extensions();
+	require_once "core/_bootstrap.inc.php";
+	ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
 
 	// start the page generation waterfall
-	$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 	$user = _get_user();
-	send_event(new InitExtEvent());
-	if(!is_cli()) { // web request
-		send_event(new PageRequestEvent(@$_GET["q"]));
-		$page->display();
-	}
-	else { // command line request
+	if(PHP_SAPI === 'cli') {
 		send_event(new CommandEvent($argv));
+	}
+	else {
+		send_event(new PageRequestEvent(_get_query()));
+		$page->display();
 	}
 
 	// saving cache data and profiling data to disk can happen later

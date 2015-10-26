@@ -71,7 +71,7 @@ class Forum extends Extension {
 	}
 	
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page, $user, $database;
+		global $database;
 		
 		$threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", array($event->display_user->id));
         $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=?", array($event->display_user->id));
@@ -250,7 +250,6 @@ class Forum extends Extension {
         }
 		private function sanity_check_viewed_thread($threadID)
         {
-			global $database;
             $errors = null;
             if (!$this->threadExists($threadID))
             {
@@ -298,7 +297,7 @@ class Forum extends Extension {
 		
 		private function show_posts($event, $showAdminOptions = false)
         {
-			global $config, $database, $user;
+			global $config, $database;
 			$threadID = $event->get_arg(1);
             $pageNumber = $event->get_arg(2);
 			$postsPerPage = $config->get_int('forumPostsPerPage', 15);

@@ -7,13 +7,16 @@
  */
 
 class Relationships extends Extension {
+	protected $db_support = ['mysql', 'pgsql'];
+
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;
 
 		// Create the database tables
 		if ($config->get_int("ext_relationships_version") < 1){
-			$database->Execute("ALTER TABLE images ADD parent_id INT NULL, ADD INDEX (parent_id);");
-			$database->Execute("ALTER TABLE images ADD has_children BOOL DEFAULT FALSE NOT NULL;");
+			$database->execute("ALTER TABLE images ADD parent_id INT");
+			$database->execute($database->scoreql_to_sql("ALTER TABLE images ADD has_children SCORE_BOOL DEFAULT SCORE_BOOL_N NOT NULL"));
+			$database->execute("CREATE INDEX images__parent_id ON images(parent_id)");
 
 			$config->set_int("ext_relationships_version", 1);
 			log_info("relationships", "extension installed");

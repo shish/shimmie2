@@ -20,7 +20,7 @@ class AdminPageTheme extends Themelet {
 	 */
 	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
 		$c_protected = $protected ? " protected" : "";
-		$html = make_form(make_link("admin/$action"), "POST", false, null, null, "admin$c_protected");
+		$html = make_form(make_link("admin/$action"), "POST", false, "admin$c_protected");
 		if($protected) {
 			$html .= "<input type='submit' id='$action' value='$name' disabled='disabled'>";
 			$html .= "<input type='checkbox' onclick='$(\"#$action\").attr(\"disabled\", !$(this).is(\":checked\"))'>";
@@ -36,7 +36,6 @@ class AdminPageTheme extends Themelet {
 	 * Show a form which links to admin_utils with POST[action] set to one of:
 	 *  'lowercase all tags'
 	 *  'recount tag use'
-	 *  'purge unused tags'
 	 *  etc
 	 */
 	public function display_form() {
@@ -53,7 +52,7 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new Block("Misc Admin Tools", $html));
 
 		$html = make_form(make_link("admin/set_tag_case"), "POST");
-		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case'>";
+		$html .= "<input type='text' name='tag' placeholder='Enter tag with correct case' class='autocomplete_tags' autocomplete='off'>";
 		$html .= "<input type='submit' value='Set Tag Case'>";
 		$html .= "</form>\n";
 		$page->add_block(new Block("Set Tag Case", $html));
