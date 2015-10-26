@@ -95,11 +95,10 @@ class Layout {
 		}
 		*/
 
-		$flash = get_prefixed_cookie("flash_message");
+    $flash = $page->get_cookie("flash_message");
 		$flash_html = "";
 		if($flash) {
 			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-			set_prefixed_cookie("flash_message", "", -1, "/");
 		}
 
 		print <<<EOD
