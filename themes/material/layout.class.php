@@ -118,6 +118,8 @@ class Layout {
     <link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css?v1.0.5"  rel="stylesheet">
     $header_html
 		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js?v1.0.5"></script>
+		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/script0.js?v1"></script>
+    <!-- having conflicts this ensures the screens will not remain hidden \while the layout is adjusted -->
 	</head>
 
 	<body>
@@ -155,6 +157,12 @@ class Layout {
         </nav>
       </div>
       <main class="mdl-layout__content">
+        <div class="mdl-grid">
+          <div class="mdl-cell mdl-cell--12-col mdl-grid ">
+            $head_block_html
+            $sub_block_html
+          </div>
+        </div>
         <div id="main-grid" class="mdl-grid">
           <div id="left-block" class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-cell--4-col-phone mdl-color--grey-200">
             <script>
@@ -169,12 +177,8 @@ class Layout {
               <script>
                 document.getElementById("main-block").style.display="none";
               </script>
-              <div class="mdl-cell mdl-cell--12-col mdl-grid ">
-                $head_block_html
-                $sub_block_html
-              </div>
               <!-- Start art Block -->
-              <article>
+              <article class="mdl-cell mdl-cell--12-col mdl-cell--top">
               $flash_html
               $main_block_html
               </article>
@@ -231,6 +235,8 @@ EOD;
     $h = $block->header;
     $b = $block->body;
     $i = $block->id;
+    $i = preg_replace('/[^\w-]/', '', $i);//blotter extention id has `!`
+
     if($section == "toolbar"){
       $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
       if(!empty($b)) $html .= "$b";
@@ -261,10 +267,17 @@ EOD;
     }
     $html = "<section id='$i'>";
     $h_toggler = $hidable ? " shm-toggler" : "";
-    if(!empty($h)) $html .= "<h3 data-toggle-sel='#$i' class=' nowwhat $h_toggler'>$h</h3>";
+    if(!empty($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
     if(!empty($b)) $html .= "<div class='blockbody'>$b</div>";
     $html .= "</section>\n";
     return $html;
   }
 
 }
+
+
+//@todo fix ext/blotter id tag
+//@todo fix table row error for ext/ip_ban
+//@todo fix table row error for ext/image_hash_ban
+//@todo fix table row error for ext/untag
+//@todo fix ext private-messages gives Uncaught TypeError: Cannot read property 'href' of null when no messages are there..
