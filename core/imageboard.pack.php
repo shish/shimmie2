@@ -576,9 +576,6 @@ class Image {
 		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
 		global $database;
 
-		$tags = array_map(array('Tag', 'sanitise'), $tags);
-		$tags = Tag::resolve_aliases($tags);
-
 		if(count($tags) <= 0) {
 			throw new SCoreException('Tried to set zero tags');
 		}
@@ -588,12 +585,6 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
-				$ttpe = new TagTermParseEvent($tag, $this->id);
-				send_event($ttpe);
-				if($ttpe->is_metatag()) {
-					continue;
-				}
-
 				if(mb_strlen($tag, 'UTF-8') > 255){
 					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
 					continue;
@@ -629,6 +620,19 @@ class Image {
 
 			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
+		}
+	}
+
+	/**
+	 * Send list of metatags to be parsed.
+	 *
+	 * @param [] $metatags
+	 * @param int $image_id
+	 */
+	public function parse_metatags($metatags, $image_id) {
+		foreach($metatags as $tag) {
+			$ttpe = new TagTermParseEvent($tag, $image_id, TRUE);
+			send_event($ttpe);
 		}
 	}
 
@@ -1156,6 +1160,8 @@ class Tag {
 			$tag_array = array("tagme");
 		}
 
+		$tag_array = array_iunique($tag_array); //remove duplicate tags
+
 		sort($tag_array);
 
 		return $tag_array;
@@ -1254,7 +1260,7 @@ class Tag {
 		$i = 0;
 		$tag_count = count($tags);
 		while($i<$tag_count) {
-			$aliases = explode(' ', Tag::resolve_alias($tags[$i]));
+			$aliases = Tag::explode(Tag::resolve_alias($tags[$i]), FALSE);
 			foreach($aliases as $alias){
 				if(!in_array($alias, $new)){
 					if($tags[$i] == $alias){
