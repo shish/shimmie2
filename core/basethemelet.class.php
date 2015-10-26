@@ -16,7 +16,7 @@ class BaseThemelet {
 	 */
 	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
 		global $page;
-		$page->add_http_header("HTTP/1.0 $code $title");
+		$page->set_code($code);
 		$page->set_title($title);
 		$page->set_heading($title);
 		$has_nav = false;
@@ -66,8 +66,8 @@ class BaseThemelet {
 
 		$custom_classes = "";
 		if(class_exists("Relationships")){
-			if(property_exists('Image', 'parent_id') && $image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
-			if(property_exists('Image', 'has_children') && $image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
+			if(property_exists($image, 'parent_id') && $image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
+			if(property_exists($image, 'has_children') && $image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
 		}
 
 		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-post-id='$i_id'>".
@@ -83,10 +83,11 @@ class BaseThemelet {
 	 * @param string $query
 	 * @param int $page_number
 	 * @param int $total_pages
+	 * @param bool $show_random
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
-		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
+		$body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
 		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 	}
 
@@ -95,7 +96,7 @@ class BaseThemelet {
 	 *
 	 * @param string $base_url
 	 * @param string $query
-	 * @param int|string $page
+	 * @param string $page
 	 * @param string $name
 	 * @return string
 	 */
@@ -107,8 +108,8 @@ class BaseThemelet {
 	/**
 	 * @param string $base_url
 	 * @param string $query
-	 * @param int|string $page
-	 * @param int|string $current_page
+	 * @param string $page
+	 * @param int $current_page
 	 * @param string $name
 	 * @return string
 	 */
@@ -127,19 +128,25 @@ class BaseThemelet {
 	 * @param int $total_pages
 	 * @param string $base_url
 	 * @param string $query
+	 * @param bool $show_random
 	 * @return string
 	 */
-	private function build_paginator($current_page, $total_pages, $base_url, $query) {
+	private function build_paginator($current_page, $total_pages, $base_url, $query, $show_random) {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
-		$rand = mt_rand(1, $total_pages);
 
 		$at_start = ($current_page <= 1 || $total_pages <= 1);
 		$at_end = ($current_page >= $total_pages);
 
 		$first_html  = $at_start ? "First" : $this->gen_page_link($base_url, $query, 1,            "First");
 		$prev_html   = $at_start ? "Prev"  : $this->gen_page_link($base_url, $query, $prev,        "Prev");
-		$random_html =                       $this->gen_page_link($base_url, $query, $rand,        "Random");
+
+		$random_html = "-";
+		if($show_random) {
+			$rand = mt_rand(1, $total_pages);
+			$random_html =                   $this->gen_page_link($base_url, $query, $rand,        "Random");
+		}
+
 		$next_html   = $at_end   ? "Next"  : $this->gen_page_link($base_url, $query, $next,        "Next");
 		$last_html   = $at_end   ? "Last"  : $this->gen_page_link($base_url, $query, $total_pages, "Last");
 

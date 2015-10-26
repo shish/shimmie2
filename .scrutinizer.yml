@@ -1,6 +1,9 @@
 imports:
-    - javascript
-    - php
+- javascript
+- php
 
 filter:
-    excluded_paths: [lib/*,ext/tagger/script.js]
+  excluded_paths: [lib/*,ext/tagger/script.js,ext/chatbox/*]
+
+tools:
+  external_code_coverage: true

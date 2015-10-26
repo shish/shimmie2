@@ -1,7 +1,7 @@
 <?php
 class BlocksTheme extends Themelet {
 	public function display_blocks($blocks) {
-		global $page, $user;
+		global $page;
 
 		$html = "<table class='form' style='width: 100%;'>";
 		foreach($blocks as $block) {

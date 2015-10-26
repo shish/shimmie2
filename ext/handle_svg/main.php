@@ -23,7 +23,6 @@ class SVGFileHandler extends Extension {
 	}
 
 	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
-		global $config;
 		if($this->supported_ext($event->type)) {
 			$hash = $event->hash;
 
@@ -39,7 +38,7 @@ class SVGFileHandler extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page;
+		global $page;
 		if($event->page_matches("get_svg")) {
 			$id = int_escape($event->get_arg(0));
 			$image = Image::by_id($id);
@@ -52,7 +51,7 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $ext
+	 * @param string $ext
 	 * @return bool
 	 */
 	private function supported_ext($ext) {
@@ -61,13 +60,11 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $filename
-	 * @param $metadata
+	 * @param string $filename
+	 * @param mixed[] $metadata
 	 * @return Image
 	 */
 	private function create_image_from_data($filename, $metadata) {
-		global $config;
-
 		$image = new Image();
 
 		$msp = new MiniSVGParser($filename);
@@ -85,7 +82,7 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	private function check_contents($file) {

@@ -1,8 +1,8 @@
 <?php
-class RandomTest extends ShimmieWebTestCase {
+class RandomTest extends ShimmiePHPUnitTestCase {
 	public function testRandom() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$this->log_out();
 
 		$this->get_page("random_image/view");
@@ -11,17 +11,16 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->get_page("random_image/view/test");
 		$this->assert_title("Image $image_id: test");
 
-		$raw = $this->get_page("random_image/download");
+		$this->get_page("random_image/download");
 		# FIXME: assert($raw == file(blah.jpg))
-
-		$this->log_in_as_admin();
-		$this->delete_image($image_id);
-		$this->log_out();
 	}
 
 	public function testPostListBlock() {
 		$this->log_in_as_admin();
 		$this->get_page("setup");
+
+		$this->markTestIncomplete();
+
 		$this->set_field("_config_show_random_block", true);
 		$this->click("Save Settings");
 		$this->log_out();
@@ -31,7 +30,7 @@ class RandomTest extends ShimmieWebTestCase {
 		$this->assert_no_text("Random Image");
 
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "test");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "test");
 		$this->log_out();
 
 		# enabled, image = text

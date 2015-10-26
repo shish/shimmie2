@@ -1,23 +1,39 @@
 <?php
-class DowntimeTest extends SCoreWebTestCase {
+class DowntimeTest extends ShimmiePHPUnitTestCase {
+	public function tearDown() {
+		global $config;
+		$config->set_bool("downtime", false);
+	}
+
 	public function testDowntime() {
-		$this->log_in_as_admin();
-		$this->get_page("setup");
-		$this->set_field("_config_downtime", true);
-		$this->set_field("_config_downtime_message", "brb, unit testing");
-		$this->click("Save Settings");
-		$this->assert_text("DOWNTIME MODE IS ON!");
-		$this->log_out();
+		global $config;
 
+		$config->set_string("downtime_message", "brb, unit testing");
+
+		// downtime on
+		$config->set_bool("downtime", true);
+
+		$this->log_in_as_admin();
 		$this->get_page("post/list");
-		$this->assert_text("brb, unit testing");
+		$this->assert_text("DOWNTIME MODE IS ON!");
+		$this->assert_response(200);
+
+		$this->log_in_as_user();
+		$this->get_page("post/list");
+		$this->assert_content("brb, unit testing");
+		$this->assert_response(503);
+
+		// downtime off
+		$config->set_bool("downtime", false);
 
 		$this->log_in_as_admin();
-		$this->get_page("setup");
-		$this->set_field("_config_downtime", false);
-		$this->click("Save Settings");
+		$this->get_page("post/list");
 		$this->assert_no_text("DOWNTIME MODE IS ON!");
-		$this->log_out();
+		$this->assert_response(200);
+
+		$this->log_in_as_user();
+		$this->get_page("post/list");
+		$this->assert_no_content("brb, unit testing");
+		$this->assert_response(200);
 	}
 }
-

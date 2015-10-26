@@ -1,15 +1,17 @@
 <?php
-class FeaturedTest extends ShimmieWebTestCase {
+class FeaturedTest extends ShimmiePHPUnitTestCase {
 	public function testFeatured() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx");
-		$this->log_out();
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
 		# FIXME: test that regular users can't feature things
 
 		$this->log_in_as_admin();
 		$this->get_page("post/view/$image_id");
 		$this->assert_title("Image $image_id: pbx");
+
+		$this->markTestIncomplete();
+
 		$this->click("Feature This");
 		$this->get_page("post/list");
 		$this->assert_text("Featured Image");

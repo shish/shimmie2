@@ -61,10 +61,10 @@ class PrivMsg extends Extension {
 				subject VARCHAR(64) NOT NULL,
 				message TEXT NOT NULL,
 				is_read SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-				INDEX (to_id),
 				FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 				FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE
 			");
+			$database->execute("CREATE INDEX private_message__to_id ON private_message(to_id)");
 			$config->set_int("pm_version", 2);
 			log_info("pm", "extension installed");
 		}
@@ -85,7 +85,7 @@ class PrivMsg extends Extension {
 		global $user;
 		if(!$user->is_anonymous()) {
 			$count = $this->count_pms($user);
-			$h_count = $count > 0 ? " ($count)" : "";
+			$h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
 			$event->add_link("Private Messages$h_count", make_link("user#private-messages"));
 		}
 	}

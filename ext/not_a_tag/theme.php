@@ -22,7 +22,7 @@ class NotATagTheme extends Themelet {
 					<th>Tag</th><th>Redirect</th><th>Action</th>
 					<tr>
 						<form action='".make_link("untag/list/1")."' method='GET'>
-							<td><input type='text' name='tag'></td>
+							<td><input type='text' name='tag' class='autocomplete_tags' autocomplete='off'></td>
 							<td><input type='text' name='redirect'></td>
 							<td><input type='submit' value='Search'></td>
 						</form>
@@ -31,7 +31,7 @@ class NotATagTheme extends Themelet {
 				$h_bans
 				<tfoot><tr>
 					".make_form(make_link("untag/add"))."
-						<td><input type='text' name='tag'></td>
+						<td><input type='text' name='tag' class='autocomplete_tags' autocomplete='off'></td>
 						<td><input type='text' name='redirect'></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>

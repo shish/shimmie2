@@ -1,8 +1,9 @@
 <?php
 /**
- * @global UserClass[] $_user_classes
+ * @global UserClass[] $_shm_user_classes
  */
-$_user_classes = array();
+global $_shm_user_classes;
+$_shm_user_classes = array();
 
 /**
  * Class UserClass
@@ -30,16 +31,16 @@ class UserClass {
 	 * @param array $abilities
 	 */
 	public function __construct($name, $parent=null, $abilities=array()) {
-		global $_user_classes;
+		global $_shm_user_classes;
 
 		$this->name = $name;
 		$this->abilities = $abilities;
 
 		if(!is_null($parent)) {
-			$this->parent = $_user_classes[$parent];
+			$this->parent = $_shm_user_classes[$parent];
 		}
 
-		$_user_classes[$name] = $this;
+		$_shm_user_classes[$name] = $this;
 	}
 
 	/**
@@ -50,8 +51,6 @@ class UserClass {
 	 * @throws SCoreException
 	 */
 	public function can(/*string*/ $ability) {
-		global $config;
-
 		if(array_key_exists($ability, $this->abilities)) {
 			$val = $this->abilities[$ability];
 			return $val;
@@ -60,10 +59,10 @@ class UserClass {
 			return $this->parent->can($ability);
 		}
 		else {
-			global $_user_classes;
+			global $_shm_user_classes;
 			$min_dist = 9999;
 			$min_ability = null;
-			foreach($_user_classes['base']->abilities as $a => $cando) {
+			foreach($_shm_user_classes['base']->abilities as $a => $cando) {
 				$v = levenshtein($ability, $a);
 				if($v < $min_dist) {
 					$min_dist = $v;
@@ -90,6 +89,7 @@ new UserClass("base", null, array(
 	"view_ip" => False,         # view IP addresses associated with things
 	"ban_ip" => False,
 
+	"edit_user_name" => False,
 	"edit_user_password" => False,
 	"edit_user_info" => False,  # email address, etc
 	"edit_user_class" => False,
@@ -155,6 +155,7 @@ new UserClass("admin", "base", array(
 	"edit_image_lock" => True,
 	"view_ip" => True,
 	"ban_ip" => True,
+	"edit_user_name" => True,
 	"edit_user_password" => True,
 	"edit_user_info" => True,
 	"edit_user_class" => True,

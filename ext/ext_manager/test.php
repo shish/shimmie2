@@ -1,5 +1,5 @@
 <?php
-class ExtManagerTest extends SCoreWebTestCase {
+class ExtManagerTest extends ShimmiePHPUnitTestCase {
 	public function testAuth() {
 		$this->get_page('ext_manager');
 		$this->assert_title("Extensions");
@@ -17,10 +17,9 @@ class ExtManagerTest extends SCoreWebTestCase {
 		$this->log_in_as_admin();
 		$this->get_page('ext_manager');
 		$this->assert_title("Extensions");
-		$this->assert_text("SimpleTest integration");
+		//$this->assert_text("SimpleTest integration"); // FIXME: something which still exists
 		$this->log_out();
 
 		# FIXME: test that some extensions can be added and removed? :S
 	}
 }
-

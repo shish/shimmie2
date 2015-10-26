@@ -84,7 +84,8 @@ class AliasEditor extends Extension {
 			}
 			else if($event->get_arg(0) == "export") {
 				$page->set_mode("data");
-				$page->set_type("text/plain");
+				$page->set_type("text/csv");
+				$page->set_filename("aliases.csv");
 				$page->set_data($this->get_alias_csv($database));
 			}
 			else if($event->get_arg(0) == "import") {
@@ -152,11 +153,12 @@ class AliasEditor extends Extension {
 		foreach(explode("\n", $csv) as $line) {
 			$parts = str_getcsv($line);
 			if(count($parts) == 2) {
-				$pair = array("oldtag" => $parts[0], "newtag" => $parts[1]);
-				if(!$database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)){
-					if(!$database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", array("newtag" => $pair['newtag']))){
-						$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
-					}
+				try {
+					$aae = new AddAliasEvent($parts[0], $parts[1]);
+					send_event($aae);
+				}
+				catch(AddAliasException $ex) {
+					$this->theme->display_error(500, "Error adding alias", $ex->getMessage());
 				}
 			}
 		}

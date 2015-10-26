@@ -118,7 +118,7 @@ class VideoFileHandler extends DataHandlerExtension {
 
 	/**
 	 * @param string $filename
-	 * @param array $metadata
+	 * @param mixed[] $metadata
 	 * @return Image|null
 	 */
 	protected function create_image_from_data($filename, $metadata) {
@@ -162,7 +162,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	protected function check_contents($file) {

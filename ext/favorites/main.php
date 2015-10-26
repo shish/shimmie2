@@ -133,7 +133,6 @@ class Favorites extends Extension {
 			$event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
 		}
 		else if(preg_match("/^favorited_by[=|:](.*)$/i", $event->term, $matches)) {
-			global $database;
 			$user = User::by_name($matches[1]);
 			if(!is_null($user)) {
 				$user_id = $user->id;
@@ -167,7 +166,7 @@ class Favorites extends Extension {
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
 			$database->execute("CREATE INDEX user_favorites_image_id_idx ON user_favorites(image_id)", array());
-			$config->set_int("ext_favorites_version", 1);
+			$config->set_int("ext_favorites_version", 2);
 		}
 
 		if($config->get_int("ext_favorites_version") < 2) {
@@ -205,7 +204,7 @@ class Favorites extends Extension {
 
 	/**
 	 * @param Image $image
-	 * @return array
+	 * @return string[]
 	 */
 	private function list_persons_who_have_favorited(Image $image) {
 		global $database;

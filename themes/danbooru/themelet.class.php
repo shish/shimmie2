@@ -6,8 +6,9 @@ class Themelet extends BaseThemelet {
 	 * @param string $query
 	 * @param int $page_number
 	 * @param int $total_pages
+	 * @param bool $show_random
 	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages) {
+	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
 		$page->add_block(new Block(null, $body, "main", 90));
@@ -29,7 +30,7 @@ class Themelet extends BaseThemelet {
 	 * @param string $base_url
 	 * @param string $query
 	 * @param int|string $page
-	 * @param int|string $current_page
+	 * @param int $current_page
 	 * @param string $name
 	 * @return string
 	 */

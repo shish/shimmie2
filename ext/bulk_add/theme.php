@@ -10,9 +10,11 @@ class BulkAddTheme extends Themelet {
 		$page->set_title("Adding folder");
 		$page->set_heading("Adding folder");
 		$page->add_block(new NavBlock());
+		$html = "";
 		foreach($this->messages as $block) {
-			$page->add_block($block);
+			$html .= "<br/>" . html_escape($html);
 		}
+		$page->add_block(new Block("Results", $block));
 	}
 
 	/*
@@ -21,7 +23,7 @@ class BulkAddTheme extends Themelet {
 	 * directory full of images
 	 */
 	public function display_admin_block() {
-		global $page, $user;
+		global $page;
 		$html = "
 			Add a folder full of images; any subfolders will have their names
 			used as tags for the images within.
@@ -42,4 +44,3 @@ class BulkAddTheme extends Themelet {
 		$this->messages[] = new Block($title, $body);
 	}
 }
-

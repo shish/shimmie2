@@ -1,56 +1,67 @@
 <?php
-class WordFilterTest extends ShimmieWebTestCase {
-	public function testWordFilter() {
-		$this->log_in_as_admin();
-		$this->get_page("setup");
-		$this->set_field("_config_word_filter", "whore,nice lady\na duck,a kitten\n white ,\tspace\ninvalid");
-		$this->click("Save Settings");
-		$this->log_out();
+class WordFilterTest extends ShimmiePHPUnitTestCase {
+	public function setUp() {
+		global $config;
+		parent::setUp();
+		$config->set_string("word_filter", "whore,nice lady\na duck,a kitten\n white ,\tspace\ninvalid");
+	}
 
+	public function _doThings($in, $out) {
+		global $user;
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+		send_event(new CommentPostingEvent($image_id, $user, $in));
 		$this->get_page("post/view/$image_id");
+		$this->assert_text($out);
+	}
 
-		# regular
-		$this->set_field('comment', "posted by a whore");
-		$this->click("Post Comment");
-		$this->assert_text("posted by a nice lady");
+	public function testRegular() {
+		$this->_doThings(
+			"posted by a whore",
+			"posted by a nice lady"
+		);
+	}
 
-		# replace all instances
-		$this->set_field('comment', "a whore is a whore is a whore");
-		$this->click("Post Comment");
-		$this->assert_text("a nice lady is a nice lady is a nice lady");
+	public function testReplaceAll() {
+		$this->_doThings(
+			"a whore is a whore is a whore",
+			"a nice lady is a nice lady is a nice lady"
+		);
+	}
 
-		# still have effect when case is changed
-		$this->set_field('comment', "monkey WhorE");
-		$this->click("Post Comment");
-		$this->assert_text("monkey nice lady");
+	public function testMixedCase() {
+		$this->_doThings(
+			"monkey WhorE",
+			"monkey nice lady"
+		);
+	}
 
-		# only do whole words
-		$this->set_field('comment', "my name is whoretta");
-		$this->click("Post Comment");
-		$this->assert_text("my name is whoretta");
+	public function testOnlyWholeWords() {
+		$this->_doThings(
+			"my name is whoretta",
+			"my name is whoretta"
+		);
+	}
 
-		# search multiple words
-		$this->set_field('comment', "I would like a duck");
-		$this->click("Post Comment");
-		$this->assert_text("I would like a kitten");
+	public function testMultipleWords() {
+		$this->_doThings(
+			"I would like a duck",
+			"I would like a kitten"
+		);
+	}
 
-		# test for a line which was entered with extra whitespace
-		$this->set_field('comment', "A colour is white");
-		$this->click("Post Comment");
-		$this->assert_text("A colour is space");
+	public function testWhitespace() {
+		$this->_doThings(
+			"A colour is white",
+			"A colour is space"
+		);
+	}
 
-		# don't do anything with invalid lines
-		$this->set_field('comment', "The word was invalid");
-		$this->click("Post Comment");
-		$this->assert_text("The word was invalid");
-
-		$this->log_out();
-
-		$this->log_in_as_admin();
-		$this->delete_image($image_id);
-		$this->log_out();
+	public function testIgnoreInvalid() {
+		$this->_doThings(
+			"The word was invalid",
+			"The word was invalid"
+		);
 	}
 }
 

@@ -49,7 +49,7 @@ class User {
 	 * @throws SCoreException
 	 */
 	public function __construct($row) {
-		global $_user_classes;
+		global $_shm_user_classes;
 
 		$this->id = int_escape($row['id']);
 		$this->name = $row['name'];
@@ -57,8 +57,8 @@ class User {
 		$this->join_date = $row['joindate'];
 		$this->passhash = $row['pass'];
 
-		if(array_key_exists($row["class"], $_user_classes)) {
-			$this->class = $_user_classes[$row["class"]];
+		if(array_key_exists($row["class"], $_shm_user_classes)) {
+			$this->class = $_shm_user_classes[$row["class"]];
 		}
 		else {
 			throw new SCoreException("User '{$this->name}' has invalid class '{$row["class"]}'");
@@ -94,7 +94,7 @@ class User {
 	 * @return null|User
 	 */
 	public static function by_id(/*int*/ $id) {
-		assert(is_numeric($id));
+		assert('is_numeric($id)', var_export($id, true));
 		global $database;
 		if($id === 1) {
 			$cached = $database->cache->get('user-id:'.$id);
@@ -111,7 +111,7 @@ class User {
 	 * @return null|User
 	 */
 	public static function by_name(/*string*/ $name) {
-		assert(is_string($name));
+		assert('is_string($name)', var_export($name, true));
 		global $database;
 		$row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), array("name"=>$name));
 		return is_null($row) ? null : new User($row);
@@ -124,8 +124,8 @@ class User {
 	 * @return null|User
 	 */
 	public static function by_name_and_pass(/*string*/ $name, /*string*/ $pass) {
-		assert(is_string($name));
-		assert(is_string($pass));
+		assert('is_string($name)', var_export($name, true));
+		assert('is_string($pass)', var_export($pass, true));
 		$user = User::by_name($name);
 		if($user) {
 			if($user->passhash == md5(strtolower($name) . $pass)) {
@@ -143,8 +143,8 @@ class User {
 	 * @return array
 	 */
 	public static function by_list(/*int*/ $offset, /*int*/ $limit=50) {
-		assert(is_numeric($offset));
-		assert(is_numeric($limit));
+		assert('is_numeric($offset)', var_export($offset, true));
+		assert('is_numeric($limit)', var_export($limit, true));
 		global $database;
 		$rows = $database->get_all("SELECT * FROM users WHERE id >= :start AND id < :end", array("start"=>$offset, "end"=>$offset+$limit));
 		return array_map("_new_user", $rows);
@@ -196,10 +196,25 @@ class User {
 	 * @param string $class
 	 */
 	public function set_class(/*string*/ $class) {
-		assert(is_string($class));
+		assert('is_string($class)', var_export($class, true));
 		global $database;
 		$database->Execute("UPDATE users SET class=:class WHERE id=:id", array("class"=>$class, "id"=>$this->id));
 		log_info("core-user", 'Set class for '.$this->name.' to '.$class);
+	}
+
+	/**
+	 * @param string $name
+	 * @throws Exception
+	 */
+	public function set_name(/*string*/ $name) {
+		global $database;
+		if(User::by_name($name)) {
+			throw new Exception("Desired username is already in use");
+		}
+		$old_name = $this->name;
+		$this->name = $name;
+		$database->Execute("UPDATE users SET name=:name WHERE id=:id", array("name"=>$this->name, "id"=>$this->id));
+		log_info("core-user", "Changed username for {$old_name} to {$this->name}");
 	}
 
 	/**

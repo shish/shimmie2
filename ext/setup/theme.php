@@ -13,8 +13,6 @@ class SetupTheme extends Themelet {
 	 * The page should wrap all the options in a form which links to setup_save
 	 */
 	public function display_page(Page $page, SetupPanel $panel) {
-		global $user;
-
 		usort($panel->blocks, "blockcmp");
 
 		/*
@@ -40,8 +38,6 @@ class SetupTheme extends Themelet {
 	}
 
 	public function display_advanced(Page $page, $options) {
-		global $user;
-
 		$h_rows = "";
 		ksort($options);
 		foreach($options as $name => $value) {

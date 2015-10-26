@@ -3,6 +3,11 @@
 class IndexTheme extends Themelet {
 	var $page_number, $total_pages, $search_terms;
 
+	/**
+	 * @param int $page_number
+	 * @param int $total_pages
+	 * @param string[] $search_terms
+	 */
 	public function set_page($page_number, $total_pages, $search_terms) {
 		$this->page_number = $page_number;
 		$this->total_pages = $total_pages;
@@ -27,6 +32,10 @@ and of course start organising your images :-)
 		$page->add_block(new Block("Installation Succeeded!", $text, "main", 0));
 	}
 
+	/**
+	 * @param Page $page
+	 * @param Image[] $images
+	 */
 	public function display_page(Page $page, $images) {
 		$this->display_page_header($page, $images);
 
@@ -41,12 +50,21 @@ and of course start organising your images :-)
 		}
 	}
 
-	public function display_admin_block(/*array(string)*/ $parts) {
+	/**
+	 * @param string[] $parts
+	 */
+	public function display_admin_block($parts) {
 		global $page;
 		$page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
 	}
 
 
+	/**
+	 * @param int $page_number
+	 * @param int $total_pages
+	 * @param string[] $search_terms
+	 * @return string
+	 */
 	protected function build_navigation($page_number, $total_pages, $search_terms) {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
@@ -63,7 +81,7 @@ and of course start organising your images :-)
 		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>
-				<input class='autocomplete_tags' name='search' type='text' placeholder='Search' value='$h_search_string' />
+				<input type='search' name='search' value='$h_search_string' placeholder='Search' class='autocomplete_tags' autocomplete='off' />
 				<input type='hidden' name='q' value='/post/list'>
 				<input type='submit' value='Find' style='display: none;' />
 			</form>
@@ -72,6 +90,11 @@ and of course start organising your images :-)
 		return $h_prev.' | '.$h_index.' | '.$h_next.'<br>'.$h_search;
 	}
 
+	/**
+	 * @param Image[] $images
+	 * @param string $query
+	 * @return string
+	 */
 	protected function build_table($images, $query) {
 		$h_query = html_escape($query);
 		$table = "<div class='shm-image-list' data-query='$h_query'>";
@@ -82,6 +105,10 @@ and of course start organising your images :-)
 		return $table;
 	}
 
+	/**
+	 * @param Page $page
+	 * @param Image[] $images
+	 */
 	protected function display_page_header(Page $page, $images) {
 		global $config;
 
@@ -102,14 +129,18 @@ and of course start organising your images :-)
 		$page->set_heading($page_title);
 	}
 
+	/**
+	 * @param Page $page
+	 * @param Image[] $images
+	 */
 	protected function display_page_images(Page $page, $images) {
 		if (count($this->search_terms) > 0) {
 			$query = url_escape(implode(' ', $this->search_terms));
 			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
+			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, TRUE);
 		} else {
 			$page->add_block(new Block("Images", $this->build_table($images, null), "main", 10, "image-list"));
-			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
+			$this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages, TRUE);
 		}
 	}
 }

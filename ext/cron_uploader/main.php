@@ -61,7 +61,7 @@ class CronUploader extends Extension {
 	}
 	
 	private function display_documentation() {
-		global $config, $page;
+		global $page;
 		$this->set_dir(); // Determines path to cron_uploader_dir
 		
 		
@@ -151,7 +151,6 @@ class CronUploader extends Extension {
 	}
 	
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		global $config;
 		$this->set_dir();
 		
 		$cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
@@ -196,7 +195,7 @@ class CronUploader extends Extension {
 		
 		// Sets new default dir if not in config yet/anymore
 		if ($dir == "") {
-			$dir = $_SERVER ['DOCUMENT_ROOT'] . "/data/cron_uploader";
+			$dir = data_path("cron_uploader");
 			$config->set_string ('cron_uploader_dir', $dir);
 		}
 			
@@ -344,7 +343,7 @@ class CronUploader extends Extension {
 		
 		foreach ( glob ( "$base/$subdir/*" ) as $fullpath ) {
 			$fullpath = str_replace ( "//", "/", $fullpath );
-			$shortpath = str_replace ( $base, "", $fullpath );
+			//$shortpath = str_replace ( $base, "", $fullpath );
 			
 			if (is_link ( $fullpath )) {
 				// ignore

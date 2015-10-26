@@ -13,7 +13,12 @@
 class NumericScoreSetEvent extends Event {
 	var $image_id, $user, $score;
 
-	public function __construct(/*int*/ $image_id, User $user, /*int*/ $score) {
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param int $score
+	 */
+	public function __construct($image_id, User $user, $score) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->score = $score;
@@ -29,14 +34,14 @@ class NumericScore extends Extension {
 	}
 
 	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $user, $page;
+		global $user;
 		if(!$user->is_anonymous()) {
 			$this->theme->get_voter($event->image);
 		}
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $page, $user;
+		global $user;
 		if($user->can("edit_other_vote")) {
 			$this->theme->get_nuller($event->display_user);
 		}
@@ -102,15 +107,15 @@ class NumericScore extends Extension {
 
 			if(!empty($_GET['day'])){
 				$D = (int) $_GET['day'];
-				if($D >= 1 && $D <= 31) $day = $D;
+				$day = clamp($D, 1, 31);
 			}
 			if(!empty($_GET['month'])){
 				$M = (int) $_GET['month'];
-				if($M >= 1 && $M <= 12) $month = $M;
+				$month = clamp($M, 1 ,12);
 			}
 			if(!empty($_GET['year'])){
 				$Y = (int) $_GET['year'];
-				if($Y >= 1970 && $Y < 2100) $year = $Y;
+				$year = clamp($Y, 1970, 2100);
 			}
 
 			$totaldate = $year."/".$month."/".$day;
@@ -168,17 +173,24 @@ class NumericScore extends Extension {
 		$this->delete_votes_by($event->id);
 	}
 
-	public function delete_votes_by(/*int*/ $user_id) {
+	/**
+	 * @param int $user_id
+	 */
+	public function delete_votes_by($user_id) {
 		global $database;
 
 		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
 
 		if(count($image_ids) == 0) return;
 
-		$database->execute(
-				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".implode(",", $image_ids).")",
+		// vote recounting is pretty heavy, and often hits statement timeouts
+		// if you try to recount all the images in one go
+		foreach(array_chunk($image_ids, 20) as $chunk) {
+			$id_list = implode(",", $chunk);
+			$database->execute(
+				"DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".$id_list.")",
 				array($user_id));
-		$database->execute("
+			$database->execute("
 				UPDATE images
 				SET numeric_score=COALESCE(
 					(
@@ -188,11 +200,9 @@ class NumericScore extends Extension {
 					),
 					0
 				)
-				WHERE images.id IN (".implode(",", $image_ids).")");
+				WHERE images.id IN (".$id_list.")");
+		}
 	}
-
-	// FIXME: on user deletion
-	// FIXME: on user vote nuke
 
 	public function onParseLinkTemplate(ParseLinkTemplateEvent $event) {
 		$event->replace('$score', $event->image->numeric_score);
@@ -238,10 +248,9 @@ class NumericScore extends Extension {
 				array("ns_user_id"=>$iid)));
 		}
 		else if(preg_match("/^order[=|:](numeric_)?(score)[_]?(desc|asc)?$/i", $event->term, $matches)){
-			global $order_sql;
 			$default_order_for_column = "DESC";
 			$sort = isset($matches[3]) ? strtoupper($matches[3]) : $default_order_for_column;
-			$order_sql = "images.numeric_score $sort";
+			Image::$order_sql = "images.numeric_score $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
 	}
@@ -289,7 +298,7 @@ class NumericScore extends Extension {
 	 * @param int $user_id
 	 * @param int $score
 	 */
-	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*int*/ $score) {
+	private function add_vote($image_id, $user_id, $score) {
 		global $database;
 		$database->execute(
 			"DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",

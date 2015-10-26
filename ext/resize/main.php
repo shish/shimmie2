@@ -75,12 +75,12 @@ class ResizeImage extends Extension {
 			$isanigif = 0;
 			if($image_obj->ext == "gif"){
 				$image_filename = warehouse_path("images", $image_obj->hash);
-				if(!($fh = @fopen($image_filename, 'rb'))){ //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-					return false;
-				}
-				while(!feof($fh) && $isanigif < 2) {
-					$chunk = fread($fh, 1024 * 100);
-					$isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+				if(($fh = @fopen($image_filename, 'rb'))) {
+					//check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+					while(!feof($fh) && $isanigif < 2) {
+						$chunk = fread($fh, 1024 * 100);
+						$isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+					}
 				}
 			}
 			if($isanigif == 0){
@@ -164,7 +164,7 @@ class ResizeImage extends Extension {
 	 * @throws ImageResizeException
 	 */
 	private function resize_image(Image $image_obj, /*int*/ $width, /*int*/ $height) {
-		global $config, $user, $page, $database;
+		global $database;
 		
 		if ( ($height <= 0) && ($width <= 0) ) {
 			throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
@@ -180,51 +180,15 @@ class ResizeImage extends Extension {
 		if (($image_obj->width != $info[0] ) || ($image_obj->height != $info[1])) {
 			throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
 		}
-		
-		/*
-			Check Memory usage limits
-		
-			Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
-			New check:    memory_use = width * height * (bits per channel) * channels * 2.5
-			
-			It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
-			We need to consider the size that we are GOING TO instead.
-			
-			The factor of 2.5 is simply a rough guideline.
-			http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
-		*/
-		
-		if (isset($info['bits']) && isset($info['channels']))
-		{
-			$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
-		} else {
-			//
-			// If we don't have bits and channel info from the image then assume default values
-			// of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
-			//
-			$memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
-		}
-		
+
+		$memory_use = $this->calc_memory_use($info);
 		$memory_limit = get_memory_limit();
-		
 		if ($memory_use > $memory_limit) {
 			throw new ImageResizeException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
 		}
-		
-		/* Calculate the new size of the image */
-		if ( $height > 0 && $width > 0 ) {
-			$new_height = $height;
-			$new_width = $width;
-		} else {
-			// Scale the new image
-			if      ($width  == 0)  $factor = $height/$image_obj->height;
-			elseif  ($height == 0)  $factor = $width/$image_obj->width;
-			else                    $factor = min( $width / $image_obj->width, $height / $image_obj->height );
 
-			$new_width  = round( $image_obj->width * $factor );
-			$new_height = round( $image_obj->height * $factor );
-		}
-		
+		list($new_height, $new_width) = $this->calc_new_size($image_obj, $width, $height);
+
 		/* Attempt to load the image */
 		switch ( $info[2] ) {
 		  case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
@@ -303,19 +267,65 @@ class ResizeImage extends Extension {
 		send_event(new ThumbnailGenerationEvent($new_hash, $filetype));
 		
 		/* Update the database */
-		$database->Execute(
-				"UPDATE images SET 
-					filename = :filename, filesize = :filesize,	hash = :hash, width = :width, height = :height
-				WHERE 
-					id = :id
-				",
-				array(
-					"filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
-					"width"=>$new_width, "height"=>$new_height,	"id"=>$image_obj->id
-				)
-		);
+		$database->Execute("
+			UPDATE images SET filename = :filename, filesize = :filesize, hash = :hash, width = :width, height = :height
+			WHERE id = :id
+		", array(
+			"filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
+			"width"=>$new_width, "height"=>$new_height,	"id"=>$image_obj->id
+		));
 		
 		log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_hash}");
+	}
+
+	/**
+	 * Check Memory usage limits
+	 *
+	 * Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
+	 * New check:    memory_use = width * height * (bits per channel) * channels * 2.5
+	 *
+	 * It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
+	 * We need to consider the size that we are GOING TO instead.
+	 *
+	 * The factor of 2.5 is simply a rough guideline.
+	 * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
+	 *
+	 * @param $info
+	 * @return int
+	 */
+	private function calc_memory_use($info) {
+		if (isset($info['bits']) && isset($info['channels'])) {
+			return $memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+		}
+		else {
+			// If we don't have bits and channel info from the image then assume default values
+			// of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
+			return $memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
+		}
+	}
+
+	/**
+	 * @param Image $image_obj
+	 * @param $width
+	 * @param $height
+	 * @return int[]
+	 */
+	private function calc_new_size(Image $image_obj, $width, $height) {
+		/* Calculate the new size of the image */
+		if ($height > 0 && $width > 0) {
+			$new_height = $height;
+			$new_width = $width;
+			return array($new_height, $new_width);
+		} else {
+			// Scale the new image
+			if ($width == 0) $factor = $height / $image_obj->height;
+			elseif ($height == 0) $factor = $width / $image_obj->width;
+			else                    $factor = min($width / $image_obj->width, $height / $image_obj->height);
+
+			$new_width = round($image_obj->width * $factor);
+			$new_height = round($image_obj->height * $factor);
+			return array($new_height, $new_width);
+		}
 	}
 }
 

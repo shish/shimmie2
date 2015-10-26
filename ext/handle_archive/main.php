@@ -33,84 +33,22 @@ class ArchiveFileHandler extends Extension {
 			$cmd = str_replace('%f', $event->tmpname, $cmd);
 			$cmd = str_replace('%d', $tmpdir, $cmd);
 			exec($cmd);
-			$this->add_dir($tmpdir);
+			$results = add_dir($tmpdir);
+			if(count($results) > 0) {
+        // FIXME no theme?
+				$this->theme->add_status("Adding files", $results);
+			}
 			deltree($tmpdir);
 			$event->image_id = -2; // default -1 = upload wasn't handled
 		}
 	}
 
 	/**
-	 * @param $ext
+	 * @param string $ext
 	 * @return bool
 	 */
 	private function supported_ext($ext) {
 		$exts = array("zip");
 		return in_array(strtolower($ext), $exts);
 	}
-
-	// copied from bulk add extension
-	private function add_image($tmpname, $filename, $tags) {
-		assert(file_exists($tmpname));
-
-		try {
-			$pathinfo = pathinfo($filename);
-			if(!array_key_exists('extension', $pathinfo)) {
-				throw new UploadException("File has no extension");
-			}
-			$metadata = array();
-			$metadata['filename'] = $pathinfo['basename'];
-			$metadata['extension'] = $pathinfo['extension'];
-			$metadata['tags'] = $tags;
-			$metadata['source'] = null;
-			$event = new DataUploadEvent($tmpname, $metadata);
-			send_event($event);
-		}
-		catch(UploadException $ex) {
-			return $ex->getMessage();
-		}
-	}
-
-	// copied from bulk add extension
-	private function add_dir($base, $subdir="") {
-		$list = "";
-
-		$dir = opendir("$base/$subdir");
-
-		$files = array();
-		while($f = readdir($dir)) {
-			$files[] = $f;
-		}
-		sort($files);
-
-		foreach($files as $filename) {
-			$fullpath = "$base/$subdir/$filename";
-
-			if(is_link($fullpath)) {
-				// ignore
-			}
-			else if(is_dir($fullpath)) {
-				if($filename[0] != ".") {
-					$this->add_dir($base, "$subdir/$filename");
-				}
-			}
-			else {
-				$tmpfile = $fullpath;
-				$tags = $subdir;
-				$tags = str_replace("/", " ", $tags);
-				$tags = str_replace("__", " ", $tags);
-				$list .= "<br>".html_escape("$subdir/$filename (".str_replace(" ", ",", $tags).")...");
-				$error = $this->add_image($tmpfile, $filename, $tags);
-				if(is_null($error)) {
-					$list .= "ok\n";
-				}
-				else {
-					$list .= "failed: $error\n";
-				}
-			}
-		}
-		closedir($dir);
-
-		// $this->theme->add_status("Adding $subdir", $list);
-	}
 }
-

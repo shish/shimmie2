@@ -66,8 +66,7 @@ class CommentListTheme extends Themelet {
 			
 			$comment_count = count($comments);
 			if($comment_limit > 0 && $comment_count > $comment_limit) {
-				$hidden = $comment_count - $comment_limit;
-				$comment_html .= '<p>showing '.$comment_limit.' of '.$comment_count.' comments</p>';
+				$comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
 				$comments = array_slice($comments, -$comment_limit);
 				$this->show_anon_id = false;
 			}
@@ -88,7 +87,8 @@ class CommentListTheme extends Themelet {
 						$comment_html .= $this->build_postbox($image->id);
 					}
 					else {
-						$comment_html .= "<a href='".make_link("post/view/".$image->id)."'>Add Comment</a>";
+						$link = make_link("post/view/".$image->id);
+						$comment_html .= "<a href='$link'>Add Comment</a>";
 					}
 				}
 			}
@@ -210,7 +210,6 @@ class CommentListTheme extends Themelet {
 		//$u_tags = url_escape(implode(" ", $search_terms));
 		//$query = empty($u_tags) ? "" : '/'.$u_tags;
 
-
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";
 		$h_index = "<a href='".make_link("post/list")."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : "<a href='$next'>Next</a>";
@@ -233,7 +232,6 @@ class CommentListTheme extends Themelet {
 
 		$i_uid = int_escape($comment->owner_id);
 		$h_name = html_escape($comment->owner_name);
-		$h_poster_ip = html_escape($comment->poster_ip);
 		$h_timestamp = autodate($comment->posted);
 		$h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
 		$i_comment_id = int_escape($comment->comment_id);
@@ -310,7 +308,7 @@ class CommentListTheme extends Themelet {
 		$h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
 		return '
-		<div class="comment">
+		<div class="comment comment_add">
 			'.make_form(make_link("comment/add")).'
 				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />

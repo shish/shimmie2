@@ -32,6 +32,9 @@ class ImageAdditionEvent extends Event {
 class ImageAdditionException extends SCoreException {
 	var $error;
 
+	/**
+	 * @param string $error
+	 */
 	public function __construct($error) {
 		$this->error = $error;
 	}
@@ -217,7 +220,7 @@ class ImageIO extends Extension {
 	}
 
 	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $user, $config;
+		global $user;
 		
 		if($user->can("delete_image")) {
 			$event->add_part($this->theme->get_deleter_html($event->image->id));
@@ -310,7 +313,7 @@ class ImageIO extends Extension {
 	 * @throws ImageAdditionException
 	 */
 	private function add_image(Image $image) {
-		global $page, $user, $database, $config;
+		global $user, $database, $config;
 
 		/*
 		 * Validate things
@@ -328,7 +331,7 @@ class ImageIO extends Extension {
 			if($handler == "merge" || isset($_GET['update'])) {
 				$merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
 				send_event(new TagSetEvent($existing, $merged));
-				if(isset($_GET['rating']) && isset($_GET['update']) && class_exists("Ratings")){
+				if(isset($_GET['rating']) && isset($_GET['update']) && ext_is_live("Ratings")){
 					send_event(new RatingSetEvent($existing, $_GET['rating']));
 				}
 				if(isset($_GET['source']) && isset($_GET['update'])){
@@ -384,7 +387,6 @@ class ImageIO extends Extension {
 	 */
 	private function send_file($image_id, $type) {
 		global $config;
-		global $database;
 		$image = Image::by_id($image_id);
 
 		global $page;
@@ -408,7 +410,7 @@ class ImageIO extends Extension {
 			$gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
 
 			if($if_modified_since == $gmdate_mod) {
-				$page->add_http_header("HTTP/1.0 304 Not Modified",3);
+				$page->set_code(304);
 				$page->set_data("");
 			}
 			else {

@@ -8,8 +8,6 @@ class ImageIOTheme extends Themelet {
 	 * @return string
 	 */
 	public function get_deleter_html(/*int*/ $image_id) {
-		global $config;
-
 		$html = "
 			".make_form(make_link("image/delete"))."
 				<input type='hidden' name='image_id' value='$image_id' />

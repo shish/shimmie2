@@ -15,13 +15,26 @@
  *  <p><b>Note:</b> requires the "admin" extension to be enabled
  */
 
+class BulkAddEvent extends Event {
+	public $dir, $results;
+
+	public function __construct($dir) {
+		$this->dir = $dir;
+		$this->results = array();
+	}
+}
+
 class BulkAdd extends Extension {
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $user;
 		if($event->page_matches("bulk_add")) {
 			if($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
 				set_time_limit(0);
-				$this->add_dir($_POST['dir']);
+				$bae = new BulkAddEvent($_POST['dir']);
+				send_event($bae);
+				if(strlen($bae->results) > 0) {
+					$this->theme->add_status("Adding files", $bae->results);
+				}
 				$this->theme->display_upload_results($page);
 			}
 		}
@@ -29,12 +42,14 @@ class BulkAdd extends Extension {
 
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
-			print "  bulk-add [directory]\n";
-			print "	Import this directory\n\n";
+			print "\tbulk-add [directory]\n";
+			print "\t\tImport this directory\n\n";
 		}
 		if($event->cmd == "bulk-add") {
 			if(count($event->args) == 1) {
-				$this->add_dir($event->args[0]);
+				$bae = new BulkAddEvent($event->args[0]);
+				send_event($bae);
+				print(implode("\n", $bae->results));
 			}
 		}
 	}
@@ -43,72 +58,13 @@ class BulkAdd extends Extension {
 		$this->theme->display_admin_block();
 	}
 
-	/**
-	 * Generate the necessary DataUploadEvent for a given image and tags.
-	 */
-	private function add_image($tmpname, $filename, $tags) {
-		assert(file_exists($tmpname));
-
-		$pathinfo = pathinfo($filename);
-		if(!array_key_exists('extension', $pathinfo)) {
-			throw new UploadException("File has no extension");
+	public function onBulkAdd(BulkAddEvent $event) {
+		if(is_dir($event->dir) && is_readable($event->dir)) {
+			$event->results = add_dir($event->dir);
 		}
-		$metadata = array();
-		$metadata['filename'] = $pathinfo['basename'];
-		$metadata['extension'] = $pathinfo['extension'];
-		$metadata['tags'] = $tags;
-		$metadata['source'] = null;
-		$event = new DataUploadEvent($tmpname, $metadata);
-		send_event($event);
-		if($event->image_id == -1) {
-			throw new UploadException("File type not recognised");
-		}
-	}
-
-	private function add_dir(/*string*/ $base, $subdir="") {
-		if(!is_dir($base)) {
-			$this->theme->add_status("Error", "$base is not a directory");
-			return;
-		}
-
-		$list = "";
-
-		foreach(glob("$base/$subdir/*") as $fullpath) {
-			$fullpath = str_replace("//", "/", $fullpath);
-			$shortpath = str_replace($base, "", $fullpath);
-
-			if(is_link($fullpath)) {
-				// ignore
-			}
-			else if(is_dir($fullpath)) {
-				$this->add_dir($base, str_replace($base, "", $fullpath));
-			}
-			else {
-				$pathinfo = pathinfo($fullpath);
-				$matches = array();
-				if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", $pathinfo["basename"], $matches)) {
-					$tags = $matches[1];
-				}
-				else {
-					$tags = $subdir;
-					$tags = str_replace("/", " ", $tags);
-					$tags = str_replace("__", " ", $tags);
-					$tags = trim($tags);
-				}
-				$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
-				try{
-					$this->add_image($fullpath, $pathinfo["basename"], $tags);
-					$list .= "ok\n";
-				}
-				catch(Exception $ex) {
-					$list .= "failed:<br>". $ex->getMessage();
-				}
-			}
-		}
-
-		if(strlen($list) > 0) {
-			$this->theme->add_status("Adding $subdir", $list);
+		else {
+			$h_dir = html_escape($event->dir);
+			$event->results[] = "Error, $h_dir is not a readable directory";
 		}
 	}
 }
-

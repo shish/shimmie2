@@ -15,7 +15,7 @@ class CustomCommentListTheme extends CommentListTheme {
 		$page->disable_left();
 		$page->add_block(new Block(null, $this->build_upload_box(), "main", 0));
 		$page->add_block(new Block(null, "<hr>", "main", 80));
-		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages, 90);
+		$this->display_paginator($page, "comment/list", null, $page_number, $total_pages);
 
 		// parts for each image
 		$position = 10;
@@ -56,7 +56,7 @@ class CustomCommentListTheme extends CommentListTheme {
 	}
 
 
-	protected function comment_to_html($comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, $trim=false) {
 		$inner_id = $this->inner_id; // because custom themes can't add params, because PHP
 		global $user;
 

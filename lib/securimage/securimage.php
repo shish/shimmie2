@@ -416,7 +416,7 @@ class Securimage {
    * </code>
    *
    */
-  function Securimage()
+  function __construct()
   {
     if ( session_id() == '' ) { // no session has been started yet, which is needed for validation
       session_start();

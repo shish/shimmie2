@@ -7,7 +7,6 @@
 
 class taggerTheme extends Themelet {
 	public function build_tagger (Page $page, $event) {
-		global $config;
 		// Initialization code
 		$base_href = get_base_href();
 		// TODO: AJAX test and fallback.

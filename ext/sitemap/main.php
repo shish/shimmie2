@@ -20,7 +20,7 @@ class XMLSitemap extends Extension
 		if ($event->page_matches("sitemap.xml")) {
 			global $config;
 
-			$this->sitemap_filepath = $_SERVER['DOCUMENT_ROOT'] . "/data/cache/sitemap.xml";
+			$this->sitemap_filepath = data_path("cache/sitemap.xml");
 			// determine if new sitemap needs to be generated
 			if ($this->new_sitemap_needed()) {
 				// determine which type of sitemap to generate
@@ -49,13 +49,14 @@ class XMLSitemap extends Extension
 	{
 		/* --- Add latest images to sitemap with higher priority --- */
 		$latestimages = Image::find_images(0, 50, array());
+		if(empty($latestimages)) return;
 		$latestimages_urllist = array();
 		foreach ($latestimages as $arrayid => $image) {
 			// create url from image id's
 			$latestimages_urllist[$arrayid] = "post/view/$image->id";
 		}
 
-		$this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", $image->posted_timestamp));
+		$this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", strtotime($image->posted)));
 
 		/* --- Display page --- */
 		// when sitemap is ok, display it from the file
@@ -87,7 +88,7 @@ class XMLSitemap extends Extension
 			// create url from image id's
 			$latestimages_urllist[$arrayid] = "post/view/$image->id";
 		}
-		$this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", $image->posted_timestamp));
+		$this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", strtotime($image->posted)));
 
 		/* --- Add other tags --- */
 		$other_tags = $database->get_all("SELECT tag, count FROM tags ORDER BY `count` DESC LIMIT 21,10000000");
@@ -105,7 +106,7 @@ class XMLSitemap extends Extension
 			// create url from image id's
 			$otherimages[$arrayid] = "post/view/$image->id";
 		}
-		$this->add_sitemap_queue($otherimages, "monthly", "0.6", date("Y-m-d", $image->posted_timestamp));
+		$this->add_sitemap_queue($otherimages, "monthly", "0.6", date("Y-m-d", strtotime($image->posted)));
 
 
 		/* --- Display page --- */
@@ -160,6 +161,10 @@ class XMLSitemap extends Extension
 	 */
 	private function new_sitemap_needed()
 	{
+		if(!file_exists($this->sitemap_filepath)) {
+			return true;
+		}
+
 		$sitemap_generation_interval = 86400; // allow new site map every day
 		$last_generated_time = filemtime($this->sitemap_filepath);
 

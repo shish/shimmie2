@@ -1,13 +1,13 @@
 <?php
-class RegenThumbTest extends ShimmieWebTestCase {
+class RegenThumbTest extends ShimmiePHPUnitTestCase {
 	public function testRegenThumb() {
 		$this->log_in_as_admin();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
-		$this->click("Regenerate");
+
+		$_POST['image_id'] = $image_id;
+		$this->get_page("regen_thumb");
 		$this->assert_title("Thumbnail Regenerated");
-		$this->delete_image($image_id);
-		$this->log_out();
 
 		# FIXME: test that the thumb's modified time has been updated
 	}

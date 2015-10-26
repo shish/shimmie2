@@ -1,9 +1,12 @@
 <?php
-class ReportImageTest extends ShimmieWebTestCase {
+class ReportImageTest extends ShimmiePHPUnitTestCase {
 	public function testReportImage() {
 		$this->log_in_as_user();
-		$image_id = $this->post_image("ext/simpletest/data/pbx_screenshot.jpg", "pbx computer screenshot");
+		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");
+
+		$this->markTestIncomplete();
+
 		$this->set_field('reason', "report details");
 		$this->click("Report");
 		$this->log_out();

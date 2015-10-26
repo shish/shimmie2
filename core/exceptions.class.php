@@ -22,3 +22,8 @@ class PermissionDeniedException extends SCoreException {}
  * Example: Image::by_id(-1) returns null
  */
 class ImageDoesNotExist extends SCoreException {}
+
+/*
+ * For validate_input()
+ */
+class InvalidInput extends SCoreException {}

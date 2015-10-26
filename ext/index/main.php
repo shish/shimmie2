@@ -235,7 +235,7 @@ class Index extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $database, $page, $user;
+		global $database, $page;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
 				$search = url_escape(Tag::implode(Tag::resolve_aliases(Tag::explode($_GET['search'], false))));
@@ -377,19 +377,17 @@ class Index extends Extension {
 			$event->add_querylet(new Querylet("height $cmp :height{$this->stpen}",array("height{$this->stpen}"=>int_escape($matches[2]))));
 		}
 		else if(preg_match("/^order[=|:](id|width|height|filesize|filename)[_]?(desc|asc)?$/i", $event->term, $matches)){
-			global $order_sql;
 			$ord = strtolower($matches[1]);
 			$default_order_for_column = preg_match("/^(id|filename)$/", $matches[1]) ? "ASC" : "DESC";
 			$sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
-			$order_sql = "images.$ord $sort";
+			Image::$order_sql = "images.$ord $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
 		else if(preg_match("/^order[=|:]random[_]([0-9]{1,4})$/i", $event->term, $matches)){
-			global $order_sql;
 			//order[=|:]random requires a seed to avoid duplicates
 			//since the tag can't be changed during the parseevent, we instead generate the seed during submit using js
 			$seed = $matches[1];
-			$order_sql = "RAND($seed)";
+			Image::$order_sql = "RAND($seed)";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
 
