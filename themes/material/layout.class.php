@@ -26,9 +26,9 @@ class Layout {
 		$main_block_html = "";
 		$head_block_html = "";
 		$sub_block_html = "";
-		$drawer_block_html = "";
-		$toolbar_block_html = "";
-		$subtoolbar_block_html = "";
+		$drawer_block_html = ""; //use exampled in user.theme.php & view.theme.php
+		$toolbar_block_html = ""; // not used at this point
+		$subtoolbar_block_html = ""; // use exampled in user.theme.php
     $navigation = "";
 
     $h_search = "
