@@ -233,8 +233,7 @@ EOD;
   public function get_html(Block $block, $section="main", $hidable=false, $extra_class="") {
     $h = $block->header;
     $b = $block->body;
-    $i = $block->id;
-    $i = preg_replace('/[^\w-]/', '', $i);//blotter extention id has `!`
+    $i = $block->id;//blotter extention id has `!`
 
     if($section == "toolbar"){
       $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
