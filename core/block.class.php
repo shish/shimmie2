@@ -20,7 +20,7 @@ class Block {
 	 */
 	public $body;
 
-	/** 
+	/**
 	 * Where the block should be placed. The default theme supports
 	 * "main" and "left", other themes can add their own areas.
 	 *
@@ -58,7 +58,7 @@ class Block {
 		$this->body = $body;
 		$this->section = $section;
 		$this->position = $position;
-		$this->id = str_replace(' ', '_', is_null($id) ? (is_null($header) ? md5($body) : $header) . $section : $id);
+		$this->id = preg_replace('/[^\w]/', '',str_replace(' ', '_', is_null($id) ? (is_null($header) ? md5($body) : $header) . $section : $id));
 	}
 
 	/**
@@ -94,4 +94,3 @@ class NavBlock extends Block {
 		parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
 	}
 }
-
