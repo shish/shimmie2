@@ -33,7 +33,7 @@ $(function(){
     } else {
       $("#left-block").prependTo("#main-grid")
     }
-  	$.cookie("layout-type", layout_type, {path: '/', expires: 365});
+  	$.cookie("ui-layout-type", layout_type, {path: '/', expires: 365});
     zoom("width");
   }
 
@@ -55,7 +55,7 @@ $(function(){
     } else {
       $("#left-block").prependTo("#main-grid")
     }
-  	$.cookie("layout-type", layout_type, {path: '/', expires: 365});
+  	$.cookie("ui-layout-type", layout_type, {path: '/', expires: 365});
     zoom("width");
   }
   current_layout = $.cookie("layout-type");
