@@ -560,9 +560,22 @@ class Image {
 	 */
 	public function delete_tags_from_image() {
 		global $database;
-		$database->execute(
-				"UPDATE tags SET count = count - 1 WHERE id IN ".
-				"(SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id));
+		if($database->get_driver_name() == "mysql") {
+			//mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
+			$database->execute("
+				UPDATE tags t
+				INNER JOIN image_tags it ON t.id = it.tag_id
+				SET count = count - 1
+				WHERE it.image_id = :id",
+				array("id"=>$this->id)
+			);
+		} else {
+			$database->execute("
+				UPDATE tags
+				SET count = count - 1
+				WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id)
+			);
+		}
 		$database->execute("DELETE FROM image_tags WHERE image_id=:id", array("id"=>$this->id));
 	}
 
