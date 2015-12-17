@@ -1,6 +1,6 @@
 <?php
 class BulkAddTest extends ShimmiePHPUnitTestCase {
-	function testBulkAdd() {
+	public function testBulkAdd() {
 		$this->log_in_as_admin();
 
 		$this->get_page('admin');
@@ -11,7 +11,8 @@ class BulkAddTest extends ShimmiePHPUnitTestCase {
 		$this->assertContains("Error, asdf is not a readable directory",
 			$bae->results, implode("\n", $bae->results));
 
-		return;  // FIXME: have BAE return a list of successes as well as errors?
+		// FIXME: have BAE return a list of successes as well as errors?
+		$this->markTestIncomplete();
 
 		$this->get_page('admin');
 		$this->assert_title("Admin Tools");

@@ -22,7 +22,7 @@ class TagEditCloud extends Extension {
 			}
 		}
 	}
-		
+
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_bool("tageditcloud_disable", false);
@@ -74,15 +74,13 @@ class TagEditCloud extends Extension {
 
 		$ignore_tags = Tag::explode($config->get_string("tageditcloud_ignoretags"));
 
-		if(class_exists("TagCategories")){
+		if(ext_is_live("TagCategories")) {
 			$categories = $database->get_all("SELECT category, color FROM image_tag_categories");
 			$cat_color = array();
-			foreach($categories as $row){
+			foreach($categories as $row) {
 				$cat_color[$row['category']] = $row['color'];
 			}
 		}
-
-		$tag_data = null;
 
 		switch($sort_method) {
 			case 'a':
@@ -99,31 +97,29 @@ class TagEditCloud extends Extension {
 				break;
 			case 'r':
 				$relevant_tags = array_diff($image->get_tag_array(),$ignore_tags);
-				if(count($relevant_tags) > 0) {
-					$relevant_tags = implode(",",array_map(array($database,"escape"),$relevant_tags));
-					$tag_data = $database->get_all("
-						SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
-						FROM image_tags it1
-						JOIN image_tags it2 USING(image_id)
-						JOIN tags t1 ON it1.tag_id = t1.id
-						JOIN tags t2 ON it2.tag_id = t2.id
-						WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags)
-						GROUP BY t2.tag
-						ORDER BY count DESC
-						LIMIT :limit",
-						array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
+				if(count($relevant_tags) == 0) {
+					return null;
 				}
+				$relevant_tags = implode(",",array_map(array($database,"escape"),$relevant_tags));
+				$tag_data = $database->get_all("
+					SELECT t2.tag AS tag, COUNT(image_id) AS count, FLOOR(LN(LN(COUNT(image_id) - :tag_min1 + 1)+1)*150)/200 AS scaled
+					FROM image_tags it1
+					JOIN image_tags it2 USING(image_id)
+					JOIN tags t1 ON it1.tag_id = t1.id
+					JOIN tags t2 ON it2.tag_id = t2.id
+					WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags)
+					GROUP BY t2.tag
+					ORDER BY count DESC
+					LIMIT :limit",
+					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 				break;
 		}
-		if(is_null($tag_data)) {
-			return null;
-		}
-		
+
 		$counter = 1;
 		foreach($tag_data as $row) {
 			$full_tag = $row['tag'];
 
-			if(class_exists("TagCategories")){
+			if(ext_is_live("TagCategories")){
 				$tc = explode(':',$row['tag']);
 				if(isset($tc[1]) && isset($cat_color[$tc[0]])){
 					$h_tag = html_escape($tc[1]);

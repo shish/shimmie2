@@ -329,7 +329,8 @@ class Tag_History extends Extension {
 
 				$image = Image::by_id($stored_image_id);
 				if ( ! $image instanceof Image) {
-					throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
+					continue;
+					//throw new ImageDoesNotExist("Error: cannot find any image with the ID = ". $stored_image_id);
 				}
 
 				log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');

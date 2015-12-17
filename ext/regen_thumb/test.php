@@ -1,6 +1,6 @@
 <?php
 class RegenThumbTest extends ShimmiePHPUnitTestCase {
-	function testRegenThumb() {
+	public function testRegenThumb() {
 		$this->log_in_as_admin();
 		$image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$this->get_page("post/view/$image_id");

@@ -1,6 +1,6 @@
 <?php
 class PrivMsgTest extends ShimmiePHPUnitTestCase {
-	function testPM() {
+	public function testPM() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 
@@ -31,7 +31,7 @@ class PrivMsgTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testAdminAccess() {
+	public function testAdminAccess() {
 		$this->log_in_as_admin();
 		$this->get_page("user/test");
 

@@ -1,6 +1,6 @@
 <?php
 class BanWordsTest extends ShimmiePHPUnitTestCase {
-	function check_blocked($image_id, $words) {
+	public function check_blocked($image_id, $words) {
 		global $user;
 		try {
 			send_event(new CommentPostingEvent($image_id, $user, $words));
@@ -11,7 +11,7 @@ class BanWordsTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testWordBan() {
+	public function testWordBan() {
 		global $config;
 		$config->set_string("banned_words", "viagra\nporn\n\n/http:.*\.cn\//");
 

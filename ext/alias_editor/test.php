@@ -1,12 +1,12 @@
 <?php
 class AliasEditorTest extends ShimmiePHPUnitTestCase {
-	function testAliasList() {
+	public function testAliasList() {
 		$this->get_page('alias/list');
 		$this->assert_response(200);
 		$this->assert_title("Alias List");
 	}
 
-	function testAliasListReadOnly() {
+	public function testAliasListReadOnly() {
 		// Check that normal users can't add aliases.
 		$this->log_in_as_user();
 		$this->get_page('alias/list');
@@ -14,7 +14,7 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase {
 		$this->assert_no_text("Add");
 	}
 
-	function testAliasEditor() {
+	public function testAliasEditor() {
 		/*
 		 **********************************************************************
 		 * FIXME: TODO:
@@ -26,6 +26,8 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase {
 		 *  dig into this and determine exactly what is happening.
 		 *
 		 *********************************************************************
+		*/
+		$this->markTestIncomplete();
 
 		$this->log_in_as_admin();
 
@@ -97,8 +99,6 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase {
 		$this->get_page('alias/list');
 		$this->assert_title("Alias List");
 		$this->assert_no_text("Add");
-
-		*/
 	}
 }
 

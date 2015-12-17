@@ -208,7 +208,7 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = array('n' => 123456789, 's' => $img->posted_timestamp, 'json_class' => 'Time');
+        $this->created_at = array('n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time');
         $this->id = intval($img->id);
         $this->parent_id = null;
         if (defined('ENABLED_EXTS')) {

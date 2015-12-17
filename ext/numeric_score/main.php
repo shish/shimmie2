@@ -13,7 +13,12 @@
 class NumericScoreSetEvent extends Event {
 	var $image_id, $user, $score;
 
-	public function __construct(/*int*/ $image_id, User $user, /*int*/ $score) {
+	/**
+	 * @param int $image_id
+	 * @param User $user
+	 * @param int $score
+	 */
+	public function __construct($image_id, User $user, $score) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->score = $score;
@@ -102,15 +107,15 @@ class NumericScore extends Extension {
 
 			if(!empty($_GET['day'])){
 				$D = (int) $_GET['day'];
-				if($D >= 1 && $D <= 31) $day = $D;
+				$day = clamp($D, 1, 31);
 			}
 			if(!empty($_GET['month'])){
 				$M = (int) $_GET['month'];
-				if($M >= 1 && $M <= 12) $month = $M;
+				$month = clamp($M, 1 ,12);
 			}
 			if(!empty($_GET['year'])){
 				$Y = (int) $_GET['year'];
-				if($Y >= 1970 && $Y < 2100) $year = $Y;
+				$year = clamp($Y, 1970, 2100);
 			}
 
 			$totaldate = $year."/".$month."/".$day;
@@ -168,7 +173,10 @@ class NumericScore extends Extension {
 		$this->delete_votes_by($event->id);
 	}
 
-	public function delete_votes_by(/*int*/ $user_id) {
+	/**
+	 * @param int $user_id
+	 */
+	public function delete_votes_by($user_id) {
 		global $database;
 
 		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
@@ -239,9 +247,9 @@ class NumericScore extends Extension {
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
 				array("ns_user_id"=>$iid)));
 		}
-		else if(preg_match("/^order[=|:](numeric_)?(score)[_]?(desc|asc)?$/i", $event->term, $matches)){
+		else if(preg_match("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i", $event->term, $matches)){
 			$default_order_for_column = "DESC";
-			$sort = isset($matches[3]) ? strtoupper($matches[3]) : $default_order_for_column;
+			$sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
 			Image::$order_sql = "images.numeric_score $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
@@ -250,7 +258,7 @@ class NumericScore extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
+		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches) && $event->parse) {
 			global $user;
 			$score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
 			if(!$user->is_anonymous()) {
@@ -290,7 +298,7 @@ class NumericScore extends Extension {
 	 * @param int $user_id
 	 * @param int $score
 	 */
-	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*int*/ $score) {
+	private function add_vote($image_id, $user_id, $score) {
 		global $database;
 		$database->execute(
 			"DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",

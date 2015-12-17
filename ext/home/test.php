@@ -1,6 +1,6 @@
 <?php
 class HomeTest extends ShimmiePHPUnitTestCase {
-	function testHomePage() {
+	public function testHomePage() {
 		$this->get_page('home');
 
 		// FIXME: this page doesn't use blocks; need assert_data_contains

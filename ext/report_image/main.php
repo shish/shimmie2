@@ -141,7 +141,10 @@ class ReportImage extends Extension {
 		$this->delete_reports_by($event->id);
 	}
 
-	public function delete_reports_by(/*int*/ $user_id) {
+	/**
+	 * @param int $user_id
+	 */
+	public function delete_reports_by($user_id) {
 		global $database;
 		$database->execute("DELETE FROM image_reports WHERE reporter_id=?", array($user_id));
 		$database->cache->delete("image-report-count");
@@ -165,7 +168,7 @@ class ReportImage extends Extension {
 
 	/**
 	 * @param Image $image
-	 * @return array
+	 * @return string[]
 	 */
 	public function get_reporters(Image $image) {
 		global $database;
@@ -206,7 +209,7 @@ class ReportImage extends Extension {
 	}
 
 	/**
-	 * @return mixed
+	 * @return int
 	 */
 	public function count_reported_images() {
 		global $database;
@@ -220,13 +223,3 @@ class ReportImage extends Extension {
 		return $count;
 	}
 }
-//  ===== Changelog =====
-// * Version 0.3a / 0.3a_rc - 11/06/07 - I can no longer use the same theme.php file for both SVN and RCx. Sorry.
-// *   Same deal with theme.php as it is with main.php
-// * Version 0.3 / 0.3_rc - 11/06/07 - Added the option to display thumbnails, moved the reported image list to it's
-//     own page, and checked to make sure the user is an admin before letting them delete / view reported images.
-// * Version 0.2c_rc2 - 10/27/07 - Now (really!) supports Shimmie2 RC2!
-// * Version 0.2b - 10/27/07 - Now supports Shimmie2 RC2!
-// * Version 0.2a - 10/24/07 - Fixed some SQL issues. I will make sure to test before commiting :)
-// * Version 0.2 - 10/24/07 - First public release.
-

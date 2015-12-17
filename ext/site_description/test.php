@@ -1,6 +1,6 @@
 <?php
 class SiteDescriptionTest extends ShimmiePHPUnitTestCase {
-	function testSiteDescription() {
+	public function testSiteDescription() {
 		global $config, $page;
 		$config->set_string("site_description", "A Shimmie testbed");
 		$this->get_page("post/list");
@@ -10,7 +10,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase {
 		);
 	}
 
-	function testSiteKeywords() {
+	public function testSiteKeywords() {
 		global $config, $page;
 		$config->set_string("site_keywords", "foo,bar,baz");
 		$this->get_page("post/list");

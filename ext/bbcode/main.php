@@ -93,7 +93,7 @@ class BBCode extends FormatterExtension {
 
 	/**
 	 * @param string $text
-	 * @return mixed
+	 * @return string
 	 */
 	private function filter_spoiler(/*string*/ $text) {
 		return str_replace(

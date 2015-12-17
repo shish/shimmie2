@@ -51,7 +51,7 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $ext
+	 * @param string $ext
 	 * @return bool
 	 */
 	private function supported_ext($ext) {
@@ -60,8 +60,8 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $filename
-	 * @param $metadata
+	 * @param string $filename
+	 * @param mixed[] $metadata
 	 * @return Image
 	 */
 	private function create_image_from_data($filename, $metadata) {
@@ -82,7 +82,7 @@ class SVGFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	private function check_contents($file) {

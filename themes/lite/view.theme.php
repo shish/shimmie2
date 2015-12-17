@@ -16,7 +16,11 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 11));
 		$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
 	}
-	
+
+	/**
+	 * @param Image $image
+	 * @return string
+	 */
 	private function build_stats(Image $image) {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";

@@ -63,7 +63,7 @@ class Image {
 	public $tag_array;
 
 	public $owner_id, $owner_ip;
-	public $posted, $posted_timestamp;
+	public $posted;
 	public $source;
 	public $locked;
 
@@ -82,7 +82,6 @@ class Image {
 				$name = str_replace("images.", "", $name);
 				$this->$name = $value; // hax, this is likely the cause of much scrutinizer-ci complaints.
 			}
-			$this->posted_timestamp = strtotime($this->posted); // pray
 			$this->locked = bool_escape($this->locked);
 
 			assert(is_numeric($this->id));
@@ -192,6 +191,13 @@ class Image {
 		return ($yays > 1 || $nays > 0);
 	}
 
+	/**
+	 * @param string[] $tags
+	 * @param int $offset
+	 * @param int $limit
+	 * @return null|PDOStatement
+	 * @throws SCoreException
+	 */
 	public function get_accelerated_result($tags, $offset, $limit) {
 		global $database;
 
@@ -244,7 +250,7 @@ class Image {
 	 * Count the number of image results for a given search
 	 *
 	 * @param string[] $tags
-	 * @return mixed
+	 * @return int
 	 */
 	public static function count_images($tags=array()) {
 		assert('is_array($tags)');
@@ -283,7 +289,6 @@ class Image {
 		global $config;
 		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
-
 
 	/*
 	 * Accessors & mutators
@@ -401,9 +406,9 @@ class Image {
 	/**
 	 * Check configured template for a link, then try nice URL, then plain URL
 	 *
-	 * @param $template
-	 * @param $nice
-	 * @param $plain
+	 * @param string $template
+	 * @param string $nice
+	 * @param string $plain
 	 * @return string
 	 */
 	private function get_link($template, $nice, $plain) {
@@ -532,6 +537,10 @@ class Image {
 		return $this->locked;
 	}
 
+	/**
+	 * @param bool $tf
+	 * @throws SCoreException
+	 */
 	public function set_locked($tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
@@ -551,9 +560,22 @@ class Image {
 	 */
 	public function delete_tags_from_image() {
 		global $database;
-		$database->execute(
-				"UPDATE tags SET count = count - 1 WHERE id IN ".
-				"(SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id));
+		if($database->get_driver_name() == "mysql") {
+			//mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
+			$database->execute("
+				UPDATE tags t
+				INNER JOIN image_tags it ON t.id = it.tag_id
+				SET count = count - 1
+				WHERE it.image_id = :id",
+				array("id"=>$this->id)
+			);
+		} else {
+			$database->execute("
+				UPDATE tags
+				SET count = count - 1
+				WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id)
+			);
+		}
 		$database->execute("DELETE FROM image_tags WHERE image_id=:id", array("id"=>$this->id));
 	}
 
@@ -567,9 +589,6 @@ class Image {
 		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
 		global $database;
 
-		$tags = array_map(array('Tag', 'sanitise'), $tags);
-		$tags = Tag::resolve_aliases($tags);
-
 		if(count($tags) <= 0) {
 			throw new SCoreException('Tried to set zero tags');
 		}
@@ -579,12 +598,6 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
-				$ttpe = new TagTermParseEvent($tag, $this->id);
-				send_event($ttpe);
-				if($ttpe->is_metatag()) {
-					continue;
-				}
-
 				if(mb_strlen($tag, 'UTF-8') > 255){
 					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
 					continue;
@@ -620,6 +633,19 @@ class Image {
 
 			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
+		}
+	}
+
+	/**
+	 * Send list of metatags to be parsed.
+	 *
+	 * @param [] $metatags
+	 * @param int $image_id
+	 */
+	public function parse_metatags($metatags, $image_id) {
+		foreach($metatags as $tag) {
+			$ttpe = new TagTermParseEvent($tag, $image_id, TRUE);
+			send_event($ttpe);
 		}
 	}
 
@@ -737,8 +763,57 @@ class Image {
 	}
 
 	/**
+	 * @param string[] $terms
+	 * @return ImgQuerylet[]
+	 */
+	private static function parse_meta_terms($terms) {
+		$img_querylets = array();
+		$stpe = new SearchTermParseEvent(null, $terms);
+		send_event($stpe);
+		if ($stpe->is_querylet_set()) {
+			foreach ($stpe->get_querylets() as $querylet) {
+				$img_querylets[] = new ImgQuerylet($querylet, true);
+			}
+		}
+		return $img_querylets;
+	}
+
+	/**
+	 * @param ImgQuerylet[] $img_querylets
+	 * @return Querylet
+	 */
+	private static function build_img_search($img_querylets) {
+		// merge all the image metadata searches into one generic querylet
+		$n = 0;
+		$sql = "";
+		$terms = array();
+		foreach ($img_querylets as $iq) {
+			if ($n++ > 0) $sql .= " AND";
+			if (!$iq->positive) $sql .= " NOT";
+			$sql .= " (" . $iq->qlet->sql . ")";
+			$terms = array_merge($terms, $iq->qlet->variables);
+		}
+		return new Querylet($sql, $terms);
+	}
+
+	/**
+	 * @param Querylet $img_search
+	 * @return Querylet
+	 */
+	private static function build_simple_query($img_search) {
+		$query = new Querylet("SELECT images.* FROM images ");
+
+		if (!empty($img_search->sql)) {
+			$query->append_sql(" WHERE ");
+			$query->append($img_search);
+			return $query;
+		}
+		return $query;
+	}
+
+	/**
 	 * WARNING: this description is no longer accurate, though it does get across
-	 * the general idea - the actual method has a few extra optimisiations
+	 * the general idea - the actual method has a few extra optimisations
 	 *
 	 * "foo bar -baz user=foo" becomes
 	 *
@@ -752,7 +827,7 @@ class Image {
 	 *   A) Incredibly simple:
 	 *      Each search term maps to a list of image IDs
 	 *   B) Runs really fast on a good database:
-	 *      These lists are calucalted once, and the set intersection taken
+	 *      These lists are calculated once, and the set intersection taken
 	 *   C) Runs really slow on bad databases:
 	 *      All the subqueries are executed every time for every row in the
 	 *      images table. Yes, MySQL does suck this much.
@@ -764,21 +839,12 @@ class Image {
 		global $database;
 
 		$tag_querylets = array();
-		$img_querylets = array();
+		$img_querylets = self::parse_meta_terms($terms);
 		$positive_tag_count = 0;
-
-		$stpe = new SearchTermParseEvent(null, $terms);
-		send_event($stpe);
-		if($stpe->is_querylet_set()) {
-			foreach($stpe->get_querylets() as $querylet) {
-				$img_querylets[] = new ImgQuerylet($querylet, true);
-			}
-		}
-
-		$terms = Tag::resolve_aliases($terms);
 
 		// parse the words that are searched for into
 		// various types of querylet
+		$terms = Tag::resolve_aliases($terms);
 		foreach($terms as $term) {
 			$positive = true;
 			if(is_string($term) && !empty($term) && ($term[0] == '-')) {
@@ -804,41 +870,25 @@ class Image {
 				}
 			}
 		}
-
-
-		// merge all the image metadata searches into one generic querylet
-		$n = 0;
-		$sql = "";
-		$terms = array();
-		foreach($img_querylets as $iq) {
-			if($n++ > 0) $sql .= " AND";
-			if(!$iq->positive) $sql .= " NOT";
-			$sql .= " (" . $iq->qlet->sql . ")";
-			$terms = array_merge($terms, $iq->qlet->variables);
-		}
-		$img_search = new Querylet($sql, $terms);
+		$img_search = self::build_img_search($img_querylets);
 
 		// How many tag querylets are there?
 		$count_tag_querylets = count($tag_querylets);
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($count_tag_querylets === 0) {
-			$query = new Querylet("SELECT images.* FROM images ");
-
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" WHERE ");
-				$query->append($img_search);
-			}
+			$query = self::build_simple_query($img_search);
 		}
 
 		// one positive tag (a common case), do an optimised search
 		else if($count_tag_querylets === 1 && $tag_querylets[0]->positive) {
 			$query = new Querylet($database->scoreql_to_sql("
-				SELECT images.* FROM images
+				SELECT images.*
+				FROM images
 				JOIN image_tags ON images.id=image_tags.image_id
 				JOIN tags ON image_tags.tag_id=tags.id
 				WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
-				"), array("tag"=>$tag_querylets[0]->tag));
+			"), array("tag"=>$tag_querylets[0]->tag));
 
 			if(!empty($img_search->sql)) {
 				$query->append_sql(" AND ");
@@ -854,10 +904,12 @@ class Image {
 
 			foreach($tag_querylets as $tq) {
 				$tag_ids = $database->get_col(
-						$database->scoreql_to_sql(
-							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-						),
-						array("tag"=>$tq->tag));
+					$database->scoreql_to_sql("
+						SELECT id
+						FROM tags
+						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					"), array("tag"=>$tq->tag)
+				);
 				if($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
@@ -872,7 +924,7 @@ class Image {
 				$have_pos = count($positive_tag_id_array) > 0;
 				$have_neg = count($negative_tag_id_array) > 0;
 
-				$sql = "SELECT images.* FROM images WHERE images.id IN (";
+				$sql = "";
 				if($have_pos) {
 					$positive_tag_id_list = join(', ', $positive_tag_id_array);
 					$sql .= "
@@ -894,8 +946,11 @@ class Image {
 						WHERE tag_id IN ($negative_tag_id_list)
 					";
 				}
-				$sql .= ")";
-				$query = new Querylet($sql);
+				$query = new Querylet("
+					SELECT images.*
+					FROM images
+					WHERE images.id IN ($sql)
+				");
 
 				if(strlen($img_search->sql) > 0) {
 					$query->append_sql(" AND ");
@@ -921,22 +976,15 @@ class Image {
 	 * build_accurate_search_querylet() for a full explanation
 	 *
 	 * @param array $terms
+	 * @return Querylet
 	 */
 	private static function build_ugly_search_querylet($terms) {
 		global $database;
 
 		$tag_querylets = array();
-		$img_querylets = array();
+		$img_querylets = self::parse_meta_terms($terms);
 		$positive_tag_count = 0;
 		$negative_tag_count = 0;
-
-		$stpe = new SearchTermParseEvent(null, $terms);
-		send_event($stpe);
-		if($stpe->is_querylet_set()) {
-			foreach($stpe->get_querylets() as $querylet) {
-				$img_querylets[] = new ImgQuerylet($querylet, true);
-			}
-		}
 
 		$terms = Tag::resolve_aliases($terms);
 
@@ -979,44 +1027,24 @@ class Image {
 			else $negative_tag_count++;
 		}
 		$tag_search = new Querylet($sql, $terms);
-
-		// merge all the image metadata searches into one generic querylet
-		$n = 0;
-		$sql = "";
-		$terms = array();
-		foreach($img_querylets as $iq) {
-			if($n++ > 0) $sql .= " AND";
-			if(!$iq->positive) $sql .= " NOT";
-			$sql .= " (" . $iq->qlet->sql . ")";
-			$terms = array_merge($terms, $iq->qlet->variables);
-		}
-		$img_search = new Querylet($sql, $terms);
-
+		$img_search = self::build_img_search($img_querylets);
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = new Querylet("SELECT images.*,UNIX_TIMESTAMP(posted) AS posted_timestamp FROM images ");
-
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" WHERE ");
-				$query->append($img_search);
-			}
+			$query = self::build_simple_query($img_search);
 		}
 
 		// one positive tag (a common case), do an optimised search
 		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
-			$query = new Querylet(
-				// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
-				// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
-				"
-					SELECT images.*, UNIX_TIMESTAMP(posted) AS posted_timestamp
-					FROM tags, image_tags, images
-					WHERE
-						tag LIKE :tag0
-						AND tags.id = image_tags.tag_id
-						AND image_tags.image_id = images.id
-				",
-				$tag_search->variables);
+			// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
+			// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				JOIN image_tags ON images.id=image_tags.image_id
+				JOIN tags ON image_tags.tag_id=tags.id
+				WHERE tag LIKE :tag0
+			", $tag_search->variables);
 
 			if(!empty($img_search->sql)) {
 				$query->append_sql(" AND ");
@@ -1031,7 +1059,10 @@ class Image {
 
 			$x = 0;
 			foreach($tag_search->variables as $tag) {
-				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
+				$tag_ids = $database->get_col(
+					"SELECT id FROM tags WHERE tag LIKE :tag",
+					array("tag"=>$tag)
+				);
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
 
 				$tags_ok = count($tag_ids) > 0 || !$tag_querylets[$x]->positive;
@@ -1057,7 +1088,7 @@ class Image {
 					)
 				);
 				$query = new Querylet('
-					SELECT *, UNIX_TIMESTAMP(posted) AS posted_timestamp
+					SELECT *
 					FROM ('.$subquery->sql.') AS images ', $subquery->variables);
 
 				if(!empty($img_search->sql)) {
@@ -1102,7 +1133,7 @@ class Tag {
 	 * Remove any excess fluff from a user-input tag
 	 *
 	 * @param string $tag
-	 * @return mixed
+	 * @return string
 	 */
 	public static function sanitise($tag) {
 		assert('is_string($tag)');
@@ -1118,7 +1149,7 @@ class Tag {
 	 *
 	 * @param string|string[] $tags
 	 * @param bool $tagme
-	 * @return array
+	 * @return string[]
 	 */
 	public static function explode($tags, $tagme=true) {
 		assert('is_string($tags) || is_array($tags)');
@@ -1141,6 +1172,8 @@ class Tag {
 		if(count($tag_array) === 0 && $tagme) {
 			$tag_array = array("tagme");
 		}
+
+		$tag_array = array_iunique($tag_array); //remove duplicate tags
 
 		sort($tag_array);
 
@@ -1213,7 +1246,10 @@ class Tag {
 			global $database;
 			$db_wild_tag = str_replace("%", "\%", $tag);
 			$db_wild_tag = str_replace("*", "%", $db_wild_tag);
-			$newtags = $database->get_col($database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"), array($db_wild_tag));
+			$newtags = $database->get_col(
+				$database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"),
+				array($db_wild_tag)
+			);
 			if(count($newtags) > 0) {
 				$resolved = $newtags;
 			} else {
@@ -1237,7 +1273,7 @@ class Tag {
 		$i = 0;
 		$tag_count = count($tags);
 		while($i<$tag_count) {
-			$aliases = explode(' ', Tag::resolve_alias($tags[$i]));
+			$aliases = Tag::explode(Tag::resolve_alias($tags[$i]), FALSE);
 			foreach($aliases as $alias){
 				if(!in_array($alias, $new)){
 					if($tags[$i] == $alias){
@@ -1284,7 +1320,7 @@ function move_upload_to_archive(DataUploadEvent $event) {
  * @param $base string
  * @return array
  */
-function add_dir(/*string*/ $base) {
+function add_dir($base) {
     $results = array();
 
     foreach(list_files($base) as $full_path) {
@@ -1307,12 +1343,12 @@ function add_dir(/*string*/ $base) {
 }
 
 /**
- * @param $tmpname
- * @param $filename
- * @param $tags
+ * @param string $tmpname
+ * @param string $filename
+ * @param string $tags
  * @throws UploadException
  */
-function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) {
+function add_image($tmpname, $filename, $tags) {
     assert(file_exists($tmpname));
 
     $pathinfo = pathinfo($filename);
@@ -1337,7 +1373,7 @@ function add_image(/*string*/ $tmpname, /*string*/ $filename, /*string*/ $tags) 
  *
  * @param int $orig_width
  * @param int $orig_height
- * @return array
+ * @return int[]
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
@@ -1362,5 +1398,4 @@ function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 		return array((int)($orig_width*$scale), (int)($orig_height*$scale));
 	}
 }
-
 

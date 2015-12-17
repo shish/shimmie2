@@ -1,13 +1,14 @@
 <?php
 class WikiTest extends ShimmiePHPUnitTestCase {
-	function testIndex() {
+	public function testIndex() {
 		$this->get_page("wiki");
 		$this->assert_title("Index");
 		$this->assert_text("This is a default page");
 	}
 
-/*
-	function testAccess() {
+	public function testAccess() {
+		$this->markTestIncomplete();
+
 		global $config;
 		foreach(array("anon", "user", "admin") as $user) {
 			foreach(array(false, true) as $allowed) {
@@ -39,7 +40,9 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		}
 	}
 
-	function testLock() {
+	public function testLock() {
+		$this->markTestIncomplete();
+
 		global $config;
 		$config->set_bool("wiki_edit_anon", true);
 		$config->set_bool("wiki_edit_user", false);
@@ -73,7 +76,9 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testDefault() {
+	public function testDefault() {
+		$this->markTestIncomplete();
+
 		$this->log_in_as_admin();
 		$this->get_page("wiki/wiki:default");
 		$this->assert_title("wiki:default");
@@ -90,7 +95,9 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		$this->log_out();
 	}
 
-	function testRevisions() {
+	public function testRevisions() {
+		$this->markTestIncomplete();
+
 		$this->log_in_as_admin();
 		$this->get_page("wiki/test");
 		$this->assert_title("test");
@@ -111,6 +118,5 @@ class WikiTest extends ShimmiePHPUnitTestCase {
 		$this->click("Delete All");
 		$this->log_out();
 	}
-*/
 }
 

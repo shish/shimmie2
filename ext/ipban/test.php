@@ -1,6 +1,6 @@
 <?php
 class IPBanTest extends ShimmiePHPUnitTestCase {
-	function testIPBan() {
+	public function testIPBan() {
 		$this->get_page('ip_ban/list');
 		$this->assert_response(403);
 		$this->assert_title("Permission Denied");
@@ -9,7 +9,9 @@ class IPBanTest extends ShimmiePHPUnitTestCase {
 
 		$this->get_page('ip_ban/list');
 		$this->assert_no_text("42.42.42.42");
-		/*
+
+		$this->markTestIncomplete();
+
 		$this->set_field('ip', '42.42.42.42');
 		$this->set_field('reason', 'unit testing');
 		$this->set_field('end', '1 week');
@@ -18,7 +20,6 @@ class IPBanTest extends ShimmiePHPUnitTestCase {
 		$this->assert_text("42.42.42.42");
 		$this->click("Remove"); // FIXME: remove which ban? :S
 		$this->assert_no_text("42.42.42.42");
-		*/
 
 		$this->get_page('ip_ban/list?all=on'); // just test it doesn't crash for now
 

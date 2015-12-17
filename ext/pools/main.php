@@ -252,19 +252,21 @@ class Pools extends Extension {
 	 * When displaying an image, optionally list all the pools that the
 	 * image is currently a member of on a side panel, as well as a link
 	 * to the Next image in the pool.
+	 *
+	 * @var DisplayingImageEvent $event
 	 */
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $config;
 
 		if($config->get_bool("poolsInfoOnViewImage")) {
 			$imageID = $event->image->id;
-			$poolsIDs = $this->get_pool_id($imageID);
+			$poolsIDs = $this->get_pool_ids($imageID);
 
 			$show_nav = $config->get_bool("poolsShowNavLinks", false);
 
 			$navInfo = array();
 			foreach($poolsIDs as $poolID) {
-				$pool = $this->get_single_pool($poolID['pool_id']);
+				$pool = $this->get_single_pool($poolID);
 
 				$navInfo[$pool['id']] = array();
 				$navInfo[$pool['id']]['info'] = $pool;
@@ -374,15 +376,9 @@ class Pools extends Extension {
 	private function list_pools(Page $page, /*int*/ $pageNumber) {
 		global $config, $database;
 
-		if(is_null($pageNumber) || !is_numeric($pageNumber))
-			$pageNumber = 0;
-		else if ($pageNumber <= 0)
-			$pageNumber = 0;
-		else
-			$pageNumber--;
+		$pageNumber = clamp($pageNumber, 1, null) - 1;
 
 		$poolsPerPage = $config->get_int("poolsListsPerPage");
-
 
 		$order_by = "";
 		$order = $page->get_cookie("ui-order-pool");
@@ -397,15 +393,14 @@ class Pools extends Extension {
 		}
 
 		$pools = $database->get_all("
-				SELECT p.id, p.user_id, p.public, p.title, p.description,
-				       p.posts, u.name as user_name
-				FROM pools AS p
-				INNER JOIN users AS u
-				ON p.user_id = u.id
-				$order_by
-				LIMIT :l OFFSET :o
-				", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage)
-				);
+			SELECT p.id, p.user_id, p.public, p.title, p.description,
+			       p.posts, u.name as user_name
+			FROM pools AS p
+			INNER JOIN users AS u
+			ON p.user_id = u.id
+			$order_by
+			LIMIT :l OFFSET :o
+		", array("l"=>$poolsPerPage, "o"=>$pageNumber * $poolsPerPage));
 
 		$totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
 
@@ -416,7 +411,7 @@ class Pools extends Extension {
 	/**
 	 * HERE WE CREATE A NEW POOL
 	 *
-	 * @return mixed
+	 * @return int
 	 * @throws PoolCreationException
 	 */
 	private function add_pool() {
@@ -438,12 +433,9 @@ class Pools extends Extension {
 				VALUES (:uid, :public, :title, :desc, now())",
 				array("uid"=>$user->id, "public"=>$public, "title"=>$_POST["title"], "desc"=>$_POST["description"]));
 
-		$result = array();
-		$result['poolID'] = $database->get_last_insert_id('pools_id_seq');
-
-		log_info("pools", "Pool {$result["poolID"]} created by {$user->name}");
-
-		return $result["poolID"];
+		$poolID = $database->get_last_insert_id('pools_id_seq');
+		log_info("pools", "Pool {$poolID} created by {$user->name}");
+		return $poolID;
 	}
 
 	/**
@@ -482,11 +474,11 @@ class Pools extends Extension {
 	/**
 	 * Get all of the pool IDs that an image is in, given an image ID.
 	 * @param int $imageID Integer ID for the image
-	 * @return array
+	 * @return int[]
 	 */
-	private function get_pool_id(/*int*/ $imageID) {
+	private function get_pool_ids(/*int*/ $imageID) {
 		global $database;
-		return $database->get_all("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
+		return $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
 	}
 
 	/**

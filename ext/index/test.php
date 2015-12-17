@@ -1,6 +1,6 @@
 <?php
 class IndexTest extends ShimmiePHPUnitTestCase {
-	function testIndexPage() {
+	public function testIndexPage() {
 		$this->get_page('post/list');
 		$this->assert_title("Welcome to Shimmie ".VERSION);
 		$this->assert_no_text("Prev | Index | Next");
@@ -29,7 +29,7 @@ class IndexTest extends ShimmiePHPUnitTestCase {
 		# FIXME: test search box
 	}
 
-	function testSearches() {
+	public function testSearches() {
 		$this->log_in_as_user();
 		$image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
 		$image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "computer bedroom workshop");

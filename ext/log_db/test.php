@@ -1,6 +1,6 @@
 <?php
 class LogDatabaseTest extends ShimmiePHPUnitTestCase {
-	function testLog() {
+	public function testLog() {
 		$this->log_in_as_admin();
 		$this->get_page("log/view");
 		$this->get_page("log/view?module=core-image");

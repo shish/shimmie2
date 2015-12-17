@@ -1,6 +1,6 @@
 <?php
 class ExtManagerTest extends ShimmiePHPUnitTestCase {
-	function testAuth() {
+	public function testAuth() {
 		$this->get_page('ext_manager');
 		$this->assert_title("Extensions");
 

@@ -26,7 +26,7 @@ class MP3FileHandler extends DataHandlerExtension {
 
 	/**
 	 * @param string $filename
-	 * @param array $metadata
+	 * @param mixed[] $metadata
 	 * @return Image|null
 	 */
 	protected function create_image_from_data($filename, $metadata) {

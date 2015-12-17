@@ -125,6 +125,25 @@ function no_escape($input) {
 }
 
 /**
+ * @param int $val
+ * @param int|null $min
+ * @param int|null $max
+ * @return int
+ */
+function clamp($val, $min, $max) {
+	if(!is_numeric($val) || (!is_null($min) && $val < $min)) {
+		$val = $min;
+	}
+	if(!is_null($max) && $val > $max) {
+		$val = $max;
+	}
+	if(!is_null($min) && !is_null($max)) {
+		assert('$val >= $min && $val <= $max', "$min <= $val <= $max");
+	}
+	return $val;
+}
+
+/**
  * @param string $name
  * @param array $attrs
  * @param array $children
@@ -268,17 +287,22 @@ function validate_input($inputs) {
 
 	foreach($inputs as $key => $validations) {
 		$flags = explode(',', $validations);
+
+		if(in_array('bool', $flags) && !isset($_POST[$key])) {
+			$_POST[$key] = 'off';
+		}
+
 		if(in_array('optional', $flags)) {
-			if(!isset($_POST[$key])) {
+			if(!isset($_POST[$key]) || trim($_POST[$key]) == "") {
+				$outputs[$key] = null;
 				continue;
 			}
 		}
-
-		if(!isset($_POST[$key])) {
+		if(!isset($_POST[$key]) || trim($_POST[$key]) == "") {
 			throw new InvalidInput("Input '$key' not set");
 		}
 
-		$value = $_POST[$key];
+		$value = trim($_POST[$key]);
 
 		if(in_array('user_id', $flags)) {
 			$id = int_escape($value);
@@ -308,9 +332,34 @@ function validate_input($inputs) {
 			$outputs[$key] = $value;
 		}
 		else if(in_array('email', $flags)) {
-			$outputs[$key] = $value;
+			$outputs[$key] = trim($value);
 		}
 		else if(in_array('password', $flags)) {
+			$outputs[$key] = $value;
+		}
+		else if(in_array('int', $flags)) {
+			$value = trim($value);
+			if(empty($value) || !is_numeric($value)) {
+				throw new InvalidInput("Invalid int: ".html_escape($value));
+			}
+			$outputs[$key] = (int)$value;
+		}
+		else if(in_array('bool', $flags)) {
+			$outputs[$key] = bool_escape($value);
+		}
+		else if(in_array('string', $flags)) {
+			if(in_array('trim', $flags)) {
+				$value = trim($value);
+			}
+			if(in_array('lower', $flags)) {
+				$value = strtolower($value);
+			}
+			if(in_array('not-empty', $flags)) {
+				throw new InvalidInput("$key must not be blank");
+			}
+			if(in_array('nullify', $flags)) {
+				if(empty($value)) $value = null;
+			}
 			$outputs[$key] = $value;
 		}
 		else {
@@ -910,21 +959,19 @@ function transload($url, $mfile) {
 	}
 
 	if($config->get_string("transload_engine") === "fopen") {
-		$fp = @fopen($url, "r");
-		if(!$fp) {
+		$fp_in = @fopen($url, "r");
+		$fp_out = fopen($mfile, "w");
+		if(!$fp_in || !$fp_out) {
 			return false;
 		}
-		$data = "";
 		$length = 0;
-		while(!feof($fp) && $length <= $config->get_int('upload_size')) {
-			$data .= fread($fp, 8192);
-			$length = strlen($data);
+		while(!feof($fp_in) && $length <= $config->get_int('upload_size')) {
+			$data = fread($fp_in, 8192);
+			$length += strlen($data);
+			fwrite($fp_out, $data);
 		}
-		fclose($fp);
-
-		$fp = fopen($mfile, "w");
-		fwrite($fp, $data);
-		fclose($fp);
+		fclose($fp_in);
+		fclose($fp_out);
 
 		$headers = http_parse_headers(implode("\n", $http_response_header));
 
