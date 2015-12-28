@@ -48,9 +48,11 @@ EOD
 					<!-- Simple Textfield -->
 					<div class='mdl-cell mdl-cell--4-col'>
 						<form class='mdl-typography--text-center' action='".make_link("post/list")."' method='GET'>
-							<input id='search' name='search' size='30' type='search' value='' class='autocomplete_tags mdl-textfield__input' autocomplete='off' />
-							<input type='hidden' name='q' value='/post/list'>
-							<label class='mdl-textfield__label' for='search'>Search</label>
+							<div class='mdl-textfield mdl-js-textfield'>
+								<input id='search' name='search' size='30' type='search' value='' class='autocomplete_tags mdl-textfield__input' autocomplete='off' />
+								<input type='hidden' name='q' value='/post/list'>
+								<label class='mdl-textfield__label' for='search'>Search</label>
+							</div>
 						</form>
 					</div>
 				</div>
