@@ -14,17 +14,6 @@ class CustomHomeTheme extends HomeTheme {
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		$hh
 	</head>
-	<style>
-		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
-		div#front-page {text-align:center;}
-		.space {margin-bottom: 1em;}
-		div#front-page div#links a {margin: 0 0.5em;}
-		div#front-page li {list-style-type: none; margin: 0;}
-		@media (max-width: 800px) {
-			div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
-			#counter {display: none;}
-		}
-	</style>
 	<body>
 		<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
 		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
@@ -56,7 +45,7 @@ EOD
 			</div>
 		";
 		return "
-		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center' id='front-page'>
+		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center'>
 			<div class='mdl-layout__drawer'>
 			    <span class='mdl-layout-title'>$sitename</span>
 			    $main_links
