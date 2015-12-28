@@ -37,7 +37,6 @@ EOD
 	}
 
 	public function build_body(/*string*/ $sitename, /*string*/ $main_links, /*string*/ $main_text, /*string*/ $contact_link, $num_comma, /*string*/ $counter_text) {
-		$main_links_html = empty($main_links) ? "" : /*Change this*/"<div class='space' id='links'>$main_links</div>";
 		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
 		$counter_html = empty($counter_text)  ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
 		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> &ndash;";
@@ -60,6 +59,7 @@ EOD
 		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center' id='front-page'>
 			<div class='mdl-layout__drawer'>
 			    <span class='mdl-layout-title'>$sitename</span>
+			    $main_links
 			</div>
 			<main class='mdl-layout__content'>
     			<div class='page-content'>
