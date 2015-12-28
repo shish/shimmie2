@@ -48,7 +48,9 @@ EOD
 		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center'>
 			<div class='mdl-layout__drawer'>
 			    <span class='mdl-layout-title'>$sitename</span>
-			    $main_links
+			    <nav class='mdl-navigation'>
+			    	$main_links
+		    	</nav>
 			</div>
 			<main class='mdl-layout__content'>
     			<div class='page-content'>
