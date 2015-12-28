@@ -59,7 +59,9 @@ EOD
 		";
 		return "
 		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center' id='front-page'>
-			$main_links_html
+			<div class='mdl-layout__drawer'>
+			    <span class='mdl-layout-title'>$sitename</span>
+			</div>
 			<main class='mdl-layout__content'>
     			<div class='page-content'>
 					<h2 class='mdl-typography--text-center'><a style='text-decoration: none;' href='".make_link()."'><span>$sitename</span></a></h2>
