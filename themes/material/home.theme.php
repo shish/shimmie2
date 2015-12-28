@@ -28,7 +28,7 @@ EOD
 	public function build_body(/*string*/ $sitename, /*string*/ $main_links, /*string*/ $main_text, /*string*/ $contact_link, $num_comma, /*string*/ $counter_text) {
 		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
 		$counter_html = empty($counter_text)  ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
-		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> &ndash;";
+		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> -";
 		$search_html = "
 			<div class='mdl-grid'>
 				<div class='mdl-layout-spacer'></div>
@@ -57,7 +57,7 @@ EOD
 					$message_html
 					$counter_html
 					<div class='mdl-typography--text-center' id='foot'>
-						<p>$contact_link - Serving $num_comma posts &ndash - Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
+						<p>$contact_link Serving $num_comma posts - Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
 					</div>
 				</div>
 			</main>
