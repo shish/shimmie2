@@ -114,9 +114,9 @@ class Layout {
 		<title>{$page->title}</title>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet">
-    <link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css?v1.0.5"  rel="stylesheet">
+    <link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css"  rel="stylesheet">
     $header_html
-		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js?v1.0.5"></script>
+		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js"></script>
 		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/script0.js?v1"></script>
     <!-- having conflicts this ensures the screens will not remain hidden \while the layout is adjusted -->
 	</head>
