@@ -12,12 +12,13 @@ class CustomHomeTheme extends HomeTheme {
 		<title>$sitename</title>
 		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    	<link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet">
+    	<link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css"  rel="stylesheet">
 		$hh
+		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js"></script>
 	</head>
 	<body>
-		<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
-		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 		$body
 	</body>
 </html>
