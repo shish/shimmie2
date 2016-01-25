@@ -367,6 +367,9 @@ class TagEdit extends Extension {
 					$after[] = $tag;
 				}
 
+				// replace'd tag may already exist in tag set, so remove dupes to avoid integrity constraint violations.
+				$after = array_unique($after);
+
 				$image->set_tags($after);
 
 				$last_id = $image->id;
