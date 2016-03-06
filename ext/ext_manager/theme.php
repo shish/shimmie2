@@ -25,7 +25,7 @@ class ExtManagerTheme extends Themelet {
 			$html .= "
 				<tr>
 					$h_en
-					<td><a href='$h_link'>$h_name</a></td>
+					<td>".($extension->documentation ? "<a href='$h_link'>$h_name</a>" : $h_name)."</td>
 					<td style='text-align: left;'>$h_description</td>
 				</tr>";
 		}
