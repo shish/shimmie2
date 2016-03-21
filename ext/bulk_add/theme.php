@@ -12,9 +12,9 @@ class BulkAddTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$html = "";
 		foreach($this->messages as $block) {
-			$html .= "<br/>" . html_escape($html);
+			$html .= "<br/>" . $block->body;
 		}
-		$page->add_block(new Block("Results", $block));
+		$page->add_block(new Block("Results", $html));
 	}
 
 	/*
