@@ -67,7 +67,7 @@ class BaseThemelet {
 		$custom_classes = "";
 		if(class_exists("Relationships")){
 			if(property_exists($image, 'parent_id') && $image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
-			if(property_exists($image, 'has_children') && $image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
+			if(property_exists($image, 'has_children') && $image->has_children == 'Y'){ $custom_classes .= "shm-thumb-has_child "; }
 		}
 
 		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-post-id='$i_id'>".

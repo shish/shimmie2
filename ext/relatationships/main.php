@@ -25,7 +25,7 @@ class Relationships extends Extension {
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		if(isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : TRUE) { //Ignore tag_edit__parent if tags contain parent metatag
-			if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : FALSE) {
+			if(isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : FALSE) {
 				$this->set_parent($event->image->id, (int) $_POST["tag_edit__parent"]);
 			}else{
 				$this->remove_parent($event->image->id);
@@ -83,7 +83,7 @@ class Relationships extends Extension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 
-		if($event->image->has_children){
+		if($event->image->has_children == 'Y'){
 			$database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", array("iid"=>$event->image->id));
 		}
 
