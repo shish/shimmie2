@@ -365,7 +365,7 @@ class Page {
 		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_lib_cache_file' type='text/css'>", 43);
 
 		$css_latest = $config_latest;
-		$css_files = array_merge(zglob("lib/shimmie.css"), zglob("ext/*/style.css"), zglob("themes/$theme_name/style.css"));
+		$css_files = array_merge(zglob("lib/shimmie.css"), zglob("ext/{".ENABLED_EXTS."}/style.css"), zglob("themes/$theme_name/style.css"));
 		foreach($css_files as $css) {
 			$css_latest = max($css_latest, filemtime($css));
 		}
@@ -402,7 +402,7 @@ class Page {
 		$this->add_html_header("<script src='$data_href/$js_lib_cache_file' type='text/javascript'></script>", 45);
 
 		$js_latest = $config_latest;
-		$js_files = array_merge(zglob("lib/shimmie.js"), zglob("ext/*/script.js"), zglob("themes/$theme_name/script.js"));
+		$js_files = array_merge(zglob("lib/shimmie.js"), zglob("ext/{".ENABLED_EXTS."}/script.js"), zglob("themes/$theme_name/script.js"));
 		foreach($js_files as $js) {
 			$js_latest = max($js_latest, filemtime($js));
 		}
