@@ -5,6 +5,8 @@
 	"require" : {
 		"php" : ">=5.4.8",
 
+		"flexihash/flexihash": "^2.0.0",
+
 		"bower-asset/jquery": "1.12.3"
 	},
 

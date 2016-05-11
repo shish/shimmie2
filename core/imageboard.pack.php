@@ -23,9 +23,6 @@
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-require_once "lib/flexihash.php";
-
 /**
  * Class Image
  *
@@ -724,7 +721,7 @@ class Image {
 
 			if($opts != $fh_last_opts) {
 				$fh_last_opts = $opts;
-				$flexihash = new Flexihash();
+				$flexihash = new Flexihash\Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
 					$parts_count = count($parts);
