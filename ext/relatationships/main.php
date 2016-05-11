@@ -21,6 +21,12 @@ class Relationships extends Extension {
 			$config->set_int("ext_relationships_version", 1);
 			log_info("relationships", "extension installed");
 		}
+		if ($config->get_int("ext_relationships_version") < 2){
+			$database->execute("CREATE INDEX images__has_children ON images(has_children)");
+
+			$config->set_int("ext_relationships_version", 2);
+			log_info("relationships", "extension updated");
+		}
 	}
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
