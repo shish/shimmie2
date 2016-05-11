@@ -27,7 +27,7 @@ date_default_timezone_set('UTC');
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
 		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
-		<script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
+		<script type="text/javascript" src="lib/vendor/js/jquery-1.12.3.min.js"></script>
 	</head>
 	<body>
 <?php if(false) { ?>

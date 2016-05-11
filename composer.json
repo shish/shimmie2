@@ -3,6 +3,25 @@
 	"license" : "GPL-2.0",
 
 	"require" : {
-		"php" : ">=5.4.8"
+		"php" : ">=5.4.8",
+
+		"fxp/composer-asset-plugin": "~1.1",
+		"bower-asset/jquery": "1.12.3"
+
+	},
+
+	"vendor-copy": {
+		"vendor/bower-asset/jquery/dist/jquery.js"      : "lib/vendor/js/jquery-1.12.3.js",
+		"vendor/bower-asset/jquery/dist/jquery.min.js"  : "lib/vendor/js/jquery-1.12.3.min.js",
+		"vendor/bower-asset/jquery/dist/jquery.min.map" : "lib/vendor/js/jquery-1.12.3.min.map"
+	},
+
+	"scripts": {
+		"post-install-cmd" : [
+			"php -r \"array_map('copy', array_keys(json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']), json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']);\""
+		],
+		"post-update-cmd" : [
+			"php -r \"array_map('copy', array_keys(json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']), json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']);\""
+		]
 	}
 }
