@@ -5,9 +5,7 @@
 	"require" : {
 		"php" : ">=5.4.8",
 
-		"fxp/composer-asset-plugin": "~1.1",
 		"bower-asset/jquery": "1.12.3"
-
 	},
 
 	"vendor-copy": {
