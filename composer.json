@@ -23,13 +23,15 @@
 		"flexihash/flexihash" : "^2.0.0",
 		"ifixit/php-akismet"  : "1.*",
 
-		"bower-asset/jquery"  : "1.12.3"
+		"bower-asset/jquery"         : "1.12.3",
+		"bower-asset/jquery-timeago" : "1.5.2"
 	},
 
 	"vendor-copy": {
-		"vendor/bower-asset/jquery/dist/jquery.js"      : "lib/vendor/js/jquery-1.12.3.js",
-		"vendor/bower-asset/jquery/dist/jquery.min.js"  : "lib/vendor/js/jquery-1.12.3.min.js",
-		"vendor/bower-asset/jquery/dist/jquery.min.map" : "lib/vendor/js/jquery-1.12.3.min.map"
+		"vendor/bower-asset/jquery/dist/jquery.js"            : "lib/vendor/js/jquery-1.12.3.js",
+		"vendor/bower-asset/jquery/dist/jquery.min.js"        : "lib/vendor/js/jquery-1.12.3.min.js",
+		"vendor/bower-asset/jquery/dist/jquery.min.map"       : "lib/vendor/js/jquery-1.12.3.min.map",
+		"vendor/bower-asset/jquery-timeago/jquery.timeago.js" : "lib/vendor/js/jquery.timeago.js"
 	},
 
 	"scripts": {
