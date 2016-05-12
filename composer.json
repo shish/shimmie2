@@ -2,12 +2,28 @@
 	"type"    : "project",
 	"license" : "GPL-2.0",
 
+	"repositories" : [
+		{
+			"type" : "package",
+			"package" : {
+				"name" : "ifixit/php-akismet",
+				"version" : "1.0",
+				"source" : {
+					"url"       : "https://github.com/iFixit/php-akismet.git",
+					"type"      : "git",
+					"reference" : "126b4b9182230678a585338be4cfca24c9129dc9"
+				}
+			}
+		}
+	],
+
 	"require" : {
 		"php" : ">=5.4.8",
 
-		"flexihash/flexihash": "^2.0.0",
+		"flexihash/flexihash" : "^2.0.0",
+		"ifixit/php-akismet"  : "1.*",
 
-		"bower-asset/jquery": "1.12.3"
+		"bower-asset/jquery"  : "1.12.3"
 	},
 
 	"vendor-copy": {
