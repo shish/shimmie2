@@ -5,12 +5,7 @@ class ExtManagerTheme extends Themelet {
 		$h_en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			".make_form(make_link("ext_manager/set"))."
-				<script type='text/javascript'>
-				$(document).ready(function() {
-					$(\"#extensions\").tablesorter();
-				});
-				</script>
-				<table id='extensions' class='zebra'>
+				<table id='extensions' class='zebra sortable'>
 					<thead>
 						<tr>$h_en<th>Name</th><th>Description</th></tr>
 					</thead>
