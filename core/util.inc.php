@@ -1,5 +1,4 @@
 <?php
-require_once "lib/recaptchalib.php";
 require_once "lib/securimage/securimage.php";
 require_once "lib/context.php";
 
@@ -633,7 +632,9 @@ function captcha_get_html() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_publickey = $config->get_string("api_recaptcha_pubkey");
 		if(!empty($r_publickey)) {
-			$captcha = recaptcha_get_html($r_publickey);
+			$captcha = "
+				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
+				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
 		}
 		else {
 			session_start();
@@ -657,15 +658,11 @@ function captcha_check() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_privatekey = $config->get_string('api_recaptcha_privkey');
 		if(!empty($r_privatekey)) {
-			$resp = recaptcha_check_answer(
-				$r_privatekey,
-				$_SERVER["REMOTE_ADDR"],
-				$_POST["recaptcha_challenge_field"],
-				$_POST["recaptcha_response_field"]
-			);
+			$recaptcha = new \ReCaptcha\ReCaptcha($r_privatekey);
+			$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-			if(!$resp->is_valid) {
-				log_info("core", "Captcha failed (ReCaptcha): " . $resp->error);
+			if(!$resp->isSuccess()) {
+				log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
 				return false;
 			}
 		}

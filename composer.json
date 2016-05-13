@@ -23,6 +23,7 @@
 
 		"flexihash/flexihash" : "^2.0.0",
 		"ifixit/php-akismet"  : "1.*",
+		"google/recaptcha"    : "~1.1",
 
 		"bower-asset/jquery"         : "1.12.3",
 		"bower-asset/jquery-timeago" : "1.5.2",
