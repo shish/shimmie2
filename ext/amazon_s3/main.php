@@ -7,7 +7,7 @@
  * Documentation:
  */
 
-require_once "lib/S3.php";
+require_once "ext/amazon_s3/S3.php";
 
 class UploadS3 extends Extension {
 	public function onInitExt(InitExtEvent $event) {
