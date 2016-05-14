@@ -19,23 +19,38 @@
 class VideoFileHandler extends DataHandlerExtension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_string('video_thumb_engine', 'static');
-		$config->set_default_string('thumb_ffmpeg_path', '');
 
-		// By default we generate thumbnails ignoring the aspect ratio of the video file.
-		//
-		// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
-		// rather than completely failing out of the box. If people complain that their
-		// thumbnails are distorted, then they can turn this feature on manually later.
-		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
+		if($config->get_int("ext_handle_video_version") < 1) {
+			if($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
+				//ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
+				if(is_executable(strtok($ffmpeg, PHP_EOL))) {
+					$config->set_default_string('video_thumb_engine', 'ffmpeg');
+					$config->set_default_string('thumb_ffmpeg_path',  'ffmpeg');
+				}
+			} else {
+				$config->set_default_string('video_thumb_engine', 'static');
+				$config->set_default_string('thumb_ffmpeg_path',  '');
+			}
+
+			// By default we generate thumbnails ignoring the aspect ratio of the video file.
+			//
+			// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
+			// rather than completely failing out of the box. If people complain that their
+			// thumbnails are distorted, then they can turn this feature on manually later.
+			$config->set_default_bool('video_thumb_ignore_aspect_ratio', TRUE);
+
+			$config->set_int("ext_handle_video_version", 1);
+			log_info("pools", "extension installed");
+		}
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		//global $config;
-		
-		$thumbers = array();
-		$thumbers['None'] = "static";
-		$thumbers['ffmpeg'] = "ffmpeg";
+
+		$thumbers = array(
+			'None'   => 'static',
+			'ffmpeg' => 'ffmpeg'
+		);
 
 		$sb = new SetupBlock("Video Thumbnail Options");
 
