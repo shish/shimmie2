@@ -14,7 +14,6 @@
  *  In the future, it may be necessary to change the user agent checks to reflect the current state of H.264 support.<br><br>
  *  Made possible by:<br>
  *  <a href='http://getid3.sourceforge.net/'>getID3()</a> - Gets media information with PHP (no bulky FFMPEG API required).<br>
- *  <a href='http://jarisflvplayer.org/'>Jaris FLV Player</a> - GPLv3 flash multimedia player.
  */
 
 class VideoFileHandler extends DataHandlerExtension {

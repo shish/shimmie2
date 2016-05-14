@@ -28,7 +28,8 @@
 
 		"bower-asset/jquery"         : "1.12.3",
 		"bower-asset/jquery-timeago" : "1.5.2",
-		"bower-asset/tablesorter"    : "2.0.5"
+		"bower-asset/tablesorter"    : "2.0.5",
+		"bower-asset/mediaelement"   : "2.21.1"
 	},
 
 	"vendor-copy": {
@@ -36,6 +37,7 @@
 		"vendor/bower-asset/jquery/dist/jquery.min.map"            : "lib/vendor/js/jquery-1.12.3.min.map",
 		"vendor/bower-asset/jquery-timeago/jquery.timeago.js"      : "lib/vendor/js/jquery.timeago.js",
 		"vendor/bower-asset/tablesorter/jquery.tablesorter.min.js" : "lib/vendor/js/jquery.tablesorter.min.js"
+		"vendor/bower-asset/mediaelement/build/flashmediaelement.swf" : "lib/vendor/swf/flashmediaelement.swf"
 	},
 
 	"scripts": {
