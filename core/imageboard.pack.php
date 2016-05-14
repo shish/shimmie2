@@ -388,7 +388,7 @@ class Image {
 	 * @return string
 	 */
 	public function get_image_link() {
-		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.jpg');
+		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
 	}
 
 	/**
