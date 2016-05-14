@@ -1,5 +1,4 @@
 <?php
-require_once "lib/securimage/securimage.php";
 require_once "lib/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -635,13 +634,9 @@ function captcha_get_html() {
 			$captcha = "
 				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
 				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
-		}
-		else {
+		} else {
 			session_start();
-			//$securimg = new Securimage();
-			$base = get_base_href();
-			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
-				"<br/>CAPTCHA: <input type='text' name='code' value='' />";
+			$captcha = Securimage::getCaptchaHtml(['securimage_path' => './vendor/dapphp/securimage/']);
 		}
 	}
 	return $captcha;
@@ -669,7 +664,7 @@ function captcha_check() {
 		else {
 			session_start();
 			$securimg = new Securimage();
-			if($securimg->check($_POST['code']) == false) {
+			if($securimg->check($_POST['captcha_code']) == FALSE) {
 				log_info("core", "Captcha failed (Securimage)");
 				return false;
 			}
