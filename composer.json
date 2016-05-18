@@ -43,6 +43,13 @@
 	},
 
 	"scripts": {
+		"pre-install-cmd" : [
+			"php -r \"array_map('unlink', array_merge(glob('lib/vendor/js/*.{js,map}', GLOB_BRACE), glob('lib/vendor/css/*.css'), glob('lib/vendor/swf/*.swf')));\""
+		],
+		"pre-update-cmd" : [
+			"php -r \"array_map('unlink', array_merge(glob('lib/vendor/js/*.{js,map}', GLOB_BRACE), glob('lib/vendor/css/*.css'), glob('lib/vendor/swf/*.swf')));\""
+		],
+
 		"post-install-cmd" : [
 			"php -r \"array_map('copy', array_keys(json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']), json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']);\""
 		],
