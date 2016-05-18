@@ -1,7 +1,7 @@
 <?php
 class NotesTheme extends Themelet {
 	public function note_button($image_id) {
-		return '		
+		return '
 			<!-- <a href="#" id="addnotelink" >Add a note</a> -->
 			<form action="" method="">
 			<input type="button" id="addnote" value="Add Note">
@@ -30,42 +30,39 @@ class NotesTheme extends Themelet {
 							</form>
 						';
 	}
-	
+
 	public function search_notes_page(Page $page) { //IN DEVELOPMENT, NOT FULLY WORKING
 		$html = '<form method="GET" action="'.make_link("post/list/note=").'">
 		<input placeholder="Search Notes" type="text" name="search"/>
 		<input type="submit" style="display: none;" value="Find"/>
 		</form>';
-	
+
 		$page->set_title(html_escape("Search Note"));
 		$page->set_heading(html_escape("Search Note"));
 		$page->add_block(new Block("Search Note", $html, "main", 10));
 	}
-		
+
 	// check action POST on form
-	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions)
-	{
+	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions) {
 		$to_json = array();
-		foreach($recovered_notes as $note)
-		{
+		foreach($recovered_notes as $note) {
 			$parsedNote = $note["note"];
 			$parsedNote = str_replace("\n", "\\n", $parsedNote);
 			$parsedNote = str_replace("\r", "\\r", $parsedNote);
 
 			$to_json[] = array(
-				'x1' => $note["x1"],
-				'y1' => $note["y1"],
-				'height' => $note["height"],
-				'width' => $note["width"],
-				'note' => $parsedNote,
+				'x1'      => $note["x1"],
+				'y1'      => $note["y1"],
+				'height'  => $note["height"],
+				'width'   => $note["width"],
+				'note'    => $parsedNote,
 				'note_id' => $note["id"],
 			);
 		}
 
-		$html = "<script type='text/javascript'>";
-		$html .= "notes = " . json_encode($to_json);
-		$html .= "</script>
-	
+		$html = "<script type='text/javascript'>notes = ".json_encode($to_json)."</script>";
+
+		$html .= "
 	<div id='noteform'>
 		".make_form(make_link("note/add_note"))."
 			<input type='hidden' name='image_id' value='".$image_id."' />
@@ -73,7 +70,7 @@ class NotesTheme extends Themelet {
 			<input name='note_y1' type='hidden' value='' id='NoteY1' />
 			<input name='note_height' type='hidden' value='' id='NoteHeight' />
 			<input name='note_width' type='hidden' value='' id='NoteWidth' />
-			
+
 			<table>
 				<tr>
 					<td colspan='2'>
@@ -85,7 +82,7 @@ class NotesTheme extends Themelet {
 					<td><input type='button' value='Cancel' id='cancelnote' /></td>
 			  	</tr>
 			</table>
-			
+
 		</form>
 	</div>
 		<div id='noteEditForm'>
@@ -126,8 +123,8 @@ class NotesTheme extends Themelet {
 
 		$page->add_block(new Block(null, $html, "main", 1));
 	}
-		
-	
+
+
 	public function display_note_list($images, $pageNumber, $totalPages) {
 		global $page;
 		$pool_images = '';
@@ -137,20 +134,21 @@ class NotesTheme extends Themelet {
 			$thumb_html = $this->build_thumb_html($image);
 
 			$pool_images .= '<span class="thumb">'.
-					   		'<a href="$image_link">'.$thumb_html.'</a>'.
-					   '</span>';
+			                '    <a href="$image_link">'.$thumb_html.'</a>'.
+			                '</span>';
 
-			
+
 		}
 		$this->display_paginator($page, "note/list", null, $pageNumber, $totalPages);
-		
+
 		$page->set_title("Notes");
 		$page->set_heading("Notes");
 		$page->add_block(new Block("Notes", $pool_images, "main", 20));
 	}
-	
+
 	public function display_note_requests($images, $pageNumber, $totalPages) {
 		global $page;
+
 		$pool_images = '';
 		foreach($images as $pair) {
 			$image = $pair[0];
@@ -158,13 +156,13 @@ class NotesTheme extends Themelet {
 			$thumb_html = $this->build_thumb_html($image);
 
 			$pool_images .= '<span class="thumb">'.
-					   		'<a href="$image_link">'.$thumb_html.'</a>'.
-					   '</span>';
+			                '    <a href="$image_link">'.$thumb_html.'</a>'.
+			                '</span>';
 
-			
+
 		}
 		$this->display_paginator($page, "requests/list", null, $pageNumber, $totalPages);
-		
+
 		$page->set_title("Note Requests");
 		$page->set_heading("Note Requests");
 		$page->add_block(new Block("Note Requests", $pool_images, "main", 20));
@@ -174,19 +172,19 @@ class NotesTheme extends Themelet {
 		global $user;
 
 		$html = "<table id='poolsList' class='zebra'>".
-			"<thead><tr>".
-			"<th>Image</th>".
-			"<th>Note</th>".
-			"<th>Body</th>".
-			"<th>Updater</th>".
-			"<th>Date</th>";
+		        "<thead><tr>".
+		        "<th>Image</th>".
+		        "<th>Note</th>".
+		        "<th>Body</th>".
+		        "<th>Updater</th>".
+		        "<th>Date</th>";
 
 		if(!$user->is_anonymous()){
 			$html .= "<th>Action</th>";
 		}
 
 		$html .= "</tr></thead>".
-			"<tbody>";
+		         "<tbody>";
 
 		foreach($histories as $history) {
 			$image_link = "<a href='".make_link("post/view/".$history['image_id'])."'>".$history['image_id']."</a>";
@@ -195,11 +193,11 @@ class NotesTheme extends Themelet {
 			$revert_link = "<a href='".make_link("note/revert/".$history['note_id']."/".$history['review_id'])."'>Revert</a>";
 
 			$html .= "<tr>".
-				"<td>".$image_link."</td>".
-				"<td>".$history_link."</td>".
-				"<td style='text-align:left;'>".$history['note']."</td>".
-				"<td>".$user_link."</td>".
-				"<td>".autodate($history['date'])."</td>";
+			         "<td>".$image_link."</td>".
+			         "<td>".$history_link."</td>".
+			         "<td style='text-align:left;'>".$history['note']."</td>".
+			         "<td>".$user_link."</td>".
+			         "<td>".autodate($history['date'])."</td>";
 
 			if(!$user->is_anonymous()){
 				$html .= "<td>".$revert_link."</td>";
@@ -223,7 +221,7 @@ class NotesTheme extends Themelet {
 
 		$this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
 	}
-	
+
 	public function display_history($histories, $pageNumber, $totalPages) {
 		global $page;
 
@@ -232,8 +230,7 @@ class NotesTheme extends Themelet {
 		$page->set_title("Note History");
 		$page->set_heading("Note History");
 		$page->add_block(new Block("Note History", $html, "main", 10));
-		
+
 		$this->display_paginator($page, "note/updated", null, $pageNumber, $totalPages);
 	}
 }
-
