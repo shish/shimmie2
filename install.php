@@ -130,9 +130,8 @@ function check_gd_version() {
 }
 
 function check_im_version() {
-	if(!ini_get('safe_mode')) {
-		$convert_check = exec("convert");
-	}
+	$convert_check = exec("convert");
+
 	return (empty($convert_check) ? 0 : 1);
 }
 
