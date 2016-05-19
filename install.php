@@ -11,7 +11,7 @@
  * Initialise the database, check that folder
  * permissions are set properly.
  *
- * This file should be independant of the database
+ * This file should be independent of the database
  * and other such things that aren't ready yet
  */
 
@@ -26,7 +26,39 @@ date_default_timezone_set('UTC');
 	<head>
 		<title>Shimmie Installation</title>
 		<link rel="shortcut icon" href="favicon.ico" />
-		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
+		<style>
+			#installer {
+				background: #EEE;
+				font-family: "Arial", sans-serif;
+				font-size: 14px;
+				width: 512px;
+				margin: auto;
+				margin-top: 16px;
+				border: 1px solid black;
+				border-radius: 16px;
+			}
+			#installer A {
+				text-decoration: none;
+			}
+			#installer A:hover {
+				text-decoration: underline;
+			}
+			#installer H1, #installer H3 {
+				background: #DDD;
+				text-align: center;
+				margin: 0px;
+				padding: 2px;
+			}
+			#installer H1 {
+				border-bottom: 1px solid black;
+				border-radius: 16px 16px 0px 0px;
+			}
+			#installer H3 {
+				border-bottom: 1px solid black;
+				border-top: 1px solid black;
+				margin-top: 32px;
+			}
+		</style>
 		<script type="text/javascript" src="lib/vendor/js/jquery-1.12.3.min.js"></script>
 	</head>
 	<body>
