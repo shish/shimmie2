@@ -58,8 +58,6 @@ date_default_timezone_set('UTC');
 			}
 			#installer H3 {
 				border-bottom: 1px solid black;
-				border-top: 1px solid black;
-				margin-top: 32px;
 			}
 		</style>
 		<script type="text/javascript" src="lib/vendor/js/jquery-1.12.3.min.js"></script>
@@ -75,6 +73,18 @@ date_default_timezone_set('UTC');
 				<p>If you've installed a web server on your desktop PC, you probably
 				want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
 				</p>
+			</div>
+		</div>
+		<pre style="display:none">
+<?php } elseif(!file_exists("vendor/")) { ?>
+		<div id="installer">
+			<h1>Install Error</h1>
+			<h3>Warning: Composer vendor folder does not exist!</h3>
+			<div class="container">
+				<p>Shimmie is unable to find the composer vendor directory.<br>
+				Have you followed the composer setup instructions found in the <a href="https://github.com/shish/shimmie2#installation-development">README</a>?</>
+
+				<p>If you are not intending to do any development with Shimmie, it is highly recommend you use one of the pre-packaged releases found on <a href="https://github.com/shish/shimmie2/releases">Github</a> instead.</p>
 			</div>
 		</div>
 		<pre style="display:none">
@@ -295,8 +305,8 @@ function create_tables() { // {{{
 			print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
+				<h3>Warning: The Database schema is not empty!</h3>
 				<div class="container">
-					<h3>Warning: The Database schema is not empty!</h3>
 					<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
 					<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
 					<br/><br/>
@@ -416,11 +426,13 @@ function build_dirs() { // {{{
 		<div id='installer'>
 			<h1>Shimmie Installer</h1>
 			<h3>Directory Permissions Error:</h3>
-			<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
-			<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
-			<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
-			<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
-			<br/><br/>
+			<div class='container'>
+				<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
+				<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
+				<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
+				<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
+				<br/><br/>
+			</div>
 		</div>
 		";
 		exit(7);
@@ -442,7 +454,9 @@ function write_config() { // {{{
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>Things are OK \o/</h3>
-			<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
+			<div class="container">
+				<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
+			</div>
 		</div>
 EOD;
 	}
@@ -452,15 +466,17 @@ EOD;
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>File Permissions Error:</h3>
-		    The web server isn't allowed to write to the config file; please copy
-		    the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
-		    folder manually. Make sure that when you save it, there is no whitespace
-		    before the "&lt;?php" or after the "?&gt;"
-
-		    <p><textarea cols="80" rows="2">$h_file_content</textarea>
-
-		    <p>Once done, <a href="index.php">click here to Continue</a>.
-			<br/><br/>
+			<div class="container">
+				The web server isn't allowed to write to the config file; please copy
+				the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
+				folder manually. Make sure that when you save it, there is no whitespace
+				before the "&lt;?php" or after the "?&gt;"
+				
+				<p><textarea cols="80" rows="2">$h_file_content</textarea>
+				
+				<p>Once done, <a href="index.php">click here to Continue</a>.
+				<br/><br/>
+			</div>
 		</div>
 EOD;
 	}
@@ -472,8 +488,8 @@ function handle_db_errors(/*bool*/ $isPDO, /*str*/ $errorMessage1,  /*str*/ $err
 	print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
+			<h3>Unknown Error:</h3>
 			<div class="container">
-				<h3>Unknown Error:</h3>
 				<p>{$errorMessage1}</p>
 				<p>{$errorMessage1Extra}</p>
 				<p>{$errorMessage2}</p>
