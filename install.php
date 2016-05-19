@@ -100,7 +100,7 @@ assert_options(ASSERT_BAIL, 1);
  *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
  *
  */
-define('__SHIMMIE_ROOT__', trim(remove_trailing_slash(dirname(__FILE__))) . '/');
+define('__SHIMMIE_ROOT__', trim(rtrim(dirname(__FILE__), '/\\')) . '/');
 
 // Pull in necessary files
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
@@ -113,19 +113,6 @@ do_install();
 
 // utilities {{{
 	// TODO: Can some of these be pushed into "core/util.inc.php" ?
-
-/**
-  * Strips off any kind of slash at the end so as to normalise the path.
-  * @param string $path    Path to normalise.
-  * @return string         Path without trailing slash.
-  */
-function remove_trailing_slash($path) {
-	if ((substr($path, -1) === '/') || (substr($path, -1) === '\\')) {
-		return substr($path, 0, -1);
-	} else {
-		return $path;
-	}
-}
 
 function check_gd_version() {
 	$gdversion = 0;
