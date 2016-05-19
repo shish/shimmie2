@@ -138,10 +138,10 @@ function check_im_version() {
 function eok($name, $value) {
 	echo "<br>$name ... ";
 	if($value) {
-		echo "<font color='green'>ok</font>\n";
+		echo "<span style='color: green'>ok</span>\n";
 	}
 	else {
-		echo "<font color='red'>failed</font>\n";
+		echo "<span style='color: green'>failed</span>\n";
 	}
 }
 // }}}
@@ -171,7 +171,7 @@ function ask_questions() { // {{{
 
 	if(check_gd_version() == 0 && check_im_version() == 0) {
 		$errors[] = "
-			No thumbnailers cound be found - install the imagemagick
+			No thumbnailers could be found - install the imagemagick
 			tools (or the PHP-GD library, of imagemagick is unavailable).
 		";
 	}
