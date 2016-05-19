@@ -65,7 +65,7 @@ date_default_timezone_set('UTC');
 		<script type="text/javascript" src="lib/vendor/js/jquery-1.12.3.min.js"></script>
 	</head>
 	<body>
-<?php if(false) { ?>
+<?php if(FALSE) { ?>
 		<div id="installer">
 			<h1>Install Error</h1>
 			<div class="container">
@@ -77,8 +77,7 @@ date_default_timezone_set('UTC');
 				</p>
 			</div>
 		</div>
-		<div style="display: none;">
-			<PLAINTEXT>
+		<pre style="display:none">
 <?php }
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
