@@ -37,6 +37,9 @@ date_default_timezone_set('UTC');
 				border: 1px solid black;
 				border-radius: 16px;
 			}
+			#installer > .container {
+				padding: 5px;
+			}
 			#installer A {
 				text-decoration: none;
 			}
@@ -65,12 +68,14 @@ date_default_timezone_set('UTC');
 <?php if(false) { ?>
 		<div id="installer">
 			<h1>Install Error</h1>
-			<p>Shimmie needs to be run via a web server with PHP support -- you
-			appear to be either opening the file from your hard disk, or your
-			web server is mis-configured and doesn't know how to handle PHP files.</p>
-			<p>If you've installed a web server on your desktop PC, you probably
-			want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
-			</p>
+			<div class="container">
+				<p>Shimmie needs to be run via a web server with PHP support -- you
+				appear to be either opening the file from your hard disk, or your
+				web server is mis-configured and doesn't know how to handle PHP files.</p>
+				<p>If you've installed a web server on your desktop PC, you probably
+				want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
+				</p>
+			</div>
 		</div>
 		<div style="display: none;">
 			<PLAINTEXT>
@@ -207,67 +212,68 @@ function ask_questions() { // {{{
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 
-			$warn_msg
-			$err_msg
+			<div class="container">
+				$warn_msg
+				$err_msg
 
-			<h3>Database Install</h3>
-			<form action="install.php" method="POST">
-				<center>
-					<table class='form'>
-						<tr>
-							<th>Type:</th>
-							<td><select name="database_type" id="database_type" onchange="update_qs();">
-								$db_m
-								$db_p
-								$db_s
-							</select></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Host:</th>
-							<td><input type="text" name="database_host" size="40" value="localhost"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Username:</th>
-							<td><input type="text" name="database_user" size="40"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Password:</th>
-							<td><input type="password" name="database_password" size="40"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql sqlite">
-							<th>DB&nbsp;Name:</th>
-							<td><input type="text" name="database_name" size="40" value="shimmie"></td>
-						</tr>
-						<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
-					</table>
-				</center>
-				<script>
-				$(function() {
-					update_qs();
-				});
-				function update_qs() {
-					$(".dbconf").hide();
-					var seldb = $("#database_type").val() || "none";
-					$("."+seldb).show();
-				}
-				</script>
-			</form>
+				<h3>Database Install</h3>
+				<form action="install.php" method="POST">
+					<center>
+						<table class='form'>
+							<tr>
+								<th>Type:</th>
+								<td><select name="database_type" id="database_type" onchange="update_qs();">
+									$db_m
+									$db_p
+									$db_s
+								</select></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Host:</th>
+								<td><input type="text" name="database_host" size="40" value="localhost"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Username:</th>
+								<td><input type="text" name="database_user" size="40"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Password:</th>
+								<td><input type="password" name="database_password" size="40"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql sqlite">
+								<th>DB&nbsp;Name:</th>
+								<td><input type="text" name="database_name" size="40" value="shimmie"></td>
+							</tr>
+							<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+						</table>
+					</center>
+					<script>
+					$(function() {
+						update_qs();
+					});
+					function update_qs() {
+						$(".dbconf").hide();
+						var seldb = $("#database_type").val() || "none";
+						$("."+seldb).show();
+					}
+					</script>
+				</form>
 
-			<h3>Help</h3>
+				<h3>Help</h3>
 
-			<p class="dbconf mysql pgsql">
-				Please make sure the database you have chosen exists and is empty.<br>
-				The username provided must have access to create tables within the database.
-			</p>
-			<p class="dbconf sqlite">
-				For SQLite the database name will be a filename on disk, relative to
-				where shimmie was installed.
-			</p>
-			<p class="dbconf none">
-				Drivers can generally be downloaded with your OS package manager;
-				for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
-			</p>
-
+				<p class="dbconf mysql pgsql">
+					Please make sure the database you have chosen exists and is empty.<br>
+					The username provided must have access to create tables within the database.
+				</p>
+				<p class="dbconf sqlite">
+					For SQLite the database name will be a filename on disk, relative to
+					where shimmie was installed.
+				</p>
+				<p class="dbconf none">
+					Drivers can generally be downloaded with your OS package manager;
+					for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
+				</p>
+			</div>
 		</div>
 EOD;
 } // }}}
@@ -290,10 +296,12 @@ function create_tables() { // {{{
 			print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
-				<h3>Warning: The Database schema is not empty!</h3>
-				<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
-				<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
-				<br/><br/>
+				<div class="container">
+					<h3>Warning: The Database schema is not empty!</h3>
+					<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
+					<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
+					<br/><br/>
+				</div>
 			</div>
 EOD;
 			exit(2);
@@ -305,7 +313,7 @@ EOD;
 			PRIMARY KEY (oldtag)
 		");
 		$db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", array());
-		
+
 		$db->create_table("config", "
 			name VARCHAR(128) NOT NULL,
 			value TEXT,
@@ -320,7 +328,7 @@ EOD;
 			email VARCHAR(128)
 		");
 		$db->execute("CREATE INDEX users_name_idx ON users(name)", array());
-		
+
 		$db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
@@ -340,14 +348,14 @@ EOD;
 		$db->execute("CREATE INDEX images_width_idx ON images(width)", array());
 		$db->execute("CREATE INDEX images_height_idx ON images(height)", array());
 		$db->execute("CREATE INDEX images_hash_idx ON images(hash)", array());
-		
+
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
 			count INTEGER NOT NULL DEFAULT 0
 		");
 		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
-		
+
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
@@ -357,33 +365,14 @@ EOD;
 		");
 		$db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", array());
 		$db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", array());
-		
+
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
 	catch(PDOException $e) {
-		print <<<EOD
-			<div id="installer">
-				<h1>Shimmie Installer</h1>
-				<h3>Database Error:</h3>
-				<p>An error occured while trying to create the database tables necessary for Shimmie.</p>
-				<p>Please check and ensure that the database configuration options are all correct.</p>
-				<p>{$e->getMessage()}</p>
-			</div>
-EOD;
-		exit(3);
-	}
-	catch (Exception $e) {
-		print <<<EOD
-			<div id="installer">
-				<h1>Shimmie Installer</h1>
-				<h3>Unknown Error:</h3>
-				<p>An unknown error occured while trying to create the database tables necessary for Shimmie.</p>
-				<p>Please check the server log files for more information.</p>
-				<p>{$e->getMessage()}</p>
-			</div>
-EOD;
-		exit(4);
+		handle_db_errors(TRUE, "An error occurred while trying to create the database tables necessary for Shimmie.", $e->getMessage(), 3);
+	} catch (Exception $e) {
+		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
 	}
 } // }}}
 
@@ -399,31 +388,11 @@ function insert_defaults() { // {{{
 		}
 		$db->commit();
 	}
-	catch(PDOException $e)
-	{
-		print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Database Error:</h3>
-			<p>An error occured while trying to insert data into the database.</p>
-			<p>Please check and ensure that the database configuration options are all correct.</p>
-			<p>{$e->getMessage()}</p>
-		</div>
-EOD;
-		exit(5);
+	catch(PDOException $e) {
+		handle_db_errors(TRUE, "An error occurred while trying to insert data into the database.", $e->getMessage(), 5);
 	}
-	catch (Exception $e)
-	{
-		print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Unknown Error:</h3>
-			<p>An unknown error occured while trying to insert data into the database.</p>
-			<p>Please check the server log files for more information.</p>
-			<p>{$e->getMessage()}</p>
-		</div>
-EOD;
-		exit(6);
+	catch (Exception $e) {
+		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
 	}
 } // }}}
 
@@ -498,6 +467,22 @@ EOD;
 	}
 	echo "\n";
 } // }}}
+
+function handle_db_errors(/*bool*/ $isPDO, /*str*/ $errorMessage1,  /*str*/ $errorMessage2, /*int*/ $exitCode) {
+	$errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
+	print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<div class="container">
+				<h3>Unknown Error:</h3>
+				<p>{$errorMessage1}</p>
+				<p>{$errorMessage1Extra}</p>
+				<p>{$errorMessage2}</p>
+			</div>
+		</div>
+EOD;
+	exit($exitCode);
+}
 ?>
 	</body>
 </html>
