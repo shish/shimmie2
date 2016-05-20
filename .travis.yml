@@ -31,6 +31,7 @@ install:
   - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
   - if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
   - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+  - composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins
   - composer install
   - php install.php
 
