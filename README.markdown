@@ -36,7 +36,7 @@ check out one of the versioned branches.
 
 # Installation (Development)
 
-0.
+0. Download the shimmie via the "Download Zip" button.
 1. Install [Composer](https://getcomposer.org/). (If you don't already have it)
 2. Run `composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins`. (This is installed globally due to a known composer bug)
 3. Run `composer install`
