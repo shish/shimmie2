@@ -382,7 +382,7 @@ class Page {
 			}
 			file_put_contents($css_cache_file, $css_data);
 		}
-		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 44);
+		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 100);
 
 		/*** Generate JS cache files ***/
 		$js_lib_latest = $config_latest;
@@ -415,7 +415,7 @@ class Page {
 			}
 			file_put_contents($js_cache_file, $js_data);
 		}
-		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 45);
+		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 100);
 	}
 }
 
