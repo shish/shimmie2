@@ -44,6 +44,12 @@ class NotesTheme extends Themelet {
 
 	// check action POST on form
 	public function display_note_system(Page $page, $image_id, $recovered_notes, $adminOptions) {
+		$base_href = get_base_href();
+
+		$page->add_html_header("<script src='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.js' type='text/javascript'></script>");
+		$page->add_html_header("<script src='$base_href/ext/notes/lib/jquery.imgareaselect-1.0.0-rc1.min.js' type='text/javascript'></script>");
+		$page->add_html_header("<link rel='stylesheet' type='text/css' href='$base_href/ext/notes/lib/jquery.imgnotes-1.0.min.css' />");
+
 		$to_json = array();
 		foreach($recovered_notes as $note) {
 			$parsedNote = $note["note"];
@@ -121,7 +127,7 @@ class NotesTheme extends Themelet {
 
 		$html .= "</div>";
 
-		$page->add_block(new Block(null, $html, "main", 1));
+		$page->add_block(new Block(null, $html, "main", 1, 'note_system'));
 	}
 
 
