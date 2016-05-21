@@ -1038,12 +1038,14 @@ class Image {
 		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
 			// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 			// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
+			$group_by = ((strpos($tag_search->variables['tag0'], '%') !== FALSE) ? "GROUP BY images.id" : "");
 			$query = new Querylet("
 				SELECT images.*
 				FROM images
 				JOIN image_tags ON images.id=image_tags.image_id
 				JOIN tags ON image_tags.tag_id=tags.id
 				WHERE tag LIKE :tag0
+				{$group_by}
 			", $tag_search->variables);
 
 			if(!empty($img_search->sql)) {
