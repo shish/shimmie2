@@ -101,7 +101,7 @@ $header_html
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2014,
+			2007-2016,
 			based on the Danbooru concept.
 			$debug
 			$contact
