@@ -21,11 +21,17 @@ class Relationships extends Extension {
 			$config->set_int("ext_relationships_version", 1);
 			log_info("relationships", "extension installed");
 		}
+		if ($config->get_int("ext_relationships_version") < 2){
+			$database->execute("CREATE INDEX images__has_children ON images(has_children)");
+
+			$config->set_int("ext_relationships_version", 2);
+			log_info("relationships", "extension updated");
+		}
 	}
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		if(isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : TRUE) { //Ignore tag_edit__parent if tags contain parent metatag
-			if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : FALSE) {
+			if(isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : FALSE) {
 				$this->set_parent($event->image->id, (int) $_POST["tag_edit__parent"]);
 			}else{
 				$this->remove_parent($event->image->id);
@@ -83,7 +89,7 @@ class Relationships extends Extension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 
-		if($event->image->has_children){
+		if(bool_escape($event->image->has_children)){
 			$database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", array("iid"=>$event->image->id));
 		}
 
