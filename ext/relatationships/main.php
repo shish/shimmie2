@@ -89,7 +89,7 @@ class Relationships extends Extension {
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 
-		if($event->image->has_children == 'Y'){
+		if(bool_escape($event->image->has_children)){
 			$database->execute("UPDATE images SET parent_id = NULL WHERE parent_id = :iid", array("iid"=>$event->image->id));
 		}
 
