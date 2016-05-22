@@ -985,6 +985,7 @@ class Image {
 		$img_querylets = self::parse_meta_terms($terms);
 		$positive_tag_count = 0;
 		$negative_tag_count = 0;
+		$wildcard_count     = 0;
 
 		$terms = Tag::resolve_aliases($terms);
 
@@ -1012,6 +1013,8 @@ class Image {
 					$tag_querylets[] = new TagQuerylet($term, !$negative);
 				}
 			}
+
+			if(strpos($term, '%') !== FALSE) $wildcard_count++;
 		}
 
 		// merge all the tag querylets into one generic one
@@ -1019,7 +1022,13 @@ class Image {
 		$terms = array();
 		foreach($tag_querylets as $tq) {
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= ' '.$sign.' (tag LIKE :tag'.Image::$tag_n.')';
+
+			if(!$wildcard_count) {
+				$sql .= ' '.$sign.' (tag LIKE :tag'.Image::$tag_n.')';
+			} else {
+				$sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
+			}
+
 			$terms['tag'.Image::$tag_n] = $tq->tag;
 			Image::$tag_n++;
 
@@ -1038,7 +1047,7 @@ class Image {
 		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
 			// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
 			// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
-			$group_by = ((strpos($tag_search->variables['tag0'], '%') !== FALSE) ? "GROUP BY images.id" : "");
+			$group_by = (!$wildcard_count ? "" : "GROUP BY images.id");
 			$query = new Querylet("
 				SELECT images.*
 				FROM images
@@ -1076,8 +1085,9 @@ class Image {
 			if($tags_ok) {
 				$tag_id_list = join(', ', $tag_id_array);
 
+				$sum = (!$wildcard_count ? "SUM" : "");
 				$subquery = new Querylet('
-					SELECT images.*, SUM('.$tag_search->sql.') AS score
+					SELECT images.*, '.$sum.'('.$tag_search->sql.') AS score
 					FROM images
 					LEFT JOIN image_tags ON image_tags.image_id = images.id
 					JOIN tags ON image_tags.tag_id = tags.id
