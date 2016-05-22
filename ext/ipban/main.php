@@ -224,7 +224,7 @@ class IPBan extends Extension {
 
 				$contact_link = $config->get_string("contact_link");
 				if(!empty($contact_link)) {
-					print "<p><a href='$contact_link'>Contact The Admin</a>";
+					print "<p><a href='$contact_link'>Contact the staff (be sure to include this message)</a>";
 				}
 				exit;
 			}
