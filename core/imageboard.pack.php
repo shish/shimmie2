@@ -797,21 +797,6 @@ class Image {
 	}
 
 	/**
-	 * @param Querylet $img_search
-	 * @return Querylet
-	 */
-	private static function build_simple_query($img_search) {
-		$query = new Querylet("SELECT images.* FROM images ");
-
-		if (!empty($img_search->sql)) {
-			$query->append_sql(" WHERE ");
-			$query->append($img_search);
-			return $query;
-		}
-		return $query;
-	}
-
-	/**
 	 * WARNING: this description is no longer accurate, though it does get across
 	 * the general idea - the actual method has a few extra optimisations
 	 *
@@ -877,7 +862,11 @@ class Image {
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($count_tag_querylets === 0) {
-			$query = self::build_simple_query($img_search);
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=1
+			");
 		}
 
 		// one positive tag (a common case), do an optimised search
@@ -889,11 +878,6 @@ class Image {
 				JOIN tags ON image_tags.tag_id=tags.id
 				WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
 			"), array("tag"=>$tag_querylets[0]->tag));
-
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" AND ");
-				$query->append($img_search);
-			}
 		}
 
 		// more than one positive tag, or more than zero negative tags
@@ -902,30 +886,29 @@ class Image {
 			$negative_tag_id_array = array();
 			$tags_ok = true;
 
-			foreach($tag_querylets as $tq) {
+			foreach ($tag_querylets as $tq) {
 				$tag_ids = $database->get_col(
 					$database->scoreql_to_sql("
 						SELECT id
 						FROM tags
 						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
-					"), array("tag"=>$tq->tag)
+					"), array("tag" => $tq->tag)
 				);
-				if($tq->positive) {
+				if ($tq->positive) {
 					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
 					$tags_ok = count($tag_ids) > 0;
-					if(!$tags_ok) break;
-				}
-				else {
+					if (!$tags_ok) break;
+				} else {
 					$negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
 				}
 			}
 
-			if($tags_ok) {
+			if ($tags_ok) {
 				$have_pos = count($positive_tag_id_array) > 0;
 				$have_neg = count($negative_tag_id_array) > 0;
 
 				$sql = "";
-				if($have_pos) {
+				if ($have_pos) {
 					$positive_tag_id_list = join(', ', $positive_tag_id_array);
 					$sql .= "
 						SELECT image_id
@@ -935,10 +918,10 @@ class Image {
 						HAVING COUNT(image_id)>=$positive_tag_count
 					";
 				}
-				if($have_pos && $have_neg) {
+				if ($have_pos && $have_neg) {
 					$sql .= " EXCEPT ";
 				}
-				if($have_neg) {
+				if ($have_neg) {
 					$negative_tag_id_list = join(', ', $negative_tag_id_array);
 					$sql .= "
 						SELECT image_id
@@ -951,13 +934,7 @@ class Image {
 					FROM images
 					WHERE images.id IN ($sql)
 				");
-
-				if(strlen($img_search->sql) > 0) {
-					$query->append_sql(" AND ");
-					$query->append($img_search);
-				}
-			}
-			else {
+			} else {
 				# one of the positive tags had zero results, therefor there
 				# can be no results; "where 1=0" should shortcut things
 				$query = new Querylet("
@@ -966,6 +943,12 @@ class Image {
 					WHERE 1=0
 				");
 			}
+		}
+
+		if (!empty($img_search->sql)) {
+			$query->append_sql(" AND ");
+			$query->append($img_search);
+			return $query;
 		}
 
 		return $query;
@@ -1040,7 +1023,11 @@ class Image {
 
 		// no tags, do a simple search (+image metadata if we have any)
 		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = self::build_simple_query($img_search);
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=1
+			");
 		}
 
 		// one positive tag (a common case), do an optimised search
@@ -1056,11 +1043,6 @@ class Image {
 				WHERE tag LIKE :tag0
 				{$group_by}
 			", $tag_search->variables);
-
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" AND ");
-				$query->append($img_search);
-			}
 		}
 
 		// more than one positive tag, and zero or more negative tags
@@ -1101,12 +1083,9 @@ class Image {
 				);
 				$query = new Querylet('
 					SELECT *
-					FROM ('.$subquery->sql.') AS images ', $subquery->variables);
-
-				if(!empty($img_search->sql)) {
-					$query->append_sql(" WHERE ");
-					$query->append($img_search);
-				}
+					FROM ('.$subquery->sql.') AS images
+					WHERE 1=1
+				', $subquery->variables);
 			}
 			else {
 				# there are no results, "where 1=0" should shortcut things
@@ -1120,13 +1099,20 @@ class Image {
 
 		//zero positive tags and one or more negative tags
 		//TODO: This isn't currently implemented. SEE: https://github.com/shish/shimmie2/issues/66
-		else{
+		else {
 			$query = new Querylet("
 				SELECT images.*
 				FROM images
 				WHERE 1=0
 			");
 		}
+
+		if (!empty($img_search->sql)) {
+			$query->append_sql(" AND ");
+			$query->append($img_search);
+			return $query;
+		}
+
 		Image::$tag_n = 0;
 		return $query;
 	}
