@@ -44,12 +44,20 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$_GET = $args;
 		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 		send_event(new PageRequestEvent($page_name));
+		if($page->mode == "redirect") {
+			$page->code = 302;
+		}
 	}
 
 	// page things
 	protected function assert_title($title) {
 		global $page;
-		$this->assertEquals($title, $page->title);
+		$this->assertContains($title, $page->title);
+	}
+
+	protected function assert_no_title($title) {
+		global $page;
+		$this->assertNotContains($title, $page->title);
 	}
 
 	protected function assert_response($code) {
@@ -59,7 +67,7 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 
 	protected function page_to_text($section=null) {
 		global $page;
-		$text = "";
+		$text = $page->title . "\n";
 		foreach($page->blocks as $block) {
 			if(is_null($section) || $section == $block->section) {
 				$text .= $block->header . "\n";
