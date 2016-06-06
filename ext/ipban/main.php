@@ -222,7 +222,7 @@ class IPBan extends Extension {
 				print "IP <b>$ip</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>$reason</b>\n";
 				print "<p>If you couldn't possibly be guilty of what you're banned for, the person we banned probably had a dynamic IP address and so do you. See <a href='http://whatismyipaddress.com/dynamic-static'>http://whatismyipaddress.com/dynamic-static</a> for more information.\n";
 
-				$contact_link = $config->get_string("contact_link");
+				$contact_link = contact_link();
 				if(!empty($contact_link)) {
 					print "<p><a href='$contact_link'>Contact The Admin</a>";
 				}
