@@ -20,7 +20,7 @@ class Layout {
 		$theme_name = $config->get_string('theme', 'lite');
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
-		$contact_link = $config->get_string('contact_link');
+		$contact_link = contact_link();
 
 		$header_html = "";
 		ksort($page->html_headers);
@@ -152,7 +152,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:{$contact_link}'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='{$contact_link}'>Contact</a>";
 		//$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		/*$wrapper = "";

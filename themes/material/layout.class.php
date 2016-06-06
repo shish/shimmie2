@@ -13,7 +13,7 @@ class Layout {
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
 		$main_page = $config->get_string('main_page');
-		$contact_link = $config->get_string('contact_link');
+		$contact_link = contact_link();
     $site_link = make_link();
 
 		$header_html = "";
@@ -86,7 +86,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 		/*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
