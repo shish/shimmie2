@@ -833,7 +833,7 @@ class Image {
 					FROM images
 					JOIN image_tags ON images.id=image_tags.image_id
 					JOIN tags ON image_tags.tag_id=tags.id
-					WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 					GROUP BY images.id
 				) AS images
 				WHERE 1=1
