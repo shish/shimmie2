@@ -316,7 +316,13 @@ class Image {
 		}
 
 		if(count($tags) === 0) {
-			$row = $database->get_row('SELECT images.* FROM images WHERE images.id '.$gtlt.' '.$this->id.' ORDER BY images.id '.$dir.' LIMIT 1');
+			$row = $database->get_row('
+				SELECT images.*
+				FROM images
+				WHERE images.id '.$gtlt.' '.$this->id.'
+				ORDER BY images.id '.$dir.'
+				LIMIT 1
+			');
 		}
 		else {
 			$tags[] = 'id'. $gtlt . $this->id;
@@ -355,7 +361,11 @@ class Image {
 	public function set_owner(User $owner) {
 		global $database;
 		if($owner->id != $this->owner_id) {
-			$database->execute("UPDATE images SET owner_id=:owner_id WHERE id=:id", array("owner_id"=>$owner->id, "id"=>$this->id));
+			$database->execute("
+				UPDATE images
+				SET owner_id=:owner_id
+				WHERE id=:id
+			", array("owner_id"=>$owner->id, "id"=>$this->id));
 			log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}", false, array("image_id" => $this->id));
 		}
 	}
@@ -368,7 +378,13 @@ class Image {
 	public function get_tag_array() {
 		global $database;
 		if(!isset($this->tag_array)) {
-			$this->tag_array = $database->get_col("SELECT tag FROM image_tags JOIN tags ON image_tags.tag_id = tags.id WHERE image_id=:id ORDER BY tag", array("id"=>$this->id));
+			$this->tag_array = $database->get_col("
+				SELECT tag
+				FROM image_tags
+				JOIN tags ON image_tags.tag_id = tags.id
+				WHERE image_id=:id
+				ORDER BY tag
+			", array("id"=>$this->id));
 		}
 		return $this->tag_array;
 	}
@@ -570,10 +586,18 @@ class Image {
 			$database->execute("
 				UPDATE tags
 				SET count = count - 1
-				WHERE id IN (SELECT tag_id FROM image_tags WHERE image_id = :id)", array("id"=>$this->id)
-			);
+				WHERE id IN (
+					SELECT tag_id
+					FROM image_tags
+					WHERE image_id = :id
+				)
+			", array("id"=>$this->id));
 		}
-		$database->execute("DELETE FROM image_tags WHERE image_id=:id", array("id"=>$this->id));
+		$database->execute("
+			DELETE
+			FROM image_tags
+			WHERE image_id=:id
+		", array("id"=>$this->id));
 	}
 
 	/**
@@ -601,10 +625,13 @@ class Image {
 				}
 
 				$id = $database->get_one(
-						$database->scoreql_to_sql(
-							"SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-						),
-						array("tag"=>$tag));
+					$database->scoreql_to_sql("
+						SELECT id
+						FROM tags
+						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					"),
+					array("tag"=>$tag)
+				);
 				if(empty($id)) {
 					// a new tag
 					$database->execute(
@@ -617,15 +644,19 @@ class Image {
 				}
 				else {
 					// user of an existing tag
-					$database->execute(
-							"INSERT INTO image_tags(image_id, tag_id) VALUES(:iid, :tid)",
-							array("iid"=>$this->id, "tid"=>$id));
+					$database->execute("
+						INSERT INTO image_tags(image_id, tag_id)
+						VALUES(:iid, :tid)
+					", array("iid"=>$this->id, "tid"=>$id));
 				}
 				$database->execute(
-						$database->scoreql_to_sql(
-							"UPDATE tags SET count = count + 1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
-						),
-						array("tag"=>$tag));
+					$database->scoreql_to_sql("
+						UPDATE tags
+						SET count = count + 1
+						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					"),
+					array("tag"=>$tag)
+				);
 			}
 
 			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
@@ -789,14 +820,9 @@ class Image {
 					$img_querylets[] = new ImgQuerylet($querylet, $positive);
 				}
 			} else {
-				$expansions = Tag::resolve_wildcard($term);
-				if ($expansions) {
-					if ($positive) $positive_tag_count++;
-					else $negative_tag_count++;
-				}
-				foreach ($expansions as $expanded_term) {
-					$tag_querylets[] = new TagQuerylet($expanded_term, $positive);
-				}
+				$tag_querylets[] = new TagQuerylet(Tag::sanitise_wildcard($term), $positive);
+				if ($positive) $positive_tag_count++;
+				else $negative_tag_count++;
 			}
 		}
 
@@ -823,6 +849,7 @@ class Image {
 
 		// one positive tag (a common case), do an optimised search
 		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
+			# "LIKE" to account for wildcards
 			$query = new Querylet($database->scoreql_to_sql("
 				SELECT *
 				FROM (
@@ -840,15 +867,9 @@ class Image {
 		// more than one positive tag, or more than zero negative tags
 		else {
 			if($database->get_driver_name() === "mysql")
-				$query = Image::build_ugly_search_querylet(
-					$tag_querylets,
-					$positive_tag_count
-				);
+				$query = Image::build_ugly_search_querylet($tag_querylets);
 			else
-				$query = Image::build_accurate_search_querylet(
-					$tag_querylets,
-					$positive_tag_count
-				);
+				$query = Image::build_accurate_search_querylet($tag_querylets);
 		}
 
 		/*
@@ -893,14 +914,10 @@ class Image {
 	 *      All the subqueries are executed every time for every row in the
 	 *      images table. Yes, MySQL does suck this much.
 	 *
-	 * @param array $tag_querylets
-	 * @param int $positive_tag_count
+	 * @param TagQuerylet[] $tag_querylets
 	 * @return Querylet
 	 */
-	private static function build_accurate_search_querylet(
-		$tag_querylets,
-		$positive_tag_count
-	) {
+	private static function build_accurate_search_querylet($tag_querylets) {
 		global $database;
 
 		$positive_tag_id_array = array();
@@ -911,7 +928,7 @@ class Image {
 				$database->scoreql_to_sql("
 					SELECT id
 					FROM tags
-					WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 				"),
 				array("tag" => $tq->tag)
 			);
@@ -931,51 +948,44 @@ class Image {
 			}
 		}
 
-		$have_pos = count($positive_tag_id_array) > 0;
-		$have_neg = count($negative_tag_id_array) > 0;
-
-		$sql = "";
-		if ($have_pos) {
+		assert('$positive_tag_id_array || $negative_tag_id_array');
+		$wheres = array();
+		if ($positive_tag_id_array) {
 			$positive_tag_id_list = join(', ', $positive_tag_id_array);
-			$sql .= "
-				SELECT image_id
-				FROM image_tags
-				WHERE tag_id IN ($positive_tag_id_list)
-				GROUP BY image_id
-				HAVING COUNT(image_id)>=$positive_tag_count
-			";
+			$wheres[] = "tag_id IN ($positive_tag_id_list)";
 		}
-		if ($have_pos && $have_neg) {
-			$sql .= " EXCEPT ";
-		}
-		if ($have_neg) {
+		if ($negative_tag_id_array) {
 			$negative_tag_id_list = join(', ', $negative_tag_id_array);
-			$sql .= "
-				SELECT image_id
-				FROM image_tags
-				WHERE tag_id IN ($negative_tag_id_list)
-			";
+			$wheres[] = "tag_id NOT IN ($negative_tag_id_list)";
 		}
+		$wheres_str = join(" AND ", $wheres);
 		return new Querylet("
 			SELECT images.*
 			FROM images
-			WHERE images.id IN ($sql)
-		");
+			WHERE images.id IN (
+				SELECT image_id
+				FROM image_tags
+				WHERE $wheres_str
+				GROUP BY image_id
+				HAVING COUNT(image_id) >= :search_score
+			)
+		", array("search_score"=>count($positive_tag_id_array)));
 	}
 
 	/**
 	 * this function exists because mysql is a turd, see the docs for
 	 * build_accurate_search_querylet() for a full explanation
 	 *
-	 * @param array $tag_querylets
-	 * @param int $positive_tag_count
+	 * @param TagQuerylet[] $tag_querylets
 	 * @return Querylet
 	 */
-	private static function build_ugly_search_querylet(
-		$tag_querylets,
-		$positive_tag_count
-	) {
+	private static function build_ugly_search_querylet($tag_querylets) {
 		global $database;
+
+		$positive_tag_count = 0;
+		foreach($tag_querylets as $tq) {
+			if($tq->positive) $positive_tag_count++;
+		}
 
 		// only negative tags - shortcut to fail
 		if($positive_tag_count == 0) {
@@ -993,7 +1003,7 @@ class Image {
 		$terms = array();
 		foreach($tag_querylets as $tq) {
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= ' '.$sign.' IF(tag LIKE :tag'.Image::$tag_n.', 1, 0)';
+			$sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
 			$terms['tag'.Image::$tag_n] = $tq->tag;
 			Image::$tag_n++;
 		}
@@ -1001,19 +1011,18 @@ class Image {
 
 		$tag_id_array = array();
 
-		$x = 0;
-		foreach($tag_search->variables as $tag) {
+		foreach($tag_querylets as $tq) {
 			$tag_ids = $database->get_col(
 				$database->scoreql_to_sql("
 					SELECT id
 					FROM tags
-					WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 				"),
-				array("tag" => $tag)
+				array("tag" => $tq->tag)
 			);
 			$tag_id_array = array_merge($tag_id_array, $tag_ids);
 
-			if($tag_querylets[$x]->positive && count($tag_ids) == 0) {
+			if($tq->positive && count($tag_ids) == 0) {
 				# one of the positive tags had zero results, therefor there
 				# can be no results; "where 1=0" should shortcut things
 				return new Querylet("
@@ -1022,15 +1031,13 @@ class Image {
 					WHERE 1=0
 				");
 			}
-
-			$x++;
 		}
 
 		Image::$tag_n = 0;
 		return new Querylet('
 			SELECT *
 			FROM (
-				SELECT images.*, SUM('.$tag_search->sql.') AS score
+				SELECT images.*, ('.$tag_search->sql.') AS score
 				FROM images
 				LEFT JOIN image_tags ON image_tags.image_id = images.id
 				JOIN tags ON image_tags.tag_id = tags.id
@@ -1154,34 +1161,24 @@ class Tag {
 
 	/**
 	 * @param string $tag
-	 * @return array
+	 * @return string
 	 */
-	public static function resolve_wildcard($tag) {
+	public static function sanitise_wildcard($tag) {
 		// if there is no wildcard, return the tag
 		if(strpos($tag, "*") === false) {
-			return array($tag);
+			return $tag;
 		}
 
-		// if the whole match is wild, return null to save the database
+		// if the whole match is wild, save the database
 		else if(str_replace("*", "", $tag) == "") {
-			return array();
+			return "invalid-wildcard";
 		}
 
-		// else find some matches
+		// else translate to sql
 		else {
-			global $database;
-			$db_wild_tag = str_replace("%", "\%", $tag);
-			$db_wild_tag = str_replace("*", "%", $db_wild_tag);
-			$newtags = $database->get_col(
-				$database->scoreql_to_sql("SELECT tag FROM tags WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(?)"),
-				array($db_wild_tag)
-			);
-			if(count($newtags) > 0) {
-				$resolved = $newtags;
-			} else {
-				$resolved = array($tag);
-			}
-			return $resolved;
+			$tag = str_replace("%", "\%", $tag);
+			$tag = str_replace("*", "%", $tag);
+			return $tag;
 		}
 	}
 
