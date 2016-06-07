@@ -132,7 +132,14 @@ class IndexTest extends ShimmiePHPUnitTestCase {
 	/* * * * * * * * * * *
 	* Wildcards          *
 	* * * * * * * * * * */
-	public function testWildSearch() {
+	public function testWildSearchNoResults() {
+		$image_ids = $this->upload();
+
+		$this->get_page("post/list/asdfasdf*/1");
+		$this->assert_response(404);
+	}
+
+	public function testWildSearchOneResult() {
 		$image_ids = $this->upload();
 
 		// Only the first image matches both the wildcard and the tag.
@@ -142,6 +149,15 @@ class IndexTest extends ShimmiePHPUnitTestCase {
 		// "computer computing screenshot")
 		$this->get_page("post/list/comp* screenshot/1");
 		$this->assert_response(302);
+	}
+
+	public function testWildSearchManyResults() {
+		$image_ids = $this->upload();
+
+		// two images match comp* - one matches it once,
+		// one matches it twice
+		$this->get_page("post/list/comp*/1");
+		$this->assert_response(200);
 	}
     
 	/* * * * * * * * * * *
