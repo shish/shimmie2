@@ -980,17 +980,6 @@ class Image {
 	) {
 		global $database;
 
-		// merge all the tag querylets into one generic one
-		$sql = "0";
-		$terms = array();
-		foreach($tag_querylets as $tq) {
-			$sign = $tq->positive ? "+" : "-";
-			$sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
-			$terms['tag'.Image::$tag_n] = $tq->tag;
-			Image::$tag_n++;
-		}
-		$tag_search = new Querylet($sql, $terms);
-
 		// only negative tags - shortcut to fail
 		if($positive_tag_count == 0) {
 			// TODO: This isn't currently implemented.
@@ -1001,6 +990,17 @@ class Image {
 				WHERE 1=0
 			");
 		}
+
+		// merge all the tag querylets into one generic one
+		$sql = "0";
+		$terms = array();
+		foreach($tag_querylets as $tq) {
+			$sign = $tq->positive ? "+" : "-";
+			$sql .= ' '.$sign.' IF(tag LIKE :tag'.Image::$tag_n.', 1, 0)';
+			$terms['tag'.Image::$tag_n] = $tq->tag;
+			Image::$tag_n++;
+		}
+		$tag_search = new Querylet($sql, $terms);
 
 		$tag_id_array = array();
 
