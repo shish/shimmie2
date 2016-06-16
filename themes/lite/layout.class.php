@@ -20,7 +20,7 @@ class Layout {
 		$theme_name = $config->get_string('theme', 'lite');
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
-		$contact_link = $config->get_string('contact_link');
+		$contact_link = contact_link();
 
 		$header_html = "";
 		ksort($page->html_headers);
@@ -152,7 +152,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:{$contact_link}'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='{$contact_link}'>Contact</a>";
 		//$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		/*$wrapper = "";
@@ -198,7 +198,7 @@ class Layout {
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2014,
+			2007-2016,
 			based on the Danbooru concept.<br />
 			Lite Theme by <a href="http://seemslegit.com">Zach</a>
 			$debug

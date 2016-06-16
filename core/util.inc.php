@@ -591,6 +591,31 @@ function zglob($pattern) {
 	}
 }
 
+/**
+ * Gets contact link as mailto: or http:
+ */
+function contact_link() {
+	global $config;
+	$text = $config->get_string('contact_link');
+	if(
+		startsWith($text, "http:") ||
+		startsWith($text, "https:") ||
+		startsWith($text, "mailto:")
+	) {
+		return $text;
+	}
+
+	if(strpos($text, "@")) {
+		return "mailto:$text";
+	}
+
+	if(strpos($text, "/")) {
+		return "http://$text";
+	}
+
+	return $text;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * CAPTCHA abstraction                                                       *

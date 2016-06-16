@@ -13,7 +13,7 @@ class Layout {
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
 		$main_page = $config->get_string('main_page');
-		$contact_link = $config->get_string('contact_link');
+		$contact_link = contact_link();
     $site_link = make_link();
 
 		$header_html = "";
@@ -86,7 +86,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 		/*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		$wrapper = "";
@@ -114,9 +114,9 @@ class Layout {
 		<title>{$page->title}</title>
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
     <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons"  rel="stylesheet">
-    <link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css?v1.0.5"  rel="stylesheet">
+    <link rel="stylesheet" href="{$data_href}/themes/{$theme_name}/material.min.css"  rel="stylesheet">
     $header_html
-		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js?v1.0.5"></script>
+		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/material.min.js"></script>
 		<script type="text/javascript" src="{$data_href}/themes/{$theme_name}/script0.js?v1"></script>
     <!-- having conflicts this ensures the screens will not remain hidden \while the layout is adjusted -->
 	</head>

@@ -756,18 +756,16 @@ class Image {
 	private static function build_search_querylet($terms) {
 		assert('is_array($terms)');
 		global $database;
-		if($database->get_driver_name() === "mysql")
-			return Image::build_ugly_search_querylet($terms);
-		else
-			return Image::build_accurate_search_querylet($terms);
-	}
 
-	/**
-	 * @param string[] $terms
-	 * @return ImgQuerylet[]
-	 */
-	private static function parse_meta_terms($terms) {
+		$tag_querylets = array();
 		$img_querylets = array();
+		$positive_tag_count = 0;
+		$negative_tag_count = 0;
+
+		/*
+		 * Turn a bunch of strings into a bunch of TagQuerylet
+		 * and ImgQuerylet objects
+		 */
 		$stpe = new SearchTermParseEvent(null, $terms);
 		send_event($stpe);
 		if ($stpe->is_querylet_set()) {
@@ -775,39 +773,105 @@ class Image {
 				$img_querylets[] = new ImgQuerylet($querylet, true);
 			}
 		}
-		return $img_querylets;
-	}
 
-	/**
-	 * @param ImgQuerylet[] $img_querylets
-	 * @return Querylet
-	 */
-	private static function build_img_search($img_querylets) {
-		// merge all the image metadata searches into one generic querylet
-		$n = 0;
-		$sql = "";
-		$terms = array();
-		foreach ($img_querylets as $iq) {
-			if ($n++ > 0) $sql .= " AND";
-			if (!$iq->positive) $sql .= " NOT";
-			$sql .= " (" . $iq->qlet->sql . ")";
-			$terms = array_merge($terms, $iq->qlet->variables);
+		$terms = Tag::resolve_aliases($terms);
+		foreach ($terms as $term) {
+			$positive = true;
+			if (is_string($term) && !empty($term) && ($term[0] == '-')) {
+				$positive = false;
+				$term = substr($term, 1);
+			}
+			if (strlen($term) === 0) {
+				continue;
+			}
+
+			$stpe = new SearchTermParseEvent($term, $terms);
+			send_event($stpe);
+			if ($stpe->is_querylet_set()) {
+				foreach ($stpe->get_querylets() as $querylet) {
+					$img_querylets[] = new ImgQuerylet($querylet, $positive);
+				}
+			} else {
+				$expansions = Tag::resolve_wildcard($term);
+				if ($expansions) {
+					if ($positive) $positive_tag_count++;
+					else $negative_tag_count++;
+				}
+				foreach ($expansions as $expanded_term) {
+					$tag_querylets[] = new TagQuerylet($expanded_term, $positive);
+				}
+			}
 		}
-		return new Querylet($sql, $terms);
-	}
 
-	/**
-	 * @param Querylet $img_search
-	 * @return Querylet
-	 */
-	private static function build_simple_query($img_search) {
-		$query = new Querylet("SELECT images.* FROM images ");
+		/*
+		 * Turn a bunch of Querylet objects into a base query
+		 *
+		 * Must follow the format
+		 *
+		 *   SELECT images.*
+		 *   FROM (...) AS images
+		 *   WHERE (...)
+		 *
+		 * ie, return a set of images.* columns, and end with a WHERE
+		 */
 
-		if (!empty($img_search->sql)) {
-			$query->append_sql(" WHERE ");
-			$query->append($img_search);
-			return $query;
+		// no tags, do a simple search
+		if($positive_tag_count + $negative_tag_count == 0) {
+			$query = new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=1
+			");
 		}
+
+		// one positive tag (a common case), do an optimised search
+		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
+			$query = new Querylet($database->scoreql_to_sql("
+				SELECT *
+				FROM (
+					SELECT images.*
+					FROM images
+					JOIN image_tags ON images.id=image_tags.image_id
+					JOIN tags ON image_tags.tag_id=tags.id
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
+					GROUP BY images.id
+				) AS images
+				WHERE 1=1
+			"), array("tag"=>$tag_querylets[0]->tag));
+		}
+
+		// more than one positive tag, or more than zero negative tags
+		else {
+			if($database->get_driver_name() === "mysql")
+				$query = Image::build_ugly_search_querylet(
+					$tag_querylets,
+					$positive_tag_count
+				);
+			else
+				$query = Image::build_accurate_search_querylet(
+					$tag_querylets,
+					$positive_tag_count
+				);
+		}
+
+		/*
+		 * Merge all the image metadata searches into one generic querylet
+		 * and append to the base querylet with "AND blah"
+		 */
+		if($img_querylets) {
+			$n = 0;
+			$img_sql = "";
+			$img_vars = array();
+			foreach ($img_querylets as $iq) {
+				if ($n++ > 0) $img_sql .= " AND";
+				if (!$iq->positive) $img_sql .= " NOT";
+				$img_sql .= " (" . $iq->qlet->sql . ")";
+				$img_vars = array_merge($img_vars, $iq->qlet->variables);
+			}
+			$query->append_sql(" AND ");
+			$query->append(new Querylet($img_sql, $img_vars));
+		}
+
 		return $query;
 	}
 
@@ -832,186 +896,99 @@ class Image {
 	 *      All the subqueries are executed every time for every row in the
 	 *      images table. Yes, MySQL does suck this much.
 	 *
-	 * @param string[] $terms
-	 * @return \Querylet
+	 * @param array $tag_querylets
+	 * @param int $positive_tag_count
+	 * @return Querylet
 	 */
-	private static function build_accurate_search_querylet($terms) {
+	private static function build_accurate_search_querylet(
+		$tag_querylets,
+		$positive_tag_count
+	) {
 		global $database;
 
-		$tag_querylets = array();
-		$img_querylets = self::parse_meta_terms($terms);
-		$positive_tag_count = 0;
+		$positive_tag_id_array = array();
+		$negative_tag_id_array = array();
 
-		// parse the words that are searched for into
-		// various types of querylet
-		$terms = Tag::resolve_aliases($terms);
-		foreach($terms as $term) {
-			$positive = true;
-			if(is_string($term) && !empty($term) && ($term[0] == '-')) {
-				$positive = false;
-				$term = substr($term, 1);
-			}
-			if(strlen($term) === 0) {
-				continue;
-			}
-
-			$stpe = new SearchTermParseEvent($term, $terms);
-			send_event($stpe);
-			if($stpe->is_querylet_set()) {
-				foreach($stpe->get_querylets() as $querylet) {
-					$img_querylets[] = new ImgQuerylet($querylet, $positive);
+		foreach ($tag_querylets as $tq) {
+			$tag_ids = $database->get_col(
+				$database->scoreql_to_sql("
+					SELECT id
+					FROM tags
+					WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+				"),
+				array("tag" => $tq->tag)
+			);
+			if ($tq->positive) {
+				$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
+				if (count($tag_ids) == 0) {
+					# one of the positive tags had zero results, therefor there
+					# can be no results; "where 1=0" should shortcut things
+					return new Querylet("
+						SELECT images.*
+						FROM images
+						WHERE 1=0
+					");
 				}
-			}
-			else {
-				$expansions = Tag::resolve_wildcard($term);
-				if($expansions && $positive) $positive_tag_count++;
-				foreach($expansions as $expanded_term) {
-					$tag_querylets[] = new TagQuerylet($expanded_term, $positive);
-				}
-			}
-		}
-		$img_search = self::build_img_search($img_querylets);
-
-		// How many tag querylets are there?
-		$count_tag_querylets = count($tag_querylets);
-
-		// no tags, do a simple search (+image metadata if we have any)
-		if($count_tag_querylets === 0) {
-			$query = self::build_simple_query($img_search);
-		}
-
-		// one positive tag (a common case), do an optimised search
-		else if($count_tag_querylets === 1 && $tag_querylets[0]->positive) {
-			$query = new Querylet($database->scoreql_to_sql("
-				SELECT images.*
-				FROM images
-				JOIN image_tags ON images.id=image_tags.image_id
-				JOIN tags ON image_tags.tag_id=tags.id
-				WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
-			"), array("tag"=>$tag_querylets[0]->tag));
-
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" AND ");
-				$query->append($img_search);
+			} else {
+				$negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
 			}
 		}
 
-		// more than one positive tag, or more than zero negative tags
-		else {
-			$positive_tag_id_array = array();
-			$negative_tag_id_array = array();
-			$tags_ok = true;
+		$have_pos = count($positive_tag_id_array) > 0;
+		$have_neg = count($negative_tag_id_array) > 0;
 
-			foreach($tag_querylets as $tq) {
-				$tag_ids = $database->get_col(
-					$database->scoreql_to_sql("
-						SELECT id
-						FROM tags
-						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
-					"), array("tag"=>$tq->tag)
-				);
-				if($tq->positive) {
-					$positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
-					$tags_ok = count($tag_ids) > 0;
-					if(!$tags_ok) break;
-				}
-				else {
-					$negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
-				}
-			}
-
-			if($tags_ok) {
-				$have_pos = count($positive_tag_id_array) > 0;
-				$have_neg = count($negative_tag_id_array) > 0;
-
-				$sql = "";
-				if($have_pos) {
-					$positive_tag_id_list = join(', ', $positive_tag_id_array);
-					$sql .= "
-						SELECT image_id
-						FROM image_tags
-						WHERE tag_id IN ($positive_tag_id_list)
-						GROUP BY image_id
-						HAVING COUNT(image_id)>=$positive_tag_count
-					";
-				}
-				if($have_pos && $have_neg) {
-					$sql .= " EXCEPT ";
-				}
-				if($have_neg) {
-					$negative_tag_id_list = join(', ', $negative_tag_id_array);
-					$sql .= "
-						SELECT image_id
-						FROM image_tags
-						WHERE tag_id IN ($negative_tag_id_list)
-					";
-				}
-				$query = new Querylet("
-					SELECT images.*
-					FROM images
-					WHERE images.id IN ($sql)
-				");
-
-				if(strlen($img_search->sql) > 0) {
-					$query->append_sql(" AND ");
-					$query->append($img_search);
-				}
-			}
-			else {
-				# one of the positive tags had zero results, therefor there
-				# can be no results; "where 1=0" should shortcut things
-				$query = new Querylet("
-					SELECT images.*
-					FROM images
-					WHERE 1=0
-				");
-			}
+		$sql = "";
+		if ($have_pos) {
+			$positive_tag_id_list = join(', ', $positive_tag_id_array);
+			$sql .= "
+				SELECT image_id
+				FROM image_tags
+				WHERE tag_id IN ($positive_tag_id_list)
+				GROUP BY image_id
+				HAVING COUNT(image_id)>=$positive_tag_count
+			";
 		}
-
-		return $query;
+		if ($have_pos && $have_neg) {
+			$sql .= " EXCEPT ";
+		}
+		if ($have_neg) {
+			$negative_tag_id_list = join(', ', $negative_tag_id_array);
+			$sql .= "
+				SELECT image_id
+				FROM image_tags
+				WHERE tag_id IN ($negative_tag_id_list)
+			";
+		}
+		return new Querylet("
+			SELECT images.*
+			FROM images
+			WHERE images.id IN ($sql)
+		");
 	}
 
 	/**
 	 * this function exists because mysql is a turd, see the docs for
 	 * build_accurate_search_querylet() for a full explanation
 	 *
-	 * @param array $terms
+	 * @param array $tag_querylets
+	 * @param int $positive_tag_count
 	 * @return Querylet
 	 */
-	private static function build_ugly_search_querylet($terms) {
+	private static function build_ugly_search_querylet(
+		$tag_querylets,
+		$positive_tag_count
+	) {
 		global $database;
 
-		$tag_querylets = array();
-		$img_querylets = self::parse_meta_terms($terms);
-		$positive_tag_count = 0;
-		$negative_tag_count = 0;
-
-		$terms = Tag::resolve_aliases($terms);
-
-		reset($terms); // rewind to first element in array.
-
-		// turn each term into a specific type of querylet
-		foreach($terms as $term) {
-			$negative = false;
-			if( !empty($term) && ($term[0] == '-')) {
-				$negative = true;
-				$term = substr($term, 1);
-			}
-
-			$stpe = new SearchTermParseEvent($term, $terms);
-			send_event($stpe);
-			if($stpe->is_querylet_set()) {
-				foreach($stpe->get_querylets() as $querylet) {
-					$img_querylets[] = new ImgQuerylet($querylet, !$negative);
-				}
-			}
-			else {
-				$term = str_replace("*", "%", $term);
-				$term = str_replace("?", "_", $term);
-				if(!preg_match("/^[%_]+$/", $term)) {
-					$tag_querylets[] = new TagQuerylet($term, !$negative);
-				}
-			}
+		// only negative tags - shortcut to fail
+		if($positive_tag_count == 0) {
+			// TODO: This isn't currently implemented.
+			// SEE: https://github.com/shish/shimmie2/issues/66
+			return new Querylet("
+				SELECT images.*
+				FROM images
+				WHERE 1=0
+			");
 		}
 
 		// merge all the tag querylets into one generic one
@@ -1019,104 +996,56 @@ class Image {
 		$terms = array();
 		foreach($tag_querylets as $tq) {
 			$sign = $tq->positive ? "+" : "-";
-			$sql .= ' '.$sign.' (tag LIKE :tag'.Image::$tag_n.')';
+			$sql .= ' '.$sign.' IF(tag LIKE :tag'.Image::$tag_n.', 1, 0)';
 			$terms['tag'.Image::$tag_n] = $tq->tag;
 			Image::$tag_n++;
-
-			if($sign === "+") $positive_tag_count++;
-			else $negative_tag_count++;
 		}
 		$tag_search = new Querylet($sql, $terms);
-		$img_search = self::build_img_search($img_querylets);
 
-		// no tags, do a simple search (+image metadata if we have any)
-		if($positive_tag_count + $negative_tag_count == 0) {
-			$query = self::build_simple_query($img_search);
-		}
+		$tag_id_array = array();
 
-		// one positive tag (a common case), do an optimised search
-		else if($positive_tag_count === 1 && $negative_tag_count === 0) {
-			// MySQL is braindead, and does a full table scan on images, running the subquery once for each row -_-
-			// "{$this->get_images} WHERE images.id IN (SELECT image_id FROM tags WHERE tag LIKE ?) ",
-			$query = new Querylet("
-				SELECT images.*
-				FROM images
-				JOIN image_tags ON images.id=image_tags.image_id
-				JOIN tags ON image_tags.tag_id=tags.id
-				WHERE tag LIKE :tag0
-			", $tag_search->variables);
+		$x = 0;
+		foreach($tag_search->variables as $tag) {
+			$tag_ids = $database->get_col(
+				$database->scoreql_to_sql("
+					SELECT id
+					FROM tags
+					WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+				"),
+				array("tag" => $tag)
+			);
+			$tag_id_array = array_merge($tag_id_array, $tag_ids);
 
-			if(!empty($img_search->sql)) {
-				$query->append_sql(" AND ");
-				$query->append($img_search);
-			}
-		}
-
-		// more than one positive tag, and zero or more negative tags
-		else if($positive_tag_count >= 1) {
-			$tag_id_array = array();
-			$tags_ok = true;
-
-			$x = 0;
-			foreach($tag_search->variables as $tag) {
-				$tag_ids = $database->get_col(
-					"SELECT id FROM tags WHERE tag LIKE :tag",
-					array("tag"=>$tag)
-				);
-				$tag_id_array = array_merge($tag_id_array, $tag_ids);
-
-				$tags_ok = count($tag_ids) > 0 || !$tag_querylets[$x]->positive;
-				if(!$tags_ok) break;
-
-				$x++;
-			}
-
-			if($tags_ok) {
-				$tag_id_list = join(', ', $tag_id_array);
-
-				$subquery = new Querylet('
-					SELECT images.*, SUM('.$tag_search->sql.') AS score
-					FROM images
-					LEFT JOIN image_tags ON image_tags.image_id = images.id
-					JOIN tags ON image_tags.tag_id = tags.id
-					WHERE tags.id IN ('.$tag_id_list.')
-					GROUP BY images.id
-					HAVING score = :score',
-					array_merge(
-						$tag_search->variables,
-						array("score"=>$positive_tag_count)
-					)
-				);
-				$query = new Querylet('
-					SELECT *
-					FROM ('.$subquery->sql.') AS images ', $subquery->variables);
-
-				if(!empty($img_search->sql)) {
-					$query->append_sql(" WHERE ");
-					$query->append($img_search);
-				}
-			}
-			else {
-				# there are no results, "where 1=0" should shortcut things
-				$query = new Querylet("
+			if($tag_querylets[$x]->positive && count($tag_ids) == 0) {
+				# one of the positive tags had zero results, therefor there
+				# can be no results; "where 1=0" should shortcut things
+				return new Querylet("
 					SELECT images.*
 					FROM images
 					WHERE 1=0
 				");
 			}
+
+			$x++;
 		}
 
-		//zero positive tags and one or more negative tags
-		//TODO: This isn't currently implemented. SEE: https://github.com/shish/shimmie2/issues/66
-		else{
-			$query = new Querylet("
-				SELECT images.*
-				FROM images
-				WHERE 1=0
-			");
-		}
 		Image::$tag_n = 0;
-		return $query;
+		return new Querylet('
+			SELECT *
+			FROM (
+				SELECT images.*, SUM('.$tag_search->sql.') AS score
+				FROM images
+				LEFT JOIN image_tags ON image_tags.image_id = images.id
+				JOIN tags ON image_tags.tag_id = tags.id
+				WHERE tags.id IN (' . join(', ', $tag_id_array) . ')
+				GROUP BY images.id
+				HAVING score = :score
+			) AS images
+			WHERE 1=1
+		', array_merge(
+			$tag_search->variables,
+			array("score"=>$positive_tag_count)
+		));
 	}
 }
 
