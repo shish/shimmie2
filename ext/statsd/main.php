@@ -50,6 +50,9 @@ class StatsDInterface extends Extension {
 		else if($event->page_matches("rss")) {
 			$this->_stats("rss");
 		}
+		else if($event->page_matches("api")) {
+			$this->_stats("api");
+		}
 		else {
 			#global $_shm_load_start;
 			#$time = microtime(true) - $_shm_load_start;
