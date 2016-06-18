@@ -20,8 +20,14 @@ class AutoComplete extends Extension {
 				$SQLarr['limit'] = $_GET["limit"];
 			}
 
-			$res = $database->get_col(
-					"SELECT tag FROM tags WHERE tag LIKE :search AND count > 0 $limitSQL", $SQLarr);
+			$res = $database->get_pairs("
+				SELECT tag, count
+				FROM tags
+				WHERE tag LIKE :search
+				AND count > 0
+				ORDER BY count DESC
+				$limitSQL", $SQLarr
+			);
 
 			$page->set_mode("data");
 			$page->set_type("application/json");

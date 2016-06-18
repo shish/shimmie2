@@ -18,10 +18,10 @@ $(function(){
 					dataType : 'json',
 					type : 'GET',
 					success : function (data) {
-						response($.map(data, function (item) {
+						response($.map(data, function (count, item) {
 							item = (isNegative ? '-'+item : item);
 							return {
-								label : item,
+								label : item + ' ('+count+')',
 								value : item
 							}
 						}));
