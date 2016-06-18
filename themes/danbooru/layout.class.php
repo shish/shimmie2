@@ -50,13 +50,7 @@ class Layout {
 		//$base_href = $config->get_string('base_href');
 		$data_href = get_base_href();
 		$contact_link = contact_link();
-
-
-		$header_html = "";
-		ksort($page->html_headers);
-		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t$line\n";
-		}
+		$header_html = $page->get_all_html_headers();
 
 		$left_block_html = "";
 		$user_block_html = "";
