@@ -86,7 +86,7 @@ class IcoFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	private function check_contents($file) {
@@ -98,7 +98,7 @@ class IcoFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $hash
+	 * @param string $hash
 	 * @return bool
 	 */
 	private function create_thumb($hash) {

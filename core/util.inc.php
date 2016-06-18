@@ -390,8 +390,8 @@ function show_ip($ip, $ban_reason) {
 /**
  * Checks if a given string contains another at the beginning.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function startsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -402,8 +402,8 @@ function startsWith(/*string*/ $haystack, /*string*/ $needle) {
 /**
  * Checks if a given string contains another at the end.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function endsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -695,7 +695,7 @@ function is_https_enabled() {
  * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
  * and released under the 'Simplified BSD License'.
  *
- * @param string &$file File path
+ * @param string $file File path
  * @param string $ext
  * @param bool $list
  * @return string
@@ -1463,7 +1463,7 @@ function _dump_event_listeners($event_listeners, $path) {
 }
 
 /**
- * @param $ext_name string
+ * @param string $ext_name Main class name (eg ImageIO as opposed to ImageIOTheme or ImageIOTest)
  * @return bool
  */
 function ext_is_live($ext_name) {
