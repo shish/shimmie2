@@ -3,9 +3,8 @@
 class CustomHomeTheme extends HomeTheme {
 	public function display_page(Page $page, $sitename, $base_href, $theme_name, $body) {
 		$page->set_mode("data");
-		$hh = "";
 		$page->add_auto_html_headers();
-		foreach($page->html_headers as $h) {$hh .= $h;}
+		$hh = $page->get_all_html_headers();
 		$page->set_data(<<<EOD
 <html>
 	<head>
