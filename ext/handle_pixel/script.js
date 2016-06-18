@@ -21,7 +21,7 @@ $(function() {
 		
 		$(".shm-zoomer").val(zoom_type);
 		
-		$.cookie("ui-image-zoom", zoom_type, {path: '/', expires: 365});
+		Cookies.set("ui-image-zoom", zoom_type, {expires: 365});
 	}
 
 	$(".shm-zoomer").change(function(e) {
@@ -29,13 +29,13 @@ $(function() {
 	});
 
 	$(".shm-main-image").click(function(e) {
-		switch($.cookie("ui-image-zoom")) {
+		switch(Cookies.get("ui-image-zoom")) {
 			case "full": zoom("width"); break;
 			default: zoom("full"); break;
 		}
 	});
 
-	if($.cookie("ui-image-zoom")) {
-		zoom($.cookie("ui-image-zoom"));
+	if(Cookies.get("ui-image-zoom")) {
+		zoom(Cookies.get("ui-image-zoom"));
 	}
 });
