@@ -7,3 +7,7 @@ div#front-page li {list-style-type: none; margin: 0;}
 	div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
 	#counter {display: none;}
 }
+
+div#front-page > #search > form { margin: 0 auto; }
+div#front-page > #search > form > ul { width: 225px; vertical-align: middle; display: inline-block; }
+div#front-page > #search > form > input[type=submit]{ padding: 4px 6px; }
