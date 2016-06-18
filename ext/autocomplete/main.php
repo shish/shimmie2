@@ -23,7 +23,7 @@ class AutoComplete extends Extension {
 			}
 
 			$res = null;
-			$database->cache->get($cache_key);
+			$res = $database->cache->get($cache_key);
 			if(!$res) {
 				$res = $database->get_pairs("
 					SELECT tag, count
