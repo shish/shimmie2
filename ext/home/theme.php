@@ -5,6 +5,7 @@ class HomeTheme extends Themelet {
 		$page->set_mode("data");
 		$hh = "";
 		$page->add_auto_html_headers();
+		ksort($page->html_headers);
 		foreach($page->html_headers as $h) {$hh .= $h;}
 		$page->set_data(<<<EOD
 <html>
