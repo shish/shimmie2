@@ -22,16 +22,15 @@ class AutoComplete extends Extension {
 				$cache_key .= "-" . $_GET["limit"];
 			}
 
-			$res = null;
 			$res = $database->cache->get($cache_key);
 			if(!$res) {
-				$res = $database->get_pairs("
+				$res = $database->get_pairs($database->scoreql_to_sql("
 					SELECT tag, count
 					FROM tags
-					WHERE tag LIKE :search
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
 					AND count > 0
 					ORDER BY count DESC
-					$limitSQL", $SQLarr
+					$limitSQL"), $SQLarr
 				);
 				$database->cache->set($cache_key, $res, 600);
 			}
