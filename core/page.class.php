@@ -225,8 +225,9 @@ class Page {
 	 */
 	public function get_all_html_headers() {
 		$data = '';
+		ksort($this->html_headers);
 		foreach ($this->html_headers as $line) {
-			$data .= $line . "\n";
+			$data .= "\t\t" . $line . "\n";
 		}
 		return $data;
 	}

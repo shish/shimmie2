@@ -21,12 +21,7 @@ class Layout {
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
 		$contact_link = contact_link();
-
-		$header_html = "";
-		ksort($page->html_headers);
-		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t{$line}\n";
-		}
+		$header_html = $page->get_all_html_headers();
 
 		$menu = "<div class='menu'>
 			<script type='text/javascript' src='{$data_href}/themes/{$theme_name}/wz_tooltip.js'></script>
