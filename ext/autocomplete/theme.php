@@ -51,7 +51,7 @@ class AutoCompleteTheme extends Themelet {
 				$('.ui-autocomplete-input').keydown(function(e) {
 					var keyCode = e.keyCode || e.which;
 
-					if (keyCode == 9) {
+					if (keyCode == 9 || keyCode == 32) {
 						e.preventDefault();
 
 						var tag = $('.tagit-autocomplete:not([style*=\"display: none\"]) > li:first').text();
