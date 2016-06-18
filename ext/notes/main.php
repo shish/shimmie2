@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Name: [Beta] Notes
