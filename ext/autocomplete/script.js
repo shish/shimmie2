@@ -23,7 +23,7 @@ $(function(){
 							return {
 								label : item + ' ('+count+')',
 								value : item
-							}
+							};
 						}));
 					},
 					error : function (request, status, error) {

@@ -2,7 +2,6 @@
 
 class VideoFileHandlerTheme extends Themelet {
 	public function display_image(Page $page, Image $image) {
-		$data_href = get_base_href();
 		$ilink = $image->get_image_link();
 		$thumb_url = make_http($image->get_thumb_link()); //used as fallback image
 		$ext = strtolower($image->get_ext());

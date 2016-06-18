@@ -221,9 +221,15 @@ class User {
 	 */
 	public function set_password(/*string*/ $password) {
 		global $database;
-		$this->passhash = password_hash($password, PASSWORD_BCRYPT);
-		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$this->passhash, "id"=>$this->id));
-		log_info("core-user", 'Set password for '.$this->name);
+		$hash = password_hash($password, PASSWORD_BCRYPT);
+		if(is_string($hash)) {
+			$this->passhash = $hash;
+			$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$this->passhash, "id"=>$this->id));
+			log_info("core-user", 'Set password for '.$this->name);
+		}
+		else {
+			throw new SCoreException("Failed to hash password");
+		}
 	}
 
 	/**
