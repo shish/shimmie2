@@ -85,12 +85,12 @@ class VideoFileHandler extends DataHandlerExtension {
 			
 				if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
 				{
-					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+					$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
 				}
 				else
 				{
 					$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
-					$cmd = "{$ffmpeg} -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
+					$cmd = "{$ffmpeg} -y -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
 				}
 
 				exec($cmd, $output, $returnValue);
