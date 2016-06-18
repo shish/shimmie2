@@ -3,7 +3,7 @@ imports:
 - php
 
 filter:
-  excluded_paths: [lib/*,ext/tagger/script.js,ext/chatbox/*]
+  excluded_paths: [lib/*,ext/*/lib/*,ext/tagger/script.js,ext/chatbox/*]
 
 tools:
   external_code_coverage: true
