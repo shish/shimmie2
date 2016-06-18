@@ -51,13 +51,20 @@ class AutoCompleteTheme extends Themelet {
 				$('.ui-autocomplete-input').keydown(function(e) {
 					var keyCode = e.keyCode || e.which;
 
-					if (keyCode == 9 || keyCode == 32) {
+					//Stop tags containing space.
+					if(keyCode == 32) {
 						e.preventDefault();
 
-						var tag = $('.tagit-autocomplete:not([style*=\"display: none\"]) > li:first').text();
+						$('[name=search]').tagit('createTag', $(this).val());
+						$(this).autocomplete('close');
+					} else if (keyCode == 9) {
+						e.preventDefault();
+
+						var tag = $('.tagit-autocomplete[style*=\"display: block\"] > li:first').text();
 						if(tag){
 							$('[name=search]').tagit('createTag', tag);
 							$('.ui-autocomplete-input').autocomplete('close');
+							$('.ui-autocomplete-input').val(''); //If tag already exists, make sure to remove duplicate.
 						}
 					}
 				});
