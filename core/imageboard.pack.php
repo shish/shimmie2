@@ -23,9 +23,6 @@
 * Classes                                                                   *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-
-require_once "lib/flexihash.php";
-
 /**
  * Class Image
  *
@@ -391,7 +388,7 @@ class Image {
 	 * @return string
 	 */
 	public function get_image_link() {
-		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.jpg');
+		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
 	}
 
 	/**
@@ -724,7 +721,7 @@ class Image {
 
 			if($opts != $fh_last_opts) {
 				$fh_last_opts = $opts;
-				$flexihash = new Flexihash();
+				$flexihash = new Flexihash\Flexihash();
 				foreach(explode(",", $opts) as $opt) {
 					$parts = explode("=", $opt);
 					$parts_count = count($parts);

@@ -1,0 +1,8 @@
+#Navigationleft .blockbody { overflow: visible; }
+
+.tagit { background: white !important; border: 1px solid grey !important; cursor: text; }
+.tagit-choice { cursor: initial; }
+input[name=search] ~ input[type=submit] { display: inline-block !important; }
+
+.tag-negative { background: #ff8080 !important; }
+.tag-positive { background: #40bf40 !important; }

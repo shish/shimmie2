@@ -9,7 +9,7 @@
  *  Formatting is done with the standard formatting API (normally BBCode)
  */
 
-require_once "lib/akismet.class.php";
+require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event {
 	/** @var  int */

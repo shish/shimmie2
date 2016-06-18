@@ -1,5 +1,4 @@
 <?php
-require_once "lib/password.php";
 
 /** @private */
 function _new_user($row) {
