@@ -12,6 +12,8 @@ env:
     - DB=mysql
     - DB=pgsql
     - DB=sqlite
+  allow_failures:
+    - DB=sqlite
 
 cache:
   directories:
@@ -41,13 +43,15 @@ script:
 after_failure:
   - head -n 100 data/config/*
   - ls /var/run/mysql*
-  - ls /var/log/*mysql*
-  - cat /var/log/mysql.err
-  - cat /var/log/mysql.log
-  - cat /var/log/mysql/error.log
-  - cat /var/log/mysql/slow.log
-  - ls /var/log/postgresql
-  - cat /var/log/postgresql/postgresql*
+  # All of the below commands require sudo, which we can't use without losing some speed & caching.
+  # SEE: https://docs.travis-ci.com/user/workers/container-based-infrastructure/
+  # - ls /var/log/*mysql*
+  # - cat /var/log/mysql.err
+  # - cat /var/log/mysql.log
+  # - cat /var/log/mysql/error.log
+  # - cat /var/log/mysql/slow.log
+  # - ls /var/log/postgresql
+  # - cat /var/log/postgresql/postgresql*
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar

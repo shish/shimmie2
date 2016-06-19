@@ -6,3 +6,4 @@ input[name=search] ~ input[type=submit] { display: inline-block !important; }
 
 .tag-negative { background: #ff8080 !important; }
 .tag-positive { background: #40bf40 !important; }
+.tag-metatag   { background: #eaa338 !important; }

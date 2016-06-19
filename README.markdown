@@ -11,6 +11,8 @@
 # Shimmie
 
 [![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 
 This is the main branch of Shimmie, if you know anything at all about running
 websites, this is the version to use.
@@ -26,21 +28,22 @@ check out one of the versioned branches.
 
 # Installation
 
-0. Download the latest release under [Releases](https://github.com/shish/shimmie2/releases).
-1. Create a blank database
-2. Unzip shimmie into a folder on the web host
-3. Visit the folder with a web browser
-4. Enter the location of the database
-5. Click "install". Hopefully you'll end up at the welcome screen; if
+1. Download the latest release under [Releases](https://github.com/shish/shimmie2/releases).
+2. Create a blank database
+3. Unzip shimmie into a folder on the web host
+4. Visit the folder with a web browser
+5. Enter the location of the database
+6. Click "install". Hopefully you'll end up at the welcome screen; if
    not, you should be given instructions on how to fix any errors~
 
 # Installation (Development)
 
-0. Download the shimmie via the "Download Zip" button.
-1. Install [Composer](https://getcomposer.org/). (If you don't already have it)
-2. Run `composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins`. (This is installed globally due to a known composer bug)
-3. Run `composer install`
-4. Follow instructions noted in "Installation" (Excluding 0).
+1. Download shimmie via the "Download Zip" button on the [develop](https://github.com/shish/shimmie2/tree/develop) branch.
+2. Unzip shimmie into a folder on the web host
+3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
+4. Run `composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins`. (This is installed globally due to a known composer bug)
+5. Run `composer install` in the shimmie folder.
+6. Follow instructions noted in "Installation" (Excluding 1 & 3).
 
 ## Upgrade from 2.3.X
 
