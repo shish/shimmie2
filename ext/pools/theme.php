@@ -21,6 +21,7 @@ class PoolsTheme extends Themelet {
 					$navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['next']).'" class="pools_next_img">Next</a>';
 				}
 				if(!empty($navlinks)){
+					$navlinks .= "<div style='height: 5px'></div>";
 					$linksPools[] = $navlinks;
 				}
 			}
