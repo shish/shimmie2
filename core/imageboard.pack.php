@@ -813,7 +813,7 @@ class Image {
 		 */
 
 		// no tags, do a simple search
-		if($positive_tag_count + $negative_tag_count == 0) {
+		if($positive_tag_count === 0 && $negative_tag_count === 0) {
 			$query = new Querylet("
 				SELECT images.*
 				FROM images
