@@ -47,10 +47,9 @@ $(function(){
 		} else if (keyCode == 9) {
 			e.preventDefault();
 
-			var tag = $('.tagit-autocomplete[style*=\"display: block\"] > li:first').text();
-			if(tag){
-				$('[name=search]').tagit('createTag', tag);
-				$('.ui-autocomplete-input').autocomplete('close');
+			var tag = $('.tagit-autocomplete[style*=\"display: block\"] > li:focus, .tagit-autocomplete[style*=\"display: block\"] > li:first').first();
+			if(tag.length){
+				$(tag).click();
 				$('.ui-autocomplete-input').val(''); //If tag already exists, make sure to remove duplicate.
 			}
 		}
