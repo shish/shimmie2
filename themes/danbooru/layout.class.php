@@ -43,7 +43,7 @@ Tips
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class Layout {
-	public function display_page($page) {
+	public function display_page(Page $page) {
 		global $config, $user;
 
 		$theme_name = $config->get_string('theme');
@@ -233,10 +233,16 @@ $header_html
 EOD;
 	}
 	
-	private function navlinks($link, $desc, $pages_matched) {
 	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+	 * @param string $link
+	 * @param string $desc
+	 * @param string[] $pages_matched
+	 * @return string
 	 */
+	private function navlinks($link, $desc, $pages_matched) {
+		/**
+		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+		 */
 		$html = null;
 		$url = ltrim(_get_query(), "/");
 

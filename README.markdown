@@ -11,8 +11,14 @@
 # Shimmie
 
 [![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
+(master)
+
+[![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=develop)](https://travis-ci.org/shish/shimmie2)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=develop)
+[![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=develop)
+(develop)
 
 This is the main branch of Shimmie, if you know anything at all about running
 websites, this is the version to use.
@@ -23,14 +29,14 @@ check out one of the versioned branches.
 # Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- PHP 5.4.8+
+- Stable PHP ([5.5 as of writing](https://en.wikipedia.org/wiki/PHP#Release_history))
 - GD or ImageMagick
 
 # Installation
 
 1. Download the latest release under [Releases](https://github.com/shish/shimmie2/releases).
-2. Create a blank database
-3. Unzip shimmie into a folder on the web host
+2. Unzip shimmie into a folder on the web host
+3. Create a blank database
 4. Visit the folder with a web browser
 5. Enter the location of the database
 6. Click "install". Hopefully you'll end up at the welcome screen; if
@@ -43,7 +49,7 @@ check out one of the versioned branches.
 3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
 4. Run `composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins`. (This is installed globally due to a known composer bug)
 5. Run `composer install` in the shimmie folder.
-6. Follow instructions noted in "Installation" (Excluding 1 & 3).
+6. Follow instructions noted in "Installation" starting from step 3.
 
 ## Upgrade from 2.3.X
 
@@ -155,7 +161,7 @@ Issue/Bug tracker: http://github.com/shish/shimmie2/issues
 
 All code is released under the [GNU GPL Version 2](http://www.gnu.org/licenses/gpl-2.0.html) unless mentioned otherwise.
 
-If you give shimmie to someone else, you have to give them the source (which should be easy, as PHP
-is an interpreted language...). If you want to add customisations to your own
-site, then those customisations belong to you, and you can do what you want
-with them.
+If you give shimmie to someone else, you have to give them the source (which
+should be easy, as PHP is an interpreted language...). If you want to add
+customisations to your own site, then those customisations belong to you,
+and you can do what you want with them.

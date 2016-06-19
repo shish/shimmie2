@@ -18,6 +18,7 @@
 class ImageResizeException extends SCoreException {
 	var $error;
 
+	/** @param string $error */
 	public function __construct($error) {
 		$this->error = $error;
 	}
@@ -282,7 +283,7 @@ class ResizeImage extends Extension {
 	 * Check Memory usage limits
 	 *
 	 * Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
-	 * New check:    memory_use = width * height * (bits per channel) * channels * 2.5
+	 * New check:   $memory_use = $width * $height * ($bits_per_channel) * channels * 2.5
 	 *
 	 * It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
 	 * We need to consider the size that we are GOING TO instead.
@@ -290,24 +291,25 @@ class ResizeImage extends Extension {
 	 * The factor of 2.5 is simply a rough guideline.
 	 * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
 	 *
-	 * @param $info
+	 * @param mixed[] $info
 	 * @return int
 	 */
 	private function calc_memory_use($info) {
 		if (isset($info['bits']) && isset($info['channels'])) {
-			return $memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+			$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
 		}
 		else {
 			// If we don't have bits and channel info from the image then assume default values
 			// of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
-			return $memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
+			$memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
 		}
+		return (int)$memory_use;
 	}
 
 	/**
 	 * @param Image $image_obj
-	 * @param $width
-	 * @param $height
+	 * @param int $width
+	 * @param int $height
 	 * @return int[]
 	 */
 	private function calc_new_size(Image $image_obj, $width, $height) {
@@ -320,7 +322,7 @@ class ResizeImage extends Extension {
 			// Scale the new image
 			if ($width == 0) $factor = $height / $image_obj->height;
 			elseif ($height == 0) $factor = $width / $image_obj->width;
-			else                    $factor = min($width / $image_obj->width, $height / $image_obj->height);
+			else                  $factor = min($width / $image_obj->width, $height / $image_obj->height);
 
 			$new_width = round($image_obj->width * $factor);
 			$new_height = round($image_obj->height * $factor);

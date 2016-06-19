@@ -133,7 +133,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	/**
 	 * @param string $filename
 	 * @param mixed[] $metadata
-	 * @return Image|null
+	 * @return Image
 	 */
 	protected function create_image_from_data($filename, $metadata) {
 

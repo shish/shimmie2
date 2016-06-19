@@ -166,8 +166,15 @@ function xml_tag($name, $attrs=array(), $children=array()) {
 	return $xml;
 }
 
-// Original PHP code by Chirp Internet: www.chirp.com.au
-// Please acknowledge use of this code by including this header.
+/**
+ * Original PHP code by Chirp Internet: www.chirp.com.au
+ * Please acknowledge use of this code by including this header.
+ *
+ * @param string $string input data
+ * @param int $limit how long the string should be
+ * @param string $break where to break the string
+ * @param string $pad what to add to the end of the string after truncating
+ */
 function truncate($string, $limit, $break=" ", $pad="...") {
 	// return with no change if string is shorter than $limit
 	if(strlen($string) <= $limit) return $string;
@@ -1031,8 +1038,8 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
  * 
  * @param array $headers
- * @param mixed $name
- * @return mixed
+ * @param string $name
+ * @return string|bool
  */
 function findHeader ($headers, $name) {
 	if (!is_array($headers)) {
@@ -1441,6 +1448,10 @@ function _set_event_listeners() {
 	}
 }
 
+/**
+ * @param array $event_listeners
+ * @param string $path
+ */
 function _dump_event_listeners($event_listeners, $path) {
 	$p = "<"."?php\n";
 

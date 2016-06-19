@@ -18,6 +18,7 @@ function dstat($name, $val) {
 class StatsDInterface extends Extension {
 	public static $stats = array();
 
+	/** @param string $type */
 	private function _stats($type) {
 		global $_shm_event_count, $database, $_shm_load_start;
 		$time = microtime(true) - $_shm_load_start;
@@ -32,7 +33,7 @@ class StatsDInterface extends Extension {
 		StatsDInterface::$stats["shimmie.$type.cache-misses"] = $database->cache->get_misses()."|c";
 	}
 
-	public function onPageRequest($event) {
+	public function onPageRequest(PageRequestEvent $event) {
 		$this->_stats("overall");
 
 		if($event->page_matches("post/view")) {  # 40%
@@ -64,19 +65,19 @@ class StatsDInterface extends Extension {
 		StatsDInterface::$stats = array();
 	}
 
-	public function onUserCreation($event) {
+	public function onUserCreation(UserCreationEvent $event) {
 		StatsDInterface::$stats["shimmie.events.user_creations"] = "1|c";
 	}
 
-	public function onDataUpload($event) {
+	public function onDataUpload(DataUploadEvent $event) {
 		StatsDInterface::$stats["shimmie.events.uploads"] = "1|c";
 	}
 
-	public function onCommentPosting($event) {
+	public function onCommentPosting(CommentPostingEvent $event) {
 		StatsDInterface::$stats["shimmie.events.comments"] = "1|c";
 	}
 
-	public function onImageInfoSet($event) {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		StatsDInterface::$stats["shimmie.events.info-sets"] = "1|c";
 	}
 
@@ -85,7 +86,10 @@ class StatsDInterface extends Extension {
 	 */
 	public function get_priority() {return 99;}
 
-
+	/**
+	 * @param array $data
+	 * @param int $sampleRate
+	 */
     private function send($data, $sampleRate=1) {
         if (!STATSD_HOST) { return; }
 
