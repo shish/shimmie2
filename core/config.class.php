@@ -151,7 +151,7 @@ interface Config {
  * left to the concrete implementation
  */
 abstract class BaseConfig implements Config {
-	var $values = array();
+	public $values = array();
 
 	/**
 	 * @param string $name
@@ -366,8 +366,8 @@ class StaticConfig extends BaseConfig {
  * \endcode
  */
 class DatabaseConfig extends BaseConfig {
-	/** @var \Database|null  */
-	var $database = null;
+	/** @var Database  */
+	private $database = null;
 
 	/**
 	 * Load the config table from a database.

@@ -16,7 +16,7 @@
  * This class is just a wrapper around SCoreException.
  */
 class ImageResizeException extends SCoreException {
-	var $error;
+	public $error;
 
 	/** @param string $error */
 	public function __construct($error) {

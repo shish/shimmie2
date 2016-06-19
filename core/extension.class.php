@@ -88,15 +88,11 @@ abstract class Extension {
 	/** this theme's Themelet object */
 	public $theme;
 
-	/** @private */
-	var $_child;
-
 	// in PHP5.3, late static bindings can take care of this; __CLASS__
 	// used here will refer to the subclass
 	// http://php.net/manual/en/language.oop5.late-static-bindings.php
 	/** @private */
 	public function i_am(Extension $child) {
-		$this->_child = $child;
 		if(is_null($this->theme)) $this->theme = $this->get_theme_object($child, false);
 	}
 

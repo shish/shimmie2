@@ -81,7 +81,7 @@ class NullUserException extends SCoreException {}
 
 class UserPage extends Extension {
 	/** @var UserPageTheme $theme */
-	var $theme;
+	public $theme;
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;

@@ -18,9 +18,9 @@ function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
 }
 
 class ExtensionInfo {
-	var $ext_name, $name, $link, $author, $email;
-	var $description, $documentation, $version, $visibility;
-	var $enabled;
+	public $ext_name, $name, $link, $author, $email;
+	public $description, $documentation, $version, $visibility;
+	public $enabled;
 
 	public function __construct($main) {
 		$matches = array();

@@ -14,7 +14,7 @@
 
 // RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event {
-	var $id;
+	public $id;
 
 	public function __construct($id) {
 		$this->id = $id;
@@ -23,9 +23,9 @@ class RemoveIPBanEvent extends Event {
 // }}}
 // AddIPBanEvent {{{
 class AddIPBanEvent extends Event {
-	var $ip;
-	var $reason;
-	var $end;
+	public $ip;
+	public $reason;
+	public $end;
 
 	public function __construct(/*string(ip)*/ $ip, /*string*/ $reason, /*string*/ $end) {
 		$this->ip = trim($ip);
