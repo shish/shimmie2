@@ -12,6 +12,8 @@ env:
     - DB=mysql
     - DB=pgsql
     - DB=sqlite
+    allow_failures:
+      - DB=sqlite
 
 cache:
   directories:
