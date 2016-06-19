@@ -1429,7 +1429,6 @@ function _set_event_listeners() {
 		elseif(is_subclass_of($class, "Extension")) {
 			/** @var Extension $extension */
 			$extension = new $class();
-			$extension->i_am($extension);
 
 			// skip extensions which don't support our current database
 			if(!$extension->is_live()) continue;
@@ -1460,7 +1459,6 @@ function _dump_event_listeners($event_listeners, $path) {
 		if($rclass->isAbstract()) {}
 		elseif(is_subclass_of($class, "Extension")) {
 			$p .= "\$$class = new $class(); ";
-			$p .= "\${$class}->i_am(\$$class);\n";
 		}
 	}
 
