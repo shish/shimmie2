@@ -85,8 +85,7 @@ class LinkImageTheme extends Themelet {
 		return	"
 			<tr>
 				<td><label for='".$id."' title='Click to select the textbox'>$label</label></td>
-				<td><input type='text' readonly='readonly' id='".$id."' name='".$id."'
-						value='".html_escape($content)."' onfocus='this.select();'></input></td>
+				<td><input type='text' readonly='readonly' id='".$id."' name='".$id."' value='".html_escape($content)."' onfocus='this.select();' /></td>
 			</tr>
 		";
 	}
