@@ -69,7 +69,7 @@ var Tagger = {
 	tag : {
 		submit : function () {
 			var l = this.list.childNodes.length;
-			var tags = Array();
+			var tags = [];
 			for(var i=0; i<l; i++) {
 				var s_tag = this.list.childNodes[i].firstChild.data;
 				tags.push(s_tag);
