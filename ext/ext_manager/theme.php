@@ -3,7 +3,7 @@
 class ExtManagerTheme extends Themelet {
 	/**
 	 * @param Page $page
-	 * @param Extension[] $extensions
+	 * @param ExtensionInfo[] $extensions
 	 * @param bool $editable
 	 */
 	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
