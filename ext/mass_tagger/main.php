@@ -45,18 +45,24 @@ class MassTagger extends Extension {
 
 			if(isset($_POST['setadd']) && $_POST['setadd'] == 'set') {
 				foreach($images as $image) {
-					$image->set_tags(Tag::explode($tag));
+					$event = new TagSetEvent ($image, $tag);
+					self::onTagSet($event);
 				}
 			}
 			else {
 				foreach($images as $image) {
 					if (!empty($neg_tag_array)) {
-						$img_tags = array_merge($pos_tag_array, explode(" ",$image->get_tag_list()));
-						$img_tags = array_diff($img_tags, $neg_tag_array);
-						$image->set_tags(Tag::explode($img_tags));
+						$neg_event = new TagSetEvent($image, implode(' ',$neg_tag_array));
+						$pos_event = new TagSetEvent($image, implode(' ',$pos_tag_array));
+						$img_tags = array_merge($pos_event->tags, explode(" ",$image->get_tag_list()));
+						$img_tags = array_diff($img_tags, $neg_event->tags);
+						$event = new TagSetEvent($image, $img_tags);
+						self::onTagSet($event);
 					}
-					else
-						$image->set_tags(Tag::explode($tag . " " . $image->get_tag_list()));
+					else {
+						$event = new TagSetEvent($image, $tag . " " . $image->get_tag_list());
+						self::onTagSet($event);
+					}
 				}
 			}
 
@@ -64,6 +70,9 @@ class MassTagger extends Extension {
 			if(!isset($_SERVER['HTTP_REFERER'])) $_SERVER['HTTP_REFERER'] = make_link();
 			$page->set_redirect($_SERVER['HTTP_REFERER']);
 		}
+	}
+	private function onTagSet(TagSetEvent $event) {
+		$event->image->set_tags($event->tags);
 	}
 }
 
