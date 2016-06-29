@@ -1,7 +1,7 @@
 <?php
 
 class BulkAddTheme extends Themelet {
-	var $messages = array();
+	private $messages = array();
 
 	/*
 	 * Show a standard page for results to be put into

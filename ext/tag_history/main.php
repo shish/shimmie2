@@ -248,8 +248,12 @@ class Tag_History extends Extension {
 		return ($row ? $row : array());
 	}
 	
-	/*
+	/**
 	 * This function attempts to revert all changes by a given IP within an (optional) timeframe.
+	 *
+	 * @param string $name
+	 * @param string $ip
+	 * @param string $date
 	 */
 	public function process_revert_all_changes($name, $ip, $date) {
 		global $database;

@@ -225,7 +225,7 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends Extension {
-	var $stpen = 0;  // search term parse event number
+	private $stpen = 0;  // search term parse event number
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;

@@ -101,6 +101,7 @@ class MiniSVGParser {
 	/** @var int */
 	public $height=0;
 
+	/** @param string $file */
 	function __construct($file) {
 		$xml_parser = xml_parser_create();
 		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));

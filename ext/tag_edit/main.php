@@ -98,6 +98,10 @@ class TagSetEvent extends Event {
 	public $tags;
 	public $metatags;
 
+	/**
+	 * @param Image $image
+	 * @param string $tags
+	 */
 	public function __construct(Image $image, $tags) {
 		$this->image    = $image;
 
@@ -165,6 +169,11 @@ class TagTermParseEvent extends Event {
 	/** @var bool */
 	public $parse  = TRUE; //marks the tag to be parsed, and not just checked if valid metatag
 
+	/**
+	 * @param string $term
+	 * @param int $id
+	 * @param bool $parse
+	 */
 	public function __construct($term, $id, $parse) {
 		$this->term  = $term;
 		$this->id    = $id;

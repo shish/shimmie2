@@ -213,7 +213,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Returns amount of files & total size of dir.
-	 * @param $path string
+	 * @param string $path directory name to scan
 	 * @return multitype:number
 	 */
 	function scan_dir($path){
@@ -234,7 +234,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Uploads the image & handles everything
-	 * @param $upload_count int to upload a non-config amount of imgs
+	 * @param int $upload_count to upload a non-config amount of imgs
 	 * @return boolean returns true if the upload was successful
 	 */
 	public function process_upload($upload_count = 0) {

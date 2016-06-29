@@ -22,7 +22,10 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 
 	public function setUp() {
 		$class = str_replace("Test", "", get_class($this));
-		if(!method_exists($class, "is_live") || !ext_is_live($class)) {
+		if(!class_exists($class)) {
+			$this->markTestSkipped("$class not loaded");
+		}
+		elseif(!ext_is_live($class)) {
 			$this->markTestSkipped("$class not supported with this database");
 		}
 

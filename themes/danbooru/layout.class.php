@@ -43,20 +43,14 @@ Tips
 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 class Layout {
-	public function display_page($page) {
+	public function display_page(Page $page) {
 		global $config, $user;
 
 		$theme_name = $config->get_string('theme');
 		//$base_href = $config->get_string('base_href');
 		$data_href = get_base_href();
 		$contact_link = contact_link();
-
-
-		$header_html = "";
-		ksort($page->html_headers);
-		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t$line\n";
-		}
+		$header_html = $page->get_all_html_headers();
 
 		$left_block_html = "";
 		$user_block_html = "";
@@ -239,10 +233,16 @@ $header_html
 EOD;
 	}
 	
-	private function navlinks($link, $desc, $pages_matched) {
 	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+	 * @param string $link
+	 * @param string $desc
+	 * @param string[] $pages_matched
+	 * @return string
 	 */
+	private function navlinks($link, $desc, $pages_matched) {
+		/**
+		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+		 */
 		$html = null;
 		$url = ltrim(_get_query(), "/");
 

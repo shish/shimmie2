@@ -12,8 +12,10 @@
  * An image is being added to the database.
  */
 class ImageAdditionEvent extends Event {
-	var $user;
-	/** @var \Image */
+	/** @var User */
+	public $user;
+
+	/** @var Image */
 	public $image;
 	
 	/**
@@ -30,7 +32,7 @@ class ImageAdditionEvent extends Event {
 }
 
 class ImageAdditionException extends SCoreException {
-	var $error;
+	public $error;
 
 	/**
 	 * @param string $error

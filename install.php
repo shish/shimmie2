@@ -4,14 +4,14 @@
  *
  * @package    Shimmie
  * @copyright  Copyright (c) 2007-2015, Shish et al.
- * @author     Shish <webmaster at shishnet.org>, jgen <jeffgenovy at gmail.com>
+ * @author     Shish [webmaster at shishnet.org], jgen [jeffgenovy at gmail.com]
  * @link       http://code.shishnet.org/shimmie2/
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  * 
  * Initialise the database, check that folder
  * permissions are set properly.
  *
- * This file should be independant of the database
+ * This file should be independent of the database
  * and other such things that aren't ready yet
  */
 
@@ -25,23 +25,69 @@ date_default_timezone_set('UTC');
 <html>
 	<head>
 		<title>Shimmie Installation</title>
-		<link rel="shortcut icon" href="favicon.ico" />
-		<link rel='stylesheet' href='lib/shimmie.css' type='text/css'>
-		<script type="text/javascript" src="lib/jquery-1.11.0.min.js"></script>
+		<link rel="shortcut icon" href="data:image/x-icon;base64,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AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAREREREREREREREREREREREQAAAAAAAAAAAAAAEREREREAAQEBAQEBAQEBAAARERERAAEBAQEBAQEBAQABABEREQABAQEBAQEBAQEAAQEAEREAAQEBAQEBAQEBAAEBABERAAYGBQQDAgEBAQACAQAREQAMDAwLCwoJCQcACQgAEREAEBAQEBAQDg4MAA0NABERABAQEBAQEBAQEAAQEAAREQAQEBAQEBAQEBAAEBAAEREAAAAAAAAAAAAAABAQABEREQAQEA8QEBAQEBAAEAARERERABAQEBAQEA8QEAAAEREREREAAAAAAAAAAAAAABERERERERERERERERERERER//8AAIAPAACABwAAgAMAAIABAACAAQAAgAEAAIABAACAAQAAgAEAAIABAACAAQAAwAEAAOABAADwAQAA//8AAA==" />
+		<style>
+			#installer {
+				background: #EEE;
+				font-family: "Arial", sans-serif;
+				font-size: 14px;
+				width: 512px;
+				margin: auto;
+				margin-top: 16px;
+				border: 1px solid black;
+				border-radius: 16px;
+			}
+			#installer > .container {
+				padding: 5px;
+			}
+			#installer A {
+				text-decoration: none;
+			}
+			#installer A:hover {
+				text-decoration: underline;
+			}
+			#installer H1, #installer H3 {
+				background: #DDD;
+				text-align: center;
+				margin: 0px;
+				padding: 2px;
+			}
+			#installer H1 {
+				border-bottom: 1px solid black;
+				border-radius: 16px 16px 0px 0px;
+			}
+			#installer H3 {
+				border-bottom: 1px solid black;
+			}
+		</style>
+		<script type="text/javascript" src="lib/vendor/js/jquery-1.12.3.min.js"></script>
 	</head>
 	<body>
-<?php if(false) { ?>
+<?php if(FALSE) { ?>
 		<div id="installer">
 			<h1>Install Error</h1>
-			<p>Shimmie needs to be run via a web server with PHP support -- you
-			appear to be either opening the file from your hard disk, or your
-			web server is mis-configured and doesn't know how to handle PHP files.</p>
-			<p>If you've installed a web server on your desktop PC, you probably
-			want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
-			</p>
+			<div class="container">
+				<p>Shimmie needs to be run via a web server with PHP support -- you
+				appear to be either opening the file from your hard disk, or your
+				web server is mis-configured and doesn't know how to handle PHP files.</p>
+				<p>If you've installed a web server on your desktop PC, you probably
+				want to visit <a href="http://localhost/">the local web server</a>.<br/><br/>
+				</p>
+			</div>
 		</div>
-		<div style="display: none;">
-			<PLAINTEXT>
+		<pre style="display:none">
+<?php } elseif(!file_exists("vendor/")) { ?>
+		<div id="installer">
+			<h1>Install Error</h1>
+			<h3>Warning: Composer vendor folder does not exist!</h3>
+			<div class="container">
+				<p>Shimmie is unable to find the composer vendor directory.<br>
+				Have you followed the composer setup instructions found in the <a href="https://github.com/shish/shimmie2#installation-development">README</a>?</>
+
+				<p>If you are not intending to do any development with Shimmie, it is highly recommend you use one of the pre-packaged releases found on <a href="https://github.com/shish/shimmie2/releases">Github</a> instead.</p>
+			</div>
+		</div>
+		<pre style="display:none">
 <?php }
 assert_options(ASSERT_ACTIVE, 1);
 assert_options(ASSERT_BAIL, 1);
@@ -54,7 +100,7 @@ assert_options(ASSERT_BAIL, 1);
  *	__SHIMMIE_ROOT__ = '/var/www/shimmie2/'
  *
  */
-define('__SHIMMIE_ROOT__', trim(remove_trailing_slash(dirname(__FILE__))) . '/');
+define('__SHIMMIE_ROOT__', trim(rtrim(dirname(__FILE__), '/\\')) . '/');
 
 // Pull in necessary files
 require_once __SHIMMIE_ROOT__."core/util.inc.php";
@@ -67,19 +113,6 @@ do_install();
 
 // utilities {{{
 	// TODO: Can some of these be pushed into "core/util.inc.php" ?
-
-/**
-  * Strips off any kind of slash at the end so as to normalise the path.
-  * @param string $path    Path to normalise.
-  * @return string         Path without trailing slash.
-  */
-function remove_trailing_slash($path) {
-	if ((substr($path, -1) === '/') || (substr($path, -1) === '\\')) {
-		return substr($path, 0, -1);
-	} else {
-		return $path;
-	}
-}
 
 function check_gd_version() {
 	$gdversion = 0;
@@ -97,19 +130,18 @@ function check_gd_version() {
 }
 
 function check_im_version() {
-	if(!ini_get('safe_mode')) {
-		$convert_check = exec("convert");
-	}
+	$convert_check = exec("convert");
+
 	return (empty($convert_check) ? 0 : 1);
 }
 
 function eok($name, $value) {
 	echo "<br>$name ... ";
 	if($value) {
-		echo "<font color='green'>ok</font>\n";
+		echo "<span style='color: green'>ok</span>\n";
 	}
 	else {
-		echo "<font color='red'>failed</font>\n";
+		echo "<span style='color: green'>failed</span>\n";
 	}
 }
 // }}}
@@ -139,7 +171,7 @@ function ask_questions() { // {{{
 
 	if(check_gd_version() == 0 && check_im_version() == 0) {
 		$errors[] = "
-			No thumbnailers cound be found - install the imagemagick
+			No thumbnailers could be found - install the imagemagick
 			tools (or the PHP-GD library, of imagemagick is unavailable).
 		";
 	}
@@ -175,67 +207,68 @@ function ask_questions() { // {{{
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 
-			$warn_msg
-			$err_msg
+			<div class="container">
+				$warn_msg
+				$err_msg
 
-			<h3>Database Install</h3>
-			<form action="install.php" method="POST">
-				<center>
-					<table class='form'>
-						<tr>
-							<th>Type:</th>
-							<td><select name="database_type" id="database_type" onchange="update_qs();">
-								$db_m
-								$db_p
-								$db_s
-							</select></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Host:</th>
-							<td><input type="text" name="database_host" size="40" value="localhost"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Username:</th>
-							<td><input type="text" name="database_user" size="40"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql">
-							<th>Password:</th>
-							<td><input type="password" name="database_password" size="40"></td>
-						</tr>
-						<tr class="dbconf mysql pgsql sqlite">
-							<th>DB&nbsp;Name:</th>
-							<td><input type="text" name="database_name" size="40" value="shimmie"></td>
-						</tr>
-						<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
-					</table>
-				</center>
-				<script>
-				$(function() {
-					update_qs();
-				});
-				function update_qs() {
-					$(".dbconf").hide();
-					var seldb = $("#database_type").val() || "none";
-					$("."+seldb).show();
-				}
-				</script>
-			</form>
+				<h3>Database Install</h3>
+				<form action="install.php" method="POST">
+					<center>
+						<table class='form'>
+							<tr>
+								<th>Type:</th>
+								<td><select name="database_type" id="database_type" onchange="update_qs();">
+									$db_m
+									$db_p
+									$db_s
+								</select></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Host:</th>
+								<td><input type="text" name="database_host" size="40" value="localhost"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Username:</th>
+								<td><input type="text" name="database_user" size="40"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql">
+								<th>Password:</th>
+								<td><input type="password" name="database_password" size="40"></td>
+							</tr>
+							<tr class="dbconf mysql pgsql sqlite">
+								<th>DB&nbsp;Name:</th>
+								<td><input type="text" name="database_name" size="40" value="shimmie"></td>
+							</tr>
+							<tr><td colspan="2"><input type="submit" value="Go!"></td></tr>
+						</table>
+					</center>
+					<script>
+					$(function() {
+						update_qs();
+					});
+					function update_qs() {
+						$(".dbconf").hide();
+						var seldb = $("#database_type").val() || "none";
+						$("."+seldb).show();
+					}
+					</script>
+				</form>
 
-			<h3>Help</h3>
+				<h3>Help</h3>
 
-			<p class="dbconf mysql pgsql">
-				Please make sure the database you have chosen exists and is empty.<br>
-				The username provided must have access to create tables within the database.
-			</p>
-			<p class="dbconf sqlite">
-				For SQLite the database name will be a filename on disk, relative to
-				where shimmie was installed.
-			</p>
-			<p class="dbconf none">
-				Drivers can generally be downloaded with your OS package manager;
-				for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
-			</p>
-
+				<p class="dbconf mysql pgsql">
+					Please make sure the database you have chosen exists and is empty.<br>
+					The username provided must have access to create tables within the database.
+				</p>
+				<p class="dbconf sqlite">
+					For SQLite the database name will be a filename on disk, relative to
+					where shimmie was installed.
+				</p>
+				<p class="dbconf none">
+					Drivers can generally be downloaded with your OS package manager;
+					for Debian / Ubuntu you want php5-pgsql, php5-mysql, or php5-sqlite.
+				</p>
+			</div>
 		</div>
 EOD;
 } // }}}
@@ -259,9 +292,11 @@ function create_tables() { // {{{
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Warning: The Database schema is not empty!</h3>
-				<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
-				<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
-				<br/><br/>
+				<div class="container">
+					<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
+					<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
+					<br/><br/>
+				</div>
 			</div>
 EOD;
 			exit(2);
@@ -273,7 +308,7 @@ EOD;
 			PRIMARY KEY (oldtag)
 		");
 		$db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", array());
-		
+
 		$db->create_table("config", "
 			name VARCHAR(128) NOT NULL,
 			value TEXT,
@@ -288,7 +323,7 @@ EOD;
 			email VARCHAR(128)
 		");
 		$db->execute("CREATE INDEX users_name_idx ON users(name)", array());
-		
+
 		$db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
@@ -308,14 +343,14 @@ EOD;
 		$db->execute("CREATE INDEX images_width_idx ON images(width)", array());
 		$db->execute("CREATE INDEX images_height_idx ON images(height)", array());
 		$db->execute("CREATE INDEX images_hash_idx ON images(hash)", array());
-		
+
 		$db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
 			count INTEGER NOT NULL DEFAULT 0
 		");
 		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
-		
+
 		$db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
@@ -325,33 +360,14 @@ EOD;
 		");
 		$db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", array());
 		$db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", array());
-		
+
 		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
 		$db->commit();
 	}
 	catch(PDOException $e) {
-		print <<<EOD
-			<div id="installer">
-				<h1>Shimmie Installer</h1>
-				<h3>Database Error:</h3>
-				<p>An error occured while trying to create the database tables necessary for Shimmie.</p>
-				<p>Please check and ensure that the database configuration options are all correct.</p>
-				<p>{$e->getMessage()}</p>
-			</div>
-EOD;
-		exit(3);
-	}
-	catch (Exception $e) {
-		print <<<EOD
-			<div id="installer">
-				<h1>Shimmie Installer</h1>
-				<h3>Unknown Error:</h3>
-				<p>An unknown error occured while trying to create the database tables necessary for Shimmie.</p>
-				<p>Please check the server log files for more information.</p>
-				<p>{$e->getMessage()}</p>
-			</div>
-EOD;
-		exit(4);
+		handle_db_errors(TRUE, "An error occurred while trying to create the database tables necessary for Shimmie.", $e->getMessage(), 3);
+	} catch (Exception $e) {
+		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
 	}
 } // }}}
 
@@ -367,31 +383,11 @@ function insert_defaults() { // {{{
 		}
 		$db->commit();
 	}
-	catch(PDOException $e)
-	{
-		print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Database Error:</h3>
-			<p>An error occured while trying to insert data into the database.</p>
-			<p>Please check and ensure that the database configuration options are all correct.</p>
-			<p>{$e->getMessage()}</p>
-		</div>
-EOD;
-		exit(5);
+	catch(PDOException $e) {
+		handle_db_errors(TRUE, "An error occurred while trying to insert data into the database.", $e->getMessage(), 5);
 	}
-	catch (Exception $e)
-	{
-		print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Unknown Error:</h3>
-			<p>An unknown error occured while trying to insert data into the database.</p>
-			<p>Please check the server log files for more information.</p>
-			<p>{$e->getMessage()}</p>
-		</div>
-EOD;
-		exit(6);
+	catch (Exception $e) {
+		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
 	}
 } // }}}
 
@@ -416,11 +412,13 @@ function build_dirs() { // {{{
 		<div id='installer'>
 			<h1>Shimmie Installer</h1>
 			<h3>Directory Permissions Error:</h3>
-			<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
-			<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
-			<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
-			<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
-			<br/><br/>
+			<div class='container'>
+				<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
+				<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
+				<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
+				<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
+				<br/><br/>
+			</div>
 		</div>
 		";
 		exit(7);
@@ -442,7 +440,9 @@ function write_config() { // {{{
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>Things are OK \o/</h3>
-			<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
+			<div class="container">
+				<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
+			</div>
 		</div>
 EOD;
 	}
@@ -452,20 +452,38 @@ EOD;
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>File Permissions Error:</h3>
-		    The web server isn't allowed to write to the config file; please copy
-		    the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
-		    folder manually. Make sure that when you save it, there is no whitespace
-		    before the "&lt;?php" or after the "?&gt;"
-
-		    <p><textarea cols="80" rows="2">$h_file_content</textarea>
-
-		    <p>Once done, <a href="index.php">click here to Continue</a>.
-			<br/><br/>
+			<div class="container">
+				The web server isn't allowed to write to the config file; please copy
+				the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
+				folder manually. Make sure that when you save it, there is no whitespace
+				before the "&lt;?php" or after the "?&gt;"
+				
+				<p><textarea cols="80" rows="2">$h_file_content</textarea>
+				
+				<p>Once done, <a href="index.php">click here to Continue</a>.
+				<br/><br/>
+			</div>
 		</div>
 EOD;
 	}
 	echo "\n";
 } // }}}
+
+function handle_db_errors(/*bool*/ $isPDO, /*str*/ $errorMessage1,  /*str*/ $errorMessage2, /*int*/ $exitCode) {
+	$errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
+	print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>Unknown Error:</h3>
+			<div class="container">
+				<p>{$errorMessage1}</p>
+				<p>{$errorMessage1Extra}</p>
+				<p>{$errorMessage2}</p>
+			</div>
+		</div>
+EOD;
+	exit($exitCode);
+}
 ?>
 	</body>
 </html>

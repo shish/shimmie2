@@ -1,37 +1,42 @@
 <?php
 
 class ExtManagerTheme extends Themelet {
+	/**
+	 * @param Page $page
+	 * @param ExtensionInfo[] $extensions
+	 * @param bool $editable
+	 */
 	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
 		$h_en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			".make_form(make_link("ext_manager/set"))."
-				<script type='text/javascript'>
-				$(document).ready(function() {
-					$(\"#extensions\").tablesorter();
-				});
-				</script>
-				<table id='extensions' class='zebra'>
+				<table id='extensions' class='zebra sortable'>
 					<thead>
-						<tr>$h_en<th>Name</th><th>Description</th></tr>
+						<tr>
+							$h_en
+							<th>Name</th>
+							<th>Docs</th>
+							<th>Description</th>
+						</tr>
 					</thead>
 					<tbody>
 		";
 		foreach($extensions as $extension) {
 			if(!$editable && $extension->visibility == "admin") continue;
 
-			$h_name = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
+			$h_name        = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
 			$h_description = html_escape($extension->description);
-			if($extension->enabled === TRUE) $h_enabled = " checked='checked'";
-			else if($extension->enabled === FALSE) $h_enabled = "";
-			else $h_enabled = " disabled checked='checked'";
-			$h_link = make_link("ext_doc/".url_escape($extension->ext_name));
+			$h_link        = make_link("ext_doc/".url_escape($extension->ext_name));
+			$h_enabled     = ($extension->enabled === TRUE ? " checked='checked'" : ($extension->enabled === FALSE ? "" : " disabled checked='checked'"));
+			$h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
+			$h_docs        = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
-			$h_en = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
 			$html .= "
-				<tr>
-					$h_en
-					<td><a href='$h_link'>$h_name</a></td>
-					<td style='text-align: left;'>$h_description</td>
+				<tr data-ext='{$extension->ext_name}'>
+					{$h_enabled_box}
+					<td>{$h_name}</td>
+					<td>{$h_docs}</td>
+					<td style='text-align: left;'>{$h_description}</td>
 				</tr>";
 		}
 		$h_set = $editable ? "<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>" : "";

@@ -85,21 +85,12 @@ abstract class Extension {
 	/** @var array which DBs this ext supports (blank for 'all') */
 	protected $db_support = [];
 
-	/** this theme's Themelet object */
+	/** @var Themelet this theme's Themelet object */
 	public $theme;
 
-	/** @private */
-	var $_child;
-
-	// in PHP5.3, late static bindings can take care of this; __CLASS__
-	// used here will refer to the subclass
-	// http://php.net/manual/en/language.oop5.late-static-bindings.php
-	/** @private */
-	public function i_am(Extension $child) {
-		$this->_child = $child;
-		if(is_null($this->theme)) $this->theme = $this->get_theme_object($child, false);
+	public function __construct() {
+		$this->theme = $this->get_theme_object(get_called_class());
 	}
-
 
 	public function is_live() {
 		global $database;
@@ -112,21 +103,21 @@ abstract class Extension {
 	/**
 	 * Find the theme object for a given extension.
 	 *
-	 * @param Extension $class
-	 * @param bool $fatal
-	 * @return bool
+	 * @param string $base
+	 * @return Themelet
 	 */
-	private function get_theme_object(Extension $class, $fatal=true) {
-		$base = get_class($class);
-		if(class_exists('Custom'.$base.'Theme')) {
-			$class = 'Custom'.$base.'Theme';
-			return new $class();
+	private function get_theme_object($base) {
+		$custom = 'Custom'.$base.'Theme';
+		$normal = $base.'Theme';
+
+		if(class_exists($custom)) {
+			return new $custom();
 		}
-		elseif ($fatal || class_exists($base.'Theme')) {
-			$class = $base.'Theme';
-			return new $class();
-		} else {
-			return false;
+		elseif(class_exists($normal)) {
+			return new $normal();
+		}
+		else {
+			return null;
 		}
 	}
 

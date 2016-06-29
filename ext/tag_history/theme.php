@@ -5,7 +5,7 @@
  */
 
 class Tag_HistoryTheme extends Themelet {
-	var $messages = array();
+	private $messages = array();
 
 	/**
 	 * @param Page $page

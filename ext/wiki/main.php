@@ -31,14 +31,20 @@ class WikiPage {
 	/** @var int|string */
 	public $id;
 
-	var $owner_id;
-	var $owner_ip;
-	var $date;
+	/** @var int */
+	public $owner_id;
+
+	/** @var string */
+	public $owner_ip;
+
+	/** @var string */
+	public $date;
 
 	/** @var string */
 	public $title;
 
-	var $revision;
+	/** @var int */
+	public $revision;
 
 	/** @var bool */
 	public $locked;

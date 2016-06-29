@@ -1,6 +1,4 @@
 <?php
-require_once "lib/recaptchalib.php";
-require_once "lib/securimage/securimage.php";
 require_once "lib/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -168,8 +166,15 @@ function xml_tag($name, $attrs=array(), $children=array()) {
 	return $xml;
 }
 
-// Original PHP code by Chirp Internet: www.chirp.com.au
-// Please acknowledge use of this code by including this header.
+/**
+ * Original PHP code by Chirp Internet: www.chirp.com.au
+ * Please acknowledge use of this code by including this header.
+ *
+ * @param string $string input data
+ * @param int $limit how long the string should be
+ * @param string $break where to break the string
+ * @param string $pad what to add to the end of the string after truncating
+ */
 function truncate($string, $limit, $break=" ", $pad="...") {
 	// return with no change if string is shorter than $limit
 	if(strlen($string) <= $limit) return $string;
@@ -392,8 +397,8 @@ function show_ip($ip, $ban_reason) {
 /**
  * Checks if a given string contains another at the beginning.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function startsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -404,8 +409,8 @@ function startsWith(/*string*/ $haystack, /*string*/ $needle) {
 /**
  * Checks if a given string contains another at the end.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function endsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -414,6 +419,11 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	return (substr($haystack, $start) === $needle);
 }
 
+if(!function_exists("mb_strlen")) {  // D:
+	function mb_strlen($str) {return strlen($str);}
+	function mb_internal_encoding($enc) {}
+	function mb_strtolower($str) {return strtolower($str);}
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
@@ -633,14 +643,12 @@ function captcha_get_html() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_publickey = $config->get_string("api_recaptcha_pubkey");
 		if(!empty($r_publickey)) {
-			$captcha = recaptcha_get_html($r_publickey);
-		}
-		else {
+			$captcha = "
+				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
+				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
+		} else {
 			session_start();
-			//$securimg = new Securimage();
-			$base = get_base_href();
-			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
-				"<br/>CAPTCHA: <input type='text' name='code' value='' />";
+			$captcha = Securimage::getCaptchaHtml(['securimage_path' => './vendor/dapphp/securimage/']);
 		}
 	}
 	return $captcha;
@@ -657,22 +665,18 @@ function captcha_check() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_privatekey = $config->get_string('api_recaptcha_privkey');
 		if(!empty($r_privatekey)) {
-			$resp = recaptcha_check_answer(
-				$r_privatekey,
-				$_SERVER["REMOTE_ADDR"],
-				$_POST["recaptcha_challenge_field"],
-				$_POST["recaptcha_response_field"]
-			);
+			$recaptcha = new \ReCaptcha\ReCaptcha($r_privatekey);
+			$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-			if(!$resp->is_valid) {
-				log_info("core", "Captcha failed (ReCaptcha): " . $resp->error);
+			if(!$resp->isSuccess()) {
+				log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
 				return false;
 			}
 		}
 		else {
 			session_start();
 			$securimg = new Securimage();
-			if($securimg->check($_POST['code']) == false) {
+			if($securimg->check($_POST['captcha_code']) == FALSE) {
 				log_info("core", "Captcha failed (Securimage)");
 				return false;
 			}
@@ -703,7 +707,7 @@ function is_https_enabled() {
  * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
  * and released under the 'Simplified BSD License'.
  *
- * @param string &$file File path
+ * @param string $file File path
  * @param string $ext
  * @param bool $list
  * @return string
@@ -1034,8 +1038,8 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
  * 
  * @param array $headers
- * @param mixed $name
- * @return mixed
+ * @param string $name
+ * @return string|bool
  */
 function findHeader ($headers, $name) {
 	if (!is_array($headers)) {
@@ -1425,7 +1429,6 @@ function _set_event_listeners() {
 		elseif(is_subclass_of($class, "Extension")) {
 			/** @var Extension $extension */
 			$extension = new $class();
-			$extension->i_am($extension);
 
 			// skip extensions which don't support our current database
 			if(!$extension->is_live()) continue;
@@ -1444,6 +1447,10 @@ function _set_event_listeners() {
 	}
 }
 
+/**
+ * @param array $event_listeners
+ * @param string $path
+ */
 function _dump_event_listeners($event_listeners, $path) {
 	$p = "<"."?php\n";
 
@@ -1452,7 +1459,6 @@ function _dump_event_listeners($event_listeners, $path) {
 		if($rclass->isAbstract()) {}
 		elseif(is_subclass_of($class, "Extension")) {
 			$p .= "\$$class = new $class(); ";
-			$p .= "\${$class}->i_am(\$$class);\n";
 		}
 	}
 
@@ -1471,7 +1477,7 @@ function _dump_event_listeners($event_listeners, $path) {
 }
 
 /**
- * @param $ext_name string
+ * @param string $ext_name Main class name (eg ImageIO as opposed to ImageIOTheme or ImageIOTest)
  * @return bool
  */
 function ext_is_live($ext_name) {

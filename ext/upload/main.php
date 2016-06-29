@@ -238,13 +238,15 @@ class Upload extends Extension {
 	 * @return string[]
 	 */
 	private function tags_for_upload_slot($id) {
+		$post_tags = isset($_POST["tags"]) ? $_POST["tags"] : "";
+
 		if(isset($_POST["tags$id"])) {
 			# merge then explode, not explode then merge - else
 			# one of the merges may create a surplus "tagme"
-			$tags = Tag::explode($_POST['tags'] . " " . $_POST["tags$id"]);
+			$tags = Tag::explode($post_tags . " " . $_POST["tags$id"]);
 		}
 		else {
-			$tags = Tag::explode($_POST['tags']);
+			$tags = Tag::explode($post_tags);
 		}
 		return $tags;
 	}

@@ -3,7 +3,7 @@
 class CustomIndexTheme extends IndexTheme {
 	/**
 	 * @param Page $page
-	 * @param null|Image[] $images
+	 * @param Image[] $images
 	 */
 	public function display_page(Page $page, $images) {
 		global $config;
@@ -40,7 +40,7 @@ class CustomIndexTheme extends IndexTheme {
 	/**
 	 * @param int $page_number
 	 * @param int $total_pages
-	 * @param array $search_terms
+	 * @param string[] $search_terms
 	 * @return string
 	 */
 	protected function build_navigation($page_number, $total_pages, $search_terms) {

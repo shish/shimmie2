@@ -11,7 +11,7 @@
  */
 
 class NumericScoreSetEvent extends Event {
-	var $image_id, $user, $score;
+	public $image_id, $user, $score;
 
 	/**
 	 * @param int $image_id
