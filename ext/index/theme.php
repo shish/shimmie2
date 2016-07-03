@@ -1,7 +1,7 @@
 <?php
 
 class IndexTheme extends Themelet {
-	private $page_number, $total_pages, $search_terms;
+	protected $page_number, $total_pages, $search_terms;
 
 	/**
 	 * @param int $page_number
