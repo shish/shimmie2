@@ -79,7 +79,7 @@ function sql_escape($input) {
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
- * @param $input
+ * @param mixed $input
  * @return bool
  */
 function bool_escape($input) {
@@ -676,7 +676,7 @@ function captcha_check() {
 		else {
 			session_start();
 			$securimg = new Securimage();
-			if($securimg->check($_POST['captcha_code']) == FALSE) {
+			if($securimg->check($_POST['captcha_code']) === false) {
 				log_info("core", "Captcha failed (Securimage)");
 				return false;
 			}
@@ -733,7 +733,7 @@ function getMimeType($file, $ext="", $list=false) {
 		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
 	);
 
-	if ($list == true){ return $exts; }
+	if ($list === true){ return $exts; }
 
 	if (isset($exts[$ext])) { return $exts[$ext]; }
 
@@ -828,7 +828,7 @@ function get_memory_limit() {
 			// Shimmie wants more memory than what PHP is currently set for.
 
 			// Attempt to set PHP's memory limit.
-			if ( ini_set("memory_limit", $shimmie_limit) === FALSE ) {
+			if ( ini_set("memory_limit", $shimmie_limit) === false ) {
 				/*  We can't change PHP's limit, oh well, return whatever its currently set to */
 				return $memory;
 			}
