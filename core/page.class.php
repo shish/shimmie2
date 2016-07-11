@@ -290,7 +290,7 @@ class Page {
 				#	header("Cache-control: no-cache");
 				#	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
 				#}
-				if($this->get_cookie("flash_message")) {
+				if($this->get_cookie("flash_message") !== null) {
 					$this->add_cookie("flash_message", "", -1, "/");
 				}
 				usort($this->blocks, "blockcmp");

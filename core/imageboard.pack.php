@@ -667,7 +667,7 @@ class Image {
 	/**
 	 * Send list of metatags to be parsed.
 	 *
-	 * @param [] $metatags
+	 * @param string[] $metatags
 	 * @param int $image_id
 	 */
 	public function parse_metatags($metatags, $image_id) {
@@ -876,7 +876,7 @@ class Image {
 		 * Merge all the image metadata searches into one generic querylet
 		 * and append to the base querylet with "AND blah"
 		 */
-		if($img_querylets) {
+		if(!empty($img_querylets)) {
 			$n = 0;
 			$img_sql = "";
 			$img_vars = array();
@@ -950,11 +950,11 @@ class Image {
 
 		assert('$positive_tag_id_array || $negative_tag_id_array');
 		$wheres = array();
-		if ($positive_tag_id_array) {
+		if (!empty($positive_tag_id_array)) {
 			$positive_tag_id_list = join(', ', $positive_tag_id_array);
 			$wheres[] = "tag_id IN ($positive_tag_id_list)";
 		}
-		if ($negative_tag_id_array) {
+		if (!empty($negative_tag_id_array)) {
 			$negative_tag_id_list = join(', ', $negative_tag_id_array);
 			$wheres[] = "tag_id NOT IN ($negative_tag_id_list)";
 		}
