@@ -39,7 +39,8 @@ _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in
 _d("VERSION", '2.5.5+');     // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
-_d("EXTRA_EXTS", "");        // optional extra extensions
+_d("EXTRA_EXTS", "");        // string   optional extra extensions
+_d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
 
 
 /*
