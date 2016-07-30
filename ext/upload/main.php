@@ -178,7 +178,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
-					$tags = isset($_GET['tags']) ? $_GET['tags'] : 'tagme';
+					$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : 'tagme';
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
 					$this->theme->display_upload_status($page, $ok);
