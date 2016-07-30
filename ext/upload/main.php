@@ -29,7 +29,11 @@ class DataUploadEvent extends Event {
 	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
-		assert(file_exists($tmpname));
+		assert('file_exists($tmpname)');
+		assert('is_string($metadata["filename"])');
+		assert('is_string($metadata["extension"])');
+		assert('is_array($metadata["tags"])');
+		assert('is_string($metadata["source"]) || is_null($metadata["source"])');
 
 		$this->tmpname = $tmpname;
 

@@ -55,7 +55,7 @@ class MP3FileHandler extends DataHandlerExtension {
 		}
 		
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = Tag::explode($metadata['tags']);
+		$image->tag_array = $metadata['tags'];
 		$image->source    = $metadata['source'];
 
 		return $image;
