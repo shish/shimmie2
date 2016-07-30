@@ -198,7 +198,6 @@ class Image {
 	public function get_accelerated_result($tags, $offset, $limit) {
 		global $database;
 
-		$tags = Tag::resolve_aliases($tags);
 		if(!Image::validate_accel($tags)) {
 			return null;
 		}
@@ -263,10 +262,9 @@ class Image {
 			return $total;
 		}
 		else if($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
-			$term = Tag::resolve_alias($tags[0]);
 			return $database->get_one(
 				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
-				array("tag"=>$term));
+				array("tag"=>$tags[0]));
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
@@ -802,7 +800,6 @@ class Image {
 			}
 		}
 
-		$terms = Tag::resolve_aliases($terms);
 		foreach ($terms as $term) {
 			$positive = true;
 			if (is_string($term) && !empty($term) && ($term[0] == '-')) {
@@ -819,10 +816,18 @@ class Image {
 				foreach ($stpe->get_querylets() as $querylet) {
 					$img_querylets[] = new ImgQuerylet($querylet, $positive);
 				}
-			} else {
-				$tag_querylets[] = new TagQuerylet(Tag::sanitise_wildcard($term), $positive);
-				if ($positive) $positive_tag_count++;
-				else $negative_tag_count++;
+			}
+			else {
+				// if the whole match is wild, skip this;
+				// if not, translate into SQL
+				if(str_replace("*", "", $term) != "") {
+					$term = str_replace('_', '\_', $term);
+					$term = str_replace('%', '\%', $term);
+					$term = str_replace('*', '%', $term);
+					$tag_querylets[] = new TagQuerylet($term, $positive);
+					if ($positive) $positive_tag_count++;
+					else $negative_tag_count++;
+				}
 			}
 		}
 
@@ -1063,146 +1068,85 @@ class Image {
  */
 class Tag {
 	/**
-	 * Remove any excess fluff from a user-input tag
-	 *
-	 * @param string $tag
-	 * @return string
-	 */
-	public static function sanitise($tag) {
-		assert('is_string($tag)');
-		$tag = preg_replace("/[\s?*]/", "", $tag);            # whitespace
-		$tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
-		$tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
-		$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
-		return $tag;
-	}
-
-	/**
-	 * Turn any string or array into a valid tag array.
-	 *
-	 * @param string|string[] $tags
-	 * @param bool $tagme
-	 * @return string[]
-	 */
-	public static function explode($tags, $tagme=true) {
-		assert('is_string($tags) || is_array($tags)');
-
-		if(is_string($tags)) {
-			$tags = explode(' ', trim($tags));
-		}
-		//else if(is_array($tags)) {
-			// do nothing
-		//}
-
-		$tag_array = array();
-		foreach($tags as $tag) {
-			$tag = trim($tag, ", \t\n\r\0\x0B");
-			if(is_string($tag) && !empty($tag)) {
-				$tag_array[] = $tag;
-			}
-		}
-
-		if(count($tag_array) === 0 && $tagme) {
-			$tag_array = array("tagme");
-		}
-
-		$tag_array = array_iunique($tag_array); //remove duplicate tags
-
-		sort($tag_array);
-
-		return $tag_array;
-	}
-
-	/**
-	 * @param string|string[] $tags
+	 * @param string[] $tags
 	 * @return string
 	 */
 	public static function implode($tags) {
-		assert('is_string($tags) || is_array($tags)');
+		assert('is_array($tags)');
 
-		if(is_array($tags)) {
-			sort($tags);
-			$tags = implode(' ', $tags);
-		}
-		//else if(is_string($tags)) {
-			// do nothing
-		//}
+		sort($tags);
+		$tags = implode(' ', $tags);
 
 		return $tags;
 	}
 
 	/**
-	 * @param string $tag
-	 * @return string
-	 */
-	public static function resolve_alias($tag) {
-		assert('is_string($tag)');
-		global $database;
-
-		$negative = false;
-		if(!empty($tag) && ($tag[0] == '-')) {
-			$negative = true;
-			$tag = substr($tag, 1);
-		}
-
-
-		$newtag = $database->get_one(
-			$database->scoreql_to_sql("SELECT newtag FROM aliases WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)"),
-			array("tag"=>$tag)
-		);
-
-		if(empty($newtag)) {
-			//tag has no alias, use old tag
-			$newtag = $tag;
-		}
-
-		return !$negative ? $newtag : preg_replace("/(\S+)/", "-$1", $newtag);
-	}
-
-	/**
-	 * @param string $tag
-	 * @return string
-	 */
-	public static function sanitise_wildcard($tag) {
-		// if there is no wildcard, return the tag
-		if(strpos($tag, "*") === false) {
-			return $tag;
-		}
-
-		// if the whole match is wild, save the database
-		else if(str_replace("*", "", $tag) == "") {
-			return "invalid-wildcard";
-		}
-
-		// else translate to sql
-		else {
-			$tag = str_replace("%", "\%", $tag);
-			$tag = str_replace("*", "%", $tag);
-			return $tag;
-		}
-	}
-
-	/**
-	 * This function takes a list (array) of tags and changes any tags that have aliases
+	 * Turn a human-supplied string into a valid tag array.
 	 *
-	 * @param string[] $tags Array of tags
-	 * @return array
+	 * @param string $tags
+	 * @param bool $tagme add "tagme" if the string is empty
+	 * @return string[]
 	 */
-	public static function resolve_aliases($tags) {
-		assert('is_array($tags)');
+	public static function explode($tags, $tagme=true) {
+		global $database;
+		assert('is_string($tags)');
 
+		$tags = explode(' ', trim($tags));
+
+		/* sanitise by removing invisible / dodgy characters */
+		$tag_array = array();
+		foreach($tags as $tag) {
+			$tag = preg_replace("/\s/", "", $tag);                # whitespace
+			$tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
+			$tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
+			$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
+			$tag = trim($tag, ", \t\n\r\0\x0B");
+
+			if(!empty($tag)) {
+				$tag_array[] = $tag;
+			}
+		}
+
+		/* if user supplied a blank string, add "tagme" */
+		if(count($tag_array) === 0 && $tagme) {
+			$tag_array = array("tagme");
+		}
+
+		/* resolve aliases */
 		$new = array();
-
 		$i = 0;
-		$tag_count = count($tags);
+		$tag_count = count($tag_array);
 		while($i<$tag_count) {
-			$aliases = Tag::explode(Tag::resolve_alias($tags[$i]), FALSE);
-			foreach($aliases as $alias){
-				if(!in_array($alias, $new)){
-					if($tags[$i] == $alias){
-						$new[] = $alias;
-					}elseif(!in_array($alias, $tags)){
-						$tags[] = $alias;
+			$tag = $tag_array[$i];
+			$negative = '';
+			if(!empty($tag) && ($tag[0] == '-')) {
+				$negative = '-';
+				$tag = substr($tag, 1);
+			}
+
+			$newtags = $database->get_one(
+				$database->scoreql_to_sql("
+					SELECT newtag
+					FROM aliases
+					WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)
+				"),
+				array("tag"=>$tag)
+			);
+			if(empty($newtags)) {
+				//tag has no alias, use old tag
+				$aliases = array($tag);
+			}
+			else {
+				$aliases = Tag::explode($newtags);
+			}
+
+			foreach($aliases as $alias) {
+				if(!in_array($alias, $new)) {
+					if($tag == $alias) {
+						$new[] = $negative.$alias;
+					}
+					elseif(!in_array($alias, $tag_array)) {
+						$tag_array[] = $negative.$alias;
 						$tag_count++;
 					}
 				}
@@ -1210,8 +1154,13 @@ class Tag {
 			$i++;
 		}
 
-		$new = array_iunique($new); // remove any duplicate tags
-		return $new;
+		/* remove any duplicate tags */
+		$tag_array = array_iunique($new);
+
+		/* tidy up */
+		sort($tag_array);
+
+		return $tag_array;
 	}
 }
 
@@ -1225,16 +1174,17 @@ class Tag {
  * hierarchy, or throw an exception trying.
  *
  * @param DataUploadEvent $event
- * @return bool
  * @throws UploadException
  */
 function move_upload_to_archive(DataUploadEvent $event) {
 	$target = warehouse_path("images", $event->hash);
 	if(!@copy($event->tmpname, $target)) {
-		$errors = error_get_last(); // note: requires php 5.2
-		throw new UploadException("Failed to copy file from uploads ({$event->tmpname}) to archive ($target): {$errors['type']} / {$errors['message']}");
+		$errors = error_get_last();
+		throw new UploadException(
+			"Failed to copy file from uploads ({$event->tmpname}) to archive ($target): ".
+			"{$errors['type']} / {$errors['message']}"
+		);
 	}
-	return true;
 }
 
 /**

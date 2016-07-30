@@ -174,7 +174,7 @@ abstract class DataHandlerExtension extends Extension {
 		$supported_ext = $this->supported_ext($event->type);
 		$check_contents = $this->check_contents($event->tmpname);
 		if($supported_ext && $check_contents) {
-			if(!move_upload_to_archive($event)) return;
+			move_upload_to_archive($event);
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
 			/* Check if we are replacing an image */

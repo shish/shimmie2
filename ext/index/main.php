@@ -161,16 +161,16 @@
 class SearchTermParseEvent extends Event {
 	/** @var null|string  */
 	public $term = null;
-	/** @var null|array */
-	public $context = null;
+	/** @var null */
+	public $context = array();
 	/** @var \Querylet[] */
 	public $querylets = array();
 
 	/**
 	 * @param string|null $term
-	 * @param array|null $context
+	 * @param array $context
 	 */
-	public function __construct($term, $context) {
+	public function __construct($term, array $context) {
 		$this->term = $term;
 		$this->context = $context;
 	}
@@ -201,16 +201,16 @@ class SearchTermParseException extends SCoreException {
 }
 
 class PostListBuildingEvent extends Event {
-	/** @var null|array */
-	public $search_terms = null;
+	/** @var array */
+	public $search_terms = array();
 
 	/** @var array */
 	public $parts = array();
 
 	/**
-	 * @param array|null $search
+	 * @param string[] $search
 	 */
-	public function __construct($search) {
+	public function __construct(array $search) {
 		$this->search_terms = $search;
 	}
 
@@ -238,7 +238,8 @@ class Index extends Extension {
 		global $database, $page;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
-				$search = url_escape(Tag::implode(Tag::resolve_aliases(Tag::explode($_GET['search'], false))));
+				// implode(explode()) to resolve aliases and sanitise
+				$search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
 				if(empty($search)) {
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/list/1"));
@@ -310,7 +311,7 @@ class Index extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onImageInfoSet($event) {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		global $database;
 		if(SPEED_HAX) {
 			$database->cache->delete("thumb-block:{$event->image->id}");

@@ -39,7 +39,7 @@ class Tag_HistoryTheme extends Themelet {
 			foreach($current_tags as $tag){
 				$taglinks[] = "<a href='".make_link("post/list/".$tag."/1")."'>".$tag."</a>";
 			}
-			$current_tags = Tag::implode($taglinks);
+			$current_tags = implode(' ', $taglinks);
 
 			$history_list .= "
 				<li>

@@ -10,7 +10,7 @@ class SVGFileHandler extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
-			if(!move_upload_to_archive($event)) return;
+			move_upload_to_archive($event);
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
 			if(is_null($image)) {

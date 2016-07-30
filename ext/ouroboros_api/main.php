@@ -271,12 +271,8 @@ class OuroborosPost extends _SafeOuroborosImage
     public function __construct(array $post, $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
-            $this->tags = Tag::implode(
-                array_map(
-                    array('Tag', 'sanitise'),
-                    Tag::explode(urldecode($post['tags']))
-                )
-            );
+            // implode(explode()) to resolve aliases and sanitise
+            $this->tags = Tag::implode(Tag::explode(urldecode($post['tags'])));
         }
         if (array_key_exists('file', $post)) {
             if (!is_null($post['file'])) {

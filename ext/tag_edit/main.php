@@ -100,20 +100,15 @@ class TagSetEvent extends Event {
 
 	/**
 	 * @param Image $image
-	 * @param string $tags
+	 * @param string[] $tags
 	 */
-	public function __construct(Image $image, $tags) {
+	public function __construct(Image $image, array $tags) {
 		$this->image    = $image;
 
 		$this->tags     = array();
 		$this->metatags = array();
 
-		//tags need to be sanitised, alias checked & have metatags removed before being passed to onTagSet
-		$tag_array = Tag::explode($tags);
-		$tag_array = array_map(array('Tag', 'sanitise'), $tag_array);
-		$tag_array = Tag::resolve_aliases($tag_array);
-
-		foreach($tag_array as $tag) {
+		foreach($tags as $tag) {
 			if((strpos($tag, ':') === FALSE) && (strpos($tag, '=') === FALSE)) {
 				//Tag doesn't contain : or =, meaning it can't possibly be a metatag.
 				//This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
@@ -134,12 +129,6 @@ class TagSetEvent extends Event {
 	}
 }
 
-/*
- * LockSetEvent:
- *   $image_id
- *   $locked
- *
- */
 class LockSetEvent extends Event {
 	/** @var \Image */
 	public $image;
@@ -151,7 +140,8 @@ class LockSetEvent extends Event {
 	 * @param bool $locked
 	 */
 	public function __construct(Image $image, $locked) {
-		assert(is_bool($locked));
+		assert('is_bool($locked)');
+
 		$this->image = $image;
 		$this->locked = $locked;
 	}
@@ -175,6 +165,10 @@ class TagTermParseEvent extends Event {
 	 * @param bool $parse
 	 */
 	public function __construct($term, $id, $parse) {
+		assert('is_string($term)');
+		assert('is_int($id)');
+		assert('is_bool($parse)');
+
 		$this->term  = $term;
 		$this->id    = $id;
 		$this->parse = $parse;
@@ -229,7 +223,7 @@ class TagEdit extends Extension {
 			}
 		}
 		if($this->can_tag($event->image) && isset($_POST['tag_edit__tags'])) {
-			send_event(new TagSetEvent($event->image, $_POST['tag_edit__tags']));
+			send_event(new TagSetEvent($event->image, Tag::explode($_POST['tag_edit__tags'])));
 		}
 		if($this->can_source($event->image) && isset($_POST['tag_edit__source'])) {
 			if(isset($_POST['tag_edit__tags']) ? !preg_match('/source[=|:]/', $_POST["tag_edit__tags"]) : TRUE){
@@ -387,10 +381,13 @@ class TagEdit extends Extension {
 	}
 
 	/**
-	 * @param string|string[] $tags
+	 * @param string $tags
 	 * @param string $source
 	 */
 	private function mass_source_edit($tags, $source) {
+		assert('is_string($tags)');
+		assert('is_string($source)');
+
 		$tags = Tag::explode($tags);
 
 		$last_id = -1;
