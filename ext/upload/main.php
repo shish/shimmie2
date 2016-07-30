@@ -157,7 +157,7 @@ class Upload extends Extension {
 					}
 					
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
-					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
+					$tags = array(); // Tags aren't changed when replacing. Set to empty to stop PHP warnings.
 					
 					$ok = false;
 					if(count($_FILES)) {
@@ -287,14 +287,18 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an upload.
-	 * @param $file
-	 * @param $tags
-	 * @param $source
-	 * @param string $replace
+	 * @param string $file
+	 * @param string[] $tags
+	 * @param string|null $source
+	 * @param int $replace
 	 * @return bool TRUE on upload successful.
 	 */
-	private function try_upload($file, $tags, $source, $replace='') {
+	private function try_upload($file, $tags, $source, $replace=-1) {
 		global $page;
+		assert('is_string($url)');
+		assert('is_array($tags)');
+		assert('is_string($source) || is_null($source)');
+		assert('is_int($replace)');
 
 		if(empty($source)) $source = null;
 
@@ -316,7 +320,7 @@ class Upload extends Extension {
 				$metadata['source'] = $source;
 				
 				/* check if we have been given an image ID to replace */
-				if (!empty($replace)) {
+				if ($replace >= 0) {
 					$metadata['replace'] = $replace;
 				}
 				
@@ -341,13 +345,17 @@ class Upload extends Extension {
 	 * Handle an transload.
 	 *
 	 * @param string $url
-	 * @param mixed $tags
-	 * @param string $source
-	 * @param string $replace
+	 * @param string[] $tags
+	 * @param string|null $source
+	 * @param int $replace
 	 * @return bool Returns TRUE on transload successful.
 	 */
-	private function try_transload($url, $tags, $source, $replace='') {
+	private function try_transload($url, $tags, $source, $replace=-1) {
 		global $page, $config, $user;
+		assert('is_string($url)');
+		assert('is_array($tags)');
+		assert('is_string($source) || is_null($source)');
+		assert('is_int($replace)');
 
 		$ok = true;
 
@@ -408,7 +416,7 @@ class Upload extends Extension {
 			}
 			
 			/* check if we have been given an image ID to replace */
-			if (!empty($replace)) {
+			if ($replace >= 0) {
 				$metadata['replace'] = $replace;
 			}
 			
