@@ -299,7 +299,7 @@ class Upload extends Extension {
 	 */
 	private function try_upload($file, $tags, $source, $replace=-1) {
 		global $page;
-		assert('is_string($url)');
+		assert('is_string($file)');
 		assert('is_array($tags)');
 		assert('is_string($source) || is_null($source)');
 		assert('is_int($replace)');
