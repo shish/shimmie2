@@ -92,6 +92,7 @@ else if(document.getElementById('tag-sidebar') !== null) {
 	}
 	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then image is most likely flash.
 	var furl = fileinfo.href || fileinfo.src;
+    furl = furl.split('?')[0]; // Remove trailing variables, if present (required for sankakucomplex).
 	var fs = (fileinfo.innerText.match(/[0-9]+ (KB|MB)/) || ["0 KB"])[0].split(" ");
 	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
