@@ -81,9 +81,14 @@ else if(document.getElementById('tag-sidebar') !== null) {
 		var fileinfo = document.getElementById("highres");
 		//NOTE: If highres doesn't exist, post must be flash (only sankakucomplex has flash)
 	}else if(source.search("gelbooru\\.com") >= 0){
-		var fileinfo = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[0];
-		//gelbooru has no easy way to select the original image link, so we need to double check it is the correct link.
-		fileinfo = (fileinfo.getAttribute('href') === "#" ? document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[1] : fileinfo);
+        // Try to find the "Original image" link in the options sidebar.
+        var fileinfo;
+        var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
+        for (var i = 0; i < nodes.length; i++) {
+            if (nodes[i].getAttribute('href') === "#") continue;
+            fileinfo = nodes[i];
+            break;
+        }
 	}
 	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then image is most likely flash.
 	var furl = fileinfo.href || fileinfo.src;
