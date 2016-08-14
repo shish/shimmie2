@@ -49,6 +49,7 @@ if(document.getElementById("post_tag_string") !== null) {
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
+            history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -98,6 +99,7 @@ else if(document.getElementById('tag-sidebar') !== null) {
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
+            history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -134,6 +136,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	if(tag.search(/\bflash\b/) === -1) {
 		var img = document.getElementById("main_image").src;
 		if(supext.search(img.match(".*\\.([a-z0-9]+)")[1]) !== -1) {
+            history.pushState(history.state, document.title, location.href);
 			location.href = ste+img+"&tags="+tag+"&source="+source;
 		}
 		else{
@@ -143,6 +146,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	else{
 		var mov = document.location.hostname+document.getElementsByName("movie")[0].value;
 		if(supext.search("swf") !== -1) {
+            history.pushState(history.state, document.title, location.href);
 			location.href = ste+mov+"&tags="+tag+"&source="+source;
 		}
 		else{
