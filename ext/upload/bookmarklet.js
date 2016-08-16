@@ -60,15 +60,11 @@ if(document.getElementById("image-container") !== null) {
 }
 
 /*
- * konachan | sankakucomplex | gelbooru
+ * konachan | sankakucomplex | gelbooru | etc.
  */
 else if(document.getElementById('tag-sidebar') !== null) {
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
-		if(document.location.href.search("sankakucomplex\\.com") >= 0 || document.location.href.search("gelbooru\\.com")){
-			var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
-		}else{
-			var tag = document.getElementById("post_tags").value;
-		}
+        var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
 	}
 	tag = tag.replace(/\+/g, "%2B");
 
@@ -76,10 +72,9 @@ else if(document.getElementById('tag-sidebar') !== null) {
 
 	var rating = document.getElementById("stats").innerHTML.match("Rating: ([a-zA-Z]+)")[1];
 
-	if(source.search("sankakucomplex\\.com") >= 0 || source.search("konachan\\.com") >= 0){
+	if(document.getElementById('highres') !== null) {
 		var fileinfo = document.getElementById("highres");
-		//NOTE: If highres doesn't exist, post must be flash (only sankakucomplex has flash)
-	}else if(source.search("gelbooru\\.com") >= 0){
+	}else if(document.getElementById('pfd') !== null){
         // Try to find the "Original image" link in the options sidebar.
         var fileinfo;
         var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
@@ -89,9 +84,9 @@ else if(document.getElementById('tag-sidebar') !== null) {
             break;
         }
 	}
-	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then image is most likely flash.
+	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then assume that the image is flash.
 	var furl = fileinfo.href || fileinfo.src;
-    furl = furl.split('?')[0]; // Remove trailing variables, if present (required for sankakucomplex).
+    furl = furl.split('?')[0]; // Remove trailing variables
 	var fs = (fileinfo.innerText.match(/[0-9]+ (KB|MB)/) || ["0 KB"])[0].split(" ");
 	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
