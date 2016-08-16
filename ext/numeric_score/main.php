@@ -11,7 +11,7 @@
  */
 
 class NumericScoreSetEvent extends Event {
-	var $image_id, $user, $score;
+	public $image_id, $user, $score;
 
 	/**
 	 * @param int $image_id
@@ -247,9 +247,9 @@ class NumericScore extends Extension {
 				"images.id in (SELECT image_id FROM numeric_score_votes WHERE user_id=:ns_user_id AND score=-1)",
 				array("ns_user_id"=>$iid)));
 		}
-		else if(preg_match("/^order[=|:](numeric_)?(score)[_]?(desc|asc)?$/i", $event->term, $matches)){
+		else if(preg_match("/^order[=|:](?:numeric_)?(score)(?:_(desc|asc))?$/i", $event->term, $matches)){
 			$default_order_for_column = "DESC";
-			$sort = isset($matches[3]) ? strtoupper($matches[3]) : $default_order_for_column;
+			$sort = isset($matches[2]) ? strtoupper($matches[2]) : $default_order_for_column;
 			Image::$order_sql = "images.numeric_score $sort";
 			$event->add_querylet(new Querylet("1=1")); //small hack to avoid metatag being treated as normal tag
 		}
@@ -258,7 +258,7 @@ class NumericScore extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
+		if(preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches) && $event->parse) {
 			global $user;
 			$score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
 			if(!$user->is_anonymous()) {

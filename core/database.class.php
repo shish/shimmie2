@@ -357,7 +357,7 @@ class MemcacheCache implements CacheEngine {
 }
 
 class APCCache implements CacheEngine {
-	var $hits=0, $misses=0;
+	public $hits=0, $misses=0;
 
 	public function __construct($args) {
 		// $args is not used, but is passed in when APC cache is created.
@@ -755,11 +755,11 @@ class Database {
 
 class MockDatabase extends Database {
 	/** @var int */
-	var $query_id = 0;
+	private $query_id = 0;
 	/** @var array */
-	var $responses = array();
+	private $responses = array();
 	/** @var \NoCache|null  */
-	var $cache = null;
+	public $cache = null;
 
 	/**
 	 * @param array $responses

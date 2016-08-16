@@ -271,12 +271,8 @@ class OuroborosPost extends _SafeOuroborosImage
     public function __construct(array $post, $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
-            $this->tags = Tag::implode(
-                array_map(
-                    array('Tag', 'sanitise'),
-                    Tag::explode(urldecode($post['tags']))
-                )
-            );
+            // implode(explode()) to resolve aliases and sanitise
+            $this->tags = Tag::implode(Tag::explode(urldecode($post['tags'])));
         }
         if (array_key_exists('file', $post)) {
             if (!is_null($post['file'])) {
@@ -587,9 +583,9 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param $limit
-     * @param $page
-     * @param $tags
+     * @param int $limit
+     * @param int $page
+     * @param string[] $tags
      */
     protected function postIndex($limit, $page, $tags)
     {
@@ -611,13 +607,13 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of tags
-     * @param $limit
-     * @param $page
-     * @param $order
-     * @param $id
-     * @param $after_id
-     * @param $name
-     * @param $name_pattern
+     * @param int $limit
+     * @param int $page
+     * @param string $order
+     * @param int $id
+     * @param int $after_id
+     * @param string $name
+     * @param string $name_pattern
      */
     protected function tagIndex($limit, $page, $order, $id, $after_id, $name, $name_pattern)
     {
@@ -830,7 +826,7 @@ class OuroborosAPI extends Extension
 
     /**
      * Helper for matching API methods from event
-     * @param $page
+     * @param string $page
      * @return bool
      */
     private function match($page)

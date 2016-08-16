@@ -9,6 +9,7 @@ global $config, $database, $user, $page;
 require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
+require_once "vendor/autoload.php";
 
 // set up and purify the environment
 _version_check();

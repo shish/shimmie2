@@ -3,9 +3,8 @@
 class HomeTheme extends Themelet {
 	public function display_page(Page $page, $sitename, $base_href, $theme_name, $body) {
 		$page->set_mode("data");
-		$hh = "";
 		$page->add_auto_html_headers();
-		foreach($page->html_headers as $h) {$hh .= $h;}
+		$hh = $page->get_all_html_headers();
 		$page->set_data(<<<EOD
 <html>
 	<head>
@@ -14,17 +13,6 @@ class HomeTheme extends Themelet {
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		$hh
 	</head>
-	<style>
-		div#front-page h1 {font-size: 4em; margin-top: 2em; margin-bottom: 0px; text-align: center; border: none; background: none; box-shadow: none; -webkit-box-shadow: none; -moz-box-shadow: none;}
-		div#front-page {text-align:center;}
-		.space {margin-bottom: 1em;}
-		div#front-page div#links a {margin: 0 0.5em;}
-		div#front-page li {list-style-type: none; margin: 0;}
-		@media (max-width: 800px) {
-			div#front-page h1 {font-size: 3em; margin-top: 0.5em; margin-bottom: 0.5em;}
-			#counter {display: none;}
-		}
-	</style>
 	<body>
 		$body
 	</body>
@@ -37,7 +25,7 @@ EOD
 		$main_links_html = empty($main_links) ? "" : "<div class='space' id='links'>$main_links</div>";
 		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
 		$counter_html = empty($counter_text)  ? "" : "<div class='space' id='counter'>$counter_text</div>";
-		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> &ndash;";
+		$contact_link = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a> &ndash;";
 		$search_html = "
 			<div class='space' id='search'>
 				<form action='".make_link("post/list")."' method='GET'>

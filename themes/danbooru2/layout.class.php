@@ -49,14 +49,8 @@ class Layout {
 		//$theme_name = $config->get_string('theme');
 		//$base_href = $config->get_string('base_href');
 		//$data_href = get_base_href();
-		$contact_link = $config->get_string('contact_link');
-
-
-		$header_html = "";
-		ksort($page->html_headers);
-		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t$line\n";
-		}
+		$contact_link = contact_link();
+		$header_html = $page->get_all_html_headers();
 
 		$left_block_html = "";
 		$user_block_html = "";
@@ -88,7 +82,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 
 		if(empty($this->subheading)) {
 			$subheading = "";
@@ -255,7 +249,7 @@ $header_html
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2014,
+			2007-2016,
 			based on the Danbooru concept<br />
 			$debug
 			$contact

@@ -29,7 +29,11 @@ class DataUploadEvent extends Event {
 	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
-		assert(file_exists($tmpname));
+		assert('file_exists($tmpname)');
+		assert('is_string($metadata["filename"])');
+		assert('is_string($metadata["extension"])');
+		assert('is_array($metadata["tags"])');
+		assert('is_string($metadata["source"]) || is_null($metadata["source"])');
 
 		$this->tmpname = $tmpname;
 
@@ -157,7 +161,7 @@ class Upload extends Extension {
 					}
 					
 					$source = isset($_POST['source']) ? $_POST['source'] : null;
-					$tags = ''; // Tags aren't changed when uploading. Set to null to stop PHP warnings.
+					$tags = array(); // Tags aren't changed when replacing. Set to empty to stop PHP warnings.
 					
 					$ok = false;
 					if(count($_FILES)) {
@@ -178,7 +182,7 @@ class Upload extends Extension {
 				}
 				else if(!empty($_GET['url'])) {
 					$url = $_GET['url'];
-					$tags = isset($_GET['tags']) ? $_GET['tags'] : 'tagme';
+					$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : 'tagme';
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
 					$this->theme->display_upload_status($page, $ok);
@@ -238,13 +242,15 @@ class Upload extends Extension {
 	 * @return string[]
 	 */
 	private function tags_for_upload_slot($id) {
+		$post_tags = isset($_POST["tags"]) ? $_POST["tags"] : "";
+
 		if(isset($_POST["tags$id"])) {
 			# merge then explode, not explode then merge - else
 			# one of the merges may create a surplus "tagme"
-			$tags = Tag::explode($_POST['tags'] . " " . $_POST["tags$id"]);
+			$tags = Tag::explode($post_tags . " " . $_POST["tags$id"]);
 		}
 		else {
-			$tags = Tag::explode($_POST['tags']);
+			$tags = Tag::explode($post_tags);
 		}
 		return $tags;
 	}
@@ -285,14 +291,18 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an upload.
-	 * @param $file
-	 * @param $tags
-	 * @param $source
-	 * @param string $replace
+	 * @param string $file
+	 * @param string[] $tags
+	 * @param string|null $source
+	 * @param int $replace
 	 * @return bool TRUE on upload successful.
 	 */
-	private function try_upload($file, $tags, $source, $replace='') {
+	private function try_upload($file, $tags, $source, $replace=-1) {
 		global $page;
+		assert('is_string($file)');
+		assert('is_array($tags)');
+		assert('is_string($source) || is_null($source)');
+		assert('is_int($replace)');
 
 		if(empty($source)) $source = null;
 
@@ -314,7 +324,7 @@ class Upload extends Extension {
 				$metadata['source'] = $source;
 				
 				/* check if we have been given an image ID to replace */
-				if (!empty($replace)) {
+				if ($replace >= 0) {
 					$metadata['replace'] = $replace;
 				}
 				
@@ -339,13 +349,17 @@ class Upload extends Extension {
 	 * Handle an transload.
 	 *
 	 * @param string $url
-	 * @param mixed $tags
-	 * @param string $source
-	 * @param string $replace
+	 * @param string[] $tags
+	 * @param string|null $source
+	 * @param int $replace
 	 * @return bool Returns TRUE on transload successful.
 	 */
-	private function try_transload($url, $tags, $source, $replace='') {
+	private function try_transload($url, $tags, $source, $replace=-1) {
 		global $page, $config, $user;
+		assert('is_string($url)');
+		assert('is_array($tags)');
+		assert('is_string($source) || is_null($source)');
+		assert('is_int($replace)');
 
 		$ok = true;
 
@@ -389,11 +403,14 @@ class Upload extends Extension {
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
+			$ext = false;
 			if (is_array($headers)) {
-				$metadata['extension'] = getExtension(findHeader($headers, 'Content-Type'));
-			} else {
-				$metadata['extension'] = $pathinfo['extension'];
+				$ext = getExtension(findHeader($headers, 'Content-Type'));
 			}
+			if ($ext === false) {
+				$ext = $pathinfo['extension'];
+			}
+			$metadata['extension'] = $ext;
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){
@@ -406,7 +423,7 @@ class Upload extends Extension {
 			}
 			
 			/* check if we have been given an image ID to replace */
-			if (!empty($replace)) {
+			if ($replace >= 0) {
 				$metadata['replace'] = $replace;
 			}
 			

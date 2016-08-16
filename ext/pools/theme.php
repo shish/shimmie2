@@ -21,6 +21,7 @@ class PoolsTheme extends Themelet {
 					$navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['next']).'" class="pools_next_img">Next</a>';
 				}
 				if(!empty($navlinks)){
+					$navlinks .= "<div style='height: 5px'></div>";
 					$linksPools[] = $navlinks;
 				}
 			}
@@ -86,14 +87,14 @@ class PoolsTheme extends Themelet {
 
 		$html .= "</tbody></table>";
 
-		$order_html = '
-			<select id="order_pool">
-			  <option value="created">Recently created</option>
-			  <option value="updated">Last updated</option>
-			  <option value="name">Name</option>
-			  <option value="count">Post count</option>
-			</select>
-		';
+		$order_html = '<select id="order_pool">';
+		$order_selected = $page->get_cookie('ui-order-pool');
+		$order_arr = ['created' => 'Recently created', 'updated' => 'Last updated', 'name' => 'Name', 'count' => 'Post Count'];
+		foreach($order_arr as $value => $text) {
+			$selected = ($value == $order_selected ? "selected" : "");
+			$order_html .= "<option value=\"{$value}\" {$selected}>{$text}</option>\n";
+		}
+		$order_html .= '</select>';
 
 		$this->display_top(null, "Pools");
 		$page->add_block(new Block("Order By", $order_html, "left", 15));

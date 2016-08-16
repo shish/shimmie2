@@ -1,0 +1,394 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "7f3cebcb4b5b802a6e34719d10bbafc7",
+    "content-hash": "1b9fd588bc2d86a26b1760a6b2041d21",
+    "packages": [
+        {
+            "name": "bower-asset/jquery",
+            "version": "1.12.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jquery/jquery-dist.git",
+                "reference": "3a43d7e563314bf32970b773dd31ecf2b90813dd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/3a43d7e563314bf32970b773dd31ecf2b90813dd",
+                "reference": "3a43d7e563314bf32970b773dd31ecf2b90813dd",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "dist/jquery.js",
+                "bower-asset-ignore": [
+                    "package.json"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "keywords": [
+                "browser",
+                "javascript",
+                "jquery",
+                "library"
+            ]
+        },
+        {
+            "name": "bower-asset/jquery-timeago",
+            "version": "v1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmm5t/jquery-timeago.git",
+                "reference": "67c11951ae9b6020341c1056a42b5406162db40c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/67c11951ae9b6020341c1056a42b5406162db40c",
+                "reference": "67c11951ae9b6020341c1056a42b5406162db40c",
+                "shasum": ""
+            },
+            "require": {
+                "bower-asset/jquery": ">=1.4"
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": "jquery.timeago.js",
+                "bower-asset-ignore": [
+                    "test",
+                    "vendor"
+                ]
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "bower-asset/js-cookie",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/js-cookie/js-cookie.git",
+                "reference": "5c830fb71a2bd3acce9cb733d692e13316991891"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/5c830fb71a2bd3acce9cb733d692e13316991891",
+                "reference": "5c830fb71a2bd3acce9cb733d692e13316991891",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "src/js.cookie.js"
+                ],
+                "bower-asset-ignore": [
+                    "travis.sh",
+                    "test",
+                    "Gruntfile.js",
+                    "package.json",
+                    ".gitignore",
+                    ".jshintignore",
+                    ".jshintrc",
+                    ".tm_properties",
+                    ".travis.yml"
+                ]
+            },
+            "license": [
+                "MIT"
+            ]
+        },
+        {
+            "name": "bower-asset/mediaelement",
+            "version": "2.21.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/johndyer/mediaelement.git",
+                "reference": "68ae308b2ac4ac6648c06f68db9f8902370a3249"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/johndyer/mediaelement/zipball/68ae308b2ac4ac6648c06f68db9f8902370a3249",
+                "reference": "68ae308b2ac4ac6648c06f68db9f8902370a3249",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "./build/mediaelement-and-player.js",
+                    "./build/mediaelementplayer.css"
+                ],
+                "bower-asset-ignore": [
+                    "**",
+                    "!/build/**",
+                    "!/bower.json",
+                    "!/README*",
+                    "!/changelog*"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "HTML5 <video> and <audio> made easy.",
+            "keywords": [
+                "audio",
+                "html5",
+                "shim",
+                "video"
+            ]
+        },
+        {
+            "name": "bower-asset/tablesorter",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/christianbach/tablesorter.git",
+                "reference": "774576308e8a25aa9d68b7fe3069b79543992d7a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/christianbach/tablesorter/zipball/774576308e8a25aa9d68b7fe3069b79543992d7a",
+                "reference": "774576308e8a25aa9d68b7fe3069b79543992d7a",
+                "shasum": ""
+            },
+            "type": "bower-asset-library",
+            "extra": {
+                "bower-asset-main": [
+                    "jquery.metadata.js",
+                    "jquery.tablesorter.min.js"
+                ],
+                "bower-asset-ignore": [
+                    "**/.*",
+                    "node_modules",
+                    "bower_components",
+                    "test",
+                    "tests"
+                ],
+                "branch-alias": {
+                    "dev-master": "2.0.5-dev"
+                }
+            },
+            "license": [
+                "MIT,GPL"
+            ],
+            "description": "Flexible client-side table sorting",
+            "keywords": [
+                "client-side",
+                "sort",
+                "table"
+            ],
+            "time": "2015-12-03 01:22:52"
+        },
+        {
+            "name": "dapphp/securimage",
+            "version": "3.6.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dapphp/securimage.git",
+                "reference": "2ed50264ae5541fec8d8c79e4c9b6235a7cfd506"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dapphp/securimage/zipball/2ed50264ae5541fec8d8c79e4c9b6235a7cfd506",
+                "reference": "2ed50264ae5541fec8d8c79e4c9b6235a7cfd506",
+                "shasum": ""
+            },
+            "require": {
+                "ext-gd": "*",
+                "php": ">=5.2.0"
+            },
+            "suggest": {
+                "ext-pdo": "For database storage support",
+                "ext-pdo_mysql": "For MySQL database support",
+                "ext-pdo_sqlite": "For SQLite3 database support"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "securimage.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD"
+            ],
+            "authors": [
+                {
+                    "name": "Drew Phillips",
+                    "email": "drew@drew-phillips.com"
+                }
+            ],
+            "description": "PHP CAPTCHA Library",
+            "homepage": "https://www.phpcaptcha.org",
+            "keywords": [
+                "captcha",
+                "security"
+            ],
+            "time": "2016-03-04 21:08:00"
+        },
+        {
+            "name": "flexihash/flexihash",
+            "version": "v2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pda/flexihash.git",
+                "reference": "497ba5782606d998f8ab0b4e5942e3a799bec018"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pda/flexihash/zipball/497ba5782606d998f8ab0b4e5942e3a799bec018",
+                "reference": "497ba5782606d998f8ab0b4e5942e3a799bec018",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8",
+                "satooshi/php-coveralls": "~1.0",
+                "squizlabs/php_codesniffer": "^2.3",
+                "symfony/config": "^2.0.0",
+                "symfony/console": "^2.0.0",
+                "symfony/filesystem": "^2.0.0",
+                "symfony/stopwatch": "^2.0.0",
+                "symfony/yaml": "^2.0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Flexihash\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Annesley",
+                    "email": "paul@annesley.cc",
+                    "homepage": "http://paul.annesley.cc"
+                },
+                {
+                    "name": "Dom Morgan",
+                    "email": "dom@d3r.com",
+                    "homepage": "https://d3r.com"
+                }
+            ],
+            "description": "Flexihash is a small PHP library which implements consistent hashing",
+            "homepage": "https://github.com/pda/flexihash",
+            "time": "2016-04-22 21:03:23"
+        },
+        {
+            "name": "google/recaptcha",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/google/recaptcha.git",
+                "reference": "f3390c376129f84d22734df1f94cc7db25006bbc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/google/recaptcha/zipball/f3390c376129f84d22734df1f94cc7db25006bbc",
+                "reference": "f3390c376129f84d22734df1f94cc7db25006bbc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.5.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "ReCaptcha\\": "src/ReCaptcha"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Client library for reCAPTCHA, a free service that protect websites from spam and abuse.",
+            "homepage": "http://www.google.com/recaptcha/",
+            "keywords": [
+                "Abuse",
+                "captcha",
+                "recaptcha",
+                "spam"
+            ],
+            "time": "2015-12-28 18:03:30"
+        },
+        {
+            "name": "ifixit/php-akismet",
+            "version": "1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iFixit/php-akismet.git",
+                "reference": "126b4b9182230678a585338be4cfca24c9129dc9"
+            },
+            "type": "library"
+        },
+        {
+            "name": "ircmaxell/password-compat",
+            "version": "v1.0.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/password_compat.git",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/password_compat/zipball/5c5cde8822a69545767f7c7f3058cb15ff84614c",
+                "reference": "5c5cde8822a69545767f7c7f3058cb15ff84614c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "lib/password.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Anthony Ferrara",
+                    "email": "ircmaxell@php.net",
+                    "homepage": "http://blog.ircmaxell.com"
+                }
+            ],
+            "description": "A compatibility library for the proposed simplified password hashing algorithm: https://wiki.php.net/rfc/password_hash",
+            "homepage": "https://github.com/ircmaxell/password_compat",
+            "keywords": [
+                "hashing",
+                "password"
+            ],
+            "time": "2014-11-20 16:49:30"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=5.4.8"
+    },
+    "platform-dev": []
+}

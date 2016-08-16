@@ -1,11 +1,11 @@
 <?php
 class CommentListTheme extends Themelet {
-	var $comments_shown = 0;
-	var $show_anon_id = false;
-	var $anon_id = 1;
-	var $anon_cid = 0;
-	var $anon_map = array();
-	var $ct = null;
+	private $comments_shown = 0;
+	private $show_anon_id = false;
+	private $anon_id = 1;
+	private $anon_cid = 0;
+	private $anon_map = array();
+	private $ct = null;
 
 	private function get_anon_colour($ip) {
 		if(is_null($this->ct)) {
@@ -276,7 +276,7 @@ class CommentListTheme extends Themelet {
 			if(!empty($comment->owner_email)) {
 				$hash = md5(strtolower($comment->owner_email));
 				$cb = date("Y-m-d");
-				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
+				$h_avatar = "<img src=\"//www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
 			$h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";

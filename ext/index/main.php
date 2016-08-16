@@ -161,16 +161,16 @@
 class SearchTermParseEvent extends Event {
 	/** @var null|string  */
 	public $term = null;
-	/** @var null|array */
-	public $context = null;
+	/** @var null */
+	public $context = array();
 	/** @var \Querylet[] */
 	public $querylets = array();
 
 	/**
 	 * @param string|null $term
-	 * @param array|null $context
+	 * @param array $context
 	 */
-	public function __construct($term, $context) {
+	public function __construct($term, array $context) {
 		$this->term = $term;
 		$this->context = $context;
 	}
@@ -201,16 +201,16 @@ class SearchTermParseException extends SCoreException {
 }
 
 class PostListBuildingEvent extends Event {
-	/** @var null|array */
-	public $search_terms = null;
+	/** @var array */
+	public $search_terms = array();
 
 	/** @var array */
 	public $parts = array();
 
 	/**
-	 * @param array|null $search
+	 * @param string[] $search
 	 */
-	public function __construct($search) {
+	public function __construct(array $search) {
 		$this->search_terms = $search;
 	}
 
@@ -225,7 +225,7 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends Extension {
-	var $stpen = 0;  // search term parse event number
+	private $stpen = 0;  // search term parse event number
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -238,7 +238,8 @@ class Index extends Extension {
 		global $database, $page;
 		if($event->page_matches("post/list")) {
 			if(isset($_GET['search'])) {
-				$search = url_escape(Tag::implode(Tag::resolve_aliases(Tag::explode($_GET['search'], false))));
+				// implode(explode()) to resolve aliases and sanitise
+				$search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
 				if(empty($search)) {
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/list/1"));
@@ -253,9 +254,9 @@ class Index extends Extension {
 			$search_terms = $event->get_search_terms();
 			$page_number = $event->get_page_number();
 			$page_size = $event->get_page_size();
-            
+
 			$count_search_terms = count($search_terms);
-            
+
 			try {
 				#log_debug("index", "Search for ".implode(" ", $search_terms), false, array("terms"=>$search_terms));
 				$total_pages = Image::count_pages($search_terms);
@@ -277,7 +278,7 @@ class Index extends Extension {
 			}
 
 			$count_images = count($images);
-            
+
 			if($count_search_terms === 0 && $count_images === 0 && $page_number === 1) {
 				$this->theme->display_intro($page);
 				send_event(new PostListBuildingEvent($search_terms));
@@ -310,7 +311,7 @@ class Index extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onImageInfoSet($event) {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		global $database;
 		if(SPEED_HAX) {
 			$database->cache->delete("thumb-block:{$event->image->id}");
@@ -322,8 +323,17 @@ class Index extends Extension {
 		// check for tags first as tag based searches are more common.
 		if(preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
-			$tags = $matches[2];
-			$event->add_querylet(new Querylet('images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) '.$cmp.' '.$tags.')'));
+			$count = $matches[2];
+			$event->add_querylet(
+				new Querylet("EXISTS (
+				              SELECT 1
+				              FROM image_tags it
+				              LEFT JOIN tags t ON it.tag_id = t.id
+				              WHERE images.id = it.image_id
+				              GROUP BY image_id
+				              HAVING COUNT(*) $cmp $count
+				)")
+			);
 		}
 		else if(preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
 			$cmp = preg_replace('/^:/', '=', $matches[1]);
@@ -394,4 +404,3 @@ class Index extends Extension {
 		$this->stpen++;
 	}
 }
-

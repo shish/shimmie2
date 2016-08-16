@@ -1,43 +1,58 @@
 language: php
-sudo: false
-
 php:
-- 5.4
-- 5.5
-- 5.6
-- nightly
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+
+sudo: false
 
 env:
   matrix:
-  - DB=mysql
-  - DB=pgsql
-  - DB=sqlite
+    - DB=mysql
+    - DB=pgsql
+    - DB=sqlite
+  allow_failures:
+    - DB=sqlite
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
+before_install:
+  - travis_retry composer self-update && composer --version #travis is bad at updating composer
+  - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
 install:
-- mkdir -p data/config
-- if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
-- if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
-- if [[ "$DB" == "pgsql" ]]; then echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
-- if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
-- if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
-- if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
-- if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
-- wget https://scrutinizer-ci.com/ocular.phar
+  - mkdir -p data/config
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then psql -c "CREATE DATABASE shimmie;" -U postgres; fi
+  - if [[ "$DB" == "pgsql" ]]; then echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "SET GLOBAL general_log = 'ON';" -uroot; fi
+  - if [[ "$DB" == "mysql" ]]; then mysql -e "CREATE DATABASE shimmie;" -uroot; fi
+  - if [[ "$DB" == "mysql" ]]; then echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ; fi
+  - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+  - composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins
+  - composer install
+  - php install.php
 
 script:
-- php install.php
-- phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+  - phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
 
 after_failure:
-- head -n 100 data/config/*
-- ls /var/run/mysql*
-- ls /var/log/*mysql*
-- cat /var/log/mysql.err
-- cat /var/log/mysql.log
-- cat /var/log/mysql/error.log
-- cat /var/log/mysql/slow.log
-- ls /var/log/postgresql
-- cat /var/log/postgresql/postgresql*
+  - head -n 100 data/config/*
+  - ls /var/run/mysql*
+  # All of the below commands require sudo, which we can't use without losing some speed & caching.
+  # SEE: https://docs.travis-ci.com/user/workers/container-based-infrastructure/
+  # - ls /var/log/*mysql*
+  # - cat /var/log/mysql.err
+  # - cat /var/log/mysql.log
+  # - cat /var/log/mysql/error.log
+  # - cat /var/log/mysql/slow.log
+  # - ls /var/log/postgresql
+  # - cat /var/log/postgresql/postgresql*
 
 after_script:
-- php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover
+  - wget https://scrutinizer-ci.com/ocular.phar
+  - php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover

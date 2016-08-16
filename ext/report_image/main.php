@@ -22,21 +22,28 @@ class RemoveReportedImageEvent extends Event {
 }
 
 class AddReportedImageEvent extends Event {
+	/** @var ImageReport */
+	public $report;
+
+	/**
+	 * @param ImageReport $report
+	 */
+	public function __construct($report) {
+		$this->report = $report;
+	}
+}
+
+class ImageReport {
 	/** @var int  */
-	public $reporter_id;
+	public $user_id;
 	/** @var int  */
 	public $image_id;
 	/** @var string  */
 	public $reason;
 
-	/**
-	 * @param int $image_id
-	 * @param int $reporter_id
-	 * @param string $reason
-	 */
-	public function __construct($image_id, $reporter_id, $reason) {
-		$this->reporter_id = $reporter_id;
+	public function __construct($image_id, $user_id, $reason) {
 		$this->image_id = $image_id;
+		$this->user_id = $user_id;
 		$this->reason = $reason;
 	}
 }
@@ -56,7 +63,7 @@ class ReportImage extends Extension {
 			if($event->get_arg(0) == "add") {
 				if(!empty($_POST['image_id']) && !empty($_POST['reason'])) {
 					$image_id = int_escape($_POST['image_id']);
-					send_event(new AddReportedImageEvent($image_id, $user->id, $_POST['reason']));
+					send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $_POST['reason'])));
 					$page->set_mode("redirect");
 					$page->set_redirect(make_link("post/view/$image_id"));
 				}
@@ -93,11 +100,11 @@ class ReportImage extends Extension {
 
 	public function onAddReportedImage(AddReportedImageEvent $event) {
 		global $database;
-		log_info("report_image", "Adding report of Image #{$event->image_id} with reason '{$event->reason}'", false, array("image_id" => $event->image_id));
+		log_info("report_image", "Adding report of Image #{$event->report->image_id} with reason '{$event->report->reason}'", false, array("image_id" => $event->report->image_id));
 		$database->Execute(
 				"INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",
-				array($event->image_id, $event->reporter_id, $event->reason));
+				array($event->report->image_id, $event->report->user_id, $event->report->reason));
 		$database->cache->delete("image-report-count");
 	}
 
@@ -117,7 +124,7 @@ class ReportImage extends Extension {
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $user;
 		if($user->can('create_image_report')) {
-			$reps = $this->get_reporters($event->image);
+			$reps = $this->get_reports($event->image);
 			$this->theme->display_image_banner($event->image, $reps);
 		}
 	}
@@ -139,6 +146,20 @@ class ReportImage extends Extension {
 
 	public function onUserDeletion(UserDeletionEvent $event) {
 		$this->delete_reports_by($event->id);
+	}
+
+	public function onSetupBuilding(SetupBuildingEvent $event) {
+		$sb = new SetupBlock("Image Reports");
+
+		$opts = array(
+			"Reporter Only" => "user",
+			"Reason Only" => "reason",
+			"Both" => "both",
+			"None" => "none",
+		);
+		$sb->add_choice_option("report_image_publicity", $opts, "Show publicly: ");
+
+		$event->panel->add_block($sb);
 	}
 
 	/**
@@ -168,17 +189,21 @@ class ReportImage extends Extension {
 
 	/**
 	 * @param Image $image
-	 * @return string[]
+	 * @return ImageReport[]
 	 */
-	public function get_reporters(Image $image) {
+	public function get_reports(Image $image) {
 		global $database;
 
-		return $database->get_col("
-			SELECT users.name
+		$rows = $database->get_all("
+			SELECT *
 			FROM image_reports
-			JOIN users ON reporter_id = users.id
 			WHERE image_reports.image_id = :image_id
 		", array("image_id" => $image->id));
+		$reps = array();
+		foreach($rows as $row) {
+			$reps[] = new ImageReport($row["image_id"], $row["reporter_id"], $row["reason"]);
+		}
+		return $reps;
 	}
 
 	/**

@@ -74,8 +74,8 @@ class ImageInfoSetEvent extends Event {
 }
 
 class ImageAdminBlockBuildingEvent extends Event {
-	/** @var array  */
-	var $parts = array();
+	/** @var string[] */
+	public $parts = array();
 	/** @var \Image|null  */
 	public $image = null;
 	/** @var null|\User  */

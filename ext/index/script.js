@@ -1,7 +1,7 @@
 /*jshint bitwise:false, curly:true, eqeqeq:true, evil:true, forin:false, noarg:true, noempty:true, nonew:true, undef:false, strict:false, browser:true, jquery:true */
 
 $(function() {
-	var blocked_tags = ($.cookie("ui-blocked-tags") || "").split(" ");
+	var blocked_tags = (Cookies.get("ui-blocked-tags") || "").split(" ");
 	var needs_refresh = false;
 	for(var i=0; i<blocked_tags.length; i++) {
 		var tag = blocked_tags[i];
@@ -34,9 +34,9 @@ $(function() {
 });
 
 function select_blocked_tags() {
-	var blocked_tags = prompt("Enter tags to ignore", $.cookie("ui-blocked-tags") || "My_Little_Pony");
+	var blocked_tags = prompt("Enter tags to ignore", Cookies.get("ui-blocked-tags") || "My_Little_Pony");
 	if(blocked_tags !== null) {
-		$.cookie("ui-blocked-tags", blocked_tags.toLowerCase(), {path: '/', expires: 365});
+		Cookies.set("ui-blocked-tags", blocked_tags.toLowerCase(), {expires: 365});
 		location.reload(true);
 	}
 }

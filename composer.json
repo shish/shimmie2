@@ -1,0 +1,61 @@
+{
+	"type"    : "project",
+	"license" : "GPL-2.0",
+	"minimum-stability" : "dev",
+
+	"repositories" : [
+		{
+			"type" : "package",
+			"package" : {
+				"name" : "ifixit/php-akismet",
+				"version" : "1.0",
+				"source" : {
+					"url"       : "https://github.com/iFixit/php-akismet.git",
+					"type"      : "git",
+					"reference" : "126b4b9182230678a585338be4cfca24c9129dc9"
+				}
+			}
+		}
+	],
+
+	"require" : {
+		"php" : ">=5.4.8",
+
+		"flexihash/flexihash"       : "^2.0.0",
+		"ifixit/php-akismet"        : "1.*",
+		"google/recaptcha"          : "~1.1",
+		"dapphp/securimage"         : "3.6.*",
+		"ircmaxell/password-compat" : "1.0.4",
+
+		"bower-asset/jquery"         : "1.12.3",
+		"bower-asset/jquery-timeago" : "1.5.2",
+		"bower-asset/tablesorter"    : "2.0.5",
+		"bower-asset/mediaelement"   : "2.21.1",
+		"bower-asset/js-cookie"      : "2.1.1"
+	},
+
+	"vendor-copy": {
+		"vendor/bower-asset/jquery/dist/jquery.min.js"                : "lib/vendor/js/jquery-1.12.3.min.js",
+		"vendor/bower-asset/jquery/dist/jquery.min.map"               : "lib/vendor/js/jquery-1.12.3.min.map",
+		"vendor/bower-asset/jquery-timeago/jquery.timeago.js"         : "lib/vendor/js/jquery.timeago.js",
+		"vendor/bower-asset/tablesorter/jquery.tablesorter.min.js"    : "lib/vendor/js/jquery.tablesorter.min.js",
+		"vendor/bower-asset/mediaelement/build/flashmediaelement.swf" : "lib/vendor/swf/flashmediaelement.swf",
+		"vendor/bower-asset/js-cookie/src/js.cookie.js"               : "lib/vendor/js/js.cookie.js"
+	},
+
+	"scripts": {
+		"pre-install-cmd" : [
+			"php -r \"array_map('unlink', array_merge(glob('lib/vendor/js/j*.{js,map}', GLOB_BRACE), glob('lib/vendor/css/*.css'), glob('lib/vendor/swf/*.swf')));\""
+		],
+		"pre-update-cmd" : [
+			"php -r \"array_map('unlink', array_merge(glob('lib/vendor/js/j*.{js,map}', GLOB_BRACE), glob('lib/vendor/css/*.css'), glob('lib/vendor/swf/*.swf')));\""
+		],
+
+		"post-install-cmd" : [
+			"php -r \"array_map('copy', array_keys(json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']), json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']);\""
+		],
+		"post-update-cmd" : [
+			"php -r \"array_map('copy', array_keys(json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']), json_decode(file_get_contents('composer.json'), TRUE)['vendor-copy']);\""
+		]
+	}
+}

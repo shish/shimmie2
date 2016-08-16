@@ -81,7 +81,7 @@ class NullUserException extends SCoreException {}
 
 class UserPage extends Extension {
 	/** @var UserPageTheme $theme */
-	var $theme;
+	public $theme;
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -216,7 +216,7 @@ class UserPage extends Extension {
 			($user->id == $event->display_user->id)
 		) {
 			$event->add_stats(
-				"No avatar? This gallery uses <a href='http://gravatar.com'>Gravatar</a> for avatar hosting, use the".
+				"No avatar? This gallery uses <a href='https://gravatar.com'>Gravatar</a> for avatar hosting, use the".
 				"<br>same email address here and there to have your avatar synced<br>",
 				0
 			);
@@ -313,8 +313,8 @@ class UserPage extends Extension {
 		global $user;
 
 		$matches = array();
-		if(preg_match("/^(poster|user)[=|:](.*)$/i", $event->term, $matches)) {
-			$duser = User::by_name($matches[2]);
+		if(preg_match("/^(?:poster|user)[=|:](.*)$/i", $event->term, $matches)) {
+			$duser = User::by_name($matches[1]);
 			if(!is_null($duser)) {
 				$user_id = $duser->id;
 			}
@@ -323,12 +323,12 @@ class UserPage extends Extension {
 			}
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
-		else if(preg_match("/^(poster|user)_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
-			$user_id = int_escape($matches[2]);
+		else if(preg_match("/^(?:poster|user)_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
+			$user_id = int_escape($matches[1]);
 			$event->add_querylet(new Querylet("images.owner_id = $user_id"));
 		}
-		else if($user->can("view_ip") && preg_match("/^(poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
-			$user_ip = $matches[2]; // FIXME: ip_escape?
+		else if($user->can("view_ip") && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
+			$user_ip = $matches[1]; // FIXME: ip_escape?
 			$event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
 		}
 	}

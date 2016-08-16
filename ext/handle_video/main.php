@@ -14,29 +14,43 @@
  *  In the future, it may be necessary to change the user agent checks to reflect the current state of H.264 support.<br><br>
  *  Made possible by:<br>
  *  <a href='http://getid3.sourceforge.net/'>getID3()</a> - Gets media information with PHP (no bulky FFMPEG API required).<br>
- *  <a href='http://jarisflvplayer.org/'>Jaris FLV Player</a> - GPLv3 flash multimedia player.
  */
 
 class VideoFileHandler extends DataHandlerExtension {
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
-		$config->set_default_string('video_thumb_engine', 'static');
-		$config->set_default_string('thumb_ffmpeg_path', '');
 
-		// By default we generate thumbnails ignoring the aspect ratio of the video file.
-		//
-		// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
-		// rather than completely failing out of the box. If people complain that their
-		// thumbnails are distorted, then they can turn this feature on manually later.
-		$config->set_default_bool('video_thumb_ignore_aspect_ratio', true);
+		if($config->get_int("ext_handle_video_version") < 1) {
+			if($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
+				//ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
+				if(is_executable(strtok($ffmpeg, PHP_EOL))) {
+					$config->set_default_string('video_thumb_engine', 'ffmpeg');
+					$config->set_default_string('thumb_ffmpeg_path',  'ffmpeg');
+				}
+			} else {
+				$config->set_default_string('video_thumb_engine', 'static');
+				$config->set_default_string('thumb_ffmpeg_path',  '');
+			}
+
+			// By default we generate thumbnails ignoring the aspect ratio of the video file.
+			//
+			// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
+			// rather than completely failing out of the box. If people complain that their
+			// thumbnails are distorted, then they can turn this feature on manually later.
+			$config->set_default_bool('video_thumb_ignore_aspect_ratio', TRUE);
+
+			$config->set_int("ext_handle_video_version", 1);
+			log_info("pools", "extension installed");
+		}
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		//global $config;
-		
-		$thumbers = array();
-		$thumbers['None'] = "static";
-		$thumbers['ffmpeg'] = "ffmpeg";
+
+		$thumbers = array(
+			'None'   => 'static',
+			'ffmpeg' => 'ffmpeg'
+		);
 
 		$sb = new SetupBlock("Video Thumbnail Options");
 
@@ -85,12 +99,12 @@ class VideoFileHandler extends DataHandlerExtension {
 			
 				if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
 				{
-					$cmd = escapeshellcmd("{$ffmpeg} -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+					$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
 				}
 				else
 				{
 					$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
-					$cmd = "{$ffmpeg} -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
+					$cmd = "{$ffmpeg} -y -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}";
 				}
 
 				exec($cmd, $output, $returnValue);
@@ -119,7 +133,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	/**
 	 * @param string $filename
 	 * @param mixed[] $metadata
-	 * @return Image|null
+	 * @return Image
 	 */
 	protected function create_image_from_data($filename, $metadata) {
 
@@ -155,7 +169,7 @@ class VideoFileHandler extends DataHandlerExtension {
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
-		$image->tag_array = Tag::explode($metadata['tags']);
+		$image->tag_array = $metadata['tags'];
 		$image->source    = $metadata['source'];
 
 		return $image;

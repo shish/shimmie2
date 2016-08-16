@@ -10,7 +10,7 @@ class IcoFileHandler extends Extension {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
-			if(!move_upload_to_archive($event)) return;
+			move_upload_to_archive($event);
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
@@ -79,14 +79,14 @@ class IcoFileHandler extends Extension {
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = Tag::explode($metadata['tags']);
+		$image->tag_array = $metadata['tags'];
 		$image->source    = $metadata['source'];
 
 		return $image;
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	private function check_contents($file) {
@@ -98,7 +98,7 @@ class IcoFileHandler extends Extension {
 	}
 
 	/**
-	 * @param $hash
+	 * @param string $hash
 	 * @return bool
 	 */
 	private function create_thumb($hash) {
