@@ -29,18 +29,16 @@ else if(CA === 2) { // New Tags
  * jQuery should always active here, meaning we can use jQuery in this part of the bookmarklet.
  */
 
-if(document.getElementById("post_tag_string") !== null) {
+if(document.getElementById("image-container") !== null) {
+    var imageContainer = $('#image-container')[0];
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
-		var tag = $('#post_tag_string').text().replace(/\n/g, "");
+		var tag = imageContainer.getAttribute('data-tags');
 	}
 	tag = tag.replace(/\+/g, "%2B");
 
 	var source = "http://" + document.location.hostname + document.location.href.match("\/posts\/[0-9]+");
 
-	var rlist = $('[name="post[rating]"]');
-	for( var x=0; x < 3; x++){
-		var rating = (rlist[x].checked === true ? rlist[x].value : rating);
-	}
+    var rating = imageContainer.getAttribute('data-rating');
 
 	var fileinfo = $('#sidebar > section:eq(3) > ul > :contains("Size") > a');
 	var furl = "http://" + document.location.hostname + fileinfo.attr('href');
