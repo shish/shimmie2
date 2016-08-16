@@ -29,18 +29,16 @@ else if(CA === 2) { // New Tags
  * jQuery should always active here, meaning we can use jQuery in this part of the bookmarklet.
  */
 
-if(document.getElementById("post_tag_string") !== null) {
+if(document.getElementById("image-container") !== null) {
+	var imageContainer = $('#image-container')[0];
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
-		var tag = $('#post_tag_string').text().replace(/\n/g, "");
+		var tag = imageContainer.getAttribute('data-tags');
 	}
 	tag = tag.replace(/\+/g, "%2B");
 
 	var source = "http://" + document.location.hostname + document.location.href.match("\/posts\/[0-9]+");
 
-	var rlist = $('[name="post[rating]"]');
-	for( var x=0; x < 3; x++){
-		var rating = (rlist[x].checked === true ? rlist[x].value : rating);
-	}
+	var rating = imageContainer.getAttribute('data-rating');
 
 	var fileinfo = $('#sidebar > section:eq(3) > ul > :contains("Size") > a');
 	var furl = "http://" + document.location.hostname + fileinfo.attr('href');
@@ -49,6 +47,7 @@ if(document.getElementById("post_tag_string") !== null) {
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -61,15 +60,11 @@ if(document.getElementById("post_tag_string") !== null) {
 }
 
 /*
- * konachan | sankakucomplex | gelbooru
+ * konachan | sankakucomplex | gelbooru | etc.
  */
 else if(document.getElementById('tag-sidebar') !== null) {
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
-		if(document.location.href.search("sankakucomplex\\.com") >= 0 || document.location.href.search("gelbooru\\.com")){
-			var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+\n/g, "$1 ");
-		}else{
-			var tag = document.getElementById("post_tags").value;
-		}
+		var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
 	}
 	tag = tag.replace(/\+/g, "%2B");
 
@@ -77,21 +72,27 @@ else if(document.getElementById('tag-sidebar') !== null) {
 
 	var rating = document.getElementById("stats").innerHTML.match("Rating: ([a-zA-Z]+)")[1];
 
-	if(source.search("sankakucomplex\\.com") >= 0 || source.search("konachan\\.com") >= 0){
+	if(document.getElementById('highres') !== null) {
 		var fileinfo = document.getElementById("highres");
-		//NOTE: If highres doesn't exist, post must be flash (only sankakucomplex has flash)
-	}else if(source.search("gelbooru\\.com") >= 0){
-		var fileinfo = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[0];
-		//gelbooru has no easy way to select the original image link, so we need to double check it is the correct link.
-		fileinfo = (fileinfo.getAttribute('href') === "#" ? document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a')[1] : fileinfo);
+	}else if(document.getElementById('pfd') !== null){
+		// Try to find the "Original image" link in the options sidebar.
+		var fileinfo;
+		var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
+		for (var i = 0; i < nodes.length; i++) {
+			if (nodes[i].getAttribute('href') === "#") continue;
+			fileinfo = nodes[i];
+			break;
+		}
 	}
-	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then image is most likely flash.
+	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then assume that the image is flash.
 	var furl = fileinfo.href || fileinfo.src;
+	furl = furl.split('?')[0]; // Remove trailing variables, if present.
 	var fs = (fileinfo.innerText.match(/[0-9]+ (KB|MB)/) || ["0 KB"])[0].split(" ");
 	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -128,6 +129,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	if(tag.search(/\bflash\b/) === -1) {
 		var img = document.getElementById("main_image").src;
 		if(supext.search(img.match(".*\\.([a-z0-9]+)")[1]) !== -1) {
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+img+"&tags="+tag+"&source="+source;
 		}
 		else{
@@ -137,6 +139,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	else{
 		var mov = document.location.hostname+document.getElementsByName("movie")[0].value;
 		if(supext.search("swf") !== -1) {
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+mov+"&tags="+tag+"&source="+source;
 		}
 		else{
