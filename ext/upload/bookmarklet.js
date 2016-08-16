@@ -66,7 +66,7 @@ if(document.getElementById("post_tag_string") !== null) {
 else if(document.getElementById('tag-sidebar') !== null) {
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
 		if(document.location.href.search("sankakucomplex\\.com") >= 0 || document.location.href.search("gelbooru\\.com")){
-			var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+\n/g, "$1 ");
+			var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
 		}else{
 			var tag = document.getElementById("post_tags").value;
 		}
