@@ -403,14 +403,14 @@ class Upload extends Extension {
 			$metadata['tags'] = $tags;
 			$metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
 			
-            $ext = false;
+			$ext = false;
 			if (is_array($headers)) {
 				$ext = getExtension(findHeader($headers, 'Content-Type'));
 			}
-            if ($ext === false) {
+			if ($ext === false) {
 				$ext = $pathinfo['extension'];
 			}
-            $metadata['extension'] = $ext;
+			$metadata['extension'] = $ext;
 			
 			/* check for locked > adds to metadata if it has */
 			if(!empty($locked)){

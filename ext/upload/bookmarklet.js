@@ -30,7 +30,7 @@ else if(CA === 2) { // New Tags
  */
 
 if(document.getElementById("image-container") !== null) {
-    var imageContainer = $('#image-container')[0];
+	var imageContainer = $('#image-container')[0];
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
 		var tag = imageContainer.getAttribute('data-tags');
 	}
@@ -38,7 +38,7 @@ if(document.getElementById("image-container") !== null) {
 
 	var source = "http://" + document.location.hostname + document.location.href.match("\/posts\/[0-9]+");
 
-    var rating = imageContainer.getAttribute('data-rating');
+	var rating = imageContainer.getAttribute('data-rating');
 
 	var fileinfo = $('#sidebar > section:eq(3) > ul > :contains("Size") > a');
 	var furl = "http://" + document.location.hostname + fileinfo.attr('href');
@@ -47,7 +47,7 @@ if(document.getElementById("image-container") !== null) {
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
-            history.pushState(history.state, document.title, location.href);
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -64,7 +64,7 @@ if(document.getElementById("image-container") !== null) {
  */
 else if(document.getElementById('tag-sidebar') !== null) {
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
-        var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
+		var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
 	}
 	tag = tag.replace(/\+/g, "%2B");
 
@@ -75,24 +75,24 @@ else if(document.getElementById('tag-sidebar') !== null) {
 	if(document.getElementById('highres') !== null) {
 		var fileinfo = document.getElementById("highres");
 	}else if(document.getElementById('pfd') !== null){
-        // Try to find the "Original image" link in the options sidebar.
-        var fileinfo;
-        var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
-        for (var i = 0; i < nodes.length; i++) {
-            if (nodes[i].getAttribute('href') === "#") continue;
-            fileinfo = nodes[i];
-            break;
-        }
+		// Try to find the "Original image" link in the options sidebar.
+		var fileinfo;
+		var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
+		for (var i = 0; i < nodes.length; i++) {
+			if (nodes[i].getAttribute('href') === "#") continue;
+			fileinfo = nodes[i];
+			break;
+		}
 	}
 	fileinfo = fileinfo || document.getElementsByTagName('embed')[0]; //If fileinfo is null then assume that the image is flash.
 	var furl = fileinfo.href || fileinfo.src;
-    furl = furl.split('?')[0]; // Remove trailing variables
+	furl = furl.split('?')[0]; // Remove trailing variables
 	var fs = (fileinfo.innerText.match(/[0-9]+ (KB|MB)/) || ["0 KB"])[0].split(" ");
 	var filesize = (fs[1] === "MB" ? fs[0] * 1024 : fs[0]);
 
 	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
 		if(filesize <= maxsize){
-            history.pushState(history.state, document.title, location.href);
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+furl+"&tags="+tag+"&rating="+rating+"&source="+source;
 		}
 		else{
@@ -129,7 +129,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	if(tag.search(/\bflash\b/) === -1) {
 		var img = document.getElementById("main_image").src;
 		if(supext.search(img.match(".*\\.([a-z0-9]+)")[1]) !== -1) {
-            history.pushState(history.state, document.title, location.href);
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+img+"&tags="+tag+"&source="+source;
 		}
 		else{
@@ -139,7 +139,7 @@ else if(document.getElementsByTagName("title")[0].innerHTML.search("Image [0-9.-
 	else{
 		var mov = document.location.hostname+document.getElementsByName("movie")[0].value;
 		if(supext.search("swf") !== -1) {
-            history.pushState(history.state, document.title, location.href);
+			history.pushState(history.state, document.title, location.href);
 			location.href = ste+mov+"&tags="+tag+"&source="+source;
 		}
 		else{
