@@ -40,7 +40,7 @@ class VideoFileHandler extends DataHandlerExtension {
 			$config->set_default_bool('video_thumb_ignore_aspect_ratio', TRUE);
 
 			$config->set_int("ext_handle_video_version", 1);
-			log_info("pools", "extension installed");
+			log_info("handle_video", "extension installed");
 		}
 
 		$config->set_default_bool('video_playback_autoplay', TRUE);
