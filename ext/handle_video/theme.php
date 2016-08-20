@@ -2,10 +2,13 @@
 
 class VideoFileHandlerTheme extends Themelet {
 	public function display_image(Page $page, Image $image) {
+		global $config;
 		$ilink = $image->get_image_link();
 		$thumb_url = make_http($image->get_thumb_link()); //used as fallback image
 		$ext = strtolower($image->get_ext());
 		$full_url = make_http($ilink);
+		$autoplay = $config->get_bool("video_playback_autoplay");
+		$loop = $config->get_bool("video_playback_loop");
 
 		$html = "Video not playing? <a href='" . $image->parse_link_template(make_link('image/$id/$id%20-%20$tags.$ext')) . "'>Click here</a> to download the file.<br/>";
 
@@ -25,7 +28,12 @@ class VideoFileHandlerTheme extends Themelet {
 							<param name=\"allowFullScreen\" value=\"true\" />
 							<param name=\"wmode\" value=\"opaque\" />
 
-							<param name=\"flashVars\" value=\"controls=true&autoplay=true&poster={$thumb_url}&file={$full_url}\" />
+							<param name=\"flashVars\" value=\""
+								. "controls=true"
+								. "&autoplay=" . ($autoplay ? 'true' : 'false')
+								. "&poster={$thumb_url}"
+								. "&file={$full_url}"
+								. "&loop=" . ($loop ? 'true' : 'false') . "\" />
 							<img src=\"{$thumb_url}\" />
 						</object>";
 
@@ -34,7 +42,7 @@ class VideoFileHandlerTheme extends Themelet {
 				$html .= $html_fallback;
 			} else {
 				$html .= "
-					<video controls autoplay width=\"100%\">
+					<video controls " . ($autoplay ? 'autoplay' : '') . " width=\"100%\" " . ($loop ? 'loop' : '') . ">
 						<source src='{$ilink}' type='{$supportedExts[$ext]}'>
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
