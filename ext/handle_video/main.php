@@ -2,7 +2,7 @@
 /*
  * Name: Handle Video
  * Author: velocity37 <velocity37@gmail.com>
- * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>
+ * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>, im-mi <im.mi.mail.mi@gmail.com>
  * License: GPLv2
  * Description: Handle FLV, MP4, OGV and WEBM video files.
  * Documentation:
@@ -42,6 +42,9 @@ class VideoFileHandler extends DataHandlerExtension {
 			$config->set_int("ext_handle_video_version", 1);
 			log_info("pools", "extension installed");
 		}
+
+		$config->set_default_bool('video_playback_autoplay', TRUE);
+		$config->set_default_bool('video_playback_loop', TRUE);
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
@@ -66,6 +69,12 @@ class VideoFileHandler extends DataHandlerExtension {
 		$sb->add_label("<br>");
 		$sb->add_bool_option("video_thumb_ignore_aspect_ratio", "Ignore aspect ratio when creating thumbnails: ");
 
+		$event->panel->add_block($sb);
+		
+		$sb = new SetupBlock("Video Playback Options");
+		$sb->add_bool_option("video_playback_autoplay", "Autoplay: ");
+		$sb->add_label("<br>");
+		$sb->add_bool_option("video_playback_loop", "Loop: ");
 		$event->panel->add_block($sb);
 	}
 
