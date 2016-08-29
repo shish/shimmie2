@@ -54,7 +54,7 @@ class BaseThemelet {
 		$h_view_link = make_link('post/view/'.$i_id);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
-		$h_tags = strtolower($image->get_tag_list());
+		$h_tags = html_escape(strtolower($image->get_tag_list()));
 
 		$extArr = array_flip(array('swf', 'svg', 'mp3')); //List of thumbless filetypes
 		if(!isset($extArr[$image->ext])){
