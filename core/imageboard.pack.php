@@ -1102,6 +1102,11 @@ class Tag {
 			$tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
 			$tag = trim($tag, ", \t\n\r\0\x0B");
 
+			if(mb_strlen($tag, 'UTF-8') > 255){
+				flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+				continue;
+			}
+
 			if(!empty($tag)) {
 				$tag_array[] = $tag;
 			}
