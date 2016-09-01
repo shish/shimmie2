@@ -154,8 +154,9 @@ class PoolsTheme extends Themelet {
 				}
 			}
 
-			$bb = new BBCode();
-			$page->add_block(new Block(html_escape($pool['title']), $bb->format($pool['description']), "main", 10));
+			$tfe = new TextFormattingEvent($pool['description']);
+			send_event($tfe);
+			$page->add_block(new Block(html_escape($pool['title']), $tfe->formatted, "main", 10));
 		}
 	}
 
