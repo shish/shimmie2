@@ -74,8 +74,8 @@ class IcoFileHandler extends Extension {
 
 		$width = $subheader['width'];
 		$height = $subheader['height'];
-		$image->width = width == 0 ? 256 : width;
-		$image->height = height == 0 ? 256 : height;
+		$image->width = $width == 0 ? 256 : $width;
+		$image->height = $height == 0 ? 256 : $height;
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
