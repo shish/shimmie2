@@ -28,7 +28,7 @@ $(function() {
 		zoom(this.options[this.selectedIndex].value);
 	});
 
-	$(".shm-main-image").click(function(e) {
+	$("img.shm-main-image").click(function(e) {
 		switch(Cookies.get("ui-image-zoom")) {
 			case "full": zoom("width"); break;
 			default: zoom("full"); break;
