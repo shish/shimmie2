@@ -72,8 +72,10 @@ class IcoFileHandler extends Extension {
 		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
 		fclose($fp);
 
-		$image->width = $subheader['width'];
-		$image->height = $subheader['height'];
+		$width = $subheader['width'];
+		$height = $subheader['height'];
+		$image->width = width == 0 ? 256 : width;
+		$image->height = height == 0 ? 256 : height;
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
