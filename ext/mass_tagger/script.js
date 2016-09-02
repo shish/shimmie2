@@ -34,3 +34,8 @@ function toggle_tag( button, id ) {
 		list.val(string);
 	}
 }
+
+$(function () {
+	// Clear the selection, in case it was autocompleted by the browser.
+	$('#mass_tagger_ids').val("");
+});
