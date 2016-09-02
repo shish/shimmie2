@@ -27,6 +27,11 @@ $(function() {
 	$(".shm-zoomer").change(function(e) {
 		zoom(this.options[this.selectedIndex].value);
 	});
+	$(window).resize(function(e) {
+		$(".shm-zoomer").each(function (e) {
+			zoom(this.options[this.selectedIndex].value)
+		});
+	});
 
 	$("img.shm-main-image").click(function(e) {
 		switch(Cookies.get("ui-image-zoom")) {
