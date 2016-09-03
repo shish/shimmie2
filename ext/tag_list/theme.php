@@ -61,14 +61,18 @@ class TagListTheme extends Themelet {
 			$category = $split[0];
 			$tag_html = $split[1];
 			if(!isset($tag_categories_html[$category])) {
-				$tag_categories_html[$category] = '';
+				$tag_categories_html[$category] = '<ul class="tag_list">';
 			}
-			$tag_categories_html[$category] .= $tag_html . '<br />';
+			$tag_categories_html[$category] .= "<li>$tag_html</li>";
 
 			if(!isset($tag_categories_count[$category])) {
 				$tag_categories_count[$category] = 0;
 			}
 			$tag_categories_count[$category] += 1;
+		}
+
+		foreach(array_keys($tag_categories_html) as $category) {
+			$tag_categories_html[$category] .= "</ul>";
 		}
 
 		asort($tag_categories_html);
@@ -111,14 +115,16 @@ class TagListTheme extends Themelet {
 		else {
 			$tag_category_dict = array();
 		}
-		$main_html = '';
+		$main_html = '<ul class="tag_list">';
 
 		foreach($tag_infos as $row) {
 			$split = $this->return_tag($row, $tag_category_dict);
 			//$category = $split[0];
 			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
+			$main_html .= "<li>$tag_html</li>";
 		}
+
+		$main_html .= '</ul>';
 
 		if($config->get_string('tag_list_image_type')=="tags") {
 			$page->add_block(new Block("Tags", $main_html, "left", 10));
@@ -147,14 +153,16 @@ class TagListTheme extends Themelet {
 		else {
 			$tag_category_dict = array();
 		}
-		$main_html = '';
+		$main_html = '<ul class="tag_list">';
 
 		foreach($tag_infos as $row) {
 			$split = self::return_tag($row, $tag_category_dict);
 			//$category = $split[0];
 			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
+			$main_html .= "<li>$tag_html</li>";
 		}
+
+		$main_html .= '</ul>';
 
 		$main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 		$page->add_block(new Block("Popular Tags", $main_html, "left", 60));
@@ -179,14 +187,16 @@ class TagListTheme extends Themelet {
 		else {
 			$tag_category_dict = array();
 		}
-		$main_html = '';
+		$main_html = '<ul class="tag_list">';
 
 		foreach($tag_infos as $row) {
 			$split = self::return_tag($row, $tag_category_dict);
 			//$category = $split[0];
 			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
+			$main_html .= "<li>$tag_html</li>";
 		}
+
+		$main_html .= '</ul>';
 
 		$main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 		$page->add_block(new Block("refine Search", $main_html, "left", 60));

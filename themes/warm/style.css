@@ -121,6 +121,9 @@ NAV SELECT {
 	content: " >>>";
 }
 
+.tag_list {
+	text-align: inherit;
+}
 .tag_count:before {
 	content: "(";
 }
