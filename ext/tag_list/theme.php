@@ -35,6 +35,29 @@ class TagListTheme extends Themelet {
 
 	// =======================================================================
 
+	protected function get_tag_list_preamble() {
+		global $config;
+
+		$tag_info_link_is_visible = !is_null($config->get_string('info_link'));
+		$tag_count_is_visible = $config->get_bool("tag_list_numbers");
+
+		return '
+			<table class="tag_list sortable">
+				<colgroup>' .
+					($tag_info_link_is_visible ? '<col class="tag_info_link_column">' : '') .
+					('<col class="tag_name_column">') .
+					($tag_count_is_visible ? '<col class="tag_count_column">' : '') . '
+				</colgroup>
+				<thead>
+					<tr>' .
+						($tag_info_link_is_visible ? '<th class="tag_info_link_cell"></th>' : '') .
+						('<th class="tag_name_cell">Tag</th>') .
+						($tag_count_is_visible ? '<th class="tag_count_cell">#</th>' : '') . '
+					</tr>
+				</thead>
+				<tbody>';
+	}
+
 	/*
 	 * $tag_infos = array(
 	 *                 array('tag' => $tag, 'count' => $number_of_uses),
@@ -61,14 +84,18 @@ class TagListTheme extends Themelet {
 			$category = $split[0];
 			$tag_html = $split[1];
 			if(!isset($tag_categories_html[$category])) {
-				$tag_categories_html[$category] = '';
+				$tag_categories_html[$category] = $this->get_tag_list_preamble();
 			}
-			$tag_categories_html[$category] .= $tag_html . '<br />';
+			$tag_categories_html[$category] .= "<tr>$tag_html</tr>";
 
 			if(!isset($tag_categories_count[$category])) {
 				$tag_categories_count[$category] = 0;
 			}
 			$tag_categories_count[$category] += 1;
+		}
+
+		foreach(array_keys($tag_categories_html) as $category) {
+			$tag_categories_html[$category] .= '</tbody></table>';
 		}
 
 		asort($tag_categories_html);
@@ -99,10 +126,8 @@ class TagListTheme extends Themelet {
 	 *                 ...
 	 *              )
 	 */
-	public function display_related_block(Page $page, $tag_infos) {
-		global $config;
-
-		if($config->get_string('tag_list_related_sort') == 'alphabetical') asort($tag_infos);
+	private function get_tag_list_html($tag_infos, $sort) {
+		if($sort == 'alphabetical') asort($tag_infos);
 
 		if(class_exists('TagCategories')) {
 			$this->tagcategories = new TagCategories;
@@ -111,14 +136,31 @@ class TagListTheme extends Themelet {
 		else {
 			$tag_category_dict = array();
 		}
-		$main_html = '';
+		$main_html = $this->get_tag_list_preamble();
 
 		foreach($tag_infos as $row) {
 			$split = $this->return_tag($row, $tag_category_dict);
 			//$category = $split[0];
 			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
+			$main_html .= "<tr>$tag_html</tr>";
 		}
+
+		$main_html .= '</tbody></table>';
+
+		return $main_html;
+	}
+
+	/*
+	 * $tag_infos = array(
+	 *                 array('tag' => $tag, 'count' => $number_of_uses),
+	 *                 ...
+	 *              )
+	 */
+	public function display_related_block(Page $page, $tag_infos) {
+		global $config;
+
+		$main_html = $this->get_tag_list_html(
+			$tag_infos, $config->get_string('tag_list_related_sort'));
 
 		if($config->get_string('tag_list_image_type')=="tags") {
 			$page->add_block(new Block("Tags", $main_html, "left", 10));
@@ -138,25 +180,10 @@ class TagListTheme extends Themelet {
 	public function display_popular_block(Page $page, $tag_infos) {
 		global $config;
 
-		if($config->get_string('tag_list_popular_sort') == 'alphabetical') asort($tag_infos);
-
-		if(class_exists('TagCategories')) {
-			$this->tagcategories = new TagCategories;
-			$tag_category_dict = $this->tagcategories->getKeyedDict();
-		}
-		else {
-			$tag_category_dict = array();
-		}
-		$main_html = '';
-
-		foreach($tag_infos as $row) {
-			$split = self::return_tag($row, $tag_category_dict);
-			//$category = $split[0];
-			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
-		}
-
+		$main_html = $this->get_tag_list_html(
+			$tag_infos, $config->get_string('tag_list_popular_sort'));
 		$main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
+
 		$page->add_block(new Block("Popular Tags", $main_html, "left", 60));
 	}
 
@@ -170,25 +197,10 @@ class TagListTheme extends Themelet {
 	public function display_refine_block(Page $page, $tag_infos, $search) {
 		global $config;
 
-		if($config->get_string('tag_list_popular_sort') == 'alphabetical') asort($tag_infos);
-
-		if(class_exists('TagCategories')) {
-			$this->tagcategories = new TagCategories;
-			$tag_category_dict = $this->tagcategories->getKeyedDict();
-		}
-		else {
-			$tag_category_dict = array();
-		}
-		$main_html = '';
-
-		foreach($tag_infos as $row) {
-			$split = self::return_tag($row, $tag_category_dict);
-			//$category = $split[0];
-			$tag_html = $split[1];
-			$main_html .= $tag_html . '<br />';
-		}
-
+		$main_html = $this->get_tag_list_html(
+			$tag_infos, $config->get_string('tag_list_popular_sort'));
 		$main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
+
 		$page->add_block(new Block("refine Search", $main_html, "left", 60));
 	}
 
@@ -217,13 +229,13 @@ class TagListTheme extends Themelet {
 		// if($n++) $display_html .= "\n<br/>";
 		if(!is_null($config->get_string('info_link'))) {
 			$link = html_escape(str_replace('$tag', $tag, $config->get_string('info_link')));
-			$display_html .= ' <a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a>';
+			$display_html .= ' <td class="tag_info_link_cell"><a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a></td>';
 		}
 		$link = $this->tag_link($row['tag']);
-		$display_html .= ' <a class="tag_name'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">'.$h_tag_no_underscores.'</a>';
+		$display_html .= ' <td class="tag_name_cell"><a class="tag_name'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">'.$h_tag_no_underscores.'</a></td>';
 
 		if($config->get_bool("tag_list_numbers")) {
-			$display_html .= " <span class='tag_count'>$count</span>";
+			$display_html .= " <td class='tag_count_cell'><span class='tag_count'>$count</span></td>";
 		}
 
 		return array($category, $display_html);

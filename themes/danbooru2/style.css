@@ -152,6 +152,16 @@ max-width:150px;
 width:15rem;
 text-align:left;
 }
+TABLE.tag_list {
+	width: auto;
+	border-collapse: collapse;
+}
+TABLE.tag_list>THEAD {
+	display: none;
+}
+TABLE.tag_list>TBODY>TR>TD {
+	display: inline;
+}
 .tag_count {
 display:inline-block;
 margin-left:0.4rem;

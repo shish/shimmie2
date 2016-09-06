@@ -218,6 +218,16 @@ NAV SELECT {
 	text-align: left;
 }
 
+TABLE.tag_list {
+	border-collapse: collapse;
+}
+TABLE.tag_list>THEAD {
+	display: none;
+}
+TABLE.tag_list>TBODY>TR>TD {
+	display: inline;
+}
+
 .more:after {
 	content: " >>>";
 }

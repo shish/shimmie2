@@ -117,6 +117,17 @@ NAV SELECT {
 	padding: 0px;
 }
 
+TABLE.tag_list {
+	width: 100%;
+	border-collapse: collapse;
+}
+TABLE.tag_list>THEAD {
+	display: none;
+}
+TABLE.tag_list>TBODY>TR>TD {
+	display: inline;
+}
+
 .more:after {
 	content: " >>>";
 }
