@@ -136,14 +136,13 @@ class PoolsTheme extends Themelet {
 		$page->set_title($heading);
 		$page->set_heading($heading);
 
-		$nav_html = '<a href="'.make_link().'">Index</a>';
 		$poolnav_html = '
 			<a href="'.make_link("pool/list").'">Pool Index</a>
 			<br><a href="'.make_link("pool/new").'">Create Pool</a>
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
 
-		$page->add_block(new Block($nav_html, null, "left", 5, "indexnavleft"));
+		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
 
 		if(count($pools) == 1) {
