@@ -229,13 +229,13 @@ class TagListTheme extends Themelet {
 		// if($n++) $display_html .= "\n<br/>";
 		if(!is_null($config->get_string('info_link'))) {
 			$link = html_escape(str_replace('$tag', $tag, $config->get_string('info_link')));
-			$display_html .= ' <td class="tag_info_link_cell"><a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a></td>';
+			$display_html .= '<td class="tag_info_link_cell"> <a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a></td>';
 		}
 		$link = $this->tag_link($row['tag']);
-		$display_html .= ' <td class="tag_name_cell"><a class="tag_name'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">'.$h_tag_no_underscores.'</a></td>';
+		$display_html .= '<td class="tag_name_cell"> <a class="tag_name'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">'.$h_tag_no_underscores.'</a></td>';
 
 		if($config->get_bool("tag_list_numbers")) {
-			$display_html .= " <td class='tag_count_cell'><span class='tag_count'>$count</span></td>";
+			$display_html .= "<td class='tag_count_cell'> <span class='tag_count'>$count</span></td>";
 		}
 
 		return array($category, $display_html);
