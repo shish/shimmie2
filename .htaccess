@@ -3,7 +3,12 @@
 </IfModule>
 
 <FilesMatch "\.(sqlite|sdb|s3db|db)$">
-	Deny from all
+	<IfModule mod_authz_host.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_host.c>
+		Deny from all
+	</IfModule>
 </FilesMatch>
 
 <IfModule mod_rewrite.c>

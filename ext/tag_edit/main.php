@@ -95,11 +95,38 @@ class SourceSetEvent extends Event {
 class TagSetEvent extends Event {
 	/** @var \Image */
 	public $image;
-	var $tags;
+	public $tags;
+	public $metatags;
 
 	public function __construct(Image $image, $tags) {
-		$this->image = $image;
-		$this->tags = Tag::explode($tags);
+		$this->image    = $image;
+
+		$this->tags     = array();
+		$this->metatags = array();
+
+		//tags need to be sanitised, alias checked & have metatags removed before being passed to onTagSet
+		$tag_array = Tag::explode($tags);
+		$tag_array = array_map(array('Tag', 'sanitise'), $tag_array);
+		$tag_array = Tag::resolve_aliases($tag_array);
+
+		foreach($tag_array as $tag) {
+			if((strpos($tag, ':') === FALSE) && (strpos($tag, '=') === FALSE)) {
+				//Tag doesn't contain : or =, meaning it can't possibly be a metatag.
+				//This should help speed wise, as it avoids running every single tag through a bunch of preg_match instead.
+				array_push($this->tags, $tag);
+				continue;
+			}
+
+			$ttpe = new TagTermParseEvent($tag, $this->image->id, FALSE); //Only check for metatags, don't parse. Parsing is done after set_tags.
+			send_event($ttpe);
+
+			//seperate tags from metatags
+			if(!$ttpe->is_metatag()) {
+				array_push($this->tags, $tag);
+			}else{
+				array_push($this->metatags, $tag);
+			}
+		}
 	}
 }
 
@@ -131,14 +158,17 @@ class LockSetEvent extends Event {
  * Signal that a tag term needs parsing
  */
 class TagTermParseEvent extends Event {
-	var $term = null;
-	var $id = null;
+	public $term = NULL; //tag
+	public $id   = NULL; //image_id
 	/** @var bool */
-	public $metatag = false;
+	public $metatag = FALSE;
+	/** @var bool */
+	public $parse  = TRUE; //marks the tag to be parsed, and not just checked if valid metatag
 
-	public function __construct($term, $id) {
-		$this->term = $term;
-		$this->id = $id;
+	public function __construct($term, $id, $parse) {
+		$this->term  = $term;
+		$this->id    = $id;
+		$this->parse = $parse;
 	}
 
 	/**
@@ -215,6 +245,7 @@ class TagEdit extends Extension {
 		if($user->can("edit_image_tag") && (!$event->image->is_locked() || $user->can("edit_image_lock"))) {
 			$event->image->set_tags($event->tags);
 		}
+		$event->image->parse_metatags($event->metatags, $event->image->id);
 	}
 
 	public function onSourceSet(SourceSetEvent $event) {
@@ -257,7 +288,7 @@ class TagEdit extends Extension {
 	public function onTagTermParse(TagTermParseEvent $event) {
 		$matches = array();
 
-		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
+		if(preg_match("/^source[=|:](.*)$/i", $event->term, $matches) && $event->parse) {
 			$source = ($matches[1] !== "none" ? $matches[1] : null);
 			send_event(new SourceSetEvent(Image::by_id($event->id), $source));
 		}
@@ -335,6 +366,9 @@ class TagEdit extends Extension {
 				foreach($replace_set as $tag) {
 					$after[] = $tag;
 				}
+
+				// replace'd tag may already exist in tag set, so remove dupes to avoid integrity constraint violations.
+				$after = array_unique($after);
 
 				$image->set_tags($after);
 

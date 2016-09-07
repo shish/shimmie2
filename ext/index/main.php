@@ -253,9 +253,9 @@ class Index extends Extension {
 			$search_terms = $event->get_search_terms();
 			$page_number = $event->get_page_number();
 			$page_size = $event->get_page_size();
-            
+
 			$count_search_terms = count($search_terms);
-            
+
 			try {
 				#log_debug("index", "Search for ".implode(" ", $search_terms), false, array("terms"=>$search_terms));
 				$total_pages = Image::count_pages($search_terms);
@@ -277,7 +277,7 @@ class Index extends Extension {
 			}
 
 			$count_images = count($images);
-            
+
 			if($count_search_terms === 0 && $count_images === 0 && $page_number === 1) {
 				$this->theme->display_intro($page);
 				send_event(new PostListBuildingEvent($search_terms));
@@ -322,8 +322,17 @@ class Index extends Extension {
 		// check for tags first as tag based searches are more common.
 		if(preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
 			$cmp = ltrim($matches[1], ":") ?: "=";
-			$tags = $matches[2];
-			$event->add_querylet(new Querylet('images.id IN (SELECT DISTINCT image_id FROM image_tags GROUP BY image_id HAVING count(image_id) '.$cmp.' '.$tags.')'));
+			$count = $matches[2];
+			$event->add_querylet(
+				new Querylet("EXISTS (
+				              SELECT 1
+				              FROM image_tags it
+				              LEFT JOIN tags t ON it.tag_id = t.id
+				              WHERE images.id = it.image_id
+				              GROUP BY image_id
+				              HAVING COUNT(*) $cmp $count
+				)")
+			);
 		}
 		else if(preg_match("/^ratio([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+):(\d+)$/i", $event->term, $matches)) {
 			$cmp = preg_replace('/^:/', '=', $matches[1]);
@@ -394,4 +403,3 @@ class Index extends Extension {
 		$this->stpen++;
 	}
 }
-
