@@ -104,6 +104,10 @@ TABLE.tag_list>THEAD {
 }
 TABLE.tag_list>TBODY>TR>TD {
 	display: inline;
+	padding: 0;
+}
+TABLE.tag_list>TBODY>TR>TD:after {
+	content: " ";
 }
 
 .more:after {
