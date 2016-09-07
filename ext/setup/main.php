@@ -262,7 +262,7 @@ class Setup extends Extension {
                 $full = (@$_SERVER["HTTPS"] ? "https://" : "http://") . $host . $_SERVER["PHP_SELF"];
 		$test_url = str_replace("/index.php", "/nicetest", $full);
 
-		$nicescript = "<script language='javascript'>
+		$nicescript = "<script type='text/javascript'>
 			function getHTTPObject() {
 				if (window.XMLHttpRequest){
 					return new XMLHttpRequest();

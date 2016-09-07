@@ -6,6 +6,7 @@ class HomeTheme extends Themelet {
 		$page->add_auto_html_headers();
 		$hh = $page->get_all_html_headers();
 		$page->set_data(<<<EOD
+<!doctype html>
 <html>
 	<head>
 		<title>$sitename</title>

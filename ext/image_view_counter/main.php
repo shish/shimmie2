@@ -37,7 +37,7 @@ class ImageViewCounter extends Extension {
 			$event->add_part(
 				"<tr><th>Views:</th><td>". 
 				$this->get_view_count($event->image->id) .
-				"</th></tr>", 38);
+				"</tr>", 38);
 	}
 
 	# Installs DB table

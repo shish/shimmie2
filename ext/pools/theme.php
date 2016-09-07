@@ -214,7 +214,7 @@ class PoolsTheme extends Themelet {
 
 		if($user->id == $pool['user_id'] || $user->is_admin()){
 			$editor .= "
-				<script language='javascript' type='text/javascript'>
+				<script type='text/javascript'>
 				<!--
 				function confirm_action() {
 					return confirm('Are you sure that you want to delete this pool?');
@@ -231,7 +231,7 @@ class PoolsTheme extends Themelet {
 
 		if($check_all) {
 			$editor .= "
-				<script language='javascript' type='text/javascript'>
+				<script type='text/javascript'>
 				<!--
 				function setAll(value) {
 					$('[name=\"check[]\"]').attr('checked', value);
@@ -257,7 +257,7 @@ class PoolsTheme extends Themelet {
 
 		$this->display_top($pool, "Importing Posts", true);
 		$pool_images = "
-			<script language='javascript' type='text/javascript'>
+			<script type='text/javascript'>
 			<!--
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');

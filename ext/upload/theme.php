@@ -59,7 +59,7 @@ class UploadTheme extends Themelet {
 				$upload_list .= "
 					<tr>
 						<td colspan='2'><input type='file' name='data$i'></td>
-						<td colspan='2'><input type='text' name='url$i'</td>
+						<td colspan='2'><input type='text' name='url$i'></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
