@@ -194,7 +194,7 @@ class PoolsTheme extends Themelet {
 		global $user;
 
 		$editor = "\n".make_form( make_link('pool/import') ).'
-				<input type="text" name="pool_tag" id="edit_pool_tag" value="Please enter a tag" onclick="this.value=\'\';"/>
+				<input type="text" name="pool_tag" id="edit_pool_tag" placeholder="Please enter a tag"/>
 				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
 				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
