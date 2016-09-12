@@ -103,9 +103,7 @@ class Ratings extends Extension {
 	}
 	
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
-		if($this->can_rate()) {
-			$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
-		}
+		$event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating), 80);
 	}
 	
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
