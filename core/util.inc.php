@@ -16,6 +16,16 @@ function html_escape($input) {
 }
 
 /**
+ * Unescape data that was made safe for printing into HTML
+ *
+ * @param $input
+ * @return string
+ */
+function html_unescape($input) {
+	return html_entity_decode($input, ENT_QUOTES, "UTF-8");
+}
+
+/**
  * Make sure some data is safe to be used in integer context
  *
  * @param $input
