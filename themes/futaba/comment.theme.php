@@ -70,13 +70,16 @@ class CustomCommentListTheme extends CommentListTheme {
 		$i_comment_id = int_escape($comment->comment_id);
 		$i_image_id = int_escape($comment->image_id);
 
-		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
-		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 		$h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
 		$h_date = $comment->posted;
-		$h_del = $user->can("delete_comment") ?
-			' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
-			'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
+		$h_del = "";
+		if ($user->can("delete_comment")) {
+			$comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
+			$j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
+			$h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
+			$h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
+			$h_del = " - <a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";
+		}
 		$h_reply = "[<a href='".make_link("post/view/$i_image_id")."'>Reply</a>]";
 
 		if($inner_id == 0) {
