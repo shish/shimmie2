@@ -17,13 +17,18 @@ class RandomListTheme extends Themelet {
 	public function display_page(Page $page, $images) {
 		$page->title = "Random Images";
 
-		$html = "<b>Refresh the page to view more images</b>
-		<div class='shm-image-list'>";
+		$html = "<b>Refresh the page to view more images</b>";
+		if (count($images)) {
+			$html .= "<div class='shm-image-list'>";
 
-		foreach ($images as $image)
-			$html .= $this->build_thumb_html($image);
+			foreach ($images as $image)
+				$html .= $this->build_thumb_html($image);
 
-		$html .= "</div>";
+			$html .= "</div>";
+		} else {
+			$html .= "<br/><br/>No images were found to match the search criteria";
+		}
+
 		$page->add_block(new Block("Random Images", $html));
 
 		$nav = $this->build_navigation($this->search_terms);
