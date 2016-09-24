@@ -67,9 +67,9 @@ class IcoFileHandler extends Extension {
 		$image = new Image();
 
 		$fp = fopen($filename, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 
-		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
+		$subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
 		fclose($fp);
 
 		$width = $subheader['width'];
@@ -94,7 +94,7 @@ class IcoFileHandler extends Extension {
 	private function check_contents($file) {
 		if(!file_exists($file)) return false;
 		$fp = fopen($file, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 		fclose($fp);
 		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
 	}
