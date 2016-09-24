@@ -226,11 +226,11 @@ class Wiki extends Extension {
 	private function get_page($title, $revision=-1) {
 		global $database;
 		// first try and get the actual page
-		$row = $database->get_row("
+		$row = $database->get_row($database->scoreql_to_sql("
 				SELECT *
 				FROM wiki_pages
-				WHERE title LIKE :title
-				ORDER BY revision DESC",
+				WHERE SCORE_STRNORM(title) LIKE SCORE_STRNORM(:title)
+				ORDER BY revision DESC"),
 				array("title"=>$title));
 
 		// fall back to wiki:default
