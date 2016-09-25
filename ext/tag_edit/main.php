@@ -214,7 +214,7 @@ class TagEdit extends Extension {
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		global $user;
-		if($user->can("edit_image_owner")) {
+		if($user->can("edit_image_owner") && isset($_POST['tag_edit__owner'])) {
 			$owner = User::by_name($_POST['tag_edit__owner']);
 			if ($owner instanceof User) {
 				send_event(new OwnerSetEvent($event->image, $owner));
