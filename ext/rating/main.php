@@ -110,7 +110,10 @@ class Ratings extends Extension {
 	
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
 		if($this->can_rate() && isset($_POST["rating"])) {
-			send_event(new RatingSetEvent($event->image, $_POST['rating']));
+			$rating = $_POST["rating"];
+			if (Ratings::rating_is_valid($rating)) {
+				send_event(new RatingSetEvent($event->image, $rating));
+			}
 		}
 	}
 
@@ -208,6 +211,22 @@ class Ratings extends Extension {
 			case "q": return "Questionable";
 			case "e": return "Explicit";
 			default:  return "Unknown";
+		}
+	}
+
+	/**
+	 * @param string $rating
+	 * @return bool
+	 */
+	public static function rating_is_valid(/*string*/ $rating) {
+		switch($rating) {
+			case "s":
+			case "q":
+			case "e":
+			case "u":
+				return true;
+			default:
+				return false;
 		}
 	}
 
