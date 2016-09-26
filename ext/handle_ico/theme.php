@@ -2,7 +2,7 @@
 
 class IcoFileHandlerTheme extends Themelet {
 	public function display_image(Page $page, Image $image) {
-		$ilink = make_link("get_ico/{$image->id}/{$image->id}.ico");
+		$ilink = $image->get_image_link();
 		$html = "
 			<img id='main_image' src='$ilink'>
 		";

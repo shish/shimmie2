@@ -53,6 +53,7 @@ AddType audio/ogg      oga ogg opus
 AddType image/jpeg     jpg jpeg
 AddType image/bmp      bmp
 AddType image/svg+xml  svg svgz
+AddType image/x-icon   ico ani cur
 AddType image/webp     webp
 AddType video/mp4      f4v f4p m4v mp4
 AddType video/ogg      ogv

@@ -35,20 +35,6 @@ class IcoFileHandler extends Extension {
 		}
 	}
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page;
-		if($event->page_matches("get_ico")) {
-			$id = int_escape($event->get_arg(0));
-			$image = Image::by_id($id);
-			$hash = $image->hash;
-			$ha = substr($hash, 0, 2);
-
-			$page->set_type("image/x-icon");
-			$page->set_mode("data");
-			$page->set_data(file_get_contents("images/$ha/$hash"));
-		}
-	}
-
 	/**
 	 * @param string $ext
 	 * @return bool
@@ -67,9 +53,9 @@ class IcoFileHandler extends Extension {
 		$image = new Image();
 
 		$fp = fopen($filename, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 
-		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
+		$subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
 		fclose($fp);
 
 		$width = $subheader['width'];
@@ -94,7 +80,7 @@ class IcoFileHandler extends Extension {
 	private function check_contents($file) {
 		if(!file_exists($file)) return false;
 		$fp = fopen($file, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 		fclose($fp);
 		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
 	}
