@@ -35,20 +35,6 @@ class IcoFileHandler extends Extension {
 		}
 	}
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page;
-		if($event->page_matches("get_ico")) {
-			$id = int_escape($event->get_arg(0));
-			$image = Image::by_id($id);
-			$hash = $image->hash;
-			$ha = substr($hash, 0, 2);
-
-			$page->set_type("image/x-icon");
-			$page->set_mode("data");
-			$page->set_data(file_get_contents("images/$ha/$hash"));
-		}
-	}
-
 	/**
 	 * @param string $ext
 	 * @return bool
