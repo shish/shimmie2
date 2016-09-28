@@ -216,7 +216,7 @@ class TagListTheme extends Themelet {
 		$count = $row['calc_count'];
 		// if($n++) $display_html .= "\n<br/>";
 		if(!is_null($config->get_string('info_link'))) {
-			$link = html_escape(str_replace('$tag', $tag, $config->get_string('info_link')));
+			$link = html_escape(str_replace('$tag', url_escape($tag), $config->get_string('info_link')));
 			$display_html .= ' <a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a>';
 		}
 		$link = $this->tag_link($row['tag']);
