@@ -30,7 +30,7 @@ class RelationshipsTheme extends Themelet {
 		global $user;
 
 		$h_parent_id = $image->parent_id;
-		$s_parent_id = $h_parent_id ?: "None.";
+		$s_parent_id = $h_parent_id ?: "None";
 
 		$html = "<tr>\n".
 		        "	<th>Parent</th>\n".

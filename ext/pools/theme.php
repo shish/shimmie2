@@ -136,14 +136,13 @@ class PoolsTheme extends Themelet {
 		$page->set_title($heading);
 		$page->set_heading($heading);
 
-		$nav_html = '<a href="'.make_link().'">Index</a>';
 		$poolnav_html = '
 			<a href="'.make_link("pool/list").'">Pool Index</a>
 			<br><a href="'.make_link("pool/new").'">Create Pool</a>
 			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
 		';
 
-		$page->add_block(new Block($nav_html, null, "left", 5, "indexnavleft"));
+		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
 
 		if(count($pools) == 1) {
@@ -154,8 +153,9 @@ class PoolsTheme extends Themelet {
 				}
 			}
 
-			$bb = new BBCode();
-			$page->add_block(new Block(html_escape($pool['title']), $bb->format($pool['description']), "main", 10));
+			$tfe = new TextFormattingEvent($pool['description']);
+			send_event($tfe);
+			$page->add_block(new Block(html_escape($pool['title']), $tfe->formatted, "main", 10));
 		}
 	}
 
@@ -194,7 +194,7 @@ class PoolsTheme extends Themelet {
 		global $user;
 
 		$editor = "\n".make_form( make_link('pool/import') ).'
-				<input type="text" name="pool_tag" id="edit_pool_tag" value="Please enter a tag" onclick="this.value=\'\';"/>
+				<input type="text" name="pool_tag" id="edit_pool_tag" placeholder="Please enter a tag"/>
 				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
 				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
 			</form>
@@ -214,7 +214,7 @@ class PoolsTheme extends Themelet {
 
 		if($user->id == $pool['user_id'] || $user->is_admin()){
 			$editor .= "
-				<script language='javascript' type='text/javascript'>
+				<script type='text/javascript'>
 				<!--
 				function confirm_action() {
 					return confirm('Are you sure that you want to delete this pool?');
@@ -231,7 +231,7 @@ class PoolsTheme extends Themelet {
 
 		if($check_all) {
 			$editor .= "
-				<script language='javascript' type='text/javascript'>
+				<script type='text/javascript'>
 				<!--
 				function setAll(value) {
 					$('[name=\"check[]\"]').attr('checked', value);
@@ -257,7 +257,7 @@ class PoolsTheme extends Themelet {
 
 		$this->display_top($pool, "Importing Posts", true);
 		$pool_images = "
-			<script language='javascript' type='text/javascript'>
+			<script type='text/javascript'>
 			<!--
 			function confirm_action() {
 				return confirm('Are you sure you want to add selected posts to this pool?');

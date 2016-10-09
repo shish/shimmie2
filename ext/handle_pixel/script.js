@@ -1,5 +1,7 @@
 $(function() {
-	function zoom(zoom_type) {
+	function zoom(zoom_type, save_cookie) {
+		save_cookie = save_cookie === undefined ? true : save_cookie;
+		
 		var img = $('.shm-main-image');
 		
 		if(zoom_type == "full") {
@@ -21,14 +23,21 @@ $(function() {
 		
 		$(".shm-zoomer").val(zoom_type);
 		
-		Cookies.set("ui-image-zoom", zoom_type, {expires: 365});
+		if (save_cookie) {
+			Cookies.set("ui-image-zoom", zoom_type, {expires: 365});
+		}
 	}
 
 	$(".shm-zoomer").change(function(e) {
 		zoom(this.options[this.selectedIndex].value);
 	});
+	$(window).resize(function(e) {
+		$(".shm-zoomer").each(function (e) {
+			zoom(this.options[this.selectedIndex].value, false)
+		});
+	});
 
-	$(".shm-main-image").click(function(e) {
+	$("img.shm-main-image").click(function(e) {
 		switch(Cookies.get("ui-image-zoom")) {
 			case "full": zoom("width"); break;
 			default: zoom("full"); break;

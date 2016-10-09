@@ -24,13 +24,18 @@ function toggle_tag( button, id ) {
     var string = list.val();
     
     if( (string.indexOf(id) == 0) || (string.indexOf(":"+id) > -1) ) {
-		$(button).css('border', 'none');
+		$(button).removeClass('mass-tagger-selected');
 		string = string.replace(id, '');
 		list.val(string);
 	}
 	else {
-		$(button).css('border', '3px solid blue');
+		$(button).addClass('mass-tagger-selected');
 		string += id;
 		list.val(string);
 	}
 }
+
+$(function () {
+	// Clear the selection, in case it was autocompleted by the browser.
+	$('#mass_tagger_ids').val("");
+});

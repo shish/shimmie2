@@ -101,6 +101,9 @@ class MiniSVGParser {
 	/** @var int */
 	public $height=0;
 
+	/** @var int */
+	private $xml_depth=0;
+
 	/** @param string $file */
 	function __construct($file) {
 		$xml_parser = xml_parser_create();
@@ -110,13 +113,15 @@ class MiniSVGParser {
 	}
 
 	function startElement($parser, $name, $attrs) {
-		if($name == "SVG") {
+		if($name == "SVG" && $this->xml_depth == 0) {
 			$this->width = int_escape($attrs["WIDTH"]);
 			$this->height = int_escape($attrs["HEIGHT"]);
 		}
+		$this->xml_depth++;
 	}
 
 	function endElement($parser, $name) {
+		$this->xml_depth--;
 	}
 }
 
