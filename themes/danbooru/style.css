@@ -132,6 +132,20 @@ overflow:hidden;
 text-align:left;
 width:150px;
 }
+TABLE.tag_list {
+	border-collapse: collapse;
+}
+TABLE.tag_list>THEAD {
+	display: none;
+}
+TABLE.tag_list>TBODY>TR>TD {
+	display: inline;
+	padding: 0;
+	line-height: 1em;
+}
+TABLE.tag_list>TBODY>TR>TD:after {
+	content: " ";
+}
 .tag_count {
 color:#AAAAAA;
 }
