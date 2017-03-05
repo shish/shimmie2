@@ -34,9 +34,9 @@ class MP3FileHandler extends DataHandlerExtension {
 
 		$image = new Image();
 
-		// FIXME: need more flash format specs :|
-		$image->width = 0;
-		$image->height = 0;
+		// this needs to be a square, larger than thumbnail size
+		$image->width = 1000;
+		$image->height = 1000;
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
