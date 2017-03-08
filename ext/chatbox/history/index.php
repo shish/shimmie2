@@ -10,15 +10,23 @@
 
 	$admin = loggedIn();
 	
+	$log = 1;
+	
 	if (isset($_GET['log']))
+	{
 		$log = $_GET['log'];
+	}
 	
 	if (isset($_POST['log']))
+	{
 		$log = $_POST['log'];
+	}
 
-	if (!isset($log))
+	if (filter_var($log, FILTER_VALIDATE_INT) === false)
+	{
 		$log = 1;
-		
+	}
+	
 	$ys = ys($log);
 	$posts = $ys->posts();
 
