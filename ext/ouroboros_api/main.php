@@ -60,6 +60,11 @@ class _SafeOuroborosImage
      */
     public $width = null;
     /**
+     * File extension
+     * @var string
+     */
+    public $file_ext = '';
+    /**
      * File Size in bytes
      * @var integer
      */
@@ -189,7 +194,7 @@ class _SafeOuroborosImage
      * Constructor
      * @param Image $img
      */
-    function __construct(Image $img)
+    public function __construct(Image $img)
     {
         global $config;
         // author
@@ -343,7 +348,7 @@ class _SafeOuroborosTag
     public $name = '';
     public $type = 0;
 
-    function __construct(array $tag)
+    public function __construct(array $tag)
     {
         $this->count = $tag['count'];
         $this->id = $tag['id'];

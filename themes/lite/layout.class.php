@@ -164,7 +164,7 @@ class Layout {
 
 		$flash = $page->get_cookie("flash_message");
 		$flash_html = "";
-		if($flash) {
+		if(!empty($flash)) {
 			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
 		}
 

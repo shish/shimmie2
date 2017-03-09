@@ -790,28 +790,28 @@ class MockDatabase extends Database {
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|null|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
 
