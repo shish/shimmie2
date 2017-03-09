@@ -20,6 +20,7 @@
 
 	"require" : {
 		"php" : ">=5.4.8",
+		"phpunit/phpunit" : "*",
 
 		"flexihash/flexihash"       : "^2.0.0",
 		"ifixit/php-akismet"        : "1.*",
@@ -29,7 +30,7 @@
 
 		"bower-asset/jquery"         : "1.12.3",
 		"bower-asset/jquery-timeago" : "1.5.2",
-		"bower-asset/tablesorter"    : "2.0.5",
+		"bower-asset/tablesorter"    : "2.*",
 		"bower-asset/mediaelement"   : "2.21.1",
 		"bower-asset/js-cookie"      : "2.1.1"
 	},
