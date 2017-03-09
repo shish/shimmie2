@@ -263,11 +263,32 @@ class SQLite extends DBEngine {
 // }}}
 // {{{ cache engines
 interface CacheEngine {
+
+	/**
+	 * @param string $key
+	 */
 	public function get($key);
+
+	/**
+	 * @param string $key
+	 *
+	 * @return void
+	 */
 	public function set($key, $val, $time=0);
+
+	/**
+	 * @return void
+	 */
 	public function delete($key);
 
+	/**
+	 * @return integer
+	 */
 	public function get_hits();
+
+	/**
+	 * @return integer
+	 */
 	public function get_misses();
 }
 class NoCache implements CacheEngine {
@@ -818,7 +839,7 @@ class MockDatabase extends Database {
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
 
