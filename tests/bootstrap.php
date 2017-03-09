@@ -16,7 +16,7 @@ if(is_null(User::by_name("demo"))) {
 	$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 }
 
-abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
+abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
 	protected $backupGlobalsBlacklist = array('database', 'config');
 	private $images = array();
 
