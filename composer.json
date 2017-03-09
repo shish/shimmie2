@@ -20,6 +20,7 @@
 
 	"require" : {
 		"php" : ">=5.6",
+		"phpunit/phpunit" : "5.*",
 
 		"flexihash/flexihash"       : "^2.0.0",
 		"ifixit/php-akismet"        : "1.*",
