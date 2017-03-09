@@ -220,7 +220,7 @@ class Wiki extends Extension {
 
 	/**
 	 * @param string $title
-	 * @param int|null $revision
+	 * @param integer $revision
 	 * @return WikiPage
 	 */
 	private function get_page($title, $revision=-1) {

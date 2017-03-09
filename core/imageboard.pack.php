@@ -175,6 +175,10 @@ class Image {
 		return $images;
 	}
 
+	/**
+	 * @param string[] $tags
+	 * @return boolean
+	 */
 	public function validate_accel($tags) {
 		$yays = 0;
 		$nays = 0;

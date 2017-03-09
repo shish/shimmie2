@@ -86,6 +86,12 @@ xanax
 		$event->panel->add_block($sb);
 	}
 
+	/**
+	 * Throws if the comment contains banned words.
+	 * @param string $comment
+	 * @param CommentPostingException|SCoreException $ex
+	 * @throws CommentPostingException|SCoreException if the comment contains banned words. 
+	 */
 	private function test_text($comment, $ex) {
 		$comment = strtolower($comment);
 
@@ -105,6 +111,9 @@ xanax
 		}
 	}
 
+	/**
+	 * @return string[]
+	 */
 	private function get_words() {
 		global $config;
 		$words = array();

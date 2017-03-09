@@ -509,7 +509,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function commit() {
@@ -525,7 +525,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function rollback() {
@@ -566,6 +566,10 @@ class Database {
 		return $this->engine->name;
 	}
 
+	/**
+	 * @param null|PDO $db
+	 * @param string $sql
+	 */
 	private function count_execs($db, $sql, $inputarray) {
 		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
 			$fp = @fopen("data/sql.log", "a");

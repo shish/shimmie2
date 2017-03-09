@@ -114,6 +114,9 @@ do_install();
 // utilities {{{
 	// TODO: Can some of these be pushed into "core/util.inc.php" ?
 
+/**
+ * @return int
+ */
 function check_gd_version() {
 	$gdversion = 0;
 
@@ -129,6 +132,9 @@ function check_gd_version() {
 	return $gdversion;
 }
 
+/**
+ * @return int
+ */
 function check_im_version() {
 	$convert_check = exec("convert");
 
@@ -469,6 +475,12 @@ EOD;
 	echo "\n";
 } // }}}
 
+/**
+ * @param boolean $isPDO
+ * @param string $errorMessage1
+ * @param string $errorMessage2
+ * @param integer $exitCode
+ */
 function handle_db_errors(/*bool*/ $isPDO, /*str*/ $errorMessage1,  /*str*/ $errorMessage2, /*int*/ $exitCode) {
 	$errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
 	print <<<EOD

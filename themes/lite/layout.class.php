@@ -242,7 +242,7 @@ EOD;
 	/**
 	 * @param string $link
 	 * @param null|string $desc
-	 * @param array $pages_matched
+	 * @param string[] $pages_matched
 	 * @return null|string
 	 */
 	public function navlinks($link, $desc, $pages_matched) {
