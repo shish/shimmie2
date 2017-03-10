@@ -12,11 +12,11 @@
 			"type" : "package",
 			"package" : {
 				"name" : "ifixit/php-akismet",
-				"version" : "1.0",
+				"version" : "1.1",
 				"source" : {
 					"url"       : "https://github.com/iFixit/php-akismet.git",
 					"type"      : "git",
-					"reference" : "126b4b9182230678a585338be4cfca24c9129dc9"
+					"reference" : "fd4ff50eb577457c1b7b887401663e91e77625ae"
 				}
 			}
 		}
