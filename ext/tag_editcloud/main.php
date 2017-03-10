@@ -83,18 +83,6 @@ class TagEditCloud extends Extension {
 		}
 
 		switch($sort_method) {
-			case 'a':
-			case 'p':
-			default:
-				$order_by = $sort_method == 'a' ? "tag" : "count DESC";
-				$tag_data = $database->get_all("
-					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
-					FROM tags
-					WHERE count >= :tag_min2
-					ORDER BY $order_by
-					LIMIT :limit",
-					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
-				break;
 			case 'r':
 				$relevant_tags = array_diff($image->get_tag_array(),$ignore_tags);
 				if(count($relevant_tags) == 0) {
@@ -110,6 +98,18 @@ class TagEditCloud extends Extension {
 					WHERE t1.count >= :tag_min2 AND t1.tag IN($relevant_tags)
 					GROUP BY t2.tag
 					ORDER BY count DESC
+					LIMIT :limit",
+					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
+				break;
+			case 'a':
+			case 'p':
+			default:
+				$order_by = $sort_method == 'a' ? "tag" : "count DESC";
+				$tag_data = $database->get_all("
+					SELECT tag, FLOOR(LN(LN(count - :tag_min1 + 1)+1)*150)/200 AS scaled, count
+					FROM tags
+					WHERE count >= :tag_min2
+					ORDER BY $order_by
 					LIMIT :limit",
 					array("tag_min1" => $tags_min, "tag_min2" => $tags_min, "limit" => $max_count));
 				break;
