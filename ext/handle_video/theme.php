@@ -50,7 +50,9 @@ class VideoFileHandlerTheme extends Themelet {
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
 						{$html_fallback}
-					</video>";
+					</video>
+					<script>$('#main_image').prop('volume', 0.25);</script>
+				";
 			}
 
 		} else {

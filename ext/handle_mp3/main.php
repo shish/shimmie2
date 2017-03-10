@@ -38,6 +38,10 @@ class MP3FileHandler extends DataHandlerExtension {
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
+
+		//Filename is renamed to "artist - title.mp3" when the user requests download by using the download attribute & jsmediatags.js
+		$image->filename = $metadata['filename'];
+
 		$image->ext       = $metadata['extension'];
 		$image->tag_array = $metadata['tags'];
 		$image->source    = $metadata['source'];
