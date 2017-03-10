@@ -8,7 +8,7 @@ require_once "lib/context.php";
 /**
  * Make some data safe for printing into HTML
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function html_escape($input) {
@@ -18,7 +18,7 @@ function html_escape($input) {
 /**
  * Unescape data that was made safe for printing into HTML
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function html_unescape($input) {
@@ -28,7 +28,7 @@ function html_unescape($input) {
 /**
  * Make sure some data is safe to be used in integer context
  *
- * @param $input
+ * @param string $input
  * @return int
  */
 function int_escape($input) {
@@ -42,7 +42,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function url_escape($input) {
@@ -77,7 +77,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function sql_escape($input) {
@@ -125,7 +125,7 @@ function bool_escape($input) {
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function no_escape($input) {
@@ -202,7 +202,7 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @param $limit
+ * @param string|integer $limit
  * @return int
  */
 function parse_shorthand_int($limit) {
@@ -232,7 +232,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
- * @param $int
+ * @param integer $int
  * @return string
  */
 function to_shorthand_int($int) {
@@ -254,7 +254,7 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
- * @param $date
+ * @param string $date
  * @param bool $html
  * @return string
  */
@@ -267,7 +267,7 @@ function autodate($date, $html=true) {
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
- * @param $dateTime
+ * @param string $dateTime
  * @return bool
  */
 function isValidDateTime($dateTime) {
@@ -283,7 +283,7 @@ function isValidDateTime($dateTime) {
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
- * @param $date
+ * @param string $date
  * @return bool
  */
 function isValidDate($date) {
@@ -297,6 +297,9 @@ function isValidDate($date) {
 	return false;
 }
 
+/**
+ * @param string[] $inputs
+ */
 function validate_input($inputs) {
 	$outputs = array();
 
@@ -391,8 +394,8 @@ function validate_input($inputs) {
  *
  * FIXME: also check that IP ban ext is installed
  *
- * @param $ip
- * @param $ban_reason
+ * @param string $ip
+ * @param string $ban_reason
  * @return string
  */
 function show_ip($ip, $ban_reason) {
@@ -616,6 +619,7 @@ function zglob($pattern) {
 
 /**
  * Gets contact link as mailto: or http:
+ * @return string
  */
 function contact_link() {
 	global $config;
@@ -1734,6 +1738,9 @@ function _get_user() {
 	return $user;
 }
 
+/**
+ * @return string
+ */
 function _get_query() {
 	return @$_POST["q"]?:@$_GET["q"];
 }

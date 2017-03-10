@@ -266,12 +266,14 @@ interface CacheEngine {
 
 	/**
 	 * @param string $key
+	 * @return mixed
 	 */
 	public function get($key);
 
 	/**
 	 * @param string $key
-	 *
+	 * @param mixed $val
+	 * @param integer $time
 	 * @return void
 	 */
 	public function set($key, $val, $time=0);
@@ -345,7 +347,7 @@ class MemcacheCache implements CacheEngine {
 	/**
 	 * @param string $key
 	 * @param mixed $val
-	 * @param int $time
+	 * @param integer $time
 	 */
 	public function set($key, $val, $time=0) {
 		assert('!is_null($key)');
@@ -422,6 +424,10 @@ class Database {
 	 * @var null|PDO
 	 */
 	private $db = null;
+	
+	/**
+	 * @var float
+	 */
 	public $dbtime = 0.0;
 
 	/**
