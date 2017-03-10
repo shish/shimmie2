@@ -12,8 +12,6 @@
  *  OGV, WEBM: HTML5<br>
  *  MP4's flash fallback is forced with a bit of Javascript as some browsers won't fallback if they can't play H.264.
  *  In the future, it may be necessary to change the user agent checks to reflect the current state of H.264 support.<br><br>
- *  Made possible by:<br>
- *  <a href='http://getid3.sourceforge.net/'>getID3()</a> - Gets media information with PHP (no bulky FFMPEG API required).<br>
  */
 
 class VideoFileHandler extends DataHandlerExtension {
@@ -145,30 +143,24 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @return Image
 	 */
 	protected function create_image_from_data($filename, $metadata) {
-
 		$image = new Image();
 
-		require_once('lib/getid3/getid3/getid3.php');
-		$getID3 = new getID3;
-		$ThisFileInfo = $getID3->analyze($filename);
+		//NOTE: No need to set width/height as we don't use it.
+		$image->width  = 1;
+		$image->height = 1;
 		
-		if (isset($ThisFileInfo['video']['resolution_x']) && isset($ThisFileInfo['video']['resolution_y'])) {
-			$image->width = $ThisFileInfo['video']['resolution_x'];
-			$image->height = $ThisFileInfo['video']['resolution_y'];
-		} else {
-			$image->width = 0;
-			$image->height = 0;
-		}
-		
-		switch ($ThisFileInfo['mime_type']) {
+		switch (mime_content_type($filename)) {
 			case "video/webm":
 				$image->ext = "webm";
 				break;
-			case "video/quicktime":
+			case "video/mp4":
 				$image->ext = "mp4";
 				break;
-			case "application/ogg":
+			case "video/ogg":
 				$image->ext = "ogv";
+				break;
+			case "video/flv":
+				$image->ext = "flv";
 				break;
 			case "video/x-flv":
 				$image->ext = "flv";
@@ -189,20 +181,20 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @return bool
 	 */
 	protected function check_contents($file) {
+		$success = FALSE;
 		if (file_exists($file)) {
-			require_once('lib/getid3/getid3/getid3.php');
-			$getID3 = new getID3;
-			$ThisFileInfo = $getID3->analyze($file);
-			if (isset($ThisFileInfo['mime_type']) && (
-					$ThisFileInfo['mime_type'] == "video/webm"      ||
-					$ThisFileInfo['mime_type'] == "video/quicktime" ||
-					$ThisFileInfo['mime_type'] == "application/ogg" ||
-					$ThisFileInfo['mime_type'] == 'video/x-flv')
-			) {
-				return TRUE;
-			}
+			$mimeType = mime_content_type($file);
+
+			$success = in_array($mimeType, [
+				'video/webm',
+				'video/mp4',
+				'video/ogg',
+				'video/flv',
+				'video/x-flv'
+			]);
 		}
-			return FALSE;
+
+		return $success;
 	}
 }
 
