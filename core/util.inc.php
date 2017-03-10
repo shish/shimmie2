@@ -90,7 +90,7 @@ function sql_escape($input) {
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
  * @param mixed $input
- * @return bool
+ * @return boolean
  */
 function bool_escape($input) {
 	/*
