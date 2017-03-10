@@ -6,7 +6,7 @@ class MP3FileHandlerTheme extends Themelet {
 		$ilink = $image->get_image_link();
 		$fname = url_escape($image->filename); //Most of the time this will be the title/artist of the song.
 		$html = "
-			<audio controls class='shm-main-image audio' id='main_image' alt='main image'>
+			<audio controls class='shm-main-image audio_image' id='main_image' alt='main image'>
 				<source src=\"$ilink\" type=\"audio/mpeg\">
 				Your browser does not support the audio element.
 			</audio>
