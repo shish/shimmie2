@@ -41,18 +41,15 @@ class VideoFileHandlerTheme extends Themelet {
 				//FLV doesn't support <video>.
 				$html .= $html_fallback;
 			} else {
-				$html .= "
-					<video controls class='shm-main-image' id='main_image' alt='main image'"
-						. ($autoplay ? ' autoplay' : '')
-						. ($loop ? ' loop' : '')
-						. " data-width='{$image->width}' "
-						. " data-height='{$image->height}'>
+				$autoplay = ($autoplay ? ' autoplay' : '');
+				$loop     = ($loop ? ' loop' : '');
 
+				$html .= "
+					<video controls class='shm-main-image' id='main_image' alt='main image' {$autoplay} {$loop} style='max-width: 100%'>
 						<source src='{$ilink}' type='{$supportedExts[$ext]}'>
 
 						<!-- If browser doesn't support filetype, fallback to flash -->
 						{$html_fallback}
-
 					</video>";
 			}
 
