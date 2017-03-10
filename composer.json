@@ -5,6 +5,10 @@
 
 	"repositories" : [
 		{
+			"type": "composer",
+			"url": "https://asset-packagist.org"
+		},
+		{
 			"type" : "package",
 			"package" : {
 				"name" : "ifixit/php-akismet",
