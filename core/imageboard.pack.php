@@ -175,7 +175,7 @@ class Image {
 		return $images;
 	}
 
-	public function validate_accel($tags) {
+	public static function validate_accel($tags) {
 		$yays = 0;
 		$nays = 0;
 		foreach($tags as $tag) {
@@ -195,7 +195,7 @@ class Image {
 	 * @return null|PDOStatement
 	 * @throws SCoreException
 	 */
-	public function get_accelerated_result($tags, $offset, $limit) {
+	public static function get_accelerated_result($tags, $offset, $limit) {
 		global $database;
 
 		if(!Image::validate_accel($tags)) {
