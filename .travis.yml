@@ -36,7 +36,7 @@ install:
   - php install.php
 
 script:
-  - phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+  - vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
 
 after_failure:
   - head -n 100 data/config/*
