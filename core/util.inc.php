@@ -1600,14 +1600,17 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 /** @privatesection */
 
 function _version_check() {
-	$min_version = "5.4.8";
-	if(version_compare(PHP_VERSION, $min_version) == -1) {
-		print "
-Currently SCore Engine doesn't support versions of PHP lower than $min_version --
-if your web host is running an older version, they are dangerously out of
+	if(MIN_PHP_VERSION)
+	{
+        if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") === FALSE) {
+            print "
+Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
+(PHP reports that it is version ".phpversion().")
+If your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";
-		exit;
+            exit;
+        }
 	}
 }
 

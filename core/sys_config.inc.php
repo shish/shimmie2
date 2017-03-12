@@ -41,7 +41,7 @@ _d("TIMEZONE", null);        // string   timezone
 _d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
 _d("EXTRA_EXTS", "");        // string   optional extra extensions
 _d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
-
+_d("MIN_PHP_VERSION", '5.6');// string   minium supported PHP version
 
 /*
  * Calculated settings - you should never need to change these

@@ -43,6 +43,9 @@ class WordFilter extends Extension {
 		return $text;
 	}
 
+	/**
+	 * @return string[]
+	 */
 	private function get_map() {
 		global $config;
 		$raw = $config->get_string("word_filter");

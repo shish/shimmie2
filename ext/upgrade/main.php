@@ -129,6 +129,7 @@ class Upgrade extends Extension {
 		}
 	}
 
+    /** @return int */
 	public function get_priority() {return 5;}
 }
 
