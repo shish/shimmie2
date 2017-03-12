@@ -432,24 +432,6 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	return (substr($haystack, $start) === $needle);
 }
 
-if(!function_exists("mb_strlen")) {  // D:
-
-	/**
-	 * @param string $str
-	 */
-	function mb_strlen($str) {return strlen($str);}
-
-	/**
-	 * @param string $enc
-	 */
-	function mb_internal_encoding($enc) {}
-
-	/**
-	 * @param string $str
-	 */
-	function mb_strtolower($str) {return strtolower($str);}
-}
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
