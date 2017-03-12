@@ -193,7 +193,7 @@ class ExtManager extends Extension {
 	}
 
     /**
-     * @param string[] $extra
+     * @param string[] $extras
      */
 	private function write_config($extras) {
 		file_put_contents(
