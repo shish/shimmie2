@@ -168,7 +168,7 @@ class SearchTermParseEvent extends Event {
 
 	/**
 	 * @param string|null $term
-	 * @param array $context
+	 * @param string[] $context
 	 */
 	public function __construct($term, array $context) {
 		$this->term = $term;

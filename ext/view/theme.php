@@ -45,6 +45,9 @@ class ViewImageTheme extends Themelet {
 		return "$h_prev | $h_index | $h_next";
 	}
 
+	/**
+	 * @return string
+	 */
 	protected function build_navigation(Image $image) {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
