@@ -47,9 +47,8 @@ check out one of the versioned branches.
 1. Download shimmie via the "Download Zip" button on the [develop](https://github.com/shish/shimmie2/tree/develop) branch.
 2. Unzip shimmie into a folder on the web host
 3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
-4. Run `composer global require "fxp/composer-asset-plugin:~1.1" --no-plugins`. (This is installed globally due to a known composer bug)
-5. Run `composer install` in the shimmie folder.
-6. Follow instructions noted in "Installation" starting from step 3.
+4. Run `composer install` in the shimmie folder.
+5. Follow instructions noted in "Installation" starting from step 3.
 
 ## Upgrade from 2.3.X
 
