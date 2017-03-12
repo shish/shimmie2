@@ -1025,6 +1025,7 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 
 	/**
 	 * @param string $raw_headers
+	 * @return string[]
 	 */
 	function http_parse_headers ($raw_headers){
 		$headers = array(); // $headers = [];
@@ -1157,20 +1158,38 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
 // More shorthand ways of logging
 /**
  * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
  */
 function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
 /**
  * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
  */
 function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
 /**
  * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
  */
 function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
 /**
  * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
  */
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
@@ -1201,8 +1220,8 @@ function get_request_id() {
 /**
  * Remove an item from an array
  *
- * @param $array
- * @param $to_remove
+ * @param array $array
+ * @param mixed $to_remove
  * @return array
  */
 function array_remove($array, $to_remove) {
@@ -1221,8 +1240,8 @@ function array_remove($array, $to_remove) {
  *
  * Also removes duplicate values from the array.
  *
- * @param $array
- * @param $element
+ * @param array $array
+ * @param mixed $element
  * @return array
  */
 function array_add($array, $element) {
@@ -1236,7 +1255,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @param $array
+ * @param array $array
  * @return array
  */
 function array_iunique($array) {
@@ -1260,8 +1279,8 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
- * @param $IP
- * @param $CIDR
+ * @param string $IP
+ * @param string $CIDR
  * @return bool
  */
 function ip_in_range($IP, $CIDR) {
@@ -1400,7 +1419,10 @@ function list_files(/*string*/ $base, $_sub_dir="") {
 	return $file_list;
 }
 
-
+/**
+ * @param string $path
+ * @return string
+ */
 function path_to_tags($path) {
     $matches = array();
     if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
