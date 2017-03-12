@@ -59,9 +59,19 @@ class Image {
 	/** @var string[]|null */
 	public $tag_array;
 
-	public $owner_id, $owner_ip;
+	/** @var int */
+	public $owner_id;
+	
+	/** @var string */
+	public $owner_ip;
+	
+	/** @var string */
 	public $posted;
+	
+	/** @var string */
 	public $source;
+    
+	/** @var boolean */
 	public $locked;
 
 	/**

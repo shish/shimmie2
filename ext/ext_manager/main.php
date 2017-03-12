@@ -12,7 +12,10 @@
  *   extensions and read their documentation
  */
 
-/** @private */
+/**
+ * @private
+ * @return int
+ */
 function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
 	return strcmp($a->name, $b->name);
 }
@@ -189,6 +192,9 @@ class ExtManager extends Extension {
 		$this->write_config($extras);
 	}
 
+    /**
+     * @param string[] $extra
+     */
 	private function write_config($extras) {
 		file_put_contents(
 			"data/config/extensions.conf.php",
