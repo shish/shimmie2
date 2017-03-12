@@ -1602,7 +1602,7 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 function _version_check() {
 	if(MIN_PHP_VERSION)
 	{
-        if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") == FALSE) {
+        if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") === FALSE) {
             print "
 Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
 (PHP reports that it is version ".phpversion().")
