@@ -433,8 +433,20 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 }
 
 if(!function_exists("mb_strlen")) {  // D:
+
+	/**
+	 * @param string $str
+	 */
 	function mb_strlen($str) {return strlen($str);}
+
+	/**
+	 * @param string $enc
+	 */
 	function mb_internal_encoding($enc) {}
+
+	/**
+	 * @param string $str
+	 */
 	function mb_strtolower($str) {return strtolower($str);}
 }
 
@@ -1028,6 +1040,10 @@ function transload($url, $mfile) {
 }
 
 if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
+
+	/**
+	 * @param string $raw_headers
+	 */
 	function http_parse_headers ($raw_headers){
 		$headers = array(); // $headers = [];
 
@@ -1157,9 +1173,21 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
 }
 
 // More shorthand ways of logging
+/**
+ * @param string $section
+ */
 function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+/**
+ * @param string $section
+ */
 function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+/**
+ * @param string $section
+ */
 function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+/**
+ * @param string $section
+ */
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
