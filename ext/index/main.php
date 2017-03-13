@@ -161,7 +161,7 @@
 class SearchTermParseEvent extends Event {
 	/** @var null|string  */
 	public $term = null;
-	/** @var null */
+	/** @var string[] */
 	public $context = array();
 	/** @var \Querylet[] */
 	public $querylets = array();
