@@ -776,6 +776,9 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
+    /**
+     * @param string $type
+     */
     private function createItemXML(XMLWriter &$xml, $type, $item)
     {
         $xml->startElement($type);

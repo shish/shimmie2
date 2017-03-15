@@ -241,7 +241,7 @@ EOD;
 
 	/**
 	 * @param string $link
-	 * @param null|string $desc
+	 * @param string $desc
 	 * @param string[] $pages_matched
 	 * @return null|string
 	 */

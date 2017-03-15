@@ -1265,7 +1265,7 @@ function add_image($tmpname, $filename, $tags) {
  *
  * @param int $orig_width
  * @param int $orig_height
- * @return int[]
+ * @return integer[]
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;
