@@ -6,7 +6,6 @@ class SVGFileHandlerTheme extends Themelet {
 //		$ilink = $image->get_image_link();
 		$html = "
 			<img src='$ilink' id='main_image' class='shm-main-image' data-width='{$image->width}' data-height='{$image->height}' />
-
 		";
 		$page->add_block(new Block("Image", $html, "main", 10));
 	}
