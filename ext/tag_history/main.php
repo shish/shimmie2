@@ -153,7 +153,7 @@ class Tag_History extends Extension {
 
 		log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 		// all should be ok so we can revert by firing the SetUserTags event.
-		send_event(new TagSetEvent($image, $stored_tags));
+		send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
 		
 		// all should be done now so redirect the user back to the image
 		$page->set_mode("redirect");
@@ -248,8 +248,12 @@ class Tag_History extends Extension {
 		return ($row ? $row : array());
 	}
 	
-	/*
+	/**
 	 * This function attempts to revert all changes by a given IP within an (optional) timeframe.
+	 *
+	 * @param string $name
+	 * @param string $ip
+	 * @param string $date
 	 */
 	public function process_revert_all_changes($name, $ip, $date) {
 		global $database;
@@ -335,7 +339,7 @@ class Tag_History extends Extension {
 
 				log_debug("tag_history", 'Reverting tags of Image #'.$stored_image_id.' to ['.$stored_tags.']');
 				// all should be ok so we can revert by firing the SetTags event.
-				send_event(new TagSetEvent($image, $stored_tags));
+				send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
 				$this->theme->add_status('Reverted Change','Reverted Image #'.$image_id.' to Tag History #'.$stored_result_id.' ('.$row['tags'].')');
 			}
 		}
@@ -347,13 +351,14 @@ class Tag_History extends Extension {
 	 * This function is called just before an images tag are changed.
 	 *
 	 * @param Image $image
-	 * @param string|string[] $tags
+	 * @param string[] $tags
 	 */
 	private function add_tag_history(Image $image, $tags) {
 		global $database, $config, $user;
+		assert('is_array($tags)');
 
 		$new_tags = Tag::implode($tags);
-		$old_tags = Tag::implode($image->get_tag_array());
+		$old_tags = $image->get_tag_list();
 		
 		if($new_tags == $old_tags) { return; }
 		

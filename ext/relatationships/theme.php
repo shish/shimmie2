@@ -12,7 +12,7 @@ class RelationshipsTheme extends Themelet {
 			$page->add_block(new Block(null, "This post belongs to a $a.", "main", 5));
 		}
 
-		if($image->has_children == TRUE){
+		if(bool_escape($image->has_children)){
 			$ids = $database->get_col("SELECT id FROM images WHERE parent_id = :iid", array("iid"=>$image->id));
 
 			$html = "This post has <a href='".make_link('post/list/parent='.$image->id.'/1')."'>".(count($ids) > 1 ? "child posts" : "a child post")."</a>";
@@ -30,7 +30,7 @@ class RelationshipsTheme extends Themelet {
 		global $user;
 
 		$h_parent_id = $image->parent_id;
-		$s_parent_id = $h_parent_id ?: "None.";
+		$s_parent_id = $h_parent_id ?: "None";
 
 		$html = "<tr>\n".
 		        "	<th>Parent</th>\n".

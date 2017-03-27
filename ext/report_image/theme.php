@@ -16,7 +16,7 @@ class ReportImageTheme extends Themelet {
 	 * @param array $reports
 	 */
 	public function display_reported_images(Page $page, $reports) {
-		global $config;
+		global $config, $user;
 
 		$h_reportedimages = "";
 		foreach($reports as $report) {
@@ -27,7 +27,6 @@ class ReportImageTheme extends Themelet {
 			$reporter_name = html_escape($report['reporter_name']);
 			$userlink = "<a href='".make_link("user/$reporter_name")."'>$reporter_name</a>";
 
-			global $user;
 			$iabbe = new ImageAdminBlockBuildingEvent($image, $user);
 			send_event($iabbe);
 			ksort($iabbe->parts);
@@ -65,15 +64,31 @@ class ReportImageTheme extends Themelet {
 
 	/**
 	 * @param Image $image
-	 * @param array $reporters
+	 * @param ImageReport[] $reports
 	 */
-	public function display_image_banner(Image $image, /*array*/ $reporters) {
-		global $page;
+	public function display_image_banner(Image $image, /*array*/ $reports) {
+		global $config, $page;
 
 		$i_image = int_escape($image->id);
 		$html = "";
-		if(count($reporters) > 0) {
-			$html .= "<b>Image reported by ".html_escape(implode(", ", $reporters))."</b><p>";
+		$public = $config->get_string("report_image_publicity");
+		if($public != "none" && count($reports) > 0) {
+			$html .= "<b>Current reports:</b>";
+			foreach($reports as $report) {
+				$html .= "<br>";
+				if($public == "both") {
+					$html .= html_escape(User::by_id($report->user_id)->name);
+					$html .= " - ";
+					$html .= html_escape($report->reason);
+				}
+				elseif($public == "user") {
+					$html .= html_escape(User::by_id($report->user_id)->name);
+				}
+				elseif($public == "reason") {
+					$html .= html_escape($report->reason);
+				}
+			}
+			$html .= "<p>";
 		}
 		$html .= "
 			".make_form(make_link("image_report/add"))."

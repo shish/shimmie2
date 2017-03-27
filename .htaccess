@@ -3,11 +3,16 @@
 </IfModule>
 
 <FilesMatch "\.(sqlite|sdb|s3db|db)$">
-	Deny from all
+	<IfModule mod_authz_host.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_host.c>
+		Deny from all
+	</IfModule>
 </FilesMatch>
 
 <IfModule mod_rewrite.c>
-	RewriteEngine  on
+	RewriteEngine On
 
 	# rather than link to images/ha/hash and have an ugly filename,
 	# we link to images/hash/tags.ext; mod_rewrite splits things so
@@ -19,14 +24,6 @@
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^(.*)$ index.php?q=$1&%{QUERY_STRING} [L]
 </IfModule>
-
-<IfModule mod_php5.c>
-	php_flag register_globals 0 
-	php_flag magic_quotes_gpc 0 
-	php_flag magic_quotes_runtime 0
-</IfModule>
-
-DefaultType image/jpeg
 
 <IfModule mod_expires.c>
 	ExpiresActive On
@@ -40,7 +37,31 @@ DefaultType image/jpeg
 	#ExpiresByType text/plain "now"
 </IfModule>
 
-<ifmodule mod_deflate.c>
+<IfModule mod_deflate.c>
 	AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
 	AddOutputFilterByType DEFLATE application/x-javascript application/javascript
-</ifmodule>
+</IfModule>
+
+#EXT: handle_pixel
+AddType image/jpeg  jpg jpeg
+AddType image/gif   gif
+AddType image/png   png
+
+#EXT: handle_ico
+AddType image/x-icon   ico ani cur
+
+#EXT: handle_flash
+AddType application/x-shockwave-flash swf
+
+#EXT: handle_mp3
+AddType audio/mpeg mp3
+
+#EXT: handle_svg
+AddType image/svg+xml  svg svgz
+
+#EXT: handle_video
+AddType video/x-flv    flv
+AddType video/mp4      f4v f4p m4v mp4
+AddType audio/mp4      f4a f4b m4a
+AddType video/ogg      ogv
+AddType video/webm     webm

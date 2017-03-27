@@ -15,24 +15,43 @@ class RandomList extends Extension {
 		global $config, $page;
 
 		if($event->page_matches("random")) {
+			if(isset($_GET['search'])) {
+				// implode(explode()) to resolve aliases and sanitise
+				$search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
+				if(empty($search)) {
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link("random"));
+				}
+				else {
+					$page->set_mode("redirect");
+					$page->set_redirect(make_link('random/'.$search));
+				}
+				return;
+			}
+
+			if($event->count_args() == 0) {
+				$search_terms = array();
+			}
+			else if($event->count_args() == 1) {
+				$search_terms = explode(' ', $event->get_arg(0));
+			}
+			else {
+				throw new SCoreException("Error: too many arguments.");
+			}
+
 			// set vars
-			$page->title = "Random Images";
 			$images_per_page = $config->get_int("random_images_list_count", 12);
 			$random_images = array();
-			$random_html = "<b>Refresh the page to view more images</b>
-			<div class='shm-image-list'>";
 
 			// generate random images
-			for ($i = 0; $i < $images_per_page; $i++)
-				array_push($random_images, Image::by_random());
+			for ($i = 0; $i < $images_per_page; $i++) {
+				$random_image = Image::by_random($search_terms);
+				if (!$random_image) continue;
+				array_push($random_images, $random_image);
+			}
 
-			// create html to display images
-			foreach ($random_images as $image)
-				$random_html .= $this->theme->build_thumb_html($image);
-
-			// display it
-			$random_html .= "</div>";
-			$page->add_block(new Block("Random Images", $random_html));
+			$this->theme->set_page($search_terms);
+			$this->theme->display_page($page, $random_images);
 		}
 	}
 

@@ -49,7 +49,7 @@ class Home extends Extension {
 		global $config;
 		$base_href = get_base_href();
 		$sitename = $config->get_string('title');
-	    $contact_link = $config->get_string('contact_link');
+	    $contact_link = contact_link();
 		$counter_dir = $config->get_string('home_counter', 'default');
 
 		$total = Image::count_images();

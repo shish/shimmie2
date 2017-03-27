@@ -69,7 +69,7 @@ var Tagger = {
 	tag : {
 		submit : function () {
 			var l = this.list.childNodes.length;
-			var tags = Array();
+			var tags = [];
 			for(var i=0; i<l; i++) {
 				var s_tag = this.list.childNodes[i].firstChild.data;
 				tags.push(s_tag);
@@ -201,11 +201,11 @@ var Tagger = {
 				x = xy[0];
 				y = xy[1];
 			}
-			setCookie(config.title+"_tagger-position",x+" "+y,14);
+			Cookies.set(config.title+"_tagger-position", x+" "+y, {expires: 14});
 		},
 		
 		load : function () {
-			var p = getCookie(config.title+"_tagger-position");
+			var p = Cookies.get(config.title+"_tagger-position");
 			if(p) {
 				var xy = p.split(" ");
 				this.set(xy[0],xy[1]);

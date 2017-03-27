@@ -837,7 +837,7 @@ class Artists extends Extension {
             INSERT INTO artists (user_id, name, notes, created, updated)
             VALUES (?, ?, ?, now(), now())
         ", array($user->id, $name, $notes));
-        return $database->get_last_insert_id();
+        return $database->get_last_insert_id('artists_id_seq');
     }
 
     /**

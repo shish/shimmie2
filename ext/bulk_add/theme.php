@@ -1,7 +1,7 @@
 <?php
 
 class BulkAddTheme extends Themelet {
-	var $messages = array();
+	private $messages = array();
 
 	/*
 	 * Show a standard page for results to be put into
@@ -12,9 +12,9 @@ class BulkAddTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$html = "";
 		foreach($this->messages as $block) {
-			$html .= "<br/>" . html_escape($html);
+			$html .= "<br/>" . $block->body;
 		}
-		$page->add_block(new Block("Results", $block));
+		$page->add_block(new Block("Results", $html));
 	}
 
 	/*

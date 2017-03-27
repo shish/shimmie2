@@ -9,7 +9,7 @@
  *  Formatting is done with the standard formatting API (normally BBCode)
  */
 
-require_once "lib/akismet.class.php";
+require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
 class CommentPostingEvent extends Event {
 	/** @var  int */
@@ -53,9 +53,9 @@ class CommentDeletionEvent extends Event {
 class CommentPostingException extends SCoreException {}
 
 class Comment {
-	var $owner, $owner_id, $owner_name, $owner_email, $owner_class;
-	var $comment, $comment_id;
-	var $image_id, $poster_ip, $posted;
+	public $owner, $owner_id, $owner_name, $owner_email, $owner_class;
+	public $comment, $comment_id;
+	public $image_id, $poster_ip, $posted;
 
 	public function __construct($row) {
 		$this->owner = null;
@@ -94,7 +94,7 @@ class Comment {
 
 class CommentList extends Extension {
 	/** @var CommentListTheme $theme */
-	var $theme;
+	public $theme;
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;

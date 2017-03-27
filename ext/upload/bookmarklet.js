@@ -79,7 +79,9 @@ else if(document.getElementById('tag-sidebar') !== null) {
 		var fileinfo;
 		var nodes = document.getElementById('pfd').parentNode.parentNode.getElementsByTagName('a');
 		for (var i = 0; i < nodes.length; i++) {
-			if (nodes[i].getAttribute('href') === "#") continue;
+			var href = nodes[i].getAttribute('href');
+			if (href === "#" || href === "javascript:;")
+				continue;
 			fileinfo = nodes[i];
 			break;
 		}

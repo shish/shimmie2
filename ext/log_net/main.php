@@ -8,7 +8,7 @@
  */
 
 class LogNet extends Extension {
-	var $count = 0;
+	private $count = 0;
 
 	public function onLog(LogEvent $event) {
 		global $user;

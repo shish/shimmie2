@@ -1,6 +1,4 @@
 <?php
-require_once "lib/recaptchalib.php";
-require_once "lib/securimage/securimage.php";
 require_once "lib/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -10,7 +8,7 @@ require_once "lib/context.php";
 /**
  * Make some data safe for printing into HTML
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function html_escape($input) {
@@ -18,9 +16,19 @@ function html_escape($input) {
 }
 
 /**
+ * Unescape data that was made safe for printing into HTML
+ *
+ * @param string $input
+ * @return string
+ */
+function html_unescape($input) {
+	return html_entity_decode($input, ENT_QUOTES, "UTF-8");
+}
+
+/**
  * Make sure some data is safe to be used in integer context
  *
- * @param $input
+ * @param string $input
  * @return int
  */
 function int_escape($input) {
@@ -34,7 +42,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function url_escape($input) {
@@ -69,7 +77,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function sql_escape($input) {
@@ -81,8 +89,8 @@ function sql_escape($input) {
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
- * @param $input
- * @return bool
+ * @param mixed $input
+ * @return boolean
  */
 function bool_escape($input) {
 	/*
@@ -117,7 +125,7 @@ function bool_escape($input) {
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function no_escape($input) {
@@ -168,8 +176,15 @@ function xml_tag($name, $attrs=array(), $children=array()) {
 	return $xml;
 }
 
-// Original PHP code by Chirp Internet: www.chirp.com.au
-// Please acknowledge use of this code by including this header.
+/**
+ * Original PHP code by Chirp Internet: www.chirp.com.au
+ * Please acknowledge use of this code by including this header.
+ *
+ * @param string $string input data
+ * @param int $limit how long the string should be
+ * @param string $break where to break the string
+ * @param string $pad what to add to the end of the string after truncating
+ */
 function truncate($string, $limit, $break=" ", $pad="...") {
 	// return with no change if string is shorter than $limit
 	if(strlen($string) <= $limit) return $string;
@@ -187,7 +202,7 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @param $limit
+ * @param string|integer $limit
  * @return int
  */
 function parse_shorthand_int($limit) {
@@ -217,7 +232,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
- * @param $int
+ * @param integer $int
  * @return string
  */
 function to_shorthand_int($int) {
@@ -239,7 +254,7 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
- * @param $date
+ * @param string $date
  * @param bool $html
  * @return string
  */
@@ -252,7 +267,7 @@ function autodate($date, $html=true) {
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
- * @param $dateTime
+ * @param string $dateTime
  * @return bool
  */
 function isValidDateTime($dateTime) {
@@ -268,7 +283,7 @@ function isValidDateTime($dateTime) {
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
- * @param $date
+ * @param string $date
  * @return bool
  */
 function isValidDate($date) {
@@ -282,6 +297,9 @@ function isValidDate($date) {
 	return false;
 }
 
+/**
+ * @param string[] $inputs
+ */
 function validate_input($inputs) {
 	$outputs = array();
 
@@ -376,8 +394,8 @@ function validate_input($inputs) {
  *
  * FIXME: also check that IP ban ext is installed
  *
- * @param $ip
- * @param $ban_reason
+ * @param string $ip
+ * @param string $ban_reason
  * @return string
  */
 function show_ip($ip, $ban_reason) {
@@ -392,8 +410,8 @@ function show_ip($ip, $ban_reason) {
 /**
  * Checks if a given string contains another at the beginning.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function startsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -404,8 +422,8 @@ function startsWith(/*string*/ $haystack, /*string*/ $needle) {
 /**
  * Checks if a given string contains another at the end.
  *
- * @param $haystack String to examine.
- * @param $needle String to look for.
+ * @param string $haystack String to examine.
+ * @param string $needle String to look for.
  * @return bool
  */
 function endsWith(/*string*/ $haystack, /*string*/ $needle) {
@@ -413,7 +431,6 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$start  = $length * -1; //negative
 	return (substr($haystack, $start) === $needle);
 }
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
@@ -434,7 +451,10 @@ function make_link($page=null, $query=null) {
 
 	if(is_null($page)) $page = $config->get_string('main_page');
 
-	if(NICE_URLS || $config->get_bool('nice_urls', false)) {
+	if(!is_null(BASE_URL)) {
+		$base = BASE_URL;
+	}
+	elseif(NICE_URLS || $config->get_bool('nice_urls', false)) {
 		$base = str_replace('/'.basename($_SERVER["SCRIPT_FILENAME"]), "", $_SERVER["PHP_SELF"]);
 	}
 	else {
@@ -591,6 +611,32 @@ function zglob($pattern) {
 	}
 }
 
+/**
+ * Gets contact link as mailto: or http:
+ * @return string
+ */
+function contact_link() {
+	global $config;
+	$text = $config->get_string('contact_link');
+	if(
+		startsWith($text, "http:") ||
+		startsWith($text, "https:") ||
+		startsWith($text, "mailto:")
+	) {
+		return $text;
+	}
+
+	if(strpos($text, "@")) {
+		return "mailto:$text";
+	}
+
+	if(strpos($text, "/")) {
+		return "http://$text";
+	}
+
+	return $text;
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * CAPTCHA abstraction                                                       *
@@ -608,14 +654,12 @@ function captcha_get_html() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_publickey = $config->get_string("api_recaptcha_pubkey");
 		if(!empty($r_publickey)) {
-			$captcha = recaptcha_get_html($r_publickey);
-		}
-		else {
+			$captcha = "
+				<div class=\"g-recaptcha\" data-sitekey=\"{$r_publickey}\"></div>
+				<script type=\"text/javascript\" src=\"https://www.google.com/recaptcha/api.js\"></script>";
+		} else {
 			session_start();
-			//$securimg = new Securimage();
-			$base = get_base_href();
-			$captcha = "<br/><img src='$base/lib/securimage/securimage_show.php?sid=". md5(uniqid(time())) ."'>".
-				"<br/>CAPTCHA: <input type='text' name='code' value='' />";
+			$captcha = Securimage::getCaptchaHtml(['securimage_path' => './vendor/dapphp/securimage/']);
 		}
 	}
 	return $captcha;
@@ -632,22 +676,18 @@ function captcha_check() {
 	if($user->is_anonymous() && $config->get_bool("comment_captcha")) {
 		$r_privatekey = $config->get_string('api_recaptcha_privkey');
 		if(!empty($r_privatekey)) {
-			$resp = recaptcha_check_answer(
-				$r_privatekey,
-				$_SERVER["REMOTE_ADDR"],
-				$_POST["recaptcha_challenge_field"],
-				$_POST["recaptcha_response_field"]
-			);
+			$recaptcha = new \ReCaptcha\ReCaptcha($r_privatekey);
+			$resp = $recaptcha->verify($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);
 
-			if(!$resp->is_valid) {
-				log_info("core", "Captcha failed (ReCaptcha): " . $resp->error);
+			if(!$resp->isSuccess()) {
+				log_info("core", "Captcha failed (ReCaptcha): " . implode("", $resp->getErrorCodes()));
 				return false;
 			}
 		}
 		else {
 			session_start();
 			$securimg = new Securimage();
-			if($securimg->check($_POST['code']) == false) {
+			if($securimg->check($_POST['captcha_code']) === false) {
 				log_info("core", "Captcha failed (Securimage)");
 				return false;
 			}
@@ -678,7 +718,7 @@ function is_https_enabled() {
  * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
  * and released under the 'Simplified BSD License'.
  *
- * @param string &$file File path
+ * @param string $file File path
  * @param string $ext
  * @param bool $list
  * @return string
@@ -704,7 +744,7 @@ function getMimeType($file, $ext="", $list=false) {
 		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
 	);
 
-	if ($list == true){ return $exts; }
+	if ($list === true){ return $exts; }
 
 	if (isset($exts[$ext])) { return $exts[$ext]; }
 
@@ -799,7 +839,7 @@ function get_memory_limit() {
 			// Shimmie wants more memory than what PHP is currently set for.
 
 			// Attempt to set PHP's memory limit.
-			if ( ini_set("memory_limit", $shimmie_limit) === FALSE ) {
+			if ( ini_set("memory_limit", $shimmie_limit) === false ) {
 				/*  We can't change PHP's limit, oh well, return whatever its currently set to */
 				return $memory;
 			}
@@ -982,6 +1022,11 @@ function transload($url, $mfile) {
 }
 
 if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
+
+	/**
+	 * @param string $raw_headers
+	 * @return string[]
+	 */
 	function http_parse_headers ($raw_headers){
 		$headers = array(); // $headers = [];
 
@@ -1009,8 +1054,8 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
  * 
  * @param array $headers
- * @param mixed $name
- * @return mixed
+ * @param string $name
+ * @return string|bool
  */
 function findHeader ($headers, $name) {
 	if (!is_array($headers)) {
@@ -1111,10 +1156,40 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
 }
 
 // More shorthand ways of logging
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
@@ -1145,8 +1220,8 @@ function get_request_id() {
 /**
  * Remove an item from an array
  *
- * @param $array
- * @param $to_remove
+ * @param array $array
+ * @param mixed $to_remove
  * @return array
  */
 function array_remove($array, $to_remove) {
@@ -1165,8 +1240,8 @@ function array_remove($array, $to_remove) {
  *
  * Also removes duplicate values from the array.
  *
- * @param $array
- * @param $element
+ * @param array $array
+ * @param mixed $element
  * @return array
  */
 function array_add($array, $element) {
@@ -1180,7 +1255,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @param $array
+ * @param array $array
  * @return array
  */
 function array_iunique($array) {
@@ -1204,8 +1279,8 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
- * @param $IP
- * @param $CIDR
+ * @param string $IP
+ * @param string $CIDR
  * @return bool
  */
 function ip_in_range($IP, $CIDR) {
@@ -1344,7 +1419,10 @@ function list_files(/*string*/ $base, $_sub_dir="") {
 	return $file_list;
 }
 
-
+/**
+ * @param string $path
+ * @return string
+ */
 function path_to_tags($path) {
     $matches = array();
     if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
@@ -1400,7 +1478,6 @@ function _set_event_listeners() {
 		elseif(is_subclass_of($class, "Extension")) {
 			/** @var Extension $extension */
 			$extension = new $class();
-			$extension->i_am($extension);
 
 			// skip extensions which don't support our current database
 			if(!$extension->is_live()) continue;
@@ -1419,6 +1496,10 @@ function _set_event_listeners() {
 	}
 }
 
+/**
+ * @param array $event_listeners
+ * @param string $path
+ */
 function _dump_event_listeners($event_listeners, $path) {
 	$p = "<"."?php\n";
 
@@ -1427,7 +1508,6 @@ function _dump_event_listeners($event_listeners, $path) {
 		if($rclass->isAbstract()) {}
 		elseif(is_subclass_of($class, "Extension")) {
 			$p .= "\$$class = new $class(); ";
-			$p .= "\${$class}->i_am(\$$class);\n";
 		}
 	}
 
@@ -1446,7 +1526,7 @@ function _dump_event_listeners($event_listeners, $path) {
 }
 
 /**
- * @param $ext_name string
+ * @param string $ext_name Main class name (eg ImageIO as opposed to ImageIOTheme or ImageIOTest)
  * @return bool
  */
 function ext_is_live($ext_name) {
@@ -1552,14 +1632,17 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 /** @privatesection */
 
 function _version_check() {
-	$min_version = "5.4.8";
-	if(version_compare(PHP_VERSION, $min_version) == -1) {
-		print "
-Currently SCore Engine doesn't support versions of PHP lower than $min_version --
-if your web host is running an older version, they are dangerously out of
+	if(MIN_PHP_VERSION)
+	{
+        if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") === FALSE) {
+            print "
+Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
+(PHP reports that it is version ".phpversion().")
+If your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";
-		exit;
+            exit;
+        }
 	}
 }
 
@@ -1690,6 +1773,9 @@ function _get_user() {
 	return $user;
 }
 
+/**
+ * @return string
+ */
 function _get_query() {
 	return @$_POST["q"]?:@$_GET["q"];
 }

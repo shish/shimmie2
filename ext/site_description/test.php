@@ -6,7 +6,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("post/list");
 		$this->assertContains(
 			'<meta name="description" content="A Shimmie testbed">',
-			$page->html_headers
+			$page->get_all_html_headers()
 		);
 	}
 
@@ -16,7 +16,7 @@ class SiteDescriptionTest extends ShimmiePHPUnitTestCase {
 		$this->get_page("post/list");
 		$this->assertContains(
 			'<meta name="keywords" content="foo,bar,baz">',
-			$page->html_headers
+			$page->get_all_html_headers()
 		);
 	}
 }

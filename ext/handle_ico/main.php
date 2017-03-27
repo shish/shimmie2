@@ -10,7 +10,7 @@ class IcoFileHandler extends Extension {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
 			$ha = substr($hash, 0, 2);
-			if(!move_upload_to_archive($event)) return;
+			move_upload_to_archive($event);
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data("images/$ha/$hash", $event->metadata);
 			if(is_null($image)) {
@@ -35,20 +35,6 @@ class IcoFileHandler extends Extension {
 		}
 	}
 
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page;
-		if($event->page_matches("get_ico")) {
-			$id = int_escape($event->get_arg(0));
-			$image = Image::by_id($id);
-			$hash = $image->hash;
-			$ha = substr($hash, 0, 2);
-
-			$page->set_type("image/x-icon");
-			$page->set_mode("data");
-			$page->set_data(file_get_contents("images/$ha/$hash"));
-		}
-	}
-
 	/**
 	 * @param string $ext
 	 * @return bool
@@ -67,38 +53,40 @@ class IcoFileHandler extends Extension {
 		$image = new Image();
 
 		$fp = fopen($filename, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 
-		$subheader = unpack("cwidth/cheight/ccolours/cnull/splanes/sbpp/lsize/loffset", fread($fp, 16));
+		$subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
 		fclose($fp);
 
-		$image->width = $subheader['width'];
-		$image->height = $subheader['height'];
+		$width = $subheader['width'];
+		$height = $subheader['height'];
+		$image->width = $width == 0 ? 256 : $width;
+		$image->height = $height == 0 ? 256 : $height;
 
 		$image->filesize  = $metadata['size'];
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = Tag::explode($metadata['tags']);
+		$image->tag_array = $metadata['tags'];
 		$image->source    = $metadata['source'];
 
 		return $image;
 	}
 
 	/**
-	 * @param $file
+	 * @param string $file
 	 * @return bool
 	 */
 	private function check_contents($file) {
 		if(!file_exists($file)) return false;
 		$fp = fopen($file, "r");
-		$header = unpack("snull/stype/scount", fread($fp, 6));
+		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
 		fclose($fp);
 		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
 	}
 
 	/**
-	 * @param $hash
+	 * @param string $hash
 	 * @return bool
 	 */
 	private function create_thumb($hash) {
