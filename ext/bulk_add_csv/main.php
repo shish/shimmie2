@@ -126,7 +126,7 @@ class BulkAddCSV extends Extension {
 			$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
 			if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
 				try{
-					$this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating, $thumbfile);
+					$this->add_image($fullpath, $pathinfo["basename"], Tag::explode($tags), $source, $rating, $thumbfile);
 					$list .= "ok\n";
 				}
 				catch(Exception $ex) {
