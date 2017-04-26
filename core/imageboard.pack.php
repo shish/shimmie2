@@ -1219,10 +1219,10 @@ function add_dir($base) {
         $short_path = str_replace($base, "", $full_path);
         $filename = basename($full_path);
 
-        $tags = Tag::explode(path_to_tags($short_path));
+        $tags = path_to_tags($short_path);
         $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
-            add_image($full_path, $filename, $tags);
+            add_image($full_path, $filename, Tag::explode($tags));
             $result .= "ok";
         }
         catch(UploadException $ex) {
