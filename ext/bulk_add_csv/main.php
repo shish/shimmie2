@@ -73,7 +73,7 @@ class BulkAddCSV extends Extension {
 		$metadata = array();
 		$metadata['filename'] = $pathinfo['basename'];
 		$metadata['extension'] = $pathinfo['extension'];
-		$metadata['tags'] = $tags;
+		$metadata['tags'] = Tag::explode($tags);
 		$metadata['source'] = $source;
 		$event = new DataUploadEvent($tmpname, $metadata);
 		send_event($event);
@@ -126,7 +126,7 @@ class BulkAddCSV extends Extension {
 			$list .= "<br>".html_escape("$shortpath (".str_replace(" ", ", ", $tags).")... ");
 			if (file_exists($csvdata[0]) && is_file($csvdata[0])) {
 				try{
-					$this->add_image($fullpath, $pathinfo["basename"], Tag::explode($tags), $source, $rating, $thumbfile);
+					$this->add_image($fullpath, $pathinfo["basename"], $tags, $source, $rating, $thumbfile);
 					$list .= "ok\n";
 				}
 				catch(Exception $ex) {

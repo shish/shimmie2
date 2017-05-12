@@ -304,6 +304,10 @@ class CronUploader extends Extension {
 
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
+	 *
+	 * @param string $tmpname
+	 * @param string $filename
+	 * @param string $tags
 	 */
 	private function add_image($tmpname, $filename, $tags) {
 		assert ( file_exists ( $tmpname ) );
@@ -315,7 +319,7 @@ class CronUploader extends Extension {
 		$metadata = array();
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
-		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
+		$metadata ['tags'] = array(""); // = $tags; doesn't work when not logged in here
 		$metadata ['source'] = null;
 		$event = new DataUploadEvent ( $tmpname, $metadata );
 		send_event ( $event );

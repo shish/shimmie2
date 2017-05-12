@@ -1210,7 +1210,7 @@ function move_upload_to_archive(DataUploadEvent $event) {
  * Add a directory full of images
  *
  * @param $base string
- * @return array
+ * @return array|string[]
  */
 function add_dir($base) {
     $results = array();
@@ -1222,7 +1222,7 @@ function add_dir($base) {
         $tags = path_to_tags($short_path);
         $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
-            add_image($full_path, $filename, Tag::explode($tags));
+            add_image($full_path, $filename, $tags);
             $result .= "ok";
         }
         catch(UploadException $ex) {
@@ -1250,7 +1250,7 @@ function add_image($tmpname, $filename, $tags) {
     $metadata = array();
     $metadata['filename'] = $pathinfo['basename'];
     $metadata['extension'] = $pathinfo['extension'];
-    $metadata['tags'] = $tags;
+    $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
     $event = new DataUploadEvent($tmpname, $metadata);
     send_event($event);
