@@ -1222,7 +1222,7 @@ function add_dir($base) {
         $tags = path_to_tags($short_path);
         $result = "$short_path (".str_replace(" ", ", ", $tags).")... ";
         try {
-            add_image($full_path, $filename, $tags);
+            add_image($full_path, $filename, Tag::explode($tags));
             $result .= "ok";
         }
         catch(UploadException $ex) {
