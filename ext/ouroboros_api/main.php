@@ -500,7 +500,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = array();
-        $meta['tags'] = Tag::explode($post->tags);
+        $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (defined('ENABLED_EXTS')) {
             if (strstr(ENABLED_EXTS, 'rating') !== false) {
