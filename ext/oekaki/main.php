@@ -31,7 +31,7 @@ class Oekaki extends Extension {
 						$metadata = array();
 						$metadata['filename'] = 'oekaki.png';
 						$metadata['extension'] = $pathinfo['extension'];
-						$metadata['tags'] = 'oekaki tagme';
+						$metadata['tags'] = Tag::explode('oekaki tagme');
 						$metadata['source'] = null;
 						$duev = new DataUploadEvent($tmpname, $metadata);
 						send_event($duev);
