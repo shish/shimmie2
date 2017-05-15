@@ -311,6 +311,7 @@ class CronUploader extends Extension {
 	 */
 	private function add_image($tmpname, $filename, $tags) {
 		assert ( file_exists ( $tmpname ) );
+		assert('is_string($tags)');
 		
 		$pathinfo = pathinfo ( $filename );
 		if (! array_key_exists ( 'extension', $pathinfo )) {
@@ -333,7 +334,7 @@ class CronUploader extends Extension {
 		
 		// Set tags
 		$img = Image::by_id($event->image_id);
-		$img->set_tags($tags);
+		$img->set_tags(Tag::explode($tags));
 	}
 	
 	private function generate_image_queue($base = "", $subdir = "") {
