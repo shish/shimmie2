@@ -291,13 +291,8 @@ class MemcacheCache implements CacheEngine {
 	 */
 	public function __construct($args) {
 		$hp = explode(":", $args);
-		if(class_exists("Memcache")) {
-			$this->memcache = new Memcache;
-			@$this->memcache->pconnect($hp[0], $hp[1]);
-		}
-		else {
-			print "no memcache"; exit;
-		}
+		$this->memcache = new Memcache;
+		@$this->memcache->pconnect($hp[0], $hp[1]);
 	}
 
 	/**
@@ -339,6 +334,92 @@ class MemcacheCache implements CacheEngine {
 	 */
 	public function delete($key) {
 		assert('!is_null($key)');
+		$this->memcache->delete($key);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
+		}
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_hits() {return $this->hits;}
+
+	/**
+	 * @return int
+	 */
+	public function get_misses() {return $this->misses;}
+}
+class MemcachedCache implements CacheEngine {
+	/** @var \Memcached|null */
+	public $memcache=null;
+	/** @var int */
+	private $hits=0;
+	/** @var int */
+	private $misses=0;
+
+	/**
+	 * @param string $args
+	 */
+	public function __construct($args) {
+		$hp = explode(":", $args);
+		$this->memcache = new Memcached;
+		#$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
+		#$this->memcache->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
+		#$this->memcache->setOption(Memcached::OPT_PREFIX_KEY, phpversion());
+		$this->memcache->addServer($hp[0], $hp[1]);
+	}
+
+	/**
+	 * @param string $key
+	 * @return array|bool|string
+	 */
+	public function get($key) {
+		assert('!is_null($key)');
+		$key = "d-" . $key;
+
+		$val = $this->memcache->get($key);
+		$res = $this->memcache->getResultCode();
+
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			$hit = $res == Memcached::RES_SUCCESS ? "miss" : "hit";
+			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
+		}
+		if($res == Memcached::RES_SUCCESS) {
+			$this->hits++;
+			return $val;
+		}
+		else if($res == Memcached::RES_NOTFOUND) {
+			$this->misses++;
+			return false;
+		}
+		else {
+			error_log("Memcached error: $res");
+		}
+	}
+
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @param int $time
+	 */
+	public function set($key, $val, $time=0) {
+		assert('!is_null($key)');
+		$key = "d-" . $key;
+
+		$this->memcache->set($key, $val, $time);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
+		}
+	}
+
+	/**
+	 * @param string $key
+	 */
+	public function delete($key) {
+		assert('!is_null($key)');
+		$key = "d-" . $key;
+
 		$this->memcache->delete($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
@@ -439,9 +520,24 @@ class Database {
 
 	private function connect_cache() {
 		$matches = array();
-		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
+		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|memcached|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
-				$this->cache = new MemcacheCache($matches[2]);
+				if(class_exists("Memcache")) {
+					$this->cache = new MemcacheCache($matches[2]);
+				}
+				else {
+					#error_log("no memcache module - caching disabled");
+					$this->cache = new NoCache();
+				}
+			}
+			else if($matches[1] == "memcached") {
+				if(class_exists("Memcached")) {
+					$this->cache = new MemcachedCache($matches[2]);
+				}
+				else {
+					#error_log("no memcached module - caching disabled");
+					$this->cache = new NoCache();
+				}
 			}
 			else if($matches[1] == "apc") {
 				$this->cache = new APCCache($matches[2]);
