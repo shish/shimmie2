@@ -60,6 +60,11 @@ class _SafeOuroborosImage
      */
     public $width = null;
     /**
+     * File extension
+     * @var string
+     */
+    public $file_ext = '';
+    /**
      * File Size in bytes
      * @var integer
      */
@@ -189,7 +194,7 @@ class _SafeOuroborosImage
      * Constructor
      * @param Image $img
      */
-    function __construct(Image $img)
+    public function __construct(Image $img)
     {
         global $config;
         // author
@@ -343,7 +348,7 @@ class _SafeOuroborosTag
     public $name = '';
     public $type = 0;
 
-    function __construct(array $tag)
+    public function __construct(array $tag)
     {
         $this->count = $tag['count'];
         $this->id = $tag['id'];
@@ -495,7 +500,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = array();
-        $meta['tags'] = $post->tags;
+        $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (defined('ENABLED_EXTS')) {
             if (strstr(ENABLED_EXTS, 'rating') !== false) {
@@ -531,7 +536,8 @@ class OuroborosAPI extends Extension
             if (!is_null($img)) {
                 $handler = $config->get_string("upload_collision_handler");
                 if($handler == "merge") {
-                    $merged = array_merge(Tag::explode($post->tags), $img->get_tag_array());
+                    $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
+                    $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
@@ -771,6 +777,9 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
+    /**
+     * @param string $type
+     */
     private function createItemXML(XMLWriter &$xml, $type, $item)
     {
         $xml->startElement($type);

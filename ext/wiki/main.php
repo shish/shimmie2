@@ -220,7 +220,7 @@ class Wiki extends Extension {
 
 	/**
 	 * @param string $title
-	 * @param int|null $revision
+	 * @param integer $revision
 	 * @return WikiPage
 	 */
 	private function get_page($title, $revision=-1) {
@@ -494,6 +494,10 @@ class Wiki extends Extension {
 
 	/** 
 	 *   callback function to format the diffence-lines with your 'style' 
+	 * @param integer $nr1
+	 * @param integer $nr2
+	 * @param string $stat
+	 * @return string
 	 */ 
 	private function formatline( $nr1, $nr2, $stat, &$value ) { #change to $value if problems 
 		if(trim($value) == "") {

@@ -157,6 +157,11 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
+	/**
+	 * @param string $name
+	 * @param string[] $options
+	 * @param null|string $label
+	 */
 	public function add_choice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_string($name);
@@ -176,6 +181,11 @@ class SetupBlock extends Block {
 		$this->body .= $html;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string[] $options
+	 * @param null|string $label
+	 */
 	public function add_multichoice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_array($name);

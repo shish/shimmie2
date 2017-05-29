@@ -161,14 +161,14 @@
 class SearchTermParseEvent extends Event {
 	/** @var null|string  */
 	public $term = null;
-	/** @var null */
+	/** @var string[] */
 	public $context = array();
 	/** @var \Querylet[] */
 	public $querylets = array();
 
 	/**
 	 * @param string|null $term
-	 * @param array $context
+	 * @param string[] $context
 	 */
 	public function __construct($term, array $context) {
 		$this->term = $term;
@@ -225,6 +225,7 @@ class PostListBuildingEvent extends Event {
 }
 
 class Index extends Extension {
+    /** @var int */
 	private $stpen = 0;  // search term parse event number
 
 	public function onInitExt(InitExtEvent $event) {

@@ -1,6 +1,10 @@
 <?php
 
-/** @private */
+/**
+ * @private
+ * @param mixed $row
+ * @return User
+ */
 function _new_user($row) {
 	return new User($row);
 }

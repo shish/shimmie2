@@ -92,6 +92,9 @@ abstract class Extension {
 		$this->theme = $this->get_theme_object(get_called_class());
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function is_live() {
 		global $database;
 		return (

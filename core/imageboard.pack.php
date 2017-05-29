@@ -59,9 +59,19 @@ class Image {
 	/** @var string[]|null */
 	public $tag_array;
 
-	public $owner_id, $owner_ip;
+	/** @var int */
+	public $owner_id;
+	
+	/** @var string */
+	public $owner_ip;
+	
+	/** @var string */
 	public $posted;
+	
+	/** @var string */
 	public $source;
+    
+	/** @var boolean */
 	public $locked;
 
 	/**
@@ -175,6 +185,10 @@ class Image {
 		return $images;
 	}
 
+	/**
+	 * @param string[] $tags
+	 * @return boolean
+	 */
 	public static function validate_accel($tags) {
 		$yays = 0;
 		$nays = 0;
@@ -1196,7 +1210,7 @@ function move_upload_to_archive(DataUploadEvent $event) {
  * Add a directory full of images
  *
  * @param $base string
- * @return array
+ * @return array|string[]
  */
 function add_dir($base) {
     $results = array();
@@ -1236,7 +1250,7 @@ function add_image($tmpname, $filename, $tags) {
     $metadata = array();
     $metadata['filename'] = $pathinfo['basename'];
     $metadata['extension'] = $pathinfo['extension'];
-    $metadata['tags'] = $tags;
+    $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
     $event = new DataUploadEvent($tmpname, $metadata);
     send_event($event);
@@ -1251,7 +1265,7 @@ function add_image($tmpname, $filename, $tags) {
  *
  * @param int $orig_width
  * @param int $orig_height
- * @return int[]
+ * @return integer[]
  */
 function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
 	global $config;

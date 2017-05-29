@@ -14,7 +14,7 @@ class Chatbox extends Extension {
 
 		// Adds header to enable chatbox
 		$root = get_base_href();
-		$yPath = make_http("") . "/ext/chatbox/";
+		$yPath = make_http( $root . "/ext/chatbox/");
 		$page->add_html_header("
 				<script src=\"http://code.jquery.com/jquery-migrate-1.2.1.js\" type=\"text/javascript\"></script>
 				<script src=\"$root/ext/chatbox/js/yshout.js\" type=\"text/javascript\"></script>
@@ -27,10 +27,9 @@ class Chatbox extends Extension {
 				</script>
 		", 500);
 
-		// loads the chatbox at the set location    
+		// loads the chatbox at the set location
 		$html = "<div id=\"yshout\"></div>";
 		$chatblock = new Block("Chatbox", $html, "main", 97);
 		$page->add_block($chatblock);
 	}
 }
-

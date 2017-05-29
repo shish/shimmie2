@@ -263,11 +263,34 @@ class SQLite extends DBEngine {
 // }}}
 // {{{ cache engines
 interface CacheEngine {
+
+	/**
+	 * @param string $key
+	 * @return mixed
+	 */
 	public function get($key);
+
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @param integer $time
+	 * @return void
+	 */
 	public function set($key, $val, $time=0);
+
+	/**
+	 * @return void
+	 */
 	public function delete($key);
 
+	/**
+	 * @return integer
+	 */
 	public function get_hits();
+
+	/**
+	 * @return integer
+	 */
 	public function get_misses();
 }
 class NoCache implements CacheEngine {
@@ -319,7 +342,7 @@ class MemcacheCache implements CacheEngine {
 	/**
 	 * @param string $key
 	 * @param mixed $val
-	 * @param int $time
+	 * @param integer $time
 	 */
 	public function set($key, $val, $time=0) {
 		assert('!is_null($key)');
@@ -482,6 +505,10 @@ class Database {
 	 * @var null|PDO
 	 */
 	private $db = null;
+	
+	/**
+	 * @var float
+	 */
 	public $dbtime = 0.0;
 
 	/**
@@ -605,7 +632,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function commit() {
@@ -621,7 +648,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function rollback() {
@@ -662,6 +689,10 @@ class Database {
 		return $this->engine->name;
 	}
 
+	/**
+	 * @param null|PDO $db
+	 * @param string $sql
+	 */
 	private function count_execs($db, $sql, $inputarray) {
 		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
 			$fp = @fopen("data/sql.log", "a");
@@ -893,35 +924,35 @@ class MockDatabase extends Database {
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|null|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
 

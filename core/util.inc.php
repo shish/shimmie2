@@ -8,7 +8,7 @@ require_once "lib/context.php";
 /**
  * Make some data safe for printing into HTML
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function html_escape($input) {
@@ -18,7 +18,7 @@ function html_escape($input) {
 /**
  * Unescape data that was made safe for printing into HTML
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function html_unescape($input) {
@@ -28,7 +28,7 @@ function html_unescape($input) {
 /**
  * Make sure some data is safe to be used in integer context
  *
- * @param $input
+ * @param string $input
  * @return int
  */
 function int_escape($input) {
@@ -42,7 +42,7 @@ function int_escape($input) {
 /**
  * Make sure some data is safe to be used in URL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function url_escape($input) {
@@ -77,7 +77,7 @@ function url_escape($input) {
 /**
  * Make sure some data is safe to be used in SQL context
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function sql_escape($input) {
@@ -90,7 +90,7 @@ function sql_escape($input) {
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  *
  * @param mixed $input
- * @return bool
+ * @return boolean
  */
 function bool_escape($input) {
 	/*
@@ -125,7 +125,7 @@ function bool_escape($input) {
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
  *
- * @param $input
+ * @param string $input
  * @return string
  */
 function no_escape($input) {
@@ -202,7 +202,7 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @param $limit
+ * @param string|integer $limit
  * @return int
  */
 function parse_shorthand_int($limit) {
@@ -232,7 +232,7 @@ function parse_shorthand_int($limit) {
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
  *
- * @param $int
+ * @param integer $int
  * @return string
  */
 function to_shorthand_int($int) {
@@ -254,7 +254,7 @@ function to_shorthand_int($int) {
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
  *
- * @param $date
+ * @param string $date
  * @param bool $html
  * @return string
  */
@@ -267,7 +267,7 @@ function autodate($date, $html=true) {
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
  *
- * @param $dateTime
+ * @param string $dateTime
  * @return bool
  */
 function isValidDateTime($dateTime) {
@@ -283,7 +283,7 @@ function isValidDateTime($dateTime) {
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
  *
- * @param $date
+ * @param string $date
  * @return bool
  */
 function isValidDate($date) {
@@ -297,6 +297,9 @@ function isValidDate($date) {
 	return false;
 }
 
+/**
+ * @param string[] $inputs
+ */
 function validate_input($inputs) {
 	$outputs = array();
 
@@ -391,8 +394,8 @@ function validate_input($inputs) {
  *
  * FIXME: also check that IP ban ext is installed
  *
- * @param $ip
- * @param $ban_reason
+ * @param string $ip
+ * @param string $ban_reason
  * @return string
  */
 function show_ip($ip, $ban_reason) {
@@ -427,12 +430,6 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
 	$length = strlen($needle);
 	$start  = $length * -1; //negative
 	return (substr($haystack, $start) === $needle);
-}
-
-if(!function_exists("mb_strlen")) {  // D:
-	function mb_strlen($str) {return strlen($str);}
-	function mb_internal_encoding($enc) {}
-	function mb_strtolower($str) {return strtolower($str);}
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
@@ -616,6 +613,7 @@ function zglob($pattern) {
 
 /**
  * Gets contact link as mailto: or http:
+ * @return string
  */
 function contact_link() {
 	global $config;
@@ -1024,6 +1022,11 @@ function transload($url, $mfile) {
 }
 
 if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
+
+	/**
+	 * @param string $raw_headers
+	 * @return string[]
+	 */
 	function http_parse_headers ($raw_headers){
 		$headers = array(); // $headers = [];
 
@@ -1153,10 +1156,40 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
 }
 
 // More shorthand ways of logging
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+/**
+ * @param string $section
+ * @param string $message
+ * @param bool|string $flash
+ * @param array $args
+ */
 function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
@@ -1187,8 +1220,8 @@ function get_request_id() {
 /**
  * Remove an item from an array
  *
- * @param $array
- * @param $to_remove
+ * @param array $array
+ * @param mixed $to_remove
  * @return array
  */
 function array_remove($array, $to_remove) {
@@ -1207,8 +1240,8 @@ function array_remove($array, $to_remove) {
  *
  * Also removes duplicate values from the array.
  *
- * @param $array
- * @param $element
+ * @param array $array
+ * @param mixed $element
  * @return array
  */
 function array_add($array, $element) {
@@ -1222,7 +1255,7 @@ function array_add($array, $element) {
 /**
  * Return the unique elements of an array, case insensitively
  *
- * @param $array
+ * @param array $array
  * @return array
  */
 function array_iunique($array) {
@@ -1246,8 +1279,8 @@ function array_iunique($array) {
  *
  * from http://uk.php.net/network
  *
- * @param $IP
- * @param $CIDR
+ * @param string $IP
+ * @param string $CIDR
  * @return bool
  */
 function ip_in_range($IP, $CIDR) {
@@ -1386,7 +1419,10 @@ function list_files(/*string*/ $base, $_sub_dir="") {
 	return $file_list;
 }
 
-
+/**
+ * @param string $path
+ * @return string
+ */
 function path_to_tags($path) {
     $matches = array();
     if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
@@ -1596,14 +1632,17 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 /** @privatesection */
 
 function _version_check() {
-	$min_version = "5.4.8";
-	if(version_compare(PHP_VERSION, $min_version) == -1) {
-		print "
-Currently SCore Engine doesn't support versions of PHP lower than $min_version --
-if your web host is running an older version, they are dangerously out of
+	if(MIN_PHP_VERSION)
+	{
+        if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") === FALSE) {
+            print "
+Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
+(PHP reports that it is version ".phpversion().")
+If your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";
-		exit;
+            exit;
+        }
 	}
 }
 
@@ -1734,6 +1773,9 @@ function _get_user() {
 	return $user;
 }
 
+/**
+ * @return string
+ */
 function _get_query() {
 	return @$_POST["q"]?:@$_GET["q"];
 }

@@ -89,7 +89,10 @@
 		global $yShout, $prefs;
 		if ($yShout) return $yShout;
 
-		if ($log > $prefs['logs'] || $log < 0 || !is_numeric($log)) $log = 1;
+		if (filter_var($log, FILTER_VALIDATE_INT, array("options" => array("min_range" => 0, "max_range" => $prefs['logs']))) === false)
+		{
+		  $log = 1;
+		}
 		
 		$log = 'log.' . $log;
 		return new YShout($log, loggedIn());

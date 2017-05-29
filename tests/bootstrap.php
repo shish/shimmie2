@@ -16,7 +16,7 @@ if(is_null(User::by_name("demo"))) {
 	$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 }
 
-abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
+abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
 	protected $backupGlobalsBlacklist = array('database', 'config');
 	private $images = array();
 
@@ -63,6 +63,9 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertNotContains($title, $page->title);
 	}
 
+	/**
+	 * @param integer $code
+	 */
 	protected function assert_response($code) {
 		global $page;
 		$this->assertEquals($code, $page->code);
@@ -84,15 +87,24 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertContains($text, $this->page_to_text($section));
 	}
 
+	/**
+	 * @param string $text
+	 */
 	protected function assert_no_text($text, $section=null) {
 		$this->assertNotContains($text, $this->page_to_text($section));
 	}
 
+	/**
+	 * @param string $content
+	 */
 	protected function assert_content($content) {
 		global $page;
 		$this->assertContains($content, $page->data);
 	}
 
+	/**
+	 * @param string $content
+	 */
 	protected function assert_no_content($content) {
 		global $page;
 		$this->assertNotContains($content, $page->data);
@@ -120,7 +132,7 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 	// post things
 	/**
 	 * @param string $filename
-	 * @param string|string[] $tags
+	 * @param string $tags
 	 * @return int
 	 */
 	protected function post_image($filename, $tags) {
