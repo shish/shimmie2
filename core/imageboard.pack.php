@@ -953,7 +953,7 @@ class Image {
 			}
 		}
 
-		assert('$positive_tag_id_array || $negative_tag_id_array');
+		assert('$positive_tag_id_array || $negative_tag_id_array', @$_GET['q']);
 		$wheres = array();
 		if (!empty($positive_tag_id_array)) {
 			$positive_tag_id_list = join(', ', $positive_tag_id_array);
