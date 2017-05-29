@@ -682,6 +682,17 @@ class Database {
 		else $this->query_count++;
 	}
 
+	private function count_time($method, $start) {
+		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
+			$fp = @fopen("data/sql.log", "a");
+			if($fp) {
+				fwrite($fp, $method.":".(microtime(true) - $start)."\n");
+				fclose($fp);
+			}
+		}
+		$this->dbtime += microtime(true) - $start;
+	}
+
 	/**
 	 * Execute an SQL query and return an PDO result-set.
 	 *
@@ -726,7 +737,7 @@ class Database {
 	public function get_all($query, $args=array()) {
 		$_start = microtime(true);
 		$data = $this->execute($query, $args)->fetchAll();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_all", $_start);
 		return $data;
 	}
 
@@ -740,7 +751,7 @@ class Database {
 	public function get_row($query, $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_row", $_start);
 		return $row ? $row : null;
 	}
 
@@ -758,7 +769,7 @@ class Database {
 		foreach($stmt as $row) {
 			$res[] = $row[0];
 		}
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_col", $_start);
 		return $res;
 	}
 
@@ -776,7 +787,7 @@ class Database {
 		foreach($stmt as $row) {
 			$res[$row[0]] = $row[1];
 		}
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_pairs", $_start);
 		return $res;
 	}
 
@@ -790,7 +801,7 @@ class Database {
 	public function get_one($query, $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_one", $_start);
 		return $row[0];
 	}
 
