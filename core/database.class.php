@@ -399,7 +399,6 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function get($key) {
 		assert('!is_null($key)');
-		$key = "d-" . $key;
 
 		$val = $this->memcache->get($key);
 		$res = $this->memcache->getResultCode();
@@ -428,7 +427,6 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function set($key, $val, $time=0) {
 		assert('!is_null($key)');
-		$key = "d-" . $key;
 
 		$this->memcache->set($key, $val, $time);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
@@ -441,7 +439,6 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function delete($key) {
 		assert('!is_null($key)');
-		$key = "d-" . $key;
 
 		$this->memcache->delete($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
@@ -549,22 +546,10 @@ class Database {
 		$matches = array();
 		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|memcached|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
-				if(class_exists("Memcache")) {
-					$this->cache = new MemcacheCache($matches[2]);
-				}
-				else {
-					#error_log("no memcache module - caching disabled");
-					$this->cache = new NoCache();
-				}
+				$this->cache = new MemcacheCache($matches[2]);
 			}
 			else if($matches[1] == "memcached") {
-				if(class_exists("Memcached")) {
-					$this->cache = new MemcachedCache($matches[2]);
-				}
-				else {
-					#error_log("no memcached module - caching disabled");
-					$this->cache = new NoCache();
-				}
+				$this->cache = new MemcachedCache($matches[2]);
 			}
 			else if($matches[1] == "apc") {
 				$this->cache = new APCCache($matches[2]);
@@ -695,17 +680,14 @@ class Database {
 	 */
 	private function count_execs($db, $sql, $inputarray) {
 		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
-			$fp = @fopen("data/sql.log", "a");
-			if($fp) {
-				$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
-				if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
-					fwrite($fp, $sql." -- ".join(", ", $inputarray)."\n");
-				}
-				else {
-					fwrite($fp, $sql."\n");
-				}
-				fclose($fp);
+			$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
+			if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
+				$text = $sql." -- ".join(", ", $inputarray)."\n";
 			}
+			else {
+				$text = $sql."\n";
+			}
+			file_put_contents("data/sql.log", $text, FILE_APPEND);
 		}
 		if(!is_array($inputarray)) $this->query_count++;
 		# handle 2-dimensional input arrays
@@ -715,11 +697,8 @@ class Database {
 
 	private function count_time($method, $start) {
 		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
-			$fp = @fopen("data/sql.log", "a");
-			if($fp) {
-				fwrite($fp, $method.":".(microtime(true) - $start)."\n");
-				fclose($fp);
-			}
+			$text = $method.":".(microtime(true) - $start)."\n";
+			file_put_contents("data/sql.log", $text, FILE_APPEND);
 		}
 		$this->dbtime += microtime(true) - $start;
 	}
