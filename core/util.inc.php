@@ -963,6 +963,10 @@ if (!function_exists('mb_strlen')) {
 	function mb_strlen($str, $encoding) {
 		return strlen($str);
 	}
+	function mb_internal_encoding($encoding) {}
+	function mb_strtolower($str) {
+		return strtolower($str);
+	}
 }
 
 /**
