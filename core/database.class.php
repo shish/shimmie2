@@ -399,6 +399,7 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function get($key) {
 		assert('!is_null($key)');
+		$key = urlencode($key);
 
 		$val = $this->memcache->get($key);
 		$res = $this->memcache->getResultCode();
@@ -416,7 +417,7 @@ class MemcachedCache implements CacheEngine {
 			return false;
 		}
 		else {
-			error_log("Memcached error: $res");
+			error_log("Memcached error during get($key): $res");
 		}
 	}
 
@@ -427,10 +428,15 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function set($key, $val, $time=0) {
 		assert('!is_null($key)');
+		$key = urlencode($key);
 
 		$this->memcache->set($key, $val, $time);
+		$res = $this->memcache->getResultCode();
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
+		}
+		if($res != Memcached::RES_SUCCESS) {
+			error_log("Memcached error during set($key): $res");
 		}
 	}
 
@@ -439,10 +445,15 @@ class MemcachedCache implements CacheEngine {
 	 */
 	public function delete($key) {
 		assert('!is_null($key)');
+		$key = urlencode($key);
 
 		$this->memcache->delete($key);
+		$res = $this->memcache->getResultCode();
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
+		}
+		if($res != Memcached::RES_SUCCESS && $res != Memcached::RES_NOTFOUND) {
+			error_log("Memcached error during delete($key): $res");
 		}
 	}
 
