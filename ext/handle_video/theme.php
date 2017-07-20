@@ -11,7 +11,7 @@ class VideoFileHandlerTheme extends Themelet {
 		$loop = $config->get_bool("video_playback_loop");
 		$player = make_link('lib/vendor/swf/flashmediaelement.swf');
 
-		$html = "Video not playing? <a href='" . $image->parse_link_template(make_link('image/$id/$id%20-%20$tags.$ext')) . "'>Click here</a> to download the file.<br/>";
+		$html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
 		//Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
 		$supportedExts = ['mp4' => 'video/mp4', 'm4v' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm', 'flv' => 'video/flv'];
