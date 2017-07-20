@@ -46,7 +46,7 @@ class TagList extends Extension {
 			$this->theme->display_page($page);
 		}
 		else if($event->page_matches("api/internal/tag_list/complete")) {
-			if(!isset($_GET["s"])) return;
+			if(!isset($_GET["s"]) || $_GET["s"] == "" || $_GET["s"] == "_") return;
 
 			//$limit = 0;
 			$cache_key = "autocomplete-" . strtolower($_GET["s"]);
