@@ -60,9 +60,9 @@ if(document.getElementById("image-container") !== null) {
 }
 
 /*
- * konachan | sankakucomplex | gelbooru | etc.
+ * konachan | sankakucomplex | gelbooru (old versions) | etc.
  */
-else if(document.getElementById('tag-sidebar') !== null) {
+ else if(document.getElementById('tag-sidebar') !== null) {
 	if (typeof tag !== "ftp://ftp." && chk !==1) {
 		var tag = document.getElementById('tag-sidebar').innerText.replace(/ /g, "_").replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1 ");
 	}
@@ -100,6 +100,42 @@ else if(document.getElementById('tag-sidebar') !== null) {
 		else{
 			alert(toobig);
 		}
+	}
+	else{
+		alert(notsup);
+	}
+}
+
+/*
+ * gelbooru
+ */
+ else if(document.getElementById('tag-list') !== null){
+	if(typeof tag !== "ftp://ftp." && chk !==1){
+		var tags = [];
+		$('#tag-list h3:contains("Tags")').nextUntil(":not(li)").each(function(index){
+			tags.push($(this).text()
+				.replace(/ /g, "_")
+				.replace(/[\?_]*(.*?)_(\(\?\)_)?[0-9]+$/gm, "$1"));
+		});
+		tag = tags.join(" ");
+	}
+	var source = "http://" + document.location.hostname + (document.location.href.match("\/post\/show\/[0-9]+") || document.location.href.match(/\/index\.php\?page=post&s=view&id=[0-9]+/));
+	var rating =
+		$('#tag-list h3:contains("Statistics")').nextUntil(":not(li)")
+		.filter(':contains("Rating")')
+		.text().match("Rating: ([a-zA-Z]+)")[1];
+	var furl =
+		$('#tag-list h3:contains("Options")').nextUntil(":not(li)")
+		.filter(':contains("Original image")').find("a").first()[0].href;
+	// File size is not supported because it's not provided.
+
+	if(supext.search(furl.match("[a-zA-Z0-9]+$")[0]) !== -1){
+		history.pushState(history.state, document.title, location.href);
+		var href = ste + furl +
+			"&tags=" + encodeURIComponent(tag) +
+			"&rating=" + encodeURIComponent(rating) +
+			"&source=" + encodeURIComponent(source);
+		location.href = href;
 	}
 	else{
 		alert(notsup);
