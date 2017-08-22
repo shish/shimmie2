@@ -282,8 +282,7 @@ class Image {
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
-			$result = $database->execute($querylet->sql, $querylet->variables);
-			return $result->rowCount();
+			return $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
 		}
 	}
 
