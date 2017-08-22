@@ -405,7 +405,7 @@ class MemcachedCache implements CacheEngine {
 		$res = $this->memcache->getResultCode();
 
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			$hit = $res == Memcached::RES_SUCCESS ? "miss" : "hit";
+			$hit = $res == Memcached::RES_SUCCESS ? "hit" : "miss";
 			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
 		}
 		if($res == Memcached::RES_SUCCESS) {
@@ -690,7 +690,7 @@ class Database {
 	 * @param string $sql
 	 */
 	private function count_execs($db, $sql, $inputarray) {
-		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
+		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 			$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
 			if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
 				$text = $sql." -- ".join(", ", $inputarray)."\n";
@@ -707,7 +707,7 @@ class Database {
 	}
 
 	private function count_time($method, $start) {
-		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
+		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 			$text = $method.":".(microtime(true) - $start)."\n";
 			file_put_contents("data/sql.log", $text, FILE_APPEND);
 		}
