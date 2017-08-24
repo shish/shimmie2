@@ -45,6 +45,14 @@ class Block {
 	public $id;
 
 	/**
+	 * Should this block count as content for the sake of
+	 * the 404 handler
+	 *
+	 * @var boolean
+	 */
+	public $is_content = true;
+
+	/**
 	 * Construct a block.
 	 *
 	 * @param string $header

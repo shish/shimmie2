@@ -30,6 +30,7 @@ class Chatbox extends Extension {
 		// loads the chatbox at the set location
 		$html = "<div id=\"yshout\"></div>";
 		$chatblock = new Block("Chatbox", $html, "main", 97);
+		$chatblock->is_content = false;
 		$page->add_block($chatblock);
 	}
 }
