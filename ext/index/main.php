@@ -265,7 +265,7 @@ class Index extends Extension {
 					$images = $database->cache->get("post-list:$page_number");
 					if(!$images) {
 						$images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
-						$database->cache->set("post-list:$page_number", $images, 600);
+						$database->cache->set("post-list:$page_number", $images, 60);
 					}
 				}
 				else {
