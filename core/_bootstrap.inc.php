@@ -10,6 +10,7 @@ require_once "core/sys_config.inc.php";
 require_once "core/util.inc.php";
 require_once "lib/context.php";
 require_once "vendor/autoload.php";
+require_once "core/imageboard.pack.php";
 
 // set up and purify the environment
 _version_check();

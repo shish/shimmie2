@@ -9,8 +9,9 @@ class VideoFileHandlerTheme extends Themelet {
 		$full_url = make_http($ilink);
 		$autoplay = $config->get_bool("video_playback_autoplay");
 		$loop = $config->get_bool("video_playback_loop");
+		$player = make_link('lib/vendor/swf/flashmediaelement.swf');
 
-		$html = "Video not playing? <a href='" . $image->parse_link_template(make_link('image/$id/$id%20-%20$tags.$ext')) . "'>Click here</a> to download the file.<br/>";
+		$html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
 		//Browser media format support: https://developer.mozilla.org/en-US/docs/Web/HTML/Supported_media_formats
 		$supportedExts = ['mp4' => 'video/mp4', 'm4v' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm', 'flv' => 'video/flv'];
@@ -22,8 +23,8 @@ class VideoFileHandlerTheme extends Themelet {
 			}
 
 			$html_fallback = "
-						<object width=\"100%\" height=\"480px\" type=\"application/x-shockwave-flash\" data=\"lib/vendor/swf/flashmediaelement.swf\">
-							<param name=\"movie\" value=\"lib/vendor/swf/flashmediaelement.swf\" />
+						<object width=\"100%\" height=\"480px\" type=\"application/x-shockwave-flash\" data=\"$player\">
+							<param name=\"movie\" value=\"$player\" />
 
 							<param name=\"allowFullScreen\" value=\"true\" />
 							<param name=\"wmode\" value=\"opaque\" />

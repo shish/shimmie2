@@ -46,7 +46,7 @@ class TagList extends Extension {
 			$this->theme->display_page($page);
 		}
 		else if($event->page_matches("api/internal/tag_list/complete")) {
-			if(!isset($_GET["s"])) return;
+			if(!isset($_GET["s"]) || $_GET["s"] == "" || $_GET["s"] == "_") return;
 
 			//$limit = 0;
 			$cache_key = "autocomplete-" . strtolower($_GET["s"]);
@@ -269,7 +269,7 @@ class TagList extends Extension {
 		$cache_key = data_path("cache/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html");
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all($database->scoreql_to_sql("
+		$tag_data = $database->get_pairs($database->scoreql_to_sql("
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
@@ -296,8 +296,10 @@ class TagList extends Extension {
 		mb_internal_encoding('UTF-8');
 		
 		$lastLetter = "";
-		foreach($tag_data as $row) {
-			$tag = $row['tag'];
+		# postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
+		# which breaks down into "az, a-, az" :(
+		ksort($tag_data, SORT_STRING | SORT_FLAG_CASE);
+		foreach($tag_data as $tag => $count) {
 			if($lastLetter != mb_strtolower(substr($tag, 0, count($starts_with)+1))) {
 				$lastLetter = mb_strtolower(substr($tag, 0, count($starts_with)+1));
 				$h_lastLetter = html_escape($lastLetter); 
@@ -305,7 +307,6 @@ class TagList extends Extension {
 			}
 			$link = $this->tag_link($tag);
 			$h_tag = html_escape($tag);
-			$count = $row['count'];
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 

@@ -35,7 +35,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		$image->hash      = $metadata['hash'];
 		$image->filename  = (($pos = strpos($metadata['filename'],'?')) !== false) ? substr($metadata['filename'],0,$pos) : $metadata['filename'];
 		$image->ext       = (($pos = strpos($metadata['extension'],'?')) !== false) ? substr($metadata['extension'],0,$pos) : $metadata['extension'];
-		$image->tag_array = $metadata['tags'];
+		$image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
 		return $image;

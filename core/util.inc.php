@@ -966,6 +966,17 @@ function data_path($filename) {
 	return $filename;
 }
 
+if (!function_exists('mb_strlen')) {
+	// TODO: we should warn the admin that they are missing multibyte support
+	function mb_strlen($str, $encoding) {
+		return strlen($str);
+	}
+	function mb_internal_encoding($encoding) {}
+	function mb_strtolower($str) {
+		return strtolower($str);
+	}
+}
+
 /**
  * @param string $url
  * @param string $mfile
