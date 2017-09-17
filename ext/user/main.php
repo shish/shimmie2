@@ -118,8 +118,8 @@ class UserPage extends Extension {
 				$offset = 0;
 				$limit = 50;
 
-				$q = "SELECT * FROM users WHERE id >= :start AND id < :end";
-				$a = array("start"=>$offset, "end"=>$offset+$limit);
+				$q = "SELECT * FROM users WHERE 1=1";
+				$a = array("offset"=>$offset, "limit"=>$limit);
 
 				if(@$_GET['username']) {
 					$q .= " AND name LIKE :name";
@@ -135,6 +135,8 @@ class UserPage extends Extension {
 					$q .= " AND class LIKE :class";
 					$a["class"] = $_GET['class'];
 				}
+
+				$q .=  " LIMIT :limit OFFSET :offset";
 
 				$rows = $database->get_all($q, $a);
 				$users = array_map("_new_user", $rows);
