@@ -4,6 +4,6 @@ php \
 	-d extension=xdebug.so \
 	-d xdebug.profiler_output_dir=./data/prof/ \
 	-d xdebug.profiler_enable=1 \
-	./phpunit.phar \
+	./vendor/bin/phpunit \
 		--config tests/phpunit.xml \
 		--coverage-clover data/coverage.clover
