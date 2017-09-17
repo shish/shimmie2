@@ -95,7 +95,7 @@ class UserPage extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $config, $page, $user;
+		global $config, $database, $page, $user;
 
 		$this->show_user_info();
 
@@ -115,15 +115,30 @@ class UserPage extends Extension {
 				$this->page_create();
 			}
 			else if($event->get_arg(0) == "list") {
-// select users.id,name,joindate,admin,
-// (select count(*) from images where images.owner_id=users.id) as images,
-// (select count(*) from comments where comments.owner_id=users.id) as comments from users;
+				$offset = 0;
+				$limit = 50;
 
-// select users.id,name,joindate,admin,image_count,comment_count
-// from users
-// join (select owner_id,count(*) as image_count from images group by owner_id) as _images on _images.owner_id=users.id
-// join (select owner_id,count(*) as comment_count from comments group by owner_id) as _comments on _comments.owner_id=users.id;
-				$this->theme->display_user_list($page, User::by_list(0), $user);
+				$q = "SELECT * FROM users WHERE id >= :start AND id < :end";
+				$a = array("start"=>$offset, "end"=>$offset+$limit);
+
+				if(@$_GET['username']) {
+					$q .= " AND name LIKE :name";
+					$a["name"] = '%' . $_GET['username'] . '%';
+				}
+
+				if(@$_GET['email']) {
+					$q .= " AND name LIKE :email";
+					$a["email"] = '%' . $_GET['email'] . '%';
+				}
+
+				if(@$_GET['class']) {
+					$q .= " AND class LIKE :class";
+					$a["class"] = $_GET['class'];
+				}
+
+				$rows = $database->get_all($q, $a);
+				$users = array_map("_new_user", $rows);
+				$this->theme->display_user_list($page, $users, $user);
 			}
 			else if($event->get_arg(0) == "logout") {
 				$this->page_logout();
