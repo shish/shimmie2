@@ -555,7 +555,15 @@ function make_http(/*string*/ $link) {
  */
 function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
 	global $user;
-	$auth = $user->get_auth_html();
+	if($method == "GET") {
+		$link = html_escape($target);
+		$target = make_link($target);
+		$extra_inputs = "<input type='hidden' name='q' value='$link'>";
+	}
+	else {
+		$extra_inputs = $user->get_auth_html();
+	}
+
 	$extra = empty($form_id) ? '' : 'id="'. $form_id .'"';
 	if($multipart) {
 		$extra .= " enctype='multipart/form-data'";
@@ -563,7 +571,7 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
 	if($onsubmit) {
 		$extra .= ' onsubmit="'.$onsubmit.'"';
 	}
-	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$auth;
+	return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
 }
 
 /**
