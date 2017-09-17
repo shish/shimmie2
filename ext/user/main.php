@@ -122,12 +122,12 @@ class UserPage extends Extension {
 				$a = array("offset"=>$offset, "limit"=>$limit);
 
 				if(@$_GET['username']) {
-					$q .= " AND name LIKE :name";
+					$q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:name)";
 					$a["name"] = '%' . $_GET['username'] . '%';
 				}
 
 				if(@$_GET['email']) {
-					$q .= " AND name LIKE :email";
+					$q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:email)";
 					$a["email"] = '%' . $_GET['email'] . '%';
 				}
 
@@ -138,7 +138,7 @@ class UserPage extends Extension {
 
 				$q .=  " LIMIT :limit OFFSET :offset";
 
-				$rows = $database->get_all($q, $a);
+				$rows = $database->get_all($database->scoreql_to_sql($q), $a);
 				$users = array_map("_new_user", $rows);
 				$this->theme->display_user_list($page, $users, $user);
 			}
