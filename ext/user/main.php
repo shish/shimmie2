@@ -126,7 +126,7 @@ class UserPage extends Extension {
 					$a["name"] = '%' . $_GET['username'] . '%';
 				}
 
-				if(@$_GET['email']) {
+				if($user->can('delete_user') && @$_GET['email']) {
 					$q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:email)";
 					$a["email"] = '%' . $_GET['email'] . '%';
 				}
