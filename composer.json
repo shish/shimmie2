@@ -32,7 +32,7 @@
 
 		"bower-asset/jquery"         : "1.12.3",
 		"bower-asset/jquery-timeago" : "1.5.2",
-		"bower-asset/tablesorter"    : "2.*",
+		"bower-asset/tablesorter"    : "dev-master",
 		"bower-asset/mediaelement"   : "2.21.1",
 		"bower-asset/js-cookie"      : "2.1.1"
 	},
