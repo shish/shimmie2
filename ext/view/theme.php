@@ -30,11 +30,9 @@ class ViewImageTheme extends Themelet {
 
 	protected function build_pin(Image $image) {
 		if(isset($_GET['search'])) {
-			$search_terms = explode(' ', $_GET['search']);
 			$query = "search=".url_escape($_GET['search']);
 		}
 		else {
-			$search_terms = array();
 			$query = null;
 		}
 

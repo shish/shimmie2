@@ -43,10 +43,7 @@ class Handle404 extends Extension {
 	private function count_main($blocks) {
 		$n = 0;
 		foreach($blocks as $block) {
-			if($block->section == "main") $n++; // more hax.
-		}
-		if(ext_is_live("Chatbox")) {
-			$n--; // even more hax.
+			if($block->section == "main" && $block->is_content) $n++; // more hax.
 		}
 		return $n;
 	}

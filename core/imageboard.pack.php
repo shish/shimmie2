@@ -189,7 +189,7 @@ class Image {
 	 * @param string[] $tags
 	 * @return boolean
 	 */
-	public function validate_accel($tags) {
+	public static function validate_accel($tags) {
 		$yays = 0;
 		$nays = 0;
 		foreach($tags as $tag) {
@@ -209,7 +209,7 @@ class Image {
 	 * @return null|PDOStatement
 	 * @throws SCoreException
 	 */
-	public function get_accelerated_result($tags, $offset, $limit) {
+	public static function get_accelerated_result($tags, $offset, $limit) {
 		global $database;
 
 		if(!Image::validate_accel($tags)) {
@@ -282,8 +282,7 @@ class Image {
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
-			$result = $database->execute($querylet->sql, $querylet->variables);
-			return $result->rowCount();
+			return $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
 		}
 	}
 
@@ -967,7 +966,7 @@ class Image {
 			}
 		}
 
-		assert('$positive_tag_id_array || $negative_tag_id_array');
+		assert('$positive_tag_id_array || $negative_tag_id_array', @$_GET['q']);
 		$wheres = array();
 		if (!empty($positive_tag_id_array)) {
 			$positive_tag_id_list = join(', ', $positive_tag_id_array);
@@ -1210,7 +1209,7 @@ function move_upload_to_archive(DataUploadEvent $event) {
  * Add a directory full of images
  *
  * @param $base string
- * @return array
+ * @return array|string[]
  */
 function add_dir($base) {
     $results = array();
@@ -1250,7 +1249,7 @@ function add_image($tmpname, $filename, $tags) {
     $metadata = array();
     $metadata['filename'] = $pathinfo['basename'];
     $metadata['extension'] = $pathinfo['extension'];
-    $metadata['tags'] = $tags;
+    $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
     $event = new DataUploadEvent($tmpname, $metadata);
     send_event($event);

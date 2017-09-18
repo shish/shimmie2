@@ -132,7 +132,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
 	// post things
 	/**
 	 * @param string $filename
-	 * @param string|string[] $tags
+	 * @param string $tags
 	 * @return int
 	 */
 	protected function post_image($filename, $tags) {
