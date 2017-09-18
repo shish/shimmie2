@@ -140,19 +140,6 @@ class User {
 		}
 	}
 
-	/**
-	 * @param int $offset
-	 * @param int $limit
-	 * @return array
-	 */
-	public static function by_list(/*int*/ $offset, /*int*/ $limit=50) {
-		assert('is_numeric($offset)', var_export($offset, true));
-		assert('is_numeric($limit)', var_export($limit, true));
-		global $database;
-		$rows = $database->get_all("SELECT * FROM users WHERE id >= :start AND id < :end", array("start"=>$offset, "end"=>$offset+$limit));
-		return array_map("_new_user", $rows);
-	}
-
 
 	/* useful user object functions start here */
 

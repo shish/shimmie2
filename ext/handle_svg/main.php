@@ -75,7 +75,7 @@ class SVGFileHandler extends Extension {
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = $metadata['tags'];
+		$image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
 		return $image;

@@ -500,7 +500,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = array();
-        $meta['tags'] = $post->tags;
+        $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (defined('ENABLED_EXTS')) {
             if (strstr(ENABLED_EXTS, 'rating') !== false) {
@@ -536,7 +536,8 @@ class OuroborosAPI extends Extension
             if (!is_null($img)) {
                 $handler = $config->get_string("upload_collision_handler");
                 if($handler == "merge") {
-                    $merged = array_merge(Tag::explode($post->tags), $img->get_tag_array());
+                    $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
+                    $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
