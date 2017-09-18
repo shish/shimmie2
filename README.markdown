@@ -29,7 +29,7 @@ check out one of the versioned branches.
 # Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (5.6+ as of writing)
+- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.0+ as of writing)
 - GD or ImageMagick
 
 # Installation
@@ -49,33 +49,6 @@ check out one of the versioned branches.
 3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
 4. Run `composer install` in the shimmie folder.
 5. Follow instructions noted in "Installation" starting from step 3.
-
-## Upgrade from 2.3.X
-
-1. Backup your current files and database!
-2. Unzip into a clean folder
-3. Copy across the images, thumbs, and data folders
-4. Move `old/config.php` to `new/data/config/shimmie.conf.php`
-5. Edit `shimmie.conf.php` to use the new database connection format:
-
-OLD Format:
-```php
-$database_dsn = "<proto>://<username>:<password>@<host>/<database>";
-```
-
-NEW Format:
-```php
-define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;dbname=<database>");
-```
-
-The rest should be automatic~
-
-If there are any errors with the upgrade process, `in_upgrade=true` will
-be left in the config table and the process will be paused for the admin
-to investigate.
-
-Deleting this config entry and refreshing the page should continue the upgrade from where it left off.
-
 
 ### Upgrade from earlier versions
 
