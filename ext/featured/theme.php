@@ -15,7 +15,7 @@ class FeaturedTheme extends Themelet {
 	 * @param int $image_id
 	 * @return string
 	 */
-	public function get_buttons_html(/*int*/ $image_id) {
+	public function get_buttons_html(int $image_id) {
 		global $user;
 		return "
 			".make_form(make_link("featured_image/set"))."

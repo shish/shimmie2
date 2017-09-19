@@ -19,13 +19,7 @@ class CommentPostingEvent extends Event {
 	/** @var string  */
 	public $comment;
 
-	/**
-	 * @param int $image_id
-	 * @param \User $user
-	 * @param string $comment
-	 */
-	public function __construct($image_id, $user, $comment) {
-		assert('is_numeric($image_id)');
+	public function __construct(int $image_id, User $user, string $comment) {
 		$this->image_id = $image_id;
 		$this->user = $user;
 		$this->comment = $comment;
@@ -41,11 +35,7 @@ class CommentDeletionEvent extends Event {
 	/** @var  int */
 	public $comment_id;
 
-	/**
-	 * @param int $comment_id
-	 */
-	public function __construct($comment_id) {
-		assert('is_numeric($comment_id)');
+	public function __construct(int $comment_id) {
 		$this->comment_id = $comment_id;
 	}
 }
@@ -339,7 +329,7 @@ class CommentList extends Extension {
 	/**
 	 * @param int $current_page
 	 */
-	private function build_page(/*int*/ $current_page) {
+	private function build_page(int $current_page) {
 		global $database, $user;
 
 		$where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
@@ -429,7 +419,7 @@ class CommentList extends Extension {
 	 * @param int $offset
 	 * @return Comment[]
 	 */
-	private function get_user_comments(/*int*/ $user_id, /*int*/ $count, /*int*/ $offset=0) {
+	private function get_user_comments(int $user_id, int $count, int $offset=0) {
 		return $this->get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -448,7 +438,7 @@ class CommentList extends Extension {
 	 * @param int $image_id
 	 * @return Comment[]
 	 */
-	private function get_comments(/*int*/ $image_id) {
+	private function get_comments(int $image_id) {
 		return $this->get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -513,7 +503,7 @@ class CommentList extends Extension {
 	 * @param string $text
 	 * @return bool
 	 */
-	private function is_spam_akismet(/*string*/ $text) {
+	private function is_spam_akismet(string $text) {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
 			$comment = array(
@@ -556,7 +546,7 @@ class CommentList extends Extension {
 	 * @param int $comment
 	 * @return null
 	 */
-	private function is_dupe(/*int*/ $image_id, /*string*/ $comment) {
+	private function is_dupe(int $image_id, string $comment) {
 		global $database;
 		return $database->get_row("
 			SELECT *
@@ -572,7 +562,7 @@ class CommentList extends Extension {
 	 * @param string $comment
 	 * @throws CommentPostingException
 	 */
-	private function add_comment_wrapper(/*int*/ $image_id, User $user, /*string*/ $comment) {
+	private function add_comment_wrapper(int $image_id, User $user, string $comment) {
 		global $database, $page;
 
 		if(!$user->can("bypass_comment_checks")) {
@@ -601,7 +591,7 @@ class CommentList extends Extension {
 	 * @param string $comment
 	 * @throws CommentPostingException
 	 */
-	private function comment_checks(/*int*/ $image_id, User $user, /*string*/ $comment) {
+	private function comment_checks(int $image_id, User $user, string $comment) {
 		global $config, $page;
 
 		// basic sanity checks

@@ -52,10 +52,6 @@ class OwnerSetEvent extends Event {
 	/** @var \User  */
 	public $owner;
 
-	/**
-	 * @param Image $image
-	 * @param User $owner
-	 */
 	public function __construct(Image $image, User $owner) {
 		$this->image = $image;
 		$this->owner = $owner;
@@ -63,35 +59,19 @@ class OwnerSetEvent extends Event {
 }
 
 
-/*
- * SourceSetEvent:
- *   $image_id
- *   $source
- *
- */
 class SourceSetEvent extends Event {
 	/** @var \Image */
 	public $image;
 	/** @var string */
 	public $source;
 
-	/**
-	 * @param Image $image
-	 * @param string $source
-	 */
-	public function __construct(Image $image, $source) {
+	public function __construct(Image $image, string $source=null) {
 		$this->image = $image;
 		$this->source = $source;
 	}
 }
 
 
-/*
- * TagSetEvent:
- *   $image_id
- *   $tags
- *
- */
 class TagSetEvent extends Event {
 	/** @var \Image */
 	public $image;
@@ -135,13 +115,7 @@ class LockSetEvent extends Event {
 	/** @var bool */
 	public $locked;
 
-	/**
-	 * @param Image $image
-	 * @param bool $locked
-	 */
-	public function __construct(Image $image, $locked) {
-		assert('is_bool($locked)');
-
+	public function __construct(Image $image, bool $locked) {
 		$this->image = $image;
 		$this->locked = $locked;
 	}
@@ -159,25 +133,13 @@ class TagTermParseEvent extends Event {
 	/** @var bool */
 	public $parse  = TRUE; //marks the tag to be parsed, and not just checked if valid metatag
 
-	/**
-	 * @param string $term
-	 * @param int $id
-	 * @param bool $parse
-	 */
-	public function __construct($term, $id, $parse) {
-		assert('is_string($term)');
-		assert('is_int($id)');
-		assert('is_bool($parse)');
-
+	public function __construct(string $term, int $id, bool $parse) {
 		$this->term  = $term;
 		$this->id    = $id;
 		$this->parse = $parse;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function is_metatag() {
+	public function is_metatag(): bool {
 		return $this->metatag;
 	}
 }

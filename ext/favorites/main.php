@@ -21,12 +21,7 @@ class FavoriteSetEvent extends Event {
 	/** @var bool */
 	public $do_set;
 
-	/**
-	 * @param int $image_id
-	 * @param User $user
-	 * @param bool $do_set
-	 */
-	public function __construct(/*int*/ $image_id, User $user, /*boolean*/ $do_set) {
+	public function __construct(int $image_id, User $user, bool $do_set) {
 		assert(is_int($image_id));
 		assert(is_bool($do_set));
 
@@ -181,12 +176,7 @@ class Favorites extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param int $user_id
-	 * @param bool $do_set
-	 */
-	private function add_vote(/*int*/ $image_id, /*int*/ $user_id, /*bool*/ $do_set) {
+	private function add_vote(int $image_id, int $user_id, bool $do_set) {
 		global $database;
 		if ($do_set) {
 			$database->Execute(
@@ -206,7 +196,7 @@ class Favorites extends Extension {
 	 * @param Image $image
 	 * @return string[]
 	 */
-	private function list_persons_who_have_favorited(Image $image) {
+	private function list_persons_who_have_favorited(Image $image): array {
 		global $database;
 
 		return $database->get_col(

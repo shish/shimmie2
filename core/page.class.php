@@ -47,7 +47,7 @@ class Page {
 	 * Set what this page should do; "page", "data", or "redirect".
 	 * @param string $mode
 	 */
-	public function set_mode($mode) {
+	public function set_mode(string $mode) {
 		$this->mode = $mode;
 	}
 
@@ -55,7 +55,7 @@ class Page {
 	 * Set the page's MIME type.
 	 * @param string $type
 	 */
-	public function set_type($type) {
+	public function set_type(string $type) {
 		$this->type = $type;
 	}
 
@@ -75,7 +75,7 @@ class Page {
 	 * Set the raw data to be sent.
 	 * @param string $data
 	 */
-	public function set_data($data) {
+	public function set_data(string $data) {
 		$this->data = $data;
 	}
 
@@ -83,7 +83,7 @@ class Page {
 	 * Set the recommended download filename.
 	 * @param string $filename
 	 */
-	public function set_filename($filename) {
+	public function set_filename(string $filename) {
 		$this->filename = $filename;
 	}
 
@@ -101,7 +101,7 @@ class Page {
 	 * to a page in the same site).
 	 * @param string $redirect
 	 */
-	public function set_redirect($redirect) {
+	public function set_redirect(string $redirect) {
 		$this->redirect = $redirect;
 	}
 
@@ -142,31 +142,19 @@ class Page {
 	 * Set the HTTP status code
 	 * @param int $code
 	 */
-	public function set_code($code) {
+	public function set_code(int $code) {
 		$this->code = $code;
 	}
 
-	/**
-	 * Set the window title.
-	 * @param string $title
-	 */
-	public function set_title($title) {
+	public function set_title(string $title) {
 		$this->title = $title;
 	}
 
-	/**
-	 * Set the main heading.
-	 * @param string $heading
-	 */
-	public function set_heading($heading) {
+	public function set_heading(string $heading) {
 		$this->heading = $heading;
 	}
 
-	/**
-	 * Set the sub heading.
-	 * @param string $subheading
-	 */
-	public function set_subheading($subheading) {
+	public function set_subheading(string $subheading) {
 		$this->subheading = $subheading;
 	}
 
@@ -175,7 +163,7 @@ class Page {
 	 * @param string $line
 	 * @param int $position
 	 */
-	public function add_html_header($line, $position=50) {
+	public function add_html_header(string $line, int $position=50) {
 		while(isset($this->html_headers[$position])) $position++;
 		$this->html_headers[$position] = $line;
 	}
@@ -185,7 +173,7 @@ class Page {
 	 * @param string $line
 	 * @param int $position
 	 */
-	public function add_http_header($line, $position=50) {
+	public function add_http_header(string $line, int $position=50) {
 		while(isset($this->http_headers[$position])) $position++;
 		$this->http_headers[$position] = $line;
 	}
@@ -200,7 +188,7 @@ class Page {
 	 * @param int $time
 	 * @param string $path
 	 */
-	public function add_cookie($name, $value, $time, $path) {
+	public function add_cookie(string $name, $value, $time, $path) {
 		$full_name = COOKIE_PREFIX."_".$name;
 		$this->cookies[] = array($full_name, $value, $time, $path);
 	}
@@ -209,7 +197,7 @@ class Page {
 	 * @param string $name
 	 * @return string|null
 	 */
-	public function get_cookie(/*string*/ $name) {
+	public function get_cookie(string $name) {
 		$full_name = COOKIE_PREFIX."_".$name;
 		if(isset($_COOKIE[$full_name])) {
 			return $_COOKIE[$full_name];
@@ -223,7 +211,7 @@ class Page {
 	 * Get all the HTML headers that are currently set and return as a string.
 	 * @return string
 	 */
-	public function get_all_html_headers() {
+	public function get_all_html_headers(): string {
 		$data = '';
 		ksort($this->html_headers);
 		foreach ($this->html_headers as $line) {

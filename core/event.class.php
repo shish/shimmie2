@@ -43,10 +43,7 @@ class PageRequestEvent extends Event {
 	 */
 	public $part_count;
 
-	/**
-	 * @param string $path
-	 */
-	public function __construct($path) {
+	public function __construct(string $path) {
 		global $config;
 
 		// trim starting slashes
@@ -82,7 +79,7 @@ class PageRequestEvent extends Event {
 	 * @param string $name
 	 * @return bool
 	 */
-	public function page_matches(/*string*/ $name) {
+	public function page_matches(string $name): bool {
 		$parts = explode("/", $name);
 		$this->part_count = count($parts);
 
@@ -105,7 +102,7 @@ class PageRequestEvent extends Event {
 	 * @param int $n
 	 * @return string|null The argument (string) or NULL
 	 */
-	public function get_arg(/*int*/ $n) {
+	public function get_arg(int $n) {
 		$offset = $this->part_count + $n;
 		if($offset >= 0 && $offset < $this->arg_count) {
 			return $this->args[$offset];
@@ -119,7 +116,7 @@ class PageRequestEvent extends Event {
 	 * Returns the number of arguments the page request has.
 	 * @return int
 	 */
-	public function count_args() {
+	public function count_args(): int {
 		return int_escape($this->arg_count - $this->part_count);
 	}
 
@@ -127,10 +124,7 @@ class PageRequestEvent extends Event {
 	 * Many things use these functions
 	 */
 
-	/**
-	 * @return array
-	 */
-	public function get_search_terms() {
+	public function get_search_terms(): array {
 		$search_terms = array();
 		if($this->count_args() === 2) {
 			$search_terms = Tag::explode($this->get_arg(0));
@@ -138,10 +132,7 @@ class PageRequestEvent extends Event {
 		return $search_terms;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_page_number() {
+	public function get_page_number(): int {
 		$page_number = 1;
 		if($this->count_args() === 1) {
 			$page_number = int_escape($this->get_arg(0));
@@ -153,10 +144,7 @@ class PageRequestEvent extends Event {
 		return $page_number;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_page_size() {
+	public function get_page_size(): int {
 		global $config;
 		return $config->get_int('index_images');
 	}
@@ -180,7 +168,7 @@ class CommandEvent extends Event {
 	/**
 	 * @param string[] $args
 	 */
-	public function __construct(/*array(string)*/ $args) {
+	public function __construct(array $args) {
 		global $user;
 
 		$opts = array();
@@ -257,10 +245,7 @@ class TextFormattingEvent extends Event {
 	 */
 	public $stripped;
 
-	/**
-	 * @param string $text
-	 */
-	public function __construct(/*string*/ $text) {
+	public function __construct(string $text) {
 		$h_text = html_escape(trim($text));
 		$this->original  = $h_text;
 		$this->formatted = $h_text;
@@ -308,13 +293,7 @@ class LogEvent extends Event {
 	 */
 	public $args;
 
-	/**
-	 * @param string $section
-	 * @param int $priority
-	 * @param string $message
-	 * @param array $args
-	 */
-	public function __construct($section, $priority, $message, $args) {
+	public function __construct(string $section, int $priority, string $message, array $args) {
 		$this->section = $section;
 		$this->priority = $priority;
 		$this->message = $message;

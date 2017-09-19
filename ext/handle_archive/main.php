@@ -45,10 +45,6 @@ class ArchiveFileHandler extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
 	private function supported_ext($ext) {
 		$exts = array("zip");
 		return in_array(strtolower($ext), $exts);

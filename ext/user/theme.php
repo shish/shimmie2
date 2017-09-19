@@ -14,7 +14,7 @@ class UserPageTheme extends Themelet {
 	 * @param User[] $users
 	 * @param User $user
 	 */
-	public function display_user_list(Page $page, $users, User $user) {
+	public function display_user_list(Page $page, array $users, User $user) {
 		$page->set_title("User List");
 		$page->set_heading("User List");
 		$page->add_block(new NavBlock());
@@ -148,12 +148,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
 
-	/**
-	 * @param Page $page
-	 * @param array $uploads
-	 * @param array $comments
-	 */
-	public function display_ip_list(Page $page, $uploads, $comments) {
+	public function display_ip_list(Page $page, array $uploads, array $comments) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";
 		$n = 0;

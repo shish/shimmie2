@@ -66,25 +66,22 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 	// page things
-	protected function assert_title($title) {
+	protected function assert_title(string $title) {
 		global $page;
 		$this->assertContains($title, $page->title);
 	}
 
-	protected function assert_no_title($title) {
+	protected function assert_no_title(string $title) {
 		global $page;
 		$this->assertNotContains($title, $page->title);
 	}
 
-	/**
-	 * @param integer $code
-	 */
-	protected function assert_response($code) {
+	protected function assert_response(int $code) {
 		global $page;
 		$this->assertEquals($code, $page->code);
 	}
 
-	protected function page_to_text($section=null) {
+	protected function page_to_text(string $section=null) {
 		global $page;
 		$text = $page->title . "\n";
 		foreach($page->blocks as $block) {
@@ -96,29 +93,20 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase {
 		return $text;
 	}
 
-	protected function assert_text($text, $section=null) {
+	protected function assert_text(string $text, string $section=null) {
 		$this->assertContains($text, $this->page_to_text($section));
 	}
 
-	/**
-	 * @param string $text
-	 */
-	protected function assert_no_text($text, $section=null) {
+	protected function assert_no_text(string $text, string $section=null) {
 		$this->assertNotContains($text, $this->page_to_text($section));
 	}
 
-	/**
-	 * @param string $content
-	 */
-	protected function assert_content($content) {
+	protected function assert_content(string $content) {
 		global $page;
 		$this->assertContains($content, $page->data);
 	}
 
-	/**
-	 * @param string $content
-	 */
-	protected function assert_no_content($content) {
+	protected function assert_no_content(string $content) {
 		global $page;
 		$this->assertNotContains($content, $page->data);
 	}
@@ -143,12 +131,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase {
 	}
 
 	// post things
-	/**
-	 * @param string $filename
-	 * @param string $tags
-	 * @return int
-	 */
-	protected function post_image($filename, $tags) {
+	protected function post_image(string $filename, string $tags): int {
 		$dae = new DataUploadEvent($filename, array(
 			"filename" => $filename,
 			"extension" => pathinfo($filename, PATHINFO_EXTENSION),
@@ -160,10 +143,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase {
 		return $dae->image_id;
 	}
 
-	/**
-	 * @param int $image_id
-	 */
-	protected function delete_image($image_id) {
+	protected function delete_image(int $image_id) {
 		$img = Image::by_id($image_id);
 		if($img) {
 			$ide = new ImageDeletionEvent($img);

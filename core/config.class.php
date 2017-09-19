@@ -12,9 +12,9 @@ interface Config {
 	 * configuration.
 	 *
 	 * @param null|string $name
-	 * @return mixed|void
+	 * @return void
 	 */
-	public function save(/*string*/ $name=null);
+	public function save(string $name=null);
 
 	//@{ /*--------------------------------- SET ------------------------------------------------------*/
 	/**
@@ -23,7 +23,7 @@ interface Config {
 	 * @param null|int $value
 	 * @return void
 	 */
-	public function set_int(/*string*/ $name, $value);
+	public function set_int(string $name, $value);
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -31,7 +31,7 @@ interface Config {
 	 * @param null|string $value
 	 * @return void
 	 */
-	public function set_string(/*string*/ $name, $value);
+	public function set_string(string $name, $value);
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -39,7 +39,7 @@ interface Config {
 	 * @param null|bool|string $value
 	 * @return void
 	 */
-	public function set_bool(/*string*/ $name, $value);
+	public function set_bool(string $name, $value);
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -47,7 +47,7 @@ interface Config {
 	 * @param array $value
 	 * @return void
 	 */
-	public function set_array(/*string*/ $name, $value);
+	public function set_array(string $name, array $value);
 	//@} /*--------------------------------------------------------------------------------------------*/
 
 	//@{ /*-------------------------------- SET DEFAULT -----------------------------------------------*/
@@ -63,7 +63,7 @@ interface Config {
 	 * @param int $value
 	 * @return void
 	 */
-	public function set_default_int(/*string*/ $name, $value);
+	public function set_default_int(string $name, int $value);
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -77,7 +77,7 @@ interface Config {
 	 * @param string|null $value
 	 * @return void
 	 */
-	public function set_default_string(/*string*/ $name, $value);
+	public function set_default_string(string $name, string $value);
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -91,7 +91,7 @@ interface Config {
 	 * @param bool $value
 	 * @return void
 	 */
-	public function set_default_bool(/*string*/ $name, /*bool*/ $value);
+	public function set_default_bool(string $name, bool $value);
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -105,7 +105,7 @@ interface Config {
 	 * @param array $value
 	 * @return void
 	 */
-	public function set_default_array(/*string*/ $name, $value);
+	public function set_default_array(string $name, array $value);
 	//@} /*--------------------------------------------------------------------------------------------*/
 
 	//@{ /*--------------------------------- GET ------------------------------------------------------*/
@@ -115,7 +115,7 @@ interface Config {
 	 * @param null|int $default
 	 * @return int
 	 */
-	public function get_int(/*string*/ $name, $default=null);
+	public function get_int(string $name, $default=null);
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
@@ -123,7 +123,7 @@ interface Config {
 	 * @param null|string $default
 	 * @return string
 	 */
-	public function get_string(/*string*/ $name, $default=null);
+	public function get_string(string $name, $default=null);
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
@@ -131,7 +131,7 @@ interface Config {
 	 * @param null|bool|string $default
 	 * @return bool
 	 */
-	public function get_bool(/*string*/ $name, $default=null);
+	public function get_bool(string $name, $default=null);
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
@@ -139,7 +139,7 @@ interface Config {
 	 * @param array|null $default
 	 * @return array
 	 */
-	public function get_array(/*string*/ $name, $default=array());
+	public function get_array(string $name, array $default=array());
 	//@} /*--------------------------------------------------------------------------------------------*/
 }
 
@@ -153,134 +153,67 @@ interface Config {
 abstract class BaseConfig implements Config {
 	public $values = array();
 
-	/**
-	 * @param string $name
-	 * @param int|null $value
-	 * @return void
-	 */
-	public function set_int(/*string*/ $name, $value) {
+	public function set_int(string $name, $value) {
 		$this->values[$name] = parse_shorthand_int($value);
 		$this->save($name);
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $value
-	 * @return void
-	 */
-	public function set_string(/*string*/ $name, $value) {
+	public function set_string(string $name, $value) {
 		$this->values[$name] = $value;
 		$this->save($name);
 	}
 
-	/**
-	 * @param string $name
-	 * @param bool|null|string $value
-	 * @return void
-	 */
-	public function set_bool(/*string*/ $name, $value) {
-		$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
+	public function set_bool(string $name, $value) {
+		$this->values[$name] = bool_escape($value) ? 'Y' : 'N';
 		$this->save($name);
 	}
 
-	/**
-	 * @param string $name
-	 * @param array $value
-	 * @return void
-	 */
-	public function set_array(/*string*/ $name, $value) {
-		assert(isset($value) && is_array($value));
+	public function set_array(string $name, array $value) {
 		$this->values[$name] = implode(",", $value);
 		$this->save($name);
 	}
 
-	/**
-	 * @param string $name
-	 * @param int $value
-	 * @return void
-	 */
-	public function set_default_int(/*string*/ $name, $value) {
-		if(is_null($this->get($name))) {
-			$this->values[$name] = parse_shorthand_int($value);
-		}
-	}
-
-	/**
-	 * @param string $name
-	 * @param null|string $value
-	 * @return void
-	 */
-	public function set_default_string(/*string*/ $name, $value) {
+	public function set_default_int(string $name, int $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = $value;
 		}
 	}
 
-	/**
-	 * @param string $name
-	 * @param bool $value
-	 * @return void
-	 */
-	public function set_default_bool(/*string*/ $name, /*bool*/ $value) {
+	public function set_default_string(string $name, string $value) {
 		if(is_null($this->get($name))) {
-			$this->values[$name] = (($value == 'on' || $value === true) ? 'Y' : 'N');
+			$this->values[$name] = $value;
 		}
 	}
 
-	/**
-	 * @param string $name
-	 * @param array $value
-	 * @return void
-	 */
-	public function set_default_array(/*string*/ $name, $value) {
-		assert(isset($value) && is_array($value));
+	public function set_default_bool(string $name, bool $value) {
+		if(is_null($this->get($name))) {
+			$this->values[$name] = $value ? 'Y' : 'N';
+		}
+	}
+
+	public function set_default_array(string $name, array $value) {
 		if(is_null($this->get($name))) {
 			$this->values[$name] = implode(",", $value);
 		}
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|int $default
-	 * @return int
-	 */
-	public function get_int(/*string*/ $name, $default=null) {
+	public function get_int(string $name, $default=null) {
 		return (int)($this->get($name, $default));
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $default
-	 * @return null|string
-	 */
-	public function get_string(/*string*/ $name, $default=null) {
+	public function get_string(string $name, $default=null) {
 		return $this->get($name, $default);
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|bool|string $default
-	 * @return bool
-	 */
-	public function get_bool(/*string*/ $name, $default=null) {
+	public function get_bool(string $name, $default=null) {
 		return bool_escape($this->get($name, $default));
 	}
 
-	/**
-	 * @param string $name
-	 * @param array $default
-	 * @return array
-	 */
-	public function get_array(/*string*/ $name, $default=array()) {
+	public function get_array(string $name, array $default=array()): array {
 		return explode(",", $this->get($name, ""));
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|mixed $default
-	 * @return null|mixed
-	 */
-	private function get(/*string*/ $name, $default=null) {
+	private function get(string $name, $default=null) {
 		if(isset($this->values[$name])) {
 			return $this->values[$name];
 		}
@@ -297,15 +230,11 @@ abstract class BaseConfig implements Config {
  * For testing, mostly.
  */
 class HardcodeConfig extends BaseConfig {
-	public function __construct($dict) {
+	public function __construct(array $dict) {
 		$this->values = $dict;
 	}
 
-	/**
-	 * @param null|string $name
-	 * @return mixed|void
-	 */
-	public function save(/*string*/ $name=null) {
+	public function save(string $name=null) {
 		// static config is static
 	}
 }
@@ -322,11 +251,7 @@ class HardcodeConfig extends BaseConfig {
  *  ?>
  */
 class StaticConfig extends BaseConfig {
-	/**
-	 * @param string $filename
-	 * @throws Exception
-	 */
-	public function __construct($filename) {
+	public function __construct(string $filename) {
 		if(file_exists($filename)) {
 			$config = array();
 			require_once $filename;
@@ -342,11 +267,7 @@ class StaticConfig extends BaseConfig {
 		}
 	}
 
-	/**
-	 * @param null|string $name
-	 * @return mixed|void
-	 */
-	public function save(/*string*/ $name=null) {
+	public function save(string $name=null) {
 		// static config is static
 	}
 }
@@ -369,11 +290,6 @@ class DatabaseConfig extends BaseConfig {
 	/** @var Database  */
 	private $database = null;
 
-	/**
-	 * Load the config table from a database.
-	 *
-	 * @param Database $database
-	 */
 	public function __construct(Database $database) {
 		$this->database = $database;
 
@@ -390,17 +306,11 @@ class DatabaseConfig extends BaseConfig {
 		}
 	}
 
-	/**
-	 * Save the current values as the new config table.
-	 *
-	 * @param null|string $name
-	 * @return mixed|void
-	 */
-	public function save(/*string*/ $name=null) {
+	public function save(string $name=null) {
 		if(is_null($name)) {
 			reset($this->values); // rewind the array to the first element
 			foreach($this->values as $name => $value) {
-				$this->save(/*string*/ $name);
+				$this->save($name);
 			}
 		}
 		else {
@@ -417,10 +327,7 @@ class DatabaseConfig extends BaseConfig {
  * Class MockConfig
  */
 class MockConfig extends HardcodeConfig {
-	/**
-	 * @param array $config
-	 */
-	public function __construct($config=array()) {
+	public function __construct(array $config=array()) {
 		$config["db_version"] = "999";
 		$config["anon_id"] = "0";
 		parent::__construct($config);

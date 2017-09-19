@@ -7,7 +7,7 @@
  * Description: Redirect users to the rules if they use bad tags
  */
 class NotATag extends Extension {
-	public function get_priority() {return 30;} // before ImageUploadEvent and tag_history
+	public function get_priority(): int {return 30;} // before ImageUploadEvent and tag_history
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config, $database;

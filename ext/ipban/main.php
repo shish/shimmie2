@@ -16,7 +16,7 @@
 class RemoveIPBanEvent extends Event {
 	public $id;
 
-	public function __construct($id) {
+	public function __construct(int $id) {
 		$this->id = $id;
 	}
 }
@@ -27,7 +27,7 @@ class AddIPBanEvent extends Event {
 	public $reason;
 	public $end;
 
-	public function __construct(/*string(ip)*/ $ip, /*string*/ $reason, /*string*/ $end) {
+	public function __construct(string $ip, string $reason, string $end) {
 		$this->ip = trim($ip);
 		$this->reason = trim($reason);
 		$this->end = trim($end);
@@ -36,7 +36,7 @@ class AddIPBanEvent extends Event {
 // }}}
 
 class IPBan extends Extension {
-	public function get_priority() {return 10;}
+	public function get_priority(): int {return 10;}
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -202,7 +202,7 @@ class IPBan extends Extension {
 		}
 	}
 
-	private function block(/*string*/ $remote) {
+	private function block(string $remote) {
 		global $config, $database;
 
 		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");

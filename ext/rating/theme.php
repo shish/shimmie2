@@ -6,7 +6,7 @@ class RatingsTheme extends Themelet {
 	 * @param string $rating
 	 * @return string
 	 */
-	public function get_rater_html(/*int*/ $image_id, /*string*/ $rating, /*bool*/ $can_rate) {
+	public function get_rater_html(int $image_id, string $rating, bool $can_rate) {
 		$s_checked = $rating == 's' ? " checked" : "";
 		$q_checked = $rating == 'q' ? " checked" : "";
 		$e_checked = $rating == 'e' ? " checked" : "";

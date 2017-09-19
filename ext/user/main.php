@@ -9,12 +9,7 @@ class UserBlockBuildingEvent extends Event {
 	/** @var array  */
 	public $parts = array();
 
-	/**
-	 * @param string $name
-	 * @param string $link
-	 * @param int $position
-	 */
-	public function add_link($name, $link, $position=50) {
+	public function add_link(string $name, string $link, int $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = array("name" => $name, "link" => $link);
 	}
@@ -26,18 +21,11 @@ class UserPageBuildingEvent extends Event {
 	/** @var array  */
 	public $stats = array();
 
-	/**
-	 * @param User $display_user
-	 */
 	public function __construct(User $display_user) {
 		$this->display_user = $display_user;
 	}
 
-	/**
-	 * @param string $html
-	 * @param int $position
-	 */
-	public function add_stats($html, $position=50) {
+	public function add_stats(string $html, int $position=50) {
 		while(isset($this->stats[$position])) { $position++; }
 		$this->stats[$position] = $html;
 	}
@@ -51,12 +39,7 @@ class UserCreationEvent extends Event {
 	/** @var  string */
 	public $email;
 
-	/**
-	 * @param string $name
-	 * @param string $pass
-	 * @param string $email
-	 */
-	public function __construct($name, $pass, $email) {
+	public function __construct(string $name, string $pass, string $email) {
 		$this->username = $name;
 		$this->password = $pass;
 		$this->email = $email;
@@ -67,10 +50,7 @@ class UserDeletionEvent extends Event {
 	/** @var  int */
 	public $id;
 
-	/**
-	 * @param int $id
-	 */
-	public function __construct($id) {
+	public function __construct(int $id) {
 		$this->id = $id;
 	}
 }
@@ -207,9 +187,6 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param UserPageBuildingEvent $event
-	 */
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
 		global $user, $config;
 
@@ -240,9 +217,6 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param UserPageBuildingEvent $event
-	 */
 	private function display_stats(UserPageBuildingEvent $event) {
 		global $user, $page, $config;
 
@@ -265,9 +239,6 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param SetupBuildingEvent $event
-	 */
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		global $config;
 
@@ -303,9 +274,6 @@ class UserPage extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	/**
-	 * @param UserBlockBuildingEvent $event
-	 */
 	public function onUserBlockBuilding(UserBlockBuildingEvent $event) {
 		global $user;
 		$event->add_link("My Profile", make_link("user"));
@@ -315,17 +283,11 @@ class UserPage extends Extension {
 		$event->add_link("Log Out", make_link("user_admin/logout"), 99);
 	}
 
-	/**
-	 * @param UserCreationEvent $event
-	 */
 	public function onUserCreation(UserCreationEvent $event) {
 		$this->check_user_creation($event);
 		$this->create_user($event);
 	}
 
-	/**
-	 * @param SearchTermParseEvent $event
-	 */
 	public function onSearchTermParse(SearchTermParseEvent $event) {
 		global $user;
 
@@ -418,10 +380,7 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $username
-	 */
-	private function page_recover($username) {
+	private function page_recover(string $username) {
 		$user = User::by_name($username);
 		if (is_null($user)) {
 			$this->theme->display_error(404, "Error", "There's no user with that name");
@@ -457,10 +416,6 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param UserCreationEvent $event
-	 * @throws UserCreationException
-	 */
 	private function check_user_creation(UserCreationEvent $event) {
 		$name = $event->username;
 		//$pass = $event->password;
@@ -497,11 +452,7 @@ class UserPage extends Extension {
 		log_info("user", "Created User #$uid ({$event->username})");
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $pass
-	 */
-	private function set_login_cookie(/*string*/ $name, /*string*/ $pass) {
+	private function set_login_cookie(string $name, string $pass) {
 		global $config, $page;
 
 		$addr = get_session_ip($config);
@@ -514,12 +465,7 @@ class UserPage extends Extension {
 	}
 //}}}
 // Things done *to* the user {{{
-	/**
-	 * @param User $a
-	 * @param User $b
-	 * @return bool
-	 */
-	private function user_can_edit_user(User $a, User $b) {
+	private function user_can_edit_user(User $a, User $b): bool {
 		if($a->is_anonymous()) {
 			$this->theme->display_error(401, "Error", "You aren't logged in");
 			return false;
@@ -565,12 +511,7 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param User $duser
-	 * @param string $pass1
-	 * @param string $pass2
-	 */
-	private function change_password_wrapper(User $duser, $pass1, $pass2) {
+	private function change_password_wrapper(User $duser, string $pass1, string $pass2) {
 		global $user;
 
 		if($this->user_can_edit_user($user, $duser)) {
@@ -591,11 +532,7 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param User $duser
-	 * @param string $address
-	 */
-	private function change_email_wrapper(User $duser, /*string(email)*/ $address) {
+	private function change_email_wrapper(User $duser, string $address) {
 		global $user;
 
 		if($this->user_can_edit_user($user, $duser)) {
@@ -606,12 +543,7 @@ class UserPage extends Extension {
 		}
 	}
 
-	/**
-	 * @param User $duser
-	 * @param string $class
-	 * @throws NullUserException
-	 */
-	private function change_class_wrapper(User $duser, /*string(class)*/ $class) {
+	private function change_class_wrapper(User $duser, string $class) {
 		global $user;
 
 		if($user->class->name == "admin") {
@@ -622,11 +554,7 @@ class UserPage extends Extension {
 	}
 // }}}
 // ips {{{
-	/**
-	 * @param User $duser
-	 * @return array
-	 */
-	private function count_upload_ips(User $duser) {
+	private function count_upload_ips(User $duser): array {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -640,11 +568,7 @@ class UserPage extends Extension {
 		return $rows;
 	}
 
-	/**
-	 * @param User $duser
-	 * @return array
-	 */
-	private function count_comment_ips(User $duser) {
+	private function count_comment_ips(User $duser): array {
 		global $database;
 		$rows = $database->get_pairs("
 				SELECT
@@ -658,12 +582,7 @@ class UserPage extends Extension {
 		return $rows;
 	}
 
-	/**
-	 * @param Page $page
-	 * @param bool $with_images
-	 * @param bool $with_comments
-	 */
-	private function delete_user(Page $page, /*boolean*/ $with_images=false, /*boolean*/ $with_comments=false) {
+	private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false) {
 		global $user, $config, $database;
 		
 		$page->set_title("Error");

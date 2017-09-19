@@ -7,7 +7,7 @@
 
 class Source_History extends Extension {
 	// in before source are actually set, so that "get current source" works
-	public function get_priority() {return 40;}
+	public function get_priority(): int {return 40;}
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -207,7 +207,7 @@ class Source_History extends Extension {
 	 * @param int $revert_id
 	 * @return mixed|null
 	 */
-	public function get_source_history_from_revert(/*int*/ $revert_id) {
+	public function get_source_history_from_revert(int $revert_id) {
 		global $database;
 		$row = $database->get_row("
 				SELECT source_histories.*, users.name
@@ -221,7 +221,7 @@ class Source_History extends Extension {
 	 * @param int $image_id
 	 * @return array
 	 */
-	public function get_source_history_from_id(/*int*/ $image_id) {
+	public function get_source_history_from_id(int $image_id) {
 		global $database;
 		$row = $database->get_all("
 				SELECT source_histories.*, users.name

@@ -127,12 +127,7 @@ class ShimmieApi extends Extension {
 		return $res;
 	}
 
-	/**
-	 * @param string $type
-	 * @param string $query
-	 * @return array
-	 */
-	private function api_get_user($type, $query) {
+	private function api_get_user(string $type, string $query): array {
 		global $database;
 		$all = $database->get_row(
 			"SELECT id, name, joindate, class FROM users WHERE $type=?",

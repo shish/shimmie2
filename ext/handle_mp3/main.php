@@ -6,30 +6,17 @@
  */
 
 class MP3FileHandler extends DataHandlerExtension {
-	/**
-	 * @param string $hash
-	 * @return bool
-	 */
-	protected function create_thumb($hash) {
+	protected function create_thumb(string $hash): bool {
 		copy("ext/handle_mp3/thumb.jpg", warehouse_path("thumbs", $hash));
 		return true;
 	}
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	protected function supported_ext($ext) {
+	protected function supported_ext(string $ext): bool {
 		$exts = array("mp3");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	/**
-	 * @param string $filename
-	 * @param mixed[] $metadata
-	 * @return Image|null
-	 */
-	protected function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data(string $filename, array $metadata) {
 		$image = new Image();
 
 		//NOTE: No need to set width/height as we don't use it.
@@ -49,15 +36,11 @@ class MP3FileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
-	/**
-	 * @param $file
-	 * @return bool
-	 */
-	protected function check_contents($file) {
+	protected function check_contents(string $tmpname): bool {
 		$success = FALSE;
 
-		if (file_exists($file)) {
-			$mimeType = mime_content_type($file);
+		if (file_exists($tmpname)) {
+			$mimeType = mime_content_type($tmpname);
 
 			$success = ($mimeType == 'audio/mpeg');
 		}
@@ -65,4 +48,3 @@ class MP3FileHandler extends DataHandlerExtension {
 		return $success;
 	}
 }
-

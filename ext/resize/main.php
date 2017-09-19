@@ -164,7 +164,7 @@ class ResizeImage extends Extension {
 	 * @param int $height
 	 * @throws ImageResizeException
 	 */
-	private function resize_image(Image $image_obj, /*int*/ $width, /*int*/ $height) {
+	private function resize_image(Image $image_obj, int $width, int $height) {
 		global $database;
 		
 		if ( ($height <= 0) && ($width <= 0) ) {

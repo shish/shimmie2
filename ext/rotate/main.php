@@ -113,7 +113,7 @@ class RotateImage extends Extension {
 	 * @param int $deg
 	 * @throws ImageRotateException
 	 */
-	private function rotate_image(/*int*/ $image_id, /*int*/ $deg) {
+	private function rotate_image(int $image_id, int $deg) {
 		global $database;
 		
 		if ( ($deg <= -360) || ($deg >= 360) ) {

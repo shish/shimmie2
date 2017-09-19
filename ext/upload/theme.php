@@ -248,7 +248,7 @@ class UploadTheme extends Themelet {
 	 * @param Page $page
 	 * @param int $image_id
 	 */
-	public function display_replace_page(Page $page, /*int*/ $image_id) {
+	public function display_replace_page(Page $page, int $image_id) {
 		global $config, $page;
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
@@ -295,7 +295,7 @@ class UploadTheme extends Themelet {
 	 * @param Page $page
 	 * @param bool $ok
 	 */
-	public function display_upload_status(Page $page, /*bool*/ $ok) {
+	public function display_upload_status(Page $page, bool $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
 			$page->set_redirect(make_link());
@@ -312,7 +312,7 @@ class UploadTheme extends Themelet {
 	 * @param string $title
 	 * @param string $message
 	 */
-	public function display_upload_error(Page $page, /*string*/ $title, /*string*/ $message) {
+	public function display_upload_error(Page $page, string $title, string $message) {
 		$page->add_block(new Block($title, $message));
 	}
 

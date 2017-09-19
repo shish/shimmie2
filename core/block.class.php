@@ -52,16 +52,7 @@ class Block {
 	 */
 	public $is_content = true;
 
-	/**
-	 * Construct a block.
-	 *
-	 * @param string $header
-	 * @param string $body
-	 * @param string $section
-	 * @param int $position
-	 * @param null|int $id A unique ID for the block (generated automatically if null).
-	 */
-	public function __construct($header, $body, /*string*/ $section="main", /*int*/ $position=50, $id=null) {
+	public function __construct(string $header=null, string $body=null, string $section="main", int $position=50, string $id=null) {
 		$this->header = $header;
 		$this->body = $body;
 		$this->section = $section;
@@ -79,7 +70,7 @@ class Block {
 	 * @param bool $hidable
 	 * @return string
 	 */
-	public function get_html($hidable=false) {
+	public function get_html(bool $hidable=false): string {
 		$h = $this->header;
 		$b = $this->body;
 		$i = $this->id;

@@ -12,7 +12,7 @@ class Tag_HistoryTheme extends Themelet {
 	 * @param int $image_id
 	 * @param array $history
 	 */
-	public function display_history_page(Page $page, /*int*/ $image_id, /*array*/ $history) {
+	public function display_history_page(Page $page, int $image_id, array $history) {
 		global $user;
 		$start_string = "
 			<div style='text-align: left'>
@@ -72,7 +72,7 @@ class Tag_HistoryTheme extends Themelet {
 	 * @param array $history
 	 * @param int $page_number
 	 */
-	public function display_global_page(Page $page, /*array*/ $history, /*int*/ $page_number) {
+	public function display_global_page(Page $page, array $history, int $page_number) {
 		$start_string = "
 			<div style='text-align: left'>
 				".make_form(make_link("tag_history/revert"))."
@@ -125,7 +125,7 @@ class Tag_HistoryTheme extends Themelet {
 	 *
 	 * @param string $validation_msg
 	 */
-	public function display_admin_block(/*string*/ $validation_msg='') {
+	public function display_admin_block(string $validation_msg='') {
 		global $page;
 		
 		if (!empty($validation_msg)) {
@@ -163,7 +163,7 @@ class Tag_HistoryTheme extends Themelet {
 	 * @param string $title
 	 * @param string $body
 	 */
-	public function add_status(/*string*/ $title, /*string*/ $body) {
+	public function add_status(string $title, string $body) {
 		$this->messages[] = '<p><b>'. $title .'</b><br>'. $body .'</p>';
 	}
 }

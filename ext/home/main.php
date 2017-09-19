@@ -49,7 +49,7 @@ class Home extends Extension {
 		global $config;
 		$base_href = get_base_href();
 		$sitename = $config->get_string('title');
-	    $contact_link = contact_link();
+	    $contact_link = contact_link() || "";
 		$counter_dir = $config->get_string('home_counter', 'default');
 
 		$total = Image::count_images();
@@ -74,7 +74,7 @@ class Home extends Extension {
 			$main_links .= ' [url=site://ext_doc]Documentation[/url]';
 		}
 		$main_links = format_text($main_links);
-		$main_text = $config->get_string('home_text');
+		$main_text = $config->get_string('home_text', '');
 
 		return $this->theme->build_body($sitename, $main_links, $main_text, $contact_link, $num_comma, $counter_text);
 	}

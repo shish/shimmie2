@@ -373,7 +373,7 @@ class Pools extends Extension {
 	 * @param \Page $page
 	 * @param int $pageNumber
 	 */
-	private function list_pools(Page $page, /*int*/ $pageNumber) {
+	private function list_pools(Page $page, int $pageNumber) {
 		global $config, $database;
 
 		$pageNumber = clamp($pageNumber, 1, null) - 1;
@@ -446,7 +446,7 @@ class Pools extends Extension {
 	 * @param int $poolID Array of integers
 	 * @return array
 	 */
-	private function get_pool(/*int*/ $poolID) {
+	private function get_pool(int $poolID) {
 		global $database;
 		return $database->get_all("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
@@ -456,7 +456,7 @@ class Pools extends Extension {
 	 * @param int $poolID the pool id
 	 * @return array Array with only 1 element in the one dimension
 	 */
-	private function get_single_pool(/*int*/ $poolID) {
+	private function get_single_pool(int $poolID) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE id=:id", array("id"=>$poolID));
 	}
@@ -466,7 +466,7 @@ class Pools extends Extension {
 	 * @param string $poolTitle
 	 * @return array Array (with only 1 element in the one dimension)
 	 */
-	private function get_single_pool_from_title(/*string*/ $poolTitle) {
+	private function get_single_pool_from_title(string $poolTitle) {
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE title=:title", array("title"=>$poolTitle));
 	}
@@ -476,7 +476,7 @@ class Pools extends Extension {
 	 * @param int $imageID Integer ID for the image
 	 * @return int[]
 	 */
-	private function get_pool_ids(/*int*/ $imageID) {
+	private function get_pool_ids(int $imageID) {
 		global $database;
 		return $database->get_col("SELECT pool_id FROM pool_images WHERE image_id=:iid", array("iid"=>$imageID));
 	}
@@ -486,7 +486,7 @@ class Pools extends Extension {
 	 * @param int $userID
 	 * @return array
 	 */
-	private function get_last_userpool(/*int*/ $userID){
+	private function get_last_userpool(int $userID){
 		global $database;
 		return $database->get_row("SELECT * FROM pools WHERE user_id=:uid ORDER BY id DESC", array("uid"=>$userID));
 	}
@@ -495,7 +495,7 @@ class Pools extends Extension {
 	 * HERE WE GET THE IMAGES FROM THE TAG ON IMPORT
 	 * @param int $pool_id
 	 */
-	private function import_posts(/*int*/ $pool_id) {
+	private function import_posts(int $pool_id) {
 		global $page, $config;
 
 		$poolsMaxResults = $config->get_int("poolsMaxImportResults", 1000);
@@ -610,7 +610,7 @@ class Pools extends Extension {
 	 * @param int $imageID
 	 * @return bool
 	 */
-	private function check_post(/*int*/ $poolID, /*int*/ $imageID) {
+	private function check_post(int $poolID, int $imageID) {
 		global $database;
 		$result = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid AND image_id=:iid", array("pid"=>$poolID, "iid"=>$imageID));
 		return ($result != 0);
@@ -623,7 +623,7 @@ class Pools extends Extension {
 	 * @param int $imageID Integer
 	 * @return array Array returning two elements (prev, next) in 1 dimension. Each returns ImageID or NULL if none.
 	 */
-	private function get_nav_posts(/*array*/ $pool, /*int*/ $imageID) {
+	private function get_nav_posts(array $pool, int $imageID) {
 		global $database;
 
 		if (empty($pool) || empty($imageID))
@@ -674,7 +674,7 @@ class Pools extends Extension {
 	 * @param PageRequestEvent $event
 	 * @param int $poolID
 	 */
-	private function get_posts($event, /*int*/ $poolID) {
+	private function get_posts($event, int $poolID) {
 		global $config, $user, $database;
 
 		$pageNumber = int_escape($event->get_arg(2));
@@ -739,7 +739,7 @@ class Pools extends Extension {
 	 * @param int $poolID
 	 * @return \Image[] Array of image objects.
 	 */
-	private function edit_posts(/*int*/ $poolID) {
+	private function edit_posts(int $poolID) {
 		global $database;
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));
@@ -760,7 +760,7 @@ class Pools extends Extension {
 	 * @param int $poolID
 	 * @return \Image[]
 	 */
-	private function edit_order(/*int*/ $poolID) {
+	private function edit_order(int $poolID) {
 		global $database;
 
 		$result = $database->Execute("SELECT image_id FROM pool_images WHERE pool_id=:pid ORDER BY image_order ASC", array("pid"=>$poolID));									
@@ -786,7 +786,7 @@ class Pools extends Extension {
 	 *
 	 * @param int $poolID
 	 */
-	private function nuke_pool(/*int*/ $poolID) {
+	private function nuke_pool(int $poolID) {
 		global $user, $database;
 
 		$p_id = $database->get_one("SELECT user_id FROM pools WHERE id = :pid", array("pid"=>$poolID));
@@ -809,7 +809,7 @@ class Pools extends Extension {
 	 * @param string $images
 	 * @param int $count
 	 */
-	private function add_history(/*int*/ $poolID, $action, $images, $count) {
+	private function add_history(int $poolID, $action, $images, $count) {
 		global $user, $database;
 
 		$database->execute("
@@ -822,7 +822,7 @@ class Pools extends Extension {
 	 * HERE WE GET THE HISTORY LIST.
 	 * @param int $pageNumber
 	 */
-	private function get_history(/*int*/ $pageNumber) {
+	private function get_history(int $pageNumber) {
 		global $config, $database;
 
 		if(is_null($pageNumber) || !is_numeric($pageNumber))
@@ -855,7 +855,7 @@ class Pools extends Extension {
 	 * HERE GO BACK IN HISTORY AND ADD OR REMOVE POSTS TO POOL.
 	 * @param int $historyID
 	 */
-	private function revert_history(/*int*/ $historyID) {
+	private function revert_history(int $historyID) {
 		global $database;
 		$status = $database->get_all("SELECT * FROM pool_history WHERE id=:hid", array("hid"=>$historyID));
 
@@ -905,7 +905,7 @@ class Pools extends Extension {
 	 * @param bool $history
 	 * @param int $imageOrder
 	 */
-	private function add_post(/*int*/ $poolID, /*int*/ $imageID, $history=false, $imageOrder=0) {
+	private function add_post(int $poolID, int $imageID, $history=false, $imageOrder=0) {
 		global $database, $config;
 
 		if(!$this->check_post($poolID, $imageID)) {
@@ -939,7 +939,7 @@ class Pools extends Extension {
 	 * @param int $imageID
 	 * @param bool $history
 	 */
-	private function delete_post(/*int*/ $poolID, /*int*/ $imageID, $history=false) {
+	private function delete_post(int $poolID, int $imageID, $history=false) {
 		global $database;
 
 		$database->execute("DELETE FROM pool_images WHERE pool_id = :pid AND image_id = :iid", array("pid"=>$poolID, "iid"=>$imageID));

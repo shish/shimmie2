@@ -35,21 +35,12 @@ class IcoFileHandler extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	private function supported_ext($ext) {
+	private function supported_ext(string $ext): bool {
 		$exts = array("ico", "ani", "cur");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	/**
-	 * @param string $filename
-	 * @param mixed[] $metadata
-	 * @return Image
-	 */
-	private function create_image_from_data($filename, $metadata) {
+	private function create_image_from_data(string $filename, array $metadata) {
 		$image = new Image();
 
 		$fp = fopen($filename, "r");
@@ -73,11 +64,7 @@ class IcoFileHandler extends Extension {
 		return $image;
 	}
 
-	/**
-	 * @param string $file
-	 * @return bool
-	 */
-	private function check_contents($file) {
+	private function check_contents(string $file): bool {
 		if(!file_exists($file)) return false;
 		$fp = fopen($file, "r");
 		$header = unpack("Snull/Stype/Scount", fread($fp, 6));
@@ -85,11 +72,7 @@ class IcoFileHandler extends Extension {
 		return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
 	}
 
-	/**
-	 * @param string $hash
-	 * @return bool
-	 */
-	private function create_thumb($hash) {
+	private function create_thumb(string $hash): bool {
 		global $config;
 
 		$inname  = warehouse_path("images", $hash);

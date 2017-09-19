@@ -122,8 +122,8 @@ class XMLSitemap extends Extension
 	 * @param string $priority
 	 * @param string $date
 	 */
-	private function add_sitemap_queue( /*array(urls)*/ $urls, $changefreq = "monthly",
-										$priority = "0.5", $date = "2013-02-01")
+	private function add_sitemap_queue(array $urls, $changefreq = "monthly",
+                                       $priority = "0.5", $date = "2013-02-01")
 	{
 		foreach ($urls as $url) {
 			$link = make_http(make_link("$url"));

@@ -66,7 +66,7 @@ class ReportImageTheme extends Themelet {
 	 * @param Image $image
 	 * @param ImageReport[] $reports
 	 */
-	public function display_image_banner(Image $image, /*array*/ $reports) {
+	public function display_image_banner(Image $image, array $reports) {
 		global $config, $page;
 
 		$i_image = int_escape($image->id);

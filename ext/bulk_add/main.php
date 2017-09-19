@@ -18,7 +18,7 @@
 class BulkAddEvent extends Event {
 	public $dir, $results;
 
-	public function __construct($dir) {
+	public function __construct(string $dir) {
 		$this->dir = $dir;
 		$this->results = array();
 	}

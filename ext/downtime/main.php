@@ -13,7 +13,7 @@
  */
 
 class Downtime extends Extension {
-	public function get_priority() {return 10;}
+	public function get_priority(): int {return 10;}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("Downtime");

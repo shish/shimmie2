@@ -14,10 +14,6 @@ class WikiUpdateEvent extends Event {
 	/** @var \WikiPage  */
 	public $wikipage;
 
-	/**
-	 * @param User $user
-	 * @param WikiPage $wikipage
-	 */
 	public function __construct(User $user, WikiPage $wikipage) {
 		$this->user = $user;
 		$this->wikipage = $wikipage;
@@ -52,10 +48,7 @@ class WikiPage {
 	/** @var string */
 	public $body;
 
-	/**
-	 * @param mixed $row
-	 */
-	public function __construct($row=null) {
+	public function __construct(array $row=null) {
 		//assert(!empty($row));
 
 		if (!is_null($row)) {
@@ -77,10 +70,7 @@ class WikiPage {
 		return User::by_id($this->owner_id);
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function is_locked() {
+	public function is_locked(): bool {
 		return $this->locked;
 	}
 }
@@ -205,7 +195,7 @@ class Wiki extends Extension {
 	 * @param WikiPage $page
 	 * @return bool
 	 */
-	public static function can_edit(User $user, WikiPage $page) {
+	public static function can_edit(User $user, WikiPage $page): bool {
 		// admins can edit everything
 		if($user->is_admin()) return true;
 
@@ -218,12 +208,7 @@ class Wiki extends Extension {
 		return false;
 	}
 
-	/**
-	 * @param string $title
-	 * @param integer $revision
-	 * @return WikiPage
-	 */
-	private function get_page($title, $revision=-1) {
+	private function get_page(string $title, int $revision=-1): WikiPage {
 		global $database;
 		// first try and get the actual page
 		$row = $database->get_row($database->scoreql_to_sql("

@@ -16,12 +16,7 @@ class AuthorSetEvent extends Event {
 	/** @var string */
 	public $author;
 
-	/**
-	 * @param Image $image
-	 * @param User $user
-	 * @param string $author
-	 */
-	public function __construct(Image $image, User $user, /*string*/ $author) {
+	public function __construct(Image $image, User $user, string $author) {
         $this->image = $image;
         $this->user = $user;
         $this->author = $author;
@@ -407,57 +402,32 @@ class Artists extends Extension {
         }
     }
 
-    /**
-     * @param int $imageID
-     * @return string
-     */
-    private function get_artistName_by_imageID($imageID) {
-        assert(is_numeric($imageID));
-
+    private function get_artistName_by_imageID(int $imageID): string {
         global $database;
         $result = $database->get_row("SELECT author FROM images WHERE id = ?", array($imageID));
         return stripslashes($result['author']);
     }
 
-    /**
-     * @param string $url
-     * @return bool
-     */
-    private function url_exists_by_url($url) {
+    private function url_exists_by_url(string $url): bool {
         global $database;
         $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", array($url));
         return ($result != 0);
     }
 
-    /**
-     * @param string $member
-     * @return bool
-     */
-    private function member_exists_by_name($member) {
+    private function member_exists_by_name(string $member): bool {
         global $database;
         $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", array($member));
         return ($result != 0);
     }
 
-    /**
-     * @param string $alias
-     * @return bool
-     */
-    private function alias_exists_by_name($alias) {
+    private function alias_exists_by_name(string $alias): bool {
         global $database;
 
         $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", array($alias));
         return ($result != 0);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $alias
-     * @return bool
-     */
-    private function alias_exists($artistID, $alias) {
-        assert(is_numeric($artistID));
-
+    private function alias_exists(int $artistID, string $alias): bool {
         global $database;
         $result = $database->get_one(
             "SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?",
@@ -466,131 +436,66 @@ class Artists extends Extension {
         return ($result != 0);
     }
 
-    /**
-     * @param string $url
-     * @return int
-     */
-    private function get_artistID_by_url($url) {
+    private function get_artistID_by_url(string $url): int {
         global $database;
         return $database->get_one("SELECT artist_id FROM artist_urls WHERE url = ?", array($url));
     }
 
-    /**
-     * @param string $member
-     * @return int
-     */
-    private function get_artistID_by_memberName($member) {
+    private function get_artistID_by_memberName(string $member): int {
         global $database;
         return $database->get_one("SELECT artist_id FROM artist_members WHERE name = ?", array($member));
     }
 
-    /**
-     * @param int $artistID
-     * @return string
-     */
-    private function get_artistName_by_artistID($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_artistName_by_artistID(int $artistID): string {
         global $database;
         return $database->get_one("SELECT name FROM artists WHERE id = ?", array($artistID));
     }
 
-    /**
-     * @param int $aliasID
-     * @return int
-     */
-    private function get_artistID_by_aliasID($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function get_artistID_by_aliasID(int $aliasID): int {
         global $database;
         return $database->get_one("SELECT artist_id FROM artist_alias WHERE id = ?", array($aliasID));
     }
 
-    /**
-     * @param int $memberID
-     * @return int
-     */
-    private function get_artistID_by_memberID($memberID) {
-        assert(is_numeric($memberID));
-
+    private function get_artistID_by_memberID(int $memberID): int {
         global $database;
         return $database->get_one("SELECT artist_id FROM artist_members WHERE id = ?", array($memberID));
     }
 
-    /**
-     * @param int $urlID
-     * @return int
-     */
-    private function get_artistID_by_urlID($urlID) {
-        assert(is_numeric($urlID));
-
+    private function get_artistID_by_urlID(int $urlID): int {
         global $database;
         return $database->get_one("SELECT artist_id FROM artist_urls WHERE id = ?", array($urlID));
     }
 
-    /**
-     * @param int $aliasID
-     */
-    private function delete_alias($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function delete_alias(int $aliasID) {
         global $database;
         $database->execute("DELETE FROM artist_alias WHERE id = ?", array($aliasID));
     }
 
-    /**
-     * @param int $urlID
-     */
-    private function delete_url($urlID) {
-        assert(is_numeric($urlID));
-
+    private function delete_url(int $urlID) {
         global $database;
         $database->execute("DELETE FROM artist_urls WHERE id = ?", array($urlID));
     }
 
-    /**
-     * @param int $memberID
-     */
-    private function delete_member($memberID) {
-        assert(is_numeric($memberID));
-
+    private function delete_member(int $memberID) {
         global $database;
         $database->execute("DELETE FROM artist_members WHERE id = ?", array($memberID));
     }
 
-    /**
-     * @param int $aliasID
-     * @return array
-     */
-    private function get_alias_by_id($aliasID) {
-        assert(is_numeric($aliasID));
-
+    private function get_alias_by_id(int $aliasID): array {
         global $database;
         $result = $database->get_row("SELECT * FROM artist_alias WHERE id = ?", array($aliasID));
         $result["alias"] = stripslashes($result["alias"]);
         return $result;
     }
 
-    /**
-     * @param int $urlID
-     * @return array
-     */
-    private function get_url_by_id($urlID) {
-        assert(is_numeric($urlID));
-
+    private function get_url_by_id(int $urlID): array {
         global $database;
         $result = $database->get_row("SELECT * FROM artist_urls WHERE id = ?", array($urlID));
         $result["url"] = stripslashes($result["url"]);
         return $result;
     }
 
-    /**
-     * @param int $memberID
-     * @return array
-     */
-    private function get_member_by_id($memberID) {
-        assert(is_numeric($memberID));
-
+    private function get_member_by_id(int $memberID): array {
         global $database;
         $result = $database->get_row("SELECT * FROM artist_members WHERE id = ?", array($memberID));
         $result["name"] = stripslashes($result["name"]);
@@ -701,15 +606,7 @@ class Artists extends Extension {
         $this->save_existing_alias($inputs['aliasID'], $inputs['alias'], $user->id);
     }
 
-    /**
-     * @param int $aliasID
-     * @param string $alias
-     * @param int $userID
-     */
-    private function save_existing_alias($aliasID, $alias, $userID) {
-        assert(is_numeric($userID));
-        assert(is_numeric($aliasID));
-
+    private function save_existing_alias(int $aliasID, string $alias, int $userID) {
         global $database;
         $database->execute(
             "UPDATE artist_alias SET alias = ?, updated = now(), user_id  = ? WHERE id = ? ",
@@ -726,15 +623,7 @@ class Artists extends Extension {
         $this->save_existing_url($inputs['urlID'], $inputs['url'], $user->id);
     }
 
-    /**
-     * @param int $urlID
-     * @param string $url
-     * @param int $userID
-     */
-    private function save_existing_url($urlID, $url, $userID) {
-        assert(is_numeric($userID));
-        assert(is_numeric($urlID));
-
+    private function save_existing_url(int $urlID, string $url, int $userID) {
         global $database;
         $database->execute(
             "UPDATE artist_urls SET url = ?, updated = now(), user_id = ? WHERE id = ?",
@@ -751,15 +640,7 @@ class Artists extends Extension {
         $this->save_existing_member($inputs['memberID'], $inputs['name'], $user->id);
     }
 
-    /**
-     * @param int $memberID
-     * @param string $memberName
-     * @param int $userID
-     */
-    private function save_existing_member($memberID, $memberName, $userID) {
-        assert(is_numeric($memberID));
-        assert(is_numeric($userID));
-
+    private function save_existing_member(int $memberID, string $memberName, int $userID) {
         global $database;
         $database->execute(
             "UPDATE artist_members SET name = ?, updated = now(), user_id = ? WHERE id = ?",
@@ -826,12 +707,7 @@ class Artists extends Extension {
         return $artistID;
     }
 
-    /**
-     * @param string $name
-     * @param string $notes
-     * @return int
-     */
-    private function save_new_artist($name, $notes) {
+    private function save_new_artist(string $name, string $notes): int {
         global $database, $user;
         $database->execute("
             INSERT INTO artists (user_id, name, notes, created, updated)
@@ -840,11 +716,7 @@ class Artists extends Extension {
         return $database->get_last_insert_id('artists_id_seq');
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    private function artist_exists($name) {
+    private function artist_exists(string $name): bool {
         global $database;
         $result = $database->get_one(
             "SELECT COUNT(1) FROM artists WHERE name = ?",
@@ -853,13 +725,7 @@ class Artists extends Extension {
         return ($result != 0);
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_artist($artistID){
-        assert(is_numeric($artistID));
-
+    private function get_artist(int $artistID): array {
         global $database;
         $result = $database->get_row(
             "SELECT * FROM artists WHERE id = ?",
@@ -872,13 +738,7 @@ class Artists extends Extension {
         return $result;
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_members($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_members(int $artistID): array {
         global $database;
         $result = $database->get_all(
             "SELECT * FROM artist_members WHERE artist_id = ?",
@@ -893,13 +753,7 @@ class Artists extends Extension {
         return $result;
     }
 
-    /**
-     * @param int $artistID
-     * @return array
-     */
-    private function get_urls($artistID) {
-        assert(is_numeric($artistID));
-
+    private function get_urls(int $artistID): array {
         global $database;
         $result = $database->get_all(
             "SELECT id, url FROM artist_urls WHERE artist_id = ?",
@@ -914,11 +768,7 @@ class Artists extends Extension {
         return $result;
     }
 
-	/**
-	 * @param string $name
-	 * @return int
-	 */
-	private function get_artist_id($name) {
+	private function get_artist_id(string $name): int {
 		global $database;
 		return (int)$database->get_one(
             "SELECT id FROM artists WHERE name = ?",
@@ -926,11 +776,7 @@ class Artists extends Extension {
         );
 	}
 
-    /**
-     * @param string $alias
-     * @return int
-     */
-    private function get_artistID_by_aliasName($alias) {
+    private function get_artistID_by_aliasName(string $alias): int {
         global $database;
 
         return (int)$database->get_one(
@@ -939,13 +785,7 @@ class Artists extends Extension {
         );
     }
 
-
-    /**
-     * @param int $artistID
-     */
-	private function delete_artist($artistID) {
-        assert(is_numeric($artistID));
-
+	private function delete_artist(int $artistID) {
         global $database;
         $database->execute(
             "DELETE FROM artists WHERE id = ? ",
@@ -1055,16 +895,8 @@ class Artists extends Extension {
                 $this->save_new_url($artistID, $url, $user->id);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $url
-     * @param int $userID
-     */
-    private function save_new_url($artistID, $url, $userID) {
+    private function save_new_url(int $artistID, string $url, int $userID) {
         global $database;
-
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
 
         $database->execute(
             "INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (?, now(), now(), ?, ?)",
@@ -1086,16 +918,8 @@ class Artists extends Extension {
                 $this->save_new_alias($artistID, $alias, $user->id);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $alias
-     * @param int $userID
-     */
-    private function save_new_alias($artistID, $alias, $userID) {
+    private function save_new_alias(int $artistID, string $alias, int $userID) {
         global $database;
-
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
 
         $database->execute(
             "INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (?, now(), now(), ?, ?)",
@@ -1117,16 +941,8 @@ class Artists extends Extension {
                 $this->save_new_member($artistID, $member, $user->id);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $member
-     * @param int $userID
-     */
-    private function save_new_member($artistID, $member, $userID) {
+    private function save_new_member(int $artistID, string $member, int $userID) {
         global $database;
-
-        assert(is_numeric($artistID));
-        assert(is_numeric($userID));
 
         $database->execute(
             "INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (?, ?, now(), now(), ?)",
@@ -1134,15 +950,8 @@ class Artists extends Extension {
         );
     }
 
-    /**
-     * @param int $artistID
-     * @param string $member
-     * @return bool
-     */
-    private function member_exists($artistID, $member) {
+    private function member_exists(int $artistID, string $member): bool {
         global $database;
-
-        assert(is_numeric($artistID));
 
         $result = $database->get_one(
             "SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?",
@@ -1151,15 +960,8 @@ class Artists extends Extension {
         return ($result != 0);
     }
 
-    /**
-     * @param int $artistID
-     * @param string $url
-     * @return bool
-     */
-    private function url_exists($artistID, $url) {
+    private function url_exists(int $artistID, string $url): bool {
         global $database;
-
-        assert(is_numeric($artistID));
 
         $result = $database->get_one(
             "SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?",
@@ -1170,14 +972,9 @@ class Artists extends Extension {
 
 	/**
 	 * HERE WE GET THE INFO OF THE ALIAS
-     *
-     * @param int $artistID
-     * @return array
 	 */
-	private function get_alias($artistID) {
+	private function get_alias(int $artistID): array {
         global $database;
-
-        assert(is_numeric($artistID));
 
         $result = $database->get_all("
             SELECT id AS alias_id, alias AS alias_name

@@ -7,7 +7,7 @@
  * Description: Allows the admin to set min / max image dimentions
  */
 class ResolutionLimit extends Extension {
-	public function get_priority() {return 40;} // early, to veto ImageUploadEvent
+	public function get_priority(): int {return 40;} // early, to veto ImageUploadEvent
 
 	public function onImageAddition(ImageAdditionEvent $event) {
 		global $config;

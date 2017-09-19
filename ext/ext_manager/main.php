@@ -87,7 +87,7 @@ class ExtensionInfo {
 	 * @param string $fname
 	 * @return bool|null
 	 */
-	private function is_enabled(/*string*/ $fname) {
+	private function is_enabled(string $fname) {
 		$core = explode(",", CORE_EXTS);
 		$extra = explode(",", EXTRA_EXTS);
 
@@ -160,7 +160,7 @@ class ExtManager extends Extension {
 	 * @param bool $all
 	 * @return ExtensionInfo[]
 	 */
-	private function get_extensions(/*bool*/ $all) {
+	private function get_extensions(bool $all) {
 		$extensions = array();
 		if($all) {
 			$exts = zglob("ext/*/main.php");
