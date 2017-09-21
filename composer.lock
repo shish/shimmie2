@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ca673d1ec39051720ade02039e5e2b4e",
+    "content-hash": "eb5180245fbf27fb02d9a4018a2ff059",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -259,6 +259,47 @@
                 "reference": "fd4ff50eb577457c1b7b887401663e91e77625ae"
             },
             "type": "library"
+        },
+        {
+            "name": "shish/libcontext-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shish/libcontext-php.git",
+                "reference": "7c80a23c56cfb207c02c18292720d3bd5aac474d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shish/libcontext-php/zipball/7c80a23c56cfb207c02c18292720d3bd5aac474d",
+                "reference": "7c80a23c56cfb207c02c18292720d3bd5aac474d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "6.*"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shish",
+                    "email": "webmaster@shishnet.org",
+                    "homepage": "http://shishnet.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A performance monitoring thing",
+            "homepage": "https://github.com/shish/libcontext-php",
+            "keywords": [
+                "performance",
+                "profiler"
+            ],
+            "time": "2017-09-21T03:48:29+00:00"
         }
     ],
     "packages-dev": [
@@ -1715,6 +1756,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "shish/libcontext-php": 20,
         "bower-asset/tablesorter": 20
     },
     "prefer-stable": false,

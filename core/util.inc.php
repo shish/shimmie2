@@ -1,5 +1,5 @@
 <?php
-require_once "lib/context.php";
+require_once "vendor/shish/libcontext-php/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
@@ -1466,9 +1466,9 @@ global $_shm_event_listeners;
 $_shm_event_listeners = array();
 
 function _load_event_listeners() {
-	global $_shm_event_listeners;
+	global $_shm_event_listeners, $_shm_ctx;
 
-	ctx_log_start("Loading extensions");
+	$_shm_ctx->log_start("Loading extensions");
 
 	$cache_path = data_path("cache/shm_event_listeners.php");
 	if(COMPILE_ELS && file_exists($cache_path)) {
@@ -1482,7 +1482,7 @@ function _load_event_listeners() {
 		}
 	}
 
-	ctx_log_endok();
+	$_shm_ctx->log_endok();
 }
 
 function _set_event_listeners() {
@@ -1568,27 +1568,27 @@ $_shm_event_count = 0;
  * @param Event $event
  */
 function send_event(Event $event) {
-	global $_shm_event_listeners, $_shm_event_count;
+	global $_shm_event_listeners, $_shm_event_count, $_shm_ctx;
 	if(!isset($_shm_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));
 
 	// send_event() is performance sensitive, and with the number
 	// of times context gets called the time starts to add up
-	$ctx = constant('CONTEXT');
+	$ctx_enabled = constant('CONTEXT');
 
-	if($ctx) ctx_log_start(get_class($event));
+	if($ctx_enabled) $_shm_ctx->log_start(get_class($event));
 	// SHIT: http://bugs.php.net/bug.php?id=35106
 	$my_event_listeners = $_shm_event_listeners[get_class($event)];
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
-		if($ctx) ctx_log_start(get_class($listener));
+		if($ctx_enabled) $_shm_ctx->log_start(get_class($listener));
 		if(method_exists($listener, $method_name)) {
 			$listener->$method_name($event);
 		}
-		if($ctx) ctx_log_endok();
+		if($ctx_enabled) $_shm_ctx->log_endok();
 	}
 	$_shm_event_count++;
-	if($ctx) ctx_log_endok();
+	if($ctx_enabled) $_shm_ctx->log_endok();
 }
 
 
@@ -1666,6 +1666,8 @@ date and you should plan on moving elsewhere.
 }
 
 function _sanitise_environment() {
+	global $_shm_ctx;
+
 	if(TIMEZONE) {
 		date_default_timezone_set(TIMEZONE);
 	}
@@ -1679,8 +1681,9 @@ function _sanitise_environment() {
 		assert_options(ASSERT_CALLBACK, 'score_assert_handler');
 	}
 
+	$_shm_ctx = new Context();
 	if(CONTEXT) {
-		ctx_set_log(CONTEXT);
+		$_shm_ctx->set_log(CONTEXT);
 	}
 
 	if(COVERAGE) {
