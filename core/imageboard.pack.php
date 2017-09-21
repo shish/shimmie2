@@ -781,7 +781,8 @@ class Image {
 				}
 			}
 
-			$choice = $flexihash->lookup($pre.$post);
+			// $choice = $flexihash->lookup($pre.$post);
+			$choice = $flexihash->lookup($this->hash);  // doesn't change
 			$tmpl = $pre.$choice.$post;
 		}
 
