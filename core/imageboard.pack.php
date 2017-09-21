@@ -232,20 +232,21 @@ class Image {
 		if($tag_count === 0) {
 			$total = $database->cache->get("image-count");
 			if(!$total) {
-				$total = $database->get_one("SELECT COUNT(*) FROM images") || 0;
+				$total = $database->get_one("SELECT COUNT(*) FROM images");
 				$database->cache->set("image-count", $total, 600);
 			}
-			return $total;
 		}
 		else if($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
-			return $database->get_one(
+			$total = $database->get_one(
 				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
-				array("tag"=>$tags[0])) || 0;
+				array("tag"=>$tags[0]));
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
-			return $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables) || 0;
+			$total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
 		}
+		if(is_null($total)) return 0;
+		return $total;
 	}
 
 	/**
@@ -740,7 +741,8 @@ class Image {
 				}
 			}
 
-			$choice = $flexihash->lookup($pre.$post);
+			// $choice = $flexihash->lookup($pre.$post);
+			$choice = $flexihash->lookup($this->hash);  // doesn't change
 			$tmpl = $pre.$choice.$post;
 		}
 
