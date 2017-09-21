@@ -16,8 +16,7 @@ if(is_null(User::by_name("demo"))) {
 	$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 }
 
-abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
-	protected $backupGlobalsBlacklist = array('database', 'config');
+abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase {
 	private $images = array();
 
 	public function setUp() {
@@ -45,6 +44,20 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
 		global $page;
 		if(!$args) $args = array();
 		$_GET = $args;
+		$_POST = array();
+		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
+		send_event(new PageRequestEvent($page_name));
+		if($page->mode == "redirect") {
+			$page->code = 302;
+		}
+	}
+
+	protected function post_page($page_name, $args=null) {
+		// use a fresh page
+		global $page;
+		if(!$args) $args = array();
+		$_GET = array();
+		$_POST = $args;
 		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 		send_event(new PageRequestEvent($page_name));
 		if($page->mode == "redirect") {
