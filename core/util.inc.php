@@ -715,7 +715,7 @@ function getMimeType(string $file, string $ext=""): string {
 	// Static extension lookup
 	$ext = strtolower($ext);
 
-	if (isset($exts[$ext])) { return MIME_TYPE_MAP[$ext]; }
+	if (isset(MIME_TYPE_MAP[$ext])) { return MIME_TYPE_MAP[$ext]; }
 
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
