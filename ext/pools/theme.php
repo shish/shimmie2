@@ -5,7 +5,7 @@ class PoolsTheme extends Themelet {
 	 * Adds a block to the panel with information on the pool(s) the image is in.
 	 * @param array Multidimensional array containing pool id, info & nav IDs.
 	 */
-	public function pool_info(/*array*/ $navIDs) {
+	public function pool_info(array $navIDs) {
 		global $page;
 
 		$linksPools = array();
@@ -37,7 +37,7 @@ class PoolsTheme extends Themelet {
 	 * @param array $pools
 	 * @return string
 	 */
-	public function get_adder_html(Image $image, /*array*/ $pools) {
+	public function get_adder_html(Image $image, array $pools) {
 		$h = "";
 		foreach($pools as $pool) {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
@@ -61,7 +61,7 @@ class PoolsTheme extends Themelet {
 	 * @param int $pageNumber
 	 * @param int $totalPages
 	 */
-	public function list_pools(Page $page, /*array*/ $pools, /*int*/ $pageNumber, /*int*/ $totalPages) {
+	public function list_pools(Page $page, array $pools, int $pageNumber, int $totalPages) {
 		$html = '
 				<table id="poolsList" class="zebra">
 					<thead><tr>
@@ -125,12 +125,7 @@ class PoolsTheme extends Themelet {
 		$page->add_block(new Block("Create Pool", $create_html, "main", 20));
 	}
 
-	/**
-	 * @param array $pools
-	 * @param string $heading
-	 * @param bool $check_all
-	 */
-	private function display_top(/*array*/ $pools, /*string*/ $heading, $check_all=false) {
+	private function display_top(array $pools=null, string $heading, bool $check_all=false) {
 		global $page, $user;
 
 		$page->set_title($heading);
@@ -167,7 +162,7 @@ class PoolsTheme extends Themelet {
 	 * @param int $pageNumber
 	 * @param int $totalPages
 	 */
-	public function view_pool(/*array*/ $pools, /*array*/ $images, /*int*/ $pageNumber, /*int*/ $totalPages) {
+	public function view_pool(array $pools, array $images, int $pageNumber, int $totalPages) {
 		global $page;
 
 		$this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
@@ -190,7 +185,7 @@ class PoolsTheme extends Themelet {
 	 * @param array $pool
 	 * @param bool $check_all
 	 */
-	public function sidebar_options(Page $page, $pool, /*bool*/ $check_all) {
+	public function sidebar_options(Page $page, $pool, bool $check_all) {
 		global $user;
 
 		$editor = "\n".make_form( make_link('pool/import') ).'
@@ -253,7 +248,7 @@ class PoolsTheme extends Themelet {
 	 * @param array $images
 	 * @param array $pool
 	 */
-	public function pool_result(Page $page, /*array*/ $images, /*array*/ $pool) {
+	public function pool_result(Page $page, array $images, array $pool) {
 
 		$this->display_top($pool, "Importing Posts", true);
 		$pool_images = "
@@ -293,7 +288,7 @@ class PoolsTheme extends Themelet {
 	 * @param array $pools
 	 * @param array $images
 	 */
-	public function edit_order(Page $page, /*array*/ $pools, /*array*/ $images) {
+	public function edit_order(Page $page, array $pools, array $images) {
 		$this->display_top($pools, "Sorting Pool");
 
 		$pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
@@ -326,7 +321,7 @@ class PoolsTheme extends Themelet {
 	 * @param array $pools
 	 * @param array $images
 	 */
-	public function edit_pool(Page $page, /*array*/ $pools, /*array*/ $images) {
+	public function edit_pool(Page $page, array $pools, array $images) {
 		/* EDIT POOL DESCRIPTION */
 		$desc_html = "
 			".make_form(make_link("pool/edit_description"))."
@@ -368,7 +363,7 @@ class PoolsTheme extends Themelet {
 	 * @param int $pageNumber
 	 * @param int $totalPages
 	 */
-	public function show_history($histories, /*int*/ $pageNumber, /*int*/ $totalPages) {
+	public function show_history($histories, int $pageNumber, int $totalPages) {
 		global $page;
 		$html = '
 			<table id="poolsList" class="zebra">

@@ -111,10 +111,7 @@ xanax
 		}
 	}
 
-	/**
-	 * @return string[]
-	 */
-	private function get_words() {
+	private function get_words(): array {
 		global $config;
 		$words = array();
 
@@ -131,6 +128,6 @@ xanax
 		return $words;
 	}
 
-	public function get_priority() {return 30;}
+	public function get_priority(): int {return 30;}
 }
 

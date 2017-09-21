@@ -92,10 +92,7 @@ abstract class Extension {
 		$this->theme = $this->get_theme_object(get_called_class());
 	}
 
-	/**
-	 * @return boolean
-	 */
-	public function is_live() {
+	public function is_live(): bool {
 		global $database;
 		return (
 			empty($this->db_support) ||
@@ -107,9 +104,9 @@ abstract class Extension {
 	 * Find the theme object for a given extension.
 	 *
 	 * @param string $base
-	 * @return Themelet
+	 * @return Themelet|null
 	 */
-	private function get_theme_object($base) {
+	private function get_theme_object(string $base) {
 		$custom = 'Custom'.$base.'Theme';
 		$normal = $base.'Theme';
 
@@ -126,11 +123,10 @@ abstract class Extension {
 
 	/**
 	 * Override this to change the priority of the extension,
-	 * lower numbered ones will recieve events first.
-	 *
+	 * lower numbered ones will receive events first.
 	 * @return int
 	 */
-	public function get_priority() {
+	public function get_priority(): int {
 		return 50;
 	}
 }
@@ -141,25 +137,13 @@ abstract class Extension {
  * Several extensions have this in common, make a common API.
  */
 abstract class FormatterExtension extends Extension {
-	/**
-	 * @param TextFormattingEvent $event
-	 */
 	public function onTextFormatting(TextFormattingEvent $event) {
 		$event->formatted = $this->format($event->formatted);
 		$event->stripped  = $this->strip($event->stripped);
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	abstract public function format(/*string*/ $text);
-
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	abstract public function strip(/*string*/ $text);
+	abstract public function format(string $text): string;
+	abstract public function strip(string $text): string;
 }
 
 /**
@@ -169,10 +153,6 @@ abstract class FormatterExtension extends Extension {
  * so we have a base class to extend from.
  */
 abstract class DataHandlerExtension extends Extension {
-	/**
-	 * @param DataUploadEvent $event
-	 * @throws UploadException
-	 */
 	public function onDataUpload(DataUploadEvent $event) {
 		$supported_ext = $this->supported_ext($event->type);
 		$check_contents = $this->check_contents($event->tmpname);
@@ -236,9 +216,6 @@ abstract class DataHandlerExtension extends Extension {
 		}
 	}
 
-	/**
-	 * @param ThumbnailGenerationEvent $event
-	 */
 	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
 		if($this->supported_ext($event->type)) {
 			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
@@ -250,9 +227,6 @@ abstract class DataHandlerExtension extends Extension {
 		}
 	}
 
-	/**
-	 * @param DisplayingImageEvent $event
-	 */
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		global $page;
 		if($this->supported_ext($event->image->ext)) {
@@ -269,29 +243,9 @@ abstract class DataHandlerExtension extends Extension {
 	protected function setup() {}
 	*/
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	abstract protected function supported_ext($ext);
-
-	/**
-	 * @param string $tmpname
-	 * @return bool
-	 */
-	abstract protected function check_contents($tmpname);
-
-	/**
-	 * @param string $filename
-	 * @param array $metadata
-	 * @return Image|null
-	 */
-	abstract protected function create_image_from_data($filename, $metadata);
-
-	/**
-	 * @param string $hash
-	 * @return bool
-	 */
-	abstract protected function create_thumb($hash);
+	abstract protected function supported_ext(string $ext): bool;
+	abstract protected function check_contents(string $tmpname): bool;
+	abstract protected function create_image_from_data(string $filename, array $metadata);
+	abstract protected function create_thumb(string $hash): bool;
 }
 

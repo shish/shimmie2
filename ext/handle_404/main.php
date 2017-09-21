@@ -48,6 +48,6 @@ class Handle404 extends Extension {
 		return $n;
 	}
 
-	public function get_priority() {return 99;}
+	public function get_priority(): int {return 99;}
 }
 

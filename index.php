@@ -87,7 +87,7 @@ EOD;
 
 try {
 	require_once "core/_bootstrap.inc.php";
-	ctx_log_start(@$_SERVER["REQUEST_URI"], true, true);
+	$_shm_ctx->log_start(@$_SERVER["REQUEST_URI"], true, true);
 
 	// start the page generation waterfall
 	$user = _get_user();
@@ -102,11 +102,11 @@ try {
 	// saving cache data and profiling data to disk can happen later
 	if(function_exists("fastcgi_finish_request")) fastcgi_finish_request();
 	$database->commit();
-	ctx_log_endok();
+	$_shm_ctx->log_endok();
 }
 catch(Exception $e) {
 	if($database) $database->rollback();
 	_fatal_error($e);
-	ctx_log_ender();
+	$_shm_ctx->log_ender();
 }
 

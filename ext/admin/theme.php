@@ -12,13 +12,7 @@ class AdminPageTheme extends Themelet {
 		$page->add_block(new NavBlock());
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $action
-	 * @param bool $protected
-	 * @return string
-	 */
-	protected function button(/*string*/ $name, /*string*/ $action, /*boolean*/ $protected=false) {
+	protected function button(string $name, string $action, bool $protected=false): string {
 		$c_protected = $protected ? " protected" : "";
 		$html = make_form(make_link("admin/$action"), "POST", false, "admin$c_protected");
 		if($protected) {

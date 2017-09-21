@@ -13,8 +13,9 @@ class BaseThemelet {
 	 * @param int $code
 	 * @param string $title
 	 * @param string $message
+	 * @return void
 	 */
-	public function display_error(/*int*/ $code, /*string*/ $title, /*string*/ $message) {
+	public function display_error(int $code, string $title, string $message) {
 		global $page;
 		$page->set_code($code);
 		$page->set_title($title);
@@ -34,6 +35,7 @@ class BaseThemelet {
 
 	/**
 	 * A specific, common error message
+	 * @return void
 	 */
 	public function display_permission_denied() {
 		$this->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -47,7 +49,7 @@ class BaseThemelet {
 	 * @param Image $image
 	 * @return string
 	 */
-	public function build_thumb_html(Image $image) {
+	public function build_thumb_html(Image $image): string {
 		global $config;
 
 		$i_id = (int) $image->id;
@@ -75,45 +77,18 @@ class BaseThemelet {
 				"</a>\n";
 	}
 
-	/**
-	 * Add a generic paginator.
-	 *
-	 * @param Page $page
-	 * @param string $base
-	 * @param string $query
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param bool $show_random
-	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
+	public function display_paginator(Page $page, string $base, string $query=null, int $page_number, int $total_pages, bool $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
 		$page->add_block(new Block(null, $body, "main", 90, "paginator"));
 	}
 
-	/**
-	 * Generate a single HTML link.
-	 *
-	 * @param string $base_url
-	 * @param string $query
-	 * @param string $page
-	 * @param string $name
-	 * @return string
-	 */
-	private function gen_page_link($base_url, $query, $page, $name) {
+	private function gen_page_link(string $base_url, string $query=null, string $page, string $name): string {
 		$link = make_link($base_url.'/'.$page, $query);
 	    return '<a href="'.$link.'">'.$name.'</a>';
 	}
 
-	/**
-	 * @param string $base_url
-	 * @param string $query
-	 * @param string $page
-	 * @param int $current_page
-	 * @param string $name
-	 * @return string
-	 */
-	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
+	private function gen_page_link_block(string $base_url, string $query=null, string $page, int $current_page, string $name): string {
 		$paginator = "";
 	    if($page == $current_page) $paginator .= "<b>";
 	    $paginator .= $this->gen_page_link($base_url, $query, $page, $name);
@@ -121,17 +96,7 @@ class BaseThemelet {
 	    return $paginator;
 	}
 
-	/**
-	 * Build the paginator.
-	 *
-	 * @param int $current_page
-	 * @param int $total_pages
-	 * @param string $base_url
-	 * @param string $query
-	 * @param bool $show_random
-	 * @return string
-	 */
-	private function build_paginator($current_page, $total_pages, $base_url, $query, $show_random) {
+	private function build_paginator(int $current_page, int $total_pages, string $base_url, string $query=null, bool $show_random): string {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
 
@@ -163,4 +128,3 @@ class BaseThemelet {
 				.'<br>&lt;&lt; '.$pages_html.' &gt;&gt;';
 	}
 }
-

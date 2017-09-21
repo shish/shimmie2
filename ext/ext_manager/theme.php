@@ -6,7 +6,7 @@ class ExtManagerTheme extends Themelet {
 	 * @param ExtensionInfo[] $extensions
 	 * @param bool $editable
 	 */
-	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
+	public function display_table(Page $page, array $extensions, bool $editable) {
 		$h_en = $editable ? "<th>Enabled</th>" : "";
 		$html = "
 			".make_form(make_link("ext_manager/set"))."

@@ -25,12 +25,7 @@ class UserClass {
 	 */
 	public $abilities = array();
 
-	/**
-	 * @param string $name
-	 * @param null|string $parent
-	 * @param array $abilities
-	 */
-	public function __construct($name, $parent=null, $abilities=array()) {
+	public function __construct(string $name, string $parent=null, array $abilities=array()) {
 		global $_shm_user_classes;
 
 		$this->name = $name;
@@ -50,7 +45,7 @@ class UserClass {
 	 * @return bool
 	 * @throws SCoreException
 	 */
-	public function can(/*string*/ $ability) {
+	public function can(string $ability): bool {
 		if(array_key_exists($ability, $this->abilities)) {
 			$val = $this->abilities[$ability];
 			return $val;

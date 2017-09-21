@@ -1,9 +1,6 @@
 <?php
 
 class MassTaggerTheme extends Themelet {
-	/*
-	 * Show $text on the $page
-	 */
 	public function display_mass_tagger( Page $page, Event $event, $config ) {
 		$data_href = get_base_href();  
 		$body = "

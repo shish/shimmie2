@@ -48,10 +48,10 @@ class User {
 	 * One will very rarely construct a user directly, more common
 	 * would be to use User::by_id, User::by_session, etc.
 	 *
-	 * @param mixed $row
+	 * @param mixed[] $row
 	 * @throws SCoreException
 	 */
-	public function __construct($row) {
+	public function __construct(array $row) {
 		global $_shm_user_classes;
 
 		$this->id = int_escape($row['id']);
@@ -68,14 +68,7 @@ class User {
 		}
 	}
 
-	/**
-	 * Construct a User by session.
-	 *
-	 * @param string $name
-	 * @param string $session
-	 * @return null|User
-	 */
-	public static function by_session(/*string*/ $name, /*string*/ $session) {
+	public static function by_session(string $name, string $session) {
 		global $config, $database;
 		$row = $database->cache->get("user-session:$name-$session");
 		if(!$row) {
@@ -91,13 +84,7 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
-	/**
-	 * Construct a User by session.
-	 * @param int $id
-	 * @return null|User
-	 */
-	public static function by_id(/*int*/ $id) {
-		assert('is_numeric($id)', var_export($id, true));
+	public static function by_id(int $id) {
 		global $database;
 		if($id === 1) {
 			$cached = $database->cache->get('user-id:'.$id);
@@ -108,27 +95,13 @@ class User {
 		return is_null($row) ? null : new User($row);
 	}
 
-	/**
-	 * Construct a User by name.
-	 * @param string $name
-	 * @return null|User
-	 */
-	public static function by_name(/*string*/ $name) {
-		assert('is_string($name)', var_export($name, true));
+	public static function by_name(string $name) {
 		global $database;
 		$row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), array("name"=>$name));
 		return is_null($row) ? null : new User($row);
 	}
 
-	/**
-	 * Construct a User by name and password.
-	 * @param string $name
-	 * @param string $pass
-	 * @return null|User
-	 */
-	public static function by_name_and_pass(/*string*/ $name, /*string*/ $pass) {
-		assert('is_string($name)', var_export($name, true));
-		assert('is_string($pass)', var_export($pass, true));
+	public static function by_name_and_pass(string $name, string $pass) {
 		$user = User::by_name($name);
 		if($user) {
 			if($user->passhash == md5(strtolower($name) . $pass)) {
@@ -138,65 +111,38 @@ class User {
 				return $user;
 			}
 		}
+		return null;
 	}
 
 
 	/* useful user object functions start here */
 
-
-	/**
-	 * @param string $ability
-	 * @return bool
-	 */
-	public function can($ability) {
+	public function can(string $ability): bool {
 		return $this->class->can($ability);
 	}
 
 
-	/**
-	 * Test if this user is anonymous (not logged in).
-	 *
-	 * @return bool
-	 */
-	public function is_anonymous() {
+	public function is_anonymous(): bool {
 		global $config;
 		return ($this->id === $config->get_int('anon_id'));
 	}
 
-	/**
-	 * Test if this user is logged in.
-	 *
-	 * @return bool
-	 */
-	public function is_logged_in() {
+	public function is_logged_in(): bool {
 		global $config;
 		return ($this->id !== $config->get_int('anon_id'));
 	}
 
-	/**
-	 * Test if this user is an administrator.
-	 *
-	 * @return bool
-	 */
-	public function is_admin() {
+	public function is_admin(): bool {
 		return ($this->class->name === "admin");
 	}
 
-	/**
-	 * @param string $class
-	 */
-	public function set_class(/*string*/ $class) {
-		assert('is_string($class)', var_export($class, true));
+	public function set_class(string $class) {
 		global $database;
 		$database->Execute("UPDATE users SET class=:class WHERE id=:id", array("class"=>$class, "id"=>$this->id));
 		log_info("core-user", 'Set class for '.$this->name.' to '.$class);
 	}
 
-	/**
-	 * @param string $name
-	 * @throws Exception
-	 */
-	public function set_name(/*string*/ $name) {
+	public function set_name(string $name) {
 		global $database;
 		if(User::by_name($name)) {
 			throw new Exception("Desired username is already in use");
@@ -207,10 +153,7 @@ class User {
 		log_info("core-user", "Changed username for {$old_name} to {$this->name}");
 	}
 
-	/**
-	 * @param string $password
-	 */
-	public function set_password(/*string*/ $password) {
+	public function set_password(string $password) {
 		global $database;
 		$hash = password_hash($password, PASSWORD_BCRYPT);
 		if(is_string($hash)) {
@@ -223,10 +166,7 @@ class User {
 		}
 	}
 
-	/**
-	 * @param string $address
-	 */
-	public function set_email(/*string*/ $address) {
+	public function set_email(string $address) {
 		global $database;
 		$database->Execute("UPDATE users SET email=:email WHERE id=:id", array("email"=>$address, "id"=>$this->id));
 		log_info("core-user", 'Set email for '.$this->name);
@@ -238,7 +178,7 @@ class User {
 	 *
 	 * @return String of HTML
 	 */
-	public function get_avatar_html() {
+	public function get_avatar_html(): string {
 		// FIXME: configurable
 		global $config;
 		if($config->get_string("avatar_host") === "gravatar") {
@@ -267,25 +207,25 @@ class User {
 	 *
 	 * @return string A string containing auth token (MD5sum)
 	 */
-	public function get_auth_token() {
+	public function get_auth_token(): string {
 		global $config;
 		$salt = DATABASE_DSN;
 		$addr = get_session_ip($config);
 		return md5(md5($this->passhash . $addr) . "salty-csrf-" . $salt);
 	}
 
-	public function get_auth_html() {
+	public function get_auth_html(): string {
 		$at = $this->get_auth_token();
 		return '<input type="hidden" name="auth_token" value="'.$at.'">';
 	}
 
-	public function check_auth_token() {
+	public function check_auth_token(): bool {
 		return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
 	}
 }
 
 class MockUser extends User {
-	public function __construct($name) {
+	public function __construct(string $name) {
 		$row = array(
 			"name" => $name,
 			"id" => 1,

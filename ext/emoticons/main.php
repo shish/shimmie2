@@ -17,21 +17,13 @@
  * Class Emoticons
  */
 class Emoticons extends FormatterExtension {
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public function format(/*string*/ $text) {
+	public function format(string $text): string {
 		$data_href = get_base_href();
 		$text = preg_replace("/:([a-z]*?):/s", "<img src='$data_href/ext/emoticons/default/\\1.gif'>", $text);
 		return $text;
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public function strip(/*string*/ $text) {
+	public function strip(string $text): string {
 		return $text;
 	}
 }

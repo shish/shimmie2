@@ -90,7 +90,7 @@ class BulkAddCSV extends Extension {
 		}
 	}
 
-	private function add_csv(/*string*/ $csvfile) {
+	private function add_csv(string $csvfile) {
 		if(!file_exists($csvfile)) {
 			$this->theme->add_status("Error", "$csvfile not found");
 			return;

@@ -28,7 +28,7 @@ class DataUploadEvent extends Event {
 	 * @param string $tmpname The temporary file used for upload.
 	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
-	public function __construct(/*string*/ $tmpname, /*array*/ $metadata) {
+	public function __construct(string $tmpname, array $metadata) {
 		assert('file_exists($tmpname)');
 		assert('is_string($metadata["filename"])');
 		assert('is_string($metadata["extension"])');
@@ -60,16 +60,15 @@ class Upload extends Extension {
 
 	/**
 	 * Early, so it can stop the DataUploadEvent before any data handlers see it.
-	 *
 	 * @return int
 	 */
-	public function get_priority() {return 40;}
+	public function get_priority(): int {return 40;}
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
 		$config->set_default_int('upload_count', 3);
-		$config->set_default_int('upload_size', '1MB');
-		$config->set_default_int('upload_min_free_space', '100MB');
+		$config->set_default_int('upload_size', parse_shorthand_int('1MB'));
+		$config->set_default_int('upload_min_free_space', parse_shorthand_int('100MB'));
 		$config->set_default_bool('upload_tlsource', TRUE);
 
 		$this->is_full = false;

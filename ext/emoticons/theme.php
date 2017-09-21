@@ -3,7 +3,7 @@ class EmoticonListTheme extends Themelet {
 	/**
 	 * @param array $list
 	 */
-	public function display_emotes(/*array*/ $list) {
+	public function display_emotes(array $list) {
 		global $page;
 		$data_href = get_base_href();
 		$html = "<html><head><title>Emoticon list</title></head><body>";

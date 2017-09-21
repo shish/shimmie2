@@ -137,7 +137,7 @@ class TagList extends Extension {
 	 * @param string $tag
 	 * @return string
 	 */
-	private function tag_link(/*string*/ $tag) {
+	private function tag_link(string $tag) {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}

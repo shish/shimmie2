@@ -6,7 +6,7 @@ class CustomExtManagerTheme extends ExtManagerTheme {
 	 * @param array $extensions
 	 * @param bool $editable
 	 */
-	public function display_table(Page $page, /*array*/ $extensions, /*bool*/ $editable) {
+	public function display_table(Page $page, array $extensions, bool $editable) {
 		$page->disable_left();
 		parent::display_table($page, $extensions, $editable);
 	}

@@ -21,7 +21,7 @@ class SendPMEvent extends Event {
 class PM {
 	public $id, $from_id, $from_ip, $to_id, $sent_date, $subject, $message, $is_read;
 
-	public function __construct($from_id=0, $from_ip="0.0.0.0", $to_id=0, $subject="A Message", $message="Some Text", $read=False) {
+	public function __construct($from_id=0, string $from_ip="0.0.0.0", int $to_id=0, string $subject="A Message", string $message="Some Text", bool $read=False) {
 		# PHP: the P stands for "really", the H stands for "awful" and the other P stands for "language"
 		if(is_array($from_id)) {
 			$a = $from_id;

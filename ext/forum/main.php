@@ -179,10 +179,7 @@ class Forum extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function get_total_pages_for_thread($threadID)
+	private function get_total_pages_for_thread(int $threadID)
 	{
 		global $database, $config;
 		$result = $database->get_row("SELECT COUNT(1) AS count FROM forum_posts WHERE thread_id = ?", array($threadID));
@@ -243,10 +240,7 @@ class Forum extends Extension {
 		return array($errors);
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function sanity_check_viewed_thread($threadID)
+	private function sanity_check_viewed_thread(int $threadID)
 	{
 		$errors = null;
 		if (!$this->threadExists($threadID))
@@ -256,10 +250,7 @@ class Forum extends Extension {
 		return array($errors);
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function get_thread_title($threadID)
+	private function get_thread_title(int $threadID)
 	{
 		global $database;
 		$result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = ? ", array($threadID));
@@ -352,10 +343,7 @@ class Forum extends Extension {
 		return $threadID;
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function save_new_post($threadID, User $user)
+	private function save_new_post(int $threadID, User $user)
 	{
 		global $config;
 		$userID = $user->id;
@@ -378,11 +366,7 @@ class Forum extends Extension {
 		$database->execute("UPDATE forum_threads SET uptodate=now() WHERE id=?", array ($threadID));
 	}
 
-	/**
-	 * @param int $threadID
-	 * @param int $pageNumber
-	 */
-	private function retrieve_posts($threadID, $pageNumber)
+	private function retrieve_posts(int $threadID, int $pageNumber)
 	{
 		global $database, $config;
 		$postsPerPage = $config->get_int('forumPostsPerPage', 15);
@@ -398,29 +382,20 @@ class Forum extends Extension {
 				, array("thread_id"=>$threadID, "offset"=>($pageNumber - 1) * $postsPerPage, "limit"=>$postsPerPage));
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function delete_thread($threadID)
+	private function delete_thread(int $threadID)
 	{
 		global $database;
 		$database->execute("DELETE FROM forum_threads WHERE id = ?", array($threadID));
 		$database->execute("DELETE FROM forum_posts WHERE thread_id = ?", array($threadID));
 	}
 
-	/**
-	 * @param int $postID
-	 */
-	private function delete_post($postID)
+	private function delete_post(int $postID)
 	{
 		global $database;
 		$database->execute("DELETE FROM forum_posts WHERE id = ?", array($postID));
 	}
 
-	/**
-	 * @param int $threadID
-	 */
-	private function threadExists($threadID)
+	private function threadExists(int $threadID)
 	{
 		global $database;
 		$result=$database->get_one("SELECT EXISTS (SELECT * FROM forum_threads WHERE id= ?)", array($threadID));

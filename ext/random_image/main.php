@@ -47,7 +47,7 @@ class RandomImage extends Extension {
 			}
 			else if($action === "view") {
 				if(!is_null($image)) {
-					send_event(new DisplayingImageEvent($image, $page));
+					send_event(new DisplayingImageEvent($image));
 				}
 			}
 			else if($action === "widget") {

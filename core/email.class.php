@@ -29,13 +29,7 @@ class Email {
 	/** @var null|string */
 	public $footer;
 
-	/**
-	 * @param string $to
-	 * @param string $subject
-	 * @param string $header
-	 * @param string $body
-	 */
-	public function __construct($to, $subject, $header, $body) {
+	public function __construct(string $to, string $subject, string $header, string $body) {
 		global $config;
 		$this->to = $to;
 		
@@ -60,7 +54,7 @@ class Email {
 		$this->footer = $config->get_string("mail_fot");
 	}
 	
-	public function send() {
+	public function send(): bool {
 		$headers  = "From: ".$this->sitename." <".$this->siteemail.">\r\n";
 		$headers .= "Reply-To: ".$this->siteemail."\r\n";
 		$headers .= "X-Mailer: PHP/" . phpversion(). "\r\n";
@@ -84,7 +78,7 @@ class Email {
 <table width="550" cellpadding="0" cellspacing="0"> 
  
 <tr> 
-<td style="background-color:#FFFFFF;border-top:0px solid #333333;border-bottom:10px solid #FFFFFF;"><center><a href="'.$this->sitedomain.'"><IMG SRC="'.$this->header_img.'"  alt="'.$this->sitename.'" name="Header" BORDER="0" align="center" title="'.$this->sitename.'"></a> 
+<td style="background-color:#FFFFFF;border-top:0 solid #333333;border-bottom:10px solid #FFFFFF;"><center><a href="'.$this->sitedomain.'"><IMG SRC="'.$this->header_img.'"  alt="'.$this->sitename.'" name="Header" BORDER="0" align="center" title="'.$this->sitename.'"></a> 
 </center></td> 
 </tr> 
 

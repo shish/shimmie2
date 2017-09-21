@@ -241,14 +241,7 @@ class TagListTheme extends Themelet {
 		return array($category, $display_html);
 	}
 
-	/**
-	 * @param string $tag
-	 * @param string[] $tags
-	 * @return string
-	 */
-	protected function ars(/*string*/ $tag, /*array(string)*/ $tags) {
-		assert(is_array($tags));
-
+	protected function ars(string $tag, array $tags): string {
 		// FIXME: a better fix would be to make sure the inputs are correct
 		$tag = strtolower($tag);
 		$tags = array_map("strtolower", $tags);
@@ -261,12 +254,7 @@ class TagListTheme extends Themelet {
 		return $html;
 	}
 
-	/**
-	 * @param array $tags
-	 * @param string $tag
-	 * @return string
-	 */
-	protected function get_remove_link($tags, $tag) {
+	protected function get_remove_link(array $tags, string $tag): string {
 		if(!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
 			return "";
 		}
@@ -277,12 +265,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @param array $tags
-	 * @param string $tag
-	 * @return string
-	 */
-	protected function get_add_link($tags, $tag) {
+	protected function get_add_link(array $tags, string $tag): string {
 		if(in_array($tag, $tags)) {
 			return "";
 		}
@@ -293,12 +276,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @param array $tags
-	 * @param string $tag
-	 * @return string
-	 */
-	protected function get_subtract_link($tags, $tag) {
+	protected function get_subtract_link(array $tags, string $tag): string {
 		if(in_array("-$tag", $tags)) {
 			return "";
 		}
@@ -309,11 +287,7 @@ class TagListTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @param string $tag
-	 * @return string
-	 */
-	protected function tag_link($tag) {
+	protected function tag_link(string $tag): string {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}

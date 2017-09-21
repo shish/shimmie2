@@ -34,10 +34,7 @@ class ImageAdditionEvent extends Event {
 class ImageAdditionException extends SCoreException {
 	public $error;
 
-	/**
-	 * @param string $error
-	 */
-	public function __construct($error) {
+	public function __construct(string $error) {
 		$this->error = $error;
 	}
 }
@@ -81,7 +78,7 @@ class ImageReplaceEvent extends Event {
 	 * @param int $id The ID of the image to replace.
 	 * @param Image $image The image object of the new image to use.
 	 */
-	public function __construct(/*int*/ $id, Image $image) {
+	public function __construct(int $id, Image $image) {
 		$this->id = $id;
 		$this->image = $image;
 	}
@@ -91,10 +88,7 @@ class ImageReplaceException extends SCoreException {
 	/** @var string */
 	public $error;
 
-	/**
-	 * @param string $error
-	 */
-	public function __construct(/*string*/ $error) {
+	public function __construct(string $error) {
 		$this->error = $error;
 	}
 }
@@ -117,7 +111,7 @@ class ThumbnailGenerationEvent extends Event {
 	 * @param string $type The type of the image
 	 * @param bool $force Regenerate the thumbnail even if one already exists
 	 */
-	public function __construct($hash, $type, $force=false) {
+	public function __construct(string $hash, string $type, bool $force=false) {
 		$this->hash = $hash;
 		$this->type = $type;
 		$this->force = $force;
@@ -143,17 +137,13 @@ class ParseLinkTemplateEvent extends Event {
 	 * @param string $link The formatted link
 	 * @param Image $image The image who's link is being parsed
 	 */
-	public function __construct($link, Image $image) {
+	public function __construct(string $link, Image $image) {
 		$this->link = $link;
 		$this->original = $link;
 		$this->image = $image;
 	}
 
-	/**
-	 * @param string $needle
-	 * @param string $replace
-	 */
-	public function replace($needle, $replace) {
+	public function replace(string $needle, string $replace) {
 		$this->link = str_replace($needle, $replace, $this->link);
 	}
 }
@@ -309,11 +299,6 @@ class ImageIO extends Extension {
 
 
 // add image {{{
-	/**
-	 * @param Image $image
-	 * @return null
-	 * @throws ImageAdditionException
-	 */
 	private function add_image(Image $image) {
 		global $user, $database, $config;
 
@@ -383,11 +368,7 @@ class ImageIO extends Extension {
 // }}}  end add
 
 // fetch image {{{
-	/**
-	 * @param int $image_id
-	 * @param string $type
-	 */
-	private function send_file($image_id, $type) {
+	private function send_file(int $image_id, string $type) {
 		global $config;
 		$image = Image::by_id($image_id);
 
@@ -438,12 +419,7 @@ class ImageIO extends Extension {
 // }}} end fetch
 
 // replace image {{{
-	/**
-	 * @param int $id
-	 * @param Image $image
-	 * @throws ImageReplaceException
-	 */
-	private function replace_image($id, $image) {
+	private function replace_image(int $id, Image $image) {
 		global $database;
 
 		/* Check to make sure the image exists. */

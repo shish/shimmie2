@@ -7,7 +7,7 @@ class RotateImageTheme extends Themelet {
 	 * @param int $image_id
 	 * @return string
 	 */
-	public function get_rotate_html(/*int*/ $image_id) {
+	public function get_rotate_html(int $image_id) {
 		$html = "
 			".make_form(make_link('rotate/'.$image_id), 'POST')."
 				<input type='hidden' name='image_id' value='$image_id'>
@@ -26,7 +26,7 @@ class RotateImageTheme extends Themelet {
 	 * @param string $title
 	 * @param string $message
 	 */
-	public function display_rotate_error(Page $page, /*string*/ $title, /*string*/ $message) {
+	public function display_rotate_error(Page $page, string $title, string $message) {
 		$page->set_title("Rotate Image");
 		$page->set_heading("Rotate Image");
 		$page->add_block(new NavBlock());

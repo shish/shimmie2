@@ -303,7 +303,7 @@ class CommentListTheme extends Themelet {
 	 * @param int $image_id
 	 * @return string
 	 */
-	protected function build_postbox(/*int*/ $image_id) {
+	protected function build_postbox(int $image_id) {
 		global $config;
 
 		$i_image_id = int_escape($image_id);

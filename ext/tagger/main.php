@@ -29,7 +29,7 @@ class Tagger extends Extension {
 
 // Tagger AJAX back-end
 class TaggerXML extends Extension {
-	public function get_priority() {return 10;}
+	public function get_priority(): int {return 10;}
 
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("tagger/tags")) {

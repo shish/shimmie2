@@ -23,22 +23,23 @@
 	],
 
 	"require" : {
-		"php" : ">=5.6",
+		"php" : ">=7.0",
 
 		"flexihash/flexihash"       : "^2.0.0",
 		"ifixit/php-akismet"        : "1.*",
 		"google/recaptcha"          : "~1.1",
 		"dapphp/securimage"         : "3.6.*",
+		"shish/libcontext-php"      : "dev-master",
 
 		"bower-asset/jquery"         : "1.12.3",
 		"bower-asset/jquery-timeago" : "1.5.2",
-		"bower-asset/tablesorter"    : "2.*",
+		"bower-asset/tablesorter"    : "dev-master",
 		"bower-asset/mediaelement"   : "2.21.1",
 		"bower-asset/js-cookie"      : "2.1.1"
 	},
 
 	"require-dev" : {
-		"phpunit/phpunit" : "5.*"
+		"phpunit/phpunit" : "6.*"
 	},
 
 	"vendor-copy": {

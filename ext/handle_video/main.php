@@ -82,7 +82,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @param string $hash
 	 * @return bool Returns true on successful thumbnail creation.
 	 */
-	protected function create_thumb($hash) {
+	protected function create_thumb(string $hash): bool {
 		global $config;
 
 		$ok = false;
@@ -132,7 +132,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @param string $ext
 	 * @return bool
 	 */
-	protected function supported_ext($ext) {
+	protected function supported_ext(string $ext): bool {
 		$exts = array("flv", "mp4", "m4v", "ogv", "webm");
 		return in_array(strtolower($ext), $exts);
 	}
@@ -142,7 +142,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	 * @param mixed[] $metadata
 	 * @return Image
 	 */
-	protected function create_image_from_data($filename, $metadata) {
+	protected function create_image_from_data(string $filename, array $metadata) {
 		$image = new Image();
 
 		//NOTE: No need to set width/height as we don't use it.
@@ -177,13 +177,13 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	/**
-	 * @param string $file
+	 * @param string $tmpname
 	 * @return bool
 	 */
-	protected function check_contents($file) {
+	protected function check_contents(string $tmpname): bool {
 		$success = FALSE;
-		if (file_exists($file)) {
-			$mimeType = mime_content_type($file);
+		if (file_exists($tmpname)) {
+			$mimeType = mime_content_type($tmpname);
 
 			$success = in_array($mimeType, [
 				'video/webm',

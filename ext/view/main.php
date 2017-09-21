@@ -17,19 +17,12 @@
 class DisplayingImageEvent extends Event {
 	/** @var \Image  */
 	public $image;
-	public $page, $context;
 
-	/**
-	 * @param Image $image
-	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
 	}
 
-	/**
-	 * @return Image
-	 */
-	public function get_image() {
+	public function get_image(): Image {
 		return $this->image;
 	}
 }
@@ -42,20 +35,12 @@ class ImageInfoBoxBuildingEvent extends Event {
 	/** @var \User  */
 	public $user;
 
-	/**
-	 * @param Image $image
-	 * @param User $user
-	 */
 	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
 
-	/**
-	 * @param string $html
-	 * @param int $position
-	 */
-	public function add_part($html, $position=50) {
+	public function add_part(string $html, int $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = $html;
 	}
@@ -65,9 +50,6 @@ class ImageInfoSetEvent extends Event {
 	/** @var \Image */
 	public $image;
 
-	/**
-	 * @param Image $image
-	 */
 	public function __construct(Image $image) {
 		$this->image = $image;
 	}
@@ -81,20 +63,12 @@ class ImageAdminBlockBuildingEvent extends Event {
 	/** @var null|\User  */
 	public $user = null;
 
-	/**
-	 * @param Image $image
-	 * @param User $user
-	 */
 	public function __construct(Image $image, User $user) {
 		$this->image = $image;
 		$this->user = $user;
 	}
 
-	/**
-	 * @param string $html
-	 * @param int $position
-	 */
-	public function add_part(/*string*/ $html, /*int*/ $position=50) {
+	public function add_part(string $html, int $position=50) {
 		while(isset($this->parts[$position])) $position++;
 		$this->parts[$position] = $html;
 	}

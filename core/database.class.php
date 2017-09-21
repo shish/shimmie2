@@ -7,34 +7,20 @@ class Querylet {
 	/** @var array */
 	public $variables;
 
-	/**
-	 * @param string $sql
-	 * @param array $variables
-	 */
-	public function __construct($sql, $variables=array()) {
+	public function __construct(string $sql, array $variables=array()) {
 		$this->sql = $sql;
 		$this->variables = $variables;
 	}
 
-	/**
-	 * @param \Querylet $querylet
-	 */
-	public function append($querylet) {
-		assert('!is_null($querylet)');
+	public function append(Querylet $querylet) {
 		$this->sql .= $querylet->sql;
 		$this->variables = array_merge($this->variables, $querylet->variables);
 	}
 
-	/**
-	 * @param string $sql
-	 */
-	public function append_sql($sql) {
+	public function append_sql(string $sql) {
 		$this->sql .= $sql;
 	}
 
-	/**
-	 * @param mixed $var
-	 */
 	public function add_variable($var) {
 		$this->variables[] = $var;
 	}
@@ -46,11 +32,7 @@ class TagQuerylet {
 	/** @var bool  */
 	public $positive;
 
-	/**
-	 * @param string $tag
-	 * @param bool $positive
-	 */
-	public function __construct($tag, $positive) {
+	public function __construct(string $tag, bool $positive) {
 		$this->tag = $tag;
 		$this->positive = $positive;
 	}
@@ -62,11 +44,7 @@ class ImgQuerylet {
 	/** @var bool */
 	public $positive;
 
-	/**
-	 * @param \Querylet $qlet
-	 * @param bool $positive
-	 */
-	public function __construct($qlet, $positive) {
+	public function __construct(Querylet $qlet, bool $positive) {
 		$this->qlet = $qlet;
 		$this->positive = $positive;
 	}
@@ -77,25 +55,13 @@ class DBEngine {
 	/** @var null|string */
 	public $name = null;
 
-	/**
-	 * @param \PDO $db
-	 */
-	public function init($db) {}
+	public function init(PDO $db) {}
 
-	/**
-	 * @param string $scoreql
-	 * @return string
-	 */
-	public function scoreql_to_sql($scoreql) {
+	public function scoreql_to_sql(string $scoreql): string {
 		return $scoreql;
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $data
-	 * @return string
-	 */
-	public function create_table_sql($name, $data) {
+	public function create_table_sql(string $name, string $data): string {
 		return 'CREATE TABLE '.$name.' ('.$data.')';
 	}
 }
@@ -103,18 +69,11 @@ class MySQL extends DBEngine {
 	/** @var string */
 	public $name = "mysql";
 
-	/**
-	 * @param \PDO $db
-	 */
-	public function init($db) {
+	public function init(PDO $db) {
 		$db->exec("SET NAMES utf8;");
 	}
 
-	/**
-	 * @param string $data
-	 * @return string
-	 */
-	public function scoreql_to_sql($data) {
+	public function scoreql_to_sql(string $data): string {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
 		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
@@ -127,12 +86,7 @@ class MySQL extends DBEngine {
 		return $data;
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $data
-	 * @return string
-	 */
-	public function create_table_sql($name, $data) {
+	public function create_table_sql(string $name, string $data): string {
 		$data = $this->scoreql_to_sql($data);
 		$ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
 		return 'CREATE TABLE '.$name.' ('.$data.') '.$ctes;
@@ -142,10 +96,7 @@ class PostgreSQL extends DBEngine {
 	/** @var string */
 	public $name = "pgsql";
 
-	/**
-	 * @param \PDO $db
-	 */
-	public function init($db) {
+	public function init(PDO $db) {
 		if(array_key_exists('REMOTE_ADDR', $_SERVER)) {
 			$db->exec("SET application_name TO 'shimmie [{$_SERVER['REMOTE_ADDR']}]';");
 		}
@@ -155,11 +106,7 @@ class PostgreSQL extends DBEngine {
 		$db->exec("SET statement_timeout TO 10000;");
 	}
 
-	/**
-	 * @param string $data
-	 * @return string
-	 */
-	public function scoreql_to_sql($data) {
+	public function scoreql_to_sql(string $data): string {
 		$data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "INET", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'t'", $data);
@@ -172,12 +119,7 @@ class PostgreSQL extends DBEngine {
 		return $data;
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $data
-	 * @return string
-	 */
-	public function create_table_sql($name, $data) {
+	public function create_table_sql(string $name, string $data): string {
 		$data = $this->scoreql_to_sql($data);
 		return "CREATE TABLE $name ($data)";
 	}
@@ -202,10 +144,7 @@ class SQLite extends DBEngine {
 	/** @var string  */
 	public $name = "sqlite";
 
-	/**
-	 * @param \PDO $db
-	 */
-	public function init($db) {
+	public function init(PDO $db) {
 		ini_set('sqlite.assoc_case', 0);
 		$db->exec("PRAGMA foreign_keys = ON;");
 		$db->sqliteCreateFunction('UNIX_TIMESTAMP', '_unix_timestamp', 1);
@@ -220,11 +159,7 @@ class SQLite extends DBEngine {
 		$db->sqliteCreateFunction('ln', '_ln', 1);
 	}
 
-	/**
-	 * @param string $data
-	 * @return string
-	 */
-	public function scoreql_to_sql($data) {
+	public function scoreql_to_sql(string $data): string {
 		$data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
 		$data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
 		$data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
@@ -236,12 +171,7 @@ class SQLite extends DBEngine {
 		return $data;
 	}
 
-	/**
-	 * @param string $name
-	 * @param string $data
-	 * @return string
-	 */
-	public function create_table_sql($name, $data) {
+	public function create_table_sql(string $name, string $data): string {
 		$data = $this->scoreql_to_sql($data);
 		$cols = array();
 		$extras = "";
@@ -264,42 +194,19 @@ class SQLite extends DBEngine {
 // {{{ cache engines
 interface CacheEngine {
 
-	/**
-	 * @param string $key
-	 * @return mixed
-	 */
-	public function get($key);
-
-	/**
-	 * @param string $key
-	 * @param mixed $val
-	 * @param integer $time
-	 * @return void
-	 */
-	public function set($key, $val, $time=0);
-
-	/**
-	 * @return void
-	 */
-	public function delete($key);
-
-	/**
-	 * @return integer
-	 */
-	public function get_hits();
-
-	/**
-	 * @return integer
-	 */
-	public function get_misses();
+	public function get(string $key);
+	public function set(string $key, $val, int $time=0);
+	public function delete(string $key);
+	public function get_hits(): int;
+	public function get_misses(): int;
 }
 class NoCache implements CacheEngine {
-	public function get($key) {return false;}
-	public function set($key, $val, $time=0) {}
-	public function delete($key) {}
+	public function get(string $key) {return false;}
+	public function set(string $key, $val, int $time=0) {}
+	public function delete(string $key) {}
 
-	public function get_hits() {return 0;}
-	public function get_misses() {return 0;}
+	public function get_hits(): int {return 0;}
+	public function get_misses(): int {return 0;}
 }
 class MemcacheCache implements CacheEngine {
 	/** @var \Memcache|null */
@@ -309,21 +216,13 @@ class MemcacheCache implements CacheEngine {
 	/** @var int */
 	private $misses=0;
 
-	/**
-	 * @param string $args
-	 */
-	public function __construct($args) {
+	public function __construct(string $args) {
 		$hp = explode(":", $args);
 		$this->memcache = new Memcache;
 		@$this->memcache->pconnect($hp[0], $hp[1]);
 	}
 
-	/**
-	 * @param string $key
-	 * @return array|bool|string
-	 */
-	public function get($key) {
-		assert('!is_null($key)');
+	public function get(string $key) {
 		$val = $this->memcache->get($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			$hit = $val === false ? "miss" : "hit";
@@ -339,39 +238,22 @@ class MemcacheCache implements CacheEngine {
 		}
 	}
 
-	/**
-	 * @param string $key
-	 * @param mixed $val
-	 * @param integer $time
-	 */
-	public function set($key, $val, $time=0) {
-		assert('!is_null($key)');
+	public function set(string $key, $val, int $time=0) {
 		$this->memcache->set($key, $val, false, $time);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
 		}
 	}
 
-	/**
-	 * @param string $key
-	 */
-	public function delete($key) {
-		assert('!is_null($key)');
+	public function delete(string $key) {
 		$this->memcache->delete($key);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
 		}
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_hits() {return $this->hits;}
-
-	/**
-	 * @return int
-	 */
-	public function get_misses() {return $this->misses;}
+	public function get_hits(): int {return $this->hits;}
+	public function get_misses(): int {return $this->misses;}
 }
 class MemcachedCache implements CacheEngine {
 	/** @var \Memcached|null */
@@ -381,10 +263,7 @@ class MemcachedCache implements CacheEngine {
 	/** @var int */
 	private $misses=0;
 
-	/**
-	 * @param string $args
-	 */
-	public function __construct($args) {
+	public function __construct(string $args) {
 		$hp = explode(":", $args);
 		$this->memcache = new Memcached;
 		#$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
@@ -393,12 +272,7 @@ class MemcachedCache implements CacheEngine {
 		$this->memcache->addServer($hp[0], $hp[1]);
 	}
 
-	/**
-	 * @param string $key
-	 * @return array|bool|string
-	 */
-	public function get($key) {
-		assert('!is_null($key)');
+	public function get(string $key) {
 		$key = urlencode($key);
 
 		$val = $this->memcache->get($key);
@@ -418,16 +292,11 @@ class MemcachedCache implements CacheEngine {
 		}
 		else {
 			error_log("Memcached error during get($key): $res");
+			return false;
 		}
 	}
 
-	/**
-	 * @param string $key
-	 * @param mixed $val
-	 * @param int $time
-	 */
-	public function set($key, $val, $time=0) {
-		assert('!is_null($key)');
+	public function set(string $key, $val, int $time=0) {
 		$key = urlencode($key);
 
 		$this->memcache->set($key, $val, $time);
@@ -440,11 +309,7 @@ class MemcachedCache implements CacheEngine {
 		}
 	}
 
-	/**
-	 * @param string $key
-	 */
-	public function delete($key) {
-		assert('!is_null($key)');
+	public function delete(string $key) {
 		$key = urlencode($key);
 
 		$this->memcache->delete($key);
@@ -457,26 +322,18 @@ class MemcachedCache implements CacheEngine {
 		}
 	}
 
-	/**
-	 * @return int
-	 */
-	public function get_hits() {return $this->hits;}
-
-	/**
-	 * @return int
-	 */
-	public function get_misses() {return $this->misses;}
+	public function get_hits(): int {return $this->hits;}
+	public function get_misses(): int {return $this->misses;}
 }
 
 class APCCache implements CacheEngine {
 	public $hits=0, $misses=0;
 
-	public function __construct($args) {
+	public function __construct(string $args) {
 		// $args is not used, but is passed in when APC cache is created.
 	}
 
-	public function get($key) {
-		assert('!is_null($key)');
+	public function get(string $key) {
 		$val = apc_fetch($key);
 		if($val) {
 			$this->hits++;
@@ -488,18 +345,16 @@ class APCCache implements CacheEngine {
 		}
 	}
 
-	public function set($key, $val, $time=0) {
-		assert('!is_null($key)');
+	public function set(string $key, $val, int $time=0) {
 		apc_store($key, $val, $time);
 	}
 
-	public function delete($key) {
-		assert('!is_null($key)');
+	public function delete(string $key) {
 		apc_delete($key);
 	}
 
-	public function get_hits() {return $this->hits;}
-	public function get_misses() {return $this->misses;}
+	public function get_hits(): int {return $this->hits;}
+	public function get_misses(): int {return $this->misses;}
 }
 // }}}
 /** @publicsection */
@@ -627,11 +482,7 @@ class Database {
 		}
 	}
 
-	/**
-	 * @return boolean|null
-	 * @throws SCoreException
-	 */
-	public function commit() {
+	public function commit(): bool {
 		if(!is_null($this->db)) {
 			if ($this->transaction === true) {
 				$this->transaction = false;
@@ -641,13 +492,12 @@ class Database {
 				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no transaction currently open.");
 			}
 		}
+		else {
+			throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no connection currently open.");
+		}
 	}
 
-	/**
-	 * @return boolean|null
-	 * @throws SCoreException
-	 */
-	public function rollback() {
+	public function rollback(): bool {
 		if(!is_null($this->db)) {
 			if ($this->transaction === true) {
 				$this->transaction = false;
@@ -657,39 +507,27 @@ class Database {
 				throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no transaction currently open.");
 			}
 		}
+		else {
+			throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no connection currently open.");
+		}
 	}
 
-	/**
-	 * @param string $input
-	 * @return string
-	 */
-	public function escape($input) {
+	public function escape(string $input): string {
 		if(is_null($this->db)) $this->connect_db();
 		return $this->db->Quote($input);
 	}
 
-	/**
-	 * @param string $input
-	 * @return string
-	 */
-	public function scoreql_to_sql($input) {
+	public function scoreql_to_sql(string $input): string {
 		if(is_null($this->engine)) $this->connect_engine();
 		return $this->engine->scoreql_to_sql($input);
 	}
 
-	/**
-	 * @return null|string
-	 */
-	public function get_driver_name() {
+	public function get_driver_name(): string {
 		if(is_null($this->engine)) $this->connect_engine();
 		return $this->engine->name;
 	}
 
-	/**
-	 * @param null|PDO $db
-	 * @param string $sql
-	 */
-	private function count_execs($db, $sql, $inputarray) {
+	private function count_execs(string $sql, array $inputarray) {
 		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 			$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
 			if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
@@ -706,7 +544,7 @@ class Database {
 		else $this->query_count++;
 	}
 
-	private function count_time($method, $start) {
+	private function count_time(string $method, float $start) {
 		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
 			$text = $method.":".(microtime(true) - $start)."\n";
 			file_put_contents("data/sql.log", $text, FILE_APPEND);
@@ -714,18 +552,10 @@ class Database {
 		$this->dbtime += microtime(true) - $start;
 	}
 
-	/**
-	 * Execute an SQL query and return an PDO result-set.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 * @throws SCoreException
-	 */
-	public function execute($query, $args=array()) {
+	public function execute(string $query, array $args=array()): PDOStatement {
 		try {
 			if(is_null($this->db)) $this->connect_db();
-			$this->count_execs($this->db, $query, $args);
+			$this->count_execs($query, $args);
 			$stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
@@ -755,7 +585,7 @@ class Database {
 	 * @param array $args
 	 * @return array
 	 */
-	public function get_all($query, $args=array()) {
+	public function get_all(string $query, array $args=array()): array {
 		$_start = microtime(true);
 		$data = $this->execute($query, $args)->fetchAll();
 		$this->count_time("get_all", $_start);
@@ -769,7 +599,7 @@ class Database {
 	 * @param array $args
 	 * @return array|null
 	 */
-	public function get_row($query, $args=array()) {
+	public function get_row(string $query, array $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
 		$this->count_time("get_row", $_start);
@@ -783,7 +613,7 @@ class Database {
 	 * @param array $args
 	 * @return array
 	 */
-	public function get_col($query, $args=array()) {
+	public function get_col(string $query, array $args=array()): array {
 		$_start = microtime(true);
 		$stmt = $this->execute($query, $args);
 		$res = array();
@@ -795,13 +625,13 @@ class Database {
 	}
 
 	/**
-	 * Execute an SQL query and return the the first row => the second rown.
+	 * Execute an SQL query and return the the first row => the second row.
 	 *
 	 * @param string $query
 	 * @param array $args
 	 * @return array
 	 */
-	public function get_pairs($query, $args=array()) {
+	public function get_pairs(string $query, array $args=array()): array {
 		$_start = microtime(true);
 		$stmt = $this->execute($query, $args);
 		$res = array();
@@ -817,9 +647,9 @@ class Database {
 	 *
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed
+	 * @return mixed|null
 	 */
-	public function get_one($query, $args=array()) {
+	public function get_one(string $query, array $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
 		$this->count_time("get_one", $_start);
@@ -832,7 +662,7 @@ class Database {
 	 * @param string|null $seq
 	 * @return int
 	 */
-	public function get_last_insert_id($seq) {
+	public function get_last_insert_id(string $seq): int {
 		if($this->engine->name == "pgsql") {
 			return $this->db->lastInsertId($seq);
 		}
@@ -847,7 +677,7 @@ class Database {
 	 * @param string $name
 	 * @param string $data
 	 */
-	public function create_table($name, $data) {
+	public function create_table(string $name, string $data) {
 		if(is_null($this->engine)) { $this->connect_engine(); }
 		$data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
 		$this->execute($this->engine->create_table_sql($name, $data));
@@ -856,27 +686,26 @@ class Database {
 	/**
 	 * Returns the number of tables present in the current database.
 	 *
-	 * @return int|null
+	 * @return int
+	 * @throws SCoreException
 	 */
-	public function count_tables() {
-
+	public function count_tables(): int {
 		if(is_null($this->db) || is_null($this->engine)) $this->connect_db();
 
 		if($this->engine->name === "mysql") {
 			return count(
-						$this->get_all("SHOW TABLES")
-					);
+				$this->get_all("SHOW TABLES")
+			);
 		} else if ($this->engine->name === "pgsql") {
 			return count(
-						$this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
-					);
+				$this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+			);
 		} else if ($this->engine->name === "sqlite") {
 			return count(
-						$this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
-					);
+				$this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
+			);
 		} else {
-			// Hard to find a universal way to do this...
-			return NULL;
+			throw new SCoreException("Can't count tables for database type {$this->engine->name}");
 		}
 	}
 }
@@ -889,20 +718,20 @@ class MockDatabase extends Database {
 	/** @var \NoCache|null  */
 	public $cache = null;
 
-	/**
-	 * @param array $responses
-	 */
-	public function __construct($responses = array()) {
+	public function __construct(array $responses = array()) {
 		$this->cache = new NoCache();
 		$this->responses = $responses;
 	}
 
-	/**
-	 * @param string $query
-	 * @param array $params
-	 * @return PDOStatement
-	 */
-	public function execute($query, $params=array()) {
+	public function execute(string $query, array $params=array()): PDOStatement {
+		log_debug("mock-database",
+			"QUERY: " . $query .
+			"\nARGS: " . var_export($params, true) .
+			"\nRETURN: " . var_export($this->responses[$this->query_id], true)
+		);
+		return $this->responses[$this->query_id++];
+	}
+	public function _execute(string $query, array $params=array()) {
 		log_debug("mock-database",
 			"QUERY: " . $query .
 			"\nARGS: " . var_export($params, true) .
@@ -911,53 +740,16 @@ class MockDatabase extends Database {
 		return $this->responses[$this->query_id++];
 	}
 
-	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 */
-	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_all(string $query, array $args=array()): array {return $this->_execute($query, $args);}
+	public function get_row(string $query, array $args=array()) {return $this->_execute($query, $args);}
+	public function get_col(string $query, array $args=array()): array {return $this->_execute($query, $args);}
+	public function get_pairs(string $query, array $args=array()): array {return $this->_execute($query, $args);}
+	public function get_one(string $query, array $args=array()) {return $this->_execute($query, $args);}
 
-	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 */
-	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
+	public function get_last_insert_id(string $seq): int {return $this->query_id;}
 
-	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 */
-	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
-
-	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 */
-	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
-
-	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return PDOStatement
-	 */
-	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
-
-	/**
-	 * @param null|string $seq
-	 * @return int|string
-	 */
-	public function get_last_insert_id($seq) {return $this->query_id;}
-
-	/**
-	 * @param string $sql
-	 * @return string
-	 */
-	public function scoreql_to_sql($sql) {return $sql;}
-	public function create_table($name, $def) {}
+	public function scoreql_to_sql(string $sql): string {return $sql;}
+	public function create_table(string $name, string $def) {}
 	public function connect_engine() {}
 }
 

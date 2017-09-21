@@ -72,17 +72,15 @@ class Image {
 	public $source;
     
 	/** @var boolean */
-	public $locked;
+	public $locked = false;
 
 	/**
 	 * One will very rarely construct an image directly, more common
 	 * would be to use Image::by_id, Image::by_hash, etc.
 	 *
-	 * @param null|mixed $row
+	 * @param null|mixed[] $row
 	 */
-	public function __construct($row=null) {
-		assert('is_null($row) || is_array($row)');
-
+	public function __construct(array $row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name
@@ -97,40 +95,19 @@ class Image {
 		}
 	}
 
-	/**
-	 * Find an image by ID.
-	 *
-	 * @param int $id
-	 * @return Image
-	 */
-	public static function by_id(/*int*/ $id) {
-		assert('is_numeric($id)');
+	public static function by_id(int $id) {
 		global $database;
 		$row = $database->get_row("SELECT * FROM images WHERE images.id=:id", array("id"=>$id));
 		return ($row ? new Image($row) : null);
 	}
 
-	/**
-	 * Find an image by hash.
-	 *
-	 * @param string $hash
-	 * @return Image
-	 */
-	public static function by_hash(/*string*/ $hash) {
-		assert('is_string($hash)');
+	public static function by_hash(string $hash) {
 		global $database;
 		$row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", array("hash"=>$hash));
 		return ($row ? new Image($row) : null);
 	}
 
-	/**
-	 * Pick a random image out of a set.
-	 *
-	 * @param string[] $tags
-	 * @return Image
-	 */
-	public static function by_random($tags=array()) {
-		assert('is_array($tags)');
+	public static function by_random(array $tags=array()) {
 		$max = Image::count_images($tags);
 		if ($max < 1) return null;		// From Issue #22 - opened by HungryFeline on May 30, 2011.
 		$rand = mt_rand(0, $max-1);
@@ -148,10 +125,7 @@ class Image {
 	 * @throws SCoreException
 	 * @return Image[]
 	 */
-	public static function find_images(/*int*/ $start, /*int*/ $limit, $tags=array()) {
-		assert('is_numeric($start)');
-		assert('is_numeric($limit)');
-		assert('is_array($tags)');
+	public static function find_images(int $start, int $limit, array $tags=array()): array {
 		global $database, $user, $config;
 
 		$images = array();
@@ -185,11 +159,7 @@ class Image {
 		return $images;
 	}
 
-	/**
-	 * @param string[] $tags
-	 * @return boolean
-	 */
-	public static function validate_accel($tags) {
+	public static function validate_accel(array $tags): bool {
 		$yays = 0;
 		$nays = 0;
 		foreach($tags as $tag) {
@@ -202,14 +172,7 @@ class Image {
 		return ($yays > 1 || $nays > 0);
 	}
 
-	/**
-	 * @param string[] $tags
-	 * @param int $offset
-	 * @param int $limit
-	 * @return null|PDOStatement
-	 * @throws SCoreException
-	 */
-	public static function get_accelerated_result($tags, $offset, $limit) {
+	public static function get_accelerated_result(array $tags, int $offset, int $limit) {
 		global $database;
 
 		if(!Image::validate_accel($tags)) {
@@ -262,15 +225,14 @@ class Image {
 	 * @param string[] $tags
 	 * @return int
 	 */
-	public static function count_images($tags=array()) {
-		assert('is_array($tags)');
+	public static function count_images(array $tags=array()): int {
 		global $database;
 		$tag_count = count($tags);
 
 		if($tag_count === 0) {
 			$total = $database->cache->get("image-count");
 			if(!$total) {
-				$total = $database->get_one("SELECT COUNT(*) FROM images");
+				$total = $database->get_one("SELECT COUNT(*) FROM images") || 0;
 				$database->cache->set("image-count", $total, 600);
 			}
 			return $total;
@@ -278,11 +240,11 @@ class Image {
 		else if($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
 			return $database->get_one(
 				$database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
-				array("tag"=>$tags[0]));
+				array("tag"=>$tags[0])) || 0;
 		}
 		else {
 			$querylet = Image::build_search_querylet($tags);
-			return $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+			return $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables) || 0;
 		}
 	}
 
@@ -292,8 +254,7 @@ class Image {
 	 * @param string[] $tags
 	 * @return float
 	 */
-	public static function count_pages($tags=array()) {
-		assert('is_array($tags)');
+	public static function count_pages(array $tags=array()): float {
 		global $config;
 		return ceil(Image::count_images($tags) / $config->get_int('index_images'));
 	}
@@ -312,9 +273,7 @@ class Image {
 	 * @param bool $next
 	 * @return Image
 	 */
-	public function get_next($tags=array(), $next=true) {
-		assert('is_array($tags)');
-		assert('is_bool($next)');
+	public function get_next(array $tags=array(), bool $next=true) {
 		global $database;
 
 		if($next) {
@@ -351,7 +310,7 @@ class Image {
 	 * @param string[] $tags
 	 * @return Image
 	 */
-	public function get_prev($tags=array()) {
+	public function get_prev(array $tags=array()) {
 		return $this->get_next($tags, false);
 	}
 
@@ -543,7 +502,7 @@ class Image {
 	 *
 	 * @param string $new_source
 	 */
-	public function set_source(/*string*/ $new_source) {
+	public function set_source(string $new_source) {
 		global $database;
 		$old_source = $this->source;
 		if(empty($new_source)) $new_source = null;
@@ -617,8 +576,8 @@ class Image {
 	 * @param string[] $tags
 	 * @throws Exception
 	 */
-	public function set_tags($tags) {
-		assert('is_array($tags) && count($tags) > 0', var_export($tags, true));
+	public function set_tags(array $tags) {
+		assert('count($tags) > 0', var_export($tags, true));
 		global $database;
 
 		if(count($tags) <= 0) {
@@ -793,8 +752,7 @@ class Image {
 	 * @param string[] $terms
 	 * @return \Querylet
 	 */
-	private static function build_search_querylet($terms) {
-		assert('is_array($terms)');
+	private static function build_search_querylet(array $terms): Querylet {
 		global $database;
 
 		$tag_querylets = array();
@@ -936,7 +894,7 @@ class Image {
 	 * @param TagQuerylet[] $tag_querylets
 	 * @return Querylet
 	 */
-	private static function build_accurate_search_querylet($tag_querylets) {
+	private static function build_accurate_search_querylet(array $tag_querylets): Querylet {
 		global $database;
 
 		$positive_tag_id_array = array();
@@ -1081,13 +1039,7 @@ class Image {
  *
  */
 class Tag {
-	/**
-	 * @param string[] $tags
-	 * @return string
-	 */
-	public static function implode($tags) {
-		assert('is_array($tags)');
-
+	public static function implode(array $tags): string {
 		sort($tags);
 		$tags = implode(' ', $tags);
 
@@ -1101,9 +1053,8 @@ class Tag {
 	 * @param bool $tagme add "tagme" if the string is empty
 	 * @return string[]
 	 */
-	public static function explode($tags, $tagme=true) {
+	public static function explode(string $tags, bool $tagme=true): array {
 		global $database;
-		assert('is_string($tags)');
 
 		$tags = explode(' ', trim($tags));
 
@@ -1267,7 +1218,7 @@ function add_image($tmpname, $filename, $tags) {
  * @param int $orig_height
  * @return integer[]
  */
-function get_thumbnail_size(/*int*/ $orig_width, /*int*/ $orig_height) {
+function get_thumbnail_size(int $orig_width, int $orig_height) {
 	global $config;
 
 	if($orig_width === 0) $orig_width = 192;

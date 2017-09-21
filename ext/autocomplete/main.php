@@ -6,7 +6,7 @@
  */
 
 class AutoComplete extends Extension {
-	public function get_priority() {return 30;} // before Home
+	public function get_priority(): int {return 30;} // before Home
 
 	public function onPageRequest(PageRequestEvent $event) {
 		global $page, $database;

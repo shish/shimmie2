@@ -26,11 +26,7 @@
  */
 
 class BBCode extends FormatterExtension {
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public function format(/*string*/ $text) {
+	public function format(string $text): string {
 		$text = $this->extract_code($text);
 		foreach(array(
 			"b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
@@ -67,11 +63,7 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	public function strip(/*string*/ $text) {
+	public function strip(string $text): string {
 		foreach(array(
 			"b", "i", "u", "s", "sup", "sub", "h1", "h2", "h3", "h4",
 			"code", "url", "email", "li",
@@ -91,22 +83,14 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	private function filter_spoiler(/*string*/ $text) {
+	private function filter_spoiler(string $text): string {
 		return str_replace(
 			array("[spoiler]","[/spoiler]"),
 			array("<span style=\"background-color:#000; color:#000;\">","</span>"),
 			$text);
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	private function strip_spoiler(/*string*/ $text) {
+	private function strip_spoiler(string $text): string {
 		$l1 = strlen("[spoiler]");
 		$l2 = strlen("[/spoiler]");
 		while(true) {
@@ -127,11 +111,7 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	private function extract_code(/*string*/ $text) {
+	private function extract_code(string $text): string {
 		# at the end of this function, the only code! blocks should be
 		# the ones we've added -- others may contain malicious content,
 		# which would only appear after decoding
@@ -158,11 +138,7 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	private function insert_code(/*string*/ $text) {
+	private function insert_code(string $text): string {
 		$l1 = strlen("[code!]");
 		$l2 = strlen("[/code!]");
 		while(true) {
@@ -181,4 +157,3 @@ class BBCode extends FormatterExtension {
 		return $text;
 	}
 }
-

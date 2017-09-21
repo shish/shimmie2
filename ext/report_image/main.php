@@ -13,10 +13,7 @@ class RemoveReportedImageEvent extends Event {
 	/** @var  int */
 	public $id;
 
-	/**
-	 * @param int $id
-	 */
-	public function __construct($id) {
+	public function __construct(int $id) {
 		$this->id = $id;
 	}
 }
@@ -25,10 +22,7 @@ class AddReportedImageEvent extends Event {
 	/** @var ImageReport */
 	public $report;
 
-	/**
-	 * @param ImageReport $report
-	 */
-	public function __construct($report) {
+	public function __construct(ImageReport $report) {
 		$this->report = $report;
 	}
 }
@@ -41,7 +35,7 @@ class ImageReport {
 	/** @var string  */
 	public $reason;
 
-	public function __construct($image_id, $user_id, $reason) {
+	public function __construct(int $image_id, int $user_id, string $reason) {
 		$this->image_id = $image_id;
 		$this->user_id = $user_id;
 		$this->reason = $reason;

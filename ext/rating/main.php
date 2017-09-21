@@ -25,11 +25,7 @@ class RatingSetEvent extends Event {
 	/** @var string  */
 	public $rating;
 
-	/**
-	 * @param Image $image
-	 * @param string $rating
-	 */
-	public function __construct(Image $image, /*char*/ $rating) {
+	public function __construct(Image $image, string $rating) {
 		assert(in_array($rating, array("s", "q", "e", "u")));
 
 		$this->image = $image;
@@ -43,7 +39,7 @@ class Ratings extends Extension {
 	/**
 	 * @return int
 	 */
-	public function get_priority() {return 50;}
+	public function get_priority(): int {return 50;}
 
 	public function onInitExt(InitExtEvent $event) {
 		global $config;
@@ -189,7 +185,7 @@ class Ratings extends Extension {
 	 * @param string $sqes
 	 * @return string
 	 */
-	public static function privs_to_sql(/*string*/ $sqes) {
+	public static function privs_to_sql(string $sqes) {
 		$arr = array();
 		$length = strlen($sqes);
 		for($i=0; $i<$length; $i++) {
@@ -203,7 +199,7 @@ class Ratings extends Extension {
 	 * @param string $rating
 	 * @return string
 	 */
-	public static function rating_to_human(/*string*/ $rating) {
+	public static function rating_to_human(string $rating) {
 		switch($rating) {
 			case "s": return "Safe";
 			case "q": return "Questionable";
@@ -216,7 +212,7 @@ class Ratings extends Extension {
 	 * @param string $rating
 	 * @return bool
 	 */
-	public static function rating_is_valid(/*string*/ $rating) {
+	public static function rating_is_valid(string $rating) {
 		switch($rating) {
 			case "s":
 			case "q":
@@ -279,7 +275,7 @@ class Ratings extends Extension {
 	 * @param string $rating
 	 * @param string $old_rating
 	 */
-	private function set_rating(/*int*/ $image_id, /*string*/ $rating, /*string*/ $old_rating) {
+	private function set_rating(int $image_id, string $rating, string $old_rating) {
 		global $database;
 		if($old_rating != $rating){
 			$database->Execute("UPDATE images SET rating=? WHERE id=?", array($rating, $image_id));

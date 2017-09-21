@@ -1,5 +1,5 @@
 <?php
-require_once "lib/context.php";
+require_once "vendor/shish/libcontext-php/context.php";
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Input / Output Sanitising                                                 *
@@ -11,7 +11,7 @@ require_once "lib/context.php";
  * @param string $input
  * @return string
  */
-function html_escape($input) {
+function html_escape($input): string {
 	return htmlentities($input, ENT_QUOTES, "UTF-8");
 }
 
@@ -21,7 +21,7 @@ function html_escape($input) {
  * @param string $input
  * @return string
  */
-function html_unescape($input) {
+function html_unescape($input): string {
 	return html_entity_decode($input, ENT_QUOTES, "UTF-8");
 }
 
@@ -31,7 +31,7 @@ function html_unescape($input) {
  * @param string $input
  * @return int
  */
-function int_escape($input) {
+function int_escape($input): int {
 	/*
 	 Side note, Casting to an integer is FASTER than using intval.
 	 http://hakre.wordpress.com/2010/05/13/php-casting-vs-intval/
@@ -45,7 +45,7 @@ function int_escape($input) {
  * @param string $input
  * @return string
  */
-function url_escape($input) {
+function url_escape($input): string {
 	/*
 		Shish: I have a feeling that these three lines are important, possibly for searching for tags with slashes in them like fate/stay_night
 		green-ponies: indeed~
@@ -80,7 +80,7 @@ function url_escape($input) {
  * @param string $input
  * @return string
  */
-function sql_escape($input) {
+function sql_escape($input): string {
 	global $database;
 	return $database->escape($input);
 }
@@ -92,7 +92,7 @@ function sql_escape($input) {
  * @param mixed $input
  * @return boolean
  */
-function bool_escape($input) {
+function bool_escape($input): bool {
 	/*
 	 Sometimes, I don't like PHP -- this, is one of those times...
 	  "a boolean FALSE is not considered a valid boolean value by this function."
@@ -132,13 +132,7 @@ function no_escape($input) {
 	return $input;
 }
 
-/**
- * @param int $val
- * @param int|null $min
- * @param int|null $max
- * @return int
- */
-function clamp($val, $min, $max) {
+function clamp(int $val, int $min=null, int $max=null): int {
 	if(!is_numeric($val) || (!is_null($min) && $val < $min)) {
 		$val = $min;
 	}
@@ -151,13 +145,7 @@ function clamp($val, $min, $max) {
 	return $val;
 }
 
-/**
- * @param string $name
- * @param array $attrs
- * @param array $children
- * @return string
- */
-function xml_tag($name, $attrs=array(), $children=array()) {
+function xml_tag(string $name, array $attrs=array(), array $children=array()): string {
 	$xml = "<$name ";
 	foreach($attrs as $k => $v) {
 		$xv = str_replace('&#039;', '&apos;', htmlspecialchars($v, ENT_QUOTES));
@@ -184,6 +172,7 @@ function xml_tag($name, $attrs=array(), $children=array()) {
  * @param int $limit how long the string should be
  * @param string $break where to break the string
  * @param string $pad what to add to the end of the string after truncating
+ * @return string
  */
 function truncate($string, $limit, $break=" ", $pad="...") {
 	// return with no change if string is shorter than $limit
@@ -202,14 +191,10 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
  *
- * @param string|integer $limit
+ * @param string $limit
  * @return int
  */
-function parse_shorthand_int($limit) {
-	if(is_numeric($limit)) {
-		return (int)$limit;
-	}
-
+function parse_shorthand_int(string $limit): int {
 	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', (string)$limit, $m)) {
 		$value = $m[1];
 		if (isset($m[2])) {
@@ -235,7 +220,7 @@ function parse_shorthand_int($limit) {
  * @param integer $int
  * @return string
  */
-function to_shorthand_int($int) {
+function to_shorthand_int(int $int): string {
 	if($int >= pow(1024, 3)) {
 		return sprintf("%.1fGB", $int / pow(1024, 3));
 	}
@@ -258,7 +243,7 @@ function to_shorthand_int($int) {
  * @param bool $html
  * @return string
  */
-function autodate($date, $html=true) {
+function autodate(string $date, bool $html=true): string {
 	$cpu = date('c', strtotime($date));
 	$hum = date('F j, Y; H:i', strtotime($date));
 	return ($html ? "<time datetime='$cpu'>$hum</time>" : $hum);
@@ -270,7 +255,7 @@ function autodate($date, $html=true) {
  * @param string $dateTime
  * @return bool
  */
-function isValidDateTime($dateTime) {
+function isValidDateTime(string $dateTime): bool {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
 		if (checkdate($matches[2], $matches[3], $matches[1])) {
 			return true;
@@ -286,7 +271,7 @@ function isValidDateTime($dateTime) {
  * @param string $date
  * @return bool
  */
-function isValidDate($date) {
+function isValidDate(string $date): bool {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {
 		// checkdate wants (month, day, year)
 		if (checkdate($matches[2], $matches[3], $matches[1])) {
@@ -297,10 +282,7 @@ function isValidDate($date) {
 	return false;
 }
 
-/**
- * @param string[] $inputs
- */
-function validate_input($inputs) {
+function validate_input(array $inputs): array {
 	$outputs = array();
 
 	foreach($inputs as $key => $validations) {
@@ -398,7 +380,7 @@ function validate_input($inputs) {
  * @param string $ban_reason
  * @return string
  */
-function show_ip($ip, $ban_reason) {
+function show_ip(string $ip, string $ban_reason): string {
 	global $user;
 	$u_reason = url_escape($ban_reason);
 	$u_end = url_escape("+1 week");
@@ -407,26 +389,12 @@ function show_ip($ip, $ban_reason) {
 	return $ip;
 }
 
-/**
- * Checks if a given string contains another at the beginning.
- *
- * @param string $haystack String to examine.
- * @param string $needle String to look for.
- * @return bool
- */
-function startsWith(/*string*/ $haystack, /*string*/ $needle) {
+function startsWith(string $haystack, string $needle): bool {
 	$length = strlen($needle);
 	return (substr($haystack, 0, $length) === $needle);
 }
 
-/**
- * Checks if a given string contains another at the end.
- *
- * @param string $haystack String to examine.
- * @param string $needle String to look for.
- * @return bool
- */
-function endsWith(/*string*/ $haystack, /*string*/ $needle) {
+function endsWith(string $haystack, string $needle): bool {
 	$length = strlen($needle);
 	$start  = $length * -1; //negative
 	return (substr($haystack, $start) === $needle);
@@ -446,7 +414,7 @@ function endsWith(/*string*/ $haystack, /*string*/ $needle) {
  * @param null|string $query
  * @return string
  */
-function make_link($page=null, $query=null) {
+function make_link(string $page=null, string $query=null): string {
 	global $config;
 
 	if(is_null($page)) $page = $config->get_string('main_page');
@@ -481,14 +449,14 @@ function make_link($page=null, $query=null) {
 /**
  * Take the current URL and modify some parameters
  *
- * @param $changes
+ * @param array $changes
  * @return string
  */
-function modify_current_url($changes) {
+function modify_current_url(array $changes): string {
 	return modify_url($_SERVER['QUERY_STRING'], $changes);
 }
 
-function modify_url($url, $changes) {
+function modify_url(string $url, array $changes): string {
 	// SHIT: PHP is officially the worst web API ever because it does not
 	// have a built-in function to do this.
 
@@ -526,7 +494,7 @@ function modify_url($url, $changes) {
  * @param string $link
  * @return string
  */
-function make_http(/*string*/ $link) {
+function make_http(string $link) {
 	if(strpos($link, "://") > 0) {
 		return $link;
 	}
@@ -553,7 +521,7 @@ function make_http(/*string*/ $link) {
  *
  * @return string
  */
-function make_form($target, $method="POST", $multipart=False, $form_id="", $onsubmit="") {
+function make_form(string $target, string $method="POST", bool $multipart=False, string $form_id="", string $onsubmit=""): string {
 	global $user;
 	if($method == "GET") {
 		$link = html_escape($target);
@@ -578,7 +546,7 @@ function make_form($target, $method="POST", $multipart=False, $form_id="", $onsu
  * @param string $file The filename
  * @return string
  */
-function mtimefile($file) {
+function mtimefile(string $file): string {
 	$data_href = get_base_href();
 	$mtime = filemtime($file);
 	return "$data_href/$file?$mtime";
@@ -589,7 +557,7 @@ function mtimefile($file) {
  *
  * @return string
  */
-function get_theme() {
+function get_theme(): string {
 	global $config;
 	$theme = $config->get_string("theme", "default");
 	if(!file_exists("themes/$theme")) $theme = "default";
@@ -602,7 +570,7 @@ function get_theme() {
  * @param string $pattern
  * @return array
  */
-function zglob($pattern) {
+function zglob(string $pattern): array {
 	$results = array();
 	if(preg_match('/(.*)\{(.*)\}(.*)/', $pattern, $matches)) {
 		$braced = explode(",", $matches[2]);
@@ -621,11 +589,13 @@ function zglob($pattern) {
 
 /**
  * Gets contact link as mailto: or http:
- * @return string
+ * @return string|null
  */
 function contact_link() {
 	global $config;
 	$text = $config->get_string('contact_link');
+	if(is_null($text)) return null;
+
 	if(
 		startsWith($text, "http:") ||
 		startsWith($text, "https:") ||
@@ -650,10 +620,7 @@ function contact_link() {
 * CAPTCHA abstraction                                                       *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/**
- * @return string
- */
-function captcha_get_html() {
+function captcha_get_html(): string {
 	global $config, $user;
 
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return "";
@@ -673,10 +640,7 @@ function captcha_get_html() {
 	return $captcha;
 }
 
-/**
- * @return bool
- */
-function captcha_check() {
+function captcha_check(): bool {
 	global $config, $user;
 
 	if(DEBUG && ip_in_range($_SERVER['REMOTE_ADDR'], "127.0.0.0/8")) return true;
@@ -715,9 +679,26 @@ function captcha_check() {
  *
  * @return bool True if HTTPS is enabled
  */
-function is_https_enabled() {
+function is_https_enabled(): bool {
 	return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 }
+
+define("MIME_TYPE_MAP", [
+	'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
+	'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
+	'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
+	'svg' => 'image/svg+xml', 'pdf' => 'application/pdf',
+	'zip' => 'application/zip', 'gz' => 'application/x-gzip',
+	'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
+	'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
+	'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
+	'css' => 'text/css', 'js' => 'text/javascript',
+	'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
+	'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
+	'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
+	'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
+	'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
+]);
 
 /**
  * Get MIME type for file
@@ -728,33 +709,13 @@ function is_https_enabled() {
  *
  * @param string $file File path
  * @param string $ext
- * @param bool $list
  * @return string
  */
-function getMimeType($file, $ext="", $list=false) {
-
+function getMimeType(string $file, string $ext=""): string {
 	// Static extension lookup
 	$ext = strtolower($ext);
-	static $exts = array(
-		'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
-		'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-		'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
-		'svg' => 'image/svg+xml', 'pdf' => 'application/pdf',
-		'zip' => 'application/zip', 'gz' => 'application/x-gzip',
-		'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
-		'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
-		'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
-		'css' => 'text/css', 'js' => 'text/javascript',
-		'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
-		'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
-		'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
-		'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
-		'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
-	);
 
-	if ($list === true){ return $exts; }
-
-	if (isset($exts[$ext])) { return $exts[$ext]; }
+	if (isset($exts[$ext])) { return MIME_TYPE_MAP[$ext]; }
 
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
@@ -785,13 +746,12 @@ function getMimeType($file, $ext="", $list=false) {
  * @param string $mime_type
  * @return bool|string
  */
-function getExtension ($mime_type){
+function getExtension(string $mime_type) {
 	if(empty($mime_type)){
 		return false;
 	}
 
-	$extensions = getMimeType(null, null, true);
-	$ext = array_search($mime_type, $extensions);
+	$ext = array_search($mime_type, MIME_TYPE_MAP);
 	return ($ext ? $ext : false);
 }
 
@@ -816,7 +776,7 @@ function blockcmp(Block $a, Block $b) {
  *
  * @return int
  */
-function get_memory_limit() {
+function get_memory_limit(): int {
 	global $config;
 
 	// thumbnail generation requires lots of memory
@@ -866,7 +826,7 @@ function get_memory_limit() {
  * @param Config $config
  * @return string
  */
-function get_session_ip(Config $config) {
+function get_session_ip(Config $config): string {
 	$mask = $config->get_string("session_hash_mask", "255.255.0.0");
 	$addr = $_SERVER['REMOTE_ADDR'];
 	$addr = inet_ntop(inet_pton($addr) & inet_pton($mask));
@@ -886,7 +846,7 @@ function get_session_ip(Config $config) {
  * @param string $text
  * @param string $type
  */
-function flash_message(/*string*/ $text, /*string*/ $type="info") {
+function flash_message(string $text, string $type="info") {
 	global $page;
 	$current = $page->get_cookie("flash_message");
 	if($current) {
@@ -907,7 +867,7 @@ function flash_message(/*string*/ $text, /*string*/ $type="info") {
  *
  * @return string
  */
-function get_base_href() {
+function get_base_href(): string {
 	if(defined("BASE_HREF")) return BASE_HREF;
 	$possible_vars = array('SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO');
 	$ok_var = null;
@@ -931,19 +891,13 @@ function get_base_href() {
  * @param string $string
  * @return string
  */
-function format_text(/*string*/ $string) {
+function format_text(string $string): string {
 	$tfe = new TextFormattingEvent($string);
 	send_event($tfe);
 	return $tfe->formatted;
 }
 
-/**
- * @param string $base
- * @param string $hash
- * @param bool $create
- * @return string
- */
-function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=true) {
+function warehouse_path(string $base, string $hash, bool $create=true): string {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {
@@ -956,11 +910,7 @@ function warehouse_path(/*string*/ $base, /*string*/ $hash, /*bool*/ $create=tru
 	return $pa;
 }
 
-/**
- * @param string $filename
- * @return string
- */
-function data_path($filename) {
+function data_path(string $filename): string {
 	$filename = "data/" . $filename;
 	if(!file_exists(dirname($filename))) mkdir(dirname($filename), 0755, true);
 	return $filename;
@@ -982,7 +932,7 @@ if (!function_exists('mb_strlen')) {
  * @param string $mfile
  * @return array|bool
  */
-function transload($url, $mfile) {
+function transload(string $url, string $mfile) {
 	global $config;
 
 	if($config->get_string("transload_engine") === "curl" && function_exists("curl_init")) {
@@ -1076,7 +1026,7 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
  * @param string $name
  * @return string|bool
  */
-function findHeader ($headers, $name) {
+function findHeader(array $headers, string $name) {
 	if (!is_array($headers)) {
 		return false;
 	}
@@ -1103,7 +1053,7 @@ function findHeader ($headers, $name) {
  * @param string $fname
  * @return string|null
  */
-function manual_include($fname) {
+function manual_include(string $fname) {
 	static $included = array();
 
 	if(!file_exists($fname)) return null;
@@ -1159,7 +1109,7 @@ define("SCORE_LOG_NOTSET", 0);
  * @param bool|string $flash
  * @param array $args
  */
-function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $flash=false, $args=array()) {
+function log_msg(string $section, int $priority, string $message, $flash=false, $args=array()) {
 	send_event(new LogEvent($section, $priority, $message, $args));
 	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 
@@ -1181,43 +1131,43 @@ function log_msg(/*string*/ $section, /*int*/ $priority, /*string*/ $message, $f
  * @param bool|string $flash
  * @param array $args
  */
-function log_debug(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
+function log_debug(   string $section, string $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);}
 /**
  * @param string $section
  * @param string $message
  * @param bool|string $flash
  * @param array $args
  */
-function log_info(    /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
+function log_info(    string $section, string $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);}
 /**
  * @param string $section
  * @param string $message
  * @param bool|string $flash
  * @param array $args
  */
-function log_warning( /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
+function log_warning( string $section, string $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);}
 /**
  * @param string $section
  * @param string $message
  * @param bool|string $flash
  * @param array $args
  */
-function log_error(   /*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
+function log_error(   string $section, string $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);}
 /**
  * @param string $section
  * @param string $message
  * @param bool|string $flash
  * @param array $args
  */
-function log_critical(/*string*/ $section, /*string*/ $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
+function log_critical(string $section, string $message, $flash=false, $args=array()) {log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);}
 
 
 /**
  * Get a unique ID for this request, useful for grouping log messages.
  *
- * @return null|string
+ * @return string
  */
-function get_request_id() {
+function get_request_id(): string {
 	static $request_id = null;
 	if(!$request_id) {
 		// not completely trustworthy, as a user can spoof this
@@ -1243,7 +1193,7 @@ function get_request_id() {
  * @param mixed $to_remove
  * @return array
  */
-function array_remove($array, $to_remove) {
+function array_remove(array $array, $to_remove): array {
 	$array = array_unique($array);
 	$a2 = array();
 	foreach($array as $existing) {
@@ -1263,7 +1213,7 @@ function array_remove($array, $to_remove) {
  * @param mixed $element
  * @return array
  */
-function array_add($array, $element) {
+function array_add(array $array, $element): array {
 	// Could we just use array_push() ?
 	//  http://www.php.net/manual/en/function.array-push.php
 	$array[] = $element;
@@ -1277,7 +1227,7 @@ function array_add($array, $element) {
  * @param array $array
  * @return array
  */
-function array_iunique($array) {
+function array_iunique(array $array): array {
 	$ok = array();
 	foreach($array as $element) {
 		$found = false;
@@ -1302,7 +1252,7 @@ function array_iunique($array) {
  * @param string $CIDR
  * @return bool
  */
-function ip_in_range($IP, $CIDR) {
+function ip_in_range(string $IP, string $CIDR): bool {
 	list ($net, $mask) = explode("/", $CIDR);
 
 	$ip_net = ip2long ($net);
@@ -1323,7 +1273,7 @@ function ip_in_range($IP, $CIDR) {
  *
  * @param string $f
  */
-function deltree($f) {
+function deltree(string $f) {
 	//Because Windows (I know, bad excuse)
 	if(PHP_OS === 'WINNT') {
 		$real = realpath($f);
@@ -1369,7 +1319,7 @@ function deltree($f) {
  * @param string $source
  * @param string $target
  */
-function full_copy($source, $target) {
+function full_copy(string $source, string $target) {
 	if(is_dir($source)) {
 		@mkdir($target);
 
@@ -1401,7 +1351,7 @@ function full_copy($source, $target) {
  * @param string $_sub_dir
  * @return array file list
  */
-function list_files(/*string*/ $base, $_sub_dir="") {
+function list_files(string $base, string $_sub_dir=""): array {
 	assert(is_dir($base));
 
 	$file_list = array();
@@ -1438,11 +1388,7 @@ function list_files(/*string*/ $base, $_sub_dir="") {
 	return $file_list;
 }
 
-/**
- * @param string $path
- * @return string
- */
-function path_to_tags($path) {
+function path_to_tags(string $path): string {
     $matches = array();
     if(preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
         $tags = $matches[1];
@@ -1466,9 +1412,9 @@ global $_shm_event_listeners;
 $_shm_event_listeners = array();
 
 function _load_event_listeners() {
-	global $_shm_event_listeners;
+	global $_shm_event_listeners, $_shm_ctx;
 
-	ctx_log_start("Loading extensions");
+	$_shm_ctx->log_start("Loading extensions");
 
 	$cache_path = data_path("cache/shm_event_listeners.php");
 	if(COMPILE_ELS && file_exists($cache_path)) {
@@ -1482,7 +1428,7 @@ function _load_event_listeners() {
 		}
 	}
 
-	ctx_log_endok();
+	$_shm_ctx->log_endok();
 }
 
 function _set_event_listeners() {
@@ -1548,7 +1494,7 @@ function _dump_event_listeners($event_listeners, $path) {
  * @param string $ext_name Main class name (eg ImageIO as opposed to ImageIOTheme or ImageIOTest)
  * @return bool
  */
-function ext_is_live($ext_name) {
+function ext_is_live(string $ext_name): bool {
 	if (class_exists($ext_name)) {
 		/** @var Extension $ext */
 		$ext = new $ext_name();
@@ -1568,27 +1514,27 @@ $_shm_event_count = 0;
  * @param Event $event
  */
 function send_event(Event $event) {
-	global $_shm_event_listeners, $_shm_event_count;
+	global $_shm_event_listeners, $_shm_event_count, $_shm_ctx;
 	if(!isset($_shm_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));
 
 	// send_event() is performance sensitive, and with the number
 	// of times context gets called the time starts to add up
-	$ctx = constant('CONTEXT');
+	$ctx_enabled = constant('CONTEXT');
 
-	if($ctx) ctx_log_start(get_class($event));
+	if($ctx_enabled) $_shm_ctx->log_start(get_class($event));
 	// SHIT: http://bugs.php.net/bug.php?id=35106
 	$my_event_listeners = $_shm_event_listeners[get_class($event)];
 	ksort($my_event_listeners);
 	foreach($my_event_listeners as $listener) {
-		if($ctx) ctx_log_start(get_class($listener));
+		if($ctx_enabled) $_shm_ctx->log_start(get_class($listener));
 		if(method_exists($listener, $method_name)) {
 			$listener->$method_name($event);
 		}
-		if($ctx) ctx_log_endok();
+		if($ctx_enabled) $_shm_ctx->log_endok();
 	}
 	$_shm_event_count++;
-	if($ctx) ctx_log_endok();
+	if($ctx_enabled) $_shm_ctx->log_endok();
 }
 
 
@@ -1607,7 +1553,7 @@ $_shm_load_start = microtime(true);
  *
  * @return string debug info to add to the page.
  */
-function get_debug_info() {
+function get_debug_info(): string {
 	global $config, $_shm_event_count, $database, $_shm_load_start;
 
 	$i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
@@ -1666,6 +1612,8 @@ date and you should plan on moving elsewhere.
 }
 
 function _sanitise_environment() {
+	global $_shm_ctx;
+
 	if(TIMEZONE) {
 		date_default_timezone_set(TIMEZONE);
 	}
@@ -1679,8 +1627,9 @@ function _sanitise_environment() {
 		assert_options(ASSERT_CALLBACK, 'score_assert_handler');
 	}
 
+	$_shm_ctx = new Context();
 	if(CONTEXT) {
-		ctx_set_log(CONTEXT);
+		$_shm_ctx->set_log(CONTEXT);
 	}
 
 	if(COVERAGE) {
@@ -1702,9 +1651,9 @@ function _sanitise_environment() {
 
 /**
  * @param string $_theme
- * @return array
+ * @return string[]
  */
-function _get_themelet_files($_theme) {
+function _get_themelet_files(string $_theme): array {
 	$base_themelets = array();
 	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
 	$base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
@@ -1755,7 +1704,7 @@ function _fatal_error(Exception $e) {
  * @param string $str
  * @return string
  */
-function _decaret($str) {
+function _decaret(string $str): string {
 	$out = "";
 	$length = strlen($str);
 	for($i=0; $i<$length; $i++) {
@@ -1772,10 +1721,7 @@ function _decaret($str) {
 	return $out;
 }
 
-/**
- * @return User
- */
-function _get_user() {
+function _get_user(): User {
 	global $config, $page;
 	$user = null;
 	if($page->get_cookie("user") && $page->get_cookie("session")) {
@@ -1793,7 +1739,7 @@ function _get_user() {
 }
 
 /**
- * @return string
+ * @return string|null
  */
 function _get_query() {
 	return @$_POST["q"]?:@$_GET["q"];

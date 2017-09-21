@@ -50,7 +50,7 @@ class Featured extends Extension {
 			if($event->get_arg(0) == "view") {
 				$image = Image::by_id($config->get_int("featured_id"));
 				if(!is_null($image)) {
-					send_event(new DisplayingImageEvent($image, $page));
+					send_event(new DisplayingImageEvent($image));
 				}
 			}
 		}

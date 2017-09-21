@@ -38,7 +38,7 @@ class RSS_Images extends Extension {
 	 * @param array $search_terms
 	 * @param int $page_number
 	 */
-	private function do_rss($images, $search_terms, /*int*/ $page_number) {
+	private function do_rss($images, $search_terms, int $page_number) {
 		global $page;
 		global $config;
 		$page->set_mode("data");
@@ -83,11 +83,7 @@ class RSS_Images extends Extension {
 		$page->set_data($xml);
 	}
 
-	/**
-	 * @param Image $image
-	 * @return string
-	 */
-	private function thumb(Image $image) {
+	private function thumb(Image $image): string {
 		global $database;
 
 		$cached = $database->cache->get("rss-thumb:{$image->id}");

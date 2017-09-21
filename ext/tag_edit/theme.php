@@ -19,7 +19,7 @@ class TagEditTheme extends Themelet {
 		$page->add_block(new Block("Mass Tag Edit", $html));
 	}
 
-	public function mss_html($terms) {
+	public function mss_html($terms): string {
 		$h_terms = html_escape($terms);
 		$html = make_form(make_link("tag_edit/mass_source_set"), "POST") . "
 				<input type='hidden' name='tags' value='$h_terms'>
@@ -30,7 +30,7 @@ class TagEditTheme extends Themelet {
 		return $html;
 	}
 
-	public function get_tag_editor_html(Image $image) {
+	public function get_tag_editor_html(Image $image): string {
 		global $user;
 
 		$tag_links = array();
@@ -58,7 +58,7 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
-	public function get_user_editor_html(Image $image) {
+	public function get_user_editor_html(Image $image): string {
 		global $user;
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_av = $image->get_owner()->get_avatar_html();
@@ -80,7 +80,7 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
-	public function get_source_editor_html(Image $image) {
+	public function get_source_editor_html(Image $image): string {
 		global $user;
 		$h_source = html_escape($image->get_source());
 		$f_source = $this->format_source($image->get_source());
@@ -100,11 +100,7 @@ class TagEditTheme extends Themelet {
 		";
 	}
 
-	/**
-	 * @param string $source
-	 * @return string
-	 */
-	protected function format_source(/*string*/ $source) {
+	protected function format_source(string $source=null): string {
 		if(!empty($source)) {
 			if(!startsWith($source, "http://") && !startsWith($source, "https://")) {
 				$source = "http://" . $source;
@@ -120,7 +116,7 @@ class TagEditTheme extends Themelet {
 		return "Unknown";
 	}
 
-	public function get_lock_editor_html(Image $image) {
+	public function get_lock_editor_html(Image $image): string {
 		global $user;
 		$b_locked = $image->is_locked() ? "Yes (Only admins may edit these details)" : "No";
 		$h_locked = $image->is_locked() ? " checked" : "";

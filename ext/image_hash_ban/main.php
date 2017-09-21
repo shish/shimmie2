@@ -13,10 +13,7 @@
 class RemoveImageHashBanEvent extends Event {
 	public $hash;
 
-	/**
-	 * @param string $hash
-	 */
-	public function __construct($hash) {
+	public function __construct(string $hash) {
 		$this->hash = $hash;
 	}
 }
@@ -26,11 +23,7 @@ class AddImageHashBanEvent extends Event {
 	public $hash;
 	public $reason;
 
-	/**
-	 * @param string $hash
-	 * @param string $reason
-	 */
-	public function __construct($hash, $reason) {
+	public function __construct(string $hash, string $reason) {
 		$this->hash = $hash;
 		$this->reason = $reason;
 	}
@@ -168,6 +161,6 @@ class ImageBan extends Extension {
 	}
 
 	// in before resolution limit plugin
-	public function get_priority() {return 30;}
+	public function get_priority(): int {return 30;}
 }
 

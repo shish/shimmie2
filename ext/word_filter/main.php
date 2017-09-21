@@ -9,7 +9,7 @@
 
 class WordFilter extends Extension {
 	// before emoticon filter
-	public function get_priority() {return 40;}
+	public function get_priority(): int {return 40;}
 
 	public function onTextFormatting(TextFormattingEvent $event) {
 		$event->formatted = $this->filter($event->formatted);
@@ -27,7 +27,7 @@ class WordFilter extends Extension {
 	 * @param string $text
 	 * @return string
 	 */
-	private function filter(/*string*/ $text) {
+	private function filter(string $text) {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {
 			$search = trim($search);

@@ -63,28 +63,18 @@ class SetupBlock extends Block {
 	/** @var string  */
 	public $body;
 
-	/**
-	 * @param string $title
-	 */
-	public function __construct($title) {
+	public function __construct(string $title) {
 		$this->header = $title;
 		$this->section = "main";
 		$this->position = 50;
 		$this->body = "";
 	}
 
-	/**
-	 * @param string $text
-	 */
-	public function add_label($text) {
+	public function add_label(string $text) {
 		$this->body .= $text;
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $label
-	 */
-	public function add_text_option($name, $label=null) {
+	public function add_text_option(string $name, string $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
@@ -94,11 +84,7 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $label
-	 */
-	public function add_longtext_option($name, $label=null) {
+	public function add_longtext_option(string $name, string $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
@@ -109,11 +95,7 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $label
-	 */
-	public function add_bool_option($name, $label=null) {
+	public function add_bool_option(string $name, string $label=null) {
 		global $config;
 		$checked = $config->get_bool($name) ? " checked" : "";
 		if(!is_null($label)) {
@@ -129,11 +111,7 @@ class SetupBlock extends Block {
 //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
 //	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $label
-	 */
-	public function add_int_option($name, $label=null) {
+	public function add_int_option(string $name, string $label=null) {
 		global $config;
 		$val = html_escape($config->get_string($name));
 		if(!is_null($label)) {
@@ -143,11 +121,7 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
-	/**
-	 * @param string $name
-	 * @param null|string $label
-	 */
-	public function add_shorthand_int_option($name, $label=null) {
+	public function add_shorthand_int_option(string $name, string $label=null) {
 		global $config;
 		$val = to_shorthand_int($config->get_string($name));
 		if(!is_null($label)) {
@@ -157,12 +131,7 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
-	/**
-	 * @param string $name
-	 * @param string[] $options
-	 * @param null|string $label
-	 */
-	public function add_choice_option($name, $options, $label=null) {
+	public function add_choice_option(string $name, array $options, string $label=null) {
 		global $config;
 		$current = $config->get_string($name);
 
@@ -181,12 +150,7 @@ class SetupBlock extends Block {
 		$this->body .= $html;
 	}
 
-	/**
-	 * @param string $name
-	 * @param string[] $options
-	 * @param null|string $label
-	 */
-	public function add_multichoice_option($name, $options, $label=null) {
+	public function add_multichoice_option(string $name, array $options, string $label=null) {
 		global $config;
 		$current = $config->get_array($name);
 

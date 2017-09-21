@@ -35,11 +35,7 @@ class RandomListTheme extends Themelet {
 		$page->add_block(new Block("Navigation", $nav, "left", 0));
 	}
 
-	/**
-	 * @param string[] $search_terms
-	 * @return string
-	 */
-	protected function build_navigation($search_terms) {
+	protected function build_navigation(array $search_terms): string {
 		$h_search_string = html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link("random");
 		$h_search = "
