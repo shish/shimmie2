@@ -17,7 +17,7 @@ if(preg_match('/\.(?:png|jpg|jpeg|gif|css|js|php)(\?.*)?$/', $_SERVER["REQUEST_U
 }
 
 // all other requests (use shimmie routing based on URL)
-$_SERVER["PHP_SELF"] = '/';
+$_SERVER["PHP_SELF"] = '/index.php';
 $_GET['q'] = explode("?", $_SERVER["REQUEST_URI"])[0];
 error_log($_GET['q']);
 require_once "index.php";
