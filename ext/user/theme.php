@@ -36,7 +36,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr>" . make_form("user_admin/list", "GET");
 		$html .= "<td><input type='text' name='username' value='$h_username'/></td>";
 		if($user->can('delete_user'))
-			$html .= "<td><input type='email' name='email' value='$h_email'/></td>";
+			$html .= "<td><input type='email' name='text' value='$h_email'/></td>";
 		$html .= "<td><input type='text' name='class' value='$h_class'/></td>";
 		$html .= "<td><input type='submit' value='Search'/></td>";
 		$html .= "</form></tr>";
