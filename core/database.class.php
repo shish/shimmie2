@@ -356,6 +356,47 @@ class APCCache implements CacheEngine {
 	public function get_hits(): int {return $this->hits;}
 	public function get_misses(): int {return $this->misses;}
 }
+
+class RedisCache implements CacheEngine {
+	public $hits=0, $misses=0;
+	private $redis=null;
+
+	public function __construct(string $args) {
+		$this->redis = new Redis();
+		$hp = explode(":", $args);
+		$this->redis->pconnect($hp[0], $hp[1]);
+		$this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
+		$this->redis->setOption(Redis::OPT_PREFIX, 'shm:');
+	}
+
+	public function get(string $key) {
+		$val = $this->redis->get($key);
+		if($val !== false) {
+			$this->hits++;
+			return $val;
+		}
+		else {
+			$this->misses++;
+			return false;
+		}
+	}
+
+	public function set(string $key, $val, int $time=0) {
+		if($time > 0) {
+			$this->redis->setEx($key, $time, $val);
+		}
+		else {
+			$this->redis->set($key, $val);
+		}
+	}
+
+	public function delete(string $key) {
+		$this->redis->delete($key);
+	}
+
+	public function get_hits(): int {return $this->hits;}
+	public function get_misses(): int {return $this->misses;}
+}
 // }}}
 /** @publicsection */
 
@@ -410,7 +451,7 @@ class Database {
 
 	private function connect_cache() {
 		$matches = array();
-		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|memcached|apc)://(.*)#", CACHE_DSN, $matches)) {
+		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(.*)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
 				$this->cache = new MemcacheCache($matches[2]);
 			}
@@ -419,6 +460,9 @@ class Database {
 			}
 			else if($matches[1] == "apc") {
 				$this->cache = new APCCache($matches[2]);
+			}
+			else if($matches[1] == "redis") {
+				$this->cache = new RedisCache($matches[2]);
 			}
 		}
 		else {
