@@ -3,14 +3,14 @@
  * Name: Handle SVG
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle SVG files. (No thumbnail is generated for SVG files)
+ * Description: Handle static SVG files. (No thumbnail is generated for SVG files)
  */
 
 class SVGFileHandler extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
-			if(!move_upload_to_archive($event)) return;
+			move_upload_to_archive($event);
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
 			if(is_null($image)) {
@@ -75,7 +75,7 @@ class SVGFileHandler extends Extension {
 		$image->hash      = $metadata['hash'];
 		$image->filename  = $metadata['filename'];
 		$image->ext       = $metadata['extension'];
-		$image->tag_array = Tag::explode($metadata['tags']);
+		$image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
 		$image->source    = $metadata['source'];
 
 		return $image;
@@ -101,6 +101,10 @@ class MiniSVGParser {
 	/** @var int */
 	public $height=0;
 
+	/** @var int */
+	private $xml_depth=0;
+
+	/** @param string $file */
 	function __construct($file) {
 		$xml_parser = xml_parser_create();
 		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));
@@ -109,13 +113,15 @@ class MiniSVGParser {
 	}
 
 	function startElement($parser, $name, $attrs) {
-		if($name == "SVG") {
+		if($name == "SVG" && $this->xml_depth == 0) {
 			$this->width = int_escape($attrs["WIDTH"]);
 			$this->height = int_escape($attrs["HEIGHT"]);
 		}
+		$this->xml_depth++;
 	}
 
 	function endElement($parser, $name) {
+		$this->xml_depth--;
 	}
 }
 

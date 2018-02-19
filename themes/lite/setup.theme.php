@@ -17,14 +17,14 @@ class CustomSetupTheme extends SetupTheme {
 				$(\"#$i-toggle\").click(function() {
 					$(\"#$i\").slideToggle(\"slow\", function() {
 						if($(\"#$i\").is(\":hidden\")) {
-							$.cookie(\"$i-hidden\", 'true', {path: '/'});
+							Cookies.set(\"$i-hidden\", 'true', {path: '/'});
 						}
 						else {
-							$.cookie(\"$i-hidden\", 'false', {path: '/'});
+							Cookies.set(\"$i-hidden\", 'false', {path: '/'});
 						}
 					});
 				});
-				if($.cookie(\"$i-hidden\") == 'true') {
+				if(Cookies.get(\"$i-hidden\") == 'true') {
 					$(\"#$i\").hide();
 				}
 			});

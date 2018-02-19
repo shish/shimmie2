@@ -26,12 +26,11 @@ class MassTagger extends Extension {
 		if($event->page_matches("mass_tagger/tag") && $user->is_admin()) {
 			if( !isset($_POST['ids']) or !isset($_POST['tag']) ) return;
 
-			$tag = $_POST['tag'];
+			$tags = Tag::explode($_POST['tag']);
 
-			$tag_array = explode(" ",$tag);
 			$pos_tag_array = array();
 			$neg_tag_array = array();
-			foreach($tag_array as $new_tag) {
+			foreach($tags as $new_tag) {
 				if (strpos($new_tag, '-') === 0)
 					$neg_tag_array[] = substr($new_tag,1);
 				else
@@ -45,18 +44,19 @@ class MassTagger extends Extension {
 
 			if(isset($_POST['setadd']) && $_POST['setadd'] == 'set') {
 				foreach($images as $image) {
-					$image->set_tags(Tag::explode($tag));
+					$image->set_tags($tags);
 				}
 			}
 			else {
 				foreach($images as $image) {
 					if (!empty($neg_tag_array)) {
-						$img_tags = array_merge($pos_tag_array, explode(" ",$image->get_tag_list()));
+						$img_tags = array_merge($pos_tag_array, $image->get_tag_array());
 						$img_tags = array_diff($img_tags, $neg_tag_array);
-						$image->set_tags(Tag::explode($img_tags));
+						$image->set_tags($img_tags);
 					}
-					else
-						$image->set_tags(Tag::explode($tag . " " . $image->get_tag_list()));
+					else {
+						$image->set_tags(array_merge($tags, $image->get_tag_array()));
+					}
 				}
 			}
 

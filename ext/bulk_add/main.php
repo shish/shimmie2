@@ -32,7 +32,11 @@ class BulkAdd extends Extension {
 				set_time_limit(0);
 				$bae = new BulkAddEvent($_POST['dir']);
 				send_event($bae);
-				if(strlen($bae->results) > 0) {
+				if(is_array($bae->results)) {
+					foreach($bae->results as $result) {
+						 $this->theme->add_status("Adding files", $result);
+					}
+				} else if(strlen($bae->results) > 0) {
 					$this->theme->add_status("Adding files", $bae->results);
 				}
 				$this->theme->display_upload_results($page);

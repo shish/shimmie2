@@ -1,6 +1,6 @@
 <?php
 class TagListTest extends ShimmiePHPUnitTestCase {
-	var $pages = array("map", "alphabetic", "popularity", "categories");
+	private $pages = array("map", "alphabetic", "popularity", "categories");
 
 	public function testTagList() {
 		$this->get_page('tags/map');

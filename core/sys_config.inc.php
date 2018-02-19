@@ -36,11 +36,12 @@ _d("COMPILE_ELS", false);    // boolean  pre-build the list of event listeners
 _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("SEARCH_ACCEL", false);   // boolean  use search accelerator
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
-_d("VERSION", '2.5.5');      // string   shimmie version
+_d("VERSION", '2.6.1');      // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
-_d("EXTRA_EXTS", "");        // optional extra extensions
-
+_d("EXTRA_EXTS", "");        // string   optional extra extensions
+_d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
+_d("MIN_PHP_VERSION", '5.6');// string   minium supported PHP version
 
 /*
  * Calculated settings - you should never need to change these

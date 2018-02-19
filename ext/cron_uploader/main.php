@@ -213,7 +213,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Returns amount of files & total size of dir.
-	 * @param $path string
+	 * @param string $path directory name to scan
 	 * @return multitype:number
 	 */
 	function scan_dir($path){
@@ -234,7 +234,7 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Uploads the image & handles everything
-	 * @param $upload_count int to upload a non-config amount of imgs
+	 * @param int $upload_count to upload a non-config amount of imgs
 	 * @return boolean returns true if the upload was successful
 	 */
 	public function process_upload($upload_count = 0) {
@@ -304,9 +304,14 @@ class CronUploader extends Extension {
 
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
+	 *
+	 * @param string $tmpname
+	 * @param string $filename
+	 * @param string $tags
 	 */
 	private function add_image($tmpname, $filename, $tags) {
 		assert ( file_exists ( $tmpname ) );
+		assert('is_string($tags)');
 		
 		$pathinfo = pathinfo ( $filename );
 		if (! array_key_exists ( 'extension', $pathinfo )) {
@@ -315,7 +320,7 @@ class CronUploader extends Extension {
 		$metadata = array();
 		$metadata ['filename'] = $pathinfo ['basename'];
 		$metadata ['extension'] = $pathinfo ['extension'];
-		$metadata ['tags'] = ""; // = $tags; doesn't work when not logged in here
+		$metadata ['tags'] = array(); // = $tags; doesn't work when not logged in here
 		$metadata ['source'] = null;
 		$event = new DataUploadEvent ( $tmpname, $metadata );
 		send_event ( $event );
@@ -329,7 +334,7 @@ class CronUploader extends Extension {
 		
 		// Set tags
 		$img = Image::by_id($event->image_id);
-		$img->set_tags($tags);
+		$img->set_tags(Tag::explode($tags));
 	}
 	
 	private function generate_image_queue($base = "", $subdir = "") {

@@ -12,8 +12,10 @@
  * An image is being added to the database.
  */
 class ImageAdditionEvent extends Event {
-	var $user;
-	/** @var \Image */
+	/** @var User */
+	public $user;
+
+	/** @var Image */
 	public $image;
 	
 	/**
@@ -30,7 +32,7 @@ class ImageAdditionEvent extends Event {
 }
 
 class ImageAdditionException extends SCoreException {
-	var $error;
+	public $error;
 
 	/**
 	 * @param string $error
@@ -374,7 +376,7 @@ class ImageIO extends Extension {
 		$image->tag_array = array();
 		send_event(new TagSetEvent($image, $tags_to_set));
 
-		if($image->source) {
+		if($image->source !== null) {
 			log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
 		}
 	}

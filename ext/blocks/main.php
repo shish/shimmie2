@@ -40,8 +40,11 @@ class Blocks extends Extension {
 			$database->cache->set("blocks", $blocks, 600);
 		}
 		foreach($blocks as $block) {
-			if(fnmatch($block['pages'], implode("/", $event->args))) {
-				$page->add_block(new Block($block['title'], $block['content'], $block['area'], $block['priority']));
+			$path = implode("/", $event->args);
+			if(strlen($path) < 4000 && fnmatch($block['pages'], $path)) {
+				$b = new Block($block['title'], $block['content'], $block['area'], $block['priority']);
+				$b->is_content = false;
+				$page->add_block($b);
 			}
 		}
 

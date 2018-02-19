@@ -20,13 +20,8 @@ class Layout {
 		$theme_name = $config->get_string('theme', 'lite');
 		$site_name = $config->get_string('title');
 		$data_href = get_base_href();
-		$contact_link = $config->get_string('contact_link');
-
-		$header_html = "";
-		ksort($page->html_headers);
-		foreach($page->html_headers as $line) {
-			$header_html .= "\t\t{$line}\n";
-		}
+		$contact_link = contact_link();
+		$header_html = $page->get_all_html_headers();
 
 		$menu = "<div class='menu'>
 			<script type='text/javascript' src='{$data_href}/themes/{$theme_name}/wz_tooltip.js'></script>
@@ -152,7 +147,7 @@ class Layout {
 
 		$debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='mailto:{$contact_link}'>Contact</a>";
+		$contact = empty($contact_link) ? "" : "<br><a href='{$contact_link}'>Contact</a>";
 		//$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
 		/*$wrapper = "";
@@ -169,7 +164,7 @@ class Layout {
 
 		$flash = $page->get_cookie("flash_message");
 		$flash_html = "";
-		if($flash) {
+		if(!empty($flash)) {
 			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
 		}
 
@@ -198,7 +193,7 @@ class Layout {
 			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="http://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2014,
+			2007-2016,
 			based on the Danbooru concept.<br />
 			Lite Theme by <a href="http://seemslegit.com">Zach</a>
 			$debug
@@ -246,8 +241,8 @@ EOD;
 
 	/**
 	 * @param string $link
-	 * @param null|string $desc
-	 * @param array $pages_matched
+	 * @param string $desc
+	 * @param string[] $pages_matched
 	 * @return null|string
 	 */
 	public function navlinks($link, $desc, $pages_matched) {

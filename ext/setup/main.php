@@ -157,6 +157,11 @@ class SetupBlock extends Block {
 		$this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
 	}
 
+	/**
+	 * @param string $name
+	 * @param string[] $options
+	 * @param null|string $label
+	 */
 	public function add_choice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_string($name);
@@ -176,6 +181,11 @@ class SetupBlock extends Block {
 		$this->body .= $html;
 	}
 
+	/**
+	 * @param string $name
+	 * @param string[] $options
+	 * @param null|string $label
+	 */
 	public function add_multichoice_option($name, $options, $label=null) {
 		global $config;
 		$current = $config->get_array($name);
@@ -262,7 +272,7 @@ class Setup extends Extension {
                 $full = (@$_SERVER["HTTPS"] ? "https://" : "http://") . $host . $_SERVER["PHP_SELF"];
 		$test_url = str_replace("/index.php", "/nicetest", $full);
 
-		$nicescript = "<script language='javascript'>
+		$nicescript = "<script type='text/javascript'>
 			function getHTTPObject() {
 				if (window.XMLHttpRequest){
 					return new XMLHttpRequest();
@@ -308,12 +318,9 @@ class Setup extends Extension {
 		$sb = new SetupBlock("Remote API Integration");
 		$sb->add_label("<a href='http://akismet.com/'>Akismet</a>");
 		$sb->add_text_option("comment_wordpress_key", "<br>API key: ");
-		$sb->add_label(
-			"<br>&nbsp;<br><a href='".
-			recaptcha_get_signup_url($_SERVER["HTTP_HOST"], "Shimmie").
-			"'>ReCAPTCHA</a>");
-		$sb->add_text_option("api_recaptcha_privkey", "<br>Private key: ");
-		$sb->add_text_option("api_recaptcha_pubkey", "<br>Public key: ");
+		$sb->add_label("<br>&nbsp;<br><a href='https://www.google.com/recaptcha/admin'>ReCAPTCHA</a>");
+		$sb->add_text_option("api_recaptcha_privkey", "<br>Secret key: ");
+		$sb->add_text_option("api_recaptcha_pubkey", "<br>Site key: ");
 		$event->panel->add_block($sb);
 	}
 

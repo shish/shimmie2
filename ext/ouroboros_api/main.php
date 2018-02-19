@@ -60,6 +60,11 @@ class _SafeOuroborosImage
      */
     public $width = null;
     /**
+     * File extension
+     * @var string
+     */
+    public $file_ext = '';
+    /**
      * File Size in bytes
      * @var integer
      */
@@ -189,7 +194,7 @@ class _SafeOuroborosImage
      * Constructor
      * @param Image $img
      */
-    function __construct(Image $img)
+    public function __construct(Image $img)
     {
         global $config;
         // author
@@ -271,12 +276,8 @@ class OuroborosPost extends _SafeOuroborosImage
     public function __construct(array $post, $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
-            $this->tags = Tag::implode(
-                array_map(
-                    array('Tag', 'sanitise'),
-                    Tag::explode(urldecode($post['tags']))
-                )
-            );
+            // implode(explode()) to resolve aliases and sanitise
+            $this->tags = Tag::implode(Tag::explode(urldecode($post['tags'])));
         }
         if (array_key_exists('file', $post)) {
             if (!is_null($post['file'])) {
@@ -347,7 +348,7 @@ class _SafeOuroborosTag
     public $name = '';
     public $type = 0;
 
-    function __construct(array $tag)
+    public function __construct(array $tag)
     {
         $this->count = $tag['count'];
         $this->id = $tag['id'];
@@ -499,7 +500,7 @@ class OuroborosAPI extends Extension
             }
         }
         $meta = array();
-        $meta['tags'] = $post->tags;
+        $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (defined('ENABLED_EXTS')) {
             if (strstr(ENABLED_EXTS, 'rating') !== false) {
@@ -535,7 +536,8 @@ class OuroborosAPI extends Extension
             if (!is_null($img)) {
                 $handler = $config->get_string("upload_collision_handler");
                 if($handler == "merge") {
-                    $merged = array_merge(Tag::explode($post->tags), $img->get_tag_array());
+                    $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
+                    $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
@@ -587,9 +589,9 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param $limit
-     * @param $page
-     * @param $tags
+     * @param int $limit
+     * @param int $page
+     * @param string[] $tags
      */
     protected function postIndex($limit, $page, $tags)
     {
@@ -611,13 +613,13 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of tags
-     * @param $limit
-     * @param $page
-     * @param $order
-     * @param $id
-     * @param $after_id
-     * @param $name
-     * @param $name_pattern
+     * @param int $limit
+     * @param int $page
+     * @param string $order
+     * @param int $id
+     * @param int $after_id
+     * @param string $name
+     * @param string $name_pattern
      */
     protected function tagIndex($limit, $page, $order, $id, $after_id, $name, $name_pattern)
     {
@@ -775,6 +777,9 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
+    /**
+     * @param string $type
+     */
     private function createItemXML(XMLWriter &$xml, $type, $item)
     {
         $xml->startElement($type);
@@ -830,7 +835,7 @@ class OuroborosAPI extends Extension
 
     /**
      * Helper for matching API methods from event
-     * @param $page
+     * @param string $page
      * @return bool
      */
     private function match($page)

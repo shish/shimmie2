@@ -46,23 +46,30 @@ class TagList extends Extension {
 			$this->theme->display_page($page);
 		}
 		else if($event->page_matches("api/internal/tag_list/complete")) {
-			if(!isset($_GET["s"])) return;
+			if(!isset($_GET["s"]) || $_GET["s"] == "" || $_GET["s"] == "_") return;
 
 			//$limit = 0;
+			$cache_key = "autocomplete-" . strtolower($_GET["s"]);
 			$limitSQL = "";
 			$SQLarr = array("search"=>$_GET["s"]."%");
 			if(isset($_GET["limit"]) && $_GET["limit"] !== 0){
 				$limitSQL = "LIMIT :limit";
 				$SQLarr['limit'] = $_GET["limit"];
+				$cache_key .= "-" . $_GET["limit"];
 			}
 
-			$res = $database->get_col($database->scoreql_to_sql("
-				SELECT tag
-				FROM tags
-				WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
-					AND count > 0
-				$limitSQL
-			"), $SQLarr);
+			$res = null;
+			$database->cache->get($cache_key);
+			if(!$res) {
+				$res = $database->get_col($database->scoreql_to_sql("
+					SELECT tag
+					FROM tags
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
+						AND count > 0
+					$limitSQL
+				"), $SQLarr);
+				$database->cache->set($cache_key, $res, 600);
+			}
 
 			$page->set_mode("data");
 			$page->set_type("text/plain");
@@ -262,7 +269,7 @@ class TagList extends Extension {
 		$cache_key = data_path("cache/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html");
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
-		$tag_data = $database->get_all($database->scoreql_to_sql("
+		$tag_data = $database->get_pairs($database->scoreql_to_sql("
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
@@ -289,14 +296,17 @@ class TagList extends Extension {
 		mb_internal_encoding('UTF-8');
 		
 		$lastLetter = "";
-		foreach($tag_data as $row) {
-			$h_tag = html_escape($row['tag']);
-			$count = $row['count'];
-			if($lastLetter != mb_strtolower(substr($h_tag, 0, count($starts_with)+1))) {
-				$lastLetter = mb_strtolower(substr($h_tag, 0, count($starts_with)+1));
-				$html .= "<p>$lastLetter<br>";
+		# postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
+		# which breaks down into "az, a-, az" :(
+		ksort($tag_data, SORT_STRING | SORT_FLAG_CASE);
+		foreach($tag_data as $tag => $count) {
+			if($lastLetter != mb_strtolower(substr($tag, 0, count($starts_with)+1))) {
+				$lastLetter = mb_strtolower(substr($tag, 0, count($starts_with)+1));
+				$h_lastLetter = html_escape($lastLetter); 
+				$html .= "<p>$h_lastLetter<br>";
 			}
-			$link = $this->tag_link($row['tag']);
+			$link = $this->tag_link($tag);
+			$h_tag = html_escape($tag);
 			$html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
 		}
 
@@ -484,10 +494,11 @@ class TagList extends Extension {
 	 * @param Page $page
 	 * @param string[] $search
 	 */
-	private function add_refine_block(Page $page, /*array(string)*/ $search) {
+	private function add_refine_block(Page $page, $search) {
 		global $database, $config;
+		assert('is_array($search)');
 
-		$wild_tags = Tag::explode($search);
+		$wild_tags = $search;
 		$str_search = Tag::implode($search);
 		$related_tags = $database->cache->get("related_tags:$str_search");
 

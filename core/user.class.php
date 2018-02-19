@@ -1,7 +1,10 @@
 <?php
-require_once "lib/password.php";
 
-/** @private */
+/**
+ * @private
+ * @param mixed $row
+ * @return User
+ */
 function _new_user($row) {
 	return new User($row);
 }
@@ -137,19 +140,6 @@ class User {
 		}
 	}
 
-	/**
-	 * @param int $offset
-	 * @param int $limit
-	 * @return array
-	 */
-	public static function by_list(/*int*/ $offset, /*int*/ $limit=50) {
-		assert('is_numeric($offset)', var_export($offset, true));
-		assert('is_numeric($limit)', var_export($limit, true));
-		global $database;
-		$rows = $database->get_all("SELECT * FROM users WHERE id >= :start AND id < :end", array("start"=>$offset, "end"=>$offset+$limit));
-		return array_map("_new_user", $rows);
-	}
-
 
 	/* useful user object functions start here */
 
@@ -222,9 +212,15 @@ class User {
 	 */
 	public function set_password(/*string*/ $password) {
 		global $database;
-		$this->passhash = password_hash($password, PASSWORD_BCRYPT);
-		$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$this->passhash, "id"=>$this->id));
-		log_info("core-user", 'Set password for '.$this->name);
+		$hash = password_hash($password, PASSWORD_BCRYPT);
+		if(is_string($hash)) {
+			$this->passhash = $hash;
+			$database->Execute("UPDATE users SET pass=:hash WHERE id=:id", array("hash"=>$this->passhash, "id"=>$this->id));
+			log_info("core-user", 'Set password for '.$this->name);
+		}
+		else {
+			throw new SCoreException("Failed to hash password");
+		}
 	}
 
 	/**

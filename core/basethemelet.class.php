@@ -54,7 +54,7 @@ class BaseThemelet {
 		$h_view_link = make_link('post/view/'.$i_id);
 		$h_thumb_link = $image->get_thumb_link();
 		$h_tip = html_escape($image->get_tooltip());
-		$h_tags = strtolower($image->get_tag_list());
+		$h_tags = html_escape(strtolower($image->get_tag_list()));
 
 		$extArr = array_flip(array('swf', 'svg', 'mp3')); //List of thumbless filetypes
 		if(!isset($extArr[$image->ext])){
@@ -67,7 +67,7 @@ class BaseThemelet {
 		$custom_classes = "";
 		if(class_exists("Relationships")){
 			if(property_exists($image, 'parent_id') && $image->parent_id !== NULL){	$custom_classes .= "shm-thumb-has_parent ";	}
-			if(property_exists($image, 'has_children') && $image->has_children == TRUE){ $custom_classes .= "shm-thumb-has_child "; }
+			if(property_exists($image, 'has_children') && bool_escape($image->has_children)){ $custom_classes .= "shm-thumb-has_child "; }
 		}
 
 		return "<a href='$h_view_link' class='thumb shm-thumb shm-thumb-link {$custom_classes}' data-tags='$h_tags' data-post-id='$i_id'>".

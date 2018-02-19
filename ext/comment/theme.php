@@ -1,11 +1,11 @@
 <?php
 class CommentListTheme extends Themelet {
-	var $comments_shown = 0;
-	var $show_anon_id = false;
-	var $anon_id = 1;
-	var $anon_cid = 0;
-	var $anon_map = array();
-	var $ct = null;
+	private $comments_shown = 0;
+	private $show_anon_id = false;
+	private $anon_id = 1;
+	private $anon_cid = 0;
+	private $anon_map = array();
+	private $ct = null;
 
 	private function get_anon_colour($ip) {
 		if(is_null($this->ct)) {
@@ -259,8 +259,6 @@ class CommentListTheme extends Themelet {
 		else {
 			$h_userlink = '<a class="username" href="'.make_link('user/'.$h_name).'">'.$h_name.'</a>';
 		}
-		$stripped_nonl = str_replace("\n", "\\n", substr($tfe->stripped, 0, 50));
-		$stripped_nonl = str_replace("\r", "\\r", $stripped_nonl);
 
 		$hb = ($comment->owner_class == "hellbanned" ? "hb" : "");
 		if($trim) {
@@ -276,13 +274,18 @@ class CommentListTheme extends Themelet {
 			if(!empty($comment->owner_email)) {
 				$hash = md5(strtolower($comment->owner_email));
 				$cb = date("Y-m-d");
-				$h_avatar = "<img src=\"http://www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
+				$h_avatar = "<img src=\"//www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
 			}
 			$h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
 			$h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
-			$h_del = $user->can("delete_comment") ?
-				' - <a onclick="return confirm(\'Delete comment by '.$h_name.':\\n'.$stripped_nonl.'\');" '.
-				'href="'.make_link('comment/delete/'.$i_comment_id.'/'.$i_image_id).'">Del</a>' : '';
+			$h_del = "";
+			if ($user->can("delete_comment")) {
+				$comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
+				$j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
+				$h_delete_script = html_escape("return confirm($j_delete_confirm_message);");
+				$h_delete_link = make_link("comment/delete/$i_comment_id/$i_image_id");
+				$h_del = " - <a onclick='$h_delete_script' href='$h_delete_link'>Del</a>";
+			}
 			$html = "
 				<div class=\"comment $hb\" id=\"c$i_comment_id\">
 					<div class=\"info\">

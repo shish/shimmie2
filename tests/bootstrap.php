@@ -16,13 +16,16 @@ if(is_null(User::by_name("demo"))) {
 	$userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 }
 
-abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
+abstract class ShimmiePHPUnitTestCase extends \PHPUnit_Framework_TestCase {
 	protected $backupGlobalsBlacklist = array('database', 'config');
 	private $images = array();
 
 	public function setUp() {
 		$class = str_replace("Test", "", get_class($this));
-		if(!method_exists($class, "is_live") || !ext_is_live($class)) {
+		if(!class_exists($class)) {
+			$this->markTestSkipped("$class not loaded");
+		}
+		elseif(!ext_is_live($class)) {
 			$this->markTestSkipped("$class not supported with this database");
 		}
 
@@ -44,14 +47,25 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$_GET = $args;
 		$page = class_exists("CustomPage") ? new CustomPage() : new Page();
 		send_event(new PageRequestEvent($page_name));
+		if($page->mode == "redirect") {
+			$page->code = 302;
+		}
 	}
 
 	// page things
 	protected function assert_title($title) {
 		global $page;
-		$this->assertEquals($title, $page->title);
+		$this->assertContains($title, $page->title);
 	}
 
+	protected function assert_no_title($title) {
+		global $page;
+		$this->assertNotContains($title, $page->title);
+	}
+
+	/**
+	 * @param integer $code
+	 */
 	protected function assert_response($code) {
 		global $page;
 		$this->assertEquals($code, $page->code);
@@ -59,7 +73,7 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 
 	protected function page_to_text($section=null) {
 		global $page;
-		$text = "";
+		$text = $page->title . "\n";
 		foreach($page->blocks as $block) {
 			if(is_null($section) || $section == $block->section) {
 				$text .= $block->header . "\n";
@@ -73,15 +87,24 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 		$this->assertContains($text, $this->page_to_text($section));
 	}
 
+	/**
+	 * @param string $text
+	 */
 	protected function assert_no_text($text, $section=null) {
 		$this->assertNotContains($text, $this->page_to_text($section));
 	}
 
+	/**
+	 * @param string $content
+	 */
 	protected function assert_content($content) {
 		global $page;
 		$this->assertContains($content, $page->data);
 	}
 
+	/**
+	 * @param string $content
+	 */
 	protected function assert_no_content($content) {
 		global $page;
 		$this->assertNotContains($content, $page->data);
@@ -109,14 +132,14 @@ abstract class ShimmiePHPUnitTestCase extends PHPUnit_Framework_TestCase {
 	// post things
 	/**
 	 * @param string $filename
-	 * @param string|string[] $tags
+	 * @param string $tags
 	 * @return int
 	 */
 	protected function post_image($filename, $tags) {
 		$dae = new DataUploadEvent($filename, array(
 			"filename" => $filename,
 			"extension" => pathinfo($filename, PATHINFO_EXTENSION),
-			"tags" => $tags,
+			"tags" => Tag::explode($tags),
 			"source" => null,
 		));
 		send_event($dae);

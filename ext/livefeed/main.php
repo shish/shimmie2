@@ -15,11 +15,11 @@ class LiveFeed extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	public function onUserCreation($event) {
+	public function onUserCreation(UserCreationEvent $event) {
 		$this->msg("New user created: {$event->username}");
 	}
 
-	public function onImageAddition($event) {
+	public function onImageAddition(ImageAdditionEvent $event) {
 		global $user;
 		$this->msg(
 			make_http(make_link("post/view/".$event->image->id))." - ".
@@ -27,14 +27,14 @@ class LiveFeed extends Extension {
 		);
 	}
 
-	public function onTagSet($event) {
+	public function onTagSet(TagSetEvent $event) {
 		$this->msg(
 			make_http(make_link("post/view/".$event->image->id))." - ".
 			"tags set to: ".Tag::implode($event->tags)
 		);
 	}
 
-	public function onCommentPosting($event) {
+	public function onCommentPosting(CommentPostingEvent $event) {
 		global $user;
 		$this->msg(
 			make_http(make_link("post/view/".$event->image_id))." - ".
@@ -42,14 +42,19 @@ class LiveFeed extends Extension {
 		);
 	}
 
-	public function onImageInfoSet($event) {
+	public function onImageInfoSet(ImageInfoSetEvent $event) {
 #		$this->msg("Image info set");
 	}
 
 	public function get_priority() {return 99;}
 
+	/**
+	 * @param string $data
+	 */
     private function msg($data) {
 		global $config;
+		assert('is_string($data)');
+
 		$host = $config->get_string("livefeed_host", "127.0.0.1:25252");
 
         if(!$host) { return; }

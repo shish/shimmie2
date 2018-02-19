@@ -5,7 +5,12 @@ thumbs
 !lib/images
 *.phar
 *.sqlite
+/lib/vendor/
 
+#Composer
+composer.phar
+composer.lock
+/vendor/
 
 # Created by http://www.gitignore.io
 
@@ -20,13 +25,6 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-
 ### OSX ###
 .DS_Store
 .AppleDouble
@@ -34,7 +32,6 @@ $RECYCLE.BIN/
 
 # Icon must ends with two \r.
 Icon
-
 
 # Thumbnails
 ._*

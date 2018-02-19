@@ -6,17 +6,35 @@ class MP3FileHandlerTheme extends Themelet {
 		$ilink = $image->get_image_link();
 		$fname = url_escape($image->filename); //Most of the time this will be the title/artist of the song.
 		$html = "
-			<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'
-			        codebase='http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0'
-					width='400' height='15'>
-				<param name='movie' value='$data_href/ext/handle_mp3/xspf_player_slim.swf?song_url=$ilink'/>
-				<param name='quality' value='high' />
-				<embed src='$data_href/ext/handle_mp3/xspf_player_slim.swf?song_url=$ilink&song_title=$fname' quality='high'
-					pluginspage='http://www.macromedia.com/go/getflashplayer'
-					width='400' height='15'
-					type='application/x-shockwave-flash'></embed>
-			</object>
-			<p><a href='$ilink'>Download</a>";
+			<audio controls class='shm-main-image audio_image' id='main_image' alt='main image'>
+				<source src=\"$ilink\" type=\"audio/mpeg\">
+				Your browser does not support the audio element.
+			</audio>
+			<p>Title: <span id='audio-title'>???</span> | Artist: <span id='audio-artist'>???</span></p>
+
+			<script>
+				$('#main_image').prop('volume', 0.25);
+
+				var jsmediatags = window.jsmediatags;
+				jsmediatags.read(location.origin+base_href+'$ilink', {
+					onSuccess: function(tag) {
+						var artist = tag.tags.artist,
+						    title  = tag.tags.title;
+
+						$('#audio-title').text(title);
+						$('#audio-artist').text(artist);
+
+						$('#audio-download').prop('download', (artist+' - '+title).substr(0, 250)+'.mp3');
+					},
+					onError: function(error) {
+						console.log(error);
+					}
+				});
+			</script>
+
+			<p><a href='$ilink' id='audio-download'>Download</a>";
+
+		$page->add_html_header("<script src='{$data_href}/ext/handle_mp3/lib/jsmediatags.min.js' type='text/javascript'></script>");
 		$page->add_block(new Block("Music", $html, "main", 10));
 	}
 }

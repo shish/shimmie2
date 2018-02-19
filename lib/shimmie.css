@@ -30,36 +30,3 @@ IMG.lazy {display: none;}
 	margin: 8px;
 	border: 1px solid #882;
 }
-
-
-#installer {
-	background: #EEE;
-	font-family: "Arial", sans-serif;
-	font-size: 14px;
-	width: 512px;
-	margin: auto;
-	margin-top: 16px;
-	border: 1px solid black;
-	border-radius: 16px;
-}
-#installer A {
-	text-decoration: none;
-}
-#installer A:hover {
-	text-decoration: underline;
-}
-#installer H1, #installer H3 {
-	background: #DDD;
-	text-align: center;
-	margin: 0px;
-	padding: 2px;
-}
-#installer H1 {
-	border-bottom: 1px solid black;
-	border-radius: 16px 16px 0px 0px;
-}
-#installer H3 {
-	border-bottom: 1px solid black;
-	border-top: 1px solid black;
-	margin-top: 32px;
-}

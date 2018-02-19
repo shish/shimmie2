@@ -57,6 +57,7 @@ class TaggerXML extends Extension {
 		}
 	}
 
+	/** @param string $s */
 	private function match_tag_list ($s) {
 		global $database, $config;
 
@@ -101,6 +102,7 @@ class TaggerXML extends Extension {
 		return $this->list_to_xml($tags,"search",$s,$count);
 	}
 
+	/** @param int $image_id */
 	private function image_tag_list ($image_id) {
 		global $database;
 		$tags = $database->Execute("
@@ -110,6 +112,12 @@ class TaggerXML extends Extension {
 		return $this->list_to_xml($tags,"image",$image_id);
 	}
 
+	/**
+	 * @param PDOStatement $tags
+	 * @param string $type
+	 * @param string $query
+	 * @param array $misc
+	 */
 	private function list_to_xml ($tags,$type,$query,$misc=null) {
 		$r = $tags->_numOfRows;
 

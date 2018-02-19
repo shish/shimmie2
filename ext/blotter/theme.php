@@ -62,7 +62,7 @@ class BlotterTheme extends Themelet {
 			if($entries[$i]['important'] == 'Y') { $important = 'Y'; } else { $important = 'N'; }
 
 			// Add the new table row(s)
-			$table_rows .= 
+			$table_rows .=
 				"<tr>
 				<td>$entry_date</td>
 				<td>$entry_text</td>
@@ -114,7 +114,7 @@ class BlotterTheme extends Themelet {
 				$i_open = "<font color='#{$i_color}'>";
 				$i_close="</font>";
 			}
-			$html .= "{$i_open}{$clean_date} - {$entry_text}{$i_close}<br /><br />";			
+			$html .= "{$i_open}{$clean_date} - {$entry_text}{$i_close}<br /><br />";
 		}
 		$html .= "</pre>";
 		return $html;
@@ -139,9 +139,9 @@ class BlotterTheme extends Themelet {
 			$entry_text = $entries[$i]['entry_text'];
 			if($entries[$i]['important'] == 'Y') {
 				$i_open = "<font color='#{$i_color}'>";
-				$i_close="</font>"; 
+				$i_close="</font>";
 			}
-			$entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";			
+			$entries_list .= "<li>{$i_open}{$clean_date} - {$entry_text}{$i_close}</li>";
 		}
 
 		$pos_break = "";
@@ -149,7 +149,7 @@ class BlotterTheme extends Themelet {
 
 		if($position === "left") {
 			$pos_break = "<br />";
-			$pos_align = ""; 
+			$pos_align = "";
 		}
 
 		if(count($entries) === 0) {
@@ -176,4 +176,3 @@ class BlotterTheme extends Themelet {
 		return $html;
 	}
 }
-

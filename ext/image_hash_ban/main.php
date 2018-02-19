@@ -11,7 +11,7 @@
 
  // RemoveImageHashBanEvent {{{
 class RemoveImageHashBanEvent extends Event {
-	var $hash;
+	public $hash;
 
 	/**
 	 * @param string $hash
@@ -23,8 +23,8 @@ class RemoveImageHashBanEvent extends Event {
 // }}}
 // AddImageHashBanEvent {{{
 class AddImageHashBanEvent extends Event {
-	var $hash;
-	var $reason;
+	public $hash;
+	public $reason;
 
 	/**
 	 * @param string $hash

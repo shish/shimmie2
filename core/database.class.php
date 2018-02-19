@@ -263,11 +263,34 @@ class SQLite extends DBEngine {
 // }}}
 // {{{ cache engines
 interface CacheEngine {
+
+	/**
+	 * @param string $key
+	 * @return mixed
+	 */
 	public function get($key);
+
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @param integer $time
+	 * @return void
+	 */
 	public function set($key, $val, $time=0);
+
+	/**
+	 * @return void
+	 */
 	public function delete($key);
 
+	/**
+	 * @return integer
+	 */
 	public function get_hits();
+
+	/**
+	 * @return integer
+	 */
 	public function get_misses();
 }
 class NoCache implements CacheEngine {
@@ -291,13 +314,8 @@ class MemcacheCache implements CacheEngine {
 	 */
 	public function __construct($args) {
 		$hp = explode(":", $args);
-		if(class_exists("Memcache")) {
-			$this->memcache = new Memcache;
-			@$this->memcache->pconnect($hp[0], $hp[1]);
-		}
-		else {
-			print "no memcache"; exit;
-		}
+		$this->memcache = new Memcache;
+		@$this->memcache->pconnect($hp[0], $hp[1]);
 	}
 
 	/**
@@ -324,7 +342,7 @@ class MemcacheCache implements CacheEngine {
 	/**
 	 * @param string $key
 	 * @param mixed $val
-	 * @param int $time
+	 * @param integer $time
 	 */
 	public function set($key, $val, $time=0) {
 		assert('!is_null($key)');
@@ -355,9 +373,103 @@ class MemcacheCache implements CacheEngine {
 	 */
 	public function get_misses() {return $this->misses;}
 }
+class MemcachedCache implements CacheEngine {
+	/** @var \Memcached|null */
+	public $memcache=null;
+	/** @var int */
+	private $hits=0;
+	/** @var int */
+	private $misses=0;
+
+	/**
+	 * @param string $args
+	 */
+	public function __construct($args) {
+		$hp = explode(":", $args);
+		$this->memcache = new Memcached;
+		#$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
+		#$this->memcache->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
+		#$this->memcache->setOption(Memcached::OPT_PREFIX_KEY, phpversion());
+		$this->memcache->addServer($hp[0], $hp[1]);
+	}
+
+	/**
+	 * @param string $key
+	 * @return array|bool|string
+	 */
+	public function get($key) {
+		assert('!is_null($key)');
+		$key = urlencode($key);
+
+		$val = $this->memcache->get($key);
+		$res = $this->memcache->getResultCode();
+
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			$hit = $res == Memcached::RES_SUCCESS ? "hit" : "miss";
+			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
+		}
+		if($res == Memcached::RES_SUCCESS) {
+			$this->hits++;
+			return $val;
+		}
+		else if($res == Memcached::RES_NOTFOUND) {
+			$this->misses++;
+			return false;
+		}
+		else {
+			error_log("Memcached error during get($key): $res");
+		}
+	}
+
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @param int $time
+	 */
+	public function set($key, $val, $time=0) {
+		assert('!is_null($key)');
+		$key = urlencode($key);
+
+		$this->memcache->set($key, $val, $time);
+		$res = $this->memcache->getResultCode();
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
+		}
+		if($res != Memcached::RES_SUCCESS) {
+			error_log("Memcached error during set($key): $res");
+		}
+	}
+
+	/**
+	 * @param string $key
+	 */
+	public function delete($key) {
+		assert('!is_null($key)');
+		$key = urlencode($key);
+
+		$this->memcache->delete($key);
+		$res = $this->memcache->getResultCode();
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
+		}
+		if($res != Memcached::RES_SUCCESS && $res != Memcached::RES_NOTFOUND) {
+			error_log("Memcached error during delete($key): $res");
+		}
+	}
+
+	/**
+	 * @return int
+	 */
+	public function get_hits() {return $this->hits;}
+
+	/**
+	 * @return int
+	 */
+	public function get_misses() {return $this->misses;}
+}
 
 class APCCache implements CacheEngine {
-	var $hits=0, $misses=0;
+	public $hits=0, $misses=0;
 
 	public function __construct($args) {
 		// $args is not used, but is passed in when APC cache is created.
@@ -401,6 +513,10 @@ class Database {
 	 * @var null|PDO
 	 */
 	private $db = null;
+	
+	/**
+	 * @var float
+	 */
 	public $dbtime = 0.0;
 
 	/**
@@ -439,9 +555,12 @@ class Database {
 
 	private function connect_cache() {
 		$matches = array();
-		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|apc)://(.*)#", CACHE_DSN, $matches)) {
+		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(memcache|memcached|apc)://(.*)#", CACHE_DSN, $matches)) {
 			if($matches[1] == "memcache") {
 				$this->cache = new MemcacheCache($matches[2]);
+			}
+			else if($matches[1] == "memcached") {
+				$this->cache = new MemcachedCache($matches[2]);
 			}
 			else if($matches[1] == "apc") {
 				$this->cache = new APCCache($matches[2]);
@@ -509,7 +628,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function commit() {
@@ -525,7 +644,7 @@ class Database {
 	}
 
 	/**
-	 * @return bool
+	 * @return boolean|null
 	 * @throws SCoreException
 	 */
 	public function rollback() {
@@ -566,24 +685,33 @@ class Database {
 		return $this->engine->name;
 	}
 
+	/**
+	 * @param null|PDO $db
+	 * @param string $sql
+	 */
 	private function count_execs($db, $sql, $inputarray) {
-		if ((defined('DEBUG_SQL') && DEBUG_SQL === true) || (!defined('DEBUG_SQL') && @$_GET['DEBUG_SQL'])) {
-			$fp = @fopen("data/sql.log", "a");
-			if($fp) {
-				$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
-				if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
-					fwrite($fp, $sql." -- ".join(", ", $inputarray)."\n");
-				}
-				else {
-					fwrite($fp, $sql."\n");
-				}
-				fclose($fp);
+		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
+			$sql = trim(preg_replace('/\s+/msi', ' ', $sql));
+			if(isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
+				$text = $sql." -- ".join(", ", $inputarray)."\n";
 			}
+			else {
+				$text = $sql."\n";
+			}
+			file_put_contents("data/sql.log", $text, FILE_APPEND);
 		}
 		if(!is_array($inputarray)) $this->query_count++;
 		# handle 2-dimensional input arrays
 		else if(is_array(reset($inputarray))) $this->query_count += sizeof($inputarray);
 		else $this->query_count++;
+	}
+
+	private function count_time($method, $start) {
+		if((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
+			$text = $method.":".(microtime(true) - $start)."\n";
+			file_put_contents("data/sql.log", $text, FILE_APPEND);
+		}
+		$this->dbtime += microtime(true) - $start;
 	}
 
 	/**
@@ -630,7 +758,7 @@ class Database {
 	public function get_all($query, $args=array()) {
 		$_start = microtime(true);
 		$data = $this->execute($query, $args)->fetchAll();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_all", $_start);
 		return $data;
 	}
 
@@ -644,7 +772,7 @@ class Database {
 	public function get_row($query, $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_row", $_start);
 		return $row ? $row : null;
 	}
 
@@ -662,7 +790,7 @@ class Database {
 		foreach($stmt as $row) {
 			$res[] = $row[0];
 		}
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_col", $_start);
 		return $res;
 	}
 
@@ -680,7 +808,7 @@ class Database {
 		foreach($stmt as $row) {
 			$res[$row[0]] = $row[1];
 		}
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_pairs", $_start);
 		return $res;
 	}
 
@@ -694,7 +822,7 @@ class Database {
 	public function get_one($query, $args=array()) {
 		$_start = microtime(true);
 		$row = $this->execute($query, $args)->fetch();
-		$this->dbtime += microtime(true) - $_start;
+		$this->count_time("get_one", $_start);
 		return $row[0];
 	}
 
@@ -755,11 +883,11 @@ class Database {
 
 class MockDatabase extends Database {
 	/** @var int */
-	var $query_id = 0;
+	private $query_id = 0;
 	/** @var array */
-	var $responses = array();
+	private $responses = array();
 	/** @var \NoCache|null  */
-	var $cache = null;
+	public $cache = null;
 
 	/**
 	 * @param array $responses
@@ -786,35 +914,35 @@ class MockDatabase extends Database {
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_all($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|null|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_row($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_col($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return array|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_pairs($query, $args=array()) {return $this->execute($query, $args);}
 
 	/**
 	 * @param string $query
 	 * @param array $args
-	 * @return mixed|PDOStatement
+	 * @return PDOStatement
 	 */
 	public function get_one($query, $args=array()) {return $this->execute($query, $args);}
 

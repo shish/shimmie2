@@ -59,7 +59,7 @@ class UploadTheme extends Themelet {
 				$upload_list .= "
 					<tr>
 						<td colspan='2'><input type='file' name='data$i'></td>
-						<td colspan='2'><input type='text' name='url$i'</td>
+						<td colspan='2'><input type='text' name='url$i'></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
@@ -228,6 +228,7 @@ class UploadTheme extends Themelet {
 		if(class_exists("ICOFileHandler")){$supported_ext .= " ico ani cur";}
 		if(class_exists("MP3FileHandler")){$supported_ext .= " mp3";}
 		if(class_exists("SVGFileHandler")){$supported_ext .= " svg";}
+		if(class_exists("VideoFileHandler")){$supported_ext .= " flv mp4 ogv webm m4v";}
 		$title = "Booru to " . $config->get_string('title');
 		// CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
 		$html .= '<p><a href="javascript:

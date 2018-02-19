@@ -128,8 +128,8 @@ class ShimmieApi extends Extension {
 	}
 
 	/**
-	 * @param $type
-	 * @param $query
+	 * @param string $type
+	 * @param string $query
 	 * @return array
 	 */
 	private function api_get_user($type, $query) {
