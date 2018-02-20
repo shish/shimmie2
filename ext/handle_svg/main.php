@@ -6,11 +6,19 @@
  * Description: Handle static SVG files. (No thumbnail is generated for SVG files)
  */
 
+use enshrined\svgSanitize\Sanitizer;
+
 class SVGFileHandler extends Extension {
 	public function onDataUpload(DataUploadEvent $event) {
 		if($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
 			$hash = $event->hash;
-			move_upload_to_archive($event);
+
+			$sanitizer = new Sanitizer();
+			$sanitizer->removeRemoteReferences(true);
+			$dirtySVG = file_get_contents($event->tmpname);
+			$cleanSVG = $sanitizer->sanitize($dirtySVG);
+			file_put_contents(warehouse_path("images", $hash), $cleanSVG);
+
 			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 			$image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
 			if(is_null($image)) {
@@ -46,7 +54,12 @@ class SVGFileHandler extends Extension {
 
 			$page->set_type("image/svg+xml");
 			$page->set_mode("data");
-			$page->set_data(file_get_contents(warehouse_path("images", $hash)));
+
+			$sanitizer = new Sanitizer();
+			$sanitizer->removeRemoteReferences(true);
+			$dirtySVG = file_get_contents(warehouse_path("images", $hash));
+			$cleanSVG = $sanitizer->sanitize($dirtySVG);
+			$page->set_data($cleanSVG);
 		}
 	}
 
