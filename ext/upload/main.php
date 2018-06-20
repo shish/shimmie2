@@ -129,7 +129,7 @@ class Upload extends Extension {
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+		global $database, $page, $user;
 
 		if($event->page_matches("upload/replace")) {
 			// check if the user is an administrator and can upload files.
@@ -177,6 +177,7 @@ class Upload extends Extension {
 							}
 						}
 					}
+					$database->cache->delete("thumb-block:{$image_id}");
 					$this->theme->display_upload_status($page, $ok);
 				}
 				else if(!empty($_GET['url'])) {
@@ -184,6 +185,7 @@ class Upload extends Extension {
 					$tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : 'tagme';
 					$source = isset($_GET['source']) ? $_GET['source'] : $url;
 					$ok = $this->try_transload($url, $tags, $source, $image_id);
+					$database->cache->delete("thumb-block:{$image_id}");
 					$this->theme->display_upload_status($page, $ok);
 				}
 				else {

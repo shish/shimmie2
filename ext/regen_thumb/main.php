@@ -20,6 +20,7 @@ class RegenThumb extends Extension {
 		if($event->page_matches("regen_thumb/one") && $user->can("delete_image") && isset($_POST['image_id'])) {
 			$image = Image::by_id(int_escape($_POST['image_id']));
 			send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+			$database->cache->delete("thumb-block:{$image->id}");
 			$this->theme->display_results($page, $image);
 		}
 		if($event->page_matches("regen_thumb/mass") && $user->can("delete_image") && isset($_POST['tags'])) {
@@ -28,6 +29,7 @@ class RegenThumb extends Extension {
 
 			foreach($images as $image) {
 				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+				$database->cache->delete("thumb-block:{$image->id}");
 			}
 
 			$page->set_mode("redirect");
