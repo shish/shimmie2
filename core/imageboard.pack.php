@@ -163,7 +163,7 @@ class Image {
 		$yays = 0;
 		$nays = 0;
 		foreach($tags as $tag) {
-			if(!preg_match("/^-?[a-zA-Z0-9_]+$/", $tag)) {
+			if(!preg_match("/^-?[a-zA-Z0-9_-]+$/", $tag)) {
 				return false;
 			}
 			if($tag[0] == "-") $nays++;
