@@ -159,52 +159,38 @@ class Image {
 		return $images;
 	}
 
-	public static function validate_accel(array $tags): bool {
+	/*
+	 * Accelerator stuff
+	 */
+	public static function get_acceleratable(array $tags) {
+		$ret = array(
+			"yays" => array(),
+			"nays" => array(),
+		);
 		$yays = 0;
 		$nays = 0;
 		foreach($tags as $tag) {
 			if(!preg_match("/^-?[a-zA-Z0-9_-]+$/", $tag)) {
 				return false;
 			}
-			if($tag[0] == "-") $nays++;
-			else $yays++;
+			if($tag[0] == "-") {$nays++; $ret["nays"][] = substr($tag, 1);}
+			else {$yays++; $ret["yays"][] = $tag;}
 		}
-		return ($yays > 1 || $nays > 0);
+		if($yays > 1 || $nays > 0) {
+			return $ret;
+		}
+		return false;
 	}
 
 	public static function get_accelerated_result(array $tags, int $offset, int $limit) {
 		global $database;
 
-		if(!Image::validate_accel($tags)) {
-			return null;
-		}
+		$req = Image::get_acceleratable($tags);
+		if(!$req) {return null;}
+		$req["offset"] = $offset;
+		$req["limit"] = $limit;
 
-		$yays = array();
-		$nays = array();
-		foreach($tags as $tag) {
-			if($tag[0] == "-") {
-				$nays[] = substr($tag, 1);
-			}
-			else {
-				$yays[] = $tag;
-			}
-		}
-		$req = array(
-			"yays" => $yays,
-			"nays" => $nays,
-			"offset" => $offset,
-			"limit" => $limit,
-		);
-
-		$fp = fsockopen("127.0.0.1", 21212);
-		if (!$fp) {
-			return null;
-		}
-		fwrite($fp, json_encode($req));
-		$data = fgets($fp, 1024);
-		fclose($fp);
-
-		$response = json_decode($data);
+		$response = Image::query_accelerator($req);
 		$list = implode(",", $response);
 		if($list) {
 			$result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
@@ -213,6 +199,25 @@ class Image {
 			$result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
 		}
 		return $result;
+	}
+
+	public static function get_accelerated_count(array $tags) {
+		$req = Image::get_acceleratable($tags);
+		if(!$req) {return null;}
+		$req["count"] = true;
+
+		return Image::query_accelerator($req);
+	}
+
+	public static function query_accelerator($req) {
+		$fp = fsockopen("127.0.0.1", 21212);
+		if (!$fp) {
+			return null;
+		}
+		fwrite($fp, json_encode($req));
+		$data = fgets($fp, 1024);
+		fclose($fp);
+		return json_decode($data);
 	}
 
 	/*
@@ -242,8 +247,11 @@ class Image {
 				array("tag"=>$tags[0]));
 		}
 		else {
-			$querylet = Image::build_search_querylet($tags);
-			$total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+			$total = Image::get_accelerated_count($tags);
+			if(is_null($total)) {
+				$querylet = Image::build_search_querylet($tags);
+				$total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+			}
 		}
 		if(is_null($total)) return 0;
 		return $total;
