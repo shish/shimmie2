@@ -1113,7 +1113,7 @@ function log_msg(string $section, int $priority, string $message, $flash=false, 
 	send_event(new LogEvent($section, $priority, $message, $args));
 	$threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 
-	if((PHP_SAPI === 'cli') && ($priority >= $threshold)) {
+	if((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ($priority >= $threshold)) {
 		print date("c")." $section: $message\n";
 	}
 	if($flash === true) {
@@ -1639,7 +1639,7 @@ function _sanitise_environment() {
 
 	ob_start();
 
-	if(PHP_SAPI === 'cli') {
+	if(PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
 		if(isset($_SERVER['REMOTE_ADDR'])) {
 			die("CLI with remote addr? Confused, not taking the risk.");
 		}
