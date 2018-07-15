@@ -600,7 +600,11 @@ class Database {
 		try {
 			if(is_null($this->db)) $this->connect_db();
 			$this->count_execs($query, $args);
-			$stmt = $this->db->prepare($query);
+			$stmt = $this->db->prepare(
+				"-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
+				$query
+			);
+			// $stmt = $this->db->prepare($query);
 			if (!array_key_exists(0, $args)) {
 				foreach($args as $name=>$value) {
 					if(is_numeric($value)) {
