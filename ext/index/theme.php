@@ -135,6 +135,10 @@ and of course start organising your images :-)
 	 */
 	protected function display_page_images(Page $page, $images) {
 		if (count($this->search_terms) > 0) {
+			if($this->page_number > 3) {
+				// only index the first pages of each term
+				$page->add_html_header('<meta name="robots" content="noindex">');
+			}
 			$query = url_escape(implode(' ', $this->search_terms));
 			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
 			$this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages, TRUE);
