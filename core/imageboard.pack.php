@@ -1116,7 +1116,7 @@ class Tag {
 				$aliases = array($tag);
 			}
 			else {
-				$aliases = explode($newtags); // Tag::explode($newtags); - recursion can be infinite
+				$aliases = explode(" ", $newtags); // Tag::explode($newtags); - recursion can be infinite
 			}
 
 			foreach($aliases as $alias) {
