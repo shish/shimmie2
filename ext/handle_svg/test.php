@@ -10,5 +10,13 @@ class SVGHandlerTest extends ShimmiePHPUnitTestCase {
 		# FIXME: test that the thumb works
 		# FIXME: test that it gets displayed properly
 	}
+
+	public function testAbuiveSVG() {
+		$this->log_in_as_user();
+		$image_id = $this->post_image("tests/alert.svg", "something");
+		$this->get_page("post/view/$image_id");
+		$this->get_page("get_svg/$image_id");
+		$this->assert_no_content("script");
+	}
 }
 
