@@ -188,7 +188,7 @@ class User {
 				$d = urlencode($config->get_string("avatar_gravatar_default"));
 				$r = $config->get_string("avatar_gravatar_rating");
 				$cb = date("Y-m-d");
-				return "<img class=\"avatar gravatar\" src=\"http://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb\">";
+				return "<img class=\"avatar gravatar\" src=\"https://www.gravatar.com/avatar/$hash.jpg?s=$s&d=$d&r=$r&cacheBreak=$cb\">";
 			}
 		}
 		return "";
