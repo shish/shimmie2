@@ -76,13 +76,25 @@ class AdminPage extends Extension {
 
 	public function onCommand(CommandEvent $event) {
 		if($event->cmd == "help") {
-			print "  get-page [query string]\n";
-			print "    eg 'get-page post/list'\n\n";
+			print "\tget-page [query string]\n";
+			print "\t\teg 'get-page post/list'\n\n";
+			print "\tregen-thumb [hash]\n";
+			print "\t\tregenerate a thumbnail\n\n";
 		}
 		if($event->cmd == "get-page") {
 			global $page;
 			send_event(new PageRequestEvent($event->args[0]));
 			$page->display();
+		}
+		if($event->cmd == "regen-thumb") {
+			$image = Image::by_hash($event->args[0]);
+			if($image) {
+				print("Regenerating thumb for image {$image->id} ({$image->hash})\n");
+				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+			}
+			else {
+				print("Can't find image with hash {$event->args[0]}\n");
+			}
 		}
 	}
 
