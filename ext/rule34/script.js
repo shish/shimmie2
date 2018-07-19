@@ -22,7 +22,7 @@ function image_hash_ban(id) {
 			},
 			function() {
 				$("#thumb_" + id).parent().parent().hide();
-			
+			}
 		);
 	}
 }
