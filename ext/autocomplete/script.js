@@ -51,7 +51,7 @@ $(function(){
 						);
 					},
 					error : function (request, status, error) {
-						alert(error);
+						console.log(error);
 					}
 				});
 			},
