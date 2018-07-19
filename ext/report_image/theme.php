@@ -79,13 +79,13 @@ class ReportImageTheme extends Themelet {
 				if($public == "both") {
 					$html .= html_escape(User::by_id($report->user_id)->name);
 					$html .= " - ";
-					$html .= html_escape($report->reason);
+					$html .= format_text($report->reason);
 				}
 				elseif($public == "user") {
 					$html .= html_escape(User::by_id($report->user_id)->name);
 				}
 				elseif($public == "reason") {
-					$html .= html_escape($report->reason);
+					$html .= format_text($report->reason);
 				}
 			}
 			$html .= "<p>";
