@@ -27,16 +27,16 @@ function image_hash_ban(id) {
 	}
 }
 
-var navHidden = false;
+var navHidden = true;
 function toggleNav() {
 	if(navHidden) {
 		$('NAV').show();
-		$('#header').show();
+		$('#menuh-container').show();
 		$('ARTICLE').css('margin-left', '276px');
 	}
 	else {
 		$('NAV').hide();
-		$('#header').hide();
+		$('#menuh-container').hide();
 		$('ARTICLE').css('margin-left', '0px');
 	}
 	navHidden = !navHidden;
