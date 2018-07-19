@@ -334,6 +334,10 @@ class Index extends Extension {
 			$hash = strtolower($matches[2]);
 			$event->add_querylet(new Querylet('images.hash = :hash', array("hash" => $hash)));
 		}
+		else if(preg_match("/^(phash)[=|:]([0-9a-fA-F]*)$/i", $event->term, $matches)) {
+			$phash = strtolower($matches[2]);
+			$event->add_querylet(new Querylet('images.phash = :phash', array("phash" => $phash)));
+		}
 		else if(preg_match("/^(filetype|ext)[=|:]([a-zA-Z0-9]*)$/i", $event->term, $matches)) {
 			$ext = strtolower($matches[2]);
 			$event->add_querylet(new Querylet('images.ext = :ext', array("ext" => $ext)));

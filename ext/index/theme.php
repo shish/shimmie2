@@ -137,7 +137,7 @@ and of course start organising your images :-)
 		if (count($this->search_terms) > 0) {
 			if($this->page_number > 3) {
 				// only index the first pages of each term
-				$page->add_html_header('<meta name="robots" content="noindex">');
+				$page->add_html_header('<meta name="robots" content="noindex, nofollow">');
 			}
 			$query = url_escape(implode(' ', $this->search_terms));
 			$page->add_block(new Block("Images", $this->build_table($images, "#search=$query"), "main", 10, "image-list"));
