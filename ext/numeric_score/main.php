@@ -40,6 +40,13 @@ class NumericScore extends Extension {
 		if($user->can("edit_other_vote")) {
 			$this->theme->get_nuller($event->display_user);
 		}
+
+		$u_id = url_escape($event->display_user->id);
+		$n_up = Image::count_images(array("upvoted_by_id={$event->display_user->id}"));
+		$link_up = make_link("post/list/upvoted_by_id=$u_id/1");
+		$n_down = Image::count_images(array("downvoted_by_id={$event->display_user->id}"));
+		$link_down = make_link("post/list/downvoted_by_id=$u_id/1");
+		$event->add_stats("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
 	}
 
 	public function onPageRequest(PageRequestEvent $event) {
