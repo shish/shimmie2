@@ -14,7 +14,7 @@ class UserPageTheme extends Themelet {
 	 * @param User[] $users
 	 * @param User $user
 	 */
-	public function display_user_list(Page $page, array $users, User $user) {
+	public function display_user_list(Page $page, array $users, User $user, int $page_num, int $page_total) {
 		$page->set_title("User List");
 		$page->set_heading("User List");
 		$page->add_block(new NavBlock());
@@ -36,7 +36,7 @@ class UserPageTheme extends Themelet {
 		$html .= "<tr>" . make_form("user_admin/list", "GET");
 		$html .= "<td><input type='text' name='username' value='$h_username'/></td>";
 		if($user->can('delete_user'))
-			$html .= "<td><input type='email' name='text' value='$h_email'/></td>";
+			$html .= "<td><input type='text' name='email' value='$h_email'/></td>";
 		$html .= "<td><input type='text' name='class' value='$h_class'/></td>";
 		$html .= "<td><input type='submit' value='Search'/></td>";
 		$html .= "</form></tr>";
@@ -60,6 +60,26 @@ class UserPageTheme extends Themelet {
 		$html .= "</table>";
 
 		$page->add_block(new Block("Users", $html));
+		$this->display_paginator($page, "user_admin/list", $this->get_args(), $page_num, $page_total);
+	}
+
+	protected function ueie($var) {
+		if(isset($_GET[$var])) return $var."=".url_escape($_GET[$var]);
+		else return "";
+	}
+	protected function get_args() {
+		$args = "";
+		// Check if each arg is actually empty and skip it if so
+		if(strlen($this->ueie("username")))
+			$args .= $this->ueie("username")."&";
+		if(strlen($this->ueie("email")))
+			$args .= $this->ueie("email")."&";
+		if(strlen($this->ueie("class")))
+			$args .= $this->ueie("class")."&";
+		// If there are no args at all, set $args to null to prevent an unnecessary ? at the end of the paginator url
+		if(strlen($args) == 0)
+			$args = null;
+		return $args;
 	}
 
 	public function display_user_links(Page $page, User $user, $parts) {

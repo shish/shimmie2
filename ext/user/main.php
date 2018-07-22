@@ -95,11 +95,14 @@ class UserPage extends Extension {
 				$this->page_create();
 			}
 			else if($event->get_arg(0) == "list") {
-				$offset = 0;
 				$limit = 50;
 
-				$q = "SELECT * FROM users WHERE 1=1";
-				$a = array("offset"=>$offset, "limit"=>$limit);
+				$page_num = int_escape($event->get_arg(1));
+				if($page_num <= 0) $page_num = 1;
+				$offset = ($page_num-1) * $limit;
+
+				$q = "WHERE 1=1";
+				$a = array();
 
 				if(@$_GET['username']) {
 					$q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:name)";
@@ -107,7 +110,7 @@ class UserPage extends Extension {
 				}
 
 				if($user->can('delete_user') && @$_GET['email']) {
-					$q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:email)";
+					$q .= " AND SCORE_STRNORM(email) LIKE SCORE_STRNORM(:email)";
 					$a["email"] = '%' . $_GET['email'] . '%';
 				}
 
@@ -115,12 +118,14 @@ class UserPage extends Extension {
 					$q .= " AND class LIKE :class";
 					$a["class"] = $_GET['class'];
 				}
+				$where = $database->scoreql_to_sql($q);
 
-				$q .=  " LIMIT :limit OFFSET :offset";
-
-				$rows = $database->get_all($database->scoreql_to_sql($q), $a);
+				$count = $database->get_one("SELECT count(*) FROM users $where", $a);
+				$a["offset"] = $offset;
+				$a["limit"] = $limit;
+				$rows = $database->get_all("SELECT * FROM users $where LIMIT :limit OFFSET :offset", $a);
 				$users = array_map("_new_user", $rows);
-				$this->theme->display_user_list($page, $users, $user);
+				$this->theme->display_user_list($page, $users, $user, $page_num, $count/$limit);
 			}
 			else if($event->get_arg(0) == "logout") {
 				$this->page_logout();
