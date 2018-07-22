@@ -49,9 +49,13 @@ class LogDatabase extends Extension {
 				$args = array();
 				$page_num = int_escape($event->get_arg(0));
 				if($page_num <= 0) $page_num = 1;
-				if(!empty($_GET["time"])) {
-					$wheres[] = "date_sent LIKE :time";
-					$args["time"] = $_GET["time"]."%";
+				if(!empty($_GET["time-start"])) {
+					$wheres[] = "date_sent > :time_start";
+					$args["time_start"] = $_GET["time-start"];
+				}
+				if(!empty($_GET["time-end"])) {
+					$wheres[] = "date_sent < :time_end";
+					$args["time_end"] = $_GET["time-end"];
 				}
 				if(!empty($_GET["module"])) {
 					$wheres[] = "section = :module";
@@ -82,6 +86,10 @@ class LogDatabase extends Extension {
 				else {
 					$wheres[] = "priority >= :priority";
 					$args["priority"] = 20;
+				}
+				if(!empty($_GET["message"])) {
+					$wheres[] = $database->scoreql_to_sql("SCORE_STRNORM(message) LIKE SCORE_STRNORM(:message)");
+					$args["message"] = "%" . $_GET["message"] . "%";
 				}
 				$where = "";
 				if(count($wheres) > 0) {

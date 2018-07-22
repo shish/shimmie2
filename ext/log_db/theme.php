@@ -20,12 +20,14 @@ class LogDatabaseTheme extends Themelet {
 </style>
 <table class='zebra'>
 	<thead>
-		<tr><th>Time</th><th>Module</th><th>User</th><th colspan='2'>Message</th></tr>
+		<tr><th>Time</th><th>Module</th><th>User</th><th colspan='3'>Message</th></tr>
 		<form action='".make_link("log/view")."' method='GET'>
 			<tr class='sizedinputs'>
-				<td><input type='time' name='time' value='".$this->heie("time")."'></td>
+				<td><input type='date' name='time-start' value='".$this->heie("time-start")."'>
+				<br><input type='date' name='time-end' value='".$this->heie("time-end")."'></td>
 				<td><input type='text' name='module' value='".$this->heie("module")."'></td>
 				<td><input type='text' name='user' value='".$this->heie("user")."'></td>
+				<td><input type='text' name='message' value='".$this->heie("message")."'></td>
 				<td>
 					<select name='priority'>
 						<option value='".SCORE_LOG_DEBUG."'>Debug</option>
@@ -55,7 +57,7 @@ class LogDatabaseTheme extends Themelet {
 					"<a href='".make_link("user/".url_escape($event['username']))."'>".html_escape($event['username'])."</a>".
 					"</span></td>";
 			}
-			$table .= "<td colspan='2'>".$this->scan_entities(html_escape($event['message']))."</td>";
+			$table .= "<td colspan='3'>".$this->scan_entities(html_escape($event['message']))."</td>";
 			$table .= "</tr>\n";
 		}
 		$table .= "</tbody></table>";
@@ -65,21 +67,28 @@ class LogDatabaseTheme extends Themelet {
 		$page->set_heading("Event Log");
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Events", $table));
+		$this->display_paginator($page, "log/view", $this->get_args(), $page_num, $page_total);
+	}
 
+	protected function get_args() {
 		$args = "";
 		// Check if each arg is actually empty and skip it if so
-		if(strlen($this->ueie("time")))
-	            $args .= $this->ueie("time")."&";
-	        if(strlen($this->ueie("module")))
-	                        $args .= $this->ueie("module")."&";
-	        if(strlen($this->ueie("user")))
-	                        $args .= $this->ueie("user")."&";
-	        if(strlen($this->ueie("priority")))
-	                        $args .= $this->ueie("priority");
+		if(strlen($this->ueie("time-start")))
+			$args .= $this->ueie("time-start")."&";
+		if(strlen($this->ueie("time-end")))
+			$args .= $this->ueie("time-end")."&";
+		if(strlen($this->ueie("module")))
+			$args .= $this->ueie("module")."&";
+		if(strlen($this->ueie("user")))
+			$args .= $this->ueie("user")."&";
+		if(strlen($this->ueie("message")))
+			$args .= $this->ueie("message")."&";
+		if(strlen($this->ueie("priority")))
+			$args .= $this->ueie("priority");
 		// If there are no args at all, set $args to null to prevent an unnecessary ? at the end of the paginator url
 		if(strlen($args) == 0)
 			$args = null;
-		$this->display_paginator($page, "log/view", $args, $page_num, $page_total);
+		return $args;
 	}
 
 	protected function pri_to_col($pri) {
