@@ -81,15 +81,6 @@ class PixelFileHandler extends DataHandlerExtension {
 				</select>
 			</form>
 		", 20);
-
-		$u_ilink = $event->image->get_image_link();
-		$nu_enabled = (strpos($u_ilink, '?') !== false ? "<input type='hidden' name='q' value='image/{$event->image->id}.{$event->image->ext}' />" : "");
-		$event->add_part("
-			<form action='{$u_ilink}'>
-				$nu_enabled
-				<input type='submit' value='Image Only'>
-			</form>
-		", 21);
 	}
 
 // IM thumber {{{
