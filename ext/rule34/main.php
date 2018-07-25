@@ -24,8 +24,9 @@ class Rule34 extends Extension {
 	public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event) {
 		global $config;
 		$image_link = $config->get_string('image_ilink');
-		$url = $event->image->parse_link_template($image_link, "url_escape", 1);
-		$html = "<tr><th>Links</th><td><a href='$url'>Backup Image Server</a></td></tr>";
+		$url0 = $event->image->parse_link_template($image_link, "url_escape", 0);
+		$url1 = $event->image->parse_link_template($image_link, "url_escape", 1);
+		$html = "<tr><th>Links</th><td><a href='$url0'>Image Only</a> (<a href='$url1'>Backup Server</a>)</td></tr>";
 		$event->add_part($html, 90);
 	}
 
