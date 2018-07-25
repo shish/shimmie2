@@ -686,7 +686,7 @@ class Image {
 	 * @param string $_escape
 	 * @return string
 	 */
-	public function parse_link_template($tmpl, $_escape="url_escape") {
+	public function parse_link_template($tmpl, $_escape="url_escape", $n=0) {
 		global $config;
 
 		// don't bother hitting the database if it won't be used...
@@ -750,7 +750,8 @@ class Image {
 			}
 
 			// $choice = $flexihash->lookup($pre.$post);
-			$choice = $flexihash->lookup($this->hash);  // doesn't change
+			$choices = $flexihash->lookupList($this->hash, $n+1);  // hash doesn't change
+			$choice = $choices[$n];
 			$tmpl = $pre.$choice.$post;
 		}
 
