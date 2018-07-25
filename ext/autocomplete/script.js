@@ -1,7 +1,7 @@
 $(function(){
 	var metatags = ['order:id', 'order:width', 'order:height', 'order:filesize', 'order:filename'];
 
-	$('.autocomplete_tags').tagit({
+	$('[name="search"]').tagit({
 		singleFieldDelimiter: ' ',
 		beforeTagAdded: function(event, ui) {
 			if(metatags.indexOf(ui.tagLabel) !== -1) {
