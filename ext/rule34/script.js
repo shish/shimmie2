@@ -27,17 +27,45 @@ function image_hash_ban(id) {
 	}
 }
 
-var navHidden = true;
+var navHidden = false;
 function toggleNav() {
 	if(navHidden) {
-		$('NAV').show();
-		$('#menuh-container').show();
-		$('ARTICLE').css('margin-left', '276px');
+		$('BODY').removeClass('navHidden');
+		Cookies.set("ui-shownav", "true");
 	}
 	else {
-		$('NAV').hide();
-		$('#menuh-container').hide();
-		$('ARTICLE').css('margin-left', '0px');
+		$('BODY').addClass('navHidden');
+		Cookies.set("ui-shownav", "false");
 	}
 	navHidden = !navHidden;
 }
+
+$(function() {
+	if(Cookies.get("ui-shownav") === "false") {
+		toggleNav();
+	}
+});
+
+
+var forceDesktop = false;
+function toggleDesktop() {
+	if(forceDesktop) {
+		var viewport = document.querySelector("meta[name=viewport]");
+		viewport.setAttribute('content', 'width=512, initial-scale=1.0');
+		Cookies.set("ui-desktop", "false");
+	}
+	else {
+		var viewport = document.querySelector("meta[name=viewport]");
+		viewport.setAttribute('content', 'width=1024, initial-scale=0.4');
+		Cookies.set("ui-desktop", "true");
+		navHidden = true;
+		toggleNav();
+	}
+	forceDesktop = !forceDesktop;
+}
+
+$(function() {
+	if(Cookies.get("ui-desktop") === "true") {
+		toggleDesktop();
+	}
+});
