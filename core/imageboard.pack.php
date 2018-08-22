@@ -581,11 +581,21 @@ class Image {
 
 	/**
 	 * Set the tags for this image.
-	 *
-	 * @param string[] $tags
-	 * @throws Exception
 	 */
-	public function set_tags(array $tags) {
+	public function set_tags(array $unfiltered_tags) {
+		$tags = [];
+		foreach ($unfiltered_tags as $tag) {
+			if(mb_strlen($tag, 'UTF-8') > 255){
+				flash_message("Can't set a tag longer than 255 characters");
+				continue;
+			}
+			if(startsWith($tag, "-")) {
+				flash_message("Can't set a tag which starts with a minus");
+				continue;
+			}
+
+			$tags[] = $tag;
+		}
 		assert('count($tags) > 0', var_export($tags, true));
 		global $database;
 
@@ -598,11 +608,6 @@ class Image {
 			$this->delete_tags_from_image();
 			// insert each new tags
 			foreach($tags as $tag) {
-				if(mb_strlen($tag, 'UTF-8') > 255){
-					flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
-					continue;
-				}
-
 				$id = $database->get_one(
 					$database->scoreql_to_sql("
 						SELECT id
