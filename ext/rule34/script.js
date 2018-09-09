@@ -51,7 +51,7 @@ var forceDesktop = false;
 function toggleDesktop() {
 	if(forceDesktop) {
 		var viewport = document.querySelector("meta[name=viewport]");
-		viewport.setAttribute('content', 'width=512, initial-scale=1.0');
+		viewport.setAttribute('content', 'width=512');
 		Cookies.set("ui-desktop", "false");
 	}
 	else {
