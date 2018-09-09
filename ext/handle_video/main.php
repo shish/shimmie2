@@ -28,13 +28,6 @@ class VideoFileHandler extends DataHandlerExtension {
 				$config->set_default_string('thumb_ffmpeg_path',  '');
 			}
 
-			// By default we generate thumbnails ignoring the aspect ratio of the video file.
-			//
-			// Why? - This allows Shimmie to work with older versions of FFmpeg by default,
-			// rather than completely failing out of the box. If people complain that their
-			// thumbnails are distorted, then they can turn this feature on manually later.
-			$config->set_default_bool('video_thumb_ignore_aspect_ratio', TRUE);
-
 			$config->set_int("ext_handle_video_version", 1);
 			log_info("handle_video", "extension installed");
 		}
@@ -44,18 +37,10 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Video Thumbnail Options");
+		$sb = new SetupBlock("Video Options");
 		$sb->add_label("<br>Path to ffmpeg: ");
 		$sb->add_text_option("thumb_ffmpeg_path");
-
-		// Some older versions of ffmpeg have trouble with the automatic aspect ratio scaling.
-		// This adds an option in the Board Config to disable the aspect ratio scaling.
 		$sb->add_label("<br>");
-		$sb->add_bool_option("video_thumb_ignore_aspect_ratio", "Ignore aspect ratio when creating thumbnails: ");
-
-		$event->panel->add_block($sb);
-		
-		$sb = new SetupBlock("Video Playback Options");
 		$sb->add_bool_option("video_playback_autoplay", "Autoplay: ");
 		$sb->add_label("<br>");
 		$sb->add_bool_option("video_playback_loop", "Loop: ");
@@ -73,33 +58,57 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$ok = false;
 
-		$ffmpeg = escapeshellcmd($config->get_string("thumb_ffmpeg_path"));
+		$ffmpeg = $config->get_string("thumb_ffmpeg_path");
+		$inname  = warehouse_path("images", $hash);
+		$outname = warehouse_path("thumbs", $hash);
 
-		$w = (int)$config->get_int("thumb_width");
-		$h = (int)$config->get_int("thumb_height");
-		$inname  = escapeshellarg(warehouse_path("images", $hash));
-		$outname = escapeshellarg(warehouse_path("thumbs", $hash));
+		$orig_size = $this->video_size($inname);
+		$scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1]);
+		$cmd = escapeshellcmd(implode(" ", [
+			escapeshellarg($ffmpeg),
+			"-y", "-i", escapeshellarg($inname),
+			"-vf", "scale={$scaled_size[0]}:{$scaled_size[1]}",
+			"-ss", "00:00:00.0",
+			"-f", "image2",
+			"-vframes", "1",
+			escapeshellarg($outname),
+		]));
 
-		if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
-		{
-			$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
-		}
-		else
-		{
-			$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
-			$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
-		}
+		exec($cmd, $output, $ret);
 
-		exec($cmd, $output, $returnValue);
-
-		if ((int)$returnValue == (int)1)
-		{
+		if ((int)$ret == (int)1) {
 			$ok = true;
 		}
 
-		log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $returnValue");
+		// error_log("Generating thumbnail with command `$cmd`, returns $ret");
+		log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
 
 		return $ok;
+	}
+
+	protected function video_size(string $filename) {
+		global $config;
+		$ffmpeg = $config->get_string("thumb_ffmpeg_path");
+		$cmd = escapeshellcmd(implode(" ", [
+			escapeshellarg($ffmpeg),
+			"-y", "-i", escapeshellarg($filename),
+			"-vstats"
+		]));
+		$output = shell_exec($cmd . " 2>&1");
+		// error_log("Getting size with `$cmd`");
+
+		$regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";
+		if (preg_match($regex_sizes, $output, $regs)) {
+			if (preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
+				return [$regs[2], $regs[1]];
+			}
+			else {
+				return [$regs[1], $regs[2]];
+			}
+		}
+		else {
+			return [1, 1];
+		}
 	}
 
 	/**
@@ -120,8 +129,9 @@ class VideoFileHandler extends DataHandlerExtension {
 		$image = new Image();
 
 		//NOTE: No need to set width/height as we don't use it.
-		$image->width  = 1;
-		$image->height = 1;
+		$size = $this->video_size($filename);
+		$image->width  = $size[0];
+		$image->height = $size[1];
 		
 		switch (mime_content_type($filename)) {
 			case "video/webm":
