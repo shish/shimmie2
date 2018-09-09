@@ -22,11 +22,9 @@ class VideoFileHandler extends DataHandlerExtension {
 			if($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
 				//ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
 				if(is_executable(strtok($ffmpeg, PHP_EOL))) {
-					$config->set_default_string('video_thumb_engine', 'ffmpeg');
 					$config->set_default_string('thumb_ffmpeg_path',  'ffmpeg');
 				}
 			} else {
-				$config->set_default_string('video_thumb_engine', 'static');
 				$config->set_default_string('thumb_ffmpeg_path',  '');
 			}
 
@@ -46,21 +44,9 @@ class VideoFileHandler extends DataHandlerExtension {
 	}
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
-		//global $config;
-
-		$thumbers = array(
-			'None'   => 'static',
-			'ffmpeg' => 'ffmpeg'
-		);
-
 		$sb = new SetupBlock("Video Thumbnail Options");
-
-		$sb->add_choice_option("video_thumb_engine", $thumbers, "Engine: ");
-
-		//if($config->get_string("video_thumb_engine") == "ffmpeg") {
-			$sb->add_label("<br>Path to ffmpeg: ");
-			$sb->add_text_option("thumb_ffmpeg_path");
-		//}
+		$sb->add_label("<br>Path to ffmpeg: ");
+		$sb->add_text_option("thumb_ffmpeg_path");
 
 		// Some older versions of ffmpeg have trouble with the automatic aspect ratio scaling.
 		// This adds an option in the Board Config to disable the aspect ratio scaling.
@@ -87,43 +73,31 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$ok = false;
 
-		switch($config->get_string("video_thumb_engine"))
+		$ffmpeg = escapeshellcmd($config->get_string("thumb_ffmpeg_path"));
+
+		$w = (int)$config->get_int("thumb_width");
+		$h = (int)$config->get_int("thumb_height");
+		$inname  = escapeshellarg(warehouse_path("images", $hash));
+		$outname = escapeshellarg(warehouse_path("thumbs", $hash));
+
+		if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
 		{
-			default:
-			case 'static':
-				$outname = warehouse_path("thumbs", $hash);
-				copy("ext/handle_video/thumb.jpg", $outname);
-				$ok = true;
-				break;
-			
-			case 'ffmpeg':
-				$ffmpeg = escapeshellcmd($config->get_string("thumb_ffmpeg_path"));
-
-				$w = (int)$config->get_int("thumb_width");
-				$h = (int)$config->get_int("thumb_height");
-				$inname  = escapeshellarg(warehouse_path("images", $hash));
-				$outname = escapeshellarg(warehouse_path("thumbs", $hash));
-			
-				if ($config->get_bool("video_thumb_ignore_aspect_ratio") == true)
-				{
-					$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
-				}
-				else
-				{
-					$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
-					$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
-				}
-
-				exec($cmd, $output, $returnValue);
-
-				if ((int)$returnValue == (int)1)
-				{
-					$ok = true;
-				}
-
-				log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $returnValue");
-				break;
+			$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
 		}
+		else
+		{
+			$scale = 'scale="' . escapeshellarg("if(gt(a,{$w}/{$h}),{$w},-1)") . ':' . escapeshellarg("if(gt(a,{$w}/{$h}),-1,{$h})") . '"';
+			$cmd = escapeshellcmd("{$ffmpeg} -y -i {$inname} -vf {$scale} -ss 00:00:00.0 -f image2 -vframes 1 {$outname}");
+		}
+
+		exec($cmd, $output, $returnValue);
+
+		if ((int)$returnValue == (int)1)
+		{
+			$ok = true;
+		}
+
+		log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $returnValue");
 
 		return $ok;
 	}
