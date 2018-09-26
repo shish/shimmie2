@@ -60,7 +60,7 @@ EOD
 					$message_html
 					$counter_html
 					<div class='mdl-typography--text-center' id='foot'>
-						<p>$contact_link Serving $num_comma posts - Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
+						<p>$contact_link Serving $num_comma posts - Running <a href='https://code.shishnet.org/shimmie2/'>Shimmie</a>
 					</div>
 				</div>
 			</main>
