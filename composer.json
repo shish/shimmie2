@@ -23,7 +23,7 @@
 	],
 
 	"require" : {
-		"php" : ">=7.0",
+		"php" : ">=7.1",
 
 		"flexihash/flexihash"       : "^2.0.0",
 		"ifixit/php-akismet"        : "1.*",
