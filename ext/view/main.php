@@ -144,6 +144,7 @@ class ViewImage extends Extension {
 		$iibbe = new ImageInfoBoxBuildingEvent($event->get_image(), $user);
 		send_event($iibbe);
 		ksort($iibbe->parts);
+		$this->theme->display_meta_headers($event->get_image());
 		$this->theme->display_page($event->get_image(), $iibbe->parts);
 	}
 }

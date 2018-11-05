@@ -1,22 +1,12 @@
 <?php
 
 class CustomViewImageTheme extends ViewImageTheme {
-
-
 	/*
 	 * Build a page showing $image and some info about it
 	 */
 	public function display_page(Image $image, $editor_parts) {
 		global $page;
-
-		$h_metatags = str_replace(" ", ", ", html_escape($image->get_tag_list()));
-
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
-		$page->add_html_header("<meta name=\"keywords\" content=\"$h_metatags\">");
-		$page->add_html_header("<meta property=\"og:title\" content=\"$h_metatags\">");
-		$page->add_html_header("<meta property=\"og:type\" content=\"article\">");
-		$page->add_html_header("<meta property=\"og:image\" content=\"".make_http($image->get_thumb_link())."\">");
-		$page->add_html_header("<meta property=\"og:url\" content=\"".make_http(make_link("post/view/{$image->id}"))."\">");
 		$page->set_heading(html_escape($image->get_tag_list()));
 		$page->add_block(new Block(null, $this->build_pin($image), "subtoolbar", 0));
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "left", 20));
