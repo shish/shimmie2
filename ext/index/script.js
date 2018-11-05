@@ -31,6 +31,21 @@ $(function() {
 			input.val(tagArr.join(" "));
 		}
 	});
+
+	/*
+	 * If an image list has a data-query attribute, append
+	 * that query string to all thumb links inside the list.
+	 * This allows us to cache the same thumb for all query
+	 * strings, adding the query in the browser.
+	 */
+	$(".shm-image-list").each(function(idx, elm) {
+		var query = $(this).data("query");
+		if(query) {
+			$(this).find(".shm-thumb-link").each(function(idx2, elm2) {
+				$(this).attr("href", $(this).attr("href") + query);
+			});
+		}
+	});
 });
 
 function select_blocked_tags() {
