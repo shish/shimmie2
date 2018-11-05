@@ -40,7 +40,7 @@ class MP3FileHandler extends DataHandlerExtension {
 		$success = FALSE;
 
 		if (file_exists($tmpname)) {
-			$mimeType = mime_content_type($tmpname);
+			$mimeType = getMimeType($tmpname);
 
 			$success = ($mimeType == 'audio/mpeg');
 		}
