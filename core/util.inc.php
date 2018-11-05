@@ -221,6 +221,8 @@ function parse_shorthand_int(string $limit): int {
  * @return string
  */
 function to_shorthand_int(int $int): string {
+	assert($int >= 0);
+
 	if($int >= pow(1024, 3)) {
 		return sprintf("%.1fGB", $int / pow(1024, 3));
 	}
