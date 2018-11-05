@@ -172,7 +172,7 @@ function ask_questions() { // {{{
 	if(check_gd_version() == 0 && check_im_version() == 0) {
 		$errors[] = "
 			No thumbnailers could be found - install the imagemagick
-			tools (or the PHP-GD library, of imagemagick is unavailable).
+			tools (or the PHP-GD library, if imagemagick is unavailable).
 		";
 	}
 	else if(check_im_version() == 0) {
@@ -180,6 +180,13 @@ function ask_questions() { // {{{
 			The 'convert' command (from the imagemagick package)
 			could not be found - PHP-GD can be used instead, but
 			the size of thumbnails will be limited.
+		";
+	}
+
+	if(!function_exists('mb_strlen')) {
+		$errors[] = "
+			The mbstring PHP extension is missing - multibyte languages
+			(eg non-english languages) may not work right.
 		";
 	}
 
