@@ -683,7 +683,7 @@ function is_https_enabled(): bool {
 	return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 }
 
-define("MIME_TYPE_MAP", [
+const MIME_TYPE_MAP = [
 	'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
 	'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
 	'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
@@ -698,7 +698,7 @@ define("MIME_TYPE_MAP", [
 	'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
 	'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
 	'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
-]);
+];
 
 /**
  * Get MIME type for file
@@ -715,7 +715,7 @@ function getMimeType(string $file, string $ext=""): string {
 	// Static extension lookup
 	$ext = strtolower($ext);
 
-	if (isset(MIME_TYPE_MAP[$ext])) { return MIME_TYPE_MAP[$ext]; }
+	if (array_key_exists($ext, MIME_TYPE_MAP)) { return MIME_TYPE_MAP[$ext]; }
 
 	$type = false;
 	// Fileinfo documentation says fileinfo_open() will use the
