@@ -223,18 +223,3 @@ class User {
 		return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
 	}
 }
-
-class MockUser extends User {
-	public function __construct(string $name) {
-		$row = array(
-			"name" => $name,
-			"id" => 1,
-			"email" => "",
-			"joindate" => "",
-			"pass" => "",
-			"class" => "admin",
-		);
-		parent::__construct($row);
-	}
-}
-

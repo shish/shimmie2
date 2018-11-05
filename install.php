@@ -103,7 +103,6 @@ assert_options(ASSERT_BAIL, 1);
 define('__SHIMMIE_ROOT__', trim(rtrim(dirname(__FILE__), '/\\')) . '/');
 
 // Pull in necessary files
-require_once __SHIMMIE_ROOT__."core/util.inc.php";
 require_once __SHIMMIE_ROOT__."core/exceptions.class.php";
 require_once __SHIMMIE_ROOT__."core/database.class.php";
 
@@ -112,7 +111,7 @@ if(is_readable("data/config/shimmie.conf.php")) die("Shimmie is already installe
 do_install();
 
 // utilities {{{
-	// TODO: Can some of these be pushed into "core/util.inc.php" ?
+	// TODO: Can some of these be pushed into "core/???.inc.php" ?
 
 function check_gd_version(): int {
 	$gdversion = 0;

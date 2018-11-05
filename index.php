@@ -86,7 +86,7 @@ EOD;
 }
 
 try {
-	require_once "core/_bootstrap.inc.php";
+	require_once "core/_bootstrap.php";
 	$_shm_ctx->log_start(@$_SERVER["REQUEST_URI"], true, true);
 
 	// start the page generation waterfall

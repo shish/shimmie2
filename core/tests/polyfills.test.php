@@ -1,7 +1,7 @@
 <?php
-require_once "util.inc.php";
+require_once "core/polyfills.php";
 
-class CoreUtilIO extends \PHPUnit\Framework\TestCase {
+class PolyfillsTest extends \PHPUnit\Framework\TestCase {
 	public function test_html_escape() {
 		$this->assertEquals(
 			html_escape("Foo & <waffles>"),
