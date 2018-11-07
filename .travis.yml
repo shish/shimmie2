@@ -38,7 +38,7 @@ install:
     fi
   - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
   - composer install
-  - php install.php
+  - php index.php
 
 script:
   - vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover

@@ -513,7 +513,7 @@ function _get_user(): User {
  * @return string|null
  */
 function _get_query() {
-	return @$_POST["q"]?:@$_GET["q"];
+	return (@$_POST["q"]?:@$_GET["q"])?:"/";
 }
 
 
