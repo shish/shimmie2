@@ -16,6 +16,8 @@ if( // kill these glitched requests immediately
 ) {die("No");}
 
 class Rule34 extends Extension {
+	protected $db_support = ['pgsql'];  # Only PG has the NOTIFY pubsub system
+
 	public function onImageDeletion(ImageDeletionEvent $event) {
 		global $database;
 		$database->execute("NOTIFY shm_image_bans, '{$event->image->hash}';");
