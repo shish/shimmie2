@@ -9,7 +9,7 @@ RUN apt install -y composer imagemagick vim
 
 COPY composer.json /app/
 WORKDIR /app
-RUN mkdir -p lib/vendor/css lib/vendor/js lib/vendor/swf data/config
+RUN mkdir -p data/config
 RUN composer install
 
 COPY . /app/

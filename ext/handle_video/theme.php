@@ -9,7 +9,7 @@ class VideoFileHandlerTheme extends Themelet {
 		$full_url = make_http($ilink);
 		$autoplay = $config->get_bool("video_playback_autoplay");
 		$loop = $config->get_bool("video_playback_loop");
-		$player = make_link('lib/vendor/swf/flashmediaelement.swf');
+		$player = make_link('vendor/bower-asset/mediaelement/build/flashmediaelement.swf');
 
 		$html = "Video not playing? <a href='$ilink'>Click here</a> to download the file.<br/>";
 
