@@ -182,10 +182,10 @@ function warehouse_path(string $base, string $hash, bool $create=true): string {
 	$ab = substr($hash, 0, 2);
 	$cd = substr($hash, 2, 2);
 	if(WH_SPLITS == 2) {
-		$pa = $base.'/'.$ab.'/'.$cd.'/'.$hash;
+		$pa = 'data/'.$base.'/'.$ab.'/'.$cd.'/'.$hash;
 	}
 	else {
-		$pa = $base.'/'.$ab.'/'.$hash;
+		$pa = 'data/'.$base.'/'.$ab.'/'.$hash;
 	}
 	if($create && !file_exists(dirname($pa))) mkdir(dirname($pa), 0755, true);
 	return $pa;
