@@ -10,8 +10,6 @@ env:
     - DB=mysql
     - DB=pgsql
     - DB=sqlite
-  allow_failures:
-    - DB=sqlite
 
 cache:
   directories:
@@ -36,7 +34,9 @@ install:
         mysql -e "CREATE DATABASE shimmie;" -uroot ;
         echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ;
     fi
-  - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+  - if [[ "$DB" == "sqlite" ]]; then
+        echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
+	fi
   - composer install
   - php index.php
 
