@@ -108,8 +108,9 @@ function do_install() { // {{{
 	if(file_exists("data/config/auto_install.conf.php")) {
 		require_once "data/config/auto_install.conf.php";
 	}
-	else if(@$_POST["database_type"] == "sqlite" && isset($_POST["database_name"])) {
-		define('DATABASE_DSN', "sqlite:{$_POST["database_name"]}");
+	else if(@$_POST["database_type"] == "sqlite") {
+		$id = bin2hex(random_bytes(5));
+		define('DATABASE_DSN', "sqlite:data/shimmie.{$id}.sqlite");
 	}
 	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
@@ -153,7 +154,6 @@ function ask_questions() { // {{{
 	if(
 		!in_array("mysql", $drivers) &&
 		!in_array("pgsql", $drivers) &&
-
 		!in_array("sqlite", $drivers)
 	) {
 		$errors[] = "
@@ -201,7 +201,7 @@ function ask_questions() { // {{{
 								<th>Password:</th>
 								<td><input type="password" name="database_password" size="40"></td>
 							</tr>
-							<tr class="dbconf mysql pgsql sqlite">
+							<tr class="dbconf mysql pgsql">
 								<th>DB&nbsp;Name:</th>
 								<td><input type="text" name="database_name" size="40" value="shimmie"></td>
 							</tr>
