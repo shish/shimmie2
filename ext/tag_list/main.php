@@ -226,7 +226,7 @@ class TagList extends Extension {
 		$starts_with = $this->get_starts_with();
 		
 		// check if we have a cached version
-		$cache_key = data_path("cache/tag_cloud-" . md5("tc" . $tags_min . $starts_with) . ".html");
+		$cache_key = warehouse_path("cache/tag_cloud", md5("tc" . $tags_min . $starts_with));
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		// SHIT: PDO/pgsql has problems using the same named param twice -_-;;
@@ -266,7 +266,7 @@ class TagList extends Extension {
 		$starts_with = $this->get_starts_with();
 		
 		// check if we have a cached version
-		$cache_key = data_path("cache/tag_alpha-" . md5("ta" . $tags_min . $starts_with) . ".html");
+		$cache_key = warehouse_path("cache/tag_alpha", md5("ta" . $tags_min . $starts_with));
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_pairs($database->scoreql_to_sql("
@@ -328,7 +328,7 @@ class TagList extends Extension {
 		if ($tags_min < 1){ $tags_min = 1; }
 		
 		// check if we have a cached version
-		$cache_key = data_path("cache/tag_popul-" . md5("tp" . $tags_min) . ".html");
+		$cache_key = warehouse_path("cache/tag_popul", md5("tp" . $tags_min));
 		if(file_exists($cache_key)) {return file_get_contents($cache_key);}
 
 		$tag_data = $database->get_all("
