@@ -337,7 +337,7 @@ class Page {
 		$css_files = array_merge(
 			zglob("lib/shimmie.css"),
 			zglob("ext/{".ENABLED_EXTS."}/style.css"),
-			zglob("themes/$theme_name/style.css"),
+			zglob("themes/$theme_name/style.css")
 		);
 		foreach($css_files as $css) {
 			$css_latest = max($css_latest, filemtime($css));
