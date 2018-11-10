@@ -147,7 +147,7 @@ class Layout {
             $drawer_block_html
           </div>
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="http://code.shishnet.org/shimmie2/">Shimmie  &copy;</a>
+          <a class="mdl-navigation__link" href="https://code.shishnet.org/shimmie2/">Shimmie  &copy;</a>
         </nav>
       </div>
       <main class="mdl-layout__content">

@@ -140,7 +140,7 @@ class PoolsTheme extends Themelet {
 		$page->add_block(new NavBlock());
 		$page->add_block(new Block("Pool Navigation", $poolnav_html, "left", 10));
 
-		if(count($pools) == 1) {
+		if(!is_null($pools) && count($pools) == 1) {
 			$pool = $pools[0];
 			if($pool['public'] == "Y" || $user->is_admin()) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
 				if(!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL

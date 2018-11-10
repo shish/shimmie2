@@ -29,7 +29,7 @@ check out one of the versioned branches.
 # Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.0+ as of writing)
+- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.1+ as of writing)
 - GD or ImageMagick
 
 # Installation

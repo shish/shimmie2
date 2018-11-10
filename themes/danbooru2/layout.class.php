@@ -2,7 +2,7 @@
 /**
 * Name: Danbooru 2 Theme
 * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <danneh@danneh.net>
-* Link: http://trac.shishnet.org/shimmie2/
+* Link: https://code.shishnet.org/shimmie2/
 * License: GPLv2
 * Description: This is a simple theme changing the css to make shimme
 *              look more like danbooru as well as adding a custom links
@@ -246,10 +246,10 @@ $header_html
 		<footer><div>
 			Running Shimmie &ndash;
 			Images &copy; their respective owners,
-			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
-			<a href="http://www.shishnet.org/">Shish</a> &amp;
+			<a href="https://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
+			<a href="https://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2016,
+			2007-2018,
 			based on the Danbooru concept<br />
 			$debug
 			$contact

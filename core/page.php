@@ -333,33 +333,17 @@ class Page {
 		}
 
 		/*** Generate CSS cache files ***/
-		$css_lib_latest = $config_latest;
-		$css_lib_files = zglob("lib/vendor/css/*.css");
-		foreach($css_lib_files as $css) {
-			$css_lib_latest = max($css_lib_latest, filemtime($css));
-		}
-		$css_lib_md5 = md5(serialize($css_lib_files));
-		$css_lib_cache_file = data_path("cache/style.lib.{$theme_name}.{$css_lib_latest}.{$css_lib_md5}.css");
-		if(!file_exists($css_lib_cache_file)) {
-			$css_lib_data = "";
-			foreach($css_lib_files as $file) {
-				$file_data = file_get_contents($file);
-				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../'.dirname($file).'/$1")';
-				$file_data = preg_replace($pattern, $replace, $file_data);
-				$css_lib_data .= $file_data . "\n";
-			}
-			file_put_contents($css_lib_cache_file, $css_lib_data);
-		}
-		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_lib_cache_file' type='text/css'>", 43);
-
 		$css_latest = $config_latest;
-		$css_files = array_merge(zglob("lib/shimmie.css"), zglob("ext/{".ENABLED_EXTS."}/style.css"), zglob("themes/$theme_name/style.css"));
+		$css_files = array_merge(
+			zglob("lib/shimmie.css"),
+			zglob("ext/{".ENABLED_EXTS."}/style.css"),
+			zglob("themes/$theme_name/style.css"),
+		);
 		foreach($css_files as $css) {
 			$css_latest = max($css_latest, filemtime($css));
 		}
 		$css_md5 = md5(serialize($css_files));
-		$css_cache_file = data_path("cache/style.main.{$theme_name}.{$css_latest}.{$css_md5}.css");
+		$css_cache_file = data_path("cache/style.{$theme_name}.{$css_latest}.{$css_md5}.css");
 		if(!file_exists($css_cache_file)) {
 			$css_data = "";
 			foreach($css_files as $file) {
@@ -374,29 +358,24 @@ class Page {
 		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 100);
 
 		/*** Generate JS cache files ***/
-		$js_lib_latest = $config_latest;
-		$js_lib_files = zglob("lib/vendor/js/*.js");
-		foreach($js_lib_files as $js) {
-			$js_lib_latest = max($js_lib_latest, filemtime($js));
-		}
-		$js_lib_md5 = md5(serialize($js_lib_files));
-		$js_lib_cache_file = data_path("cache/script.lib.{$theme_name}.{$js_lib_latest}.{$js_lib_md5}.js");
-		if(!file_exists($js_lib_cache_file)) {
-			$js_data = "";
-			foreach($js_lib_files as $file) {
-				$js_data .= file_get_contents($file) . "\n";
-			}
-			file_put_contents($js_lib_cache_file, $js_data);
-		}
-		$this->add_html_header("<script src='$data_href/$js_lib_cache_file' type='text/javascript'></script>", 45);
-
 		$js_latest = $config_latest;
-		$js_files = array_merge(zglob("lib/shimmie.js"), zglob("ext/{".ENABLED_EXTS."}/script.js"), zglob("themes/$theme_name/script.js"));
+		$js_files = array_merge(
+			[
+				"vendor/bower-asset/jquery/dist/jquery.min.js",
+				"vendor/bower-asset/jquery-timeago/jquery.timeago.js",
+				"vendor/bower-asset/tablesorter/jquery.tablesorter.min.js",
+				"vendor/bower-asset/js-cookie/src/js.cookie.js",
+				"lib/modernizr-3.3.1.custom.js",
+			],
+			zglob("lib/shimmie.js"),
+			zglob("ext/{".ENABLED_EXTS."}/script.js"),
+			zglob("themes/$theme_name/script.js")
+		);
 		foreach($js_files as $js) {
 			$js_latest = max($js_latest, filemtime($js));
 		}
 		$js_md5 = md5(serialize($js_files));
-		$js_cache_file = data_path("cache/script.main.{$theme_name}.{$js_latest}.{$js_md5}.js");
+		$js_cache_file = data_path("cache/script.{$theme_name}.{$js_latest}.{$js_md5}.js");
 		if(!file_exists($js_cache_file)) {
 			$js_data = "";
 			foreach($js_files as $file) {
@@ -406,7 +385,4 @@ class Page {
 		}
 		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 100);
 	}
-}
-
-class MockPage extends Page {
 }

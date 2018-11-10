@@ -15,7 +15,7 @@ class IndexTest extends ShimmiePHPUnitTestCase {
 
 	public function testIndexPage() {
 		$this->get_page('post/list');
-		$this->assert_title("Welcome to Shimmie ".VERSION);
+		$this->assert_title("Welcome to Shimmie");
 		$this->assert_no_text("Prev | Index | Next");
 
 		$this->log_in_as_user();

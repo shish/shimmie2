@@ -1,11 +1,12 @@
 
 ARTICLE SELECT {width: 150px;}
 INPUT, TEXTAREA {box-sizing: border-box;}
-TD>INPUT[type="button"] {width: 100%;}
-TD>INPUT[type="submit"] {width: 100%;}
-TD>INPUT[type="text"] {width: 100%;}
-TD>INPUT[type="password"] {width: 100%;}
-TD>SELECT {width: 100%;}
+TD>INPUT[type="button"],
+TD>INPUT[type="submit"],
+TD>INPUT[type="text"],
+TD>INPUT[type="password"],
+TD>INPUT[type="email"],
+TD>SELECT,
 TD>TEXTAREA {width: 100%;}
 
 TABLE.form {width: 300px;}
@@ -29,4 +30,45 @@ IMG.lazy {display: none;}
 	padding: 8px;
 	margin: 8px;
 	border: 1px solid #882;
+}
+
+#installer {
+	background: #EEE;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	width: 512px;
+	margin: auto;
+	margin-top: 16px;
+	border: 1px solid black;
+	border-radius: 16px;
+}
+#installer P {
+	padding: 5px;
+}
+#installer A {
+	text-decoration: none;
+}
+#installer A:hover {
+	text-decoration: underline;
+}
+#installer H1, #installer H3 {
+	background: #DDD;
+	text-align: center;
+	margin: 0px;
+	padding: 2px;
+}
+#installer H1 {
+	border-bottom: 1px solid black;
+	border-radius: 16px 16px 0px 0px;
+}
+#installer H3 {
+	border-bottom: 1px solid black;
+}
+#installer TH {
+	text-align: right;
+}
+#installer INPUT,
+#installer SELECT {
+	width: 100%;
+	box-sizing: border-box;
 }
