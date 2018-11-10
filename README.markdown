@@ -50,6 +50,24 @@ check out one of the versioned branches.
 4. Run `composer install` in the shimmie folder.
 5. Follow instructions noted in "Installation" starting from step 3.
 
+# Docker
+
+Useful for testing in a known-good environment, this command will build a simple debian image and run all the unit tests inside it:
+
+```
+docker build -t shimmie .
+```
+
+Once you have an image which has passed all tests, you can then run it to get a live system:
+
+```
+docker run -p 0.0.0.0:8123:8000 shimmie
+```
+
+Then you can visit your server on port 8123 to see the site.
+
+Note that the docker image is entirely self-contained and has no persistence (assuming you use the sqlite database); each `docker run` will give a clean un-installed image.
+
 ### Upgrade from earlier versions
 
 I very much recommend going via each major release in turn (eg, 2.0.6
