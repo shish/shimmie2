@@ -23,7 +23,7 @@
 	],
 
 	"require" : {
-		"php" : ">=7.1",
+		"php" : ">=7.0",
 		"ext-pdo": "*",
 
 		"flexihash/flexihash"       : "^2.0.0",

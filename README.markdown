@@ -29,7 +29,7 @@ check out one of the versioned branches.
 # Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.1+ as of writing)
+- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.0+ as of writing)
 - GD or ImageMagick
 
 # Installation
@@ -49,6 +49,24 @@ check out one of the versioned branches.
 3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
 4. Run `composer install` in the shimmie folder.
 5. Follow instructions noted in "Installation" starting from step 3.
+
+# Docker
+
+Useful for testing in a known-good environment, this command will build a simple debian image and run all the unit tests inside it:
+
+```
+docker build -t shimmie .
+```
+
+Once you have an image which has passed all tests, you can then run it to get a live system:
+
+```
+docker run -p 0.0.0.0:8123:8000 shimmie
+```
+
+Then you can visit your server on port 8123 to see the site.
+
+Note that the docker image is entirely self-contained and has no persistence (assuming you use the sqlite database); each `docker run` will give a clean un-installed image.
 
 ### Upgrade from earlier versions
 

@@ -108,8 +108,9 @@ function do_install() { // {{{
 	if(file_exists("data/config/auto_install.conf.php")) {
 		require_once "data/config/auto_install.conf.php";
 	}
-	else if(@$_POST["database_type"] == "sqlite" && isset($_POST["database_name"])) {
-		define('DATABASE_DSN', "sqlite:{$_POST["database_name"]}");
+	else if(@$_POST["database_type"] == "sqlite") {
+		$id = bin2hex(random_bytes(5));
+		define('DATABASE_DSN', "sqlite:data/shimmie.{$id}.sqlite");
 	}
 	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
 		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
@@ -153,7 +154,6 @@ function ask_questions() { // {{{
 	if(
 		!in_array("mysql", $drivers) &&
 		!in_array("pgsql", $drivers) &&
-
 		!in_array("sqlite", $drivers)
 	) {
 		$errors[] = "
@@ -201,7 +201,7 @@ function ask_questions() { // {{{
 								<th>Password:</th>
 								<td><input type="password" name="database_password" size="40"></td>
 							</tr>
-							<tr class="dbconf mysql pgsql sqlite">
+							<tr class="dbconf mysql pgsql">
 								<th>DB&nbsp;Name:</th>
 								<td><input type="text" name="database_name" size="40" value="shimmie"></td>
 							</tr>
@@ -360,29 +360,22 @@ function insert_defaults() { // {{{
 function build_dirs() { // {{{
 	// *try* and make default dirs. Ignore any errors --
 	// if something is amiss, we'll tell the user later
-	if(!file_exists("images")) @mkdir("images");
-	if(!file_exists("thumbs")) @mkdir("thumbs");
-	if(!file_exists("data")  ) @mkdir("data");
-	if(!is_writable("images")) @chmod("images", 0755);
-	if(!is_writable("thumbs")) @chmod("thumbs", 0755);
-	if(!is_writable("data")  ) @chmod("data", 0755);
+	if(!file_exists("data")) @mkdir("data");
+	if(!is_writable("data")) @chmod("data", 0755);
 
 	// Clear file status cache before checking again.
 	clearstatcache();
 
-	if(
-		!file_exists("images") || !file_exists("thumbs") || !file_exists("data") ||
-		!is_writable("images") || !is_writable("thumbs") || !is_writable("data")
-	) {
+	if(!file_exists("data") || !is_writable("data")) {
 		print "
 		<div id='installer'>
 			<h1>Shimmie Installer</h1>
 			<h3>Directory Permissions Error:</h3>
 			<div class='container'>
-				<p>Shimmie needs to make three folders in it's directory, '<i>images</i>', '<i>thumbs</i>', and '<i>data</i>', and they need to be writable by the PHP user.</p>
-				<p>If you see this error, if probably means the folders are owned by you, and they need to be writable by the web server.</p>
+				<p>Shimmie needs to have a 'data' folder in its directory, writable by the PHP user.</p>
+				<p>If you see this error, if probably means the folder is owned by you, and it needs to be writable by the web server.</p>
 				<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
-				<p>Once you have created these folders and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
+				<p>Once you have created this folder and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
 				<br/><br/>
 			</div>
 		</div>
