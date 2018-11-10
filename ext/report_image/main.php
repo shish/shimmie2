@@ -209,7 +209,8 @@ class ReportImage extends Extension {
 		$all_reports = $database->get_all("
 			SELECT image_reports.*, users.name AS reporter_name
 			FROM image_reports
-			JOIN users ON reporter_id = users.id");
+			JOIN users ON reporter_id = users.id
+			ORDER BY image_reports.id DESC");
 		if(is_null($all_reports)) $all_reports = array();
 
 		$reports = array();

@@ -35,7 +35,7 @@ install:
     fi
   - if [[ "$DB" == "sqlite" ]]; then
         echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
-	fi
+    fi
   - composer install
   - php index.php
 
