@@ -343,13 +343,13 @@ class Page {
 			$css_latest = max($css_latest, filemtime($css));
 		}
 		$css_md5 = md5(serialize($css_files));
-		$css_cache_file = data_path("cache/style.{$theme_name}.{$css_latest}.{$css_md5}.css");
+		$css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
 		if(!file_exists($css_cache_file)) {
 			$css_data = "";
 			foreach($css_files as $file) {
 				$file_data = file_get_contents($file);
 				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../'.dirname($file).'/$1")';
+				$replace = 'url("../../../'.dirname($file).'/$1")';
 				$file_data = preg_replace($pattern, $replace, $file_data);
 				$css_data .= $file_data . "\n";
 			}
@@ -375,7 +375,7 @@ class Page {
 			$js_latest = max($js_latest, filemtime($js));
 		}
 		$js_md5 = md5(serialize($js_files));
-		$js_cache_file = data_path("cache/script.{$theme_name}.{$js_latest}.{$js_md5}.js");
+		$js_cache_file = data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
 		if(!file_exists($js_cache_file)) {
 			$js_data = "";
 			foreach($js_files as $file) {
