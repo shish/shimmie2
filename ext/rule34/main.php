@@ -42,8 +42,8 @@ class Rule34 extends Extension {
 	}
 
 	public function onUserPageBuilding(UserPageBuildingEvent $event) {
-		global $database, $user;
-		if($user->can("change_setting")) {
+		global $database, $user, $config;
+		if($user->can("change_setting") && $config->get_bool('r34_comic_integration')) {
 			$current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=?", array($event->display_user->id)));
 			$this->theme->show_comic_changer($event->display_user, $current_state);
 		}
