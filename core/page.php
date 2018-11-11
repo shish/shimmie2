@@ -322,7 +322,7 @@ class Page {
 
 		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
 
-		# 404/static handler will map these to themes/foo/bar.ico or lib/static/bar.ico
+		# static handler will map these to themes/foo/static/bar.ico or ext/handle_static/static/bar.ico
 		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
 		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
 
@@ -335,7 +335,6 @@ class Page {
 		/*** Generate CSS cache files ***/
 		$css_latest = $config_latest;
 		$css_files = array_merge(
-			zglob("lib/shimmie.css"),
 			zglob("ext/{".ENABLED_EXTS."}/style.css"),
 			zglob("themes/$theme_name/style.css")
 		);
@@ -365,9 +364,8 @@ class Page {
 				"vendor/bower-asset/jquery-timeago/jquery.timeago.js",
 				"vendor/bower-asset/tablesorter/jquery.tablesorter.min.js",
 				"vendor/bower-asset/js-cookie/src/js.cookie.js",
-				"lib/modernizr-3.3.1.custom.js",
+				"ext/handle_static/modernizr-3.3.1.custom.js",
 			],
-			zglob("lib/shimmie.js"),
 			zglob("ext/{".ENABLED_EXTS."}/script.js"),
 			zglob("themes/$theme_name/script.js")
 		);

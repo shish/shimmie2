@@ -2,10 +2,8 @@ backup
 data
 images
 thumbs
-!lib/images
 *.phar
 *.sqlite
-/lib/vendor/
 
 #Composer
 composer.phar

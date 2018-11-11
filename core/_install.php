@@ -25,7 +25,7 @@ date_default_timezone_set('UTC');
 <html>
 	<head>
 		<title>Shimmie Installation</title>
-		<link rel="shortcut icon" href="lib/static/favicon.ico">
+		<link rel="shortcut icon" href="ext/handle_static/static/favicon.ico">
 		<link rel="stylesheet" href="lib/shimmie.css" type="text/css">
 		<script type="text/javascript" src="vendor/bower-asset/jquery/dist/jquery.min.js"></script>
 	</head>
