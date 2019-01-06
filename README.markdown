@@ -141,15 +141,11 @@ themes, be careful with these, and avoid styling them, eg:
 - shm-clink = a link to a comment, flash the target element when clicked
   * data-clink-sel
 
-Documentation: http://shimmie.shishnet.org/doc/
-
 Please tell me if those docs are lacking in any way, so that they can be
 improved for the next person who uses them
 
 
 # Contact
-
-IRC: `#shimmie` on [Freenode](irc.freenode.net)
 
 Email: webmaster at shishnet.org
 
