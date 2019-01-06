@@ -52,13 +52,15 @@ check out one of the versioned branches.
 
 # Docker
 
-Useful for testing in a known-good environment, this command will build a simple debian image and run all the unit tests inside it:
+Useful for testing in a known-good environment, this command will build a
+simple debian image and run all the unit tests inside it:
 
 ```
 docker build -t shimmie .
 ```
 
-Once you have an image which has passed all tests, you can then run it to get a live system:
+Once you have an image which has passed all tests, you can then run it to get
+a live system:
 
 ```
 docker run -p 0.0.0.0:8123:8000 shimmie
@@ -66,15 +68,17 @@ docker run -p 0.0.0.0:8123:8000 shimmie
 
 Then you can visit your server on port 8123 to see the site.
 
-Note that the docker image is entirely self-contained and has no persistence (assuming you use the sqlite database); each `docker run` will give a clean un-installed image.
+Note that the docker image is entirely self-contained and has no persistence
+(assuming you use the sqlite database); each `docker run` will give a clean
+un-installed image.
 
 ### Upgrade from earlier versions
 
 I very much recommend going via each major release in turn (eg, 2.0.6
 -> 2.1.3 -> 2.2.4 -> 2.3.0 rather than 2.0.6 -> 2.3.0).
 
-While the basic database and file formats haven't changed *completely*, it's different
-enough to be a pain.
+While the basic database and file formats haven't changed *completely*, it's
+different enough to be a pain.
 
 
 ## Custom Configuration
@@ -91,7 +95,8 @@ be used.
 User classes can be added to or altered by placing them in
 `data/config/user-classes.conf.php`.
 
-For example, one can override the default anonymous "allow nothing" permissions like so:
+For example, one can override the default anonymous "allow nothing"
+permissions like so:
 
 ```php
 new UserClass("anonymous", "base", array(
@@ -116,10 +121,10 @@ For a list of permissions, see `core/userclass.class.php`
 
 # Development Info
 
-ui-* cookies are for the client-side scripts only; in some configurations
+ui-\* cookies are for the client-side scripts only; in some configurations
 (eg with varnish cache) they will be stripped before they reach the server
 
-shm-* CSS classes are for javascript to hook into; if you're customising
+shm-\* CSS classes are for javascript to hook into; if you're customising
 themes, be careful with these, and avoid styling them, eg:
 
 - shm-thumb = outermost element of a thumbnail
@@ -132,15 +137,11 @@ themes, be careful with these, and avoid styling them, eg:
 - shm-clink = a link to a comment, flash the target element when clicked
   * data-clink-sel
 
-Documentation: http://shimmie.shishnet.org/doc/
-
 Please tell me if those docs are lacking in any way, so that they can be
 improved for the next person who uses them
 
 
 # Contact
-
-IRC: `#shimmie` on [Freenode](irc.freenode.net)
 
 Email: webmaster at shishnet.org
 
