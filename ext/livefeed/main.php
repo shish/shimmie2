@@ -48,12 +48,8 @@ class LiveFeed extends Extension {
 
 	public function get_priority(): int {return 99;}
 
-	/**
-	 * @param string $data
-	 */
-    private function msg($data) {
+    private function msg(string $data) {
 		global $config;
-		assert('is_string($data)');
 
 		$host = $config->get_string("livefeed_host", "127.0.0.1:25252");
 

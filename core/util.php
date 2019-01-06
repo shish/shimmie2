@@ -389,6 +389,8 @@ function _sanitise_environment() {
 		date_default_timezone_set(TIMEZONE);
 	}
 
+	ini_set('zend.assertions', 1);  // generate assertions
+	ini_set('assert.exception', 1);  // throw exceptions when failed
 	if(DEBUG) {
 		error_reporting(E_ALL);
 		assert_options(ASSERT_ACTIVE, 1);

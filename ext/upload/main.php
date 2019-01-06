@@ -24,16 +24,15 @@ class DataUploadEvent extends Event {
 	/**
 	 * Some data is being uploaded.
 	 * This should be caught by a file handler.
-	 *  -- Removed: param $user The user uploading the data.
 	 * @param string $tmpname The temporary file used for upload.
 	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(string $tmpname, array $metadata) {
-		assert('file_exists($tmpname)');
-		assert('is_string($metadata["filename"])');
-		assert('is_string($metadata["extension"])');
-		assert('is_array($metadata["tags"])');
-		assert('is_string($metadata["source"]) || is_null($metadata["source"])');
+		assert(file_exists($tmpname));
+		assert(is_string($metadata["filename"]));
+		assert(is_string($metadata["extension"]));
+		assert(is_array($metadata["tags"]));
+		assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
 		$this->tmpname = $tmpname;
 
@@ -298,12 +297,8 @@ class Upload extends Extension {
 	 * @param int $replace
 	 * @return bool TRUE on upload successful.
 	 */
-	private function try_upload($file, $tags, $source, $replace=-1) {
+	private function try_upload(array $file, array $tags, string $source=null, int $replace=-1): bool {
 		global $page;
-		assert('is_array($file)');
-		assert('is_array($tags)');
-		assert('is_string($source) || is_null($source)');
-		assert('is_int($replace)');
 
 		if(empty($source)) $source = null;
 
@@ -346,21 +341,8 @@ class Upload extends Extension {
 		return $ok;
 	}
 
-	/**
-	 * Handle an transload.
-	 *
-	 * @param string $url
-	 * @param string[] $tags
-	 * @param string|null $source
-	 * @param int $replace
-	 * @return bool Returns TRUE on transload successful.
-	 */
-	private function try_transload($url, $tags, $source, $replace=-1) {
+	private function try_transload(string $url, array $tags, string $source=null, int $replace=-1): bool {
 		global $page, $config, $user;
-		assert('is_string($url)');
-		assert('is_array($tags)');
-		assert('is_string($source) || is_null($source)');
-		assert('is_int($replace)');
 
 		$ok = true;
 

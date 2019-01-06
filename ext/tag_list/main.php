@@ -494,9 +494,8 @@ class TagList extends Extension {
 	 * @param Page $page
 	 * @param string[] $search
 	 */
-	private function add_refine_block(Page $page, $search) {
+	private function add_refine_block(Page $page, array $search) {
 		global $database, $config;
-		assert('is_array($search)');
 
 		$wild_tags = $search;
 		$str_search = Tag::implode($search);

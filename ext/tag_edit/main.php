@@ -342,14 +342,7 @@ class TagEdit extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $tags
-	 * @param string $source
-	 */
-	private function mass_source_edit($tags, $source) {
-		assert('is_string($tags)');
-		assert('is_string($source)');
-
+	private function mass_source_edit(string $tags, string $source) {
 		$tags = Tag::explode($tags);
 
 		$last_id = -1;

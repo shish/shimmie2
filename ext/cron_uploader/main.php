@@ -304,14 +304,9 @@ class CronUploader extends Extension {
 
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
-	 *
-	 * @param string $tmpname
-	 * @param string $filename
-	 * @param string $tags
 	 */
-	private function add_image($tmpname, $filename, $tags) {
+	private function add_image(string $tmpname, string $filename, string $tags) {
 		assert ( file_exists ( $tmpname ) );
-		assert('is_string($tags)');
 		
 		$pathinfo = pathinfo ( $filename );
 		if (! array_key_exists ( 'extension', $pathinfo )) {

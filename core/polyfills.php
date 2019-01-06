@@ -546,7 +546,7 @@ function clamp(int $val, int $min=null, int $max=null): int {
 		$val = $max;
 	}
 	if(!is_null($min) && !is_null($max)) {
-		assert('$val >= $min && $val <= $max', "$min <= $val <= $max");
+		assert($val >= $min && $val <= $max, "$min <= $val <= $max");
 	}
 	return $val;
 }

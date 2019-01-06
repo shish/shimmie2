@@ -353,9 +353,8 @@ class Tag_History extends Extension {
 	 * @param Image $image
 	 * @param string[] $tags
 	 */
-	private function add_tag_history(Image $image, $tags) {
+	private function add_tag_history(Image $image, array $tags) {
 		global $database, $config, $user;
-		assert('is_array($tags)');
 
 		$new_tags = Tag::implode($tags);
 		$old_tags = $image->get_tag_list();

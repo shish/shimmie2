@@ -559,6 +559,8 @@ class Image {
 	 * Set the tags for this image.
 	 */
 	public function set_tags(array $unfiltered_tags) {
+		global $database;
+
 		$tags = [];
 		foreach ($unfiltered_tags as $tag) {
 			if(mb_strlen($tag, 'UTF-8') > 255){
@@ -572,8 +574,6 @@ class Image {
 
 			$tags[] = $tag;
 		}
-		assert('count($tags) > 0', var_export($tags, true));
-		global $database;
 
 		if(count($tags) <= 0) {
 			throw new SCoreException('Tried to set zero tags');
@@ -916,7 +916,7 @@ class Image {
 			}
 		}
 
-		assert('$positive_tag_id_array || $negative_tag_id_array', @$_GET['q']);
+		assert($positive_tag_id_array || $negative_tag_id_array, @$_GET['q']);
 		$wheres = array();
 		if (!empty($positive_tag_id_array)) {
 			$positive_tag_id_list = join(', ', $positive_tag_id_array);
