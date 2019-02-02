@@ -17,4 +17,4 @@ RUN mkdir -p data/config && \
     php index.php && \
     ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
     rm -rf data
-CMD ["/usr/bin/php", "-d", "upload_max_filesize=50M", "-d", "post_max_size=50M", "-S", "0.0.0.0:8000", "tests/router.php"]
+CMD "/app/tests/docker-init.sh"
