@@ -53,7 +53,7 @@ class RSS_Images extends Extension {
 		$base_href = make_http(get_base_href());
 		$search = "";
 		if(count($search_terms) > 0) {
-			$search = url_escape(implode(" ", $search_terms)) . "/";
+			$search = url_escape(Tag::implode($search_terms)) . "/";
 		}
 
 		if($page_number > 1) {

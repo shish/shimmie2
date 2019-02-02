@@ -36,7 +36,7 @@ class RandomListTheme extends Themelet {
 	}
 
 	protected function build_navigation(array $search_terms): string {
-		$h_search_string = html_escape(implode(" ", $search_terms));
+		$h_search_string = html_escape(Tag::implode($search_terms));
 		$h_search_link = make_link("random");
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>

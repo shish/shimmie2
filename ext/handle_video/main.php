@@ -64,7 +64,7 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$orig_size = $this->video_size($inname);
 		$scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1]);
-		$cmd = escapeshellcmd(implode(" ", [
+		$cmd = escapeshellcmd(Tag::implode([
 			escapeshellarg($ffmpeg),
 			"-y", "-i", escapeshellarg($inname),
 			"-vf", "scale={$scaled_size[0]}:{$scaled_size[1]}",
@@ -89,7 +89,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	protected function video_size(string $filename) {
 		global $config;
 		$ffmpeg = $config->get_string("thumb_ffmpeg_path");
-		$cmd = escapeshellcmd(implode(" ", [
+		$cmd = escapeshellcmd(Tag::implode([
 			escapeshellarg($ffmpeg),
 			"-y", "-i", escapeshellarg($filename),
 			"-vstats"

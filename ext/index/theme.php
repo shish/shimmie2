@@ -69,7 +69,7 @@ and of course start organising your images :-)
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
-		$u_tags = url_escape(implode(" ", $search_terms));
+		$u_tags = url_escape(Tag::implode($search_terms));
 		$query = empty($u_tags) ? "" : '/'.$u_tags;
 
 
@@ -77,7 +77,7 @@ and of course start organising your images :-)
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_next = ($page_number >= $total_pages) ? "Next" : '<a href="'.make_link('post/list'.$query.'/'.$next).'">Next</a>';
 
-		$h_search_string = html_escape(implode(" ", $search_terms));
+		$h_search_string = html_escape(Tag::implode($search_terms));
 		$h_search_link = make_link();
 		$h_search = "
 			<p><form action='$h_search_link' method='GET'>

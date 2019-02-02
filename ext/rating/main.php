@@ -71,7 +71,7 @@ class Ratings extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user;
 		if($user->is_admin() && !empty($event->search_terms)) {
-			$this->theme->display_bulk_rater(implode(" ", $event->search_terms));
+			$this->theme->display_bulk_rater(Tag::implode($event->search_terms));
 		}
 	}
 

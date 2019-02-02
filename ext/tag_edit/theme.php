@@ -40,7 +40,7 @@ class TagEditTheme extends Themelet {
 			$h_link = make_link("post/list/$u_tag/1");
 			$tag_links[] = "<a href='$h_link'>$h_tag</a>";
 		}
-		$h_tag_links = implode(" ", $tag_links);
+		$h_tag_links = Tag::implode($tag_links);
 		$h_tags = html_escape($image->get_tag_list());
 
 		return "

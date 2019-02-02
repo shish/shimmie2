@@ -47,7 +47,7 @@ class RegenThumb extends Extension {
 	public function onPostListBuilding(PostListBuildingEvent $event) {
 		global $user;
 		if($user->can("delete_image") && !empty($event->search_terms)) {
-			$event->add_control($this->theme->mtr_html(implode(" ", $event->search_terms)));
+			$event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
 		}
 	}
 }

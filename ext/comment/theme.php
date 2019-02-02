@@ -207,7 +207,7 @@ class CommentListTheme extends Themelet {
 		$next = $page_number + 1;
 		
 		//$search_terms = array('I','have','no','idea','what','this','does!');
-		//$u_tags = url_escape(implode(" ", $search_terms));
+		//$u_tags = url_escape(Tag::implode($search_terms));
 		//$query = empty($u_tags) ? "" : '/'.$u_tags;
 
 		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='$prev'>Prev</a>";

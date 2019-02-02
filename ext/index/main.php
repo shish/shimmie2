@@ -242,7 +242,7 @@ class Index extends Extension {
 			$count_search_terms = count($search_terms);
 
 			try {
-				#log_debug("index", "Search for ".implode(" ", $search_terms), false, array("terms"=>$search_terms));
+				#log_debug("index", "Search for ".Tag::implode($search_terms), false, array("terms"=>$search_terms));
 				$total_pages = Image::count_pages($search_terms);
 				if(SPEED_HAX && $count_search_terms === 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
 					$images = $database->cache->get("post-list:$page_number");

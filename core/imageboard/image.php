@@ -579,7 +579,7 @@ class Image {
 			throw new SCoreException('Tried to set zero tags');
 		}
 
-		if(implode(" ", $tags) != $this->get_tag_list()) {
+		if(Tag::implode($tags) != $this->get_tag_list()) {
 			// delete old
 			$this->delete_tags_from_image();
 			// insert each new tags
@@ -619,7 +619,7 @@ class Image {
 				);
 			}
 
-			log_info("core_image", "Tags for Image #{$this->id} set to: ".implode(" ", $tags), null, array("image_id" => $this->id));
+			log_info("core_image", "Tags for Image #{$this->id} set to: ".Tag::implode($tags), null, array("image_id" => $this->id));
 			$database->cache->delete("image-{$this->id}-tags");
 		}
 	}
