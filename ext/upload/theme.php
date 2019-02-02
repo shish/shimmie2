@@ -253,17 +253,19 @@ class UploadTheme extends Themelet {
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
 
 		$upload_list = "
-				<tr>
-					<td>File</td>
-					<td><input name='data' type='file'></td>
-					";
+			<tr>
+				<td>File</td>
+				<td><input name='data' type='file'></td>
+			</tr>
+		";
 		if($tl_enabled) {
 			$upload_list .="
-			<td>or URL</td>
-			<td><input name='url' type='text'></td>
+			<tr>
+				<td>or URL</td>
+				<td><input name='url' type='text'></td>
+			</tr>
 			";
 		}
-		$upload_list .= "</tr>";
 
 		$max_size = $config->get_int('upload_size');
 		$max_kb = to_shorthand_int($max_size);
@@ -291,10 +293,6 @@ class UploadTheme extends Themelet {
 		$page->add_block(new Block("Upload Replacement Image", $html, "main", 20));
 	}
 
-	/**
-	 * @param Page $page
-	 * @param bool $ok
-	 */
 	public function display_upload_status(Page $page, bool $ok) {
 		if($ok) {
 			$page->set_mode("redirect");
