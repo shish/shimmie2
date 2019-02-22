@@ -168,7 +168,7 @@ class UserPageTheme extends Themelet {
 		$page->add_block(new Block("Login", $html, "left", 90));
 	}
 
-	public function display_ip_list(Page $page, array $uploads, array $comments) {
+	public function display_ip_list(Page $page, array $uploads, array $comments, array $events) {
 		$html = "<table id='ip-history'>";
 		$html .= "<tr><td>Uploaded from: ";
 		$n = 0;
@@ -190,8 +190,18 @@ class UserPageTheme extends Themelet {
 			}
 		}
 
+		$html .= "</td><td>Logged Events:";
+		$n = 0;
+		foreach($comments as $ip => $count) {
+			$html .= '<br>'.$ip.' ('.$count.')';
+			if(++$n >= 20) {
+				$html .= "<br>...";
+				break;
+			}
+		}
+
 		$html .= "</td></tr>";
-		$html .= "<tr><td colspan='2'>(Most recent at top)</td></tr></table>";
+		$html .= "<tr><td colspan='3'>(Most recent at top)</td></tr></table>";
 
 		$page->add_block(new Block("IPs", $html, "main", 70));
 	}

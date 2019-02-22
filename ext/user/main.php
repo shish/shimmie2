@@ -240,7 +240,9 @@ class UserPage extends Extension {
 			$this->theme->display_ip_list(
 				$page,
 				$this->count_upload_ips($event->display_user),
-				$this->count_comment_ips($event->display_user));
+				$this->count_comment_ips($event->display_user),
+				$this->count_log_ips($event->display_user)
+			);
 		}
 	}
 
@@ -584,6 +586,21 @@ class UserPage extends Extension {
 				WHERE owner_id=:id
 				GROUP BY owner_ip
 				ORDER BY most_recent DESC", array("id"=>$duser->id));
+		return $rows;
+	}
+
+	private function count_log_ips(User $duser): array {
+		if(!class_exists('LogDatabase')) return array();
+		global $database;
+		$rows = $database->get_pairs("
+				SELECT
+					address,
+					COUNT(id) AS count,
+					MAX(date_sent) AS most_recent
+				FROM score_log
+				WHERE username=:username
+				GROUP BY address
+				ORDER BY most_recent DESC", array("username"=>$duser->name));
 		return $rows;
 	}
 
