@@ -192,7 +192,7 @@ class UserPageTheme extends Themelet {
 
 		$html .= "</td><td>Logged Events:";
 		$n = 0;
-		foreach($comments as $ip => $count) {
+		foreach($events as $ip => $count) {
 			$html .= '<br>'.$ip.' ('.$count.')';
 			if(++$n >= 20) {
 				$html .= "<br>...";
