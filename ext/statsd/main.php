@@ -66,19 +66,19 @@ class StatsDInterface extends Extension {
 	}
 
 	public function onUserCreation(UserCreationEvent $event) {
-		StatsDInterface::$stats["shimmie.events.user_creations"] = "1|c";
+		StatsDInterface::$stats["shimmie_events.user_creations"] = "1|c";
 	}
 
 	public function onDataUpload(DataUploadEvent $event) {
-		StatsDInterface::$stats["shimmie.events.uploads"] = "1|c";
+		StatsDInterface::$stats["shimmie_events.uploads"] = "1|c";
 	}
 
 	public function onCommentPosting(CommentPostingEvent $event) {
-		StatsDInterface::$stats["shimmie.events.comments"] = "1|c";
+		StatsDInterface::$stats["shimmie_events.comments"] = "1|c";
 	}
 
 	public function onImageInfoSet(ImageInfoSetEvent $event) {
-		StatsDInterface::$stats["shimmie.events.info-sets"] = "1|c";
+		StatsDInterface::$stats["shimmie_events.info-sets"] = "1|c";
 	}
 
 	/**
