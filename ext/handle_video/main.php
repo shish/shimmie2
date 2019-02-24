@@ -64,7 +64,7 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		$orig_size = $this->video_size($inname);
 		$scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1]);
-		$cmd = escapeshellcmd(Tag::implode([
+		$cmd = escapeshellcmd(implode(" ", [
 			escapeshellarg($ffmpeg),
 			"-y", "-i", escapeshellarg($inname),
 			"-vf", "scale={$scaled_size[0]}:{$scaled_size[1]}",
@@ -76,12 +76,13 @@ class VideoFileHandler extends DataHandlerExtension {
 
 		exec($cmd, $output, $ret);
 
-		if ((int)$ret == (int)1) {
+		if ((int)$ret == (int)0) {
 			$ok = true;
+			log_error('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
 		}
-
-		// error_log("Generating thumbnail with command `$cmd`, returns $ret");
-		log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+		else {
+			log_debug('handle_video', "Generating thumbnail with command `$cmd`, returns $ret");
+		}
 
 		return $ok;
 	}
@@ -89,7 +90,7 @@ class VideoFileHandler extends DataHandlerExtension {
 	protected function video_size(string $filename) {
 		global $config;
 		$ffmpeg = $config->get_string("thumb_ffmpeg_path");
-		$cmd = escapeshellcmd(Tag::implode([
+		$cmd = escapeshellcmd(implode(" ", [
 			escapeshellarg($ffmpeg),
 			"-y", "-i", escapeshellarg($filename),
 			"-vstats"
@@ -100,15 +101,17 @@ class VideoFileHandler extends DataHandlerExtension {
 		$regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";
 		if (preg_match($regex_sizes, $output, $regs)) {
 			if (preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
-				return [$regs[2], $regs[1]];
+				$size = [$regs[2], $regs[1]];
 			}
 			else {
-				return [$regs[1], $regs[2]];
+				$size = [$regs[1], $regs[2]];
 			}
 		}
 		else {
-			return [1, 1];
+			$size = [1, 1];
 		}
+		log_debug('handle_video', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
+		return $size;
 	}
 
 	/**
