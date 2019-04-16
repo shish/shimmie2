@@ -92,7 +92,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		$q = $config->get_int("thumb_quality");
 		$convert = $config->get_string("thumb_convert_path");
 
-		//  ffff imagemagic fails sometimes, not sure why
+		//  ffff imagemagick fails sometimes, not sure why
 		//$format = "'%s' '%s[0]' -format '%%[fx:w] %%[fx:h]' info:";
 		//$cmd = sprintf($format, $convert, $inname);
 		//$size = shell_exec($cmd);
@@ -107,7 +107,7 @@ class PixelFileHandler extends DataHandlerExtension {
 		$cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
 		exec($cmd, $output, $ret);
 
-		log_debug('handle_pixel', "Generating thumnail with command `$cmd`, returns $ret");
+		log_debug('handle_pixel', "Generating thumbnail with command `$cmd`, returns $ret");
 
 		if($config->get_bool("thumb_optim", false)) {
 			exec("jpegoptim $outname", $output, $ret);
