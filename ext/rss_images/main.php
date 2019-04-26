@@ -96,8 +96,10 @@ class RSS_Images extends Extension {
 		$image_url = $image->get_image_link();
 		$posted = date(DATE_RSS, strtotime($image->posted));
 		$content = html_escape(
+			"<div>" .
 			"<p>" . $this->theme->build_thumb_html($image) . "</p>" .
-			"<p>Uploaded by " . html_escape($owner->name) . "</p>"
+			"<p>Uploaded by " . html_escape($owner->name) . "</p>" .
+			"</div>"
 		);
 
 		$data = "
