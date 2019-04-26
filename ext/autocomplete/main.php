@@ -13,11 +13,13 @@ class AutoComplete extends Extension {
 
 		if($event->page_matches("api/internal/autocomplete")) {
 			if(!isset($_GET["s"])) return;
+			$s = strtolower($_GET["s"]);
+			if(strlen($s) == 0 || strlen($s) > 32) return;
 
 			//$limit = 0;
-			$cache_key = "autocomplete-" . strtolower($_GET["s"]);
+			$cache_key = "autocomplete-$s";
 			$limitSQL = "";
-			$SQLarr = array("search"=>$_GET["s"]."%");
+			$SQLarr = array("search"=>"$s%");
 			if(isset($_GET["limit"]) && $_GET["limit"] !== 0){
 				$limitSQL = "LIMIT :limit";
 				$SQLarr['limit'] = $_GET["limit"];
