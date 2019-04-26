@@ -346,7 +346,6 @@ class UserPage extends Extension {
 		if(!is_null($duser)) {
 			$user = $duser;
 			$this->set_login_cookie($duser->name, $pass);
-			log_info("user", "{$user->class->name} logged in");
 			$page->set_mode("redirect");
 
 			// Try returning to previous page
@@ -360,7 +359,6 @@ class UserPage extends Extension {
 			}
 		}
 		else {
-			log_warning("user", "Failed to log in as ".html_escape($name));
 			$this->theme->display_error(401, "Error", "No user with those details was found");
 		}
 	}
