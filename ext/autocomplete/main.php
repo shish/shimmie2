@@ -14,7 +14,12 @@ class AutoComplete extends Extension {
 		if($event->page_matches("api/internal/autocomplete")) {
 			if(!isset($_GET["s"])) return;
 			$s = strtolower($_GET["s"]);
-			if(strlen($s) == 0 || strlen($s) > 32) return;
+			if(
+				$s == '' ||
+				$s == '_' ||
+				$s == '%' ||
+				strlen($s) > 32
+			) return;
 
 			//$limit = 0;
 			$cache_key = "autocomplete-$s";
