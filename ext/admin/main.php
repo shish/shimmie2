@@ -130,16 +130,15 @@ class AdminPage extends Extension {
 		$reason = @$_POST['reason'];
 		assert(strlen($query) > 1);
 
-		log_warning("admin", "Mass deleting: $query");
-		$count = 0;
-		foreach(Image::find_images(0, 1000000, Tag::explode($query)) as $image) {
+		$images = Image::find_images(0, 1000000, Tag::explode($query));
+		$count = count($images);
+		log_warning("admin", "Mass-deleting $count images from $query", true);
+		foreach($images as $image) {
 			if($reason && class_exists("ImageBan")) {
 				send_event(new AddImageHashBanEvent($image->hash, $reason));
 			}
 			send_event(new ImageDeletionEvent($image));
-			$count++;
 		}
-		log_debug("admin", "Deleted $count images", true);
 
 		$page->set_mode("redirect");
 		$page->set_redirect(make_link("post/list"));
