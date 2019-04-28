@@ -191,7 +191,13 @@ class Image {
 			return null;
 		}
 		fwrite($fp, json_encode($req));
-		$data = fgets($fp, 1024);
+		$data = "";
+		while (($buffer = fgets($fp, 4096)) !== false) {
+			$data .= $buffer;
+		}
+		if (!feof($fp)) {
+			die("Error: unexpected fgets() fail in query_accelerator($req)\n");
+		}
 		fclose($fp);
 		return json_decode($data);
 	}
