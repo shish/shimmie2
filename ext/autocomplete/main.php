@@ -13,13 +13,20 @@ class AutoComplete extends Extension {
 
 		if($event->page_matches("api/internal/autocomplete")) {
 			if(!isset($_GET["s"])) return;
+
+			$page->set_mode("data");
+			$page->set_type("application/json");
+
 			$s = strtolower($_GET["s"]);
 			if(
 				$s == '' ||
-				$s == '_' ||
-				$s == '%' ||
+				$s[0] == '_' ||
+				$s[0] == '%' ||
 				strlen($s) > 32
-			) return;
+			) {
+				$page->set_data("{}");
+				return;
+			}
 
 			//$limit = 0;
 			$cache_key = "autocomplete-$s";
@@ -44,8 +51,6 @@ class AutoComplete extends Extension {
 				$database->cache->set($cache_key, $res, 600);
 			}
 
-			$page->set_mode("data");
-			$page->set_type("application/json");
 			$page->set_data(json_encode($res));
 		}
 
