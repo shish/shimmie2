@@ -82,18 +82,6 @@ class Upload extends Extension {
 		}
 	}
 
-	public function onPostListBuilding(PostListBuildingEvent $event) {
-		global $user, $page;
-		if($user->can("create_image")) {
-			if($this->is_full) {
-				$this->theme->display_full($page);
-			}
-			else {
-				$this->theme->display_block($page);
-			}
-		}
-	}
-
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$tes = array();
 		$tes["Disabled"] = "none";
@@ -129,6 +117,15 @@ class Upload extends Extension {
 
 	public function onPageRequest(PageRequestEvent $event) {
 		global $database, $page, $user;
+
+		if($user->can("create_image")) {
+			if($this->is_full) {
+				$this->theme->display_full($page);
+			}
+			else {
+				$this->theme->display_block($page);
+			}
+		}
 
 		if($event->page_matches("upload/replace")) {
 			// check if the user is an administrator and can upload files.
