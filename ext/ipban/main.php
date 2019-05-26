@@ -43,7 +43,11 @@ class IPBan extends Extension {
 		if($config->get_int("ext_ipban_version") < 8) {
 			$this->install();
 		}
-		$config->set_default_string("ipban_message", "If you couldn't possibly be guilty of what you're banned for, the person we banned probably had a dynamic IP address and so do you. See <a href='http://whatismyipaddress.com/dynamic-static'>http://whatismyipaddress.com/dynamic-static</a> for more information.\n");
+		$config->set_default_string("ipban_message",
+'<p>IP <b>$IP</b> has been banned until <b>$DATE</b> by <b>$ADMIN</b> because of <b>$REASON</b>
+<p>If you couldn\'t possibly be guilty of what you\'re banned for, the person we banned probably had a dynamic IP address and so do you.
+<p>See <a href="http://whatismyipaddress.com/dynamic-static">http://whatismyipaddress.com/dynamic-static</a> for more information.
+<p>$CONTACT');
 		$this->check_ip_ban();
 	}
 
@@ -84,7 +88,7 @@ class IPBan extends Extension {
 
 	public function onSetupBuilding(SetupBuildingEvent $event) {
 		$sb = new SetupBlock("IP Ban");
-		$sb->add_longtext_option("ipban_message", 'Message to show to banned users:');
+		$sb->add_longtext_option("ipban_message", 'Message to show to banned users:<br>(with $IP, $DATE, $ADMIN, $REASON, and $CONTACT)');
 		$event->panel->add_block($sb);
 	}
 
@@ -226,14 +230,20 @@ class IPBan extends Extension {
 				$admin = User::by_id($row[$prefix.'banner_id']);
 				$date = date("Y-m-d", $row[$prefix.'end_timestamp']);
 				$msg = $config->get_string("ipban_message");
-				header("HTTP/1.0 403 Forbidden");
-				print "IP <b>$ip</b> has been banned until <b>$date</b> by <b>{$admin->name}</b> because of <b>$reason</b>\n";
-				print "<p>$msg";
-
+				$msg = str_replace('$IP', $ip, $msg);
+				$msg = str_replace('$DATE', $date, $msg);
+				$msg = str_replace('$ADMIN', $admin->name, $msg);
+				$msg = str_replace('$REASON', $reason, $msg);
 				$contact_link = contact_link();
 				if(!empty($contact_link)) {
-					print "<p><a href='$contact_link'>Contact the staff (be sure to include this message)</a>";
+					$msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
 				}
+				else {
+					$msg = str_replace('$CONTACT', "", $msg);
+				}
+				header("HTTP/1.0 403 Forbidden");
+				print "$msg";
+
 				exit;
 			}
 		}

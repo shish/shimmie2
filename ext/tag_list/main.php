@@ -497,6 +497,8 @@ class TagList extends Extension {
 	private function add_refine_block(Page $page, array $search) {
 		global $database, $config;
 
+		if(count($search) > 5) return;
+
 		$wild_tags = $search;
 		$str_search = Tag::implode($search);
 		$related_tags = $database->cache->get("related_tags:$str_search");
@@ -509,7 +511,7 @@ class TagList extends Extension {
 			foreach($wild_tags as $tag) {
 				$tag = str_replace("*", "%", $tag);
 				$tag = str_replace("?", "_", $tag);
-				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag", array("tag"=>$tag));
+				$tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", array("tag"=>$tag));
 				// $search_tags = array_merge($search_tags,
 				//                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
 				$tag_id_array = array_merge($tag_id_array, $tag_ids);
@@ -517,6 +519,8 @@ class TagList extends Extension {
 				if(!$tags_ok) break;
 			}
 			$tag_id_list = join(', ', $tag_id_array);
+
+			if(count($tag_id_array) > 5) return;
 
 			if($tags_ok) {
 				$query = "

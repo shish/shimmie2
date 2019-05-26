@@ -350,6 +350,18 @@ function get_debug_info(): string {
 	return $debug;
 }
 
+function log_slow() {
+	global $_shm_load_start;
+	if(!is_null(SLOW_PAGES)) {
+		$_time = microtime(true) - $_shm_load_start;
+		if($_time > SLOW_PAGES) {
+			$_query = _get_query();
+			$_dbg = get_debug_info();
+			file_put_contents("data/slow-pages.log", "$_time $_query $_dbg\n", FILE_APPEND | LOCK_EX);
+		}
+	}
+}
+
 function score_assert_handler($file, $line, $code, $desc = null) {
 	$file = basename($file);
 	print("Assertion failed at $file:$line: $code ($desc)");
@@ -389,7 +401,7 @@ function _sanitise_environment() {
 		date_default_timezone_set(TIMEZONE);
 	}
 
-	ini_set('zend.assertions', 1);  // generate assertions
+	# ini_set('zend.assertions', 1);  // generate assertions
 	ini_set('assert.exception', 1);  // throw exceptions when failed
 	if(DEBUG) {
 		error_reporting(E_ALL);

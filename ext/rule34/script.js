@@ -1,15 +1,24 @@
 $(function() {
 	if(Cookies.get("ui-tnc-agreed") !== "true") {
-		$("BODY").html(""+
-			"<div align='center' style='font-size: 2em; position: absolute; z-index: 99999999999999999999999999;'>"+
+		$("BODY").addClass("censored");
+		$("BODY").append("<div class='tnc_bg'></div>");
+		$("BODY").append(""+
+			"<div class='tnc'>"+
 			"<p>For legal reasons, we need to point out that:"+
 			"<p>A) this site contains material not suitable for minors"+
 			"<br>B) cookies may be used"+
-			"<p><a href='/tnc_agreed'>Click here if you're an adult, and you're ok with that</a>"+
+			"<p><a onclick='tnc_agree();'>Click here if you're an adult, and you're ok with that</a>"+
 			"</div>"+
 		"");
 	}
 });
+
+function tnc_agree() {
+	Cookies.set("ui-tnc-agreed", "true", {path: '/', expires: 365});
+	$("BODY").removeClass("censored");
+	$(".tnc_bg").hide();
+	$(".tnc").hide();
+}
 
 function image_hash_ban(id) {
 	var reason = prompt("WHY?", "DNP");

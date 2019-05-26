@@ -105,11 +105,19 @@ class User {
 		$user = User::by_name($name);
 		if($user) {
 			if($user->passhash == md5(strtolower($name) . $pass)) {
+				log_info("core-user", "Migrating from md5 to bcrypt for ".html_escape($name));
 				$user->set_password($pass);
 			}
 			if(password_verify($pass, $user->passhash)) {
+				log_info("core-user", "Logged in as ".html_escape($name)." ({$user->class->name})");
 				return $user;
 			}
+			else {
+				log_warning("core-user", "Failed to log in as ".html_escape($name)." (Invalid password)");
+			}
+		}
+		else {
+			log_warning("core-user", "Failed to log in as ".html_escape($name)." (Invalid username)");
 		}
 		return null;
 	}
