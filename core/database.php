@@ -22,7 +22,7 @@ class Database {
 
 	/**
 	 * The currently active cache engine.
-	 * @var CacheEngine|null
+	 * @var Cache|null
 	 */
 	public $cache = null;
 
@@ -45,28 +45,7 @@ class Database {
 	 * DB connection is on-demand.
 	 */
 	public function __construct() {
-		$this->connect_cache();
-	}
-
-	private function connect_cache() {
-		$matches = array();
-		if(defined("CACHE_DSN") && CACHE_DSN && preg_match("#(.*)://(.*)#", CACHE_DSN, $matches)) {
-			if($matches[1] == "memcache") {
-				$this->cache = new MemcacheCache($matches[2]);
-			}
-			else if($matches[1] == "memcached") {
-				$this->cache = new MemcachedCache($matches[2]);
-			}
-			else if($matches[1] == "apc") {
-				$this->cache = new APCCache($matches[2]);
-			}
-			else if($matches[1] == "redis") {
-				$this->cache = new RedisCache($matches[2]);
-			}
-		}
-		else {
-			$this->cache = new NoCache();
-		}
+		$this->cache = Cache(CACHE_DSN);
 	}
 
 	private function connect_db() {

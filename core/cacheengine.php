@@ -3,25 +3,17 @@ interface CacheEngine {
 	public function get(string $key);
 	public function set(string $key, $val, int $time=0);
 	public function delete(string $key);
-	public function get_hits(): int;
-	public function get_misses(): int;
 }
 
 class NoCache implements CacheEngine {
 	public function get(string $key) {return false;}
 	public function set(string $key, $val, int $time=0) {}
 	public function delete(string $key) {}
-	public function get_hits(): int {return 0;}
-	public function get_misses(): int {return 0;}
 }
 
 class MemcacheCache implements CacheEngine {
 	/** @var \Memcache|null */
 	public $memcache=null;
-	/** @var int */
-	private $hits=0;
-	/** @var int */
-	private $misses=0;
 
 	public function __construct(string $args) {
 		$hp = explode(":", $args);
@@ -30,46 +22,21 @@ class MemcacheCache implements CacheEngine {
 	}
 
 	public function get(string $key) {
-		$val = $this->memcache->get($key);
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			$hit = $val === false ? "miss" : "hit";
-			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
-		}
-		if($val !== false) {
-			$this->hits++;
-			return $val;
-		}
-		else {
-			$this->misses++;
-			return false;
-		}
+		return $this->memcache->get($key);
 	}
 
 	public function set(string $key, $val, int $time=0) {
 		$this->memcache->set($key, $val, false, $time);
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
-		}
 	}
 
 	public function delete(string $key) {
 		$this->memcache->delete($key);
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
-		}
 	}
-
-	public function get_hits(): int {return $this->hits;}
-	public function get_misses(): int {return $this->misses;}
 }
 
 class MemcachedCache implements CacheEngine {
 	/** @var \Memcached|null */
 	public $memcache=null;
-	/** @var int */
-	private $hits=0;
-	/** @var int */
-	private $misses=0;
 
 	public function __construct(string $args) {
 		$hp = explode(":", $args);
@@ -86,16 +53,10 @@ class MemcachedCache implements CacheEngine {
 		$val = $this->memcache->get($key);
 		$res = $this->memcache->getResultCode();
 
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			$hit = $res == Memcached::RES_SUCCESS ? "hit" : "miss";
-			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
-		}
 		if($res == Memcached::RES_SUCCESS) {
-			$this->hits++;
 			return $val;
 		}
 		else if($res == Memcached::RES_NOTFOUND) {
-			$this->misses++;
 			return false;
 		}
 		else {
@@ -109,9 +70,6 @@ class MemcachedCache implements CacheEngine {
 
 		$this->memcache->set($key, $val, $time);
 		$res = $this->memcache->getResultCode();
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
-		}
 		if($res != Memcached::RES_SUCCESS) {
 			error_log("Memcached error during set($key): $res");
 		}
@@ -122,35 +80,19 @@ class MemcachedCache implements CacheEngine {
 
 		$this->memcache->delete($key);
 		$res = $this->memcache->getResultCode();
-		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
-		}
 		if($res != Memcached::RES_SUCCESS && $res != Memcached::RES_NOTFOUND) {
 			error_log("Memcached error during delete($key): $res");
 		}
 	}
-
-	public function get_hits(): int {return $this->hits;}
-	public function get_misses(): int {return $this->misses;}
 }
 
 class APCCache implements CacheEngine {
-	public $hits=0, $misses=0;
-
 	public function __construct(string $args) {
 		// $args is not used, but is passed in when APC cache is created.
 	}
 
 	public function get(string $key) {
-		$val = apc_fetch($key);
-		if($val) {
-			$this->hits++;
-			return $val;
-		}
-		else {
-			$this->misses++;
-			return false;
-		}
+		return apc_fetch($key);
 	}
 
 	public function set(string $key, $val, int $time=0) {
@@ -160,13 +102,9 @@ class APCCache implements CacheEngine {
 	public function delete(string $key) {
 		apc_delete($key);
 	}
-
-	public function get_hits(): int {return $this->hits;}
-	public function get_misses(): int {return $this->misses;}
 }
 
 class RedisCache implements CacheEngine {
-	public $hits=0, $misses=0;
 	private $redis=null;
 
 	public function __construct(string $args) {
@@ -178,15 +116,7 @@ class RedisCache implements CacheEngine {
 	}
 
 	public function get(string $key) {
-		$val = $this->redis->get($key);
-		if($val !== false) {
-			$this->hits++;
-			return $val;
-		}
-		else {
-			$this->misses++;
-			return false;
-		}
+		return $this->redis->get($key);
 	}
 
 	public function set(string $key, $val, int $time=0) {
@@ -201,7 +131,66 @@ class RedisCache implements CacheEngine {
 	public function delete(string $key) {
 		$this->redis->delete($key);
 	}
+}
+
+class Cache {
+	public $engine;
+	public $hits=0, $misses=0;
+	public $time=0;
+
+	public function __construct($dsn: string) {
+		$matches = array();
+		if($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches)) {
+			if($matches[1] == "memcache") {
+				$c = new MemcacheCache($matches[2]);
+			}
+			else if($matches[1] == "memcached") {
+				$c = new MemcachedCache($matches[2]);
+			}
+			else if($matches[1] == "apc") {
+				$c = new APCCache($matches[2]);
+			}
+			else if($matches[1] == "redis") {
+				$c = new RedisCache($matches[2]);
+			}
+		}
+		else {
+			$c = new NoCache();
+		}
+		$this->engine = $c;
+	}
+
+	public function get(string $key) {
+		$val = $this->engine->get($key);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			$hit = $val === false ? "hit" : "miss";
+			file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
+		}
+		if($val !== false) {
+			$this->hits++;
+			return $val;
+		}
+		else {
+			$this->misses++;
+			return false;
+		}
+	}
+
+	public function set(string $key, $val, int $time=0) {
+		$this->engine->set($key, $time, $val);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
+		}
+	}
+
+	public function delete(string $key) {
+		$this->engine->delete($key);
+		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
+			file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
+		}
+	}
 
 	public function get_hits(): int {return $this->hits;}
 	public function get_misses(): int {return $this->misses;}
 }
+
