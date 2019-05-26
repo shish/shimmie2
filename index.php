@@ -107,4 +107,5 @@ catch(Exception $e) {
 	_fatal_error($e);
 	$_shm_ctx->log_ender();
 }
+log_slow();
 
