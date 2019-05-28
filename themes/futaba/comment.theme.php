@@ -4,7 +4,7 @@ class CustomCommentListTheme extends CommentListTheme
 {
     public $inner_id = 0;
 
-    public function display_comment_list($images, $page_number, $total_pages, $can_post)
+    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post)
     {
         global $config, $page;
 
@@ -49,7 +49,7 @@ class CustomCommentListTheme extends CommentListTheme
         }
     }
     
-    public function display_recent_comments($comments)
+    public function display_recent_comments(array $comments)
     {
         // sidebar fails in this theme
     }
@@ -60,7 +60,7 @@ class CustomCommentListTheme extends CommentListTheme
     }
 
 
-    protected function comment_to_html(Comment $comment, $trim=false)
+    protected function comment_to_html(Comment $comment, bool $trim=false): string
     {
         $inner_id = $this->inner_id; // because custom themes can't add params, because PHP
         global $user;

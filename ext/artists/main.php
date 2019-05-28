@@ -10,9 +10,9 @@
  */
 class AuthorSetEvent extends Event
 {
-    /** @var \Image  */
+    /** @var Image  */
     public $image;
-    /** @var \User  */
+    /** @var User  */
     public $user;
     /** @var string */
     public $author;

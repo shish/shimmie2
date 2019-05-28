@@ -15,7 +15,7 @@ class CommentPostingEvent extends Event
 {
     /** @var  int */
     public $image_id;
-    /** @var \User */
+    /** @var User */
     public $user;
     /** @var string  */
     public $comment;

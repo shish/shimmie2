@@ -2,7 +2,7 @@
 
 class CustomCommentListTheme extends CommentListTheme
 {
-    public function display_comment_list($images, $page_number, $total_pages, $can_post)
+    public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post)
     {
         global $config, $page, $user;
 
@@ -82,13 +82,13 @@ class CustomCommentListTheme extends CommentListTheme
         }
     }
 
-    public function display_recent_comments($comments)
+    public function display_recent_comments(array $comments)
     {
         // no recent comments in this theme
     }
 
 
-    protected function comment_to_html(Comment $comment, $trim=false)
+    protected function comment_to_html(Comment $comment, bool $trim=false): string
     {
         global $user;
 

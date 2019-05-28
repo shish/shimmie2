@@ -164,7 +164,7 @@ class SearchTermParseEvent extends Event
     public $term = null;
     /** @var string[] */
     public $context = [];
-    /** @var \Querylet[] */
+    /** @var Querylet[] */
     public $querylets = [];
 
     public function __construct(string $term=null, array $context=[])

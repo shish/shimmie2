@@ -15,7 +15,7 @@ class ArtistsTheme extends Themelet
 		";
     }
 
-    public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): bool
+    public function sidebar_options(string $mode, ?int $artistID=null, $is_admin=false): void
     {
         global $page, $user;
 

@@ -2,7 +2,7 @@
 
 class Rule34Theme extends Themelet
 {
-    public function show_comic_changer(User $duser, bool $current_state): string
+    public function show_comic_changer(User $duser, bool $current_state): void
     {
         global $page;
         $checked = $current_state ? 'checked="checked"' : '';
@@ -15,7 +15,7 @@ class Rule34Theme extends Themelet
         $page->add_block(new Block("Rule34 Comic Options", $html));
     }
 
-    public function display_bans(Page $page, $bans)
+    public function display_bans(Page $page, array $bans)
     {
         global $database, $user;
         $h_bans = "";

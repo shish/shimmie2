@@ -10,9 +10,9 @@
 
 class WikiUpdateEvent extends Event
 {
-    /** @var \User  */
+    /** @var User  */
     public $user;
-    /** @var \WikiPage  */
+    /** @var WikiPage  */
     public $wikipage;
 
     public function __construct(User $user, WikiPage $wikipage)
@@ -490,6 +490,9 @@ class Wiki extends Extension
                 //return $nr1. " : $nr2 : - <font color='red' >".htmlentities( $value )  ."</font><br>";
                 return "--- $value\n";
                 break;
+
+			default:
+				throw new Exception("stat needs to be =, + or -");
         }
     }
     // }}}

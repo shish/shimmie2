@@ -340,7 +340,7 @@ class CronUploader extends Extension
         $img->set_tags(Tag::explode($tags));
     }
     
-    private function generate_image_queue($base = "", $subdir = "")
+    private function generate_image_queue(string $base = "", string $subdir = ""): void
     {
         if ($base == "") {
             $base = $this->root_dir . "/queue";
@@ -348,7 +348,7 @@ class CronUploader extends Extension
         
         if (! is_dir($base)) {
             $this->add_upload_info("Image Queue Directory could not be found at \"$base\".");
-            return [];
+            return;
         }
         
         foreach (glob("$base/$subdir/*") as $fullpath) {

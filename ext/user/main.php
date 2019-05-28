@@ -21,7 +21,7 @@ class UserBlockBuildingEvent extends Event
 
 class UserPageBuildingEvent extends Event
 {
-    /** @var \User */
+    /** @var User */
     public $display_user;
     /** @var array  */
     public $stats = [];

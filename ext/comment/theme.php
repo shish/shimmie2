@@ -1,23 +1,9 @@
 <?php
 class CommentListTheme extends Themelet
 {
-    private $comments_shown = 0;
     private $show_anon_id = false;
     private $anon_id = 1;
-    private $anon_cid = 0;
     private $anon_map = [];
-    private $ct = null;
-
-    private function get_anon_colour($ip)
-    {
-        if (is_null($this->ct)) {
-            $this->ct = hsl_rainbow();
-        }
-        if (!array_key_exists($ip, $this->anon_map)) {
-            $this->anon_map[$ip] = $this->ct[$this->anon_cid++ % count($this->ct)];
-        }
-        return $this->anon_map[$ip];
-    }
 
     /**
      * Display a page with a list of images, and for each image, the image's comments.

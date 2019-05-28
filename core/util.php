@@ -216,7 +216,7 @@ function transload(string $url, string $mfile): ?array
         $s_mfile = escapeshellarg($mfile);
         system("wget --no-check-certificate $s_url --output-document=$s_mfile");
 
-        return file_exists($mfile);
+        return file_exists($mfile) ? ["ok"=>"true"] : null;
     }
 
     if ($config->get_string("transload_engine") === "fopen") {

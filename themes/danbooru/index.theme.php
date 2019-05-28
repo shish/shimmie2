@@ -53,7 +53,7 @@ class CustomIndexTheme extends IndexTheme
         return $h_search;
     }
 
-    protected function build_table(array $images, string $query): string
+    protected function build_table(array $images, ?string $query): string
     {
         $h_query = html_escape($query);
         $table = "<div class='shm-image-list' data-query='$h_query'>";

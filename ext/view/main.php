@@ -16,7 +16,7 @@
  */
 class DisplayingImageEvent extends Event
 {
-    /** @var \Image  */
+    /** @var Image  */
     public $image;
 
     public function __construct(Image $image)
@@ -34,9 +34,9 @@ class ImageInfoBoxBuildingEvent extends Event
 {
     /** @var array  */
     public $parts = [];
-    /** @var \Image  */
+    /** @var Image  */
     public $image;
-    /** @var \User  */
+    /** @var User  */
     public $user;
 
     public function __construct(Image $image, User $user)
@@ -56,7 +56,7 @@ class ImageInfoBoxBuildingEvent extends Event
 
 class ImageInfoSetEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
 
     public function __construct(Image $image)
@@ -69,9 +69,9 @@ class ImageAdminBlockBuildingEvent extends Event
 {
     /** @var string[] */
     public $parts = [];
-    /** @var \Image|null  */
+    /** @var ?Image  */
     public $image = null;
-    /** @var null|\User  */
+    /** @var ?User  */
     public $user = null;
 
     public function __construct(Image $image, User $user)

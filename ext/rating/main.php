@@ -21,7 +21,7 @@
 
 class RatingSetEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
     /** @var string  */
     public $rating;

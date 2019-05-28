@@ -48,9 +48,9 @@
  */
 class OwnerSetEvent extends Event
 {
-    /** @var \Image  */
+    /** @var Image  */
     public $image;
-    /** @var \User  */
+    /** @var User  */
     public $owner;
 
     public function __construct(Image $image, User $owner)
@@ -63,7 +63,7 @@ class OwnerSetEvent extends Event
 
 class SourceSetEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
     /** @var string */
     public $source;
@@ -78,7 +78,7 @@ class SourceSetEvent extends Event
 
 class TagSetEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
     public $tags;
     public $metatags;
@@ -116,7 +116,7 @@ class TagSetEvent extends Event
 
 class LockSetEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
     /** @var bool */
     public $locked;

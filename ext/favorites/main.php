@@ -17,7 +17,7 @@ class FavoriteSetEvent extends Event
 {
     /** @var int */
     public $image_id;
-    /** @var \User */
+    /** @var User */
     public $user;
     /** @var bool */
     public $do_set;

@@ -120,7 +120,7 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Create Pool", $create_html, "main", 20));
     }
 
-    private function display_top(array $pools=null, string $heading, bool $check_all=false)
+    private function display_top(?array $pools, string $heading, bool $check_all=false)
     {
         global $page, $user;
 
@@ -361,7 +361,9 @@ class PoolsTheme extends Themelet
                 $prefix = "+";
             } elseif ($history['action'] == 0) {
                 $prefix = "-";
-            }
+            } else {
+            	throw new Exception("history['action'] not in {0, 1}");
+			}
 
             $images = trim($history['images']);
             $images = explode(" ", $images);

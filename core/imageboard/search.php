@@ -45,7 +45,7 @@ class TagQuerylet
 
 class ImgQuerylet
 {
-    /** @var \Querylet */
+    /** @var Querylet */
     public $qlet;
     /** @var bool */
     public $positive;

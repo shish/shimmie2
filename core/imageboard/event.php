@@ -37,7 +37,7 @@ class ImageAdditionException extends SCoreException
  */
 class ImageDeletionEvent extends Event
 {
-    /** @var \Image */
+    /** @var Image */
     public $image;
 
     /**
@@ -59,7 +59,7 @@ class ImageReplaceEvent extends Event
 {
     /** @var int */
     public $id;
-    /** @var \Image */
+    /** @var Image */
     public $image;
 
     /**
@@ -123,7 +123,7 @@ class ParseLinkTemplateEvent extends Event
     public $link;
     /** @var string */
     public $original;
-    /** @var \Image */
+    /** @var Image */
     public $image;
 
     public function __construct(string $link, Image $image)

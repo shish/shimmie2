@@ -140,7 +140,7 @@ class TaggerXML extends Extension
         return $result."</list>";
     }
 
-    private function tag_to_xml(string $tag): string
+    private function tag_to_xml(PDORow $tag): string
     {
         return
             "<tag  ".

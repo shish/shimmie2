@@ -18,7 +18,7 @@ class Themelet extends BaseThemelet
 		";
     }
 
-    public function display_paginator(Page $page, string $base, string $query, int $page_number, int $total_pages, bool $show_random = false)
+    public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
     {
         if ($total_pages == 0) {
             $total_pages = 1;
@@ -27,7 +27,7 @@ class Themelet extends BaseThemelet
         $page->add_block(new Block(null, $body, "main", 90));
     }
 
-    public function litetheme_gen_page_link(string $base_url, string $query, string $page, string $name, ?string $link_class=null): string
+    public function litetheme_gen_page_link(string $base_url, ?string $query, string $page, string $name, ?string $link_class=null): string
     {
         $link = make_link("$base_url/$page", $query);
         return "<a class='$link_class' href='$link'>$name</a>";

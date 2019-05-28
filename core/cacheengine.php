@@ -22,7 +22,7 @@ class NoCache implements CacheEngine
 
 class MemcacheCache implements CacheEngine
 {
-    /** @var \Memcache|null */
+    /** @var ?Memcache */
     public $memcache=null;
 
     public function __construct(string $args)
@@ -50,7 +50,7 @@ class MemcacheCache implements CacheEngine
 
 class MemcachedCache implements CacheEngine
 {
-    /** @var \Memcached|null */
+    /** @var ?Memcached */
     public $memcache=null;
 
     public function __construct(string $args)
@@ -169,6 +169,7 @@ class Cache
     public function __construct(?string $dsn)
     {
         $matches = [];
+        $c = null;
         if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches)) {
             if ($matches[1] == "memcache") {
                 $c = new MemcacheCache($matches[2]);

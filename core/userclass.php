@@ -12,12 +12,12 @@ class UserClass
 {
 
     /**
-     * @var null|string
+     * @var ?string
      */
     public $name = null;
 
     /**
-     * @var \UserClass|null
+     * @var ?UserClass
      */
     public $parent = null;
 

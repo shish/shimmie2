@@ -136,15 +136,6 @@ class PixelFileHandler extends DataHandlerExtension
         return true;
     }
     // }}}
-    // epeg thumber {{{
-    private function make_thumb_epeg(string $inname, string $outname): bool
-    {
-        global $config;
-        $w = $config->get_int("thumb_width");
-        exec("epeg $inname -c 'Created by EPEG' --max $w $outname");
-        return true;
-    }
-    // }}}
     // GD thumber {{{
     private function make_thumb_gd(string $inname, string $outname): bool
     {

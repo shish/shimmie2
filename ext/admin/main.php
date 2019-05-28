@@ -25,7 +25,7 @@
  */
 class AdminBuildingEvent extends Event
 {
-    /** @var \Page */
+    /** @var Page */
     public $page;
 
     public function __construct(Page $page)

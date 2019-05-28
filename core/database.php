@@ -350,7 +350,7 @@ class MockDatabase extends Database
     private $query_id = 0;
     /** @var array */
     private $responses = [];
-    /** @var \NoCache|null  */
+    /** @var ?NoCache  */
     public $cache = null;
 
     public function __construct(array $responses = [])
