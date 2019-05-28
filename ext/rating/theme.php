@@ -1,12 +1,14 @@
 <?php
 
-class RatingsTheme extends Themelet {
-	public function get_rater_html(int $image_id, string $rating, bool $can_rate): string {
-		$s_checked = $rating == 's' ? " checked" : "";
-		$q_checked = $rating == 'q' ? " checked" : "";
-		$e_checked = $rating == 'e' ? " checked" : "";
-		$human_rating = Ratings::rating_to_human($rating);
-		$html = "
+class RatingsTheme extends Themelet
+{
+    public function get_rater_html(int $image_id, string $rating, bool $can_rate): string
+    {
+        $s_checked = $rating == 's' ? " checked" : "";
+        $q_checked = $rating == 'q' ? " checked" : "";
+        $e_checked = $rating == 'e' ? " checked" : "";
+        $human_rating = Ratings::rating_to_human($rating);
+        $html = "
 			<tr>
 				<th>Rating</th>
 				<td>
@@ -23,12 +25,13 @@ class RatingsTheme extends Themelet {
 				</td>
 			</tr>
 		";
-		return $html;
-	}
+        return $html;
+    }
 
-	public function display_bulk_rater(string $terms) {
-		global $page;
-		$html = "
+    public function display_bulk_rater(string $terms)
+    {
+        global $page;
+        $html = "
 			".make_form(make_link("admin/bulk_rate"))."
 				<input type='hidden' name='query' value='".html_escape($terms)."'>
 				<select name='rating'>
@@ -40,8 +43,6 @@ class RatingsTheme extends Themelet {
 				<input type='submit' value='Go'>
 			</form>
 		";
-		$page->add_block(new Block("List Controls", $html, "left"));
-	}
+        $page->add_block(new Block("List Controls", $html, "left"));
+    }
 }
-
-

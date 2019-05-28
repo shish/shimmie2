@@ -1,24 +1,27 @@
 <?php
 
-class Rule34Theme extends Themelet {
-	public function show_comic_changer(User $duser, bool $current_state): string {
-		global $page;
-		$checked = $current_state ? 'checked="checked"' : '';
-		$html = make_form(make_link("rule34/comic_admin"), "POST");
-		$html .= "<input type='hidden' name='user_id' value='{$duser->id}'>";
-		$html .= "<label><input type='checkbox' name='is_admin' $checked> Comic Admin</label>";
-		$html .= "<br/><input type='submit' id='Set'>";
-		$html .= "</form>\n";
-		
-		$page->add_block(new Block("Rule34 Comic Options", $html));
-	}
+class Rule34Theme extends Themelet
+{
+    public function show_comic_changer(User $duser, bool $current_state): string
+    {
+        global $page;
+        $checked = $current_state ? 'checked="checked"' : '';
+        $html = make_form(make_link("rule34/comic_admin"), "POST");
+        $html .= "<input type='hidden' name='user_id' value='{$duser->id}'>";
+        $html .= "<label><input type='checkbox' name='is_admin' $checked> Comic Admin</label>";
+        $html .= "<br/><input type='submit' id='Set'>";
+        $html .= "</form>\n";
+        
+        $page->add_block(new Block("Rule34 Comic Options", $html));
+    }
 
-	public function display_bans(Page $page, $bans) {
-		global $database, $user;
-		$h_bans = "";
-		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
-		foreach($bans as $ban) {
-			$h_bans .= "
+    public function display_bans(Page $page, $bans)
+    {
+        global $database, $user;
+        $h_bans = "";
+        $prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
+        foreach ($bans as $ban) {
+            $h_bans .= "
 				<tr>
 					<td width='12%'>{$ban[$prefix.'ip']}</td>
 					<td>{$ban[$prefix.'reason']}</td>
@@ -35,8 +38,8 @@ class Rule34Theme extends Themelet {
 					-->
 				</tr>
 			";
-		}
-		$html = "
+        }
+        $html = "
 			<a href='".make_link("sys_ip_ban/list", "all=on")."'>Show All</a>
 			<p><table id='bans' class='sortable zebra'>
 				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><!-- <th>Action</th>--></tr></thead>
@@ -55,9 +58,9 @@ class Rule34Theme extends Themelet {
 				-->
 			</table>
 		";
-		$page->set_title("IP Bans");
-		$page->set_heading("IP Bans");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Edit IP Bans", $html));
-	}
+        $page->set_title("IP Bans");
+        $page->set_heading("IP Bans");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Edit IP Bans", $html));
+    }
 }

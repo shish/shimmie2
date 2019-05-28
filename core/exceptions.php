@@ -5,14 +5,18 @@
  *
  * A base exception to be caught by the upper levels.
  */
-class SCoreException extends Exception {}
+class SCoreException extends Exception
+{
+}
 
 /**
  * Class PermissionDeniedException
  *
  * A fairly common, generic exception.
  */
-class PermissionDeniedException extends SCoreException {}
+class PermissionDeniedException extends SCoreException
+{
+}
 
 /**
  * Class ImageDoesNotExist
@@ -21,9 +25,13 @@ class PermissionDeniedException extends SCoreException {}
  *
  * Example: Image::by_id(-1) returns null
  */
-class ImageDoesNotExist extends SCoreException {}
+class ImageDoesNotExist extends SCoreException
+{
+}
 
 /*
  * For validate_input()
  */
-class InvalidInput extends SCoreException {}
+class InvalidInput extends SCoreException
+{
+}

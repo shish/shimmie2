@@ -5,79 +5,86 @@
  *
  * A basic chunk of a page.
  */
-class Block {
-	/**
-	 * The block's title.
-	 *
-	 * @var string
-	 */
-	public $header;
+class Block
+{
+    /**
+     * The block's title.
+     *
+     * @var string
+     */
+    public $header;
 
-	/**
-	 * The content of the block.
-	 *
-	 * @var string
-	 */
-	public $body;
+    /**
+     * The content of the block.
+     *
+     * @var string
+     */
+    public $body;
 
-	/**
-	 * Where the block should be placed. The default theme supports
-	 * "main" and "left", other themes can add their own areas.
-	 *
-	 * @var string
-	 */
-	public $section;
+    /**
+     * Where the block should be placed. The default theme supports
+     * "main" and "left", other themes can add their own areas.
+     *
+     * @var string
+     */
+    public $section;
 
-	/**
-	 * How far down the section the block should appear, higher
-	 * numbers appear lower. The scale is 0-100 by convention,
-	 * though any number or string will work.
-	 *
-	 * @var int
-	 */
-	public $position;
+    /**
+     * How far down the section the block should appear, higher
+     * numbers appear lower. The scale is 0-100 by convention,
+     * though any number or string will work.
+     *
+     * @var int
+     */
+    public $position;
 
-	/**
-	 * A unique ID for the block.
-	 *
-	 * @var string
-	 */
-	public $id;
+    /**
+     * A unique ID for the block.
+     *
+     * @var string
+     */
+    public $id;
 
-	/**
-	 * Should this block count as content for the sake of
-	 * the 404 handler
-	 *
-	 * @var boolean
-	 */
-	public $is_content = true;
+    /**
+     * Should this block count as content for the sake of
+     * the 404 handler
+     *
+     * @var boolean
+     */
+    public $is_content = true;
 
-	public function __construct(string $header=null, string $body=null, string $section="main", int $position=50, string $id=null) {
-		$this->header = $header;
-		$this->body = $body;
-		$this->section = $section;
-		$this->position = $position;
+    public function __construct(string $header=null, string $body=null, string $section="main", int $position=50, string $id=null)
+    {
+        $this->header = $header;
+        $this->body = $body;
+        $this->section = $section;
+        $this->position = $position;
 
-		if(is_null($id)) {
-			$id = (empty($header) ? md5($body) : $header) . $section;
-		}
-		$this->id = preg_replace('/[^\w]/', '',str_replace(' ', '_', $id));
-	}
+        if (is_null($id)) {
+            $id = (empty($header) ? md5($body) : $header) . $section;
+        }
+        $this->id = preg_replace('/[^\w]/', '', str_replace(' ', '_', $id));
+    }
 
-	/**
-	 * Get the HTML for this block.
-	 */
-	public function get_html(bool $hidable=false): string {
-		$h = $this->header;
-		$b = $this->body;
-		$i = $this->id;
-		$html = "<section id='$i'>";
-		$h_toggler = $hidable ? " shm-toggler" : "";
-		if(!empty($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
-		if(!empty($b)) $html .= "<div class='blockbody'>$b</div>";
-		$html .= "</section>\n";
-		return $html;
-	}
+    /**
+     * Get the HTML for this block.
+     */
+    public function get_html(bool $hidable=false): string
+    {
+        $h = $this->header;
+        $b = $this->body;
+        $i = $this->id;
+        $html = "<section id='$i'>";
+        $h_toggler = $hidable ? " shm-toggler" : "";
+        if (!empty($h)) {
+            $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
+        }
+        if (!empty($b)) {
+            $html .= "<div class='blockbody'>$b</div>";
+        }
+        $html .= "</section>\n";
+        return $html;
+    }
 }
 
 
@@ -89,8 +96,10 @@ class Block {
  * Used because "new NavBlock()" is easier than "new Block('Navigation', ..."
  *
  */
-class NavBlock extends Block {
-	public function __construct() {
-		parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
-	}
+class NavBlock extends Block
+{
+    public function __construct()
+    {
+        parent::__construct("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0);
+    }
 }

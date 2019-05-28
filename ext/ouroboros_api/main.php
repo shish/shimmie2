@@ -209,7 +209,7 @@ class _SafeOuroborosImage
         // meta
         $this->change = intval($img->id); //DaFug is this even supposed to do? ChangeID?
         // Should be JSON specific, just strip this when converting to XML
-        $this->created_at = array('n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time');
+        $this->created_at = ['n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time'];
         $this->id = intval($img->id);
         $this->parent_id = null;
         if (defined('ENABLED_EXTS')) {
@@ -248,7 +248,7 @@ class OuroborosPost extends _SafeOuroborosImage
      * Multipart File
      * @var array
      */
-    public $file = array();
+    public $file = [];
 
     /**
      * Create with rating locked
@@ -416,7 +416,6 @@ class OuroborosAPI extends Extension
                     } else {
                         $this->sendResponse(403, 'You cannot create new posts');
                     }
-
                 } elseif ($this->match('update')) {
                     // Update
                     //@todo add post update
@@ -432,7 +431,7 @@ class OuroborosAPI extends Extension
                     $p = !empty($_REQUEST['page']) ? intval(
                         filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 1;
-                    $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : array();
+                    $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
                     if (!empty($tags)) {
                         $tags = Tag::explode($tags);
                     }
@@ -470,7 +469,6 @@ class OuroborosAPI extends Extension
             $page->display();
             die();
         }
-
     }
 
     /**
@@ -491,7 +489,7 @@ class OuroborosAPI extends Extension
                 return;
             }
         }
-        $meta = array();
+        $meta = [];
         $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
         if (defined('ENABLED_EXTS')) {
@@ -501,8 +499,8 @@ class OuroborosAPI extends Extension
         }
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url) && filter_var(
-                $post->file_url,
-                FILTER_VALIDATE_URL
+            $post->file_url,
+            FILTER_VALIDATE_URL
             ) !== false
         ) {
             // Transload from source
@@ -527,19 +525,18 @@ class OuroborosAPI extends Extension
             $img = Image::by_hash($meta['hash']);
             if (!is_null($img)) {
                 $handler = $config->get_string("upload_collision_handler");
-                if($handler == "merge") {
+                if ($handler == "merge") {
                     $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
                     $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));
 
                     // This is really the only thing besides tags we should care
-                    if(isset($meta['source'])){
+                    if (isset($meta['source'])) {
                         send_event(new SourceSetEvent($img, $meta['source']));
                     }
                     $this->sendResponse(200, self::OK_POST_CREATE_UPDATE . ' ID: ' . $img->id);
                     return;
-                }
-                else {
+                } else {
                     $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
                     return;
                 }
@@ -586,7 +583,7 @@ class OuroborosAPI extends Extension
     {
         $start = ($page - 1) * $limit;
         $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
-        $posts = array();
+        $posts = [];
         foreach ($results as $img) {
             if (!is_object($img)) {
                 continue;
@@ -604,7 +601,7 @@ class OuroborosAPI extends Extension
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
-        $tag_data = array();
+        $tag_data = [];
         switch ($order) {
             case 'name':
                 $tag_data = $database->get_col(
@@ -617,7 +614,7 @@ class OuroborosAPI extends Extension
                                                         ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
                                                     "
                     ),
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
+                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'count':
@@ -628,7 +625,7 @@ class OuroborosAPI extends Extension
                                                     WHERE count >= :tags_min
                                                     ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                                                     ",
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
+                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'date':
@@ -639,11 +636,11 @@ class OuroborosAPI extends Extension
                                                     WHERE count >= :tags_min
                                                     ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                                                     ",
-                    array('tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit)
+                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }
-        $tags = array();
+        $tags = [];
         foreach ($tag_data as $tag) {
             if (!is_array($tag)) {
                 continue;
@@ -686,7 +683,7 @@ class OuroborosAPI extends Extension
             }
             header("{$proto} {$code} {$header}", true);
         }
-        $response = array('success' => $success, 'reason' => $reason);
+        $response = ['success' => $success, 'reason' => $reason];
         if ($this->type == 'json') {
             if ($location !== false) {
                 $response['location'] = $response['reason'];
@@ -713,7 +710,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    private function sendData(string $type = '', array $data = array(), int $offset = 0)
+    private function sendData(string $type = '', array $data = [], int $offset = 0)
     {
         global $page;
         $response = '';

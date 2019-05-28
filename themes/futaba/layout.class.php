@@ -1,62 +1,62 @@
 <?php
 
-class Layout {
-	function display_page(Page $page) {
-		global $config;
+class Layout
+{
+    public function display_page(Page $page)
+    {
+        global $config;
 
-		$theme_name = $config->get_string('theme', 'default');
-		$data_href = get_base_href();
-		$contact_link = contact_link();
-		$header_html = $page->get_all_html_headers();
+        $theme_name = $config->get_string('theme', 'default');
+        $data_href = get_base_href();
+        $contact_link = contact_link();
+        $header_html = $page->get_all_html_headers();
 
-		$left_block_html = "";
-		$main_block_html = "";
-		$sub_block_html = "";
+        $left_block_html = "";
+        $main_block_html = "";
+        $sub_block_html = "";
 
-		foreach($page->blocks as $block) {
-			switch($block->section) {
-				case "left":
-					$left_block_html .= $block->get_html(true);
-					break;
-				case "main":
-					$main_block_html .= $block->get_html(false);
-					break;
-				case "subheading":
-					$sub_block_html .= $block->body; // $this->block_to_html($block, true);
-					break;
-				default:
-					print "<p>error: {$block->header} using an unknown section ({$block->section})";
-					break;
-			}
-		}
+        foreach ($page->blocks as $block) {
+            switch ($block->section) {
+                case "left":
+                    $left_block_html .= $block->get_html(true);
+                    break;
+                case "main":
+                    $main_block_html .= $block->get_html(false);
+                    break;
+                case "subheading":
+                    $sub_block_html .= $block->body; // $this->block_to_html($block, true);
+                    break;
+                default:
+                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
+                    break;
+            }
+        }
 
-		$debug = get_debug_info();
+        $debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
 
-		if(empty($page->subheading)) {
-			$subheading = "";
-		}
-		else {
-			$subheading = "<div id='subtitle'>{$page->subheading}</div>";
-		}
+        if (empty($page->subheading)) {
+            $subheading = "";
+        } else {
+            $subheading = "<div id='subtitle'>{$page->subheading}</div>";
+        }
 
-		if($page->left_enabled) {
-			$left = "<nav>$left_block_html</nav>";
-			$withleft = "withleft";
-		}
-		else {
-			$left = "";
-			$withleft = "";
-		}
+        if ($page->left_enabled) {
+            $left = "<nav>$left_block_html</nav>";
+            $withleft = "withleft";
+        } else {
+            $left = "";
+            $withleft = "";
+        }
 
-		$flash = $page->get_cookie("flash_message");
-		$flash_html = "";
-		if($flash) {
-			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-		}
+        $flash = $page->get_cookie("flash_message");
+        $flash_html = "";
+        if ($flash) {
+            $flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
+        }
 
-		print <<<EOD
+        print <<<EOD
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -94,6 +94,5 @@ $header_html
 	</body>
 </html>
 EOD;
-	}
+    }
 }
-

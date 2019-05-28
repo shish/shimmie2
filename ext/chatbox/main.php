@@ -8,14 +8,16 @@
  * Documentation:
  *  This chatbox uses YShout 5 as core.
  */
-class Chatbox extends Extension {
-	public function onPageRequest(PageRequestEvent $event) {
-		global $page, $user;
+class Chatbox extends Extension
+{
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $page, $user;
 
-		// Adds header to enable chatbox
-		$root = get_base_href();
-		$yPath = make_http( $root . "/ext/chatbox/");
-		$page->add_html_header("
+        // Adds header to enable chatbox
+        $root = get_base_href();
+        $yPath = make_http($root . "/ext/chatbox/");
+        $page->add_html_header("
 				<script src=\"http://code.jquery.com/jquery-migrate-1.2.1.js\" type=\"text/javascript\"></script>
 				<script src=\"$root/ext/chatbox/js/yshout.js\" type=\"text/javascript\"></script>
 
@@ -27,10 +29,10 @@ class Chatbox extends Extension {
 				</script>
 		", 500);
 
-		// loads the chatbox at the set location
-		$html = "<div id=\"yshout\"></div>";
-		$chatblock = new Block("Chatbox", $html, "main", 97);
-		$chatblock->is_content = false;
-		$page->add_block($chatblock);
-	}
+        // loads the chatbox at the set location
+        $html = "<div id=\"yshout\"></div>";
+        $chatblock = new Block("Chatbox", $html, "main", 97);
+        $chatblock->is_content = false;
+        $page->add_block($chatblock);
+    }
 }

@@ -7,7 +7,7 @@
  * @author     Shish [webmaster at shishnet.org], jgen [jeffgenovy at gmail.com]
  * @link       http://code.shishnet.org/shimmie2/
  * @license    http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
- * 
+ *
  * Initialise the database, check that folder
  * permissions are set properly.
  *
@@ -30,7 +30,7 @@ date_default_timezone_set('UTC');
 		<script type="text/javascript" src="vendor/bower-asset/jquery/dist/jquery.min.js"></script>
 	</head>
 	<body>
-<?php if(FALSE) { ?>
+<?php if (false) { ?>
 		<div id="installer">
 			<h1>Install Error</h1>
 			<div class="container">
@@ -43,7 +43,7 @@ date_default_timezone_set('UTC');
 			</div>
 		</div>
 		<pre style="display:none">
-<?php } elseif(!file_exists("vendor/")) { ?>
+<?php } elseif (!file_exists("vendor/")) { ?>
 		<div id="installer">
 			<h1>Install Error</h1>
 			<h3>Warning: Composer vendor folder does not exist!</h3>
@@ -65,112 +65,114 @@ require_once "core/cacheengine.php";
 require_once "core/dbengine.php";
 require_once "core/database.php";
 
-if(is_readable("data/config/shimmie.conf.php")) die("Shimmie is already installed.");
+if (is_readable("data/config/shimmie.conf.php")) {
+    die("Shimmie is already installed.");
+}
 
 do_install();
 
 // utilities {{{
-	// TODO: Can some of these be pushed into "core/???.inc.php" ?
+    // TODO: Can some of these be pushed into "core/???.inc.php" ?
 
-function check_gd_version(): int {
-	$gdversion = 0;
+function check_gd_version(): int
+{
+    $gdversion = 0;
 
-	if (function_exists('gd_info')){
-		$gd_info = gd_info();
-		if (substr_count($gd_info['GD Version'], '2.')) {
-			$gdversion = 2;
-		} else if (substr_count($gd_info['GD Version'], '1.')) {
-			$gdversion = 1;
-		}
-	}
+    if (function_exists('gd_info')) {
+        $gd_info = gd_info();
+        if (substr_count($gd_info['GD Version'], '2.')) {
+            $gdversion = 2;
+        } elseif (substr_count($gd_info['GD Version'], '1.')) {
+            $gdversion = 1;
+        }
+    }
 
-	return $gdversion;
+    return $gdversion;
 }
 
-function check_im_version(): int {
-	$convert_check = exec("convert");
+function check_im_version(): int
+{
+    $convert_check = exec("convert");
 
-	return (empty($convert_check) ? 0 : 1);
+    return (empty($convert_check) ? 0 : 1);
 }
 
-function eok($name, $value) {
-	echo "<br>$name ... ";
-	if($value) {
-		echo "<span style='color: green'>ok</span>\n";
-	}
-	else {
-		echo "<span style='color: green'>failed</span>\n";
-	}
+function eok($name, $value)
+{
+    echo "<br>$name ... ";
+    if ($value) {
+        echo "<span style='color: green'>ok</span>\n";
+    } else {
+        echo "<span style='color: green'>failed</span>\n";
+    }
 }
 // }}}
 
-function do_install() { // {{{
-	if(file_exists("data/config/auto_install.conf.php")) {
-		require_once "data/config/auto_install.conf.php";
-	}
-	else if(@$_POST["database_type"] == "sqlite") {
-		$id = bin2hex(random_bytes(5));
-		define('DATABASE_DSN', "sqlite:data/shimmie.{$id}.sqlite");
-	}
-	else if(isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
-		define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
-	}
-	else {
-		ask_questions();
-		return;
-	}
+function do_install()
+{ // {{{
+    if (file_exists("data/config/auto_install.conf.php")) {
+        require_once "data/config/auto_install.conf.php";
+    } elseif (@$_POST["database_type"] == "sqlite") {
+        $id = bin2hex(random_bytes(5));
+        define('DATABASE_DSN', "sqlite:data/shimmie.{$id}.sqlite");
+    } elseif (isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
+        define('DATABASE_DSN', "{$_POST['database_type']}:user={$_POST['database_user']};password={$_POST['database_password']};host={$_POST['database_host']};dbname={$_POST['database_name']}");
+    } else {
+        ask_questions();
+        return;
+    }
 
-	define("CACHE_DSN", null);
-	define("DEBUG_SQL", false);
-	define("DATABASE_KA", true);
-	install_process();
+    define("CACHE_DSN", null);
+    define("DEBUG_SQL", false);
+    define("DATABASE_KA", true);
+    install_process();
 } // }}}
 
-function ask_questions() { // {{{
-	$warnings = array();
-	$errors = array();
+function ask_questions()
+{ // {{{
+    $warnings = [];
+    $errors = [];
 
-	if(check_gd_version() == 0 && check_im_version() == 0) {
-		$errors[] = "
+    if (check_gd_version() == 0 && check_im_version() == 0) {
+        $errors[] = "
 			No thumbnailers could be found - install the imagemagick
 			tools (or the PHP-GD library, if imagemagick is unavailable).
 		";
-	}
-	else if(check_im_version() == 0) {
-		$warnings[] = "
+    } elseif (check_im_version() == 0) {
+        $warnings[] = "
 			The 'convert' command (from the imagemagick package)
 			could not be found - PHP-GD can be used instead, but
 			the size of thumbnails will be limited.
 		";
-	}
+    }
 
-	if(!function_exists('mb_strlen')) {
-		$errors[] = "
+    if (!function_exists('mb_strlen')) {
+        $errors[] = "
 			The mbstring PHP extension is missing - multibyte languages
 			(eg non-english languages) may not work right.
 		";
-	}
+    }
 
-	$drivers = PDO::getAvailableDrivers();
-	if(
-		!in_array("mysql", $drivers) &&
-		!in_array("pgsql", $drivers) &&
-		!in_array("sqlite", $drivers)
-	) {
-		$errors[] = "
+    $drivers = PDO::getAvailableDrivers();
+    if (
+        !in_array("mysql", $drivers) &&
+        !in_array("pgsql", $drivers) &&
+        !in_array("sqlite", $drivers)
+    ) {
+        $errors[] = "
 			No database connection library could be found; shimmie needs
 			PDO with either Postgres, MySQL, or SQLite drivers
 		";
-	}
+    }
 
-	$db_m = in_array("mysql", $drivers)  ? '<option value="mysql">MySQL</option>' : "";
-	$db_p = in_array("pgsql", $drivers)  ? '<option value="pgsql">PostgreSQL</option>' : "";
-	$db_s = in_array("sqlite", $drivers) ? '<option value="sqlite">SQLite</option>' : "";
+    $db_m = in_array("mysql", $drivers)  ? '<option value="mysql">MySQL</option>' : "";
+    $db_p = in_array("pgsql", $drivers)  ? '<option value="pgsql">PostgreSQL</option>' : "";
+    $db_s = in_array("sqlite", $drivers) ? '<option value="sqlite">SQLite</option>' : "";
 
-	$warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
-	$err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
+    $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
+    $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";
 
-	print <<<EOD
+    print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 
@@ -243,19 +245,21 @@ EOD;
 /**
  * This is where the install really takes place.
  */
-function install_process() { // {{{
-	build_dirs();
-	create_tables();
-	insert_defaults();
-	write_config();
+function install_process()
+{ // {{{
+    build_dirs();
+    create_tables();
+    insert_defaults();
+    write_config();
 } // }}}
 
-function create_tables() { // {{{
-	try {
-		$db = new Database();
+function create_tables()
+{ // {{{
+    try {
+        $db = new Database();
 
-		if ( $db->count_tables() > 0 ) {
-			print <<<EOD
+        if ($db->count_tables() > 0) {
+            print <<<EOD
 			<div id="installer">
 				<h1>Shimmie Installer</h1>
 				<h3>Warning: The Database schema is not empty!</h3>
@@ -266,22 +270,22 @@ function create_tables() { // {{{
 				</div>
 			</div>
 EOD;
-			exit(2);
-		}
+            exit(2);
+        }
 
-		$db->create_table("aliases", "
+        $db->create_table("aliases", "
 			oldtag VARCHAR(128) NOT NULL,
 			newtag VARCHAR(128) NOT NULL,
 			PRIMARY KEY (oldtag)
 		");
-		$db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", array());
+        $db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", []);
 
-		$db->create_table("config", "
+        $db->create_table("config", "
 			name VARCHAR(128) NOT NULL,
 			value TEXT,
 			PRIMARY KEY (name)
 		");
-		$db->create_table("users", "
+        $db->create_table("users", "
 			id SCORE_AIPK,
 			name VARCHAR(32) UNIQUE NOT NULL,
 			pass VARCHAR(250),
@@ -289,9 +293,9 @@ EOD;
 			class VARCHAR(32) NOT NULL DEFAULT 'user',
 			email VARCHAR(128)
 		");
-		$db->execute("CREATE INDEX users_name_idx ON users(name)", array());
+        $db->execute("CREATE INDEX users_name_idx ON users(name)", []);
 
-		$db->create_table("images", "
+        $db->create_table("images", "
 			id SCORE_AIPK,
 			owner_id INTEGER NOT NULL,
 			owner_ip SCORE_INET NOT NULL,
@@ -306,69 +310,72 @@ EOD;
 			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 		");
-		$db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", array());
-		$db->execute("CREATE INDEX images_width_idx ON images(width)", array());
-		$db->execute("CREATE INDEX images_height_idx ON images(height)", array());
-		$db->execute("CREATE INDEX images_hash_idx ON images(hash)", array());
+        $db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", []);
+        $db->execute("CREATE INDEX images_width_idx ON images(width)", []);
+        $db->execute("CREATE INDEX images_height_idx ON images(height)", []);
+        $db->execute("CREATE INDEX images_hash_idx ON images(hash)", []);
 
-		$db->create_table("tags", "
+        $db->create_table("tags", "
 			id SCORE_AIPK,
 			tag VARCHAR(64) UNIQUE NOT NULL,
 			count INTEGER NOT NULL DEFAULT 0
 		");
-		$db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", array());
+        $db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", []);
 
-		$db->create_table("image_tags", "
+        $db->create_table("image_tags", "
 			image_id INTEGER NOT NULL,
 			tag_id INTEGER NOT NULL,
 			UNIQUE(image_id, tag_id),
 			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
 		");
-		$db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", array());
-		$db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", array());
+        $db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", []);
+        $db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", []);
 
-		$db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
-		$db->commit();
-	}
-	catch(PDOException $e) {
-		handle_db_errors(TRUE, "An error occurred while trying to create the database tables necessary for Shimmie.", $e->getMessage(), 3);
-	} catch (Exception $e) {
-		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
-	}
+        $db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
+        $db->commit();
+    } catch (PDOException $e) {
+        handle_db_errors(true, "An error occurred while trying to create the database tables necessary for Shimmie.", $e->getMessage(), 3);
+    } catch (Exception $e) {
+        handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
+    }
 } // }}}
 
-function insert_defaults() { // {{{
-	try {
-		$db = new Database();
+function insert_defaults()
+{ // {{{
+    try {
+        $db = new Database();
 
-		$db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", Array("name" => 'Anonymous', "pass" => null, "class" => 'anonymous'));
-		$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')));
+        $db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']);
+        $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')]);
 
-		if(check_im_version() > 0) {
-			$db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", Array("name" => 'thumb_engine', "value" => 'convert'));
-		}
-		$db->commit();
-	}
-	catch(PDOException $e) {
-		handle_db_errors(TRUE, "An error occurred while trying to insert data into the database.", $e->getMessage(), 5);
-	}
-	catch (Exception $e) {
-		handle_db_errors(FALSE, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
-	}
+        if (check_im_version() > 0) {
+            $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'thumb_engine', "value" => 'convert']);
+        }
+        $db->commit();
+    } catch (PDOException $e) {
+        handle_db_errors(true, "An error occurred while trying to insert data into the database.", $e->getMessage(), 5);
+    } catch (Exception $e) {
+        handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
+    }
 } // }}}
 
-function build_dirs() { // {{{
-	// *try* and make default dirs. Ignore any errors --
-	// if something is amiss, we'll tell the user later
-	if(!file_exists("data")) @mkdir("data");
-	if(!is_writable("data")) @chmod("data", 0755);
+function build_dirs()
+{ // {{{
+    // *try* and make default dirs. Ignore any errors --
+    // if something is amiss, we'll tell the user later
+    if (!file_exists("data")) {
+        @mkdir("data");
+    }
+    if (!is_writable("data")) {
+        @chmod("data", 0755);
+    }
 
-	// Clear file status cache before checking again.
-	clearstatcache();
+    // Clear file status cache before checking again.
+    clearstatcache();
 
-	if(!file_exists("data") || !is_writable("data")) {
-		print "
+    if (!file_exists("data") || !is_writable("data")) {
+        print "
 		<div id='installer'>
 			<h1>Shimmie Installer</h1>
 			<h3>Directory Permissions Error:</h3>
@@ -381,22 +388,23 @@ function build_dirs() { // {{{
 			</div>
 		</div>
 		";
-		exit(7);
-	}
+        exit(7);
+    }
 } // }}}
 
-function write_config() { // {{{
-	$file_content = '<' . '?php' . "\n" .
-			"define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
-			'?' . '>';
+function write_config()
+{ // {{{
+    $file_content = '<' . '?php' . "\n" .
+            "define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
+            '?' . '>';
 
-	if(!file_exists("data/config")) {
-		mkdir("data/config", 0755, true);
-	}
+    if (!file_exists("data/config")) {
+        mkdir("data/config", 0755, true);
+    }
 
-	if(file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
-		header("Location: index.php");
-		print <<<EOD
+    if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
+        header("Location: index.php");
+        print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>Things are OK \o/</h3>
@@ -405,10 +413,9 @@ function write_config() { // {{{
 			</div>
 		</div>
 EOD;
-	}
-	else {
-		$h_file_content = htmlentities($file_content);
-		print <<<EOD
+    } else {
+        $h_file_content = htmlentities($file_content);
+        print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>File Permissions Error:</h3>
@@ -425,13 +432,14 @@ EOD;
 			</div>
 		</div>
 EOD;
-	}
-	echo "\n";
+    }
+    echo "\n";
 } // }}}
 
-function handle_db_errors(bool $isPDO, string $errorMessage1, string $errorMessage2, int $exitCode) {
-	$errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
-	print <<<EOD
+function handle_db_errors(bool $isPDO, string $errorMessage1, string $errorMessage2, int $exitCode)
+{
+    $errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
+    print <<<EOD
 		<div id="installer">
 			<h1>Shimmie Installer</h1>
 			<h3>Unknown Error:</h3>
@@ -442,7 +450,7 @@ function handle_db_errors(bool $isPDO, string $errorMessage1, string $errorMessa
 			</div>
 		</div>
 EOD;
-	exit($exitCode);
+    exit($exitCode);
 }
 ?>
 	</body>

@@ -1,9 +1,11 @@
 <?php
-class NotATagTheme extends Themelet {
-	public function display_untags(Page $page, $page_number, $page_count, $bans) {
-		$h_bans = "";
-		foreach($bans as $ban) {
-			$h_bans .= "
+class NotATagTheme extends Themelet
+{
+    public function display_untags(Page $page, $page_number, $page_count, $bans)
+    {
+        $h_bans = "";
+        foreach ($bans as $ban) {
+            $h_bans .= "
 				<tr>
 					".make_form(make_link("untag/remove"))."
 						<td width='30%'>{$ban['tag']}</td>
@@ -15,8 +17,8 @@ class NotATagTheme extends Themelet {
 					</form>
 				</tr>
 			";
-		}
-		$html = "
+        }
+        $html = "
 			<table id='image_bans' class='zebra sortable'>
 				<thead>
 					<th>Tag</th><th>Redirect</th><th>Action</th>
@@ -39,20 +41,19 @@ class NotATagTheme extends Themelet {
 			</table>
 		";
 
-		$prev = $page_number - 1;
-		$next = $page_number + 1;
+        $prev = $page_number - 1;
+        $next = $page_number + 1;
 
-		$h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("untag/list/$prev")."'>Prev</a>";
-		$h_index = "<a href='".make_link()."'>Index</a>";
-		$h_next = ($page_number >= $page_count) ? "Next" : "<a href='".make_link("untag/list/$next")."'>Next</a>";
+        $h_prev = ($page_number <= 1) ? "Prev" : "<a href='".make_link("untag/list/$prev")."'>Prev</a>";
+        $h_index = "<a href='".make_link()."'>Index</a>";
+        $h_next = ($page_number >= $page_count) ? "Next" : "<a href='".make_link("untag/list/$next")."'>Next</a>";
 
-		$nav = "$h_prev | $h_index | $h_next";
+        $nav = "$h_prev | $h_index | $h_next";
 
-		$page->set_title("UnTags");
-		$page->set_heading("UnTags");
-		$page->add_block(new Block("Edit UnTags", $html));
-		$page->add_block(new Block("Navigation", $nav, "left", 0));
-		$this->display_paginator($page, "untag/list", null, $page_number, $page_count);
-	}
+        $page->set_title("UnTags");
+        $page->set_heading("UnTags");
+        $page->add_block(new Block("Edit UnTags", $html));
+        $page->add_block(new Block("Navigation", $nav, "left", 0));
+        $this->display_paginator($page, "untag/list", null, $page_number, $page_count);
+    }
 }
-

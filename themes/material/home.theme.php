@@ -1,11 +1,14 @@
 <?php
 
-class CustomHomeTheme extends HomeTheme {
-	public function display_page(Page $page, $sitename, $base_href, $theme_name, $body) {
-		$page->set_mode("data");
-		$page->add_auto_html_headers();
-		$hh = $page->get_all_html_headers();
-		$page->set_data(<<<EOD
+class CustomHomeTheme extends HomeTheme
+{
+    public function display_page(Page $page, $sitename, $base_href, $theme_name, $body)
+    {
+        $page->set_mode("data");
+        $page->add_auto_html_headers();
+        $hh = $page->get_all_html_headers();
+        $page->set_data(
+            <<<EOD
 <html>
 	<head>
 		<title>$sitename</title>
@@ -23,14 +26,15 @@ class CustomHomeTheme extends HomeTheme {
 </html>
 EOD
 );
-	}
+    }
 
-	public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text) {
-		$message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
-		$counter_html = empty($counter_text)  ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
-		$contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> -";
-		$main_links_html = empty($main_links) ? "" : preg_replace('data-clink-sel="" ','', preg_replace('/shm-clink/', 'mdl-navigation__link', $main_links));
-		$search_html = "
+    public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text)
+    {
+        $message_html = empty($main_text)     ? "" : "<div class='space' id='message'>$main_text</div>";
+        $counter_html = empty($counter_text)  ? "" : "<div class='mdl-typography--text-center' id='counter'>$counter_text</div>";
+        $contact_link = empty($contact_link) ? "" : "<br><a href='mailto:$contact_link'>Contact</a> -";
+        $main_links_html = empty($main_links) ? "" : preg_replace('data-clink-sel="" ', '', preg_replace('/shm-clink/', 'mdl-navigation__link', $main_links));
+        $search_html = "
 			<div class='mdl-grid'>
 				<div class='mdl-layout-spacer'></div>
 				<div class='mdl-cell mdl-cell--4-col'>
@@ -45,7 +49,7 @@ EOD
 				<div class='mdl-layout-spacer'></div>
 			</div>
 		";
-		return "
+        return "
 		<div class='mdl-layout mdl-js-layout mdl-layout--fixed-drawer vertical-center'>
 			<div class='mdl-layout__drawer'>
 			    <span class='mdl-layout-title'>$sitename</span>
@@ -65,6 +69,5 @@ EOD
 				</div>
 			</main>
 		</div>";
-	}
+    }
 }
-

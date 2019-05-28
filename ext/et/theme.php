@@ -1,22 +1,25 @@
 <?php
 
-class ETTheme extends Themelet {
-	/*
-	 * Create a page showing info
-	 *
-	 * $info = an array of ($name => $value)
-	 */
-	public function display_info_page($info) {
-		global $page;
+class ETTheme extends Themelet
+{
+    /*
+     * Create a page showing info
+     *
+     * $info = an array of ($name => $value)
+     */
+    public function display_info_page($info)
+    {
+        global $page;
 
-		$page->set_title("System Info");
-		$page->set_heading("System Info");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Information:", $this->build_data_form($info)));
-	}
+        $page->set_title("System Info");
+        $page->set_heading("System Info");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Information:", $this->build_data_form($info)));
+    }
 
-	protected function build_data_form($info) {
-		$data = <<<EOD
+    protected function build_data_form($info)
+    {
+        $data = <<<EOD
 Optional:
 Site title: {$info['site_title']}
 Theme: {$info['site_theme']}
@@ -47,7 +50,7 @@ Tags: {$info['stat_tags']}
 Applications: {$info['stat_image_tags']}
 Extensions: {$info['sys_extensions']}
 EOD;
-		$html = <<<EOD
+        $html = <<<EOD
 <form action='http://shimmie.shishnet.org/register.php' method='POST'>
 	<input type='hidden' name='registration_api' value='1'>
 	<textarea name='data' rows='20' cols='80'>$data</textarea>
@@ -56,7 +59,6 @@ EOD;
 	of web servers / databases / etc I need to support.
 </form>
 EOD;
-		return $html;
-	}
+        return $html;
+    }
 }
-

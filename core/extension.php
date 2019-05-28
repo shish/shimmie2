@@ -81,50 +81,53 @@
  * Then re-implemented by Shish after he broke the forum and couldn't
  * find the thread where the original was posted >_<
  */
-abstract class Extension {
-	/** @var array which DBs this ext supports (blank for 'all') */
-	protected $db_support = [];
+abstract class Extension
+{
+    /** @var array which DBs this ext supports (blank for 'all') */
+    protected $db_support = [];
 
-	/** @var Themelet this theme's Themelet object */
-	public $theme;
+    /** @var Themelet this theme's Themelet object */
+    public $theme;
 
-	public function __construct() {
-		$this->theme = $this->get_theme_object(get_called_class());
-	}
+    public function __construct()
+    {
+        $this->theme = $this->get_theme_object(get_called_class());
+    }
 
-	public function is_live(): bool {
-		global $database;
-		return (
-			empty($this->db_support) ||
-			in_array($database->get_driver_name(), $this->db_support)
-		);
-	}
+    public function is_live(): bool
+    {
+        global $database;
+        return (
+            empty($this->db_support) ||
+            in_array($database->get_driver_name(), $this->db_support)
+        );
+    }
 
-	/**
-	 * Find the theme object for a given extension.
-	 */
-	private function get_theme_object(string $base): ?Themelet {
-		$custom = 'Custom'.$base.'Theme';
-		$normal = $base.'Theme';
+    /**
+     * Find the theme object for a given extension.
+     */
+    private function get_theme_object(string $base): ?Themelet
+    {
+        $custom = 'Custom'.$base.'Theme';
+        $normal = $base.'Theme';
 
-		if(class_exists($custom)) {
-			return new $custom();
-		}
-		elseif(class_exists($normal)) {
-			return new $normal();
-		}
-		else {
-			return null;
-		}
-	}
+        if (class_exists($custom)) {
+            return new $custom();
+        } elseif (class_exists($normal)) {
+            return new $normal();
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 * Override this to change the priority of the extension,
-	 * lower numbered ones will receive events first.
-	 */
-	public function get_priority(): int {
-		return 50;
-	}
+    /**
+     * Override this to change the priority of the extension,
+     * lower numbered ones will receive events first.
+     */
+    public function get_priority(): int
+    {
+        return 50;
+    }
 }
 
 /**
@@ -132,14 +135,16 @@ abstract class Extension {
  *
  * Several extensions have this in common, make a common API.
  */
-abstract class FormatterExtension extends Extension {
-	public function onTextFormatting(TextFormattingEvent $event) {
-		$event->formatted = $this->format($event->formatted);
-		$event->stripped  = $this->strip($event->stripped);
-	}
+abstract class FormatterExtension extends Extension
+{
+    public function onTextFormatting(TextFormattingEvent $event)
+    {
+        $event->formatted = $this->format($event->formatted);
+        $event->stripped  = $this->strip($event->stripped);
+    }
 
-	abstract public function format(string $text): string;
-	abstract public function strip(string $text): string;
+    abstract public function format(string $text): string;
+    abstract public function strip(string $text): string;
 }
 
 /**
@@ -148,100 +153,100 @@ abstract class FormatterExtension extends Extension {
  * This too is a common class of extension with many methods in common,
  * so we have a base class to extend from.
  */
-abstract class DataHandlerExtension extends Extension {
-	public function onDataUpload(DataUploadEvent $event) {
-		$supported_ext = $this->supported_ext($event->type);
-		$check_contents = $this->check_contents($event->tmpname);
-		if($supported_ext && $check_contents) {
-			move_upload_to_archive($event);
-			send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
+abstract class DataHandlerExtension extends Extension
+{
+    public function onDataUpload(DataUploadEvent $event)
+    {
+        $supported_ext = $this->supported_ext($event->type);
+        $check_contents = $this->check_contents($event->tmpname);
+        if ($supported_ext && $check_contents) {
+            move_upload_to_archive($event);
+            send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
-			/* Check if we are replacing an image */
-			if(array_key_exists('replace', $event->metadata) && isset($event->metadata['replace'])) {
-				/* hax: This seems like such a dirty way to do this.. */
+            /* Check if we are replacing an image */
+            if (array_key_exists('replace', $event->metadata) && isset($event->metadata['replace'])) {
+                /* hax: This seems like such a dirty way to do this.. */
 
-				/* Validate things */
-				$image_id = int_escape($event->metadata['replace']);
+                /* Validate things */
+                $image_id = int_escape($event->metadata['replace']);
 
-				/* Check to make sure the image exists. */
-				$existing = Image::by_id($image_id);
+                /* Check to make sure the image exists. */
+                $existing = Image::by_id($image_id);
 
-				if(is_null($existing)) {
-					throw new UploadException("Image to replace does not exist!");
-				}
-				if ($existing->hash === $event->metadata['hash']) {
-					throw new UploadException("The uploaded image is the same as the one to replace.");
-				}
+                if (is_null($existing)) {
+                    throw new UploadException("Image to replace does not exist!");
+                }
+                if ($existing->hash === $event->metadata['hash']) {
+                    throw new UploadException("The uploaded image is the same as the one to replace.");
+                }
 
-				// even more hax..
-				$event->metadata['tags'] = $existing->get_tag_list();
-				$image = $this->create_image_from_data(warehouse_path("images", $event->metadata['hash']), $event->metadata);
+                // even more hax..
+                $event->metadata['tags'] = $existing->get_tag_list();
+                $image = $this->create_image_from_data(warehouse_path("images", $event->metadata['hash']), $event->metadata);
 
-				if(is_null($image)) {
-					throw new UploadException("Data handler failed to create image object from data");
-				}
+                if (is_null($image)) {
+                    throw new UploadException("Data handler failed to create image object from data");
+                }
 
-				$ire = new ImageReplaceEvent($image_id, $image);
-				send_event($ire);
-				$event->image_id = $image_id;
-			}
-			else {
-				$image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
-				if(is_null($image)) {
-					throw new UploadException("Data handler failed to create image object from data");
-				}
-				$iae = new ImageAdditionEvent($image);
-				send_event($iae);
-				$event->image_id = $iae->image->id;
+                $ire = new ImageReplaceEvent($image_id, $image);
+                send_event($ire);
+                $event->image_id = $image_id;
+            } else {
+                $image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
+                if (is_null($image)) {
+                    throw new UploadException("Data handler failed to create image object from data");
+                }
+                $iae = new ImageAdditionEvent($image);
+                send_event($iae);
+                $event->image_id = $iae->image->id;
 
-				// Rating Stuff.
-				if(!empty($event->metadata['rating'])){
-					$rating = $event->metadata['rating'];
-					send_event(new RatingSetEvent($image, $rating));
-				}
+                // Rating Stuff.
+                if (!empty($event->metadata['rating'])) {
+                    $rating = $event->metadata['rating'];
+                    send_event(new RatingSetEvent($image, $rating));
+                }
 
-				// Locked Stuff.
-				if(!empty($event->metadata['locked'])){
-					$locked = $event->metadata['locked'];
-					send_event(new LockSetEvent($image, !empty($locked)));
-				}
-			}
-		}
-		elseif($supported_ext && !$check_contents){
-			throw new UploadException("Invalid or corrupted file");
-		}
-	}
+                // Locked Stuff.
+                if (!empty($event->metadata['locked'])) {
+                    $locked = $event->metadata['locked'];
+                    send_event(new LockSetEvent($image, !empty($locked)));
+                }
+            }
+        } elseif ($supported_ext && !$check_contents) {
+            throw new UploadException("Invalid or corrupted file");
+        }
+    }
 
-	public function onThumbnailGeneration(ThumbnailGenerationEvent $event) {
-		if($this->supported_ext($event->type)) {
-			if (method_exists($this, 'create_thumb_force') && $event->force == true) {
-				 $this->create_thumb_force($event->hash);
-			}
-			else {
-				$this->create_thumb($event->hash);
-			}
-		}
-	}
+    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
+    {
+        if ($this->supported_ext($event->type)) {
+            if (method_exists($this, 'create_thumb_force') && $event->force == true) {
+                $this->create_thumb_force($event->hash);
+            } else {
+                $this->create_thumb($event->hash);
+            }
+        }
+    }
 
-	public function onDisplayingImage(DisplayingImageEvent $event) {
-		global $page;
-		if($this->supported_ext($event->image->ext)) {
-			$this->theme->display_image($page, $event->image);
-		}
-	}
+    public function onDisplayingImage(DisplayingImageEvent $event)
+    {
+        global $page;
+        if ($this->supported_ext($event->image->ext)) {
+            $this->theme->display_image($page, $event->image);
+        }
+    }
 
-	/*
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = $this->setup();
-		if($sb) $event->panel->add_block($sb);
-	}
+    /*
+    public function onSetupBuilding(SetupBuildingEvent $event) {
+        $sb = $this->setup();
+        if($sb) $event->panel->add_block($sb);
+    }
 
-	protected function setup() {}
-	*/
+    protected function setup() {}
+    */
 
-	abstract protected function supported_ext(string $ext): bool;
-	abstract protected function check_contents(string $tmpname): bool;
-	abstract protected function create_image_from_data(string $filename, array $metadata);
-	abstract protected function create_thumb(string $hash): bool;
+    abstract protected function supported_ext(string $ext): bool;
+    abstract protected function check_contents(string $tmpname): bool;
+    abstract protected function create_image_from_data(string $filename, array $metadata);
+    abstract protected function create_thumb(string $hash): bool;
 }
-

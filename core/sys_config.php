@@ -19,7 +19,12 @@
  *
  */
 
-function _d(string $name, $value) {if(!defined($name)) define($name, $value);}
+function _d(string $name, $value)
+{
+    if (!defined($name)) {
+        define($name, $value);
+    }
+}
 _d("DATABASE_DSN", null);    // string   PDO database connection details
 _d("DATABASE_KA", true);     // string   Keep database connection alive
 _d("CACHE_DSN", null);       // string   cache connection details
@@ -50,5 +55,3 @@ _d("ENABLED_MODS", "imageboard");
  */
 _d("SCORE_VERSION", 'develop/'.VERSION); // string SCore version
 _d("ENABLED_EXTS", CORE_EXTS.",".EXTRA_EXTS);
-
-

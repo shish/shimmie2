@@ -8,185 +8,211 @@ include '../php/functions.php';
 include '../php/yshout.class.php';
 include '../php/ajaxcall.class.php';
 
-if (isset($_POST['mode']))
-	switch($_POST['mode']) {
-		case 'login':
-			doLogin();
-			break;
-		case 'logout':
-			doLogout();
-			break;
-		case 'unban':
-			doUnban();
-			break;
-		case 'unbanall':
-			doUnbanAll();
-			break;
-		case 'setpreference':
-			doSetPreference();
-			break;
-		case 'resetpreferences':
-			doResetPreferences();
-			break;
-	}
-
-function doLogin() {
-	global $kioskMode;
-	
-	if ($kioskMode) {
-		logout();
-		$result = array(
-			'error' => false,
-			'html' => cp()
-		);
-		
-		echo json_encode($result);
-		return;
-	}
-	
-	login(md5($_POST['password']));
-	$result = array();
-	if (loggedIn()) {
-		$result['error'] = false;
-		$result['html'] = cp();
-	} else
-		$result['error'] = 'invalid';
-
-	echo json_encode($result);
+if (isset($_POST['mode'])) {
+    switch ($_POST['mode']) {
+        case 'login':
+            doLogin();
+            break;
+        case 'logout':
+            doLogout();
+            break;
+        case 'unban':
+            doUnban();
+            break;
+        case 'unbanall':
+            doUnbanAll();
+            break;
+        case 'setpreference':
+            doSetPreference();
+            break;
+        case 'resetpreferences':
+            doResetPreferences();
+            break;
+    }
 }
 
-function doLogout() {
-	logout();
+function doLogin()
+{
+    global $kioskMode;
+    
+    if ($kioskMode) {
+        logout();
+        $result = [
+            'error' => false,
+            'html' => cp()
+        ];
+        
+        echo json_encode($result);
+        return;
+    }
+    
+    login(md5($_POST['password']));
+    $result = [];
+    if (loggedIn()) {
+        $result['error'] = false;
+        $result['html'] = cp();
+    } else {
+        $result['error'] = 'invalid';
+    }
 
-	$result = array(
-		'error' => false
-	);
-
-	echo json_encode($result);
+    echo json_encode($result);
 }
 
-function doUnban() {
-	global $kioskMode;
-	
-	if ($kioskMode) {
-		$result = array(
-			'error' => false
-		);
-		
-		echo json_encode($result);
-		return;
-	}
-	
-	if (!loggedIn()) return;
+function doLogout()
+{
+    logout();
 
-	$ys = ys();
-	$result = array();
+    $result = [
+        'error' => false
+    ];
 
-	$ip = $_POST['ip'];
-
-	if ($ys->banned($ip)) {
-		$ys->unban($ip);
-		$result['error'] = false;
-	} else
-		$result['error'] = 'notbanned';
-
-
-	echo json_encode($result);
+    echo json_encode($result);
 }
 
-function doUnbanAll() {
-	global $kioskMode;
-	
-	if ($kioskMode) {
-		$result = array(
-			'error' => false
-		);
-		
-		echo json_encode($result);
-		return;
-	}
-	
-	if (!loggedIn()) return;
+function doUnban()
+{
+    global $kioskMode;
+    
+    if ($kioskMode) {
+        $result = [
+            'error' => false
+        ];
+        
+        echo json_encode($result);
+        return;
+    }
+    
+    if (!loggedIn()) {
+        return;
+    }
 
-	$ys = ys();
-	$ys->unbanAll();
+    $ys = ys();
+    $result = [];
 
-	$result = array(
-		'error' => false
-	);
+    $ip = $_POST['ip'];
 
-	echo json_encode($result);
+    if ($ys->banned($ip)) {
+        $ys->unban($ip);
+        $result['error'] = false;
+    } else {
+        $result['error'] = 'notbanned';
+    }
+
+
+    echo json_encode($result);
 }
 
+function doUnbanAll()
+{
+    global $kioskMode;
+    
+    if ($kioskMode) {
+        $result = [
+            'error' => false
+        ];
+        
+        echo json_encode($result);
+        return;
+    }
+    
+    if (!loggedIn()) {
+        return;
+    }
 
-function doSetPreference() {
-	global $prefs, $kioskMode;
-	
-	if ($kioskMode) {
-		$result = array(
-			'error' => false
-		);
-		
-		echo json_encode($result);
-		return;
-	}
-	
-	if (!loggedIn()) return;
+    $ys = ys();
+    $ys->unbanAll();
 
-	$pref = $_POST['preference'];
-	$value = magic($_POST['value']);
+    $result = [
+        'error' => false
+    ];
 
-	if ($value === 'true') $value = true;
-	if ($value === 'false') $value = false;
-
-	$prefs[$pref] = $value;
-
-	savePrefs($prefs);
-
-	if ($pref == 'password') login(md5($value));
-
-	$result = array(
-		'error' => false
-	);
-
-	echo json_encode($result);
+    echo json_encode($result);
 }
 
 
-function doResetPreferences() {
-	global $prefs, $kioskMode;
-	
-	if ($kioskMode) {
-		$result = array(
-			'error' => false
-		);
-		
-		echo json_encode($result);
-		return;
-	}
-	
-	if (!loggedIn()) return;
+function doSetPreference()
+{
+    global $prefs, $kioskMode;
+    
+    if ($kioskMode) {
+        $result = [
+            'error' => false
+        ];
+        
+        echo json_encode($result);
+        return;
+    }
+    
+    if (!loggedIn()) {
+        return;
+    }
 
-	resetPrefs();
-	login(md5($prefs['password']));
+    $pref = $_POST['preference'];
+    $value = magic($_POST['value']);
 
-	//	$prefs['password'] = 'lol no';
-	$result = array(
-		'error' => false,
-		'prefs' => $prefs
-	);
+    if ($value === 'true') {
+        $value = true;
+    }
+    if ($value === 'false') {
+        $value = false;
+    }
 
-	echo json_encode($result);
+    $prefs[$pref] = $value;
+
+    savePrefs($prefs);
+
+    if ($pref == 'password') {
+        login(md5($value));
+    }
+
+    $result = [
+        'error' => false
+    ];
+
+    echo json_encode($result);
+}
+
+
+function doResetPreferences()
+{
+    global $prefs, $kioskMode;
+    
+    if ($kioskMode) {
+        $result = [
+            'error' => false
+        ];
+        
+        echo json_encode($result);
+        return;
+    }
+    
+    if (!loggedIn()) {
+        return;
+    }
+
+    resetPrefs();
+    login(md5($prefs['password']));
+
+    //	$prefs['password'] = 'lol no';
+    $result = [
+        'error' => false,
+        'prefs' => $prefs
+    ];
+
+    echo json_encode($result);
 }
 
 /* CP Display */
 
-function cp() {
-	global $kioskMode;
-	
-	if (!loggedIn() && !$kioskMode) return 'You\'re not logged in!';
+function cp()
+{
+    global $kioskMode;
+    
+    if (!loggedIn() && !$kioskMode) {
+        return 'You\'re not logged in!';
+    }
 
-	return '
+    return '
 
 				<div class="section" id="preferences">
 				<span style="display: none;" id="cp-loaded">true</span>
@@ -236,38 +262,41 @@ function cp() {
 				</div>';
 }
 
-function bansList() {
-	global $kioskMode;
-	
-	$ys = ys();
-	$bans = $ys->bans();
+function bansList()
+{
+    global $kioskMode;
+    
+    $ys = ys();
+    $bans = $ys->bans();
 
-	$html = '<ul id="bans-list">';
+    $html = '<ul id="bans-list">';
 
-	$hasBans = false;
-	foreach($bans as $ban) {
-		$hasBans = true;
-		$html .= '
+    $hasBans = false;
+    foreach ($bans as $ban) {
+        $hasBans = true;
+        $html .= '
 			<li>
 				<span class="nickname">' . $ban['nickname']. '</span>
 				(<span class="ip">' . ($kioskMode ? '[No IP in Kiosk Mode]' : $ban['ip']) . '</span>)
 				<a title="Unban" class="unban-link" href="#" rel="' . $ban['timestamp'] . '">Unban</a>
 			</li>
 		';
-	}
-	
-	if (!$hasBans)
-		$html = '<p id="no-bans">No one is banned.</p>';
-	else
-		$html .= '</ul>';
+    }
+    
+    if (!$hasBans) {
+        $html = '<p id="no-bans">No one is banned.</p>';
+    } else {
+        $html .= '</ul>';
+    }
 
-	return $html;
+    return $html;
 }
 
-function preferencesForm() {
-	global $prefs, $kioskMode;
+function preferencesForm()
+{
+    global $prefs, $kioskMode;
 
-	return '
+    return '
 					<form id="preferences-form">
 						<div id="cp-pane-administration" class="cp-pane">
 							<fieldset id="prefs-cat-cp">
@@ -434,10 +463,11 @@ function preferencesForm() {
 	';
 }
 
-function about() {
-	global $prefs;
+function about()
+{
+    global $prefs;
 
-	$html = '
+    $html = '
 		<div id="cp-pane-about" class="cp-pane">
 			<h2>About YShout</h2>
 			<p>YShout was created and developed by Yuri Vishnevsky. Version 5 is the first one with an about page, so you\'ll have to excuse the lack of appropriate information &mdash; I\'m not quite sure what it is that goes on "About" pages anyway.</p>
@@ -451,7 +481,6 @@ function about() {
 		</div>
 		';
 
-	
-	return $html;
+    
+    return $html;
 }
-

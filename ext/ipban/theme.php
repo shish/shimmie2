@@ -1,23 +1,25 @@
 <?php
 
-class IPBanTheme extends Themelet {
-	/*
-	 * Show all the bans
-	 *
-	 * $bans = an array of (
-	 *  'ip' => the banned IP
-	 *  'reason' => why the IP was banned
-	 *  'date' => when the ban started
-	 *  'end' => when the ban will end
-	 * )
-	 */
-	public function display_bans(Page $page, $bans) {
-		global $database, $user;
-		$h_bans = "";
-		$prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
-		foreach($bans as $ban) {
-			$end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
-			$h_bans .= "
+class IPBanTheme extends Themelet
+{
+    /*
+     * Show all the bans
+     *
+     * $bans = an array of (
+     *  'ip' => the banned IP
+     *  'reason' => why the IP was banned
+     *  'date' => when the ban started
+     *  'end' => when the ban will end
+     * )
+     */
+    public function display_bans(Page $page, $bans)
+    {
+        global $database, $user;
+        $h_bans = "";
+        $prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
+        foreach ($bans as $ban) {
+            $end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
+            $h_bans .= "
 				<tr>
 					<td width='12%'>{$ban[$prefix.'ip']}</td>
 					<td>{$ban[$prefix.'reason']}</td>
@@ -32,8 +34,8 @@ class IPBanTheme extends Themelet {
 					</form>
 				</tr>
 			";
-		}
-		$html = "
+        }
+        $html = "
 			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
 			<p><table id='bans' class='sortable zebra'>
 				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><th>Action</th></tr></thead>
@@ -50,10 +52,9 @@ class IPBanTheme extends Themelet {
 				</tr></tfoot>
 			</table>
 		";
-		$page->set_title("IP Bans");
-		$page->set_heading("IP Bans");
-		$page->add_block(new NavBlock());
-		$page->add_block(new Block("Edit IP Bans", $html));
-	}
+        $page->set_title("IP Bans");
+        $page->set_heading("IP Bans");
+        $page->add_block(new NavBlock());
+        $page->add_block(new Block("Edit IP Bans", $html));
+    }
 }
-

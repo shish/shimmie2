@@ -19,14 +19,14 @@ _sanitise_environment();
 // load base files
 $_shm_ctx->log_start("Opening files");
 $_shm_files = array_merge(
-	zglob("core/*.php"),
-	zglob("core/{".ENABLED_MODS."}/*.php"),
-	zglob("ext/{".ENABLED_EXTS."}/main.php")
+    zglob("core/*.php"),
+    zglob("core/{".ENABLED_MODS."}/*.php"),
+    zglob("ext/{".ENABLED_EXTS."}/main.php")
 );
-foreach($_shm_files as $_shm_filename) {
-	if(basename($_shm_filename)[0] != "_") {
-		require_once $_shm_filename;
-	}
+foreach ($_shm_files as $_shm_filename) {
+    if (basename($_shm_filename)[0] != "_") {
+        require_once $_shm_filename;
+    }
 }
 unset($_shm_files);
 unset($_shm_filename);
@@ -40,8 +40,8 @@ $_shm_ctx->log_endok();
 
 // load the theme parts
 $_shm_ctx->log_start("Loading themelets");
-foreach(_get_themelet_files(get_theme()) as $themelet) {
-	require_once $themelet;
+foreach (_get_themelet_files(get_theme()) as $themelet) {
+    require_once $themelet;
 }
 unset($themelet);
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();

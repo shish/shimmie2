@@ -35,331 +35,352 @@
  * The various extensions all add whatever they want to this structure,
  * then Layout turns it into HTML.
  */
-class Page {
-	/** @name Overall */
-	//@{
-	/** @var string */
-	public $mode = "page";
-	/** @var string */
-	public $type = "text/html; charset=utf-8";
+class Page
+{
+    /** @name Overall */
+    //@{
+    /** @var string */
+    public $mode = "page";
+    /** @var string */
+    public $type = "text/html; charset=utf-8";
 
-	/**
-	 * Set what this page should do; "page", "data", or "redirect".
-	 */
-	public function set_mode(string $mode) {
-		$this->mode = $mode;
-	}
+    /**
+     * Set what this page should do; "page", "data", or "redirect".
+     */
+    public function set_mode(string $mode)
+    {
+        $this->mode = $mode;
+    }
 
-	/**
-	 * Set the page's MIME type.
-	 */
-	public function set_type(string $type) {
-		$this->type = $type;
-	}
-
-
-	//@}
-	// ==============================================
-	/** @name "data" mode */
-	//@{
-
-	/** @var string; public only for unit test */
-	public $data = "";
-
-	/** @var string; public only for unit test */
-	public $filename = null;
-
-	/**
-	 * Set the raw data to be sent.
-	 */
-	public function set_data(string $data) {
-		$this->data = $data;
-	}
-
-	/**
-	 * Set the recommended download filename.
-	 */
-	public function set_filename(string $filename) {
-		$this->filename = $filename;
-	}
+    /**
+     * Set the page's MIME type.
+     */
+    public function set_type(string $type)
+    {
+        $this->type = $type;
+    }
 
 
-	//@}
-	// ==============================================
-	/** @name "redirect" mode */
-	//@{
+    //@}
+    // ==============================================
+    /** @name "data" mode */
+    //@{
 
-	/** @var string */
-	private $redirect = "";
+    /** @var string; public only for unit test */
+    public $data = "";
 
-	/**
-	 * Set the URL to redirect to (remember to use make_link() if linking
-	 * to a page in the same site).
-	 */
-	public function set_redirect(string $redirect) {
-		$this->redirect = $redirect;
-	}
+    /** @var string; public only for unit test */
+    public $filename = null;
 
+    /**
+     * Set the raw data to be sent.
+     */
+    public function set_data(string $data)
+    {
+        $this->data = $data;
+    }
 
-	//@}
-	// ==============================================
-	/** @name "page" mode */
-	//@{
-
-	/** @var int */
-	public $code = 200;
-
-	/** @var string */
-	public $title = "";
-
-	/** @var string */
-	public $heading = "";
-
-	/** @var string */
-	public $subheading = "";
-
-	/** @var string */
-	public $quicknav = "";
-
-	/** @var string[] */
-	public $html_headers = array();
-
-	/** @var string[] */
-	public $http_headers = array();
-
-	/** @var string[][] */
-	public $cookies = array();
-
-	/** @var Block[] */
-	public $blocks = array();
-
-	/**
-	 * Set the HTTP status code
-	 */
-	public function set_code(int $code): void {
-		$this->code = $code;
-	}
-
-	public function set_title(string $title): void {
-		$this->title = $title;
-	}
-
-	public function set_heading(string $heading): void {
-		$this->heading = $heading;
-	}
-
-	public function set_subheading(string $subheading): void {
-		$this->subheading = $subheading;
-	}
-
-	/**
-	 * Add a line to the HTML head section.
-	 */
-	public function add_html_header(string $line, int $position=50): void {
-		while(isset($this->html_headers[$position])) $position++;
-		$this->html_headers[$position] = $line;
-	}
-
-	/**
-	 * Add a http header to be sent to the client.
-	 */
-	public function add_http_header(string $line, int $position=50): void {
-		while(isset($this->http_headers[$position])) $position++;
-		$this->http_headers[$position] = $line;
-	}
-
-	/**
-	 * The counterpart for get_cookie, this works like php's
-	 * setcookie method, but prepends the site-wide cookie prefix to
-	 * the $name argument before doing anything.
-	 */
-	public function add_cookie(string $name, string $value, int $time, string $path): void {
-		$full_name = COOKIE_PREFIX."_".$name;
-		$this->cookies[] = array($full_name, $value, $time, $path);
-	}
-
-	public function get_cookie(string $name): ?string {
-		$full_name = COOKIE_PREFIX."_".$name;
-		if(isset($_COOKIE[$full_name])) {
-			return $_COOKIE[$full_name];
-		}
-		else {
-			return null;
-		}
-	}
-
-	/**
-	 * Get all the HTML headers that are currently set and return as a string.
-	 */
-	public function get_all_html_headers(): string {
-		$data = '';
-		ksort($this->html_headers);
-		foreach ($this->html_headers as $line) {
-			$data .= "\t\t" . $line . "\n";
-		}
-		return $data;
-	}
-
-	/**
-	 * Removes all currently set HTML headers (Be careful..).
-	 */
-	public function delete_all_html_headers(): void {
-		$this->html_headers = array();
-	}
-
-	/**
-	 * Add a Block of data to the page.
-	 */
-	public function add_block(Block $block) {
-		$this->blocks[] = $block;
-	}
+    /**
+     * Set the recommended download filename.
+     */
+    public function set_filename(string $filename)
+    {
+        $this->filename = $filename;
+    }
 
 
-	//@}
-	// ==============================================
+    //@}
+    // ==============================================
+    /** @name "redirect" mode */
+    //@{
 
-	/**
-	 * Display the page according to the mode and data given.
-	 */
-	public function display(): void {
-		global $page, $user;
+    /** @var string */
+    private $redirect = "";
 
-		header("HTTP/1.0 {$this->code} Shimmie");
-		header("Content-type: ".$this->type);
-		header("X-Powered-By: SCore-".SCORE_VERSION);
+    /**
+     * Set the URL to redirect to (remember to use make_link() if linking
+     * to a page in the same site).
+     */
+    public function set_redirect(string $redirect)
+    {
+        $this->redirect = $redirect;
+    }
 
-		if (!headers_sent()) {
-			foreach($this->http_headers as $head) {
-				header($head);
-			}
-			foreach($this->cookies as $c) {
-				setcookie($c[0], $c[1], $c[2], $c[3]);
-			}
-		} else {
-			print "Error: Headers have already been sent to the client.";
-		}
 
-		switch($this->mode) {
-			case "page":
-				if(CACHE_HTTP) {
-					header("Vary: Cookie, Accept-Encoding");
-					if($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
-						header("Cache-control: public, max-age=600");
-						header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
-					}
-					else {
-						#header("Cache-control: private, max-age=0");
-						header("Cache-control: no-cache");
-						header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
-					}
-				}
-				#else {
-				#	header("Cache-control: no-cache");
-				#	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
-				#}
-				if($this->get_cookie("flash_message") !== null) {
-					$this->add_cookie("flash_message", "", -1, "/");
-				}
-				usort($this->blocks, "blockcmp");
-				$this->add_auto_html_headers();
-				$layout = new Layout();
-				$layout->display_page($page);
-				break;
-			case "data":
-				header("Content-Length: ".strlen($this->data));
-				if(!is_null($this->filename)) {
-					header('Content-Disposition: attachment; filename='.$this->filename);
-				}
-				print $this->data;
-				break;
-			case "redirect":
-				header('Location: '.$this->redirect);
-				print 'You should be redirected to <a href="'.$this->redirect.'">'.$this->redirect.'</a>';
-				break;
-			default:
-				print "Invalid page mode";
-				break;
-		}
-	}
+    //@}
+    // ==============================================
+    /** @name "page" mode */
+    //@{
 
-	/**
-	 * This function grabs all the CSS and JavaScript files sprinkled throughout Shimmie's folders,
-	 * concatenates them together into two large files (one for CSS and one for JS) and then stores
-	 * them in the /cache/ directory for serving to the user.
-	 *
-	 * Why do this? Two reasons:
-	 *  1. Reduces the number of files the user's browser needs to download.
-	 *  2. Allows these cached files to be compressed/minified by the admin.
-	 *
-	 * TODO: This should really be configurable somehow...
-	 */
-	public function add_auto_html_headers(): void {
-		global $config;
+    /** @var int */
+    public $code = 200;
 
-		$data_href = get_base_href();
-		$theme_name = $config->get_string('theme', 'default');
+    /** @var string */
+    public $title = "";
 
-		$this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
+    /** @var string */
+    public $heading = "";
 
-		# static handler will map these to themes/foo/static/bar.ico or ext/handle_static/static/bar.ico
-		$this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
-		$this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
+    /** @var string */
+    public $subheading = "";
 
-		//We use $config_latest to make sure cache is reset if config is ever updated.
-		$config_latest = 0;
-		foreach(zglob("data/config/*") as $conf) {
-			$config_latest = max($config_latest, filemtime($conf));
-		}
+    /** @var string */
+    public $quicknav = "";
 
-		/*** Generate CSS cache files ***/
-		$css_latest = $config_latest;
-		$css_files = array_merge(
-			zglob("ext/{".ENABLED_EXTS."}/style.css"),
-			zglob("themes/$theme_name/style.css")
-		);
-		foreach($css_files as $css) {
-			$css_latest = max($css_latest, filemtime($css));
-		}
-		$css_md5 = md5(serialize($css_files));
-		$css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
-		if(!file_exists($css_cache_file)) {
-			$css_data = "";
-			foreach($css_files as $file) {
-				$file_data = file_get_contents($file);
-				$pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-				$replace = 'url("../../../'.dirname($file).'/$1")';
-				$file_data = preg_replace($pattern, $replace, $file_data);
-				$css_data .= $file_data . "\n";
-			}
-			file_put_contents($css_cache_file, $css_data);
-		}
-		$this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
+    /** @var string[] */
+    public $html_headers = [];
 
-		/*** Generate JS cache files ***/
-		$js_latest = $config_latest;
-		$js_files = array_merge(
-			[
-				"vendor/bower-asset/jquery/dist/jquery.min.js",
-				"vendor/bower-asset/jquery-timeago/jquery.timeago.js",
-				"vendor/bower-asset/tablesorter/jquery.tablesorter.min.js",
-				"vendor/bower-asset/js-cookie/src/js.cookie.js",
-				"ext/handle_static/modernizr-3.3.1.custom.js",
-			],
-			zglob("ext/{".ENABLED_EXTS."}/script.js"),
-			zglob("themes/$theme_name/script.js")
-		);
-		foreach($js_files as $js) {
-			$js_latest = max($js_latest, filemtime($js));
-		}
-		$js_md5 = md5(serialize($js_files));
-		$js_cache_file = data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
-		if(!file_exists($js_cache_file)) {
-			$js_data = "";
-			foreach($js_files as $file) {
-				$js_data .= file_get_contents($file) . "\n";
-			}
-			file_put_contents($js_cache_file, $js_data);
-		}
-		$this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
-	}
+    /** @var string[] */
+    public $http_headers = [];
+
+    /** @var string[][] */
+    public $cookies = [];
+
+    /** @var Block[] */
+    public $blocks = [];
+
+    /**
+     * Set the HTTP status code
+     */
+    public function set_code(int $code): void
+    {
+        $this->code = $code;
+    }
+
+    public function set_title(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function set_heading(string $heading): void
+    {
+        $this->heading = $heading;
+    }
+
+    public function set_subheading(string $subheading): void
+    {
+        $this->subheading = $subheading;
+    }
+
+    /**
+     * Add a line to the HTML head section.
+     */
+    public function add_html_header(string $line, int $position=50): void
+    {
+        while (isset($this->html_headers[$position])) {
+            $position++;
+        }
+        $this->html_headers[$position] = $line;
+    }
+
+    /**
+     * Add a http header to be sent to the client.
+     */
+    public function add_http_header(string $line, int $position=50): void
+    {
+        while (isset($this->http_headers[$position])) {
+            $position++;
+        }
+        $this->http_headers[$position] = $line;
+    }
+
+    /**
+     * The counterpart for get_cookie, this works like php's
+     * setcookie method, but prepends the site-wide cookie prefix to
+     * the $name argument before doing anything.
+     */
+    public function add_cookie(string $name, string $value, int $time, string $path): void
+    {
+        $full_name = COOKIE_PREFIX."_".$name;
+        $this->cookies[] = [$full_name, $value, $time, $path];
+    }
+
+    public function get_cookie(string $name): ?string
+    {
+        $full_name = COOKIE_PREFIX."_".$name;
+        if (isset($_COOKIE[$full_name])) {
+            return $_COOKIE[$full_name];
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Get all the HTML headers that are currently set and return as a string.
+     */
+    public function get_all_html_headers(): string
+    {
+        $data = '';
+        ksort($this->html_headers);
+        foreach ($this->html_headers as $line) {
+            $data .= "\t\t" . $line . "\n";
+        }
+        return $data;
+    }
+
+    /**
+     * Removes all currently set HTML headers (Be careful..).
+     */
+    public function delete_all_html_headers(): void
+    {
+        $this->html_headers = [];
+    }
+
+    /**
+     * Add a Block of data to the page.
+     */
+    public function add_block(Block $block)
+    {
+        $this->blocks[] = $block;
+    }
+
+
+    //@}
+    // ==============================================
+
+    /**
+     * Display the page according to the mode and data given.
+     */
+    public function display(): void
+    {
+        global $page, $user;
+
+        header("HTTP/1.0 {$this->code} Shimmie");
+        header("Content-type: ".$this->type);
+        header("X-Powered-By: SCore-".SCORE_VERSION);
+
+        if (!headers_sent()) {
+            foreach ($this->http_headers as $head) {
+                header($head);
+            }
+            foreach ($this->cookies as $c) {
+                setcookie($c[0], $c[1], $c[2], $c[3]);
+            }
+        } else {
+            print "Error: Headers have already been sent to the client.";
+        }
+
+        switch ($this->mode) {
+            case "page":
+                if (CACHE_HTTP) {
+                    header("Vary: Cookie, Accept-Encoding");
+                    if ($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
+                        header("Cache-control: public, max-age=600");
+                        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
+                    } else {
+                        #header("Cache-control: private, max-age=0");
+                        header("Cache-control: no-cache");
+                        header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
+                    }
+                }
+                #else {
+                #	header("Cache-control: no-cache");
+                #	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
+                #}
+                if ($this->get_cookie("flash_message") !== null) {
+                    $this->add_cookie("flash_message", "", -1, "/");
+                }
+                usort($this->blocks, "blockcmp");
+                $this->add_auto_html_headers();
+                $layout = new Layout();
+                $layout->display_page($page);
+                break;
+            case "data":
+                header("Content-Length: ".strlen($this->data));
+                if (!is_null($this->filename)) {
+                    header('Content-Disposition: attachment; filename='.$this->filename);
+                }
+                print $this->data;
+                break;
+            case "redirect":
+                header('Location: '.$this->redirect);
+                print 'You should be redirected to <a href="'.$this->redirect.'">'.$this->redirect.'</a>';
+                break;
+            default:
+                print "Invalid page mode";
+                break;
+        }
+    }
+
+    /**
+     * This function grabs all the CSS and JavaScript files sprinkled throughout Shimmie's folders,
+     * concatenates them together into two large files (one for CSS and one for JS) and then stores
+     * them in the /cache/ directory for serving to the user.
+     *
+     * Why do this? Two reasons:
+     *  1. Reduces the number of files the user's browser needs to download.
+     *  2. Allows these cached files to be compressed/minified by the admin.
+     *
+     * TODO: This should really be configurable somehow...
+     */
+    public function add_auto_html_headers(): void
+    {
+        global $config;
+
+        $data_href = get_base_href();
+        $theme_name = $config->get_string('theme', 'default');
+
+        $this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
+
+        # static handler will map these to themes/foo/static/bar.ico or ext/handle_static/static/bar.ico
+        $this->add_html_header("<link rel='icon' type='image/x-icon' href='$data_href/favicon.ico'>", 41);
+        $this->add_html_header("<link rel='apple-touch-icon' href='$data_href/apple-touch-icon.png'>", 42);
+
+        //We use $config_latest to make sure cache is reset if config is ever updated.
+        $config_latest = 0;
+        foreach (zglob("data/config/*") as $conf) {
+            $config_latest = max($config_latest, filemtime($conf));
+        }
+
+        /*** Generate CSS cache files ***/
+        $css_latest = $config_latest;
+        $css_files = array_merge(
+            zglob("ext/{".ENABLED_EXTS."}/style.css"),
+            zglob("themes/$theme_name/style.css")
+        );
+        foreach ($css_files as $css) {
+            $css_latest = max($css_latest, filemtime($css));
+        }
+        $css_md5 = md5(serialize($css_files));
+        $css_cache_file = data_path("cache/style/{$theme_name}.{$css_latest}.{$css_md5}.css");
+        if (!file_exists($css_cache_file)) {
+            $css_data = "";
+            foreach ($css_files as $file) {
+                $file_data = file_get_contents($file);
+                $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
+                $replace = 'url("../../../'.dirname($file).'/$1")';
+                $file_data = preg_replace($pattern, $replace, $file_data);
+                $css_data .= $file_data . "\n";
+            }
+            file_put_contents($css_cache_file, $css_data);
+        }
+        $this->add_html_header("<link rel='stylesheet' href='$data_href/$css_cache_file' type='text/css'>", 43);
+
+        /*** Generate JS cache files ***/
+        $js_latest = $config_latest;
+        $js_files = array_merge(
+            [
+                "vendor/bower-asset/jquery/dist/jquery.min.js",
+                "vendor/bower-asset/jquery-timeago/jquery.timeago.js",
+                "vendor/bower-asset/tablesorter/jquery.tablesorter.min.js",
+                "vendor/bower-asset/js-cookie/src/js.cookie.js",
+                "ext/handle_static/modernizr-3.3.1.custom.js",
+            ],
+            zglob("ext/{".ENABLED_EXTS."}/script.js"),
+            zglob("themes/$theme_name/script.js")
+        );
+        foreach ($js_files as $js) {
+            $js_latest = max($js_latest, filemtime($js));
+        }
+        $js_md5 = md5(serialize($js_files));
+        $js_cache_file = data_path("cache/script/{$theme_name}.{$js_latest}.{$js_md5}.js");
+        if (!file_exists($js_cache_file)) {
+            $js_data = "";
+            foreach ($js_files as $file) {
+                $js_data .= file_get_contents($file) . "\n";
+            }
+            file_put_contents($js_cache_file, $js_data);
+        }
+        $this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+    }
 }

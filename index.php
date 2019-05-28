@@ -43,18 +43,18 @@
  * Each of these can be imported at the start of a function with eg "global $page, $user;"
  */
 
-if(!file_exists("data/config/shimmie.conf.php")) {
-	require_once "core/_install.php";
-	exit;
+if (!file_exists("data/config/shimmie.conf.php")) {
+    require_once "core/_install.php";
+    exit;
 }
 
-if(file_exists("images") && !file_exists("data/images")) {
-	die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
+if (file_exists("images") && !file_exists("data/images")) {
+    die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
 }
 
-if(!file_exists("vendor/")) {
-	//CHECK: Should we just point to install.php instead? Seems unsafe though.
-	print <<<EOD
+if (!file_exists("vendor/")) {
+    //CHECK: Should we just point to install.php instead? Seems unsafe though.
+    print <<<EOD
 <!DOCTYPE html>
 <html>
 	<head>
@@ -79,33 +79,34 @@ if(!file_exists("vendor/")) {
 	</body>
 </html>
 EOD;
-	http_response_code(500);
-	exit;
+    http_response_code(500);
+    exit;
 }
 
 try {
-	require_once "core/_bootstrap.php";
-	$_shm_ctx->log_start(@$_SERVER["REQUEST_URI"], true, true);
+    require_once "core/_bootstrap.php";
+    $_shm_ctx->log_start(@$_SERVER["REQUEST_URI"], true, true);
 
-	// start the page generation waterfall
-	$user = _get_user();
-	if(PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
-		send_event(new CommandEvent($argv));
-	}
-	else {
-		send_event(new PageRequestEvent(_get_query()));
-		$page->display();
-	}
+    // start the page generation waterfall
+    $user = _get_user();
+    if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+        send_event(new CommandEvent($argv));
+    } else {
+        send_event(new PageRequestEvent(_get_query()));
+        $page->display();
+    }
 
-	// saving cache data and profiling data to disk can happen later
-	if(function_exists("fastcgi_finish_request")) fastcgi_finish_request();
-	$database->commit();
-	$_shm_ctx->log_endok();
-}
-catch(Exception $e) {
-	if($database) $database->rollback();
-	_fatal_error($e);
-	$_shm_ctx->log_ender();
+    // saving cache data and profiling data to disk can happen later
+    if (function_exists("fastcgi_finish_request")) {
+        fastcgi_finish_request();
+    }
+    $database->commit();
+    $_shm_ctx->log_endok();
+} catch (Exception $e) {
+    if ($database) {
+        $database->rollback();
+    }
+    _fatal_error($e);
+    $_shm_ctx->log_ender();
 }
 log_slow();
-

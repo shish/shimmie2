@@ -13,42 +13,45 @@
  *  since been increased.
  */
 
-class RegenThumb extends Extension {
-	public function onPageRequest(PageRequestEvent $event) {
-		global $database, $page, $user;
+class RegenThumb extends Extension
+{
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $database, $page, $user;
 
-		if($event->page_matches("regen_thumb/one") && $user->can("delete_image") && isset($_POST['image_id'])) {
-			$image = Image::by_id(int_escape($_POST['image_id']));
-			send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
-			$database->cache->delete("thumb-block:{$image->id}");
-			$this->theme->display_results($page, $image);
-		}
-		if($event->page_matches("regen_thumb/mass") && $user->can("delete_image") && isset($_POST['tags'])) {
-			$tags = Tag::explode(strtolower($_POST['tags']), false);
-			$images = Image::find_images(0, 10000, $tags);
+        if ($event->page_matches("regen_thumb/one") && $user->can("delete_image") && isset($_POST['image_id'])) {
+            $image = Image::by_id(int_escape($_POST['image_id']));
+            send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+            $database->cache->delete("thumb-block:{$image->id}");
+            $this->theme->display_results($page, $image);
+        }
+        if ($event->page_matches("regen_thumb/mass") && $user->can("delete_image") && isset($_POST['tags'])) {
+            $tags = Tag::explode(strtolower($_POST['tags']), false);
+            $images = Image::find_images(0, 10000, $tags);
 
-			foreach($images as $image) {
-				send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
-				$database->cache->delete("thumb-block:{$image->id}");
-			}
+            foreach ($images as $image) {
+                send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+                $database->cache->delete("thumb-block:{$image->id}");
+            }
 
-			$page->set_mode("redirect");
-			$page->set_redirect(make_link("post/list"));
-		}
-	}
+            $page->set_mode("redirect");
+            $page->set_redirect(make_link("post/list"));
+        }
+    }
 
-	public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event) {
-		global $user;
-		if($user->can("delete_image")) {
-			$event->add_part($this->theme->get_buttons_html($event->image->id));
-		}
-	}
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can("delete_image")) {
+            $event->add_part($this->theme->get_buttons_html($event->image->id));
+        }
+    }
 
-	public function onPostListBuilding(PostListBuildingEvent $event) {
-		global $user;
-		if($user->can("delete_image") && !empty($event->search_terms)) {
-			$event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
-		}
-	}
+    public function onPostListBuilding(PostListBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can("delete_image") && !empty($event->search_terms)) {
+            $event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
+        }
+    }
 }
-

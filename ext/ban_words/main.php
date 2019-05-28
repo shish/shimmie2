@@ -20,10 +20,12 @@
  *  from Essex"
  */
 
-class BanWords extends Extension {
-	public function onInitExt(InitExtEvent $event) {
-		global $config;
-		$config->set_default_string('banned_words', "
+class BanWords extends Extension
+{
+    public function onInitExt(InitExtEvent $event)
+    {
+        global $config;
+        $config->set_default_string('banned_words', "
 a href=
 anal
 blowjob
@@ -51,80 +53,87 @@ very nice site
 viagra
 xanax
 ");
-	}
+    }
 
-	public function onCommentPosting(CommentPostingEvent $event) {
-		global $user;
-		if(!$user->can("bypass_comment_checks")) {
-			$this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
-		}
-	}
+    public function onCommentPosting(CommentPostingEvent $event)
+    {
+        global $user;
+        if (!$user->can("bypass_comment_checks")) {
+            $this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
+        }
+    }
 
-	public function onSourceSet(SourceSetEvent $event) {
-		$this->test_text($event->source, new SCoreException("Source contains banned terms"));
-	}
+    public function onSourceSet(SourceSetEvent $event)
+    {
+        $this->test_text($event->source, new SCoreException("Source contains banned terms"));
+    }
 
-	public function onTagSet(TagSetEvent $event) {
-		$this->test_text(Tag::implode($event->tags), new SCoreException("Tags contain banned terms"));
-	}
+    public function onTagSet(TagSetEvent $event)
+    {
+        $this->test_text(Tag::implode($event->tags), new SCoreException("Tags contain banned terms"));
+    }
 
-	public function onSetupBuilding(SetupBuildingEvent $event) {
-		$sb = new SetupBlock("Banned Phrases");
-		$sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
-		$sb->add_longtext_option("banned_words");
-		$failed = array();
-		foreach($this->get_words() as $word) {
-			if($word[0] == '/') {
-				if(preg_match($word, "") === false) {
-					$failed[] = $word;
-				}
-			}
-		}
-		if($failed) {
-			$sb->add_label("Failed regexes: ".join(", ", $failed));
-		}
-		$event->panel->add_block($sb);
-	}
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $sb = new SetupBlock("Banned Phrases");
+        $sb->add_label("One per line, lines that start with slashes are treated as regex<br/>");
+        $sb->add_longtext_option("banned_words");
+        $failed = [];
+        foreach ($this->get_words() as $word) {
+            if ($word[0] == '/') {
+                if (preg_match($word, "") === false) {
+                    $failed[] = $word;
+                }
+            }
+        }
+        if ($failed) {
+            $sb->add_label("Failed regexes: ".join(", ", $failed));
+        }
+        $event->panel->add_block($sb);
+    }
 
-	/**
-	 * Throws if the comment contains banned words.
-	 */
-	private function test_text(string $comment, Exception $ex): void {
-		$comment = strtolower($comment);
+    /**
+     * Throws if the comment contains banned words.
+     */
+    private function test_text(string $comment, Exception $ex): void
+    {
+        $comment = strtolower($comment);
 
-		foreach($this->get_words() as $word) {
-			if($word[0] == '/') {
-				// lines that start with slash are regex
-				if(preg_match($word, $comment) === 1) {
-					throw $ex;
-				}
-			}
-			else {
-				// other words are literal
-				if(strpos($comment, $word) !== false) {
-					throw $ex;
-				}
-			}
-		}
-	}
+        foreach ($this->get_words() as $word) {
+            if ($word[0] == '/') {
+                // lines that start with slash are regex
+                if (preg_match($word, $comment) === 1) {
+                    throw $ex;
+                }
+            } else {
+                // other words are literal
+                if (strpos($comment, $word) !== false) {
+                    throw $ex;
+                }
+            }
+        }
+    }
 
-	private function get_words(): array {
-		global $config;
-		$words = array();
+    private function get_words(): array
+    {
+        global $config;
+        $words = [];
 
-		$banned = $config->get_string("banned_words");
-		foreach(explode("\n", $banned) as $word) {
-			$word = trim(strtolower($word));
-			if(strlen($word) == 0) {
-				// line is blank
-				continue;
-			}
-			$words[] = $word;
-		}
+        $banned = $config->get_string("banned_words");
+        foreach (explode("\n", $banned) as $word) {
+            $word = trim(strtolower($word));
+            if (strlen($word) == 0) {
+                // line is blank
+                continue;
+            }
+            $words[] = $word;
+        }
 
-		return $words;
-	}
+        return $words;
+    }
 
-	public function get_priority(): int {return 30;}
+    public function get_priority(): int
+    {
+        return 30;
+    }
 }
-

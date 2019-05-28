@@ -1,27 +1,35 @@
 <?php
 
-class DowntimeTheme extends Themelet {
-	/**
-	 * Show the admin that downtime mode is enabled
-	 */
-	public function display_notification(Page $page) {
-		$page->add_block(new Block("Downtime",
-			"<span style='font-size: 1.5em'><b><center>DOWNTIME MODE IS ON!</center></b></span>", "left", 0));
-	}
+class DowntimeTheme extends Themelet
+{
+    /**
+     * Show the admin that downtime mode is enabled
+     */
+    public function display_notification(Page $page)
+    {
+        $page->add_block(new Block(
+            "Downtime",
+            "<span style='font-size: 1.5em'><b><center>DOWNTIME MODE IS ON!</center></b></span>",
+            "left",
+            0
+        ));
+    }
 
-	/**
-	 * Display $message and exit
-	 */
-	public function display_message(string $message) {
-		global $config, $user, $page;
-		$theme_name = $config->get_string('theme');
-		$data_href = get_base_href();
-		$login_link = make_link("user_admin/login");
-		$auth = $user->get_auth_html();
+    /**
+     * Display $message and exit
+     */
+    public function display_message(string $message)
+    {
+        global $config, $user, $page;
+        $theme_name = $config->get_string('theme');
+        $data_href = get_base_href();
+        $login_link = make_link("user_admin/login");
+        $auth = $user->get_auth_html();
 
-		$page->set_mode('data');
-		$page->set_code(503);
-		$page->set_data(<<<EOD
+        $page->set_mode('data');
+        $page->set_code(503);
+        $page->set_data(
+            <<<EOD
 <html>
 	<head>
 		<title>Downtime</title>
@@ -59,5 +67,5 @@ class DowntimeTheme extends Themelet {
 </html>
 EOD
 );
-	}
+    }
 }

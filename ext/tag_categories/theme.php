@@ -1,10 +1,12 @@
 <?php
 
-class TagCategoriesTheme extends Themelet {
-	private $heading = "";
-	private $list = "";
+class TagCategoriesTheme extends Themelet
+{
+    private $heading = "";
+    private $list = "";
 
-    public function show_tag_categories($page, $tc_dict) {
+    public function show_tag_categories($page, $tc_dict)
+    {
         $tc_block_index = 0;
         $html = '';
 

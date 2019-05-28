@@ -4,6 +4,7 @@ images
 thumbs
 *.phar
 *.sqlite
+.php_cs.cache
 
 #Composer
 composer.phar
