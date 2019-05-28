@@ -165,17 +165,17 @@ abstract class BaseConfig implements Config
         }
     }
 
-    public function get_int(string $name, $default=null): ?int
+    public function get_int(string $name, ?int $default=null): ?int
     {
         return (int)($this->get($name, $default));
     }
 
-    public function get_string(string $name, $default=null): ?string
+    public function get_string(string $name, ?string $default=null): ?string
     {
         return $this->get($name, $default);
     }
 
-    public function get_bool(string $name, $default=null): ?bool
+    public function get_bool(string $name, ?bool $default=null): ?bool
     {
         return bool_escape($this->get($name, $default));
     }
