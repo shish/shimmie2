@@ -425,7 +425,7 @@ function int_escape(?string $input): int
 /**
  * Make sure some data is safe to be used in URL context
  */
-function url_escape(string $input): string
+function url_escape(?string $input): string
 {
     /*
         Shish: I have a feeling that these three lines are important, possibly for searching for tags with slashes in them like fate/stay_night
