@@ -18,8 +18,7 @@ function dstat($name, $val) {
 class StatsDInterface extends Extension {
 	public static $stats = array();
 
-	/** @param string $type */
-	private function _stats($type) {
+	private function _stats(string $type) {
 		global $_shm_event_count, $database, $_shm_load_start;
 		$time = microtime(true) - $_shm_load_start;
 		StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
@@ -81,16 +80,9 @@ class StatsDInterface extends Extension {
 		StatsDInterface::$stats["shimmie_events.info-sets"] = "1|c";
 	}
 
-	/**
-	 * @return int
-	 */
 	public function get_priority(): int {return 99;}
 
-	/**
-	 * @param array $data
-	 * @param int $sampleRate
-	 */
-    private function send($data, $sampleRate=1) {
+    private function send(array $data, int $sampleRate=1) {
         if (!STATSD_HOST) { return; }
 
         // sampling

@@ -12,11 +12,7 @@
  *   extensions and read their documentation
  */
 
-/**
- * @private
- * @return int
- */
-function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b) {
+function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int {
 	return strcmp($a->name, $b->name);
 }
 
@@ -83,11 +79,7 @@ class ExtensionInfo {
 		}
 	}
 
-	/**
-	 * @param string $fname
-	 * @return bool|null
-	 */
-	private function is_enabled(string $fname) {
+	private function is_enabled(string $fname): ?bool {
 		$core = explode(",", CORE_EXTS);
 		$extra = explode(",", EXTRA_EXTS);
 
@@ -105,7 +97,7 @@ class ExtManager extends Extension {
 				if($event->get_arg(0) == "set" && $user->check_auth_token()) {
 					if(is_writable("data/config")) {
 						$this->set_things($_POST);
-						log_warning("ext_manager", "Active extensions changed", true);
+						log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("ext_manager"));
 					}
@@ -157,10 +149,9 @@ class ExtManager extends Extension {
 	}
 
 	/**
-	 * @param bool $all
-	 * @return ExtensionInfo[]
+	 * #return ExtensionInfo[]
 	 */
-	private function get_extensions(bool $all) {
+	private function get_extensions(bool $all): array {
 		$extensions = array();
 		if($all) {
 			$exts = zglob("ext/*/main.php");
@@ -193,9 +184,9 @@ class ExtManager extends Extension {
 	}
 
     /**
-     * @param string[] $extras
+     * #param string[] $extras
      */
-	private function write_config($extras) {
+	private function write_config(array $extras) {
 		file_put_contents(
 			"data/config/extensions.conf.php",
 			'<'.'?php'."\n".

@@ -63,21 +63,12 @@ class SVGFileHandler extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	private function supported_ext($ext) {
+	private function supported_ext(string $ext): bool {
 		$exts = array("svg");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	/**
-	 * @param string $filename
-	 * @param mixed[] $metadata
-	 * @return Image
-	 */
-	private function create_image_from_data($filename, $metadata) {
+	private function create_image_from_data(string $filename, array $metadata): Image {
 		$image = new Image();
 
 		$msp = new MiniSVGParser($filename);
@@ -94,11 +85,7 @@ class SVGFileHandler extends Extension {
 		return $image;
 	}
 
-	/**
-	 * @param string $file
-	 * @return bool
-	 */
-	private function check_contents($file) {
+	private function check_contents(string $file): bool {
 		if(!file_exists($file)) return false;
 
 		$msp = new MiniSVGParser($file);
@@ -117,8 +104,7 @@ class MiniSVGParser {
 	/** @var int */
 	private $xml_depth=0;
 
-	/** @param string $file */
-	function __construct($file) {
+	function __construct(string $file) {
 		$xml_parser = xml_parser_create();
 		xml_set_element_handler($xml_parser, array($this, "startElement"), array($this, "endElement"));
 		$this->valid = bool_escape(xml_parse($xml_parser, file_get_contents($file), true));

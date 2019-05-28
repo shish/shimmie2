@@ -3,11 +3,8 @@
 class RotateImageTheme extends Themelet {
 	/**
 	 * Display a link to rotate an image.
-	 *
-	 * @param int $image_id
-	 * @return string
 	 */
-	public function get_rotate_html(int $image_id) {
+	public function get_rotate_html(int $image_id): string {
 		$html = "
 			".make_form(make_link('rotate/'.$image_id), 'POST')."
 				<input type='hidden' name='image_id' value='$image_id'>
@@ -21,10 +18,6 @@ class RotateImageTheme extends Themelet {
 
 	/**
 	 * Display the error.
-	 *
-	 * @param Page $page
-	 * @param string $title
-	 * @param string $message
 	 */
 	public function display_rotate_error(Page $page, string $title, string $message) {
 		$page->set_title("Rotate Image");

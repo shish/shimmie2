@@ -4,17 +4,16 @@ class RandomListTheme extends Themelet {
 	protected $search_terms;
 
 	/**
-	 * @param string[] $search_terms
+	 * #param string[] $search_terms
 	 */
-	public function set_page($search_terms) {
+	public function set_page(array $search_terms) {
 		$this->search_terms = $search_terms;
 	}
 
 	/**
-	 * @param Page $page
-	 * @param Image[] $images
+	 * #param Image[] $images
 	 */
-	public function display_page(Page $page, $images) {
+	public function display_page(Page $page, array $images) {
 		$page->title = "Random Images";
 
 		$html = "<b>Refresh the page to view more images</b>";

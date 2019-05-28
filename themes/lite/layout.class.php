@@ -8,12 +8,6 @@
 * 	       some other sites, packaged in a light blue color.
 */
 class Layout {
-
-	/**
-	 * turns the Page into HTML.
-	 *
-	 * @param Page $page
-	 */
 	public function display_page(Page $page) {
 		global $config, $user;
 
@@ -204,16 +198,7 @@ class Layout {
 EOD;
 	} /* end of function display_page() */
 
-
-	/**
-	 * A handy function which does exactly what it says in the method name.
-	 *
-	 * @param Block $block
-	 * @param bool $hidable
-	 * @param string $salt
-	 * @return string
-	 */
-	public function block_to_html(Block $block, $hidable=false, $salt="") {
+	public function block_to_html(Block $block, bool $hidable=false, string $salt=""): string {
 		$h = $block->header;
 		$b = $block->body;
 		$i = str_replace(' ', '_', $h) . $salt;
@@ -240,12 +225,9 @@ EOD;
 	}
 
 	/**
-	 * @param string $link
-	 * @param string $desc
-	 * @param string[] $pages_matched
-	 * @return null|string
+	 * #param string[] $pages_matched
 	 */
-	public function navlinks($link, $desc, $pages_matched) {
+	public function navlinks(string $link, string $desc, array $pages_matched): ?string {
 		/**
 		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 		 */

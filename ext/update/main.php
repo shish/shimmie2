@@ -46,10 +46,7 @@ class Update extends Extension {
 		}
 	}
 
-	/**
-	 * @return bool
-	 */
-	private function download_shimmie() {
+	private function download_shimmie(): bool {
 		global $config;
 
 		$commitSHA = $_GET['sha'];
@@ -73,10 +70,7 @@ class Update extends Extension {
 		return false;
 	}
 
-	/**
-	 * @return bool
-	 */
-	private function update_shimmie() {
+	private function update_shimmie(): bool {
 		global $config;
 
 		$commitSHA = $_GET['sha'];

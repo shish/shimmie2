@@ -57,11 +57,7 @@ function _set_event_listeners() {
 	}
 }
 
-/**
- * @param array $event_listeners
- * @param string $path
- */
-function _dump_event_listeners($event_listeners, $path) {
+function _dump_event_listeners(array $event_listeners, string $path): void {
 	$p = "<"."?php\n";
 
 	foreach(get_declared_classes() as $class) {
@@ -86,10 +82,6 @@ function _dump_event_listeners($event_listeners, $path) {
 	file_put_contents($path, $p);
 }
 
-/**
- * @param string $ext_name Main class name (eg ImageIO as opposed to ImageIOTheme or ImageIOTest)
- * @return bool
- */
 function ext_is_live(string $ext_name): bool {
 	if (class_exists($ext_name)) {
 		/** @var Extension $ext */
@@ -106,10 +98,8 @@ $_shm_event_count = 0;
 
 /**
  * Send an event to all registered Extensions.
- *
- * @param Event $event
  */
-function send_event(Event $event) {
+function send_event(Event $event): void {
 	global $_shm_event_listeners, $_shm_event_count, $_shm_ctx;
 	if(!isset($_shm_event_listeners[get_class($event)])) return;
 	$method_name = "on".str_replace("Event", "", get_class($event));

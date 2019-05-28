@@ -1,11 +1,6 @@
 <?php
 class ArtistsTheme extends Themelet {
-
-	/**
-	 * @param string $author
-	 * @return string
-	 */
-	public function get_author_editor_html(string $author) {
+	public function get_author_editor_html(string $author): string {
 		$h_author = html_escape($author);
 		return "
 			<tr>
@@ -18,12 +13,7 @@ class ArtistsTheme extends Themelet {
 		";
 	}
 
-	/**
-	 * @param string $mode
-	 * @param null|int $artistID
-	 * @param bool $is_admin
-	 */
-	public function sidebar_options(string $mode, $artistID=NULL, $is_admin=FALSE) {
+	public function sidebar_options(string $mode, ?int $artistID=NULL, $is_admin=FALSE): bool {
 		global $page, $user;
 
 		$html = "";
@@ -387,13 +377,7 @@ class ArtistsTheme extends Themelet {
 		$page->add_block(new Block("Artist Images", $artist_images, "main", 20));
 	}
 
-	/**
-	 * @param $aliases
-	 * @param $userIsLogged
-	 * @param $userIsAdmin
-	 * @return string
-	 */
-	private function render_aliases($aliases, $userIsLogged, $userIsAdmin) {
+	private function render_aliases(array $aliases, bool $userIsLogged, bool $userIsAdmin): string {
 		$html = "";
 		if(count($aliases) > 0) {
 			$aliasViewLink = str_replace("_", " ", $aliases[0]['alias_name']); // no link anymore
@@ -433,13 +417,7 @@ class ArtistsTheme extends Themelet {
 		return $html;
 	}
 
-	/**
-	 * @param $members
-	 * @param $userIsLogged
-	 * @param $userIsAdmin
-	 * @return string
-	 */
-	private function render_members($members, $userIsLogged, $userIsAdmin) {
+	private function render_members(array $members, bool $userIsLogged, bool $userIsAdmin): string {
 		$html = "";
 		if(count($members) > 0) {
 			$memberViewLink = str_replace("_", " ", $members[0]['name']); // no link anymore
@@ -477,13 +455,7 @@ class ArtistsTheme extends Themelet {
 		return $html;
 	}
 
-	/**
-	 * @param $urls
-	 * @param $userIsLogged
-	 * @param $userIsAdmin
-	 * @return string
-	 */
-	private function render_urls($urls, $userIsLogged, $userIsAdmin) {
+	private function render_urls(array $urls, bool $userIsLogged, bool $userIsAdmin): string {
 		$html = "";
 		if(count($urls) > 0) {
 			$urlViewLink = "<a href='" . str_replace("_", " ", $urls[0]['url']) . "' target='_blank'>" . str_replace("_", " ", $urls[0]['url']) . "</a>";

@@ -49,9 +49,6 @@ class VideoFileHandler extends DataHandlerExtension {
 
 	/**
 	 * Generate the Thumbnail image for particular file.
-	 *
-	 * @param string $hash
-	 * @return bool Returns true on successful thumbnail creation.
 	 */
 	protected function create_thumb(string $hash): bool {
 		global $config;
@@ -114,21 +111,12 @@ class VideoFileHandler extends DataHandlerExtension {
 		return $size;
 	}
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
 	protected function supported_ext(string $ext): bool {
 		$exts = array("flv", "mp4", "m4v", "ogv", "webm");
 		return in_array(strtolower($ext), $exts);
 	}
 
-	/**
-	 * @param string $filename
-	 * @param mixed[] $metadata
-	 * @return Image
-	 */
-	protected function create_image_from_data(string $filename, array $metadata) {
+	protected function create_image_from_data(string $filename, array $metadata): Image {
 		$image = new Image();
 
 		//NOTE: No need to set width/height as we don't use it.
@@ -163,10 +151,6 @@ class VideoFileHandler extends DataHandlerExtension {
 		return $image;
 	}
 
-	/**
-	 * @param string $tmpname
-	 * @return bool
-	 */
 	protected function check_contents(string $tmpname): bool {
 		$success = FALSE;
 		if (file_exists($tmpname)) {

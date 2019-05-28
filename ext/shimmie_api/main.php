@@ -110,10 +110,9 @@ class ShimmieApi extends Extension {
 	}
 
 	/**
-	 * @param string $arg
-	 * @return string[]
+	 * #return string[]
 	 */
-	private function api_get_tags($arg) {
+	private function api_get_tags(string $arg): array {
 		global $database;
 		if (!empty($arg)) {
 			$all = $database->get_all("SELECT tag FROM tags WHERE tag LIKE ?", array($arg . "%"));

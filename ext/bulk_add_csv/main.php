@@ -54,16 +54,8 @@ class BulkAddCSV extends Extension {
 
 	/**
 	 * Generate the necessary DataUploadEvent for a given image and tags.
-	 *
-	 * @param string $tmpname
-	 * @param string $filename
-	 * @param string $tags
-	 * @param string $source
-	 * @param string $rating
-	 * @param string $thumbfile
-	 * @throws UploadException
 	 */
-	private function add_image($tmpname, $filename, $tags, $source, $rating, $thumbfile) {
+	private function add_image(string $tmpname, string $filename, string $tags, string $source, string $rating, string $thumbfile) {
 		assert(file_exists($tmpname));
 
 		$pathinfo = pathinfo($filename);

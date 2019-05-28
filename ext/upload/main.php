@@ -24,8 +24,7 @@ class DataUploadEvent extends Event {
 	/**
 	 * Some data is being uploaded.
 	 * This should be caught by a file handler.
-	 * @param string $tmpname The temporary file used for upload.
-	 * @param array $metadata Info about the file, should contain at least "filename", "extension", "tags" and "source".
+	 * $metadata should contain at least "filename", "extension", "tags" and "source".
 	 */
 	public function __construct(string $tmpname, array $metadata) {
 		assert(file_exists($tmpname));
@@ -59,7 +58,6 @@ class Upload extends Extension {
 
 	/**
 	 * Early, so it can stop the DataUploadEvent before any data handlers see it.
-	 * @return int
 	 */
 	public function get_priority(): int {return 40;}
 
@@ -234,11 +232,7 @@ class Upload extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $id
-	 * @return string[]
-	 */
-	private function tags_for_upload_slot($id) {
+	private function tags_for_upload_slot(int $id): array {
 		$post_tags = isset($_POST["tags"]) ? $_POST["tags"] : "";
 
 		if(isset($_POST["tags$id"])) {
@@ -261,11 +255,8 @@ class Upload extends Extension {
 	 * which is licensed under Creative Commons Attribution 3.0 License
 	 *
 	 * TODO: Make these messages user/admin editable
-	 *
-	 * @param int $error_code PHP error code
-	 * @return string
 	 */
-	private function upload_error_message($error_code) {
+	private function upload_error_message(int $error_code): string {
 		switch ($error_code) {
 			case UPLOAD_ERR_INI_SIZE:
 				return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
@@ -288,13 +279,10 @@ class Upload extends Extension {
 
 	/**
 	 * Handle an upload.
-	 * @param string[] $file
-	 * @param string[] $tags
-	 * @param string|null $source
-	 * @param int $replace
-	 * @return bool TRUE on upload successful.
+	 * #param string[] $file
+	 * #param string[] $tags
 	 */
-	private function try_upload(array $file, array $tags, string $source=null, int $replace=-1): bool {
+	private function try_upload(array $file, array $tags, ?string $source=null, int $replace=-1): bool {
 		global $page;
 
 		if(empty($source)) $source = null;

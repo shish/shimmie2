@@ -94,7 +94,7 @@ class ReportImage extends Extension {
 
 	public function onAddReportedImage(AddReportedImageEvent $event) {
 		global $database;
-		log_info("report_image", "Adding report of Image #{$event->report->image_id} with reason '{$event->report->reason}'", false, array("image_id" => $event->report->image_id));
+		log_info("report_image", "Adding report of Image #{$event->report->image_id} with reason '{$event->report->reason}'", null, array("image_id" => $event->report->image_id));
 		$database->Execute(
 				"INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",
@@ -156,10 +156,7 @@ class ReportImage extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	/**
-	 * @param int $user_id
-	 */
-	public function delete_reports_by($user_id) {
+	public function delete_reports_by(int $user_id) {
 		global $database;
 		$database->execute("DELETE FROM image_reports WHERE reporter_id=?", array($user_id));
 		$database->cache->delete("image-report-count");
@@ -182,10 +179,9 @@ class ReportImage extends Extension {
 	}
 
 	/**
-	 * @param Image $image
-	 * @return ImageReport[]
+	 * #return ImageReport[]
 	 */
-	public function get_reports(Image $image) {
+	public function get_reports(Image $image): array {
 		global $database;
 
 		$rows = $database->get_all("
@@ -200,10 +196,7 @@ class ReportImage extends Extension {
 		return $reps;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function get_reported_images() {
+	public function get_reported_images(): array {
 		global $database;
 
 		$all_reports = $database->get_all("
@@ -228,10 +221,7 @@ class ReportImage extends Extension {
 		return $reports;
 	}
 
-	/**
-	 * @return int
-	 */
-	public function count_reported_images() {
+	public function count_reported_images(): int {
 		global $database;
 
 		$count = $database->cache->get("image-report-count");

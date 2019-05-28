@@ -221,11 +221,8 @@ EOD;
 
   /**
    * Get the HTML for this block. from core
-   *
-   * @param bool $hidable
-   * @return string
    */
-  public function get_html(Block $block, $section="main", $hidable=false, $extra_class="") {
+  public function get_html(Block $block, string $section="main", bool $hidable=false, string $extra_class=""): string {
     $h = $block->header;
     $b = $block->body;
     $i = $block->id;//blotter extention id has `!`

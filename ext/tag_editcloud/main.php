@@ -54,11 +54,7 @@ class TagEditCloud extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	/**
-	 * @param Image $image
-	 * @return string
-	 */
-	private function build_tag_map(Image $image) {
+	private function build_tag_map(Image $image): string {
 		global $database, $config;
 
 		$html = "";
@@ -172,11 +168,7 @@ class TagEditCloud extends Extension {
 		return "<div id='tageditcloud' class='tageditcloud'>{$html}</div>"; // FIXME: stupidasallhell
 	}
 
-	/**
-	 * @param Image $image
-	 * @return bool
-	 */
-	private function can_tag(Image $image) {
+	private function can_tag(Image $image): bool {
 		global $user;
 		return ($user->can("edit_image_tag") && (!$image->is_locked() || $user->can("edit_image_lock")));
 	}

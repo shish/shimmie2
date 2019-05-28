@@ -1,21 +1,11 @@
 <?php
 
 class FeaturedTheme extends Themelet {
-	/**
-	 * Show $text on the $page.
-	 *
-	 * @param Page $page
-	 * @param Image $image
-	 */
-	public function display_featured(Page $page, Image $image) {
+	public function display_featured(Page $page, Image $image): void {
 		$page->add_block(new Block("Featured Image", $this->build_featured_html($image), "left", 3));
 	}
 
-	/**
-	 * @param int $image_id
-	 * @return string
-	 */
-	public function get_buttons_html(int $image_id) {
+	public function get_buttons_html(int $image_id): string {
 		global $user;
 		return "
 			".make_form(make_link("featured_image/set"))."
@@ -26,12 +16,7 @@ class FeaturedTheme extends Themelet {
 		";
 	}
 
-	/**
-	 * @param Image $image
-	 * @param null|string $query
-	 * @return string
-	 */
-	public function build_featured_html(Image $image, $query=null) {
+	public function build_featured_html(Image $image, ?string $query=null): string {
 		$i_id = int_escape($image->id);
 		$h_view_link = make_link("post/view/$i_id", $query);
 		$h_thumb_link = $image->get_thumb_link();

@@ -3,7 +3,7 @@
 class PoolsTheme extends Themelet {
 	/**
 	 * Adds a block to the panel with information on the pool(s) the image is in.
-	 * @param array Multidimensional array containing pool id, info & nav IDs.
+	 * $navIDs = Multidimensional array containing pool id, info & nav IDs.
 	 */
 	public function pool_info(array $navIDs) {
 		global $page;
@@ -32,12 +32,7 @@ class PoolsTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @param Image $image
-	 * @param array $pools
-	 * @return string
-	 */
-	public function get_adder_html(Image $image, array $pools) {
+	public function get_adder_html(Image $image, array $pools): string {
 		$h = "";
 		foreach($pools as $pool) {
 			$h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
@@ -55,11 +50,6 @@ class PoolsTheme extends Themelet {
 
 	/**
 	 * HERE WE SHOWS THE LIST OF POOLS.
-	 *
-	 * @param Page $page
-	 * @param array $pools
-	 * @param int $pageNumber
-	 * @param int $totalPages
 	 */
 	public function list_pools(Page $page, array $pools, int $pageNumber, int $totalPages) {
 		$html = '
@@ -156,11 +146,6 @@ class PoolsTheme extends Themelet {
 
 	/**
 	 * HERE WE DISPLAY THE POOL WITH TITLE DESCRIPTION AND IMAGES WITH PAGINATION.
-	 *
-	 * @param array $pools
-	 * @param array $images
-	 * @param int $pageNumber
-	 * @param int $totalPages
 	 */
 	public function view_pool(array $pools, array $images, int $pageNumber, int $totalPages) {
 		global $page;
@@ -180,12 +165,8 @@ class PoolsTheme extends Themelet {
 
 	/**
 	 * HERE WE DISPLAY THE POOL OPTIONS ON SIDEBAR BUT WE HIDE REMOVE OPTION IF THE USER IS NOT THE OWNER OR ADMIN.
-	 *
-	 * @param Page $page
-	 * @param array $pool
-	 * @param bool $check_all
 	 */
-	public function sidebar_options(Page $page, $pool, bool $check_all) {
+	public function sidebar_options(Page $page, array $pool, bool $check_all) {
 		global $user;
 
 		$editor = "\n".make_form( make_link('pool/import') ).'
@@ -243,10 +224,6 @@ class PoolsTheme extends Themelet {
 
 	/**
 	 * HERE WE DISPLAY THE RESULT OF THE SEARCH ON IMPORT.
-	 *
-	 * @param Page $page
-	 * @param array $images
-	 * @param array $pool
 	 */
 	public function pool_result(Page $page, array $images, array $pool) {
 
@@ -283,10 +260,6 @@ class PoolsTheme extends Themelet {
 	/**
 	 * HERE WE DISPLAY THE POOL ORDERER.
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH A TEXT INPUT TO SET A NUMBER AND CHANGE THE ORDER
-	 *
-	 * @param Page $page
-	 * @param array $pools
-	 * @param array $images
 	 */
 	public function edit_order(Page $page, array $pools, array $images) {
 		$this->display_top($pools, "Sorting Pool");
@@ -316,10 +289,6 @@ class PoolsTheme extends Themelet {
 	 *
 	 * WE LIST ALL IMAGES ON POOL WITHOUT PAGINATION AND WITH
 	 * A CHECKBOX TO SELECT WHICH IMAGE WE WANT TO REMOVE
-	 *
-	 * @param Page $page
-	 * @param array $pools
-	 * @param array $images
 	 */
 	public function edit_pool(Page $page, array $pools, array $images) {
 		/* EDIT POOL DESCRIPTION */
@@ -358,12 +327,8 @@ class PoolsTheme extends Themelet {
 
 	/**
 	 * HERE WE DISPLAY THE HISTORY LIST.
-	 *
-	 * @param array $histories
-	 * @param int $pageNumber
-	 * @param int $totalPages
 	 */
-	public function show_history($histories, int $pageNumber, int $totalPages) {
+	public function show_history(array $histories, int $pageNumber, int $totalPages) {
 		global $page;
 		$html = '
 			<table id="poolsList" class="zebra">

@@ -190,10 +190,6 @@ class _SafeOuroborosImage
      */
     public $sample_width = null;
 
-    /**
-     * Constructor
-     * @param Image $img
-     */
     public function __construct(Image $img)
     {
         global $config;
@@ -270,10 +266,8 @@ class OuroborosPost extends _SafeOuroborosImage
     /**
      * Initialize an OuroborosPost for creation
      * Mainly just acts as a wrapper and validation layer
-     * @param   array   $post
-     * @param   string  $md5
      */
-    public function __construct(array $post, $md5 = '')
+    public function __construct(array $post, string $md5 = '')
     {
         if (array_key_exists('tags', $post)) {
             // implode(explode()) to resolve aliases and sanitise
@@ -485,10 +479,8 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for post creation
-     * @param OuroborosPost $post
-     * @param string $md5
      */
-    protected function postCreate(OuroborosPost $post, $md5 = '')
+    protected function postCreate(OuroborosPost $post, string $md5 = '')
     {
         global $config;
         $handler = $config->get_string("upload_collision_handler");
@@ -575,9 +567,8 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a single post
-     * @param int $id
      */
-    protected function postShow($id = null)
+    protected function postShow(int $id = null)
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id($id));
@@ -589,11 +580,9 @@ class OuroborosAPI extends Extension
 
     /**
      * Wrapper for getting a list of posts
-     * @param int $limit
-     * @param int $page
-     * @param string[] $tags
+     * #param string[] $tags
      */
-    protected function postIndex($limit, $page, $tags)
+    protected function postIndex(int $limit, int $page, array $tags)
     {
         $start = ($page - 1) * $limit;
         $results = Image::find_images(max($start, 0), min($limit, 100), $tags);
@@ -611,17 +600,7 @@ class OuroborosAPI extends Extension
      * Tag
      */
 
-    /**
-     * Wrapper for getting a list of tags
-     * @param int $limit
-     * @param int $page
-     * @param string $order
-     * @param int $id
-     * @param int $after_id
-     * @param string $name
-     * @param string $name_pattern
-     */
-    protected function tagIndex($limit, $page, $order, $id, $after_id, $name, $name_pattern)
+    protected function tagIndex(int $limit, int $page, string $order, int $id, int $after_id, string $name, string $name_pattern)
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
@@ -680,12 +659,8 @@ class OuroborosAPI extends Extension
 
     /**
      * Sends a simple {success,reason} message to browser
-     *
-     * @param int $code HTTP equivalent code for the message
-     * @param string $reason Reason for the code
-     * @param bool $location Is $reason a location? (used mainly for post/create)
      */
-    private function sendResponse($code = 200, $reason = '', $location = false)
+    private function sendResponse(int $code = 200, string $reason = '', bool $location = false)
     {
         global $page;
         if ($code == 200) {
@@ -738,13 +713,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    /**
-     * Send data to the browser
-     * @param string $type
-     * @param mixed $data
-     * @param int $offset
-     */
-    private function sendData($type = '', $data = array(), $offset = 0)
+    private function sendData(string $type = '', array $data = array(), int $offset = 0)
     {
         global $page;
         $response = '';
@@ -777,10 +746,7 @@ class OuroborosAPI extends Extension
         $page->set_data($response);
     }
 
-    /**
-     * @param string $type
-     */
-    private function createItemXML(XMLWriter &$xml, $type, $item)
+    private function createItemXML(XMLWriter &$xml, string $type, $item)
     {
         $xml->startElement($type);
         foreach ($item as $key => $val) {
@@ -801,8 +767,6 @@ class OuroborosAPI extends Extension
      *
      * Currently checks for either user & session in request or cookies
      * and initializes a global User
-     * @param void
-     * @return void
      */
     private function tryAuth()
     {
@@ -835,10 +799,8 @@ class OuroborosAPI extends Extension
 
     /**
      * Helper for matching API methods from event
-     * @param string $page
-     * @return bool
      */
-    private function match($page)
+    private function match(string $page): bool
     {
         return (preg_match("%{$page}\.(xml|json)$%", implode('/', $this->event->args), $matches) === 1);
     }

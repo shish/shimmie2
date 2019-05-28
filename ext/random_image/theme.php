@@ -1,23 +1,11 @@
 <?php
 
-class RandomImageTheme extends Themelet
-{
-	/**
-	 * @param Page $page
-	 * @param Image $image
-	 */
-	public function display_random(Page $page, Image $image)
-	{
+class RandomImageTheme extends Themelet {
+	public function display_random(Page $page, Image $image) {
 		$page->add_block(new Block("Random Image", $this->build_random_html($image), "left", 8));
 	}
 
-	/**
-	 * @param Image $image
-	 * @param null|string $query
-	 * @return string
-	 */
-	public function build_random_html(Image $image, $query = null)
-	{
+	public function build_random_html(Image $image, ?string $query = null): string {
 
 		$i_id = int_escape($image->id);
 		$h_view_link = make_link("post/view/$i_id", $query);

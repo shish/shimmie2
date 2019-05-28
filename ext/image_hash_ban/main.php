@@ -126,12 +126,7 @@ class ImageBan extends Extension {
 
 	// DB funness
 
-	/**
-	 * @param int $page
-	 * @param int $size
-	 * @return array
-	 */
-	public function get_image_hash_bans($page, $size=100) {
+	public function get_image_hash_bans(int $page, int $size=100): array {
 		global $database;
 
 		// FIXME: many

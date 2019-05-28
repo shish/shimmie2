@@ -1,54 +1,24 @@
 <?php
 class Themelet extends BaseThemelet {
-	/**
-	 * @param Page $page
-	 * @param string $base
-	 * @param string $query
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param bool $show_random
-	 */
-	public function display_paginator(Page $page, $base, $query, $page_number, $total_pages, $show_random = FALSE) {
+	public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = FALSE) {
 		if($total_pages == 0) $total_pages = 1;
 		$body = $this->build_paginator($page_number, $total_pages, $base, $query);
 		$page->add_block(new Block(null, $body, "main", 90));
 	}
 
-	/**
-	 * @param string $base_url
-	 * @param string $query
-	 * @param int|string $page
-	 * @param string $name
-	 * @return string
-	 */
-	private function gen_page_link($base_url, $query, $page, $name) {
+	private function gen_page_link(string $base_url, string $query, string $page, string $name): string {
 		$link = make_link("$base_url/$page", $query);
 	    return "<a href='$link'>$name</a>";
 	}
 
-	/**
-	 * @param string $base_url
-	 * @param string $query
-	 * @param int|string $page
-	 * @param int $current_page
-	 * @param string $name
-	 * @return string
-	 */
-	private function gen_page_link_block($base_url, $query, $page, $current_page, $name) {
+	private function gen_page_link_block(string $base_url, string $query, int $page, int $current_page, string $name): string {
 		$paginator = "";
 	    if($page == $current_page) $paginator .= "<b>$page</b>";
 	    else $paginator .= $this->gen_page_link($base_url, $query, $page, $name);
 	    return $paginator;
 	}
 
-	/**
-	 * @param int $current_page
-	 * @param int $total_pages
-	 * @param string $base_url
-	 * @param string $query
-	 * @return string
-	 */
-	private function build_paginator($current_page, $total_pages, $base_url, $query) {
+	private function build_paginator(int $current_page, int $total_pages, string $base_url, string $query): string {
 		$next = $current_page + 1;
 		$prev = $current_page - 1;
 

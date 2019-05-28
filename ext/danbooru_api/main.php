@@ -119,7 +119,7 @@ class DanbooruApi extends Extension {
      * - tags: any typical tag query. See Tag#parse_query for details.
      * - after_id: limit results to tags with an id number after after_id. Useful if you only want to refresh
 	 *
-	 * @return string
+	 * #return string
 	 */
 	private function api_find_tags() {
 		global $database;
@@ -187,8 +187,7 @@ class DanbooruApi extends Extension {
 	 * - page: page number
 	 * - after_id: limit results to posts added after this id
 	 *
-	 * @return string
-	 * @throws SCoreException
+	 * #return string
 	 */
 	private function api_find_posts() {
 		$results = array();

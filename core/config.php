@@ -10,44 +10,30 @@ interface Config {
 	 * Save the list of name:value pairs to wherever they came from,
 	 * so that the next time a page is loaded it will use the new
 	 * configuration.
-	 *
-	 * @param null|string $name
-	 * @return void
 	 */
-	public function save(string $name=null);
+	public function save(string $name=null): void;
 
 	//@{ /*--------------------------------- SET ------------------------------------------------------*/
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
-	 * @param string $name
-	 * @param null|int $value
-	 * @return void
 	 */
-	public function set_int(string $name, $value);
+	public function set_int(string $name, ?int $value): void;
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
-	 * @param string $name
-	 * @param null|string $value
-	 * @return void
 	 */
-	public function set_string(string $name, $value);
+	public function set_string(string $name, ?string $value): void;
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
-	 * @param string $name
 	 * @param null|bool|string $value
-	 * @return void
 	 */
-	public function set_bool(string $name, $value);
+	public function set_bool(string $name, $value): void;
 
 	/**
 	 * Set a configuration option to a new value, regardless of what the value is at the moment.
-	 * @param string $name
-	 * @param array $value
-	 * @return void
 	 */
-	public function set_array(string $name, array $value);
+	public function set_array(string $name, array $value): void;
 	//@} /*--------------------------------------------------------------------------------------------*/
 
 	//@{ /*-------------------------------- SET DEFAULT -----------------------------------------------*/
@@ -58,12 +44,8 @@ interface Config {
 	 * This has the advantage that the values will show up in the "advanced" setup
 	 * page where they can be modified, while calling get_* with a "default"
 	 * parameter won't show up.
-	 *
-	 * @param string $name
-	 * @param int $value
-	 * @return void
 	 */
-	public function set_default_int(string $name, int $value);
+	public function set_default_int(string $name, int $value): void;
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -72,12 +54,8 @@ interface Config {
 	 * This has the advantage that the values will show up in the "advanced" setup
 	 * page where they can be modified, while calling get_* with a "default"
 	 * parameter won't show up.
-	 *
-	 * @param string $name
-	 * @param string|null $value
-	 * @return void
 	 */
-	public function set_default_string(string $name, string $value);
+	public function set_default_string(string $name, string $value): void;
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -86,12 +64,8 @@ interface Config {
 	 * This has the advantage that the values will show up in the "advanced" setup
 	 * page where they can be modified, while calling get_* with a "default"
 	 * parameter won't show up.
-	 *
-	 * @param string $name
-	 * @param bool $value
-	 * @return void
 	 */
-	public function set_default_bool(string $name, bool $value);
+	public function set_default_bool(string $name, bool $value): void;
 
 	/**
 	 * Set a configuration option to a new value, if there is no value currently.
@@ -100,46 +74,30 @@ interface Config {
 	 * This has the advantage that the values will show up in the "advanced" setup
 	 * page where they can be modified, while calling get_* with a "default"
 	 * parameter won't show up.
-	 *
-	 * @param string $name
-	 * @param array $value
-	 * @return void
 	 */
-	public function set_default_array(string $name, array $value);
+	public function set_default_array(string $name, array $value): void;
 	//@} /*--------------------------------------------------------------------------------------------*/
 
 	//@{ /*--------------------------------- GET ------------------------------------------------------*/
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
-	 * @param string $name
-	 * @param null|int $default
-	 * @return int
 	 */
-	public function get_int(string $name, $default=null);
+	public function get_int(string $name, ?int $default=null): ?int;
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
-	 * @param string $name
-	 * @param null|string $default
-	 * @return string
 	 */
-	public function get_string(string $name, $default=null);
+	public function get_string(string $name, ?string $default=null): ?string;
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
-	 * @param string $name
-	 * @param null|bool|string $default
-	 * @return bool
 	 */
-	public function get_bool(string $name, $default=null);
+	public function get_bool(string $name, ?bool $default=null): ?bool;
 
 	/**
 	 * Pick a value out of the table by name, cast to the appropriate data type.
-	 * @param string $name
-	 * @param array|null $default
-	 * @return array
 	 */
-	public function get_array(string $name, array $default=array());
+	public function get_array(string $name, ?array $default=array()): ?array;
 	//@} /*--------------------------------------------------------------------------------------------*/
 }
 

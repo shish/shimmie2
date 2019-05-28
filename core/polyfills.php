@@ -5,10 +5,6 @@
 
 /**
  * Remove an item from an array
- *
- * @param array $array
- * @param mixed $to_remove
- * @return array
  */
 function array_remove(array $array, $to_remove): array {
 	$array = array_unique($array);
@@ -25,10 +21,6 @@ function array_remove(array $array, $to_remove): array {
  * Adds an item to an array.
  *
  * Also removes duplicate values from the array.
- *
- * @param array $array
- * @param mixed $element
- * @return array
  */
 function array_add(array $array, $element): array {
 	// Could we just use array_push() ?
@@ -40,9 +32,6 @@ function array_add(array $array, $element): array {
 
 /**
  * Return the unique elements of an array, case insensitively
- *
- * @param array $array
- * @return array
  */
 function array_iunique(array $array): array {
 	$ok = array();
@@ -64,10 +53,6 @@ function array_iunique(array $array): array {
  * Figure out if an IP is in a specified range
  *
  * from http://uk.php.net/network
- *
- * @param string $IP
- * @param string $CIDR
- * @return bool
  */
 function ip_in_range(string $IP, string $CIDR): bool {
 	list ($net, $mask) = explode("/", $CIDR);
@@ -87,8 +72,6 @@ function ip_in_range(string $IP, string $CIDR): bool {
  *
  * from a patch by Christian Walde; only intended for use in the
  * "extension manager" extension, but it seems to fit better here
- *
- * @param string $f
  */
 function deltree(string $f) {
 	//Because Windows (I know, bad excuse)
@@ -132,9 +115,6 @@ function deltree(string $f) {
  * Copy an entire file hierarchy
  *
  * from a comment on http://uk.php.net/copy
- *
- * @param string $source
- * @param string $target
  */
 function full_copy(string $source, string $target) {
 	if(is_dir($source)) {
@@ -163,10 +143,6 @@ function full_copy(string $source, string $target) {
 
 /**
  * Return a list of all the regular files in a directory and subdirectories
- *
- * @param string $base
- * @param string $_sub_dir
- * @return array file list
  */
 function list_files(string $base, string $_sub_dir=""): array {
 	assert(is_dir($base));
@@ -208,10 +184,9 @@ function list_files(string $base, string $_sub_dir=""): array {
 if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
 
 	/**
-	 * @param string $raw_headers
-	 * @return string[]
+	 * #return string[]
 	 */
-	function http_parse_headers ($raw_headers){
+	function http_parse_headers (string $raw_headers): array {
 		$headers = array(); // $headers = [];
 
 		foreach (explode("\n", $raw_headers) as $i => $h) {
@@ -236,17 +211,13 @@ if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/func
 /**
  * HTTP Headers can sometimes be lowercase which will cause issues.
  * In cases like these, we need to make sure to check for them if the camelcase version does not exist.
- *
- * @param array $headers
- * @param string $name
- * @return string|bool
  */
-function findHeader(array $headers, string $name) {
+function findHeader(array $headers, string $name): ?string {
 	if (!is_array($headers)) {
-		return false;
+		return null;
 	}
 
-	$header = false;
+	$header = null;
 
 	if(array_key_exists($name, $headers)) {
 		$header = $headers[$name];
@@ -296,10 +267,6 @@ const MIME_TYPE_MAP = [
  * The contents of this function are taken from the __getMimeType() function
  * from the "Amazon S3 PHP class" which is Copyright (c) 2008, Donovan Schönknecht
  * and released under the 'Simplified BSD License'.
- *
- * @param string $file File path
- * @param string $ext
- * @return string
  */
 function getMimeType(string $file, string $ext=""): string {
 	// Static extension lookup
@@ -332,24 +299,17 @@ function getMimeType(string $file, string $ext=""): string {
 	return 'application/octet-stream';
 }
 
-/**
- * @param string $mime_type
- * @return bool|string
- */
-function getExtension(string $mime_type) {
+function getExtension(?string $mime_type): ?string {
 	if(empty($mime_type)){
-		return false;
+		return null;
 	}
 
 	$ext = array_search($mime_type, MIME_TYPE_MAP);
-	return ($ext ? $ext : false);
+	return ($ext ? $ext : null);
 }
 
 /**
  * Like glob, with support for matching very long patterns with braces.
- *
- * @param string $pattern
- * @return array
  */
 function zglob(string $pattern): array {
 	$results = array();
@@ -375,8 +335,6 @@ function zglob(string $pattern): array {
  * function should return /gallery
  *
  * PHP really, really sucks.
- *
- * @return string
  */
 function get_base_href(): string {
 	if(defined("BASE_HREF")) return BASE_HREF;
@@ -413,31 +371,22 @@ function endsWith(string $haystack, string $needle): bool {
 
 /**
  * Make some data safe for printing into HTML
- *
- * @param string $input
- * @return string
  */
-function html_escape($input): string {
+function html_escape(string $input): string {
 	return htmlentities($input, ENT_QUOTES, "UTF-8");
 }
 
 /**
  * Unescape data that was made safe for printing into HTML
- *
- * @param string $input
- * @return string
  */
-function html_unescape($input): string {
+function html_unescape(string $input): string {
 	return html_entity_decode($input, ENT_QUOTES, "UTF-8");
 }
 
 /**
  * Make sure some data is safe to be used in integer context
- *
- * @param string $input
- * @return int
  */
-function int_escape($input): int {
+function int_escape(string $input): int {
 	/*
 	 Side note, Casting to an integer is FASTER than using intval.
 	 http://hakre.wordpress.com/2010/05/13/php-casting-vs-intval/
@@ -447,11 +396,8 @@ function int_escape($input): int {
 
 /**
  * Make sure some data is safe to be used in URL context
- *
- * @param string $input
- * @return string
  */
-function url_escape($input): string {
+function url_escape(string $input): string {
 	/*
 		Shish: I have a feeling that these three lines are important, possibly for searching for tags with slashes in them like fate/stay_night
 		green-ponies: indeed~
@@ -482,11 +428,8 @@ function url_escape($input): string {
 
 /**
  * Make sure some data is safe to be used in SQL context
- *
- * @param string $input
- * @return string
  */
-function sql_escape($input): string {
+function sql_escape(string $input): string {
 	global $database;
 	return $database->escape($input);
 }
@@ -494,9 +437,6 @@ function sql_escape($input): string {
 
 /**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
- *
- * @param mixed $input
- * @return boolean
  */
 function bool_escape($input): bool {
 	/*
@@ -530,11 +470,8 @@ function bool_escape($input): bool {
 /**
  * Some functions require a callback function for escaping,
  * but we might not want to alter the data
- *
- * @param string $input
- * @return string
  */
-function no_escape($input) {
+function no_escape(string $input): string {
 	return $input;
 }
 
@@ -573,14 +510,8 @@ function xml_tag(string $name, array $attrs=array(), array $children=array()): s
 /**
  * Original PHP code by Chirp Internet: www.chirp.com.au
  * Please acknowledge use of this code by including this header.
- *
- * @param string $string input data
- * @param int $limit how long the string should be
- * @param string $break where to break the string
- * @param string $pad what to add to the end of the string after truncating
- * @return string
  */
-function truncate($string, $limit, $break=" ", $pad="...") {
+function truncate(string $string, int $limit, string $break=" ", string $pad="..."): string{
 	// return with no change if string is shorter than $limit
 	if(strlen($string) <= $limit) return $string;
 
@@ -596,9 +527,6 @@ function truncate($string, $limit, $break=" ", $pad="...") {
 
 /**
  * Turn a human readable filesize into an integer, eg 1KB -> 1024
- *
- * @param string $limit
- * @return int
  */
 function parse_shorthand_int(string $limit): int {
 	if(preg_match('/^([\d\.]+)([gmk])?b?$/i', (string)$limit, $m)) {
@@ -622,9 +550,6 @@ function parse_shorthand_int(string $limit): int {
 
 /**
  * Turn an integer into a human readable filesize, eg 1024 -> 1KB
- *
- * @param integer $int
- * @return string
  */
 function to_shorthand_int(int $int): string {
 	assert($int >= 0);
@@ -646,10 +571,6 @@ function to_shorthand_int(int $int): string {
 
 /**
  * Turn a date into a time, a date, an "X minutes ago...", etc
- *
- * @param string $date
- * @param bool $html
- * @return string
  */
 function autodate(string $date, bool $html=true): string {
 	$cpu = date('c', strtotime($date));
@@ -659,9 +580,6 @@ function autodate(string $date, bool $html=true): string {
 
 /**
  * Check if a given string is a valid date-time. ( Format: yyyy-mm-dd hh:mm:ss )
- *
- * @param string $dateTime
- * @return bool
  */
 function isValidDateTime(string $dateTime): bool {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2}) ([01][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/", $dateTime, $matches)) {
@@ -675,9 +593,6 @@ function isValidDateTime(string $dateTime): bool {
 
 /**
  * Check if a given string is a valid date. ( Format: yyyy-mm-dd )
- *
- * @param string $date
- * @return bool
  */
 function isValidDate(string $date): bool {
 	if (preg_match("/^(\d{4})-(\d{2})-(\d{2})$/", $date, $matches)) {

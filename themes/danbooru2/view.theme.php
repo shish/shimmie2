@@ -1,10 +1,6 @@
 <?php
 
 class CustomViewImageTheme extends ViewImageTheme {
-	/**
-	 * @param Image $image
-	 * @param $editor_parts
-	 */
 	public function display_page(Image $image, $editor_parts) {
 		global $page;
 		$page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
@@ -14,11 +10,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		$page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 15));
 	}
 
-	/**
-	 * @param Image $image
-	 * @return string
-	 */
-	private function build_information(Image $image) {
+	private function build_information(Image $image): string {
 		$h_owner = html_escape($image->get_owner()->name);
 		$h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
 		$h_ip = html_escape($image->owner_ip);
@@ -58,11 +50,7 @@ class CustomViewImageTheme extends ViewImageTheme {
 		return $html;
 	}
 
-	/**
-	 * @param Image $image
-	 * @return string
-	 */
-	protected function build_navigation(Image $image) {
+	protected function build_navigation(Image $image): string {
 		//$h_pin = $this->build_pin($image);
 		$h_search = "
 			<form action='".make_link()."' method='GET'>

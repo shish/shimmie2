@@ -1,12 +1,7 @@
 <?php
 
 class RatingsTheme extends Themelet {
-	/**
-	 * @param int $image_id
-	 * @param string $rating
-	 * @return string
-	 */
-	public function get_rater_html(int $image_id, string $rating, bool $can_rate) {
+	public function get_rater_html(int $image_id, string $rating, bool $can_rate): string {
 		$s_checked = $rating == 's' ? " checked" : "";
 		$q_checked = $rating == 'q' ? " checked" : "";
 		$e_checked = $rating == 'e' ? " checked" : "";
@@ -31,7 +26,7 @@ class RatingsTheme extends Themelet {
 		return $html;
 	}
 
-	public function display_bulk_rater($terms) {
+	public function display_bulk_rater(string $terms) {
 		global $page;
 		$html = "
 			".make_form(make_link("admin/bulk_rate"))."

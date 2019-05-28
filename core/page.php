@@ -45,7 +45,6 @@ class Page {
 
 	/**
 	 * Set what this page should do; "page", "data", or "redirect".
-	 * @param string $mode
 	 */
 	public function set_mode(string $mode) {
 		$this->mode = $mode;
@@ -53,7 +52,6 @@ class Page {
 
 	/**
 	 * Set the page's MIME type.
-	 * @param string $type
 	 */
 	public function set_type(string $type) {
 		$this->type = $type;
@@ -73,7 +71,6 @@ class Page {
 
 	/**
 	 * Set the raw data to be sent.
-	 * @param string $data
 	 */
 	public function set_data(string $data) {
 		$this->data = $data;
@@ -81,7 +78,6 @@ class Page {
 
 	/**
 	 * Set the recommended download filename.
-	 * @param string $filename
 	 */
 	public function set_filename(string $filename) {
 		$this->filename = $filename;
@@ -99,7 +95,6 @@ class Page {
 	/**
 	 * Set the URL to redirect to (remember to use make_link() if linking
 	 * to a page in the same site).
-	 * @param string $redirect
 	 */
 	public function set_redirect(string $redirect) {
 		$this->redirect = $redirect;
@@ -140,40 +135,35 @@ class Page {
 
 	/**
 	 * Set the HTTP status code
-	 * @param int $code
 	 */
-	public function set_code(int $code) {
+	public function set_code(int $code): void {
 		$this->code = $code;
 	}
 
-	public function set_title(string $title) {
+	public function set_title(string $title): void {
 		$this->title = $title;
 	}
 
-	public function set_heading(string $heading) {
+	public function set_heading(string $heading): void {
 		$this->heading = $heading;
 	}
 
-	public function set_subheading(string $subheading) {
+	public function set_subheading(string $subheading): void {
 		$this->subheading = $subheading;
 	}
 
 	/**
 	 * Add a line to the HTML head section.
-	 * @param string $line
-	 * @param int $position
 	 */
-	public function add_html_header(string $line, int $position=50) {
+	public function add_html_header(string $line, int $position=50): void {
 		while(isset($this->html_headers[$position])) $position++;
 		$this->html_headers[$position] = $line;
 	}
 
 	/**
 	 * Add a http header to be sent to the client.
-	 * @param string $line
-	 * @param int $position
 	 */
-	public function add_http_header(string $line, int $position=50) {
+	public function add_http_header(string $line, int $position=50): void {
 		while(isset($this->http_headers[$position])) $position++;
 		$this->http_headers[$position] = $line;
 	}
@@ -182,22 +172,13 @@ class Page {
 	 * The counterpart for get_cookie, this works like php's
 	 * setcookie method, but prepends the site-wide cookie prefix to
 	 * the $name argument before doing anything.
-	 *
-	 * @param string $name
-	 * @param string $value
-	 * @param int $time
-	 * @param string $path
 	 */
-	public function add_cookie(string $name, $value, $time, $path) {
+	public function add_cookie(string $name, string $value, int $time, string $path): void {
 		$full_name = COOKIE_PREFIX."_".$name;
 		$this->cookies[] = array($full_name, $value, $time, $path);
 	}
 
-	/**
-	 * @param string $name
-	 * @return string|null
-	 */
-	public function get_cookie(string $name) {
+	public function get_cookie(string $name): ?string {
 		$full_name = COOKIE_PREFIX."_".$name;
 		if(isset($_COOKIE[$full_name])) {
 			return $_COOKIE[$full_name];
@@ -209,7 +190,6 @@ class Page {
 
 	/**
 	 * Get all the HTML headers that are currently set and return as a string.
-	 * @return string
 	 */
 	public function get_all_html_headers(): string {
 		$data = '';
@@ -223,13 +203,12 @@ class Page {
 	/**
 	 * Removes all currently set HTML headers (Be careful..).
 	 */
-	public function delete_all_html_headers() {
+	public function delete_all_html_headers(): void {
 		$this->html_headers = array();
 	}
 
 	/**
 	 * Add a Block of data to the page.
-	 * @param Block $block
 	 */
 	public function add_block(Block $block) {
 		$this->blocks[] = $block;
@@ -242,7 +221,7 @@ class Page {
 	/**
 	 * Display the page according to the mode and data given.
 	 */
-	public function display() {
+	public function display(): void {
 		global $page, $user;
 
 		header("HTTP/1.0 {$this->code} Shimmie");
@@ -314,7 +293,7 @@ class Page {
 	 *
 	 * TODO: This should really be configurable somehow...
 	 */
-	public function add_auto_html_headers() {
+	public function add_auto_html_headers(): void {
 		global $config;
 
 		$data_href = get_base_href();

@@ -99,10 +99,6 @@ class Relationships extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $imageID
-	 * @param int $parentID
-	 */
 	private function set_parent(int $imageID, int $parentID){
 		global $database;
 
@@ -112,10 +108,6 @@ class Relationships extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $parentID
-	 * @param int $childID
-	 */
 	private function set_child(int $parentID, int $childID){
 		global $database;
 
@@ -125,9 +117,6 @@ class Relationships extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $imageID
-	 */
 	private function remove_parent(int $imageID){
 		global $database;
 		$parentID = $database->get_one("SELECT parent_id FROM images WHERE id = :iid", array("iid"=>$imageID));

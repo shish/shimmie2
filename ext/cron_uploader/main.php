@@ -39,7 +39,6 @@ class CronUploader extends Extension {
 	/**
 	 * Checks if the cron upload page has been accessed
 	 * and initializes the upload.
-	 * @param PageRequestEvent $event
 	 */
 	public function onPageRequest(PageRequestEvent $event) {
 		global $config, $user;
@@ -213,10 +212,8 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Returns amount of files & total size of dir.
-	 * @param string $path directory name to scan
-	 * @return multitype:number
 	 */
-	function scan_dir($path){
+	function scan_dir(string $path): array{
 		$ite=new RecursiveDirectoryIterator($path);
 	
 		$bytestotal=0;
@@ -234,10 +231,8 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Uploads the image & handles everything
-	 * @param int $upload_count to upload a non-config amount of imgs
-	 * @return boolean returns true if the upload was successful
 	 */
-	public function process_upload($upload_count = 0) {
+	public function process_upload(int $upload_count = 0): bool {
 		global $config;
 		set_time_limit(0);
 		$this->set_dir();
@@ -375,11 +370,8 @@ class CronUploader extends Extension {
 	
 	/**
 	 * Adds a message to the info being published at the end
-	 * @param $text string
-	 * @param $addon int Enter a value to modify an existing value (enter value number)
-	 * @return int
 	 */
-	private function add_upload_info($text, $addon = 0) {
+	private function add_upload_info(string $text, int $addon = 0): int {
 		$info = $this->upload_info;
 		$time = "[" .date('Y-m-d H:i:s'). "]";
 		

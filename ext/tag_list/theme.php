@@ -3,26 +3,20 @@
 class TagListTheme extends Themelet {
 	/** @var string  */
 	public $heading = "";
-	/** @var string|string[]  */
+	/** @var string  */
 	public $list = "";
 
 	public $navigation;
 
-	/**
-	 * @param string $text
-	 */
-	public function set_heading($text) {
+	public function set_heading(string $text) {
 		$this->heading = $text;
 	}
 
-	/**
-	 * @param string|string[] $list
-	 */
-	public function set_tag_list($list) {
+	public function set_tag_list(string $list) {
 		$this->list = $list;
 	}
 
-	public function set_navigation($nav) {
+	public function set_navigation(string $nav) {
 		$this->navigation = $nav;
 	}
 

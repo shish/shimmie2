@@ -133,11 +133,7 @@ class TagList extends Extension {
 	}
 // }}}
 // misc {{{
-	/**
-	 * @param string $tag
-	 * @return string
-	 */
-	private function tag_link(string $tag) {
+	private function tag_link(string $tag): string {
 		$u_tag = url_escape($tag);
 		return make_link("post/list/$u_tag/1");
 	}
@@ -145,10 +141,8 @@ class TagList extends Extension {
 	/**
 	 * Get the minimum number of times a tag needs to be used
 	 * in order to be considered in the tag list.
-	 *
-	 * @return int
 	 */
-	private function get_tags_min() {
+	private function get_tags_min(): int {
 		if(isset($_GET['mincount'])) {
 			return int_escape($_GET['mincount']);
 		}
@@ -158,10 +152,7 @@ class TagList extends Extension {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
-	private function get_starts_with() {
+	private function get_starts_with(): string {
 		global $config;
 		if(isset($_GET['starts_with'])) {
 			return $_GET['starts_with'] . "%";
@@ -176,10 +167,7 @@ class TagList extends Extension {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
-	private function build_az() {
+	private function build_az(): string {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
@@ -203,10 +191,7 @@ class TagList extends Extension {
 // }}}
 // maps {{{
 
-	/**
-	 * @return string
-	 */
-	private function build_navigation() {
+	private function build_navigation(): string {
 		$h_index = "<a href='".make_link()."'>Index</a>";
 		$h_map = "<a href='".make_link("tags/map")."'>Map</a>";
 		$h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
@@ -216,10 +201,7 @@ class TagList extends Extension {
 		return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
 	}
 
-	/**
-	 * @return string
-	 */
-	private function build_tag_map() {
+	private function build_tag_map(): string {
 		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
@@ -256,10 +238,7 @@ class TagList extends Extension {
 		return $html;
 	}
 
-	/**
-	 * @return string
-	 */
-	private function build_tag_alphabetic() {
+	private function build_tag_alphabetic(): string {
 		global $config, $database;
 
 		$tags_min = $this->get_tags_min();
@@ -315,10 +294,7 @@ class TagList extends Extension {
 		return $html;
 	}
 
-	/**
-	 * @return string
-	 */
-	private function build_tag_popularity() {
+	private function build_tag_popularity(): string {
 		global $database;
 
 		$tags_min = $this->get_tags_min();
@@ -357,10 +333,7 @@ class TagList extends Extension {
 		return $html;
 	}
 
-	/**
-	 * @return string
-	 */
-	private function build_tag_list() {
+	private function build_tag_list(): string {
 		global $database;
 
 		//$tags_min = $this->get_tags_min();
@@ -386,10 +359,6 @@ class TagList extends Extension {
 	}
 // }}}
 // blocks {{{
-	/**
-	 * @param Page $page
-	 * @param Image $image
-	 */
 	private function add_related_block(Page $page, Image $image) {
 		global $database, $config;
 
@@ -421,10 +390,6 @@ class TagList extends Extension {
 		}
 	}
 
-	/**
-	 * @param Page $page
-	 * @param Image $image
-	 */
 	private function add_split_tags_block(Page $page, Image $image) {
 		global $database;
 
@@ -443,10 +408,6 @@ class TagList extends Extension {
 		}
 	}
 
-	/**
-	 * @param Page $page
-	 * @param Image $image
-	 */
 	private function add_tags_block(Page $page, Image $image) {
 		global $database;
 
@@ -465,9 +426,6 @@ class TagList extends Extension {
 		}
 	}
 
-	/**
-	 * @param Page $page
-	 */
 	private function add_popular_block(Page $page) {
 		global $database, $config;
 
@@ -491,8 +449,7 @@ class TagList extends Extension {
 	}
 
 	/**
-	 * @param Page $page
-	 * @param string[] $search
+	 * #param string[] $search
 	 */
 	private function add_refine_block(Page $page, array $search) {
 		global $database, $config;

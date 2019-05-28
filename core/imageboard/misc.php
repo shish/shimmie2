@@ -7,7 +7,6 @@
  * Move a file from PHP's temporary area into shimmie's image storage
  * hierarchy, or throw an exception trying.
  *
- * @param DataUploadEvent $event
  * @throws UploadException
  */
 function move_upload_to_archive(DataUploadEvent $event) {
@@ -24,10 +23,9 @@ function move_upload_to_archive(DataUploadEvent $event) {
 /**
  * Add a directory full of images
  *
- * @param $base string
- * @return array|string[]
+ * #return string[]
  */
-function add_dir($base) {
+function add_dir(string $base): array {
 	$results = array();
 
 	foreach(list_files($base) as $full_path) {
@@ -49,13 +47,7 @@ function add_dir($base) {
 	return $results;
 }
 
-/**
- * @param string $tmpname
- * @param string $filename
- * @param string $tags
- * @throws UploadException
- */
-function add_image($tmpname, $filename, $tags) {
+function add_image(string $tmpname, string $filename, string $tags): void {
 	assert(file_exists($tmpname));
 
 	$pathinfo = pathinfo($filename);
@@ -78,11 +70,9 @@ function add_image($tmpname, $filename, $tags) {
  * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact
  *
- * @param int $orig_width
- * @param int $orig_height
- * @return integer[]
+ * #return int[]
  */
-function get_thumbnail_size(int $orig_width, int $orig_height) {
+function get_thumbnail_size(int $orig_width, int $orig_height): array {
 	global $config;
 
 	if($orig_width === 0) $orig_width = 192;

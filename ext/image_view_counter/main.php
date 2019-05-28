@@ -58,9 +58,8 @@ class ImageViewCounter extends Extension {
 
 	/**
 	 * Adds a view to the item if needed
-	 * @param int $imgid
 	 */
-	private function addview($imgid)
+	private function addview(int $imgid)
 	{
 		global $database, $user;
 
@@ -84,9 +83,8 @@ class ImageViewCounter extends Extension {
 
 	/**
 	 * Returns true if this IP hasn't recently viewed this image
-	 * @param int $imgid
 	 */
-	private function can_add_view($imgid)
+	private function can_add_view(int $imgid)
 	{
 		global $database;
 
@@ -111,9 +109,8 @@ class ImageViewCounter extends Extension {
 
 	/**
 	 * Returns the int of the view count from the given image id
-	 * @param int $imgid - if not set or 0, return views of all images
 	 */
-	private function get_view_count($imgid = 0)
+	private function get_view_count(int $imgid = 0)
 	{
 		global $database;
 

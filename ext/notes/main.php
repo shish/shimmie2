@@ -211,11 +211,8 @@ class Notes extends Extension {
 
 	/**
 	 * HERE WE GET ALL NOTES FOR DISPLAYED IMAGE.
-	 *
-	 * @param int $imageID
-	 * @return array
 	 */
-	private function get_notes($imageID) {
+	private function get_notes(int $imageID): array {
 		global $database;
 
 		return $database->get_all(
@@ -360,7 +357,6 @@ class Notes extends Extension {
 
 	/**
 	 * HERE WE ALL IMAGES THAT HAVE NOTES
-	 * @param PageRequestEvent $event
 	 */
 	private function get_notes_list(PageRequestEvent $event) {
 		global $database, $config;
@@ -393,7 +389,6 @@ class Notes extends Extension {
 
 	/**
 	 * HERE WE GET ALL NOTE REQUESTS
-	 * @param PageRequestEvent $event
 	 */
 	private function get_notes_requests(PageRequestEvent $event) {
 		global $config, $database;
@@ -447,7 +442,6 @@ class Notes extends Extension {
 
 	/**
 	 * HERE WE GET ALL HISTORIES.
-	 * @param PageRequestEvent $event
 	 */
 	private function get_histories(PageRequestEvent $event){
 		global $config, $database;
@@ -477,7 +471,6 @@ class Notes extends Extension {
 
 	/**
 	 * HERE WE THE HISTORY FOR A SPECIFIC NOTE.
-	 * @param PageRequestEvent $event
 	 */
 	private function get_history(PageRequestEvent $event){
 		global $config, $database;
@@ -508,10 +501,8 @@ class Notes extends Extension {
 
 	/**
 	 * HERE GO BACK IN HISTORY AND SET THE OLD NOTE. IF WAS REMOVED WE RE-ADD IT.
-	 * @param int $noteID
-	 * @param int $reviewID
 	 */
-	private function revert_history($noteID, $reviewID){
+	private function revert_history(int $noteID, int $reviewID){
 		global $database;
 
 		$history = $database->get_row("SELECT * FROM note_histories WHERE note_id = ? AND review_id = ?", array($noteID, $reviewID));

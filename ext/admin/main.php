@@ -132,7 +132,7 @@ class AdminPage extends Extension {
 
 		$images = Image::find_images(0, 1000000, Tag::explode($query));
 		$count = count($images);
-		log_warning("admin", "Mass-deleting $count images from $query", true);
+		log_warning("admin", "Mass-deleting $count images from $query", "Mass deleted $count images");
 		foreach($images as $image) {
 			if($reason && class_exists("ImageBan")) {
 				send_event(new AddImageHashBanEvent($image->hash, $reason));
@@ -150,14 +150,14 @@ class AdminPage extends Extension {
 		$database->execute($database->scoreql_to_sql(
 			"UPDATE tags SET tag=:tag1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag2)"
 		), array("tag1" => $_POST['tag'], "tag2" => $_POST['tag']));
-		log_info("admin", "Fixed the case of ".html_escape($_POST['tag']), true);
+		log_info("admin", "Fixed the case of ".html_escape($_POST['tag']), "Fixed case");
 		return true;
 	}
 
 	private function lowercase_all_tags() {
 		global $database;
 		$database->execute("UPDATE tags SET tag=lower(tag)");
-		log_warning("admin", "Set all tags to lowercase", true);
+		log_warning("admin", "Set all tags to lowercase", "Set all tags to lowercase");
 		return true;
 	}
 
@@ -171,7 +171,7 @@ class AdminPage extends Extension {
 			)
 		");
 		$database->Execute("DELETE FROM tags WHERE count=0");
-		log_warning("admin", "Re-counted tags", true);
+		log_warning("admin", "Re-counted tags", "Re-counted tags");
 		return true;
 	}
 

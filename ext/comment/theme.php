@@ -19,13 +19,8 @@ class CommentListTheme extends Themelet {
 
 	/**
 	 * Display a page with a list of images, and for each image, the image's comments.
-	 *
-	 * @param array $images
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param bool $can_post
 	 */
-	public function display_comment_list($images, $page_number, $total_pages, $can_post) {
+	public function display_comment_list(array $images, int $page_number, int $total_pages, bool $can_post) {
 		global $config, $page, $user;
 
 		// aaaaaaargh php
@@ -125,9 +120,9 @@ class CommentListTheme extends Themelet {
 	/**
 	 * Add some comments to the page, probably in a sidebar.
 	 *
-	 * @param \Comment[] $comments An array of Comment objects to be shown
+	 * #param Comment[] $comments An array of Comment objects to be shown
 	 */
-	public function display_recent_comments($comments) {
+	public function display_recent_comments(array $comments) {
 		global $page;
 		$this->show_anon_id = false;
 		$html = "";
@@ -142,11 +137,9 @@ class CommentListTheme extends Themelet {
 	/**
 	 * Show comments for an image.
 	 *
-	 * @param Image $image
-	 * @param \Comment[] $comments
-	 * @param bool $postbox
+	 * #param Comment[] $comments
 	 */
-	public function display_image_comments(Image $image, $comments, $postbox) {
+	public function display_image_comments(Image $image, array $comments, bool $postbox) {
 		global $page;
 		$this->show_anon_id = true;
 		$html = "";
@@ -163,10 +156,9 @@ class CommentListTheme extends Themelet {
 	/**
 	 * Show comments made by a user.
 	 *
-	 * @param \Comment[] $comments
-	 * @param \User $user
+	 * #param Comment[] $comments
 	 */
-	public function display_recent_user_comments($comments, User $user) {
+	public function display_recent_user_comments(array $comments, User $user) {
 		global $page;
 		$html = "";
 		foreach($comments as $comment) {
@@ -181,13 +173,7 @@ class CommentListTheme extends Themelet {
 		$page->add_block(new Block("Comments", $html, "left", 70, "comment-list-user"));
 	}
 
-	/**
-	 * @param \Comment[] $comments
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param \User $user
-	 */
-	public function display_all_user_comments($comments, $page_number, $total_pages, User $user) {
+	public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user) {
 		global $page;
 		
 		assert(is_numeric($page_number));
@@ -219,12 +205,7 @@ class CommentListTheme extends Themelet {
 		$this->display_paginator($page, "comment/beta-search/{$user->name}", null, $page_number, $total_pages);
 	}
 
-	/**
-	 * @param \Comment $comment
-	 * @param bool $trim
-	 * @return string
-	 */
-	protected function comment_to_html(Comment $comment, $trim=false) {
+	protected function comment_to_html(Comment $comment, bool $trim=false): string {
 		global $config, $user;
 
 		$tfe = new TextFormattingEvent($comment->comment);
@@ -299,11 +280,7 @@ class CommentListTheme extends Themelet {
 		return $html;
 	}
 
-	/**
-	 * @param int $image_id
-	 * @return string
-	 */
-	protected function build_postbox(int $image_id) {
+	protected function build_postbox(int $image_id): string {
 		global $config;
 
 		$i_image_id = int_escape($image_id);

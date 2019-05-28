@@ -15,9 +15,6 @@ class ConfigSaveEvent extends Event {
 	/** @var \Config */
 	public $config;
 
-	/**
-	 * @param Config $config
-	 */
 	public function __construct(Config $config) {
 		$this->config = $config;
 	}
@@ -31,9 +28,6 @@ class SetupBuildingEvent extends Event {
 	/** @var \SetupPanel */
 	public $panel;
 
-	/**
-	 * @param SetupPanel $panel
-	 */
 	public function __construct(SetupPanel $panel) {
 		$this->panel = $panel;
 	}
@@ -46,9 +40,6 @@ class SetupPanel {
 	/** @var \SetupBlock[]  */
 	public $blocks = array();
 
-	/**
-	 * @param SetupBlock $block
-	 */
 	public function add_block(SetupBlock $block) {
 		$this->blocks[] = $block;
 	}

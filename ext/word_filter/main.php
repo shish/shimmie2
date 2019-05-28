@@ -23,11 +23,7 @@ class WordFilter extends Extension {
 		$event->panel->add_block($sb);
 	}
 
-	/**
-	 * @param string $text
-	 * @return string
-	 */
-	private function filter(string $text) {
+	private function filter(string $text): string {
 		$map = $this->get_map();
 		foreach($map as $search => $replace) {
 			$search = trim($search);
@@ -44,9 +40,9 @@ class WordFilter extends Extension {
 	}
 
 	/**
-	 * @return string[]
+	 * #return string[]
 	 */
-	private function get_map() {
+	private function get_map(): array {
 		global $config;
 		$raw = $config->get_string("word_filter");
 		$lines = explode("\n", $raw);

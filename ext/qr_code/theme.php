@@ -1,9 +1,6 @@
 <?php
 class QRImageTheme extends Themelet {
-	/**
-	 * @param string $link
-	 */
-	public function links_block($link) {
+	public function links_block(string $link) {
 		global $page;
 
 		$page->add_block( new Block(

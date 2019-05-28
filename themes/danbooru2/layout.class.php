@@ -259,16 +259,7 @@ $header_html
 EOD;
 	}
 
-	/**
-	 * @param string $link
-	 * @param string $desc
-	 * @param string[] $pages_matched
-	 * @return string
-	 */
-	private function navlinks($link, $desc, $pages_matched) {
-	/**
-	 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
-	 */
+	private function navlinks(string $link, string $desc, array $pages_matched): string {
 		$html = "";
 		$url = _get_query();
 

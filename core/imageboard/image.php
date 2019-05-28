@@ -53,10 +53,8 @@ class Image {
 	/**
 	 * One will very rarely construct an image directly, more common
 	 * would be to use Image::by_id, Image::by_hash, etc.
-	 *
-	 * @param null|mixed[] $row
 	 */
-	public function __construct(array $row=null) {
+	public function __construct(?array $row=null) {
 		if(!is_null($row)) {
 			foreach($row as $name => $value) {
 				// some databases use table.name rather than name
@@ -95,11 +93,8 @@ class Image {
 	/**
 	 * Search for an array of images
 	 *
-	 * @param int $start
-	 * @param int $limit
-	 * @param string[] $tags
-	 * @throws SCoreException
-	 * @return Image[]
+	 * #param string[] $tags
+	 * #return Image[]
 	 */
 	public static function find_images(int $start, int $limit, array $tags=array()): array {
 		global $database, $user, $config;
@@ -209,8 +204,7 @@ class Image {
 	/**
 	 * Count the number of image results for a given search
 	 *
-	 * @param string[] $tags
-	 * @return int
+	 * #param string[] $tags
 	 */
 	public static function count_images(array $tags=array()): int {
 		global $database;
@@ -242,8 +236,7 @@ class Image {
 	/**
 	 * Count the number of pages for a given search
 	 *
-	 * @param string[] $tags
-	 * @return float
+	 * #param string[] $tags
 	 */
 	public static function count_pages(array $tags=array()): float {
 		global $config;
@@ -260,11 +253,9 @@ class Image {
 	 * Rather than simply $this_id + 1, one must take into account
 	 * deleted images and search queries
 	 *
-	 * @param string[] $tags
-	 * @param bool $next
-	 * @return Image
+	 * #param string[] $tags
 	 */
-	public function get_next(array $tags=array(), bool $next=true) {
+	public function get_next(array $tags=array(), bool $next=true): ?Image {
 		global $database;
 
 		if($next) {
@@ -298,26 +289,21 @@ class Image {
 	/**
 	 * The reverse of get_next
 	 *
-	 * @param string[] $tags
-	 * @return Image
+	 * #param string[] $tags
 	 */
-	public function get_prev(array $tags=array()) {
+	public function get_prev(array $tags=array()): ?Image {
 		return $this->get_next($tags, false);
 	}
 
 	/**
 	 * Find the User who owns this Image
-	 *
-	 * @return User
 	 */
-	public function get_owner() {
+	public function get_owner(): User {
 		return User::by_id($this->owner_id);
 	}
 
 	/**
 	 * Set the image's owner.
-	 *
-	 * @param User $owner
 	 */
 	public function set_owner(User $owner) {
 		global $database;
@@ -327,16 +313,16 @@ class Image {
 				SET owner_id=:owner_id
 				WHERE id=:id
 			", array("owner_id"=>$owner->id, "id"=>$this->id));
-			log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}", false, array("image_id" => $this->id));
+			log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}", null, array("image_id" => $this->id));
 		}
 	}
 
 	/**
 	 * Get this image's tags as an array.
 	 *
-	 * @return string[]
+	 * #return string[]
 	 */
-	public function get_tag_array() {
+	public function get_tag_array(): array {
 		global $database;
 		if(!isset($this->tag_array)) {
 			$this->tag_array = $database->get_col("
@@ -352,40 +338,29 @@ class Image {
 
 	/**
 	 * Get this image's tags as a string.
-	 *
-	 * @return string
 	 */
-	public function get_tag_list() {
+	public function get_tag_list(): string {
 		return Tag::implode($this->get_tag_array());
 	}
 
 	/**
 	 * Get the URL for the full size image
-	 *
-	 * @return string
 	 */
-	public function get_image_link() {
+	public function get_image_link(): string {
 		return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
 	}
 
 	/**
 	 * Get the URL for the thumbnail
-	 *
-	 * @return string
 	 */
-	public function get_thumb_link() {
+	public function get_thumb_link(): string {
 		return $this->get_link('image_tlink', '_thumbs/$hash/thumb.jpg', 'thumb/$id.jpg');
 	}
 
 	/**
 	 * Check configured template for a link, then try nice URL, then plain URL
-	 *
-	 * @param string $template
-	 * @param string $nice
-	 * @param string $plain
-	 * @return string
 	 */
-	private function get_link($template, $nice, $plain) {
+	private function get_link(string $template, string $nice, string $plain): string {
 		global $config;
 
 		$image_link = $config->get_string($template);
@@ -407,10 +382,8 @@ class Image {
 	/**
 	 * Get the tooltip for this image, formatted according to the
 	 * configured template.
-	 *
-	 * @return string
 	 */
-	public function get_tooltip() {
+	public function get_tooltip(): string {
 		global $config;
 		$tt = $this->parse_link_template($config->get_string('image_tip'), "no_escape");
 
@@ -436,86 +409,67 @@ class Image {
 
 	/**
 	 * Figure out where the full size image is on disk.
-	 *
-	 * @return string
 	 */
-	public function get_image_filename() {
+	public function get_image_filename(): string {
 		return warehouse_path("images", $this->hash);
 	}
 
 	/**
 	 * Figure out where the thumbnail is on disk.
-	 *
-	 * @return string
 	 */
-	public function get_thumb_filename() {
+	public function get_thumb_filename(): string {
 		return warehouse_path("thumbs", $this->hash);
 	}
 
 	/**
 	 * Get the original filename.
-	 *
-	 * @return string
 	 */
-	public function get_filename() {
+	public function get_filename(): string {
 		return $this->filename;
 	}
 
 	/**
 	 * Get the image's mime type.
-	 *
-	 * @return string
 	 */
-	public function get_mime_type() {
+	public function get_mime_type(): string {
 		return getMimeType($this->get_image_filename(), $this->get_ext());
 	}
 
 	/**
 	 * Get the image's filename extension
-	 *
-	 * @return string
 	 */
-	public function get_ext() {
+	public function get_ext(): string {
 		return $this->ext;
 	}
 
 	/**
 	 * Get the image's source URL
-	 *
-	 * @return string
 	 */
-	public function get_source() {
+	public function get_source(): string {
 		return $this->source;
 	}
 
 	/**
 	 * Set the image's source URL
-	 *
-	 * @param string $new_source
 	 */
-	public function set_source(string $new_source) {
+	public function set_source(string $new_source): void {
 		global $database;
 		$old_source = $this->source;
 		if(empty($new_source)) $new_source = null;
 		if($new_source != $old_source) {
 			$database->execute("UPDATE images SET source=:source WHERE id=:id", array("source"=>$new_source, "id"=>$this->id));
-			log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)", false, array("image_id" => $this->id));
+			log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)", null, array("image_id" => $this->id));
 		}
 	}
 
 	/**
 	 * Check if the image is locked.
-	 * @return bool
 	 */
-	public function is_locked() {
+	public function is_locked(): bool {
 		return $this->locked;
 	}
 
-	/**
-	 * @param bool $tf
-	 * @throws SCoreException
-	 */
-	public function set_locked($tf) {
+	public function set_locked(bool $tf) {
 		global $database;
 		$ln = $tf ? "Y" : "N";
 		$sln = $database->scoreql_to_sql('SCORE_BOOL_'.$ln);
@@ -523,7 +477,7 @@ class Image {
 		$sln = str_replace('"', "", $sln);
 		if(bool_escape($sln) !== $this->locked) {
 			$database->execute("UPDATE images SET locked=:yn WHERE id=:id", array("yn"=>$sln, "id"=>$this->id));
-			log_info("core_image", "Setting Image #{$this->id} lock to: $ln", false, array("image_id" => $this->id));
+			log_info("core_image", "Setting Image #{$this->id} lock to: $ln", null, array("image_id" => $this->id));
 		}
 	}
 
@@ -532,7 +486,7 @@ class Image {
 	 *
 	 * Normally in preparation to set them to a new set.
 	 */
-	public function delete_tags_from_image() {
+	public function delete_tags_from_image(): void {
 		global $database;
 		if($database->get_driver_name() == "mysql") {
 			//mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
@@ -633,10 +587,9 @@ class Image {
 	/**
 	 * Send list of metatags to be parsed.
 	 *
-	 * @param string[] $metatags
-	 * @param int $image_id
+	 * #param string[] $metatags
 	 */
-	public function parse_metatags($metatags, $image_id) {
+	public function parse_metatags(array $metatags, int $image_id): void {
 		foreach($metatags as $tag) {
 			$ttpe = new TagTermParseEvent($tag, $image_id, TRUE);
 			send_event($ttpe);
@@ -646,11 +599,11 @@ class Image {
 	/**
 	 * Delete this image from the database and disk
 	 */
-	public function delete() {
+	public function delete(): void {
 		global $database;
 		$this->delete_tags_from_image();
 		$database->execute("DELETE FROM images WHERE id=:id", array("id"=>$this->id));
-		log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')', false, array("image_id" => $this->id));
+		log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')', null, array("image_id" => $this->id));
 
 		unlink($this->get_image_filename());
 		unlink($this->get_thumb_filename());
@@ -660,20 +613,13 @@ class Image {
 	 * This function removes an image (and thumbnail) from the DISK ONLY.
 	 * It DOES NOT remove anything from the database.
 	 */
-	public function remove_image_only() {
-		log_info("core_image", 'Removed Image File ('.$this->hash.')', false, array("image_id" => $this->id));
+	public function remove_image_only(): void {
+		log_info("core_image", 'Removed Image File ('.$this->hash.')', null, array("image_id" => $this->id));
 		@unlink($this->get_image_filename());
 		@unlink($this->get_thumb_filename());
 	}
 
-	/**
-	 * Someone please explain this
-	 *
-	 * @param string $tmpl
-	 * @param string $_escape
-	 * @return string
-	 */
-	public function parse_link_template($tmpl, $_escape="url_escape", $n=0) {
+	public function parse_link_template(string $tmpl, string $_escape="url_escape", int $n=0): string {
 		global $config;
 
 		// don't bother hitting the database if it won't be used...
@@ -746,8 +692,7 @@ class Image {
 	}
 
 	/**
-	 * @param string[] $terms
-	 * @return \Querylet
+	 * #param string[] $terms
 	 */
 	private static function build_search_querylet(array $terms): Querylet {
 		global $database;
@@ -888,8 +833,7 @@ class Image {
 	 *      All the subqueries are executed every time for every row in the
 	 *      images table. Yes, MySQL does suck this much.
 	 *
-	 * @param TagQuerylet[] $tag_querylets
-	 * @return Querylet
+	 * #param TagQuerylet[] $tag_querylets
 	 */
 	private static function build_accurate_search_querylet(array $tag_querylets): Querylet {
 		global $database;
@@ -950,10 +894,9 @@ class Image {
 	 * this function exists because mysql is a turd, see the docs for
 	 * build_accurate_search_querylet() for a full explanation
 	 *
-	 * @param TagQuerylet[] $tag_querylets
-	 * @return Querylet
+	 * #param TagQuerylet[] $tag_querylets
 	 */
-	private static function build_ugly_search_querylet($tag_querylets) {
+	private static function build_ugly_search_querylet(array $tag_querylets): Querylet {
 		global $database;
 
 		$positive_tag_count = 0;

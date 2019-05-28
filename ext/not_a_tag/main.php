@@ -29,9 +29,9 @@ class NotATag extends Extension {
 	}
 
 	/**
-	 * @param string[] $tags_mixed
+	 * #param string[] $tags_mixed
 	 */
-	private function scan($tags_mixed) {
+	private function scan(array $tags_mixed) {
 		global $database;
 
 		$tags = array();
@@ -93,12 +93,7 @@ class NotATag extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $page
-	 * @param int $size
-	 * @return array
-	 */
-	public function get_untags($page, $size=100) {
+	public function get_untags(int $page, int $size=100): array {
 		global $database;
 
 		// FIXME: many

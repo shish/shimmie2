@@ -37,10 +37,7 @@ class UploadTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function h_upload_list_1() {
+	protected function h_upload_list_1(): string {
 		global $config;
 		$upload_list = "";
 		$upload_count = $config->get_int('upload_count');
@@ -86,10 +83,7 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function h_upload_List_2() {
+	protected function h_upload_List_2(): string {
 		global $config;
 
 		$tl_enabled = ($config->get_string("transload_engine", "none") != "none");
@@ -186,10 +180,7 @@ class UploadTheme extends Themelet {
 		return $upload_list;
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function h_bookmarklets() {
+	protected function h_bookmarklets(): string {
 		global $config;
 		$link = make_http(make_link("upload"));
 		$main_page = make_http(make_link());
@@ -244,9 +235,6 @@ class UploadTheme extends Themelet {
 
 	/**
 	 * Only allows 1 file to be uploaded - for replacing another image file.
-	 *
-	 * @param Page $page
-	 * @param int $image_id
 	 */
 	public function display_replace_page(Page $page, int $image_id) {
 		global $config, $page;
@@ -305,19 +293,11 @@ class UploadTheme extends Themelet {
 		}
 	}
 
-	/**
-	 * @param Page $page
-	 * @param string $title
-	 * @param string $message
-	 */
 	public function display_upload_error(Page $page, string $title, string $message) {
 		$page->add_block(new Block($title, $message));
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function build_upload_block() {
+	protected function build_upload_block(): string {
 		global $config;
 
 		$upload_list = "";

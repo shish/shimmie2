@@ -206,10 +206,6 @@ class Database {
 
 	/**
 	 * Execute an SQL query and return a 2D array.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return array
 	 */
 	public function get_all(string $query, array $args=array()): array {
 		$_start = microtime(true);
@@ -220,10 +216,6 @@ class Database {
 
 	/**
 	 * Execute an SQL query and return a single row.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return array|null
 	 */
 	public function get_row(string $query, array $args=array()) {
 		$_start = microtime(true);
@@ -234,10 +226,6 @@ class Database {
 
 	/**
 	 * Execute an SQL query and return the first column of each row.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return array
 	 */
 	public function get_col(string $query, array $args=array()): array {
 		$_start = microtime(true);
@@ -252,10 +240,6 @@ class Database {
 
 	/**
 	 * Execute an SQL query and return the the first row => the second row.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return array
 	 */
 	public function get_pairs(string $query, array $args=array()): array {
 		$_start = microtime(true);
@@ -270,10 +254,6 @@ class Database {
 
 	/**
 	 * Execute an SQL query and return a single value.
-	 *
-	 * @param string $query
-	 * @param array $args
-	 * @return mixed|null
 	 */
 	public function get_one(string $query, array $args=array()) {
 		$_start = microtime(true);
@@ -284,9 +264,6 @@ class Database {
 
 	/**
 	 * Get the ID of the last inserted row.
-	 *
-	 * @param string|null $seq
-	 * @return int
 	 */
 	public function get_last_insert_id(string $seq): int {
 		if($this->engine->name == "pgsql") {
@@ -299,11 +276,8 @@ class Database {
 
 	/**
 	 * Create a table from pseudo-SQL.
-	 *
-	 * @param string $name
-	 * @param string $data
 	 */
-	public function create_table(string $name, string $data) {
+	public function create_table(string $name, string $data): void {
 		if(is_null($this->engine)) { $this->connect_engine(); }
 		$data = trim($data, ", \t\n\r\0\x0B");  // mysql doesn't like trailing commas
 		$this->execute($this->engine->create_table_sql($name, $data));
@@ -312,7 +286,6 @@ class Database {
 	/**
 	 * Returns the number of tables present in the current database.
 	 *
-	 * @return int
 	 * @throws SCoreException
 	 */
 	public function count_tables(): int {

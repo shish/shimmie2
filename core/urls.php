@@ -8,12 +8,8 @@
  * things like the nice URLs setting.
  *
  * eg make_link("post/list") becomes "/v2/index.php?q=post/list"
- *
- * @param null|string $page
- * @param null|string $query
- * @return string
  */
-function make_link(string $page=null, string $query=null): string {
+function make_link(?string $page=null, ?string $query=null): string {
 	global $config;
 
 	if(is_null($page)) $page = $config->get_string('main_page');
@@ -47,9 +43,6 @@ function make_link(string $page=null, string $query=null): string {
 
 /**
  * Take the current URL and modify some parameters
- *
- * @param array $changes
- * @return string
  */
 function modify_current_url(array $changes): string {
 	return modify_url($_SERVER['QUERY_STRING'], $changes);
@@ -89,11 +82,8 @@ function modify_url(string $url, array $changes): string {
 
 /**
  * Turn a relative link into an absolute one, including hostname
- *
- * @param string $link
- * @return string
  */
-function make_http(string $link) {
+function make_http(string $link): string {
 	if(strpos($link, "://") > 0) {
 		return $link;
 	}

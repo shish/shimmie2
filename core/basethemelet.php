@@ -9,13 +9,8 @@ class BaseThemelet {
 
 	/**
 	 * Generic error message display
-	 *
-	 * @param int $code
-	 * @param string $title
-	 * @param string $message
-	 * @return void
 	 */
-	public function display_error(int $code, string $title, string $message) {
+	public function display_error(int $code, string $title, string $message): void {
 		global $page;
 		$page->set_code($code);
 		$page->set_title($title);
@@ -35,9 +30,8 @@ class BaseThemelet {
 
 	/**
 	 * A specific, common error message
-	 * @return void
 	 */
-	public function display_permission_denied() {
+	public function display_permission_denied(): void {
 		$this->display_error(403, "Permission Denied", "You do not have permission to access this page");
 	}
 
@@ -45,9 +39,6 @@ class BaseThemelet {
 	/**
 	 * Generic thumbnail code; returns HTML rather than adding
 	 * a block since thumbs tend to go inside blocks...
-	 *
-	 * @param Image $image
-	 * @return string
 	 */
 	public function build_thumb_html(Image $image): string {
 		global $config;

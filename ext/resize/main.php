@@ -18,8 +18,7 @@
 class ImageResizeException extends SCoreException {
 	public $error;
 
-	/** @param string $error */
-	public function __construct($error) {
+	public function __construct(string $error) {
 		$this->error = $error;
 	}
 }
@@ -158,11 +157,6 @@ class ResizeImage extends Extension {
 	/**
 	 * This function could be made much smaller by using the ImageReplaceEvent
 	 * ie: Pretend that we are replacing the image with a resized copy.
-	 *
-	 * @param Image $image_obj
-	 * @param int $width
-	 * @param int $height
-	 * @throws ImageResizeException
 	 */
 	private function resize_image(Image $image_obj, int $width, int $height) {
 		global $database;
@@ -290,11 +284,8 @@ class ResizeImage extends Extension {
 	 *
 	 * The factor of 2.5 is simply a rough guideline.
 	 * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
-	 *
-	 * @param mixed[] $info
-	 * @return int
 	 */
-	private function calc_memory_use($info) {
+	private function calc_memory_use(array $info): int {
 		if (isset($info['bits']) && isset($info['channels'])) {
 			$memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
 		}
@@ -307,12 +298,9 @@ class ResizeImage extends Extension {
 	}
 
 	/**
-	 * @param Image $image_obj
-	 * @param int $width
-	 * @param int $height
-	 * @return int[]
+	 * #return int[]
 	 */
-	private function calc_new_size(Image $image_obj, $width, $height) {
+	private function calc_new_size(Image $image_obj, int $width, int $height): array {
 		/* Calculate the new size of the image */
 		if ($height > 0 && $width > 0) {
 			$new_height = $height;

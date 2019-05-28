@@ -2,9 +2,7 @@
 
 class ExtManagerTheme extends Themelet {
 	/**
-	 * @param Page $page
-	 * @param ExtensionInfo[] $extensions
-	 * @param bool $editable
+	 * #param ExtensionInfo[] $extensions
 	 */
 	public function display_table(Page $page, array $extensions, bool $editable) {
 		$h_en = $editable ? "<th>Enabled</th>" : "";

@@ -5,8 +5,6 @@
 class Layout {
 	/**
 	 * turns the Page into HTML
-	 *
-	 * @param Page $page
 	 */
 	public function display_page(Page $page) {
 		global $config;

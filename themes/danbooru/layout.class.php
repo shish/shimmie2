@@ -234,12 +234,9 @@ EOD;
 	}
 	
 	/**
-	 * @param string $link
-	 * @param string $desc
-	 * @param string[] $pages_matched
-	 * @return string
+	 * #param string[] $pages_matched
 	 */
-	private function navlinks($link, $desc, $pages_matched) {
+	private function navlinks(string $link, string $desc, array $pages_matched): string {
 		/**
 		 * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
 		 */

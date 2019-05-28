@@ -33,12 +33,7 @@ class RSS_Images extends Extension {
 		}
 	}
 
-	/**
-	 * @param array $images
-	 * @param array $search_terms
-	 * @param int $page_number
-	 */
-	private function do_rss($images, $search_terms, int $page_number) {
+	private function do_rss(array $images, array $search_terms, int $page_number) {
 		global $page;
 		global $config;
 		$page->set_mode("data");

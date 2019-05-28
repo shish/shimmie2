@@ -2,10 +2,9 @@
 
 class CustomIndexTheme extends IndexTheme {
 	/**
-	 * @param Page $page
-	 * @param Image[] $images
+	 * #param Image[] $images
 	 */
-	public function display_page(Page $page, $images) {
+	public function display_page(Page $page, array $images) {
 		global $config;
 
 		if(count($this->search_terms) == 0) {
@@ -38,12 +37,9 @@ class CustomIndexTheme extends IndexTheme {
 	}
 
 	/**
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param string[] $search_terms
-	 * @return string
+	 * #param string[] $search_terms
 	 */
-	protected function build_navigation($page_number, $total_pages, $search_terms) {
+	protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string {
 		$h_search_string = count($search_terms) == 0 ? "" : html_escape(implode(" ", $search_terms));
 		$h_search_link = make_link();
 		$h_search = "
@@ -58,11 +54,9 @@ class CustomIndexTheme extends IndexTheme {
 	}
 
 	/**
-	 * @param Image[] $images
-	 * @param string $query
-	 * @return string
+	 * #param Image[] $images
 	 */
-	protected function build_table($images, $query) {
+	protected function build_table(array $images, string $query): string {
 		$h_query = html_escape($query);
 		$table = "<div class='shm-image-list' data-query='$h_query'>";
 		foreach($images as $image) {

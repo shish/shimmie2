@@ -10,9 +10,7 @@ class UserPageTheme extends Themelet {
 	}
 
 	/**
-	 * @param Page $page
-	 * @param User[] $users
-	 * @param User $user
+	 * #param User[] $users
 	 */
 	public function display_user_list(Page $page, array $users, User $user, int $page_num, int $page_total) {
 		$page->set_title("User List");

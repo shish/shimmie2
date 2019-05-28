@@ -60,11 +60,7 @@ class Comment {
 		$this->posted =  $row['posted'];
 	}
 
-	/**
-	 * @param User $user
-	 * @return mixed
-	 */
-	public static function count_comments_by_user($user) {
+	public static function count_comments_by_user(User $user): int {
 		global $database;
 		return $database->get_one("
 			SELECT COUNT(*) AS count
@@ -73,10 +69,7 @@ class Comment {
 		", array("owner_id"=>$user->id));
 	}
 
-	/**
-	 * @return null|User
-	 */
-	public function get_owner() {
+	public function get_owner(): User {
 		if(empty($this->owner)) $this->owner = User::by_id($this->owner_id);
 		return $this->owner;
 	}
@@ -326,9 +319,6 @@ class CommentList extends Extension {
 	}
 
 // page building {{{
-	/**
-	 * @param int $current_page
-	 */
 	private function build_page(int $current_page) {
 		global $database, $user;
 
@@ -381,11 +371,9 @@ class CommentList extends Extension {
 
 // get comments {{{
 	/**
-	 * @param string $query
-	 * @param array $args
-	 * @return Comment[]
+	 * #return Comment[]
 	 */
-	private function get_generic_comments($query, $args) {
+	private function get_generic_comments(string $query, array $args): array {
 		global $database;
 		$rows = $database->get_all($query, $args);
 		$comments = array();
@@ -396,10 +384,9 @@ class CommentList extends Extension {
 	}
 
 	/**
-	 * @param int $count
-	 * @return Comment[]
+	 * #return Comment[]
 	 */
-	private function get_recent_comments($count) {
+	private function get_recent_comments(int $count): array {
 		return $this->get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -414,12 +401,9 @@ class CommentList extends Extension {
 	}
 
 	/**
-	 * @param int $user_id
-	 * @param int $count
-	 * @param int $offset
-	 * @return Comment[]
+	 * #return Comment[]
 	 */
-	private function get_user_comments(int $user_id, int $count, int $offset=0) {
+	private function get_user_comments(int $user_id, int $count, int $offset=0): array {
 		return $this->get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -435,10 +419,9 @@ class CommentList extends Extension {
 	}
 
 	/**
-	 * @param int $image_id
-	 * @return Comment[]
+	 * #return Comment[]
 	 */
-	private function get_comments(int $image_id) {
+	private function get_comments(int $image_id): array {
 		return $this->get_generic_comments("
 			SELECT
 				users.id as user_id, users.name as user_name, users.email as user_email, users.class as user_class,
@@ -454,10 +437,7 @@ class CommentList extends Extension {
 // }}}
 
 // add / remove / edit comments {{{
-	/**
-	 * @return bool
-	 */
-	private function is_comment_limit_hit() {
+	private function is_comment_limit_hit(): bool {
 		global $config, $database;
 
 		// sqlite fails at intervals
@@ -479,10 +459,7 @@ class CommentList extends Extension {
 		return (count($result) >= $max);
 	}
 
-	/**
-	 * @return bool
-	 */
-	private function hash_match() {
+	private function hash_match(): bool {
 		return ($_POST['hash'] == $this->get_hash());
 	}
 
@@ -492,18 +469,12 @@ class CommentList extends Extension {
 	 * many times.
 	 *
 	 * FIXME: assumes comments are posted via HTTP...
-	 *
-	 * @return string
 	 */
-	public static function get_hash() {
+	public static function get_hash(): string {
 		return md5($_SERVER['REMOTE_ADDR'] . date("%Y%m%d"));
 	}
 
-	/**
-	 * @param string $text
-	 * @return bool
-	 */
-	private function is_spam_akismet(string $text) {
+	private function is_spam_akismet(string $text): bool {
 		global $config, $user;
 		if(strlen($config->get_string('comment_wordpress_key')) > 0) {
 			$comment = array(
@@ -541,14 +512,9 @@ class CommentList extends Extension {
 		return false;
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param int $comment
-	 * @return null
-	 */
-	private function is_dupe(int $image_id, string $comment) {
+	private function is_dupe(int $image_id, string $comment): bool {
 		global $database;
-		return $database->get_row("
+		return (bool)$database->get_row("
 			SELECT *
 			FROM comments
 			WHERE image_id=:image_id AND comment=:comment
@@ -556,12 +522,6 @@ class CommentList extends Extension {
 	}
 // do some checks
 
-	/**
-	 * @param int $image_id
-	 * @param User $user
-	 * @param string $comment
-	 * @throws CommentPostingException
-	 */
 	private function add_comment_wrapper(int $image_id, User $user, string $comment) {
 		global $database, $page;
 
@@ -582,15 +542,9 @@ class CommentList extends Extension {
 		$snippet = substr($comment, 0, 100);
 		$snippet = str_replace("\n", " ", $snippet);
 		$snippet = str_replace("\r", " ", $snippet);
-		log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", false, array("image_id"=>$image_id, "comment_id"=>$cid));
+		log_info("comment", "Comment #$cid added to Image #$image_id: $snippet", null, array("image_id"=>$image_id, "comment_id"=>$cid));
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param User $user
-	 * @param string $comment
-	 * @throws CommentPostingException
-	 */
 	private function comment_checks(int $image_id, User $user, string $comment) {
 		global $config, $page;
 

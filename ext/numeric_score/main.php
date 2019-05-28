@@ -162,7 +162,7 @@ class NumericScore extends Extension {
 
 	public function onNumericScoreSet(NumericScoreSetEvent $event) {
 		global $user;
-		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", true, array("image_id"=>$event->image_id));
+		log_debug("numeric_score", "Rated Image #{$event->image_id} as {$event->score}", "Rated Image", array("image_id"=>$event->image_id));
 		$this->add_vote($event->image_id, $user->id, $event->score);
 	}
 
@@ -175,10 +175,7 @@ class NumericScore extends Extension {
 		$this->delete_votes_by($event->id);
 	}
 
-	/**
-	 * @param int $user_id
-	 */
-	public function delete_votes_by($user_id) {
+	public function delete_votes_by(int $user_id) {
 		global $database;
 
 		$image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", array($user_id));
@@ -295,12 +292,7 @@ class NumericScore extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param int $user_id
-	 * @param int $score
-	 */
-	private function add_vote($image_id, $user_id, $score) {
+	private function add_vote(int $image_id, int $user_id, int $score) {
 		global $database;
 		$database->execute(
 			"DELETE FROM numeric_score_votes WHERE image_id=:imageid AND user_id=:userid",

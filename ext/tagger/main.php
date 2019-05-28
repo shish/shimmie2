@@ -57,8 +57,7 @@ class TaggerXML extends Extension {
 		}
 	}
 
-	/** @param string $s */
-	private function match_tag_list ($s) {
+	private function match_tag_list (string $s) {
 		global $database, $config;
 
 		$max_rows = $config->get_int("ext_tagger_tag_max",30);
@@ -102,8 +101,7 @@ class TaggerXML extends Extension {
 		return $this->list_to_xml($tags,"search",$s,$count);
 	}
 
-	/** @param int $image_id */
-	private function image_tag_list ($image_id) {
+	private function image_tag_list (int $image_id) {
 		global $database;
 		$tags = $database->Execute("
 			SELECT tags.*
@@ -112,13 +110,7 @@ class TaggerXML extends Extension {
 		return $this->list_to_xml($tags,"image",$image_id);
 	}
 
-	/**
-	 * @param PDOStatement $tags
-	 * @param string $type
-	 * @param string $query
-	 * @param array $misc
-	 */
-	private function list_to_xml ($tags,$type,$query,$misc=null) {
+	private function list_to_xml (PDOStatement $tags, string $type, string $query, ?array$misc=null): string {
 		$r = $tags->_numOfRows;
 
 		$s_misc = "";
@@ -132,7 +124,7 @@ class TaggerXML extends Extension {
 		return $result."</list>";
 	}
 
-	private function tag_to_xml ($tag) {
+	private function tag_to_xml (string $tag): string {
 		return
 			"<tag  ".
 				"id=\"".$tag['id']."\" ".
@@ -141,7 +133,7 @@ class TaggerXML extends Extension {
 				"</tag>";
 	}
 
-	private function count($query,$values) {
+	private function count(string $query, $values) {
 		global $database;
 		return $database->Execute(
 			"SELECT COUNT(*) FROM `tags` $query",$values)->fields['COUNT(*)'];

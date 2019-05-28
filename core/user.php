@@ -1,11 +1,6 @@
 <?php
 
-/**
- * @private
- * @param mixed $row
- * @return User
- */
-function _new_user($row) {
+function _new_user(array $row): User {
 	return new User($row);
 }
 
@@ -48,7 +43,6 @@ class User {
 	 * One will very rarely construct a user directly, more common
 	 * would be to use User::by_id, User::by_session, etc.
 	 *
-	 * @param mixed[] $row
 	 * @throws SCoreException
 	 */
 	public function __construct(array $row) {
@@ -183,8 +177,6 @@ class User {
 	/**
 	 * Get a snippet of HTML which will render the user's avatar, be that
 	 * a local file, a remote file, a gravatar, a something else, etc.
-	 *
-	 * @return String of HTML
 	 */
 	public function get_avatar_html(): string {
 		// FIXME: configurable
@@ -212,8 +204,6 @@ class User {
 	 * authtok  = md5(sesskey, salt), presented to the user in web forms, to make sure that
 	 *            the form was generated within the session. Salted and re-hashed so that
 	 *            reading a web page from the user's cache doesn't give access to the session key
-	 *
-	 * @return string A string containing auth token (MD5sum)
 	 */
 	public function get_auth_token(): string {
 		global $config;

@@ -66,9 +66,6 @@ class Block {
 
 	/**
 	 * Get the HTML for this block.
-	 *
-	 * @param bool $hidable
-	 * @return string
 	 */
 	public function get_html(bool $hidable=false): string {
 		$h = $this->header;

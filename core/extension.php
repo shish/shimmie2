@@ -102,11 +102,8 @@ abstract class Extension {
 
 	/**
 	 * Find the theme object for a given extension.
-	 *
-	 * @param string $base
-	 * @return Themelet|null
 	 */
-	private function get_theme_object(string $base) {
+	private function get_theme_object(string $base): ?Themelet {
 		$custom = 'Custom'.$base.'Theme';
 		$normal = $base.'Theme';
 
@@ -124,7 +121,6 @@ abstract class Extension {
 	/**
 	 * Override this to change the priority of the extension,
 	 * lower numbered ones will receive events first.
-	 * @return int
 	 */
 	public function get_priority(): int {
 		return 50;

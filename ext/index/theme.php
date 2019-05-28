@@ -3,12 +3,7 @@
 class IndexTheme extends Themelet {
 	protected $page_number, $total_pages, $search_terms;
 
-	/**
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param string[] $search_terms
-	 */
-	public function set_page($page_number, $total_pages, $search_terms) {
+	public function set_page(int $page_number, int $total_pages, array $search_terms) {
 		$this->page_number = $page_number;
 		$this->total_pages = $total_pages;
 		$this->search_terms = $search_terms;
@@ -33,10 +28,9 @@ and of course start organising your images :-)
 	}
 
 	/**
-	 * @param Page $page
-	 * @param Image[] $images
+	 * #param Image[] $images
 	 */
-	public function display_page(Page $page, $images) {
+	public function display_page(Page $page, array $images) {
 		$this->display_page_header($page, $images);
 
 		$nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
@@ -51,21 +45,18 @@ and of course start organising your images :-)
 	}
 
 	/**
-	 * @param string[] $parts
+	 * #param string[] $parts
 	 */
-	public function display_admin_block($parts) {
+	public function display_admin_block(array $parts) {
 		global $page;
 		$page->add_block(new Block("List Controls", join("<br>", $parts), "left", 50));
 	}
 
 
 	/**
-	 * @param int $page_number
-	 * @param int $total_pages
-	 * @param string[] $search_terms
-	 * @return string
+	 * #param string[] $search_terms
 	 */
-	protected function build_navigation($page_number, $total_pages, $search_terms) {
+	protected function build_navigation(int $page_number, int $total_pages, array $search_terms): string {
 		$prev = $page_number - 1;
 		$next = $page_number + 1;
 
@@ -91,11 +82,9 @@ and of course start organising your images :-)
 	}
 
 	/**
-	 * @param Image[] $images
-	 * @param string $query
-	 * @return string
+	 * #param Image[] $images
 	 */
-	protected function build_table($images, $query) {
+	protected function build_table(array $images, string $query): string {
 		$h_query = html_escape($query);
 		$table = "<div class='shm-image-list' data-query='$h_query'>";
 		foreach($images as $image) {
@@ -106,10 +95,9 @@ and of course start organising your images :-)
 	}
 
 	/**
-	 * @param Page $page
-	 * @param Image[] $images
+	 * #param Image[] $images
 	 */
-	protected function display_page_header(Page $page, $images) {
+	protected function display_page_header(Page $page, array $images) {
 		global $config;
 
 		if (count($this->search_terms) == 0) {
@@ -130,10 +118,9 @@ and of course start organising your images :-)
 	}
 
 	/**
-	 * @param Page $page
-	 * @param Image[] $images
+	 * #param Image[] $images
 	 */
-	protected function display_page_images(Page $page, $images) {
+	protected function display_page_images(Page $page, array $images) {
 		if (count($this->search_terms) > 0) {
 			if($this->page_number > 3) {
 				// only index the first pages of each term

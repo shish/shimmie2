@@ -5,12 +5,8 @@ class AliasEditorTheme extends Themelet {
 	 * Show a page of aliases.
 	 *
 	 * Note: $can_manage = whether things like "add new alias" should be shown
-	 *
-	 * @param array $aliases An array of ($old_tag => $new_tag)
-	 * @param int $pageNumber
-	 * @param int $totalPages
 	 */
-	public function display_aliases($aliases, $pageNumber, $totalPages) {
+	public function display_aliases(array $aliases, int $pageNumber, int $totalPages): void {
 		global $page, $user;
 
 		$can_manage = $user->can("manage_alias_list");

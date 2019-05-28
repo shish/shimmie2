@@ -195,7 +195,7 @@ class PostListBuildingEvent extends Event {
 	public $parts = array();
 
 	/**
-	 * @param string[] $search
+	 * #param string[] $search
 	 */
 	public function __construct(array $search) {
 		$this->search_terms = $search;

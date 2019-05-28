@@ -5,21 +5,12 @@ require_once "vendor/shish/libcontext-php/context.php";
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-/**
- * @param string $file The filename
- * @return string
- */
 function mtimefile(string $file): string {
 	$data_href = get_base_href();
 	$mtime = filemtime($file);
 	return "$data_href/$file?$mtime";
 }
 
-/**
- * Return the current theme as a string
- *
- * @return string
- */
 function get_theme(): string {
 	global $config;
 	$theme = $config->get_string("theme", "default");
@@ -27,11 +18,7 @@ function get_theme(): string {
 	return $theme;
 }
 
-/**
- * Gets contact link as mailto: or http:
- * @return string|null
- */
-function contact_link() {
+function contact_link(): ?string {
 	global $config;
 	$text = $config->get_string('contact_link');
 	if(is_null($text)) return null;
@@ -57,8 +44,6 @@ function contact_link() {
 
 /**
  * Check if HTTPS is enabled for the server.
- *
- * @return bool True if HTTPS is enabled
  */
 function is_https_enabled(): bool {
 	return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
@@ -66,12 +51,8 @@ function is_https_enabled(): bool {
 
 /**
  * Compare two Block objects, used to sort them before being displayed
- *
- * @param Block $a
- * @param Block $b
- * @return int
  */
-function blockcmp(Block $a, Block $b) {
+function blockcmp(Block $a, Block $b): int {
 	if($a->position == $b->position) {
 		return 0;
 	}
@@ -82,8 +63,6 @@ function blockcmp(Block $a, Block $b) {
 
 /**
  * Figure out PHP's internal memory limit
- *
- * @return int
  */
 function get_memory_limit(): int {
 	global $config;
@@ -131,9 +110,6 @@ function get_memory_limit(): int {
 /**
  * Get the currently active IP, masked to make it not change when the last
  * octet or two change, for use in session cookies and such
- *
- * @param Config $config
- * @return string
  */
 function get_session_ip(Config $config): string {
 	$mask = $config->get_string("session_hash_mask", "255.255.0.0");
@@ -151,9 +127,6 @@ function get_session_ip(Config $config): string {
  * Generally one should flash a message in onPageRequest and log a message wherever
  * the action actually takes place (eg onWhateverElse) - but much of the time, actions
  * are taken from within onPageRequest...
- *
- * @param string $text
- * @param string $type
  */
 function flash_message(string $text, string $type="info") {
 	global $page;
@@ -168,9 +141,6 @@ function flash_message(string $text, string $type="info") {
 
 /**
  * A shorthand way to send a TextFormattingEvent and get the results.
- *
- * @param string $string
- * @return string
  */
 function format_text(string $string): string {
 	$tfe = new TextFormattingEvent($string);
@@ -197,12 +167,7 @@ function data_path(string $filename): string {
 	return $filename;
 }
 
-/**
- * @param string $url
- * @param string $mfile
- * @return array|bool
- */
-function transload(string $url, string $mfile) {
+function transload(string $url, string $mfile): ?array {
 	global $config;
 
 	if($config->get_string("transload_engine") === "curl" && function_exists("curl_init")) {
@@ -241,7 +206,7 @@ function transload(string $url, string $mfile) {
 		$fp_in = @fopen($url, "r");
 		$fp_out = fopen($mfile, "w");
 		if(!$fp_in || !$fp_out) {
-			return false;
+			return null;
 		}
 		$length = 0;
 		while(!feof($fp_in) && $length <= $config->get_int('upload_size')) {
@@ -257,16 +222,13 @@ function transload(string $url, string $mfile) {
 		return $headers;
 	}
 
-	return false;
+	return null;
 }
 
 /**
  * Get the active contents of a .php file
- *
- * @param string $fname
- * @return string|null
  */
-function manual_include(string $fname) {
+function manual_include(string $fname): ?string {
 	static $included = array();
 
 	if(!file_exists($fname)) return null;
@@ -321,8 +283,6 @@ $_shm_load_start = microtime(true);
 /**
  * Collects some debug information (execution time, memory usage, queries, etc)
  * and formats it to stick in the footer of the page.
- *
- * @return string debug info to add to the page.
  */
 function get_debug_info(): string {
 	global $config, $_shm_event_count, $database, $_shm_load_start;
@@ -380,8 +340,7 @@ function score_assert_handler($file, $line, $code, $desc = null) {
 /** @privatesection */
 
 function _version_check() {
-	if(MIN_PHP_VERSION)
-	{
+	if(MIN_PHP_VERSION) {
 		if(version_compare(phpversion(), MIN_PHP_VERSION, ">=") === FALSE) {
 			print "
 Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
@@ -434,10 +393,6 @@ function _sanitise_environment() {
 }
 
 
-/**
- * @param string $_theme
- * @return string[]
- */
 function _get_themelet_files(string $_theme): array {
 	$base_themelets = array();
 	if(file_exists('themes/'.$_theme.'/custompage.class.php')) $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
@@ -453,7 +408,6 @@ function _get_themelet_files(string $_theme): array {
 
 /**
  * Used to display fatal errors to the web user.
- * @param Exception $e
  */
 function _fatal_error(Exception $e) {
 	$version = VERSION;
@@ -485,9 +439,6 @@ function _fatal_error(Exception $e) {
  *
  * Necessary because various servers and various clients
  * think that / is special...
- *
- * @param string $str
- * @return string
  */
 function _decaret(string $str): string {
 	$out = "";
@@ -523,10 +474,7 @@ function _get_user(): User {
 	return $user;
 }
 
-/**
- * @return string|null
- */
-function _get_query() {
+function _get_query(): string {
 	return (@$_POST["q"]?:@$_GET["q"])?:"/";
 }
 
@@ -535,14 +483,14 @@ function _get_query() {
 * Code coverage                                                             *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-function _start_coverage() {
+function _start_coverage(): void {
 	if(function_exists("xdebug_start_code_coverage")) {
 		#xdebug_start_code_coverage(XDEBUG_CC_UNUSED|XDEBUG_CC_DEAD_CODE);
 		xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
 	}
 }
 
-function _end_coverage() {
+function _end_coverage(): void {
 	if(function_exists("xdebug_get_code_coverage")) {
 		// Absolute path is necessary because working directory
 		// inside register_shutdown_function is unpredictable.
@@ -564,10 +512,6 @@ function _end_coverage() {
  * and a link to ban that IP (if the user is allowed to ban IPs)
  *
  * FIXME: also check that IP ban ext is installed
- *
- * @param string $ip
- * @param string $ban_reason
- * @return string
  */
 function show_ip(string $ip, string $ban_reason): string {
 	global $user;
@@ -580,14 +524,6 @@ function show_ip(string $ip, string $ban_reason): string {
 
 /**
  * Make a form tag with relevant auth token and stuff
- *
- * @param string $target
- * @param string $method
- * @param bool $multipart
- * @param string $form_id
- * @param string $onsubmit
- *
- * @return string
  */
 function make_form(string $target, string $method="POST", bool $multipart=False, string $form_id="", string $onsubmit=""): string {
 	global $user;

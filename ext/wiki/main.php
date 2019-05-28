@@ -63,10 +63,7 @@ class WikiPage {
 		}
 	}
 
-	/**
-	 * @return null|User
-	 */
-	public function get_owner() {
+	public function get_owner(): User {
 		return User::by_id($this->owner_id);
 	}
 
@@ -190,10 +187,6 @@ class Wiki extends Extension {
 
 	/**
 	 * See if the given user is allowed to edit the given page.
-	 *
-	 * @param User $user
-	 * @param WikiPage $page
-	 * @return bool
 	 */
 	public static function can_edit(User $user, WikiPage $page): bool {
 		// admins can edit everything
@@ -479,12 +472,8 @@ class Wiki extends Extension {
 
 	/** 
 	 *   callback function to format the diffence-lines with your 'style' 
-	 * @param integer $nr1
-	 * @param integer $nr2
-	 * @param string $stat
-	 * @return string
-	 */ 
-	private function formatline( $nr1, $nr2, $stat, &$value ) { #change to $value if problems 
+	 */
+	private function formatline(int $nr1, int $nr2, string $stat, &$value ): string { #change to $value if problems
 		if(trim($value) == "") {
 			return ""; 
 		} 

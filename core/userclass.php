@@ -41,8 +41,6 @@ class UserClass {
 	/**
 	 * Determine if this class of user can perform an action or has ability.
 	 *
-	 * @param string $ability
-	 * @return bool
 	 * @throws SCoreException
 	 */
 	public function can(string $ability): bool {

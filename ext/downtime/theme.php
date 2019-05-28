@@ -3,8 +3,6 @@
 class DowntimeTheme extends Themelet {
 	/**
 	 * Show the admin that downtime mode is enabled
-	 *
-	 * @param Page $page
 	 */
 	public function display_notification(Page $page) {
 		$page->add_block(new Block("Downtime",
@@ -13,8 +11,6 @@ class DowntimeTheme extends Themelet {
 
 	/**
 	 * Display $message and exit
-	 *
-	 * @param string $message
 	 */
 	public function display_message(string $message) {
 		global $config, $user, $page;

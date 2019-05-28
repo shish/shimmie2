@@ -1,12 +1,7 @@
 <?php
 
 class Rule34Theme extends Themelet {
-	/**
-	 * @param User $duser
-	 * @param bool $current_state
-	 * @return string
-	 */
-	public function show_comic_changer(User $duser, $current_state) {
+	public function show_comic_changer(User $duser, bool $current_state): string {
 		global $page;
 		$checked = $current_state ? 'checked="checked"' : '';
 		$html = make_form(make_link("rule34/comic_admin"), "POST");

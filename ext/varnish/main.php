@@ -35,8 +35,5 @@ class VarnishPurger extends Extension {
 		$this->curl_purge("post/view/{$event->image->id}");
 	}
 
-	/**
-	 * @return int
-	 */
 	public function get_priority(): int {return 99;}
 }

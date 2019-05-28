@@ -88,11 +88,8 @@ xanax
 
 	/**
 	 * Throws if the comment contains banned words.
-	 * @param string $comment
-	 * @param CommentPostingException|SCoreException $ex
-	 * @throws CommentPostingException|SCoreException if the comment contains banned words. 
 	 */
-	private function test_text($comment, $ex) {
+	private function test_text(string $comment, Exception $ex): void {
 		$comment = strtolower($comment);
 
 		foreach($this->get_words() as $word) {

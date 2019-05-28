@@ -116,14 +116,9 @@ class XMLSitemap extends Extension
 
 	/**
 	 * Adds an array of urls to the sitemap with the given information.
-	 *
-	 * @param array $urls
-	 * @param string $changefreq
-	 * @param string $priority
-	 * @param string $date
 	 */
-	private function add_sitemap_queue(array $urls, $changefreq = "monthly",
-                                       $priority = "0.5", $date = "2013-02-01")
+	private function add_sitemap_queue(array $urls, string $changefreq = "monthly",
+                                       string $priority = "0.5", string $date = "2013-02-01")
 	{
 		foreach ($urls as $url) {
 			$link = make_http(make_link("$url"));
@@ -156,10 +151,8 @@ class XMLSitemap extends Extension
 
 	/**
 	 * Returns true if a new sitemap is needed.
-	 *
-	 * @return bool
 	 */
-	private function new_sitemap_needed()
+	private function new_sitemap_needed(): bool
 	{
 		if(!file_exists($this->sitemap_filepath)) {
 			return true;

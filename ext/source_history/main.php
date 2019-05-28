@@ -115,9 +115,8 @@ class Source_History extends Extension {
 
 	/**
 	 * This function is called when a revert request is received.
-	 * @param int $revert_id
 	 */
-	private function process_revert_request($revert_id) {
+	private function process_revert_request(int $revert_id) {
 		global $page;
 
 		$revert_id = int_escape($revert_id);
@@ -203,11 +202,7 @@ class Source_History extends Extension {
 		$this->theme->display_revert_ip_results();
 	}
 
-	/**
-	 * @param int $revert_id
-	 * @return mixed|null
-	 */
-	public function get_source_history_from_revert(int $revert_id) {
+	public function get_source_history_from_revert(int $revert_id): ?array {
 		global $database;
 		$row = $database->get_row("
 				SELECT source_histories.*, users.name
@@ -217,11 +212,7 @@ class Source_History extends Extension {
 		return ($row ? $row : null);
 	}
 
-	/**
-	 * @param int $image_id
-	 * @return array
-	 */
-	public function get_source_history_from_id(int $image_id) {
+	public function get_source_history_from_id(int $image_id): array {
 		global $database;
 		$row = $database->get_all("
 				SELECT source_histories.*, users.name
@@ -233,11 +224,7 @@ class Source_History extends Extension {
 		return ($row ? $row : array());
 	}
 
-	/**
-	 * @param int $page_id
-	 * @return array
-	 */
-	public function get_global_source_history($page_id) {
+	public function get_global_source_history(int $page_id): array {
 		global $database;
 		$row = $database->get_all("
 				SELECT source_histories.*, users.name
@@ -251,12 +238,8 @@ class Source_History extends Extension {
 
 	/**
 	 * This function attempts to revert all changes by a given IP within an (optional) timeframe.
-	 *
-	 * @param string $name
-	 * @param string $ip
-	 * @param string $date
 	 */
-	public function process_revert_all_changes($name, $ip, $date) {
+	public function process_revert_all_changes(string $name, string $ip, string $date) {
 		global $database;
 		
 		$select_code = array();
@@ -351,10 +334,8 @@ class Source_History extends Extension {
 
 	/**
 	 * This function is called just before an images source is changed.
-	 * @param Image $image
-	 * @param string $source
 	 */
-	private function add_source_history($image, $source) {
+	private function add_source_history(Image $image, string $source) {
 		global $database, $config, $user;
 
 		$new_source = $source;

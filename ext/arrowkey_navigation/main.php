@@ -11,8 +11,6 @@
 class ArrowkeyNavigation extends Extension {
 	/**
 	 * Adds functionality for post/view on images.
-	 *
-	 * @param DisplayingImageEvent $event
 	 */
 	public function onDisplayingImage(DisplayingImageEvent $event) {
 		$prev_url = make_http(make_link("post/prev/".$event->image->id));
@@ -22,8 +20,6 @@ class ArrowkeyNavigation extends Extension {
 
 	/**
 	 * Adds functionality for post/list.
-	 *
-	 * @param PageRequestEvent $event
 	 */
 	public function onPageRequest(PageRequestEvent $event) {
 		if($event->page_matches("post/list")) {
@@ -36,11 +32,8 @@ class ArrowkeyNavigation extends Extension {
 
 	/**
 	 * Adds the javascript to the page with the given urls.
-	 *
-	 * @param string $prev_url
-	 * @param string $next_url
 	 */
-	private function add_arrowkeys_code($prev_url, $next_url) {
+	private function add_arrowkeys_code(string $prev_url, string $next_url) {
 		global $page;
 
 		$page->add_html_header("<script type=\"text/javascript\">
@@ -57,11 +50,8 @@ class ArrowkeyNavigation extends Extension {
 
 	/**
 	 * Returns info about the current page number.
-	 *
-	 * @param PageRequestEvent $event
-	 * @return array
 	 */
-	private function get_list_pageinfo(PageRequestEvent $event) {
+	private function get_list_pageinfo(PageRequestEvent $event): array {
 		global $config, $database;
 
 		// get the amount of images per page

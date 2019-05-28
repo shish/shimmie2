@@ -48,7 +48,7 @@ class AliasEditor extends Extension {
 				if($user->can("manage_alias_list")) {
 					if(isset($_POST['oldtag'])) {
 						$database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", array("oldtag" => $_POST['oldtag']));
-						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], true);
+						log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], "Deleted alias");
 
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("alias/list"));
@@ -90,7 +90,7 @@ class AliasEditor extends Extension {
 						$tmp = $_FILES['alias_file']['tmp_name'];
 						$contents = file_get_contents($tmp);
 						$this->add_alias_csv($database, $contents);
-						log_info("alias_editor", "Imported aliases from file", true); # FIXME: how many?
+						log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
 						$page->set_mode("redirect");
 						$page->set_redirect(make_link("alias/list"));
 					}
@@ -116,7 +116,7 @@ class AliasEditor extends Extension {
 		}
 		else {
 			$database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
-			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", true);
+			log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
 		}
 	}
 
@@ -158,7 +158,6 @@ class AliasEditor extends Extension {
 	 * Add alias *after* mass tag editing, else the MTE will
 	 * search for the images and be redirected to the alias,
 	 * missing out the images tagged with the old tag.
-	 * @return int
 	 */
 	public function get_priority(): int {return 60;}
 }

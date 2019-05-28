@@ -79,8 +79,7 @@ class TagSetEvent extends Event {
 	public $metatags;
 
 	/**
-	 * @param Image $image
-	 * @param string[] $tags
+	 * #param string[] $tags
 	 */
 	public function __construct(Image $image, array $tags) {
 		$this->image    = $image;
@@ -237,7 +236,6 @@ class TagEdit extends Extension {
 
 	/**
 	 * When an alias is added, oldtag becomes inaccessible.
-	 * @param AddAliasEvent $event
 	 */
 	public function onAddAlias(AddAliasEvent $event) {
 		$this->mass_tag_edit($event->oldtag, $event->newtag);
@@ -261,29 +259,17 @@ class TagEdit extends Extension {
 		if(!empty($matches)) $event->metatag = true;
 	}
 
-	/**
-	 * @param Image $image
-	 * @return bool
-	 */
-	private function can_tag(Image $image) {
+	private function can_tag(Image $image): bool {
 		global $user;
 		return ($user->can("edit_image_tag") || !$image->is_locked());
 	}
 
-	/**
-	 * @param Image $image
-	 * @return bool
-	 */
-	private function can_source(Image $image) {
+	private function can_source(Image $image): bool {
 		global $user;
 		return ($user->can("edit_image_source") || !$image->is_locked());
 	}
 
-	/**
-	 * @param string $search
-	 * @param string $replace
-	 */
-	private function mass_tag_edit($search, $replace) {
+	private function mass_tag_edit(string $search, string $replace) {
 		global $database;
 
 		$search_set = Tag::explode(strtolower($search), false);

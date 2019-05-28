@@ -40,7 +40,7 @@ _d("TIMEZONE", null);        // string   timezone
 _d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,handle_static,comment,tag_list,index,tag_edit,alias_editor"); // extensions to always enable
 _d("EXTRA_EXTS", "");        // string   optional extra extensions
 _d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
-_d("MIN_PHP_VERSION", '7.0');// string   minimum supported PHP version
+_d("MIN_PHP_VERSION", '7.1');// string   minimum supported PHP version
 _d("SLOW_PAGES", null);      // float    log pages which take more time than this
 _d("ENABLED_MODS", "imageboard");
 

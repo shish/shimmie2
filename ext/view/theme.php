@@ -47,10 +47,7 @@ class ViewImageTheme extends Themelet {
 		return "$h_prev | $h_index | $h_next";
 	}
 
-	/**
-	 * @return string
-	 */
-	protected function build_navigation(Image $image) {
+	protected function build_navigation(Image $image): string {
 		$h_pin = $this->build_pin($image);
 		$h_search = "
 			<p><form action='".make_link()."' method='GET'>

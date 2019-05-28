@@ -18,9 +18,7 @@ class Tag {
 	/**
 	 * Turn a human-supplied string into a valid tag array.
 	 *
-	 * @param string $tags
-	 * @param bool $tagme add "tagme" if the string is empty
-	 * @return string[]
+	 * #return string[]
 	 */
 	public static function explode(string $tags, bool $tagme=true): array {
 		global $database;

@@ -36,9 +36,6 @@ class RatingSetEvent extends Event {
 class Ratings extends Extension {
 	protected $db_support = ['mysql'];  // ?
 
-	/**
-	 * @return int
-	 */
 	public function get_priority(): int {return 50;}
 
 	public function onInitExt(InitExtEvent $event) {
@@ -162,11 +159,7 @@ class Ratings extends Extension {
 		}
 	}
 
-	/**
-	 * @param \User $user
-	 * @return string
-	 */
-	public static function get_user_privs(User $user) {
+	public static function get_user_privs(User $user): string {
 		global $config;
 
 		if($user->is_anonymous()) {
@@ -181,11 +174,7 @@ class Ratings extends Extension {
 		return $sqes;
 	}
 
-	/**
-	 * @param string $sqes
-	 * @return string
-	 */
-	public static function privs_to_sql(string $sqes) {
+	public static function privs_to_sql(string $sqes): string {
 		$arr = array();
 		$length = strlen($sqes);
 		for($i=0; $i<$length; $i++) {
@@ -195,11 +184,7 @@ class Ratings extends Extension {
 		return $set;
 	}
 
-	/**
-	 * @param string $rating
-	 * @return string
-	 */
-	public static function rating_to_human(string $rating) {
+	public static function rating_to_human(string $rating): string {
 		switch($rating) {
 			case "s": return "Safe";
 			case "q": return "Questionable";
@@ -208,11 +193,7 @@ class Ratings extends Extension {
 		}
 	}
 
-	/**
-	 * @param string $rating
-	 * @return bool
-	 */
-	public static function rating_is_valid(string $rating) {
+	public static function rating_is_valid(string $rating): bool {
 		switch($rating) {
 			case "s":
 			case "q":
@@ -226,10 +207,8 @@ class Ratings extends Extension {
 
 	/**
 	 * FIXME: this is a bit ugly and guessey, should have proper options
-	 *
-	 * @return bool
 	 */
-	private function can_rate() {
+	private function can_rate(): bool {
 		global $config, $user;
 		if($user->is_anonymous() && $config->get_string("ext_rating_anon_privs") == "sqeu") return false;
 		if($user->is_admin()) return true;
@@ -238,10 +217,9 @@ class Ratings extends Extension {
 	}
 
 	/**
-	 * @param string[] $context
-	 * @return bool
+	 * #param string[] $context
 	 */
-	private function no_rating_query($context) {
+	private function no_rating_query(array $context): bool {
 		foreach($context as $term) {
 			if(preg_match("/^rating[=|:]/", $term)) {
 				return false;
@@ -270,11 +248,6 @@ class Ratings extends Extension {
 		}
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param string $rating
-	 * @param string $old_rating
-	 */
 	private function set_rating(int $image_id, string $rating, string $old_rating) {
 		global $database;
 		if($old_rating != $rating){
