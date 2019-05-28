@@ -45,7 +45,7 @@ class Database {
 	 * DB connection is on-demand.
 	 */
 	public function __construct() {
-		$this->cache = Cache(CACHE_DSN);
+		$this->cache = new Cache(CACHE_DSN);
 	}
 
 	private function connect_db() {

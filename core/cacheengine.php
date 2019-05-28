@@ -138,7 +138,7 @@ class Cache {
 	public $hits=0, $misses=0;
 	public $time=0;
 
-	public function __construct($dsn: string) {
+	public function __construct(?string $dsn) {
 		$matches = array();
 		if($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches)) {
 			if($matches[1] == "memcache") {
@@ -177,7 +177,7 @@ class Cache {
 	}
 
 	public function set(string $key, $val, int $time=0) {
-		$this->engine->set($key, $time, $val);
+		$this->engine->set($key, $val, $time);
 		if((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
 			file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
 		}
