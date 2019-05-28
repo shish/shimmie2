@@ -369,6 +369,7 @@ class MockDatabase extends Database
         );
         return $this->responses[$this->query_id++];
     }
+
     public function _execute(string $query, array $params=[])
     {
         log_debug(
@@ -410,9 +411,11 @@ class MockDatabase extends Database
     {
         return $sql;
     }
-    public function create_table(string $name, string $def)
+
+    public function create_table(string $name, string $def): void
     {
     }
+
     public function connect_engine()
     {
     }

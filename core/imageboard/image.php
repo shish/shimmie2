@@ -485,7 +485,7 @@ class Image
     /**
      * Get the image's source URL
      */
-    public function get_source(): string
+    public function get_source(): ?string
     {
         return $this->source;
     }

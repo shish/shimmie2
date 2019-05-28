@@ -113,74 +113,74 @@ abstract class BaseConfig implements Config
 {
     public $values = [];
 
-    public function set_int(string $name, $value)
+    public function set_int(string $name, ?int $value): void
     {
         $this->values[$name] = parse_shorthand_int($value);
         $this->save($name);
     }
 
-    public function set_string(string $name, $value)
+    public function set_string(string $name, ?string $value): void
     {
         $this->values[$name] = $value;
         $this->save($name);
     }
 
-    public function set_bool(string $name, $value)
+    public function set_bool(string $name, $value): void
     {
         $this->values[$name] = bool_escape($value) ? 'Y' : 'N';
         $this->save($name);
     }
 
-    public function set_array(string $name, array $value)
+    public function set_array(string $name, array $value): void
     {
         $this->values[$name] = implode(",", $value);
         $this->save($name);
     }
 
-    public function set_default_int(string $name, int $value)
+    public function set_default_int(string $name, int $value): void
     {
         if (is_null($this->get($name))) {
             $this->values[$name] = $value;
         }
     }
 
-    public function set_default_string(string $name, string $value)
+    public function set_default_string(string $name, string $value): void
     {
         if (is_null($this->get($name))) {
             $this->values[$name] = $value;
         }
     }
 
-    public function set_default_bool(string $name, bool $value)
+    public function set_default_bool(string $name, bool $value): void
     {
         if (is_null($this->get($name))) {
             $this->values[$name] = $value ? 'Y' : 'N';
         }
     }
 
-    public function set_default_array(string $name, array $value)
+    public function set_default_array(string $name, array $value): void
     {
         if (is_null($this->get($name))) {
             $this->values[$name] = implode(",", $value);
         }
     }
 
-    public function get_int(string $name, $default=null)
+    public function get_int(string $name, $default=null): ?int
     {
         return (int)($this->get($name, $default));
     }
 
-    public function get_string(string $name, $default=null)
+    public function get_string(string $name, $default=null): ?string
     {
         return $this->get($name, $default);
     }
 
-    public function get_bool(string $name, $default=null)
+    public function get_bool(string $name, $default=null): ?bool
     {
         return bool_escape($this->get($name, $default));
     }
 
-    public function get_array(string $name, array $default=[]): array
+    public function get_array(string $name, ?array $default=[]): ?array
     {
         return explode(",", $this->get($name, ""));
     }
@@ -208,7 +208,7 @@ class HardcodeConfig extends BaseConfig
         $this->values = $dict;
     }
 
-    public function save(string $name=null)
+    public function save(string $name=null): void
     {
         // static config is static
     }
@@ -242,7 +242,7 @@ class StaticConfig extends BaseConfig
         }
     }
 
-    public function save(string $name=null)
+    public function save(string $name=null): void
     {
         // static config is static
     }
@@ -283,7 +283,7 @@ class DatabaseConfig extends BaseConfig
         }
     }
 
-    public function save(string $name=null)
+    public function save(string $name=null): void
     {
         if (is_null($name)) {
             reset($this->values); // rewind the array to the first element

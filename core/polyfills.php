@@ -391,8 +391,11 @@ function endsWith(string $haystack, string $needle): bool
 /**
  * Make some data safe for printing into HTML
  */
-function html_escape(string $input): string
+function html_escape(?string $input): string
 {
+    if (is_null($input)) {
+        return "";
+    }
     return htmlentities($input, ENT_QUOTES, "UTF-8");
 }
 
@@ -407,12 +410,15 @@ function html_unescape(string $input): string
 /**
  * Make sure some data is safe to be used in integer context
  */
-function int_escape(string $input): int
+function int_escape(?string $input): int
 {
     /*
      Side note, Casting to an integer is FASTER than using intval.
      http://hakre.wordpress.com/2010/05/13/php-casting-vs-intval/
     */
+    if (is_null($input)) {
+        return 0;
+    }
     return (int)$input;
 }
 

@@ -91,7 +91,7 @@ and of course start organising your images :-)
     /**
      * #param Image[] $images
      */
-    protected function build_table(array $images, string $query): string
+    protected function build_table(array $images, ?string $query): string
     {
         $h_query = html_escape($query);
         $table = "<div class='shm-image-list' data-query='$h_query'>";

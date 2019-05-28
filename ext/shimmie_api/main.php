@@ -109,7 +109,7 @@ class ShimmieApi extends Extension
     /**
      * #return string[]
      */
-    private function api_get_tags(string $arg): array
+    private function api_get_tags(?string $arg): array
     {
         global $database;
         if (!empty($arg)) {
