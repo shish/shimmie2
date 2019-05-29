@@ -242,7 +242,7 @@ class Database
     /**
      * Execute an SQL query and return a single row.
      */
-    public function get_row(string $query, array $args=[]): ?PDORow
+    public function get_row(string $query, array $args=[]): ?array
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
@@ -385,7 +385,7 @@ class MockDatabase extends Database
     {
         return $this->_execute($query, $args);
     }
-    public function get_row(string $query, array $args=[]): ?PDORow
+    public function get_row(string $query, array $args=[]): ?array
     {
         return $this->_execute($query, $args);
     }
