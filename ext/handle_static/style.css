@@ -37,8 +37,7 @@ IMG.lazy {display: none;}
 	font-family: "Arial", sans-serif;
 	font-size: 14px;
 	width: 512px;
-	margin: auto;
-	margin-top: 16px;
+	margin: 16px auto auto;
 	border: 1px solid black;
 	border-radius: 16px;
 }

@@ -50,7 +50,7 @@ class Database
         $this->cache = new Cache(CACHE_DSN);
     }
 
-    private function connect_db()
+    private function connect_db(): void
     {
         # FIXME: detect ADODB URI, automatically translate PDO DSN
 
@@ -88,7 +88,7 @@ class Database
         $this->beginTransaction();
     }
 
-    private function connect_engine()
+    private function connect_engine(): void
     {
         if (preg_match("/^([^:]*)/", DATABASE_DSN, $matches)) {
             $db_proto=$matches[1];
@@ -107,7 +107,7 @@ class Database
         }
     }
 
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         if ($this->transaction === false) {
             $this->db->beginTransaction();
@@ -167,7 +167,7 @@ class Database
         return $this->engine->name;
     }
 
-    private function count_execs(string $sql, array $inputarray)
+    private function count_execs(string $sql, array $inputarray): void
     {
         if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
             $sql = trim(preg_replace('/\s+/msi', ' ', $sql));
@@ -189,7 +189,7 @@ class Database
         }
     }
 
-    private function count_time(string $method, float $start)
+    private function count_time(string $method, float $start): void
     {
         if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
             $text = $method.":".(microtime(true) - $start)."\n";
@@ -242,7 +242,7 @@ class Database
     /**
      * Execute an SQL query and return a single row.
      */
-    public function get_row(string $query, array $args=[])
+    public function get_row(string $query, array $args=[]): ?PDORow
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
@@ -385,7 +385,7 @@ class MockDatabase extends Database
     {
         return $this->_execute($query, $args);
     }
-    public function get_row(string $query, array $args=[])
+    public function get_row(string $query, array $args=[]): ?PDORow
     {
         return $this->_execute($query, $args);
     }
@@ -416,7 +416,7 @@ class MockDatabase extends Database
     {
     }
 
-    public function connect_engine()
+    public function connect_engine(): void
     {
     }
 }

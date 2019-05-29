@@ -7,7 +7,7 @@
 global $_shm_event_listeners;
 $_shm_event_listeners = [];
 
-function _load_event_listeners()
+function _load_event_listeners(): void
 {
     global $_shm_event_listeners, $_shm_ctx;
 
@@ -27,7 +27,7 @@ function _load_event_listeners()
     $_shm_ctx->log_endok();
 }
 
-function _set_event_listeners()
+function _set_event_listeners(): void
 {
     global $_shm_event_listeners;
     $_shm_event_listeners = [];

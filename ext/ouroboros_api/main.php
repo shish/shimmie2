@@ -569,7 +569,7 @@ class OuroborosAPI extends Extension
     {
         if (!is_null($id)) {
             $post = new _SafeOuroborosImage(Image::by_id($id));
-            $this->sendData('post', $post);
+            $this->sendData('post', [$post]);
         } else {
             $this->sendResponse(424, 'ID is mandatory');
         }

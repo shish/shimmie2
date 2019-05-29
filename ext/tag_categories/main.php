@@ -126,6 +126,8 @@ class TagCategories extends Extension
             return false;
         }
 
+        $is_success = null;
+
         if ($_POST['tc_status'] == 'edit') {
             $is_success = $database->execute(
                 'UPDATE image_tag_categories

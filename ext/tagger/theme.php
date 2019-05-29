@@ -49,15 +49,15 @@ class taggerTheme extends Themelet
 	<div id="tagger_titlebar">Tagger</div>
 
 	<div id="tagger_toolbar">
-		<input type="text" value="" id="tagger_filter" onkeyup="Tagger.tag.search(this.value, $delay);"></input>
-		<input type="button" value="Add" onclick="Tagger.tag.create(byId('tagger_filter').value);"></input>
+		<input type="text" value="" id="tagger_filter" onkeyup="Tagger.tag.search(this.value, $delay);" />
+		<input type="button" value="Add" onclick="Tagger.tag.create(byId('tagger_filter').value);" />
 		<form action="$url_form" method="POST" onsubmit="Tagger.tag.submit();">
-			<input type='hidden' name='image_id' value='$i_image_id' id="image_id"></input>
-			<input type='hidden' name='query' value='$h_query'></input>
-			<input type='hidden' name='source' value='$h_source'></input>
-			<input type="hidden" name="tags" value="" id="tagger_tags"></input>
+			<input type='hidden' name='image_id' value='$i_image_id' id="image_id" />
+			<input type='hidden' name='query' value='$h_query' />
+			<input type='hidden' name='source' value='$h_source' />
+			<input type="hidden" name="tags" value="" id="tagger_tags" />
 
-			<input type="submit" value="Set"></input>
+			<input type="submit" value="Set" />
 		</form>
 		<!--<ul id="tagger_p-menu"></ul>
 		<br style="clear:both;"/>-->

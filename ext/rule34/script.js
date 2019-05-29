@@ -59,12 +59,12 @@ $(function() {
 var forceDesktop = false;
 function toggleDesktop() {
 	if(forceDesktop) {
-		var viewport = document.querySelector("meta[name=viewport]");
+		let viewport = document.querySelector("meta[name=viewport]");
 		viewport.setAttribute('content', 'width=512');
 		Cookies.set("ui-desktop", "false");
 	}
 	else {
-		var viewport = document.querySelector("meta[name=viewport]");
+		let viewport = document.querySelector("meta[name=viewport]");
 		viewport.setAttribute('content', 'width=1024, initial-scale=0.4');
 		Cookies.set("ui-desktop", "true");
 		navHidden = true;

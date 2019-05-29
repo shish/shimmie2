@@ -31,7 +31,6 @@
 }
 #tagger_body {
 	max-height:175px;
-	overflow:auto;
 	overflow-x:hidden;
 	overflow-y:auto;
 }

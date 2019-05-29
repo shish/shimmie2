@@ -43,5 +43,20 @@
 
 	"require-dev" : {
 		"phpunit/phpunit" : "6.*"
+	},
+
+	"suggest": {
+		"ext-memcache": "memcache caching",
+		"ext-memcached": "memcached caching",
+		"ext-apc": "apc caching",
+		"ext-redis": "redis caching",
+		"ext-dom": "some extensions",
+		"ext-curl": "some extensions",
+		"ext-ctype": "some extensions",
+		"ext-json": "some extensions",
+		"ext-zip": "self-updater extension",
+		"ext-zlib": "anti-spam",
+		"ext-xml": "some extensions",
+		"ext-gd": "GD-based thumbnailing"
 	}
 }

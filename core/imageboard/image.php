@@ -71,21 +71,21 @@ class Image
         }
     }
 
-    public static function by_id(int $id)
+    public static function by_id(int $id): ?Image
     {
         global $database;
         $row = $database->get_row("SELECT * FROM images WHERE images.id=:id", ["id"=>$id]);
         return ($row ? new Image($row) : null);
     }
 
-    public static function by_hash(string $hash)
+    public static function by_hash(string $hash): ?Image
     {
         global $database;
         $row = $database->get_row("SELECT images.* FROM images WHERE hash=:hash", ["hash"=>$hash]);
         return ($row ? new Image($row) : null);
     }
 
-    public static function by_random(array $tags=[])
+    public static function by_random(array $tags=[]): ?Image
     {
         $max = Image::count_images($tags);
         if ($max < 1) {
@@ -148,7 +148,7 @@ class Image
     /*
      * Accelerator stuff
      */
-    public static function get_acceleratable(array $tags)
+    public static function get_acceleratable(array $tags): ?array
     {
         $ret = [
             "yays" => [],
@@ -158,7 +158,7 @@ class Image
         $nays = 0;
         foreach ($tags as $tag) {
             if (!preg_match("/^-?[a-zA-Z0-9_-]+$/", $tag)) {
-                return false;
+                return null;
             }
             if ($tag[0] == "-") {
                 $nays++;
@@ -171,10 +171,10 @@ class Image
         if ($yays > 1 || $nays > 0) {
             return $ret;
         }
-        return false;
+        return null;
     }
 
-    public static function get_accelerated_result(array $tags, int $offset, int $limit)
+    public static function get_accelerated_result(array $tags, int $offset, int $limit): ?PDOStatement
     {
         global $database;
 
@@ -195,7 +195,7 @@ class Image
         return $result;
     }
 
-    public static function get_accelerated_count(array $tags)
+    public static function get_accelerated_count(array $tags): ?int
     {
         $req = Image::get_acceleratable($tags);
         if (!$req) {
@@ -336,7 +336,7 @@ class Image
     /**
      * Set the image's owner.
      */
-    public function set_owner(User $owner)
+    public function set_owner(User $owner): void
     {
         global $database;
         if ($owner->id != $this->owner_id) {
@@ -514,7 +514,7 @@ class Image
         return $this->locked;
     }
 
-    public function set_locked(bool $tf)
+    public function set_locked(bool $tf): void
     {
         global $database;
         $ln = $tf ? "Y" : "N";
@@ -566,7 +566,7 @@ class Image
     /**
      * Set the tags for this image.
      */
-    public function set_tags(array $unfiltered_tags)
+    public function set_tags(array $unfiltered_tags): void
     {
         global $database;
 

@@ -39,7 +39,7 @@ class ForumTheme extends Themelet
 					<tr><td>Message:</td><td><textarea id='message' name='message' >$threadText</textarea></td></tr>
 					<tr><td></td><td><small>Max characters alowed: $max_characters.</small></td></tr>";
         if ($user->is_admin()) {
-            $html .= "<tr><td colspan='2'><label for='sticky'>Sticky:</label><input name='sticky' type='checkbox' value='Y' /></td></tr>";
+            $html .= "<tr><td colspan='2'><label for='sticky'>Sticky:</label><input name='sticky' id='sticky' type='checkbox' value='Y' /></td></tr>";
         }
         $html .= "<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
 				</table>

@@ -64,7 +64,7 @@ class User
         }
     }
 
-    public static function by_session(string $name, string $session)
+    public static function by_session(string $name, string $session): ?User
     {
         global $config, $database;
         $row = $database->cache->get("user-session:$name-$session");
@@ -80,7 +80,7 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
-    public static function by_id(int $id)
+    public static function by_id(int $id): ?User
     {
         global $database;
         if ($id === 1) {
@@ -96,14 +96,14 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
-    public static function by_name(string $name)
+    public static function by_name(string $name): ?User
     {
         global $database;
         $row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), ["name"=>$name]);
         return is_null($row) ? null : new User($row);
     }
 
-    public static function by_name_and_pass(string $name, string $pass)
+    public static function by_name_and_pass(string $name, string $pass): ?User
     {
         $user = User::by_name($name);
         if ($user) {
@@ -149,14 +149,14 @@ class User
         return ($this->class->name === "admin");
     }
 
-    public function set_class(string $class)
+    public function set_class(string $class): void
     {
         global $database;
         $database->Execute("UPDATE users SET class=:class WHERE id=:id", ["class"=>$class, "id"=>$this->id]);
         log_info("core-user", 'Set class for '.$this->name.' to '.$class);
     }
 
-    public function set_name(string $name)
+    public function set_name(string $name): void
     {
         global $database;
         if (User::by_name($name)) {
@@ -168,7 +168,7 @@ class User
         log_info("core-user", "Changed username for {$old_name} to {$this->name}");
     }
 
-    public function set_password(string $password)
+    public function set_password(string $password): void
     {
         global $database;
         $hash = password_hash($password, PASSWORD_BCRYPT);
@@ -181,7 +181,7 @@ class User
         }
     }
 
-    public function set_email(string $address)
+    public function set_email(string $address): void
     {
         global $database;
         $database->Execute("UPDATE users SET email=:email WHERE id=:id", ["email"=>$address, "id"=>$this->id]);

@@ -12,18 +12,18 @@ class Querylet
         $this->variables = $variables;
     }
 
-    public function append(Querylet $querylet)
+    public function append(Querylet $querylet): void
     {
         $this->sql .= $querylet->sql;
         $this->variables = array_merge($this->variables, $querylet->variables);
     }
 
-    public function append_sql(string $sql)
+    public function append_sql(string $sql): void
     {
         $this->sql .= $sql;
     }
 
-    public function add_variable($var)
+    public function add_variable($var): void
     {
         $this->variables[] = $var;
     }

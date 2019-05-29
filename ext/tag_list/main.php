@@ -302,8 +302,8 @@ class TagList extends Extension
         # which breaks down into "az, a-, az" :(
         ksort($tag_data, SORT_STRING | SORT_FLAG_CASE);
         foreach ($tag_data as $tag => $count) {
-            if ($lastLetter != mb_strtolower(substr($tag, 0, count($starts_with)+1))) {
-                $lastLetter = mb_strtolower(substr($tag, 0, count($starts_with)+1));
+            if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with)+1))) {
+                $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with)+1));
                 $h_lastLetter = html_escape($lastLetter);
                 $html .= "<p>$h_lastLetter<br>";
             }

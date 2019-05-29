@@ -78,7 +78,7 @@ function ip_in_range(string $IP, string $CIDR): bool
  * from a patch by Christian Walde; only intended for use in the
  * "extension manager" extension, but it seems to fit better here
  */
-function deltree(string $f)
+function deltree(string $f): void
 {
     //Because Windows (I know, bad excuse)
     if (PHP_OS === 'WINNT') {
@@ -117,7 +117,7 @@ function deltree(string $f)
  *
  * from a comment on http://uk.php.net/copy
  */
-function full_copy(string $source, string $target)
+function full_copy(string $source, string $target): void
 {
     if (is_dir($source)) {
         @mkdir($target);

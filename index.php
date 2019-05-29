@@ -69,7 +69,7 @@ if (!file_exists("vendor/")) {
 			<div class="container">
 				<p>Shimmie is unable to find the composer vendor directory.<br>
 				Have you followed the composer setup instructions found in the
-				<a href="https://github.com/shish/shimmie2#installation-development">README</a>?</>
+				<a href="https://github.com/shish/shimmie2#installation-development">README</a>?</p>
 
 				<p>If you are not intending to do any development with Shimmie,
 				it is highly recommend you use one of the pre-packaged releases

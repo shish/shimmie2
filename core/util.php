@@ -137,7 +137,7 @@ function get_session_ip(Config $config): string
  * the action actually takes place (eg onWhateverElse) - but much of the time, actions
  * are taken from within onPageRequest...
  */
-function flash_message(string $text, string $type="info")
+function flash_message(string $text, string $type="info"): void
 {
     global $page;
     $current = $page->get_cookie("flash_message");
@@ -332,7 +332,7 @@ function get_debug_info(): string
     return $debug;
 }
 
-function log_slow()
+function log_slow(): void
 {
     global $_shm_load_start;
     if (!is_null(SLOW_PAGES)) {
@@ -345,7 +345,7 @@ function log_slow()
     }
 }
 
-function score_assert_handler($file, $line, $code, $desc = null)
+function score_assert_handler($file, $line, $code, $desc = null): void
 {
     $file = basename($file);
     print("Assertion failed at $file:$line: $code ($desc)");
@@ -363,7 +363,7 @@ function score_assert_handler($file, $line, $code, $desc = null)
 
 /** @privatesection */
 
-function _version_check()
+function _version_check(): void
 {
     if (MIN_PHP_VERSION) {
         if (version_compare(phpversion(), MIN_PHP_VERSION, ">=") === false) {
@@ -378,7 +378,7 @@ date and you should plan on moving elsewhere.
     }
 }
 
-function _sanitise_environment()
+function _sanitise_environment(): void
 {
     global $_shm_ctx;
 
@@ -438,7 +438,7 @@ function _get_themelet_files(string $_theme): array
 /**
  * Used to display fatal errors to the web user.
  */
-function _fatal_error(Exception $e)
+function _fatal_error(Exception $e): void
 {
     $version = VERSION;
     $message = $e->getMessage();

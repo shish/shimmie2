@@ -47,7 +47,7 @@ class Page
     /**
      * Set what this page should do; "page", "data", or "redirect".
      */
-    public function set_mode(string $mode)
+    public function set_mode(string $mode): void
     {
         $this->mode = $mode;
     }
@@ -55,7 +55,7 @@ class Page
     /**
      * Set the page's MIME type.
      */
-    public function set_type(string $type)
+    public function set_type(string $type): void
     {
         $this->type = $type;
     }
@@ -75,7 +75,7 @@ class Page
     /**
      * Set the raw data to be sent.
      */
-    public function set_data(string $data)
+    public function set_data(string $data): void
     {
         $this->data = $data;
     }
@@ -83,7 +83,7 @@ class Page
     /**
      * Set the recommended download filename.
      */
-    public function set_filename(string $filename)
+    public function set_filename(string $filename): void
     {
         $this->filename = $filename;
     }
@@ -101,7 +101,7 @@ class Page
      * Set the URL to redirect to (remember to use make_link() if linking
      * to a page in the same site).
      */
-    public function set_redirect(string $redirect)
+    public function set_redirect(string $redirect): void
     {
         $this->redirect = $redirect;
     }
@@ -229,7 +229,7 @@ class Page
     /**
      * Add a Block of data to the page.
      */
-    public function add_block(Block $block)
+    public function add_block(Block $block): void
     {
         $this->blocks[] = $block;
     }

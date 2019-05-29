@@ -97,7 +97,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 .reply, .paginator {
 	margin-bottom: 2px;
 	font-size: 10pt;
-	padding: 0px 5px;
 	background: #F0E0D6;
 	color: #800000;
 	border: 1px solid #D9BFB7;

@@ -49,7 +49,7 @@ class TagCategoriesTheme extends Themelet
                 </table>
                 <button class="tc_edit" type="button" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') tr + tr td span\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') td input\').show(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_edit\').hide(); $(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_submit\').show();">Edit</button>
                 <button class="tc_submit" type="submit" style="display:none;" name="tc_status" value="edit">Submit</button>
-                <button class="tc_submit" type="button" style="display:none.tagcategoryblock:nth-of-type('.$tc_block_index.');" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_delete\').show(); $(this).hide();">Delete</button>
+                <button class="tc_submit" type="button" style="display:none;" onclick="$(\'.tagcategoryblock:nth-of-type('.$tc_block_index.') .tc_delete\').show(); $(this).hide();">Delete</button>
                 <button class="tc_delete" type="submit" style="display:none;" name="tc_status" value="delete">Really, really delete</button>
             </form>
             </div>

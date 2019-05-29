@@ -15,7 +15,7 @@ class LinkImageTest extends ShimmiePHPUnitTestCase
 
         // FIXME
         $matches = [];
-        preg_match("#value='(http://.*(/|%2F)post(/|%2F)view(/|%2F)[0-9]+)'#", $raw, $matches);
+        preg_match("#value='(http://.*(/|%2F)post(/|%2F)view(/|%2F)[0-9]+)'#", $this->page_to_text(), $matches);
         $this->assertTrue(count($matches) > 0);
         if ($matches) {
             $this->get($matches[1]);

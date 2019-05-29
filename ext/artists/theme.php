@@ -31,38 +31,38 @@ class ArtistsTheme extends Themelet
         if ($mode == "editor") {
             $html = "<form method='post' action='".make_link("artist/new_artist")."'>
 						".$user->get_auth_html()."
-						<input type='submit' name='edit' id='edit' value='New Artist'/>
+						<input type='submit' name='edit' value='New Artist'/>
 					</form>
 					
 					<form method='post' action='".make_link("artist/edit_artist")."'>
 						".$user->get_auth_html()."
-						<input type='submit' name='edit' id='edit' value='Edit Artist'/>
+						<input type='submit' name='edit' value='Edit Artist'/>
 						<input type='hidden' name='artist_id' value='".$artistID."'>
 					</form>";
                     
             if ($is_admin) {
                 $html .= "<form method='post' action='".make_link("artist/nuke_artist")."'>
 							".$user->get_auth_html()."
-							<input type='submit' name='edit' id='edit' value='Delete Artist'/>
+							<input type='submit' name='edit' value='Delete Artist'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
             }
             
             $html .= "<form method='post' action='".make_link("artist/add_alias")."'>
 							".$user->get_auth_html()."
-							<input type='submit' name='edit' id='edit' value='Add Alias'/>
+							<input type='submit' name='edit' value='Add Alias'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
 						
 						<form method='post' action='".make_link("artist/add_member")."'>
 							".$user->get_auth_html()."
-							<input type='submit' name='edit' id='edit' value='Add Member'/>
+							<input type='submit' name='edit' value='Add Member'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>
 						
 						<form method='post' action='".make_link("artist/add_url")."'>
 							".$user->get_auth_html()."
-							<input type='submit' name='edit' id='edit' value='Add Url'/>
+							<input type='submit' name='edit' value='Add Url'/>
 							<input type='hidden' name='artist_id' value='".$artistID."'>
 						</form>";
         }
@@ -297,7 +297,7 @@ class ArtistsTheme extends Themelet
 			<form method="POST" action="'.make_link("artist/alias/edited/".$alias['id']).'">
 				'.$user->get_auth_html().'
 				<label for="alias">Alias:</label>
-				<input type="text" name="alias" value="'.$alias['alias'].'" />
+				<input type="text" name="alias" id="alias" value="'.$alias['alias'].'" />
 				<input type="hidden" name="aliasID" value="'.$alias['id'].'" />
 				<input type="submit" value="Submit" />
 			</form>
@@ -315,7 +315,7 @@ class ArtistsTheme extends Themelet
 			<form method="POST" action="'.make_link("artist/url/edited/".$url['id']).'">
 				'.$user->get_auth_html().'
 				<label for="url">URL:</label>
-				<input type="text" name="url" value="'.$url['url'].'" />
+				<input type="text" name="url" id="url" value="'.$url['url'].'" />
 				<input type="hidden" name="urlID" value="'.$url['id'].'" />
 				<input type="submit" value="Submit" />
 			</form>
@@ -332,8 +332,8 @@ class ArtistsTheme extends Themelet
         $html = '
 			<form method="POST" action="'.make_link("artist/member/edited/".$member['id']).'">
 				'.$user->get_auth_html().'
-				<label for="member">Member name:</label>
-				<input type="text" name="name" value="'.$member['name'].'" />
+				<label for="name">Member name:</label>
+				<input type="text" name="name" id="name" value="'.$member['name'].'" />
 				<input type="hidden" name="memberID" value="'.$member['id'].'" />
 				<input type="submit" value="Submit" />
 			</form>

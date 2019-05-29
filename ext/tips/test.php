@@ -11,7 +11,7 @@ class TipsTest extends ShimmiePHPUnitTestCase
         $this->markTestIncomplete();
 
         // get rid of the default data if it's there
-        if (strpos($raw, "Delete")) {
+        if (strpos($this->page_to_text(), "Delete")) {
             $this->click("Delete");
         }
         $this->log_out();

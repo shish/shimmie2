@@ -9,7 +9,7 @@
  *
  * @throws UploadException
  */
-function move_upload_to_archive(DataUploadEvent $event)
+function move_upload_to_archive(DataUploadEvent $event): void
 {
     $target = warehouse_path("images", $event->hash);
     if (!@copy($event->tmpname, $target)) {

@@ -19,7 +19,7 @@
  *
  */
 
-function _d(string $name, $value)
+function _d(string $name, $value): void
 {
     if (!defined($name)) {
         define($name, $value);
