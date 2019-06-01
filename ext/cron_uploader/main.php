@@ -223,10 +223,10 @@ class CronUploader extends Extension
      */
     public function scan_dir(string $path): array
     {
-        $ite=new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-    
         $bytestotal=0;
         $nbfiles=0;
+
+        $ite=new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
         foreach (new RecursiveIteratorIterator($ite) as $filename=>$cur) {
             $filesize = $cur->getSize();
             $bytestotal += $filesize;
@@ -340,26 +340,18 @@ class CronUploader extends Extension
         $img->set_tags(Tag::explode($tags));
     }
     
-    private function generate_image_queue(string $base = "", string $subdir = ""): void
+    private function generate_image_queue(): void
     {
-        if ($base == "") {
-            $base = $this->root_dir . "/queue";
-        }
+        $base = $this->root_dir . "/queue";
         
         if (! is_dir($base)) {
             $this->add_upload_info("Image Queue Directory could not be found at \"$base\".");
             return;
         }
         
-        foreach (glob("$base/$subdir/*") as $fullpath) {
-            $fullpath = str_replace("//", "/", $fullpath);
-            //$shortpath = str_replace ( $base, "", $fullpath );
-            
-            if (is_link($fullpath)) {
-                // ignore
-            } elseif (is_dir($fullpath)) {
-                $this->generate_image_queue($base, str_replace($base, "", $fullpath));
-            } else {
+        $ite=new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
+        foreach (new RecursiveIteratorIterator($ite) as $fullpath=>$cur) {
+            if (!is_link($fullpath) && !is_dir($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
                 $matches = [];
                 
