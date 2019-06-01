@@ -351,20 +351,10 @@ class CronUploader extends Extension
         foreach (new RecursiveIteratorIterator($ite) as $fullpath=>$cur) {
             if (!is_link($fullpath) && !is_dir($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
-                $matches = [];
-                
-                if (preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", $pathinfo ["basename"], $matches)) {
-                    $tags = $matches [1];
-                } else {
-                    $tags = $subdir;
-                    $tags = str_replace("/", " ", $tags);
-                    $tags = str_replace("__", " ", $tags);
-                    if ($tags == "") {
-                        $tags = " ";
-                    }
-                    $tags = trim($tags);
-                }
-                
+
+                $relativePath = substr($fullpath,strlen($base));
+                $tags = path_to_tags($relativePath);
+
                 $img = [
                         0 => $fullpath,
                         1 => $pathinfo ["basename"],
