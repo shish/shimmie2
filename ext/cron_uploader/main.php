@@ -223,7 +223,7 @@ class CronUploader extends Extension
      */
     public function scan_dir(string $path): array
     {
-        $ite=new RecursiveDirectoryIterator($path);
+        $ite=new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
     
         $bytestotal=0;
         $nbfiles=0;
@@ -264,7 +264,7 @@ class CronUploader extends Extension
         shuffle($this->image_queue);
 
         // Upload the file(s)
-        for ($i = 0; $i < $upload_count; $i++) {
+        for ($i = 0; $i < $upload_count && $i < sizeof($this->image_queue); $i++) {
             $img = $this->image_queue[$i];
             
             try {
