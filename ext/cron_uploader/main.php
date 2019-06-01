@@ -319,7 +319,7 @@ class CronUploader extends Extension
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
         $metadata ['extension'] = $pathinfo ['extension'];
-        $metadata ['tags'] = []; // = $tags; doesn't work when not logged in here
+        $metadata ['tags'] = Tag::explode($tags); 
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -332,10 +332,7 @@ class CronUploader extends Extension
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
-        
-        // Set tags
-        $img = Image::by_id($event->image_id);
-        $img->set_tags(Tag::explode($tags));
+
     }
     
     private function generate_image_queue(): void
