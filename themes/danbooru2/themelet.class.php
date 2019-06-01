@@ -10,13 +10,13 @@ class Themelet extends BaseThemelet
         $page->add_block(new Block(null, $body, "main", 90));
     }
 
-    private function gen_page_link(string $base_url, string $query, string $page, string $name): string
+    private function gen_page_link(string $base_url, ?string $query, string $page, string $name): string
     {
         $link = make_link("$base_url/$page", $query);
         return "<a href='$link'>$name</a>";
     }
 
-    private function gen_page_link_block(string $base_url, string $query, int $page, int $current_page, string $name): string
+    private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): string
     {
         $paginator = "";
         if ($page == $current_page) {
@@ -27,7 +27,7 @@ class Themelet extends BaseThemelet
         return $paginator;
     }
 
-    private function build_paginator(int $current_page, int $total_pages, string $base_url, string $query): string
+    private function build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query): string
     {
         $next = $current_page + 1;
         $prev = $current_page - 1;
