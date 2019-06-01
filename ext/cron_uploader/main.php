@@ -274,9 +274,6 @@ class CronUploader extends Extension
             } catch (Exception $e) {
                 $this->move_uploaded($img[0], $img[1], true);
             }
-            
-            // Remove img from queue array
-            unset($this->image_queue[$i]);
         }
         
         // Display & save upload log
