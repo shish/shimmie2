@@ -142,7 +142,9 @@ class CronUploader extends Extension
     {
         global $config;
         // Set default values
-        if ($config->get_string("cron_uploader_key", "")) {
+        $this->upload_key = $config->get_string("cron_uploader_key", "");
+        if (strlen($this->upload_key)<=0) {
+            echo "test2";
             $this->upload_key = $this->generate_key();
     
             $config->set_default_int('cron_uploader_count', 1);
