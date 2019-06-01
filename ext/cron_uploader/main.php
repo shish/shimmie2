@@ -265,8 +265,8 @@ class CronUploader extends Extension
         shuffle($this->image_queue);
 
         // Upload the file(s)
-        for ($i = 0; $i < $upload_count && $i < sizeof($this->image_queue); $i++) {
-            $img = $this->image_queue[$i];
+        for ($i = 0; $i < $upload_count && sizeof($this->image_queue)>0; $i++) {
+            $img = array_pop($this->image_queue);
             
             try {
                 $this->add_image($img[0], $img[1], $img[2]);
