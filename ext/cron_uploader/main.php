@@ -273,6 +273,11 @@ class CronUploader extends Extension
                 $this->move_uploaded($img[0], $img[1], false);
             } catch (Exception $e) {
                 $this->move_uploaded($img[0], $img[1], true);
+                if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
+                    // Postgres invalidates the transaction if there is an SQL error, 
+                    // so all subsequence transactions will fail.
+                    break;
+                }
             }
         }
         
