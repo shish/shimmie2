@@ -33,7 +33,7 @@ class Themelet extends BaseThemelet
         return "<a class='$link_class' href='$link'>$name</a>";
     }
 
-    public function litetheme_gen_page_link_block(string $base_url, string $query, string $page, string $current_page, string $name): string
+    public function litetheme_gen_page_link_block(string $base_url, ?string $query, string $page, string $current_page, string $name): string
     {
         $paginator = "";
 
@@ -47,7 +47,7 @@ class Themelet extends BaseThemelet
         return $paginator;
     }
 
-    public function litetheme_build_paginator(int $current_page, int $total_pages, string $base_url, string $query, bool $show_random): string
+    public function litetheme_build_paginator(int $current_page, int $total_pages, string $base_url, ?string $query, bool $show_random): string
     {
         $next = $current_page + 1;
         $prev = $current_page - 1;

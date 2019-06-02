@@ -142,7 +142,8 @@ class CronUploader extends Extension
     {
         global $config;
         // Set default values
-        if ($config->get_string("cron_uploader_key", "")) {
+        $this->upload_key = $config->get_string("cron_uploader_key", "");
+        if (strlen($this->upload_key)<=0) {
             $this->upload_key = $this->generate_key();
     
             $config->set_default_int('cron_uploader_count', 1);
@@ -264,8 +265,8 @@ class CronUploader extends Extension
         shuffle($this->image_queue);
 
         // Upload the file(s)
-        for ($i = 0; $i < $upload_count && $i < sizeof($this->image_queue); $i++) {
-            $img = $this->image_queue[$i];
+        for ($i = 0; $i < $upload_count && sizeof($this->image_queue)>0; $i++) {
+            $img = array_pop($this->image_queue);
             
             try {
                 $this->add_image($img[0], $img[1], $img[2]);
@@ -273,9 +274,6 @@ class CronUploader extends Extension
             } catch (Exception $e) {
                 $this->move_uploaded($img[0], $img[1], true);
             }
-            
-            // Remove img from queue array
-            unset($this->image_queue[$i]);
         }
         
         // Display & save upload log
@@ -321,7 +319,7 @@ class CronUploader extends Extension
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
         $metadata ['extension'] = $pathinfo ['extension'];
-        $metadata ['tags'] = []; // = $tags; doesn't work when not logged in here
+        $metadata ['tags'] = Tag::explode($tags); 
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -334,10 +332,7 @@ class CronUploader extends Extension
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
-        
-        // Set tags
-        $img = Image::by_id($event->image_id);
-        $img->set_tags(Tag::explode($tags));
+
     }
     
     private function generate_image_queue(): void
@@ -353,20 +348,10 @@ class CronUploader extends Extension
         foreach (new RecursiveIteratorIterator($ite) as $fullpath=>$cur) {
             if (!is_link($fullpath) && !is_dir($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
-                $matches = [];
-                
-                if (preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", $pathinfo ["basename"], $matches)) {
-                    $tags = $matches [1];
-                } else {
-                    $tags = $subdir;
-                    $tags = str_replace("/", " ", $tags);
-                    $tags = str_replace("__", " ", $tags);
-                    if ($tags == "") {
-                        $tags = " ";
-                    }
-                    $tags = trim($tags);
-                }
-                
+
+                $relativePath = substr($fullpath,strlen($base));
+                $tags = path_to_tags($relativePath);
+
                 $img = [
                         0 => $fullpath,
                         1 => $pathinfo ["basename"],

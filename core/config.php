@@ -18,7 +18,7 @@ interface Config
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_int(string $name, ?int $value): void;
+    public function set_int(string $name, ?string $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -113,7 +113,7 @@ abstract class BaseConfig implements Config
 {
     public $values = [];
 
-    public function set_int(string $name, ?int $value): void
+    public function set_int(string $name, ?string $value): void
     {
         $this->values[$name] = parse_shorthand_int($value);
         $this->save($name);

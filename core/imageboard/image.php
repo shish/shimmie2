@@ -570,6 +570,8 @@ class Image
     {
         global $database;
 
+        $unfiltered_tags = array_unique($unfiltered_tags);
+
         $tags = [];
         foreach ($unfiltered_tags as $tag) {
             if (mb_strlen($tag, 'UTF-8') > 255) {
