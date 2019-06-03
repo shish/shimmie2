@@ -273,6 +273,11 @@ class CronUploader extends Extension
                 $this->move_uploaded($img[0], $img[1], false);
             } catch (Exception $e) {
                 $this->move_uploaded($img[0], $img[1], true);
+                if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
+                    // Postgres invalidates the transaction if there is an SQL error, 
+                    // so all subsequence transactions will fail.
+                    break;
+                }
             }
         }
         
@@ -289,16 +294,23 @@ class CronUploader extends Extension
         // Create
         $newDir = $this->root_dir;
         
-        // Determine which dir to move to
-        if ($corrupt) {
-            // Move to corrupt dir
-            $newDir .= "/failed_to_upload/";
-            $info = "ERROR: Image was not uploaded.";
-        } else {
-            $newDir .= "/uploaded/";
-            $info = "Image successfully uploaded. ";
-        }
-        
+        $relativeDir = dirname(substr($path, strlen($this->root_dir) + 7));
+
+		// Determine which dir to move to
+		if ($corrupt) {
+			// Move to corrupt dir
+			$newDir .= "/failed_to_upload/".$relativeDir;
+			$info = "ERROR: Image was not uploaded.";
+		}
+		else {
+			$newDir .= "/uploaded/".$relativeDir;
+			$info = "Image successfully uploaded. ";
+		}
+		$newDir = str_replace ( "//", "/", $newDir."/" );
+
+        if (!is_dir($newDir)) 
+            mkdir ( $newDir, 0775, true );
+
         // move file to correct dir
         rename($path, $newDir.$filename);
         

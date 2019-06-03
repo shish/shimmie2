@@ -281,14 +281,20 @@ function manual_include(string $fname): ?string
 function path_to_tags(string $path): string
 {
     $matches = [];
-    if (preg_match("/\d+ - (.*)\.([a-zA-Z]+)/", basename($path), $matches)) {
+	$tags = "";
+    if(preg_match("/\d+ - (.*)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
         $tags = $matches[1];
-    } else {
-        $tags = dirname($path);
-        $tags = str_replace("/", " ", $tags);
-        $tags = str_replace("__", " ", $tags);
-        $tags = trim($tags);
-    }
+	}
+	
+	$dir_tags = dirname($path);
+	$dir_tags = str_replace("/", " ", $dir_tags);
+	$dir_tags = str_replace("__", " ", $dir_tags);
+	$dir_tags = trim($dir_tags);
+	if ($dir_tags != "") {
+		$tags = trim($tags)." ".trim($dir_tags);
+	}
+	$tags = trim ( $tags );
+	
     return $tags;
 }
 
