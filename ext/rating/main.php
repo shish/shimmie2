@@ -37,7 +37,7 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
-    protected $db_support = ['mysql'];  // ?
+    protected $db_support = ['mysql','pgsql'];  // ?
 
     public function get_priority(): int
     {
