@@ -1,0 +1,10 @@
+.selected {
+	outline: 3px solid blue;
+}
+
+.bulk_action {
+	margin-top: 8pt;
+}
+.bulk_selector_controls table td {
+	width: 33%;
+}

@@ -73,13 +73,13 @@ class Ratings extends Extension
         $event->panel->add_block($sb);
     }
     
-    public function onPostListBuilding(PostListBuildingEvent $event)
-    {
-        global $user;
-        if ($user->is_admin() && !empty($event->search_terms)) {
-            $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
-        }
-    }
+    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // {
+    //     global $user;
+    //     if ($user->is_admin() && !empty($event->search_terms)) {
+    //         $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
+    //     }
+    // }
 
     
     public function onDisplayingImage(DisplayingImageEvent $event)
@@ -140,6 +140,35 @@ class Ratings extends Extension
             $ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
             $set = "'" . join("', '", $ratings) . "'";
             $event->add_querylet(new Querylet("rating IN ($set)"));
+        }
+    }
+
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    {
+        global $user;
+
+        if ($user->is_admin()) {
+            $event->add_action("Set Rating","",$this->theme->get_selection_rater_html("bulk_rating"));
+        }
+
+    }
+
+    public function onBulkAction(BulkActionEvent $event)
+    {
+        global $user;
+
+        switch($event->action) {
+            case "Set Rating":
+                if (!isset($_POST['bulk_rating'])) {
+                    return;
+                }
+                if ($user->is_admin()) {
+                    $rating = $_POST['bulk_rating'];
+                    foreach ($event->items as $image) {
+                        send_event(new RatingSetEvent($image, $rating));
+                    }
+                }
+                break;
         }
     }
 

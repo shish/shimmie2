@@ -15,14 +15,23 @@
 
 class RegenThumb extends Extension
 {
+    public function regenerate_thumbnail($image)
+    {
+        global $database;
+
+        send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
+        $database->cache->delete("thumb-block:{$image->id}");
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $database, $page, $user;
 
         if ($event->page_matches("regen_thumb/one") && $user->can("delete_image") && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));
-            send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
-            $database->cache->delete("thumb-block:{$image->id}");
+
+            $this->regenerate_thumbnail($image);
+
             $this->theme->display_results($page, $image);
         }
         if ($event->page_matches("regen_thumb/mass") && $user->can("delete_image") && isset($_POST['tags'])) {
@@ -30,8 +39,7 @@ class RegenThumb extends Extension
             $images = Image::find_images(0, 10000, $tags);
 
             foreach ($images as $image) {
-                send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
-                $database->cache->delete("thumb-block:{$image->id}");
+                $this->regenerate_thumbnail($image);
             }
 
             $page->set_mode("redirect");
@@ -47,11 +55,40 @@ class RegenThumb extends Extension
         }
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
+    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // {
+    //     global $user;
+    //     if ($user->can("delete_image") && !empty($event->search_terms)) {
+    //         $event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
+    //     }
+    // }
+
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("delete_image") && !empty($event->search_terms)) {
-            $event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
+
+        if ($user->can("delete_image")) {
+            $event->add_action("Regen Thumbnails");
+        }
+
+    }
+
+    public function onBulkAction(BulkActionEvent $event)
+    {
+        global $user;
+
+        switch($event->action) {
+            case "Regen Thumbnails":
+                if ($user->can("delete_image")) {
+                    $total = 0;
+                    foreach ($event->items as $image) {
+                        $this->regenerate_thumbnail($image);
+                        $total++;
+                    }
+                    flash_message("Regenerated thumbnails for $total items");
+                }
+                break;
         }
     }
+
 }
