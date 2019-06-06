@@ -103,8 +103,6 @@ class PixelFileHandler extends DataHandlerExtension
     {
         global $config;
 
-        $w = $config->get_int("thumb_width");
-        $h = $config->get_int("thumb_height");
         $q = $config->get_int("thumb_quality");
         $convert = $config->get_string("thumb_convert_path");
 
@@ -114,12 +112,10 @@ class PixelFileHandler extends DataHandlerExtension
         //$size = shell_exec($cmd);
         //$size = explode(" ", trim($size));
         $size = getimagesize($inname);
-        if ($size[0] > $size[1]*5) {
-            $size[0] = $size[1]*5;
-        }
-        if ($size[1] > $size[0]*5) {
-            $size[1] = $size[0]*5;
-        }
+        $tsize = get_thumbnail_size_scaled($size[0] , $size[1]);
+        $w = $tsize[0];
+        $h = $tsize[1];
+
 
         // running the call with cmd.exe requires quoting for our paths
         $format = '"%s" "%s[0]" -extent %ux%u -flatten -strip -thumbnail %ux%u -quality %u jpg:"%s"';
@@ -158,24 +154,18 @@ class PixelFileHandler extends DataHandlerExtension
         $memory_limit = get_memory_limit();
 
         if ($memory_use > $memory_limit) {
-            $w = $config->get_int('thumb_width');
-            $h = $config->get_int('thumb_height');
-            $thumb = imagecreatetruecolor($w, min($h, 64));
+        	$tsize = get_thumbnail_size_scaled($width, $height);
+			$w = $tsize[0];
+			$h = $tsize[1];
+			$thumb = imagecreatetruecolor($w, min($h, 64));
             $white = imagecolorallocate($thumb, 255, 255, 255);
             $black = imagecolorallocate($thumb, 0, 0, 0);
             imagefill($thumb, 0, 0, $white);
             imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
             return $thumb;
         } else {
-            if ($width > $height*5) {
-                $width = $height*5;
-            }
-            if ($height > $width*5) {
-                $height = $width*5;
-            }
-
             $image = imagecreatefromstring(file_get_contents($tmpname));
-            $tsize = get_thumbnail_size($width, $height);
+            $tsize = get_thumbnail_size_scaled($width, $height);
 
             $thumb = imagecreatetruecolor($tsize[0], $tsize[1]);
             imagecopyresampled(

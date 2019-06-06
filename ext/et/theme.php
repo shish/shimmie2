@@ -41,6 +41,7 @@ Memory: {$info['thumb_mem']}
 Quality: {$info['thumb_quality']}
 Width: {$info['thumb_width']}
 Height: {$info['thumb_height']}
+Scaling: {$info['thumb_scaling']}
 
 Shimmie stats:
 Images: {$info['stat_images']}

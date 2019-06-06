@@ -19,6 +19,7 @@ class ImageIO extends Extension
         global $config;
         $config->set_default_int('thumb_width', 192);
         $config->set_default_int('thumb_height', 192);
+        $config->set_default_int('thumb_scaling', 100);
         $config->set_default_int('thumb_quality', 75);
         $config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
         $config->set_default_string('thumb_convert_path', 'convert');
@@ -147,7 +148,11 @@ class ImageIO extends Extension
         $sb->add_label(" px at ");
         $sb->add_int_option("thumb_quality");
         $sb->add_label(" % quality ");
-        
+
+        $sb->add_label("<br>High-DPI scaling ");
+        $sb->add_int_option("thumb_scaling");
+        $sb->add_label("%");
+
         if ($config->get_string("thumb_engine") == "convert") {
             $sb->add_label("<br>ImageMagick Binary: ");
             $sb->add_text_option("thumb_convert_path");

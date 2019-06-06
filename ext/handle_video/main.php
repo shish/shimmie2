@@ -64,7 +64,7 @@ class VideoFileHandler extends DataHandlerExtension
         $outname = warehouse_path("thumbs", $hash);
 
         $orig_size = $this->video_size($inname);
-        $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1]);
+        $scaled_size = get_thumbnail_size_scaled($orig_size[0], $orig_size[1]);
         $cmd = escapeshellcmd(implode(" ", [
             escapeshellarg($ffmpeg),
             "-y", "-i", escapeshellarg($inname),
