@@ -19,7 +19,9 @@ class ImageIO extends Extension
         global $config;
         $config->set_default_int('thumb_width', 192);
         $config->set_default_int('thumb_height', 192);
+        $config->set_default_int('thumb_scaling', 100);
         $config->set_default_int('thumb_quality', 75);
+        $config->set_default_string('thumb_type', 'jpg');
         $config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
         $config->set_default_string('thumb_convert_path', 'convert');
 
@@ -137,8 +139,15 @@ class ImageIO extends Extension
         $thumbers['Built-in GD'] = "gd";
         $thumbers['ImageMagick'] = "convert";
 
+        $thumb_types = [];
+        $thumb_types['JPEG'] = "jpg";
+        $thumb_types['WEBP'] = "webp";
+
+
         $sb = new SetupBlock("Thumbnailing");
         $sb->add_choice_option("thumb_engine", $thumbers, "Engine: ");
+        $sb->add_label("<br>");
+        $sb->add_choice_option("thumb_type", $thumb_types, "Filetype: ");
 
         $sb->add_label("<br>Size ");
         $sb->add_int_option("thumb_width");
@@ -147,7 +156,11 @@ class ImageIO extends Extension
         $sb->add_label(" px at ");
         $sb->add_int_option("thumb_quality");
         $sb->add_label(" % quality ");
-        
+
+        $sb->add_label("<br>High-DPI scaling ");
+        $sb->add_int_option("thumb_scaling");
+        $sb->add_label("%");
+
         if ($config->get_string("thumb_engine") == "convert") {
             $sb->add_label("<br>ImageMagick Binary: ");
             $sb->add_text_option("thumb_convert_path");
@@ -240,7 +253,13 @@ class ImageIO extends Extension
         if (!is_null($image)) {
             $page->set_mode("data");
             if ($type == "thumb") {
-                $page->set_type("image/jpeg");
+				$ext = $config->get_string("thumb_type");
+				if (array_key_exists($ext, MIME_TYPE_MAP)) {
+					$page->set_type(MIME_TYPE_MAP[$ext]);
+				} else {
+					$page->set_type("image/jpeg");
+				}
+                
                 $file = $image->get_thumb_filename();
             } else {
                 $page->set_type($image->get_mime_type());
@@ -259,6 +278,9 @@ class ImageIO extends Extension
                 $page->set_data("");
             } else {
                 $page->add_http_header("Last-Modified: $gmdate_mod");
+				if ($type != "thumb") {
+					$page->add_http_header("Content-Disposition: inline; filename=".$image->get_nice_image_name());
+				}
                 $page->set_data(file_get_contents($file));
                 
                 if ($config->get_int("image_expires")) {
@@ -291,7 +313,7 @@ class ImageIO extends Extension
         if (is_null($existing)) {
             throw new ImageReplaceException("Image to replace does not exist!");
         }
-        
+
         if (strlen(trim($image->source)) == 0) {
             $image->source = $existing->get_source();
         }
@@ -301,6 +323,7 @@ class ImageIO extends Extension
             and have it stored in a 'replaced images' list that could be
             inspected later by an admin?
         */
+
         log_debug("image", "Removing image with hash ".$existing->hash);
         $existing->remove_image_only(); // Actually delete the old image file from disk
         
@@ -318,6 +341,9 @@ class ImageIO extends Extension
                     "id"=>$id
                 ]
         );
+
+        /* Generate new thumbnail */
+        send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->ext)));
 
         log_info("image", "Replaced Image #{$id} with ({$image->hash})");
     }

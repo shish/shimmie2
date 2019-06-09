@@ -57,6 +57,8 @@ class ET extends Extension
         $info['thumb_quality']	= $config->get_int('thumb_quality');
         $info['thumb_width']	= $config->get_int('thumb_width');
         $info['thumb_height']	= $config->get_int('thumb_height');
+        $info['thumb_scaling']	= $config->get_int('thumb_scaling');
+        $info['thumb_type']	    = $config->get_string('thumb_type');
         $info['thumb_mem']		= $config->get_int("thumb_mem_limit");
 
         $info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");

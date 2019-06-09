@@ -386,11 +386,21 @@ class Image
     }
 
     /**
+     * Get the nicely formatted version of the file name
+     */
+    public function get_nice_image_name(): string
+    {
+        return $this->parse_link_template('$id - $tags.$ext');
+    }
+
+    /**
      * Get the URL for the thumbnail
      */
     public function get_thumb_link(): string
     {
-        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.jpg', 'thumb/$id.jpg');
+        global $config;
+        $ext = $config->get_string("thumb_type");
+        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
     }
 
     /**
@@ -593,6 +603,9 @@ class Image
         if (Tag::implode($tags) != $this->get_tag_list()) {
             // delete old
             $this->delete_tags_from_image();
+
+            $written_tags = [];
+
             // insert each new tags
             foreach ($tags as $tag) {
                 $id = $database->get_one(
@@ -615,11 +628,17 @@ class Image
                         ["id"=>$this->id, "tag"=>$tag]
                     );
                 } else {
-                    // user of an existing tag
+                    // check if tag has already been written
+                    if(in_array($id, $written_tags)) {
+                        continue;
+                    }
+
                     $database->execute("
-						INSERT INTO image_tags(image_id, tag_id)
-						VALUES(:iid, :tid)
-					", ["iid"=>$this->id, "tid"=>$id]);
+                        INSERT INTO image_tags(image_id, tag_id)
+                        VALUES(:iid, :tid)
+                    ", ["iid"=>$this->id, "tid"=>$id]);
+
+                    array_push($written_tags, $id);
                 }
                 $database->execute(
                     $database->scoreql_to_sql("

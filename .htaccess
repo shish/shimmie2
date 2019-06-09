@@ -27,7 +27,7 @@
 
 <IfModule mod_expires.c>
 	ExpiresActive On
-	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|css|js))$">
+	<FilesMatch "([0-9a-f]{32}|\.(gif|jpe?g|png|webp|css|js))$">
 		<IfModule mod_headers.c>
 			Header set Cache-Control "public, max-age=2629743"
 		</IfModule>
@@ -46,6 +46,7 @@
 AddType image/jpeg  jpg jpeg
 AddType image/gif   gif
 AddType image/png   png
+AddType image/webp  webp
 
 #EXT: handle_ico
 AddType image/x-icon   ico ani cur

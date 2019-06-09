@@ -3,14 +3,18 @@
  * Name: Handle Flash
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle Flash files. (No thumbnail is generated for flash files)
+ * Description: Handle Flash files.
  */
 
 class FlashFileHandler extends DataHandlerExtension
 {
     protected function create_thumb(string $hash): bool
     {
-        copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
+        global $config;
+
+        if(!create_thumbnail_ffmpeg($hash)) {
+            copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
+        }
         return true;
     }
 

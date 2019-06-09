@@ -99,6 +99,10 @@ class ThumbnailGenerationEvent extends Event
     /** @var bool */
     public $force;
 
+    /** @var bool */
+    public $generated;
+
+
     /**
      * Request a thumbnail be made for an image object
      */
@@ -107,6 +111,7 @@ class ThumbnailGenerationEvent extends Event
         $this->hash = $hash;
         $this->type = $type;
         $this->force = $force;
+        $this->generated = false;
     }
 }
 

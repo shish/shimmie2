@@ -69,7 +69,7 @@ class ResizeImage extends Extension
 
         $image_obj = Image::by_id($event->image_id);
 
-        if ($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif")) {
+        if ($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif" || $image_obj->ext == "webp")) {
             $width = $height = 0;
 
             if ($config->get_int("resize_default_width") !== 0) {
@@ -159,11 +159,6 @@ class ResizeImage extends Extension
     
     // Private functions
     /* ----------------------------- */
-
-    /**
-     * This function could be made much smaller by using the ImageReplaceEvent
-     * ie: Pretend that we are replacing the image with a resized copy.
-     */
     private function resize_image(Image $image_obj, int $width, int $height)
     {
         global $database;
@@ -174,134 +169,42 @@ class ResizeImage extends Extension
         
         $hash = $image_obj->hash;
         $image_filename  = warehouse_path("images", $hash);
+
         $info = getimagesize($image_filename);
-        /* Get the image file type */
-        $pathinfo = pathinfo($image_obj->filename);
-        $filetype = strtolower($pathinfo['extension']);
-        
         if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
             throw new ImageResizeException("The current image size does not match what is set in the database! - Aborting Resize.");
         }
 
-        $memory_use = $this->calc_memory_use($info);
-        $memory_limit = get_memory_limit();
-        if ($memory_use > $memory_limit) {
-            throw new ImageResizeException("The image is too large to resize given the memory limits. ($memory_use > $memory_limit)");
-        }
-
         list($new_height, $new_width) = $this->calc_new_size($image_obj, $width, $height);
 
-        /* Attempt to load the image */
-        switch ($info[2]) {
-          case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
-          case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-          case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
-          default:
-            throw new ImageResizeException("Unsupported image type (Only GIF, JPEG, and PNG are supported).");
-        }
-        
-        // Handle transparent images
-        
-        $image_resized = imagecreatetruecolor($new_width, $new_height);
-        
-        if ($info[2] == IMAGETYPE_GIF) {
-            $transparency = imagecolortransparent($image);
-
-            // If we have a specific transparent color
-            if ($transparency >= 0) {
-                // Get the original image's transparent color's RGB values
-                $transparent_color = imagecolorsforindex($image, $transparency);
-
-                // Allocate the same color in the new image resource
-                $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
-
-                // Completely fill the background of the new image with allocated color.
-                imagefill($image_resized, 0, 0, $transparency);
-
-                // Set the background color for new image to transparent
-                imagecolortransparent($image_resized, $transparency);
-            }
-        } elseif ($info[2] == IMAGETYPE_PNG) {
-            //
-            // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
-            //
-            imagealphablending($image_resized, false);
-            imagesavealpha($image_resized, true);
-            $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
-            imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color);
-        }
-        
-        // Actually resize the image.
-        imagecopyresampled($image_resized, $image, 0, 0, 0, 0, $new_width, $new_height, $image_obj->width, $image_obj->height);
-        
         /* Temp storage while we resize */
         $tmp_filename = tempnam("/tmp", 'shimmie_resize');
         if (empty($tmp_filename)) {
             throw new ImageResizeException("Unable to save temporary image file.");
         }
-        
-        /* Output to the same format as the original image */
-        switch ($info[2]) {
-          case IMAGETYPE_GIF:   imagegif($image_resized, $tmp_filename);    break;
-          case IMAGETYPE_JPEG:  imagejpeg($image_resized, $tmp_filename);   break;
-          case IMAGETYPE_PNG:   imagepng($image_resized, $tmp_filename);    break;
-          default:
-            throw new ImageResizeException("Failed to save the new image - Unsupported image type.");
-        }
-        
+
+        image_resize_gd($image_filename, $info, $new_width, $new_height, $tmp_filename);
+
+        $new_image = new Image();
+        $new_image->hash = md5_file($tmp_filename);
+        $new_image->filesize = filesize($tmp_filename);
+        $new_image->filename = 'resized-'.$image_obj->filename;
+        $new_image->width = $new_width;
+        $new_image->height = $new_height;
+        $new_image->ext = $image_obj->ext;
+
         /* Move the new image into the main storage location */
-        $new_hash = md5_file($tmp_filename);
-        $new_size = filesize($tmp_filename);
-        $target = warehouse_path("images", $new_hash);
+        $target = warehouse_path("images", $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
-        $new_filename = 'resized-'.$image_obj->filename;
         
         /* Remove temporary file */
         @unlink($tmp_filename);
 
-        /* Delete original image and thumbnail */
-        log_debug("image", "Removing image with hash ".$hash);
-        $image_obj->remove_image_only();
+        send_event(new ImageReplaceEvent($image_obj->id, $new_image));
         
-        /* Generate new thumbnail */
-        send_event(new ThumbnailGenerationEvent($new_hash, $filetype));
-        
-        /* Update the database */
-        $database->Execute("
-			UPDATE images SET filename = :filename, filesize = :filesize, hash = :hash, width = :width, height = :height
-			WHERE id = :id
-		", [
-            "filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
-            "width"=>$new_width, "height"=>$new_height,	"id"=>$image_obj->id
-        ]);
-        
-        log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_hash}");
-    }
-
-    /**
-     * Check Memory usage limits
-     *
-     * Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
-     * New check:   $memory_use = $width * $height * ($bits_per_channel) * channels * 2.5
-     *
-     * It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
-     * We need to consider the size that we are GOING TO instead.
-     *
-     * The factor of 2.5 is simply a rough guideline.
-     * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
-     */
-    private function calc_memory_use(array $info): int
-    {
-        if (isset($info['bits']) && isset($info['channels'])) {
-            $memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
-        } else {
-            // If we don't have bits and channel info from the image then assume default values
-            // of 8 bits per color and 4 channels (R,G,B,A) -- ie: regular 24-bit color
-            $memory_use = ($info[0] * $info[1] * 1 * 4 * 2.5) / 1024;
-        }
-        return (int)$memory_use;
+        log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_image->hash}");
     }
 
     /**

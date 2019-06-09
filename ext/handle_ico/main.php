@@ -24,13 +24,6 @@ class IcoFileHandler extends Extension
         }
     }
 
-    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
-    {
-        if ($this->supported_ext($event->type)) {
-            $this->create_thumb($event->hash);
-        }
-    }
-
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page;
@@ -88,8 +81,10 @@ class IcoFileHandler extends Extension
         $inname  = warehouse_path("images", $hash);
         $outname = warehouse_path("thumbs", $hash);
 
-        $w = $config->get_int("thumb_width");
-        $h = $config->get_int("thumb_height");
+        $tsize = get_thumbnail_size_scaled($width, $height);
+        $w = $tsize[0];
+        $h = $tsise[1];
+        
         $q = $config->get_int("thumb_quality");
         $mem = $config->get_int("thumb_mem_limit") / 1024 / 1024; // IM takes memory in MB
 
