@@ -339,7 +339,7 @@ class CronUploader extends Extension
         // Generate info message
         $infomsg = ""; // Will contain info message
         if ($event->image_id == -1) {
-            $infomsg = "File type not recognised. Filename: {$filename}";
+            throw new Exception("File type not recognised. Filename: {$filename}");
         } else {
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
         }
