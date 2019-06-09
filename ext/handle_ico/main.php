@@ -24,13 +24,6 @@ class IcoFileHandler extends Extension
         }
     }
 
-    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
-    {
-        if ($this->supported_ext($event->type)) {
-            $this->create_thumb($event->hash);
-        }
-    }
-
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page;

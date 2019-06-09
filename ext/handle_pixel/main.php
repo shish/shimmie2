@@ -3,14 +3,14 @@
  * Name: Handle Pixel
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle JPEG, PNG, GIF, etc files
+ * Description: Handle JPEG, PNG, GIF, WEBP, etc files
  */
 
 class PixelFileHandler extends DataHandlerExtension
 {
     protected function supported_ext(string $ext): bool
     {
-        $exts = ["jpg", "jpeg", "gif", "png"];
+        $exts = ["jpg", "jpeg", "gif", "png", "webp"];
         $ext = (($pos = strpos($ext, '?')) !== false) ? substr($ext, 0, $pos) : $ext;
         return in_array(strtolower($ext), $exts);
     }
@@ -39,7 +39,7 @@ class PixelFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG];
+        $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
         if (!file_exists($tmpname)) {
             return false;
         }
@@ -55,15 +55,6 @@ class PixelFileHandler extends DataHandlerExtension
 
     protected function create_thumb(string $hash): bool
     {
-        $outname = warehouse_path("thumbs", $hash);
-        if (file_exists($outname)) {
-            return true;
-        }
-        return $this->create_thumb_force($hash);
-    }
-
-    protected function create_thumb_force(string $hash): bool
-    {
         global $config;
 
         $inname  = warehouse_path("images", $hash);
@@ -77,7 +68,7 @@ class PixelFileHandler extends DataHandlerExtension
                 $ok = $this->make_thumb_gd($inname, $outname);
                 break;
             case 'convert':
-                $ok = $this->make_thumb_convert($inname, $outname);
+                $ok = create_thumbnail_convert($hash);
                 break;
         }
 
@@ -98,90 +89,31 @@ class PixelFileHandler extends DataHandlerExtension
 		", 20);
     }
 
-    // IM thumber {{{
-    private function make_thumb_convert(string $inname, string $outname): bool
-    {
-        global $config;
-
-        $q = $config->get_int("thumb_quality");
-        $convert = $config->get_string("thumb_convert_path");
-
-        //  ffff imagemagick fails sometimes, not sure why
-        //$format = "'%s' '%s[0]' -format '%%[fx:w] %%[fx:h]' info:";
-        //$cmd = sprintf($format, $convert, $inname);
-        //$size = shell_exec($cmd);
-        //$size = explode(" ", trim($size));
-        $size = getimagesize($inname);
-        $tsize = get_thumbnail_size_scaled($size[0] , $size[1]);
-        $w = $tsize[0];
-        $h = $tsize[1];
-
-
-        // running the call with cmd.exe requires quoting for our paths
-        $format = '"%s" "%s[0]" -extent %ux%u -flatten -strip -thumbnail %ux%u -quality %u jpg:"%s"';
-        $cmd = sprintf($format, $convert, $inname, $size[0], $size[1], $w, $h, $q, $outname);
-        $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
-        exec($cmd, $output, $ret);
-
-        log_debug('handle_pixel', "Generating thumbnail with command `$cmd`, returns $ret");
-
-        if ($config->get_bool("thumb_optim", false)) {
-            exec("jpegoptim $outname", $output, $ret);
-        }
-
-        return true;
-    }
-    // }}}
     // GD thumber {{{
     private function make_thumb_gd(string $inname, string $outname): bool
     {
         global $config;
-        $thumb = $this->get_thumb($inname);
-        $ok = imagejpeg($thumb, $outname, $config->get_int('thumb_quality'));
-        imagedestroy($thumb);
-        return $ok;
-    }
 
-    private function get_thumb(string $tmpname)
-    {
-        global $config;
-
-        $info = getimagesize($tmpname);
-        $width = $info[0];
-        $height = $info[1];
-
-        $memory_use = (filesize($tmpname)*2) + ($width*$height*4) + (4*1024*1024);
-        $memory_limit = get_memory_limit();
-
-        if ($memory_use > $memory_limit) {
-        	$tsize = get_thumbnail_size_scaled($width, $height);
-			$w = $tsize[0];
-			$h = $tsize[1];
-			$thumb = imagecreatetruecolor($w, min($h, 64));
+        try {
+            $info = getimagesize($inname);
+            $tsize = get_thumbnail_size_scaled($info[0], $info[1]);
+            $image = image_resize_gd($inname, $info, $tsize[0], $tsize[1], 
+                $outname, $config->get_string('thumb_type'),$config->get_int('thumb_quality'));
+        } catch(InsufficientMemoryException $e) {
+        	$tsize = get_thumbnail_max_size_scaled();
+			$thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
             $white = imagecolorallocate($thumb, 255, 255, 255);
             $black = imagecolorallocate($thumb, 0, 0, 0);
             imagefill($thumb, 0, 0, $white);
+            log_warning("handle_pixel","Insufficient memory while creating thumbnail: ".$e->getMessage());
             imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
-            return $thumb;
-        } else {
-            $image = imagecreatefromstring(file_get_contents($tmpname));
-            $tsize = get_thumbnail_size_scaled($width, $height);
-
-            $thumb = imagecreatetruecolor($tsize[0], $tsize[1]);
-            imagecopyresampled(
-                $thumb,
-                $image,
-                0,
-                0,
-                0,
-                0,
-                $tsize[0],
-                $tsize[1],
-                $width,
-                $height
-                    );
-            return $thumb;
+            return true;
+        } catch(Exception $e) {
+            log_error("handle_pixel","Error while creating thumbnail: ".$e->getMessage());
+            return false;
         }
+
+        return true;
     }
     // }}}
 }

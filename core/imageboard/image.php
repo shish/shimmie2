@@ -386,11 +386,21 @@ class Image
     }
 
     /**
+     * Get the nicely formatted version of the file name
+     */
+    public function get_nice_image_name(): string
+    {
+        return $this->parse_link_template('$id - $tags.$ext');
+    }
+
+    /**
      * Get the URL for the thumbnail
      */
     public function get_thumb_link(): string
     {
-        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.jpg', 'thumb/$id.jpg');
+        global $config;
+        $ext = $config->get_string("thumb_type");
+        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
     }
 
     /**

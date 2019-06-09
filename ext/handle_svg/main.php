@@ -3,12 +3,12 @@
  * Name: Handle SVG
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle static SVG files. (No thumbnail is generated for SVG files)
+ * Description: Handle static SVG files. 
  */
 
 use enshrined\svgSanitize\Sanitizer;
 
-class SVGFileHandler extends Extension
+class SVGFileHandler extends DataHandlerExtension
 {
     public function onDataUpload(DataUploadEvent $event)
     {
@@ -32,13 +32,12 @@ class SVGFileHandler extends Extension
         }
     }
 
-    public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
+    protected function create_thumb(string $hash): bool
     {
-        if ($this->supported_ext($event->type)) {
-            $hash = $event->hash;
-
+        if(!create_thumbnail_convert($hash)) {
             copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
         }
+        return true;
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event)
@@ -68,13 +67,13 @@ class SVGFileHandler extends Extension
         }
     }
 
-    private function supported_ext(string $ext): bool
+    protected function supported_ext(string $ext): bool
     {
         $exts = ["svg"];
         return in_array(strtolower($ext), $exts);
     }
 
-    private function create_image_from_data(string $filename, array $metadata): Image
+    protected function create_image_from_data(string $filename, array $metadata): Image
     {
         $image = new Image();
 
@@ -92,7 +91,7 @@ class SVGFileHandler extends Extension
         return $image;
     }
 
-    private function check_contents(string $file): bool
+    protected function check_contents(string $file): bool
     {
         if (!file_exists($file)) {
             return false;

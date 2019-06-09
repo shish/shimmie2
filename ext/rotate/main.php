@@ -106,11 +106,6 @@ class RotateImage extends Extension
     
     // Private functions
     /* ----------------------------- */
-
-    /**
-     * This function could be made much smaller by using the ImageReplaceEvent
-     * ie: Pretend that we are replacing the image with a rotated copy.
-     */
     private function rotate_image(int $image_id, int $deg)
     {
         global $database;
@@ -129,24 +124,10 @@ class RotateImage extends Extension
         if (file_exists($image_filename)==false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
+
         $info = getimagesize($image_filename);
-        /* Get the image file type */
-        $pathinfo = pathinfo($image_obj->filename);
-        $filetype = strtolower($pathinfo['extension']);
         
-        /*
-            Check Memory usage limits
-
-            Old check:   $memory_use = (filesize($image_filename)*2) + ($width*$height*4) + (4*1024*1024);
-            New check:    memory_use = width * height * (bits per channel) * channels * 2.5
-
-            It didn't make sense to compute the memory usage based on the NEW size for the image. ($width*$height*4)
-            We need to consider the size that we are GOING TO instead.
-
-            The factor of 2.5 is simply a rough guideline.
-            http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
-        */
-        $memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
+        $memory_use =calc_memory_use ($info);
         $memory_limit = get_memory_limit();
         
         if ($memory_use > $memory_limit) {
@@ -155,12 +136,10 @@ class RotateImage extends Extension
         
         
         /* Attempt to load the image */
-        switch ($info[2]) {
-          case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
-          case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-          case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
-          default:
-            throw new ImageRotateException("Unsupported image type or ");
+        $image = imagecreatefromstring(file_get_contents($image_filename));
+
+        if($image==false) {
+            throw new ImageRotateException("Could not load image: ".$image_filename);
         }
         
         /* Rotate and resample the image */
@@ -184,9 +163,17 @@ class RotateImage extends Extension
           }
         }
         */
+
+        $background_color = 0;
+        switch($info[2]){
+            case IMAGETYPE_PNG:
+            case IMAGETYPE_WEBP:
+                $background_color = imagecolorallocatealpha($image, 0, 0, 0, 127);
+                break;
+        }
         
-        $image_rotated = imagerotate($image, $deg, 0);
-        
+        $image_rotated = imagerotate($image, $deg, $background_color);
+
         /* Temp storage while we rotate */
         $tmp_filename = tempnam(ini_get('upload_tmp_dir'), 'shimmie_rotate');
         if (empty($tmp_filename)) {
@@ -195,48 +182,40 @@ class RotateImage extends Extension
         
         /* Output to the same format as the original image */
         switch ($info[2]) {
-          case IMAGETYPE_GIF:   imagegif($image_rotated, $tmp_filename);    break;
-          case IMAGETYPE_JPEG:  imagejpeg($image_rotated, $tmp_filename);   break;
-          case IMAGETYPE_PNG:   imagepng($image_rotated, $tmp_filename);    break;
+          case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);      break;
+          case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);     break;
+          case IMAGETYPE_PNG:   $result = imagepng($image_rotated, $tmp_filename,9);    break;
+          case IMAGETYPE_WEBP:  $result = imagewebp($image_rotated, $tmp_filename);     break;
+          case IMAGETYPE_BMP:   $result = imagebmp($image_rotated, $tmp_filename,true); break;
           default:
             throw new ImageRotateException("Unsupported image type.");
         }
-        
+
+        if($result==false) {
+            throw new ImageRotateException("Could not save image: ".$tmp_filename);
+        }
+
+        list($new_width, $new_height) = getimagesize($tmp_filename);
+
+        $new_image = new Image();
+        $new_image->hash = md5_file($tmp_filename);
+        $new_image->filesize = filesize($tmp_filename);
+        $new_image->filename = 'rotated-'.$image_obj->filename;
+        $new_image->width = $new_width;
+        $new_image->height = $new_height;
+        $new_image->ext = $image_obj->ext;
+
         /* Move the new image into the main storage location */
-        $new_hash = md5_file($tmp_filename);
-        $new_size = filesize($tmp_filename);
-        $target = warehouse_path("images", $new_hash);
+        $target = warehouse_path("images", $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageRotateException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
-        $new_filename = 'rotated-'.$image_obj->filename;
-        
-        list($new_width, $new_height) = getimagesize($target);
 
-        
         /* Remove temporary file */
         @unlink($tmp_filename);
 
-        /* Delete original image and thumbnail */
-        log_debug("image", "Removing image with hash ".$hash);
-        $image_obj->remove_image_only();
-        
-        /* Generate new thumbnail */
-        send_event(new ThumbnailGenerationEvent($new_hash, $filetype));
-        
-        /* Update the database */
-        $database->Execute(
-            "UPDATE images SET 
-					filename = :filename, filesize = :filesize,	hash = :hash, width = :width, height = :height
-				WHERE 
-					id = :id
-				",
-            [
-                    "filename"=>$new_filename, "filesize"=>$new_size, "hash"=>$new_hash,
-                    "width"=>$new_width, "height"=>$new_height,	"id"=>$image_id
-                ]
-        );
-        
-        log_info("rotate", "Rotated Image #{$image_id} - New hash: {$new_hash}");
+        send_event(new ImageReplaceEvent($image_id, $new_image));
+
+        log_info("rotate", "Rotated Image #{$image_id} - New hash: {$new_image->hash}");
     }
 }

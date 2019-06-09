@@ -37,6 +37,7 @@ Disk use: {$info['sys_disk']}
 
 Thumbnail Generation:
 Engine: {$info['thumb_engine']}
+Type: {$info['thumb_type']}
 Memory: {$info['thumb_mem']}
 Quality: {$info['thumb_quality']}
 Width: {$info['thumb_width']}

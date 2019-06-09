@@ -166,6 +166,7 @@ class Ratings extends Extension
                     $rating = $_POST['bulk_rating'];
                     foreach ($event->items as $image) {
                         send_event(new RatingSetEvent($image, $rating));
+						$event->running_total++;
                     }
                 }
                 break;

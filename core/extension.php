@@ -219,12 +219,20 @@ abstract class DataHandlerExtension extends Extension
 
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
     {
+        $result = false;
         if ($this->supported_ext($event->type)) {
-            if (method_exists($this, 'create_thumb_force') && $event->force == true) {
-                $this->create_thumb_force($event->hash);
+            if($event->force) {
+                $result = $this->create_thumb($event->hash);
             } else {
-                $this->create_thumb($event->hash);
+                $outname = warehouse_path("thumbs", $event->hash);
+                if(file_exists($outname)) {
+                    return;
+                }
+                $result = $this->create_thumb($event->hash);
             }
+        }
+        if($result) {
+            $event->generated = true;
         }
     }
 
