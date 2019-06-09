@@ -111,16 +111,14 @@ class Source_HistoryTheme extends Themelet
         }
         
         $html = '
-			Revert source changes/edit by a specific IP address or username.
-			<br>You can restrict the time frame to revert these edits as well.
-			<br>(Date format: 2011-10-23)
+			Revert source changes by a specific IP address or username, optionally limited to recent changes.
 			'.$validation_msg.'
 
 			<br><br>'.make_form(make_link("source_history/bulk_revert"), 'POST')."
 				<table class='form'>
 					<tr><th>Username</th>        <td><input type='text' name='revert_name' size='15'></td></tr>
 					<tr><th>IP&nbsp;Address</th> <td><input type='text' name='revert_ip' size='15'></td></tr>
-					<tr><th>Date&nbsp;range</th> <td><input type='date' name='revert_date' size='15'></td></tr>
+					<tr><th>Since</th>           <td><input type='date' name='revert_date' size='15'></td></tr>
 					<tr><td colspan='2'><input type='submit' value='Revert'></td></tr>
 				</table>
 			</form>

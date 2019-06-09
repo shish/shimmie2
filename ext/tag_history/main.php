@@ -247,7 +247,7 @@ class Tag_History extends Extension
     /**
      * This function attempts to revert all changes by a given IP within an (optional) timeframe.
      */
-    public function process_revert_all_changes(string $name, string $ip, string $date)
+    public function process_revert_all_changes(?string $name, ?string $ip, ?string $date)
     {
         global $database;
         
@@ -265,14 +265,14 @@ class Tag_History extends Extension
             }
         }
 
-        if (!is_null($date)) {
-            $select_code[] = 'date_set >= ?';
-            $select_args[] = $date;
-        }
-
         if (!is_null($ip)) {
             $select_code[] = 'user_ip = ?';
             $select_args[] = $ip;
+        }
+
+        if (!is_null($date)) {
+            $select_code[] = 'date_set >= ?';
+            $select_args[] = $date;
         }
 
         if (count($select_code) == 0) {
