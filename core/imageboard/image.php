@@ -593,6 +593,9 @@ class Image
         if (Tag::implode($tags) != $this->get_tag_list()) {
             // delete old
             $this->delete_tags_from_image();
+
+            $written_tags = [];
+
             // insert each new tags
             foreach ($tags as $tag) {
                 $id = $database->get_one(
@@ -615,11 +618,17 @@ class Image
                         ["id"=>$this->id, "tag"=>$tag]
                     );
                 } else {
-                    // user of an existing tag
+                    // check if tag has already been written
+                    if(in_array($id, $written_tags)) {
+                        continue;
+                    }
+
                     $database->execute("
-						INSERT INTO image_tags(image_id, tag_id)
-						VALUES(:iid, :tid)
-					", ["iid"=>$this->id, "tid"=>$id]);
+                        INSERT INTO image_tags(image_id, tag_id)
+                        VALUES(:iid, :tid)
+                    ", ["iid"=>$this->id, "tid"=>$id]);
+
+                    array_push($written_tags, $id);
                 }
                 $database->execute(
                     $database->scoreql_to_sql("
