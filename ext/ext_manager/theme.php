@@ -30,13 +30,13 @@ class ExtManagerTheme extends Themelet
             $h_description = html_escape($extension->description);
             $h_link        = make_link("ext_doc/".url_escape($extension->ext_name));
             $h_enabled     = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " disabled checked='checked'"));
-            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
+            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."' id='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
             $h_docs        = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
             $html .= "
 				<tr data-ext='{$extension->ext_name}'>
 					{$h_enabled_box}
-					<td>{$h_name}</td>
+					<td><label for='ext_".html_escape($extension->ext_name)."'>{$h_name}</label></td>
 					<td>{$h_docs}</td>
 					<td style='text-align: left;'>{$h_description}</td>
 				</tr>";
