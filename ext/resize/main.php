@@ -11,20 +11,6 @@
  * Documentation:
  *  This extension allows admins to resize images.
  */
-
-/**
- * This class is just a wrapper around SCoreException.
- */
-class ImageResizeException extends SCoreException
-{
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
-}
-
 /**
  *	This class handles image resize requests.
  */
