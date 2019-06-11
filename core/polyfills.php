@@ -507,7 +507,7 @@ function no_escape(string $input): string
     return $input;
 }
 
-function clamp(int $val, int $min=null, int $max=null): int
+function clamp(?int $val, ?int $min=null, ?int $max=null): int
 {
     if (!is_numeric($val) || (!is_null($min) && $val < $min)) {
         $val = $min;
