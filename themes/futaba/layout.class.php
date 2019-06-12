@@ -85,7 +85,7 @@ $header_html
 			<a href="https://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
 			<a href="https://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2018,
+			2007-2019,
 			based on the Danbooru concept.
 			<br>Futaba theme based on 4chan's layout and CSS :3
 			$debug
