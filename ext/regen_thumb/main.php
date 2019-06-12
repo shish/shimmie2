@@ -69,7 +69,7 @@ class RegenThumb extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("Regen Thumbnails","",$this->theme->bulk_html());
+            $event->add_action("bulk_regen","Regen Thumbnails","",$this->theme->bulk_html());
         }
 
     }
@@ -79,7 +79,7 @@ class RegenThumb extends Extension
         global $user;
 
         switch($event->action) {
-            case "Regen Thumbnails":
+            case "bulk_regen":
                 if ($user->can("delete_image")) {
                     $force = true;
                     if(isset($_POST["bulk_regen_thumb_missing_only"])
@@ -88,13 +88,18 @@ class RegenThumb extends Extension
                         $force=false;
                     }
     
-                    
-                    foreach ($event->items as $image) {
+                    $total = 0;
+                    foreach ($event->items as $id) {
+                        $image = Image::by_id($id);
+                        if($image==null) {
+                            continue;
+                        }
+
                         if($this->regenerate_thumbnail($image, $force)) {
-                            $event->running_total++;
+                            $total++;
                         }
                     }
-                    flash_message("Regenerated thumbnails for $event->running_total items");
+                    flash_message("Regenerated thumbnails for $total items");
                 }
                 break;
         }

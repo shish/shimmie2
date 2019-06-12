@@ -14,7 +14,7 @@ class BulkActionBlockBuildingEvent extends Event
     /** @var array  */
     public $actions = array();
 
-    public function add_action(String $action, String $confirmation_message = "", String $block = "", int $position = 40)
+    public function add_action(String $action, string $button_text, String $confirmation_message = "", String $block = "", int $position = 40)
     {
         if ($block == null)
             $block = "";
@@ -25,6 +25,7 @@ class BulkActionBlockBuildingEvent extends Event
                 "block" => $block,
                 "confirmation_message" => $confirmation_message,
                 "action" => $action,
+                "button_text" => $button_text,
                 "position" => $position
             )
         );
@@ -33,17 +34,18 @@ class BulkActionBlockBuildingEvent extends Event
 
 class BulkActionEvent extends Event
 {
+    /** @var string  */
     public $action;
+    /** @var array  */
     public $items;
+    /** @var PageRequestEvent  */
     public $page_request;
-    public $running_total;
 
-    function __construct(String $action, PageRequestEvent $pageRequestEvent, array $items, int $running_total = 0)
+    function __construct(String $action, PageRequestEvent $pageRequestEvent, array $items)
     {
         $this->action = $action;
         $this->page_request = $pageRequestEvent;
         $this->items = $items;
-        $this->running_total = $running_total;
     }
 }
 
@@ -53,7 +55,17 @@ class BulkActions extends Extension
     {
         global $config, $page, $user;
 
-        $this->theme->display_selector($page, $event, $config, Tag::implode($event->search_terms));
+        if ($user->is_logged_in()) {
+            $babbe = new BulkActionBlockBuildingEvent();
+            send_event($babbe);
+
+            if (sizeof($babbe->actions) == 0)
+			    return;
+
+            usort($babbe->actions, array($this, "sort_blocks"));
+
+            $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
+        }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
@@ -61,15 +73,15 @@ class BulkActions extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("Delete", "Delete selected images?", "", 10);
+            $event->add_action("bulk_delete","Delete", "Delete selected images?", "", 10);
         }
 
         if ($user->can("bulk_edit_image_tag")) {
-            $event->add_action("Tag", "", $this->theme->render_tag_input(), 10);
+            $event->add_action("bulk_tag","Tag", "", $this->theme->render_tag_input(), 10);
         }
 
         if ($user->can("bulk_edit_image_source")) {
-            $event->add_action("Set Source", "", $this->theme->render_source_input(), 10);
+            $event->add_action("bulk_source","Set Source", "", $this->theme->render_source_input(), 10);
         }
     }
 
@@ -78,13 +90,13 @@ class BulkActions extends Extension
         global $user;
 
         switch ($event->action) {
-            case "Delete":
+            case "bulk_delete":
                 if ($user->can("delete_image")) {
-                    $event->running_total += $this->delete_items($event->items);
-                    flash_message("Deleted $event->running_total items");
+                    $i = $this->delete_items($event->items);
+                    flash_message("Deleted $i items");
                 }
                 break;
-            case "Tag":
+            case "bulk_tag":
                 if (!isset($_POST['bulk_tags'])) {
                     return;
                 }
@@ -95,18 +107,18 @@ class BulkActions extends Extension
                         $replace = true;
                     }
 
-                    $event->running_total += $this->tag_items($event->items, $tags, $replace);
-                    flash_message("Tagged $event->running_total items");
+                    $i= $this->tag_items($event->items, $tags, $replace);
+                    flash_message("Tagged $i items");
                 }
                 break;
-            case "Set Source":
+            case "bulk_source":
                 if (!isset($_POST['bulk_source'])) {
                     return;
                 }
                 if ($user->can("bulk_edit_image_source")) {
                     $source = $_POST['bulk_source'];
-                    $event->running_total += $this->set_source($event->items, $source);
-                    flash_message("Set source for $event->running_total items");
+                    $i = $this->set_source($event->items, $source);
+                    flash_message("Set source for $i items");
                 }
                 break;
         }
@@ -128,35 +140,33 @@ class BulkActions extends Extension
                 if (is_array($data)) {
                     foreach ($data as $id) {
                         if (is_numeric($id)) {
-                            $item = Image::by_id(int_escape($id));
-                            array_push($items, $item);
+                            array_push($items, int_escape($id));
                         }
                     }
-                }
-                if (sizeof($items) > 0) {
-                    reset($items); // rewind to first element in array.
-                    $newEvent = new BulkActionEvent($action, $event, $items);
-                    send_event($newEvent);
                 }
             } else if (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
                 $query = $_POST['bulk_query'];
                 if ($query != null && $query != "") {
                     $n = 0;
+                    $tags = Tag::explode($query);
                     while (true) {
-                        $items = Image::find_images($n, 100, Tag::explode($query));
-                        if (count($items) == 0) {
+                        $results = Image::find_image_ids($n, 100, $tags);
+                        if (count($results) == 0) {
                             break;
                         }
 
-                        reset($items); // rewind to first element in array.
-                        $newEvent = new BulkActionEvent($action, $event, $items, $n);
-                        send_event($newEvent);
-
-                        $n = $newEvent->running_total;
+                        reset($results); // rewind to first element in array.
+                        $items = array_merge($items, $results);
+                        $n += count($results);
                     }
                 }
             }
 
+            if (sizeof($items) > 0) {
+                reset($items); // rewind to first element in array.
+                $newEvent = new BulkActionEvent($action, $event, $items);
+                send_event($newEvent);
+            }
 
 
             $page->set_mode("redirect");
@@ -167,15 +177,25 @@ class BulkActions extends Extension
         }
     }
 
+    private function sort_blocks($a, $b)
+	{
+		return $a["position"] - $b["position"];
+    }
+    
     private function delete_items(array $items): int
     {
         $total = 0;
-        foreach ($items as $item) {
+        foreach ($items as $id) {
             try {
-                send_event(new ImageDeletionEvent($item));
+                $image = Image::by_id($id);
+                if($image==null) {
+                    continue;
+                }
+
+                send_event(new ImageDeletionEvent($image));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while removing $item->id: " . $e->getMessage(), "error");
+                flash_message("Error while removing $id: " . $e->getMessage(), "error");
             }
         }
         return $total;
@@ -197,20 +217,30 @@ class BulkActions extends Extension
 
         $total = 0;
         if ($replace) {
-            foreach ($items as $item) {
-                send_event(new TagSetEvent($item, $tags));
+            foreach ($items as $id) {
+                $image = Image::by_id($id);
+                if($image==null) {
+                    continue;
+                }
+
+                send_event(new TagSetEvent($image, $tags));
                 $total++;
             }
         } else {
-            foreach ($items as $item) {
+            foreach ($items as $id) {
+                $image = Image::by_id($id);
+                if($image==null) {
+                    continue;
+                }
+
                 $img_tags = [];
                 if (!empty($neg_tag_array)) {
-                    $img_tags = array_merge($pos_tag_array, $item->get_tag_array());
+                    $img_tags = array_merge($pos_tag_array, $image->get_tag_array());
                     $img_tags = array_diff($img_tags, $neg_tag_array);
                 } else {
-                    $img_tags = array_merge($tags, $item->get_tag_array());
+                    $img_tags = array_merge($tags, $image->get_tag_array());
                 }
-                send_event(new TagSetEvent($item, $img_tags));
+                send_event(new TagSetEvent($image, $img_tags));
                 $total++;
             }
         }
@@ -221,12 +251,17 @@ class BulkActions extends Extension
     private function set_source(array $items, String $source): int
     {
         $total = 0;
-        foreach ($items as $item) {
+        foreach ($items as $id) {
             try {
-                send_event(new SourceSetEvent($item, $source));
+                $image = Image::by_id($id);
+                if($image==null) {
+                    continue;
+                }
+
+                send_event(new SourceSetEvent($image, $source));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while setting source for $item->id: " . $e->getMessage(), "error");
+                flash_message("Error while setting source for $id: " . $e->getMessage(), "error");
             }
         }
 

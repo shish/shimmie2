@@ -25,7 +25,7 @@ function validate_selections(form, confirmationMessage) {
     if(confirmationMessage!=null&&confirmationMessage!="") {
         return confirm(confirmationMessage);
     } else if(queryOnly) {
-        var action = $(form).find('input[name="bulk_action"]').val();
+        var action = $(form).find('input[name="submit_button"]').val();
 
         return confirm("Perform bulk action \"" + action + "\" on all images matching the current search?");
     }

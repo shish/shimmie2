@@ -145,6 +145,51 @@ class Image
         return $images;
     }
 
+    /**
+     * Search for an array of image IDs
+     *
+     * #param string[] $tags
+     * #return int[]
+     */
+    public static function find_image_ids(int $start, int $limit, array $tags=[]): array
+    {
+        global $database, $user, $config;
+
+        $images = [];
+
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit < 1) {
+            $limit = 1;
+        }
+
+        if (SPEED_HAX) {
+            if (!$user->can("big_search") and count($tags) > 3) {
+                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
+            }
+        }
+
+        $result = null;
+        if (SEARCH_ACCEL) {
+            $result = Image::get_accelerated_result($tags, $start, $limit);
+        }
+
+        if (!$result) {
+            $querylet = Image::build_search_querylet($tags);
+            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
+            $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
+            #var_dump($querylet->sql); var_dump($querylet->variables);
+            $result = $database->execute($querylet->sql, $querylet->variables);
+        }
+
+        while ($row = $result->fetch()) {
+            $images[] = $row["id"];
+        }
+        Image::$order_sql = null;
+        return $images;
+    }
+
     /*
      * Accelerator stuff
      */
