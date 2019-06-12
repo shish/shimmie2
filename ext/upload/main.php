@@ -42,18 +42,12 @@ class DataUploadEvent extends Event
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
-        $this->tmpname = $tmpname;
-
         $this->metadata = $metadata;
-        $this->metadata['hash'] = md5_file($tmpname);
-        $this->metadata['size'] = filesize($tmpname);
 
-        // useful for most file handlers, so pull directly into fields
-        $this->hash = $this->metadata['hash'];
+        $this->set_tmpname($tmpname);
 
         if($config->get_bool("upload_use_mime")) {
-            $this->type = strtolower(get_extension_from_mime($tmpname));
-            $this->metadata["extension"] = $this->type;
+            $this->set_type(get_extension_from_mime($tmpname));
         } else {
             if(array_key_exists('extension',$metadata)&&!empty($metadata['extension'])) {
                 $this->type = strtolower($metadata['extension']);
@@ -61,6 +55,19 @@ class DataUploadEvent extends Event
                 throw new UploadException("Could not determine extension for file ".$metadata["filename"]);
             }
         }
+    }
+
+    public function set_type(String $type) {
+        $this->type = strtolower($type);
+        $this->metadata["extension"] = $this->type;
+    }
+
+    public function set_tmpname(String $tmpname) {
+        $this->tmpname = $tmpname;
+        $this->metadata['hash'] = md5_file($tmpname);
+        $this->metadata['size'] = filesize($tmpname);
+        // useful for most file handlers, so pull directly into fields
+        $this->hash = $this->metadata['hash'];
     }
 }
 
