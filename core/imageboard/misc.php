@@ -53,20 +53,33 @@ function add_image(string $tmpname, string $filename, string $tags): void
     assert(file_exists($tmpname));
 
     $pathinfo = pathinfo($filename);
-    if (!array_key_exists('extension', $pathinfo)) {
-        throw new UploadException("File has no extension");
-    }
     $metadata = [];
     $metadata['filename'] = $pathinfo['basename'];
-    $metadata['extension'] = $pathinfo['extension'];
+    if (array_key_exists('extension', $pathinfo)) {
+        $metadata['extension'] = $pathinfo['extension'];
+    }
+    
     $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
     $event = new DataUploadEvent($tmpname, $metadata);
     send_event($event);
-    if ($event->image_id == -1) {
-        throw new UploadException("File type not recognised");
-    }
 }
+
+
+function get_extension_from_mime(String $file_path): ?String 
+{
+    global $config;
+    $mime = mime_content_type($file_path);
+    if(!empty($mime)) {
+        $ext = get_extension($mime);
+        if(!empty($ext)) {
+            return $ext;
+        } 
+        throw new UploadException("Could not determine extension for mimetype ".$mime);
+    }
+    throw new UploadException("Could not determine file mime type: ".$file_path);
+}
+
 
 /**
  * Given a full size pair of dimensions, return a pair scaled down to fit

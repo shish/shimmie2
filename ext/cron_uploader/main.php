@@ -325,9 +325,6 @@ class CronUploader extends Extension
         assert(file_exists($tmpname));
         
         $pathinfo = pathinfo($filename);
-        if (! array_key_exists('extension', $pathinfo)) {
-            throw new UploadException("File has no extension");
-        }
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
         $metadata ['extension'] = $pathinfo ['extension'];

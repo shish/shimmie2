@@ -310,7 +310,7 @@ function getMimeType(string $file, string $ext=""): string
     return 'application/octet-stream';
 }
 
-function getExtension(?string $mime_type): ?string
+function get_extension(?string $mime_type): ?string
 {
     if (empty($mime_type)) {
         return null;

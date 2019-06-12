@@ -18,9 +18,15 @@ class DataUploadEvent extends Event
     /** @var string */
     public $hash;
     /** @var string */
-    public $type;
+    public $type = "";
     /** @var int */
     public $image_id = -1;
+    /** @var bool */
+    public $handled = false;
+    /** @var bool */
+    public $merged = false;
+
+
 
     /**
      * Some data is being uploaded.
@@ -29,9 +35,10 @@ class DataUploadEvent extends Event
      */
     public function __construct(string $tmpname, array $metadata)
     {
+        global $config;
+
         assert(file_exists($tmpname));
         assert(is_string($metadata["filename"]));
-        assert(is_string($metadata["extension"]));
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
@@ -43,7 +50,17 @@ class DataUploadEvent extends Event
 
         // useful for most file handlers, so pull directly into fields
         $this->hash = $this->metadata['hash'];
-        $this->type = strtolower($metadata['extension']);
+
+        if($config->get_bool("upload_use_mime")) {
+            $this->type = strtolower(get_extension_from_mime($tmpname));
+            $this->metadata["extension"] = $this->type;
+        } else {
+            if(array_key_exists('extension',$metadata)&&!empty($metadata['extension'])) {
+                $this->type = strtolower($metadata['extension']);
+            } else {
+                throw new UploadException("Could not determine extension for file ".$metadata["filename"]);
+            }
+        }
     }
 }
 
@@ -76,6 +93,7 @@ class Upload extends Extension
         $config->set_default_int('upload_size', parse_shorthand_int('1MB'));
         $config->set_default_int('upload_min_free_space', parse_shorthand_int('100MB'));
         $config->set_default_bool('upload_tlsource', true);
+        $config->set_default_bool('upload_use_mime', false);
 
         $this->is_full = false;
 
@@ -108,6 +126,7 @@ class Upload extends Extension
         $sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
         $sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
         $sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
+        $sb->add_bool_option("upload_use_mime", "<br/>Use mime type to determine file types: ");
         $event->panel->add_block($sb);
     }
 
@@ -307,7 +326,9 @@ class Upload extends Extension
                 $pathinfo = pathinfo($file['name']);
                 $metadata = [];
                 $metadata['filename'] = $pathinfo['basename'];
-                $metadata['extension'] = $pathinfo['extension'];
+                if (array_key_exists('extension', $pathinfo)) {
+                    $metadata['extension'] = $pathinfo['extension'];
+                }
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
                 
@@ -318,9 +339,6 @@ class Upload extends Extension
                 
                 $event = new DataUploadEvent($file['tmp_name'], $metadata);
                 send_event($event);
-                if ($event->image_id == -1) {
-                    throw new UploadException("File type not recognised");
-                }
                 $page->add_http_header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(
@@ -389,7 +407,7 @@ class Upload extends Extension
             
             $ext = false;
             if (is_array($headers)) {
-                $ext = getExtension(findHeader($headers, 'Content-Type'));
+                $ext = get_extension(findHeader($headers, 'Content-Type'));
             }
             if ($ext === false) {
                 $ext = $pathinfo['extension'];
@@ -411,8 +429,8 @@ class Upload extends Extension
                 $metadata['replace'] = $replace;
             }
             
-            $event = new DataUploadEvent($tmp_filename, $metadata);
             try {
+                $event = new DataUploadEvent($tmp_filename, $metadata);
                 send_event($event);
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(

@@ -69,7 +69,9 @@ class BulkAddCSV extends Extension
         }
         $metadata = [];
         $metadata['filename'] = $pathinfo['basename'];
-        $metadata['extension'] = $pathinfo['extension'];
+        if (array_key_exists('extension', $pathinfo)) {
+            $metadata['extension'] = $pathinfo['extension'];
+        }
         $metadata['tags'] = Tag::explode($tags);
         $metadata['source'] = $source;
         $event = new DataUploadEvent($tmpname, $metadata);
