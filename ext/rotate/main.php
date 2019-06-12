@@ -171,8 +171,14 @@ class RotateImage extends Extension
                 $background_color = imagecolorallocatealpha($image, 0, 0, 0, 127);
                 break;
         }
-        
+        if($background_color===false) {
+            throw new ImageRotateException("Unable to allocate transparent color");
+        }
+
         $image_rotated = imagerotate($image, $deg, $background_color);
+        if($image_rotated===false) {
+            throw new ImageRotateException("Image rotate failed");
+        }
 
         /* Temp storage while we rotate */
         $tmp_filename = tempnam(ini_get('upload_tmp_dir'), 'shimmie_rotate');
@@ -181,6 +187,7 @@ class RotateImage extends Extension
         }
         
         /* Output to the same format as the original image */
+        $result = false;
         switch ($info[2]) {
           case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);      break;
           case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);     break;
@@ -191,7 +198,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Unsupported image type.");
         }
 
-        if($result==false) {
+        if($result===false) {
             throw new ImageRotateException("Could not save image: ".$tmp_filename);
         }
 

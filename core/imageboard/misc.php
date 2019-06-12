@@ -345,82 +345,116 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
     }
 
     $image = imagecreatefromstring(file_get_contents($image_filename));
-
-    if($image==false) {
-        throw new ImageResizeException("Could not load image: ".$image_filename);
-    }
-
     $image_resized = imagecreatetruecolor($new_width, $new_height);
+    try {
+        if($image===false) {
+            throw new ImageResizeException("Could not load image: ".$image_filename);
+        }
+        if($image_resized===false) {
+            throw new ImageResizeException("Could not create output image with dimensions $new_width c $new_height ");
+        }
 
-    // Handle transparent images
-    switch($info[2]) {
-        case IMAGETYPE_GIF:
-            $transparency = imagecolortransparent($image);
-            $palletsize = imagecolorstotal($image);
+        // Handle transparent images
+        switch($info[2]) {
+            case IMAGETYPE_GIF:
+                $transparency = imagecolortransparent($image);
+                $palletsize = imagecolorstotal($image);
 
-            // If we have a specific transparent color
-            if ($transparency >= 0 && $transparency < $palletsize) {
-                // Get the original image's transparent color's RGB values
-                $transparent_color = imagecolorsforindex($image, $transparency);
+                // If we have a specific transparent color
+                if ($transparency >= 0 && $transparency < $palletsize) {
+                    // Get the original image's transparent color's RGB values
+                    $transparent_color = imagecolorsforindex($image, $transparency);
 
-                // Allocate the same color in the new image resource
-                $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
+                    // Allocate the same color in the new image resource
+                    $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
+                    if($transparency===false) {
+                        throw new ImageResizeException("Unable to allocate transparent color");
+                    }
+                    
+                    // Completely fill the background of the new image with allocated color.
+                    if(imagefill($image_resized, 0, 0, $transparency)===false) {
+                        throw new ImageResizeException("Unable to fill new image with transparent color");
+                    }
 
-                // Completely fill the background of the new image with allocated color.
-                imagefill($image_resized, 0, 0, $transparency);
-
-                // Set the background color for new image to transparent
-                imagecolortransparent($image_resized, $transparency);
+                    // Set the background color for new image to transparent
+                    imagecolortransparent($image_resized, $transparency);
+                }
+                break;
+            case IMAGETYPE_PNG:
+            case IMAGETYPE_WEBP:
+                //
+                // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
+                //
+                if(imagealphablending($image_resized, false)===false) {
+                    throw new ImageResizeException("Unable to disable image alpha blending");
+                }
+                if(imagesavealpha($image_resized, true)===false) {
+                    throw new ImageResizeException("Unable to enable image save alpha");
+                }
+                $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
+                if($transparent_color===false) {
+                    throw new ImageResizeException("Unable to allocate transparent color");
+                }
+                if(imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color)===false) {
+                    throw new ImageResizeException("Unable to fill new image with transparent color");
+                }
+                break;
+        }
+        
+        // Actually resize the image.
+        if(imagecopyresampled(
+            $image_resized,
+            $image,
+            0,
+            0,
+            0,
+            0,
+            $new_width,
+            $new_height,
+            $width,
+            $height
+            )===false) {
+                throw new ImageResizeException("Unable to copy resized image data to new image");
             }
-            break;
-        case IMAGETYPE_PNG:
-        case IMAGETYPE_WEBP:
-            //
-            // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
-            //
-            imagealphablending($image_resized, false);
-            imagesavealpha($image_resized, true);
-            $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
-            imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color);
-            break;
-    }
-    
-    // Actually resize the image.
-    imagecopyresampled(
-        $image_resized,
-        $image,
-        0,
-        0,
-        0,
-        0,
-        $new_width,
-        $new_height,
-        $width,
-        $height
-        );
 
-    switch($output_type) {
-        case "bmp":
-            $result = imagebmp($image_resized, $output_filename, true);
-            break;
-        case "webp":
-            $result = imagewebp($image_resized, $output_filename, $output_quality);
-            break;
-        case "jpg":
-        case "jpeg":
-            $result = imagejpeg($image_resized, $output_filename, $output_quality);
-            break;
-        case "png":
-            $result = imagepng($image_resized, $output_filename, 9);
-            break;
-        case "gif":
-            $result = imagegif($image_resized, $output_filename);
-            break;
-        default:
-            throw new ImageResizeException("Failed to save the new image - Unsupported image type: $output_type");
+        $result = false;
+        switch($output_type) {
+            case "bmp":
+                $result = imagebmp($image_resized, $output_filename, true);
+                break;
+            case "webp":
+                $result = imagewebp($image_resized, $output_filename, $output_quality);
+                break;
+            case "jpg":
+            case "jpeg":
+                $result = imagejpeg($image_resized, $output_filename, $output_quality);
+                break;
+            case "png":
+                $result = imagepng($image_resized, $output_filename, 9);
+                break;
+            case "gif":
+                $result = imagegif($image_resized, $output_filename);
+                break;
+            default:
+                throw new ImageResizeException("Failed to save the new image - Unsupported image type: $output_type");
+        }
+        if($result==false) {
+            throw new ImageResizeException("Failed to save the new image, function returned false when saving type: $output_type");
+        }
+    } finally {
+        imagedestroy($image);
+        imagedestroy($image_resized);
     }
-    if($result==false) {
-        throw new ImageResizeException("Failed to save the new image, function returned false when saving type: $output_type");
+}
+
+function is_animated_gif(String $image_filename) {
+    $isanigif = 0;
+    if (($fh = @fopen($image_filename, 'rb'))) {
+        //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+        while (!feof($fh) && $isanigif < 2) {
+            $chunk = fread($fh, 1024 * 100);
+            $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+        }
     }
-    imagedestroy($image_resized);
+    return ($isanigif == 0);
 }
