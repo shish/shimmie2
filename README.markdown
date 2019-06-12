@@ -86,7 +86,7 @@ different enough to be a pain.
 Various aspects of Shimmie can be configured to suit your site specific needs
 via the file `data/config/shimmie.conf.php` (created after installation).
 
-Take a look at `core/sys_config.inc.php` for the available options that can
+Take a look at `core/sys_config.php` for the available options that can
 be used.
 
 
@@ -116,7 +116,7 @@ new UserClass("moderator", "user", array(
 ));
 ```
 
-For a list of permissions, see `core/userclass.class.php`
+For a list of permissions, see `core/userclass.php`
 
 
 # Development Info
