@@ -56,8 +56,6 @@ date_default_timezone_set('UTC');
 		</div>
 		<pre style="display:none">
 <?php }
-assert_options(ASSERT_ACTIVE, 1);
-assert_options(ASSERT_BAIL, 1);
 
 // Pull in necessary files
 require_once "core/exceptions.php";
