@@ -87,7 +87,7 @@ class TranscodeImage extends Extension
     ];
 
     /**
-     * Need to be after upload, but before the processing extensions
+     * Needs to be after upload, but before the processing extensions
      */
     public function get_priority(): int
     {
@@ -238,7 +238,7 @@ class TranscodeImage extends Extension
                             if($image==null) {
                                 continue;
                             }
-            
+                            
                             $this->transcode_and_replace_image($image, $format);
                             // If a subsequent transcode fails, the database need to have everything about the previous transcodes recorded already,
                             // otherwise the image entries will be stuck pointing to missing image files
@@ -424,20 +424,20 @@ class TranscodeImage extends Extension
         }
         $ext = $this->determine_ext($target_format);
 
-        $args = "-flatten";
+        $args = " -flatten ";
         $bg = "none";
         switch($target_format) {
             case "webp-lossless":
-                $args = '-define webp:lossless=true';
+                $args .= '-define webp:lossless=true';
                 break;
             case "webp-lossy":
-                $args = '';
+                $args .= '';
                 break;
             case "png":
-                $args = '-define png:compression-level=9';
+                $args .= '-define png:compression-level=9';
                 break;
             default:
-                $bg = "white";
+                $bg = "black";
                 break;
         }
         $tmp_name = tempnam("/tmp", "shimmie_transcode");

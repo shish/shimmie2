@@ -16,6 +16,15 @@
  */
 class ResizeImage extends Extension
 {
+    /**
+     * Needs to be after the data processing extensions
+     */
+    public function get_priority(): int
+    {
+        return 55;
+    }
+
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

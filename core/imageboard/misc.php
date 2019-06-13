@@ -201,12 +201,13 @@ function create_thumbnail_convert($hash): bool
         $options .= "\>";
     }
 
+    $bg = "black";
     if($type=="webp") {
-        $format = '"%s" -thumbnail %ux%u%s -quality %u -background none "%s[0]"  %s:"%s"';
-    } else {
-        $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u "%s[0]" %s:"%s"';
+        $bg = "none";
     }
-    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $inname, $type, $outname);
+    $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s "%s[0]"  %s:"%s"';
+
+    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg, $inname, $type, $outname);
     $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
     exec($cmd, $output, $ret);
 
