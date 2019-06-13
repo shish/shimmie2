@@ -351,17 +351,6 @@ function log_slow(): void
     }
 }
 
-function score_assert_handler($file, $line, $code, $desc = null): void
-{
-    $file = basename($file);
-    print("Assertion failed at $file:$line: $code ($desc)");
-    /*
-    print("<pre>");
-    debug_print_backtrace();
-    print("</pre>");
-    */
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
@@ -396,11 +385,6 @@ function _sanitise_environment(): void
     ini_set('assert.exception', 1);  // throw exceptions when failed
     if (DEBUG) {
         error_reporting(E_ALL);
-        assert_options(ASSERT_ACTIVE, 1);
-        assert_options(ASSERT_BAIL, 1);
-        assert_options(ASSERT_WARNING, 0);
-        assert_options(ASSERT_QUIET_EVAL, 1);
-        assert_options(ASSERT_CALLBACK, 'score_assert_handler');
     }
 
     $_shm_ctx = new Context();
