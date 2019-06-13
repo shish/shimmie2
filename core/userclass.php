@@ -128,6 +128,10 @@ new UserClass("base", null, [
     "view_hellbanned" => false,
 
     "protected" => false,          # only admins can modify protected users (stops a moderator changing an admin's password)
+
+    "edit_image_rating" => false,
+    "bulk_edit_image_rating" => false,
+
 ]);
 
 new UserClass("anonymous", "base", [
@@ -140,6 +144,7 @@ new UserClass("user", "base", [
     "edit_image_tag" => true,
     "edit_image_source" => true,
     "create_image_report" => true,
+    "edit_image_rating" => true,
 ]);
 
 new UserClass("admin", "base", [
@@ -184,6 +189,8 @@ new UserClass("admin", "base", [
     "view_sysinfo" => true,
     "view_hellbanned" => true,
     "protected" => true,
+    "edit_image_rating" => true,
+    "bulk_edit_image_rating" => true,
 ]);
 
 new UserClass("hellbanned", "user", [

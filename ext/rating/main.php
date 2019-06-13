@@ -19,6 +19,62 @@
  *  </ul>
  */
 
+ /**
+ * @global Rating[] $_shm_ratings
+ */
+global $_shm_ratings;
+$_shm_ratings = [];
+
+class Rating {
+    /**
+     * @var string
+     */
+    public $name = null;
+
+    /**
+     * @var string
+     */
+    public $code = null;
+
+    /**
+     * @var string
+     */
+    public $search_term = null;
+
+    /**
+     * @var int
+     */
+    public $order = 0;
+
+    public function __construct( string $code, string $name, string $search_term, int $order)
+    {
+        global $_shm_ratings;
+
+        if(strlen($code)!=1) {
+            throw new Exception("Rating code must be exactly one character");
+        }
+        if($search_term[0]!=$code) {
+            throw new Exception("Code must be the same as the first letter of search_term");
+        }
+
+        $this->name = $name;
+        $this->code = $code;
+        $this->search_term = $search_term;
+        $this->order = $order;
+
+        if($code=="u"&&array_key_exists("u",$_shm_ratings)) {
+            throw new Exception("u is a reserved rating code that cnanot be overridden");
+        }
+        $_shm_ratings[$code] = $this;
+    }
+}
+
+new Rating("s", "Safe", "safe", 0);
+new Rating("q", "Questionable", "questionable", 500);
+new Rating("e", "Explicit", "explicit", 1000);
+new Rating("u", "Unrated", "unrated", 99999);
+@include_once "data/config/ratings.conf.php";
+
 class RatingSetEvent extends Event
 {
     /** @var Image */
@@ -28,7 +84,9 @@ class RatingSetEvent extends Event
 
     public function __construct(Image $image, string $rating)
     {
-        assert(in_array($rating, ["s", "q", "e", "u"]));
+        global $_shm_ratings;
+
+        assert(in_array($rating, array_keys($_shm_ratings)));
 
         $this->image = $image;
         $this->rating = $rating;
@@ -37,7 +95,25 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
-    protected $db_support = ['mysql','pgsql'];  // ?
+
+    protected $db_support = ['mysql','pgsql'];  
+
+    private $search_regexp;
+
+
+    public function __construct() {
+        parent::__construct();
+
+        global $_shm_ratings;
+
+        $codes = implode("",array_keys($_shm_ratings));
+        $search_terms = [];
+        foreach($_shm_ratings as $key=>$rating) {
+            array_push($search_terms, $rating->search_term);
+        }
+        $this->search_regexp = "/^rating[=|:](?:([".$codes."]+)|(".
+            implode("|", $search_terms)."|unknown))$/D";
+    }
 
     public function get_priority(): int
     {
@@ -46,30 +122,43 @@ class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event)
     {
-        global $config;
+        global $config, $_shm_user_classes, $_shm_ratings;
         
-        if ($config->get_int("ext_ratings2_version") < 2) {
+        if ($config->get_int("ext_ratings2_version") < 4) {
             $this->install();
         }
 
-        $config->set_default_string("ext_rating_anon_privs", 'squ');
-        $config->set_default_string("ext_rating_user_privs", 'sqeu');
-        $config->set_default_string("ext_rating_admin_privs", 'sqeu');
+        foreach(array_keys($_shm_user_classes) as $key){
+            if($key=="base"||$key=="hellbanned") {
+                continue;
+            }
+            $config->set_default_array("ext_rating_".$key."_privs", array_keys($_shm_ratings));
+        }
+
+
     }
     
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $privs = [];
-        $privs['Safe Only'] = 's';
-        $privs['Safe and Unknown'] = 'su';
-        $privs['Safe and Questionable'] = 'sq';
-        $privs['Safe, Questionable, Unknown'] = 'squ';
-        $privs['All'] = 'sqeu';
+        global $config, $_shm_user_classes, $_shm_ratings;
+
+		$ratings = array_values($_shm_ratings);
+		usort($ratings, function($a, $b) {
+			return $a->order <=> $b->order;
+        });
+        $options = [];
+        foreach($ratings as $key => $rating) {			
+			$options[$rating->name] = $rating->code;
+		}
 
         $sb = new SetupBlock("Image Ratings");
-        $sb->add_choice_option("ext_rating_anon_privs", $privs, "Anonymous: ");
-        $sb->add_choice_option("ext_rating_user_privs", $privs, "<br>Users: ");
-        $sb->add_choice_option("ext_rating_admin_privs", $privs, "<br>Admins: ");
+        foreach(array_keys($_shm_user_classes) as $key){
+            if($key=="base"||$key=="hellbanned") {
+                continue;
+            }
+            $sb->add_multichoice_option("ext_rating_".$key."_privs", $options, "<br/>".$key.": ");
+        }
+
         $event->panel->add_block($sb);
     }
     
@@ -89,7 +178,6 @@ class Ratings extends Extension
          * Deny images upon insufficient permissions.
          **/
         $user_view_level = Ratings::get_user_privs($user);
-        $user_view_level = preg_split('//', $user_view_level, -1);
         if (!in_array($event->image->rating, $user_view_level)) {
             $page->set_mode("redirect");
             $page->set_redirect(make_link("post/list"));
@@ -128,16 +216,20 @@ class Ratings extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user;
+        global $user, $_shm_ratings;
         
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
             $set = Ratings::privs_to_sql(Ratings::get_user_privs($user));
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
-        if (preg_match("/^rating[=|:](?:([sqeu]+)|(safe|questionable|explicit|unknown))$/D", strtolower($event->term), $matches)) {
+
+
+        if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
-            $ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
+
+            $ratings = array_intersect(str_split($ratings), Ratings::get_user_privs($user));
+
             $set = "'" . join("', '", $ratings) . "'";
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
@@ -147,9 +239,9 @@ class Ratings extends Extension
     {
         $matches = [];
 
-        if (preg_match("/^rating[=|:](?:([sqeu]+)|(safe|questionable|explicit|unknown))$/D", strtolower($event->term), $matches) && $event->parse) {
+        if (preg_match($this->search_regexp, strtolower($event->term), $matches) && $event->parse) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
-            $ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
+            $ratings = array_intersect(str_split($ratings), Ratings::get_user_privs($user));
 
             $rating = $ratings[0];
             
@@ -169,8 +261,8 @@ class Ratings extends Extension
     {
         global $user;
 
-        if ($user->is_admin()) {
-            $event->add_action("bulk_rate", "Set Rating", "", $this->theme->get_selection_rater_html("bulk_rating"));
+        if ($user->can("bulk_edit_image_rating")) {
+            $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("bulk_rating"));
         }
     }
 
@@ -183,7 +275,7 @@ class Ratings extends Extension
                 if (!isset($_POST['bulk_rating'])) {
                     return;
                 }
-                if ($user->is_admin()) {
+                if ($user->can("bulk_edit_image_rating")) {
                     $rating = $_POST['bulk_rating'];
                     $total = 0;
                     foreach ($event->items as $id) {
@@ -206,7 +298,7 @@ class Ratings extends Extension
         global $user, $page;
         
         if ($event->page_matches("admin/bulk_rate")) {
-            if (!$user->is_admin()) {
+            if (!$user->can("bulk_edit_image_rating")) {
                 throw new PermissionDeniedException();
             } else {
                 $n = 0;
@@ -234,26 +326,21 @@ class Ratings extends Extension
         }
     }
 
-    public static function get_user_privs(User $user): string
+    public static function get_user_privs(User $user): array
     {
-        global $config;
+        global $config, $_shm_ratings;
 
-        if ($user->is_anonymous()) {
-            $sqes = $config->get_string("ext_rating_anon_privs");
-        } elseif ($user->is_admin()) {
-            $sqes = $config->get_string("ext_rating_admin_privs");
-        } else {
-            $sqes = $config->get_string("ext_rating_user_privs");
-        }
-        return $sqes;
+        return $config->get_array("ext_rating_".$user->class->name."_privs");
     }
 
-    public static function privs_to_sql(string $sqes): string
+    public static function privs_to_sql(array $sqes): string
     {
         $arr = [];
-        $length = strlen($sqes);
-        for ($i=0; $i<$length; $i++) {
-            $arr[] = "'" . $sqes[$i] . "'";
+        foreach($sqes as $i) {
+            $arr[] = "'" . $i . "'";
+        }
+        if(sizeof($arr)==0) {
+            return "' '";
         }
         $set = join(', ', $arr);
         return $set;
@@ -261,25 +348,19 @@ class Ratings extends Extension
 
     public static function rating_to_human(string $rating): string
     {
-        switch ($rating) {
-            case "s": return "Safe";
-            case "q": return "Questionable";
-            case "e": return "Explicit";
-            default:  return "Unknown";
+        global $_shm_ratings;
+
+        if(array_key_exists($rating, $_shm_ratings)) {
+            return $_shm_ratings[$rating]->name;
         }
+        return "Unknown";
     }
 
     public static function rating_is_valid(string $rating): bool
     {
-        switch ($rating) {
-            case "s":
-            case "q":
-            case "e":
-            case "u":
-                return true;
-            default:
-                return false;
-        }
+        global $_shm_ratings;
+
+        return in_array($rating, array_keys($_shm_ratings));
     }
 
     /**
@@ -288,13 +369,7 @@ class Ratings extends Extension
     private function can_rate(): bool
     {
         global $config, $user;
-        if ($user->is_anonymous() && $config->get_string("ext_rating_anon_privs") == "sqeu") {
-            return false;
-        }
-        if ($user->is_admin()) {
-            return true;
-        }
-        if (!$user->is_anonymous() && $config->get_string("ext_rating_user_privs") == "sqeu") {
+        if ($user->can("edit_image_rating")) {
             return true;
         }
         return false;
@@ -328,7 +403,7 @@ class Ratings extends Extension
             $config->set_int("ext_ratings2_version", 2);
         }
 
-        if ($config->get_int("ext_ratings2_version") < 3) {
+		if($config->get_int("ext_ratings2_version") < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
                 case "mysql":
@@ -339,7 +414,17 @@ class Ratings extends Extension
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
             }
-            $config->set_int("ext_ratings2_version", 3);
+			$config->set_int("ext_ratings2_version", 3);
+		}
+
+        if ($config->get_int("ext_ratings2_version") < 4) {
+            $value = $config->get_string("ext_rating_anon_privs");
+            $config->set_array("ext_rating_anonymous_privs", str_split($value));
+            $value = $config->get_string("ext_rating_user_privs");
+            $config->set_array("ext_rating_user_privs", str_split($value));
+            $value = $config->get_string("ext_rating_admin_privs");
+            $config->set_array("ext_rating_admin_privs", str_split($value));
+            $config->set_int("ext_ratings2_version", 4);
         }
     }
 
