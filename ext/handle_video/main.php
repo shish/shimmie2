@@ -55,16 +55,7 @@ class VideoFileHandler extends DataHandlerExtension
      */
     protected function create_thumb(string $hash): bool
     {
-        $ok = false;
-
-        $ok = create_thumbnail_ffmpeg($hash);
-
-        return $ok;
-    }
-
-    protected function video_size(string $filename): array
-    {
-        return video_size($filename);
+        return create_thumbnail_ffmpeg($hash);
     }
 
     protected function supported_ext(string $ext): bool
@@ -77,8 +68,7 @@ class VideoFileHandler extends DataHandlerExtension
     {
         $image = new Image();
 
-        //NOTE: No need to set width/height as we don't use it.
-        $size = $this->video_size($filename);
+        $size = video_size($filename);
         $image->width  = $size[0];
         $image->height = $size[1];
         
@@ -111,19 +101,15 @@ class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $success = false;
-        if (file_exists($tmpname)) {
-            $mimeType = getMimeType($tmpname);
-
-            $success = in_array($mimeType, [
+        return (
+            file_exists($tmpname) &&
+            in_array(getMimeType($tmpname), [
                 'video/webm',
                 'video/mp4',
                 'video/ogg',
                 'video/flv',
                 'video/x-flv'
-            ]);
-        }
-
-        return $success;
+            ])
+        );
     }
 }
