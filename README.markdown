@@ -99,21 +99,21 @@ For example, one can override the default anonymous "allow nothing"
 permissions like so:
 
 ```php
-new UserClass("anonymous", "base", array(
+new UserClass("anonymous", "base", [
 	"create_comment" => True,
 	"edit_image_tag" => True,
 	"edit_image_source" => True,
 	"create_image_report" => True,
-));
+]);
 ```
 
 For a moderator class, being a regular user who can delete images and comments:
 
 ```php
-new UserClass("moderator", "user", array(
+new UserClass("moderator", "user", [
 	"delete_image" => True,
 	"delete_comment" => True,
-));
+]);
 ```
 
 For a list of permissions, see `core/userclass.php`
