@@ -674,7 +674,7 @@ class Image
                     );
                 } else {
                     // check if tag has already been written
-                    if(in_array($id, $written_tags)) {
+                    if (in_array($id, $written_tags)) {
                         continue;
                     }
 

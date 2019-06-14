@@ -127,7 +127,7 @@ class RotateImage extends Extension
 
         $info = getimagesize($image_filename);
         
-        $memory_use =calc_memory_use ($info);
+        $memory_use =calc_memory_use($info);
         $memory_limit = get_memory_limit();
         
         if ($memory_use > $memory_limit) {
@@ -137,8 +137,7 @@ class RotateImage extends Extension
         
         /* Attempt to load the image */
         $image = imagecreatefromstring(file_get_contents($image_filename));
-
-        if($image==false) {
+        if ($image == false) {
             throw new ImageRotateException("Could not load image: ".$image_filename);
         }
         
@@ -165,18 +164,18 @@ class RotateImage extends Extension
         */
 
         $background_color = 0;
-        switch($info[2]){
+        switch ($info[2]) {
             case IMAGETYPE_PNG:
             case IMAGETYPE_WEBP:
                 $background_color = imagecolorallocatealpha($image, 0, 0, 0, 127);
                 break;
         }
-        if($background_color===false) {
+        if ($background_color===false) {
             throw new ImageRotateException("Unable to allocate transparent color");
         }
 
         $image_rotated = imagerotate($image, $deg, $background_color);
-        if($image_rotated===false) {
+        if ($image_rotated===false) {
             throw new ImageRotateException("Image rotate failed");
         }
 
@@ -191,14 +190,14 @@ class RotateImage extends Extension
         switch ($info[2]) {
           case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);      break;
           case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);     break;
-          case IMAGETYPE_PNG:   $result = imagepng($image_rotated, $tmp_filename,9);    break;
+          case IMAGETYPE_PNG:   $result = imagepng($image_rotated, $tmp_filename, 9);    break;
           case IMAGETYPE_WEBP:  $result = imagewebp($image_rotated, $tmp_filename);     break;
-          case IMAGETYPE_BMP:   $result = imagebmp($image_rotated, $tmp_filename,true); break;
+          case IMAGETYPE_BMP:   $result = imagebmp($image_rotated, $tmp_filename, true); break;
           default:
             throw new ImageRotateException("Unsupported image type.");
         }
 
-        if($result===false) {
+        if ($result===false) {
             throw new ImageRotateException("Could not save image: ".$tmp_filename);
         }
 

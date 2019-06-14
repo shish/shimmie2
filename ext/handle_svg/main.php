@@ -3,7 +3,7 @@
  * Name: Handle SVG
  * Author: Shish <webmaster@shishnet.org>
  * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle static SVG files. 
+ * Description: Handle static SVG files.
  */
 
 use enshrined\svgSanitize\Sanitizer;
@@ -34,7 +34,7 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function create_thumb(string $hash): bool
     {
-        if(!create_thumbnail_convert($hash)) {
+        if (!create_thumbnail_convert($hash)) {
             copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
         }
         return true;

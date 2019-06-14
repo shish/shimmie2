@@ -37,9 +37,9 @@ class BulkAdd extends Extension
                 set_time_limit(0);
                 $bae = new BulkAddEvent($_POST['dir']);
                 send_event($bae);
-				foreach ($bae->results as $result) {
-					$this->theme->add_status("Adding files", $result);
-				}
+                foreach ($bae->results as $result) {
+                    $this->theme->add_status("Adding files", $result);
+                }
                 $this->theme->display_upload_results($page);
             }
         }

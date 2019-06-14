@@ -221,17 +221,17 @@ abstract class DataHandlerExtension extends Extension
     {
         $result = false;
         if ($this->supported_ext($event->type)) {
-            if($event->force) {
+            if ($event->force) {
                 $result = $this->create_thumb($event->hash);
             } else {
                 $outname = warehouse_path("thumbs", $event->hash);
-                if(file_exists($outname)) {
+                if (file_exists($outname)) {
                     return;
                 }
                 $result = $this->create_thumb($event->hash);
             }
         }
-        if($result) {
+        if ($result) {
             $event->generated = true;
         }
     }

@@ -12,22 +12,23 @@
 class BulkActionBlockBuildingEvent extends Event
 {
     /** @var array  */
-    public $actions = array();
+    public $actions = [];
 
     public function add_action(String $action, string $button_text, String $confirmation_message = "", String $block = "", int $position = 40)
     {
-        if ($block == null)
+        if ($block == null) {
             $block = "";
+        }
 
         array_push(
             $this->actions,
-            array(
+            [
                 "block" => $block,
                 "confirmation_message" => $confirmation_message,
                 "action" => $action,
                 "button_text" => $button_text,
                 "position" => $position
-            )
+            ]
         );
     }
 }
@@ -41,7 +42,7 @@ class BulkActionEvent extends Event
     /** @var PageRequestEvent  */
     public $page_request;
 
-    function __construct(String $action, PageRequestEvent $pageRequestEvent, array $items)
+    public function __construct(String $action, PageRequestEvent $pageRequestEvent, array $items)
     {
         $this->action = $action;
         $this->page_request = $pageRequestEvent;
@@ -59,10 +60,11 @@ class BulkActions extends Extension
             $babbe = new BulkActionBlockBuildingEvent();
             send_event($babbe);
 
-            if (sizeof($babbe->actions) == 0)
-			    return;
+            if (sizeof($babbe->actions) == 0) {
+                return;
+            }
 
-            usort($babbe->actions, array($this, "sort_blocks"));
+            usort($babbe->actions, [$this, "sort_blocks"]);
 
             $this->theme->display_selector($page, $babbe->actions, Tag::implode($event->search_terms));
         }
@@ -73,15 +75,15 @@ class BulkActions extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("bulk_delete","Delete", "Delete selected images?", "", 10);
+            $event->add_action("bulk_delete", "Delete", "Delete selected images?", "", 10);
         }
 
         if ($user->can("bulk_edit_image_tag")) {
-            $event->add_action("bulk_tag","Tag", "", $this->theme->render_tag_input(), 10);
+            $event->add_action("bulk_tag", "Tag", "", $this->theme->render_tag_input(), 10);
         }
 
         if ($user->can("bulk_edit_image_source")) {
-            $event->add_action("bulk_source","Set Source", "", $this->theme->render_source_input(), 10);
+            $event->add_action("bulk_source", "Set Source", "", $this->theme->render_source_input(), 10);
         }
     }
 
@@ -144,7 +146,7 @@ class BulkActions extends Extension
                         }
                     }
                 }
-            } else if (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
+            } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
                 $query = $_POST['bulk_query'];
                 if ($query != null && $query != "") {
                     $n = 0;
@@ -178,8 +180,8 @@ class BulkActions extends Extension
     }
 
     private function sort_blocks($a, $b)
-	{
-		return $a["position"] - $b["position"];
+    {
+        return $a["position"] - $b["position"];
     }
     
     private function delete_items(array $items): int
@@ -188,7 +190,7 @@ class BulkActions extends Extension
         foreach ($items as $id) {
             try {
                 $image = Image::by_id($id);
-                if($image==null) {
+                if ($image==null) {
                     continue;
                 }
 
@@ -219,7 +221,7 @@ class BulkActions extends Extension
         if ($replace) {
             foreach ($items as $id) {
                 $image = Image::by_id($id);
-                if($image==null) {
+                if ($image==null) {
                     continue;
                 }
 
@@ -229,7 +231,7 @@ class BulkActions extends Extension
         } else {
             foreach ($items as $id) {
                 $image = Image::by_id($id);
-                if($image==null) {
+                if ($image==null) {
                     continue;
                 }
 
@@ -254,7 +256,7 @@ class BulkActions extends Extension
         foreach ($items as $id) {
             try {
                 $image = Image::by_id($id);
-                if($image==null) {
+                if ($image==null) {
                     continue;
                 }
 

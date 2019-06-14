@@ -170,16 +170,15 @@ class Ratings extends Extension
         global $user;
 
         if ($user->is_admin()) {
-            $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("bulk_rating"));
+            $event->add_action("bulk_rate", "Set Rating", "", $this->theme->get_selection_rater_html("bulk_rating"));
         }
-
     }
 
     public function onBulkAction(BulkActionEvent $event)
     {
         global $user;
 
-        switch($event->action) {
+        switch ($event->action) {
             case "bulk_rate":
                 if (!isset($_POST['bulk_rating'])) {
                     return;
@@ -189,12 +188,12 @@ class Ratings extends Extension
                     $total = 0;
                     foreach ($event->items as $id) {
                         $image = Image::by_id($id);
-                        if($image==null) {
+                        if ($image==null) {
                             continue;
                         }
         
                         send_event(new RatingSetEvent($image, $rating));
-						$total++;
+                        $total++;
                     }
                     flash_message("Rating set for $total items");
                 }
@@ -331,7 +330,7 @@ class Ratings extends Extension
 
         if ($config->get_int("ext_ratings2_version") < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
-            switch($database->get_driver_name()) {
+            switch ($database->get_driver_name()) {
                 case "mysql":
                     $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
@@ -340,7 +339,7 @@ class Ratings extends Extension
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
             }
-			$config->set_int("ext_ratings2_version", 3);
+            $config->set_int("ext_ratings2_version", 3);
         }
     }
 

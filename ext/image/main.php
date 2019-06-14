@@ -253,12 +253,12 @@ class ImageIO extends Extension
         if (!is_null($image)) {
             $page->set_mode("data");
             if ($type == "thumb") {
-				$ext = $config->get_string("thumb_type");
-				if (array_key_exists($ext, MIME_TYPE_MAP)) {
-					$page->set_type(MIME_TYPE_MAP[$ext]);
-				} else {
-					$page->set_type("image/jpeg");
-				}
+                $ext = $config->get_string("thumb_type");
+                if (array_key_exists($ext, MIME_TYPE_MAP)) {
+                    $page->set_type(MIME_TYPE_MAP[$ext]);
+                } else {
+                    $page->set_type("image/jpeg");
+                }
                 
                 $file = $image->get_thumb_filename();
             } else {
@@ -278,9 +278,9 @@ class ImageIO extends Extension
                 $page->set_data("");
             } else {
                 $page->add_http_header("Last-Modified: $gmdate_mod");
-				if ($type != "thumb") {
-					$page->add_http_header("Content-Disposition: inline; filename=".$image->get_nice_image_name());
-				}
+                if ($type != "thumb") {
+                    $page->add_http_header("Content-Disposition: inline; filename=".$image->get_nice_image_name());
+                }
                 $page->set_data(file_get_contents($file));
                 
                 if ($config->get_int("image_expires")) {

@@ -75,7 +75,7 @@ class TagEditCloud extends Extension
 
         $ignore_tags = Tag::explode($config->get_string("tageditcloud_ignoretags"));
 
-		$cat_color = [];
+        $cat_color = [];
         if (ext_is_live("TagCategories")) {
             $categories = $database->get_all("SELECT category, color FROM image_tag_categories");
             foreach ($categories as $row) {

@@ -69,33 +69,31 @@ class RegenThumb extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("bulk_regen","Regen Thumbnails","",$this->theme->bulk_html());
+            $event->add_action("bulk_regen", "Regen Thumbnails", "", $this->theme->bulk_html());
         }
-
     }
 
     public function onBulkAction(BulkActionEvent $event)
     {
         global $user;
 
-        switch($event->action) {
+        switch ($event->action) {
             case "bulk_regen":
                 if ($user->can("delete_image")) {
                     $force = true;
-                    if(isset($_POST["bulk_regen_thumb_missing_only"])
-                        &&$_POST["bulk_regen_thumb_missing_only"]=="true") 
-                    {
+                    if (isset($_POST["bulk_regen_thumb_missing_only"])
+                        &&$_POST["bulk_regen_thumb_missing_only"]=="true") {
                         $force=false;
                     }
     
                     $total = 0;
                     foreach ($event->items as $id) {
                         $image = Image::by_id($id);
-                        if($image==null) {
+                        if ($image==null) {
                             continue;
                         }
 
-                        if($this->regenerate_thumbnail($image, $force)) {
+                        if ($this->regenerate_thumbnail($image, $force)) {
                             $total++;
                         }
                     }
@@ -110,41 +108,42 @@ class RegenThumb extends Extension
         $this->theme->display_admin_block();
     }
 
-    public function onAdminAction(AdminActionEvent $event) {
+    public function onAdminAction(AdminActionEvent $event)
+    {
         global $database;
 
-        switch($event->action) {
+        switch ($event->action) {
             case "regen_thumbs":
             $event->redirect = true;
                 $force = false;
-                if(isset($_POST["regen_thumb_force"])&&$_POST["regen_thumb_force"]=="true") {
+                if (isset($_POST["regen_thumb_force"])&&$_POST["regen_thumb_force"]=="true") {
                     $force=true;
                 }
                 $limit = 1000;
-                if(isset($_POST["regen_thumb_limit"])&&is_numeric($_POST["regen_thumb_limit"])) {
+                if (isset($_POST["regen_thumb_limit"])&&is_numeric($_POST["regen_thumb_limit"])) {
                     $limit=intval($_POST["regen_thumb_limit"]);
                 }
 
                 $type = "";
-                if(isset($_POST["regen_thumb_limit"])) {
+                if (isset($_POST["regen_thumb_limit"])) {
                     $type = $_POST["regen_thumb_type"];
                 }
                 $images = $this->get_images($type);
                 
                 $i = 0;
                 foreach ($images as $image) {
-                    if(!$force) {
+                    if (!$force) {
                         $path = warehouse_path("thumbs", $image["hash"], false);
-                        if(file_exists($path)) {
+                        if (file_exists($path)) {
                             continue;
                         }
                     }
                     $event = new ThumbnailGenerationEvent($image["hash"], $image["ext"], $force);
                     send_event($event);
-                    if($event->generated) {
+                    if ($event->generated) {
                         $i++;
                     }
-                    if($i>=$limit) {
+                    if ($i>=$limit) {
                         break;
                     }
                 }
@@ -153,22 +152,22 @@ class RegenThumb extends Extension
             case "delete_thumbs":
                 $event->redirect = true;
 
-                if(isset($_POST["delete_thumb_type"])&&$_POST["delete_thumb_type"]!="") {
+                if (isset($_POST["delete_thumb_type"])&&$_POST["delete_thumb_type"]!="") {
                     $images = $this->get_images($_POST["delete_thumb_type"]);
                 
                     $i = 0;
                     foreach ($images as $image) {
                         $outname = warehouse_path("thumbs", $image["hash"]);
-                        if(file_exists($outname)) {
+                        if (file_exists($outname)) {
                             unlink($outname);
                             $i++;
-                        }  
+                        }
                     }
                     flash_message("Deleted $i thumbnails for ".$_POST["delete_thumb_type"]." images");
                 } else {
                     $dir = "data/thumbs/";
                     $this->remove_dir_recursively($dir);
-                    flash_message("Deleted all thumbnails");    
+                    flash_message("Deleted all thumbnails");
                 }
 
 
@@ -176,13 +175,13 @@ class RegenThumb extends Extension
         }
     }
 
-    function get_images(String $ext = null) 
+    public function get_images(String $ext = null)
     {
         global $database;
 
         $query = "SELECT hash, ext FROM images";
         $args = [];
-        if($ext!=null&&$ext!="") {
+        if ($ext!=null&&$ext!="") {
             $query .= " WHERE ext = :ext";
             $args["ext"] = $ext;
         }
@@ -190,16 +189,16 @@ class RegenThumb extends Extension
         return $database->get_all($query, $args);
     }
 
-    function remove_dir_recursively($dir) 
+    public function remove_dir_recursively($dir)
     {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
-                    if ($object != "." && $object != "..") {
+                if ($object != "." && $object != "..") {
                     if (filetype($dir."/".$object) == "dir") {
-                        $this->remove_dir_recursively($dir."/".$object); 
+                        $this->remove_dir_recursively($dir."/".$object);
                     } else {
-                        unlink   ($dir."/".$object);
+                        unlink($dir."/".$object);
                     }
                 }
             }
@@ -207,5 +206,4 @@ class RegenThumb extends Extension
             rmdir($dir);
         }
     }
-
 }

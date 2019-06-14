@@ -362,8 +362,8 @@ class PoolsTheme extends Themelet
             } elseif ($history['action'] == 0) {
                 $prefix = "-";
             } else {
-            	throw new Exception("history['action'] not in {0, 1}");
-			}
+                throw new Exception("history['action'] not in {0, 1}");
+            }
 
             $images = trim($history['images']);
             $images = explode(" ", $images);

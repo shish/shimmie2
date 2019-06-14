@@ -491,8 +491,8 @@ class Wiki extends Extension
                 return "--- $value\n";
                 break;
 
-			default:
-				throw new Exception("stat needs to be =, + or -");
+            default:
+                throw new Exception("stat needs to be =, + or -");
         }
     }
     // }}}

@@ -123,8 +123,8 @@ class Rule34 extends Extension
                     }
                 }
 
-				$page->set_mode("redirect");
-				$page->set_redirect(make_link("admin"));
+                $page->set_mode("redirect");
+                $page->set_redirect(make_link("admin"));
             }
         }
 
