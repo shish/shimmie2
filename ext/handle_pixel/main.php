@@ -96,7 +96,7 @@ class PixelFileHandler extends DataHandlerExtension
 
         try {
             $info = getimagesize($inname);
-            $tsize = get_thumbnail_size_scaled($info[0], $info[1]);
+            $tsize = get_thumbnail_size($info[0], $info[1], true);
             $image = image_resize_gd(
                 $inname,
                 $info,

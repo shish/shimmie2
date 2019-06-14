@@ -7,6 +7,7 @@
  * Move a file from PHP's temporary area into shimmie's image storage
  * hierarchy, or throw an exception trying.
  *
+ * @param DataUploadEvent $event
  * @throws UploadException
  */
 function move_upload_to_archive(DataUploadEvent $event): void
@@ -24,7 +25,8 @@ function move_upload_to_archive(DataUploadEvent $event): void
 /**
  * Add a directory full of images
  *
- * #return string[]
+ * @param string $base
+ * @return array
  */
 function add_dir(string $base): array
 {
@@ -48,6 +50,14 @@ function add_dir(string $base): array
     return $results;
 }
 
+/**
+ * Sends a DataUploadEvent for a file.
+ *
+ * @param string $tmpname
+ * @param string $filename
+ * @param string $tags
+ * @throws UploadException
+ */
 function add_image(string $tmpname, string $filename, string $tags): void
 {
     assert(file_exists($tmpname));
@@ -65,10 +75,15 @@ function add_image(string $tmpname, string $filename, string $tags): void
     send_event($event);
 }
 
-
-function get_extension_from_mime(String $file_path): ?String
+/**
+ * Gets an the extension defined in MIME_TYPE_MAP for a file.
+ *
+ * @param String $file_path
+ * @return String The extension that was found.
+ * @throws UploadException if the mimetype could not be determined, or if an extension for hte mimetype could not be found.
+ */
+function get_extension_from_mime(String $file_path): String
 {
-    global $config;
     $mime = mime_content_type($file_path);
     if (!empty($mime)) {
         $ext = get_extension($mime);
@@ -83,11 +98,15 @@ function get_extension_from_mime(String $file_path): ?String
 
 /**
  * Given a full size pair of dimensions, return a pair scaled down to fit
- * into the configured thumbnail square, with ratio intact
+ * into the configured thumbnail square, with ratio intact.
+ * Optionally uses the High-DPI scaling setting to adjust the final resolution.
  *
- * #return int[]
+ * @param int $orig_width
+ * @param int $orig_height
+ * @param bool $use_dpi_scaling Enables the High-DPI scaling.
+ * @return array
  */
-function get_thumbnail_size(int $orig_width, int $orig_height): array
+function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_scaling = false): array
 {
     global $config;
 
@@ -105,8 +124,15 @@ function get_thumbnail_size(int $orig_width, int $orig_height): array
         $orig_height = $orig_width * 5;
     }
 
-    $max_width  = $config->get_int('thumb_width');
-    $max_height = $config->get_int('thumb_height');
+
+    if($use_dpi_scaling) {
+        $max_size = get_thumbnail_max_size_scaled();
+        $max_width  = $max_size[0];
+        $max_height = $max_size[1];
+    } else {
+        $max_width = $config->get_int('thumb_width');
+        $max_height = $config->get_int('thumb_height');
+    }
 
     $xscale = ($max_height / $orig_height);
     $yscale = ($max_width / $orig_width);
@@ -120,44 +146,10 @@ function get_thumbnail_size(int $orig_width, int $orig_height): array
 }
 
 /**
- * Given a full size pair of dimensions, return a pair scaled down to fit
- * into the configured thumbnail square, with ratio intact, using thumb_scaling
+ * Fetches the thumbnails height and width settings and applies the High-DPI scaling setting before returning the dimensions.
  *
- * #return int[]
+ * @return array [width, height]
  */
-function get_thumbnail_size_scaled(int $orig_width, int $orig_height): array
-{
-    global $config;
-
-    if ($orig_width === 0) {
-        $orig_width = 192;
-    }
-    if ($orig_height === 0) {
-        $orig_height = 192;
-    }
-
-    if ($orig_width > $orig_height * 5) {
-        $orig_width = $orig_height * 5;
-    }
-    if ($orig_height > $orig_width * 5) {
-        $orig_height = $orig_width * 5;
-    }
-
-    $max_size = get_thumbnail_max_size_scaled();
-    $max_width  = $max_size[0];
-    $max_height = $max_size[1];
-
-    $xscale = ($max_height / $orig_height);
-    $yscale = ($max_width / $orig_width);
-    $scale = ($xscale < $yscale) ? $xscale : $yscale;
-
-    if ($scale > 1 && $config->get_bool('thumb_upscale')) {
-        return [(int)$orig_width, (int)$orig_height];
-    } else {
-        return [(int)($orig_width*$scale), (int)($orig_height*$scale)];
-    }
-}
-
 function get_thumbnail_max_size_scaled(): array
 {
     global $config;
@@ -168,7 +160,13 @@ function get_thumbnail_max_size_scaled(): array
     return [$max_width, $max_height];
 }
 
-function create_thumbnail_convert($hash): bool
+/**
+ * Creates a thumbnail file using ImageMagick's convert command.
+ *
+ * @param $hash
+ * @return bool true is successful, false if not.
+ */
+function create_thumbnail_convert($hash): bool 
 {
     global $config;
 
@@ -187,9 +185,7 @@ function create_thumbnail_convert($hash): bool
     //$cmd = sprintf($format, $convert, $inname);
     //$size = shell_exec($cmd);
     //$size = explode(" ", trim($size));
-    $tsize = get_thumbnail_max_size_scaled();
-    $w = $tsize[0];
-    $h = $tsize[1];
+    list($w, $h) = get_thumbnail_max_size_scaled();
 
 
     // running the call with cmd.exe requires quoting for our paths
@@ -205,7 +201,6 @@ function create_thumbnail_convert($hash): bool
         $bg = "none";
     }
     $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s "%s[0]"  %s:"%s"';
-
     $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg, $inname, $type, $outname);
     $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
     exec($cmd, $output, $ret);
@@ -219,6 +214,12 @@ function create_thumbnail_convert($hash): bool
     return true;
 }
 
+/**
+ * Creates a thumbnail using ffmpeg.
+ *
+ * @param $hash
+ * @return bool true if successful, false if not.
+ */
 function create_thumbnail_ffmpeg($hash): bool
 {
     global $config;
@@ -232,7 +233,7 @@ function create_thumbnail_ffmpeg($hash): bool
     $outname = warehouse_path("thumbs", $hash);
 
     $orig_size = video_size($inname);
-    $scaled_size = get_thumbnail_size_scaled($orig_size[0], $orig_size[1]);
+    $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);
     
     $codec = "mjpeg";
     $quality = $config->get_int("thumb_quality");
@@ -270,6 +271,12 @@ function create_thumbnail_ffmpeg($hash): bool
     }
 }
 
+/**
+ * Determines the dimensions of a video file using ffmpeg.
+ *
+ * @param string $filename
+ * @return array [width, height]
+ */
 function video_size(string $filename): array
 {
     global $config;
@@ -307,6 +314,9 @@ function video_size(string $filename): array
  *
  * The factor of 2.5 is simply a rough guideline.
  * http://stackoverflow.com/questions/527532/reasonable-php-memory-limit-for-image-resize
+ *
+ * @param array $info The output of getimagesize() for the source file in question.
+ * @return int The number of bytes an image resize operation is estimated to use.
  */
 function calc_memory_use(array $info): int
 {
@@ -320,12 +330,25 @@ function calc_memory_use(array $info): int
     return (int)$memory_use;
 }
 
+/**
+ * Performs a resize operation on an image file using GD.
+ *
+ * @param String $image_filename The source file to be resized.
+ * @param array $info The output of getimagesize() for the source file.
+ * @param int $new_width
+ * @param int $new_height
+ * @param string $output_filename
+ * @param string|null $output_type If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
+ * @param int $output_quality Defaults to 80.
+ * @throws ImageResizeException
+ * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
+ */
 function image_resize_gd(
     String $image_filename,
     array $info,
     int $new_width,
     int $new_height,
-    string $output_filename=null,
+    string $output_filename,
     string $output_type=null,
     int $output_quality = 80
 ) {
@@ -423,7 +446,7 @@ function image_resize_gd(
             throw new ImageResizeException("Unable to copy resized image data to new image");
         }
 
-        $result = false;
+
         switch ($output_type) {
             case "bmp":
                 $result = imagebmp($image_resized, $output_filename, true);
@@ -453,15 +476,20 @@ function image_resize_gd(
     }
 }
 
-function is_animated_gif(String $image_filename)
-{
-    $isanigif = 0;
+/**
+ * Determines if a file is an animated gif.
+ *
+ * @param String $image_filename The path of the file to check.
+ * @return bool true if the file is an animated gif, false if it is not.
+ */
+function is_animated_gif(String $image_filename) {
+    $is_anim_gif = 0;
     if (($fh = @fopen($image_filename, 'rb'))) {
         //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-        while (!feof($fh) && $isanigif < 2) {
+        while (!feof($fh) && $is_anim_gif < 2) {
             $chunk = fread($fh, 1024 * 100);
-            $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+            $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
         }
     }
-    return ($isanigif == 0);
+    return ($is_anim_gif == 0);
 }
