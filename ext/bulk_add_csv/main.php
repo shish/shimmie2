@@ -64,12 +64,11 @@ class BulkAddCSV extends Extension
         assert(file_exists($tmpname));
 
         $pathinfo = pathinfo($filename);
-        if (!array_key_exists('extension', $pathinfo)) {
-            throw new UploadException("File has no extension");
-        }
         $metadata = [];
         $metadata['filename'] = $pathinfo['basename'];
-        $metadata['extension'] = $pathinfo['extension'];
+        if (array_key_exists('extension', $pathinfo)) {
+            $metadata['extension'] = $pathinfo['extension'];
+        }
         $metadata['tags'] = Tag::explode($tags);
         $metadata['source'] = $source;
         $event = new DataUploadEvent($tmpname, $metadata);

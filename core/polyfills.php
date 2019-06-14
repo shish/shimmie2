@@ -264,7 +264,9 @@ const MIME_TYPE_MAP = [
     'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
     'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
     'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
-    'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm'
+    'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm',
+    'webp' => 'image/webp', 'bmp' =>'image/x-ms-bmp', 'psd' => 'image/vnd.adobe.photoshop',
+    'mkv' => 'video/x-matroska'
 ];
 
 /**
@@ -309,7 +311,7 @@ function getMimeType(string $file, string $ext=""): string
     return 'application/octet-stream';
 }
 
-function getExtension(?string $mime_type): ?string
+function get_extension(?string $mime_type): ?string
 {
     if (empty($mime_type)) {
         return null;

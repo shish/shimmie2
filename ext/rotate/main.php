@@ -155,12 +155,9 @@ class RotateImage extends Extension
         
         
         /* Attempt to load the image */
-        switch ($info[2]) {
-          case IMAGETYPE_GIF:   $image = imagecreatefromgif($image_filename);   break;
-          case IMAGETYPE_JPEG:  $image = imagecreatefromjpeg($image_filename);  break;
-          case IMAGETYPE_PNG:   $image = imagecreatefrompng($image_filename);   break;
-          default:
-            throw new ImageRotateException("Unsupported image type or ");
+        $image = imagecreatefromstring(file_get_contents($image_filename));
+        if ($image == false) {
+            throw new ImageRotateException("Could not load image: ".$image_filename);
         }
         
         /* Rotate and resample the image */

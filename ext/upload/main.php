@@ -307,7 +307,9 @@ class Upload extends Extension
                 $pathinfo = pathinfo($file['name']);
                 $metadata = [];
                 $metadata['filename'] = $pathinfo['basename'];
-                $metadata['extension'] = $pathinfo['extension'];
+                if (array_key_exists('extension', $pathinfo)) {
+                    $metadata['extension'] = $pathinfo['extension'];
+                }
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
                 
@@ -389,7 +391,7 @@ class Upload extends Extension
             
             $ext = false;
             if (is_array($headers)) {
-                $ext = getExtension(findHeader($headers, 'Content-Type'));
+                $ext = get_extension(findHeader($headers, 'Content-Type'));
             }
             if ($ext === false) {
                 $ext = $pathinfo['extension'];
@@ -411,8 +413,8 @@ class Upload extends Extension
                 $metadata['replace'] = $replace;
             }
             
-            $event = new DataUploadEvent($tmp_filename, $metadata);
             try {
+                $event = new DataUploadEvent($tmp_filename, $metadata);
                 send_event($event);
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(

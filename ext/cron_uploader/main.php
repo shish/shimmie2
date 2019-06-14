@@ -274,7 +274,7 @@ class CronUploader extends Extension
             } catch (Exception $e) {
                 $this->move_uploaded($img[0], $img[1], true);
                 if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
-                    // Postgres invalidates the transaction if there is an SQL error, 
+                    // Postgres invalidates the transaction if there is an SQL error,
                     // so all subsequence transactions will fail.
                     break;
                 }
@@ -296,20 +296,20 @@ class CronUploader extends Extension
         
         $relativeDir = dirname(substr($path, strlen($this->root_dir) + 7));
 
-		// Determine which dir to move to
-		if ($corrupt) {
-			// Move to corrupt dir
-			$newDir .= "/failed_to_upload/".$relativeDir;
-			$info = "ERROR: Image was not uploaded.";
-		}
-		else {
-			$newDir .= "/uploaded/".$relativeDir;
-			$info = "Image successfully uploaded. ";
-		}
-		$newDir = str_replace ( "//", "/", $newDir."/" );
+        // Determine which dir to move to
+        if ($corrupt) {
+            // Move to corrupt dir
+            $newDir .= "/failed_to_upload/".$relativeDir;
+            $info = "ERROR: Image was not uploaded.";
+        } else {
+            $newDir .= "/uploaded/".$relativeDir;
+            $info = "Image successfully uploaded. ";
+        }
+        $newDir = str_replace("//", "/", $newDir."/");
 
-        if (!is_dir($newDir)) 
-            mkdir ( $newDir, 0775, true );
+        if (!is_dir($newDir)) {
+            mkdir($newDir, 0775, true);
+        }
 
         // move file to correct dir
         rename($path, $newDir.$filename);
@@ -325,13 +325,12 @@ class CronUploader extends Extension
         assert(file_exists($tmpname));
         
         $pathinfo = pathinfo($filename);
-        if (! array_key_exists('extension', $pathinfo)) {
-            throw new UploadException("File has no extension");
-        }
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
-        $metadata ['extension'] = $pathinfo ['extension'];
-        $metadata ['tags'] = Tag::explode($tags); 
+        if (array_key_exists('extension', $pathinfo)) {
+            $metadata['extension'] = $pathinfo['extension'];
+        }
+        $metadata ['tags'] = Tag::explode($tags);
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -344,7 +343,6 @@ class CronUploader extends Extension
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
-
     }
     
     private function generate_image_queue(): void
@@ -361,7 +359,7 @@ class CronUploader extends Extension
             if (!is_link($fullpath) && !is_dir($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
 
-                $relativePath = substr($fullpath,strlen($base));
+                $relativePath = substr($fullpath, strlen($base));
                 $tags = path_to_tags($relativePath);
 
                 $img = [
