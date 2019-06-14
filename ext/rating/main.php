@@ -237,6 +237,7 @@ class Ratings extends Extension
 
     public function onTagTermParse(TagTermParseEvent $event)
     {
+        global $user;
         $matches = [];
 
         if (preg_match($this->search_regexp, strtolower($event->term), $matches) && $event->parse) {
@@ -328,15 +329,15 @@ class Ratings extends Extension
 
     public static function get_user_privs(User $user): array
     {
-        global $config, $_shm_ratings;
+        global $config;
 
         return $config->get_array("ext_rating_".$user->class->name."_privs");
     }
 
-    public static function privs_to_sql(array $sqes): string
+    public static function privs_to_sql(array $privs): string
     {
         $arr = [];
-        foreach($sqes as $i) {
+        foreach($privs as $i) {
             $arr[] = "'" . $i . "'";
         }
         if(sizeof($arr)==0) {
