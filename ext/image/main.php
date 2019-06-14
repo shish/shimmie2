@@ -141,7 +141,7 @@ class ImageIO extends Extension
 
         $thumb_types = [];
         $thumb_types['JPEG'] = "jpg";
-        $thumb_types['WEBP'] = "webp";
+        $thumb_types['WEBP (Not IE/Safari compatible)'] = "webp";
 
 
         $sb = new SetupBlock("Thumbnailing");
