@@ -366,8 +366,8 @@ class DanbooruApi extends Extension
         $fileinfo = pathinfo($filename);
         $metadata = [];
         $metadata['filename'] = $fileinfo['basename'];
-        if (array_key_exists('extension', $pathinfo)) {
-            $metadata['extension'] = $pathinfo['extension'];
+        if (array_key_exists('extension', $fileinfo)) {
+            $metadata['extension'] = $fileinfo['extension'];
         }
         $metadata['tags'] = $posttags;
         $metadata['source'] = $source;

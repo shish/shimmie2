@@ -73,13 +73,13 @@ class Ratings extends Extension
         $event->panel->add_block($sb);
     }
     
-    public function onPostListBuilding(PostListBuildingEvent $event)
-    {
-        global $user;
-        if ($user->is_admin() && !empty($event->search_terms)) {
-            $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
-        }
-    }
+    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // {
+    //     global $user;
+    //     if ($user->is_admin() && !empty($event->search_terms)) {
+    //         $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
+    //     }
+    // }
 
     
     public function onDisplayingImage(DisplayingImageEvent $event)
@@ -140,6 +140,65 @@ class Ratings extends Extension
             $ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
             $set = "'" . join("', '", $ratings) . "'";
             $event->add_querylet(new Querylet("rating IN ($set)"));
+        }
+    }
+
+    public function onTagTermParse(TagTermParseEvent $event)
+    {
+        $matches = [];
+
+        if (preg_match("/^rating[=|:](?:([sqeu]+)|(safe|questionable|explicit|unknown))$/D", strtolower($event->term), $matches) && $event->parse) {
+            $ratings = $matches[1] ? $matches[1] : $matches[2][0];
+            $ratings = array_intersect(str_split($ratings), str_split(Ratings::get_user_privs($user)));
+
+            $rating = $ratings[0];
+            
+            $image = Image::by_id($event->id);
+
+            $re = new RatingSetEvent($image, $rating);
+
+            send_event($re);
+        }
+
+        if (!empty($matches)) {
+            $event->metatag = true;
+        }
+    }
+    
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    {
+        global $user;
+
+        if ($user->is_admin()) {
+            $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("bulk_rating"));
+        }
+
+    }
+
+    public function onBulkAction(BulkActionEvent $event)
+    {
+        global $user;
+
+        switch($event->action) {
+            case "bulk_rate":
+                if (!isset($_POST['bulk_rating'])) {
+                    return;
+                }
+                if ($user->is_admin()) {
+                    $rating = $_POST['bulk_rating'];
+                    $total = 0;
+                    foreach ($event->items as $id) {
+                        $image = Image::by_id($id);
+                        if($image==null) {
+                            continue;
+                        }
+        
+                        send_event(new RatingSetEvent($image, $rating));
+						$total++;
+                    }
+                    flash_message("Rating set for $total items");
+                }
+                break;
         }
     }
 
@@ -271,8 +330,17 @@ class Ratings extends Extension
         }
 
         if ($config->get_int("ext_ratings2_version") < 3) {
-            $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
-            $config->set_int("ext_ratings2_version", 3);
+            $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
+            switch($database->get_driver_name()) {
+                case "mysql":
+                    $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
+                    break;
+                case "pgsql":
+                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
+                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
+                    break;
+            }
+			$config->set_int("ext_ratings2_version", 3);
         }
     }
 

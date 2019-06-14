@@ -35,3 +35,22 @@ class ImageDoesNotExist extends SCoreException
 class InvalidInput extends SCoreException
 {
 }
+
+/*
+ * This is used by the image resizing code when there is not enough memory to perform a resize.
+ */
+class InsufficientMemoryException extends SCoreException
+{
+}
+/*
+ * This is used by the image resizing code when there is an error while resizing
+ */
+class ImageResizeException extends SCoreException
+{
+    public $error;
+
+    public function __construct(string $error)
+    {
+        $this->error = $error;
+    }
+}

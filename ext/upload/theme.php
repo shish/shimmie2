@@ -219,7 +219,7 @@ class UploadTheme extends Themelet
         $html .= ' (Drag &amp; drop onto your bookmarks toolbar, then click when looking at an image)';
 
         // Bookmarklet checks if shimmie supports ext. If not, won't upload to site/shows alert saying not supported.
-        $supported_ext = "jpg jpeg gif png";
+        $supported_ext = "jpg jpeg gif png webp";
         if (class_exists("FlashFileHandler")) {
             $supported_ext .= " swf";
         }

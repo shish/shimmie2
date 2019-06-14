@@ -244,8 +244,11 @@ class CronUploader extends Extension
      */
     public function process_upload(int $upload_count = 0): bool
     {
-        global $config;
+        global $config, $database;
+
         set_time_limit(0);
+
+        $output_subdir = date('Ymd-His', time())."/";
         $this->set_dir();
         $this->generate_image_queue();
         
@@ -262,24 +265,50 @@ class CronUploader extends Extension
         }
         
         // Randomize Images
-        shuffle($this->image_queue);
+        //shuffle($this->image_queue);
+
+        $merged = 0;
+        $added = 0;
+        $failed = 0;
+
+        $failedItems = [];
 
         // Upload the file(s)
         for ($i = 0; $i < $upload_count && sizeof($this->image_queue)>0; $i++) {
             $img = array_pop($this->image_queue);
             
             try {
-                $this->add_image($img[0], $img[1], $img[2]);
-                $this->move_uploaded($img[0], $img[1], false);
+                $database->beginTransaction();
+                $result = $this->add_image($img[0], $img[1], $img[2]);
+                $database->commit();
+                $this->move_uploaded($img[0], $img[1], $output_subdir, false);
+                if($result==null) {
+                    $merged++;
+                } else {
+                    $added++;
+                }
             } catch (Exception $e) {
-                $this->move_uploaded($img[0], $img[1], true);
+                $failed++;
+                $this->move_uploaded($img[0], $img[1], $output_subdir, true);
+				$msgNumber = $this->add_upload_info("(".gettype($e).") ".$e->getMessage());
+                $msgNumber = $this->add_upload_info($e->getTraceAsString());
                 if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
                     // Postgres invalidates the transaction if there is an SQL error,
                     // so all subsequence transactions will fail.
                     break;
                 }
+                try {
+                    $database->rollback();
+                } catch (Exception $e) {}
             }
         }
+
+
+        $msgNumber = $this->add_upload_info("Items added: $added");
+        $msgNumber = $this->add_upload_info("Items merged: $merged");
+        $msgNumber = $this->add_upload_info("Items failed: $failed");
+
+
         
         // Display & save upload log
         $this->handle_log();
@@ -287,7 +316,7 @@ class CronUploader extends Extension
         return true;
     }
     
-    private function move_uploaded($path, $filename, $corrupt = false)
+    private function move_uploaded($path, $filename, $output_subdir, $corrupt = false)
     {
         global $config;
         
@@ -296,16 +325,17 @@ class CronUploader extends Extension
         
         $relativeDir = dirname(substr($path, strlen($this->root_dir) + 7));
 
-        // Determine which dir to move to
-        if ($corrupt) {
-            // Move to corrupt dir
-            $newDir .= "/failed_to_upload/".$relativeDir;
-            $info = "ERROR: Image was not uploaded.";
-        } else {
-            $newDir .= "/uploaded/".$relativeDir;
-            $info = "Image successfully uploaded. ";
-        }
-        $newDir = str_replace("//", "/", $newDir."/");
+		// Determine which dir to move to
+		if ($corrupt) {
+			// Move to corrupt dir
+			$newDir .= "/failed_to_upload/".$output_subdir.$relativeDir;
+			$info = "ERROR: Image was not uploaded.";
+		}
+		else {
+			$newDir .= "/uploaded/".$output_subdir.$relativeDir;
+			$info = "Image successfully uploaded. ";
+		}
+		$newDir = str_replace ( "//", "/", $newDir."/" );
 
         if (!is_dir($newDir)) {
             mkdir($newDir, 0775, true);
@@ -328,9 +358,9 @@ class CronUploader extends Extension
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
         if (array_key_exists('extension', $pathinfo)) {
-            $metadata['extension'] = $pathinfo['extension'];
+            $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = Tag::explode($tags);
+        $metadata ['tags'] = Tag::explode($tags); 
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -339,10 +369,13 @@ class CronUploader extends Extension
         $infomsg = ""; // Will contain info message
         if ($event->image_id == -1) {
             throw new Exception("File type not recognised. Filename: {$filename}");
+        } else if ($event->image_id == null) {
+            $infomsg = "Image merged. Filename: {$filename}";
         } else {
-            $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename} - Tags: {$tags}";
+            $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
+        return $event->image_id;
     }
     
     private function generate_image_queue(): void

@@ -18,9 +18,15 @@ class DataUploadEvent extends Event
     /** @var string */
     public $hash;
     /** @var string */
-    public $type;
+    public $type = "";
     /** @var int */
     public $image_id = -1;
+    /** @var bool */
+    public $handled = false;
+    /** @var bool */
+    public $merged = false;
+
+
 
     /**
      * Some data is being uploaded.
@@ -29,21 +35,39 @@ class DataUploadEvent extends Event
      */
     public function __construct(string $tmpname, array $metadata)
     {
+        global $config;
+
         assert(file_exists($tmpname));
         assert(is_string($metadata["filename"]));
-        assert(is_string($metadata["extension"]));
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
-        $this->tmpname = $tmpname;
-
         $this->metadata = $metadata;
+
+        $this->set_tmpname($tmpname);
+
+        if($config->get_bool("upload_use_mime")) {
+            $this->set_type(get_extension_from_mime($tmpname));
+        } else {
+            if(array_key_exists('extension',$metadata)&&!empty($metadata['extension'])) {
+                $this->type = strtolower($metadata['extension']);
+            } else {
+                throw new UploadException("Could not determine extension for file ".$metadata["filename"]);
+            }
+        }
+    }
+
+    public function set_type(String $type) {
+        $this->type = strtolower($type);
+        $this->metadata["extension"] = $this->type;
+    }
+
+    public function set_tmpname(String $tmpname) {
+        $this->tmpname = $tmpname;
         $this->metadata['hash'] = md5_file($tmpname);
         $this->metadata['size'] = filesize($tmpname);
-
         // useful for most file handlers, so pull directly into fields
         $this->hash = $this->metadata['hash'];
-        $this->type = strtolower($metadata['extension']);
     }
 }
 
@@ -76,6 +100,7 @@ class Upload extends Extension
         $config->set_default_int('upload_size', parse_shorthand_int('1MB'));
         $config->set_default_int('upload_min_free_space', parse_shorthand_int('100MB'));
         $config->set_default_bool('upload_tlsource', true);
+        $config->set_default_bool('upload_use_mime', false);
 
         $this->is_full = false;
 
@@ -108,6 +133,7 @@ class Upload extends Extension
         $sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
         $sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
         $sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
+        $sb->add_bool_option("upload_use_mime", "<br/>Use mime type to determine file types: ");
         $event->panel->add_block($sb);
     }
 
@@ -320,9 +346,6 @@ class Upload extends Extension
                 
                 $event = new DataUploadEvent($file['tmp_name'], $metadata);
                 send_event($event);
-                if ($event->image_id == -1) {
-                    throw new UploadException("File type not recognised");
-                }
                 $page->add_http_header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(

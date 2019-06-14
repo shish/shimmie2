@@ -37,4 +37,48 @@ class RegenThumbTheme extends Themelet
 		";
         return $html;
     }
+
+    public function bulk_html() {
+        return "<label><input type='checkbox' name='bulk_regen_thumb_missing_only' id='bulk_regen_thumb_missing_only' style='width:13px' value='true' />Only missing thumbs</label>";
+    }
+
+    public function display_admin_block()
+    {
+        global $page, $database;
+
+        $types = [];
+        $results = $database->get_all("SELECT ext, count(*) count FROM images group by ext");
+        foreach ($results as $result) {
+            array_push($types,"<option value='".$result["ext"]."'>".$result["ext"]." (".$result["count"].")</option>");
+        }
+
+        $html = "
+            Will only regenerate missing thumbnails, unless force is selected. Force will override the limit and will likely take a very long time to process.
+			<p>".make_form(make_link("admin/regen_thumbs"))."
+				<table class='form'>
+                <tr><th><label for='regen_thumb_force'>Force</label></th><td><input type='checkbox' name='regen_thumb_force' id='regen_thumb_force' value='true' /></td></tr>
+                <tr><th><label for='regen_thumb_limit'>Limit</label></th><td><input type='number' name='regen_thumb_limit' id='regen_thumb_limit' value='1000' /></td></tr>
+                <tr><th><label for='regen_thumb_type'>Type</label></th><td>
+                    <select name='regen_thumb_type' id='regen_thumb_type' value='1000'>
+                        <option value=''>All</option>
+                        ".implode($types)."
+                    </select>
+                </td></tr>
+                <tr><td colspan='2'><input type='submit' value='Regenerate Thumbnails'></td></tr>
+				</table>
+			</form></p>
+			<p>".make_form(make_link("admin/delete_thumbs"),"POST",False, "","return confirm('Are you sure you want to delete all thumbnails?')")."
+				<table class='form'>
+                    <tr><th><label for='delete_thumb_type'>Type</label></th><td>
+                        <select name='delete_thumb_type' id='delete_thumb_type' value='1000'>
+                            <option value=''>All</option>
+                            ".implode($types)."
+                        </select>
+                    </td></tr>
+					<tr><td colspan='2'><input type='submit' value='Delete Thumbnails'></td></tr>
+				</table>
+            </form></p>
+            		";
+        $page->add_block(new Block("Regen Thumbnails", $html));
+    }
 }

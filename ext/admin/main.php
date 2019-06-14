@@ -124,13 +124,13 @@ class AdminPage extends Extension
         }
     }
 
-    public function onPostListBuilding(PostListBuildingEvent $event)
-    {
-        global $user;
-        if ($user->can("manage_admintools") && !empty($event->search_terms)) {
-            $event->add_control($this->theme->dbq_html(Tag::implode($event->search_terms)));
-        }
-    }
+    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // {
+    //     global $user;
+    //     if ($user->can("manage_admintools") && !empty($event->search_terms)) {
+    //         $event->add_control($this->theme->dbq_html(Tag::implode($event->search_terms)));
+    //     }
+    // }
 
     private function delete_by_query()
     {
