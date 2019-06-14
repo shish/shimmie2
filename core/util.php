@@ -281,21 +281,44 @@ function manual_include(string $fname): ?string
 function path_to_tags(string $path): string
 {
     $matches = [];
-    $tags = "";
-    if (preg_match("/\d+ - (.*)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
-        $tags = $matches[1];
-    }
+	$tags = [];
+    if(preg_match("/\d+ - (.*)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
+        $tags = explode($matches[1]," ");
+	}
+	
+	$path = dirname($path);
+    $path = str_replace(";", ":", $path);
+	$path = str_replace("__", " ", $path);
     
-    $dir_tags = dirname($path);
-    $dir_tags = str_replace("/", " ", $dir_tags);
-    $dir_tags = str_replace("__", " ", $dir_tags);
-    $dir_tags = trim($dir_tags);
-    if ($dir_tags != "") {
-        $tags = trim($tags)." ".trim($dir_tags);
+
+    $category = "";
+    foreach(explode("/", $path) as $dir) {
+        $category_to_inherit = "";
+        foreach(explode(" ", $dir) as $tag) {
+            $tag = trim($tag);
+            if($tag=="") {
+                continue;
+            }
+            if(substr_compare($tag, ":", -1) === 0) {
+                // This indicates a tag that ends in a colon,
+                // which is for inheriting to tags on the subfolder
+                $category_to_inherit = $tag;
+            } else {
+                if($category!=""&&strpos($tag, ":") === false) {
+                    // This indicates that category inheritance is active,
+                    // and we've encountered a tag that does not specify a category.
+                    // So we attach the inherited category to the tag.
+                    $tag = $category.$tag;
+                }
+                array_push($tags, $tag);
+            }
+        }
+        // Category inheritance only works on the immediate subfolder, 
+        // so we hold a category until the next iteration, and then set
+        // it back to an empty string after that iteration
+        $category = $category_to_inherit;
     }
-    $tags = trim($tags);
-    
-    return $tags;
+    return implode(" ",$tags);
 }
 
 
