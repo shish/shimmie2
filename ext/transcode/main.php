@@ -43,6 +43,7 @@ class TranscodeImage extends Extension
             "psd",
             "tiff",
             "webp",
+            "ico",
         ]
     ];
 
@@ -68,6 +69,7 @@ class TranscodeImage extends Extension
     const INPUT_FORMATS = [
         "BMP" => "bmp",
         "GIF" => "gif",
+        "ICO" => "ico",
         "JPG" => "jpg",
         "PNG" => "png",
         "PSD" => "psd",
@@ -440,15 +442,21 @@ class TranscodeImage extends Extension
         }
         $tmp_name = tempnam("/tmp", "shimmie_transcode");
 
-        $format = '"%s" %s -quality %u -background %s "%s"  %s:"%s"';
-        $cmd = sprintf($format, $convert, $args, $q, $bg, $source_name, $ext, $tmp_name);
+        $source_type = "";
+        switch ($source_format) {
+            case "ico":
+                $source_type = "ico:";
+        }
+
+        $format = '"%s" %s -quality %u -background %s %s"%s"  %s:"%s" 2>&1';
+        $cmd = sprintf($format, $convert, $args, $q, $bg, $source_type, $source_name, $ext, $tmp_name);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
 
         log_debug('transcode', "Transcoding with command `$cmd`, returns $ret");
 
         if ($ret!==0) {
-            throw new ImageTranscodeException("Transcoding failed with command ".$cmd);
+            throw new ImageTranscodeException("Transcoding failed with command ".$cmd.", returning ".implode("\r\n", $output));
         }
 
         return $tmp_name;

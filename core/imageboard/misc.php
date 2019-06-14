@@ -208,8 +208,11 @@ function create_thumbnail_convert($hash, $input_type = ""): bool
     $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg,$input_type, $inname, $type, $outname);
     $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
     exec($cmd, $output, $ret);
-
-    log_debug('handle_pixel', "Generating thumbnail with command `$cmd`, returns $ret");
+    if ($ret!=0) {
+        log_warning('imageboard/misc', "Generating thumbnail with command `$cmd`, returns $ret, outputting ".implode("\r\n",$output));
+    } else {
+        log_debug('imageboard/misc', "Generating thumbnail with command `$cmd`, returns $ret");
+    }
 
     if ($config->get_bool("thumb_optim", false)) {
         exec("jpegoptim $outname", $output, $ret);
