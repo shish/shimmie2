@@ -590,7 +590,7 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_name() == "mysql") {
+        if ($database->get_driver_name() == Database::MYSQL_DRIVER) {
             //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
             $database->execute(
                 "
@@ -907,7 +907,7 @@ class Image
 
         // more than one positive tag, or more than zero negative tags
         else {
-            if ($database->get_driver_name() === "mysql") {
+            if ($database->get_driver_name() === Database::MYSQL_DRIVER) {
                 $query = Image::build_ugly_search_querylet($tag_querylets);
             } else {
                 $query = Image::build_accurate_search_querylet($tag_querylets);

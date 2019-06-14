@@ -201,14 +201,14 @@ class AdminPage extends Extension
         $database = $matches['dbname'];
 
         switch ($software) {
-            case 'mysql':
+            case Database::MYSQL_DRIVER:
                 $cmd = "mysqldump -h$hostname -u$username -p$password $database";
                 break;
-            case 'pgsql':
+            case Database::PGSQL_DRIVER:
                 putenv("PGPASSWORD=$password");
                 $cmd = "pg_dump -h $hostname -U $username $database";
                 break;
-            case 'sqlite':
+            case Database::SQLITE_DRIVER:
                 $cmd = "sqlite3 $database .dump";
                 break;
             default:
@@ -257,7 +257,7 @@ class AdminPage extends Extension
         //TODO: Update score_log (Having an optional ID column for score_log would be nice..)
         preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
 
-        if ($matches['proto'] == "mysql") {
+        if ($matches['proto'] == Database::MYSQL_DRIVER) {
             $tables = $database->get_col("SELECT TABLE_NAME
 			                              FROM information_schema.KEY_COLUMN_USAGE
 			                              WHERE TABLE_SCHEMA = :db
@@ -280,9 +280,9 @@ class AdminPage extends Extension
                 $i++;
             }
             $database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
-        } elseif ($matches['proto'] == "pgsql") {
+        } elseif ($matches['proto'] == Database::PGSQL_DRIVER) {
             //TODO: Make this work with PostgreSQL
-        } elseif ($matches['proto'] == "sqlite") {
+        } elseif ($matches['proto'] == Database::SQLITE_DRIVER) {
             //TODO: Make this work with SQLite
         }
         return true;

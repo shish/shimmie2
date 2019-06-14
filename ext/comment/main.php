@@ -480,14 +480,14 @@ class CommentList extends Extension
         global $config, $database;
 
         // sqlite fails at intervals
-        if ($database->get_driver_name() === "sqlite") {
+        if ($database->get_driver_name() === Database::SQLITE_DRIVER) {
             return false;
         }
 
         $window = int_escape($config->get_int('comment_window'));
         $max = int_escape($config->get_int('comment_limit'));
 
-        if ($database->get_driver_name() == "mysql") {
+        if ($database->get_driver_name() == Database::MYSQL_DRIVER) {
             $window_sql = "interval $window minute";
         } else {
             $window_sql = "interval '$window minute'";

@@ -110,7 +110,7 @@ function do_install()
 { // {{{
     if (file_exists("data/config/auto_install.conf.php")) {
         require_once "data/config/auto_install.conf.php";
-    } elseif (@$_POST["database_type"] == "sqlite") {
+    } elseif (@$_POST["database_type"] == Database::SQLITE_DRIVER) {
         $id = bin2hex(random_bytes(5));
         define('DATABASE_DSN', "sqlite:data/shimmie.{$id}.sqlite");
     } elseif (isset($_POST['database_type']) && isset($_POST['database_host']) && isset($_POST['database_user']) && isset($_POST['database_name'])) {
@@ -153,9 +153,9 @@ function ask_questions()
 
     $drivers = PDO::getAvailableDrivers();
     if (
-        !in_array("mysql", $drivers) &&
-        !in_array("pgsql", $drivers) &&
-        !in_array("sqlite", $drivers)
+        !in_array(Database::MYSQL_DRIVER, $drivers) &&
+        !in_array(Database::PGSQL_DRIVER, $drivers) &&
+        !in_array(Database::SQLITE_DRIVER, $drivers)
     ) {
         $errors[] = "
 			No database connection library could be found; shimmie needs
@@ -163,9 +163,9 @@ function ask_questions()
 		";
     }
 
-    $db_m = in_array("mysql", $drivers)  ? '<option value="mysql">MySQL</option>' : "";
-    $db_p = in_array("pgsql", $drivers)  ? '<option value="pgsql">PostgreSQL</option>' : "";
-    $db_s = in_array("sqlite", $drivers) ? '<option value="sqlite">SQLite</option>' : "";
+    $db_m = in_array(Database::MYSQL_DRIVER, $drivers)  ? '<option value="'.Database::MYSQL_DRIVER.'">MySQL</option>' : "";
+    $db_p = in_array(Database::PGSQL_DRIVER, $drivers)  ? '<option value="'.Database::PGSQL_DRIVER.'">PostgreSQL</option>' : "";
+    $db_s = in_array(Database::SQLITE_DRIVER, $drivers) ? '<option value="'.Database::SQLITE_DRIVER.'">SQLite</option>' : "";
 
     $warn_msg = $warnings ? "<h3>Warnings</h3>".implode("\n<p>", $warnings) : "";
     $err_msg = $errors ? "<h3>Errors</h3>".implode("\n<p>", $errors) : "";

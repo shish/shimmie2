@@ -45,7 +45,7 @@ class AdminPageTheme extends Themelet
             $html .= $this->button("Download all images", "download_all_images", false);
         }
         $html .= $this->button("Download database contents", "database_dump", false);
-        if ($database->get_driver_name() == "mysql") {
+        if ($database->get_driver_name() == Database::MYSQL_DRIVER) {
             $html .= $this->button("Reset image IDs", "reset_image_ids", true);
         }
         $page->add_block(new Block("Misc Admin Tools", $html));

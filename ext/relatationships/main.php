@@ -8,7 +8,7 @@
 
 class Relationships extends Extension
 {
-    protected $db_support = ['mysql', 'pgsql'];
+    protected $db_support = [Database::MYSQL_DRIVER, Database::PGSQL_DRIVER];
 
     public function onInitExt(InitExtEvent $event)
     {

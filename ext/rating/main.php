@@ -37,7 +37,7 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
-    protected $db_support = ['mysql','pgsql'];  // ?
+    protected $db_support = [Database::MYSQL_DRIVER,Database::PGSQL_DRIVER];
 
     public function get_priority(): int
     {
@@ -331,10 +331,10 @@ class Ratings extends Extension
         if ($config->get_int("ext_ratings2_version") < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
-                case "mysql":
+                case Database::MYSQL_DRIVER:
                     $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
-                case "pgsql":
+                case Database::PGSQL_DRIVER:
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
