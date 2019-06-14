@@ -46,7 +46,8 @@ class RatingsTheme extends Themelet
         $page->add_block(new Block("List Controls", $html, "left"));
     }
 
-    public function get_selection_rater_html(String $id = "select_rating") {
+    public function get_selection_rater_html(String $id = "select_rating")
+    {
         return "<select name='".$id."'>
 					<option value='s'>Safe</option>
 					<option value='q'>Questionable</option>

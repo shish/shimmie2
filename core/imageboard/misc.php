@@ -66,15 +66,15 @@ function add_image(string $tmpname, string $filename, string $tags): void
 }
 
 
-function get_extension_from_mime(String $file_path): ?String 
+function get_extension_from_mime(String $file_path): ?String
 {
     global $config;
     $mime = mime_content_type($file_path);
-    if(!empty($mime)) {
+    if (!empty($mime)) {
         $ext = get_extension($mime);
-        if(!empty($ext)) {
+        if (!empty($ext)) {
             return $ext;
-        } 
+        }
         throw new UploadException("Could not determine extension for mimetype ".$mime);
     }
     throw new UploadException("Could not determine file mime type: ".$file_path);
@@ -168,7 +168,7 @@ function get_thumbnail_max_size_scaled(): array
     return [$max_width, $max_height];
 }
 
-function create_thumbnail_convert($hash): bool 
+function create_thumbnail_convert($hash): bool
 {
     global $config;
 
@@ -178,8 +178,7 @@ function create_thumbnail_convert($hash): bool
     $q = $config->get_int("thumb_quality");
     $convert = $config->get_string("thumb_convert_path");
 
-    if($convert==null||$convert=="") 
-    {
+    if ($convert==null||$convert=="") {
         return false;
     }
 
@@ -202,7 +201,7 @@ function create_thumbnail_convert($hash): bool
     }
 
     $bg = "black";
-    if($type=="webp") {
+    if ($type=="webp") {
         $bg = "none";
     }
     $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s "%s[0]"  %s:"%s"';
@@ -225,7 +224,7 @@ function create_thumbnail_ffmpeg($hash): bool
     global $config;
 
     $ffmpeg = $config->get_string("thumb_ffmpeg_path");
-    if($ffmpeg==null||$ffmpeg=="") {
+    if ($ffmpeg==null||$ffmpeg=="") {
         return false;
     }
 
@@ -237,12 +236,12 @@ function create_thumbnail_ffmpeg($hash): bool
     
     $codec = "mjpeg";
     $quality = $config->get_int("thumb_quality");
-    if($config->get_string("thumb_type")=="webp") {
+    if ($config->get_string("thumb_type")=="webp") {
         $codec = "libwebp";
     } else {
-        // mjpeg quality ranges from 2-31, with 2 being the best quality. 
+        // mjpeg quality ranges from 2-31, with 2 being the best quality.
         $quality = floor(31 - (31 * ($quality/100)));
-        if($quality<2) {
+        if ($quality<2) {
             $quality = 2;
         }
     }
@@ -321,13 +320,19 @@ function calc_memory_use(array $info): int
     return (int)$memory_use;
 }
 
-function image_resize_gd(String $image_filename, array $info, int $new_width, int $new_height, 
-        string $output_filename=null, string $output_type=null, int $output_quality = 80) 
-{        
+function image_resize_gd(
+    String $image_filename,
+    array $info,
+    int $new_width,
+    int $new_height,
+    string $output_filename=null,
+    string $output_type=null,
+    int $output_quality = 80
+) {
     $width = $info[0];
     $height = $info[1];
 
-    if($output_type==null) {
+    if ($output_type==null) {
         /* If not specified, output to the same format as the original image */
         switch ($info[2]) {
             case IMAGETYPE_GIF:   $output_type = "gif";    break;
@@ -337,7 +342,7 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
             case IMAGETYPE_BMP:   $output_type = "bmp";    break;
             default: throw new ImageResizeException("Failed to save the new image - Unsupported image type.");
         }
-    } 
+    }
 
     $memory_use = calc_memory_use($info);
     $memory_limit = get_memory_limit();
@@ -348,15 +353,15 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
     $image = imagecreatefromstring(file_get_contents($image_filename));
     $image_resized = imagecreatetruecolor($new_width, $new_height);
     try {
-        if($image===false) {
+        if ($image===false) {
             throw new ImageResizeException("Could not load image: ".$image_filename);
         }
-        if($image_resized===false) {
+        if ($image_resized===false) {
             throw new ImageResizeException("Could not create output image with dimensions $new_width c $new_height ");
         }
 
         // Handle transparent images
-        switch($info[2]) {
+        switch ($info[2]) {
             case IMAGETYPE_GIF:
                 $transparency = imagecolortransparent($image);
                 $palletsize = imagecolorstotal($image);
@@ -368,12 +373,12 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
 
                     // Allocate the same color in the new image resource
                     $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
-                    if($transparency===false) {
+                    if ($transparency===false) {
                         throw new ImageResizeException("Unable to allocate transparent color");
                     }
                     
                     // Completely fill the background of the new image with allocated color.
-                    if(imagefill($image_resized, 0, 0, $transparency)===false) {
+                    if (imagefill($image_resized, 0, 0, $transparency)===false) {
                         throw new ImageResizeException("Unable to fill new image with transparent color");
                     }
 
@@ -386,24 +391,24 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
                 //
                 // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
                 //
-                if(imagealphablending($image_resized, false)===false) {
+                if (imagealphablending($image_resized, false)===false) {
                     throw new ImageResizeException("Unable to disable image alpha blending");
                 }
-                if(imagesavealpha($image_resized, true)===false) {
+                if (imagesavealpha($image_resized, true)===false) {
                     throw new ImageResizeException("Unable to enable image save alpha");
                 }
                 $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
-                if($transparent_color===false) {
+                if ($transparent_color===false) {
                     throw new ImageResizeException("Unable to allocate transparent color");
                 }
-                if(imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color)===false) {
+                if (imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color)===false) {
                     throw new ImageResizeException("Unable to fill new image with transparent color");
                 }
                 break;
         }
         
         // Actually resize the image.
-        if(imagecopyresampled(
+        if (imagecopyresampled(
             $image_resized,
             $image,
             0,
@@ -415,11 +420,11 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
             $width,
             $height
             )===false) {
-                throw new ImageResizeException("Unable to copy resized image data to new image");
-            }
+            throw new ImageResizeException("Unable to copy resized image data to new image");
+        }
 
         $result = false;
-        switch($output_type) {
+        switch ($output_type) {
             case "bmp":
                 $result = imagebmp($image_resized, $output_filename, true);
                 break;
@@ -439,7 +444,7 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
             default:
                 throw new ImageResizeException("Failed to save the new image - Unsupported image type: $output_type");
         }
-        if($result==false) {
+        if ($result==false) {
             throw new ImageResizeException("Failed to save the new image, function returned false when saving type: $output_type");
         }
     } finally {
@@ -448,7 +453,8 @@ function image_resize_gd(String $image_filename, array $info, int $new_width, in
     }
 }
 
-function is_animated_gif(String $image_filename) {
+function is_animated_gif(String $image_filename)
+{
     $isanigif = 0;
     if (($fh = @fopen($image_filename, 'rb'))) {
         //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)

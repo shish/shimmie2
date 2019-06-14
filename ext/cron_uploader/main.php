@@ -282,7 +282,7 @@ class CronUploader extends Extension
                 $result = $this->add_image($img[0], $img[1], $img[2]);
                 $database->commit();
                 $this->move_uploaded($img[0], $img[1], $output_subdir, false);
-                if($result==null) {
+                if ($result==null) {
                     $merged++;
                 } else {
                     $added++;
@@ -290,7 +290,7 @@ class CronUploader extends Extension
             } catch (Exception $e) {
                 $failed++;
                 $this->move_uploaded($img[0], $img[1], $output_subdir, true);
-				$msgNumber = $this->add_upload_info("(".gettype($e).") ".$e->getMessage());
+                $msgNumber = $this->add_upload_info("(".gettype($e).") ".$e->getMessage());
                 $msgNumber = $this->add_upload_info($e->getTraceAsString());
                 if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
                     // Postgres invalidates the transaction if there is an SQL error,
@@ -299,7 +299,8 @@ class CronUploader extends Extension
                 }
                 try {
                     $database->rollback();
-                } catch (Exception $e) {}
+                } catch (Exception $e) {
+                }
             }
         }
 
@@ -325,17 +326,16 @@ class CronUploader extends Extension
         
         $relativeDir = dirname(substr($path, strlen($this->root_dir) + 7));
 
-		// Determine which dir to move to
-		if ($corrupt) {
-			// Move to corrupt dir
-			$newDir .= "/failed_to_upload/".$output_subdir.$relativeDir;
-			$info = "ERROR: Image was not uploaded.";
-		}
-		else {
-			$newDir .= "/uploaded/".$output_subdir.$relativeDir;
-			$info = "Image successfully uploaded. ";
-		}
-		$newDir = str_replace ( "//", "/", $newDir."/" );
+        // Determine which dir to move to
+        if ($corrupt) {
+            // Move to corrupt dir
+            $newDir .= "/failed_to_upload/".$output_subdir.$relativeDir;
+            $info = "ERROR: Image was not uploaded.";
+        } else {
+            $newDir .= "/uploaded/".$output_subdir.$relativeDir;
+            $info = "Image successfully uploaded. ";
+        }
+        $newDir = str_replace("//", "/", $newDir."/");
 
         if (!is_dir($newDir)) {
             mkdir($newDir, 0775, true);
@@ -360,7 +360,7 @@ class CronUploader extends Extension
         if (array_key_exists('extension', $pathinfo)) {
             $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = Tag::explode($tags); 
+        $metadata ['tags'] = Tag::explode($tags);
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -369,7 +369,7 @@ class CronUploader extends Extension
         $infomsg = ""; // Will contain info message
         if ($event->image_id == -1) {
             throw new Exception("File type not recognised. Filename: {$filename}");
-        } else if ($event->image_id == null) {
+        } elseif ($event->image_id == null) {
             $infomsg = "Image merged. Filename: {$filename}";
         } else {
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";

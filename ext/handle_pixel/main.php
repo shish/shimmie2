@@ -97,19 +97,26 @@ class PixelFileHandler extends DataHandlerExtension
         try {
             $info = getimagesize($inname);
             $tsize = get_thumbnail_size_scaled($info[0], $info[1]);
-            $image = image_resize_gd($inname, $info, $tsize[0], $tsize[1], 
-                $outname, $config->get_string('thumb_type'),$config->get_int('thumb_quality'));
-        } catch(InsufficientMemoryException $e) {
-        	$tsize = get_thumbnail_max_size_scaled();
-			$thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
+            $image = image_resize_gd(
+                $inname,
+                $info,
+                $tsize[0],
+                $tsize[1],
+                $outname,
+                $config->get_string('thumb_type'),
+                $config->get_int('thumb_quality')
+            );
+        } catch (InsufficientMemoryException $e) {
+            $tsize = get_thumbnail_max_size_scaled();
+            $thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
             $white = imagecolorallocate($thumb, 255, 255, 255);
             $black = imagecolorallocate($thumb, 0, 0, 0);
             imagefill($thumb, 0, 0, $white);
-            log_warning("handle_pixel","Insufficient memory while creating thumbnail: ".$e->getMessage());
+            log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
             imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
             return true;
-        } catch(Exception $e) {
-            log_error("handle_pixel","Error while creating thumbnail: ".$e->getMessage());
+        } catch (Exception $e) {
+            log_error("handle_pixel", "Error while creating thumbnail: ".$e->getMessage());
             return false;
         }
 

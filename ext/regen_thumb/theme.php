@@ -38,7 +38,8 @@ class RegenThumbTheme extends Themelet
         return $html;
     }
 
-    public function bulk_html() {
+    public function bulk_html()
+    {
         return "<label><input type='checkbox' name='bulk_regen_thumb_missing_only' id='bulk_regen_thumb_missing_only' style='width:13px' value='true' />Only missing thumbs</label>";
     }
 
@@ -49,7 +50,7 @@ class RegenThumbTheme extends Themelet
         $types = [];
         $results = $database->get_all("SELECT ext, count(*) count FROM images group by ext");
         foreach ($results as $result) {
-            array_push($types,"<option value='".$result["ext"]."'>".$result["ext"]." (".$result["count"].")</option>");
+            array_push($types, "<option value='".$result["ext"]."'>".$result["ext"]." (".$result["count"].")</option>");
         }
 
         $html = "
@@ -67,7 +68,7 @@ class RegenThumbTheme extends Themelet
                 <tr><td colspan='2'><input type='submit' value='Regenerate Thumbnails'></td></tr>
 				</table>
 			</form></p>
-			<p>".make_form(make_link("admin/delete_thumbs"),"POST",False, "","return confirm('Are you sure you want to delete all thumbnails?')")."
+			<p>".make_form(make_link("admin/delete_thumbs"), "POST", false, "", "return confirm('Are you sure you want to delete all thumbnails?')")."
 				<table class='form'>
                     <tr><th><label for='delete_thumb_type'>Type</label></th><td>
                         <select name='delete_thumb_type' id='delete_thumb_type' value='1000'>

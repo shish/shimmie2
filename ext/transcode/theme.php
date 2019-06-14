@@ -20,14 +20,14 @@ class TranscodeImageTheme extends Themelet
         return $html;
     }
     
-    public function get_transcode_picker_html(array $options) {
+    public function get_transcode_picker_html(array $options)
+    {
         $html = "<select id='transcode_format'  name='transcode_format' required='required' >";
-        foreach($options as $display=>$value) {
+        foreach ($options as $display=>$value) {
             $html .= "<option value='$value'>$display</option>";
         }
 
         return $html."</select>";
-
     }
 
     public function display_transcode_error(Page $page, string $title, string $message)
@@ -37,5 +37,4 @@ class TranscodeImageTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block($title, $message));
     }
-
 }
