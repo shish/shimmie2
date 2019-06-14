@@ -164,9 +164,10 @@ function get_thumbnail_max_size_scaled(): array
  * Creates a thumbnail file using ImageMagick's convert command.
  *
  * @param $hash
+ * @param string $input_type Optional, allows specifying the input format. Usually not necessary.
  * @return bool true is successful, false if not.
  */
-function create_thumbnail_convert($hash): bool 
+function create_thumbnail_convert($hash, $input_type = ""): bool
 {
     global $config;
 
@@ -200,8 +201,11 @@ function create_thumbnail_convert($hash): bool
     if ($type=="webp") {
         $bg = "none";
     }
-    $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s "%s[0]"  %s:"%s"';
-    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg, $inname, $type, $outname);
+    if(!empty($input_type)) {
+        $input_type = $input_type.":";
+    }
+    $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
+    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg,$input_type, $inname, $type, $outname);
     $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
     exec($cmd, $output, $ret);
 

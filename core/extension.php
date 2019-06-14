@@ -222,13 +222,13 @@ abstract class DataHandlerExtension extends Extension
         $result = false;
         if ($this->supported_ext($event->type)) {
             if ($event->force) {
-                $result = $this->create_thumb($event->hash);
+                $result = $this->create_thumb($event->hash, $event->type);
             } else {
                 $outname = warehouse_path("thumbs", $event->hash);
                 if (file_exists($outname)) {
                     return;
                 }
-                $result = $this->create_thumb($event->hash);
+                $result = $this->create_thumb($event->hash, $event->type);
             }
         }
         if ($result) {
@@ -256,5 +256,5 @@ abstract class DataHandlerExtension extends Extension
     abstract protected function supported_ext(string $ext): bool;
     abstract protected function check_contents(string $tmpname): bool;
     abstract protected function create_image_from_data(string $filename, array $metadata);
-    abstract protected function create_thumb(string $hash): bool;
+    abstract protected function create_thumb(string $hash, string $type): bool;
 }

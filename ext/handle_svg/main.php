@@ -32,7 +32,7 @@ class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    protected function create_thumb(string $hash): bool
+    protected function create_thumb(string $hash, string $type): bool
     {
         if (!create_thumbnail_convert($hash)) {
             copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));

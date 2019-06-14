@@ -53,7 +53,7 @@ class VideoFileHandler extends DataHandlerExtension
     /**
      * Generate the Thumbnail image for particular file.
      */
-    protected function create_thumb(string $hash): bool
+    protected function create_thumb(string $hash, string $type): bool
     {
         return create_thumbnail_ffmpeg($hash);
     }

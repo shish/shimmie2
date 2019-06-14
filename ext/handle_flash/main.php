@@ -8,7 +8,7 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-    protected function create_thumb(string $hash): bool
+    protected function create_thumb(string $hash, string $type): bool
     {
         global $config;
 
