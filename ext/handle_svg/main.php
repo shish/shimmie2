@@ -19,10 +19,10 @@ class SVGFileHandler extends DataHandlerExtension
             $sanitizer->removeRemoteReferences(true);
             $dirtySVG = file_get_contents($event->tmpname);
             $cleanSVG = $sanitizer->sanitize($dirtySVG);
-            file_put_contents(warehouse_path("images", $hash), $cleanSVG);
+            file_put_contents(warehouse_path(Image::IMAGE_DIR, $hash), $cleanSVG);
 
             send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-            $image = $this->create_image_from_data(warehouse_path("images", $hash), $event->metadata);
+            $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $hash), $event->metadata);
             if (is_null($image)) {
                 throw new UploadException("SVG handler failed to create image object from data");
             }
@@ -35,7 +35,7 @@ class SVGFileHandler extends DataHandlerExtension
     protected function create_thumb(string $hash, string $type): bool
     {
         if (!create_thumbnail_convert($hash)) {
-            copy("ext/handle_svg/thumb.jpg", warehouse_path("thumbs", $hash));
+            copy("ext/handle_svg/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         }
         return true;
     }
@@ -61,7 +61,7 @@ class SVGFileHandler extends DataHandlerExtension
 
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = file_get_contents(warehouse_path("images", $hash));
+            $dirtySVG = file_get_contents(warehouse_path(Image::IMAGE_DIR, $hash));
             $cleanSVG = $sanitizer->sanitize($dirtySVG);
             $page->set_data($cleanSVG);
         }

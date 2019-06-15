@@ -237,7 +237,7 @@ class AdminPage extends Extension
         $zip = new ZipArchive;
         if ($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === true) {
             foreach ($images as $img) {
-                $img_loc = warehouse_path("images", $img["hash"], false);
+                $img_loc = warehouse_path(Image::IMAGE_DIR, $img["hash"], false);
                 $zip->addFile($img_loc, $img["hash"].".".$img["ext"]);
             }
             $zip->close();

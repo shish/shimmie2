@@ -116,8 +116,8 @@ class Rule34 extends Extension
                                 continue;
                             }
                             log_info("admin", "Cleaning {$hash}");
-                            @unlink(warehouse_path('images', $hash));
-                            @unlink(warehouse_path('thumbs', $hash));
+                            @unlink(warehouse_path(Image::IMAGE_DIR, $hash));
+                            @unlink(warehouse_path(Image::THUMBNAIL_DIR, $hash));
                             $database->execute("NOTIFY shm_image_bans, '{$hash}';");
                         }
                     }

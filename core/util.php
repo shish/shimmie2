@@ -163,10 +163,13 @@ function warehouse_path(string $base, string $hash, bool $create=true): string
 {
     $ab = substr($hash, 0, 2);
     $cd = substr($hash, 2, 2);
+
+    $pa = Image::DATA_DIR.'/'.$base.'/';
+
     if (WH_SPLITS == 2) {
-        $pa = 'data/'.$base.'/'.$ab.'/'.$cd.'/'.$hash;
+        $pa .= $ab.'/'.$cd.'/'.$hash;
     } else {
-        $pa = 'data/'.$base.'/'.$ab.'/'.$hash;
+        $pa .= $ab.'/'.$hash;
     }
     if ($create && !file_exists(dirname($pa))) {
         mkdir(dirname($pa), 0755, true);

@@ -10,6 +10,10 @@
  */
 class Image
 {
+    public const DATA_DIR = "data";
+    public const IMAGE_DIR = "images";
+    public const THUMBNAIL_DIR = "thumbs";
+
     private static $tag_n = 0; // temp hack
     public static $order_sql = null; // this feels ugly
 
@@ -502,7 +506,7 @@ class Image
      */
     public function get_image_filename(): string
     {
-        return warehouse_path("images", $this->hash);
+        return warehouse_path(self::IMAGE_DIR, $this->hash);
     }
 
     /**
@@ -510,7 +514,7 @@ class Image
      */
     public function get_thumb_filename(): string
     {
-        return warehouse_path("thumbs", $this->hash);
+        return warehouse_path(self::THUMBNAIL_DIR, $this->hash);
     }
 
     /**

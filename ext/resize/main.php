@@ -79,7 +79,7 @@ class ResizeImage extends Extension
             }
             $isanigif = 0;
             if ($image_obj->ext == "gif") {
-                $image_filename = warehouse_path("images", $image_obj->hash);
+                $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 if (($fh = @fopen($image_filename, 'rb'))) {
                     //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                     while (!feof($fh) && $isanigif < 2) {
@@ -167,7 +167,7 @@ class ResizeImage extends Extension
         }
         
         $hash = $image_obj->hash;
-        $image_filename  = warehouse_path("images", $hash);
+        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
 
         $info = getimagesize($image_filename);
         if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
@@ -193,7 +193,7 @@ class ResizeImage extends Extension
         $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }

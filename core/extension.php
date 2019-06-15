@@ -182,7 +182,7 @@ abstract class DataHandlerExtension extends Extension
 
                 // even more hax..
                 $event->metadata['tags'] = $existing->get_tag_list();
-                $image = $this->create_image_from_data(warehouse_path("images", $event->metadata['hash']), $event->metadata);
+                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->metadata['hash']), $event->metadata);
 
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
@@ -192,7 +192,7 @@ abstract class DataHandlerExtension extends Extension
                 send_event($ire);
                 $event->image_id = $image_id;
             } else {
-                $image = $this->create_image_from_data(warehouse_path("images", $event->hash), $event->metadata);
+                $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
@@ -224,7 +224,7 @@ abstract class DataHandlerExtension extends Extension
             if ($event->force) {
                 $result = $this->create_thumb($event->hash, $event->type);
             } else {
-                $outname = warehouse_path("thumbs", $event->hash);
+                $outname = warehouse_path(Image::THUMBNAIL_DIR, $event->hash);
                 if (file_exists($outname)) {
                     return;
                 }

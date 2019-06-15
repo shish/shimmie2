@@ -58,8 +58,8 @@ class PixelFileHandler extends DataHandlerExtension
     {
         global $config;
 
-        $inname  = warehouse_path("images", $hash);
-        $outname = warehouse_path("thumbs", $hash);
+        $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
+        $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
         $ok = false;
 

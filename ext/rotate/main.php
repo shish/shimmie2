@@ -120,7 +120,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Image does not have a hash associated with it.");
         }
         
-        $image_filename  = warehouse_path("images", $hash);
+        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
         if (file_exists($image_filename)==false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
@@ -212,7 +212,7 @@ class RotateImage extends Extension
         $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageRotateException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }

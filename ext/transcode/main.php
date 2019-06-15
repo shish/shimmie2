@@ -308,7 +308,7 @@ class TranscodeImage extends Extension
     private function transcode_and_replace_image(Image $image_obj, String $target_format)
     {
         $target_format = $this->clean_format($target_format);
-        $original_file = warehouse_path("images", $image_obj->hash);
+        $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
         $tmp_filename = $this->transcode_image($original_file, $image_obj->ext, $target_format);
         
@@ -321,7 +321,7 @@ class TranscodeImage extends Extension
         $new_image->ext = $this->determine_ext($target_format);
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageTranscodeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }

@@ -12,7 +12,7 @@
  */
 function move_upload_to_archive(DataUploadEvent $event): void
 {
-    $target = warehouse_path("images", $event->hash);
+    $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
     if (!@copy($event->tmpname, $target)) {
         $errors = error_get_last();
         throw new UploadException(
@@ -171,8 +171,8 @@ function create_thumbnail_convert($hash, $input_type = ""): bool
 {
     global $config;
 
-    $inname  = warehouse_path("images", $hash);
-    $outname = warehouse_path("thumbs", $hash);
+    $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
+    $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
     $q = $config->get_int("thumb_quality");
     $convert = $config->get_string("thumb_convert_path");
@@ -236,8 +236,8 @@ function create_thumbnail_ffmpeg($hash): bool
         return false;
     }
 
-    $inname  = warehouse_path("images", $hash);
-    $outname = warehouse_path("thumbs", $hash);
+    $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
+    $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
     $orig_size = video_size($inname);
     $scaled_size = get_thumbnail_size($orig_size[0], $orig_size[1], true);
