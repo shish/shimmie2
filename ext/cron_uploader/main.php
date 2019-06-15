@@ -56,7 +56,7 @@ class CronUploader extends Extension
         global $config, $user;
 
         if ($event->page_matches("cron_upload")) {
-            $this->upload_key = $config->get_string("cron_uploader_key", "");
+            $this->upload_key = $config->get_string(self::CONFIG_KEY, "");
 
             // If the key is in the url, upload
             if ($this->upload_key != "" && $event->get_arg(0) == $this->upload_key) {
