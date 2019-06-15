@@ -22,8 +22,7 @@ class ExtensionInfo
     public $ext_name;
     public $name;
     public $link;
-    public $author;
-    public $email;
+    public $authors;
     public $description;
     public $documentation;
     public $version;
@@ -39,8 +38,9 @@ class ExtensionInfo
         $this->ext_name = $matches[1];
         $this->name = $this->ext_name;
         $this->enabled = $this->is_enabled($this->ext_name);
+        $this->authors = [];
 
-        for ($i=0; $i<$number_of_lines; $i++) {
+        for ($i = 0; $i < $number_of_lines; $i++) {
             $line = $lines[$i];
             if (preg_match("/Name: (.*)/", $line, $matches)) {
                 $this->name = $matches[1];
@@ -53,25 +53,31 @@ class ExtensionInfo
                 }
             } elseif (preg_match("/Version: (.*)/", $line, $matches)) {
                 $this->version = $matches[1];
-            } elseif (preg_match("/Author: (.*) [<\(](.*@.*)[>\)]/", $line, $matches)) {
-                $this->author = $matches[1];
-                $this->email = $matches[2];
-            } elseif (preg_match("/Author: (.*)/", $line, $matches)) {
-                $this->author = $matches[1];
+            } elseif (preg_match("/Authors?: (.*)/", $line, $matches)) {
+                $author_list = explode(',', $matches[1]);
+                foreach ($author_list as $author) {
+                    if (preg_match("/(.*) [<\(](.*@.*)[>\)]/", $author, $matches)) {
+                        $this->authors[] = new ExtensionAuthor($matches[1], $matches[2]);
+                    } else {
+                        $this->authors[] = new ExtensionAuthor($author, null);
+                    }
+                }
+
+
             } elseif (preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
                 $this->description = $matches[2];
-                $start = $matches[1]." ";
+                $start = $matches[1] . " ";
                 $start_len = strlen($start);
-                while (substr($lines[$i+1], 0, $start_len) == $start) {
-                    $this->description .= " ".substr($lines[$i+1], $start_len);
+                while (substr($lines[$i + 1], 0, $start_len) == $start) {
+                    $this->description .= " " . substr($lines[$i + 1], $start_len);
                     $i++;
                 }
             } elseif (preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
                 $this->documentation = $matches[2];
-                $start = $matches[1]." ";
+                $start = $matches[1] . " ";
                 $start_len = strlen($start);
-                while (substr($lines[$i+1], 0, $start_len) == $start) {
-                    $this->documentation .= " ".substr($lines[$i+1], $start_len);
+                while (substr($lines[$i + 1], 0, $start_len) == $start) {
+                    $this->documentation .= " " . substr($lines[$i + 1], $start_len);
                     $i++;
                 }
                 $this->documentation = str_replace('$site', make_http(get_base_href()), $this->documentation);
@@ -93,6 +99,18 @@ class ExtensionInfo
             return null;
         } // core
         return false; // not enabled
+    }
+}
+
+class ExtensionAuthor
+{
+    public $name;
+    public $email;
+
+    public function __construct(string $name, string $email)
+    {
+        $this->name = $name;
+        $this->email = $email;
     }
 }
 
@@ -166,7 +184,7 @@ class ExtManager extends Extension
         if ($all) {
             $exts = zglob("ext/*/main.php");
         } else {
-            $exts = zglob("ext/{".ENABLED_EXTS."}/main.php");
+            $exts = zglob("ext/{" . ENABLED_EXTS . "}/main.php");
         }
         foreach ($exts as $main) {
             $extensions[] = new ExtensionInfo($main);
@@ -200,9 +218,9 @@ class ExtManager extends Extension
     {
         file_put_contents(
             "data/config/extensions.conf.php",
-            '<'.'?php'."\n".
-            'define("EXTRA_EXTS", "'.implode(",", $extras).'");'."\n".
-            '?'.">"
+            '<' . '?php' . "\n" .
+            'define("EXTRA_EXTS", "' . implode(",", $extras) . '");' . "\n" .
+            '?' . ">"
         );
 
         // when the list of active extensions changes, we can be
