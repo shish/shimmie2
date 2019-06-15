@@ -157,13 +157,14 @@ class CronUploader extends Extension
     {
         global $config;
         // Set default values
+        $config->set_default_int('cron_uploader_count', 1);
+        $this->set_dir();
+
         $this->upload_key = $config->get_string("cron_uploader_key", "");
-        if (strlen($this->upload_key) <= 0) {
+        if (empty($this->upload_key)) {
             $this->upload_key = $this->generate_key();
 
-            $config->set_default_int('cron_uploader_count', 1);
-            $config->set_default_string('cron_uploader_key', $this->upload_key);
-            $this->set_dir();
+            $config->set_string('cron_uploader_key', $this->upload_key);
         }
     }
 
@@ -180,7 +181,7 @@ class CronUploader extends Extension
         $sb->add_int_option("cron_uploader_count", "How many to upload each time");
         $sb->add_text_option("cron_uploader_dir", "<br>Set Cron Uploader root directory<br>");
 
-        $sb->add_label("<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
+        $sb->add_label("<br>Cron Command: <input type='text' size='60' readonly='readonly' value='".html_escape($cron_cmd)."'><br>
 		Create a cron job with the command above.<br/>
 		<a href='$documentation_link'>Read the documentation</a> if you're not sure what to do.");
 
