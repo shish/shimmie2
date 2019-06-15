@@ -15,6 +15,14 @@ class CronUploader extends Extension
     // TODO: Change logging to MySQL + display log at /cron_upload
     // TODO: Move stuff to theme.php
 
+    const QUEUE_DIR = "queue";
+    const UPLOADED_DIR = "uploaded";
+    const FAILED_DIR = "failed_to_upload";
+
+    const CONFIG_KEY = "cron_uploader_key";
+    const CONFIG_COUNT = "cron_uploader_count";
+    const CONFIG_DIR = "cron_uploader_dir";
+
     /**
      * Lists all log events this session
      * @var string
@@ -78,9 +86,9 @@ class CronUploader extends Extension
         $this->set_dir(); // Determines path to cron_uploader_dir
 
 
-        $queue_dir = $this->root_dir . "/queue";
-        $uploaded_dir = $this->root_dir . "/uploaded";
-        $failed_dir = $this->root_dir . "/failed_to_upload";
+        $queue_dir = $this->root_dir . "/" . self::QUEUE_DIR;
+        $uploaded_dir = $this->root_dir . "/" . self::UPLOADED_DIR;
+        $failed_dir = $this->root_dir . "/" . self::FAILED_DIR;
 
         $queue_dirinfo = $this->scan_dir($queue_dir);
         $uploaded_dirinfo = $this->scan_dir($uploaded_dir);
@@ -157,14 +165,14 @@ class CronUploader extends Extension
     {
         global $config;
         // Set default values
-        $config->set_default_int('cron_uploader_count', 1);
+        $config->set_default_int(self::CONFIG_COUNT, 1);
         $this->set_dir();
 
-        $this->upload_key = $config->get_string("cron_uploader_key", "");
+        $this->upload_key = $config->get_string(self::CONFIG_KEY, "");
         if (empty($this->upload_key)) {
             $this->upload_key = $this->generate_key();
 
-            $config->set_string('cron_uploader_key', $this->upload_key);
+            $config->set_string(self::CONFIG_KEY, $this->upload_key);
         }
     }
 
@@ -178,10 +186,10 @@ class CronUploader extends Extension
 
         $sb = new SetupBlock("Cron Uploader");
         $sb->add_label("<b>Settings</b><br>");
-        $sb->add_int_option("cron_uploader_count", "How many to upload each time");
-        $sb->add_text_option("cron_uploader_dir", "<br>Set Cron Uploader root directory<br>");
+        $sb->add_int_option(self::CONFIG_COUNT, "How many to upload each time");
+        $sb->add_text_option(self::CONFIG_DIR, "<br>Set Cron Uploader root directory<br>");
 
-        $sb->add_label("<br>Cron Command: <input type='text' size='60' readonly='readonly' value='".html_escape($cron_cmd)."'><br>
+        $sb->add_label("<br>Cron Command: <input type='text' size='60' readonly='readonly' value='" . html_escape($cron_cmd) . "'><br>
 		Create a cron job with the command above.<br/>
 		<a href='$documentation_link'>Read the documentation</a> if you're not sure what to do.");
 
@@ -212,23 +220,23 @@ class CronUploader extends Extension
         global $config;
         // Determine directory (none = default)
 
-        $dir = $config->get_string("cron_uploader_dir", "");
+        $dir = $config->get_string(self::CONFIG_DIR, "");
 
         // Sets new default dir if not in config yet/anymore
         if ($dir == "") {
             $dir = data_path("cron_uploader");
-            $config->set_string('cron_uploader_dir', $dir);
+            $config->set_string(self::CONFIG_DIR, $dir);
         }
 
         // Make the directory if it doesn't exist yet
-        if (!is_dir($dir . "/queue/")) {
-            mkdir($dir . "/queue/", 0775, true);
+        if (!is_dir($dir . "/" . self::QUEUE_DIR . "/")) {
+            mkdir($dir . "/" . self::QUEUE_DIR . "/", 0775, true);
         }
-        if (!is_dir($dir . "/uploaded/")) {
-            mkdir($dir . "/uploaded/", 0775, true);
+        if (!is_dir($dir . "/" . self::UPLOADED_DIR . "/")) {
+            mkdir($dir . "/" . self::UPLOADED_DIR . "/", 0775, true);
         }
-        if (!is_dir($dir . "/failed_to_upload/")) {
-            mkdir($dir . "/failed_to_upload/", 0775, true);
+        if (!is_dir($dir . "/" . self::FAILED_DIR . "/")) {
+            mkdir($dir . "/" . self::FAILED_DIR . "/", 0775, true);
         }
 
         $this->root_dir = $dir;
@@ -270,7 +278,7 @@ class CronUploader extends Extension
 
         // Gets amount of imgs to upload
         if ($upload_count == 0) {
-            $upload_count = $config->get_int("cron_uploader_count", 1);
+            $upload_count = $config->get_int(self::CONFIG_COUNT, 1);
         }
 
         // Throw exception if there's nothing in the queue
@@ -286,8 +294,6 @@ class CronUploader extends Extension
         $merged = 0;
         $added = 0;
         $failed = 0;
-
-        $failedItems = [];
 
         // Upload the file(s)
         for ($i = 0; $i < $upload_count && sizeof($this->image_queue) > 0; $i++) {
@@ -308,11 +314,7 @@ class CronUploader extends Extension
                 $this->move_uploaded($img[0], $img[1], $output_subdir, true);
                 $msgNumber = $this->add_upload_info("(" . gettype($e) . ") " . $e->getMessage());
                 $msgNumber = $this->add_upload_info($e->getTraceAsString());
-                if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
-                    // Postgres invalidates the transaction if there is an SQL error,
-                    // so all subsequence transactions will fail.
-                    break;
-                }
+
                 try {
                     $database->rollback();
                 } catch (Exception $e) {
@@ -345,10 +347,10 @@ class CronUploader extends Extension
         // Determine which dir to move to
         if ($corrupt) {
             // Move to corrupt dir
-            $newDir .= "/failed_to_upload/" . $output_subdir . $relativeDir;
+            $newDir .= "/" . self::FAILED_DIR . "/" . $output_subdir . $relativeDir;
             $info = "ERROR: Image was not uploaded.";
         } else {
-            $newDir .= "/uploaded/" . $output_subdir . $relativeDir;
+            $newDir .= "/" . self::UPLOADED_DIR . "/" . $output_subdir . $relativeDir;
             $info = "Image successfully uploaded. ";
         }
         $newDir = str_replace("//", "/", $newDir . "/");
@@ -396,7 +398,7 @@ class CronUploader extends Extension
 
     private function generate_image_queue(): void
     {
-        $base = $this->root_dir . "/queue";
+        $base = $this->root_dir . "/" . self::QUEUE_DIR;
 
         if (!is_dir($base)) {
             $this->add_upload_info("Image Queue Directory could not be found at \"$base\".");
