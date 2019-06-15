@@ -62,6 +62,10 @@ class ResizeImage extends Extension
     {
         global $config, $page;
 
+        if($event->image_id==null) {
+            return;
+        }
+
         $image_obj = Image::by_id($event->image_id);
 
         if ($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif" || $image_obj->ext == "webp")) {
