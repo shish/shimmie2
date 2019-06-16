@@ -198,6 +198,10 @@ class Image
         $yays = 0;
         $nays = 0;
         foreach ($tag_conditions as $tq) {
+            if (strpos($tq->tag, "*") !== false) {
+                // can't deal with wildcards
+                return null;
+            }
             if ($tq->positive) {
                 $yays++;
                 $ret["yays"][] = $tq->tag;
@@ -354,12 +358,8 @@ class Image
                     $img_conditions[] = new ImgCondition($querylet, $positive);
                 }
             } else {
-                // if the whole match is wild, skip this;
-                // if not, translate into SQL
+                // if the whole match is wild, skip this
                 if (str_replace("*", "", $term) != "") {
-                    $term = str_replace('_', '\_', $term);
-                    $term = str_replace('%', '\%', $term);
-                    $term = str_replace('*', '%', $term);
                     $tag_conditions[] = new TagCondition($term, $positive);
                 }
             }
@@ -912,7 +912,7 @@ class Image
 					GROUP BY images.id
 				) AS images
 				WHERE 1=1
-			"), ["tag"=>$tag_conditions[0]->tag]);
+			"), ["tag"=>Tag::sqlify($tag_conditions[0]->tag)]);
         }
 
         // more than one positive tag, or more than zero negative tags
@@ -986,7 +986,7 @@ class Image
 					FROM tags
 					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 				"),
-                ["tag" => $tq->tag]
+                ["tag" => Tag::sqlify($tq->tag)]
             );
             if ($tq->positive) {
                 $positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
@@ -1062,7 +1062,7 @@ class Image
         foreach ($tag_conditions as $tq) {
             $sign = $tq->positive ? "+" : "-";
             $sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
-            $terms['tag'.Image::$tag_n] = $tq->tag;
+            $terms['tag'.Image::$tag_n] = Tag::sqlify($tq->tag);
             Image::$tag_n++;
         }
         $tag_search = new Querylet($sql, $terms);
@@ -1076,7 +1076,7 @@ class Image
 					FROM tags
 					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 				"),
-                ["tag" => $tq->tag]
+                ["tag" => Tag::sqlify($tq->tag)]
             );
             $tag_id_array = array_merge($tag_id_array, $tag_ids);
 

@@ -100,4 +100,12 @@ class Tag
 
         return $tag_array;
     }
+
+    public static function sqlify(string $term): string
+    {
+        $term = str_replace('_', '\_', $term);
+        $term = str_replace('%', '\%', $term);
+        $term = str_replace('*', '%', $term);
+        return $term;
+    }
 }
