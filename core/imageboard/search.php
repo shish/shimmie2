@@ -29,7 +29,7 @@ class Querylet
     }
 }
 
-class TagQuerylet
+class TagCondition
 {
     /** @var string  */
     public $tag;
@@ -43,7 +43,7 @@ class TagQuerylet
     }
 }
 
-class ImgQuerylet
+class ImgCondition
 {
     /** @var Querylet */
     public $qlet;
