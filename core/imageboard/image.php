@@ -125,13 +125,11 @@ class Image
             }
         }
 
-        $result = null;
-        if (SEARCH_ACCEL) {
-            $result = Image::get_accelerated_result($tags, $start, $limit);
-        }
+        list($tag_querylets, $img_querylets) = self::parse_all_terms($tags);
 
+        $result = Image::get_accelerated_result($tag_querylets, $img_querylets, $start, $limit);
         if (!$result) {
-            $querylet = Image::build_search_querylet($tags);
+            $querylet = Image::build_search_querylet($tag_querylets, $img_querylets);
             $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
             $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
             #var_dump($querylet->sql); var_dump($querylet->variables);
@@ -170,13 +168,11 @@ class Image
             }
         }
 
-        $result = null;
-        if (SEARCH_ACCEL) {
-            $result = Image::get_accelerated_result($tags, $start, $limit);
-        }
+        list($tag_querylets, $img_querylets) = self::parse_all_terms($tags);
 
+        $result = Image::get_accelerated_result($tag_querylets, $img_querylets, $start, $limit);
         if (!$result) {
-            $querylet = Image::build_search_querylet($tags);
+            $querylet = Image::build_search_querylet($tag_querylets, $img_querylets);
             $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
             $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
             #var_dump($querylet->sql); var_dump($querylet->variables);
@@ -193,7 +189,7 @@ class Image
     /*
      * Accelerator stuff
      */
-    public static function get_acceleratable(array $tags): ?array
+    public static function get_acceleratable(array $tag_querylets): ?array
     {
         $ret = [
             "yays" => [],
@@ -201,16 +197,13 @@ class Image
         ];
         $yays = 0;
         $nays = 0;
-        foreach ($tags as $tag) {
-            if (!preg_match("/^-?[a-zA-Z0-9_'-]+$/", $tag)) {
-                return null;
-            }
-            if ($tag[0] == "-") {
-                $nays++;
-                $ret["nays"][] = substr($tag, 1);
-            } else {
+        foreach ($tag_querylets as $tq) {
+            if ($tq->positive) {
                 $yays++;
-                $ret["yays"][] = $tag;
+                $ret["yays"][] = $tq->tag;
+            } else {
+                $nays++;
+                $ret["nays"][] = $tq->tag;
             }
         }
         if ($yays > 1 || $nays > 0) {
@@ -219,11 +212,15 @@ class Image
         return null;
     }
 
-    public static function get_accelerated_result(array $tags, int $offset, int $limit): ?PDOStatement
+    public static function get_accelerated_result(array $tag_querylets, array $img_querylets, int $offset, int $limit): ?PDOStatement
     {
+        if (!SEARCH_ACCEL || !empty($img_querylets)) {
+            return null;
+        }
+
         global $database;
 
-        $req = Image::get_acceleratable($tags);
+        $req = Image::get_acceleratable($tag_querylets);
         if (!$req) {
             return null;
         }
@@ -240,9 +237,13 @@ class Image
         return $result;
     }
 
-    public static function get_accelerated_count(array $tags): ?int
+    public static function get_accelerated_count(array $tag_querylets, array $img_querylets): ?int
     {
-        $req = Image::get_acceleratable($tags);
+        if (!SEARCH_ACCEL || !empty($img_querylets)) {
+            return null;
+        }
+
+        $req = Image::get_acceleratable($tag_querylets);
         if (!$req) {
             return null;
         }
@@ -295,9 +296,10 @@ class Image
                 ["tag"=>$tags[0]]
             );
         } else {
-            $total = Image::get_accelerated_count($tags);
+            list($tag_querylets, $img_querylets) = self::parse_all_terms($tags);
+            $total = Image::get_accelerated_count($tag_querylets, $img_querylets);
             if (is_null($total)) {
-                $querylet = Image::build_search_querylet($tags);
+                $querylet = Image::build_search_querylet($tag_querylets, $img_querylets);
                 $total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
             }
         }
@@ -316,6 +318,53 @@ class Image
     {
         global $config;
         return ceil(Image::count_images($tags) / $config->get_int('index_images'));
+    }
+
+    private static function parse_all_terms(array $terms): array
+    {
+        $tag_querylets = [];
+        $img_querylets = [];
+
+        /*
+         * Turn a bunch of strings into a bunch of TagQuerylet
+         * and ImgQuerylet objects
+         */
+        $stpe = new SearchTermParseEvent(null, $terms);
+        send_event($stpe);
+        if ($stpe->is_querylet_set()) {
+            foreach ($stpe->get_querylets() as $querylet) {
+                $img_querylets[] = new ImgQuerylet($querylet, true);
+            }
+        }
+
+        foreach ($terms as $term) {
+            $positive = true;
+            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
+                $positive = false;
+                $term = substr($term, 1);
+            }
+            if (strlen($term) === 0) {
+                continue;
+            }
+
+            $stpe = new SearchTermParseEvent($term, $terms);
+            send_event($stpe);
+            if ($stpe->is_querylet_set()) {
+                foreach ($stpe->get_querylets() as $querylet) {
+                    $img_querylets[] = new ImgQuerylet($querylet, $positive);
+                }
+            } else {
+                // if the whole match is wild, skip this;
+                // if not, translate into SQL
+                if (str_replace("*", "", $term) != "") {
+                    $term = str_replace('_', '\_', $term);
+                    $term = str_replace('%', '\%', $term);
+                    $term = str_replace('*', '%', $term);
+                    $tag_querylets[] = new TagQuerylet($term, $positive);
+                }
+            }
+        }
+        return [$tag_querylets, $img_querylets];
     }
 
     /*
@@ -352,7 +401,8 @@ class Image
 			');
         } else {
             $tags[] = 'id'. $gtlt . $this->id;
-            $querylet = Image::build_search_querylet($tags);
+            list($tag_querylets, $img_querylets) = self::parse_all_terms($tags);
+            $querylet = Image::build_search_querylet($tag_querylets, $img_querylets);
             $querylet->append_sql(' ORDER BY images.id '.$dir.' LIMIT 1');
             $row = $database->get_row($querylet->sql, $querylet->variables);
         }
@@ -813,57 +863,17 @@ class Image
     /**
      * #param string[] $terms
      */
-    private static function build_search_querylet(array $terms): Querylet
+    private static function build_search_querylet(array $tag_querylets, array $img_querylets): Querylet
     {
         global $database;
 
-        $tag_querylets = [];
-        $img_querylets = [];
         $positive_tag_count = 0;
         $negative_tag_count = 0;
-
-        /*
-         * Turn a bunch of strings into a bunch of TagQuerylet
-         * and ImgQuerylet objects
-         */
-        $stpe = new SearchTermParseEvent(null, $terms);
-        send_event($stpe);
-        if ($stpe->is_querylet_set()) {
-            foreach ($stpe->get_querylets() as $querylet) {
-                $img_querylets[] = new ImgQuerylet($querylet, true);
-            }
-        }
-
-        foreach ($terms as $term) {
-            $positive = true;
-            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
-                $positive = false;
-                $term = substr($term, 1);
-            }
-            if (strlen($term) === 0) {
-                continue;
-            }
-
-            $stpe = new SearchTermParseEvent($term, $terms);
-            send_event($stpe);
-            if ($stpe->is_querylet_set()) {
-                foreach ($stpe->get_querylets() as $querylet) {
-                    $img_querylets[] = new ImgQuerylet($querylet, $positive);
-                }
+        foreach ($tag_querylets as $tq) {
+            if ($tq->positive) {
+                $positive_tag_count++;
             } else {
-                // if the whole match is wild, skip this;
-                // if not, translate into SQL
-                if (str_replace("*", "", $term) != "") {
-                    $term = str_replace('_', '\_', $term);
-                    $term = str_replace('%', '\%', $term);
-                    $term = str_replace('*', '%', $term);
-                    $tag_querylets[] = new TagQuerylet($term, $positive);
-                    if ($positive) {
-                        $positive_tag_count++;
-                    } else {
-                        $negative_tag_count++;
-                    }
-                }
+                $negative_tag_count++;
             }
         }
 
