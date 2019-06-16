@@ -126,6 +126,15 @@ class ViewImage extends Extension
             $page->set_mode("redirect");
             $page->set_redirect(make_link("post/view/{$image->id}", $query));
         } elseif ($event->page_matches("post/view")) {
+            if(!is_numeric($event->get_arg(0))) {
+				// For some reason there exists some very broken mobile client
+				// who follows up every request to '/post/view/123' with
+				// '/post/view/12300000000000Image 123: tags' which spams the
+				// database log with 'integer out of range'
+                $this->theme->display_error(404, "Image not found", "Invalid image ID");
+                return;
+            }
+
             $image_id = int_escape($event->get_arg(0));
 
             $image = Image::by_id($image_id);
