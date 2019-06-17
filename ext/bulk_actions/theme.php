@@ -47,6 +47,15 @@ class BulkActionsTheme extends Themelet
         $page->add_block($block);
     }
 
+    public function render_ban_reason_input()
+    {
+        if (class_exists("ImageBan")) {
+            return "<input type='text' name='bulk_ban_reason' placeholder='Ban reason (leave blank to not ban)' />";
+        } else {
+            return "";
+        }
+    }
+
     public function render_tag_input()
     {
         return "<label><input type='checkbox' style='width:13px;' name='bulk_tags_replace' value='true'/>Replace tags</label>" .

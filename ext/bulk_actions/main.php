@@ -86,7 +86,7 @@ class BulkActions extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", "", 10);
+            $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
         }
 
         if ($user->can("bulk_edit_image_tag")) {
@@ -212,6 +212,12 @@ class BulkActions extends Extension
                     continue;
                 }
 
+                if (class_exists("ImageBan") && isset($_POST['bulk_ban_reason'])) {
+                    $reason = $_POST['bulk_ban_reason'];
+                    if ($reason) {
+                        send_event(new AddImageHashBanEvent($image->hash, $reason));
+                    }
+                }
                 send_event(new ImageDeletionEvent($image));
                 $total++;
             } catch (Exception $e) {
