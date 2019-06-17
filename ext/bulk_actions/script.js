@@ -37,7 +37,7 @@ function validate_selections(form, confirmationMessage) {
 function activate_bulk_selector () {
     set_selected_items([]);
     if(!bulk_selector_initialized) {
-        $("a.shm-thumb").each(
+        $(".shm-thumb").each(
             function (index, block) {
                 add_selector_button($(block));
             }
@@ -67,11 +67,11 @@ function get_selected_items() {
 }
 
 function set_selected_items(items) {
-    $("a.shm-thumb").removeClass('selected');
+    $(".shm-thumb").removeClass('selected');
 
     $(items).each(
         function(index,item) {
-            $('a.shm-thumb[data-post-id="' + item + '"]').addClass('selected');
+            $('.shm-thumb[data-post-id="' + item + '"]').addClass('selected');
         }
     );
 
@@ -109,7 +109,7 @@ function toggle_selection( id ) {
 
 function select_all() {
     var items = [];
-    $("a.shm-thumb").each(
+    $(".shm-thumb").each(
         function ( index, block ) {
             block = $(block);
             var id = block.data("post-id");
@@ -122,7 +122,7 @@ function select_all() {
 function select_invert() {
     var currentItems = get_selected_items();
     var items = [];
-    $("a.shm-thumb").each(
+    $(".shm-thumb").each(
         function ( index, block ) {
             block = $(block);
             var id = block.data("post-id");
@@ -141,7 +141,7 @@ function select_none() {
 function select_range(start, end) {
     var data = get_selected_items();
     var selecting = false;
-    $("a.shm-thumb").each(
+    $(".shm-thumb").each(
         function ( index, block ) {
             block = $(block);
             var id = block.data("post-id");
