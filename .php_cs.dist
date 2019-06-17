@@ -3,6 +3,7 @@
 $finder = PhpCsFixer\Finder::create()
   ->exclude('ext/amazon_s3/lib')
   ->exclude('vendor')
+  ->exclude('data')
   ->in(__DIR__)
 ;
 
