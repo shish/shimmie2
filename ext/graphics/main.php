@@ -19,7 +19,7 @@ abstract class GraphicsConfig
     const FFPROBE_PATH = "graphics_ffprobe_path";
     const CONVERT_PATH = "graphics_convert_path";
     const VERSION = "ext_graphics_version";
-    const MEM_LIMIT =  'graphics_mem_limit';
+    const MEM_LIMIT = 'graphics_mem_limit';
 
 }
 
@@ -167,40 +167,36 @@ class Graphics extends Extension
     {
         global $config;
         $config->set_default_string(GraphicsConfig::FFPROBE_PATH, 'ffprobe');
+        $config->set_default_int(GraphicsConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
+        $config->set_default_string(GraphicsConfig::FFMPEG_PATH, '');
+        $config->set_default_string(GraphicsConfig::CONVERT_PATH, '');
 
 
         if ($config->get_int(GraphicsConfig::VERSION) < 1) {
             $current_value = $config->get_string("thumb_ffmpeg_path");
-            if(!empty($current_value)) {
+            if (!empty($current_value)) {
                 $config->set_string(GraphicsConfig::FFMPEG_PATH, $current_value);
             } elseif ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
                 //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
                 if (is_executable(strtok($ffmpeg, PHP_EOL))) {
                     $config->set_default_string(GraphicsConfig::FFMPEG_PATH, 'ffmpeg');
                 }
-            } else {
-                $config->set_default_string(GraphicsConfig::FFMPEG_PATH, '');
             }
 
             $current_value = $config->get_string("thumb_convert_path");
-            if(!empty($current_value)) {
+            if (!empty($current_value)) {
                 $config->set_string(GraphicsConfig::CONVERT_PATH, $current_value);
             } elseif ($convert = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' convert')) {
                 //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
                 if (is_executable(strtok($convert, PHP_EOL))) {
                     $config->set_default_string(GraphicsConfig::CONVERT_PATH, 'convert');
                 }
-            } else {
-                $config->set_default_string(GraphicsConfig::CONVERT_PATH, '');
             }
 
             $current_value = $config->get_int("thumb_mem_limit");
-            if(!empty($current_value)) {
+            if (!empty($current_value)) {
                 $config->set_int(GraphicsConfig::MEM_LIMIT, $current_value);
             }
-
-
-
 
             $config->set_int(GraphicsConfig::VERSION, 1);
             log_info("graphics", "extension installed");
@@ -220,7 +216,7 @@ class Graphics extends Extension
 //                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
 //            }
 //        } else {
-            $sb->add_text_option(GraphicsConfig::CONVERT_PATH, "convert command: ");
+        $sb->add_text_option(GraphicsConfig::CONVERT_PATH, "convert command: ");
 //        }
 
         $sb->add_text_option(GraphicsConfig::FFMPEG_PATH, "<br/>ffmpeg command: ");
@@ -260,17 +256,17 @@ class Graphics extends Extension
             case self::IMAGICK_ENGINE:
 //                if (self::imagick_available()) {
 //                } else {
-                    self::image_resize_convert(
-                        $event->input_path,
-                        $event->input_type,
-                        $event->target_width,
-                        $event->target_height,
-                        $event->output_path,
-                        $event->target_format,
-                        $event->ignore_aspect_ratio,
-                        $event->target_quality,
-                        $event->minimize,
-                        $event->allow_upscale);
+                self::image_resize_convert(
+                    $event->input_path,
+                    $event->input_type,
+                    $event->target_width,
+                    $event->target_height,
+                    $event->output_path,
+                    $event->target_format,
+                    $event->ignore_aspect_ratio,
+                    $event->target_quality,
+                    $event->minimize,
+                    $event->allow_upscale);
                 //}
                 break;
             default:
