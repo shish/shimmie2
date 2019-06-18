@@ -9,30 +9,64 @@
  */
 
 
+abstract class ImageConfig {
+    const THUMB_ENGINE =     'thumb_engine';
+    const THUMB_WIDTH =      'thumb_width';
+    const THUMB_HEIGHT =     'thumb_height';
+    const THUMB_SCALING =    'thumb_scaling';
+    const THUMB_QUALITY =    'thumb_quality';
+    const THUMB_TYPE =       'thumb_type';
+
+    const SHOW_META =        'image_show_meta';
+    const ILINK =            'image_ilink';
+    const TLINK =            'image_tlink';
+    const TIP =              'image_tip';
+    const EXPIRES =          'image_expires';
+    const UPLOAD_COLLISION_HANDLER = 'upload_collision_handler';
+
+    const COLLISION_MERGE = 'merge';
+    const COLLISION_ERROR = 'error';
+
+}
+
 /**
  * A class to handle adding / getting / removing image files from the disk.
  */
 class ImageIO extends Extension
 {
+
+    const COLLISION_OPTIONS = ['Error'=>ImageConfig::COLLISION_ERROR, 'Merge'=>ImageConfig::COLLISION_MERGE];
+
+    const EXIF_READ_FUNCTION = "exif_read_data";
+
+
+    const THUMBNAIL_ENGINES = [
+        'Built-in GD' => Graphics::GD_ENGINE,
+        'ImageMagick' => Graphics::IMAGICK_ENGINE
+    ];
+
+    const THUMBNAIL_TYPES = [
+        'JPEG' => "jpg",
+        'WEBP (Not IE/Safari compatible)' => "webp"
+    ];
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_int('thumb_width', 192);
-        $config->set_default_int('thumb_height', 192);
-        $config->set_default_int('thumb_scaling', 100);
-        $config->set_default_int('thumb_quality', 75);
-        $config->set_default_string('thumb_type', 'jpg');
-        $config->set_default_int('thumb_mem_limit', parse_shorthand_int('8MB'));
-        $config->set_default_string('thumb_convert_path', 'convert');
+        $config->set_default_int(ImageConfig::THUMB_WIDTH, 192);
+        $config->set_default_int(ImageConfig::THUMB_HEIGHT, 192);
+        $config->set_default_int(ImageConfig::THUMB_SCALING, 100);
+        $config->set_default_int(ImageConfig::THUMB_QUALITY, 75);
+        $config->set_default_string(ImageConfig::THUMB_TYPE, 'jpg');
 
-        if (function_exists("exif_read_data")) {
-            $config->set_default_bool('image_show_meta', false);
+        if (function_exists(self::EXIF_READ_FUNCTION)) {
+            $config->set_default_bool(ImageConfig::SHOW_META, false);
         }
-        $config->set_default_string('image_ilink', '');
-        $config->set_default_string('image_tlink', '');
-        $config->set_default_string('image_tip', '$tags // $size // $filesize');
-        $config->set_default_string('upload_collision_handler', 'error');
-        $config->set_default_int('image_expires', (60*60*24*31));	// defaults to one month
+        $config->set_default_string(ImageConfig::ILINK, '');
+        $config->set_default_string(ImageConfig::TLINK, '');
+        $config->set_default_string(ImageConfig::TIP, '$tags // $size // $filesize');
+        $config->set_default_string(ImageConfig::UPLOAD_COLLISION_HANDLER, ImageConfig::COLLISION_ERROR);
+        $config->set_default_int(ImageConfig::EXPIRES, (60*60*24*31));	// defaults to one month
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -125,50 +159,36 @@ class ImageIO extends Extension
         $sb = new SetupBlock("Image Options");
         $sb->position = 30;
         // advanced only
-        //$sb->add_text_option("image_ilink", "Image link: ");
-        //$sb->add_text_option("image_tlink", "<br>Thumbnail link: ");
-        $sb->add_text_option("image_tip", "Image tooltip: ");
-        $sb->add_choice_option("upload_collision_handler", ['Error'=>'error', 'Merge'=>'merge'], "<br>Upload collision handler: ");
-        if (function_exists("exif_read_data")) {
-            $sb->add_bool_option("image_show_meta", "<br>Show metadata: ");
+        //$sb->add_text_option(ImageConfig::ILINK, "Image link: ");
+        //$sb->add_text_option(ImageConfig::TLINK, "<br>Thumbnail link: ");
+        $sb->add_text_option(ImageConfig::TIP, "Image tooltip: ");
+        $sb->add_choice_option(ImageConfig::UPLOAD_COLLISION_HANDLER, self::COLLISION_OPTIONS, "<br>Upload collision handler: ");
+        if (function_exists(self::EXIF_READ_FUNCTION)) {
+            $sb->add_bool_option(ImageConfig::SHOW_META, "<br>Show metadata: ");
         }
 
         $event->panel->add_block($sb);
 
-        $thumbers = [];
-        $thumbers['Built-in GD'] = "gd";
-        $thumbers['ImageMagick'] = "convert";
 
-        $thumb_types = [];
-        $thumb_types['JPEG'] = "jpg";
-        $thumb_types['WEBP (Not IE/Safari compatible)'] = "webp";
 
 
         $sb = new SetupBlock("Thumbnailing");
-        $sb->add_choice_option("thumb_engine", $thumbers, "Engine: ");
+        $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine: ");
         $sb->add_label("<br>");
-        $sb->add_choice_option("thumb_type", $thumb_types, "Filetype: ");
+        $sb->add_choice_option(ImageConfig::THUMB_TYPE, self::THUMBNAIL_TYPES, "Filetype: ");
 
         $sb->add_label("<br>Size ");
-        $sb->add_int_option("thumb_width");
+        $sb->add_int_option(ImageConfig::THUMB_WIDTH);
         $sb->add_label(" x ");
-        $sb->add_int_option("thumb_height");
+        $sb->add_int_option(ImageConfig::THUMB_HEIGHT);
         $sb->add_label(" px at ");
-        $sb->add_int_option("thumb_quality");
+        $sb->add_int_option(ImageConfig::THUMB_QUALITY);
         $sb->add_label(" % quality ");
 
         $sb->add_label("<br>High-DPI scaling ");
-        $sb->add_int_option("thumb_scaling");
+        $sb->add_int_option(ImageConfig::THUMB_SCALING);
         $sb->add_label("%");
 
-        if ($config->get_string("thumb_engine") == "convert") {
-            $sb->add_label("<br>ImageMagick Binary: ");
-            $sb->add_text_option("thumb_convert_path");
-        }
-
-        if ($config->get_string("thumb_engine") == "gd") {
-            $sb->add_shorthand_int_option("thumb_mem_limit", "<br>Max memory use: ");
-        }
 
         $event->panel->add_block($sb);
     }
@@ -193,8 +213,8 @@ class ImageIO extends Extension
          */
         $existing = Image::by_hash($image->hash);
         if (!is_null($existing)) {
-            $handler = $config->get_string("upload_collision_handler");
-            if ($handler == "merge" || isset($_GET['update'])) {
+            $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+            if ($handler == ImageConfig::COLLISION_MERGE || isset($_GET['update'])) {
                 $merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
                 send_event(new TagSetEvent($existing, $merged));
                 if (isset($_GET['rating']) && isset($_GET['update']) && ext_is_live("Ratings")) {
@@ -256,7 +276,7 @@ class ImageIO extends Extension
         global $page;
         if (!is_null($image)) {
             if ($type == "thumb") {
-                $ext = $config->get_string("thumb_type");
+                $ext = $config->get_string(ImageConfig::THUMB_TYPE);
                 if (array_key_exists($ext, MIME_TYPE_MAP)) {
                     $page->set_type(MIME_TYPE_MAP[$ext]);
                 } else {
@@ -289,8 +309,8 @@ class ImageIO extends Extension
 
                 $page->set_file($file);
                 
-                if ($config->get_int("image_expires")) {
-                    $expires = date(DATE_RFC1123, time() + $config->get_int("image_expires"));
+                if ($config->get_int(ImageConfig::EXPIRES)) {
+                    $expires = date(DATE_RFC1123, time() + $config->get_int(ImageConfig::EXPIRES));
                 } else {
                     $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
                 }

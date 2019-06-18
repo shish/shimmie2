@@ -52,14 +52,17 @@ class ET extends Extension
         $info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
                                to_shorthand_int(disk_total_space("./"));
         $info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
-        
-        $info['thumb_engine']	= $config->get_string("thumb_engine");
-        $info['thumb_quality']	= $config->get_int('thumb_quality');
-        $info['thumb_width']	= $config->get_int('thumb_width');
-        $info['thumb_height']	= $config->get_int('thumb_height');
-        $info['thumb_scaling']	= $config->get_int('thumb_scaling');
-        $info['thumb_type']	    = $config->get_string('thumb_type');
-        $info['thumb_mem']		= $config->get_int("thumb_mem_limit");
+
+        $info[GraphicsConfig::FFMPEG_PATH]	= $config->get_string(GraphicsConfig::FFMPEG_PATH);
+        $info[GraphicsConfig::CONVERT_PATH]	= $config->get_string(GraphicsConfig::CONVERT_PATH);
+        $info[GraphicsConfig::MEM_LIMIT]	= $config->get_int(GraphicsConfig::MEM_LIMIT);
+
+        $info[ImageConfig::THUMB_ENGINE]	= $config->get_string(ImageConfig::THUMB_ENGINE);
+        $info[ImageConfig::THUMB_QUALITY]	= $config->get_int(ImageConfig::THUMB_QUALITY);
+        $info[ImageConfig::THUMB_WIDTH]	= $config->get_int(ImageConfig::THUMB_WIDTH);
+        $info[ImageConfig::THUMB_HEIGHT]	= $config->get_int(ImageConfig::THUMB_HEIGHT);
+        $info[ImageConfig::THUMB_SCALING]	= $config->get_int(ImageConfig::THUMB_SCALING);
+        $info[ImageConfig::THUMB_TYPE]	    = $config->get_string(ImageConfig::THUMB_TYPE);
 
         $info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
         $info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");

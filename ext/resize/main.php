@@ -26,8 +26,6 @@ abstract class ResizeConfig
  */
 class ResizeImage extends Extension
 {
-    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
-
     /**
      * Needs to be after the data processing extensions
      */
@@ -40,17 +38,18 @@ class ResizeImage extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_bool('resize_enabled', true);
-        $config->set_default_bool('resize_upload', false);
-        $config->set_default_int('resize_default_width', 0);
-        $config->set_default_int('resize_default_height', 0);
+        $config->set_default_bool(ResizeConfig::ENABLED, true);
+        $config->set_default_bool(ResizeConfig::UPLOAD, false);
+        $config->set_default_string(ResizeConfig::ENGINE, Graphics::GD_ENGINE);
+        $config->set_default_int(ResizeConfig::DEFAULT_WIDTH, 0);
+        $config->set_default_int(ResizeConfig::DEFAULT_HEIGHT, 0);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool("resize_enabled")
-            && in_array($event->image->ext, self::SUPPORTED_EXT)) {
+        if ($user->is_admin() && $config->get_bool(ResizeConfig::ENABLED)
+            && $this->can_resize_format($event->image->ext)) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
         }
@@ -60,6 +59,7 @@ class ResizeImage extends Extension
     {
         $sb = new SetupBlock("Image Resize");
         $sb->start_table();
+        $sb->add_choice_option(ResizeConfig::ENGINE,  Media::IMAGE_MEDIA_ENGINES, "Engine: ", true);
         $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images: ", true);
         $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload: ", true);
         $sb->end_table();
@@ -82,15 +82,15 @@ class ResizeImage extends Extension
 
         $image_obj = Image::by_id($event->image_id);
 
-        if ($config->get_bool("resize_upload") == true
-                && in_array($event->type, self::SUPPORTED_EXT)) {
+        if ($config->get_bool(ResizeConfig::UPLOAD) == true
+                && $this->can_resize_format($event->type)) {
             $width = $height = 0;
 
-            if ($config->get_int("resize_default_width") !== 0) {
-                $height = $config->get_int("resize_default_width");
+            if ($config->get_int(ResizeConfig::DEFAULT_WIDTH) !== 0) {
+                $height = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
             }
-            if ($config->get_int("resize_default_height") !== 0) {
-                $height = $config->get_int("resize_default_height");
+            if ($config->get_int(ResizeConfig::DEFAULT_HEIGHT) !== 0) {
+                $height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
             }
             $isanigif = 0;
             if ($image_obj->ext == "gif") {
@@ -169,8 +169,16 @@ class ResizeImage extends Extension
             }
         }
     }
-    
-    
+
+    private function can_resize_format($format): bool
+    {
+        global $config;
+        $engine = $config->get_string(ResizeConfig::ENGINE);
+        return Graphics::is_input_supported($engine, $format)
+                && Graphics::is_output_supported($engine, $format);
+    }
+
+
     // Private functions
     /* ----------------------------- */
     private function resize_image(Image $image_obj, int $width, int $height)
@@ -197,7 +205,15 @@ class ResizeImage extends Extension
             throw new ImageResizeException("Unable to save temporary image file.");
         }
 
-        image_resize_gd($image_filename, $info, $new_width, $new_height, $tmp_filename);
+        send_event(new GraphicResizeEvent(
+            Graphics::GD_ENGINE,
+            $image_filename,
+            $image_obj->ext,
+            $tmp_filename,
+            $new_width,
+            $new_height,
+            true
+        ));
 
         $new_image = new Image();
         $new_image->hash = md5_file($tmp_filename);

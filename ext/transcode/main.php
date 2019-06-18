@@ -33,50 +33,6 @@ class TranscodeImage extends Extension
 {
     const ACTION_BULK_TRANSCODE = "bulk_transcode";
 
-    const CONVERSION_ENGINES = [
-        "GD" => "gd",
-        "ImageMagick" => "convert",
-    ];
-
-    const ENGINE_INPUT_SUPPORT = [
-        "gd" => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-        ],
-        "convert" => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "psd",
-            "tiff",
-            "webp",
-            "ico",
-        ]
-    ];
-
-    const ENGINE_OUTPUT_SUPPORT = [
-        "gd" => [
-            "jpg",
-            "png",
-            "webp-lossy",
-        ],
-        "convert" => [
-            "jpg",
-            "png",
-            "webp-lossy",
-            "webp-lossless",
-        ]
-    ];
-
-    const LOSSLESS_FORMATS = [
-        "webp-lossless",
-        "png",
-    ];
-
     const INPUT_FORMATS = [
         "BMP" => "bmp",
         "GIF" => "gif",
@@ -88,17 +44,12 @@ class TranscodeImage extends Extension
         "WEBP" => "webp",
     ];
 
-    const FORMAT_ALIASES = [
-        "tif" => "tiff",
-        "jpeg" => "jpg",
-    ];
-
     const OUTPUT_FORMATS = [
         "" => "",
         "JPEG (lossy)" => "jpg",
         "PNG (lossless)" => "png",
-        "WEBP (lossy)" => "webp-lossy",
-        "WEBP (lossless)" => "webp-lossless",
+        "WEBP (lossy)" => Graphics::WEBP_LOSSY,
+        "WEBP (lossless)" => Graphics::WEBP_LOSSLESS,
     ];
 
     /**
@@ -113,13 +64,13 @@ class TranscodeImage extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_bool('transcode_enabled', true);
-        $config->set_default_bool('transcode_upload', false);
-        $config->set_default_string('transcode_engine', "gd");
-        $config->set_default_int('transcode_quality', 80);
+        $config->set_default_bool(TranscodeConfig::ENABLED, true);
+        $config->set_default_bool(TranscodeConfig::UPLOAD, false);
+        $config->set_default_string(TranscodeConfig::ENGINE, Graphics::GD_ENGINE);
+        $config->set_default_int(TranscodeConfig::QUALITY, 80);
 
         foreach (array_values(self::INPUT_FORMATS) as $format) {
-            $config->set_default_string('transcode_upload_'.$format, "");
+            $config->set_default_string(TranscodeConfig::UPLOAD_PREFIX.$format, "");
         }
     }
 
@@ -127,8 +78,8 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->is_admin() && $config->get_bool("resize_enabled")) {
-            $engine = $config->get_string("transcode_engine");
+        if ($user->is_admin()) {
+            $engine = $config->get_string(TranscodeConfig::ENGINE);
             if ($this->can_convert_format($engine, $event->image->ext)) {
                 $options = $this->get_supported_output_formats($engine, $event->image->ext);
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
@@ -140,16 +91,16 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        $engine = $config->get_string("transcode_engine");
+        $engine = $config->get_string(TranscodeConfig::ENGINE);
 
 
         $sb = new SetupBlock("Image Transcode");
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE,  self::CONVERSION_ENGINES, "Engine", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE,  Graphics::IMAGE_GRAPHICS_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
-            if (in_array($format, self::ENGINE_INPUT_SUPPORT[$engine])) {
+            if (in_array($format, Graphics::ENGINE_INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
                 $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
             }
@@ -163,23 +114,23 @@ class TranscodeImage extends Extension
     {
         global $config, $page;
 
-        if ($config->get_bool("transcode_upload") == true) {
+        if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
             $ext = strtolower($event->type);
 
-            $ext = $this->clean_format($ext);
+            $ext = Graphics::normalize_format($ext);
 
-            if ($event->type=="gif"&&is_animated_gif($event->tmpname)) {
+            if ($event->type=="gif"&&Graphics::is_animated_gif($event->tmpname)) {
                 return;
             }
 
             if (in_array($ext, array_values(self::INPUT_FORMATS))) {
-                $target_format = $config->get_string("transcode_upload_".$ext);
+                $target_format = $config->get_string(TranscodeConfig::UPLOAD_PREFIX.$ext);
                 if (empty($target_format)) {
                     return;
                 }
                 try {
                     $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-                    $event->set_type($this->determine_ext($target_format));
+                    $event->set_type(Graphics::determine_ext($target_format));
                     $event->set_tmpname($new_image);
                 } catch (Exception $e) {
                     log_error("transcode", "Error while performing upload transcode: ".$e->getMessage());
@@ -227,7 +178,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        $engine = $config->get_string("transcode_engine");
+        $engine = $config->get_string(TranscodeConfig::ENGINE);
 
         if ($user->is_admin()) {
             $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null,"", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
@@ -239,7 +190,7 @@ class TranscodeImage extends Extension
         global $user, $database;
 
         switch ($event->action) {
-            case "bulk_transcode":
+            case self::ACTION_BULK_TRANSCODE:
                 if (!isset($_POST['transcode_format'])) {
                     return;
                 }
@@ -251,8 +202,9 @@ class TranscodeImage extends Extension
                             $database->beginTransaction();
 
                             $this->transcode_and_replace_image($image, $format);
-                            // If a subsequent transcode fails, the database need to have everything about the previous transcodes recorded already,
-                            // otherwise the image entries will be stuck pointing to missing image files
+                            // If a subsequent transcode fails, the database needs to have everything about the previous
+                            // transcodes recorded already, otherwise the image entries will be stuck pointing to
+                            // missing image files
                             $database->commit();
                             $total++;
                         } catch (Exception $e) {
@@ -269,54 +221,34 @@ class TranscodeImage extends Extension
         }
     }
 
-    private function clean_format($format): ?string
-    {
-        if (array_key_exists($format, self::FORMAT_ALIASES)) {
-            return self::FORMAT_ALIASES[$format];
-        }
-        return $format;
-    }
 
     private function can_convert_format($engine, $format): bool
     {
-        $format = $this->clean_format($format);
-        if (!in_array($format, self::ENGINE_INPUT_SUPPORT[$engine])) {
-            return false;
-        }
-        return true;
+        return Graphics::is_input_supported($engine, $format);
     }
+
 
     private function get_supported_output_formats($engine, ?String $omit_format = null): array
     {
-        $omit_format = $this->clean_format($omit_format);
+        $omit_format = Graphics::normalize_format($omit_format);
         $output = [];
         foreach (self::OUTPUT_FORMATS as $key=>$value) {
             if ($value=="") {
                 $output[$key] = $value;
                 continue;
             }
-            if (in_array($value, self::ENGINE_OUTPUT_SUPPORT[$engine])
-                &&(empty($omit_format)||$omit_format!=$this->determine_ext($value))) {
+            if(Graphics::is_output_supported($engine, $value)
+                &&(empty($omit_format)||$omit_format!=Graphics::determine_ext($value))) {
                 $output[$key] = $value;
             }
         }
         return $output;
     }
     
-    private function determine_ext(String $format): String
-    {
-        switch ($format) {
-            case "webp-lossless":
-            case "webp-lossy":
-                return "webp";
-            default:
-                return $format;
-        }
-    }
+
 
     private function transcode_and_replace_image(Image $image_obj, String $target_format)
     {
-        $target_format = $this->clean_format($target_format);
         $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
         $tmp_filename = $this->transcode_image($original_file, $image_obj->ext, $target_format);
@@ -327,7 +259,7 @@ class TranscodeImage extends Extension
         $new_image->filename = $image_obj->filename;
         $new_image->width = $image_obj->width;
         $new_image->height = $image_obj->height;
-        $new_image->ext = $this->determine_ext($target_format);
+        $new_image->ext = Graphics::determine_ext($target_format);
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
@@ -346,7 +278,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        if ($source_format==$this->determine_ext($target_format)) {
+        if ($source_format==Graphics::determine_ext($target_format)) {
             throw new ImageTranscodeException("Source and target formats are the same: ".$source_format);
         }
 
@@ -357,7 +289,7 @@ class TranscodeImage extends Extension
         if (!$this->can_convert_format($engine, $source_format)) {
             throw new ImageTranscodeException("Engine $engine does not support input format $source_format");
         }
-        if (!in_array($target_format, self::ENGINE_OUTPUT_SUPPORT[$engine])) {
+        if (!in_array($target_format, Graphics::ENGINE_OUTPUT_SUPPORT[$engine])) {
             throw new ImageTranscodeException("Engine $engine does not support output format $target_format");
         }
 
@@ -426,20 +358,20 @@ class TranscodeImage extends Extension
         global $config;
             
         $q = $config->get_int("transcode_quality");
-        $convert = $config->get_string("thumb_convert_path");
+        $convert = $config->get_string(GraphicsConfig::CONVERT_PATH);
 
         if ($convert==null||$convert=="") {
             throw new ImageTranscodeException("ImageMagick path not configured");
         }
-        $ext = $this->determine_ext($target_format);
+        $ext = Graphics::determine_ext($target_format);
 
         $args = " -flatten ";
         $bg = "none";
         switch ($target_format) {
-            case "webp-lossless":
+            case Graphics::WEBP_LOSSLESS:
                 $args .= '-define webp:lossless=true';
                 break;
-            case "webp-lossy":
+            case Graphics::WEBP_LOSSY:
                 $args .= '';
                 break;
             case "png":

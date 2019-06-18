@@ -463,7 +463,7 @@ class Image
      */
     public function get_image_link(): string
     {
-        return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
+        return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
     }
 
     /**
@@ -480,8 +480,8 @@ class Image
     public function get_thumb_link(): string
     {
         global $config;
-        $ext = $config->get_string("thumb_type");
-        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
+        $ext = $config->get_string(ImageConfig::THUMB_TYPE);
+        return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
     }
 
     /**
@@ -512,7 +512,7 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        $tt = $this->parse_link_template($config->get_string('image_tip'), "no_escape");
+        $tt = $this->parse_link_template($config->get_string(ImageConfig::TIP), "no_escape");
 
         // Removes the size tag if the file is an mp3
         if ($this->ext === 'mp3') {

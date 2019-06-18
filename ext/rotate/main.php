@@ -130,7 +130,7 @@ class RotateImage extends Extension
 
         $info = getimagesize($image_filename);
         
-        $memory_use =calc_memory_use($info);
+        $memory_use = Graphics::calc_memory_use($info);
         $memory_limit = get_memory_limit();
         
         if ($memory_use > $memory_limit) {

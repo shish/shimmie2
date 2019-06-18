@@ -35,10 +35,14 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function create_thumb(string $hash, string $type): bool
     {
-        if (!create_thumbnail_convert($hash)) {
+        try {
+            create_image_thumb($hash, $type, Graphics::IMAGICK_ENGINE);
+            return true;
+        } catch (GraphicsException $e) {
+            log_warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());
             copy("ext/handle_svg/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
+            return false;
         }
-        return true;
     }
 
     public function onDisplayingImage(DisplayingImageEvent $event)

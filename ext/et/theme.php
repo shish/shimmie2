@@ -35,14 +35,16 @@ Database: {$info['sys_db']}
 Server: {$info['sys_server']}
 Disk use: {$info['sys_disk']}
 
+Graphics System:
+Memory Limit: {$info[GraphicsConfig::MEM_LIMIT]}
+
 Thumbnail Generation:
-Engine: {$info['thumb_engine']}
-Type: {$info['thumb_type']}
-Memory: {$info['thumb_mem']}
-Quality: {$info['thumb_quality']}
-Width: {$info['thumb_width']}
-Height: {$info['thumb_height']}
-Scaling: {$info['thumb_scaling']}
+Engine: {$info[ImageConfig::THUMB_ENGINE]}
+Type: {$info[ImageConfig::THUMB_TYPE]}
+Quality: {$info[ImageConfig::THUMB_QUALITY]}
+Width: {$info[ImageConfig::THUMB_WIDTH]}
+Height: {$info[ImageConfig::THUMB_HEIGHT]}
+Scaling: {$info[ImageConfig::THUMB_SCALING]}
 
 Shimmie stats:
 Images: {$info['stat_images']}

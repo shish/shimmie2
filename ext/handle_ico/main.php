@@ -56,6 +56,12 @@ class IcoFileHandler extends DataHandlerExtension
 
     protected function create_thumb(string $hash, string $type): bool
     {
-        return create_thumbnail_convert($hash, $type);
+        try {
+            create_image_thumb($hash, $type, Graphics::IMAGICK_ENGINE);
+            return true;
+        } catch (GraphicsException $e) {
+            log_warning("handle_ico", "Could not generate thumbnail. " . $e->getMessage());
+            return false;
+        }
     }
 }

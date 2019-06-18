@@ -16,20 +16,21 @@
 
 class VideoFileHandler extends DataHandlerExtension
 {
+    const SUPPORTED_MIME = [
+        'video/webm',
+        'video/mp4',
+        'video/ogg',
+        'video/flv',
+        'video/x-flv'
+    ];
+    const SUPPORTED_EXT = ["flv", "mp4", "m4v", "ogv", "webm"];
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
 
         if ($config->get_int("ext_handle_video_version") < 1) {
-            if ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
-                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($ffmpeg, PHP_EOL))) {
-                    $config->set_default_string('thumb_ffmpeg_path', 'ffmpeg');
-                }
-            } else {
-                $config->set_default_string('thumb_ffmpeg_path', '');
-            }
-
+            // This used to set the ffmpeg path. It does not do this anymore, that is now in the base graphic extension.
             $config->set_int("ext_handle_video_version", 1);
             log_info("handle_video", "extension installed");
         }
@@ -41,9 +42,6 @@ class VideoFileHandler extends DataHandlerExtension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Video Options");
-        $sb->add_label("<br>Path to ffmpeg: ");
-        $sb->add_text_option("thumb_ffmpeg_path");
-        $sb->add_label("<br>");
         $sb->add_bool_option("video_playback_autoplay", "Autoplay: ");
         $sb->add_label("<br>");
         $sb->add_bool_option("video_playback_loop", "Loop: ");
@@ -55,20 +53,19 @@ class VideoFileHandler extends DataHandlerExtension
      */
     protected function create_thumb(string $hash, string $type): bool
     {
-        return create_thumbnail_ffmpeg($hash);
+        return Graphics::create_thumbnail_ffmpeg($hash);
     }
 
     protected function supported_ext(string $ext): bool
     {
-        $exts = ["flv", "mp4", "m4v", "ogv", "webm"];
-        return in_array(strtolower($ext), $exts);
+        return in_array(strtolower($ext), self::SUPPORTED_EXT);
     }
 
     protected function create_image_from_data(string $filename, array $metadata): Image
     {
         $image = new Image();
 
-        $size = video_size($filename);
+        $size = Graphics::video_size($filename);
         $image->width  = $size[0];
         $image->height = $size[1];
         
@@ -103,13 +100,7 @@ class VideoFileHandler extends DataHandlerExtension
     {
         return (
             file_exists($tmpname) &&
-            in_array(getMimeType($tmpname), [
-                'video/webm',
-                'video/mp4',
-                'video/ogg',
-                'video/flv',
-                'video/x-flv'
-            ])
+            in_array(getMimeType($tmpname), self::SUPPORTED_MIME)
         );
     }
 }

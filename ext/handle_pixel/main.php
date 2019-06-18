@@ -56,24 +56,22 @@ class PixelFileHandler extends DataHandlerExtension
 
     protected function create_thumb(string $hash, string $type): bool
     {
-        global $config;
-
-        $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
-        $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
-
-        $ok = false;
-
-        switch ($config->get_string("thumb_engine")) {
-            default:
-            case 'gd':
-                $ok = $this->make_thumb_gd($inname, $outname);
-                break;
-            case 'convert':
-                $ok = create_thumbnail_convert($hash);
-                break;
+        try {
+            create_image_thumb($hash, $type);
+            return true;
+        } catch (InsufficientMemoryException $e) {
+            $tsize = get_thumbnail_max_size_scaled();
+            $thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
+            $white = imagecolorallocate($thumb, 255, 255, 255);
+            $black = imagecolorallocate($thumb, 0, 0, 0);
+            imagefill($thumb, 0, 0, $white);
+            log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
+            imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
+            return true;
+        } catch (Exception $e) {
+            log_error("handle_pixel", "Error while creating thumbnail: ".$e->getMessage());
+            return false;
         }
-
-        return $ok;
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -90,38 +88,4 @@ class PixelFileHandler extends DataHandlerExtension
 		", 20);
     }
 
-    // GD thumber {{{
-    private function make_thumb_gd(string $inname, string $outname): bool
-    {
-        global $config;
-
-        try {
-            $info = getimagesize($inname);
-            $tsize = get_thumbnail_size($info[0], $info[1], true);
-            $image = image_resize_gd(
-                $inname,
-                $info,
-                $tsize[0],
-                $tsize[1],
-                $outname,
-                $config->get_string('thumb_type'),
-                $config->get_int('thumb_quality')
-            );
-        } catch (InsufficientMemoryException $e) {
-            $tsize = get_thumbnail_max_size_scaled();
-            $thumb = imagecreatetruecolor($tsize[0], min($tsize[1], 64));
-            $white = imagecolorallocate($thumb, 255, 255, 255);
-            $black = imagecolorallocate($thumb, 0, 0, 0);
-            imagefill($thumb, 0, 0, $white);
-            log_warning("handle_pixel", "Insufficient memory while creating thumbnail: ".$e->getMessage());
-            imagestring($thumb, 5, 10, 24, "Image Too Large :(", $black);
-            return true;
-        } catch (Exception $e) {
-            log_error("handle_pixel", "Error while creating thumbnail: ".$e->getMessage());
-            return false;
-        }
-
-        return true;
-    }
-    // }}}
 }
