@@ -31,6 +31,8 @@ class ImageRotateException extends SCoreException
  */
 class RotateImage extends Extension
 {
+    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -41,7 +43,8 @@ class RotateImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool("rotate_enabled")) {
+        if ($user->is_admin() && $config->get_bool("rotate_enabled")
+                && in_array($event->image->ext, self::SUPPORTED_EXT)) {
             /* Add a link to rotate the image */
             $event->add_part($this->theme->get_rotate_html($event->image->id));
         }

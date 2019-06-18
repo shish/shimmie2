@@ -16,6 +16,8 @@
  */
 class ResizeImage extends Extension
 {
+    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
+
     /**
      * Needs to be after the data processing extensions
      */
@@ -37,7 +39,8 @@ class ResizeImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool("resize_enabled")) {
+        if ($user->is_admin() && $config->get_bool("resize_enabled")
+            && in_array($event->image->ext, self::SUPPORTED_EXT)) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
         }
@@ -68,7 +71,8 @@ class ResizeImage extends Extension
 
         $image_obj = Image::by_id($event->image_id);
 
-        if ($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif" || $image_obj->ext == "webp")) {
+        if ($config->get_bool("resize_upload") == true
+                && in_array($event->type, self::SUPPORTED_EXT)) {
             $width = $height = 0;
 
             if ($config->get_int("resize_default_width") !== 0) {
