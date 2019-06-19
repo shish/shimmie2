@@ -21,10 +21,10 @@ class RandomList extends Extension
                 // implode(explode()) to resolve aliases and sanitise
                 $search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
                 if (empty($search)) {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("random"));
                 } else {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('random/'.$search));
                 }
                 return;

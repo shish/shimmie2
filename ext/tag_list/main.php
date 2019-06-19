@@ -75,7 +75,7 @@ class TagList extends Extension
                 $database->cache->set($cache_key, $res, 600);
             }
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/plain");
             $page->set_data(implode("\n", $res));
         }

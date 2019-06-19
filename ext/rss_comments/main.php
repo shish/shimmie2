@@ -24,7 +24,7 @@ class RSS_Comments extends Extension
     {
         global $config, $database, $page;
         if ($event->page_matches("rss/comments")) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/rss+xml");
 
             $comments = $database->get_all("

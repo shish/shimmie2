@@ -132,7 +132,7 @@ class Source_History extends Extension
 
         // check for the nothing case
         if ($revert_id < 1) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
             return;
         }
@@ -165,7 +165,7 @@ class Source_History extends Extension
         send_event(new SourceSetEvent($image, $stored_source));
         
         // all should be done now so redirect the user back to the image
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 

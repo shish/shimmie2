@@ -139,7 +139,7 @@ class Forum extends Extension
                         $redirectTo = "forum/view/".$newThreadID."/1";
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link($redirectTo));
 
                     break;
@@ -151,7 +151,7 @@ class Forum extends Extension
                         $this->delete_post($postID);
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("forum/view/".$threadID));
                     break;
                 case "nuke":
@@ -161,7 +161,7 @@ class Forum extends Extension
                         $this->delete_thread($threadID);
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("forum/index"));
                     break;
                 case "answer":
@@ -176,11 +176,11 @@ class Forum extends Extension
                         }
                         $this->save_new_post($threadID, $user);
                     }
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("forum/view/".$threadID."/".$total_pages));
                     break;
                 default:
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("forum/index"));
                     //$this->theme->display_error(400, "Invalid action", "You should check forum/index.");
                     break;

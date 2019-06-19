@@ -152,7 +152,7 @@ class XMLSitemap extends Extension
 
         // Generate new sitemap
         file_put_contents($this->sitemap_filepath, $xml);
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_type("application/xml");
         $page->set_data($xml);
     }
@@ -188,7 +188,7 @@ class XMLSitemap extends Extension
 
         $xml = file_get_contents($this->sitemap_filepath);
 
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_type("application/xml");
         $page->set_data($xml);
     }

@@ -43,7 +43,7 @@ class ImageIO extends Extension
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], 'post/view')) {
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     } else {
@@ -56,7 +56,7 @@ class ImageIO extends Extension
             if ($user->can("replace_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('upload/replace/'.$image->id));
                 } else {
                     /* Invalid image ID */
@@ -251,7 +251,7 @@ class ImageIO extends Extension
 
         global $page;
         if (!is_null($image)) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             if ($type == "thumb") {
                 $ext = $config->get_string("thumb_type");
                 if (array_key_exists($ext, MIME_TYPE_MAP)) {

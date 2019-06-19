@@ -372,7 +372,7 @@ class UserPage extends Extension
         if (!is_null($duser)) {
             $user = $duser;
             $this->set_login_cookie($duser->name, $pass);
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
 
             // Try returning to previous page
             if ($config->get_int("user_loginshowprofile", 0) == 0 &&
@@ -397,7 +397,7 @@ class UserPage extends Extension
             $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
         }
         log_info("user", "Logged out");
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
 
         // Try forwarding to same page on logout unless user comes from registration page
         if ($config->get_int("user_loginshowprofile", 0) == 0 &&
@@ -440,7 +440,7 @@ class UserPage extends Extension
                 $uce = new UserCreationEvent($_POST['name'], $_POST['pass1'], $_POST['email']);
                 send_event($uce);
                 $this->set_login_cookie($uce->username, $uce->password);
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("user"));
             } catch (UserCreationException $ex) {
                 $this->theme->display_error(400, "User Creation Error", $ex->getMessage());
@@ -532,10 +532,10 @@ class UserPage extends Extension
         global $page, $user;
 
         if ($user->id == $duser->id) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user"));
         } else {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("user/{$duser->name}"));
         }
     }
@@ -698,7 +698,7 @@ class UserPage extends Extension
                 ["id" => $_POST['id']]
             );
         
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }

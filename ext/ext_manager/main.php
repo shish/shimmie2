@@ -125,7 +125,7 @@ class ExtManager extends Extension
                     if (is_writable("data/config")) {
                         $this->set_things($_POST);
                         log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("ext_manager"));
                     } else {
                         $this->theme->display_error(

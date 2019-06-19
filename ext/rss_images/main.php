@@ -39,7 +39,7 @@ class RSS_Images extends Extension
     {
         global $page;
         global $config;
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_type("application/rss+xml");
 
         $data = "";

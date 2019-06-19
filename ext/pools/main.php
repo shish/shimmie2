@@ -130,7 +130,7 @@ class Pools extends Extension
                 case "create": // ADD _POST
                     try {
                         $newPoolID = $this->add_pool();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/".$newPoolID));
                     } catch (PoolCreationException $e) {
                         $this->theme->display_error(400, "Error", $e->error);
@@ -150,7 +150,7 @@ class Pools extends Extension
                     if (!$user->is_anonymous()) {
                         $historyID = int_escape($event->get_arg(1));
                         $this->revert_history($historyID);
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/updated"));
                     }
                     break;
@@ -159,7 +159,7 @@ class Pools extends Extension
                     if ($this->have_permission($user, $pool)) {
                         $this->theme->edit_pool($page, $this->get_pool($pool_id), $this->edit_posts($pool_id));
                     } else {
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/".$pool_id));
                     }
                     break;
@@ -169,13 +169,13 @@ class Pools extends Extension
                         if ($this->have_permission($user, $pool)) {
                             $this->theme->edit_order($page, $this->get_pool($pool_id), $this->edit_order($pool_id));
                         } else {
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("pool/view/".$pool_id));
                         }
                     } else {
                         if ($this->have_permission($user, $pool)) {
                             $this->order_posts();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("pool/view/".$pool_id));
                         } else {
                             $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -194,7 +194,7 @@ class Pools extends Extension
                 case "add_posts":
                     if ($this->have_permission($user, $pool)) {
                         $this->add_posts();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/".$pool_id));
                     } else {
                         $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -204,7 +204,7 @@ class Pools extends Extension
                 case "remove_posts":
                     if ($this->have_permission($user, $pool)) {
                         $this->remove_posts();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/".$pool_id));
                     } else {
                         $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -215,7 +215,7 @@ class Pools extends Extension
                 case "edit_description":
                     if ($this->have_permission($user, $pool)) {
                         $this->edit_description();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/view/".$pool_id));
                     } else {
                         $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -228,7 +228,7 @@ class Pools extends Extension
                     //  -> Only admins and owners may do this
                     if ($user->is_admin() || $user->id == $pool['user_id']) {
                         $this->nuke_pool($pool_id);
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/list"));
                     } else {
                         $this->theme->display_error(403, "Permission Denied", "You do not have permission to access this page");
@@ -236,7 +236,7 @@ class Pools extends Extension
                     break;
 
                 default:
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("pool/list"));
                     break;
             }

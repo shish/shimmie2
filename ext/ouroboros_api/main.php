@@ -404,7 +404,7 @@ class OuroborosAPI extends Extension
             } elseif ($this->type == 'xml') {
                 $page->set_type('text/xml; charset=utf-8');
             }
-            $page->set_mode('data');
+            $page->set_mode(PageMode::DATA);
             $this->tryAuth();
 
             if ($event->page_matches('post')) {
@@ -464,7 +464,7 @@ class OuroborosAPI extends Extension
                 }
             }
         } elseif ($event->page_matches('post/show')) {
-            $page->set_mode('redirect');
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link(str_replace('post/show', 'post/view', implode('/', $event->args))));
             $page->display();
             die();

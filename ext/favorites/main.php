@@ -81,7 +81,7 @@ class Favorites extends Extension
                     log_debug("favourite", "Favourite removed for $image_id", "Favourite removed");
                 }
             }
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id"));
         }
     }

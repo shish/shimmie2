@@ -57,7 +57,7 @@ class SVGFileHandler extends DataHandlerExtension
             $hash = $image->hash;
 
             $page->set_type("image/svg+xml");
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
 
             $sanitizer = new Sanitizer();
             $sanitizer->removeRemoteReferences(true);

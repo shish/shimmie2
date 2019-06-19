@@ -203,7 +203,7 @@ class Setup extends Extension
         global $config, $page, $user;
 
         if ($event->page_matches("nicetest")) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_data("ok");
         }
 
@@ -216,7 +216,7 @@ class Setup extends Extension
                     $config->save();
                     flash_message("Config saved");
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("setup"));
                 } elseif ($event->get_arg(0) == "advanced") {
                     $this->theme->display_advanced($page, $config->values);

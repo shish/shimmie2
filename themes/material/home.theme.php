@@ -4,7 +4,7 @@ class CustomHomeTheme extends HomeTheme
 {
     public function display_page(Page $page, $sitename, $base_href, $theme_name, $body)
     {
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->add_auto_html_headers();
         $hh = $page->get_all_html_headers();
         $page->set_data(

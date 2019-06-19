@@ -14,7 +14,7 @@ class HandleStatic extends Extension
     {
         global $config, $page;
         // hax.
-        if ($page->mode == "page" && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
+        if ($page->mode == PageMode::PAGE && (!isset($page->blocks) || $this->count_main($page->blocks) == 0)) {
             $h_pagename = html_escape(implode('/', $event->args));
             $f_pagename = preg_replace("/[^a-z_\-\.]+/", "_", $h_pagename);
             $theme_name = $config->get_string("theme", "default");
@@ -27,7 +27,7 @@ class HandleStatic extends Extension
 
                 $page->add_http_header("Cache-control: public, max-age=600");
                 $page->add_http_header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
-                $page->set_mode("data");
+                $page->set_mode(PageMode::DATA);
                 $page->set_data(file_get_contents($filename));
                 if (endsWith($filename, ".ico")) {
                     $page->set_type("image/x-icon");

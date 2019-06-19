@@ -40,7 +40,7 @@ class RandomImage extends Extension
 
             if ($action === "download") {
                 if (!is_null($image)) {
-                    $page->set_mode("data");
+                    $page->set_mode(PageMode::DATA);
                     $page->set_type($image->get_mime_type());
                     $page->set_data(file_get_contents($image->get_image_filename()));
                 }
@@ -50,7 +50,7 @@ class RandomImage extends Extension
                 }
             } elseif ($action === "widget") {
                 if (!is_null($image)) {
-                    $page->set_mode("data");
+                    $page->set_mode(PageMode::DATA);
                     $page->set_type("text/html");
                     $page->set_data($this->theme->build_thumb_html($image));
                 }

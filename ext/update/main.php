@@ -38,7 +38,7 @@ class Update extends Extension
             if ($event->page_matches("update/download")) {
                 $ok = $this->download_shimmie();
 
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 if ($ok) {
                     $page->set_redirect(make_link("update/update", "sha=".$_GET['sha']));
                 } else {
@@ -47,7 +47,7 @@ class Update extends Extension
             } elseif ($event->page_matches("update/update")) {
                 $ok = $this->update_shimmie();
 
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 if ($ok) {
                     $page->set_redirect(make_link("admin"));
                 } //TODO: Show success?

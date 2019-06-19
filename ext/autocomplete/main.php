@@ -21,7 +21,7 @@ class AutoComplete extends Extension
                 return;
             }
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/json");
 
             $s = strtolower($_GET["s"]);

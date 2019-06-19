@@ -26,6 +26,11 @@
  * Various other common functions are available as part of the Themelet class.
  */
 
+abstract class PageMode {
+    const REDIRECT = 'redirect';
+    const DATA = 'data';
+    const PAGE = 'page';
+}
 
 /**
  * Class Page
@@ -40,7 +45,7 @@ class Page
     /** @name Overall */
     //@{
     /** @var string */
-    public $mode = "page";
+    public $mode = PageMode::PAGE;
     /** @var string */
     public $type = "text/html; charset=utf-8";
 
@@ -261,7 +266,7 @@ class Page
         }
 
         switch ($this->mode) {
-            case "page":
+            case PageMode::PAGE:
                 if (CACHE_HTTP) {
                     header("Vary: Cookie, Accept-Encoding");
                     if ($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
@@ -285,14 +290,14 @@ class Page
                 $layout = new Layout();
                 $layout->display_page($page);
                 break;
-            case "data":
+            case PageMode::DATA:
                 header("Content-Length: ".strlen($this->data));
                 if (!is_null($this->filename)) {
                     header('Content-Disposition: attachment; filename='.$this->filename);
                 }
                 print $this->data;
                 break;
-            case "redirect":
+            case PageMode::REDIRECT:
                 header('Location: '.$this->redirect);
                 print 'You should be redirected to <a href="'.$this->redirect.'">'.$this->redirect.'</a>';
                 break;

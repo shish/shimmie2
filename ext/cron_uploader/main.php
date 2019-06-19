@@ -456,7 +456,7 @@ class CronUploader extends Extension
         global $page;
 
         // Display message
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_type("text/plain");
         $page->set_data($this->upload_info);
 

@@ -96,7 +96,7 @@ class RotateImage extends Extension
                         
                         //$this->theme->display_rotate_page($page, $image_id);
                         
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageRotateException $e) {
                         $this->theme->display_rotate_error($page, "Error Rotating", $e->error);

@@ -43,7 +43,7 @@ class RegenThumb extends Extension
                 $this->regenerate_thumbnail($image);
             }
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }

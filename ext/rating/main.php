@@ -91,7 +91,7 @@ class Ratings extends Extension
         $user_view_level = Ratings::get_user_privs($user);
         $user_view_level = preg_split('//', $user_view_level, -1);
         if (!in_array($event->image->rating, $user_view_level)) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }
@@ -228,7 +228,7 @@ class Ratings extends Extension
                 #		select image_id from image_tags join tags
                 #		on image_tags.tag_id = tags.id where tags.tag = ?);
                 #	", array($_POST["rating"], $_POST["tag"]));
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/list"));
             }
         }

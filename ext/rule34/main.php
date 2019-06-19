@@ -90,14 +90,14 @@ class Rule34 extends Extension
                     'UPDATE users SET comic_admin=? WHERE id=?',
                     [$input['is_admin'] ? 't' : 'f', $input['user_id']]
                 );
-                $page->set_mode('redirect');
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(@$_SERVER['HTTP_REFERER']);
             }
         }
 
         if ($event->page_matches("tnc_agreed")) {
             setcookie("ui-tnc-agreed", "true", 0, "/");
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(@$_SERVER['HTTP_REFERER'] ?? "/");
         }
 
@@ -123,7 +123,7 @@ class Rule34 extends Extension
                     }
                 }
 
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
             }
         }

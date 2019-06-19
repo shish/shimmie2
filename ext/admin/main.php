@@ -70,7 +70,7 @@ class AdminPage extends Extension
                     }
 
                     if ($aae->redirect) {
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("admin"));
                     }
                 }
@@ -149,7 +149,7 @@ class AdminPage extends Extension
             send_event(new ImageDeletionEvent($image));
         }
 
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link("post/list"));
         return false;
     }
@@ -218,7 +218,7 @@ class AdminPage extends Extension
         //FIXME: .SQL dump is empty if cmd doesn't exist
 
         if ($cmd) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/x-unknown");
             $page->set_filename('shimmie-'.date('Ymd').'.sql');
             $page->set_data(shell_exec($cmd));
@@ -243,7 +243,7 @@ class AdminPage extends Extension
             $zip->close();
         }
 
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link($filename)); //TODO: Delete file after downloaded?
 
         return false;  // we do want a redirect, but a manual one

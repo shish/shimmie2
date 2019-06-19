@@ -53,7 +53,7 @@ class ShimmieApi extends Extension
         global $page, $user;
 
         if ($event->page_matches("api/shimmie")) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/plain");
 
             if ($event->page_matches("api/shimmie/get_tags")) {
@@ -100,7 +100,7 @@ class ShimmieApi extends Extension
                 $all = $this->api_get_user($type, $query);
                 $page->set_data(json_encode($all));
             } else {
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("ext_doc/shimmie_api"));
             }
         }

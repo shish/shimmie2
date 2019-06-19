@@ -199,7 +199,7 @@ class TranscodeImage extends Extension
                 if (isset($_POST['transcode_format'])) {
                     try {
                         $this->transcode_and_replace_image($image_obj, $_POST['transcode_format']);
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageTranscodeException $e) {
                         $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
