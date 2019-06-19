@@ -64,10 +64,10 @@ class CronUploader extends Extension
                 $this->set_dir();
 
                 $lockfile = fopen($this->root_dir . "/.lock", "w");
+                if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
+                    throw new Exception("Cron upload process is already running");
+                }
                 try {
-                    if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
-                        throw new Exception("Cron upload process is already running");
-                    }
                     $this->process_upload(); // Start upload
                 } finally {
                     flock($lockfile, LOCK_UN);
@@ -301,6 +301,7 @@ class CronUploader extends Extension
 
             try {
                 $database->beginTransaction();
+                $this->add_upload_info("Adding file: {$img[1]} - tags: {$img[2]}");
                 $result = $this->add_image($img[0], $img[1], $img[2]);
                 $database->commit();
                 $this->move_uploaded($img[0], $img[1], $output_subdir, false);
@@ -378,7 +379,7 @@ class CronUploader extends Extension
         if (array_key_exists('extension', $pathinfo)) {
             $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = Tag::explode($tags);
+        $metadata ['tags'] = Tag::explode($tags); // doesn't work when not logged in here, handled below
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -393,6 +394,13 @@ class CronUploader extends Extension
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
+
+        // Set tags
+        $img = Image::by_id($event->image_id);
+        if(count($img->get_tag_array())==0) {
+            $img->set_tags(Tag::explode($tags));
+        }
+
         return $event->image_id;
     }
 
