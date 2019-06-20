@@ -88,7 +88,7 @@ class ImageIO extends Extension
     public function onImageAddition(ImageAdditionEvent $event)
     {
         try {
-            $this->add_image($event->image);
+            $this->add_image($event);
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
         }
@@ -175,9 +175,11 @@ class ImageIO extends Extension
 
 
     // add image {{{
-    private function add_image(Image $image)
+    private function add_image(ImageAdditionEvent $event)
     {
         global $user, $database, $config;
+
+        $image = $event->image;
 
         /*
          * Validate things
@@ -201,7 +203,9 @@ class ImageIO extends Extension
                 if (isset($_GET['source']) && isset($_GET['update'])) {
                     send_event(new SourceSetEvent($existing, $_GET['source']));
                 }
-                return null;
+                $event->merged = true;
+                $event->image = Image::by_id($existing->id);
+                return;
             } else {
                 $error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
                         "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);

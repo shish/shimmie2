@@ -29,6 +29,7 @@ class SVGFileHandler extends DataHandlerExtension
             $iae = new ImageAdditionEvent($image);
             send_event($iae);
             $event->image_id = $iae->image->id;
+            $event->merged = $iae->merged;
         }
     }
 
