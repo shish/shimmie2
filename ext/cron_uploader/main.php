@@ -305,7 +305,7 @@ class CronUploader extends Extension
                 $result = $this->add_image($img[0], $img[1], $img[2]);
                 $database->commit();
                 $this->move_uploaded($img[0], $img[1], $output_subdir, false);
-                if ($result == null) {
+                if ($result->merged) {
                     $merged++;
                 } else {
                     $added++;
@@ -369,9 +369,14 @@ class CronUploader extends Extension
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
      */
-    private function add_image(string $tmpname, string $filename, string $tags)
+    private function add_image(string $tmpname, string $filename, string $tags): DataUploadEvent
     {
         assert(file_exists($tmpname));
+
+        $tagArray = Tag::explode($tags);
+        if(count($tagArray)==0) {
+            $tagArray[] = "tagme";
+        }
 
         $pathinfo = pathinfo($filename);
         $metadata = [];
@@ -379,7 +384,7 @@ class CronUploader extends Extension
         if (array_key_exists('extension', $pathinfo)) {
             $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = Tag::explode($tags); // doesn't work when not logged in here, handled below
+        $metadata ['tags'] = $tagArray; // doesn't work when not logged in here, handled below
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
@@ -397,11 +402,9 @@ class CronUploader extends Extension
 
         // Set tags
         $img = Image::by_id($event->image_id);
-        if(count($img->get_tag_array())==0) {
-            $img->set_tags(Tag::explode($tags));
-        }
+        $img->set_tags(array_merge($tagArray, $img->get_tag_array()));
 
-        return $event->image_id;
+        return $event;
     }
 
     private function generate_image_queue(): void
