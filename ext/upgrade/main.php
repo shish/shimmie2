@@ -129,6 +129,20 @@ class Upgrade extends Extension
             log_info("upgrade", "Database at version 14");
             $config->set_bool("in_upgrade", false);
         }
+
+        if ($config->get_int("db_version") < 15) {
+            $config->set_bool("in_upgrade", true);
+            $config->set_int("db_version", 15);
+
+            log_info("upgrade", "Adding lower indexes for postgresql use");
+            if ($database->get_driver_name() == Database::PGSQL_DRIVER) {
+                $database->execute('CREATE INDEX tags_lower_tag_idx ON tags ((lower(tag)))');
+                $database->execute('CREATE INDEX users_lower_name_idx ON users ((lower(name)))');
+            }
+
+            log_info("upgrade", "Database at version 15");
+            $config->set_bool("in_upgrade", false);
+        }
     }
 
     public function get_priority(): int
