@@ -170,7 +170,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->is_admin()) {
-            $event->add_action("bulk_rate", "Set Rating", "", $this->theme->get_selection_rater_html("bulk_rating"));
+            $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("u","bulk_rating"));
         }
     }
 
@@ -191,7 +191,7 @@ class Ratings extends Extension
                         if ($image==null) {
                             continue;
                         }
-        
+
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }
