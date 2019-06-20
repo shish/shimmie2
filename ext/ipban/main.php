@@ -235,7 +235,7 @@ class IPBan extends Extension
     {
         global $config, $database;
 
-        $prefix = ($database->get_driver_name() == Database::SQLITE_DRIVER ? "bans." : "");
+        $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
 
         $bans = $this->get_active_bans();
 

@@ -68,7 +68,7 @@ class LogDatabase extends Extension
                     $args["module"] = $_GET["module"];
                 }
                 if (!empty($_GET["user"])) {
-                    if ($database->get_driver_name() == Database::PGSQL_DRIVER) {
+                    if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                         if (preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
                             $wheres[] = "(username = :user1 OR text(address) = :user2)";
                             $args["user1"] = $_GET["user"];

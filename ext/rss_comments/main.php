@@ -9,7 +9,7 @@
 
 class RSS_Comments extends Extension
 {
-    protected $db_support = [Database::MYSQL_DRIVER, Database::SQLITE_DRIVER];  // pgsql has no UNIX_TIMESTAMP
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // pgsql has no UNIX_TIMESTAMP
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {

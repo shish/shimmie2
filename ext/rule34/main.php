@@ -19,7 +19,7 @@ if ( // kill these glitched requests immediately
 
 class Rule34 extends Extension
 {
-    protected $db_support = [Database::PGSQL_DRIVER];  # Only PG has the NOTIFY pubsub system
+    protected $db_support = [DatabaseDriver::PGSQL];  # Only PG has the NOTIFY pubsub system
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {

@@ -69,7 +69,7 @@ class User
         global $config, $database;
         $row = $database->cache->get("user-session:$name-$session");
         if (!$row) {
-            if ($database->get_driver_name() === Database::MYSQL_DRIVER) {
+            if ($database->get_driver_name() === DatabaseDriver::MYSQL) {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
             } else {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";

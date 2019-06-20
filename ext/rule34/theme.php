@@ -19,7 +19,7 @@ class Rule34Theme extends Themelet
     {
         global $database, $user;
         $h_bans = "";
-        $prefix = ($database->get_driver_name() == Database::SQLITE_DRIVER ? "bans." : "");
+        $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
         foreach ($bans as $ban) {
             $h_bans .= "
 				<tr>

@@ -157,7 +157,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
 
         global $database;
         $db = $database->get_driver_name();
-        if ($db == Database::PGSQL_DRIVER || $db == Database::SQLITE_DRIVER) {
+        if ($db == DatabaseDriver::PGSQL || $db == DatabaseDriver::SQLITE) {
             $this->markTestIncomplete();
         }
 
