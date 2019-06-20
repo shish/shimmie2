@@ -283,9 +283,9 @@ function path_to_tags(string $path): string
     $matches = [];
 	$tags = [];
     if(preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
-        $tags = explode($matches[1]," ");
+        $tags = explode(" ",$matches[1]);
 	}
-	
+
 	$path = dirname($path);
     $path = str_replace(";", ":", $path);
 	$path = str_replace("__", " ", $path);
@@ -310,7 +310,7 @@ function path_to_tags(string $path): string
                     // So we attach the inherited category to the tag.
                     $tag = $category.$tag;
                 }
-                array_push($tags, $tag);
+                $tags[] = $tag;
             }
         }
         // Category inheritance only works on the immediate subfolder, 
@@ -318,6 +318,7 @@ function path_to_tags(string $path): string
         // it back to an empty string after that iteration
         $category = $category_to_inherit;
     }
+
     return implode(" ",$tags);
 }
 
