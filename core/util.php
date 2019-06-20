@@ -282,7 +282,7 @@ function path_to_tags(string $path): string
 {
     $matches = [];
 	$tags = [];
-    if(preg_match("/\d+ - (.*)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
+    if(preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
         $tags = explode($matches[1]," ");
 	}
 	
