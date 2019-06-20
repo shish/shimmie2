@@ -213,7 +213,7 @@ class Wiki extends Extension
         return false;
     }
 
-    private function get_page(string $title, int $revision=-1): WikiPage
+    private function get_page(string $title): WikiPage
     {
         global $database;
         // first try and get the actual page
@@ -222,17 +222,21 @@ class Wiki extends Extension
 				SELECT *
 				FROM wiki_pages
 				WHERE SCORE_STRNORM(title) LIKE SCORE_STRNORM(:title)
-				ORDER BY revision DESC"),
+				ORDER BY revision DESC
+				LIMIT 1
+			"),
             ["title"=>$title]
         );
 
         // fall back to wiki:default
         if (empty($row)) {
             $row = $database->get_row("
-					SELECT *
-					FROM wiki_pages
-					WHERE title LIKE :title
-					ORDER BY revision DESC", ["title"=>"wiki:default"]);
+				SELECT *
+				FROM wiki_pages
+				WHERE title LIKE :title
+				ORDER BY revision DESC
+				LIMIT 1
+			", ["title"=>"wiki:default"]);
 
             // fall further back to manual
             if (empty($row)) {
