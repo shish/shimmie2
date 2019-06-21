@@ -125,7 +125,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     }
 
 
-    if($use_dpi_scaling) {
+    if ($use_dpi_scaling) {
         $max_size = get_thumbnail_max_size_scaled();
         $max_width  = $max_size[0];
         $max_height = $max_size[1];
@@ -201,15 +201,15 @@ function create_thumbnail_convert($hash, $input_type = ""): bool
     if ($type=="webp") {
         $bg = "none";
     }
-    if(!empty($input_type)) {
+    if (!empty($input_type)) {
         $input_type = $input_type.":";
     }
     $format = '"%s" -flatten -strip -thumbnail %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
-    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg,$input_type, $inname, $type, $outname);
+    $cmd = sprintf($format, $convert, $w, $h, $options, $q, $bg, $input_type, $inname, $type, $outname);
     $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
     exec($cmd, $output, $ret);
     if ($ret!=0) {
-        log_warning('imageboard/misc', "Generating thumbnail with command `$cmd`, returns $ret, outputting ".implode("\r\n",$output));
+        log_warning('imageboard/misc', "Generating thumbnail with command `$cmd`, returns $ret, outputting ".implode("\r\n", $output));
     } else {
         log_debug('imageboard/misc', "Generating thumbnail with command `$cmd`, returns $ret");
     }
@@ -489,7 +489,8 @@ function image_resize_gd(
  * @param String $image_filename The path of the file to check.
  * @return bool true if the file is an animated gif, false if it is not.
  */
-function is_animated_gif(String $image_filename) {
+function is_animated_gif(String $image_filename)
+{
     $is_anim_gif = 0;
     if (($fh = @fopen($image_filename, 'rb'))) {
         //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)

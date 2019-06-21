@@ -62,8 +62,6 @@ class ExtensionInfo
                         $this->authors[] = new ExtensionAuthor($author, null);
                     }
                 }
-
-
             } elseif (preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
                 $this->description = $matches[2];
                 $start = $matches[1] . " ";

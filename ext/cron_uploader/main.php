@@ -333,7 +333,6 @@ class CronUploader extends Extension
         $this->handle_log();
 
         return true;
-
     }
 
     private function move_uploaded($path, $filename, $output_subdir, $corrupt = false)
@@ -374,7 +373,7 @@ class CronUploader extends Extension
         assert(file_exists($tmpname));
 
         $tagArray = Tag::explode($tags);
-        if(count($tagArray)==0) {
+        if (count($tagArray)==0) {
             $tagArray[] = "tagme";
         }
 

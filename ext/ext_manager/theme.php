@@ -129,7 +129,6 @@ class ExtManagerTheme extends Themelet
                     $author .= html_escape($auth->name);
                 }
             }
-
         }
 
         $version = ($info->version) ? "<br><b>Version:</b> " . html_escape($info->version) : "";

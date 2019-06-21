@@ -26,7 +26,8 @@
  * Various other common functions are available as part of the Themelet class.
  */
 
-abstract class PageMode {
+abstract class PageMode
+{
     const REDIRECT = 'redirect';
     const DATA = 'data';
     const PAGE = 'page';
