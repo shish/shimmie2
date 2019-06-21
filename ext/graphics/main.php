@@ -11,8 +11,6 @@
 * This is used by the graphics code when there is an error
 */
 
-use FFMpeg\FFMpeg;
-
 abstract class GraphicsConfig
 {
     const FFMPEG_PATH = "graphics_ffmpeg_path";
@@ -169,7 +167,7 @@ class Graphics extends Extension
         $config->set_default_string(GraphicsConfig::FFPROBE_PATH, 'ffprobe');
         $config->set_default_int(GraphicsConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
         $config->set_default_string(GraphicsConfig::FFMPEG_PATH, '');
-        $config->set_default_string(GraphicsConfig::CONVERT_PATH, '');
+        $config->set_default_string(GraphicsConfig::CONVERT_PATH, 'convert');
 
 
         if ($config->get_int(GraphicsConfig::VERSION) < 1) {
