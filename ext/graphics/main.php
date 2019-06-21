@@ -37,15 +37,15 @@ abstract class GraphicsEngine {
             "jpg",
             "png",
             "webp",
-            self::WEBP_LOSSY,
+            Graphics::WEBP_LOSSY,
         ],
         GraphicsEngine::IMAGICK => [
             "gif",
             "jpg",
             "png",
             "webp",
-            self::WEBP_LOSSY,
-            self::WEBP_LOSSLESS,
+            Graphics::WEBP_LOSSY,
+            Graphics::WEBP_LOSSLESS,
         ],
         GraphicsEngine::FFMPEG => [
 
