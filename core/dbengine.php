@@ -74,7 +74,7 @@ class PostgreSQL extends DBEngine
         } else {
             $db->exec("SET application_name TO 'shimmie [local]';");
         }
-        $db->exec("SET statement_timeout TO 10000;");
+        $db->exec("SET statement_timeout TO ".DATABASE_TIMEOUT.";");
     }
 
     public function scoreql_to_sql(string $data): string

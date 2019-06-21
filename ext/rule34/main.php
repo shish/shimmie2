@@ -73,7 +73,7 @@ class Rule34 extends Extension
         global $database, $page, $user;
 
         if ($user->can("delete_user")) {  // deleting users can take a while
-            $database->execute("SET statement_timeout TO 25000;");
+            $database->execute("SET statement_timeout TO ".(DATABASE_TIMEOUT+15000).";");
         }
 
         if (function_exists("sd_notify_watchdog")) {
