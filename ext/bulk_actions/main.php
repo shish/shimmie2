@@ -14,6 +14,8 @@ class BulkActionBlockBuildingEvent extends Event
     /** @var array  */
     public $actions = [];
 
+    public $search_terms = [];
+
     public function add_action(String $action, string $button_text, String $confirmation_message = "", String $block = "", int $position = 40)
     {
         if ($block == null) {
@@ -58,6 +60,8 @@ class BulkActions extends Extension
 
         if ($user->is_logged_in()) {
             $babbe = new BulkActionBlockBuildingEvent();
+            $babbe->search_terms = $event->search_terms;
+
             send_event($babbe);
 
             if (sizeof($babbe->actions) == 0) {
