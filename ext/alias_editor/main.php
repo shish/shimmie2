@@ -41,7 +41,7 @@ class AliasEditor extends Extension
                         try {
                             $aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
                             send_event($aae);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("alias/list"));
                         } catch (AddAliasException $ex) {
                             $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
@@ -54,7 +54,7 @@ class AliasEditor extends Extension
                         $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $_POST['oldtag']]);
                         log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], "Deleted alias");
 
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
                     }
                 }
@@ -80,7 +80,7 @@ class AliasEditor extends Extension
 
                 $this->theme->display_aliases($alias, $page_number + 1, $total_pages);
             } elseif ($event->get_arg(0) == "export") {
-                $page->set_mode("data");
+                $page->set_mode(PageMode::DATA);
                 $page->set_type("text/csv");
                 $page->set_filename("aliases.csv");
                 $page->set_data($this->get_alias_csv($database));
@@ -91,7 +91,7 @@ class AliasEditor extends Extension
                         $contents = file_get_contents($tmp);
                         $this->add_alias_csv($database, $contents);
                         log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
                     } else {
                         $this->theme->display_error(400, "No File Specified", "You have to upload a file");

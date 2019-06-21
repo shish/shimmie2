@@ -239,10 +239,10 @@ class Index extends Extension
                 // implode(explode()) to resolve aliases and sanitise
                 $search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
                 if (empty($search)) {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/list/1"));
                 } else {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('post/list/'.$search.'/1'));
                 }
                 return;
@@ -278,7 +278,7 @@ class Index extends Extension
                 $this->theme->display_intro($page);
                 send_event(new PostListBuildingEvent($search_terms));
             } elseif ($count_search_terms > 0 && $count_images === 1 && $page_number === 1) {
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link('post/view/'.$images[0]->id));
             } else {
                 $plbe = new PostListBuildingEvent($search_terms);

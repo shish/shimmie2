@@ -27,7 +27,6 @@ class DataUploadEvent extends Event
     public $merged = false;
 
 
-
     /**
      * Some data is being uploaded.
      * This should be caught by a file handler.
@@ -49,10 +48,10 @@ class DataUploadEvent extends Event
         if ($config->get_bool("upload_use_mime")) {
             $this->set_type(get_extension_from_mime($tmpname));
         } else {
-            if (array_key_exists('extension', $metadata)&&!empty($metadata['extension'])) {
+            if (array_key_exists('extension', $metadata) && !empty($metadata['extension'])) {
                 $this->type = strtolower($metadata['extension']);
             } else {
-                throw new UploadException("Could not determine extension for file ".$metadata["filename"]);
+                throw new UploadException("Could not determine extension for file " . $metadata["filename"]);
             }
         }
     }
@@ -130,9 +129,9 @@ class Upload extends Extension
         $sb->position = 10;
         // Output the limits from PHP so the user has an idea of what they can set.
         $sb->add_int_option("upload_count", "Max uploads: ");
-        $sb->add_label("<i>PHP Limit = ".ini_get('max_file_uploads')."</i>");
+        $sb->add_label("<i>PHP Limit = " . ini_get('max_file_uploads') . "</i>");
         $sb->add_shorthand_int_option("upload_size", "<br/>Max size per file: ");
-        $sb->add_label("<i>PHP Limit = ".ini_get('upload_max_filesize')."</i>");
+        $sb->add_label("<i>PHP Limit = " . ini_get('upload_max_filesize') . "</i>");
         $sb->add_choice_option("transload_engine", $tes, "<br/>Transload: ");
         $sb->add_bool_option("upload_tlsource", "<br/>Use transloaded URL as source if none is provided: ");
         $sb->add_bool_option("upload_use_mime", "<br/>Use mime type to determine file types: ");
@@ -190,10 +189,10 @@ class Upload extends Extension
                     if (count($_FILES) > 1) {
                         throw new UploadException("Can not upload more than one image for replacing.");
                     }
-                    
+
                     $source = isset($_POST['source']) ? $_POST['source'] : null;
                     $tags = []; // Tags aren't changed when replacing. Set to empty to stop PHP warnings.
-                    
+
                     $ok = false;
                     if (count($_FILES)) {
                         foreach ($_FILES as $file) {
@@ -249,7 +248,7 @@ class Upload extends Extension
                     if (!empty($_GET['tags']) && $_GET['tags'] != "null") {
                         $tags = Tag::explode($_GET['tags']);
                     }
-                            
+
                     $ok = $this->try_transload($url, $tags, $source);
                     $this->theme->display_upload_status($page, $ok);
                 } else {
@@ -314,7 +313,7 @@ class Upload extends Extension
      * #param string[] $file
      * #param string[] $tags
      */
-    private function try_upload(array $file, array $tags, ?string $source=null, int $replace=-1): bool
+    private function try_upload(array $file, array $tags, ?string $source = null, int $replace = -1): bool
     {
         global $page;
 
@@ -331,7 +330,7 @@ class Upload extends Extension
                 if ($file['error'] !== UPLOAD_ERR_OK) {
                     throw new UploadException($this->upload_error_message($file['error']));
                 }
-                
+
                 $pathinfo = pathinfo($file['name']);
                 $metadata = [];
                 $metadata['filename'] = $pathinfo['basename'];
@@ -340,19 +339,22 @@ class Upload extends Extension
                 }
                 $metadata['tags'] = $tags;
                 $metadata['source'] = $source;
-                
+
                 /* check if we have been given an image ID to replace */
                 if ($replace >= 0) {
                     $metadata['replace'] = $replace;
                 }
-                
+
                 $event = new DataUploadEvent($file['tmp_name'], $metadata);
                 send_event($event);
-                $page->add_http_header("X-Shimmie-Image-ID: ".int_escape($event->image_id));
+                if ($event->image_id == -1) {
+                    throw new UploadException("File type not supported: " . $metadata['extension']);
+                }
+                $page->add_http_header("X-Shimmie-Image-ID: " . int_escape($event->image_id));
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(
                     $page,
-                    "Error with ".html_escape($file['name']),
+                    "Error with " . html_escape($file['name']),
                     $ex->getMessage()
                 );
                 $ok = false;
@@ -362,7 +364,7 @@ class Upload extends Extension
         return $ok;
     }
 
-    private function try_transload(string $url, array $tags, string $source=null, int $replace=-1): bool
+    private function try_transload(string $url, array $tags, string $source = null, int $replace = -1): bool
     {
         global $page, $config, $user;
 
@@ -372,7 +374,7 @@ class Upload extends Extension
         if ($user->can("edit_image_lock") && !empty($_GET['locked'])) {
             $locked = bool_escape($_GET['locked']);
         }
-        
+
         // Checks if url contains rating, also checks if the rating extension is enabled.
         if ($config->get_string("transload_engine", "none") != "none" && ext_is_live("Ratings") && !empty($_GET['rating'])) {
             // Rating event will validate that this is s/q/e/u
@@ -386,7 +388,7 @@ class Upload extends Extension
 
         // transload() returns Array or Bool, depending on the transload_engine.
         $headers = transload($url, $tmp_filename);
-        
+
         $s_filename = is_array($headers) ? findHeader($headers, 'Content-Disposition') : null;
         $h_filename = ($s_filename ? preg_replace('/^.*filename="([^ ]+)"/i', '$1', $s_filename) : null);
         $filename = $h_filename ?: basename($url);
@@ -394,8 +396,8 @@ class Upload extends Extension
         if (!$headers) {
             $this->theme->display_upload_error(
                 $page,
-                "Error with ".html_escape($filename),
-                "Error reading from ".html_escape($url)
+                "Error with " . html_escape($filename),
+                "Error reading from " . html_escape($url)
             );
             return false;
         }
@@ -403,7 +405,7 @@ class Upload extends Extension
         if (filesize($tmp_filename) == 0) {
             $this->theme->display_upload_error(
                 $page,
-                "Error with ".html_escape($filename),
+                "Error with " . html_escape($filename),
                 "No data found -- perhaps the site has hotlink protection?"
             );
             $ok = false;
@@ -413,7 +415,7 @@ class Upload extends Extension
             $metadata['filename'] = $filename;
             $metadata['tags'] = $tags;
             $metadata['source'] = (($url == $source) && !$config->get_bool('upload_tlsource') ? "" : $source);
-            
+
             $ext = false;
             if (is_array($headers)) {
                 $ext = get_extension(findHeader($headers, 'Content-Type'));
@@ -422,7 +424,7 @@ class Upload extends Extension
                 $ext = $pathinfo['extension'];
             }
             $metadata['extension'] = $ext;
-            
+
             /* check for locked > adds to metadata if it has */
             if (!empty($locked)) {
                 $metadata['locked'] = $locked ? "on" : "";
@@ -432,19 +434,22 @@ class Upload extends Extension
             if (!empty($rating)) {
                 $metadata['rating'] = $rating;
             }
-            
+
             /* check if we have been given an image ID to replace */
             if ($replace >= 0) {
                 $metadata['replace'] = $replace;
             }
-            
+
             try {
                 $event = new DataUploadEvent($tmp_filename, $metadata);
                 send_event($event);
+                if ($event->image_id == -1) {
+                    throw new UploadException("File type not supported: " . $metadata['extension']);
+                }
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(
                     $page,
-                    "Error with ".html_escape($url),
+                    "Error with " . html_escape($url),
                     $ex->getMessage()
                 );
                 $ok = false;

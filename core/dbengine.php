@@ -22,7 +22,7 @@ class DBEngine
 class MySQL extends DBEngine
 {
     /** @var string */
-    public $name = "mysql";
+    public $name = DatabaseDriver::MYSQL;
 
     public function init(PDO $db)
     {
@@ -54,7 +54,7 @@ class MySQL extends DBEngine
 class PostgreSQL extends DBEngine
 {
     /** @var string */
-    public $name = "pgsql";
+    public $name = DatabaseDriver::PGSQL;
 
     public function init(PDO $db)
     {
@@ -136,7 +136,7 @@ function _ln($n)
 class SQLite extends DBEngine
 {
     /** @var string  */
-    public $name = "sqlite";
+    public $name = DatabaseDriver::SQLITE;
 
     public function init(PDO $db)
     {

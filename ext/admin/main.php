@@ -70,7 +70,7 @@ class AdminPage extends Extension
                     }
 
                     if ($aae->redirect) {
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("admin"));
                     }
                 }
@@ -149,7 +149,7 @@ class AdminPage extends Extension
             send_event(new ImageDeletionEvent($image));
         }
 
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link("post/list"));
         return false;
     }
@@ -201,14 +201,14 @@ class AdminPage extends Extension
         $database = $matches['dbname'];
 
         switch ($software) {
-            case 'mysql':
+            case DatabaseDriver::MYSQL:
                 $cmd = "mysqldump -h$hostname -u$username -p$password $database";
                 break;
-            case 'pgsql':
+            case DatabaseDriver::PGSQL:
                 putenv("PGPASSWORD=$password");
                 $cmd = "pg_dump -h $hostname -U $username $database";
                 break;
-            case 'sqlite':
+            case DatabaseDriver::SQLITE:
                 $cmd = "sqlite3 $database .dump";
                 break;
             default:
@@ -218,7 +218,7 @@ class AdminPage extends Extension
         //FIXME: .SQL dump is empty if cmd doesn't exist
 
         if ($cmd) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/x-unknown");
             $page->set_filename('shimmie-'.date('Ymd').'.sql');
             $page->set_data(shell_exec($cmd));
@@ -237,13 +237,13 @@ class AdminPage extends Extension
         $zip = new ZipArchive;
         if ($zip->open($filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE) === true) {
             foreach ($images as $img) {
-                $img_loc = warehouse_path("images", $img["hash"], false);
+                $img_loc = warehouse_path(Image::IMAGE_DIR, $img["hash"], false);
                 $zip->addFile($img_loc, $img["hash"].".".$img["ext"]);
             }
             $zip->close();
         }
 
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link($filename)); //TODO: Delete file after downloaded?
 
         return false;  // we do want a redirect, but a manual one
@@ -257,7 +257,7 @@ class AdminPage extends Extension
         //TODO: Update score_log (Having an optional ID column for score_log would be nice..)
         preg_match("#^(?P<proto>\w+)\:(?:user=(?P<user>\w+)(?:;|$)|password=(?P<password>\w*)(?:;|$)|host=(?P<host>[\w\.\-]+)(?:;|$)|dbname=(?P<dbname>[\w_]+)(?:;|$))+#", DATABASE_DSN, $matches);
 
-        if ($matches['proto'] == "mysql") {
+        if ($matches['proto'] == DatabaseDriver::MYSQL) {
             $tables = $database->get_col("SELECT TABLE_NAME
 			                              FROM information_schema.KEY_COLUMN_USAGE
 			                              WHERE TABLE_SCHEMA = :db
@@ -280,9 +280,9 @@ class AdminPage extends Extension
                 $i++;
             }
             $database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
-        } elseif ($matches['proto'] == "pgsql") {
+        } elseif ($matches['proto'] == DatabaseDriver::PGSQL) {
             //TODO: Make this work with PostgreSQL
-        } elseif ($matches['proto'] == "sqlite") {
+        } elseif ($matches['proto'] == DatabaseDriver::SQLITE) {
             //TODO: Make this work with SQLite
         }
         return true;

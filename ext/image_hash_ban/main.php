@@ -79,7 +79,7 @@ class ImageBan extends Extension
                             flash_message("Image deleted");
                         }
 
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     }
                 } elseif ($event->get_arg(0) == "remove") {
@@ -87,7 +87,7 @@ class ImageBan extends Extension
                         send_event(new RemoveImageHashBanEvent($_POST['hash']));
 
                         flash_message("Image ban removed");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     }
                 } elseif ($event->get_arg(0) == "list") {

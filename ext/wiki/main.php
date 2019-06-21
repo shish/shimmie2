@@ -137,7 +137,7 @@ class Wiki extends Extension
                     send_event(new WikiUpdateEvent($user, $wikipage));
 
                     $u_title = url_escape($title);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } catch (WikiUpdateException $e) {
                     $original = $this->get_page($title);
@@ -159,7 +159,7 @@ class Wiki extends Extension
                     ["title"=>$_POST["title"], "rev"=>$_POST["revision"]]
                 );
                 $u_title = url_escape($_POST["title"]);
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         } elseif ($event->page_matches("wiki_admin/delete_all")) {
@@ -170,7 +170,7 @@ class Wiki extends Extension
                     ["title"=>$_POST["title"]]
                 );
                 $u_title = url_escape($_POST["title"]);
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         }
@@ -213,7 +213,7 @@ class Wiki extends Extension
         return false;
     }
 
-    private function get_page(string $title): WikiPage
+    private function get_page(string $title, int $revision=-1): WikiPage
     {
         global $database;
         // first try and get the actual page
@@ -222,21 +222,17 @@ class Wiki extends Extension
 				SELECT *
 				FROM wiki_pages
 				WHERE SCORE_STRNORM(title) LIKE SCORE_STRNORM(:title)
-				ORDER BY revision DESC
-				LIMIT 1
-			"),
+				ORDER BY revision DESC"),
             ["title"=>$title]
         );
 
         // fall back to wiki:default
         if (empty($row)) {
             $row = $database->get_row("
-				SELECT *
-				FROM wiki_pages
-				WHERE title LIKE :title
-				ORDER BY revision DESC
-				LIMIT 1
-			", ["title"=>"wiki:default"]);
+					SELECT *
+					FROM wiki_pages
+					WHERE title LIKE :title
+					ORDER BY revision DESC", ["title"=>"wiki:default"]);
 
             // fall further back to manual
             if (empty($row)) {

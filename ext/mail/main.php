@@ -35,7 +35,7 @@ class MailTest extends Extension
     {
         if ($event->page_matches("mail/test")) {
             global $page;
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             echo "Alert: uncomment this page's code on /ext/mail/main.php starting on line 33, and change the email address. Make sure you're using a server with a domain, not localhost.";
             /*
             echo "Preparing to send message:<br>";

@@ -16,6 +16,8 @@
  */
 class ResizeImage extends Extension
 {
+    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
+
     /**
      * Needs to be after the data processing extensions
      */
@@ -37,7 +39,8 @@ class ResizeImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool("resize_enabled")) {
+        if ($user->is_admin() && $config->get_bool("resize_enabled")
+            && in_array($event->image->ext, self::SUPPORTED_EXT)) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
         }
@@ -64,7 +67,8 @@ class ResizeImage extends Extension
 
         $image_obj = Image::by_id($event->image_id);
 
-        if ($config->get_bool("resize_upload") == true && ($image_obj->ext == "jpg" || $image_obj->ext == "png" || $image_obj->ext == "gif" || $image_obj->ext == "webp")) {
+        if ($config->get_bool("resize_upload") == true
+                && in_array($event->type, self::SUPPORTED_EXT)) {
             $width = $height = 0;
 
             if ($config->get_int("resize_default_width") !== 0) {
@@ -75,7 +79,7 @@ class ResizeImage extends Extension
             }
             $isanigif = 0;
             if ($image_obj->ext == "gif") {
-                $image_filename = warehouse_path("images", $image_obj->hash);
+                $image_filename = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
                 if (($fh = @fopen($image_filename, 'rb'))) {
                     //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                     while (!feof($fh) && $isanigif < 2) {
@@ -141,7 +145,7 @@ class ResizeImage extends Extension
                         
                         //$this->theme->display_resize_page($page, $image_id);
                         
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageResizeException $e) {
                         $this->theme->display_resize_error($page, "Error Resizing", $e->error);
@@ -163,7 +167,7 @@ class ResizeImage extends Extension
         }
         
         $hash = $image_obj->hash;
-        $image_filename  = warehouse_path("images", $hash);
+        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
 
         $info = getimagesize($image_filename);
         if (($image_obj->width != $info[0]) || ($image_obj->height != $info[1])) {
@@ -189,7 +193,7 @@ class ResizeImage extends Extension
         $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }

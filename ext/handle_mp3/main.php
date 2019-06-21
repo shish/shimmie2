@@ -7,9 +7,9 @@
 
 class MP3FileHandler extends DataHandlerExtension
 {
-    protected function create_thumb(string $hash): bool
+    protected function create_thumb(string $hash, string $type): bool
     {
-        copy("ext/handle_mp3/thumb.jpg", warehouse_path("thumbs", $hash));
+        copy("ext/handle_mp3/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         return true;
     }
 

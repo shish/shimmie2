@@ -43,6 +43,7 @@ class TranscodeImage extends Extension
             "psd",
             "tiff",
             "webp",
+            "ico",
         ]
     ];
 
@@ -68,6 +69,7 @@ class TranscodeImage extends Extension
     const INPUT_FORMATS = [
         "BMP" => "bmp",
         "GIF" => "gif",
+        "ICO" => "ico",
         "JPG" => "jpg",
         "PNG" => "png",
         "PSD" => "psd",
@@ -197,7 +199,7 @@ class TranscodeImage extends Extension
                 if (isset($_POST['transcode_format'])) {
                     try {
                         $this->transcode_and_replace_image($image_obj, $_POST['transcode_format']);
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageTranscodeException $e) {
                         $this->theme->display_transcode_error($page, "Error Transcoding", $e->getMessage());
@@ -306,7 +308,7 @@ class TranscodeImage extends Extension
     private function transcode_and_replace_image(Image $image_obj, String $target_format)
     {
         $target_format = $this->clean_format($target_format);
-        $original_file = warehouse_path("images", $image_obj->hash);
+        $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
         $tmp_filename = $this->transcode_image($original_file, $image_obj->ext, $target_format);
         
@@ -319,7 +321,7 @@ class TranscodeImage extends Extension
         $new_image->ext = $this->determine_ext($target_format);
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageTranscodeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
@@ -440,15 +442,21 @@ class TranscodeImage extends Extension
         }
         $tmp_name = tempnam("/tmp", "shimmie_transcode");
 
-        $format = '"%s" %s -quality %u -background %s "%s"  %s:"%s"';
-        $cmd = sprintf($format, $convert, $args, $q, $bg, $source_name, $ext, $tmp_name);
+        $source_type = "";
+        switch ($source_format) {
+            case "ico":
+                $source_type = "ico:";
+        }
+
+        $format = '"%s" %s -quality %u -background %s %s"%s"  %s:"%s" 2>&1';
+        $cmd = sprintf($format, $convert, $args, $q, $bg, $source_type, $source_name, $ext, $tmp_name);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
 
         log_debug('transcode', "Transcoding with command `$cmd`, returns $ret");
 
         if ($ret!==0) {
-            throw new ImageTranscodeException("Transcoding failed with command ".$cmd);
+            throw new ImageTranscodeException("Transcoding failed with command ".$cmd.", returning ".implode("\r\n", $output));
         }
 
         return $tmp_name;

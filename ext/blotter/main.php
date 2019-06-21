@@ -102,7 +102,7 @@ class Blotter extends Extension
                             [$entry_text, $important]
                         );
                         log_info("blotter", "Added Message: $entry_text");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));
                     }
                     break;
@@ -119,7 +119,7 @@ class Blotter extends Extension
                         }
                         $database->Execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
                         log_info("blotter", "Removed Entry #$id");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));
                     }
                     break;

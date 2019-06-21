@@ -59,7 +59,7 @@ class TaggerXML extends Extension
                 $tags.
             "</tags>";
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/xml");
             $page->set_data($xml);
         }

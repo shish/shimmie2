@@ -31,6 +31,8 @@ class ImageRotateException extends SCoreException
  */
 class RotateImage extends Extension
 {
+    const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -41,7 +43,8 @@ class RotateImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool("rotate_enabled")) {
+        if ($user->is_admin() && $config->get_bool("rotate_enabled")
+                && in_array($event->image->ext, self::SUPPORTED_EXT)) {
             /* Add a link to rotate the image */
             $event->add_part($this->theme->get_rotate_html($event->image->id));
         }
@@ -93,7 +96,7 @@ class RotateImage extends Extension
                         
                         //$this->theme->display_rotate_page($page, $image_id);
                         
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageRotateException $e) {
                         $this->theme->display_rotate_error($page, "Error Rotating", $e->error);
@@ -120,7 +123,7 @@ class RotateImage extends Extension
             throw new ImageRotateException("Image does not have a hash associated with it.");
         }
         
-        $image_filename  = warehouse_path("images", $hash);
+        $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
         if (file_exists($image_filename)==false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
@@ -212,7 +215,7 @@ class RotateImage extends Extension
         $new_image->ext = $image_obj->ext;
 
         /* Move the new image into the main storage location */
-        $target = warehouse_path("images", $new_image->hash);
+        $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
         if (!@copy($tmp_filename, $target)) {
             throw new ImageRotateException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }

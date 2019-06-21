@@ -19,7 +19,7 @@ if ( // kill these glitched requests immediately
 
 class Rule34 extends Extension
 {
-    protected $db_support = ['pgsql'];  # Only PG has the NOTIFY pubsub system
+    protected $db_support = [DatabaseDriver::PGSQL];  # Only PG has the NOTIFY pubsub system
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
@@ -90,14 +90,14 @@ class Rule34 extends Extension
                     'UPDATE users SET comic_admin=? WHERE id=?',
                     [$input['is_admin'] ? 't' : 'f', $input['user_id']]
                 );
-                $page->set_mode('redirect');
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(@$_SERVER['HTTP_REFERER']);
             }
         }
 
         if ($event->page_matches("tnc_agreed")) {
             setcookie("ui-tnc-agreed", "true", 0, "/");
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(@$_SERVER['HTTP_REFERER'] ?? "/");
         }
 
@@ -116,14 +116,14 @@ class Rule34 extends Extension
                                 continue;
                             }
                             log_info("admin", "Cleaning {$hash}");
-                            @unlink(warehouse_path('images', $hash));
-                            @unlink(warehouse_path('thumbs', $hash));
+                            @unlink(warehouse_path(Image::IMAGE_DIR, $hash));
+                            @unlink(warehouse_path(Image::THUMBNAIL_DIR, $hash));
                             $database->execute("NOTIFY shm_image_bans, '{$hash}';");
                         }
                     }
                 }
 
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("admin"));
             }
         }

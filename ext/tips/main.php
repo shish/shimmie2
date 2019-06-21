@@ -10,7 +10,7 @@
 
 class Tips extends Extension
 {
-    protected $db_support = ['mysql', 'sqlite'];  // rand() ?
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // rand() ?
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -51,7 +51,7 @@ class Tips extends Extension
                 case "save":
                     if ($user->check_auth_token()) {
                         $this->saveTip();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("tips/list"));
                     }
                     break;
@@ -59,14 +59,14 @@ class Tips extends Extension
                     // FIXME: HTTP GET CSRF
                     $tipID = int_escape($event->get_arg(1));
                     $this->setStatus($tipID);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("tips/list"));
                     break;
                 case "delete":
                     // FIXME: HTTP GET CSRF
                     $tipID = int_escape($event->get_arg(1));
                     $this->deleteTip($tipID);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("tips/list"));
                     break;
             }

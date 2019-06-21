@@ -132,7 +132,7 @@ class Tag_History extends Extension
 
         // check for the nothing case
         if ($revert_id < 1) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
             return;
         }
@@ -162,7 +162,7 @@ class Tag_History extends Extension
         send_event(new TagSetEvent($image, Tag::explode($stored_tags)));
         
         // all should be done now so redirect the user back to the image
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 

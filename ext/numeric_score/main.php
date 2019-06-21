@@ -94,7 +94,7 @@ class NumericScore extends Extension
                 if (!is_null($score) && $image_id>0) {
                     send_event(new NumericScoreSetEvent($image_id, $user, $score));
                 }
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
             }
         } elseif ($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
@@ -108,13 +108,13 @@ class NumericScore extends Extension
                     "UPDATE images SET numeric_score=0 WHERE id=?",
                     [$image_id]
                 );
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
             }
         } elseif ($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
             if ($user->can("edit_other_vote")) {
                 $this->delete_votes_by(int_escape($_POST['user_id']));
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link());
             }
         } elseif ($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {

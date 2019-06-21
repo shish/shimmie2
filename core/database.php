@@ -1,9 +1,17 @@
 <?php
+abstract class DatabaseDriver
+{
+    public const MYSQL = "mysql";
+    public const PGSQL = "pgsql";
+    public const SQLITE = "sqlite";
+}
+
 /**
  * A class for controlled database access
  */
 class Database
 {
+
     /**
      * The PDO database connection object, for anyone who wants direct access.
      * @var null|PDO
@@ -72,7 +80,7 @@ class Database
 
         // https://bugs.php.net/bug.php?id=70221
         $ka = DATABASE_KA;
-        if (version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == "sqlite") {
+        if (version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == DatabaseDriver::SQLITE) {
             $ka = false;
         }
 
@@ -96,11 +104,11 @@ class Database
             throw new SCoreException("Can't figure out database engine");
         }
 
-        if ($db_proto === "mysql") {
+        if ($db_proto === DatabaseDriver::MYSQL) {
             $this->engine = new MySQL();
-        } elseif ($db_proto === "pgsql") {
+        } elseif ($db_proto === DatabaseDriver::PGSQL) {
             $this->engine = new PostgreSQL();
-        } elseif ($db_proto === "sqlite") {
+        } elseif ($db_proto === DatabaseDriver::SQLITE) {
             $this->engine = new SQLite();
         } else {
             die('Unknown PDO driver: '.$db_proto);
@@ -296,7 +304,7 @@ class Database
      */
     public function get_last_insert_id(string $seq): int
     {
-        if ($this->engine->name == "pgsql") {
+        if ($this->engine->name == DatabaseDriver::PGSQL) {
             return $this->db->lastInsertId($seq);
         } else {
             return $this->db->lastInsertId();
@@ -326,15 +334,15 @@ class Database
             $this->connect_db();
         }
 
-        if ($this->engine->name === "mysql") {
+        if ($this->engine->name === DatabaseDriver::MYSQL) {
             return count(
                 $this->get_all("SHOW TABLES")
             );
-        } elseif ($this->engine->name === "pgsql") {
+        } elseif ($this->engine->name === DatabaseDriver::PGSQL) {
             return count(
                 $this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
             );
-        } elseif ($this->engine->name === "sqlite") {
+        } elseif ($this->engine->name === DatabaseDriver::SQLITE) {
             return count(
                 $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
             );

@@ -9,7 +9,7 @@ class ExtManagerTheme extends Themelet
     {
         $h_en = $editable ? "<th>Enabled</th>" : "";
         $html = "
-			".make_form(make_link("ext_manager/set"))."
+			" . make_form(make_link("ext_manager/set")) . "
 				<table id='extensions' class='zebra sortable'>
 					<thead>
 						<tr>
@@ -26,17 +26,17 @@ class ExtManagerTheme extends Themelet
                 continue;
             }
 
-            $h_name        = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
+            $h_name = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
             $h_description = html_escape($extension->description);
-            $h_link        = make_link("ext_doc/".url_escape($extension->ext_name));
-            $h_enabled     = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " disabled checked='checked'"));
-            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_".html_escape($extension->ext_name)."' id='ext_".html_escape($extension->ext_name)."'$h_enabled></td>" : "";
-            $h_docs        = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
+            $h_link = make_link("ext_doc/" . url_escape($extension->ext_name));
+            $h_enabled = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " disabled checked='checked'"));
+            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->ext_name) . "' id='ext_" . html_escape($extension->ext_name) . "'$h_enabled></td>" : "";
+            $h_docs = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
             $html .= "
 				<tr data-ext='{$extension->ext_name}'>
 					{$h_enabled_box}
-					<td><label for='ext_".html_escape($extension->ext_name)."'>{$h_name}</label></td>
+					<td><label for='ext_" . html_escape($extension->ext_name) . "'>{$h_name}</label></td>
 					<td>{$h_docs}</td>
 					<td style='text-align: left;'>{$h_description}</td>
 				</tr>";
@@ -116,15 +116,24 @@ class ExtManagerTheme extends Themelet
     public function display_doc(Page $page, ExtensionInfo $info)
     {
         $author = "";
-        if ($info->author) {
-            if ($info->email) {
-                $author = "<br><b>Author:</b> <a href=\"mailto:".html_escape($info->email)."\">".html_escape($info->author)."</a>";
-            } else {
-                $author = "<br><b>Author:</b> ".html_escape($info->author);
+        if (count($info->authors) > 0) {
+            $author = "<br /><b>Author";
+            if (count($info->authors) > 1) {
+                $author .= "s";
             }
+            $author .= ":</b>";
+            foreach ($info->authors as $auth) {
+                if (!empty($auth->email)) {
+                    $author .= "<a href=\"mailto:" . html_escape($auth->email) . "\">" . html_escape($auth->name) . "</a>";
+                } else {
+                    $author .= html_escape($auth->name);
+                }
+            }
+
         }
-        $version = ($info->version) ? "<br><b>Version:</b> ".html_escape($info->version) : "";
-        $link = ($info->link) ? "<br><b>Home Page:</b> <a href=\"".html_escape($info->link)."\">Link</a>" : "";
+
+        $version = ($info->version) ? "<br><b>Version:</b> " . html_escape($info->version) : "";
+        $link = ($info->link) ? "<br><b>Home Page:</b> <a href=\"" . html_escape($info->link) . "\">Link</a>" : "";
         $doc = $info->documentation;
         $html = "
 			<div style='margin: auto; text-align: left; width: 512px;'>
@@ -133,10 +142,10 @@ class ExtManagerTheme extends Themelet
 				$link
 				<p>$doc
 				<hr>
-				<p><a href='".make_link("ext_manager")."'>Back to the list</a>
+				<p><a href='" . make_link("ext_manager") . "'>Back to the list</a>
 			</div>";
 
-        $page->set_title("Documentation for ".html_escape($info->name));
+        $page->set_title("Documentation for " . html_escape($info->name));
         $page->set_heading(html_escape($info->name));
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Documentation", $html));

@@ -43,7 +43,7 @@ class RegenThumb extends Extension
                 $this->regenerate_thumbnail($image);
             }
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }
@@ -133,7 +133,7 @@ class RegenThumb extends Extension
                 $i = 0;
                 foreach ($images as $image) {
                     if (!$force) {
-                        $path = warehouse_path("thumbs", $image["hash"], false);
+                        $path = warehouse_path(Image::THUMBNAIL_DIR, $image["hash"], false);
                         if (file_exists($path)) {
                             continue;
                         }
@@ -157,7 +157,7 @@ class RegenThumb extends Extension
                 
                     $i = 0;
                     foreach ($images as $image) {
-                        $outname = warehouse_path("thumbs", $image["hash"]);
+                        $outname = warehouse_path(Image::THUMBNAIL_DIR, $image["hash"]);
                         if (file_exists($outname)) {
                             unlink($outname);
                             $i++;

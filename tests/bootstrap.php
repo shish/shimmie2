@@ -52,7 +52,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $_POST = [];
         $page = class_exists("CustomPage") ? new CustomPage() : new Page();
         send_event(new PageRequestEvent($page_name));
-        if ($page->mode == "redirect") {
+        if ($page->mode == PageMode::REDIRECT) {
             $page->code = 302;
         }
     }
@@ -68,7 +68,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $_POST = $args;
         $page = class_exists("CustomPage") ? new CustomPage() : new Page();
         send_event(new PageRequestEvent($page_name));
-        if ($page->mode == "redirect") {
+        if ($page->mode == PageMode::REDIRECT) {
             $page->code = 302;
         }
     }

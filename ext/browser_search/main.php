@@ -54,7 +54,7 @@ class BrowserSearch extends Extension
 			";
 
             // And now to send it to the browser
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/xml");
             $page->set_data($xml);
         } elseif (
@@ -85,7 +85,7 @@ class BrowserSearch extends Extension
 
             // And now for the final output
             $json_string = "[\"$tag_search\",[\"$json_tag_list\"],[],[]]";
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_data($json_string);
         }
     }

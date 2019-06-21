@@ -43,7 +43,7 @@ class ImageIO extends Extension
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     if (isset($_SERVER['HTTP_REFERER']) && !strstr($_SERVER['HTTP_REFERER'], 'post/view')) {
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     } else {
@@ -56,7 +56,7 @@ class ImageIO extends Extension
             if ($user->can("replace_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('upload/replace/'.$image->id));
                 } else {
                     /* Invalid image ID */
@@ -88,7 +88,7 @@ class ImageIO extends Extension
     public function onImageAddition(ImageAdditionEvent $event)
     {
         try {
-            $this->add_image($event->image);
+            $this->add_image($event);
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
         }
@@ -141,7 +141,7 @@ class ImageIO extends Extension
 
         $thumb_types = [];
         $thumb_types['JPEG'] = "jpg";
-        $thumb_types['WEBP'] = "webp";
+        $thumb_types['WEBP (Not IE/Safari compatible)'] = "webp";
 
 
         $sb = new SetupBlock("Thumbnailing");
@@ -175,9 +175,11 @@ class ImageIO extends Extension
 
 
     // add image {{{
-    private function add_image(Image $image)
+    private function add_image(ImageAdditionEvent $event)
     {
         global $user, $database, $config;
+
+        $image = $event->image;
 
         /*
          * Validate things
@@ -201,7 +203,9 @@ class ImageIO extends Extension
                 if (isset($_GET['source']) && isset($_GET['update'])) {
                     send_event(new SourceSetEvent($existing, $_GET['source']));
                 }
-                return null;
+                $event->merged = true;
+                $event->image = Image::by_id($existing->id);
+                return;
             } else {
                 $error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
                         "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
@@ -251,7 +255,7 @@ class ImageIO extends Extension
 
         global $page;
         if (!is_null($image)) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             if ($type == "thumb") {
                 $ext = $config->get_string("thumb_type");
                 if (array_key_exists($ext, MIME_TYPE_MAP)) {

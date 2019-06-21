@@ -123,7 +123,7 @@ class ViewImage extends Extension
                 return;
             }
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$image->id}", $query));
         } elseif ($event->page_matches("post/view")) {
             if (!is_numeric($event->get_arg(0))) {
@@ -157,7 +157,7 @@ class ViewImage extends Extension
 
             send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
         }
     }

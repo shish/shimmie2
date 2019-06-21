@@ -11,6 +11,8 @@ class ImageAdditionEvent extends Event
     /** @var Image */
     public $image;
 
+    public $merged = false;
+
     /**
      * Inserts a new image into the database with its associated
      * information. Also calls TagSetEvent to set the tags for

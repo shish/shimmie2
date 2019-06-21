@@ -1,42 +1,52 @@
 <?php
+
 /*
  * Name: Cron Uploader
- * Author: YaoiFox <admin@yaoifox.com>
+ * Authors: YaoiFox <admin@yaoifox.com>, Matthew Barbour <matthew@darkholme.net>
  * Link: http://www.yaoifox.com/
  * License: GPLv2
  * Description: Uploads images automatically using Cron Jobs
  * Documentation: Installation guide: activate this extension and navigate to www.yoursite.com/cron_upload
  */
+
 class CronUploader extends Extension
 {
     // TODO: Checkbox option to only allow localhost + a list of additional IP adresses that can be set in /cron_upload
     // TODO: Change logging to MySQL + display log at /cron_upload
     // TODO: Move stuff to theme.php
-    
+
+    const QUEUE_DIR = "queue";
+    const UPLOADED_DIR = "uploaded";
+    const FAILED_DIR = "failed_to_upload";
+
+    const CONFIG_KEY = "cron_uploader_key";
+    const CONFIG_COUNT = "cron_uploader_count";
+    const CONFIG_DIR = "cron_uploader_dir";
+
     /**
      * Lists all log events this session
      * @var string
      */
     private $upload_info = "";
-    
+
     /**
      * Lists all files & info required to upload.
      * @var array
      */
     private $image_queue = [];
-    
+
     /**
      * Cron Uploader root directory
      * @var string
      */
     private $root_dir = "";
-    
+
     /**
      * Key used to identify uploader
      * @var string
      */
     private $upload_key = "";
-    
+
     /**
      * Checks if the cron upload page has been accessed
      * and initializes the upload.
@@ -44,39 +54,50 @@ class CronUploader extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $user;
-        
+
         if ($event->page_matches("cron_upload")) {
-            $this->upload_key = $config->get_string("cron_uploader_key", "");
-            
+            $this->upload_key = $config->get_string(self::CONFIG_KEY, "");
+
             // If the key is in the url, upload
             if ($this->upload_key != "" && $event->get_arg(0) == $this->upload_key) {
                 // log in as admin
-                $this->process_upload(); // Start upload
+                $this->set_dir();
+
+                $lockfile = fopen($this->root_dir . "/.lock", "w");
+                if (!flock($lockfile, LOCK_EX | LOCK_NB)) {
+                    throw new Exception("Cron upload process is already running");
+                }
+                try {
+                    $this->process_upload(); // Start upload
+                } finally {
+                    flock($lockfile, LOCK_UN);
+                    fclose($lockfile);
+                }
             } elseif ($user->is_admin()) {
                 $this->set_dir();
                 $this->display_documentation();
             }
         }
     }
-    
+
     private function display_documentation()
     {
         global $page;
         $this->set_dir(); // Determines path to cron_uploader_dir
-        
-        
-        $queue_dir = $this->root_dir . "/queue";
-        $uploaded_dir = $this->root_dir . "/uploaded";
-        $failed_dir = $this->root_dir . "/failed_to_upload";
-        
+
+
+        $queue_dir = $this->root_dir . "/" . self::QUEUE_DIR;
+        $uploaded_dir = $this->root_dir . "/" . self::UPLOADED_DIR;
+        $failed_dir = $this->root_dir . "/" . self::FAILED_DIR;
+
         $queue_dirinfo = $this->scan_dir($queue_dir);
         $uploaded_dirinfo = $this->scan_dir($uploaded_dir);
         $failed_dirinfo = $this->scan_dir($failed_dir);
-        
+
         $cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
         $cron_cmd = "curl --silent $cron_url";
         $log_path = $this->root_dir . "/uploads.log";
-        
+
         $info_html = "<b>Information</b>
 			<br>
 			<table style='width:470px;'>
@@ -105,7 +126,7 @@ class CronUploader extends Extension
 			<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
 			Create a cron job with the command above.<br/>
 				Read the documentation if you're not sure what to do.<br>";
-        
+
         $install_html = "
 			This cron uploader is fairly easy to use but has to be configured first.
 			<br />1. Install & activate this plugin.
@@ -130,8 +151,10 @@ class CronUploader extends Extension
 			<br />So when you want to manually upload an image, all you have to do is open the link once.
 			<br />This link can be found under 'Cron Command' in the board config, just remove the 'wget ' part and only the url remains.
 			<br />(<b>$cron_url</b>)";
-        
-        
+
+        $page->set_title("Cron Uploader");
+        $page->set_heading("Cron Uploader");
+
         $block = new Block("Cron Uploader", $info_html, "main", 10);
         $block_install = new Block("Installation Guide", $install_html, "main", 20);
         $page->add_block($block);
@@ -142,36 +165,37 @@ class CronUploader extends Extension
     {
         global $config;
         // Set default values
-        $this->upload_key = $config->get_string("cron_uploader_key", "");
-        if (strlen($this->upload_key)<=0) {
+        $config->set_default_int(self::CONFIG_COUNT, 1);
+        $this->set_dir();
+
+        $this->upload_key = $config->get_string(self::CONFIG_KEY, "");
+        if (empty($this->upload_key)) {
             $this->upload_key = $this->generate_key();
-    
-            $config->set_default_int('cron_uploader_count', 1);
-            $config->set_default_string('cron_uploader_key', $this->upload_key);
-            $this->set_dir();
+
+            $config->set_string(self::CONFIG_KEY, $this->upload_key);
         }
     }
-    
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $this->set_dir();
-        
+
         $cron_url = make_http(make_link("/cron_upload/" . $this->upload_key));
         $cron_cmd = "curl --silent $cron_url";
         $documentation_link = make_http(make_link("cron_upload"));
-        
+
         $sb = new SetupBlock("Cron Uploader");
         $sb->add_label("<b>Settings</b><br>");
-        $sb->add_int_option("cron_uploader_count", "How many to upload each time");
-        $sb->add_text_option("cron_uploader_dir", "<br>Set Cron Uploader root directory<br>");
-        
-        $sb->add_label("<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
+        $sb->add_int_option(self::CONFIG_COUNT, "How many to upload each time");
+        $sb->add_text_option(self::CONFIG_DIR, "<br>Set Cron Uploader root directory<br>");
+
+        $sb->add_label("<br>Cron Command: <input type='text' size='60' readonly='readonly' value='" . html_escape($cron_cmd) . "'><br>
 		Create a cron job with the command above.<br/>
 		<a href='$documentation_link'>Read the documentation</a> if you're not sure what to do.");
 
         $event->panel->add_block($sb);
     }
-    
+
     /*
      * Generates a unique key for the website to prevent unauthorized access.
      */
@@ -180,14 +204,14 @@ class CronUploader extends Extension
         $length = 20;
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
-        
-        for ($i = 0; $i < $length; $i ++) {
+
+        for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters [rand(0, strlen($characters) - 1)];
         }
-        
+
         return $randomString;
     }
-    
+
     /*
      * Set the directory for the image queue. If no directory was given, set it to the default directory.
      */
@@ -195,50 +219,50 @@ class CronUploader extends Extension
     {
         global $config;
         // Determine directory (none = default)
-        
-        $dir = $config->get_string("cron_uploader_dir", "");
-        
+
+        $dir = $config->get_string(self::CONFIG_DIR, "");
+
         // Sets new default dir if not in config yet/anymore
         if ($dir == "") {
             $dir = data_path("cron_uploader");
-            $config->set_string('cron_uploader_dir', $dir);
+            $config->set_string(self::CONFIG_DIR, $dir);
         }
-            
+
         // Make the directory if it doesn't exist yet
-        if (!is_dir($dir . "/queue/")) {
-            mkdir($dir . "/queue/", 0775, true);
+        if (!is_dir($dir . "/" . self::QUEUE_DIR . "/")) {
+            mkdir($dir . "/" . self::QUEUE_DIR . "/", 0775, true);
         }
-        if (!is_dir($dir . "/uploaded/")) {
-            mkdir($dir . "/uploaded/", 0775, true);
+        if (!is_dir($dir . "/" . self::UPLOADED_DIR . "/")) {
+            mkdir($dir . "/" . self::UPLOADED_DIR . "/", 0775, true);
         }
-        if (!is_dir($dir . "/failed_to_upload/")) {
-            mkdir($dir . "/failed_to_upload/", 0775, true);
+        if (!is_dir($dir . "/" . self::FAILED_DIR . "/")) {
+            mkdir($dir . "/" . self::FAILED_DIR . "/", 0775, true);
         }
-        
+
         $this->root_dir = $dir;
         return $dir;
     }
-    
+
     /**
      * Returns amount of files & total size of dir.
      */
     public function scan_dir(string $path): array
     {
-        $bytestotal=0;
-        $nbfiles=0;
+        $bytestotal = 0;
+        $nbfiles = 0;
 
-        $ite=new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
-        foreach (new RecursiveIteratorIterator($ite) as $filename=>$cur) {
+        $ite = new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS);
+        foreach (new RecursiveIteratorIterator($ite) as $filename => $cur) {
             $filesize = $cur->getSize();
             $bytestotal += $filesize;
             $nbfiles++;
         }
-    
+
         $size_mb = $bytestotal / 1048576; // to mb
         $size_mb = number_format($size_mb, 2, '.', '');
-        return ['total_files'=>$nbfiles,'total_mb'=>$size_mb];
+        return ['total_files' => $nbfiles, 'total_mb' => $size_mb];
     }
-    
+
     /**
      * Uploads the image & handles everything
      */
@@ -246,24 +270,24 @@ class CronUploader extends Extension
     {
         global $config, $database;
 
-        set_time_limit(0);
+        //set_time_limit(0);
 
-        $output_subdir = date('Ymd-His', time())."/";
-        $this->set_dir();
+
+        $output_subdir = date('Ymd-His', time()) . "/";
         $this->generate_image_queue();
-        
+
         // Gets amount of imgs to upload
         if ($upload_count == 0) {
-            $upload_count = $config->get_int("cron_uploader_count", 1);
+            $upload_count = $config->get_int(self::CONFIG_COUNT, 1);
         }
-        
+
         // Throw exception if there's nothing in the queue
         if (count($this->image_queue) == 0) {
             $this->add_upload_info("Your queue is empty so nothing could be uploaded.");
             $this->handle_log();
             return false;
         }
-        
+
         // Randomize Images
         //shuffle($this->image_queue);
 
@@ -271,18 +295,17 @@ class CronUploader extends Extension
         $added = 0;
         $failed = 0;
 
-        $failedItems = [];
-
         // Upload the file(s)
-        for ($i = 0; $i < $upload_count && sizeof($this->image_queue)>0; $i++) {
+        for ($i = 0; $i < $upload_count && sizeof($this->image_queue) > 0; $i++) {
             $img = array_pop($this->image_queue);
-            
+
             try {
                 $database->beginTransaction();
+                $this->add_upload_info("Adding file: {$img[1]} - tags: {$img[2]}");
                 $result = $this->add_image($img[0], $img[1], $img[2]);
                 $database->commit();
                 $this->move_uploaded($img[0], $img[1], $output_subdir, false);
-                if ($result==null) {
+                if ($result->merged) {
                     $merged++;
                 } else {
                     $added++;
@@ -290,13 +313,9 @@ class CronUploader extends Extension
             } catch (Exception $e) {
                 $failed++;
                 $this->move_uploaded($img[0], $img[1], $output_subdir, true);
-                $msgNumber = $this->add_upload_info("(".gettype($e).") ".$e->getMessage());
+                $msgNumber = $this->add_upload_info("(" . gettype($e) . ") " . $e->getMessage());
                 $msgNumber = $this->add_upload_info($e->getTraceAsString());
-                if (strpos($e->getMessage(), 'SQLSTATE') !== false) {
-                    // Postgres invalidates the transaction if there is an SQL error,
-                    // so all subsequence transactions will fail.
-                    break;
-                }
+
                 try {
                     $database->rollback();
                 } catch (Exception $e) {
@@ -310,85 +329,95 @@ class CronUploader extends Extension
         $msgNumber = $this->add_upload_info("Items failed: $failed");
 
 
-        
         // Display & save upload log
         $this->handle_log();
-        
+
         return true;
+
     }
-    
+
     private function move_uploaded($path, $filename, $output_subdir, $corrupt = false)
     {
         global $config;
-        
+
         // Create
         $newDir = $this->root_dir;
-        
+
         $relativeDir = dirname(substr($path, strlen($this->root_dir) + 7));
 
         // Determine which dir to move to
         if ($corrupt) {
             // Move to corrupt dir
-            $newDir .= "/failed_to_upload/".$output_subdir.$relativeDir;
+            $newDir .= "/" . self::FAILED_DIR . "/" . $output_subdir . $relativeDir;
             $info = "ERROR: Image was not uploaded.";
         } else {
-            $newDir .= "/uploaded/".$output_subdir.$relativeDir;
+            $newDir .= "/" . self::UPLOADED_DIR . "/" . $output_subdir . $relativeDir;
             $info = "Image successfully uploaded. ";
         }
-        $newDir = str_replace("//", "/", $newDir."/");
+        $newDir = str_replace("//", "/", $newDir . "/");
 
         if (!is_dir($newDir)) {
             mkdir($newDir, 0775, true);
         }
 
         // move file to correct dir
-        rename($path, $newDir.$filename);
-        
+        rename($path, $newDir . $filename);
+
         $this->add_upload_info($info . "Image \"$filename\" moved from queue to \"$newDir\".");
     }
 
     /**
      * Generate the necessary DataUploadEvent for a given image and tags.
      */
-    private function add_image(string $tmpname, string $filename, string $tags)
+    private function add_image(string $tmpname, string $filename, string $tags): DataUploadEvent
     {
         assert(file_exists($tmpname));
-        
+
+        $tagArray = Tag::explode($tags);
+        if(count($tagArray)==0) {
+            $tagArray[] = "tagme";
+        }
+
         $pathinfo = pathinfo($filename);
         $metadata = [];
         $metadata ['filename'] = $pathinfo ['basename'];
         if (array_key_exists('extension', $pathinfo)) {
             $metadata ['extension'] = $pathinfo ['extension'];
         }
-        $metadata ['tags'] = Tag::explode($tags);
+        $metadata ['tags'] = $tagArray; // doesn't work when not logged in here, handled below
         $metadata ['source'] = null;
         $event = new DataUploadEvent($tmpname, $metadata);
         send_event($event);
-        
+
         // Generate info message
         $infomsg = ""; // Will contain info message
         if ($event->image_id == -1) {
             throw new Exception("File type not recognised. Filename: {$filename}");
-        } elseif ($event->image_id == null) {
-            $infomsg = "Image merged. Filename: {$filename}";
+        } elseif ($event->merged === true) {
+            $infomsg = "Image merged. ID: {$event->image_id} Filename: {$filename}";
         } else {
             $infomsg = "Image uploaded. ID: {$event->image_id} - Filename: {$filename}";
         }
         $msgNumber = $this->add_upload_info($infomsg);
-        return $event->image_id;
+
+        // Set tags
+        $img = Image::by_id($event->image_id);
+        $img->set_tags(array_merge($tagArray, $img->get_tag_array()));
+
+        return $event;
     }
-    
+
     private function generate_image_queue(): void
     {
-        $base = $this->root_dir . "/queue";
-        
-        if (! is_dir($base)) {
+        $base = $this->root_dir . "/" . self::QUEUE_DIR;
+
+        if (!is_dir($base)) {
             $this->add_upload_info("Image Queue Directory could not be found at \"$base\".");
             return;
         }
-        
-        $ite=new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
-        foreach (new RecursiveIteratorIterator($ite) as $fullpath=>$cur) {
+
+        $ite = new RecursiveDirectoryIterator($base, FilesystemIterator::SKIP_DOTS);
+        foreach (new RecursiveIteratorIterator($ite) as $fullpath => $cur) {
             if (!is_link($fullpath) && !is_dir($fullpath)) {
                 $pathinfo = pathinfo($fullpath);
 
@@ -396,62 +425,62 @@ class CronUploader extends Extension
                 $tags = path_to_tags($relativePath);
 
                 $img = [
-                        0 => $fullpath,
-                        1 => $pathinfo ["basename"],
-                        2 => $tags
+                    0 => $fullpath,
+                    1 => $pathinfo ["basename"],
+                    2 => $tags
                 ];
                 array_push($this->image_queue, $img);
             }
         }
     }
-    
+
     /**
      * Adds a message to the info being published at the end
      */
     private function add_upload_info(string $text, int $addon = 0): int
     {
         $info = $this->upload_info;
-        $time = "[" .date('Y-m-d H:i:s'). "]";
-        
+        $time = "[" . date('Y-m-d H:i:s') . "]";
+
         // If addon function is not used
         if ($addon == 0) {
-            $this->upload_info .=  "$time $text\r\n";
-            
+            $this->upload_info .= "$time $text\r\n";
+
             // Returns the number of the current line
-            $currentLine = substr_count($this->upload_info, "\n") -1;
+            $currentLine = substr_count($this->upload_info, "\n") - 1;
             return $currentLine;
         }
-        
+
         // else if addon function is used, select the line & modify it
         $lines = substr($info, "\n"); // Seperate the string to array in lines
         $lines[$addon] = "$lines[$addon] $text"; // Add the content to the line
         $this->upload_info = implode("\n", $lines); // Put string back together & update
-        
+
         return $addon; // Return line number
     }
-    
+
     /**
      * This is run at the end to display & save the log.
      */
     private function handle_log()
     {
         global $page;
-        
+
         // Display message
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_type("text/plain");
         $page->set_data($this->upload_info);
-        
+
         // Save log
         $log_path = $this->root_dir . "/uploads.log";
-        
+
         if (file_exists($log_path)) {
             $prev_content = file_get_contents($log_path);
         } else {
             $prev_content = "";
         }
-         
-        $content = $prev_content ."\r\n".$this->upload_info;
+
+        $content = $prev_content . "\r\n" . $this->upload_info;
         file_put_contents($log_path, $content);
     }
 }

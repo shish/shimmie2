@@ -67,7 +67,7 @@ class ReportImage extends Extension
                 if (!empty($_POST['image_id']) && !empty($_POST['reason'])) {
                     $image_id = int_escape($_POST['image_id']);
                     send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $_POST['reason'])));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/$image_id"));
                 } else {
                     $this->theme->display_error(500, "Missing input", "Missing image ID or report reason");
@@ -76,7 +76,7 @@ class ReportImage extends Extension
                 if (!empty($_POST['id'])) {
                     if ($user->can("view_image_report")) {
                         send_event(new RemoveReportedImageEvent($_POST['id']));
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("image_report/list"));
                     }
                 } else {
@@ -85,7 +85,7 @@ class ReportImage extends Extension
             } elseif ($event->get_arg(0) == "remove_reports_by" && $user->check_auth_token()) {
                 if ($user->can("view_image_report")) {
                     $this->delete_reports_by(int_escape($_POST['user_id']));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link());
                 }
             } elseif ($event->get_arg(0) == "list") {

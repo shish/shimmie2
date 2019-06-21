@@ -165,14 +165,14 @@ class TagEdit extends Extension
                     $search = $_POST['search'];
                     $replace = $_POST['replace'];
                     $this->mass_tag_edit($search, $replace);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("admin"));
                 }
             }
             if ($event->get_arg(0) == "mass_source_set") {
                 if ($user->can("mass_tag_edit") && isset($_POST['tags']) && isset($_POST['source'])) {
                     $this->mass_source_edit($_POST['tags'], $_POST['source']);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/list"));
                 }
             }

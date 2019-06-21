@@ -41,7 +41,7 @@ class Oekaki extends Extension
                             throw new UploadException("File type not recognised");
                         } else {
                             unlink($tmpname);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("post/view/".$duev->image_id));
                         }
                     }

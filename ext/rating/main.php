@@ -37,7 +37,7 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
-    protected $db_support = ['mysql','pgsql'];  // ?
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
     public function get_priority(): int
     {
@@ -91,7 +91,7 @@ class Ratings extends Extension
         $user_view_level = Ratings::get_user_privs($user);
         $user_view_level = preg_split('//', $user_view_level, -1);
         if (!in_array($event->image->rating, $user_view_level)) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }
@@ -170,7 +170,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->is_admin()) {
-            $event->add_action("bulk_rate", "Set Rating", "", $this->theme->get_selection_rater_html("bulk_rating"));
+            $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("u","bulk_rating"));
         }
     }
 
@@ -191,7 +191,7 @@ class Ratings extends Extension
                         if ($image==null) {
                             continue;
                         }
-        
+
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }
@@ -228,7 +228,7 @@ class Ratings extends Extension
                 #		select image_id from image_tags join tags
                 #		on image_tags.tag_id = tags.id where tags.tag = ?);
                 #	", array($_POST["rating"], $_POST["tag"]));
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/list"));
             }
         }
@@ -331,10 +331,10 @@ class Ratings extends Extension
         if ($config->get_int("ext_ratings2_version") < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
-                case "mysql":
+                case DatabaseDriver::MYSQL:
                     $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
-                case "pgsql":
+                case DatabaseDriver::PGSQL:
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;

@@ -10,6 +10,10 @@
  */
 class Image
 {
+    public const DATA_DIR = "data";
+    public const IMAGE_DIR = "images";
+    public const THUMBNAIL_DIR = "thumbs";
+
     private static $tag_n = 0; // temp hack
     public static $order_sql = null; // this feels ugly
 
@@ -552,7 +556,7 @@ class Image
      */
     public function get_image_filename(): string
     {
-        return warehouse_path("images", $this->hash);
+        return warehouse_path(self::IMAGE_DIR, $this->hash);
     }
 
     /**
@@ -560,7 +564,7 @@ class Image
      */
     public function get_thumb_filename(): string
     {
-        return warehouse_path("thumbs", $this->hash);
+        return warehouse_path(self::THUMBNAIL_DIR, $this->hash);
     }
 
     /**
@@ -640,7 +644,7 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_name() == "mysql") {
+        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
             //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
             $database->execute(
                 "
@@ -917,7 +921,7 @@ class Image
 
         // more than one positive tag, or more than zero negative tags
         else {
-            if ($database->get_driver_name() === "mysql") {
+            if ($database->get_driver_name() === DatabaseDriver::MYSQL) {
                 $query = Image::build_ugly_search_querylet($tag_conditions);
             } else {
                 $query = Image::build_accurate_search_querylet($tag_conditions);

@@ -172,7 +172,7 @@ class Artists extends Extension
                 }
                 case "new_artist":
                 {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/new"));
                     break;
                 }
@@ -183,7 +183,7 @@ class Artists extends Extension
                         if ($newArtistID == -1) {
                             $this->theme->display_error(400, "Error", "Error when entering artist data.");
                         } else {
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$newArtistID));
                         }
                     } else {
@@ -238,7 +238,7 @@ class Artists extends Extension
                 case "edit_artist":
                 {
                     $artistID = $_POST['artist_id'];
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/edit/".$artistID));
                     break;
                 }
@@ -246,14 +246,14 @@ class Artists extends Extension
                 {
                     $artistID = int_escape($_POST['id']);
                     $this->update_artist();
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/view/".$artistID));
                     break;
                 }
                 case "nuke_artist":
                 {
                     $artistID = $_POST['artist_id'];
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/nuke/".$artistID));
                     break;
                 }
@@ -261,7 +261,7 @@ class Artists extends Extension
                 {
                     $artistID = $event->get_arg(1);
                     $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/list"));
                     break;
                 }
@@ -291,7 +291,7 @@ class Artists extends Extension
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_alias();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -300,7 +300,7 @@ class Artists extends Extension
                             $aliasID = $event->get_arg(2);
                             $artistID = $this->get_artistID_by_aliasID($aliasID);
                             $this->delete_alias($aliasID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -316,7 +316,7 @@ class Artists extends Extension
                             $this->update_alias();
                             $aliasID = int_escape($_POST['aliasID']);
                             $artistID = $this->get_artistID_by_aliasID($aliasID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -332,7 +332,7 @@ class Artists extends Extension
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_urls();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -341,7 +341,7 @@ class Artists extends Extension
                             $urlID = $event->get_arg(2);
                             $artistID = $this->get_artistID_by_urlID($urlID);
                             $this->delete_url($urlID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -357,7 +357,7 @@ class Artists extends Extension
                             $this->update_url();
                             $urlID = int_escape($_POST['urlID']);
                             $artistID = $this->get_artistID_by_urlID($urlID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -372,7 +372,7 @@ class Artists extends Extension
                         {
                             $artistID = $_POST['artistID'];
                             $this->add_members();
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -381,7 +381,7 @@ class Artists extends Extension
                             $memberID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_memberID($memberID);
                             $this->delete_member($memberID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }
@@ -397,7 +397,7 @@ class Artists extends Extension
                             $this->update_member();
                             $memberID = int_escape($_POST['memberID']);
                             $artistID = $this->get_artistID_by_memberID($memberID);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("artist/view/".$artistID));
                             break;
                         }

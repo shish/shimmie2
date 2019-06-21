@@ -77,7 +77,7 @@ class IPBan extends Extension
                         send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
                         flash_message("Ban for {$_POST['ip']} added");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "remove" && $user->check_auth_token()) {
@@ -85,7 +85,7 @@ class IPBan extends Extension
                         send_event(new RemoveIPBanEvent($_POST['id']));
 
                         flash_message("Ban removed");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "list") {
@@ -235,7 +235,7 @@ class IPBan extends Extension
     {
         global $config, $database;
 
-        $prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
+        $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
 
         $bans = $this->get_active_bans();
 

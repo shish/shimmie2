@@ -26,7 +26,7 @@ class DowntimeTheme extends Themelet
         $login_link = make_link("user_admin/login");
         $auth = $user->get_auth_html();
 
-        $page->set_mode('data');
+        $page->set_mode(PageMode::DATA);
         $page->set_code(503);
         $page->set_data(
             <<<EOD

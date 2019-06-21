@@ -8,11 +8,12 @@
 
 class PixelFileHandler extends DataHandlerExtension
 {
+    const SUPPORTED_EXTENSIONS = ["jpg", "jpeg", "gif", "png", "webp"];
+
     protected function supported_ext(string $ext): bool
     {
-        $exts = ["jpg", "jpeg", "gif", "png", "webp"];
         $ext = (($pos = strpos($ext, '?')) !== false) ? substr($ext, 0, $pos) : $ext;
-        return in_array(strtolower($ext), $exts);
+        return in_array(strtolower($ext), self::SUPPORTED_EXTENSIONS);
     }
 
     protected function create_image_from_data(string $filename, array $metadata)
@@ -53,12 +54,12 @@ class PixelFileHandler extends DataHandlerExtension
         return false;
     }
 
-    protected function create_thumb(string $hash): bool
+    protected function create_thumb(string $hash, string $type): bool
     {
         global $config;
 
-        $inname  = warehouse_path("images", $hash);
-        $outname = warehouse_path("thumbs", $hash);
+        $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
+        $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
 
         $ok = false;
 
@@ -96,7 +97,7 @@ class PixelFileHandler extends DataHandlerExtension
 
         try {
             $info = getimagesize($inname);
-            $tsize = get_thumbnail_size_scaled($info[0], $info[1]);
+            $tsize = get_thumbnail_size($info[0], $info[1], true);
             $image = image_resize_gd(
                 $inname,
                 $info,

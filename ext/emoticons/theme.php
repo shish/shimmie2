@@ -18,7 +18,7 @@ class EmoticonListTheme extends Themelet
         }
         $html .= "</tr></table>";
         $html .= "</body></html>";
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
         $page->set_data($html);
     }
 }

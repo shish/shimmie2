@@ -61,7 +61,7 @@ class Blocks extends Extension
 					", [$_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content']]);
                     log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
                     $database->cache->delete("blocks");
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));
                 }
             }
@@ -81,7 +81,7 @@ class Blocks extends Extension
                         log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
                     }
                     $database->cache->delete("blocks");
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));
                 }
             } elseif ($event->get_arg(0) == "list") {
