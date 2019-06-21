@@ -40,7 +40,7 @@ class ResizeImage extends Extension
         global $config;
         $config->set_default_bool(ResizeConfig::ENABLED, true);
         $config->set_default_bool(ResizeConfig::UPLOAD, false);
-        $config->set_default_string(ResizeConfig::ENGINE, Graphics::GD_ENGINE);
+        $config->set_default_string(ResizeConfig::ENGINE, GraphicsEngine::GD);
         $config->set_default_int(ResizeConfig::DEFAULT_WIDTH, 0);
         $config->set_default_int(ResizeConfig::DEFAULT_HEIGHT, 0);
     }
@@ -206,7 +206,7 @@ class ResizeImage extends Extension
         }
 
         send_event(new GraphicResizeEvent(
-            Graphics::GD_ENGINE,
+            GraphicsEngine::GD,
             $image_filename,
             $image_obj->ext,
             $tmp_filename,

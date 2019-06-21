@@ -21,6 +21,65 @@ abstract class GraphicsConfig
 
 }
 
+abstract class GraphicsEngine {
+    public const GD = "gd";
+    public const IMAGICK = "convert";
+    public const FFMPEG = "ffmpeg";
+
+    public const ALL = [
+        GraphicsEngine::GD,
+        GraphicsEngine::FFMPEG,
+        GraphicsEngine::IMAGICK
+    ];
+    public const OUTPUT_SUPPORT = [
+        GraphicsEngine::GD => [
+            "gif",
+            "jpg",
+            "png",
+            "webp",
+            self::WEBP_LOSSY,
+        ],
+        GraphicsEngine::IMAGICK => [
+            "gif",
+            "jpg",
+            "png",
+            "webp",
+            self::WEBP_LOSSY,
+            self::WEBP_LOSSLESS,
+        ],
+        GraphicsEngine::FFMPEG => [
+
+        ]
+    ];
+    public const INPUT_SUPPORT = [
+        GraphicsEngine::GD => [
+            "bmp",
+            "gif",
+            "jpg",
+            "png",
+            "webp",
+        ],
+        GraphicsEngine::IMAGICK => [
+            "bmp",
+            "gif",
+            "jpg",
+            "png",
+            "psd",
+            "tiff",
+            "webp",
+            "ico",
+        ],
+        GraphicsEngine::FFMPEG => [
+            "avi",
+            "mkv",
+            "webm",
+            "mp4",
+            "mov",
+            "flv"
+        ]
+    ];
+}
+
 class GraphicsException extends SCoreException
 {
 }
@@ -47,7 +106,7 @@ class GraphicResizeEvent extends Event
                                 bool $minimize = false,
                                 bool $allow_upscale = true)
     {
-        assert(in_array($engine, Graphics::GRAPHICS_ENGINES));
+        assert(in_array($engine, GraphicsEngine::ALL));
         $this->engine = $engine;
         $this->input_path = $input_path;
         $this->input_type = $input_type;
@@ -67,68 +126,9 @@ class Graphics extends Extension
     const WEBP_LOSSY = "webp-lossy";
     const WEBP_LOSSLESS = "webp-lossless";
 
-    const FFMPEG_ENGINE = "ffmpeg";
-    const GD_ENGINE = "gd";
-    const IMAGICK_ENGINE = "convert";
-
-    const GRAPHICS_ENGINES = [
-        self::GD_ENGINE,
-        self::FFMPEG_ENGINE,
-        self::IMAGICK_ENGINE
-    ];
-
     const IMAGE_GRAPHICS_ENGINES = [
-        "GD" => self::GD_ENGINE,
-        "ImageMagick" => self::IMAGICK_ENGINE,
-    ];
-
-    const ENGINE_INPUT_SUPPORT = [
-        self::GD_ENGINE => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-        ],
-        self::IMAGICK_ENGINE => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "psd",
-            "tiff",
-            "webp",
-            "ico",
-        ],
-        self::FFMPEG_ENGINE => [
-            "avi",
-            "mkv",
-            "webm",
-            "mp4",
-            "mov",
-            "flv"
-        ]
-    ];
-
-    const ENGINE_OUTPUT_SUPPORT = [
-        self::GD_ENGINE => [
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-            self::WEBP_LOSSY,
-        ],
-        self::IMAGICK_ENGINE => [
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-            self::WEBP_LOSSY,
-            self::WEBP_LOSSLESS,
-        ],
-        self::FFMPEG_ENGINE => [
-
-        ]
+        "GD" => GraphicsEngine::GD,
+        "ImageMagick" => GraphicsEngine::IMAGICK,
     ];
 
     const LOSSLESS_FORMATS = [
@@ -203,7 +203,7 @@ class Graphics extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Graphics");
+        $sb = new SetupBlock("Graphic Engines");
 
 //        if (self::imagick_available()) {
 //            try {
@@ -233,7 +233,7 @@ class Graphics extends Extension
     public function onGraphicResize(GraphicResizeEvent $event)
     {
         switch ($event->engine) {
-            case self::GD_ENGINE:
+            case GraphicsEngine::GD:
                 $info = getimagesize($event->input_path);
                 if ($info === false) {
                     throw new GraphicsException("getimagesize failed for " . $event->input_path);
@@ -251,7 +251,7 @@ class Graphics extends Extension
                     $event->allow_upscale);
 
                 break;
-            case self::IMAGICK_ENGINE:
+            case GraphicsEngine::IMAGICK:
 //                if (self::imagick_available()) {
 //                } else {
                 self::image_resize_convert(
@@ -292,7 +292,7 @@ class Graphics extends Extension
      * @param array $info The output of getimagesize() for the source file in question.
      * @return int The number of bytes an image resize operation is estimated to use.
      */
-    static function calc_memory_use(array $info): int
+    public static function calc_memory_use(array $info): int
     {
         if (isset($info['bits']) && isset($info['channels'])) {
             $memory_use = ($info[0] * $info[1] * ($info['bits'] / 8) * $info['channels'] * 2.5) / 1024;
@@ -312,7 +312,7 @@ class Graphics extends Extension
      * @return bool true if successful, false if not.
      * @throws GraphicsException
      */
-    static function create_thumbnail_ffmpeg($hash): bool
+    public static function create_thumbnail_ffmpeg($hash): bool
     {
         global $config;
 
@@ -500,7 +500,7 @@ class Graphics extends Extension
 
         $convert = $config->get_string(GraphicsConfig::CONVERT_PATH);
 
-        if ($convert == null || $convert == "") {
+        if (empty($convert)) {
             throw new GraphicsException("convert command not configured");
         }
 
@@ -735,7 +735,7 @@ class Graphics extends Extension
     public static function is_input_supported($engine, $format): bool
     {
         $format = self::normalize_format($format);
-        if (!in_array($format, Graphics::ENGINE_INPUT_SUPPORT[$engine])) {
+        if (!in_array($format, GraphicsEngine::INPUT_SUPPORT[$engine])) {
             return false;
         }
         return true;
@@ -744,7 +744,7 @@ class Graphics extends Extension
     public static function is_output_supported($engine, $format): bool
     {
         $format = self::normalize_format($format);
-        if (!in_array($format, Graphics::ENGINE_OUTPUT_SUPPORT[$engine])) {
+        if (!in_array($format, GraphicsEngine::OUTPUT_SUPPORT[$engine])) {
             return false;
         }
         return true;

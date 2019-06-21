@@ -66,7 +66,7 @@ class TranscodeImage extends Extension
         global $config;
         $config->set_default_bool(TranscodeConfig::ENABLED, true);
         $config->set_default_bool(TranscodeConfig::UPLOAD, false);
-        $config->set_default_string(TranscodeConfig::ENGINE, Graphics::GD_ENGINE);
+        $config->set_default_string(TranscodeConfig::ENGINE, GraphicsEngine::GD);
         $config->set_default_int(TranscodeConfig::QUALITY, 80);
 
         foreach (array_values(self::INPUT_FORMATS) as $format) {
@@ -100,7 +100,7 @@ class TranscodeImage extends Extension
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
         $sb->add_choice_option(TranscodeConfig::ENGINE,  Graphics::IMAGE_GRAPHICS_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
-            if (in_array($format, Graphics::ENGINE_INPUT_SUPPORT[$engine])) {
+            if (in_array($format, GraphicsEngine::INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
                 $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
             }
@@ -289,7 +289,7 @@ class TranscodeImage extends Extension
         if (!$this->can_convert_format($engine, $source_format)) {
             throw new ImageTranscodeException("Engine $engine does not support input format $source_format");
         }
-        if (!in_array($target_format, Graphics::ENGINE_OUTPUT_SUPPORT[$engine])) {
+        if (!in_array($target_format, GraphicsEngine::OUTPUT_SUPPORT[$engine])) {
             throw new ImageTranscodeException("Engine $engine does not support output format $target_format");
         }
 
