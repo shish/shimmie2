@@ -12,15 +12,15 @@ class PoolsTheme extends Themelet
 
         $linksPools = [];
         foreach ($navIDs as $poolID => $pool) {
-            $linksPools[] = "<a href='".make_link("pool/view/".$poolID)."'>".html_escape($pool['info']['title'])."</a>";
+            $linksPools[] = "<a href='" . make_link("pool/view/" . $poolID) . "'>" . html_escape($pool['info']['title']) . "</a>";
 
             if (array_key_exists('nav', $pool)) {
                 $navlinks = "";
                 if (!empty($pool['nav']['prev'])) {
-                    $navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['prev']).'" class="pools_prev_img">Prev</a>';
+                    $navlinks .= '<a href="' . make_link('post/view/' . $pool['nav']['prev']) . '" class="pools_prev_img">Prev</a>';
                 }
                 if (!empty($pool['nav']['next'])) {
-                    $navlinks .= '<a href="'.make_link('post/view/'.$pool['nav']['next']).'" class="pools_next_img">Next</a>';
+                    $navlinks .= '<a href="' . make_link('post/view/' . $pool['nav']['next']) . '" class="pools_next_img">Next</a>';
                 }
                 if (!empty($navlinks)) {
                     $navlinks .= "<div style='height: 5px'></div>";
@@ -38,9 +38,9 @@ class PoolsTheme extends Themelet
     {
         $h = "";
         foreach ($pools as $pool) {
-            $h .= "<option value='".$pool['id']."'>".html_escape($pool['title'])."</option>";
+            $h .= "<option value='" . $pool['id'] . "'>" . html_escape($pool['title']) . "</option>";
         }
-        $editor = "\n".make_form(make_link("pool/add_post"))."
+        $editor = "\n" . make_form(make_link("pool/add_post")) . "
 				<select name='pool_id'>
 					$h
 				</select>
@@ -67,15 +67,15 @@ class PoolsTheme extends Themelet
 
         // Build up the list of pools.
         foreach ($pools as $pool) {
-            $pool_link = '<a href="'.make_link("pool/view/".$pool['id']).'">'.html_escape($pool['title'])."</a>";
-            $user_link = '<a href="'.make_link("user/".url_escape($pool['user_name'])).'">'.html_escape($pool['user_name'])."</a>";
+            $pool_link = '<a href="' . make_link("pool/view/" . $pool['id']) . '">' . html_escape($pool['title']) . "</a>";
+            $user_link = '<a href="' . make_link("user/" . url_escape($pool['user_name'])) . '">' . html_escape($pool['user_name']) . "</a>";
             $public = ($pool['public'] == "Y" ? "Yes" : "No");
 
-            $html .= "<tr>".
-                "<td class='left'>".$pool_link."</td>".
-                "<td>".$user_link."</td>".
-                "<td>".$pool['posts']."</td>".
-                "<td>".$public."</td>".
+            $html .= "<tr>" .
+                "<td class='left'>" . $pool_link . "</td>" .
+                "<td>" . $user_link . "</td>" .
+                "<td>" . $pool['posts'] . "</td>" .
+                "<td>" . $public . "</td>" .
                 "</tr>";
         }
 
@@ -96,7 +96,6 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Pools", $html, "main", 10));
 
 
-
         $this->display_paginator($page, "pool/list", null, $pageNumber, $totalPages);
     }
 
@@ -106,7 +105,7 @@ class PoolsTheme extends Themelet
     public function new_pool_composer(Page $page)
     {
         $create_html = "
-			".make_form(make_link("pool/create"))."
+			" . make_form(make_link("pool/create")) . "
 				<table>
 					<tr><td>Title:</td><td><input type='text' name='title'></td></tr>
 					<tr><td>Public?</td><td><input name='public' type='checkbox' value='Y' checked='checked'/></td></tr>
@@ -120,7 +119,7 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Create Pool", $create_html, "main", 20));
     }
 
-    private function display_top(?array $pools, string $heading, bool $check_all=false)
+    private function display_top(?array $pools, string $heading, bool $check_all = false)
     {
         global $page, $user;
 
@@ -128,9 +127,9 @@ class PoolsTheme extends Themelet
         $page->set_heading($heading);
 
         $poolnav_html = '
-			<a href="'.make_link("pool/list").'">Pool Index</a>
-			<br><a href="'.make_link("pool/new").'">Create Pool</a>
-			<br><a href="'.make_link("pool/updated").'">Pool Changes</a>
+			<a href="' . make_link("pool/list") . '">Pool Index</a>
+			<br><a href="' . make_link("pool/new") . '">Create Pool</a>
+			<br><a href="' . make_link("pool/updated") . '">Pool Changes</a>
 		';
 
         $page->add_block(new NavBlock());
@@ -157,16 +156,16 @@ class PoolsTheme extends Themelet
     {
         global $page;
 
-        $this->display_top($pools, "Pool: ".html_escape($pools[0]['title']));
+        $this->display_top($pools, "Pool: " . html_escape($pools[0]['title']));
 
         $pool_images = '';
         foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
-            $pool_images .= "\n".$thumb_html."\n";
+            $pool_images .= "\n" . $thumb_html . "\n";
         }
 
         $page->add_block(new Block("Viewing Posts", $pool_images, "main", 30));
-        $this->display_paginator($page, "pool/view/".$pools[0]['id'], null, $pageNumber, $totalPages);
+        $this->display_paginator($page, "pool/view/" . $pools[0]['id'], null, $pageNumber, $totalPages);
     }
 
 
@@ -177,22 +176,22 @@ class PoolsTheme extends Themelet
     {
         global $user;
 
-        $editor = "\n".make_form(make_link('pool/import')).'
+        $editor = "\n" . make_form(make_link('pool/import')) . '
 				<input type="text" name="pool_tag" id="edit_pool_tag" placeholder="Please enter a tag"/>
 				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
-				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
+				<input type="hidden" name="pool_id" value="' . $pool['id'] . '">
 			</form>
 			
-			'.make_form(make_link('pool/edit')).'
+			' . make_form(make_link('pool/edit')) . '
 				<input type="submit" name="edit" id="edit_pool_btn" value="Edit Pool"/>
 				<input type="hidden" name="edit_pool" value="yes">
-				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
+				<input type="hidden" name="pool_id" value="' . $pool['id'] . '">
 			</form>
 			
-			'.make_form(make_link('pool/order')).'
+			' . make_form(make_link('pool/order')) . '
 				<input type="submit" name="edit" id="edit_pool_order_btn" value="Order Pool"/>
 				<input type="hidden" name="order_view" value="yes">
-				<input type="hidden" name="pool_id" value="'.$pool['id'].'">
+				<input type="hidden" name="pool_id" value="' . $pool['id'] . '">
 			</form>
 			';
 
@@ -206,9 +205,9 @@ class PoolsTheme extends Themelet
 				//-->
 				</script>
 
-				".make_form(make_link("pool/nuke"))."
+				" . make_form(make_link("pool/nuke")) . "
 					<input type='submit' name='delete' id='delete_pool_btn' value='Delete Pool' onclick='return confirm_action()' />
-					<input type='hidden' name='pool_id' value='".$pool['id']."'>
+					<input type='hidden' name='pool_id' value='" . $pool['id'] . "'>
 				</form>
 				";
         }
@@ -246,19 +245,19 @@ class PoolsTheme extends Themelet
 			</script>
 		";
 
-        $pool_images .= "<form action='".make_link("pool/add_posts")."' method='POST' name='checks'>";
+        $pool_images .= "<form action='" . make_link("pool/add_posts") . "' method='POST' name='checks'>";
 
         foreach ($images as $image) {
             $thumb_html = $this->build_thumb_html($image);
 
-            $pool_images .= '<span class="thumb">'. $thumb_html .'<br>'.
-                '<input name="check[]" type="checkbox" value="'.$image->id.'" />'.
+            $pool_images .= '<span class="thumb">' . $thumb_html . '<br>' .
+                '<input name="check[]" type="checkbox" value="' . $image->id . '" />' .
                 '</span>';
         }
 
-        $pool_images .= "<br>".
-            "<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>".
-            "<input type='hidden' name='pool_id' value='".$pool[0]['id']."'>".
+        $pool_images .= "<br>" .
+            "<input type='submit' name='edit' id='edit_pool_add_btn' value='Add Selected' onclick='return confirm_action()'/>" .
+            "<input type='hidden' name='pool_id' value='" . $pool[0]['id'] . "'>" .
             "</form>";
 
         $page->add_block(new Block("Import", $pool_images, "main", 30));
@@ -273,21 +272,21 @@ class PoolsTheme extends Themelet
     {
         $this->display_top($pools, "Sorting Pool");
 
-        $pool_images = "\n<form action='".make_link("pool/order")."' method='POST' name='checks'>";
+        $pool_images = "\n<form action='" . make_link("pool/order") . "' method='POST' name='checks'>";
         $i = 0;
         foreach ($images as $pair) {
             $image = $pair[0];
             $thumb_html = $this->build_thumb_html($image);
-            $pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
-                '<br><input name="imgs['.$i.'][]" type="number" style="max-width:50px;" value="'.$image->image_order.'" />'.
-                '<input name="imgs['.$i.'][]" type="hidden" value="'.$image->id.'" />'.
+            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
+                '<br><input name="imgs[' . $i . '][]" type="number" style="max-width:50px;" value="' . $image->image_order . '" />' .
+                '<input name="imgs[' . $i . '][]" type="hidden" value="' . $image->id . '" />' .
                 '</span>';
             $i++;
         }
 
-        $pool_images .= "<br>".
-            "<input type='submit' name='edit' id='edit_pool_order' value='Order'/>".
-            "<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
+        $pool_images .= "<br>" .
+            "<input type='submit' name='edit' id='edit_pool_order' value='Order'/>" .
+            "<input type='hidden' name='pool_id' value='" . $pools[0]['id'] . "'>" .
             "</form>";
 
         $page->add_block(new Block("Sorting Posts", $pool_images, "main", 30));
@@ -303,29 +302,29 @@ class PoolsTheme extends Themelet
     {
         /* EDIT POOL DESCRIPTION */
         $desc_html = "
-			".make_form(make_link("pool/edit_description"))."
-					<textarea name='description'>".$pools[0]['description']."</textarea><br />
-					<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>
+			" . make_form(make_link("pool/edit_description")) . "
+					<textarea name='description'>" . $pools[0]['description'] . "</textarea><br />
+					<input type='hidden' name='pool_id' value='" . $pools[0]['id'] . "'>
 					<input type='submit' value='Change Description' />
 			</form>
 		";
 
         /* REMOVE POOLS */
-        $pool_images = "\n<form action='".make_link("pool/remove_posts")."' method='POST' name='checks'>";
+        $pool_images = "\n<form action='" . make_link("pool/remove_posts") . "' method='POST' name='checks'>";
 
         foreach ($images as $pair) {
             $image = $pair[0];
 
             $thumb_html = $this->build_thumb_html($image);
 
-            $pool_images .= '<span class="thumb">'."\n".$thumb_html."\n".
-                '<br><input name="check[]" type="checkbox" value="'.$image->id.'" />'.
+            $pool_images .= '<span class="thumb">' . "\n" . $thumb_html . "\n" .
+                '<br><input name="check[]" type="checkbox" value="' . $image->id . '" />' .
                 '</span>';
         }
 
-        $pool_images .= "<br>".
-            "<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>".
-            "<input type='hidden' name='pool_id' value='".$pools[0]['id']."'>".
+        $pool_images .= "<br>" .
+            "<input type='submit' name='edit' id='edit_pool_remove_sel' value='Remove Selected'/>" .
+            "<input type='hidden' name='pool_id' value='" . $pools[0]['id'] . "'>" .
             "</form>";
 
         $pools[0]['description'] = ""; //This is a rough fix to avoid showing the description twice.
@@ -353,9 +352,9 @@ class PoolsTheme extends Themelet
 				</tr></thead><tbody>';
 
         foreach ($histories as $history) {
-            $pool_link = "<a href='".make_link("pool/view/".$history['pool_id'])."'>".html_escape($history['title'])."</a>";
-            $user_link = "<a href='".make_link("user/".url_escape($history['user_name']))."'>".html_escape($history['user_name'])."</a>";
-            $revert_link = "<a href='".make_link("pool/revert/".$history['id'])."'>Revert</a>";
+            $pool_link = "<a href='" . make_link("pool/view/" . $history['pool_id']) . "'>" . html_escape($history['title']) . "</a>";
+            $user_link = "<a href='" . make_link("user/" . url_escape($history['user_name'])) . "'>" . html_escape($history['user_name']) . "</a>";
+            $revert_link = "<a href='" . make_link("pool/revert/" . $history['id']) . "'>Revert</a>";
 
             if ($history['action'] == 1) {
                 $prefix = "+";
@@ -370,16 +369,16 @@ class PoolsTheme extends Themelet
 
             $image_link = "";
             foreach ($images as $image) {
-                $image_link .= "<a href='".make_link("post/view/".$image)."'>".$prefix.$image." </a>";
+                $image_link .= "<a href='" . make_link("post/view/" . $image) . "'>" . $prefix . $image . " </a>";
             }
 
-            $html .= "<tr>".
-                "<td class='left'>".$pool_link."</td>".
-                "<td>".$history['count']."</td>".
-                "<td>".$image_link."</td>".
-                "<td>".$user_link."</td>".
-                "<td>".$history['date']."</td>".
-                "<td>".$revert_link."</td>".
+            $html .= "<tr>" .
+                "<td class='left'>" . $pool_link . "</td>" .
+                "<td>" . $history['count'] . "</td>" .
+                "<td>" . $image_link . "</td>" .
+                "<td>" . $user_link . "</td>" .
+                "<td>" . $history['date'] . "</td>" .
+                "<td>" . $revert_link . "</td>" .
                 "</tr>";
         }
 
@@ -389,5 +388,19 @@ class PoolsTheme extends Themelet
         $page->add_block(new Block("Recent Changes", $html, "main", 10));
 
         $this->display_paginator($page, "pool/updated", null, $pageNumber, $totalPages);
+    }
+
+    public function get_bulk_pool_selector(array $pools)
+    {
+        $output = "<select name='bulk_pool_select' required='required'><option></option>";
+        foreach ($pools as $pool) {
+            $output .= "<option value='" . $pool["id"] . "' >" . $pool["title"] . "</option>";
+        }
+        return $output . "</select>";
+    }
+
+    public function get_bulk_pool_input()
+    {
+        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' />";
     }
 }
