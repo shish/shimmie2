@@ -95,7 +95,6 @@ function get_extension_from_mime(String $file_path): String
     throw new UploadException("Could not determine file mime type: ".$file_path);
 }
 
-
 /**
  * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact.
@@ -179,7 +178,7 @@ function create_image_thumb(string $hash, string $type, string $engine = null) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
     }
 
-    send_event(new GraphicResizeEvent(
+    send_event(new MediaResizeEvent(
         $engine,
         $inname,
         $type,

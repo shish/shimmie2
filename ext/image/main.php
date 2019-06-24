@@ -41,8 +41,8 @@ class ImageIO extends Extension
 
 
     const THUMBNAIL_ENGINES = [
-        'Built-in GD' => GraphicsEngine::GD,
-        'ImageMagick' => GraphicsEngine::IMAGICK
+        'Built-in GD' => MediaEngine::GD,
+        'ImageMagick' => MediaEngine::IMAGICK
     ];
 
     const THUMBNAIL_TYPES = [

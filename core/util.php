@@ -79,7 +79,7 @@ function get_memory_limit(): int
 
     // thumbnail generation requires lots of memory
     $default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
-    $shimmie_limit = parse_shorthand_int($config->get_int(GraphicsConfig::MEM_LIMIT));
+    $shimmie_limit = parse_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT));
 
     if ($shimmie_limit < 3*1024*1024) {
         // we aren't going to fit, override

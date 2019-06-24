@@ -1,65 +1,66 @@
 <?php
 /*
- * Name: Graphics
+ * Name: Media
  * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides common functions and settings used for graphic operations.
+ * Description: Provides common functions and settings used for media operations.
  * License: MIT
  * Version: 1.0
  */
 
 /*
-* This is used by the graphics code when there is an error
+* This is used by the media code when there is an error
 */
 
-abstract class GraphicsConfig
+abstract class MediaConfig
 {
-    const FFMPEG_PATH = "graphics_ffmpeg_path";
-    const FFPROBE_PATH = "graphics_ffprobe_path";
-    const CONVERT_PATH = "graphics_convert_path";
-    const VERSION = "ext_graphics_version";
-    const MEM_LIMIT = 'graphics_mem_limit';
+    const FFMPEG_PATH = "media_ffmpeg_path";
+    const FFPROBE_PATH = "media_ffprobe_path";
+    const CONVERT_PATH = "media_convert_path";
+    const VERSION = "ext_media_version";
+    const MEM_LIMIT = 'media_mem_limit';
 
 }
 
-abstract class GraphicsEngine {
+abstract class MediaEngine
+{
     public const GD = "gd";
     public const IMAGICK = "convert";
     public const FFMPEG = "ffmpeg";
 
     public const ALL = [
-        GraphicsEngine::GD,
-        GraphicsEngine::FFMPEG,
-        GraphicsEngine::IMAGICK
+        MediaEngine::GD,
+        MediaEngine::FFMPEG,
+        MediaEngine::IMAGICK
     ];
     public const OUTPUT_SUPPORT = [
-        GraphicsEngine::GD => [
+        MediaEngine::GD => [
             "gif",
             "jpg",
             "png",
             "webp",
-            Graphics::WEBP_LOSSY,
+            Media::WEBP_LOSSY,
         ],
-        GraphicsEngine::IMAGICK => [
+        MediaEngine::IMAGICK => [
             "gif",
             "jpg",
             "png",
             "webp",
-            Graphics::WEBP_LOSSY,
-            Graphics::WEBP_LOSSLESS,
+            Media::WEBP_LOSSY,
+            Media::WEBP_LOSSLESS,
         ],
-        GraphicsEngine::FFMPEG => [
+        MediaEngine::FFMPEG => [
 
         ]
     ];
     public const INPUT_SUPPORT = [
-        GraphicsEngine::GD => [
+        MediaEngine::GD => [
             "bmp",
             "gif",
             "jpg",
             "png",
             "webp",
         ],
-        GraphicsEngine::IMAGICK => [
+        MediaEngine::IMAGICK => [
             "bmp",
             "gif",
             "jpg",
@@ -69,7 +70,7 @@ abstract class GraphicsEngine {
             "webp",
             "ico",
         ],
-        GraphicsEngine::FFMPEG => [
+        MediaEngine::FFMPEG => [
             "avi",
             "mkv",
             "webm",
@@ -80,11 +81,11 @@ abstract class GraphicsEngine {
     ];
 }
 
-class GraphicsException extends SCoreException
+class MediaException extends SCoreException
 {
 }
 
-class GraphicResizeEvent extends Event
+class MediaResizeEvent extends Event
 {
     public $engine;
     public $input_path;
@@ -106,7 +107,7 @@ class GraphicResizeEvent extends Event
                                 bool $minimize = false,
                                 bool $allow_upscale = true)
     {
-        assert(in_array($engine, GraphicsEngine::ALL));
+        assert(in_array($engine, MediaEngine::ALL));
         $this->engine = $engine;
         $this->input_path = $input_path;
         $this->input_type = $input_type;
@@ -121,14 +122,28 @@ class GraphicResizeEvent extends Event
     }
 }
 
-class Graphics extends Extension
+class MediaCheckLosslessEvent extends Event
+{
+    public $file_name;
+    public $ext;
+    public $result = false;
+
+    public function __construct(string $file_name, string $ext)
+    {
+        $this->file_name = $file_name;
+        $this->ext = $ext;
+    }
+
+}
+
+class Media extends Extension
 {
     const WEBP_LOSSY = "webp-lossy";
     const WEBP_LOSSLESS = "webp-lossless";
 
-    const IMAGE_GRAPHICS_ENGINES = [
-        "GD" => GraphicsEngine::GD,
-        "ImageMagick" => GraphicsEngine::IMAGICK,
+    const IMAGE_MEDIA_ENGINES = [
+        "GD" => MediaEngine::GD,
+        "ImageMagick" => MediaEngine::IMAGICK,
     ];
 
     const LOSSLESS_FORMATS = [
@@ -148,6 +163,16 @@ class Graphics extends Extension
     ];
 
 
+    //RIFF####WEBPVP8?..............ANIM
+    private const WEBP_ANIMATION_HEADER =
+        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, null,
+            null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0x41, 0x4E, 0x49, 0x4D];
+
+    //RIFF####WEBPVP8L
+    private const WEBP_LOSSLESS_HEADER =
+        [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, 0x4C];
+
+
     static function imagick_available(): bool
     {
         return extension_loaded("imagick");
@@ -164,46 +189,46 @@ class Graphics extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_string(GraphicsConfig::FFPROBE_PATH, 'ffprobe');
-        $config->set_default_int(GraphicsConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
-        $config->set_default_string(GraphicsConfig::FFMPEG_PATH, '');
-        $config->set_default_string(GraphicsConfig::CONVERT_PATH, 'convert');
+        $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
+        $config->set_default_int(MediaConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
+        $config->set_default_string(MediaConfig::FFMPEG_PATH, '');
+        $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
 
 
-        if ($config->get_int(GraphicsConfig::VERSION) < 1) {
+        if ($config->get_int(MediaConfig::VERSION) < 1) {
             $current_value = $config->get_string("thumb_ffmpeg_path");
             if (!empty($current_value)) {
-                $config->set_string(GraphicsConfig::FFMPEG_PATH, $current_value);
+                $config->set_string(MediaConfig::FFMPEG_PATH, $current_value);
             } elseif ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
                 //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
                 if (is_executable(strtok($ffmpeg, PHP_EOL))) {
-                    $config->set_default_string(GraphicsConfig::FFMPEG_PATH, 'ffmpeg');
+                    $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
                 }
             }
 
             $current_value = $config->get_string("thumb_convert_path");
             if (!empty($current_value)) {
-                $config->set_string(GraphicsConfig::CONVERT_PATH, $current_value);
+                $config->set_string(MediaConfig::CONVERT_PATH, $current_value);
             } elseif ($convert = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' convert')) {
                 //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
                 if (is_executable(strtok($convert, PHP_EOL))) {
-                    $config->set_default_string(GraphicsConfig::CONVERT_PATH, 'convert');
+                    $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
                 }
             }
 
             $current_value = $config->get_int("thumb_mem_limit");
             if (!empty($current_value)) {
-                $config->set_int(GraphicsConfig::MEM_LIMIT, $current_value);
+                $config->set_int(MediaConfig::MEM_LIMIT, $current_value);
             }
 
-            $config->set_int(GraphicsConfig::VERSION, 1);
-            log_info("graphics", "extension installed");
+            $config->set_int(MediaConfig::VERSION, 1);
+            log_info("media", "extension installed");
         }
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        $sb = new SetupBlock("Graphic Engines");
+        $sb = new SetupBlock("Media Engines");
 
 //        if (self::imagick_available()) {
 //            try {
@@ -214,29 +239,29 @@ class Graphics extends Extension
 //                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
 //            }
 //        } else {
-        $sb->add_text_option(GraphicsConfig::CONVERT_PATH, "convert command: ");
+        $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert command: ");
 //        }
 
-        $sb->add_text_option(GraphicsConfig::FFMPEG_PATH, "<br/>ffmpeg command: ");
+        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "<br/>ffmpeg command: ");
 
-        $sb->add_shorthand_int_option(GraphicsConfig::MEM_LIMIT, "<br />Max memory use: ");
+        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "<br />Max memory use: ");
 
         $event->panel->add_block($sb);
 
     }
 
     /**
-     * @param GraphicResizeEvent $event
-     * @throws GraphicsException
+     * @param MediaResizeEvent $event
+     * @throws MediaException
      * @throws InsufficientMemoryException
      */
-    public function onGraphicResize(GraphicResizeEvent $event)
+    public function onMediaResize(MediaResizeEvent $event)
     {
         switch ($event->engine) {
-            case GraphicsEngine::GD:
+            case MediaEngine::GD:
                 $info = getimagesize($event->input_path);
                 if ($info === false) {
-                    throw new GraphicsException("getimagesize failed for " . $event->input_path);
+                    throw new MediaException("getimagesize failed for " . $event->input_path);
                 }
 
                 self::image_resize_gd(
@@ -251,7 +276,7 @@ class Graphics extends Extension
                     $event->allow_upscale);
 
                 break;
-            case GraphicsEngine::IMAGICK:
+            case MediaEngine::IMAGICK:
 //                if (self::imagick_available()) {
 //                } else {
                 self::image_resize_convert(
@@ -268,13 +293,29 @@ class Graphics extends Extension
                 //}
                 break;
             default:
-                throw new GraphicsException("Engine not supported for resize: " . $event->engine);
+                throw new MediaException("Engine not supported for resize: " . $event->engine);
         }
 
         // TODO: Get output optimization tools working better
 //        if ($config->get_bool("thumb_optim", false)) {
 //            exec("jpegoptim $outname", $output, $ret);
 //        }
+    }
+
+    public function onMediaCheckLossless(MediaCheckLosslessEvent $event)
+    {
+        switch ($event->ext) {
+            case "png":
+            case "psd":
+            case "bmp":
+            case "gif":
+            case "ico":
+                $event->result = true;
+                break;
+            case "webp":
+                $event->result = Media::is_lossless_webp($event->file_name);
+                break;
+        }
     }
 
     /**
@@ -310,15 +351,15 @@ class Graphics extends Extension
      *
      * @param $hash
      * @return bool true if successful, false if not.
-     * @throws GraphicsException
+     * @throws MediaException
      */
     public static function create_thumbnail_ffmpeg($hash): bool
     {
         global $config;
 
-        $ffmpeg = $config->get_string(GraphicsConfig::FFMPEG_PATH);
+        $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
         if ($ffmpeg == null || $ffmpeg == "") {
-            throw new GraphicsException("ffmpeg command configured");
+            throw new MediaException("ffmpeg command configured");
         }
 
         $inname = warehouse_path(Image::IMAGE_DIR, $hash);
@@ -355,10 +396,10 @@ class Graphics extends Extension
         exec($cmd, $output, $ret);
 
         if ((int)$ret == (int)0) {
-            log_debug('graphics', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_debug('Media', "Generating thumbnail with command `$cmd`, returns $ret");
             return true;
         } else {
-            log_error('graphics', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_error('Media', "Generating thumbnail with command `$cmd`, returns $ret");
             return false;
         }
     }
@@ -498,10 +539,10 @@ class Graphics extends Extension
     {
         global $config;
 
-        $convert = $config->get_string(GraphicsConfig::CONVERT_PATH);
+        $convert = $config->get_string(MediaConfig::CONVERT_PATH);
 
         if (empty($convert)) {
-            throw new GraphicsException("convert command not configured");
+            throw new MediaException("convert command not configured");
         }
 
         if (empty($output_type)) {
@@ -533,9 +574,9 @@ class Graphics extends Extension
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
         if ($ret != 0) {
-            throw new GraphicsException("Resizing image with command `$cmd`, returns $ret, outputting " . implode("\r\n", $output));
+            throw new MediaException("Resizing image with command `$cmd`, returns $ret, outputting " . implode("\r\n", $output));
         } else {
-            log_debug('graphics', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_debug('Media', "Generating thumbnail with command `$cmd`, returns $ret");
         }
     }
 
@@ -549,7 +590,7 @@ class Graphics extends Extension
      * @param string $output_filename
      * @param string|null $output_type If set to null, the output file type will be automatically determined via the $info parameter. Otherwise an exception will be thrown.
      * @param int $output_quality Defaults to 80.
-     * @throws GraphicsException
+     * @throws MediaException
      * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
      */
     public static function image_resize_gd(
@@ -586,7 +627,7 @@ class Graphics extends Extension
                     $output_type = "bmp";
                     break;
                 default:
-                    throw new GraphicsException("Failed to save the new image - Unsupported image type.");
+                    throw new MediaException("Failed to save the new image - Unsupported image type.");
             }
         }
 
@@ -609,10 +650,10 @@ class Graphics extends Extension
         $image_resized = imagecreatetruecolor($new_width, $new_height);
         try {
             if ($image === false) {
-                throw new GraphicsException("Could not load image: " . $image_filename);
+                throw new MediaException("Could not load image: " . $image_filename);
             }
             if ($image_resized === false) {
-                throw new GraphicsException("Could not create output image with dimensions $new_width c $new_height ");
+                throw new MediaException("Could not create output image with dimensions $new_width c $new_height ");
             }
 
             // Handle transparent images
@@ -629,12 +670,12 @@ class Graphics extends Extension
                         // Allocate the same color in the new image resource
                         $transparency = imagecolorallocate($image_resized, $transparent_color['red'], $transparent_color['green'], $transparent_color['blue']);
                         if ($transparency === false) {
-                            throw new GraphicsException("Unable to allocate transparent color");
+                            throw new MediaException("Unable to allocate transparent color");
                         }
 
                         // Completely fill the background of the new image with allocated color.
                         if (imagefill($image_resized, 0, 0, $transparency) === false) {
-                            throw new GraphicsException("Unable to fill new image with transparent color");
+                            throw new MediaException("Unable to fill new image with transparent color");
                         }
 
                         // Set the background color for new image to transparent
@@ -647,17 +688,17 @@ class Graphics extends Extension
                     // More info here:  http://stackoverflow.com/questions/279236/how-do-i-resize-pngs-with-transparency-in-php
                     //
                     if (imagealphablending($image_resized, false) === false) {
-                        throw new GraphicsException("Unable to disable image alpha blending");
+                        throw new MediaException("Unable to disable image alpha blending");
                     }
                     if (imagesavealpha($image_resized, true) === false) {
-                        throw new GraphicsException("Unable to enable image save alpha");
+                        throw new MediaException("Unable to enable image save alpha");
                     }
                     $transparent_color = imagecolorallocatealpha($image_resized, 255, 255, 255, 127);
                     if ($transparent_color === false) {
-                        throw new GraphicsException("Unable to allocate transparent color");
+                        throw new MediaException("Unable to allocate transparent color");
                     }
                     if (imagefilledrectangle($image_resized, 0, 0, $new_width, $new_height, $transparent_color) === false) {
-                        throw new GraphicsException("Unable to fill new image with transparent color");
+                        throw new MediaException("Unable to fill new image with transparent color");
                     }
                     break;
             }
@@ -675,7 +716,7 @@ class Graphics extends Extension
                     $width,
                     $height
                 ) === false) {
-                throw new GraphicsException("Unable to copy resized image data to new image");
+                throw new MediaException("Unable to copy resized image data to new image");
             }
 
             switch ($output_type) {
@@ -683,7 +724,7 @@ class Graphics extends Extension
                     $result = imagebmp($image_resized, $output_filename, true);
                     break;
                 case "webp":
-                case Graphics::WEBP_LOSSY:
+                case Media::WEBP_LOSSY:
                     $result = imagewebp($image_resized, $output_filename, $output_quality);
                     break;
                 case "jpg":
@@ -697,10 +738,10 @@ class Graphics extends Extension
                     $result = imagegif($image_resized, $output_filename);
                     break;
                 default:
-                    throw new GraphicsException("Failed to save the new image - Unsupported image type: $output_type");
+                    throw new MediaException("Failed to save the new image - Unsupported image type: $output_type");
             }
             if ($result === false) {
-                throw new GraphicsException("Failed to save the new image, function returned false when saving type: $output_type");
+                throw new MediaException("Failed to save the new image, function returned false when saving type: $output_type");
             }
         } finally {
             @imagedestroy($image);
@@ -714,17 +755,67 @@ class Graphics extends Extension
      * @param String $image_filename The path of the file to check.
      * @return bool true if the file is an animated gif, false if it is not.
      */
-    public static function is_animated_gif(String $image_filename)
+    public static function is_animated_gif(String $image_filename): bool
     {
         $is_anim_gif = 0;
         if (($fh = @fopen($image_filename, 'rb'))) {
-            //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
-            while (!feof($fh) && $is_anim_gif < 2) {
-                $chunk = fread($fh, 1024 * 100);
-                $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+            try {
+                //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
+                while (!feof($fh) && $is_anim_gif < 2) {
+                    $chunk = fread($fh, 1024 * 100);
+                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+                }
+            } finally {
+                @fclose($fh);
             }
         }
         return ($is_anim_gif == 0);
+    }
+
+
+
+
+    private static function compare_file_bytes(String $file_name, array $comparison): bool
+    {
+        $size= filesize($file_name);
+        if ($size < count($comparison)) {
+            // Can't match because it's too small
+            return false;
+        }
+
+        if (($fh = @fopen($file_name, 'rb'))) {
+            try {
+                $chunk = unpack("C*",fread($fh, count($comparison)));
+
+                for ($i = 0; $i < count($comparison); $i++) {
+                    $byte = $comparison[$i];
+                    if($byte==null) {
+                        continue;
+                    } else {
+                        $fileByte = $chunk[$i+1];
+                        if($fileByte!=$byte) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            } finally {
+                @fclose($fh);
+            }
+        } else {
+            throw new MediaException("Unable to open file for byte check: $file_name");
+        }
+
+    }
+
+    public static function is_animated_webp(String $image_filename): bool
+    {
+        return self::compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
+    }
+
+    public static function is_lossless_webp(String $image_filename): bool
+    {
+        return self::compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
     }
 
     public static function supports_alpha(string $format)
@@ -735,7 +826,7 @@ class Graphics extends Extension
     public static function is_input_supported($engine, $format): bool
     {
         $format = self::normalize_format($format);
-        if (!in_array($format, GraphicsEngine::INPUT_SUPPORT[$engine])) {
+        if (!in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
             return false;
         }
         return true;
@@ -744,7 +835,7 @@ class Graphics extends Extension
     public static function is_output_supported($engine, $format): bool
     {
         $format = self::normalize_format($format);
-        if (!in_array($format, GraphicsEngine::OUTPUT_SUPPORT[$engine])) {
+        if (!in_array($format, MediaEngine::OUTPUT_SUPPORT[$engine])) {
             return false;
         }
         return true;
@@ -752,15 +843,15 @@ class Graphics extends Extension
 
     /**
      * Checks if a format (normally a file extension) is a variant name of another format (ie, jpg and jpeg).
-     * If one is found, then the maine name that the Graphics extension will recognize is returned,
+     * If one is found, then the maine name that the Media extension will recognize is returned,
      * otherwise the incoming format is returned.
      *
      * @param $format
-     * @return string|null The format name that the graphics extension will recognize.
+     * @return string|null The format name that the media extension will recognize.
      */
     static public function normalize_format($format): ?string
     {
-        if (array_key_exists($format, Graphics::FORMAT_ALIASES)) {
+        if (array_key_exists($format, Media::FORMAT_ALIASES)) {
             return self::FORMAT_ALIASES[$format];
         }
         return $format;
@@ -776,7 +867,7 @@ class Graphics extends Extension
     static public function video_size(string $filename): array
     {
         global $config;
-        $ffmpeg = $config->get_string(GraphicsConfig::FFMPEG_PATH);
+        $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
         $cmd = escapeshellcmd(implode(" ", [
             escapeshellarg($ffmpeg),
             "-y", "-i", escapeshellarg($filename),
@@ -795,7 +886,7 @@ class Graphics extends Extension
         } else {
             $size = [1, 1];
         }
-        log_debug('graphics', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
+        log_debug('Media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
         return $size;
     }
 

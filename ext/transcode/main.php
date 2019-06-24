@@ -48,8 +48,8 @@ class TranscodeImage extends Extension
         "" => "",
         "JPEG (lossy)" => "jpg",
         "PNG (lossless)" => "png",
-        "WEBP (lossy)" => Graphics::WEBP_LOSSY,
-        "WEBP (lossless)" => Graphics::WEBP_LOSSLESS,
+        "WEBP (lossy)" => Media::WEBP_LOSSY,
+        "WEBP (lossless)" => Media::WEBP_LOSSLESS,
     ];
 
     /**
@@ -66,7 +66,7 @@ class TranscodeImage extends Extension
         global $config;
         $config->set_default_bool(TranscodeConfig::ENABLED, true);
         $config->set_default_bool(TranscodeConfig::UPLOAD, false);
-        $config->set_default_string(TranscodeConfig::ENGINE, GraphicsEngine::GD);
+        $config->set_default_string(TranscodeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(TranscodeConfig::QUALITY, 80);
 
         foreach (array_values(self::INPUT_FORMATS) as $format) {
@@ -98,9 +98,9 @@ class TranscodeImage extends Extension
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE,  Graphics::IMAGE_GRAPHICS_ENGINES, "Engine", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE,  Media::IMAGE__MEDIA_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
-            if (in_array($format, GraphicsEngine::INPUT_SUPPORT[$engine])) {
+            if (in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
                 $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
             }
@@ -117,9 +117,9 @@ class TranscodeImage extends Extension
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
             $ext = strtolower($event->type);
 
-            $ext = Graphics::normalize_format($ext);
+            $ext = Media::normalize_format($ext);
 
-            if ($event->type=="gif"&&Graphics::is_animated_gif($event->tmpname)) {
+            if ($event->type=="gif"&&Media::is_animated_gif($event->tmpname)) {
                 return;
             }
 
@@ -130,7 +130,7 @@ class TranscodeImage extends Extension
                 }
                 try {
                     $new_image = $this->transcode_image($event->tmpname, $ext, $target_format);
-                    $event->set_type(Graphics::determine_ext($target_format));
+                    $event->set_type(Media::determine_ext($target_format));
                     $event->set_tmpname($new_image);
                 } catch (Exception $e) {
                     log_error("transcode", "Error while performing upload transcode: ".$e->getMessage());
@@ -224,21 +224,21 @@ class TranscodeImage extends Extension
 
     private function can_convert_format($engine, $format): bool
     {
-        return Graphics::is_input_supported($engine, $format);
+        return Media::is_input_supported($engine, $format);
     }
 
 
     private function get_supported_output_formats($engine, ?String $omit_format = null): array
     {
-        $omit_format = Graphics::normalize_format($omit_format);
+        $omit_format = Media::normalize_format($omit_format);
         $output = [];
         foreach (self::OUTPUT_FORMATS as $key=>$value) {
             if ($value=="") {
                 $output[$key] = $value;
                 continue;
             }
-            if(Graphics::is_output_supported($engine, $value)
-                &&(empty($omit_format)||$omit_format!=Graphics::determine_ext($value))) {
+            if(Media::is_output_supported($engine, $value)
+                &&(empty($omit_format)||$omit_format!=Media::determine_ext($value))) {
                 $output[$key] = $value;
             }
         }
@@ -259,7 +259,7 @@ class TranscodeImage extends Extension
         $new_image->filename = $image_obj->filename;
         $new_image->width = $image_obj->width;
         $new_image->height = $image_obj->height;
-        $new_image->ext = Graphics::determine_ext($target_format);
+        $new_image->ext = Media::determine_ext($target_format);
 
         /* Move the new image into the main storage location */
         $target = warehouse_path(Image::IMAGE_DIR, $new_image->hash);
@@ -278,7 +278,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        if ($source_format==Graphics::determine_ext($target_format)) {
+        if ($source_format==Media::determine_ext($target_format)) {
             throw new ImageTranscodeException("Source and target formats are the same: ".$source_format);
         }
 
@@ -289,7 +289,7 @@ class TranscodeImage extends Extension
         if (!$this->can_convert_format($engine, $source_format)) {
             throw new ImageTranscodeException("Engine $engine does not support input format $source_format");
         }
-        if (!in_array($target_format, GraphicsEngine::OUTPUT_SUPPORT[$engine])) {
+        if (!in_array($target_format, MediaEngine::OUTPUT_SUPPORT[$engine])) {
             throw new ImageTranscodeException("Engine $engine does not support output format $target_format");
         }
 
@@ -313,7 +313,7 @@ class TranscodeImage extends Extension
         try {
             $result = false;
             switch ($target_format) {
-                case "webp-lossy":
+                case Media::WEBP_LOSSY:
                     $result = imagewebp($image, $tmp_name, $q);
                     break;
                 case "png":
@@ -358,20 +358,20 @@ class TranscodeImage extends Extension
         global $config;
             
         $q = $config->get_int("transcode_quality");
-        $convert = $config->get_string(GraphicsConfig::CONVERT_PATH);
+        $convert = $config->get_string(MediaConfig::CONVERT_PATH);
 
         if ($convert==null||$convert=="") {
             throw new ImageTranscodeException("ImageMagick path not configured");
         }
-        $ext = Graphics::determine_ext($target_format);
+        $ext = Media::determine_ext($target_format);
 
         $args = " -flatten ";
         $bg = "none";
         switch ($target_format) {
-            case Graphics::WEBP_LOSSLESS:
+            case Media::WEBP_LOSSLESS:
                 $args .= '-define webp:lossless=true';
                 break;
-            case Graphics::WEBP_LOSSY:
+            case Media::WEBP_LOSSY:
                 $args .= '';
                 break;
             case "png":

@@ -35,8 +35,8 @@ Database: {$info['sys_db']}
 Server: {$info['sys_server']}
 Disk use: {$info['sys_disk']}
 
-Graphics System:
-Memory Limit: {$info[GraphicsConfig::MEM_LIMIT]}
+Media System:
+Memory Limit: {$info[MediaConfig::MEM_LIMIT]}
 
 Thumbnail Generation:
 Engine: {$info[ImageConfig::THUMB_ENGINE]}

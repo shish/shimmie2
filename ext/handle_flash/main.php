@@ -12,7 +12,7 @@ class FlashFileHandler extends DataHandlerExtension
     {
         global $config;
 
-        if (!Graphics::create_thumbnail_ffmpeg($hash)) {
+        if (!Media::create_thumbnail_ffmpeg($hash)) {
             copy("ext/handle_flash/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         }
         return true;

@@ -40,7 +40,7 @@ class ResizeImage extends Extension
         global $config;
         $config->set_default_bool(ResizeConfig::ENABLED, true);
         $config->set_default_bool(ResizeConfig::UPLOAD, false);
-        $config->set_default_string(ResizeConfig::ENGINE, GraphicsEngine::GD);
+        $config->set_default_string(ResizeConfig::ENGINE, MediaEngine::GD);
         $config->set_default_int(ResizeConfig::DEFAULT_WIDTH, 0);
         $config->set_default_int(ResizeConfig::DEFAULT_HEIGHT, 0);
     }
@@ -174,8 +174,8 @@ class ResizeImage extends Extension
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);
-        return Graphics::is_input_supported($engine, $format)
-                && Graphics::is_output_supported($engine, $format);
+        return Media::is_input_supported($engine, $format)
+                && Media::is_output_supported($engine, $format);
     }
 
 
@@ -205,8 +205,8 @@ class ResizeImage extends Extension
             throw new ImageResizeException("Unable to save temporary image file.");
         }
 
-        send_event(new GraphicResizeEvent(
-            GraphicsEngine::GD,
+        send_event(new MediaResizeEvent(
+            MediaEngine::GD,
             $image_filename,
             $image_obj->ext,
             $tmp_filename,

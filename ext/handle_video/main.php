@@ -53,7 +53,7 @@ class VideoFileHandler extends DataHandlerExtension
      */
     protected function create_thumb(string $hash, string $type): bool
     {
-        return Graphics::create_thumbnail_ffmpeg($hash);
+        return Media::create_thumbnail_ffmpeg($hash);
     }
 
     protected function supported_ext(string $ext): bool
@@ -65,7 +65,7 @@ class VideoFileHandler extends DataHandlerExtension
     {
         $image = new Image();
 
-        $size = Graphics::video_size($filename);
+        $size = Media::video_size($filename);
         $image->width  = $size[0];
         $image->height = $size[1];
         

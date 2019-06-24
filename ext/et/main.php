@@ -53,9 +53,9 @@ class ET extends Extension
                                to_shorthand_int(disk_total_space("./"));
         $info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
 
-        $info[GraphicsConfig::FFMPEG_PATH]	= $config->get_string(GraphicsConfig::FFMPEG_PATH);
-        $info[GraphicsConfig::CONVERT_PATH]	= $config->get_string(GraphicsConfig::CONVERT_PATH);
-        $info[GraphicsConfig::MEM_LIMIT]	= $config->get_int(GraphicsConfig::MEM_LIMIT);
+        $info[MediaConfig::FFMPEG_PATH]	= $config->get_string(MediaConfig::FFMPEG_PATH);
+        $info[MediaConfig::CONVERT_PATH]	= $config->get_string(MediaConfig::CONVERT_PATH);
+        $info[MediaConfig::MEM_LIMIT]	= $config->get_int(MediaConfig::MEM_LIMIT);
 
         $info[ImageConfig::THUMB_ENGINE]	= $config->get_string(ImageConfig::THUMB_ENGINE);
         $info[ImageConfig::THUMB_QUALITY]	= $config->get_int(ImageConfig::THUMB_QUALITY);
