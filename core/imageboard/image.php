@@ -987,6 +987,7 @@ class Image
         global $database;
 
         $positive_tag_id_array = [];
+        $positive_wildcard_id_array = [];
         $negative_tag_id_array = [];
 
         foreach ($tag_conditions as $tq) {
@@ -998,9 +999,11 @@ class Image
 				"),
                 ["tag" => Tag::sqlify($tq->tag)]
             );
+
+            $tag_count = count($tag_ids);
+
             if ($tq->positive) {
-                $positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
-                if (count($tag_ids) == 0) {
+                if ($tag_count== 0) {
                     # one of the positive tags had zero results, therefor there
                     # can be no results; "where 1=0" should shortcut things
                     return new Querylet("
@@ -1008,34 +1011,73 @@ class Image
 						FROM images
 						WHERE 1=0
 					");
+                } elseif($tag_count==1) {
+                    // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
+                    $positive_tag_id_array[] = $tag_ids[0];
+                } else {
+                    // Terms that resolve to multiple tags act as an OR within themselves
+                    // and as an AND in relation to all other terms,
+                    $positive_wildcard_id_array[] = $tag_ids;
                 }
             } else {
+                // Unlike positive criteria, negative criteria are all handled in an OR fashion,
+                // so we can just compile them all into a single sub-query.
                 $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
             }
         }
 
-        assert($positive_tag_id_array || $negative_tag_id_array, @$_GET['q']);
-        $wheres = [];
-        if (!empty($positive_tag_id_array)) {
-            $positive_tag_id_list = join(', ', $positive_tag_id_array);
-            $wheres[] = "tag_id IN ($positive_tag_id_list)";
-        }
-        if (!empty($negative_tag_id_array)) {
+        $sql = "";
+        assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
+        if(!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+            $inner_joins = [];
+            if (!empty($positive_tag_id_array)) {
+                foreach($positive_tag_id_array as $tag) {
+                    $inner_joins[] = "= $tag";
+                }
+            }
+            if(!empty($positive_wildcard_id_array)) {
+                foreach ($positive_wildcard_id_array as $tags) {
+                    $positive_tag_id_list = join(', ', $tags);
+                    $inner_joins[] = "IN ($positive_tag_id_list)";
+                }
+            }
+
+            $first = array_shift($inner_joins);
+            $sub_query = "SELECT it.image_id FROM  image_tags it ";
+            $i = 0;
+            foreach ($inner_joins as $inner_join) {
+                $i++;
+                $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
+            }
+            if(!empty($negative_tag_id_array)) {
+                $negative_tag_id_list = join(', ', $negative_tag_id_array);
+                $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
+            }
+            $sub_query .= "WHERE it.tag_id $first ";
+            if(!empty($negative_tag_id_array)) {
+                $sub_query .= " AND negative.image_id IS NULL";
+            }
+            $sub_query .= " GROUP BY it.image_id ";
+
+            $sql = "
+                SELECT images.*
+                FROM images INNER JOIN (
+                $sub_query
+                ) a on a.image_id = images.id 
+            ";
+        } elseif(!empty($negative_tag_id_array)) {
             $negative_tag_id_list = join(', ', $negative_tag_id_array);
-            $wheres[] = "tag_id NOT IN ($negative_tag_id_list)";
+            $sql = "
+                SELECT images.*
+                FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)  
+                WHERE a.image_id IS NULL
+            ";
+        } else {
+            throw new SCoreException("No criteria specified");
         }
-        $wheres_str = join(" AND ", $wheres);
-        return new Querylet("
-			SELECT images.*
-			FROM images
-			WHERE images.id IN (
-				SELECT image_id
-				FROM image_tags
-				WHERE $wheres_str
-				GROUP BY image_id
-				HAVING COUNT(image_id) >= :search_score
-			)
-		", ["search_score"=>count($positive_tag_id_array)]);
+
+        //throw new SCoreException($sql);
+        return new Querylet($sql);
     }
 
     /**
