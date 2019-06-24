@@ -96,11 +96,14 @@ try {
         $page->display();
     }
 
+    if($database->transaction===true) {
+        $database->commit();
+    }
+
     // saving cache data and profiling data to disk can happen later
     if (function_exists("fastcgi_finish_request")) {
         fastcgi_finish_request();
     }
-    $database->commit();
     $_shm_ctx->log_endok();
 } catch (Exception $e) {
     if ($database) {
