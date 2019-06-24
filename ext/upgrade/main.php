@@ -143,6 +143,25 @@ class Upgrade extends Extension
             log_info("upgrade", "Database at version 15");
             $config->set_bool("in_upgrade", false);
         }
+
+        if ($config->get_int("db_version") < 16) {
+            $config->set_bool("in_upgrade", true);
+            $config->set_int("db_version", 16);
+
+            log_info("upgrade", "Adding tag_id, image_id index to image_tags");
+            $database->execute('CREATE UNIQUE INDEX image_tags_tag_id_image_id_idx ON image_tags(tag_id,image_id) ');
+
+            log_info("upgrade", "Changing filename column to VARCHAR(255)");
+            if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
+                $database->execute('ALTER TABLE images ALTER COLUMN filename SET DATA TYPE VARCHAR(255)');
+            } elseif ($database->get_driver_name() == DatabaseDriver::MYSQL) {
+                $database->execute('ALTER TABLE images MODIFY COLUMN filename VARCHAR(255) NOT NULL');
+            }
+            // SQLite doesn't support altering existing columns? This seems like a problem?
+
+            log_info("upgrade", "Database at version 16");
+            $config->set_bool("in_upgrade", false);
+        }
     }
 
     public function get_priority(): int
