@@ -20,6 +20,8 @@
 ob_start();
 
 date_default_timezone_set('UTC');
+define("DATABASE_TIMEOUT", 10000);
+
 ?>
 <!DOCTYPE html>
 <html>
