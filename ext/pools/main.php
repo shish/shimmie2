@@ -768,44 +768,38 @@ class Pools extends Extension
 
         $imagesPerPage = $config->get_int(PoolsConfig::IMAGES_PER_PAGE);
 
+
+        $query = "
+                INNER JOIN images AS i ON i.id = p.image_id
+                WHERE p.pool_id = :pid 
+        ";
+
+
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
         if (ext_is_live("Ratings")) {
-            $rating = Ratings::privs_to_sql(Ratings::get_user_privs($user));
+            $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_privs($user)).")";
         }
-        if (isset($rating) && !empty($rating)) {
-            $result = $database->get_all(
-                "
-					SELECT p.image_id
-					FROM pool_images AS p
-					INNER JOIN images AS i ON i.id = p.image_id
-					WHERE p.pool_id = :pid AND i.rating IN ($rating)
+        if(ext_is_live("trash")) {
+            $query .=  $database->scoreql_to_sql(" AND trash = SCORE_BOOL_N ");
+        }
+
+        $result = $database->get_all(
+            "
+					SELECT p.image_id FROM pool_images p
+					$query
 					ORDER BY p.image_order ASC
 					LIMIT :l OFFSET :o",
-                ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
-            );
+            ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
+        );
 
-            $totalPages = ceil($database->get_one(
-                    "
-					SELECT COUNT(*) 
-					FROM pool_images AS p
-					INNER JOIN images AS i ON i.id = p.image_id
-					WHERE pool_id=:pid AND i.rating IN ($rating)",
-                    ["pid" => $poolID]
-                ) / $imagesPerPage);
-        } else {
-            $result = $database->get_all(
+        $totalPages = ceil($database->get_one(
                 "
-					SELECT image_id
-					FROM pool_images
-					WHERE pool_id=:pid
-					ORDER BY image_order ASC
-					LIMIT :l OFFSET :o",
-                ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
-            );
+					SELECT COUNT(*) FROM pool_images p
+					$query",
+                ["pid" => $poolID]
+            ) / $imagesPerPage);
 
-            $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]) / $imagesPerPage);
-        }
 
 
         $images = [];

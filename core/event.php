@@ -6,6 +6,8 @@
  */
 abstract class Event
 {
+    public $stop_processing = false;
+
     public function __construct()
     {
     }

@@ -121,6 +121,7 @@ function send_event(Event $event): void
     // SHIT: http://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];
     ksort($my_event_listeners);
+
     foreach ($my_event_listeners as $listener) {
         if ($ctx_enabled) {
             $_shm_ctx->log_start(get_class($listener));
@@ -130,6 +131,9 @@ function send_event(Event $event): void
         }
         if ($ctx_enabled) {
             $_shm_ctx->log_endok();
+        }
+        if($event->stop_processing===true) {
+            break;
         }
     }
     $_shm_event_count++;
