@@ -255,7 +255,6 @@ class ImageIO extends Extension
 
         global $page;
         if (!is_null($image)) {
-            $page->set_mode(PageMode::DATA);
             if ($type == "thumb") {
                 $ext = $config->get_string("thumb_type");
                 if (array_key_exists($ext, MIME_TYPE_MAP)) {
@@ -263,7 +262,7 @@ class ImageIO extends Extension
                 } else {
                     $page->set_type("image/jpeg");
                 }
-                
+
                 $file = $image->get_thumb_filename();
             } else {
                 $page->set_type($image->get_mime_type());
@@ -278,26 +277,29 @@ class ImageIO extends Extension
             $gmdate_mod = gmdate('D, d M Y H:i:s', filemtime($file)) . ' GMT';
 
             if ($if_modified_since == $gmdate_mod) {
+                $page->set_mode(PageMode::DATA);
                 $page->set_code(304);
                 $page->set_data("");
             } else {
+                $page->set_mode(PageMode::FILE);
                 $page->add_http_header("Last-Modified: $gmdate_mod");
                 if ($type != "thumb") {
-                    $page->add_http_header("Content-Disposition: inline; filename=".$image->get_nice_image_name());
+                    $page->set_filename($image->get_nice_image_name(), 'inline');
                 }
-                $page->set_data(file_get_contents($file));
+
+                $page->set_file($file);
                 
                 if ($config->get_int("image_expires")) {
                     $expires = date(DATE_RFC1123, time() + $config->get_int("image_expires"));
                 } else {
                     $expires = 'Fri, 2 Sep 2101 12:42:42 GMT'; // War was beginning
                 }
-                $page->add_http_header('Expires: '.$expires);
+                $page->add_http_header('Expires: ' . $expires);
             }
         } else {
             $page->set_title("Not Found");
             $page->set_heading("Not Found");
-            $page->add_block(new Block("Navigation", "<a href='".make_link()."'>Index</a>", "left", 0));
+            $page->add_block(new Block("Navigation", "<a href='" . make_link() . "'>Index</a>", "left", 0));
             $page->add_block(new Block(
                 "Image not in database",
                 "The requested image was not found in the database"

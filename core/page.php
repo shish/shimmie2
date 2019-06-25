@@ -31,6 +31,7 @@ abstract class PageMode
     const REDIRECT = 'redirect';
     const DATA = 'data';
     const PAGE = 'page';
+    const FILE = 'file';
 }
 
 /**
@@ -75,8 +76,13 @@ class Page
     /** @var string; public only for unit test */
     public $data = "";
 
+    /** @var string; */
+    public $file = null;
+
     /** @var string; public only for unit test */
     public $filename = null;
+
+    private $disposition = null;
 
     /**
      * Set the raw data to be sent.
@@ -86,12 +92,18 @@ class Page
         $this->data = $data;
     }
 
+    public function set_file(string $file): void
+    {
+        $this->file = $file;
+    }
+
     /**
      * Set the recommended download filename.
      */
-    public function set_filename(string $filename): void
+    public function set_filename(string $filename, string $disposition = "attachment"): void
     {
         $this->filename = $filename;
+        $this->disposition = $disposition;
     }
 
 
@@ -171,7 +183,7 @@ class Page
     /**
      * Add a line to the HTML head section.
      */
-    public function add_html_header(string $line, int $position=50): void
+    public function add_html_header(string $line, int $position = 50): void
     {
         while (isset($this->html_headers[$position])) {
             $position++;
@@ -182,7 +194,7 @@ class Page
     /**
      * Add a http header to be sent to the client.
      */
-    public function add_http_header(string $line, int $position=50): void
+    public function add_http_header(string $line, int $position = 50): void
     {
         while (isset($this->http_headers[$position])) {
             $position++;
@@ -197,13 +209,13 @@ class Page
      */
     public function add_cookie(string $name, string $value, int $time, string $path): void
     {
-        $full_name = COOKIE_PREFIX."_".$name;
+        $full_name = COOKIE_PREFIX . "_" . $name;
         $this->cookies[] = [$full_name, $value, $time, $path];
     }
 
     public function get_cookie(string $name): ?string
     {
-        $full_name = COOKIE_PREFIX."_".$name;
+        $full_name = COOKIE_PREFIX . "_" . $name;
         if (isset($_COOKIE[$full_name])) {
             return $_COOKIE[$full_name];
         } else {
@@ -252,8 +264,8 @@ class Page
         global $page, $user;
 
         header("HTTP/1.0 {$this->code} Shimmie");
-        header("Content-type: ".$this->type);
-        header("X-Powered-By: SCore-".SCORE_VERSION);
+        header("Content-type: " . $this->type);
+        header("X-Powered-By: SCore-" . SCORE_VERSION);
 
         if (!headers_sent()) {
             foreach ($this->http_headers as $head) {
@@ -292,15 +304,84 @@ class Page
                 $layout->display_page($page);
                 break;
             case PageMode::DATA:
-                header("Content-Length: ".strlen($this->data));
+                header("Content-Length: " . strlen($this->data));
                 if (!is_null($this->filename)) {
-                    header('Content-Disposition: attachment; filename='.$this->filename);
+                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
                 print $this->data;
                 break;
+            case PageMode::FILE:
+                if (!is_null($this->filename)) {
+                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
+                }
+
+                //https://gist.github.com/codler/3906826
+
+                $size = filesize($this->file); // File size
+                $length = $size;           // Content length
+                $start = 0;               // Start byte
+                $end = $size - 1;       // End byte
+
+                header("Content-Length: " . strlen($size));
+                header('Accept-Ranges: bytes');
+
+                if (isset($_SERVER['HTTP_RANGE'])) {
+
+                    $c_start = $start;
+                    $c_end = $end;
+                    list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+                    if (strpos($range, ',') !== false) {
+                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                        header("Content-Range: bytes $start-$end/$size");
+                        break;
+                    }
+                    if ($range == '-') {
+                        $c_start = $size - substr($range, 1);
+                    } else {
+                        $range = explode('-', $range);
+                        $c_start = $range[0];
+                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+                    }
+                    $c_end = ($c_end > $end) ? $end : $c_end;
+                    if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                        header("Content-Range: bytes $start-$end/$size");
+                        break;
+                    }
+                    $start = $c_start;
+                    $end = $c_end;
+                    $length = $end - $start + 1;
+                    header('HTTP/1.1 206 Partial Content');
+                }
+                header("Content-Range: bytes $start-$end/$size");
+                header("Content-Length: " . $length);
+
+
+                $fp = fopen($this->file, 'r');
+                try {
+                    fseek($fp, $start);
+                    $buffer = 1024 * 64;
+                    while (!feof($fp) && ($p = ftell($fp)) <= $end) {
+                        if ($p + $buffer > $end) {
+                            $buffer = $end - $p + 1;
+                        }
+                        set_time_limit(0);
+                        echo fread($fp, $buffer);
+                        flush();
+
+                        // After flush, we can tell if the client browser has disconnected.
+                        // This means we can start sending a large file, and if we detect they disappeared
+                        // then we can just stop and not waste any more resources or bandwidth.
+                        if (connection_status() != 0)
+                            break;
+                    }
+                } finally {
+                    fclose($fp);
+                }
+                break;
             case PageMode::REDIRECT:
-                header('Location: '.$this->redirect);
-                print 'You should be redirected to <a href="'.$this->redirect.'">'.$this->redirect.'</a>';
+                header('Location: ' . $this->redirect);
+                print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
                 break;
             default:
                 print "Invalid page mode";
@@ -341,7 +422,7 @@ class Page
         /*** Generate CSS cache files ***/
         $css_latest = $config_latest;
         $css_files = array_merge(
-            zglob("ext/{".ENABLED_EXTS."}/style.css"),
+            zglob("ext/{" . ENABLED_EXTS . "}/style.css"),
             zglob("themes/$theme_name/style.css")
         );
         foreach ($css_files as $css) {
@@ -354,7 +435,7 @@ class Page
             foreach ($css_files as $file) {
                 $file_data = file_get_contents($file);
                 $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-                $replace = 'url("../../../'.dirname($file).'/$1")';
+                $replace = 'url("../../../' . dirname($file) . '/$1")';
                 $file_data = preg_replace($pattern, $replace, $file_data);
                 $css_data .= $file_data . "\n";
             }
@@ -372,7 +453,7 @@ class Page
                 "vendor/bower-asset/js-cookie/src/js.cookie.js",
                 "ext/handle_static/modernizr-3.3.1.custom.js",
             ],
-            zglob("ext/{".ENABLED_EXTS."}/script.js"),
+            zglob("ext/{" . ENABLED_EXTS . "}/script.js"),
             zglob("themes/$theme_name/script.js")
         );
         foreach ($js_files as $js) {
