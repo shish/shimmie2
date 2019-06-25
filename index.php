@@ -106,7 +106,7 @@ try {
     }
     $_shm_ctx->log_endok();
 } catch (Exception $e) {
-    if ($database) {
+    if ($database && $database->transaction===true) {
         $database->rollback();
     }
     _fatal_error($e);
