@@ -166,6 +166,63 @@ class Upgrade extends Extension
             log_info("upgrade", "Database at version 16");
             $config->set_bool("in_upgrade", false);
         }
+
+        if ($config->get_int("db_version") < 17) {
+            $config->set_bool("in_upgrade", true);
+            $config->set_int("db_version", 17);
+
+            log_info("upgrade", "Adding media information columns to images table");
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN lossless SCORE_BOOL NULL"
+            ));
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN video SCORE_BOOL NULL"
+            ));
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN audio SCORE_BOOL NULL"
+            ));
+            $database->execute("ALTER TABLE images ADD COLUMN length INTEGER NULL ");
+
+            log_info("upgrade", "Setting indexes for media columns");
+            switch($database->get_driver_name()) {
+                case DatabaseDriver::PGSQL:
+                case DatabaseDriver::SQLITE:
+                    $database->execute('CREATE INDEX images_video_idx ON images(video) WHERE video IS NOT NULL');
+                    $database->execute('CREATE INDEX images_audio_idx ON images(audio) WHERE audio IS NOT NULL');
+                    $database->execute('CREATE INDEX images_length_idx ON images(length) WHERE length IS NOT NULL');
+                    break;
+                default:
+                    $database->execute('CREATE INDEX images_video_idx ON images(video)');
+                    $database->execute('CREATE INDEX images_audio_idx ON images(audio)');
+                    $database->execute('CREATE INDEX images_length_idx ON images(length)');
+                    break;
+            }
+
+            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
+                $database->execute("SET statement_timeout TO 300000;");
+            }
+
+            log_info("upgrade", "Setting index for ext column");
+            $database->execute('CREATE INDEX images_ext_idx ON images(ext)');
+
+
+            $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
+            log_info("upgrade", "Setting predictable media values for known file types");
+            $database->execute("UPDATE images SET lossless = true, video = true WHERE ext IN ('swf')");
+            $database->execute("UPDATE images SET lossless = false, video = false, audio = true WHERE ext IN ('mp3')");
+            $database->execute("UPDATE images SET lossless = false, video = false, audio = false WHERE ext IN ('jpg','jpeg')");
+            $database->execute("UPDATE images SET lossless = true, video = false, audio = false WHERE ext IN ('ico','ani','cur','png','svg')");
+            $database->execute("UPDATE images SET lossless = true, audio = false WHERE ext IN ('gif')");
+            $database->execute("UPDATE images SET audio = false WHERE ext IN ('webp')");
+            $database->execute("UPDATE images SET lossless = false, video = true WHERE ext IN ('flv','mp4','m4v','ogv','webm')");
+
+
+            log_info("upgrade", "Database at version 17");
+            $config->set_bool("in_upgrade", false);
+        }
+
+
+
     }
 
     public function get_priority(): int

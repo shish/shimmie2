@@ -54,6 +54,19 @@ class Image
     /** @var boolean */
     public $locked = false;
 
+    /** @var boolean */
+    public $lossless = null;
+
+    /** @var boolean */
+    public $video = null;
+
+    /** @var boolean */
+    public $audio = null;
+
+    /** @var int */
+    public $length = null;
+
+
     /**
      * One will very rarely construct an image directly, more common
      * would be to use Image::by_id, Image::by_hash, etc.

@@ -80,8 +80,8 @@ class TranscodeImage extends Extension
 
         if ($user->is_admin()) {
             $engine = $config->get_string(TranscodeConfig::ENGINE);
-            if ($this->can_convert_format($engine, $event->image->ext)) {
-                $options = $this->get_supported_output_formats($engine, $event->image->ext);
+            if ($this->can_convert_format($engine, $event->image->ext, $event->image->lossless)) {
+                $options = $this->get_supported_output_formats($engine, $event->image->ext, $event->image->lossless??false);
                 $event->add_part($this->theme->get_transcode_html($event->image, $options));
             }
         }
@@ -222,23 +222,27 @@ class TranscodeImage extends Extension
     }
 
 
-    private function can_convert_format($engine, $format): bool
+    private function can_convert_format($engine, $format, ?bool $lossless = null): bool
     {
-        return Media::is_input_supported($engine, $format);
+        return Media::is_input_supported($engine, $format, $lossless);
     }
 
 
-    private function get_supported_output_formats($engine, ?String $omit_format = null): array
+    private function get_supported_output_formats($engine, ?String $omit_format = null, ?bool $lossless = null): array
     {
-        $omit_format = Media::normalize_format($omit_format);
+        if($omit_format!=null) {
+            $omit_format = Media::normalize_format($omit_format, $lossless);
+        }
         $output = [];
+
+
         foreach (self::OUTPUT_FORMATS as $key=>$value) {
             if ($value=="") {
                 $output[$key] = $value;
                 continue;
             }
             if(Media::is_output_supported($engine, $value)
-                &&(empty($omit_format)||$omit_format!=Media::determine_ext($value))) {
+                &&(empty($omit_format)||$omit_format!=$value)) {
                 $output[$key] = $value;
             }
         }
@@ -278,7 +282,7 @@ class TranscodeImage extends Extension
     {
         global $config;
 
-        if ($source_format==Media::determine_ext($target_format)) {
+        if ($source_format==$target_format) {
             throw new ImageTranscodeException("Source and target formats are the same: ".$source_format);
         }
 
@@ -313,6 +317,7 @@ class TranscodeImage extends Extension
         try {
             $result = false;
             switch ($target_format) {
+                case "webp":
                 case Media::WEBP_LOSSY:
                     $result = imagewebp($image, $tmp_name, $q);
                     break;

@@ -241,12 +241,12 @@ class ImageIO extends Extension
 				)
 				VALUES (
 					:owner_id, :owner_ip, :filename, :filesize,
-					:hash, :ext, :width, :height, now(), :source
+					:hash, :ext, 0, 0, now(), :source
 				)",
             [
                 "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'], "filename" => substr($image->filename, 0, 255), "filesize" => $image->filesize,
-                    "hash"=>$image->hash, "ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source
-                ]
+                "hash" => $image->hash, "ext" => strtolower($image->ext), "source" => $image->source
+            ]
         );
         $image->id = $database->get_last_insert_id('images_id_seq');
 
@@ -264,6 +264,13 @@ class ImageIO extends Extension
         if ($image->source !== null) {
             log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
         }
+
+        try {
+            Media::update_image_media_properties($image->hash, strtolower($image->ext));
+        } catch(MediaException $e) {
+            log_warning("add_image","Error while running update_image_media_properties: ".$e->getMessage());
+        }
+
     }
     // }}}  end add
 
@@ -340,33 +347,49 @@ class ImageIO extends Extension
             throw new ImageReplaceException("Image to replace does not exist!");
         }
 
+        $duplicate = Image::by_hash($image->hash);
+        if(!is_null($duplicate)) {
+            $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
+                "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
+            throw new ImageReplaceException($error);
+        }
+
         if (strlen(trim($image->source)) == 0) {
             $image->source = $existing->get_source();
         }
-        
+
+        // Update the data in the database.
+        $database->Execute(
+            "UPDATE images SET 
+					filename = :filename, filesize = :filesize,	hash = :hash,
+					ext = :ext, width = 0, height = 0, source = :source
+                WHERE 
+					id = :id
+				",
+            [
+                "filename" => substr($image->filename, 0, 255),
+                "filesize" => $image->filesize,
+                "hash" => $image->hash,
+                "ext" => strtolower($image->ext),
+                "source" => $image->source,
+                "id" => $id,
+            ]
+        );
+
         /*
             This step could be optional, ie: perhaps move the image somewhere
             and have it stored in a 'replaced images' list that could be
             inspected later by an admin?
         */
 
-        log_debug("image", "Removing image with hash ".$existing->hash);
+        log_debug("image", "Removing image with hash " . $existing->hash);
         $existing->remove_image_only(); // Actually delete the old image file from disk
-        
-        // Update the data in the database.
-        $database->Execute(
-            "UPDATE images SET 
-					filename = :filename, filesize = :filesize,	hash = :hash,
-					ext = :ext, width = :width, height = :height, source = :source
-				WHERE 
-					id = :id
-				",
-            [
-                    "filename" => substr($image->filename, 0, 255), "filesize"=>$image->filesize, "hash"=>$image->hash,
-                    "ext"=>strtolower($image->ext), "width"=>$image->width, "height"=>$image->height, "source"=>$image->source,
-                    "id"=>$id
-                ]
-        );
+
+        try {
+            Media::update_image_media_properties($image->hash, $image->ext);
+        } catch(MediaException $e) {
+            log_warning("image_replace","Error while running update_image_media_properties: ".$e->getMessage());
+        }
 
         /* Generate new thumbnail */
         send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->ext)));

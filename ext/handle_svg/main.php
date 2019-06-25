@@ -10,6 +10,24 @@ use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
 {
+
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        switch ($event->ext) {
+            case "svg":
+                $event->lossless = true;
+                $event->video = false;
+                $event->audio = false;
+
+                $msp = new MiniSVGParser($event->file_name);
+                $event->width = $msp->width;
+                $event->height = $msp->height;
+
+                break;
+        }
+    }
+
+
     public function onDataUpload(DataUploadEvent $event)
     {
         if ($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
@@ -81,10 +99,6 @@ class SVGFileHandler extends DataHandlerExtension
     protected function create_image_from_data(string $filename, array $metadata): Image
     {
         $image = new Image();
-
-        $msp = new MiniSVGParser($filename);
-        $image->width = $msp->width;
-        $image->height = $msp->height;
 
         $image->filesize  = $metadata['size'];
         $image->hash      = $metadata['hash'];

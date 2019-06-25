@@ -49,7 +49,9 @@ abstract class MediaEngine
             Media::WEBP_LOSSLESS,
         ],
         MediaEngine::FFMPEG => [
-
+            "jpg",
+            "webp",
+            "png"
         ]
     ];
     public const INPUT_SUPPORT = [
@@ -59,6 +61,8 @@ abstract class MediaEngine
             "jpg",
             "png",
             "webp",
+            Media::WEBP_LOSSY,
+            Media::WEBP_LOSSLESS
         ],
         MediaEngine::IMAGICK => [
             "bmp",
@@ -68,6 +72,8 @@ abstract class MediaEngine
             "psd",
             "tiff",
             "webp",
+            Media::WEBP_LOSSY,
+            Media::WEBP_LOSSLESS,
             "ico",
         ],
         MediaEngine::FFMPEG => [
@@ -122,11 +128,16 @@ class MediaResizeEvent extends Event
     }
 }
 
-class MediaCheckLosslessEvent extends Event
+class MediaCheckPropertiesEvent extends Event
 {
     public $file_name;
     public $ext;
-    public $result = false;
+    public $lossless = null;
+    public $audio = null;
+    public $video = null;
+    public $length = null;
+    public $height = null;
+    public $width = null;
 
     public function __construct(string $file_name, string $ext)
     {
@@ -135,6 +146,7 @@ class MediaCheckLosslessEvent extends Event
     }
 
 }
+
 
 class Media extends Extension
 {
@@ -149,11 +161,19 @@ class Media extends Extension
     const LOSSLESS_FORMATS = [
         self::WEBP_LOSSLESS,
         "png",
+        "psd",
+        "bmp",
+        "ico",
+        "cur",
+        "ani",
+        "gif"
+
     ];
 
     const ALPHA_FORMATS = [
         self::WEBP_LOSSLESS,
         self::WEBP_LOSSY,
+        "webp",
         "png",
     ];
 
@@ -191,7 +211,7 @@ class Media extends Extension
         global $config;
         $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
         $config->set_default_int(MediaConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
-        $config->set_default_string(MediaConfig::FFMPEG_PATH, '');
+        $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
         $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
 
 
@@ -203,6 +223,13 @@ class Media extends Extension
                 //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
                 if (is_executable(strtok($ffmpeg, PHP_EOL))) {
                     $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
+                }
+            }
+
+            if ($ffprobe = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffprobe')) {
+                //ffprobe exists in PATH, check if it's executable, and if so, default to it instead of static
+                if (is_executable(strtok($ffprobe, PHP_EOL))) {
+                    $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
                 }
             }
 
@@ -226,6 +253,20 @@ class Media extends Extension
         }
     }
 
+    public function onPageRequest(PageRequestEvent $event)
+    {
+        global $database, $page, $user;
+
+        if ($event->page_matches("media_rescan/") && $user->is_admin() && isset($_POST['image_id'])) {
+            $image = Image::by_id(int_escape($_POST['image_id']));
+
+            $this->update_image_media_properties($image->hash, $image->ext);
+
+            $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/$image->id"));
+        }
+    }
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Media Engines");
@@ -243,11 +284,72 @@ class Media extends Extension
 //        }
 
         $sb->add_text_option(MediaConfig::FFMPEG_PATH, "<br/>ffmpeg command: ");
+        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "<br/>ffprobe command: ");
 
         $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "<br />Max memory use: ");
 
         $event->panel->add_block($sb);
 
+    }
+
+    public function onAdminBuilding(AdminBuildingEvent $event)
+    {
+        global $database;
+        $types = $database->get_all("SELECT ext, count(*) count FROM images group by ext");
+
+        $this->theme->display_form($types);
+    }
+
+    public function onAdminAction(AdminActionEvent $event)
+    {
+        $action = $event->action;
+        if (method_exists($this, $action)) {
+            $event->redirect = $this->$action();
+        }
+    }
+
+
+    public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
+    {
+        global $user;
+        if ($user->can("delete_image")) {
+            $event->add_part($this->theme->get_buttons_html($event->image->id));
+        }
+    }
+
+
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    {
+        global $user;
+
+        if ($user->is_admin()) {
+            $event->add_action("bulk_media_rescan", "Scan Media Properties");
+        }
+    }
+
+    public function onBulkAction(BulkActionEvent $event)
+    {
+        global $user;
+
+        switch ($event->action) {
+            case "bulk_media_rescan":
+                if ($user->is_admin()) {
+                    $total = 0;
+                    foreach ($event->items as $id) {
+                        $image = Image::by_id($id);
+                        if ($image == null) {
+                            continue;
+                        }
+                        try {
+                            $this->update_image_media_properties($image->hash, $image->ext);
+                            $total++;
+                        } catch (MediaException $e) {
+                        }
+                    }
+                    flash_message("Scanned media properties for $total items");
+                }
+                break;
+        }
     }
 
     /**
@@ -302,20 +404,86 @@ class Media extends Extension
 //        }
     }
 
-    public function onMediaCheckLossless(MediaCheckLosslessEvent $event)
+
+    const CONTENT_SEARCH_TERM_REGEX = "/^(-)?content[=|:]((video)|(audio))$/i";
+
+
+    public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        switch ($event->ext) {
-            case "png":
-            case "psd":
-            case "bmp":
-            case "gif":
-            case "ico":
-                $event->result = true;
-                break;
-            case "webp":
-                $event->result = Media::is_lossless_webp($event->file_name);
-                break;
+        global $database;
+
+        $matches = [];
+        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
+            $positive = $matches[1];
+            $field = $matches[2];
+            $event->add_querylet(new Querylet("$field = " . $database->scoreql_to_sql($positive != "-" ? "SCORE_BOOL_Y" : "SCORE_BOOL_N")));
         }
+    }
+
+    public function onTagTermParse(TagTermParseEvent $event)
+    {
+        $matches = [];
+
+        if (preg_match(self::SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
+            // Nothing to save, just helping filter out reserved tags
+        }
+
+        if (!empty($matches)) {
+            $event->metatag = true;
+        }
+    }
+
+    private function media_rescan(): bool
+    {
+        $ext = "";
+        if (array_key_exists("media_rescan_type", $_POST)) {
+            $ext = $_POST["media_rescan_type"];
+        }
+
+        $results = $this->get_images($ext);
+
+        foreach ($results as $result) {
+            $this->update_image_media_properties($result["hash"], $result["ext"]);
+        }
+        return true;
+    }
+
+    public static function update_image_media_properties(string $hash, string $ext)
+    {
+        global $database;
+
+        $path = warehouse_path(Image::IMAGE_DIR, $hash);
+        $mcpe = new MediaCheckPropertiesEvent($path, $ext);
+        send_event($mcpe);
+
+
+        $database->execute(
+            "UPDATE images SET 
+                  lossless = :lossless, video = :video, audio = :audio, 
+                  height = :height, width = :width,
+                  length = :length WHERE hash = :hash",
+            [
+                "hash" => $hash,
+                "width" => $mcpe->width ?? 0,
+                "height" => $mcpe->height ?? 0,
+                "lossless" => $database->scoresql_value_prepare($mcpe->lossless),
+                "video" => $database->scoresql_value_prepare($mcpe->video),
+                "audio" => $database->scoresql_value_prepare($mcpe->audio),
+                "length" => $mcpe->length
+            ]);
+    }
+
+    public function get_images(String $ext = null)
+    {
+        global $database;
+
+        $query = "SELECT id, hash, ext FROM images  ";
+        $args = [];
+        if (!empty($ext)) {
+            $query .= " WHERE ext = :ext";
+            $args["ext"] = $ext;
+        }
+        return $database->get_all($query, $args);
     }
 
     /**
@@ -401,6 +569,41 @@ class Media extends Extension
         } else {
             log_error('Media', "Generating thumbnail with command `$cmd`, returns $ret");
             return false;
+        }
+    }
+
+
+    public static function get_ffprobe_data($filename): array
+    {
+        global $config;
+
+        $ffprobe = $config->get_string(MediaConfig::FFPROBE_PATH);
+        if ($ffprobe == null || $ffprobe == "") {
+            throw new MediaException("ffprobe command configured");
+        }
+
+        $args = [
+            escapeshellarg($ffprobe),
+            "-print_format", "json",
+            "-v", "quiet",
+            "-show_format",
+            "-show_streams",
+            escapeshellarg($filename),
+        ];
+
+        $cmd = escapeshellcmd(implode(" ", $args));
+
+        exec($cmd, $output, $ret);
+
+        if ((int)$ret == (int)0) {
+            log_debug('Media', "Getting media data `$cmd`, returns $ret");
+            $output = implode($output);
+            $data = json_decode($output, true);
+
+            return $data;
+        } else {
+            log_error('Media', "Getting media data `$cmd`, returns $ret");
+            return [];
         }
     }
 
@@ -773,11 +976,9 @@ class Media extends Extension
     }
 
 
-
-
     private static function compare_file_bytes(String $file_name, array $comparison): bool
     {
-        $size= filesize($file_name);
+        $size = filesize($file_name);
         if ($size < count($comparison)) {
             // Can't match because it's too small
             return false;
@@ -785,15 +986,15 @@ class Media extends Extension
 
         if (($fh = @fopen($file_name, 'rb'))) {
             try {
-                $chunk = unpack("C*",fread($fh, count($comparison)));
+                $chunk = unpack("C*", fread($fh, count($comparison)));
 
                 for ($i = 0; $i < count($comparison); $i++) {
                     $byte = $comparison[$i];
-                    if($byte==null) {
+                    if ($byte == null) {
                         continue;
                     } else {
-                        $fileByte = $chunk[$i+1];
-                        if($fileByte!=$byte) {
+                        $fileByte = $chunk[$i + 1];
+                        if ($fileByte != $byte) {
                             return false;
                         }
                     }
@@ -823,9 +1024,9 @@ class Media extends Extension
         return in_array(self::normalize_format($format), self::ALPHA_FORMATS);
     }
 
-    public static function is_input_supported($engine, $format): bool
+    public static function is_input_supported($engine, $format, ?bool $lossless = null): bool
     {
-        $format = self::normalize_format($format);
+        $format = self::normalize_format($format, $lossless);
         if (!in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
             return false;
         }
@@ -849,8 +1050,16 @@ class Media extends Extension
      * @param $format
      * @return string|null The format name that the media extension will recognize.
      */
-    static public function normalize_format($format): ?string
+    static public function normalize_format(string $format, ?bool $lossless = null): ?string
     {
+        if ($format == "webp") {
+            if ($lossless === true) {
+                $format = Media::WEBP_LOSSLESS;
+            } else {
+                $format = Media::WEBP_LOSSY;
+            }
+        }
+
         if (array_key_exists($format, Media::FORMAT_ALIASES)) {
             return self::FORMAT_ALIASES[$format];
         }

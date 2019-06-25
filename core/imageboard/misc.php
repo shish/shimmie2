@@ -194,3 +194,21 @@ function create_image_thumb(string $hash, string $type, string $engine = null) {
 }
 
 
+const TIME_UNITS = ["s"=>60,"m"=>60,"h"=>24,"d"=>365,"y"=>PHP_INT_MAX];
+function format_milliseconds(int $input): string
+{
+    $output = "";
+
+    $remainder = floor($input / 1000);
+
+    foreach (TIME_UNITS AS $unit=>$conversion) {
+        $count = $remainder % $conversion;
+        $remainder = floor($remainder / $conversion);
+        if($count==0&&$remainder<1) {
+            break;
+        }
+        $output = "$count".$unit." ".$output;
+    }
+
+    return trim($output);
+}

@@ -10,6 +10,44 @@ class PixelFileHandler extends DataHandlerExtension
 {
     const SUPPORTED_EXTENSIONS = ["jpg", "jpeg", "gif", "png", "webp"];
 
+
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        if(in_array($event->ext, Media::LOSSLESS_FORMATS)) {
+            $event->lossless = true;
+        } elseif($event->ext=="webp") {
+            $event->lossless = Media::is_lossless_webp($event->file_name);
+        }
+
+        if(in_array($event->ext,self::SUPPORTED_EXTENSIONS)) {
+            if($event->lossless==null) {
+                $event->lossless = false;
+            }
+            $event->audio = false;
+            switch ($event->ext) {
+                case "gif":
+                    $event->video = Media::is_animated_gif($event->file_name);
+                    break;
+                case "webp":
+                    $event->video = Media::is_animated_webp($event->file_name);
+                    break;
+                default:
+                    $event->video = false;
+                    break;
+            }
+
+            $info = getimagesize($event->file_name);
+            if (!$info) {
+                return null;
+            }
+
+            $event->width = $info[0];
+            $event->height = $info[1];
+        }
+    }
+
+
+
     protected function supported_ext(string $ext): bool
     {
         $ext = (($pos = strpos($ext, '?')) !== false) ? substr($ext, 0, $pos) : $ext;
@@ -19,14 +57,6 @@ class PixelFileHandler extends DataHandlerExtension
     protected function create_image_from_data(string $filename, array $metadata)
     {
         $image = new Image();
-
-        $info = getimagesize($filename);
-        if (!$info) {
-            return null;
-        }
-
-        $image->width = $info[0];
-        $image->height = $info[1];
 
         $image->filesize  = $metadata['size'];
         $image->hash      = $metadata['hash'];

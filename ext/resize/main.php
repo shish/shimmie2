@@ -49,7 +49,7 @@ class ResizeImage extends Extension
     {
         global $user, $config;
         if ($user->is_admin() && $config->get_bool(ResizeConfig::ENABLED)
-            && $this->can_resize_format($event->image->ext)) {
+            && $this->can_resize_format($event->image->ext, $event->image->lossless)) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
         }
@@ -83,7 +83,7 @@ class ResizeImage extends Extension
         $image_obj = Image::by_id($event->image_id);
 
         if ($config->get_bool(ResizeConfig::UPLOAD) == true
-                && $this->can_resize_format($event->type)) {
+                && $this->can_resize_format($event->type, $image_obj->lossless)) {
             $width = $height = 0;
 
             if ($config->get_int(ResizeConfig::DEFAULT_WIDTH) !== 0) {
@@ -170,7 +170,7 @@ class ResizeImage extends Extension
         }
     }
 
-    private function can_resize_format($format): bool
+    private function can_resize_format($format, ?bool $lossless): bool
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);

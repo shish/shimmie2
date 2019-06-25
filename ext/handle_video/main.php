@@ -48,6 +48,60 @@ class VideoFileHandler extends DataHandlerExtension
         $event->panel->add_block($sb);
     }
 
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        if(in_array($event->ext, self::SUPPORTED_EXT)) {
+            $event->video = true;
+            try {
+                $data = Media::get_ffprobe_data($event->file_name);
+
+                if(is_array($data)) {
+                    if(array_key_exists("streams", $data)) {
+                        $video = false;
+                        $audio = true;
+                        $streams = $data["streams"];
+                        if (is_array($streams)) {
+                            foreach ($streams as $stream) {
+                                if(is_array($stream)) {
+                                    if (array_key_exists("codec_type", $stream)) {
+                                        $type = $stream["codec_type"];
+                                        switch ($type) {
+                                            case "audio":
+                                                $audio = true;
+                                                break;
+                                            case "video":
+                                                $video = true;
+                                                break;
+                                        }
+                                    }
+                                    if (array_key_exists("width", $stream) && !empty($stream["width"])
+                                        && is_numeric($stream["width"]) && intval($stream["width"]) > ($event->width) ?? 0) {
+                                        $event->width = intval($stream["width"]);
+                                    }
+                                    if (array_key_exists("height", $stream) && !empty($stream["height"])
+                                        && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->height) ?? 0) {
+                                        $event->height = intval($stream["height"]);
+                                    }
+
+                                }
+                            }
+                            $event->video = $video;
+                            $event->audio = $audio;
+                        }
+                    }
+                    if(array_key_exists("format", $data)&& is_array($data["format"])) {
+                        $format = $data["format"];
+                        if(array_key_exists("duration", $format) && is_numeric($format["duration"])) {
+                             $event->length = floor(floatval($format["duration"]) * 1000);
+                        }
+                    }
+                }
+            } catch(MediaException $e) {
+
+            }
+        }
+    }
+
     /**
      * Generate the Thumbnail image for particular file.
      */
@@ -65,10 +119,6 @@ class VideoFileHandler extends DataHandlerExtension
     {
         $image = new Image();
 
-        $size = Media::video_size($filename);
-        $image->width  = $size[0];
-        $image->height = $size[1];
-        
         switch (getMimeType($filename)) {
             case "video/webm":
                 $image->ext = "webm";
