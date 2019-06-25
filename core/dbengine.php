@@ -4,6 +4,9 @@ class DBEngine
     /** @var null|string */
     public $name = null;
 
+    public $BOOL_Y = null;
+    public $BOOL_N = null;
+
     public function init(PDO $db)
     {
     }
@@ -24,6 +27,9 @@ class MySQL extends DBEngine
     /** @var string */
     public $name = DatabaseDriver::MYSQL;
 
+    public $BOOL_Y = 'Y';
+    public $BOOL_N = 'N';
+
     public function init(PDO $db)
     {
         $db->exec("SET NAMES utf8;");
@@ -33,8 +39,8 @@ class MySQL extends DBEngine
     {
         $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
         $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'N'", $data);
+        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
+        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
         $data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
         $data = str_replace("SCORE_DATETIME", "DATETIME", $data);
         $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
@@ -53,8 +59,13 @@ class MySQL extends DBEngine
 
 class PostgreSQL extends DBEngine
 {
+
+
     /** @var string */
     public $name = DatabaseDriver::PGSQL;
+
+    public $BOOL_Y = 't';
+    public $BOOL_N = 'f';
 
     public function init(PDO $db)
     {
@@ -70,8 +81,8 @@ class PostgreSQL extends DBEngine
     {
         $data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
         $data = str_replace("SCORE_INET", "INET", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'t'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'f'", $data);
+        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
+        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
         $data = str_replace("SCORE_BOOL", "BOOL", $data);
         $data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
         $data = str_replace("SCORE_NOW", "current_timestamp", $data);
@@ -138,6 +149,10 @@ class SQLite extends DBEngine
     /** @var string  */
     public $name = DatabaseDriver::SQLITE;
 
+    public $BOOL_Y = 'Y';
+    public $BOOL_N = 'N';
+
+
     public function init(PDO $db)
     {
         ini_set('sqlite.assoc_case', 0);
@@ -158,8 +173,8 @@ class SQLite extends DBEngine
     {
         $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
         $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'N'", $data);
+        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
+        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
         $data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
         $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
         $data = str_replace("SCORE_STRNORM", "lower", $data);

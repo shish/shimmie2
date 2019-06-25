@@ -167,6 +167,19 @@ class Database
         return $this->engine->scoreql_to_sql($input);
     }
 
+    public function scoresql_value_prepare($input)
+    {
+        if (is_null($this->engine)) {
+            $this->connect_engine();
+        }
+        if($input===true) {
+            return $this->engine->BOOL_Y;
+        } else if ($input===false) {
+            return $this->engine->BOOL_N;
+        }
+        return $input;
+    }
+
     public function get_driver_name(): string
     {
         if (is_null($this->engine)) {
