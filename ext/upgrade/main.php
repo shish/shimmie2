@@ -154,6 +154,10 @@ class Upgrade extends Extension
             log_info("upgrade", "Changing filename column to VARCHAR(255)");
             if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                 $database->execute('ALTER TABLE images ALTER COLUMN filename SET DATA TYPE VARCHAR(255)');
+                // Postgresql creates a unique index for unique columns, not just a constraint,
+                // so we don't need two indexes on the same column
+                $database->execute('DROP INDEX IF EXISTS images_hash_idx');
+                $database->execute('DROP INDEX IF EXISTS users_name_idx');
             } elseif ($database->get_driver_name() == DatabaseDriver::MYSQL) {
                 $database->execute('ALTER TABLE images MODIFY COLUMN filename VARCHAR(255) NOT NULL');
             }
