@@ -170,12 +170,12 @@ class ResizeImage extends Extension
         }
     }
 
-    private function can_resize_format($format, ?bool $lossless): bool
+    private function can_resize_format($format, ?bool $lossless = null): bool
     {
         global $config;
         $engine = $config->get_string(ResizeConfig::ENGINE);
-        return Media::is_input_supported($engine, $format)
-                && Media::is_output_supported($engine, $format);
+        return Media::is_input_supported($engine, $format, $lossless)
+                && Media::is_output_supported($engine, $format, $lossless);
     }
 
 
@@ -183,12 +183,19 @@ class ResizeImage extends Extension
     /* ----------------------------- */
     private function resize_image(Image $image_obj, int $width, int $height)
     {
-        global $database;
+        global $database, $config;
         
         if (($height <= 0) && ($width <= 0)) {
             throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
         }
-        
+
+        $engine = $config->get_string(ResizeConfig::ENGINE);
+
+
+        if(!$this->can_resize_format($image_obj->ext, $image_obj->lossless)) {
+            throw new ImageResizeException("Engine $engine cannot resize selected image");
+        }
+
         $hash = $image_obj->hash;
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
 
@@ -206,7 +213,7 @@ class ResizeImage extends Extension
         }
 
         send_event(new MediaResizeEvent(
-            MediaEngine::GD,
+            $engine,
             $image_filename,
             $image_obj->ext,
             $tmp_filename,

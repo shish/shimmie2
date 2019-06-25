@@ -178,6 +178,11 @@ function create_image_thumb(string $hash, string $type, string $engine = null) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
     }
 
+    $output_format = $config->get_string(ImageConfig::THUMB_TYPE);
+    if($output_format=="webp") {
+        $output_format = Media::WEBP_LOSSY;
+    }
+
     send_event(new MediaResizeEvent(
         $engine,
         $inname,
@@ -186,7 +191,7 @@ function create_image_thumb(string $hash, string $type, string $engine = null) {
         $tsize[0],
         $tsize[1],
         false,
-        $config->get_string(ImageConfig::THUMB_TYPE),
+        $output_format,
         $config->get_int(ImageConfig::THUMB_QUALITY),
         true,
         $config->get_bool('thumb_upscale', false)

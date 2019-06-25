@@ -726,6 +726,17 @@ class Media extends Extension
 //        }
 //    }
 
+    public static function is_lossless(string $filename, string $format) {
+        if(in_array($format, self::LOSSLESS_FORMATS)) {
+            return true;
+        }
+        switch($format) {
+            case "webp":
+                return self::is_lossless_webp($filename);
+                break;
+        }
+        return false;
+    }
 
     public static function image_resize_convert(
         String $input_path,
@@ -752,6 +763,10 @@ class Media extends Extension
             $output_type = $input_type;
         }
 
+        if($output_type=="webp" && self::is_lossless($input_path, $input_type)) {
+            $output_type = self::WEBP_LOSSLESS;
+        }
+
         $bg = "black";
         if (self::supports_alpha($output_type)) {
             $bg = "none";
@@ -759,7 +774,8 @@ class Media extends Extension
         if (!empty($input_type)) {
             $input_type = $input_type . ":";
         }
-        $args = "";
+
+        $args = " -flatten ";
         if ($minimize) {
             $args = " -strip -thumbnail";
         }
@@ -772,8 +788,19 @@ class Media extends Extension
             $resize_args .= "\!";
         }
 
-        $format = '"%s" -flatten %s %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
-        $cmd = sprintf($format, $convert, $args, $new_width, $new_height, $resize_args, $output_quality, $bg, $input_type, $input_path, $output_type, $output_filename);
+        switch ($output_type) {
+            case Media::WEBP_LOSSLESS:
+                $args .= '-define webp:lossless=true';
+                break;
+            case "png":
+                $args .= '-define png:compression-level=9';
+                break;
+        }
+
+        $output_ext = self::determine_ext($output_type);
+
+        $format = '"%s"  %s -resize %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
+        $cmd = sprintf($format, $convert, $args, $new_width, $new_height, $resize_args, $output_quality, $bg, $input_type, $input_path, $output_ext, $output_filename);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
         if ($ret != 0) {
@@ -1024,7 +1051,7 @@ class Media extends Extension
         return in_array(self::normalize_format($format), self::ALPHA_FORMATS);
     }
 
-    public static function is_input_supported($engine, $format, ?bool $lossless = null): bool
+    public static function is_input_supported(string $engine, string $format, ?bool $lossless = null): bool
     {
         $format = self::normalize_format($format, $lossless);
         if (!in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
@@ -1033,9 +1060,9 @@ class Media extends Extension
         return true;
     }
 
-    public static function is_output_supported($engine, $format): bool
+    public static function is_output_supported(string $engine, string $format, ?bool $lossless = false): bool
     {
-        $format = self::normalize_format($format);
+        $format = self::normalize_format($format, $lossless);
         if (!in_array($format, MediaEngine::OUTPUT_SUPPORT[$engine])) {
             return false;
         }
