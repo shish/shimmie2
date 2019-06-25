@@ -13,6 +13,7 @@ class Upgrade extends Extension
     {
         global $config, $database;
 
+
         if ($config->get_bool("in_upgrade")) {
             return;
         }
@@ -163,6 +164,8 @@ class Upgrade extends Extension
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?
 
+
+
             log_info("upgrade", "Database at version 16");
             $config->set_bool("in_upgrade", false);
         }
@@ -208,13 +211,13 @@ class Upgrade extends Extension
 
             $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
             log_info("upgrade", "Setting predictable media values for known file types");
-            $database->execute("UPDATE images SET lossless = true, video = true WHERE ext IN ('swf')");
-            $database->execute("UPDATE images SET lossless = false, video = false, audio = true WHERE ext IN ('mp3')");
-            $database->execute("UPDATE images SET lossless = false, video = false, audio = false WHERE ext IN ('jpg','jpeg')");
-            $database->execute("UPDATE images SET lossless = true, video = false, audio = false WHERE ext IN ('ico','ani','cur','png','svg')");
-            $database->execute("UPDATE images SET lossless = true, audio = false WHERE ext IN ('gif')");
-            $database->execute("UPDATE images SET audio = false WHERE ext IN ('webp')");
-            $database->execute("UPDATE images SET lossless = false, video = true WHERE ext IN ('flv','mp4','m4v','ogv','webm')");
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_Y, video = SCORE_BOOL_Y WHERE ext IN ('swf')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_N, audio = SCORE_BOOL_Y WHERE ext IN ('mp3')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_N, audio = SCORE_BOOL_N WHERE ext IN ('jpg','jpeg')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_Y, video = SCORE_BOOL_N, audio = SCORE_BOOL_N WHERE ext IN ('ico','ani','cur','png','svg')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_Y, audio = SCORE_BOOL_N WHERE ext IN ('gif')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET audio = SCORE_BOOL_N WHERE ext IN ('webp')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_Y WHERE ext IN ('flv','mp4','m4v','ogv','webm')"));
 
 
             log_info("upgrade", "Database at version 17");
