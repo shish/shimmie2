@@ -59,7 +59,7 @@ class Trash extends Extension
     {
         global $user, $page;
 
-        if(!$user->can("view_trash")) {
+        if($event->image->trash===true && !$user->can("view_trash")) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
