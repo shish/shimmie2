@@ -75,7 +75,7 @@ class TagList extends Extension
                 $database->cache->set($cache_key, $res, 600);
             }
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/plain");
             $page->set_data(implode("\n", $res));
         }
@@ -93,6 +93,21 @@ class TagList extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("tags", new Link('tags/map'), "Tags");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
+            $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
+            $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
+            $event->add_nav_link("tags_categories", new Link('tags/categories'), "Categories");
+        }
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $config, $page;
@@ -100,7 +115,7 @@ class TagList extends Extension
             if ($config->get_string('tag_list_image_type') == 'related') {
                 $this->add_related_block($page, $event->image);
             } else {
-                if (class_exists("TagCategories") and $config->get_bool('tag_categories_split_on_view')) {
+                if (class_exists("TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
@@ -422,7 +437,7 @@ class TagList extends Extension
 			ORDER BY calc_count DESC
 			LIMIT :tag_list_length
 		";
-        $args = ["image_id"=>$image->id, "tag_list_length"=>$config->get_int('tag_list_length')];
+        $args = ["image_id" => $image->id, "tag_list_length" => $config->get_int('tag_list_length')];
 
         $tags = $database->get_all($query, $args);
         if (count($tags) > 0) {
@@ -514,7 +529,7 @@ class TagList extends Extension
             foreach ($wild_tags as $tag) {
                 $tag = str_replace("*", "%", $tag);
                 $tag = str_replace("?", "_", $tag);
-                $tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag"=>$tag]);
+                $tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
                 // $search_tags = array_merge($search_tags,
                 //                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));
                 $tag_id_array = array_merge($tag_id_array, $tag_ids);
@@ -525,23 +540,20 @@ class TagList extends Extension
             }
             $tag_id_list = join(', ', $tag_id_array);
 
-            if (count($tag_id_array) > 5) {
+            if (count($tag_id_array) > 5 || count($tag_id_array) == 0) {
                 return;
             }
 
             if ($tags_ok) {
                 $query = "
 					SELECT t2.tag AS tag, COUNT(it2.image_id) AS calc_count
-					FROM
-						image_tags AS it1,
-						image_tags AS it2,
-						tags AS t1,
-						tags AS t2
+					FROM image_tags AS it1 -- Got other images with the same tags
+					    -- Get the tags from those images, except those the same as the starting tags
+					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id AND it2.tag_id NOT IN($tag_id_list)
+					    -- And filter out anything starting with tagme
+						INNER JOIN tags AS t2 ON it2.tag_id = t2.id  AND t2.tag NOT LIKE 'tagme%'
 					WHERE
-						t1.id IN($tag_id_list)
-						AND it1.image_id=it2.image_id
-						AND it1.tag_id = t1.id
-						AND it2.tag_id = t2.id
+						it1.tag_id IN($tag_id_list)
 					GROUP BY t2.tag
 					ORDER BY calc_count
 					DESC LIMIT :limit

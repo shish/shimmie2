@@ -6,6 +6,8 @@
  */
 abstract class Event
 {
+    public $stop_processing = false;
+
     public function __construct()
     {
     }
@@ -58,7 +60,7 @@ class PageRequestEvent extends Event
 
         // if path is not specified, use the default front page
         if (empty($path)) {   /* empty is faster than strlen */
-            $path = $config->get_string('front_page');
+            $path = $config->get_string(SetupConfig::FRONT_PAGE);
         }
 
         // break the path into parts

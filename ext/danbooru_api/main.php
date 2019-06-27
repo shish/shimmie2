@@ -60,7 +60,7 @@ class DanbooruApi extends Extension
     private function api_danbooru(PageRequestEvent $event)
     {
         global $page;
-        $page->set_mode("data");
+        $page->set_mode(PageMode::DATA);
 
         if (($event->get_arg(1) == 'add_post') || (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'create.xml'))) {
             // No XML data is returned from this function
@@ -80,7 +80,7 @@ class DanbooruApi extends Extension
         // This redirects that to http://shimmie/post/view/123
         elseif (($event->get_arg(1) == 'post') && ($event->get_arg(2) == 'show')) {
             $fixedlocation = make_link("post/view/" . $event->get_arg(3));
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect($fixedlocation);
         }
     }
@@ -297,7 +297,7 @@ class DanbooruApi extends Extension
         // Now we check if a file was uploaded or a url was provided to transload
         // Much of this code is borrowed from /ext/upload
 
-        if (!$user->can("create_image")) {
+        if (!$user->can(Permissions::CREATE_IMAGE)) {
             $page->set_code(409);
             $page->add_http_header("X-Danbooru-Errors: authentication error");
             return;

@@ -5,7 +5,6 @@ class CustomViewImageTheme extends ViewImageTheme
     public function display_page(Image $image, $editor_parts)
     {
         global $page;
-        $page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
         $page->set_heading(html_escape($image->get_tag_list()));
         $page->add_block(new Block("Search", $this->build_navigation($image), "left", 0));
         $page->add_block(new Block("Information", $this->build_information($image), "left", 15));
@@ -17,11 +16,12 @@ class CustomViewImageTheme extends ViewImageTheme
         $h_owner = html_escape($image->get_owner()->name);
         $h_ownerlink = "<a href='".make_link("user/$h_owner")."'>$h_owner</a>";
         $h_ip = html_escape($image->owner_ip);
+        $h_type = html_escape($image->get_mime_type());
         $h_date = autodate($image->posted);
         $h_filesize = to_shorthand_int($image->filesize);
 
         global $user;
-        if ($user->can("view_ip")) {
+        if ($user->can(Permissions::VIEW_IP)) {
             $h_ownerlink .= " ($h_ip)";
         }
 
@@ -30,7 +30,14 @@ class CustomViewImageTheme extends ViewImageTheme
 		<br>Uploader: $h_ownerlink
 		<br>Date: $h_date
 		<br>Size: $h_filesize ({$image->width}x{$image->height})
+		<br>Type: $h_type
 		";
+
+        if($image->length!=null) {
+            $h_length = format_milliseconds($image->length);
+            $html .= "<br/>Length: $h_length";
+        }
+
 
         if (!is_null($image->source)) {
             $h_source = html_escape($image->source);

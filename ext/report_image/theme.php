@@ -46,7 +46,7 @@ class ReportImageTheme extends Themelet
 			";
         }
 
-        $thumb_width = $config->get_int("thumb_width");
+        $thumb_width = $config->get_int(ImageConfig::THUMB_WIDTH);
         $html = "
 			<table id='reportedimage' class='zebra'>
 				<thead><td width='$thumb_width'>Image</td><td>Reason</td><td width='128'>Action</td></thead>

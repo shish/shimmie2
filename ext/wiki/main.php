@@ -137,7 +137,7 @@ class Wiki extends Extension
                     send_event(new WikiUpdateEvent($user, $wikipage));
 
                     $u_title = url_escape($title);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("wiki/$u_title"));
                 } catch (WikiUpdateException $e) {
                     $original = $this->get_page($title);
@@ -159,7 +159,7 @@ class Wiki extends Extension
                     ["title"=>$_POST["title"], "rev"=>$_POST["revision"]]
                 );
                 $u_title = url_escape($_POST["title"]);
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         } elseif ($event->page_matches("wiki_admin/delete_all")) {
@@ -170,9 +170,24 @@ class Wiki extends Extension
                     ["title"=>$_POST["title"]]
                 );
                 $u_title = url_escape($_POST["title"]);
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
+        }
+    }
+
+
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("wiki",new Link('wiki'), "Wiki");
+    }
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="wiki") {
+            $event->add_nav_link("wiki_rules", new Link('wiki/rules'), "Rules");
+            $event->add_nav_link("wiki_help", new Link('ext_doc/wiki'), "Help");
         }
     }
 
@@ -206,7 +221,7 @@ class Wiki extends Extension
         }
 
         // anon / user can edit if allowed by config
-        if ($user->can("edit_wiki_page")) {
+        if ($user->can(Permissions::EDIT_WIKI_PAGE)) {
             return true;
         }
 

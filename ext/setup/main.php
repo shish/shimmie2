@@ -6,6 +6,8 @@
  * Description: Allows the site admin to configure the board to his or her taste
  */
 
+include_once "config.php";
+
 /* ConfigSaveEvent {{{
  *
  * Sent when the setup screen's 'set' button has been
@@ -61,6 +63,8 @@ class SetupBlock extends Block
     /** @var string  */
     public $body;
 
+
+
     public function __construct(string $title)
     {
         $this->header = $title;
@@ -74,38 +78,127 @@ class SetupBlock extends Block
         $this->body .= $text;
     }
 
-    public function add_text_option(string $name, string $label=null)
+    public function start_table()
     {
+        $this->body .= "<table class='form'>";
+    }
+    public function end_table()
+    {
+        $this->body .= "</table>";
+    }
+    public function start_table_row()
+    {
+        $this->body .= "</tr>";
+    }
+    public function end_table_row()
+    {
+        $this->body .= "</tr>";
+    }
+    public function start_table_head()
+    {
+        $this->body .= "<thead>";
+    }
+    public function end_table_head()
+    {
+        $this->body .= "</thead>";
+    }
+    public function add_table_header($content, int $colspan = 2)
+    {
+        $this->start_table_head();
+        $this->start_table_row();
+        $this->add_table_header_cell($content, $colspan);
+        $this->end_table_row();
+        $this->end_table_head();
+    }
+
+    public function start_table_cell(int $colspan = 1)
+    {
+        $this->body .= "<td colspan='$colspan'>";
+    }
+    public function end_table_cell()
+    {
+        $this->body .= "</td>";
+    }
+    public function add_table_cell($content, int $colspan = 1)
+    {
+        $this->start_table_cell($colspan);
+        $this->body .= $content;
+        $this->end_table_cell();
+    }
+    public function start_table_header_cell(int $colspan = 1)
+    {
+        $this->body .= "<th colspan='$colspan'>";
+    }
+    public function end_table_header_cell()
+    {
+        $this->body .= "</th>";
+    }
+    public function add_table_header_cell($content, int $colspan = 1)
+    {
+        $this->start_table_header_cell($colspan);
+        $this->body .= $content;
+        $this->end_table_header_cell();
+    }
+
+
+
+    private function format_option(string $name, $html, ?string $label, bool $table_row) {
         global $config;
-        $val = html_escape($config->get_string($name));
+
+        if($table_row) $this->start_table_row();
+        if($table_row) $this->start_table_header_cell();
         if (!is_null($label)) {
             $this->body .= "<label for='{$name}'>{$label}</label>";
         }
-        $this->body .= "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
-        $this->body .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
+        if($table_row) $this->end_table_header_cell();
+
+        if($table_row) $this->start_table_cell();
+        $this->body .= $html;
+        if($table_row) $this->end_table_cell();
+        if($table_row) $this->end_table_row();
     }
 
-    public function add_longtext_option(string $name, string $label=null)
+    public function add_text_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = html_escape($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $rows = max(3, min(10, count(explode("\n", $val))));
-        $this->body .= "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
+
+        $html = "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
+        $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_bool_option(string $name, string $label=null)
+    public function add_longtext_option(string $name, string $label=null, bool $table_row = false)
+    {
+        global $config;
+        $val = html_escape($config->get_string($name));
+
+        $rows = max(3, min(10, count(explode("\n", $val))));
+        $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
+    }
+
+    public function add_bool_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $checked = $config->get_bool($name) ? " checked" : "";
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
+
+        $html = "";
+        if(!$table_row&&!is_null($label)) {
+            $html .= "<label for='{$name}'>{$label}</label>";
         }
-        $this->body .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='bool'>\n";
+
+        $html .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
+        if ($table_row && !is_null($label)) {
+            $html .= "<label for='{$name}'>{$label}</label>";
+        }
+
+        $html .= "<input type='hidden' name='_type_$name' value='bool'>\n";
+
+        $this->format_option($name, $html, null, $table_row);
     }
 
     //	public function add_hidden_option($name, $label=null) {
@@ -114,36 +207,33 @@ class SetupBlock extends Block
     //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label=null)
+    public function add_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = html_escape($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
+
     }
 
-    public function add_shorthand_int_option(string $name, string $label=null)
+    public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = to_shorthand_int($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
+        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_choice_option(string $name, array $options, string $label=null)
+    public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
         $current = $config->get_string($name);
 
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
         $html = "<select id='$name' name='_config_$name'>";
         foreach ($options as $optname => $optval) {
             if ($optval == $current) {
@@ -154,19 +244,16 @@ class SetupBlock extends Block
             $html .= "<option value='$optval'$selected>$optname</option>\n";
         }
         $html .= "</select>";
-        $this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->body .= $html;
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_multichoice_option(string $name, array $options, string $label=null)
+    public function add_multichoice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
         $current = $config->get_array($name);
 
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
         $html = "<select id='$name' name='_config_{$name}[]' multiple size='5'>";
         foreach ($options as $optname => $optval) {
             if (in_array($optval, $current)) {
@@ -177,10 +264,10 @@ class SetupBlock extends Block
             $html .= "<option value='$optval'$selected>$optname</option>\n";
         }
         $html .= "</select>";
-        $this->body .= "<input type='hidden' name='_type_$name' value='array'>\n";
-        $this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
+        $html .= "<input type='hidden' name='_type_$name' value='array'>\n";
+        $html .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 
-        $this->body .= $html;
+        $this->format_option($name, $html, $label, $table_row);
     }
 }
 // }}}
@@ -190,12 +277,11 @@ class Setup extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_string("title", "Shimmie");
-        $config->set_default_string("front_page", "post/list");
-        $config->set_default_string("main_page", "post/list");
-        $config->set_default_string("theme", "default");
-        $config->set_default_bool("word_wrap", true);
-        $config->set_default_bool("comment_captcha", false);
+        $config->set_default_string(SetupConfig::TITLE, "Shimmie");
+        $config->set_default_string(SetupConfig::FRONT_PAGE, "post/list");
+        $config->set_default_string(SetupConfig::MAIN_PAGE, "post/list");
+        $config->set_default_string(SetupConfig::THEME, "default");
+        $config->set_default_bool(SetupConfig::WORD_WRAP, true);
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -203,12 +289,12 @@ class Setup extends Extension
         global $config, $page, $user;
 
         if ($event->page_matches("nicetest")) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_data("ok");
         }
 
         if ($event->page_matches("setup")) {
-            if (!$user->can("change_setting")) {
+            if (!$user->can(Permissions::CHANGE_SETTING)) {
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->get_arg(0) == "save" && $user->check_auth_token()) {
@@ -216,7 +302,7 @@ class Setup extends Extension
                     $config->save();
                     flash_message("Config saved");
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("setup"));
                 } elseif ($event->get_arg(0) == "advanced") {
                     $this->theme->display_advanced($page, $config->values);
@@ -283,11 +369,11 @@ class Setup extends Extension
 		</script>";
         $sb = new SetupBlock("General");
         $sb->position = 0;
-        $sb->add_text_option("title", "Site title: ");
-        $sb->add_text_option("front_page", "<br>Front page: ");
-        $sb->add_text_option("main_page", "<br>Main page: ");
+        $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
+        $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
+        $sb->add_text_option(SetupConfig::MAIN_PAGE, "<br>Main page: ");
         $sb->add_text_option("contact_link", "<br>Contact URL: ");
-        $sb->add_choice_option("theme", $themes, "<br>Theme: ");
+        $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
         $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
         $sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");
@@ -325,10 +411,20 @@ class Setup extends Extension
         log_warning("setup", "Cache cleared");
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::CHANGE_SETTING)) {
+                $event->add_nav_link("setup", new Link('setup'), "Board Config", null, 0);
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("change_setting")) {
+        if ($user->can(Permissions::CHANGE_SETTING)) {
             $event->add_link("Board Config", make_link("setup"));
         }
     }

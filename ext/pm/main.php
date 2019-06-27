@@ -93,6 +93,19 @@ class PrivMsg extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="user") {
+            if (!$user->is_anonymous()) {
+                $count = $this->count_pms($user);
+                $h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
+                $event->add_nav_link("pm", new Link('user#private-messages'), "Private Messages$h_count");
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
@@ -108,7 +121,7 @@ class PrivMsg extends Extension
         global $page, $user;
         $duser = $event->display_user;
         if (!$user->is_anonymous() && !$duser->is_anonymous()) {
-            if (($user->id == $duser->id) || $user->can("view_other_pms")) {
+            if (($user->id == $duser->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                 $this->theme->display_pms($page, $this->get_pms($duser));
             }
             if ($user->id != $duser->id) {
@@ -128,7 +141,7 @@ class PrivMsg extends Extension
                         $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
                         if (is_null($pm)) {
                             $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
-                        } elseif (($pm["to_id"] == $user->id) || $user->can("view_other_pms")) {
+                        } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                             $from_user = User::by_id(int_escape($pm["from_id"]));
                             if ($pm["to_id"] == $user->id) {
                                 $database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", ["id" => $pm_id]);
@@ -145,11 +158,11 @@ class PrivMsg extends Extension
                             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
                             if (is_null($pm)) {
                                 $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
-                            } elseif (($pm["to_id"] == $user->id) || $user->can("view_other_pms")) {
+                            } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
                                 $database->cache->delete("pm-count-{$user->id}");
                                 log_info("pm", "Deleted PM #$pm_id", "PM deleted");
-                                $page->set_mode("redirect");
+                                $page->set_mode(PageMode::REDIRECT);
                                 $page->set_redirect($_SERVER["HTTP_REFERER"]);
                             }
                         }
@@ -162,7 +175,7 @@ class PrivMsg extends Extension
                             $message = $_POST["message"];
                             send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
                             flash_message("PM sent");
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect($_SERVER["HTTP_REFERER"]);
                         }
                         break;

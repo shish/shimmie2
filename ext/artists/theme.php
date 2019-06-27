@@ -545,4 +545,14 @@ class ArtistsTheme extends Themelet
         }
         return $html;
     }
+
+    public function get_help_html()
+    {
+        return '<p>Search for images with a particular artist.</p>
+        <div class="command_example">
+        <pre>artist=leonardo</pre>
+        <p>Returns images with the artist "leonardo".</p>
+        </div> 
+        ';
+    }
 }

@@ -6,6 +6,8 @@
  * Description: Let tags be split into 'categories', like Danbooru's tagging
  */
 
+require_once "config.php";
+
 class TagCategories extends Extension
 {
     public function onInitExt(InitExtEvent $event)
@@ -14,9 +16,9 @@ class TagCategories extends Extension
         
         // whether we split out separate categories on post view by default
         //  note: only takes effect if /post/view shows the image's exact tags
-        $config->set_default_bool("tag_categories_split_on_view", true);
+        $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);
 
-        if ($config->get_int("ext_tag_categories_version") < 1) {
+        if ($config->get_int(TagCategoriesConfig::VERSION) < 1) {
             // primary extension database, holds all our stuff!
             $database->create_table(
                 'image_tag_categories',
@@ -26,7 +28,7 @@ class TagCategories extends Extension
 				color VARCHAR(7)'
             );
 
-            $config->set_int("ext_tag_categories_version", 1);
+            $config->set_int(TagCategoriesConfig::VERSION, 1);
 
             log_info("tag_categories", "extension installed");
         }
@@ -68,23 +70,34 @@ class TagCategories extends Extension
 
         if (preg_match("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i", $event->term, $matches)) {
             global $database;
-            $type = $matches[1];
+            $type = strtolower($matches[1]);
             $cmp = ltrim($matches[2], ":") ?: "=";
             $count = $matches[3];
 
-            $types = $database->get_col('SELECT category FROM image_tag_categories');
+            $types = $database->get_col(
+                $database->scoreql_to_sql('SELECT SCORE_STRNORM(category) FROM image_tag_categories'));
             if (in_array($type, $types)) {
                 $event->add_querylet(
-                    new Querylet("EXISTS (
+                    new Querylet($database->scoreql_to_sql("EXISTS (
 					    SELECT 1
 					    FROM image_tags it
 					    LEFT JOIN tags t ON it.tag_id = t.id
 					    WHERE images.id = it.image_id
 					    GROUP BY image_id
-					    HAVING SUM(CASE WHEN t.tag LIKE '$type:%' THEN 1 ELSE 0 END) $cmp $count
-					)")
+					    HAVING SUM(CASE WHEN SCORE_STRNORM(t.tag) LIKE SCORE_STRNORM('$type:%') THEN 1 ELSE 0 END) $cmp $count
+					)"))
                 );
             }
+        }
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Tag Categories";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
         }
     }
 

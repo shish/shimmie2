@@ -1,14 +1,30 @@
 <?php
 /**
  * Name: Post Relationships
- * Author: Angus Johnston <admin@codeanimu.net>
+ * Author: Angus Johnston <admin@codeanimu.net, Matthew Barbour <matthew@darkholme.net>
  * License: GPLv2
  * Description: Allow posts to have relationships (parent/child).
  */
 
+class ImageRelationshipSetEvent extends Event
+{
+    public $child_id;
+    public $parent_id;
+
+
+    public function  __construct(int $child_id, int $parent_id)
+    {
+        $this->child_id = $child_id;
+        $this->parent_id = $parent_id;
+    }
+}
+
+
 class Relationships extends Extension
 {
-    protected $db_support = ['mysql', 'pgsql'];
+    public const NAME = "Relationships";
+
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -35,7 +51,7 @@ class Relationships extends Extension
     {
         if (isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : true) { //Ignore tag_edit__parent if tags contain parent metatag
             if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : false) {
-                $this->set_parent($event->image->id, (int) $_POST["tag_edit__parent"]);
+                send_event(new ImageRelationshipSetEvent($event->image->id,(int) $_POST["tag_edit__parent"]));
             } else {
                 $this->remove_parent($event->image->id);
             }
@@ -65,6 +81,17 @@ class Relationships extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Relationships";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
         $matches = [];
@@ -75,12 +102,12 @@ class Relationships extends Extension
             if ($parentID == "none" || $parentID == "0") {
                 $this->remove_parent($event->id);
             } else {
-                $this->set_parent($event->id, $parentID);
+                send_event(new ImageRelationshipSetEvent($event->id, $parentID));
             }
         } elseif (preg_match("/^child[=|:]([0-9]+)$/", $event->term, $matches) && $event->parse) {
             $childID = $matches[1];
 
-            $this->set_child($event->id, $childID);
+            send_event(new ImageRelationshipSetEvent($childID, $event->id));
         }
 
         if (!empty($matches)) {
@@ -102,29 +129,45 @@ class Relationships extends Extension
         }
 
         if ($event->image->parent_id !== null) {
-            $database->execute("UPDATE images SET has_children = (SELECT * FROM (SELECT CASE WHEN (COUNT(*) - 1) > 0 THEN 1 ELSE 0 END FROM images WHERE parent_id = :pid) AS sub)
-								WHERE id = :pid", ["pid"=>$event->image->parent_id]);
+            $this->set_has_children($event->image->parent_id);
         }
     }
 
-    private function set_parent(int $imageID, int $parentID)
+    public function onImageRelationshipSet(ImageRelationshipSetEvent $event)
     {
         global $database;
 
-        if ($database->get_row("SELECT 1 FROM images WHERE id = :pid", ["pid"=>$parentID])) {
-            $database->execute("UPDATE images SET parent_id = :pid WHERE id = :iid", ["pid"=>$parentID, "iid"=>$imageID]);
-            $database->execute("UPDATE images SET has_children = TRUE WHERE id = :pid", ["pid"=>$parentID]);
+        $old_parent = $database->get_one("SELECT parent_id FROM images WHERE id = :cid", ["cid"=>$event->child_id]);
+
+        if($old_parent!=$event->parent_id) {
+            if ($database->get_row("SELECT 1 FROM images WHERE id = :pid", ["pid" => $event->parent_id])) {
+
+                $result = $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["pid" => $event->parent_id, "cid" => $event->child_id]);
+
+                if ($result->rowCount() > 0) {
+                    $database->execute("UPDATE images SET has_children = TRUE WHERE id = :pid", ["pid" => $event->parent_id]);
+
+                    if($old_parent!=null) {
+                        $this->set_has_children($old_parent);
+                    }
+                }
+            }
         }
     }
 
-    private function set_child(int $parentID, int $childID)
+
+    public static function get_children(Image $image, int $omit = null): array
     {
         global $database;
-
-        if ($database->get_row("SELECT 1 FROM images WHERE id = :cid", ["cid"=>$childID])) {
-            $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["cid"=>$childID, "pid"=>$parentID]);
-            $database->execute("UPDATE images SET has_children = TRUE WHERE id = :pid", ["pid"=>$parentID]);
+        $results = $database->get_all_iterable("SELECT * FROM images WHERE parent_id = :pid ", ["pid"=>$image->id]);
+        $output = [];
+        foreach ($results as $result) {
+            if($result["id"]==$omit) {
+                continue;
+            }
+            $output[] = new Image($result);
         }
+        return $output;
     }
 
     private function remove_parent(int $imageID)
@@ -134,8 +177,23 @@ class Relationships extends Extension
 
         if ($parentID) {
             $database->execute("UPDATE images SET parent_id = NULL WHERE id = :iid", ["iid"=>$imageID]);
-            $database->execute("UPDATE images SET has_children = (SELECT * FROM (SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM images WHERE parent_id = :pid) AS sub)
-								WHERE id = :pid", ["pid"=>$parentID]);
+            $this->set_has_children($parentID);
         }
     }
+
+    private function set_has_children(int $parent_id)
+    {
+        global $database;
+
+        // Doesn't work on pgsql
+//        $database->execute("UPDATE images SET has_children = (SELECT * FROM (SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM images WHERE parent_id = :pid) AS sub)
+//								WHERE id = :pid", ["pid"=>$parentID]);
+
+        $database->execute(
+            "UPDATE images SET has_children = EXISTS (SELECT 1 FROM images WHERE parent_id = :pid) WHERE id = :pid",
+            ["pid"=>$parent_id]);
+    }
+
+
+
 }

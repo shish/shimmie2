@@ -81,7 +81,7 @@ class BulkAddCSV extends Extension
                 send_event($ratingevent);
             }
             if (file_exists($thumbfile)) {
-                copy($thumbfile, warehouse_path("thumbs", $event->hash));
+                copy($thumbfile, warehouse_path(Image::THUMBNAIL_DIR, $event->hash));
             }
         }
     }

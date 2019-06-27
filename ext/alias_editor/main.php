@@ -36,12 +36,12 @@ class AliasEditor extends Extension
 
         if ($event->page_matches("alias")) {
             if ($event->get_arg(0) == "add") {
-                if ($user->can("manage_alias_list")) {
+                if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     if (isset($_POST['oldtag']) && isset($_POST['newtag'])) {
                         try {
                             $aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
                             send_event($aae);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("alias/list"));
                         } catch (AddAliasException $ex) {
                             $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
@@ -49,12 +49,12 @@ class AliasEditor extends Extension
                     }
                 }
             } elseif ($event->get_arg(0) == "remove") {
-                if ($user->can("manage_alias_list")) {
+                if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     if (isset($_POST['oldtag'])) {
                         $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $_POST['oldtag']]);
                         log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], "Deleted alias");
 
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
                     }
                 }
@@ -80,18 +80,18 @@ class AliasEditor extends Extension
 
                 $this->theme->display_aliases($alias, $page_number + 1, $total_pages);
             } elseif ($event->get_arg(0) == "export") {
-                $page->set_mode("data");
+                $page->set_mode(PageMode::DATA);
                 $page->set_type("text/csv");
                 $page->set_filename("aliases.csv");
                 $page->set_data($this->get_alias_csv($database));
             } elseif ($event->get_arg(0) == "import") {
-                if ($user->can("manage_alias_list")) {
+                if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     if (count($_FILES) > 0) {
                         $tmp = $_FILES['alias_file']['tmp_name'];
                         $contents = file_get_contents($tmp);
                         $this->add_alias_csv($database, $contents);
                         log_info("alias_editor", "Imported aliases from file", "Imported aliases"); # FIXME: how many?
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
                     } else {
                         $this->theme->display_error(400, "No File Specified", "You have to upload a file");
@@ -117,10 +117,17 @@ class AliasEditor extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("aliases", new Link('alias/list'), "Aliases", NavLink::is_active(["alias"]));
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("manage_alias_list")) {
+        if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
             $event->add_link("Alias Editor", make_link("alias/list"));
         }
     }

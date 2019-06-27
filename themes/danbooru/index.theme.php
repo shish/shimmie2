@@ -11,7 +11,7 @@ class CustomIndexTheme extends IndexTheme
 
         if (count($this->search_terms) == 0) {
             $query = null;
-            $page_title = $config->get_string('title');
+            $page_title = $config->get_string(SetupConfig::TITLE);
         } else {
             $search_string = implode(' ', $this->search_terms);
             $query = url_escape($search_string);

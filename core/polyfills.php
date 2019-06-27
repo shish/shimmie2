@@ -251,21 +251,44 @@ if (!function_exists('mb_strlen')) {
 }
 
 const MIME_TYPE_MAP = [
-    'jpg' => 'image/jpeg', 'gif' => 'image/gif', 'png' => 'image/png',
-    'tif' => 'image/tiff', 'tiff' => 'image/tiff', 'ico' => 'image/x-icon',
-    'swf' => 'application/x-shockwave-flash', 'video/x-flv' => 'flv',
-    'svg' => 'image/svg+xml', 'pdf' => 'application/pdf',
-    'zip' => 'application/zip', 'gz' => 'application/x-gzip',
-    'tar' => 'application/x-tar', 'bz' => 'application/x-bzip',
-    'bz2' => 'application/x-bzip2', 'txt' => 'text/plain',
-    'asc' => 'text/plain', 'htm' => 'text/html', 'html' => 'text/html',
-    'css' => 'text/css', 'js' => 'text/javascript',
-    'xml' => 'text/xml', 'xsl' => 'application/xsl+xml',
-    'ogg' => 'application/ogg', 'mp3' => 'audio/mpeg', 'wav' => 'audio/x-wav',
-    'avi' => 'video/x-msvideo', 'mpg' => 'video/mpeg', 'mpeg' => 'video/mpeg',
-    'mov' => 'video/quicktime', 'flv' => 'video/x-flv', 'php' => 'text/x-php',
-    'mp4' => 'video/mp4', 'ogv' => 'video/ogg', 'webm' => 'video/webm',
-    'webp' => 'image/webp', 'bmp' =>'image/x-ms-bmp', 'psd' => 'image/vnd.adobe.photoshop',
+    'jpg' => 'image/jpeg',
+    'gif' => 'image/gif',
+    'png' => 'image/png',
+    'tif' => 'image/tiff',
+    'tiff' => 'image/tiff',
+    'ico' => 'image/x-icon',
+    'swf' => 'application/x-shockwave-flash',
+    'flv' => 'video/x-flv',
+    'svg' => 'image/svg+xml',
+    'pdf' => 'application/pdf',
+    'zip' => 'application/zip',
+    'gz' => 'application/x-gzip',
+    'tar' => 'application/x-tar',
+    'bz' => 'application/x-bzip',
+    'bz2' => 'application/x-bzip2',
+    'txt' => 'text/plain',
+    'asc' => 'text/plain',
+    'htm' => 'text/html',
+    'html' => 'text/html',
+    'css' => 'text/css',
+    'js' => 'text/javascript',
+    'xml' => 'text/xml',
+    'xsl' => 'application/xsl+xml',
+    'ogg' => 'application/ogg',
+    'mp3' => 'audio/mpeg',
+    'wav' => 'audio/x-wav',
+    'avi' => 'video/x-msvideo',
+    'mpg' => 'video/mpeg',
+    'mpeg' => 'video/mpeg',
+    'mov' => 'video/quicktime',
+    'flv' => 'video/x-flv',
+    'php' => 'text/x-php',
+    'mp4' => 'video/mp4',
+    'ogv' => 'video/ogg',
+    'webm' => 'video/webm',
+    'webp' => 'image/webp',
+    'bmp' =>'image/x-ms-bmp',
+    'psd' => 'image/vnd.adobe.photoshop',
     'mkv' => 'video/x-matroska'
 ];
 
@@ -728,4 +751,54 @@ function validate_input(array $inputs): array
     }
 
     return $outputs;
+}
+
+/**
+ * Translates all possible directory separators to the appropriate one for the current system,
+ * and removes any duplicate separators.
+ */
+function sanitize_path(string $path): string
+{
+    return preg_replace('|[\\\\/]+|S',DIRECTORY_SEPARATOR,$path);
+}
+
+/**
+ * Combines all path segments specified, ensuring no duplicate separators occur,
+ * as well as converting all possible separators to the one appropriate for the current system.
+ */
+function join_path(string ...$paths): string
+{
+    $output = "";
+    foreach ($paths as $path) {
+        if(empty($path)) {
+            continue;
+        }
+        $path = sanitize_path($path);
+        if(empty($output)) {
+            $output = $path;
+        } else {
+            $output = rtrim($output, DIRECTORY_SEPARATOR);
+            $path = ltrim($path, DIRECTORY_SEPARATOR);
+            $output .= DIRECTORY_SEPARATOR . $path;
+        }
+    }
+    return $output;
+}
+
+/**
+ * Perform callback on each item returned by an iterator.
+ */
+function iterator_map(callable $callback, iterator $iter): Generator
+{
+    foreach($iter as $i) {
+        yield call_user_func($callback,$i);
+    }
+}
+
+/**
+ * Perform callback on each item returned by an iterator and combine the result into an array.
+ */
+function iterator_map_to_array(callable $callback, iterator $iter): array
+{
+    return iterator_to_array(iterator_map($callback, $iter));
 }

@@ -1,9 +1,17 @@
 <?php
+abstract class DatabaseDriver
+{
+    public const MYSQL = "mysql";
+    public const PGSQL = "pgsql";
+    public const SQLITE = "sqlite";
+}
+
 /**
  * A class for controlled database access
  */
 class Database
 {
+
     /**
      * The PDO database connection object, for anyone who wants direct access.
      * @var null|PDO
@@ -72,7 +80,7 @@ class Database
 
         // https://bugs.php.net/bug.php?id=70221
         $ka = DATABASE_KA;
-        if (version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == "sqlite") {
+        if (version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == DatabaseDriver::SQLITE) {
             $ka = false;
         }
 
@@ -96,11 +104,11 @@ class Database
             throw new SCoreException("Can't figure out database engine");
         }
 
-        if ($db_proto === "mysql") {
+        if ($db_proto === DatabaseDriver::MYSQL) {
             $this->engine = new MySQL();
-        } elseif ($db_proto === "pgsql") {
+        } elseif ($db_proto === DatabaseDriver::PGSQL) {
             $this->engine = new PostgreSQL();
-        } elseif ($db_proto === "sqlite") {
+        } elseif ($db_proto === DatabaseDriver::SQLITE) {
             $this->engine = new SQLite();
         } else {
             die('Unknown PDO driver: '.$db_proto);
@@ -159,6 +167,19 @@ class Database
         return $this->engine->scoreql_to_sql($input);
     }
 
+    public function scoresql_value_prepare($input)
+    {
+        if (is_null($this->engine)) {
+            $this->connect_engine();
+        }
+        if($input===true) {
+            return $this->engine->BOOL_Y;
+        } else if ($input===false) {
+            return $this->engine->BOOL_N;
+        }
+        return $input;
+    }
+
     public function get_driver_name(): string
     {
         if (is_null($this->engine)) {
@@ -167,35 +188,16 @@ class Database
         return $this->engine->name;
     }
 
-    private function count_execs(string $sql, array $inputarray): void
+    private function count_time(string $method, float $start, string $query, ?array $args): void
     {
-        if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
-            $sql = trim(preg_replace('/\s+/msi', ' ', $sql));
-            if (isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
-                $text = $sql." -- ".join(", ", $inputarray)."\n";
-            } else {
-                $text = $sql."\n";
-            }
-            file_put_contents("data/sql.log", $text, FILE_APPEND);
+		global $_tracer, $tracer_enabled;
+		$dur = microtime(true) - $start;
+        if($tracer_enabled) {
+            $query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
+            $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
         }
-        if (!is_array($inputarray)) {
-            $this->query_count++;
-        }
-        # handle 2-dimensional input arrays
-        elseif (is_array(reset($inputarray))) {
-            $this->query_count += sizeof($inputarray);
-        } else {
-            $this->query_count++;
-        }
-    }
-
-    private function count_time(string $method, float $start): void
-    {
-        if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
-            $text = $method.":".(microtime(true) - $start)."\n";
-            file_put_contents("data/sql.log", $text, FILE_APPEND);
-        }
-        $this->dbtime += microtime(true) - $start;
+		$this->query_count++;
+        $this->dbtime += $dur;
     }
 
     public function execute(string $query, array $args=[]): PDOStatement
@@ -204,7 +206,6 @@ class Database
             if (is_null($this->db)) {
                 $this->connect_db();
             }
-            $this->count_execs($query, $args);
             $stmt = $this->db->prepare(
                 "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
                 $query
@@ -225,7 +226,7 @@ class Database
             return $stmt;
         } catch (PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
-        }
+		}
     }
 
     /**
@@ -235,7 +236,18 @@ class Database
     {
         $_start = microtime(true);
         $data = $this->execute($query, $args)->fetchAll();
-        $this->count_time("get_all", $_start);
+        $this->count_time("get_all", $_start, $query, $args);
+        return $data;
+    }
+
+    /**
+     * Execute an SQL query and return a iterable object for use with generators.
+     */
+    public function get_all_iterable(string $query, array $args=[]): PDOStatement
+    {
+        $_start = microtime(true);
+        $data = $this->execute($query, $args);
+        $this->count_time("get_all_iterable", $_start, $query, $args);
         return $data;
     }
 
@@ -246,7 +258,7 @@ class Database
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
-        $this->count_time("get_row", $_start);
+        $this->count_time("get_row", $_start, $query, $args);
         return $row ? $row : null;
     }
 
@@ -256,27 +268,32 @@ class Database
     public function get_col(string $query, array $args=[]): array
     {
         $_start = microtime(true);
-        $stmt = $this->execute($query, $args);
-        $res = [];
-        foreach ($stmt as $row) {
-            $res[] = $row[0];
-        }
-        $this->count_time("get_col", $_start);
+        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
+        $this->count_time("get_col", $_start, $query, $args);
         return $res;
     }
 
     /**
-     * Execute an SQL query and return the the first row => the second row.
+     * Execute an SQL query and return the first column of each row as a single iterable object.
+     */
+    public function get_col_iterable(string $query, array $args=[]): Generator
+    {
+        $_start = microtime(true);
+        $stmt = $this->execute($query, $args);
+        $this->count_time("get_col_iterable", $_start, $query, $args);
+        foreach ($stmt as $row) {
+            yield $row[0];
+        }
+    }
+
+    /**
+     * Execute an SQL query and return the the first column => the second column.
      */
     public function get_pairs(string $query, array $args=[]): array
     {
         $_start = microtime(true);
-        $stmt = $this->execute($query, $args);
-        $res = [];
-        foreach ($stmt as $row) {
-            $res[$row[0]] = $row[1];
-        }
-        $this->count_time("get_pairs", $_start);
+        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
+        $this->count_time("get_pairs", $_start, $query, $args);
         return $res;
     }
 
@@ -287,7 +304,7 @@ class Database
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
-        $this->count_time("get_one", $_start);
+        $this->count_time("get_one", $_start, $query, $args);
         return $row[0];
     }
 
@@ -296,7 +313,7 @@ class Database
      */
     public function get_last_insert_id(string $seq): int
     {
-        if ($this->engine->name == "pgsql") {
+        if ($this->engine->name == DatabaseDriver::PGSQL) {
             return $this->db->lastInsertId($seq);
         } else {
             return $this->db->lastInsertId();
@@ -326,15 +343,15 @@ class Database
             $this->connect_db();
         }
 
-        if ($this->engine->name === "mysql") {
+        if ($this->engine->name === DatabaseDriver::MYSQL) {
             return count(
                 $this->get_all("SHOW TABLES")
             );
-        } elseif ($this->engine->name === "pgsql") {
+        } elseif ($this->engine->name === DatabaseDriver::PGSQL) {
             return count(
                 $this->get_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
             );
-        } elseif ($this->engine->name === "sqlite") {
+        } elseif ($this->engine->name === DatabaseDriver::SQLITE) {
             return count(
                 $this->get_all("SELECT name FROM sqlite_master WHERE type = 'table'")
             );

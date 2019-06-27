@@ -9,12 +9,12 @@
 
 class RSS_Comments extends Extension
 {
-    protected $db_support = ['mysql', 'sqlite'];  // pgsql has no UNIX_TIMESTAMP
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // pgsql has no UNIX_TIMESTAMP
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
         global $config, $page;
-        $title = $config->get_string('title');
+        $title = $config->get_string(SetupConfig::TITLE);
 
         $page->add_html_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
             "title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
@@ -24,7 +24,7 @@ class RSS_Comments extends Extension
     {
         global $config, $database, $page;
         if ($event->page_matches("rss/comments")) {
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/rss+xml");
 
             $comments = $database->get_all("
@@ -60,7 +60,7 @@ class RSS_Comments extends Extension
 				";
             }
 
-            $title = $config->get_string('title');
+            $title = $config->get_string(SetupConfig::TITLE);
             $base_href = make_http(get_base_href());
             $version = $config->get_string('version');
             $xml = <<<EOD
@@ -79,4 +79,12 @@ EOD;
             $page->set_data($xml);
         }
     }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="comment") {
+            $event->add_nav_link("comment_rss", new Link('rss/comments'), "Feed");
+        }
+    }
+
 }

@@ -45,7 +45,7 @@ class NumericScore extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         global $user;
-        if ($user->can("edit_other_vote")) {
+        if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
             $this->theme->get_nuller($event->display_user);
         }
 
@@ -94,11 +94,11 @@ class NumericScore extends Extension
                 if (!is_null($score) && $image_id>0) {
                     send_event(new NumericScoreSetEvent($image_id, $user, $score));
                 }
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
             }
         } elseif ($event->page_matches("numeric_score/remove_votes_on") && $user->check_auth_token()) {
-            if ($user->can("edit_other_vote")) {
+            if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
                 $image_id = int_escape($_POST['image_id']);
                 $database->execute(
                     "DELETE FROM numeric_score_votes WHERE image_id=?",
@@ -108,13 +108,13 @@ class NumericScore extends Extension
                     "UPDATE images SET numeric_score=0 WHERE id=?",
                     [$image_id]
                 );
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
             }
         } elseif ($event->page_matches("numeric_score/remove_votes_by") && $user->check_auth_token()) {
-            if ($user->can("edit_other_vote")) {
+            if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
                 $this->delete_votes_by(int_escape($_POST['user_id']));
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link());
             }
         } elseif ($event->page_matches("popular_by_day") || $event->page_matches("popular_by_month") || $event->page_matches("popular_by_year")) {
@@ -228,6 +228,16 @@ class NumericScore extends Extension
         $event->replace('$score', $event->image->numeric_score);
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Numeric Score";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         $matches = [];
@@ -291,6 +301,16 @@ class NumericScore extends Extension
 
         if (!empty($matches)) {
             $event->metatag = true;
+        }
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("numeric_score_day", new Link('popular_by_day'), "Popular by Day");
+            $event->add_nav_link("numeric_score_month", new Link('popular_by_month'), "Popular by Month");
+            $event->add_nav_link("numeric_score_year", new Link('popular_by_year'), "Popular by Year");
+
         }
     }
 

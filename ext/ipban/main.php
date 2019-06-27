@@ -66,7 +66,7 @@ class IPBan extends Extension
     {
         if ($event->page_matches("ip_ban")) {
             global $page, $user;
-            if ($user->can("ban_ip")) {
+            if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "add" && $user->check_auth_token()) {
                     if (isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
                         if (empty($_POST['end'])) {
@@ -77,7 +77,7 @@ class IPBan extends Extension
                         send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
                         flash_message("Ban for {$_POST['ip']} added");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "remove" && $user->check_auth_token()) {
@@ -85,7 +85,7 @@ class IPBan extends Extension
                         send_event(new RemoveIPBanEvent($_POST['id']));
 
                         flash_message("Ban removed");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "list") {
@@ -105,10 +105,20 @@ class IPBan extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BAN_IP)) {
+                $event->add_nav_link("ip_bans", new Link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_ip")) {
+        if ($user->can(Permissions::BAN_IP)) {
             $event->add_link("IP Bans", make_link("ip_ban/list"));
         }
     }
@@ -235,7 +245,7 @@ class IPBan extends Extension
     {
         global $config, $database;
 
-        $prefix = ($database->get_driver_name() == "sqlite" ? "bans." : "");
+        $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
 
         $bans = $this->get_active_bans();
 

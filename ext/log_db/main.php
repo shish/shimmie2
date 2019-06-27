@@ -48,7 +48,7 @@ class LogDatabase extends Extension
     {
         global $database, $user;
         if ($event->page_matches("log/view")) {
-            if ($user->can("view_eventlog")) {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $wheres = [];
                 $args = [];
                 $page_num = int_escape($event->get_arg(0));
@@ -68,7 +68,7 @@ class LogDatabase extends Extension
                     $args["module"] = $_GET["module"];
                 }
                 if (!empty($_GET["user"])) {
-                    if ($database->get_driver_name() == "pgsql") {
+                    if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                         if (preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
                             $wheres[] = "(username = :user1 OR text(address) = :user2)";
                             $args["user1"] = $_GET["user"];
@@ -120,10 +120,20 @@ class LogDatabase extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
+                $event->add_nav_link("event_log", new Link('log/view'), "Event Log");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_eventlog")) {
+        if ($user->can(Permissions::VIEW_EVENTLOG)) {
             $event->add_link("Event Log", make_link("log/view"));
         }
     }

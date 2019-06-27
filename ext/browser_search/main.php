@@ -27,14 +27,14 @@ class BrowserSearch extends Extension
 
         // Add in header code to let the browser know that the search plugin exists
         // We need to build the data for the header
-        $search_title = $config->get_string('title');
+        $search_title = $config->get_string(SetupConfig::TITLE);
         $search_file_url = make_link('browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml');
         $page->add_html_header("<link rel='search' type='application/opensearchdescription+xml' title='$search_title' href='$search_file_url'>");
 
         // The search.xml file that is generated on the fly
         if ($event->page_matches("browser_search/please_dont_use_this_tag_as_it_would_break_stuff__search.xml")) {
             // First, we need to build all the variables we'll need
-            $search_title = $config->get_string('title');
+            $search_title = $config->get_string(SetupConfig::TITLE);
             $search_form_url =  make_link('post/list/{searchTerms}');
             $suggenton_url = make_link('browser_search/')."{searchTerms}";
             $icon_b64 = base64_encode(file_get_contents("ext/handle_static/static/favicon.ico"));
@@ -54,7 +54,7 @@ class BrowserSearch extends Extension
 			";
 
             // And now to send it to the browser
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/xml");
             $page->set_data($xml);
         } elseif (
@@ -85,7 +85,7 @@ class BrowserSearch extends Extension
 
             // And now for the final output
             $json_string = "[\"$tag_search\",[\"$json_tag_list\"],[],[]]";
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_data($json_string);
         }
     }

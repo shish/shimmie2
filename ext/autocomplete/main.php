@@ -21,7 +21,7 @@ class AutoComplete extends Extension
                 return;
             }
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("application/json");
 
             $s = strtolower($_GET["s"]);
@@ -38,7 +38,9 @@ class AutoComplete extends Extension
             //$limit = 0;
             $cache_key = "autocomplete-$s";
             $limitSQL = "";
-            $SQLarr = ["search"=>"$s%"];
+            $s = str_replace('_','\_', $s);
+            $s = str_replace('%','\%', $s);
+            $SQLarr = ["search"=>"$s%"]; #, "cat_search"=>"%:$s%"];
             if (isset($_GET["limit"]) && $_GET["limit"] !== 0) {
                 $limitSQL = "LIMIT :limit";
                 $SQLarr['limit'] = $_GET["limit"];
@@ -51,7 +53,8 @@ class AutoComplete extends Extension
                     $database->scoreql_to_sql("
 					SELECT tag, count
 					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
+					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search) 
+					-- OR SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:cat_search)
 					AND count > 0
 					ORDER BY count DESC
 					$limitSQL"),

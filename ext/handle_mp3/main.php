@@ -7,9 +7,22 @@
 
 class MP3FileHandler extends DataHandlerExtension
 {
-    protected function create_thumb(string $hash): bool
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        copy("ext/handle_mp3/thumb.jpg", warehouse_path("thumbs", $hash));
+        switch ($event->ext) {
+            case "mp3":
+                $event->audio = true;
+                $event->video = false;
+                $event->lossless = false;
+                break;
+        }
+        // TODO: Buff out audio format support, length scanning
+
+    }
+
+    protected function create_thumb(string $hash, string $type): bool
+    {
+        copy("ext/handle_mp3/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         return true;
     }
 
@@ -36,6 +49,7 @@ class MP3FileHandler extends DataHandlerExtension
         $image->ext       = $metadata['extension'];
         $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
         $image->source    = $metadata['source'];
+
 
         return $image;
     }

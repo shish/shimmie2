@@ -58,10 +58,20 @@ class NotATag extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="tags") {
+            if ($user->can(Permissions::BAN_IMAGE)) {
+                $event->add_nav_link("untags", new Link('untag/list/1'), "UnTags");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_image")) {
+        if ($user->can(Permissions::BAN_IMAGE)) {
             $event->add_link("UnTags", make_link("untag/list/1"));
         }
     }
@@ -71,7 +81,7 @@ class NotATag extends Extension
         global $database, $page, $user;
 
         if ($event->page_matches("untag")) {
-            if ($user->can("ban_image")) {
+            if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
                     $tag = $_POST["tag"];
                     $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";
@@ -81,14 +91,14 @@ class NotATag extends Extension
                         [$tag, $redirect]
                     );
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "remove") {
                     if (isset($_POST['tag'])) {
                         $database->Execute("DELETE FROM untags WHERE tag = ?", [$_POST['tag']]);
 
                         flash_message("Image ban removed");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     }
                 } elseif ($event->get_arg(0) == "list") {

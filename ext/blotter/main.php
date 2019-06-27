@@ -56,6 +56,17 @@ class Blotter extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->is_admin()) {
+                $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
@@ -102,7 +113,7 @@ class Blotter extends Extension
                             [$entry_text, $important]
                         );
                         log_info("blotter", "Added Message: $entry_text");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));
                     }
                     break;
@@ -119,7 +130,7 @@ class Blotter extends Extension
                         }
                         $database->Execute("DELETE FROM blotter WHERE id=:id", ["id"=>$id]);
                         log_info("blotter", "Removed Entry #$id");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("blotter/editor"));
                     }
                     break;

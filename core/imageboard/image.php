@@ -10,6 +10,9 @@
  */
 class Image
 {
+    public const IMAGE_DIR = "images";
+    public const THUMBNAIL_DIR = "thumbs";
+
     private static $tag_n = 0; // temp hack
     public static $order_sql = null; // this feels ugly
 
@@ -50,6 +53,19 @@ class Image
     
     /** @var boolean */
     public $locked = false;
+
+    /** @var boolean */
+    public $lossless = null;
+
+    /** @var boolean */
+    public $video = null;
+
+    /** @var boolean */
+    public $audio = null;
+
+    /** @var int */
+    public $length = null;
+
 
     /**
      * One will very rarely construct an image directly, more common
@@ -100,6 +116,43 @@ class Image
         }
     }
 
+
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags=[]): iterable
+    {
+        global $database, $user, $config;
+
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit!=null && $limit < 1) {
+            $limit = 1;
+        }
+
+        if (SPEED_HAX) {
+            if (!$user->can(Permissions::BIG_SEARCH) and count($tags) > 3) {
+                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
+            }
+        }
+
+        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+
+        $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
+        if (!$result) {
+            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
+            if($limit!=null) {
+                $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
+            }
+            $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
+            #var_dump($querylet->sql); var_dump($querylet->variables);
+            $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
+        }
+
+        Image::$order_sql = null;
+
+        return $result;
+    }
+
     /**
      * Search for an array of images
      *
@@ -108,92 +161,30 @@ class Image
      */
     public static function find_images(int $start, int $limit, array $tags=[]): array
     {
-        global $database, $user, $config;
+        $result = self::find_images_internal($start, $limit, $tags);
 
         $images = [];
-
-        if ($start < 0) {
-            $start = 0;
-        }
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        if (SPEED_HAX) {
-            if (!$user->can("big_search") and count($tags) > 3) {
-                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
-            }
-        }
-
-        $result = null;
-        if (SEARCH_ACCEL) {
-            $result = Image::get_accelerated_result($tags, $start, $limit);
-        }
-
-        if (!$result) {
-            $querylet = Image::build_search_querylet($tags);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
-            #var_dump($querylet->sql); var_dump($querylet->variables);
-            $result = $database->execute($querylet->sql, $querylet->variables);
-        }
-
-        while ($row = $result->fetch()) {
+        foreach ($result as $row) {
             $images[] = new Image($row);
         }
-        Image::$order_sql = null;
         return $images;
     }
 
     /**
-     * Search for an array of image IDs
-     *
-     * #param string[] $tags
-     * #return int[]
+     * Search for an array of images, returning a iterable object of Image
      */
-    public static function find_image_ids(int $start, int $limit, array $tags=[]): array
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): Generator
     {
-        global $database, $user, $config;
-
-        $images = [];
-
-        if ($start < 0) {
-            $start = 0;
+        $result = self::find_images_internal($start, $limit, $tags);
+        foreach ($result as $row) {
+            yield new Image($row);
         }
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        if (SPEED_HAX) {
-            if (!$user->can("big_search") and count($tags) > 3) {
-                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
-            }
-        }
-
-        $result = null;
-        if (SEARCH_ACCEL) {
-            $result = Image::get_accelerated_result($tags, $start, $limit);
-        }
-
-        if (!$result) {
-            $querylet = Image::build_search_querylet($tags);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
-            #var_dump($querylet->sql); var_dump($querylet->variables);
-            $result = $database->execute($querylet->sql, $querylet->variables);
-        }
-
-        while ($row = $result->fetch()) {
-            $images[] = $row["id"];
-        }
-        Image::$order_sql = null;
-        return $images;
     }
 
     /*
      * Accelerator stuff
      */
-    public static function get_acceleratable(array $tags): ?array
+    public static function get_acceleratable(array $tag_conditions): ?array
     {
         $ret = [
             "yays" => [],
@@ -201,16 +192,17 @@ class Image
         ];
         $yays = 0;
         $nays = 0;
-        foreach ($tags as $tag) {
-            if (!preg_match("/^-?[a-zA-Z0-9_'-]+$/", $tag)) {
+        foreach ($tag_conditions as $tq) {
+            if (strpos($tq->tag, "*") !== false) {
+                // can't deal with wildcards
                 return null;
             }
-            if ($tag[0] == "-") {
-                $nays++;
-                $ret["nays"][] = substr($tag, 1);
-            } else {
+            if ($tq->positive) {
                 $yays++;
-                $ret["yays"][] = $tag;
+                $ret["yays"][] = $tq->tag;
+            } else {
+                $nays++;
+                $ret["nays"][] = $tq->tag;
             }
         }
         if ($yays > 1 || $nays > 0) {
@@ -219,11 +211,15 @@ class Image
         return null;
     }
 
-    public static function get_accelerated_result(array $tags, int $offset, int $limit): ?PDOStatement
+    public static function get_accelerated_result(array $tag_conditions, array $img_conditions, int $offset, ?int $limit): ?PDOStatement
     {
+        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
+            return null;
+        }
+
         global $database;
 
-        $req = Image::get_acceleratable($tags);
+        $req = Image::get_acceleratable($tag_conditions);
         if (!$req) {
             return null;
         }
@@ -231,8 +227,8 @@ class Image
         $req["limit"] = $limit;
 
         $response = Image::query_accelerator($req);
-        $list = implode(",", $response);
-        if ($list) {
+        if ($response) {
+			$list = implode(",", $response);
             $result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
         } else {
             $result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
@@ -240,9 +236,13 @@ class Image
         return $result;
     }
 
-    public static function get_accelerated_count(array $tags): ?int
+    public static function get_accelerated_count(array $tag_conditions, array $img_conditions): ?int
     {
-        $req = Image::get_acceleratable($tags);
+        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
+            return null;
+        }
+
+        $req = Image::get_acceleratable($tag_conditions);
         if (!$req) {
             return null;
         }
@@ -253,17 +253,21 @@ class Image
 
     public static function query_accelerator($req)
     {
+		global $_tracer;
         $fp = @fsockopen("127.0.0.1", 21212);
         if (!$fp) {
             return null;
         }
-        fwrite($fp, json_encode($req));
+		$req_str = json_encode($req);
+		$_tracer->begin("Accelerator Query", ["req"=>$req_str]);
+        fwrite($fp, $req_str);
         $data = "";
         while (($buffer = fgets($fp, 4096)) !== false) {
             $data .= $buffer;
         }
+		$_tracer->end();
         if (!feof($fp)) {
-            die("Error: unexpected fgets() fail in query_accelerator($req)\n");
+            die("Error: unexpected fgets() fail in query_accelerator($req_str)\n");
         }
         fclose($fp);
         return json_decode($data);
@@ -295,9 +299,10 @@ class Image
                 ["tag"=>$tags[0]]
             );
         } else {
-            $total = Image::get_accelerated_count($tags);
+            list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+            $total = Image::get_accelerated_count($tag_conditions, $img_conditions);
             if (is_null($total)) {
-                $querylet = Image::build_search_querylet($tags);
+                $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
                 $total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
             }
         }
@@ -316,6 +321,49 @@ class Image
     {
         global $config;
         return ceil(Image::count_images($tags) / $config->get_int('index_images'));
+    }
+
+    private static function terms_to_conditions(array $terms): array
+    {
+        $tag_conditions = [];
+        $img_conditions = [];
+
+        /*
+         * Turn a bunch of strings into a bunch of TagCondition
+         * and ImgCondition objects
+         */
+        $stpe = new SearchTermParseEvent(null, $terms);
+        send_event($stpe);
+        if ($stpe->is_querylet_set()) {
+            foreach ($stpe->get_querylets() as $querylet) {
+                $img_conditions[] = new ImgCondition($querylet, true);
+            }
+        }
+
+        foreach ($terms as $term) {
+            $positive = true;
+            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
+                $positive = false;
+                $term = substr($term, 1);
+            }
+            if (strlen($term) === 0) {
+                continue;
+            }
+
+            $stpe = new SearchTermParseEvent($term, $terms);
+            send_event($stpe);
+            if ($stpe->is_querylet_set()) {
+                foreach ($stpe->get_querylets() as $querylet) {
+                    $img_conditions[] = new ImgCondition($querylet, $positive);
+                }
+            } else {
+                // if the whole match is wild, skip this
+                if (str_replace("*", "", $term) != "") {
+                    $tag_conditions[] = new TagCondition($term, $positive);
+                }
+            }
+        }
+        return [$tag_conditions, $img_conditions];
     }
 
     /*
@@ -352,7 +400,8 @@ class Image
 			');
         } else {
             $tags[] = 'id'. $gtlt . $this->id;
-            $querylet = Image::build_search_querylet($tags);
+            list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
             $querylet->append_sql(' ORDER BY images.id '.$dir.' LIMIT 1');
             $row = $database->get_row($querylet->sql, $querylet->variables);
         }
@@ -427,7 +476,7 @@ class Image
      */
     public function get_image_link(): string
     {
-        return $this->get_link('image_ilink', '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
+        return $this->get_link(ImageConfig::ILINK, '_images/$hash/$id%20-%20$tags.$ext', 'image/$id.$ext');
     }
 
     /**
@@ -444,8 +493,8 @@ class Image
     public function get_thumb_link(): string
     {
         global $config;
-        $ext = $config->get_string("thumb_type");
-        return $this->get_link('image_tlink', '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
+        $ext = $config->get_string(ImageConfig::THUMB_TYPE);
+        return $this->get_link(ImageConfig::TLINK, '_thumbs/$hash/thumb.'.$ext, 'thumb/$id.'.$ext);
     }
 
     /**
@@ -476,7 +525,7 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        $tt = $this->parse_link_template($config->get_string('image_tip'), "no_escape");
+        $tt = $this->parse_link_template($config->get_string(ImageConfig::TIP), "no_escape");
 
         // Removes the size tag if the file is an mp3
         if ($this->ext === 'mp3') {
@@ -502,7 +551,7 @@ class Image
      */
     public function get_image_filename(): string
     {
-        return warehouse_path("images", $this->hash);
+        return warehouse_path(self::IMAGE_DIR, $this->hash);
     }
 
     /**
@@ -510,7 +559,7 @@ class Image
      */
     public function get_thumb_filename(): string
     {
-        return warehouse_path("thumbs", $this->hash);
+        return warehouse_path(self::THUMBNAIL_DIR, $this->hash);
     }
 
     /**
@@ -590,7 +639,7 @@ class Image
     public function delete_tags_from_image(): void
     {
         global $database;
-        if ($database->get_driver_name() == "mysql") {
+        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
             //mysql < 5.6 has terrible subquery optimization, using EXISTS / JOIN fixes this
             $database->execute(
                 "
@@ -764,7 +813,7 @@ class Image
         $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
         $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
         $tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
-        $tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
+        $tmpl = str_replace('$title', $_escape($config->get_string(SetupConfig::TITLE)), $tmpl);
         $tmpl = str_replace('$date', $_escape(autodate($this->posted, false)), $tmpl);
 
         // nothing seems to use this, sending the event out to 50 exts is a lot of overhead
@@ -774,16 +823,17 @@ class Image
             $tmpl = $plte->link;
         }
 
-        static $flexihash = null;
-        static $fh_last_opts = null;
+        static $flexihashes = [];
         $matches = [];
         if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
             $pre = $matches[1];
             $opts = $matches[2];
             $post = $matches[3];
 
-            if ($opts != $fh_last_opts) {
-                $fh_last_opts = $opts;
+            if(isset($flexihashes[$opts])) {
+                $flexihash = $flexihashes[$opts];
+            }
+            else {
                 $flexihash = new Flexihash\Flexihash();
                 foreach (explode(",", $opts) as $opt) {
                     $parts = explode("=", $opt);
@@ -799,6 +849,7 @@ class Image
                     }
                     $flexihash->addTarget($opt_val, $opt_weight);
                 }
+                $flexihashes[$opts] = $flexihash;
             }
 
             // $choice = $flexihash->lookup($pre.$post);
@@ -813,57 +864,17 @@ class Image
     /**
      * #param string[] $terms
      */
-    private static function build_search_querylet(array $terms): Querylet
+    private static function build_search_querylet(array $tag_conditions, array $img_conditions): Querylet
     {
         global $database;
 
-        $tag_querylets = [];
-        $img_querylets = [];
         $positive_tag_count = 0;
         $negative_tag_count = 0;
-
-        /*
-         * Turn a bunch of strings into a bunch of TagQuerylet
-         * and ImgQuerylet objects
-         */
-        $stpe = new SearchTermParseEvent(null, $terms);
-        send_event($stpe);
-        if ($stpe->is_querylet_set()) {
-            foreach ($stpe->get_querylets() as $querylet) {
-                $img_querylets[] = new ImgQuerylet($querylet, true);
-            }
-        }
-
-        foreach ($terms as $term) {
-            $positive = true;
-            if (is_string($term) && !empty($term) && ($term[0] == '-')) {
-                $positive = false;
-                $term = substr($term, 1);
-            }
-            if (strlen($term) === 0) {
-                continue;
-            }
-
-            $stpe = new SearchTermParseEvent($term, $terms);
-            send_event($stpe);
-            if ($stpe->is_querylet_set()) {
-                foreach ($stpe->get_querylets() as $querylet) {
-                    $img_querylets[] = new ImgQuerylet($querylet, $positive);
-                }
+        foreach ($tag_conditions as $tq) {
+            if ($tq->positive) {
+                $positive_tag_count++;
             } else {
-                // if the whole match is wild, skip this;
-                // if not, translate into SQL
-                if (str_replace("*", "", $term) != "") {
-                    $term = str_replace('_', '\_', $term);
-                    $term = str_replace('%', '\%', $term);
-                    $term = str_replace('*', '%', $term);
-                    $tag_querylets[] = new TagQuerylet($term, $positive);
-                    if ($positive) {
-                        $positive_tag_count++;
-                    } else {
-                        $negative_tag_count++;
-                    }
-                }
+                $negative_tag_count++;
             }
         }
 
@@ -888,41 +899,20 @@ class Image
 			");
         }
 
-        // one positive tag (a common case), do an optimised search
-        elseif ($positive_tag_count === 1 && $negative_tag_count === 0) {
-            # "LIKE" to account for wildcards
-            $query = new Querylet($database->scoreql_to_sql("
-				SELECT *
-				FROM (
-					SELECT images.*
-					FROM images
-					JOIN image_tags ON images.id=image_tags.image_id
-					JOIN tags ON image_tags.tag_id=tags.id
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
-					GROUP BY images.id
-				) AS images
-				WHERE 1=1
-			"), ["tag"=>$tag_querylets[0]->tag]);
-        }
-
         // more than one positive tag, or more than zero negative tags
         else {
-            if ($database->get_driver_name() === "mysql") {
-                $query = Image::build_ugly_search_querylet($tag_querylets);
-            } else {
-                $query = Image::build_accurate_search_querylet($tag_querylets);
-            }
+            $query = Image::build_accurate_search_querylet($tag_conditions);
         }
 
         /*
          * Merge all the image metadata searches into one generic querylet
          * and append to the base querylet with "AND blah"
          */
-        if (!empty($img_querylets)) {
+        if (!empty($img_conditions)) {
             $n = 0;
             $img_sql = "";
             $img_vars = [];
-            foreach ($img_querylets as $iq) {
+            foreach ($img_conditions as $iq) {
                 if ($n++ > 0) {
                     $img_sql .= " AND";
                 }
@@ -940,47 +930,30 @@ class Image
     }
 
     /**
-     * WARNING: this description is no longer accurate, though it does get across
-     * the general idea - the actual method has a few extra optimisations
-     *
-     * "foo bar -baz user=foo" becomes
-     *
-     * SELECT * FROM images WHERE
-     *           images.id IN (SELECT image_id FROM image_tags WHERE tag='foo')
-     *   AND     images.id IN (SELECT image_id FROM image_tags WHERE tag='bar')
-     *   AND NOT images.id IN (SELECT image_id FROM image_tags WHERE tag='baz')
-     *   AND     images.id IN (SELECT id FROM images WHERE owner_name='foo')
-     *
-     * This is:
-     *   A) Incredibly simple:
-     *      Each search term maps to a list of image IDs
-     *   B) Runs really fast on a good database:
-     *      These lists are calculated once, and the set intersection taken
-     *   C) Runs really slow on bad databases:
-     *      All the subqueries are executed every time for every row in the
-     *      images table. Yes, MySQL does suck this much.
-     *
-     * #param TagQuerylet[] $tag_querylets
+     * #param TagQuerylet[] $tag_conditions
      */
-    private static function build_accurate_search_querylet(array $tag_querylets): Querylet
+    private static function build_accurate_search_querylet(array $tag_conditions): Querylet
     {
         global $database;
 
         $positive_tag_id_array = [];
+        $positive_wildcard_id_array = [];
         $negative_tag_id_array = [];
 
-        foreach ($tag_querylets as $tq) {
+        foreach ($tag_conditions as $tq) {
             $tag_ids = $database->get_col(
                 $database->scoreql_to_sql("
 					SELECT id
 					FROM tags
 					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
 				"),
-                ["tag" => $tq->tag]
+                ["tag" => Tag::sqlify($tq->tag)]
             );
+
+            $tag_count = count($tag_ids);
+
             if ($tq->positive) {
-                $positive_tag_id_array = array_merge($positive_tag_id_array, $tag_ids);
-                if (count($tag_ids) == 0) {
+                if ($tag_count== 0) {
                     # one of the positive tags had zero results, therefor there
                     # can be no results; "where 1=0" should shortcut things
                     return new Querylet("
@@ -988,115 +961,71 @@ class Image
 						FROM images
 						WHERE 1=0
 					");
+                } elseif($tag_count==1) {
+                    // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
+                    $positive_tag_id_array[] = $tag_ids[0];
+                } else {
+                    // Terms that resolve to multiple tags act as an OR within themselves
+                    // and as an AND in relation to all other terms,
+                    $positive_wildcard_id_array[] = $tag_ids;
                 }
             } else {
+                // Unlike positive criteria, negative criteria are all handled in an OR fashion,
+                // so we can just compile them all into a single sub-query.
                 $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
             }
         }
 
-        assert($positive_tag_id_array || $negative_tag_id_array, @$_GET['q']);
-        $wheres = [];
-        if (!empty($positive_tag_id_array)) {
-            $positive_tag_id_list = join(', ', $positive_tag_id_array);
-            $wheres[] = "tag_id IN ($positive_tag_id_list)";
-        }
-        if (!empty($negative_tag_id_array)) {
+        $sql = "";
+        assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
+        if(!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+            $inner_joins = [];
+            if (!empty($positive_tag_id_array)) {
+                foreach($positive_tag_id_array as $tag) {
+                    $inner_joins[] = "= $tag";
+                }
+            }
+            if(!empty($positive_wildcard_id_array)) {
+                foreach ($positive_wildcard_id_array as $tags) {
+                    $positive_tag_id_list = join(', ', $tags);
+                    $inner_joins[] = "IN ($positive_tag_id_list)";
+                }
+            }
+
+            $first = array_shift($inner_joins);
+            $sub_query = "SELECT it.image_id FROM  image_tags it ";
+            $i = 0;
+            foreach ($inner_joins as $inner_join) {
+                $i++;
+                $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
+            }
+            if(!empty($negative_tag_id_array)) {
+                $negative_tag_id_list = join(', ', $negative_tag_id_array);
+                $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
+            }
+            $sub_query .= "WHERE it.tag_id $first ";
+            if(!empty($negative_tag_id_array)) {
+                $sub_query .= " AND negative.image_id IS NULL";
+            }
+            $sub_query .= " GROUP BY it.image_id ";
+
+            $sql = "
+                SELECT images.*
+                FROM images INNER JOIN (
+                $sub_query
+                ) a on a.image_id = images.id 
+            ";
+        } elseif(!empty($negative_tag_id_array)) {
             $negative_tag_id_list = join(', ', $negative_tag_id_array);
-            $wheres[] = "tag_id NOT IN ($negative_tag_id_list)";
-        }
-        $wheres_str = join(" AND ", $wheres);
-        return new Querylet("
-			SELECT images.*
-			FROM images
-			WHERE images.id IN (
-				SELECT image_id
-				FROM image_tags
-				WHERE $wheres_str
-				GROUP BY image_id
-				HAVING COUNT(image_id) >= :search_score
-			)
-		", ["search_score"=>count($positive_tag_id_array)]);
-    }
-
-    /**
-     * this function exists because mysql is a turd, see the docs for
-     * build_accurate_search_querylet() for a full explanation
-     *
-     * #param TagQuerylet[] $tag_querylets
-     */
-    private static function build_ugly_search_querylet(array $tag_querylets): Querylet
-    {
-        global $database;
-
-        $positive_tag_count = 0;
-        foreach ($tag_querylets as $tq) {
-            if ($tq->positive) {
-                $positive_tag_count++;
-            }
+            $sql = "
+                SELECT images.*
+                FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)  
+                WHERE negative.image_id IS NULL
+            ";
+        } else {
+            throw new SCoreException("No criteria specified");
         }
 
-        // only negative tags - shortcut to fail
-        if ($positive_tag_count == 0) {
-            // TODO: This isn't currently implemented.
-            // SEE: https://github.com/shish/shimmie2/issues/66
-            return new Querylet("
-				SELECT images.*
-				FROM images
-				WHERE 1=0
-			");
-        }
-
-        // merge all the tag querylets into one generic one
-        $sql = "0";
-        $terms = [];
-        foreach ($tag_querylets as $tq) {
-            $sign = $tq->positive ? "+" : "-";
-            $sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
-            $terms['tag'.Image::$tag_n] = $tq->tag;
-            Image::$tag_n++;
-        }
-        $tag_search = new Querylet($sql, $terms);
-
-        $tag_id_array = [];
-
-        foreach ($tag_querylets as $tq) {
-            $tag_ids = $database->get_col(
-                $database->scoreql_to_sql("
-					SELECT id
-					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
-				"),
-                ["tag" => $tq->tag]
-            );
-            $tag_id_array = array_merge($tag_id_array, $tag_ids);
-
-            if ($tq->positive && count($tag_ids) == 0) {
-                # one of the positive tags had zero results, therefor there
-                # can be no results; "where 1=0" should shortcut things
-                return new Querylet("
-					SELECT images.*
-					FROM images
-					WHERE 1=0
-				");
-            }
-        }
-
-        Image::$tag_n = 0;
-        return new Querylet('
-			SELECT *
-			FROM (
-				SELECT images.*, ('.$tag_search->sql.') AS score
-				FROM images
-				LEFT JOIN image_tags ON image_tags.image_id = images.id
-				JOIN tags ON image_tags.tag_id = tags.id
-				WHERE tags.id IN (' . join(', ', $tag_id_array) . ')
-				GROUP BY images.id
-				HAVING score = :score
-			) AS images
-			WHERE 1=1
-		', array_merge(
-            $tag_search->variables,
-            ["score"=>$positive_tag_count]
-        ));
+        return new Querylet($sql);
     }
 }

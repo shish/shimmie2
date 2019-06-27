@@ -67,29 +67,29 @@ class ReportImage extends Extension
                 if (!empty($_POST['image_id']) && !empty($_POST['reason'])) {
                     $image_id = int_escape($_POST['image_id']);
                     send_event(new AddReportedImageEvent(new ImageReport($image_id, $user->id, $_POST['reason'])));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/$image_id"));
                 } else {
                     $this->theme->display_error(500, "Missing input", "Missing image ID or report reason");
                 }
             } elseif ($event->get_arg(0) == "remove") {
                 if (!empty($_POST['id'])) {
-                    if ($user->can("view_image_report")) {
+                    if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
                         send_event(new RemoveReportedImageEvent($_POST['id']));
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("image_report/list"));
                     }
                 } else {
                     $this->theme->display_error(500, "Missing input", "Missing image ID");
                 }
             } elseif ($event->get_arg(0) == "remove_reports_by" && $user->check_auth_token()) {
-                if ($user->can("view_image_report")) {
+                if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
                     $this->delete_reports_by(int_escape($_POST['user_id']));
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link());
                 }
             } elseif ($event->get_arg(0) == "list") {
-                if ($user->can("view_image_report")) {
+                if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
                     $this->theme->display_reported_images($page, $this->get_reported_images());
                 }
             }
@@ -118,7 +118,7 @@ class ReportImage extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_image_report")) {
+        if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
             $this->theme->get_nuller($event->display_user);
         }
     }
@@ -126,16 +126,30 @@ class ReportImage extends Extension
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
-        if ($user->can('create_image_report')) {
+        if ($user->can(Permissions::CREATE_IMAGE_REPORT)) {
             $reps = $this->get_reports($event->image);
             $this->theme->display_image_banner($event->image, $reps);
+        }
+    }
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+                $count = $this->count_reported_images();
+                $h_count = $count > 0 ? " ($count)" : "";
+
+                $event->add_nav_link("image_report", new Link('image_report/list'), "Reported Images$h_count");
+            }
         }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_image_report")) {
+        if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
             $count = $this->count_reported_images();
             $h_count = $count > 0 ? " ($count)" : "";
             $event->add_link("Reported Images$h_count", make_link("image_report/list"));

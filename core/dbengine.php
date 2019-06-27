@@ -1,8 +1,23 @@
 <?php
+abstract class SCORE {
+    const AIPK      = "SCORE_AIPK";
+    const INET      = "SCORE_INET";
+    const BOOL_Y    = "SCORE_BOOL_Y";
+    const BOOL_N    = "SCORE_BOOL_N";
+    const BOOL      = "SCORE_BOOL";
+    const DATETIME  = "SCORE_DATETIME";
+    const NOW       = "SCORE_NOW";
+    const STRNORM   = "SCORE_STRNORM";
+    const ILIKE     = "SCORE_ILIKE";
+}
+
 class DBEngine
 {
     /** @var null|string */
     public $name = null;
+
+    public $BOOL_Y = null;
+    public $BOOL_N = null;
 
     public function init(PDO $db)
     {
@@ -22,7 +37,10 @@ class DBEngine
 class MySQL extends DBEngine
 {
     /** @var string */
-    public $name = "mysql";
+    public $name = DatabaseDriver::MYSQL;
+
+    public $BOOL_Y = 'Y';
+    public $BOOL_N = 'N';
 
     public function init(PDO $db)
     {
@@ -31,15 +49,15 @@ class MySQL extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
-        $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'N'", $data);
-        $data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
-        $data = str_replace("SCORE_DATETIME", "DATETIME", $data);
-        $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-        $data = str_replace("SCORE_STRNORM", "", $data);
-        $data = str_replace("SCORE_ILIKE", "LIKE", $data);
+        $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY auto_increment", $data);
+        $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "ENUM('Y', 'N')", $data);
+        $data = str_replace(SCORE::DATETIME, "DATETIME", $data);
+        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
+        $data = str_replace(SCORE::STRNORM, "", $data);
+        $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;
     }
 
@@ -53,8 +71,13 @@ class MySQL extends DBEngine
 
 class PostgreSQL extends DBEngine
 {
+
+
     /** @var string */
-    public $name = "pgsql";
+    public $name = DatabaseDriver::PGSQL;
+
+    public $BOOL_Y = 't';
+    public $BOOL_N = 'f';
 
     public function init(PDO $db)
     {
@@ -63,20 +86,20 @@ class PostgreSQL extends DBEngine
         } else {
             $db->exec("SET application_name TO 'shimmie [local]';");
         }
-        $db->exec("SET statement_timeout TO 10000;");
+        $db->exec("SET statement_timeout TO ".DATABASE_TIMEOUT.";");
     }
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
-        $data = str_replace("SCORE_INET", "INET", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'t'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'f'", $data);
-        $data = str_replace("SCORE_BOOL", "BOOL", $data);
-        $data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
-        $data = str_replace("SCORE_NOW", "current_timestamp", $data);
-        $data = str_replace("SCORE_STRNORM", "lower", $data);
-        $data = str_replace("SCORE_ILIKE", "ILIKE", $data);
+        $data = str_replace(SCORE::AIPK, "SERIAL PRIMARY KEY", $data);
+        $data = str_replace(SCORE::INET, "INET", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "BOOL", $data);
+        $data = str_replace(SCORE::DATETIME, "TIMESTAMP", $data);
+        $data = str_replace(SCORE::NOW, "current_timestamp", $data);
+        $data = str_replace(SCORE::STRNORM, "lower", $data);
+        $data = str_replace(SCORE::ILIKE, "ILIKE", $data);
         return $data;
     }
 
@@ -136,7 +159,11 @@ function _ln($n)
 class SQLite extends DBEngine
 {
     /** @var string  */
-    public $name = "sqlite";
+    public $name = DatabaseDriver::SQLITE;
+
+    public $BOOL_Y = 'Y';
+    public $BOOL_N = 'N';
+
 
     public function init(PDO $db)
     {
@@ -156,14 +183,14 @@ class SQLite extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
-        $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'N'", $data);
-        $data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
-        $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-        $data = str_replace("SCORE_STRNORM", "lower", $data);
-        $data = str_replace("SCORE_ILIKE", "LIKE", $data);
+        $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY", $data);
+        $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "CHAR(1)", $data);
+        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
+        $data = str_replace(SCORE::STRNORM, "lower", $data);
+        $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;
     }
 

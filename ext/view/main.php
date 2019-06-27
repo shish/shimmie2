@@ -14,80 +14,12 @@
  * wish to appear on the "view" page should listen for this,
  * which only appears when an image actually exists.
  */
-class DisplayingImageEvent extends Event
-{
-    /** @var Image  */
-    public $image;
 
-    public function __construct(Image $image)
-    {
-        $this->image = $image;
-    }
+require_once "events/displaying_image_event.php";
+require_once "events/image_info_box_building_event.php";
+require_once "events/image_info_set_event.php";
+require_once "events/image_admin_block_building_event.php";
 
-    public function get_image(): Image
-    {
-        return $this->image;
-    }
-}
-
-class ImageInfoBoxBuildingEvent extends Event
-{
-    /** @var array  */
-    public $parts = [];
-    /** @var Image  */
-    public $image;
-    /** @var User  */
-    public $user;
-
-    public function __construct(Image $image, User $user)
-    {
-        $this->image = $image;
-        $this->user = $user;
-    }
-
-    public function add_part(string $html, int $position=50)
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
-    }
-}
-
-class ImageInfoSetEvent extends Event
-{
-    /** @var Image */
-    public $image;
-
-    public function __construct(Image $image)
-    {
-        $this->image = $image;
-    }
-}
-
-class ImageAdminBlockBuildingEvent extends Event
-{
-    /** @var string[] */
-    public $parts = [];
-    /** @var ?Image  */
-    public $image = null;
-    /** @var ?User  */
-    public $user = null;
-
-    public function __construct(Image $image, User $user)
-    {
-        $this->image = $image;
-        $this->user = $user;
-    }
-
-    public function add_part(string $html, int $position=50)
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
-    }
-}
 
 class ViewImage extends Extension
 {
@@ -123,15 +55,26 @@ class ViewImage extends Extension
                 return;
             }
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/{$image->id}", $query));
         } elseif ($event->page_matches("post/view")) {
+            if (!is_numeric($event->get_arg(0))) {
+                // For some reason there exists some very broken mobile client
+                // who follows up every request to '/post/view/123' with
+                // '/post/view/12300000000000Image 123: tags' which spams the
+                // database log with 'integer out of range'
+                $this->theme->display_error(404, "Image not found", "Invalid image ID");
+                return;
+            }
+
             $image_id = int_escape($event->get_arg(0));
 
             $image = Image::by_id($image_id);
 
             if (!is_null($image)) {
-                send_event(new DisplayingImageEvent($image));
+                $die = new DisplayingImageEvent($image);
+                send_event($die);
+                $page->set_title(html_escape($die->title));
                 $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
                 send_event($iabbe);
                 ksort($iabbe->parts);
@@ -148,7 +91,7 @@ class ViewImage extends Extension
 
             send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
 
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
         }
     }
@@ -160,6 +103,9 @@ class ViewImage extends Extension
         send_event($iibbe);
         ksort($iibbe->parts);
         $this->theme->display_meta_headers($event->get_image());
+
+        $event->title = "Image {$event->get_image()->id}: ".$event->get_image()->get_tag_list();
+
         $this->theme->display_page($event->get_image(), $iibbe->parts);
     }
 }

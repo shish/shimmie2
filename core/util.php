@@ -1,9 +1,10 @@
 <?php
-require_once "vendor/shish/libcontext-php/context.php";
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+const DATA_DIR = "data";
+
 
 function mtimefile(string $file): string
 {
@@ -15,7 +16,7 @@ function mtimefile(string $file): string
 function get_theme(): string
 {
     global $config;
-    $theme = $config->get_string("theme", "default");
+    $theme = $config->get_string(SetupConfig::THEME, "default");
     if (!file_exists("themes/$theme")) {
         $theme = "default";
     }
@@ -78,7 +79,7 @@ function get_memory_limit(): int
 
     // thumbnail generation requires lots of memory
     $default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
-    $shimmie_limit = parse_shorthand_int($config->get_int("thumb_mem_limit"));
+    $shimmie_limit = parse_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT));
 
     if ($shimmie_limit < 3*1024*1024) {
         // we aren't going to fit, override
@@ -159,25 +160,40 @@ function format_text(string $string): string
     return $tfe->formatted;
 }
 
-function warehouse_path(string $base, string $hash, bool $create=true): string
+/**
+ * Generates the path to a file under the data folder based on the file's hash.
+ * This process creates subfolders based on octet pairs from the file's hash.
+ * The calculated folder follows this pattern data/$base/octet_pairs/$hash
+ * @param string $base
+ * @param string $hash
+ * @param bool $create
+ * @param int $splits The number of octet pairs to split the hash into. Caps out at strlen($hash)/2.
+ * @return string
+ */
+function warehouse_path(string $base, string $hash, bool $create=true, int $splits = WH_SPLITS): string
 {
-    $ab = substr($hash, 0, 2);
-    $cd = substr($hash, 2, 2);
-    if (WH_SPLITS == 2) {
-        $pa = 'data/'.$base.'/'.$ab.'/'.$cd.'/'.$hash;
-    } else {
-        $pa = 'data/'.$base.'/'.$ab.'/'.$hash;
+    $dirs =[DATA_DIR, $base];
+    $splits = min($splits, strlen($hash) / 2);
+    for($i = 0; $i < $splits; $i++) {
+        $dirs[] = substr($hash, $i * 2, 2);
     }
+    $dirs[] = $hash;
+
+    $pa = join_path(...$dirs);
+
     if ($create && !file_exists(dirname($pa))) {
         mkdir(dirname($pa), 0755, true);
     }
     return $pa;
 }
 
-function data_path(string $filename): string
+/**
+ * Determines the path to the specified file in the data folder.
+ */
+function data_path(string $filename, bool $create = true): string
 {
-    $filename = "data/" . $filename;
-    if (!file_exists(dirname($filename))) {
+    $filename = join_path("data", $filename);
+    if ($create&&!file_exists(dirname($filename))) {
         mkdir(dirname($filename), 0755, true);
     }
     return $filename;
@@ -281,21 +297,57 @@ function manual_include(string $fname): ?string
 function path_to_tags(string $path): string
 {
     $matches = [];
-    $tags = "";
-    if (preg_match("/\d+ - (.*)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
-        $tags = $matches[1];
+    $tags = [];
+    if (preg_match("/\d+ - (.+)\.([a-zA-Z0-9]+)/", basename($path), $matches)) {
+        $tags = explode(" ", $matches[1]);
     }
+
+    $path = dirname($path);
+    $path = str_replace(";", ":", $path);
+    $path = str_replace("__", " ", $path);
     
-    $dir_tags = dirname($path);
-    $dir_tags = str_replace("/", " ", $dir_tags);
-    $dir_tags = str_replace("__", " ", $dir_tags);
-    $dir_tags = trim($dir_tags);
-    if ($dir_tags != "") {
-        $tags = trim($tags)." ".trim($dir_tags);
+
+    $category = "";
+    foreach (explode("/", $path) as $dir) {
+        $category_to_inherit = "";
+        foreach (explode(" ", $dir) as $tag) {
+            $tag = trim($tag);
+            if ($tag=="") {
+                continue;
+            }
+            if (substr_compare($tag, ":", -1) === 0) {
+                // This indicates a tag that ends in a colon,
+                // which is for inheriting to tags on the subfolder
+                $category_to_inherit = $tag;
+            } else {
+                if ($category!=""&&strpos($tag, ":") === false) {
+                    // This indicates that category inheritance is active,
+                    // and we've encountered a tag that does not specify a category.
+                    // So we attach the inherited category to the tag.
+                    $tag = $category.$tag;
+                }
+                $tags[] = $tag;
+            }
+        }
+        // Category inheritance only works on the immediate subfolder,
+        // so we hold a category until the next iteration, and then set
+        // it back to an empty string after that iteration
+        $category = $category_to_inherit;
     }
-    $tags = trim($tags);
-    
-    return $tags;
+
+    return implode(" ", $tags);
+}
+
+
+function join_url(string $base, string ...$paths)
+{
+    $output = $base;
+    foreach ($paths as $path) {
+        $output = rtrim($output,"/");
+        $path = ltrim($path, "/");
+        $output .= "/".$path;
+    }
+    return $output;
 }
 
 
@@ -338,19 +390,6 @@ function get_debug_info(): string
     return $debug;
 }
 
-function log_slow(): void
-{
-    global $_shm_load_start;
-    if (!is_null(SLOW_PAGES)) {
-        $_time = microtime(true) - $_shm_load_start;
-        if ($_time > SLOW_PAGES) {
-            $_query = _get_query();
-            $_dbg = get_debug_info();
-            file_put_contents("data/slow-pages.log", "$_time $_query $_dbg\n", FILE_APPEND | LOCK_EX);
-        }
-    }
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *
@@ -375,7 +414,7 @@ date and you should plan on moving elsewhere.
 
 function _sanitise_environment(): void
 {
-    global $_shm_ctx;
+    global $_tracer;
 
     if (TIMEZONE) {
         date_default_timezone_set(TIMEZONE);
@@ -387,10 +426,7 @@ function _sanitise_environment(): void
         error_reporting(E_ALL);
     }
 
-    $_shm_ctx = new Context();
-    if (CONTEXT) {
-        $_shm_ctx->set_log(CONTEXT);
-    }
+    $_tracer = new EventTracer();
 
     if (COVERAGE) {
         _start_coverage();
@@ -552,8 +588,8 @@ function show_ip(string $ip, string $ban_reason): string
     global $user;
     $u_reason = url_escape($ban_reason);
     $u_end = url_escape("+1 week");
-    $ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
-    $ip = $user->can("view_ip") ? $ip.$ban : "";
+    $ban = $user->can(Permissions::BAN_IP) ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
+    $ip = $user->can(Permissions::VIEW_IP) ? $ip.$ban : "";
     return $ip;
 }
 

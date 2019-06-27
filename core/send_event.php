@@ -9,9 +9,7 @@ $_shm_event_listeners = [];
 
 function _load_event_listeners(): void
 {
-    global $_shm_event_listeners, $_shm_ctx;
-
-    $_shm_ctx->log_start("Loading extensions");
+    global $_shm_event_listeners;
 
     $cache_path = data_path("cache/shm_event_listeners.php");
     if (COMPILE_ELS && file_exists($cache_path)) {
@@ -23,8 +21,13 @@ function _load_event_listeners(): void
             _dump_event_listeners($_shm_event_listeners, $cache_path);
         }
     }
+}
 
-    $_shm_ctx->log_endok();
+function _clear_cached_event_listeners(): void
+{
+    if (file_exists(data_path("cache/shm_event_listeners.php"))) {
+       unlink(data_path("cache/shm_event_listeners.php"));
+    }
 }
 
 function _set_event_listeners(): void
@@ -105,35 +108,31 @@ $_shm_event_count = 0;
  */
 function send_event(Event $event): void
 {
-    global $_shm_event_listeners, $_shm_event_count, $_shm_ctx;
+    global $tracer_enabled;
+    
+    global $_shm_event_listeners, $_shm_event_count, $_tracer;
     if (!isset($_shm_event_listeners[get_class($event)])) {
         return;
     }
     $method_name = "on".str_replace("Event", "", get_class($event));
 
     // send_event() is performance sensitive, and with the number
-    // of times context gets called the time starts to add up
-    $ctx_enabled = constant('CONTEXT');
-
-    if ($ctx_enabled) {
-        $_shm_ctx->log_start(get_class($event));
-    }
+    // of times tracer gets called the time starts to add up
+    if ($tracer_enabled) $_tracer->begin(get_class($event));
     // SHIT: http://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];
     ksort($my_event_listeners);
+
     foreach ($my_event_listeners as $listener) {
-        if ($ctx_enabled) {
-            $_shm_ctx->log_start(get_class($listener));
-        }
+        if ($tracer_enabled) $_tracer->begin(get_class($listener));
         if (method_exists($listener, $method_name)) {
             $listener->$method_name($event);
         }
-        if ($ctx_enabled) {
-            $_shm_ctx->log_endok();
+        if ($tracer_enabled) $_tracer->end();
+        if($event->stop_processing===true) {
+            break;
         }
     }
     $_shm_event_count++;
-    if ($ctx_enabled) {
-        $_shm_ctx->log_endok();
-    }
+    if ($tracer_enabled) $_tracer->end();
 }

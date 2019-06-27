@@ -100,7 +100,7 @@ class Notes extends Extension
                         $this->revert_history($noteID, $reviewID);
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("note/updated"));
                     break;
                 case "add_note":
@@ -108,7 +108,7 @@ class Notes extends Extension
                         $this->add_new_note();
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "add_request":
@@ -116,7 +116,7 @@ class Notes extends Extension
                         $this->add_note_request();
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "nuke_notes":
@@ -124,7 +124,7 @@ class Notes extends Extension
                         $this->nuke_notes();
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "nuke_requests":
@@ -132,25 +132,25 @@ class Notes extends Extension
                         $this->nuke_requests();
                     }
 
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "edit_note":
                     if (!$user->is_anonymous()) {
                         $this->update_note();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/" . $_POST["image_id"]));
                     }
                     break;
                 case "delete_note":
                     if ($user->is_admin()) {
                         $this->delete_note();
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     }
                     break;
                 default:
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("note/list"));
                     break;
             }
@@ -210,9 +210,19 @@ class Notes extends Extension
             }
 
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
-        } elseif (preg_match("/^notes_by_userno[=|:](\d+)$/i", $event->term, $matches)) {
-            $user_id = int_escape($matches[1]);
+        } elseif (preg_match("/^(notes_by_userno|notes_by_user_id)[=|:](\d+)$/i", $event->term, $matches)) {
+            $user_id = int_escape($matches[2]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
+        }
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Notes";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
         }
     }
 

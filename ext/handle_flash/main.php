@@ -8,12 +8,32 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-    protected function create_thumb(string $hash): bool
+
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        switch ($event->ext) {
+            case "swf":
+                $event->lossless = true;
+                $event->video = true;
+
+                $info = getimagesize($event->file_name);
+                if (!$info) {
+                    return null;
+                }
+
+                $event->width = $info[0];
+                $event->height = $info[1];
+
+                break;
+        }
+    }
+
+    protected function create_thumb(string $hash, string $type): bool
     {
         global $config;
 
-        if (!create_thumbnail_ffmpeg($hash)) {
-            copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
+        if (!Media::create_thumbnail_ffmpeg($hash)) {
+            copy("ext/handle_flash/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         }
         return true;
     }
@@ -35,13 +55,7 @@ class FlashFileHandler extends DataHandlerExtension
         $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
         $image->source    = $metadata['source'];
 
-        $info = getimagesize($filename);
-        if (!$info) {
-            return null;
-        }
 
-        $image->width = $info[0];
-        $image->height = $info[1];
 
         return $image;
     }

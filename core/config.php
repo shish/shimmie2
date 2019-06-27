@@ -144,6 +144,13 @@ abstract class BaseConfig implements Config
         }
     }
 
+    public function set_default_float(string $name, float $value): void
+    {
+        if (is_null($this->get($name))) {
+            $this->values[$name] = $value;
+        }
+    }
+
     public function set_default_string(string $name, string $value): void
     {
         if (is_null($this->get($name))) {
@@ -168,6 +175,11 @@ abstract class BaseConfig implements Config
     public function get_int(string $name, ?int $default=null): ?int
     {
         return (int)($this->get($name, $default));
+    }
+
+    public function get_float(string $name, ?float $default=null): ?float
+    {
+        return (float)($this->get($name, $default));
     }
 
     public function get_string(string $name, ?string $default=null): ?string

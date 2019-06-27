@@ -161,18 +161,18 @@ class TagEdit extends Extension
         global $user, $page;
         if ($event->page_matches("tag_edit")) {
             if ($event->get_arg(0) == "replace") {
-                if ($user->can("mass_tag_edit") && isset($_POST['search']) && isset($_POST['replace'])) {
+                if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['search']) && isset($_POST['replace'])) {
                     $search = $_POST['search'];
                     $replace = $_POST['replace'];
                     $this->mass_tag_edit($search, $replace);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("admin"));
                 }
             }
             if ($event->get_arg(0) == "mass_source_set") {
-                if ($user->can("mass_tag_edit") && isset($_POST['tags']) && isset($_POST['source'])) {
+                if ($user->can(Permissions::MASS_TAG_EDIT) && isset($_POST['tags']) && isset($_POST['source'])) {
                     $this->mass_source_edit($_POST['tags'], $_POST['source']);
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("post/list"));
                 }
             }
@@ -182,7 +182,7 @@ class TagEdit extends Extension
     // public function onPostListBuilding(PostListBuildingEvent $event)
     // {
     //     global $user;
-    //     if ($user->can("bulk_edit_image_source") && !empty($event->search_terms)) {
+    //     if ($user->can(UserAbilities::BULK_EDIT_IMAGE_SOURCE) && !empty($event->search_terms)) {
     //         $event->add_control($this->theme->mss_html(Tag::implode($event->search_terms)));
     //     }
     // }
@@ -190,7 +190,7 @@ class TagEdit extends Extension
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
         global $user;
-        if ($user->can("edit_image_owner") && isset($_POST['tag_edit__owner'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && isset($_POST['tag_edit__owner'])) {
             $owner = User::by_name($_POST['tag_edit__owner']);
             if ($owner instanceof User) {
                 send_event(new OwnerSetEvent($event->image, $owner));
@@ -206,7 +206,7 @@ class TagEdit extends Extension
                 send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
             }
         }
-        if ($user->can("edit_image_lock")) {
+        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
             $locked = isset($_POST['tag_edit__locked']) && $_POST['tag_edit__locked']=="on";
             send_event(new LockSetEvent($event->image, $locked));
         }
@@ -215,7 +215,7 @@ class TagEdit extends Extension
     public function onOwnerSet(OwnerSetEvent $event)
     {
         global $user;
-        if ($user->can("edit_image_owner") && (!$event->image->is_locked() || $user->can("edit_image_lock"))) {
+        if ($user->can(Permissions::EDIT_IMAGE_OWNER) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
             $event->image->set_owner($event->owner);
         }
     }
@@ -223,7 +223,7 @@ class TagEdit extends Extension
     public function onTagSet(TagSetEvent $event)
     {
         global $user;
-        if ($user->can("edit_image_tag") && (!$event->image->is_locked() || $user->can("edit_image_lock"))) {
+        if ($user->can(Permissions::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
             $event->image->set_tags($event->tags);
         }
         $event->image->parse_metatags($event->metatags, $event->image->id);
@@ -232,7 +232,7 @@ class TagEdit extends Extension
     public function onSourceSet(SourceSetEvent $event)
     {
         global $user;
-        if ($user->can("edit_image_source") && (!$event->image->is_locked() || $user->can("edit_image_lock"))) {
+        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
             $event->image->set_source($event->source);
         }
     }
@@ -240,7 +240,7 @@ class TagEdit extends Extension
     public function onLockSet(LockSetEvent $event)
     {
         global $user;
-        if ($user->can("edit_image_lock")) {
+        if ($user->can(Permissions::EDIT_IMAGE_LOCK)) {
             $event->image->set_locked($event->locked);
         }
     }
@@ -254,6 +254,15 @@ class TagEdit extends Extension
     {
         $this->theme->display_mass_editor();
     }
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
+        }
+    }
+
 
     /**
      * When an alias is added, oldtag becomes inaccessible.
@@ -288,13 +297,13 @@ class TagEdit extends Extension
     private function can_tag(Image $image): bool
     {
         global $user;
-        return ($user->can("edit_image_tag") || !$image->is_locked());
+        return ($user->can(Permissions::EDIT_IMAGE_TAG) || !$image->is_locked());
     }
 
     private function can_source(Image $image): bool
     {
         global $user;
-        return ($user->can("edit_image_source") || !$image->is_locked());
+        return ($user->can(Permissions::EDIT_IMAGE_SOURCE) || !$image->is_locked());
     }
 
     private function mass_tag_edit(string $search, string $replace)

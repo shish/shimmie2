@@ -189,7 +189,7 @@ class UploadTheme extends Themelet
         global $config;
         $link = make_http(make_link("upload"));
         $main_page = make_http(make_link());
-        $title = $config->get_string('title');
+        $title = $config->get_string(SetupConfig::TITLE);
         $max_size = $config->get_int('upload_size');
         $max_kb = to_shorthand_int($max_size);
         $delimiter = $config->get_bool('nice_urls') ? '?' : '&amp;';
@@ -235,7 +235,7 @@ class UploadTheme extends Themelet
         if (class_exists("VideoFileHandler")) {
             $supported_ext .= " flv mp4 ogv webm m4v";
         }
-        $title = "Booru to " . $config->get_string('title');
+        $title = "Booru to " . $config->get_string(SetupConfig::TITLE);
         // CA=0: Ask to use current or new tags | CA=1: Always use current tags | CA=2: Always use new tags
         $html .= '<p><a href="javascript:
 			var ste=&quot;'. $link . $delimiter .'url=&quot;;
@@ -300,7 +300,7 @@ class UploadTheme extends Themelet
     public function display_upload_status(Page $page, bool $ok)
     {
         if ($ok) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
         } else {
             $page->set_title("Upload Status");

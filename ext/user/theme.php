@@ -26,7 +26,7 @@ class UserPageTheme extends Themelet
 
         $html .= "<tr>";
         $html .= "<td>Name</td>";
-        if ($user->can('delete_user')) {
+        if ($user->can(Permissions::DELETE_USER)) {
             $html .= "<td>Email</td>";
         }
         $html .= "<td>Class</td>";
@@ -39,7 +39,7 @@ class UserPageTheme extends Themelet
 
         $html .= "<tr>" . make_form("user_admin/list", "GET");
         $html .= "<td><input type='text' name='username' value='$h_username'/></td>";
-        if ($user->can('delete_user')) {
+        if ($user->can(Permissions::DELETE_USER)) {
             $html .= "<td><input type='text' name='email' value='$h_email'/></td>";
         }
         $html .= "<td><input type='text' name='class' value='$h_class'/></td>";
@@ -55,7 +55,7 @@ class UserPageTheme extends Themelet
 
             $html .= "<tr>";
             $html .= "<td><a href='$u_link'>$h_name</a></td>";
-            if ($user->can('delete_user')) {
+            if ($user->can(Permissions::DELETE_USER)) {
                 $html .= "<td>$h_email</td>";
             }
             $html .= "<td>$h_class</td>";
@@ -256,7 +256,7 @@ class UserPageTheme extends Themelet
         $html = "";
         if ($duser->id != $config->get_int('anon_id')) {  //justa fool-admin protection so they dont mess around with anon users.
         
-            if ($user->can('edit_user_name')) {
+            if ($user->can(Permissions::EDIT_USER_NAME)) {
                 $html .= "
 				<p>".make_form(make_link("user_admin/change_name"))."
 					<input type='hidden' name='id' value='{$duser->id}'>
@@ -298,7 +298,7 @@ class UserPageTheme extends Themelet
 
             $i_user_id = int_escape($duser->id);
 
-            if ($user->can("edit_user_class")) {
+            if ($user->can(Permissions::EDIT_USER_CLASS)) {
                 global $_shm_user_classes;
                 $class_html = "";
                 foreach ($_shm_user_classes as $name => $values) {
@@ -319,7 +319,7 @@ class UserPageTheme extends Themelet
 				";
             }
 
-            if ($user->can("delete_user")) {
+            if ($user->can(Permissions::DELETE_USER)) {
                 $html .= "
 					<p>".make_form(make_link("user_admin/delete_user"))."
 						<input type='hidden' name='id' value='$i_user_id'>
@@ -343,4 +343,30 @@ class UserPageTheme extends Themelet
         return $html;
     }
     // }}}
+
+    public function get_help_html()
+    {
+        global $user;
+        $output = '<p>Search for images posted by particular individuals.</p>
+        <div class="command_example">
+        <pre>poster=username</pre>
+        <p>Returns images posted by "username".</p>
+        </div> 
+        <div class="command_example">
+        <pre>poster_id=123</pre>
+        <p>Returns images posted by user 123.</p>
+        </div> 
+        ';
+
+
+        if ($user->can(Permissions::VIEW_IP)) {
+            $output .="
+        <div class=\"command_example\">
+                <pre>poster_ip=127.0.0.1</pre>
+                <p>Returns images posted from IP 127.0.0.1.</p>
+                </div> 
+                ";
+        }
+        return $output;
+    }
 }

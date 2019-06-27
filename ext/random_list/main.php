@@ -21,10 +21,10 @@ class RandomList extends Extension
                 // implode(explode()) to resolve aliases and sanitise
                 $search = url_escape(Tag::implode(Tag::explode($_GET['search'], false)));
                 if (empty($search)) {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("random"));
                 } else {
-                    $page->set_mode("redirect");
+                    $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link('random/'.$search));
                 }
                 return;
@@ -73,5 +73,12 @@ class RandomList extends Extension
         );
 
         $event->panel->add_block($sb);
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_random", new Link('random'), "Shuffle");
+        }
     }
 }

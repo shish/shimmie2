@@ -99,24 +99,24 @@ For example, one can override the default anonymous "allow nothing"
 permissions like so:
 
 ```php
-new UserClass("anonymous", "base", array(
-	"create_comment" => True,
-	"edit_image_tag" => True,
-	"edit_image_source" => True,
-	"create_image_report" => True,
-));
+new UserClass("anonymous", "base", [
+	Permissions::CREATE_COMMENT => True,
+	Permissions::EDIT_IMAGE_TAG => True,
+	Permissions::EDIT_IMAGE_SOURCE => True,
+	Permissions::CREATE_IMAGE_REPORT => True,
+]);
 ```
 
 For a moderator class, being a regular user who can delete images and comments:
 
 ```php
-new UserClass("moderator", "user", array(
-	"delete_image" => True,
-	"delete_comment" => True,
-));
+new UserClass("moderator", "user", [
+	Permissions::DELETE_IMAGE => True,
+	Permissions::DELETE_COMMENT => True,
+]);
 ```
 
-For a list of permissions, see `core/userclass.php`
+For a list of permissions, see `core/permissions.php`
 
 
 # Development Info

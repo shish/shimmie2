@@ -32,12 +32,12 @@ class Featured extends Extension
         global $config, $page, $user;
         if ($event->page_matches("featured_image")) {
             if ($event->get_arg(0) == "set" && $user->check_auth_token()) {
-                if ($user->can("edit_feature") && isset($_POST['image_id'])) {
+                if ($user->can(Permissions::EDIT_FEATURE) && isset($_POST['image_id'])) {
                     $id = int_escape($_POST['image_id']);
                     if ($id > 0) {
                         $config->set_int("featured_id", $id);
                         log_info("featured", "Featured image set to $id", "Featured image set");
-                        $page->set_mode("redirect");
+                        $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/$id"));
                     }
                 }
@@ -45,7 +45,7 @@ class Featured extends Extension
             if ($event->get_arg(0) == "download") {
                 $image = Image::by_id($config->get_int("featured_id"));
                 if (!is_null($image)) {
-                    $page->set_mode("data");
+                    $page->set_mode(PageMode::DATA);
                     $page->set_type($image->get_mime_type());
                     $page->set_data(file_get_contents($image->get_image_filename()));
                 }
@@ -86,7 +86,7 @@ class Featured extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("edit_feature")) {
+        if ($user->can(Permissions::EDIT_FEATURE)) {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }

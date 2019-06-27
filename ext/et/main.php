@@ -18,16 +18,28 @@ class ET extends Extension
     {
         global $user;
         if ($event->page_matches("system_info")) {
-            if ($user->can("view_sysinfo")) {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
                 $this->theme->display_info_page($this->get_info());
             }
         }
     }
 
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
+                $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_sysinfo")) {
+        if ($user->can(Permissions::VIEW_SYSINTO)) {
             $event->add_link("System Info", make_link("system_info"));
         }
     }
@@ -40,8 +52,8 @@ class ET extends Extension
         global $config, $database;
 
         $info = [];
-        $info['site_title'] = $config->get_string("title");
-        $info['site_theme'] = $config->get_string("theme");
+        $info['site_title'] = $config->get_string(SetupConfig::TITLE);
+        $info['site_theme'] = $config->get_string(SetupConfig::THEME);
         $info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
 
         $info['sys_shimmie'] = VERSION;
@@ -52,14 +64,17 @@ class ET extends Extension
         $info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
                                to_shorthand_int(disk_total_space("./"));
         $info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
-        
-        $info['thumb_engine']	= $config->get_string("thumb_engine");
-        $info['thumb_quality']	= $config->get_int('thumb_quality');
-        $info['thumb_width']	= $config->get_int('thumb_width');
-        $info['thumb_height']	= $config->get_int('thumb_height');
-        $info['thumb_scaling']	= $config->get_int('thumb_scaling');
-        $info['thumb_type']	    = $config->get_string('thumb_type');
-        $info['thumb_mem']		= $config->get_int("thumb_mem_limit");
+
+        $info[MediaConfig::FFMPEG_PATH]	= $config->get_string(MediaConfig::FFMPEG_PATH);
+        $info[MediaConfig::CONVERT_PATH]	= $config->get_string(MediaConfig::CONVERT_PATH);
+        $info[MediaConfig::MEM_LIMIT]	= $config->get_int(MediaConfig::MEM_LIMIT);
+
+        $info[ImageConfig::THUMB_ENGINE]	= $config->get_string(ImageConfig::THUMB_ENGINE);
+        $info[ImageConfig::THUMB_QUALITY]	= $config->get_int(ImageConfig::THUMB_QUALITY);
+        $info[ImageConfig::THUMB_WIDTH]	= $config->get_int(ImageConfig::THUMB_WIDTH);
+        $info[ImageConfig::THUMB_HEIGHT]	= $config->get_int(ImageConfig::THUMB_HEIGHT);
+        $info[ImageConfig::THUMB_SCALING]	= $config->get_int(ImageConfig::THUMB_SCALING);
+        $info[ImageConfig::THUMB_TYPE]	    = $config->get_string(ImageConfig::THUMB_TYPE);
 
         $info['stat_images']   = $database->get_one("SELECT COUNT(*) FROM images");
         $info['stat_comments'] = $database->get_one("SELECT COUNT(*) FROM comments");

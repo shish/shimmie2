@@ -12,7 +12,7 @@ class Tagger extends Extension
     {
         global $page, $user;
 
-        if ($user->can("edit_image_tag") && ($event->image->is_locked() || $user->can("edit_image_lock"))) {
+        if ($user->can(Permissions::EDIT_IMAGE_TAG) && ($event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
             $this->theme->build_tagger($page, $event);
         }
     }
@@ -59,7 +59,7 @@ class TaggerXML extends Extension
                 $tags.
             "</tags>";
 
-            $page->set_mode("data");
+            $page->set_mode(PageMode::DATA);
             $page->set_type("text/xml");
             $page->set_data($xml);
         }

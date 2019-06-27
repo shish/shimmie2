@@ -26,6 +26,13 @@
  * Various other common functions are available as part of the Themelet class.
  */
 
+abstract class PageMode
+{
+    const REDIRECT = 'redirect';
+    const DATA = 'data';
+    const PAGE = 'page';
+    const FILE = 'file';
+}
 
 /**
  * Class Page
@@ -40,7 +47,7 @@ class Page
     /** @name Overall */
     //@{
     /** @var string */
-    public $mode = "page";
+    public $mode = PageMode::PAGE;
     /** @var string */
     public $type = "text/html; charset=utf-8";
 
@@ -69,8 +76,13 @@ class Page
     /** @var string; public only for unit test */
     public $data = "";
 
+    /** @var string; */
+    public $file = null;
+
     /** @var string; public only for unit test */
     public $filename = null;
+
+    private $disposition = null;
 
     /**
      * Set the raw data to be sent.
@@ -80,12 +92,18 @@ class Page
         $this->data = $data;
     }
 
+    public function set_file(string $file): void
+    {
+        $this->file = $file;
+    }
+
     /**
      * Set the recommended download filename.
      */
-    public function set_filename(string $filename): void
+    public function set_filename(string $filename, string $disposition = "attachment"): void
     {
         $this->filename = $filename;
+        $this->disposition = $disposition;
     }
 
 
@@ -165,7 +183,7 @@ class Page
     /**
      * Add a line to the HTML head section.
      */
-    public function add_html_header(string $line, int $position=50): void
+    public function add_html_header(string $line, int $position = 50): void
     {
         while (isset($this->html_headers[$position])) {
             $position++;
@@ -176,7 +194,7 @@ class Page
     /**
      * Add a http header to be sent to the client.
      */
-    public function add_http_header(string $line, int $position=50): void
+    public function add_http_header(string $line, int $position = 50): void
     {
         while (isset($this->http_headers[$position])) {
             $position++;
@@ -191,13 +209,13 @@ class Page
      */
     public function add_cookie(string $name, string $value, int $time, string $path): void
     {
-        $full_name = COOKIE_PREFIX."_".$name;
+        $full_name = COOKIE_PREFIX . "_" . $name;
         $this->cookies[] = [$full_name, $value, $time, $path];
     }
 
     public function get_cookie(string $name): ?string
     {
-        $full_name = COOKIE_PREFIX."_".$name;
+        $full_name = COOKIE_PREFIX . "_" . $name;
         if (isset($_COOKIE[$full_name])) {
             return $_COOKIE[$full_name];
         } else {
@@ -246,8 +264,8 @@ class Page
         global $page, $user;
 
         header("HTTP/1.0 {$this->code} Shimmie");
-        header("Content-type: ".$this->type);
-        header("X-Powered-By: SCore-".SCORE_VERSION);
+        header("Content-type: " . $this->type);
+        header("X-Powered-By: SCore-" . SCORE_VERSION);
 
         if (!headers_sent()) {
             foreach ($this->http_headers as $head) {
@@ -261,7 +279,7 @@ class Page
         }
 
         switch ($this->mode) {
-            case "page":
+            case PageMode::PAGE:
                 if (CACHE_HTTP) {
                     header("Vary: Cookie, Accept-Encoding");
                     if ($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
@@ -281,20 +299,135 @@ class Page
                     $this->add_cookie("flash_message", "", -1, "/");
                 }
                 usort($this->blocks, "blockcmp");
+                $pnbe = new PageNavBuildingEvent();
+                send_event($pnbe);
+
+                $nav_links = $pnbe->links;
+
+                $active_link = null;
+                // To save on event calls, we check if one of the top-level links has already been marked as active
+                foreach ($nav_links as $link) {
+                    if($link->active===true) {
+                        $active_link = $link;
+                        break;
+                    }
+                }
+                $sub_links = null;
+                // If one is, we just query for sub-menu options under that one tab
+                if($active_link!==null) {
+                    $psnbe = new PageSubNavBuildingEvent($active_link->name);
+                    send_event($psnbe);
+                    $sub_links = $psnbe->links;
+                } else {
+                    // Otherwise we query for the sub-items under each of the tabs
+                    foreach ($nav_links as $link) {
+                        $psnbe = new PageSubNavBuildingEvent($link->name);
+                        send_event($psnbe);
+
+                        // Now we check for a current link so we can identify the sub-links to show
+                        foreach ($psnbe->links as $sub_link) {
+                            if($sub_link->active===true) {
+                                $sub_links = $psnbe->links;
+                                break;
+                            }
+                        }
+                        // If the active link has been detected, we break out
+                        if($sub_links!==null) {
+                            $link->active = true;
+                            break;
+                        }
+                    }
+                }
+
+
+
+                $sub_links = $sub_links??[];
+                usort($nav_links, "sort_nav_links");
+                usort($sub_links, "sort_nav_links");
+
                 $this->add_auto_html_headers();
                 $layout = new Layout();
-                $layout->display_page($page);
+                $layout->display_page($page, $nav_links, $sub_links);
                 break;
-            case "data":
-                header("Content-Length: ".strlen($this->data));
+            case PageMode::DATA:
+                header("Content-Length: " . strlen($this->data));
                 if (!is_null($this->filename)) {
-                    header('Content-Disposition: attachment; filename='.$this->filename);
+                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
                 print $this->data;
                 break;
-            case "redirect":
-                header('Location: '.$this->redirect);
-                print 'You should be redirected to <a href="'.$this->redirect.'">'.$this->redirect.'</a>';
+            case PageMode::FILE:
+                if (!is_null($this->filename)) {
+                    header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
+                }
+
+                //https://gist.github.com/codler/3906826
+
+                $size = filesize($this->file); // File size
+                $length = $size;           // Content length
+                $start = 0;               // Start byte
+                $end = $size - 1;       // End byte
+
+                header("Content-Length: " . strlen($size));
+                header('Accept-Ranges: bytes');
+
+                if (isset($_SERVER['HTTP_RANGE'])) {
+
+                    $c_start = $start;
+                    $c_end = $end;
+                    list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
+                    if (strpos($range, ',') !== false) {
+                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                        header("Content-Range: bytes $start-$end/$size");
+                        break;
+                    }
+                    if ($range == '-') {
+                        $c_start = $size - substr($range, 1);
+                    } else {
+                        $range = explode('-', $range);
+                        $c_start = $range[0];
+                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+                    }
+                    $c_end = ($c_end > $end) ? $end : $c_end;
+                    if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
+                        header('HTTP/1.1 416 Requested Range Not Satisfiable');
+                        header("Content-Range: bytes $start-$end/$size");
+                        break;
+                    }
+                    $start = $c_start;
+                    $end = $c_end;
+                    $length = $end - $start + 1;
+                    header('HTTP/1.1 206 Partial Content');
+                }
+                header("Content-Range: bytes $start-$end/$size");
+                header("Content-Length: " . $length);
+
+
+                $fp = fopen($this->file, 'r');
+                try {
+                    fseek($fp, $start);
+                    $buffer = 1024 * 64;
+                    while (!feof($fp) && ($p = ftell($fp)) <= $end) {
+                        if ($p + $buffer > $end) {
+                            $buffer = $end - $p + 1;
+                        }
+                        set_time_limit(0);
+                        echo fread($fp, $buffer);
+                        flush();
+
+                        // After flush, we can tell if the client browser has disconnected.
+                        // This means we can start sending a large file, and if we detect they disappeared
+                        // then we can just stop and not waste any more resources or bandwidth.
+                        if (connection_status() != 0)
+                            break;
+                    }
+                } finally {
+                    fclose($fp);
+                }
+                break;
+            case PageMode::REDIRECT:
+                header('Location: ' . $this->redirect);
+                print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
                 break;
             default:
                 print "Invalid page mode";
@@ -318,7 +451,7 @@ class Page
         global $config;
 
         $data_href = get_base_href();
-        $theme_name = $config->get_string('theme', 'default');
+        $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
         $this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
 
@@ -335,7 +468,7 @@ class Page
         /*** Generate CSS cache files ***/
         $css_latest = $config_latest;
         $css_files = array_merge(
-            zglob("ext/{".ENABLED_EXTS."}/style.css"),
+            zglob("ext/{" . ENABLED_EXTS . "}/style.css"),
             zglob("themes/$theme_name/style.css")
         );
         foreach ($css_files as $css) {
@@ -348,7 +481,7 @@ class Page
             foreach ($css_files as $file) {
                 $file_data = file_get_contents($file);
                 $pattern = '/url[\s]*\([\s]*["\']?([^"\'\)]+)["\']?[\s]*\)/';
-                $replace = 'url("../../../'.dirname($file).'/$1")';
+                $replace = 'url("../../../' . dirname($file) . '/$1")';
                 $file_data = preg_replace($pattern, $replace, $file_data);
                 $css_data .= $file_data . "\n";
             }
@@ -366,7 +499,7 @@ class Page
                 "vendor/bower-asset/js-cookie/src/js.cookie.js",
                 "ext/handle_static/modernizr-3.3.1.custom.js",
             ],
-            zglob("ext/{".ENABLED_EXTS."}/script.js"),
+            zglob("ext/{" . ENABLED_EXTS . "}/script.js"),
             zglob("themes/$theme_name/script.js")
         );
         foreach ($js_files as $js) {
@@ -383,4 +516,100 @@ class Page
         }
         $this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
+}
+
+class PageNavBuildingEvent extends Event
+{
+    public $links = [];
+
+    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    {
+        $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
+    }
+}
+
+class PageSubNavBuildingEvent extends Event
+{
+    public $parent;
+
+    public $links = [];
+
+    public function __construct(string $parent)
+    {
+        $this->parent= $parent;
+    }
+
+    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    {
+        $this->links[]  = new NavLink($name, $link, $desc, $active,$order);
+    }
+}
+
+class NavLink
+{
+    public $name;
+    public $link;
+    public $description;
+    public $order;
+    public $active = false;
+
+    public function  __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
+    {
+        global $config;
+
+        $this->name = $name;
+        $this->link = $link;
+        $this->description = $description;
+        $this->order = $order;
+        if($active==null) {
+            $query = ltrim(_get_query(), "/");
+            if ($query === "") {
+                // This indicates the front page, so we check what's set as the front page
+                $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
+
+                if ($front_page === $link->page) {
+                    $this->active = true;
+                } else {
+                    $this->active = self::is_active([$link->page], $front_page);
+                }
+            } elseif($query===$link->page) {
+                $this->active = true;
+            }else {
+                $this->active = self::is_active([$link->page]);
+            }
+        } else {
+            $this->active = $active;
+        }
+
+    }
+
+    public static function is_active(array $pages_matched, string $url = null): bool
+    {
+        /**
+         * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+         */
+        $url = $url??ltrim(_get_query(), "/");
+
+        $re1='.*?';
+        $re2='((?:[a-z][a-z_]+))';
+
+        if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
+            $url=$matches[1][0];
+        }
+
+        $count_pages_matched = count($pages_matched);
+
+        for ($i=0; $i < $count_pages_matched; $i++) {
+            if ($url == $pages_matched[$i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+function sort_nav_links(NavLink $a, NavLink $b)
+{
+    return $a->order - $b->order;
 }

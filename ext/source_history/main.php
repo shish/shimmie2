@@ -35,13 +35,13 @@ class Source_History extends Extension
 
         if ($event->page_matches("source_history/revert")) {
             // this is a request to revert to a previous version of the source
-            if ($user->can("edit_image_tag")) {
+            if ($user->can(Permissions::EDIT_IMAGE_TAG)) {
                 if (isset($_POST['revert'])) {
                     $this->process_revert_request($_POST['revert']);
                 }
             }
         } elseif ($event->page_matches("source_history/bulk_revert")) {
-            if ($user->can("bulk_edit_image_tag") && $user->check_auth_token()) {
+            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG) && $user->check_auth_token()) {
                 $this->process_bulk_revert_request();
             }
         } elseif ($event->page_matches("source_history/all")) {
@@ -82,10 +82,20 @@ class Source_History extends Extension
         $this->add_source_history($event->image, $event->source);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+                $event->add_nav_link("source_history", new Link('source_history/all/1'), "Source Changes", NavLink::is_active(["source_history"]));
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("bulk_edit_image_tag")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
             $event->add_link("Source Changes", make_link("source_history/all/1"));
         }
     }
@@ -132,7 +142,7 @@ class Source_History extends Extension
 
         // check for the nothing case
         if ($revert_id < 1) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link());
             return;
         }
@@ -165,7 +175,7 @@ class Source_History extends Extension
         send_event(new SourceSetEvent($image, $stored_source));
         
         // all should be done now so redirect the user back to the image
-        $page->set_mode("redirect");
+        $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
     }
 

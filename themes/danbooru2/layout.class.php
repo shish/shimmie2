@@ -44,11 +44,11 @@ Tips
 
 class Layout
 {
-    public function display_page($page)
+    public function display_page($page, array $nav_links, array $sub_links)
     {
         global $config, $user;
 
-        //$theme_name = $config->get_string('theme');
+        //$theme_name = $config->get_string(SetupConfig::THEME);
         //$base_href = $config->get_string('base_href');
         //$data_href = get_base_href();
         $contact_link = contact_link();
@@ -92,115 +92,21 @@ class Layout
             $subheading = "<div id='subtitle'>{$this->subheading}</div>";
         }
 
-        $site_name = $config->get_string('title'); // bzchan: change from normal default to get title for top of page
-        $main_page = $config->get_string('main_page'); // bzchan: change from normal default to get main page for top of page
+        $site_name = $config->get_string(SetupConfig::TITLE); // bzchan: change from normal default to get title for top of page
+        $main_page = $config->get_string(SetupConfig::MAIN_PAGE); // bzchan: change from normal default to get main page for top of page
 
-        // bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
         $custom_links = "";
-        if ($user->is_anonymous()) {
-            $custom_links .= $this->navlinks(make_link('user_admin/login'), "Sign in", ["user", "user_admin", "setup", "admin"]);
-        } else {
-            $custom_links .= $this->navlinks(make_link('user'), "My Account", ["user", "user_admin"]);
-        }
-        if ($user->is_admin()) {
-            $custom_links .= $this->navlinks(make_link('admin'), "Admin", ["admin", "ext_manager", "setup"]);
-        }
-        $custom_links .= $this->navlinks(make_link('post/list'), "Posts", ["post", "upload", "", "random_image"]);
-        $custom_links .= $this->navlinks(make_link('comment/list'), "Comments", ["comment"]);
-        $custom_links .= $this->navlinks(make_link('tags'), "Tags", ["tags", "alias"]);
-        if (class_exists("Pools")) {
-            $custom_links .= $this->navlinks(make_link('pool/list'), "Pools", ["pool"]);
-        }
-        if (class_exists("Wiki")) {
-            $custom_links .= $this->navlinks(make_link('wiki'), "Wiki", ["wiki"]);
-            $custom_links .= $this->navlinks(make_link('wiki/more'), "More &raquo;", ["wiki/more"]);
+        foreach ($nav_links as $nav_link) {
+            $custom_links .=  "<li>".$this->navlinks($nav_link->link, $nav_link->description, $nav_link->active)."</li>";
         }
 
         $custom_sublinks = "";
-        // hack
-        $username = url_escape($user->name);
-        // hack
-        $qp = explode("/", ltrim(_get_query(), "/"));
-        // php sucks
-        switch ($qp[0]) {
-            default:
-            case "ext_doc":
-                $custom_sublinks .= $user_block_html;
-                break;
-            case "user":
-            case "user_admin":
-                if ($user->is_anonymous()) {
-                    $custom_sublinks .= "<li><a href='".make_link('user_admin/create')."'>Sign up</a></li>";
-                // $custom_sublinks .= "<li><a href='".make_link('')."'>Reset Password</a></li>";
-                    // $custom_sublinks .= "<li><a href='".make_link('')."'>Login Reminder</a></li>";
-                } else {
-                    $custom_sublinks .= "<li><a href='".make_link('user_admin/logout')."'>Sign out</a></li>";
-                }
-                break;
-            case "":
-                # FIXME: this assumes that the front page is
-                # post/list; in 99% of case it will either be
-                # post/list or home, and in the latter case
-                # the subnav links aren't shown, but it would
-                # be nice to be correct
-            case "random_image":
-            case "post":
-            case "upload":
-                if (class_exists("NumericScore")) {
-                    $custom_sublinks .= "<li><b>Popular by </b><a href='".make_link('popular_by_day')."'>Day</a>/<a href='".make_link('popular_by_month')."'>Month</a>/<a href='".make_link('popular_by_year')."'>Year</a></li>";
-                }
-                $custom_sublinks .= "<li><a href='".make_link('post/list')."'>Listing</a></li>";
-                if (class_exists("Favorites")) {
-                    $custom_sublinks .= "<li><a href='".make_link("post/list/favorited_by={$username}/1")."'>My Favorites</a></li>";
-                }
-                if (class_exists("RSS_Images")) {
-                    $custom_sublinks .= "<li><a href='".make_link('rss/images')."'>Feed</a></li>";
-                }
-                if (class_exists("RandomImage")) {
-                    $custom_sublinks .= "<li><a href='".make_link("random_image/view")."'>Random</a></li>";
-                }
-                $custom_sublinks .= "<li><a href='".make_link('upload')."'>Upload</a></li>";
-                if (class_exists("Wiki")) {
-                    $custom_sublinks .= "<li><a href='".make_link("wiki/posts")."'>Help</a></li>";
-                } else {
-                    $custom_sublinks .= "<li><a href='".make_link("ext_doc/index")."'>Help</a></li>";
-                }
-                break;
-            case "comment":
-                $custom_sublinks .= "<li><a href='".make_link('comment/list')."'>All</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("ext_doc/comment")."'>Help</a></li>";
-                break;
-            case "pool":
-                $custom_sublinks .= "<li><a href='".make_link('pool/list')."'>List</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("pool/new")."'>Create</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("pool/updated")."'>Changes</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("ext_doc/pools")."'>Help</a></li>";
-                break;
-            case "wiki":
-                $custom_sublinks .= "<li><a href='".make_link('wiki')."'>Index</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("wiki/rules")."'>Rules</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("ext_doc/wiki")."'>Help</a></li>";
-                break;
-            case "tags":
-            case "alias":
-                $custom_sublinks .= "<li><a href='".make_link('tags/map')."'>Map</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link('tags/alphabetic')."'>Alphabetic</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link('tags/popularity')."'>Popularity</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link('tags/categories')."'>Categories</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Aliases</a></li>";
-                $custom_sublinks .= "<li><a href='".make_link("ext_doc/tag_edit")."'>Help</a></li>";
-                break;
-            case "admin":
-            case "ext_manager":
-            case "setup":
-                if ($user->is_admin()) {
-                    $custom_sublinks .= "<li><a href='".make_link('ext_manager')."'>Extension Manager</a></li>";
-                    $custom_sublinks .= "<li><a href='".make_link('setup')."'>Board Config</a></li>";
-                    $custom_sublinks .= "<li><a href='".make_link('alias/list')."'>Alias Editor</a></li>";
-                } else {
-                    $custom_sublinks .= "<li>I think you might be lost</li>";
-                }
-                break;
+        if(!empty($sub_links)) {
+            $custom_sublinks = "<div class='sbar'>";
+            foreach ($sub_links as $nav_link) {
+                $custom_sublinks .= "<li>".$this->navlinks($nav_link->link, $nav_link->description, $nav_link->active)."</li>";
+            }
+            $custom_sublinks .= "</div>";
         }
 
 
@@ -269,28 +175,15 @@ $header_html
 EOD;
     }
 
-    private function navlinks(string $link, string $desc, array $pages_matched): string
+    public function navlinks(Link $link, string $desc, bool $active): ?string
     {
-        $html = "";
-        $url = _get_query();
+        $html = null;
+        if ($active) {
+            $html = "<a class='current-page' href='{$link->make_link()}'>{$desc}</a>";
+        } else {
+            $html = "<a class='tab' href='{$link->make_link()}'>{$desc}</a>";
+        }
 
-        $re1='.*?';
-        $re2='((?:[a-z][a-z_]+))';
-
-        if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
-            $url=$matches[1][0];
-        }
-        
-        $count_pages_matched = count($pages_matched);
-        
-        for ($i=0; $i < $count_pages_matched; $i++) {
-            if ($url == $pages_matched[$i]) {
-                $html = "<li class='current-page'><a href='$link'>$desc</a></li>";
-            }
-        }
-        if (empty($html)) {
-            $html = "<li><a class='tab' href='$link'>$desc</a></li>";
-        }
         return $html;
     }
 }

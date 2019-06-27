@@ -12,7 +12,7 @@ class Oekaki extends Extension
         global $user, $page;
 
         if ($event->page_matches("oekaki")) {
-            if ($user->can("create_image")) {
+            if ($user->can(Permissions::CREATE_IMAGE)) {
                 if ($event->get_arg(0) == "create") {
                     $this->theme->display_page();
                     $this->theme->display_block();
@@ -41,7 +41,7 @@ class Oekaki extends Extension
                             throw new UploadException("File type not recognised");
                         } else {
                             unlink($tmpname);
-                            $page->set_mode("redirect");
+                            $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect(make_link("post/view/".$duev->image_id));
                         }
                     }
@@ -84,7 +84,7 @@ class Oekaki extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
         global $user;
-        if ($user->can("create_image")) {
+        if ($user->can(Permissions::CREATE_IMAGE)) {
             $this->theme->display_block();
         }
     }

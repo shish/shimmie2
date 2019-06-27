@@ -95,8 +95,7 @@ class RatingSetEvent extends Event
 
 class Ratings extends Extension
 {
-
-    protected $db_support = ['mysql','pgsql'];  
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
     private $search_regexp;
 
@@ -179,7 +178,7 @@ class Ratings extends Extension
          **/
         $user_view_level = Ratings::get_user_privs($user);
         if (!in_array($event->image->rating, $user_view_level)) {
-            $page->set_mode("redirect");
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
     }
@@ -212,6 +211,21 @@ class Ratings extends Extension
     public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
     {
         $event->replace('$rating', $this->rating_to_human($event->image->rating));
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        global $user;
+
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Ratings";
+
+            $ratings = self::get_sorted_ratings();
+
+            $block->body = $this->theme->get_help_html($ratings);
+            $event->add_block($block);
+        }
     }
 
     public function onSearchTermParse(SearchTermParseEvent $event)
@@ -262,7 +276,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if ($user->can("bulk_edit_image_rating")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
             $event->add_action("bulk_rate","Set Rating","",$this->theme->get_selection_rater_html("bulk_rating"));
         }
     }
@@ -276,15 +290,10 @@ class Ratings extends Extension
                 if (!isset($_POST['bulk_rating'])) {
                     return;
                 }
-                if ($user->can("bulk_edit_image_rating")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $rating = $_POST['bulk_rating'];
                     $total = 0;
-                    foreach ($event->items as $id) {
-                        $image = Image::by_id($id);
-                        if ($image==null) {
-                            continue;
-                        }
-        
+                    foreach ($event->items as $image) {
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }
@@ -299,7 +308,7 @@ class Ratings extends Extension
         global $user, $page;
         
         if ($event->page_matches("admin/bulk_rate")) {
-            if (!$user->can("bulk_edit_image_rating")) {
+            if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                 throw new PermissionDeniedException();
             } else {
                 $n = 0;
@@ -321,7 +330,7 @@ class Ratings extends Extension
                 #		select image_id from image_tags join tags
                 #		on image_tags.tag_id = tags.id where tags.tag = ?);
                 #	", array($_POST["rating"], $_POST["tag"]));
-                $page->set_mode("redirect");
+                $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/list"));
             }
         }
@@ -407,10 +416,10 @@ class Ratings extends Extension
 		if($config->get_int("ext_ratings2_version") < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
-                case "mysql":
+                case DatabaseDriver::MYSQL:
                     $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT 'u'");
                     break;
-                case "pgsql":
+                case DatabaseDriver::PGSQL:
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT 'u'");
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;

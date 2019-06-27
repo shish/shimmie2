@@ -83,9 +83,11 @@ EOD;
     exit;
 }
 
+require_once "core/_bootstrap.php";
+//$_tracer->mark(@$_SERVER["REQUEST_URI"]);
+$_tracer->begin($_SERVER["REQUEST_URI"] ?? "No Request");
+
 try {
-    require_once "core/_bootstrap.php";
-    $_shm_ctx->log_start(@$_SERVER["REQUEST_URI"], true, true);
 
     // start the page generation waterfall
     $user = _get_user();
@@ -96,17 +98,24 @@ try {
         $page->display();
     }
 
+    if($database->transaction===true) {
+        $database->commit();
+    }
+
     // saving cache data and profiling data to disk can happen later
     if (function_exists("fastcgi_finish_request")) {
         fastcgi_finish_request();
     }
-    $database->commit();
-    $_shm_ctx->log_endok();
 } catch (Exception $e) {
-    if ($database) {
+    if ($database && $database->transaction===true) {
         $database->rollback();
     }
     _fatal_error($e);
-    $_shm_ctx->log_ender();
 }
-log_slow();
+
+$_tracer->end();
+if (TRACE_FILE) {
+	if((microtime(true) - $_shm_load_start) > TRACE_THRESHOLD) {
+		$_tracer->flush(TRACE_FILE);
+	}
+}
