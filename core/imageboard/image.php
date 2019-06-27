@@ -1048,7 +1048,7 @@ class Image
             $sql = "
                 SELECT images.*
                 FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)  
-                WHERE a.image_id IS NULL
+                WHERE negative.image_id IS NULL
             ";
         } else {
             throw new SCoreException("No criteria specified");
