@@ -564,12 +564,13 @@ class Ratings extends Extension
             $value = $config->get_string("ext_rating_admin_privs");
             $config->set_array("ext_rating_admin_privs", str_split($value));
 
+
+            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
+                $database->execute("SET statement_timeout TO 300000;");
+            }
+            $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
+
             $config->set_int(RatingsConfig::VERSION, 4);
-        }
-
-        if ($config->get_int(RatingsConfig::VERSION) < 5) {
-
-            $config->set_int(RatingsConfig::VERSION, 5);
         }
     }
 

@@ -224,23 +224,6 @@ class Upgrade extends Extension
             $config->set_bool("in_upgrade", false);
         }
 
-
-        if ($config->get_int("db_version") < 18) {
-            $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 18);
-
-            log_info("upgrade", "Updating to new unrated code");
-
-            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
-                $database->execute("SET statement_timeout TO 300000;");
-            }
-            $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
-
-
-            log_info("upgrade", "Database at version 18");
-            $config->set_bool("in_upgrade", false);
-        }
-
     }
 
     public function get_priority(): int
