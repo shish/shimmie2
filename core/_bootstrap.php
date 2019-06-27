@@ -47,6 +47,11 @@ unset($themelet);
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $_tracer->end();
 
+$_shm_ctx->log_start("Loading user information");
+$user = _get_user();
+$user_config = new DatabaseConfig($database, "user_config","user_id", $user->id);
+$_shm_ctx->log_endok();
+
 // hook up event handlers
 $_tracer->begin("Loading extensions");
 _load_event_listeners();

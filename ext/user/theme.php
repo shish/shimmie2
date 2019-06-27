@@ -243,14 +243,9 @@ class UserPageTheme extends Themelet
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
 
-        if (!$user->is_anonymous()) {
-            if ($user->id == $duser->id || $user->can("edit_user_info")) {
-                $page->add_block(new Block("Options", $this->build_options($duser), "main", 60));
-            }
-        }
     }
 
-    protected function build_options(User $duser)
+    public function build_options(User $duser, UserOptionsBuildingEvent $event)
     {
         global $config, $user;
         $html = "";
@@ -266,7 +261,7 @@ class UserPageTheme extends Themelet
 						<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
 					</table>
 				</form>
-				";
+				</p>";
             }
 
             $html .= "
@@ -285,7 +280,7 @@ class UserPageTheme extends Themelet
 					</tfoot>
 				</table>
 			</form>
-
+            </p>
 			<p>".make_form(make_link("user_admin/change_email"))."
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
@@ -294,7 +289,7 @@ class UserPageTheme extends Themelet
 					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
 				</table>
 			</form>
-			";
+			</p>";
 
             $i_user_id = int_escape($duser->id);
 
@@ -316,7 +311,7 @@ class UserPageTheme extends Themelet
 							<tfoot><tr><td><input type='submit' value='Set'></td></tr></tfoot>
 						</table>
 					</form>
-				";
+				</p>";
             }
 
             if ($user->can("delete_user")) {
@@ -337,8 +332,12 @@ class UserPageTheme extends Themelet
 							</tfoot>
 						</table>
 					</form>
-				";
+				</p>";
             }
+            foreach ($event->parts as $part) {
+                $html .= $part;
+            }
+
         }
         return $html;
     }
