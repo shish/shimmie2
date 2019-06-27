@@ -82,4 +82,3 @@ class UserDeletionEvent extends Event
         $this->id = $id;
     }
 }
-

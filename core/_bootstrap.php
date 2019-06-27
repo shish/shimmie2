@@ -68,7 +68,13 @@ unset($themelet);
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $_tracer->end();
 
-$_tracer->begin("Loading extensions/event listeners");
+$_tracer->log_start("Loading user information");
+$user = _get_user();
+$user_config = new DatabaseConfig($database, "user_config","user_id", $user->id);
+$_tracer->log_endok();
+
+// hook up event handlers
+$_tracer->begin("Loading event listeners");
 _load_event_listeners();
 $_tracer->end();
 

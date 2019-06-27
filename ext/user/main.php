@@ -188,6 +188,17 @@ class UserPage extends Extension
 
         ksort($event->stats);
         $this->theme->display_user_page($event->display_user, $event->stats);
+
+        if (!$user->is_anonymous()) {
+            if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
+                $uobe = new UserOptionsBuildingEvent();
+                send_event($uobe);
+
+                $page->add_block(new Block("Options", $this->theme->build_options($event->display_user, $uobe), "main", 60));
+            }
+        }
+
+
         if ($user->id == $event->display_user->id) {
             $ubbe = new UserBlockBuildingEvent();
             send_event($ubbe);
