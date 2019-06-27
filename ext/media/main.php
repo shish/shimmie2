@@ -416,7 +416,7 @@ class Media extends Extension
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
             $positive = $matches[1];
             $field = $matches[2];
-            $event->add_querylet(new Querylet("$field = " . $database->scoreql_to_sql($positive != "-" ? "SCORE_BOOL_Y" : "SCORE_BOOL_N")));
+            $event->add_querylet(new Querylet("$field = " . $database->scoreql_to_sql($positive != "-" ? SCORE::BOOL_Y : SCORE::BOOL_N)));
         }
     }
 
