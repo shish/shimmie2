@@ -12,7 +12,7 @@ class RatingsTheme extends Themelet
 		".($can_rate ? "
 					<span class='view'>$human_rating</span>
 					<span class='edit'>
-						".$this->get_selection_rater_html($rating)."
+						".$this->get_selection_rater_html([$rating])."
 					</span>
 		" : "
 					$human_rating
@@ -22,6 +22,29 @@ class RatingsTheme extends Themelet
 		";
         return $html;
     }
+
+
+    public function display_form(array $current_ratings, array $available_ratings)
+    {
+        global $page, $database;
+
+        $html = make_form(make_link("admin/update_ratings"))."<table class='form'><tr>
+        <th>Change</th><td><select name='rating_old' required='required'><option></option>";
+            foreach ($current_ratings as $key=>$value) {
+                $html .= "<option value='$key'>$value</option>";
+            }
+        $html .= "</select></td></tr>
+        <tr><th>To</th><td><select name='rating_new'  required='required'><option></option>";
+        foreach ($available_ratings as $value) {
+            $html .= "<option value='$value->code'>$value->name</option>";
+        }
+        $html .= "</select></td></tr>
+        <tr><td colspan='2'><input type='submit' value='Update'></td></tr></table>
+        </form>\n";
+        $page->add_block(new Block("Update Ratings", $html));
+    }
+
+
 
     // public function display_bulk_rater(string $terms)
     // {
@@ -41,17 +64,21 @@ class RatingsTheme extends Themelet
     //     $page->add_block(new Block("List Controls", $html, "left"));
     // }
 
-    public function get_selection_rater_html(String $selected_option, String $id = "rating") {
+    public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null) {
         global $_shm_ratings;
 
-		$output = "<select name='".$id."'>";
-		$options = array_values($_shm_ratings);
-		usort($options, function($a, $b) {
-			return $a->order <=> $b->order;
-		});
-		
-		foreach($options as $option) {			
-			$output .= "<option value='".$option->code."' ".($selected_option==$option->code ? "selected='selected'": "").">".$option->name."</option>";
+		$output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
+
+        $options = Ratings::get_sorted_ratings();
+
+		foreach($options as $option) {
+		    if($available_options!=null && !in_array($option->code, $available_options)) {
+		        continue;
+            }
+
+			$output .= "<option value='".$option->code."' ".
+                (in_array($option->code,$selected_options) ? "selected='selected'": "")
+                .">".$option->name."</option>";
 		}
 		return $output."</select>";
     }
@@ -82,5 +109,27 @@ class RatingsTheme extends Themelet
         }
         $output .= "</table>";
         return $output;
+    public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
+    {
+        $html = "
+                <p>".make_form(make_link("user_admin/default_ratings"))."
+                    <input type='hidden' name='id' value='$user->id'>
+                    <table style='width: 300px;'>
+                        <thead>
+                            <tr><th colspan='2'>Default Rating Filter</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr><td>This controls the default rating search results will be filtered by, and nothing else. To override in your search results, add rating:* to your search.</td></tr>
+                            <tr><td>
+                                ".$this->get_selection_rater_html($selected_ratings, true, $available_ratings)."
+                            </td></tr>
+                        </tbody>
+                        <tfoot>
+                            <tr><td><input type='submit' value='Save'></td></tr>
+                        </tfoot>
+                    </table>
+                </form>
+            ";
+        return $html;
     }
 }

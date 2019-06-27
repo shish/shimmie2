@@ -48,8 +48,8 @@ class CustomViewImageTheme extends ViewImageTheme
         }
 
         if (ext_is_live("Ratings")) {
-            if ($image->rating == null || $image->rating == "u") {
-                $image->rating = "u";
+            if ($image->rating == null || $image->rating == "?") {
+                $image->rating = "?";
             }
             $h_rating = Ratings::rating_to_human($image->rating);
             $html .= "<br>Rating: $h_rating";
