@@ -124,7 +124,7 @@ class Trash extends Extension
         global $user;
 
         if ($user->can("view_trash")&&in_array("in:trash", $event->search_terms)) {
-            $event->add_action("bulk_trash_restore","Restore From Trash");
+            $event->add_action("bulk_trash_restore","(U)ndelete", "u");
         }
     }
 

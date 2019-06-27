@@ -16,22 +16,29 @@ class BulkActionBlockBuildingEvent extends Event
 
     public $search_terms = [];
 
-    public function add_action(String $action, string $button_text, String $confirmation_message = "", String $block = "", int $position = 40)
+    public function add_action(String $action, string $button_text, string $access_key = null, String $confirmation_message = "", String $block = "", int $position = 40)
     {
         if ($block == null) {
             $block = "";
         }
 
-        array_push(
-            $this->actions,
-            [
+        if(!empty($access_key)) {
+            assert(strlen($access_key)==1);
+            foreach ($this->actions as $existing) {
+                if($existing["access_key"]==$access_key) {
+                    throw new SCoreException("Access key $access_key is already in use");
+                }
+            }
+        }
+
+        $this->actions[] =[
                 "block" => $block,
+                "access_key" => $access_key,
                 "confirmation_message" => $confirmation_message,
                 "action" => $action,
                 "button_text" => $button_text,
                 "position" => $position
-            ]
-        );
+            ];
     }
 }
 
@@ -79,15 +86,22 @@ class BulkActions extends Extension
         global $user;
 
         if ($user->can("delete_image")) {
-            $event->add_action("bulk_delete", "Delete", "Delete selected images?", "", 10);
+            $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", "", 10);
         }
 
         if ($user->can("bulk_edit_image_tag")) {
-            $event->add_action("bulk_tag", "Tag", "", $this->theme->render_tag_input(), 10);
+
+            $event->add_action(
+                "bulk_tag",
+                "Tag",
+                "t",
+                "",
+                $this->theme->render_tag_input(),
+                10);
         }
 
         if ($user->can("bulk_edit_image_source")) {
-            $event->add_action("bulk_source", "Set Source", "", $this->theme->render_source_input(), 10);
+            $event->add_action("bulk_source", "Set (S)ource", "s","", $this->theme->render_source_input(), 10);
         }
     }
 

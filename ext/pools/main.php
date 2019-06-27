@@ -415,8 +415,8 @@ class Pools extends Extension
         $pools = $database->get_all("SELECT * FROM pools ORDER BY title ");
 
 
-        $event->add_action("bulk_pool_add_existing", "Add To Pool", "", $this->theme->get_bulk_pool_selector($pools));
-        $event->add_action("bulk_pool_add_new", "Create Pool", "", $this->theme->get_bulk_pool_input());
+        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p","", $this->theme->get_bulk_pool_selector($pools));
+        $event->add_action("bulk_pool_add_new", "Create Pool", "","", $this->theme->get_bulk_pool_input());
     }
 
     public function onBulkAction(BulkActionEvent $event)

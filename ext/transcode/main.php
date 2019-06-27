@@ -12,6 +12,15 @@
  *  If and image is uanble to be transcoded for any reason, the upload will continue unaffected.
  */
 
+class TranscodeConfig
+{
+    const ENGINE = "transcode_engine";
+    const ENABLED = "transcode_enabled";
+    const UPLOAD = "transcode_upload";
+    const UPLOAD_PREFIX = "transcode_upload_";
+    const QUALITY = "transcode_quality";
+}
+
  /*
  * This is used by the image transcoding code when there is an error while transcoding
  */
@@ -221,7 +230,7 @@ class TranscodeImage extends Extension
         $engine = $config->get_string("transcode_engine");
 
         if ($user->is_admin()) {
-            $event->add_action("bulk_transcode", "Transcode", "", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
+            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null,"", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
         }
     }
 
