@@ -22,6 +22,8 @@ class ImageTranscodeException extends SCoreException
 
 class TranscodeImage extends Extension
 {
+    const ACTION_BULK_TRANSCODE = "bulk_transcode";
+
     const CONVERSION_ENGINES = [
         "GD" => "gd",
         "ImageMagick" => "convert",
