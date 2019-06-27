@@ -13,7 +13,6 @@ class Upgrade extends Extension
     {
         global $config, $database;
 
-
         if ($config->get_bool("in_upgrade")) {
             return;
         }
@@ -164,8 +163,6 @@ class Upgrade extends Extension
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?
 
-
-
             log_info("upgrade", "Database at version 16");
             $config->set_bool("in_upgrade", false);
         }
@@ -224,7 +221,24 @@ class Upgrade extends Extension
             $config->set_bool("in_upgrade", false);
         }
 
+        if ($config->get_int("db_version") < 18) {
+            $config->set_bool("in_upgrade", true);
+            $config->set_int("db_version", 18);
 
+            log_info("upgrade", "Adding user config table");
+
+            $database->create_table("user_config", "
+                user_id INTEGER NOT NULL,
+                name VARCHAR(128) NOT NULL,
+                value TEXT,
+                PRIMARY KEY (user_id, name),
+			    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		    ");
+            $database->execute("CREATE INDEX user_config_user_id_idx ON user_config(user_id)");
+
+            log_info("upgrade", "Database at version 18");
+            $config->set_bool("in_upgrade", false);
+        }
 
     }
 
