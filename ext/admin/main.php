@@ -137,6 +137,7 @@ class AdminPage extends Extension
         global $page;
         $query = $_POST['query'];
         $reason = @$_POST['reason'];
+
         assert(strlen($query) > 1);
 
         $images = Image::find_images(0, 1000000, Tag::explode($query));
@@ -146,7 +147,7 @@ class AdminPage extends Extension
             if ($reason && class_exists("ImageBan")) {
                 send_event(new AddImageHashBanEvent($image->hash, $reason));
             }
-            send_event(new ImageDeletionEvent($image));
+            send_event(new ImageDeletionEvent($image, true));
         }
 
         $page->set_mode(PageMode::REDIRECT);

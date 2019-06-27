@@ -55,16 +55,18 @@ class AdminPageTheme extends Themelet
         $html .= "<input type='submit' value='Set Tag Case'>";
         $html .= "</form>\n";
         $page->add_block(new Block("Set Tag Case", $html));
+
     }
 
     public function dbq_html($terms)
     {
-        $h_terms = html_escape($terms);
-        $h_reason = "";
+        if(ext_is_live("Trash")) {
+            $warning = "This delete method will bypass the trash<br/>";
+        }
         if (class_exists("ImageBan")) {
             $h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
         }
-        $html = make_form(make_link("admin/delete_by_query"), "POST") . "
+        $html = $warning.make_form(make_link("admin/delete_by_query"), "POST") . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
 				$h_reason
@@ -73,4 +75,6 @@ class AdminPageTheme extends Themelet
 		";
         return $html;
     }
+
+
 }
