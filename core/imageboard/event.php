@@ -42,15 +42,19 @@ class ImageDeletionEvent extends Event
     /** @var Image */
     public $image;
 
+    /** @var bool */
+    public $force = false;
+
     /**
      * Deletes an image.
      *
      * Used by things like tags and comments handlers to
      * clean out related rows in their tables.
      */
-    public function __construct(Image $image)
+    public function __construct(Image $image, bool $force = false)
     {
         $this->image = $image;
+        $this->force = $force;
     }
 }
 

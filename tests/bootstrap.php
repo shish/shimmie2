@@ -167,7 +167,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         $img = Image::by_id($image_id);
         if ($img) {
-            $ide = new ImageDeletionEvent($img);
+            $ide = new ImageDeletionEvent($img, true);
             send_event($ide);
         }
     }

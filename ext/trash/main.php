@@ -67,7 +67,7 @@ class Trash extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
-        if($event->image->trash===false) {
+        if($event->force===false && $event->image->trash===false) {
             self::set_trash($event->image->id, true);
             $event->stop_processing = true;
         }
