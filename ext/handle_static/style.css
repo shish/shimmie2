@@ -7,7 +7,8 @@ TD>INPUT[type="text"],
 TD>INPUT[type="password"],
 TD>INPUT[type="email"],
 TD>SELECT,
-TD>TEXTAREA {width: 100%;}
+TD>TEXTAREA,
+TD>BUTTON {width: 100%;}
 
 TABLE.form {width: 300px;}
 TABLE.form TD, TABLE.form TH {vertical-align: middle;}

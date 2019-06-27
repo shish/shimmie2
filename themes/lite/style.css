@@ -140,7 +140,7 @@ TABLE.zebra TR TD {border-bottom: 1px solid #C3D2E0;}
 TABLE.zebra TR:nth-child(odd) {background: #CEDFF0;}
 TABLE.zebra TR:nth-child(even) {background: #F0F7FF;}
 
-INPUT, TEXTAREA {
+INPUT, TEXTAREA, button {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
@@ -149,7 +149,7 @@ INPUT, TEXTAREA {
 	padding:2px;
 }
 
-INPUT:hover, TEXTAREA:hover {
+INPUT:hover, button:hover, TEXTAREA:hover {
 	background-color:#FFFFFF;
 	text-decoration:none;
 }
@@ -196,7 +196,7 @@ NAV TABLE {
 NAV TD {
 	vertical-align: middle;
 }
-NAV INPUT {
+NAV INPUT, nav button {
 	width: 95%;
 	padding: 0px;
 }
