@@ -1,4 +1,16 @@
 <?php
+abstract class SCORE {
+    const AIPK      = "SCORE_AIPK";
+    const INET      = "SCORE_INET";
+    const BOOL_Y    = "SCORE_BOOL_Y";
+    const BOOL_N    = "SCORE_BOOL_N";
+    const BOOL      = "SCORE_BOOL";
+    const DATETIME  = "SCORE_DATETIME";
+    const NOW       = "SCORE_NOW";
+    const STRNORM   = "SCORE_STRNORM";
+    const ILIKE     = "SCORE_ILIKE";
+}
+
 class DBEngine
 {
     /** @var null|string */
@@ -37,15 +49,15 @@ class MySQL extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY auto_increment", $data);
-        $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
-        $data = str_replace("SCORE_BOOL", "ENUM('Y', 'N')", $data);
-        $data = str_replace("SCORE_DATETIME", "DATETIME", $data);
-        $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-        $data = str_replace("SCORE_STRNORM", "", $data);
-        $data = str_replace("SCORE_ILIKE", "LIKE", $data);
+        $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY auto_increment", $data);
+        $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "ENUM('Y', 'N')", $data);
+        $data = str_replace(SCORE::DATETIME, "DATETIME", $data);
+        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
+        $data = str_replace(SCORE::STRNORM, "", $data);
+        $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;
     }
 
@@ -79,15 +91,15 @@ class PostgreSQL extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "SERIAL PRIMARY KEY", $data);
-        $data = str_replace("SCORE_INET", "INET", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
-        $data = str_replace("SCORE_BOOL", "BOOL", $data);
-        $data = str_replace("SCORE_DATETIME", "TIMESTAMP", $data);
-        $data = str_replace("SCORE_NOW", "current_timestamp", $data);
-        $data = str_replace("SCORE_STRNORM", "lower", $data);
-        $data = str_replace("SCORE_ILIKE", "ILIKE", $data);
+        $data = str_replace(SCORE::AIPK, "SERIAL PRIMARY KEY", $data);
+        $data = str_replace(SCORE::INET, "INET", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "BOOL", $data);
+        $data = str_replace(SCORE::DATETIME, "TIMESTAMP", $data);
+        $data = str_replace(SCORE::NOW, "current_timestamp", $data);
+        $data = str_replace(SCORE::STRNORM, "lower", $data);
+        $data = str_replace(SCORE::ILIKE, "ILIKE", $data);
         return $data;
     }
 
@@ -171,14 +183,14 @@ class SQLite extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace("SCORE_AIPK", "INTEGER PRIMARY KEY", $data);
-        $data = str_replace("SCORE_INET", "VARCHAR(45)", $data);
-        $data = str_replace("SCORE_BOOL_Y", "'$this->BOOL_Y'", $data);
-        $data = str_replace("SCORE_BOOL_N", "'$this->BOOL_N'", $data);
-        $data = str_replace("SCORE_BOOL", "CHAR(1)", $data);
-        $data = str_replace("SCORE_NOW", "\"1970-01-01\"", $data);
-        $data = str_replace("SCORE_STRNORM", "lower", $data);
-        $data = str_replace("SCORE_ILIKE", "LIKE", $data);
+        $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY", $data);
+        $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL, "CHAR(1)", $data);
+        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
+        $data = str_replace(SCORE::STRNORM, "lower", $data);
+        $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;
     }
 
