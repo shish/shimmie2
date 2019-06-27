@@ -428,7 +428,7 @@ class Media extends Extension
     {
         $matches = [];
 
-        if (preg_match(self::SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
+        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
             // Nothing to save, just helping filter out reserved tags
         }
 
