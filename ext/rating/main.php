@@ -139,7 +139,7 @@ class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event)
     {
-        global $user, $config, $user_config, $_shm_user_classes, $_shm_ratings;
+        global $user, $config, $_shm_user_classes, $_shm_ratings;
 
         if ($config->get_int(RatingsConfig::VERSION) < 4) {
             $this->install();
@@ -151,12 +151,11 @@ class Ratings extends Extension
             }
             $config->set_default_array("ext_rating_" . $key . "_privs", array_keys($_shm_ratings));
         }
-
-
-        $user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($user));
-
     }
 
+    public function onInitUserConfig(InitUserConfigEvent $event) {
+        $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
+    }
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
