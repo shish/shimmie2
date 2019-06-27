@@ -280,13 +280,17 @@ class Media extends Extension
 //                $sb->add_label("<b style='color:red'>ImageMagick not detected</b>");
 //            }
 //        } else {
-        $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert command: ");
+        $sb->start_table();
+        $sb->add_table_header("Commands");
+
+        $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert", true);
 //        }
 
-        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "<br/>ffmpeg command: ");
-        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "<br/>ffprobe command: ");
+        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "<br/>ffmpeg", true);
+        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "<br/>ffprobe", true);
 
-        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "<br />Max memory use: ");
+        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "<br />Mem limit: ", true);
+        $sb->end_table();
 
         $event->panel->add_block($sb);
 

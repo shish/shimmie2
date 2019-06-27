@@ -98,7 +98,7 @@ class TranscodeImage extends Extension
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE,  Media::IMAGE__MEDIA_ENGINES, "Engine", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE,  Media::IMAGE_MEDIA_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
             if (in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
