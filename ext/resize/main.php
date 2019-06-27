@@ -11,6 +11,16 @@
  * Documentation:
  *  This extension allows admins to resize images.
  */
+
+abstract class ResizeConfig
+{
+    const ENABLED = 'resize_enabled';
+    const UPLOAD = 'resize_upload';
+    const ENGINE = 'resize_engine';
+    const DEFAULT_WIDTH = 'resize_default_width';
+    const DEFAULT_HEIGHT = 'resize_default_height';
+}
+
 /**
  *	This class handles image resize requests.
  */
@@ -49,15 +59,20 @@ class ResizeImage extends Extension
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Image Resize");
-        $sb->add_bool_option("resize_enabled", "Allow resizing images: ");
-        $sb->add_bool_option("resize_upload", "<br>Resize on upload: ");
-        $sb->add_label("<br>Preset/Default Width: ");
-        $sb->add_int_option("resize_default_width");
-        $sb->add_label(" px");
-        $sb->add_label("<br>Preset/Default Height: ");
-        $sb->add_int_option("resize_default_height");
-        $sb->add_label(" px");
-        $sb->add_label("<br>(enter 0 for no default)");
+        $sb->start_table();
+        $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images: ", true);
+        $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload: ", true);
+        $sb->end_table();
+        $sb->start_table();
+        $sb->add_table_header("Preset/Default Dimensions");
+        $sb->add_label("<tr><th>Width</th><td>");
+        $sb->add_int_option(ResizeConfig::DEFAULT_WIDTH);
+        $sb->add_label("</td><td>px</td></tr>");
+        $sb->add_label("<tr><th>Height</th><td>");
+        $sb->add_int_option(ResizeConfig::DEFAULT_HEIGHT);
+        $sb->add_label("</td><td>px</td></tr>");
+        $sb->add_label("<tr><td></td><td>(enter 0 for no default)</td></tr>");
+        $sb->end_table();
         $event->panel->add_block($sb);
     }
     

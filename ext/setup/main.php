@@ -61,6 +61,8 @@ class SetupBlock extends Block
     /** @var string  */
     public $body;
 
+
+
     public function __construct(string $title)
     {
         $this->header = $title;
@@ -74,38 +76,123 @@ class SetupBlock extends Block
         $this->body .= $text;
     }
 
-    public function add_text_option(string $name, string $label=null)
+    public function start_table()
     {
+        $this->body .= "<table class='form'>";
+    }
+    public function end_table()
+    {
+        $this->body .= "</table>";
+    }
+    public function start_table_row()
+    {
+        $this->body .= "</tr>";
+    }
+    public function end_table_row()
+    {
+        $this->body .= "</tr>";
+    }
+    public function start_table_head()
+    {
+        $this->body .= "<thead>";
+    }
+    public function end_table_head()
+    {
+        $this->body .= "</thead>";
+    }
+    public function add_table_header($content, int $colspan = 2)
+    {
+        $this->start_table_head();
+        $this->start_table_row();
+        $this->add_table_header_cell($content, $colspan);
+        $this->end_table_row();
+        $this->end_table_head();
+    }
+
+    public function start_table_cell(int $colspan = 1)
+    {
+        $this->body .= "<td colspan='$colspan'>";
+    }
+    public function end_table_cell()
+    {
+        $this->body .= "</td>";
+    }
+    public function add_table_cell($content, int $colspan = 1)
+    {
+        $this->start_table_cell($colspan);
+        $this->body .= $content;
+        $this->end_table_cell();
+    }
+    public function start_table_header_cell(int $colspan = 1)
+    {
+        $this->body .= "<th colspan='$colspan'>";
+    }
+    public function end_table_header_cell()
+    {
+        $this->body .= "</th>";
+    }
+    public function add_table_header_cell($content, int $colspan = 1)
+    {
+        $this->start_table_header_cell($colspan);
+        $this->body .= $content;
+        $this->end_table_header_cell();
+    }
+
+
+
+    private function format_option(string $name, $html, ?string $label, bool $table_row) {
         global $config;
-        $val = html_escape($config->get_string($name));
+
+        if($table_row) $this->start_table_row();
+        if($table_row) $this->start_table_header_cell();
         if (!is_null($label)) {
             $this->body .= "<label for='{$name}'>{$label}</label>";
         }
-        $this->body .= "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
-        $this->body .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
+        if($table_row) $this->end_table_header_cell();
+
+        if($table_row) $this->start_table_cell();
+        $this->body .= $html;
+        if($table_row) $this->end_table_cell();
+        if($table_row) $this->end_table_row();
     }
 
-    public function add_longtext_option(string $name, string $label=null)
+    public function add_text_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = html_escape($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $rows = max(3, min(10, count(explode("\n", $val))));
-        $this->body .= "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
+
+        $html = "<input type='text' id='{$name}' name='_config_{$name}' value='{$val}'>\n";
+        $html .= "<input type='hidden' name='_type_{$name}' value='string'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_bool_option(string $name, string $label=null)
+    public function add_longtext_option(string $name, string $label=null, bool $table_row = false)
+    {
+        global $config;
+        $val = html_escape($config->get_string($name));
+
+        $rows = max(3, min(10, count(explode("\n", $val))));
+        $html = "<textarea rows='$rows' id='$name' name='_config_$name'>$val</textarea>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
+    }
+
+    public function add_bool_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $checked = $config->get_bool($name) ? " checked" : "";
+
+        $html = "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
         if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
+            $html .= "<label for='{$name}'>{$label}</label>";
+            $label = null;
         }
-        $this->body .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='bool'>\n";
+
+        $html .= "<input type='hidden' name='_type_$name' value='bool'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
     }
 
     //	public function add_hidden_option($name, $label=null) {
@@ -114,36 +201,33 @@ class SetupBlock extends Block
     //		$this->body .= "<input type='hidden' id='$name' name='$name' value='$val'>";
     //	}
 
-    public function add_int_option(string $name, string $label=null)
+    public function add_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = html_escape($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
+
     }
 
-    public function add_shorthand_int_option(string $name, string $label=null)
+    public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
         $val = to_shorthand_int($config->get_string($name));
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
-        $this->body .= "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
-        $this->body .= "<input type='hidden' name='_type_$name' value='int'>\n";
+        $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
+
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_choice_option(string $name, array $options, string $label=null)
+    public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
         $current = $config->get_string($name);
 
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
         $html = "<select id='$name' name='_config_$name'>";
         foreach ($options as $optname => $optval) {
             if ($optval == $current) {
@@ -154,19 +238,16 @@ class SetupBlock extends Block
             $html .= "<option value='$optval'$selected>$optname</option>\n";
         }
         $html .= "</select>";
-        $this->body .= "<input type='hidden' name='_type_$name' value='string'>\n";
+        $html .= "<input type='hidden' name='_type_$name' value='string'>\n";
 
-        $this->body .= $html;
+        $this->format_option($name, $html, $label, $table_row);
     }
 
-    public function add_multichoice_option(string $name, array $options, string $label=null)
+    public function add_multichoice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
         $current = $config->get_array($name);
 
-        if (!is_null($label)) {
-            $this->body .= "<label for='$name'>$label</label>";
-        }
         $html = "<select id='$name' name='_config_{$name}[]' multiple size='5'>";
         foreach ($options as $optname => $optval) {
             if (in_array($optval, $current)) {
@@ -177,10 +258,10 @@ class SetupBlock extends Block
             $html .= "<option value='$optval'$selected>$optname</option>\n";
         }
         $html .= "</select>";
-        $this->body .= "<input type='hidden' name='_type_$name' value='array'>\n";
-        $this->body .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
+        $html .= "<input type='hidden' name='_type_$name' value='array'>\n";
+        $html .= "<!--<br><br><br><br>-->\n"; // setup page auto-layout counts <br> tags
 
-        $this->body .= $html;
+        $this->format_option($name, $html, $label, $table_row);
     }
 }
 // }}}

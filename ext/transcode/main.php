@@ -133,16 +133,18 @@ class TranscodeImage extends Extension
 
 
         $sb = new SetupBlock("Image Transcode");
-        $sb->add_bool_option("transcode_enabled", "Allow transcoding images: ");
-        $sb->add_bool_option("transcode_upload", "<br>Transcode on upload: ");
-        $sb->add_choice_option('transcode_engine', self::CONVERSION_ENGINES, "<br />Transcode engine: ");
+        $sb->start_table();
+        $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
+        $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE,  self::CONVERSION_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
             if (in_array($format, self::ENGINE_INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
-                $sb->add_choice_option('transcode_upload_'.$format, $outputs, "<br />$display to: ");
+                $sb->add_choice_option(TranscodeConfig::UPLOAD_PREFIX.$format, $outputs, "$display", true);
             }
         }
-        $sb->add_int_option("transcode_quality", "<br/>Lossy format quality: ");
+        $sb->add_int_option(TranscodeConfig::QUALITY, "Lossy format quality: ");
+        $sb->end_table();
         $event->panel->add_block($sb);
     }
 
