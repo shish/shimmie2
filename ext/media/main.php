@@ -781,7 +781,9 @@ class Media extends Extension
 
         $args = " -flatten ";
         if ($minimize) {
-            $args = " -strip -thumbnail";
+            $args .= " -strip -thumbnail";
+        } else {
+            $args .= " -resize";
         }
 
         $resize_args = "";
@@ -803,7 +805,7 @@ class Media extends Extension
 
         $output_ext = self::determine_ext($output_type);
 
-        $format = '"%s"  %s -resize %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
+        $format = '"%s"  %s %ux%u%s -quality %u -background %s %s"%s[0]"  %s:"%s" 2>&1';
         $cmd = sprintf($format, $convert, $args, $new_width, $new_height, $resize_args, $output_quality, $bg, $input_type, $input_path, $output_ext, $output_filename);
         $cmd = str_replace("\"convert\"", "convert", $cmd); // quotes are only needed if the path to convert contains a space; some other times, quotes break things, see github bug #27
         exec($cmd, $output, $ret);
