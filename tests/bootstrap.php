@@ -16,6 +16,9 @@ if (is_null(User::by_name("demo"))) {
     $userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
 }
 
+global $user;
+send_event(new InitUserConfigEvent($user));
+
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
     private $images = [];
@@ -132,6 +135,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         global $user;
         $user = User::by_name('demo');
+        send_event(new InitUserConfigEvent($user));
         $this->assertNotNull($user);
     }
 
@@ -139,6 +143,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         global $user;
         $user = User::by_name('test');
+        send_event(new InitUserConfigEvent($user));
         $this->assertNotNull($user);
     }
 
