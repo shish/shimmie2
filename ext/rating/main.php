@@ -532,7 +532,7 @@ class Ratings extends Extension
         global $database, $config;
 
         if ($config->get_int(RatingsConfig::VERSION) < 1) {
-            $database->Execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT 'u'");
+            $database->Execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
             $database->Execute("CREATE INDEX images__rating ON images(rating)");
             $config->set_int(RatingsConfig::VERSION, 3);
         }
@@ -565,9 +565,19 @@ class Ratings extends Extension
             $config->set_array("ext_rating_admin_privs", str_split($value));
 
 
+            switch ($database->get_driver_name()) {
+                case DatabaseDriver::MYSQL:
+                    $database->Execute("ALTER TABLE images CHANGE rating rating CHAR(1) NOT NULL DEFAULT '?'");
+                    break;
+                case DatabaseDriver::PGSQL:
+                    $database->Execute("ALTER TABLE images ALTER COLUMN rating SET DEFAULT '?'");
+                    break;
+            }
+
             if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
                 $database->execute("SET statement_timeout TO 300000;");
             }
+
             $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
 
             $config->set_int(RatingsConfig::VERSION, 4);
