@@ -156,7 +156,7 @@ class Ratings extends Extension
     public function onInitUserConfig(InitUserConfigEvent $event) {
         $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
     }
-
+    
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
         global $user, $user_config;
@@ -558,11 +558,17 @@ class Ratings extends Extension
 
         if ($config->get_int(RatingsConfig::VERSION) < 4) {
             $value = $config->get_string("ext_rating_anon_privs");
-            $config->set_array("ext_rating_anonymous_privs", str_split($value));
+            if(!empty($value)) {
+                $config->set_array("ext_rating_anonymous_privs", str_split($value));
+            }
             $value = $config->get_string("ext_rating_user_privs");
-            $config->set_array("ext_rating_user_privs", str_split($value));
+            if(!empty($value)) {
+                $config->set_array("ext_rating_user_privs", str_split($value));
+            }
             $value = $config->get_string("ext_rating_admin_privs");
-            $config->set_array("ext_rating_admin_privs", str_split($value));
+            if(!empty($value)) {
+                $config->set_array("ext_rating_admin_privs", str_split($value));
+            }
 
 
             switch ($database->get_driver_name()) {
