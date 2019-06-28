@@ -20,12 +20,12 @@
  */
 
  /**
- * @global Rating[] $_shm_ratings
+ * @global ImageRating[] $_shm_ratings
  */
 global $_shm_ratings;
 $_shm_ratings = [];
 
-class Rating {
+class ImageRating {
     /**
      * @var string
      */
@@ -71,7 +71,7 @@ function clear_ratings() {
     }
 }
 
-function add_rating(Rating $rating) {
+function add_rating(ImageRating $rating) {
     global $_shm_ratings;
 
     if($rating->code=="?"&&array_key_exists("?",$_shm_ratings)) {
@@ -80,11 +80,11 @@ function add_rating(Rating $rating) {
     $_shm_ratings[$rating->code] = $rating;
 }
 
-add_rating(new Rating("?", "Unrated", "unrated", 99999));
+add_rating(new ImageRating("?", "Unrated", "unrated", 99999));
 
-add_rating(new Rating("s", "Safe", "safe", 0));
-add_rating(new Rating("q", "Questionable", "questionable", 500));
-add_rating(new Rating("e", "Explicit", "explicit", 1000));
+add_rating(new ImageRating("s", "Safe", "safe", 0));
+add_rating(new ImageRating("q", "Questionable", "questionable", 500));
+add_rating(new ImageRating("e", "Explicit", "explicit", 1000));
 @include_once "data/config/ratings.conf.php";
 
 class RatingSetEvent extends Event
