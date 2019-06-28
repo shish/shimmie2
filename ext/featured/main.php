@@ -74,7 +74,7 @@ class Featured extends Extension
             }
             if (!is_null($image)) {
                 if (ext_is_live("Ratings")) {
-                    if (strpos(Ratings::get_user_class_privs($user), $image->rating) === false) {
+                    if (!in_array($image->rating, Ratings::get_user_class_privs($user))) {
                         return;
                     }
                 }

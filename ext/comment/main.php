@@ -414,7 +414,7 @@ class CommentList extends Extension
             $image = Image::by_id($row["image_id"]);
             if (
                 ext_is_live("Ratings") && !is_null($image) &&
-                strpos($user_ratings, $image->rating) === false
+                !in_array($image->rating, $user_ratings)
             ) {
                 $image = null; // this is "clever", I may live to regret it
             }
