@@ -133,6 +133,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         global $user;
         $user = User::by_name('demo');
         $this->assertNotNull($user);
+        send_event(new InitUserConfigEvent($user));
     }
 
     protected function log_in_as_user()
@@ -140,6 +141,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         global $user;
         $user = User::by_name('test');
         $this->assertNotNull($user);
+        send_event(new InitUserConfigEvent($user));
     }
 
     protected function log_out()
@@ -147,6 +149,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         global $user, $config;
         $user = User::by_id($config->get_int("anon_id", 0));
         $this->assertNotNull($user);
+        send_event(new InitUserConfigEvent($user));
     }
 
     // post things
