@@ -92,7 +92,7 @@ try {
 
     // start the page generation waterfall
     $user = _get_user();
-    send_event(new InitUserConfigEvent($user));
+    send_event(new UserLoginEvent($user));
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
         send_event(new CommandEvent($argv));
     } else {

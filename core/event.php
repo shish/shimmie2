@@ -191,6 +191,8 @@ class CommandEvent extends Event
                     $user = User::by_name($args[++$i]);
                     if (is_null($user)) {
                         die("Unknown user");
+                    } else {
+                        send_event(new UserLoginEvent($user));
                     }
                     break;
                 case '-q':
