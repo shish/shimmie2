@@ -27,6 +27,12 @@ class UserPage extends Extension
         $config->set_default_bool("login_tac_bbcode", true);
     }
 
+    public function onUserLogin(UserLoginEvent $event)
+    {
+        global $user;
+        $user = $event->user;
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $database, $page, $user;
@@ -347,7 +353,7 @@ class UserPage extends Extension
 
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
-            $user = $duser;
+            send_event(new UserLoginEvent($duser));
             $this->set_login_cookie($duser->name, $pass);
             $page->set_mode(PageMode::REDIRECT);
 
@@ -460,6 +466,8 @@ class UserPage extends Extension
         $uid = $database->get_last_insert_id('users_id_seq');
         $user = User::by_name($event->username);
         $user->set_password($event->password);
+        send_event(new UserLoginEvent($user));
+
         log_info("user", "Created User #$uid ({$event->username})");
     }
 

@@ -6,6 +6,10 @@
  * Visibility: admin
  */
 
+/** @var $user_config Config */
+global $user_config;
+
+
 // The user object doesn't exist until after database setup operations and the first wave of InitExtEvents,
 // so we can't reliably access this data until then. This event is triggered by the system after all of that is done.
 class InitUserConfigEvent extends Event
@@ -13,9 +17,10 @@ class InitUserConfigEvent extends Event
     public $user;
     public $user_config;
 
-    public function __construct(User $user)
+    public function __construct(User $user, Config $user_config)
     {
         $this->user = $user;
+        $this->user_config = $user_config;
     }
 }
 
@@ -32,11 +37,12 @@ class UserConfig extends Extension
         }
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event) {
+    public function onUserLogin(UserLoginEvent $event)
+    {
         global $database, $user_config;
 
         $user_config = new DatabaseConfig($database, "user_config", "user_id", $event->user->id);
-        $event->user_config  = $user_config;
+        send_event(new InitUserConfigEvent($event->user, $user_config));
     }
 
     private function install(): void

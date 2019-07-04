@@ -58,6 +58,7 @@ class DanbooruApi extends Extension
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
             }
+            send_event(new UserLoginEvent($user));
         }
     }
 
