@@ -348,7 +348,8 @@ class ImageIO extends Extension
         }
 
         $duplicate = Image::by_hash($image->hash);
-        if(!is_null($duplicate)) {
+
+        if(!is_null($duplicate) && $duplicate->id!=$id) {
             $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
                 "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
             throw new ImageReplaceException($error);
