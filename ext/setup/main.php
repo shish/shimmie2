@@ -184,15 +184,19 @@ class SetupBlock extends Block
         global $config;
         $checked = $config->get_bool($name) ? " checked" : "";
 
-        $html = "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
-        if (!is_null($label)) {
+        $html = "";
+        if(!$table_row&&!is_null($label)) {
             $html .= "<label for='{$name}'>{$label}</label>";
-            $label = null;
+        }
+
+        $html .= "<input type='checkbox' id='$name' name='_config_$name'$checked>\n";
+        if ($table_row && !is_null($label)) {
+            $html .= "<label for='{$name}'>{$label}</label>";
         }
 
         $html .= "<input type='hidden' name='_type_$name' value='bool'>\n";
 
-        $this->format_option($name, $html, $label, $table_row);
+        $this->format_option($name, $html, null, $table_row);
     }
 
     //	public function add_hidden_option($name, $label=null) {
