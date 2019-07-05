@@ -246,14 +246,10 @@ class TranscodeImage extends Extension
                 if ($user->is_admin()) {
                     $format = $_POST['transcode_format'];
                     $total = 0;
-                    foreach ($event->items as $id) {
+                    foreach ($event->items as $image) {
                         try {
                             $database->beginTransaction();
-                            $image = Image::by_id($id);
-                            if ($image==null) {
-                                continue;
-                            }
-                            
+
                             $this->transcode_and_replace_image($image, $format);
                             // If a subsequent transcode fails, the database need to have everything about the previous transcodes recorded already,
                             // otherwise the image entries will be stuck pointing to missing image files

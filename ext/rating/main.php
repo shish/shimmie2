@@ -186,12 +186,7 @@ class Ratings extends Extension
                 if ($user->can("bulk_edit_image_rating")) {
                     $rating = $_POST['bulk_rating'];
                     $total = 0;
-                    foreach ($event->items as $id) {
-                        $image = Image::by_id($id);
-                        if ($image==null) {
-                            continue;
-                        }
-
+                    foreach ($event->items as $image) {
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }

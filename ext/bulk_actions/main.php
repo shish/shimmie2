@@ -51,7 +51,7 @@ class BulkActionEvent extends Event
     /** @var PageRequestEvent  */
     public $page_request;
 
-    public function __construct(String $action, PageRequestEvent $pageRequestEvent, array $items)
+    public function __construct(String $action, PageRequestEvent $pageRequestEvent, Generator  $items)
     {
         $this->action = $action;
         $this->page_request = $pageRequestEvent;
@@ -154,36 +154,20 @@ class BulkActions extends Extension
 
             $action = $_POST['bulk_action'];
 
-            $items = [];
+            $items = null;
             if (isset($_POST['bulk_selected_ids']) && $_POST['bulk_selected_ids'] != "") {
                 $data = json_decode($_POST['bulk_selected_ids']);
-                if (is_array($data)) {
-                    foreach ($data as $id) {
-                        if (is_numeric($id)) {
-                            array_push($items, int_escape($id));
-                        }
-                    }
+                if (is_array($data)&&!empty($data)) {
+                    $items = $this->yield_items($data);
                 }
             } elseif (isset($_POST['bulk_query']) && $_POST['bulk_query'] != "") {
                 $query = $_POST['bulk_query'];
                 if ($query != null && $query != "") {
-                    $n = 0;
-                    $tags = Tag::explode($query);
-                    while (true) {
-                        $results = Image::find_image_ids($n, 100, $tags);
-                        if (count($results) == 0) {
-                            break;
-                        }
-
-                        reset($results); // rewind to first element in array.
-                        $items = array_merge($items, $results);
-                        $n += count($results);
-                    }
+                    $items = $this->yield_search_results($query);
                 }
             }
 
-            if (sizeof($items) > 0) {
-                reset($items); // rewind to first element in array.
+            if (is_iterable($items)) {
                 $newEvent = new BulkActionEvent($action, $event, $items);
                 send_event($newEvent);
             }
@@ -197,21 +181,34 @@ class BulkActions extends Extension
         }
     }
 
+    private function yield_items(array $data): Generator
+    {
+        foreach ($data as $id) {
+            if (is_numeric($id)) {
+                $image = Image::by_id($id);
+                if($image!=null) {
+                    yield $image;
+                }
+            }
+        }
+    }
+
+    private function yield_search_results(string $query): Generator
+    {
+        $tags = Tag::explode($query);
+        return Image::find_images_iterable(0, null, $tags);
+    }
+
     private function sort_blocks($a, $b)
     {
         return $a["position"] - $b["position"];
     }
     
-    private function delete_items(array $items): int
+    private function delete_items(iterable $items): int
     {
         $total = 0;
-        foreach ($items as $id) {
+        foreach ($items as $image) {
             try {
-                $image = Image::by_id($id);
-                if ($image==null) {
-                    continue;
-                }
-
                 if (class_exists("ImageBan") && isset($_POST['bulk_ban_reason'])) {
                     $reason = $_POST['bulk_ban_reason'];
                     if ($reason) {
@@ -221,13 +218,13 @@ class BulkActions extends Extension
                 send_event(new ImageDeletionEvent($image));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while removing $id: " . $e->getMessage(), "error");
+                flash_message("Error while removing {$image->id}: " . $e->getMessage(), "error");
             }
         }
         return $total;
     }
 
-    private function tag_items(array $items, string $tags, bool $replace): int
+    private function tag_items(iterable $items, string $tags, bool $replace): int
     {
         $tags = Tag::explode($tags);
 
@@ -243,28 +240,21 @@ class BulkActions extends Extension
 
         $total = 0;
         if ($replace) {
-            foreach ($items as $id) {
-                $image = Image::by_id($id);
-                if ($image==null) {
-                    continue;
-                }
-
+            foreach ($items as $image) {
                 send_event(new TagSetEvent($image, $tags));
                 $total++;
             }
         } else {
-            foreach ($items as $id) {
-                $image = Image::by_id($id);
-                if ($image==null) {
-                    continue;
-                }
+            foreach ($items as $image) {
+                $img_tags = array_map("strtolower",$image->get_tag_array());
 
-                $img_tags = [];
                 if (!empty($neg_tag_array)) {
-                    $img_tags = array_merge($pos_tag_array, $image->get_tag_array());
+                    $neg_tag_array = array_map("strtolower",$neg_tag_array);
+
+                    $img_tags = array_merge($pos_tag_array, $img_tags);
                     $img_tags = array_diff($img_tags, $neg_tag_array);
                 } else {
-                    $img_tags = array_merge($tags, $image->get_tag_array());
+                    $img_tags = array_merge($tags, $img_tags);
                 }
                 send_event(new TagSetEvent($image, $img_tags));
                 $total++;
@@ -274,23 +264,17 @@ class BulkActions extends Extension
         return $total;
     }
 
-    private function set_source(array $items, String $source): int
+    private function set_source(iterable $items, String $source): int
     {
         $total = 0;
-        foreach ($items as $id) {
+        foreach ($items as $image) {
             try {
-                $image = Image::by_id($id);
-                if ($image==null) {
-                    continue;
-                }
-
                 send_event(new SourceSetEvent($image, $source));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while setting source for $id: " . $e->getMessage(), "error");
+                flash_message("Error while setting source for {$image->id}: " . $e->getMessage(), "error");
             }
         }
-
         return $total;
     }
 }

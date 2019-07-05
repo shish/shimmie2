@@ -136,8 +136,8 @@ class Trash extends Extension
             case "bulk_trash_restore":
                 if ($user->can("view_trash")) {
                     $total = 0;
-                    foreach ($event->items as $id) {
-                        self::set_trash($id, false);
+                    foreach ($event->items as $image) {
+                        self::set_trash($image->id, false);
                         $total++;
                     }
                     flash_message("Restored $total items from trash");

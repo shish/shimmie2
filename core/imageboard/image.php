@@ -10,7 +10,6 @@
  */
 class Image
 {
-    public const DATA_DIR = "data";
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
@@ -104,6 +103,43 @@ class Image
         }
     }
 
+
+    private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags=[]): iterable
+    {
+        global $database, $user, $config;
+
+        if ($start < 0) {
+            $start = 0;
+        }
+        if ($limit!=null && $limit < 1) {
+            $limit = 1;
+        }
+
+        if (SPEED_HAX) {
+            if (!$user->can("big_search") and count($tags) > 3) {
+                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
+            }
+        }
+
+        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+
+        $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
+        if (!$result) {
+            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
+            if($limit!=null) {
+                $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
+            }
+            $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
+            #var_dump($querylet->sql); var_dump($querylet->variables);
+            $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
+        }
+
+        Image::$order_sql = null;
+
+        return $result;
+    }
+
     /**
      * Search for an array of images
      *
@@ -112,82 +148,24 @@ class Image
      */
     public static function find_images(int $start, int $limit, array $tags=[]): array
     {
-        global $database, $user, $config;
+        $result = self::find_images_internal($start, $limit, $tags);
 
         $images = [];
-
-        if ($start < 0) {
-            $start = 0;
-        }
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        if (SPEED_HAX) {
-            if (!$user->can("big_search") and count($tags) > 3) {
-                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
-            }
-        }
-
-        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-
-        $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
-        if (!$result) {
-            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
-            #var_dump($querylet->sql); var_dump($querylet->variables);
-            $result = $database->execute($querylet->sql, $querylet->variables);
-        }
-
-        while ($row = $result->fetch()) {
+        foreach ($result as $row) {
             $images[] = new Image($row);
         }
-        Image::$order_sql = null;
         return $images;
     }
 
     /**
-     * Search for an array of image IDs
-     *
-     * #param string[] $tags
-     * #return int[]
+     * Search for an array of images, returning a iterable object of Image
      */
-    public static function find_image_ids(int $start, int $limit, array $tags=[]): array
+    public static function find_images_iterable(int $start = 0, ?int $limit = null, array $tags=[]): Generator
     {
-        global $database, $user, $config;
-
-        $images = [];
-
-        if ($start < 0) {
-            $start = 0;
+        $result = self::find_images_internal($start, $limit, $tags);
+        foreach ($result as $row) {
+            yield new Image($row);
         }
-        if ($limit < 1) {
-            $limit = 1;
-        }
-
-        if (SPEED_HAX) {
-            if (!$user->can("big_search") and count($tags) > 3) {
-                throw new SCoreException("Anonymous users may only search for up to 3 tags at a time");
-            }
-        }
-
-        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-
-        $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
-        if (!$result) {
-            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            $querylet->append(new Querylet(" LIMIT :limit OFFSET :offset", ["limit"=>$limit, "offset"=>$start]));
-            #var_dump($querylet->sql); var_dump($querylet->variables);
-            $result = $database->execute($querylet->sql, $querylet->variables);
-        }
-
-        while ($row = $result->fetch()) {
-            $images[] = $row["id"];
-        }
-        Image::$order_sql = null;
-        return $images;
     }
 
     /*
@@ -220,7 +198,7 @@ class Image
         return null;
     }
 
-    public static function get_accelerated_result(array $tag_conditions, array $img_conditions, int $offset, int $limit): ?PDOStatement
+    public static function get_accelerated_result(array $tag_conditions, array $img_conditions, int $offset, ?int $limit): ?PDOStatement
     {
         if (!SEARCH_ACCEL || !empty($img_conditions)) {
             return null;

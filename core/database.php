@@ -250,6 +250,17 @@ class Database
     }
 
     /**
+     * Execute an SQL query and return a iterable object for use with generators.
+     */
+    public function get_all_iterable(string $query, array $args=[]): PDOStatement
+    {
+        $_start = microtime(true);
+        $data = $this->execute($query, $args);
+        $this->count_time("get_all_iterable", $_start);
+        return $data;
+    }
+
+    /**
      * Execute an SQL query and return a single row.
      */
     public function get_row(string $query, array $args=[]): ?array
@@ -276,7 +287,20 @@ class Database
     }
 
     /**
-     * Execute an SQL query and return the the first row => the second row.
+     * Execute an SQL query and return the first column of each row as a single iterable object.
+     */
+    public function get_col_iterable(string $query, array $args=[]): Generator
+    {
+        $_start = microtime(true);
+        $stmt = $this->execute($query, $args);
+        $this->count_time("get_col_iterable", $_start);
+        foreach ($stmt as $row) {
+            yield $row[0];
+        }
+    }
+
+    /**
+     * Execute an SQL query and return the the first column => the second column.
      */
     public function get_pairs(string $query, array $args=[]): array
     {

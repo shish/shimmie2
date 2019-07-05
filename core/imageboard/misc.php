@@ -501,3 +501,8 @@ function is_animated_gif(String $image_filename)
     }
     return ($is_anim_gif == 0);
 }
+
+function image_to_id(Image $image): int
+{
+    return $image->id;
+}

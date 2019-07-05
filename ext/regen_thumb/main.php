@@ -87,12 +87,7 @@ class RegenThumb extends Extension
                     }
     
                     $total = 0;
-                    foreach ($event->items as $id) {
-                        $image = Image::by_id($id);
-                        if ($image==null) {
-                            continue;
-                        }
-
+                    foreach ($event->items as $image) {
                         if ($this->regenerate_thumbnail($image, $force)) {
                             $total++;
                         }
