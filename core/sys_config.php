@@ -33,7 +33,7 @@ _d("DEBUG", false);          // boolean  print various debugging details
 _d("DEBUG_SQL", false);      // boolean  dump SQL queries to data/sql.log
 _d("DEBUG_CACHE", false);    // boolean  dump cache queries to data/cache.log
 _d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
-_d("CONTEXT", null);         // string   file to log performance data into
+_d("EVENT_TRACE", null);     // string   file to log performance data into
 _d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
 _d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes
 _d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance

@@ -101,7 +101,7 @@ $_shm_event_count = 0;
  */
 function send_event(Event $event): void
 {
-    global $_shm_event_listeners, $_shm_event_count, $_shm_ctx;
+    global $_shm_event_listeners, $_shm_event_count, $_tracer;
     if (!isset($_shm_event_listeners[get_class($event)])) {
         return;
     }
@@ -109,31 +109,23 @@ function send_event(Event $event): void
 
     // send_event() is performance sensitive, and with the number
     // of times context gets called the time starts to add up
-    $ctx_enabled = constant('CONTEXT');
+    $tracer_enabled = constant('EVENT_TRACE');
 
-    if ($ctx_enabled) {
-        $_shm_ctx->log_start(get_class($event));
-    }
+    if ($tracer_enabled) $_tracer->begin(get_class($event));
     // SHIT: http://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];
     ksort($my_event_listeners);
 
     foreach ($my_event_listeners as $listener) {
-        if ($ctx_enabled) {
-            $_shm_ctx->log_start(get_class($listener));
-        }
+        if ($tracer_enabled) $_tracer->begin(get_class($listener));
         if (method_exists($listener, $method_name)) {
             $listener->$method_name($event);
         }
-        if ($ctx_enabled) {
-            $_shm_ctx->log_endok();
-        }
+        if ($tracer_enabled) $_tracer->end();
         if($event->stop_processing===true) {
             break;
         }
     }
     $_shm_event_count++;
-    if ($ctx_enabled) {
-        $_shm_ctx->log_endok();
-    }
+    if ($tracer_enabled) $_tracer->end();
 }

@@ -1,6 +1,4 @@
 <?php
-require_once "vendor/shish/libcontext-php/context.php";
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -460,7 +458,7 @@ date and you should plan on moving elsewhere.
 
 function _sanitise_environment(): void
 {
-    global $_shm_ctx;
+    global $_tracer;
 
     if (TIMEZONE) {
         date_default_timezone_set(TIMEZONE);
@@ -472,10 +470,7 @@ function _sanitise_environment(): void
         error_reporting(E_ALL);
     }
 
-    $_shm_ctx = new Context();
-    if (CONTEXT) {
-        $_shm_ctx->set_log(CONTEXT);
-    }
+    $_tracer = new EventTracer();
 
     if (COVERAGE) {
         _start_coverage();

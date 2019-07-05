@@ -188,11 +188,14 @@ class Cache
 
     public function get(string $key)
     {
+		global $_tracer;
+		$_tracer->begin("Cache Query", null, ["key"=>$key]);
         $val = $this->engine->get($key);
         if ((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
             $hit = $val === false ? "hit" : "miss";
             file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
         }
+		$_tracer->end();
         if ($val !== false) {
             $this->hits++;
             return $val;

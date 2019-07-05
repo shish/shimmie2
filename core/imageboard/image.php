@@ -262,17 +262,21 @@ class Image
 
     public static function query_accelerator($req)
     {
+		global $_tracer;
         $fp = @fsockopen("127.0.0.1", 21212);
         if (!$fp) {
             return null;
         }
-        fwrite($fp, json_encode($req));
+		$_tracer->begin("Query Accelerator", null, ["req"=>$req_str]);
+		$req_str = json_encode($req);
+        fwrite($fp, $req_str);
         $data = "";
         while (($buffer = fgets($fp, 4096)) !== false) {
             $data .= $buffer;
         }
+		$_tracer->end();
         if (!feof($fp)) {
-            die("Error: unexpected fgets() fail in query_accelerator($req)\n");
+            die("Error: unexpected fgets() fail in query_accelerator($req_str)\n");
         }
         fclose($fp);
         return json_decode($data);

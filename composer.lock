@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b679340e0fc96ae78f8919db742d17da",
+    "content-hash": "b1d9675735299d17a988bc9dfc8e5973",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -297,26 +297,33 @@
             "type": "library"
         },
         {
-            "name": "shish/libcontext-php",
+            "name": "shish/eventtracer-php",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/shish/libcontext-php.git",
-                "reference": "f57c377e0a5e700fb4d9406e47051a3b7478170e"
+                "url": "https://github.com/shish/eventtracer-php.git",
+                "reference": "8fc0001dffa6cc68ee56e8681a2e27579eb70dca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/libcontext-php/zipball/f57c377e0a5e700fb4d9406e47051a3b7478170e",
-                "reference": "f57c377e0a5e700fb4d9406e47051a3b7478170e",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/8fc0001dffa6cc68ee56e8681a2e27579eb70dca",
+                "reference": "8fc0001dffa6cc68ee56e8681a2e27579eb70dca",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0"
+                "ext-json": "*",
+                "ext-posix": "*",
+                "php": "^7.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "6.*"
+                "phpunit/phpunit": "^7"
             },
             "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -329,13 +336,9 @@
                     "role": "Developer"
                 }
             ],
-            "description": "A performance monitoring thing",
-            "homepage": "https://github.com/shish/libcontext-php",
-            "keywords": [
-                "performance",
-                "profiler"
-            ],
-            "time": "2017-09-21T13:25:55+00:00"
+            "description": "An API to write JSON traces as used by the Chrome Trace Viewer",
+            "homepage": "https://github.com/shish/eventtracer-php",
+            "time": "2019-07-05T14:44:25+00:00"
         }
     ],
     "packages-dev": [
@@ -1815,7 +1818,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "shish/libcontext-php": 20,
+        "shish/eventtracer-php": 20,
         "bower-asset/tablesorter": 20
     },
     "prefer-stable": false,

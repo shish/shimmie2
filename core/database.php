@@ -221,6 +221,8 @@ class Database
 
     public function execute(string $query, array $args=[]): PDOStatement
     {
+		global $_tracer;
+		$_tracer->begin("DB Query", null, ["query"=>$query]);
         try {
             if (is_null($this->db)) {
                 $this->connect_db();
@@ -246,7 +248,9 @@ class Database
             return $stmt;
         } catch (PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
-        }
+        } finally {
+			$_tracer->end();
+		}
     }
 
     /**
