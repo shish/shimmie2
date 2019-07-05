@@ -17,6 +17,7 @@ _version_check();
 _sanitise_environment();
 
 // load base files
+$_shm_ctx->log_start("Bootstrap");
 $_shm_ctx->log_start("Opening files");
 $_shm_files = array_merge(
     zglob("core/*.php"),
@@ -48,5 +49,9 @@ $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $_shm_ctx->log_endok();
 
 // hook up event handlers
+$_shm_ctx->log_start("Loading extensions");
 _load_event_listeners();
+$_shm_ctx->log_endok();
+
 send_event(new InitExtEvent());
+$_shm_ctx->log_endok();

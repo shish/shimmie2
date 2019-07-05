@@ -9,9 +9,7 @@ $_shm_event_listeners = [];
 
 function _load_event_listeners(): void
 {
-    global $_shm_event_listeners, $_shm_ctx;
-
-    $_shm_ctx->log_start("Loading extensions");
+    global $_shm_event_listeners;
 
     $cache_path = data_path("cache/shm_event_listeners.php");
     if (COMPILE_ELS && file_exists($cache_path)) {
@@ -23,8 +21,6 @@ function _load_event_listeners(): void
             _dump_event_listeners($_shm_event_listeners, $cache_path);
         }
     }
-
-    $_shm_ctx->log_endok();
 }
 
 function _set_event_listeners(): void
