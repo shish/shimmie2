@@ -77,6 +77,11 @@ function add_rating(ImageRating $rating) {
     if($rating->code=="?"&&array_key_exists("?",$_shm_ratings)) {
         throw new Exception("? is a reserved rating code that cannot be overridden");
     }
+
+    if($rating->code!="?"&&in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
+        throw new Exception("$rating->search_term is a reserved search term");
+    }
+
     $_shm_ratings[$rating->code] = $rating;
 }
 
@@ -114,6 +119,8 @@ class Ratings extends Extension
 {
     protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
+    public const UNRATED_KEYWORDS = ["unknown","unrated"];
+
     private $search_regexp;
 
 
@@ -129,7 +136,7 @@ class Ratings extends Extension
             array_push($search_terms, $rating->search_term);
         }
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
-            implode("|", $search_terms) . "|unknown))$/D";
+            implode("|", $search_terms) . "|".implode("|",self::UNRATED_KEYWORDS)."))$/D";
     }
 
     public function get_priority(): int
@@ -156,7 +163,7 @@ class Ratings extends Extension
     public function onInitUserConfig(InitUserConfigEvent $event) {
         $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
     }
-    
+
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
         global $user, $user_config;
@@ -260,7 +267,7 @@ class Ratings extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user, $_shm_ratings;
+        global $user;
 
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
@@ -271,6 +278,10 @@ class Ratings extends Extension
 
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
+
+            if(count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+                $ratings = "?";
+            }
 
             if ($ratings == '*') {
                 $ratings = Ratings::get_user_class_privs($user);
@@ -290,6 +301,10 @@ class Ratings extends Extension
 
         if (preg_match($this->search_regexp, strtolower($event->term), $matches) && $event->parse) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
+
+            if(count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+                $ratings = "?";
+            }
 
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs($user));
 
