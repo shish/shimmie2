@@ -45,4 +45,77 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(parse_shorthand_int("43.4KB"), 44441);
         $this->assertEquals(parse_shorthand_int("1231231231"), 1231231231);
     }
+
+    public function test_sanitize_path()
+    {
+
+        $this->assertEquals(
+            "one",
+            sanitize_path("one")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one\\two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one/two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one\\\\two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one//two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one\\\\\\two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            sanitize_path("one///two")
+        );
+
+        $this->assertEquals(
+            DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR,
+            sanitize_path("\\/one/\\/\\/two\\/")
+        );
+
+    }
+
+    public function test_join_path()
+    {
+        $this->assertEquals(
+            "one",
+            join_path("one")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two",
+            join_path("one","two")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
+            join_path("one","two","three")
+        );
+
+        $this->assertEquals(
+            "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
+            join_path("one/two","three")
+        );
+
+        $this->assertEquals(
+            DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three".DIRECTORY_SEPARATOR,
+            join_path("\\/////\\\\one/\///"."\\//two\/\\//\\//","//\/\\\/three/\\/\/")
+        );
+    }
 }

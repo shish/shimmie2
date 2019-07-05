@@ -752,3 +752,53 @@ function validate_input(array $inputs): array
 
     return $outputs;
 }
+
+/**
+ * Translates all possible directory separators to the appropriate one for the current system,
+ * and removes any duplicate separators.
+ */
+function sanitize_path(string $path): string
+{
+    return preg_replace('|[\\\\/]+|S',DIRECTORY_SEPARATOR,$path);
+}
+
+/**
+ * Combines all path segments specified, ensuring no duplicate separators occur,
+ * as well as converting all possible separators to the one appropriate for the current system.
+ */
+function join_path(string ...$paths): string
+{
+    $output = "";
+    foreach ($paths as $path) {
+        if(empty($path)) {
+            continue;
+        }
+        $path = sanitize_path($path);
+        if(empty($output)) {
+            $output = $path;
+        } else {
+            $output = rtrim($output, DIRECTORY_SEPARATOR);
+            $path = ltrim($path, DIRECTORY_SEPARATOR);
+            $output .= DIRECTORY_SEPARATOR . $path;
+        }
+    }
+    return $output;
+}
+
+/**
+ * Perform callback on each item returned by an iterator.
+ */
+function iterator_map(callable $callback, iterator $iter): Generator
+{
+    foreach($iter as $i) {
+        yield call_user_func($callback,$i);
+    }
+}
+
+/**
+ * Perform callback on each item returned by an iterator and combine the result into an array.
+ */
+function iterator_map_to_array(callable $callback, iterator $iter): array
+{
+    return iterator_to_array(iterator_map($callback, $iter));
+}
