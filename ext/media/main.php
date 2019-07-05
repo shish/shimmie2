@@ -339,11 +339,7 @@ class Media extends Extension
             case "bulk_media_rescan":
                 if ($user->is_admin()) {
                     $total = 0;
-                    foreach ($event->items as $id) {
-                        $image = Image::by_id($id);
-                        if ($image == null) {
-                            continue;
-                        }
+                    foreach ($event->items as $image) {
                         try {
                             $this->update_image_media_properties($image->hash, $image->ext);
                             $total++;
@@ -409,7 +405,7 @@ class Media extends Extension
     }
 
 
-    const CONTENT_SEARCH_TERM_REGEX = "/^(-)?content[=|:]((video)|(audio))$/i";
+    const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio))$/i";
 
 
     public function onSearchTermParse(SearchTermParseEvent $event)
@@ -418,9 +414,8 @@ class Media extends Extension
 
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
-            $positive = $matches[1];
             $field = $matches[2];
-            $event->add_querylet(new Querylet("$field = " . $database->scoreql_to_sql($positive != "-" ? SCORE::BOOL_Y : SCORE::BOOL_N)));
+            $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
         }
     }
 
@@ -779,12 +774,6 @@ class Media extends Extension
             $input_type = $input_type . ":";
         }
 
-        $args = " -flatten ";
-        if ($minimize) {
-            $args .= " -strip -thumbnail";
-        } else {
-            $args .= " -resize";
-        }
 
         $resize_args = "";
         if (!$allow_upscale) {
@@ -794,6 +783,7 @@ class Media extends Extension
             $resize_args .= "\!";
         }
 
+        $args = "";
         switch ($output_type) {
             case Media::WEBP_LOSSLESS:
                 $args .= '-define webp:lossless=true';
@@ -802,6 +792,13 @@ class Media extends Extension
                 $args .= '-define png:compression-level=9';
                 break;
         }
+
+        if ($minimize) {
+            $args .= " -strip -thumbnail";
+        } else {
+            $args .= " -resize";
+        }
+
 
         $output_ext = self::determine_ext($output_type);
 
