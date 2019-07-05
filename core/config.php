@@ -23,6 +23,11 @@ interface Config
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
+    public function set_float(string $name, ?string $value): void;
+
+    /**
+     * Set a configuration option to a new value, regardless of what the value is at the moment.
+     */
     public function set_string(string $name, ?string $value): void;
 
     /**
@@ -47,6 +52,16 @@ interface Config
      * parameter won't show up.
      */
     public function set_default_int(string $name, int $value): void;
+
+    /**
+     * Set a configuration option to a new value, if there is no value currently.
+     *
+     * Extensions should generally call these from their InitExtEvent handlers.
+     * This has the advantage that the values will show up in the "advanced" setup
+     * page where they can be modified, while calling get_* with a "default"
+     * parameter won't show up.
+     */
+    public function set_default_float(string $name, float $value): void;
 
     /**
      * Set a configuration option to a new value, if there is no value currently.
@@ -88,6 +103,11 @@ interface Config
     /**
      * Pick a value out of the table by name, cast to the appropriate data type.
      */
+    public function get_float(string $name, ?float $default=null): ?float;
+
+    /**
+     * Pick a value out of the table by name, cast to the appropriate data type.
+     */
     public function get_string(string $name, ?string $default=null): ?string;
 
     /**
@@ -119,6 +139,12 @@ abstract class BaseConfig implements Config
         $this->save($name);
     }
 
+    public function set_float(string $name, ?string $value): void
+    {
+        $this->values[$name] = $value;
+        $this->save($name);
+    }
+
     public function set_string(string $name, ?string $value): void
     {
         $this->values[$name] = $value;
@@ -131,9 +157,13 @@ abstract class BaseConfig implements Config
         $this->save($name);
     }
 
-    public function set_array(string $name, array $value): void
+    public function set_array(string $name, ?array $value): void
     {
-        $this->values[$name] = implode(",", $value);
+        if($value!=null) {
+            $this->values[$name] = implode(",", $value);
+        } else {
+            $this->values[$name] = null;
+        }
         $this->save($name);
     }
 
@@ -279,19 +309,41 @@ class DatabaseConfig extends BaseConfig
     /** @var Database  */
     private $database = null;
 
-    public function __construct(Database $database)
+    private $table_name;
+    private $sub_column;
+    private $sub_value;
+
+    public function __construct(Database $database, string $table_name = "config",
+                                string $sub_column = null, string $sub_value = null)
     {
         $this->database = $database;
+        $this->table_name = $table_name;
+        $this->sub_value = $sub_value;
+        $this->sub_column = $sub_column;
 
-        $cached = $this->database->cache->get("config");
+        $cache_name = "config";
+        if(!empty($sub_value)) {
+            $cache_name .= "_".$sub_value;
+        }
+
+        $cached = $this->database->cache->get($cache_name);
         if ($cached) {
             $this->values = $cached;
         } else {
             $this->values = [];
-            foreach ($this->database->get_all("SELECT name, value FROM config") as $row) {
+
+            $query = "SELECT name, value FROM {$this->table_name}";
+            $args = [];
+
+            if(!empty($sub_column)&&!empty($sub_value)) {
+                $query .= " WHERE $sub_column = :sub_value";
+                $args["sub_value"] = $sub_value;
+            }
+
+            foreach ($this->database->get_all($query, $args ) as $row) {
                 $this->values[$row["name"]] = $row["value"];
             }
-            $this->database->cache->set("config", $this->values);
+            $this->database->cache->set($cache_name, $this->values);
         }
     }
 
@@ -303,8 +355,23 @@ class DatabaseConfig extends BaseConfig
                 $this->save($name);
             }
         } else {
-            $this->database->Execute("DELETE FROM config WHERE name = :name", ["name"=>$name]);
-            $this->database->Execute("INSERT INTO config VALUES (:name, :value)", ["name"=>$name, "value"=>$this->values[$name]]);
+            $query = "DELETE FROM {$this->table_name} WHERE name = :name";
+            $args = ["name"=>$name];
+            $cols = ["name","value"];
+            $params = [":name",":value"];
+            if(!empty($this->sub_column)&&!empty($this->sub_value)) {
+                $query .= " AND $this->sub_column = :sub_value";
+                $args["sub_value"] = $this->sub_value;
+                $cols[] = $this->sub_column;
+                $params[] = ":sub_value";
+            }
+
+            $this->database->Execute($query, $args);
+
+            $args["value"] =$this->values[$name];
+            $this->database->Execute(
+                "INSERT INTO {$this->table_name} (".join(",",$cols).") VALUES (".join(",",$params).")",
+                $args);
         }
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here

@@ -13,7 +13,6 @@ class Upgrade extends Extension
     {
         global $config, $database;
 
-
         if ($config->get_bool("in_upgrade")) {
             return;
         }
@@ -164,8 +163,6 @@ class Upgrade extends Extension
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?
 
-
-
             log_info("upgrade", "Database at version 16");
             $config->set_bool("in_upgrade", false);
         }
@@ -223,8 +220,6 @@ class Upgrade extends Extension
             log_info("upgrade", "Database at version 17");
             $config->set_bool("in_upgrade", false);
         }
-
-
 
     }
 

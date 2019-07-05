@@ -19,6 +19,17 @@ class UserBlockBuildingEvent extends Event
     }
 }
 
+class UserOptionsBuildingEvent extends Event
+{
+    /** @var array  */
+    public $parts = [];
+
+    public function add__html(string $html)
+    {
+        $this->parts[] = $html;
+    }
+}
+
 class UserPageBuildingEvent extends Event
 {
     /** @var User */
@@ -57,6 +68,15 @@ class UserCreationEvent extends Event
     }
 }
 
+class UserLoginEvent extends Event
+{
+    public $user;
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+}
+
 class UserDeletionEvent extends Event
 {
     /** @var  int */
@@ -91,6 +111,12 @@ class UserPage extends Extension
         $config->set_default_string("avatar_gravatar_default", "");
         $config->set_default_string("avatar_gravatar_rating", "g");
         $config->set_default_bool("login_tac_bbcode", true);
+    }
+
+    public function onUserLogin(UserLoginEvent $event)
+    {
+        global $user;
+        $user = $event->user;
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -243,6 +269,17 @@ class UserPage extends Extension
 
         ksort($event->stats);
         $this->theme->display_user_page($event->display_user, $event->stats);
+
+        if (!$user->is_anonymous()) {
+            if ($user->id == $event->display_user->id || $user->can("edit_user_info")) {
+                $uobe = new UserOptionsBuildingEvent();
+                send_event($uobe);
+
+                $page->add_block(new Block("Options", $this->theme->build_options($event->display_user, $uobe), "main", 60));
+            }
+        }
+
+
         if ($user->id == $event->display_user->id) {
             $ubbe = new UserBlockBuildingEvent();
             send_event($ubbe);
@@ -370,7 +407,7 @@ class UserPage extends Extension
 
         $duser = User::by_name_and_pass($name, $pass);
         if (!is_null($duser)) {
-            $user = $duser;
+            send_event(new UserLoginEvent($duser));
             $this->set_login_cookie($duser->name, $pass);
             $page->set_mode(PageMode::REDIRECT);
 
@@ -483,6 +520,8 @@ class UserPage extends Extension
         $uid = $database->get_last_insert_id('users_id_seq');
         $user = User::by_name($event->username);
         $user->set_password($event->password);
+        send_event(new UserLoginEvent($user));
+
         log_info("user", "Created User #$uid ({$event->username})");
     }
 

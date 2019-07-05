@@ -779,6 +779,7 @@ class OuroborosAPI extends Extension
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
             }
+            send_event(new UserLoginEvent($user));
         } elseif (isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'session']) &&
             isset($_COOKIE[$config->get_string('cookie_prefix', 'shm') . '_' . 'user'])
         ) {
@@ -791,6 +792,7 @@ class OuroborosAPI extends Extension
             } else {
                 $user = User::by_id($config->get_int("anon_id", 0));
             }
+            send_event(new UserLoginEvent($user));
         }
     }
 

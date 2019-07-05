@@ -404,20 +404,16 @@ class TagList extends Extension
 
         $query = "
 			SELECT t3.tag AS tag, t3.count AS calc_count, it3.tag_id
-			FROM
-				image_tags AS it1,
-				image_tags AS it2,
-				image_tags AS it3,
-				tags AS t1,
-				tags AS t3
+            FROM image_tags AS it1 -- Starting image's tags                
+                INNER JOIN tags AS t1 ON t1.id = it1.tag_id AND t1.tag NOT LIKE 'tagme%'
+                -- Get images with the same tags as the starting image
+                INNER JOIN image_tags AS it2 ON it1.tag_id=it2.tag_id
+                -- Get the tags from those other images except the same as the starting tags 
+                INNER JOIN image_tags AS it3 ON it2.image_id=it3.image_id 
+                LEFT JOIN image_tags it4 ON it4.image_id = it1.image_id AND it4.tag_id = it3.tag_id
+                INNER JOIN tags AS t3 ON t3.id = it3.tag_id AND t3.tag NOT LIKE 'tagme%' 
 			WHERE
 				it1.image_id=:image_id
-				AND it1.tag_id=it2.tag_id
-				AND it2.image_id=it3.image_id
-				AND t1.tag != 'tagme'
-				AND t3.tag != 'tagme'
-				AND t1.id = it1.tag_id
-				AND t3.id = it3.tag_id
 			GROUP BY it3.tag_id, t3.tag, t3.count
 			ORDER BY calc_count DESC
 			LIMIT :tag_list_length
@@ -512,6 +508,9 @@ class TagList extends Extension
             $tag_id_array = [];
             $tags_ok = true;
             foreach ($wild_tags as $tag) {
+                if ($tag[0] == "-" || strpos($tag, "tagme")===0) {
+                    continue;
+                }
                 $tag = str_replace("*", "%", $tag);
                 $tag = str_replace("?", "_", $tag);
                 $tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
