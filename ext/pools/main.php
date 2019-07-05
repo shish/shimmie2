@@ -432,17 +432,26 @@ class Pools extends Extension
                 $pool = $this->get_pool($pool_id);
 
                 if ($this->have_permission($user, $pool)) {
-                    send_event(new PoolAddPostsEvent($pool_id, $event->items));
+                    $ids = [];
+                    foreach($event->items as $item) {
+                        $ids[] = $item->id;
+                    }
+                    send_event(new PoolAddPostsEvent($pool_id, $ids));
                 }
                 break;
             case "bulk_pool_add_new":
                 if (!isset($_POST['bulk_pool_new'])) {
                     return;
                 }
+                $ids = [];
+                foreach($event->items as $item) {
+                    $ids[] = $item->id;
+                }
+
                 $new_pool_title = $_POST['bulk_pool_new'];
                 $pce = new PoolCreationEvent($new_pool_title);
                 send_event($pce);
-                send_event(new PoolAddPostsEvent($pce->new_id, $event->items));
+                send_event(new PoolAddPostsEvent($pce->new_id, $ids));
                 break;
         }
     }
