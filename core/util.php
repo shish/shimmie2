@@ -5,6 +5,9 @@ require_once "vendor/shish/libcontext-php/context.php";
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+const DATA_DIR = "data";
+
+
 function mtimefile(string $file): string
 {
     $data_href = get_base_href();
@@ -159,28 +162,40 @@ function format_text(string $string): string
     return $tfe->formatted;
 }
 
-function warehouse_path(string $base, string $hash, bool $create=true): string
+/**
+ * Generates the path to a file under the data folder based on the file's hash.
+ * This process creates subfolders based on octet pairs from the file's hash.
+ * The calculated folder follows this pattern data/$base/octet_pairs/$hash
+ * @param string $base
+ * @param string $hash
+ * @param bool $create
+ * @param int $splits The number of octet pairs to split the hash into. Caps out at strlen($hash)/2.
+ * @return string
+ */
+function warehouse_path(string $base, string $hash, bool $create=true, int $splits = WH_SPLITS): string
 {
-    $ab = substr($hash, 0, 2);
-    $cd = substr($hash, 2, 2);
-
-    $pa = Image::DATA_DIR.'/'.$base.'/';
-
-    if (WH_SPLITS == 2) {
-        $pa .= $ab.'/'.$cd.'/'.$hash;
-    } else {
-        $pa .= $ab.'/'.$hash;
+    $dirs =[DATA_DIR, $base];
+    $splits = min($splits, strlen($hash) / 2);
+    for($i = 0; $i < $splits; $i++) {
+        $dirs[] = substr($hash, $i * 2, 2);
     }
+    $dirs[] = $hash;
+
+    $pa = join_path(...$dirs);
+
     if ($create && !file_exists(dirname($pa))) {
         mkdir(dirname($pa), 0755, true);
     }
     return $pa;
 }
 
-function data_path(string $filename): string
+/**
+ * Determines the path to the specified file in the data folder.
+ */
+function data_path(string $filename, bool $create = true): string
 {
-    $filename = "data/" . $filename;
-    if (!file_exists(dirname($filename))) {
+    $filename = join_path("data", $filename);
+    if ($create&&!file_exists(dirname($filename))) {
         mkdir(dirname($filename), 0755, true);
     }
     return $filename;
@@ -323,6 +338,49 @@ function path_to_tags(string $path): string
     }
 
     return implode(" ", $tags);
+}
+
+/**
+ * Translates all possible directory separators to the appropriate one for the current system,
+ * and removes any duplicate separators.
+ */
+function sanitize_path(string $path): string
+{
+    return preg_replace('|[\\\\/]+|S',DIRECTORY_SEPARATOR,$path);
+}
+
+/**
+ * Combines all path segments specified, ensuring no duplicate separators occur,
+ * as well as converting all possible separators to the one appropriate for the current system.
+ */
+function join_path(string ...$paths): string
+{
+    $output = "";
+    foreach ($paths as $path) {
+        if(empty($path)) {
+            continue;
+        }
+        $path = sanitize_path($path);
+        if(empty($output)) {
+            $output = $path;
+        } else {
+            $output = rtrim($output, DIRECTORY_SEPARATOR);
+            $path = ltrim($path, DIRECTORY_SEPARATOR);
+            $output .= DIRECTORY_SEPARATOR . $path;
+        }
+    }
+    return $output;
+}
+
+function join_url(string $base, string ...$paths)
+{
+    $output = $base;
+    foreach ($paths as $path) {
+        $output = rtrim($output,"/");
+        $path = ltrim($path, "/");
+        $output .= "/".$path;
+    }
+    return $output;
 }
 
 
