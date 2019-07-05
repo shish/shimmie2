@@ -399,8 +399,8 @@ class PoolsTheme extends Themelet
         return $output . "</select>";
     }
 
-    public function get_bulk_pool_input()
+    public function get_bulk_pool_input(array $search_terms)
     {
-        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' />";
+        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ",$search_terms))."' />";
     }
 }
