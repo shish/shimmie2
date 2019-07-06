@@ -192,7 +192,7 @@ class Database
     {
 		global $_tracer;
 		$dur = microtime(true) - $start;
-		$_tracer->complete($dur, "DB Query", null, ["query"=>$query, "args"=>$args]);
+		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", null, ["query"=>$query, "args"=>$args]);
 
         if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
             $query = trim(preg_replace('/\s+/msi', ' ', $query));
@@ -206,7 +206,7 @@ class Database
         }
 
 		$this->query_count++;
-        $this->dbtime += microtime(true) - $start;
+        $this->dbtime += $dur;
     }
 
     public function execute(string $query, array $args=[]): PDOStatement
