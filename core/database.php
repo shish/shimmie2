@@ -188,46 +188,33 @@ class Database
         return $this->engine->name;
     }
 
-    private function count_execs(string $sql, array $inputarray): void
+    private function count_time(string $method, float $start, string $query, ?array $args): void
     {
-        if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
-            $sql = trim(preg_replace('/\s+/msi', ' ', $sql));
-            if (isset($inputarray) && is_array($inputarray) && !empty($inputarray)) {
-                $text = $sql." -- ".join(", ", $inputarray)."\n";
-            } else {
-                $text = $sql."\n";
-            }
-            file_put_contents("data/sql.log", $text, FILE_APPEND);
-        }
-        if (!is_array($inputarray)) {
-            $this->query_count++;
-        }
-        # handle 2-dimensional input arrays
-        elseif (is_array(reset($inputarray))) {
-            $this->query_count += sizeof($inputarray);
-        } else {
-            $this->query_count++;
-        }
-    }
+		global $_tracer;
+		$dur = microtime(true) - $start;
+		$_tracer->complete($dur, "DB Query", null, ["query"=>$query, "args"=>$args]);
 
-    private function count_time(string $method, float $start): void
-    {
         if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
-            $text = $method.":".(microtime(true) - $start)."\n";
+            $query = trim(preg_replace('/\s+/msi', ' ', $query));
+            if (isset($args) && is_array($args) && !empty($args)) {
+                $text = $query." -- ".join(", ", $args)."\n";
+            } else {
+                $text = $query."\n";
+            }
+            $text .= "$method:$dur\n";
             file_put_contents("data/sql.log", $text, FILE_APPEND);
         }
+
+		$this->query_count++;
         $this->dbtime += microtime(true) - $start;
     }
 
     public function execute(string $query, array $args=[]): PDOStatement
     {
-		global $_tracer;
-		$_tracer->begin("DB Query", null, ["query"=>$query]);
         try {
             if (is_null($this->db)) {
                 $this->connect_db();
             }
-            $this->count_execs($query, $args);
             $stmt = $this->db->prepare(
                 "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
                 $query
@@ -248,8 +235,6 @@ class Database
             return $stmt;
         } catch (PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
-        } finally {
-			$_tracer->end();
 		}
     }
 
@@ -260,7 +245,7 @@ class Database
     {
         $_start = microtime(true);
         $data = $this->execute($query, $args)->fetchAll();
-        $this->count_time("get_all", $_start);
+        $this->count_time("get_all", $_start, $query, $args);
         return $data;
     }
 
@@ -271,7 +256,7 @@ class Database
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
-        $this->count_time("get_row", $_start);
+        $this->count_time("get_row", $_start, $query, $args);
         return $row ? $row : null;
     }
 
@@ -286,7 +271,7 @@ class Database
         foreach ($stmt as $row) {
             $res[] = $row[0];
         }
-        $this->count_time("get_col", $_start);
+        $this->count_time("get_col", $_start, $query, $args);
         return $res;
     }
 
@@ -301,7 +286,7 @@ class Database
         foreach ($stmt as $row) {
             $res[$row[0]] = $row[1];
         }
-        $this->count_time("get_pairs", $_start);
+        $this->count_time("get_pairs", $_start, $query, $args);
         return $res;
     }
 
@@ -312,7 +297,7 @@ class Database
     {
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
-        $this->count_time("get_one", $_start);
+        $this->count_time("get_one", $_start, $query, $args);
         return $row[0];
     }
 
