@@ -40,7 +40,7 @@ class AutoComplete extends Extension
             $limitSQL = "";
             $s = str_replace('_','\_', $s);
             $s = str_replace('%','\%', $s);
-            $SQLarr = ["search"=>"$s%", "cat_search"=>"%:$s%"];
+            $SQLarr = ["search"=>"$s%"]; #, "cat_search"=>"%:$s%"];
             if (isset($_GET["limit"]) && $_GET["limit"] !== 0) {
                 $limitSQL = "LIMIT :limit";
                 $SQLarr['limit'] = $_GET["limit"];
@@ -54,7 +54,7 @@ class AutoComplete extends Extension
 					SELECT tag, count
 					FROM tags
 					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search) 
-					  OR SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:cat_search)
+					-- OR SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:cat_search)
 					AND count > 0
 					ORDER BY count DESC
 					$limitSQL"),
