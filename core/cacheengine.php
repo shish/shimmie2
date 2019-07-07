@@ -191,15 +191,15 @@ class Cache
         global $_tracer;
         $_tracer->begin("Cache Query", ["key"=>$key]);
         $val = $this->engine->get($key);
-        $hit = $val === false ? "hit" : "miss";
-        $_tracer->end(null, ["result"=>$hit]);
         if ($val !== false) {
+			$res = "hit";
             $this->hits++;
-            return $val;
         } else {
+			$res = "miss";
             $this->misses++;
-            return false;
         }
+        $_tracer->end(null, ["result"=>$res]);
+		return $val;
     }
 
     public function set(string $key, $val, int $time=0)
