@@ -638,12 +638,11 @@ class UserPage extends Extension
         $rows = $database->get_pairs("
 				SELECT
 					address,
-					COUNT(id) AS count,
-					MAX(date_sent) AS most_recent
+					COUNT(id) AS count
 				FROM score_log
 				WHERE username=:username
 				GROUP BY address
-				ORDER BY most_recent DESC", ["username"=>$duser->name]);
+				ORDER BY MAX(date_sent) DESC", ["username"=>$duser->name]);
         return $rows;
     }
 
