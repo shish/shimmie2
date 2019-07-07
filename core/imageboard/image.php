@@ -200,7 +200,7 @@ class Image
 
     public static function get_accelerated_result(array $tag_conditions, array $img_conditions, int $offset, ?int $limit): ?PDOStatement
     {
-        if (!SEARCH_ACCEL || !empty($img_conditions)) {
+        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
             return null;
         }
 
@@ -214,8 +214,8 @@ class Image
         $req["limit"] = $limit;
 
         $response = Image::query_accelerator($req);
-        $list = implode(",", $response);
-        if ($list) {
+        if ($response) {
+			$list = implode(",", $response);
             $result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
         } else {
             $result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
@@ -225,7 +225,7 @@ class Image
 
     public static function get_accelerated_count(array $tag_conditions, array $img_conditions): ?int
     {
-        if (!SEARCH_ACCEL || !empty($img_conditions)) {
+        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
             return null;
         }
 
@@ -240,8 +240,6 @@ class Image
 
     public static function query_accelerator($req)
     {
-		if(isset($_GET['DISABLE_ACCEL'])) return null;
-
 		global $_tracer;
         $fp = @fsockopen("127.0.0.1", 21212);
         if (!$fp) {
