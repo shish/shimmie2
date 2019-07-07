@@ -940,26 +940,6 @@ class Image
     }
 
     /**
-     * WARNING: this description is no longer accurate, though it does get across
-     * the general idea - the actual method has a few extra optimisations
-     *
-     * "foo bar -baz user=foo" becomes
-     *
-     * SELECT * FROM images WHERE
-     *           images.id IN (SELECT image_id FROM image_tags WHERE tag='foo')
-     *   AND     images.id IN (SELECT image_id FROM image_tags WHERE tag='bar')
-     *   AND NOT images.id IN (SELECT image_id FROM image_tags WHERE tag='baz')
-     *   AND     images.id IN (SELECT id FROM images WHERE owner_name='foo')
-     *
-     * This is:
-     *   A) Incredibly simple:
-     *      Each search term maps to a list of image IDs
-     *   B) Runs really fast on a good database:
-     *      These lists are calculated once, and the set intersection taken
-     *   C) Runs really slow on bad databases:
-     *      All the subqueries are executed every time for every row in the
-     *      images table. Yes, MySQL does suck this much.
-     *
      * #param TagQuerylet[] $tag_conditions
      */
     private static function build_accurate_search_querylet(array $tag_conditions): Querylet
