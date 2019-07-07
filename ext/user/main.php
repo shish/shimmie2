@@ -605,12 +605,11 @@ class UserPage extends Extension
         $rows = $database->get_pairs("
 				SELECT
 					owner_ip,
-					COUNT(images.id) AS count,
-					MAX(posted) AS most_recent
+					COUNT(images.id) AS count
 				FROM images
 				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY most_recent DESC", ["id"=>$duser->id]);
+				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
         return $rows;
     }
 
@@ -620,12 +619,11 @@ class UserPage extends Extension
         $rows = $database->get_pairs("
 				SELECT
 					owner_ip,
-					COUNT(comments.id) AS count,
-					MAX(posted) AS most_recent
+					COUNT(comments.id) AS count
 				FROM comments
 				WHERE owner_id=:id
 				GROUP BY owner_ip
-				ORDER BY most_recent DESC", ["id"=>$duser->id]);
+				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
         return $rows;
     }
 
