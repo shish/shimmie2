@@ -61,6 +61,8 @@ define("DATABASE_TIMEOUT", 10000);
 
 // Pull in necessary files
 require_once "vendor/autoload.php";
+$_tracer = new EventTracer();
+
 require_once "core/exceptions.php";
 require_once "core/cacheengine.php";
 require_once "core/dbengine.php";
