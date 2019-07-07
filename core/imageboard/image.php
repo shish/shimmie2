@@ -888,23 +888,6 @@ class Image
 			");
         }
 
-        // one positive tag (a common case), do an optimised search
-        elseif ($positive_tag_count === 1 && $negative_tag_count === 0) {
-            # "LIKE" to account for wildcards
-            $query = new Querylet($database->scoreql_to_sql("
-				SELECT *
-				FROM (
-					SELECT images.*
-					FROM images
-					JOIN image_tags ON images.id=image_tags.image_id
-					JOIN tags ON image_tags.tag_id=tags.id
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
-					GROUP BY images.id
-				) AS images
-				WHERE 1=1
-			"), ["tag"=>Tag::sqlify($tag_conditions[0]->tag)]);
-        }
-
         // more than one positive tag, or more than zero negative tags
         else {
             $query = Image::build_accurate_search_querylet($tag_conditions);
