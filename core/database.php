@@ -192,7 +192,7 @@ class Database
     {
 		global $_tracer;
 		$dur = microtime(true) - $start;
-		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args]);
+		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
 		$this->query_count++;
         $this->dbtime += $dur;
     }
