@@ -812,16 +812,17 @@ class Image
             $tmpl = $plte->link;
         }
 
-        static $flexihash = null;
-        static $fh_last_opts = null;
+        static $flexihashes = [];
         $matches = [];
         if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
             $pre = $matches[1];
             $opts = $matches[2];
             $post = $matches[3];
 
-            if ($opts != $fh_last_opts) {
-                $fh_last_opts = $opts;
+            if(isset($flexihashes[$opts])) {
+                $flexihash = $flexihashes[$opts];
+            }
+            else {
                 $flexihash = new Flexihash\Flexihash();
                 foreach (explode(",", $opts) as $opt) {
                     $parts = explode("=", $opt);
@@ -837,6 +838,7 @@ class Image
                     }
                     $flexihash->addTarget($opt_val, $opt_weight);
                 }
+                $flexihashes[$opts] = $flexihash;
             }
 
             // $choice = $flexihash->lookup($pre.$post);
