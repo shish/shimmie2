@@ -390,19 +390,6 @@ function get_debug_info(): string
     return $debug;
 }
 
-function log_slow(): void
-{
-    global $_shm_load_start;
-    if (!is_null(SLOW_PAGES)) {
-        $_time = microtime(true) - $_shm_load_start;
-        if ($_time > SLOW_PAGES) {
-            $_query = _get_query();
-            $_dbg = get_debug_info();
-            file_put_contents("data/slow-pages.log", "$_time $_query $_dbg\n", FILE_APPEND | LOCK_EX);
-        }
-    }
-}
-
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Request initialisation stuff                                              *

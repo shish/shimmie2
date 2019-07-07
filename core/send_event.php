@@ -108,8 +108,8 @@ function send_event(Event $event): void
     $method_name = "on".str_replace("Event", "", get_class($event));
 
     // send_event() is performance sensitive, and with the number
-    // of times context gets called the time starts to add up
-    $tracer_enabled = constant('EVENT_TRACE');
+    // of times tracer gets called the time starts to add up
+    $tracer_enabled = constant('TRACE_FILE');
 
     if ($tracer_enabled) $_tracer->begin(get_class($event));
     // SHIT: http://bugs.php.net/bug.php?id=35106

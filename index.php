@@ -113,8 +113,9 @@ try {
     _fatal_error($e);
 }
 
-log_slow();
 $_tracer->end();
-if (EVENT_TRACE) {
-	$_tracer->flush(EVENT_TRACE);
+if (TRACE_FILE) {
+	if((microtime(true) - $_shm_load_start) > TRACE_THRESHOLD) {
+		$_tracer->flush(TRACE_FILE);
+	}
 }
