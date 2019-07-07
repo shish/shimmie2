@@ -170,7 +170,7 @@ class Cache
     {
         $matches = [];
         $c = null;
-        if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches)) {
+        if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
             if ($matches[1] == "memcache") {
                 $c = new MemcacheCache($matches[2]);
             } elseif ($matches[1] == "memcached") {
