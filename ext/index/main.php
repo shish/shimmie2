@@ -257,13 +257,24 @@ class Index extends Extension
             try {
                 #log_debug("index", "Search for ".Tag::implode($search_terms), false, array("terms"=>$search_terms));
                 $total_pages = Image::count_pages($search_terms);
-                if (SPEED_HAX && $count_search_terms === 0 && ($page_number < 10)) { // extra caching for the first few post/list pages
-                    $images = $database->cache->get("post-list:$page_number");
-                    if (!$images) {
-                        $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
-                        $database->cache->set("post-list:$page_number", $images, 60);
+                $images = [];
+
+                if (SPEED_HAX) {
+                    $fast_page_limit = 500;
+                    if ($total_pages > $fast_page_limit) $total_pages = $fast_page_limit;
+                    if ($page_number > $fast_page_limit) {
+                        $images = [];
+                    } elseif ($count_search_terms === 0 && ($page_number < 10)) {
+                        // extra caching for the first few post/list pages
+                        $images = $database->cache->get("post-list:$page_number");
+                        if (!$images) {
+                            $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
+                            $database->cache->set("post-list:$page_number", $images, 60);
+                        }
                     }
-                } else {
+                }
+
+                if (!$images) {
                     $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
                 }
             } catch (SearchTermParseException $stpe) {
