@@ -265,11 +265,7 @@ class Database
     public function get_col(string $query, array $args=[]): array
     {
         $_start = microtime(true);
-        $stmt = $this->execute($query, $args);
-        $res = [];
-        foreach ($stmt as $row) {
-            $res[] = $row[0];
-        }
+        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
         return $res;
     }
@@ -293,11 +289,7 @@ class Database
     public function get_pairs(string $query, array $args=[]): array
     {
         $_start = microtime(true);
-        $stmt = $this->execute($query, $args);
-        $res = [];
-        foreach ($stmt as $row) {
-            $res[$row[0]] = $row[1];
-        }
+        $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
         $this->count_time("get_pairs", $_start, $query, $args);
         return $res;
     }
