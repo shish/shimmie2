@@ -248,7 +248,7 @@ class Image
             return null;
         }
 		$req_str = json_encode($req);
-		$_tracer->begin("Accelerator Query", null, ["req"=>$req_str]);
+		$_tracer->begin("Accelerator Query", ["req"=>$req_str]);
         fwrite($fp, $req_str);
         $data = "";
         while (($buffer = fgets($fp, 4096)) !== false) {

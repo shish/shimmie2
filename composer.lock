@@ -302,12 +302,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "97b7578c3e08fe7ff797d38dc0fea4f42864bdd7"
+                "reference": "f49a597b9b048421fcd5077be68adbdfbdd133fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/97b7578c3e08fe7ff797d38dc0fea4f42864bdd7",
-                "reference": "97b7578c3e08fe7ff797d38dc0fea4f42864bdd7",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/f49a597b9b048421fcd5077be68adbdfbdd133fe",
+                "reference": "f49a597b9b048421fcd5077be68adbdfbdd133fe",
                 "shasum": ""
             },
             "require": {
@@ -338,7 +338,7 @@
             ],
             "description": "An API to write JSON traces as used by the Chrome Trace Viewer",
             "homepage": "https://github.com/shish/eventtracer-php",
-            "time": "2019-07-07T09:50:22+00:00"
+            "time": "2019-07-07T12:22:39+00:00"
         }
     ],
     "packages-dev": [
