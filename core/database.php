@@ -256,7 +256,7 @@ class Database
     {
         $_start = microtime(true);
         $data = $this->execute($query, $args);
-        $this->count_time("get_all_iterable", $_start);
+        $this->count_time("get_all_iterable", $_start, $query, $args);
         return $data;
     }
 
@@ -293,7 +293,7 @@ class Database
     {
         $_start = microtime(true);
         $stmt = $this->execute($query, $args);
-        $this->count_time("get_col_iterable", $_start);
+        $this->count_time("get_col_iterable", $_start, $query, $args);
         foreach ($stmt as $row) {
             yield $row[0];
         }
