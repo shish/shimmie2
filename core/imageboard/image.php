@@ -907,11 +907,7 @@ class Image
 
         // more than one positive tag, or more than zero negative tags
         else {
-            if ($database->get_driver_name() === DatabaseDriver::MYSQL) {
-                $query = Image::build_ugly_search_querylet($tag_conditions);
-            } else {
-                $query = Image::build_accurate_search_querylet($tag_conditions);
-            }
+            $query = Image::build_accurate_search_querylet($tag_conditions);
         }
 
         /*
@@ -1036,89 +1032,6 @@ class Image
             throw new SCoreException("No criteria specified");
         }
 
-        //throw new SCoreException($sql);
         return new Querylet($sql);
-    }
-
-    /**
-     * this function exists because mysql is a turd, see the docs for
-     * build_accurate_search_querylet() for a full explanation
-     *
-     * #param TagQuerylet[] $tag_conditions
-     */
-    private static function build_ugly_search_querylet(array $tag_conditions): Querylet
-    {
-        global $database;
-
-        $positive_tag_count = 0;
-        foreach ($tag_conditions as $tq) {
-            if ($tq->positive) {
-                $positive_tag_count++;
-            }
-        }
-
-        // only negative tags - shortcut to fail
-        if ($positive_tag_count == 0) {
-            // TODO: This isn't currently implemented.
-            // SEE: https://github.com/shish/shimmie2/issues/66
-            return new Querylet("
-				SELECT images.*
-				FROM images
-				WHERE 1=0
-			");
-        }
-
-        // merge all the tag querylets into one generic one
-        $sql = "0";
-        $terms = [];
-        foreach ($tag_conditions as $tq) {
-            $sign = $tq->positive ? "+" : "-";
-            $sql .= ' '.$sign.' IF(SUM(tag LIKE :tag'.Image::$tag_n.'), 1, 0)';
-            $terms['tag'.Image::$tag_n] = Tag::sqlify($tq->tag);
-            Image::$tag_n++;
-        }
-        $tag_search = new Querylet($sql, $terms);
-
-        $tag_id_array = [];
-
-        foreach ($tag_conditions as $tq) {
-            $tag_ids = $database->get_col(
-                $database->scoreql_to_sql("
-					SELECT id
-					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
-				"),
-                ["tag" => Tag::sqlify($tq->tag)]
-            );
-            $tag_id_array = array_merge($tag_id_array, $tag_ids);
-
-            if ($tq->positive && count($tag_ids) == 0) {
-                # one of the positive tags had zero results, therefor there
-                # can be no results; "where 1=0" should shortcut things
-                return new Querylet("
-					SELECT images.*
-					FROM images
-					WHERE 1=0
-				");
-            }
-        }
-
-        Image::$tag_n = 0;
-        return new Querylet('
-			SELECT *
-			FROM (
-				SELECT images.*, ('.$tag_search->sql.') AS score
-				FROM images
-				LEFT JOIN image_tags ON image_tags.image_id = images.id
-				JOIN tags ON image_tags.tag_id = tags.id
-				WHERE tags.id IN (' . join(', ', $tag_id_array) . ')
-				GROUP BY images.id
-				HAVING score = :score
-			) AS images
-			WHERE 1=1
-		', array_merge(
-            $tag_search->variables,
-            ["score"=>$positive_tag_count]
-        ));
     }
 }
