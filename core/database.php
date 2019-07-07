@@ -193,18 +193,6 @@ class Database
 		global $_tracer;
 		$dur = microtime(true) - $start;
 		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args]);
-
-        if ((DEBUG_SQL === true) || (is_null(DEBUG_SQL) && @$_GET['DEBUG_SQL'])) {
-            $query = trim(preg_replace('/\s+/msi', ' ', $query));
-            if (isset($args) && is_array($args) && !empty($args)) {
-                $text = $query." -- ".join(", ", $args)."\n";
-            } else {
-                $text = $query."\n";
-            }
-            $text .= "$method:$dur\n";
-            file_put_contents("data/sql.log", $text, FILE_APPEND);
-        }
-
 		$this->query_count++;
         $this->dbtime += $dur;
     }

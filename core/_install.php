@@ -123,7 +123,6 @@ function do_install()
     }
 
     define("CACHE_DSN", null);
-    define("DEBUG_SQL", false);
     define("DATABASE_KA", true);
     install_process();
 } // }}}
