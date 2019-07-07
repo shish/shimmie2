@@ -192,6 +192,7 @@ class Database
     {
 		global $_tracer;
 		$dur = microtime(true) - $start;
+		$query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
 		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
 		$this->query_count++;
         $this->dbtime += $dur;
