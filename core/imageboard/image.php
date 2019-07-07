@@ -262,6 +262,8 @@ class Image
 
     public static function query_accelerator($req)
     {
+		if(isset($_GET['DISABLE_ACCEL'])) return null;
+
 		global $_tracer;
         $fp = @fsockopen("127.0.0.1", 21212);
         if (!$fp) {
