@@ -30,7 +30,6 @@ _d("DATABASE_KA", true);     // string   Keep database connection alive
 _d("DATABASE_TIMEOUT", 10000);// int     Time to wait for each statement to complete
 _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details
-_d("DEBUG_CACHE", false);    // boolean  dump cache queries to data/cache.log
 _d("COVERAGE", false);       // boolean  activate xdebug coverage monitor
 _d("CACHE_HTTP", false);     // boolean  output explicit HTTP caching headers
 _d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes

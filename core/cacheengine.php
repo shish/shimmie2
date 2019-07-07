@@ -188,14 +188,11 @@ class Cache
 
     public function get(string $key)
     {
-		global $_tracer;
-		$_tracer->begin("Cache Query", ["key"=>$key]);
+        global $_tracer;
+        $_tracer->begin("Cache Query", ["key"=>$key]);
         $val = $this->engine->get($key);
-        if ((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-            $hit = $val === false ? "hit" : "miss";
-            file_put_contents("data/cache.log", "Cache $hit: $key\n", FILE_APPEND);
-        }
-		$_tracer->end();
+        $hit = $val === false ? "hit" : "miss";
+        $_tracer->end(null, ["result"=>$hit]);
         if ($val !== false) {
             $this->hits++;
             return $val;
@@ -207,18 +204,18 @@ class Cache
 
     public function set(string $key, $val, int $time=0)
     {
+        global $_tracer;
+        $_tracer->begin("Cache Set", ["key"=>$key, "time"=>$time]);
         $this->engine->set($key, $val, $time);
-        if ((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-            file_put_contents("data/cache.log", "Cache set: $key ($time)\n", FILE_APPEND);
-        }
+        $_tracer->end();
     }
 
     public function delete(string $key)
     {
+        global $_tracer;
+        $_tracer->begin("Cache Delete", ["key"=>$key]);
         $this->engine->delete($key);
-        if ((DEBUG_CACHE === true) || (is_null(DEBUG_CACHE) && @$_GET['DEBUG_CACHE'])) {
-            file_put_contents("data/cache.log", "Cache delete: $key\n", FILE_APPEND);
-        }
+        $_tracer->end();
     }
 
     public function get_hits(): int
