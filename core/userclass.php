@@ -133,6 +133,7 @@ new UserClass("base", null, [
     "bulk_edit_image_rating" => false,
 
     "view_trash" => false,
+    "perform_bulk_actions" => false,
 ]);
 
 new UserClass("anonymous", "base", [
@@ -194,7 +195,7 @@ new UserClass("admin", "base", [
     "edit_image_rating" => true,
     "bulk_edit_image_rating" => true,
     "view_trash" => true,
-
+    "perform_bulk_actions" => true,
 ]);
 
 new UserClass("hellbanned", "user", [
