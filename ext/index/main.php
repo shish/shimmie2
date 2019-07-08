@@ -263,7 +263,12 @@ class Index extends Extension
                     $fast_page_limit = 500;
                     if ($total_pages > $fast_page_limit) $total_pages = $fast_page_limit;
                     if ($page_number > $fast_page_limit) {
-                        $images = [];
+                        $this->theme->display_error(
+                            404, "Search limit hit",
+                            "Only $fast_page_limit pages of results are searchable - " .
+                            "if you want to find older results, use more specific search terms"
+                        );
+                        return;
                     } elseif ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
                         $images = $database->cache->get("post-list:$page_number");
