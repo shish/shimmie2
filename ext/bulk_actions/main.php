@@ -85,11 +85,11 @@ class BulkActions extends Extension
     {
         global $user;
 
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_action("bulk_delete", "(D)elete", "d", "Delete selected images?", $this->theme->render_ban_reason_input(), 10);
         }
 
-        if ($user->can("bulk_edit_image_tag")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
 
             $event->add_action(
                 "bulk_tag",
@@ -100,7 +100,7 @@ class BulkActions extends Extension
                 10);
         }
 
-        if ($user->can("bulk_edit_image_source")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_SOURCE)) {
             $event->add_action("bulk_source", "Set (S)ource", "s","", $this->theme->render_source_input(), 10);
         }
     }
@@ -111,7 +111,7 @@ class BulkActions extends Extension
 
         switch ($event->action) {
             case "bulk_delete":
-                if ($user->can("delete_image")) {
+                if ($user->can(Permissions::DELETE_IMAGE)) {
                     $i = $this->delete_items($event->items);
                     flash_message("Deleted $i items");
                 }
@@ -120,7 +120,7 @@ class BulkActions extends Extension
                 if (!isset($_POST['bulk_tags'])) {
                     return;
                 }
-                if ($user->can("bulk_edit_image_tag")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
                     $tags = $_POST['bulk_tags'];
                     $replace = false;
                     if (isset($_POST['bulk_tags_replace']) &&  $_POST['bulk_tags_replace'] == "true") {
@@ -135,7 +135,7 @@ class BulkActions extends Extension
                 if (!isset($_POST['bulk_source'])) {
                     return;
                 }
-                if ($user->can("bulk_edit_image_source")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_SOURCE)) {
                     $source = $_POST['bulk_source'];
                     $i = $this->set_source($event->items, $source);
                     flash_message("Set source for $i items");

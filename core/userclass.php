@@ -72,134 +72,133 @@ class UserClass
 // action = create / view / edit / delete
 // object = image / user / tag / setting
 new UserClass("base", null, [
-    "change_setting" => false,  # modify web-level settings, eg the config table
-    "override_config" => false, # modify sys-level settings, eg shimmie.conf.php
-    "big_search" => false,      # search for more than 3 tags at once (speed mode only)
+    Permissions::CHANGE_SETTING => false,  # modify web-level settings, eg the config table
+    Permissions::OVERRIDE_CONFIG => false, # modify sys-level settings, eg shimmie.conf.php
+    Permissions::BIG_SEARCH => false,      # search for more than 3 tags at once (speed mode only)
 
-    "manage_extension_list" => false,
-    "manage_alias_list" => false,
-    "mass_tag_edit" => false,
+    Permissions::MANAGE_EXTENSION_LIST => false,
+    Permissions::MANAGE_ALIAS_LIST => false,
+    Permissions::MASS_TAG_EDIT => false,
 
-    "view_ip" => false,         # view IP addresses associated with things
-    "ban_ip" => false,
+    Permissions::VIEW_IP => false,         # view IP addresses associated with things
+    Permissions::BAN_IP => false,
 
-    "edit_user_name" => false,
-    "edit_user_password" => false,
-    "edit_user_info" => false,  # email address, etc
-    "edit_user_class" => false,
-    "delete_user" => false,
+    Permissions::EDIT_USER_NAME => false,
+    Permissions::EDIT_USER_PASSWORD => false,
+    Permissions::EDIT_USER_INFO => false,  # email address, etc
+    Permissions::EDIT_USER_CLASS => false,
+    Permissions::DELETE_USER => false,
 
-    "create_comment" => false,
-    "delete_comment" => false,
-    "bypass_comment_checks" => false,  # spam etc
+    Permissions::CREATE_COMMENT => false,
+    Permissions::DELETE_COMMENT => false,
+    Permissions::BYPASS_COMMENT_CHECKS => false,  # spam etc
 
-    "replace_image" => false,
-    "create_image" => false,
-    "edit_image_tag" => false,
-    "edit_image_source" => false,
-    "edit_image_owner" => false,
-    "edit_image_lock" => false,
-    "bulk_edit_image_tag" => false,
-    "bulk_edit_image_source" => false,
-    "delete_image" => false,
+    Permissions::REPLACE_IMAGE => false,
+    Permissions::CREATE_IMAGE => false,
+    Permissions::EDIT_IMAGE_TAG => false,
+    Permissions::EDIT_IMAGE_SOURCE => false,
+    Permissions::EDIT_IMAGE_OWNER => false,
+    Permissions::EDIT_IMAGE_LOCK => false,
+    Permissions::BULK_EDIT_IMAGE_TAG => false,
+    Permissions::BULK_EDIT_IMAGE_SOURCE => false,
+    Permissions::DELETE_IMAGE => false,
 
-    "ban_image" => false,
+    Permissions::BAN_IMAGE => false,
 
-    "view_eventlog" => false,
-    "ignore_downtime" => false,
+    Permissions::VIEW_EVENTLOG => false,
+    Permissions::IGNORE_DOWNTIME => false,
 
-    "create_image_report" => false,
-    "view_image_report" => false,  # deal with reported images
+    Permissions::CREATE_IMAGE_REPORT => false,
+    Permissions::VIEW_IMAGE_REPORT => false,  # deal with reported images
 
-    "edit_wiki_page" => false,
-    "delete_wiki_page" => false,
+    Permissions::EDIT_WIKI_PAGE => false,
+    Permissions::DELETE_WIKI_PAGE => false,
 
-    "manage_blocks" => false,
+    Permissions::MANAGE_BLOCKS => false,
 
-    "manage_admintools" => false,
+    Permissions::MANAGE_ADMINTOOLS => false,
 
-    "view_other_pms" => false,
-    "edit_feature" => false,
-    "bulk_edit_vote" => false,
-    "edit_other_vote" => false,
-    "view_sysinfo" => false,
+    Permissions::VIEW_OTHER_PMS => false,
+    Permissions::EDIT_FEATURE => false,
+    Permissions::BULK_EDIT_VOTE => false,
+    Permissions::EDIT_OTHER_VOTE => false,
+    Permissions::VIEW_SYSINTO => false,
 
-    "hellbanned" => false,
-    "view_hellbanned" => false,
+    Permissions::HELLBANNED => false,
+    Permissions::VIEW_HELLBANNED => false,
 
-    "protected" => false,          # only admins can modify protected users (stops a moderator changing an admin's password)
+    Permissions::PROTECTED => false,          # only admins can modify protected users (stops a moderator changing an admin's password)
 
-    "edit_image_rating" => false,
-    "bulk_edit_image_rating" => false,
+    Permissions::EDIT_IMAGE_RATING => false,
+    Permissions::BULK_EDIT_IMAGE_RATING => false,
 
-    "view_trash" => false,
-    "perform_bulk_actions" => false,
+    Permissions::VIEW_TRASH => false,
 ]);
 
 new UserClass("anonymous", "base", [
 ]);
 
 new UserClass("user", "base", [
-    "big_search" => true,
-    "create_image" => true,
-    "create_comment" => true,
-    "edit_image_tag" => true,
-    "edit_image_source" => true,
-    "create_image_report" => true,
-    "edit_image_rating" => true,
+    Permissions::BIG_SEARCH => true,
+    Permissions::CREATE_IMAGE => true,
+    Permissions::CREATE_COMMENT => true,
+    Permissions::EDIT_IMAGE_TAG => true,
+    Permissions::EDIT_IMAGE_SOURCE => true,
+    Permissions::CREATE_IMAGE_REPORT => true,
+    Permissions::EDIT_IMAGE_RATING => true,
 
 ]);
 
 new UserClass("admin", "base", [
-    "change_setting" => true,
-    "override_config" => true,
-    "big_search" => true,
-    "edit_image_lock" => true,
-    "view_ip" => true,
-    "ban_ip" => true,
-    "edit_user_name" => true,
-    "edit_user_password" => true,
-    "edit_user_info" => true,
-    "edit_user_class" => true,
-    "delete_user" => true,
-    "create_image" => true,
-    "delete_image" => true,
-    "ban_image" => true,
-    "create_comment" => true,
-    "delete_comment" => true,
-    "bypass_comment_checks" => true,
-    "replace_image" => true,
-    "manage_extension_list" => true,
-    "manage_alias_list" => true,
-    "edit_image_tag" => true,
-    "edit_image_source" => true,
-    "edit_image_owner" => true,
-    "bulk_edit_image_tag" => true,
-    "bulk_edit_image_source" => true,
-    "mass_tag_edit" => true,
-    "create_image_report" => true,
-    "view_image_report" => true,
-    "edit_wiki_page" => true,
-    "delete_wiki_page" => true,
-    "view_eventlog" => true,
-    "manage_blocks" => true,
-    "manage_admintools" => true,
-    "ignore_downtime" => true,
-    "view_other_pms" => true,
-    "edit_feature" => true,
-    "bulk_edit_vote" => true,
-    "edit_other_vote" => true,
-    "view_sysinfo" => true,
-    "view_hellbanned" => true,
-    "protected" => true,
-    "edit_image_rating" => true,
-    "bulk_edit_image_rating" => true,
-    "view_trash" => true,
-    "perform_bulk_actions" => true,
+    Permissions::CHANGE_SETTING => true,
+    Permissions::OVERRIDE_CONFIG => true,
+    Permissions::BIG_SEARCH => true,
+    Permissions::EDIT_IMAGE_LOCK => true,
+    Permissions::VIEW_IP => true,
+    Permissions::BAN_IP => true,
+    Permissions::EDIT_USER_NAME => true,
+    Permissions::EDIT_USER_PASSWORD => true,
+    Permissions::EDIT_USER_INFO => true,
+    Permissions::EDIT_USER_CLASS => true,
+    Permissions::DELETE_USER => true,
+    Permissions::CREATE_IMAGE => true,
+    Permissions::DELETE_IMAGE => true,
+    Permissions::BAN_IMAGE => true,
+    Permissions::CREATE_COMMENT => true,
+    Permissions::DELETE_COMMENT => true,
+    Permissions::BYPASS_COMMENT_CHECKS => true,
+    Permissions::REPLACE_IMAGE => true,
+    Permissions::MANAGE_EXTENSION_LIST => true,
+    Permissions::MANAGE_ALIAS_LIST => true,
+    Permissions::EDIT_IMAGE_TAG => true,
+    Permissions::EDIT_IMAGE_SOURCE => true,
+    Permissions::EDIT_IMAGE_OWNER => true,
+    Permissions::BULK_EDIT_IMAGE_TAG => true,
+    Permissions::BULK_EDIT_IMAGE_SOURCE => true,
+    Permissions::MASS_TAG_EDIT => true,
+    Permissions::CREATE_IMAGE_REPORT => true,
+    Permissions::VIEW_IMAGE_REPORT => true,
+    Permissions::EDIT_WIKI_PAGE => true,
+    Permissions::DELETE_WIKI_PAGE => true,
+    Permissions::VIEW_EVENTLOG => true,
+    Permissions::MANAGE_BLOCKS => true,
+    Permissions::MANAGE_ADMINTOOLS => true,
+    Permissions::IGNORE_DOWNTIME => true,
+    Permissions::VIEW_OTHER_PMS => true,
+    Permissions::EDIT_FEATURE => true,
+    Permissions::BULK_EDIT_VOTE => true,
+    Permissions::EDIT_OTHER_VOTE => true,
+    Permissions::VIEW_SYSINTO => true,
+    Permissions::VIEW_HELLBANNED => true,
+    Permissions::PROTECTED => true,
+    Permissions::EDIT_IMAGE_RATING => true,
+    Permissions::BULK_EDIT_IMAGE_RATING => true,
+    Permissions::VIEW_TRASH => true,
+
 ]);
 
 new UserClass("hellbanned", "user", [
-    "hellbanned" => true,
+    Permissions::HELLBANNED => true,
 ]);
 
 @include_once "data/config/user-classes.conf.php";

@@ -28,14 +28,14 @@ class RegenThumb extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("regen_thumb/one") && $user->can("delete_image") && isset($_POST['image_id'])) {
+        if ($event->page_matches("regen_thumb/one") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));
 
             $this->regenerate_thumbnail($image);
 
             $this->theme->display_results($page, $image);
         }
-        if ($event->page_matches("regen_thumb/mass") && $user->can("delete_image") && isset($_POST['tags'])) {
+        if ($event->page_matches("regen_thumb/mass") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['tags'])) {
             $tags = Tag::explode(strtolower($_POST['tags']), false);
             $images = Image::find_images(0, 10000, $tags);
 
@@ -51,7 +51,7 @@ class RegenThumb extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }
@@ -59,7 +59,7 @@ class RegenThumb extends Extension
     // public function onPostListBuilding(PostListBuildingEvent $event)
     // {
     //     global $user;
-    //     if ($user->can("delete_image") && !empty($event->search_terms)) {
+    //     if ($user->can(UserAbilities::DELETE_IMAGE) && !empty($event->search_terms)) {
     //         $event->add_control($this->theme->mtr_html(Tag::implode($event->search_terms)));
     //     }
     // }
@@ -68,7 +68,7 @@ class RegenThumb extends Extension
     {
         global $user;
 
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_action("bulk_regen", "Regen Thumbnails", "","", $this->theme->bulk_html());
         }
     }
@@ -79,7 +79,7 @@ class RegenThumb extends Extension
 
         switch ($event->action) {
             case "bulk_regen":
-                if ($user->can("delete_image")) {
+                if ($user->can(Permissions::DELETE_IMAGE)) {
                     $force = true;
                     if (isset($_POST["bulk_regen_thumb_missing_only"])
                         &&$_POST["bulk_regen_thumb_missing_only"]=="true") {

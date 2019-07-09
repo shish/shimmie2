@@ -293,7 +293,7 @@ class Setup extends Extension
         }
 
         if ($event->page_matches("setup")) {
-            if (!$user->can("change_setting")) {
+            if (!$user->can(Permissions::CHANGE_SETTING)) {
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->get_arg(0) == "save" && $user->check_auth_token()) {
@@ -413,7 +413,7 @@ class Setup extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("change_setting")) {
+        if ($user->can(Permissions::CHANGE_SETTING)) {
             $event->add_link("Board Config", make_link("setup"));
         }
     }

@@ -410,7 +410,7 @@ class OuroborosAPI extends Extension
             if ($event->page_matches('post')) {
                 if ($this->match('create')) {
                     // Create
-                    if ($user->can("create_image")) {
+                    if ($user->can(Permissions::CREATE_IMAGE)) {
                         $md5 = !empty($_REQUEST['md5']) ? filter_var($_REQUEST['md5'], FILTER_SANITIZE_STRING) : null;
                         $this->postCreate(new OuroborosPost($_REQUEST['post']), $md5);
                     } else {

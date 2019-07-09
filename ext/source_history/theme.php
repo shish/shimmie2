@@ -20,7 +20,7 @@ class Source_HistoryTheme extends Themelet
             $current_source = html_escape($fields['source']);
             $name = $fields['name'];
             $date_set = autodate($fields['date_set']);
-            $h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
+            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
             $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
             $selected = ($n == 2) ? " checked" : "";
@@ -72,7 +72,7 @@ class Source_HistoryTheme extends Themelet
             $image_id = $fields['image_id'];
             $current_source = html_escape($fields['source']);
             $name = $fields['name'];
-            $h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
+            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Sourcing Image #$image_id as '$current_source'") : "";
             $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
             $history_list .= '

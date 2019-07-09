@@ -48,7 +48,7 @@ class LogDatabase extends Extension
     {
         global $database, $user;
         if ($event->page_matches("log/view")) {
-            if ($user->can("view_eventlog")) {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $wheres = [];
                 $args = [];
                 $page_num = int_escape($event->get_arg(0));
@@ -123,7 +123,7 @@ class LogDatabase extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_eventlog")) {
+        if ($user->can(Permissions::VIEW_EVENTLOG)) {
             $event->add_link("Event Log", make_link("log/view"));
         }
     }

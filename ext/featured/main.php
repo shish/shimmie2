@@ -32,7 +32,7 @@ class Featured extends Extension
         global $config, $page, $user;
         if ($event->page_matches("featured_image")) {
             if ($event->get_arg(0) == "set" && $user->check_auth_token()) {
-                if ($user->can("edit_feature") && isset($_POST['image_id'])) {
+                if ($user->can(Permissions::EDIT_FEATURE) && isset($_POST['image_id'])) {
                     $id = int_escape($_POST['image_id']);
                     if ($id > 0) {
                         $config->set_int("featured_id", $id);
@@ -86,7 +86,7 @@ class Featured extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("edit_feature")) {
+        if ($user->can(Permissions::EDIT_FEATURE)) {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }

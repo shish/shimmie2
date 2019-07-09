@@ -316,7 +316,7 @@ class Media extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }

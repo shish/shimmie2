@@ -588,8 +588,8 @@ function show_ip(string $ip, string $ban_reason): string
     global $user;
     $u_reason = url_escape($ban_reason);
     $u_end = url_escape("+1 week");
-    $ban = $user->can("ban_ip") ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
-    $ip = $user->can("view_ip") ? $ip.$ban : "";
+    $ban = $user->can(Permissions::BAN_IP) ? ", <a href='".make_link("ip_ban/list", "ip=$ip&reason=$u_reason&end=$u_end#add")."'>Ban</a>" : "";
+    $ip = $user->can(Permissions::VIEW_IP) ? $ip.$ban : "";
     return $ip;
 }
 

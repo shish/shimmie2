@@ -218,9 +218,9 @@ class CommentListTheme extends Themelet
                 if (!array_key_exists($comment->poster_ip, $this->anon_map)) {
                     $this->anon_map[$comment->poster_ip] = $this->anon_id;
                 }
-                #if($user->can("view_ip")) {
+                #if($user->can(UserAbilities::VIEW_IP)) {
                 #$style = " style='color: ".$this->get_anon_colour($comment->poster_ip).";'";
-                if ($user->can("view_ip") || $config->get_bool("comment_samefags_public", false)) {
+                if ($user->can(Permissions::VIEW_IP) || $config->get_bool("comment_samefags_public", false)) {
                     if ($this->anon_map[$comment->poster_ip] != $this->anon_id) {
                         $anoncode2 = '<sup>('.$this->anon_map[$comment->poster_ip].')</sup>';
                     }
@@ -248,9 +248,9 @@ class CommentListTheme extends Themelet
                 $h_avatar = "<img src=\"//www.gravatar.com/avatar/$hash.jpg?cacheBreak=$cb\"><br>";
             }
             $h_reply = " - <a href='javascript: replyTo($i_image_id, $i_comment_id, \"$h_name\")'>Reply</a>";
-            $h_ip = $user->can("view_ip") ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
+            $h_ip = $user->can(Permissions::VIEW_IP) ? "<br>".show_ip($comment->poster_ip, "Comment posted {$comment->posted}") : "";
             $h_del = "";
-            if ($user->can("delete_comment")) {
+            if ($user->can(Permissions::DELETE_COMMENT)) {
                 $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
                 $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
                 $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");

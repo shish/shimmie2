@@ -189,7 +189,7 @@ class CommentList extends Extension
     private function onPageRequest_delete(PageRequestEvent $event)
     {
         global $user, $page;
-        if ($user->can("delete_comment")) {
+        if ($user->can(Permissions::DELETE_COMMENT)) {
             // FIXME: post, not args
             if ($event->count_args() === 3) {
                 send_event(new CommentDeletionEvent($event->get_arg(1)));
@@ -209,7 +209,7 @@ class CommentList extends Extension
     private function onPageRequest_bulk_delete()
     {
         global $user, $database, $page;
-        if ($user->can("delete_comment") && !empty($_POST["ip"])) {
+        if ($user->can(Permissions::DELETE_COMMENT) && !empty($_POST["ip"])) {
             $ip = $_POST['ip'];
 
             $comment_ids = $database->get_col("
@@ -288,7 +288,7 @@ class CommentList extends Extension
         $this->theme->display_image_comments(
             $event->image,
             $this->get_comments($event->image->id),
-            $user->can("create_comment")
+            $user->can(Permissions::CREATE_COMMENT)
         );
     }
 
@@ -399,7 +399,7 @@ class CommentList extends Extension
             }
         }
 
-        $this->theme->display_comment_list($images, $current_page, $total_pages, $user->can("create_comment"));
+        $this->theme->display_comment_list($images, $current_page, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
     // }}}
 
@@ -574,7 +574,7 @@ class CommentList extends Extension
     {
         global $database, $page;
 
-        if (!$user->can("bypass_comment_checks")) {
+        if (!$user->can(Permissions::BYPASS_COMMENT_CHECKS)) {
             // will raise an exception if anything is wrong
             $this->comment_checks($image_id, $user, $comment);
         }
@@ -600,7 +600,7 @@ class CommentList extends Extension
         global $config, $page;
 
         // basic sanity checks
-        if (!$user->can("create_comment")) {
+        if (!$user->can(Permissions::CREATE_COMMENT)) {
             throw new CommentPostingException("Anonymous posting has been disabled");
         } elseif (is_null(Image::by_id($image_id))) {
             throw new CommentPostingException("The image does not exist");

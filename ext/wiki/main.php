@@ -206,7 +206,7 @@ class Wiki extends Extension
         }
 
         // anon / user can edit if allowed by config
-        if ($user->can("edit_wiki_page")) {
+        if ($user->can(Permissions::EDIT_WIKI_PAGE)) {
             return true;
         }
 

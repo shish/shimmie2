@@ -54,7 +54,7 @@ class AdminPage extends Extension
         global $page, $user;
 
         if ($event->page_matches("admin")) {
-            if (!$user->can("manage_admintools")) {
+            if (!$user->can(Permissions::MANAGE_ADMINTOOLS)) {
                 $this->theme->display_permission_denied();
             } else {
                 if ($event->count_args() == 0) {
@@ -111,7 +111,7 @@ class AdminPage extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("manage_admintools")) {
+        if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
             $event->add_link("Board Admin", make_link("admin"));
         }
     }

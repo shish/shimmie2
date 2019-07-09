@@ -32,7 +32,7 @@ class NumericScoreTheme extends Themelet
 			<input type='submit' value='Vote Down'>
 			</form>
 		";
-        if ($user->can("edit_other_vote")) {
+        if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
             $html .= "
 			<form action='".make_link("numeric_score/remove_votes_on")."' method='POST'>
 			".$user->get_auth_html()."

@@ -57,8 +57,8 @@ class CustomViewImageTheme extends ViewImageTheme
             $html .= $part;
         }
         if (
-            (!$image->is_locked() || $user->can("edit_image_lock")) &&
-            $user->can("edit_image_tag")
+            (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
+            $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {
             $html .= "
   						<tr><td colspan='4'>

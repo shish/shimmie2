@@ -50,7 +50,7 @@ class Rule34 extends Extension
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         global $database, $user, $config;
-        if ($user->can("change_setting") && $config->get_bool('r34_comic_integration')) {
+        if ($user->can(Permissions::CHANGE_SETTING) && $config->get_bool('r34_comic_integration')) {
             $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=?", [$event->display_user->id]));
             $this->theme->show_comic_changer($event->display_user, $current_state);
         }
@@ -59,7 +59,7 @@ class Rule34 extends Extension
     public function onThumbnailGeneration(ThumbnailGenerationEvent $event)
     {
         global $database, $user;
-        if ($user->can("manage_admintools")) {
+        if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
             $database->execute("NOTIFY shm_image_bans, '{$event->hash}';");
         }
     }
@@ -72,7 +72,7 @@ class Rule34 extends Extension
     {
         global $database, $page, $user;
 
-        if ($user->can("delete_user")) {  // deleting users can take a while
+        if ($user->can(Permissions::DELETE_USER)) {  // deleting users can take a while
             $database->execute("SET statement_timeout TO ".(DATABASE_TIMEOUT+15000).";");
         }
 
@@ -81,7 +81,7 @@ class Rule34 extends Extension
         }
 
         if ($event->page_matches("rule34/comic_admin")) {
-            if ($user->can("change_setting") && $user->check_auth_token()) {
+            if ($user->can(Permissions::CHANGE_SETTING) && $user->check_auth_token()) {
                 $input = validate_input([
                     'user_id' => 'user_id,exists',
                     'is_admin' => 'bool',
@@ -102,7 +102,7 @@ class Rule34 extends Extension
         }
 
         if ($event->page_matches("admin/cache_purge")) {
-            if (!$user->can("manage_admintools")) {
+            if (!$user->can(Permissions::MANAGE_ADMINTOOLS)) {
                 $this->theme->display_permission_denied();
             } else {
                 if ($user->check_auth_token()) {
@@ -130,7 +130,7 @@ class Rule34 extends Extension
 
         if ($event->page_matches("sys_ip_ban")) {
             global $page, $user;
-            if ($user->can("ban_ip")) {
+            if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "list") {
                     $bans = (isset($_GET["all"])) ? $this->get_bans() : $this->get_active_bans();
                     $this->theme->display_bans($page, $bans);

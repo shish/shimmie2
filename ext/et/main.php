@@ -18,7 +18,7 @@ class ET extends Extension
     {
         global $user;
         if ($event->page_matches("system_info")) {
-            if ($user->can("view_sysinfo")) {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
                 $this->theme->display_info_page($this->get_info());
             }
         }
@@ -27,7 +27,7 @@ class ET extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_sysinfo")) {
+        if ($user->can(Permissions::VIEW_SYSINTO)) {
             $event->add_link("System Info", make_link("system_info"));
         }
     }

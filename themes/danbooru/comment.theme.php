@@ -104,7 +104,7 @@ class CustomCommentListTheme extends CommentListTheme
 
         $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";
         $h_del = "";
-        if ($user->can("delete_comment")) {
+        if ($user->can(Permissions::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
             $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");

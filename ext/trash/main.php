@@ -37,7 +37,7 @@ class Trash extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("trash_restore") && $user->can("view_trash")) {
+        if ($event->page_matches("trash_restore") && $user->can(Permissions::VIEW_TRASH)) {
             // Try to get the image ID
             $image_id = int_escape($event->get_arg(0));
             if (empty($image_id)) {
@@ -59,7 +59,7 @@ class Trash extends Extension
     {
         global $user, $page;
 
-        if($event->image->trash===true && !$user->can("view_trash")) {
+        if($event->image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -87,7 +87,7 @@ class Trash extends Extension
 
 
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
-            if($user->can("view_trash")) {
+            if($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_Y ")));
             }
         }
@@ -114,7 +114,7 @@ class Trash extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $config, $database, $user;
-        if($event->image->trash===true && $user->can("view_trash")) {
+        if($event->image->trash===true && $user->can(Permissions::VIEW_TRASH)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }
@@ -123,7 +123,7 @@ class Trash extends Extension
     {
         global $user;
 
-        if ($user->can("view_trash")&&in_array("in:trash", $event->search_terms)) {
+        if ($user->can(Permissions::VIEW_TRASH)&&in_array("in:trash", $event->search_terms)) {
             $event->add_action("bulk_trash_restore","(U)ndelete", "u");
         }
     }
@@ -134,7 +134,7 @@ class Trash extends Extension
 
         switch ($event->action) {
             case "bulk_trash_restore":
-                if ($user->can("view_trash")) {
+                if ($user->can(Permissions::VIEW_TRASH)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         self::set_trash($image->id, false);

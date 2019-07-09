@@ -169,7 +169,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if ($user->can("bulk_edit_image_rating")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
             $event->add_action("bulk_rate","Set (R)ating", "r","",$this->theme->get_selection_rater_html("u","bulk_rating"));
         }
     }
@@ -183,7 +183,7 @@ class Ratings extends Extension
                 if (!isset($_POST['bulk_rating'])) {
                     return;
                 }
-                if ($user->can("bulk_edit_image_rating")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $rating = $_POST['bulk_rating'];
                     $total = 0;
                     foreach ($event->items as $image) {
@@ -201,7 +201,7 @@ class Ratings extends Extension
         global $user, $page;
         
         if ($event->page_matches("admin/bulk_rate")) {
-            if (!$user->can("bulk_edit_image_rating")) {
+            if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                 throw new PermissionDeniedException();
             } else {
                 $n = 0;
