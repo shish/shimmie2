@@ -133,6 +133,8 @@ new UserClass("base", null, [
     Permissions::BULK_EDIT_IMAGE_RATING => false,
 
     Permissions::VIEW_TRASH => false,
+
+    Permissions::PERFORM_BULK_ACTIONS => false,
 ]);
 
 new UserClass("anonymous", "base", [
@@ -194,7 +196,7 @@ new UserClass("admin", "base", [
     Permissions::EDIT_IMAGE_RATING => true,
     Permissions::BULK_EDIT_IMAGE_RATING => true,
     Permissions::VIEW_TRASH => true,
-
+    Permissions::PERFORM_BULK_ACTIONS => true,
 ]);
 
 new UserClass("hellbanned", "user", [
