@@ -6,6 +6,8 @@
  * Description: Let tags be split into 'categories', like Danbooru's tagging
  */
 
+require_once "config.php";
+
 class TagCategories extends Extension
 {
     public function onInitExt(InitExtEvent $event)
@@ -14,9 +16,9 @@ class TagCategories extends Extension
         
         // whether we split out separate categories on post view by default
         //  note: only takes effect if /post/view shows the image's exact tags
-        $config->set_default_bool("tag_categories_split_on_view", true);
+        $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);
 
-        if ($config->get_int("ext_tag_categories_version") < 1) {
+        if ($config->get_int(TagCategoriesConfig::VERSION) < 1) {
             // primary extension database, holds all our stuff!
             $database->create_table(
                 'image_tag_categories',
@@ -26,7 +28,7 @@ class TagCategories extends Extension
 				color VARCHAR(7)'
             );
 
-            $config->set_int("ext_tag_categories_version", 1);
+            $config->set_int(TagCategoriesConfig::VERSION, 1);
 
             log_info("tag_categories", "extension installed");
         }

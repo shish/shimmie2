@@ -100,7 +100,7 @@ class TagList extends Extension
             if ($config->get_string('tag_list_image_type') == 'related') {
                 $this->add_related_block($page, $event->image);
             } else {
-                if (class_exists("TagCategories") and $config->get_bool('tag_categories_split_on_view')) {
+                if (class_exists("TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);
