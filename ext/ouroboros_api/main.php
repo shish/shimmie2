@@ -585,7 +585,7 @@ class OuroborosAPI extends Extension
                                                         ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
                                                     "
                     ),
-                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'count':
@@ -596,7 +596,7 @@ class OuroborosAPI extends Extension
                                                     WHERE count >= :tags_min
                                                     ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                                                     ",
-                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
             case 'date':
@@ -607,7 +607,7 @@ class OuroborosAPI extends Extension
                                                     WHERE count >= :tags_min
                                                     ORDER BY count DESC, tag ASC LIMIT :start, :max_items
                                                     ",
-                    ['tags_min' => $config->get_int('tags_min'), 'start' => $start, 'max_items' => $limit]
+                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;
         }
