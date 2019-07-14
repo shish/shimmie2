@@ -2,6 +2,8 @@
 
 require_once "config.php";
 
+require_once "config.php";
+
 class TagList extends Extension
 {
     public function onInitExt(InitExtEvent $event)
