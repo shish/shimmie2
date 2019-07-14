@@ -106,6 +106,7 @@ class Tag
         $term = str_replace('_', '\_', $term);
         $term = str_replace('%', '\%', $term);
         $term = str_replace('*', '%', $term);
+        $term = str_replace("?", "_", $term);
         return $term;
     }
 }

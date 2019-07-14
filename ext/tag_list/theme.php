@@ -38,7 +38,7 @@ class TagListTheme extends Themelet
     {
         global $config;
 
-        $tag_info_link_is_visible = !is_null($config->get_string('info_link'));
+        $tag_info_link_is_visible = !is_null($config->get_string(TagListConfig::INFO_LINK));
         $tag_count_is_visible = $config->get_bool("tag_list_numbers");
 
         return '
@@ -68,7 +68,7 @@ class TagListTheme extends Themelet
     {
         global $config;
 
-        if ($config->get_string('tag_list_related_sort') == 'alphabetical') {
+        if ($config->get_string(TagListConfig::RELATED_SORT) == TagListConfig::SORT_ALPHABETICAL) {
             asort($tag_infos);
         }
 
@@ -117,7 +117,7 @@ class TagListTheme extends Themelet
             $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
         }
 
-        if ($config->get_string('tag_list_image_type')=="tags") {
+        if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
             $page->add_block(new Block("Tags", $main_html, "left", 10));
         } else {
             $page->add_block(new Block("Related Tags", $main_html, "left", 10));
@@ -132,7 +132,7 @@ class TagListTheme extends Themelet
      */
     private function get_tag_list_html($tag_infos, $sort)
     {
-        if ($sort == 'alphabetical') {
+        if ($sort == TagListConfig::SORT_ALPHABETICAL) {
             asort($tag_infos);
         }
 
@@ -168,10 +168,10 @@ class TagListTheme extends Themelet
 
         $main_html = $this->get_tag_list_html(
             $tag_infos,
-            $config->get_string('tag_list_related_sort')
+            $config->get_string(TagListConfig::RELATED_SORT)
         );
 
-        if ($config->get_string('tag_list_image_type')=="tags") {
+        if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
             $page->add_block(new Block("Tags", $main_html, "left", 10));
         } else {
             $page->add_block(new Block("Related Tags", $main_html, "left", 10));
@@ -191,7 +191,7 @@ class TagListTheme extends Themelet
 
         $main_html = $this->get_tag_list_html(
             $tag_infos,
-            $config->get_string('tag_list_popular_sort')
+            $config->get_string(TagListConfig::POPULAR_SORT)
         );
         $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
@@ -211,7 +211,7 @@ class TagListTheme extends Themelet
 
         $main_html = $this->get_tag_list_html(
             $tag_infos,
-            $config->get_string('tag_list_popular_sort')
+            $config->get_string(TagListConfig::POPULAR_SORT)
         );
         $main_html .= "&nbsp;<br><a class='more' href='".make_link("tags")."'>Full List</a>\n";
 
@@ -240,10 +240,10 @@ class TagListTheme extends Themelet
         }
 
         $h_tag_no_underscores = str_replace("_", " ", $h_tag);
-        $count = $row['calc_count'];
+        $count = $row['count'];
         // if($n++) $display_html .= "\n<br/>";
-        if (!is_null($config->get_string('info_link'))) {
-            $link = html_escape(str_replace('$tag', url_escape($tag), $config->get_string('info_link')));
+        if (!is_null($config->get_string(TagListConfig::INFO_LINK))) {
+            $link = html_escape(str_replace('$tag', url_escape($tag), $config->get_string(TagListConfig::INFO_LINK)));
             $display_html .= '<td class="tag_info_link_cell"> <a class="tag_info_link'.$tag_category_css.'" '.$tag_category_style.'href="'.$link.'">?</a></td>';
         }
         $link = $this->tag_link($row['tag']);
