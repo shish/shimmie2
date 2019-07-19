@@ -23,6 +23,13 @@ function _load_event_listeners(): void
     }
 }
 
+function _clear_cached_event_listeners(): void
+{
+    if (file_exists(data_path("cache/shm_event_listeners.php"))) {
+       unlink(data_path("cache/shm_event_listeners.php"));
+    }
+}
+
 function _set_event_listeners(): void
 {
     global $_shm_event_listeners;

@@ -224,8 +224,6 @@ class ExtManager extends Extension
         // when the list of active extensions changes, we can be
         // pretty sure that the list of who reacts to what will
         // change too
-        if (file_exists("data/cache/event_listeners.php")) {
-            unlink("data/cache/event_listeners.php");
-        }
+        _clear_cached_event_listeners();
     }
 }
