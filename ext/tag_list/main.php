@@ -395,7 +395,7 @@ class TagList extends Extension
             }
             $h_tag = html_escape($row['tag']);
             $link = $this->tag_link($row['tag']);
-            $image = Image::by_random([$row['tag']]);
+            $image = Image::by_random([$row['tag']], 100);
             if (is_null($image)) {
                 continue;
             } // one of the popular tags has no images

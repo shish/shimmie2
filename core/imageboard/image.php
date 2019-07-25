@@ -101,12 +101,15 @@ class Image
         return ($row ? new Image($row) : null);
     }
 
-    public static function by_random(array $tags=[]): ?Image
+    public static function by_random(array $tags=[], int $limit_range=0): ?Image
     {
         $max = Image::count_images($tags);
         if ($max < 1) {
             return null;
         }		// From Issue #22 - opened by HungryFeline on May 30, 2011.
+        if ($max > $limit_range) {
+            $max = $limit_range;
+        }
         $rand = mt_rand(0, $max-1);
         $set = Image::find_images($rand, 1, $tags);
         if (count($set) > 0) {
