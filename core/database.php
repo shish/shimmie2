@@ -190,10 +190,12 @@ class Database
 
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
-		global $_tracer;
+		global $_tracer, $tracer_enabled;
 		$dur = microtime(true) - $start;
-		$query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
-		$_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
+        if($tracer_enabled) {
+            $query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
+            $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
+        }
 		$this->query_count++;
         $this->dbtime += $dur;
     }
