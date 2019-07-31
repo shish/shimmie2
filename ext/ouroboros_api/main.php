@@ -231,8 +231,8 @@ class _SafeOuroborosImage
         $this->has_notes = false;
 
         // thumb
-        $this->preview_height = $config->get_int('thumb_height');
-        $this->preview_width = $config->get_int('thumb_width');
+        $this->preview_height = $config->get_int(ImageConfig::THUMB_HEIGHT);
+        $this->preview_width = $config->get_int(ImageConfig::THUMB_WIDTH);
         $this->preview_url = make_http($img->get_thumb_link());
 
         // sample (use the full image here)
@@ -481,8 +481,8 @@ class OuroborosAPI extends Extension
     protected function postCreate(OuroborosPost $post, string $md5 = '')
     {
         global $config;
-        $handler = $config->get_string("upload_collision_handler");
-        if (!empty($md5) && !($handler == 'merge')) {
+        $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+        if (!empty($md5) && !($handler == ImageConfig::COLLISION_MERGE)) {
             $img = Image::by_hash($md5);
             if (!is_null($img)) {
                 $this->sendResponse(420, self::ERROR_POST_CREATE_DUPE);
@@ -524,8 +524,8 @@ class OuroborosAPI extends Extension
         if (!empty($meta['hash'])) {
             $img = Image::by_hash($meta['hash']);
             if (!is_null($img)) {
-                $handler = $config->get_string("upload_collision_handler");
-                if ($handler == "merge") {
+                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+                if ($handler == ImageConfig::COLLISION_MERGE) {
                     $postTags = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
                     $merged = array_merge($postTags, $img->get_tag_array());
                     send_event(new TagSetEvent($img, $merged));

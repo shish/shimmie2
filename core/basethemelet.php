@@ -58,7 +58,7 @@ class BaseThemelet
             $tsize = get_thumbnail_size($image->width, $image->height);
         } else {
             //Use max thumbnail size if using thumbless filetype
-            $tsize = get_thumbnail_size($config->get_int('thumb_width'), $config->get_int('thumb_height'));
+            $tsize = get_thumbnail_size($config->get_int(ImageConfig::THUMB_WIDTH), $config->get_int(ImageConfig::THUMB_WIDTH));
         }
 
         $custom_classes = "";

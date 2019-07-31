@@ -9,8 +9,8 @@ class ResizeImageTheme extends Themelet
     {
         global $config;
 
-        $default_width = $config->get_int('resize_default_width');
-        $default_height = $config->get_int('resize_default_height');
+        $default_width = $config->get_int(ResizeConfig::DEFAULT_WIDTH);
+        $default_height = $config->get_int(ResizeConfig::DEFAULT_HEIGHT);
 
         if (!$default_width) {
             $default_width = $image->width;
