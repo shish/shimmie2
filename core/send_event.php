@@ -44,7 +44,7 @@ function _set_event_listeners(): void
             $extension = new $class();
 
             // skip extensions which don't support our current database
-            if (!$extension->is_live()) {
+            if (!$extension->is_supported()) {
                 continue;
             }
 
@@ -93,7 +93,7 @@ function ext_is_live(string $ext_name): bool
     if (class_exists($ext_name)) {
         /** @var Extension $ext */
         $ext = new $ext_name();
-        return $ext->is_live();
+        return $ext->is_supported();
     }
     return false;
 }

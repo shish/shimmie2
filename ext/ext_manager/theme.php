@@ -29,8 +29,13 @@ class ExtManagerTheme extends Themelet
             $h_name = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
             $h_description = html_escape($extension->description);
             $h_link = make_link("ext_doc/" . url_escape($extension->ext_name));
-            $h_enabled = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " disabled checked='checked'"));
-            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->ext_name) . "' id='ext_" . html_escape($extension->ext_name) . "'$h_enabled></td>" : "";
+
+            $h_enabled = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " checked='checked'"));
+            $h_disabled = ($extension->supported===false || $extension->enabled===null? " disabled ": " " );
+
+            //baseline_open_in_new_black_18dp.png
+
+            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->ext_name) . "' id='ext_" . html_escape($extension->ext_name) . "'$h_disabled $h_enabled></td>" : "";
             $h_docs = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
             $html .= "
@@ -38,7 +43,7 @@ class ExtManagerTheme extends Themelet
 					{$h_enabled_box}
 					<td><label for='ext_" . html_escape($extension->ext_name) . "'>{$h_name}</label></td>
 					<td>{$h_docs}</td>
-					<td style='text-align: left;'>{$h_description}</td>
+					<td style='text-align: left;'>{$h_description} " .($extension->supported===false ? "<b style='color:red'>Database not supported</b>" : ""). "</td>
 				</tr>";
         }
         $h_set = $editable ? "<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>" : "";
@@ -113,7 +118,7 @@ class ExtManagerTheme extends Themelet
     }
     */
 
-    public function display_doc(Page $page, ExtensionInfo $info)
+    public function display_doc(Page $page, ExtensionManagerInfo $info)
     {
         $author = "";
         if (count($info->authors) > 0) {

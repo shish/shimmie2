@@ -26,6 +26,7 @@ $_tracer->begin("Opening files");
 $_shm_files = array_merge(
     zglob("core/*.php"),
     zglob("core/{".ENABLED_MODS."}/*.php"),
+    zglob("ext/{".ENABLED_EXTS."}/info.php"),
     zglob("ext/{".ENABLED_EXTS."}/main.php")
 );
 foreach ($_shm_files as $_shm_filename) {

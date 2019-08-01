@@ -89,18 +89,26 @@ abstract class Extension
     /** @var Themelet this theme's Themelet object */
     public $theme;
 
+    public $info;
+
     public function __construct()
     {
-        $this->theme = $this->get_theme_object(get_called_class());
+        $class = get_called_class();
+        $this->theme = $this->get_theme_object($class);
+        $this->info = ExtensionInfo::get_for_extension($class);
     }
 
-    public function is_live(): bool
+    public function is_supported(): bool
     {
-        global $database;
-        return (
-            empty($this->db_support) ||
-            in_array($database->get_driver_name(), $this->db_support)
-        );
+        if($this->info!=null) {
+            return $this->info->supported;
+        } else {
+            global $database;
+            return (
+                empty($this->db_support) ||
+                in_array($database->get_driver_name(), $this->db_support)
+            );
+        }
     }
 
     /**
@@ -127,6 +135,45 @@ abstract class Extension
     public function get_priority(): int
     {
         return 50;
+    }
+}
+
+abstract class ExtensionInfo
+{
+    public $name;
+    public $authors;
+    public $link;
+    public $license;
+    public $version;
+    public $visibility;
+    public $description;
+    public $documentation;
+    public $supported;
+    public $db_support;
+
+    public function __construct()
+    {
+        $this->supported = $this->is_supported();
+    }
+
+    public function is_supported(): bool
+    {
+        global $database;
+        return (
+            empty($this->db_support) ||
+            in_array($database->get_driver_name(), $this->db_support)
+        );
+    }
+
+    public static function get_for_extension(string $base): ?ExtensionInfo
+    {
+        $normal = $base.'Info';
+
+        if (class_exists($normal)) {
+            return new $normal();
+        } else {
+            return null;
+        }
     }
 }
 

@@ -12,12 +12,12 @@
  *   extensions and read their documentation
  */
 
-function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int
+function __extman_extcmp(ExtensionManagerInfo $a, ExtensionManagerInfo $b): int
 {
     return strcmp($a->name, $b->name);
 }
 
-class ExtensionInfo
+class ExtensionManagerInfo
 {
     public $ext_name;
     public $name;
@@ -28,59 +28,88 @@ class ExtensionInfo
     public $version;
     public $visibility;
     public $enabled;
+    public $supported;
 
     public function __construct($main)
     {
         $matches = [];
-        $lines = file($main);
-        $number_of_lines = count($lines);
         preg_match("#ext/(.*)/main.php#", $main, $matches);
         $this->ext_name = $matches[1];
         $this->name = $this->ext_name;
         $this->enabled = $this->is_enabled($this->ext_name);
-        $this->authors = [];
 
-        for ($i = 0; $i < $number_of_lines; $i++) {
-            $line = $lines[$i];
-            if (preg_match("/Name: (.*)/", $line, $matches)) {
-                $this->name = $matches[1];
-            } elseif (preg_match("/Visibility: (.*)/", $line, $matches)) {
-                $this->visibility = $matches[1];
-            } elseif (preg_match("/Link: (.*)/", $line, $matches)) {
-                $this->link = $matches[1];
-                if ($this->link[0] == "/") {
-                    $this->link = make_link(substr($this->link, 1));
-                }
-            } elseif (preg_match("/Version: (.*)/", $line, $matches)) {
-                $this->version = $matches[1];
-            } elseif (preg_match("/Authors?: (.*)/", $line, $matches)) {
-                $author_list = explode(',', $matches[1]);
-                foreach ($author_list as $author) {
-                    if (preg_match("/(.*) [<\(](.*@.*)[>\)]/", $author, $matches)) {
-                        $this->authors[] = new ExtensionAuthor($matches[1], $matches[2]);
-                    } else {
-                        $this->authors[] = new ExtensionAuthor($author, null);
+        if(file_exists("ext/{$this->ext_name}/info.php")) {
+            include_once "ext/{$this->ext_name}/info.php";
+            $class = get_class_from_file("ext/{$this->ext_name}/info.php");
+            $info = new $class();
+
+            $this->name = $info->name;
+            $this->link = $info->link;
+            foreach ($info->authors as $key=>$value){
+                $this->authors[] = new ExtensionAuthor($key, $value);
+            }
+            $this->description = $info->description;
+            $this->documentation = $info->documentation;
+            $this->version = $info->version;
+            $this->visibility = $info->visibility;
+            $this->supported = $info->supported;
+        } else {
+            $this->authors = [];
+
+            $handle = fopen($main, "r");
+            if ($handle === null) {
+                throw new Exception("Could not open extension file $main");
+            }
+            try {
+                $line = fgets($handle);
+
+                while ($line !== false) {
+                    if (preg_match("/Name: (.*)/", $line, $matches)) {
+                        $this->name = $matches[1];
+                    } elseif (preg_match("/Visibility: (.*)/", $line, $matches)) {
+                        $this->visibility = $matches[1];
+                    } elseif (preg_match("/Link: (.*)/", $line, $matches)) {
+                        $this->link = $matches[1];
+                        if ($this->link[0] == "/") {
+                            $this->link = make_link(substr($this->link, 1));
+                        }
+                    } elseif (preg_match("/Version: (.*)/", $line, $matches)) {
+                        $this->version = $matches[1];
+                    } elseif (preg_match("/Authors?: (.*)/", $line, $matches)) {
+                        $author_list = explode(',', $matches[1]);
+                        foreach ($author_list as $author) {
+                            if (preg_match("/(.*) [<\(](.*@.*)[>\)]/", $author, $matches)) {
+                                $this->authors[] = new ExtensionAuthor($matches[1], $matches[2]);
+                            } else {
+                                $this->authors[] = new ExtensionAuthor($author, null);
+                            }
+                        }
+                    } elseif (preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
+                        $this->description = $matches[2];
+                        $start = $matches[1] . " ";
+                        $start_len = strlen($start);
+                        while (($line = fgets($handle)) !== false &&
+                            substr($line, 0, $start_len) == $start) {
+                            $this->description .= " " . substr($line, $start_len);
+                        }
+                        continue;
+                    } elseif (preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
+                        $this->documentation = $matches[2];
+                        $start = $matches[1] . " ";
+                        $start_len = strlen($start);
+                        while (($line = fgets($handle)) !== false &&
+                            substr($line, 0, $start_len) == $start) {
+                            $this->documentation .= " " . substr($line, $start_len);
+                        }
+                        $this->documentation = str_replace('$site', make_http(get_base_href()), $this->documentation);
+                        continue;
+                    } elseif (preg_match("/\*\//", $line, $matches)) {
+                        break;
                     }
+                    $line = fgets($handle);
                 }
-            } elseif (preg_match("/(.*)Description: ?(.*)/", $line, $matches)) {
-                $this->description = $matches[2];
-                $start = $matches[1] . " ";
-                $start_len = strlen($start);
-                while (substr($lines[$i + 1], 0, $start_len) == $start) {
-                    $this->description .= " " . substr($lines[$i + 1], $start_len);
-                    $i++;
-                }
-            } elseif (preg_match("/(.*)Documentation: ?(.*)/", $line, $matches)) {
-                $this->documentation = $matches[2];
-                $start = $matches[1] . " ";
-                $start_len = strlen($start);
-                while (substr($lines[$i + 1], 0, $start_len) == $start) {
-                    $this->documentation .= " " . substr($lines[$i + 1], $start_len);
-                    $i++;
-                }
-                $this->documentation = str_replace('$site', make_http(get_base_href()), $this->documentation);
-            } elseif (preg_match("/\*\//", $line, $matches)) {
-                break;
+            } finally {
+                fclose($handle);
             }
         }
     }
@@ -142,8 +171,8 @@ class ExtManager extends Extension
 
         if ($event->page_matches("ext_doc")) {
             $ext = $event->get_arg(0);
-            if (file_exists("ext/$ext/main.php")) {
-                $info = new ExtensionInfo("ext/$ext/main.php");
+            if (file_exists("ext/$ext/info.php")) {
+                $info = new ExtensionManagerInfo("ext/$ext/main.php");
                 $this->theme->display_doc($page, $info);
             } else {
                 $this->theme->display_table($page, $this->get_extensions(false), false);
@@ -196,7 +225,7 @@ class ExtManager extends Extension
             $exts = zglob("ext/{" . ENABLED_EXTS . "}/main.php");
         }
         foreach ($exts as $main) {
-            $extensions[] = new ExtensionInfo($main);
+            $extensions[] = new ExtensionManagerInfo($main);
         }
         usort($extensions, "__extman_extcmp");
         return $extensions;
