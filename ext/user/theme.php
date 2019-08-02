@@ -343,4 +343,30 @@ class UserPageTheme extends Themelet
         return $html;
     }
     // }}}
+
+    public function get_help_html()
+    {
+        global $user;
+        $output = '<p>Search for images posted by particular individuals.</p>
+        <div class="command_example">
+        <pre>poster=username</pre>
+        <p>Returns images posted by "username".</p>
+        </div> 
+        <div class="command_example">
+        <pre>poster_id=123</pre>
+        <p>Returns images posted by user 123.</p>
+        </div> 
+        ';
+
+
+        if ($user->can(Permissions::VIEW_IP)) {
+            $output .="
+        <div class=\"command_example\">
+                <pre>poster_ip=127.0.0.1</pre>
+                <p>Returns images posted from IP 127.0.0.1.</p>
+                </div> 
+                ";
+        }
+        return $output;
+    }
 }

@@ -366,6 +366,16 @@ class CommentList extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Comments";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
     // page building {{{
     private function build_page(int $current_page)
     {

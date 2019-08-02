@@ -126,6 +126,21 @@ class Ratings extends Extension
         $event->replace('$rating', $this->rating_to_human($event->image->rating));
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        global $user;
+
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Ratings";
+
+            $ratings = self::get_sorted_ratings();
+
+            $block->body = $this->theme->get_help_html($ratings);
+            $event->add_block($block);
+        }
+    }
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user;

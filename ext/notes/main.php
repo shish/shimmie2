@@ -210,9 +210,19 @@ class Notes extends Extension
             }
 
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
-        } elseif (preg_match("/^notes_by_userno[=|:](\d+)$/i", $event->term, $matches)) {
-            $user_id = int_escape($matches[1]);
+        } elseif (preg_match("/^(notes_by_userno|notes_by_user_id)[=|:](\d+)$/i", $event->term, $matches)) {
+            $user_id = int_escape($matches[2]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM notes WHERE user_id = $user_id)"));
+        }
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Notes";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
         }
     }
 

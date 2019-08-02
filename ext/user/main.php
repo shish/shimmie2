@@ -364,6 +364,17 @@ class UserPage extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Users";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
+
     private function show_user_info()
     {
         global $user, $page;

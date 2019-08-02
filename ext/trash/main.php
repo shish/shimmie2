@@ -93,6 +93,20 @@ class Trash extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        global $user;
+        if($event->key===HelpPages::SEARCH) {
+            if($user->can(Permissions::VIEW_TRASH)) {
+                $block = new Block();
+                $block->header = "Trash";
+                $block->body = $this->theme->get_help_html();
+                $event->add_block($block);
+            }
+        }
+    }
+
+
     private function no_trash_query(array $context): bool
     {
         foreach ($context as $term) {

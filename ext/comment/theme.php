@@ -290,4 +290,28 @@ class CommentListTheme extends Themelet
 		</div>
 		';
     }
+
+    public function get_help_html()
+    {
+        return '<p>Search for images containing a certain number of comments, or comments by a particular individual.</p>
+        <div class="command_example">
+        <pre>comments=1</pre>
+        <p>Returns images with exactly 1 comment.</p>
+        </div> 
+        <div class="command_example">
+        <pre>comments>0</pre>
+        <p>Returns images with 1 or more comments. </p>
+        </div>
+        <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
+        <div class="command_example">
+        <pre>commented_by:username</pre>
+        <p>Returns images that have been commented on by "username". </p>
+        </div>
+        <div class="command_example">
+        <pre>commented_by_userno:123</pre>
+        <p>Returns images that have been commented on by user 123. </p>
+        </div>
+        ';
+
+    }
 }

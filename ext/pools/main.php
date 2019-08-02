@@ -372,6 +372,17 @@ class Pools extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Pools";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         $matches = [];

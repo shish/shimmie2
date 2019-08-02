@@ -47,11 +47,22 @@ class Artists extends Extension
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         $matches = [];
-        if (preg_match("/^author[=|:](.*)$/i", $event->term, $matches)) {
+        if (preg_match("/^(author|artist)[=|:](.*)$/i", $event->term, $matches)) {
             $char = $matches[1];
             $event->add_querylet(new Querylet("Author = :author_char", ["author_char"=>$char]));
         }
     }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Artist";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
 
     public function onInitExt(InitExtEvent $event)
     {
