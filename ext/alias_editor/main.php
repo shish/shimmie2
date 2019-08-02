@@ -117,6 +117,13 @@ class AliasEditor extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("aliases", new Link('alias/list'), "Aliases", NavLink::is_active(["alias"]));
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

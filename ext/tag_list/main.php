@@ -93,6 +93,21 @@ class TagList extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("tags", new Link('tags/map'), "Tags");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
+            $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
+            $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
+            $event->add_nav_link("tags_categories", new Link('tags/categories'), "Categories");
+        }
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $config, $page;

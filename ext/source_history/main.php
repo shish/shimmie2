@@ -82,6 +82,16 @@ class Source_History extends Extension
         $this->add_source_history($event->image, $event->source);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+                $event->add_nav_link("source_history", new Link('source_history/all/1'), "Source Changes", NavLink::is_active(["source_history"]));
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

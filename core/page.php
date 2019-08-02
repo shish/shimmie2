@@ -299,9 +299,55 @@ class Page
                     $this->add_cookie("flash_message", "", -1, "/");
                 }
                 usort($this->blocks, "blockcmp");
+                $pnbe = new PageNavBuildingEvent();
+                send_event($pnbe);
+
+                $nav_links = $pnbe->links;
+
+                $active_link = null;
+                // To save on event calls, we check if one of the top-level links has already been marked as active
+                foreach ($nav_links as $link) {
+                    if($link->active===true) {
+                        $active_link = $link;
+                        break;
+                    }
+                }
+                $sub_links = null;
+                // If one is, we just query for sub-menu options under that one tab
+                if($active_link!==null) {
+                    $psnbe = new PageSubNavBuildingEvent($active_link->name);
+                    send_event($psnbe);
+                    $sub_links = $psnbe->links;
+                } else {
+                    // Otherwise we query for the sub-items under each of the tabs
+                    foreach ($nav_links as $link) {
+                        $psnbe = new PageSubNavBuildingEvent($link->name);
+                        send_event($psnbe);
+
+                        // Now we check for a current link so we can identify the sub-links to show
+                        foreach ($psnbe->links as $sub_link) {
+                            if($sub_link->active===true) {
+                                $sub_links = $psnbe->links;
+                                break;
+                            }
+                        }
+                        // If the active link has been detected, we break out
+                        if($sub_links!==null) {
+                            $link->active = true;
+                            break;
+                        }
+                    }
+                }
+
+
+
+                $sub_links = $sub_links??[];
+                usort($nav_links, "sort_nav_links");
+                usort($sub_links, "sort_nav_links");
+
                 $this->add_auto_html_headers();
                 $layout = new Layout();
-                $layout->display_page($page);
+                $layout->display_page($page, $nav_links, $sub_links);
                 break;
             case PageMode::DATA:
                 header("Content-Length: " . strlen($this->data));
@@ -470,4 +516,100 @@ class Page
         }
         $this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
+}
+
+class PageNavBuildingEvent extends Event
+{
+    public $links = [];
+
+    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    {
+        $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
+    }
+}
+
+class PageSubNavBuildingEvent extends Event
+{
+    public $parent;
+
+    public $links = [];
+
+    public function __construct(string $parent)
+    {
+        $this->parent= $parent;
+    }
+
+    public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
+    {
+        $this->links[]  = new NavLink($name, $link, $desc, $active,$order);
+    }
+}
+
+class NavLink
+{
+    public $name;
+    public $link;
+    public $description;
+    public $order;
+    public $active = false;
+
+    public function  __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
+    {
+        global $config;
+
+        $this->name = $name;
+        $this->link = $link;
+        $this->description = $description;
+        $this->order = $order;
+        if($active==null) {
+            $query = ltrim(_get_query(), "/");
+            if ($query === "") {
+                // This indicates the front page, so we check what's set as the front page
+                $front_page = trim($config->get_string(SetupConfig::FRONT_PAGE), "/");
+
+                if ($front_page === $link->page) {
+                    $this->active = true;
+                } else {
+                    $this->active = self::is_active([$link->page], $front_page);
+                }
+            } elseif($query===$link->page) {
+                $this->active = true;
+            }else {
+                $this->active = self::is_active([$link->page]);
+            }
+        } else {
+            $this->active = $active;
+        }
+
+    }
+
+    public static function is_active(array $pages_matched, string $url = null): bool
+    {
+        /**
+         * Woo! We can actually SEE THE CURRENT PAGE!! (well... see it highlighted in the menu.)
+         */
+        $url = $url??ltrim(_get_query(), "/");
+
+        $re1='.*?';
+        $re2='((?:[a-z][a-z_]+))';
+
+        if (preg_match_all("/".$re1.$re2."/is", $url, $matches)) {
+            $url=$matches[1][0];
+        }
+
+        $count_pages_matched = count($pages_matched);
+
+        for ($i=0; $i < $count_pages_matched; $i++) {
+            if ($url == $pages_matched[$i]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}
+
+function sort_nav_links(NavLink $a, NavLink $b)
+{
+    return $a->order - $b->order;
 }

@@ -132,6 +132,20 @@ class ReportImage extends Extension
         }
     }
 
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
+                $count = $this->count_reported_images();
+                $h_count = $count > 0 ? " ($count)" : "";
+
+                $event->add_nav_link("image_report", new Link('image_report/list'), "Reported Images$h_count");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

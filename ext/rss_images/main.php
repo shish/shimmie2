@@ -116,4 +116,11 @@ class RSS_Images extends Extension
 
         return $data;
     }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_rss", new Link('rss/images'), "Feed");
+        }
+    }
 }

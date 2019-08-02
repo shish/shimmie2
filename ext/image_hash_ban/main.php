@@ -103,6 +103,17 @@ class ImageBan extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BAN_IMAGE)) {
+                $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Image Bans", NavLink::is_active(["image_hash_ban"]));
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

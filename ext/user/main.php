@@ -237,6 +237,17 @@ class UserPage extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        global $user;
+        if ($user->is_anonymous()) {
+            $event->add_nav_link("user", new Link('user_admin/login'), "Account", null, 10);
+        } else {
+            $event->add_nav_link("user", new Link('user'), "Account", null, 10);
+        }
+    }
+
+
     private function display_stats(UserPageBuildingEvent $event)
     {
         global $user, $page, $config;
@@ -303,6 +314,16 @@ class UserPage extends Extension
             "<br>When user logs in/out"
         );
         $event->panel->add_block($sb);
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::EDIT_USER_CLASS)) {
+                $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
+            }
+        }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)

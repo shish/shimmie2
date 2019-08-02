@@ -411,6 +411,16 @@ class Setup extends Extension
         log_warning("setup", "Cache cleared");
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::CHANGE_SETTING)) {
+                $event->add_nav_link("setup", new Link('setup'), "Board Config", null, 0);
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

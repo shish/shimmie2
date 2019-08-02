@@ -93,6 +93,19 @@ class PrivMsg extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="user") {
+            if (!$user->is_anonymous()) {
+                $count = $this->count_pms($user);
+                $h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
+                $event->add_nav_link("pm", new Link('user#private-messages'), "Private Messages$h_count");
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

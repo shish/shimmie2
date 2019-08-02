@@ -145,6 +145,23 @@ class Pools extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("pool", new Link('pool/list'), "Pools");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="pool") {
+            $event->add_nav_link("pool_list", new Link('pool/list'), "List");
+            $event->add_nav_link("pool_new", new Link('pool/new'), "Create");
+            $event->add_nav_link("pool_updated", new Link('pool/updated'), "Changes");
+            $event->add_nav_link("pool_help", new Link('ext_doc/pools'), "Help");
+        }
+    }
+
+
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user, $database;

@@ -56,6 +56,17 @@ class Blotter extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->is_admin()) {
+                $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

@@ -24,6 +24,18 @@ class ET extends Extension
         }
     }
 
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
+                $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

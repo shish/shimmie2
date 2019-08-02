@@ -7,7 +7,7 @@ class Layout
     /**
      * turns the Page into HTML
      */
-    public function display_page(Page $page)
+    public function display_page(Page $page, array $nav_links)
     {
         global $config;
 

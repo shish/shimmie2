@@ -162,6 +162,17 @@ class ExtManager extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
+                $event->add_nav_link("ext_manager", new Link('ext_manager'), "Extension Manager");
+            } else {
+                $event->add_nav_link("ext_doc", new Link('ext_doc'), "Board Help");
+            }
+        }
+    }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {

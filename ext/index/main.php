@@ -332,6 +332,18 @@ class Index extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]),20);
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_all", new Link('post/list'), "All");
+        }
+    }
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         $matches = [];

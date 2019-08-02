@@ -120,6 +120,16 @@ class LogDatabase extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_EVENTLOG)) {
+                $event->add_nav_link("event_log", new Link('log/view'), "Event Log");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

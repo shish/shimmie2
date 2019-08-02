@@ -255,6 +255,15 @@ class TagEdit extends Extension
         $this->theme->display_mass_editor();
     }
 
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
+        }
+    }
+
+
     /**
      * When an alias is added, oldtag becomes inaccessible.
      */

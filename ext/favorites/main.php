@@ -155,6 +155,20 @@ class Favorites extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_favorites", new Link("post/list/favorited_by={$user->name}/1"), "My Favorites");
+        }
+
+        if($event->parent==="user") {
+            if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
+                $username = url_escape($user->name);
+                $event->add_nav_link("favorites", new Link("post/list/favorited_by=$username/1"), "My Favorites");
+            }
+        }
+    }
 
     private function install()
     {

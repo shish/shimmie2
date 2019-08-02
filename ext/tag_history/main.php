@@ -82,6 +82,17 @@ class Tag_History extends Extension
         $this->add_tag_history($event->image, $event->tags);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
+                $event->add_nav_link("tag_history", new Link('tag_history/all/1'), "Tag Changes", NavLink::is_active(["tag_history"]));
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

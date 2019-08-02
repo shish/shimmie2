@@ -79,4 +79,12 @@ EOD;
             $page->set_data($xml);
         }
     }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="comment") {
+            $event->add_nav_link("comment_rss", new Link('rss/comments'), "Feed");
+        }
+    }
+
 }

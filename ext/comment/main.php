@@ -157,6 +157,21 @@ class CommentList extends Extension
         }
     }
 
+
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("comment", new Link('comment/list'), "Comments");
+    }
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="comment") {
+            $event->add_nav_link("comment_list", new Link('comment/list'), "All");
+            $event->add_nav_link("comment_help", new Link('ext_doc/comment'), "Help");
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("comment")) {
