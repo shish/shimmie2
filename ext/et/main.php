@@ -40,8 +40,8 @@ class ET extends Extension
         global $config, $database;
 
         $info = [];
-        $info['site_title'] = $config->get_string("title");
-        $info['site_theme'] = $config->get_string("theme");
+        $info['site_title'] = $config->get_string(SetupConfig::TITLE);
+        $info['site_theme'] = $config->get_string(SetupConfig::THEME);
         $info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
 
         $info['sys_shimmie'] = VERSION;

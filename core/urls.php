@@ -14,7 +14,7 @@ function make_link(?string $page=null, ?string $query=null): string
     global $config;
 
     if (is_null($page)) {
-        $page = $config->get_string('main_page');
+        $page = $config->get_string(SetupConfig::MAIN_PAGE);
     }
 
     if (!is_null(BASE_URL)) {

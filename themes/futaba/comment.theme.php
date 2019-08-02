@@ -11,7 +11,7 @@ class CustomCommentListTheme extends CommentListTheme
         //$prev = $page_number - 1;
         //$next = $page_number + 1;
 
-        $page_title = $config->get_string('title');
+        $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
         $page->set_heading($page_title);
         $page->disable_left();

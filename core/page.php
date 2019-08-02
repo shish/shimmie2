@@ -405,7 +405,7 @@ class Page
         global $config;
 
         $data_href = get_base_href();
-        $theme_name = $config->get_string('theme', 'default');
+        $theme_name = $config->get_string(SetupConfig::THEME, 'default');
 
         $this->add_html_header("<script type='text/javascript'>base_href = '$data_href';</script>", 40);
 

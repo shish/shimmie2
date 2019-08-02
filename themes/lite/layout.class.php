@@ -13,8 +13,8 @@ class Layout
     {
         global $config, $user;
 
-        $theme_name = $config->get_string('theme', 'lite');
-        $site_name = $config->get_string('title');
+        $theme_name = $config->get_string(SetupConfig::THEME, 'lite');
+        $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();
         $contact_link = contact_link();
         $header_html = $page->get_all_html_headers();

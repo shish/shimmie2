@@ -48,7 +48,7 @@ class Layout
     {
         global $config, $user;
 
-        //$theme_name = $config->get_string('theme');
+        //$theme_name = $config->get_string(SetupConfig::THEME);
         //$base_href = $config->get_string('base_href');
         //$data_href = get_base_href();
         $contact_link = contact_link();
@@ -92,10 +92,9 @@ class Layout
             $subheading = "<div id='subtitle'>{$this->subheading}</div>";
         }
 
-        $site_name = $config->get_string('title'); // bzchan: change from normal default to get title for top of page
-        $main_page = $config->get_string('main_page'); // bzchan: change from normal default to get main page for top of page
+        $site_name = $config->get_string(SetupConfig::TITLE); // bzchan: change from normal default to get title for top of page
+        $main_page = $config->get_string(SetupConfig::MAIN_PAGE); // bzchan: change from normal default to get main page for top of page
 
-        // bzchan: CUSTOM LINKS are prepared here, change these to whatever you like
         $custom_links = "";
         if ($user->is_anonymous()) {
             $custom_links .= $this->navlinks(make_link('user_admin/login'), "Sign in", ["user", "user_admin", "setup", "admin"]);

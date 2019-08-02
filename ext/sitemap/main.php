@@ -74,7 +74,7 @@ class XMLSitemap extends Extension
 
         // add index
         $index = [];
-        $index[0] = $config->get_string("front_page");
+        $index[0] = $config->get_string(SetupConfig::FRONT_PAGE);
         $this->add_sitemap_queue($index, "weekly", "1");
 
         /* --- Add 20 most used tags --- */

@@ -16,7 +16,7 @@ function mtimefile(string $file): string
 function get_theme(): string
 {
     global $config;
-    $theme = $config->get_string("theme", "default");
+    $theme = $config->get_string(SetupConfig::THEME, "default");
     if (!file_exists("themes/$theme")) {
         $theme = "default";
     }

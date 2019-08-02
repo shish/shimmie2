@@ -6,6 +6,8 @@
  * Description: Allows the site admin to configure the board to his or her taste
  */
 
+include_once "config.php";
+
 /* ConfigSaveEvent {{{
  *
  * Sent when the setup screen's 'set' button has been
@@ -275,12 +277,11 @@ class Setup extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_string("title", "Shimmie");
-        $config->set_default_string("front_page", "post/list");
-        $config->set_default_string("main_page", "post/list");
-        $config->set_default_string("theme", "default");
-        $config->set_default_bool("word_wrap", true);
-        $config->set_default_bool("comment_captcha", false);
+        $config->set_default_string(SetupConfig::TITLE, "Shimmie");
+        $config->set_default_string(SetupConfig::FRONT_PAGE, "post/list");
+        $config->set_default_string(SetupConfig::MAIN_PAGE, "post/list");
+        $config->set_default_string(SetupConfig::THEME, "default");
+        $config->set_default_bool(SetupConfig::WORD_WRAP, true);
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -368,11 +369,11 @@ class Setup extends Extension
 		</script>";
         $sb = new SetupBlock("General");
         $sb->position = 0;
-        $sb->add_text_option("title", "Site title: ");
-        $sb->add_text_option("front_page", "<br>Front page: ");
-        $sb->add_text_option("main_page", "<br>Main page: ");
+        $sb->add_text_option(SetupConfig::TITLE, "Site title: ");
+        $sb->add_text_option(SetupConfig::FRONT_PAGE, "<br>Front page: ");
+        $sb->add_text_option(SetupConfig::MAIN_PAGE, "<br>Main page: ");
         $sb->add_text_option("contact_link", "<br>Contact URL: ");
-        $sb->add_choice_option("theme", $themes, "<br>Theme: ");
+        $sb->add_choice_option(SetupConfig::THEME, $themes, "<br>Theme: ");
         //$sb->add_multichoice_option("testarray", array("a" => "b", "c" => "d"), "<br>Test Array: ");
         $sb->add_bool_option("nice_urls", "<br>Nice URLs: ");
         $sb->add_label("<span id='nicetest'>(Javascript inactive, can't test!)</span>$nicescript");

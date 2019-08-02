@@ -813,7 +813,7 @@ class Image
         $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
         $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
         $tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
-        $tmpl = str_replace('$title', $_escape($config->get_string("title")), $tmpl);
+        $tmpl = str_replace('$title', $_escape($config->get_string(SetupConfig::TITLE)), $tmpl);
         $tmpl = str_replace('$date', $_escape(autodate($this->posted, false)), $tmpl);
 
         // nothing seems to use this, sending the event out to 50 exts is a lot of overhead

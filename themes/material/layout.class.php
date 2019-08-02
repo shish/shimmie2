@@ -11,10 +11,10 @@ class Layout
     {
         global $config;
 
-        $theme_name = $config->get_string('theme', 'material');
-        $site_name = $config->get_string('title');
+        $theme_name = $config->get_string(SetupConfig::THEME, 'material');
+        $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();
-        $main_page = $config->get_string('main_page');
+        $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
         $contact_link = contact_link();
         $site_link = make_link();
         $header_html = $page->get_all_html_headers();
