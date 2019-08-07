@@ -11,7 +11,7 @@ class AliasEditorTheme extends Themelet
     {
         global $page, $user;
 
-        $can_manage = $user->can("manage_alias_list");
+        $can_manage = $user->can(Permissions::MANAGE_ALIAS_LIST);
         if ($can_manage) {
             $h_action = "<th width='10%'>Action</th>";
             $h_add = "

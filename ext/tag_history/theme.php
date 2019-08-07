@@ -25,7 +25,7 @@ class Tag_HistoryTheme extends Themelet
             $current_tags = html_escape($fields['tags']);
             $name = $fields['name'];
             $date_set = autodate($fields['date_set']);
-            $h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
+            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
             $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
             $selected = ($n == 2) ? " checked" : "";
@@ -84,7 +84,7 @@ class Tag_HistoryTheme extends Themelet
             $image_id = $fields['image_id'];
             $current_tags = html_escape($fields['tags']);
             $name = $fields['name'];
-            $h_ip = $user->can("view_ip") ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
+            $h_ip = $user->can(Permissions::VIEW_IP) ? " ".show_ip($fields['user_ip'], "Tagging Image #$image_id as '$current_tags'") : "";
             $setter = "<a href='".make_link("user/".url_escape($name))."'>".html_escape($name)."</a>$h_ip";
 
             $history_list .= '

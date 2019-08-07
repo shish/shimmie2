@@ -118,7 +118,7 @@ class ExtManager extends Extension
     {
         global $page, $user;
         if ($event->page_matches("ext_manager")) {
-            if ($user->can("manage_extension_list")) {
+            if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
                 if ($event->get_arg(0) == "set" && $user->check_auth_token()) {
                     if (is_writable("data/config")) {
                         $this->set_things($_POST);
@@ -162,11 +162,22 @@ class ExtManager extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
+                $event->add_nav_link("ext_manager", new Link('ext_manager'), "Extension Manager");
+            } else {
+                $event->add_nav_link("ext_doc", new Link('ext_doc'), "Board Help");
+            }
+        }
+    }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("manage_extension_list")) {
+        if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
             $event->add_link("Extension Manager", make_link("ext_manager"));
         } else {
             $event->add_link("Help", make_link("ext_doc"));

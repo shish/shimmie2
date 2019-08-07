@@ -74,4 +74,11 @@ class RandomList extends Extension
 
         $event->panel->add_block($sb);
     }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_random", new Link('random'), "Shuffle");
+        }
+    }
 }

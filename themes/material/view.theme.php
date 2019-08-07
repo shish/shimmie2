@@ -8,7 +8,6 @@ class CustomViewImageTheme extends ViewImageTheme
     public function display_page(Image $image, $editor_parts)
     {
         global $page;
-        $page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
         $page->set_heading(html_escape($image->get_tag_list()));
         $page->add_block(new Block(null, $this->build_pin($image), "subtoolbar", 0));
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "left", 20));
@@ -57,8 +56,8 @@ class CustomViewImageTheme extends ViewImageTheme
             $html .= $part;
         }
         if (
-            (!$image->is_locked() || $user->can("edit_image_lock")) &&
-            $user->can("edit_image_tag")
+            (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) &&
+            $user->can(Permissions::EDIT_IMAGE_TAG)
         ) {
             $html .= "
   						<tr><td colspan='4'>

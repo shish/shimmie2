@@ -15,6 +15,11 @@ require_once "vendor/autoload.php";
 _version_check();
 _sanitise_environment();
 
+// The trace system has a certain amount of memory consumption every time it is used,
+// so to prevent running out of memory during complex operations code that uses it should
+// check if tracer output is enabled before making use of it.
+$tracer_enabled = constant('TRACE_FILE')!==null;
+
 // load base files
 $_tracer->begin("Bootstrap");
 $_tracer->begin("Opening files");

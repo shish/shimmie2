@@ -58,10 +58,20 @@ class NotATag extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="tags") {
+            if ($user->can(Permissions::BAN_IMAGE)) {
+                $event->add_nav_link("untags", new Link('untag/list/1'), "UnTags");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_image")) {
+        if ($user->can(Permissions::BAN_IMAGE)) {
             $event->add_link("UnTags", make_link("untag/list/1"));
         }
     }
@@ -71,7 +81,7 @@ class NotATag extends Extension
         global $database, $page, $user;
 
         if ($event->page_matches("untag")) {
-            if ($user->can("ban_image")) {
+            if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
                     $tag = $_POST["tag"];
                     $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";

@@ -66,7 +66,7 @@ class IPBan extends Extension
     {
         if ($event->page_matches("ip_ban")) {
             global $page, $user;
-            if ($user->can("ban_ip")) {
+            if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "add" && $user->check_auth_token()) {
                     if (isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
                         if (empty($_POST['end'])) {
@@ -105,10 +105,20 @@ class IPBan extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BAN_IP)) {
+                $event->add_nav_link("ip_bans", new Link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_ip")) {
+        if ($user->can(Permissions::BAN_IP)) {
             $event->add_link("IP Bans", make_link("ip_ban/list"));
         }
     }

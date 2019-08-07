@@ -138,6 +138,21 @@ class Upload extends Extension
         $event->panel->add_block($sb);
     }
 
+
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("upload",new Link('upload'), "Upload");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="upload") {
+            if (class_exists("Wiki")) {
+                $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
+            }
+        }
+    }
+
     public function onDataUpload(DataUploadEvent $event)
     {
         global $config;
@@ -155,7 +170,7 @@ class Upload extends Extension
     {
         global $database, $page, $user;
 
-        if ($user->can("create_image")) {
+        if ($user->can(Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
                 $this->theme->display_full($page);
             } else {
@@ -165,7 +180,7 @@ class Upload extends Extension
 
         if ($event->page_matches("upload/replace")) {
             // check if the user is an administrator and can upload files.
-            if (!$user->can("replace_image")) {
+            if (!$user->can(Permissions::REPLACE_IMAGE)) {
                 $this->theme->display_permission_denied();
             } else {
                 if ($this->is_full) {
@@ -221,7 +236,7 @@ class Upload extends Extension
                 }
             }
         } elseif ($event->page_matches("upload")) {
-            if (!$user->can("create_image")) {
+            if (!$user->can(Permissions::CREATE_IMAGE)) {
                 $this->theme->display_permission_denied();
             } else {
                 /* Regular Upload Image */
@@ -371,7 +386,7 @@ class Upload extends Extension
         $ok = true;
 
         // Checks if user is admin > check if you want locked.
-        if ($user->can("edit_image_lock") && !empty($_GET['locked'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_LOCK) && !empty($_GET['locked'])) {
             $locked = bool_escape($_GET['locked']);
         }
 

@@ -73,7 +73,7 @@ class ImageIO extends Extension
     {
         if ($event->page_matches("image/delete")) {
             global $page, $user;
-            if ($user->can("delete_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
+            if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
@@ -87,7 +87,7 @@ class ImageIO extends Extension
             }
         } elseif ($event->page_matches("image/replace")) {
             global $page, $user;
-            if ($user->can("replace_image") && isset($_POST['image_id']) && $user->check_auth_token()) {
+            if ($user->can(Permissions::REPLACE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
                 $image = Image::by_id($_POST['image_id']);
                 if ($image) {
                     $page->set_mode(PageMode::REDIRECT);
@@ -110,11 +110,11 @@ class ImageIO extends Extension
     {
         global $user;
         
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_deleter_html($event->image->id));
         }
         /* In the future, could perhaps allow users to replace images that they own as well... */
-        if ($user->can("replace_image")) {
+        if ($user->can(Permissions::REPLACE_IMAGE)) {
             $event->add_part($this->theme->get_replace_html($event->image->id));
         }
     }

@@ -3,6 +3,23 @@
 * HTML Generation                                                           *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+class Link
+{
+    public $page;
+    public $query;
+
+    public function __construct(?string $page=null, ?string $query=null)
+    {
+        $this->page = $page;
+        $this->query = $query;
+    }
+
+    public function make_link(): string
+    {
+        return make_link($this->page, $this->query);
+    }
+}
+
 /**
  * Figure out the correct way to link to a page, taking into account
  * things like the nice URLs setting.
@@ -14,7 +31,7 @@ function make_link(?string $page=null, ?string $query=null): string
     global $config;
 
     if (is_null($page)) {
-        $page = $config->get_string('main_page');
+        $page = $config->get_string(SetupConfig::MAIN_PAGE);
     }
 
     if (!is_null(BASE_URL)) {

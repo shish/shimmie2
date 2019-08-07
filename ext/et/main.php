@@ -18,16 +18,28 @@ class ET extends Extension
     {
         global $user;
         if ($event->page_matches("system_info")) {
-            if ($user->can("view_sysinfo")) {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
                 $this->theme->display_info_page($this->get_info());
             }
         }
     }
 
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::VIEW_SYSINTO)) {
+                $event->add_nav_link("system_info", new Link('system_info'), "System Info", null, 10);
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("view_sysinfo")) {
+        if ($user->can(Permissions::VIEW_SYSINTO)) {
             $event->add_link("System Info", make_link("system_info"));
         }
     }
@@ -40,8 +52,8 @@ class ET extends Extension
         global $config, $database;
 
         $info = [];
-        $info['site_title'] = $config->get_string("title");
-        $info['site_theme'] = $config->get_string("theme");
+        $info['site_title'] = $config->get_string(SetupConfig::TITLE);
+        $info['site_theme'] = $config->get_string(SetupConfig::THEME);
         $info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
 
         $info['sys_shimmie'] = VERSION;

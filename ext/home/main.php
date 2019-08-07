@@ -22,8 +22,8 @@ class Home extends Extension
         global $config, $page;
         if ($event->page_matches("home")) {
             $base_href = get_base_href();
-            $sitename = $config->get_string('title');
-            $theme_name = $config->get_string('theme');
+            $sitename = $config->get_string(SetupConfig::TITLE);
+            $theme_name = $config->get_string(SetupConfig::THEME);
 
             $body = $this->get_body();
 
@@ -52,7 +52,7 @@ class Home extends Extension
         // returns just the contents of the body
         global $config;
         $base_href = get_base_href();
-        $sitename = $config->get_string('title');
+        $sitename = $config->get_string(SetupConfig::TITLE);
         $contact_link = contact_link();
         if (is_null($contact_link)) {
             $contact_link = "";

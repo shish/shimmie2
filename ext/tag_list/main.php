@@ -93,6 +93,21 @@ class TagList extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("tags", new Link('tags/map'), "Tags");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="tags") {
+            $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
+            $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
+            $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
+            $event->add_nav_link("tags_categories", new Link('tags/categories'), "Categories");
+        }
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $config, $page;
@@ -100,7 +115,7 @@ class TagList extends Extension
             if ($config->get_string('tag_list_image_type') == 'related') {
                 $this->add_related_block($page, $event->image);
             } else {
-                if (class_exists("TagCategories") and $config->get_bool('tag_categories_split_on_view')) {
+                if (class_exists("TagCategories") and $config->get_bool(TagCategoriesConfig::SPLIT_ON_VIEW)) {
                     $this->add_split_tags_block($page, $event->image);
                 } else {
                     $this->add_tags_block($page, $event->image);

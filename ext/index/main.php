@@ -332,6 +332,29 @@ class Index extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]),20);
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_all", new Link('post/list'), "All");
+        }
+    }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "General";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block, 0);
+        }
+    }
+
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         $matches = [];
@@ -380,6 +403,7 @@ class Index extends Extension
                 $event->add_querylet(new Querylet('images.source LIKE :src', ["src"=>"%$source%"]));
             }
         } elseif (preg_match("/^posted([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9-]*)$/i", $event->term, $matches)) {
+            // TODO Make this able to search = without needing a time component.
             $cmp = ltrim($matches[1], ":") ?: "=";
             $val = $matches[2];
             $event->add_querylet(new Querylet("images.posted $cmp :posted{$this->stpen}", ["posted{$this->stpen}"=>$val]));

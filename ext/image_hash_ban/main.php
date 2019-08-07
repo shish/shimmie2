@@ -64,7 +64,7 @@ class ImageBan extends Extension
         global $database, $page, $user;
 
         if ($event->page_matches("image_hash_ban")) {
-            if ($user->can("ban_image")) {
+            if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
                     $image = isset($_POST['image_id']) ? Image::by_id(int_escape($_POST['image_id'])) : null;
                     $hash = isset($_POST["hash"]) ? $_POST["hash"] : $image->hash;
@@ -103,10 +103,21 @@ class ImageBan extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::BAN_IMAGE)) {
+                $event->add_nav_link("image_bans", new Link('image_hash_ban/list/1'), "Image Bans", NavLink::is_active(["image_hash_ban"]));
+            }
+        }
+    }
+
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_image")) {
+        if ($user->can(Permissions::BAN_IMAGE)) {
             $event->add_link("Image Bans", make_link("image_hash_ban/list/1"));
         }
     }
@@ -130,7 +141,7 @@ class ImageBan extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("ban_image")) {
+        if ($user->can(Permissions::BAN_IMAGE)) {
             $event->add_part($this->theme->get_buttons_html($event->image));
         }
     }

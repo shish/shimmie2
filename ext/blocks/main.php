@@ -26,10 +26,20 @@ class Blocks extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::MANAGE_BLOCKS)) {
+                $event->add_nav_link("blocks", new Link('blocks/list'), "Blocks Editor");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("manage_blocks")) {
+        if ($user->can(Permissions::MANAGE_BLOCKS)) {
             $event->add_link("Blocks Editor", make_link("blocks/list"));
         }
     }
@@ -52,7 +62,7 @@ class Blocks extends Extension
             }
         }
 
-        if ($event->page_matches("blocks") && $user->can("manage_blocks")) {
+        if ($event->page_matches("blocks") && $user->can(Permissions::MANAGE_BLOCKS)) {
             if ($event->get_arg(0) == "add") {
                 if ($user->check_auth_token()) {
                     $database->execute("

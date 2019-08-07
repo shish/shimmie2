@@ -14,80 +14,12 @@
  * wish to appear on the "view" page should listen for this,
  * which only appears when an image actually exists.
  */
-class DisplayingImageEvent extends Event
-{
-    /** @var Image  */
-    public $image;
 
-    public function __construct(Image $image)
-    {
-        $this->image = $image;
-    }
+require_once "events/displaying_image_event.php";
+require_once "events/image_info_box_building_event.php";
+require_once "events/image_info_set_event.php";
+require_once "events/image_admin_block_building_event.php";
 
-    public function get_image(): Image
-    {
-        return $this->image;
-    }
-}
-
-class ImageInfoBoxBuildingEvent extends Event
-{
-    /** @var array  */
-    public $parts = [];
-    /** @var Image  */
-    public $image;
-    /** @var User  */
-    public $user;
-
-    public function __construct(Image $image, User $user)
-    {
-        $this->image = $image;
-        $this->user = $user;
-    }
-
-    public function add_part(string $html, int $position=50)
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
-    }
-}
-
-class ImageInfoSetEvent extends Event
-{
-    /** @var Image */
-    public $image;
-
-    public function __construct(Image $image)
-    {
-        $this->image = $image;
-    }
-}
-
-class ImageAdminBlockBuildingEvent extends Event
-{
-    /** @var string[] */
-    public $parts = [];
-    /** @var ?Image  */
-    public $image = null;
-    /** @var ?User  */
-    public $user = null;
-
-    public function __construct(Image $image, User $user)
-    {
-        $this->image = $image;
-        $this->user = $user;
-    }
-
-    public function add_part(string $html, int $position=50)
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = $html;
-    }
-}
 
 class ViewImage extends Extension
 {
@@ -140,7 +72,9 @@ class ViewImage extends Extension
             $image = Image::by_id($image_id);
 
             if (!is_null($image)) {
-                send_event(new DisplayingImageEvent($image));
+                $die = new DisplayingImageEvent($image);
+                send_event($die);
+                $page->set_title(html_escape($die->title));
                 $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
                 send_event($iabbe);
                 ksort($iabbe->parts);
@@ -169,6 +103,9 @@ class ViewImage extends Extension
         send_event($iibbe);
         ksort($iibbe->parts);
         $this->theme->display_meta_headers($event->get_image());
+
+        $event->title = "Image {$event->get_image()->id}: ".$event->get_image()->get_tag_list();
+
         $this->theme->display_page($event->get_image(), $iibbe->parts);
     }
 }

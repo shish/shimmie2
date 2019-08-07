@@ -5,7 +5,6 @@ class CustomViewImageTheme extends ViewImageTheme
     public function display_page(Image $image, $editor_parts)
     {
         global $page;
-        $page->set_title("Image {$image->id}: ".html_escape($image->get_tag_list()));
         $page->set_heading(html_escape($image->get_tag_list()));
         $page->add_block(new Block("Search", $this->build_navigation($image), "left", 0));
         $page->add_block(new Block("Information", $this->build_information($image), "left", 15));
@@ -22,7 +21,7 @@ class CustomViewImageTheme extends ViewImageTheme
         $h_filesize = to_shorthand_int($image->filesize);
 
         global $user;
-        if ($user->can("view_ip")) {
+        if ($user->can(Permissions::VIEW_IP)) {
             $h_ownerlink .= " ($h_ip)";
         }
 

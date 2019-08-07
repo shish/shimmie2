@@ -73,6 +73,16 @@ class Tips extends Extension
         }
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->is_admin()) {
+                $event->add_nav_link("tips", new Link('tips/list'), "Tips Editor");
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;

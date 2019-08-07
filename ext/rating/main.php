@@ -126,6 +126,21 @@ class Ratings extends Extension
         $event->replace('$rating', $this->rating_to_human($event->image->rating));
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        global $user;
+
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Ratings";
+
+            $ratings = self::get_sorted_ratings();
+
+            $block->body = $this->theme->get_help_html($ratings);
+            $event->add_block($block);
+        }
+    }
+
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
         global $user;
@@ -169,7 +184,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if ($user->can("bulk_edit_image_rating")) {
+        if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
             $event->add_action("bulk_rate","Set (R)ating", "r","",$this->theme->get_selection_rater_html("u","bulk_rating"));
         }
     }
@@ -183,7 +198,7 @@ class Ratings extends Extension
                 if (!isset($_POST['bulk_rating'])) {
                     return;
                 }
-                if ($user->can("bulk_edit_image_rating")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $rating = $_POST['bulk_rating'];
                     $total = 0;
                     foreach ($event->items as $image) {
@@ -201,7 +216,7 @@ class Ratings extends Extension
         global $user, $page;
         
         if ($event->page_matches("admin/bulk_rate")) {
-            if (!$user->can("bulk_edit_image_rating")) {
+            if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                 throw new PermissionDeniedException();
             } else {
                 $n = 0;

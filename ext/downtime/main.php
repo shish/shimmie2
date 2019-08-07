@@ -32,7 +32,7 @@ class Downtime extends Extension
         global $config, $page, $user;
 
         if ($config->get_bool("downtime")) {
-            if (!$user->can("ignore_downtime") && !$this->is_safe_page($event)) {
+            if (!$user->can(Permissions::IGNORE_DOWNTIME) && !$this->is_safe_page($event)) {
                 $msg = $config->get_string("downtime_message");
                 $this->theme->display_message($msg);
                 if (!defined("UNITTEST")) {  // hax D:

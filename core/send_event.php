@@ -108,6 +108,8 @@ $_shm_event_count = 0;
  */
 function send_event(Event $event): void
 {
+    global $tracer_enabled;
+    
     global $_shm_event_listeners, $_shm_event_count, $_tracer;
     if (!isset($_shm_event_listeners[get_class($event)])) {
         return;
@@ -116,8 +118,6 @@ function send_event(Event $event): void
 
     // send_event() is performance sensitive, and with the number
     // of times tracer gets called the time starts to add up
-    $tracer_enabled = constant('TRACE_FILE');
-
     if ($tracer_enabled) $_tracer->begin(get_class($event));
     // SHIT: http://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];

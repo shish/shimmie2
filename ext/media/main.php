@@ -316,7 +316,7 @@ class Media extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->can("delete_image")) {
+        if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_buttons_html($event->image->id));
         }
     }
@@ -418,6 +418,17 @@ class Media extends Extension
             $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
         }
     }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Media";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
 
     public function onTagTermParse(TagTermParseEvent $event)
     {

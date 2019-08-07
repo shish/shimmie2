@@ -11,7 +11,7 @@ class CustomCommentListTheme extends CommentListTheme
         //$prev = $page_number - 1;
         //$next = $page_number + 1;
 
-        $page_title = $config->get_string('title');
+        $page_title = $config->get_string(SetupConfig::TITLE);
         $page->set_title($page_title);
         $page->set_heading($page_title);
         $page->disable_left();
@@ -78,7 +78,7 @@ class CustomCommentListTheme extends CommentListTheme
         $h_userlink = "<a href='".make_link("user/$h_name")."'>$h_name</a>";
         $h_date = $comment->posted;
         $h_del = "";
-        if ($user->can("delete_comment")) {
+        if ($user->can(Permissions::DELETE_COMMENT)) {
             $comment_preview = substr(html_unescape($tfe->stripped), 0, 50);
             $j_delete_confirm_message = json_encode("Delete comment by {$comment->owner_name}:\n$comment_preview");
             $h_delete_script = html_escape("return confirm($j_delete_confirm_message);");

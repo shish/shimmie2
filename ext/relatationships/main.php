@@ -81,6 +81,17 @@ class Relationships extends Extension
         }
     }
 
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Relationships";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
         $matches = [];

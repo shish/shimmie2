@@ -9,9 +9,9 @@ class HellBan extends Extension
     {
         global $page, $user;
 
-        if ($user->can("hellbanned")) {
+        if ($user->can(Permissions::HELLBANNED)) {
             $s = "";
-        } elseif ($user->can("view_hellbanned")) {
+        } elseif ($user->can(Permissions::VIEW_HELLBANNED)) {
             $s = "DIV.hb, TR.hb TD {border: 1px solid red !important;}";
         } else {
             $s = ".hb {display: none !important;}";

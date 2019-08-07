@@ -65,7 +65,7 @@ class custom_html_headers extends Extension
         global $config, $page;
             
         // get config values
-        $site_title = $config->get_string("title");
+        $site_title = $config->get_string(SetupConfig::TITLE);
         $sitename_in_title = $config->get_int("sitename_in_title");
             
         // if feature is enabled & sitename isn't already in title

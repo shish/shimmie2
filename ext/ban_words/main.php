@@ -58,7 +58,7 @@ xanax
     public function onCommentPosting(CommentPostingEvent $event)
     {
         global $user;
-        if (!$user->can("bypass_comment_checks")) {
+        if (!$user->can(Permissions::BYPASS_COMMENT_CHECKS)) {
             $this->test_text($event->comment, new CommentPostingException("Comment contains banned terms"));
         }
     }

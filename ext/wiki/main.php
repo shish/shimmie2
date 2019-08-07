@@ -176,6 +176,21 @@ class Wiki extends Extension
         }
     }
 
+
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        $event->add_nav_link("wiki",new Link('wiki'), "Wiki");
+    }
+
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="wiki") {
+            $event->add_nav_link("wiki_rules", new Link('wiki/rules'), "Rules");
+            $event->add_nav_link("wiki_help", new Link('ext_doc/wiki'), "Help");
+        }
+    }
+
     public function onWikiUpdate(WikiUpdateEvent $event)
     {
         global $database;
@@ -206,7 +221,7 @@ class Wiki extends Extension
         }
 
         // anon / user can edit if allowed by config
-        if ($user->can("edit_wiki_page")) {
+        if ($user->can(Permissions::EDIT_WIKI_PAGE)) {
             return true;
         }
 

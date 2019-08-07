@@ -403,4 +403,32 @@ class PoolsTheme extends Themelet
     {
         return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ",$search_terms))."' />";
     }
+
+
+    public function get_help_html()
+    {
+        return '<p>Search for images that are in a pool.</p>
+        <div class="command_example">
+        <pre>pool=1</pre>
+        <p>Returns images in pool #1.</p> 
+        </div>
+        <div class="command_example">
+        <pre>pool=any</pre>
+        <p>Returns images in any pool.</p>
+        </div> 
+        <div class="command_example">
+        <pre>pool=none</pre>
+        <p>Returns images not in any pool.</p>
+        </div>
+        <div class="command_example">
+        <pre>pool_by_name=swimming</pre>
+        <p>Returns images in the "swimming" pool.</p>
+        </div>
+        <div class="command_example">
+        <pre>pool_by_name=swimming_pool</pre>
+        <p>Returns images in the "swimming pool" pool. Note that the underscore becomes a space</p>
+        </div>
+        ';
+
+    }
 }

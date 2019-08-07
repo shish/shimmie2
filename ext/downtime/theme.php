@@ -21,7 +21,7 @@ class DowntimeTheme extends Themelet
     public function display_message(string $message)
     {
         global $config, $user, $page;
-        $theme_name = $config->get_string('theme');
+        $theme_name = $config->get_string(SetupConfig::THEME);
         $data_href = get_base_href();
         $login_link = make_link("user_admin/login");
         $auth = $user->get_auth_html();

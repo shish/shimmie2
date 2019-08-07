@@ -14,7 +14,7 @@ class RSS_Comments extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
         global $config, $page;
-        $title = $config->get_string('title');
+        $title = $config->get_string(SetupConfig::TITLE);
 
         $page->add_html_header("<link rel=\"alternate\" type=\"application/rss+xml\" ".
             "title=\"$title - Comments\" href=\"".make_link("rss/comments")."\" />");
@@ -60,7 +60,7 @@ class RSS_Comments extends Extension
 				";
             }
 
-            $title = $config->get_string('title');
+            $title = $config->get_string(SetupConfig::TITLE);
             $base_href = make_http(get_base_href());
             $version = $config->get_string('version');
             $xml = <<<EOD
@@ -79,4 +79,12 @@ EOD;
             $page->set_data($xml);
         }
     }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="comment") {
+            $event->add_nav_link("comment_rss", new Link('rss/comments'), "Feed");
+        }
+    }
+
 }

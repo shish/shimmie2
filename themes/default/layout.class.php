@@ -7,11 +7,11 @@ class Layout
     /**
      * turns the Page into HTML
      */
-    public function display_page(Page $page)
+    public function display_page(Page $page, array $nav_links)
     {
         global $config;
 
-        //$theme_name = $config->get_string('theme', 'default');
+        //$theme_name = $config->get_string(SetupConfig::THEME, 'default');
         //$data_href = get_base_href();
         $contact_link = contact_link();
         $header_html = $page->get_all_html_headers();

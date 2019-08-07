@@ -127,7 +127,7 @@ class UserPage extends Extension
                     $a["name"] = '%' . $_GET['username'] . '%';
                 }
 
-                if ($user->can('delete_user') && @$_GET['email']) {
+                if ($user->can(Permissions::DELETE_USER) && @$_GET['email']) {
                     $q .= " AND SCORE_STRNORM(email) LIKE SCORE_STRNORM(:email)";
                     $a["email"] = '%' . $_GET['email'] . '%';
                 }
@@ -212,7 +212,7 @@ class UserPage extends Extension
         global $user, $config;
 
         $h_join_date = autodate($event->display_user->join_date);
-        if ($event->display_user->can("hellbanned")) {
+        if ($event->display_user->can(Permissions::HELLBANNED)) {
             $h_class = $event->display_user->class->parent->name;
         } else {
             $h_class = $event->display_user->class->name;
@@ -237,6 +237,17 @@ class UserPage extends Extension
         }
     }
 
+    public function onPageNavBuilding(PageNavBuildingEvent $event)
+    {
+        global $user;
+        if ($user->is_anonymous()) {
+            $event->add_nav_link("user", new Link('user_admin/login'), "Account", null, 10);
+        } else {
+            $event->add_nav_link("user", new Link('user'), "Account", null, 10);
+        }
+    }
+
+
     private function display_stats(UserPageBuildingEvent $event)
     {
         global $user, $page, $config;
@@ -250,7 +261,7 @@ class UserPage extends Extension
             $this->theme->display_user_links($page, $user, $ubbe->parts);
         }
         if (
-            ($user->can("view_ip") || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
+            ($user->can(Permissions::VIEW_IP) || ($user->is_logged_in() && $user->id == $event->display_user->id)) && # admin or self-user
             ($event->display_user->id != $config->get_int('anon_id')) # don't show anon's IP list, it is le huge
         ) {
             $this->theme->display_ip_list(
@@ -305,11 +316,21 @@ class UserPage extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        global $user;
+        if($event->parent==="system") {
+            if ($user->can(Permissions::EDIT_USER_CLASS)) {
+                $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
+            }
+        }
+    }
+
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
         $event->add_link("My Profile", make_link("user"));
-        if ($user->can("edit_user_class")) {
+        if ($user->can(Permissions::EDIT_USER_CLASS)) {
             $event->add_link("User List", make_link("user_admin/list"), 98);
         }
         $event->add_link("Log Out", make_link("user_admin/logout"), 99);
@@ -337,11 +358,22 @@ class UserPage extends Extension
         } elseif (preg_match("/^(?:poster|user)_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
             $user_id = int_escape($matches[1]);
             $event->add_querylet(new Querylet("images.owner_id = $user_id"));
-        } elseif ($user->can("view_ip") && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
+        } elseif ($user->can(Permissions::VIEW_IP) && preg_match("/^(?:poster|user)_ip[=|:]([0-9\.]+)$/i", $event->term, $matches)) {
             $user_ip = $matches[1]; // FIXME: ip_escape?
             $event->add_querylet(new Querylet("images.owner_ip = '$user_ip'"));
         }
     }
+
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if($event->key===HelpPages::SEARCH) {
+            $block = new Block();
+            $block->header = "Users";
+            $block->body = $this->theme->get_help_html();
+            $event->add_block($block);
+        }
+    }
+
 
     private function show_user_info()
     {
@@ -517,8 +549,8 @@ class UserPage extends Extension
 
         if (
             ($a->name == $b->name) ||
-            ($b->can("protected") && $a->class->name == "admin") ||
-            (!$b->can("protected") && $a->can("edit_user_info"))
+            ($b->can(Permissions::PROTECTED) && $a->class->name == "admin") ||
+            (!$b->can(Permissions::PROTECTED) && $a->can(Permissions::EDIT_USER_INFO))
         ) {
             return true;
         } else {
@@ -544,7 +576,7 @@ class UserPage extends Extension
     {
         global $user;
 
-        if ($user->can('edit_user_name') && $this->user_can_edit_user($user, $duser)) {
+        if ($user->can(Permissions::EDIT_USER_NAME) && $this->user_can_edit_user($user, $duser)) {
             $duser->set_name($name);
             flash_message("Username changed");
             // TODO: set login cookie if user changed themselves
@@ -652,7 +684,7 @@ class UserPage extends Extension
         $page->set_heading("Error");
         $page->add_block(new NavBlock());
         
-        if (!$user->can("delete_user")) {
+        if (!$user->can(Permissions::DELETE_USER)) {
             $page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
         } elseif (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
             $page->add_block(new Block(

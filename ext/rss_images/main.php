@@ -12,7 +12,7 @@ class RSS_Images extends Extension
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
         global $config, $page;
-        $title = $config->get_string('title');
+        $title = $config->get_string(SetupConfig::TITLE);
 
         if (count($event->search_terms) > 0) {
             $search = html_escape(implode(' ', $event->search_terms));
@@ -47,7 +47,7 @@ class RSS_Images extends Extension
             $data .= $this->thumb($image);
         }
 
-        $title = $config->get_string('title');
+        $title = $config->get_string(SetupConfig::TITLE);
         $base_href = make_http(get_base_href());
         $search = "";
         if (count($search_terms) > 0) {
@@ -115,5 +115,12 @@ class RSS_Images extends Extension
         $database->cache->set("rss-thumb:{$image->id}", $data, 3600);
 
         return $data;
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="posts") {
+            $event->add_nav_link("posts_rss", new Link('rss/images'), "Feed");
+        }
     }
 }

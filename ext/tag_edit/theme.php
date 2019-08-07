@@ -51,7 +51,7 @@ class TagEditTheme extends Themelet
 			<tr>
 				<th width='50px'>Tags</th>
 				<td>
-		".($user->can("edit_image_tag") ? "
+		".($user->can(Permissions::EDIT_IMAGE_TAG) ? "
 					<span class='view'>$h_tag_links</span>
 					<input class='edit autocomplete_tags' type='text' name='tag_edit__tags' value='$h_tags' id='tag_editor' autocomplete='off'>
 		" : "
@@ -68,12 +68,12 @@ class TagEditTheme extends Themelet
         $h_owner = html_escape($image->get_owner()->name);
         $h_av = $image->get_owner()->get_avatar_html();
         $h_date = autodate($image->posted);
-        $h_ip = $user->can("view_ip") ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
+        $h_ip = $user->can(Permissions::VIEW_IP) ? " (".show_ip($image->owner_ip, "Image posted {$image->posted}").")" : "";
         return "
 			<tr>
 				<th>Uploader</th>
 				<td>
-		".($user->can("edit_image_owner") ? "
+		".($user->can(Permissions::EDIT_IMAGE_OWNER) ? "
 					<span class='view'><a class='username' href='".make_link("user/$h_owner")."'>$h_owner</a>$h_ip, $h_date</span>
 					<input class='edit' type='text' name='tag_edit__owner' value='$h_owner'>
 		" : "
@@ -95,7 +95,7 @@ class TagEditTheme extends Themelet
 			<tr>
 				<th>Source</th>
 				<td>
-		".($user->can("edit_image_source") ? "
+		".($user->can(Permissions::EDIT_IMAGE_SOURCE) ? "
 					<div class='view' style='$style'>$f_source</div>
 					<input class='edit' type='text' name='tag_edit__source' value='$h_source'>
 		" : "
@@ -132,7 +132,7 @@ class TagEditTheme extends Themelet
 			<tr>
 				<th>Locked</th>
 				<td>
-		".($user->can("edit_image_lock") ? "
+		".($user->can(Permissions::EDIT_IMAGE_LOCK) ? "
 					<span class='view'>$b_locked</span>
 					<input class='edit' type='checkbox' name='tag_edit__locked'$h_locked>
 		" : "
