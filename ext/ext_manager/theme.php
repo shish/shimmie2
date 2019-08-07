@@ -22,7 +22,8 @@ class ExtManagerTheme extends Themelet
 					<tbody>
 		";
         foreach ($extensions as $extension) {
-            if (!$editable && $extension->visibility == "admin") {
+            if ((!$editable && $extension->visibility === ExtensionInfo::VISIBLE_ADMIN)
+                    || $extension->visibility === ExtensionInfo::VISIBLE_HIDDEN) {
                 continue;
             }
 

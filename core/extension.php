@@ -139,6 +139,11 @@ abstract class Extension
                 continue;
             }
             self::$enabled_extensions[] = $ext->key;
+            if(!empty($ext->dependencies)) {
+                foreach ($ext->dependencies as $dep) {
+                    self::$enabled_extensions[] = $dep;
+                }
+            }
         }
     }
 
@@ -170,7 +175,8 @@ abstract class ExtensionInfo
     public const LICENSE_WTFPL = "WTFPL";
 
     public const VISIBLE_ADMIN = "admin";
-    private const VALID_VISIBILITY = [self::VISIBLE_ADMIN];
+    public const VISIBLE_HIDDEN = "hidden";
+    private const VALID_VISIBILITY = [self::VISIBLE_ADMIN, self::VISIBLE_HIDDEN];
 
     public $key;
 
@@ -183,6 +189,7 @@ abstract class ExtensionInfo
     public $link;
     public $license;
     public $version;
+    public $dependencies = [];
     public $visibility;
     public $description;
     public $documentation;
@@ -229,6 +236,9 @@ abstract class ExtensionInfo
         }
         if(!is_array($this->authors)) {
             throw new Exception("authors has to be an array for extension $this->key");
+        }
+        if(!is_array($this->dependencies)) {
+            throw new Exception("dependencies has to be an array for extension $this->key");
         }
     }
 
