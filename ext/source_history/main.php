@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: Source History
- * Author: Shish, copied from Source History
- * Description: Keep a record of source changes, and allows you to revert changes.
- */
 
 class Source_History extends Extension
 {
@@ -53,7 +48,7 @@ class Source_History extends Extension
             $this->theme->display_history_page($page, $image_id, $this->get_source_history_from_id($image_id));
         }
     }
-    
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         $event->add_part("
@@ -99,7 +94,7 @@ class Source_History extends Extension
             $event->add_link("Source Changes", make_link("source_history/all/1"));
         }
     }
-    
+
     protected function install()
     {
         global $database, $config;
@@ -118,7 +113,7 @@ class Source_History extends Extension
             $database->execute("CREATE INDEX source_histories_image_id_idx ON source_histories(image_id)", []);
             $config->set_int("ext_source_history_version", 3);
         }
-        
+
         if ($config->get_int("ext_source_history_version") == 1) {
             $database->Execute("ALTER TABLE source_histories ADD COLUMN user_id INTEGER NOT NULL");
             $database->Execute("ALTER TABLE source_histories ADD COLUMN date_set DATETIME NOT NULL");
@@ -146,10 +141,10 @@ class Source_History extends Extension
             $page->set_redirect(make_link());
             return;
         }
-        
+
         // lets get this revert id assuming it exists
         $result = $this->get_source_history_from_revert($revert_id);
-        
+
         if (empty($result)) {
             // there is no history entry with that id so either the image was deleted
             // while the user was viewing the history, someone is playing with form
@@ -157,23 +152,23 @@ class Source_History extends Extension
             /* calling die() is probably not a good idea, we should throw an Exception */
             die("Error: No source history with specified id was found.");
         }
-        
+
         // lets get the values out of the result
         //$stored_result_id = $result['id'];
         $stored_image_id = $result['image_id'];
         $stored_source = $result['source'];
-        
+
         log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
 
         $image = Image::by_id($stored_image_id);
-        
+
         if (is_null($image)) {
             die('Error: No image with the id ('.$stored_image_id.') was found. Perhaps the image was deleted while processing this request.');
         }
 
         // all should be ok so we can revert by firing the SetUserSources event.
         send_event(new SourceSetEvent($image, $stored_source));
-        
+
         // all should be done now so redirect the user back to the image
         $page->set_mode(PageMode::REDIRECT);
         $page->set_redirect(make_link('post/view/'.$stored_image_id));
@@ -189,7 +184,7 @@ class Source_History extends Extension
 
         if (isset($_POST['revert_ip']) && !empty($_POST['revert_ip'])) {
             $revert_ip = filter_var($_POST['revert_ip'], FILTER_VALIDATE_IP, FILTER_FLAG_NO_RES_RANGE);
-            
+
             if ($revert_ip === false) {
                 // invalid ip given.
                 $this->theme->display_admin_block('Invalid IP');
@@ -198,7 +193,7 @@ class Source_History extends Extension
         } else {
             $revert_ip = null;
         }
-        
+
         if (isset($_POST['revert_date']) && !empty($_POST['revert_date'])) {
             if (isValidDate($_POST['revert_date'])) {
                 $revert_date = addslashes($_POST['revert_date']); // addslashes is really unnecessary since we just checked if valid, but better safe.
@@ -209,9 +204,9 @@ class Source_History extends Extension
         } else {
             $revert_date = null;
         }
-        
+
         set_time_limit(0); // reverting changes can take a long time, disable php's timelimit if possible.
-        
+
         // Call the revert function.
         $this->process_revert_all_changes($revert_name, $revert_ip, $revert_date);
         // output results
@@ -263,7 +258,7 @@ class Source_History extends Extension
     public function process_revert_all_changes(?string $name, ?string $ip, ?string $date)
     {
         global $database;
-        
+
         $select_code = [];
         $select_args = [];
 
@@ -294,7 +289,7 @@ class Source_History extends Extension
         }
 
         log_info("source_history", 'Attempting to revert edits where '.implode(" and ", $select_code)." (".implode(" / ", $select_args).")");
-        
+
         // Get all the images that the given IP has changed source on (within the timeframe) that were last editied by the given IP
         $result = $database->get_col('
 				SELECT t1.image_id
@@ -304,7 +299,7 @@ class Source_History extends Extension
 				AND t1.image_id IN ( select image_id from source_histories where '.implode(" AND ", $select_code).') 
 				ORDER BY t1.image_id
 		', $select_args);
-    
+
         foreach ($result as $image_id) {
             // Get the first source history that was done before the given IP edit
             $row = $database->get_row('
@@ -314,14 +309,14 @@ class Source_History extends Extension
 				AND NOT ('.implode(" AND ", $select_code).')
 				ORDER BY date_set DESC LIMIT 1
 			', $select_args);
-            
+
             if (empty($row)) {
                 // we can not revert this image based on the date restriction.
                 // Output a message perhaps?
             } else {
                 $revert_id = $row['id'];
                 $result = $this->get_source_history_from_revert($revert_id);
-                
+
                 if (empty($result)) {
                     // there is no history entry with that id so either the image was deleted
                     // while the user was viewing the history,  or something messed up
@@ -329,12 +324,12 @@ class Source_History extends Extension
                     die('Error: No source history with specified id ('.$revert_id.') was found in the database.'."\n\n".
                         'Perhaps the image was deleted while processing this request.');
                 }
-                
+
                 // lets get the values out of the result
                 $stored_result_id = $result['id'];
                 $stored_image_id = $result['image_id'];
                 $stored_source = $result['source'];
-                
+
                 log_debug("source_history", 'Reverting source of Image #'.$stored_image_id.' to ['.$stored_source.']');
 
                 $image = Image::by_id($stored_image_id);
@@ -361,23 +356,23 @@ class Source_History extends Extension
 
         $new_source = $source;
         $old_source = $image->source;
-        
+
         if ($new_source == $old_source) {
             return;
         }
-        
+
         if (empty($old_source)) {
             /* no old source, so we are probably adding the image for the first time */
             log_debug("source_history", "adding new source history: [$new_source]");
         } else {
             log_debug("source_history", "adding source history: [$old_source] -> [$new_source]");
         }
-        
+
         $allowed = $config->get_int("history_limit");
         if ($allowed == 0) {
             return;
         }
-        
+
         // if the image has no history, make one with the old source
         $entries = $database->get_one("SELECT COUNT(*) FROM source_histories WHERE image_id = ?", [$image->id]);
         if ($entries == 0 && !empty($old_source)) {
@@ -398,7 +393,7 @@ class Source_History extends Extension
             [$image->id, $new_source, $user->id, $_SERVER['REMOTE_ADDR']]
         );
         $entries++;
-        
+
         // if needed remove oldest one
         if ($allowed == -1) {
             return;

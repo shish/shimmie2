@@ -1,22 +1,4 @@
 <?php
-/*
- * Name: Bulk Add CSV
- * Author: velocity37 <velocity37@gmail.com>
- * License: GPLv2
- * Description: Bulk add server-side images with metadata from CSV file
- * Documentation:
- *  Modification of "Bulk Add" by Shish.<br><br>
- *  Adds images from a CSV with the five following values: <br>
- *  "/path/to/image.jpg","spaced tags","source","rating s/q/e","/path/thumbnail.jpg" <br>
- *  <b>e.g.</b> "/tmp/cat.png","shish oekaki","shimmie.shishnet.org","s","tmp/custom.jpg" <br><br>
- *  Any value but the first may be omitted, but there must be five values per line.<br>
- *  <b>e.g.</b> "/why/not/try/bulk_add.jpg","","","",""<br><br>
- *  Image thumbnails will be displayed at the AR of the full image. Thumbnails that are
- *  normally static (e.g. SWF) will be displayed at the board's max thumbnail size<br><br>
- *  Useful for importing tagged images without having to do database manipulation.<br>
- *  <p><b>Note:</b> requires "Admin Controls" and optionally "Image Ratings" to be enabled<br><br>
- *
- */
 
 class BulkAddCSV extends Extension
 {
@@ -40,7 +22,7 @@ class BulkAddCSV extends Extension
         }
         if ($event->cmd == "bulk-add-csv") {
             global $user;
-            
+
             //Nag until CLI is admin by default
             if (!$user->is_admin()) {
                 print "Not running as an admin, which can cause problems.\n";
@@ -96,11 +78,11 @@ class BulkAddCSV extends Extension
             $this->theme->add_status("Error", "$csvfile doesn't appear to be a csv file");
             return;
         }
-    
+
         $linenum = 1;
         $list = "";
         $csvhandle = fopen($csvfile, "r");
-        
+
         while (($csvdata = fgetcsv($csvhandle, 0, ",")) !== false) {
             if (count($csvdata) != 5) {
                 if (strlen($list) > 0) {
@@ -133,7 +115,7 @@ class BulkAddCSV extends Extension
             }
             $linenum += 1;
         }
-        
+
         if (strlen($list) > 0) {
             $this->theme->add_status("Adding $csvfile", $list);
         }

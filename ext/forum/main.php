@@ -1,12 +1,4 @@
 <?php
-/**
- * Name: [Beta] Forum
- * Author: Sein Kraft <mail@seinkraft.info>
- *         Alpha <alpha@furries.com.ar>
- * License: GPLv2
- * Description: Rough forum extension
- * Documentation:
- */
 /*
 Todo:
 *Quote buttons on posts
@@ -34,7 +26,7 @@ class Forum extends Extension
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
 					");
             $database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", []);
-            
+
             $database->create_table("forum_posts", "
 					id SCORE_AIPK,
 					thread_id INTEGER NOT NULL,
@@ -61,30 +53,30 @@ class Forum extends Extension
             $config->set_int("forum_version", 2);
         }
     }
-    
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Forum");
         $sb->add_int_option("forumTitleSubString", "Title max long: ");
         $sb->add_int_option("forumThreadsPerPage", "<br>Threads per page: ");
         $sb->add_int_option("forumPostsPerPage", "<br>Posts per page: ");
-        
+
         $sb->add_int_option("forumMaxCharsPerPost", "<br>Max chars per post: ");
         $event->panel->add_block($sb);
     }
-    
+
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         global $database;
-        
+
         $threads_count = $database->get_one("SELECT COUNT(*) FROM forum_threads WHERE user_id=?", [$event->display_user->id]);
         $posts_count = $database->get_one("SELECT COUNT(*) FROM forum_posts WHERE user_id=?", [$event->display_user->id]);
-            
+
         $days_old = ((time() - strtotime($event->display_user->join_date)) / 86400) + 1;
-                
+
         $threads_rate = sprintf("%.1f", ($threads_count / $days_old));
         $posts_rate = sprintf("%.1f", ($posts_count / $days_old));
-                
+
         $event->add_stats("Forum threads: $threads_count, $threads_rate per day");
         $event->add_stats("Forum posts: $posts_count, $posts_rate per day");
     }
@@ -249,7 +241,7 @@ class Forum extends Extension
         $result = $database->get_row("SELECT t.title FROM forum_threads AS t WHERE t.id = ? ", [$threadID]);
         return $result["title"];
     }
-        
+
     private function show_last_threads(Page $page, PageRequestEvent $event, $showAdminOptions = false)
     {
         global $config, $database;

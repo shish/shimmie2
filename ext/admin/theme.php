@@ -60,7 +60,7 @@ class AdminPageTheme extends Themelet
 
     public function dbq_html($terms)
     {
-        if(ext_is_live("Trash")) {
+        if(Extension::is_enabled(TrashInfo::KEY)) {
             $warning = "This delete method will bypass the trash<br/>";
         }
         if (class_exists("ImageBan")) {

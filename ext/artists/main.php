@@ -1,13 +1,5 @@
 <?php
-/**
- * Name: [Beta] Artists System
- * Author: Sein Kraft <mail@seinkraft.info>
- *         Alpha <alpha@furries.com.ar>
- * License: GPLv2
- * Description: Simple artists extension
- * Documentation:
- *
- */
+
 class AuthorSetEvent extends Event
 {
     /** @var Image  */
@@ -67,7 +59,7 @@ class Artists extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config, $database;
-                
+
         if ($config->get_int("ext_artists_version") < 1) {
             $database->create_table("artists", "
 					id SCORE_AIPK,
@@ -78,7 +70,7 @@ class Artists extends Extension
 					notes TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-            
+
             $database->create_table("artist_members", "
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
@@ -213,7 +205,7 @@ class Artists extends Extension
 
                     $userIsLogged = !$user->is_anonymous();
                     $userIsAdmin = $user->is_admin();
-                    
+
                     $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
                     $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
@@ -222,9 +214,9 @@ class Artists extends Extension
                         //$this->theme->show_new_member_composer($artistID);
                         //$this->theme->show_new_url_composer($artistID);
                     }
-                    
+
                     $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
-                    
+
                     break;
                 }
 
@@ -235,10 +227,10 @@ class Artists extends Extension
                     $aliases = $this->get_alias($artistID);
                     $members = $this->get_members($artistID);
                     $urls = $this->get_urls($artistID);
-                    
+
                     if (!$user->is_anonymous()) {
                         $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
-                        
+
                         $userIsAdmin = $user->is_admin();
                         $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
                     } else {
@@ -627,7 +619,7 @@ class Artists extends Extension
 
             $i++;
         }
-        
+
         // if we have more ids than urls, then some urls have been deleted -- delete them from db
         while ($i < count($urlsIDsAsArray)) {
             $this->delete_url($urlsIDsAsArray[$i++]);
@@ -746,7 +738,7 @@ class Artists extends Extension
             //delete double "separators"
             $urls = str_replace("\r\n", "\n", $urls);
             $urls = str_replace("\n\r", "\n", $urls);
-            
+
             $urlsArray = explode("\n", $urls);
             foreach ($urlsArray as $url) {
                 if (!$this->url_exists($artistID, $url)) {
@@ -798,7 +790,7 @@ class Artists extends Extension
             "SELECT * FROM artist_members WHERE artist_id = ?",
             [$artistID]
         );
-        
+
         $num = count($result);
         for ($i = 0 ; $i < $num ; $i++) {
             $result[$i]["name"] = stripslashes($result[$i]["name"]);
@@ -814,7 +806,7 @@ class Artists extends Extension
             "SELECT id, url FROM artist_urls WHERE artist_id = ?",
             [$artistID]
         );
-            
+
         $num = count($result);
         for ($i = 0 ; $i < $num ; $i++) {
             $result[$i]["url"] = stripslashes($result[$i]["url"]);
@@ -850,7 +842,7 @@ class Artists extends Extension
             [$artistID]
         );
     }
-    
+
     /*
     * HERE WE GET THE LIST OF ALL ARTIST WITH PAGINATION
     */
@@ -914,7 +906,7 @@ class Artists extends Extension
                     , $artistsPerPage
                 ]
             );
-            
+
         $number_of_listings = count($listing);
 
         for ($i = 0 ; $i < $number_of_listings ; $i++) {
@@ -936,7 +928,7 @@ class Artists extends Extension
 
         $this->theme->list_artists($listing, $pageNumber + 1, $totalPages);
     }
-    
+
     /*
     * HERE WE ADD AN ALIAS
     */

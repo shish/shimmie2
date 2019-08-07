@@ -1,10 +1,5 @@
 <?php
-/**
- * Name: Tag Categories
- * Author: Daniel Oaks <danneh@danneh.net>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Let tags be split into 'categories', like Danbooru's tagging
- */
+
 
 require_once "config.php";
 
@@ -13,7 +8,7 @@ class TagCategories extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config, $database;
-        
+
         // whether we split out separate categories on post view by default
         //  note: only takes effect if /post/view shows the image's exact tags
         $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);

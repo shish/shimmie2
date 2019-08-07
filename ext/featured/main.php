@@ -1,23 +1,4 @@
 <?php
-/*
- * Name: Featured Image
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Bring a specific image to the users' attentions
- * Documentation:
- *  Once enabled, a new "feature this" button will appear next
- *  to the other image control buttons (delete, rotate, etc).
- *  Clicking it will set the image as the site's current feature,
- *  which will be shown in the side bar of the post list.
- *  <p><b>Viewing a featured image</b>
- *  <br>Visit <code>/featured_image/view</code>
- *  <p><b>Downloading a featured image</b>
- *  <br>Link to <code>/featured_image/download</code>. This will give
- *  the raw data for an image (no HTML). This is useful so that you
- *  can set your desktop wallpaper to be the download URL, refreshed
- *  every couple of hours.
- */
 
 class Featured extends Extension
 {
@@ -73,7 +54,7 @@ class Featured extends Extension
                 $database->cache->set("featured_image_object:$fid", $image, 600);
             }
             if (!is_null($image)) {
-                if (ext_is_live("Ratings")) {
+                if (Extension::is_enabled(RatingsInfo::KEY)) {
                     if (strpos(Ratings::get_user_privs($user), $image->rating) === false) {
                         return;
                     }

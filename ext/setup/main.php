@@ -1,10 +1,4 @@
 <?php
-/*
- * Name: Board Config
- * Author: Shish
- * Visibility: admin
- * Description: Allows the site admin to configure the board to his or her taste
- */
 
 include_once "config.php";
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * Name: System
- * Author: Matthew Barbour <matthew@darkholme.net>
- * License: MIT
- * Description: Provides system screen
- */
 
 class System extends Extension
 {

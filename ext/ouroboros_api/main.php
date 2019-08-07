@@ -1,32 +1,5 @@
 <?php
 
-/*
- * Name: Ouroboros API
- * Author: Diftraku <diftraku[at]derpy.me>
- * Description: Ouroboros-like API for Shimmie
- * Version: 0.2
- * Documentation:
- *   Currently working features
- *   <ul>
- *     <li>Post:
- *       <ul>
- *         <li>Index/List</li>
- *         <li>Show</li>
- *         <li>Create</li>
- *       </ul>
- *     </li>
- *     <li>Tag:
- *       <ul>
- *         <li>Index/List</li>
- *       </ul>
- *     </li>
- *   </ul>
- *   Tested to work with CartonBox using "Danbooru 1.18.x" as site type.
- *   Does not work with Andbooru or Danbooru Gallery for reasons beyond me, took me a while to figure rating "u" is bad...
- *   Lots of Ouroboros/Danbooru specific values use their defaults (or what I gathered them to be default)
- *   and tons of stuff not supported directly in Shimmie is botched to work
- */
-
 
 class _SafeOuroborosImage
 {
@@ -212,17 +185,17 @@ class _SafeOuroborosImage
         $this->created_at = ['n' => 123456789, 's' => strtotime($img->posted), 'json_class' => 'Time'];
         $this->id = intval($img->id);
         $this->parent_id = null;
-        if (defined('ENABLED_EXTS')) {
-            if (strstr(ENABLED_EXTS, 'rating') !== false) {
-                // 'u' is not a "valid" rating
-                if ($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
-                    $this->rating = $img->rating;
-                }
-            }
-            if (strstr(ENABLED_EXTS, 'numeric_score') !== false) {
-                $this->score = $img->numeric_score;
+
+        if (Extension::is_enabled(RatingsInfo::KEY)!== false) {
+            // 'u' is not a "valid" rating
+            if ($img->rating == 's' || $img->rating == 'q' || $img->rating == 'e') {
+                $this->rating = $img->rating;
             }
         }
+        if (Extension::is_enabled(NumericScoreInfo::KEY)!== false) {
+            $this->score = $img->numeric_score;
+        }
+
         $this->source = $img->source;
         $this->status = 'active'; //not supported in Shimmie... yet
         $this->tags = $img->get_tag_list();
@@ -492,10 +465,8 @@ class OuroborosAPI extends Extension
         $meta = [];
         $meta['tags'] = is_array($post->tags) ? $post->tags : Tag::explode($post->tags);
         $meta['source'] = $post->source;
-        if (defined('ENABLED_EXTS')) {
-            if (strstr(ENABLED_EXTS, 'rating') !== false) {
-                $meta['rating'] = $post->rating;
-            }
+        if (Extension::is_enabled(RatingsInfo::KEY)!== false) {
+            $meta['rating'] = $post->rating;
         }
         // Check where we should try for the file
         if (empty($post->file) && !empty($post->file_url) && filter_var(

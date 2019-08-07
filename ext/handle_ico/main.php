@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: Handle ICO
- * Author: Shish <webmaster@shishnet.org>
- * Description: Handle windows icons
- */
 
 class IcoFileHandler extends DataHandlerExtension
 {

@@ -1,16 +1,4 @@
 <?php
-/*
- * Name: Transcode Image
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Allows admins to automatically and manually transcode images.
- * License: MIT
- * Version: 1.0
- * Documentation:
- *	Can transcode on-demand and automatically on upload. Config screen allows choosing an output format for each of the supported input formats.
- *  Supports GD and ImageMagick. Both support bmp, gif, jpg, png, and webp as inputs, and jpg, png, and lossy webp as outputs.
- *  ImageMagick additionally supports tiff and psd inputs, and webp lossless output.
- *  If and image is uanble to be transcoded for any reason, the upload will continue unaffected.
- */
 
 class TranscodeConfig
 {
@@ -86,7 +74,7 @@ class TranscodeImage extends Extension
             }
         }
     }
-    
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         global $config;
@@ -173,7 +161,7 @@ class TranscodeImage extends Extension
         }
     }
 
-    
+
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
         global $user, $config;
@@ -248,7 +236,7 @@ class TranscodeImage extends Extension
         }
         return $output;
     }
-    
+
 
 
     private function transcode_and_replace_image(Image $image_obj, String $target_format)
@@ -256,7 +244,7 @@ class TranscodeImage extends Extension
         $original_file = warehouse_path(Image::IMAGE_DIR, $image_obj->hash);
 
         $tmp_filename = $this->transcode_image($original_file, $image_obj->ext, $target_format);
-        
+
         $new_image = new Image();
         $new_image->hash = md5_file($tmp_filename);
         $new_image->filesize = filesize($tmp_filename);
@@ -270,7 +258,7 @@ class TranscodeImage extends Extension
         if (!@copy($tmp_filename, $target)) {
             throw new ImageTranscodeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
-        
+
         /* Remove temporary file */
         @unlink($tmp_filename);
 
@@ -308,7 +296,7 @@ class TranscodeImage extends Extension
     private function transcode_image_gd(String $source_name, String $source_format, string $target_format): string
     {
         global $config;
-            
+
         $q = $config->get_int("transcode_quality");
 
         $tmp_name = tempnam("/tmp", "shimmie_transcode");
@@ -361,7 +349,7 @@ class TranscodeImage extends Extension
     private function transcode_image_convert(String $source_name, String $source_format, string $target_format): string
     {
         global $config;
-            
+
         $q = $config->get_int("transcode_quality");
         $convert = $config->get_string(MediaConfig::CONVERT_PATH);
 

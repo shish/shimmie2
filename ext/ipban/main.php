@@ -1,16 +1,4 @@
 <?php
-/*
- * Name: IP Ban
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Ban IP addresses
- * Documentation:
- *  <b>Adding a Ban</b>
- *  <br>IP: Can be a single IP (eg. 123.234.210.21), or a CIDR block (eg. 152.23.43.0/24)
- *  <br>Reason: Any text, for the admin to remember why the ban was put in place
- *  <br>Until: Either a date in YYYY-MM-DD format, or an offset like "3 days"
- */
 
 // RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event

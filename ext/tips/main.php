@@ -2,7 +2,6 @@
 
 class Tips extends Extension
 {
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // rand() ?
 
     public function onInitExt(InitExtEvent $event)
     {

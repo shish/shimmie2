@@ -26,24 +26,24 @@ class ExtManagerTheme extends Themelet
                 continue;
             }
 
-            $h_name = html_escape(empty($extension->name) ? $extension->ext_name : $extension->name);
+            $h_name = html_escape(($extension->beta===true ? "[BETA] ":"").(empty($extension->name) ? $extension->key : $extension->name));
             $h_description = html_escape($extension->description);
-            $h_link = make_link("ext_doc/" . url_escape($extension->ext_name));
+            $h_link = make_link("ext_doc/" . url_escape($extension->key));
 
-            $h_enabled = ($extension->enabled === true ? " checked='checked'" : ($extension->enabled === false ? "" : " checked='checked'"));
-            $h_disabled = ($extension->supported===false || $extension->enabled===null? " disabled ": " " );
+            $h_enabled = ($extension->is_enabled() === true ? " checked='checked'" : "");
+            $h_disabled = ($extension->is_supported()===false || $extension->core===true? " disabled ": " " );
 
             //baseline_open_in_new_black_18dp.png
 
-            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->ext_name) . "' id='ext_" . html_escape($extension->ext_name) . "'$h_disabled $h_enabled></td>" : "";
+            $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->key) . "' id='ext_" . html_escape($extension->key) . "'$h_disabled $h_enabled></td>" : "";
             $h_docs = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
             $html .= "
-				<tr data-ext='{$extension->ext_name}'>
+				<tr data-ext='{$extension->name}'>
 					{$h_enabled_box}
-					<td><label for='ext_" . html_escape($extension->ext_name) . "'>{$h_name}</label></td>
+					<td><label for='ext_" . html_escape($extension->key) . "'>{$h_name}</label></td>
 					<td>{$h_docs}</td>
-					<td style='text-align: left;'>{$h_description} " .($extension->supported===false ? "<b style='color:red'>Database not supported</b>" : ""). "</td>
+					<td style='text-align: left;'>{$h_description} <b style='color:red'>".$extension->get_support_info()."</b></td>
 				</tr>";
         }
         $h_set = $editable ? "<tfoot><tr><td colspan='5'><input type='submit' value='Set Extensions'></td></tr></tfoot>" : "";
@@ -66,16 +66,16 @@ class ExtManagerTheme extends Themelet
         $col_1 = "";
         $col_2 = "";
         foreach($extensions as $extension) {
-            $ext_name = $extension->ext_name;
+            $ext_name = $extension->name;
             $h_name = empty($extension->name) ? $ext_name : html_escape($extension->name);
             $h_email = html_escape($extension->email);
             $h_link = isset($extension->link) ?
                     "<a href=\"".html_escape($extension->link)."\">Original Site</a>" : "";
             $h_doc = isset($extension->documentation) ?
-                    "<a href=\"".make_link("ext_doc/".html_escape($extension->ext_name))."\">Documentation</a>" : "";
+                    "<a href=\"".make_link("ext_doc/".html_escape($extension->name))."\">Documentation</a>" : "";
             $h_author = html_escape($extension->author);
             $h_description = html_escape($extension->description);
-            $h_enabled = $extension->enabled ? " checked='checked'" : "";
+            $h_enabled = $extension->is_enabled() ? " checked='checked'" : "";
             $h_author_link = empty($h_email) ?
                     "$h_author" :
                     "<a href='mailto:$h_email'>$h_author</a>";
@@ -118,7 +118,7 @@ class ExtManagerTheme extends Themelet
     }
     */
 
-    public function display_doc(Page $page, ExtensionManagerInfo $info)
+    public function display_doc(Page $page, ExtensionInfo $info)
     {
         $author = "";
         if (count($info->authors) > 0) {
@@ -127,12 +127,13 @@ class ExtManagerTheme extends Themelet
                 $author .= "s";
             }
             $author .= ":</b>";
-            foreach ($info->authors as $auth) {
-                if (!empty($auth->email)) {
-                    $author .= "<a href=\"mailto:" . html_escape($auth->email) . "\">" . html_escape($auth->name) . "</a>";
+            foreach ($info->authors as $auth=>$email) {
+                if (!empty($email)) {
+                    $author .= "<a href=\"mailto:" . html_escape($email) . "\">" . html_escape($auth) . "</a>";
                 } else {
-                    $author .= html_escape($auth->name);
+                    $author .= html_escape($auth);
                 }
+                $author .= "<br/>";
             }
         }
 

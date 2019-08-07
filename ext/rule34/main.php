@@ -1,14 +1,4 @@
 <?php
-/**
- * Name: Rule34 Customisations
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: Extra site-specific bits
- * Documentation:
- *   Probably not much use to other sites, but it gives
- *   a few examples of how a shimmie-based site can be
- *   integrated with other systems
- */
 
 if ( // kill these glitched requests immediately
     strpos(@$_SERVER["REQUEST_URI"], "/http") !== false
@@ -19,7 +9,6 @@ if ( // kill these glitched requests immediately
 
 class Rule34 extends Extension
 {
-    protected $db_support = [DatabaseDriver::PGSQL];  # Only PG has the NOTIFY pubsub system
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {

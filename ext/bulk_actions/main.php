@@ -1,13 +1,4 @@
 <?php
-/*
- * Name: Bulk Actions
- * Author: Matthew Barbour
- * License: WTFPL
- * Description: Provides query and selection-based bulk action support
- * Documentation: Provides bulk action section in list view. Allows performing actions against a set of images based on query or manual selection.
- * Based on Mass Tagger by Christian Walde <walde.christian@googlemail.com>, contributions by Shish and Agasa.
- */
-
 
 class BulkActionBlockBuildingEvent extends Event
 {
@@ -203,7 +194,7 @@ class BulkActions extends Extension
     {
         return $a["position"] - $b["position"];
     }
-    
+
     private function delete_items(iterable $items): int
     {
         $total = 0;

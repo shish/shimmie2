@@ -1,10 +1,4 @@
 <?php
-/**
- * Name: Tag List
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Show the tags in various ways
- */
 
 class TagList extends Extension
 {
@@ -231,7 +225,7 @@ class TagList extends Extension
 
         $tags_min = $this->get_tags_min();
         $starts_with = $this->get_starts_with();
-        
+
         // check if we have a cached version
         $cache_key = warehouse_path("cache/tag_cloud", md5("tc" . $tags_min . $starts_with));
         if (file_exists($cache_key)) {
@@ -277,7 +271,7 @@ class TagList extends Extension
 
         $tags_min = $this->get_tags_min();
         $starts_with = $this->get_starts_with();
-        
+
         // check if we have a cached version
         $cache_key = warehouse_path("cache/tag_alpha", md5("ta" . $tags_min . $starts_with));
         if (file_exists($cache_key)) {
@@ -296,7 +290,7 @@ class TagList extends Extension
         if ($config->get_bool("tag_list_pages")) {
             $html .= $this->build_az();
         }
-        
+
         /*
           strtolower() vs. mb_strtolower()
           ( See http://www.php.net/manual/en/function.mb-strtolower.php for more info )
@@ -311,7 +305,7 @@ class TagList extends Extension
 
         */
         mb_internal_encoding('UTF-8');
-        
+
         $lastLetter = "";
         # postres utf8 string sort ignores punctuation, so we get "aza, a-zb, azc"
         # which breaks down into "az, a-, az" :(
@@ -339,13 +333,13 @@ class TagList extends Extension
         global $database;
 
         $tags_min = $this->get_tags_min();
-        
+
         // Make sure that the value of $tags_min is at least 1.
         // Otherwise the database will complain if you try to do: LOG(0)
         if ($tags_min < 1) {
             $tags_min = 1;
         }
-        
+
         // check if we have a cached version
         $cache_key = warehouse_path("cache/tag_popul", md5("tp" . $tags_min));
         if (file_exists($cache_key)) {

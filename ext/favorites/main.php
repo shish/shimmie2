@@ -1,17 +1,4 @@
 <?php
-/*
- * Name: Favorites
- * Author: Daniel Marschall <info@daniel-marschall.de>
- * License: GPLv2
- * Description: Allow users to favorite images
- * Documentation:
- *  Gives users a "favorite this image" button that they can press
- *  <p>Favorites for a user can then be retrieved by searching for
- *  "favorited_by=UserName"
- *  <p>Popular images can be searched for by eg. "favorites>5"
- *  <p>Favorite info can be added to an image's filename or tooltip
- *  using the $favorites placeholder
- */
 
 class FavoriteSetEvent extends Event
 {
@@ -54,7 +41,7 @@ class Favorites extends Extension
                 "SELECT COUNT(*) AS ct FROM user_favorites WHERE user_id = :user_id AND image_id = :image_id",
                 ["user_id"=>$user_id, "image_id"=>$image_id]
             ) > 0;
-        
+
             $event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
         }
     }

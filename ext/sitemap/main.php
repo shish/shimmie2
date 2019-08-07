@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: XML Sitemap
- * Author: Sein Kraft <mail@seinkraft.info>
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://drudexsoftware.com
- * License: GPLv2
- * Description: Sitemap with caching & advanced priorities
- * Documentation:
- */
 
 class XMLSitemap extends Extension
 {

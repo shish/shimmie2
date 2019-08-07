@@ -1,10 +1,4 @@
 <?php
-/**
- * Name: Post Titles
- * Author: Matthew Barbour <matthew@darkholme.net>
- * License: MIT
- * Description: Add titles to media posts
- */
 
 require_once "config.php";
 require_once "events/post_title_set_event.php";

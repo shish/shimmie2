@@ -11,7 +11,7 @@ class CustomViewImageTheme extends ViewImageTheme
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 10));
         $page->add_block(new Block(null, $this->build_pin($image), "main", 11));
     }
-    
+
     private function build_stats(Image $image)
     {
         $h_owner = html_escape($image->get_owner()->name);
@@ -46,7 +46,7 @@ class CustomViewImageTheme extends ViewImageTheme
             $html .= "<br>Source: <a href='$h_source'>link</a>";
         }
 
-        if (ext_is_live("Ratings")) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             if ($image->rating == null || $image->rating == "u") {
                 $image->rating = "u";
             }

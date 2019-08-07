@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: Handle MP3
- * Author: Shish <webmaster@shishnet.org>
- * Description: Handle MP3 files
- */
 
 class MP3FileHandler extends DataHandlerExtension
 {

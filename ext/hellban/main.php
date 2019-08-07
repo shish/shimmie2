@@ -1,7 +1,4 @@
 <?php
-/*
- * Name: [Beta] Hellban
- */
 
 class HellBan extends Extension
 {

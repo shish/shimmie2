@@ -83,32 +83,24 @@
  */
 abstract class Extension
 {
-    /** @var array which DBs this ext supports (blank for 'all') */
-    protected $db_support = [];
+    public $key;
 
     /** @var Themelet this theme's Themelet object */
     public $theme;
 
     public $info;
 
-    public function __construct()
-    {
-        $class = get_called_class();
-        $this->theme = $this->get_theme_object($class);
-        $this->info = ExtensionInfo::get_for_extension($class);
-    }
+    private static $enabled_extensions = [];
 
-    public function is_supported(): bool
+    public function __construct($class = null)
     {
-        if($this->info!=null) {
-            return $this->info->supported;
-        } else {
-            global $database;
-            return (
-                empty($this->db_support) ||
-                in_array($database->get_driver_name(), $this->db_support)
-            );
+        $class = $class ?? get_called_class();
+        $this->theme = $this->get_theme_object($class);
+        $this->info = ExtensionInfo::get_for_extension_class($class);
+        if($this->info===null) {
+            throw new Exception("Info class not found for extension $class");
         }
+        $this->key = $this->info->key;
     }
 
     /**
@@ -136,43 +128,181 @@ abstract class Extension
     {
         return 50;
     }
+
+    public static function determine_enabled_extensions()
+    {
+        self::$enabled_extensions = [];
+        foreach(array_merge(ExtensionInfo::get_core_extensions(),
+                explode(",", EXTRA_EXTS)) as $key) {
+            $ext = ExtensionInfo::get_by_key($key);
+            if($ext===null) {
+                continue;
+            }
+            self::$enabled_extensions[] = $ext->key;
+        }
+    }
+
+    public static function is_enabled(string $key): ?bool
+    {
+        return in_array($key, self::$enabled_extensions);
+    }
+
+    public static function get_enabled_extensions(): array
+    {
+        return self::$enabled_extensions;
+    }
+    public static function get_enabled_extensions_as_string(): string
+    {
+        return implode(",",self::$enabled_extensions);
+    }
 }
 
 abstract class ExtensionInfo
 {
+    // Every credit you get costs us RAM. It stops now.
+    public const SHISH_NAME = "Shish";
+    public const SHISH_EMAIL = "webmaster@shishnet.org";
+    public const SHIMMIE_URL = "http://code.shishnet.org/shimmie2/";
+    public const SHISH_AUTHOR = [self::SHISH_NAME=>self::SHISH_EMAIL];
+
+    public const LICENSE_GPLV2 = "GPLv2";
+    public const LICENSE_MIT = "MIT";
+    public const LICENSE_WTFPL = "WTFPL";
+
+    public const VISIBLE_ADMIN = "admin";
+    private const VALID_VISIBILITY = [self::VISIBLE_ADMIN];
+
+    public $key;
+
+    public $core = false;
+
+    public $beta = false;
+
     public $name;
-    public $authors;
+    public $authors = [];
     public $link;
     public $license;
     public $version;
     public $visibility;
     public $description;
     public $documentation;
-    public $supported;
-    public $db_support;
 
-    public function __construct()
-    {
-        $this->supported = $this->is_supported();
-    }
+    /** @var array which DBs this ext supports (blank for 'all') */
+    public $db_support = [];
+
+    private $supported = null;
+    private $support_info = null;
 
     public function is_supported(): bool
     {
-        global $database;
-        return (
-            empty($this->db_support) ||
-            in_array($database->get_driver_name(), $this->db_support)
-        );
+        if($this->supported===null) {
+            $this->check_support();
+        }
+        return $this->supported;
     }
 
-    public static function get_for_extension(string $base): ?ExtensionInfo
+    public function get_support_info(): string
+    {
+        if($this->supported===null) {
+            $this->check_support();
+        }
+        return $this->support_info;
+    }
+
+    private static $all_info_by_key = [];
+    private static $all_info_by_class = [];
+    private static $core_extensions = [];
+
+    protected function __construct()
+    {
+        if(empty($this->key)) {
+            throw new Exception("key field is required");
+        }
+        if(empty($this->name)) {
+            throw new Exception("name field is required for extension $this->key");
+        }
+        if(!empty($this->visibility)&&!in_array($this->visibility, self::VALID_VISIBILITY)) {
+            throw new Exception("Invalid visibility for extension $this->key");
+        }
+        if(!is_array($this->db_support)) {
+            throw new Exception("db_support has to be an array for extension $this->key");
+        }
+        if(!is_array($this->authors)) {
+            throw new Exception("authors has to be an array for extension $this->key");
+        }
+    }
+
+    public function is_enabled(): bool
+    {
+        return Extension::is_enabled($this->key);
+    }
+
+    private function check_support()
+    {
+        global $database;
+        $this->support_info  = "";
+        if(!empty($this->db_support)&&!in_array($database->get_driver_name(), $this->db_support)) {
+            $this->support_info .= "Database not supported. ";
+        }
+        // Additional checks here as needed
+
+        $this->supported = empty($this->support_info);
+    }
+
+    public static function get_all(): array
+    {
+        return array_values(self::$all_info_by_key);
+    }
+
+    public static function get_all_keys(): array
+    {
+        return array_keys(self::$all_info_by_key);
+    }
+
+    public static function get_core_extensions(): array
+    {
+        return self::$core_extensions;
+    }
+
+    public static function get_by_key(string $key): ?ExtensionInfo
+    {
+        if(array_key_exists($key, self::$all_info_by_key)) {
+            return self::$all_info_by_key[$key];
+        } else {
+            return null;
+        }
+    }
+
+    public static function get_for_extension_class(string $base): ?ExtensionInfo
     {
         $normal = $base.'Info';
 
-        if (class_exists($normal)) {
-            return new $normal();
+        if (array_key_exists($normal, self::$all_info_by_class)) {
+            return self::$all_info_by_class[$normal];
         } else {
             return null;
+        }
+    }
+
+    public static function load_all_extension_info()
+    {
+
+        foreach (get_declared_classes() as $class) {
+            $rclass = new ReflectionClass($class);
+            if ($rclass->isAbstract()) {
+                // don't do anything
+            } elseif (is_subclass_of($class, "ExtensionInfo")) {
+                $extension_info = new $class();
+                if(array_key_exists($extension_info->key, self::$all_info_by_key)) {
+                    throw new Exception("Extension Info $class with key $extension_info->key has already been loaded");
+                }
+
+                self::$all_info_by_key[$extension_info->key] = $extension_info;
+                self::$all_info_by_class[$class] = $extension_info;
+                if($extension_info->core===true) {
+                    self::$core_extensions[] = $extension_info->key;
+                }
+            }
         }
     }
 }

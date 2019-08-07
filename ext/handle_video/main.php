@@ -1,18 +1,4 @@
 <?php
-/*
- * Name: Handle Video
- * Author: velocity37 <velocity37@gmail.com>
- * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>, im-mi <im.mi.mail.mi@gmail.com>
- * License: GPLv2
- * Description: Handle FLV, MP4, OGV and WEBM video files.
- * Documentation:
- *  Based heavily on "Handle MP3" by Shish.<br><br>
- *  FLV: Flash player<br>
- *  MP4: HTML5 with Flash fallback<br>
- *  OGV, WEBM: HTML5<br>
- *  MP4's flash fallback is forced with a bit of Javascript as some browsers won't fallback if they can't play H.264.
- *  In the future, it may be necessary to change the user agent checks to reflect the current state of H.264 support.<br><br>
- */
 
 class VideoFileHandler extends DataHandlerExtension
 {

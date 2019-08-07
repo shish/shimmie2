@@ -22,13 +22,28 @@ $tracer_enabled = constant('TRACE_FILE')!==null;
 
 // load base files
 $_tracer->begin("Bootstrap");
-$_tracer->begin("Opening files");
+$_tracer->begin("Opening core files");
 $_shm_files = array_merge(
     zglob("core/*.php"),
     zglob("core/{".ENABLED_MODS."}/*.php"),
-    zglob("ext/{".ENABLED_EXTS."}/info.php"),
-    zglob("ext/{".ENABLED_EXTS."}/main.php")
+    zglob("ext/*/info.php")
 );
+foreach ($_shm_files as $_shm_filename) {
+    if (basename($_shm_filename)[0] != "_") {
+        require_once $_shm_filename;
+    }
+}
+unset($_shm_files);
+unset($_shm_filename);
+$_tracer->end();
+
+$_tracer->begin("Loading extension info");
+ExtensionInfo::load_all_extension_info();
+Extension::determine_enabled_extensions();
+$_tracer->end();
+
+$_tracer->begin("Opening enabled extension files");
+$_shm_files = zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php");
 foreach ($_shm_files as $_shm_filename) {
     if (basename($_shm_filename)[0] != "_") {
         require_once $_shm_filename;
@@ -53,8 +68,7 @@ unset($themelet);
 $page = class_exists("CustomPage") ? new CustomPage() : new Page();
 $_tracer->end();
 
-// hook up event handlers
-$_tracer->begin("Loading extensions");
+$_tracer->begin("Loading extensions/event listeners");
 _load_event_listeners();
 $_tracer->end();
 

@@ -1,16 +1,4 @@
 <?php
-/*
- * Name: Rotate Image
- * Author: jgen <jgen.tech@gmail.com> / Agasa <hiroshiagasa@gmail.com>
- * Description: Allows admins to rotate images.
- * License: GPLv2
- * Version: 0.1
- * Notice:
- *  The image resize and resample code is based off of the "smart_resize_image"
- *  function copyright 2008 Maxim Chernyak, released under a MIT-style license.
- * Documentation:
- *  This extension allows admins to rotate images.
- */
 
 /**
  * This class is just a wrapper around SCoreException.
@@ -49,7 +37,7 @@ class RotateImage extends Extension
             $event->add_part($this->theme->get_rotate_html($event->image->id));
         }
     }
-    
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Image Rotate");
@@ -59,7 +47,7 @@ class RotateImage extends Extension
         $sb->add_label(" deg");
         $event->panel->add_block($sb);
     }
-    
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
@@ -73,29 +61,29 @@ class RotateImage extends Extension
             if (empty($image_id)) {
                 throw new ImageRotateException("Can not rotate Image: No valid Image ID given.");
             }
-            
+
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
             } else {
-            
+
                 /* Check if options were given to rotate an image. */
                 if (isset($_POST['rotate_deg'])) {
-                    
+
                     /* get options */
-                    
+
                     $deg = 0;
-                    
+
                     if (isset($_POST['rotate_deg'])) {
                         $deg = int_escape($_POST['rotate_deg']);
                     }
-                    
+
                     /* Attempt to rotate the image */
                     try {
                         $this->rotate_image($image_id, $deg);
-                        
+
                         //$this->theme->display_rotate_page($page, $image_id);
-                        
+
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageRotateException $e) {
@@ -105,45 +93,45 @@ class RotateImage extends Extension
             }
         }
     }
-    
-    
+
+
     // Private functions
     /* ----------------------------- */
     private function rotate_image(int $image_id, int $deg)
     {
         global $database;
-        
+
         if (($deg <= -360) || ($deg >= 360)) {
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
         }
-        
+
         $image_obj = Image::by_id($image_id);
         $hash = $image_obj->hash;
         if (is_null($hash)) {
             throw new ImageRotateException("Image does not have a hash associated with it.");
         }
-        
+
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
         if (file_exists($image_filename)==false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
 
         $info = getimagesize($image_filename);
-        
+
         $memory_use = Media::calc_memory_use($info);
         $memory_limit = get_memory_limit();
-        
+
         if ($memory_use > $memory_limit) {
             throw new ImageRotateException("The image is too large to rotate given the memory limits. ($memory_use > $memory_limit)");
         }
-        
-        
+
+
         /* Attempt to load the image */
         $image = imagecreatefromstring(file_get_contents($image_filename));
         if ($image == false) {
             throw new ImageRotateException("Could not load image: ".$image_filename);
         }
-        
+
         /* Rotate and resample the image */
         /*
         $image_rotated = imagecreatetruecolor( $new_width, $new_height );
@@ -187,7 +175,7 @@ class RotateImage extends Extension
         if (empty($tmp_filename)) {
             throw new ImageRotateException("Unable to save temporary image file.");
         }
-        
+
         /* Output to the same format as the original image */
         $result = false;
         switch ($info[2]) {

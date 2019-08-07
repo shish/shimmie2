@@ -1,10 +1,4 @@
 <?php
-/**
- * Name: Tagger
- * Description: Advanced Tagging v2
- * Author: Artanis (Erik Youngren) <artanis.00@gmail.com>
- * Do not remove this notice.
- */
 
 class Tagger extends Extension
 {
