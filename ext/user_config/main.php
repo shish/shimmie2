@@ -1,10 +1,4 @@
 <?php
-/*
- * Name: User-specific settings
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides system-wide support for user-specific settings
- * Visibility: admin
- */
 
 /** @var $user_config Config */
 global $user_config;
