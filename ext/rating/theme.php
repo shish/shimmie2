@@ -109,6 +109,8 @@ class RatingsTheme extends Themelet
         }
         $output .= "</table>";
         return $output;
+    }
+        
     public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
     {
         $html = "
