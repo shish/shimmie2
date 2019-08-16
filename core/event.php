@@ -154,7 +154,7 @@ class PageRequestEvent extends Event
     public function get_page_size(): int
     {
         global $config;
-        return $config->get_int('index_images');
+        return $config->get_int(IndexConfig::IMAGES);
     }
 }
 

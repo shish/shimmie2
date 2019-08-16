@@ -150,8 +150,8 @@ class Image
         $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
         if (!$result) {
             $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            if ($limit!=null) {
+            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER))));
+            if($limit!=null) {
                 $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
                 $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
             }
@@ -334,7 +334,7 @@ class Image
     public static function count_pages(array $tags=[]): float
     {
         global $config;
-        return ceil(Image::count_images($tags) / $config->get_int('index_images'));
+        return ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
     }
 
     private static function terms_to_conditions(array $terms): array
