@@ -1,148 +1,15 @@
 <?php
 
+require_once "config.php";
+require_once "events.php";
+require_once "media_engine.php";
+
 /*
 * This is used by the media code when there is an error
 */
-
-abstract class MediaConfig
-{
-    const FFMPEG_PATH = "media_ffmpeg_path";
-    const FFPROBE_PATH = "media_ffprobe_path";
-    const CONVERT_PATH = "media_convert_path";
-    const VERSION = "ext_media_version";
-    const MEM_LIMIT = 'media_mem_limit';
-}
-
-abstract class MediaEngine
-{
-    public const GD = "gd";
-    public const IMAGICK = "convert";
-    public const FFMPEG = "ffmpeg";
-
-    public const ALL = [
-        MediaEngine::GD,
-        MediaEngine::FFMPEG,
-        MediaEngine::IMAGICK
-    ];
-    public const OUTPUT_SUPPORT = [
-        MediaEngine::GD => [
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-            Media::WEBP_LOSSY,
-        ],
-        MediaEngine::IMAGICK => [
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS,
-        ],
-        MediaEngine::FFMPEG => [
-            "jpg",
-            "webp",
-            "png"
-        ]
-    ];
-    public const INPUT_SUPPORT = [
-        MediaEngine::GD => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "webp",
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS
-        ],
-        MediaEngine::IMAGICK => [
-            "bmp",
-            "gif",
-            "jpg",
-            "png",
-            "psd",
-            "tiff",
-            "webp",
-            Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS,
-            "ico",
-        ],
-        MediaEngine::FFMPEG => [
-            "avi",
-            "mkv",
-            "webm",
-            "mp4",
-            "mov",
-            "flv"
-        ]
-    ];
-}
-
 class MediaException extends SCoreException
 {
 }
-
-class MediaResizeEvent extends Event
-{
-    public $engine;
-    public $input_path;
-    public $input_type;
-    public $output_path;
-    public $target_format;
-    public $target_width;
-    public $target_height;
-    public $target_quality;
-    public $minimize;
-    public $ignore_aspect_ratio;
-    public $allow_upscale;
-
-    public function __construct(
-        String $engine,
-        string $input_path,
-        string $input_type,
-        string $output_path,
-        int $target_width,
-        int $target_height,
-        bool $ignore_aspect_ratio = false,
-        string $target_format = null,
-        int $target_quality = 80,
-        bool $minimize = false,
-        bool $allow_upscale = true
-    ) {
-        assert(in_array($engine, MediaEngine::ALL));
-        $this->engine = $engine;
-        $this->input_path = $input_path;
-        $this->input_type = $input_type;
-        $this->output_path = $output_path;
-        $this->target_height = $target_height;
-        $this->target_width = $target_width;
-        $this->target_format = $target_format;
-        $this->target_quality = $target_quality;
-        $this->minimize = $minimize;
-        $this->ignore_aspect_ratio = $ignore_aspect_ratio;
-        $this->allow_upscale = $allow_upscale;
-    }
-}
-
-class MediaCheckPropertiesEvent extends Event
-{
-    public $file_name;
-    public $ext;
-    public $lossless = null;
-    public $audio = null;
-    public $video = null;
-    public $length = null;
-    public $height = null;
-    public $width = null;
-
-    public function __construct(string $file_name, string $ext)
-    {
-        $this->file_name = $file_name;
-        $this->ext = $ext;
-    }
-}
-
 
 class Media extends Extension
 {
@@ -211,41 +78,8 @@ class Media extends Extension
         $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
 
 
-        if ($config->get_int(MediaConfig::VERSION) < 1) {
-            $current_value = $config->get_string("thumb_ffmpeg_path");
-            if (!empty($current_value)) {
-                $config->set_string(MediaConfig::FFMPEG_PATH, $current_value);
-            } elseif ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
-                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($ffmpeg, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
-                }
-            }
-
-            if ($ffprobe = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffprobe')) {
-                //ffprobe exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($ffprobe, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
-                }
-            }
-
-            $current_value = $config->get_string("thumb_convert_path");
-            if (!empty($current_value)) {
-                $config->set_string(MediaConfig::CONVERT_PATH, $current_value);
-            } elseif ($convert = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' convert')) {
-                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
-                if (is_executable(strtok($convert, PHP_EOL))) {
-                    $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
-                }
-            }
-
-            $current_value = $config->get_int("thumb_mem_limit");
-            if (!empty($current_value)) {
-                $config->set_int(MediaConfig::MEM_LIMIT, $current_value);
-            }
-
-            $config->set_int(MediaConfig::VERSION, 1);
-            log_info("media", "extension installed");
+        if ($config->get_int(MediaConfig::VERSION) < 2) {
+            $this->setup();
         }
     }
 
@@ -421,7 +255,7 @@ class Media extends Extension
     }
 
 
-    const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio))$/i";
+    const CONTENT_SEARCH_TERM_REGEX = "/^content[=|:]((video)|(audio)|(image)|(unknown))$/i";
 
 
     public function onSearchTermParse(SearchTermParseEvent $event)
@@ -430,8 +264,12 @@ class Media extends Extension
 
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
-            $field = $matches[2];
-            $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
+            $field = $matches[1];
+            if($field==="unknown") {
+                $event->add_querylet(new Querylet($database->scoreql_to_sql("video IS NULL OR audio IS NULL OR image IS NULL")));
+            } else {
+                $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
+            }
         }
     }
 
@@ -485,8 +323,8 @@ class Media extends Extension
 
         $database->execute(
             "UPDATE images SET 
-                  lossless = :lossless, video = :video, audio = :audio, 
-                  height = :height, width = :width,
+                  lossless = :lossless, video = :video, audio = :audio,image = :image, 
+                  height = :height, width = :width, 
                   length = :length WHERE hash = :hash",
             [
                 "hash" => $hash,
@@ -494,6 +332,7 @@ class Media extends Extension
                 "height" => $mcpe->height ?? 0,
                 "lossless" => $database->scoresql_value_prepare($mcpe->lossless),
                 "video" => $database->scoresql_value_prepare($mcpe->video),
+                "image" => $database->scoresql_value_prepare($mcpe->image),
                 "audio" => $database->scoresql_value_prepare($mcpe->audio),
                 "length" => $mcpe->length
             ]
@@ -1153,5 +992,75 @@ class Media extends Extension
         }
         log_debug('Media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
         return $size;
+    }
+
+    private function setup()
+    {
+        global $config, $database;
+        if ($config->get_int(MediaConfig::VERSION) < 1) {
+            $current_value = $config->get_string("thumb_ffmpeg_path");
+            if (!empty($current_value)) {
+                $config->set_string(MediaConfig::FFMPEG_PATH, $current_value);
+            } elseif ($ffmpeg = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffmpeg')) {
+                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
+                if (is_executable(strtok($ffmpeg, PHP_EOL))) {
+                    $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
+                }
+            }
+
+            if ($ffprobe = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' ffprobe')) {
+                //ffprobe exists in PATH, check if it's executable, and if so, default to it instead of static
+                if (is_executable(strtok($ffprobe, PHP_EOL))) {
+                    $config->set_default_string(MediaConfig::FFPROBE_PATH, 'ffprobe');
+                }
+            }
+
+            $current_value = $config->get_string("thumb_convert_path");
+            if (!empty($current_value)) {
+                $config->set_string(MediaConfig::CONVERT_PATH, $current_value);
+            } elseif ($convert = shell_exec((PHP_OS == 'WINNT' ? 'where' : 'which') . ' convert')) {
+                //ffmpeg exists in PATH, check if it's executable, and if so, default to it instead of static
+                if (is_executable(strtok($convert, PHP_EOL))) {
+                    $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
+                }
+            }
+
+            $current_value = $config->get_int("thumb_mem_limit");
+            if (!empty($current_value)) {
+                $config->set_int(MediaConfig::MEM_LIMIT, $current_value);
+            }
+
+            $config->set_int(MediaConfig::VERSION, 1);
+            log_info("media", "extension installed");
+        }
+
+        if ($config->get_int(MediaConfig::VERSION) < 2) {
+            $database->execute($database->scoreql_to_sql(
+                "ALTER TABLE images ADD COLUMN image SCORE_BOOL NULL"
+            ));
+
+            switch($database->get_driver_name()) {
+                case DatabaseDriver::PGSQL:
+                case DatabaseDriver::SQLITE:
+                    $database->execute('CREATE INDEX images_image_idx ON images(image) WHERE image IS NOT NULL');
+                    break;
+                default:
+                    $database->execute('CREATE INDEX images_image_idx ON images(image)');
+                    break;
+            }
+
+            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
+                $database->execute("SET statement_timeout TO 300000;");
+            }
+
+            $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
+
+            log_info("upgrade", "Setting predictable media values for known file types");
+            $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_N WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')"));
+            $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_Y WHERE ext IN ('jpg','jpeg''ico','cur','png')"));
+
+            $config->set_int(MediaConfig::VERSION, 2);
+            log_info("media", "extension at version 2");
+        }
     }
 }

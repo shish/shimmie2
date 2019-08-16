@@ -38,6 +38,7 @@ class VideoFileHandler extends DataHandlerExtension
     {
         if (in_array($event->ext, self::SUPPORTED_EXT)) {
             $event->video = true;
+            $event->image = false;
             try {
                 $data = Media::get_ffprobe_data($event->file_name);
 
