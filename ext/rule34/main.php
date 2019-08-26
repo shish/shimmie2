@@ -68,6 +68,17 @@ class Rule34 extends Extension
     {
     }
 
+    public function onSourceSet(SourceSetEvent $event)
+    {
+        // Maybe check for 404?
+        if (empty($event->source)) {
+            return;
+        }
+        if (!preg_match("/^(https?:\/\/)?[a-zA-Z0-9\.\-]+(\/.*)?$/", $event->source)) {
+            throw new SCoreException("Invalid source URL");
+        }
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $database, $page, $user;
