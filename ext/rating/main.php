@@ -234,7 +234,7 @@ class Ratings extends Extension
         } else {
             $sqes = $config->get_string("ext_rating_user_privs");
         }
-        return $sqes;
+        return $sqes ?? "";
     }
 
     public static function privs_to_sql(string $sqes): string
