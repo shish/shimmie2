@@ -118,7 +118,9 @@ class TagListTheme extends Themelet
         }
 
         if ($config->get_string('tag_list_image_type')=="tags") {
-            $page->add_block(new Block("Tags", $main_html, "left", 10));
+            if ($main_html != null) {
+                $page->add_block(new Block("Tags", $main_html, "left", 10));
+            }
         } else {
             $page->add_block(new Block("Related Tags", $main_html, "left", 10));
         }
