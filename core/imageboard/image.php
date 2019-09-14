@@ -944,12 +944,16 @@ class Image
         $negative_tag_id_array = [];
 
         foreach ($tag_conditions as $tq) {
+            $sq = "
+                SELECT id
+                FROM tags
+                WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
+            ";
+            if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+                $sq .= "ESCAPE '\\'";
+            }
             $tag_ids = $database->get_col(
-                $database->scoreql_to_sql("
-					SELECT id
-					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
-				"),
+                $database->scoreql_to_sql($sq),
                 ["tag" => Tag::sqlify($tq->tag)]
             );
 
