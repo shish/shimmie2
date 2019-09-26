@@ -1,17 +1,5 @@
 <?php
-/*
- * Name: Emoticon Filter
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Lets users use graphical smilies
- * Documentation:
- *  This extension will turn colon-something-colon into a link
- *  to an image with that something as the name, eg :smile:
- *  becomes a link to smile.gif
- *  <p>Images are stored in /ext/emoticons/default/, and you can
- *  add more emoticons by uploading images into that folder.
- */
+
 
 /**
  * Class Emoticons
@@ -31,15 +19,3 @@ class Emoticons extends FormatterExtension
     }
 }
 
-/**
- * Class EmoticonList
- */
-class EmoticonList extends Extension
-{
-    public function onPageRequest(PageRequestEvent $event)
-    {
-        if ($event->page_matches("emote/list")) {
-            $this->theme->display_emotes(glob("ext/emoticons/default/*"));
-        }
-    }
-}

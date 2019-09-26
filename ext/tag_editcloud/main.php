@@ -1,11 +1,4 @@
 <?php
-/*
- * Name: Tag EditCloud
- * Author: AtomicDryad
- * Contributors:
- *   Schizius (Relevance Sort, Category Integration, Cleanup)
- * Description: Add or remove tags to the editor via clicking.
- */
 
 /* Todo:
  * 	usepref(todo2: port userpref)
@@ -76,7 +69,7 @@ class TagEditCloud extends Extension
         $ignore_tags = Tag::explode($config->get_string("tageditcloud_ignoretags"));
 
         $cat_color = [];
-        if (ext_is_live("TagCategories")) {
+        if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
             $categories = $database->get_all("SELECT category, color FROM image_tag_categories");
             foreach ($categories as $row) {
                 $cat_color[$row['category']] = $row['color'];
@@ -124,7 +117,7 @@ class TagEditCloud extends Extension
         foreach ($tag_data as $row) {
             $full_tag = $row['tag'];
 
-            if (ext_is_live("TagCategories")) {
+            if (Extension::is_enabled(TagCategoriesInfo::KEY)) {
                 $tc = explode(':', $row['tag']);
                 if (isset($tc[1]) && isset($cat_color[$tc[0]])) {
                     $h_tag = html_escape($tc[1]);

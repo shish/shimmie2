@@ -1,13 +1,4 @@
 <?php
-/*
-* Name: StatsD Interface
-* Author: Shish <webmaster@shishnet.org>
-* License: GPLv2
-* Visibility: admin
-* Description: Sends Shimmie stats to a StatsD server
-* Documentation:
-*  define('STATSD_HOST', 'my.server.com:8125'); in shimmie.conf.php to set the host
-*/
 
 _d("STATSD_HOST", null);
 

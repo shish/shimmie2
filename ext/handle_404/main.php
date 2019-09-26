@@ -1,12 +1,5 @@
 <?php
-/**
- * Name: 404 Detector
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Visibility: admin
- * Description: If no other extension puts anything onto the page, show 404
- */
+
 
 class Handle404 extends Extension
 {

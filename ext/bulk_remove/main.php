@@ -1,13 +1,5 @@
 <?php
-/*
- * Name: [Beta] Bulk Remove
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com/
- * License: GPLv2
- * Description: Allows admin to delete many images at once through Board Admin.
- * Documentation:
- *
- */
+
 //todo: removal by tag returns 1 less image in test for some reason, actually a combined search doesn't seem to work for shit either
 
 class BulkRemove extends Extension
@@ -23,7 +15,7 @@ class BulkRemove extends Extension
             }
         }
     }
- 
+
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
         global $page;
@@ -55,12 +47,12 @@ class BulkRemove extends Extension
         // set vars
         $images_for_removal = [];
         $error = "";
-            
+
         $min_id = $_POST['remove_id_min'];
         $max_id = $_POST['remove_id_max'];
         $tags = $_POST['remove_tags'];
-            
-            
+
+
         // if using id range to remove (comined removal with tags)
         if ($min_id != "" && $max_id != "") {
             // error if values are not correctly entered
@@ -68,46 +60,46 @@ class BulkRemove extends Extension
                 intval($max_id) < intval($min_id)) {
                 $error = "Values not correctly entered for removal between id.";
             } else { // if min & max id are valid
-                    
+
                 // Grab the list of images & place it in the removing array
                 foreach (Image::find_images(intval($min_id), intval($max_id)) as $image) {
                     array_push($images_for_removal, $image);
                 }
             }
         }
-          
+
         // refine previous results or create results from tags
         if ($tags != "") {
             $tags_arr = explode(" ", $_POST['remove_tags']);
-                
+
             // Search all images with the specified tags & add to list
             foreach (Image::find_images(1, 2147483647, $tags_arr) as $image) {
                 array_push($images_for_removal, $image);
             }
         }
-            
-            
+
+
         // if no images were found with the given info
         if (count($images_for_removal) == 0) {
             $error = "No images selected for removal";
         }
-            
+
         //var_dump($tags_arr);
         return [
                 "error" => $error,
                 "images_for_removal" => $images_for_removal];
     }
-        
+
     // displays confirmation to admin before removal
     private function show_confirm()
     {
         global $page;
-            
+
         // set vars
         $determined_imgs = $this->determine_images();
         $error = $determined_imgs["error"];
         $images_for_removal = $determined_imgs["images_for_removal"];
-            
+
         // if there was an error in determine_images()
         if ($error != "") {
             $page->add_block(new Block("Cannot remove images", $error));
@@ -115,14 +107,14 @@ class BulkRemove extends Extension
         }
         // generates the image array & places it in $_POST["bulk_remove_images"]
         $_POST["bulk_remove_images"] = $images_for_removal;
-            
+
         // Display confirmation message
         $html = make_form(make_link("bulk_remove")).
                     "Are you sure you want to PERMANENTLY remove ".
                     count($images_for_removal) ." images?<br></form>";
         $page->add_block(new Block("Confirm Removal", $html));
     }
-        
+
     private function do_bulk_remove()
     {
         global $page;
@@ -133,7 +125,7 @@ class BulkRemove extends Extension
                 "Please use Board Admin to use bulk remove."
                 ));
         }
-            
+
         //
         $image_arr = $_POST["bulk_remove_images"];
     }

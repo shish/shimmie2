@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: [Beta] Oekaki
- * Author: Shish
- * Description: ChibiPaint-based Oekaki uploader
- */
 
 class Oekaki extends Extension
 {

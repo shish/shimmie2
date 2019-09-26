@@ -1,13 +1,4 @@
 <?php
-/**
- * Name: Image Comments
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Allow users to make comments on images
- * Documentation:
- *  Formatting is done with the standard formatting API (normally BBCode)
- */
 
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
@@ -382,7 +373,7 @@ class CommentList extends Extension
         global $database, $user;
 
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
-        
+
         $total_pages = $database->cache->get("comment_pages");
         if (empty($total_pages)) {
             $total_pages = (int)($database->get_one("
@@ -394,7 +385,7 @@ class CommentList extends Extension
         $total_pages = max($total_pages, 1);
 
         $current_page = clamp($current_page, 1, $total_pages);
-        
+
         $threads_per_page = 10;
         $start = $threads_per_page * ($current_page - 1);
 
@@ -407,13 +398,13 @@ class CommentList extends Extension
 			LIMIT :limit OFFSET :offset
 		", ["limit"=>$threads_per_page, "offset"=>$start]);
 
-        $user_ratings = ext_is_live("Ratings") ? Ratings::get_user_privs($user) : "";
+        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_privs($user) : "";
 
         $images = [];
         while ($row = $result->fetch()) {
             $image = Image::by_id($row["image_id"]);
             if (
-                ext_is_live("Ratings") && !is_null($image) &&
+                Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
                 strpos($user_ratings, $image->rating) === false
             ) {
                 $image = null; // this is "clever", I may live to regret it

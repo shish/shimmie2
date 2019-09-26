@@ -1,11 +1,5 @@
 <?php
-/*
- * Name: Not A Tag
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Redirect users to the rules if they use bad tags
- */
+
 class NotATag extends Extension
 {
     public function get_priority(): int

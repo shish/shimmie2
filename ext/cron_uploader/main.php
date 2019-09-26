@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Cron Uploader
- * Authors: YaoiFox <admin@yaoifox.com>, Matthew Barbour <matthew@darkholme.net>
- * Link: http://www.yaoifox.com/
- * License: GPLv2
- * Description: Uploads images automatically using Cron Jobs
- * Documentation: Installation guide: activate this extension and navigate to www.yoursite.com/cron_upload
- */
 
 class CronUploader extends Extension
 {

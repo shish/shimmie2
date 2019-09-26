@@ -1,11 +1,4 @@
 <?php
-/*
- * Name: Trash
- * Author: Matthew Barbour <matthew@darkohlme.net>
- * License: MIT
- * Description: Provides "Trash" or "Recycle Bin"-type functionality, storing delete images for later recovery
- * Documentation:
- */
 
 abstract class TrashConfig
 {
@@ -14,8 +7,6 @@ abstract class TrashConfig
 
 class Trash extends Extension
 {
-
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
     public function get_priority(): int
     {
@@ -132,7 +123,7 @@ class Trash extends Extension
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }
-    
+
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
         global $user;

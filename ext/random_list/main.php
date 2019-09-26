@@ -1,14 +1,4 @@
 <?php
-/*
- * Name: Random List
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com
- * License: GPLv2
- * Description: Allows displaying a page with random images
- * Documentation:
- * Random image list can be accessed through www.yoursite.com/random
- * It is recommended that you create a link to this page so users know it exists.
- */
 
 class RandomList extends Extension
 {

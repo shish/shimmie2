@@ -40,7 +40,6 @@ _d("SEARCH_ACCEL", false);   // boolean  use search accelerator
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", '2.7-beta');   // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
-_d("CORE_EXTS", "bbcode,user,mail,upload,image,view,handle_pixel,ext_manager,setup,upgrade,handle_404,handle_static,comment,tag_list,index,tag_edit,alias_editor,media,help_pages,system"); // extensions to always enable
 _d("EXTRA_EXTS", "");        // string   optional extra extensions
 _d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
 _d("MIN_PHP_VERSION", '7.1');// string   minimum supported PHP version
@@ -53,4 +52,3 @@ _d("ENABLED_MODS", "imageboard");
  * directly, only the things they're built from
  */
 _d("SCORE_VERSION", 'develop/'.VERSION); // string SCore version
-_d("ENABLED_EXTS", CORE_EXTS.",".EXTRA_EXTS);

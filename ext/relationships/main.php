@@ -1,10 +1,4 @@
 <?php
-/**
- * Name: Post Relationships
- * Author: Angus Johnston <admin@codeanimu.net, Matthew Barbour <matthew@darkholme.net>
- * License: GPLv2
- * Description: Allow posts to have relationships (parent/child).
- */
 
 class ImageRelationshipSetEvent extends Event
 {
@@ -24,7 +18,6 @@ class Relationships extends Extension
 {
     public const NAME = "Relationships";
 
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 
     public function onInitExt(InitExtEvent $event)
     {

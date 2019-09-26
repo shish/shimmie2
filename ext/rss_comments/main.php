@@ -1,16 +1,7 @@
 <?php
-/*
- * Name: RSS for Comments
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Self explanatory
- */
 
 class RSS_Comments extends Extension
 {
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // pgsql has no UNIX_TIMESTAMP
-
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
         global $config, $page;

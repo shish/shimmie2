@@ -1,10 +1,4 @@
 <?php
-/*
- * Name: Handle Flash
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle Flash files.
- */
 
 class FlashFileHandler extends DataHandlerExtension
 {

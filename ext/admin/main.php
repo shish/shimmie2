@@ -1,24 +1,4 @@
 <?php
-/**
- * Name: Admin Controls
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Various things to make admins' lives easier
- * Documentation:
- *  Various moderate-level tools for admins; for advanced, obscure, and
- *  possibly dangerous tools see the shimmie2-utils script set
- *  <p>Lowercase all tags:
- *  <br>Set all tags to lowercase for consistency
- *  <p>Recount tag use:
- *  <br>If the counts of images per tag get messed up somehow, this will
- *  reset them, and remove any unused tags
- *  <p>Database dump:
- *  <br>Download the contents of the database in plain text format, useful
- *  for backups.
- *  <p>Image dump:
- *  <br>Download all the images as a .zip file (Requires ZipArchive)
- */
 
 /**
  * Sent when the admin page is ready to be added to

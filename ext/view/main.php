@@ -1,19 +1,4 @@
 <?php
-/*
- * Name: Image Viewer
- * Author: Shish
- * Description: Allows users to see uploaded images
- */
-
-/*
- * DisplayingImageEvent:
- *   $image -- the image being displayed
- *   $page  -- the page to display on
- *
- * Sent when an image is ready to display. Extensions who
- * wish to appear on the "view" page should listen for this,
- * which only appears when an image actually exists.
- */
 
 require_once "events/displaying_image_event.php";
 require_once "events/image_info_box_building_event.php";

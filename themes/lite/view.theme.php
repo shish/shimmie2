@@ -47,7 +47,7 @@ class CustomViewImageTheme extends ViewImageTheme
             $html .= "<br>Source: <a href='$h_source'>link</a>";
         }
 
-        if (ext_is_live("Ratings")) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             if ($image->rating == null || $image->rating == "u") {
                 $image->rating = "u";
             }

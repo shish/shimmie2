@@ -1,11 +1,4 @@
 <?php
-/*
- * Name: Database Upgrader
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Keeps things happy behind the scenes
- * Visibility: admin
- */
 
 class Upgrade extends Extension
 {
@@ -63,7 +56,7 @@ class Upgrade extends Extension
 
             log_info("upgrade", "Adding foreign keys to images");
             $database->Execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
-        
+
             log_info("upgrade", "Database at version 10");
             $config->set_bool("in_upgrade", false);
         }

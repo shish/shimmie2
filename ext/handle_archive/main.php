@@ -1,14 +1,4 @@
 <?php
-/*
- * Name: Handle Archives
- * Author: Shish <webmaster@shishnet.org>
- * Description: Allow users to upload archives (zip, etc)
- * Documentation:
- *  Note: requires exec() access and an external unzip command
- *  <p>Any command line unzipper should work, some examples:
- *  <p>unzip: <code>unzip -d "%d" "%f"</code>
- *  <br>7-zip: <code>7zr x -o"%d" "%f"</code>
- */
 
 class ArchiveFileHandler extends Extension
 {

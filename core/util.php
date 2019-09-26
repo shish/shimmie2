@@ -454,8 +454,8 @@ function _get_themelet_files(string $_theme): array
     $base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
     $base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
-    $ext_themelets = zglob("ext/{".ENABLED_EXTS."}/theme.php");
-    $custom_themelets = zglob('themes/'.$_theme.'/{'.ENABLED_EXTS.'}.theme.php');
+    $ext_themelets = zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php");
+    $custom_themelets = zglob('themes/'.$_theme.'/{'.Extension::get_enabled_extensions_as_string().'}.theme.php');
 
     return array_merge($base_themelets, $ext_themelets, $custom_themelets);
 }

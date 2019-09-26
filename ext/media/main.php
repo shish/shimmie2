@@ -1,11 +1,4 @@
 <?php
-/*
- * Name: Media
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides common functions and settings used for media operations.
- * License: MIT
- * Version: 1.0
- */
 
 /*
 * This is used by the media code when there is an error

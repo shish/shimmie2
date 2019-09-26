@@ -1,15 +1,5 @@
 <?php
-/*
- * Name: Site Description
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Visibility: admin
- * Description: A description for search engines
- * Documentation:
- *  This extension sets the "description" meta tag in the header
- *  of pages so that search engines can pick it up
- */
+
 class SiteDescription extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)

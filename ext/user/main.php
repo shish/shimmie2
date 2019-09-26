@@ -1,72 +1,6 @@
 <?php
-/*
- * Name: User Management
- * Author: Shish
- * Description: Allows people to sign up to the website
- */
 
-class UserBlockBuildingEvent extends Event
-{
-    /** @var array  */
-    public $parts = [];
-
-    public function add_link(string $name, string $link, int $position=50)
-    {
-        while (isset($this->parts[$position])) {
-            $position++;
-        }
-        $this->parts[$position] = ["name" => $name, "link" => $link];
-    }
-}
-
-class UserPageBuildingEvent extends Event
-{
-    /** @var User */
-    public $display_user;
-    /** @var array  */
-    public $stats = [];
-
-    public function __construct(User $display_user)
-    {
-        $this->display_user = $display_user;
-    }
-
-    public function add_stats(string $html, int $position=50)
-    {
-        while (isset($this->stats[$position])) {
-            $position++;
-        }
-        $this->stats[$position] = $html;
-    }
-}
-
-class UserCreationEvent extends Event
-{
-    /** @var  string */
-    public $username;
-    /** @var  string */
-    public $password;
-    /** @var  string */
-    public $email;
-
-    public function __construct(string $name, string $pass, string $email)
-    {
-        $this->username = $name;
-        $this->password = $pass;
-        $this->email = $email;
-    }
-}
-
-class UserDeletionEvent extends Event
-{
-    /** @var  int */
-    public $id;
-
-    public function __construct(int $id)
-    {
-        $this->id = $id;
-    }
-}
+require_once "events.php";
 
 class UserCreationException extends SCoreException
 {
@@ -679,11 +613,11 @@ class UserPage extends Extension
     private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false)
     {
         global $user, $config, $database;
-        
+
         $page->set_title("Error");
         $page->set_heading("Error");
         $page->add_block(new NavBlock());
-        
+
         if (!$user->can(Permissions::DELETE_USER)) {
             $page->add_block(new Block("Not Admin", "Only admins can delete accounts"));
         } elseif (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
@@ -726,7 +660,7 @@ class UserPage extends Extension
                 "DELETE FROM users WHERE id = :id",
                 ["id" => $_POST['id']]
             );
-        
+
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }

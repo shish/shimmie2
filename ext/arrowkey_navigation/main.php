@@ -1,13 +1,5 @@
 <?php
-/**
- * Name: Arrow Key Navigation
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com/
- * License: GPLv2
- * Description: Allows viewers no navigate between images using the left & right arrow keys.
- * Documentation:
- *  Simply enable this extention in the extention manager to enable arrow key navigation.
- */
+
 class ArrowkeyNavigation extends Extension
 {
     /**

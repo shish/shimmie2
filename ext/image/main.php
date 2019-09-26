@@ -1,33 +1,6 @@
 <?php
-/*
- * Name: Image Manager
- * Author: Shish <webmaster@shishnet.org>
- * Modified by: jgen <jgen.tech@gmail.com>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle the image database
- * Visibility: admin
- */
 
-
-abstract class ImageConfig {
-    const THUMB_ENGINE =     'thumb_engine';
-    const THUMB_WIDTH =      'thumb_width';
-    const THUMB_HEIGHT =     'thumb_height';
-    const THUMB_SCALING =    'thumb_scaling';
-    const THUMB_QUALITY =    'thumb_quality';
-    const THUMB_TYPE =       'thumb_type';
-
-    const SHOW_META =        'image_show_meta';
-    const ILINK =            'image_ilink';
-    const TLINK =            'image_tlink';
-    const TIP =              'image_tip';
-    const EXPIRES =          'image_expires';
-    const UPLOAD_COLLISION_HANDLER = 'upload_collision_handler';
-
-    const COLLISION_MERGE = 'merge';
-    const COLLISION_ERROR = 'error';
-
-}
+require_once "config.php";
 
 /**
  * A class to handle adding / getting / removing image files from the disk.
@@ -217,7 +190,7 @@ class ImageIO extends Extension
             if ($handler == ImageConfig::COLLISION_MERGE || isset($_GET['update'])) {
                 $merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
                 send_event(new TagSetEvent($existing, $merged));
-                if (isset($_GET['rating']) && isset($_GET['update']) && ext_is_live("Ratings")) {
+                if (isset($_GET['rating']) && isset($_GET['update']) && Extension::is_enabled(RatingsInfo::KEY)) {
                     send_event(new RatingSetEvent($existing, $_GET['rating']));
                 }
                 if (isset($_GET['source']) && isset($_GET['update'])) {

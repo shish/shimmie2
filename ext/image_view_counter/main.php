@@ -1,20 +1,9 @@
 <?php
-/**
- * Name: Image View Counter
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com/
- * License: GPLv2
- * Description: Tracks & displays how many times an image is viewed
- * Documentation:
- *  Whenever anyone views an image, a view will be added to that image.
- *  This extension will also track any username & the IP adress.
- *  This is done to prevent duplicate views.
- *  A person can only count as a view again 1 hour after viewing the image initially.
- */
+
 class ImageViewCounter extends Extension
 {
     private $view_interval = 3600; # allows views to be added each hour
-    
+
     # Add Setup Block with options for view counter
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
@@ -23,14 +12,14 @@ class ImageViewCounter extends Extension
 
         $event->panel->add_block($sb);
     }
-        
+
     # Adds view to database if needed
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         $imgid = $event->image->id; // determines image id
         $this->addview($imgid); // adds a view
     }
-        
+
     # display views to user or admin below image if allowed
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
     {

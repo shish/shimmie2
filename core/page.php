@@ -468,7 +468,7 @@ class Page
         /*** Generate CSS cache files ***/
         $css_latest = $config_latest;
         $css_files = array_merge(
-            zglob("ext/{" . ENABLED_EXTS . "}/style.css"),
+            zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/style.css"),
             zglob("themes/$theme_name/style.css")
         );
         foreach ($css_files as $css) {
@@ -499,7 +499,7 @@ class Page
                 "vendor/bower-asset/js-cookie/src/js.cookie.js",
                 "ext/handle_static/modernizr-3.3.1.custom.js",
             ],
-            zglob("ext/{" . ENABLED_EXTS . "}/script.js"),
+            zglob("ext/{" . Extension::get_enabled_extensions_as_string() . "}/script.js"),
             zglob("themes/$theme_name/script.js")
         );
         foreach ($js_files as $js) {

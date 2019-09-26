@@ -1,16 +1,4 @@
 <?php
-/*
- * Name: Resize Image
- * Author: jgen <jgen.tech@gmail.com>
- * Description: Allows admins to resize images.
- * License: GPLv2
- * Version: 0.1
- * Notice:
- *  The image resize and resample code is based off of the "smart_resize_image"
- *  function copyright 2008 Maxim Chernyak, released under a MIT-style license.
- * Documentation:
- *  This extension allows admins to resize images.
- */
 
 abstract class ResizeConfig
 {
@@ -54,7 +42,7 @@ class ResizeImage extends Extension
             $event->add_part($this->theme->get_resize_html($event->image));
         }
     }
-    
+
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
         $sb = new SetupBlock("Image Resize");
@@ -75,7 +63,7 @@ class ResizeImage extends Extension
         $sb->end_table();
         $event->panel->add_block($sb);
     }
-    
+
     public function onDataUpload(DataUploadEvent $event)
     {
         global $config, $page;
@@ -134,32 +122,32 @@ class ResizeImage extends Extension
             if (empty($image_id)) {
                 throw new ImageResizeException("Can not resize Image: No valid Image ID given.");
             }
-            
+
             $image = Image::by_id($image_id);
             if (is_null($image)) {
                 $this->theme->display_error(404, "Image not found", "No image in the database has the ID #$image_id");
             } else {
-            
+
                 /* Check if options were given to resize an image. */
                 if (isset($_POST['resize_width']) || isset($_POST['resize_height'])) {
-                    
+
                     /* get options */
-                    
+
                     $width = $height = 0;
-                    
+
                     if (isset($_POST['resize_width'])) {
                         $width = int_escape($_POST['resize_width']);
                     }
                     if (isset($_POST['resize_height'])) {
                         $height = int_escape($_POST['resize_height']);
                     }
-                    
+
                     /* Attempt to resize the image */
                     try {
                         $this->resize_image($image, $width, $height);
-                        
+
                         //$this->theme->display_resize_page($page, $image_id);
-                        
+
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$image_id));
                     } catch (ImageResizeException $e) {
@@ -184,7 +172,7 @@ class ResizeImage extends Extension
     private function resize_image(Image $image_obj, int $width, int $height)
     {
         global $database, $config;
-        
+
         if (($height <= 0) && ($width <= 0)) {
             throw new ImageResizeException("Invalid options for height and width. ($width x $height)");
         }
@@ -235,12 +223,12 @@ class ResizeImage extends Extension
         if (!@copy($tmp_filename, $target)) {
             throw new ImageResizeException("Failed to copy new image file from temporary location ({$tmp_filename}) to archive ($target)");
         }
-        
+
         /* Remove temporary file */
         @unlink($tmp_filename);
 
         send_event(new ImageReplaceEvent($image_obj->id, $new_image));
-        
+
         log_info("resize", "Resized Image #{$image_obj->id} - New hash: {$new_image->hash}");
     }
 

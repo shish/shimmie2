@@ -27,10 +27,10 @@ class CustomCommentListTheme extends CommentListTheme
 
         // parts for each image
         $position = 10;
-        
+
         $comment_captcha = $config->get_bool('comment_captcha');
         $comment_limit = $config->get_int("comment_list_count", 10);
-        
+
         foreach ($images as $pair) {
             $image = $pair[0];
             $comments = $pair[1];
@@ -46,7 +46,7 @@ class CustomCommentListTheme extends CommentListTheme
             }
             $p = autodate($image->posted);
 
-            $r = ext_is_live("Ratings") ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
+            $r = Extension::is_enabled(RatingsInfo::KEY) ? "<b>Rating</b> ".Ratings::rating_to_human($image->rating) : "";
             $comment_html =   "<b>Date</b> $p $s <b>User</b> $un $s $r<br><b>Tags</b> $t<p>&nbsp;";
 
             $comment_count = count($comments);

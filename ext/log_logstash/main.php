@@ -1,11 +1,4 @@
 <?php
-/*
- * Name: Logging (Logstash)
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Send log events to a network port.
- * Visibility: admin
- */
 
 class LogLogstash extends Extension
 {

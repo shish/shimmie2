@@ -1,13 +1,4 @@
 <?php
-/**
- * Name: Pools System
- * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>, Daku <admin@codeanimu.net>
- * License: GPLv2
- * Description: Allow users to create groups of images and order them.
- * Documentation: This extension allows users to created named groups of
- *   images, and order the images within the group.
- *   Useful for related images like in a comic, etc.
- */
 
 abstract class PoolsConfig
 {
@@ -806,10 +797,10 @@ class Pools extends Extension
 
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
-        if (ext_is_live("Ratings")) {
+        if (Extension::is_enabled(RatingsInfo::KEY)) {
             $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_privs($user)).")";
         }
-        if(ext_is_live("trash")) {
+        if(Extension::is_enabled(TrashInfo::KEY)) {
             $query .=  $database->scoreql_to_sql(" AND trash = SCORE_BOOL_N ");
         }
 

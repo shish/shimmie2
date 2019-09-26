@@ -1,17 +1,5 @@
 <?php
-/*
- * Name: Regen Thumb
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Regenerate a thumbnail image
- * Documentation:
- *  This adds a button in the image control section on an
- *  image's view page, which allows an admin to regenerate
- *  an image's thumbnail; useful for instance if the first
- *  attempt failed due to lack of memory, and memory has
- *  since been increased.
- */
+
 
 class RegenThumb extends Extension
 {
@@ -85,7 +73,7 @@ class RegenThumb extends Extension
                         &&$_POST["bulk_regen_thumb_missing_only"]=="true") {
                         $force=false;
                     }
-    
+
                     $total = 0;
                     foreach ($event->items as $image) {
                         if ($this->regenerate_thumbnail($image, $force)) {
@@ -124,7 +112,7 @@ class RegenThumb extends Extension
                     $type = $_POST["regen_thumb_type"];
                 }
                 $images = $this->get_images($type);
-                
+
                 $i = 0;
                 foreach ($images as $image) {
                     if (!$force) {
@@ -149,7 +137,7 @@ class RegenThumb extends Extension
 
                 if (isset($_POST["delete_thumb_type"])&&$_POST["delete_thumb_type"]!="") {
                     $images = $this->get_images($_POST["delete_thumb_type"]);
-                
+
                     $i = 0;
                     foreach ($images as $image) {
                         $outname = warehouse_path(Image::THUMBNAIL_DIR, $image["hash"]);

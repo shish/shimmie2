@@ -1,11 +1,5 @@
 <?php
-/*
- * Name: RSS for Images
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Self explanatory
- */
+
 
 class RSS_Images extends Extension
 {

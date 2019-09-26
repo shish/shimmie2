@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: Autocomplete
- * Author: Daku <admin@codeanimu.net>
- * Description: Adds autocomplete to search & tagging.
- */
 
 class AutoComplete extends Extension
 {

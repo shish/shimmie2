@@ -8,7 +8,7 @@ class CustomExtManagerTheme extends ExtManagerTheme
         parent::display_table($page, $extensions, $editable);
     }
 
-    public function display_doc(Page $page, ExtensionInfo $info)
+    public function display_doc(Page $page, ExtensionManagerInfo $info)
     {
         $page->disable_left();
         parent::display_doc($page, $info);

@@ -44,7 +44,7 @@ function _set_event_listeners(): void
             $extension = new $class();
 
             // skip extensions which don't support our current database
-            if (!$extension->is_live()) {
+            if (!$extension->info->is_supported()) {
                 continue;
             }
 
@@ -88,16 +88,6 @@ function _dump_event_listeners(array $event_listeners, string $path): void
     file_put_contents($path, $p);
 }
 
-function ext_is_live(string $ext_name): bool
-{
-    if (class_exists($ext_name)) {
-        /** @var Extension $ext */
-        $ext = new $ext_name();
-        return $ext->is_live();
-    }
-    return false;
-}
-
 
 /** @private */
 global $_shm_event_count;
@@ -109,7 +99,7 @@ $_shm_event_count = 0;
 function send_event(Event $event): void
 {
     global $tracer_enabled;
-    
+
     global $_shm_event_listeners, $_shm_event_count, $_tracer;
     if (!isset($_shm_event_listeners[get_class($event)])) {
         return;

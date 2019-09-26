@@ -1,16 +1,7 @@
 <?php
-/**
- * Name: Random Tip
- * Author: Sein Kraft <mail@seinkraft.info>
- * License: GPLv2
- * Description: Show a random line of text in the subheader space
- * Documentation:
- *  Formatting is done with HTML
- */
 
 class Tips extends Extension
 {
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // rand() ?
 
     public function onInitExt(InitExtEvent $event)
     {

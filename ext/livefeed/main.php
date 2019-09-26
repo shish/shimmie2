@@ -1,12 +1,4 @@
 <?php
-/*
-* Name: Live Feed
-* Author: Shish <webmaster@shishnet.org>
-* License: GPLv2
-* Visibility: admin
-* Description: Logs user-safe (no IPs) data to a UDP socket, eg IRCCat
-* Documentation:
-*/
 
 class LiveFeed extends Extension
 {

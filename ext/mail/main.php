@@ -1,11 +1,4 @@
 <?php
-/**
-* Name: Mail System
-* Author: Zach Hall <zach@sosguy.net>
-* Link: http://seemslegit.com
-* License: GPLv2
-* Description: Provides an interface for sending and receiving mail.
-*/
 
 class Mail extends Extension
 {
@@ -19,7 +12,7 @@ class Mail extends Extension
         $sb->add_label("<br><i>Should measure 550x110px. Use an absolute URL</i>");
         $event->panel->add_block($sb);
     }
-    
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -31,6 +24,11 @@ class Mail extends Extension
 }
 class MailTest extends Extension
 {
+    public function __construct()
+    {
+        parent::__construct("Mail");
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("mail/test")) {
