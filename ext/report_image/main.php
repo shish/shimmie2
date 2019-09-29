@@ -127,7 +127,7 @@ class ReportImage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
                 $count = $this->count_reported_images();
                 $h_count = $count > 0 ? " ($count)" : "";

@@ -47,7 +47,7 @@ class ResizeImage extends Extension
     {
         $sb = new SetupBlock("Image Resize");
         $sb->start_table();
-        $sb->add_choice_option(ResizeConfig::ENGINE,  Media::IMAGE_MEDIA_ENGINES, "Engine: ", true);
+        $sb->add_choice_option(ResizeConfig::ENGINE, Media::IMAGE_MEDIA_ENGINES, "Engine: ", true);
         $sb->add_bool_option(ResizeConfig::ENABLED, "Allow resizing images: ", true);
         $sb->add_bool_option(ResizeConfig::UPLOAD, "Resize on upload: ", true);
         $sb->end_table();
@@ -180,7 +180,7 @@ class ResizeImage extends Extension
         $engine = $config->get_string(ResizeConfig::ENGINE);
 
 
-        if(!$this->can_resize_format($image_obj->ext, $image_obj->lossless)) {
+        if (!$this->can_resize_format($image_obj->ext, $image_obj->lossless)) {
             throw new ImageResizeException("Engine $engine cannot resize selected image");
         }
 

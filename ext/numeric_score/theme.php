@@ -132,6 +132,5 @@ class NumericScoreTheme extends Themelet
         <p>Sorts the search results by score, ascending.</p>
         </div>
         ';
-
     }
 }

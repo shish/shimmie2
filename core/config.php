@@ -159,7 +159,7 @@ abstract class BaseConfig implements Config
 
     public function set_array(string $name, ?array $value): void
     {
-        if($value!=null) {
+        if ($value!=null) {
             $this->values[$name] = implode(",", $value);
         } else {
             $this->values[$name] = null;
@@ -313,16 +313,19 @@ class DatabaseConfig extends BaseConfig
     private $sub_column;
     private $sub_value;
 
-    public function __construct(Database $database, string $table_name = "config",
-                                string $sub_column = null, string $sub_value = null)
-    {
+    public function __construct(
+        Database $database,
+        string $table_name = "config",
+        string $sub_column = null,
+        string $sub_value = null
+    ) {
         $this->database = $database;
         $this->table_name = $table_name;
         $this->sub_value = $sub_value;
         $this->sub_column = $sub_column;
 
         $cache_name = "config";
-        if(!empty($sub_value)) {
+        if (!empty($sub_value)) {
             $cache_name .= "_".$sub_value;
         }
 
@@ -335,12 +338,12 @@ class DatabaseConfig extends BaseConfig
             $query = "SELECT name, value FROM {$this->table_name}";
             $args = [];
 
-            if(!empty($sub_column)&&!empty($sub_value)) {
+            if (!empty($sub_column)&&!empty($sub_value)) {
                 $query .= " WHERE $sub_column = :sub_value";
                 $args["sub_value"] = $sub_value;
             }
 
-            foreach ($this->database->get_all($query, $args ) as $row) {
+            foreach ($this->database->get_all($query, $args) as $row) {
                 $this->values[$row["name"]] = $row["value"];
             }
             $this->database->cache->set($cache_name, $this->values);
@@ -359,7 +362,7 @@ class DatabaseConfig extends BaseConfig
             $args = ["name"=>$name];
             $cols = ["name","value"];
             $params = [":name",":value"];
-            if(!empty($this->sub_column)&&!empty($this->sub_value)) {
+            if (!empty($this->sub_column)&&!empty($this->sub_value)) {
                 $query .= " AND $this->sub_column = :sub_value";
                 $args["sub_value"] = $this->sub_value;
                 $cols[] = $this->sub_column;
@@ -370,8 +373,9 @@ class DatabaseConfig extends BaseConfig
 
             $args["value"] =$this->values[$name];
             $this->database->Execute(
-                "INSERT INTO {$this->table_name} (".join(",",$cols).") VALUES (".join(",",$params).")",
-                $args);
+                "INSERT INTO {$this->table_name} (".join(",", $cols).") VALUES (".join(",", $params).")",
+                $args
+            );
         }
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here

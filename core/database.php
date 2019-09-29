@@ -172,9 +172,9 @@ class Database
         if (is_null($this->engine)) {
             $this->connect_engine();
         }
-        if($input===true) {
+        if ($input===true) {
             return $this->engine->BOOL_Y;
-        } else if ($input===false) {
+        } elseif ($input===false) {
             return $this->engine->BOOL_N;
         }
         return $input;
@@ -190,13 +190,13 @@ class Database
 
     private function count_time(string $method, float $start, string $query, ?array $args): void
     {
-		global $_tracer, $tracer_enabled;
-		$dur = microtime(true) - $start;
-        if($tracer_enabled) {
+        global $_tracer, $tracer_enabled;
+        $dur = microtime(true) - $start;
+        if ($tracer_enabled) {
             $query = trim(preg_replace('/^[\t ]+/m', '', $query));  // trim leading whitespace
             $_tracer->complete($start * 1000000, $dur * 1000000, "DB Query", ["query"=>$query, "args"=>$args, "method"=>$method]);
         }
-		$this->query_count++;
+        $this->query_count++;
         $this->dbtime += $dur;
     }
 
@@ -226,7 +226,7 @@ class Database
             return $stmt;
         } catch (PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
-		}
+        }
     }
 
     /**

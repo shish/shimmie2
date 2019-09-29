@@ -36,19 +36,19 @@ class VideoFileHandler extends DataHandlerExtension
 
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        if(in_array($event->ext, self::SUPPORTED_EXT)) {
+        if (in_array($event->ext, self::SUPPORTED_EXT)) {
             $event->video = true;
             try {
                 $data = Media::get_ffprobe_data($event->file_name);
 
-                if(is_array($data)) {
-                    if(array_key_exists("streams", $data)) {
+                if (is_array($data)) {
+                    if (array_key_exists("streams", $data)) {
                         $video = false;
                         $audio = true;
                         $streams = $data["streams"];
                         if (is_array($streams)) {
                             foreach ($streams as $stream) {
-                                if(is_array($stream)) {
+                                if (is_array($stream)) {
                                     if (array_key_exists("codec_type", $stream)) {
                                         $type = $stream["codec_type"];
                                         switch ($type) {
@@ -68,22 +68,20 @@ class VideoFileHandler extends DataHandlerExtension
                                         && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->height) ?? 0) {
                                         $event->height = intval($stream["height"]);
                                     }
-
                                 }
                             }
                             $event->video = $video;
                             $event->audio = $audio;
                         }
                     }
-                    if(array_key_exists("format", $data)&& is_array($data["format"])) {
+                    if (array_key_exists("format", $data)&& is_array($data["format"])) {
                         $format = $data["format"];
-                        if(array_key_exists("duration", $format) && is_numeric($format["duration"])) {
-                             $event->length = floor(floatval($format["duration"]) * 1000);
+                        if (array_key_exists("duration", $format) && is_numeric($format["duration"])) {
+                            $event->length = floor(floatval($format["duration"]) * 1000);
                         }
                     }
                 }
-            } catch(MediaException $e) {
-
+            } catch (MediaException $e) {
             }
         }
     }

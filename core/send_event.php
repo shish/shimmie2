@@ -26,7 +26,7 @@ function _load_event_listeners(): void
 function _clear_cached_event_listeners(): void
 {
     if (file_exists(data_path("cache/shm_event_listeners.php"))) {
-       unlink(data_path("cache/shm_event_listeners.php"));
+        unlink(data_path("cache/shm_event_listeners.php"));
     }
 }
 
@@ -108,21 +108,29 @@ function send_event(Event $event): void
 
     // send_event() is performance sensitive, and with the number
     // of times tracer gets called the time starts to add up
-    if ($tracer_enabled) $_tracer->begin(get_class($event));
+    if ($tracer_enabled) {
+        $_tracer->begin(get_class($event));
+    }
     // SHIT: http://bugs.php.net/bug.php?id=35106
     $my_event_listeners = $_shm_event_listeners[get_class($event)];
     ksort($my_event_listeners);
 
     foreach ($my_event_listeners as $listener) {
-        if ($tracer_enabled) $_tracer->begin(get_class($listener));
+        if ($tracer_enabled) {
+            $_tracer->begin(get_class($listener));
+        }
         if (method_exists($listener, $method_name)) {
             $listener->$method_name($event);
         }
-        if ($tracer_enabled) $_tracer->end();
-        if($event->stop_processing===true) {
+        if ($tracer_enabled) {
+            $_tracer->end();
+        }
+        if ($event->stop_processing===true) {
             break;
         }
     }
     $_shm_event_count++;
-    if ($tracer_enabled) $_tracer->end();
+    if ($tracer_enabled) {
+        $_tracer->end();
+    }
 }

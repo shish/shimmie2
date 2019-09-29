@@ -339,6 +339,5 @@ and of course start organising your images :-)
             </ul>
         </p>
         ';
-
     }
 }

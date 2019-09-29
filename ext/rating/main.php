@@ -109,7 +109,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Ratings";
 
@@ -164,7 +164,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate","Set (R)ating", "r","",$this->theme->get_selection_rater_html("u","bulk_rating"));
+            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html("u", "bulk_rating"));
         }
     }
 

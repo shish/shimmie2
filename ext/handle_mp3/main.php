@@ -12,7 +12,6 @@ class MP3FileHandler extends DataHandlerExtension
                 break;
         }
         // TODO: Buff out audio format support, length scanning
-
     }
 
     protected function create_thumb(string $hash, string $type): bool

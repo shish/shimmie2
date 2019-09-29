@@ -86,7 +86,7 @@ class TranscodeImage extends Extension
         $sb->start_table();
         $sb->add_bool_option(TranscodeConfig::ENABLED, "Allow transcoding images: ", true);
         $sb->add_bool_option(TranscodeConfig::UPLOAD, "Transcode on upload: ", true);
-        $sb->add_choice_option(TranscodeConfig::ENGINE,  Media::IMAGE_MEDIA_ENGINES, "Engine", true);
+        $sb->add_choice_option(TranscodeConfig::ENGINE, Media::IMAGE_MEDIA_ENGINES, "Engine", true);
         foreach (self::INPUT_FORMATS as $display=>$format) {
             if (in_array($format, MediaEngine::INPUT_SUPPORT[$engine])) {
                 $outputs = $this->get_supported_output_formats($engine, $format);
@@ -169,7 +169,7 @@ class TranscodeImage extends Extension
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
         if ($user->is_admin()) {
-            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null,"", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
+            $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
         }
     }
 
@@ -218,7 +218,7 @@ class TranscodeImage extends Extension
 
     private function get_supported_output_formats($engine, ?String $omit_format = null, ?bool $lossless = null): array
     {
-        if($omit_format!=null) {
+        if ($omit_format!=null) {
             $omit_format = Media::normalize_format($omit_format, $lossless);
         }
         $output = [];
@@ -229,7 +229,7 @@ class TranscodeImage extends Extension
                 $output[$key] = $value;
                 continue;
             }
-            if(Media::is_output_supported($engine, $value)
+            if (Media::is_output_supported($engine, $value)
                 &&(empty($omit_format)||$omit_format!=$value)) {
                 $output[$key] = $value;
             }

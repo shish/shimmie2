@@ -4,7 +4,6 @@ use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
 {
-
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
         switch ($event->ext) {

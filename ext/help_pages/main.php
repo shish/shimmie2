@@ -8,7 +8,6 @@ class HelpPageListBuildingEvent extends Event
     {
         $this->pages[$key] = $name;
     }
-
 }
 
 class HelpPageBuildingEvent extends Event
@@ -21,10 +20,9 @@ class HelpPageBuildingEvent extends Event
         $this->key = $key;
     }
 
-    function add_block(Block $block, int $position = 50)
+    public function add_block(Block $block, int $position = 50)
     {
-        if(!array_key_exists("$position",$this->blocks))
-        {
+        if (!array_key_exists("$position", $this->blocks)) {
             $this->blocks["$position"] = [];
         }
         $this->blocks["$position"][] = $block;
@@ -49,7 +47,7 @@ class HelpPages extends Extension
             } else {
                 $name = $event->get_arg(0);
                 $title = $name;
-                if(array_key_exists($name, $e->pages)) {
+                if (array_key_exists($name, $e->pages)) {
                     $title = $e->pages[$name];
                 }
 
@@ -60,7 +58,7 @@ class HelpPages extends Extension
                 asort($hpbe->blocks);
 
                 foreach ($hpbe->blocks as $key=>$value) {
-                    foreach($value as $block) {
+                    foreach ($value as $block) {
                         $page->add_block($block);
                     }
                 }
@@ -85,15 +83,15 @@ class HelpPages extends Extension
         $event->add_link("Help", make_link("help"));
     }
 
-    public function onHelpPageBuilding(HelpPageBuildingEvent $event) {
+    public function onHelpPageBuilding(HelpPageBuildingEvent $event)
+    {
+        if ($event->key=="licenses") {
+            $block = new Block("Software Licenses");
+            $block->body = "The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.";
+            $event->add_block($block);
 
-        if($event->key=="licenses"){
-        $block = new Block("Software Licenses");
-        $block->body = "The code in Shimmie is contributed by numerous authors under multiple licenses. For reference, these licenses are listed below. The base software is in general licensed under the GPLv2 license.";
-        $event->add_block($block);
-
-        $block = new Block(ExtensionInfo::LICENSE_GPLV2);
-        $block->body = "<pre>                    GNU GENERAL PUBLIC LICENSE
+            $block = new Block(ExtensionInfo::LICENSE_GPLV2);
+            $block->body = "<pre>                    GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
@@ -432,10 +430,10 @@ proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
 library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.</pre>";
-        $event->add_block($block);
+            $event->add_block($block);
 
-        $block = new Block(ExtensionInfo::LICENSE_MIT);
-        $block->body = "<pre>Permission is hereby granted, free of charge, to any person obtaining a copy
+            $block = new Block(ExtensionInfo::LICENSE_MIT);
+            $block->body = "<pre>Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the \"Software\"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -452,11 +450,11 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</pre>";
-        $event->add_block($block);
+            $event->add_block($block);
 
 
-        $block = new Block(ExtensionInfo::LICENSE_WTFPL);
-        $block->body = "<pre>            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+            $block = new Block(ExtensionInfo::LICENSE_WTFPL);
+            $block->body = "<pre>            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
                     Version 2, December 2004
 
  Copyright (C) 2004 Sam Hocevar <sam@hocevar.net>
@@ -471,9 +469,7 @@ SOFTWARE.</pre>";
   0. You just DO WHAT THE FUCK YOU WANT TO.
 
 </pre>";
-        $event->add_block($block);
-
+            $event->add_block($block);
+        }
     }
-    }
-
 }

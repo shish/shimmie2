@@ -7,7 +7,6 @@ require_once "config.php";
  */
 class ImageIO extends Extension
 {
-
     const COLLISION_OPTIONS = ['Error'=>ImageConfig::COLLISION_ERROR, 'Merge'=>ImageConfig::COLLISION_MERGE];
 
     const EXIF_READ_FUNCTION = "exif_read_data";
@@ -240,10 +239,9 @@ class ImageIO extends Extension
 
         try {
             Media::update_image_media_properties($image->hash, strtolower($image->ext));
-        } catch(MediaException $e) {
-            log_warning("add_image","Error while running update_image_media_properties: ".$e->getMessage());
+        } catch (MediaException $e) {
+            log_warning("add_image", "Error while running update_image_media_properties: ".$e->getMessage());
         }
-
     }
     // }}}  end add
 
@@ -322,7 +320,7 @@ class ImageIO extends Extension
 
         $duplicate = Image::by_hash($image->hash);
 
-        if(!is_null($duplicate) && $duplicate->id!=$id) {
+        if (!is_null($duplicate) && $duplicate->id!=$id) {
             $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
                 "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
             throw new ImageReplaceException($error);
@@ -361,8 +359,8 @@ class ImageIO extends Extension
 
         try {
             Media::update_image_media_properties($image->hash, $image->ext);
-        } catch(MediaException $e) {
-            log_warning("image_replace","Error while running update_image_media_properties: ".$e->getMessage());
+        } catch (MediaException $e) {
+            log_warning("image_replace", "Error while running update_image_media_properties: ".$e->getMessage());
         }
 
         /* Generate new thumbnail */

@@ -36,7 +36,7 @@ class PostTitles extends Extension
     {
         global $config;
 
-        if($config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
+        if ($config->get_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE)) {
             $event->set_title(self::get_title($event->get_image()));
         }
     }
@@ -67,8 +67,8 @@ class PostTitles extends Extension
     {
         $sb = new SetupBlock("Post Titles");
         $sb->start_table();
-        $sb->add_bool_option(PostTitlesConfig::DEFAULT_TO_FILENAME,"Default to filename", true);
-        $sb->add_bool_option(PostTitlesConfig::SHOW_IN_WINDOW_TITLE,"Show in window title", true);
+        $sb->add_bool_option(PostTitlesConfig::DEFAULT_TO_FILENAME, "Default to filename", true);
+        $sb->add_bool_option(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, "Show in window title", true);
         $sb->end_table();
 
         $event->panel->add_block($sb);
@@ -88,9 +88,9 @@ class PostTitles extends Extension
         global $config;
 
         $title = $image->title??"";
-        if(empty($title) && $config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
+        if (empty($title) && $config->get_bool(PostTitlesConfig::DEFAULT_TO_FILENAME)) {
             $info = pathinfo($image->filename);
-            if(array_key_exists("extension",$info)) {
+            if (array_key_exists("extension", $info)) {
                 $title = basename($image->filename, '.' . $info['extension']);
             } else {
                 $title = $image->filename;

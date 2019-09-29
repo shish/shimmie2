@@ -97,7 +97,7 @@ abstract class Extension
         $class = $class ?? get_called_class();
         $this->theme = $this->get_theme_object($class);
         $this->info = ExtensionInfo::get_for_extension_class($class);
-        if($this->info===null) {
+        if ($this->info===null) {
             throw new Exception("Info class not found for extension $class");
         }
         $this->key = $this->info->key;
@@ -132,14 +132,16 @@ abstract class Extension
     public static function determine_enabled_extensions()
     {
         self::$enabled_extensions = [];
-        foreach(array_merge(ExtensionInfo::get_core_extensions(),
-                explode(",", EXTRA_EXTS)) as $key) {
+        foreach (array_merge(
+            ExtensionInfo::get_core_extensions(),
+            explode(",", EXTRA_EXTS)
+        ) as $key) {
             $ext = ExtensionInfo::get_by_key($key);
-            if($ext===null) {
+            if ($ext===null) {
                 continue;
             }
             self::$enabled_extensions[] = $ext->key;
-            if(!empty($ext->dependencies)) {
+            if (!empty($ext->dependencies)) {
                 foreach ($ext->dependencies as $dep) {
                     self::$enabled_extensions[] = $dep;
                 }
@@ -158,7 +160,7 @@ abstract class Extension
     }
     public static function get_enabled_extensions_as_string(): string
     {
-        return implode(",",self::$enabled_extensions);
+        return implode(",", self::$enabled_extensions);
     }
 }
 
@@ -202,7 +204,7 @@ abstract class ExtensionInfo
 
     public function is_supported(): bool
     {
-        if($this->supported===null) {
+        if ($this->supported===null) {
             $this->check_support();
         }
         return $this->supported;
@@ -210,7 +212,7 @@ abstract class ExtensionInfo
 
     public function get_support_info(): string
     {
-        if($this->supported===null) {
+        if ($this->supported===null) {
             $this->check_support();
         }
         return $this->support_info;
@@ -222,22 +224,22 @@ abstract class ExtensionInfo
 
     protected function __construct()
     {
-        if(empty($this->key)) {
+        if (empty($this->key)) {
             throw new Exception("key field is required");
         }
-        if(empty($this->name)) {
+        if (empty($this->name)) {
             throw new Exception("name field is required for extension $this->key");
         }
-        if(!empty($this->visibility)&&!in_array($this->visibility, self::VALID_VISIBILITY)) {
+        if (!empty($this->visibility)&&!in_array($this->visibility, self::VALID_VISIBILITY)) {
             throw new Exception("Invalid visibility for extension $this->key");
         }
-        if(!is_array($this->db_support)) {
+        if (!is_array($this->db_support)) {
             throw new Exception("db_support has to be an array for extension $this->key");
         }
-        if(!is_array($this->authors)) {
+        if (!is_array($this->authors)) {
             throw new Exception("authors has to be an array for extension $this->key");
         }
-        if(!is_array($this->dependencies)) {
+        if (!is_array($this->dependencies)) {
             throw new Exception("dependencies has to be an array for extension $this->key");
         }
     }
@@ -251,7 +253,7 @@ abstract class ExtensionInfo
     {
         global $database;
         $this->support_info  = "";
-        if(!empty($this->db_support)&&!in_array($database->get_driver_name(), $this->db_support)) {
+        if (!empty($this->db_support)&&!in_array($database->get_driver_name(), $this->db_support)) {
             $this->support_info .= "Database not supported. ";
         }
         // Additional checks here as needed
@@ -276,7 +278,7 @@ abstract class ExtensionInfo
 
     public static function get_by_key(string $key): ?ExtensionInfo
     {
-        if(array_key_exists($key, self::$all_info_by_key)) {
+        if (array_key_exists($key, self::$all_info_by_key)) {
             return self::$all_info_by_key[$key];
         } else {
             return null;
@@ -296,20 +298,19 @@ abstract class ExtensionInfo
 
     public static function load_all_extension_info()
     {
-
         foreach (get_declared_classes() as $class) {
             $rclass = new ReflectionClass($class);
             if ($rclass->isAbstract()) {
                 // don't do anything
             } elseif (is_subclass_of($class, "ExtensionInfo")) {
                 $extension_info = new $class();
-                if(array_key_exists($extension_info->key, self::$all_info_by_key)) {
+                if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
                     throw new Exception("Extension Info $class with key $extension_info->key has already been loaded");
                 }
 
                 self::$all_info_by_key[$extension_info->key] = $extension_info;
                 self::$all_info_by_class[$class] = $extension_info;
-                if($extension_info->core===true) {
+                if ($extension_info->core===true) {
                     self::$core_extensions[] = $extension_info->key;
                 }
             }

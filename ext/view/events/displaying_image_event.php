@@ -26,7 +26,8 @@ class DisplayingImageEvent extends Event
         return $this->image;
     }
 
-    public function set_title(String $title) {
+    public function set_title(String $title)
+    {
         $this->title = $title;
     }
 }

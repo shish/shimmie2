@@ -57,7 +57,7 @@ class Layout
         }
 
         $custom_sublinks = "";
-        if(!empty($sub_links)) {
+        if (!empty($sub_links)) {
             $custom_sublinks = "<div class='sbar'>";
             foreach ($sub_links as $nav_link) {
                 $custom_sublinks .= $this->navlinks($nav_link->link, $nav_link->description, $nav_link->active);

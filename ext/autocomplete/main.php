@@ -33,8 +33,8 @@ class AutoComplete extends Extension
             //$limit = 0;
             $cache_key = "autocomplete-$s";
             $limitSQL = "";
-            $s = str_replace('_','\_', $s);
-            $s = str_replace('%','\%', $s);
+            $s = str_replace('_', '\_', $s);
+            $s = str_replace('%', '\%', $s);
             $SQLarr = ["search"=>"$s%"]; #, "cat_search"=>"%:$s%"];
             if (isset($_GET["limit"]) && $_GET["limit"] !== 0) {
                 $limitSQL = "LIMIT :limit";

@@ -7,14 +7,14 @@ class PixelFileHandler extends DataHandlerExtension
 
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        if(in_array($event->ext, Media::LOSSLESS_FORMATS)) {
+        if (in_array($event->ext, Media::LOSSLESS_FORMATS)) {
             $event->lossless = true;
-        } elseif($event->ext=="webp") {
+        } elseif ($event->ext=="webp") {
             $event->lossless = Media::is_lossless_webp($event->file_name);
         }
 
-        if(in_array($event->ext,self::SUPPORTED_EXTENSIONS)) {
-            if($event->lossless==null) {
+        if (in_array($event->ext, self::SUPPORTED_EXTENSIONS)) {
+            if ($event->lossless==null) {
                 $event->lossless = false;
             }
             $event->audio = false;
@@ -111,5 +111,4 @@ class PixelFileHandler extends DataHandlerExtension
 			</form>
 		", 20);
     }
-
 }

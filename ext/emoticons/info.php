@@ -28,4 +28,3 @@ becomes a link to smile.gif
 <p>Images are stored in /ext/emoticons/default/, and you can
 add more emoticons by uploading images into that folder.";
 }
-

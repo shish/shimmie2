@@ -10,8 +10,13 @@ class TranscodeImageTheme extends Themelet
         global $config;
 
         $html = "
-			".make_form(make_link("transcode/{$image->id}"), 'POST', false, "",
-                "return transcodeSubmit()")."
+			".make_form(
+            make_link("transcode/{$image->id}"),
+            'POST',
+            false,
+            "",
+            "return transcodeSubmit()"
+        )."
                 <input type='hidden' name='image_id' value='{$image->id}'>
                 <input type='hidden' id='image_lossless' name='image_lossless' value='{$image->lossless}'>
                 ".$this->get_transcode_picker_html($options)."

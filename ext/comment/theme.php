@@ -312,6 +312,5 @@ class CommentListTheme extends Themelet
         <p>Returns images that have been commented on by user 123. </p>
         </div>
         ';
-
     }
 }

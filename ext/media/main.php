@@ -11,7 +11,6 @@ abstract class MediaConfig
     const CONVERT_PATH = "media_convert_path";
     const VERSION = "ext_media_version";
     const MEM_LIMIT = 'media_mem_limit';
-
 }
 
 abstract class MediaEngine
@@ -98,14 +97,19 @@ class MediaResizeEvent extends Event
     public $ignore_aspect_ratio;
     public $allow_upscale;
 
-    public function __construct(String $engine, string $input_path, string $input_type, string $output_path,
-                                int $target_width, int $target_height,
-                                bool $ignore_aspect_ratio = false,
-                                string $target_format = null,
-                                int $target_quality = 80,
-                                bool $minimize = false,
-                                bool $allow_upscale = true)
-    {
+    public function __construct(
+        String $engine,
+        string $input_path,
+        string $input_type,
+        string $output_path,
+        int $target_width,
+        int $target_height,
+        bool $ignore_aspect_ratio = false,
+        string $target_format = null,
+        int $target_quality = 80,
+        bool $minimize = false,
+        bool $allow_upscale = true
+    ) {
         assert(in_array($engine, MediaEngine::ALL));
         $this->engine = $engine;
         $this->input_path = $input_path;
@@ -137,7 +141,6 @@ class MediaCheckPropertiesEvent extends Event
         $this->file_name = $file_name;
         $this->ext = $ext;
     }
-
 }
 
 
@@ -186,7 +189,7 @@ class Media extends Extension
         [0x52, 0x49, 0x46, 0x46, null, null, null, null, 0x57, 0x45, 0x42, 0x50, 0x56, 0x50, 0x38, 0x4C];
 
 
-    static function imagick_available(): bool
+    public static function imagick_available(): bool
     {
         return extension_loaded("imagick");
     }
@@ -286,7 +289,6 @@ class Media extends Extension
         $sb->end_table();
 
         $event->panel->add_block($sb);
-
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -368,7 +370,8 @@ class Media extends Extension
                     $event->target_format,
                     $event->ignore_aspect_ratio,
                     $event->target_quality,
-                    $event->allow_upscale);
+                    $event->allow_upscale
+                );
 
                 break;
             case MediaEngine::IMAGICK:
@@ -384,7 +387,8 @@ class Media extends Extension
                     $event->ignore_aspect_ratio,
                     $event->target_quality,
                     $event->minimize,
-                    $event->allow_upscale);
+                    $event->allow_upscale
+                );
                 //}
                 break;
             default:
@@ -414,7 +418,7 @@ class Media extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Media";
             $block->body = $this->theme->get_help_html();
@@ -473,7 +477,8 @@ class Media extends Extension
                 "video" => $database->scoresql_value_prepare($mcpe->video),
                 "audio" => $database->scoresql_value_prepare($mcpe->audio),
                 "length" => $mcpe->length
-            ]);
+            ]
+        );
     }
 
     public function get_images(String $ext = null)
@@ -729,11 +734,12 @@ class Media extends Extension
 //        }
 //    }
 
-    public static function is_lossless(string $filename, string $format) {
-        if(in_array($format, self::LOSSLESS_FORMATS)) {
+    public static function is_lossless(string $filename, string $format)
+    {
+        if (in_array($format, self::LOSSLESS_FORMATS)) {
             return true;
         }
-        switch($format) {
+        switch ($format) {
             case "webp":
                 return self::is_lossless_webp($filename);
                 break;
@@ -752,8 +758,7 @@ class Media extends Extension
         int $output_quality = 80,
         bool $minimize = false,
         bool $allow_upscale = true
-    ): void
-    {
+    ): void {
         global $config;
 
         $convert = $config->get_string(MediaConfig::CONVERT_PATH);
@@ -766,7 +771,7 @@ class Media extends Extension
             $output_type = $input_type;
         }
 
-        if($output_type=="webp" && self::is_lossless($input_path, $input_type)) {
+        if ($output_type=="webp" && self::is_lossless($input_path, $input_type)) {
             $output_type = self::WEBP_LOSSLESS;
         }
 
@@ -840,8 +845,7 @@ class Media extends Extension
         bool $ignore_aspect_ratio = false,
         int $output_quality = 80,
         bool $allow_upscale = true
-    )
-    {
+    ) {
         $width = $info[0];
         $height = $info[1];
 
@@ -942,16 +946,16 @@ class Media extends Extension
 
             // Actually resize the image.
             if (imagecopyresampled(
-                    $image_resized,
-                    $image,
-                    0,
-                    0,
-                    0,
-                    0,
-                    $new_width,
-                    $new_height,
-                    $width,
-                    $height
+                $image_resized,
+                $image,
+                0,
+                0,
+                0,
+                0,
+                $new_width,
+                $new_height,
+                $width,
+                $height
                 ) === false) {
                 throw new MediaException("Unable to copy resized image data to new image");
             }
@@ -1040,7 +1044,6 @@ class Media extends Extension
         } else {
             throw new MediaException("Unable to open file for byte check: $file_name");
         }
-
     }
 
     public static function is_animated_webp(String $image_filename): bool
@@ -1084,7 +1087,7 @@ class Media extends Extension
      * @param $format
      * @return string|null The format name that the media extension will recognize.
      */
-    static public function normalize_format(string $format, ?bool $lossless = null): ?string
+    public static function normalize_format(string $format, ?bool $lossless = null): ?string
     {
         if ($format == "webp") {
             if ($lossless === true) {
@@ -1107,7 +1110,7 @@ class Media extends Extension
      * @param string $filename
      * @return array [width, height]
      */
-    static public function video_size(string $filename): array
+    public static function video_size(string $filename): array
     {
         global $config;
         $ffmpeg = $config->get_string(MediaConfig::FFMPEG_PATH);
@@ -1132,5 +1135,4 @@ class Media extends Extension
         log_debug('Media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
         return $size;
     }
-
 }

@@ -32,7 +32,7 @@ class ExtManagerTheme extends Themelet
             $h_link = make_link("ext_doc/" . url_escape($extension->key));
 
             $h_enabled = ($extension->is_enabled() === true ? " checked='checked'" : "");
-            $h_disabled = ($extension->is_supported()===false || $extension->core===true? " disabled ": " " );
+            $h_disabled = ($extension->is_supported()===false || $extension->core===true? " disabled ": " ");
 
             //baseline_open_in_new_black_18dp.png
 

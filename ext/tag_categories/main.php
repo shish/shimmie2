@@ -70,7 +70,8 @@ class TagCategories extends Extension
             $count = $matches[3];
 
             $types = $database->get_col(
-                $database->scoreql_to_sql('SELECT SCORE_STRNORM(category) FROM image_tag_categories'));
+                $database->scoreql_to_sql('SELECT SCORE_STRNORM(category) FROM image_tag_categories')
+            );
             if (in_array($type, $types)) {
                 $event->add_querylet(
                     new Querylet($database->scoreql_to_sql("EXISTS (
@@ -88,7 +89,7 @@ class TagCategories extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Tag Categories";
             $block->body = $this->theme->get_help_html();

@@ -144,7 +144,7 @@ class Favorites extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Favorites";
             $block->body = $this->theme->get_help_html();
@@ -155,11 +155,11 @@ class Favorites extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent=="posts") {
+        if ($event->parent=="posts") {
             $event->add_nav_link("posts_favorites", new Link("post/list/favorited_by={$user->name}/1"), "My Favorites");
         }
 
-        if($event->parent==="user") {
+        if ($event->parent==="user") {
             if ($user->can(Permissions::MANAGE_ADMINTOOLS)) {
                 $username = url_escape($user->name);
                 $event->add_nav_link("favorites", new Link("post/list/favorited_by=$username/1"), "My Favorites");

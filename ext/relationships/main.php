@@ -6,7 +6,7 @@ class ImageRelationshipSetEvent extends Event
     public $parent_id;
 
 
-    public function  __construct(int $child_id, int $parent_id)
+    public function __construct(int $child_id, int $parent_id)
     {
         $this->child_id = $child_id;
         $this->parent_id = $parent_id;
@@ -44,7 +44,7 @@ class Relationships extends Extension
     {
         if (isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : true) { //Ignore tag_edit__parent if tags contain parent metatag
             if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : false) {
-                send_event(new ImageRelationshipSetEvent($event->image->id,(int) $_POST["tag_edit__parent"]));
+                send_event(new ImageRelationshipSetEvent($event->image->id, (int) $_POST["tag_edit__parent"]));
             } else {
                 $this->remove_parent($event->image->id);
             }
@@ -76,7 +76,7 @@ class Relationships extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Relationships";
             $block->body = $this->theme->get_help_html();
@@ -132,15 +132,14 @@ class Relationships extends Extension
 
         $old_parent = $database->get_one("SELECT parent_id FROM images WHERE id = :cid", ["cid"=>$event->child_id]);
 
-        if($old_parent!=$event->parent_id) {
+        if ($old_parent!=$event->parent_id) {
             if ($database->get_row("SELECT 1 FROM images WHERE id = :pid", ["pid" => $event->parent_id])) {
-
                 $result = $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["pid" => $event->parent_id, "cid" => $event->child_id]);
 
                 if ($result->rowCount() > 0) {
                     $database->execute("UPDATE images SET has_children = TRUE WHERE id = :pid", ["pid" => $event->parent_id]);
 
-                    if($old_parent!=null) {
+                    if ($old_parent!=null) {
                         $this->set_has_children($old_parent);
                     }
                 }
@@ -155,7 +154,7 @@ class Relationships extends Extension
         $results = $database->get_all_iterable("SELECT * FROM images WHERE parent_id = :pid ", ["pid"=>$image->id]);
         $output = [];
         foreach ($results as $result) {
-            if($result["id"]==$omit) {
+            if ($result["id"]==$omit) {
                 continue;
             }
             $output[] = new Image($result);
@@ -180,13 +179,11 @@ class Relationships extends Extension
 
         // Doesn't work on pgsql
 //        $database->execute("UPDATE images SET has_children = (SELECT * FROM (SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM images WHERE parent_id = :pid) AS sub)
-//								WHERE id = :pid", ["pid"=>$parentID]);
+        //								WHERE id = :pid", ["pid"=>$parentID]);
 
         $database->execute(
             "UPDATE images SET has_children = EXISTS (SELECT 1 FROM images WHERE parent_id = :pid) WHERE id = :pid",
-            ["pid"=>$parent_id]);
+            ["pid"=>$parent_id]
+        );
     }
-
-
-
 }

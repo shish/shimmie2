@@ -3,10 +3,12 @@
 
 function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int
 {
-    if($a->beta===true&&$b->beta===false)
+    if ($a->beta===true&&$b->beta===false) {
         return 1;
-    if($a->beta===false&&$b->beta===true)
+    }
+    if ($a->beta===false&&$b->beta===true) {
         return -1;
+    }
 
     return strcmp($a->name, $b->name);
 }
@@ -82,7 +84,7 @@ class ExtManager extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
                 $event->add_nav_link("ext_manager", new Link('ext_manager'), "Extension Manager");
             } else {
@@ -108,7 +110,7 @@ class ExtManager extends Extension
     {
         $extensions = ExtensionInfo::get_all();
         if (!$all) {
-            $extensions = array_filter($extensions,"__extman_extactive");
+            $extensions = array_filter($extensions, "__extman_extactive");
         }
         usort($extensions, "__extman_extcmp");
         return $extensions;

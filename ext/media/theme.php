@@ -42,6 +42,5 @@ class MediaTheme extends Themelet
         </div>
         <p>These search terms depend on the items being scanned for media content. Automatic scanning was implemented in mid-2019, so items uploaded before, or items uploaded on a system without ffmpeg, will require additional scanning before this will work.</p> 
         ';
-
     }
 }

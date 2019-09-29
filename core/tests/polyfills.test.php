@@ -48,7 +48,6 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
 
     public function test_sanitize_path()
     {
-
         $this->assertEquals(
             "one",
             sanitize_path("one")
@@ -88,7 +87,6 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
             DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR,
             sanitize_path("\\/one/\\/\\/two\\/")
         );
-
     }
 
     public function test_join_path()
@@ -100,22 +98,22 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             "one".DIRECTORY_SEPARATOR."two",
-            join_path("one","two")
+            join_path("one", "two")
         );
 
         $this->assertEquals(
             "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
-            join_path("one","two","three")
+            join_path("one", "two", "three")
         );
 
         $this->assertEquals(
             "one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three",
-            join_path("one/two","three")
+            join_path("one/two", "three")
         );
 
         $this->assertEquals(
             DIRECTORY_SEPARATOR."one".DIRECTORY_SEPARATOR."two".DIRECTORY_SEPARATOR."three".DIRECTORY_SEPARATOR,
-            join_path("\\/////\\\\one/\///"."\\//two\/\\//\\//","//\/\\\/three/\\/\/")
+            join_path("\\/////\\\\one/\///"."\\//two\/\\//\\//", "//\/\\\/three/\\/\/")
         );
     }
 }

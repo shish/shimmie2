@@ -2,7 +2,6 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
         switch ($event->ext) {

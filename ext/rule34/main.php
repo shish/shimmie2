@@ -9,7 +9,6 @@ if ( // kill these glitched requests immediately
 
 class Rule34 extends Extension
 {
-
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $database;

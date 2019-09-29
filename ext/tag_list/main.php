@@ -97,7 +97,7 @@ class TagList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="tags") {
+        if ($event->parent=="tags") {
             $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
             $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
             $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
@@ -137,15 +137,24 @@ class TagList extends Extension
         $sb->start_table();
         $sb->add_text_option(TagListConfig::INFO_LINK, "Tag info link", true);
         $sb->add_text_option(TagListConfig::OMIT_TAGS, "Omit tags", true);
-        $sb->add_choice_option(TagListConfig::IMAGE_TYPE,
+        $sb->add_choice_option(
+            TagListConfig::IMAGE_TYPE,
             TagListConfig::TYPE_CHOICES,
-            "Image tag list", true);
-        $sb->add_choice_option(TagListConfig::RELATED_SORT,
+            "Image tag list",
+            true
+        );
+        $sb->add_choice_option(
+            TagListConfig::RELATED_SORT,
             TagListConfig::SORT_CHOICES,
-            "Sort related list by", true);
-        $sb->add_choice_option(TagListConfig::POPULAR_SORT,
+            "Sort related list by",
+            true
+        );
+        $sb->add_choice_option(
+            TagListConfig::POPULAR_SORT,
             TagListConfig::SORT_CHOICES,
-            "Sort popular list by", true);
+            "Sort popular list by",
+            true
+        );
         $sb->add_bool_option("tag_list_numbers", "Show tag counts", true);
         $sb->end_table();
         $event->panel->add_block($sb);
@@ -179,7 +188,7 @@ class TagList extends Extension
 
         $results = $database->cache->get("tag_list_omitted_tags:".$tags_config);
 
-        if($results==null) {
+        if ($results==null) {
             $results = [];
             $tags = explode(" ", $tags_config);
 
@@ -200,13 +209,11 @@ class TagList extends Extension
                 } else {
                     $where[] = " tag LIKE :$arg ";
                 }
-
             }
 
             $results = $database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
 
             $database->cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
-
         }
         return $results;
     }
@@ -454,11 +461,11 @@ class TagList extends Extension
         global $database, $config;
 
         $omitted_tags = self::get_omitted_tags();
-        $starting_tags = $database->get_col("SELECT tag_id FROM image_tags WHERE image_id = :image_id",["image_id" => $image->id]);
+        $starting_tags = $database->get_col("SELECT tag_id FROM image_tags WHERE image_id = :image_id", ["image_id" => $image->id]);
 
-        $starting_tags = array_diff($starting_tags,$omitted_tags);
+        $starting_tags = array_diff($starting_tags, $omitted_tags);
 
-        if(count($starting_tags) === 0) {
+        if (count($starting_tags) === 0) {
             // No valid starting tags, so can't look anything up
             return;
         }
@@ -467,9 +474,9 @@ class TagList extends Extension
                 SELECT it2.tag_id
                 FROM image_tags AS it1
                     INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
-                        AND it2.tag_id NOT IN (".implode(",",array_merge($omitted_tags,$starting_tags)).")
+                        AND it2.tag_id NOT IN (".implode(",", array_merge($omitted_tags, $starting_tags)).")
                 WHERE
-                    it1.tag_id IN (".implode(",",$starting_tags).")
+                    it1.tag_id IN (".implode(",", $starting_tags).")
                 GROUP BY it2.tag_id
             ) A ON A.tag_id = tags.id
 			ORDER BY count DESC
@@ -530,7 +537,7 @@ class TagList extends Extension
         if (empty($tags)) {
             $omitted_tags = self::get_omitted_tags();
 
-            if(empty($omitted_tags)) {
+            if (empty($omitted_tags)) {
                 $query = "
                     SELECT tag, count
                     FROM tags
@@ -538,7 +545,6 @@ class TagList extends Extension
                     ORDER BY count DESC
                     LIMIT :popular_tag_list_length
                     ";
-
             } else {
                 $query = "
                     SELECT tag, count
@@ -618,9 +624,9 @@ class TagList extends Extension
 
             $omitted_tags = self::get_omitted_tags();
 
-            $starting_tags = array_diff($starting_tags,$omitted_tags);
+            $starting_tags = array_diff($starting_tags, $omitted_tags);
 
-            if(count($starting_tags) === 0) {
+            if (count($starting_tags) === 0) {
                 // No valid starting tags, so can't look anything up
                 return [];
             }
@@ -631,9 +637,9 @@ class TagList extends Extension
 					FROM image_tags AS it1 -- Got other images with the same tags
 					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id 
 					    -- And filter out unwanted tags
-                            AND it2.tag_id NOT IN (".implode(",",array_merge($omitted_tags,$starting_tags)).")
+                            AND it2.tag_id NOT IN (".implode(",", array_merge($omitted_tags, $starting_tags)).")
 					WHERE
-                    it1.tag_id IN (".implode(",",$starting_tags).")
+                    it1.tag_id IN (".implode(",", $starting_tags).")
 					GROUP BY it2.tag_id) A ON A.tag_id = t.id
 					ORDER BY A.calc_count
 					DESC LIMIT :limit
@@ -643,14 +649,12 @@ class TagList extends Extension
                 $related_tags = $database->get_all($query, $args);
                 $database->cache->set("related_tags:$str_search", $related_tags, 60 * 60);
             }
-
         }
         if ($related_tags === false) {
             return [];
         } else {
             return $related_tags;
         }
-
     }
 
 

@@ -117,12 +117,12 @@ class TagListTheme extends Themelet
             $page->add_block(new Block($category_display_name, $tag_categories_html[$category], "left", 9));
         }
 
-		if ($main_html != null) {
-			if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
-				$page->add_block(new Block("Tags", $main_html, "left", 10));
-			} else {
-				$page->add_block(new Block("Related Tags", $main_html, "left", 10));
-			}
+        if ($main_html != null) {
+            if ($config->get_string(TagListConfig::IMAGE_TYPE)==TagListConfig::TYPE_TAGS) {
+                $page->add_block(new Block("Tags", $main_html, "left", 10));
+            } else {
+                $page->add_block(new Block("Related Tags", $main_html, "left", 10));
+            }
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 
-abstract class ImageConfig {
+abstract class ImageConfig
+{
     const THUMB_ENGINE =     'thumb_engine';
     const THUMB_WIDTH =      'thumb_width';
     const THUMB_HEIGHT =     'thumb_height';
@@ -17,5 +18,4 @@ abstract class ImageConfig {
 
     const COLLISION_MERGE = 'merge';
     const COLLISION_ERROR = 'error';
-
 }

@@ -108,10 +108,13 @@ class Index extends Extension
                 if (SPEED_HAX) {
                     if (!$user->can("big_search")) {
                         $fast_page_limit = 500;
-                        if ($total_pages > $fast_page_limit) $total_pages = $fast_page_limit;
+                        if ($total_pages > $fast_page_limit) {
+                            $total_pages = $fast_page_limit;
+                        }
                         if ($page_number > $fast_page_limit) {
                             $this->theme->display_error(
-                                404, "Search limit hit",
+                                404,
+                                "Search limit hit",
                                 "Only $fast_page_limit pages of results are searchable - " .
                                 "if you want to find older results, use more specific search terms"
                             );
@@ -180,19 +183,19 @@ class Index extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
-        $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]),20);
+        $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]), 20);
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="posts") {
+        if ($event->parent=="posts") {
             $event->add_nav_link("posts_all", new Link('post/list'), "All");
         }
     }
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "General";
             $block->body = $this->theme->get_help_html();

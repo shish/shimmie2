@@ -18,4 +18,3 @@ class Emoticons extends FormatterExtension
         return $text;
     }
 }
-

@@ -7,7 +7,6 @@ abstract class TrashConfig
 
 class Trash extends Extension
 {
-
     public function get_priority(): int
     {
         // Needs to be early to intercept delete events
@@ -50,7 +49,7 @@ class Trash extends Extension
     {
         global $user, $page;
 
-        if($event->image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
+        if ($event->image->trash===true && !$user->can(Permissions::VIEW_TRASH)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -58,7 +57,7 @@ class Trash extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
-        if($event->force!==true && $event->image->trash!==true) {
+        if ($event->force!==true && $event->image->trash!==true) {
             self::set_trash($event->image->id, true);
             $event->stop_processing = true;
         }
@@ -78,7 +77,7 @@ class Trash extends Extension
 
 
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
-            if($user->can(Permissions::VIEW_TRASH)) {
+            if ($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_Y ")));
             }
         }
@@ -87,8 +86,8 @@ class Trash extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         global $user;
-        if($event->key===HelpPages::SEARCH) {
-            if($user->can(Permissions::VIEW_TRASH)) {
+        if ($event->key===HelpPages::SEARCH) {
+            if ($user->can(Permissions::VIEW_TRASH)) {
                 $block = new Block();
                 $block->header = "Trash";
                 $block->body = $this->theme->get_help_html();
@@ -108,18 +107,19 @@ class Trash extends Extension
         return true;
     }
 
-    public static function set_trash($image_id, $trash) {
+    public static function set_trash($image_id, $trash)
+    {
         global $database;
 
-        $database->execute("UPDATE images SET trash = :trash WHERE id = :id",
-            ["trash"=>$database->scoresql_value_prepare($trash),"id"=>$image_id]);
-
-
+        $database->execute(
+            "UPDATE images SET trash = :trash WHERE id = :id",
+            ["trash"=>$database->scoresql_value_prepare($trash),"id"=>$image_id]
+        );
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $config, $database, $user;
-        if($event->image->trash===true && $user->can(Permissions::VIEW_TRASH)) {
+        if ($event->image->trash===true && $user->can(Permissions::VIEW_TRASH)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }
@@ -129,7 +129,7 @@ class Trash extends Extension
         global $user;
 
         if ($user->can(Permissions::VIEW_TRASH)&&in_array("in:trash", $event->search_terms)) {
-            $event->add_action("bulk_trash_restore","(U)ndelete", "u");
+            $event->add_action("bulk_trash_restore", "(U)ndelete", "u");
         }
     }
 
@@ -163,7 +163,5 @@ class Trash extends Extension
             $database->Execute("CREATE INDEX images_trash_idx ON images(trash)");
             $config->set_int(TrashConfig::VERSION, 1);
         }
-
     }
-
 }
