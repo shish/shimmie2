@@ -7,7 +7,7 @@
  * License: GPLv2
  * Description: Self explanatory
  */
-class RSS_ImagesInfo extends ExtensionInfo
+class RSSImagesInfo extends ExtensionInfo
 {
     public const KEY = "rss_images";
 

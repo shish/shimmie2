@@ -1,6 +1,6 @@
 <?php
 
-class Tag_History extends Extension
+class TagHistory extends Extension
 {
     // in before tags are actually set, so that "get current tags" works
     public function get_priority(): int

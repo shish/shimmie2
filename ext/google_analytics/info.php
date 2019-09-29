@@ -9,7 +9,7 @@
  * Documentation:
  *
  */
-class google_analyticsInfo extends ExtensionInfo
+class GoogleAnalyticsInfo extends ExtensionInfo
 {
     public const KEY = "google_analytics";
 

@@ -1,7 +1,7 @@
 <?php
 
 
-class RSS_Images extends Extension
+class RSSImages extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event)
     {

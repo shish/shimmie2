@@ -8,7 +8,7 @@
  * Description: Self explanatory
  */
 
-class RSS_CommentsInfo extends ExtensionInfo
+class RSSCommentsInfo extends ExtensionInfo
 {
     public const KEY = "rss_comments";
 

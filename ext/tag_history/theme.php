@@ -4,7 +4,7 @@
  * Author: Bzchan <bzchan@animemahou.com>, modified by jgen <jgen.tech@gmail.com>
  */
 
-class Tag_HistoryTheme extends Themelet
+class TagHistoryTheme extends Themelet
 {
     private $messages = [];
 

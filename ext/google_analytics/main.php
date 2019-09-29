@@ -1,6 +1,6 @@
 <?php
 
-class google_analytics extends Extension
+class GoogleAnalytics extends Extension
 {
     # Add analytics to config
     public function onSetupBuilding(SetupBuildingEvent $event)

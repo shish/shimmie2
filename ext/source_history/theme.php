@@ -1,5 +1,5 @@
 <?php
-class Source_HistoryTheme extends Themelet
+class SourceHistoryTheme extends Themelet
 {
     private $messages = [];
 

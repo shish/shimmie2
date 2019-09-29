@@ -1,6 +1,6 @@
 <?php
 
-class RSS_Comments extends Extension
+class RSSComments extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event)
     {

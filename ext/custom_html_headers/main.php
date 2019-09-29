@@ -1,6 +1,6 @@
 <?php
 
-class custom_html_headers extends Extension
+class CustomHtmlHeaders extends Extension
 {
     # Adds setup block for custom <head> content
     public function onSetupBuilding(SetupBuildingEvent $event)

@@ -5,7 +5,7 @@
  * Do not remove this notice.                                                *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-class taggerTheme extends Themelet
+class TaggerTheme extends Themelet
 {
     public function build_tagger(Page $page, $event)
     {

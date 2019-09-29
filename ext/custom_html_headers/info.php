@@ -9,7 +9,7 @@
  * Documentation:
  *
  */
-class custom_html_headersInfo extends ExtensionInfo
+class CustomHtmlHeadersInfo extends ExtensionInfo
 {
     public const KEY = "custom_html_headers";
 

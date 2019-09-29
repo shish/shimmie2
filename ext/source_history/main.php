@@ -1,6 +1,6 @@
 <?php
 
-class Source_History extends Extension
+class SourceHistory extends Extension
 {
     // in before source are actually set, so that "get current source" works
     public function get_priority(): int

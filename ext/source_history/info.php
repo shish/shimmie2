@@ -6,7 +6,7 @@
  * Description: Keep a record of source changes, and allows you to revert changes.
  */
 
-class Source_HistoryInfo extends ExtensionInfo
+class SourceHistoryInfo extends ExtensionInfo
 {
     public const KEY = "source_history";
 
