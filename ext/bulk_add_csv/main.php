@@ -6,7 +6,7 @@ class BulkAddCSV extends Extension
     {
         global $page, $user;
         if ($event->page_matches("bulk_add_csv")) {
-            if ($user->is_admin() && $user->check_auth_token() && isset($_POST['csv'])) {
+            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['csv'])) {
                 set_time_limit(0);
                 $this->add_csv($_POST['csv']);
                 $this->theme->display_upload_results($page);
@@ -24,7 +24,7 @@ class BulkAddCSV extends Extension
             global $user;
 
             //Nag until CLI is admin by default
-            if (!$user->is_admin()) {
+            if (!$user->can(Permissions::BULK_ADD)) {
                 print "Not running as an admin, which can cause problems.\n";
                 print "Please add the parameter: -u admin_username";
             } elseif (count($event->args) == 1) {

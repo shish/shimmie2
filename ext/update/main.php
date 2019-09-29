@@ -28,7 +28,7 @@ class Update extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $user, $page;
-        if ($user->is_admin() && isset($_GET['sha'])) {
+        if ($user->can(Permissions::EDIT_FILES) && isset($_GET['sha'])) {
             if ($event->page_matches("update/download")) {
                 $ok = $this->download_shimmie();
 

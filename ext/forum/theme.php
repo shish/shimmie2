@@ -38,7 +38,7 @@ class ForumTheme extends Themelet
 					<tr><td>Title:</td><td><input type='text' name='title' value='$threadTitle'></td></tr>
 					<tr><td>Message:</td><td><textarea id='message' name='message' >$threadText</textarea></td></tr>
 					<tr><td></td><td><small>Max characters alowed: $max_characters.</small></td></tr>";
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::FORUM_ADMIN)) {
             $html .= "<tr><td colspan='2'><label for='sticky'>Sticky:</label><input name='sticky' id='sticky' type='checkbox' value='Y' /></td></tr>";
         }
         $html .= "<tr><td colspan='2'><input type='submit' value='Submit' /></td></tr>
@@ -121,7 +121,7 @@ class ForumTheme extends Themelet
             
             $postID = $post['id'];
             
-            //if($user->is_admin()){
+            //if($user->can(Permissions::FORUM_ADMIN)){
             //$delete_link = "<a href=".make_link("forum/delete/".$threadID."/".$postID).">Delete</a>";
             //} else {
             //$delete_link = "";

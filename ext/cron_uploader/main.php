@@ -65,7 +65,7 @@ class CronUploader extends Extension
                     flock($lockfile, LOCK_UN);
                     fclose($lockfile);
                 }
-            } elseif ($user->is_admin()) {
+            } elseif ($user->can(Permissions::BULK_ADD)) {
                 $this->set_dir();
                 $this->display_documentation();
             }

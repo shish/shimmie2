@@ -66,7 +66,7 @@ class TranscodeImage extends Extension
     {
         global $user, $config;
 
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::EDIT_FILES)) {
             $engine = $config->get_string(TranscodeConfig::ENGINE);
             if ($this->can_convert_format($engine, $event->image->ext, $event->image->lossless)) {
                 $options = $this->get_supported_output_formats($engine, $event->image->ext, $event->image->lossless??false);
@@ -135,7 +135,7 @@ class TranscodeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("transcode") && $user->is_admin()) {
+        if ($event->page_matches("transcode") && $user->can(Permissions::EDIT_FILES)) {
             $image_id = int_escape($event->get_arg(0));
             if (empty($image_id)) {
                 $image_id = isset($_POST['image_id']) ? int_escape($_POST['image_id']) : null;
@@ -168,7 +168,7 @@ class TranscodeImage extends Extension
 
         $engine = $config->get_string(TranscodeConfig::ENGINE);
 
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::EDIT_FILES)) {
             $event->add_action(self::ACTION_BULK_TRANSCODE, "Transcode", null, "", $this->theme->get_transcode_picker_html($this->get_supported_output_formats($engine)));
         }
     }
@@ -182,7 +182,7 @@ class TranscodeImage extends Extension
                 if (!isset($_POST['transcode_format'])) {
                     return;
                 }
-                if ($user->is_admin()) {
+                if ($user->can(Permissions::EDIT_FILES)) {
                     $format = $_POST['transcode_format'];
                     $total = 0;
                     foreach ($event->items as $image) {

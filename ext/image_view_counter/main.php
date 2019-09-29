@@ -26,7 +26,7 @@ class ImageViewCounter extends Extension
         global $user, $config;
 
         $adminonly = $config->get_bool("image_viewcounter_adminonly"); // todo
-        if ($adminonly == false || ($adminonly && $user->is_admin())) {
+        if ($adminonly == false || ($adminonly && $user->can(Permissions::SEE_IMAGE_VIEW_COUNTS))) {
             $event->add_part(
                 "<tr><th>Views:</th><td>".
                 $this->get_view_count($event->image->id) .

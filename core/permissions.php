@@ -42,6 +42,7 @@ abstract class Permissions
     public const CREATE_IMAGE_REPORT = "create_image_report";
     public const VIEW_IMAGE_REPORT = "view_image_report";  # deal with reported images
 
+    public const WIKI_ADMIN = "wiki_admin";
     public const EDIT_WIKI_PAGE = "edit_wiki_page";
     public const DELETE_WIKI_PAGE = "delete_wiki_page";
 
@@ -66,4 +67,17 @@ abstract class Permissions
     public const VIEW_TRASH = "view_trash";
 
     public const PERFORM_BULK_ACTIONS = "perform_bulk_actions";
+
+    public const BULK_ADD = "bulk_add";
+    public const EDIT_FILES = "edit_files";
+    public const EDIT_TAG_CATEGORIES = "edit_tag_categories";
+    public const RESCAN_MEDIA = "rescan_media";
+    public const SEE_IMAGE_VIEW_COUNTS = "see_image_view_counts";
+
+    public const ARTISTS_ADMIN = "artists_admin";
+    public const BLOTTER_ADMIN = "blotter_admin";
+    public const FORUM_ADMIN = "forum_admin";
+    public const NOTES_ADMIN = "notes_admin";
+    public const POOLS_ADMIN = "pools_admin";
+    public const TIPS_ADMIN = "tips_admin";
 }

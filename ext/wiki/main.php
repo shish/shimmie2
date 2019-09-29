@@ -118,7 +118,7 @@ class Wiki extends Extension
             $title = $_POST['title'];
             $rev = int_escape($_POST['revision']);
             $body = $_POST['body'];
-            $lock = $user->is_admin() && isset($_POST['lock']) && ($_POST['lock'] == "on");
+            $lock = $user->can(Permissions::WIKI_ADMIN) && isset($_POST['lock']) && ($_POST['lock'] == "on");
 
             if ($this->can_edit($user, $this->get_page($title))) {
                 $wikipage = $this->get_page($title);
@@ -144,7 +144,7 @@ class Wiki extends Extension
                 $this->theme->display_permission_denied();
             }
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::WIKI_ADMIN)) {
                 global $database;
                 $database->Execute(
                     "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
@@ -155,7 +155,7 @@ class Wiki extends Extension
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         } elseif ($event->page_matches("wiki_admin/delete_all")) {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::WIKI_ADMIN)) {
                 global $database;
                 $database->Execute(
                     "DELETE FROM wiki_pages WHERE title=:title",
@@ -203,7 +203,7 @@ class Wiki extends Extension
     public static function can_edit(User $user, WikiPage $page): bool
     {
         // admins can edit everything
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::WIKI_ADMIN)) {
             return true;
         }
 

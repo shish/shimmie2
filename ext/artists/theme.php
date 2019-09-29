@@ -216,7 +216,7 @@ class ArtistsTheme extends Themelet
             if (!$user->is_anonymous()) {
                 $html .= "<td>".$edit_link."</td>";
             }
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::ARTISTS_ADMIN)) {
                 $html .= "<td>".$del_link."</td>";
             }
 

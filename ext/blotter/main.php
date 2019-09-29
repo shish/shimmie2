@@ -52,7 +52,7 @@ class Blotter extends Extension
     {
         global $user;
         if ($event->parent==="system") {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::BLOTTER_ADMIN)) {
                 $event->add_nav_link("blotter", new Link('blotter/editor'), "Blotter Editor");
             }
         }
@@ -62,7 +62,7 @@ class Blotter extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::BLOTTER_ADMIN)) {
             $event->add_link("Blotter Editor", make_link("blotter/editor"));
         }
     }
@@ -76,7 +76,7 @@ class Blotter extends Extension
                     /**
                      * Displays the blotter editor.
                      */
-                    if (!$user->is_admin()) {
+                    if (!$user->can(Permissions::BLOTTER_ADMIN)) {
                         $this->theme->display_permission_denied();
                     } else {
                         $entries = $database->get_all("SELECT * FROM blotter ORDER BY id DESC");
@@ -87,7 +87,7 @@ class Blotter extends Extension
                     /**
                      * Adds an entry
                      */
-                    if (!$user->is_admin() || !$user->check_auth_token()) {
+                    if (!$user->can(Permissions::BLOTTER_ADMIN) || !$user->check_auth_token()) {
                         $this->theme->display_permission_denied();
                     } else {
                         $entry_text = $_POST['entry_text'];
@@ -113,7 +113,7 @@ class Blotter extends Extension
                     /**
                      * Removes an entry
                      */
-                    if (!$user->is_admin() || !$user->check_auth_token()) {
+                    if (!$user->can(Permissions::BLOTTER_ADMIN) || !$user->check_auth_token()) {
                         $this->theme->display_permission_denied();
                     } else {
                         $id = int_escape($_POST['id']);

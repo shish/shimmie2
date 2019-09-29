@@ -32,7 +32,7 @@ class Tips extends Extension
 
         $this->getTip();
 
-        if ($event->page_matches("tips") && $user->is_admin()) {
+        if ($event->page_matches("tips") && $user->can(Permissions::TIPS_ADMIN)) {
             switch ($event->get_arg(0)) {
                 case "list":
                     $this->manageTips();
@@ -67,7 +67,7 @@ class Tips extends Extension
     {
         global $user;
         if ($event->parent==="system") {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::TIPS_ADMIN)) {
                 $event->add_nav_link("tips", new Link('tips/list'), "Tips Editor");
             }
         }
@@ -76,7 +76,7 @@ class Tips extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::TIPS_ADMIN)) {
             $event->add_link("Tips Editor", make_link("tips/list"));
         }
     }

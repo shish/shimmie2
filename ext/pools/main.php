@@ -291,7 +291,7 @@ class Pools extends Extension
                 case "nuke":
                     // Completely remove the given pool.
                     //  -> Only admins and owners may do this
-                    if ($user->is_admin() || $user->id == $pool['user_id']) {
+                    if ($user->can(Permissions::POOLS_ADMIN) || $user->id == $pool['user_id']) {
                         $this->nuke_pool($pool_id);
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("pool/list"));
@@ -351,7 +351,7 @@ class Pools extends Extension
     {
         global $config, $database, $user;
         if ($config->get_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE) && !$user->is_anonymous()) {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::POOLS_ADMIN)) {
                 $pools = $database->get_all("SELECT * FROM pools");
             } else {
                 $pools = $database->get_all("SELECT * FROM pools WHERE user_id=:id", ["id" => $user->id]);
@@ -479,7 +479,7 @@ class Pools extends Extension
     private function have_permission(User $user, array $pool): bool
     {
         // If the pool is public and user is logged OR if the user is admin OR if the pool is owned by the user.
-        if ((($pool['public'] == "Y" || $pool['public'] == "y") && !$user->is_anonymous()) || $user->is_admin() || $user->id == $pool['user_id']) {
+        if ((($pool['public'] == "Y" || $pool['public'] == "y") && !$user->is_anonymous()) || $user->can(Permissions::POOLS_ADMIN) || $user->id == $pool['user_id']) {
             return true;
         } else {
             return false;
@@ -887,7 +887,7 @@ class Pools extends Extension
         global $user, $database;
 
         $p_id = $database->get_one("SELECT user_id FROM pools WHERE id = :pid", ["pid" => $poolID]);
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::POOLS_ADMIN)) {
             $database->execute("DELETE FROM pool_history WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pool_images WHERE pool_id = :pid", ["pid" => $poolID]);
             $database->execute("DELETE FROM pools WHERE id = :pid", ["pid" => $poolID]);

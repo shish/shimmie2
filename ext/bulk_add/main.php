@@ -18,7 +18,7 @@ class BulkAdd extends Extension
     {
         global $page, $user;
         if ($event->page_matches("bulk_add")) {
-            if ($user->is_admin() && $user->check_auth_token() && isset($_POST['dir'])) {
+            if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
                 set_time_limit(0);
                 $bae = new BulkAddEvent($_POST['dir']);
                 send_event($bae);

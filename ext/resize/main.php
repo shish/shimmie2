@@ -36,7 +36,7 @@ class ResizeImage extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($user->is_admin() && $config->get_bool(ResizeConfig::ENABLED)
+        if ($user->can(Permissions::EDIT_FILES) && $config->get_bool(ResizeConfig::ENABLED)
             && $this->can_resize_format($event->image->ext, $event->image->lossless)) {
             /* Add a link to resize the image */
             $event->add_part($this->theme->get_resize_html($event->image));
@@ -113,7 +113,7 @@ class ResizeImage extends Extension
     {
         global $page, $user;
 
-        if ($event->page_matches("resize") && $user->is_admin()) {
+        if ($event->page_matches("resize") && $user->can(Permissions::EDIT_FILES)) {
             // Try to get the image ID
             $image_id = int_escape($event->get_arg(0));
             if (empty($image_id)) {

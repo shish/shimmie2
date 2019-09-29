@@ -7,7 +7,7 @@ class BulkRemove extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $user;
-        if ($event->page_matches("bulk_remove") && $user->is_admin() && $user->check_auth_token()) {
+        if ($event->page_matches("bulk_remove") && $user->can(Permissions::BULK_ADD) && $user->check_auth_token()) {
             if ($event->get_arg(0) == "confirm") {
                 $this->do_bulk_remove();
             } else {

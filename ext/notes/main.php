@@ -113,7 +113,7 @@ class Notes extends Extension
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "nuke_notes":
-                    if ($user->is_admin()) {
+                    if ($user->can(Permissions::NOTES_ADMIN)) {
                         $this->nuke_notes();
                     }
 
@@ -121,7 +121,7 @@ class Notes extends Extension
                     $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
                     break;
                 case "nuke_requests":
-                    if ($user->is_admin()) {
+                    if ($user->can(Permissions::NOTES_ADMIN)) {
                         $this->nuke_requests();
                     }
 
@@ -136,7 +136,7 @@ class Notes extends Extension
                     }
                     break;
                 case "delete_note":
-                    if ($user->is_admin()) {
+                    if ($user->can(Permissions::NOTES_ADMIN)) {
                         $this->delete_note();
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("post/view/".$_POST["image_id"]));
@@ -160,7 +160,7 @@ class Notes extends Extension
 
         //display form on image event
         $notes = $this->get_notes($event->image->id);
-        $this->theme->display_note_system($page, $event->image->id, $notes, $user->is_admin());
+        $this->theme->display_note_system($page, $event->image->id, $notes, $user->can(Permissions::NOTES_ADMIN));
     }
 
 
@@ -173,7 +173,7 @@ class Notes extends Extension
         if (!$user->is_anonymous()) {
             $event->add_part($this->theme->note_button($event->image->id));
             $event->add_part($this->theme->request_button($event->image->id));
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::NOTES_ADMIN)) {
                 $event->add_part($this->theme->nuke_notes_button($event->image->id));
                 $event->add_part($this->theme->nuke_requests_button($event->image->id));
             }

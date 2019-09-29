@@ -52,7 +52,7 @@ class TagCategories extends Extension
         global $page, $user;
 
         if ($event->page_matches("tags/categories")) {
-            if ($user->is_admin()) {
+            if ($user->can(Permissions::EDIT_TAG_CATEGORIES)) {
                 $this->page_update();
                 $this->show_tag_categories($page);
             }
@@ -123,7 +123,7 @@ class TagCategories extends Extension
     {
         global $user, $database;
 
-        if (!$user->is_admin()) {
+        if (!$user->can(Permissions::EDIT_TAG_CATEGORIES)) {
             return false;
         }
 

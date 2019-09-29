@@ -144,11 +144,6 @@ class User
         return ($this->id !== $config->get_int('anon_id'));
     }
 
-    public function is_admin(): bool
-    {
-        return ($this->class->name === "admin");
-    }
-
     public function set_class(string $class): void
     {
         global $database;

@@ -112,6 +112,7 @@ new UserClass("base", null, [
     Permissions::CREATE_IMAGE_REPORT => false,
     Permissions::VIEW_IMAGE_REPORT => false,  # deal with reported images
 
+    Permissions::WIKI_ADMIN => false,
     Permissions::EDIT_WIKI_PAGE => false,
     Permissions::DELETE_WIKI_PAGE => false,
 
@@ -136,6 +137,19 @@ new UserClass("base", null, [
     Permissions::VIEW_TRASH => false,
 
     Permissions::PERFORM_BULK_ACTIONS => false,
+
+    Permissions::BULK_ADD => false,
+    Permissions::EDIT_FILES => false,
+    Permissions::EDIT_TAG_CATEGORIES => false,
+    Permissions::RESCAN_MEDIA => false,
+    Permissions::SEE_IMAGE_VIEW_COUNTS => false,
+
+    Permissions::ARTISTS_ADMIN => false,
+    Permissions::BLOTTER_ADMIN => false,
+    Permissions::FORUM_ADMIN => false,
+    Permissions::NOTES_ADMIN => false,
+    Permissions::POOLS_ADMIN => false,
+    Permissions::TIPS_ADMIN => false,
 ]);
 
 new UserClass("anonymous", "base", [
@@ -183,6 +197,7 @@ new UserClass("admin", "base", [
     Permissions::MASS_TAG_EDIT => true,
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::VIEW_IMAGE_REPORT => true,
+    Permissions::WIKI_ADMIN => true,
     Permissions::EDIT_WIKI_PAGE => true,
     Permissions::DELETE_WIKI_PAGE => true,
     Permissions::VIEW_EVENTLOG => true,
@@ -200,6 +215,17 @@ new UserClass("admin", "base", [
     Permissions::BULK_EDIT_IMAGE_RATING => true,
     Permissions::VIEW_TRASH => true,
     Permissions::PERFORM_BULK_ACTIONS => true,
+    Permissions::BULK_ADD => true,
+    Permissions::EDIT_FILES => true,
+    Permissions::EDIT_TAG_CATEGORIES => true,
+    Permissions::RESCAN_MEDIA => true,
+    Permissions::SEE_IMAGE_VIEW_COUNTS => true,
+    Permissions::ARTISTS_ADMIN => true,
+    Permissions::BLOTTER_ADMIN => true,
+    Permissions::FORUM_ADMIN => true,
+    Permissions::NOTES_ADMIN => true,
+    Permissions::POOLS_ADMIN => true,
+    Permissions::TIPS_ADMIN => true,
 ]);
 
 new UserClass("hellbanned", "user", [

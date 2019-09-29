@@ -137,7 +137,7 @@ class PoolsTheme extends Themelet
 
         if (!is_null($pools) && count($pools) == 1) {
             $pool = $pools[0];
-            if ($pool['public'] == "Y" || $user->is_admin()) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
+            if ($pool['public'] == "Y" || $user->can(Permissions::POOLS_ADMIN)) {// IF THE POOL IS PUBLIC OR IS ADMIN SHOW EDIT PANEL
                 if (!$user->is_anonymous()) {// IF THE USER IS REGISTERED AND LOGGED IN SHOW EDIT PANEL
                     $this->sidebar_options($page, $pool, $check_all);
                 }
@@ -195,7 +195,7 @@ class PoolsTheme extends Themelet
 			</form>
 			';
 
-        if ($user->id == $pool['user_id'] || $user->is_admin()) {
+        if ($user->id == $pool['user_id'] || $user->can(Permissions::POOLS_ADMIN)) {
             $editor .= "
 				<script type='text/javascript'>
 				<!--

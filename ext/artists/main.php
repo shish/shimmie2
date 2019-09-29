@@ -204,7 +204,7 @@ class Artists extends Extension
                     $urls = $this->get_urls($artist['id']);
 
                     $userIsLogged = !$user->is_anonymous();
-                    $userIsAdmin = $user->is_admin();
+                    $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
 
                     $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
@@ -231,7 +231,7 @@ class Artists extends Extension
                     if (!$user->is_anonymous()) {
                         $this->theme->show_artist_editor($artist, $aliases, $members, $urls);
 
-                        $userIsAdmin = $user->is_admin();
+                        $userIsAdmin = $user->can(Permissions::ARTISTS_ADMIN);
                         $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
                     } else {
                         $this->theme->display_error(401, "Error", "You must be registered and logged in to edit an artist.");

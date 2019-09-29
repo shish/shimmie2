@@ -89,7 +89,7 @@ class Forum extends Extension
         if ($event->page_matches("forum")) {
             switch ($event->get_arg(0)) {
                 case "index":
-                    $this->show_last_threads($page, $event, $user->is_admin());
+                    $this->show_last_threads($page, $event, $user->can(Permissions::FORUM_ADMIN));
                     if (!$user->is_anonymous()) {
                         $this->theme->display_new_thread_composer($page);
                     }
@@ -104,8 +104,8 @@ class Forum extends Extension
                         break;
                     }
 
-                    $this->show_posts($event, $user->is_admin());
-                    if ($user->is_admin()) {
+                    $this->show_posts($event, $user->can(Permissions::FORUM_ADMIN));
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
                         $this->theme->add_actions_block($page, $threadID);
                     }
                     if (!$user->is_anonymous()) {
@@ -139,7 +139,7 @@ class Forum extends Extension
                     $threadID = int_escape($event->get_arg(1));
                     $postID = int_escape($event->get_arg(2));
 
-                    if ($user->is_admin()) {
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
                         $this->delete_post($postID);
                     }
 
@@ -149,7 +149,7 @@ class Forum extends Extension
                 case "nuke":
                     $threadID = int_escape($event->get_arg(1));
 
-                    if ($user->is_admin()) {
+                    if ($user->can(Permissions::FORUM_ADMIN)) {
                         $this->delete_thread($threadID);
                     }
 

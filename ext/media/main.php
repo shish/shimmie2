@@ -253,7 +253,7 @@ class Media extends Extension
     {
         global $database, $page, $user;
 
-        if ($event->page_matches("media_rescan/") && $user->is_admin() && isset($_POST['image_id'])) {
+        if ($event->page_matches("media_rescan/") && $user->can(Permissions::RESCAN_MEDIA) && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));
 
             $this->update_image_media_properties($image->hash, $image->ext);
@@ -321,7 +321,7 @@ class Media extends Extension
     {
         global $user;
 
-        if ($user->is_admin()) {
+        if ($user->can(Permissions::RESCAN_MEDIA)) {
             $event->add_action("bulk_media_rescan", "Scan Media Properties");
         }
     }
@@ -332,7 +332,7 @@ class Media extends Extension
 
         switch ($event->action) {
             case "bulk_media_rescan":
-                if ($user->is_admin()) {
+                if ($user->can(Permissions::RESCAN_MEDIA)) {
                     $total = 0;
                     foreach ($event->items as $image) {
                         try {
