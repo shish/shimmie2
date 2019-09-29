@@ -55,12 +55,11 @@ class AdminPageTheme extends Themelet
         $html .= "<input type='submit' value='Set Tag Case'>";
         $html .= "</form>\n";
         $page->add_block(new Block("Set Tag Case", $html));
-
     }
 
     public function dbq_html($terms)
     {
-        if(ext_is_live("Trash")) {
+        if (ext_is_live("Trash")) {
             $warning = "This delete method will bypass the trash<br/>";
         }
         if (class_exists("ImageBan")) {
@@ -75,6 +74,4 @@ class AdminPageTheme extends Themelet
 		";
         return $html;
     }
-
-
 }

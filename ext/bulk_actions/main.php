@@ -22,10 +22,10 @@ class BulkActionBlockBuildingEvent extends Event
             $block = "";
         }
 
-        if(!empty($access_key)) {
+        if (!empty($access_key)) {
             assert(strlen($access_key)==1);
             foreach ($this->actions as $existing) {
-                if($existing["access_key"]==$access_key) {
+                if ($existing["access_key"]==$access_key) {
                     throw new SCoreException("Access key $access_key is already in use");
                 }
             }
@@ -90,18 +90,18 @@ class BulkActions extends Extension
         }
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_TAG)) {
-
             $event->add_action(
                 "bulk_tag",
                 "Tag",
                 "t",
                 "",
                 $this->theme->render_tag_input(),
-                10);
+                10
+            );
         }
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_SOURCE)) {
-            $event->add_action("bulk_source", "Set (S)ource", "s","", $this->theme->render_source_input(), 10);
+            $event->add_action("bulk_source", "Set (S)ource", "s", "", $this->theme->render_source_input(), 10);
         }
     }
 
@@ -186,7 +186,7 @@ class BulkActions extends Extension
         foreach ($data as $id) {
             if (is_numeric($id)) {
                 $image = Image::by_id($id);
-                if($image!=null) {
+                if ($image!=null) {
                     yield $image;
                 }
             }
@@ -246,10 +246,10 @@ class BulkActions extends Extension
             }
         } else {
             foreach ($items as $image) {
-                $img_tags = array_map("strtolower",$image->get_tag_array());
+                $img_tags = array_map("strtolower", $image->get_tag_array());
 
                 if (!empty($neg_tag_array)) {
-                    $neg_tag_array = array_map("strtolower",$neg_tag_array);
+                    $neg_tag_array = array_map("strtolower", $neg_tag_array);
 
                     $img_tags = array_merge($pos_tag_array, $img_tags);
                     $img_tags = array_diff($img_tags, $neg_tag_array);

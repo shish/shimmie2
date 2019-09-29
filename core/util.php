@@ -174,7 +174,7 @@ function warehouse_path(string $base, string $hash, bool $create=true, int $spli
 {
     $dirs =[DATA_DIR, $base];
     $splits = min($splits, strlen($hash) / 2);
-    for($i = 0; $i < $splits; $i++) {
+    for ($i = 0; $i < $splits; $i++) {
         $dirs[] = substr($hash, $i * 2, 2);
     }
     $dirs[] = $hash;
@@ -343,7 +343,7 @@ function join_url(string $base, string ...$paths)
 {
     $output = $base;
     foreach ($paths as $path) {
-        $output = rtrim($output,"/");
+        $output = rtrim($output, "/");
         $path = ltrim($path, "/");
         $output .= "/".$path;
     }

@@ -27,12 +27,13 @@ class UserConfig extends Extension
     {
         global $config;
 
-        if ($config->get_int(self::VERSION,0)<1) {
+        if ($config->get_int(self::VERSION, 0)<1) {
             $this->install();
         }
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event) {
+    public function onInitUserConfig(InitUserConfigEvent $event)
+    {
         global $database, $user_config;
 
         $user_config = new DatabaseConfig($database, "user_config", "user_id", $event->user->id);
@@ -43,8 +44,7 @@ class UserConfig extends Extension
     {
         global $config, $database;
 
-        if ($config->get_int(self::VERSION,0) < 1) {
-
+        if ($config->get_int(self::VERSION, 0) < 1) {
             log_info("upgrade", "Adding user config table");
 
             $database->create_table("user_config", "

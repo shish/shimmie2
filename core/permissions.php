@@ -66,5 +66,4 @@ abstract class Permissions
     public const VIEW_TRASH = "view_trash";
 
     public const PERFORM_BULK_ACTIONS = "perform_bulk_actions";
-
 }

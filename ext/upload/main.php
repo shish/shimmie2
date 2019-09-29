@@ -141,12 +141,12 @@ class Upload extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
-        $event->add_nav_link("upload",new Link('upload'), "Upload");
+        $event->add_nav_link("upload", new Link('upload'), "Upload");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="upload") {
+        if ($event->parent=="upload") {
             if (class_exists("Wiki")) {
                 $event->add_nav_link("upload_guidelines", new Link('wiki/upload_guidelines'), "Guidelines");
             }

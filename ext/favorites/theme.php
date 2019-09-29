@@ -56,6 +56,5 @@ class FavoritesTheme extends Themelet
         <p>Returns images that have been favorited by user 123. </p>
         </div>
         ';
-
     }
 }

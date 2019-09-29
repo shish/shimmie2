@@ -113,6 +113,5 @@ class TagCategoriesTheme extends Themelet
         <p>Can use &lt;, &lt;=, &gt;, &gt;=, or =.</p>
         <p>Category name is not case sensitive, category must exist for search to work.</p>
         ';
-
     }
 }

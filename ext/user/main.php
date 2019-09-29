@@ -341,7 +341,7 @@ class UserPage extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::EDIT_USER_CLASS)) {
                 $event->add_nav_link("user_admin", new Link('user_admin/list'), "User List", NavLink::is_active(["user_admin"]));
             }
@@ -388,7 +388,7 @@ class UserPage extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Users";
             $block->body = $this->theme->get_help_html();

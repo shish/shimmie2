@@ -242,7 +242,6 @@ class UserPageTheme extends Themelet
         $page->set_heading(html_escape($duser->name)."'s Page");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
-
     }
 
     public function build_options(User $duser, UserOptionsBuildingEvent $event)
@@ -337,7 +336,6 @@ class UserPageTheme extends Themelet
             foreach ($event->parts as $part) {
                 $html .= $part;
             }
-
         }
         return $html;
     }

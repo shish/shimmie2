@@ -12,7 +12,7 @@ class IcoFileHandler extends DataHandlerExtension
 
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
-        if(in_array($event->ext, self::SUPPORTED_EXTENSIONS)) {
+        if (in_array($event->ext, self::SUPPORTED_EXTENSIONS)) {
             $event->lossless = true;
             $event->video = false;
             $event->audio = false;

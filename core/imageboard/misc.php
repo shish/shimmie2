@@ -124,7 +124,7 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     }
 
 
-    if($use_dpi_scaling) {
+    if ($use_dpi_scaling) {
         list($max_width, $max_height) = get_thumbnail_max_size_scaled();
     } else {
         $max_width = $config->get_int(ImageConfig::THUMB_WIDTH);
@@ -138,7 +138,6 @@ function get_thumbnail_size(int $orig_width, int $orig_height, bool $use_dpi_sca
     } else {
         return $output;
     }
-
 }
 
 function get_scaled_by_aspect_ratio(int $original_width, int $original_height, int $max_width, int $max_height) : array
@@ -167,19 +166,20 @@ function get_thumbnail_max_size_scaled(): array
 }
 
 
-function create_image_thumb(string $hash, string $type, string $engine = null) {
+function create_image_thumb(string $hash, string $type, string $engine = null)
+{
     global $config;
 
     $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
     $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
     $tsize = get_thumbnail_max_size_scaled();
 
-    if(empty($engine)) {
+    if (empty($engine)) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
     }
 
     $output_format = $config->get_string(ImageConfig::THUMB_TYPE);
-    if($output_format=="webp") {
+    if ($output_format=="webp") {
         $output_format = Media::WEBP_LOSSY;
     }
 
@@ -206,10 +206,10 @@ function format_milliseconds(int $input): string
 
     $remainder = floor($input / 1000);
 
-    foreach (TIME_UNITS AS $unit=>$conversion) {
+    foreach (TIME_UNITS as $unit=>$conversion) {
         $count = $remainder % $conversion;
         $remainder = floor($remainder / $conversion);
-        if($count==0&&$remainder<1) {
+        if ($count==0&&$remainder<1) {
             break;
         }
         $output = "$count".$unit." ".$output;

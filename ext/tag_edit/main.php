@@ -258,7 +258,7 @@ class TagEdit extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="tags") {
+        if ($event->parent=="tags") {
             $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
         }
     }

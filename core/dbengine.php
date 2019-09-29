@@ -1,5 +1,6 @@
 <?php
-abstract class SCORE {
+abstract class SCORE
+{
     const AIPK      = "SCORE_AIPK";
     const INET      = "SCORE_INET";
     const BOOL_Y    = "SCORE_BOOL_Y";

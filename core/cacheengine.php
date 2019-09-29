@@ -192,14 +192,14 @@ class Cache
         $_tracer->begin("Cache Query", ["key"=>$key]);
         $val = $this->engine->get($key);
         if ($val !== false) {
-			$res = "hit";
+            $res = "hit";
             $this->hits++;
         } else {
-			$res = "miss";
+            $res = "miss";
             $this->misses++;
         }
         $_tracer->end(null, ["result"=>$res]);
-		return $val;
+        return $val;
     }
 
     public function set(string $key, $val, int $time=0)

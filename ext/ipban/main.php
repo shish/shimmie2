@@ -108,7 +108,7 @@ class IPBan extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::BAN_IP)) {
                 $event->add_nav_link("ip_bans", new Link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
             }

@@ -759,7 +759,7 @@ function validate_input(array $inputs): array
  */
 function sanitize_path(string $path): string
 {
-    return preg_replace('|[\\\\/]+|S',DIRECTORY_SEPARATOR,$path);
+    return preg_replace('|[\\\\/]+|S', DIRECTORY_SEPARATOR, $path);
 }
 
 /**
@@ -770,11 +770,11 @@ function join_path(string ...$paths): string
 {
     $output = "";
     foreach ($paths as $path) {
-        if(empty($path)) {
+        if (empty($path)) {
             continue;
         }
         $path = sanitize_path($path);
-        if(empty($output)) {
+        if (empty($output)) {
             $output = $path;
         } else {
             $output = rtrim($output, DIRECTORY_SEPARATOR);
@@ -790,8 +790,8 @@ function join_path(string ...$paths): string
  */
 function iterator_map(callable $callback, iterator $iter): Generator
 {
-    foreach($iter as $i) {
-        yield call_user_func($callback,$i);
+    foreach ($iter as $i) {
+        yield call_user_func($callback, $i);
     }
 }
 

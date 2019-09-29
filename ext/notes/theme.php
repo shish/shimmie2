@@ -269,7 +269,5 @@ class NotesTheme extends Themelet
         <p>Returns images with note(s) by user 123.</p>
         </div>
         ';
-
     }
-
 }

@@ -72,6 +72,5 @@ class RelationshipsTheme extends Themelet
         <p>Returns images that have no children.</p>
         </div> 
         ';
-
     }
 }

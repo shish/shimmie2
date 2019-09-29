@@ -142,20 +142,33 @@ class SetupBlock extends Block
 
 
 
-    private function format_option(string $name, $html, ?string $label, bool $table_row) {
+    private function format_option(string $name, $html, ?string $label, bool $table_row)
+    {
         global $config;
 
-        if($table_row) $this->start_table_row();
-        if($table_row) $this->start_table_header_cell();
+        if ($table_row) {
+            $this->start_table_row();
+        }
+        if ($table_row) {
+            $this->start_table_header_cell();
+        }
         if (!is_null($label)) {
             $this->body .= "<label for='{$name}'>{$label}</label>";
         }
-        if($table_row) $this->end_table_header_cell();
+        if ($table_row) {
+            $this->end_table_header_cell();
+        }
 
-        if($table_row) $this->start_table_cell();
+        if ($table_row) {
+            $this->start_table_cell();
+        }
         $this->body .= $html;
-        if($table_row) $this->end_table_cell();
-        if($table_row) $this->end_table_row();
+        if ($table_row) {
+            $this->end_table_cell();
+        }
+        if ($table_row) {
+            $this->end_table_row();
+        }
     }
 
     public function add_text_option(string $name, string $label=null, bool $table_row = false)
@@ -187,7 +200,7 @@ class SetupBlock extends Block
         $checked = $config->get_bool($name) ? " checked" : "";
 
         $html = "";
-        if(!$table_row&&!is_null($label)) {
+        if (!$table_row&&!is_null($label)) {
             $html .= "<label for='{$name}'>{$label}</label>";
         }
 
@@ -216,7 +229,6 @@ class SetupBlock extends Block
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
         $this->format_option($name, $html, $label, $table_row);
-
     }
 
     public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
@@ -414,7 +426,7 @@ class Setup extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::CHANGE_SETTING)) {
                 $event->add_nav_link("setup", new Link('setup'), "Board Config", null, 0);
             }

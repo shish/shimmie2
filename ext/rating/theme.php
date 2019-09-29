@@ -30,9 +30,9 @@ class RatingsTheme extends Themelet
 
         $html = make_form(make_link("admin/update_ratings"))."<table class='form'><tr>
         <th>Change</th><td><select name='rating_old' required='required'><option></option>";
-            foreach ($current_ratings as $key=>$value) {
-                $html .= "<option value='$key'>$value</option>";
-            }
+        foreach ($current_ratings as $key=>$value) {
+            $html .= "<option value='$key'>$value</option>";
+        }
         $html .= "</select></td></tr>
         <tr><th>To</th><td><select name='rating_new'  required='required'><option></option>";
         foreach ($available_ratings as $value) {
@@ -50,37 +50,38 @@ class RatingsTheme extends Themelet
     // {
     //     global $page;
     //     $html = "
-	// 		".make_form(make_link("admin/bulk_rate"))."
-	// 			<input type='hidden' name='query' value='".html_escape($terms)."'>
-	// 			<select name='rating'>
-	// 				<option value='s'>Safe</option>
-	// 				<option value='q'>Questionable</option>
-	// 				<option value='e'>Explicit</option>
-	// 				<option value='u'>Unrated</option>
-	// 			</select>
-	// 			<input type='submit' value='Go'>
-	// 		</form>
-	// 	";
+    // 		".make_form(make_link("admin/bulk_rate"))."
+    // 			<input type='hidden' name='query' value='".html_escape($terms)."'>
+    // 			<select name='rating'>
+    // 				<option value='s'>Safe</option>
+    // 				<option value='q'>Questionable</option>
+    // 				<option value='e'>Explicit</option>
+    // 				<option value='u'>Unrated</option>
+    // 			</select>
+    // 			<input type='submit' value='Go'>
+    // 		</form>
+    // 	";
     //     $page->add_block(new Block("List Controls", $html, "left"));
     // }
 
-    public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null) {
+    public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null)
+    {
         global $_shm_ratings;
 
-		$output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
+        $output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
 
         $options = Ratings::get_sorted_ratings();
 
-		foreach($options as $option) {
-		    if($available_options!=null && !in_array($option->code, $available_options)) {
-		        continue;
+        foreach ($options as $option) {
+            if ($available_options!=null && !in_array($option->code, $available_options)) {
+                continue;
             }
 
-			$output .= "<option value='".$option->code."' ".
-                (in_array($option->code,$selected_options) ? "selected='selected'": "")
+            $output .= "<option value='".$option->code."' ".
+                (in_array($option->code, $selected_options) ? "selected='selected'": "")
                 .">".$option->name."</option>";
-		}
-		return $output."</select>";
+        }
+        return $output."</select>";
     }
 
     public function get_help_html(array $ratings)

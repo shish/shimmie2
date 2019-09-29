@@ -2,7 +2,6 @@
 
 class HelpPagesTheme extends Themelet
 {
-
     public function display_list_page(array $pages)
     {
         global $page;
@@ -27,5 +26,4 @@ class HelpPagesTheme extends Themelet
         $page->set_title("Help - $title");
         $page->set_heading("Help - $title");
     }
-
 }

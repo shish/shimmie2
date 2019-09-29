@@ -46,7 +46,6 @@ class PoolAddPostsEvent extends Event
         $this->pool_id = $pool_id;
         $this->posts = $posts;
     }
-
 }
 
 class PoolCreationEvent extends Event
@@ -67,7 +66,6 @@ class PoolCreationEvent extends Event
         $this->public = $public;
         $this->description = $description;
     }
-
 }
 
 class Pools extends Extension
@@ -152,7 +150,7 @@ class Pools extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="pool") {
+        if ($event->parent=="pool") {
             $event->add_nav_link("pool_list", new Link('pool/list'), "List");
             $event->add_nav_link("pool_new", new Link('pool/new'), "Create");
             $event->add_nav_link("pool_updated", new Link('pool/updated'), "Changes");
@@ -198,7 +196,8 @@ class Pools extends Extension
                             $title,
                             $user,
                             $_POST["public"] === "Y",
-                            $_POST["description"]);
+                            $_POST["description"]
+                        );
 
                         send_event($event);
                         $page->set_mode(PageMode::REDIRECT);
@@ -374,7 +373,7 @@ class Pools extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Pools";
             $block->body = $this->theme->get_help_html();
@@ -443,8 +442,8 @@ class Pools extends Extension
         $pools = $database->get_all("SELECT * FROM pools ORDER BY title ");
 
 
-        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p","", $this->theme->get_bulk_pool_selector($pools));
-        $event->add_action("bulk_pool_add_new", "Create Pool", "","", $this->theme->get_bulk_pool_input($event->search_terms));
+        $event->add_action("bulk_pool_add_existing", "Add To (P)ool", "p", "", $this->theme->get_bulk_pool_selector($pools));
+        $event->add_action("bulk_pool_add_new", "Create Pool", "", "", $this->theme->get_bulk_pool_input($event->search_terms));
     }
 
     public function onBulkAction(BulkActionEvent $event)
@@ -461,7 +460,8 @@ class Pools extends Extension
 
                 if ($this->have_permission($user, $pool)) {
                     send_event(
-                        new PoolAddPostsEvent($pool_id,iterator_map_to_array("image_to_id", $event->items)));
+                        new PoolAddPostsEvent($pool_id, iterator_map_to_array("image_to_id", $event->items))
+                    );
                 }
                 break;
             case "bulk_pool_add_new":
@@ -809,7 +809,7 @@ class Pools extends Extension
         if (ext_is_live("Ratings")) {
             $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_class_privs($user)).")";
         }
-        if(ext_is_live("trash")) {
+        if (ext_is_live("trash")) {
             $query .=  $database->scoreql_to_sql(" AND trash = SCORE_BOOL_N ");
         }
 
@@ -823,10 +823,10 @@ class Pools extends Extension
         );
 
         $totalPages = ceil($database->get_one(
-                "
+            "
 					SELECT COUNT(*) FROM pool_images p
 					$query",
-                ["pid" => $poolID]
+            ["pid" => $poolID]
             ) / $imagesPerPage);
 
 

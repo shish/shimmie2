@@ -140,7 +140,7 @@ class Image
         if (!$result) {
             $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
             $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
-            if($limit!=null) {
+            if ($limit!=null) {
                 $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
             }
             $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
@@ -228,7 +228,7 @@ class Image
 
         $response = Image::query_accelerator($req);
         if ($response) {
-			$list = implode(",", $response);
+            $list = implode(",", $response);
             $result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
         } else {
             $result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
@@ -253,19 +253,19 @@ class Image
 
     public static function query_accelerator($req)
     {
-		global $_tracer;
+        global $_tracer;
         $fp = @fsockopen("127.0.0.1", 21212);
         if (!$fp) {
             return null;
         }
-		$req_str = json_encode($req);
-		$_tracer->begin("Accelerator Query", ["req"=>$req_str]);
+        $req_str = json_encode($req);
+        $_tracer->begin("Accelerator Query", ["req"=>$req_str]);
         fwrite($fp, $req_str);
         $data = "";
         while (($buffer = fgets($fp, 4096)) !== false) {
             $data .= $buffer;
         }
-		$_tracer->end();
+        $_tracer->end();
         if (!feof($fp)) {
             die("Error: unexpected fgets() fail in query_accelerator($req_str)\n");
         }
@@ -299,7 +299,7 @@ class Image
                 ["tag"=>$tags[0]]
             );
         } else {
-            if(ext_is_live("Ratings")) {
+            if (ext_is_live("Ratings")) {
                 $tags[] = "rating:*";
             }
             list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
@@ -833,10 +833,9 @@ class Image
             $opts = $matches[2];
             $post = $matches[3];
 
-            if(isset($flexihashes[$opts])) {
+            if (isset($flexihashes[$opts])) {
                 $flexihash = $flexihashes[$opts];
-            }
-            else {
+            } else {
                 $flexihash = new Flexihash\Flexihash();
                 foreach (explode(",", $opts) as $opt) {
                     $parts = explode("=", $opt);
@@ -964,7 +963,7 @@ class Image
 						FROM images
 						WHERE 1=0
 					");
-                } elseif($tag_count==1) {
+                } elseif ($tag_count==1) {
                     // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
                     $positive_tag_id_array[] = $tag_ids[0];
                 } else {
@@ -981,14 +980,14 @@ class Image
 
         $sql = "";
         assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
-        if(!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+        if (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
             $inner_joins = [];
             if (!empty($positive_tag_id_array)) {
-                foreach($positive_tag_id_array as $tag) {
+                foreach ($positive_tag_id_array as $tag) {
                     $inner_joins[] = "= $tag";
                 }
             }
-            if(!empty($positive_wildcard_id_array)) {
+            if (!empty($positive_wildcard_id_array)) {
                 foreach ($positive_wildcard_id_array as $tags) {
                     $positive_tag_id_list = join(', ', $tags);
                     $inner_joins[] = "IN ($positive_tag_id_list)";
@@ -1002,12 +1001,12 @@ class Image
                 $i++;
                 $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
             }
-            if(!empty($negative_tag_id_array)) {
+            if (!empty($negative_tag_id_array)) {
                 $negative_tag_id_list = join(', ', $negative_tag_id_array);
                 $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
             }
             $sub_query .= "WHERE it.tag_id $first ";
-            if(!empty($negative_tag_id_array)) {
+            if (!empty($negative_tag_id_array)) {
                 $sub_query .= " AND negative.image_id IS NULL";
             }
             $sub_query .= " GROUP BY it.image_id ";
@@ -1018,7 +1017,7 @@ class Image
                 $sub_query
                 ) a on a.image_id = images.id 
             ";
-        } elseif(!empty($negative_tag_id_array)) {
+        } elseif (!empty($negative_tag_id_array)) {
             $negative_tag_id_list = join(', ', $negative_tag_id_array);
             $sql = "
                 SELECT images.*

@@ -14,7 +14,6 @@ class HelpPageListBuildingEvent extends Event
     {
         $this->pages[$key] = $name;
     }
-
 }
 
 class HelpPageBuildingEvent extends Event
@@ -27,10 +26,9 @@ class HelpPageBuildingEvent extends Event
         $this->key = $key;
     }
 
-    function add_block(Block $block, int $position = 50)
+    public function add_block(Block $block, int $position = 50)
     {
-        if(!array_key_exists("$position",$this->blocks))
-        {
+        if (!array_key_exists("$position", $this->blocks)) {
             $this->blocks["$position"] = [];
         }
         $this->blocks["$position"][] = $block;
@@ -55,7 +53,7 @@ class HelpPages extends Extension
             } else {
                 $name = $event->get_arg(0);
                 $title = $name;
-                if(array_key_exists($name, $e->pages)) {
+                if (array_key_exists($name, $e->pages)) {
                     $title = $e->pages[$name];
                 }
 
@@ -66,7 +64,7 @@ class HelpPages extends Extension
                 asort($hpbe->blocks);
 
                 foreach ($hpbe->blocks as $key=>$value) {
-                    foreach($value as $block) {
+                    foreach ($value as $block) {
                         $page->add_block($block);
                     }
                 }
@@ -89,6 +87,4 @@ class HelpPages extends Extension
         global $user;
         $event->add_link("Help", make_link("help"));
     }
-
-
 }

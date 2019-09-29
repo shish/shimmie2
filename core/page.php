@@ -307,14 +307,14 @@ class Page
                 $active_link = null;
                 // To save on event calls, we check if one of the top-level links has already been marked as active
                 foreach ($nav_links as $link) {
-                    if($link->active===true) {
+                    if ($link->active===true) {
                         $active_link = $link;
                         break;
                     }
                 }
                 $sub_links = null;
                 // If one is, we just query for sub-menu options under that one tab
-                if($active_link!==null) {
+                if ($active_link!==null) {
                     $psnbe = new PageSubNavBuildingEvent($active_link->name);
                     send_event($psnbe);
                     $sub_links = $psnbe->links;
@@ -326,13 +326,13 @@ class Page
 
                         // Now we check for a current link so we can identify the sub-links to show
                         foreach ($psnbe->links as $sub_link) {
-                            if($sub_link->active===true) {
+                            if ($sub_link->active===true) {
                                 $sub_links = $psnbe->links;
                                 break;
                             }
                         }
                         // If the active link has been detected, we break out
-                        if($sub_links!==null) {
+                        if ($sub_links!==null) {
                             $link->active = true;
                             break;
                         }
@@ -372,7 +372,6 @@ class Page
                 header('Accept-Ranges: bytes');
 
                 if (isset($_SERVER['HTTP_RANGE'])) {
-
                     $c_start = $start;
                     $c_end = $end;
                     list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
@@ -418,8 +417,9 @@ class Page
                         // After flush, we can tell if the client browser has disconnected.
                         // This means we can start sending a large file, and if we detect they disappeared
                         // then we can just stop and not waste any more resources or bandwidth.
-                        if (connection_status() != 0)
+                        if (connection_status() != 0) {
                             break;
+                        }
                     }
                 } finally {
                     fclose($fp);
@@ -541,7 +541,7 @@ class PageSubNavBuildingEvent extends Event
 
     public function add_nav_link(string $name, Link $link, string $desc, ?bool $active = null, int $order = 50)
     {
-        $this->links[]  = new NavLink($name, $link, $desc, $active,$order);
+        $this->links[]  = new NavLink($name, $link, $desc, $active, $order);
     }
 }
 
@@ -553,7 +553,7 @@ class NavLink
     public $order;
     public $active = false;
 
-    public function  __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
+    public function __construct(String $name, Link $link, String $description, ?bool $active = null, int $order = 50)
     {
         global $config;
 
@@ -561,7 +561,7 @@ class NavLink
         $this->link = $link;
         $this->description = $description;
         $this->order = $order;
-        if($active==null) {
+        if ($active==null) {
             $query = ltrim(_get_query(), "/");
             if ($query === "") {
                 // This indicates the front page, so we check what's set as the front page
@@ -572,15 +572,14 @@ class NavLink
                 } else {
                     $this->active = self::is_active([$link->page], $front_page);
                 }
-            } elseif($query===$link->page) {
+            } elseif ($query===$link->page) {
                 $this->active = true;
-            }else {
+            } else {
                 $this->active = self::is_active([$link->page]);
             }
         } else {
             $this->active = $active;
         }
-
     }
 
     public static function is_active(array $pages_matched, string $url = null): bool

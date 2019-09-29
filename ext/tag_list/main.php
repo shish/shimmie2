@@ -100,7 +100,7 @@ class TagList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="tags") {
+        if ($event->parent=="tags") {
             $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
             $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
             $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");

@@ -187,7 +187,7 @@ class Upgrade extends Extension
             $database->execute("ALTER TABLE images ADD COLUMN length INTEGER NULL ");
 
             log_info("upgrade", "Setting indexes for media columns");
-            switch($database->get_driver_name()) {
+            switch ($database->get_driver_name()) {
                 case DatabaseDriver::PGSQL:
                 case DatabaseDriver::SQLITE:
                     $database->execute('CREATE INDEX images_video_idx ON images(video) WHERE video IS NOT NULL');
@@ -223,7 +223,6 @@ class Upgrade extends Extension
             log_info("upgrade", "Database at version 17");
             $config->set_bool("in_upgrade", false);
         }
-
     }
 
     public function get_priority(): int

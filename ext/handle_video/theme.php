@@ -14,11 +14,11 @@ class VideoFileHandlerTheme extends Themelet
         $player = make_link('vendor/bower-asset/mediaelement/build/flashmediaelement.swf');
 
         $width="auto";
-        if($image->width>1) {
+        if ($image->width>1) {
             $width = $image->width."px";
         }
         $height="auto";
-        if($image->height>1) {
+        if ($image->height>1) {
             $height = $image->height."px";
         }
 

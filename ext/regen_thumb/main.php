@@ -69,7 +69,7 @@ class RegenThumb extends Extension
         global $user;
 
         if ($user->can(Permissions::DELETE_IMAGE)) {
-            $event->add_action("bulk_regen", "Regen Thumbnails", "","", $this->theme->bulk_html());
+            $event->add_action("bulk_regen", "Regen Thumbnails", "", "", $this->theme->bulk_html());
         }
     }
 

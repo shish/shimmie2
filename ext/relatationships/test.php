@@ -34,7 +34,7 @@ class RelationshipTest extends ShimmiePHPUnitTestCase
         $image_3 = Image::by_id($image_id_3);
 
         $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1,$image_2->parent_id);
+        $this->assertEquals($image_id_1, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);
@@ -56,7 +56,7 @@ class RelationshipTest extends ShimmiePHPUnitTestCase
         $image_3 = Image::by_id($image_id_3);
 
         $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_3,$image_2->parent_id);
+        $this->assertEquals($image_id_3, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertFalse($image_2->has_children);
         $this->assertFalse($image_2->has_children);
@@ -129,7 +129,7 @@ class RelationshipTest extends ShimmiePHPUnitTestCase
         $image_3 = Image::by_id($image_id_3);
 
         $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1,$image_2->parent_id);
+        $this->assertEquals($image_id_1, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);
@@ -151,8 +151,8 @@ class RelationshipTest extends ShimmiePHPUnitTestCase
         $image_2 = Image::by_id($image_id_2);
         $image_3 = Image::by_id($image_id_3);
 
-        $this->assertEquals($image_id_3,$image_1->parent_id);
-        $this->assertEquals($image_id_1,$image_2->parent_id);
+        $this->assertEquals($image_id_3, $image_1->parent_id);
+        $this->assertEquals($image_id_1, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);
@@ -175,7 +175,7 @@ class RelationshipTest extends ShimmiePHPUnitTestCase
         $image_3 = Image::by_id($image_id_3);
 
         $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1,$image_2->parent_id);
+        $this->assertEquals($image_id_1, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);

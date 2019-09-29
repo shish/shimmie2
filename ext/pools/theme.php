@@ -401,7 +401,7 @@ class PoolsTheme extends Themelet
 
     public function get_bulk_pool_input(array $search_terms)
     {
-        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ",$search_terms))."' />";
+        return "<input type='text' name='bulk_pool_new' placeholder='New pool' required='required' value='".(implode(" ", $search_terms))."' />";
     }
 
 
@@ -429,6 +429,5 @@ class PoolsTheme extends Themelet
         <p>Returns images in the "swimming pool" pool. Note that the underscore becomes a space</p>
         </div>
         ';
-
     }
 }

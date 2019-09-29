@@ -166,7 +166,7 @@ class CommentList extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="comment") {
+        if ($event->parent=="comment") {
             $event->add_nav_link("comment_list", new Link('comment/list'), "All");
             $event->add_nav_link("comment_help", new Link('ext_doc/comment'), "Help");
         }
@@ -368,7 +368,7 @@ class CommentList extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Comments";
             $block->body = $this->theme->get_help_html();

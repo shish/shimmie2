@@ -29,7 +29,7 @@ class Blocks extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent==="system") {
+        if ($event->parent==="system") {
             if ($user->can(Permissions::MANAGE_BLOCKS)) {
                 $event->add_nav_link("blocks", new Link('blocks/list'), "Blocks Editor");
             }

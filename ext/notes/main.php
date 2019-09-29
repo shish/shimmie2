@@ -218,7 +218,7 @@ class Notes extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Notes";
             $block->body = $this->theme->get_help_html();

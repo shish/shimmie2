@@ -26,6 +26,4 @@ class System extends Extension
     {
         $event->add_nav_link("system", new Link('system'), "System");
     }
-
-
 }

@@ -25,7 +25,8 @@
 global $_shm_ratings;
 $_shm_ratings = [];
 
-class ImageRating {
+class ImageRating
+{
     /**
      * @var string
      */
@@ -46,9 +47,9 @@ class ImageRating {
      */
     public $order = 0;
 
-    public function __construct( string $code, string $name, string $search_term, int $order)
+    public function __construct(string $code, string $name, string $search_term, int $order)
     {
-        if(strlen($code)!=1) {
+        if (strlen($code)!=1) {
             throw new Exception("Rating code must be exactly one character");
         }
 
@@ -56,29 +57,30 @@ class ImageRating {
         $this->code = $code;
         $this->search_term = $search_term;
         $this->order = $order;
-
     }
 }
 
-function clear_ratings() {
+function clear_ratings()
+{
     global $_shm_ratings;
     $keys =  array_keys($_shm_ratings);
-    foreach ($keys as $key){
-        if($key=="?") {
+    foreach ($keys as $key) {
+        if ($key=="?") {
             continue;
         }
         unset($_shm_ratings[$key]);
     }
 }
 
-function add_rating(ImageRating $rating) {
+function add_rating(ImageRating $rating)
+{
     global $_shm_ratings;
 
-    if($rating->code=="?"&&array_key_exists("?",$_shm_ratings)) {
+    if ($rating->code=="?"&&array_key_exists("?", $_shm_ratings)) {
         throw new Exception("? is a reserved rating code that cannot be overridden");
     }
 
-    if($rating->code!="?"&&in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
+    if ($rating->code!="?"&&in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
         throw new Exception("$rating->search_term is a reserved search term");
     }
 
@@ -110,7 +112,8 @@ class RatingSetEvent extends Event
     }
 }
 
-abstract class RatingsConfig {
+abstract class RatingsConfig
+{
     const VERSION = "ext_ratings2_version";
     const USER_DEFAULTS = "ratings_default";
 }
@@ -136,7 +139,7 @@ class Ratings extends Extension
             array_push($search_terms, $rating->search_term);
         }
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
-            implode("|", $search_terms) . "|".implode("|",self::UNRATED_KEYWORDS)."))$/D";
+            implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/D";
     }
 
     public function get_priority(): int
@@ -160,7 +163,8 @@ class Ratings extends Extension
         }
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event) {
+    public function onInitUserConfig(InitUserConfigEvent $event)
+    {
         $event->user_config->set_default_array(RatingsConfig::USER_DEFAULTS, self::get_user_class_privs($event->user));
     }
 
@@ -169,9 +173,12 @@ class Ratings extends Extension
         global $user, $user_config;
 
         $event->add__html(
-            $this->theme->get_user_options($user,
+            $this->theme->get_user_options(
+                $user,
                 self::get_user_default_ratings($user),
-                self::get_user_class_privs($user)));
+                self::get_user_class_privs($user)
+            )
+        );
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
@@ -254,7 +261,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Ratings";
 
@@ -279,7 +286,7 @@ class Ratings extends Extension
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
-            if(count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+            if (count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
                 $ratings = "?";
             }
 
@@ -302,7 +309,7 @@ class Ratings extends Extension
         if (preg_match($this->search_regexp, strtolower($event->term), $matches) && $event->parse) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
-            if(count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
+            if (count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
                 $ratings = "?";
             }
 
@@ -348,16 +355,16 @@ class Ratings extends Extension
         switch ($action) {
             case "update_ratings":
                 $event->redirect = true;
-                if(!array_key_exists("rating_old", $_POST) || empty($_POST["rating_old"])) {
+                if (!array_key_exists("rating_old", $_POST) || empty($_POST["rating_old"])) {
                     return;
                 }
-                if(!array_key_exists("rating_new", $_POST) || empty($_POST["rating_new"])) {
+                if (!array_key_exists("rating_new", $_POST) || empty($_POST["rating_new"])) {
                     return;
                 }
                 $old = $_POST["rating_old"];
                 $new = $_POST["rating_new"];
 
-                if($user->can("bulk_edit_image_rating")) {
+                if ($user->can("bulk_edit_image_rating")) {
                     $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>$new, "old"=>$old ]);
                 }
 
@@ -371,7 +378,7 @@ class Ratings extends Extension
         global $user;
 
         if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-            $event->add_action("bulk_rate", "Set (R)ating", "r","", $this->theme->get_selection_rater_html(["?"]));
+            $event->add_action("bulk_rate", "Set (R)ating", "r", "", $this->theme->get_selection_rater_html(["?"]));
         }
     }
 
@@ -455,7 +462,6 @@ class Ratings extends Extension
                     break;
             }
         }
-
     }
 
     public static function get_sorted_ratings(): array
@@ -490,10 +496,10 @@ class Ratings extends Extension
     public static function privs_to_sql(array $privs): string
     {
         $arr = [];
-        foreach($privs as $i) {
+        foreach ($privs as $i) {
             $arr[] = "'" . $i . "'";
         }
-        if(sizeof($arr)==0) {
+        if (sizeof($arr)==0) {
             return "' '";
         }
         $set = join(', ', $arr);
@@ -504,7 +510,7 @@ class Ratings extends Extension
     {
         global $_shm_ratings;
 
-        if(array_key_exists($rating, $_shm_ratings)) {
+        if (array_key_exists($rating, $_shm_ratings)) {
             return $_shm_ratings[$rating]->name;
         }
         return "Unknown";
@@ -557,7 +563,7 @@ class Ratings extends Extension
             $config->set_int(RatingsConfig::VERSION, 2);
         }
 
-		if($config->get_int(RatingsConfig::VERSION) < 3) {
+        if ($config->get_int(RatingsConfig::VERSION) < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::MYSQL:
@@ -568,20 +574,20 @@ class Ratings extends Extension
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
             }
-			$config->set_int(RatingsConfig::VERSION, 3);
-		}
+            $config->set_int(RatingsConfig::VERSION, 3);
+        }
 
         if ($config->get_int(RatingsConfig::VERSION) < 4) {
             $value = $config->get_string("ext_rating_anon_privs");
-            if(!empty($value)) {
+            if (!empty($value)) {
                 $config->set_array("ext_rating_anonymous_privs", str_split($value));
             }
             $value = $config->get_string("ext_rating_user_privs");
-            if(!empty($value)) {
+            if (!empty($value)) {
                 $config->set_array("ext_rating_user_privs", str_split($value));
             }
             $value = $config->get_string("ext_rating_admin_privs");
-            if(!empty($value)) {
+            if (!empty($value)) {
                 $config->set_array("ext_rating_admin_privs", str_split($value));
             }
 

@@ -230,7 +230,7 @@ class NumericScore extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        if($event->key===HelpPages::SEARCH) {
+        if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Numeric Score";
             $block->body = $this->theme->get_help_html();
@@ -306,11 +306,10 @@ class NumericScore extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="posts") {
+        if ($event->parent=="posts") {
             $event->add_nav_link("numeric_score_day", new Link('popular_by_day'), "Popular by Day");
             $event->add_nav_link("numeric_score_month", new Link('popular_by_month'), "Popular by Month");
             $event->add_nav_link("numeric_score_year", new Link('popular_by_year'), "Popular by Year");
-
         }
     }
 
