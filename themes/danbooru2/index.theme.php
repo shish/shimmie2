@@ -7,31 +7,15 @@ class CustomIndexTheme extends IndexTheme
      */
     public function display_page(Page $page, array $images)
     {
-        global $config;
-
-        if (count($this->search_terms) == 0) {
-            $query = null;
-            $page_title = $config->get_string(SetupConfig::TITLE);
-        } else {
-            $search_string = implode(' ', $this->search_terms);
-            $query = url_escape($search_string);
-            $page_title = html_escape($search_string);
-        }
+        $this->display_page_header($page, $images);
 
         $nav = $this->build_navigation($this->page_number, $this->total_pages, $this->search_terms);
-        $page->set_title($page_title);
-        $page->set_heading($page_title);
         $page->add_block(new Block("Search", $nav, "left", 0));
+
         if (count($images) > 0) {
-            if ($query) {
-                $page->add_block(new Block("Images", $this->build_table($images, "search=$query"), "main", 10));
-                $this->display_paginator($page, "post/list/$query", null, $this->page_number, $this->total_pages);
-            } else {
-                $page->add_block(new Block("Images", $this->build_table($images, null), "main", 10));
-                $this->display_paginator($page, "post/list", null, $this->page_number, $this->total_pages);
-            }
+            $this->display_page_images($page, $images);
         } else {
-            $page->add_block(new Block("No Images Found", "No images were found to match the search criteria"));
+            $this->display_error(404, "No Images Found", "No images were found to match the search criteria");
         }
     }
 

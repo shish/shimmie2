@@ -16,22 +16,21 @@ margin:0;
 padding:0 1rem 0 2rem;
 }
 HEADER ul#navbar li {
+margin:0;
+}
+HEADER ul#navbar li a {
 display:inline-block;
 margin:0 0.15rem;
 padding:0.4rem 0.6rem;
 }
-HEADER ul#navbar li:first-child {
-margin-left: -0.6rem;
-}
 HEADER ul#navbar li:first-child a {
+margin-left: -0.6rem;
 color: #FF3333;
 font-weight: bold;
 }
-HEADER ul#navbar li.current-page {
+HEADER ul#navbar li a.current-page {
 background-color:#EEEEFF;
 border-radius:0.2rem 0.2rem 0 0;
-}
-HEADER ul#navbar li.current-page a {
 font-weight:bold;
 }
 HEADER ul#subnavbar {
