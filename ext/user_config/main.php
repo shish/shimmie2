@@ -31,12 +31,12 @@ class UserConfig extends Extension
         }
     }
 
-    public function onInitUserConfig(InitUserConfigEvent $event)
+    public function onUserLogin(UserLoginEvent $event)
     {
         global $database, $user_config;
 
         $user_config = new DatabaseConfig($database, "user_config", "user_id", $event->user->id);
-        $event->user_config  = $user_config;
+        send_event(new InitUserConfigEvent($event->user, $user_config));
     }
 
     private function install(): void

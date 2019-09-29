@@ -37,6 +37,12 @@ unset($_shm_files);
 unset($_shm_filename);
 $_tracer->end();
 
+// connect to the database
+$_tracer->begin("Connecting to DB");
+$database = new Database();
+$config = new DatabaseConfig($database);
+$_tracer->end();
+
 $_tracer->begin("Loading extension info");
 ExtensionInfo::load_all_extension_info();
 Extension::determine_enabled_extensions();
@@ -51,12 +57,6 @@ foreach ($_shm_files as $_shm_filename) {
 }
 unset($_shm_files);
 unset($_shm_filename);
-$_tracer->end();
-
-// connect to the database
-$_tracer->begin("Connecting to DB");
-$database = new Database();
-$config = new DatabaseConfig($database);
 $_tracer->end();
 
 // load the theme parts

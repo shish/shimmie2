@@ -101,8 +101,6 @@ abstract class RatingsConfig
 
 class Ratings extends Extension
 {
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
-
     public const UNRATED_KEYWORDS = ["unknown","unrated"];
 
     private $search_regexp;

@@ -7,8 +7,6 @@ abstract class TrashConfig
 
 class Trash extends Extension
 {
-    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
-
     public function get_priority(): int
     {
         // Needs to be early to intercept delete events
@@ -23,7 +21,6 @@ class Trash extends Extension
             $this->install();
         }
     }
-
 
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -44,8 +41,6 @@ class Trash extends Extension
             $page->set_redirect(make_link("post/view/".$image_id));
         }
     }
-
-
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {

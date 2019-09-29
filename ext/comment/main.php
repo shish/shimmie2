@@ -398,7 +398,7 @@ class CommentList extends Extension
 			LIMIT :limit OFFSET :offset
 		", ["limit"=>$threads_per_page, "offset"=>$start]);
 
-        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_privs($user) : "";
+        $user_ratings = Extension::is_enabled(RatingsInfo::KEY) ? Ratings::get_user_class_privs($user) : "";
 
         $images = [];
         while ($row = $result->fetch()) {

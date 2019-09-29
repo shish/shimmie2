@@ -137,9 +137,10 @@ abstract class Extension
             explode(",", EXTRA_EXTS)
         ) as $key) {
             $ext = ExtensionInfo::get_by_key($key);
-            if ($ext===null) {
+            if ($ext===null || !$ext->is_supported()) {
                 continue;
             }
+            // FIXME: error if one of our dependencies isn't supported
             self::$enabled_extensions[] = $ext->key;
             if (!empty($ext->dependencies)) {
                 foreach ($ext->dependencies as $dep) {
@@ -253,7 +254,7 @@ abstract class ExtensionInfo
     {
         global $database;
         $this->support_info  = "";
-        if (!empty($this->db_support)&&!in_array($database->get_driver_name(), $this->db_support)) {
+        if (!empty($this->db_support) && !in_array($database->get_driver_name(), $this->db_support)) {
             $this->support_info .= "Database not supported. ";
         }
         // Additional checks here as needed

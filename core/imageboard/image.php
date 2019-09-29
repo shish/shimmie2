@@ -302,7 +302,7 @@ class Image
                 ["tag"=>$tags[0]]
             );
         } else {
-            if (ext_is_live("Ratings")) {
+            if (Extension::is_enabled(RatingsInfo::KEY)) {
                 $tags[] = "rating:*";
             }
             list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
