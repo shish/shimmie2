@@ -602,12 +602,10 @@ class TagList extends Extension
             $starting_tags = [];
             $tags_ok = true;
             foreach ($wild_tags as $tag) {
-                if ($tag[0] == "-") {
+                if ($tag[0] == "-" || strpos($tag, "tagme")===0) {
                     continue;
                 }
-
                 $tag = Tag::sqlify($tag);
-
                 $tag_ids = $database->get_col("SELECT id FROM tags WHERE tag LIKE :tag AND count < 25000", ["tag" => $tag]);
                 // $search_tags = array_merge($search_tags,
                 //                  $database->get_col("SELECT tag FROM tags WHERE tag LIKE :tag", array("tag"=>$tag)));

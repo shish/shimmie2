@@ -798,7 +798,7 @@ class Pools extends Extension
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_privs($user)).")";
+            $query .= "AND i.rating IN (".Ratings::privs_to_sql(Ratings::get_user_class_privs($user)).")";
         }
         if (Extension::is_enabled(TrashInfo::KEY)) {
             $query .=  $database->scoreql_to_sql(" AND trash = SCORE_BOOL_N ");

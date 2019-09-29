@@ -803,7 +803,6 @@ function iterator_map_to_array(callable $callback, iterator $iter): array
     return iterator_to_array(iterator_map($callback, $iter));
 }
 
-
 function get_class_from_file(string $file): string
 {
     $fp = fopen($file, 'r');

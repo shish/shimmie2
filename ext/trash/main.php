@@ -7,6 +7,8 @@ abstract class TrashConfig
 
 class Trash extends Extension
 {
+    protected $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
+
     public function get_priority(): int
     {
         // Needs to be early to intercept delete events

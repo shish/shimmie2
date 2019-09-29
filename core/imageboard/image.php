@@ -302,6 +302,9 @@ class Image
                 ["tag"=>$tags[0]]
             );
         } else {
+            if (ext_is_live("Ratings")) {
+                $tags[] = "rating:*";
+            }
             list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
             $total = Image::get_accelerated_count($tag_conditions, $img_conditions);
             if (is_null($total)) {

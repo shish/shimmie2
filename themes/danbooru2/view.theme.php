@@ -48,13 +48,11 @@ class CustomViewImageTheme extends ViewImageTheme
         }
 
         if (Extension::is_enabled(RatingsInfo::KEY)) {
-            if ($image->rating == null || $image->rating == "u") {
-                $image->rating = "u";
+            if ($image->rating == null || $image->rating == "?") {
+                $image->rating = "?";
             }
-            if (Extension::is_enabled(RatingsInfo::KEY)) {
-                $h_rating = Ratings::rating_to_human($image->rating);
-                $html .= "<br>Rating: $h_rating";
-            }
+			$h_rating = Ratings::rating_to_human($image->rating);
+			$html .= "<br>Rating: $h_rating";
         }
 
         return $html;

@@ -200,7 +200,7 @@ class DanbooruApi extends Extension
                 "preview_url" => $img->get_thumb_link(),
                 "preview_height" => $previewsize[1],
                 "preview_width" => $previewsize[0],
-                "rating" => "u",
+                "rating" => "?",
                 "date" => $img->posted,
                 "is_warehoused" => false,
                 "tags" => $taglist,
