@@ -213,7 +213,7 @@ class Database
             // $stmt = $this->db->prepare($query);
             if (!array_key_exists(0, $args)) {
                 foreach ($args as $name=>$value) {
-                    if (is_numeric($value)) {
+                    if (is_int($value)) {
                         $stmt->bindValue(':'.$name, $value, PDO::PARAM_INT);
                     } else {
                         $stmt->bindValue(':'.$name, $value, PDO::PARAM_STR);
