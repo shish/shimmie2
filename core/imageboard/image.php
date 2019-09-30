@@ -81,9 +81,13 @@ class Image
             }
             $this->locked = bool_escape($this->locked);
 
-            assert(is_int($this->id));
-            assert(is_int($this->height));
-            assert(is_int($this->width));
+            assert(is_numeric($this->id));
+            assert(is_numeric($this->height));
+            assert(is_numeric($this->width));
+
+            $this->id = int_escape($this->id);
+            $this->height = int_escape($this->height);
+            $this->width = int_escape($this->width);
         }
     }
 
