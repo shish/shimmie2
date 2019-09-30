@@ -77,8 +77,8 @@ class PostgreSQL extends DBEngine
     /** @var string */
     public $name = DatabaseDriver::PGSQL;
 
-    public $BOOL_Y = 't';
-    public $BOOL_N = 'f';
+    public $BOOL_Y = 'true';
+    public $BOOL_N = 'false';
 
     public function init(PDO $db)
     {
@@ -94,8 +94,8 @@ class PostgreSQL extends DBEngine
     {
         $data = str_replace(SCORE::AIPK, "SERIAL PRIMARY KEY", $data);
         $data = str_replace(SCORE::INET, "INET", $data);
-        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
-        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL_Y, $this->BOOL_Y, $data);
+        $data = str_replace(SCORE::BOOL_N, $this->BOOL_N, $data);
         $data = str_replace(SCORE::BOOL, "BOOL", $data);
         $data = str_replace(SCORE::DATETIME, "TIMESTAMP", $data);
         $data = str_replace(SCORE::NOW, "current_timestamp", $data);
