@@ -86,7 +86,8 @@ class Database
 
         $db_params = [
             PDO::ATTR_PERSISTENT => $ka,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_EMULATE_PREPARES => false,  # return native types
         ];
         $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
 
