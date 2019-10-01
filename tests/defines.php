@@ -1,0 +1,23 @@
+<?php
+define("DATABASE_DSN", null);
+define("DATABASE_KA", true);
+define("DATABASE_TIMEOUT", 10000);
+define("CACHE_DSN", null);
+define("DEBUG", false);
+define("COVERAGE", false);
+define("CACHE_HTTP", false);
+define("COOKIE_PREFIX", 'shm');
+define("SPEED_HAX", false);
+define("COMPILE_ELS", false);
+define("NICE_URLS", false);
+define("SEARCH_ACCEL", false);
+define("WH_SPLITS", 1);
+define("VERSION", '2.8-dev');
+define("TIMEZONE", null);
+define("EXTRA_EXTS", "");
+define("BASE_URL", null);
+define("MIN_PHP_VERSION", '7.3');
+define("TRACE_FILE", null);
+define("TRACE_THRESHOLD", 0.0);
+define("ENABLED_MODS", "imageboard");
+define("SCORE_VERSION", 'develop/'.VERSION);
