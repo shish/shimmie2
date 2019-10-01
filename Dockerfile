@@ -1,4 +1,4 @@
-FROM debian:testing-slim
+FROM debian:stable-slim
 ENV DEBIAN_FRONTEND=noninteractive
 EXPOSE 8000
 RUN apt update && apt install -y curl

@@ -23,8 +23,11 @@ check out one of the versioned branches.
 
 # Requirements
 
-- MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.1+ as of writing)
+- These are generally based on "whatever is in Debian Stable", because that's
+  conservative without being TOO painfully out of date, and is a nice target
+  for the unit test Docker build.
+- A database: PostgreSQL 11+ / MariaDB 10.3+ / SQLite 3.27+
+- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.3+ as of writing)
 - GD or ImageMagick
 
 # Installation

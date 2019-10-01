@@ -38,11 +38,11 @@ _d("COMPILE_ELS", false);    // boolean  pre-build the list of event listeners
 _d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("SEARCH_ACCEL", false);   // boolean  use search accelerator
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
-_d("VERSION", '2.7.0');      // string   shimmie version
+_d("VERSION", '2.8-dev');    // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("EXTRA_EXTS", "");        // string   optional extra extensions
 _d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
-_d("MIN_PHP_VERSION", '7.1');// string   minimum supported PHP version
+_d("MIN_PHP_VERSION", '7.3');// string   minimum supported PHP version
 _d("TRACE_FILE", null);      // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);  // float    log pages which take more time than this many seconds
 _d("ENABLED_MODS", "imageboard");
