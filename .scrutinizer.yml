@@ -5,5 +5,12 @@ imports:
 filter:
   excluded_paths: [ext/*/lib/*,ext/tagger/script.js,ext/chatbox/*]
 
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - php-scrutinizer-run
+
 tools:
   external_code_coverage: true
