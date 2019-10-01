@@ -78,14 +78,8 @@ class Database
             $db_pass=$matches[1];
         }
 
-        // https://bugs.php.net/bug.php?id=70221
-        $ka = DATABASE_KA;
-        if (version_compare(PHP_VERSION, "6.9.9") == 1 && $this->get_driver_name() == DatabaseDriver::SQLITE) {
-            $ka = false;
-        }
-
         $db_params = [
-            PDO::ATTR_PERSISTENT => $ka,
+            PDO::ATTR_PERSISTENT => DATABASE_KA,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
         $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
