@@ -5,6 +5,8 @@ thumbs
 *.phar
 *.sqlite
 .php_cs.cache
+.devcontainer
+trace.json
 
 #Composer
 composer.phar
