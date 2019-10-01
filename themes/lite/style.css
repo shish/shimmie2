@@ -32,7 +32,6 @@ a.tab:hover, a.tab:active, .tab-selected {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
@@ -126,8 +125,7 @@ CODE {
 #subtitle {
 	width: 256px;
 	font-size: 0.75em;
-	margin: auto;
-	margin-top: -16px;
+	margin: -16px auto auto;
 	text-align: center;
 	border: 1px solid black;
 	border-top: none;
@@ -142,17 +140,16 @@ TABLE.zebra TR TD {border-bottom: 1px solid #C3D2E0;}
 TABLE.zebra TR:nth-child(odd) {background: #CEDFF0;}
 TABLE.zebra TR:nth-child(even) {background: #F0F7FF;}
 
-INPUT, TEXTAREA {
+INPUT, TEXTAREA, button {
 	-moz-border-radius:4px;
 	-webkit-border-radius:4px;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
 }
 
-INPUT:hover, TEXTAREA:hover {
+INPUT:hover, button:hover, TEXTAREA:hover {
 	background-color:#FFFFFF;
 	text-decoration:none;
 }
@@ -199,7 +196,7 @@ NAV TABLE {
 NAV TD {
 	vertical-align: middle;
 }
-NAV INPUT {
+NAV INPUT, nav button {
 	width: 95%;
 	padding: 0px;
 }
@@ -255,7 +252,6 @@ TABLE.tag_list>TBODY>TR>TD:after {
 	-webkit-border-radius:4px;
 	color: #000;
 	border:1px solid #C8D1DB;
-	padding:4px;
 	cursor:default;
 	margin-right:2px;
 	padding:2px;
@@ -275,7 +271,7 @@ ARTICLE {
 	text-align: left;
 	height: 1%;
 }
-ARTICLE_noleft {
+ARTICLE.body_noleft {
 	margin-left: 4px;
 	margin-right: 16px;
 	margin-bottom:16px;

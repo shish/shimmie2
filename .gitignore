@@ -2,10 +2,9 @@ backup
 data
 images
 thumbs
-!lib/images
 *.phar
 *.sqlite
-/lib/vendor/
+.php_cs.cache
 
 #Composer
 composer.phar

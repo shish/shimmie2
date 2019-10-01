@@ -2,31 +2,33 @@
 /**
  * A class to turn a Page data structure into a blob of HTML
  */
-class Layout {
-	/**
-	 * turns the Page into HTML
-	 */
-	public function display_page(Page $page) {
-		global $config;
+class Layout
+{
+    /**
+     * turns the Page into HTML
+     */
+    public function display_page(Page $page)
+    {
+        global $config;
 
-		$theme_name = $config->get_string('theme', 'material');
-		$site_name = $config->get_string('title');
-		$data_href = get_base_href();
-		$main_page = $config->get_string('main_page');
-		$contact_link = contact_link();
-		$site_link = make_link();
-		$header_html = $page->get_all_html_headers();
+        $theme_name = $config->get_string(SetupConfig::THEME, 'material');
+        $site_name = $config->get_string(SetupConfig::TITLE);
+        $data_href = get_base_href();
+        $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
+        $contact_link = contact_link();
+        $site_link = make_link();
+        $header_html = $page->get_all_html_headers();
 
-		$left_block_html = "";
-		$main_block_html = "";
-		$head_block_html = "";
-		$sub_block_html = "";
-		$drawer_block_html = ""; //use exampled in user.theme.php & view.theme.php
-		$toolbar_block_html = ""; // not used at this point
-		$subtoolbar_block_html = ""; // use exampled in user.theme.php
+        $left_block_html = "";
+        $main_block_html = "";
+        $head_block_html = "";
+        $sub_block_html = "";
+        $drawer_block_html = ""; //use exampled in user.theme.php & view.theme.php
+        $toolbar_block_html = ""; // not used at this point
+        $subtoolbar_block_html = ""; // use exampled in user.theme.php
     $navigation = "";
 
-    $h_search = "
+        $h_search = "
       <div class='mdl-textfield mdl-js-textfield mdl-textfield--expandable
                   mdl-textfield--floating-label mdl-textfield--align-right'>
         <form action='".make_link()."' method='GET'>
@@ -43,60 +45,60 @@ class Layout {
       </div>
     ";
 
-		foreach($page->blocks as $block) {
-			switch($block->section) {
-				case "toolbar":
-					$toolbar_block_html .= $this->get_html($block, "toolbar");
-					break;
-				case "subtoolbar":
-					$subtoolbar_block_html .= $this->get_html($block, "subtoolbar");
-  				break;
-				case "left":
-          if($block->header == "Navigation"){
-            $subtoolbar_block_html = $this->rework_navigation($block);
-            break;
+        foreach ($page->blocks as $block) {
+            switch ($block->section) {
+                case "toolbar":
+                    $toolbar_block_html .= $this->get_html($block, "toolbar");
+                    break;
+                case "subtoolbar":
+                    $subtoolbar_block_html .= $this->get_html($block, "subtoolbar");
+                break;
+                case "left":
+          if ($block->header == "Navigation") {
+              $subtoolbar_block_html = $this->rework_navigation($block);
+              break;
           }
-					// $left_block_html .= $block->get_html(true);
+                    // $left_block_html .= $block->get_html(true);
           $left_block_html .= $this->get_html($block, "full", true, "left-blocks nav-card mdl-cell--4-col-tablet");
-					break;
-				case "head":
+                    break;
+                case "head":
           $head_block_html .= $this->get_html($block, "third", true, "nav-card head-blocks");
-					break;
-				case "drawer":
+                    break;
+                case "drawer":
           $drawer_block_html .= $this->get_html($block, "full", true, "nav-card drawer-blocks");
-					break;
-				case "main":
-					// $main_block_html .= $block->get_html(false);
+                    break;
+                case "main":
+                    // $main_block_html .= $block->get_html(false);
           $main_block_html .= $this->get_html($block, "main", true, "");
-					break;
-				case "subheading":
-					// $sub_block_html .= $block->body; // $this->block_to_html($block, true);
+                    break;
+                case "subheading":
+                    // $sub_block_html .= $block->body; // $this->block_to_html($block, true);
           $sub_block_html .= $this->get_html($block, "third", true, "nav-card");
-					break;
-				default:
-					print "<p>error: {$block->header} using an unknown section ({$block->section})";
-					break;
-			}
-		}
+                    break;
+                default:
+                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
+                    break;
+            }
+        }
 
-		$debug = get_debug_info();
+        $debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-		/*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
+        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+        /*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
-		$wrapper = "";
-		if(strlen($page->heading) > 100) {
-			$wrapper = ' style="height: 3em; overflow: auto;"';
-		}
-		*/
+        $wrapper = "";
+        if(strlen($page->heading) > 100) {
+            $wrapper = ' style="height: 3em; overflow: auto;"';
+        }
+        */
 
-    $flash = $page->get_cookie("flash_message");
-		$flash_html = "";
-		if($flash) {
-			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-		}
+        $flash = $page->get_cookie("flash_message");
+        $flash_html = "";
+        if ($flash) {
+            $flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
+        }
 
-		print <<<EOD
+        print <<<EOD
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -147,7 +149,7 @@ class Layout {
             $drawer_block_html
           </div>
         <nav class="mdl-navigation">
-          <a class="mdl-navigation__link" href="http://code.shishnet.org/shimmie2/">Shimmie  &copy;</a>
+          <a class="mdl-navigation__link" href="https://code.shishnet.org/shimmie2/">Shimmie  &copy;</a>
         </nav>
       </div>
       <main class="mdl-layout__content">
@@ -195,77 +197,91 @@ class Layout {
 	</body>
 </html>
 EOD;
-	}
+    }
 
-  public function rework_navigation(Block $block){
-    $h = $block->header;
-    $b = $block->body;
-    $i = $block->id;
+    public function rework_navigation(Block $block)
+    {
+        $h = $block->header;
+        $b = $block->body;
+        $i = $block->id;
 
-    $dom = new DomDocument();
-    $dom->loadHTML($b);
-    $output = array();
-    $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
-    foreach ($dom->getElementsByTagName('a') as $item) {
-       $item->setAttribute('class', 'mdl-navigation__link');
-       $html .= $dom->saveHTML($item);
-      //  $output[] = array (
+        $dom = new DomDocument();
+        $dom->loadHTML($b);
+        $output = [];
+        $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
+        foreach ($dom->getElementsByTagName('a') as $item) {
+            $item->setAttribute('class', 'mdl-navigation__link');
+            $html .= $dom->saveHTML($item);
+            //  $output[] = array (
       //     ,'str' => $dom->saveHTML($item)
       //     // ,'href' => $item->getAttribute('href')
       //     // ,'anchorText' => $item->nodeValue
       //  );
+        }
+        $html .= "</nav>\n</section>\n";
+        return $html;
     }
-    $html .= "</nav>\n</section>\n";
-    return $html;
-  }
 
-  /**
-   * Get the HTML for this block. from core
-   *
-   * @param bool $hidable
-   * @return string
-   */
-  public function get_html(Block $block, $section="main", $hidable=false, $extra_class="") {
-    $h = $block->header;
-    $b = $block->body;
-    $i = $block->id;//blotter extention id has `!`
+    /**
+     * Get the HTML for this block. from core
+     */
+    public function get_html(Block $block, string $section="main", bool $hidable=false, string $extra_class=""): string
+    {
+        $h = $block->header;
+        $b = $block->body;
+        $i = $block->id;//blotter extention id has `!`
 
-    if($section == "toolbar"){
-      $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
-      if(!empty($b)) $html .= "$b";
-      $html .= "</nav>\n</section>\n";
-      return $html;
+        if ($section == "toolbar") {
+            $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
+            if (!empty($b)) {
+                $html .= "$b";
+            }
+            $html .= "</nav>\n</section>\n";
+            return $html;
+        }
+        if ($section == "subtoolbar") {
+            $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
+            if (!empty($b)) {
+                $html .= "$b";
+            }
+            $html .= "</nav>\n</section>\n";
+            return $html;
+        }
+        if ($section == "full") {
+            $html = "<div class='mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col $extra_class'><section id='$i'>";
+            $h_toggler = $hidable ? " shm-toggler" : "";
+            if (!empty($h)) {
+                $html .="<div class='mdl-card__title'><h3 data-toggle-sel='#$i' class='mdl-card__title-text $h_toggler'>$h</h3></div>";
+            }
+            if (!empty($b)) {
+                $html .="<div class='mdl-card__supporting-text blockbody'>$b</div>";
+            }
+            $html .= "</section></div>\n";
+            return $html;
+        }
+        if ($section == "third") {
+            $html = "<div class='mdl-card mdl-shadow--4dp mdl-cell mdl-cell--4-col $extra_class'><section id='$i'>";
+            $h_toggler = $hidable ? " shm-toggler" : "";
+            if (!empty($h)) {
+                $html .="<div class='mdl-card__title'><h3 data-toggle-sel='#$i' class='mdl-card__title-text $h_toggler'>$h</h3></div>";
+            }
+            if (!empty($b)) {
+                $html .="<div class='mdl-card__supporting-text blockbody'>$b</div>";
+            }
+            $html .= "</section></div>\n";
+            return $html;
+        }
+        $html = "<section id='$i'>";
+        $h_toggler = $hidable ? " shm-toggler" : "";
+        if (!empty($h)) {
+            $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
+        }
+        if (!empty($b)) {
+            $html .= "<div class='blockbody'>$b</div>";
+        }
+        $html .= "</section>\n";
+        return $html;
     }
-    if($section == "subtoolbar"){
-      $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
-      if(!empty($b)) $html .= "$b";
-      $html .= "</nav>\n</section>\n";
-      return $html;
-    }
-    if($section == "full"){
-      $html = "<div class='mdl-card mdl-shadow--4dp mdl-cell mdl-cell--12-col $extra_class'><section id='$i'>";
-      $h_toggler = $hidable ? " shm-toggler" : "";
-      if(!empty($h)) $html .="<div class='mdl-card__title'><h3 data-toggle-sel='#$i' class='mdl-card__title-text $h_toggler'>$h</h3></div>";
-      if(!empty($b)) $html .="<div class='mdl-card__supporting-text blockbody'>$b</div>";
-      $html .= "</section></div>\n";
-      return $html;
-    }
-    if($section == "third"){
-      $html = "<div class='mdl-card mdl-shadow--4dp mdl-cell mdl-cell--4-col $extra_class'><section id='$i'>";
-      $h_toggler = $hidable ? " shm-toggler" : "";
-      if(!empty($h)) $html .="<div class='mdl-card__title'><h3 data-toggle-sel='#$i' class='mdl-card__title-text $h_toggler'>$h</h3></div>";
-      if(!empty($b)) $html .="<div class='mdl-card__supporting-text blockbody'>$b</div>";
-      $html .= "</section></div>\n";
-      return $html;
-    }
-    $html = "<section id='$i'>";
-    $h_toggler = $hidable ? " shm-toggler" : "";
-    if(!empty($h)) $html .= "<h3 data-toggle-sel='#$i' class='$h_toggler'>$h</h3>";
-    if(!empty($b)) $html .= "<div class='blockbody'>$b</div>";
-    $html .= "</section>\n";
-    return $html;
-  }
-
 }
 
 

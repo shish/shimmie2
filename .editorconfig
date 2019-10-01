@@ -1,0 +1,21 @@
+# In retrospect I'm less of a fan of tabs for indentation, because
+# while they're better when they work, they're worse when they don't
+# work, and so many people use terrible editors when they don't work
+# that everything is inconsistent... but tabs are what Shimmie went
+# with back in the 90's, so that's what we use now, and we deal with
+# the pain of making sure everybody configures their editor properly
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{js,css,php}]
+charset = utf-8
+indent_style = space
+indent_size = 4
+

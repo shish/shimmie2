@@ -1,0 +1,8 @@
+vendor
+.git
+*.phar
+data
+images
+thumbs
+composer.lock
+*.sqlite

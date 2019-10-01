@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * Name: System
+ * Author: Matthew Barbour <matthew@darkholme.net>
+ * Description: Provides system screen
+ */
+
+class SystemInfo extends ExtensionInfo
+{
+    public const KEY = "system";
+
+    public $key = self::KEY;
+    public $name = "System";
+    public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
+    public $license = self::LICENSE_WTFPL;
+    public $description = "Provides system screen";
+    public $core = true;
+}

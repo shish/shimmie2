@@ -1,3 +1,4 @@
 <?php
-class Themelet extends BaseThemelet {}
-
+class Themelet extends BaseThemelet
+{
+}

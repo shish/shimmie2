@@ -1,7 +1,17 @@
 <phpunit bootstrap="../tests/bootstrap.php" colors="true">
 	<testsuites>
-		<testsuite name="shimmie">
+		<testsuite name="core">
+			<directory suffix="test.php">../core/</directory>
+		</testsuite>
+		<testsuite name="ext">
 			<directory suffix="test.php">../ext/</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist>
+			<directory suffix=".php">../core</directory>
+			<directory suffix=".php">../ext</directory>
+			<directory suffix=".php">../themes/default</directory>
+		</whitelist>
+	</filter>
 </phpunit>

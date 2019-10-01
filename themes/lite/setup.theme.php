@@ -6,12 +6,14 @@
  * A customised version of the Setup theme.
  *
  */
-class CustomSetupTheme extends SetupTheme {
-	protected function sb_to_html(SetupBlock $block) {
-		$h = $block->header;
-		$b = $block->body;
-		$i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
-		$html = "
+class CustomSetupTheme extends SetupTheme
+{
+    protected function sb_to_html(SetupBlock $block)
+    {
+        $h = $block->header;
+        $b = $block->body;
+        $i = preg_replace('/[^a-zA-Z0-9]/', '_', $h) . "-setup";
+        $html = "
 			<script type='text/javascript'><!--
 			$(document).ready(function() {
 				$(\"#$i-toggle\").click(function() {
@@ -35,7 +37,6 @@ class CustomSetupTheme extends SetupTheme {
 			</div>
 		";
 
-		return $this->rr($html);
-	}
+        return $this->rr($html);
+    }
 }
-

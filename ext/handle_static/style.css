@@ -1,0 +1,74 @@
+
+ARTICLE SELECT {width: 150px;}
+INPUT, TEXTAREA {box-sizing: border-box;}
+TD>INPUT[type="button"],
+TD>INPUT[type="submit"],
+TD>INPUT[type="text"],
+TD>INPUT[type="password"],
+TD>INPUT[type="email"],
+TD>SELECT,
+TD>TEXTAREA,
+TD>BUTTON {width: 100%;}
+
+TABLE.form {width: 300px;}
+TABLE.form TD, TABLE.form TH {vertical-align: middle;}
+TABLE.form TBODY TD {text-align: left;}
+TABLE.form TBODY TH {text-align: right; padding-right: 4px; width: 1%; white-space: nowrap;}
+TABLE.form TD + TH {padding-left: 8px;}
+
+*[onclick],
+H3[class~="shm-toggler"],
+.sortable TH {
+	cursor: pointer;
+}
+IMG {border: none;}
+FORM {margin: 0px;}
+IMG.lazy {display: none;}
+
+#flash {
+	background: #FF7;
+	display: block;
+	padding: 8px;
+	margin: 8px;
+	border: 1px solid #882;
+}
+
+#installer {
+	background: #EEE;
+	font-family: "Arial", sans-serif;
+	font-size: 14px;
+	width: 512px;
+	margin: 16px auto auto;
+	border: 1px solid black;
+	border-radius: 16px;
+}
+#installer P {
+	padding: 5px;
+}
+#installer A {
+	text-decoration: none;
+}
+#installer A:hover {
+	text-decoration: underline;
+}
+#installer H1, #installer H3 {
+	background: #DDD;
+	text-align: center;
+	margin: 0px;
+	padding: 2px;
+}
+#installer H1 {
+	border-bottom: 1px solid black;
+	border-radius: 16px 16px 0px 0px;
+}
+#installer H3 {
+	border-bottom: 1px solid black;
+}
+#installer TH {
+	text-align: right;
+}
+#installer INPUT,
+#installer SELECT {
+	width: 100%;
+	box-sizing: border-box;
+}

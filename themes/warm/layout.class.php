@@ -2,65 +2,65 @@
 /**
  * A class to turn a Page data structure into a blob of HTML
  */
-class Layout {
-	/**
-	 * turns the Page into HTML
-	 *
-	 * @param Page $page
-	 */
-	public function display_page(Page $page) {
-		global $config;
+class Layout
+{
+    /**
+     * turns the Page into HTML
+     */
+    public function display_page(Page $page)
+    {
+        global $config;
 
-		//$theme_name = $config->get_string('theme', 'default');
-		$site_name = $config->get_string('title');
-		$data_href = get_base_href();
-		$main_page = $config->get_string('main_page');
-		$contact_link = contact_link();
-		$header_html = $page->get_all_html_headers();
+        //$theme_name = $config->get_string(SetupConfig::THEME, 'default');
+        $site_name = $config->get_string(SetupConfig::TITLE);
+        $data_href = get_base_href();
+        $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
+        $contact_link = contact_link();
+        $header_html = $page->get_all_html_headers();
 
-		$left_block_html = "";
-		$main_block_html = "";
-		$head_block_html = "";
-		$sub_block_html = "";
+        $left_block_html = "";
+        $main_block_html = "";
+        $head_block_html = "";
+        $sub_block_html = "";
 
-		foreach($page->blocks as $block) {
-			switch($block->section) {
-				case "left":
-					$left_block_html .= $block->get_html(true);
-					break;
-				case "head":
-					$head_block_html .= "<td width='250'><small>".$block->get_html(false)."</small></td>";
-					break;
-				case "main":
-					$main_block_html .= $block->get_html(false);
-					break;
-				case "subheading":
-					$sub_block_html .= $block->body; // $this->block_to_html($block, true);
-					break;
-				default:
-					print "<p>error: {$block->header} using an unknown section ({$block->section})";
-					break;
-			}
-		}
+        foreach ($page->blocks as $block) {
+            switch ($block->section) {
+                case "left":
+                    $left_block_html .= $block->get_html(true);
+                    break;
+                case "head":
+                    $head_block_html .= "<td width='250'><small>".$block->get_html(false)."</small></td>";
+                    break;
+                case "main":
+                    $main_block_html .= $block->get_html(false);
+                    break;
+                case "subheading":
+                    $sub_block_html .= $block->body; // $this->block_to_html($block, true);
+                    break;
+                default:
+                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
+                    break;
+            }
+        }
 
-		$debug = get_debug_info();
+        $debug = get_debug_info();
 
-		$contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-		/*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
+        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+        /*$subheading = empty($page->subheading) ? "" : "<div id='subtitle'>{$page->subheading}</div>";
 
-		$wrapper = "";
-		if(strlen($page->heading) > 100) {
-			$wrapper = ' style="height: 3em; overflow: auto;"';
-		}
-		*/
+        $wrapper = "";
+        if(strlen($page->heading) > 100) {
+            $wrapper = ' style="height: 3em; overflow: auto;"';
+        }
+        */
 
-		$flash = $page->get_cookie("flash_message");
-		$flash_html = "";
-		if($flash) {
-			$flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-		}
+        $flash = $page->get_cookie("flash_message");
+        $flash_html = "";
+        if ($flash) {
+            $flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
+        }
 
-		print <<<EOD
+        print <<<EOD
 <!doctype html>
 <!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
 <!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
@@ -93,10 +93,10 @@ $header_html
 		</article>
 		<footer>
 			Images &copy; their respective owners,
-			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
-			<a href="http://www.shishnet.org/">Shish</a> &amp;
+			<a href="https://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
+			<a href="https://www.shishnet.org/">Shish</a> &amp;
 			<a href="https://github.com/shish/shimmie2/graphs/contributors">The Team</a>
-			2007-2016,
+			2007-2019,
 			based on the Danbooru concept.
 			$debug
 			$contact
@@ -104,6 +104,5 @@ $header_html
 	</body>
 </html>
 EOD;
-	}
+    }
 }
-

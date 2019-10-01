@@ -1,8 +1,10 @@
 language: php
 php:
-  - 5.6
-  - 7.0
-  - 7.1
+  - 7.3
+
+services:
+  - mysql
+  - postgresql
 
 sudo: false
 
@@ -10,8 +12,6 @@ env:
   matrix:
     - DB=mysql
     - DB=pgsql
-    - DB=sqlite
-  allow_failures:
     - DB=sqlite
 
 cache:
@@ -35,11 +35,13 @@ install:
     if [[ "$DB" == "mysql" ]]; then
         mysql -e "SET GLOBAL general_log = 'ON';" -uroot ;
         mysql -e "CREATE DATABASE shimmie;" -uroot ;
-        echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=localhost;dbname=shimmie");' > data/config/auto_install.conf.php ;
+        echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
     fi
-  - if [[ "$DB" == "sqlite" ]]; then echo '<?php define("DATABASE_DSN", "sqlite:shimmie.sqlite");' > data/config/auto_install.conf.php ; fi
+  - if [[ "$DB" == "sqlite" ]]; then
+        echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
+    fi
   - composer install
-  - php install.php
+  - php index.php
 
 script:
   - vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover

@@ -29,7 +29,7 @@ check out one of the versioned branches.
 # Requirements
 
 - MySQL/MariaDB 5.1+ (with experimental support for PostgreSQL 9+ and SQLite 3)
-- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (5.6+ as of writing)
+- [Stable PHP](https://en.wikipedia.org/wiki/PHP#Release_history) (7.1+ as of writing)
 - GD or ImageMagick
 
 # Installation
@@ -50,40 +50,35 @@ check out one of the versioned branches.
 4. Run `composer install` in the shimmie folder.
 5. Follow instructions noted in "Installation" starting from step 3.
 
-## Upgrade from 2.3.X
+# Docker
 
-1. Backup your current files and database!
-2. Unzip into a clean folder
-3. Copy across the images, thumbs, and data folders
-4. Move `old/config.php` to `new/data/config/shimmie.conf.php`
-5. Edit `shimmie.conf.php` to use the new database connection format:
+Useful for testing in a known-good environment, this command will build a
+simple debian image and run all the unit tests inside it:
 
-OLD Format:
-```php
-$database_dsn = "<proto>://<username>:<password>@<host>/<database>";
+```
+docker build -t shimmie .
 ```
 
-NEW Format:
-```php
-define("DATABASE_DSN", "<proto>:user=<username>;password=<password>;host=<host>;dbname=<database>");
+Once you have an image which has passed all tests, you can then run it to get
+a live system:
+
+```
+docker run -p 0.0.0.0:8123:8000 shimmie
 ```
 
-The rest should be automatic~
+Then you can visit your server on port 8123 to see the site.
 
-If there are any errors with the upgrade process, `in_upgrade=true` will
-be left in the config table and the process will be paused for the admin
-to investigate.
-
-Deleting this config entry and refreshing the page should continue the upgrade from where it left off.
-
+Note that the docker image is entirely self-contained and has no persistence
+(assuming you use the sqlite database); each `docker run` will give a clean
+un-installed image.
 
 ### Upgrade from earlier versions
 
 I very much recommend going via each major release in turn (eg, 2.0.6
 -> 2.1.3 -> 2.2.4 -> 2.3.0 rather than 2.0.6 -> 2.3.0).
 
-While the basic database and file formats haven't changed *completely*, it's different
-enough to be a pain.
+While the basic database and file formats haven't changed *completely*, it's
+different enough to be a pain.
 
 
 ## Custom Configuration
@@ -91,7 +86,7 @@ enough to be a pain.
 Various aspects of Shimmie can be configured to suit your site specific needs
 via the file `data/config/shimmie.conf.php` (created after installation).
 
-Take a look at `core/sys_config.inc.php` for the available options that can
+Take a look at `core/sys_config.php` for the available options that can
 be used.
 
 
@@ -100,35 +95,36 @@ be used.
 User classes can be added to or altered by placing them in
 `data/config/user-classes.conf.php`.
 
-For example, one can override the default anonymous "allow nothing" permissions like so:
+For example, one can override the default anonymous "allow nothing"
+permissions like so:
 
 ```php
-new UserClass("anonymous", "base", array(
-	"create_comment" => True,
-	"edit_image_tag" => True,
-	"edit_image_source" => True,
-	"create_image_report" => True,
-));
+new UserClass("anonymous", "base", [
+	Permissions::CREATE_COMMENT => True,
+	Permissions::EDIT_IMAGE_TAG => True,
+	Permissions::EDIT_IMAGE_SOURCE => True,
+	Permissions::CREATE_IMAGE_REPORT => True,
+]);
 ```
 
 For a moderator class, being a regular user who can delete images and comments:
 
 ```php
-new UserClass("moderator", "user", array(
-	"delete_image" => True,
-	"delete_comment" => True,
-));
+new UserClass("moderator", "user", [
+	Permissions::DELETE_IMAGE => True,
+	Permissions::DELETE_COMMENT => True,
+]);
 ```
 
-For a list of permissions, see `core/userclass.class.php`
+For a list of permissions, see `core/permissions.php`
 
 
 # Development Info
 
-ui-* cookies are for the client-side scripts only; in some configurations
+ui-\* cookies are for the client-side scripts only; in some configurations
 (eg with varnish cache) they will be stripped before they reach the server
 
-shm-* CSS classes are for javascript to hook into; if you're customising
+shm-\* CSS classes are for javascript to hook into; if you're customising
 themes, be careful with these, and avoid styling them, eg:
 
 - shm-thumb = outermost element of a thumbnail

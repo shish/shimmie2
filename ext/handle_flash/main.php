@@ -1,67 +1,71 @@
 <?php
-/*
- * Name: Handle Flash
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle Flash files. (No thumbnail is generated for flash files)
- */
 
-class FlashFileHandler extends DataHandlerExtension {
-	/**
-	 * @param string $hash
-	 * @return bool
-	 */
-	protected function create_thumb($hash) {
-		copy("ext/handle_flash/thumb.jpg", warehouse_path("thumbs", $hash));
-		return true;
-	}
+class FlashFileHandler extends DataHandlerExtension
+{
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        switch ($event->ext) {
+            case "swf":
+                $event->lossless = true;
+                $event->video = true;
 
-	/**
-	 * @param string $ext
-	 * @return bool
-	 */
-	protected function supported_ext($ext) {
-		$exts = array("swf");
-		return in_array(strtolower($ext), $exts);
-	}
+                $info = getimagesize($event->file_name);
+                if (!$info) {
+                    return null;
+                }
 
-	/**
-	 * @param string $filename
-	 * @param array $metadata
-	 * @return Image|null
-	 */
-	protected function create_image_from_data(/*string*/ $filename, /*array*/ $metadata) {
-		$image = new Image();
+                $event->width = $info[0];
+                $event->height = $info[1];
 
-		$image->filesize  = $metadata['size'];
-		$image->hash	  = $metadata['hash'];
-		$image->filename  = $metadata['filename'];
-		$image->ext       = $metadata['extension'];
-		$image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-		$image->source    = $metadata['source'];
+                break;
+        }
+    }
 
-		$info = getimagesize($filename);
-		if(!$info) return null;
+    protected function create_thumb(string $hash, string $type): bool
+    {
+        global $config;
 
-		$image->width = $info[0];
-		$image->height = $info[1];
+        if (!Media::create_thumbnail_ffmpeg($hash)) {
+            copy("ext/handle_flash/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
+        }
+        return true;
+    }
 
-		return $image;
-	}
+    protected function supported_ext(string $ext): bool
+    {
+        $exts = ["swf"];
+        return in_array(strtolower($ext), $exts);
+    }
 
-	/**
-	 * @param string $file
-	 * @return bool
-	 */
-	protected function check_contents(/*string*/ $file) {
-		if (!file_exists($file)) return false;
+    protected function create_image_from_data(string $filename, array $metadata)
+    {
+        $image = new Image();
 
-		$fp = fopen($file, "r");
-		$head = fread($fp, 3);
-		fclose($fp);
-		if (!in_array($head, array("CWS", "FWS"))) return false;
+        $image->filesize  = $metadata['size'];
+        $image->hash	  = $metadata['hash'];
+        $image->filename  = $metadata['filename'];
+        $image->ext       = $metadata['extension'];
+        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
+        $image->source    = $metadata['source'];
 
-		return true;
-	}
+
+
+        return $image;
+    }
+
+    protected function check_contents(string $tmpname): bool
+    {
+        if (!file_exists($tmpname)) {
+            return false;
+        }
+
+        $fp = fopen($tmpname, "r");
+        $head = fread($fp, 3);
+        fclose($fp);
+        if (!in_array($head, ["CWS", "FWS"])) {
+            return false;
+        }
+
+        return true;
+    }
 }
-
