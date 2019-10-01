@@ -20,34 +20,6 @@ class NoCache implements CacheEngine
     }
 }
 
-class MemcacheCache implements CacheEngine
-{
-    /** @var ?Memcache */
-    public $memcache=null;
-
-    public function __construct(string $args)
-    {
-        $hp = explode(":", $args);
-        $this->memcache = new Memcache;
-        @$this->memcache->pconnect($hp[0], $hp[1]);
-    }
-
-    public function get(string $key)
-    {
-        return $this->memcache->get($key);
-    }
-
-    public function set(string $key, $val, int $time=0)
-    {
-        $this->memcache->set($key, $val, false, $time);
-    }
-
-    public function delete(string $key)
-    {
-        $this->memcache->delete($key);
-    }
-}
-
 class MemcachedCache implements CacheEngine
 {
     /** @var ?Memcached */
@@ -171,9 +143,7 @@ class Cache
         $matches = [];
         $c = null;
         if ($dsn && preg_match("#(.*)://(.*)#", $dsn, $matches) && !isset($_GET['DISABLE_CACHE'])) {
-            if ($matches[1] == "memcache") {
-                $c = new MemcacheCache($matches[2]);
-            } elseif ($matches[1] == "memcached") {
+            if ($matches[1] == "memcached") {
                 $c = new MemcachedCache($matches[2]);
             } elseif ($matches[1] == "apc") {
                 $c = new APCCache($matches[2]);
