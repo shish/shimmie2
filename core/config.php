@@ -135,7 +135,7 @@ abstract class BaseConfig implements Config
 
     public function set_int(string $name, ?string $value): void
     {
-        $this->values[$name] = parse_shorthand_int($value);
+        $this->values[$name] = is_null($value) ? null : parse_shorthand_int($value);
         $this->save($name);
     }
 
