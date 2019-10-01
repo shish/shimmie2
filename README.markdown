@@ -15,11 +15,6 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 (master)
 
-[![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=develop)](https://travis-ci.org/shish/shimmie2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=develop)
-[![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=develop)
-(develop)
-
 This is the main branch of Shimmie, if you know anything at all about running
 websites, this is the version to use.
 
@@ -44,7 +39,7 @@ check out one of the versioned branches.
 
 # Installation (Development)
 
-1. Download shimmie via the "Download Zip" button on the [develop](https://github.com/shish/shimmie2/tree/develop) branch.
+1. Download shimmie via the "Download Zip" button on the [master](https://github.com/shish/shimmie2/tree/master) branch.
 2. Unzip shimmie into a folder on the web host
 3. Install [Composer](https://getcomposer.org/). (If you don't already have it)
 4. Run `composer install` in the shimmie folder.
