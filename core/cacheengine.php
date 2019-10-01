@@ -32,7 +32,7 @@ class MemcachedCache implements CacheEngine
         #$this->memcache->setOption(Memcached::OPT_COMPRESSION, False);
         #$this->memcache->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_PHP);
         #$this->memcache->setOption(Memcached::OPT_PREFIX_KEY, phpversion());
-        $this->memcache->addServer($hp[0], $hp[1]);
+        $this->memcache->addServer($hp[0], (int)$hp[1]);
     }
 
     public function get(string $key)
@@ -106,7 +106,7 @@ class RedisCache implements CacheEngine
     {
         $this->redis = new Redis();
         $hp = explode(":", $args);
-        $this->redis->pconnect($hp[0], $hp[1]);
+        $this->redis->pconnect($hp[0], (int)$hp[1]);
         $this->redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_PHP);
         $this->redis->setOption(Redis::OPT_PREFIX, 'shm:');
     }
