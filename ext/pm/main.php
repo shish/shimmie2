@@ -122,7 +122,7 @@ class PrivMsg extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $cache, $database, $page, $user;
         if ($event->page_matches("pm")) {
             if (!$user->is_anonymous()) {
                 switch ($event->get_arg(0)) {
@@ -135,7 +135,7 @@ class PrivMsg extends Extension
                             $from_user = User::by_id(int_escape($pm["from_id"]));
                             if ($pm["to_id"] == $user->id) {
                                 $database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", ["id" => $pm_id]);
-                                $database->cache->delete("pm-count-{$user->id}");
+                                $cache->delete("pm-count-{$user->id}");
                             }
                             $this->theme->display_message($page, $from_user, $user, new PM($pm));
                         } else {
@@ -150,7 +150,7 @@ class PrivMsg extends Extension
                                 $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
                             } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
                                 $database->execute("DELETE FROM private_message WHERE id = :id", ["id" => $pm_id]);
-                                $database->cache->delete("pm-count-{$user->id}");
+                                $cache->delete("pm-count-{$user->id}");
                                 log_info("pm", "Deleted PM #$pm_id", "PM deleted");
                                 $page->set_mode(PageMode::REDIRECT);
                                 $page->set_redirect($_SERVER["HTTP_REFERER"]);
@@ -179,7 +179,7 @@ class PrivMsg extends Extension
 
     public function onSendPM(SendPMEvent $event)
     {
-        global $database;
+        global $cache, $database;
         $database->execute(
             "
 				INSERT INTO private_message(
@@ -189,7 +189,7 @@ class PrivMsg extends Extension
             ["fromid" => $event->pm->from_id, "fromip" => $event->pm->from_ip,
             "toid" => $event->pm->to_id, "subject" => $event->pm->subject, "message" => $event->pm->message]
         );
-        $database->cache->delete("pm-count-{$event->pm->to_id}");
+        $cache->delete("pm-count-{$event->pm->to_id}");
         log_info("pm", "Sent PM to User #{$event->pm->to_id}");
     }
 
@@ -216,9 +216,9 @@ class PrivMsg extends Extension
 
     private function count_pms(User $user)
     {
-        global $database;
+        global $cache, $database;
 
-        $count = $database->cache->get("pm-count:{$user->id}");
+        $count = $cache->get("pm-count:{$user->id}");
         if (is_null($count) || $count === false) {
             $count = $database->get_one("
 					SELECT count(*)
@@ -226,7 +226,7 @@ class PrivMsg extends Extension
 					WHERE to_id = :to_id
 					AND is_read = :is_read
 			", ["to_id" => $user->id, "is_read" => "N"]);
-            $database->cache->set("pm-count:{$user->id}", $count, 600);
+            $cache->set("pm-count:{$user->id}", $count, 600);
         }
         return $count;
     }

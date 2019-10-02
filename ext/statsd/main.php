@@ -13,7 +13,7 @@ class StatsDInterface extends Extension
 
     private function _stats(string $type)
     {
-        global $_shm_event_count, $database, $_shm_load_start;
+        global $_shm_event_count, $cache, $database, $_shm_load_start;
         $time = microtime(true) - $_shm_load_start;
         StatsDInterface::$stats["shimmie.$type.hits"] = "1|c";
         StatsDInterface::$stats["shimmie.$type.time"] = "$time|ms";
@@ -22,8 +22,8 @@ class StatsDInterface extends Extension
         StatsDInterface::$stats["shimmie.$type.files"] = count(get_included_files())."|c";
         StatsDInterface::$stats["shimmie.$type.queries"] = $database->query_count."|c";
         StatsDInterface::$stats["shimmie.$type.events"] = $_shm_event_count."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $database->cache->get_hits()."|c";
-        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $database->cache->get_misses()."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-hits"] = $cache->get_hits()."|c";
+        StatsDInterface::$stats["shimmie.$type.cache-misses"] = $cache->get_misses()."|c";
     }
 
     public function onPageRequest(PageRequestEvent $event)

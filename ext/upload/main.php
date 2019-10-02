@@ -165,7 +165,7 @@ class Upload extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $cache, $page, $user;
 
         if ($user->can(Permissions::CREATE_IMAGE)) {
             if ($this->is_full) {
@@ -219,14 +219,14 @@ class Upload extends Extension
                             }
                         }
                     }
-                    $database->cache->delete("thumb-block:{$image_id}");
+                    $cache->delete("thumb-block:{$image_id}");
                     $this->theme->display_upload_status($page, $ok);
                 } elseif (!empty($_GET['url'])) {
                     $url = $_GET['url'];
                     $tags = isset($_GET['tags']) ? Tag::explode($_GET['tags']) : 'tagme';
                     $source = isset($_GET['source']) ? $_GET['source'] : $url;
                     $ok = $this->try_transload($url, $tags, $source, $image_id);
-                    $database->cache->delete("thumb-block:{$image_id}");
+                    $cache->delete("thumb-block:{$image_id}");
                     $this->theme->display_upload_status($page, $ok);
                 } else {
                     $this->theme->display_replace_page($page, $image_id);

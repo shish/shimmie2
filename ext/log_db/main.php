@@ -39,7 +39,7 @@ class LogDatabase extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $user;
+        global $cache, $database, $user;
         if ($event->page_matches("log/view")) {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $wheres = [];
@@ -95,12 +95,12 @@ class LogDatabase extends Extension
 
                 $limit = 50;
                 $offset = ($page_num-1) * $limit;
-                $page_total = $database->cache->get("event_log_length");
+                $page_total = $cache->get("event_log_length");
                 if (!$page_total) {
                     $page_total = $database->get_one("SELECT count(*) FROM score_log $where", $args);
                     // don't cache a length of zero when the extension is first installed
                     if ($page_total > 10) {
-                        $database->cache->set("event_log_length", $page_total, 600);
+                        $cache->set("event_log_length", $page_total, 600);
                     }
                 }
 

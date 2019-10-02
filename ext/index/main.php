@@ -79,7 +79,7 @@ class Index extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $cache, $page, $user;
         if ($event->page_matches("post/list")) {
             if (isset($_GET['search'])) {
                 // implode(explode()) to resolve aliases and sanitise
@@ -123,10 +123,10 @@ class Index extends Extension
                     }
                     if ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
-                        $images = $database->cache->get("post-list:$page_number");
+                        $images = $cache->get("post-list:$page_number");
                         if (!$images) {
                             $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
-                            $database->cache->set("post-list:$page_number", $images, 60);
+                            $cache->set("post-list:$page_number", $images, 60);
                         }
                     }
                 }
@@ -175,9 +175,9 @@ class Index extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
-        global $database;
+        global $cache;
         if (SPEED_HAX) {
-            $database->cache->delete("thumb-block:{$event->image->id}");
+            $cache->delete("thumb-block:{$event->image->id}");
         }
     }
 

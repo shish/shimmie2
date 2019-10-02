@@ -20,7 +20,7 @@ class TagList extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $database;
+        global $cache, $page, $database;
 
         if ($event->page_matches("tags")) {
             $this->theme->set_navigation($this->build_navigation());
@@ -60,7 +60,7 @@ class TagList extends Extension
             }
 
             $res = null;
-            $database->cache->get($cache_key);
+            $cache->get($cache_key);
             if (!$res) {
                 $res = $database->get_col($database->scoreql_to_sql("
 					SELECT tag
@@ -69,7 +69,7 @@ class TagList extends Extension
 						AND count > 0
 					$limitSQL
 				"), $SQLarr);
-                $database->cache->set($cache_key, $res, 600);
+                $cache->set($cache_key, $res, 600);
             }
 
             $page->set_mode(PageMode::DATA);
@@ -183,10 +183,10 @@ class TagList extends Extension
 
     private static function get_omitted_tags(): array
     {
-        global $config, $database;
+        global $cache, $config, $database;
         $tags_config =  $config->get_string(TagListConfig::OMIT_TAGS);
 
-        $results = $database->cache->get("tag_list_omitted_tags:".$tags_config);
+        $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
         if ($results==null) {
             $results = [];
@@ -213,7 +213,7 @@ class TagList extends Extension
 
             $results = $database->get_col("SELECT id FROM tags WHERE " . implode(" OR ", $where), $args);
 
-            $database->cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
+            $cache->set("tag_list_omitted_tags:" . $tags_config, $results, 600);
         }
         return $results;
     }
@@ -531,9 +531,9 @@ class TagList extends Extension
 
     private function add_popular_block(Page $page)
     {
-        global $database, $config;
+        global $cache, $database, $config;
 
-        $tags = $database->cache->get("popular_tags");
+        $tags = $cache->get("popular_tags");
         if (empty($tags)) {
             $omitted_tags = self::get_omitted_tags();
 
@@ -560,7 +560,7 @@ class TagList extends Extension
 
             $tags = $database->get_all($query, $args);
 
-            $database->cache->set("popular_tags", $tags, 600);
+            $cache->set("popular_tags", $tags, 600);
         }
         if (count($tags) > 0) {
             $this->theme->display_popular_block($page, $tags);
@@ -589,12 +589,12 @@ class TagList extends Extension
 
     public static function get_related_tags(array $search, int $limit): array
     {
-        global $config, $database;
+        global $cache, $database;
 
 
         $wild_tags = $search;
         $str_search = Tag::implode($search);
-        $related_tags = $database->cache->get("related_tags:$str_search");
+        $related_tags = $cache->get("related_tags:$str_search");
 
         if (empty($related_tags)) {
             // $search_tags = array();
@@ -645,7 +645,7 @@ class TagList extends Extension
                 $args = ["limit" => $limit];
 
                 $related_tags = $database->get_all($query, $args);
-                $database->cache->set("related_tags:$str_search", $related_tags, 60 * 60);
+                $cache->set("related_tags:$str_search", $related_tags, 60 * 60);
             }
         }
         if ($related_tags === false) {

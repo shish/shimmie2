@@ -263,13 +263,13 @@ class CommentList extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
-        global $config, $database;
+        global $cache, $config, $database;
         $cc = $config->get_int("comment_count");
         if ($cc > 0) {
-            $recent = $database->cache->get("recent_comments");
+            $recent = $cache->get("recent_comments");
             if (empty($recent)) {
                 $recent = $this->get_recent_comments($cc);
-                $database->cache->set("recent_comments", $recent, 60);
+                $cache->set("recent_comments", $recent, 60);
             }
             if (count($recent) > 0) {
                 $this->theme->display_recent_comments($recent);
@@ -370,17 +370,17 @@ class CommentList extends Extension
     // page building {{{
     private function build_page(int $current_page)
     {
-        global $database, $user;
+        global $cache, $database, $user;
 
         $where = SPEED_HAX ? "WHERE posted > now() - interval '24 hours'" : "";
 
-        $total_pages = $database->cache->get("comment_pages");
+        $total_pages = $cache->get("comment_pages");
         if (empty($total_pages)) {
             $total_pages = (int)($database->get_one("
 				SELECT COUNT(c1)
 				FROM (SELECT COUNT(image_id) AS c1 FROM comments $where GROUP BY image_id) AS s1
 			") / 10);
-            $database->cache->set("comment_pages", $total_pages, 600);
+            $cache->set("comment_pages", $total_pages, 600);
         }
         $total_pages = max($total_pages, 1);
 

@@ -66,8 +66,8 @@ class User
 
     public static function by_session(string $name, string $session): ?User
     {
-        global $config, $database;
-        $row = $database->cache->get("user-session:$name-$session");
+        global $cache, $config, $database;
+        $row = $cache->get("user-session:$name-$session");
         if (!$row) {
             if ($database->get_driver_name() === DatabaseDriver::MYSQL) {
                 $query = "SELECT * FROM users WHERE name = :name AND md5(concat(pass, :ip)) = :sess";
@@ -75,23 +75,23 @@ class User
                 $query = "SELECT * FROM users WHERE name = :name AND md5(pass || :ip) = :sess";
             }
             $row = $database->get_row($query, ["name"=>$name, "ip"=>get_session_ip($config), "sess"=>$session]);
-            $database->cache->set("user-session:$name-$session", $row, 600);
+            $cache->set("user-session:$name-$session", $row, 600);
         }
         return is_null($row) ? null : new User($row);
     }
 
     public static function by_id(int $id): ?User
     {
-        global $database;
+        global $cache, $database;
         if ($id === 1) {
-            $cached = $database->cache->get('user-id:'.$id);
+            $cached = $cache->get('user-id:'.$id);
             if ($cached) {
                 return new User($cached);
             }
         }
         $row = $database->get_row("SELECT * FROM users WHERE id = :id", ["id"=>$id]);
         if ($id === 1) {
-            $database->cache->set('user-id:'.$id, $row, 600);
+            $cache->set('user-id:'.$id, $row, 600);
         }
         return is_null($row) ? null : new User($row);
     }

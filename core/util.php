@@ -305,7 +305,7 @@ function path_to_tags(string $path): string
     $path = dirname($path);
     $path = str_replace(";", ":", $path);
     $path = str_replace("__", " ", $path);
-    
+
 
     $category = "";
     foreach (explode("/", $path) as $dir) {
@@ -366,7 +366,7 @@ $_shm_load_start = microtime(true);
  */
 function get_debug_info(): string
 {
-    global $config, $_shm_event_count, $database, $_shm_load_start;
+    global $cache, $config, $_shm_event_count, $database, $_shm_load_start;
 
     $i_mem = sprintf("%5.2f", ((memory_get_peak_usage(true)+512)/1024)/1024);
 
@@ -378,8 +378,8 @@ function get_debug_info(): string
     $time = sprintf("%.2f", microtime(true) - $_shm_load_start);
     $dbtime = sprintf("%.2f", $database->dbtime);
     $i_files = count(get_included_files());
-    $hits = $database->cache->get_hits();
-    $miss = $database->cache->get_misses();
+    $hits = $cache->get_hits();
+    $miss = $cache->get_misses();
 
     $debug = "<br>Took $time seconds (db:$dbtime) and {$i_mem}MB of RAM";
     $debug .= "; Used $i_files files and {$database->query_count} queries";

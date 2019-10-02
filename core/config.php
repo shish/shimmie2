@@ -319,6 +319,8 @@ class DatabaseConfig extends BaseConfig
         string $sub_column = null,
         string $sub_value = null
     ) {
+        global $cache;
+
         $this->database = $database;
         $this->table_name = $table_name;
         $this->sub_value = $sub_value;
@@ -329,7 +331,7 @@ class DatabaseConfig extends BaseConfig
             $cache_name .= "_".$sub_value;
         }
 
-        $cached = $this->database->cache->get($cache_name);
+        $cached = $cache->get($cache_name);
         if ($cached) {
             $this->values = $cached;
         } else {
@@ -346,12 +348,14 @@ class DatabaseConfig extends BaseConfig
             foreach ($this->database->get_all($query, $args) as $row) {
                 $this->values[$row["name"]] = $row["value"];
             }
-            $this->database->cache->set($cache_name, $this->values);
+            $cache->set($cache_name, $this->values);
         }
     }
 
     public function save(string $name=null): void
     {
+        global $cache;
+
         if (is_null($name)) {
             reset($this->values); // rewind the array to the first element
             foreach ($this->values as $name => $value) {
@@ -379,7 +383,7 @@ class DatabaseConfig extends BaseConfig
         }
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
-        $this->database->cache->set("config", $this->values);
+        $cache->set("config", $this->values);
     }
 }
 

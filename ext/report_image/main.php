@@ -89,21 +89,21 @@ class ReportImage extends Extension
 
     public function onAddReportedImage(AddReportedImageEvent $event)
     {
-        global $database;
+        global $cache, $database;
         log_info("report_image", "Adding report of Image #{$event->report->image_id} with reason '{$event->report->reason}'", null, ["image_id" => $event->report->image_id]);
         $database->Execute(
             "INSERT INTO image_reports(image_id, reporter_id, reason)
 				VALUES (?, ?, ?)",
             [$event->report->image_id, $event->report->user_id, $event->report->reason]
         );
-        $database->cache->delete("image-report-count");
+        $cache->delete("image-report-count");
     }
 
     public function onRemoveReportedImage(RemoveReportedImageEvent $event)
     {
-        global $database;
+        global $cache, $database;
         $database->Execute("DELETE FROM image_reports WHERE id = ?", [$event->id]);
-        $database->cache->delete("image-report-count");
+        $cache->delete("image-report-count");
     }
 
     public function onUserPageBuilding(UserPageBuildingEvent $event)
@@ -149,9 +149,9 @@ class ReportImage extends Extension
 
     public function onImageDeletion(ImageDeletionEvent $event)
     {
-        global $database;
+        global $cache, $database;
         $database->Execute("DELETE FROM image_reports WHERE image_id = ?", [$event->image->id]);
-        $database->cache->delete("image-report-count");
+        $cache->delete("image-report-count");
     }
 
     public function onUserDeletion(UserDeletionEvent $event)
@@ -176,9 +176,9 @@ class ReportImage extends Extension
 
     public function delete_reports_by(int $user_id)
     {
-        global $database;
+        global $cache, $database;
         $database->execute("DELETE FROM image_reports WHERE reporter_id=?", [$user_id]);
-        $database->cache->delete("image-report-count");
+        $cache->delete("image-report-count");
     }
 
     protected function install()
@@ -247,12 +247,12 @@ class ReportImage extends Extension
 
     public function count_reported_images(): int
     {
-        global $database;
+        global $cache, $database;
 
-        $count = $database->cache->get("image-report-count");
+        $count = $cache->get("image-report-count");
         if (is_null($count) || $count === false) {
             $count = $database->get_one("SELECT count(*) FROM image_reports");
-            $database->cache->set("image-report-count", $count, 600);
+            $cache->set("image-report-count", $count, 600);
         }
 
         return $count;

@@ -41,16 +41,16 @@ class Image
 
     /** @var int */
     public $owner_id;
-    
+
     /** @var string */
     public $owner_ip;
-    
+
     /** @var string */
     public $posted;
-    
+
     /** @var string */
     public $source;
-    
+
     /** @var boolean */
     public $locked = false;
 
@@ -291,14 +291,14 @@ class Image
      */
     public static function count_images(array $tags=[]): int
     {
-        global $database;
+        global $cache, $database;
         $tag_count = count($tags);
 
         if ($tag_count === 0) {
-            $total = $database->cache->get("image-count");
+            $total = $cache->get("image-count");
             if (!$total) {
                 $total = $database->get_one("SELECT COUNT(*) FROM images");
-                $database->cache->set("image-count", $total, 600);
+                $cache->set("image-count", $total, 600);
             }
         } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
             $total = $database->get_one(
@@ -682,7 +682,7 @@ class Image
      */
     public function set_tags(array $unfiltered_tags): void
     {
-        global $database;
+        global $cache, $database;
 
         $unfiltered_tags = array_unique($unfiltered_tags);
 
@@ -755,7 +755,7 @@ class Image
             }
 
             log_info("core_image", "Tags for Image #{$this->id} set to: ".Tag::implode($tags), null, ["image_id" => $this->id]);
-            $database->cache->delete("image-{$this->id}-tags");
+            $cache->delete("image-{$this->id}-tags");
         }
     }
 

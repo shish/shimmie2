@@ -39,12 +39,12 @@ class Blocks extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $cache, $database, $page, $user;
 
-        $blocks = $database->cache->get("blocks");
+        $blocks = $cache->get("blocks");
         if ($blocks === false) {
             $blocks = $database->get_all("SELECT * FROM blocks");
-            $database->cache->set("blocks", $blocks, 600);
+            $cache->set("blocks", $blocks, 600);
         }
         foreach ($blocks as $block) {
             $path = implode("/", $event->args);
@@ -63,7 +63,7 @@ class Blocks extends Extension
 						VALUES (?, ?, ?, ?, ?)
 					", [$_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content']]);
                     log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
-                    $database->cache->delete("blocks");
+                    $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));
                 }
@@ -83,7 +83,7 @@ class Blocks extends Extension
 						", [$_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content'], $_POST['id']]);
                         log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
                     }
-                    $database->cache->delete("blocks");
+                    $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("blocks/list"));
                 }

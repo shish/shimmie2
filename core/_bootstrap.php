@@ -4,7 +4,7 @@
  * actually do anything as far as the app is concerned
  */
 
-global $config, $database, $user, $page, $_tracer;
+global $cache, $config, $database, $user, $page, $_tracer;
 
 require_once "core/sys_config.php";
 require_once "core/polyfills.php";
@@ -37,7 +37,10 @@ unset($_shm_files);
 unset($_shm_filename);
 $_tracer->end();
 
-// connect to the database
+$_tracer->begin("Connecting to Cache");
+$cache = new Cache(CACHE_DSN);
+$_tracer->end();
+
 $_tracer->begin("Connecting to DB");
 $database = new Database();
 $config = new DatabaseConfig($database);

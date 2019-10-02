@@ -30,12 +30,6 @@ class Database
     private $engine = null;
 
     /**
-     * The currently active cache engine.
-     * @var Cache|null
-     */
-    public $cache = null;
-
-    /**
      * A boolean flag to track if we already have an active transaction.
      * (ie: True if beginTransaction() already called)
      *
@@ -47,16 +41,6 @@ class Database
      * How many queries this DB object has run
      */
     public $query_count = 0;
-
-    /**
-     * For now, only connect to the cache, as we will pretty much certainly
-     * need it. There are some pages where all the data is in cache, so the
-     * DB connection is on-demand.
-     */
-    public function __construct()
-    {
-        $this->cache = new Cache(CACHE_DSN);
-    }
 
     private function connect_db(): void
     {
@@ -364,12 +348,9 @@ class MockDatabase extends Database
     private $query_id = 0;
     /** @var array */
     private $responses = [];
-    /** @var ?NoCache  */
-    public $cache = null;
 
     public function __construct(array $responses = [])
     {
-        $this->cache = new NoCache();
         $this->responses = $responses;
     }
 

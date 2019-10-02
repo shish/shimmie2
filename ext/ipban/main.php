@@ -113,20 +113,20 @@ class IPBan extends Extension
 
     public function onAddIPBan(AddIPBanEvent $event)
     {
-        global $user, $database;
+        global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (:ip, :reason, :end, :admin_id)";
         $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "end"=>strtotime($event->end), "admin_id"=>$user->id]);
-        $database->cache->delete("ip_bans_sorted");
+        $cache->delete("ip_bans_sorted");
         log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->end}");
     }
 
     public function onRemoveIPBan(RemoveIPBanEvent $event)
     {
-        global $database;
+        global $cache, $database;
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id"=>$event->id]);
         if ($ban) {
             $database->Execute("DELETE FROM bans WHERE id = :id", ["id"=>$event->id]);
-            $database->cache->delete("ip_bans_sorted");
+            $cache->delete("ip_bans_sorted");
             log_info("ipban", "Removed {$ban['ip']}'s ban");
         }
     }
@@ -306,9 +306,9 @@ class IPBan extends Extension
     // returns [ips, nets]
     private function get_active_bans_sorted()
     {
-        global $database;
+        global $cache;
 
-        $cached = $database->cache->get("ip_bans_sorted");
+        $cached = $cache->get("ip_bans_sorted");
         if ($cached) {
             return $cached;
         }
@@ -325,7 +325,7 @@ class IPBan extends Extension
         }
 
         $sorted = [$ips, $nets];
-        $database->cache->set("ip_bans_sorted", $sorted, 600);
+        $cache->set("ip_bans_sorted", $sorted, 600);
         return $sorted;
     }
     // }}}

@@ -9,7 +9,7 @@ class AutoComplete extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $database;
+        global $cache, $page, $database;
 
         if ($event->page_matches("api/internal/autocomplete")) {
             if (!isset($_GET["s"])) {
@@ -42,7 +42,7 @@ class AutoComplete extends Extension
                 $cache_key .= "-" . $_GET["limit"];
             }
 
-            $res = $database->cache->get($cache_key);
+            $res = $cache->get($cache_key);
             if (!$res) {
                 $res = $database->get_pairs(
                     $database->scoreql_to_sql("
@@ -55,7 +55,7 @@ class AutoComplete extends Extension
 					$limitSQL"),
                     $SQLarr
                 );
-                $database->cache->set($cache_key, $res, 600);
+                $cache->set($cache_key, $res, 600);
             }
 
             $page->set_data(json_encode($res));

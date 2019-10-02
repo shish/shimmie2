@@ -5,10 +5,10 @@ class RegenThumb extends Extension
 {
     public function regenerate_thumbnail($image, $force = true): string
     {
-        global $database;
+        global $cache;
         $event = new ThumbnailGenerationEvent($image->hash, $image->ext, $force);
         send_event($event);
-        $database->cache->delete("thumb-block:{$image->id}");
+        $cache->delete("thumb-block:{$image->id}");
         return $event->generated;
     }
 
