@@ -334,14 +334,16 @@ class Media extends Extension
             case "bulk_media_rescan":
                 if ($user->can(Permissions::RESCAN_MEDIA)) {
                     $total = 0;
+                    $failed = 0;
                     foreach ($event->items as $image) {
                         try {
                             $this->update_image_media_properties($image->hash, $image->ext);
                             $total++;
                         } catch (MediaException $e) {
+                            $failed++;
                         }
                     }
-                    flash_message("Scanned media properties for $total items");
+                    flash_message("Scanned media properties for $total items, failed for $failed");
                 }
                 break;
         }

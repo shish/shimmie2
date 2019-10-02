@@ -82,6 +82,7 @@ class VideoFileHandler extends DataHandlerExtension
                     }
                 }
             } catch (MediaException $e) {
+                // a post with no metadata is better than no post
             }
         }
     }

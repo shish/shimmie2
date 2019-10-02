@@ -112,7 +112,7 @@ class RotateImage extends Extension
         }
 
         $image_filename  = warehouse_path(Image::IMAGE_DIR, $hash);
-        if (file_exists($image_filename)==false) {
+        if (file_exists($image_filename)===false) {
             throw new ImageRotateException("$image_filename does not exist.");
         }
 

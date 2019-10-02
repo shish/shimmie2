@@ -61,7 +61,7 @@ class ImageViewCounter extends Extension
         global $database, $user;
 
         // don't add view if person already viewed recently
-        if ($this->can_add_view($imgid) == false) {
+        if ($this->can_add_view($imgid) === false) {
             return;
         }
 

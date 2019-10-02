@@ -200,10 +200,11 @@ class TranscodeImage extends Extension
                             try {
                                 $database->rollback();
                             } catch (Exception $e) {
+                                // is this safe? o.o
                             }
                         }
                     }
-                    flash_message("Transcoded  $total items");
+                    flash_message("Transcoded $total items");
                 }
                 break;
         }

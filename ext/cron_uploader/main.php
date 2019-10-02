@@ -291,8 +291,8 @@ class CronUploader extends Extension
         for ($i = 0; $i < $upload_count && sizeof($this->image_queue) > 0; $i++) {
             $img = array_pop($this->image_queue);
 
+            $database->beginTransaction();
             try {
-                $database->beginTransaction();
                 $this->add_upload_info("Adding file: {$img[1]} - tags: {$img[2]}");
                 $result = $this->add_image($img[0], $img[1], $img[2]);
                 $database->commit();
@@ -303,23 +303,17 @@ class CronUploader extends Extension
                     $added++;
                 }
             } catch (Exception $e) {
+                $database->rollback();
                 $failed++;
                 $this->move_uploaded($img[0], $img[1], $output_subdir, true);
                 $msgNumber = $this->add_upload_info("(" . gettype($e) . ") " . $e->getMessage());
                 $msgNumber = $this->add_upload_info($e->getTraceAsString());
-
-                try {
-                    $database->rollback();
-                } catch (Exception $e) {
-                }
             }
         }
-
 
         $msgNumber = $this->add_upload_info("Items added: $added");
         $msgNumber = $this->add_upload_info("Items merged: $merged");
         $msgNumber = $this->add_upload_info("Items failed: $failed");
-
 
         // Display & save upload log
         $this->handle_log();
