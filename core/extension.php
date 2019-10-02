@@ -225,24 +225,12 @@ abstract class ExtensionInfo
 
     protected function __construct()
     {
-        if (empty($this->key)) {
-            throw new Exception("key field is required");
-        }
-        if (empty($this->name)) {
-            throw new Exception("name field is required for extension $this->key");
-        }
-        if (!empty($this->visibility)&&!in_array($this->visibility, self::VALID_VISIBILITY)) {
-            throw new Exception("Invalid visibility for extension $this->key");
-        }
-        if (!is_array($this->db_support)) {
-            throw new Exception("db_support has to be an array for extension $this->key");
-        }
-        if (!is_array($this->authors)) {
-            throw new Exception("authors has to be an array for extension $this->key");
-        }
-        if (!is_array($this->dependencies)) {
-            throw new Exception("dependencies has to be an array for extension $this->key");
-        }
+        assert (!empty($this->key), "key field is required");
+        assert (!empty($this->name), "name field is required for extension $this->key");
+        assert (empty($this->visibility) || in_array($this->visibility, self::VALID_VISIBILITY), "Invalid visibility for extension $this->key");
+        assert (is_array($this->db_support), "db_support has to be an array for extension $this->key");
+        assert (is_array($this->authors), "authors has to be an array for extension $this->key");
+        assert (is_array($this->dependencies), "dependencies has to be an array for extension $this->key");
     }
 
     public function is_enabled(): bool
