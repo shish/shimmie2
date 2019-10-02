@@ -203,8 +203,8 @@ class Database
             $stmt = $this->db->prepare(
                 "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
                 $query
-            )
-			assert(!is_bool($stmt));;
+            );
+            assert(!is_bool($stmt));
             // $stmt = $this->db->prepare($query);
             if (!array_key_exists(0, $args)) {
                 foreach ($args as $name=>$value) {
@@ -313,8 +313,8 @@ class Database
         } else {
             $id = $this->db->lastInsertId();
         }
-		assert(is_numeric($id));
-		return (int)$id;
+        assert(is_numeric($id));
+        return (int)$id;
     }
 
     /**
