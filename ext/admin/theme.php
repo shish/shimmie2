@@ -59,12 +59,18 @@ class AdminPageTheme extends Themelet
 
     public function dbq_html($terms)
     {
+        $h_terms = html_escape($terms);
+
+        $warning = "";
         if (Extension::is_enabled(TrashInfo::KEY)) {
             $warning = "This delete method will bypass the trash<br/>";
         }
+
+		$h_reason = "";
         if (class_exists("ImageBan")) {
             $h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
         }
+
         $html = $warning.make_form(make_link("admin/delete_by_query"), "POST") . "
 				<input type='button' class='shm-unlocker' data-unlock-sel='#dbqsubmit' value='Unlock'>
 				<input type='hidden' name='query' value='$h_terms'>
