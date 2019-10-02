@@ -364,19 +364,10 @@ function insert_defaults()
 
 function build_dirs()
 { // {{{
-    // *try* and make default dirs. Ignore any errors --
-    // if something is amiss, we'll tell the user later
-    if (!file_exists("data")) {
-        @mkdir("data");
-    }
-    if (!is_writable("data")) {
-        @chmod("data", 0755);
-    }
+    $data_exists = file_exists("data") || mkdir("data");
+    $data_writable = is_writable("data") || chmod("data", 0755);
 
-    // Clear file status cache before checking again.
-    clearstatcache();
-
-    if (!file_exists("data") || !is_writable("data")) {
+    if (!$data_exists || !$data_writable) {
         print "
 		<div id='installer'>
 			<h1>Shimmie Installer</h1>

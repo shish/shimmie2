@@ -203,7 +203,8 @@ class Database
             $stmt = $this->db->prepare(
                 "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
                 $query
-            );
+            )
+			assert(!is_bool($stmt));;
             // $stmt = $this->db->prepare($query);
             if (!array_key_exists(0, $args)) {
                 foreach ($args as $name=>$value) {
@@ -308,10 +309,12 @@ class Database
     public function get_last_insert_id(string $seq): int
     {
         if ($this->engine->name == DatabaseDriver::PGSQL) {
-            return $this->db->lastInsertId($seq);
+            $id = $this->db->lastInsertId($seq);
         } else {
-            return $this->db->lastInsertId();
+            $id = $this->db->lastInsertId();
         }
+		assert(is_numeric($id));
+		return (int)$id;
     }
 
     /**
