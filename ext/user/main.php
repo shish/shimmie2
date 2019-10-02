@@ -343,8 +343,7 @@ class UserPage extends Extension
     // Things done *with* the user {{{
     private function page_login($name, $pass)
     {
-        global $config, $user, $page;
-
+        global $config, $page;
 
         if (empty($name) || empty($pass)) {
             $this->theme->display_error(400, "Error", "Username or password left blank");

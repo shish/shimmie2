@@ -323,8 +323,6 @@ class CronUploader extends Extension
 
     private function move_uploaded($path, $filename, $output_subdir, $corrupt = false)
     {
-        global $config;
-
         // Create
         $newDir = $this->root_dir;
 

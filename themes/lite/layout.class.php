@@ -11,7 +11,7 @@ class Layout
 {
     public function display_page(Page $page, array $nav_links, array $sub_links)
     {
-        global $config, $user;
+        global $config;
 
         $theme_name = $config->get_string(SetupConfig::THEME, 'lite');
         $site_name = $config->get_string(SetupConfig::TITLE);
@@ -30,7 +30,7 @@ class Layout
             $custom_links .= $this->navlinks($nav_link->link, $nav_link->description, $nav_link->active);
         }
         $menu .= "{$custom_links}</div>";
-        
+
         $left_block_html = "";
         $main_block_html = "";
         $sub_block_html  = "";

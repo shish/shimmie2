@@ -4,7 +4,7 @@ class MediaTheme extends Themelet
 {
     public function display_form(array $types)
     {
-        global $page, $database;
+        global $page;
 
         $html = "Use this to force scanning for media properties.";
         $html .= make_form(make_link("admin/media_rescan"));

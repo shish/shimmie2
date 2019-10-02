@@ -138,8 +138,6 @@ class SetupBlock extends Block
 
     private function format_option(string $name, $html, ?string $label, bool $table_row)
     {
-        global $config;
-
         if ($table_row) {
             $this->start_table_row();
         }

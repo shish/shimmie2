@@ -81,7 +81,7 @@ class ImageIO extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
-        
+
         if ($user->can(Permissions::DELETE_IMAGE)) {
             $event->add_part($this->theme->get_deleter_html($event->image->id));
         }
@@ -113,7 +113,7 @@ class ImageIO extends Extension
             throw new UploadException($e->error);
         }
     }
-    
+
     public function onUserPageBuilding(UserPageBuildingEvent $event)
     {
         $u_id = url_escape($event->display_user->id);
@@ -126,8 +126,6 @@ class ImageIO extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        global $config;
-
         $sb = new SetupBlock("Image Options");
         $sb->position = 30;
         // advanced only
@@ -140,9 +138,6 @@ class ImageIO extends Extension
         }
 
         $event->panel->add_block($sb);
-
-
-
 
         $sb = new SetupBlock("Thumbnailing");
         $sb->add_choice_option(ImageConfig::THUMB_ENGINE, self::THUMBNAIL_ENGINES, "Engine: ");
@@ -160,7 +155,6 @@ class ImageIO extends Extension
         $sb->add_label("<br>High-DPI scaling ");
         $sb->add_int_option(ImageConfig::THUMB_SCALING);
         $sb->add_label("%");
-
 
         $event->panel->add_block($sb);
     }
@@ -286,7 +280,7 @@ class ImageIO extends Extension
                 }
 
                 $page->set_file($file);
-                
+
                 if ($config->get_int(ImageConfig::EXPIRES)) {
                     $expires = date(DATE_RFC1123, time() + $config->get_int(ImageConfig::EXPIRES));
                 } else {
@@ -313,7 +307,7 @@ class ImageIO extends Extension
 
         /* Check to make sure the image exists. */
         $existing = Image::by_id($id);
-        
+
         if (is_null($existing)) {
             throw new ImageReplaceException("Image to replace does not exist!");
         }

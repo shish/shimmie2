@@ -26,7 +26,7 @@ class RatingsTheme extends Themelet
 
     public function display_form(array $current_ratings, array $available_ratings)
     {
-        global $page, $database;
+        global $page;
 
         $html = make_form(make_link("admin/update_ratings"))."<table class='form'><tr>
         <th>Change</th><td><select name='rating_old' required='required'><option></option>";
@@ -66,8 +66,6 @@ class RatingsTheme extends Themelet
 
     public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null)
     {
-        global $_shm_ratings;
-
         $output = "<select name='rating".($multiple ? "[]' multiple='multiple'" : "' ")." >";
 
         $options = Ratings::get_sorted_ratings();
@@ -111,7 +109,7 @@ class RatingsTheme extends Themelet
         $output .= "</table>";
         return $output;
     }
-        
+
     public function get_user_options(User $user, array $selected_ratings, array $available_ratings): string
     {
         $html = "

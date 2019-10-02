@@ -127,7 +127,7 @@ class RedisCache implements CacheEngine
 
     public function delete(string $key)
     {
-        $this->redis->delete($key);
+        $this->redis->del($key);
     }
 }
 

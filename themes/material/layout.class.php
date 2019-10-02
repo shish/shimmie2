@@ -14,7 +14,7 @@ class Layout
         $theme_name = $config->get_string(SetupConfig::THEME, 'material');
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();
-        $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
+        // $main_page = $config->get_string(SetupConfig::MAIN_PAGE);
         $contact_link = contact_link();
         $site_link = make_link();
         $header_html = $page->get_all_html_headers();
@@ -26,7 +26,7 @@ class Layout
         $drawer_block_html = ""; //use exampled in user.theme.php & view.theme.php
         $toolbar_block_html = ""; // not used at this point
         $subtoolbar_block_html = ""; // use exampled in user.theme.php
-    $navigation = "";
+        // $navigation = "";
 
         $h_search = "
       <div class='mdl-textfield mdl-js-textfield mdl-textfield--expandable
@@ -201,13 +201,13 @@ EOD;
 
     public function rework_navigation(Block $block)
     {
-        $h = $block->header;
+        // $h = $block->header;
         $b = $block->body;
         $i = $block->id;
 
         $dom = new DomDocument();
         $dom->loadHTML($b);
-        $output = [];
+        // $output = [];
         $html = "<section id='$i'>\n<nav class='mdl-navigation'>\n";
         foreach ($dom->getElementsByTagName('a') as $item) {
             $item->setAttribute('class', 'mdl-navigation__link');

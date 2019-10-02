@@ -13,7 +13,6 @@ class Image
     public const IMAGE_DIR = "images";
     public const THUMBNAIL_DIR = "thumbs";
 
-    private static $tag_n = 0; // temp hack
     public static $order_sql = null; // this feels ugly
 
     /** @var null|int */
@@ -875,8 +874,6 @@ class Image
      */
     private static function build_search_querylet(array $tag_conditions, array $img_conditions): Querylet
     {
-        global $database;
-
         $positive_tag_count = 0;
         $negative_tag_count = 0;
         foreach ($tag_conditions as $tq) {
@@ -989,7 +986,6 @@ class Image
             }
         }
 
-        $sql = "";
         assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
         if (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
             $inner_joins = [];

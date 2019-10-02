@@ -4,8 +4,6 @@ class BulkActionsTheme extends Themelet
 {
     public function display_selector(Page $page, array $actions, string $query)
     {
-        global $user;
-
         $body = "<input type='hidden' name='bulk_selected_ids' id='bulk_selected_ids' />
 				<input id='bulk_selector_activate' type='button' onclick='activate_bulk_selector();' value='Activate (M)anual Select' accesskey='m'/>
 				<div id='bulk_selector_controls' style='display: none;'>

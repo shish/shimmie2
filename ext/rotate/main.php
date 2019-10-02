@@ -99,8 +99,6 @@ class RotateImage extends Extension
     /* ----------------------------- */
     private function rotate_image(int $image_id, int $deg)
     {
-        global $database;
-
         if (($deg <= -360) || ($deg >= 360)) {
             throw new ImageRotateException("Invalid options for rotation angle. ($deg)");
         }
@@ -177,7 +175,6 @@ class RotateImage extends Extension
         }
 
         /* Output to the same format as the original image */
-        $result = false;
         switch ($info[2]) {
           case IMAGETYPE_GIF:   $result = imagegif($image_rotated, $tmp_filename);      break;
           case IMAGETYPE_JPEG:  $result = imagejpeg($image_rotated, $tmp_filename);     break;

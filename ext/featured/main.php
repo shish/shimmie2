@@ -42,7 +42,7 @@ class Featured extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
-        global $cache, $config, $database, $page, $user;
+        global $cache, $config, $page, $user;
         $fid = $config->get_int("featured_id");
         if ($fid > 0) {
             $image = $cache->get("featured_image_object:$fid");

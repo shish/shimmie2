@@ -251,7 +251,7 @@ class Media extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $page, $user;
 
         if ($event->page_matches("media_rescan/") && $user->can(Permissions::RESCAN_MEDIA) && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));

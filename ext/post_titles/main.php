@@ -12,7 +12,7 @@ class PostTitles extends Extension
 
     public function onInitExt(InitExtEvent $event)
     {
-        global $config, $database;
+        global $config;
 
         $config->set_default_bool(PostTitlesConfig::DEFAULT_TO_FILENAME, false);
         $config->set_default_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, false);

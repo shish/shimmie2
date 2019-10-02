@@ -7,8 +7,6 @@ class TranscodeImageTheme extends Themelet
      */
     public function get_transcode_html(Image $image, array $options)
     {
-        global $config;
-
         $html = "
 			".make_form(
             make_link("transcode/{$image->id}"),
@@ -23,10 +21,10 @@ class TranscodeImageTheme extends Themelet
 				<br><input id='transcodebutton' type='submit' value='Transcode'>
 			</form>
 		";
-        
+
         return $html;
     }
-    
+
     public function get_transcode_picker_html(array $options)
     {
         $html = "<select id='transcode_format'  name='transcode_format' required='required' >";

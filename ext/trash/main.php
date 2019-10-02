@@ -115,7 +115,7 @@ class Trash extends Extension
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
-        global $config, $database, $user;
+        global $user;
         if ($event->image->trash===true && $user->can(Permissions::VIEW_TRASH)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }

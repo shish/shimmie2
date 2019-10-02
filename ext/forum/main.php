@@ -96,7 +96,7 @@ class Forum extends Extension
                     break;
                 case "view":
                     $threadID = int_escape($event->get_arg(1));
-                    $pageNumber = int_escape($event->get_arg(2));
+                    // $pageNumber = int_escape($event->get_arg(2));
                     list($errors) = $this->sanity_check_viewed_thread($threadID);
 
                     if ($errors!=null) {

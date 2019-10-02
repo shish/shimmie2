@@ -153,7 +153,7 @@ class Pools extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $user, $database;
+        global $page, $user;
 
         if ($event->page_matches("pool")) {
             $pool_id = 0;
@@ -428,7 +428,7 @@ class Pools extends Extension
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
-        global $user, $database;
+        global $database;
 
         $pools = $database->get_all("SELECT * FROM pools ORDER BY title ");
 

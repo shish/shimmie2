@@ -242,7 +242,7 @@ class DanbooruApi extends Extension
      */
     private function api_add_post()
     {
-        global $user, $config, $page;
+        global $user, $page;
         $danboorup_kludge = 1;            // danboorup for firefox makes broken links out of location: /path
 
         // Check first if a login was supplied, if it wasn't check if the user is logged in via cookie

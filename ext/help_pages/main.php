@@ -35,7 +35,7 @@ class HelpPages extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("help")) {
             $e = new HelpPageListBuildingEvent();
@@ -79,7 +79,6 @@ class HelpPages extends Extension
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
-        global $user;
         $event->add_link("Help", make_link("help"));
     }
 

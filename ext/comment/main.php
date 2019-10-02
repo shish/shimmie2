@@ -263,7 +263,7 @@ class CommentList extends Extension
 
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
-        global $cache, $config, $database;
+        global $cache, $config;
         $cc = $config->get_int("comment_count");
         if ($cc > 0) {
             $recent = $cache->get("recent_comments");

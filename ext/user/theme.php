@@ -234,7 +234,7 @@ class UserPageTheme extends Themelet
 
     public function display_user_page(User $duser, $stats)
     {
-        global $page, $user;
+        global $page;
         assert(is_array($stats));
         $stats[] = 'User ID: '.$duser->id;
 
@@ -249,7 +249,7 @@ class UserPageTheme extends Themelet
         global $config, $user;
         $html = "";
         if ($duser->id != $config->get_int('anon_id')) {  //justa fool-admin protection so they dont mess around with anon users.
-        
+
             if ($user->can(Permissions::EDIT_USER_NAME)) {
                 $html .= "
 				<p>".make_form(make_link("user_admin/change_name"))."

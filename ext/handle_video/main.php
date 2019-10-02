@@ -115,8 +115,6 @@ class VideoFileHandler extends DataHandlerExtension
                 $image->ext = "ogv";
                 break;
             case "video/flv":
-                $image->ext = "flv";
-                break;
             case "video/x-flv":
                 $image->ext = "flv";
                 break;

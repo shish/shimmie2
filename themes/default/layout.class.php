@@ -9,8 +9,7 @@ class Layout
      */
     public function display_page(Page $page, array $nav_links)
     {
-        global $config;
-
+        //global $config;
         //$theme_name = $config->get_string(SetupConfig::THEME, 'default');
         //$data_href = get_base_href();
         $contact_link = contact_link();

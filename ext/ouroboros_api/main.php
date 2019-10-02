@@ -589,17 +589,7 @@ class OuroborosAPI extends Extension
                 );
                 break;
             case 'count':
-                $tag_data = $database->get_all(
-                    "
-                                                    SELECT id, tag, count
-                                                    FROM tags
-                                                    WHERE count >= :tags_min
-                                                    ORDER BY count DESC, tag ASC LIMIT :start, :max_items
-                                                    ",
-                    ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
-                );
-                break;
-            case 'date':
+            default:
                 $tag_data = $database->get_all(
                     "
                                                     SELECT id, tag, count

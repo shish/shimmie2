@@ -46,7 +46,7 @@ class Layout
 {
     public function display_page(Page $page, array $nav_links, array $sub_links)
     {
-        global $config, $user;
+        global $config;
 
         $theme_name = $config->get_string(SetupConfig::THEME);
         //$base_href = $config->get_string('base_href');
@@ -174,7 +174,7 @@ $header_html
 </html>
 EOD;
     }
-    
+
     /**
      * #param string[] $pages_matched
      */

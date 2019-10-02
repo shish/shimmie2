@@ -128,7 +128,7 @@ class Ratings extends Extension
 
     public function onInitExt(InitExtEvent $event)
     {
-        global $user, $config, $_shm_user_classes, $_shm_ratings;
+        global $config, $_shm_user_classes, $_shm_ratings;
 
         if ($config->get_int(RatingsConfig::VERSION) < 4) {
             $this->install();
@@ -149,7 +149,7 @@ class Ratings extends Extension
 
     public function onUserOptionsBuilding(UserOptionsBuildingEvent $event)
     {
-        global $user, $user_config;
+        global $user;
 
         $event->add__html(
             $this->theme->get_user_options(
@@ -162,7 +162,7 @@ class Ratings extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
-        global $config, $_shm_user_classes, $_shm_ratings;
+        global $_shm_user_classes;
 
         $ratings = self::get_sorted_ratings();
 
@@ -238,8 +238,6 @@ class Ratings extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        global $user;
-
         if ($event->key===HelpPages::SEARCH) {
             $block = new Block();
             $block->header = "Ratings";
@@ -507,7 +505,7 @@ class Ratings extends Extension
      */
     private function can_rate(): bool
     {
-        global $config, $user;
+        global $user;
         if ($user->can("edit_image_rating")) {
             return true;
         }

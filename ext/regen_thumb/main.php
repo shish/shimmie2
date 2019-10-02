@@ -14,7 +14,7 @@ class RegenThumb extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $database, $page, $user;
+        global $page, $user;
 
         if ($event->page_matches("regen_thumb/one") && $user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));
@@ -93,8 +93,6 @@ class RegenThumb extends Extension
 
     public function onAdminAction(AdminActionEvent $event)
     {
-        global $database;
-
         switch ($event->action) {
             case "regen_thumbs":
             $event->redirect = true;

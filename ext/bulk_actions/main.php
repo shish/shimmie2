@@ -54,7 +54,7 @@ class BulkActions extends Extension
 {
     public function onPostListBuilding(PostListBuildingEvent $event)
     {
-        global $config, $page, $user;
+        global $page, $user;
 
         if ($user->is_logged_in()) {
             $babbe = new BulkActionBlockBuildingEvent();

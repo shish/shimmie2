@@ -76,7 +76,7 @@ class RSSImages extends Extension
 
     private function thumb(Image $image): string
     {
-        global $cache, $database;
+        global $cache;
 
         $cached = $cache->get("rss-thumb:{$image->id}");
         if ($cached) {

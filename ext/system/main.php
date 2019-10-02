@@ -4,7 +4,7 @@ class System extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $page, $user;
+        global $page;
 
         if ($event->page_matches("system")) {
             $e = new PageSubNavBuildingEvent("system");

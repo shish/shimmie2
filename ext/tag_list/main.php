@@ -189,7 +189,6 @@ class TagList extends Extension
         $results = $cache->get("tag_list_omitted_tags:".$tags_config);
 
         if ($results==null) {
-            $results = [];
             $tags = explode(" ", $tags_config);
 
             if (empty($tags)) {
@@ -572,7 +571,7 @@ class TagList extends Extension
      */
     private function add_refine_block(Page $page, array $search)
     {
-        global $database, $config;
+        global $config;
 
         if (count($search) > 5) {
             return;

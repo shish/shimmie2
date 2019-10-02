@@ -122,7 +122,6 @@ class ExtManager extends Extension
         $extras = [];
 
         foreach (ExtensionInfo::get_all_keys() as $key) {
-            $matches = [];
             if (!in_array($key, $core) && isset($settings["ext_$key"])) {
                 $extras[] = $key;
             }

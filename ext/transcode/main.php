@@ -100,7 +100,7 @@ class TranscodeImage extends Extension
 
     public function onDataUpload(DataUploadEvent $event)
     {
-        global $config, $page;
+        global $config;
 
         if ($config->get_bool(TranscodeConfig::UPLOAD) == true) {
             $ext = strtolower($event->type);
@@ -196,7 +196,7 @@ class TranscodeImage extends Extension
                             $database->commit();
                             $total++;
                         } catch (Exception $e) {
-                            log_error("transcode", "Error while bulk transcode on item $id to $format: ".$e->getMessage());
+                            log_error("transcode", "Error while bulk transcode on item {$image->id} to $format: ".$e->getMessage());
                             try {
                                 $database->rollback();
                             } catch (Exception $e) {
@@ -291,6 +291,8 @@ class TranscodeImage extends Extension
                 return $this->transcode_image_gd($source_name, $source_format, $target_format);
             case "convert":
                 return $this->transcode_image_convert($source_name, $source_format, $target_format);
+            default:
+                throw new ImageTranscodeException("No engine specified");
         }
     }
 

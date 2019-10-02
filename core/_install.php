@@ -99,16 +99,6 @@ function check_im_version(): int
 
     return (empty($convert_check) ? 0 : 1);
 }
-
-function eok($name, $value)
-{
-    echo "<br>$name ... ";
-    if ($value) {
-        echo "<span style='color: green'>ok</span>\n";
-    } else {
-        echo "<span style='color: green'>failed</span>\n";
-    }
-}
 // }}}
 
 function do_install()
