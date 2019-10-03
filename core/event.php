@@ -217,13 +217,13 @@ class CommandEvent extends Event
             print "Usage: php {$args[0]} [flags] [command]\n";
             print "\n";
             print "Flags:\n";
-            print "  -u [username]\n";
-            print "    Log in as the specified user\n";
-            print "  -q / -v\n";
-            print "    Be quieter / more verbose\n";
-            print "    Scale is debug - info - warning - error - critical\n";
-            print "    Default is to show warnings and above\n";
-            print "    \n";
+            print "\t-u [username]\n";
+            print "\t\tLog in as the specified user\n";
+            print "\t-q / -v\n";
+            print "\t\tBe quieter / more verbose\n";
+            print "\t\tScale is debug - info - warning - error - critical\n";
+            print "\t\tDefault is to show warnings and above\n";
+            print "\n";
             print "Currently known commands:\n";
         }
     }
