@@ -96,6 +96,24 @@ class BulkActions extends Extension
         }
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tbulk-action <action> <query>\n";
+            print "\t\tperform an action on all query results\n\n";
+        }
+        if ($event->cmd == "bulk-action") {
+            if (count($event->args) < 2) {
+                return;
+            }
+            $query = $event->args[0];
+            $items = $this->yield_search_results($event->args[1]);
+            $newEvent = new BulkActionEvent($event->args[0], $event, $items);
+            print($newEvent);
+            # send_event($newEvent);
+        }
+    }
+
     public function onBulkAction(BulkActionEvent $event)
     {
         global $user;
