@@ -210,11 +210,8 @@ class Index extends Extension
             print "\t\tsearch the database and print results\n\n";
         }
         if ($event->cmd == "search") {
-            if (count($event->args) < 1) {
-                return;
-            }
-            $query = count($event) > 0 ? Tag::explode($event->args[0]) : [];
-            $items = Image::find_images(0, null, $query);
+            $query = count($event->args) > 0 ? Tag::explode($event->args[0]) : [];
+            $items = Image::find_images(0, 100, $query);
             foreach ($items as $item) {
                 print("{$item->hash}\n");
             }
