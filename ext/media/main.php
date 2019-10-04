@@ -349,6 +349,23 @@ class Media extends Extension
         }
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tmedia-rescan <id>\n";
+            print "\t\trefresh metadata for a given post\n\n";
+        }
+        if ($event->cmd == "media-rescan") {
+            $uid = $event->args[0];
+            $image = Image::by_id_or_hash($uid);
+            if ($image) {
+                $this->update_image_media_properties($image->hash, $image->ext);
+            } else {
+                print("No post with ID '$uid'\n");
+            }
+        }
+    }
+
     /**
      * @param MediaResizeEvent $event
      * @throws MediaException
