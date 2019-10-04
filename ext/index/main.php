@@ -203,6 +203,24 @@ class Index extends Extension
         }
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tsearch <query>\n";
+            print "\t\tsearch the database and print results\n\n";
+        }
+        if ($event->cmd == "search") {
+            if (count($event->args) < 1) {
+                return;
+            }
+            $query = count($event) > 0 ? Tag::explode($event->args[0]) : [];
+            $items = Image::find_images(0, null, $query);
+            foreach ($items as $item) {
+                print("{$item->hash}\n");
+            }
+        }
+    }
+
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
