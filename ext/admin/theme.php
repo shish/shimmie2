@@ -66,7 +66,7 @@ class AdminPageTheme extends Themelet
             $warning = "This delete method will bypass the trash<br/>";
         }
 
-		$h_reason = "";
+        $h_reason = "";
         if (class_exists("ImageBan")) {
             $h_reason = "<input type='text' name='reason' placeholder='Ban reason (leave blank to not ban)'>";
         }

@@ -104,6 +104,11 @@ class Image
         return ($row ? new Image($row) : null);
     }
 
+    public static function by_id_or_hash(string $id): ?Image
+    {
+        return (is_numeric($id) && strlen($id) != 32) ? Image::by_id((int)$id) : Image::by_hash($id);
+    }
+
     public static function by_random(array $tags=[], int $limit_range=0): ?Image
     {
         $max = Image::count_images($tags);
