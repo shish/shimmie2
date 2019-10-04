@@ -352,7 +352,7 @@ class Media extends Extension
     public function onCommand(CommandEvent $event)
     {
         if ($event->cmd == "help") {
-            print "\tmedia-rescan <id>\n";
+            print "\tmedia-rescan <id / hash>\n";
             print "\t\trefresh metadata for a given post\n\n";
         }
         if ($event->cmd == "media-rescan") {
