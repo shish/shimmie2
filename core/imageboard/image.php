@@ -148,8 +148,8 @@ class Image
             $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string("index_order"))));
             if ($limit!=null) {
                 $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
+                $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
             }
-            $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
             #var_dump($querylet->sql); var_dump($querylet->variables);
             $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
         }
@@ -165,7 +165,7 @@ class Image
      * #param string[] $tags
      * #return Image[]
      */
-    public static function find_images(int $start, int $limit, array $tags=[]): array
+    public static function find_images(int $start, ?int $limit = null, array $tags=[]): array
     {
         $result = self::find_images_internal($start, $limit, $tags);
 
