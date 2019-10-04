@@ -206,6 +206,7 @@ class Index extends Extension
     public function onCommand(CommandEvent $event)
     {
         if ($event->cmd == "help") {
+            # TODO: --fields a,b,c
             print "\tsearch <query>\n";
             print "\t\tsearch the database and print results\n\n";
         }
