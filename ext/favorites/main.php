@@ -167,6 +167,45 @@ class Favorites extends Extension
         }
     }
 
+    public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
+    {
+        global $user;
+
+        if (!$user->is_anonymous()) {
+            $event->add_action("bulk_favorite", "Favorite");
+            $event->add_action("bulk_unfavorite", "Un-Favorite");
+        }
+    }
+
+    public function onBulkAction(BulkActionEvent $event)
+    {
+        global $user;
+
+        switch ($event->action) {
+            case "bulk_favorite":
+                if (!$user->is_anonymous()) {
+                    $total = 0;
+                    foreach ($event->items as $image) {
+                        send_event(new FavoriteSetEvent($image->id, $user, true));
+                        $total++;
+                    }
+                    flash_message("Added $total items to favorites");
+                }
+                break;
+            case "bulk_unfavorite":
+                if (!$user->is_anonymous()) {
+                    $total = 0;
+                    foreach ($event->items as $image) {
+                        send_event(new FavoriteSetEvent($image->id, $user, false));
+                        $total++;
+                    }
+                    flash_message("Removed $total items from favorites");
+                }
+                break;
+        }
+    }
+
+
     private function install()
     {
         global $database;
@@ -203,10 +242,12 @@ class Favorites extends Extension
     {
         global $database;
         if ($do_set) {
-            $database->Execute(
-                "INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
-                ["image_id"=>$image_id, "user_id"=>$user_id]
-            );
+            if(!$database->exists("select 1 from user_favorites where image_id=:image_id and user_id=:user_id",["image_id"=>$image_id, "user_id"=>$user_id])) {
+                $database->Execute(
+                    "INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
+                    ["image_id"=>$image_id, "user_id"=>$user_id]
+                );
+            }
         } else {
             $database->Execute(
                 "DELETE FROM user_favorites WHERE image_id = :image_id AND user_id = :user_id",
