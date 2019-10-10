@@ -51,8 +51,10 @@ class CustomViewImageTheme extends ViewImageTheme
             if ($image->rating == null || $image->rating == "?") {
                 $image->rating = "?";
             }
-            $h_rating = Ratings::rating_to_human($image->rating);
-            $html .= "<br>Rating: $h_rating";
+            if (Extension::is_enabled(RatingsInfo::KEY)) {
+                $h_rating = Ratings::rating_to_human($image->rating);
+                $html .= "<br>Rating: $h_rating";
+            }
         }
 
         return $html;

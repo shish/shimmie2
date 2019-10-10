@@ -35,9 +35,6 @@ class DataUploadEvent extends Event
         assert(is_array($metadata["tags"]));
         assert(is_string($metadata["source"]) || is_null($metadata["source"]));
 
-        // DB limits to 64 char filenames
-        $metadata['filename'] = substr($metadata['filename'], 0, 63);
-
         $this->metadata = $metadata;
 
         $this->set_tmpname($tmpname);

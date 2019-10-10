@@ -281,6 +281,7 @@ const MIME_TYPE_MAP = [
     'mpg' => 'video/mpeg',
     'mpeg' => 'video/mpeg',
     'mov' => 'video/quicktime',
+    'flv' => 'video/x-flv',
     'php' => 'text/x-php',
     'mp4' => 'video/mp4',
     'ogv' => 'video/ogg',
@@ -502,7 +503,7 @@ function bool_escape($input): bool
     */
     if (is_bool($input)) {
         return $input;
-    } elseif (is_int($input)) {
+    } elseif (is_numeric($input)) {
         return ($input === 1);
     } else {
         $value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
