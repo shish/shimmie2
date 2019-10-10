@@ -1,14 +1,6 @@
 <?php
 
-class TranscodeConfig
-{
-    const ENGINE = "transcode_engine";
-    const ENABLED = "transcode_enabled";
-    const UPLOAD = "transcode_upload";
-    const UPLOAD_PREFIX = "transcode_upload_";
-    const QUALITY = "transcode_quality";
-}
-
+require_once "config.php";
  /*
  * This is used by the image transcoding code when there is an error while transcoding
  */
