@@ -178,9 +178,13 @@ class Database
         $this->dbtime += $dur;
     }
 
-    public function execute(string $query, array $args=[]): PDOStatement
+    public function execute(string $query, array $args=[], bool $scoreql = false): PDOStatement
     {
         try {
+            if($scoreql===true) {
+                $query = $this->scoreql_to_sql($query);
+            }
+
             if (is_null($this->db)) {
                 $this->connect_db();
             }
@@ -211,8 +215,12 @@ class Database
     /**
      * Execute an SQL query and return a 2D array.
      */
-    public function get_all(string $query, array $args=[]): array
+    public function get_all(string $query, array $args=[], bool $scoreql = false): array
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
+
         $_start = microtime(true);
         $data = $this->execute($query, $args)->fetchAll();
         $this->count_time("get_all", $_start, $query, $args);
@@ -222,8 +230,11 @@ class Database
     /**
      * Execute an SQL query and return a iterable object for use with generators.
      */
-    public function get_all_iterable(string $query, array $args=[]): PDOStatement
+    public function get_all_iterable(string $query, array $args=[], bool $scoreql = false): PDOStatement
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $data = $this->execute($query, $args);
         $this->count_time("get_all_iterable", $_start, $query, $args);
@@ -233,19 +244,40 @@ class Database
     /**
      * Execute an SQL query and return a single row.
      */
-    public function get_row(string $query, array $args=[]): ?array
+    public function get_row(string $query, array $args=[], bool $scoreql = false): ?array
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("get_row", $_start, $query, $args);
         return $row ? $row : null;
     }
 
+
+    /**
+     * Execute an SQL query and return a boolean based on whether it returns a result
+     */
+    public function exists(string $query, array $args=[], bool $scoreql = false): bool
+    {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
+        $_start = microtime(true);
+        $result = $this->execute($query, $args);
+        $this->count_time("exists", $_start, $query, $args);
+        return $result->rowCount()>0;
+    }
+
     /**
      * Execute an SQL query and return the first column of each row.
      */
-    public function get_col(string $query, array $args=[]): array
+    public function get_col(string $query, array $args=[], bool $scoreql = false): array
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_COLUMN);
         $this->count_time("get_col", $_start, $query, $args);
@@ -255,8 +287,11 @@ class Database
     /**
      * Execute an SQL query and return the first column of each row as a single iterable object.
      */
-    public function get_col_iterable(string $query, array $args=[]): Generator
+    public function get_col_iterable(string $query, array $args=[], bool $scoreql = false): Generator
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $stmt = $this->execute($query, $args);
         $this->count_time("get_col_iterable", $_start, $query, $args);
@@ -268,8 +303,11 @@ class Database
     /**
      * Execute an SQL query and return the the first column => the second column.
      */
-    public function get_pairs(string $query, array $args=[]): array
+    public function get_pairs(string $query, array $args=[], bool $scoreql = false): array
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $res = $this->execute($query, $args)->fetchAll(PDO::FETCH_KEY_PAIR);
         $this->count_time("get_pairs", $_start, $query, $args);
@@ -279,8 +317,11 @@ class Database
     /**
      * Execute an SQL query and return a single value.
      */
-    public function get_one(string $query, array $args=[])
+    public function get_one(string $query, array $args=[], bool $scoreql = false)
     {
+        if($scoreql===true) {
+            $query = $this->scoreql_to_sql($query);
+        }
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("get_one", $_start, $query, $args);
@@ -354,7 +395,7 @@ class MockDatabase extends Database
         $this->responses = $responses;
     }
 
-    public function execute(string $query, array $params=[]): PDOStatement
+    public function execute(string $query, array $params=[], bool $scoreql = false): PDOStatement
     {
         log_debug(
             "mock-database",
@@ -376,23 +417,23 @@ class MockDatabase extends Database
         return $this->responses[$this->query_id++];
     }
 
-    public function get_all(string $query, array $args=[]): array
+    public function get_all(string $query, array $args=[], bool $scoreql = false): array
     {
         return $this->_execute($query, $args);
     }
-    public function get_row(string $query, array $args=[]): ?array
+    public function get_row(string $query, array $args=[], bool $scoreql = false): ?array
     {
         return $this->_execute($query, $args);
     }
-    public function get_col(string $query, array $args=[]): array
+    public function get_col(string $query, array $args=[], bool $scoreql = false): array
     {
         return $this->_execute($query, $args);
     }
-    public function get_pairs(string $query, array $args=[]): array
+    public function get_pairs(string $query, array $args=[], bool $scoreql = false): array
     {
         return $this->_execute($query, $args);
     }
-    public function get_one(string $query, array $args=[])
+    public function get_one(string $query, array $args=[], bool $scoreql = false)
     {
         return $this->_execute($query, $args);
     }
