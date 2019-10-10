@@ -29,23 +29,7 @@ class Tag
         $tags = explode(' ', trim($tags));
 
         /* sanitise by removing invisible / dodgy characters */
-        $tag_array = [];
-        foreach ($tags as $tag) {
-            $tag = preg_replace("/\s/", "", $tag);                # whitespace
-            $tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
-            $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
-            $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
-            $tag = trim($tag, ", \t\n\r\0\x0B");
-
-            if (mb_strlen($tag, 'UTF-8') > 255) {
-                flash_message("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
-                continue;
-            }
-
-            if (!empty($tag)) {
-                $tag_array[] = $tag;
-            }
-        }
+        $tag_array = self::sanitize_array($tags);
 
         /* if user supplied a blank string, add "tagme" */
         if (count($tag_array) === 0 && $tagme) {
@@ -100,6 +84,74 @@ class Tag
 
         return $tag_array;
     }
+
+    public static function sanitize(string $tag): string
+    {
+        $tag = preg_replace("/\s/", "", $tag);                # whitespace
+        $tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
+        $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
+        $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
+        $tag = trim($tag, ", \t\n\r\0\x0B");
+
+        if (mb_strlen($tag, 'UTF-8') > 255) {
+            throw new Exception("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+        }
+        return $tag;
+    }
+
+    public static function compare(array $tags1, array $tags2): bool
+    {
+        if(count($tags1)!==count($tags2)) {
+            return false;
+        }
+
+        $tags1 = array_map("strtolower",$tags1);
+        $tags2 = array_map("strtolower",$tags2);
+        natcasesort($tags1);
+        natcasesort($tags2);
+
+
+        for($i = 0; $i < count($tags1); $i++) {
+            if($tags1[$i]!==$tags2[$i]) {
+                var_dump($tags1);
+                var_dump($tags2);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static function get_diff_tags(array $source, array $remove): array
+    {
+        $before = array_map('strtolower', $source);
+        $remove = array_map('strtolower', $remove);
+        $after = [];
+        foreach ($before as $tag) {
+            if (!in_array($tag, $remove)) {
+                $after[] = $tag;
+            }
+        }
+        return $after;
+    }
+
+    public static function sanitize_array(array $tags): array
+    {
+        $tag_array = [];
+        foreach ($tags as $tag) {
+            try {
+                $tag = Tag::sanitize($tag);
+            } catch(Exception $e) {
+                flash_message($e->getMessage());
+                continue;
+            }
+
+            if (!empty($tag)) {
+                $tag_array[] = $tag;
+            }
+        }
+        return $tag_array;
+    }
+
 
     public static function sqlify(string $term): string
     {
