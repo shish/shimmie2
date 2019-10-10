@@ -11,7 +11,7 @@
 
 class BulkAddInfo extends ExtensionInfo
 {
-    public const KEY = "builk_add";
+    public const KEY = "bulk_add";
 
     public $key = self::KEY;
     public $name = "Bulk Add";
