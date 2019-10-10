@@ -1053,14 +1053,17 @@ class Media extends Extension
                 $database->execute("SET statement_timeout TO 300000;");
             }
 
-            $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
-
+            if ($database->transaction === true) {
+               $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
+            }
             log_info("upgrade", "Setting predictable media values for known file types");
             $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_N WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_Y WHERE ext IN ('jpg','jpeg''ico','cur','png')"));
 
             $config->set_int(MediaConfig::VERSION, 2);
             log_info("media", "extension at version 2");
+
+            $database->beginTransaction();
         }
     }
 }
