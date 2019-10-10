@@ -37,7 +37,7 @@ class ExtManagerTheme extends Themelet
             //baseline_open_in_new_black_18dp.png
 
             $h_enabled_box = $editable ? "<td><input type='checkbox' name='ext_" . html_escape($extension->key) . "' id='ext_" . html_escape($extension->key) . "'$h_disabled $h_enabled></td>" : "";
-            $h_docs = ($extension->documentation ? "<a href='$h_link'>■</a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
+            $h_docs = ($extension->documentation ? "<a href='$h_link'><img src='ext/ext_manager/baseline_open_in_new_black_18dp.png'/></a>" : ""); //TODO: A proper "docs" symbol would be preferred here.
 
             $html .= "
 				<tr data-ext='{$extension->name}'>
