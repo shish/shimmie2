@@ -12,7 +12,7 @@ abstract class SCORE
     const ILIKE     = "SCORE_ILIKE";
 }
 
-class DBEngine
+abstract class DBEngine
 {
     /** @var null|string */
     public $name = null;
@@ -33,6 +33,8 @@ class DBEngine
     {
         return 'CREATE TABLE '.$name.' ('.$data.')';
     }
+
+    public abstract function set_timeout(PDO $db, int $time);
 }
 
 class MySQL extends DBEngine
@@ -68,6 +70,13 @@ class MySQL extends DBEngine
         $ctes = "ENGINE=InnoDB DEFAULT CHARSET='utf8'";
         return 'CREATE TABLE '.$name.' ('.$data.') '.$ctes;
     }
+
+    public function set_timeout(PDO $db, int $time): void
+    {
+        // These only apply to read-only queries, which appears to be the best we can to mysql-wise
+        $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
+    }
+
 }
 
 class PostgreSQL extends DBEngine
@@ -87,7 +96,7 @@ class PostgreSQL extends DBEngine
         } else {
             $db->exec("SET application_name TO 'shimmie [local]';");
         }
-        $db->exec("SET statement_timeout TO ".DATABASE_TIMEOUT.";");
+        $this->set_timeout($db, DATABASE_TIMEOUT);
     }
 
     public function scoreql_to_sql(string $data): string
@@ -109,6 +118,12 @@ class PostgreSQL extends DBEngine
         $data = $this->scoreql_to_sql($data);
         return "CREATE TABLE $name ($data)";
     }
+
+    public function set_timeout(PDO $db, int $time): void
+    {
+        $db->exec("SET statement_timeout TO ".$time.";");
+    }
+
 }
 
 // shimmie functions for export to sqlite
@@ -212,5 +227,10 @@ class SQLite extends DBEngine
         }
         $cols_redone = implode(", ", $cols);
         return "CREATE TABLE $name ($cols_redone); $extras";
+    }
+
+    public function set_timeout(PDO $db, int $time): void
+    {
+        // There doesn't seem to be such a thing for SQLite, so it does nothing
     }
 }

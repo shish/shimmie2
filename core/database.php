@@ -178,6 +178,11 @@ class Database
         $this->dbtime += $dur;
     }
 
+    public function set_timeout(int $time): void
+    {
+        $this->engine->set_timeout($this->db, $time);
+    }
+
     public function execute(string $query, array $args=[], bool $scoreql = false): PDOStatement
     {
         try {

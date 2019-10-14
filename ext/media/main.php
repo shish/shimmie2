@@ -1049,9 +1049,7 @@ class Media extends Extension
                     break;
             }
 
-            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
-                $database->execute("SET statement_timeout TO 300000;");
-            }
+            $database->set_timeout(300000); // These updates can take a little bit
 
             if ($database->transaction === true) {
                $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
