@@ -29,9 +29,17 @@ class ApprovalTheme extends Themelet
         ';
     }
 
+    public function display_admin_block(SetupBuildingEvent $event)
+    {
+        $sb = new SetupBlock("Approval");
+        $sb->add_bool_option(ApprovalConfig::IMAGES, "Images: ");
+        $event->panel->add_block($sb);
+    }
+
     public function display_admin_form()
     {
         global $page;
+
         $html = make_form(make_link("admin/approval"), "POST");
         $html .= "<button name='approval_action' value='approve_all'>Approve All Images</button><br/>";
         $html .= "<button name='approval_action' value='de_approve_all'>De-approve All Images</button>";

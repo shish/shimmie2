@@ -41,6 +41,11 @@ class Approval extends Extension
         }
     }
 
+    public function onSetupBuilding(SetupBuildingEvent $event)
+    {
+        $this->theme->display_admin_block($event);
+    }
+
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
         $this->theme->display_admin_form();
@@ -98,20 +103,22 @@ class Approval extends Extension
     const SEARCH_REGEXP = "/^approved:(yes|no)/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        global $user, $database;
+        global $user, $database, $config;
 
-        $matches = [];
+        if($config->get_bool(ApprovalConfig::IMAGES)) {
+            $matches = [];
 
-        if (is_null($event->term) && $this->no_approval_query($event->context)) {
-            $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_Y ")));
-        }
-
-
-        if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
-            if ($user->can(Permissions::APPROVE_IMAGE)&&$matches[1]=="no") {
-                $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_N ")));
-            } else {
+            if (is_null($event->term) && $this->no_approval_query($event->context)) {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_Y ")));
+            }
+
+
+            if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
+                if ($user->can(Permissions::APPROVE_IMAGE) && $matches[1] == "no") {
+                    $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_N ")));
+                } else {
+                    $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_Y ")));
+                }
             }
         }
     }
@@ -151,17 +158,17 @@ class Approval extends Extension
     }
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
-        global $user;
-        if ($event->image->approved===false && $user->can(Permissions::APPROVE_IMAGE)) {
+        global $user, $config;
+        if ($event->image->approved===false && $user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
             $event->add_part($this->theme->get_image_admin_html($event->image->id));
         }
     }
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
-        global $user;
+        global $user, $config;
 
-        if ($user->can(Permissions::APPROVE_IMAGE)&&in_array("approved:no", $event->search_terms)) {
+        if ($user->can(Permissions::APPROVE_IMAGE)&&in_array("approved:no", $event->search_terms)&& $config->get_bool(ApprovalConfig::IMAGES)) {
             $event->add_action("bulk_approve_image", "Approve", "a");
         }
     }
