@@ -48,6 +48,8 @@ class Approval extends Extension
 
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
+        global $config;
+
         $this->theme->display_admin_form();
     }
 
@@ -81,9 +83,9 @@ class Approval extends Extension
 
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
-        global $user, $page;
+        global $user, $page, $config;
 
-        if ($event->image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
+        if ( $config->get_bool(ApprovalConfig::IMAGES) && $event->image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -125,9 +127,9 @@ class Approval extends Extension
 
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
-        global $user;
+        global $user, $config;
         if ($event->key===HelpPages::SEARCH) {
-            if ($user->can(Permissions::APPROVE_IMAGE)) {
+            if ($user->can(Permissions::APPROVE_IMAGE) &&  $config->get_bool(ApprovalConfig::IMAGES)) {
                 $block = new Block();
                 $block->header = "Approval";
                 $block->body = $this->theme->get_help_html();
