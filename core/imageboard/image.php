@@ -115,7 +115,7 @@ class Image
         if ($max < 1) {
             return null;
         }		// From Issue #22 - opened by HungryFeline on May 30, 2011.
-        if ($max > $limit_range) {
+        if ($limit_range > 0 && $max > $limit_range) {
             $max = $limit_range;
         }
         $rand = mt_rand(0, $max-1);
