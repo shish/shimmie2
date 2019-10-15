@@ -31,7 +31,7 @@ class LogDatabaseTheme extends Themelet
 <table class='zebra'>
 	<thead>
 		<tr><th>Time</th><th>Module</th><th>User</th><th colspan='3'>Message</th></tr>
-		<form action='".make_link("log/view")."' method='GET'>
+		".make_form("log/view", "GET")."
 			<tr class='sizedinputs'>
 				<td><input type='date' name='time-start' value='".$this->heie("time-start")."'>
 				<br><input type='date' name='time-end' value='".$this->heie("time-end")."'></td>
@@ -40,11 +40,11 @@ class LogDatabaseTheme extends Themelet
 				<td><input type='text' name='message' value='".$this->heie("message")."'></td>
 				<td>
 					<select name='priority'>
-						<option value='".SCORE_LOG_DEBUG."'>Debug</option>
-						<option value='".SCORE_LOG_INFO."' selected>Info</option>
-						<option value='".SCORE_LOG_WARNING."'>Warning</option>
-						<option value='".SCORE_LOG_ERROR."'>Error</option>
-						<option value='".SCORE_LOG_CRITICAL."'>Critical</option>
+						<option value='".SCORE_LOG_DEBUG."' ".($this->heie("priority")==SCORE_LOG_DEBUG ? "selected" : "").">Debug</option>
+						<option value='".SCORE_LOG_INFO."' ".($this->heie("priority")==SCORE_LOG_INFO ? "selected" : "").">Info</option>
+						<option value='".SCORE_LOG_WARNING."' ".($this->heie("priority")==SCORE_LOG_WARNING ? "selected" : "").">Warning</option>
+						<option value='".SCORE_LOG_ERROR."' ".($this->heie("priority")==SCORE_LOG_ERROR ? "selected" : "").">Error</option>
+						<option value='".SCORE_LOG_CRITICAL."' ".($this->heie("priority")==SCORE_LOG_CRITICAL ? "selected" : "").">Critical</option>
 					</select>
 				</td>
 				<td><input type='submit' value='Search'></td>
@@ -53,7 +53,7 @@ class LogDatabaseTheme extends Themelet
 	</thead>
 	<tbody>\n";
         reset($events); // rewind to first element in array.
-        
+
         foreach ($events as $event) {
             $c = $this->pri_to_col($event['priority']);
             $table .= "<tr style='color: $c'>";
