@@ -150,6 +150,7 @@ new UserClass("base", null, [
     Permissions::NOTES_ADMIN => false,
     Permissions::POOLS_ADMIN => false,
     Permissions::TIPS_ADMIN => false,
+    Permissions::CRON_ADMIN => false,
 ]);
 
 new UserClass("anonymous", "base", [
@@ -226,6 +227,7 @@ new UserClass("admin", "base", [
     Permissions::NOTES_ADMIN => true,
     Permissions::POOLS_ADMIN => true,
     Permissions::TIPS_ADMIN => true,
+    Permissions::CRON_ADMIN => true,
 ]);
 
 new UserClass("hellbanned", "user", [

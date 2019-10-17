@@ -39,7 +39,7 @@ class CronUploader extends Extension
             $key = $event->get_arg(0);
             if (!empty($key)) {
                 $this->process_upload($key); // Start upload
-            } elseif ($user->is_admin()) {
+            } elseif ($user->can(Permissions::CRON_ADMIN)) {
                 $this->display_documentation();
             }
         }
