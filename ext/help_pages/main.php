@@ -33,22 +33,40 @@ class HelpPages extends Extension
 {
     public const SEARCH = "search";
 
+    private $pages;
+
+    private function get_pages(): array
+    {
+        if($this->pages==null) {
+            $e = new HelpPageListBuildingEvent();
+            send_event($e);
+            $this->pages = $e->pages;
+        }
+        return $this->pages;
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page;
 
+        $pages = $this->get_pages();
+
         if ($event->page_matches("help")) {
-            $e = new HelpPageListBuildingEvent();
-            send_event($e);
-            $page->set_mode(PageMode::PAGE);
+
 
             if ($event->count_args() == 0) {
-                $this->theme->display_list_page($e->pages);
+                $name = array_key_first($pages);
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("help/".$name));
+                return;
             } else {
+                $page->set_mode(PageMode::PAGE);
                 $name = $event->get_arg(0);
                 $title = $name;
-                if (array_key_exists($name, $e->pages)) {
-                    $title = $e->pages[$name];
+                if(array_key_exists($name, $pages)) {
+                    $title = $pages[$name];
+                } else {
+                    return;
                 }
 
                 $this->theme->display_help_page($title);
@@ -75,6 +93,16 @@ class HelpPages extends Extension
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
         $event->add_nav_link("help", new Link('help'), "Help");
+    }
+
+    public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
+    {
+        if($event->parent=="help") {
+            $pages = $this->get_pages();
+            foreach ($pages as $key=>$value) {
+                $event->add_nav_link("help_".$key, new Link('help/'.$key),$value);
+            }
+        }
     }
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
