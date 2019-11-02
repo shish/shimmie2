@@ -37,6 +37,21 @@ class Approval extends Extension
 
             self::approve_image($image_id);
             $page->set_mode(PageMode::REDIRECT);
+            $page->set_redirect(make_link("post/view/" . $image_id));
+        }
+
+        if ($event->page_matches("disapprove_image") && $user->can(Permissions::APPROVE_IMAGE)) {
+            // Try to get the image ID
+            $image_id = int_escape($event->get_arg(0));
+            if (empty($image_id)) {
+                $image_id = isset($_POST['image_id']) ? $_POST['image_id'] : null;
+            }
+            if (empty($image_id)) {
+                throw new SCoreException("Can not disapprove image: No valid Image ID given.");
+            }
+
+            self::disapprove_image($image_id);
+            $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/".$image_id));
         }
     }
@@ -69,7 +84,7 @@ class Approval extends Extension
                         ["approved_by_id"=>$user->id]
                     );
                     break;
-                case "de_approve_all":
+                case "disapprove_all":
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute($database->scoreql_to_sql(
                         "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE approved = SCORE_BOOL_Y"));
@@ -158,11 +173,22 @@ class Approval extends Extension
             ["approved_by_id"=>$user->id, "id"=>$image_id]
         );
     }
+
+    public static function disapprove_image($image_id)
+    {
+        global $database, $user;
+
+        $database->execute($database->scoreql_to_sql(
+            "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"),
+            ["id"=>$image_id]
+        );
+    }
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if ($event->image->approved===false && $user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_part($this->theme->get_image_admin_html($event->image->id));
+        if($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
+            $event->add_part($this->theme->get_image_admin_html($event->image));
         }
     }
 
@@ -170,8 +196,12 @@ class Approval extends Extension
     {
         global $user, $config;
 
-        if ($user->can(Permissions::APPROVE_IMAGE)&&in_array("approved:no", $event->search_terms)&& $config->get_bool(ApprovalConfig::IMAGES)) {
-            $event->add_action("bulk_approve_image", "Approve", "a");
+        if ($user->can(Permissions::APPROVE_IMAGE)&& $config->get_bool(ApprovalConfig::IMAGES)) {
+            if(in_array("approved:no", $event->search_terms)) {
+                $event->add_action("bulk_approve_image", "Approve", "a");
+            } else {
+                $event->add_action("bulk_disapprove_image", "Disapprove");
+            }
         }
     }
 
@@ -188,6 +218,16 @@ class Approval extends Extension
                         $total++;
                     }
                     flash_message("Approved $total items");
+                }
+                break;
+            case "bulk_disapprove_image":
+                if ($user->can(Permissions::APPROVE_IMAGE)) {
+                    $total = 0;
+                    foreach ($event->items as $image) {
+                        self::disapprove_image($image->id);
+                        $total++;
+                    }
+                    flash_message("Disapproved $total items");
                 }
                 break;
         }

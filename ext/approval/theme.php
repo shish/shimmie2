@@ -2,14 +2,23 @@
 
 class ApprovalTheme extends Themelet
 {
-    public function get_image_admin_html(int $image_id)
+    public function get_image_admin_html(Image $image)
     {
-        $html = "
-			".make_form(make_link('approve_image/'.$image_id), 'POST')."
-				<input type='hidden' name='image_id' value='$image_id'>
+        if($image->approved===true) {
+            $html = "
+			".make_form(make_link('disapprove_image/'.$image->id), 'POST')."
+				<input type='hidden' name='image_id' value='$image->id'>
+				<input type='submit' value='Disapprove'>
+			</form>
+		";
+        } else {
+            $html = "
+			".make_form(make_link('approve_image/'.$image->id), 'POST')."
+				<input type='hidden' name='image_id' value='$image->id'>
 				<input type='submit' value='Approve'>
 			</form>
 		";
+        }
 
         return $html;
     }
@@ -42,7 +51,7 @@ class ApprovalTheme extends Themelet
 
         $html = make_form(make_link("admin/approval"), "POST");
         $html .= "<button name='approval_action' value='approve_all'>Approve All Images</button><br/>";
-        $html .= "<button name='approval_action' value='de_approve_all'>De-approve All Images</button>";
+        $html .= "<button name='approval_action' value='disapprove_all'>Disapprove All Images</button>";
         $html .= "</form>\n";
         $page->add_block(new Block("Approval", $html));
     }
