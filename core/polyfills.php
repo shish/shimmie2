@@ -281,7 +281,6 @@ const MIME_TYPE_MAP = [
     'mpg' => 'video/mpeg',
     'mpeg' => 'video/mpeg',
     'mov' => 'video/quicktime',
-    'flv' => 'video/x-flv',
     'php' => 'text/x-php',
     'mp4' => 'video/mp4',
     'ogv' => 'video/ogg',
