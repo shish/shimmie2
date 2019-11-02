@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Regen Thumb
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description:
- * Documentation:
- */
 class RegenThumbInfo extends ExtensionInfo
 {
     public const KEY = "regen_thumb";

@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: Custom HTML Headers
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com
- * License: GPLv2
- * Description: Allows admins to modify & set custom &lt;head&gt; content
- * Documentation:
- *
- */
 class CustomHtmlHeadersInfo extends ExtensionInfo
 {
     public const KEY = "custom_html_headers";

@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Site Description
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Visibility: admin
- * Description: A description for search engines
- * Documentation:
- *
- */
 class SiteDescriptionInfo extends ExtensionInfo
 {
     public const KEY = "site_description";

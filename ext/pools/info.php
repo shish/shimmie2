@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Name: Pools System
- * Author: Sein Kraft <mail@seinkraft.info>, jgen <jgen.tech@gmail.com>, Daku <admin@codeanimu.net>
- * License: GPLv2
- * Description: Allow users to create groups of images and order them.
- * Documentation:
- */
-
 class PoolsInfo extends ExtensionInfo
 {
     public const KEY = "pools";

@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: Google Analytics
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://drudexsoftware.com
- * License: GPLv2
- * Description: Integrates Google Analytics tracking
- * Documentation:
- *
- */
 class GoogleAnalyticsInfo extends ExtensionInfo
 {
     public const KEY = "google_analytics";

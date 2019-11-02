@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Emoticon Filter
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Lets users use graphical smilies
- * Documentation:
- *
- */
-
 class EmoticonsInfo extends ExtensionInfo
 {
     public const KEY = "emoticons";

@@ -1,15 +1,5 @@
 <?php
 
-/*
-* Name: StatsD Interface
-* Author: Shish <webmaster@shishnet.org>
-* License: GPLv2
-* Visibility: admin
-* Description: Sends Shimmie stats to a StatsD server
-* Documentation:
-*
-*/
-
 class StatsDInterfaceInfo extends ExtensionInfo
 {
     public const KEY = "statsd";

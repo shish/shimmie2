@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: IP Ban
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Ban IP addresses
- * Documentation:
- *
- */
-
 class IPBanInfo extends ExtensionInfo
 {
     public const KEY = "ipban";

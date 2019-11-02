@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Ouroboros API
- * Author: Diftraku <diftraku[at]derpy.me>
- * Description: Ouroboros-like API for Shimmie
- * Version: 0.2
- * Documentation:
- *
- */
-
-
 class OuroborosAPIInfo extends ExtensionInfo
 {
     public const KEY = "ouroboros_api";

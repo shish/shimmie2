@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Logging (Database)
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Keep a record of SCore events (in the database).
- * Visibility: admin
- */
-
 class LogDatabaseInfo extends ExtensionInfo
 {
     public const KEY = "log_db";

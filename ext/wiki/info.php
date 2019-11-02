@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: Simple Wiki
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: A simple wiki, for those who don't want the hugeness of mediawiki
- * Documentation:
- *
- */
-
 class WikiInfo extends ExtensionInfo
 {
     public const KEY = "wiki";

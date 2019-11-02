@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Tag Editor
- * Author: Shish
- * Description: Allow images to have tags assigned to them
- * Documentation:
- */
-
 class TagEditInfo extends ExtensionInfo
 {
     public const KEY = "tag_edit";

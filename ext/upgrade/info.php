@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Database Upgrader
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Keeps things happy behind the scenes
- * Visibility: admin
- */
-
 class UpgradeInfo extends ExtensionInfo
 {
     public const KEY = "upgrade";

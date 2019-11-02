@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Handle Flash
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle Flash files.
- */
-
 class FlashFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_flash";

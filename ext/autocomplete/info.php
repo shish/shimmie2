@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Autocomplete
- * Author: Daku <admin@codeanimu.net>
- * Description: Adds autocomplete to search & tagging.
- */
-
 class AutoCompleteInfo extends ExtensionInfo
 {
     public const KEY = "autocomplete";

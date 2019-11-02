@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: System Info
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: Show various bits of system information
- * Documentation:
- */
-
 class ETInfo extends ExtensionInfo
 {
     public const KEY = "et";

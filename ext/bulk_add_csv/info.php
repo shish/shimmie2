@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Bulk Add CSV
- * Author: velocity37 <velocity37@gmail.com>
- * License: GPLv2
- * Description: Bulk add server-side images with metadata from CSV file
- * Documentation:
- *
- *
- */
-
 class BulkAddCSVInfo extends ExtensionInfo
 {
     public const KEY = "bulk_add_csv";

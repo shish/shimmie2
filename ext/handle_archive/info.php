@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Handle Archives
- * Author: Shish <webmaster@shishnet.org>
- * Description: Allow users to upload archives (zip, etc)
- * Documentation:
- *
- */
-
 class ArchiveFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_archive";

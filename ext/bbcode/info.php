@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Name: BBCode
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Turns BBCode into HTML
- */
-
 class BBCodeInfo extends ExtensionInfo
 {
     public const KEY = "bbcode";

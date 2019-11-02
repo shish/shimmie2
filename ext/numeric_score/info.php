@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: Image Scores (Numeric)
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Allow users to score images
- * Documentation:
- */
-
 class NumericScoreInfo extends ExtensionInfo
 {
     public const KEY = "numeric_score";

@@ -1,17 +1,5 @@
 <?php
 
-/*
- * Name: Browser Search
- * Author: ATravelingGeek <atg@atravelinggeek.com>
- * Some code (and lots of help) by Artanis (Erik Youngren <artanis.00@gmail.com>) from the 'tagger' extention - Used with permission
- * Link: http://atravelinggeek.com/
- * License: GPLv2
- * Description: Allows the user to add a browser 'plugin' to search the site with real-time suggestions
- * Version: 0.1c, October 26, 2007
- * Documentation:
- *
- */
-
 class BrowserSearchInfo extends ExtensionInfo
 {
     public const KEY = "browser_search";

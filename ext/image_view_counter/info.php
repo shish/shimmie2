@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: Image View Counter
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com/
- * License: GPLv2
- * Description: Tracks & displays how many times an image is viewed
- * Documentation:
- *
- */
 class ImageViewCounterInfo extends ExtensionInfo
 {
     public const KEY = "image_view_counter";

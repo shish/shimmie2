@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Image Viewer
- * Author: Shish
- * Description: Allows users to see uploaded images
- */
-
-
 class ViewImageInfo extends ExtensionInfo
 {
     public const KEY = "view";

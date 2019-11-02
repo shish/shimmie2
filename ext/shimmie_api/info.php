@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: [Beta] Shimmie JSON API
- * Author: Shish <webmaster@shishnet.org>
- * Description: A JSON interface to shimmie data [WARNING]
- * Documentation:
- *
- */
-
-
 class ShimmieApiInfo extends ExtensionInfo
 {
     public const KEY = "shimmie_api";

@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Downtime
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Show a "down for maintenance" page
- * Documentation:
- *
- */
-
 class DowntimeInfo extends ExtensionInfo
 {
     public const KEY = "downtime";

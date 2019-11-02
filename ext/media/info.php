@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Media
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides common functions and settings used for media operations.
- */
-
 class MediaInfo extends ExtensionInfo
 {
     public const KEY = "media";

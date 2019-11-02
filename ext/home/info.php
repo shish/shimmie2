@@ -1,15 +1,5 @@
 <?php
 
-/*
-* Name: Home Page
-* Author: Bzchan <bzchan@animemahou.com>
-* License: GPLv2
-* Visibility: admin
-* Description: Displays a front page with logo, search box and image count
-* Documentation:
-*
-*/
-
 class HomeInfo extends ExtensionInfo
 {
     public const KEY = "home";

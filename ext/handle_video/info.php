@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: Handle Video
- * Author: velocity37 <velocity37@gmail.com>
- * Modified By: Shish <webmaster@shishnet.org>, jgen <jeffgenovy@gmail.com>, im-mi <im.mi.mail.mi@gmail.com>
- * License: GPLv2
- * Description: Handle FLV, MP4, OGV and WEBM video files.
- * Documentation:
- */
-
 class VideoFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_video";

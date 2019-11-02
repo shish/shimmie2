@@ -1,13 +1,5 @@
 <?php
 
-/*
-Name: Danbooru Client API
-Author: JJS <jsutinen@gmail.com>
-Description: Allow Danbooru apps like Danbooru Uploader for Firefox to communicate with Shimmie
-Documentation:
-
-*/
-
 class DanbooruApiInfo extends ExtensionInfo
 {
     public const KEY = "danbooru_api";

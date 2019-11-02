@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: Private Messaging
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: Allow users to send messages to eachother
- * Documentation:
- *
- */
-
 class PrivMsgInfo extends ExtensionInfo
 {
     public const KEY = "pm";

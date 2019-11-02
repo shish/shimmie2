@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: User Management
- * Author: Shish
- * Description: Allows people to sign up to the website
- */
-
 class UserPageInfo extends ExtensionInfo
 {
     public const KEY = "user";

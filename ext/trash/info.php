@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Trash
- * Author: Matthew Barbour <matthew@darkohlme.net>
- * Description: Provides "Trash" or "Recycle Bin"-type functionality, storing delete images for later recovery
- * Documentation:
- */
-
 class TrashInfo extends ExtensionInfo
 {
     public const KEY = "trash";

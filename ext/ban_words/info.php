@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Comment Word Ban
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: For stopping spam and other comment abuse
- * Documentation:
- *
- */
-
 class BanWordsInfo extends ExtensionInfo
 {
     public const KEY = "ban_words";

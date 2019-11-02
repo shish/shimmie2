@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Name: Admin Controls
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Various things to make admins' lives easier
- * Documentation:
-
- */
-
 class AdminPageInfo extends ExtensionInfo
 {
     public const KEY = "admin";

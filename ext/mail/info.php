@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Name: Mail System
- * Author: Zach Hall <zach@sosguy.net>
- * Link: http://seemslegit.com
- * License: GPLv2
- * Description: Provides an interface for sending and receiving mail.
- */
-
 class MailInfo extends ExtensionInfo
 {
     public const KEY = "mail";

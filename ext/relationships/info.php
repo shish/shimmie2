@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Name: Post Relationships
- * Author: Angus Johnston <admin@codeanimu.net>
- * License: GPLv2
- * Description: Allow posts to have relationships (parent/child).
- */
-
 class RelationshipsInfo extends ExtensionInfo
 {
     public const KEY = "relationships";
