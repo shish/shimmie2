@@ -63,9 +63,9 @@ class Trash extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent=="posts") {
-            if($user->can(Permissions::VIEW_TRASH)) {
-                $event->add_nav_link("posts_trash", new Link('/post/list/in%3Atrash/1'), "Trash",null, 60);
+        if ($event->parent=="posts") {
+            if ($user->can(Permissions::VIEW_TRASH)) {
+                $event->add_nav_link("posts_trash", new Link('/post/list/in%3Atrash/1'), "Trash", null, 60);
             }
         }
     }

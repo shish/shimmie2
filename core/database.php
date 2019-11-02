@@ -186,7 +186,7 @@ class Database
     public function execute(string $query, array $args=[], bool $scoreql = false): PDOStatement
     {
         try {
-            if($scoreql===true) {
+            if ($scoreql===true) {
                 $query = $this->scoreql_to_sql($query);
             }
 
@@ -222,7 +222,7 @@ class Database
      */
     public function get_all(string $query, array $args=[], bool $scoreql = false): array
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
 
@@ -237,7 +237,7 @@ class Database
      */
     public function get_all_iterable(string $query, array $args=[], bool $scoreql = false): PDOStatement
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -251,7 +251,7 @@ class Database
      */
     public function get_row(string $query, array $args=[], bool $scoreql = false): ?array
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -266,7 +266,7 @@ class Database
      */
     public function exists(string $query, array $args=[], bool $scoreql = false): bool
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -280,7 +280,7 @@ class Database
      */
     public function get_col(string $query, array $args=[], bool $scoreql = false): array
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -294,7 +294,7 @@ class Database
      */
     public function get_col_iterable(string $query, array $args=[], bool $scoreql = false): Generator
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -310,7 +310,7 @@ class Database
      */
     public function get_pairs(string $query, array $args=[], bool $scoreql = false): array
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);
@@ -324,7 +324,7 @@ class Database
      */
     public function get_one(string $query, array $args=[], bool $scoreql = false)
     {
-        if($scoreql===true) {
+        if ($scoreql===true) {
             $query = $this->scoreql_to_sql($query);
         }
         $_start = microtime(true);

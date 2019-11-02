@@ -905,7 +905,7 @@ class Artists extends Extension
                     $pageNumber * $artistsPerPage
                     , $artistsPerPage
                 ]
-            );
+        );
 
         $number_of_listings = count($listing);
 

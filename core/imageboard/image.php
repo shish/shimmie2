@@ -151,7 +151,7 @@ class Image
         if (!$result) {
             $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
             $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER))));
-            if($limit!=null) {
+            if ($limit!=null) {
                 $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
                 $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
             }
@@ -730,9 +730,11 @@ class Image
                         "INSERT INTO tags(tag) VALUES (:tag)",
                         ["tag"=>$tag]
                     );
-                    $database->execute($database->scoreql_to_sql(
+                    $database->execute(
+                        $database->scoreql_to_sql(
                         "INSERT INTO image_tags(image_id, tag_id)
-							VALUES(:id, (SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)))"),
+							VALUES(:id, (SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)))"
+                    ),
                         ["id"=>$this->id, "tag"=>$tag]
                     );
                 } else {

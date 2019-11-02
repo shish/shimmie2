@@ -341,7 +341,7 @@ class Ratings extends Extension
                 $old = $_POST["rating_old"];
                 $new = $_POST["rating_new"];
 
-                if($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>$new, "old"=>$old ]);
                 }
 

@@ -101,18 +101,18 @@ class Tag
 
     public static function compare(array $tags1, array $tags2): bool
     {
-        if(count($tags1)!==count($tags2)) {
+        if (count($tags1)!==count($tags2)) {
             return false;
         }
 
-        $tags1 = array_map("strtolower",$tags1);
-        $tags2 = array_map("strtolower",$tags2);
+        $tags1 = array_map("strtolower", $tags1);
+        $tags2 = array_map("strtolower", $tags2);
         natcasesort($tags1);
         natcasesort($tags2);
 
 
-        for($i = 0; $i < count($tags1); $i++) {
-            if($tags1[$i]!==$tags2[$i]) {
+        for ($i = 0; $i < count($tags1); $i++) {
+            if ($tags1[$i]!==$tags2[$i]) {
                 var_dump($tags1);
                 var_dump($tags2);
                 return false;
@@ -140,7 +140,7 @@ class Tag
         foreach ($tags as $tag) {
             try {
                 $tag = Tag::sanitize($tag);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 flash_message($e->getMessage());
                 continue;
             }

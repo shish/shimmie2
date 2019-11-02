@@ -34,7 +34,7 @@ abstract class DBEngine
         return 'CREATE TABLE '.$name.' ('.$data.')';
     }
 
-    public abstract function set_timeout(PDO $db, int $time);
+    abstract public function set_timeout(PDO $db, int $time);
 }
 
 class MySQL extends DBEngine
@@ -76,7 +76,6 @@ class MySQL extends DBEngine
         // These only apply to read-only queries, which appears to be the best we can to mysql-wise
         $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
     }
-
 }
 
 class PostgreSQL extends DBEngine
@@ -123,7 +122,6 @@ class PostgreSQL extends DBEngine
     {
         $db->exec("SET statement_timeout TO ".$time.";");
     }
-
 }
 
 // shimmie functions for export to sqlite

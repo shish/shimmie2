@@ -22,7 +22,7 @@ class CronUploader extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="system") {
+        if ($event->parent=="system") {
             $event->add_nav_link("cron_docs", new Link('cron_upload'), "Cron Upload");
         }
     }
@@ -58,7 +58,7 @@ class CronUploader extends Extension
         $sb->add_int_option(CronUploaderConfig::COUNT, "Upload per run", true);
         $sb->add_text_option(CronUploaderConfig::DIR, "Root dir", true);
         $sb->add_text_option(CronUploaderConfig::KEY, "Key", true);
-        $sb->add_choice_option(CronUploaderConfig::USER, $users,"User", true);
+        $sb->add_choice_option(CronUploaderConfig::USER, $users, "User", true);
         $sb->end_table();
         $sb->add_label("<a href='$documentation_link'>Read the documentation</a> for cron setup instructions.");
 
@@ -130,7 +130,7 @@ class CronUploader extends Extension
         $results = get_dir_contents($stage_dir);
 
         if (count($results) == 0) {
-            if(rmdir($stage_dir)===false) {
+            if (rmdir($stage_dir)===false) {
                 flash_message("Nothing to stage from $folder, cannot remove folder");
             } else {
                 flash_message("Nothing to stage from $folder, removing folder");
@@ -203,24 +203,29 @@ class CronUploader extends Extension
         }
 
         $this->theme->display_documentation(
-            $running, $queue_dirinfo, $uploaded_dirinfo, $failed_dirinfo,
-            $this->get_cron_cmd(), $this->get_cron_url(), $logs
+            $running,
+            $queue_dirinfo,
+            $uploaded_dirinfo,
+            $failed_dirinfo,
+            $this->get_cron_cmd(),
+            $this->get_cron_url(),
+            $logs
         );
     }
 
-    function get_queue_dir()
+    public function get_queue_dir()
     {
         $dir = CronUploaderConfig::get_dir();
         return join_path($dir, self::QUEUE_DIR);
     }
 
-    function get_uploaded_dir()
+    public function get_uploaded_dir()
     {
         $dir = CronUploaderConfig::get_dir();
         return join_path($dir, self::UPLOADED_DIR);
     }
 
-    function get_failed_dir()
+    public function get_failed_dir()
     {
         $dir = CronUploaderConfig::get_dir();
         return join_path($dir, self::FAILED_DIR);
@@ -262,7 +267,7 @@ class CronUploader extends Extension
             throw new SCoreException("Cron upload key incorrect");
         }
         $user_id = CronUploaderConfig::get_user();
-        if(empty($user_id)) {
+        if (empty($user_id)) {
             throw new SCoreException("Cron upload user not set");
         }
         $user = User::by_id($user_id);
@@ -329,8 +334,6 @@ class CronUploader extends Extension
                     $this->move_uploaded($img[0], $img[1], $output_subdir, true);
                     $this->log_message(SCORE_LOG_ERROR, "(" . gettype($e) . ") " . $e->getMessage());
                     $this->log_message(SCORE_LOG_ERROR, $e->getTraceAsString());
-
-
                 }
             }
 
@@ -348,14 +351,13 @@ class CronUploader extends Extension
             flock($lockfile, LOCK_UN);
             fclose($lockfile);
         }
-
     }
 
     private function move_uploaded(string $path, string $filename, string $output_subdir, bool $corrupt = false)
     {
         $relativeDir = dirname(substr($path, strlen(CronUploaderConfig::get_dir()) + 7));
 
-        if($relativeDir==".") {
+        if ($relativeDir==".") {
             $relativeDir = "";
         }
 
@@ -424,10 +426,11 @@ class CronUploader extends Extension
 
     private const PARTIAL_DOWNLOAD_EXTENSIONS = ['crdownload','part'];
 
-    private function is_skippable_file(string $path) {
+    private function is_skippable_file(string $path)
+    {
         $info = pathinfo($path);
 
-        if(in_array(strtolower($info['extension']),self::PARTIAL_DOWNLOAD_EXTENSIONS)) {
+        if (in_array(strtolower($info['extension']), self::PARTIAL_DOWNLOAD_EXTENSIONS)) {
             return true;
         }
 
@@ -499,4 +502,3 @@ class CronUploader extends Extension
         $page->set_data(implode("\r\n", $this->output_buffer));
     }
 }
-

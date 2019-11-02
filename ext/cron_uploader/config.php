@@ -22,7 +22,6 @@ abstract class CronUploaderConfig
 
             $config->set_string(self::KEY, $upload_key);
         }
-
     }
 
     public static function get_user(): int

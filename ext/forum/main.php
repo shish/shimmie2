@@ -269,7 +269,7 @@ class Forum extends Extension
                 "GROUP BY f.id, f.sticky, f.title, f.date, u.name, u.email, u.class ".
                 "ORDER BY f.sticky ASC, f.uptodate DESC LIMIT :limit OFFSET :offset",
             ["limit"=>$threadsPerPage, "offset"=>$pageNumber * $threadsPerPage]
-                );
+        );
 
         $this->theme->display_thread_list($page, $threads, $showAdminOptions, $pageNumber + 1, $totalPages);
     }
@@ -302,7 +302,7 @@ class Forum extends Extension
                 "ORDER BY p.date ASC ".
                 "LIMIT :limit OFFSET :offset",
             ["thread_id"=>$threadID, "offset"=>$pageNumber * $postsPerPage, "limit"=>$postsPerPage]
-                );
+        );
         $this->theme->display_thread($posts, $showAdminOptions, $threadTitle, $threadID, $pageNumber + 1, $totalPages);
     }
 

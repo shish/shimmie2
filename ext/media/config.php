@@ -6,5 +6,4 @@ abstract class MediaConfig
     const CONVERT_PATH = "media_convert_path";
     const VERSION = "ext_media_version";
     const MEM_LIMIT = 'media_mem_limit';
-
 }

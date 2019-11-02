@@ -14,14 +14,19 @@ class MediaResizeEvent extends Event
     public $ignore_aspect_ratio;
     public $allow_upscale;
 
-    public function __construct(String $engine, string $input_path, string $input_type, string $output_path,
-                                int $target_width, int $target_height,
-                                bool $ignore_aspect_ratio = false,
-                                string $target_format = null,
-                                int $target_quality = 80,
-                                bool $minimize = false,
-                                bool $allow_upscale = true)
-    {
+    public function __construct(
+        String $engine,
+        string $input_path,
+        string $input_type,
+        string $output_path,
+        int $target_width,
+        int $target_height,
+        bool $ignore_aspect_ratio = false,
+        string $target_format = null,
+        int $target_quality = 80,
+        bool $minimize = false,
+        bool $allow_upscale = true
+    ) {
         assert(in_array($engine, MediaEngine::ALL));
         $this->engine = $engine;
         $this->input_path = $input_path;
@@ -54,5 +59,4 @@ class MediaCheckPropertiesEvent extends Event
         $this->file_name = $file_name;
         $this->ext = $ext;
     }
-
 }

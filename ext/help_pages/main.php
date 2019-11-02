@@ -37,7 +37,7 @@ class HelpPages extends Extension
 
     private function get_pages(): array
     {
-        if($this->pages==null) {
+        if ($this->pages==null) {
             $e = new HelpPageListBuildingEvent();
             send_event($e);
             $this->pages = $e->pages;
@@ -52,8 +52,6 @@ class HelpPages extends Extension
         $pages = $this->get_pages();
 
         if ($event->page_matches("help")) {
-
-
             if ($event->count_args() == 0) {
                 $name = array_key_first($pages);
                 $page->set_mode(PageMode::REDIRECT);
@@ -63,7 +61,7 @@ class HelpPages extends Extension
                 $page->set_mode(PageMode::PAGE);
                 $name = $event->get_arg(0);
                 $title = $name;
-                if(array_key_exists($name, $pages)) {
+                if (array_key_exists($name, $pages)) {
                     $title = $pages[$name];
                 } else {
                     return;
@@ -97,10 +95,10 @@ class HelpPages extends Extension
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
-        if($event->parent=="help") {
+        if ($event->parent=="help") {
             $pages = $this->get_pages();
             foreach ($pages as $key=>$value) {
-                $event->add_nav_link("help_".$key, new Link('help/'.$key),$value);
+                $event->add_nav_link("help_".$key, new Link('help/'.$key), $value);
             }
         }
     }

@@ -4,7 +4,7 @@ class ApprovalTheme extends Themelet
 {
     public function get_image_admin_html(Image $image)
     {
-        if($image->approved===true) {
+        if ($image->approved===true) {
             $html = "
 			".make_form(make_link('disapprove_image/'.$image->id), 'POST')."
 				<input type='hidden' name='image_id' value='$image->id'>

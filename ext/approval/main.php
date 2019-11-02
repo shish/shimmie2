@@ -74,20 +74,23 @@ class Approval extends Extension
 
         $action = $event->action;
         $event->redirect = true;
-        if($action==="approval") {
+        if ($action==="approval") {
             $approval_action = $_POST["approval_action"];
             switch ($approval_action) {
                 case "approve_all":
                     $database->set_timeout(300000); // These updates can take a little bit
-                    $database->execute($database->scoreql_to_sql(
-                        "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE approved = SCORE_BOOL_N"),
+                    $database->execute(
+                        $database->scoreql_to_sql(
+                        "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE approved = SCORE_BOOL_N"
+                    ),
                         ["approved_by_id"=>$user->id]
                     );
                     break;
                 case "disapprove_all":
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute($database->scoreql_to_sql(
-                        "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE approved = SCORE_BOOL_Y"));
+                        "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE approved = SCORE_BOOL_Y"
+                    ));
                     break;
                 default:
 
@@ -100,7 +103,7 @@ class Approval extends Extension
     {
         global $user, $page, $config;
 
-        if ( $config->get_bool(ApprovalConfig::IMAGES) && $event->image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
+        if ($config->get_bool(ApprovalConfig::IMAGES) && $event->image->approved===false && !$user->can(Permissions::APPROVE_IMAGE)) {
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/list"));
         }
@@ -109,9 +112,9 @@ class Approval extends Extension
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
-        if($event->parent=="posts") {
-            if($user->can(Permissions::APPROVE_IMAGE)) {
-                $event->add_nav_link("posts_unapproved", new Link('/post/list/approved%3Ano/1'), "Pending Approval",null, 60);
+        if ($event->parent=="posts") {
+            if ($user->can(Permissions::APPROVE_IMAGE)) {
+                $event->add_nav_link("posts_unapproved", new Link('/post/list/approved%3Ano/1'), "Pending Approval", null, 60);
             }
         }
     }
@@ -122,7 +125,7 @@ class Approval extends Extension
     {
         global $user, $database, $config;
 
-        if($config->get_bool(ApprovalConfig::IMAGES)) {
+        if ($config->get_bool(ApprovalConfig::IMAGES)) {
             $matches = [];
 
             if (is_null($event->term) && $this->no_approval_query($event->context)) {
@@ -168,8 +171,10 @@ class Approval extends Extension
     {
         global $database, $user;
 
-        $database->execute($database->scoreql_to_sql(
-            "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE id = :id AND approved = SCORE_BOOL_N"),
+        $database->execute(
+            $database->scoreql_to_sql(
+            "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE id = :id AND approved = SCORE_BOOL_N"
+        ),
             ["approved_by_id"=>$user->id, "id"=>$image_id]
         );
     }
@@ -178,8 +183,10 @@ class Approval extends Extension
     {
         global $database, $user;
 
-        $database->execute($database->scoreql_to_sql(
-            "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"),
+        $database->execute(
+            $database->scoreql_to_sql(
+            "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"
+        ),
             ["id"=>$image_id]
         );
     }
@@ -187,7 +194,7 @@ class Approval extends Extension
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user, $config;
-        if($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
+        if ($user->can(Permissions::APPROVE_IMAGE) && $config->get_bool(ApprovalConfig::IMAGES)) {
             $event->add_part($this->theme->get_image_admin_html($event->image));
         }
     }
@@ -197,7 +204,7 @@ class Approval extends Extension
         global $user, $config;
 
         if ($user->can(Permissions::APPROVE_IMAGE)&& $config->get_bool(ApprovalConfig::IMAGES)) {
-            if(in_array("approved:no", $event->search_terms)) {
+            if (in_array("approved:no", $event->search_terms)) {
                 $event->add_action("bulk_approve_image", "Approve", "a");
             } else {
                 $event->add_action("bulk_disapprove_image", "Disapprove");

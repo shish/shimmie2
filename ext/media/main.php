@@ -265,7 +265,7 @@ class Media extends Extension
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
             $field = $matches[1];
-            if($field==="unknown") {
+            if ($field==="unknown") {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("video IS NULL OR audio IS NULL OR image IS NULL")));
             } else {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
@@ -814,7 +814,7 @@ class Media extends Extension
                 $new_height,
                 $width,
                 $height
-                ) === false) {
+            ) === false) {
                 throw new MediaException("Unable to copy resized image data to new image");
             }
 
@@ -1039,7 +1039,7 @@ class Media extends Extension
                 "ALTER TABLE images ADD COLUMN image SCORE_BOOL NULL"
             ));
 
-            switch($database->get_driver_name()) {
+            switch ($database->get_driver_name()) {
                 case DatabaseDriver::PGSQL:
                 case DatabaseDriver::SQLITE:
                     $database->execute('CREATE INDEX images_image_idx ON images(image) WHERE image IS NOT NULL');
@@ -1052,7 +1052,7 @@ class Media extends Extension
             $database->set_timeout(300000); // These updates can take a little bit
 
             if ($database->transaction === true) {
-               $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
+                $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
             }
             log_info("upgrade", "Setting predictable media values for known file types");
             $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_N WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')"));

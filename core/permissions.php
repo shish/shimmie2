@@ -83,5 +83,4 @@ abstract class Permissions
     public const CRON_ADMIN = "cron_admin";
     public const APPROVE_IMAGE = "approve_image";
     public const APPROVE_COMMENT = "approve_comment";
-
 }

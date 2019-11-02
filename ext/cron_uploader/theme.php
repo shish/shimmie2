@@ -2,9 +2,15 @@
 
 class CronUploaderTheme extends Themelet
 {
-    public function display_documentation(bool $running, array $queue_dirinfo, array $uploaded_dirinfo, array $failed_dirinfo,
-            string $cron_cmd, string $cron_url, ?array $log_entries)
-    {
+    public function display_documentation(
+        bool $running,
+        array $queue_dirinfo,
+        array $uploaded_dirinfo,
+        array $failed_dirinfo,
+        string $cron_cmd,
+        string $cron_url,
+        ?array $log_entries
+    ) {
         global $page;
 
 
@@ -51,7 +57,7 @@ class CronUploaderTheme extends Themelet
 			        <br />When you create the cron job, you choose when to upload new images.</li>
             </ol>";
 
-    $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means. 
+        $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means. 
 <br />(<b>{$queue_dirinfo['path']}</b>)
                     <ol>
                         <li>Any sub-folders will be turned into tags.</li>
@@ -81,9 +87,9 @@ class CronUploaderTheme extends Themelet
         $page->add_block($block_install);
         $page->add_block($block_usage);
 
-        if(!empty($log_entries)) {
+        if (!empty($log_entries)) {
             $log_html = "<table class='log'>";
-            foreach($log_entries as $entry) {
+            foreach ($log_entries as $entry) {
                 $log_html .= "<tr><th>{$entry["date_sent"]}</th><td>{$entry["message"]}</td></tr>";
             }
             $log_html .= "</table>";
@@ -111,13 +117,13 @@ class CronUploaderTheme extends Themelet
         $html .= "<tr><td colspan='2'><input type='submit' value='Re-stage files to queue' /></td></tr>";
         $html .= "</table></form>";
 
-        $html .= make_form(make_link("admin/cron_uploader_clear_queue"), "POST",false,"","return confirm('Are you sure you want to delete everything in the queue folder?');")
+        $html .= make_form(make_link("admin/cron_uploader_clear_queue"), "POST", false, "", "return confirm('Are you sure you want to delete everything in the queue folder?');")
             ."<table class='form'><tr><td>"
             ."<input type='submit' value='Clear queue folder'></td></tr></table></form>";
-        $html .= make_form(make_link("admin/cron_uploader_clear_uploaded"), "POST",false,"","return confirm('Are you sure you want to delete everything in the uploaded folder?');")
+        $html .= make_form(make_link("admin/cron_uploader_clear_uploaded"), "POST", false, "", "return confirm('Are you sure you want to delete everything in the uploaded folder?');")
             ."<table class='form'><tr><td>"
             ."<input type='submit' value='Clear uploaded folder'></td></tr></table></form>";
-        $html .= make_form(make_link("admin/cron_uploader_clear_failed"), "POST",false,"","return confirm('Are you sure you want to delete everything in the failed folder?');")
+        $html .= make_form(make_link("admin/cron_uploader_clear_failed"), "POST", false, "", "return confirm('Are you sure you want to delete everything in the failed folder?');")
             ."<table class='form'><tr><td>"
             ."<input type='submit' value='Clear failed folder'></td></tr></table></form>";
         $html .= "</table>\n";

@@ -352,16 +352,18 @@ function join_url(string $base, string ...$paths)
 
 function get_dir_contents(string $dir): array
 {
-    if(empty($dir)) {
+    if (empty($dir)) {
         throw new Exception("dir required");
     }
-    if(!is_dir($dir)) {
+    if (!is_dir($dir)) {
         return [];
     }
     $results = array_diff(
         scandir(
-            $dir),
-        ['..', '.']);
+            $dir
+        ),
+        ['..', '.']
+    );
 
     return $results;
 }
@@ -378,7 +380,8 @@ function scan_dir(string $path): array
         $path,
         FilesystemIterator::KEY_AS_PATHNAME |
         FilesystemIterator::CURRENT_AS_FILEINFO |
-        FilesystemIterator::SKIP_DOTS);
+        FilesystemIterator::SKIP_DOTS
+    );
     foreach (new RecursiveIteratorIterator($ite) as $filename => $cur) {
         try {
             $filesize = $cur->getSize();

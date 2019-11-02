@@ -818,7 +818,7 @@ class Pools extends Extension
 					SELECT COUNT(*) FROM pool_images p
 					$query",
             ["pid" => $poolID]
-            ) / $imagesPerPage);
+        ) / $imagesPerPage);
 
 
 
