@@ -61,18 +61,10 @@ class AdminPage extends Extension
     public function onCommand(CommandEvent $event)
     {
         if ($event->cmd == "help") {
-            print "\tdb-upgrade\n";
-            print "\t\tRun DB schema updates, if automatic updates are disabled\n\n";
             print "\tget-page <query string>\n";
             print "\t\teg 'get-page post/list'\n\n";
             print "\tregen-thumb <id / hash>\n";
             print "\t\tregenerate a thumbnail\n\n";
-        }
-        if ($event->cmd == "db-upgrade") {
-            print("Running DB Upgrade\n");
-            global $database;
-            $database->set_timeout(300000); // These updates can take a little bit
-            send_event(new DatabaseUpgradeEvent());
         }
         if ($event->cmd == "get-page") {
             global $page;

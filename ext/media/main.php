@@ -992,7 +992,7 @@ class Media extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
-        if ($config->get_int(MediaConfig::VERSION) < 1) {
+        if ($this->get_version(MediaConfig::VERSION) < 1) {
             $current_value = $config->get_string("thumb_ffmpeg_path");
             if (!empty($current_value)) {
                 $config->set_string(MediaConfig::FFMPEG_PATH, $current_value);
@@ -1025,11 +1025,10 @@ class Media extends Extension
                 $config->set_int(MediaConfig::MEM_LIMIT, $current_value);
             }
 
-            $config->set_int(MediaConfig::VERSION, 1);
-            log_info("media", "extension installed");
+            $this->set_version(MediaConfig::VERSION, 1);
         }
 
-        if ($config->get_int(MediaConfig::VERSION) < 2) {
+        if ($this->get_version(MediaConfig::VERSION) < 2) {
             $database->execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN image SCORE_BOOL NULL"
             ));
@@ -1053,8 +1052,7 @@ class Media extends Extension
             $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_N WHERE ext IN ('swf','mp3','ani','flv','mp4','m4v','ogv','webm')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET image = SCORE_BOOL_Y WHERE ext IN ('jpg','jpeg','ico','cur','png')"));
 
-            $config->set_int(MediaConfig::VERSION, 2);
-            log_info("media", "extension at version 2");
+            $this->set_version(MediaConfig::VERSION, 2);
 
             $database->beginTransaction();
         }

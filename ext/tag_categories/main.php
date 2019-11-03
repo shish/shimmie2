@@ -16,9 +16,9 @@ class TagCategories extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
-        if ($config->get_int(TagCategoriesConfig::VERSION) < 1) {
+        if ($this->get_version(TagCategoriesConfig::VERSION) < 1) {
             // primary extension database, holds all our stuff!
             $database->create_table(
                 'image_tag_categories',
@@ -28,7 +28,7 @@ class TagCategories extends Extension
 				color VARCHAR(7)'
             );
 
-            $config->set_int(TagCategoriesConfig::VERSION, 1);
+            $this->set_version(TagCategoriesConfig::VERSION, 1);
 
             log_info("tag_categories", "extension installed");
         }

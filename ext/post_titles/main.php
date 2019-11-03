@@ -20,11 +20,11 @@ class PostTitles extends Extension
 
     private function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
-        if ($config->get_int(PostTitlesConfig::VERSION) < 1) {
+        if ($this->get_version(PostTitlesConfig::VERSION) < 1) {
             $database->Execute("ALTER TABLE images ADD COLUMN title varchar(255) NULL");
-            $config->set_int(PostTitlesConfig::VERSION, 1);
+            $this->set_version(PostTitlesConfig::VERSION, 1);
         }
     }
 

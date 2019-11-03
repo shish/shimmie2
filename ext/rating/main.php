@@ -525,18 +525,18 @@ class Ratings extends Extension
     {
         global $database, $config;
 
-        if ($config->get_int(RatingsConfig::VERSION) < 1) {
+        if ($this->get_version(RatingsConfig::VERSION) < 1) {
             $database->Execute("ALTER TABLE images ADD COLUMN rating CHAR(1) NOT NULL DEFAULT '?'");
             $database->Execute("CREATE INDEX images__rating ON images(rating)");
-            $config->set_int(RatingsConfig::VERSION, 3);
+            $this->set_version(RatingsConfig::VERSION, 3);
         }
 
-        if ($config->get_int(RatingsConfig::VERSION) < 2) {
+        if ($this->get_version(RatingsConfig::VERSION) < 2) {
             $database->Execute("CREATE INDEX images__rating ON images(rating)");
-            $config->set_int(RatingsConfig::VERSION, 2);
+            $this->set_version(RatingsConfig::VERSION, 2);
         }
 
-        if ($config->get_int(RatingsConfig::VERSION) < 3) {
+        if ($this->get_version(RatingsConfig::VERSION) < 3) {
             $database->Execute("UPDATE images SET rating = 'u' WHERE rating is null");
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::MYSQL:
@@ -547,10 +547,10 @@ class Ratings extends Extension
                     $database->Execute("ALTER TABLE images ALTER COLUMN rating SET NOT NULL");
                     break;
             }
-            $config->set_int(RatingsConfig::VERSION, 3);
+            $this->set_version(RatingsConfig::VERSION, 3);
         }
 
-        if ($config->get_int(RatingsConfig::VERSION) < 4) {
+        if ($this->get_version(RatingsConfig::VERSION) < 4) {
             $value = $config->get_string("ext_rating_anon_privs");
             if (!empty($value)) {
                 $config->set_array("ext_rating_anonymous_privs", str_split($value));
@@ -578,7 +578,7 @@ class Ratings extends Extension
 
             $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
 
-            $config->set_int(RatingsConfig::VERSION, 4);
+            $this->set_version(RatingsConfig::VERSION, 4);
         }
     }
 

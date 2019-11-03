@@ -163,6 +163,19 @@ abstract class Extension
     {
         return implode(",", self::$enabled_extensions);
     }
+
+    protected function get_version(string $name): int
+    {
+        global $config;
+        return $config->get_int($name, 0);
+    }
+
+    protected function set_version(string $name, int $ver)
+    {
+        global $config;
+        $config->set_int($name, $ver);
+        log_info("upgrade", "Set version for $name to $ver");
+    }
 }
 
 abstract class ExtensionInfo

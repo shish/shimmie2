@@ -2,6 +2,20 @@
 
 class Upgrade extends Extension
 {
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tdb-upgrade\n";
+            print "\t\tRun DB schema updates, if automatic updates are disabled\n\n";
+        }
+        if ($event->cmd == "db-upgrade") {
+            print("Running DB Upgrade\n");
+            global $database;
+            $database->set_timeout(300000); // These updates can take a little bit
+            send_event(new DatabaseUpgradeEvent());
+        }
+    }
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
@@ -11,31 +25,29 @@ class Upgrade extends Extension
         }
 
         if (!is_numeric($config->get_string("db_version"))) {
-            $config->set_int("db_version", 2);
+            $this->set_version("db_version", 2);
         }
 
-        if ($config->get_int("db_version") < 6) {
+        if ($this->get_version("db_version") < 6) {
             // cry :S
         }
 
         // v7 is convert to innodb with adodb
         // now done again as v9 with PDO
 
-        if ($config->get_int("db_version") < 8) {
+        if ($this->get_version("db_version") < 8) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 8);
 
             $database->execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
             ));
 
-            log_info("upgrade", "Database at version 8");
+            $this->set_version("db_version", 8);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 9) {
+        if ($this->get_version("db_version") < 9) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 9);
 
             if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
                 $tables = $database->get_col("SHOW TABLES");
@@ -45,37 +57,34 @@ class Upgrade extends Extension
                 }
             }
 
-            log_info("upgrade", "Database at version 9");
+            $this->set_version("db_version", 9);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 10) {
+        if ($this->get_version("db_version") < 10) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 10);
 
             log_info("upgrade", "Adding foreign keys to images");
             $database->Execute("ALTER TABLE images ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
 
-            log_info("upgrade", "Database at version 10");
+            $this->set_version("db_version", 10);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 11) {
+        if ($this->get_version("db_version") < 11) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 11);
 
             log_info("upgrade", "Converting user flags to classes");
             $database->execute("ALTER TABLE users ADD COLUMN class VARCHAR(32) NOT NULL default :user", ["user" => "user"]);
-            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name"=>"anonymous", "id"=>$config->get_int('anon_id')]);
+            $database->execute("UPDATE users SET class = :name WHERE id=:id", ["name"=>"anonymous", "id"=>$this->get_version('anon_id')]);
             $database->execute("UPDATE users SET class = :name WHERE admin=:admin", ["name"=>"admin", "admin"=>'Y']);
 
-            log_info("upgrade", "Database at version 11");
+            $this->set_version("db_version", 11);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 12) {
+        if ($this->get_version("db_version") < 12) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 12);
 
             if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                 log_info("upgrade", "Changing ext column to VARCHAR");
@@ -85,13 +94,12 @@ class Upgrade extends Extension
             log_info("upgrade", "Lowering case of all exts");
             $database->execute("UPDATE images SET ext = LOWER(ext)");
 
-            log_info("upgrade", "Database at version 12");
+            $this->set_version("db_version", 12);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 13) {
+        if ($this->get_version("db_version") < 13) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 13);
 
             log_info("upgrade", "Changing password column to VARCHAR(250)");
             if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
@@ -100,13 +108,12 @@ class Upgrade extends Extension
                 $database->execute("ALTER TABLE users CHANGE pass pass VARCHAR(250)");
             }
 
-            log_info("upgrade", "Database at version 13");
+            $this->set_version("db_version", 13);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 14) {
+        if ($this->get_version("db_version") < 14) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 14);
 
             log_info("upgrade", "Changing tag column to VARCHAR(255)");
             if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
@@ -119,13 +126,12 @@ class Upgrade extends Extension
                 $database->execute('ALTER TABLE aliases MODIFY COLUMN newtag VARCHAR(255) NOT NULL');
             }
 
-            log_info("upgrade", "Database at version 14");
+            $this->set_version("db_version", 14);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 15) {
+        if ($this->get_version("db_version") < 15) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 15);
 
             log_info("upgrade", "Adding lower indexes for postgresql use");
             if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
@@ -133,13 +139,12 @@ class Upgrade extends Extension
                 $database->execute('CREATE INDEX users_lower_name_idx ON users ((lower(name)))');
             }
 
-            log_info("upgrade", "Database at version 15");
+            $this->set_version("db_version", 15);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 16) {
+        if ($this->get_version("db_version") < 16) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 16);
 
             log_info("upgrade", "Adding tag_id, image_id index to image_tags");
             $database->execute('CREATE UNIQUE INDEX image_tags_tag_id_image_id_idx ON image_tags(tag_id,image_id) ');
@@ -156,13 +161,12 @@ class Upgrade extends Extension
             }
             // SQLite doesn't support altering existing columns? This seems like a problem?
 
-            log_info("upgrade", "Database at version 16");
+            $this->set_version("db_version", 16);
             $config->set_bool("in_upgrade", false);
         }
 
-        if ($config->get_int("db_version") < 17) {
+        if ($this->get_version("db_version") < 17) {
             $config->set_bool("in_upgrade", true);
-            $config->set_int("db_version", 17);
 
             log_info("upgrade", "Adding media information columns to images table");
             $database->execute($database->scoreql_to_sql(
@@ -207,8 +211,7 @@ class Upgrade extends Extension
             $database->execute($database->scoreql_to_sql("UPDATE images SET audio = SCORE_BOOL_N WHERE ext IN ('webp')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_Y WHERE ext IN ('flv','mp4','m4v','ogv','webm')"));
 
-
-            log_info("upgrade", "Database at version 17");
+            $this->set_version("db_version", 17);
             $config->set_bool("in_upgrade", false);
         }
     }

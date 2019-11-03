@@ -151,14 +151,14 @@ class Trash extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
-        if ($config->get_int(TrashConfig::VERSION) < 1) {
+        if ($this->get_version(TrashConfig::VERSION) < 1) {
             $database->Execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN trash SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
             ));
             $database->Execute("CREATE INDEX images_trash_idx ON images(trash)");
-            $config->set_int(TrashConfig::VERSION, 1);
+            $this->set_version(TrashConfig::VERSION, 1);
         }
     }
 }

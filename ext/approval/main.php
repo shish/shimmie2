@@ -239,9 +239,9 @@ class Approval extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
-        if ($config->get_int(ApprovalConfig::VERSION) < 1) {
+        if ($this->get_version(ApprovalConfig::VERSION) < 1) {
             $database->Execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN approved SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
             ));
@@ -250,7 +250,7 @@ class Approval extends Extension
             ));
 
             $database->Execute("CREATE INDEX images_approved_idx ON images(approved)");
-            $config->set_int(ApprovalConfig::VERSION, 1);
+            $this->set_version(ApprovalConfig::VERSION, 1);
         }
     }
 }

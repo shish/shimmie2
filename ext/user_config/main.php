@@ -30,13 +30,11 @@ class UserConfig extends Extension
         send_event(new InitUserConfigEvent($event->user, $user_config));
     }
 
-    private function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 
-        if ($config->get_int(self::VERSION, 0) < 1) {
-            log_info("upgrade", "Adding user config table");
-
+        if ($this->get_version(self::VERSION) < 1) {
             $database->create_table("user_config", "
                 user_id INTEGER NOT NULL,
                 name VARCHAR(128) NOT NULL,
@@ -46,7 +44,7 @@ class UserConfig extends Extension
 		    ");
             $database->execute("CREATE INDEX user_config_user_id_idx ON user_config(user_id)");
 
-            $config->set_int(self::VERSION, 1);
+            $this->set_version(self::VERSION, 1);
         }
     }
 
