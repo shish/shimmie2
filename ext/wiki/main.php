@@ -77,7 +77,7 @@ class Wiki extends Extension
     {
         global $database, $config;
 
-        if ($this->get_version("ext_wiki_version", 0) < 1) {
+        if ($this->get_version("ext_wiki_version") < 1) {
             $database->create_table("wiki_pages", "
 				id SCORE_AIPK,
 				owner_id INTEGER NOT NULL,
