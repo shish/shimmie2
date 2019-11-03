@@ -15,7 +15,7 @@ class LogDatabase extends Extension
         if ($config->get_int("ext_log_database_version") < 1) {
             $database->create_table("score_log", "
 				id SCORE_AIPK,
-				date_sent TIMESTAMP NOT NULL,
+				date_sent TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				section VARCHAR(32) NOT NULL,
 				username VARCHAR(32) NOT NULL,
 				address SCORE_INET NOT NULL,

@@ -21,8 +21,8 @@ class Forum extends Extension
 					sticky SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					title VARCHAR(255) NOT NULL,
 					user_id INTEGER NOT NULL,
-					date TIMESTAMP NOT NULL,
-					uptodate TIMESTAMP NOT NULL,
+					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					uptodate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT
 					");
             $database->execute("CREATE INDEX forum_threads_date_idx ON forum_threads(date)", []);
@@ -31,7 +31,7 @@ class Forum extends Extension
 					id SCORE_AIPK,
 					thread_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					date TIMESTAMP NOT NULL,
+					date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 					message TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT,
 					FOREIGN KEY (thread_id) REFERENCES forum_threads (id) ON UPDATE CASCADE ON DELETE CASCADE
