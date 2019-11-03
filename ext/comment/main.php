@@ -90,7 +90,8 @@ class CommentList extends Extension
     /** @var CommentListTheme $theme */
     public $theme;
 
-    public function onInitExt(InitExtEvent $event) {
+    public function onInitExt(InitExtEvent $event)
+    {
         global $config;
         $config->set_default_int('comment_window', 5);
         $config->set_default_int('comment_limit', 10);

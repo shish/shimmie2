@@ -77,8 +77,8 @@ class Approval extends Extension
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute(
                         $database->scoreql_to_sql(
-                        "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE approved = SCORE_BOOL_N"
-                    ),
+                            "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE approved = SCORE_BOOL_N"
+                        ),
                         ["approved_by_id"=>$user->id]
                     );
                     break;
@@ -169,8 +169,8 @@ class Approval extends Extension
 
         $database->execute(
             $database->scoreql_to_sql(
-            "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE id = :id AND approved = SCORE_BOOL_N"
-        ),
+                "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE id = :id AND approved = SCORE_BOOL_N"
+            ),
             ["approved_by_id"=>$user->id, "id"=>$image_id]
         );
     }
@@ -181,8 +181,8 @@ class Approval extends Extension
 
         $database->execute(
             $database->scoreql_to_sql(
-            "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"
-        ),
+                "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"
+            ),
             ["id"=>$image_id]
         );
     }

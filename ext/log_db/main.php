@@ -8,7 +8,8 @@ class LogDatabase extends Extension
         $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event) {
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
         global $config, $database;
 
         if ($config->get_int("ext_log_database_version") < 1) {

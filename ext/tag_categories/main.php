@@ -5,7 +5,8 @@ require_once "config.php";
 
 class TagCategories extends Extension
 {
-    public function onInitExt(InitExtEvent $event) {
+    public function onInitExt(InitExtEvent $event)
+    {
         global $config;
 
         // whether we split out separate categories on post view by default
@@ -13,7 +14,8 @@ class TagCategories extends Extension
         $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);
     }
 
-    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event) {
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
         global $config, $database;
 
         if ($config->get_int(TagCategoriesConfig::VERSION) < 1) {

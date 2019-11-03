@@ -70,9 +70,9 @@ class AdminPage extends Extension
         }
         if ($event->cmd == "db-upgrade") {
             print("Running DB Upgrade\n");
-			global $database;
+            global $database;
             $database->set_timeout(300000); // These updates can take a little bit
-			send_event(new DatabaseUpgradeEvent());
+            send_event(new DatabaseUpgradeEvent());
         }
         if ($event->cmd == "get-page") {
             global $page;

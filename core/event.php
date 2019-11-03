@@ -317,5 +317,6 @@ class LogEvent extends Event
     }
 }
 
-class DatabaseUpgradeEvent extends Event {
+class DatabaseUpgradeEvent extends Event
+{
 }
