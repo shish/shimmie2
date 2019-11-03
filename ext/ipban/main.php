@@ -1,6 +1,5 @@
 <?php
 
-// RemoveIPBanEvent {{{
 class RemoveIPBanEvent extends Event
 {
     public $id;
@@ -10,8 +9,7 @@ class RemoveIPBanEvent extends Event
         $this->id = $id;
     }
 }
-// }}}
-// AddIPBanEvent {{{
+
 class AddIPBanEvent extends Event
 {
     public $ip;
@@ -25,7 +23,6 @@ class AddIPBanEvent extends Event
         $this->end = trim($end);
     }
 }
-// }}}
 
 class IPBan extends Extension
 {
@@ -131,7 +128,6 @@ class IPBan extends Extension
         }
     }
 
-    // installer {{{
     protected function install()
     {
         global $database;
@@ -209,8 +205,7 @@ class IPBan extends Extension
             $config->set_int("ext_ipban_version", 8);
         }
     }
-    // }}}
-    // deal with banned person {{{
+
     private function check_ip_ban()
     {
         $remote = $_SERVER['REMOTE_ADDR'];
@@ -266,8 +261,7 @@ class IPBan extends Extension
         log_error("ipban", "block($remote) called but no bans matched");
         exit;
     }
-    // }}}
-    // database {{{
+
     private function get_bans()
     {
         global $database;
@@ -328,5 +322,4 @@ class IPBan extends Extension
         $cache->set("ip_bans_sorted", $sorted, 600);
         return $sorted;
     }
-    // }}}
 }

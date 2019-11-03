@@ -159,8 +159,7 @@ class TagList extends Extension
         $sb->end_table();
         $event->panel->add_block($sb);
     }
-    // }}}
-    // misc {{{
+
     private function tag_link(string $tag): string
     {
         $u_tag = url_escape($tag);
@@ -253,8 +252,6 @@ class TagList extends Extension
 
         return $html;
     }
-    // }}}
-    // maps {{{
 
     private function build_navigation(): string
     {
@@ -453,8 +450,7 @@ class TagList extends Extension
 
         return $html;
     }
-    // }}}
-    // blocks {{{
+
     private function add_related_block(Page $page, Image $image): void
     {
         global $database, $config;
@@ -653,7 +649,4 @@ class TagList extends Extension
             return $related_tags;
         }
     }
-
-
-    // }}}
 }

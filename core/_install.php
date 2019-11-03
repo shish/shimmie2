@@ -74,8 +74,7 @@ if (is_readable("data/config/shimmie.conf.php")) {
 
 do_install();
 
-// utilities {{{
-    // TODO: Can some of these be pushed into "core/???.inc.php" ?
+// TODO: Can some of these be pushed into "core/???.inc.php" ?
 
 function check_gd_version(): int
 {
@@ -99,10 +98,9 @@ function check_im_version(): int
 
     return (empty($convert_check) ? 0 : 1);
 }
-// }}}
 
 function do_install()
-{ // {{{
+{
     if (file_exists("data/config/auto_install.conf.php")) {
         require_once "data/config/auto_install.conf.php";
     } elseif (@$_POST["database_type"] == DatabaseDriver::SQLITE) {
@@ -118,10 +116,10 @@ function do_install()
     define("CACHE_DSN", null);
     define("DATABASE_KA", true);
     install_process();
-} // }}}
+}
 
 function ask_questions()
-{ // {{{
+{
     $warnings = [];
     $errors = [];
 
@@ -232,21 +230,21 @@ function ask_questions()
 			</div>
 		</div>
 EOD;
-} // }}}
+}
 
 /**
  * This is where the install really takes place.
  */
 function install_process()
-{ // {{{
+{
     build_dirs();
     create_tables();
     insert_defaults();
     write_config();
-} // }}}
+}
 
 function create_tables()
-{ // {{{
+{
     try {
         $db = new Database();
 
@@ -331,10 +329,10 @@ EOD;
     } catch (Exception $e) {
         handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
     }
-} // }}}
+}
 
 function insert_defaults()
-{ // {{{
+{
     try {
         $db = new Database();
 
@@ -350,10 +348,10 @@ function insert_defaults()
     } catch (Exception $e) {
         handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
     }
-} // }}}
+}
 
 function build_dirs()
-{ // {{{
+{
     $data_exists = file_exists("data") || mkdir("data");
     $data_writable = is_writable("data") || chmod("data", 0755);
 
@@ -373,10 +371,10 @@ function build_dirs()
 		";
         exit(7);
     }
-} // }}}
+}
 
 function write_config()
-{ // {{{
+{
     $file_content = '<' . '?php' . "\n" .
             "define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
             '?' . '>';
@@ -417,7 +415,7 @@ EOD;
 EOD;
     }
     echo "\n";
-} // }}}
+}
 
 function handle_db_errors(bool $isPDO, string $errorMessage1, string $errorMessage2, int $exitCode)
 {

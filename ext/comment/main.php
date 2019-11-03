@@ -367,7 +367,6 @@ class CommentList extends Extension
         }
     }
 
-    // page building {{{
     private function build_page(int $current_page)
     {
         global $cache, $database, $user;
@@ -417,9 +416,7 @@ class CommentList extends Extension
 
         $this->theme->display_comment_list($images, $current_page, $total_pages, $user->can(Permissions::CREATE_COMMENT));
     }
-    // }}}
 
-    // get comments {{{
     /**
      * #return Comment[]
      */
@@ -488,9 +485,7 @@ class CommentList extends Extension
 			ORDER BY comments.id ASC
 		", ["image_id"=>$image_id]);
     }
-    // }}}
 
-    // add / remove / edit comments {{{
     private function is_comment_limit_hit(): bool
     {
         global $config, $database;
@@ -651,5 +646,4 @@ class CommentList extends Extension
             throw new CommentPostingException("Akismet thinks that your comment is spam. Try rewriting the comment, or logging in.");
         }
     }
-    // }}}
 }

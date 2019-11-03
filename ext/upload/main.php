@@ -291,8 +291,6 @@ class Upload extends Extension
         return $tags;
     }
 
-    // do things {{{
-
     /**
      * Returns a descriptive error message for the specified PHP error code.
      *
@@ -475,5 +473,4 @@ class Upload extends Extension
 
         return $ok;
     }
-    // }}}
 }

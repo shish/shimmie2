@@ -1,6 +1,5 @@
 <?php
 
- // RemoveImageHashBanEvent {{{
 class RemoveImageHashBanEvent extends Event
 {
     public $hash;
@@ -10,8 +9,7 @@ class RemoveImageHashBanEvent extends Event
         $this->hash = $hash;
     }
 }
-// }}}
-// AddImageHashBanEvent {{{
+
 class AddImageHashBanEvent extends Event
 {
     public $hash;
@@ -23,7 +21,7 @@ class AddImageHashBanEvent extends Event
         $this->reason = $reason;
     }
 }
-// }}}
+
 class ImageBan extends Extension
 {
     public function onInitExt(InitExtEvent $event)
