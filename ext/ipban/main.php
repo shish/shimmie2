@@ -208,8 +208,8 @@ class IPBan extends Extension
         }
 
         if ($this->get_version("ext_ipban_version") == 9) {
-            $database->execute("ALTER TABLE bans ADD COLUMN expire NULL TIMESTAMP DEFAULT NULL");
-            $database->execute("UPDATE bans SET expire = dateadd(s, end_timestamp, '1970-01-01 00:00:00')");
+            $database->execute("ALTER TABLE bans ADD COLUMN expires TIMESTAMP DEFAULT NULL");
+            $database->execute("UPDATE bans SET expires = to_date('1970/01/01', 'YYYY/MM/DD') + (end_timestamp * interval '1 seconds')");
             $database->execute("ALTER TABLE bans DROP COLUMN end_timestamp");
             $database->execute("CREATE INDEX bans__expires ON bans(expires)");
             $this->set_version("ext_ipban_version", 10);
