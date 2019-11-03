@@ -76,8 +76,8 @@ $_tracer->begin("Loading event listeners");
 _load_event_listeners();
 $_tracer->end();
 
-send_event(new InitExtEvent());
 if (AUTO_DB_UPGRADE) {
     send_event(new DatabaseUpgradeEvent());
 }
+send_event(new InitExtEvent());
 $_tracer->end();
