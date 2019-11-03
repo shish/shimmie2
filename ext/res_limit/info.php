@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Resolution Limiter
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Allows the admin to set min / max image dimensions
- */
 class ResolutionLimitInfo extends ExtensionInfo
 {
     public const KEY = "res_limit";

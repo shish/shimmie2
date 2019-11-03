@@ -472,7 +472,7 @@ class OuroborosAPI extends Extension
         if (empty($post->file) && !empty($post->file_url) && filter_var(
             $post->file_url,
             FILTER_VALIDATE_URL
-            ) !== false
+        ) !== false
         ) {
             // Transload from source
             $meta['file'] = tempnam('/tmp', 'shimmie_transload_' . $config->get_string('transload_engine'));

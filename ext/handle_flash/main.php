@@ -13,6 +13,7 @@ class FlashFileHandler extends DataHandlerExtension
                 if (!$info) {
                     return null;
                 }
+                $event->image = false;
 
                 $event->width = $info[0];
                 $event->height = $info[1];

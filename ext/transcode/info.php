@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Transcode Image
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Allows admins to automatically and manually transcode images.
- * Documentation:
- *
- */
-
 class TranscodeImageInfo extends ExtensionInfo
 {
     public const KEY = "transcode";

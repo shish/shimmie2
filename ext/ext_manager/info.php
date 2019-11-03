@@ -1,15 +1,5 @@
 <?php
 
-/**
- * Name: Extension Manager
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Visibility: admin
- * Description: A thing for point & click extension management
- * Documentation:
- */
-
 class ExtManagerInfo extends ExtensionInfo
 {
     public const KEY = "ext_manager";

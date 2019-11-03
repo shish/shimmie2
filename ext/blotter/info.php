@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Blotter
- * Author: Zach Hall <zach@sosguy.net> [http://seemslegit.com/]
- * License: GPLv2
- * Description:
- */
 class BlotterInfo extends ExtensionInfo
 {
     public const KEY = "blotter";

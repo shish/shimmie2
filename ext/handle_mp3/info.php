@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Handle MP3
- * Author: Shish <webmaster@shishnet.org>
- * Description: Handle MP3 files
- */
-
 class MP3FileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_mp3";

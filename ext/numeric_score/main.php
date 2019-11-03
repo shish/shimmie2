@@ -129,7 +129,7 @@ class NumericScore extends Extension
             $sql = "SELECT id FROM images
 			        WHERE EXTRACT(YEAR FROM posted) = :year
 					";
-            $args = ["limit" => $config->get_int("index_images"), "year" => $year];
+            $args = ["limit" => $config->get_int(IndexConfig::IMAGES), "year" => $year];
 
             if ($event->page_matches("popular_by_day")) {
                 $sql .=

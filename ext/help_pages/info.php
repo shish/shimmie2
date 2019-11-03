@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Name: Help Pages
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides documentation screens
- */
-
 class HelpPagesInfo extends ExtensionInfo
 {
     public const KEY = "help_pages";

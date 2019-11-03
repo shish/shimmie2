@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: User-specific settings
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides system-wide support for user-specific settings
- * Visibility: admin
- */
-
 class UserConfigInfo extends ExtensionInfo
 {
     public const KEY = "user_config";

@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Name: System
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Provides system screen
- */
-
 class SystemInfo extends ExtensionInfo
 {
     public const KEY = "system";

@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Handle ICO
- * Author: Shish <webmaster@shishnet.org>
- * Description: Handle windows icons
- */
-
 class IcoFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_ico";

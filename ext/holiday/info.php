@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Name: Holiday Theme
- * Author: DakuTree <thedakutree@codeanimu.net>
- * Link: http://www.codeanimu.net
- * License: GPLv2
- * Description: Use an additional stylesheet on certain holidays.
- */
 class HolidayInfo extends ExtensionInfo
 {
     public const KEY = "holiday";

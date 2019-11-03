@@ -89,7 +89,7 @@ class NotATag extends Extension
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "remove") {
                     if (isset($_POST['tag'])) {
-                        $database->Execute("DELETE FROM untags WHERE tag = ?", [$_POST['tag']]);
+                        $database->Execute($database->scoreql_to_sql("DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"), [$_POST['tag']]);
 
                         flash_message("Image ban removed");
                         $page->set_mode(PageMode::REDIRECT);

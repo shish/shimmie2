@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Name: Post Titles
- * Author: Matthew Barbour <matthew@darkholme.net>
- * Description: Add titles to media posts
- */
-
 class PostTitlesInfo extends ExtensionInfo
 {
     public const KEY = "post_titles";

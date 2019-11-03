@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: Static File Handler
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Visibility: admin
- * Description: If Shimmie can't handle a request, check static files ($theme/static/$filename, then ext/handle_static/static/$filename)
- */
-
 class HandleStaticInfo extends ExtensionInfo
 {
     public const KEY = "handle_static";

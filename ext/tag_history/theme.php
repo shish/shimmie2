@@ -1,9 +1,4 @@
 <?php
-/*
- * Name: Tag History
- * Author: Bzchan <bzchan@animemahou.com>, modified by jgen <jgen.tech@gmail.com>
- */
-
 class TagHistoryTheme extends Themelet
 {
     private $messages = [];
@@ -117,11 +112,11 @@ class TagHistoryTheme extends Themelet
     public function display_admin_block(string $validation_msg='')
     {
         global $page;
-        
+
         if (!empty($validation_msg)) {
             $validation_msg = '<br><b>'. $validation_msg .'</b>';
         }
-        
+
         $html = '
 			Revert tag changes by a specific IP address or username, optionally limited to recent changes.
 			'.$validation_msg.'
@@ -137,7 +132,7 @@ class TagHistoryTheme extends Themelet
 		";
         $page->add_block(new Block("Mass Tag Revert", $html));
     }
-    
+
     /*
      * Show a standard page for results to be put into
      */

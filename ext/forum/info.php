@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: [Beta] Forum
- * Author: Sein Kraft <mail@seinkraft.info>
- *         Alpha <alpha@furries.com.ar>
- * License: GPLv2
- * Description: Rough forum extension
- * Documentation:
- */
-
 class ForumInfo extends ExtensionInfo
 {
     public const KEY = "dorum";

@@ -52,7 +52,7 @@ class ArrowkeyNavigation extends Extension
         global $config, $database;
 
         // get the amount of images per page
-        $images_per_page = $config->get_int('index_images');
+        $images_per_page = $config->get_int(IndexConfig::IMAGES);
 
         // if there are no tags, use default
         if (is_null($event->get_arg(1))) {

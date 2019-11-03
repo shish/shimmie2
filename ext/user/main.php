@@ -339,8 +339,7 @@ class UserPage extends Extension
             $this->theme->display_user_block($page, $user, $ubbe->parts);
         }
     }
-    // }}}
-    // Things done *with* the user {{{
+
     private function page_login($name, $pass)
     {
         global $config, $page;
@@ -490,8 +489,7 @@ class UserPage extends Extension
             '/'
         );
     }
-    //}}}
-    // Things done *to* the user {{{
+
     private function user_can_edit_user(User $a, User $b): bool
     {
         if ($a->is_anonymous()) {
@@ -581,8 +579,7 @@ class UserPage extends Extension
             $this->redirect_to_user($duser);
         }
     }
-    // }}}
-    // ips {{{
+
     private function count_upload_ips(User $duser): array
     {
         global $database;
@@ -683,5 +680,4 @@ class UserPage extends Extension
             $page->set_redirect(make_link("post/list"));
         }
     }
-    // }}}
 }

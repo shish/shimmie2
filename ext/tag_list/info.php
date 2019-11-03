@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Name: Tag List
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Show the tags in various ways
- */
-
 class TagListInfo extends ExtensionInfo
 {
     public const KEY = "tag_list";

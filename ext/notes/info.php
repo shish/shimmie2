@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Name: [Beta] Notes
- * Author: Sein Kraft <mail@seinkraft.info>
- * License: GPLv2
- * Description: Annotate images
- * Documentation:
- */
-
 class NotesInfo extends ExtensionInfo
 {
     public const KEY = "notes";

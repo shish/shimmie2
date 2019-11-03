@@ -9,6 +9,7 @@ class MP3FileHandler extends DataHandlerExtension
                 $event->audio = true;
                 $event->video = false;
                 $event->lossless = false;
+                $event->image = false;
                 break;
         }
         // TODO: Buff out audio format support, length scanning

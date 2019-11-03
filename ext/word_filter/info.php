@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Word Filter
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Simple search and replace
- */
-
 class WordFilterInfo extends ExtensionInfo
 {
     public const KEY = "word_filter";

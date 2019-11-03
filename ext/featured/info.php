@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Featured Image
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * License: GPLv2
- * Description: Bring a specific image to the users' attentions
- * Documentation:
- *
- */
-
 class FeaturedInfo extends ExtensionInfo
 {
     public const KEY = "featured";

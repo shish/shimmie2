@@ -1,13 +1,5 @@
 <?php
 
-/*
- * Name: Favorites
- * Author: Daniel Marschall <info@daniel-marschall.de>
- * License: GPLv2
- * Description: Allow users to favorite images
- * Documentation:
- */
-
 class FavoritesInfo extends ExtensionInfo
 {
     public const KEY = "favorites";

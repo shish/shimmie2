@@ -11,6 +11,8 @@ class IcoFileHandler extends DataHandlerExtension
             $event->lossless = true;
             $event->video = false;
             $event->audio = false;
+            $event->image = ($event->ext!="ani");
+
 
             $fp = fopen($event->file_name, "r");
             try {

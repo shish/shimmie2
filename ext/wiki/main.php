@@ -265,7 +265,6 @@ class Wiki extends Extension
         return new WikiPage($row);
     }
 
-    // php-diff {{{
     /**
         Diff implemented in pure php, written from scratch.
         Copyright (C) 2003  Daniel Unterberger <diff.phpnet@holomind.de>
@@ -502,5 +501,4 @@ class Wiki extends Extension
                 throw new Exception("stat needs to be =, + or -");
         }
     }
-    // }}}
 }

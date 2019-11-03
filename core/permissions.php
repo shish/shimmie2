@@ -80,4 +80,7 @@ abstract class Permissions
     public const NOTES_ADMIN = "notes_admin";
     public const POOLS_ADMIN = "pools_admin";
     public const TIPS_ADMIN = "tips_admin";
+    public const CRON_ADMIN = "cron_admin";
+    public const APPROVE_IMAGE = "approve_image";
+    public const APPROVE_COMMENT = "approve_comment";
 }

@@ -57,21 +57,21 @@ class LogDatabase extends Extension
                     $args["time_end"] = $_GET["time-end"];
                 }
                 if (!empty($_GET["module"])) {
-                    $wheres[] = "section = :module";
+                    $wheres[] =  $database->scoreql_to_sql("SCORE_STRNORM(section) = SCORE_STRNORM(:module)");
                     $args["module"] = $_GET["module"];
                 }
                 if (!empty($_GET["user"])) {
                     if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                         if (preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-                            $wheres[] = "(username = :user1 OR text(address) = :user2)";
+                            $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR SCORE_STRNORM(text(address)) = SCORE_STRNORM(:user2))");
                             $args["user1"] = $_GET["user"];
                             $args["user2"] = $_GET["user"] . "/32";
                         } else {
-                            $wheres[] = "lower(username) = lower(:user)";
+                            $wheres[] = $database->scoreql_to_sql("SCORE_STRNORM(username) = SCORE_STRNORM(:user)");
                             $args["user"] = $_GET["user"];
                         }
                     } else {
-                        $wheres[] = "(username = :user1 OR address = :user2)";
+                        $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR SCORE_STRNORM(address) = SCORE_STRNORM(:user2))");
                         $args["user1"] = $_GET["user"];
                         $args["user2"] = $_GET["user"];
                     }

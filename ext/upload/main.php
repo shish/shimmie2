@@ -138,7 +138,10 @@ class Upload extends Extension
 
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
-        $event->add_nav_link("upload", new Link('upload'), "Upload");
+        global $user;
+        if ($user->can(Permissions::CREATE_IMAGE)) {
+            $event->add_nav_link("upload", new Link('upload'), "Upload");
+        }
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
@@ -287,8 +290,6 @@ class Upload extends Extension
         }
         return $tags;
     }
-
-    // do things {{{
 
     /**
      * Returns a descriptive error message for the specified PHP error code.
@@ -472,5 +473,4 @@ class Upload extends Extension
 
         return $ok;
     }
-    // }}}
 }

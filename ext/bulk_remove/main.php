@@ -123,7 +123,7 @@ class BulkRemove extends Extension
             $page->add_block(new Block(
                 "Bulk Remove Error",
                 "Please use Board Admin to use bulk remove."
-                ));
+            ));
         }
 
         //

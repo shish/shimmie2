@@ -1,14 +1,5 @@
 <?php
 
-/**
- * Name: Rule34 Customisations
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: Extra site-specific bits
- * Documentation:
- *
- */
-
 class Rule34Info extends ExtensionInfo
 {
     public const KEY = "rule34";

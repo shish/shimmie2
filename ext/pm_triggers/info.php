@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: [Beta] PM triggers
- * Author: Shish <webmaster@shishnet.org>
- * License: GPLv2
- * Description: Send PMs in response to certain events (eg image deletion)
- */
-
 class PMTriggerInfo extends ExtensionInfo
 {
     public const KEY = "pm_triggers";

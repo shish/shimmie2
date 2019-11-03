@@ -350,6 +350,54 @@ function join_url(string $base, string ...$paths)
     return $output;
 }
 
+function get_dir_contents(string $dir): array
+{
+    if (empty($dir)) {
+        throw new Exception("dir required");
+    }
+    if (!is_dir($dir)) {
+        return [];
+    }
+    $results = array_diff(
+        scandir(
+            $dir
+        ),
+        ['..', '.']
+    );
+
+    return $results;
+}
+
+/**
+ * Returns amount of files & total size of dir.
+ */
+function scan_dir(string $path): array
+{
+    $bytestotal = 0;
+    $nbfiles = 0;
+
+    $ite = new RecursiveDirectoryIterator(
+        $path,
+        FilesystemIterator::KEY_AS_PATHNAME |
+        FilesystemIterator::CURRENT_AS_FILEINFO |
+        FilesystemIterator::SKIP_DOTS
+    );
+    foreach (new RecursiveIteratorIterator($ite) as $filename => $cur) {
+        try {
+            $filesize = $cur->getSize();
+            $bytestotal += $filesize;
+            $nbfiles++;
+        } catch (RuntimeException $e) {
+            // This usually just means that the file got eaten by the import
+            continue;
+        }
+    }
+
+    $size_mb = $bytestotal / 1048576; // to mb
+    $size_mb = number_format($size_mb, 2, '.', '');
+    return ['path' => $path, 'total_files' => $nbfiles, 'total_mb' => $size_mb];
+}
+
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Debugging functions                                                       *

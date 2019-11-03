@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Name: Uploader
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Allows people to upload files to the website
- */
-
 class UploadInfo extends ExtensionInfo
 {
     public const KEY = "upload";

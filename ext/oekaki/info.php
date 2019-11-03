@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: [Beta] Oekaki
- * Author: Shish
- * Description: ChibiPaint-based Oekaki uploader
- */
-
 class OekakiInfo extends ExtensionInfo
 {
     public const KEY = "oekaki";

@@ -1,15 +1,5 @@
 <?php
 
-/*
- * Name: Random List
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com
- * License: GPLv2
- * Description: Allows displaying a page with random images
- * Documentation:
- *
- */
-
 class RandomListInfo extends ExtensionInfo
 {
     public const KEY = "random_list";

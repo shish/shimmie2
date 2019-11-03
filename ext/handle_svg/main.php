@@ -10,6 +10,7 @@ class SVGFileHandler extends DataHandlerExtension
                 $event->lossless = true;
                 $event->video = false;
                 $event->audio = false;
+                $event->image = true;
 
                 $msp = new MiniSVGParser($event->file_name);
                 $event->width = $msp->width;

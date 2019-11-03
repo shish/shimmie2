@@ -1,13 +1,5 @@
 <?php
 
-/*
-* Name: Varnish Purger
-* Author: Shish <webmaster@shishnet.org>
-* License: GPLv2
-* Visibility: admin
-* Description: Sends PURGE requests when a /post/view is updated
-*/
-
 class VarnishPurgerInfo extends ExtensionInfo
 {
     public const KEY = "varnish";

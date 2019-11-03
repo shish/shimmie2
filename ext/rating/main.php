@@ -341,7 +341,7 @@ class Ratings extends Extension
                 $old = $_POST["rating_old"];
                 $new = $_POST["rating_new"];
 
-                if ($user->can("bulk_edit_image_rating")) {
+                if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
                     $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>$new, "old"=>$old ]);
                 }
 
@@ -506,7 +506,7 @@ class Ratings extends Extension
     private function can_rate(): bool
     {
         global $user;
-        if ($user->can("edit_image_rating")) {
+        if ($user->can(Permissions::EDIT_IMAGE_RATING)) {
             return true;
         }
         return false;
@@ -578,9 +578,7 @@ class Ratings extends Extension
                     break;
             }
 
-            if ($database->get_driver_name()==DatabaseDriver::PGSQL) {  // These updates can take a little bit
-                $database->execute("SET statement_timeout TO 300000;");
-            }
+            $database->set_timeout(300000); // These updates can take a little bit
 
             $database->execute("UPDATE images SET rating = :new WHERE rating = :old", ["new"=>'?', "old"=>'u' ]);
 

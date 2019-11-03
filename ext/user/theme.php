@@ -339,7 +339,6 @@ class UserPageTheme extends Themelet
         }
         return $html;
     }
-    // }}}
 
     public function get_help_html()
     {

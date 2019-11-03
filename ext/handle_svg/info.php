@@ -1,12 +1,5 @@
 <?php
 
-/*
- * Name: Handle SVG
- * Author: Shish <webmaster@shishnet.org>
- * Link: http://code.shishnet.org/shimmie2/
- * Description: Handle static SVG files.
- */
-
 class SVGFileHandlerInfo extends ExtensionInfo
 {
     public const KEY = "handle_svg";

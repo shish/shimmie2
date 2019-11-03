@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Name: [Beta] Bulk Remove
- * Author: Drudex Software <support@drudexsoftware.com>
- * Link: http://www.drudexsoftware.com/
- * License: GPLv2
- * Description: Allows admin to delete many images at once through Board Admin.
- * Documentation:
- *
- */
 class BulkRemoveInfo extends ExtensionInfo
 {
     public const KEY = "bulk_remove";

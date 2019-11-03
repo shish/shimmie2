@@ -2,8 +2,7 @@
 
 include_once "config.php";
 
-/* ConfigSaveEvent {{{
- *
+/*
  * Sent when the setup screen's 'set' button has been
  * activated; new config options are in $_POST
  */
@@ -17,9 +16,8 @@ class ConfigSaveEvent extends Event
         $this->config = $config;
     }
 }
-// }}}
-/* SetupBuildingEvent {{{
- *
+
+/*
  * Sent when the setup page is ready to be added to
  */
 class SetupBuildingEvent extends Event
@@ -32,10 +30,7 @@ class SetupBuildingEvent extends Event
         $this->panel = $panel;
     }
 }
-// }}}
-/* SetupPanel {{{
- *
- */
+
 class SetupPanel
 {
     /** @var SetupBlock[]  */
@@ -46,18 +41,13 @@ class SetupPanel
         $this->blocks[] = $block;
     }
 }
-// }}}
-/* SetupBlock {{{
- *
- */
+
 class SetupBlock extends Block
 {
     /** @var string  */
     public $header;
     /** @var string  */
     public $body;
-
-
 
     public function __construct(string $title)
     {
@@ -133,8 +123,6 @@ class SetupBlock extends Block
         $this->body .= $content;
         $this->end_table_header_cell();
     }
-
-
 
     private function format_option(string $name, $html, ?string $label, bool $table_row)
     {
@@ -274,7 +262,6 @@ class SetupBlock extends Block
         $this->format_option($name, $html, $label, $table_row);
     }
 }
-// }}}
 
 class Setup extends Extension
 {

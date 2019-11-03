@@ -1,11 +1,5 @@
 <?php
 
-/*
- * Name: Source History
- * Author: Shish, copied from Source History
- * Description: Keep a record of source changes, and allows you to revert changes.
- */
-
 class SourceHistoryInfo extends ExtensionInfo
 {
     public const KEY = "source_history";

@@ -29,6 +29,7 @@ class PixelFileHandler extends DataHandlerExtension
                     $event->video = false;
                     break;
             }
+            $event->image = !$event->video;
 
             $info = getimagesize($event->file_name);
             if (!$info) {

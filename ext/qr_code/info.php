@@ -1,9 +1,5 @@
 <?php
-/*
- * Name: QR Codes
- * Author: Zach Hall <zach@sosguy.net> [http://seemslegit.com]
- * Description:
- */
+
 class QRImageInfo extends ExtensionInfo
 {
     public const KEY = "qr_code";

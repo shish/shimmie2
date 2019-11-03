@@ -502,7 +502,7 @@ function bool_escape($input): bool
     */
     if (is_bool($input)) {
         return $input;
-    } elseif (is_int($input)) {
+    } elseif (is_numeric($input)) {
         return ($input === 1);
     } else {
         $value = filter_var($input, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);

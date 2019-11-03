@@ -159,8 +159,6 @@ class ImageIO extends Extension
         $event->panel->add_block($sb);
     }
 
-
-    // add image {{{
     private function add_image(ImageAdditionEvent $event)
     {
         global $user, $database, $config;
@@ -237,9 +235,7 @@ class ImageIO extends Extension
             log_warning("add_image", "Error while running update_image_media_properties: ".$e->getMessage());
         }
     }
-    // }}}  end add
 
-    // fetch image {{{
     private function send_file(int $image_id, string $type)
     {
         global $config;
@@ -298,9 +294,7 @@ class ImageIO extends Extension
             ));
         }
     }
-    // }}} end fetch
 
-    // replace image {{{
     private function replace_image(int $id, Image $image)
     {
         global $database;
@@ -362,5 +356,4 @@ class ImageIO extends Extension
 
         log_info("image", "Replaced Image #{$id} with ({$image->hash})");
     }
-    // }}} end replace
-} // end of class ImageIO
+}
