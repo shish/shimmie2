@@ -203,7 +203,7 @@ class IPBan extends Extension
         }
 
         if ($config->get_int("ext_ipban_version") == 8) {
-            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN mode TEXT NOT NULL DEFAULT 'block'"));
+            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN mode VARCHAR(16) NOT NULL DEFAULT 'block'"));
             $config->set_int("ext_ipban_version", 9);
         }
     }
