@@ -69,7 +69,9 @@ class AdminPage extends Extension
             print "\t\tregenerate a thumbnail\n\n";
         }
         if ($event->cmd == "db-upgrade") {
-            print("Running DB Upgrade");
+            print("Running DB Upgrade\n");
+			global $database;
+            $database->set_timeout(300000); // These updates can take a little bit
 			send_event(new DatabaseUpgradeEvent());
         }
         if ($event->cmd == "get-page") {
