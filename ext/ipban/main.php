@@ -138,7 +138,7 @@ class IPBan extends Extension
 				ip SCORE_INET NOT NULL,
 				end_timestamp INTEGER,
 				reason TEXT NOT NULL,
-				added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW,
+				added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
             $database->execute("CREATE INDEX bans__end_timestamp ON bans(end_timestamp)");
@@ -151,8 +151,8 @@ class IPBan extends Extension
             $database->Execute("CREATE TABLE bans (
 				id int(11) NOT NULL auto_increment,
 				ip char(15) default NULL,
-				date SCORE_DATETIME default NULL,
-				end SCORE_DATETIME default NULL,
+				date TIMESTAMP default NULL,
+				end TIMESTAMP default NULL,
 				reason varchar(255) default NULL,
 				PRIMARY KEY (id)
 			)");
@@ -198,7 +198,7 @@ class IPBan extends Extension
 
         if ($config->get_int("ext_ipban_version") == 7) {
             $database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
-            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW"));
+            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"));
             $config->set_int("ext_ipban_version", 8);
         }
     }

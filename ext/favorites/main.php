@@ -208,7 +208,7 @@ class Favorites extends Extension
             $database->create_table("user_favorites", "
 					image_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created_at SCORE_DATETIME NOT NULL,
+					created_at TIMESTAMP NOT NULL,
 					UNIQUE(image_id, user_id),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE

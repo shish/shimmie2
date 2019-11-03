@@ -6,8 +6,6 @@ abstract class SCORE
     const BOOL_Y    = "SCORE_BOOL_Y";
     const BOOL_N    = "SCORE_BOOL_N";
     const BOOL      = "SCORE_BOOL";
-    const DATETIME  = "SCORE_DATETIME";
-    const NOW       = "SCORE_NOW";
     const STRNORM   = "SCORE_STRNORM";
     const ILIKE     = "SCORE_ILIKE";
 }
@@ -57,8 +55,6 @@ class MySQL extends DBEngine
         $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
         $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
         $data = str_replace(SCORE::BOOL, "ENUM('Y', 'N')", $data);
-        $data = str_replace(SCORE::DATETIME, "DATETIME", $data);
-        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
         $data = str_replace(SCORE::STRNORM, "", $data);
         $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;
@@ -105,8 +101,6 @@ class PostgreSQL extends DBEngine
         $data = str_replace(SCORE::BOOL_Y, $this->BOOL_Y, $data);
         $data = str_replace(SCORE::BOOL_N, $this->BOOL_N, $data);
         $data = str_replace(SCORE::BOOL, "BOOL", $data);
-        $data = str_replace(SCORE::DATETIME, "TIMESTAMP", $data);
-        $data = str_replace(SCORE::NOW, "current_timestamp", $data);
         $data = str_replace(SCORE::STRNORM, "lower", $data);
         $data = str_replace(SCORE::ILIKE, "ILIKE", $data);
         return $data;
@@ -202,7 +196,6 @@ class SQLite extends DBEngine
         $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
         $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
         $data = str_replace(SCORE::BOOL, "CHAR(1)", $data);
-        $data = str_replace(SCORE::NOW, "\"1970-01-01\"", $data);
         $data = str_replace(SCORE::STRNORM, "lower", $data);
         $data = str_replace(SCORE::ILIKE, "LIKE", $data);
         return $data;

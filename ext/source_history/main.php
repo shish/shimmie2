@@ -101,7 +101,7 @@ class SourceHistory extends Extension
 				user_id INTEGER NOT NULL,
 				user_ip SCORE_INET NOT NULL,
 	    		source TEXT NOT NULL,
-				date_set SCORE_DATETIME NOT NULL,
+				date_set TIMESTAMP NOT NULL,
 				FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 				FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 			");
