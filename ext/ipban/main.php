@@ -250,7 +250,7 @@ class IPBan extends Extension
             ) {
                 $reason = $row[$prefix.'reason'];
                 $admin = User::by_id($row[$prefix.'banner_id']);
-                $date = $row['expire'];
+                $date = $row['expires'];
                 $msg = $config->get_string("ipban_message");
                 $msg = str_replace('$IP', $ip, $msg);
                 $msg = str_replace('$DATE', $date, $msg);
