@@ -26,7 +26,7 @@ class Blotter extends Extension
             global $database, $config;
             $database->create_table("blotter", "
 					id SCORE_AIPK,
-					entry_date SCORE_DATETIME DEFAULT SCORE_NOW,
+					entry_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 					entry_text TEXT NOT NULL,
 					important SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N
 					");

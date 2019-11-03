@@ -86,7 +86,7 @@ class Pools extends Extension
 					public SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
 					title VARCHAR(255) NOT NULL,
 					description TEXT,
-					date SCORE_DATETIME NOT NULL,
+					date TIMESTAMP NOT NULL,
 					posts INTEGER NOT NULL DEFAULT 0,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -104,7 +104,7 @@ class Pools extends Extension
 					action INTEGER NOT NULL,
 					images TEXT,
 					count INTEGER NOT NULL DEFAULT 0,
-					date SCORE_DATETIME NOT NULL,
+					date TIMESTAMP NOT NULL,
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");

@@ -110,7 +110,7 @@ class CommentList extends Extension
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
 					owner_ip SCORE_INET NOT NULL,
-					posted SCORE_DATETIME DEFAULT NULL,
+					posted TIMESTAMP DEFAULT NULL,
 					comment TEXT NOT NULL,
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
 					FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
@@ -128,7 +128,7 @@ class CommentList extends Extension
 					image_id INTEGER NOT NULL,
 					owner_id INTEGER NOT NULL,
 					owner_ip CHAR(16) NOT NULL,
-					posted SCORE_DATETIME DEFAULT NULL,
+					posted TIMESTAMP DEFAULT NULL,
 					comment TEXT NOT NULL
 				");
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);

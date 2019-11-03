@@ -65,8 +65,8 @@ class Artists extends Extension
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL,
+					updated TIMESTAMP NOT NULL,
 					notes TEXT,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -76,8 +76,8 @@ class Artists extends Extension
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
 					name VARCHAR(255) NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL,
+					updated TIMESTAMP NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
@@ -85,8 +85,8 @@ class Artists extends Extension
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created SCORE_DATETIME,
-					updated SCORE_DATETIME,
+					created TIMESTAMP,
+					updated TIMESTAMP,
 					alias VARCHAR(255),
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
@@ -95,8 +95,8 @@ class Artists extends Extension
 					id SCORE_AIPK,
 					artist_id INTEGER NOT NULL,
 					user_id INTEGER NOT NULL,
-					created SCORE_DATETIME NOT NULL,
-					updated SCORE_DATETIME NOT NULL,
+					created TIMESTAMP NOT NULL,
+					updated TIMESTAMP NOT NULL,
 					url VARCHAR(1000) NOT NULL,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (artist_id) REFERENCES artists (id) ON UPDATE CASCADE ON DELETE CASCADE
