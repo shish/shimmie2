@@ -6,7 +6,7 @@ class Tips extends Extension
     {
         global $config, $database;
 
-        if ($config->get_int("ext_tips_version") < 1) {
+        if ($this->get_version("ext_tips_version") < 1) {
             $database->create_table("tips", "
 					id SCORE_AIPK,
 					enable SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
@@ -21,8 +21,7 @@ class Tips extends Extension
                 ["Y", "coins.png", "Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
             );
 
-            $config->set_int("ext_tips_version", 1);
-            log_info("tips", "extension installed");
+            $this->set_version("ext_tips_version", 1);
         }
     }
 

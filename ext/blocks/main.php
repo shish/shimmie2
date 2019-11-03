@@ -5,7 +5,7 @@ class Blocks extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
-        if ($config->get_int("ext_blocks_version") < 1) {
+        if ($this->get_version("ext_blocks_version") < 1) {
             $database->create_table("blocks", "
 				id SCORE_AIPK,
 				pages VARCHAR(128) NOT NULL,
@@ -15,7 +15,7 @@ class Blocks extends Extension
 				content TEXT NOT NULL
 			");
             $database->execute("CREATE INDEX blocks_pages_idx ON blocks(pages)", []);
-            $config->set_int("ext_blocks_version", 1);
+            $this->set_version("ext_blocks_version", 1);
         }
     }
 

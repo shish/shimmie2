@@ -77,7 +77,7 @@ class Wiki extends Extension
     {
         global $database, $config;
 
-        if ($config->get_int("ext_wiki_version", 0) < 1) {
+        if ($this->get_version("ext_wiki_version", 0) < 1) {
             $database->create_table("wiki_pages", "
 				id SCORE_AIPK,
 				owner_id INTEGER NOT NULL,
@@ -90,12 +90,12 @@ class Wiki extends Extension
 				UNIQUE (title, revision),
 				FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
 			");
-            $config->set_int("ext_wiki_version", 2);
+            $this->set_version("ext_wiki_version", 2);
         }
-        if ($config->get_int("ext_wiki_version") < 2) {
+        if ($this->get_version("ext_wiki_version") < 2) {
             $database->Execute("ALTER TABLE wiki_pages ADD COLUMN
 				locked ENUM('Y', 'N') DEFAULT 'N' NOT NULL AFTER REVISION");
-            $config->set_int("ext_wiki_version", 2);
+            $this->set_version("ext_wiki_version", 2);
         }
     }
 

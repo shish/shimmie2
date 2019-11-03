@@ -202,7 +202,7 @@ class Favorites extends Extension
         global $config;
         global $database;
 
-        if ($config->get_int("ext_favorites_version") < 1) {
+        if ($this->get_version("ext_favorites_version") < 1) {
             $database->Execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");
             $database->Execute("CREATE INDEX images__favorites ON images(favorites)");
             $database->create_table("user_favorites", "
@@ -214,10 +214,10 @@ class Favorites extends Extension
 					FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE
 					");
             $database->execute("CREATE INDEX user_favorites_image_id_idx ON user_favorites(image_id)", []);
-            $config->set_int("ext_favorites_version", 2);
+            $this->set_version("ext_favorites_version", 2);
         }
 
-        if ($config->get_int("ext_favorites_version") < 2) {
+        if ($this->get_version("ext_favorites_version") < 2) {
             log_info("favorites", "Cleaning user favourites");
             $database->Execute("DELETE FROM user_favorites WHERE user_id NOT IN (SELECT id FROM users)");
             $database->Execute("DELETE FROM user_favorites WHERE image_id NOT IN (SELECT id FROM images)");
@@ -225,7 +225,7 @@ class Favorites extends Extension
             log_info("favorites", "Adding foreign keys to user favourites");
             $database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;");
             $database->Execute("ALTER TABLE user_favorites ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE;");
-            $config->set_int("ext_favorites_version", 2);
+            $this->set_version("ext_favorites_version", 2);
         }
     }
 

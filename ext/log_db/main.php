@@ -12,7 +12,7 @@ class LogDatabase extends Extension
     {
         global $config, $database;
 
-        if ($config->get_int("ext_log_database_version") < 1) {
+        if ($this->get_version("ext_log_database_version") < 1) {
             $database->create_table("score_log", "
 				id SCORE_AIPK,
 				date_sent TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -23,7 +23,7 @@ class LogDatabase extends Extension
 				message TEXT NOT NULL
 			");
             //INDEX(section)
-            $config->set_int("ext_log_database_version", 1);
+            $this->set_version("ext_log_database_version", 1);
         }
     }
 
@@ -141,7 +141,7 @@ class LogDatabase extends Extension
         $username = ($user && $user->name) ? $user->name : "null";
 
         // not installed yet...
-        if ($config->get_int("ext_log_database_version") < 1) {
+        if ($this->get_version("ext_log_database_version") < 1) {
             return;
         }
 

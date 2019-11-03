@@ -15,12 +15,6 @@ class VideoFileHandler extends DataHandlerExtension
     {
         global $config;
 
-        if ($config->get_int("ext_handle_video_version") < 1) {
-            // This used to set the ffmpeg path. It does not do this anymore, that is now in the base graphic extension.
-            $config->set_int("ext_handle_video_version", 1);
-            log_info("handle_video", "extension installed");
-        }
-
         $config->set_default_bool('video_playback_autoplay', true);
         $config->set_default_bool('video_playback_loop', true);
     }

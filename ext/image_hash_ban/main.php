@@ -27,14 +27,14 @@ class ImageBan extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
-        if ($config->get_int("ext_imageban_version") < 1) {
+        if ($this->get_version("ext_imageban_version") < 1) {
             $database->create_table("image_bans", "
 				id SCORE_AIPK,
 				hash CHAR(32) NOT NULL,
 				date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 				reason TEXT NOT NULL
 			");
-            $config->set_int("ext_imageban_version", 1);
+            $this->set_version("ext_imageban_version", 1);
         }
     }
 

@@ -60,7 +60,7 @@ class Artists extends Extension
     {
         global $config, $database;
 
-        if ($config->get_int("ext_artists_version") < 1) {
+        if ($this->get_version("ext_artists_version") < 1) {
             $database->create_table("artists", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
@@ -104,9 +104,7 @@ class Artists extends Extension
             $database->execute("ALTER TABLE images ADD COLUMN author VARCHAR(255) NULL");
 
             $config->set_int("artistsPerPage", 20);
-            $config->set_int("ext_artists_version", 1);
-
-            log_info("artists", "extension installed");
+            $this->set_version("ext_artists_version", 1);
         }
     }
 

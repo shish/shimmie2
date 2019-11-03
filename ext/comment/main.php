@@ -103,9 +103,9 @@ class CommentList extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
-        if ($config->get_int("ext_comments_version") < 3) {
+        if ($this->get_version("ext_comments_version") < 3) {
             // shortcut to latest
-            if ($config->get_int("ext_comments_version") < 1) {
+            if ($this->get_version("ext_comments_version") < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -119,11 +119,11 @@ class CommentList extends Extension
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
                 $database->execute("CREATE INDEX comments_owner_id_idx ON comments(owner_id)", []);
                 $database->execute("CREATE INDEX comments_posted_idx ON comments(posted)", []);
-                $config->set_int("ext_comments_version", 3);
+                $this->set_version("ext_comments_version", 3);
             }
 
             // the whole history
-            if ($config->get_int("ext_comments_version") < 1) {
+            if ($this->get_version("ext_comments_version") < 1) {
                 $database->create_table("comments", "
 					id SCORE_AIPK,
 					image_id INTEGER NOT NULL,
@@ -133,17 +133,17 @@ class CommentList extends Extension
 					comment TEXT NOT NULL
 				");
                 $database->execute("CREATE INDEX comments_image_id_idx ON comments(image_id)", []);
-                $config->set_int("ext_comments_version", 1);
+                $this->set_version("ext_comments_version", 1);
             }
 
-            if ($config->get_int("ext_comments_version") == 1) {
+            if ($this->get_version("ext_comments_version") == 1) {
                 $database->Execute("CREATE INDEX comments_owner_ip ON comments(owner_ip)");
                 $database->Execute("CREATE INDEX comments_posted ON comments(posted)");
-                $config->set_int("ext_comments_version", 2);
+                $this->set_version("ext_comments_version", 2);
             }
 
-            if ($config->get_int("ext_comments_version") == 2) {
-                $config->set_int("ext_comments_version", 3);
+            if ($this->get_version("ext_comments_version") == 2) {
+                $this->set_version("ext_comments_version", 3);
                 $database->Execute("ALTER TABLE comments ADD FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE");
                 $database->Execute("ALTER TABLE comments ADD FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT");
             }

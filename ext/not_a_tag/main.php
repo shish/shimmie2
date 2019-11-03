@@ -10,12 +10,12 @@ class NotATag extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
-        if ($config->get_int("ext_notatag_version") < 1) {
+        if ($this->get_version("ext_notatag_version") < 1) {
             $database->create_table("untags", "
 				tag VARCHAR(128) NOT NULL PRIMARY KEY,
 				redirect VARCHAR(255) NOT NULL
 			");
-            $config->set_int("ext_notatag_version", 1);
+            $this->set_version("ext_notatag_version", 1);
         }
     }
 

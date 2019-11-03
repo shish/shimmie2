@@ -81,7 +81,7 @@ class Pools extends Extension
         global $config, $database;
 
         // Create the database tables
-        if ($config->get_int("ext_pools_version") < 1) {
+        if ($this->get_version("ext_pools_version") < 1) {
             $database->create_table("pools", "
 					id SCORE_AIPK,
 					user_id INTEGER NOT NULL,
@@ -110,16 +110,16 @@ class Pools extends Extension
 					FOREIGN KEY (pool_id) REFERENCES pools(id) ON UPDATE CASCADE ON DELETE CASCADE,
 					FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE CASCADE
 					");
-            $config->set_int("ext_pools_version", 3);
+            $this->set_version("ext_pools_version", 3);
 
             log_info("pools", "extension installed");
         }
 
-        if ($config->get_int("ext_pools_version") < 2) {
+        if ($this->get_version("ext_pools_version") < 2) {
             $database->Execute("ALTER TABLE pools ADD UNIQUE INDEX (title);");
             $database->Execute("ALTER TABLE pools ADD lastupdated TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;");
 
-            $config->set_int("ext_pools_version", 3); // skip 2
+            $this->set_version("ext_pools_version", 3); // skip 2
         }
     }
 

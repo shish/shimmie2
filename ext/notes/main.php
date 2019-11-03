@@ -7,7 +7,7 @@ class Notes extends Extension
         global $config, $database;
 
         // shortcut to latest
-        if ($config->get_int("ext_notes_version") < 1) {
+        if ($this->get_version("ext_notes_version") < 1) {
             $database->Execute("ALTER TABLE images ADD COLUMN notes INTEGER NOT NULL DEFAULT 0");
             $database->create_table("notes", "
 					id SCORE_AIPK,
@@ -59,8 +59,7 @@ class Notes extends Extension
             $config->set_int("notesRequestsPerPage", 20);
             $config->set_int("notesHistoriesPerPage", 20);
 
-            $config->set_int("ext_notes_version", 1);
-            log_info("notes", "extension installed");
+            $this->set_version("ext_notes_version", 1);
         }
     }
 
