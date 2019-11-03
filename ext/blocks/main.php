@@ -2,7 +2,7 @@
 
 class Blocks extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
         if ($config->get_int("ext_blocks_version") < 1) {

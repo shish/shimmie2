@@ -16,14 +16,6 @@ class NumericScoreSetEvent extends Event
 
 class NumericScore extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-        if ($config->get_int("ext_numeric_score_version", 0) < 1) {
-            $this->install();
-        }
-    }
-
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;
@@ -303,7 +295,7 @@ class NumericScore extends Extension
         }
     }
 
-    private function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database;
         global $config;

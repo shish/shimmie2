@@ -12,11 +12,6 @@ class SourceHistory extends Extension
     {
         global $config;
         $config->set_default_int("history_limit", -1);
-
-        // shimmie is being installed so call install to create the table.
-        if ($config->get_int("ext_source_history_version") < 3) {
-            $this->install();
-        }
     }
 
     public function onAdminBuilding(AdminBuildingEvent $event)
@@ -95,7 +90,7 @@ class SourceHistory extends Extension
         }
     }
 
-    protected function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

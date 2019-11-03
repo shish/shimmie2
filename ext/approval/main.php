@@ -15,10 +15,6 @@ class Approval extends Extension
 
         $config->set_default_bool(ApprovalConfig::IMAGES, false);
         $config->set_default_bool(ApprovalConfig::COMMENTS, false);
-
-        if ($config->get_int(ApprovalConfig::VERSION) < 1) {
-            $this->install();
-        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -241,7 +237,7 @@ class Approval extends Extension
     }
 
 
-    private function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

@@ -18,8 +18,7 @@ class Relationships extends Extension
 {
     public const NAME = "Relationships";
 
-
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
 

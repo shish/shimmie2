@@ -37,7 +37,7 @@ class ImageViewCounter extends Extension
     }
 
     # Installs DB table
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

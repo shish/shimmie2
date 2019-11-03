@@ -7,7 +7,7 @@ class NotATag extends Extension
         return 30;
     } // before ImageUploadEvent and tag_history
 
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
         if ($config->get_int("ext_notatag_version") < 1) {

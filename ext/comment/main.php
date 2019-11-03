@@ -90,15 +90,18 @@ class CommentList extends Extension
     /** @var CommentListTheme $theme */
     public $theme;
 
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config, $database;
+    public function onInitExt(InitExtEvent $event) {
+        global $config;
         $config->set_default_int('comment_window', 5);
         $config->set_default_int('comment_limit', 10);
         $config->set_default_int('comment_list_count', 10);
         $config->set_default_int('comment_count', 5);
         $config->set_default_bool('comment_captcha', false);
+    }
 
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
+        global $config, $database;
         if ($config->get_int("ext_comments_version") < 3) {
             // shortcut to latest
             if ($config->get_int("ext_comments_version") < 1) {

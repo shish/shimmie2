@@ -5,13 +5,16 @@ require_once "config.php";
 
 class TagCategories extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config, $database;
+    public function onInitExt(InitExtEvent $event) {
+        global $config;
 
         // whether we split out separate categories on post view by default
         //  note: only takes effect if /post/view shows the image's exact tags
         $config->set_default_bool(TagCategoriesConfig::SPLIT_ON_VIEW, true);
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event) {
+        global $config, $database;
 
         if ($config->get_int(TagCategoriesConfig::VERSION) < 1) {
             // primary extension database, holds all our stuff!

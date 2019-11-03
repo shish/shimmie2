@@ -13,15 +13,6 @@ class Trash extends Extension
         return 10;
     }
 
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-
-        if ($config->get_int(TrashConfig::VERSION) < 1) {
-            $this->install();
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
@@ -158,8 +149,7 @@ class Trash extends Extension
         }
     }
 
-
-    private function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

@@ -73,7 +73,7 @@ class WikiPage
 
 class Wiki extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

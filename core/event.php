@@ -316,3 +316,6 @@ class LogEvent extends Event
         $this->time = time();
     }
 }
+
+class DatabaseUpgradeEvent extends Event {
+}

@@ -22,14 +22,6 @@ class FavoriteSetEvent extends Event
 
 class Favorites extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-        if ($config->get_int("ext_favorites_version", 0) < 1) {
-            $this->install();
-        }
-    }
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $database, $user;
@@ -205,11 +197,10 @@ class Favorites extends Extension
         }
     }
 
-
-    private function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database;
         global $config;
+        global $database;
 
         if ($config->get_int("ext_favorites_version") < 1) {
             $database->Execute("ALTER TABLE images ADD COLUMN favorites INTEGER NOT NULL DEFAULT 0");

@@ -130,10 +130,6 @@ class Ratings extends Extension
     {
         global $config, $_shm_user_classes, $_shm_ratings;
 
-        if ($config->get_int(RatingsConfig::VERSION) < 4) {
-            $this->install();
-        }
-
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
                 continue;
@@ -525,7 +521,7 @@ class Ratings extends Extension
         return true;
     }
 
-    private function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

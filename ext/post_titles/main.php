@@ -16,13 +16,9 @@ class PostTitles extends Extension
 
         $config->set_default_bool(PostTitlesConfig::DEFAULT_TO_FILENAME, false);
         $config->set_default_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, false);
-
-        if ($config->get_int(PostTitlesConfig::VERSION) < 1) {
-            $this->install();
-        }
     }
 
-    private function install()
+    private function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
 

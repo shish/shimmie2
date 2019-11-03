@@ -41,15 +41,6 @@ class ImageReport
 
 class ReportImage extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-
-        if ($config->get_int("ext_report_image_version") < 1) {
-            $this->install();
-        }
-    }
-
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
@@ -181,7 +172,7 @@ class ReportImage extends Extension
         $cache->delete("image-report-count");
     }
 
-    protected function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database, $config;
 

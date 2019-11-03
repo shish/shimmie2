@@ -4,8 +4,12 @@ class LogDatabase extends Extension
 {
     public function onInitExt(InitExtEvent $event)
     {
-        global $database;
         global $config;
+        $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event) {
+        global $config, $database;
 
         if ($config->get_int("ext_log_database_version") < 1) {
             $database->create_table("score_log", "
@@ -20,8 +24,6 @@ class LogDatabase extends Extension
             //INDEX(section)
             $config->set_int("ext_log_database_version", 1);
         }
-
-        $config->set_default_int("log_db_priority", SCORE_LOG_INFO);
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)

@@ -61,9 +61,8 @@ class PoolCreationEvent extends Event
 
 class Pools extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config, $database;
+    public function onInitExt(InitExtEvent $event) {
+        global $config;
 
         // Set the defaults for the pools extension
         $config->set_default_int(PoolsConfig::MAX_IMPORT_RESULTS, 1000);
@@ -74,6 +73,10 @@ class Pools extends Extension
         $config->set_default_bool(PoolsConfig::ADDER_ON_VIEW_IMAGE, false);
         $config->set_default_bool(PoolsConfig::SHOW_NAV_LINKS, false);
         $config->set_default_bool(PoolsConfig::AUTO_INCREMENT_ORDER, false);
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event) {
+        global $config, $database;
 
         // Create the database tables
         if ($config->get_int("ext_pools_version") < 1) {

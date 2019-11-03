@@ -22,15 +22,6 @@ class UserConfig extends Extension
 {
     private const VERSION = "ext_user_config_version";
 
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config;
-
-        if ($config->get_int(self::VERSION, 0)<1) {
-            $this->install();
-        }
-    }
-
     public function onUserLogin(UserLoginEvent $event)
     {
         global $database, $user_config;
@@ -39,7 +30,7 @@ class UserConfig extends Extension
         send_event(new InitUserConfigEvent($event->user, $user_config));
     }
 
-    private function install(): void
+    private function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
         global $config, $database;
 

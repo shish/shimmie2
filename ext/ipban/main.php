@@ -34,9 +34,6 @@ class IPBan extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        if ($config->get_int("ext_ipban_version") < 8) {
-            $this->install();
-        }
         $config->set_default_string(
             "ipban_message",
             '<p>IP <b>$IP</b> has been banned until <b>$DATE</b> by <b>$ADMIN</b> because of <b>$REASON</b>
@@ -128,7 +125,7 @@ class IPBan extends Extension
         }
     }
 
-    protected function install()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database;
         global $config;

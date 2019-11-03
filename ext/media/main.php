@@ -76,11 +76,6 @@ class Media extends Extension
         $config->set_default_int(MediaConfig::MEM_LIMIT, parse_shorthand_int('8MB'));
         $config->set_default_string(MediaConfig::FFMPEG_PATH, 'ffmpeg');
         $config->set_default_string(MediaConfig::CONVERT_PATH, 'convert');
-
-
-        if ($config->get_int(MediaConfig::VERSION) < 2) {
-            $this->setup();
-        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -994,7 +989,7 @@ class Media extends Extension
         return $size;
     }
 
-    private function setup()
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
         if ($config->get_int(MediaConfig::VERSION) < 1) {

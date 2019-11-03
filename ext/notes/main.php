@@ -2,7 +2,7 @@
 
 class Notes extends Extension
 {
-    public function onInitExt(InitExtEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
 

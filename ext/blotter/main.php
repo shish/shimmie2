@@ -4,9 +4,14 @@ class Blotter extends Extension
 {
     public function onInitExt(InitExtEvent $event)
     {
-        /**
-         * I love re-using this installer don't I...
-         */
+        global $config;
+        $config->set_default_int("blotter_recent", 5);
+        $config->set_default_string("blotter_color", "FF0000");
+        $config->set_default_string("blotter_position", "subheading");
+    }
+
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    {
         global $config;
         $version = $config->get_int("blotter_version", 0);
         /**
@@ -33,10 +38,6 @@ class Blotter extends Extension
             log_info("blotter", "Installed tables for blotter extension.");
             $config->set_int("blotter_version", 1);
         }
-        // Set default config:
-        $config->set_default_int("blotter_recent", 5);
-        $config->set_default_string("blotter_color", "FF0000");
-        $config->set_default_string("blotter_position", "subheading");
     }
 
     public function onSetupBuilding(SetupBuildingEvent $event)
