@@ -201,6 +201,11 @@ class IPBan extends Extension
             $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN added SCORE_DATETIME NOT NULL DEFAULT SCORE_NOW"));
             $config->set_int("ext_ipban_version", 8);
         }
+
+        if ($config->get_int("ext_ipban_version") == 8) {
+            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN mode TEXT NOT NULL DEFAULT 'block'"));
+            $config->set_int("ext_ipban_version", 9);
+        }
     }
 
     private function check_ip_ban()
