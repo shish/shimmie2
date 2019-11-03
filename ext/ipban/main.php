@@ -108,8 +108,8 @@ class IPBan extends Extension
     public function onAddIPBan(AddIPBanEvent $event)
     {
         global $cache, $user, $database;
-        $sql = "INSERT INTO bans (ip, reason, end_timestamp, banner_id) VALUES (:ip, :reason, :end, :admin_id)";
-        $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "end"=>strtotime($event->end), "admin_id"=>$user->id]);
+        $sql = "INSERT INTO bans (ip, reason, expires, banner_id) VALUES (:ip, :reason, :expires, :admin_id)";
+        $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "expires"=>$event->end, "admin_id"=>$user->id]);
         $cache->delete("ip_bans_sorted");
         log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->end}");
     }
@@ -136,13 +136,13 @@ class IPBan extends Extension
 				id SCORE_AIPK,
 				banner_id INTEGER NOT NULL,
 				ip SCORE_INET NOT NULL,
-				end_timestamp INTEGER,
 				reason TEXT NOT NULL,
 				added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				expires TIMESTAMP NULL DEFAULT NULL,
 				FOREIGN KEY (banner_id) REFERENCES users(id) ON DELETE CASCADE,
 			");
-            $database->execute("CREATE INDEX bans__end_timestamp ON bans(end_timestamp)");
-            $this->set_version("ext_ipban_version", 8);
+            $database->execute("CREATE INDEX bans__expires ON bans(expires)");
+            $this->set_version("ext_ipban_version", 10);
         }
 
         // ===
@@ -198,13 +198,21 @@ class IPBan extends Extension
 
         if ($this->get_version("ext_ipban_version") == 7) {
             $database->execute($database->scoreql_to_sql("ALTER TABLE bans CHANGE ip ip SCORE_INET"));
-            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP"));
+            $database->execute("ALTER TABLE bans ADD COLUMN added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP");
             $this->set_version("ext_ipban_version", 8);
         }
 
         if ($this->get_version("ext_ipban_version") == 8) {
-            $database->execute($database->scoreql_to_sql("ALTER TABLE bans ADD COLUMN mode VARCHAR(16) NOT NULL DEFAULT 'block'"));
+            $database->execute("ALTER TABLE bans ADD COLUMN mode VARCHAR(16) NOT NULL DEFAULT 'block'");
             $this->set_version("ext_ipban_version", 9);
+        }
+
+        if ($this->get_version("ext_ipban_version") == 9) {
+            $database->execute("ALTER TABLE bans ADD COLUMN expire NULL TIMESTAMP DEFAULT NULL");
+            $database->execute("UPDATE bans SET expire = dateadd(s, end_timestamp, '1970-01-01 00:00:00')");
+            $database->execute("ALTER TABLE bans DROP COLUMN end_timestamp");
+            $database->execute("CREATE INDEX bans__expires ON bans(expires)");
+            $this->set_version("ext_ipban_version", 10);
         }
     }
 
@@ -242,7 +250,7 @@ class IPBan extends Extension
             ) {
                 $reason = $row[$prefix.'reason'];
                 $admin = User::by_id($row[$prefix.'banner_id']);
-                $date = date("Y-m-d", $row[$prefix.'end_timestamp']);
+                $date = $row['expire'];
                 $msg = $config->get_string("ipban_message");
                 $msg = str_replace('$IP', $ip, $msg);
                 $msg = str_replace('$DATE', $date, $msg);
@@ -271,7 +279,7 @@ class IPBan extends Extension
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			ORDER BY added, end_timestamp, bans.id
+			ORDER BY added, expires, bans.id
 		");
         if ($bans) {
             return $bans;
@@ -288,9 +296,9 @@ class IPBan extends Extension
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			WHERE (end_timestamp > :end_timestamp) OR (end_timestamp IS NULL)
-			ORDER BY end_timestamp, bans.id
-		", ["end_timestamp"=>time()]);
+			WHERE (expires > CURRENT_TIMESTAMP) OR (expires IS NULL)
+			ORDER BY expires, bans.id
+		");
 
         if ($bans) {
             return $bans;
