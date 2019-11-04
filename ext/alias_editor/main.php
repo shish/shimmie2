@@ -49,7 +49,7 @@ class AliasEditor extends Extension
                     }
                 }
             } elseif ($event->get_arg(0) == "list") {
-                if($event->count_args() == 2) {
+                if ($event->count_args() == 2) {
                     $page_number = $event->get_arg(1);
                     if (!is_numeric($page_number)) {
                         $page_number = 0;
@@ -58,8 +58,7 @@ class AliasEditor extends Extension
                     } else {
                         $page_number--;
                     }
-                }
-                else {
+                } else {
                     $page_number = 0;
                 }
 

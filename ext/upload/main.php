@@ -187,13 +187,11 @@ class Upload extends Extension
                     throw new UploadException("Can not replace Image: disk nearly full");
                 }
                 // Try to get the image ID
-                if($event->count_args() >= 1) {
+                if ($event->count_args() >= 1) {
                     $image_id = int_escape($event->get_arg(0));
-                }
-                elseif(isset($_POST['image_id'])) {
+                } elseif (isset($_POST['image_id'])) {
                     $image_id = $_POST['image_id'];
-                }
-                else {
+                } else {
                     throw new UploadException("Can not replace Image: No valid Image ID given.");
                 }
 

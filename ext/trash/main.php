@@ -19,13 +19,11 @@ class Trash extends Extension
 
         if ($event->page_matches("trash_restore") && $user->can(Permissions::VIEW_TRASH)) {
             // Try to get the image ID
-            if($event->count_args() >= 1) {
+            if ($event->count_args() >= 1) {
                 $image_id = int_escape($event->get_arg(0));
-            }
-            elseif (isset($_POST['image_id'])) {
+            } elseif (isset($_POST['image_id'])) {
                 $image_id = $_POST['image_id'];
-            }
-            else {
+            } else {
                 throw new SCoreException("Can not restore image: No valid Image ID given.");
             }
 

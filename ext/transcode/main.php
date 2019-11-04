@@ -128,13 +128,11 @@ class TranscodeImage extends Extension
         global $page, $user;
 
         if ($event->page_matches("transcode") && $user->can(Permissions::EDIT_FILES)) {
-            if($event->count_args() >= 1) {
+            if ($event->count_args() >= 1) {
                 $image_id = int_escape($event->get_arg(0));
-            }
-            elseif(isset($_POST['image_id'])) {
+            } elseif (isset($_POST['image_id'])) {
                 $image_id =  int_escape($_POST['image_id']);
-            }
-            else {
+            } else {
                 throw new ImageTranscodeException("Can not resize Image: No valid Image ID given.");
             }
             $image_obj = Image::by_id($image_id);

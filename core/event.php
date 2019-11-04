@@ -116,17 +116,16 @@ class PageRequestEvent extends Event
         }
     }
 
-    public function try_page_num(int $n): int {
-        if($this->count_args() > $n) {
+    public function try_page_num(int $n): int
+    {
+        if ($this->count_args() > $n) {
             $i = $this->get_arg($n);
             if (!is_numeric($i) || $i <= 0) {
                 return int_escape($i);
-            }
-            else {
+            } else {
                 return 1;
             }
-        }
-        else {
+        } else {
             return 1;
         }
     }

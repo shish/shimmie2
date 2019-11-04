@@ -60,14 +60,13 @@ class ExtManager extends Extension
         }
 
         if ($event->page_matches("ext_doc")) {
-            if($event->count_args() == 1) {
+            if ($event->count_args() == 1) {
                 $ext = $event->get_arg(0);
                 if (file_exists("ext/$ext/info.php")) {
                     $info = ExtensionInfo::get_by_key($ext);
                     $this->theme->display_doc($page, $info);
                 }
-            }
-            else {
+            } else {
                 $this->theme->display_table($page, $this->get_extensions(false), false);
             }
         }
