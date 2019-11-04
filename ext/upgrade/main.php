@@ -28,10 +28,6 @@ class Upgrade extends Extension
             $this->set_version("db_version", 2);
         }
 
-        if ($this->get_version("db_version") < 6) {
-            // cry :S
-        }
-
         // v7 is convert to innodb with adodb
         // now done again as v9 with PDO
 

@@ -272,9 +272,9 @@ class AdminPage extends Extension
             }
             $database->execute("ALTER TABLE images AUTO_INCREMENT=".(count($ids) + 1));
         } elseif ($matches['proto'] == DatabaseDriver::PGSQL) {
-            //TODO: Make this work with PostgreSQL
+            throw new SCoreException("TODO: Make this work with PostgreSQL");
         } elseif ($matches['proto'] == DatabaseDriver::SQLITE) {
-            //TODO: Make this work with SQLite
+            throw new SCoreException("TODO: Make this work with SQLite");
         }
         return true;
     }

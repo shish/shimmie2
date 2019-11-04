@@ -207,11 +207,13 @@ class Artists extends Extension
                     $images = Image::find_images(0, 4, Tag::explode($artist['name']));
 
                     $this->theme->show_artist($artist, $aliases, $members, $urls, $images, $userIsLogged, $userIsAdmin);
+                    /*
                     if ($userIsLogged) {
-                        //$this->theme->show_new_alias_composer($artistID);
-                        //$this->theme->show_new_member_composer($artistID);
-                        //$this->theme->show_new_url_composer($artistID);
+                        $this->theme->show_new_alias_composer($artistID);
+                        $this->theme->show_new_member_composer($artistID);
+                        $this->theme->show_new_url_composer($artistID);
                     }
+                    */
 
                     $this->theme->sidebar_options("editor", $artistID, $userIsAdmin);
 

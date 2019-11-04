@@ -109,7 +109,7 @@ class BulkActions extends Extension
             $query = $event->args[0];
             $items = $this->yield_search_results($event->args[1]);
             $newEvent = new BulkActionEvent($event->args[0], $event, $items);
-            print($newEvent);
+            var_dump($newEvent);
             # send_event($newEvent);
         }
     }

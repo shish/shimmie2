@@ -118,9 +118,11 @@ and of course start organising your images :-)
                 $page->set_subheading("Page {$this->page_number} / {$this->total_pages}");
             }
         }
+        /*
         if ($this->page_number > 1 || count($this->search_terms) > 0) {
-            // $page_title .= " / $page_number";
+            $page_title .= " / $page_number";
         }
+        */
 
         $page->set_title($page_title);
         $page->set_heading($page_title);

@@ -36,7 +36,6 @@ abstract class CronUploaderConfig
         $config->set_int(self::USER, $value);
     }
 
-
     public static function get_key(): string
     {
         global $config;
@@ -55,10 +54,10 @@ abstract class CronUploaderConfig
         return $config->get_int(self::COUNT);
     }
 
-    public static function set_count(int $value): int
+    public static function set_count(int $value): void
     {
         global $config;
-        $config->get_int(self::COUNT, $value);
+        $config->set_int(self::COUNT, $value);
     }
 
     public static function get_dir(): string

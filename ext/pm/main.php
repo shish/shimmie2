@@ -139,7 +139,7 @@ class PrivMsg extends Extension
                             }
                             $this->theme->display_message($page, $from_user, $user, new PM($pm));
                         } else {
-                            // permission denied
+                            $this->theme->display_permission_denied();
                         }
                         break;
                     case "delete":

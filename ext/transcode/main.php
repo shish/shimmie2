@@ -331,13 +331,13 @@ class TranscodeImage extends Extension
                     }
                     break;
             }
-            if ($result===false) {
-                throw new ImageTranscodeException("Error while transcoding ".$source_name." to ".$target_format);
-            }
-            return $tmp_name;
         } finally {
             imagedestroy($image);
         }
+        if ($result===false) {
+            throw new ImageTranscodeException("Error while transcoding ".$source_name." to ".$target_format);
+        }
+        return $tmp_name;
     }
 
     private function transcode_image_convert(String $source_name, String $source_format, string $target_format): string
