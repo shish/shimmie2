@@ -245,18 +245,23 @@ class Forum extends Extension
     private function show_last_threads(Page $page, PageRequestEvent $event, $showAdminOptions = false)
     {
         global $config, $database;
-        $pageNumber = $event->get_arg(1);
         $threadsPerPage = $config->get_int('forumThreadsPerPage', 15);
         $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_threads") / $threadsPerPage);
 
-        if (is_null($pageNumber) || !is_numeric($pageNumber)) {
+        if($event->count_args() >= 2) {
+            $pageNumber = $event->get_arg(1);
+            if (!is_numeric($pageNumber)) {
+                $pageNumber = 0;
+            } elseif ($pageNumber <= 0) {
+                $pageNumber = 0;
+            } elseif ($pageNumber >= $totalPages) {
+                $pageNumber = $totalPages - 1;
+            } else {
+                $pageNumber--;
+            }
+        }
+        else {
             $pageNumber = 0;
-        } elseif ($pageNumber <= 0) {
-            $pageNumber = 0;
-        } elseif ($pageNumber >= $totalPages) {
-            $pageNumber = $totalPages - 1;
-        } else {
-            $pageNumber--;
         }
 
         $threads = $database->get_all(
@@ -278,19 +283,24 @@ class Forum extends Extension
     {
         global $config, $database;
         $threadID = $event->get_arg(1);
-        $pageNumber = $event->get_arg(2);
         $postsPerPage = $config->get_int('forumPostsPerPage', 15);
         $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = ?", [$threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);
 
-        if (is_null($pageNumber) || !is_numeric($pageNumber)) {
+        if($event->count_args() >= 3) {
+            $pageNumber = $event->get_arg(2);
+            if (!is_numeric($pageNumber)) {
+                $pageNumber = 0;
+            } elseif ($pageNumber <= 0) {
+                $pageNumber = 0;
+            } elseif ($pageNumber >= $totalPages) {
+                $pageNumber = $totalPages - 1;
+            } else {
+                $pageNumber--;
+            }
+        }
+        else {
             $pageNumber = 0;
-        } elseif ($pageNumber <= 0) {
-            $pageNumber = 0;
-        } elseif ($pageNumber >= $totalPages) {
-            $pageNumber = $totalPages - 1;
-        } else {
-            $pageNumber--;
         }
 
         $posts = $database->get_all(

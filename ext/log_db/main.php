@@ -47,10 +47,7 @@ class LogDatabase extends Extension
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $wheres = [];
                 $args = [];
-                $page_num = int_escape($event->get_arg(0));
-                if ($page_num <= 0) {
-                    $page_num = 1;
-                }
+                $page_num = $event->try_page_num(0);
                 if (!empty($_GET["time-start"])) {
                     $wheres[] = "date_sent > :time_start";
                     $args["time_start"] = $_GET["time-start"];

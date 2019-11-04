@@ -54,19 +54,21 @@ class ArrowkeyNavigation extends Extension
         // get the amount of images per page
         $images_per_page = $config->get_int(IndexConfig::IMAGES);
 
-        // if there are no tags, use default
-        if (is_null($event->get_arg(1))) {
-            $prefix = "";
-            $page_number = int_escape($event->get_arg(0));
-            $total_pages = ceil($database->get_one(
-                "SELECT COUNT(*) FROM images"
-            ) / $images_per_page);
-        } else { // if there are tags, use pages with tags
+		if($event->count_args() > 1) {
+			// if there are tags, use pages with tags
             $prefix = url_escape($event->get_arg(0)) . "/";
-            $page_number = int_escape($event->get_arg(1));
+            $page_number = $event->try_page_num(1);
             $total_pages = ceil($database->get_one(
                 "SELECT count FROM tags WHERE tag=:tag",
                 ["tag"=>$event->get_arg(0)]
+            ) / $images_per_page);
+        }
+        else {
+			// if there are no tags, use default
+            $prefix = "";
+            $page_number = $event->try_page_num(0);
+            $total_pages = ceil($database->get_one(
+                "SELECT COUNT(*) FROM images"
             ) / $images_per_page);
         }
 

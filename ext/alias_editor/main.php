@@ -49,13 +49,18 @@ class AliasEditor extends Extension
                     }
                 }
             } elseif ($event->get_arg(0) == "list") {
-                $page_number = $event->get_arg(1);
-                if (is_null($page_number) || !is_numeric($page_number)) {
+                if($event->count_args() == 2) {
+                    $page_number = $event->get_arg(1);
+                    if (!is_numeric($page_number)) {
+                        $page_number = 0;
+                    } elseif ($page_number <= 0) {
+                        $page_number = 0;
+                    } else {
+                        $page_number--;
+                    }
+                }
+                else {
                     $page_number = 0;
-                } elseif ($page_number <= 0) {
-                    $page_number = 0;
-                } else {
-                    $page_number--;
                 }
 
                 $alias_per_page = $config->get_int('alias_items_per_page', 30);

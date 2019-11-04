@@ -53,10 +53,7 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "list") {
                 $limit = 50;
 
-                $page_num = int_escape($event->get_arg(1));
-                if ($page_num <= 0) {
-                    $page_num = 1;
-                }
+                $page_num = $event->try_page_num(1);
                 $offset = ($page_num-1) * $limit;
 
                 $q = "WHERE 1=1";

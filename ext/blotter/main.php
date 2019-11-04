@@ -71,7 +71,7 @@ class Blotter extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $database, $user;
-        if ($event->page_matches("blotter")) {
+        if ($event->page_matches("blotter") && $event->count_args() > 0) {
             switch ($event->get_arg(0)) {
                 case "editor":
                     /**

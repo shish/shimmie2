@@ -36,9 +36,8 @@ class CronUploader extends Extension
         global $user;
 
         if ($event->page_matches("cron_upload")) {
-            $key = $event->get_arg(0);
-            if (!empty($key)) {
-                $this->process_upload($key); // Start upload
+            if ($event->count_args() == 1) {
+                $this->process_upload($event->get_arg(0)); // Start upload
             } elseif ($user->can(Permissions::CRON_ADMIN)) {
                 $this->display_documentation();
             }

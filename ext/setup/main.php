@@ -288,7 +288,11 @@ class Setup extends Extension
             if (!$user->can(Permissions::CHANGE_SETTING)) {
                 $this->theme->display_permission_denied();
             } else {
-                if ($event->get_arg(0) == "save" && $user->check_auth_token()) {
+                if ($event->count_args() == 0) {
+                    $panel = new SetupPanel();
+                    send_event(new SetupBuildingEvent($panel));
+                    $this->theme->display_page($page, $panel);
+                } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
                     send_event(new ConfigSaveEvent($config));
                     $config->save();
                     flash_message("Config saved");
@@ -297,10 +301,6 @@ class Setup extends Extension
                     $page->set_redirect(make_link("setup"));
                 } elseif ($event->get_arg(0) == "advanced") {
                     $this->theme->display_advanced($page, $config->values);
-                } else {
-                    $panel = new SetupPanel();
-                    send_event(new SetupBuildingEvent($panel));
-                    $this->theme->display_page($page, $panel);
                 }
             }
         }

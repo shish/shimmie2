@@ -173,7 +173,7 @@ class Pools extends Extension
             // What action are we trying to perform?
             switch ($event->get_arg(0)) {
                 case "list": //index
-                    $this->list_pools($page, int_escape($event->get_arg(1)));
+                    $this->list_pools($page, $event->try_page_num(1));
                     break;
 
                 case "new": // Show form for new pools
@@ -779,14 +779,7 @@ class Pools extends Extension
     {
         global $config, $user, $database;
 
-        $pageNumber = int_escape($event->get_arg(2));
-        if (is_null($pageNumber) || !is_numeric($pageNumber)) {
-            $pageNumber = 0;
-        } elseif ($pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
+        $pageNumber = $event->try_page_num(2) - 1;
 
         $poolID = int_escape($poolID);
         $pool = $this->get_pool($poolID);

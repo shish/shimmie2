@@ -106,13 +106,28 @@ class PageRequestEvent extends Event
     /**
      * Get the n th argument of the page request (if it exists.)
      */
-    public function get_arg(int $n): ?string
+    public function get_arg(int $n): string
     {
         $offset = $this->part_count + $n;
         if ($offset >= 0 && $offset < $this->arg_count) {
             return $this->args[$offset];
         } else {
-            return null;
+            throw new SCoreException("Requested an invalid argument #$n");
+        }
+    }
+
+    public function try_page_num(int $n): int {
+        if($this->count_args() > $n) {
+            $i = $this->get_arg($n);
+            if (!is_numeric($i) || $i <= 0) {
+                return int_escape($i);
+            }
+            else {
+                return 1;
+            }
+        }
+        else {
+            return 1;
         }
     }
 

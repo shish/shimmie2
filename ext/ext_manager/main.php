@@ -38,7 +38,7 @@ class ExtManager extends Extension
         global $page, $user;
         if ($event->page_matches("ext_manager")) {
             if ($user->can(Permissions::MANAGE_EXTENSION_LIST)) {
-                if ($event->get_arg(0) == "set" && $user->check_auth_token()) {
+                if ($event->count_args() == 1 && $event->get_arg(0) == "set" && $user->check_auth_token()) {
                     if (is_writable("data/config")) {
                         $this->set_things($_POST);
                         log_warning("ext_manager", "Active extensions changed", "Active extensions changed");
@@ -60,11 +60,14 @@ class ExtManager extends Extension
         }
 
         if ($event->page_matches("ext_doc")) {
-            $ext = $event->get_arg(0);
-            if (file_exists("ext/$ext/info.php")) {
-                $info = ExtensionInfo::get_by_key($ext);
-                $this->theme->display_doc($page, $info);
-            } else {
+            if($event->count_args() == 1) {
+                $ext = $event->get_arg(0);
+                if (file_exists("ext/$ext/info.php")) {
+                    $info = ExtensionInfo::get_by_key($ext);
+                    $this->theme->display_doc($page, $info);
+                }
+            }
+            else {
                 $this->theme->display_table($page, $this->get_extensions(false), false);
             }
         }

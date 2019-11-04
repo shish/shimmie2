@@ -243,14 +243,14 @@ class CommentList extends Extension
 
     private function onPageRequest_list(PageRequestEvent $event)
     {
-        $page_num = int_escape($event->get_arg(1));
+        $page_num = $event->try_page_num(1);
         $this->build_page($page_num);
     }
 
     private function onPageRequest_beta_search(PageRequestEvent $event)
     {
         $search = $event->get_arg(1);
-        $page_num = int_escape($event->get_arg(2));
+		$page_num = $event->try_page_num(2);
         $duser = User::by_name($search);
         $i_comment_count = Comment::count_comments_by_user($duser);
         $com_per_page = 50;

@@ -39,9 +39,14 @@ class ShimmieApi extends Extension
             $page->set_type("text/plain");
 
             if ($event->page_matches("api/shimmie/get_tags")) {
-                $tag = $event->get_arg(0);
-                if (empty($tag) && isset($_GET['tag'])) {
+                if($event->count_args() > 0) {
+                    $tag = $event->get_arg(0);
+                }
+                elseif (isset($_GET['tag'])) {
                     $tag = $_GET['tag'];
+                }
+                else {
+                    $tag = null;
                 }
                 $res = $this->api_get_tags($tag);
                 $page->set_data(json_encode($res));

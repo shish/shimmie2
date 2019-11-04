@@ -384,12 +384,7 @@ class Notes extends Extension
     {
         global $database, $config;
 
-        $pageNumber = $event->get_arg(1);
-        if (is_null($pageNumber) || !is_numeric($pageNumber) || $pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
+        $pageNumber = $event->try_page_num(1) - 1;
 
         $notesPerPage = $config->get_int('notesNotesPerPage');
 
@@ -419,12 +414,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $pageNumber = $event->get_arg(1);
-        if (is_null($pageNumber) || !is_numeric($pageNumber) || $pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
+        $pageNumber = $event->try_page_num(1) - 1;
 
         $requestsPerPage = $config->get_int('notesRequestsPerPage');
 
@@ -478,12 +468,7 @@ class Notes extends Extension
     {
         global $config, $database;
 
-        $pageNumber = $event->get_arg(1);
-        if (is_null($pageNumber) || !is_numeric($pageNumber) || $pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
+        $pageNumber = $event->try_page_num(1) - 1;
 
         $historiesPerPage = $config->get_int('notesHistoriesPerPage');
 
@@ -511,13 +496,7 @@ class Notes extends Extension
         global $config, $database;
 
         $noteID = $event->get_arg(1);
-
-        $pageNumber = $event->get_arg(2);
-        if (is_null($pageNumber) || !is_numeric($pageNumber) || $pageNumber <= 0) {
-            $pageNumber = 0;
-        } else {
-            $pageNumber--;
-        }
+        $pageNumber = $event->try_page_num(2);
 
         $historiesPerPage = $config->get_int('notesHistoriesPerPage');
 
