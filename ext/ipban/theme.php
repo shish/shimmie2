@@ -18,7 +18,7 @@ class IPBanTheme extends Themelet
         $h_bans = "";
         $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
         foreach ($bans as $ban) {
-            $end_human = date('Y-m-d', $ban[$prefix.'end_timestamp']);
+            $end_human = $ban['expires'];
             $h_bans .= "
 				<tr>
 					<td width='12%'>{$ban[$prefix.'ip']}</td>
