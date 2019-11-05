@@ -14,13 +14,13 @@ class AddIPBanEvent extends Event
 {
     public $ip;
     public $reason;
-    public $end;
+    public $expires;
 
-    public function __construct(string $ip, string $reason, string $end)
+    public function __construct(string $ip, string $reason, ?string $expires)
     {
         $this->ip = trim($ip);
         $this->reason = trim($reason);
-        $this->end = trim($end);
+        $this->expires = $expires;
     }
 }
 
@@ -54,7 +54,7 @@ class IPBan extends Extension
                         if (empty($_POST['end'])) {
                             $end = null;
                         } else {
-                            $end = $_POST['end'];
+                            $end = date("Y-m-d H:M:S", strtotime(trim($_POST['end'])));
                         }
                         send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
@@ -109,9 +109,9 @@ class IPBan extends Extension
     {
         global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, reason, expires, banner_id) VALUES (:ip, :reason, :expires, :admin_id)";
-        $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "expires"=>$event->end, "admin_id"=>$user->id]);
+        $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
         $cache->delete("ip_bans_sorted");
-        log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->end}");
+        log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
     public function onRemoveIPBan(RemoveIPBanEvent $event)
