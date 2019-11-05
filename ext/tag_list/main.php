@@ -24,7 +24,9 @@ class TagList extends Extension
 
         if ($event->page_matches("tags")) {
             $this->theme->set_navigation($this->build_navigation());
-            switch ($event->get_arg(0)) {
+			if($event->count_args() == 0) $sub = "map";
+			else $sub = $event->get_arg(0);
+            switch ($sub) {
                 default:
                 case 'map':
                     $this->theme->set_heading("Tag Map");

@@ -54,7 +54,7 @@ class IPBan extends Extension
                         if (empty($_POST['end'])) {
                             $end = null;
                         } else {
-                            $end = date("Y-m-d H:M:S", strtotime(trim($_POST['end'])));
+                            $end = date("Y-m-d H:i:s", strtotime(trim($_POST['end'])));
                         }
                         send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
 
