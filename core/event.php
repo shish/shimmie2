@@ -120,7 +120,7 @@ class PageRequestEvent extends Event
     {
         if ($this->count_args() > $n) {
             $i = $this->get_arg($n);
-            if (!is_numeric($i) || $i <= 0) {
+            if (is_numeric($i) && int_escape($i) > 0) {
                 return int_escape($i);
             } else {
                 return 1;
