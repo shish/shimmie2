@@ -18,14 +18,14 @@ class IPBanTheme extends Themelet
         $h_bans = "";
         $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
         foreach ($bans as $ban) {
-            $end_human = $ban['expires'];
             $h_bans .= "
 				<tr>
 					<td width='12%'>{$ban[$prefix.'ip']}</td>
 					<td>{$ban[$prefix.'reason']}</td>
 					<td width='10%'>{$ban['banner_name']}</td>
 					<td width='10%'>".substr($ban[$prefix.'added'], 0, 10)."</td>
-					<td width='15%'>{$end_human}</td>
+					<td width='10%'>".substr($ban[$prefix.'expires'], 0, 10)."</td>
+					<td width='10%'>{$ban['mode']}</td>
 					".make_form(make_link("ip_ban/remove"))."
 					<td width='8%'>
 							<input type='hidden' name='id' value='{$ban[$prefix.'id']}'>
@@ -38,7 +38,7 @@ class IPBanTheme extends Themelet
         $html = "
 			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
 			<p><table id='bans' class='sortable zebra'>
-				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><th>Action</th></tr></thead>
+				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><th>Type</th><th>Action</th></tr></thead>
 				$h_bans
 				<tfoot><tr id='add'>
 					".make_form(make_link("ip_ban/add"))."
@@ -47,6 +47,7 @@ class IPBanTheme extends Themelet
 						<td>{$user->name}</td>
 						<td></td>
 						<td><input type='text' name='end' value='".html_escape(@$_GET['end'])."'></td>
+						<td></td>
 						<td><input type='submit' value='Ban'></td>
 					</form>
 				</tr></tfoot>
