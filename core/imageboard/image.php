@@ -734,7 +734,7 @@ class Image
                         $database->scoreql_to_sql(
                             "INSERT INTO image_tags(image_id, tag_id)
 							VALUES(:id, (SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)))"
-                    ),
+                        ),
                         ["id"=>$this->id, "tag"=>$tag]
                     );
                 } else {

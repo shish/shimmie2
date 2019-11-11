@@ -296,12 +296,7 @@ class UserPage extends Extension
 
         $matches = [];
         if (preg_match("/^(?:poster|user)[=|:](.*)$/i", $event->term, $matches)) {
-            $duser = User::by_name($matches[1]);
-            if (!is_null($duser)) {
-                $user_id = $duser->id;
-            } else {
-                $user_id = -1;
-            }
+            $user_id = User::name_to_id($matches[1]);
             $event->add_querylet(new Querylet("images.owner_id = $user_id"));
         } elseif (preg_match("/^(?:poster|user)_id[=|:]([0-9]+)$/i", $event->term, $matches)) {
             $user_id = int_escape($matches[1]);

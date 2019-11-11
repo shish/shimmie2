@@ -120,13 +120,7 @@ class Favorites extends Extension
             $favorites = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT id FROM images WHERE favorites $cmp $favorites)"));
         } elseif (preg_match("/^favorited_by[=|:](.*)$/i", $event->term, $matches)) {
-            $my_user = User::by_name($matches[1]);
-            if (!is_null($my_user)) {
-                $user_id = $my_user->id;
-            } else {
-                $user_id = -1;
-            }
-
+            $user_id = User::name_to_id($matches[1]);
             $event->add_querylet(new Querylet("images.id IN (SELECT image_id FROM user_favorites WHERE user_id = $user_id)"));
         } elseif (preg_match("/^favorited_by_userno[=|:](\d+)$/i", $event->term, $matches)) {
             $user_id = int_escape($matches[1]);

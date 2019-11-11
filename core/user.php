@@ -103,6 +103,16 @@ class User
         return is_null($row) ? null : new User($row);
     }
 
+    public static function name_to_id(string $name): int
+    {
+        $u = User::by_name($name);
+        if (is_null($u)) {
+            throw SCoreException("Can't find any user named " . html_escape($name));
+        } else {
+            return $u->id;
+        }
+    }
+
     public static function by_name_and_pass(string $name, string $pass): ?User
     {
         $my_user = User::by_name($name);
