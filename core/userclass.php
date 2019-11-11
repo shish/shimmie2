@@ -63,7 +63,7 @@ class UserClass
                     $min_ability = $a;
                 }
             }
-            throw new SCoreException("Unknown ability '".html_escape($ability)."'. Did the developer mean '".html_escape($min_ability)."'?");
+            throw new SCoreException("Unknown ability '$ability'. Did the developer mean '$min_ability'?");
         }
     }
 }

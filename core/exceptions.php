@@ -7,6 +7,11 @@
  */
 class SCoreException extends Exception
 {
+    public function __construct(string $msg, ?string $query=null)
+    {
+        parent::__construct($msg);
+        $this->query = $query;
+    }
 }
 
 /**

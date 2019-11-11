@@ -522,6 +522,8 @@ function _fatal_error(Exception $e): void
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
     //'.$h_hash.'
+    
+    $q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
 
     header("HTTP/1.0 500 Internal Error");
     echo '
@@ -531,7 +533,8 @@ function _fatal_error(Exception $e): void
 	</head>
 	<body>
 		<h1>Internal Error</h1>
-		<p><b>Message:</b> '.$message.'
+		<p><b>Message:</b> '.html_escape($message).'
+		'.$q.'
 		<p><b>Version:</b> '.$version.' (on '.phpversion().')
 	</body>
 </html>

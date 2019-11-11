@@ -17,7 +17,7 @@ class Database
      * @var null|PDO
      */
     private $db = null;
-    
+
     /**
      * @var float
      */
@@ -103,29 +103,21 @@ class Database
 
     public function commit(): bool
     {
-        if (!is_null($this->db)) {
-            if ($this->transaction === true) {
-                $this->transaction = false;
-                return $this->db->commit();
-            } else {
-                throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no transaction currently open.");
-            }
+        if (!is_null($this->db) && $this->transaction === true) {
+            $this->transaction = false;
+            return $this->db->commit();
         } else {
-            throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call commit() as there is no connection currently open.");
+            throw new SCoreException("Unable to call commit() as there is no transaction currently open.");
         }
     }
 
     public function rollback(): bool
     {
-        if (!is_null($this->db)) {
-            if ($this->transaction === true) {
-                $this->transaction = false;
-                return $this->db->rollback();
-            } else {
-                throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no transaction currently open.");
-            }
+        if (!is_null($this->db) && $this->transaction === true) {
+            $this->transaction = false;
+            return $this->db->rollback();
         } else {
-            throw new SCoreException("<p><b>Database Transaction Error:</b> Unable to call rollback() as there is no connection currently open.");
+            throw new SCoreException("Unable to call rollback() as there is no transaction currently open.");
         }
     }
 
@@ -213,7 +205,7 @@ class Database
             }
             return $stmt;
         } catch (PDOException $pdoe) {
-            throw new SCoreException($pdoe->getMessage()."<p><b>Query:</b> ".$query);
+            throw new SCoreException($pdoe->getMessage(), $query);
         }
     }
 
