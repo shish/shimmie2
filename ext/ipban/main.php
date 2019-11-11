@@ -60,7 +60,7 @@ class IPBan extends Extension
 
                         flash_message("Ban for {$_POST['ip']} added");
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list"));
+                        $page->set_redirect(make_link("ip_ban/list/1"));
                     }
                 } elseif ($event->get_arg(0) == "remove" && $user->check_auth_token()) {
                     if (isset($_POST['id'])) {
@@ -68,10 +68,11 @@ class IPBan extends Extension
 
                         flash_message("Ban removed");
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list"));
+                        $page->set_redirect(make_link("ip_ban/list/1"));
                     }
                 } elseif ($event->get_arg(0) == "list") {
-                    $bans = (isset($_GET["all"])) ? $this->get_bans() : $this->get_active_bans();
+                    $pageNum = $event->try_page_num(1);
+                    $bans = (isset($_GET["all"])) ? $this->get_bans(true, $pageNum) : $this->get_bans(false, $pageNum);
                     $this->theme->display_bans($page, $bans);
                 }
             } else {
@@ -92,7 +93,7 @@ class IPBan extends Extension
         global $user;
         if ($event->parent==="system") {
             if ($user->can(Permissions::BAN_IP)) {
-                $event->add_nav_link("ip_bans", new Link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
+                $event->add_nav_link("ip_bans", new Link('ip_ban/list/1'), "IP Bans", NavLink::is_active(["ip_ban"]));
             }
         }
     }
@@ -101,7 +102,7 @@ class IPBan extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IP)) {
-            $event->add_link("IP Bans", make_link("ip_ban/list"));
+            $event->add_link("IP Bans", make_link("ip_ban/list/1"));
         }
     }
 
@@ -240,7 +241,7 @@ class IPBan extends Extension
 
         $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
 
-        $bans = $this->get_active_bans();
+        $bans = $this->get_bans(false, null);
 
         foreach ($bans as $row) {
             $ip = $row[$prefix."ip"];
@@ -272,39 +273,62 @@ class IPBan extends Extension
         exit;
     }
 
-    private function get_bans()
+    private function get_bans(bool $all, ?int $page)
     {
         global $database;
-        $bans = $database->get_all("
-			SELECT bans.*, users.name as banner_name
-			FROM bans
-			JOIN users ON banner_id = users.id
-			ORDER BY added, expires, bans.id
-		");
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
+
+        $size = 100;
+        if (@$_GET['limit']) {
+            $size = int_escape($_GET['limit']);
         }
-    }
+        $filters = ["1=1"];
+        $args = [];
 
-    private function get_active_bans()
-    {
-        global $database;
+        if (!$all) {
+            $filters[] = "((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))";
+        }
+        if (@$_GET['s_ip']) {
+            $filters[] = "(ip = :ip)";
+            $args['ip'] = $_GET['s_ip'];
+        }
+        if (@$_GET['s_reason']) {
+            $filters[] = "(reason LIKE :reason)";
+            $args['reason'] = '%' . $_GET['s_reason'] . "%";
+        }
+        if (@$_GET['s_banner']) {
+            $filters[] = "(banner_id = :banner_id)";
+            $args['banner_id'] = User::by_name($_GET['s_banner'])->id;
+        }
+        if (@$_GET['s_added']) {
+            $filters[] = "(added LIKE :added)";
+            $args['added'] = '%' . $_GET['s_added'] . "%";
+        }
+        if (@$_GET['s_expires']) {
+            $filters[] = "(expires LIKE :expires)";
+            $args['expires'] = '%' . $_GET['s_expires'] . "%";
+        }
+        if (@$_GET['s_mode']) {
+            $filters[] = "(mode = :mode)";
+            $args['mode'] = $_GET['s_mode'];
+        }
+        $filter = implode(" AND ", $filters);
 
-        $bans = $database->get_all("
+        if (is_null($page)) {
+            $pager = "";
+        } else {
+            $pager = "OFFSET :offset LIMIT :limit";
+            $args["offset"] = ($page-1)*$size;
+            $args['limit'] = $size;
+        }
+
+        return $database->get_all("
 			SELECT bans.*, users.name as banner_name
 			FROM bans
 			JOIN users ON banner_id = users.id
-			WHERE (expires > CURRENT_TIMESTAMP) OR (expires IS NULL)
+			WHERE $filter
 			ORDER BY expires, bans.id
-		");
-
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
-        }
+			$pager
+		", $args);
     }
 
     // returns [ips, nets]
@@ -317,7 +341,7 @@ class IPBan extends Extension
             return $cached;
         }
 
-        $bans = $this->get_active_bans();
+        $bans = $this->get_bans(false, null);
         $ips = []; # "0.0.0.0" => false);
         $nets = []; # "0.0.0.0/32" => false);
         foreach ($bans as $row) {

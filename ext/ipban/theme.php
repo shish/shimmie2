@@ -35,22 +35,39 @@ class IPBanTheme extends Themelet
 				</tr>
 			";
         }
+        $today = date('Y-m-d');
         $html = "
-			<a href='".make_link("ip_ban/list", "all=on")."'>Show All</a>
+			<a href='".make_link("ip_ban/list", "limit=1000000")."'>Show All Active</a> /
+			<a href='".make_link("ip_ban/list", "all=on&limit=1000000")."'>Show EVERYTHING</a>
 			<p><table id='bans' class='sortable zebra'>
-				<thead><tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><th>Type</th><th>Action</th></tr></thead>
+				<thead>
+					<tr><th>IP</th><th>Reason</th><th>By</th><th>From</th><th>Until</th><th>Type</th><th>Action</th></tr>
+					<tr>
+						".make_form(make_link("ip_ban/list/1"), "GET")."
+							<td><input type='text' name='s_ip' value='".html_escape(@$_GET['s_ip'])."'></td>
+							<td><input type='text' name='s_reason' value='".html_escape(@$_GET['s_reason'])."'></td>
+							<td><input type='text' name='s_banner' value='".html_escape(@$_GET['s_banner'])."'></td>
+							<td><input type='text' name='s_added' value='".html_escape(@$_GET['s_added'])."'></td>
+							<td><input type='text' name='s_expires' value='".html_escape(@$_GET['s_expires'])."'></td>
+							<td><input type='text' name='s_mode' value='".html_escape(@$_GET['s_mode'])."'></td>
+							<td><input type='submit' value='Search'></td>
+						</form>
+					</tr>
+				</thead>
 				$h_bans
-				<tfoot><tr id='add'>
-					".make_form(make_link("ip_ban/add"))."
-						<td><input type='text' name='ip' value='".html_escape(@$_GET['ip'])."'></td>
-						<td><input type='text' name='reason' value='".html_escape(@$_GET['reason'])."'></td>
-						<td>{$user->name}</td>
-						<td></td>
-						<td><input type='text' name='end' value='".html_escape(@$_GET['end'])."'></td>
-						<td></td>
-						<td><input type='submit' value='Ban'></td>
-					</form>
-				</tr></tfoot>
+				<tfoot>
+					<tr id='add'>
+						".make_form(make_link("ip_ban/add"))."
+							<td><input type='text' name='ip' value='".html_escape(@$_GET['ip'])."'></td>
+							<td><input type='text' name='reason' value='".html_escape(@$_GET['reason'])."'></td>
+							<td>{$user->name}</td>
+							<td>{$today}</td>
+							<td><input type='text' name='end' value='".html_escape(@$_GET['end'])."'></td>
+							<td>block</td>
+							<td><input type='submit' value='Ban'></td>
+						</form>
+					</tr>
+				</tfoot>
 			</table>
 		";
         $page->set_title("IP Bans");
