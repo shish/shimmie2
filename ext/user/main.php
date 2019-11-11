@@ -390,10 +390,10 @@ class UserPage extends Extension
 
     private function page_recover(string $username)
     {
-        $user = User::by_name($username);
-        if (is_null($user)) {
+        $my_user = User::by_name($username);
+        if (is_null($my_user)) {
             $this->theme->display_error(404, "Error", "There's no user with that name");
-        } elseif (is_null($user->email)) {
+        } elseif (is_null($my_user->email)) {
             $this->theme->display_error(400, "Error", "That user has no registered email address");
         } else {
             // send email

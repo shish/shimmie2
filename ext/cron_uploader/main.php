@@ -269,13 +269,13 @@ class CronUploader extends Extension
         if (empty($user_id)) {
             throw new SCoreException("Cron upload user not set");
         }
-        $user = User::by_id($user_id);
-        if ($user == null) {
+        $my_user = User::by_id($user_id);
+        if ($my_user == null) {
             throw new SCoreException("No user found for cron upload user $user_id");
         }
 
-        send_event(new UserLoginEvent($user));
-        $this->log_message(SCORE_LOG_INFO, "Logged in as user {$user->name}");
+        send_event(new UserLoginEvent($my_user));
+        $this->log_message(SCORE_LOG_INFO, "Logged in as user {$my_user->name}");
 
         $lockfile = fopen($this->get_lock_file(), "w");
         if (!flock($lockfile, LOCK_EX | LOCK_NB)) {

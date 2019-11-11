@@ -112,7 +112,7 @@ class ForumTheme extends Themelet
             
             $message = stripslashes($message);
             
-            $user = "<a href='".make_link("user/".$post["user_name"]."")."'>".$post["user_name"]."</a>";
+            $userLink = "<a href='".make_link("user/".$post["user_name"]."")."'>".$post["user_name"]."</a>";
 
             $poster = User::by_name($post["user_name"]);
             $gravatar = $poster->get_avatar_html();
@@ -140,7 +140,7 @@ class ForumTheme extends Themelet
 				<td class='forumSupmessage'><div class=deleteLink>".$delete_link."</div></td>
 			</tr>
 			<tr class='posBody'>
-				<td class='forumUser'>".$user."<br>".$rank."<br>".$gravatar."<br></td>
+				<td class='forumUser'>".$userLink."<br>".$rank."<br>".$gravatar."<br></td>
 				<td class='forumMessage'>
 					<div class=postDate><small>".autodate($post['date'])."</small></div>
 					<div class=postNumber> #".$post_number."</div>

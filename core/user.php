@@ -105,15 +105,15 @@ class User
 
     public static function by_name_and_pass(string $name, string $pass): ?User
     {
-        $user = User::by_name($name);
-        if ($user) {
-            if ($user->passhash == md5(strtolower($name) . $pass)) {
+        $my_user = User::by_name($name);
+        if ($my_user) {
+            if ($my_user->passhash == md5(strtolower($name) . $pass)) {
                 log_info("core-user", "Migrating from md5 to bcrypt for ".html_escape($name));
-                $user->set_password($pass);
+                $my_user->set_password($pass);
             }
-            if (password_verify($pass, $user->passhash)) {
-                log_info("core-user", "Logged in as ".html_escape($name)." ({$user->class->name})");
-                return $user;
+            if (password_verify($pass, $my_user->passhash)) {
+                log_info("core-user", "Logged in as ".html_escape($name)." ({$my_user->class->name})");
+                return $my_user;
             } else {
                 log_warning("core-user", "Failed to log in as ".html_escape($name)." (Invalid password)");
             }

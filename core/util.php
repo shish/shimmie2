@@ -570,19 +570,19 @@ function _decaret(string $str): string
 function _get_user(): User
 {
     global $config, $page;
-    $user = null;
+    $my_user = null;
     if ($page->get_cookie("user") && $page->get_cookie("session")) {
         $tmp_user = User::by_session($page->get_cookie("user"), $page->get_cookie("session"));
         if (!is_null($tmp_user)) {
-            $user = $tmp_user;
+            $my_user = $tmp_user;
         }
     }
-    if (is_null($user)) {
-        $user = User::by_id($config->get_int("anon_id", 0));
+    if (is_null($my_user)) {
+        $my_user = User::by_id($config->get_int("anon_id", 0));
     }
-    assert(!is_null($user));
+    assert(!is_null($my_user));
 
-    return $user;
+    return $my_user;
 }
 
 function _get_query(): string

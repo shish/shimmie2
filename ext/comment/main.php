@@ -347,9 +347,9 @@ class CommentList extends Extension
             $comments = $matches[2];
             $event->add_querylet(new Querylet("images.id IN (SELECT DISTINCT image_id FROM comments GROUP BY image_id HAVING count(image_id) $cmp $comments)"));
         } elseif (preg_match("/^commented_by[=|:](.*)$/i", $event->term, $matches)) {
-            $user = User::by_name($matches[1]);
-            if (!is_null($user)) {
-                $user_id = $user->id;
+            $my_user = User::by_name($matches[1]);
+            if (!is_null($my_user)) {
+                $user_id = $my_user->id;
             } else {
                 $user_id = -1;
             }
