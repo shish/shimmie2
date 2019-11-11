@@ -316,7 +316,7 @@ class IPBan extends Extension
         if (is_null($page)) {
             $pager = "";
         } else {
-            $pager = "OFFSET :offset LIMIT :limit";
+            $pager = "LIMIT :limit OFFSET :offset";
             $args["offset"] = ($page-1)*$size;
             $args['limit'] = $size;
         }
