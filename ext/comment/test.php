@@ -1,7 +1,7 @@
 <?php
 class CommentListTest extends ShimmiePHPUnitTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         global $config;
         parent::setUp();
@@ -9,7 +9,7 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         $this->log_out();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         global $config;
         $config->set_int("comment_limit", 10);

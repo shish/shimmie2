@@ -69,7 +69,7 @@ class ResLimitTest extends ShimmiePHPUnitTestCase
 
     # reset to defaults, otherwise this can interfere with
     # other extensions' test suites
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
 

@@ -1,7 +1,7 @@
 <?php
 class WordFilterTest extends ShimmiePHPUnitTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         global $config;
         parent::setUp();

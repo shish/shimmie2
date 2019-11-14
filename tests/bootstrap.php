@@ -20,7 +20,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
     private $images = [];
 
-    public function setUp()
+    public function setUp(): void
     {
         $class = str_replace("Test", "", get_class($this));
         if (!class_exists($class)) {
@@ -34,7 +34,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $this->log_out();
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         foreach ($this->images as $image_id) {
             $this->delete_image($image_id);

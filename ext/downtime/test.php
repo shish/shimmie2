@@ -1,7 +1,7 @@
 <?php
 class DowntimeTest extends ShimmiePHPUnitTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         global $config;
         $config->set_bool("downtime", false);

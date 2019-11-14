@@ -1,7 +1,7 @@
 <?php
 class ViewTest extends ShimmiePHPUnitTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
         // FIXME: upload images
