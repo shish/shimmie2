@@ -1,0 +1,58 @@
+name: Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
+    strategy:
+      max-parallel: 15
+      matrix:
+        php: ['7.3', '7.4']
+        database: ['postgres', 'mysql', 'sqlite']
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up PHP
+      uses: shivammathur/setup-php@master
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: pcov
+        extension-csv: mbstring
+
+    - name: Check versions
+      run: php -v && composer -V
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Install shimmie
+      run: |
+        mkdir -p data/config
+        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
+            psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
+            psql -c "CREATE DATABASE shimmie;" -U postgres ;
+            echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ;
+        fi
+        if [[ "${{ matrix.database }}" == "mysql" ]]; then
+            mysql -e "SET GLOBAL general_log = 'ON';" -uroot ;
+            mysql -e "CREATE DATABASE shimmie;" -uroot ;
+            echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
+        fi
+        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
+            echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
+        fi
+        php index.php
+        
+    - name: Run test suite
+      run: vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+      
+    - name: Upload coverage
+      run: |
+          wget https://scrutinizer-ci.com/ocular.phar
+          php ocular.phar code-coverage:upload --format=php-clover data/coverage.clover
