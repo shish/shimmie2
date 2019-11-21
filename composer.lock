@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6a399a98a16e87102f3f9941338cdc31",
+    "content-hash": "771e83de94b5aef4631762f45a430fa8",
     "packages": [
         {
             "name": "bower-asset/jquery",
-            "version": "1.12.3",
+            "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
-                "reference": "3a43d7e563314bf32970b773dd31ecf2b90813dd"
+                "url": "https://github.com/jquery/jquery-dist.git",
+                "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/3a43d7e563314bf32970b773dd31ecf2b90813dd",
-                "reference": "3a43d7e563314bf32970b773dd31ecf2b90813dd"
+                "url": "https://api.github.com/repos/jquery/jquery-dist/zipball/5e89585e0121e72ff47de177c5ef604f3089a53d",
+                "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "type": "bower-asset",
             "license": [
@@ -26,16 +26,16 @@
         },
         {
             "name": "bower-asset/jquery-timeago",
-            "version": "v1.5.2",
+            "version": "v1.5.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:rmm5t/jquery-timeago.git",
-                "reference": "67c11951ae9b6020341c1056a42b5406162db40c"
+                "reference": "180864a9c544a49e43719b457250af216d5e4c3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/67c11951ae9b6020341c1056a42b5406162db40c",
-                "reference": "67c11951ae9b6020341c1056a42b5406162db40c"
+                "url": "https://api.github.com/repos/rmm5t/jquery-timeago/zipball/180864a9c544a49e43719b457250af216d5e4c3a",
+                "reference": "180864a9c544a49e43719b457250af216d5e4c3a"
             },
             "require": {
                 "bower-asset/jquery": ">=1.4"
@@ -47,16 +47,16 @@
         },
         {
             "name": "bower-asset/js-cookie",
-            "version": "v2.1.1",
+            "version": "v2.1.4",
             "source": {
                 "type": "git",
                 "url": "git@github.com:js-cookie/js-cookie.git",
-                "reference": "5c830fb71a2bd3acce9cb733d692e13316991891"
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/5c830fb71a2bd3acce9cb733d692e13316991891",
-                "reference": "5c830fb71a2bd3acce9cb733d692e13316991891"
+                "url": "https://api.github.com/repos/js-cookie/js-cookie/zipball/8b70250875f7e07445b6a457f9c2474ead4cba44",
+                "reference": "8b70250875f7e07445b6a457f9c2474ead4cba44"
             },
             "type": "bower-asset",
             "license": [
@@ -65,16 +65,16 @@
         },
         {
             "name": "bower-asset/mediaelement",
-            "version": "2.21.1",
+            "version": "2.21.2",
             "source": {
                 "type": "git",
                 "url": "git@github.com:johndyer/mediaelement.git",
-                "reference": "6e80b260172f4ddc3b0bbee046775d2ba4c6f9b7"
+                "reference": "394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/johndyer/mediaelement/zipball/6e80b260172f4ddc3b0bbee046775d2ba4c6f9b7",
-                "reference": "6e80b260172f4ddc3b0bbee046775d2ba4c6f9b7"
+                "url": "https://api.github.com/repos/johndyer/mediaelement/zipball/394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce",
+                "reference": "394db3b4a2e3f5f7988cacdefe62ed973bf4a3ce"
             },
             "type": "bower-asset",
             "license": [
@@ -302,12 +302,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/eventtracer-php.git",
-                "reference": "bc5130a5ca933edf6e8608b213265b4d1121a395"
+                "reference": "b06a2824e8932f6744a4c8ccaee4ddbe61158989"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/bc5130a5ca933edf6e8608b213265b4d1121a395",
-                "reference": "bc5130a5ca933edf6e8608b213265b4d1121a395",
+                "url": "https://api.github.com/repos/shish/eventtracer-php/zipball/b06a2824e8932f6744a4c8ccaee4ddbe61158989",
+                "reference": "b06a2824e8932f6744a4c8ccaee4ddbe61158989",
                 "shasum": ""
             },
             "require": {
@@ -338,7 +338,7 @@
             ],
             "description": "An API to write JSON traces as used by the Chrome Trace Viewer",
             "homepage": "https://github.com/shish/eventtracer-php",
-            "time": "2019-11-14T18:14:36+00:00"
+            "time": "2019-11-21T13:07:27+00:00"
         }
     ],
     "packages-dev": [
@@ -766,12 +766,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "b85a9205e06bead6f243af7f29812d8a62e50027"
+                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/b85a9205e06bead6f243af7f29812d8a62e50027",
-                "reference": "b85a9205e06bead6f243af7f29812d8a62e50027",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/f1884187926fbb755a9aaf0b3836ad3165b478bf",
+                "reference": "f1884187926fbb755a9aaf0b3836ad3165b478bf",
                 "shasum": ""
             },
             "require": {
@@ -821,7 +821,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-11-03T06:15:39+00:00"
+            "time": "2019-11-20T13:55:58+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1018,12 +1018,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e2389334f8a98e418fabacf9376b3a637ac73d85"
+                "reference": "f2eeaa3cdab29a70ba900d5f1c67f841adf028ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e2389334f8a98e418fabacf9376b3a637ac73d85",
-                "reference": "e2389334f8a98e418fabacf9376b3a637ac73d85",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f2eeaa3cdab29a70ba900d5f1c67f841adf028ea",
+                "reference": "f2eeaa3cdab29a70ba900d5f1c67f841adf028ea",
                 "shasum": ""
             },
             "require": {
@@ -1093,7 +1093,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-11-13T20:09:40+00:00"
+            "time": "2019-11-21T09:37:31+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1210,12 +1210,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "2ce6675fe77612cce2a49d0cecb4e7afead64323"
+                "reference": "16e54fbc971c14d98779b9c3b22572178ff9411f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/2ce6675fe77612cce2a49d0cecb4e7afead64323",
-                "reference": "2ce6675fe77612cce2a49d0cecb4e7afead64323",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/16e54fbc971c14d98779b9c3b22572178ff9411f",
+                "reference": "16e54fbc971c14d98779b9c3b22572178ff9411f",
                 "shasum": ""
             },
             "require": {
@@ -1223,7 +1223,7 @@
             },
             "require-dev": {
                 "phpunit/phpunit": "^7.5 || ^8.0",
-                "symfony/process": "^2 || ^3.3 || ^4"
+                "symfony/process": "^2 || ^3.3 || ^4 || ^5"
             },
             "type": "library",
             "extra": {
@@ -1258,7 +1258,7 @@
                 "unidiff",
                 "unified diff"
             ],
-            "time": "2019-10-23T09:06:00+00:00"
+            "time": "2019-11-18T19:26:59+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -1266,12 +1266,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "0f73ef4aa2d8a5e00393c06729012a50845e9e4c"
+                "reference": "464c90d7bdf5ad4e8a6aea15c091fec0603d4368"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/0f73ef4aa2d8a5e00393c06729012a50845e9e4c",
-                "reference": "0f73ef4aa2d8a5e00393c06729012a50845e9e4c",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/464c90d7bdf5ad4e8a6aea15c091fec0603d4368",
+                "reference": "464c90d7bdf5ad4e8a6aea15c091fec0603d4368",
                 "shasum": ""
             },
             "require": {
@@ -1311,7 +1311,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2019-10-23T09:05:42+00:00"
+            "time": "2019-11-20T08:46:58+00:00"
         },
         {
             "name": "sebastian/exporter",

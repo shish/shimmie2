@@ -1,6 +1,8 @@
 {
+	"name": "shish/shimmie2",
+	"description": "A tag-based image gallery",
 	"type"    : "project",
-	"license" : "GPL-2.0",
+	"license" : "GPL-2.0-or-later",
 	"minimum-stability" : "dev",
 
 	"repositories" : [
@@ -32,13 +34,13 @@
 		"google/recaptcha"          : "~1.1",
 		"dapphp/securimage"         : "3.6.*",
 		"shish/eventtracer-php"     : "dev-master",
-		"enshrined/svg-sanitize"    : "0.8.2",
+		"enshrined/svg-sanitize"    : "0.8.*",
 
-		"bower-asset/jquery"         : "1.12.3",
-		"bower-asset/jquery-timeago" : "1.5.2",
+		"bower-asset/jquery"         : "1.12.*",
+		"bower-asset/jquery-timeago" : "1.5.*",
 		"bower-asset/tablesorter"    : "dev-master",
-		"bower-asset/mediaelement"   : "2.21.1",
-		"bower-asset/js-cookie"      : "2.1.1"
+		"bower-asset/mediaelement"   : "2.21.*",
+		"bower-asset/js-cookie"      : "2.1.*"
     },
 
 	"require-dev" : {
