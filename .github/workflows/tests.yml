@@ -9,7 +9,7 @@ jobs:
       max-parallel: 15
       matrix:
         php: ['7.3', '7.4']
-        database: ['postgres', 'mysql', 'sqlite']
+        database: ['pgsql', 'mysql', 'sqlite']
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
         coverage: pcov
-        extension-csv: mbstring, pgsql
+        extension-csv: mbstring
 
     - name: Check versions
       run: php -v && composer -V
