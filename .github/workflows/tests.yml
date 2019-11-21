@@ -29,7 +29,7 @@ jobs:
       run: composer validate
 
     - name: Install system dependencies
-      run: sudo apt-get install -y postgres-client
+      run: sudo apt-get install -y postgresql-client
 
     - name: Install PHP dependencies
       run: composer install --prefer-dist --no-progress --no-suggest
