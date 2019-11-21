@@ -22,22 +22,11 @@ jobs:
         coverage: pcov
         extension-csv: mbstring
 
-    - name: Check versions
-      run: php -v && composer -V
-
-    - name: Validate composer.json and composer.lock
-      run: composer validate
-
-    - name: Install system dependencies
-      run: sudo apt-get install -y postgresql-client
-
-    - name: Install PHP dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-
-    - name: Pre-configure database
+    - name: Set up database
       run: |
         mkdir -p data/config
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
+            sudo apt-get install -y postgresql-client ;
             psql --version ;
             psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
             psql -c "CREATE DATABASE shimmie;" -U postgres ;
@@ -53,6 +42,15 @@ jobs:
             sqlite3 --version ;
             echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
         fi
+
+    - name: Check versions
+      run: php -v && composer -V
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install PHP dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
 
     - name: Install shimmie
       run: php index.php
