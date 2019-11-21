@@ -6,9 +6,9 @@ jobs:
   build:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
-      max-parallel: 15
+      max-parallel: 3
       matrix:
-        php: ['7.3', '7.4']
+        php: ['7.3']
         database: ['pgsql', 'mysql', 'sqlite']
     runs-on: ubuntu-latest
 
