@@ -22,7 +22,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         try {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
         } catch (UploadException $e) {
-            $this->assertContains("already has hash", $e->getMessage());
+            $this->assertStringContainsString("already has hash", $e->getMessage());
         }
     }
 
@@ -31,7 +31,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         try {
             $this->post_image("index.php", "test");
         } catch (UploadException $e) {
-            $this->assertContains("Invalid or corrupted file", $e->getMessage());
+            $this->assertStringContainsString("Invalid or corrupted file", $e->getMessage());
         }
     }
 

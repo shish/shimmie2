@@ -32,28 +32,28 @@ class CommentListTest extends ShimmiePHPUnitTestCase
         try {
             send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
         } catch (CommentPostingException $e) {
-            $this->assertContains("try and be more original", $e->getMessage());
+            $this->assertStringContainsString("try and be more original", $e->getMessage());
         }
 
         # empty comment
         try {
             send_event(new CommentPostingEvent($image_id, $user, ""));
         } catch (CommentPostingException $e) {
-            $this->assertContains("Comments need text", $e->getMessage());
+            $this->assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # whitespace is still empty...
         try {
             send_event(new CommentPostingEvent($image_id, $user, " \t\r\n"));
         } catch (CommentPostingException $e) {
-            $this->assertContains("Comments need text", $e->getMessage());
+            $this->assertStringContainsString("Comments need text", $e->getMessage());
         }
 
         # repetitive (aka. gzip gives >= 10x improvement)
         try {
             send_event(new CommentPostingEvent($image_id, $user, str_repeat("U", 5000)));
         } catch (CommentPostingException $e) {
-            $this->assertContains("Comment too repetitive", $e->getMessage());
+            $this->assertStringContainsString("Comment too repetitive", $e->getMessage());
         }
 
         # test UTF8

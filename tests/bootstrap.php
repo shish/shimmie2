@@ -77,7 +77,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected function assert_title(string $title)
     {
         global $page;
-        $this->assertContains($title, $page->title);
+        $this->assertStringContainsString($title, $page->title);
     }
 
     protected function assert_no_title(string $title)
@@ -107,7 +107,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     protected function assert_text(string $text, string $section=null)
     {
-        $this->assertContains($text, $this->page_to_text($section));
+        $this->assertStringContainsString($text, $this->page_to_text($section));
     }
 
     protected function assert_no_text(string $text, string $section=null)
@@ -118,7 +118,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected function assert_content(string $content)
     {
         global $page;
-        $this->assertContains($content, $page->data);
+        $this->assertStringContainsString($content, $page->data);
     }
 
     protected function assert_no_content(string $content)

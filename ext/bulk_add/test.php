@@ -10,7 +10,7 @@ class BulkAddTest extends ShimmiePHPUnitTestCase
 
         $bae = new BulkAddEvent('asdf');
         send_event($bae);
-        $this->assertContains(
+        $this->assertStringContainsString(
             "Error, asdf is not a readable directory",
             $bae->results,
             implode("\n", $bae->results)
