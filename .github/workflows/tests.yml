@@ -7,6 +7,7 @@ jobs:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
       max-parallel: 3
+      fail-fast: false
       matrix:
         php: ['7.3']
         database: ['pgsql', 'mysql', 'sqlite']
@@ -34,9 +35,9 @@ jobs:
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
             mysql --version ;
-            mysql -e "SET GLOBAL general_log = 'ON';" -uroot ;
-            mysql -e "CREATE DATABASE shimmie;" -uroot ;
-            echo '<?php define("DATABASE_DSN", "mysql:user=root;password=;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
+            mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot ;
+            mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
+            echo '<?php define("DATABASE_DSN", "mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
             sqlite3 --version ;
