@@ -30,9 +30,10 @@ jobs:
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
             sudo apt-get install -y postgresql postgresql-client ;
             psql --version ;
-            psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
-            psql -c "CREATE DATABASE shimmie;" -U postgres ;
-            echo '<?php define("DATABASE_DSN", "pgsql:user=postgres;password=;host=;dbname=shimmie");' > data/config/auto_install.conf.php ;
+            sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
+            sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
+            sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
+            echo '<?php define("DATABASE_DSN", "pgsql:user=shimmie;password=shimmie;host=;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
             mysql --version ;
