@@ -25,6 +25,7 @@ jobs:
 
     - name: Set up database
       run: |
+        apt update
         mkdir -p data/config
         if [[ "${{ matrix.database }}" == "pgsql" ]]; then
             sudo apt-get install -y postgresql-client ;
