@@ -40,6 +40,7 @@ jobs:
             echo '<?php define("DATABASE_DSN", "mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
+            sudo apt-get install -y sqlite3 ;
             sqlite3 --version ;
             echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
         fi
