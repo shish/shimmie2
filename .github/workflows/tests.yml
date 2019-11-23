@@ -33,7 +33,7 @@ jobs:
             sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
             sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
             sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
-            echo '<?php define("DATABASE_DSN", "pgsql:user=shimmie;password=shimmie;host=;dbname=shimmie");' > data/config/auto_install.conf.php ;
+            echo '<?php define("DATABASE_DSN", "pgsql:user=shimmie;password=shimmie;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
             mysql --version ;
