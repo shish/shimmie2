@@ -49,30 +49,30 @@ class IPBan extends Extension
         if ($event->page_matches("ip_ban")) {
             global $page, $user;
             if ($user->can(Permissions::BAN_IP)) {
-                if ($event->get_arg(0) == "add" && $user->check_auth_token()) {
-                    if (isset($_POST['ip']) && isset($_POST['reason']) && isset($_POST['end'])) {
-                        if (empty($_POST['end'])) {
+                if ($event->get_arg(0) == "create" && $user->check_auth_token()) {
+                    if (isset($_POST['c_ip']) && isset($_POST['c_reason']) && isset($_POST['c_expires'])) {
+                        if (empty($_POST['c_expires'])) {
                             $end = null;
                         } else {
-                            $end = date("Y-m-d H:i:s", strtotime(trim($_POST['end'])));
+                            $end = date("Y-m-d H:i:s", strtotime(trim($_POST['c_expires'])));
                         }
-                        send_event(new AddIPBanEvent($_POST['ip'], $_POST['reason'], $end));
+                        send_event(new AddIPBanEvent($_POST['c_ip'], $_POST['c_reason'], $end));
 
-                        flash_message("Ban for {$_POST['ip']} added");
+                        flash_message("Ban for {$_POST['c_ip']} added");
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list/1"));
+                        $page->set_redirect(make_link("ip_ban/list"));
                     }
-                } elseif ($event->get_arg(0) == "remove" && $user->check_auth_token()) {
-                    if (isset($_POST['id'])) {
-                        send_event(new RemoveIPBanEvent($_POST['id']));
+                } elseif ($event->get_arg(0) == "delete" && $user->check_auth_token()) {
+                    if (isset($_POST['d_id'])) {
+                        send_event(new RemoveIPBanEvent($_POST['d_id']));
 
                         flash_message("Ban removed");
                         $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list/1"));
+                        $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "list") {
-                    $pageNum = $event->try_page_num(1);
-                    $bans = (isset($_GET["all"])) ? $this->get_bans(true, $pageNum) : $this->get_bans(false, $pageNum);
+                    $pageNum = isset($_GET["r__page"]) ? int_escape($_GET["r__page"]) : 1;
+                    $bans = $this->get_bans(isset($_GET["r_all"]), $pageNum);
                     $this->theme->display_bans($page, $bans);
                 }
             } else {
@@ -93,7 +93,7 @@ class IPBan extends Extension
         global $user;
         if ($event->parent==="system") {
             if ($user->can(Permissions::BAN_IP)) {
-                $event->add_nav_link("ip_bans", new Link('ip_ban/list/1'), "IP Bans", NavLink::is_active(["ip_ban"]));
+                $event->add_nav_link("ip_bans", new Link('ip_ban/list'), "IP Bans", NavLink::is_active(["ip_ban"]));
             }
         }
     }
@@ -102,7 +102,7 @@ class IPBan extends Extension
     {
         global $user;
         if ($user->can(Permissions::BAN_IP)) {
-            $event->add_link("IP Bans", make_link("ip_ban/list/1"));
+            $event->add_link("IP Bans", make_link("ip_ban/list"));
         }
     }
 
