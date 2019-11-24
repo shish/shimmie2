@@ -1,5 +1,35 @@
 <?php
 
+use MicroCRUD\{StringColumn,DateColumn,TextColumn,EnumColumn,Table};
+
+class IPBanTable extends Table {
+    function __construct(\PDO $db, $token=null) {
+        parent::__construct($db, $token);
+
+        $this->table = "bans";
+        $this->base_query = "
+			SELECT *, users.name AS banner
+			FROM bans JOIN users ON banner_id=users.id
+		";
+
+        $this->size = 10;
+        $this->columns = [
+            new StringColumn("ip", "IP"),
+            new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall"]),
+            new TextColumn("reason", "Reason"),
+            new StringColumn("banner", "Banner"),
+            new DateColumn("added", "Added"),
+            new DateColumn("expires", "Expires"),
+        ];
+        $this->order_by = ["expires", "id"];
+        $this->flags = [
+            "all" => ["((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))", null],
+        ];
+        $this->create_url = "/ip_ban/create";
+        $this->delete_url = "/ip_ban/remove";
+    }
+}
+
 class RemoveIPBanEvent extends Event
 {
     public $id;
@@ -47,7 +77,7 @@ class IPBan extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("ip_ban")) {
-            global $page, $user;
+            global $database, $page, $user;
             if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "create" && $user->check_auth_token()) {
                     if (isset($_POST['c_ip']) && isset($_POST['c_reason']) && isset($_POST['c_expires'])) {
@@ -71,9 +101,9 @@ class IPBan extends Extension
                         $page->set_redirect(make_link("ip_ban/list"));
                     }
                 } elseif ($event->get_arg(0) == "list") {
-                    $pageNum = isset($_GET["r__page"]) ? int_escape($_GET["r__page"]) : 1;
-                    $bans = $this->get_bans(isset($_GET["r_all"]), $pageNum);
-                    $this->theme->display_bans($page, $bans);
+                    $t = new IPBanTable($database->raw_db(), $user->get_auth_token());
+                    $table = $t->table($t->query());
+                    $this->theme->display_bans($page, $table, $t->paginator());
                 }
             } else {
                 $this->theme->display_permission_denied();

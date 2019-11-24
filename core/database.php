@@ -378,6 +378,10 @@ class Database
             throw new SCoreException("Can't count tables for database type {$this->engine->name}");
         }
     }
+
+    public function raw_db(): PDO {
+        return $this->db;
+    }
 }
 
 class MockDatabase extends Database
