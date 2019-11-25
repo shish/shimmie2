@@ -96,7 +96,7 @@ class PostgreSQL extends DBEngine
 
     public function scoreql_to_sql(string $data): string
     {
-        $data = str_replace(SCORE::AIPK, "SERIAL PRIMARY KEY", $data);
+        $data = str_replace(SCORE::AIPK, "INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY", $data);
         $data = str_replace(SCORE::INET, "INET", $data);
         $data = str_replace(SCORE::BOOL_Y, $this->BOOL_Y, $data);
         $data = str_replace(SCORE::BOOL_N, $this->BOOL_N, $data);
