@@ -26,7 +26,6 @@ function _d(string $name, $value): void
     }
 }
 _d("DATABASE_DSN", null);    // string   PDO database connection details
-_d("DATABASE_KA", true);     // string   Keep database connection alive
 _d("DATABASE_TIMEOUT", 10000);// int     Time to wait for each statement to complete
 _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details

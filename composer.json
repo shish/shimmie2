@@ -34,6 +34,7 @@
 		"google/recaptcha"          : "~1.1",
 		"dapphp/securimage"         : "3.6.*",
 		"shish/eventtracer-php"     : "dev-master",
+		"shish/ffsphp"              : "0.0.*",
 		"shish/microcrud"           : "dev-master",
 		"enshrined/svg-sanitize"    : "0.8.*",
 

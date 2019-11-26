@@ -1,4 +1,6 @@
 <?php
+use FFSPHP\PDO;
+
 abstract class DatabaseDriver
 {
     public const MYSQL = "mysql";
@@ -44,29 +46,9 @@ class Database
 
     private function connect_db(): void
     {
-        # FIXME: detect ADODB URI, automatically translate PDO DSN
-
-        /*
-         * Why does the abstraction layer act differently depending on the
-         * back-end? Because PHP is deliberately retarded.
-         *
-         * http://stackoverflow.com/questions/237367
-         */
-        $matches = [];
-        $db_user=null;
-        $db_pass=null;
-        if (preg_match("/user=([^;]*)/", DATABASE_DSN, $matches)) {
-            $db_user=$matches[1];
-        }
-        if (preg_match("/password=([^;]*)/", DATABASE_DSN, $matches)) {
-            $db_pass=$matches[1];
-        }
-
-        $db_params = [
-            PDO::ATTR_PERSISTENT => DATABASE_KA,
+        $this->db = new PDO(DATABASE_DSN, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        ];
-        $this->db = new PDO(DATABASE_DSN, $db_user, $db_pass, $db_params);
+        ]);
 
         $this->connect_engine();
         $this->engine->init($this->db);
@@ -185,25 +167,11 @@ class Database
             if (is_null($this->db)) {
                 $this->connect_db();
             }
-            $stmt = $this->db->prepare(
+            return $this->db->execute(
                 "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
-                $query
+                $query,
+                $args
             );
-            assert(!is_bool($stmt));
-            // $stmt = $this->db->prepare($query);
-            if (!array_key_exists(0, $args)) {
-                foreach ($args as $name=>$value) {
-                    if (is_int($value)) {
-                        $stmt->bindValue(':'.$name, $value, PDO::PARAM_INT);
-                    } else {
-                        $stmt->bindValue(':'.$name, $value, PDO::PARAM_STR);
-                    }
-                }
-                $stmt->execute();
-            } else {
-                $stmt->execute($args);
-            }
-            return $stmt;
         } catch (PDOException $pdoe) {
             throw new SCoreException($pdoe->getMessage(), $query);
         }

@@ -4,14 +4,14 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1a344925ec0ffdb23fb554973ae897bd",
+    "content-hash": "599bc5009cfcad0fdbf40925bbed4493",
     "packages": [
         {
             "name": "bower-asset/jquery",
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "git@github.com:jquery/jquery-dist.git",
+                "url": "https://github.com/jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -341,23 +341,66 @@
             "time": "2019-11-21T13:07:27+00:00"
         },
         {
+            "name": "shish/ffsphp",
+            "version": "v0.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shish/ffsphp.git",
+                "reference": "6b1874cf05b0b6bbdf7b118ca081097d1f830cd7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/6b1874cf05b0b6bbdf7b118ca081097d1f830cd7",
+                "reference": "6b1874cf05b0b6bbdf7b118ca081097d1f830cd7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "8.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FFSPHP\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shish",
+                    "email": "webmaster@shishnet.org",
+                    "homepage": "http://shishnet.org",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A collection of workarounds for stupid PHP things",
+            "homepage": "https://github.com/shish/ffsphp",
+            "time": "2019-11-25T15:37:09+00:00"
+        },
+        {
             "name": "shish/microcrud",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "6e297d376904e34986320896f6a1c83b377a54cc"
+                "reference": "415ef0d7cf54177783cceaf031e5b7a0e9b7aa11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/6e297d376904e34986320896f6a1c83b377a54cc",
-                "reference": "6e297d376904e34986320896f6a1c83b377a54cc",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/415ef0d7cf54177783cceaf031e5b7a0e9b7aa11",
+                "reference": "415ef0d7cf54177783cceaf031e5b7a0e9b7aa11",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
                 "php": ">=7.2",
-                "shish/microhtml": "dev-master"
+                "shish/ffsphp": "0.0.*",
+                "shish/microhtml": "0.0.*"
             },
             "require-dev": {
                 "phpunit/phpunit": "8.*"
@@ -386,20 +429,20 @@
                 "crud",
                 "generator"
             ],
-            "time": "2019-11-24T13:37:36+00:00"
+            "time": "2019-11-25T22:50:43+00:00"
         },
         {
             "name": "shish/microhtml",
-            "version": "dev-master",
+            "version": "v0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "ac1cd313555d81b7b45e162291eed8d0a8165511"
+                "reference": "76d923e69d140c638995bbe6f24085a9108950f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/ac1cd313555d81b7b45e162291eed8d0a8165511",
-                "reference": "ac1cd313555d81b7b45e162291eed8d0a8165511",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/76d923e69d140c638995bbe6f24085a9108950f1",
+                "reference": "76d923e69d140c638995bbe6f24085a9108950f1",
                 "shasum": ""
             },
             "require": {
@@ -432,7 +475,7 @@
                 "generator",
                 "html"
             ],
-            "time": "2019-11-24T02:10:21+00:00"
+            "time": "2019-11-25T18:12:07+00:00"
         }
     ],
     "packages-dev": [
@@ -1131,7 +1174,7 @@
                 "myclabs/deep-copy": "^1.9.1",
                 "phar-io/manifest": "^1.0.3",
                 "phar-io/version": "^2.0.1",
-                "php": "^7.2",
+                "php": "^7.3",
                 "phpspec/prophecy": "^1.8.1",
                 "phpunit/php-code-coverage": "^7.0.7",
                 "phpunit/php-file-iterator": "^2.0.2",
