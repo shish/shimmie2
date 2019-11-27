@@ -124,52 +124,5 @@ class Rule34 extends Extension
                 $page->set_redirect(make_link("admin"));
             }
         }
-
-        if ($event->page_matches("sys_ip_ban")) {
-            global $page, $user;
-            if ($user->can(Permissions::BAN_IP)) {
-                if ($event->get_arg(0) == "list") {
-                    $bans = (isset($_GET["all"])) ? $this->get_bans() : $this->get_active_bans();
-                    $this->theme->display_bans($page, $bans);
-                }
-            } else {
-                $this->theme->display_permission_denied();
-            }
-        }
-    }
-
-    private function get_bans()
-    {
-        global $database;
-        $bans = $database->get_all("
-			SELECT sys_ip_bans.*, users.name as banner_name
-			FROM sys_ip_bans
-			JOIN users ON banner_id = users.id
-			ORDER BY time_start, time_end, sys_ip_bans.id
-		");
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
-        }
-    }
-
-    private function get_active_bans()
-    {
-        global $database;
-
-        $bans = $database->get_all("
-			SELECT sys_ip_bans.*, users.name as banner_name
-			FROM sys_ip_bans
-			JOIN users ON banner_id = users.id
-			WHERE (time_end > now()) OR (time_end IS NULL)
-			ORDER BY time_end, sys_ip_bans.id
-		");
-
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
-        }
     }
 }
