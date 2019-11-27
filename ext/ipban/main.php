@@ -1,5 +1,6 @@
 <?php
 
+use MicroCRUD\InetColumn;
 use MicroCRUD\StringColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\TextColumn;
@@ -14,13 +15,15 @@ class IPBanTable extends Table
 
         $this->table = "bans";
         $this->base_query = "
-			SELECT bans.*, users.name AS banner
-			FROM bans JOIN users ON banner_id=users.id
+			SELECT * FROM (
+				SELECT bans.*, users.name AS banner
+				FROM bans JOIN users ON banner_id=users.id
+			) AS tbl1
 		";
 
         $this->size = 10;
         $this->columns = [
-            new StringColumn("ip", "IP"),
+            new InetColumn("ip", "IP"),
             new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall"]),
             new TextColumn("reason", "Reason"),
             new StringColumn("banner", "Banner"),
@@ -31,8 +34,10 @@ class IPBanTable extends Table
         $this->flags = [
             "all" => ["((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))", null],
         ];
-        $this->create_url = "/ip_ban/create";
-        $this->delete_url = "/ip_ban/remove";
+        $this->create_url = make_link("ip_ban/create");
+        $this->delete_url = make_link("ip_ban/delete");
+
+		$this->table_attrs = ["class" => "sortable zebra"];
     }
 }
 
@@ -83,30 +88,25 @@ class IPBan extends Extension
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("ip_ban")) {
-            global $database, $page, $user;
+			global $database, $page, $user;
             if ($user->can(Permissions::BAN_IP)) {
-                if ($event->get_arg(0) == "create" && $user->check_auth_token()) {
-                    if (isset($_POST['c_ip']) && isset($_POST['c_reason']) && isset($_POST['c_expires'])) {
-                        if (empty($_POST['c_expires'])) {
-                            $end = null;
-                        } else {
-                            $end = date("Y-m-d H:i:s", strtotime(trim($_POST['c_expires'])));
-                        }
-                        send_event(new AddIPBanEvent($_POST['c_ip'], $_POST['c_reason'], $end));
-
-                        flash_message("Ban for {$_POST['c_ip']} added");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list"));
-                    }
-                } elseif ($event->get_arg(0) == "delete" && $user->check_auth_token()) {
-                    if (isset($_POST['d_id'])) {
-                        send_event(new RemoveIPBanEvent($_POST['d_id']));
-
-                        flash_message("Ban removed");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("ip_ban/list"));
-                    }
+                if ($event->get_arg(0) == "create") {
+					$user->ensure_authed();
+					$input = validate_input(["c_ip"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
+					send_event(new AddIPBanEvent($input['c_ip'], $input['c_reason'], $input['c_expires']));
+					flash_message("Ban for {$input['c_ip']} added");
+					$page->set_mode(PageMode::REDIRECT);
+					$page->set_redirect(make_link("ip_ban/list"));
+                } elseif ($event->get_arg(0) == "delete") {
+					$user->ensure_authed();
+					$input = validate_input(["d_id"=>"int"]);
+					send_event(new RemoveIPBanEvent($input['d_id']));
+					flash_message("Ban removed");
+					$page->set_mode(PageMode::REDIRECT);
+					$page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "list") {
+					$_GET['c_banner'] = $user->name;
+					$_GET['c_added'] = date('Y-m-d');
                     $t = new IPBanTable($database->raw_db(), $user->get_auth_token());
                     $table = $t->table($t->query());
                     $this->theme->display_bans($page, $table, $t->paginator());

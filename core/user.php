@@ -242,5 +242,12 @@ class User
     public function check_auth_token(): bool
     {
         return (isset($_POST["auth_token"]) && $_POST["auth_token"] == $this->get_auth_token());
+	}
+
+	public function ensure_authed(): void
+	{
+		if(!$this->check_auth_token()) {
+			die("Invalid auth token");
+		}
     }
 }

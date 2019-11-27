@@ -728,6 +728,8 @@ function validate_input(array $inputs): array
             $outputs[$key] = (int)$value;
         } elseif (in_array('bool', $flags)) {
             $outputs[$key] = bool_escape($value);
+        } elseif (in_array('date', $flags)) {
+            $outputs[$key] = date("Y-m-d H:i:s", strtotime(trim($value)));
         } elseif (in_array('string', $flags)) {
             if (in_array('trim', $flags)) {
                 $value = trim($value);
