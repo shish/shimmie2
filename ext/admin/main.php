@@ -63,6 +63,10 @@ class AdminPage extends Extension
         if ($event->cmd == "help") {
             print "\tget-page <query string>\n";
             print "\t\teg 'get-page post/list'\n\n";
+            print "\tpost-page <query string> <urlencoded params>\n";
+            print "\t\teg 'post-page ip_ban/delete id=1'\n\n";
+            print "\tget-token\n";
+            print "\t\tget a CSRF auth token\n\n";
             print "\tregen-thumb <id / hash>\n";
             print "\t\tregenerate a thumbnail\n\n";
         }
@@ -70,6 +74,17 @@ class AdminPage extends Extension
             global $page;
             send_event(new PageRequestEvent($event->args[0]));
             $page->display();
+        }
+        if ($event->cmd == "post-page") {
+            global $page;
+            $_SERVER['REQUEST_METHOD'] = "POST";
+            parse_str($event->args[1], $_POST);
+            send_event(new PageRequestEvent($event->args[0]));
+            $page->display();
+        }
+        if ($event->cmd == "get-token") {
+            global $user;
+            print($user->get_auth_token());
         }
         if ($event->cmd == "regen-thumb") {
             $uid = $event->args[0];
