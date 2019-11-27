@@ -39,7 +39,7 @@ class Rule34 extends Extension
     {
         global $database, $user, $config;
         if ($user->can(Permissions::CHANGE_SETTING) && $config->get_bool('r34_comic_integration')) {
-            $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=?", [$event->display_user->id]));
+            $current_state = bool_escape($database->get_one("SELECT comic_admin FROM users WHERE id=:id", ['id'=>$event->display_user->id]));
             $this->theme->show_comic_changer($event->display_user, $current_state);
         }
     }
@@ -84,8 +84,8 @@ class Rule34 extends Extension
                     'is_admin' => 'bool',
                 ]);
                 $database->execute(
-                    'UPDATE users SET comic_admin=? WHERE id=?',
-                    [$input['is_admin'] ? 't' : 'f', $input['user_id']]
+                    'UPDATE users SET comic_admin=:is_admin WHERE id=:id',
+                    ['is_admin'=>$input['is_admin'] ? 't' : 'f', 'id'=>$input['user_id']]
                 );
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(@$_SERVER['HTTP_REFERER']);

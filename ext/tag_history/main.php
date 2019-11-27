@@ -213,36 +213,34 @@ class TagHistory extends Extension
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
-				WHERE tag_histories.id = ?", [$revert_id]);
+				WHERE tag_histories.id = :id", ["id"=>$revert_id]);
         return ($row ? $row : null);
     }
 
     public function get_tag_history_from_id(int $image_id): array
     {
         global $database;
-        $row = $database->get_all(
+        return $database->get_all(
             "
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
-				WHERE image_id = ?
+				WHERE image_id = :id
 				ORDER BY tag_histories.id DESC",
-            [$image_id]
+            ["id"=>$image_id]
         );
-        return ($row ? $row : []);
     }
 
     public function get_global_tag_history(int $page_id): array
     {
         global $database;
-        $row = $database->get_all("
+        return $database->get_all("
 				SELECT tag_histories.*, users.name
 				FROM tag_histories
 				JOIN users ON tag_histories.user_id = users.id
 				ORDER BY tag_histories.id DESC
 				LIMIT 100 OFFSET :offset
 		", ["offset" => ($page_id-1)*100]);
-        return ($row ? $row : []);
     }
 
     /**
@@ -261,19 +259,19 @@ class TagHistory extends Extension
                 $this->theme->add_status($name, "user not found");
                 return;
             } else {
-                $select_code[] = 'user_id = ?';
-                $select_args[] = $duser->id;
+                $select_code[] = 'user_id = :user_id';
+                $select_args['user_id'] = $duser->id;
             }
         }
 
         if (!is_null($ip)) {
-            $select_code[] = 'user_ip = ?';
-            $select_args[] = $ip;
+            $select_code[] = 'user_ip = :user_ip';
+            $select_args['user_ip'] = $ip;
         }
 
         if (!is_null($date)) {
-            $select_code[] = 'date_set >= ?';
-            $select_args[] = $date;
+            $select_code[] = 'date_set >= :date_set';
+            $select_args['date_set'] = $date;
         }
 
         if (count($select_code) == 0) {
@@ -368,13 +366,13 @@ class TagHistory extends Extension
         }
 
         // if the image has no history, make one with the old tags
-        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = ?", [$image->id]);
+        $entries = $database->get_one("SELECT COUNT(*) FROM tag_histories WHERE image_id = :id", ["id"=>$image->id]);
         if ($entries == 0 && !empty($old_tags)) {
             $database->execute(
                 "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
-				VALUES (?, ?, ?, ?, now())",
-                [$image->id, $old_tags, $config->get_int('anon_id'), '127.0.0.1']
+				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
+                ["image_id"=>$image->id, "tags"=>$old_tags, "user_id"=>$config->get_int('anon_id'), "user_ip"=>'127.0.0.1']
             );
             $entries++;
         }
@@ -383,8 +381,8 @@ class TagHistory extends Extension
         $database->execute(
             "
 				INSERT INTO tag_histories(image_id, tags, user_id, user_ip, date_set)
-				VALUES (?, ?, ?, ?, now())",
-            [$image->id, $new_tags, $user->id, $_SERVER['REMOTE_ADDR']]
+				VALUES (:image_id, :tags, :user_id, :user_ip, now())",
+            ["image_id"=>$image->id, "tags"=>$new_tags, "user_id"=>$user->id, "user_ip"=>$_SERVER['REMOTE_ADDR']]
         );
         $entries++;
 
@@ -401,8 +399,8 @@ class TagHistory extends Extension
                 http://dev.mysql.com/doc/refman/5.1/en/subquery-restrictions.html
                 http://stackoverflow.com/questions/45494/mysql-error-1093-cant-specify-target-table-for-update-in-from-clause
             */
-            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = ?", [$image->id]);
-            $database->execute("DELETE FROM tag_histories WHERE id = ?", [$min_id]);
+            $min_id = $database->get_one("SELECT MIN(id) FROM tag_histories WHERE image_id = :image_id", ["image_id"=>$image->id]);
+            $database->execute("DELETE FROM tag_histories WHERE id = :id", ["id"=>$min_id]);
         }
     }
 }

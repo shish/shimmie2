@@ -32,8 +32,8 @@ class Blotter extends Extension
 					");
             // Insert sample data:
             $database->execute(
-                "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), ?, ?)",
-                ["Installed the blotter extension!", "Y"]
+                "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
+                ["text"=>"Installed the blotter extension!", "important"=>"Y"]
             );
             log_info("blotter", "Installed tables for blotter extension.");
             $config->set_int("blotter_version", 1);
@@ -102,8 +102,8 @@ class Blotter extends Extension
                         }
                         // Now insert into db:
                         $database->execute(
-                            "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), ?, ?)",
-                            [$entry_text, $important]
+                            "INSERT INTO blotter (entry_date, entry_text, important) VALUES (now(), :text, :important)",
+                            ["text"=>$entry_text, "important"=>$important]
                         );
                         log_info("blotter", "Added Message: $entry_text");
                         $page->set_mode(PageMode::REDIRECT);

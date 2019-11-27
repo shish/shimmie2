@@ -115,8 +115,8 @@ class ImageBan extends Extension
     {
         global $database;
         $database->Execute(
-            "INSERT INTO image_bans (hash, reason, date) VALUES (?, ?, now())",
-            [$event->hash, $event->reason]
+            "INSERT INTO image_bans (hash, reason, date) VALUES (:hash, :reason, now())",
+            ["hash"=>$event->hash, "reason"=>$event->reason]
         );
         log_info("image_hash_ban", "Banned hash {$event->hash} because '{$event->reason}'");
     }
@@ -124,7 +124,7 @@ class ImageBan extends Extension
     public function onRemoveImageHashBan(RemoveImageHashBanEvent $event)
     {
         global $database;
-        $database->Execute("DELETE FROM image_bans WHERE hash = ?", [$event->hash]);
+        $database->Execute("DELETE FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -147,12 +147,12 @@ class ImageBan extends Extension
         $where = ["(1=1)"];
         $args = [];
         if (!empty($_GET['hash'])) {
-            $where[] = 'hash = ?';
-            $args[] = $_GET['hash'];
+            $where[] = 'hash = :hash';
+            $args['hash'] = $_GET['hash'];
         }
         if (!empty($_GET['reason'])) {
-            $where[] = 'reason SCORE_ILIKE ?';
-            $args[] = "%".$_GET['reason']."%";
+            $where[] = 'reason SCORE_ILIKE :reason';
+            $args['reason'] = "%".$_GET['reason']."%";
         }
         $where = implode(" AND ", $where);
         $bans = $database->get_all($database->scoreql_to_sql("

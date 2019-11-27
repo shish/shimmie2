@@ -74,8 +74,8 @@ class DanbooruApi extends Extension
             $idlist = explode(",", $_GET['id']);
             foreach ($idlist as $id) {
                 $sqlresult = $database->get_all(
-                    "SELECT id,tag,count FROM tags WHERE id = ?",
-                    [$id]
+                    "SELECT id,tag,count FROM tags WHERE id = :id",
+                    ['id'=>$id]
                 );
                 foreach ($sqlresult as $row) {
                     $results[] = [$row['count'], $row['tag'], $row['id']];
@@ -86,9 +86,9 @@ class DanbooruApi extends Extension
             foreach ($namelist as $name) {
                 $sqlresult = $database->get_all(
                     $database->scoreql_to_sql(
-                        "SELECT id,tag,count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"
+                        "SELECT id,tag,count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
                     ),
-                    [$name]
+                    ['tag'=>$name]
                 );
                 foreach ($sqlresult as $row) {
                     $results[] = [$row['count'], $row['tag'], $row['id']];
@@ -102,8 +102,8 @@ class DanbooruApi extends Extension
         } else {
             $start = isset($_GET['after_id']) ? int_escape($_GET['offset']) : 0;
             $sqlresult = $database->get_all(
-                "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= ? ORDER BY id DESC",
-                [$start]
+                "SELECT id,tag,count FROM tags WHERE count > 0 AND id >= :id ORDER BY id DESC",
+                ['id'=>$start]
             );
             foreach ($sqlresult as $row) {
                 $results[] = [$row['count'], $row['tag'], $row['id']];

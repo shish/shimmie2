@@ -60,8 +60,8 @@ class Blocks extends Extension
                 if ($user->check_auth_token()) {
                     $database->execute("
 						INSERT INTO blocks (pages, title, area, priority, content)
-						VALUES (?, ?, ?, ?, ?)
-					", [$_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content']]);
+						VALUES (:pages, :title, :area, :priority, :content)
+					", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content']]);
                     log_info("blocks", "Added Block #".($database->get_last_insert_id('blocks_id_seq'))." (".$_POST['title'].")");
                     $cache->delete("blocks");
                     $page->set_mode(PageMode::REDIRECT);
@@ -73,14 +73,14 @@ class Blocks extends Extension
                     if (!empty($_POST['delete'])) {
                         $database->execute("
 							DELETE FROM blocks
-							WHERE id=?
-						", [$_POST['id']]);
+							WHERE id=:id
+						", ['id'=>$_POST['id']]);
                         log_info("blocks", "Deleted Block #".$_POST['id']);
                     } else {
                         $database->execute("
-							UPDATE blocks SET pages=?, title=?, area=?, priority=?, content=?
-							WHERE id=?
-						", [$_POST['pages'], $_POST['title'], $_POST['area'], (int)$_POST['priority'], $_POST['content'], $_POST['id']]);
+							UPDATE blocks SET pages=:pages, title=:title, area=:area, priority=:priority, content=:content
+							WHERE id=:id
+						", ['pages'=>$_POST['pages'], 'title'=>$_POST['title'], 'area'=>$_POST['area'], 'priority'=>(int)$_POST['priority'], 'content'=>$_POST['content'], 'id'=>$_POST['id']]);
                         log_info("blocks", "Updated Block #".$_POST['id']." (".$_POST['title'].")");
                     }
                     $cache->delete("blocks");

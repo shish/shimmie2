@@ -144,8 +144,8 @@ class Artists extends Extension
         }
 
         $database->execute(
-            "UPDATE images SET author = ? WHERE id = ?",
-            [$artistName, $event->image->id]
+            "UPDATE images SET author = :author WHERE id = :id",
+            ['author'=>$artistName, 'id'=>$event->image->id]
         );
     }
 
@@ -414,21 +414,21 @@ class Artists extends Extension
     private function get_artistName_by_imageID(int $imageID): string
     {
         global $database;
-        $result = $database->get_row("SELECT author FROM images WHERE id = ?", [$imageID]);
+        $result = $database->get_row("SELECT author FROM images WHERE id = :id", ['id'=>$imageID]);
         return stripslashes($result['author']);
     }
 
     private function url_exists_by_url(string $url): bool
     {
         global $database;
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = ?", [$url]);
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_urls WHERE url = :url", ['url'=>$url]);
         return ($result != 0);
     }
 
     private function member_exists_by_name(string $member): bool
     {
         global $database;
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = ?", [$member]);
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_members WHERE name = :name", ['name'=>$member]);
         return ($result != 0);
     }
 
@@ -436,7 +436,7 @@ class Artists extends Extension
     {
         global $database;
 
-        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = ?", [$alias]);
+        $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = :alias", ['alias'=>$alias]);
         return ($result != 0);
     }
 
@@ -444,8 +444,8 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_alias WHERE artist_id = ? AND alias = ?",
-            [$artistID, $alias]
+            "SELECT COUNT(1) FROM artist_alias WHERE artist_id = :artist_id AND alias = :alias",
+            ['artist_id'=>$artistID, 'alias'=>$alias]
         );
         return ($result != 0);
     }
@@ -453,61 +453,61 @@ class Artists extends Extension
     private function get_artistID_by_url(string $url): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE url = ?", [$url]);
+        return $database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url'=>$url]);
     }
 
     private function get_artistID_by_memberName(string $member): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE name = ?", [$member]);
+        return $database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name'=>$member]);
     }
 
     private function get_artistName_by_artistID(int $artistID): string
     {
         global $database;
-        return $database->get_one("SELECT name FROM artists WHERE id = ?", [$artistID]);
+        return $database->get_one("SELECT name FROM artists WHERE id = :id", ['id'=>$artistID]);
     }
 
     private function get_artistID_by_aliasID(int $aliasID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_alias WHERE id = ?", [$aliasID]);
+        return $database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
     private function get_artistID_by_memberID(int $memberID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE id = ?", [$memberID]);
+        return $database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
     private function get_artistID_by_urlID(int $urlID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE id = ?", [$urlID]);
+        return $database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
     private function delete_alias(int $aliasID)
     {
         global $database;
-        $database->execute("DELETE FROM artist_alias WHERE id = ?", [$aliasID]);
+        $database->execute("DELETE FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
     private function delete_url(int $urlID)
     {
         global $database;
-        $database->execute("DELETE FROM artist_urls WHERE id = ?", [$urlID]);
+        $database->execute("DELETE FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
     private function delete_member(int $memberID)
     {
         global $database;
-        $database->execute("DELETE FROM artist_members WHERE id = ?", [$memberID]);
+        $database->execute("DELETE FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
     private function get_alias_by_id(int $aliasID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_alias WHERE id = ?", [$aliasID]);
+        $result = $database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
         $result["alias"] = stripslashes($result["alias"]);
         return $result;
     }
@@ -515,7 +515,7 @@ class Artists extends Extension
     private function get_url_by_id(int $urlID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_urls WHERE id = ?", [$urlID]);
+        $result = $database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
         $result["url"] = stripslashes($result["url"]);
         return $result;
     }
@@ -523,7 +523,7 @@ class Artists extends Extension
     private function get_member_by_id(int $memberID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_members WHERE id = ?", [$memberID]);
+        $result = $database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id'=>$memberID]);
         $result["name"] = stripslashes($result["name"]);
         return $result;
     }
@@ -559,8 +559,8 @@ class Artists extends Extension
 
         global $database;
         $database->execute(
-            "UPDATE artists SET name = ?, notes = ?, updated = now(), user_id = ? WHERE id = ? ",
-            [$name, $notes, $userID, $artistID]
+            "UPDATE artists SET name = :name, notes = :notes, updated = now(), user_id = :user_id WHERE id = :id",
+            ['name'=>$name, 'notes'=>$notes, 'user_id'=>$userID, 'id'=>$artistID]
         );
 
         // ALIAS MATCHING SECTION
@@ -640,8 +640,8 @@ class Artists extends Extension
     {
         global $database;
         $database->execute(
-            "UPDATE artist_alias SET alias = ?, updated = now(), user_id  = ? WHERE id = ? ",
-            [$alias, $userID, $aliasID]
+            "UPDATE artist_alias SET alias = :alias, updated = now(), user_id = :user_id WHERE id = :id",
+            ['alias'=>$alias, 'user_id'=>$userID, 'id'=>$aliasID]
         );
     }
 
@@ -659,8 +659,8 @@ class Artists extends Extension
     {
         global $database;
         $database->execute(
-            "UPDATE artist_urls SET url = ?, updated = now(), user_id = ? WHERE id = ?",
-            [$url, $userID, $urlID]
+            "UPDATE artist_urls SET url = :url, updated = now(), user_id = :user_id WHERE id = :id",
+            ['url'=>$url, 'user_id'=>$userID, 'id'=>$urlID]
         );
     }
 
@@ -678,8 +678,8 @@ class Artists extends Extension
     {
         global $database;
         $database->execute(
-            "UPDATE artist_members SET name = ?, updated = now(), user_id = ? WHERE id = ?",
-            [$memberName, $userID, $memberID]
+            "UPDATE artist_members SET name = :name, updated = now(), user_id = :user_id WHERE id = :id",
+            ['name'=>$memberName, 'user_id'=>$userID, 'id'=>$memberID]
         );
     }
 
@@ -754,8 +754,8 @@ class Artists extends Extension
         global $database, $user;
         $database->execute("
             INSERT INTO artists (user_id, name, notes, created, updated)
-            VALUES (?, ?, ?, now(), now())
-        ", [$user->id, $name, $notes]);
+            VALUES (:user_id, :name, :notes, now(), now())
+        ", ['user_id'=>$user->id, 'name'=>$name, 'notes'=>$notes]);
         return $database->get_last_insert_id('artists_id_seq');
     }
 
@@ -763,8 +763,8 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artists WHERE name = ?",
-            [$name]
+            "SELECT COUNT(1) FROM artists WHERE name = :name",
+            ['name'=>$name]
         );
         return ($result != 0);
     }
@@ -773,8 +773,8 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_row(
-            "SELECT * FROM artists WHERE id = ?",
-            [$artistID]
+            "SELECT * FROM artists WHERE id = :id",
+            ['id'=>$artistID]
         );
 
         $result["name"] = stripslashes($result["name"]);
@@ -787,8 +787,8 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_all(
-            "SELECT * FROM artist_members WHERE artist_id = ?",
-            [$artistID]
+            "SELECT * FROM artist_members WHERE artist_id = :artist_id",
+            ['artist_id'=>$artistID]
         );
 
         $num = count($result);
@@ -803,8 +803,8 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_all(
-            "SELECT id, url FROM artist_urls WHERE artist_id = ?",
-            [$artistID]
+            "SELECT id, url FROM artist_urls WHERE artist_id = :artist_id",
+            ['artist_id'=>$artistID]
         );
 
         $num = count($result);
@@ -819,8 +819,8 @@ class Artists extends Extension
     {
         global $database;
         return (int)$database->get_one(
-            "SELECT id FROM artists WHERE name = ?",
-            [$name]
+            "SELECT id FROM artists WHERE name = :name",
+            ['name'=>$name]
         );
     }
 
@@ -829,8 +829,8 @@ class Artists extends Extension
         global $database;
 
         return (int)$database->get_one(
-            "SELECT artist_id FROM artist_alias WHERE alias = ?",
-            [$alias]
+            "SELECT artist_id FROM artist_alias WHERE alias = :alias",
+            ['alias'=>$alias]
         );
     }
 
@@ -838,8 +838,8 @@ class Artists extends Extension
     {
         global $database;
         $database->execute(
-            "DELETE FROM artists WHERE id = ? ",
-            [$artistID]
+            "DELETE FROM artists WHERE id = :id",
+            ['id'=>$artistID]
         );
     }
 
@@ -899,12 +899,12 @@ class Artists extends Extension
                             ORDER BY m.updated DESC
                         )
                 ORDER BY updated DESC
-                LIMIT ?, ?
+                LIMIT :offset, :limit
             ",
             [
-                    $pageNumber * $artistsPerPage
-                    , $artistsPerPage
-                ]
+				"offset"=>$pageNumber * $artistsPerPage,
+				"limit"=>$artistsPerPage
+            ]
         );
 
         $number_of_listings = count($listing);
@@ -954,8 +954,8 @@ class Artists extends Extension
         global $database;
 
         $database->execute(
-            "INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (?, now(), now(), ?, ?)",
-            [$artistID, $url, $userID]
+            "INSERT INTO artist_urls (artist_id, created, updated, url, user_id) VALUES (:artist_id, now(), now(), :url, :user_id)",
+            ['artist'=>$artistID, 'url'=>$url, 'user_id'=>$userID]
         );
     }
 
@@ -981,8 +981,8 @@ class Artists extends Extension
         global $database;
 
         $database->execute(
-            "INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (?, now(), now(), ?, ?)",
-            [$artistID, $alias, $userID]
+            "INSERT INTO artist_alias (artist_id, created, updated, alias, user_id) VALUES (:artist_id, now(), now(), :alias, :user_id)",
+            ['artist_id'=>$artistID, 'alias'=>$alias, 'user_id'=>$userID]
         );
     }
 
@@ -1008,8 +1008,8 @@ class Artists extends Extension
         global $database;
 
         $database->execute(
-            "INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (?, ?, now(), now(), ?)",
-            [$artistID, $member, $userID]
+            "INSERT INTO artist_members (artist_id, name, created, updated, user_id) VALUES (:artist_id, :name, now(), now(), :user_id)",
+            ['artist'=>$artistID, 'name'=>$member, 'user_id'=>$userID]
         );
     }
 
@@ -1018,8 +1018,8 @@ class Artists extends Extension
         global $database;
 
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_members WHERE artist_id = ? AND name = ?",
-            [$artistID, $member]
+            "SELECT COUNT(1) FROM artist_members WHERE artist_id = :artist_id AND name = :name",
+            ['artist_id'=>$artistID, 'name'=>$member]
         );
         return ($result != 0);
     }
@@ -1029,8 +1029,8 @@ class Artists extends Extension
         global $database;
 
         $result = $database->get_one(
-            "SELECT COUNT(1) FROM artist_urls WHERE artist_id = ? AND url = ?",
-            [$artistID, $url]
+            "SELECT COUNT(1) FROM artist_urls WHERE artist_id = :artist_id AND url = :url",
+            ['artist_id'=>$artistID, 'url'=>$url]
         );
         return ($result != 0);
     }
@@ -1045,9 +1045,9 @@ class Artists extends Extension
         $result = $database->get_all("
             SELECT id AS alias_id, alias AS alias_name
             FROM artist_alias
-            WHERE artist_id = ?
+            WHERE artist_id = :artist_id
             ORDER BY alias ASC
-        ", [$artistID]);
+        ", ['artist_id'=>$artistID]);
 
         for ($i = 0 ; $i < count($result) ; $i++) {
             $result[$i]["alias_name"] = stripslashes($result[$i]["alias_name"]);

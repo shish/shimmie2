@@ -84,8 +84,8 @@ class ReportImage extends Extension
         log_info("report_image", "Adding report of Image #{$event->report->image_id} with reason '{$event->report->reason}'", null, ["image_id" => $event->report->image_id]);
         $database->Execute(
             "INSERT INTO image_reports(image_id, reporter_id, reason)
-				VALUES (?, ?, ?)",
-            [$event->report->image_id, $event->report->user_id, $event->report->reason]
+				VALUES (:image_id, :reporter_id, :reason)",
+            ['image_id'=>$event->report->image_id, 'reporter_id'=>$event->report->user_id, 'reason'=>$event->report->reason]
         );
         $cache->delete("image-report-count");
     }
@@ -93,7 +93,7 @@ class ReportImage extends Extension
     public function onRemoveReportedImage(RemoveReportedImageEvent $event)
     {
         global $cache, $database;
-        $database->Execute("DELETE FROM image_reports WHERE id = ?", [$event->id]);
+        $database->Execute("DELETE FROM image_reports WHERE id = :id", ["id"=>$event->id]);
         $cache->delete("image-report-count");
     }
 
@@ -141,7 +141,7 @@ class ReportImage extends Extension
     public function onImageDeletion(ImageDeletionEvent $event)
     {
         global $cache, $database;
-        $database->Execute("DELETE FROM image_reports WHERE image_id = ?", [$event->image->id]);
+        $database->Execute("DELETE FROM image_reports WHERE image_id = :image_id", ["image_id"=>$event->image->id]);
         $cache->delete("image-report-count");
     }
 
@@ -168,7 +168,7 @@ class ReportImage extends Extension
     public function delete_reports_by(int $user_id)
     {
         global $cache, $database;
-        $database->execute("DELETE FROM image_reports WHERE reporter_id=?", [$user_id]);
+        $database->execute("DELETE FROM image_reports WHERE reporter_id=:reporter_id", ['reporter_id'=>$user_id]);
         $cache->delete("image-report-count");
     }
 

@@ -49,8 +49,8 @@ class NumericScore extends Extension
                 "SELECT users.name as username, user_id, score 
 				FROM numeric_score_votes 
 				JOIN users ON numeric_score_votes.user_id=users.id
-				WHERE image_id=?",
-                [$image_id]
+				WHERE image_id=:image_id",
+                ['image_id'=>$image_id]
             );
             $html = "<table style='width: 100%;'>";
             foreach ($x as $vote) {
@@ -83,12 +83,12 @@ class NumericScore extends Extension
             if ($user->can(Permissions::EDIT_OTHER_VOTE)) {
                 $image_id = int_escape($_POST['image_id']);
                 $database->execute(
-                    "DELETE FROM numeric_score_votes WHERE image_id=?",
-                    [$image_id]
+                    "DELETE FROM numeric_score_votes WHERE image_id=:image_id",
+                    ['image_id'=>$image_id]
                 );
                 $database->execute(
-                    "UPDATE images SET numeric_score=0 WHERE id=?",
-                    [$image_id]
+                    "UPDATE images SET numeric_score=0 WHERE id=:id",
+                    ['id'=>$image_id]
                 );
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id"));
@@ -177,7 +177,7 @@ class NumericScore extends Extension
     {
         global $database;
 
-        $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=?", [$user_id]);
+        $image_ids = $database->get_col("SELECT image_id FROM numeric_score_votes WHERE user_id=:user_id", ['user_id'=>$user_id]);
 
         if (count($image_ids) == 0) {
             return;
@@ -188,8 +188,8 @@ class NumericScore extends Extension
         foreach (array_chunk($image_ids, 20) as $chunk) {
             $id_list = implode(",", $chunk);
             $database->execute(
-                "DELETE FROM numeric_score_votes WHERE user_id=? AND image_id IN (".$id_list.")",
-                [$user_id]
+                "DELETE FROM numeric_score_votes WHERE user_id=:user_id AND image_id IN (".$id_list.")",
+                ['user_id'=>$user_id]
             );
             $database->execute("
 				UPDATE images

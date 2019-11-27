@@ -400,10 +400,10 @@ class Ratings extends Extension
                     $n += 100;
                 }
                 #$database->execute("
-                #	update images set rating=? where images.id in (
+                #	update images set rating=:rating where images.id in (
                 #		select image_id from image_tags join tags
-                #		on image_tags.tag_id = tags.id where tags.tag = ?);
-                #	", array($_POST["rating"], $_POST["tag"]));
+                #		on image_tags.tag_id = tags.id where tags.tag = :tag);
+                #	", ['rating'=>$_POST["rating"], 'tag'=>$_POST["tag"]]);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/list"));
             }
@@ -586,7 +586,7 @@ class Ratings extends Extension
     {
         global $database;
         if ($old_rating != $rating) {
-            $database->Execute("UPDATE images SET rating=? WHERE id=?", [$rating, $image_id]);
+            $database->Execute("UPDATE images SET rating=:rating WHERE id=:id", ['rating'=>$rating, 'id'=>$image_id]);
             log_info("rating", "Rating for Image #{$image_id} set to: ".$this->rating_to_human($rating));
         }
     }

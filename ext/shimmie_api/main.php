@@ -98,7 +98,7 @@ class ShimmieApi extends Extension
     {
         global $database;
         if (!empty($arg)) {
-            $all = $database->get_all("SELECT tag FROM tags WHERE tag LIKE ?", [$arg . "%"]);
+            $all = $database->get_all("SELECT tag FROM tags WHERE tag LIKE :tag", ['tag'=>$arg . "%"]);
         } else {
             $all = $database->get_all("SELECT tag FROM tags");
         }
@@ -113,8 +113,8 @@ class ShimmieApi extends Extension
     {
         global $database;
         $all = $database->get_row(
-            "SELECT id, name, joindate, class FROM users WHERE $type=?",
-            [$query]
+            "SELECT id, name, joindate, class FROM users WHERE $type=:query",
+            ['query'=>$query]
         );
 
         if (!empty($all)) {
@@ -131,8 +131,8 @@ class ShimmieApi extends Extension
 
             if (isset($_GET['recent'])) {
                 $recent = $database->get_all(
-                    "SELECT * FROM images WHERE owner_id=? ORDER BY id DESC LIMIT 0, 5",
-                    [$all['id']]
+                    "SELECT * FROM images WHERE owner_id=:owner_id ORDER BY id DESC LIMIT 0, 5",
+                    ['owner_id'=>$all['id']]
                 );
 
                 $i = 0;

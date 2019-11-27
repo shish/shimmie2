@@ -42,13 +42,13 @@ class TaggerXML extends Extension
         $max_rows = $config->get_int("ext_tagger_tag_max", 30);
         $limit_rows = $config->get_int("ext_tagger_limit", 30);
 
-        $values = [];
+        $values = [
+			'p' => strlen($s) == 1 ? " " : "\_",
+			'sq' => "%".$p.sql_escape($s)."%"
+		];
 
         // Match
-        $p = strlen($s) == 1? " ":"\_";
-        $sq = "%".$p.sql_escape($s)."%";
-        $match = "concat(?,tag) LIKE ?";
-        array_push($values, $p, $sq);
+        $match = "concat(:p, tag) LIKE :sq";
         // Exclude
         //		$exclude = $event->get_arg(1)? "AND NOT IN ".$this->image_tags($event->get_arg(1)) : null;
 
@@ -62,7 +62,7 @@ class TaggerXML extends Extension
         $count = $this->count($q_where, $values);
         if ($count > $max_rows) {
             $q_from = "FROM (SELECT * FROM `tags` {$q_where} ".
-                "ORDER BY count DESC LIMIT 0, {$limit_rows}) AS `c_tags`";
+                "ORDER BY count DESC LIMIT {$limit_rows} OFFSET 0) AS `c_tags`";
             $q_where = null;
             $count = ["max"=>$count];
         } else {
@@ -88,7 +88,7 @@ class TaggerXML extends Extension
         $tags = $database->Execute("
 			SELECT tags.*
 			FROM image_tags JOIN tags ON image_tags.tag_id = tags.id
-			WHERE image_id=? ORDER BY tag", [$image_id]);
+			WHERE image_id=:image_id ORDER BY tag", ['image_id'=>$image_id]);
         return $this->list_to_xml($tags, "image", $image_id);
     }
 

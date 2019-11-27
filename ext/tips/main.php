@@ -17,8 +17,8 @@ class Tips extends Extension
             $database->execute(
                 "
 					INSERT INTO tips (enable, image, text)
-					VALUES (?, ?, ?)",
-                ["Y", "coins.png", "Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
+					VALUES (:enable, :image, :text)",
+                ["enable"=>"Y", "image"=>"coins.png", "text"=>"Do you like this extension? Please support us for developing new ones. <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8235933\" target=\"_blank\">Donate through paypal</a>."]
             );
 
             $this->set_version("ext_tips_version", 1);
@@ -109,8 +109,8 @@ class Tips extends Extension
         $database->execute(
             "
 				INSERT INTO tips (enable, image, text)
-				VALUES (?, ?, ?)",
-            [$enable, $image, $text]
+				VALUES (:enable, :image, :text)",
+            ["enable"=>$enable, "image"=>$image, "text"=>$text]
         );
     }
 
@@ -148,7 +148,7 @@ class Tips extends Extension
     {
         global $database;
 
-        $tip = $database->get_row("SELECT * FROM tips WHERE id = ? ", [int_escape($tipID)]);
+        $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id"=>int_escape($tipID)]);
 
         if (bool_escape($tip['enable'])) {
             $enable = "N";
@@ -156,12 +156,12 @@ class Tips extends Extension
             $enable = "Y";
         }
 
-        $database->execute("UPDATE tips SET enable = ? WHERE id = ?", [$enable, int_escape($tipID)]);
+        $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>int_escape($tipID)]);
     }
 
     private function deleteTip(int $tipID)
     {
         global $database;
-        $database->execute("DELETE FROM tips WHERE id = ?", [int_escape($tipID)]);
+        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>int_escape($tipID)]);
     }
 }

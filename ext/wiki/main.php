@@ -190,8 +190,9 @@ class Wiki extends Extension
         try {
             $database->Execute("
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
-				VALUES (?, ?, now(), ?, ?, ?, ?)", [$event->user->id, $_SERVER['REMOTE_ADDR'],
-                $wpage->title, $wpage->revision, $wpage->locked?'Y':'N', $wpage->body]);
+				VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
+				["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
+                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked?'Y':'N', "body"=>$wpage->body]);
         } catch (Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
         }

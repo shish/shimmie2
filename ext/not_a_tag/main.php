@@ -81,15 +81,15 @@ class NotATag extends Extension
                     $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";
 
                     $database->Execute(
-                        "INSERT INTO untags(tag, redirect) VALUES (?, ?)",
-                        [$tag, $redirect]
+                        "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
+                        ["tag"=>$tag, "redirect"=>$redirect]
                     );
 
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "remove") {
                     if (isset($_POST['tag'])) {
-                        $database->Execute($database->scoreql_to_sql("DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(?)"), [$_POST['tag']]);
+                        $database->Execute($database->scoreql_to_sql("DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"), ["tag"=>$_POST['tag']]);
 
                         flash_message("Image ban removed");
                         $page->set_mode(PageMode::REDIRECT);
@@ -113,17 +113,15 @@ class NotATag extends Extension
         global $database;
 
         // FIXME: many
-        $size_i = int_escape($size);
-        $offset_i = int_escape($page-1)*$size_i;
         $where = ["(1=1)"];
-        $args = [];
+        $args = ["limit"=>$size, "offset"=>($page-1)*$size];
         if (!empty($_GET['tag'])) {
-            $where[] = 'tag SCORE_ILIKE ?';
-            $args[] = "%".$_GET['tag']."%";
+            $where[] = 'tag SCORE_ILIKE :tag';
+            $args["tag"] = "%".$_GET['tag']."%";
         }
         if (!empty($_GET['redirect'])) {
-            $where[] = 'redirect SCORE_ILIKE ?';
-            $args[] = "%".$_GET['redirect']."%";
+            $where[] = 'redirect SCORE_ILIKE :redirect';
+            $args["redirect"] = "%".$_GET['redirect']."%";
         }
         $where = implode(" AND ", $where);
         $bans = $database->get_all($database->scoreql_to_sql("
@@ -131,13 +129,9 @@ class NotATag extends Extension
 			FROM untags
 			WHERE $where
 			ORDER BY tag
-			LIMIT $size_i
-			OFFSET $offset_i
+			LIMIT :limit
+			OFFSET :offset
 			"), $args);
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
-        }
+		return $bans;
     }
 }

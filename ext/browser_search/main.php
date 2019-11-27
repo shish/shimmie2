@@ -53,9 +53,9 @@ class BrowserSearch extends Extension
 
             // Now to get DB results
             if ($config->get_string("search_suggestions_results_order") == "a") {
-                $tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 ORDER BY tag ASC LIMIT 30", [$tag_search."%"]);
+                $tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE :tag AND count > 0 ORDER BY tag ASC LIMIT 30", ['tag'=>$tag_search."%"]);
             } else {
-                $tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE ? AND count > 0 ORDER BY count DESC LIMIT 30", [$tag_search."%"]);
+                $tags = $database->execute("SELECT tag FROM tags WHERE tag LIKE :tag AND count > 0 ORDER BY count DESC LIMIT 30", ['tag'=>$tag_search."%"]);
             }
 
 

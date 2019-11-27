@@ -38,16 +38,16 @@ class TagCategories extends Extension
 
         if ($number_of_db_rows == 0) {
             $database->execute(
-                'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
-                ["artist", "Artist", "Artists", "#BB6666"]
+                'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
+                ["category"=>"artist", "single"=>"Artist", "multiple"=>"Artists", "color"=>"#BB6666"]
             );
             $database->execute(
-                'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
-                ["series", "Series", "Series", "#AA00AA"]
+                'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
+                ["category"=>"series", "single"=>"Series", "multiple"=>"Series", "color"=>"#AA00AA"]
             );
             $database->execute(
-                'INSERT INTO image_tag_categories VALUES (?, ?, ?, ?)',
-                ["character", "Character", "Characters", "#66BB66"]
+                'INSERT INTO image_tag_categories VALUES (:category, :single, :multiple, :color)',
+                ["category"=>"character", "single"=>"Character", "multiple"=>"Characters", "color"=>"#66BB66"]
             );
         }
     }
