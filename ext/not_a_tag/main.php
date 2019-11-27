@@ -132,6 +132,6 @@ class NotATag extends Extension
 			LIMIT :limit
 			OFFSET :offset
 			"), $args);
-		return $bans;
+        return $bans;
     }
 }

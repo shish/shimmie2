@@ -1,9 +1,15 @@
 <?php
 
-use MicroCRUD\{StringColumn,DateColumn,TextColumn,EnumColumn,Table};
+use MicroCRUD\StringColumn;
+use MicroCRUD\DateColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\EnumColumn;
+use MicroCRUD\Table;
 
-class IPBanTable extends Table {
-    function __construct(\PDO $db, $token=null) {
+class IPBanTable extends Table
+{
+    public function __construct(\PDO $db, $token=null)
+    {
         parent::__construct($db, $token);
 
         $this->table = "bans";

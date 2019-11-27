@@ -902,8 +902,8 @@ class Artists extends Extension
                 LIMIT :offset, :limit
             ",
             [
-				"offset"=>$pageNumber * $artistsPerPage,
-				"limit"=>$artistsPerPage
+                "offset"=>$pageNumber * $artistsPerPage,
+                "limit"=>$artistsPerPage
             ]
         );
 

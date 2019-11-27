@@ -347,7 +347,8 @@ class Database
         }
     }
 
-    public function raw_db(): PDO {
+    public function raw_db(): PDO
+    {
         return $this->db;
     }
 }

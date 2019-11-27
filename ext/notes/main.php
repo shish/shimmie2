@@ -353,7 +353,8 @@ class Notes extends Extension
         $notesPerPage = $config->get_int('notesNotesPerPage');
 
         //$result = $database->get_all("SELECT * FROM pool_images WHERE pool_id=:pool_id", ['pool_id'=>$poolID]);
-        $result = $database->execute("
+        $result = $database->execute(
+            "
 			SELECT DISTINCT image_id
 			FROM notes
 			WHERE enable = :enable
@@ -414,7 +415,7 @@ class Notes extends Extension
 				VALUES (:note_enable, :note_id, :review_id, :image_id, :user_id, :user_ip, now(), :x1, :y1, :height, :width, :note)
 			",
             ['note_enable'=>$noteEnable, 'note_id'=>$noteID, 'review_id'=>$reviewID, 'image_id'=>$imageID, 'user_id'=>$user->id, 'user_ip'=>$_SERVER['REMOTE_ADDR'],
-			'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
+            'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText]
         );
     }
 

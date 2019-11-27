@@ -188,11 +188,13 @@ class Wiki extends Extension
         global $database;
         $wpage = $event->wikipage;
         try {
-            $database->Execute("
+            $database->Execute(
+                "
 				INSERT INTO wiki_pages(owner_id, owner_ip, date, title, revision, locked, body)
 				VALUES (:owner_id, :owner_ip, now(), :title, :revision, :locked, :body)",
-				["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
-                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked?'Y':'N', "body"=>$wpage->body]);
+                ["owner_id"=>$event->user->id, "owner_ip"=>$_SERVER['REMOTE_ADDR'],
+                "title"=>$wpage->title, "revision"=>$wpage->revision, "locked"=>$wpage->locked?'Y':'N', "body"=>$wpage->body]
+            );
         } catch (Exception $e) {
             throw new WikiUpdateException("Somebody else edited that page at the same time :-(");
         }

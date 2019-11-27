@@ -43,9 +43,9 @@ class TaggerXML extends Extension
         $limit_rows = $config->get_int("ext_tagger_limit", 30);
 
         $values = [
-			'p' => strlen($s) == 1 ? " " : "\_",
-			'sq' => "%".$p.sql_escape($s)."%"
-		];
+            'p' => strlen($s) == 1 ? " " : "\_",
+            'sq' => "%".$p.sql_escape($s)."%"
+        ];
 
         // Match
         $match = "concat(:p, tag) LIKE :sq";
