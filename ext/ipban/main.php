@@ -8,7 +8,7 @@ class IPBanTable extends Table {
 
         $this->table = "bans";
         $this->base_query = "
-			SELECT *, users.name AS banner
+			SELECT bans.*, users.name AS banner
 			FROM bans JOIN users ON banner_id=users.id
 		";
 
