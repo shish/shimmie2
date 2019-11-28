@@ -4,5 +4,4 @@ vendor
 data
 images
 thumbs
-composer.lock
 *.sqlite
