@@ -1,4 +1,4 @@
-$(function(){
+document.addEventListener('DOMContentLoaded', () => {
 	var metatags = ['order:id', 'order:width', 'order:height', 'order:filesize', 'order:filename'];
 
 	$('[name="search"]').tagit({

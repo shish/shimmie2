@@ -514,7 +514,7 @@ class Page
             }
             file_put_contents($js_cache_file, $js_data);
         }
-        $this->add_html_header("<script src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
+        $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
 }
 
