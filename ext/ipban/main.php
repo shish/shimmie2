@@ -84,7 +84,75 @@ class IPBan extends Extension
 <p>See <a href="http://whatismyipaddress.com/dynamic-static">http://whatismyipaddress.com/dynamic-static</a> for more information.
 <p>$CONTACT'
         );
-        $this->check_ip_ban();
+    }
+
+    public function onUserLogin(UserLoginEvent $event)
+    {
+        global $cache, $config, $database, $page, $user, $_shm_user_classes;
+
+		// Get lists of banned IPs and banned networks
+        $ips = $cache->get("ip_bans");
+        $networks = $cache->get("network_bans");
+        if ($ips === false || $networks === false) {
+			$rows = $database->get_pairs("
+				SELECT ip, id
+				FROM bans
+				WHERE ((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))
+			");
+
+			$ips = []; # "0.0.0.0" => 123;
+			$networks = []; # "0.0.0.0/32" => 456;
+			foreach ($rows as $ip => $id) {
+				if (strstr($ip, '/')) {
+					$networks[$ip] = $id;
+				} else {
+					$ips[$ip] = $id;
+				}
+			}
+
+			$cache->set("ip_bans", $ips, 600);
+			$cache->set("network_bans", $networks, 600);
+        }
+
+		// Check if our current IP is in either of the ban lists
+        $remote = $_SERVER['REMOTE_ADDR'];
+		$active_ban_id = null;
+        if (isset($ips[$remote])) {
+            $active_ban_id = $ips[$remote];
+        }
+		else {
+			foreach ($networks as $range => $ban_id) {
+				if (ip_in_range($remote, $range)) {
+					$active_ban_id = $ban_id;
+				}
+			}
+		}
+
+		// If an active ban is found, act on it
+		if(!is_null($active_ban_id)) {
+			$row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
+
+			$msg = $config->get_string("ipban_message");
+			$msg = str_replace('$IP', $row["ip"], $msg);
+			$msg = str_replace('$DATE', $row['expires'], $msg);
+			$msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
+			$msg = str_replace('$REASON', $row['reason'], $msg);
+			$contact_link = contact_link();
+			if (!empty($contact_link)) {
+				$msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
+			} else {
+				$msg = str_replace('$CONTACT', "", $msg);
+			}
+
+			if($row["mode"] == "ghost") {
+				$page->add_block(new Block(null, $msg, "main", 0));
+				$event->user->class = $_shm_user_classes["ghost"];
+			} else {
+				header("HTTP/1.0 403 Forbidden");
+				print "$msg";
+				exit;
+			}
+		}
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -168,8 +236,7 @@ class IPBan extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database;
-        global $config;
+        global $config, $database;
 
         // shortcut to latest
         if ($this->get_version("ext_ipban_version") < 1) {
@@ -255,78 +322,5 @@ class IPBan extends Extension
             $database->execute("CREATE INDEX bans__expires ON bans(expires)");
             $this->set_version("ext_ipban_version", 10);
         }
-    }
-
-    private function check_ip_ban()
-    {
-        $remote = $_SERVER['REMOTE_ADDR'];
-        list($ips, $networks) = $this->get_active_bans_grouped();
-        if (isset($ips[$remote])) {
-            $this->block($ips[$remote]);  // never returns
-        }
-        foreach ($networks as $range => $ban_id) {
-            if (ip_in_range($remote, $range)) {
-                $this->block($ban_id);  // never returns
-            }
-        }
-    }
-
-    private function block(int $ban_id)
-    {
-        global $config, $database, $user, $page, $_shm_user_classes;
-
-        $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$ban_id]);
-
-        $msg = $config->get_string("ipban_message");
-        $msg = str_replace('$IP', $row["ip"], $msg);
-        $msg = str_replace('$DATE', $row['expires'], $msg);
-        $msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
-        $msg = str_replace('$REASON', $row['reason'], $msg);
-        $contact_link = contact_link();
-        if (!empty($contact_link)) {
-            $msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
-        } else {
-            $msg = str_replace('$CONTACT', "", $msg);
-        }
-
-        if($row["mode"] == "ghost") {
-            $page->add_block(new Block(null, $msg, "main", 0));
-            $user->class = $_shm_user_classes["ghost"];
-        } else {
-            header("HTTP/1.0 403 Forbidden");
-            print "$msg";
-            exit;
-        }
-    }
-
-    // returns [ips, nets]
-    private function get_active_bans_grouped()
-    {
-        global $cache, $database;
-
-        $cached = $cache->get("ip_to_ban_id_grouped");
-        if ($cached) {
-            return $cached;
-        }
-
-        $rows = $database->get_pairs("
-            SELECT ip, id
-            FROM bans
-            WHERE ((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))
-        ");
-
-        $ips = []; # "0.0.0.0" => 123;
-        $nets = []; # "0.0.0.0/32" => 456;
-        foreach ($rows as $ip => $id) {
-            if (strstr($ip, '/')) {
-                $nets[$ip] = $id;
-            } else {
-                $ips[$ip] = $id;
-            }
-        }
-
-        $sorted = [$ips, $nets];
-        $cache->set("ip_to_ban_id_grouped", $sorted, 600);
-        return $sorted;
     }
 }
