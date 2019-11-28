@@ -54,12 +54,14 @@ class RemoveIPBanEvent extends Event
 class AddIPBanEvent extends Event
 {
     public $ip;
+    public $mode;
     public $reason;
     public $expires;
 
-    public function __construct(string $ip, string $reason, ?string $expires)
+    public function __construct(string $ip, string $mode, string $reason, ?string $expires)
     {
         $this->ip = trim($ip);
+        $this->mode = $mode;
         $this->reason = trim($reason);
         $this->expires = $expires;
     }
@@ -92,8 +94,8 @@ class IPBan extends Extension
             if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "create") {
 					$user->ensure_authed();
-					$input = validate_input(["c_ip"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
-					send_event(new AddIPBanEvent($input['c_ip'], $input['c_reason'], $input['c_expires']));
+					$input = validate_input(["c_ip"=>"string", "c_mode"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
+					send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
 					flash_message("Ban for {$input['c_ip']} added");
 					$page->set_mode(PageMode::REDIRECT);
 					$page->set_redirect(make_link("ip_ban/list"));
@@ -145,8 +147,8 @@ class IPBan extends Extension
     public function onAddIPBan(AddIPBanEvent $event)
     {
         global $cache, $user, $database;
-        $sql = "INSERT INTO bans (ip, reason, expires, banner_id) VALUES (:ip, :reason, :expires, :admin_id)";
-        $database->Execute($sql, ["ip"=>$event->ip, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
+        $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
+        $database->Execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
         $cache->delete("ip_bans_sorted");
         log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
