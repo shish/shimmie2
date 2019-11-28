@@ -156,6 +156,7 @@ class UserPage extends Extension
         }
 
         $event->add_stats("Joined: $h_join_date", 10);
+        $event->add_stats("Current IP: {$_SERVER['REMOTE_ADDR']}", 80);
         $event->add_stats("Class: $h_class", 90);
 
         $av = $event->display_user->get_avatar_html();
