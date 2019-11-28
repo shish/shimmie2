@@ -145,7 +145,9 @@ class IPBan extends Extension
 			}
 
 			if($row["mode"] == "ghost") {
-				$page->add_block(new Block(null, $msg, "main", 0));
+				$b = new Block(null, $msg, "main", 0);
+				$b->is_content = false;
+				$page->add_block($b);
 				$event->user->class = $_shm_user_classes["ghost"];
 			} else {
 				header("HTTP/1.0 403 Forbidden");
