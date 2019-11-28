@@ -24,7 +24,7 @@ class IPBanTable extends Table
         $this->size = 10;
         $this->columns = [
             new InetColumn("ip", "IP"),
-            new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall"]),
+            new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall", "Ghost"=>"ghost"]),
             new TextColumn("reason", "Reason"),
             new StringColumn("banner", "Banner"),
             new DateColumn("added", "Added"),
@@ -273,7 +273,7 @@ class IPBan extends Extension
 
     private function block(int $ban_id)
     {
-        global $config, $database;
+        global $config, $database, $user, $page, $_shm_user_classes;
 
         $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$ban_id]);
 
@@ -289,9 +289,14 @@ class IPBan extends Extension
             $msg = str_replace('$CONTACT', "", $msg);
         }
 
-        header("HTTP/1.0 403 Forbidden");
-        print "$msg";
-        exit;
+        if($row["mode"] == "ghost") {
+            $page->add_block(new Block(null, $msg, "main", 0));
+            $user->class = $_shm_user_classes["ghost"];
+        } else {
+            header("HTTP/1.0 403 Forbidden");
+            print "$msg";
+            exit;
+        }
     }
 
     // returns [ips, nets]

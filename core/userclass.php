@@ -156,6 +156,12 @@ new UserClass("base", null, [
     Permissions::APPROVE_COMMENT => false,
 ]);
 
+// Ghost users can't do anything
+new UserClass("ghost", "base", [
+]);
+
+// Anonymous users can't do anything by default, but
+// the admin might grant them some permissions
 new UserClass("anonymous", "base", [
 ]);
 
