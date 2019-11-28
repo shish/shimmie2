@@ -109,7 +109,9 @@ class IPBan extends Extension
                 } elseif ($event->get_arg(0) == "list") {
 					$_GET['c_banner'] = $user->name;
 					$_GET['c_added'] = date('Y-m-d');
-                    $t = new IPBanTable($database->raw_db(), $user->get_auth_token());
+                    $t = new IPBanTable($database->raw_db());
+                    $t->token = $user->get_auth_token();
+                    $t->inputs = $_GET;
                     $table = $t->table($t->query());
                     $this->theme->display_bans($page, $table, $t->paginator());
                 }
