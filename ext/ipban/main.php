@@ -116,8 +116,8 @@ class IPBan extends Extension
                 }
             }
 
-            $cache->set("ip_bans", $ips, 600);
-            $cache->set("network_bans", $networks, 600);
+            $cache->set("ip_bans", $ips, 60);
+            $cache->set("network_bans", $networks, 60);
         }
 
         // Check if our current IP is in either of the ban lists
@@ -136,10 +136,13 @@ class IPBan extends Extension
         // If an active ban is found, act on it
         if (!is_null($active_ban_id)) {
             $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
+            if (empty($row)) {
+                return;
+            }
 
-            $msg = $config->get_string("ipban_message");
+            $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message");
             $msg = str_replace('$IP', $row["ip"], $msg);
-            $msg = str_replace('$DATE', $row['expires'], $msg);
+            $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
             $msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
             $msg = str_replace('$REASON', $row['reason'], $msg);
             $contact_link = contact_link();
@@ -148,6 +151,7 @@ class IPBan extends Extension
             } else {
                 $msg = str_replace('$CONTACT', "", $msg);
             }
+            $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
             if ($row["mode"] == "ghost") {
                 $b = new Block(null, $msg, "main", 0);
@@ -207,8 +211,16 @@ class IPBan extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
+        global $config;
+
         $sb = new SetupBlock("IP Ban");
         $sb->add_longtext_option("ipban_message", 'Message to show to banned users:<br>(with $IP, $DATE, $ADMIN, $REASON, and $CONTACT)');
+        if ($config->get_string("ipban_message_ghost")) {
+            $sb->add_longtext_option("ipban_message_ghost", 'Message to show to ghost users:');
+        }
+        if ($config->get_string("ipban_message_anon-ghost")) {
+            $sb->add_longtext_option("ipban_message_anon-ghost", 'Message to show to ghost anons:');
+        }
         $event->panel->add_block($sb);
     }
 
@@ -235,7 +247,8 @@ class IPBan extends Extension
         global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
         $database->Execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
-        $cache->delete("ip_bans_sorted");
+        $cache->delete("ip_bans");
+        $cache->delete("network_bans");
         log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
@@ -245,7 +258,8 @@ class IPBan extends Extension
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id"=>$event->id]);
         if ($ban) {
             $database->Execute("DELETE FROM bans WHERE id = :id", ["id"=>$event->id]);
-            $cache->delete("ip_bans_sorted");
+            $cache->delete("ip_bans");
+            $cache->delete("network_bans");
             log_info("ipban", "Removed {$ban['ip']}'s ban");
         }
     }
