@@ -153,12 +153,14 @@ class IPBan extends Extension
                 $b = new Block(null, $msg, "main", 0);
                 $b->is_content = false;
                 $page->add_block($b);
+                $page->add_cookie("nocache", "Ghost Banned", time()+60*60*2, "/");
                 $event->user->class = $_shm_user_classes["ghost"];
             } elseif ($row["mode"] == "anon-ghost") {
                 if ($event->user->is_anonymous()) {
                     $b = new Block(null, $msg, "main", 0);
                     $b->is_content = false;
                     $page->add_block($b);
+                    $page->add_cookie("nocache", "Ghost Banned", time()+60*60*2, "/");
                     $event->user->class = $_shm_user_classes["ghost"];
                 }
             } else {
