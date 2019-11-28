@@ -260,140 +260,68 @@ class IPBan extends Extension
     private function check_ip_ban()
     {
         $remote = $_SERVER['REMOTE_ADDR'];
-        $bans = $this->get_active_bans_sorted();
-
-        // bans[0] = IPs
-        if (isset($bans[0][$remote])) {
-            $this->block($remote);  // never returns
+        list($ips, $networks) = $this->get_active_bans_grouped();
+        if (isset($ips[$remote])) {
+            $this->block($ips[$remote]);  // never returns
         }
-
-        // bans[1] = CIDR nets
-        foreach ($bans[1] as $ip => $true) {
-            if (ip_in_range($remote, $ip)) {
-                $this->block($remote);  // never returns
+        foreach ($networks as $range => $ban_id) {
+            if (ip_in_range($remote, $range)) {
+                $this->block($ban_id);  // never returns
             }
         }
     }
 
-    private function block(string $remote)
+    private function block(int $ban_id)
     {
         global $config, $database;
 
-        $prefix = ($database->get_driver_name() == DatabaseDriver::SQLITE ? "bans." : "");
+        $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$ban_id]);
 
-        $bans = $this->get_bans(false, null);
-
-        foreach ($bans as $row) {
-            $ip = $row[$prefix."ip"];
-            if (
-                (strstr($ip, '/') && ip_in_range($remote, $ip)) ||
-                ($ip == $remote)
-            ) {
-                $reason = $row[$prefix.'reason'];
-                $admin = User::by_id($row[$prefix.'banner_id']);
-                $date = $row['expires'];
-                $msg = $config->get_string("ipban_message");
-                $msg = str_replace('$IP', $ip, $msg);
-                $msg = str_replace('$DATE', $date, $msg);
-                $msg = str_replace('$ADMIN', $admin->name, $msg);
-                $msg = str_replace('$REASON', $reason, $msg);
-                $contact_link = contact_link();
-                if (!empty($contact_link)) {
-                    $msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
-                } else {
-                    $msg = str_replace('$CONTACT', "", $msg);
-                }
-                header("HTTP/1.0 403 Forbidden");
-                print "$msg";
-
-                exit;
-            }
+        $msg = $config->get_string("ipban_message");
+        $msg = str_replace('$IP', $row["ip"], $msg);
+        $msg = str_replace('$DATE', $row['expires'], $msg);
+        $msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
+        $msg = str_replace('$REASON', $row['reason'], $msg);
+        $contact_link = contact_link();
+        if (!empty($contact_link)) {
+            $msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
+        } else {
+            $msg = str_replace('$CONTACT', "", $msg);
         }
-        log_error("ipban", "block($remote) called but no bans matched");
+
+        header("HTTP/1.0 403 Forbidden");
+        print "$msg";
         exit;
     }
 
-    private function get_bans(bool $all, ?int $page)
-    {
-        global $database;
-
-        $size = 100;
-        if (@$_GET['limit']) {
-            $size = int_escape($_GET['limit']);
-        }
-        $filters = ["1=1"];
-        $args = [];
-
-        if (!$all) {
-            $filters[] = "((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))";
-        }
-        if (@$_GET['s_ip']) {
-            $filters[] = "(ip = :ip)";
-            $args['ip'] = $_GET['s_ip'];
-        }
-        if (@$_GET['s_reason']) {
-            $filters[] = "(reason LIKE :reason)";
-            $args['reason'] = '%' . $_GET['s_reason'] . "%";
-        }
-        if (@$_GET['s_banner']) {
-            $filters[] = "(banner_id = :banner_id)";
-            $args['banner_id'] = User::by_name($_GET['s_banner'])->id;
-        }
-        if (@$_GET['s_added']) {
-            $filters[] = "(added LIKE :added)";
-            $args['added'] = '%' . $_GET['s_added'] . "%";
-        }
-        if (@$_GET['s_expires']) {
-            $filters[] = "(expires LIKE :expires)";
-            $args['expires'] = '%' . $_GET['s_expires'] . "%";
-        }
-        if (@$_GET['s_mode']) {
-            $filters[] = "(mode = :mode)";
-            $args['mode'] = $_GET['s_mode'];
-        }
-        $filter = implode(" AND ", $filters);
-
-        if (is_null($page)) {
-            $pager = "";
-        } else {
-            $pager = "LIMIT :limit OFFSET :offset";
-            $args["offset"] = ($page-1)*$size;
-            $args['limit'] = $size;
-        }
-
-        return $database->get_all("
-			SELECT bans.*, users.name as banner_name
-			FROM bans
-			JOIN users ON banner_id = users.id
-			WHERE $filter
-			ORDER BY expires, bans.id
-			$pager
-		", $args);
-    }
-
     // returns [ips, nets]
-    private function get_active_bans_sorted()
+    private function get_active_bans_grouped()
     {
-        global $cache;
+        global $cache, $database;
 
-        $cached = $cache->get("ip_bans_sorted");
+        $cached = $cache->get("ip_to_ban_id_grouped");
         if ($cached) {
             return $cached;
         }
 
-        $bans = $this->get_bans(false, null);
-        $ips = []; # "0.0.0.0" => false);
-        $nets = []; # "0.0.0.0/32" => false);
-        foreach ($bans as $row) {
-            if (strstr($row['ip'], '/')) {
-                $nets[$row['ip']] = true;
+        $rows = $database->get_pairs("
+            SELECT ip, id
+            FROM bans
+            WHERE ((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))
+        ");
+
+        $ips = []; # "0.0.0.0" => 123;
+        $nets = []; # "0.0.0.0/32" => 456;
+        foreach ($rows as $ip => $id) {
+            if (strstr($ip, '/')) {
+                $nets[$ip] = $id;
             } else {
-                $ips[$row['ip']] = true;
+                $ips[$ip] = $id;
             }
         }
 
         $sorted = [$ips, $nets];
-        $cache->set("ip_bans_sorted", $sorted, 600);
+        $cache->set("ip_to_ban_id_grouped", $sorted, 600);
         return $sorted;
     }
 }
