@@ -63,7 +63,8 @@ class LogDatabase extends Extension
                 if (!empty($_GET["user"])) {
                     if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
                         if (preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-                            $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR SCORE_STRNORM(text(address)) = SCORE_STRNORM(:user2))");
+                            # for some reason postgres won't use an index on lower(text(address)), but will text(address)?
+                            $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR text(address) = :user2)");
                             $args["user1"] = $_GET["user"];
                             $args["user2"] = $_GET["user"] . "/32";
                         } else {
