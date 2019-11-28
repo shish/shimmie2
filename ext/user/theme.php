@@ -167,7 +167,7 @@ class UserPageTheme extends Themelet
 
     public function display_login_block(Page $page)
     {
-        global $config;
+        global $config, $user;
         $html = '
 			'.make_form(make_link("user_admin/login"))."
 				<table style='width: 100%;' class='form'>
@@ -187,7 +187,7 @@ class UserPageTheme extends Themelet
 				</table>
 			</form>
 		";
-        if ($config->get_bool("login_signup_enabled")) {
+        if ($config->get_bool("login_signup_enabled") && $user->can(Permissions::CREATE_USER)) {
             $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
         }
         $page->add_block(new Block("Login", $html, "left", 90));

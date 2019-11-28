@@ -83,6 +83,7 @@ new UserClass("base", null, [
     Permissions::VIEW_IP => false,         # view IP addresses associated with things
     Permissions::BAN_IP => false,
 
+    Permissions::CREATE_USER => false,
     Permissions::EDIT_USER_NAME => false,
     Permissions::EDIT_USER_PASSWORD => false,
     Permissions::EDIT_USER_INFO => false,  # email address, etc
@@ -163,6 +164,7 @@ new UserClass("ghost", "base", [
 // Anonymous users can't do anything by default, but
 // the admin might grant them some permissions
 new UserClass("anonymous", "base", [
+    Permissions::CREATE_USER => true,
 ]);
 
 new UserClass("user", "base", [
