@@ -11,15 +11,11 @@ class HashBanTable extends Table
     {
         parent::__construct($db, $token);
 
-        $this->table = "bans";
-        $this->base_query = "
-			SELECT * FROM (
-				SELECT bans.*, users.name AS banner
-				FROM bans JOIN users ON banner_id=users.id
-			) AS tbl1
-		";
+        $this->table = "image_bans";
+        $this->base_query = "SELECT * FROM image_bans";
 
-        $this->size = 10;
+        $this->size = 100;
+		$this->limit = 1000000;
         $this->columns = [
             new StringColumn("hash", "Hash"),
             new TextColumn("reason", "Reason"),
