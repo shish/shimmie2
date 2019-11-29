@@ -1,5 +1,28 @@
 <?php
 
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
+
+class NotATagTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db)
+    {
+        parent::__construct($db);
+        $this->table = "untags";
+        $this->base_query = "SELECT * FROM untags";
+        $this->size = 100;
+        $this->limit = 1000000;
+        $this->columns = [
+            new TextColumn("tag", "Tag"),
+            new TextColumn("redirect", "Redirect"),
+        ];
+        $this->order_by = ["tag", "redirect"];
+        $this->create_url = make_link("untag/add");
+        $this->delete_url = make_link("untag/remove");
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
 class NotATag extends Extension
 {
     public function get_priority(): int
@@ -77,32 +100,29 @@ class NotATag extends Extension
         if ($event->page_matches("untag")) {
             if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
-                    $tag = $_POST["tag"];
-                    $redirect = isset($_POST['redirect']) ? $_POST['redirect'] : "DNP";
-
-                    $database->Execute(
+                    $user->ensure_authed();
+                    $input = validate_input(["c_tag"=>"string", "c_redirect"=>"string"]);
+                    $database->execute(
                         "INSERT INTO untags(tag, redirect) VALUES (:tag, :redirect)",
-                        ["tag"=>$tag, "redirect"=>$redirect]
+                        ["tag"=>$input['c_tag'], "redirect"=>$input['c_redirect']]
                     );
-
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "remove") {
-                    if (isset($_POST['tag'])) {
-                        $database->Execute($database->scoreql_to_sql("DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"), ["tag"=>$_POST['tag']]);
-
-                        flash_message("Image ban removed");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect($_SERVER['HTTP_REFERER']);
-                    }
+                    $user->ensure_authed();
+                    $input = validate_input(["d_tag"=>"string"]);
+                    $database->execute($database->scoreql_to_sql(
+                        "DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+                        ["tag"=>$input['d_tag']]
+                    );
+                    flash_message("Image ban removed");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "list") {
-                    $page_num = 0;
-                    if ($event->count_args() == 2) {
-                        $page_num = int_escape($event->get_arg(1));
-                    }
-                    $page_size = 100;
-                    $page_count = ceil($database->get_one("SELECT COUNT(tag) FROM untags")/$page_size);
-                    $this->theme->display_untags($page, $page_num, $page_count, $this->get_untags($page_num, $page_size));
+                    $t = new NotATagTable($database->raw_db());
+                    $t->token = $user->get_auth_token();
+                    $t->inputs = $_GET;
+                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             }
         }

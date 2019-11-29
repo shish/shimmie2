@@ -4,7 +4,6 @@ class IPBanTheme extends Themelet
 {
     public function display_bans(Page $page, $table, $paginator)
     {
-        $today = date('Y-m-d');
         $html = "
 			<a href='".make_link("ip_ban/list", "r__size=1000000")."'>Show All Active</a> /
 			<a href='".make_link("ip_ban/list", "r_all=on&r__size=1000000")."'>Show EVERYTHING</a>

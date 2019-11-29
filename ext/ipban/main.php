@@ -9,10 +9,9 @@ use MicroCRUD\Table;
 
 class IPBanTable extends Table
 {
-    public function __construct(\PDO $db, $token=null)
+    public function __construct(\FFSPHP\PDO $db)
     {
-        parent::__construct($db, $token);
-
+        parent::__construct($db);
         $this->table = "bans";
         $this->base_query = "
 			SELECT * FROM (
@@ -20,7 +19,6 @@ class IPBanTable extends Table
 				FROM bans JOIN users ON banner_id=users.id
 			) AS tbl1
 		";
-
         $this->size = 100;
         $this->limit = 1000000;
         $this->columns = [
@@ -42,7 +40,6 @@ class IPBanTable extends Table
         ];
         $this->create_url = make_link("ip_ban/create");
         $this->delete_url = make_link("ip_ban/delete");
-
         $this->table_attrs = ["class" => "zebra"];
     }
 }
@@ -200,8 +197,7 @@ class IPBan extends Extension
                     $t = new IPBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $_GET;
-                    $table = $t->table($t->query());
-                    $this->theme->display_bans($page, $table, $t->paginator());
+                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             } else {
                 $this->theme->display_permission_denied();
