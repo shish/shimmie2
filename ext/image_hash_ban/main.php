@@ -7,13 +7,11 @@ use MicroCRUD\Table;
 
 class HashBanTable extends Table
 {
-    public function __construct(\FFSPHP\PDO $db, $token=null)
+    public function __construct(\FFSPHP\PDO $db)
     {
-        parent::__construct($db, $token);
-
+        parent::__construct($db);
         $this->table = "image_bans";
         $this->base_query = "SELECT * FROM image_bans";
-
         $this->size = 100;
 		$this->limit = 1000000;
         $this->columns = [
@@ -24,7 +22,6 @@ class HashBanTable extends Table
         $this->order_by = ["date DESC", "id"];
         $this->create_url = make_link("image_hash_ban/add");
         $this->delete_url = make_link("image_hash_ban/remove");
-
         $this->table_attrs = ["class" => "zebra"];
     }
 }
@@ -104,12 +101,8 @@ class ImageBan extends Extension
                     }
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
-                    $input = validate_input(["d_id"=>"int"]);
-                    $hash = $database->get_one(
-                        "SELECT hash FROM image_hash_bans WHERE id=:id",
-                        ["id"=>$input['d_id']]
-                    );
-                    send_event(new RemoveImageHashBanEvent($hash));
+                    $input = validate_input(["d_hash"=>"string"]);
+                    send_event(new RemoveImageHashBanEvent($input['hash']));
                     flash_message("Image ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);

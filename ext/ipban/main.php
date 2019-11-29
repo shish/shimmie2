@@ -9,10 +9,9 @@ use MicroCRUD\Table;
 
 class IPBanTable extends Table
 {
-    public function __construct(\FFSPHP\PDO $db, $token=null)
+    public function __construct(\FFSPHP\PDO $db)
     {
-        parent::__construct($db, $token);
-
+        parent::__construct($db);
         $this->table = "bans";
         $this->base_query = "
 			SELECT * FROM (
@@ -20,8 +19,8 @@ class IPBanTable extends Table
 				FROM bans JOIN users ON banner_id=users.id
 			) AS tbl1
 		";
-
-        $this->size = 10;
+        $this->size = 100;
+        $this->limit = 1000000;
         $this->columns = [
             new InetColumn("ip", "IP"),
             new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall", "Ghost"=>"ghost"]),
@@ -36,8 +35,7 @@ class IPBanTable extends Table
         ];
         $this->create_url = make_link("ip_ban/create");
         $this->delete_url = make_link("ip_ban/delete");
-
-		$this->table_attrs = ["class" => "sortable zebra"];
+		$this->table_attrs = ["class" => "zebra"];
     }
 }
 
