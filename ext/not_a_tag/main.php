@@ -10,6 +10,7 @@ class NotATagTable extends Table
         parent::__construct($db);
         $this->table = "untags";
         $this->base_query = "SELECT * FROM untags";
+		$this->primary_key = "tag";
         $this->size = 100;
         $this->limit = 1000000;
         $this->columns = [
@@ -122,7 +123,7 @@ class NotATag extends Extension
                     $t = new NotATagTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $_GET;
-                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
+                    $this->theme->display_untags($page, $t->table($t->query()), $t->paginator());
                 }
             }
         }

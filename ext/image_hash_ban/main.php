@@ -12,6 +12,7 @@ class HashBanTable extends Table
         parent::__construct($db);
         $this->table = "image_bans";
         $this->base_query = "SELECT * FROM image_bans";
+		$this->primary_key = "hash";
         $this->size = 100;
 		$this->limit = 1000000;
         $this->columns = [
@@ -102,7 +103,7 @@ class ImageBan extends Extension
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
                     $input = validate_input(["d_hash"=>"string"]);
-                    send_event(new RemoveImageHashBanEvent($input['hash']));
+                    send_event(new RemoveImageHashBanEvent($input['d_hash']));
                     flash_message("Image ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
