@@ -342,16 +342,16 @@
         },
         {
             "name": "shish/ffsphp",
-            "version": "v0.0.1",
+            "version": "v0.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/ffsphp.git",
-                "reference": "6b1874cf05b0b6bbdf7b118ca081097d1f830cd7"
+                "reference": "16c98d57c80bb4848f20253c8c1e5fe7f6c5823f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/ffsphp/zipball/6b1874cf05b0b6bbdf7b118ca081097d1f830cd7",
-                "reference": "6b1874cf05b0b6bbdf7b118ca081097d1f830cd7",
+                "url": "https://api.github.com/repos/shish/ffsphp/zipball/16c98d57c80bb4848f20253c8c1e5fe7f6c5823f",
+                "reference": "16c98d57c80bb4848f20253c8c1e5fe7f6c5823f",
                 "shasum": ""
             },
             "require": {
@@ -380,7 +380,7 @@
             ],
             "description": "A collection of workarounds for stupid PHP things",
             "homepage": "https://github.com/shish/ffsphp",
-            "time": "2019-11-25T15:37:09+00:00"
+            "time": "2019-11-29T12:00:09+00:00"
         },
         {
             "name": "shish/microcrud",
@@ -388,12 +388,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "7c917baa46f137c5e0f6bd4d9874b1c61014797e"
+                "reference": "685e01a22427a83fc5b13cf09c16b1d72e9755f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/7c917baa46f137c5e0f6bd4d9874b1c61014797e",
-                "reference": "7c917baa46f137c5e0f6bd4d9874b1c61014797e",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/685e01a22427a83fc5b13cf09c16b1d72e9755f0",
+                "reference": "685e01a22427a83fc5b13cf09c16b1d72e9755f0",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2019-11-28T21:02:52+00:00"
+            "time": "2019-11-29T10:55:02+00:00"
         },
         {
             "name": "shish/microhtml",
