@@ -111,10 +111,10 @@ class Media extends Extension
         $sb->add_text_option(MediaConfig::CONVERT_PATH, "convert", true);
 //        }
 
-        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "<br/>ffmpeg", true);
-        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "<br/>ffprobe", true);
+        $sb->add_text_option(MediaConfig::FFMPEG_PATH, "ffmpeg", true);
+        $sb->add_text_option(MediaConfig::FFPROBE_PATH, "ffprobe", true);
 
-        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "<br />Mem limit: ", true);
+        $sb->add_shorthand_int_option(MediaConfig::MEM_LIMIT, "Mem limit: ", true);
         $sb->end_table();
 
         $event->panel->add_block($sb);
