@@ -9,7 +9,7 @@ use MicroCRUD\Table;
 
 class IPBanTable extends Table
 {
-    public function __construct(\PDO $db, $token=null)
+    public function __construct(\FFSPHP\PDO $db, $token=null)
     {
         parent::__construct($db, $token);
 
@@ -182,8 +182,7 @@ class IPBan extends Extension
                     $t = new IPBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $_GET;
-                    $table = $t->table($t->query());
-                    $this->theme->display_bans($page, $table, $t->paginator());
+                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             } else {
                 $this->theme->display_permission_denied();

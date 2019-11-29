@@ -1,5 +1,38 @@
 <?php
 
+use MicroCRUD\StringColumn;
+use MicroCRUD\DateColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
+
+class HashBanTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db, $token=null)
+    {
+        parent::__construct($db, $token);
+
+        $this->table = "bans";
+        $this->base_query = "
+			SELECT * FROM (
+				SELECT bans.*, users.name AS banner
+				FROM bans JOIN users ON banner_id=users.id
+			) AS tbl1
+		";
+
+        $this->size = 10;
+        $this->columns = [
+            new StringColumn("hash", "Hash"),
+            new TextColumn("reason", "Reason"),
+            new DateColumn("date", "Date"),
+        ];
+        $this->order_by = ["date DESC", "id"];
+        $this->create_url = make_link("image_hash_ban/add");
+        $this->delete_url = make_link("image_hash_ban/remove");
+
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
 class RemoveImageHashBanEvent extends Event
 {
     public $hash;
@@ -55,9 +88,11 @@ class ImageBan extends Extension
         if ($event->page_matches("image_hash_ban")) {
             if ($user->can(Permissions::BAN_IMAGE)) {
                 if ($event->get_arg(0) == "add") {
-                    $image = isset($_POST['image_id']) ? Image::by_id(int_escape($_POST['image_id'])) : null;
-                    $hash = isset($_POST["hash"]) ? $_POST["hash"] : $image->hash;
-                    $reason = isset($_POST['reason']) ? $_POST['reason'] : "DNP";
+                    $user->ensure_authed();
+                    $input = validate_input(["c_hash"=>"optional,string", "c_reason"=>"string", "c_image_id"=>"optional,int"]);
+                    $image = isset($input['c_image_id']) ? Image::by_id($input['c_image_id']) : null;
+                    $hash = isset($input["c_hash"]) ? $input["c_hash"] : $image->hash;
+                    $reason = isset($input['c_reason']) ? $input['c_reason'] : "DNP";
 
                     if ($hash) {
                         send_event(new AddImageHashBanEvent($hash, $reason));
@@ -72,21 +107,21 @@ class ImageBan extends Extension
                         $page->set_redirect($_SERVER['HTTP_REFERER']);
                     }
                 } elseif ($event->get_arg(0) == "remove") {
-                    if (isset($_POST['hash'])) {
-                        send_event(new RemoveImageHashBanEvent($_POST['hash']));
-
-                        flash_message("Image ban removed");
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect($_SERVER['HTTP_REFERER']);
-                    }
+                    $user->ensure_authed();
+                    $input = validate_input(["d_id"=>"int"]);
+                    $hash = $database->get_one(
+                        "SELECT hash FROM image_hash_bans WHERE id=:id",
+                        ["id"=>$input['d_id']]
+                    );
+                    send_event(new RemoveImageHashBanEvent($hash));
+                    flash_message("Image ban removed");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "list") {
-                    $page_num = 0;
-                    if ($event->count_args() == 2) {
-                        $page_num = int_escape($event->get_arg(1));
-                    }
-                    $page_size = 100;
-                    $page_count = ceil($database->get_one("SELECT COUNT(id) FROM image_bans")/$page_size);
-                    $this->theme->display_Image_hash_Bans($page, $page_num, $page_count, $this->get_image_hash_bans($page_num, $page_size));
+                    $t = new HashBanTable($database->raw_db());
+                    $t->token = $user->get_auth_token();
+                    $t->inputs = $_GET;
+                    $this->theme->display_bans($page, $t->table($t->query()), $t->paginator());
                 }
             }
         }
@@ -102,7 +137,6 @@ class ImageBan extends Extension
         }
     }
 
-
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
@@ -114,7 +148,7 @@ class ImageBan extends Extension
     public function onAddImageHashBan(AddImageHashBanEvent $event)
     {
         global $database;
-        $database->Execute(
+        $database->execute(
             "INSERT INTO image_bans (hash, reason, date) VALUES (:hash, :reason, now())",
             ["hash"=>$event->hash, "reason"=>$event->reason]
         );
@@ -124,7 +158,7 @@ class ImageBan extends Extension
     public function onRemoveImageHashBan(RemoveImageHashBanEvent $event)
     {
         global $database;
-        $database->Execute("DELETE FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
+        $database->execute("DELETE FROM image_bans WHERE hash = :hash", ["hash"=>$event->hash]);
     }
 
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
@@ -132,41 +166,6 @@ class ImageBan extends Extension
         global $user;
         if ($user->can(Permissions::BAN_IMAGE)) {
             $event->add_part($this->theme->get_buttons_html($event->image));
-        }
-    }
-
-    // DB funness
-
-    public function get_image_hash_bans(int $page, int $size=100): array
-    {
-        global $database;
-
-        // FIXME: many
-        $size_i = int_escape($size);
-        $offset_i = int_escape($page-1)*$size_i;
-        $where = ["(1=1)"];
-        $args = [];
-        if (!empty($_GET['hash'])) {
-            $where[] = 'hash = :hash';
-            $args['hash'] = $_GET['hash'];
-        }
-        if (!empty($_GET['reason'])) {
-            $where[] = 'reason SCORE_ILIKE :reason';
-            $args['reason'] = "%".$_GET['reason']."%";
-        }
-        $where = implode(" AND ", $where);
-        $bans = $database->get_all($database->scoreql_to_sql("
-			SELECT *
-			FROM image_bans
-			WHERE $where
-			ORDER BY id DESC
-			LIMIT $size_i
-			OFFSET $offset_i
-			"), $args);
-        if ($bans) {
-            return $bans;
-        } else {
-            return [];
         }
     }
 
