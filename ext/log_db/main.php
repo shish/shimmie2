@@ -1,5 +1,74 @@
 <?php
 
+use function MicroHTML\{A,SPAN};
+use MicroCRUD\Column;
+use MicroCRUD\DateTimeColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
+
+
+class ActorColumn extends Column {
+    public function __construct($name, $title)
+    {
+        parent::__construct($name, $title, "((username=:$name) OR (address=:$name))");
+    }
+
+    public function display($row)
+    {
+        if ($row['username'] == "Anonymous") {
+            return $row["address"];
+        } else {
+            return A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']);
+        }
+    }
+}
+
+class MessageColumn extends TextColumn {
+    public function display($row)
+    {
+        $c = "#000";
+        switch ($row['priority']) {
+            case SCORE_LOG_DEBUG: $c = "#999"; break;
+            case SCORE_LOG_INFO: $c = "#000"; break;
+            case SCORE_LOG_WARNING: $c = "#800"; break;
+            case SCORE_LOG_ERROR: $c = "#C00"; break;
+            case SCORE_LOG_CRITICAL: $c = "#F00"; break;
+        }
+        return SPAN(["style"=>"color: $c"], $this->scan_entities($row[$this->name]));
+    }
+
+    protected function scan_entities($line)
+    {
+        return preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
+    }
+
+    protected function link_image($id)
+    {
+        $iid = int_escape($id[1]);
+        return "<a href='".make_link("post/view/$iid")."'>Image #$iid</a>";
+    }
+}
+
+class LogTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db)
+    {
+        parent::__construct($db);
+        $this->table = "score_log";
+        $this->base_query = "SELECT * FROM score_log";
+        $this->size = 100;
+        $this->limit = 1000000;
+        $this->columns = [
+            new DateTimeColumn("date_sent", "Time"),
+            new TextColumn("section", "Module"),
+            new ActorColumn("username_or_address", "User"),
+            new MessageColumn("message", "Message")
+        ];
+        $this->order_by = ["date_sent DESC"];
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
 class LogDatabase extends Extension
 {
     public function onInitExt(InitExtEvent $event)
