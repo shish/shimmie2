@@ -13,88 +13,12 @@ class UserPageTheme extends Themelet
         ));
     }
 
-    /**
-     * #param User[] $users
-     */
-    public function display_user_list(Page $page, array $users, User $user, int $page_num, int $page_total)
+    public function display_user_list(Page $page, $table, $paginator)
     {
         $page->set_title("User List");
         $page->set_heading("User List");
         $page->add_block(new NavBlock());
-
-        $html = "<table class='zebra'>";
-
-        $html .= "<tr>";
-        $html .= "<td>Name</td>";
-        if ($user->can(Permissions::DELETE_USER)) {
-            $html .= "<td>Email</td>";
-        }
-        $html .= "<td>Class</td>";
-        $html .= "<td>Action</td>";
-        $html .= "</tr>";
-
-        $h_username = html_escape(@$_GET['username']);
-        $h_email = html_escape(@$_GET['email']);
-        $h_class = html_escape(@$_GET['class']);
-
-        $html .= "<tr>" . make_form("user_admin/list", "GET");
-        $html .= "<td><input type='text' name='username' value='$h_username'/></td>";
-        if ($user->can(Permissions::DELETE_USER)) {
-            $html .= "<td><input type='text' name='email' value='$h_email'/></td>";
-        }
-        $html .= "<td><input type='text' name='class' value='$h_class'/></td>";
-        $html .= "<td><input type='submit' value='Search'/></td>";
-        $html .= "</form></tr>";
-
-        foreach ($users as $duser) {
-            $h_name = html_escape($duser->name);
-            $h_email = html_escape($duser->email);
-            $h_class = html_escape($duser->class->name);
-            $u_link = make_link("user/" . url_escape($duser->name));
-            $u_posts = make_link("post/list/user_id=" . url_escape($duser->id) . "/1");
-
-            $html .= "<tr>";
-            $html .= "<td><a href='$u_link'>$h_name</a></td>";
-            if ($user->can(Permissions::DELETE_USER)) {
-                $html .= "<td>$h_email</td>";
-            }
-            $html .= "<td>$h_class</td>";
-            $html .= "<td><a href='$u_posts'>Show Posts</a></td>";
-            $html .= "</tr>";
-        }
-
-        $html .= "</table>";
-
-        $page->add_block(new Block("Users", $html));
-        $this->display_paginator($page, "user_admin/list", $this->get_args(), $page_num, $page_total);
-    }
-
-    protected function ueie($var)
-    {
-        if (isset($_GET[$var])) {
-            return $var."=".url_escape($_GET[$var]);
-        } else {
-            return "";
-        }
-    }
-    protected function get_args()
-    {
-        $args = "";
-        // Check if each arg is actually empty and skip it if so
-        if (strlen($this->ueie("username"))) {
-            $args .= $this->ueie("username")."&";
-        }
-        if (strlen($this->ueie("email"))) {
-            $args .= $this->ueie("email")."&";
-        }
-        if (strlen($this->ueie("class"))) {
-            $args .= $this->ueie("class")."&";
-        }
-        // If there are no args at all, set $args to null to prevent an unnecessary ? at the end of the paginator url
-        if (strlen($args) == 0) {
-            $args = null;
-        }
-        return $args;
+        $page->add_block(new Block("Users", $table . $paginator));
     }
 
     public function display_user_links(Page $page, User $user, $parts)
