@@ -63,7 +63,7 @@ class Block
         if (is_null($id)) {
             $id = (empty($header) ? md5($body) : $header) . $section;
         }
-        $this->id = preg_replace('/[^\w]/', '', str_replace(' ', '_', $id));
+        $this->id = preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
     }
 
     /**
