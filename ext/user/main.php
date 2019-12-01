@@ -2,6 +2,61 @@
 
 require_once "events.php";
 
+use function MicroHTML\A;
+use MicroCRUD\Column;
+use MicroCRUD\EnumColumn;
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
+
+class UserNameColumn extends TextColumn {
+    public function display(array $row) {
+        return A(["href"=>make_link("user/{$row[$this->name]}")], $row[$this->name]);
+    }
+}
+
+class UserLinksColumn extends Column {
+    public function __construct() {
+        parent::__construct("links", "User Links", "(1=1)");
+        $this->sortable = false;
+    }
+    public function create_input(array $inputs) {
+        return "";
+    }
+    public function read_input(array $inputs) {
+        return "";
+    }
+    public function display(array $row) {
+        return A(["href"=>make_link("post/list/user_id={$row['id']}/1")], "Posts");
+    }
+}
+
+class UserTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db)
+    {
+        global $_shm_user_classes;
+        $classes = [];
+        foreach($_shm_user_classes as $cls) {
+            $classes[$cls->name] = $cls->name;
+        }
+        ksort($classes);
+        parent::__construct($db);
+        $this->table = "users";
+        $this->base_query = "SELECT * FROM users";
+        $this->size = 100;
+        $this->limit = 1000000;
+        $this->columns = [
+            new UserNameColumn("name", "Name"),
+            new EnumColumn("class", "Class", $classes),
+            // Added later, for admins only
+            // new TextColumn("email", "Email"),
+            new UserLinksColumn(),
+        ];
+        $this->order_by = ["name"];
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
 class UserCreationException extends SCoreException
 {
 }
@@ -51,36 +106,15 @@ class UserPage extends Extension
             } elseif ($event->get_arg(0) == "create") {
                 $this->page_create();
             } elseif ($event->get_arg(0) == "list") {
-                $limit = 50;
-
-                $page_num = $event->try_page_num(1);
-                $offset = ($page_num-1) * $limit;
-
-                $q = "WHERE 1=1";
-                $a = [];
-
-                if (@$_GET['username']) {
-                    $q .= " AND SCORE_STRNORM(name) LIKE SCORE_STRNORM(:name)";
-                    $a["name"] = '%' . $_GET['username'] . '%';
+                $t = new UserTable($database->raw_db());
+                $t->token = $user->get_auth_token();
+                $t->inputs = $_GET;
+                if ($user->can(Permissions::DELETE_USER)) {
+                    $col = new TextColumn("email", "Email");
+                    // $t->columns[] = $col;
+                    array_splice($t->columns, 2, 0, [$col]);
                 }
-
-                if ($user->can(Permissions::DELETE_USER) && @$_GET['email']) {
-                    $q .= " AND SCORE_STRNORM(email) LIKE SCORE_STRNORM(:email)";
-                    $a["email"] = '%' . $_GET['email'] . '%';
-                }
-
-                if (@$_GET['class']) {
-                    $q .= " AND class LIKE :class";
-                    $a["class"] = $_GET['class'];
-                }
-                $where = $database->scoreql_to_sql($q);
-
-                $count = $database->get_one("SELECT count(*) FROM users $where", $a);
-                $a["offset"] = $offset;
-                $a["limit"] = $limit;
-                $rows = $database->get_all("SELECT * FROM users $where LIMIT :limit OFFSET :offset", $a);
-                $users = array_map("_new_user", $rows);
-                $this->theme->display_user_list($page, $users, $user, $page_num, $count/$limit);
+                $this->theme->display_user_list($page, $t->table($t->query()), $t->paginator());
             } elseif ($event->get_arg(0) == "logout") {
                 $this->page_logout();
             }
@@ -156,6 +190,9 @@ class UserPage extends Extension
         }
 
         $event->add_stats("Joined: $h_join_date", 10);
+        if($user->name == $event->display_user->name) {
+            $event->add_stats("Current IP: {$_SERVER['REMOTE_ADDR']}", 80);
+        }
         $event->add_stats("Class: $h_class", 90);
 
         $av = $event->display_user->get_avatar_html();
@@ -184,7 +221,6 @@ class UserPage extends Extension
         }
     }
 
-
     private function display_stats(UserPageBuildingEvent $event)
     {
         global $user, $page, $config;
@@ -200,7 +236,6 @@ class UserPage extends Extension
                 $page->add_block(new Block("Options", $this->theme->build_options($event->display_user, $uobe), "main", 60));
             }
         }
-
 
         if ($user->id == $event->display_user->id) {
             $ubbe = new UserBlockBuildingEvent();
@@ -397,7 +432,12 @@ class UserPage extends Extension
 
     private function page_create()
     {
-        global $config, $page;
+        global $config, $page, $user;
+        if ($user->can(Permissions::CREATE_USER)) {
+            $this->theme->display_error(403, "Account creation blocked", "Account creation is currently disabled");
+            return;
+        }
+
         if (!$config->get_bool("login_signup_enabled")) {
             $this->theme->display_signups_disabled($page);
         } elseif (!isset($_POST['name'])) {

@@ -23,7 +23,12 @@ class IPBanTable extends Table
         $this->limit = 1000000;
         $this->columns = [
             new InetColumn("ip", "IP"),
-            new EnumColumn("mode", "Mode", ["Block"=>"block", "Firewall"=>"firewall", "Ghost"=>"ghost"]),
+            new EnumColumn("mode", "Mode", [
+                "Block"=>"block",
+                "Firewall"=>"firewall",
+                "Ghost"=>"ghost",
+                "Anon Ghost"=>"anon-ghost"
+            ]),
             new TextColumn("reason", "Reason"),
             new StringColumn("banner", "Banner"),
             new DateColumn("added", "Added"),
@@ -35,7 +40,7 @@ class IPBanTable extends Table
         ];
         $this->create_url = make_link("ip_ban/create");
         $this->delete_url = make_link("ip_ban/delete");
-		$this->table_attrs = ["class" => "zebra"];
+        $this->table_attrs = ["class" => "zebra"];
     }
 }
 
@@ -88,95 +93,107 @@ class IPBan extends Extension
     {
         global $cache, $config, $database, $page, $user, $_shm_user_classes;
 
-		// Get lists of banned IPs and banned networks
+        // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
         $networks = $cache->get("network_bans");
         if ($ips === false || $networks === false) {
-			$rows = $database->get_pairs("
+            $rows = $database->get_pairs("
 				SELECT ip, id
 				FROM bans
 				WHERE ((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))
 			");
 
-			$ips = []; # "0.0.0.0" => 123;
-			$networks = []; # "0.0.0.0/32" => 456;
-			foreach ($rows as $ip => $id) {
-				if (strstr($ip, '/')) {
-					$networks[$ip] = $id;
-				} else {
-					$ips[$ip] = $id;
-				}
-			}
+            $ips = []; # "0.0.0.0" => 123;
+            $networks = []; # "0.0.0.0/32" => 456;
+            foreach ($rows as $ip => $id) {
+                if (strstr($ip, '/')) {
+                    $networks[$ip] = $id;
+                } else {
+                    $ips[$ip] = $id;
+                }
+            }
 
-			$cache->set("ip_bans", $ips, 600);
-			$cache->set("network_bans", $networks, 600);
+            $cache->set("ip_bans", $ips, 60);
+            $cache->set("network_bans", $networks, 60);
         }
 
-		// Check if our current IP is in either of the ban lists
+        // Check if our current IP is in either of the ban lists
         $remote = $_SERVER['REMOTE_ADDR'];
-		$active_ban_id = null;
+        $active_ban_id = null;
         if (isset($ips[$remote])) {
             $active_ban_id = $ips[$remote];
+        } else {
+            foreach ($networks as $range => $ban_id) {
+                if (ip_in_range($remote, $range)) {
+                    $active_ban_id = $ban_id;
+                }
+            }
         }
-		else {
-			foreach ($networks as $range => $ban_id) {
-				if (ip_in_range($remote, $range)) {
-					$active_ban_id = $ban_id;
-				}
-			}
-		}
 
-		// If an active ban is found, act on it
-		if(!is_null($active_ban_id)) {
-			$row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
+        // If an active ban is found, act on it
+        if (!is_null($active_ban_id)) {
+            $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
+            if (empty($row)) {
+                return;
+            }
 
-			$msg = $config->get_string("ipban_message");
-			$msg = str_replace('$IP', $row["ip"], $msg);
-			$msg = str_replace('$DATE', $row['expires'], $msg);
-			$msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
-			$msg = str_replace('$REASON', $row['reason'], $msg);
-			$contact_link = contact_link();
-			if (!empty($contact_link)) {
-				$msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
-			} else {
-				$msg = str_replace('$CONTACT', "", $msg);
-			}
+            $msg = $config->get_string("ipban_message_{$row['mode']}") ?? $config->get_string("ipban_message");
+            $msg = str_replace('$IP', $row["ip"], $msg);
+            $msg = str_replace('$DATE', $row['expires'] ?? 'the end of time', $msg);
+            $msg = str_replace('$ADMIN', User::by_id($row['banner_id'])->name, $msg);
+            $msg = str_replace('$REASON', $row['reason'], $msg);
+            $contact_link = contact_link();
+            if (!empty($contact_link)) {
+                $msg = str_replace('$CONTACT', "<a href='$contact_link'>Contact the staff (be sure to include this message)</a>", $msg);
+            } else {
+                $msg = str_replace('$CONTACT', "", $msg);
+            }
+            $msg .= "<!-- $active_ban_id / {$row["mode"]} -->";
 
-			if($row["mode"] == "ghost") {
-				$b = new Block(null, $msg, "main", 0);
-				$b->is_content = false;
-				$page->add_block($b);
-				$event->user->class = $_shm_user_classes["ghost"];
-			} else {
-				header("HTTP/1.0 403 Forbidden");
-				print "$msg";
-				exit;
-			}
-		}
+            if ($row["mode"] == "ghost") {
+                $b = new Block(null, $msg, "main", 0);
+                $b->is_content = false;
+                $page->add_block($b);
+                $page->add_cookie("nocache", "Ghost Banned", time()+60*60*2, "/");
+                $event->user->class = $_shm_user_classes["ghost"];
+            } elseif ($row["mode"] == "anon-ghost") {
+                if ($event->user->is_anonymous()) {
+                    $b = new Block(null, $msg, "main", 0);
+                    $b->is_content = false;
+                    $page->add_block($b);
+                    $page->add_cookie("nocache", "Ghost Banned", time()+60*60*2, "/");
+                    $event->user->class = $_shm_user_classes["ghost"];
+                }
+            } else {
+                header("HTTP/1.0 403 Forbidden");
+                print "$msg";
+                exit;
+            }
+        }
     }
 
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("ip_ban")) {
-			global $database, $page, $user;
+            global $database, $page, $user;
             if ($user->can(Permissions::BAN_IP)) {
                 if ($event->get_arg(0) == "create") {
-					$user->ensure_authed();
-					$input = validate_input(["c_ip"=>"string", "c_mode"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
-					send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
-					flash_message("Ban for {$input['c_ip']} added");
-					$page->set_mode(PageMode::REDIRECT);
-					$page->set_redirect(make_link("ip_ban/list"));
+                    $user->ensure_authed();
+                    $input = validate_input(["c_ip"=>"string", "c_mode"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
+                    send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
+                    flash_message("Ban for {$input['c_ip']} added");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "delete") {
-					$user->ensure_authed();
-					$input = validate_input(["d_id"=>"int"]);
-					send_event(new RemoveIPBanEvent($input['d_id']));
-					flash_message("Ban removed");
-					$page->set_mode(PageMode::REDIRECT);
-					$page->set_redirect(make_link("ip_ban/list"));
+                    $user->ensure_authed();
+                    $input = validate_input(["d_id"=>"int"]);
+                    send_event(new RemoveIPBanEvent($input['d_id']));
+                    flash_message("Ban removed");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "list") {
-					$_GET['c_banner'] = $user->name;
-					$_GET['c_added'] = date('Y-m-d');
+                    $_GET['c_banner'] = $user->name;
+                    $_GET['c_added'] = date('Y-m-d');
                     $t = new IPBanTable($database->raw_db());
                     $t->token = $user->get_auth_token();
                     $t->inputs = $_GET;
@@ -190,8 +207,16 @@ class IPBan extends Extension
 
     public function onSetupBuilding(SetupBuildingEvent $event)
     {
+        global $config;
+
         $sb = new SetupBlock("IP Ban");
         $sb->add_longtext_option("ipban_message", 'Message to show to banned users:<br>(with $IP, $DATE, $ADMIN, $REASON, and $CONTACT)');
+        if ($config->get_string("ipban_message_ghost")) {
+            $sb->add_longtext_option("ipban_message_ghost", 'Message to show to ghost users:');
+        }
+        if ($config->get_string("ipban_message_anon-ghost")) {
+            $sb->add_longtext_option("ipban_message_anon-ghost", 'Message to show to ghost anons:');
+        }
         $event->panel->add_block($sb);
     }
 
@@ -218,7 +243,8 @@ class IPBan extends Extension
         global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
         $database->Execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
-        $cache->delete("ip_bans_sorted");
+        $cache->delete("ip_bans");
+        $cache->delete("network_bans");
         log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
@@ -228,7 +254,8 @@ class IPBan extends Extension
         $ban = $database->get_row("SELECT * FROM bans WHERE id = :id", ["id"=>$event->id]);
         if ($ban) {
             $database->Execute("DELETE FROM bans WHERE id = :id", ["id"=>$event->id]);
-            $cache->delete("ip_bans_sorted");
+            $cache->delete("ip_bans");
+            $cache->delete("network_bans");
             log_info("ipban", "Removed {$ban['ip']}'s ban");
         }
     }
