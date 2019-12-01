@@ -388,12 +388,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "f346979a046cf3d348df6a552d7a919f9793c938"
+                "reference": "3767c1f932474cf225c68c74c245536a1d212f6c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/f346979a046cf3d348df6a552d7a919f9793c938",
-                "reference": "f346979a046cf3d348df6a552d7a919f9793c938",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/3767c1f932474cf225c68c74c245536a1d212f6c",
+                "reference": "3767c1f932474cf225c68c74c245536a1d212f6c",
                 "shasum": ""
             },
             "require": {
@@ -429,15 +429,7 @@
                 "crud",
                 "generator"
             ],
-<<<<<<< HEAD
-            "time": "2019-11-29T02:11:55+00:00"
-=======
-<<<<<<< HEAD
-            "time": "2019-11-29T21:15:17+00:00"
-=======
-            "time": "2019-11-29T10:55:02+00:00"
->>>>>>> e926b15d5ffeb6f7c0510acacaaa846294212f5c
->>>>>>> 0a330cd0baebc7f9387fd63a36a88c38d4338a0f
+            "time": "2019-12-01T19:41:08+00:00"
         },
         {
             "name": "shish/microhtml",
