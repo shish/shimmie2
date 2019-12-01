@@ -7,51 +7,14 @@ class AliasEditorTheme extends Themelet
      *
      * Note: $can_manage = whether things like "add new alias" should be shown
      */
-    public function display_aliases(array $aliases, int $pageNumber, int $totalPages): void
+    public function display_aliases($table, $paginator): void
     {
         global $page, $user;
 
         $can_manage = $user->can(Permissions::MANAGE_ALIAS_LIST);
-        if ($can_manage) {
-            $h_action = "<th width='10%'>Action</th>";
-            $h_add = "
-				<tr>
-					".make_form(make_link("alias/add"))."
-						<td><input type='text' name='oldtag' class='autocomplete_tags' autocomplete='off'></td>
-						<td><input type='text' name='newtag' class='autocomplete_tags' autocomplete='off'></td>
-						<td><input type='submit' value='Add'></td>
-					</form>
-				</tr>
-			";
-        } else {
-            $h_action = "";
-            $h_add = "";
-        }
-
-        $h_aliases = "";
-        foreach ($aliases as $old => $new) {
-            $h_old = html_escape($old);
-            $h_new = "<a href='".make_link("post/list/".url_escape($new)."/1")."'>".html_escape($new)."</a>";
-
-            $h_aliases .= "<tr><td>$h_old</td><td>$h_new</td>";
-            if ($can_manage) {
-                $h_aliases .= "
-					<td>
-						".make_form(make_link("alias/remove"))."
-							<input type='hidden' name='oldtag' value='$h_old'>
-							<input type='submit' value='Remove'>
-						</form>
-					</td>
-				";
-            }
-            $h_aliases .= "</tr>";
-        }
         $html = "
-			<table id='aliases' class='sortable zebra'>
-				<thead><tr><th>From</th><th>To</th>$h_action</tr></thead>
-				<tbody>$h_aliases</tbody>
-				<tfoot>$h_add</tfoot>
-			</table>
+            $table
+            $paginator
 			<p><a href='".make_link("alias/export/aliases.csv")."' download='aliases.csv'>Download as CSV</a></p>
 		";
 
@@ -69,7 +32,5 @@ class AliasEditorTheme extends Themelet
         if ($can_manage) {
             $page->add_block(new Block("Bulk Upload", $bulk_html, "main", 51));
         }
-
-        $this->display_paginator($page, "alias/list", null, $pageNumber, $totalPages);
     }
 }

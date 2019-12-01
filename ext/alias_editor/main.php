@@ -1,5 +1,27 @@
 <?php
 
+use MicroCRUD\TextColumn;
+use MicroCRUD\Table;
+
+class AliasTable extends Table
+{
+    public function __construct(\FFSPHP\PDO $db)
+    {
+        parent::__construct($db);
+        $this->table = "aliases";
+        $this->base_query = "SELECT * FROM aliases";
+        $this->primary_key = "oldtag";
+        $this->size = 100;
+        $this->limit = 1000000;
+        $this->columns = [
+            new TextColumn("oldtag", "Old Tag"),
+            new TextColumn("newtag", "New Tag"),
+        ];
+        $this->order_by = ["oldtag"];
+        $this->table_attrs = ["class" => "zebra"];
+    }
+}
+
 class AddAliasEvent extends Event
 {
     /** @var string  */
@@ -27,52 +49,36 @@ class AliasEditor extends Extension
         if ($event->page_matches("alias")) {
             if ($event->get_arg(0) == "add") {
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
-                    if (isset($_POST['oldtag']) && isset($_POST['newtag'])) {
-                        try {
-                            $aae = new AddAliasEvent($_POST['oldtag'], $_POST['newtag']);
-                            send_event($aae);
-                            $page->set_mode(PageMode::REDIRECT);
-                            $page->set_redirect(make_link("alias/list"));
-                        } catch (AddAliasException $ex) {
-                            $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
-                        }
+                    $user->ensure_authed();
+                    $input = validate_input(["c_oldtag"=>"string", "c_newtag"=>"string"]);
+                    try {
+                        $aae = new AddAliasEvent($input['c_oldtag'], $input['c_newtag']);
+                        send_event($aae);
+                        $page->set_mode(PageMode::REDIRECT);
+                        $page->set_redirect(make_link("alias/list"));
+                    } catch (AddAliasException $ex) {
+                        $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
                     }
                 }
             } elseif ($event->get_arg(0) == "remove") {
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
-                    if (isset($_POST['oldtag'])) {
-                        $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $_POST['oldtag']]);
-                        log_info("alias_editor", "Deleted alias for ".$_POST['oldtag'], "Deleted alias");
-
-                        $page->set_mode(PageMode::REDIRECT);
-                        $page->set_redirect(make_link("alias/list"));
-                    }
+                    $user->ensure_authed();
+                    $input = validate_input(["d_oldtag"=>"string"]);
+                    $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $input['d_oldtag']]);
+                    log_info("alias_editor", "Deleted alias for ".$input['d_oldtag'], "Deleted alias");
+                    $page->set_mode(PageMode::REDIRECT);
+                    $page->set_redirect(make_link("alias/list"));
                 }
             } elseif ($event->get_arg(0) == "list") {
-                if ($event->count_args() == 2) {
-                    $page_number = $event->get_arg(1);
-                    if (!is_numeric($page_number)) {
-                        $page_number = 0;
-                    } elseif ($page_number <= 0) {
-                        $page_number = 0;
-                    } else {
-                        $page_number--;
-                    }
-                } else {
-                    $page_number = 0;
+                $t = new AliasTable($database->raw_db());
+                $t->token = $user->get_auth_token();
+                $t->inputs = $_GET;
+                $t->size = $config->get_int('alias_items_per_page', 30);
+                if($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+                    $t->create_url = make_link("alias/add");
+                    $t->delete_url = make_link("alias/remove");
                 }
-
-                $alias_per_page = $config->get_int('alias_items_per_page', 30);
-
-                $query = "SELECT oldtag, newtag FROM aliases ORDER BY newtag ASC LIMIT :limit OFFSET :offset";
-                $alias = $database->get_pairs(
-                    $query,
-                    ["limit"=>$alias_per_page, "offset"=>$page_number * $alias_per_page]
-                );
-
-                $total_pages = ceil($database->get_one("SELECT COUNT(*) FROM aliases") / $alias_per_page);
-
-                $this->theme->display_aliases($alias, $page_number + 1, $total_pages);
+                $this->theme->display_aliases($t->table($t->query()), $t->paginator());
             } elseif ($event->get_arg(0) == "export") {
                 $page->set_mode(PageMode::DATA);
                 $page->set_type("text/csv");
