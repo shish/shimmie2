@@ -43,10 +43,6 @@ class TagList extends Extension
                     $this->theme->set_heading("Tag List by Popularity");
                     $this->theme->set_tag_list($this->build_tag_popularity());
                     break;
-                case 'categories':
-                    $this->theme->set_heading("Popular Categories");
-                    $this->theme->set_tag_list($this->build_tag_list());
-                    break;
             }
             $this->theme->display_page($page);
         } elseif ($event->page_matches("api/internal/tag_list/complete")) {
@@ -106,7 +102,6 @@ class TagList extends Extension
             $event->add_nav_link("tags_map", new Link('tags/map'), "Map");
             $event->add_nav_link("tags_alphabetic", new Link('tags/alphabetic'), "Alphabetic");
             $event->add_nav_link("tags_popularity", new Link('tags/popularity'), "Popularity");
-            $event->add_nav_link("tags_categories", new Link('tags/categories'), "Categories");
         }
     }
 
@@ -264,9 +259,8 @@ class TagList extends Extension
         $h_map = "<a href='".make_link("tags/map")."'>Map</a>";
         $h_alphabetic = "<a href='".make_link("tags/alphabetic")."'>Alphabetic</a>";
         $h_popularity = "<a href='".make_link("tags/popularity")."'>Popularity</a>";
-        $h_cats = "<a href='".make_link("tags/categories")."'>Categories</a>";
         $h_all = "<a href='".modify_current_url(["mincount"=>1])."'>Show All</a>";
-        return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>$h_cats<br>&nbsp;<br>$h_all";
+        return "$h_index<br>&nbsp;<br>$h_map<br>$h_alphabetic<br>$h_popularity<br>&nbsp;<br>$h_all";
     }
 
     private function build_tag_map(): string
@@ -420,38 +414,6 @@ class TagList extends Extension
         if (SPEED_HAX) {
             file_put_contents($cache_key, $html);
         }
-
-        return $html;
-    }
-
-    private function build_tag_list(): string
-    {
-        global $database;
-
-        //$tags_min = $this->get_tags_min();
-        $tag_data = $database->get_all("SELECT tag,count FROM tags ORDER BY count DESC, tag ASC LIMIT 9");
-
-        $html = "<table>";
-        $n = 0;
-        foreach ($tag_data as $row) {
-            if ($n%3==0) {
-                $html .= "<tr>";
-            }
-            $h_tag = html_escape($row['tag']);
-            $link = $this->tag_link($row['tag']);
-            $image = Image::by_random([$row['tag']], 100);
-            if (is_null($image)) {
-                continue;
-            } // one of the popular tags has no images
-            $thumb = $image->get_thumb_link();
-            $tsize = get_thumbnail_size($image->width, $image->height);
-            $html .= "<td><a href='$link'><img src='$thumb' style='height: {$tsize[1]}px; width: {$tsize[0]}px;'><br>$h_tag</a></td>\n";
-            if ($n%3==2) {
-                $html .= "</tr>";
-            }
-            $n++;
-        }
-        $html .= "</table>";
 
         return $html;
     }
