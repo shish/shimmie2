@@ -523,10 +523,30 @@ function _fatal_error(Exception $e): void
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
     //'.$h_hash.'
     
-    $q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
 
-    header("HTTP/1.0 500 Internal Error");
-    echo '
+    if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
+		print("Trace: ");
+		$t = array_reverse($e->getTrace());
+		foreach($t as $n => $f) {
+			$c = $f['class'] ?? '';
+			$t = $f['type'] ?? '';
+			$a = implode(", ", array_map("stringer", $f['args']));
+			print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
+		}
+
+		print("Message: $message\n");
+
+		if(isset($e->query)) {
+			print("Query:   {$e->query}\n");
+		}
+
+		$phpver = phpversion();
+		print("Version: $version (on $phpver)\n");
+	}
+	else {
+		$q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
+		header("HTTP/1.0 500 Internal Error");
+		echo '
 <html>
 	<head>
 		<title>Internal error - SCore-'.$version.'</title>
@@ -539,6 +559,7 @@ function _fatal_error(Exception $e): void
 	</body>
 </html>
 ';
+	}
 }
 
 /**
