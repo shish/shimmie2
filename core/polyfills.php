@@ -833,3 +833,22 @@ function get_class_from_file(string $file): string
     }
     return $class;
 }
+
+function stringer($s) {
+    if(is_array($s)) {
+        if(isset($s[0])) {
+            return "[" . implode(", ", array_map("stringer", $s)) . "]";
+        }
+        else {
+            $pairs = [];
+            foreach($s as $k=>$v) {
+                $pairs[] = "\"$k\"=>" . stringer($v);
+            }
+            return "[" . implode(", ", $pairs) . "]";
+        }
+    }
+    if(is_string($s)) {
+        return "\"$s\"";  // FIXME: handle escaping quotes
+    }
+    return (string)$s;
+}
