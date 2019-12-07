@@ -114,71 +114,9 @@ class LogDatabase extends Extension
         global $cache, $database, $user;
         if ($event->page_matches("log/view")) {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
-                $wheres = [];
-                $args = [];
-                $page_num = $event->try_page_num(0);
-                if (!empty($_GET["time-start"])) {
-                    $wheres[] = "date_sent > :time_start";
-                    $args["time_start"] = $_GET["time-start"];
-                }
-                if (!empty($_GET["time-end"])) {
-                    $wheres[] = "date_sent < :time_end";
-                    $args["time_end"] = $_GET["time-end"];
-                }
-                if (!empty($_GET["module"])) {
-                    $wheres[] =  $database->scoreql_to_sql("SCORE_STRNORM(section) = SCORE_STRNORM(:module)");
-                    $args["module"] = $_GET["module"];
-                }
-                if (!empty($_GET["user"])) {
-                    if ($database->get_driver_name() == DatabaseDriver::PGSQL) {
-                        if (preg_match("#\d+\.\d+\.\d+\.\d+(/\d+)?#", $_GET["user"])) {
-                            # for some reason postgres won't use an index on lower(text(address)), but will text(address)?
-                            $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR text(address) = :user2)");
-                            $args["user1"] = $_GET["user"];
-                            $args["user2"] = $_GET["user"] . "/32";
-                        } else {
-                            $wheres[] = $database->scoreql_to_sql("SCORE_STRNORM(username) = SCORE_STRNORM(:user)");
-                            $args["user"] = $_GET["user"];
-                        }
-                    } else {
-                        $wheres[] =  $database->scoreql_to_sql("(SCORE_STRNORM(username) = SCORE_STRNORM(:user1) OR SCORE_STRNORM(address) = SCORE_STRNORM(:user2))");
-                        $args["user1"] = $_GET["user"];
-                        $args["user2"] = $_GET["user"];
-                    }
-                }
-                if (!empty($_GET["priority"])) {
-                    $wheres[] = "priority >= :priority";
-                    $args["priority"] = int_escape($_GET["priority"]);
-                } else {
-                    $wheres[] = "priority >= :priority";
-                    $args["priority"] = 20;
-                }
-                if (!empty($_GET["message"])) {
-                    $wheres[] = $database->scoreql_to_sql("SCORE_STRNORM(message) LIKE SCORE_STRNORM(:message)");
-                    $args["message"] = "%" . $_GET["message"] . "%";
-                }
-                $where = "";
-                if (count($wheres) > 0) {
-                    $where = "WHERE ";
-                    $where .= join(" AND ", $wheres);
-                }
-
-                $limit = 50;
-                $offset = ($page_num-1) * $limit;
-                $page_total = $cache->get("event_log_length");
-                if (!$page_total) {
-                    $page_total = $database->get_one("SELECT count(*) FROM score_log $where", $args);
-                    // don't cache a length of zero when the extension is first installed
-                    if ($page_total > 10) {
-                        $cache->set("event_log_length", $page_total, 600);
-                    }
-                }
-
-                $args["limit"] = $limit;
-                $args["offset"] = $offset;
-                $events = $database->get_all("SELECT * FROM score_log $where ORDER BY id DESC LIMIT :limit OFFSET :offset", $args);
-
-                $this->theme->display_events($events, $page_num, 100);
+				$t = new LogTable($database->raw_db());
+				$t->inputs = $_GET;
+                $this->theme->display_events($t->table($t->query()), $t->paginator());
             }
         }
     }
