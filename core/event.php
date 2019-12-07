@@ -11,6 +11,11 @@ abstract class Event
     public function __construct()
     {
     }
+
+    public function __toString()
+    {
+        return var_export($this, true);
+    }
 }
 
 
