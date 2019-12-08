@@ -1,11 +1,31 @@
 <?php
 
-use function MicroHTML\{A,SPAN};
+use function MicroHTML\{A,SPAN,emptyHTML,INPUT,BR,SELECT,OPTION};
 use MicroCRUD\Column;
 use MicroCRUD\DateTimeColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
+
+class ShortDateTimeColumn extends DateTimeColumn {
+    public function read_input(array $inputs)
+    {
+        return emptyHTML(
+            INPUT([
+                "type"=>"date",
+                "name"=>"r_{$this->name}[]",
+                "value"=>@$inputs["r_{$this->name}"][0]
+            ]),
+            BR(),
+            INPUT([
+                "type"=>"date",
+                "name"=>"r_{$this->name}[]",
+                "value"=>@$inputs["r_{$this->name}"][1]
+            ])
+        );
+    }
+
+}
 
 class ActorColumn extends Column {
     public function __construct($name, $title)
@@ -15,15 +35,70 @@ class ActorColumn extends Column {
 
     public function display($row)
     {
-        if ($row['username'] == "Anonymous") {
-            return $row["address"];
-        } else {
-            return A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']);
+		$ret = emptyHTML();
+        if ($row['username'] != "Anonymous") {
+            $ret->appendChild(A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']));
+			$ret->appendChild(BR());
         }
+		$ret->appendChild($row['address']);
+        return $ret;
     }
 }
 
-class MessageColumn extends TextColumn {
+class MessageColumn extends Column {
+    public function __construct($name, $title)
+    {
+        parent::__construct(
+            $name,
+            $title,
+            "($name LIKE :{$name}_0 AND priority >= :{$name}_1)"
+        );
+        $this->input_mod = function ($var) {
+            list($m, $l) = $var;
+            if (empty($m)) {
+                $m = "%";
+            }
+			else {
+				$m = "%$m%";
+			}
+            if (empty($l)) {
+                $l = SCORE_LOG_INFO;
+            }
+            return [$m, $l];
+        };
+    }
+
+    public function read_input($inputs)
+    {
+        $ret = emptyHTML(
+			INPUT([
+				"type"=>"text",
+				"name"=>"r_{$this->name}[]",
+				"placeholder"=>$this->title,
+				"value"=>@$inputs["r_{$this->name}"][0]
+			])
+		);
+
+		$options = [
+			"Debug" => SCORE_LOG_DEBUG,
+			"Info" => SCORE_LOG_INFO,
+			"Warning" => SCORE_LOG_WARNING,
+			"Error" => SCORE_LOG_ERROR,
+			"Critical" => SCORE_LOG_CRITICAL,
+		];
+        $s = SELECT(["name"=>"r_{$this->name}[]"]);
+        $s->appendChild(OPTION(["value"=>""], '-'));
+        foreach ($options as $k => $v) {
+            $attrs = ["value"=>$v];
+            if ($v == @$inputs["r_{$this->name}"][1]) {
+                $attrs["selected"] = true;
+            }
+            $s->appendChild(OPTION($attrs, $k));
+        }
+		$ret->appendChild($s);
+        return $ret;
+    }
+
     public function display($row)
     {
         $c = "#000";
@@ -59,7 +134,7 @@ class LogTable extends Table
         $this->size = 100;
         $this->limit = 1000000;
         $this->columns = [
-            new DateTimeColumn("date_sent", "Time"),
+            new ShortDateTimeColumn("date_sent", "Time"),
             new TextColumn("section", "Module"),
             new ActorColumn("username_or_address", "User"),
             new MessageColumn("message", "Message")
