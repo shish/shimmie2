@@ -62,7 +62,7 @@ class MessageColumn extends Column {
 				$m = "%$m%";
 			}
             if (empty($l)) {
-                $l = SCORE_LOG_INFO;
+                $l = 0;
             }
             return [$m, $l];
         };
