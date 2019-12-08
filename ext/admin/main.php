@@ -134,37 +134,6 @@ class AdminPage extends Extension
         }
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event)
-    // {
-    //     global $user;
-    //     if ($user->can("manage_admintools") && !empty($event->search_terms)) {
-    //         $event->add_control($this->theme->dbq_html(Tag::implode($event->search_terms)));
-    //     }
-    // }
-
-    private function delete_by_query()
-    {
-        global $page;
-        $query = $_POST['query'];
-        $reason = @$_POST['reason'];
-
-        assert(strlen($query) > 1);
-
-        $images = Image::find_images(0, 1000000, Tag::explode($query));
-        $count = count($images);
-        log_warning("admin", "Mass-deleting $count images from $query", "Mass deleted $count images");
-        foreach ($images as $image) {
-            if ($reason && class_exists("ImageBan")) {
-                send_event(new AddImageHashBanEvent($image->hash, $reason));
-            }
-            send_event(new ImageDeletionEvent($image, true));
-        }
-
-        $page->set_mode(PageMode::REDIRECT);
-        $page->set_redirect(make_link("post/list"));
-        return false;
-    }
-
     private function set_tag_case()
     {
         global $database;
