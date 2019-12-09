@@ -61,29 +61,4 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
         //send_event(new AdminActionEvent('database_dump'));
         //$this->assert_response(200);
     }
-
-    public function testDBQ()
-    {
-        $this->log_in_as_user();
-        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "test");
-        $image_id_2 = $this->post_image("tests/bedroom_workshop.jpg", "test2");
-        $image_id_3 = $this->post_image("tests/favicon.png", "test");
-
-        $this->get_page("post/list/test/1");
-        //$this->click("Delete All These Images");
-        $_POST['query'] = 'test';
-        //$_POST['reason'] = 'reason'; // non-null-reason = add a hash ban
-        send_event(new AdminActionEvent('delete_by_query'));
-
-        $this->get_page("post/view/$image_id_1");
-        $this->assert_response(404);
-        $this->get_page("post/view/$image_id_2");
-        $this->assert_response(200);
-        $this->get_page("post/view/$image_id_3");
-        $this->assert_response(404);
-
-        $this->delete_image($image_id_1);
-        $this->delete_image($image_id_2);
-        $this->delete_image($image_id_3);
-    }
 }
