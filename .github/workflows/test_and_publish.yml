@@ -10,7 +10,6 @@ jobs:
   test:
     name: PHP ${{ matrix.php }} / DB ${{ matrix.database }}
     strategy:
-      max-parallel: 3
       fail-fast: false
       matrix:
         php: ['7.3', '7.4']
@@ -26,7 +25,7 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
         coverage: pcov
-        extensions: mbstring
+        extensions: mbstring, pdo-sqlite, pdo-pgsql, pdo-mysql
 
     - name: Set up database
       run: |
