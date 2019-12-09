@@ -1,4 +1,6 @@
 <?php
+use function MicroHTML\{FORM,INPUT};
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -516,13 +518,11 @@ function _fatal_error(Exception $e): void
 {
     $version = VERSION;
     $message = $e->getMessage();
-
-    //$trace = var_dump($e->getTrace());
+    $phpver = phpversion();
 
     //$hash = exec("git rev-parse HEAD");
     //$h_hash = $hash ? "<p><b>Hash:</b> $hash" : "";
     //'.$h_hash.'
-    
 
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
 		print("Trace: ");
@@ -540,7 +540,6 @@ function _fatal_error(Exception $e): void
 			print("Query:   {$e->query}\n");
 		}
 
-		$phpver = phpversion();
 		print("Version: $version (on $phpver)\n");
 	}
 	else {
@@ -555,7 +554,7 @@ function _fatal_error(Exception $e): void
 		<h1>Internal Error</h1>
 		<p><b>Message:</b> '.html_escape($message).'
 		'.$q.'
-		<p><b>Version:</b> '.$version.' (on '.phpversion().')
+		<p><b>Version:</b> '.$version.' (on '.$phpver.')
 	</body>
 </html>
 ';
@@ -687,4 +686,30 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
         $extra .= ' onsubmit="'.$onsubmit.'"';
     }
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
+}
+
+function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit="") {
+    global $user;
+
+    $attrs = [
+        "action"=>$target,
+        "method"=>$method
+    ];
+
+    if($form_id) {
+        $attrs["id"] = $form_id;
+    }
+    if ($multipart) {
+        $attrs["enctype"] = 'multipart/form-data';
+    }
+    if ($onsubmit) {
+        $attrs["onsubmit"] = $onsubmit;
+    }
+    $f = FORM(
+        $attrs,
+        INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
+        $method != "GET" ? "" : $user->get_auth_html()
+    );
+
+    return $f;
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "599bc5009cfcad0fdbf40925bbed4493",
+    "content-hash": "f6ab14a66aa01232794ac310aab1c06c",
     "packages": [
         {
             "name": "bower-asset/jquery",
@@ -388,19 +388,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "060c30d1a7414cf3242f26aaf689d7c8683fb345"
+                "reference": "8ffe9514490e356897aa2bb2c4df5ce63b82bd2d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/060c30d1a7414cf3242f26aaf689d7c8683fb345",
-                "reference": "060c30d1a7414cf3242f26aaf689d7c8683fb345",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/8ffe9514490e356897aa2bb2c4df5ce63b82bd2d",
+                "reference": "8ffe9514490e356897aa2bb2c4df5ce63b82bd2d",
                 "shasum": ""
             },
             "require": {
                 "ext-pdo": "*",
                 "php": ">=7.2",
                 "shish/ffsphp": "0.0.*",
-                "shish/microhtml": "0.0.*"
+                "shish/microhtml": "^1.0.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "8.*"
@@ -429,20 +429,24 @@
                 "crud",
                 "generator"
             ],
+<<<<<<< HEAD
             "time": "2019-12-07T22:47:15+00:00"
+=======
+            "time": "2019-12-09T13:30:51+00:00"
+>>>>>>> use microhtml for ext_manager
         },
         {
             "name": "shish/microhtml",
-            "version": "v0.0.2",
+            "version": "v1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "76d923e69d140c638995bbe6f24085a9108950f1"
+                "reference": "1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/76d923e69d140c638995bbe6f24085a9108950f1",
-                "reference": "76d923e69d140c638995bbe6f24085a9108950f1",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c",
+                "reference": "1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c",
                 "shasum": ""
             },
             "require": {
@@ -475,7 +479,7 @@
                 "generator",
                 "html"
             ],
-            "time": "2019-11-25T18:12:07+00:00"
+            "time": "2019-12-09T12:12:14+00:00"
         }
     ],
     "packages-dev": [
