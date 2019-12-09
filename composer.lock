@@ -429,24 +429,20 @@
                 "crud",
                 "generator"
             ],
-<<<<<<< HEAD
-            "time": "2019-12-07T22:47:15+00:00"
-=======
             "time": "2019-12-09T13:30:51+00:00"
->>>>>>> use microhtml for ext_manager
         },
         {
             "name": "shish/microhtml",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microhtml.git",
-                "reference": "1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c"
+                "reference": "b942fe1da33cd8889252290469ce3ed2ea329491"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microhtml/zipball/1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c",
-                "reference": "1b81c6537eee07e7ba7fb4dbbf9ba2173e8c436c",
+                "url": "https://api.github.com/repos/shish/microhtml/zipball/b942fe1da33cd8889252290469ce3ed2ea329491",
+                "reference": "b942fe1da33cd8889252290469ce3ed2ea329491",
                 "shasum": ""
             },
             "require": {
@@ -479,7 +475,7 @@
                 "generator",
                 "html"
             ],
-            "time": "2019-12-09T12:12:14+00:00"
+            "time": "2019-12-09T14:15:35+00:00"
         }
     ],
     "packages-dev": [
