@@ -25,7 +25,7 @@ jobs:
       with:
         php-version: ${{ matrix.php }}
         coverage: pcov
-        extensions: mbstring, pdo-sqlite, pdo-pgsql, pdo-mysql
+        extensions: mbstring, pdo-sqlite, pdo-pgsql, pdo-mysql, gd
 
     - name: Set up database
       run: |
