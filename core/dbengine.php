@@ -125,7 +125,7 @@ function _unix_timestamp($date)
 }
 function _now()
 {
-    return date("Y-m-d h:i:s");
+    return date("Y-m-d H:i:s");
 }
 function _floor($a)
 {
