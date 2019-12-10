@@ -227,7 +227,7 @@ class Favorites extends Extension
     {
         global $database;
         if ($do_set) {
-            if (!$database->exists("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id"=>$image_id, "user_id"=>$user_id])) {
+            if (!$database->get_row("select 1 from user_favorites where image_id=:image_id and user_id=:user_id", ["image_id"=>$image_id, "user_id"=>$user_id])) {
                 $database->Execute(
                     "INSERT INTO user_favorites(image_id, user_id, created_at) VALUES(:image_id, :user_id, NOW())",
                     ["image_id"=>$image_id, "user_id"=>$user_id]

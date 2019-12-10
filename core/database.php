@@ -220,21 +220,6 @@ class Database
         return $row ? $row : null;
     }
 
-
-    /**
-     * Execute an SQL query and return a boolean based on whether it returns a result
-     */
-    public function exists(string $query, array $args=[], bool $scoreql = false): bool
-    {
-        if ($scoreql===true) {
-            $query = $this->scoreql_to_sql($query);
-        }
-        $_start = microtime(true);
-        $result = $this->execute($query, $args);
-        $this->count_time("exists", $_start, $query, $args);
-        return $result->rowCount()>0;
-    }
-
     /**
      * Execute an SQL query and return the first column of each row.
      */
