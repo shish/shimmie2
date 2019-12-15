@@ -13,9 +13,6 @@ abstract class DBEngine
     /** @var null|string */
     public $name = null;
 
-    public $BOOL_Y = null;
-    public $BOOL_N = null;
-
     public function init(PDO $db)
     {
     }
@@ -38,9 +35,6 @@ class MySQL extends DBEngine
     /** @var string */
     public $name = DatabaseDriver::MYSQL;
 
-    public $BOOL_Y = 'Y';
-    public $BOOL_N = 'N';
-
     public function init(PDO $db)
     {
         $db->exec("SET NAMES utf8;");
@@ -50,8 +44,8 @@ class MySQL extends DBEngine
     {
         $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY auto_increment", $data);
         $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
-        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
-        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'N'", $data);
         $data = str_replace(SCORE::BOOL, "ENUM('Y', 'N')", $data);
         return $data;
     }
@@ -77,9 +71,6 @@ class PostgreSQL extends DBEngine
     /** @var string */
     public $name = DatabaseDriver::PGSQL;
 
-    public $BOOL_Y = 'true';
-    public $BOOL_N = 'false';
-
     public function init(PDO $db)
     {
         if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
@@ -94,8 +85,8 @@ class PostgreSQL extends DBEngine
     {
         $data = str_replace(SCORE::AIPK, "INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY", $data);
         $data = str_replace(SCORE::INET, "INET", $data);
-        $data = str_replace(SCORE::BOOL_Y, $this->BOOL_Y, $data);
-        $data = str_replace(SCORE::BOOL_N, $this->BOOL_N, $data);
+        $data = str_replace(SCORE::BOOL_Y, 'true', $data);
+        $data = str_replace(SCORE::BOOL_N, 'false', $data);
         $data = str_replace(SCORE::BOOL, "BOOL", $data);
         return $data;
     }
@@ -163,10 +154,6 @@ class SQLite extends DBEngine
     /** @var string  */
     public $name = DatabaseDriver::SQLITE;
 
-    public $BOOL_Y = 'Y';
-    public $BOOL_N = 'N';
-
-
     public function init(PDO $db)
     {
         ini_set('sqlite.assoc_case', 0);
@@ -187,8 +174,8 @@ class SQLite extends DBEngine
     {
         $data = str_replace(SCORE::AIPK, "INTEGER PRIMARY KEY", $data);
         $data = str_replace(SCORE::INET, "VARCHAR(45)", $data);
-        $data = str_replace(SCORE::BOOL_Y, "'$this->BOOL_Y'", $data);
-        $data = str_replace(SCORE::BOOL_N, "'$this->BOOL_N'", $data);
+        $data = str_replace(SCORE::BOOL_Y, "'Y'", $data);
+        $data = str_replace(SCORE::BOOL_N, "'N'", $data);
         $data = str_replace(SCORE::BOOL, "CHAR(1)", $data);
         return $data;
     }
