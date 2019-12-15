@@ -37,7 +37,7 @@ class ActorColumn extends Column
 {
     public function __construct($name, $title)
     {
-        parent::__construct($name, $title, "((username LIKE :{$name}) OR (address::text LIKE :{$name}))");
+        parent::__construct($name, $title, "((LOWER(username) LIKE LOWER(:{$name})) OR (address::text LIKE :{$name}))");
         $this->input_mod = function ($var) {
             return "%$var%";
         };
