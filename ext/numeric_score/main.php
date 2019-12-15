@@ -31,11 +31,11 @@ class NumericScore extends Extension
             $this->theme->get_nuller($event->display_user);
         }
 
-        $u_id = url_escape($event->display_user->id);
-        $n_up = Image::count_images(["upvoted_by_id={$event->display_user->id}"]);
-        $link_up = make_link("post/list/upvoted_by_id=$u_id/1");
-        $n_down = Image::count_images(["downvoted_by_id={$event->display_user->id}"]);
-        $link_down = make_link("post/list/downvoted_by_id=$u_id/1");
+        $u_name = url_escape($event->display_user->name);
+        $n_up = Image::count_images(["upvoted_by={$event->display_user->name}"]);
+        $link_up = make_link("post/list/upvoted_by=$u_name/1");
+        $n_down = Image::count_images(["downvoted_by={$event->display_user->name}"]);
+        $link_down = make_link("post/list/downvoted_by=$u_name/1");
         $event->add_stats("<a href='$link_up'>$n_up Upvotes</a> / <a href='$link_down'>$n_down Downvotes</a>");
     }
 
