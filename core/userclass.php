@@ -121,6 +121,8 @@ new UserClass("base", null, [
 
     Permissions::MANAGE_ADMINTOOLS => false,
 
+    Permissions::SEND_PM => false,
+    Permissions::READ_PM => false,
     Permissions::VIEW_OTHER_PMS => false,
     Permissions::EDIT_FEATURE => false,
     Permissions::BULK_EDIT_VOTE => false,
@@ -176,7 +178,8 @@ new UserClass("user", "base", [
     Permissions::EDIT_IMAGE_TITLE => true,
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::EDIT_IMAGE_RATING => true,
-
+    Permissions::SEND_PM => true,
+    Permissions::READ_PM => true,
 ]);
 
 new UserClass("admin", "base", [
@@ -216,6 +219,8 @@ new UserClass("admin", "base", [
     Permissions::MANAGE_BLOCKS => true,
     Permissions::MANAGE_ADMINTOOLS => true,
     Permissions::IGNORE_DOWNTIME => true,
+    Permissions::SEND_PM => true,
+    Permissions::READ_PM => true,
     Permissions::VIEW_OTHER_PMS => true,
     Permissions::EDIT_FEATURE => true,
     Permissions::BULK_EDIT_VOTE => true,

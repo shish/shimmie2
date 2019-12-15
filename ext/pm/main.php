@@ -87,7 +87,7 @@ class PrivMsg extends Extension
     {
         global $user;
         if ($event->parent==="user") {
-            if (!$user->is_anonymous()) {
+            if ($user->can(Permissions::READ_PM)) {
                 $count = $this->count_pms($user);
                 $h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
                 $event->add_nav_link("pm", new Link('user#private-messages'), "Private Messages$h_count");
@@ -99,7 +99,7 @@ class PrivMsg extends Extension
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
         global $user;
-        if (!$user->is_anonymous()) {
+        if ($user->can(Permissions::READ_PM)) {
             $count = $this->count_pms($user);
             $h_count = $count > 0 ? " <span class='unread'>($count)</span>" : "";
             $event->add_link("Private Messages$h_count", make_link("user#private-messages"));
@@ -124,9 +124,9 @@ class PrivMsg extends Extension
     {
         global $cache, $database, $page, $user;
         if ($event->page_matches("pm")) {
-            if (!$user->is_anonymous()) {
-                switch ($event->get_arg(0)) {
-                    case "read":
+            switch ($event->get_arg(0)) {
+                case "read":
+                    if ($user->can(Permissions::READ_PM)) {
                         $pm_id = int_escape($event->get_arg(1));
                         $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
                         if (is_null($pm)) {
@@ -141,8 +141,10 @@ class PrivMsg extends Extension
                         } else {
                             $this->theme->display_permission_denied();
                         }
-                        break;
-                    case "delete":
+                    }
+                    break;
+                case "delete":
+                    if ($user->can(Permissions::READ_PM)) {
                         if ($user->check_auth_token()) {
                             $pm_id = int_escape($_POST["pm_id"]);
                             $pm = $database->get_row("SELECT * FROM private_message WHERE id = :id", ["id" => $pm_id]);
@@ -156,8 +158,10 @@ class PrivMsg extends Extension
                                 $page->set_redirect($_SERVER["HTTP_REFERER"]);
                             }
                         }
-                        break;
-                    case "send":
+                    }
+                    break;
+                case "send":
+                    if ($user->can(Permissions::SEND_PM)) {
                         if ($user->check_auth_token()) {
                             $to_id = int_escape($_POST["to_id"]);
                             $from_id = $user->id;
@@ -168,11 +172,11 @@ class PrivMsg extends Extension
                             $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect($_SERVER["HTTP_REFERER"]);
                         }
-                        break;
-                    default:
-                        $this->theme->display_error(400, "Invalid action", "That's not something you can do with a PM");
-                        break;
-                }
+                    }
+                    break;
+                default:
+                    $this->theme->display_error(400, "Invalid action", "That's not something you can do with a PM");
+                    break;
             }
         }
     }

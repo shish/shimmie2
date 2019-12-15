@@ -51,6 +51,8 @@ abstract class Permissions
 
     public const MANAGE_ADMINTOOLS = "manage_admintools";
 
+    public const SEND_PM = "send_pm";
+    public const READ_PM = "read_pm";
     public const VIEW_OTHER_PMS = "view_other_pms";
     public const EDIT_FEATURE = "edit_feature";
     public const BULK_EDIT_VOTE = "bulk_edit_vote";
