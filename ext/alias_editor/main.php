@@ -106,15 +106,28 @@ class AliasEditor extends Extension
     public function onAddAlias(AddAliasEvent $event)
     {
         global $database;
-        $pair = ["oldtag" => $event->oldtag, "newtag" => $event->newtag];
-        if ($database->get_row("SELECT * FROM aliases WHERE oldtag=:oldtag AND lower(newtag)=lower(:newtag)", $pair)) {
-            throw new AddAliasException("That alias already exists");
-        } elseif ($database->get_row("SELECT * FROM aliases WHERE oldtag=:newtag", ["newtag" => $event->newtag])) {
-            throw new AddAliasException("{$event->newtag} is itself an alias");
-        } else {
-            $database->execute("INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)", $pair);
-            log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
+
+        $row = $database->get_row(
+            "SELECT * FROM aliases WHERE lower(oldtag)=lower(:oldtag)",
+            ["oldtag"=>$event->oldtag]
+        );
+        if ($row) {
+            throw new AddAliasException("{$row['oldtag']} is already an alias for {$row['newtag']}");
         }
+
+        $row = $database->get_row(
+            "SELECT * FROM aliases WHERE lower(oldtag)=lower(:newtag)",
+            ["newtag" => $event->newtag]
+        );
+        if ($row) {
+            throw new AddAliasException("{$row['oldtag']} is itself an alias for {$row['newtag']}");
+        }
+
+        $database->execute(
+            "INSERT INTO aliases(oldtag, newtag) VALUES(:oldtag, :newtag)",
+            ["oldtag" => $event->oldtag, "newtag" => $event->newtag]
+        );
+        log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
