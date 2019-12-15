@@ -99,7 +99,7 @@ class User
     public static function by_name(string $name): ?User
     {
         global $database;
-        $row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE SCORE_STRNORM(name) = SCORE_STRNORM(:name)"), ["name"=>$name]);
+        $row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)"), ["name"=>$name]);
         return is_null($row) ? null : new User($row);
     }
 

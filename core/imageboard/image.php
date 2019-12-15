@@ -306,7 +306,7 @@ class Image
             }
         } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
             $total = $database->get_one(
-                $database->scoreql_to_sql("SELECT count FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+                $database->scoreql_to_sql("SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)"),
                 ["tag"=>$tags[0]]
             );
         } else {
@@ -720,7 +720,7 @@ class Image
                     $database->scoreql_to_sql("
 						SELECT id
 						FROM tags
-						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+						WHERE LOWER(tag) = LOWER(:tag)
 					"),
                     ["tag"=>$tag]
                 );
@@ -733,7 +733,7 @@ class Image
                     $database->execute(
                         $database->scoreql_to_sql(
                             "INSERT INTO image_tags(image_id, tag_id)
-							VALUES(:id, (SELECT id FROM tags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)))"
+							VALUES(:id, (SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)))"
                         ),
                         ["id"=>$this->id, "tag"=>$tag]
                     );
@@ -754,7 +754,7 @@ class Image
                     $database->scoreql_to_sql("
 						UPDATE tags
 						SET count = count + 1
-						WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)
+						WHERE LOWER(tag) = LOWER(:tag)
 					"),
                     ["tag"=>$tag]
                 );
@@ -957,7 +957,7 @@ class Image
             $sq = "
                 SELECT id
                 FROM tags
-                WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:tag)
+                WHERE LOWER(tag) LIKE LOWER(:tag)
             ";
             if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
                 $sq .= "ESCAPE '\\'";

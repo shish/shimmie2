@@ -579,10 +579,10 @@ class OuroborosAPI extends Extension
                     $database->scoreql_to_sql(
                         "
                                                         SELECT DISTINCT
-                                                            id, SCORE_STRNORM(substr(tag, 1, 1)), count
+                                                            id, LOWER(substr(tag, 1, 1)), count
                                                         FROM tags
                                                         WHERE count >= :tags_min
-                                                        ORDER BY SCORE_STRNORM(substr(tag, 1, 1)) LIMIT :start, :max_items
+                                                        ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
                                                     "
                     ),
                     ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]

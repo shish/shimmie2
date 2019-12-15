@@ -66,7 +66,7 @@ class TagList extends Extension
                 $res = $database->get_col($database->scoreql_to_sql("
 					SELECT tag
 					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search)
+					WHERE LOWER(tag) LIKE LOWER(:search)
 						AND count > 0
 					$limitSQL
 				"), $SQLarr);
@@ -238,10 +238,10 @@ class TagList extends Extension
 
         $tag_data = $database->get_col($database->scoreql_to_sql("
 			SELECT DISTINCT
-				SCORE_STRNORM(substr(tag, 1, 1))
+				LOWER(substr(tag, 1, 1))
 			FROM tags
 			WHERE count >= :tags_min
-			ORDER BY SCORE_STRNORM(substr(tag, 1, 1))
+			ORDER BY LOWER(substr(tag, 1, 1))
 		"), ["tags_min"=>$tags_min]);
 
         $html = "<span class='atoz'>";
@@ -284,7 +284,7 @@ class TagList extends Extension
 				FROM tags
 				WHERE count >= :tags_min
 				AND tag SCORE_ILIKE :starts_with
-				ORDER BY SCORE_STRNORM(tag)
+				ORDER BY LOWER(tag)
 			"), ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";
@@ -327,7 +327,7 @@ class TagList extends Extension
 				FROM tags
 				WHERE count >= :tags_min
 				AND tag SCORE_ILIKE :starts_with
-				ORDER BY SCORE_STRNORM(tag)
+				ORDER BY LOWER(tag)
 				"), ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";

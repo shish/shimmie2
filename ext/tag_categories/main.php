@@ -75,7 +75,7 @@ class TagCategories extends Extension
             $count = $matches[3];
 
             $types = $database->get_col(
-                $database->scoreql_to_sql('SELECT SCORE_STRNORM(category) FROM image_tag_categories')
+                $database->scoreql_to_sql('SELECT LOWER(category) FROM image_tag_categories')
             );
             if (in_array($type, $types)) {
                 $event->add_querylet(
@@ -85,7 +85,7 @@ class TagCategories extends Extension
 					    LEFT JOIN tags t ON it.tag_id = t.id
 					    WHERE images.id = it.image_id
 					    GROUP BY image_id
-					    HAVING SUM(CASE WHEN SCORE_STRNORM(t.tag) LIKE SCORE_STRNORM('$type:%') THEN 1 ELSE 0 END) $cmp $count
+					    HAVING SUM(CASE WHEN LOWER(t.tag) LIKE LOWER('$type:%') THEN 1 ELSE 0 END) $cmp $count
 					)"))
                 );
             }

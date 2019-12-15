@@ -48,8 +48,8 @@ class AutoComplete extends Extension
                     $database->scoreql_to_sql("
 					SELECT tag, count
 					FROM tags
-					WHERE SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:search) 
-					-- OR SCORE_STRNORM(tag) LIKE SCORE_STRNORM(:cat_search)
+					WHERE LOWER(tag) LIKE LOWER(:search) 
+					-- OR LOWER(tag) LIKE LOWER(:cat_search)
 					AND count > 0
 					ORDER BY count DESC
 					$limitSQL"),

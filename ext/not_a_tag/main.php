@@ -114,7 +114,7 @@ class NotATag extends Extension
                     $input = validate_input(["d_tag"=>"string"]);
                     $database->execute(
                         $database->scoreql_to_sql(
-                        "DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+                        "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)"
                     ),
                         ["tag"=>$input['d_tag']]
                     );

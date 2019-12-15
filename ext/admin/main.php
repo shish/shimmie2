@@ -138,7 +138,7 @@ class AdminPage extends Extension
     {
         global $database;
         $database->execute($database->scoreql_to_sql(
-            "UPDATE tags SET tag=:tag1 WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag2)"
+            "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)"
         ), ["tag1" => $_POST['tag'], "tag2" => $_POST['tag']]);
         log_info("admin", "Fixed the case of ".html_escape($_POST['tag']), "Fixed case");
         return true;

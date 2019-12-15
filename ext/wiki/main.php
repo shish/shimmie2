@@ -231,7 +231,7 @@ class Wiki extends Extension
             $database->scoreql_to_sql("
 				SELECT *
 				FROM wiki_pages
-				WHERE SCORE_STRNORM(title) LIKE SCORE_STRNORM(:title)
+				WHERE LOWER(title) LIKE LOWER(:title)
 				ORDER BY revision DESC"),
             ["title"=>$title]
         );

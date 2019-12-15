@@ -52,7 +52,7 @@ class Tag
                 $database->scoreql_to_sql("
 					SELECT newtag
 					FROM aliases
-					WHERE SCORE_STRNORM(oldtag)=SCORE_STRNORM(:tag)
+					WHERE LOWER(oldtag)=LOWER(:tag)
 				"),
                 ["tag"=>$tag]
             );
