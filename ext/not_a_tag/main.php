@@ -139,11 +139,11 @@ class NotATag extends Extension
         $where = ["(1=1)"];
         $args = ["limit"=>$size, "offset"=>($page-1)*$size];
         if (!empty($_GET['tag'])) {
-            $where[] = 'tag SCORE_ILIKE :tag';
+            $where[] = 'LOWER(tag) LIKE LOWER(:tag)';
             $args["tag"] = "%".$_GET['tag']."%";
         }
         if (!empty($_GET['redirect'])) {
-            $where[] = 'redirect SCORE_ILIKE :redirect';
+            $where[] = 'LOWER(redirect) LIKE LOWER(:redirect)';
             $args["redirect"] = "%".$_GET['redirect']."%";
         }
         $where = implode(" AND ", $where);

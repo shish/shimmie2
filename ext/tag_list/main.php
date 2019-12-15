@@ -283,7 +283,7 @@ class TagList extends Extension
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag SCORE_ILIKE :starts_with
+				AND LOWER(tag) LIKE LOWER(:starts_with)
 				ORDER BY LOWER(tag)
 			"), ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
 
@@ -326,7 +326,7 @@ class TagList extends Extension
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
-				AND tag SCORE_ILIKE :starts_with
+				AND LOWER(tag) LIKE LOWER(:starts_with)
 				ORDER BY LOWER(tag)
 				"), ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
 
