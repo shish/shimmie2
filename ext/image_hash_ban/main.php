@@ -12,9 +12,9 @@ class HashBanTable extends Table
         parent::__construct($db);
         $this->table = "image_bans";
         $this->base_query = "SELECT * FROM image_bans";
-		$this->primary_key = "hash";
+        $this->primary_key = "hash";
         $this->size = 100;
-		$this->limit = 1000000;
+        $this->limit = 1000000;
         $this->columns = [
             new StringColumn("hash", "Hash"),
             new TextColumn("reason", "Reason"),

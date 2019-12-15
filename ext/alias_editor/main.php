@@ -74,7 +74,7 @@ class AliasEditor extends Extension
                 $t->token = $user->get_auth_token();
                 $t->inputs = $_GET;
                 $t->size = $config->get_int('alias_items_per_page', 30);
-                if($user->can(Permissions::MANAGE_ALIAS_LIST)) {
+                if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     $t->create_url = make_link("alias/add");
                     $t->delete_url = make_link("alias/remove");
                 }

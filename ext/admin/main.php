@@ -72,18 +72,18 @@ class AdminPage extends Extension
         }
         if ($event->cmd == "get-page") {
             global $page;
-			if(isset($event->args[1])) {
-            	parse_str($event->args[1], $_GET);
-			}
+            if (isset($event->args[1])) {
+                parse_str($event->args[1], $_GET);
+            }
             send_event(new PageRequestEvent($event->args[0]));
             $page->display();
         }
         if ($event->cmd == "post-page") {
             global $page;
             $_SERVER['REQUEST_METHOD'] = "POST";
-			if(isset($event->args[1])) {
-				parse_str($event->args[1], $_POST);
-			}
+            if (isset($event->args[1])) {
+                parse_str($event->args[1], $_POST);
+            }
             send_event(new PageRequestEvent($event->args[0]));
             $page->display();
         }

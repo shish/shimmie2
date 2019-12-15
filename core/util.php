@@ -1,5 +1,6 @@
 <?php
-use function MicroHTML\{FORM,INPUT};
+use function MicroHTML\FORM;
+use function MicroHTML\INPUT;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
@@ -525,27 +526,26 @@ function _fatal_error(Exception $e): void
     //'.$h_hash.'
 
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
-		print("Trace: ");
-		$t = array_reverse($e->getTrace());
-		foreach($t as $n => $f) {
-			$c = $f['class'] ?? '';
-			$t = $f['type'] ?? '';
-			$a = implode(", ", array_map("stringer", $f['args']));
-			print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
-		}
+        print("Trace: ");
+        $t = array_reverse($e->getTrace());
+        foreach ($t as $n => $f) {
+            $c = $f['class'] ?? '';
+            $t = $f['type'] ?? '';
+            $a = implode(", ", array_map("stringer", $f['args']));
+            print("$n: {$f['file']}({$f['line']}): {$c}{$t}{$f['function']}({$a})\n");
+        }
 
-		print("Message: $message\n");
+        print("Message: $message\n");
 
-		if(isset($e->query)) {
-			print("Query:   {$e->query}\n");
-		}
+        if (isset($e->query)) {
+            print("Query:   {$e->query}\n");
+        }
 
-		print("Version: $version (on $phpver)\n");
-	}
-	else {
-		$q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
-		header("HTTP/1.0 500 Internal Error");
-		echo '
+        print("Version: $version (on $phpver)\n");
+    } else {
+        $q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
+        header("HTTP/1.0 500 Internal Error");
+        echo '
 <html>
 	<head>
 		<title>Internal error - SCore-'.$version.'</title>
@@ -558,7 +558,7 @@ function _fatal_error(Exception $e): void
 	</body>
 </html>
 ';
-	}
+    }
 }
 
 /**
@@ -688,7 +688,8 @@ function make_form(string $target, string $method="POST", bool $multipart=false,
     return '<form action="'.$target.'" method="'.$method.'" '.$extra.'>'.$extra_inputs;
 }
 
-function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit="") {
+function SHM_FORM(string $target, string $method="POST", bool $multipart=false, string $form_id="", string $onsubmit="")
+{
     global $user;
 
     $attrs = [
@@ -696,7 +697,7 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
         "method"=>$method
     ];
 
-    if($form_id) {
+    if ($form_id) {
         $attrs["id"] = $form_id;
     }
     if ($multipart) {

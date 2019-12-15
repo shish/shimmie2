@@ -10,7 +10,7 @@ class NotATagTable extends Table
         parent::__construct($db);
         $this->table = "untags";
         $this->base_query = "SELECT * FROM untags";
-		$this->primary_key = "tag";
+        $this->primary_key = "tag";
         $this->size = 100;
         $this->limit = 1000000;
         $this->columns = [
@@ -112,8 +112,10 @@ class NotATag extends Extension
                 } elseif ($event->get_arg(0) == "remove") {
                     $user->ensure_authed();
                     $input = validate_input(["d_tag"=>"string"]);
-                    $database->execute($database->scoreql_to_sql(
-                        "DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"),
+                    $database->execute(
+                        $database->scoreql_to_sql(
+                        "DELETE FROM untags WHERE SCORE_STRNORM(tag) = SCORE_STRNORM(:tag)"
+                    ),
                         ["tag"=>$input['d_tag']]
                     );
                     flash_message("Image ban removed");

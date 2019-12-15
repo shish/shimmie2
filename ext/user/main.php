@@ -8,24 +8,31 @@ use MicroCRUD\EnumColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
-class UserNameColumn extends TextColumn {
-    public function display(array $row) {
+class UserNameColumn extends TextColumn
+{
+    public function display(array $row)
+    {
         return A(["href"=>make_link("user/{$row[$this->name]}")], $row[$this->name]);
     }
 }
 
-class UserLinksColumn extends Column {
-    public function __construct() {
+class UserLinksColumn extends Column
+{
+    public function __construct()
+    {
         parent::__construct("links", "User Links", "(1=1)");
         $this->sortable = false;
     }
-    public function create_input(array $inputs) {
+    public function create_input(array $inputs)
+    {
         return "";
     }
-    public function read_input(array $inputs) {
+    public function read_input(array $inputs)
+    {
         return "";
     }
-    public function display(array $row) {
+    public function display(array $row)
+    {
         return A(["href"=>make_link("post/list/user_id={$row['id']}/1")], "Posts");
     }
 }
@@ -36,7 +43,7 @@ class UserTable extends Table
     {
         global $_shm_user_classes;
         $classes = [];
-        foreach($_shm_user_classes as $cls) {
+        foreach ($_shm_user_classes as $cls) {
             $classes[$cls->name] = $cls->name;
         }
         ksort($classes);
@@ -190,7 +197,7 @@ class UserPage extends Extension
         }
 
         $event->add_stats("Joined: $h_join_date", 10);
-        if($user->name == $event->display_user->name) {
+        if ($user->name == $event->display_user->name) {
             $event->add_stats("Current IP: {$_SERVER['REMOTE_ADDR']}", 80);
         }
         $event->add_stats("Class: $h_class", 90);

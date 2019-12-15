@@ -1,6 +1,21 @@
 <?php
 
-use function MicroHTML\{LABEL,A,B,IMG,TABLE,THEAD,TFOOT,TBODY,TH,TR,TD,INPUT,DIV,P,BR,emptyHTML};
+use function MicroHTML\LABEL;
+use function MicroHTML\A;
+use function MicroHTML\B;
+use function MicroHTML\IMG;
+use function MicroHTML\TABLE;
+use function MicroHTML\THEAD;
+use function MicroHTML\TFOOT;
+use function MicroHTML\TBODY;
+use function MicroHTML\TH;
+use function MicroHTML\TR;
+use function MicroHTML\TD;
+use function MicroHTML\INPUT;
+use function MicroHTML\DIV;
+use function MicroHTML\P;
+use function MicroHTML\BR;
+use function MicroHTML\emptyHTML;
 
 class ExtManagerTheme extends Themelet
 {

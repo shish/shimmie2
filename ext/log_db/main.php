@@ -1,13 +1,20 @@
 <?php
 
-use function MicroHTML\{A,SPAN,emptyHTML,INPUT,BR,SELECT,OPTION,rawHTML};
+use function MicroHTML\A;
+use function MicroHTML\SPAN;
+use function MicroHTML\emptyHTML;
+use function MicroHTML\INPUT;
+use function MicroHTML\BR;
+use function MicroHTML\SELECT;
+use function MicroHTML\OPTION;
+use function MicroHTML\rawHTML;
 use MicroCRUD\Column;
 use MicroCRUD\DateTimeColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
-
-class ShortDateTimeColumn extends DateTimeColumn {
+class ShortDateTimeColumn extends DateTimeColumn
+{
     public function read_input(array $inputs)
     {
         return emptyHTML(
@@ -24,31 +31,32 @@ class ShortDateTimeColumn extends DateTimeColumn {
             ])
         );
     }
-
 }
 
-class ActorColumn extends Column {
+class ActorColumn extends Column
+{
     public function __construct($name, $title)
     {
         parent::__construct($name, $title, "((username LIKE :{$name}) OR (address::text LIKE :{$name}))");
         $this->input_mod = function ($var) {
-			return "%$var%";
-		};
+            return "%$var%";
+        };
     }
 
     public function display($row)
     {
-		$ret = emptyHTML();
+        $ret = emptyHTML();
         if ($row['username'] != "Anonymous") {
             $ret->appendChild(A(["href"=>make_link("user/{$row['username']}"), "title"=>$row['address']], $row['username']));
-			$ret->appendChild(BR());
+            $ret->appendChild(BR());
         }
-		$ret->appendChild($row['address']);
+        $ret->appendChild($row['address']);
         return $ret;
     }
 }
 
-class MessageColumn extends Column {
+class MessageColumn extends Column
+{
     public function __construct($name, $title)
     {
         parent::__construct(
@@ -60,10 +68,9 @@ class MessageColumn extends Column {
             list($m, $l) = $var;
             if (empty($m)) {
                 $m = "%";
+            } else {
+                $m = "%$m%";
             }
-			else {
-				$m = "%$m%";
-			}
             if (empty($l)) {
                 $l = 0;
             }
@@ -74,21 +81,21 @@ class MessageColumn extends Column {
     public function read_input($inputs)
     {
         $ret = emptyHTML(
-			INPUT([
-				"type"=>"text",
-				"name"=>"r_{$this->name}[]",
-				"placeholder"=>$this->title,
-				"value"=>@$inputs["r_{$this->name}"][0]
-			])
-		);
+            INPUT([
+                "type"=>"text",
+                "name"=>"r_{$this->name}[]",
+                "placeholder"=>$this->title,
+                "value"=>@$inputs["r_{$this->name}"][0]
+            ])
+        );
 
-		$options = [
-			"Debug" => SCORE_LOG_DEBUG,
-			"Info" => SCORE_LOG_INFO,
-			"Warning" => SCORE_LOG_WARNING,
-			"Error" => SCORE_LOG_ERROR,
-			"Critical" => SCORE_LOG_CRITICAL,
-		];
+        $options = [
+            "Debug" => SCORE_LOG_DEBUG,
+            "Info" => SCORE_LOG_INFO,
+            "Warning" => SCORE_LOG_WARNING,
+            "Error" => SCORE_LOG_ERROR,
+            "Critical" => SCORE_LOG_CRITICAL,
+        ];
         $s = SELECT(["name"=>"r_{$this->name}[]"]);
         $s->appendChild(OPTION(["value"=>""], '-'));
         foreach ($options as $k => $v) {
@@ -98,7 +105,7 @@ class MessageColumn extends Column {
             }
             $s->appendChild(OPTION($attrs, $k));
         }
-		$ret->appendChild($s);
+        $ret->appendChild($s);
         return $ret;
     }
 
@@ -192,8 +199,8 @@ class LogDatabase extends Extension
         global $cache, $database, $user;
         if ($event->page_matches("log/view")) {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
-				$t = new LogTable($database->raw_db());
-				$t->inputs = $_GET;
+                $t = new LogTable($database->raw_db());
+                $t->inputs = $_GET;
                 $this->theme->display_events($t->table($t->query()), $t->paginator());
             }
         }
