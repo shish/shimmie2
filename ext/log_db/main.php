@@ -1,6 +1,6 @@
 <?php
 
-use function MicroHTML\{A,SPAN,emptyHTML,INPUT,BR,SELECT,OPTION};
+use function MicroHTML\{A,SPAN,emptyHTML,INPUT,BR,SELECT,OPTION,rawHTML};
 use MicroCRUD\Column;
 use MicroCRUD\DateTimeColumn;
 use MicroCRUD\TextColumn;
@@ -30,7 +30,10 @@ class ShortDateTimeColumn extends DateTimeColumn {
 class ActorColumn extends Column {
     public function __construct($name, $title)
     {
-        parent::__construct($name, $title, "((username=:$name) OR (address=:$name))");
+        parent::__construct($name, $title, "((username LIKE :{$name}) OR (address::text LIKE :{$name}))");
+        $this->input_mod = function ($var) {
+			return "%$var%";
+		};
     }
 
     public function display($row)
@@ -109,7 +112,7 @@ class MessageColumn extends Column {
             case SCORE_LOG_ERROR: $c = "#C00"; break;
             case SCORE_LOG_CRITICAL: $c = "#F00"; break;
         }
-        return SPAN(["style"=>"color: $c"], $this->scan_entities($row[$this->name]));
+        return SPAN(["style"=>"color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
 
     protected function scan_entities($line)
