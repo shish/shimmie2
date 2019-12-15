@@ -108,7 +108,7 @@ class Rule34 extends Extension
                     if (preg_match_all("/([a-fA-F0-9]{32})/", $all, $matches)) {
                         $matches = $matches[0];
                         foreach ($matches as $hash) {
-                            flash_message("Cleaning {$hash}");
+                            $page->flash("Cleaning {$hash}");
                             if (strlen($hash) != 32) {
                                 continue;
                             }

@@ -165,7 +165,7 @@ class Favorites extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_favorite":
@@ -175,7 +175,7 @@ class Favorites extends Extension
                         send_event(new FavoriteSetEvent($image->id, $user, true));
                         $total++;
                     }
-                    flash_message("Added $total items to favorites");
+                    $page->flash("Added $total items to favorites");
                 }
                 break;
             case "bulk_unfavorite":
@@ -185,7 +185,7 @@ class Favorites extends Extension
                         send_event(new FavoriteSetEvent($image->id, $user, false));
                         $total++;
                     }
-                    flash_message("Removed $total items from favorites");
+                    $page->flash("Removed $total items from favorites");
                 }
                 break;
         }

@@ -93,6 +93,8 @@ class IPBan extends Extension
     {
         global $cache, $config, $database, $page, $user, $_shm_user_classes;
 
+        $d = @$_GET['DEBUG'];
+
         // Get lists of banned IPs and banned networks
         $ips = $cache->get("ip_bans");
         $networks = $cache->get("network_bans");
@@ -130,6 +132,12 @@ class IPBan extends Extension
             }
         }
 
+        if ($d) {
+            print($remote);
+            print("\n");
+            print($active_ban_id);
+            print("\n");
+        }
         // If an active ban is found, act on it
         if (!is_null($active_ban_id)) {
             $row = $database->get_row("SELECT * FROM bans WHERE id=:id", ["id"=>$active_ban_id]);
@@ -181,14 +189,14 @@ class IPBan extends Extension
                     $user->ensure_authed();
                     $input = validate_input(["c_ip"=>"string", "c_mode"=>"string", "c_reason"=>"string", "c_expires"=>"optional,date"]);
                     send_event(new AddIPBanEvent($input['c_ip'], $input['c_mode'], $input['c_reason'], $input['c_expires']));
-                    flash_message("Ban for {$input['c_ip']} added");
+                    $page->flash("Ban for {$input['c_ip']} added");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "delete") {
                     $user->ensure_authed();
                     $input = validate_input(["d_id"=>"int"]);
                     send_event(new RemoveIPBanEvent($input['d_id']));
-                    flash_message("Ban removed");
+                    $page->flash("Ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("ip_ban/list"));
                 } elseif ($event->get_arg(0) == "list") {

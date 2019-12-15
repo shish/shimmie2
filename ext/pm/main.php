@@ -164,7 +164,7 @@ class PrivMsg extends Extension
                             $subject = $_POST["subject"];
                             $message = $_POST["message"];
                             send_event(new SendPMEvent(new PM($from_id, $_SERVER["REMOTE_ADDR"], $to_id, $subject, $message)));
-                            flash_message("PM sent");
+                            $page->flash("PM sent");
                             $page->set_mode(PageMode::REDIRECT);
                             $page->set_redirect($_SERVER["HTTP_REFERER"]);
                         }

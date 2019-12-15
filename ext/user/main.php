@@ -563,11 +563,11 @@ class UserPage extends Extension
 
     private function change_name_wrapper(User $duser, $name)
     {
-        global $user;
+        global $page, $user;
 
         if ($user->can(Permissions::EDIT_USER_NAME) && $this->user_can_edit_user($user, $duser)) {
             $duser->set_name($name);
-            flash_message("Username changed");
+            $page->flash("Username changed");
             // TODO: set login cookie if user changed themselves
             $this->redirect_to_user($duser);
         } else {
@@ -577,7 +577,7 @@ class UserPage extends Extension
 
     private function change_password_wrapper(User $duser, string $pass1, string $pass2)
     {
-        global $user;
+        global $page, $user;
 
         if ($this->user_can_edit_user($user, $duser)) {
             if ($pass1 != $pass2) {
@@ -590,7 +590,7 @@ class UserPage extends Extension
                     $this->set_login_cookie($duser->name, $pass1);
                 }
 
-                flash_message("Password changed");
+                $page->flash("Password changed");
                 $this->redirect_to_user($duser);
             }
         }
@@ -598,23 +598,23 @@ class UserPage extends Extension
 
     private function change_email_wrapper(User $duser, string $address)
     {
-        global $user;
+        global $page, $user;
 
         if ($this->user_can_edit_user($user, $duser)) {
             $duser->set_email($address);
 
-            flash_message("Email changed");
+            $page->flash("Email changed");
             $this->redirect_to_user($duser);
         }
     }
 
     private function change_class_wrapper(User $duser, string $class)
     {
-        global $user;
+        global $page, $user;
 
         if ($user->class->name == "admin") {
             $duser->set_class($class);
-            flash_message("Class changed");
+            $page->flash("Class changed");
             $this->redirect_to_user($duser);
         }
     }

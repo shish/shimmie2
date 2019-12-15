@@ -19,6 +19,7 @@ define("SCORE_LOG_NOTSET", 0);
  */
 function log_msg(string $section, int $priority, string $message, ?string $flash=null, $args=[])
 {
+    global $page;
     send_event(new LogEvent($section, $priority, $message, $args));
     $threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 
@@ -26,7 +27,7 @@ function log_msg(string $section, int $priority, string $message, ?string $flash
         print date("c")." $section: $message\n";
     }
     if (!is_null($flash)) {
-        flash_message($flash);
+        $page->flash($flash);
     }
 }
 

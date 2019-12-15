@@ -133,7 +133,7 @@ class Trash extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_trash_restore":
@@ -143,7 +143,7 @@ class Trash extends Extension
                         self::set_trash($image->id, false);
                         $total++;
                     }
-                    flash_message("Restored $total items from trash");
+                    $page->flash("Restored $total items from trash");
                 }
                 break;
         }

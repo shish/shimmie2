@@ -357,7 +357,7 @@ class Ratings extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_rate":
@@ -371,7 +371,7 @@ class Ratings extends Extension
                         send_event(new RatingSetEvent($image, $rating));
                         $total++;
                     }
-                    flash_message("Rating set for $total items");
+                    $page->flash("Rating set for $total items");
                 }
                 break;
         }

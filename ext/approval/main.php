@@ -210,7 +210,7 @@ class Approval extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_approve_image":
@@ -220,7 +220,7 @@ class Approval extends Extension
                         self::approve_image($image->id);
                         $total++;
                     }
-                    flash_message("Approved $total items");
+                    $page->flash("Approved $total items");
                 }
                 break;
             case "bulk_disapprove_image":
@@ -230,7 +230,7 @@ class Approval extends Extension
                         self::disapprove_image($image->id);
                         $total++;
                     }
-                    flash_message("Disapproved $total items");
+                    $page->flash("Disapproved $total items");
                 }
                 break;
         }

@@ -45,11 +45,7 @@ class Layout
             $wrapper = ' style="height: 3em; overflow: auto;"';
         }
 
-        $flash = $page->get_cookie("flash_message");
-        $flash_html = "";
-        if ($flash) {
-            $flash_html = "<b id='flash'>".nl2br(html_escape($flash))." <a href='#' onclick=\"\$('#flash').hide(); return false;\">[X]</a></b>";
-        }
+        $flash_html = $page->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $flash)))."</b>" : "";
 
         print <<<EOD
 <!doctype html>

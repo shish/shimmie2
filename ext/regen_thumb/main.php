@@ -63,7 +63,7 @@ class RegenThumb extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_regen":
@@ -80,7 +80,7 @@ class RegenThumb extends Extension
                             $total++;
                         }
                     }
-                    flash_message("Regenerated thumbnails for $total items");
+                    $page->flash("Regenerated thumbnails for $total items");
                 }
                 break;
         }
@@ -93,6 +93,7 @@ class RegenThumb extends Extension
 
     public function onAdminAction(AdminActionEvent $event)
     {
+        global $page;
         switch ($event->action) {
             case "regen_thumbs":
             $event->redirect = true;
@@ -128,7 +129,7 @@ class RegenThumb extends Extension
                         break;
                     }
                 }
-                flash_message("Re-generated $i thumbnails");
+                $page->flash("Re-generated $i thumbnails");
                 break;
             case "delete_thumbs":
                 $event->redirect = true;
@@ -144,11 +145,11 @@ class RegenThumb extends Extension
                             $i++;
                         }
                     }
-                    flash_message("Deleted $i thumbnails for ".$_POST["delete_thumb_type"]." images");
+                    $page->flash("Deleted $i thumbnails for ".$_POST["delete_thumb_type"]." images");
                 } else {
                     $dir = "data/thumbs/";
                     $this->remove_dir_recursively($dir);
-                    flash_message("Deleted all thumbnails");
+                    $page->flash("Deleted all thumbnails");
                 }
 
 

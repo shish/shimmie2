@@ -116,13 +116,13 @@ class BulkActions extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_delete":
                 if ($user->can(Permissions::DELETE_IMAGE)) {
                     $i = $this->delete_items($event->items);
-                    flash_message("Deleted $i items");
+                    $page->flash("Deleted $i items");
                 }
                 break;
             case "bulk_tag":
@@ -137,7 +137,7 @@ class BulkActions extends Extension
                     }
 
                     $i= $this->tag_items($event->items, $tags, $replace);
-                    flash_message("Tagged $i items");
+                    $page->flash("Tagged $i items");
                 }
                 break;
             case "bulk_source":
@@ -147,7 +147,7 @@ class BulkActions extends Extension
                 if ($user->can(Permissions::BULK_EDIT_IMAGE_SOURCE)) {
                     $source = $_POST['bulk_source'];
                     $i = $this->set_source($event->items, $source);
-                    flash_message("Set source for $i items");
+                    $page->flash("Set source for $i items");
                 }
                 break;
         }
@@ -215,6 +215,7 @@ class BulkActions extends Extension
 
     private function delete_items(iterable $items): int
     {
+        global $page;
         $total = 0;
         foreach ($items as $image) {
             try {
@@ -227,7 +228,7 @@ class BulkActions extends Extension
                 send_event(new ImageDeletionEvent($image));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while removing {$image->id}: " . $e->getMessage(), "error");
+                $page->flash("Error while removing {$image->id}: " . $e->getMessage(), "error");
             }
         }
         return $total;
@@ -275,13 +276,14 @@ class BulkActions extends Extension
 
     private function set_source(iterable $items, String $source): int
     {
+        global $page;
         $total = 0;
         foreach ($items as $image) {
             try {
                 send_event(new SourceSetEvent($image, $source));
                 $total++;
             } catch (Exception $e) {
-                flash_message("Error while setting source for {$image->id}: " . $e->getMessage(), "error");
+                $page->flash("Error while setting source for {$image->id}: " . $e->getMessage(), "error");
             }
         }
         return $total;

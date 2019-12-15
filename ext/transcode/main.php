@@ -166,7 +166,7 @@ class TranscodeImage extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user, $database;
+        global $user, $database, $page;
 
         switch ($event->action) {
             case self::ACTION_BULK_TRANSCODE:
@@ -195,7 +195,7 @@ class TranscodeImage extends Extension
                             }
                         }
                     }
-                    flash_message("Transcoded $total items");
+                    $page->flash("Transcoded $total items");
                 }
                 break;
         }

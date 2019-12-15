@@ -295,8 +295,7 @@ class Setup extends Extension
                 } elseif ($event->get_arg(0) == "save" && $user->check_auth_token()) {
                     send_event(new ConfigSaveEvent($config));
                     $config->save();
-                    flash_message("Config saved");
-
+                    $page->flash("Config saved");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("setup"));
                 } elseif ($event->get_arg(0) == "advanced") {

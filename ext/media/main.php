@@ -157,7 +157,7 @@ class Media extends Extension
 
     public function onBulkAction(BulkActionEvent $event)
     {
-        global $user;
+        global $page, $user;
 
         switch ($event->action) {
             case "bulk_media_rescan":
@@ -172,7 +172,7 @@ class Media extends Extension
                             $failed++;
                         }
                     }
-                    flash_message("Scanned media properties for $total items, failed for $failed");
+                    $page->flash("Scanned media properties for $total items, failed for $failed");
                 }
                 break;
         }

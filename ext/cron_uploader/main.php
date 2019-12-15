@@ -107,6 +107,7 @@ class CronUploader extends Extension
 
     private function restage_folder(string $folder)
     {
+        global $page;
         if (empty($folder)) {
             throw new Exception("folder empty");
         }
@@ -122,7 +123,7 @@ class CronUploader extends Extension
         $results = get_dir_contents($queue_dir);
 
         if (count($results) > 0) {
-            flash_message("Queue folder must be empty to re-stage", "error");
+            $page->flash("Queue folder must be empty to re-stage", "error");
             return;
         }
 
@@ -130,9 +131,9 @@ class CronUploader extends Extension
 
         if (count($results) == 0) {
             if (rmdir($stage_dir)===false) {
-                flash_message("Nothing to stage from $folder, cannot remove folder");
+                $page->flash("Nothing to stage from $folder, cannot remove folder");
             } else {
-                flash_message("Nothing to stage from $folder, removing folder");
+                $page->flash("Nothing to stage from $folder, removing folder");
             }
             return;
         }
@@ -144,15 +145,16 @@ class CronUploader extends Extension
             rename($original_path, $new_path);
         }
 
-        flash_message("Re-staged $folder to queue");
+        $page->flash("Re-staged $folder to queue");
         rmdir($stage_dir);
     }
 
     private function clear_folder($folder)
     {
+        global $page;
         $path = join_path(CronUploaderConfig::get_dir(), $folder);
         deltree($path);
-        flash_message("Cleared $path");
+        $page->flash("Cleared $path");
     }
 
 

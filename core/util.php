@@ -133,27 +133,6 @@ function get_session_ip(Config $config): string
 
 
 /**
- * Set (or extend) a flash-message cookie.
- *
- * This can optionally be done at the same time as saving a log message with log_*()
- *
- * Generally one should flash a message in onPageRequest and log a message wherever
- * the action actually takes place (eg onWhateverElse) - but much of the time, actions
- * are taken from within onPageRequest...
- */
-function flash_message(string $text, string $type="info"): void
-{
-    global $page;
-    $current = $page->get_cookie("flash_message");
-    if ($current) {
-        $text = $current . "\n" . $text;
-    }
-    # the message should be viewed pretty much immediately,
-    # so 60s timeout should be more than enough
-    $page->add_cookie("flash_message", $text, time()+60, "/");
-}
-
-/**
  * A shorthand way to send a TextFormattingEvent and get the results.
  */
 function format_text(string $string): string

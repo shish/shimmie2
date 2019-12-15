@@ -686,18 +686,18 @@ class Image
      */
     public function set_tags(array $unfiltered_tags): void
     {
-        global $cache, $database;
+        global $cache, $database, $page;
 
         $unfiltered_tags = array_unique($unfiltered_tags);
 
         $tags = [];
         foreach ($unfiltered_tags as $tag) {
             if (mb_strlen($tag, 'UTF-8') > 255) {
-                flash_message("Can't set a tag longer than 255 characters");
+                $page->flash("Can't set a tag longer than 255 characters");
                 continue;
             }
             if (startsWith($tag, "-")) {
-                flash_message("Can't set a tag which starts with a minus");
+                $page->flash("Can't set a tag which starts with a minus");
                 continue;
             }
 

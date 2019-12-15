@@ -90,11 +90,11 @@ class ImageBan extends Extension
 
                     if ($hash) {
                         send_event(new AddImageHashBanEvent($hash, $reason));
-                        flash_message("Image ban added");
+                        $page->flash("Image ban added");
 
                         if ($image) {
                             send_event(new ImageDeletionEvent($image));
-                            flash_message("Image deleted");
+                            $page->flash("Image deleted");
                         }
 
                         $page->set_mode(PageMode::REDIRECT);
@@ -104,7 +104,7 @@ class ImageBan extends Extension
                     $user->ensure_authed();
                     $input = validate_input(["d_hash"=>"string"]);
                     send_event(new RemoveImageHashBanEvent($input['d_hash']));
-                    flash_message("Image ban removed");
+                    $page->flash("Image ban removed");
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect($_SERVER['HTTP_REFERER']);
                 } elseif ($event->get_arg(0) == "list") {

@@ -157,6 +157,9 @@ class Page
     /** @var Block[] */
     public $blocks = [];
 
+    /** @var string[] */
+    public $flash = [];
+
     /**
      * Set the HTTP status code
      */
@@ -178,6 +181,11 @@ class Page
     public function set_subheading(string $subheading): void
     {
         $this->subheading = $subheading;
+    }
+
+    public function flash(string $message): void
+    {
+        $this->flash[] = $message;
     }
 
     /**
@@ -263,6 +271,10 @@ class Page
     {
         global $page, $user;
 
+        if (@$_GET["flash"]) {
+            $this->flash[] = $_GET['flash'];
+        }
+
         header("HTTP/1.0 {$this->code} Shimmie");
         header("Content-type: " . $this->type);
         header("X-Powered-By: SCore-" . SCORE_VERSION);
@@ -295,9 +307,6 @@ class Page
                 #	header("Cache-control: no-cache");
                 #	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
                 #}
-                if ($this->get_cookie("flash_message") !== null) {
-                    $this->add_cookie("flash_message", "", -1, "/");
-                }
                 usort($this->blocks, "blockcmp");
                 $pnbe = new PageNavBuildingEvent();
                 send_event($pnbe);
@@ -426,6 +435,10 @@ class Page
                 }
                 break;
             case PageMode::REDIRECT:
+                if ($this->flash) {
+                    $this->redirect .= (strpos($this->redirect, "?") === false) ? "?" : "&";
+                    $this->redirect .= "flash=" . url_escape(implode("\n", $this->flash));
+                }
                 header('Location: ' . $this->redirect);
                 print 'You should be redirected to <a href="' . $this->redirect . '">' . $this->redirect . '</a>';
                 break;

@@ -136,12 +136,13 @@ class Tag
 
     public static function sanitize_array(array $tags): array
     {
+        global $page;
         $tag_array = [];
         foreach ($tags as $tag) {
             try {
                 $tag = Tag::sanitize($tag);
             } catch (Exception $e) {
-                flash_message($e->getMessage());
+                $page->flash($e->getMessage());
                 continue;
             }
 
