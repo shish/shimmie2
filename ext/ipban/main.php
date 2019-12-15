@@ -245,7 +245,7 @@ class IPBan extends Extension
         $database->Execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
         $cache->delete("ip_bans");
         $cache->delete("network_bans");
-        log_info("ipban", "Banned {$event->ip} because '{$event->reason}' until {$event->expires}");
+        log_info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
     }
 
     public function onRemoveIPBan(RemoveIPBanEvent $event)
