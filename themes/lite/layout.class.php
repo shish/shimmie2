@@ -82,7 +82,7 @@ class Layout
             $main_block_html = "<article>{$main_block_html}</article>";
         }
 
-        $flash_html = $page->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $flash)))."</b>" : "";
+        $flash_html = $page->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $page->flash)))."</b>" : "";
 
         print <<<EOD
 <!doctype html>

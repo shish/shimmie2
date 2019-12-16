@@ -50,7 +50,7 @@ class Layout
             $withleft = "";
         }
 
-        $flash_html = $page->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $flash)))."</b>" : "";
+        $flash_html = $page->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $page->flash)))."</b>" : "";
 
         print <<<EOD
 <!doctype html>
