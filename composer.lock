@@ -388,12 +388,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "dae8198fdb6716f8d30f683dfb05140b11d4ff19"
+                "reference": "f64681c605922909d57e9c17c0b63311f3c8a5d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/dae8198fdb6716f8d30f683dfb05140b11d4ff19",
-                "reference": "dae8198fdb6716f8d30f683dfb05140b11d4ff19",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/f64681c605922909d57e9c17c0b63311f3c8a5d6",
+                "reference": "f64681c605922909d57e9c17c0b63311f3c8a5d6",
                 "shasum": ""
             },
             "require": {
@@ -429,7 +429,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2019-12-15T15:19:46+00:00"
+            "time": "2019-12-16T00:07:35+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -541,12 +541,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "9012edbd1604a93cee7e7422d07a2c5776c56e0c"
+                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/9012edbd1604a93cee7e7422d07a2c5776c56e0c",
-                "reference": "9012edbd1604a93cee7e7422d07a2c5776c56e0c",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/579bb7356d91f9456ccd505f24ca8b667966a0a7",
+                "reference": "579bb7356d91f9456ccd505f24ca8b667966a0a7",
                 "shasum": ""
             },
             "require": {
@@ -581,7 +581,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2019-08-26T15:40:39+00:00"
+            "time": "2019-12-15T19:12:40+00:00"
         },
         {
             "name": "phar-io/manifest",
