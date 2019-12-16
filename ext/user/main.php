@@ -6,6 +6,7 @@ use function MicroHTML\A;
 use MicroCRUD\Column;
 use MicroCRUD\EnumColumn;
 use MicroCRUD\TextColumn;
+use MicroCRUD\DateColumn;
 use MicroCRUD\Table;
 
 class UserNameColumn extends TextColumn
@@ -57,6 +58,7 @@ class UserTable extends Table
             new EnumColumn("class", "Class", $classes),
             // Added later, for admins only
             // new TextColumn("email", "Email"),
+            new DateColumn("joindate", "Join Date"),
             new UserLinksColumn(),
         ];
         $this->order_by = ["name"];
