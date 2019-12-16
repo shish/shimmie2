@@ -116,6 +116,9 @@ class User
     public static function by_name_and_pass(string $name, string $pass): ?User
     {
         $my_user = User::by_name($name);
+        if (!$my_user && strpos($name, "_") !== false) {
+            $my_user = User::by_name(str_replace(" ", "_", $name));
+        }
         if ($my_user) {
             if ($my_user->passhash == md5(strtolower($name) . $pass)) {
                 log_info("core-user", "Migrating from md5 to bcrypt for ".html_escape($name));
