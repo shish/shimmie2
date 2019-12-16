@@ -67,6 +67,14 @@ class Page
         $this->type = $type;
     }
 
+    public function __construct()
+    {
+        if (@$_GET["flash"]) {
+            $this->flash[] = $_GET['flash'];
+            unset($_GET["flash"]);
+        }
+    }
+
 
     //@}
     // ==============================================
@@ -270,10 +278,6 @@ class Page
     public function display(): void
     {
         global $page, $user;
-
-        if (@$_GET["flash"]) {
-            $this->flash[] = $_GET['flash'];
-        }
 
         header("HTTP/1.0 {$this->code} Shimmie");
         header("Content-type: " . $this->type);
