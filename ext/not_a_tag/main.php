@@ -1,5 +1,6 @@
 <?php
 
+use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
@@ -13,10 +14,11 @@ class NotATagTable extends Table
         $this->primary_key = "tag";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new TextColumn("tag", "Tag"),
             new TextColumn("redirect", "Redirect"),
-        ];
+            new ActionColumn("id"),
+        ]);
         $this->order_by = ["tag", "redirect"];
         $this->create_url = make_link("untag/add");
         $this->delete_url = make_link("untag/remove");
@@ -116,6 +118,7 @@ class NotATag extends Extension
                         $database->scoreql_to_sql(
 							"DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)"
 						),
+
                         ["tag"=>$input['d_tag']]
                     );
                     $page->flash("Image ban removed");

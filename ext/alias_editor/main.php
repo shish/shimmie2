@@ -1,5 +1,6 @@
 <?php
 
+use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
 
@@ -13,10 +14,11 @@ class AliasTable extends Table
         $this->primary_key = "oldtag";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new TextColumn("oldtag", "Old Tag"),
             new TextColumn("newtag", "New Tag"),
-        ];
+            new ActionColumn("oldtag"),
+        ]);
         $this->order_by = ["oldtag"];
         $this->table_attrs = ["class" => "zebra"];
     }

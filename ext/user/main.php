@@ -3,7 +3,7 @@
 require_once "events.php";
 
 use function MicroHTML\A;
-use MicroCRUD\Column;
+use MicroCRUD\ActionColumn;
 use MicroCRUD\EnumColumn;
 use MicroCRUD\TextColumn;
 use MicroCRUD\Table;
@@ -16,21 +16,14 @@ class UserNameColumn extends TextColumn
     }
 }
 
-class UserLinksColumn extends Column
+class UserActionColumn extends ActionColumn
 {
     public function __construct()
     {
-        parent::__construct("links", "User Links", "(1=1)");
+        parent::__construct("id", "User Links");
         $this->sortable = false;
     }
-    public function create_input(array $inputs)
-    {
-        return "";
-    }
-    public function read_input(array $inputs)
-    {
-        return "";
-    }
+
     public function display(array $row)
     {
         return A(["href"=>make_link("post/list/user={$row['name']}/1")], "Posts");
@@ -52,13 +45,13 @@ class UserTable extends Table
         $this->base_query = "SELECT * FROM users";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new UserNameColumn("name", "Name"),
             new EnumColumn("class", "Class", $classes),
             // Added later, for admins only
             // new TextColumn("email", "Email"),
-            new UserLinksColumn(),
-        ];
+            new UserActionColumn(),
+        ]);
         $this->order_by = ["name"];
         $this->table_attrs = ["class" => "zebra"];
     }
