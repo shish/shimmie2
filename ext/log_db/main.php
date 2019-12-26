@@ -86,7 +86,6 @@ class ActorColumn extends Column
             }
         }
         return [$un, $ip];
->>>>>>> crud update
     }
 
     public function display($row)
