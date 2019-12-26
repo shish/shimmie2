@@ -47,7 +47,7 @@ class ActorColumn extends Column
         $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
         switch ($driver) {
             case "pgsql":
-                return "((username = :{$this->name}_0) OR (address && inet :{$this->name}_1))";
+                return "((username = :{$this->name}_0) OR (address && cast(:{$this->name}_1 as inet)))";
             default:
                 return "((username = :{$this->name}_0) OR (address = :{$this->name}_1))";
         }
@@ -79,11 +79,7 @@ class ActorColumn extends Column
             $un = null;
         }
         if (empty($ip)) {
-            $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
-            switch ($driver) {
-                case "pgsql": $ip = "0.0.0.0/0"; break;
-                default: $ip = null; break;
-            }
+            $ip = null;
         }
         return [$un, $ip];
     }
