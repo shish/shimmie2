@@ -77,8 +77,8 @@ class PostgreSQL extends DBEngine
     /** @var string */
     public $name = DatabaseDriver::PGSQL;
 
-    public $BOOL_Y = true;
-    public $BOOL_N = false;
+    public $BOOL_Y = "true";
+    public $BOOL_N = "false";
 
     public function init(PDO $db)
     {
