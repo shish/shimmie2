@@ -435,7 +435,7 @@ class UserPage extends Extension
     private function page_create()
     {
         global $config, $page, $user;
-        if ($user->can(Permissions::CREATE_USER)) {
+        if (!$user->can(Permissions::CREATE_USER)) {
             $this->theme->display_error(403, "Account creation blocked", "Account creation is currently disabled");
             return;
         }
