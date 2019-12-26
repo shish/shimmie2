@@ -1,5 +1,6 @@
 <?php
 
+use MicroCRUD\ActionColumn;
 use MicroCRUD\InetColumn;
 use MicroCRUD\StringColumn;
 use MicroCRUD\DateColumn;
@@ -21,7 +22,7 @@ class IPBanTable extends Table
 		";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new InetColumn("ip", "IP"),
             new EnumColumn("mode", "Mode", [
                 "Block"=>"block",
@@ -33,7 +34,8 @@ class IPBanTable extends Table
             new StringColumn("banner", "Banner"),
             new DateColumn("added", "Added"),
             new DateColumn("expires", "Expires"),
-        ];
+            new ActionColumn("id"),
+        ]);
         $this->order_by = ["expires", "id"];
         $this->flags = [
             "all" => ["((expires > CURRENT_TIMESTAMP) OR (expires IS NULL))", null],

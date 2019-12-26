@@ -8,6 +8,7 @@ use function MicroHTML\BR;
 use function MicroHTML\SELECT;
 use function MicroHTML\OPTION;
 use function MicroHTML\rawHTML;
+use MicroCRUD\ActionColumn;
 use MicroCRUD\Column;
 use MicroCRUD\DateTimeColumn;
 use MicroCRUD\TextColumn;
@@ -37,10 +38,54 @@ class ActorColumn extends Column
 {
     public function __construct($name, $title)
     {
-        parent::__construct($name, $title, "((LOWER(username) LIKE LOWER(:{$name})) OR (address::text LIKE :{$name}))");
-        $this->input_mod = function ($var) {
-            return "%$var%";
-        };
+        parent::__construct($name, $title);
+        $this->sortable = false;
+    }
+
+    public function get_sql_filter(): string
+    {
+        $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        switch ($driver) {
+            case "pgsql":
+                return "((username = :{$this->name}_0) OR (address && inet :{$this->name}_1))";
+            default:
+                return "((username = :{$this->name}_0) OR (address = :{$this->name}_1))";
+        }
+    }
+
+    public function read_input($inputs)
+    {
+        return emptyHTML(
+            INPUT([
+                "type" => "text",
+                "name" => "r_{$this->name}[]",
+                "placeholder" => "Username",
+                "value" => @$inputs["r_{$this->name}"][0]
+            ]),
+            BR(),
+            INPUT([
+                "type" => "text",
+                "name" => "r_{$this->name}[]",
+                "placeholder" => "IP Address",
+                "value" => @$inputs["r_{$this->name}"][1]
+            ])
+        );
+    }
+
+    public function modify_input_for_read($input)
+    {
+        list($un, $ip) = $input;
+        if (empty($un)) {
+            $un = null;
+        }
+        if (empty($ip)) {
+            $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+            switch ($driver) {
+                case "pgsql": $ip = "0.0.0.0/0"; break;
+                default: $ip = null; break;
+            }
+        }
+        return [$un, $ip];
     }
 
     public function display($row)
@@ -59,23 +104,13 @@ class MessageColumn extends Column
 {
     public function __construct($name, $title)
     {
-        parent::__construct(
-            $name,
-            $title,
-            "($name LIKE :{$name}_0 AND priority >= :{$name}_1)"
-        );
-        $this->input_mod = function ($var) {
-            list($m, $l) = $var;
-            if (empty($m)) {
-                $m = "%";
-            } else {
-                $m = "%$m%";
-            }
-            if (empty($l)) {
-                $l = 0;
-            }
-            return [$m, $l];
-        };
+        parent::__construct($name, $title);
+        $this->sortable = false;
+    }
+
+    public function get_sql_filter(): string
+    {
+        return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";
     }
 
     public function read_input($inputs)
@@ -107,6 +142,20 @@ class MessageColumn extends Column
         }
         $ret->appendChild($s);
         return $ret;
+    }
+
+    public function modify_input_for_read($input)
+    {
+        list($m, $l) = $input;
+        if (empty($m)) {
+            $m = "%";
+        } else {
+            $m = "%$m%";
+        }
+        if (empty($l)) {
+            $l = 0;
+        }
+        return [$m, $l];
     }
 
     public function display($row)
@@ -143,12 +192,13 @@ class LogTable extends Table
         $this->base_query = "SELECT * FROM score_log";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new ShortDateTimeColumn("date_sent", "Time"),
             new TextColumn("section", "Module"),
             new ActorColumn("username_or_address", "User"),
-            new MessageColumn("message", "Message")
-        ];
+            new MessageColumn("message", "Message"),
+            new ActionColumn("id"),
+        ]);
         $this->order_by = ["date_sent DESC"];
         $this->table_attrs = ["class" => "zebra"];
     }

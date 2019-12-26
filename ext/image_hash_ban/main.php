@@ -1,5 +1,6 @@
 <?php
 
+use MicroCRUD\ActionColumn;
 use MicroCRUD\StringColumn;
 use MicroCRUD\DateColumn;
 use MicroCRUD\TextColumn;
@@ -15,11 +16,12 @@ class HashBanTable extends Table
         $this->primary_key = "hash";
         $this->size = 100;
         $this->limit = 1000000;
-        $this->columns = [
+        $this->set_columns([
             new StringColumn("hash", "Hash"),
             new TextColumn("reason", "Reason"),
             new DateColumn("date", "Date"),
-        ];
+            new ActionColumn("id"),
+        ]);
         $this->order_by = ["date DESC", "id"];
         $this->create_url = make_link("image_hash_ban/add");
         $this->delete_url = make_link("image_hash_ban/remove");
