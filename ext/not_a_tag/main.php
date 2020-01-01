@@ -17,7 +17,7 @@ class NotATagTable extends Table
         $this->set_columns([
             new TextColumn("tag", "Tag"),
             new TextColumn("redirect", "Redirect"),
-            new ActionColumn("id"),
+            new ActionColumn("tag"),
         ]);
         $this->order_by = ["tag", "redirect"];
         $this->create_url = make_link("untag/add");

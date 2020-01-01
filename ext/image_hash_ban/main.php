@@ -20,7 +20,7 @@ class HashBanTable extends Table
             new StringColumn("hash", "Hash"),
             new TextColumn("reason", "Reason"),
             new DateColumn("date", "Date"),
-            new ActionColumn("id"),
+            new ActionColumn("hash"),
         ]);
         $this->order_by = ["date DESC", "id"];
         $this->create_url = make_link("image_hash_ban/add");
