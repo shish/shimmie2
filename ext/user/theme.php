@@ -1,4 +1,5 @@
 <?php
+use function \MicroHTML\{emptyHTML,rawHTML,TABLE,TBODY,TFOOT,TR,TH,TD,LABEL,INPUT,SMALL,A,BR,P};
 
 class UserPageTheme extends Themelet
 {
@@ -28,10 +29,10 @@ class UserPageTheme extends Themelet
 
     public function display_user_block(Page $page, User $user, $parts)
     {
-        $h_name = html_escape($user->name);
-        $html = 'Logged in as '.$h_name;
+        $html = emptyHTML('Logged in as ', $user->name);
         foreach ($parts as $part) {
-            $html .= '<br><a href="'.$part["link"].'">'.$part["name"].'</a>';
+            $html->appendChild(BR());
+            $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
         }
         $page->add_block(new Block("User Links", $html, "left", 90));
     }
@@ -47,30 +48,41 @@ class UserPageTheme extends Themelet
             $tac = $tfe->formatted;
         }
 
-        if (empty($tac)) {
-            $html = "";
-        } else {
-            $html = '<p>'.$tac.'</p>';
-        }
+        $form = SHM_FORM(make_link("user_admin/create"));
+        $form->appendChild(
+            TABLE(
+                ["class"=>"form"],
+                TBODY(
+                    TR(
+                        TH("Name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "required"=>true]))
+                    ),
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Repeat&nbsp;Password")),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "required"=>true]))
+                    ),
+                    TR(
+                        TH(rawHTML("Email&nbsp;(Optional)")),
+                        TD(INPUT(["type"=>'email', "name"=>'email']))
+                    ),
+                    TR(
+                        TD(["colspan"=>"2"], rawHTML(captcha_get_html()))
+                    ),
+                ),
+                TFOOT(
+					TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                )
+            )
+        );
 
-        $h_reca = "<tr><td colspan='2'>".captcha_get_html()."</td></tr>";
-
-        $html .= '
-		'.make_form(make_link("user_admin/create"))."
-			<table class='form'>
-				<tbody>
-					<tr><th>Name</th><td><input type='text' name='name' required></td></tr>
-					<tr><th>Password</th><td><input type='password' name='pass1' required></td></tr>
-					<tr><th>Repeat&nbsp;Password</th><td><input type='password' name='pass2' required></td></tr>
-					<tr><th>Email&nbsp;(Optional)</th><td><input type='email' name='email'></td></tr>
-					$h_reca
-				</tbody>
-				<tfoot>
-					<tr><td colspan='2'><input type='Submit' value='Create Account'></td></tr>
-				</tfoot>
-			</table>
-		</form>
-		";
+        $html = emptyHTML(
+            $tac ? P($tac) : null,
+            $form
+        );
 
         $page->set_title("Create Account");
         $page->set_heading("Create Account");
@@ -92,28 +104,32 @@ class UserPageTheme extends Themelet
     public function display_login_block(Page $page)
     {
         global $config, $user;
-        $html = '
-			'.make_form(make_link("user_admin/login"))."
-				<table style='width: 100%;' class='form'>
-					<tbody>
-						<tr>
-							<th><label for='user'>Name</label></th>
-							<td><input id='user' type='text' name='user' autocomplete='username'></td>
-						</tr>
-						<tr>
-							<th><label for='pass'>Password</label></th>
-							<td><input id='pass' type='password' name='pass' autocomplete='current-password'></td>
-						</tr>
-					</tbody>
-					<tfoot>
-						<tr><td colspan='2'><input type='submit' value='Log In'></td></tr>
-					</tfoot>
-				</table>
-			</form>
-		";
+        $form = SHM_FORM(make_link("user_admin/login"));
+        $form->appendChild(
+            TABLE(
+                ["style"=>"width: 100%", "class"=>"form"],
+                TBODY(
+                    TR(
+                        TH(LABEL(["for"=>"user"], "Name")),
+                        TD(INPUT(["id"=>"user", "type"=>"text", "name"=>"user", "autocomplete"=>"username"]))
+                    ),
+                    TR(
+                        TH(LABEL(["for"=>"pass"], "Password")),
+                        TD(INPUT(["id"=>"pass", "type"=>"password", "name"=>"pass", "autocomplete"=>"current-password"]))
+                    )
+                ),
+                TFOOT(
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Log In"])))
+                )
+            )
+        );
+
+        $html = emptyHTML();
+        $html->appendChild($form);
         if ($config->get_bool("login_signup_enabled") && $user->can(Permissions::CREATE_USER)) {
-            $html .= "<small><a href='".make_link("user_admin/create")."'>Create Account</a></small>";
+            $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
         }
+
         $page->add_block(new Block("Login", $html, "left", 90));
     }
 
@@ -271,11 +287,11 @@ class UserPageTheme extends Themelet
         <div class="command_example">
         <pre>poster=username</pre>
         <p>Returns images posted by "username".</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>poster_id=123</pre>
         <p>Returns images posted by user 123.</p>
-        </div> 
+        </div>
         ';
 
 
@@ -284,7 +300,7 @@ class UserPageTheme extends Themelet
         <div class=\"command_example\">
                 <pre>poster_ip=127.0.0.1</pre>
                 <p>Returns images posted from IP 127.0.0.1.</p>
-                </div> 
+                </div>
                 ";
         }
         return $output;
