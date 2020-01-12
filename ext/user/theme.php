@@ -98,11 +98,11 @@ class UserPageTheme extends Themelet
 					<tbody>
 						<tr>
 							<th><label for='user'>Name</label></th>
-							<td><input id='user' type='text' name='user'></td>
+							<td><input id='user' type='text' name='user' autocomplete='username'></td>
 						</tr>
 						<tr>
 							<th><label for='pass'>Password</label></th>
-							<td><input id='pass' type='password' name='pass'></td>
+							<td><input id='pass' type='password' name='pass' autocomplete='current-password'></td>
 						</tr>
 					</tbody>
 					<tfoot>
@@ -195,8 +195,8 @@ class UserPageTheme extends Themelet
 						<tr><th colspan='2'>Change Password</th></tr>
 					</thead>
 					<tbody>
-						<tr><th>Password</th><td><input type='password' name='pass1'></td></tr>
-						<tr><th>Repeat Password</th><td><input type='password' name='pass2'></td></tr>
+						<tr><th>Password</th><td><input type='password' name='pass1' autocomplete='new-password'></td></tr>
+						<tr><th>Repeat Password</th><td><input type='password' name='pass2' autocomplete='new-password'></td></tr>
 					</tbody>
 					<tfoot>
 						<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
@@ -208,7 +208,7 @@ class UserPageTheme extends Themelet
 				<input type='hidden' name='id' value='{$duser->id}'>
 				<table class='form'>
 					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
-					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."'></td></tr></tbody>
+					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."' autocomplete='email' inputmode='email'></td></tr></tbody>
 					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
 				</table>
 			</form>
