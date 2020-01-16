@@ -1,6 +1,15 @@
 <?php
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
+use function MicroHTML\DIV;
+use function MicroHTML\PRE;
+use function MicroHTML\P;
+use function MicroHTML\TABLE;
+use function MicroHTML\THEAD;
+use function MicroHTML\TFOOT;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Misc                                                                      *
@@ -692,4 +701,31 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     );
 
     return $f;
+}
+
+function SHM_COMMAND_EXAMPLE(string $ex, string $desc)
+{
+    return DIV(
+        ["class"=>"command_example"],
+        PRE($ex),
+        P($desc)
+    );
+}
+
+function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
+{
+    if (is_string($foot)) {
+        $foot = TFOOT(TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>$foot]))));
+    }
+    $form = SHM_FORM(make_link($target));
+    $form->appendChild(P(
+        INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
+        TABLE(
+            ["class"=>"form"],
+            THEAD(TR(TH(["colspan"=>"2"], $title))),
+            $body,
+            $foot
+        )
+    ));
+    return $form;
 }

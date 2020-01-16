@@ -1,5 +1,20 @@
 <?php
-use function \MicroHTML\{emptyHTML,rawHTML,TABLE,TBODY,TFOOT,TR,TH,TD,LABEL,INPUT,SMALL,A,BR,P};
+use function \MicroHTML\emptyHTML;
+use function \MicroHTML\rawHTML;
+use function \MicroHTML\TABLE;
+use function \MicroHTML\TBODY;
+use function \MicroHTML\TFOOT;
+use function \MicroHTML\TR;
+use function \MicroHTML\TH;
+use function \MicroHTML\TD;
+use function \MicroHTML\LABEL;
+use function \MicroHTML\INPUT;
+use function \MicroHTML\SMALL;
+use function \MicroHTML\A;
+use function \MicroHTML\BR;
+use function \MicroHTML\P;
+use function \MicroHTML\SELECT;
+use function \MicroHTML\OPTION;
 
 class UserPageTheme extends Themelet
 {
@@ -74,7 +89,7 @@ class UserPageTheme extends Themelet
                     ),
                 ),
                 TFOOT(
-					TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
+                    TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>"Create Account"])))
                 )
             )
         );
@@ -133,41 +148,35 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Login", $html, "left", 90));
     }
 
+    private function _ip_list(string $name, array $ips)
+    {
+        $td = TD("$name: ");
+        $n = 0;
+        foreach ($ips as $ip => $count) {
+            $td->appendChild(BR());
+            $td->appendChild("$ip ($count)");
+            if (++$n >= 20) {
+                $td->appendChild(BR());
+                $td->appendChild("...");
+                break;
+            }
+        }
+        return $td;
+    }
+
     public function display_ip_list(Page $page, array $uploads, array $comments, array $events)
     {
-        $html = "<table id='ip-history'>";
-        $html .= "<tr><td>Uploaded from: ";
-        $n = 0;
-        foreach ($uploads as $ip => $count) {
-            $html .= '<br>'.$ip.' ('.$count.')';
-            if (++$n >= 20) {
-                $html .= "<br>...";
-                break;
-            }
-        }
-
-        $html .= "</td><td>Commented from:";
-        $n = 0;
-        foreach ($comments as $ip => $count) {
-            $html .= '<br>'.$ip.' ('.$count.')';
-            if (++$n >= 20) {
-                $html .= "<br>...";
-                break;
-            }
-        }
-
-        $html .= "</td><td>Logged Events:";
-        $n = 0;
-        foreach ($events as $ip => $count) {
-            $html .= '<br>'.$ip.' ('.$count.')';
-            if (++$n >= 20) {
-                $html .= "<br>...";
-                break;
-            }
-        }
-
-        $html .= "</td></tr>";
-        $html .= "<tr><td colspan='3'>(Most recent at top)</td></tr></table>";
+        $html = TABLE(
+            ["id"=>"ip-history"],
+            TR(
+                $this->_ip_list("Uploaded from", $uploads),
+                $this->_ip_list("Commented from", $comments),
+                $this->_ip_list("Logged Events", $events)
+            ),
+            TR(
+                TD(["colspan"=>"3"], "(Most recent at top)")
+            )
+        );
 
         $page->add_block(new Block("IPs", $html, "main", 70));
     }
@@ -187,92 +196,84 @@ class UserPageTheme extends Themelet
     public function build_options(User $duser, UserOptionsBuildingEvent $event)
     {
         global $config, $user;
-        $html = "";
-        if ($duser->id != $config->get_int('anon_id')) {  //justa fool-admin protection so they dont mess around with anon users.
+        $html = emptyHTML();
 
+        // just a fool-admin protection so they dont mess around with anon users.
+        if ($duser->id != $config->get_int('anon_id')) {
             if ($user->can(Permissions::EDIT_USER_NAME)) {
-                $html .= "
-				<p>".make_form(make_link("user_admin/change_name"))."
-					<input type='hidden' name='id' value='{$duser->id}'>
-					<table class='form'>
-						<thead><tr><th colspan='2'>Change Name</th></tr></thead>
-						<tbody><tr><th>New name</th><td><input type='text' name='name' value='".html_escape($duser->name)."'></td></tr></tbody>
-						<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
-					</table>
-				</form>
-				</p>";
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/change_name",
+                    "Change Name",
+                    TBODY(TR(
+                        TH("New name"),
+                        TD(INPUT(["type"=>'text', "name"=>'name', "value"=>$duser->name]))
+                    )),
+                    "Set"
+                ));
             }
 
-            $html .= "
-			<p>".make_form(make_link("user_admin/change_pass"))."
-				<input type='hidden' name='id' value='{$duser->id}'>
-				<table class='form'>
-					<thead>
-						<tr><th colspan='2'>Change Password</th></tr>
-					</thead>
-					<tbody>
-						<tr><th>Password</th><td><input type='password' name='pass1' autocomplete='new-password'></td></tr>
-						<tr><th>Repeat Password</th><td><input type='password' name='pass2' autocomplete='new-password'></td></tr>
-					</tbody>
-					<tfoot>
-						<tr><td colspan='2'><input type='Submit' value='Change Password'></td></tr>
-					</tfoot>
-				</table>
-			</form>
-            </p>
-			<p>".make_form(make_link("user_admin/change_email"))."
-				<input type='hidden' name='id' value='{$duser->id}'>
-				<table class='form'>
-					<thead><tr><th colspan='2'>Change Email</th></tr></thead>
-					<tbody><tr><th>Address</th><td><input type='text' name='address' value='".html_escape($duser->email)."' autocomplete='email' inputmode='email'></td></tr></tbody>
-					<tfoot><tr><td colspan='2'><input type='Submit' value='Set'></td></tr></tfoot>
-				</table>
-			</form>
-			</p>";
+            $html->appendChild(SHM_USER_FORM(
+                $duser,
+                "user_admin/change_pass",
+                "Change Password",
+                TBODY(
+                    TR(
+                        TH("Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass1', "autocomplete"=>'new-password']))
+                    ),
+                    TR(
+                        TH("Repeat Password"),
+                        TD(INPUT(["type"=>'password', "name"=>'pass2', "autocomplete"=>'new-password']))
+                    ),
+                ),
+                "Set"
+            ));
 
-            $i_user_id = int_escape($duser->id);
+            $html->appendChild(SHM_USER_FORM(
+                $duser,
+                "user_admin/change_email",
+                "Change Email",
+                TBODY(TR(
+                    TH("Address"),
+                    TD(INPUT(["type"=>'text', "name"=>'address', "value"=>$duser->email, "autocomplete"=>'email', "inputmode"=>'email']))
+                )),
+                "Set"
+            ));
 
             if ($user->can(Permissions::EDIT_USER_CLASS)) {
                 global $_shm_user_classes;
-                $class_html = "";
+                $select = SELECT(["name"=>"class"]);
                 foreach ($_shm_user_classes as $name => $values) {
-                    $h_name = html_escape($name);
-                    $h_title = html_escape(ucwords($name));
-                    $h_selected = ($name == $duser->class->name ? " selected" : "");
-                    $class_html .= "<option value='$h_name'$h_selected>$h_title</option>\n";
+                    $select->appendChild(
+                        OPTION(["value"=>$name, "selected"=>$name == $duser->class->name], ucwords($name))
+                    );
                 }
-                $html .= "
-					<p>".make_form(make_link("user_admin/change_class"))."
-						<input type='hidden' name='id' value='$i_user_id'>
-						<table style='width: 300px;'>
-							<thead><tr><th colspan='2'>Change Class</th></tr></thead>
-							<tbody><tr><td><select name='class'>$class_html</select></td></tr></tbody>
-							<tfoot><tr><td><input type='submit' value='Set'></td></tr></tfoot>
-						</table>
-					</form>
-				</p>";
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/change_class",
+                    "Change Class",
+                    TBODY(TR(TD($select))),
+                    "Set"
+                ));
             }
 
             if ($user->can(Permissions::DELETE_USER)) {
-                $html .= "
-					<p>".make_form(make_link("user_admin/delete_user"))."
-						<input type='hidden' name='id' value='$i_user_id'>
-						<table style='width: 300px;'>
-							<thead>
-								<tr><th colspan='2'>Delete User</th></tr>
-							</thead>
-							<tbody>
-								<tr><td><input type='checkbox' name='with_images'> Delete images</td></tr>
-								<tr><td><input type='checkbox' name='with_comments'> Delete comments</td></tr>
-							</tbody>
-							<tfoot>
-								<tr><td><input type='button' class='shm-unlocker' data-unlock-sel='.deluser' value='Unlock'></td></tr>
-								<tr><td><input type='submit' class='deluser' value='Delete User' disabled='true'/></td></tr>
-							</tfoot>
-						</table>
-					</form>
-				</p>";
+                $html->appendChild(SHM_USER_FORM(
+                    $duser,
+                    "user_admin/delete_user",
+                    "Delete User",
+                    TBODY(
+                        TR(TD(INPUT(["type"=>'checkbox', "name"=>'with_images'], "Delete images"))),
+                        TR(TD(INPUT(["type"=>'checkbox', "name"=>'with_comments'], "Delete comments"))),
+                    ),
+                    TFOOT(
+                        TR(TD(INPUT(["type"=>'button', "class"=>'shm-unlocker', "data-unlock-sel"=>'.deluser', "value"=>'Unlock']))),
+                        TR(TD(INPUT(["type"=>'submit', "class"=>'deluser', "value"=>'Delete User', "disabled"=>'true']))),
+                    )
+                ));
             }
+
             foreach ($event->parts as $part) {
                 $html .= $part;
             }
@@ -283,25 +284,21 @@ class UserPageTheme extends Themelet
     public function get_help_html()
     {
         global $user;
-        $output = '<p>Search for images posted by particular individuals.</p>
-        <div class="command_example">
-        <pre>poster=username</pre>
-        <p>Returns images posted by "username".</p>
-        </div>
-        <div class="command_example">
-        <pre>poster_id=123</pre>
-        <p>Returns images posted by user 123.</p>
-        </div>
-        ';
-
+        $output = emptyHTML(P("Search for images posted by particular individuals."));
+        $output->appendChild(SHM_COMMAND_EXAMPLE(
+            "poster=username",
+            'Returns images posted by "username".'
+        ));
+        $output->appendChild(SHM_COMMAND_EXAMPLE(
+            "poster_id=123",
+            'Returns images posted by user 123.'
+        ));
 
         if ($user->can(Permissions::VIEW_IP)) {
-            $output .="
-        <div class=\"command_example\">
-                <pre>poster_ip=127.0.0.1</pre>
-                <p>Returns images posted from IP 127.0.0.1.</p>
-                </div>
-                ";
+            $output->appendChild(SHM_COMMAND_EXAMPLE(
+                "poster_ip=127.0.0.1",
+                "Returns images posted from IP 127.0.0.1."
+            ));
         }
         return $output;
     }
