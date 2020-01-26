@@ -302,10 +302,7 @@ class TagHistory extends Extension
 				ORDER BY date_set DESC LIMIT 1
 			', $select_args);
 
-            if (empty($row)) {
-                // we can not revert this image based on the date restriction.
-                // Output a message perhaps?
-            } else {
+            if (!empty($row)) {
                 $revert_id = $row['id'];
                 $result = $this->get_tag_history_from_revert($revert_id);
 

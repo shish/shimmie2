@@ -286,10 +286,6 @@ class Media extends Extension
         $matches = [];
 
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
-            // Nothing to save, just helping filter out reserved tags
-        }
-
-        if (!empty($matches)) {
             $event->metatag = true;
         }
     }

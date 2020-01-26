@@ -430,7 +430,7 @@ class UserPage extends Extension
         } elseif (is_null($my_user->email)) {
             $this->theme->display_error(400, "Error", "That user has no registered email address");
         } else {
-            // send email
+            throw new SCoreException("Email sending not implemented");
         }
     }
 

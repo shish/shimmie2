@@ -53,10 +53,7 @@ class SetupBlock extends Block
 
     public function __construct(string $title)
     {
-        $this->header = $title;
-        $this->section = "main";
-        $this->position = 50;
-        $this->body = "";
+        parent::__construct($title, "", "main", 50);
     }
 
     public function add_label(string $text)
