@@ -4,7 +4,7 @@ images
 thumbs
 *.phar
 *.sqlite
-.php_cs.cache
+*.cache
 .devcontainer
 trace.json
 
