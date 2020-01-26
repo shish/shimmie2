@@ -208,6 +208,10 @@ function transload(string $url, string $mfile): ?array
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 
         $response = curl_exec($ch);
+        if ($response === false) {
+            log_warning("core-util", "Failed to transload $url");
+            throw new SCoreException("Failed to fetch $url");
+        }
 
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $headers = http_parse_headers(implode("\n", preg_split('/\R/', rtrim(substr($response, 0, $header_size)))));

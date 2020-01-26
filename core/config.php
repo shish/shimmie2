@@ -214,7 +214,9 @@ abstract class BaseConfig implements Config
     public function get_string(string $name, ?string $default=null): ?string
     {
         $val = $this->get($name, $default);
-        if(!is_string($val) && !is_null($val)) throw new SCoreException("$name is not a string: $val");
+        if (!is_string($val) && !is_null($val)) {
+            throw new SCoreException("$name is not a string: $val");
+        }
         return $val;
     }
 
