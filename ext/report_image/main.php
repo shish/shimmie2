@@ -225,10 +225,10 @@ class ReportImage extends Extension
 
         $reports = [];
         foreach ($all_reports as $report) {
-            $image_id = int_escape($report['image_id']);
+            $image_id = (int)$report['image_id'];
             $image = Image::by_id($image_id);
             if (is_null($image)) {
-                send_event(new RemoveReportedImageEvent($report['id']));
+                send_event(new RemoveReportedImageEvent((int)$report['id']));
                 continue;
             }
             $report['image'] = $image;

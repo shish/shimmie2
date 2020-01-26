@@ -144,7 +144,7 @@ class PrivMsg extends Extension
                         if (is_null($pm)) {
                             $this->theme->display_error(404, "No such PM", "There is no PM #$pm_id");
                         } elseif (($pm["to_id"] == $user->id) || $user->can(Permissions::VIEW_OTHER_PMS)) {
-                            $from_user = User::by_id(int_escape($pm["from_id"]));
+                            $from_user = User::by_id((int)$pm["from_id"]);
                             if ($pm["to_id"] == $user->id) {
                                 $database->execute("UPDATE private_message SET is_read='Y' WHERE id = :id", ["id" => $pm_id]);
                                 $cache->delete("pm-count-{$user->id}");

@@ -46,7 +46,7 @@ class ImageIO extends Extension
         if ($event->page_matches("image/delete")) {
             global $page, $user;
             if ($user->can(Permissions::DELETE_IMAGE) && isset($_POST['image_id']) && $user->check_auth_token()) {
-                $image = Image::by_id($_POST['image_id']);
+                $image = Image::by_id(int_escape($_POST['image_id']));
                 if ($image) {
                     send_event(new ImageDeletionEvent($image));
                     $page->set_mode(PageMode::REDIRECT);

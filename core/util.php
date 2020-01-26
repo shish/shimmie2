@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 use function MicroHTML\emptyHTML;
+use function MicroHTML\rawHTML;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
@@ -695,7 +696,7 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     return FORM(
         $attrs,
         INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
-        $method != "GET" ? "" : $user->get_auth_html()
+        $method == "GET" ? "" : rawHTML($user->get_auth_html())
     );
 }
 

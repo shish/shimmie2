@@ -105,7 +105,7 @@ class StatsDInterface extends Extension
         try {
             $parts = explode(":", STATSD_HOST);
             $host = $parts[0];
-            $port = $parts[1];
+            $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
             if (! $fp) {
                 return;

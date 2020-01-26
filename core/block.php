@@ -61,7 +61,7 @@ class Block
         $this->position = $position;
 
         if (is_null($id)) {
-            $id = (empty($header) ? md5($body) : $header) . $section;
+            $id = (empty($header) ? md5($body ?? '') : $header) . $section;
         }
         $this->id = preg_replace('/[^\w-]/', '', str_replace(' ', '_', $id));
     }

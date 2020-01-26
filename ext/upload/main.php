@@ -252,13 +252,13 @@ class Upload extends Extension
                     foreach ($_FILES as $name => $file) {
                         $tags = $this->tags_for_upload_slot(int_escape(substr($name, 4)));
                         $source = isset($_POST['source']) ? $_POST['source'] : null;
-                        $ok = $ok & $this->try_upload($file, $tags, $source);
+                        $ok = $this->try_upload($file, $tags, $source) && $ok;
                     }
                     foreach ($_POST as $name => $value) {
                         if (substr($name, 0, 3) == "url" && strlen($value) > 0) {
                             $tags = $this->tags_for_upload_slot(int_escape(substr($name, 3)));
                             $source = isset($_POST['source']) ? $_POST['source'] : $value;
-                            $ok = $ok & $this->try_transload($value, $tags, $source);
+                            $ok = $this->try_transload($value, $tags, $source) && $ok;
                         }
                     }
 

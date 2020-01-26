@@ -207,7 +207,7 @@ class CommentList extends Extension
         if (isset($_POST['image_id']) && isset($_POST['comment'])) {
             try {
                 $i_iid = int_escape($_POST['image_id']);
-                $cpe = new CommentPostingEvent($_POST['image_id'], $user, $_POST['comment']);
+                $cpe = new CommentPostingEvent(int_escape($_POST['image_id']), $user, $_POST['comment']);
                 send_event($cpe);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$i_iid#comment_on_$i_iid"));
