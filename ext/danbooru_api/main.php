@@ -154,7 +154,7 @@ class DanbooruApi extends Extension
         } elseif (isset($_GET['id'])) {
             $idlist = explode(",", $_GET['id']);
             foreach ($idlist as $id) {
-                $results[] = Image::by_id($id);
+                $results[] = Image::by_id(int_escape($id));
             }
             $count = count($results);
         } else {
