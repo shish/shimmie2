@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class ExtManagerTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth()

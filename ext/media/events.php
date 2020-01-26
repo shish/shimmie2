@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class MediaResizeEvent extends Event
 {
@@ -27,6 +27,7 @@ class MediaResizeEvent extends Event
         bool $minimize = false,
         bool $allow_upscale = true
     ) {
+        parent::__construct();
         assert(in_array($engine, MediaEngine::ALL));
         $this->engine = $engine;
         $this->input_path = $input_path;
@@ -56,6 +57,7 @@ class MediaCheckPropertiesEvent extends Event
 
     public function __construct(string $file_name, string $ext)
     {
+        parent::__construct();
         $this->file_name = $file_name;
         $this->ext = $ext;
     }

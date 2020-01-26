@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class Themelet extends BaseThemelet
 {
 
@@ -17,7 +17,7 @@ class Themelet extends BaseThemelet
     /**
      * Generate a single HTML link.
      */
-    public function futaba_gen_page_link(string $base_url, ?string $query, string $page, string $name): string
+    public function futaba_gen_page_link(string $base_url, ?string $query, int $page, string $name): string
     {
         $link = make_link("$base_url/$page", $query);
         return "[<a href='$link'>{$name}</a>]";

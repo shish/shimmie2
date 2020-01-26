@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 function _new_user(array $row): User
 {
@@ -107,7 +107,7 @@ class User
     {
         $u = User::by_name($name);
         if (is_null($u)) {
-            throw SCoreException("Can't find any user named " . html_escape($name));
+            throw new ScoreException("Can't find any user named " . html_escape($name));
         } else {
             return $u->id;
         }
@@ -168,7 +168,7 @@ class User
     {
         global $database;
         if (User::by_name($name)) {
-            throw new Exception("Desired username is already in use");
+            throw new ScoreException("Desired username is already in use");
         }
         $old_name = $this->name;
         $this->name = $name;

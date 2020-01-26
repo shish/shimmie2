@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class RatingsTheme extends Themelet
 {
@@ -88,17 +88,17 @@ class RatingsTheme extends Themelet
         <div class="command_example">
         <pre>rating:'.$ratings[0]->search_term.'</pre>
         <p>Returns images with the '.$ratings[0]->name.' rating.</p>
-        </div> 
+        </div>
         <p>Ratings can be abbreviated to a single letter as well</p>
         <div class="command_example">
         <pre>rating:'.$ratings[0]->code.'</pre>
         <p>Returns images with the '.$ratings[0]->name.' rating.</p>
-        </div> 
+        </div>
         <p>If abbreviations are used, multiple ratings can be searched for.</p>
         <div class="command_example">
         <pre>rating:'.$ratings[0]->code.$ratings[1]->code.'</pre>
         <p>Returns images with the '.$ratings[0]->name.' or '.$ratings[1]->name.' rating.</p>
-        </div> 
+        </div>
         <p>Available ratings:</p>
         <table>
         <tr><th>Name</th><th>Search Term</th><th>Abbreviation</th></tr>

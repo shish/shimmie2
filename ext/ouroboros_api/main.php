@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 class _SafeOuroborosImage
@@ -405,7 +405,7 @@ class OuroborosAPI extends Extension
                         filter_var($_REQUEST['page'], FILTER_SANITIZE_NUMBER_INT)
                     ) : 1;
                     $tags = !empty($_REQUEST['tags']) ? filter_var($_REQUEST['tags'], FILTER_SANITIZE_STRING) : [];
-                    if (!empty($tags)) {
+                    if (is_string($tags)) {
                         $tags = Tag::explode($tags);
                     }
                     $this->postIndex($limit, $p, $tags);
@@ -451,7 +451,7 @@ class OuroborosAPI extends Extension
     /**
      * Wrapper for post creation
      */
-    protected function postCreate(OuroborosPost $post, string $md5 = '')
+    protected function postCreate(OuroborosPost $post, ?string $md5 = '')
     {
         global $config;
         $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
@@ -572,7 +572,6 @@ class OuroborosAPI extends Extension
     {
         global $database, $config;
         $start = ($page - 1) * $limit;
-        $tag_data = [];
         switch ($order) {
             case 'name':
                 $tag_data = $database->get_col(

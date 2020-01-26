@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class MP3FileHandlerTheme extends Themelet
 {
@@ -6,7 +6,6 @@ class MP3FileHandlerTheme extends Themelet
     {
         $data_href = get_base_href();
         $ilink = $image->get_image_link();
-        $fname = url_escape($image->filename); //Most of the time this will be the title/artist of the song.
         $html = "
 			<audio controls class='shm-main-image audio_image' id='main_image' alt='main image'>
 				<source src=\"$ilink\" type=\"audio/mpeg\">

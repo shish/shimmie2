@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ETTheme extends Themelet
 {
@@ -54,7 +54,7 @@ Tags: {$info['stat_tags']}
 Applications: {$info['stat_image_tags']}
 Extensions: {$info['sys_extensions']}
 EOD;
-        $html = <<<EOD
+        return <<<EOD
 <form action='http://shimmie.shishnet.org/register.php' method='POST'>
 	<input type='hidden' name='registration_api' value='1'>
 	<textarea name='data' rows='20' cols='80'>$data</textarea>
@@ -63,6 +63,5 @@ EOD;
 	of web servers / databases / etc I need to support.
 </form>
 EOD;
-        return $html;
     }
 }

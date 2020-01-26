@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class RatingTest extends ShimmiePHPUnitTestCase
 {
     public function testRating()

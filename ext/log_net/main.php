@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class LogNet extends Extension
 {
@@ -33,7 +33,7 @@ class LogNet extends Extension
         try {
             $parts = explode(":", $host);
             $host = $parts[0];
-            $port = $parts[1];
+            $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
             if (! $fp) {
                 return;

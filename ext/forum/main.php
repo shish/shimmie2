@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
 Todo:
 *Quote buttons on posts
@@ -9,6 +9,9 @@ Todo:
 */
 class Forum extends Extension
 {
+    /** @var ForumTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
@@ -281,7 +284,7 @@ class Forum extends Extension
     private function show_posts(PageRequestEvent $event, $showAdminOptions = false)
     {
         global $config, $database;
-        $threadID = $event->get_arg(1);
+        $threadID = int_escape($event->get_arg(1));
         $postsPerPage = $config->get_int('forumPostsPerPage', 15);
         $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM forum_posts WHERE thread_id = :id", ['id'=>$threadID]) / $postsPerPage);
         $threadTitle = $this->get_thread_title($threadID);

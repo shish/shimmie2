@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ImageRelationshipSetEvent extends Event
 {
@@ -8,6 +8,7 @@ class ImageRelationshipSetEvent extends Event
 
     public function __construct(int $child_id, int $parent_id)
     {
+        parent::__construct();
         $this->child_id = $child_id;
         $this->parent_id = $parent_id;
     }
@@ -20,7 +21,7 @@ class Relationships extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         // Create the database tables
         if ($this->get_version("ext_relationships_version") < 1) {
@@ -55,6 +56,8 @@ class Relationships extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^parent[=|:]([0-9]+|any|none)$/", $event->term, $matches)) {
             $parentID = $matches[1];

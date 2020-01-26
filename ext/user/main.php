@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "events.php";
 
@@ -331,6 +331,8 @@ class UserPage extends Extension
     {
         global $user;
 
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^(?:poster|user)[=|:](.*)$/i", $event->term, $matches)) {
             $user_id = User::name_to_id($matches[1]);
@@ -617,7 +619,7 @@ class UserPage extends Extension
     private function count_upload_ips(User $duser): array
     {
         global $database;
-        $rows = $database->get_pairs("
+        return $database->get_pairs("
 				SELECT
 					owner_ip,
 					COUNT(images.id) AS count
@@ -625,13 +627,12 @@ class UserPage extends Extension
 				WHERE owner_id=:id
 				GROUP BY owner_ip
 				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
-        return $rows;
     }
 
     private function count_comment_ips(User $duser): array
     {
         global $database;
-        $rows = $database->get_pairs("
+        return $database->get_pairs("
 				SELECT
 					owner_ip,
 					COUNT(comments.id) AS count
@@ -639,7 +640,6 @@ class UserPage extends Extension
 				WHERE owner_id=:id
 				GROUP BY owner_ip
 				ORDER BY max(posted) DESC", ["id"=>$duser->id]);
-        return $rows;
     }
 
     private function count_log_ips(User $duser): array
@@ -648,7 +648,7 @@ class UserPage extends Extension
             return [];
         }
         global $database;
-        $rows = $database->get_pairs("
+        return $database->get_pairs("
 				SELECT
 					address,
 					COUNT(id) AS count
@@ -656,7 +656,6 @@ class UserPage extends Extension
 				WHERE username=:username
 				GROUP BY address
 				ORDER BY MAX(date_sent) DESC", ["username"=>$duser->name]);
-        return $rows;
     }
 
     private function delete_user(Page $page, bool $with_images=false, bool $with_comments=false)

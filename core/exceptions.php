@@ -1,15 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Class SCoreException
  *
  * A base exception to be caught by the upper levels.
  */
-class SCoreException extends Exception
+class SCoreException extends RuntimeException
 {
+    /** @var string|null */
+    public $query;
+
+    /** @var string */
+    public $error;
+
     public function __construct(string $msg, ?string $query=null)
     {
         parent::__construct($msg);
+        $this->error = $msg;
         $this->query = $query;
     }
 }
@@ -47,15 +54,10 @@ class InvalidInput extends SCoreException
 class InsufficientMemoryException extends SCoreException
 {
 }
+
 /*
  * This is used by the image resizing code when there is an error while resizing
  */
 class ImageResizeException extends SCoreException
 {
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
 }

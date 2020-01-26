@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class BanWords extends Extension
 {
@@ -75,7 +75,7 @@ xanax
     /**
      * Throws if the comment contains banned words.
      */
-    private function test_text(string $comment, Exception $ex): void
+    private function test_text(string $comment, SCoreException $ex): void
     {
         $comment = strtolower($comment);
 

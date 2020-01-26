@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class RemoveReportedImageEvent extends Event
 {
@@ -7,6 +7,7 @@ class RemoveReportedImageEvent extends Event
 
     public function __construct(int $id)
     {
+        parent::__construct();
         $this->id = $id;
     }
 }
@@ -18,6 +19,7 @@ class AddReportedImageEvent extends Event
 
     public function __construct(ImageReport $report)
     {
+        parent::__construct();
         $this->report = $report;
     }
 }
@@ -174,7 +176,7 @@ class ReportImage extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
         if ($this->get_version("ext_report_image_version") < 1) {
             $database->create_table("image_reports", "
@@ -246,6 +248,6 @@ class ReportImage extends Extension
             $cache->set("image-report-count", $count, 600);
         }
 
-        return $count;
+        return (int)$count;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Things which should be in the core API                                    *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -162,9 +162,7 @@ function list_files(string $base, string $_sub_dir=""): array
     foreach ($files as $filename) {
         $full_path = "$base/$_sub_dir/$filename";
 
-        if (is_link($full_path)) {
-            // ignore
-        } elseif (is_dir($full_path)) {
+        if (!is_link($full_path) && is_dir($full_path)) {
             if (!($filename == "." || $filename == "..")) {
                 //subdirectory found
                 $file_list = array_merge(
@@ -549,7 +547,7 @@ function xml_tag(string $name, array $attrs=[], array $children=[]): string
 {
     $xml = "<$name ";
     foreach ($attrs as $k => $v) {
-        $xv = str_replace('&#039;', '&apos;', htmlspecialchars($v, ENT_QUOTES));
+        $xv = str_replace('&#039;', '&apos;', htmlspecialchars((string)$v, ENT_QUOTES));
         $xml .= "$k=\"$xv\" ";
     }
     if (count($children) > 0) {

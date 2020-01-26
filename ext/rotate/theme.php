@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class RotateImageTheme extends Themelet
 {
@@ -7,15 +8,12 @@ class RotateImageTheme extends Themelet
      */
     public function get_rotate_html(int $image_id): string
     {
-        $html = "
-			".make_form(make_link('rotate/'.$image_id), 'POST')."
-				<input type='hidden' name='image_id' value='$image_id'>
-				<input id='rotate_deg' name='rotate_deg' type='number' placeholder='Rotation degrees'>
-				<input id='rotatebutton' type='submit' value='Rotate'>
-			</form>
-		";
-        
-        return $html;
+        return (string)SHM_SIMPLE_FORM(
+            make_link('rotate/'.$image_id),
+            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type"=>'number', "name"=>'rotate_deg', "id"=>"rotate_deg", "placeholder"=>"Rotation degrees"]),
+            INPUT(["type"=>'submit', "value"=>'Rotate', "id"=>"rotatebutton"]),
+        );
     }
 
     /**

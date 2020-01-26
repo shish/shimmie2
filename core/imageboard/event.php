@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * An image is being added to the database.
@@ -20,18 +20,13 @@ class ImageAdditionEvent extends Event
      */
     public function __construct(Image $image)
     {
+        parent::__construct();
         $this->image = $image;
     }
 }
 
 class ImageAdditionException extends SCoreException
 {
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
 }
 
 /**
@@ -53,6 +48,7 @@ class ImageDeletionEvent extends Event
      */
     public function __construct(Image $image, bool $force = false)
     {
+        parent::__construct();
         $this->image = $image;
         $this->force = $force;
     }
@@ -77,6 +73,7 @@ class ImageReplaceEvent extends Event
      */
     public function __construct(int $id, Image $image)
     {
+        parent::__construct();
         $this->id = $id;
         $this->image = $image;
     }
@@ -84,13 +81,6 @@ class ImageReplaceEvent extends Event
 
 class ImageReplaceException extends SCoreException
 {
-    /** @var string */
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
 }
 
 /**
@@ -108,12 +98,12 @@ class ThumbnailGenerationEvent extends Event
     /** @var bool */
     public $generated;
 
-
     /**
      * Request a thumbnail be made for an image object
      */
     public function __construct(string $hash, string $type, bool $force=false)
     {
+        parent::__construct();
         $this->hash = $hash;
         $this->type = $type;
         $this->force = $force;
@@ -139,6 +129,7 @@ class ParseLinkTemplateEvent extends Event
 
     public function __construct(string $link, Image $image)
     {
+        parent::__construct();
         $this->link = $link;
         $this->original = $link;
         $this->image = $image;

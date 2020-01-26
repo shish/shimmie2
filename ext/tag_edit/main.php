@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * OwnerSetEvent:
@@ -15,6 +15,7 @@ class OwnerSetEvent extends Event
 
     public function __construct(Image $image, User $owner)
     {
+        parent::__construct();
         $this->image = $image;
         $this->owner = $owner;
     }
@@ -30,6 +31,7 @@ class SourceSetEvent extends Event
 
     public function __construct(Image $image, string $source=null)
     {
+        parent::__construct();
         $this->image = $image;
         $this->source = $source;
     }
@@ -48,6 +50,7 @@ class TagSetEvent extends Event
      */
     public function __construct(Image $image, array $tags)
     {
+        parent::__construct();
         $this->image    = $image;
 
         $this->tags     = [];
@@ -83,6 +86,7 @@ class LockSetEvent extends Event
 
     public function __construct(Image $image, bool $locked)
     {
+        parent::__construct();
         $this->image = $image;
         $this->locked = $locked;
     }
@@ -103,6 +107,7 @@ class TagTermParseEvent extends Event
 
     public function __construct(string $term, int $id, bool $parse)
     {
+        parent::__construct();
         $this->term  = $term;
         $this->id    = $id;
         $this->parse = $parse;

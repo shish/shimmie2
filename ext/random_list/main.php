@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class RandomList extends Extension
 {
+    /** @var RandomListTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $page;

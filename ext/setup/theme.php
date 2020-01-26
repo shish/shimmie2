@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class SetupTheme extends Themelet
 {
@@ -44,11 +44,13 @@ class SetupTheme extends Themelet
         $h_rows = "";
         ksort($options);
         foreach ($options as $name => $value) {
+            if(is_null($value)) $value = '';
+
             $h_name = html_escape($name);
-            $h_value = html_escape($value);
+            $h_value = html_escape((string)$value);
 
             $h_box = "";
-            if (strpos($value, "\n") > 0) {
+            if (is_string($value) && strpos($value, "\n") > 0) {
                 $h_box .= "<textarea cols='50' rows='4' name='_config_$h_name'>$h_value</textarea>";
             } else {
                 $h_box .= "<input type='text' name='_config_$h_name' value='$h_value'>";

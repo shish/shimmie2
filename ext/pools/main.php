@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 abstract class PoolsConfig
 {
@@ -17,13 +17,6 @@ abstract class PoolsConfig
  */
 class PoolCreationException extends SCoreException
 {
-    /** @var string */
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
 }
 
 class PoolAddPostsEvent extends Event
@@ -34,6 +27,7 @@ class PoolAddPostsEvent extends Event
 
     public function __construct(int $pool_id, array $posts)
     {
+        parent::__construct();
         $this->pool_id = $pool_id;
         $this->posts = $posts;
     }
@@ -50,6 +44,7 @@ class PoolCreationEvent extends Event
 
     public function __construct(string $title, User $pool_user = null, bool $public = false, string $description = "")
     {
+        parent::__construct();
         global $user;
 
         $this->title = $title;
@@ -61,6 +56,9 @@ class PoolCreationEvent extends Event
 
 class Pools extends Extension
 {
+    /** @var PoolsTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -78,7 +76,7 @@ class Pools extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         // Create the database tables
         if ($this->get_version("ext_pools_version") < 1) {
@@ -380,6 +378,8 @@ class Pools extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^pool[=|:]([0-9]+|any|none)$/i", $event->term, $matches)) {
             $poolID = $matches[1];
@@ -414,7 +414,7 @@ class Pools extends Extension
             if ($poolTag == 'lastcreated') {
                 $pool = $this->get_last_userpool($user->id);
             } elseif (ctype_digit($poolTag)) { //If only digits, assume PoolID
-                $pool = $this->get_single_pool($poolTag);
+                $pool = $this->get_single_pool((int)$poolTag);
             } else { //assume PoolTitle
                 $pool = $this->get_single_pool_from_title($poolTag);
             }
@@ -524,7 +524,7 @@ class Pools extends Extension
 			LIMIT :l OFFSET :o
 		", ["l" => $poolsPerPage, "o" => $pageNumber * $poolsPerPage]);
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM pools") / $poolsPerPage);
 
         $this->theme->list_pools($page, $pools, $pageNumber + 1, $totalPages);
     }
@@ -780,18 +780,13 @@ class Pools extends Extension
         global $config, $user, $database;
 
         $pageNumber = $event->try_page_num(2) - 1;
-
-        $poolID = int_escape($poolID);
         $pool = $this->get_pool($poolID);
-
         $imagesPerPage = $config->get_int(PoolsConfig::IMAGES_PER_PAGE);
-
 
         $query = "
                 INNER JOIN images AS i ON i.id = p.image_id
-                WHERE p.pool_id = :pid 
+                WHERE p.pool_id = :pid
         ";
-
 
         // WE CHECK IF THE EXTENSION RATING IS INSTALLED, WHICH VERSION AND IF IT
         // WORKS TO SHOW/HIDE SAFE, QUESTIONABLE, EXPLICIT AND UNRATED IMAGES FROM USER
@@ -811,14 +806,12 @@ class Pools extends Extension
             ["pid" => $poolID, "l" => $imagesPerPage, "o" => $pageNumber * $imagesPerPage]
         );
 
-        $totalPages = ceil($database->get_one(
+        $totalPages = (int)ceil($database->get_one(
             "
 					SELECT COUNT(*) FROM pool_images p
 					$query",
             ["pid" => $poolID]
         ) / $imagesPerPage);
-
-
 
         $images = [];
         foreach ($result as $singleResult) {
@@ -942,7 +935,7 @@ class Pools extends Extension
 				LIMIT :l OFFSET :o
 				", ["l" => $historiesPerPage, "o" => $pageNumber * $historiesPerPage]);
 
-        $totalPages = ceil($database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
+        $totalPages = (int)ceil($database->get_one("SELECT COUNT(*) FROM pool_history") / $historiesPerPage);
 
         $this->theme->show_history($history, $pageNumber + 1, $totalPages);
     }
@@ -1025,7 +1018,7 @@ class Pools extends Extension
 
         if ($history) {
             $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
-            $this->add_history($poolID, 1, $imageID, $count);
+            $this->add_history($poolID, 1, (string)$imageID, $count);
         }
         return true;
     }
@@ -1051,7 +1044,7 @@ class Pools extends Extension
 
         if ($history) {
             $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
-            $this->add_history($poolID, 0, $imageID, $count);
+            $this->add_history($poolID, 0, (string)$imageID, $count);
         }
     }
 }

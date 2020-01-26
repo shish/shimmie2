@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ReportImageTheme extends Themelet
 {
@@ -57,7 +57,7 @@ class ReportImageTheme extends Themelet
     {
         global $config, $page;
 
-        $i_image = int_escape($image->id);
+        $i_image = $image->id;
         $html = "";
         $public = $config->get_string("report_image_publicity");
         if ($public != "none" && count($reports) > 0) {

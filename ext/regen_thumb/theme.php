@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class RegenThumbTheme extends Themelet
 {
@@ -25,17 +25,6 @@ class RegenThumbTheme extends Themelet
         $page->add_html_header("<meta http-equiv=\"cache-control\" content=\"no-cache\">");
         $page->add_block(new NavBlock());
         $page->add_block(new Block("Thumbnail", $this->build_thumb_html($image)));
-    }
-
-    public function mtr_html(string $terms)
-    {
-        $h_terms = html_escape($terms);
-        $html = make_form(make_link("regen_thumb/mass"), "POST") . "
-				<input type='hidden' name='tags' value='$h_terms'>
-				<input type='submit' value='Regen all thumbs' onclick='return confirm(\"This can use a lot of CPU time.\\nAre you sure you want to do this?\")'>
-			</form>
-		";
-        return $html;
     }
 
     public function bulk_html()

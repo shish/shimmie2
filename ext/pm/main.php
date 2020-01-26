@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class SendPMEvent extends Event
 {
@@ -6,19 +6,28 @@ class SendPMEvent extends Event
 
     public function __construct(PM $pm)
     {
+        parent::__construct();
         $this->pm = $pm;
     }
 }
 
 class PM
 {
+    /** @var int */
     public $id;
+    /** @var int */
     public $from_id;
+    /** @var string */
     public $from_ip;
+    /** @var int */
     public $to_id;
+    /** @var mixed */
     public $sent_date;
+    /** @var string */
     public $subject;
+    /** @var string */
     public $message;
+    /** @var bool */
     public $is_read;
 
     public function __construct($from_id=0, string $from_ip="0.0.0.0", int $to_id=0, string $subject="A Message", string $message="Some Text", bool $read=false)
@@ -26,10 +35,10 @@ class PM
         # PHP: the P stands for "really", the H stands for "awful" and the other P stands for "language"
         if (is_array($from_id)) {
             $a = $from_id;
-            $this->id      = $a["id"];
-            $this->from_id = $a["from_id"];
+            $this->id      = (int)$a["id"];
+            $this->from_id = (int)$a["from_id"];
             $this->from_ip = $a["from_ip"];
-            $this->to_id   = $a["to_id"];
+            $this->to_id   = (int)$a["to_id"];
             $this->sent_date = $a["sent_date"];
             $this->subject = $a["subject"];
             $this->message = $a["message"];
@@ -48,6 +57,9 @@ class PM
 
 class PrivMsg extends Extension
 {
+    /** @var PrivMsgTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
@@ -75,7 +87,7 @@ class PrivMsg extends Extension
             log_info("pm", "Adding foreign keys to private messages");
             $database->Execute("delete from private_message where to_id not in (select id from users);");
             $database->Execute("delete from private_message where from_id not in (select id from users);");
-            $database->Execute("ALTER TABLE private_message 
+            $database->Execute("ALTER TABLE private_message
 			ADD FOREIGN KEY (from_id) REFERENCES users(id) ON DELETE CASCADE,
 			ADD FOREIGN KEY (to_id) REFERENCES users(id) ON DELETE CASCADE;");
             $config->set_int("pm_version", 2);

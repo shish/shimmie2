@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Class Tag
  *
@@ -88,13 +88,13 @@ class Tag
     public static function sanitize(string $tag): string
     {
         $tag = preg_replace("/\s/", "", $tag);                # whitespace
-        $tag = preg_replace('/\x20(\x0e|\x0f)/', '', $tag);   # unicode RTL
+        $tag = preg_replace('/\x20[\x0e\x0f]/', '', $tag);   # unicode RTL
         $tag = preg_replace("/\.+/", ".", $tag);              # strings of dots?
         $tag = preg_replace("/^(\.+[\/\\\\])+/", "", $tag);   # trailing slashes?
         $tag = trim($tag, ", \t\n\r\0\x0B");
 
         if (mb_strlen($tag, 'UTF-8') > 255) {
-            throw new Exception("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
+            throw new ScoreException("The tag below is longer than 255 characters, please use a shorter tag.\n$tag\n");
         }
         return $tag;
     }

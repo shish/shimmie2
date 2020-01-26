@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * \page eande Events and Extensions
  *
@@ -83,11 +83,13 @@
  */
 abstract class Extension
 {
+    /** @var string */
     public $key;
 
-    /** @var Themelet this theme's Themelet object */
-    public $theme;
+    /** @var Themelet */
+    protected $theme;
 
+    /** @var ExtensionInfo */
     public $info;
 
     private static $enabled_extensions = [];
@@ -98,7 +100,7 @@ abstract class Extension
         $this->theme = $this->get_theme_object($class);
         $this->info = ExtensionInfo::get_for_extension_class($class);
         if ($this->info===null) {
-            throw new Exception("Info class not found for extension $class");
+            throw new ScoreException("Info class not found for extension $class");
         }
         $this->key = $this->info->key;
     }
@@ -213,7 +215,10 @@ abstract class ExtensionInfo
     /** @var array which DBs this ext supports (blank for 'all') */
     public $db_support = [];
 
+    /** @var bool */
     private $supported = null;
+
+    /** @var string */
     private $support_info = null;
 
     public function is_supported(): bool
@@ -302,12 +307,10 @@ abstract class ExtensionInfo
     {
         foreach (get_declared_classes() as $class) {
             $rclass = new ReflectionClass($class);
-            if ($rclass->isAbstract()) {
-                // don't do anything
-            } elseif (is_subclass_of($class, "ExtensionInfo")) {
+            if (!$rclass->isAbstract() && is_subclass_of($class, "ExtensionInfo")) {
                 $extension_info = new $class();
                 if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
-                    throw new Exception("Extension Info $class with key $extension_info->key has already been loaded");
+                    throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
                 }
 
                 self::$all_info_by_key[$extension_info->key] = $extension_info;

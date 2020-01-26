@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 require_once "events.php";
@@ -7,6 +7,9 @@ class Index extends Extension
 {
     /** @var int */
     private $stpen = 0;  // search term parse event number
+
+    /** @var IndexTheme */
+    protected $theme;
 
     public function onInitExt(InitExtEvent $event)
     {
@@ -161,6 +164,8 @@ class Index extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         // check for tags first as tag based searches are more common.
         if (preg_match("/^tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {

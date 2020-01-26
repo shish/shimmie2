@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /*
  * SearchTermParseEvent:
@@ -15,6 +15,7 @@ class SearchTermParseEvent extends Event
 
     public function __construct(string $term=null, array $context=[])
     {
+        parent::__construct();
         $this->term = $term;
         $this->context = $context;
     }
@@ -52,6 +53,7 @@ class PostListBuildingEvent extends Event
      */
     public function __construct(array $search)
     {
+        parent::__construct();
         $this->search_terms = $search;
     }
 

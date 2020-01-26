@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 // FIXME: Move all the stuff that handles size input to main.php
 // FIXME: Move default canvas size to config file; changeable in board config
 // While we're here, add maximum and minimum image sizes in config

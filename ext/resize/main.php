@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 abstract class ResizeConfig
 {
@@ -87,7 +87,7 @@ class ResizeImage extends Extension
                     //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                     while (!feof($fh) && $isanigif < 2) {
                         $chunk = fread($fh, 1024 * 100);
-                        $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+                        $isanigif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
                     }
                 }
             }

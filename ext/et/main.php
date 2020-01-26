@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class ET extends Extension
 {
+    /** @var ETTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $user;
@@ -12,7 +15,6 @@ class ET extends Extension
         }
     }
 
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
@@ -22,7 +24,6 @@ class ET extends Extension
             }
         }
     }
-
 
     public function onUserBlockBuilding(UserBlockBuildingEvent $event)
     {
@@ -49,8 +50,8 @@ class ET extends Extension
         $info['sys_php']     = phpversion();
         $info['sys_db']      = $database->get_driver_name();
         $info['sys_os']      = php_uname();
-        $info['sys_disk']    = to_shorthand_int(disk_total_space("./") - disk_free_space("./")) . " / " .
-                               to_shorthand_int(disk_total_space("./"));
+        $info['sys_disk']    = to_shorthand_int((int)disk_total_space("./") - (int)disk_free_space("./")) . " / " .
+                               to_shorthand_int((int)disk_total_space("./"));
         $info['sys_server']  = isset($_SERVER["SERVER_SOFTWARE"]) ? $_SERVER["SERVER_SOFTWARE"] : 'unknown';
 
         $info[MediaConfig::FFMPEG_PATH]	= $config->get_string(MediaConfig::FFMPEG_PATH);
@@ -73,9 +74,7 @@ class ET extends Extension
         $els = [];
         foreach (get_declared_classes() as $class) {
             $rclass = new ReflectionClass($class);
-            if ($rclass->isAbstract()) {
-                // don't do anything
-            } elseif (is_subclass_of($class, "Extension")) {
+            if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
                 $els[] = $class;
             }
         }

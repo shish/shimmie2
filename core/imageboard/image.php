@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Class Image
  *
@@ -27,6 +27,7 @@ class Image
     /** @var string */
     public $hash;
 
+	/** @var int */
     public $filesize;
 
     /** @var string */
@@ -65,7 +66,6 @@ class Image
     /** @var int */
     public $length = null;
 
-
     /**
      * One will very rarely construct an image directly, more common
      * would be to use Image::by_id, Image::by_hash, etc.
@@ -76,17 +76,18 @@ class Image
             foreach ($row as $name => $value) {
                 // some databases use table.name rather than name
                 $name = str_replace("images.", "", $name);
-                $this->$name = $value; // hax, this is likely the cause of much scrutinizer-ci complaints.
+
+                // hax, this is likely the cause of much scrutinizer-ci complaints.
+                if(in_array($name, ["locked", "lossless", "video", "audio"])) {
+                    $this->$name = bool_escape($value);
+                }
+                elseif(in_array($name, ["id", "owner_id", "height", "width", "filesize", "length"])) {
+                    $this->$name = int_escape($value);
+                }
+                else {
+                    $this->$name = $value;
+                }
             }
-            $this->locked = bool_escape($this->locked);
-
-            assert(is_numeric($this->id));
-            assert(is_numeric($this->height));
-            assert(is_numeric($this->width));
-
-            $this->id = int_escape($this->id);
-            $this->height = int_escape($this->height);
-            $this->width = int_escape($this->width);
         }
     }
 
@@ -301,12 +302,12 @@ class Image
         if ($tag_count === 0) {
             $total = $cache->get("image-count");
             if (!$total) {
-                $total = $database->get_one("SELECT COUNT(*) FROM images");
+                $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
                 $cache->set("image-count", $total, 600);
             }
         } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
-            $total = $database->get_one(
-                $database->scoreql_to_sql("SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)"),
+            $total = (int)$database->get_one(
+                "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
                 ["tag"=>$tags[0]]
             );
         } else {
@@ -317,7 +318,7 @@ class Image
             $total = Image::get_accelerated_count($tag_conditions, $img_conditions);
             if (is_null($total)) {
                 $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-                $total = $database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+                $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
             }
         }
         if (is_null($total)) {
@@ -331,10 +332,10 @@ class Image
      *
      * #param string[] $tags
      */
-    public static function count_pages(array $tags=[]): float
+    public static function count_pages(array $tags=[]): int
     {
         global $config;
-        return ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
+        return (int)ceil(Image::count_images($tags) / $config->get_int(IndexConfig::IMAGES));
     }
 
     private static function terms_to_conditions(array $terms): array
@@ -1029,13 +1030,13 @@ class Image
                 SELECT images.*
                 FROM images INNER JOIN (
                 $sub_query
-                ) a on a.image_id = images.id 
+                ) a on a.image_id = images.id
             ";
         } elseif (!empty($negative_tag_id_array)) {
             $negative_tag_id_list = join(', ', $negative_tag_id_array);
             $sql = "
                 SELECT images.*
-                FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)  
+                FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
                 WHERE negative.image_id IS NULL
             ";
         } else {

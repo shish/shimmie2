@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class WikiUpdateEvent extends Event
 {
@@ -9,6 +9,7 @@ class WikiUpdateEvent extends Event
 
     public function __construct(User $user, WikiPage $wikipage)
     {
+        parent::__construct();
         $this->user = $user;
         $this->wikipage = $wikipage;
     }
@@ -73,9 +74,12 @@ class WikiPage
 
 class Wiki extends Extension
 {
+    /** @var WikiTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
         if ($this->get_version("ext_wiki_version") < 1) {
             $database->create_table("wiki_pages", "
@@ -303,11 +307,11 @@ class Wiki extends Extension
     {
         $c1         = 0 ;                   # current line of left
         $c2         = 0 ;                   # current line of right
-        $max1       = count($f1) ;        # maximal lines of left
-        $max2       = count($f2) ;        # maximal lines of right
+        $max1       = count($f1) ;          # maximal lines of left
+        $max2       = count($f2) ;          # maximal lines of right
         $outcount   = 0;                    # output counter
-        $hit1       = "" ;                  # hit in left
-        $hit2       = "" ;                  # hit in right
+        $hit1       = [];                   # hit in left
+        $hit2       = [];                   # hit in right
         $stop       = 0;
         $out        = "";
 
@@ -329,7 +333,7 @@ class Wiki extends Extension
                 *   add to output-string, if "show_equal" is enabled
                 */
                 $out    .= ($show_equal==1)
-                         ?  formatline(($c1), ($c2), "=", $f1[ $c1 ])
+                         ?  $this->formatline(($c1), ($c2), "=", $f1[ $c1 ])
                          : "" ;
                 /**
                 *   increase the out-putcounter, if "show_equal" is enabled
@@ -501,7 +505,7 @@ class Wiki extends Extension
                 break;
 
             default:
-                throw new Exception("stat needs to be =, + or -");
+                throw new RuntimeException("stat needs to be =, + or -");
         }
     }
 }

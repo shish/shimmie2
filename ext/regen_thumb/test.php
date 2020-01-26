@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class RegenThumbTest extends ShimmiePHPUnitTestCase
 {
     public function testRegenThumb()

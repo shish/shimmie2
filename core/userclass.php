@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * @global UserClass[] $_shm_user_classes
  */
@@ -48,8 +48,7 @@ class UserClass
     public function can(string $ability): bool
     {
         if (array_key_exists($ability, $this->abilities)) {
-            $val = $this->abilities[$ability];
-            return $val;
+            return $this->abilities[$ability];
         } elseif (!is_null($this->parent)) {
             return $this->parent->can($ability);
         } else {

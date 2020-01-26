@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class IndexTest extends ShimmiePHPUnitTestCase
 {
     private function upload()

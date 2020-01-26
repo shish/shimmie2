@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class CustomHtmlHeaders extends Extension
 {
@@ -15,10 +15,10 @@ class CustomHtmlHeaders extends Extension
 
         // modified title
         $sb->add_choice_option("sitename_in_title", [
-                    "none" => 0,
-                    "as prefix" => 1,
-                    "as suffix" => 2
-                    ], "<br>Add website name in title");
+            "none" => "none",
+            "as prefix" => "prefix",
+            "as suffix" => "suffix"
+        ], "<br>Add website name in title");
 
         $event->panel->add_block($sb);
     }
@@ -26,7 +26,7 @@ class CustomHtmlHeaders extends Extension
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
-        $config->set_default_int("sitename_in_title", 0);
+        $config->set_default_string("sitename_in_title", "none");
     }
 
     # Load Analytics tracking code on page request
@@ -52,17 +52,16 @@ class CustomHtmlHeaders extends Extension
 
         // get config values
         $site_title = $config->get_string(SetupConfig::TITLE);
-        $sitename_in_title = $config->get_int("sitename_in_title");
+        $sitename_in_title = $config->get_string("sitename_in_title");
 
-        // if feature is enabled & sitename isn't already in title
-        // (can occur on index & other pages)
-        if ($sitename_in_title != 0 && !strstr($page->title, $site_title)) {
-            if ($sitename_in_title == 1) {
-                $page->title = "$site_title - $page->title";
-            } // as prefix
-            elseif ($sitename_in_title == 2) {
-                $page->title = "$page->title - $site_title";
-            } // as suffix
+        // sitename is already in title (can occur on index & other pages)
+        if(strstr($page->title, $site_title)) return;
+
+        if ($sitename_in_title == "prefix") {
+            $page->title = "$site_title - $page->title";
+        }
+        elseif ($sitename_in_title == "suffix") {
+            $page->title = "$page->title - $site_title";
         }
     }
 }

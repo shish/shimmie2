@@ -1,12 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 class NumericScoreTheme extends Themelet
 {
     public function get_voter(Image $image)
     {
         global $user, $page;
-        $i_image_id = int_escape($image->id);
-        $i_score = int_escape($image->numeric_score);
+        $i_image_id = $image->id;
+        if(is_string($image->numeric_score)) $image->numeric_score = (int)$image->numeric_score;
+        $i_score = $image->numeric_score;
 
         $html = "
 			Current Score: $i_score
@@ -99,7 +100,7 @@ class NumericScoreTheme extends Themelet
         <div class="command_example">
         <pre>score=1</pre>
         <p>Returns images with a score of 1.</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>score>0</pre>
         <p>Returns images with a score of 1 or more.</p>

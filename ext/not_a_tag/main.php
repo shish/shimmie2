@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
@@ -28,6 +28,9 @@ class NotATagTable extends Table
 
 class NotATag extends Extension
 {
+    /** @var NotATagTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         return 30;
@@ -35,7 +38,7 @@ class NotATag extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
         if ($this->get_version("ext_notatag_version") < 1) {
             $database->create_table("untags", "
 				tag VARCHAR(128) NOT NULL PRIMARY KEY,
@@ -149,7 +152,7 @@ class NotATag extends Extension
             $args["redirect"] = "%".$_GET['redirect']."%";
         }
         $where = implode(" AND ", $where);
-        $bans = $database->get_all($database->scoreql_to_sql("
+        return $database->get_all($database->scoreql_to_sql("
 			SELECT *
 			FROM untags
 			WHERE $where
@@ -157,6 +160,5 @@ class NotATag extends Extension
 			LIMIT :limit
 			OFFSET :offset
 			"), $args);
-        return $bans;
     }
 }

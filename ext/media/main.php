@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 require_once "events.php";
@@ -257,6 +257,8 @@ class Media extends Extension
     {
         global $database;
 
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
             $field = $matches[1];
@@ -317,9 +319,9 @@ class Media extends Extension
 
 
         $database->execute(
-            "UPDATE images SET 
-                  lossless = :lossless, video = :video, audio = :audio,image = :image, 
-                  height = :height, width = :width, 
+            "UPDATE images SET
+                  lossless = :lossless, video = :video, audio = :audio,image = :image,
+                  height = :height, width = :width,
                   length = :length WHERE hash = :hash",
             [
                 "hash" => $hash,
@@ -459,9 +461,7 @@ class Media extends Extension
         if ((int)$ret == (int)0) {
             log_debug('Media', "Getting media data `$cmd`, returns $ret");
             $output = implode($output);
-            $data = json_decode($output, true);
-
-            return $data;
+            return json_decode($output, true);
         } else {
             log_error('Media', "Getting media data `$cmd`, returns $ret");
             return [];
@@ -857,7 +857,7 @@ class Media extends Extension
                 //check if gif is animated (via http://www.php.net/manual/en/function.imagecreatefromgif.php#104473)
                 while (!feof($fh) && $is_anim_gif < 2) {
                     $chunk = fread($fh, 1024 * 100);
-                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00(\x2C|\x21)#s', $chunk, $matches);
+                    $is_anim_gif += preg_match_all('#\x00\x21\xF9\x04.{4}\x00[\x2C\x21]#s', $chunk, $matches);
                 }
             } finally {
                 @fclose($fh);

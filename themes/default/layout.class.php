@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * A class to turn a Page data structure into a blob of HTML
  */

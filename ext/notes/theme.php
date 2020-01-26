@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class NotesTheme extends Themelet
 {
     public function note_button($image_id)

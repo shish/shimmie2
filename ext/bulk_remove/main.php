@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 //todo: removal by tag returns 1 less image in test for some reason, actually a combined search doesn't seem to work for shit either
 

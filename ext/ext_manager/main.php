@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 function __extman_extcmp(ExtensionInfo $a, ExtensionInfo $b): int
@@ -33,6 +33,9 @@ class ExtensionAuthor
 
 class ExtManager extends Extension
 {
+    /** @var ExtManagerTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
@@ -138,8 +141,7 @@ class ExtManager extends Extension
         file_put_contents(
             "data/config/extensions.conf.php",
             '<' . '?php' . "\n" .
-            'define("EXTRA_EXTS", "' . implode(",", $extras) . '");' . "\n" .
-            '?' . ">"
+            'define("EXTRA_EXTS", "' . implode(",", $extras) . '");' . "\n"
         );
 
         // when the list of active extensions changes, we can be

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class FavoriteSetEvent extends Event
 {
@@ -11,6 +11,7 @@ class FavoriteSetEvent extends Event
 
     public function __construct(int $image_id, User $user, bool $do_set)
     {
+        parent::__construct();
         assert(is_int($image_id));
         assert(is_bool($do_set));
 
@@ -22,6 +23,9 @@ class FavoriteSetEvent extends Event
 
 class Favorites extends Extension
 {
+    /** @var FavoritesTheme */
+    protected $theme;
+
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $database, $user;
@@ -34,7 +38,7 @@ class Favorites extends Extension
                 ["user_id"=>$user_id, "image_id"=>$image_id]
             ) > 0;
 
-            $event->add_part($this->theme->get_voter_html($event->image, $is_favorited));
+            $event->add_part((string)$this->theme->get_voter_html($event->image, $is_favorited));
         }
     }
 
@@ -114,6 +118,8 @@ class Favorites extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^favorites([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
@@ -131,10 +137,7 @@ class Favorites extends Extension
     public function onHelpPageBuilding(HelpPageBuildingEvent $event)
     {
         if ($event->key===HelpPages::SEARCH) {
-            $block = new Block();
-            $block->header = "Favorites";
-            $block->body = $this->theme->get_help_html();
-            $event->add_block($block);
+            $event->add_block(new Block("Favorites", (string)$this->theme->get_help_html()));
         }
     }
 
@@ -193,7 +196,6 @@ class Favorites extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config;
         global $database;
 
         if ($this->get_version("ext_favorites_version") < 1) {

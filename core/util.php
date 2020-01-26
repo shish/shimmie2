@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use function MicroHTML\emptyHTML;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
@@ -79,7 +79,7 @@ function blockcmp(Block $a, Block $b): int
     if ($a->position == $b->position) {
         return 0;
     } else {
-        return ($a->position > $b->position);
+        return ($a->position > $b->position) ? 1 : -1;
     }
 }
 
@@ -92,7 +92,7 @@ function get_memory_limit(): int
 
     // thumbnail generation requires lots of memory
     $default_limit = 8*1024*1024;	// 8 MB of memory is PHP's default.
-    $shimmie_limit = parse_shorthand_int($config->get_int(MediaConfig::MEM_LIMIT));
+    $shimmie_limit = $config->get_int(MediaConfig::MEM_LIMIT);
 
     if ($shimmie_limit < 3*1024*1024) {
         // we aren't going to fit, override
@@ -117,7 +117,7 @@ function get_memory_limit(): int
             // Shimmie wants more memory than what PHP is currently set for.
 
             // Attempt to set PHP's memory limit.
-            if (ini_set("memory_limit", $shimmie_limit) === false) {
+            if (ini_set("memory_limit", "$shimmie_limit") === false) {
                 /*  We can't change PHP's limit, oh well, return whatever its currently set to */
                 return $memory;
             }
@@ -344,20 +344,17 @@ function join_url(string $base, string ...$paths)
 
 function get_dir_contents(string $dir): array
 {
-    if (empty($dir)) {
-        throw new Exception("dir required");
-    }
+    assert(!empty($dir));
+
     if (!is_dir($dir)) {
         return [];
     }
-    $results = array_diff(
+    return array_diff(
         scandir(
             $dir
         ),
         ['..', '.']
     );
-
-    return $results;
 }
 
 /**
@@ -460,8 +457,8 @@ function _sanitise_environment(): void
         date_default_timezone_set(TIMEZONE);
     }
 
-    # ini_set('zend.assertions', 1);  // generate assertions
-    ini_set('assert.exception', 1);  // throw exceptions when failed
+    # ini_set('zend.assertions', '1');  // generate assertions
+    ini_set('assert.exception', '1');  // throw exceptions when failed
     if (DEBUG) {
         error_reporting(E_ALL);
     }
@@ -695,13 +692,11 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     if ($onsubmit) {
         $attrs["onsubmit"] = $onsubmit;
     }
-    $f = FORM(
+    return FORM(
         $attrs,
         INPUT(["type"=>"hidden", "name"=>"q", "value"=>$target]),
         $method != "GET" ? "" : $user->get_auth_html()
     );
-
-    return $f;
 }
 
 function SHM_SIMPLE_FORM($target, ...$children) {

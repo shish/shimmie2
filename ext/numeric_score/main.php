@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class NumericScoreSetEvent extends Event
 {
@@ -8,6 +8,7 @@ class NumericScoreSetEvent extends Event
 
     public function __construct(int $image_id, User $user, int $score)
     {
+        parent::__construct();
         $this->image_id = $image_id;
         $this->user = $user;
         $this->score = $score;
@@ -46,8 +47,8 @@ class NumericScore extends Extension
         if ($event->page_matches("numeric_score_votes")) {
             $image_id = int_escape($event->get_arg(0));
             $x = $database->get_all(
-                "SELECT users.name as username, user_id, score 
-				FROM numeric_score_votes 
+                "SELECT users.name as username, user_id, score
+				FROM numeric_score_votes
 				JOIN users ON numeric_score_votes.user_id=users.id
 				WHERE image_id=:image_id",
                 ['image_id'=>$image_id]
@@ -222,6 +223,8 @@ class NumericScore extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^score([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(-?\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
@@ -298,7 +301,6 @@ class NumericScore extends Extension
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database;
-        global $config;
 
         if ($this->get_version("ext_numeric_score_version") < 1) {
             $database->execute("ALTER TABLE images ADD COLUMN numeric_score INTEGER NOT NULL DEFAULT 0");

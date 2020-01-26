@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use MicroCRUD\ActionColumn;
 use MicroCRUD\TextColumn;
@@ -33,6 +33,7 @@ class AddAliasEvent extends Event
 
     public function __construct(string $oldtag, string $newtag)
     {
+        parent::__construct();
         $this->oldtag = trim($oldtag);
         $this->newtag = trim($newtag);
     }
@@ -44,6 +45,9 @@ class AddAliasException extends SCoreException
 
 class AliasEditor extends Extension
 {
+    /** @var AliasEditorTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $database, $page, $user;

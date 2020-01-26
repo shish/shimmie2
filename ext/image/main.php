@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 
@@ -168,7 +168,7 @@ class ImageIO extends Extension
         /*
          * Validate things
          */
-        if (strlen(trim($image->source)) == 0) {
+        if (strlen(trim($image->source ?? '')) == 0) {
             $image->source = null;
         }
 

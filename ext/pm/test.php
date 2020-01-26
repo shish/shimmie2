@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class PrivMsgTest extends ShimmiePHPUnitTestCase
 {
     public function testPM()

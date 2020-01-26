@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
 * Name: Danbooru Theme
 * Author: Bzchan <bzchan@animemahou.com>

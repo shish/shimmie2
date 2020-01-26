@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 abstract class SCORE
 {
     const AIPK      = "SCORE_AIPK";
@@ -169,7 +169,7 @@ class SQLite extends DBEngine
 
     public function init(PDO $db)
     {
-        ini_set('sqlite.assoc_case', 0);
+        ini_set('sqlite.assoc_case', '0');
         $db->exec("PRAGMA foreign_keys = ON;");
         $db->sqliteCreateFunction('UNIX_TIMESTAMP', '_unix_timestamp', 1);
         $db->sqliteCreateFunction('now', '_now', 0);

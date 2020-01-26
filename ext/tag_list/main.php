@@ -1,9 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 
 class TagList extends Extension
 {
+    /** @var TagListTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -503,7 +506,7 @@ class TagList extends Extension
                 $query = "
                     SELECT tag, count
                     FROM tags
-                    WHERE count > 0 
+                    WHERE count > 0
                     ORDER BY count DESC
                     LIMIT :popular_tag_list_length
                     ";
@@ -511,7 +514,7 @@ class TagList extends Extension
                 $query = "
                     SELECT tag, count
                     FROM tags
-                    WHERE count > 0 
+                    WHERE count > 0
                         AND id NOT IN (".(implode(",", $omitted_tags)).")
                     ORDER BY count DESC
                     LIMIT :popular_tag_list_length
@@ -595,7 +598,7 @@ class TagList extends Extension
                 $query = "SELECT t.tag, A.calc_count AS count FROM tags t INNER JOIN (
 					SELECT it2.tag_id, COUNT(it2.image_id) AS calc_count
 					FROM image_tags AS it1 -- Got other images with the same tags
-					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id 
+					    INNER JOIN image_tags AS it2 ON it1.image_id=it2.image_id
 					    -- And filter out unwanted tags
                             AND it2.tag_id NOT IN (".implode(",", array_merge($omitted_tags, $starting_tags)).")
 					WHERE

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 abstract class TrashConfig
 {
@@ -73,7 +73,7 @@ class Trash extends Extension
             $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_N ")));
         }
 
-
+        if(is_null($event->term)) return;
         if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
             if ($user->can(Permissions::VIEW_TRASH)) {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("trash = SCORE_BOOL_Y ")));

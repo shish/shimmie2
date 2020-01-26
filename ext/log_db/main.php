@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use function MicroHTML\A;
 use function MicroHTML\SPAN;
@@ -44,7 +44,7 @@ class ActorColumn extends Column
 
     public function get_sql_filter(): string
     {
-        $driver = $this->table->db->getAttribute(\PDO::ATTR_DRIVER_NAME);
+        $driver = $this->table->db->getAttribute(PDO::ATTR_DRIVER_NAME);
         switch ($driver) {
             case "pgsql":
                 return "((username = :{$this->name}_0) OR (address && cast(:{$this->name}_1 as inet)))";
@@ -202,6 +202,9 @@ class LogTable extends Table
 
 class LogDatabase extends Extension
 {
+    /** @var LogDatabaseTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -210,7 +213,7 @@ class LogDatabase extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         if ($this->get_version("ext_log_database_version") < 1) {
             $database->create_table("score_log", "
@@ -242,7 +245,7 @@ class LogDatabase extends Extension
 
     public function onPageRequest(PageRequestEvent $event)
     {
-        global $cache, $database, $user;
+        global $database, $user;
         if ($event->page_matches("log/view")) {
             if ($user->can(Permissions::VIEW_EVENTLOG)) {
                 $t = new LogTable($database->raw_db());

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class _SafeImage
 {
@@ -130,13 +130,14 @@ class ShimmieApi extends Extension
             );
 
             if (isset($_GET['recent'])) {
-                $recent = $database->get_all(
+                $recents = $database->get_all(
                     "SELECT * FROM images WHERE owner_id=:owner_id ORDER BY id DESC LIMIT 0, 5",
                     ['owner_id'=>$all['id']]
                 );
 
                 $i = 0;
-                foreach ($recent as $all['recentposts'][$i]) {
+                foreach ($recents as $recent) {
+                    $all['recentposts'][$i] = $recent;
                     unset($all['recentposts'][$i]['owner_id']); //We already know the owners id..
                     unset($all['recentposts'][$i]['owner_ip']);
 

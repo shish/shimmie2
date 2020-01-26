@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class SourceHistory extends Extension
 {
@@ -92,7 +92,7 @@ class SourceHistory extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
         if ($this->get_version("ext_source_history_version") < 1) {
             $database->create_table("source_histories", "
@@ -127,8 +127,6 @@ class SourceHistory extends Extension
     private function process_revert_request(int $revert_id)
     {
         global $page;
-
-        $revert_id = int_escape($revert_id);
 
         // check for the nothing case
         if ($revert_id < 1) {
@@ -289,7 +287,7 @@ class SourceHistory extends Extension
 				FROM source_histories t1
 				LEFT JOIN source_histories t2 ON (t1.image_id = t2.image_id AND t1.date_set < t2.date_set)
 				WHERE t2.image_id IS NULL
-				AND t1.image_id IN ( select image_id from source_histories where '.implode(" AND ", $select_code).') 
+				AND t1.image_id IN ( select image_id from source_histories where '.implode(" AND ", $select_code).')
 				ORDER BY t1.image_id
 		', $select_args);
 

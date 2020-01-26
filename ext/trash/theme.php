@@ -1,17 +1,15 @@
-<?php
+<?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class TrashTheme extends Themelet
 {
     public function get_image_admin_html(int $image_id)
     {
-        $html = "
-			".make_form(make_link('trash_restore/'.$image_id), 'POST')."
-				<input type='hidden' name='image_id' value='$image_id'>
-				<input type='submit' value='Restore From Trash'>
-			</form>
-		";
-
-        return $html;
+        return (string)SHM_SIMPLE_FORM(
+            make_link('trash_restore/'.$image_id),
+            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type"=>'submit', "value"=>'Restore From Trash']),
+        );
     }
 
 
@@ -21,7 +19,7 @@ class TrashTheme extends Themelet
         <div class="command_example">
         <pre>in:trash</pre>
         <p>Returns images that are in the trash.</p>
-        </div> 
+        </div>
         ';
     }
 }

@@ -4,7 +4,7 @@ class Blocks extends Extension
 {
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
         if ($this->get_version("ext_blocks_version") < 1) {
             $database->create_table("blocks", "
 				id SCORE_AIPK,

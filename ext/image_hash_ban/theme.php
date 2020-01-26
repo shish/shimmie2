@@ -1,4 +1,5 @@
-<?php
+<?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class ImageBanTheme extends Themelet
 {
@@ -18,14 +19,12 @@ class ImageBanTheme extends Themelet
      */
     public function get_buttons_html(Image $image)
     {
-        $html = "
-			".make_form(make_link("image_hash_ban/add"))."
-				<input type='hidden' name='c_hash' value='{$image->hash}'>
-				<input type='hidden' name='c_image_id' value='{$image->id}'>
-				<input type='text' name='c_reason'>
-				<input type='submit' value='Ban Hash and Delete Image'>
-			</form>
-		";
-        return $html;
+        return (string)SHM_SIMPLE_FORM(
+            make_link("image_hash_ban/add"),
+            INPUT(["type"=>'hidden', "name"=>'c_hash', "value"=>$image->hash]),
+            INPUT(["type"=>'hidden', "name"=>'c_image_id', "value"=>$image->id]),
+            INPUT(["type"=>'text', "name"=>'c_reason']),
+            INPUT(["type"=>'submit', "value"=>'Ban Hash and Delete Image']),
+        );
     }
 }

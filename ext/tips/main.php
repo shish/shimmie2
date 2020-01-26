@@ -1,10 +1,13 @@
-<?php
+<?php declare(strict_types=1);
 
 class Tips extends Extension
 {
+    /** @var TipsTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         if ($this->get_version("ext_tips_version") < 1) {
             $database->create_table("tips", "
@@ -148,7 +151,7 @@ class Tips extends Extension
     {
         global $database;
 
-        $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id"=>int_escape($tipID)]);
+        $tip = $database->get_row("SELECT * FROM tips WHERE id = :id ", ["id"=>$tipID]);
 
         if (bool_escape($tip['enable'])) {
             $enable = "N";
@@ -156,12 +159,12 @@ class Tips extends Extension
             $enable = "Y";
         }
 
-        $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>int_escape($tipID)]);
+        $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>$tipID]);
     }
 
     private function deleteTip(int $tipID)
     {
         global $database;
-        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>int_escape($tipID)]);
+        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>$tipID]);
     }
 }

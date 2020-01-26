@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class BulkActionBlockBuildingEvent extends Event
 {
@@ -39,13 +39,11 @@ class BulkActionEvent extends Event
     public $action;
     /** @var array  */
     public $items;
-    /** @var PageRequestEvent  */
-    public $page_request;
 
-    public function __construct(String $action, PageRequestEvent $pageRequestEvent, Generator  $items)
+    public function __construct(String $action, Generator $items)
     {
+        parent::__construct();
         $this->action = $action;
-        $this->page_request = $pageRequestEvent;
         $this->items = $items;
     }
 }
@@ -108,7 +106,7 @@ class BulkActions extends Extension
             }
             $query = $event->args[0];
             $items = $this->yield_search_results($event->args[1]);
-            $newEvent = new BulkActionEvent($event->args[0], $event, $items);
+            $newEvent = new BulkActionEvent($event->args[0], $items);
             var_dump($newEvent);
             # send_event($newEvent);
         }
@@ -177,10 +175,9 @@ class BulkActions extends Extension
             }
 
             if (is_iterable($items)) {
-                $newEvent = new BulkActionEvent($action, $event, $items);
+                $newEvent = new BulkActionEvent($action, $items);
                 send_event($newEvent);
             }
-
 
             $page->set_mode(PageMode::REDIRECT);
             if (!isset($_SERVER['HTTP_REFERER'])) {
@@ -228,7 +225,7 @@ class BulkActions extends Extension
                 send_event(new ImageDeletionEvent($image));
                 $total++;
             } catch (Exception $e) {
-                $page->flash("Error while removing {$image->id}: " . $e->getMessage(), "error");
+                $page->flash("Error while removing {$image->id}: " . $e->getMessage());
             }
         }
         return $total;
@@ -283,7 +280,7 @@ class BulkActions extends Extension
                 send_event(new SourceSetEvent($image, $source));
                 $total++;
             } catch (Exception $e) {
-                $page->flash("Error while setting source for {$image->id}: " . $e->getMessage(), "error");
+                $page->flash("Error while setting source for {$image->id}: " . $e->getMessage());
             }
         }
         return $total;

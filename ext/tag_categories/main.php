@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 require_once "config.php";
@@ -66,8 +66,9 @@ class TagCategories extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        $matches = [];
+        if(is_null($event->term)) return;
 
+        $matches = [];
         if (preg_match("/^(.+)tags([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])([0-9]+)$/i", $event->term, $matches)) {
             global $database;
             $type = strtolower($matches[1]);
@@ -105,10 +106,7 @@ class TagCategories extends Extension
     public function getDict()
     {
         global $database;
-
-        $tc_dict = $database->get_all('SELECT * FROM image_tag_categories;');
-
-        return $tc_dict;
+        return $database->get_all('SELECT * FROM image_tag_categories;');
     }
 
     public function getKeyedDict($key_with = 'category')

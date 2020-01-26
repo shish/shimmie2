@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /** @var $user_config Config */
 global $user_config;
@@ -13,6 +13,7 @@ class InitUserConfigEvent extends Event
 
     public function __construct(User $user, Config $user_config)
     {
+        parent::__construct();
         $this->user = $user;
         $this->user_config = $user_config;
     }
@@ -26,13 +27,13 @@ class UserConfig extends Extension
     {
         global $database, $user_config;
 
-        $user_config = new DatabaseConfig($database, "user_config", "user_id", $event->user->id);
+        $user_config = new DatabaseConfig($database, "user_config", "user_id", "{$event->user->id}");
         send_event(new InitUserConfigEvent($event->user, $user_config));
     }
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event): void
     {
-        global $config, $database;
+        global $database;
 
         if ($this->get_version(self::VERSION) < 1) {
             $database->create_table("user_config", "

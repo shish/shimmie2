@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 class XMLSitemap extends Extension
@@ -46,12 +46,19 @@ class XMLSitemap extends Extension
             return;
         }
         $latestimages_urllist = [];
+        $last_image = null;
         foreach ($latestimages as $arrayid => $image) {
             // create url from image id's
             $latestimages_urllist[$arrayid] = "post/view/$image->id";
+            $last_image = $image;
         }
 
-        $this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", strtotime($image->posted)));
+        $this->add_sitemap_queue(
+            $latestimages_urllist,
+            "monthly",
+            "0.8",
+            date("Y-m-d", strtotime($last_image->posted))
+        );
 
         /* --- Display page --- */
         // when sitemap is ok, display it from the file

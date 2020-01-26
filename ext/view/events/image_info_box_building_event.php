@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ImageInfoBoxBuildingEvent extends Event
 {
@@ -11,6 +11,7 @@ class ImageInfoBoxBuildingEvent extends Event
 
     public function __construct(Image $image, User $user)
     {
+        parent::__construct();
         $this->image = $image;
         $this->user = $user;
     }

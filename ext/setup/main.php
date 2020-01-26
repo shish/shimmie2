@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 include_once "config.php";
 
@@ -13,6 +13,7 @@ class ConfigSaveEvent extends Event
 
     public function __construct(Config $config)
     {
+        parent::__construct();
         $this->config = $config;
     }
 }
@@ -27,6 +28,7 @@ class SetupBuildingEvent extends Event
 
     public function __construct(SetupPanel $panel)
     {
+        parent::__construct();
         $this->panel = $panel;
     }
 }
@@ -203,7 +205,7 @@ class SetupBlock extends Block
     public function add_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
-        $val = html_escape($config->get_string($name));
+        $val = $config->get_int($name);
 
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='4' style='text-align: center;'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
@@ -214,7 +216,7 @@ class SetupBlock extends Block
     public function add_shorthand_int_option(string $name, string $label=null, bool $table_row = false)
     {
         global $config;
-        $val = to_shorthand_int($config->get_string($name));
+        $val = to_shorthand_int($config->get_int($name));
         $html = "<input type='text' id='$name' name='_config_$name' value='$val' size='6' style='text-align: center;'>\n";
         $html .= "<input type='hidden' name='_type_$name' value='int'>\n";
 
@@ -224,7 +226,12 @@ class SetupBlock extends Block
     public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
-        $current = $config->get_string($name);
+        if(is_int(array_values($options)[0])) {
+            $current = $config->get_int($name);
+        }
+        else {
+            $current = $config->get_string($name);
+        }
 
         $html = "<select id='$name' name='_config_$name'>";
         foreach ($options as $optname => $optval) {
@@ -388,8 +395,8 @@ class Setup extends Extension
                 $value = isset($_POST["_config_$name"]) ? $_POST["_config_$name"] : null;
                 switch ($type) {
                     case "string": $config->set_string($name, $value); break;
-                    case "int":    $config->set_int($name, $value);    break;
-                    case "bool":   $config->set_bool($name, $value);   break;
+                    case "int":    $config->set_int($name, parse_shorthand_int((string)$value));    break;
+                    case "bool":   $config->set_bool($name, bool_escape($value));   break;
                     case "array":  $config->set_array($name, $value);  break;
                 }
             }

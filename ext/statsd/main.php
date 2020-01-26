@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 _d("STATSD_HOST", null);
 
@@ -78,7 +78,7 @@ class StatsDInterface extends Extension
         return 99;
     }
 
-    private function send(array $data, int $sampleRate=1)
+    private function send(array $data, float $sampleRate=1)
     {
         if (!STATSD_HOST) {
             return;

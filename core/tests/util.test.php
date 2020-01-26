@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 require_once "core/util.php";
 
 class UtilTest extends \PHPUnit\Framework\TestCase

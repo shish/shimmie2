@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class HolidayTheme extends Themelet
 {
     public function display_holiday($date)

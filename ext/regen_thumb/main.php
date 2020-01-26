@@ -1,9 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
 
 class RegenThumb extends Extension
 {
-    public function regenerate_thumbnail($image, $force = true): string
+    /** @var RegenThumbTheme */
+    protected $theme;
+
+    public function regenerate_thumbnail($image, $force = true): bool
     {
         global $cache;
         $event = new ThumbnailGenerationEvent($image->hash, $image->ext, $force);

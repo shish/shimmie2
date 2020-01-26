@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class OekakiTest extends ShimmiePHPUnitTestCase
 {
     public function testLog()

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class WordFilter extends Extension
 {
@@ -44,7 +44,7 @@ class WordFilter extends Extension
     private function get_map(): array
     {
         global $config;
-        $raw = $config->get_string("word_filter");
+        $raw = $config->get_string("word_filter") ?? "";
         $lines = explode("\n", $raw);
         $map = [];
         foreach ($lines as $line) {

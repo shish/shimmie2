@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 if ( // kill these glitched requests immediately
     strpos(@$_SERVER["REQUEST_URI"], "/http") !== false

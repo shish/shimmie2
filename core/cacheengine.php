@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 interface CacheEngine
 {
     public function get(string $key);

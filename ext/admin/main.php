@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Sent when the admin page is ready to be added to
@@ -10,6 +10,7 @@ class AdminBuildingEvent extends Event
 
     public function __construct(Page $page)
     {
+        parent::__construct();
         $this->page = $page;
     }
 }
@@ -23,12 +24,16 @@ class AdminActionEvent extends Event
 
     public function __construct(string $action)
     {
+        parent::__construct();
         $this->action = $action;
     }
 }
 
 class AdminPage extends Extension
 {
+    /** @var AdminPageTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;

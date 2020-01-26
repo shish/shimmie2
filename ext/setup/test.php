@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class SetupTest extends ShimmiePHPUnitTestCase
 {
     public function testNiceUrlsTest()

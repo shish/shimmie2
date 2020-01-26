@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class Home extends Extension
 {
+    /** @var HomeTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $page;

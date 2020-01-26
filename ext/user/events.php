@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class UserBlockBuildingEvent extends Event
 {
@@ -34,6 +34,7 @@ class UserPageBuildingEvent extends Event
 
     public function __construct(User $display_user)
     {
+        parent::__construct();
         $this->display_user = $display_user;
     }
 
@@ -57,6 +58,7 @@ class UserCreationEvent extends Event
 
     public function __construct(string $name, string $pass, string $email)
     {
+        parent::__construct();
         $this->username = $name;
         $this->password = $pass;
         $this->email = $email;
@@ -68,6 +70,7 @@ class UserLoginEvent extends Event
     public $user;
     public function __construct(User $user)
     {
+        parent::__construct();
         $this->user = $user;
     }
 }
@@ -79,6 +82,7 @@ class UserDeletionEvent extends Event
 
     public function __construct(int $id)
     {
+        parent::__construct();
         $this->id = $id;
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * Load all the files into memory, sanitise the environment, but don't
  * actually do anything as far as the app is concerned

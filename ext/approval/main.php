@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 abstract class ApprovalConfig
 {
@@ -9,6 +9,9 @@ abstract class ApprovalConfig
 
 class Approval extends Extension
 {
+    /** @var ApprovalTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -59,8 +62,6 @@ class Approval extends Extension
 
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
-        global $config;
-
         $this->theme->display_admin_form();
     }
 
@@ -128,7 +129,7 @@ class Approval extends Extension
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_Y ")));
             }
 
-
+            if(is_null($event->term)) return;
             if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
                 if ($user->can(Permissions::APPROVE_IMAGE) && $matches[1] == "no") {
                     $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_N ")));
@@ -177,7 +178,7 @@ class Approval extends Extension
 
     public static function disapprove_image($image_id)
     {
-        global $database, $user;
+        global $database;
 
         $database->execute(
             $database->scoreql_to_sql(
@@ -235,7 +236,6 @@ class Approval extends Extension
                 break;
         }
     }
-
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

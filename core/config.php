@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Interface Config
@@ -18,12 +18,12 @@ interface Config
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_int(string $name, ?string $value): void;
+    public function set_int(string $name, ?int $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
      */
-    public function set_float(string $name, ?string $value): void;
+    public function set_float(string $name, ?float $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -32,9 +32,8 @@ interface Config
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
-     * @param null|bool|string $value
      */
-    public function set_bool(string $name, $value): void;
+    public function set_bool(string $name, ?bool $value): void;
 
     /**
      * Set a configuration option to a new value, regardless of what the value is at the moment.
@@ -133,13 +132,13 @@ abstract class BaseConfig implements Config
 {
     public $values = [];
 
-    public function set_int(string $name, ?string $value): void
+    public function set_int(string $name, ?int $value): void
     {
-        $this->values[$name] = is_null($value) ? null : parse_shorthand_int($value);
+        $this->values[$name] = is_null($value) ? null : $value;
         $this->save($name);
     }
 
-    public function set_float(string $name, ?string $value): void
+    public function set_float(string $name, ?float $value): void
     {
         $this->values[$name] = $value;
         $this->save($name);
@@ -151,9 +150,9 @@ abstract class BaseConfig implements Config
         $this->save($name);
     }
 
-    public function set_bool(string $name, $value): void
+    public function set_bool(string $name, ?bool $value): void
     {
-        $this->values[$name] = bool_escape($value) ? 'Y' : 'N';
+        $this->values[$name] = $value ? 'Y' : 'N';
         $this->save($name);
     }
 
@@ -277,10 +276,10 @@ class StaticConfig extends BaseConfig
             if (!empty($config)) {
                 $this->values = $config;
             } else {
-                throw new Exception("Config file '$filename' doesn't contain any config");
+                throw new ScoreException("Config file '$filename' doesn't contain any config");
             }
         } else {
-            throw new Exception("Config file '$filename' missing");
+            throw new ScoreException("Config file '$filename' missing");
         }
     }
 

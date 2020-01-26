@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class LinkImage extends Extension
 {
+    /** @var LinkImageTheme */
+    protected $theme;
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page;

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * \page themes Themes
  *
@@ -44,8 +44,6 @@ abstract class PageMode
  */
 class Page
 {
-    /** @name Overall */
-    //@{
     /** @var string */
     public $mode = PageMode::PAGE;
     /** @var string */
@@ -75,11 +73,7 @@ class Page
         }
     }
 
-
-    //@}
     // ==============================================
-    /** @name "data" mode */
-    //@{
 
     /** @var string; public only for unit test */
     public $data = "";
@@ -114,11 +108,7 @@ class Page
         $this->disposition = $disposition;
     }
 
-
-    //@}
     // ==============================================
-    /** @name "redirect" mode */
-    //@{
 
     /** @var string */
     private $redirect = "";
@@ -132,11 +122,7 @@ class Page
         $this->redirect = $redirect;
     }
 
-
-    //@}
     // ==============================================
-    /** @name "page" mode */
-    //@{
 
     /** @var int */
     public $code = 200;
@@ -268,8 +254,6 @@ class Page
         $this->blocks[] = $block;
     }
 
-
-    //@}
     // ==============================================
 
     /**
@@ -553,6 +537,7 @@ class PageSubNavBuildingEvent extends Event
 
     public function __construct(string $parent)
     {
+        parent::__construct();
         $this->parent= $parent;
     }
 

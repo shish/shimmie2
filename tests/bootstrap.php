@@ -64,6 +64,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         if (!$args) {
             $args = [];
         }
+        foreach($args as $k=>$v) {
+            $args[$k] = (string)$v;
+        }
         $_GET = [];
         $_POST = $args;
         $page = class_exists("CustomPage") ? new CustomPage() : new Page();
@@ -78,6 +81,12 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         global $page;
         $this->assertStringContainsString($title, $page->title);
+    }
+
+    protected function assert_title_matches($title)
+    {
+        global $page;
+        $this->assertStringMatchesFormat($title, $page->title);
     }
 
     protected function assert_no_title(string $title)

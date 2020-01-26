@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class AuthorSetEvent extends Event
 {
@@ -11,6 +11,7 @@ class AuthorSetEvent extends Event
 
     public function __construct(Image $image, User $user, string $author)
     {
+        parent::__construct();
         $this->image = $image;
         $this->user = $user;
         $this->author = $author;
@@ -19,6 +20,9 @@ class AuthorSetEvent extends Event
 
 class Artists extends Extension
 {
+    /** @var ArtistsTheme */
+    protected $theme;
+
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
         global $user;
@@ -38,6 +42,8 @@ class Artists extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^(author|artist)[=|:](.*)$/i", $event->term, $matches)) {
             $char = $matches[1];
@@ -195,7 +201,7 @@ class Artists extends Extension
 
                 case "view":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $artist = $this->get_artist($artistID);
                     $aliases = $this->get_alias($artist['id']);
                     $members = $this->get_members($artist['id']);
@@ -222,7 +228,7 @@ class Artists extends Extension
 
                 case "edit":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $artist = $this->get_artist($artistID);
                     $aliases = $this->get_alias($artistID);
                     $members = $this->get_members($artistID);
@@ -262,7 +268,7 @@ class Artists extends Extension
                 }
                 case "nuke":
                 {
-                    $artistID = $event->get_arg(1);
+                    $artistID = int_escape($event->get_arg(1));
                     $this->delete_artist($artistID); // this will delete the artist, its alias, its urls and its members
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("artist/list"));
@@ -300,7 +306,7 @@ class Artists extends Extension
                         }
                         case "delete":
                         {
-                            $aliasID = $event->get_arg(2);
+                            $aliasID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_aliasID($aliasID);
                             $this->delete_alias($aliasID);
                             $page->set_mode(PageMode::REDIRECT);
@@ -341,7 +347,7 @@ class Artists extends Extension
                         }
                         case "delete":
                         {
-                            $urlID = $event->get_arg(2);
+                            $urlID = int_escape($event->get_arg(2));
                             $artistID = $this->get_artistID_by_urlID($urlID);
                             $this->delete_url($urlID);
                             $page->set_mode(PageMode::REDIRECT);
@@ -415,7 +421,7 @@ class Artists extends Extension
     {
         global $database;
         $result = $database->get_row("SELECT author FROM images WHERE id = :id", ['id'=>$imageID]);
-        return stripslashes($result['author']);
+        return $result['author'] ?? "";
     }
 
     private function url_exists_by_url(string $url): bool
@@ -435,7 +441,6 @@ class Artists extends Extension
     private function alias_exists_by_name(string $alias): bool
     {
         global $database;
-
         $result = $database->get_one("SELECT COUNT(1) FROM artist_alias WHERE alias = :alias", ['alias'=>$alias]);
         return ($result != 0);
     }
@@ -507,25 +512,19 @@ class Artists extends Extension
     private function get_alias_by_id(int $aliasID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
-        $result["alias"] = stripslashes($result["alias"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
     private function get_url_by_id(int $urlID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
-        $result["url"] = stripslashes($result["url"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
     private function get_member_by_id(int $memberID): array
     {
         global $database;
-        $result = $database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id'=>$memberID]);
-        $result["name"] = stripslashes($result["name"]);
-        return $result;
+        return $database->get_row("SELECT * FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
     private function update_artist()
@@ -850,7 +849,7 @@ class Artists extends Extension
     {
         global $config, $database;
 
-        $pageNumber = clamp($event->get_arg(1), 1, null) - 1;
+        $pageNumber = clamp(int_escape($event->get_arg(1)), 1, null) - 1;
         $artistsPerPage = $config->get_int("artistsPerPage");
 
         $listing = $database->get_all(

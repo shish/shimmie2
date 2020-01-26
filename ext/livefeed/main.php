@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class LiveFeed extends Extension
 {
@@ -63,7 +63,7 @@ class LiveFeed extends Extension
         try {
             $parts = explode(":", $host);
             $host = $parts[0];
-            $port = $parts[1];
+            $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
             if (! $fp) {
                 return;

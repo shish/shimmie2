@@ -1,4 +1,6 @@
-<?php
+<?php declare(strict_types=1);
+use function MicroHTML\INPUT;
+
 class ImageIOTheme extends Themelet
 {
     /**
@@ -7,14 +9,11 @@ class ImageIOTheme extends Themelet
      */
     public function get_deleter_html(int $image_id): string
     {
-        $html = "
-			".make_form(make_link("image/delete"))."
-				<input type='hidden' name='image_id' value='$image_id' />
-				<input type='submit' value='Delete' onclick='return confirm(\"Delete the image?\");' />
-			</form>
-		";
-        
-        return $html;
+        return (string)SHM_SIMPLE_FORM(
+            make_link("image/delete"),
+            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type"=>'submit', "value"=>'Delete', "onclick"=>'return confirm("Delete the image?");']),
+        );
     }
 
     /**
@@ -22,10 +21,10 @@ class ImageIOTheme extends Themelet
      */
     public function get_replace_html(int $image_id): string
     {
-        $html = make_form(make_link("image/replace"))."
-					<input type='hidden' name='image_id' value='$image_id' />
-					<input type='submit' value='Replace' />
-				</form>";
-        return $html;
+        return (string)SHM_SIMPLE_FORM(
+            make_link("image/replace"),
+            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type"=>'submit', "value"=>'Replace']),
+        );
     }
 }

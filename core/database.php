@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use FFSPHP\PDO;
 
 abstract class DatabaseDriver
@@ -168,7 +168,7 @@ class Database
                 $this->connect_db();
             }
             return $this->db->execute(
-                "-- " . str_replace("%2F", "/", urlencode(@$_GET['q'])). "\n" .
+                "-- " . str_replace("%2F", "/", urlencode($_GET['q'] ?? '')). "\n" .
                 $query,
                 $args
             );

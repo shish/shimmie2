@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 // Tagger AJAX back-end
 class TaggerXML extends Extension
@@ -21,7 +21,7 @@ class TaggerXML extends Extension
                 $tags = $this->match_tag_list($_GET['s']);
             } elseif ($event->get_arg(0)) { // tagger/tags/$int
                 // return arg[1] AS image_id's tag list in XML form
-                $tags = $this->image_tag_list($event->get_arg(0));
+                $tags = $this->image_tag_list(int_escape($event->get_arg(0)));
             }
 
             $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".
@@ -42,8 +42,9 @@ class TaggerXML extends Extension
         $max_rows = $config->get_int("ext_tagger_tag_max", 30);
         $limit_rows = $config->get_int("ext_tagger_limit", 30);
 
+        $p = strlen($s) == 1 ? " " : "\_";
         $values = [
-            'p' => strlen($s) == 1 ? " " : "\_",
+            'p' => $p,
             'sq' => "%".$p.sql_escape($s)."%"
         ];
 
@@ -89,7 +90,7 @@ class TaggerXML extends Extension
 			SELECT tags.*
 			FROM image_tags JOIN tags ON image_tags.tag_id = tags.id
 			WHERE image_id=:image_id ORDER BY tag", ['image_id'=>$image_id]);
-        return $this->list_to_xml($tags, "image", $image_id);
+        return $this->list_to_xml($tags, "image", (string)$image_id);
     }
 
     private function list_to_xml(PDOStatement $tags, string $type, string $query, ?array$misc=null): string

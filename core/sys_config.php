@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /*
  * First, load the user-specified settings
  */

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class PostTitlesTheme extends Themelet
 {
     public function get_title_set_html(string $title, bool $can_set): string

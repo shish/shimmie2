@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ArrowkeyNavigation extends Extension
 {
@@ -85,11 +85,9 @@ class ArrowkeyNavigation extends Extension
         }
 
         // Create return array
-        $pageinfo = [
+        return [
             "prev" => $prefix.$prev,
             "next" => $prefix.$next,
         ];
-
-        return $pageinfo;
     }
 }

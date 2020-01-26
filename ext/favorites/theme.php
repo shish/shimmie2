@@ -1,21 +1,18 @@
-<?php
+<?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class FavoritesTheme extends Themelet
 {
     public function get_voter_html(Image $image, $is_favorited)
     {
-        $i_image_id = int_escape($image->id);
         $name  = $is_favorited ? "unset" : "set";
         $label = $is_favorited ? "Un-Favorite" : "Favorite";
-        $html  = "
-			".make_form(make_link("change_favorite"))."
-			<input type='hidden' name='image_id' value='$i_image_id'>
-			<input type='hidden' name='favorite_action' value='$name'>
-			<input type='submit' value='$label'>
-			</form>
-		";
-
-        return $html;
+        return SHM_SIMPLE_FORM(
+            make_link("change_favorite"),
+            INPUT(["type"=>"hidden", "name"=>"image_id", "value"=>$image->id]),
+            INPUT(["type"=>"hidden", "name"=>"favorite_action", "value"=>$name]),
+            INPUT(["type"=>"submit", "value"=>$label]),
+        );
     }
 
     public function display_people($username_array)
@@ -26,7 +23,7 @@ class FavoritesTheme extends Themelet
         $html = "$i_favorites people:";
 
         reset($username_array); // rewind to first element in array.
-        
+
         foreach ($username_array as $row) {
             $username = html_escape($row);
             $html .= "<br><a href='".make_link("user/$username")."'>$username</a>";
@@ -40,7 +37,7 @@ class FavoritesTheme extends Themelet
         return '<p>Search for images that have been favorited a certain number of times, or favorited by a particular individual.</p>
         <div class="command_example">
         <pre>favorites=1</pre>
-        <p>Returns images that have been favorited once.</p> 
+        <p>Returns images that have been favorited once.</p>
         </div>
         <div class="command_example">
         <pre>favorites>0</pre>

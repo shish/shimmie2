@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class ForumTheme extends Themelet
 {
     public function display_thread_list(Page $page, $threads, $showAdminOptions, $pageNumber, $totalPages)

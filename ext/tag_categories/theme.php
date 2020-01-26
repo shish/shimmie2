@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
 
 class TagCategoriesTheme extends Themelet
 {
-    public function show_tag_categories($page, $tc_dict)
+    public function show_tag_categories(Page $page, $tc_dict)
     {
         $tc_block_index = 0;
         $html = '';
@@ -105,7 +105,7 @@ class TagCategoriesTheme extends Themelet
         <div class="command_example">
         <pre>persontags=1</pre>
         <p>Returns images with exactly 1 tag with the tag category "person".</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>cattags>0</pre>
         <p>Returns images with 1 or more tags with the tag category "cat". </p>

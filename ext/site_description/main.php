@@ -1,15 +1,15 @@
-<?php
+<?php declare(strict_types=1);
 
 class SiteDescription extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)
     {
         global $config, $page;
-        if (strlen($config->get_string("site_description")) > 0) {
+        if (!empty($config->get_string("site_description"))) {
             $description = $config->get_string("site_description");
             $page->add_html_header("<meta name=\"description\" content=\"$description\">");
         }
-        if (strlen($config->get_string("site_keywords")) > 0) {
+        if (!empty($config->get_string("site_keywords"))) {
             $keywords = $config->get_string("site_keywords");
             $page->add_html_header("<meta name=\"keywords\" content=\"$keywords\">");
         }

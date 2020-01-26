@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
 * Name: Danbooru 2 Theme
 * Author: Bzchan <bzchan@animemahou.com>, updated by Daniel Oaks <daniel@danieloaks.net>

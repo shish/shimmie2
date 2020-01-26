@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use MicroCRUD\ActionColumn;
 use MicroCRUD\InetColumn;
@@ -52,6 +52,7 @@ class RemoveIPBanEvent extends Event
 
     public function __construct(int $id)
     {
+        parent::__construct();
         $this->id = $id;
     }
 }
@@ -65,6 +66,7 @@ class AddIPBanEvent extends Event
 
     public function __construct(string $ip, string $mode, string $reason, ?string $expires)
     {
+        parent::__construct();
         $this->ip = trim($ip);
         $this->mode = $mode;
         $this->reason = trim($reason);
@@ -74,6 +76,9 @@ class AddIPBanEvent extends Event
 
 class IPBan extends Extension
 {
+    /** @var IPBanTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         return 10;
@@ -93,7 +98,7 @@ class IPBan extends Extension
 
     public function onUserLogin(UserLoginEvent $event)
     {
-        global $cache, $config, $database, $page, $user, $_shm_user_classes;
+        global $cache, $config, $database, $page, $_shm_user_classes;
 
         $d = @$_GET['DEBUG'];
 
@@ -272,7 +277,7 @@ class IPBan extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
 
         // shortcut to latest
         if ($this->get_version("ext_ipban_version") < 1) {

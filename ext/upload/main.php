@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Occurs when some data is being uploaded.
@@ -28,6 +28,7 @@ class DataUploadEvent extends Event
      */
     public function __construct(string $tmpname, array $metadata)
     {
+        parent::__construct();
         global $config;
 
         assert(file_exists($tmpname));
@@ -80,6 +81,9 @@ class UploadException extends SCoreException
  */
 class Upload extends Extension
 {
+    /** @var UploadTheme */
+    protected $theme;
+
     /** @var bool */
     public $is_full;
 
@@ -105,10 +109,13 @@ class Upload extends Extension
         $min_free_space = $config->get_int("upload_min_free_space");
         if ($min_free_space > 0) {
             // SHIT: fucking PHP "security" measures -_-;;;
-            $free_num = @disk_free_space(realpath("./images/"));
-            if ($free_num !== false) {
-                $this->is_full = $free_num < $min_free_space;
-            }
+			$img_path = realpath("./images/");
+			if($img_path) {
+				$free_num = @disk_free_space($img_path);
+				if ($free_num !== false) {
+					$this->is_full = $free_num < $min_free_space;
+				}
+			}
         }
     }
 
@@ -363,7 +370,7 @@ class Upload extends Extension
                 if ($event->image_id == -1) {
                     throw new UploadException("File type not supported: " . $metadata['extension']);
                 }
-                $page->add_http_header("X-Shimmie-Image-ID: " . int_escape($event->image_id));
+                $page->add_http_header("X-Shimmie-Image-ID: " . $event->image_id);
             } catch (UploadException $ex) {
                 $this->theme->display_upload_error(
                     $page,

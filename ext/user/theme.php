@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use function \MicroHTML\emptyHTML;
 use function \MicroHTML\rawHTML;
 use function \MicroHTML\TABLE;
@@ -49,7 +49,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(BR());
             $html->appendChild(A(["href"=>$part["link"]], $part["name"]));
         }
-        $page->add_block(new Block("User Links", $html, "left", 90));
+        $page->add_block(new Block("User Links", (string)$html, "left", 90));
     }
 
     public function display_signup_page(Page $page)
@@ -102,7 +102,7 @@ class UserPageTheme extends Themelet
         $page->set_title("Create Account");
         $page->set_heading("Create Account");
         $page->add_block(new NavBlock());
-        $page->add_block(new Block("Signup", $html));
+        $page->add_block(new Block("Signup", (string)$html));
     }
 
     public function display_signups_disabled(Page $page)
@@ -145,7 +145,7 @@ class UserPageTheme extends Themelet
             $html->appendChild(SMALL(A(["href"=>make_link("user_admin/create")], "Create Account")));
         }
 
-        $page->add_block(new Block("Login", $html, "left", 90));
+        $page->add_block(new Block("Login", (string)$html, "left", 90));
     }
 
     private function _ip_list(string $name, array $ips)
@@ -178,7 +178,7 @@ class UserPageTheme extends Themelet
             )
         );
 
-        $page->add_block(new Block("IPs", $html, "main", 70));
+        $page->add_block(new Block("IPs", (string)$html, "main", 70));
     }
 
     public function display_user_page(User $duser, $stats)
@@ -193,7 +193,7 @@ class UserPageTheme extends Themelet
         $page->add_block(new Block("Stats", join("<br>", $stats), "main", 10));
     }
 
-    public function build_options(User $duser, UserOptionsBuildingEvent $event)
+    public function build_options(User $duser, UserOptionsBuildingEvent $event): string
     {
         global $config, $user;
         $html = emptyHTML();
@@ -278,7 +278,7 @@ class UserPageTheme extends Themelet
                 $html .= $part;
             }
         }
-        return $html;
+        return (string)$html;
     }
 
     public function get_help_html()

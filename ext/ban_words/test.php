@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class BanWordsTest extends ShimmiePHPUnitTestCase
 {
     public function check_blocked($image_id, $words)

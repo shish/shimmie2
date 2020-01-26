@@ -1,16 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 class ImageAdminBlockBuildingEvent extends Event
 {
     /** @var string[] */
     public $parts = [];
-    /** @var ?Image  */
+    /** @var Image  */
     public $image = null;
-    /** @var ?User  */
+    /** @var User  */
     public $user = null;
 
     public function __construct(Image $image, User $user)
     {
+        parent::__construct();
         $this->image = $image;
         $this->user = $user;
     }

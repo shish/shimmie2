@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 abstract class MediaConfig
 {
     const FFMPEG_PATH = "media_ffmpeg_path";

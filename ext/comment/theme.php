@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class CommentListTheme extends Themelet
 {
     private $show_anon_id = false;
@@ -40,14 +40,14 @@ class CommentListTheme extends Themelet
 
         $comment_limit = $config->get_int("comment_list_count", 10);
         $comment_captcha = $config->get_bool('comment_captcha');
-        
+
         foreach ($images as $pair) {
             $image = $pair[0];
             $comments = $pair[1];
 
             $thumb_html = $this->build_thumb_html($image);
             $comment_html = "";
-            
+
             $comment_count = count($comments);
             if ($comment_limit > 0 && $comment_count > $comment_limit) {
                 $comment_html .= "<p>showing $comment_limit of $comment_count comments</p>";
@@ -166,10 +166,10 @@ class CommentListTheme extends Themelet
     public function display_all_user_comments(array $comments, int $page_number, int $total_pages, User $user)
     {
         global $page;
-        
+
         assert(is_numeric($page_number));
         assert(is_numeric($total_pages));
-        
+
         $html = "";
         foreach ($comments as $comment) {
             $html .= $this->comment_to_html($comment, true);
@@ -182,7 +182,7 @@ class CommentListTheme extends Themelet
 
         $prev = $page_number - 1;
         $next = $page_number + 1;
-        
+
         //$search_terms = array('I','have','no','idea','what','this','does!');
         //$u_tags = url_escape(Tag::implode($search_terms));
         //$query = empty($u_tags) ? "" : '/'.$u_tags;
@@ -274,16 +274,15 @@ class CommentListTheme extends Themelet
     {
         global $config;
 
-        $i_image_id = int_escape($image_id);
         $hash = CommentList::get_hash();
         $h_captcha = $config->get_bool("comment_captcha") ? captcha_get_html() : "";
 
         return '
 		<div class="comment comment_add">
 			'.make_form(make_link("comment/add")).'
-				<input type="hidden" name="image_id" value="'.$i_image_id.'" />
+				<input type="hidden" name="image_id" value="'.$image_id.'" />
 				<input type="hidden" name="hash" value="'.$hash.'" />
-				<textarea id="comment_on_'.$i_image_id.'" name="comment" rows="5" cols="50"></textarea>
+				<textarea id="comment_on_'.$image_id.'" name="comment" rows="5" cols="50"></textarea>
 				'.$h_captcha.'
 				<br><input type="submit" value="Post Comment" />
 			</form>
@@ -297,7 +296,7 @@ class CommentListTheme extends Themelet
         <div class="command_example">
         <pre>comments=1</pre>
         <p>Returns images with exactly 1 comment.</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>comments>0</pre>
         <p>Returns images with 1 or more comments. </p>

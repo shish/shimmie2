@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class Notes extends Extension
 {
+    /** @var NotesTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $config, $database;
@@ -86,8 +89,8 @@ class Notes extends Extension
                     $this->get_history($event);
                     break;
                 case "revert":
-                    $noteID   = $event->get_arg(1);
-                    $reviewID = $event->get_arg(2);
+                    $noteID   = int_escape($event->get_arg(1));
+                    $reviewID = int_escape($event->get_arg(2));
                     if (!$user->is_anonymous()) {
                         $this->revert_history($noteID, $reviewID);
                     }
@@ -185,6 +188,8 @@ class Notes extends Extension
      */
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (preg_match("/^note[=|:](.*)$/i", $event->term, $matches)) {
             $notes = int_escape($matches[1]);
@@ -485,7 +490,7 @@ class Notes extends Extension
         $noteText   = $history['note'];
 
         $database->execute("
-			UPDATE notes 
+			UPDATE notes
 			SET enable = :enable, x1 = :x1, y1 = :y1, height = :height, width = :width, note = :note
 			WHERE image_id = :image_id AND id = :id
 		", ['enable'=>1, 'x1'=>$noteX1, 'y1'=>$noteY1, 'height'=>$noteHeight, 'width'=>$noteWidth, 'note'=>$noteText, 'image_id'=>$imageID, 'id'=>$noteID]);

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * Event API                                                                 *
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -37,9 +37,7 @@ function _set_event_listeners(): void
 
     foreach (get_declared_classes() as $class) {
         $rclass = new ReflectionClass($class);
-        if ($rclass->isAbstract()) {
-            // don't do anything
-        } elseif (is_subclass_of($class, "Extension")) {
+        if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
             /** @var Extension $extension */
             $extension = new $class();
 
@@ -68,8 +66,7 @@ function _dump_event_listeners(array $event_listeners, string $path): void
 
     foreach (get_declared_classes() as $class) {
         $rclass = new ReflectionClass($class);
-        if ($rclass->isAbstract()) {
-        } elseif (is_subclass_of($class, "Extension")) {
+        if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
             $p .= "\$$class = new $class(); ";
         }
     }

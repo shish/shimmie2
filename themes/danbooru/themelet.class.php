@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class Themelet extends BaseThemelet
 {
     public function display_paginator(Page $page, string $base, ?string $query, int $page_number, int $total_pages, bool $show_random = false)
@@ -10,7 +10,7 @@ class Themelet extends BaseThemelet
         $page->add_block(new Block(null, $body, "main", 90));
     }
 
-    private function gen_page_link(string $base_url, ?string $query, string $page, string $name): string
+    private function gen_page_link(string $base_url, ?string $query, int $page, string $name): string
     {
         $link = make_link("$base_url/$page", $query);
         return "<a href='$link'>$name</a>";

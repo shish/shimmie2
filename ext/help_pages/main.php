@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class HelpPageListBuildingEvent extends Event
 {
@@ -17,6 +17,7 @@ class HelpPageBuildingEvent extends Event
 
     public function __construct(string $key)
     {
+        parent::__construct();
         $this->key = $key;
     }
 

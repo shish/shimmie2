@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 class QRImageTheme extends Themelet
 {
     public function links_block(string $link)

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "events/displaying_image_event.php";
 require_once "events/image_info_box_building_event.php";
@@ -8,6 +8,9 @@ require_once "events/image_admin_block_building_event.php";
 
 class ViewImage extends Extension
 {
+    /** @var ViewImageTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;

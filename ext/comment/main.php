@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "vendor/ifixit/php-akismet/akismet.class.php";
 
@@ -13,6 +13,7 @@ class CommentPostingEvent extends Event
 
     public function __construct(int $image_id, User $user, string $comment)
     {
+        parent::__construct();
         $this->image_id = $image_id;
         $this->user = $user;
         $this->comment = $comment;
@@ -31,6 +32,7 @@ class CommentDeletionEvent extends Event
 
     public function __construct(int $comment_id)
     {
+        parent::__construct();
         $this->comment_id = $comment_id;
     }
 }
@@ -69,7 +71,7 @@ class Comment
     public static function count_comments_by_user(User $user): int
     {
         global $database;
-        return $database->get_one("
+        return (int)$database->get_one("
 			SELECT COUNT(*) AS count
 			FROM comments
 			WHERE owner_id=:owner_id
@@ -102,7 +104,7 @@ class CommentList extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
         if ($this->get_version("ext_comments_version") < 3) {
             // shortcut to latest
             if ($this->get_version("ext_comments_version") < 1) {
@@ -202,7 +204,7 @@ class CommentList extends Extension
         if ($user->can(Permissions::DELETE_COMMENT)) {
             // FIXME: post, not args
             if ($event->count_args() === 3) {
-                send_event(new CommentDeletionEvent($event->get_arg(1)));
+                send_event(new CommentDeletionEvent(int_escape($event->get_arg(1))));
                 $page->flash("Deleted comment");
                 $page->set_mode(PageMode::REDIRECT);
                 if (!empty($_SERVER['HTTP_REFERER'])) {
@@ -254,7 +256,7 @@ class CommentList extends Extension
         $duser = User::by_name($search);
         $i_comment_count = Comment::count_comments_by_user($duser);
         $com_per_page = 50;
-        $total_pages = ceil($i_comment_count / $com_per_page);
+        $total_pages = (int)ceil($i_comment_count / $com_per_page);
         $page_num = clamp($page_num, 1, $total_pages);
         $comments = $this->get_user_comments($duser->id, $com_per_page, ($page_num - 1) * $com_per_page);
         $this->theme->display_all_user_comments($comments, $page_num, $total_pages, $duser);
@@ -340,8 +342,9 @@ class CommentList extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        $matches = [];
+        if(is_null($event->term)) return;
 
+        $matches = [];
         if (preg_match("/^comments([:]?<|[:]?>|[:]?<=|[:]?>=|[:|=])(\d+)$/i", $event->term, $matches)) {
             $cmp = ltrim($matches[1], ":") ?: "=";
             $comments = $matches[2];
@@ -399,7 +402,7 @@ class CommentList extends Extension
 
         $images = [];
         while ($row = $result->fetch()) {
-            $image = Image::by_id($row["image_id"]);
+            $image = Image::by_id((int)$row["image_id"]);
             if (
                 Extension::is_enabled(RatingsInfo::KEY) && !is_null($image) &&
                 !in_array($image->rating, $user_ratings)

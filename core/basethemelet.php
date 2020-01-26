@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Class BaseThemelet
@@ -85,13 +85,13 @@ class BaseThemelet
         $page->add_block(new Block(null, $body, "main", 90, "paginator"));
     }
 
-    private function gen_page_link(string $base_url, ?string $query, string $page, string $name): string
+    private function gen_page_link(string $base_url, ?string $query, int $page, string $name): string
     {
         $link = make_link($base_url.'/'.$page, $query);
         return '<a href="'.$link.'">'.$name.'</a>';
     }
 
-    private function gen_page_link_block(string $base_url, ?string $query, string $page, int $current_page, string $name): string
+    private function gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): string
     {
         $paginator = "";
         if ($page == $current_page) {
@@ -129,7 +129,7 @@ class BaseThemelet
 
         $pages = [];
         foreach (range($start, $end) as $i) {
-            $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, $i);
+            $pages[] = $this->gen_page_link_block($base_url, $query, $i, $current_page, (string)$i);
         }
         $pages_html = implode(" | ", $pages);
 

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 
@@ -109,13 +109,13 @@ class CronUploader extends Extension
     {
         global $page;
         if (empty($folder)) {
-            throw new Exception("folder empty");
+            throw new SCoreException("folder empty");
         }
         $queue_dir = $this->get_queue_dir();
         $stage_dir = join_path($this->get_failed_dir(), $folder);
 
         if (!is_dir($stage_dir)) {
-            throw new Exception("Could not find $stage_dir");
+            throw new SCoreException("Could not find $stage_dir");
         }
 
         $this->prep_root_dir();
@@ -123,7 +123,7 @@ class CronUploader extends Extension
         $results = get_dir_contents($queue_dir);
 
         if (count($results) > 0) {
-            $page->flash("Queue folder must be empty to re-stage", "error");
+            $page->flash("Queue folder must be empty to re-stage");
             return;
         }
 
@@ -293,7 +293,7 @@ class CronUploader extends Extension
             }
 
             $output_subdir = date('Ymd-His', time());
-            $image_queue = $this->generate_image_queue($upload_count);
+            $image_queue = $this->generate_image_queue(CronUploaderConfig::get_dir(), $upload_count);
 
 
             // Throw exception if there's nothing in the queue
@@ -408,9 +408,8 @@ class CronUploader extends Extension
         send_event($event);
 
         // Generate info message
-        $infomsg = ""; // Will contain info message
         if ($event->image_id == -1) {
-            throw new Exception("File type not recognised. Filename: {$filename}");
+            throw new UploadException("File type not recognised. Filename: {$filename}");
         } elseif ($event->merged === true) {
             $infomsg = "Image merged. ID: {$event->image_id} - Filename: {$filename}";
         } else {
@@ -473,8 +472,6 @@ class CronUploader extends Extension
 
     private function log_message(int $severity, string $message): void
     {
-        global $database;
-
         log_msg(self::NAME, $severity, $message);
 
         $time = "[" . date('Y-m-d H:i:s') . "]";

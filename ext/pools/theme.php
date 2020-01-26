@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class PoolsTheme extends Themelet
 {
@@ -181,13 +181,13 @@ class PoolsTheme extends Themelet
 				<input type="submit" name="edit" id="edit_pool_import_btn" value="Import"/>
 				<input type="hidden" name="pool_id" value="' . $pool['id'] . '">
 			</form>
-			
+
 			' . make_form(make_link('pool/edit')) . '
 				<input type="submit" name="edit" id="edit_pool_btn" value="Edit Pool"/>
 				<input type="hidden" name="edit_pool" value="yes">
 				<input type="hidden" name="pool_id" value="' . $pool['id'] . '">
 			</form>
-			
+
 			' . make_form(make_link('pool/order')) . '
 				<input type="submit" name="edit" id="edit_pool_order_btn" value="Order Pool"/>
 				<input type="hidden" name="order_view" value="yes">
@@ -361,7 +361,7 @@ class PoolsTheme extends Themelet
             } elseif ($history['action'] == 0) {
                 $prefix = "-";
             } else {
-                throw new Exception("history['action'] not in {0, 1}");
+                throw new RuntimeException("history['action'] not in {0, 1}");
             }
 
             $images = trim($history['images']);
@@ -410,12 +410,12 @@ class PoolsTheme extends Themelet
         return '<p>Search for images that are in a pool.</p>
         <div class="command_example">
         <pre>pool=1</pre>
-        <p>Returns images in pool #1.</p> 
+        <p>Returns images in pool #1.</p>
         </div>
         <div class="command_example">
         <pre>pool=any</pre>
         <p>Returns images in any pool.</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>pool=none</pre>
         <p>Returns images not in any pool.</p>

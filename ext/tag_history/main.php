@@ -1,7 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 class TagHistory extends Extension
 {
+    /** @var TagHistoryTheme */
+    protected $theme;
+
     // in before tags are actually set, so that "get current tags" works
     public function get_priority(): int
     {
@@ -93,7 +96,7 @@ class TagHistory extends Extension
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $database, $config;
+        global $database;
 
         if ($this->get_version("ext_tag_history_version") < 1) {
             $database->create_table("tag_histories", "
@@ -128,8 +131,6 @@ class TagHistory extends Extension
     private function process_revert_request(int $revert_id)
     {
         global $page;
-
-        $revert_id = int_escape($revert_id);
 
         // check for the nothing case
         if ($revert_id < 1) {
@@ -287,7 +288,7 @@ class TagHistory extends Extension
 				FROM tag_histories t1
 				LEFT JOIN tag_histories t2 ON (t1.image_id = t2.image_id AND t1.date_set < t2.date_set)
 				WHERE t2.image_id IS NULL
-				AND t1.image_id IN ( select image_id from tag_histories where '.implode(" AND ", $select_code).') 
+				AND t1.image_id IN ( select image_id from tag_histories where '.implode(" AND ", $select_code).')
 				ORDER BY t1.image_id
 		', $select_args);
 
@@ -355,9 +356,9 @@ class TagHistory extends Extension
 
         if (empty($old_tags)) {
             /* no old tags, so we are probably adding the image for the first time */
-            log_debug("tag_history", "adding new tag history: [$new_tags]", false, ["image_id" => $image->id]);
+            log_debug("tag_history", "adding new tag history: [$new_tags]", null, ["image_id" => $image->id]);
         } else {
-            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]", false, ["image_id" => $image->id]);
+            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]", null, ["image_id" => $image->id]);
         }
 
         $allowed = $config->get_int("history_limit");

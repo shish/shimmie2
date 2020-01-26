@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Generic parent class for all events.
  *
@@ -58,6 +58,7 @@ class PageRequestEvent extends Event
 
     public function __construct(string $path)
     {
+        parent::__construct();
         global $config;
 
         // trim starting slashes
@@ -140,7 +141,7 @@ class PageRequestEvent extends Event
      */
     public function count_args(): int
     {
-        return int_escape($this->arg_count - $this->part_count);
+        return $this->arg_count - $this->part_count;
     }
 
     /*
@@ -198,6 +199,7 @@ class CommandEvent extends Event
      */
     public function __construct(array $args)
     {
+        parent::__construct();
         global $user;
 
         $opts = [];
@@ -278,6 +280,7 @@ class TextFormattingEvent extends Event
 
     public function __construct(string $text)
     {
+        parent::__construct();
         $h_text = html_escape(trim($text));
         $this->original  = $h_text;
         $this->formatted = $h_text;
@@ -328,6 +331,7 @@ class LogEvent extends Event
 
     public function __construct(string $section, int $priority, string $message, array $args)
     {
+        parent::__construct();
         $this->section = $section;
         $this->priority = $priority;
         $this->message = $message;

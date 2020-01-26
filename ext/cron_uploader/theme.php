@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class CronUploaderTheme extends Themelet
 {
@@ -40,7 +40,7 @@ class CronUploaderTheme extends Themelet
 			<td>{$failed_dirinfo['total_mb']}</td>
 			<td>{$failed_dirinfo['path']}</td>
 			</tr></table>
-	
+
 			<br>Cron Command: <input type='text' size='60' value='$cron_cmd'><br>
 			Create a cron job with the command above.<br/>
 				Read the documentation if you're not sure what to do.<br>";
@@ -57,14 +57,14 @@ class CronUploaderTheme extends Themelet
 			        <br />When you create the cron job, you choose when to upload new images.</li>
             </ol>";
 
-        $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means. 
+        $usage_html = "Upload your images you want to be uploaded to the queue directory using your FTP client or other means.
 <br />(<b>{$queue_dirinfo['path']}</b>)
                     <ol>
                         <li>Any sub-folders will be turned into tags.</li>
                         <li>If the file name matches \"## - tag1 tag2.png\" the tags will be used.</li>
                         <li>If both are found, they will all be used.</li>
                         <li>The character \";\" will be changed into \":\" in any tags.</li>
-                        <li>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>                            
+                        <li>You can inherit categories by creating a folder that ends with \";\". For instance category;\\tag1 would result in the tag category:tag1. This allows creating a category folder, then creating many subfolders that will use that category.</li>
                     </ol>
                     The cron uploader works by importing files from the queue folder whenever this url is visited:
                 <br/><pre><a href='$cron_url'>$cron_url</a></pre>
@@ -72,7 +72,7 @@ class CronUploaderTheme extends Themelet
             <ul>
                 <li>If an import is already running, another cannot start until it is done.</li>
                 <li>Each time it runs it will import up to ".CronUploaderConfig::get_count()." file(s). This is controlled from <a href='".make_link("setup")."'>Board Config</a>.</li>
-                <li>Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from <a href='".make_link("admin")."'>Board Admin</a>.</li> 
+                <li>Uploaded images will be moved to the 'uploaded' directory into a subfolder named after the time the import started. It's recommended that you remove everything out of this directory from time to time. If you have admin controls enabled, this can be done from <a href='".make_link("admin")."'>Board Admin</a>.</li>
                 <li>If you enable the db logging extension, you can view the log output on this screen. Otherwise the log will be written to a file at ".CronUploaderConfig::get_dir().DIRECTORY_SEPARATOR."uploads.log</li>
 			</ul>
         ";
@@ -100,7 +100,7 @@ class CronUploaderTheme extends Themelet
 
     public function display_form(array $failed_dirs)
     {
-        global $page, $database;
+        global $page;
 
         $link = make_http(make_link("cron_upload"));
         $html = "<a href='$link'>Cron uploader documentation</a>";

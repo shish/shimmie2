@@ -1,17 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * This class is just a wrapper around SCoreException.
  */
 class ImageRotateException extends SCoreException
 {
-    /** @var string */
-    public $error;
-
-    public function __construct(string $error)
-    {
-        $this->error = $error;
-    }
 }
 
 /**

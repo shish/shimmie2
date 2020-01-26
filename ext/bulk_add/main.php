@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class BulkAddEvent extends Event
 {
@@ -7,6 +7,7 @@ class BulkAddEvent extends Event
 
     public function __construct(string $dir)
     {
+        parent::__construct();
         $this->dir = $dir;
         $this->results = [];
     }

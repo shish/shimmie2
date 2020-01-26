@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension

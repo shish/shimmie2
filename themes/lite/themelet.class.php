@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /**
  * Class Themelet
@@ -27,13 +27,13 @@ class Themelet extends BaseThemelet
         $page->add_block(new Block(null, $body, "main", 90));
     }
 
-    public function litetheme_gen_page_link(string $base_url, ?string $query, string $page, string $name, ?string $link_class=null): string
+    public function litetheme_gen_page_link(string $base_url, ?string $query, int $page, string $name, ?string $link_class=null): string
     {
         $link = make_link("$base_url/$page", $query);
         return "<a class='$link_class' href='$link'>$name</a>";
     }
 
-    public function litetheme_gen_page_link_block(string $base_url, ?string $query, string $page, string $current_page, string $name): string
+    public function litetheme_gen_page_link_block(string $base_url, ?string $query, int $page, int $current_page, string $name): string
     {
         $paginator = "";
 

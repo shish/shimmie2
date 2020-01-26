@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use MicroCRUD\ActionColumn;
 use MicroCRUD\StringColumn;
@@ -35,6 +35,7 @@ class RemoveImageHashBanEvent extends Event
 
     public function __construct(string $hash)
     {
+        parent::__construct();
         $this->hash = $hash;
     }
 }
@@ -46,6 +47,7 @@ class AddImageHashBanEvent extends Event
 
     public function __construct(string $hash, string $reason)
     {
+        parent::__construct();
         $this->hash = $hash;
         $this->reason = $reason;
     }
@@ -53,9 +55,12 @@ class AddImageHashBanEvent extends Event
 
 class ImageBan extends Extension
 {
+    /** @var ImageBanTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
-        global $config, $database;
+        global $database;
         if ($this->get_version("ext_imageban_version") < 1) {
             $database->create_table("image_bans", "
 				id SCORE_AIPK,

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ArchiveFileHandler extends Extension
 {
@@ -20,7 +20,7 @@ class ArchiveFileHandler extends Extension
     public function onDataUpload(DataUploadEvent $event)
     {
         if ($this->supported_ext($event->type)) {
-            global $config;
+            global $config, $page;
             $tmp = sys_get_temp_dir();
             $tmpdir = "$tmp/shimmie-archive-{$event->hash}";
             $cmd = $config->get_string('archive_extract_command');
@@ -29,10 +29,7 @@ class ArchiveFileHandler extends Extension
             exec($cmd);
             $results = add_dir($tmpdir);
             if (count($results) > 0) {
-                // Not all themes have the add_status() method, so need to check before calling.
-                if (method_exists($this->theme, "add_status")) {
-                    $this->theme->add_status("Adding files", $results);
-                }
+                $page->flash("Adding files" . implode("\n", $results));
             }
             deltree($tmpdir);
             $event->image_id = -2; // default -1 = upload wasn't handled

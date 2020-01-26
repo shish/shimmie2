@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
  /**
  * @global ImageRating[] $_shm_ratings
@@ -30,9 +30,7 @@ class ImageRating
 
     public function __construct(string $code, string $name, string $search_term, int $order)
     {
-        if (strlen($code)!=1) {
-            throw new Exception("Rating code must be exactly one character");
-        }
+        assert(strlen($code)==1, "Rating code must be exactly one character");
 
         $this->name = $name;
         $this->code = $code;
@@ -58,11 +56,11 @@ function add_rating(ImageRating $rating)
     global $_shm_ratings;
 
     if ($rating->code=="?"&&array_key_exists("?", $_shm_ratings)) {
-        throw new Exception("? is a reserved rating code that cannot be overridden");
+        throw new RuntimeException("? is a reserved rating code that cannot be overridden");
     }
 
     if ($rating->code!="?"&&in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
-        throw new Exception("$rating->search_term is a reserved search term");
+        throw new RuntimeException("$rating->search_term is a reserved search term");
     }
 
     $_shm_ratings[$rating->code] = $rating;
@@ -84,6 +82,7 @@ class RatingSetEvent extends Event
 
     public function __construct(Image $image, string $rating)
     {
+        parent::__construct();
         global $_shm_ratings;
 
         assert(in_array($rating, array_keys($_shm_ratings)));
@@ -101,10 +100,12 @@ abstract class RatingsConfig
 
 class Ratings extends Extension
 {
+    /** @var RatingsTheme */
+    protected $theme;
+
     public const UNRATED_KEYWORDS = ["unknown","unrated"];
 
     private $search_regexp;
-
 
     public function __construct()
     {
@@ -249,6 +250,8 @@ class Ratings extends Extension
     {
         global $user;
 
+        if(is_null($event->term)) return;
+
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
             $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings($user));
@@ -383,7 +386,7 @@ class Ratings extends Extension
 
         if ($event->page_matches("admin/bulk_rate")) {
             if (!$user->can(Permissions::BULK_EDIT_IMAGE_RATING)) {
-                throw new PermissionDeniedException();
+                throw new PermissionDeniedException("Permission denied");
             } else {
                 $n = 0;
                 while (true) {
@@ -475,8 +478,7 @@ class Ratings extends Extension
         if (sizeof($arr)==0) {
             return "' '";
         }
-        $set = join(', ', $arr);
-        return $set;
+        return join(', ', $arr);
     }
 
     public static function rating_to_human(string $rating): string

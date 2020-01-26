@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class ImageInfoSetEvent extends Event
 {
@@ -7,6 +7,7 @@ class ImageInfoSetEvent extends Event
 
     public function __construct(Image $image)
     {
+        parent::__construct();
         $this->image = $image;
     }
 }

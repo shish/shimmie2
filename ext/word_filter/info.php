@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 class WordFilterInfo extends ExtensionInfo
 {

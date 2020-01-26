@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 /* Todo:
  * 	usepref(todo2: port userpref)
@@ -51,7 +51,7 @@ class TagEditCloud extends Extension
         $event->panel->add_block($sb);
     }
 
-    private function build_tag_map(Image $image): string
+    private function build_tag_map(Image $image): ?string
     {
         global $database, $config;
 

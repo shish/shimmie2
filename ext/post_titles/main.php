@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 require_once "config.php";
 require_once "events/post_title_set_event.php";
@@ -18,7 +18,7 @@ class PostTitles extends Extension
         $config->set_default_bool(PostTitlesConfig::SHOW_IN_WINDOW_TITLE, false);
     }
 
-    private function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
+    public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database;
 
