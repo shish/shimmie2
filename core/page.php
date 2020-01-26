@@ -365,7 +365,7 @@ class Page
                 $start = 0;               // Start byte
                 $end = $size - 1;       // End byte
 
-                header("Content-Length: " . strlen($size));
+                header("Content-Length: " . $size);
                 header('Accept-Ranges: bytes');
 
                 if (isset($_SERVER['HTTP_RANGE'])) {

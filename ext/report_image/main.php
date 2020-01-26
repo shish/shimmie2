@@ -59,7 +59,7 @@ class ReportImage extends Extension
             } elseif ($event->get_arg(0) == "remove") {
                 if (!empty($_POST['id'])) {
                     if ($user->can(Permissions::VIEW_IMAGE_REPORT)) {
-                        send_event(new RemoveReportedImageEvent($_POST['id']));
+                        send_event(new RemoveReportedImageEvent(int_escape($_POST['id'])));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("image_report/list"));
                     }
