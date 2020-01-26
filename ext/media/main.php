@@ -976,9 +976,9 @@ class Media extends Extension
         $regex_sizes = "/Video: .* ([0-9]{1,4})x([0-9]{1,4})/";
         if (preg_match($regex_sizes, $output, $regs)) {
             if (preg_match("/displaymatrix: rotation of (90|270).00 degrees/", $output)) {
-                $size = [$regs[2], $regs[1]];
+                $size = [(int)$regs[2], (int)$regs[1]];
             } else {
-                $size = [$regs[1], $regs[2]];
+                $size = [(int)$regs[1], (int)$regs[2]];
             }
         } else {
             $size = [1, 1];
