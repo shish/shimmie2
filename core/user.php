@@ -99,7 +99,7 @@ class User
     public static function by_name(string $name): ?User
     {
         global $database;
-        $row = $database->get_row($database->scoreql_to_sql("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)"), ["name"=>$name]);
+        $row = $database->get_row("SELECT * FROM users WHERE LOWER(name) = LOWER(:name)", ["name"=>$name]);
         return is_null($row) ? null : new User($row);
     }
 
@@ -107,7 +107,7 @@ class User
     {
         $u = User::by_name($name);
         if (is_null($u)) {
-            throw new ScoreException("Can't find any user named " . html_escape($name));
+            throw new ScoreException("Can't find any user named $name");
         } else {
             return $u->id;
         }
@@ -121,17 +121,17 @@ class User
         }
         if ($my_user) {
             if ($my_user->passhash == md5(strtolower($name) . $pass)) {
-                log_info("core-user", "Migrating from md5 to bcrypt for ".html_escape($name));
+                log_info("core-user", "Migrating from md5 to bcrypt for $name");
                 $my_user->set_password($pass);
             }
             if (password_verify($pass, $my_user->passhash)) {
-                log_info("core-user", "Logged in as ".html_escape($name)." ({$my_user->class->name})");
+                log_info("core-user", "Logged in as $name ({$my_user->class->name})");
                 return $my_user;
             } else {
-                log_warning("core-user", "Failed to log in as ".html_escape($name)." (Invalid password)");
+                log_warning("core-user", "Failed to log in as $name (Invalid password)");
             }
         } else {
-            log_warning("core-user", "Failed to log in as ".html_escape($name)." (Invalid username)");
+            log_warning("core-user", "Failed to log in as $name (Invalid username)");
         }
         return null;
     }

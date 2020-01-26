@@ -98,7 +98,7 @@ class ActorColumn extends Column
 
 class MessageColumn extends Column
 {
-    public function __construct($name, $title)
+    public function __construct(string $name, string $title)
     {
         parent::__construct($name, $title);
         $this->sortable = false;
@@ -109,7 +109,7 @@ class MessageColumn extends Column
         return "({$this->name} LIKE :{$this->name}_0 AND priority >= :{$this->name}_1)";
     }
 
-    public function read_input($inputs)
+    public function read_input(array $inputs)
     {
         $ret = emptyHTML(
             INPUT([
@@ -167,7 +167,7 @@ class MessageColumn extends Column
         return SPAN(["style"=>"color: $c"], rawHTML($this->scan_entities($row[$this->name])));
     }
 
-    protected function scan_entities($line)
+    protected function scan_entities(string $line)
     {
         return preg_replace_callback("/Image #(\d+)/s", [$this, "link_image"], $line);
     }
