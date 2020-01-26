@@ -79,9 +79,9 @@ class Image
 
                 // hax, this is likely the cause of much scrutinizer-ci complaints.
                 if (in_array($name, ["locked", "lossless", "video", "audio"])) {
-                    $this->$name = bool_escape($value);
+                    $this->$name = bool_escape((string)$value);
                 } elseif (in_array($name, ["id", "owner_id", "height", "width", "filesize", "length"])) {
-                    $this->$name = int_escape($value);
+                    $this->$name = int_escape((string)$value);
                 } else {
                     $this->$name = $value;
                 }

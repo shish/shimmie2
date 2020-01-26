@@ -51,7 +51,7 @@ class User
     {
         global $_shm_user_classes;
 
-        $this->id = int_escape($row['id']);
+        $this->id = int_escape((string)$row['id']);
         $this->name = $row['name'];
         $this->email = $row['email'];
         $this->join_date = $row['joindate'];
