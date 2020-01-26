@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
 if ( // kill these glitched requests immediately
-    strpos(@$_SERVER["REQUEST_URI"], "/http") !== false
+    !empty($_SERVER["REQUEST_URI"])
+    && strpos(@$_SERVER["REQUEST_URI"], "/http") !== false
     && strpos(@$_SERVER["REQUEST_URI"], "paheal.net") !== false
 ) {
     die("No");
