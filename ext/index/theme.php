@@ -44,13 +44,13 @@ and of course start organising your images :-)
 
         if (count($images) > 0) {
             $this->display_page_images($page, $images);
-			if($this->page_number < $this->total_pages) {
-				$next = $this->page_number + 1;
-				$u_tags = url_escape(Tag::implode($this->search_terms));
-				$query = empty($u_tags) ? "" : '/'.$u_tags;
-				$next = make_link('post/list'.$query.'/'.$next);
-				$page->add_html_header("<link rel='prefetch' href='$next'>");
-			}
+            if ($this->page_number < $this->total_pages) {
+                $next = $this->page_number + 1;
+                $u_tags = url_escape(Tag::implode($this->search_terms));
+                $query = empty($u_tags) ? "" : '/'.$u_tags;
+                $next = make_link('post/list'.$query.'/'.$next);
+                $page->add_html_header("<link rel='prefetch' href='$next'>");
+            }
         } else {
             $this->display_error(404, "No Images Found", "No images were found to match the search criteria");
         }

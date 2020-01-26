@@ -250,7 +250,9 @@ class Ratings extends Extension
     {
         global $user;
 
-        if(is_null($event->term)) return;
+        if (is_null($event->term)) {
+            return;
+        }
 
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {

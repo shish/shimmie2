@@ -331,7 +331,9 @@ class UserPage extends Extension
     {
         global $user;
 
-        if(is_null($event->term)) return;
+        if (is_null($event->term)) {
+            return;
+        }
 
         $matches = [];
         if (preg_match("/^(?:poster|user)[=|:](.*)$/i", $event->term, $matches)) {

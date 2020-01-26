@@ -44,7 +44,9 @@ class SetupTheme extends Themelet
         $h_rows = "";
         ksort($options);
         foreach ($options as $name => $value) {
-            if(is_null($value)) $value = '';
+            if (is_null($value)) {
+                $value = '';
+            }
 
             $h_name = html_escape($name);
             $h_value = html_escape((string)$value);

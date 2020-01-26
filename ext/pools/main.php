@@ -378,7 +378,9 @@ class Pools extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        if(is_null($event->term)) return;
+        if (is_null($event->term)) {
+            return;
+        }
 
         $matches = [];
         if (preg_match("/^pool[=|:]([0-9]+|any|none)$/i", $event->term, $matches)) {

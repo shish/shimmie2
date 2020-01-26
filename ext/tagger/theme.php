@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
-use function MicroHTML\{DIV,FORM,INPUT};
+use function MicroHTML\DIV;
+use function MicroHTML\FORM;
+use function MicroHTML\INPUT;
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Tagger - Advanced Tagging v2                                              *

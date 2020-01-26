@@ -129,7 +129,9 @@ class Approval extends Extension
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_Y ")));
             }
 
-            if(is_null($event->term)) return;
+            if (is_null($event->term)) {
+                return;
+            }
             if (preg_match(self::SEARCH_REGEXP, strtolower($event->term), $matches)) {
                 if ($user->can(Permissions::APPROVE_IMAGE) && $matches[1] == "no") {
                     $event->add_querylet(new Querylet($database->scoreql_to_sql("approved = SCORE_BOOL_N ")));

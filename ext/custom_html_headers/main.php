@@ -55,12 +55,13 @@ class CustomHtmlHeaders extends Extension
         $sitename_in_title = $config->get_string("sitename_in_title");
 
         // sitename is already in title (can occur on index & other pages)
-        if(strstr($page->title, $site_title)) return;
+        if (strstr($page->title, $site_title)) {
+            return;
+        }
 
         if ($sitename_in_title == "prefix") {
             $page->title = "$site_title - $page->title";
-        }
-        elseif ($sitename_in_title == "suffix") {
+        } elseif ($sitename_in_title == "suffix") {
             $page->title = "$page->title - $site_title";
         }
     }

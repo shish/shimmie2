@@ -699,7 +699,8 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     );
 }
 
-function SHM_SIMPLE_FORM($target, ...$children) {
+function SHM_SIMPLE_FORM($target, ...$children)
+{
     $form = SHM_FORM($target);
     $form->appendChild(emptyHTML(...$children));
     return $form;

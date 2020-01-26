@@ -1,5 +1,13 @@
 <?php declare(strict_types=1);
-use function MicroHTML\{TABLE,TR,TH,TD,INPUT,TEXTAREA,rawHTML,SELECT,OPTION};
+use function MicroHTML\TABLE;
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+use function MicroHTML\INPUT;
+use function MicroHTML\TEXTAREA;
+use function MicroHTML\rawHTML;
+use function MicroHTML\SELECT;
+use function MicroHTML\OPTION;
 
 class BlocksTheme extends Themelet
 {
@@ -13,11 +21,16 @@ class BlocksTheme extends Themelet
                 make_link("blocks/update"),
                 TR(
                     INPUT(["type"=>"hidden", "name"=>"id", "value"=>$block['id']]),
-                    TH("Title"), TD(INPUT(["type"=>"text", "name"=>"title", "value"=>$block['title']])),
-                    TH("Area"), TD(INPUT(["type"=>"text", "name"=>"area", "value"=>$block['area']])),
-                    TH("Priority"), TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>$block['priority']])),
-                    TH("Pages"), TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>$block['pages']])),
-                    TH("Delete"), TD(INPUT(["type"=>"checkbox", "name"=>"delete"])),
+                    TH("Title"),
+                    TD(INPUT(["type"=>"text", "name"=>"title", "value"=>$block['title']])),
+                    TH("Area"),
+                    TD(INPUT(["type"=>"text", "name"=>"area", "value"=>$block['area']])),
+                    TH("Priority"),
+                    TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>$block['priority']])),
+                    TH("Pages"),
+                    TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>$block['pages']])),
+                    TH("Delete"),
+                    TD(INPUT(["type"=>"checkbox", "name"=>"delete"])),
                     TD(INPUT(["type"=>"submit", "value"=>"Save"]))
                 ),
                 TR(
@@ -32,10 +45,14 @@ class BlocksTheme extends Themelet
         $html->appendChild(SHM_SIMPLE_FORM(
             make_link("blocks/add"),
             TR(
-                TH("Title"), TD(INPUT(["type"=>"text", "name"=>"title", "value"=>""])),
-                TH("Area"), TD(SELECT(["name"=>"area"], OPTION("left"), OPTION("main"))),
-                TH("Priority"), TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>'50'])),
-                TH("Pages"), TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>'post/list*'])),
+                TH("Title"),
+                TD(INPUT(["type"=>"text", "name"=>"title", "value"=>""])),
+                TH("Area"),
+                TD(SELECT(["name"=>"area"], OPTION("left"), OPTION("main"))),
+                TH("Priority"),
+                TD(INPUT(["type"=>"text", "name"=>"priority", "value"=>'50'])),
+                TH("Pages"),
+                TD(INPUT(["type"=>"text", "name"=>"pages", "value"=>'post/list*'])),
                 TD(["colspan"=>'3'], INPUT(["type"=>"submit", "value"=>"Add"]))
             ),
             TR(

@@ -109,13 +109,13 @@ class Upload extends Extension
         $min_free_space = $config->get_int("upload_min_free_space");
         if ($min_free_space > 0) {
             // SHIT: fucking PHP "security" measures -_-;;;
-			$img_path = realpath("./images/");
-			if($img_path) {
-				$free_num = @disk_free_space($img_path);
-				if ($free_num !== false) {
-					$this->is_full = $free_num < $min_free_space;
-				}
-			}
+            $img_path = realpath("./images/");
+            if ($img_path) {
+                $free_num = @disk_free_space($img_path);
+                if ($free_num !== false) {
+                    $this->is_full = $free_num < $min_free_space;
+                }
+            }
         }
     }
 

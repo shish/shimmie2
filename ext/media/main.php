@@ -257,7 +257,9 @@ class Media extends Extension
     {
         global $database;
 
-        if(is_null($event->term)) return;
+        if (is_null($event->term)) {
+            return;
+        }
 
         $matches = [];
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {

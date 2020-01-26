@@ -164,7 +164,9 @@ class Index extends Extension
 
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
-        if(is_null($event->term)) return;
+        if (is_null($event->term)) {
+            return;
+        }
 
         $matches = [];
         // check for tags first as tag based searches are more common.

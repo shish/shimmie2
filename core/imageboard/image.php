@@ -27,7 +27,7 @@ class Image
     /** @var string */
     public $hash;
 
-	/** @var int */
+    /** @var int */
     public $filesize;
 
     /** @var string */
@@ -78,13 +78,11 @@ class Image
                 $name = str_replace("images.", "", $name);
 
                 // hax, this is likely the cause of much scrutinizer-ci complaints.
-                if(in_array($name, ["locked", "lossless", "video", "audio"])) {
+                if (in_array($name, ["locked", "lossless", "video", "audio"])) {
                     $this->$name = bool_escape($value);
-                }
-                elseif(in_array($name, ["id", "owner_id", "height", "width", "filesize", "length"])) {
+                } elseif (in_array($name, ["id", "owner_id", "height", "width", "filesize", "length"])) {
                     $this->$name = int_escape($value);
-                }
-                else {
+                } else {
                     $this->$name = $value;
                 }
             }

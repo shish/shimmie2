@@ -64,7 +64,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         if (!$args) {
             $args = [];
         }
-        foreach($args as $k=>$v) {
+        foreach ($args as $k=>$v) {
             $args[$k] = (string)$v;
         }
         $_GET = [];

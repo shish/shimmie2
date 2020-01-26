@@ -223,10 +223,9 @@ class SetupBlock extends Block
     public function add_choice_option(string $name, array $options, string $label=null, bool $table_row = false)
     {
         global $config;
-        if(is_int(array_values($options)[0])) {
+        if (is_int(array_values($options)[0])) {
             $current = $config->get_int($name);
-        }
-        else {
+        } else {
             $current = $config->get_string($name);
         }
 
