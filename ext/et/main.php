@@ -46,7 +46,7 @@ class ET extends Extension
         $info['site_url']   = "http://" . $_SERVER["HTTP_HOST"] . get_base_href();
 
         $info['sys_shimmie'] = VERSION;
-        $info['sys_schema']  = $config->get_string("db_version");
+        $info['sys_schema']  = $config->get_int("db_version");
         $info['sys_php']     = phpversion();
         $info['sys_db']      = $database->get_driver_name();
         $info['sys_os']      = php_uname();
