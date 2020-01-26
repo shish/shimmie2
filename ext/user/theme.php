@@ -63,8 +63,8 @@ class UserPageTheme extends Themelet
             $tac = $tfe->formatted;
         }
 
-        $form = SHM_FORM(make_link("user_admin/create"));
-        $form->appendChild(
+        $form = SHM_SIMPLE_FORM(
+            make_link("user_admin/create"),
             TABLE(
                 ["class"=>"form"],
                 TBODY(
@@ -119,8 +119,8 @@ class UserPageTheme extends Themelet
     public function display_login_block(Page $page)
     {
         global $config, $user;
-        $form = SHM_FORM(make_link("user_admin/login"));
-        $form->appendChild(
+        $form = SHM_SIMPLE_FORM(
+            make_link("user_admin/login"),
             TABLE(
                 ["style"=>"width: 100%", "class"=>"form"],
                 TBODY(

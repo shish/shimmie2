@@ -1,4 +1,5 @@
 <?php
+use function MicroHTML\emptyHTML;
 use function MicroHTML\FORM;
 use function MicroHTML\INPUT;
 use function MicroHTML\DIV;
@@ -703,6 +704,12 @@ function SHM_FORM(string $target, string $method="POST", bool $multipart=false, 
     return $f;
 }
 
+function SHM_SIMPLE_FORM($target, ...$children) {
+    $form = SHM_FORM($target);
+    $form->appendChild(emptyHTML(...$children));
+    return $form;
+}
+
 function SHM_COMMAND_EXAMPLE(string $ex, string $desc)
 {
     return DIV(
@@ -717,15 +724,16 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
     if (is_string($foot)) {
         $foot = TFOOT(TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>$foot]))));
     }
-    $form = SHM_FORM(make_link($target));
-    $form->appendChild(P(
-        INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
-        TABLE(
-            ["class"=>"form"],
-            THEAD(TR(TH(["colspan"=>"2"], $title))),
-            $body,
-            $foot
+    return SHM_SIMPLE_FORM(
+        make_link($target),
+        P(
+            INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
+            TABLE(
+                ["class"=>"form"],
+                THEAD(TR(TH(["colspan"=>"2"], $title))),
+                $body,
+                $foot
+            )
         )
-    ));
-    return $form;
+    );
 }

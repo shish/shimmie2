@@ -26,18 +26,20 @@ class ExtManagerTheme extends Themelet
     {
         $tbody = TBODY();
 
-        $form = SHM_FORM(make_link("ext_manager/set"));
-        $form->appendChild(TABLE(
-            ["id"=>'extensions', "class"=>'zebra sortable'],
-            THEAD(TR(
-                $editable ? TH("Enabled") : null,
-                TH("Name"),
-                TH("Docs"),
-                TH("Description")
-            )),
-            $tbody,
-            $editable ? TFOOT(TR(TD(["colspan"=>'5'], INPUT(["type"=>'submit', "value"=>'Set Extensions'])))) : null
-        ));
+        $form = SHM_SIMPLE_FORM(
+            make_link("ext_manager/set"),
+            TABLE(
+                ["id"=>'extensions', "class"=>'zebra sortable'],
+                THEAD(TR(
+                    $editable ? TH("Enabled") : null,
+                    TH("Name"),
+                    TH("Docs"),
+                    TH("Description")
+                )),
+                $tbody,
+                $editable ? TFOOT(TR(TD(["colspan"=>'5'], INPUT(["type"=>'submit', "value"=>'Set Extensions'])))) : null
+            )
+        );
 
         foreach ($extensions as $extension) {
             if ((!$editable && $extension->visibility === ExtensionInfo::VISIBLE_ADMIN)
