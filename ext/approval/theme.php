@@ -1,26 +1,27 @@
 <?php declare(strict_types=1);
+use function MicroHTML\BR;
+use function MicroHTML\BUTTON;
+use function MicroHTML\INPUT;
 
 class ApprovalTheme extends Themelet
 {
     public function get_image_admin_html(Image $image)
     {
         if ($image->approved===true) {
-            $html = "
-			".make_form(make_link('disapprove_image/'.$image->id), 'POST')."
-				<input type='hidden' name='image_id' value='$image->id'>
-				<input type='submit' value='Disapprove'>
-			</form>
-		";
+            $html = SHM_SIMPLE_FORM(
+                make_link('disapprove_image/'.$image->id),
+                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                SHM_SUBMIT("Disapprove")
+            );
         } else {
-            $html = "
-			".make_form(make_link('approve_image/'.$image->id), 'POST')."
-				<input type='hidden' name='image_id' value='$image->id'>
-				<input type='submit' value='Approve'>
-			</form>
-		";
+            $html = SHM_SIMPLE_FORM(
+                make_link('approve_image/'.$image->id),
+                INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
+                SHM_SUBMIT("Approve")
+            );
         }
 
-        return $html;
+        return (string)$html;
     }
 
 
@@ -30,11 +31,11 @@ class ApprovalTheme extends Themelet
         <div class="command_example">
         <pre>approved:yes</pre>
         <p>Returns images that have been approved.</p>
-        </div> 
+        </div>
         <div class="command_example">
         <pre>approved:no</pre>
         <p>Returns images that have not been approved.</p>
-        </div> 
+        </div>
         ';
     }
 
@@ -49,10 +50,12 @@ class ApprovalTheme extends Themelet
     {
         global $page;
 
-        $html = make_form(make_link("admin/approval"), "POST");
-        $html .= "<button name='approval_action' value='approve_all'>Approve All Images</button><br/>";
-        $html .= "<button name='approval_action' value='disapprove_all'>Disapprove All Images</button>";
-        $html .= "</form>\n";
+        $html = (string)SHM_SIMPLE_FORM(
+            make_link("admin/approval"),
+            BUTTON(["name"=>'approval_action', "value"=>'approve_all'], "Approve All Images"),
+            BR(),
+            BUTTON(["name"=>'approval_action', "value"=>'disapprove_all'], "Disapprove All Images"),
+        );
         $page->add_block(new Block("Approval", $html));
     }
 }

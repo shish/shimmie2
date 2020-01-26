@@ -32,7 +32,7 @@ class Block
     /**
      * How far down the section the block should appear, higher
      * numbers appear lower. The scale is 0-100 by convention,
-     * though any number or string will work.
+     * though any number will work.
      *
      * @var int
      */

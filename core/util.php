@@ -711,6 +711,11 @@ function SHM_SIMPLE_FORM($target, ...$children)
     return $form;
 }
 
+function SHM_SUBMIT(string $text)
+{
+    return INPUT(["type"=>"submit", "value"=>$text]);
+}
+
 function SHM_COMMAND_EXAMPLE(string $ex, string $desc)
 {
     return DIV(

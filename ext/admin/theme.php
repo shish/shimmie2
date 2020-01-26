@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class AdminPageTheme extends Themelet
 {
@@ -50,10 +51,11 @@ class AdminPageTheme extends Themelet
         }
         $page->add_block(new Block("Misc Admin Tools", $html));
 
-        $html = make_form(make_link("admin/set_tag_case"), "POST");
-        $html .= "<input type='text' name='tag' placeholder='Enter tag with correct case' class='autocomplete_tags' autocomplete='off'>";
-        $html .= "<input type='submit' value='Set Tag Case'>";
-        $html .= "</form>\n";
+        $html = (string)SHM_SIMPLE_FORM(
+            make_link("admin/set_tag_case"),
+            INPUT(["type"=>'text', "name"=>'tag', "placeholder"=>'Enter tag with correct case', "class"=>'autocomplete_tags', "autocomplete"=>'off']),
+            SHM_SUBMIT('Set Tag Case'),
+        );
         $page->add_block(new Block("Set Tag Case", $html));
     }
 }

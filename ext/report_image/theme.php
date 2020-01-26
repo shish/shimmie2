@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class ReportImageTheme extends Themelet
 {
@@ -88,14 +89,12 @@ class ReportImageTheme extends Themelet
 
     public function get_nuller(User $duser)
     {
-        global $user, $page;
-        $html = "
-			<form action='".make_link("image_report/remove_reports_by")."' method='POST'>
-			".$user->get_auth_html()."
-			<input type='hidden' name='user_id' value='{$duser->id}'>
-			<input type='submit' value='Delete all reports by this user'>
-			</form>
-		";
+        global $page;
+        $html = (string)SHM_SIMPLE_FORM(
+            make_link("image_report/remove_reports_by"),
+            INPUT(["type"=>'hidden', "name"=>'user_id', "value"=>$duser->id]),
+            SHM_SUBMIT('Delete all reports by this user')
+        );
         $page->add_block(new Block("Reports", $html, "main", 80));
     }
 }

@@ -136,7 +136,6 @@ class Media extends Extension
         }
     }
 
-
     public function onImageAdminBlockBuilding(ImageAdminBlockBuildingEvent $event)
     {
         global $user;
@@ -145,11 +144,9 @@ class Media extends Extension
         }
     }
 
-
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
         global $user;
-
         if ($user->can(Permissions::RESCAN_MEDIA)) {
             $event->add_action("bulk_media_rescan", "Scan Media Properties");
         }
@@ -282,11 +279,9 @@ class Media extends Extension
         }
     }
 
-
     public function onTagTermParse(TagTermParseEvent $event)
     {
         $matches = [];
-
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
             $event->metatag = true;
         }
@@ -466,7 +461,7 @@ class Media extends Extension
         }
     }
 
-    public static function determine_ext(String $format): String
+    public static function determine_ext(string $format): string
     {
         $format = self::normalize_format($format);
         switch ($format) {
@@ -599,8 +594,8 @@ class Media extends Extension
     }
 
     public static function image_resize_convert(
-        String $input_path,
-        String $input_type,
+        string $input_path,
+        string $input_type,
         int $new_width,
         int $new_height,
         string $output_filename,
@@ -687,7 +682,7 @@ class Media extends Extension
      * @throws InsufficientMemoryException if the estimated memory usage exceeds the memory limit.
      */
     public static function image_resize_gd(
-        String $image_filename,
+        string $image_filename,
         array $info,
         int $new_width,
         int $new_height,
@@ -847,7 +842,7 @@ class Media extends Extension
      * @param String $image_filename The path of the file to check.
      * @return bool true if the file is an animated gif, false if it is not.
      */
-    public static function is_animated_gif(String $image_filename): bool
+    public static function is_animated_gif(string $image_filename): bool
     {
         $is_anim_gif = 0;
         if (($fh = @fopen($image_filename, 'rb'))) {
@@ -865,7 +860,7 @@ class Media extends Extension
     }
 
 
-    private static function compare_file_bytes(String $file_name, array $comparison): bool
+    private static function compare_file_bytes(string $file_name, array $comparison): bool
     {
         $size = filesize($file_name);
         if ($size < count($comparison)) {
@@ -897,17 +892,17 @@ class Media extends Extension
         }
     }
 
-    public static function is_animated_webp(String $image_filename): bool
+    public static function is_animated_webp(string $image_filename): bool
     {
         return self::compare_file_bytes($image_filename, self::WEBP_ANIMATION_HEADER);
     }
 
-    public static function is_lossless_webp(String $image_filename): bool
+    public static function is_lossless_webp(string $image_filename): bool
     {
         return self::compare_file_bytes($image_filename, self::WEBP_LOSSLESS_HEADER);
     }
 
-    public static function supports_alpha(string $format)
+    public static function supports_alpha(string $format): bool
     {
         return in_array(self::normalize_format($format), self::ALPHA_FORMATS);
     }

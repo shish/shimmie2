@@ -1,4 +1,5 @@
 <?php declare(strict_types=1);
+use function MicroHTML\INPUT;
 
 class FeaturedTheme extends Themelet
 {
@@ -9,14 +10,11 @@ class FeaturedTheme extends Themelet
 
     public function get_buttons_html(int $image_id): string
     {
-        global $user;
-        return "
-			".make_form(make_link("featured_image/set"))."
-			".$user->get_auth_html()."
-			<input type='hidden' name='image_id' value='{$image_id}'>
-			<input type='submit' value='Feature This'>
-			</form>
-		";
+        return (string)SHM_SIMPLE_FORM(
+            make_link("featured_image/set"),
+            INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
+            INPUT(["type"=>'submit', "value"=>'Feature This']),
+        );
     }
 
     public function build_featured_html(Image $image, ?string $query=null): string
