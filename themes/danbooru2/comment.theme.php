@@ -95,12 +95,12 @@ class CustomCommentListTheme extends CommentListTheme
         $tfe = new TextFormattingEvent($comment->comment);
         send_event($tfe);
 
-        //$i_uid = int_escape($comment->owner_id);
+        //$i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);
         //$h_poster_ip = html_escape($comment->poster_ip);
         $h_comment = ($trim ? substr($tfe->stripped, 0, 50)."..." : $tfe->formatted);
-        $i_comment_id = int_escape($comment->comment_id);
-        $i_image_id = int_escape($comment->image_id);
+        $i_comment_id = $comment->comment_id;
+        $i_image_id = $comment->image_id;
         $h_posted = autodate($comment->posted);
 
         $h_userlink = "<a class='username' href='".make_link("user/$h_name")."'>$h_name</a>";

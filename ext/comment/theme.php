@@ -167,9 +167,6 @@ class CommentListTheme extends Themelet
     {
         global $page;
 
-        assert(is_numeric($page_number));
-        assert(is_numeric($total_pages));
-
         $html = "";
         foreach ($comments as $comment) {
             $html .= $this->comment_to_html($comment, true);
@@ -203,12 +200,12 @@ class CommentListTheme extends Themelet
         $tfe = new TextFormattingEvent($comment->comment);
         send_event($tfe);
 
-        $i_uid = int_escape($comment->owner_id);
+        $i_uid = $comment->owner_id;
         $h_name = html_escape($comment->owner_name);
         $h_timestamp = autodate($comment->posted);
         $h_comment = ($trim ? truncate($tfe->stripped, 50) : $tfe->formatted);
-        $i_comment_id = int_escape($comment->comment_id);
-        $i_image_id = int_escape($comment->image_id);
+        $i_comment_id = $comment->comment_id;
+        $i_image_id = $comment->image_id;
 
         if ($i_uid == $config->get_int("anon_id")) {
             $anoncode = "";

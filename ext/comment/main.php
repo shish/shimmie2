@@ -43,15 +43,34 @@ class CommentPostingException extends SCoreException
 
 class Comment
 {
+    /** @var User */
     public $owner;
+
+    /** @var int */
     public $owner_id;
+
+    /** @var string */
     public $owner_name;
+
+    /** @var string */
     public $owner_email;
+
+    /** @var string */
     public $owner_class;
+
+    /** @var string */
     public $comment;
+
+    /** @var int */
     public $comment_id;
+
+    /** @var int */
     public $image_id;
+
+    /** @var string */
     public $poster_ip;
+
+    /** @var string */
     public $posted;
 
     public function __construct($row)
