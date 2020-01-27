@@ -34,18 +34,15 @@ jobs:
             sudo -u postgres psql -c "SELECT set_config('log_statement', 'all', false);" -U postgres ;
             sudo -u postgres psql -c "CREATE USER shimmie WITH PASSWORD 'shimmie';" -U postgres ;
             sudo -u postgres psql -c "CREATE DATABASE shimmie WITH OWNER shimmie;" -U postgres ;
-            echo '<?php define("DATABASE_DSN", "pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "mysql" ]]; then
             mysql --version ;
             mysql -e "SET GLOBAL general_log = 'ON';" -uroot -proot ;
             mysql -e "CREATE DATABASE shimmie;" -uroot -proot ;
-            echo '<?php define("DATABASE_DSN", "mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie");' > data/config/auto_install.conf.php ;
         fi
         if [[ "${{ matrix.database }}" == "sqlite" ]]; then
             sudo apt-get install -y sqlite3 ;
             sqlite3 --version ;
-            echo '<?php define("DATABASE_DSN", "sqlite:data/shimmie.sqlite");' > data/config/auto_install.conf.php ;
         fi
 
     - name: Check versions
@@ -61,7 +58,17 @@ jobs:
       run: php index.php
         
     - name: Run test suite
-      run: vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
+      run: |
+        if [[ "${{ matrix.database }}" == "pgsql" ]]; then
+            export DSN="pgsql:user=shimmie;password=shimmie;host=127.0.0.1;dbname=shimmie"
+        fi
+        if [[ "${{ matrix.database }}" == "mysql" ]]; then
+            export DSN="mysql:user=root;password=root;host=127.0.0.1;dbname=shimmie"
+        fi
+        if [[ "${{ matrix.database }}" == "sqlite" ]]; then
+            export DSN="sqlite:data/shimmie.sqlite"
+        fi
+        vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-clover=data/coverage.clover
       
     - name: Upload coverage
       run: |
