@@ -20,3 +20,4 @@ define("TRACE_FILE", null);
 define("TRACE_THRESHOLD", 0.0);
 define("ENABLED_MODS", "imageboard");
 define("SCORE_VERSION", 'develop/'.VERSION);
+define("AUTO_DB_UPGRADE", true);
