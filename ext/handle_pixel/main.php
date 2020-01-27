@@ -70,7 +70,7 @@ class PixelFileHandler extends DataHandlerExtension
             return false;
         }
         $info = getimagesize($tmpname);
-        if (is_null($info)) {
+        if (!$info) {
             return false;
         }
         if (in_array($info[2], $valid)) {

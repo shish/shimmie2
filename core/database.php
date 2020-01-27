@@ -271,7 +271,7 @@ class Database
     }
 
     /**
-     * Execute an SQL query and return a single value.
+     * Execute an SQL query and return a single value, or null.
      */
     public function get_one(string $query, array $args=[], bool $scoreql = false)
     {
@@ -281,7 +281,7 @@ class Database
         $_start = microtime(true);
         $row = $this->execute($query, $args)->fetch();
         $this->count_time("get_one", $_start, $query, $args);
-        return $row[0];
+        return $row ? $row[0] : null;
     }
 
     /**
