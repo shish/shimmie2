@@ -4,7 +4,7 @@
  * actually do anything as far as the app is concerned
  */
 
-global $cache, $config, $database, $user, $page, $_tracer;
+global $cache, $config, $database, $user, $page, $_tracer, $tracer_enabled;
 
 require_once "core/sys_config.php";
 require_once "core/polyfills.php";
