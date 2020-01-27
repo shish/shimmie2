@@ -84,7 +84,6 @@ class Update extends Extension
         $commitSHA = $_GET['sha'];
 
         log_info("update", "Download succeeded. Attempting to update Shimmie.");
-        $config->set_bool("in_upgrade", true);
         $ok = false;
 
         /** TODO: Backup all folders (except /data, /images, /thumbs) before attempting this?
@@ -106,7 +105,6 @@ class Update extends Extension
 
         $zip->close();
         unlink("./data/update_$commitSHA.zip");
-        $config->set_bool("in_upgrade", false);
 
         if ($ok) {
             $config->set_string("commit_hash", $commitSHA);
