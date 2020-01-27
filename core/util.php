@@ -480,7 +480,7 @@ function require_all(array $files): void {
 function _load_core_files() {
     require_all(array_merge(
         zglob("core/*.php"),
-        zglob("core/{".ENABLED_MODS."}/*.php"),
+        zglob("core/imageboard/*.php"),
         zglob("ext/*/info.php")
     ));
 }

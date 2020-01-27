@@ -34,4 +34,3 @@ _d("EXTRA_EXTS", "");        // string   optional extra extensions
 _d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
 _d("TRACE_FILE", null);      // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);  // float    log pages which take more time than this many seconds
-_d("ENABLED_MODS", "imageboard");
