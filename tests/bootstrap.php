@@ -10,11 +10,16 @@ $_SERVER['QUERY_STRING'] = '/';
 chdir(dirname(dirname(__FILE__)));
 require_once "core/_bootstrap.php";
 
-if (is_null(User::by_name("demo"))) {
-    $userPage = new UserPage();
-    $userPage->onUserCreation(new UserCreationEvent("demo", "demo", ""));
-    $userPage->onUserCreation(new UserCreationEvent("test", "test", ""));
+function create_user(string $name) {
+	if (is_null(User::by_name($name))) {
+	    $userPage = new UserPage();
+	    $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
+		assert(!is_null(User::by_name($name)), "Creation of user $name failed");
+	}
 }
+
+create_user("demo");
+create_user("test");
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
