@@ -12,11 +12,10 @@ define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
 define("NICE_URLS", false);
 define("WH_SPLITS", 1);
-define("VERSION", '2.8-dev');
+define("VERSION", 'unit-tests');
 define("BASE_URL", null);
 define("TRACE_FILE", null);
 define("TRACE_THRESHOLD", 0.0);
 define("TIMEZONE", 'UTC');
 define("BASE_HREF", "/");
 define("CLI_LOG_LEVEL", 50);
-
