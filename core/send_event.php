@@ -12,12 +12,12 @@ function _load_event_listeners(): void
     global $_shm_event_listeners;
 
     $cache_path = data_path("cache/shm_event_listeners.php");
-    if (COMPILE_ELS && file_exists($cache_path)) {
+    if (SPEED_HAX && file_exists($cache_path)) {
         require_once($cache_path);
     } else {
         _set_event_listeners();
 
-        if (COMPILE_ELS) {
+        if (SPEED_HAX) {
             _dump_event_listeners($_shm_event_listeners, $cache_path);
         }
     }

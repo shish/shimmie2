@@ -10,7 +10,6 @@ define("COVERAGE", false);
 define("CACHE_HTTP", false);
 define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
-define("COMPILE_ELS", false);
 define("NICE_URLS", false);
 define("SEARCH_ACCEL", false);
 define("WH_SPLITS", 1);
