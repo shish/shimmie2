@@ -38,7 +38,7 @@ require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.
 
 // load the theme parts
 require_all(_get_themelet_files(get_theme()));
-$page = class_exists("CustomPage") ? new CustomPage() : new Page();
+$page = new Page();
 
 // hook up event handlers
 _load_event_listeners();

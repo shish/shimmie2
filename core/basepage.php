@@ -1,4 +1,6 @@
 <?php declare(strict_types=1);
+require_once "core/event.php";
+
 /**
  * \page themes Themes
  *
@@ -42,7 +44,7 @@ abstract class PageMode
  * The various extensions all add whatever they want to this structure,
  * then Layout turns it into HTML.
  */
-class Page
+class BasePage
 {
     /** @var string */
     public $mode = PageMode::PAGE;

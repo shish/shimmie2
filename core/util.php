@@ -528,9 +528,7 @@ function _sanitise_environment(): void
 function _get_themelet_files(string $_theme): array
 {
     $base_themelets = [];
-    if (file_exists('themes/'.$_theme.'/custompage.class.php')) {
-        $base_themelets[] = 'themes/'.$_theme.'/custompage.class.php';
-    }
+    $base_themelets[] = 'themes/'.$_theme.'/page.class.php';
     $base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
     $base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
