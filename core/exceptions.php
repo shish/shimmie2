@@ -21,6 +21,26 @@ class SCoreException extends RuntimeException
     }
 }
 
+class InstallerException extends RuntimeException
+{
+    /** @var string */
+    public $title;
+
+    /** @var string */
+    public $body;
+
+    /** @var int */
+    public $code;
+
+    public function __construct(string $title, string $body, int $code)
+    {
+        parent::construct($title);
+        $this->title = $title;
+        $this->body = $body;
+        $this->code = $code;
+    }
+}
+
 /**
  * Class PermissionDeniedException
  *

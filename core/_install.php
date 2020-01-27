@@ -67,6 +67,7 @@ require_once "core/exceptions.php";
 require_once "core/cacheengine.php";
 require_once "core/dbengine.php";
 require_once "core/database.php";
+require_once "core/util.php";
 
 if (is_readable("data/config/shimmie.conf.php")) {
     die("Shimmie is already installed.");
@@ -75,29 +76,6 @@ if (is_readable("data/config/shimmie.conf.php")) {
 do_install();
 
 // TODO: Can some of these be pushed into "core/???.inc.php" ?
-
-function check_gd_version(): int
-{
-    $gdversion = 0;
-
-    if (function_exists('gd_info')) {
-        $gd_info = gd_info();
-        if (substr_count($gd_info['GD Version'], '2.')) {
-            $gdversion = 2;
-        } elseif (substr_count($gd_info['GD Version'], '1.')) {
-            $gdversion = 1;
-        }
-    }
-
-    return $gdversion;
-}
-
-function check_im_version(): int
-{
-    $convert_check = exec("convert");
-
-    return (empty($convert_check) ? 0 : 1);
-}
 
 function do_install()
 {
@@ -115,7 +93,23 @@ function do_install()
 
     define("CACHE_DSN", null);
     define("DATABASE_KA", true);
-    install_process();
+    try {
+        create_dirs();
+        create_tables(new Database());
+        write_config();
+    } catch (InstallerException $e) {
+        print <<<EOD
+		<div id="installer">
+			<h1>Shimmie Installer</h1>
+			<h3>{$e->title}</h3>
+			<div class="container">
+				{$e->body}
+				<br/><br/>
+			</div>
+		</div>
+EOD;
+        exit($e->code);
+    }
 }
 
 function ask_questions()
@@ -230,208 +224,6 @@ function ask_questions()
 			</div>
 		</div>
 EOD;
-}
-
-/**
- * This is where the install really takes place.
- */
-function install_process()
-{
-    build_dirs();
-    create_tables();
-    insert_defaults();
-    write_config();
-}
-
-function create_tables()
-{
-    try {
-        $db = new Database();
-
-        if ($db->count_tables() > 0) {
-            print <<<EOD
-			<div id="installer">
-				<h1>Shimmie Installer</h1>
-				<h3>Warning: The Database schema is not empty!</h3>
-				<div class="container">
-					<p>Please ensure that the database you are installing Shimmie with is empty before continuing.</p>
-					<p>Once you have emptied the database of any tables, please hit 'refresh' to continue.</p>
-					<br/><br/>
-				</div>
-			</div>
-EOD;
-            exit(2);
-        }
-
-        $db->create_table("aliases", "
-			oldtag VARCHAR(128) NOT NULL,
-			newtag VARCHAR(128) NOT NULL,
-			PRIMARY KEY (oldtag)
-		");
-        $db->execute("CREATE INDEX aliases_newtag_idx ON aliases(newtag)", []);
-
-        $db->create_table("config", "
-			name VARCHAR(128) NOT NULL,
-			value TEXT,
-			PRIMARY KEY (name)
-		");
-        $db->create_table("users", "
-			id SCORE_AIPK,
-			name VARCHAR(32) UNIQUE NOT NULL,
-			pass VARCHAR(250),
-			joindate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			class VARCHAR(32) NOT NULL DEFAULT 'user',
-			email VARCHAR(128)
-		");
-        $db->execute("CREATE INDEX users_name_idx ON users(name)", []);
-
-        $db->create_table("images", "
-			id SCORE_AIPK,
-			owner_id INTEGER NOT NULL,
-			owner_ip SCORE_INET NOT NULL,
-			filename VARCHAR(64) NOT NULL,
-			filesize INTEGER NOT NULL,
-			hash CHAR(32) UNIQUE NOT NULL,
-			ext CHAR(4) NOT NULL,
-			source VARCHAR(255),
-			width INTEGER NOT NULL,
-			height INTEGER NOT NULL,
-			posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			locked SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N,
-			FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE RESTRICT
-		");
-        $db->execute("CREATE INDEX images_owner_id_idx ON images(owner_id)", []);
-        $db->execute("CREATE INDEX images_width_idx ON images(width)", []);
-        $db->execute("CREATE INDEX images_height_idx ON images(height)", []);
-        $db->execute("CREATE INDEX images_hash_idx ON images(hash)", []);
-
-        $db->create_table("tags", "
-			id SCORE_AIPK,
-			tag VARCHAR(64) UNIQUE NOT NULL,
-			count INTEGER NOT NULL DEFAULT 0
-		");
-        $db->execute("CREATE INDEX tags_tag_idx ON tags(tag)", []);
-
-        $db->create_table("image_tags", "
-			image_id INTEGER NOT NULL,
-			tag_id INTEGER NOT NULL,
-			UNIQUE(image_id, tag_id),
-			FOREIGN KEY (image_id) REFERENCES images(id) ON DELETE CASCADE,
-			FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE
-		");
-        $db->execute("CREATE INDEX images_tags_image_id_idx ON image_tags(image_id)", []);
-        $db->execute("CREATE INDEX images_tags_tag_id_idx ON image_tags(tag_id)", []);
-
-        $db->execute("INSERT INTO config(name, value) VALUES('db_version', 11)");
-        $db->commit();
-    } catch (PDOException $e) {
-        handle_db_errors(true, "An error occurred while trying to create the database tables necessary for Shimmie.", $e->getMessage(), 3);
-    } catch (Exception $e) {
-        handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 4);
-    }
-}
-
-function insert_defaults()
-{
-    try {
-        $db = new Database();
-
-        $db->execute("INSERT INTO users(name, pass, joindate, class) VALUES(:name, :pass, now(), :class)", ["name" => 'Anonymous', "pass" => null, "class" => 'anonymous']);
-        $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'anon_id', "value" => $db->get_last_insert_id('users_id_seq')]);
-
-        if (check_im_version() > 0) {
-            $db->execute("INSERT INTO config(name, value) VALUES(:name, :value)", ["name" => 'thumb_engine', "value" => 'convert']);
-        }
-        $db->commit();
-    } catch (PDOException $e) {
-        handle_db_errors(true, "An error occurred while trying to insert data into the database.", $e->getMessage(), 5);
-    } catch (Exception $e) {
-        handle_db_errors(false, "An unknown error occurred while trying to insert data into the database.", $e->getMessage(), 6);
-    }
-}
-
-function build_dirs()
-{
-    $data_exists = file_exists("data") || mkdir("data");
-    $data_writable = is_writable("data") || chmod("data", 0755);
-
-    if (!$data_exists || !$data_writable) {
-        print "
-		<div id='installer'>
-			<h1>Shimmie Installer</h1>
-			<h3>Directory Permissions Error:</h3>
-			<div class='container'>
-				<p>Shimmie needs to have a 'data' folder in its directory, writable by the PHP user.</p>
-				<p>If you see this error, if probably means the folder is owned by you, and it needs to be writable by the web server.</p>
-				<p>PHP reports that it is currently running as user: ".$_ENV["USER"]." (". $_SERVER["USER"] .")</p>
-				<p>Once you have created this folder and / or changed the ownership of the shimmie folder, hit 'refresh' to continue.</p>
-				<br/><br/>
-			</div>
-		</div>
-		";
-        exit(7);
-    }
-}
-
-function write_config()
-{
-    $file_content = '<' . '?php' . "\n" .
-            "define('DATABASE_DSN', '".DATABASE_DSN."');\n" .
-            '?' . '>';
-
-    if (!file_exists("data/config")) {
-        mkdir("data/config", 0755, true);
-    }
-
-    if (file_put_contents("data/config/shimmie.conf.php", $file_content, LOCK_EX)) {
-        header("Location: index.php");
-        print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Things are OK \o/</h3>
-			<div class="container">
-				<p>If you aren't redirected, <a href="index.php">click here to Continue</a>.
-			</div>
-		</div>
-EOD;
-    } else {
-        $h_file_content = htmlentities($file_content);
-        print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>File Permissions Error:</h3>
-			<div class="container">
-				The web server isn't allowed to write to the config file; please copy
-				the text below, save it as 'data/config/shimmie.conf.php', and upload it into the shimmie
-				folder manually. Make sure that when you save it, there is no whitespace
-				before the "&lt;?php" or after the "?&gt;"
-				
-				<p><textarea cols="80" rows="2">$h_file_content</textarea>
-				
-				<p>Once done, <a href="index.php">click here to Continue</a>.
-				<br/><br/>
-			</div>
-		</div>
-EOD;
-    }
-    echo "\n";
-}
-
-function handle_db_errors(bool $isPDO, string $errorMessage1, string $errorMessage2, int $exitCode)
-{
-    $errorMessage1Extra = ($isPDO ? "Please check and ensure that the database configuration options are all correct." : "Please check the server log files for more information.");
-    print <<<EOD
-		<div id="installer">
-			<h1>Shimmie Installer</h1>
-			<h3>Unknown Error:</h3>
-			<div class="container">
-				<p>{$errorMessage1}</p>
-				<p>{$errorMessage1Extra}</p>
-				<p>{$errorMessage2}</p>
-			</div>
-		</div>
-EOD;
-    exit($exitCode);
 }
 ?>
 	</body>

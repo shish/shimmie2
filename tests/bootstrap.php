@@ -10,12 +10,13 @@ $_SERVER['QUERY_STRING'] = '/';
 chdir(dirname(dirname(__FILE__)));
 require_once "core/_bootstrap.php";
 
-function create_user(string $name) {
-	if (is_null(User::by_name($name))) {
-	    $userPage = new UserPage();
-	    $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
-		assert(!is_null(User::by_name($name)), "Creation of user $name failed");
-	}
+function create_user(string $name)
+{
+    if (is_null(User::by_name($name))) {
+        $userPage = new UserPage();
+        $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
+        assert(!is_null(User::by_name($name)), "Creation of user $name failed");
+    }
 }
 
 create_user("demo");
