@@ -1,14 +1,29 @@
 <?php
-define("UNITTEST", true);
-define("TIMEZONE", 'UTC');
-define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
-define("BASE_HREF", "/");
-define("CLI_LOG_LEVEL", 50);
+chdir(dirname(dirname(__FILE__)));
+require_once "vendor/autoload.php";
+require_once "tests/defines.php";
+require_once "core/sys_config.php";
+require_once "core/polyfills.php";
+require_once "core/util.php";
 
 $_SERVER['QUERY_STRING'] = '/';
 
-chdir(dirname(dirname(__FILE__)));
-require_once "core/_bootstrap.php";
+global $cache, $config, $database, $user, $page, $_tracer;
+_sanitise_environment();
+_load_core_files();
+$cache = new Cache(CACHE_DSN);
+$id = bin2hex(random_bytes(5));
+$database = new Database("sqlite:data/shimmie.test.$id.sqlite");
+create_dirs();
+create_tables($database);
+$config = new DatabaseConfig($database);
+ExtensionInfo::load_all_extension_info();
+Extension::determine_enabled_extensions();
+require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
+_load_theme_files();
+$page = new Page();
+_load_event_listeners();
+
 if (AUTO_DB_UPGRADE) {
     send_event(new DatabaseUpgradeEvent());
 }

@@ -1,22 +1,15 @@
 <?php declare(strict_types=1);
-/*
- * First, load the user-specified settings
- */
-@include_once "data/config/shimmie.conf.php";
-@include_once "data/config/extensions.conf.php";
-
-
 /**
- * For any values that aren't defined in the above files, Shimmie
- * will set the values to their defaults
+ * For any values that aren't defined in data/config/*.php,
+ * Shimmie will set the values to their defaults
  *
- * All of these can be over-ridden by placing a 'define' in data/config/shimmie.conf.php
+ * All of these can be over-ridden by placing a 'define' in
+ * data/config/shimmie.conf.php
  *
  * Do NOT change them in this file. These are the defaults only!
  *
  * Example:
  *  define("SPEED_HAX", true);
- *
  */
 
 function _d(string $name, $value): void

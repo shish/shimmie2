@@ -1,4 +1,7 @@
 <?php
+define("UNITTEST", true);
+define("EXTRA_EXTS", str_replace("ext/", "", implode(',', glob('ext/*'))));
+
 define("DATABASE_DSN", null);
 define("DATABASE_TIMEOUT", 10000);
 define("CACHE_DSN", null);
@@ -12,8 +15,6 @@ define("NICE_URLS", false);
 define("SEARCH_ACCEL", false);
 define("WH_SPLITS", 1);
 define("VERSION", '2.8-dev');
-define("TIMEZONE", null);
-define("EXTRA_EXTS", "");
 define("BASE_URL", null);
 define("MIN_PHP_VERSION", '7.3');
 define("TRACE_FILE", null);
@@ -21,3 +22,7 @@ define("TRACE_THRESHOLD", 0.0);
 define("ENABLED_MODS", "imageboard");
 define("SCORE_VERSION", 'develop/'.VERSION);
 define("AUTO_DB_UPGRADE", true);
+define("TIMEZONE", 'UTC');
+define("BASE_HREF", "/");
+define("CLI_LOG_LEVEL", 50);
+
