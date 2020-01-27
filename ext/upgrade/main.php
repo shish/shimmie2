@@ -196,9 +196,17 @@ class Upgrade extends Extension
             log_info("upgrade", "Setting index for ext column");
             $database->execute('CREATE INDEX images_ext_idx ON images(ext)');
 
+            $this->set_version("db_version", 17);
+            $config->set_bool("in_upgrade", false);
+        }
 
-            $database->commit(); // Each of these commands could hit a lot of data, combining them into one big transaction would not be a good idea.
+        if ($this->get_version("db_version") < 18) {
             log_info("upgrade", "Setting predictable media values for known file types");
+            if ($database->transaction) {
+                // Each of these commands could hit a lot of data, combining
+                // them into one big transaction would not be a good idea.
+                $database->commit();
+            }
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_Y, video = SCORE_BOOL_Y WHERE ext IN ('swf')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_N, audio = SCORE_BOOL_Y WHERE ext IN ('mp3')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_N, audio = SCORE_BOOL_N WHERE ext IN ('jpg','jpeg')"));
@@ -206,8 +214,7 @@ class Upgrade extends Extension
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_Y, audio = SCORE_BOOL_N WHERE ext IN ('gif')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET audio = SCORE_BOOL_N WHERE ext IN ('webp')"));
             $database->execute($database->scoreql_to_sql("UPDATE images SET lossless = SCORE_BOOL_N, video = SCORE_BOOL_Y WHERE ext IN ('flv','mp4','m4v','ogv','webm')"));
-
-            $this->set_version("db_version", 17);
+            $this->set_version("db_version", 18);
             $config->set_bool("in_upgrade", false);
         }
     }
