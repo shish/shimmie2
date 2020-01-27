@@ -477,8 +477,22 @@ function require_all(array $files): void {
     }
 }
 
-function _version_check(): void
+function _load_core_files() {
+    require_all(array_merge(
+        zglob("core/*.php"),
+        zglob("core/{".ENABLED_MODS."}/*.php"),
+        zglob("ext/*/info.php")
+    ));
+}
+
+function _load_theme_files() {
+    require_all(_get_themelet_files(get_theme()));
+}
+
+function _sanitise_environment(): void
 {
+    global $_tracer, $tracer_enabled;
+
     if (MIN_PHP_VERSION) {
         if (version_compare(phpversion(), MIN_PHP_VERSION, ">=") === false) {
             print "
@@ -490,11 +504,10 @@ date and you should plan on moving elsewhere.
             exit;
         }
     }
-}
 
-function _sanitise_environment(): void
-{
-    global $_tracer;
+    if (file_exists("images") && !file_exists("data/images")) {
+        die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
+    }
 
     if (TIMEZONE) {
         date_default_timezone_set(TIMEZONE);
@@ -506,6 +519,10 @@ function _sanitise_environment(): void
         error_reporting(E_ALL);
     }
 
+    // The trace system has a certain amount of memory consumption every time it is used,
+    // so to prevent running out of memory during complex operations code that uses it should
+    // check if tracer output is enabled before making use of it.
+    $tracer_enabled = constant('TRACE_FILE')!==null;
     $_tracer = new EventTracer();
 
     if (COVERAGE) {

@@ -48,10 +48,6 @@ if (!file_exists("data/config/shimmie.conf.php")) {
     exit;
 }
 
-if (file_exists("images") && !file_exists("data/images")) {
-    die("As of Shimmie 2.7 images and thumbs should be moved to data/images and data/thumbs");
-}
-
 if (!file_exists("vendor/")) {
     //CHECK: Should we just point to install.php instead? Seems unsafe though.
     print <<<EOD
@@ -86,6 +82,11 @@ EOD;
 require_once "core/_bootstrap.php";
 //$_tracer->mark(@$_SERVER["REQUEST_URI"]);
 $_tracer->begin($_SERVER["REQUEST_URI"] ?? "No Request");
+
+if (AUTO_DB_UPGRADE) {
+    send_event(new DatabaseUpgradeEvent());
+}
+send_event(new InitExtEvent());
 
 try {
     // start the page generation waterfall

@@ -9,6 +9,10 @@ $_SERVER['QUERY_STRING'] = '/';
 
 chdir(dirname(dirname(__FILE__)));
 require_once "core/_bootstrap.php";
+if (AUTO_DB_UPGRADE) {
+    send_event(new DatabaseUpgradeEvent());
+}
+send_event(new InitExtEvent());
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
