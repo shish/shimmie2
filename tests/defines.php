@@ -11,7 +11,6 @@ define("CACHE_HTTP", false);
 define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
 define("NICE_URLS", false);
-define("SEARCH_ACCEL", false);
 define("WH_SPLITS", 1);
 define("VERSION", '2.8-dev');
 define("BASE_URL", null);

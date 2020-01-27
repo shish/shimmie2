@@ -146,17 +146,14 @@ class Image
 
         list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
 
-        $result = Image::get_accelerated_result($tag_conditions, $img_conditions, $start, $limit);
-        if (!$result) {
-            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-            $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER))));
-            if ($limit!=null) {
-                $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
-                $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
-            }
-            #var_dump($querylet->sql); var_dump($querylet->variables);
-            $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
+        $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+        $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER))));
+        if ($limit!=null) {
+            $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
+            $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
         }
+        #var_dump($querylet->sql); var_dump($querylet->variables);
+        $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
 
         Image::$order_sql = null;
 
@@ -192,98 +189,6 @@ class Image
     }
 
     /*
-     * Accelerator stuff
-     */
-    public static function get_acceleratable(array $tag_conditions): ?array
-    {
-        $ret = [
-            "yays" => [],
-            "nays" => [],
-        ];
-        $yays = 0;
-        $nays = 0;
-        foreach ($tag_conditions as $tq) {
-            if (strpos($tq->tag, "*") !== false) {
-                // can't deal with wildcards
-                return null;
-            }
-            if ($tq->positive) {
-                $yays++;
-                $ret["yays"][] = $tq->tag;
-            } else {
-                $nays++;
-                $ret["nays"][] = $tq->tag;
-            }
-        }
-        if ($yays > 1 || $nays > 0) {
-            return $ret;
-        }
-        return null;
-    }
-
-    public static function get_accelerated_result(array $tag_conditions, array $img_conditions, int $offset, ?int $limit): ?PDOStatement
-    {
-        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
-            return null;
-        }
-
-        global $database;
-
-        $req = Image::get_acceleratable($tag_conditions);
-        if (!$req) {
-            return null;
-        }
-        $req["offset"] = $offset;
-        $req["limit"] = $limit;
-
-        $response = Image::query_accelerator($req);
-        if ($response) {
-            $list = implode(",", $response);
-            $result = $database->execute("SELECT * FROM images WHERE id IN ($list) ORDER BY images.id DESC");
-        } else {
-            $result = $database->execute("SELECT * FROM images WHERE 1=0 ORDER BY images.id DESC");
-        }
-        return $result;
-    }
-
-    public static function get_accelerated_count(array $tag_conditions, array $img_conditions): ?int
-    {
-        if (!SEARCH_ACCEL || !empty($img_conditions) || isset($_GET['DISABLE_ACCEL'])) {
-            return null;
-        }
-
-        $req = Image::get_acceleratable($tag_conditions);
-        if (!$req) {
-            return null;
-        }
-        $req["count"] = true;
-
-        return Image::query_accelerator($req);
-    }
-
-    public static function query_accelerator($req)
-    {
-        global $_tracer;
-        $fp = @fsockopen("127.0.0.1", 21212);
-        if (!$fp) {
-            return null;
-        }
-        $req_str = json_encode($req);
-        $_tracer->begin("Accelerator Query", ["req"=>$req_str]);
-        fwrite($fp, $req_str);
-        $data = "";
-        while (($buffer = fgets($fp, 4096)) !== false) {
-            $data .= $buffer;
-        }
-        $_tracer->end();
-        if (!feof($fp)) {
-            die("Error: unexpected fgets() fail in query_accelerator($req_str)\n");
-        }
-        fclose($fp);
-        return json_decode($data);
-    }
-
-    /*
      * Image-related utility functions
      */
 
@@ -313,11 +218,8 @@ class Image
                 $tags[] = "rating:*";
             }
             list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-            $total = Image::get_accelerated_count($tag_conditions, $img_conditions);
-            if (is_null($total)) {
-                $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-                $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
-            }
+            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+            $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
         }
         if (is_null($total)) {
             return 0;
