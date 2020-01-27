@@ -493,16 +493,15 @@ function _sanitise_environment(): void
 {
     global $_tracer, $tracer_enabled;
 
-    if (MIN_PHP_VERSION) {
-        if (version_compare(phpversion(), MIN_PHP_VERSION, ">=") === false) {
-            print "
-Shimmie (SCore Engine) does not support versions of PHP lower than ".MIN_PHP_VERSION."
+    $min_php = "7.3";
+    if (version_compare(phpversion(), $min_php, ">=") === false) {
+        print "
+Shimmie (SCore Engine) does not support versions of PHP lower than $min_php
 (PHP reports that it is version ".phpversion().")
 If your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";
-            exit;
-        }
+        exit;
     }
 
     if (file_exists("images") && !file_exists("data/images")) {

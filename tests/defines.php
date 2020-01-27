@@ -14,7 +14,6 @@ define("NICE_URLS", false);
 define("WH_SPLITS", 1);
 define("VERSION", '2.8-dev');
 define("BASE_URL", null);
-define("MIN_PHP_VERSION", '7.3');
 define("TRACE_FILE", null);
 define("TRACE_THRESHOLD", 0.0);
 define("ENABLED_MODS", "imageboard");
