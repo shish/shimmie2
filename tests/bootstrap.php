@@ -10,18 +10,6 @@ $_SERVER['QUERY_STRING'] = '/';
 chdir(dirname(dirname(__FILE__)));
 require_once "core/_bootstrap.php";
 
-function create_user(string $name)
-{
-    if (is_null(User::by_name($name))) {
-        $userPage = new UserPage();
-        $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
-        assert(!is_null(User::by_name($name)), "Creation of user $name failed");
-    }
-}
-
-create_user("demo");
-create_user("test");
-
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
     private $images = [];
@@ -35,6 +23,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             $this->markTestSkipped("$class not supported with this database");
         }
 
+        $this->create_user("demo");
+        $this->create_user("test");
+
         // things to do after bootstrap and before request
         // log in as anon
         $this->log_out();
@@ -44,6 +35,15 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         foreach ($this->images as $image_id) {
             $this->delete_image($image_id);
+        }
+    }
+
+    protected function create_user(string $name)
+    {
+        if (is_null(User::by_name($name))) {
+            $userPage = new UserPage();
+            $userPage->onUserCreation(new UserCreationEvent($name, $name, ""));
+            assert(!is_null(User::by_name($name)), "Creation of user $name failed");
         }
     }
 

@@ -60,7 +60,7 @@ if (!file_exists("vendor/")) {
 	<head>
 		<title>Shimmie Error</title>
 		<link rel="shortcut icon" href="ext/handle_static/static/favicon.ico">
-		<link rel="stylesheet" href="lib/shimmie.css" type="text/css">
+		<link rel="stylesheet" href="ext/handle_static/style.css" type="text/css">
 	</head>
 	<body>
 		<div id="installer">

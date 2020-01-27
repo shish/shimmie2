@@ -469,6 +469,14 @@ function get_debug_info(): string
 
 /** @privatesection */
 
+function require_all(array $files): void {
+    foreach ($files as $filename) {
+        if (basename($filename)[0] != "_") {
+            require_once $filename;
+        }
+    }
+}
+
 function _version_check(): void
 {
     if (MIN_PHP_VERSION) {

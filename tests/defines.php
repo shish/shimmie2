@@ -1,6 +1,5 @@
 <?php
 define("DATABASE_DSN", null);
-define("DATABASE_KA", true);
 define("DATABASE_TIMEOUT", 10000);
 define("CACHE_DSN", null);
 define("DEBUG", false);

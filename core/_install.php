@@ -92,10 +92,9 @@ function do_install()
     }
 
     define("CACHE_DSN", null);
-    define("DATABASE_KA", true);
     try {
         create_dirs();
-        create_tables(new Database());
+        create_tables(new Database(DATABASE_DSN));
         write_config();
     } catch (InstallerException $e) {
         print <<<EOD

@@ -13,6 +13,8 @@ abstract class DatabaseDriver
  */
 class Database
 {
+    /** @var string */
+    private $dsn;
 
     /**
      * The PDO database connection object, for anyone who wants direct access.
@@ -44,9 +46,13 @@ class Database
      */
     public $query_count = 0;
 
+    public function __construct(string $dsn) {
+        $this->dsn = $dsn;
+    }
+
     private function connect_db(): void
     {
-        $this->db = new PDO(DATABASE_DSN, [
+        $this->db = new PDO($this->dsn, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ]);
 
