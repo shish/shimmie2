@@ -34,7 +34,7 @@ class InstallerException extends RuntimeException
 
     public function __construct(string $title, string $body, int $code)
     {
-        parent::__construct($title);
+        parent::__construct($body);
         $this->title = $title;
         $this->body = $body;
         $this->code = $code;
