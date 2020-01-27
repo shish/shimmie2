@@ -457,7 +457,7 @@ function get_debug_info(): string
     $debug .= "; Used $i_files files and {$database->query_count} queries";
     $debug .= "; Sent $_shm_event_count events";
     $debug .= "; $hits cache hits and $miss misses";
-    $debug .= "; Shimmie version ". VERSION . $commit; // .", SCore Version ". SCORE_VERSION;
+    $debug .= "; Shimmie version ". VERSION . $commit;
 
     return $debug;
 }
@@ -496,8 +496,8 @@ function _sanitise_environment(): void
     $min_php = "7.3";
     if (version_compare(phpversion(), $min_php, ">=") === false) {
         print "
-Shimmie (SCore Engine) does not support versions of PHP lower than $min_php
-(PHP reports that it is version ".phpversion().")
+Shimmie does not support versions of PHP lower than $min_php
+(PHP reports that it is version ".phpversion().").
 If your web host is running an older version, they are dangerously out of
 date and you should plan on moving elsewhere.
 ";

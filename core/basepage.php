@@ -267,7 +267,7 @@ class BasePage
 
         header("HTTP/1.0 {$this->code} Shimmie");
         header("Content-type: " . $this->type);
-        header("X-Powered-By: SCore-" . SCORE_VERSION);
+        header("X-Powered-By: Shimmie-" . VERSION);
 
         if (!headers_sent()) {
             foreach ($this->http_headers as $head) {

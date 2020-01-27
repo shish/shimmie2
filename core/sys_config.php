@@ -35,9 +35,3 @@ _d("BASE_URL", null);        // string   force a specific base URL (default is a
 _d("TRACE_FILE", null);      // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);  // float    log pages which take more time than this many seconds
 _d("ENABLED_MODS", "imageboard");
-
-/*
- * Calculated settings - you should never need to change these
- * directly, only the things they're built from
- */
-_d("SCORE_VERSION", 'develop/'.VERSION); // string SCore version
