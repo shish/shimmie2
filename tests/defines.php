@@ -19,7 +19,6 @@ define("TRACE_FILE", null);
 define("TRACE_THRESHOLD", 0.0);
 define("ENABLED_MODS", "imageboard");
 define("SCORE_VERSION", 'develop/'.VERSION);
-define("AUTO_DB_UPGRADE", true);
 define("TIMEZONE", 'UTC');
 define("BASE_HREF", "/");
 define("CLI_LOG_LEVEL", 50);

@@ -24,9 +24,7 @@ _load_theme_files();
 $page = new Page();
 _load_event_listeners();
 
-if (AUTO_DB_UPGRADE) {
-    send_event(new DatabaseUpgradeEvent());
-}
+send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase

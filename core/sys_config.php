@@ -36,7 +36,6 @@ _d("MIN_PHP_VERSION", '7.3');// string   minimum supported PHP version
 _d("TRACE_FILE", null);      // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);  // float    log pages which take more time than this many seconds
 _d("ENABLED_MODS", "imageboard");
-_d("AUTO_DB_UPGRADE", true); // bool     whether or not to automatically run DB schema updates
 
 /*
  * Calculated settings - you should never need to change these
