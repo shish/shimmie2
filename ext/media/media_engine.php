@@ -5,11 +5,13 @@ abstract class MediaEngine
     public const GD = "gd";
     public const IMAGICK = "convert";
     public const FFMPEG = "ffmpeg";
+    public const STATIC = "static";
 
     public const ALL = [
         MediaEngine::GD,
         MediaEngine::FFMPEG,
-        MediaEngine::IMAGICK
+        MediaEngine::IMAGICK,
+        MediaEngine::STATIC,
     ];
     public const OUTPUT_SUPPORT = [
         MediaEngine::GD => [
@@ -30,8 +32,11 @@ abstract class MediaEngine
         MediaEngine::FFMPEG => [
             "jpg",
             "webp",
-            "png"
-        ]
+            "png",
+        ],
+        MediaEngine::STATIC => [
+            "jpg",
+        ],
     ];
     public const INPUT_SUPPORT = [
         MediaEngine::GD => [
@@ -41,7 +46,7 @@ abstract class MediaEngine
             "png",
             "webp",
             Media::WEBP_LOSSY,
-            Media::WEBP_LOSSLESS
+            Media::WEBP_LOSSLESS,
         ],
         MediaEngine::IMAGICK => [
             "bmp",
@@ -61,7 +66,12 @@ abstract class MediaEngine
             "webm",
             "mp4",
             "mov",
-            "flv"
-        ]
+            "flv",
+        ],
+        MediaEngine::STATIC => [
+            "jpg",
+            "gif",
+            "png",
+        ],
     ];
 }

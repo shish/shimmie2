@@ -236,6 +236,9 @@ class Media extends Extension
                 );
                 //}
                 break;
+            case MediaEngine::STATIC:
+                copy($event->input_path, $event->output_path);
+                break;
             default:
                 throw new MediaException("Engine not supported for resize: " . $event->engine);
         }

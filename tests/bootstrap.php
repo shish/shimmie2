@@ -23,7 +23,7 @@ require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.
 _load_theme_files();
 $page = new Page();
 _load_event_listeners();
-$config->set_string("thumb_engine", "gd");  # GD has less overhead per-call
+$config->set_string("thumb_engine", "static");  # GD has less overhead per-call
 
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
