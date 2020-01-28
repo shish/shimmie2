@@ -7,9 +7,12 @@ require_once "core/polyfills.php";
 require_once "core/util.php";
 
 $_SERVER['QUERY_STRING'] = '/';
+if(file_exists("tests/trace.json")) unlink("tests/trace.json");
 
 global $cache, $config, $database, $user, $page, $_tracer;
 _sanitise_environment();
+$tracer_enabled = true;
+$_tracer->begin("bootstrap");
 _load_core_files();
 $cache = new Cache(CACHE_DSN);
 $dsn = getenv("DSN");
@@ -24,9 +27,9 @@ _load_theme_files();
 $page = new Page();
 _load_event_listeners();
 $config->set_string("thumb_engine", "static");  # GD has less overhead per-call
-
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
+$_tracer->end();
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -36,8 +39,8 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        global $_tracer, $tracer_enabled;
-        $tracer_enabled = true;
+        global $_tracer;
+        $_tracer->begin($this->getName());
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
         if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
@@ -52,7 +55,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $this->log_out();
 
         $_tracer->end();
-        $_tracer->begin($this->getName());
+        $_tracer->begin("test");
     }
 
     public function tearDown(): void
@@ -64,6 +67,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         foreach ($database->get_col("SELECT id FROM images") as $image_id) {
             send_event(new ImageDeletionEvent(Image::by_id($image_id)));
         }
+        $_tracer->end();
         $_tracer->end();
         $_tracer->clear();
         $_tracer->flush("tests/trace.json");
