@@ -1,30 +1,53 @@
 <?php declare(strict_types=1);
+
 class IPBanTest extends ShimmiePHPUnitTestCase
 {
-    public function testIPBan()
-    {
-        $this->get_page('ip_ban/list');
-        $this->assert_response(403);
-        $this->assert_title("Permission Denied");
+    # FIXME: test that the IP is actually banned
+
+    public function testAccess() {
+        $page = $this->get_page('ip_ban/list');
+        $this->assertEquals(403, $page->code);
+        $this->assertEquals("Permission Denied", $page->title);
+    }
+
+    public function testIPBan() {
+        global $database;
 
         $this->log_in_as_admin();
 
+        // Check initial state
         $this->get_page('ip_ban/list');
         $this->assert_no_text("42.42.42.42");
 
-        $this->markTestIncomplete();
+        // Add ban
+        send_event(new AddIPBanEvent(
+            '42.42.42.42',
+            'block',
+            'unit testing',
+            '2099-01-01'
+        ));
 
-        $this->set_field('c_ip', '42.42.42.42');
-        $this->set_field('c_reason', 'unit testing');
-        $this->set_field('c_expires', '1 week');
-        $this->click("Ban");
+        // Check added
+        $page = $this->get_page('ip_ban/list');
+        $this->assertStringContainsString(
+            "42.42.42.42",
+            $page->find_block("Edit IP Bans")->body
+        );
 
-        $this->assert_text("42.42.42.42");
-        $this->click("Remove"); // FIXME: remove which ban? :S
-        $this->assert_no_text("42.42.42.42");
+        // Delete ban
+        $ban_id = (int)$database->get_one("SELECT id FROM bans");
+        send_event(new RemoveIPBanEvent($ban_id));
 
+        // Check delete
+        $page = $this->get_page('ip_ban/list');
+        $this->assertStringNotContainsString(
+            "42.42.42.42",
+            $page->find_block("Edit IP Bans")->body
+        );
+    }
+
+    public function test_all() {
+        $this->log_in_as_admin();
         $this->get_page('ip_ban/list?r_all=on'); // just test it doesn't crash for now
-
-        # FIXME: test that the IP is actually banned
     }
 }

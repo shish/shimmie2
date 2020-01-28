@@ -247,8 +247,7 @@ class Image
          * Turn a bunch of strings into a bunch of TagCondition
          * and ImgCondition objects
          */
-        $stpe = new SearchTermParseEvent(null, $terms);
-        send_event($stpe);
+        $stpe = send_event(new SearchTermParseEvent(null, $terms));
         if ($stpe->is_querylet_set()) {
             foreach ($stpe->get_querylets() as $querylet) {
                 $img_conditions[] = new ImgCondition($querylet, true);
@@ -265,8 +264,7 @@ class Image
                 continue;
             }
 
-            $stpe = new SearchTermParseEvent($term, $terms);
-            send_event($stpe);
+            $stpe = send_event(new SearchTermParseEvent($term, $terms));
             if ($stpe->is_querylet_set()) {
                 foreach ($stpe->get_querylets() as $querylet) {
                     $img_conditions[] = new ImgCondition($querylet, $positive);
@@ -674,8 +672,7 @@ class Image
     public function parse_metatags(array $metatags, int $image_id): void
     {
         foreach ($metatags as $tag) {
-            $ttpe = new TagTermParseEvent($tag, $image_id, true);
-            send_event($ttpe);
+            send_event(new TagTermParseEvent($tag, $image_id, true));
         }
     }
 
@@ -735,8 +732,7 @@ class Image
 
         // nothing seems to use this, sending the event out to 50 exts is a lot of overhead
         if (!SPEED_HAX) {
-            $plte = new ParseLinkTemplateEvent($tmpl, $this);
-            send_event($plte);
+            $plte = send_event(new ParseLinkTemplateEvent($tmpl, $this));
             $tmpl = $plte->link;
         }
 

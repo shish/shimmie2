@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class IcoHandlerTest extends ShimmiePHPUnitTestCase
+class IcoFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testIcoHander()
     {

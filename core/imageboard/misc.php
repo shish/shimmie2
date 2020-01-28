@@ -68,11 +68,10 @@ function add_image(string $tmpname, string $filename, string $tags): void
     if (array_key_exists('extension', $pathinfo)) {
         $metadata['extension'] = $pathinfo['extension'];
     }
-    
+
     $metadata['tags'] = Tag::explode($tags);
     $metadata['source'] = null;
-    $event = new DataUploadEvent($tmpname, $metadata);
-    send_event($event);
+    send_event(new DataUploadEvent($tmpname, $metadata));
 }
 
 /**

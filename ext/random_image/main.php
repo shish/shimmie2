@@ -12,28 +12,28 @@ class RandomImage extends Extension
                 $search_terms = [];
             } elseif ($event->count_args() == 2) {
                 $action = $event->get_arg(0);
-                $search_terms = explode(' ', $event->get_arg(1));
+                $search_terms = Tag::explode($event->get_arg(1));
             } else {
                 throw new SCoreException("Error: too many arguments.");
             }
             $image = Image::by_random($search_terms);
+            if(!$image) {
+                throw new SCoreException(
+                    "Couldn't find any images randomly",
+                    Tag::implode($search_terms)
+                );
+            }
 
             if ($action === "download") {
-                if (!is_null($image)) {
-                    $page->set_mode(PageMode::DATA);
-                    $page->set_type($image->get_mime_type());
-                    $page->set_data(file_get_contents($image->get_image_filename()));
-                }
+                $page->set_mode(PageMode::DATA);
+                $page->set_type($image->get_mime_type());
+                $page->set_data(file_get_contents($image->get_image_filename()));
             } elseif ($action === "view") {
-                if (!is_null($image)) {
-                    send_event(new DisplayingImageEvent($image));
-                }
+                send_event(new DisplayingImageEvent($image));
             } elseif ($action === "widget") {
-                if (!is_null($image)) {
-                    $page->set_mode(PageMode::DATA);
-                    $page->set_type("text/html");
-                    $page->set_data($this->theme->build_thumb_html($image));
-                }
+                $page->set_mode(PageMode::DATA);
+                $page->set_type("text/html");
+                $page->set_data($this->theme->build_thumb_html($image));
             }
         }
     }

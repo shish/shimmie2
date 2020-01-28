@@ -178,8 +178,7 @@ function get_session_ip(Config $config): string
  */
 function format_text(string $string): string
 {
-    $tfe = new TextFormattingEvent($string);
-    send_event($tfe);
+    $tfe = send_event(new TextFormattingEvent($string));
     return $tfe->formatted;
 }
 

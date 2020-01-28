@@ -53,14 +53,12 @@ class BulkAddCSV extends Extension
         }
         $metadata['tags'] = Tag::explode($tags);
         $metadata['source'] = $source;
-        $event = new DataUploadEvent($tmpname, $metadata);
-        send_event($event);
+        $event = send_event(new DataUploadEvent($tmpname, $metadata));
         if ($event->image_id == -1) {
             throw new UploadException("File type not recognised");
         } else {
             if (class_exists("RatingSetEvent") && in_array($rating, ["s", "q", "e"])) {
-                $ratingevent = new RatingSetEvent(Image::by_id($event->image_id), $rating);
-                send_event($ratingevent);
+                send_event(new RatingSetEvent(Image::by_id($event->image_id), $rating));
             }
             if (file_exists($thumbfile)) {
                 copy($thumbfile, warehouse_path(Image::THUMBNAIL_DIR, $event->hash));

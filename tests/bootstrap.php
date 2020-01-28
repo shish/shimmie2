@@ -23,36 +23,50 @@ require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.
 _load_theme_files();
 $page = new Page();
 _load_event_listeners();
+$config->set_string("thumb_engine", "gd");  # GD has less overhead per-call
 
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
-    private $images = [];
+    protected $anon_name = "anonymous";
+    protected $admin_name = "demo";
+    protected $user_name = "test";
 
     public function setUp(): void
     {
+        global $_tracer, $tracer_enabled;
+        $tracer_enabled = true;
+        $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
-        if (!class_exists($class)) {
-            $this->markTestSkipped("$class not loaded");
-        } elseif (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
+        if (!ExtensionInfo::get_for_extension_class($class)->is_supported()) {
             $this->markTestSkipped("$class not supported with this database");
         }
 
-        $this->create_user("demo");
-        $this->create_user("test");
+        $this->create_user($this->admin_name);
+        $this->create_user($this->user_name);
 
         // things to do after bootstrap and before request
         // log in as anon
         $this->log_out();
+
+        $_tracer->end();
+        $_tracer->begin($this->getName());
     }
 
     public function tearDown(): void
     {
-        foreach ($this->images as $image_id) {
-            $this->delete_image($image_id);
+        global $_tracer;
+        $_tracer->end();
+        $_tracer->begin("tearDown");
+        global $database, $_tracer;
+        foreach ($database->get_col("SELECT id FROM images") as $image_id) {
+            send_event(new ImageDeletionEvent(Image::by_id($image_id)));
         }
+        $_tracer->end();
+        $_tracer->clear();
+        $_tracer->flush("tests/trace.json");
     }
 
     protected function create_user(string $name)
@@ -73,11 +87,12 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
         $_GET = $args;
         $_POST = [];
-        $page = class_exists("CustomPage") ? new CustomPage() : new Page();
+        $page = new Page();
         send_event(new PageRequestEvent($page_name));
         if ($page->mode == PageMode::REDIRECT) {
             $page->code = 302;
         }
+        return $page;
     }
 
     protected function post_page($page_name, $args=null)
@@ -92,7 +107,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
         $_GET = [];
         $_POST = $args;
-        $page = class_exists("CustomPage") ? new CustomPage() : new Page();
+        $page = new Page();
         send_event(new PageRequestEvent($page_name));
         if ($page->mode == PageMode::REDIRECT) {
             $page->code = 302;
@@ -127,14 +142,22 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected function page_to_text(string $section=null)
     {
         global $page;
-        $text = $page->title . "\n";
-        foreach ($page->blocks as $block) {
-            if (is_null($section) || $section == $block->section) {
-                $text .= $block->header . "\n";
-                $text .= $block->body . "\n\n";
+        if($page->mode == PageMode::PAGE) {
+            $text = $page->title . "\n";
+            foreach ($page->blocks as $block) {
+                if (is_null($section) || $section == $block->section) {
+                    $text .= $block->header . "\n";
+                    $text .= $block->body . "\n\n";
+                }
             }
+            return $text;
         }
-        return $text;
+        elseif($page->mode == PageMode::DATA) {
+            return $page->data;
+        }
+        else {
+            $this->assertTrue(false, "Page mode is not PAGE or DATA");
+        }
     }
 
     protected function assert_text(string $text, string $section=null)
@@ -162,23 +185,17 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     // user things
     protected function log_in_as_admin()
     {
-        global $user;
-        $user = User::by_name('demo');
-        $this->assertNotNull($user);
-        send_event(new UserLoginEvent($user));
+        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
     }
 
     protected function log_in_as_user()
     {
-        global $user;
-        $user = User::by_name('test');
-        $this->assertNotNull($user);
-        send_event(new UserLoginEvent($user));
+        send_event(new UserLoginEvent(User::by_name($this->user_name)));
     }
 
     protected function log_out()
     {
-        global $user, $config;
+        global $config;
         $user = User::by_id($config->get_int("anon_id", 0));
         $this->assertNotNull($user);
         send_event(new UserLoginEvent($user));
@@ -194,7 +211,6 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             "source" => null,
         ]);
         send_event($dae);
-        $this->images[] = $dae->image_id;
         return $dae->image_id;
     }
 

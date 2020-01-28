@@ -60,9 +60,7 @@ class ViewImage extends Extension
             $image = Image::by_id($image_id);
 
             if (!is_null($image)) {
-                $die = new DisplayingImageEvent($image);
-                send_event($die);
-                $page->set_title(html_escape($die->title));
+                send_event(new DisplayingImageEvent($image));
                 $iabbe = new ImageAdminBlockBuildingEvent($image, $user);
                 send_event($iabbe);
                 ksort($iabbe->parts);
@@ -91,9 +89,6 @@ class ViewImage extends Extension
         send_event($iibbe);
         ksort($iibbe->parts);
         $this->theme->display_meta_headers($event->get_image());
-
-        $event->title = "Image {$event->get_image()->id}: ".$event->get_image()->get_tag_list();
-
         $this->theme->display_page($event->get_image(), $iibbe->parts);
     }
 }

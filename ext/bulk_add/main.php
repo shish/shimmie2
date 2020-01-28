@@ -21,8 +21,7 @@ class BulkAdd extends Extension
         if ($event->page_matches("bulk_add")) {
             if ($user->can(Permissions::BULK_ADD) && $user->check_auth_token() && isset($_POST['dir'])) {
                 set_time_limit(0);
-                $bae = new BulkAddEvent($_POST['dir']);
-                send_event($bae);
+                $bae = send_event(new BulkAddEvent($_POST['dir']));
                 foreach ($bae->results as $result) {
                     $this->theme->add_status("Adding files", $result);
                 }
@@ -39,8 +38,7 @@ class BulkAdd extends Extension
         }
         if ($event->cmd == "bulk-add") {
             if (count($event->args) == 1) {
-                $bae = new BulkAddEvent($event->args[0]);
-                send_event($bae);
+                $bae = send_event(new BulkAddEvent($event->args[0]));
                 print(implode("\n", $bae->results));
             }
         }

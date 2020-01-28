@@ -155,12 +155,6 @@ class IndexTest extends ShimmiePHPUnitTestCase
     {
         $image_ids = $this->upload();
 
-        global $database;
-        $db = $database->get_driver_name();
-        if ($db == DatabaseDriver::PGSQL || $db == DatabaseDriver::SQLITE) {
-            $this->markTestIncomplete();
-        }
-
         // Only the first image matches both the wildcard and the tag.
         // This checks for https://github.com/shish/shimmie2/issues/547
         // (comp* is expanded to "computer computing", then we searched
@@ -179,7 +173,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->get_page("post/list/comp*/1");
         $this->assert_response(200);
     }
-    
+
     /* * * * * * * * * * *
     * Mixed              *
     * * * * * * * * * * */
@@ -201,7 +195,7 @@ class IndexTest extends ShimmiePHPUnitTestCase
     * * * * * * * * * * */
     public function testOther()
     {
-        $this->markTestIncomplete();
+        $image_ids = $this->upload();
 
         # negative tag, should have one result
         $this->get_page('post/list/computer -pbx/1');
@@ -209,8 +203,8 @@ class IndexTest extends ShimmiePHPUnitTestCase
 
         # negative tag alone, should work
         # FIXME: known broken in mysql
-        //$this->get_page('post/list/-pbx/1');
-        //$this->assert_response(302);
+        $this->get_page('post/list/-pbx/1');
+        $this->assert_response(302);
 
         # test various search methods
         $this->get_page("post/list/bedroo*/1");

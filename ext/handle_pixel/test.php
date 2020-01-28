@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class PixelHandlerTest extends ShimmiePHPUnitTestCase
+class PixelFileHandlerTest extends ShimmiePHPUnitTestCase
 {
     public function testPixelHander()
     {

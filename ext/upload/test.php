@@ -37,14 +37,15 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
     public function testRejectHuge()
     {
-        $this->markTestIncomplete();
-
         // FIXME: huge.dat is rejected for other reasons; manual testing shows that this works
-        file_put_contents("huge.dat", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024*1024*3));
-        $this->post_image("index.php", "test");
-        $this->assert_response(200);
-        $this->assert_title("Upload Status");
-        $this->assert_text("File too large");
-        unlink("huge.dat");
+        file_put_contents("data/huge.jpg", file_get_contents("tests/pbx_screenshot.jpg") . str_repeat("U", 1024*1024*3));
+        try {
+            $this->post_image("data/huge.jpg", "test");
+            $this->assertTrue(false, "Uploading huge.jpg didn't fail...");
+        }
+        catch (UploadException $e) {
+            $this->assertEquals("File too large (3.0MB > 1.0MB)", $e->error);
+        }
+        unlink("data/huge.jpg");
     }
 }

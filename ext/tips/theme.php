@@ -46,9 +46,9 @@ class TipsTheme extends Themelet
 
         $img = "";
         if (!empty($tip['image'])) {
-            $img = "<img src=".$url.$tip['image']." /> ";
+            $img = "<img src=".$url.url_escape($tip['image'])." /> ";
         }
-        $html = "<div id='tips'>".$img.$tip['text']."</div>";
+        $html = "<div id='tips'>".$img.html_escape($tip['text'])."</div>";
         $page->add_block(new Block(null, $html, "subheading", 10));
     }
 

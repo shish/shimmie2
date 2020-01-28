@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class RelationshipTest extends ShimmiePHPUnitTestCase
+class RelationshipsTest extends ShimmiePHPUnitTestCase
 {
     public function testSetParent()
     {

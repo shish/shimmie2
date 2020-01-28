@@ -39,6 +39,14 @@ class AddAliasEvent extends Event
     }
 }
 
+class DeleteAliasEvent extends Event {
+    public $oldtag;
+
+    public function __construct(string $oldtag) {
+        $this->oldtag = $oldtag;
+    }
+}
+
 class AddAliasException extends SCoreException
 {
 }
@@ -58,8 +66,7 @@ class AliasEditor extends Extension
                     $user->ensure_authed();
                     $input = validate_input(["c_oldtag"=>"string", "c_newtag"=>"string"]);
                     try {
-                        $aae = new AddAliasEvent($input['c_oldtag'], $input['c_newtag']);
-                        send_event($aae);
+                        send_event(new AddAliasEvent($input['c_oldtag'], $input['c_newtag']));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("alias/list"));
                     } catch (AddAliasException $ex) {
@@ -70,8 +77,7 @@ class AliasEditor extends Extension
                 if ($user->can(Permissions::MANAGE_ALIAS_LIST)) {
                     $user->ensure_authed();
                     $input = validate_input(["d_oldtag"=>"string"]);
-                    $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $input['d_oldtag']]);
-                    log_info("alias_editor", "Deleted alias for ".$input['d_oldtag'], "Deleted alias");
+                    send_event(new DeleteAliasEvent($input['d_oldtag']));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("alias/list"));
                 }
@@ -136,6 +142,12 @@ class AliasEditor extends Extension
         log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
+    public function onDeleteAlias(DeleteAliasEvent $event) {
+        global $database;
+        $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
+        log_info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");
+    }
+
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="tags") {
@@ -168,8 +180,7 @@ class AliasEditor extends Extension
             $parts = str_getcsv($line);
             if (count($parts) == 2) {
                 try {
-                    $aae = new AddAliasEvent($parts[0], $parts[1]);
-                    send_event($aae);
+                    send_event(new AddAliasEvent($parts[0], $parts[1]));
                 } catch (AddAliasException $ex) {
                     $this->theme->display_error(500, "Error adding alias", $ex->getMessage());
                 }

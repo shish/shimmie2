@@ -87,25 +87,20 @@ class CommentListTest extends ShimmiePHPUnitTestCase
 
     public function testSingleDel()
     {
-        $this->markTestIncomplete();
+        global $database, $user;
 
         $this->log_in_as_admin();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
 
         # make a comment
-        $this->get_page("post/view/$image_id");
-        $this->set_field('comment', "Test Comment ASDFASDF");
-        $this->click("Post Comment");
-        $this->assert_title("Image $image_id: pbx");
+        send_event(new CommentPostingEvent($image_id, $user, "Test Comment ASDFASDF"));
+        $page = $this->get_page("post/view/$image_id");
         $this->assert_text("ASDFASDF");
 
-        # delete it
-        $this->click("Del");
-        $this->assert_title("Image $image_id: pbx");
+        # delete a comment
+        $comment_id = (int)$database->get_one("SELECT id FROM comments");
+        send_event(new CommentDeletionEvent($comment_id));
+        $page = $this->get_page("post/view/$image_id");
         $this->assert_no_text("ASDFASDF");
-
-        # tidy up
-        $this->delete_image($image_id);
-        $this->log_out();
     }
 }

@@ -1,34 +1,39 @@
 <?php declare(strict_types=1);
-class HashBanTest extends ShimmiePHPUnitTestCase
+class ImageBanTest extends ShimmiePHPUnitTestCase
 {
     public function testBan()
     {
-        $this->log_in_as_user();
-        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $this->log_out();
-
         $this->log_in_as_admin();
-        $this->get_page("post/view/$image_id");
+        $hash = "feb01bab5698a11dd87416724c7a89e3";
 
-        $this->markTestIncomplete();
-
-        $this->click("Ban and Delete");
-        $this->log_out();
-
-        $this->log_in_as_user();
-        $this->get_page("post/view/$image_id");
-        $this->assert_response(404);
+        // Post image
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $this->get_page("post/view/$image_id");
-        $this->assert_response(404);
+        $page = $this->get_page("post/view/$image_id");
+        $this->assertEquals(200, $page->code);
 
-        $this->log_in_as_admin();
-        $this->get_page("image_hash_ban/list/1");
-        $this->click("Remove");
+        // Ban & delete
+        send_event(new AddImageHashBanEvent($hash, "test hash ban"));
+        send_event(new ImageDeletionEvent(Image::by_id($image_id)));
 
-        $this->log_in_as_user();
+        // Check deleted
+        $page = $this->get_page("post/view/$image_id");
+        $this->assertEquals(404, $page->code);
+
+        // Can't repost
+        try {
+            $this->post_image("tests/pbx_screenshot.jpg", "pbx");
+            $this->assertTrue(false);
+        }
+        catch(UploadException $e) {
+            $this->assertTrue(true);
+        }
+
+        // Remove ban
+        send_event(new RemoveImageHashBanEvent($hash));
+
+        // Can repost
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
-        $this->get_page("post/view/$image_id");
-        $this->assert_response(200);
+        $page = $this->get_page("post/view/$image_id");
+        $this->assertEquals(200, $page->code);
     }
 }

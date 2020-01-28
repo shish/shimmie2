@@ -93,13 +93,13 @@ $_shm_event_count = 0;
 /**
  * Send an event to all registered Extensions.
  */
-function send_event(Event $event): void
+function send_event(Event $event): Event
 {
     global $tracer_enabled;
 
     global $_shm_event_listeners, $_shm_event_count, $_tracer;
     if (!isset($_shm_event_listeners[get_class($event)])) {
-        return;
+        return $event;
     }
     $method_name = "on".str_replace("Event", "", get_class($event));
 
@@ -130,4 +130,6 @@ function send_event(Event $event): void
     if ($tracer_enabled) {
         $_tracer->end();
     }
+
+    return $event;
 }

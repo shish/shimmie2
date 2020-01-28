@@ -8,8 +8,7 @@
  * return data to the extension which sent them, for example:
  *
  * \code
- * $tfe = new TextFormattingEvent($original_text);
- * send_event($tfe);
+ * $tfe = send_event(new TextFormattingEvent($original_text));
  * $formatted_text = $tfe->formatted;
  * \endcode
  *
@@ -381,16 +380,14 @@ abstract class DataHandlerExtension extends Extension
                     throw new UploadException("Data handler failed to create image object from data");
                 }
 
-                $ire = new ImageReplaceEvent($image_id, $image);
-                send_event($ire);
+                $ire = send_event(new ImageReplaceEvent($image_id, $image));
                 $event->image_id = $image_id;
             } else {
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->hash), $event->metadata);
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
-                $iae = new ImageAdditionEvent($image);
-                send_event($iae);
+                $iae = send_event(new ImageAdditionEvent($image));
                 $event->image_id = $iae->image->id;
                 $event->merged = $iae->merged;
 

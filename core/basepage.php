@@ -113,7 +113,7 @@ class BasePage
     // ==============================================
 
     /** @var string */
-    private $redirect = "";
+    public $redirect = "";
 
     /**
      * Set the URL to redirect to (remember to use make_link() if linking
@@ -256,6 +256,19 @@ class BasePage
         $this->blocks[] = $block;
     }
 
+    /**
+     * Find a block which contains the given text
+     * (Useful for unit tests)
+     */
+    public function find_block(string $text): ?Block {
+        foreach($this->blocks as $block) {
+            if($block->header == $text) {
+                return $block;
+            }
+        }
+        return null;
+    }
+
     // ==============================================
 
     /**
@@ -298,8 +311,7 @@ class BasePage
                 #	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
                 #}
                 usort($this->blocks, "blockcmp");
-                $pnbe = new PageNavBuildingEvent();
-                send_event($pnbe);
+                $pnbe = send_event(new PageNavBuildingEvent());
 
                 $nav_links = $pnbe->links;
 
@@ -314,14 +326,12 @@ class BasePage
                 $sub_links = null;
                 // If one is, we just query for sub-menu options under that one tab
                 if ($active_link!==null) {
-                    $psnbe = new PageSubNavBuildingEvent($active_link->name);
-                    send_event($psnbe);
+                    $psnbe = send_event(new PageSubNavBuildingEvent($active_link->name));
                     $sub_links = $psnbe->links;
                 } else {
                     // Otherwise we query for the sub-items under each of the tabs
                     foreach ($nav_links as $link) {
-                        $psnbe = new PageSubNavBuildingEvent($link->name);
-                        send_event($psnbe);
+                        $psnbe = send_event(new PageSubNavBuildingEvent($link->name));
 
                         // Now we check for a current link so we can identify the sub-links to show
                         foreach ($psnbe->links as $sub_link) {
@@ -337,8 +347,6 @@ class BasePage
                         }
                     }
                 }
-
-
 
                 $sub_links = $sub_links??[];
                 usort($nav_links, "sort_nav_links");

@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class EmoticonTest extends ShimmiePHPUnitTestCase
+class EmoticonsTest extends ShimmiePHPUnitTestCase
 {
     public function testEmoticons()
     {

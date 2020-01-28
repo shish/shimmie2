@@ -228,7 +228,9 @@ class CommandEvent extends Event
             }
         }
 
-        define("CLI_LOG_LEVEL", $log_level);
+        if(!defined("CLI_LOG_LEVEL")) {
+            define("CLI_LOG_LEVEL", $log_level);
+        }
 
         if (count($opts) > 0) {
             $this->cmd = $opts[0];

@@ -1,5 +1,25 @@
 <?php declare(strict_types=1);
 
+class CreateTipEvent extends Event {
+    public $enable;
+    public $image;
+    public $text;
+    public function __construct(bool $enable, string $image, string $text) {
+        parent::__construct();
+        $this->enable = $enable;
+        $this->image = $image;
+        $this->text = $text;
+    }
+}
+
+class DeleteTipEvent extends Event {
+    public $tip_id;
+    public function __construct(int $tip_id) {
+        parent::__construct();
+        $this->tip_id = $tip_id;
+    }
+}
+
 class Tips extends Extension
 {
     /** @var TipsTheme */
@@ -42,7 +62,7 @@ class Tips extends Extension
                     break;
                 case "save":
                     if ($user->check_auth_token()) {
-                        $this->saveTip();
+                        send_event(new CreateTipEvent(isset($_POST["enable"]), $_POST["image"], $_POST["text"]));
                         $page->set_mode(PageMode::REDIRECT);
                         $page->set_redirect(make_link("tips/list"));
                     }
@@ -57,7 +77,7 @@ class Tips extends Extension
                 case "delete":
                     // FIXME: HTTP GET CSRF
                     $tipID = int_escape($event->get_arg(1));
-                    $this->deleteTip($tipID);
+                    send_event(new DeleteTipEvent($tipID));
                     $page->set_mode(PageMode::REDIRECT);
                     $page->set_redirect(make_link("tips/list"));
                     break;
@@ -101,19 +121,13 @@ class Tips extends Extension
         $this->theme->manageTips($url, $images);
     }
 
-    private function saveTip()
-    {
+    public function onCreateTip(CreateTipEvent $event) {
         global $database;
-
-        $enable = isset($_POST["enable"]) ? "Y" : "N";
-        $image = html_escape($_POST["image"]);
-        $text = $_POST["text"];
-
         $database->execute(
             "
 				INSERT INTO tips (enable, image, text)
 				VALUES (:enable, :image, :text)",
-            ["enable"=>$enable, "image"=>$image, "text"=>$text]
+            ["enable"=>$event->enable ? "Y" : "N", "image"=>$event->image, "text"=>$event->text]
         );
     }
 
@@ -162,9 +176,8 @@ class Tips extends Extension
         $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>$tipID]);
     }
 
-    private function deleteTip(int $tipID)
-    {
+    public function onDeleteTip(DeleteTipEvent $event) {
         global $database;
-        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>$tipID]);
+        $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>$event->tip_id]);
     }
 }

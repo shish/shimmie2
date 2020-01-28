@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class ResLimitTest extends ShimmiePHPUnitTestCase
+class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 {
     public function testResLimitOK()
     {

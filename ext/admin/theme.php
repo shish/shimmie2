@@ -42,13 +42,6 @@ class AdminPageTheme extends Themelet
         $html = "";
         $html .= $this->button("All tags to lowercase", "lowercase_all_tags", true);
         $html .= $this->button("Recount tag use", "recount_tag_use", false);
-        if (class_exists('ZipArchive')) {
-            $html .= $this->button("Download all images", "download_all_images", false);
-        }
-        $html .= $this->button("Download database contents", "database_dump", false);
-        if ($database->get_driver_name() == DatabaseDriver::MYSQL) {
-            $html .= $this->button("Reset image IDs", "reset_image_ids", true);
-        }
         $page->add_block(new Block("Misc Admin Tools", $html));
 
         $html = (string)SHM_SIMPLE_FORM(

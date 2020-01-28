@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class ArtistTest extends ShimmiePHPUnitTestCase
+class ArtistsTest extends ShimmiePHPUnitTestCase
 {
     public function testSearch()
     {

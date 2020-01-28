@@ -15,6 +15,26 @@ class WikiUpdateEvent extends Event
     }
 }
 
+class WikiDeleteRevisionEvent extends Event {
+    public $title;
+    public $revision;
+
+    public function __construct($title, $revision) {
+        parent::__construct();
+        $this->title = $title;
+        $this->revision = $revision;
+    }
+}
+
+class WikiDeletePageEvent extends Event {
+    public $title;
+
+    public function __construct($title) {
+        parent::__construct();
+        $this->title = $title;
+    }
+}
+
 class WikiUpdateException extends SCoreException
 {
 }
@@ -50,12 +70,12 @@ class WikiPage
         //assert(!empty($row));
 
         if (!is_null($row)) {
-            $this->id = $row['id'];
-            $this->owner_id = $row['owner_id'];
+            $this->id = (int)$row['id'];
+            $this->owner_id = (int)$row['owner_id'];
             $this->owner_ip = $row['owner_ip'];
             $this->date = $row['date'];
             $this->title = $row['title'];
-            $this->revision = $row['revision'];
+            $this->revision = (int)$row['revision'];
             $this->locked = ($row['locked'] == 'Y');
             $this->body = $row['body'];
         }
@@ -149,22 +169,14 @@ class Wiki extends Extension
             }
         } elseif ($event->page_matches("wiki_admin/delete_revision")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
-                global $database;
-                $database->Execute(
-                    "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
-                    ["title"=>$_POST["title"], "rev"=>$_POST["revision"]]
-                );
+                send_event(new WikiDeleteRevisionEvent($_POST["title"], $_POST["revision"]));
                 $u_title = url_escape($_POST["title"]);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
             }
         } elseif ($event->page_matches("wiki_admin/delete_all")) {
             if ($user->can(Permissions::WIKI_ADMIN)) {
-                global $database;
-                $database->Execute(
-                    "DELETE FROM wiki_pages WHERE title=:title",
-                    ["title"=>$_POST["title"]]
-                );
+                send_event(new WikiDeletePageEvent($_POST["title"]));
                 $u_title = url_escape($_POST["title"]);
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("wiki/$u_title"));
@@ -204,6 +216,22 @@ class Wiki extends Extension
         }
     }
 
+    public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event) {
+        global $database;
+        $database->Execute(
+            "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
+            ["title"=>$event->title, "rev"=>$event->revision]
+        );
+    }
+
+    public function onWikiDeletePage(WikiDeletePageEvent $event) {
+        global $database;
+        $database->Execute(
+            "DELETE FROM wiki_pages WHERE title=:title",
+            ["title" => $event->title]
+        );
+    }
+
     /**
      * See if the given user is allowed to edit the given page.
      */
@@ -227,7 +255,7 @@ class Wiki extends Extension
         return false;
     }
 
-    private function get_page(string $title, int $revision=-1): WikiPage
+    public static function get_page(string $title, int $revision=-1): WikiPage
     {
         global $database;
         // first try and get the actual page

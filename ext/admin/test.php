@@ -3,62 +3,84 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth()
     {
-        $this->get_page('admin');
-        $this->assert_response(403);
-        $this->assert_title("Permission Denied");
+        send_event(new UserLoginEvent(User::by_name($this->anon_name)));
+        $page = $this->get_page('admin');
+        $this->assertEquals(403, $page->code);
+        $this->assertEquals("Permission Denied", $page->title);
 
-        $this->log_in_as_user();
-        $this->get_page('admin');
-        $this->assert_response(403);
-        $this->assert_title("Permission Denied");
+        send_event(new UserLoginEvent(User::by_name($this->user_name)));
+        $page = $this->get_page('admin');
+        $this->assertEquals(403, $page->code);
+        $this->assertEquals("Permission Denied", $page->title);
 
-        $this->log_in_as_admin();
-        $this->get_page('admin');
-        $this->assert_response(200);
-        $this->assert_title("Admin Tools");
+        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        $page = $this->get_page('admin');
+        $this->assertEquals(200, $page->code);
+        $this->assertEquals("Admin Tools", $page->title);
     }
 
-    public function testLowercase()
+    public function testLowercaseAndSetCase()
     {
+        // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
-
-        $this->log_in_as_admin();
+        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase$ts");
 
-        $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: TeStCase$ts");
+        // Validate problem
+        $page = $this->get_page("post/view/$image_id_1");
+        $this->assertEquals("Image $image_id_1: TeStCase$ts", $page->title);
 
-        $this->get_page('admin');
-        $this->assert_title("Admin Tools");
-        //$this->click("All tags to lowercase");
+        // Fix
         send_event(new AdminActionEvent('lowercase_all_tags'));
 
+        // Validate fix
         $this->get_page("post/view/$image_id_1");
         $this->assert_title("Image $image_id_1: testcase$ts");
 
-        $this->delete_image($image_id_1);
+        // Change
+        $_POST["tag"] = "TestCase$ts";
+        send_event(new AdminActionEvent('set_tag_case'));
+
+        // Validate change
+        $this->get_page("post/view/$image_id_1");
+        $this->assert_title("Image $image_id_1: TestCase$ts");
     }
 
     # FIXME: make sure the admin tools actually work
     public function testRecount()
     {
-        $this->log_in_as_admin();
-        $this->get_page('admin');
-        $this->assert_title("Admin Tools");
+        global $database;
 
-        //$this->click("Recount tag use");
+        // Create a problem
+        $ts = time(); // we need a tag that hasn't been used before
+        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        $database->execute(
+            "INSERT INTO tags(tag, count) VALUES(:tag, :count)",
+            ["tag"=>"tes$ts", "count"=>42]
+        );
+
+        // Fix
         send_event(new AdminActionEvent('recount_tag_use'));
+
+        // Validate fix
+        $this->assertEquals(
+            0,
+            $database->get_one(
+                "SELECT count FROM tags WHERE tag = :tag",
+                ["tag"=>"tes$ts"]
+            )
+        );
     }
 
-    public function testDump()
+    public function testCommands()
     {
-        $this->log_in_as_admin();
-        $this->get_page('admin');
-        $this->assert_title("Admin Tools");
-
-        // this calls mysqldump which jams up travis prompting for a password
-        //$this->click("Download database contents");
-        //send_event(new AdminActionEvent('database_dump'));
-        //$this->assert_response(200);
+        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        ob_start();
+        send_event(new CommandEvent(["index.php", "help"]));
+        send_event(new CommandEvent(["index.php", "get-page", "post/list"]));
+        send_event(new CommandEvent(["index.php", "post-page", "post/list", "foo=bar"]));
+        send_event(new CommandEvent(["index.php", "get-token"]));
+        send_event(new CommandEvent(["index.php", "regen-thumb", "42"]));
+        ob_end_clean();
     }
 }

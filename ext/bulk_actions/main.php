@@ -175,8 +175,7 @@ class BulkActions extends Extension
             }
 
             if (is_iterable($items)) {
-                $newEvent = new BulkActionEvent($action, $items);
-                send_event($newEvent);
+                send_event(new BulkActionEvent($action, $items));
             }
 
             $page->set_mode(PageMode::REDIRECT);

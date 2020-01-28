@@ -31,7 +31,7 @@ class UploadTheme extends Themelet
 			</form>
 			<small>(Max file size is $max_kb)</small>
 		";
-        
+
         $page->set_title("Upload");
         $page->set_heading("Upload");
         $page->add_block(new NavBlock());
@@ -95,25 +95,25 @@ class UploadTheme extends Themelet
         // Uploader 2.0!
         $upload_list = "";
         $upload_count = $config->get_int('upload_count');
-        
+
         for ($i=0; $i<$upload_count; $i++) {
             $a = $i+1;
             $s = $i-1;
-            
+
             if ($i != 0) {
                 $upload_list .="<tr id='row$i' style='display:none'>";
             } else {
                 $upload_list .= "<tr id='row$i'>";
             }
-            
+
             $upload_list .= "<td width='15'>";
-                    
+
             if ($i == 0) {
                 $js = 'javascript:$(function() {
 					$("#row'.$a.'").show();
 					$("#hide'.$i.'").hide();
 					$("#hide'.$a.'").show();});';
-                
+
                 $upload_list .= "
 					<div id='hide$i'>
 						<img id='wrapper' src='ext/upload/minus.png' />
@@ -128,12 +128,12 @@ class UploadTheme extends Themelet
 				$("#data'.$i.'").val("");
 				$("#url'.$i.'").val("");
 				});';
-                
+
                 $upload_list .="
 					<div id='hide$i'>
 						<a href='#' onclick='$js'><img src='ext/upload/minus.png' /></a>
 				";
-                
+
                 if ($a == $upload_count) {
                     $upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
                 } else {
@@ -141,7 +141,7 @@ class UploadTheme extends Themelet
 						$("#row'.$a.'").show();
 						$("#hide'.$i.'").hide();
 						$("#hide'.$a.'").show(); });';
-                        
+
                     $upload_list .=
                     "<a href='#' onclick='$js1'>".
                     "<img src='ext/upload/plus.png' /></a>";
@@ -149,7 +149,7 @@ class UploadTheme extends Themelet
                 $upload_list .= "</div>";
             }
             $upload_list .= "</td>";
-                    
+
             $js2 = 'javascript:$(function() {
 						$("#url'.$i.'").hide();
 						$("#url'.$i.'").val("");
@@ -157,13 +157,13 @@ class UploadTheme extends Themelet
 
             $upload_list .= "
 				<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
-            
+
             if ($tl_enabled) {
                 $js = 'javascript:$(function() {
 						$("#data'.$i.'").hide();
 						$("#data'.$i.'").val("");
 						$("#url'.$i.'").show(); });';
-                
+
                 $upload_list .=
                 "<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td></form>
 				<td>
@@ -175,7 +175,7 @@ class UploadTheme extends Themelet
 				<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
 				";
             }
-                    
+
             $upload_list .= "
 				</tr>
 			";
@@ -273,10 +273,10 @@ class UploadTheme extends Themelet
 
         $max_size = $config->get_int('upload_size');
         $max_kb = to_shorthand_int($max_size);
-        
+
         $image = Image::by_id($image_id);
         $thumbnail = $this->build_thumb_html($image);
-        
+
         $html = "
 				<p>Replacing Image ID ".$image_id."<br>Please note: You will have to refresh the image page, or empty your browser cache.</p>"
                 .$thumbnail."<br>"
@@ -311,7 +311,7 @@ class UploadTheme extends Themelet
 
     public function display_upload_error(Page $page, string $title, string $message)
     {
-        $page->add_block(new Block($title, $message));
+        $page->add_block(new Block($title, html_escape($message)));
     }
 
     protected function build_upload_block(): string
@@ -320,7 +320,7 @@ class UploadTheme extends Themelet
 
         $upload_list = "";
         $upload_count = $config->get_int('upload_count');
-        
+
         for ($i=0; $i<$upload_count; $i++) {
             if ($i == 0) {
                 $style = "";

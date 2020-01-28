@@ -257,7 +257,7 @@ class IPBan extends Extension
     {
         global $cache, $user, $database;
         $sql = "INSERT INTO bans (ip, mode, reason, expires, banner_id) VALUES (:ip, :mode, :reason, :expires, :admin_id)";
-        $database->Execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
+        $database->execute($sql, ["ip"=>$event->ip, "mode"=>$event->mode, "reason"=>$event->reason, "expires"=>$event->expires, "admin_id"=>$user->id]);
         $cache->delete("ip_bans");
         $cache->delete("network_bans");
         log_info("ipban", "Banned ({$event->mode}) {$event->ip} because '{$event->reason}' until {$event->expires}");
@@ -284,6 +284,7 @@ class IPBan extends Extension
             $database->create_table("bans", "
 				id SCORE_AIPK,
 				banner_id INTEGER NOT NULL,
+				mode VARCHAR(16) NOT NULL DEFAULT 'block',
 				ip SCORE_INET NOT NULL,
 				reason TEXT NOT NULL,
 				added TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
