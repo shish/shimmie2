@@ -109,14 +109,6 @@ class Database
         }
     }
 
-    public function escape(string $input): string
-    {
-        if (is_null($this->db)) {
-            $this->connect_db();
-        }
-        return $this->db->Quote($input);
-    }
-
     public function scoreql_to_sql(string $input): string
     {
         if (is_null($this->engine)) {
