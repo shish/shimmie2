@@ -478,16 +478,6 @@ function url_escape(?string $input): string
 }
 
 /**
- * Make sure some data is safe to be used in SQL context
- */
-function sql_escape(string $input): string
-{
-    global $database;
-    return $database->escape($input);
-}
-
-
-/**
  * Turn all manner of HTML / INI / JS / DB booleans into a PHP one
  */
 function bool_escape($input): bool

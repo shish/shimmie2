@@ -45,7 +45,7 @@ class TaggerXML extends Extension
         $p = strlen($s) == 1 ? " " : "\_";
         $values = [
             'p' => $p,
-            'sq' => "%".$p.sql_escape($s)."%"
+            'sq' => "%".$p.$s."%"
         ];
 
         // Match

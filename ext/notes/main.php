@@ -295,7 +295,7 @@ class Notes extends Extension
             "y1"     => int_escape($_POST["note_y1"]),
             "height" => int_escape($_POST["note_height"]),
             "width"  => int_escape($_POST["note_width"]),
-            "note"   => sql_escape(html_escape($_POST["note_text"])),
+            "note"   => $_POST["note_text"],
             "image_id" => int_escape($_POST["image_id"]),
             "id"     => int_escape($_POST["note_id"])
         ];
