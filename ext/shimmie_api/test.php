@@ -15,7 +15,10 @@ class ShimmieApiTest extends ShimmiePHPUnitTestCase
         $this->get_page("api/shimmie/find_images");
         $this->get_page("api/shimmie/find_images/pbx");
         $this->get_page("api/shimmie/find_images/pbx/1");
-        $this->get_page("api/shimmie/get_user/demo");
+
+        $page = $this->get_page("api/shimmie/get_user/demo");
+        $this->assertEquals(200, $page->code);
+
         //$this->get_page("api/shimmie/get_user?name=demo");
         //$this->get_page("api/shimmie/get_user?id=2");
 

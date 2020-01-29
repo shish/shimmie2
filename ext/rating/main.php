@@ -253,12 +253,19 @@ class Ratings extends Extension
         }
     }
 
+    public function onTagTermCheck(TagTermCheckEvent $event)
+    {
+        if (preg_match($this->search_regexp, $event->term)) {
+            $event->metatag = true;
+        }
+    }
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
         global $user;
         $matches = [];
 
-        if (preg_match($this->search_regexp, strtolower($event->term), $matches) && $event->parse) {
+        if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
             if (count($matches)>2&&in_array($matches[2], self::UNRATED_KEYWORDS)) {
@@ -267,13 +274,9 @@ class Ratings extends Extension
 
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs($user));
             $rating = $ratings[0];
-            $image = Image::by_id($event->id);
+            $image = Image::by_id($event->image_id);
             $re = new RatingSetEvent($image, $rating);
             send_event($re);
-        }
-
-        if (!empty($matches)) {
-            $event->metatag = true;
         }
     }
 

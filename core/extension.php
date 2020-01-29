@@ -375,9 +375,13 @@ abstract class DataHandlerExtension extends Extension
                 // even more hax..
                 $event->metadata['tags'] = $existing->get_tag_list();
                 $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $event->metadata['hash']), $event->metadata);
-
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
+                }
+                try {
+                    send_event(new MediaCheckPropertiesEvent($image));
+                } catch (MediaException $e) {
+                    throw new UploadException("Unable to scan media properties: ".$e->getMessage());
                 }
 
                 $ire = send_event(new ImageReplaceEvent($image_id, $image));
@@ -387,6 +391,12 @@ abstract class DataHandlerExtension extends Extension
                 if (is_null($image)) {
                     throw new UploadException("Data handler failed to create image object from data");
                 }
+                try {
+                    send_event(new MediaCheckPropertiesEvent($image));
+                } catch (MediaException $e) {
+                    throw new UploadException("Unable to scan media properties: ".$e->getMessage());
+                }
+
                 $iae = send_event(new ImageAdditionEvent($image));
                 $event->image_id = $iae->image->id;
                 $event->merged = $iae->merged;
@@ -404,6 +414,7 @@ abstract class DataHandlerExtension extends Extension
                 }
             }
         } elseif ($supported_ext && !$check_contents) {
+            // We DO support this extension - but the file looks corrupt
             throw new UploadException("Invalid or corrupted file");
         }
     }
@@ -434,15 +445,6 @@ abstract class DataHandlerExtension extends Extension
             $this->theme->display_image($page, $event->image);
         }
     }
-
-    /*
-    public function onSetupBuilding(SetupBuildingEvent $event) {
-        $sb = $this->setup();
-        if($sb) $event->panel->add_block($sb);
-    }
-
-    protected function setup() {}
-    */
 
     abstract protected function supported_ext(string $ext): bool;
     abstract protected function check_contents(string $tmpname): bool;

@@ -30,6 +30,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
         $this->log_in_as_user();
         try {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+            $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
             $this->assertEquals("Image too small", $e->getMessage());
         }
@@ -46,6 +47,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
         try {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+            $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
             $this->assertEquals("Image too large", $e->getMessage());
         }
@@ -62,6 +64,7 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
 
         try {
             $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+            $this->assertTrue(false, "Invalid-size image was allowed");
         } catch (UploadException $e) {
             $this->assertEquals("Image needs to be in one of these ratios: 16:9", $e->getMessage());
         }
@@ -71,13 +74,13 @@ class ResolutionLimitTest extends ShimmiePHPUnitTestCase
     # other extensions' test suites
     public function tearDown(): void
     {
-        parent::tearDown();
-
         global $config;
         $config->set_int("upload_min_height", -1);
         $config->set_int("upload_min_width", -1);
         $config->set_int("upload_max_height", -1);
         $config->set_int("upload_max_width", -1);
         $config->set_string("upload_ratios", "");
+
+        parent::tearDown();
     }
 }

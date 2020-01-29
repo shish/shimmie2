@@ -404,10 +404,16 @@ class Pools extends Extension
         }
     }
 
+    public function onTagTermCheck(TagTermCheckEvent $event)
+    {
+        if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term)) {
+            $event->metatag = true;
+        }
+    }
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
         $matches = [];
-
         if (preg_match("/^pool[=|:]([^:]*|lastcreated):?([0-9]*)$/i", $event->term, $matches)) {
             global $user;
             $poolTag = (string)str_replace("_", " ", $matches[1]);
@@ -421,15 +427,10 @@ class Pools extends Extension
                 $pool = $this->get_single_pool_from_title($poolTag);
             }
 
-
             if ($pool ? $this->have_permission($user, $pool) : false) {
                 $image_order = ($matches[2] ?: 0);
-                $this->add_post($pool['id'], $event->id, true, $image_order);
+                $this->add_post($pool['id'], $event->image_id, true, $image_order);
             }
-        }
-
-        if (!empty($matches)) {
-            $event->metatag = true;
         }
     }
 

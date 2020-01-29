@@ -1,14 +1,6 @@
 <?php declare(strict_types=1);
 class BlotterTest extends ShimmiePHPUnitTestCase
 {
-    public function testLogin()
-    {
-        $this->log_in_as_admin();
-        //$this->assert_text("Blotter Editor");
-        //$this->click("Blotter Editor");
-        //$this->log_out();
-    }
-
     public function testDenial()
     {
         $this->get_page("blotter/editor");
@@ -23,7 +15,8 @@ class BlotterTest extends ShimmiePHPUnitTestCase
     {
         $this->log_in_as_admin();
 
-        $this->get_page("blotter/editor");
+        $page = $this->get_page("blotter/editor");
+        $this->assertEquals(200, $page->code);
         //$this->set_field("entry_text", "blotter testing");
         //$this->click("Add");
         //$this->assert_text("blotter testing");

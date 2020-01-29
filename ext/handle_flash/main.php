@@ -6,17 +6,17 @@ class FlashFileHandler extends DataHandlerExtension
     {
         switch ($event->ext) {
             case "swf":
-                $event->lossless = true;
-                $event->video = true;
+                $event->image->lossless = true;
+                $event->image->video = true;
 
                 $info = getimagesize($event->file_name);
                 if (!$info) {
                     return null;
                 }
-                $event->image = false;
+                $event->image->image = false;
 
-                $event->width = $info[0];
-                $event->height = $info[1];
+                $event->image->width = $info[0];
+                $event->image->height = $info[1];
 
                 break;
         }

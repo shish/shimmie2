@@ -20,7 +20,6 @@ class DataUploadEvent extends Event
     /** @var bool */
     public $merged = false;
 
-
     /**
      * Some data is being uploaded.
      * This should be caught by a file handler.

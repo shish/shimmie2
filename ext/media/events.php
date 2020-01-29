@@ -45,20 +45,15 @@ class MediaResizeEvent extends Event
 
 class MediaCheckPropertiesEvent extends Event
 {
+    public $image;
     public $file_name;
     public $ext;
-    public $lossless = null;
-    public $audio = null;
-    public $video = null;
-    public $image = null;
-    public $length = null;
-    public $height = null;
-    public $width = null;
 
-    public function __construct(string $file_name, string $ext)
+    public function __construct(Image $image)
     {
         parent::__construct();
-        $this->file_name = $file_name;
-        $this->ext = $ext;
+        $this->image = $image;
+        $this->file_name = warehouse_path(Image::IMAGE_DIR, $image->hash);
+        $this->ext = strtolower($image->ext);
     }
 }

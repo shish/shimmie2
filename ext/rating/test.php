@@ -9,22 +9,15 @@ class RatingsTest extends ShimmiePHPUnitTestCase
         send_event(new RatingSetEvent($image, "s"));
 
         # search for it in various ways
-        $page = $this->get_page("post/list/rating=Safe/1");
-        $this->assertEquals("/post/view/1", $page->redirect);
-
-        $page = $this->get_page("post/list/rating=s/1");
-        $this->assertEquals("/post/view/1", $page->redirect);
-
-        $page = $this->get_page("post/list/rating=sqe/1");
-        $this->assertEquals("/post/view/1", $page->redirect);
+        $this->assert_search_results(["rating=Safe"], [$image_id]);
+        $this->assert_search_results(["rating=s"], [$image_id]);
+        $this->assert_search_results(["rating=sqe"], [$image_id]);
 
         # test that search by tag still works
-        $page = $this->get_page("post/list/pbx/1");
-        $this->assertEquals("/post/view/1", $page->redirect);
+        $this->assert_search_results(["pbx"], [$image_id]);
 
         # searching for a different rating should return nothing
-        $page = $this->get_page("post/list/rating=q/1");
-        $this->assertEquals("No Images Found", $page->heading);
+        $this->assert_search_results(["rating=q"], []);
     }
 
     public function testRatingExplicit()
@@ -38,7 +31,6 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
         # the explicit image shouldn't show up in anon's searches
         $this->log_out();
-        $page = $this->get_page("post/list/pbx/1");
-        $this->assertEquals("No Images Found", $page->heading);
+        $this->assert_search_results(["pbx"], []);
     }
 }

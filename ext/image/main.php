@@ -93,8 +93,60 @@ class ImageIO extends Extension
 
     public function onImageAddition(ImageAdditionEvent $event)
     {
+        global $config;
+
         try {
-            $this->add_image($event);
+            $image = $event->image;
+
+            /*
+             * Validate things
+             */
+            if (strlen(trim($image->source ?? '')) == 0) {
+                $image->source = null;
+            }
+
+            /*
+             * Check for an existing image
+             */
+            $existing = Image::by_hash($image->hash);
+            if (!is_null($existing)) {
+                $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
+                if ($handler == ImageConfig::COLLISION_MERGE || isset($_GET['update'])) {
+                    $merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
+                    send_event(new TagSetEvent($existing, $merged));
+                    if (isset($_GET['rating']) && isset($_GET['update']) && Extension::is_enabled(RatingsInfo::KEY)) {
+                        send_event(new RatingSetEvent($existing, $_GET['rating']));
+                    }
+                    if (isset($_GET['source']) && isset($_GET['update'])) {
+                        send_event(new SourceSetEvent($existing, $_GET['source']));
+                    }
+                    $event->merged = true;
+                    $event->image = Image::by_id($existing->id);
+                    return;
+                } else {
+                    $error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
+                        "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
+                    throw new ImageAdditionException($error);
+                }
+            }
+
+            // actually insert the info
+            $image->save_to_db();
+
+            log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
+
+            # at this point in time, the image's tags haven't really been set,
+            # and so, having $image->tag_array set to something is a lie (but
+            # a useful one, as we want to know what the tags are /supposed/ to
+            # be). Here we correct the lie, by first nullifying the wrong tags
+            # then using the standard mechanism to set them properly.
+            $tags_to_set = $image->get_tag_array();
+            $image->tag_array = [];
+            send_event(new TagSetEvent($image, $tags_to_set));
+
+            if ($image->source !== null) {
+                log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
+            }
         } catch (ImageAdditionException $e) {
             throw new UploadException($e->error);
         }
@@ -108,7 +160,43 @@ class ImageIO extends Extension
     public function onImageReplace(ImageReplaceEvent $event)
     {
         try {
-            $this->replace_image($event->id, $event->image);
+            $id = $event->id;
+            $image = $event->image;
+
+            /* Check to make sure the image exists. */
+            $existing = Image::by_id($id);
+
+            if (is_null($existing)) {
+                throw new ImageReplaceException("Image to replace does not exist!");
+            }
+
+            $duplicate = Image::by_hash($image->hash);
+            if (!is_null($duplicate) && $duplicate->id!=$id) {
+                $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
+                    "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
+                throw new ImageReplaceException($error);
+            }
+
+            if (strlen(trim($image->source)) == 0) {
+                $image->source = $existing->get_source();
+            }
+
+            // Update the data in the database.
+            $image->save_to_db();
+
+            /*
+                This step could be optional, ie: perhaps move the image somewhere
+                and have it stored in a 'replaced images' list that could be
+                inspected later by an admin?
+            */
+
+            log_debug("image", "Removing image with hash " . $existing->hash);
+            $existing->remove_image_only(); // Actually delete the old image file from disk
+
+            /* Generate new thumbnail */
+            send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->ext)));
+
+            log_info("image", "Replaced Image #{$id} with ({$image->hash})");
         } catch (ImageReplaceException $e) {
             throw new UploadException($e->error);
         }
@@ -157,83 +245,6 @@ class ImageIO extends Extension
         $sb->add_label("%");
 
         $event->panel->add_block($sb);
-    }
-
-    private function add_image(ImageAdditionEvent $event)
-    {
-        global $user, $database, $config;
-
-        $image = $event->image;
-
-        /*
-         * Validate things
-         */
-        if (strlen(trim($image->source ?? '')) == 0) {
-            $image->source = null;
-        }
-
-        /*
-         * Check for an existing image
-         */
-        $existing = Image::by_hash($image->hash);
-        if (!is_null($existing)) {
-            $handler = $config->get_string(ImageConfig::UPLOAD_COLLISION_HANDLER);
-            if ($handler == ImageConfig::COLLISION_MERGE || isset($_GET['update'])) {
-                $merged = array_merge($image->get_tag_array(), $existing->get_tag_array());
-                send_event(new TagSetEvent($existing, $merged));
-                if (isset($_GET['rating']) && isset($_GET['update']) && Extension::is_enabled(RatingsInfo::KEY)) {
-                    send_event(new RatingSetEvent($existing, $_GET['rating']));
-                }
-                if (isset($_GET['source']) && isset($_GET['update'])) {
-                    send_event(new SourceSetEvent($existing, $_GET['source']));
-                }
-                $event->merged = true;
-                $event->image = Image::by_id($existing->id);
-                return;
-            } else {
-                $error = "Image <a href='".make_link("post/view/{$existing->id}")."'>{$existing->id}</a> ".
-                        "already has hash {$image->hash}:<p>".$this->theme->build_thumb_html($existing);
-                throw new ImageAdditionException($error);
-            }
-        }
-
-        // actually insert the info
-        $database->Execute(
-            "INSERT INTO images(
-					owner_id, owner_ip, filename, filesize,
-					hash, ext, width, height, posted, source
-				)
-				VALUES (
-					:owner_id, :owner_ip, :filename, :filesize,
-					:hash, :ext, 0, 0, now(), :source
-				)",
-            [
-                "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'], "filename" => substr($image->filename, 0, 255), "filesize" => $image->filesize,
-                "hash" => $image->hash, "ext" => strtolower($image->ext), "source" => $image->source
-            ]
-        );
-        $image->id = $database->get_last_insert_id('images_id_seq');
-
-        log_info("image", "Uploaded Image #{$image->id} ({$image->hash})");
-
-        # at this point in time, the image's tags haven't really been set,
-        # and so, having $image->tag_array set to something is a lie (but
-        # a useful one, as we want to know what the tags are /supposed/ to
-        # be). Here we correct the lie, by first nullifying the wrong tags
-        # then using the standard mechanism to set them properly.
-        $tags_to_set = $image->get_tag_array();
-        $image->tag_array = [];
-        send_event(new TagSetEvent($image, $tags_to_set));
-
-        if ($image->source !== null) {
-            log_info("core-image", "Source for Image #{$image->id} set to: {$image->source}");
-        }
-
-        try {
-            Media::update_image_media_properties($image->hash, strtolower($image->ext));
-        } catch (MediaException $e) {
-            log_warning("add_image", "Error while running update_image_media_properties: ".$e->getMessage());
-        }
     }
 
     private function send_file(int $image_id, string $type)
@@ -293,67 +304,5 @@ class ImageIO extends Extension
                 "The requested image was not found in the database"
             ));
         }
-    }
-
-    private function replace_image(int $id, Image $image)
-    {
-        global $database;
-
-        /* Check to make sure the image exists. */
-        $existing = Image::by_id($id);
-
-        if (is_null($existing)) {
-            throw new ImageReplaceException("Image to replace does not exist!");
-        }
-
-        $duplicate = Image::by_hash($image->hash);
-
-        if (!is_null($duplicate) && $duplicate->id!=$id) {
-            $error = "Image <a href='" . make_link("post/view/{$duplicate->id}") . "'>{$duplicate->id}</a> " .
-                "already has hash {$image->hash}:<p>" . $this->theme->build_thumb_html($duplicate);
-            throw new ImageReplaceException($error);
-        }
-
-        if (strlen(trim($image->source)) == 0) {
-            $image->source = $existing->get_source();
-        }
-
-        // Update the data in the database.
-        $database->Execute(
-            "UPDATE images SET 
-					filename = :filename, filesize = :filesize,	hash = :hash,
-					ext = :ext, width = 0, height = 0, source = :source
-                WHERE 
-					id = :id
-				",
-            [
-                "filename" => substr($image->filename, 0, 255),
-                "filesize" => $image->filesize,
-                "hash" => $image->hash,
-                "ext" => strtolower($image->ext),
-                "source" => $image->source,
-                "id" => $id,
-            ]
-        );
-
-        /*
-            This step could be optional, ie: perhaps move the image somewhere
-            and have it stored in a 'replaced images' list that could be
-            inspected later by an admin?
-        */
-
-        log_debug("image", "Removing image with hash " . $existing->hash);
-        $existing->remove_image_only(); // Actually delete the old image file from disk
-
-        try {
-            Media::update_image_media_properties($image->hash, $image->ext);
-        } catch (MediaException $e) {
-            log_warning("image_replace", "Error while running update_image_media_properties: ".$e->getMessage());
-        }
-
-        /* Generate new thumbnail */
-        send_event(new ThumbnailGenerationEvent($image->hash, strtolower($image->ext)));
-
-        log_info("image", "Replaced Image #{$id} with ({$image->hash})");
     }
 }

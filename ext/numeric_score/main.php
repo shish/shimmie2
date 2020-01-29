@@ -274,20 +274,23 @@ class NumericScore extends Extension
         }
     }
 
+    public function onTagTermCheck(TagTermCheckEvent $event)
+    {
+        if (preg_match("/^vote[=|:](up|down|remove)$/i", $event->term)) {
+            $event->metatag = true;
+        }
+    }
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
         $matches = [];
 
-        if (preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches) && $event->parse) {
+        if (preg_match("/^vote[=|:](up|down|remove)$/", $event->term, $matches)) {
             global $user;
             $score = ($matches[1] == "up" ? 1 : ($matches[1] == "down" ? -1 : 0));
             if (!$user->is_anonymous()) {
-                send_event(new NumericScoreSetEvent($event->id, $user, $score));
+                send_event(new NumericScoreSetEvent($event->image_id, $user, $score));
             }
-        }
-
-        if (!empty($matches)) {
-            $event->metatag = true;
         }
     }
 

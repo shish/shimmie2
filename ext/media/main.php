@@ -85,7 +85,8 @@ class Media extends Extension
         if ($event->page_matches("media_rescan/") && $user->can(Permissions::RESCAN_MEDIA) && isset($_POST['image_id'])) {
             $image = Image::by_id(int_escape($_POST['image_id']));
 
-            $this->update_image_media_properties($image->hash, $image->ext);
+            send_event(new MediaCheckPropertiesEvent($image));
+            $image->save_to_db();
 
             $page->set_mode(PageMode::REDIRECT);
             $page->set_redirect(make_link("post/view/$image->id"));
@@ -163,7 +164,8 @@ class Media extends Extension
                     $failed = 0;
                     foreach ($event->items as $image) {
                         try {
-                            $this->update_image_media_properties($image->hash, $image->ext);
+                            send_event(new MediaCheckPropertiesEvent($image));
+                            $image->save_media_properties();
                             $total++;
                         } catch (MediaException $e) {
                             $failed++;
@@ -185,7 +187,8 @@ class Media extends Extension
             $uid = $event->args[0];
             $image = Image::by_id_or_hash($uid);
             if ($image) {
-                $this->update_image_media_properties($image->hash, $image->ext);
+                send_event(new MediaCheckPropertiesEvent($image));
+                $image->save_to_db();
             } else {
                 print("No post with ID '$uid'\n");
             }
@@ -282,67 +285,11 @@ class Media extends Extension
         }
     }
 
-    public function onTagTermParse(TagTermParseEvent $event)
+    public function onTagTermCheck(TagTermCheckEvent $event)
     {
-        $matches = [];
-        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, strtolower($event->term), $matches) && $event->parse) {
+        if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term)) {
             $event->metatag = true;
         }
-    }
-
-    private function media_rescan(): bool
-    {
-        $ext = "";
-        if (array_key_exists("media_rescan_type", $_POST)) {
-            $ext = $_POST["media_rescan_type"];
-        }
-
-        $results = $this->get_images($ext);
-
-        foreach ($results as $result) {
-            $this->update_image_media_properties($result["hash"], $result["ext"]);
-        }
-        return true;
-    }
-
-    public static function update_image_media_properties(string $hash, string $ext)
-    {
-        global $database;
-
-        $path = warehouse_path(Image::IMAGE_DIR, $hash);
-        $mcpe = new MediaCheckPropertiesEvent($path, $ext);
-        send_event($mcpe);
-
-
-        $database->execute(
-            "UPDATE images SET
-                  lossless = :lossless, video = :video, audio = :audio,image = :image,
-                  height = :height, width = :width,
-                  length = :length WHERE hash = :hash",
-            [
-                "hash" => $hash,
-                "width" => $mcpe->width ?? 0,
-                "height" => $mcpe->height ?? 0,
-                "lossless" => $database->scoresql_value_prepare($mcpe->lossless),
-                "video" => $database->scoresql_value_prepare($mcpe->video),
-                "image" => $database->scoresql_value_prepare($mcpe->image),
-                "audio" => $database->scoresql_value_prepare($mcpe->audio),
-                "length" => $mcpe->length
-            ]
-        );
-    }
-
-    public function get_images(String $ext = null)
-    {
-        global $database;
-
-        $query = "SELECT id, hash, ext FROM images  ";
-        $args = [];
-        if (!empty($ext)) {
-            $query .= " WHERE ext = :ext";
-            $args["ext"] = $ext;
-        }
-        return $database->get_all($query, $args);
     }
 
     /**

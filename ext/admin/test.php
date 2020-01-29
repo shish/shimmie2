@@ -3,17 +3,17 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 {
     public function testAuth()
     {
-        send_event(new UserLoginEvent(User::by_name($this->anon_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$anon_name)));
         $page = $this->get_page('admin');
         $this->assertEquals(403, $page->code);
         $this->assertEquals("Permission Denied", $page->title);
 
-        send_event(new UserLoginEvent(User::by_name($this->user_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
         $page = $this->get_page('admin');
         $this->assertEquals(403, $page->code);
         $this->assertEquals("Permission Denied", $page->title);
 
-        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         $page = $this->get_page('admin');
         $this->assertEquals(200, $page->code);
         $this->assertEquals("Admin Tools", $page->title);
@@ -23,7 +23,7 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
     {
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
-        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "TeStCase$ts");
 
         // Validate problem
@@ -53,7 +53,7 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 
         // Create a problem
         $ts = time(); // we need a tag that hasn't been used before
-        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         $database->execute(
             "INSERT INTO tags(tag, count) VALUES(:tag, :count)",
             ["tag"=>"tes$ts", "count"=>42]
@@ -74,7 +74,7 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
 
     public function testCommands()
     {
-        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
         ob_start();
         send_event(new CommandEvent(["index.php", "help"]));
         send_event(new CommandEvent(["index.php", "get-page", "post/list"]));
@@ -82,5 +82,8 @@ class AdminPageTest extends ShimmiePHPUnitTestCase
         send_event(new CommandEvent(["index.php", "get-token"]));
         send_event(new CommandEvent(["index.php", "regen-thumb", "42"]));
         ob_end_clean();
+
+        // don't crash
+        $this->assertTrue(true);
     }
 }

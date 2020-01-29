@@ -61,10 +61,16 @@ class Image
     public $video = null;
 
     /** @var boolean */
+    public $image = null;
+
+    /** @var boolean */
     public $audio = null;
 
     /** @var int */
     public $length = null;
+
+    public static $bool_props = ["locked", "lossless", "video", "audio"];
+    public static $int_props = ["id", "owner_id", "height", "width", "filesize", "length"];
 
     /**
      * One will very rarely construct an image directly, more common
@@ -78,9 +84,11 @@ class Image
                 $name = str_replace("images.", "", $name);
 
                 // hax, this is likely the cause of much scrutinizer-ci complaints.
-                if (in_array($name, ["locked", "lossless", "video", "audio"])) {
+                if (is_null($value)) {
+                    $this->$name = null;
+                } elseif (in_array($name, self::$bool_props)) {
                     $this->$name = bool_escape((string)$value);
-                } elseif (in_array($name, ["id", "owner_id", "height", "width", "filesize", "length"])) {
+                } elseif (in_array($name, self::$int_props)) {
                     $this->$name = int_escape((string)$value);
                 } else {
                     $this->$name = $value;
@@ -356,6 +364,70 @@ class Image
         }
     }
 
+    public function save_to_db()
+    {
+        global $database, $user;
+        $cut_name = substr($this->filename, 0, 255);
+
+        if (is_null($this->id)) {
+            $database->execute(
+                "INSERT INTO images(
+					owner_id, owner_ip,
+                    filename, filesize,
+				    hash, ext,
+                    width, height,
+                    posted, source
+				)
+				VALUES (
+					:owner_id, :owner_ip,
+				    :filename, :filesize,
+					:hash, :ext,
+				    0, 0,
+				    now(), :source
+				)",
+                [
+                    "owner_id" => $user->id, "owner_ip" => $_SERVER['REMOTE_ADDR'],
+                    "filename" => $cut_name, "filesize" => $this->filesize,
+                    "hash" => $this->hash, "ext" => strtolower($this->ext),
+                    "source" => $this->source
+                ]
+            );
+            $this->id = $database->get_last_insert_id('images_id_seq');
+        } else {
+            $database->execute(
+                "UPDATE images SET ".
+                "filename = :filename, filesize = :filesize, hash = :hash, ".
+                "ext = :ext, width = 0, height = 0, source = :source ".
+                "WHERE id = :id",
+                [
+                    "filename" => $cut_name,
+                    "filesize" => $this->filesize,
+                    "hash" => $this->hash,
+                    "ext" => strtolower($this->ext),
+                    "source" => $this->source,
+                    "id" => $this->id,
+                ]
+            );
+        }
+
+        $database->execute(
+            "UPDATE images SET ".
+            "lossless = :lossless, ".
+            "video = :video, audio = :audio,image = :image, ".
+            "height = :height, width = :width, ".
+            "length = :length WHERE id = :id",
+            [
+                "id" => $this->id,
+                "width" => $this->width ?? 0,
+                "height" => $this->height ?? 0,
+                "lossless" => $database->scoresql_value_prepare($this->lossless),
+                "video" => $database->scoresql_value_prepare($this->video),
+                "image" => $database->scoresql_value_prepare($this->image),
+                "audio" => $database->scoresql_value_prepare($this->audio),
+                "length" => $this->length
+            ]
+        );
+    }
     /**
      * Get this image's tags as an array.
      *

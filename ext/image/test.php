@@ -14,7 +14,10 @@ class ImageIOTest extends ShimmiePHPUnitTestCase
         //$this->assert_title("Image $image_id: test");
 
         # test that serving manually doesn't cause errors
-        $this->get_page("image/$image_id/moo.jpg");
-        $this->get_page("thumb/$image_id/moo.jpg");
+        $page = $this->get_page("image/$image_id/moo.jpg");
+        $this->assertEquals(200, $page->code);
+
+        $page = $this->get_page("thumb/$image_id/moo.jpg");
+        $this->assertEquals(200, $page->code);
     }
 }

@@ -35,9 +35,20 @@ $_tracer->end();
 
 abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 {
-    protected $anon_name = "anonymous";
-    protected $admin_name = "demo";
-    protected $user_name = "test";
+    protected static $anon_name = "anonymous";
+    protected static $admin_name = "demo";
+    protected static $user_name = "test";
+    protected $wipe_time = "test";
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        global $_tracer;
+        $_tracer->begin("Test Class");
+
+        self::create_user(self::$admin_name);
+        self::create_user(self::$user_name);
+    }
 
     public function setUp(): void
     {
@@ -49,18 +60,16 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             $this->markTestSkipped("$class not supported with this database");
         }
 
-        $this->create_user($this->admin_name);
-        $this->create_user($this->user_name);
+        // If we have a parent test, don't wipe out the state they gave us
+        if (!$this->getDependencyInput()) {
+            // things to do after bootstrap and before request
+            // log in as anon
+            self::log_out();
 
-        // things to do after bootstrap and before request
-        // log in as anon
-        $this->log_out();
-
-        $_tracer->begin("tearDown");
-        foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-            send_event(new ImageDeletionEvent(Image::by_id($image_id)));
+            foreach ($database->get_col("SELECT id FROM images") as $image_id) {
+                send_event(new ImageDeletionEvent(Image::by_id($image_id)));
+            }
         }
-        $_tracer->end();
 
         $_tracer->end();
         $_tracer->begin("test");
@@ -75,7 +84,14 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $_tracer->flush("tests/trace.json");
     }
 
-    protected function create_user(string $name)
+    public static function tearDownAfterClass(): void
+    {
+        parent::tearDownAfterClass();
+        global $_tracer;
+        $_tracer->end();
+    }
+
+    protected static function create_user(string $name)
     {
         if (is_null(User::by_name($name))) {
             $userPage = new UserPage();
@@ -84,7 +100,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         }
     }
 
-    protected function get_page($page_name, $args=null)
+    protected static function get_page($page_name, $args=null)
     {
         // use a fresh page
         global $page;
@@ -101,7 +117,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         return $page;
     }
 
-    protected function post_page($page_name, $args=null)
+    protected static function post_page($page_name, $args=null)
     {
         // use a fresh page
         global $page;
@@ -186,23 +202,31 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         $this->assertStringNotContainsString($content, $page->data);
     }
 
+    protected function assert_search_results($tags, $results)
+    {
+        $images = Image::find_images(0, null, $tags);
+        $ids = [];
+        foreach ($images as $image) {
+            $ids[] = $image->id;
+        }
+        $this->assertEquals($results, $ids);
+    }
+
     // user things
-    protected function log_in_as_admin()
+    protected static function log_in_as_admin()
     {
-        send_event(new UserLoginEvent(User::by_name($this->admin_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$admin_name)));
     }
 
-    protected function log_in_as_user()
+    protected static function log_in_as_user()
     {
-        send_event(new UserLoginEvent(User::by_name($this->user_name)));
+        send_event(new UserLoginEvent(User::by_name(self::$user_name)));
     }
 
-    protected function log_out()
+    protected static function log_out()
     {
         global $config;
-        $user = User::by_id($config->get_int("anon_id", 0));
-        $this->assertNotNull($user);
-        send_event(new UserLoginEvent($user));
+        send_event(new UserLoginEvent(User::by_id($config->get_int("anon_id", 0))));
     }
 
     // post things

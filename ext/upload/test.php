@@ -12,7 +12,8 @@ class UploadTest extends ShimmiePHPUnitTestCase
     public function testUpload()
     {
         $this->log_in_as_user();
-        $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx computer screenshot");
+        $this->assertGreaterThan(0, $image_id);
     }
 
     public function testRejectDupe()
@@ -28,11 +29,8 @@ class UploadTest extends ShimmiePHPUnitTestCase
 
     public function testRejectUnknownFiletype()
     {
-        try {
-            $this->post_image("index.php", "test");
-        } catch (UploadException $e) {
-            $this->assertStringContainsString("Invalid or corrupted file", $e->getMessage());
-        }
+        $image_id = $this->post_image("index.php", "test");
+        $this->assertEquals(-1, $image_id);  // no file handler claimed this
     }
 
     public function testRejectHuge()

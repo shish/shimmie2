@@ -1,7 +1,11 @@
 <?php declare(strict_types=1);
 class RelationshipsTest extends ShimmiePHPUnitTestCase
 {
-    public function testSetParent()
+    //=================================================================
+    // Set by box
+    //=================================================================
+
+    public function testNoParent()
     {
         $this->log_in_as_user();
 
@@ -20,81 +24,85 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $this->assertFalse($image_2->has_children);
         $this->assertFalse($image_3->has_children);
 
-        $this->get_page("post/view/$image_id_2");
-        $this->assert_title("Image $image_id_2: pbx");
-
-        $this->markTestIncomplete();
-
-        $this->set_field("tag_edit__parent", $image_id_1);
-        $this->click("Set");
-
-
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
-        $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1, $image_2->parent_id);
-        $this->assertNull($image_3->parent_id);
-        $this->assertTrue($image_1->has_children);
-        $this->assertFalse($image_2->has_children);
-        $this->assertFalse($image_3->has_children);
-
-
-        // Test changing to a different parent
-
-        $this->get_page("post/view/$image_id_2");
-        $this->assert_title("Image $image_id_2: pbx");
-
-        $this->markTestIncomplete();
-
-        $this->set_field("tag_edit__parent", $image_id_3);
-        $this->click("Set");
-
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
-        $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_3, $image_2->parent_id);
-        $this->assertNull($image_3->parent_id);
-        $this->assertFalse($image_2->has_children);
-        $this->assertFalse($image_2->has_children);
-        $this->assertTrue($image_3->has_children);
-
-
-        // Test setting parent to none
-
-        $this->get_page("post/view/$image_id_2");
-        $this->assert_title("Image $image_id_2: pbx");
-
-        $this->markTestIncomplete();
-
-        $this->set_field("tag_edit__parent", "");
-        $this->click("Set");
-
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
-        $this->assertNull($image_1->parent_id);
-        $this->assertNull($image_2->parent_id);
-        $this->assertNull($image_3->parent_id);
-        $this->assertFalse($image_2->has_children);
-        $this->assertFalse($image_2->has_children);
-        $this->assertFalse($image_3->has_children);
-
-
-        $this->log_out();
-
-        $this->log_in_as_admin();
-        $this->delete_image($image_id_1);
-        $this->delete_image($image_id_2);
-        $this->delete_image($image_id_3);
-        $this->log_out();
+        return [$image_1, $image_2, $image_3];
     }
 
-    public function testSetParentByTag()
+    /**
+     * @depends testNoParent
+     */
+    public function testSetParent($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
+
+        send_event(new ImageRelationshipSetEvent($image_2->id, $image_1->id));
+
+        // refresh data from database
+        $image_1 = Image::by_id($image_1->id);
+        $image_2 = Image::by_id($image_2->id);
+        $image_3 = Image::by_id($image_3->id);
+
+        $this->assertNull($image_1->parent_id);
+        $this->assertEquals($image_1->id, $image_2->parent_id);
+        $this->assertNull($image_3->parent_id);
+        $this->assertTrue($image_1->has_children);
+        $this->assertFalse($image_2->has_children);
+        $this->assertFalse($image_3->has_children);
+
+        return [$image_1, $image_2, $image_3];
+    }
+
+    /**
+     * @depends testSetParent
+     */
+    public function testChangeParent($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
+        send_event(new ImageRelationshipSetEvent($image_2->id, $image_3->id));
+
+        // refresh data from database
+        $image_1 = Image::by_id($image_1->id);
+        $image_2 = Image::by_id($image_2->id);
+        $image_3 = Image::by_id($image_3->id);
+
+        $this->assertNull($image_1->parent_id);
+        $this->assertEquals($image_3->id, $image_2->parent_id);
+        $this->assertNull($image_3->parent_id);
+        $this->assertFalse($image_2->has_children);
+        $this->assertFalse($image_2->has_children);
+        $this->assertTrue($image_3->has_children);
+
+        return [$image_1, $image_2, $image_3];
+    }
+
+    /**
+     * @depends testChangeParent
+     */
+    public function testRemoveParent($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
+
+        global $database;
+        $database->execute("UPDATE images SET parent_id=NULL, has_children=FALSE");
+        // FIXME: send_event(new ImageRelationshipSetEvent($image_2->id, null));
+
+        // refresh data from database
+        $image_1 = Image::by_id($image_1->id);
+        $image_2 = Image::by_id($image_2->id);
+        $image_3 = Image::by_id($image_3->id);
+
+        $this->assertNull($image_1->parent_id);
+        $this->assertNull($image_2->parent_id);
+        $this->assertNull($image_3->parent_id);
+        $this->assertFalse($image_2->has_children);
+        $this->assertFalse($image_2->has_children);
+        $this->assertFalse($image_3->has_children);
+    }
+
+    //=================================================================
+    // Set by tag
+    //=================================================================
+
+    public function testSetParentByTagBase()
     {
         $this->log_in_as_user();
         $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
@@ -112,81 +120,77 @@ class RelationshipsTest extends ShimmiePHPUnitTestCase
         $this->assertFalse($image_2->has_children);
         $this->assertFalse($image_3->has_children);
 
-        // Test settings parent:#
+        return [$image_1, $image_2, $image_3];
+    }
 
-        $this->get_page("post/view/$image_id_2");
-        $this->assert_title("Image $image_id_2: pbx");
+    /**
+     * @depends testSetParentByTagBase
+     */
+    public function testSetParentByTag($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
 
-        $this->markTestIncomplete();
+        send_event(new TagSetEvent($image_2, ["pbx", "parent:{$image_1->id}"]));
 
-        $this->set_field("tag_edit__tags", "pbx parent:$image_id_1");
-        $this->click("Set");
+        // refresh data from database
+        $image_1 = Image::by_id($image_1->id);
+        $image_2 = Image::by_id($image_2->id);
+        $image_3 = Image::by_id($image_3->id);
 
-        $this->assert_title("Image $image_id_2: pbx");
-
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
+        $this->assertEquals(["pbx"], $image_2->get_tag_array());
         $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1, $image_2->parent_id);
+        $this->assertEquals($image_1->id, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);
         $this->assertFalse($image_3->has_children);
 
-        // Test settings child:#
+        return [$image_1, $image_2, $image_3];
+    }
 
-        $this->get_page("post/view/$image_id_3");
-        $this->assert_title("Image $image_id_3: pbx");
+    /**
+     * @depends testSetParentByTag
+     */
+    public function testSetChildByTag($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
 
-        $this->markTestIncomplete();
+        send_event(new TagSetEvent($image_3, ["pbx", "child:{$image_1->id}"]));
 
-        $this->set_field("tag_edit__tags", "pbx child:$image_id_1");
-        $this->click("Set");
+        // refresh data from database
+        $image_1 = Image::by_id($image_1->id);
+        $image_2 = Image::by_id($image_2->id);
+        $image_3 = Image::by_id($image_3->id);
 
-        $this->assert_title("Image $image_id_3: pbx");
-
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
-        $this->assertEquals($image_id_3, $image_1->parent_id);
-        $this->assertEquals($image_id_1, $image_2->parent_id);
+        $this->assertEquals(["pbx"], $image_3->get_tag_array());
+        $this->assertEquals($image_3->id, $image_1->parent_id);
+        $this->assertEquals($image_1->id, $image_2->parent_id);
         $this->assertNull($image_3->parent_id);
         $this->assertTrue($image_1->has_children);
         $this->assertFalse($image_2->has_children);
         $this->assertTrue($image_3->has_children);
 
-        // Test settings parent:none
+        return [$image_1, $image_2, $image_3];
+    }
 
-        $this->get_page("post/view/$image_id_1");
-        $this->assert_title("Image $image_id_1: pbx");
+    /**
+     * @depends testSetChildByTag
+     */
+    public function testRemoveParentByTag($imgs)
+    {
+        [$image_1, $image_2, $image_3] = $imgs;
 
-        $this->markTestIncomplete();
+        // check parent is set
+        $this->assertEquals($image_2->parent_id, $image_1->id);
 
-        $this->set_field("tag_edit__tags", "pbx parent:none");
-        $this->click("Set");
+        // un-set it
+        send_event(new TagSetEvent($image_2, ["pbx", "parent:none"]));
 
-        $this->assert_title("Image $image_id_1: pbx");
+        // refresh data from database
+        $image_2 = Image::by_id($image_2->id);
 
-        $image_1 = Image::by_id($image_id_1);
-        $image_2 = Image::by_id($image_id_2);
-        $image_3 = Image::by_id($image_id_3);
-
-        $this->assertNull($image_1->parent_id);
-        $this->assertEquals($image_id_1, $image_2->parent_id);
-        $this->assertNull($image_3->parent_id);
-        $this->assertTrue($image_1->has_children);
-        $this->assertFalse($image_2->has_children);
-        $this->assertFalse($image_3->has_children);
-
-        $this->log_out();
-
-        $this->log_in_as_admin();
-        $this->delete_image($image_id_1);
-        $this->delete_image($image_id_2);
-        $this->delete_image($image_id_3);
-        $this->log_out();
+        // check it was unset
+        $this->assertEquals(["pbx"], $image_2->get_tag_array());
+        $this->assertNull($image_2->parent_id);
     }
 }

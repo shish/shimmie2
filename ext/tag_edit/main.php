@@ -64,11 +64,11 @@ class TagSetEvent extends Event
                 continue;
             }
 
-            $ttpe = new TagTermParseEvent($tag, $this->image->id, false); //Only check for metatags, don't parse. Parsing is done after set_tags.
+            $ttpe = new TagTermCheckEvent($tag);
             send_event($ttpe);
 
             //seperate tags from metatags
-            if (!$ttpe->is_metatag()) {
+            if (!$ttpe->metatag) {
                 array_push($this->tags, $tag);
             } else {
                 array_push($this->metatags, $tag);
@@ -92,30 +92,35 @@ class LockSetEvent extends Event
     }
 }
 
-/*
- * TagTermParseEvent:
- * Signal that a tag term needs parsing
+/**
+ * Check whether or not a tag is a meta-tag
  */
-class TagTermParseEvent extends Event
+class TagTermCheckEvent extends Event
 {
     public $term = null; //tag
-    public $id   = null; //image_id
     /** @var bool */
     public $metatag = false;
-    /** @var bool */
-    public $parse  = true; //marks the tag to be parsed, and not just checked if valid metatag
 
-    public function __construct(string $term, int $id, bool $parse)
+    public function __construct(string $term)
     {
         parent::__construct();
         $this->term  = $term;
-        $this->id    = $id;
-        $this->parse = $parse;
     }
+}
 
-    public function is_metatag(): bool
+/**
+ * If a tag is a meta-tag, parse it
+ */
+class TagTermParseEvent extends Event
+{
+    public $term = null;
+    public $image_id = null;
+
+    public function __construct(string $term, int $image_id)
     {
-        return $this->metatag;
+        parent::__construct();
+        $this->term = $term;
+        $this->image_id = $image_id;
     }
 }
 
@@ -245,17 +250,18 @@ class TagEdit extends Extension
         $event->add_part($this->theme->get_lock_editor_html($event->image), 42);
     }
 
+    public function onTagTermCheck(TagTermCheckEvent $event)
+    {
+        if (preg_match("/^source[=|:](.*)$/i", $event->term)) {
+            $event->metatag = true;
+        }
+    }
+
     public function onTagTermParse(TagTermParseEvent $event)
     {
-        $matches = [];
-
-        if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches) && $event->parse) {
+        if (preg_match("/^source[=|:](.*)$/i", $event->term, $matches)) {
             $source = ($matches[1] !== "none" ? $matches[1] : null);
-            send_event(new SourceSetEvent(Image::by_id($event->id), $source));
-        }
-
-        if (!empty($matches)) {
-            $event->metatag = true;
+            send_event(new SourceSetEvent(Image::by_id($event->image_id), $source));
         }
     }
 

@@ -48,8 +48,8 @@ class Artists extends Extension
 
         $matches = [];
         if (preg_match("/^(author|artist)[=|:](.*)$/i", $event->term, $matches)) {
-            $char = $matches[1];
-            $event->add_querylet(new Querylet("Author = :author_char", ["author_char"=>$char]));
+            $char = $matches[2];
+            $event->add_querylet(new Querylet("author = :author_char", ["author_char"=>$char]));
         }
     }
 
@@ -62,7 +62,6 @@ class Artists extends Extension
             $event->add_block($block);
         }
     }
-
 
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {

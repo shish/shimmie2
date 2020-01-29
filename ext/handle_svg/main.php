@@ -7,19 +7,18 @@ class SVGFileHandler extends DataHandlerExtension
     {
         switch ($event->ext) {
             case "svg":
-                $event->lossless = true;
-                $event->video = false;
-                $event->audio = false;
-                $event->image = true;
+                $event->image->lossless = true;
+                $event->image->video = false;
+                $event->image->audio = false;
+                $event->image->image = true;
 
                 $msp = new MiniSVGParser($event->file_name);
-                $event->width = $msp->width;
-                $event->height = $msp->height;
+                $event->image->width = $msp->width;
+                $event->image->height = $msp->height;
 
                 break;
         }
     }
-
 
     public function onDataUpload(DataUploadEvent $event)
     {

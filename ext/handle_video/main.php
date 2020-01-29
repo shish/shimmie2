@@ -31,8 +31,8 @@ class VideoFileHandler extends DataHandlerExtension
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
         if (in_array($event->ext, self::SUPPORTED_EXT)) {
-            $event->video = true;
-            $event->image = false;
+            $event->image->video = true;
+            $event->image->image = false;
             try {
                 $data = Media::get_ffprobe_data($event->file_name);
 
@@ -57,22 +57,22 @@ class VideoFileHandler extends DataHandlerExtension
                                     }
                                     if (array_key_exists("width", $stream) && !empty($stream["width"])
                                         && is_numeric($stream["width"]) && intval($stream["width"]) > ($event->width) ?? 0) {
-                                        $event->width = intval($stream["width"]);
+                                        $event->image->width = intval($stream["width"]);
                                     }
                                     if (array_key_exists("height", $stream) && !empty($stream["height"])
                                         && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->height) ?? 0) {
-                                        $event->height = intval($stream["height"]);
+                                        $event->image->height = intval($stream["height"]);
                                     }
                                 }
                             }
-                            $event->video = $video;
-                            $event->audio = $audio;
+                            $event->image->video = $video;
+                            $event->image->audio = $audio;
                         }
                     }
                     if (array_key_exists("format", $data)&& is_array($data["format"])) {
                         $format = $data["format"];
                         if (array_key_exists("duration", $format) && is_numeric($format["duration"])) {
-                            $event->length = floor(floatval($format["duration"]) * 1000);
+                            $event->image->length = floor(floatval($format["duration"]) * 1000);
                         }
                     }
                 }

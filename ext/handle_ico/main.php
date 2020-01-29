@@ -4,15 +4,13 @@ class IcoFileHandler extends DataHandlerExtension
 {
     const SUPPORTED_EXTENSIONS = ["ico", "ani", "cur"];
 
-
     public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
     {
         if (in_array($event->ext, self::SUPPORTED_EXTENSIONS)) {
-            $event->lossless = true;
-            $event->video = false;
-            $event->audio = false;
-            $event->image = ($event->ext!="ani");
-
+            $event->image->lossless = true;
+            $event->image->video = false;
+            $event->image->audio = false;
+            $event->image->image = ($event->ext!="ani");
 
             $fp = fopen($event->file_name, "r");
             try {
@@ -24,11 +22,10 @@ class IcoFileHandler extends DataHandlerExtension
 
             $width = $subheader['width'];
             $height = $subheader['height'];
-            $event->width = $width == 0 ? 256 : $width;
-            $event->height = $height == 0 ? 256 : $height;
+            $event->image->width = $width == 0 ? 256 : $width;
+            $event->image->height = $height == 0 ? 256 : $height;
         }
     }
-
 
     protected function supported_ext(string $ext): bool
     {
