@@ -39,7 +39,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
 
     public function setUp(): void
     {
-        global $_tracer;
+        global $database, $_tracer;
         $_tracer->begin($this->getName());
         $_tracer->begin("setUp");
         $class = str_replace("Test", "", get_class($this));
@@ -54,6 +54,12 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
         // log in as anon
         $this->log_out();
 
+        $_tracer->begin("tearDown");
+        foreach ($database->get_col("SELECT id FROM images") as $image_id) {
+            send_event(new ImageDeletionEvent(Image::by_id($image_id)));
+        }
+        $_tracer->end();
+
         $_tracer->end();
         $_tracer->begin("test");
     }
@@ -61,12 +67,6 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     public function tearDown(): void
     {
         global $_tracer;
-        $_tracer->end();
-        $_tracer->begin("tearDown");
-        global $database, $_tracer;
-        foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-            send_event(new ImageDeletionEvent(Image::by_id($image_id)));
-        }
         $_tracer->end();
         $_tracer->end();
         $_tracer->clear();
