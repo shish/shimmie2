@@ -468,7 +468,8 @@ function get_debug_info(): string
 
 /** @privatesection */
 
-function require_all(array $files): void {
+function require_all(array $files): void
+{
     foreach ($files as $filename) {
         if (basename($filename)[0] != "_") {
             require_once $filename;
@@ -476,7 +477,8 @@ function require_all(array $files): void {
     }
 }
 
-function _load_core_files() {
+function _load_core_files()
+{
     require_all(array_merge(
         zglob("core/*.php"),
         zglob("core/imageboard/*.php"),
@@ -484,7 +486,8 @@ function _load_core_files() {
     ));
 }
 
-function _load_theme_files() {
+function _load_theme_files()
+{
     require_all(_get_themelet_files(get_theme()));
 }
 

@@ -42,8 +42,7 @@ class UploadTest extends ShimmiePHPUnitTestCase
         try {
             $this->post_image("data/huge.jpg", "test");
             $this->assertTrue(false, "Uploading huge.jpg didn't fail...");
-        }
-        catch (UploadException $e) {
+        } catch (UploadException $e) {
             $this->assertEquals("File too large (3.0MB > 1.0MB)", $e->error);
         }
         unlink("data/huge.jpg");

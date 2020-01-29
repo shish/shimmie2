@@ -97,14 +97,16 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(parse_shorthand_int("1231231231"), 1231231231);
     }
 
-    public function test_autodate() {
+    public function test_autodate()
+    {
         $this->assertEquals(
             "<time datetime='2012-06-23T16:14:22+00:00'>June 23, 2012; 16:14</time>",
             autodate("2012-06-23 16:14:22")
         );
     }
 
-    public function test_validate_input() {
+    public function test_validate_input()
+    {
         $_POST = [
             "foo" => " bar ",
             "to_null" => "  ",
@@ -195,7 +197,8 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function test_stringer() {
+    public function test_stringer()
+    {
         $this->assertEquals(
             '["foo"=>"bar", "baz"=>[1, 2, 3], "qux"=>["a"=>"b"]]',
             stringer(["foo"=>"bar", "baz"=>[1,2,3], "qux"=>["a"=>"b"]])

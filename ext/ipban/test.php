@@ -4,13 +4,15 @@ class IPBanTest extends ShimmiePHPUnitTestCase
 {
     # FIXME: test that the IP is actually banned
 
-    public function testAccess() {
+    public function testAccess()
+    {
         $page = $this->get_page('ip_ban/list');
         $this->assertEquals(403, $page->code);
         $this->assertEquals("Permission Denied", $page->title);
     }
 
-    public function testIPBan() {
+    public function testIPBan()
+    {
         global $database;
 
         $this->log_in_as_admin();
@@ -46,7 +48,8 @@ class IPBanTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function test_all() {
+    public function test_all()
+    {
         $this->log_in_as_admin();
         $this->get_page('ip_ban/list?r_all=on'); // just test it doesn't crash for now
     }

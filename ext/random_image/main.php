@@ -17,7 +17,7 @@ class RandomImage extends Extension
                 throw new SCoreException("Error: too many arguments.");
             }
             $image = Image::by_random($search_terms);
-            if(!$image) {
+            if (!$image) {
                 throw new SCoreException(
                     "Couldn't find any images randomly",
                     Tag::implode($search_terms)

@@ -1,10 +1,12 @@
 <?php declare(strict_types=1);
 
-class CreateTipEvent extends Event {
+class CreateTipEvent extends Event
+{
     public $enable;
     public $image;
     public $text;
-    public function __construct(bool $enable, string $image, string $text) {
+    public function __construct(bool $enable, string $image, string $text)
+    {
         parent::__construct();
         $this->enable = $enable;
         $this->image = $image;
@@ -12,9 +14,11 @@ class CreateTipEvent extends Event {
     }
 }
 
-class DeleteTipEvent extends Event {
+class DeleteTipEvent extends Event
+{
     public $tip_id;
-    public function __construct(int $tip_id) {
+    public function __construct(int $tip_id)
+    {
         parent::__construct();
         $this->tip_id = $tip_id;
     }
@@ -121,7 +125,8 @@ class Tips extends Extension
         $this->theme->manageTips($url, $images);
     }
 
-    public function onCreateTip(CreateTipEvent $event) {
+    public function onCreateTip(CreateTipEvent $event)
+    {
         global $database;
         $database->execute(
             "
@@ -176,7 +181,8 @@ class Tips extends Extension
         $database->execute("UPDATE tips SET enable = :enable WHERE id = :id", ["enable"=>$enable, "id"=>$tipID]);
     }
 
-    public function onDeleteTip(DeleteTipEvent $event) {
+    public function onDeleteTip(DeleteTipEvent $event)
+    {
         global $database;
         $database->execute("DELETE FROM tips WHERE id = :id", ["id"=>$event->tip_id]);
     }

@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 class TagEditTest extends ShimmiePHPUnitTestCase
 {
-    public function testValidChange() {
+    public function testValidChange()
+    {
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id($image_id);
@@ -25,8 +26,7 @@ class TagEditTest extends ShimmiePHPUnitTestCase
         try {
             send_event(new TagSetEvent($image, []));
             $this->assertTrue(false);
-        }
-        catch(SCoreException $e) {
+        } catch (SCoreException $e) {
             $this->assertEquals("Tried to set zero tags", $e->error);
         }
     }

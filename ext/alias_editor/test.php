@@ -21,7 +21,8 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("Add");
     }
 
-    public function testAliasOneToOne() {
+    public function testAliasOneToOne()
+    {
         $this->log_in_as_admin();
 
         $this->get_page("alias/export/aliases.csv");
@@ -48,7 +49,8 @@ class AliasEditorTest extends ShimmiePHPUnitTestCase
         $this->assert_no_text("test1");
     }
 
-    public function testAliasOneToMany() {
+    public function testAliasOneToMany()
+    {
         $this->log_in_as_admin();
 
         $this->get_page("alias/export/aliases.csv");

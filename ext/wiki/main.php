@@ -15,21 +15,25 @@ class WikiUpdateEvent extends Event
     }
 }
 
-class WikiDeleteRevisionEvent extends Event {
+class WikiDeleteRevisionEvent extends Event
+{
     public $title;
     public $revision;
 
-    public function __construct($title, $revision) {
+    public function __construct($title, $revision)
+    {
         parent::__construct();
         $this->title = $title;
         $this->revision = $revision;
     }
 }
 
-class WikiDeletePageEvent extends Event {
+class WikiDeletePageEvent extends Event
+{
     public $title;
 
-    public function __construct($title) {
+    public function __construct($title)
+    {
         parent::__construct();
         $this->title = $title;
     }
@@ -216,7 +220,8 @@ class Wiki extends Extension
         }
     }
 
-    public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event) {
+    public function onWikiDeleteRevision(WikiDeleteRevisionEvent $event)
+    {
         global $database;
         $database->Execute(
             "DELETE FROM wiki_pages WHERE title=:title AND revision=:rev",
@@ -224,7 +229,8 @@ class Wiki extends Extension
         );
     }
 
-    public function onWikiDeletePage(WikiDeletePageEvent $event) {
+    public function onWikiDeletePage(WikiDeletePageEvent $event)
+    {
         global $database;
         $database->Execute(
             "DELETE FROM wiki_pages WHERE title=:title",

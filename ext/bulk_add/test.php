@@ -2,7 +2,8 @@
 
 class BulkAddTest extends ShimmiePHPUnitTestCase
 {
-    public function testInvalidDir() {
+    public function testInvalidDir()
+    {
         send_event(new UserLoginEvent(User::by_name($this->admin_name)));
         $bae = send_event(new BulkAddEvent('asdf'));
         $this->assertContains(
@@ -12,7 +13,8 @@ class BulkAddTest extends ShimmiePHPUnitTestCase
         );
     }
 
-    public function testValidDir() {
+    public function testValidDir()
+    {
         send_event(new UserLoginEvent(User::by_name($this->admin_name)));
         send_event(new BulkAddEvent('tests'));
         $page = $this->get_page("post/list/hash=17fc89f372ed3636e28bd25cc7f3bac1/1");

@@ -7,7 +7,9 @@ require_once "core/polyfills.php";
 require_once "core/util.php";
 
 $_SERVER['QUERY_STRING'] = '/';
-if(file_exists("tests/trace.json")) unlink("tests/trace.json");
+if (file_exists("tests/trace.json")) {
+    unlink("tests/trace.json");
+}
 
 global $cache, $config, $database, $user, $page, $_tracer;
 _sanitise_environment();
@@ -146,7 +148,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     protected function page_to_text(string $section=null)
     {
         global $page;
-        if($page->mode == PageMode::PAGE) {
+        if ($page->mode == PageMode::PAGE) {
             $text = $page->title . "\n";
             foreach ($page->blocks as $block) {
                 if (is_null($section) || $section == $block->section) {
@@ -155,11 +157,9 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
                 }
             }
             return $text;
-        }
-        elseif($page->mode == PageMode::DATA) {
+        } elseif ($page->mode == PageMode::DATA) {
             return $page->data;
-        }
-        else {
+        } else {
             $this->assertTrue(false, "Page mode is not PAGE or DATA");
         }
     }

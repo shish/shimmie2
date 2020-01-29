@@ -46,7 +46,8 @@ class Database
      */
     public $query_count = 0;
 
-    public function __construct(string $dsn) {
+    public function __construct(string $dsn)
+    {
         $this->dsn = $dsn;
     }
 

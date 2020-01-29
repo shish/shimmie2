@@ -39,10 +39,12 @@ class AddAliasEvent extends Event
     }
 }
 
-class DeleteAliasEvent extends Event {
+class DeleteAliasEvent extends Event
+{
     public $oldtag;
 
-    public function __construct(string $oldtag) {
+    public function __construct(string $oldtag)
+    {
         $this->oldtag = $oldtag;
     }
 }
@@ -142,7 +144,8 @@ class AliasEditor extends Extension
         log_info("alias_editor", "Added alias for {$event->oldtag} -> {$event->newtag}", "Added alias");
     }
 
-    public function onDeleteAlias(DeleteAliasEvent $event) {
+    public function onDeleteAlias(DeleteAliasEvent $event)
+    {
         global $database;
         $database->execute("DELETE FROM aliases WHERE oldtag=:oldtag", ["oldtag" => $event->oldtag]);
         log_info("alias_editor", "Deleted alias for {$event->oldtag}", "Deleted alias");

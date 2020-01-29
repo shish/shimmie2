@@ -260,9 +260,10 @@ class BasePage
      * Find a block which contains the given text
      * (Useful for unit tests)
      */
-    public function find_block(string $text): ?Block {
-        foreach($this->blocks as $block) {
-            if($block->header == $text) {
+    public function find_block(string $text): ?Block
+    {
+        foreach ($this->blocks as $block) {
+            if ($block->header == $text) {
                 return $block;
             }
         }

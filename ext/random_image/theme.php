@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
-use function MicroHTML\{DIV,A,IMG};
+use function MicroHTML\DIV;
+use function MicroHTML\A;
+use function MicroHTML\IMG;
 
 class RandomImageTheme extends Themelet
 {
