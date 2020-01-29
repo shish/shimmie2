@@ -77,7 +77,7 @@ class Relationships extends Extension
             }
         } elseif (preg_match("/^child[=|:](any|none)$/", $event->term, $matches)) {
             $not = ($matches[1] == "any" ? "=" : "!=");
-            $event->add_querylet(new Querylet("images.has_children $not TRUE"));
+            $event->add_querylet(new Querylet("images.has_children $not :true", ["true"=>true]));
         }
     }
 
@@ -150,7 +150,7 @@ class Relationships extends Extension
         }
 
         $database->execute("UPDATE images SET parent_id = :pid WHERE id = :cid", ["pid" => $event->parent_id, "cid" => $event->child_id]);
-        $database->execute("UPDATE images SET has_children = TRUE WHERE id = :pid", ["pid" => $event->parent_id]);
+        $database->execute("UPDATE images SET has_children = :true WHERE id = :pid", ["pid" => $event->parent_id, "true"=>true]);
 
         if ($old_parent!=null) {
             $this->set_has_children($old_parent);

@@ -428,6 +428,7 @@ class Image
             ]
         );
     }
+
     /**
      * Get this image's tags as an array.
      *
