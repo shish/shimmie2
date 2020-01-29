@@ -8,24 +8,16 @@ $_shm_ratings = [];
 
 class ImageRating
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $name = null;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $code = null;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $search_term = null;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     public $order = 0;
 
     public function __construct(string $code, string $name, string $search_term, int $order)
@@ -42,32 +34,27 @@ class ImageRating
 function clear_ratings()
 {
     global $_shm_ratings;
-    $keys =  array_keys($_shm_ratings);
+    $keys = array_keys($_shm_ratings);
     foreach ($keys as $key) {
-        if ($key=="?") {
-            continue;
+        if ($key != "?") {
+            unset($_shm_ratings[$key]);
         }
-        unset($_shm_ratings[$key]);
     }
 }
 
 function add_rating(ImageRating $rating)
 {
     global $_shm_ratings;
-
-    if ($rating->code=="?"&&array_key_exists("?", $_shm_ratings)) {
+    if ($rating->code == "?" && array_key_exists("?", $_shm_ratings)) {
         throw new RuntimeException("? is a reserved rating code that cannot be overridden");
     }
-
-    if ($rating->code!="?"&&in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
+    if ($rating->code != "?" && in_array(strtolower($rating->search_term), Ratings::UNRATED_KEYWORDS)) {
         throw new RuntimeException("$rating->search_term is a reserved search term");
     }
-
     $_shm_ratings[$rating->code] = $rating;
 }
 
 add_rating(new ImageRating("?", "Unrated", "unrated", 99999));
-
 add_rating(new ImageRating("s", "Safe", "safe", 0));
 add_rating(new ImageRating("q", "Questionable", "questionable", 500));
 add_rating(new ImageRating("e", "Explicit", "explicit", 1000));
@@ -103,15 +90,13 @@ class Ratings extends Extension
     /** @var RatingsTheme */
     protected $theme;
 
-    public const UNRATED_KEYWORDS = ["unknown","unrated"];
+    public const UNRATED_KEYWORDS = ["unknown", "unrated"];
 
     private $search_regexp;
 
-    public function __construct()
+    public function onInitExt(InitExtEvent $event)
     {
-        parent::__construct();
-
-        global $_shm_ratings;
+        global $config, $_shm_user_classes, $_shm_ratings;
 
         $codes = implode("", array_keys($_shm_ratings));
         $search_terms = [];
@@ -120,16 +105,6 @@ class Ratings extends Extension
         }
         $this->search_regexp = "/^rating[=|:](?:(\*|[" . $codes . "]+)|(" .
             implode("|", $search_terms) . "|".implode("|", self::UNRATED_KEYWORDS)."))$/D";
-    }
-
-    public function get_priority(): int
-    {
-        return 50;
-    }
-
-    public function onInitExt(InitExtEvent $event)
-    {
-        global $config, $_shm_user_classes, $_shm_ratings;
 
         foreach (array_keys($_shm_user_classes) as $key) {
             if ($key == "base" || $key == "hellbanned") {
@@ -148,7 +123,7 @@ class Ratings extends Extension
     {
         global $user;
 
-        $event->add__html(
+        $event->add_html(
             $this->theme->get_user_options(
                 $user,
                 self::get_user_default_ratings($user),
@@ -181,15 +156,6 @@ class Ratings extends Extension
         $event->panel->add_block($sb);
     }
 
-    // public function onPostListBuilding(PostListBuildingEvent $event)
-    // {
-    //     global $user;
-    //     if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING) && !empty($event->search_terms)) {
-    //         $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
-    //     }
-    // }
-
-
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user, $page;
@@ -215,12 +181,21 @@ class Ratings extends Extension
 
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
     {
-        $event->add_part($this->theme->get_rater_html($event->image->id, $event->image->rating, $this->can_rate()), 80);
+        global $user;
+        $event->add_part(
+            $this->theme->get_rater_html(
+                $event->image->id,
+                $event->image->rating,
+                $user->can(Permissions::EDIT_IMAGE_RATING)
+            ),
+            80
+        );
     }
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
-        if ($this->can_rate() && isset($_POST["rating"])) {
+        global $user;
+        if ($user->can(Permissions::EDIT_IMAGE_RATING) && isset($_POST["rating"])) {
             $rating = $_POST["rating"];
             if (Ratings::rating_is_valid($rating)) {
                 send_event(new RatingSetEvent($event->image, $rating));
@@ -260,7 +235,6 @@ class Ratings extends Extension
             $event->add_querylet(new Querylet("rating IN ($set)"));
         }
 
-
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
             $ratings = $matches[1] ? $matches[1] : $matches[2][0];
 
@@ -292,13 +266,9 @@ class Ratings extends Extension
             }
 
             $ratings = array_intersect(str_split($ratings), Ratings::get_user_class_privs($user));
-
             $rating = $ratings[0];
-
             $image = Image::by_id($event->id);
-
             $re = new RatingSetEvent($image, $rating);
-
             send_event($re);
         }
 
@@ -306,7 +276,6 @@ class Ratings extends Extension
             $event->metatag = true;
         }
     }
-
 
     public function onAdminBuilding(AdminBuildingEvent $event)
     {
@@ -321,7 +290,6 @@ class Ratings extends Extension
                 $original_values[$result] = $result;
             }
         }
-
 
         $this->theme->display_form($original_values, self::get_sorted_ratings());
     }
@@ -349,7 +317,6 @@ class Ratings extends Extension
                 break;
         }
     }
-
 
     public function onBulkActionBlockBuilding(BulkActionBlockBuildingEvent $event)
     {
@@ -501,18 +468,6 @@ class Ratings extends Extension
     }
 
     /**
-     * FIXME: this is a bit ugly and guessey, should have proper options
-     */
-    private function can_rate(): bool
-    {
-        global $user;
-        if ($user->can(Permissions::EDIT_IMAGE_RATING)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * #param string[] $context
      */
     private function no_rating_query(array $context): bool
@@ -567,7 +522,6 @@ class Ratings extends Extension
             if (!empty($value)) {
                 $config->set_array("ext_rating_admin_privs", str_split($value));
             }
-
 
             switch ($database->get_driver_name()) {
                 case DatabaseDriver::MYSQL:

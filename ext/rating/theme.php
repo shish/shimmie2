@@ -23,7 +23,6 @@ class RatingsTheme extends Themelet
         return $html;
     }
 
-
     public function display_form(array $current_ratings, array $available_ratings)
     {
         global $page;
@@ -43,26 +42,6 @@ class RatingsTheme extends Themelet
         </form>\n";
         $page->add_block(new Block("Update Ratings", $html));
     }
-
-
-
-    // public function display_bulk_rater(string $terms)
-    // {
-    //     global $page;
-    //     $html = "
-    // 		".make_form(make_link("admin/bulk_rate"))."
-    // 			<input type='hidden' name='query' value='".html_escape($terms)."'>
-    // 			<select name='rating'>
-    // 				<option value='s'>Safe</option>
-    // 				<option value='q'>Questionable</option>
-    // 				<option value='e'>Explicit</option>
-    // 				<option value='u'>Unrated</option>
-    // 			</select>
-    // 			<input type='submit' value='Go'>
-    // 		</form>
-    // 	";
-    //     $page->add_block(new Block("List Controls", $html, "left"));
-    // }
 
     public function get_selection_rater_html(array $selected_options, bool $multiple = false, array $available_options = null)
     {

@@ -19,7 +19,7 @@ class UserOptionsBuildingEvent extends Event
     /** @var array  */
     public $parts = [];
 
-    public function add__html(string $html)
+    public function add_html(string $html)
     {
         $this->parts[] = $html;
     }

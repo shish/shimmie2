@@ -22,5 +22,5 @@ class RatingsInfo extends ExtensionInfo
       <li>rating=sq -- safe and questionable images
     </ul>
 </ul>";
-    public $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
+    //public $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 }
