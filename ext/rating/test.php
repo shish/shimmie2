@@ -29,6 +29,8 @@ class RatingsTest extends ShimmiePHPUnitTestCase
 
     public function testRatingExplicit()
     {
+        global $config;
+        $config->set_array("ext_rating_anonymous_privs", ["s", "q"]);
         $this->log_in_as_user();
         $image_id = $this->post_image("tests/pbx_screenshot.jpg", "pbx");
         $image = Image::by_id($image_id);

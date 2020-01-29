@@ -225,14 +225,14 @@ class Ratings extends Extension
     {
         global $user;
 
-        if (is_null($event->term)) {
-            return;
-        }
-
         $matches = [];
         if (is_null($event->term) && $this->no_rating_query($event->context)) {
             $set = Ratings::privs_to_sql(Ratings::get_user_default_ratings($user));
             $event->add_querylet(new Querylet("rating IN ($set)"));
+        }
+
+        if (is_null($event->term)) {
+            return;
         }
 
         if (preg_match($this->search_regexp, strtolower($event->term), $matches)) {
@@ -419,7 +419,6 @@ class Ratings extends Extension
         });
         return $ratings;
     }
-
 
     public static function get_user_class_privs(User $user): array
     {
