@@ -59,6 +59,9 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
 
         $this->assertTrue(bool_escape(1));
         $this->assertFalse(bool_escape(0));
+
+        $this->assertTrue(bool_escape("1"));
+        $this->assertFalse(bool_escape("0"));
     }
 
     public function test_clamp()
