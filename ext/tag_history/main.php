@@ -30,7 +30,7 @@ class TagHistory extends Extension
             // this is a request to revert to a previous version of the tags
             if ($user->can(Permissions::EDIT_IMAGE_TAG)) {
                 if (isset($_POST['revert'])) {
-                    $this->process_revert_request($_POST['revert']);
+                    $this->process_revert_request((int)$_POST['revert']);
                 }
             }
         } elseif ($event->page_matches("tag_history/bulk_revert")) {
@@ -151,7 +151,7 @@ class TagHistory extends Extension
         }
 
         // lets get the values out of the result
-        $stored_image_id = int_escape($result['image_id']);
+        $stored_image_id = (int)$result['image_id'];
         $stored_tags = $result['tags'];
 
         $image = Image::by_id($stored_image_id);
