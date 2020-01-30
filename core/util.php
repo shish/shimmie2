@@ -628,6 +628,12 @@ function _decaret(string $str): string
             if ($str[$i] == "b") {
                 $out .= "\\";
             }
+            if ($str[$i] == "q") {
+                $out .= "?";
+            }
+            if ($str[$i] == "a") {
+                $out .= "&";
+            }
         } else {
             $out .= $str[$i];
         }

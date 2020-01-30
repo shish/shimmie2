@@ -473,6 +473,8 @@ function url_escape(?string $input): string
     $input = str_replace('^', '^^', $input);
     $input = str_replace('/', '^s', $input);
     $input = str_replace('\\', '^b', $input);
+    $input = str_replace('?', '^q', $input);
+    $input = str_replace('&', '^a', $input);
     $input = rawurlencode($input);
     return $input;
 }
