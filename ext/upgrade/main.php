@@ -20,7 +20,7 @@ class Upgrade extends Extension
     {
         global $config, $database;
 
-        if (!is_numeric($config->get_string("db_version"))) {
+        if ($config->get_int("db_version") < 1) {
             $this->set_version("db_version", 2);
         }
 
