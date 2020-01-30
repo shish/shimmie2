@@ -19,7 +19,7 @@ class ViewImage extends Extension
             $image_id = int_escape($event->get_arg(0));
 
             if (isset($_GET['search'])) {
-                $search_terms = explode(' ', $_GET['search']);
+                $search_terms = Tag::explode(Tag::decaret($_GET['search']));
                 $query = "#search=".url_escape($_GET['search']);
             } else {
                 $search_terms = [];

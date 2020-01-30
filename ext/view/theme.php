@@ -38,7 +38,7 @@ class ViewImageTheme extends Themelet
     protected function build_pin(Image $image)
     {
         if (isset($_GET['search'])) {
-            $query = "search=".url_escape($_GET['search']);
+            $query = "search=".url_escape(Tag::caret($_GET['search']));
         } else {
             $query = null;
         }

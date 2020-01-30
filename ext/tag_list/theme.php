@@ -305,9 +305,9 @@ class TagListTheme extends Themelet
         }
     }
 
-    protected function tag_link(string $tag): string
+    public function tag_link(string $tag): string
     {
-        $u_tag = url_escape($tag);
+        $u_tag = url_escape(Tag::caret($tag));
         return make_link("post/list/$u_tag/1");
     }
 }

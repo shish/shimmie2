@@ -163,12 +163,6 @@ class TagList extends Extension
         $event->panel->add_block($sb);
     }
 
-    private function tag_link(string $tag): string
-    {
-        $u_tag = url_escape($tag);
-        return make_link("post/list/$u_tag/1");
-    }
-
     /**
      * Get the minimum number of times a tag needs to be used
      * in order to be considered in the tag list.
@@ -297,7 +291,7 @@ class TagList extends Extension
         foreach ($tag_data as $row) {
             $h_tag = html_escape($row['tag']);
             $size = sprintf("%.2f", (float)$row['scaled']);
-            $link = $this->tag_link($row['tag']);
+            $link = $this->theme->tag_link($row['tag']);
             if ($size<0.5) {
                 $size = 0.5;
             }
@@ -363,7 +357,7 @@ class TagList extends Extension
                 $h_lastLetter = html_escape($lastLetter);
                 $html .= "<p>$h_lastLetter<br>";
             }
-            $link = $this->tag_link($tag);
+            $link = $this->theme->tag_link($tag);
             $h_tag = html_escape($tag);
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
         }
@@ -410,7 +404,7 @@ class TagList extends Extension
                 $lastLog = $scaled;
                 $html .= "<p>$lastLog<br>";
             }
-            $link = $this->tag_link($row['tag']);
+            $link = $this->theme->tag_link($row['tag']);
             $html .= "<a href='$link'>$h_tag&nbsp;($count)</a>\n";
         }
 
