@@ -42,6 +42,24 @@ class IndexTest extends ShimmiePHPUnitTestCase
         $this->assert_response(200);
     }
 
+    public function testWeirdTags()
+    {
+        $this->log_in_as_user();
+        $image_id_1 = $this->post_image("tests/pbx_screenshot.jpg", "question? colon:thing exclamation!");
+
+        $this->assert_search_results(["question?"], [$image_id_1]);
+        $page = $this->get_page('post/list/question?/1');
+        $this->assertEquals("/post/view/$image_id_1", $page->redirect);
+
+        $this->assert_search_results(["colon:thing"], [$image_id_1]);
+        $page = $this->get_page('post/list/colon:thing/1');
+        $this->assertEquals("/post/view/$image_id_1", $page->redirect);
+
+        $this->assert_search_results(["exclamation!"], [$image_id_1]);
+        $page = $this->get_page('post/list/exclamation!/1');
+        $this->assertEquals("/post/view/$image_id_1", $page->redirect);
+    }
+
     // base case
     public function testUpload()
     {
