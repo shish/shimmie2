@@ -18,6 +18,8 @@ class Approval extends Extension
 
         $config->set_default_bool(ApprovalConfig::IMAGES, false);
         $config->set_default_bool(ApprovalConfig::COMMENTS, false);
+
+        Image::$bool_props[] = "approved";
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -77,17 +79,16 @@ class Approval extends Extension
                 case "approve_all":
                     $database->set_timeout(300000); // These updates can take a little bit
                     $database->execute(
-                        $database->scoreql_to_sql(
-                            "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE approved = SCORE_BOOL_N"
-                        ),
-                        ["approved_by_id"=>$user->id]
+                        "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE approved = :false",
+                        ["approved_by_id"=>$user->id, "true"=>true, "false"=>false]
                     );
                     break;
                 case "disapprove_all":
                     $database->set_timeout(300000); // These updates can take a little bit
-                    $database->execute($database->scoreql_to_sql(
-                        "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE approved = SCORE_BOOL_Y"
-                    ));
+                    $database->execute(
+                        "UPDATE images SET approved = :false, approved_by_id = NULL WHERE approved = :true",
+                        ["true"=>true, "false"=>false]
+                    );
                     break;
                 default:
 
@@ -171,10 +172,8 @@ class Approval extends Extension
         global $database, $user;
 
         $database->execute(
-            $database->scoreql_to_sql(
-                "UPDATE images SET approved = SCORE_BOOL_Y, approved_by_id = :approved_by_id WHERE id = :id AND approved = SCORE_BOOL_N"
-            ),
-            ["approved_by_id"=>$user->id, "id"=>$image_id]
+            "UPDATE images SET approved = :true, approved_by_id = :approved_by_id WHERE id = :id AND approved = :false",
+            ["approved_by_id"=>$user->id, "id"=>$image_id, "true"=>true, "false"=>false]
         );
     }
 
@@ -183,10 +182,8 @@ class Approval extends Extension
         global $database;
 
         $database->execute(
-            $database->scoreql_to_sql(
-                "UPDATE images SET approved = SCORE_BOOL_N, approved_by_id = NULL WHERE id = :id AND approved = SCORE_BOOL_Y"
-            ),
-            ["id"=>$image_id]
+            "UPDATE images SET approved = :false, approved_by_id = NULL WHERE id = :id AND approved = :true",
+            ["id"=>$image_id, "true"=>true, "false"=>false]
         );
     }
 
@@ -244,14 +241,14 @@ class Approval extends Extension
         global $database;
 
         if ($this->get_version(ApprovalConfig::VERSION) < 1) {
-            $database->Execute($database->scoreql_to_sql(
+            $database->execute($database->scoreql_to_sql(
                 "ALTER TABLE images ADD COLUMN approved SCORE_BOOL NOT NULL DEFAULT SCORE_BOOL_N"
             ));
-            $database->Execute($database->scoreql_to_sql(
+            $database->execute(
                 "ALTER TABLE images ADD COLUMN approved_by_id INTEGER NULL"
-            ));
+            );
 
-            $database->Execute("CREATE INDEX images_approved_idx ON images(approved)");
+            $database->execute("CREATE INDEX images_approved_idx ON images(approved)");
             $this->set_version(ApprovalConfig::VERSION, 1);
         }
     }

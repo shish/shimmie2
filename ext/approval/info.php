@@ -9,5 +9,4 @@ class ApprovalInfo extends ExtensionInfo
     public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
     public $license = self::LICENSE_WTFPL;
     public $description = "Adds an approval step to the upload/import process.";
-    public $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 }
