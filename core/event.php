@@ -72,16 +72,6 @@ class PageRequestEvent extends Event
         // break the path into parts
         $args = explode('/', $path);
 
-        // voodoo so that an arg can contain a slash; is
-        // this still needed?
-        if (strpos($path, "^") !== false) {
-            $unescaped = [];
-            foreach ($args as $part) {
-                $unescaped[] = _decaret($part);
-            }
-            $args = $unescaped;
-        }
-
         $this->args = $args;
         $this->arg_count = count($args);
     }
@@ -152,7 +142,7 @@ class PageRequestEvent extends Event
     {
         $search_terms = [];
         if ($this->count_args() === 2) {
-            $search_terms = Tag::explode($this->get_arg(0));
+            $search_terms = Tag::explode(Tag::decaret($this->get_arg(0)));
         }
         return $search_terms;
     }

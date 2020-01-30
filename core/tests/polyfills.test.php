@@ -30,7 +30,7 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
 
     public function test_url_escape()
     {
-        $this->assertEquals(url_escape("^\o/^"), "%5E%5E%5Ebo%5Es%5E%5E");
+        $this->assertEquals(url_escape("^\o/^"), "%5E%5Co%2F%5E");
         $this->assertEquals(url_escape(null), "");
     }
 

@@ -606,41 +606,6 @@ function _fatal_error(Exception $e): void
     }
 }
 
-/**
- * Turn ^^ into ^ and ^s into /
- *
- * Necessary because various servers and various clients
- * think that / is special...
- */
-function _decaret(string $str): string
-{
-    $out = "";
-    $length = strlen($str);
-    for ($i=0; $i<$length; $i++) {
-        if ($str[$i] == "^") {
-            $i++;
-            if ($str[$i] == "^") {
-                $out .= "^";
-            }
-            if ($str[$i] == "s") {
-                $out .= "/";
-            }
-            if ($str[$i] == "b") {
-                $out .= "\\";
-            }
-            if ($str[$i] == "q") {
-                $out .= "?";
-            }
-            if ($str[$i] == "a") {
-                $out .= "&";
-            }
-        } else {
-            $out .= $str[$i];
-        }
-    }
-    return $out;
-}
-
 function _get_user(): User
 {
     global $config, $page;
