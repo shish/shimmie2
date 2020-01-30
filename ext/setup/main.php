@@ -404,6 +404,28 @@ class Setup extends Extension
         log_warning("setup", "Cache cleared");
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tconfig [get|set] <args>\n";
+            print "\t\teg 'config get db_version'\n\n";
+        }
+        if ($event->cmd == "config") {
+            global $cache, $config;
+            $cmd = $event->args[0];
+            $key = $event->args[1];
+            switch ($cmd) {
+                case "get":
+                    print($config->get_string($key) . "\n");
+                    break;
+                case "set":
+                    $config->set_string($key, $event->args[2]);
+                    break;
+            }
+            $cache->delete("config");
+        }
+    }
+
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         global $user;
