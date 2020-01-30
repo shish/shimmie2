@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 chdir(dirname(dirname(__FILE__)));
 require_once "vendor/autoload.php";
 require_once "tests/defines.php";
@@ -67,7 +67,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
             self::log_out();
 
             foreach ($database->get_col("SELECT id FROM images") as $image_id) {
-                send_event(new ImageDeletionEvent(Image::by_id($image_id)));
+                send_event(new ImageDeletionEvent(Image::by_id((int)$image_id), true));
             }
         }
 

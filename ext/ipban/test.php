@@ -26,7 +26,7 @@ class IPBanTest extends ShimmiePHPUnitTestCase
             '42.42.42.42',
             'block',
             'unit testing',
-            '2099-01-01'
+            '2030-01-01'
         ));
 
         // Check added

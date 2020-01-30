@@ -768,14 +768,6 @@ function create_tables(Database $db)
 		    <p>{$e->getMessage()}</p>",
             3
         );
-    } catch (Exception $e) {
-        throw new InstallerException(
-            "Unknown Error:",
-            "<p>An unknown error occurred while trying to insert data into the database.</p>
-		    <p>Please check the server log files for more information.</p>
-		    <p>{$e->getMessage()}</p>",
-            4
-        );
     }
 }
 

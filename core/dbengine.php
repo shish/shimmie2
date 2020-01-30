@@ -66,7 +66,7 @@ class MySQL extends DBEngine
     public function set_timeout(PDO $db, int $time): void
     {
         // These only apply to read-only queries, which appears to be the best we can to mysql-wise
-        $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
+        // $db->exec("SET SESSION MAX_EXECUTION_TIME=".$time.";");
     }
 }
 

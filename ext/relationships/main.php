@@ -193,12 +193,14 @@ class Relationships extends Extension
         //	   WHERE id = :pid
         // ", ["pid"=>$parentID]);
 
+        $children = $database->get_one(
+            "SELECT COUNT(*) FROM images WHERE parent_id=:pid",
+            ["pid"=>$parent_id]
+        );
         $database->execute(
             "UPDATE images
-            SET has_children = EXISTS (
-                SELECT 1 FROM images WHERE parent_id = :pid
-            ) WHERE id = :pid",
-            ["pid"=>$parent_id]
+            SET has_children = :has_children WHERE id = :pid",
+            ["has_children"=>$database->scoresql_value_prepare($children>0), "pid"=>$parent_id]
         );
     }
 }
