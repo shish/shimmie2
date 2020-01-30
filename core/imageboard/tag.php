@@ -110,7 +110,6 @@ class Tag
         natcasesort($tags1);
         natcasesort($tags2);
 
-
         for ($i = 0; $i < count($tags1); $i++) {
             if ($tags1[$i]!==$tags2[$i]) {
                 var_dump($tags1);
@@ -163,7 +162,7 @@ class Tag
         $term = str_replace('_', '\_', $term);
         $term = str_replace('%', '\%', $term);
         $term = str_replace('*', '%', $term);
-        $term = str_replace("?", "_", $term);
+        // $term = str_replace("?", "_", $term);
         return $term;
     }
 }
