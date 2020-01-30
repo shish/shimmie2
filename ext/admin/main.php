@@ -74,6 +74,8 @@ class AdminPage extends Extension
             print "\t\tget a CSRF auth token\n\n";
             print "\tregen-thumb <id / hash>\n";
             print "\t\tregenerate a thumbnail\n\n";
+            print "\tcache [get|set|del] [key] <value>\n";
+            print "\t\teg 'cache get config'\n\n";
         }
         if ($event->cmd == "get-page") {
             global $page;
@@ -103,6 +105,22 @@ class AdminPage extends Extension
                 send_event(new ThumbnailGenerationEvent($image->hash, $image->ext, true));
             } else {
                 print("No post with ID '$uid'\n");
+            }
+        }
+        if ($event->cmd == "cache") {
+            global $cache;
+            $cmd = $event->args[0];
+            $key = $event->args[1];
+            switch ($cmd) {
+                case "get":
+                    var_dump($cache->get($key));
+                    break;
+                case "set":
+                    $cache->set($key, $event->args[2], 60);
+                    break;
+                case "del":
+                    $cache->delete($key);
+                    break;
             }
         }
     }
