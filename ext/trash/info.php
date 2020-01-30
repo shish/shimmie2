@@ -9,5 +9,4 @@ class TrashInfo extends ExtensionInfo
     public $authors = ["Matthew Barbour"=>"matthew@darkholme.net"];
     public $license = self::LICENSE_WTFPL;
     public $description = "Provides \"Trash\" or \"Recycle Bin\"-type functionality, storing delete images for later recovery";
-    public $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::PGSQL];
 }

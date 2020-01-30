@@ -13,6 +13,11 @@ class Trash extends Extension
         return 10;
     }
 
+    public function onInitExt(InitExtEvent $event)
+    {
+        Image::$bool_props[] = "trash";
+    }
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;
@@ -61,7 +66,6 @@ class Trash extends Extension
         }
     }
 
-
     const SEARCH_REGEXP = "/^in:trash$/";
     public function onSearchTermParse(SearchTermParseEvent $event)
     {
@@ -95,7 +99,6 @@ class Trash extends Extension
             }
         }
     }
-
 
     private function no_trash_query(array $context): bool
     {

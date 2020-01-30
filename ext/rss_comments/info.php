@@ -10,5 +10,4 @@ class RSSCommentsInfo extends ExtensionInfo
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;
     public $description = "Self explanatory";
-    public $db_support = [DatabaseDriver::MYSQL, DatabaseDriver::SQLITE];  // pgsql has no UNIX_TIMESTAMP
 }
