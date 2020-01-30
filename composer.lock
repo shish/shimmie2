@@ -11,7 +11,7 @@
             "version": "1.12.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/jquery/jquery-dist.git",
+                "url": "git@github.com:jquery/jquery-dist.git",
                 "reference": "5e89585e0121e72ff47de177c5ef604f3089a53d"
             },
             "dist": {
@@ -392,12 +392,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shish/microcrud.git",
-                "reference": "bda8a0f0d1308d3312504cef7ffef8960a96fd3a"
+                "reference": "1a95d4ea8121ec6a7d5f17440ffb328e2c1f4c32"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shish/microcrud/zipball/bda8a0f0d1308d3312504cef7ffef8960a96fd3a",
-                "reference": "bda8a0f0d1308d3312504cef7ffef8960a96fd3a",
+                "url": "https://api.github.com/repos/shish/microcrud/zipball/1a95d4ea8121ec6a7d5f17440ffb328e2c1f4c32",
+                "reference": "1a95d4ea8121ec6a7d5f17440ffb328e2c1f4c32",
                 "shasum": ""
             },
             "require": {
@@ -433,7 +433,7 @@
                 "crud",
                 "generator"
             ],
-            "time": "2020-01-01T22:01:28+00:00"
+            "time": "2020-01-30T22:51:16+00:00"
         },
         {
             "name": "shish/microhtml",
@@ -751,12 +751,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpDocumentor/ReflectionDocBlock.git",
-                "reference": "31fd6db84fdf3a8b003ab88d70345dd812a38d8d"
+                "reference": "93919e334b0cb304fb04429b4b3a3b1e1787c873"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/31fd6db84fdf3a8b003ab88d70345dd812a38d8d",
-                "reference": "31fd6db84fdf3a8b003ab88d70345dd812a38d8d",
+                "url": "https://api.github.com/repos/phpDocumentor/ReflectionDocBlock/zipball/93919e334b0cb304fb04429b4b3a3b1e1787c873",
+                "reference": "93919e334b0cb304fb04429b4b3a3b1e1787c873",
                 "shasum": ""
             },
             "require": {
@@ -796,7 +796,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2020-01-25T14:52:34+00:00"
+            "time": "2020-01-27T20:01:09+00:00"
         },
         {
             "name": "phpdocumentor/type-resolver",
