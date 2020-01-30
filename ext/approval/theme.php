@@ -9,13 +9,13 @@ class ApprovalTheme extends Themelet
     {
         if ($image->approved===true) {
             $html = SHM_SIMPLE_FORM(
-                make_link('disapprove_image/'.$image->id),
+                'disapprove_image/'.$image->id,
                 INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
                 SHM_SUBMIT("Disapprove")
             );
         } else {
             $html = SHM_SIMPLE_FORM(
-                make_link('approve_image/'.$image->id),
+                'approve_image/'.$image->id,
                 INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image->id]),
                 SHM_SUBMIT("Approve")
             );
@@ -51,7 +51,7 @@ class ApprovalTheme extends Themelet
         global $page;
 
         $html = (string)SHM_SIMPLE_FORM(
-            make_link("admin/approval"),
+            "admin/approval",
             BUTTON(["name"=>'approval_action', "value"=>'approve_all'], "Approve All Images"),
             BR(),
             BUTTON(["name"=>'approval_action', "value"=>'disapprove_all'], "Disapprove All Images"),

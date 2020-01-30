@@ -20,7 +20,7 @@ class ImageBanTheme extends Themelet
     public function get_buttons_html(Image $image)
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("image_hash_ban/add"),
+            "image_hash_ban/add",
             INPUT(["type"=>'hidden', "name"=>'c_hash', "value"=>$image->hash]),
             INPUT(["type"=>'hidden', "name"=>'c_image_id', "value"=>$image->id]),
             INPUT(["type"=>'text', "name"=>'c_reason']),

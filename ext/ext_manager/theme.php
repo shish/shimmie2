@@ -27,7 +27,7 @@ class ExtManagerTheme extends Themelet
         $tbody = TBODY();
 
         $form = SHM_SIMPLE_FORM(
-            make_link("ext_manager/set"),
+            "ext_manager/set",
             TABLE(
                 ["id"=>'extensions', "class"=>'zebra sortable'],
                 THEAD(TR(

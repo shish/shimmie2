@@ -934,7 +934,7 @@ function SHM_USER_FORM(User $duser, string $target, string $title, $body, $foot)
         $foot = TFOOT(TR(TD(["colspan"=>"2"], INPUT(["type"=>"submit", "value"=>$foot]))));
     }
     return SHM_SIMPLE_FORM(
-        make_link($target),
+        $target,
         P(
             INPUT(["type"=>'hidden', "name"=>'id', "value"=>$duser->id]),
             TABLE(

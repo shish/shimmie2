@@ -9,7 +9,7 @@ class RotateImageTheme extends Themelet
     public function get_rotate_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link('rotate/'.$image_id),
+            'rotate/'.$image_id,
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             INPUT(["type"=>'number', "name"=>'rotate_deg', "id"=>"rotate_deg", "placeholder"=>"Rotation degrees"]),
             INPUT(["type"=>'submit', "value"=>'Rotate', "id"=>"rotatebutton"]),

@@ -11,7 +11,7 @@ class FeaturedTheme extends Themelet
     public function get_buttons_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("featured_image/set"),
+            "featured_image/set",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             INPUT(["type"=>'submit', "value"=>'Feature This']),
         );

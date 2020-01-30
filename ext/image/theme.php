@@ -10,7 +10,7 @@ class ImageIOTheme extends Themelet
     public function get_deleter_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("image/delete"),
+            "image/delete",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             INPUT(["type"=>'submit', "value"=>'Delete', "onclick"=>'return confirm("Delete the image?");']),
         );
@@ -22,7 +22,7 @@ class ImageIOTheme extends Themelet
     public function get_replace_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("image/replace"),
+            "image/replace",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             INPUT(["type"=>'submit', "value"=>'Replace']),
         );

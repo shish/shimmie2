@@ -6,7 +6,7 @@ class TrashTheme extends Themelet
     public function get_image_admin_html(int $image_id)
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link('trash_restore/'.$image_id),
+            'trash_restore/'.$image_id,
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             INPUT(["type"=>'submit', "value"=>'Restore From Trash']),
         );

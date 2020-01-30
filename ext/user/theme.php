@@ -64,7 +64,7 @@ class UserPageTheme extends Themelet
         }
 
         $form = SHM_SIMPLE_FORM(
-            make_link("user_admin/create"),
+            "user_admin/create",
             TABLE(
                 ["class"=>"form"],
                 TBODY(
@@ -120,7 +120,7 @@ class UserPageTheme extends Themelet
     {
         global $config, $user;
         $form = SHM_SIMPLE_FORM(
-            make_link("user_admin/login"),
+            "user_admin/login",
             TABLE(
                 ["style"=>"width: 100%", "class"=>"form"],
                 TBODY(

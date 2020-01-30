@@ -20,7 +20,7 @@ class MediaTheme extends Themelet
         }
 
         $html = (string)SHM_SIMPLE_FORM(
-            make_link("admin/media_rescan"),
+            "admin/media_rescan",
             "Use this to force scanning for media properties.",
             TABLE(
                 ["class"=>"form"],
@@ -34,7 +34,7 @@ class MediaTheme extends Themelet
     public function get_buttons_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("media_rescan/"),
+            "media_rescan/",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             SHM_SUBMIT('Scan Media Properties'),
         );

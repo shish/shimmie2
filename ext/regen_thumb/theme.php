@@ -9,7 +9,7 @@ class RegenThumbTheme extends Themelet
     public function get_buttons_html(int $image_id): string
     {
         return (string)SHM_SIMPLE_FORM(
-            make_link("regen_thumb/one"),
+            "regen_thumb/one",
             INPUT(["type"=>'hidden', "name"=>'image_id', "value"=>$image_id]),
             SHM_SUBMIT('Regenerate Thumbnail')
         );
