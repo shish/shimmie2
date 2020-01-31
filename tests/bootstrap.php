@@ -44,7 +44,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     {
         parent::setUpBeforeClass();
         global $_tracer;
-        $_tracer->begin("Test Class");
+        $_tracer->begin(get_called_class());
 
         self::create_user(self::$admin_name);
         self::create_user(self::$user_name);
