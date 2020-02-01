@@ -196,7 +196,9 @@ class TagEdit extends Extension
         if ($user->can(Permissions::EDIT_IMAGE_TAG) && (!$event->image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK))) {
             $event->image->set_tags($event->tags);
         }
-        $event->image->parse_metatags($event->metatags, $event->image->id);
+        foreach ($event->metatags as $tag) {
+            send_event(new TagTermParseEvent($tag, $event->image->id));
+        }
     }
 
     public function onSourceSet(SourceSetEvent $event)

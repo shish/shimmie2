@@ -736,18 +736,6 @@ class Image
     }
 
     /**
-     * Send list of metatags to be parsed.
-     *
-     * #param string[] $metatags
-     */
-    public function parse_metatags(array $metatags, int $image_id): void
-    {
-        foreach ($metatags as $tag) {
-            send_event(new TagTermParseEvent($tag, $image_id, true));
-        }
-    }
-
-    /**
      * Delete this image from the database and disk
      */
     public function delete(): void
