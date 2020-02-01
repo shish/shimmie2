@@ -324,13 +324,12 @@ class LogEvent extends Event
      */
     public $args;
 
-    public function __construct(string $section, int $priority, string $message, array $args)
+    public function __construct(string $section, int $priority, string $message)
     {
         parent::__construct();
         $this->section = $section;
         $this->priority = $priority;
         $this->message = $message;
-        $this->args = $args;
         $this->time = time();
     }
 }

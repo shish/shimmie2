@@ -17,10 +17,10 @@ define("SCORE_LOG_NOTSET", 0);
  * When taking action, a log event should be stored by the server
  * Quite often, both of these happen at once, hence log_*() having $flash
  */
-function log_msg(string $section, int $priority, string $message, ?string $flash=null, $args=[])
+function log_msg(string $section, int $priority, string $message, ?string $flash=null)
 {
     global $page;
-    send_event(new LogEvent($section, $priority, $message, $args));
+    send_event(new LogEvent($section, $priority, $message));
     $threshold = defined("CLI_LOG_LEVEL") ? CLI_LOG_LEVEL : 0;
 
     if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ($priority >= $threshold)) {
@@ -32,25 +32,25 @@ function log_msg(string $section, int $priority, string $message, ?string $flash
 }
 
 // More shorthand ways of logging
-function log_debug(string $section, string $message, ?string $flash=null, $args=[])
+function log_debug(string $section, string $message, ?string $flash=null)
 {
-    log_msg($section, SCORE_LOG_DEBUG, $message, $flash, $args);
+    log_msg($section, SCORE_LOG_DEBUG, $message, $flash);
 }
-function log_info(string $section, string $message, ?string $flash=null, $args=[])
+function log_info(string $section, string $message, ?string $flash=null)
 {
-    log_msg($section, SCORE_LOG_INFO, $message, $flash, $args);
+    log_msg($section, SCORE_LOG_INFO, $message, $flash);
 }
-function log_warning(string $section, string $message, ?string $flash=null, $args=[])
+function log_warning(string $section, string $message, ?string $flash=null)
 {
-    log_msg($section, SCORE_LOG_WARNING, $message, $flash, $args);
+    log_msg($section, SCORE_LOG_WARNING, $message, $flash);
 }
-function log_error(string $section, string $message, ?string $flash=null, $args=[])
+function log_error(string $section, string $message, ?string $flash=null)
 {
-    log_msg($section, SCORE_LOG_ERROR, $message, $flash, $args);
+    log_msg($section, SCORE_LOG_ERROR, $message, $flash);
 }
-function log_critical(string $section, string $message, ?string $flash=null, $args=[])
+function log_critical(string $section, string $message, ?string $flash=null)
 {
-    log_msg($section, SCORE_LOG_CRITICAL, $message, $flash, $args);
+    log_msg($section, SCORE_LOG_CRITICAL, $message, $flash);
 }
 
 

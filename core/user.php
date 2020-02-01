@@ -121,7 +121,7 @@ class User
         if (!$my_user && strpos($name, " ") !== false) {
             $my_user = User::by_name(str_replace(" ", "_", $name));
         }
-        
+
         if ($my_user) {
             if ($my_user->passhash == md5(strtolower($name) . $pass)) {
                 log_info("core-user", "Migrating from md5 to bcrypt for $name");

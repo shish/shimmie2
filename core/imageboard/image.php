@@ -360,7 +360,7 @@ class Image
 				SET owner_id=:owner_id
 				WHERE id=:id
 			", ["owner_id"=>$owner->id, "id"=>$this->id]);
-            log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}", null, ["image_id" => $this->id]);
+            log_info("core_image", "Owner for Image #{$this->id} set to {$owner->name}");
         }
     }
 
@@ -592,7 +592,7 @@ class Image
         }
         if ($new_source != $old_source) {
             $database->execute("UPDATE images SET source=:source WHERE id=:id", ["source"=>$new_source, "id"=>$this->id]);
-            log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)", null, ["image_id" => $this->id]);
+            log_info("core_image", "Source for Image #{$this->id} set to: $new_source (was $old_source)");
         }
     }
 
@@ -613,7 +613,7 @@ class Image
         $sln = str_replace('"', "", $sln);
         if (bool_escape($sln) !== $this->locked) {
             $database->execute("UPDATE images SET locked=:yn WHERE id=:id", ["yn"=>$sln, "id"=>$this->id]);
-            log_info("core_image", "Setting Image #{$this->id} lock to: $ln", null, ["image_id" => $this->id]);
+            log_info("core_image", "Setting Image #{$this->id} lock to: $ln");
         }
     }
 
@@ -732,7 +732,7 @@ class Image
                 );
             }
 
-            log_info("core_image", "Tags for Image #{$this->id} set to: ".Tag::implode($tags), null, ["image_id" => $this->id]);
+            log_info("core_image", "Tags for Image #{$this->id} set to: ".Tag::implode($tags));
             $cache->delete("image-{$this->id}-tags");
         }
     }
@@ -757,7 +757,7 @@ class Image
         global $database;
         $this->delete_tags_from_image();
         $database->execute("DELETE FROM images WHERE id=:id", ["id"=>$this->id]);
-        log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')', null, ["image_id" => $this->id]);
+        log_info("core_image", 'Deleted Image #'.$this->id.' ('.$this->hash.')');
 
         unlink($this->get_image_filename());
         unlink($this->get_thumb_filename());
@@ -769,7 +769,7 @@ class Image
      */
     public function remove_image_only(): void
     {
-        log_info("core_image", 'Removed Image File ('.$this->hash.')', null, ["image_id" => $this->id]);
+        log_info("core_image", 'Removed Image File ('.$this->hash.')');
         @unlink($this->get_image_filename());
         @unlink($this->get_thumb_filename());
     }

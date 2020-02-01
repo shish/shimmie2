@@ -15,7 +15,6 @@ class LogLogstash extends Extension
                     "section" => $event->section,
                     "priority" => $event->priority,
                     "time" => $event->time,
-                    "args" => $event->args,
                 ],
                 #"@request" => $_SERVER,
                 "@request" => [
@@ -42,7 +41,7 @@ class LogLogstash extends Extension
         try {
             $parts = explode(":", $host);
             $host = $parts[0];
-            $port = $parts[1];
+            $port = (int)$parts[1];
             $fp = fsockopen("udp://$host", $port, $errno, $errstr);
             if (! $fp) {
                 return;

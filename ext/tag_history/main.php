@@ -353,9 +353,9 @@ class TagHistory extends Extension
 
         if (empty($old_tags)) {
             /* no old tags, so we are probably adding the image for the first time */
-            log_debug("tag_history", "adding new tag history: [$new_tags]", null, ["image_id" => $image->id]);
+            log_debug("tag_history", "adding new tag history: [$new_tags]");
         } else {
-            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]", null, ["image_id" => $image->id]);
+            log_debug("tag_history", "adding tag history: [$old_tags] -> [$new_tags]");
         }
 
         $allowed = $config->get_int("history_limit");
