@@ -58,6 +58,7 @@ class Page extends BasePage
         $self = _get_query();
 
         # $header_html_thing = file_get_contents("themes/rule34v2/header.inc");
+        $footer_html = $this->footer_html();
         print <<<EOD
 <!DOCTYPE html>
 <html>
@@ -100,7 +101,8 @@ EOD;
 
 		<article>
 			$flash_html
-			<!-- <h2>Database reboot will be happening in a bit, expect a few minutes of downtime~</h2> -->
+			<!-- <h2>Database reboot will be happening in a bit, expect a few minutes of downtime~</h2>
+ -->
 			$main_block_html
 		</article>
 
@@ -113,16 +115,9 @@ ETH: <b>0x68B88a00e69Bde88E9db1b9fC10b8011226e26aF</b></font>
 <br>
 Thank you!
 
-			Images &copy; their respective owners,
-			<a href="http://code.shishnet.org/shimmie2/">Shimmie</a> &copy;
-			<a href="http://www.shishnet.org/">Shish</a> &amp;
-			<a href="https://github.com/shish/shimmie2/contributors">The Team</a>
-			2007-2020,
-			based on the Danbooru concept.
-			$debug
-			$contact
+			$footer_html
 		</footer>
-		
+
 		<!-- BEGIN EroAdvertising ADSPACE CODE -->
 <!--<script type="text/javascript" language="javascript" charset="utf-8" src="https://adspaces.ero-advertising.com/adspace/158168.js"></script>-->
 <!-- END EroAdvertising ADSPACE CODE -->
