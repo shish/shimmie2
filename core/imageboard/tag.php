@@ -180,7 +180,7 @@ class Tag
             "&" => "a",
         ];
 
-        foreach($to_caret as $from => $to) {
+        foreach ($to_caret as $from => $to) {
             $input = str_replace($from, '^' . $to, $input);
         }
         return $input;
