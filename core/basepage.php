@@ -368,8 +368,7 @@ class BasePage
                     header('Content-Disposition: ' . $this->disposition . '; filename=' . $this->filename);
                 }
 
-                //https://gist.github.com/codler/3906826
-
+                // https://gist.github.com/codler/3906826
                 $size = filesize($this->file); // File size
                 $length = $size;           // Content length
                 $start = 0;               // Start byte
@@ -379,7 +378,6 @@ class BasePage
                 header('Accept-Ranges: bytes');
 
                 if (isset($_SERVER['HTTP_RANGE'])) {
-                    $c_end = $end;
                     list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                     if (strpos($range, ',') !== false) {
                         header('HTTP/1.1 416 Requested Range Not Satisfiable');
@@ -388,6 +386,7 @@ class BasePage
                     }
                     if ($range == '-') {
                         $c_start = $size - (int)substr($range, 1);
+                        $c_end = $end;
                     } else {
                         $range = explode('-', $range);
                         $c_start = (int)$range[0];
@@ -407,29 +406,7 @@ class BasePage
                 header("Content-Range: bytes $start-$end/$size");
                 header("Content-Length: " . $length);
 
-
-                $fp = fopen($this->file, 'r');
-                try {
-                    fseek($fp, $start);
-                    $buffer = 1024 * 64;
-                    while (!feof($fp) && ($p = ftell($fp)) <= $end) {
-                        if ($p + $buffer > $end) {
-                            $buffer = $end - $p + 1;
-                        }
-                        set_time_limit(0);
-                        echo fread($fp, $buffer);
-                        flush();
-
-                        // After flush, we can tell if the client browser has disconnected.
-                        // This means we can start sending a large file, and if we detect they disappeared
-                        // then we can just stop and not waste any more resources or bandwidth.
-                        if (connection_status() != 0) {
-                            break;
-                        }
-                    }
-                } finally {
-                    fclose($fp);
-                }
+                stream_file($this->file, $start, $end);
                 break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
@@ -544,7 +521,8 @@ class BasePage
 EOD;
     }
 
-    protected function head_html(): string {
+    protected function head_html(): string
+    {
         $html_header_html = $this->get_all_html_headers();
 
         return "
@@ -555,7 +533,8 @@ EOD;
         ";
     }
 
-    protected function body_html(): string {
+    protected function body_html(): string
+    {
         $left_block_html = "";
         $main_block_html = "";
         $sub_block_html  = "";
@@ -604,7 +583,8 @@ EOD;
         ";
     }
 
-    protected function footer_html(): string {
+    protected function footer_html(): string
+    {
         $debug = get_debug_info();
         $contact_link = contact_link();
         $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
@@ -711,7 +691,6 @@ class NavLink
 
         return false;
     }
-
 }
 
 function sort_nav_links(NavLink $a, NavLink $b)

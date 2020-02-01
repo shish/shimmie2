@@ -150,6 +150,32 @@ function list_files(string $base, string $_sub_dir=""): array
     return $file_list;
 }
 
+function stream_file(string $file, int $start, int $end): void
+{
+    $fp = fopen($file, 'r');
+    try {
+        set_time_limit(0);
+        fseek($fp, $start);
+        $buffer = 1024 * 64;
+        while (!feof($fp) && ($p = ftell($fp)) <= $end) {
+            if ($p + $buffer > $end) {
+                $buffer = $end - $p + 1;
+            }
+            echo fread($fp, $buffer);
+            flush();
+
+            // After flush, we can tell if the client browser has disconnected.
+            // This means we can start sending a large file, and if we detect they disappeared
+            // then we can just stop and not waste any more resources or bandwidth.
+            if (connection_status() != 0) {
+                break;
+            }
+        }
+    } finally {
+        fclose($fp);
+    }
+}
+
 if (!function_exists('http_parse_headers')) { #http://www.php.net/manual/en/function.http-parse-headers.php#112917
 
     /**

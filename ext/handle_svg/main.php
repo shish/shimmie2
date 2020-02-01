@@ -47,8 +47,11 @@ class SVGFileHandler extends DataHandlerExtension
     {
         try {
             // Normally we require imagemagick, but for unit tests we can use a no-op engine
-            if(defined('UNITTEST')) create_image_thumb($hash, $type);
-            else create_image_thumb($hash, $type, MediaEngine::IMAGICK);
+            if (defined('UNITTEST')) {
+                create_image_thumb($hash, $type);
+            } else {
+                create_image_thumb($hash, $type, MediaEngine::IMAGICK);
+            }
             return true;
         } catch (MediaException $e) {
             log_warning("handle_svg", "Could not generate thumbnail. " . $e->getMessage());

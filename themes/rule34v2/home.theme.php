@@ -34,7 +34,7 @@ class CustomHomeTheme extends HomeTheme
 	</body>
 </html>
 EOD
-);
+        );
     }
 
     public function build_body(string $sitename, string $main_links, string $main_text, string $contact_link, $num_comma, string $counter_text)
