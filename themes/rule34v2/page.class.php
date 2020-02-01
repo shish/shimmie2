@@ -7,7 +7,6 @@ class Page extends BasePage
 
         $theme_name = $config->get_string('theme', 'default');
         $data_href = get_base_href();
-        $contact_link = contact_link();
         $header_html = $this->get_all_html_headers();
 
         $left_block_html = "";
@@ -39,26 +38,10 @@ class Page extends BasePage
             }
         }
 
-        $debug = get_debug_info();
-
-        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
-        $subheading = empty($this->subheading) ? "" : "<div id='subtitle'>{$this->subheading}</div>";
-
-        $wrapper = "";
-        if (strlen($this->heading) > 100) {
-            $wrapper = ' style="height: 3em; overflow: auto;"';
-        }
-
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
-
         $generated = autodate(date('c'));
-        $debug .= "; generated $generated";
-        $query = !empty($this->_search_query) ? html_escape(Tag::implode($this->_search_query)) : "";
-
-        $self = _get_query();
-
-        # $header_html_thing = file_get_contents("themes/rule34v2/header.inc");
         $footer_html = $this->footer_html();
+
         print <<<EOD
 <!DOCTYPE html>
 <html>
@@ -115,13 +98,13 @@ ETH: <b>0x68B88a00e69Bde88E9db1b9fC10b8011226e26aF</b></font>
 <br>
 Thank you!
 
+            Page generated $generated.
 			$footer_html
 		</footer>
 
 		<!-- BEGIN EroAdvertising ADSPACE CODE -->
 <!--<script type="text/javascript" language="javascript" charset="utf-8" src="https://adspaces.ero-advertising.com/adspace/158168.js"></script>-->
 <!-- END EroAdvertising ADSPACE CODE -->
-		<!-- self: $self -->
 	</body>
 </html>
 EOD;
