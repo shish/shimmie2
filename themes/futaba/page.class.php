@@ -8,7 +8,7 @@ class Page extends BasePage
         $this->left_enabled = false;
     }
 
-    public function render($nav_links, $subnav_links)
+    public function render()
     {
         $left_block_html = "";
         $main_block_html = "";

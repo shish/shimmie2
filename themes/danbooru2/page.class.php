@@ -50,9 +50,11 @@ class Page extends BasePage
         $this->left_enabled = false;
     }
 
-    public function render(array $nav_links, array $sub_links)
+    public function render()
     {
         global $config;
+
+        list($nav_links, $sub_links) = $this->get_nav_links();
 
         $left_block_html = "";
         $user_block_html = "";

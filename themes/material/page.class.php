@@ -1,10 +1,11 @@
 <?php declare(strict_types=1);
 class Page extends BasePage
 {
-    public function render($nav_links, $subnav_links)
+    public function render()
     {
         global $config;
 
+        list($nav_links, $sub_links) = $this->get_nav_links();
         $theme_name = $config->get_string(SetupConfig::THEME, 'material');
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();

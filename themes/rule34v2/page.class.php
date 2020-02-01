@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 class Page extends BasePage
 {
-    public function render($nav_links, $subnav_links)
+    public function render()
     {
         global $config;
 

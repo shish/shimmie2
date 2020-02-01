@@ -18,10 +18,11 @@ class Page extends BasePage
         $this->left_enabled = false;
     }
 
-    public function render(array $nav_links, array $sub_links)
+    public function render()
     {
         global $config;
 
+        list($nav_links, $sub_links) = $this->get_nav_links();
         $theme_name = $config->get_string(SetupConfig::THEME, 'lite');
         $site_name = $config->get_string(SetupConfig::TITLE);
         $data_href = get_base_href();

@@ -138,9 +138,6 @@ class BasePage
     /** @var string */
     public $subheading = "";
 
-    /** @var string */
-    public $quicknav = "";
-
     /** @var string[] */
     public $html_headers = [];
 
@@ -312,49 +309,8 @@ class BasePage
                 #	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
                 #}
                 usort($this->blocks, "blockcmp");
-                $pnbe = send_event(new PageNavBuildingEvent());
-
-                $nav_links = $pnbe->links;
-
-                $active_link = null;
-                // To save on event calls, we check if one of the top-level links has already been marked as active
-                foreach ($nav_links as $link) {
-                    if ($link->active===true) {
-                        $active_link = $link;
-                        break;
-                    }
-                }
-                $sub_links = null;
-                // If one is, we just query for sub-menu options under that one tab
-                if ($active_link!==null) {
-                    $psnbe = send_event(new PageSubNavBuildingEvent($active_link->name));
-                    $sub_links = $psnbe->links;
-                } else {
-                    // Otherwise we query for the sub-items under each of the tabs
-                    foreach ($nav_links as $link) {
-                        $psnbe = send_event(new PageSubNavBuildingEvent($link->name));
-
-                        // Now we check for a current link so we can identify the sub-links to show
-                        foreach ($psnbe->links as $sub_link) {
-                            if ($sub_link->active===true) {
-                                $sub_links = $psnbe->links;
-                                break;
-                            }
-                        }
-                        // If the active link has been detected, we break out
-                        if ($sub_links!==null) {
-                            $link->active = true;
-                            break;
-                        }
-                    }
-                }
-
-                $sub_links = $sub_links??[];
-                usort($nav_links, "sort_nav_links");
-                usort($sub_links, "sort_nav_links");
-
                 $this->add_auto_html_headers();
-                $this->render($nav_links, $sub_links);
+                $this->render();
                 break;
             case PageMode::DATA:
                 header("Content-Length: " . strlen($this->data));
@@ -504,10 +460,56 @@ class BasePage
         $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
 
+    protected function get_nav_links()
+    {
+        $pnbe = send_event(new PageNavBuildingEvent());
+
+        $nav_links = $pnbe->links;
+
+        $active_link = null;
+        // To save on event calls, we check if one of the top-level links has already been marked as active
+        foreach ($nav_links as $link) {
+            if ($link->active===true) {
+                $active_link = $link;
+                break;
+            }
+        }
+        $sub_links = null;
+        // If one is, we just query for sub-menu options under that one tab
+        if ($active_link!==null) {
+            $psnbe = send_event(new PageSubNavBuildingEvent($active_link->name));
+            $sub_links = $psnbe->links;
+        } else {
+            // Otherwise we query for the sub-items under each of the tabs
+            foreach ($nav_links as $link) {
+                $psnbe = send_event(new PageSubNavBuildingEvent($link->name));
+
+                // Now we check for a current link so we can identify the sub-links to show
+                foreach ($psnbe->links as $sub_link) {
+                    if ($sub_link->active===true) {
+                        $sub_links = $psnbe->links;
+                        break;
+                    }
+                }
+                // If the active link has been detected, we break out
+                if ($sub_links!==null) {
+                    $link->active = true;
+                    break;
+                }
+            }
+        }
+
+        $sub_links = $sub_links??[];
+        usort($nav_links, "sort_nav_links");
+        usort($sub_links, "sort_nav_links");
+
+        return [$nav_links, $sub_links];
+    }
+
     /**
      * turns the Page into HTML
      */
-    public function render(array $nav_links, array $sub_links)
+    public function render()
     {
         $head_html = $this->head_html();
         $body_html = $this->body_html();
