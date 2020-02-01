@@ -277,7 +277,7 @@ class BasePage
      */
     public function display(): void
     {
-        global $page, $user;
+        global $user;
 
         header("HTTP/1.0 {$this->code} Shimmie");
         header("Content-type: " . $this->type);
@@ -354,8 +354,7 @@ class BasePage
                 usort($sub_links, "sort_nav_links");
 
                 $this->add_auto_html_headers();
-                $layout = new Layout();
-                $layout->display_page($page, $nav_links, $sub_links);
+                $this->render($nav_links, $sub_links);
                 break;
             case PageMode::DATA:
                 header("Content-Length: " . strlen($this->data));
@@ -380,7 +379,6 @@ class BasePage
                 header('Accept-Ranges: bytes');
 
                 if (isset($_SERVER['HTTP_RANGE'])) {
-                    $c_start = $start;
                     $c_end = $end;
                     list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
                     if (strpos($range, ',') !== false) {
@@ -528,6 +526,100 @@ class BasePage
         }
         $this->add_html_header("<script defer src='$data_href/$js_cache_file' type='text/javascript'></script>", 44);
     }
+
+    /**
+     * turns the Page into HTML
+     */
+    public function render(array $nav_links, array $sub_links)
+    {
+        $head_html = $this->head_html();
+        $body_html = $this->body_html();
+
+        print <<<EOD
+<!doctype html>
+<html class="no-js" lang="en">
+    $head_html
+    $body_html
+</html>
+EOD;
+    }
+
+    protected function head_html(): string {
+        $html_header_html = $this->get_all_html_headers();
+
+        return "
+        <head>
+		    <title>{$this->title}</title>
+            $html_header_html
+	    </head>
+        ";
+    }
+
+    protected function body_html(): string {
+        $left_block_html = "";
+        $main_block_html = "";
+        $sub_block_html  = "";
+
+        foreach ($this->blocks as $block) {
+            switch ($block->section) {
+                case "left":
+                    $left_block_html .= $block->get_html(true);
+                    break;
+                case "main":
+                    $main_block_html .= $block->get_html(false);
+                    break;
+                case "subheading":
+                    $sub_block_html .= $block->get_html(false);
+                    break;
+                default:
+                    print "<p>error: {$block->header} using an unknown section ({$block->section})";
+                    break;
+            }
+        }
+
+        $wrapper = "";
+        if (strlen($this->heading) > 100) {
+            $wrapper = ' style="height: 3em; overflow: auto;"';
+        }
+
+        $footer_html = $this->footer_html();
+        $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
+        return "
+            <body>
+                <header>
+                    <h1$wrapper>{$this->heading}</h1>
+                    $sub_block_html
+                </header>
+                <nav>
+                    $left_block_html
+                </nav>
+                <article>
+                    $flash_html
+                    $main_block_html
+                </article>
+                <footer>
+                    $footer_html
+                </footer>
+            </body>
+        ";
+    }
+
+    protected function footer_html(): string {
+        $debug = get_debug_info();
+        $contact_link = contact_link();
+        $contact = empty($contact_link) ? "" : "<br><a href='$contact_link'>Contact</a>";
+
+        return "
+			Images &copy; their respective owners,
+			<a href=\"https://code.shishnet.org/shimmie2/\">Shimmie</a> &copy;
+			<a href=\"https://www.shishnet.org/\">Shish</a> &amp;
+			<a href=\"https://github.com/shish/shimmie2/graphs/contributors\">The Team</a>
+			2007-2020,
+			based on the Danbooru concept.
+			$debug
+			$contact
+        ";
+    }
 }
 
 class PageNavBuildingEvent extends Event
@@ -619,6 +711,7 @@ class NavLink
 
         return false;
     }
+
 }
 
 function sort_nav_links(NavLink $a, NavLink $b)

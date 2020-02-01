@@ -45,6 +45,7 @@ class DeleteAliasEvent extends Event
 
     public function __construct(string $oldtag)
     {
+        parent::__construct();
         $this->oldtag = $oldtag;
     }
 }

@@ -459,37 +459,37 @@ class Artists extends Extension
     private function get_artistID_by_url(string $url): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url'=>$url]);
+        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE url = :url", ['url'=>$url]);
     }
 
     private function get_artistID_by_memberName(string $member): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name'=>$member]);
+        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE name = :name", ['name'=>$member]);
     }
 
     private function get_artistName_by_artistID(int $artistID): string
     {
         global $database;
-        return $database->get_one("SELECT name FROM artists WHERE id = :id", ['id'=>$artistID]);
+        return (string)$database->get_one("SELECT name FROM artists WHERE id = :id", ['id'=>$artistID]);
     }
 
     private function get_artistID_by_aliasID(int $aliasID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
+        return (int)$database->get_one("SELECT artist_id FROM artist_alias WHERE id = :id", ['id'=>$aliasID]);
     }
 
     private function get_artistID_by_memberID(int $memberID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id'=>$memberID]);
+        return (int)$database->get_one("SELECT artist_id FROM artist_members WHERE id = :id", ['id'=>$memberID]);
     }
 
     private function get_artistID_by_urlID(int $urlID): int
     {
         global $database;
-        return $database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
+        return (int)$database->get_one("SELECT artist_id FROM artist_urls WHERE id = :id", ['id'=>$urlID]);
     }
 
     private function delete_alias(int $aliasID)

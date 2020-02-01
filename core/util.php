@@ -547,7 +547,6 @@ function _get_themelet_files(string $_theme): array
 {
     $base_themelets = [];
     $base_themelets[] = 'themes/'.$_theme.'/page.class.php';
-    $base_themelets[] = 'themes/'.$_theme.'/layout.class.php';
     $base_themelets[] = 'themes/'.$_theme.'/themelet.class.php';
 
     $ext_themelets = zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/theme.php");
@@ -591,7 +590,8 @@ function _fatal_error(Exception $e): void
         $q = (!isset($e->query) || is_null($e->query)) ? "" : "<p><b>Query:</b> " . html_escape($e->query);
         header("HTTP/1.0 500 Internal Error");
         echo '
-<html>
+<!doctype html>
+<html lang="en">
 	<head>
 		<title>Internal error - SCore-'.$version.'</title>
 	</head>

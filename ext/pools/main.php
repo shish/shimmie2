@@ -692,7 +692,7 @@ class Pools extends Extension
             $images .= " " . $imageID;
         }
 
-        $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
+        $count = (int)$database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
         $this->add_history($poolID, 0, $images, $count);
         return $poolID;
     }
@@ -982,7 +982,7 @@ class Pools extends Extension
                 continue; // go on to the next one.
             }
 
-            $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
+            $count = (int)$database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
             $this->add_history($poolID, $newAction, $imageArray, $count);
         }
     }
@@ -1020,7 +1020,7 @@ class Pools extends Extension
         $this->update_count($poolID);
 
         if ($history) {
-            $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
+            $count = (int)$database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
             $this->add_history($poolID, 1, (string)$imageID, $count);
         }
         return true;
@@ -1046,7 +1046,7 @@ class Pools extends Extension
         $this->update_count($poolID);
 
         if ($history) {
-            $count = $database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
+            $count = (int)$database->get_one("SELECT COUNT(*) FROM pool_images WHERE pool_id=:pid", ["pid" => $poolID]);
             $this->add_history($poolID, 0, (string)$imageID, $count);
         }
     }

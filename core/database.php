@@ -346,6 +346,7 @@ class MockDatabase extends Database
 
     public function __construct(array $responses = [])
     {
+        parent::__construct("fake:dsn");
         $this->responses = $responses;
     }
 
