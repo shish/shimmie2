@@ -227,7 +227,7 @@ class TagListTheme extends Themelet
         $display_html = '';
         $tag = $row['tag'];
         $h_tag = html_escape($tag);
-        
+
         $tag_category_css = '';
         $tag_category_style = '';
         $h_tag_split = explode(':', html_escape($tag), 2);
@@ -277,8 +277,7 @@ class TagListTheme extends Themelet
         if (!in_array($tag, $tags) && !in_array("-$tag", $tags)) {
             return "";
         } else {
-            $tags = array_remove($tags, $tag);
-            $tags = array_remove($tags, "-$tag");
+            $tags = array_diff($tags, [$tag, "-$tag"]);
             return "<a href='".$this->tag_link(join(' ', $tags))."' title='Remove' rel='nofollow'>R</a>";
         }
     }
@@ -288,8 +287,7 @@ class TagListTheme extends Themelet
         if (in_array($tag, $tags)) {
             return "";
         } else {
-            $tags = array_remove($tags, "-$tag");
-            $tags = array_add($tags, $tag);
+            $tags = array_diff($tags, ["-$tag"]) + [$tag];
             return "<a href='".$this->tag_link(join(' ', $tags))."' title='Add' rel='nofollow'>A</a>";
         }
     }
@@ -299,8 +297,7 @@ class TagListTheme extends Themelet
         if (in_array("-$tag", $tags)) {
             return "";
         } else {
-            $tags = array_remove($tags, $tag);
-            $tags = array_add($tags, "-$tag");
+            $tags = array_diff($tags, [$tag]) + ["-$tag"];
             return "<a href='".$this->tag_link(join(' ', $tags))."' title='Subtract' rel='nofollow'>S</a>";
         }
     }

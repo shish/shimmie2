@@ -4,35 +4,6 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * Remove an item from an array
- */
-function array_remove(array $array, $to_remove): array
-{
-    $array = array_unique($array);
-    $a2 = [];
-    foreach ($array as $existing) {
-        if ($existing != $to_remove) {
-            $a2[] = $existing;
-        }
-    }
-    return $a2;
-}
-
-/**
- * Adds an item to an array.
- *
- * Also removes duplicate values from the array.
- */
-function array_add(array $array, $element): array
-{
-    // Could we just use array_push() ?
-    //  http://www.php.net/manual/en/function.array-push.php
-    $array[] = $element;
-    $array = array_unique($array);
-    return $array;
-}
-
-/**
  * Return the unique elements of an array, case insensitively
  */
 function array_iunique(array $array): array
