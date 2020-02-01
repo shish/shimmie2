@@ -31,6 +31,6 @@ _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in
 _d("VERSION", '2.8-dev');    // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
 _d("EXTRA_EXTS", "");        // string   optional extra extensions
-_d("BASE_URL", null);        // string   force a specific base URL (default is auto-detect)
+_d("BASE_HREF", null);       // string   force a specific base URL (default is auto-detect)
 _d("TRACE_FILE", null);      // string   file to log performance data into
 _d("TRACE_THRESHOLD", 0.0);  // float    log pages which take more time than this many seconds

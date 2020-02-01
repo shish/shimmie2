@@ -34,12 +34,11 @@ function make_link(?string $page=null, ?string $query=null): string
         $page = $config->get_string(SetupConfig::MAIN_PAGE);
     }
 
-    if (!is_null(BASE_URL)) {
-        $base = BASE_URL;
-    } elseif (NICE_URLS || $config->get_bool('nice_urls', false)) {
-        $base = str_replace('/'.basename($_SERVER["SCRIPT_FILENAME"]), "", $_SERVER["PHP_SELF"]);
+    $install_dir = get_base_href();
+    if (NICE_URLS || $config->get_bool('nice_urls', false)) {
+        $base = $install_dir;
     } else {
-        $base = "./".basename($_SERVER["SCRIPT_FILENAME"])."?q=";
+        $base = "$install_dir/index.php?q=";
     }
 
     if (is_null($query)) {
