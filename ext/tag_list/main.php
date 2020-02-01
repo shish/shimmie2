@@ -319,13 +319,13 @@ class TagList extends Extension
             return file_get_contents($cache_key);
         }
 
-        $tag_data = $database->get_pairs($database->scoreql_to_sql("
+        $tag_data = $database->get_pairs("
 				SELECT tag, count
 				FROM tags
 				WHERE count >= :tags_min
 				AND LOWER(tag) LIKE LOWER(:starts_with)
 				ORDER BY LOWER(tag)
-				"), ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
+				", ["tags_min"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {
@@ -352,6 +352,8 @@ class TagList extends Extension
         # which breaks down into "az, a-, az" :(
         ksort($tag_data, SORT_STRING | SORT_FLAG_CASE);
         foreach ($tag_data as $tag => $count) {
+            // In PHP, $array["10"] sets the array key as int(10), not string("10")...
+            $tag = (string)$tag;
             if ($lastLetter != mb_strtolower(substr($tag, 0, strlen($starts_with)+1))) {
                 $lastLetter = mb_strtolower(substr($tag, 0, strlen($starts_with)+1));
                 $h_lastLetter = html_escape($lastLetter);
