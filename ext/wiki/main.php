@@ -271,7 +271,8 @@ class Wiki extends Extension
 				FROM wiki_pages
 				WHERE LOWER(title) LIKE LOWER(:title)
 				ORDER BY revision DESC
-			", ["title"=>$title]
+			",
+            ["title"=>$title]
         );
 
         // fall back to wiki:default
