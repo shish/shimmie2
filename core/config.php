@@ -242,59 +242,6 @@ abstract class BaseConfig implements Config
 
 
 /**
- * Class HardcodeConfig
- *
- * For testing, mostly.
- */
-class HardcodeConfig extends BaseConfig
-{
-    public function __construct(array $dict)
-    {
-        $this->values = $dict;
-    }
-
-    public function save(string $name=null): void
-    {
-        // static config is static
-    }
-}
-
-
-/**
- * Class StaticConfig
- *
- * Loads the config list from a PHP file; the file should be in the format:
- *
- *  <?php
- *  $config['foo'] = "bar";
- *  $config['baz'] = "qux";
- *  ?>
- */
-class StaticConfig extends BaseConfig
-{
-    public function __construct(string $filename)
-    {
-        if (file_exists($filename)) {
-            $config = [];
-            require_once $filename;
-            if (!empty($config)) {
-                $this->values = $config;
-            } else {
-                throw new ScoreException("Config file '$filename' doesn't contain any config");
-            }
-        } else {
-            throw new ScoreException("Config file '$filename' missing");
-        }
-    }
-
-    public function save(string $name=null): void
-    {
-        // static config is static
-    }
-}
-
-
-/**
  * Class DatabaseConfig
  *
  * Loads the config list from a table in a given database, the table should
@@ -387,18 +334,5 @@ class DatabaseConfig extends BaseConfig
         // rather than deleting and having some other request(s) do a thundering
         // herd of race-conditioned updates, just save the updated version once here
         $cache->set("config", $this->values);
-    }
-}
-
-/**
- * Class MockConfig
- */
-class MockConfig extends HardcodeConfig
-{
-    public function __construct(array $config=[])
-    {
-        $config["db_version"] = "999";
-        $config["anon_id"] = "0";
-        parent::__construct($config);
     }
 }
