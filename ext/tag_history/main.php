@@ -303,7 +303,7 @@ class TagHistory extends Extension
 			', $select_args);
 
             if (!empty($row)) {
-                $revert_id = $row['id'];
+                $revert_id = (int)$row['id'];
                 $result = $this->get_tag_history_from_revert($revert_id);
 
                 if (empty($result)) {
@@ -315,8 +315,8 @@ class TagHistory extends Extension
                 }
 
                 // lets get the values out of the result
-                $stored_result_id = int_escape($result['id']);
-                $stored_image_id = int_escape($result['image_id']);
+                $stored_result_id = (int)$result['id'];
+                $stored_image_id = (int)$result['image_id'];
                 $stored_tags = $result['tags'];
 
                 $image = Image::by_id($stored_image_id);
