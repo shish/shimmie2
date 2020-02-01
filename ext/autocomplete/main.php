@@ -45,14 +45,14 @@ class AutoComplete extends Extension
             $res = $cache->get($cache_key);
             if (!$res) {
                 $res = $database->get_pairs(
-                    $database->scoreql_to_sql("
+                    "
 					SELECT tag, count
 					FROM tags
-					WHERE LOWER(tag) LIKE LOWER(:search) 
+					WHERE LOWER(tag) LIKE LOWER(:search)
 					-- OR LOWER(tag) LIKE LOWER(:cat_search)
 					AND count > 0
 					ORDER BY count DESC
-					$limitSQL"),
+					$limitSQL",
                     $SQLarr
                 );
                 $cache->set($cache_key, $res, 600);

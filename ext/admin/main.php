@@ -160,9 +160,10 @@ class AdminPage extends Extension
     private function set_tag_case()
     {
         global $database;
-        $database->execute($database->scoreql_to_sql(
-            "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)"
-        ), ["tag1" => $_POST['tag'], "tag2" => $_POST['tag']]);
+        $database->execute(
+            "UPDATE tags SET tag=:tag1 WHERE LOWER(tag) = LOWER(:tag2)",
+            ["tag1" => $_POST['tag'], "tag2" => $_POST['tag']]
+        );
         log_info("admin", "Fixed the case of {$_POST['tag']}", "Fixed case");
         return true;
     }

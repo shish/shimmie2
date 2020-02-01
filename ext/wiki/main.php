@@ -266,21 +266,22 @@ class Wiki extends Extension
         global $database;
         // first try and get the actual page
         $row = $database->get_row(
-            $database->scoreql_to_sql("
+            "
 				SELECT *
 				FROM wiki_pages
 				WHERE LOWER(title) LIKE LOWER(:title)
-				ORDER BY revision DESC"),
-            ["title"=>$title]
+				ORDER BY revision DESC
+			", ["title"=>$title]
         );
 
         // fall back to wiki:default
         if (empty($row)) {
             $row = $database->get_row("
-					SELECT *
-					FROM wiki_pages
-					WHERE title LIKE :title
-					ORDER BY revision DESC", ["title"=>"wiki:default"]);
+                SELECT *
+                FROM wiki_pages
+                WHERE title LIKE :title
+                ORDER BY revision DESC
+			", ["title"=>"wiki:default"]);
 
             // fall further back to manual
             if (empty($row)) {

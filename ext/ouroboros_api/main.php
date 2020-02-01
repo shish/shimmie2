@@ -574,15 +574,13 @@ class OuroborosAPI extends Extension
         switch ($order) {
             case 'name':
                 $tag_data = $database->get_col(
-                    $database->scoreql_to_sql(
-                        "
-                                                        SELECT DISTINCT
-                                                            id, LOWER(substr(tag, 1, 1)), count
-                                                        FROM tags
-                                                        WHERE count >= :tags_min
-                                                        ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
-                                                    "
-                    ),
+                    "
+                        SELECT DISTINCT
+                            id, LOWER(substr(tag, 1, 1)), count
+                        FROM tags
+                        WHERE count >= :tags_min
+                        ORDER BY LOWER(substr(tag, 1, 1)) LIMIT :start, :max_items
+                    ",
                     ['tags_min' => $config->get_int(TagListConfig::TAGS_MIN), 'start' => $start, 'max_items' => $limit]
                 );
                 break;

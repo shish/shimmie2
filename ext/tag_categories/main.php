@@ -78,18 +78,18 @@ class TagCategories extends Extension
             $count = $matches[3];
 
             $types = $database->get_col(
-                $database->scoreql_to_sql('SELECT LOWER(category) FROM image_tag_categories')
+                'SELECT LOWER(category) FROM image_tag_categories'
             );
             if (in_array($type, $types)) {
                 $event->add_querylet(
-                    new Querylet($database->scoreql_to_sql("EXISTS (
+                    new Querylet("EXISTS (
 					    SELECT 1
 					    FROM image_tags it
 					    LEFT JOIN tags t ON it.tag_id = t.id
 					    WHERE images.id = it.image_id
 					    GROUP BY image_id
 					    HAVING SUM(CASE WHEN LOWER(t.tag) LIKE LOWER('$type:%') THEN 1 ELSE 0 END) $cmp $count
-					)"))
+					)")
                 );
             }
         }

@@ -268,7 +268,7 @@ class Media extends Extension
         if (preg_match(self::CONTENT_SEARCH_TERM_REGEX, $event->term, $matches)) {
             $field = $matches[1];
             if ($field==="unknown") {
-                $event->add_querylet(new Querylet($database->scoreql_to_sql("video IS NULL OR audio IS NULL OR image IS NULL")));
+                $event->add_querylet(new Querylet("video IS NULL OR audio IS NULL OR image IS NULL"));
             } else {
                 $event->add_querylet(new Querylet($database->scoreql_to_sql("$field = SCORE_BOOL_Y")));
             }

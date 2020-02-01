@@ -49,11 +49,11 @@ class Tag
             }
 
             $newtags = $database->get_one(
-                $database->scoreql_to_sql("
+                "
 					SELECT newtag
 					FROM aliases
 					WHERE LOWER(oldtag)=LOWER(:tag)
-				"),
+				",
                 ["tag"=>$tag]
             );
             if (empty($newtags)) {

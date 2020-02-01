@@ -85,9 +85,7 @@ class DanbooruApi extends Extension
             $namelist = explode(",", $_GET['name']);
             foreach ($namelist as $name) {
                 $sqlresult = $database->get_all(
-                    $database->scoreql_to_sql(
-                        "SELECT id,tag,count FROM tags WHERE LOWER(tag) = LOWER(:tag)"
-                    ),
+                    "SELECT id,tag,count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
                     ['tag'=>$name]
                 );
                 foreach ($sqlresult as $row) {

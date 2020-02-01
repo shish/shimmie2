@@ -689,11 +689,11 @@ class Image
             // insert each new tags
             foreach ($tags as $tag) {
                 $id = $database->get_one(
-                    $database->scoreql_to_sql("
+                    "
 						SELECT id
 						FROM tags
 						WHERE LOWER(tag) = LOWER(:tag)
-					"),
+					",
                     ["tag"=>$tag]
                 );
                 if (empty($id)) {
@@ -703,10 +703,8 @@ class Image
                         ["tag"=>$tag]
                     );
                     $database->execute(
-                        $database->scoreql_to_sql(
-                            "INSERT INTO image_tags(image_id, tag_id)
-							VALUES(:id, (SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)))"
-                        ),
+                        "INSERT INTO image_tags(image_id, tag_id)
+							VALUES(:id, (SELECT id FROM tags WHERE LOWER(tag) = LOWER(:tag)))",
                         ["id"=>$this->id, "tag"=>$tag]
                     );
                 } else {
@@ -723,11 +721,11 @@ class Image
                     array_push($written_tags, $id);
                 }
                 $database->execute(
-                    $database->scoreql_to_sql("
+                    "
 						UPDATE tags
 						SET count = count + 1
 						WHERE LOWER(tag) = LOWER(:tag)
-					"),
+					",
                     ["tag"=>$tag]
                 );
             }
@@ -933,7 +931,7 @@ class Image
                 $sq .= "ESCAPE '\\'";
             }
             $tag_ids = $database->get_col(
-                $database->scoreql_to_sql($sq),
+                $sq,
                 ["tag" => Tag::sqlify($tq->tag)]
             );
 

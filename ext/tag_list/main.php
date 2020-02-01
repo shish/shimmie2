@@ -66,13 +66,13 @@ class TagList extends Extension
             $res = null;
             $cache->get($cache_key);
             if (!$res) {
-                $res = $database->get_col($database->scoreql_to_sql("
+                $res = $database->get_col("
 					SELECT tag
 					FROM tags
 					WHERE LOWER(tag) LIKE LOWER(:search)
 						AND count > 0
 					$limitSQL
-				"), $SQLarr);
+				", $SQLarr);
                 $cache->set($cache_key, $res, 600);
             }
 
@@ -233,13 +233,13 @@ class TagList extends Extension
 
         $tags_min = $this->get_tags_min();
 
-        $tag_data = $database->get_col($database->scoreql_to_sql("
+        $tag_data = $database->get_col("
 			SELECT DISTINCT
 				LOWER(substr(tag, 1, 1))
 			FROM tags
 			WHERE count >= :tags_min
 			ORDER BY LOWER(substr(tag, 1, 1))
-		"), ["tags_min"=>$tags_min]);
+		", ["tags_min"=>$tags_min]);
 
         $html = "<span class='atoz'>";
         foreach ($tag_data as $a) {
@@ -274,7 +274,7 @@ class TagList extends Extension
         }
 
         // SHIT: PDO/pgsql has problems using the same named param twice -_-;;
-        $tag_data = $database->get_all($database->scoreql_to_sql("
+        $tag_data = $database->get_all("
 				SELECT
 					tag,
 					FLOOR(LOG(2.7, LOG(2.7, count - :tags_min2 + 1)+1)*1.5*100)/100 AS scaled
@@ -282,7 +282,7 @@ class TagList extends Extension
 				WHERE count >= :tags_min
 				AND LOWER(tag) LIKE LOWER(:starts_with)
 				ORDER BY LOWER(tag)
-			"), ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
+			", ["tags_min"=>$tags_min, "tags_min2"=>$tags_min, "starts_with"=>$starts_with]);
 
         $html = "";
         if ($config->get_bool(TagListConfig::PAGES)) {

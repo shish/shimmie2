@@ -118,9 +118,7 @@ class NotATag extends Extension
                     $user->ensure_authed();
                     $input = validate_input(["d_tag"=>"string"]);
                     $database->execute(
-                        $database->scoreql_to_sql(
-                            "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)"
-                        ),
+                        "DELETE FROM untags WHERE LOWER(tag) = LOWER(:tag)",
                         ["tag"=>$input['d_tag']]
                     );
                     $page->flash("Image ban removed");
@@ -152,13 +150,13 @@ class NotATag extends Extension
             $args["redirect"] = "%".$_GET['redirect']."%";
         }
         $where = implode(" AND ", $where);
-        return $database->get_all($database->scoreql_to_sql("
+        return $database->get_all("
 			SELECT *
 			FROM untags
 			WHERE $where
 			ORDER BY tag
 			LIMIT :limit
 			OFFSET :offset
-			"), $args);
+		", $args);
     }
 }
