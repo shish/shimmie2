@@ -704,7 +704,7 @@ class UserPage extends Extension
                 );
             }
 
-            send_event(new UserDeletionEvent($_POST['id']));
+            send_event(new UserDeletionEvent((int)$_POST['id']));
 
             $database->execute(
                 "DELETE FROM users WHERE id = :id",

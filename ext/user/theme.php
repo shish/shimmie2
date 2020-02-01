@@ -264,8 +264,8 @@ class UserPageTheme extends Themelet
                     "user_admin/delete_user",
                     "Delete User",
                     TBODY(
-                        TR(TD(INPUT(["type"=>'checkbox', "name"=>'with_images'], "Delete images"))),
-                        TR(TD(INPUT(["type"=>'checkbox', "name"=>'with_comments'], "Delete comments"))),
+                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_images']), "Delete images"))),
+                        TR(TD(LABEL(INPUT(["type"=>'checkbox', "name"=>'with_comments']), "Delete comments"))),
                     ),
                     TFOOT(
                         TR(TD(INPUT(["type"=>'button', "class"=>'shm-unlocker', "data-unlock-sel"=>'.deluser', "value"=>'Unlock']))),
