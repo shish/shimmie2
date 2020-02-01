@@ -81,7 +81,6 @@ function _dump_event_listeners(array $event_listeners, string $path): void
     }
     $p .= ");\n";
 
-    $p .= "?".">";
     file_put_contents($path, $p);
 }
 
