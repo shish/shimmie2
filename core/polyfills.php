@@ -371,7 +371,7 @@ function zglob(string $pattern): array
  */
 function get_base_href(): string
 {
-    if (defined("BASE_HREF")) {
+    if (defined("BASE_HREF") && !empty(BASE_HREF)) {
         return BASE_HREF;
     }
     $possible_vars = ['SCRIPT_NAME', 'PHP_SELF', 'PATH_INFO', 'ORIG_PATH_INFO'];
