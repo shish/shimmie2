@@ -273,6 +273,9 @@ class TextFormattingEvent extends Event
     public function __construct(string $text)
     {
         parent::__construct();
+        // We need to escape before formatting, instead of at display time,
+        // because formatters will add their own HTML tags into the mix and
+        // we don't want to escape those.
         $h_text = html_escape(trim($text));
         $this->original  = $h_text;
         $this->formatted = $h_text;
