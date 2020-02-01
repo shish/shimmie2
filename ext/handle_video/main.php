@@ -56,11 +56,11 @@ class VideoFileHandler extends DataHandlerExtension
                                         }
                                     }
                                     if (array_key_exists("width", $stream) && !empty($stream["width"])
-                                        && is_numeric($stream["width"]) && intval($stream["width"]) > ($event->width) ?? 0) {
+                                        && is_numeric($stream["width"]) && intval($stream["width"]) > ($event->image->width) ?? 0) {
                                         $event->image->width = intval($stream["width"]);
                                     }
                                     if (array_key_exists("height", $stream) && !empty($stream["height"])
-                                        && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->height) ?? 0) {
+                                        && is_numeric($stream["height"]) && intval($stream["height"]) > ($event->image->height) ?? 0) {
                                         $event->image->height = intval($stream["height"]);
                                     }
                                 }
