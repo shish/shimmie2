@@ -38,6 +38,8 @@ class Page extends BasePage
             }
         }
 
+        # used in header.inc
+        $query = !empty($this->_search_query) ? html_escape(Tag::implode($this->_search_query)) : "";
         $flash_html = $this->flash ? "<b id='flash'>".nl2br(html_escape(implode("\n", $this->flash)))."</b>" : "";
         $generated = autodate(date('c'));
         $footer_html = $this->footer_html();
