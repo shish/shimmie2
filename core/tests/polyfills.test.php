@@ -89,15 +89,25 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(truncate("te...", 2), "te...");
     }
 
-    public function test_shorthand_int()
+    public function test_to_shorthand_int()
     {
         $this->assertEquals(to_shorthand_int(1231231231), "1.1GB");
         $this->assertEquals(to_shorthand_int(2), "2");
+    }
 
+    public function test_parse_shorthand_int()
+    {
         $this->assertEquals(parse_shorthand_int("foo"), -1);
         $this->assertEquals(parse_shorthand_int("32M"), 33554432);
         $this->assertEquals(parse_shorthand_int("43.4KB"), 44441);
         $this->assertEquals(parse_shorthand_int("1231231231"), 1231231231);
+    }
+
+    public function test_format_milliseconds()
+    {
+        $this->assertEquals("", format_milliseconds(5));
+        $this->assertEquals("5s", format_milliseconds(5000));
+        $this->assertEquals("1y 213d 16h 53m 20s", format_milliseconds(50000000000));
     }
 
     public function test_autodate()
