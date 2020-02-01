@@ -389,11 +389,11 @@ class BasePage
                         break;
                     }
                     if ($range == '-') {
-                        $c_start = $size - substr($range, 1);
+                        $c_start = $size - (int)substr($range, 1);
                     } else {
                         $range = explode('-', $range);
-                        $c_start = $range[0];
-                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? $range[1] : $size;
+                        $c_start = (int)$range[0];
+                        $c_end = (isset($range[1]) && is_numeric($range[1])) ? (int)$range[1] : $size;
                     }
                     $c_end = ($c_end > $end) ? $end : $c_end;
                     if ($c_start > $c_end || $c_start > $size - 1 || $c_end >= $size) {
