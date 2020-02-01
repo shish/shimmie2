@@ -49,7 +49,7 @@ class BasePage
     /** @var string */
     public $mode = PageMode::PAGE;
     /** @var string */
-    public $type = "text/html; charset=utf-8";
+    private $type = "text/html; charset=utf-8";
 
     /**
      * Set what this page should do; "page", "data", or "redirect".
@@ -80,11 +80,11 @@ class BasePage
     /** @var string; public only for unit test */
     public $data = "";
 
-    /** @var string; */
-    public $file = null;
+    /** @var string */
+    private $file = null;
 
-    /** @var string; public only for unit test */
-    public $filename = null;
+    /** @var string */
+    private $filename = null;
 
     private $disposition = null;
 
@@ -238,14 +238,6 @@ class BasePage
     }
 
     /**
-     * Removes all currently set HTML headers (Be careful..).
-     */
-    public function delete_all_html_headers(): void
-    {
-        $this->html_headers = [];
-    }
-
-    /**
      * Add a Block of data to the page.
      */
     public function add_block(Block $block): void
@@ -274,8 +266,6 @@ class BasePage
      */
     public function display(): void
     {
-        global $user;
-
         header("HTTP/1.0 {$this->code} Shimmie");
         header("Content-type: " . $this->type);
         header("X-Powered-By: Shimmie-" . VERSION);
@@ -294,6 +284,7 @@ class BasePage
         switch ($this->mode) {
             case PageMode::PAGE:
                 if (CACHE_HTTP) {
+                    global $user;
                     header("Vary: Cookie, Accept-Encoding");
                     if ($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
                         header("Cache-control: public, max-age=600");
