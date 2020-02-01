@@ -81,12 +81,12 @@ class PolyfillsTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function truncate()
+    public function test_truncate()
     {
         $this->assertEquals(truncate("test words", 10), "test words");
-        $this->assertEquals(truncate("test words", 6), "test...");
-        $this->assertEquals(truncate("test words", 9), "test...");
-        $this->assertEquals(truncate("test words", 2), "te...");
+        $this->assertEquals(truncate("test...", 9), "test...");
+        $this->assertEquals(truncate("test...", 6), "test...");
+        $this->assertEquals(truncate("te...", 2), "te...");
     }
 
     public function test_shorthand_int()
