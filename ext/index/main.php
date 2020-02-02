@@ -154,7 +154,7 @@ class Index extends Extension
         }
         if ($event->cmd == "search") {
             $query = count($event->args) > 0 ? Tag::explode($event->args[0]) : [];
-            $items = Image::find_images(0, 100, $query);
+            $items = Image::find_images(0, 1000, $query);
             foreach ($items as $item) {
                 print("{$item->hash}\n");
             }
