@@ -25,6 +25,7 @@ function log_msg(string $section, int $priority, string $message, ?string $flash
 
     if ((PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg') && ($priority >= $threshold)) {
         print date("c")." $section: $message\n";
+        ob_flush();
     }
     if (!is_null($flash)) {
         $page->flash($flash);
