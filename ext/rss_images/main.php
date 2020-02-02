@@ -24,6 +24,9 @@ class RSSImages extends Extension
             $search_terms = $event->get_search_terms();
             $page_number = $event->get_page_number();
             $page_size = $event->get_page_size();
+            if (SPEED_HAX && $page_number > 9) {
+                return;
+            }
             $images = Image::find_images(($page_number-1)*$page_size, $page_size, $search_terms);
             $this->do_rss($images, $search_terms, $page_number);
         }
