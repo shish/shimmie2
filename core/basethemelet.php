@@ -84,11 +84,11 @@ class BaseThemelet
         $body = $this->build_paginator($page_number, $total_pages, $base, $query, $show_random);
         $page->add_block(new Block(null, $body, "main", 90, "paginator"));
 
-        if($page_number < $total_pages) {
+        if ($page_number < $total_pages) {
             $page->add_html_header("<link rel='prefetch' href='".make_link($base.'/'.($page_number+1), $query)."'>");
             $page->add_html_header("<link rel='next' href='".make_link($base.'/'.($page_number+1), $query)."'>");
         }
-        if($page_number > 1) {
+        if ($page_number > 1) {
             $page->add_html_header("<link rel='previous' href='".make_link($base.'/'.($page_number-1), $query)."'>");
         }
     }

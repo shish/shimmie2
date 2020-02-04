@@ -38,7 +38,8 @@ class ViewImageTheme extends Themelet
         }
     }
 
-    protected function get_query() {
+    protected function get_query()
+    {
         if (isset($_GET['search'])) {
             $query = "search=".url_escape(Tag::caret($_GET['search']));
         } else {
