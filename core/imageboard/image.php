@@ -199,6 +199,26 @@ class Image
      * Image-related utility functions
      */
 
+    public static function count_total_images(): int
+    {
+        global $cache, $database;
+        $total = $cache->get("image-count");
+        if (!$total) {
+            $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
+            $cache->set("image-count", $total, 600);
+        }
+        return $total;
+    }
+
+    public static function count_tag(string $tag): int
+    {
+        global $database;
+        return (int)$database->get_one(
+            "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
+            ["tag"=>$tag]
+        );
+    }
+
     /**
      * Count the number of image results for a given search
      *
@@ -211,22 +231,19 @@ class Image
 
         if ($tag_count === 0) {
             // total number of images in the DB
-            $total = $cache->get("image-count");
-            if (!$total) {
-                $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
-                $cache->set("image-count", $total, 600);
-            }
+            $total = self::count_total_images();
         } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
-            // one tag - we can look that up directly
-            // TODO: one negative tag = (total - tag.count)
-            $total = (int)$database->get_one(
-                "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
-                ["tag"=>$tags[0]]
-            );
+            if (!startsWith($tags[0], "-")) {
+                // one tag - we can look that up directly
+                $total = self::count_tag($tags[0]);
+            } else {
+                // one negative tag - subtract from the total
+                $total = self::count_total_images() - self::count_tag(substr($tags[0], 1));
+            }
         } else {
             // complex query
             $total = $cache->get("image-count:" . Tag::implode($tags));
-            if(!$total) {
+            if (!$total) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
                 }
