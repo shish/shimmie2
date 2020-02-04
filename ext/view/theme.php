@@ -25,6 +25,10 @@ class ViewImageTheme extends Themelet
         $page->add_block(new Block("Navigation", $this->build_navigation($image), "left", 0));
         $page->add_block(new Block(null, $this->build_info($image, $editor_parts), "main", 20));
         //$page->add_block(new Block(null, $this->build_pin($image), "main", 11));
+
+        $query = $this->get_query();
+        $page->add_html_header("<link id='nextlink' rel='next' href='".make_link("post/next/{$image->id}", $query)."'>");
+        $page->add_html_header("<link id='prevlink' rel='previous' href='".make_link("post/prev/{$image->id}", $query)."'>");
     }
 
     public function display_admin_block(Page $page, $parts)
@@ -34,15 +38,18 @@ class ViewImageTheme extends Themelet
         }
     }
 
-
-    protected function build_pin(Image $image)
-    {
+    protected function get_query() {
         if (isset($_GET['search'])) {
             $query = "search=".url_escape(Tag::caret($_GET['search']));
         } else {
             $query = null;
         }
+        return $query;
+    }
 
+    protected function build_pin(Image $image)
+    {
+        $query = $this->get_query();
         $h_prev = "<a id='prevlink' href='".make_link("post/prev/{$image->id}", $query)."'>Prev</a>";
         $h_index = "<a href='".make_link()."'>Index</a>";
         $h_next = "<a id='nextlink' href='".make_link("post/next/{$image->id}", $query)."'>Next</a>";
