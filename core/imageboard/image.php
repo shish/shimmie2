@@ -134,7 +134,6 @@ class Image
         }
     }
 
-
     private static function find_images_internal(int $start = 0, ?int $limit = null, array $tags=[]): iterable
     {
         global $database, $user, $config;
@@ -211,23 +210,35 @@ class Image
         $tag_count = count($tags);
 
         if ($tag_count === 0) {
+            // total number of images in the DB
             $total = $cache->get("image-count");
             if (!$total) {
                 $total = (int)$database->get_one("SELECT COUNT(*) FROM images");
                 $cache->set("image-count", $total, 600);
             }
         } elseif ($tag_count === 1 && !preg_match("/[:=><\*\?]/", $tags[0])) {
+            // one tag - we can look that up directly
+            // TODO: one negative tag = (total - tag.count)
             $total = (int)$database->get_one(
                 "SELECT count FROM tags WHERE LOWER(tag) = LOWER(:tag)",
                 ["tag"=>$tags[0]]
             );
         } else {
-            if (Extension::is_enabled(RatingsInfo::KEY)) {
-                $tags[] = "rating:*";
+            // complex query
+            $total = $cache->get("image-count:" . Tag::implode($tags));
+            if(!$total) {
+                if (Extension::is_enabled(RatingsInfo::KEY)) {
+                    $tags[] = "rating:*";
+                }
+                list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+                $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+                $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
+                if (SPEED_HAX && $total > 5000) {
+                    // when we have a ton of images, the count
+                    // won't change dramatically very often
+                    $cache->set("image-count:" . Tag::implode($tags), $total, 3600);
+                }
             }
-            list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-            $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
         }
         if (is_null($total)) {
             return 0;

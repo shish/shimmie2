@@ -43,26 +43,26 @@ class Index extends Extension
             $count_search_terms = count($search_terms);
 
             try {
-                #log_debug("index", "Search for ".Tag::implode($search_terms), false, array("terms"=>$search_terms));
+                $fast_page_limit = 500;
+
+                if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
+                    $this->theme->display_error(
+                        404,
+                        "Search limit hit",
+                        "Only $fast_page_limit pages of results are searchable - " .
+                        "if you want to find older results, use more specific search terms"
+                    );
+                    return;
+                }
+
                 $total_pages = Image::count_pages($search_terms);
                 $images = [];
 
+                if (SPEED_HAX && $total_pages > $fast_page_limit && !$user->can("big_search")) {
+                    $total_pages = $fast_page_limit;
+                }
+
                 if (SPEED_HAX) {
-                    if (!$user->can("big_search")) {
-                        $fast_page_limit = 500;
-                        if ($total_pages > $fast_page_limit) {
-                            $total_pages = $fast_page_limit;
-                        }
-                        if ($page_number > $fast_page_limit) {
-                            $this->theme->display_error(
-                                404,
-                                "Search limit hit",
-                                "Only $fast_page_limit pages of results are searchable - " .
-                                "if you want to find older results, use more specific search terms"
-                            );
-                            return;
-                        }
-                    }
                     if ($count_search_terms === 0 && ($page_number < 10)) {
                         // extra caching for the first few post/list pages
                         $images = $cache->get("post-list:$page_number");
