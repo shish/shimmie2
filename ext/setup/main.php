@@ -23,6 +23,9 @@ class ConfigSaveEvent extends Event
  */
 class SetupBuildingEvent extends Event
 {
+    /** @var SetupTheme */
+    protected $theme;
+
     /** @var SetupPanel */
     public $panel;
 

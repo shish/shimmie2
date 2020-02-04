@@ -7,6 +7,9 @@ abstract class TrashConfig
 
 class Trash extends Extension
 {
+    /** @var TrashTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         // Needs to be early to intercept delete events

@@ -2,6 +2,9 @@
 
 class Tagger extends Extension
 {
+    /** @var TaggerTheme */
+    protected $theme;
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $page, $user;

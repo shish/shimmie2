@@ -12,6 +12,9 @@ class ImageRotateException extends SCoreException
  */
 class RotateImage extends Extension
 {
+    /** @var RotateImageTheme */
+    protected $theme;
+
     const SUPPORTED_EXT = ["jpg","jpeg","png","gif","webp"];
 
     public function onInitExt(InitExtEvent $event)

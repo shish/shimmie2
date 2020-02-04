@@ -2,6 +2,9 @@
 
 class Update extends Extension
 {
+    /** @var UpdateTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

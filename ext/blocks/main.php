@@ -2,6 +2,9 @@
 
 class Blocks extends Extension
 {
+    /** @var BlocksTheme */
+    protected $theme;
+
     public function onDatabaseUpgrade(DatabaseUpgradeEvent $event)
     {
         global $database;

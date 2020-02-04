@@ -5,6 +5,9 @@ require_once "config.php";
 
 class TagCategories extends Extension
 {
+    /** @var TagCategoriesTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

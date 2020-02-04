@@ -2,6 +2,9 @@
 
 class Featured extends Extension
 {
+    /** @var FeaturedTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

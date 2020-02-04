@@ -2,6 +2,9 @@
 
 class Oekaki extends Extension
 {
+    /** @var OekakiTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $user, $page;

@@ -15,6 +15,9 @@ class BulkAddEvent extends Event
 
 class BulkAdd extends Extension
 {
+    /** @var BulkAddTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;

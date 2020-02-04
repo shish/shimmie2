@@ -2,6 +2,9 @@
 
 class AutoComplete extends Extension
 {
+    /** @var AutoCompleteTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         return 30;

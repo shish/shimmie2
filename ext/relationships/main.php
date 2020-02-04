@@ -16,6 +16,9 @@ class ImageRelationshipSetEvent extends Event
 
 class Relationships extends Extension
 {
+    /** @var RelationshipsTheme */
+    protected $theme;
+
     public const NAME = "Relationships";
 
     public function onInitExt(InitExtEvent $event)

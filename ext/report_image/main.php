@@ -43,6 +43,9 @@ class ImageReport
 
 class ReportImage extends Extension
 {
+    /** @var ReportImageTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;

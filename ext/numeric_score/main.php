@@ -17,6 +17,9 @@ class NumericScoreSetEvent extends Event
 
 class NumericScore extends Extension
 {
+    /** @var NumericScoreTheme */
+    protected $theme;
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user;

@@ -2,6 +2,9 @@
 
 class Blotter extends Extension
 {
+    /** @var BlotterTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

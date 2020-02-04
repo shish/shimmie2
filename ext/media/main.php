@@ -13,6 +13,9 @@ class MediaException extends SCoreException
 
 class Media extends Extension
 {
+    /** @var MediaTheme */
+    protected $theme;
+
     const WEBP_LOSSY = "webp-lossy";
     const WEBP_LOSSLESS = "webp-lossless";
 

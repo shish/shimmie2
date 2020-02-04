@@ -86,11 +86,13 @@ class XMLSitemap extends Extension
         /* --- Add latest images to sitemap with higher priority --- */
         $latestimages = Image::find_images(0, 50, []);
         $latestimages_urllist = [];
+        $latest_image = null;
         foreach ($latestimages as $arrayid => $image) {
             // create url from image id's
             $latestimages_urllist[$arrayid] = "post/view/$image->id";
+            $latest_image = $image;
         }
-        $this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", strtotime($image->posted)));
+        $this->add_sitemap_queue($latestimages_urllist, "monthly", "0.8", date("Y-m-d", strtotime($latest_image->posted)));
 
         /* --- Add other tags --- */
         $other_tags = $database->get_all("SELECT tag, count FROM tags ORDER BY `count` DESC LIMIT 21,10000000");

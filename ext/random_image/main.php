@@ -2,6 +2,9 @@
 
 class RandomImage extends Extension
 {
+    /** @var RandomImageTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page;

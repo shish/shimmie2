@@ -2,6 +2,9 @@
 
 class Holiday extends Extension
 {
+    /** @var HolidayTheme */
+    protected $theme;
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;

@@ -2,6 +2,9 @@
 
 class Downtime extends Extension
 {
+    /** @var DowntimeTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         return 10;

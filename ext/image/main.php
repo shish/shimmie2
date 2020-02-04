@@ -7,6 +7,9 @@ require_once "config.php";
  */
 class ImageIO extends Extension
 {
+    /** @var ImageIOTheme */
+    protected $theme;
+
     const COLLISION_OPTIONS = ['Error'=>ImageConfig::COLLISION_ERROR, 'Merge'=>ImageConfig::COLLISION_MERGE];
 
     const EXIF_READ_FUNCTION = "exif_read_data";

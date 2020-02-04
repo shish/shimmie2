@@ -2,6 +2,9 @@
 
 class BulkAddCSV extends Extension
 {
+    /** @var BulkAddCSVTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         global $page, $user;

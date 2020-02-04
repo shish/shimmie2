@@ -11,7 +11,7 @@ use function MicroHTML\INPUT;
 
 class TaggerTheme extends Themelet
 {
-    public function build_tagger(Page $page, $event)
+    public function build_tagger(Page $page, DisplayingImageEvent $event)
     {
         // Initialization code
         $base_href = get_base_href();

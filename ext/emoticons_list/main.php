@@ -5,6 +5,9 @@
  */
 class EmoticonList extends Extension
 {
+    /** @var EmoticonListTheme */
+    protected $theme;
+
     public function onPageRequest(PageRequestEvent $event)
     {
         if ($event->page_matches("emote/list")) {

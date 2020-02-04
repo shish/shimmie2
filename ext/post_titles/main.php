@@ -5,6 +5,9 @@ require_once "events/post_title_set_event.php";
 
 class PostTitles extends Extension
 {
+    /** @var PostTitlesTheme */
+    protected $theme;
+
     public function get_priority(): int
     {
         return 60;

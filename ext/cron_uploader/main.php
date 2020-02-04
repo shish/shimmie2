@@ -4,6 +4,9 @@ require_once "config.php";
 
 class CronUploader extends Extension
 {
+    /** @var CronUploaderTheme */
+    protected $theme;
+
     public const NAME = "cron_uploader";
 
     // TODO: Checkbox option to only allow localhost + a list of additional IP addresses that can be set in /cron_upload
