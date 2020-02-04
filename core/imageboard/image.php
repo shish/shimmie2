@@ -894,24 +894,26 @@ class Image
 			");
         }
 
-        // one positive tag sorted by ID - we can fetch this from the
-        // image_tags table, and do the offset / limit there, which is
-        // 10x faster than fetching all the image_tags and doing the
-        // offset / limit on the result.
+        // one tag sorted by ID - we can fetch this from the image_tags table,
+        // and do the offset / limit there, which is 10x faster than fetching
+        // all the image_tags and doing the offset / limit on the result.
         elseif (
-            $positive_tag_count === 1
-            && $negative_tag_count === 0
+            (
+                ($positive_tag_count === 1 && $negative_tag_count === 0)
+                || ($positive_tag_count === 0 && $negative_tag_count === 1)
+            )
             && empty($img_conditions)
             && $order == "id DESC"
             && !is_null($offset)
             && !is_null($limit)
         ) {
+            $in = $positive_tag_count === 1 ? "IN" : "NOT IN";
             $query = new Querylet("
                 SELECT images.*
                 FROM images INNER JOIN (
                     SELECT it.image_id
                     FROM image_tags it
-                    WHERE it.tag_id IN (
+                    WHERE it.tag_id $in (
                         SELECT id
                         FROM tags
                         WHERE LOWER(tag) LIKE LOWER(:tag)
