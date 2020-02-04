@@ -32,6 +32,7 @@ $(document).ready(function() {
 	/** Setup tablesorter **/
 	$("table.sortable").tablesorter();
 
+	/** Setup sidebar toggle **/
 	try {
 		var sidebar_hidden = (Cookies.get("ui-sidebar-hidden") || "").split("|");
 		for(var i in sidebar_hidden) {
@@ -53,7 +54,7 @@ $(document).ready(function() {
 			}
 			else {
 				for (var i in sidebar_hidden) {
-					if (sidebar_hidden[i] === tid) { 
+					if (sidebar_hidden[i] === tid) {
 						sidebar_hidden.splice(i, 1);
 					}
 				}
@@ -62,6 +63,7 @@ $(document).ready(function() {
 		});
 	});
 
+	/** setup unlocker buttons **/
 	$(".shm-unlocker").each(function(idx, elm) {
 		var tid = $(elm).data("unlock-sel");
 		var tob = $(tid);
@@ -70,4 +72,16 @@ $(document).ready(function() {
 			tob.attr("disabled", false);
 		});
 	});
+
+	/** setup arrow key bindings **/
+    $(document).keyup(function(e) {
+        if($(e.target).is('input', 'textarea')){ return; }
+        if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) { return; }
+        if (e.keyCode == 37 && $("[rel='prev']").length) {
+            window.location.href = $("[rel='pref']").attr("href");
+        }
+        else if (e.keyCode == 39 && $("[rel='next']").length) {
+            window.location.href = $("[rel='next']").attr("href");
+        }
+    });
 });
