@@ -167,8 +167,9 @@ class Media extends Extension
                     $failed = 0;
                     foreach ($event->items as $image) {
                         try {
+                            log_debug("media", "Rescanning media for {$image->hash} ({$image->id})");
                             send_event(new MediaCheckPropertiesEvent($image));
-                            $image->save_media_properties();
+                            $image->save_to_db();
                             $total++;
                         } catch (MediaException $e) {
                             $failed++;
@@ -373,10 +374,10 @@ class Media extends Extension
         exec($cmd, $output, $ret);
 
         if ((int)$ret == (int)0) {
-            log_debug('Media', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
             return true;
         } else {
-            log_error('Media', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_error('media', "Generating thumbnail with command `$cmd`, returns $ret");
             return false;
         }
     }
@@ -405,11 +406,11 @@ class Media extends Extension
         exec($cmd, $output, $ret);
 
         if ((int)$ret == (int)0) {
-            log_debug('Media', "Getting media data `$cmd`, returns $ret");
+            log_debug('media', "Getting media data `$cmd`, returns $ret");
             $output = implode($output);
             return json_decode($output, true);
         } else {
-            log_error('Media', "Getting media data `$cmd`, returns $ret");
+            log_error('media', "Getting media data `$cmd`, returns $ret");
             return [];
         }
     }
@@ -617,7 +618,7 @@ class Media extends Extension
         if ($ret != 0) {
             throw new MediaException("Resizing image with command `$cmd`, returns $ret, outputting " . implode("\r\n", $output));
         } else {
-            log_debug('Media', "Generating thumbnail with command `$cmd`, returns $ret");
+            log_debug('media', "Generating thumbnail with command `$cmd`, returns $ret");
         }
     }
 
@@ -931,7 +932,7 @@ class Media extends Extension
         } else {
             $size = [1, 1];
         }
-        log_debug('Media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
+        log_debug('media', "Getting video size with `$cmd`, returns $output -- $size[0], $size[1]");
         return $size;
     }
 

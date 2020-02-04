@@ -107,11 +107,11 @@ class BulkActions extends Extension
             if (count($event->args) < 2) {
                 return;
             }
-            $query = $event->args[0];
-            $items = $this->yield_search_results($event->args[1]);
-            $newEvent = new BulkActionEvent($event->args[0], $items);
-            var_dump($newEvent);
-            # send_event($newEvent);
+            $action = $event->args[0];
+            $query = $event->args[1];
+            $items = $this->yield_search_results($query);
+            log_info("bulk_actions", "Performing $action on {$event->args[1]}");
+            send_event(new BulkActionEvent($event->args[0], $items));
         }
     }
 

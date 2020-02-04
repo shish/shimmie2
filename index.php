@@ -152,7 +152,10 @@ try {
 
 $_tracer->end();
 if (TRACE_FILE) {
-    if ((microtime(true) - $_shm_load_start) > TRACE_THRESHOLD && $_SERVER["REQUEST_URI"] != "/upload") {
+    if (
+        (microtime(true) - $_shm_load_start) > TRACE_THRESHOLD
+        && ($_SERVER["REQUEST_URI"] ?? "") != "/upload"
+    ) {
         $_tracer->flush(TRACE_FILE);
     }
 }
