@@ -151,15 +151,8 @@ class Image
             }
         }
 
-        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-
-        $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
-        $querylet->append(new Querylet(" ORDER BY ".(Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER))));
-        if ($limit!=null) {
-            $querylet->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
-            $querylet->append(new Querylet(" OFFSET :offset ", ["offset"=>$start]));
-        }
-        #var_dump($querylet->sql); var_dump($querylet->variables);
+        $order = (Image::$order_sql ?: "images.".$config->get_string(IndexConfig::ORDER));
+        $querylet = Image::build_search_querylet($tags, $order, $limit, $start);
         $result = $database->get_all_iterable($querylet->sql, $querylet->variables);
 
         Image::$order_sql = null;
@@ -247,8 +240,7 @@ class Image
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
                 }
-                list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-                $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+                $querylet = Image::build_search_querylet($tags);
                 $total = (int)$database->get_one("SELECT COUNT(*) AS cnt FROM ($querylet->sql) AS tbl", $querylet->variables);
                 if (SPEED_HAX && $total > 5000) {
                     // when we have a ton of images, the count
@@ -349,8 +341,7 @@ class Image
 			');
         } else {
             $tags[] = 'id'. $gtlt . $this->id;
-            list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
-            $querylet = Image::build_search_querylet($tag_conditions, $img_conditions);
+            $querylet = Image::build_search_querylet($tags);
             $querylet->append_sql(' ORDER BY images.id '.$dir.' LIMIT 1');
             $row = $database->get_row($querylet->sql, $querylet->variables);
         }
@@ -863,8 +854,15 @@ class Image
     /**
      * #param string[] $terms
      */
-    private static function build_search_querylet(array $tag_conditions, array $img_conditions): Querylet
+    private static function build_search_querylet(
+        array $tags,
+        ?string $order=null,
+        ?int $limit=null,
+        ?int $offset=null
+    ): Querylet
     {
+        list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
+
         $positive_tag_count = 0;
         $negative_tag_count = 0;
         foreach ($tag_conditions as $tq) {
@@ -921,6 +919,14 @@ class Image
             }
             $query->append_sql(" AND ");
             $query->append(new Querylet($img_sql, $img_vars));
+        }
+
+        if (!is_null($order)) {
+            $query->append(new Querylet(" ORDER BY ".$order));
+        }
+        if (!is_null($limit)) {
+            $query->append(new Querylet(" LIMIT :limit ", ["limit" => $limit]));
+            $query->append(new Querylet(" OFFSET :offset ", ["offset" => $offset]));
         }
 
         return $query;
