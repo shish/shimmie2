@@ -77,8 +77,8 @@ $(document).ready(function() {
     $(document).keyup(function(e) {
         if($(e.target).is('input', 'textarea')){ return; }
         if (e.metaKey || e.ctrlKey || e.altKey || e.shiftKey) { return; }
-        if (e.keyCode == 37 && $("[rel='prev']").length) {
-            window.location.href = $("[rel='pref']").attr("href");
+        if (e.keyCode == 37 && $("[rel='previous']").length) {
+            window.location.href = $("[rel='previous']").attr("href");
         }
         else if (e.keyCode == 39 && $("[rel='next']").length) {
             window.location.href = $("[rel='next']").attr("href");
