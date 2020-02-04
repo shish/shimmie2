@@ -894,6 +894,40 @@ class Image
 			");
         }
 
+        // one positive tag sorted by ID - we can fetch this from the
+        // image_tags table, and do the offset / limit there, which is
+        // 10x faster than fetching all the image_tags and doing the
+        // offset / limit on the result.
+        elseif (
+            $positive_tag_count === 1
+            && $negative_tag_count === 0
+            && empty($img_conditions)
+            && $order == "id DESC"
+            && !is_null($offset)
+            && !is_null($limit)
+        ) {
+            $query = new Querylet("
+                SELECT images.*
+                FROM images INNER JOIN (
+                    SELECT it.image_id
+                    FROM image_tags it
+                    WHERE it.tag_id IN (
+                        SELECT id
+                        FROM tags
+                        WHERE LOWER(tag) LIKE LOWER(:tag)
+                    )
+                    ORDER BY it.image_id DESC
+                    LIMIT :limit OFFSET :offset
+                ) a on a.image_id = images.id
+                ORDER BY images.id DESC;
+            ", ["tag"=>$tag_conditions[0]->tag, "limit"=>$limit, "offset"=>$offset]);
+            // don't do these at the image level because
+            // we did them at the image_tags level
+            $order = null;
+            $limit = null;
+            $offset = null;
+        }
+
         // more than one positive tag, or more than zero negative tags
         else {
             $query = Image::build_accurate_search_querylet($tag_conditions);
