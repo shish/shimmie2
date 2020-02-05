@@ -851,6 +851,16 @@ class Image
         return $tmpl;
     }
 
+    private static function tag_or_wildcard_to_ids(string $tag): array
+    {
+        global $database;
+        $sq = "SELECT id FROM tags WHERE LOWER(tag) LIKE LOWER(:tag)";
+        if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+            $sq .= "ESCAPE '\\'";
+        }
+        return $database->get_col($sq, ["tag" => Tag::sqlify($tag)]);
+    }
+
     /**
      * #param string[] $terms
      */
@@ -909,26 +919,33 @@ class Image
             && !is_null($limit)
         ) {
             $in = $positive_tag_count === 1 ? "IN" : "NOT IN";
-            $query = new Querylet("
-                SELECT images.*
-                FROM images INNER JOIN (
-                    SELECT it.image_id
-                    FROM image_tags it
-                    WHERE it.tag_id $in (
-                        SELECT id
-                        FROM tags
-                        WHERE LOWER(tag) LIKE LOWER(:tag)
-                    )
-                    ORDER BY it.image_id DESC
-                    LIMIT :limit OFFSET :offset
-                ) a on a.image_id = images.id
-                ORDER BY images.id DESC;
-            ", ["tag"=>$tag_conditions[0]->tag, "limit"=>$limit, "offset"=>$offset]);
-            // don't do these at the image level because
-            // we did them at the image_tags level
-            $order = null;
-            $limit = null;
-            $offset = null;
+            // doing this inline is 100x slower?
+            $tag_array = self::tag_or_wildcard_to_ids($tag_conditions[0]->tag);
+            if (count($tag_array) == 0) {
+                if ($positive_tag_count == 1) {
+                    $query = new Querylet("SELECT images.* FROM images WHERE 1=0");
+                } else {
+                    $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
+                }
+            } else {
+                $set = implode(', ', $tag_array);
+                $query = new Querylet("
+                    SELECT images.*
+                    FROM images INNER JOIN (
+                        SELECT it.image_id
+                        FROM image_tags it
+                        WHERE it.tag_id $in ($set)
+                        ORDER BY it.image_id DESC
+                        LIMIT :limit OFFSET :offset
+                    ) a on a.image_id = images.id
+                    ORDER BY images.id DESC;
+                ", ["limit"=>$limit, "offset"=>$offset]);
+                // don't do these at the image level because
+                // we did them at the image_tags level
+                $order = null;
+                $limit = null;
+                $offset = null;
+            }
         }
 
         // more than one positive tag, or more than zero negative tags
@@ -938,19 +955,7 @@ class Image
             $negative_tag_id_array = [];
 
             foreach ($tag_conditions as $tq) {
-                $sq = "
-                    SELECT id
-                    FROM tags
-                    WHERE LOWER(tag) LIKE LOWER(:tag)
-                ";
-                if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
-                    $sq .= "ESCAPE '\\'";
-                }
-                $tag_ids = $database->get_col(
-                    $sq,
-                    ["tag" => Tag::sqlify($tq->tag)]
-                );
-
+                $tag_ids = self::tag_or_wildcard_to_ids($tq->tag);
                 $tag_count = count($tag_ids);
 
                 if ($tq->positive) {

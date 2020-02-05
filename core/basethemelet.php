@@ -86,7 +86,7 @@ class BaseThemelet
 
         $page->add_html_header("<link rel='first' href='".make_http(make_link($base.'/1', $query))."'>");
         if ($page_number < $total_pages) {
-            $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number+1), $query))."'>");
+            # $page->add_html_header("<link rel='prefetch' href='".make_http(make_link($base.'/'.($page_number+1), $query))."'>");
             $page->add_html_header("<link rel='next' href='".make_http(make_link($base.'/'.($page_number+1), $query))."'>");
         }
         if ($page_number > 1) {
