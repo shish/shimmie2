@@ -904,7 +904,7 @@ class Image
                 || ($positive_tag_count === 0 && $negative_tag_count === 1)
             )
             && empty($img_conditions)
-            && $order == "id DESC"
+            && ($order == "id DESC" || $order == "images.id DESC")
             && !is_null($offset)
             && !is_null($limit)
         ) {
