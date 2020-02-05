@@ -859,8 +859,9 @@ class Image
         ?string $order=null,
         ?int $limit=null,
         ?int $offset=null
-    ): Querylet
-    {
+    ): Querylet {
+        global $database;
+
         list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
 
         $positive_tag_count = 0;
@@ -932,7 +933,98 @@ class Image
 
         // more than one positive tag, or more than zero negative tags
         else {
-            $query = Image::build_accurate_search_querylet($tag_conditions);
+            $positive_tag_id_array = [];
+            $positive_wildcard_id_array = [];
+            $negative_tag_id_array = [];
+
+            foreach ($tag_conditions as $tq) {
+                $sq = "
+                    SELECT id
+                    FROM tags
+                    WHERE LOWER(tag) LIKE LOWER(:tag)
+                ";
+                if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
+                    $sq .= "ESCAPE '\\'";
+                }
+                $tag_ids = $database->get_col(
+                    $sq,
+                    ["tag" => Tag::sqlify($tq->tag)]
+                );
+
+                $tag_count = count($tag_ids);
+
+                if ($tq->positive) {
+                    if ($tag_count== 0) {
+                        # one of the positive tags had zero results, therefor there
+                        # can be no results; "where 1=0" should shortcut things
+                        return new Querylet("
+                            SELECT images.*
+                            FROM images
+                            WHERE 1=0
+                        ");
+                    } elseif ($tag_count==1) {
+                        // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
+                        $positive_tag_id_array[] = $tag_ids[0];
+                    } else {
+                        // Terms that resolve to multiple tags act as an OR within themselves
+                        // and as an AND in relation to all other terms,
+                        $positive_wildcard_id_array[] = $tag_ids;
+                    }
+                } else {
+                    // Unlike positive criteria, negative criteria are all handled in an OR fashion,
+                    // so we can just compile them all into a single sub-query.
+                    $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
+                }
+            }
+
+            assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
+            if (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
+                $inner_joins = [];
+                if (!empty($positive_tag_id_array)) {
+                    foreach ($positive_tag_id_array as $tag) {
+                        $inner_joins[] = "= $tag";
+                    }
+                }
+                if (!empty($positive_wildcard_id_array)) {
+                    foreach ($positive_wildcard_id_array as $tags) {
+                        $positive_tag_id_list = join(', ', $tags);
+                        $inner_joins[] = "IN ($positive_tag_id_list)";
+                    }
+                }
+
+                $first = array_shift($inner_joins);
+                $sub_query = "SELECT it.image_id FROM  image_tags it ";
+                $i = 0;
+                foreach ($inner_joins as $inner_join) {
+                    $i++;
+                    $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
+                }
+                if (!empty($negative_tag_id_array)) {
+                    $negative_tag_id_list = join(', ', $negative_tag_id_array);
+                    $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
+                }
+                $sub_query .= "WHERE it.tag_id $first ";
+                if (!empty($negative_tag_id_array)) {
+                    $sub_query .= " AND negative.image_id IS NULL";
+                }
+                $sub_query .= " GROUP BY it.image_id ";
+
+                $query = new Querylet("
+                    SELECT images.*
+                    FROM images
+                    INNER JOIN ($sub_query) a on a.image_id = images.id
+                ");
+            } elseif (!empty($negative_tag_id_array)) {
+                $negative_tag_id_list = join(', ', $negative_tag_id_array);
+                $query = new Querylet("
+                    SELECT images.*
+                    FROM images
+                    LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
+                    WHERE negative.image_id IS NULL
+                ");
+            } else {
+                throw new SCoreException("No criteria specified");
+            }
         }
 
         /*
@@ -966,108 +1058,5 @@ class Image
         }
 
         return $query;
-    }
-
-    /**
-     * #param TagQuerylet[] $tag_conditions
-     */
-    private static function build_accurate_search_querylet(array $tag_conditions): Querylet
-    {
-        global $database;
-
-        $positive_tag_id_array = [];
-        $positive_wildcard_id_array = [];
-        $negative_tag_id_array = [];
-
-        foreach ($tag_conditions as $tq) {
-            $sq = "
-                SELECT id
-                FROM tags
-                WHERE LOWER(tag) LIKE LOWER(:tag)
-            ";
-            if ($database->get_driver_name() === DatabaseDriver::SQLITE) {
-                $sq .= "ESCAPE '\\'";
-            }
-            $tag_ids = $database->get_col(
-                $sq,
-                ["tag" => Tag::sqlify($tq->tag)]
-            );
-
-            $tag_count = count($tag_ids);
-
-            if ($tq->positive) {
-                if ($tag_count== 0) {
-                    # one of the positive tags had zero results, therefor there
-                    # can be no results; "where 1=0" should shortcut things
-                    return new Querylet("
-						SELECT images.*
-						FROM images
-						WHERE 1=0
-					");
-                } elseif ($tag_count==1) {
-                    // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
-                    $positive_tag_id_array[] = $tag_ids[0];
-                } else {
-                    // Terms that resolve to multiple tags act as an OR within themselves
-                    // and as an AND in relation to all other terms,
-                    $positive_wildcard_id_array[] = $tag_ids;
-                }
-            } else {
-                // Unlike positive criteria, negative criteria are all handled in an OR fashion,
-                // so we can just compile them all into a single sub-query.
-                $negative_tag_id_array = array_merge($negative_tag_id_array, $tag_ids);
-            }
-        }
-
-        assert($positive_tag_id_array || $positive_wildcard_id_array || $negative_tag_id_array, @$_GET['q']);
-        if (!empty($positive_tag_id_array) || !empty($positive_wildcard_id_array)) {
-            $inner_joins = [];
-            if (!empty($positive_tag_id_array)) {
-                foreach ($positive_tag_id_array as $tag) {
-                    $inner_joins[] = "= $tag";
-                }
-            }
-            if (!empty($positive_wildcard_id_array)) {
-                foreach ($positive_wildcard_id_array as $tags) {
-                    $positive_tag_id_list = join(', ', $tags);
-                    $inner_joins[] = "IN ($positive_tag_id_list)";
-                }
-            }
-
-            $first = array_shift($inner_joins);
-            $sub_query = "SELECT it.image_id FROM  image_tags it ";
-            $i = 0;
-            foreach ($inner_joins as $inner_join) {
-                $i++;
-                $sub_query .= " INNER JOIN image_tags it$i ON it$i.image_id = it.image_id AND it$i.tag_id $inner_join ";
-            }
-            if (!empty($negative_tag_id_array)) {
-                $negative_tag_id_list = join(', ', $negative_tag_id_array);
-                $sub_query .= " LEFT JOIN image_tags negative ON negative.image_id = it.image_id AND negative.tag_id IN ($negative_tag_id_list) ";
-            }
-            $sub_query .= "WHERE it.tag_id $first ";
-            if (!empty($negative_tag_id_array)) {
-                $sub_query .= " AND negative.image_id IS NULL";
-            }
-            $sub_query .= " GROUP BY it.image_id ";
-
-            $sql = "
-                SELECT images.*
-                FROM images INNER JOIN (
-                $sub_query
-                ) a on a.image_id = images.id
-            ";
-        } elseif (!empty($negative_tag_id_array)) {
-            $negative_tag_id_list = join(', ', $negative_tag_id_array);
-            $sql = "
-                SELECT images.*
-                FROM images LEFT JOIN image_tags negative ON negative.image_id = images.id AND negative.tag_id in ($negative_tag_id_list)
-                WHERE negative.image_id IS NULL
-            ";
-        } else {
-            throw new SCoreException("No criteria specified");
-        }
-
-        return new Querylet($sql);
     }
 }
