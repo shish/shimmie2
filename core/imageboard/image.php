@@ -898,11 +898,7 @@ class Image
 
         // no tags, do a simple search
         if ($positive_tag_count === 0 && $negative_tag_count === 0) {
-            $query = new Querylet("
-				SELECT images.*
-				FROM images
-				WHERE 1=1
-			");
+            $query = new Querylet("SELECT images.* FROM images WHERE 1=1");
         }
 
         // one tag sorted by ID - we can fetch this from the image_tags table,
@@ -938,13 +934,10 @@ class Image
                         ORDER BY it.image_id DESC
                         LIMIT :limit OFFSET :offset
                     ) a on a.image_id = images.id
-                    ORDER BY images.id DESC;
                 ", ["limit"=>$limit, "offset"=>$offset]);
-                // don't do these at the image level because
-                // we did them at the image_tags level
-                $order = null;
-                $limit = null;
-                $offset = null;
+                // don't offset at the image level because
+                // we already offset at the image_tags level
+                $offset = 0;
             }
         }
 
@@ -962,11 +955,7 @@ class Image
                     if ($tag_count== 0) {
                         # one of the positive tags had zero results, therefor there
                         # can be no results; "where 1=0" should shortcut things
-                        return new Querylet("
-                            SELECT images.*
-                            FROM images
-                            WHERE 1=0
-                        ");
+                        return new Querylet("SELECT images.* FROM images WHERE 1=0");
                     } elseif ($tag_count==1) {
                         // All wildcard terms that qualify for a single tag can be treated the same as non-wildcards
                         $positive_tag_id_array[] = $tag_ids[0];
@@ -998,7 +987,7 @@ class Image
                 }
 
                 $first = array_shift($inner_joins);
-                $sub_query = "SELECT it.image_id FROM  image_tags it ";
+                $sub_query = "SELECT it.image_id FROM image_tags it ";
                 $i = 0;
                 foreach ($inner_joins as $inner_join) {
                     $i++;
