@@ -117,7 +117,13 @@ $_tracer->end();
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 //$_tracer->mark(@$_SERVER["REQUEST_URI"]);
-$_tracer->begin($_SERVER["REQUEST_URI"] ?? "No Request");
+$_tracer->begin(
+	$_SERVER["REQUEST_URI"] ?? "No Request",
+	[
+		"user"=>$_COOKIE["shm_user"] ?? "No User",
+		"ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
+	]
+);
 
 if (!SPEED_HAX) {
     send_event(new DatabaseUpgradeEvent());
