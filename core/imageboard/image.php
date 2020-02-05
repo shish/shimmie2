@@ -934,10 +934,13 @@ class Image
                         ORDER BY it.image_id DESC
                         LIMIT :limit OFFSET :offset
                     ) a on a.image_id = images.id
+                    ORDER BY images.id DESC
                 ", ["limit"=>$limit, "offset"=>$offset]);
                 // don't offset at the image level because
                 // we already offset at the image_tags level
-                $offset = 0;
+                $order = null;
+                $limit = null;
+                $offset = null;
             }
         }
 
