@@ -122,6 +122,7 @@ $_tracer->begin(
 	[
 		"user"=>$_COOKIE["shm_user"] ?? "No User",
 		"ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
+		"user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
 	]
 );
 
