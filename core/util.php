@@ -471,7 +471,7 @@ function get_debug_info(): string
 function require_all(array $files): void
 {
     foreach ($files as $filename) {
-		require_once $filename;
+        require_once $filename;
     }
 }
 

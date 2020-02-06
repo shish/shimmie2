@@ -45,10 +45,12 @@ class Index extends Extension
             try {
                 $fast_page_limit = 500;
 
-                if(
-                    SPEED_HAX
-                    && strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot") !== false
-                    && count($search_terms) > 1
+                if (
+                    SPEED_HAX && strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot") !== false
+                    && (
+                        $count_search_terms > 1
+                        || ($count_search_terms == 1 && $search_terms[0][0] == "-")
+                    )
                 ) {
                     // googlebot loves searching for weird combinations of tags...
                     $fast_page_limit = 50;

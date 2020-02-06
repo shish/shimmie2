@@ -139,12 +139,12 @@ $_tracer->end();
 
 //$_tracer->mark(@$_SERVER["REQUEST_URI"]);
 $_tracer->begin(
-	$_SERVER["REQUEST_URI"] ?? "No Request",
-	[
-		"user"=>$_COOKIE["shm_user"] ?? "No User",
-		"ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
-		"user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
-	]
+    $_SERVER["REQUEST_URI"] ?? "No Request",
+    [
+        "user"=>$_COOKIE["shm_user"] ?? "No User",
+        "ip"=>$_SERVER['REMOTE_ADDR'] ?? "No IP",
+        "user_agent"=>$_SERVER['HTTP_USER_AGENT'] ?? "No UA",
+    ]
 );
 
 if (!SPEED_HAX) {

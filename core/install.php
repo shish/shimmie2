@@ -15,7 +15,8 @@
  * and other such things that aren't ready yet
  */
 
-function install() {
+function install()
+{
     date_default_timezone_set('UTC');
     define("DATABASE_TIMEOUT", 10000);
 
@@ -49,15 +50,15 @@ function install() {
     require_once "core/util.php";
 
     $dsn = get_dsn();
-    if($dsn) {
+    if ($dsn) {
         do_install($dsn);
     } else {
         ask_questions();
     }
-
 }
 
-function get_dsn() {
+function get_dsn()
+{
     if (file_exists("data/config/auto_install.conf.php")) {
         $dsn = null;
         require_once "data/config/auto_install.conf.php";
@@ -72,7 +73,8 @@ function get_dsn() {
     return $dsn;
 }
 
-function do_install($dsn) {
+function do_install($dsn)
+{
     try {
         create_dirs();
         create_tables(new Database($dsn));
@@ -80,7 +82,6 @@ function do_install($dsn) {
     } catch (InstallerException $e) {
         exit_with_page($e->title, $e->body, $e->code);
     }
-
 }
 
 function ask_questions()
@@ -129,7 +130,7 @@ function ask_questions()
 
     exit_with_page(
         "Install Options",
-<<<EOD
+        <<<EOD
     $warn_msg
     $err_msg
 
@@ -194,7 +195,8 @@ function ask_questions()
         Drivers can generally be downloaded with your OS package manager;
         for Debian / Ubuntu you want php-pgsql, php-mysql, or php-sqlite.
     </p>
-EOD);
+EOD
+    );
 }
 
 
@@ -337,7 +339,8 @@ function write_config($dsn)
     }
 }
 
-function exit_with_page($title, $body, $code=0) {
+function exit_with_page($title, $body, $code=0)
+{
     print("<!DOCTYPE html>
 <html>
 	<head>
