@@ -12,7 +12,7 @@ WORKDIR /app
 RUN composer install
 
 COPY . /app/
-RUN echo '=== Installing ===' && mkdir -p data/config && echo "<?php define(\"DATABASE_DSN\", \"sqlite:data/shimmie.sqlite\");" > data/config/auto_install.conf.php && php index.php && \
+RUN echo '=== Installing ===' && mkdir -p data/config && echo "<?php \$dsn = \"sqlite:data/shimmie.sqlite\";" > data/config/auto_install.conf.php && php index.php && \
     echo '=== Smoke Test ===' && php index.php get-page /post/list && \
     echo '=== Unit Tests ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml && \
     echo '=== Coverage ===' && ./vendor/bin/phpunit --configuration tests/phpunit.xml --coverage-text && \
