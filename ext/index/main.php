@@ -45,6 +45,15 @@ class Index extends Extension
             try {
                 $fast_page_limit = 500;
 
+                if(
+                    SPEED_HAX
+                    && strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot") !== false
+                    && count($search_terms) > 1
+                ) {
+                    // googlebot loves searching for weird combinations of tags...
+                    $fast_page_limit = 50;
+                }
+
                 if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
                     $this->theme->display_error(
                         404,
