@@ -53,7 +53,7 @@ class Index extends Extension
                     )
                 ) {
                     // googlebot loves searching for weird combinations of tags...
-                    $fast_page_limit = 50;
+                    $fast_page_limit = 10;
                 }
 
                 if (SPEED_HAX && $page_number > $fast_page_limit && !$user->can("big_search")) {
