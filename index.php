@@ -48,7 +48,8 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 if (!file_exists("data/config/shimmie.conf.php")) {
-    require_once "core/_install.php";
+    require_once "core/install.php";
+    install();
     exit;
 }
 
@@ -99,16 +100,36 @@ require_once "core/util.php";
 global $cache, $config, $database, $user, $page, $_tracer;
 _sanitise_environment();
 $_tracer->begin("Bootstrap");
+$_tracer->begin("Load core");
 _load_core_files();
+$_tracer->end();
+$_tracer->begin("Cache");
 $cache = new Cache(CACHE_DSN);
+$_tracer->end();
+$_tracer->begin("Database");
 $database = new Database(DATABASE_DSN);
+$_tracer->end();
+$_tracer->begin("DatabaseConfig");
 $config = new DatabaseConfig($database);
+$_tracer->end();
+$_tracer->begin("ExtensionInfo");
 ExtensionInfo::load_all_extension_info();
+$_tracer->end();
+$_tracer->begin("Extension");
 Extension::determine_enabled_extensions();
+$_tracer->end();
+$_tracer->begin("Load extension");
 require_all(zglob("ext/{".Extension::get_enabled_extensions_as_string()."}/main.php"));
+$_tracer->end();
+$_tracer->begin("Load theme");
 _load_theme_files();
+$_tracer->end();
+$_tracer->begin("Page");
 $page = new Page();
+$_tracer->end();
+$_tracer->begin("Load Event Listeners");
 _load_event_listeners();
+$_tracer->end();
 $_tracer->end();
 
 
