@@ -8,6 +8,12 @@ enabled, so that images will be served straight from disk by the webserver
 instead of via PHP. If you're serving images via PHP, then your site might
 melt under the load of 5 concurrent users...
 
+Add a Cache
+-----------
+eg installing memcached, then setting
+`define("CACHE_DSN", "memcache://127.0.0.1:11211")` - a bunch of stuff will
+get served from the high-speed cache instead of the SQL database.
+
 `SPEED_HAX`
 -----------
 Setting this to true will make a bunch of changes which reduce the correctness
