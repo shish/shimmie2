@@ -156,12 +156,13 @@ function stream_file(string $file, int $start, int $end): void
     try {
         set_time_limit(0);
         fseek($fp, $start);
-        $buffer = 1024 * 64;
+        $buffer = 1024 * 1024;
         while (!feof($fp) && ($p = ftell($fp)) <= $end) {
             if ($p + $buffer > $end) {
                 $buffer = $end - $p + 1;
             }
             echo fread($fp, $buffer);
+            @ob_flush();
             flush();
 
             // After flush, we can tell if the client browser has disconnected.

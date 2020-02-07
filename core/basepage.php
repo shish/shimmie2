@@ -1,6 +1,4 @@
-<?php declare(strict_types=1);
-require_once "core/event.php";
-
+<?php
 /**
  * \page themes Themes
  *
@@ -83,8 +81,14 @@ class BasePage
     /** @var string */
     private $file = null;
 
-    /** @var string */
-    private $filename = null;
+    /** @var string; */
+    public $file = null;
+
+    /** @var bool; */
+    public $file_delete = null;
+
+    /** @var string; public only for unit test */
+    public $filename = null;
 
     private $disposition = null;
 
@@ -96,9 +100,10 @@ class BasePage
         $this->data = $data;
     }
 
-    public function set_file(string $file): void
+    public function set_file(string $file, bool $delete = false): void
     {
         $this->file = $file;
+        $this->file_delete = $delete;
     }
 
     /**
@@ -353,8 +358,13 @@ class BasePage
                 header("Content-Range: bytes $start-$end/$size");
                 header("Content-Length: " . $length);
 
-                stream_file($this->file, $start, $end);
-                break;
+                try {
+                	stream_file($this->file, $start, $end);
+                } finally {
+                    if ($this->file_delete === true) {
+                        unlink($this->file);
+                    }
+                }                break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
                     $this->redirect .= (strpos($this->redirect, "?") === false) ? "?" : "&";

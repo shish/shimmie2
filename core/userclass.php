@@ -156,6 +156,10 @@ new UserClass("base", null, [
 
     Permissions::APPROVE_IMAGE => false,
     Permissions::APPROVE_COMMENT => false,
+
+    Permissions::BULK_DOWNLOAD => false,
+    Permissions::BULK_IMPORT => false,
+    Permissions::BULK_EXPORT => false,
 ]);
 
 // Ghost users can't do anything
@@ -245,6 +249,9 @@ new UserClass("admin", "base", [
     Permissions::CRON_ADMIN => true,
     Permissions::APPROVE_IMAGE => true,
     Permissions::APPROVE_COMMENT => true,
+    Permissions::BULK_DOWNLOAD => true,
+    Permissions::BULK_IMPORT => true,
+    Permissions::BULK_EXPORT => true,
 ]);
 
 new UserClass("hellbanned", "user", [

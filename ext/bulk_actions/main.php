@@ -39,6 +39,11 @@ class BulkActionEvent extends Event
     public $action;
     /** @var array  */
     public $items;
+    /** @var PageRequestEvent  */
+    public $page_request;
+    /** @var string  */
+    public $download_file;
+    public $download_delete = false;
 
     public function __construct(String $action, Generator $items)
     {
@@ -177,15 +182,23 @@ class BulkActions extends Extension
                 }
             }
 
+            $newEvent = null;
             if (is_iterable($items)) {
-                send_event(new BulkActionEvent($action, $items));
+                $newEvent = new BulkActionEvent($action, $event, $items);
+                send_event($newEvent);
             }
 
-            $page->set_mode(PageMode::REDIRECT);
-            if (!isset($_SERVER['HTTP_REFERER'])) {
-                $_SERVER['HTTP_REFERER'] = make_link();
+            if($newEvent!=null && !empty($newEvent->download_file)) {
+                $page->set_mode(PageMode::FILE);
+                $page->set_filename($newEvent->download_file, "download");
+                $page->set_file($newEvent->download_file, $newEvent->download_delete);
+            } else {
+                $page->set_mode(PageMode::REDIRECT);
+                if (!isset($_SERVER['HTTP_REFERER'])) {
+                    $_SERVER['HTTP_REFERER'] = make_link();
+                }
+                $page->set_redirect($_SERVER['HTTP_REFERER']);
             }
-            $page->set_redirect($_SERVER['HTTP_REFERER']);
         }
     }
 

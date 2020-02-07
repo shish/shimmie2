@@ -117,43 +117,19 @@ class Artists extends Extension
 
     public function onAuthorSet(AuthorSetEvent $event)
     {
-        global $database;
+        $this->set_author($event->image->id, $event->author);
+    }
 
-        $author = strtolower($event->author);
-        if (strlen($author) === 0 || strpos($author, " ")) {
-            return;
+
+    public function onBulkExport(BulkExportEvent $event)
+    {
+        $event->fields["author"] = $event->image->author;
+    }
+    public function onBulkImport(BulkImportEvent $event)
+    {
+        if(property_exists($event->fields,"author") && $event->fields->author != null) {
+            $this->set_author($event->image->id, $event->fields->author);
         }
-
-        $paddedAuthor = str_replace(" ", "_", $author);
-
-        $artistID = null;
-        if ($this->artist_exists($author)) {
-            $artistID = $this->get_artist_id($author);
-        }
-
-        if (is_null($artistID) && $this->alias_exists_by_name($paddedAuthor)) {
-            $artistID = $this->get_artistID_by_aliasName($paddedAuthor);
-        }
-
-        if (is_null($artistID) && $this->member_exists_by_name($paddedAuthor)) {
-            $artistID = $this->get_artistID_by_memberName($paddedAuthor);
-        }
-
-        if (is_null($artistID) && $this->url_exists_by_url($author)) {
-            $artistID = $this->get_artistID_by_url($author);
-        }
-
-        if (!is_null($artistID)) {
-            $artistName = $this->get_artistName_by_artistID($artistID);
-        } else {
-            $this->save_new_artist($author, "");
-            $artistName = $author;
-        }
-
-        $database->execute(
-            "UPDATE images SET author = :author WHERE id = :id",
-            ['author'=>$artistName, 'id'=>$event->image->id]
-        );
     }
 
     public function onPageRequest(PageRequestEvent $event)
@@ -416,6 +392,46 @@ class Artists extends Extension
                 }
             }
         }
+    }
+
+    private function set_author(int $imageId, string $author) {
+        global $database;
+
+        $author = strtolower($author);
+        if (strlen($author) === 0 || strpos($author, " ")) {
+            return;
+        }
+
+        $paddedAuthor = str_replace(" ", "_", $author);
+
+        $artistID = null;
+        if ($this->artist_exists($author)) {
+            $artistID = $this->get_artist_id($author);
+        }
+
+        if (is_null($artistID) && $this->alias_exists_by_name($paddedAuthor)) {
+            $artistID = $this->get_artistID_by_aliasName($paddedAuthor);
+        }
+
+        if (is_null($artistID) && $this->member_exists_by_name($paddedAuthor)) {
+            $artistID = $this->get_artistID_by_memberName($paddedAuthor);
+        }
+
+        if (is_null($artistID) && $this->url_exists_by_url($author)) {
+            $artistID = $this->get_artistID_by_url($author);
+        }
+
+        if (!is_null($artistID)) {
+            $artistName = $this->get_artistName_by_artistID($artistID);
+        } else {
+            $this->save_new_artist($author, "");
+            $artistName = $author;
+        }
+
+        $database->execute(
+            "UPDATE images SET author = ? WHERE id = ?",
+            [$artistName, $imageId]
+        );
     }
 
     private function get_artistName_by_imageID(int $imageID): string

@@ -156,6 +156,38 @@ class Ratings extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onBulkExport(BulkExportEvent $event)
+    {
+        $event->fields["rating"] = $event->image->rating;
+    }
+    public function onBulkImport(BulkImportEvent $event)
+    {
+        if(property_exists($event->fields,"rating")
+            && $event->fields->rating != null
+            && Ratings::rating_is_valid( $event->fields->rating)) {
+            $this->set_rating($event->image->id, $event->fields->rating,"");
+        }
+    }
+
+    // public function onPostListBuilding(PostListBuildingEvent $event)
+    // {
+    //     global $user;
+    //     if ($user->can(Permissions::BULK_EDIT_IMAGE_RATING) && !empty($event->search_terms)) {
+    //         $this->theme->display_bulk_rater(Tag::implode($event->search_terms));
+    //     }
+    // }
+
+    private function check_permissions(Image $image): bool
+    {
+        global $user;
+
+        $user_view_level = Ratings::get_user_class_privs($user);
+        if (!in_array($image->rating, $user_view_level)) {
+            return false;
+        }
+        return true;
+    }
+
     public function onDisplayingImage(DisplayingImageEvent $event)
     {
         global $user, $page;

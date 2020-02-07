@@ -73,6 +73,16 @@ class PostTitles extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onBulkExport(BulkExportEvent $event)
+    {
+        $event->fields["title"] = $event->image->title;
+    }
+    public function onBulkImport(BulkImportEvent $event)
+    {
+        if(property_exists($event->fields,"title") && $event->fields->title!=null) {
+            $this->set_title($event->image->id, $event->fields->title);
+        }
+    }
 
 
     private function set_title(int $image_id, string $title)
