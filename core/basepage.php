@@ -83,6 +83,9 @@ class BasePage
     /** @var string */
     private $file = null;
 
+    /** @var bool */
+    private $file_delete = false;
+
     /** @var string */
     private $filename = null;
 
@@ -96,9 +99,10 @@ class BasePage
         $this->data = $data;
     }
 
-    public function set_file(string $file): void
+    public function set_file(string $file, bool $delete = false): void
     {
         $this->file = $file;
+        $this->file_delete = $delete;
     }
 
     /**
@@ -353,7 +357,13 @@ class BasePage
                 header("Content-Range: bytes $start-$end/$size");
                 header("Content-Length: " . $length);
 
-                stream_file($this->file, $start, $end);
+                try {
+                    stream_file($this->file, $start, $end);
+                } finally {
+                    if ($this->file_delete === true) {
+                        unlink($this->file);
+                    }
+                }
                 break;
             case PageMode::REDIRECT:
                 if ($this->flash) {
