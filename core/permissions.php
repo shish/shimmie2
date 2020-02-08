@@ -31,6 +31,8 @@ abstract class Permissions
     public const EDIT_IMAGE_OWNER = "edit_image_owner";
     public const EDIT_IMAGE_LOCK = "edit_image_lock";
     public const EDIT_IMAGE_TITLE = "edit_image_title";
+    public const EDIT_IMAGE_RELATIONSHIPS = "edit_image_relationships";
+    public const EDIT_IMAGE_ARTIST = "edit_image_artist";
     public const BULK_EDIT_IMAGE_TAG = "bulk_edit_image_tag";
     public const BULK_EDIT_IMAGE_SOURCE = "bulk_edit_image_source";
     public const DELETE_IMAGE = "delete_image";
@@ -76,6 +78,8 @@ abstract class Permissions
     public const EDIT_TAG_CATEGORIES = "edit_tag_categories";
     public const RESCAN_MEDIA = "rescan_media";
     public const SEE_IMAGE_VIEW_COUNTS = "see_image_view_counts";
+
+    public const EDIT_FAVOURITES = "edit_favourites";
 
     public const ARTISTS_ADMIN = "artists_admin";
     public const BLOTTER_ADMIN = "blotter_admin";

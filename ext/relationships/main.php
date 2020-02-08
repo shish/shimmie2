@@ -48,11 +48,14 @@ class Relationships extends Extension
 
     public function onImageInfoSet(ImageInfoSetEvent $event)
     {
-        if (isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : true) { //Ignore tag_edit__parent if tags contain parent metatag
-            if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : false) {
-                send_event(new ImageRelationshipSetEvent($event->image->id, (int) $_POST["tag_edit__parent"]));
-            } else {
-                $this->remove_parent($event->image->id);
+        global $user;
+        if ($user->can(Permissions::EDIT_IMAGE_RELATIONSHIPS)) {
+            if (isset($_POST['tag_edit__tags']) ? !preg_match('/parent[=|:]/', $_POST["tag_edit__tags"]) : true) { //Ignore tag_edit__parent if tags contain parent metatag
+                if (isset($_POST["tag_edit__parent"]) ? ctype_digit($_POST["tag_edit__parent"]) : false) {
+                    send_event(new ImageRelationshipSetEvent($event->image->id, (int) $_POST["tag_edit__parent"]));
+                } else {
+                    $this->remove_parent($event->image->id);
+                }
             }
         }
     }

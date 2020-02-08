@@ -131,14 +131,6 @@ class Index extends Extension
         $event->panel->add_block($sb);
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
-    {
-        global $cache;
-        if (SPEED_HAX) {
-            $cache->delete("thumb-block:{$event->image->id}");
-        }
-    }
-
     public function onPageNavBuilding(PageNavBuildingEvent $event)
     {
         $event->add_nav_link("posts", new Link('post/list'), "Posts", NavLink::is_active(["post","view"]), 20);

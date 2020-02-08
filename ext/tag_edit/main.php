@@ -171,10 +171,10 @@ class TagEdit extends Extension
                 throw new NullUserException("Error: No user with that name was found.");
             }
         }
-        if ($this->can_tag($event->image) && isset($_POST['tag_edit__tags'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_TAG) && isset($_POST['tag_edit__tags'])) {
             send_event(new TagSetEvent($event->image, Tag::explode($_POST['tag_edit__tags'])));
         }
-        if ($this->can_source($event->image) && isset($_POST['tag_edit__source'])) {
+        if ($user->can(Permissions::EDIT_IMAGE_SOURCE) && isset($_POST['tag_edit__source'])) {
             if (isset($_POST['tag_edit__tags']) ? !preg_match('/source[=|:]/', $_POST["tag_edit__tags"]) : true) {
                 send_event(new SourceSetEvent($event->image, $_POST['tag_edit__source']));
             }
@@ -268,18 +268,6 @@ class TagEdit extends Extension
             $source = ($matches[1] !== "none" ? $matches[1] : null);
             send_event(new SourceSetEvent(Image::by_id($event->image_id), $source));
         }
-    }
-
-    private function can_tag(Image $image): bool
-    {
-        global $user;
-        return ($user->can(Permissions::EDIT_IMAGE_TAG) || !$image->is_locked());
-    }
-
-    private function can_source(Image $image): bool
-    {
-        global $user;
-        return ($user->can(Permissions::EDIT_IMAGE_SOURCE) || !$image->is_locked());
     }
 
     private function mass_tag_edit(string $search, string $replace)

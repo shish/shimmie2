@@ -74,11 +74,14 @@ class ViewImage extends Extension
             }
 
             $image_id = int_escape($_POST['image_id']);
-
-            send_event(new ImageInfoSetEvent(Image::by_id($image_id)));
-
-            $page->set_mode(PageMode::REDIRECT);
-            $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
+            $image = Image::by_id($image_id);
+            if (!$image->is_locked()) {
+                send_event(new ImageInfoSetEvent($image));
+                $page->set_mode(PageMode::REDIRECT);
+                $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
+            } else {
+                $this->theme->display_error(403, "Image Locked", "An admin has locked this image");
+            }
         }
     }
 

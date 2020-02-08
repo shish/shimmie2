@@ -162,7 +162,9 @@ function stream_file(string $file, int $start, int $end): void
                 $buffer = $end - $p + 1;
             }
             echo fread($fp, $buffer);
-            if(!defined("UNITTEST")) @ob_flush();
+            if (!defined("UNITTEST")) {
+                @ob_flush();
+            }
             flush();
 
             // After flush, we can tell if the client browser has disconnected.

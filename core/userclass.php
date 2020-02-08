@@ -100,6 +100,8 @@ new UserClass("base", null, [
     Permissions::EDIT_IMAGE_OWNER => false,
     Permissions::EDIT_IMAGE_LOCK => false,
     Permissions::EDIT_IMAGE_TITLE => false,
+    Permissions::EDIT_IMAGE_RELATIONSHIPS => false,
+    Permissions::EDIT_IMAGE_ARTIST => false,
     Permissions::BULK_EDIT_IMAGE_TAG => false,
     Permissions::BULK_EDIT_IMAGE_SOURCE => false,
     Permissions::DELETE_IMAGE => false,
@@ -146,6 +148,8 @@ new UserClass("base", null, [
     Permissions::RESCAN_MEDIA => false,
     Permissions::SEE_IMAGE_VIEW_COUNTS => false,
 
+    Permissions::EDIT_FAVOURITES => false,
+
     Permissions::ARTISTS_ADMIN => false,
     Permissions::BLOTTER_ADMIN => false,
     Permissions::FORUM_ADMIN => false,
@@ -175,8 +179,11 @@ new UserClass("user", "base", [
     Permissions::EDIT_IMAGE_TAG => true,
     Permissions::EDIT_IMAGE_SOURCE => true,
     Permissions::EDIT_IMAGE_TITLE => true,
+    Permissions::EDIT_IMAGE_RELATIONSHIPS => true,
+    Permissions::EDIT_IMAGE_ARTIST => true,
     Permissions::CREATE_IMAGE_REPORT => true,
     Permissions::EDIT_IMAGE_RATING => true,
+    Permissions::EDIT_FAVOURITES => true,
     Permissions::SEND_PM => true,
     Permissions::READ_PM => true,
 ]);

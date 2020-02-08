@@ -40,11 +40,6 @@ class LiveFeed extends Extension
         );
     }
 
-    public function onImageInfoSet(ImageInfoSetEvent $event)
-    {
-        #		$this->msg("Image info set");
-    }
-
     public function get_priority(): int
     {
         return 99;

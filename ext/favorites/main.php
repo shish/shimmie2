@@ -82,6 +82,7 @@ class Favorites extends Extension
     {
         global $user;
         if (
+            $user->can(Permissions::EDIT_FAVOURITES) &&
             in_array('favorite_action', $_POST) &&
             (($_POST['favorite_action'] == "set") || ($_POST['favorite_action'] == "unset"))
         ) {

@@ -19,6 +19,12 @@ class Rule34 extends Extension
         $database->execute("NOTIFY shm_image_bans, '{$event->image->hash}';");
     }
 
+    public function onImageInfoSet(ImageInfoSetEvent $event)
+    {
+        global $cache;
+        $cache->delete("thumb-block:{$event->image->id}");
+    }
+
     public function onImageInfoBoxBuilding(ImageInfoBoxBuildingEvent $event)
     {
         global $config;
