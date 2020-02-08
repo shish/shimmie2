@@ -23,27 +23,13 @@ class SVGFileHandler extends DataHandlerExtension
         }
     }
 
-    public function onDataUpload(DataUploadEvent $event)
+    protected function move_upload_to_archive(DataUploadEvent $event)
     {
-        if ($this->supported_ext($event->type) && $this->check_contents($event->tmpname)) {
-            $hash = $event->hash;
-
-            $sanitizer = new Sanitizer();
-            $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = file_get_contents($event->tmpname);
-            $cleanSVG = $sanitizer->sanitize($dirtySVG);
-            file_put_contents(warehouse_path(Image::IMAGE_DIR, $hash), $cleanSVG);
-
-            send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
-            $image = $this->create_image_from_data(warehouse_path(Image::IMAGE_DIR, $hash), $event->metadata);
-            if (is_null($image)) {
-                throw new UploadException("SVG handler failed to create image object from data");
-            }
-            $iae = new ImageAdditionEvent($image);
-            send_event($iae);
-            $event->image_id = $iae->image->id;
-            $event->merged = $iae->merged;
-        }
+        $sanitizer = new Sanitizer();
+        $sanitizer->removeRemoteReferences(true);
+        $dirtySVG = file_get_contents($event->tmpname);
+        $cleanSVG = $sanitizer->sanitize($dirtySVG);
+        file_put_contents(warehouse_path(Image::IMAGE_DIR, $event->hash), $cleanSVG);
     }
 
     protected function create_thumb(string $hash, string $type): bool

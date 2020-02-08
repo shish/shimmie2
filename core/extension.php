@@ -347,12 +347,24 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
+    protected function move_upload_to_archive(DataUploadEvent $event)
+    {
+        $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
+        if (!@copy($event->tmpname, $target)) {
+            $errors = error_get_last();
+            throw new UploadException(
+                "Failed to copy file from uploads ({$event->tmpname}) to archive ($target): ".
+                "{$errors['type']} / {$errors['message']}"
+            );
+        }
+    }
+
     public function onDataUpload(DataUploadEvent $event)
     {
         $supported_ext = $this->supported_ext($event->type);
         $check_contents = $this->check_contents($event->tmpname);
         if ($supported_ext && $check_contents) {
-            move_upload_to_archive($event);
+            $this->move_upload_to_archive($event);
             send_event(new ThumbnailGenerationEvent($event->hash, $event->type));
 
             /* Check if we are replacing an image */

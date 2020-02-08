@@ -4,25 +4,6 @@
 \* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 /**
- * Move a file from PHP's temporary area into shimmie's image storage
- * hierarchy, or throw an exception trying.
- *
- * @param DataUploadEvent $event
- * @throws UploadException
- */
-function move_upload_to_archive(DataUploadEvent $event): void
-{
-    $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
-    if (!@copy($event->tmpname, $target)) {
-        $errors = error_get_last();
-        throw new UploadException(
-            "Failed to copy file from uploads ({$event->tmpname}) to archive ($target): ".
-            "{$errors['type']} / {$errors['message']}"
-        );
-    }
-}
-
-/**
  * Add a directory full of images
  *
  * @param string $base
