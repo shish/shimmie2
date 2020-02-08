@@ -530,25 +530,7 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        $tt = $this->parse_link_template($config->get_string(ImageConfig::TIP), "no_escape");
-
-        // Removes the size tag if the file is an mp3
-        if ($this->ext === 'mp3') {
-            $iitip = $tt;
-            $mp3tip = ["0x0"];
-            $h_tip = str_replace($mp3tip, " ", $iitip);
-
-            // Makes it work with a variation of the default tooltips (I.E $tags // $filesize // $size)
-            $justincase = ["   //", "//   ", "  //", "//  ", "  "];
-            if (strstr($h_tip, "  ")) {
-                $h_tip = html_escape(str_replace($justincase, "", $h_tip));
-            } else {
-                $h_tip = html_escape($h_tip);
-            }
-            return $h_tip;
-        } else {
-            return $tt;
-        }
+        return $this->parse_link_template($config->get_string(ImageConfig::TIP), "no_escape");
     }
 
     /**
@@ -802,7 +784,17 @@ class Image
         $tmpl = str_replace('$tags', $_escape($tags), $tmpl);
         $tmpl = str_replace('$base', $base_href, $tmpl);
         $tmpl = str_replace('$ext', $this->ext, $tmpl);
-        $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
+        if($this->width && $this->height && $this->length) {
+            $s = $this->length / 1000;
+            $tmpl = str_replace('$size', "{$this->width}x{$this->height}, ${s}s", $tmpl);
+        }
+        elseif($this->width && $this->height) {
+            $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
+        }
+        elseif($this->length) {
+            $s = $this->length / 1000;
+            $tmpl = str_replace('$size', "${s}s", $tmpl);
+        }
         $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
         $tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
         $tmpl = str_replace('$title', $_escape($config->get_string(SetupConfig::TITLE)), $tmpl);
