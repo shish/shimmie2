@@ -45,13 +45,14 @@ class Index extends Extension
             try {
                 $fast_page_limit = 500;
 
+                $ua = $_SERVER["HTTP_USER_AGENT"] ?? "No UA";
                 if (
                     SPEED_HAX
                     && (
-                        strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot") !== false
-                        || strstr($_SERVER["HTTP_USER_AGENT"], "YandexBot") !== false
-                        || strstr($_SERVER["HTTP_USER_AGENT"], "bingbot") !== false
-                        || strstr($_SERVER["HTTP_USER_AGENT"], "msnbot") !== false
+                        strstr($ua, "Googlebot") !== false
+                        || strstr($ua, "YandexBot") !== false
+                        || strstr($ua, "bingbot") !== false
+                        || strstr($ua, "msnbot") !== false
                     )
                     && (
                         $count_search_terms > 1
