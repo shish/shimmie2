@@ -51,6 +51,7 @@ class Index extends Extension
                         strstr($_SERVER["HTTP_USER_AGENT"], "Googlebot") !== false
                         || strstr($_SERVER["HTTP_USER_AGENT"], "YandexBot") !== false
                         || strstr($_SERVER["HTTP_USER_AGENT"], "bingbot") !== false
+                        || strstr($_SERVER["HTTP_USER_AGENT"], "msnbot") !== false
                     )
                     && (
                         $count_search_terms > 1
