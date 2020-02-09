@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 
+use function MicroHTML\{TR,TH,TD,A};
+
 if ( // kill these glitched requests immediately
     !empty($_SERVER["REQUEST_URI"])
     && strpos(@$_SERVER["REQUEST_URI"], "/http") !== false
@@ -29,9 +31,17 @@ class Rule34 extends Extension
     {
         global $config;
         $image_link = $config->get_string(ImageConfig::ILINK);
-        $url0 = $event->image->parse_link_template($image_link, "url_escape", 0);
-        $url1 = $event->image->parse_link_template($image_link, "url_escape", 1);
-        $html = "<tr><th>Links</th><td><a href='$url0'>Image Only</a> (<a href='$url1'>Backup Server</a>)</td></tr>";
+        $url0 = $event->image->parse_link_template($image_link, 0);
+        $url1 = $event->image->parse_link_template($image_link, 1);
+        $html = (string)TR(
+            TH("Links"),
+            TD(
+                A(["href"=>$url0], "Image Only"),
+                " (",
+                A(["href"=>$url1], "Backup Server"),
+                ")"
+            )
+        );
         $event->add_part($html, 90);
     }
 

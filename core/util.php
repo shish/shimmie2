@@ -221,6 +221,44 @@ function data_path(string $filename, bool $create = true): string
     return $filename;
 }
 
+function load_balance_url(string $tmpl, string $hash, int $n=0): string
+{
+    static $flexihashes = [];
+    $matches = [];
+    if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
+        $pre = $matches[1];
+        $opts = $matches[2];
+        $post = $matches[3];
+
+        if (isset($flexihashes[$opts])) {
+            $flexihash = $flexihashes[$opts];
+        } else {
+            $flexihash = new Flexihash\Flexihash();
+            foreach (explode(",", $opts) as $opt) {
+                $parts = explode("=", $opt);
+                $parts_count = count($parts);
+                $opt_val = "";
+                $opt_weight = 0;
+                if ($parts_count === 2) {
+                    $opt_val = $parts[0];
+                    $opt_weight = $parts[1];
+                } elseif ($parts_count === 1) {
+                    $opt_val = $parts[0];
+                    $opt_weight = 1;
+                }
+                $flexihash->addTarget($opt_val, $opt_weight);
+            }
+            $flexihashes[$opts] = $flexihash;
+        }
+
+        // $choice = $flexihash->lookup($pre.$post);
+        $choices = $flexihash->lookupList($hash, $n + 1);  // hash doesn't change
+        $choice = $choices[$n];
+        $tmpl = $pre . $choice . $post;
+    }
+    return $tmpl;
+}
+
 function transload(string $url, string $mfile): ?array
 {
     global $config;

@@ -62,4 +62,23 @@ class UtilTest extends \PHPUnit\Framework\TestCase
             warehouse_path("base", $hash, false, 10)
         );
     }
+
+    public function test_load_balance_url()
+    {
+        $hash = "7ac19c10d6859415";
+        $ext = "jpg";
+
+        // pseudo-randomly select one of the image servers, balanced in given ratio
+        $this->assertEquals(
+            "https://baz.mycdn.com/7ac19c10d6859415.jpg",
+            load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash)
+        );
+
+        // N'th and N+1'th results should be different
+        $this->assertNotEquals(
+            load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 0),
+            load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 1)
+        );
+
+    }
 }

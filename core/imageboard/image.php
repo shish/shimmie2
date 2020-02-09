@@ -530,7 +530,7 @@ class Image
     public function get_tooltip(): string
     {
         global $config;
-        return $this->parse_link_template($config->get_string(ImageConfig::TIP), "no_escape");
+        return $this->parse_link_template($config->get_string(ImageConfig::TIP));
     }
 
     /**
@@ -761,7 +761,7 @@ class Image
         @unlink($this->get_thumb_filename());
     }
 
-    public function parse_link_template(string $tmpl, string $_escape="url_escape", int $n=0): string
+    public function parse_link_template(string $tmpl, int $n=0): string
     {
         global $config;
 
@@ -781,7 +781,7 @@ class Image
         $tmpl = str_replace('$hash_ab', substr($this->hash, 0, 2), $tmpl);
         $tmpl = str_replace('$hash_cd', substr($this->hash, 2, 2), $tmpl);
         $tmpl = str_replace('$hash', $this->hash, $tmpl);
-        $tmpl = str_replace('$tags', $_escape($tags), $tmpl);
+        $tmpl = str_replace('$tags', $tags, $tmpl);
         $tmpl = str_replace('$base', $base_href, $tmpl);
         $tmpl = str_replace('$ext', $this->ext, $tmpl);
         if ($this->width && $this->height && $this->length) {
@@ -794,9 +794,9 @@ class Image
             $tmpl = str_replace('$size', "${s}s", $tmpl);
         }
         $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
-        $tmpl = str_replace('$filename', $_escape($base_fname), $tmpl);
-        $tmpl = str_replace('$title', $_escape($config->get_string(SetupConfig::TITLE)), $tmpl);
-        $tmpl = str_replace('$date', $_escape(autodate($this->posted, false)), $tmpl);
+        $tmpl = str_replace('$filename', $base_fname, $tmpl);
+        $tmpl = str_replace('$title', $config->get_string(SetupConfig::TITLE), $tmpl);
+        $tmpl = str_replace('$date', autodate($this->posted, false), $tmpl);
 
         // nothing seems to use this, sending the event out to 50 exts is a lot of overhead
         if (!SPEED_HAX) {
@@ -804,41 +804,7 @@ class Image
             $tmpl = $plte->link;
         }
 
-        static $flexihashes = [];
-        $matches = [];
-        if (preg_match("/(.*){(.*)}(.*)/", $tmpl, $matches)) {
-            $pre = $matches[1];
-            $opts = $matches[2];
-            $post = $matches[3];
-
-            if (isset($flexihashes[$opts])) {
-                $flexihash = $flexihashes[$opts];
-            } else {
-                $flexihash = new Flexihash\Flexihash();
-                foreach (explode(",", $opts) as $opt) {
-                    $parts = explode("=", $opt);
-                    $parts_count = count($parts);
-                    $opt_val = "";
-                    $opt_weight = 0;
-                    if ($parts_count === 2) {
-                        $opt_val = $parts[0];
-                        $opt_weight = $parts[1];
-                    } elseif ($parts_count === 1) {
-                        $opt_val = $parts[0];
-                        $opt_weight = 1;
-                    }
-                    $flexihash->addTarget($opt_val, $opt_weight);
-                }
-                $flexihashes[$opts] = $flexihash;
-            }
-
-            // $choice = $flexihash->lookup($pre.$post);
-            $choices = $flexihash->lookupList($this->hash, $n+1);  // hash doesn't change
-            $choice = $choices[$n];
-            $tmpl = $pre.$choice.$post;
-        }
-
-        return $tmpl;
+        return load_balance_url($tmpl, $this->hash, $n);
     }
 
     private static function tag_or_wildcard_to_ids(string $tag): array
@@ -860,8 +826,6 @@ class Image
         ?int $limit=null,
         ?int $offset=null
     ): Querylet {
-        global $database;
-
         list($tag_conditions, $img_conditions) = self::terms_to_conditions($tags);
 
         $positive_tag_count = 0;
@@ -905,7 +869,8 @@ class Image
             && !is_null($limit)
         ) {
             $in = $positive_tag_count === 1 ? "IN" : "NOT IN";
-            // doing this inline is 100x slower?
+            // IN (SELECT id FROM tags) is 100x slower than doing a separate
+            // query and then a second query for IN(first_query_results)??
             $tag_array = self::tag_or_wildcard_to_ids($tag_conditions[0]->tag);
             if (count($tag_array) == 0) {
                 if ($positive_tag_count == 1) {
