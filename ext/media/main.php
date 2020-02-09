@@ -296,6 +296,21 @@ class Media extends Extension
         }
     }
 
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    {
+        if ($event->image->width && $event->image->height && $event->image->length) {
+            $s = ((int)($event->image->length / 100))/10;
+            $event->replace('$size', "{$event->image->width}x{$event->image->height}, ${s}s");
+        } elseif ($event->image->width && $event->image->height) {
+            $event->replace('$size', "{$event->image->width}x{$event->image->height}");
+        } elseif ($event->image->length) {
+            $s = ((int)($event->image->length / 100))/10;
+            $event->replace('$size', "${s}s");
+        }
+
+        $event->replace('$ext', $event->image->ext);
+    }
+
     /**
      * Check Memory usage limits
      *

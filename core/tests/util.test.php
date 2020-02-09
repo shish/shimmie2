@@ -79,6 +79,5 @@ class UtilTest extends \PHPUnit\Framework\TestCase
             load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 0),
             load_balance_url("https://{foo=10,bar=5,baz=5}.mycdn.com/$hash.$ext", $hash, 1)
         );
-
     }
 }

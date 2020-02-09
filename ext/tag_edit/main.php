@@ -230,14 +230,12 @@ class TagEdit extends Extension
         $this->theme->display_mass_editor();
     }
 
-
     public function onPageSubNavBuilding(PageSubNavBuildingEvent $event)
     {
         if ($event->parent=="tags") {
             $event->add_nav_link("tags_help", new Link('ext_doc/tag_edit'), "Help");
         }
     }
-
 
     /**
      * When an alias is added, oldtag becomes inaccessible.
@@ -268,6 +266,14 @@ class TagEdit extends Extension
             $source = ($matches[1] !== "none" ? $matches[1] : null);
             send_event(new SourceSetEvent(Image::by_id($event->image_id), $source));
         }
+    }
+
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    {
+        $tags = $event->image->get_tag_list();
+        $tags = str_replace("/", "", $tags);
+        $tags = preg_replace("/^\.+/", "", $tags);
+        $event->replace('$tags', $tags);
     }
 
     private function mass_tag_edit(string $search, string $replace)

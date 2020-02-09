@@ -250,6 +250,20 @@ class ImageIO extends Extension
         $event->panel->add_block($sb);
     }
 
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    {
+        $fname = $event->image->get_filename();
+        $base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
+
+        $event->replace('$id', (string)$event->image->id);
+        $event->replace('$hash_ab', substr($event->image->hash, 0, 2));
+        $event->replace('$hash_cd', substr($event->image->hash, 2, 2));
+        $event->replace('$hash', $event->image->hash);
+        $event->replace('$filesize', to_shorthand_int($event->image->filesize));
+        $event->replace('$filename', $base_fname);
+        $event->replace('$date', autodate($event->image->posted, false));
+    }
+
     private function send_file(int $image_id, string $type)
     {
         global $config;

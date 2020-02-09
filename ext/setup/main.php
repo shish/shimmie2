@@ -446,4 +446,11 @@ class Setup extends Extension
             $event->add_link("Board Config", make_link("setup"));
         }
     }
+
+    public function onParseLinkTemplate(ParseLinkTemplateEvent $event)
+    {
+        global $config;
+        $event->replace('$base', $config->get_string('base_href'));
+        $event->replace('$title', $config->get_string(SetupConfig::TITLE));
+    }
 }

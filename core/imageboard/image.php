@@ -763,47 +763,8 @@ class Image
 
     public function parse_link_template(string $tmpl, int $n=0): string
     {
-        global $config;
-
-        // don't bother hitting the database if it won't be used...
-        $tags = "";
-        if (strpos($tmpl, '$tags') !== false) { // * stabs dynamically typed languages with a rusty spoon *
-            $tags = $this->get_tag_list();
-            $tags = str_replace("/", "", $tags);
-            $tags = preg_replace("/^\.+/", "", $tags);
-        }
-
-        $base_href = $config->get_string('base_href');
-        $fname = $this->get_filename();
-        $base_fname = strpos($fname, '.') ? substr($fname, 0, strrpos($fname, '.')) : $fname;
-
-        $tmpl = str_replace('$id', $this->id, $tmpl);
-        $tmpl = str_replace('$hash_ab', substr($this->hash, 0, 2), $tmpl);
-        $tmpl = str_replace('$hash_cd', substr($this->hash, 2, 2), $tmpl);
-        $tmpl = str_replace('$hash', $this->hash, $tmpl);
-        $tmpl = str_replace('$tags', $tags, $tmpl);
-        $tmpl = str_replace('$base', $base_href, $tmpl);
-        $tmpl = str_replace('$ext', $this->ext, $tmpl);
-        if ($this->width && $this->height && $this->length) {
-            $s = ((int)($this->length / 100))/10;
-            $tmpl = str_replace('$size', "{$this->width}x{$this->height}, ${s}s", $tmpl);
-        } elseif ($this->width && $this->height) {
-            $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
-        } elseif ($this->length) {
-            $s = ((int)($this->length / 100))/10;
-            $tmpl = str_replace('$size', "${s}s", $tmpl);
-        }
-        $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
-        $tmpl = str_replace('$filename', $base_fname, $tmpl);
-        $tmpl = str_replace('$title', $config->get_string(SetupConfig::TITLE), $tmpl);
-        $tmpl = str_replace('$date', autodate($this->posted, false), $tmpl);
-
-        // nothing seems to use this, sending the event out to 50 exts is a lot of overhead
-        if (!SPEED_HAX) {
-            $plte = send_event(new ParseLinkTemplateEvent($tmpl, $this));
-            $tmpl = $plte->link;
-        }
-
+        $plte = send_event(new ParseLinkTemplateEvent($tmpl, $this));
+        $tmpl = $plte->link;
         return load_balance_url($tmpl, $this->hash, $n);
     }
 

@@ -34,7 +34,6 @@ Notable behaviour changes:
 - We only show the first 500 pages of results for any query, except for
   the most simple (no tags, or one positive tag)
 - We only ever show the first 5,000 results for complex queries
-- `ParseLinkTemplateEvent` is disabled
 - Only comments from the past 24 hours show up in /comment/list
 - Web crawlers are blocked from creating too many nonsense searches
 - The first 10 pages in the index get extra caching

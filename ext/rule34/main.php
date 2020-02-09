@@ -1,6 +1,9 @@
 <?php declare(strict_types=1);
 
-use function MicroHTML\{TR,TH,TD,A};
+use function MicroHTML\TR;
+use function MicroHTML\TH;
+use function MicroHTML\TD;
+use function MicroHTML\A;
 
 if ( // kill these glitched requests immediately
     !empty($_SERVER["REQUEST_URI"])
