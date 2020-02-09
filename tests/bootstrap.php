@@ -29,6 +29,7 @@ _load_theme_files();
 $page = new Page();
 _load_event_listeners();
 $config->set_string("thumb_engine", "static");  # GD has less overhead per-call
+$config->set_bool("nice_urls", true);
 send_event(new DatabaseUpgradeEvent());
 send_event(new InitExtEvent());
 $_tracer->end();
@@ -43,7 +44,7 @@ abstract class ShimmiePHPUnitTestCase extends \PHPUnit\Framework\TestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        global $_tracer;
+        global $_tracer, $config;
         $_tracer->begin(get_called_class());
 
         self::create_user(self::$admin_name);

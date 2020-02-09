@@ -35,7 +35,7 @@ function make_link(?string $page=null, ?string $query=null): string
     }
 
     $install_dir = get_base_href();
-    if (NICE_URLS || $config->get_bool('nice_urls', false)) {
+    if (SPEED_HAX || $config->get_bool('nice_urls', false)) {
         $base = $install_dir;
     } else {
         $base = "$install_dir/index.php?q=";

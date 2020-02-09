@@ -8,7 +8,6 @@ define("CACHE_DSN", null);
 define("DEBUG", false);
 define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);
-define("NICE_URLS", true);
 define("WH_SPLITS", 1);
 define("VERSION", 'unit-tests');
 define("TRACE_FILE", null);

@@ -24,7 +24,6 @@ _d("CACHE_DSN", null);       // string   cache connection details
 _d("DEBUG", false);          // boolean  print various debugging details
 _d("COOKIE_PREFIX", 'shm');  // string   if you run multiple galleries with non-shared logins, give them different prefixes
 _d("SPEED_HAX", false);      // boolean  do some questionable things in the name of performance
-_d("NICE_URLS", false);      // boolean  force niceurl mode
 _d("WH_SPLITS", 1);          // int      how many levels of subfolders to put in the warehouse
 _d("VERSION", '2.8-dev');    // string   shimmie version
 _d("TIMEZONE", null);        // string   timezone
