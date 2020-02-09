@@ -405,7 +405,7 @@ class UserPage extends Extension
     {
         global $page, $config;
         $page->add_cookie("session", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");
-        if (CACHE_HTTP || SPEED_HAX) {
+        if (SPEED_HAX) {
             # to keep as few versions of content as possible,
             # make cookies all-or-nothing
             $page->add_cookie("user", "", time() + 60 * 60 * 24 * $config->get_int('login_memory'), "/");

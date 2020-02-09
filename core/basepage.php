@@ -287,22 +287,6 @@ class BasePage
 
         switch ($this->mode) {
             case PageMode::PAGE:
-                if (CACHE_HTTP) {
-                    global $user;
-                    header("Vary: Cookie, Accept-Encoding");
-                    if ($user->is_anonymous() && $_SERVER["REQUEST_METHOD"] == "GET") {
-                        header("Cache-control: public, max-age=600");
-                        header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 600) . ' GMT');
-                    } else {
-                        #header("Cache-control: private, max-age=0");
-                        header("Cache-control: no-cache");
-                        header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
-                    }
-                }
-                #else {
-                #	header("Cache-control: no-cache");
-                #	header('Expires: ' . gmdate('D, d M Y H:i:s', time() - 600) . ' GMT');
-                #}
                 usort($this->blocks, "blockcmp");
                 $this->add_auto_html_headers();
                 $this->render();
