@@ -6,7 +6,6 @@ define("DATABASE_DSN", null);
 define("DATABASE_TIMEOUT", 10000);
 define("CACHE_DSN", null);
 define("DEBUG", false);
-define("COVERAGE", false);
 define("CACHE_HTTP", false);
 define("COOKIE_PREFIX", 'shm');
 define("SPEED_HAX", false);

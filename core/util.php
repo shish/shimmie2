@@ -322,42 +322,6 @@ function transload(string $url, string $mfile): ?array
     return null;
 }
 
-/**
- * Get the active contents of a .php file
- */
-function manual_include(string $fname): ?string
-{
-    static $included = [];
-
-    if (!file_exists($fname)) {
-        return null;
-    }
-
-    if (in_array($fname, $included)) {
-        return null;
-    }
-
-    $included[] = $fname;
-
-    print "$fname\n";
-
-    $text = file_get_contents($fname);
-
-    // we want one continuous file
-    $text = str_replace('<'.'?php', '', $text);
-    $text = str_replace('?'.'>', '', $text);
-
-    // most requires are built-in, but we want /lib separately
-    $text = str_replace('require_', '// require_', $text);
-    $text = str_replace('// require_once "lib', 'require_once "lib', $text);
-
-    // @include_once is used for user-creatable config files
-    $text = preg_replace('/@include_once "(.*)";/e', "manual_include('$1')", $text);
-
-    return $text;
-}
-
-
 function path_to_tags(string $path): string
 {
     $matches = [];
@@ -562,11 +526,6 @@ date and you should plan on moving elsewhere.
     $tracer_enabled = constant('TRACE_FILE')!==null;
     $_tracer = new EventTracer();
 
-    if (COVERAGE) {
-        _start_coverage();
-        register_shutdown_function("_end_coverage");
-    }
-
     ob_start();
 
     if (PHP_SAPI === 'cli' || PHP_SAPI == 'phpdbg') {
@@ -665,36 +624,6 @@ function _get_query(): string
     return (@$_POST["q"]?:@$_GET["q"])?:"/";
 }
 
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
-* Code coverage                                                             *
-\* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-function _start_coverage(): void
-{
-    if (function_exists("xdebug_start_code_coverage")) {
-        #xdebug_start_code_coverage(XDEBUG_CC_UNUSED|XDEBUG_CC_DEAD_CODE);
-        xdebug_start_code_coverage(XDEBUG_CC_UNUSED);
-    }
-}
-
-function _end_coverage(): void
-{
-    if (function_exists("xdebug_get_code_coverage")) {
-        // Absolute path is necessary because working directory
-        // inside register_shutdown_function is unpredictable.
-        $absolute_path = dirname(dirname(__FILE__)) . "/data/coverage";
-        if (!file_exists($absolute_path)) {
-            mkdir($absolute_path);
-        }
-        $n = 0;
-        $t = time();
-        while (file_exists("$absolute_path/$t.$n.log")) {
-            $n++;
-        }
-        file_put_contents("$absolute_path/$t.$n.log", gzdeflate(serialize(xdebug_get_code_coverage())));
-    }
-}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *\
 * HTML Generation                                                           *
