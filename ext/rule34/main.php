@@ -64,6 +64,13 @@ class Rule34 extends Extension
 
     public function onCommand(CommandEvent $event)
     {
+        global $cache;
+        if ($event->cmd == "wipe-thumb-cache") {
+            foreach (Image::find_images_iterable(0, null, Tag::explode($event->args[0])) as $image) {
+                print($image->id . "\n");
+                $cache->delete("thumb-block:{$image->id}");
+            }
+        }
     }
 
     public function onSourceSet(SourceSetEvent $event)
