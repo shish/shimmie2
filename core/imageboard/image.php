@@ -784,15 +784,13 @@ class Image
         $tmpl = str_replace('$tags', $_escape($tags), $tmpl);
         $tmpl = str_replace('$base', $base_href, $tmpl);
         $tmpl = str_replace('$ext', $this->ext, $tmpl);
-        if($this->width && $this->height && $this->length) {
-            $s = $this->length / 1000;
+        if ($this->width && $this->height && $this->length) {
+            $s = ((int)($this->length / 100))/10;
             $tmpl = str_replace('$size', "{$this->width}x{$this->height}, ${s}s", $tmpl);
-        }
-        elseif($this->width && $this->height) {
+        } elseif ($this->width && $this->height) {
             $tmpl = str_replace('$size', "{$this->width}x{$this->height}", $tmpl);
-        }
-        elseif($this->length) {
-            $s = $this->length / 1000;
+        } elseif ($this->length) {
+            $s = ((int)($this->length / 100))/10;
             $tmpl = str_replace('$size', "${s}s", $tmpl);
         }
         $tmpl = str_replace('$filesize', to_shorthand_int($this->filesize), $tmpl);
