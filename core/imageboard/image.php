@@ -235,7 +235,9 @@ class Image
             }
         } else {
             // complex query
-            $total = $cache->get("image-count:" . Tag::implode($tags));
+            // implode(tags) can be too long for memcache...
+            $cache_key = "image-count:" . md5(Tag::implode($tags));
+            $total = $cache->get($cache_key);
             if (!$total) {
                 if (Extension::is_enabled(RatingsInfo::KEY)) {
                     $tags[] = "rating:*";
@@ -245,7 +247,7 @@ class Image
                 if (SPEED_HAX && $total > 5000) {
                     // when we have a ton of images, the count
                     // won't change dramatically very often
-                    $cache->set("image-count:" . Tag::implode($tags), $total, 3600);
+                    $cache->set($cache_key, $total, 3600);
                 }
             }
         }
