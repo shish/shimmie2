@@ -75,7 +75,7 @@ class ViewImage extends Extension
 
             $image_id = int_escape($_POST['image_id']);
             $image = Image::by_id($image_id);
-            if (!$image->is_locked()) {
+            if (!$image->is_locked() || $user->can(Permissions::EDIT_IMAGE_LOCK)) {
                 send_event(new ImageInfoSetEvent($image));
                 $page->set_mode(PageMode::REDIRECT);
                 $page->set_redirect(make_link("post/view/$image_id", url_escape(@$_POST['query'])));
