@@ -10,10 +10,9 @@
 
 # Shimmie
 
-[![Build Status](https://travis-ci.org/shish/shimmie2.svg?branch=master)](https://travis-ci.org/shish/shimmie2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
+[![Unit Tests](https://github.com/shish/shimmie2/workflows/Unit%20Tests/badge.svg)](https://github.com/shish/shimmie2/actions)
+[![Code Quality](https://scrutinizer-ci.com/g/shish/shimmie2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/shish/shimmie2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/shish/shimmie2/?branch=master)
-(master)
 
 This is the main branch of Shimmie, if you know anything at all about running
 websites, this is the version to use.
