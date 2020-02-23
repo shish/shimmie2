@@ -137,7 +137,7 @@ class ParseLinkTemplateEvent extends Event
 
     public function replace(string $needle, ?string $replace): void
     {
-        if(!is_null($replace)) {
+        if (!is_null($replace)) {
             $this->link = str_replace($needle, $replace, $this->link);
         }
     }

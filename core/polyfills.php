@@ -341,7 +341,8 @@ function get_extension(?string $mime_type): ?string
     return ($ext ? $ext : null);
 }
 
-function getSubclassesOf(string $parent) {
+function getSubclassesOf(string $parent)
+{
     $result = [];
     foreach (get_declared_classes() as $class) {
         $rclass = new ReflectionClass($class);

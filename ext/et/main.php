@@ -33,10 +33,23 @@ class ET extends Extension
         }
     }
 
+    public function onCommand(CommandEvent $event)
+    {
+        if ($event->cmd == "help") {
+            print "\tget-info\n";
+            print "\t\tList a bunch of info\n\n";
+        }
+        if ($event->cmd == "info") {
+            foreach ($this->get_info() as $k => $v) {
+                print("$k = $v\n");
+            }
+        }
+    }
+
     /**
      * Collect the information and return it in a keyed array.
      */
-    private function get_info()
+    private function get_info(): array
     {
         global $config, $database;
 

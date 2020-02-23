@@ -460,9 +460,10 @@ abstract class DataHandlerExtension extends Extension
     abstract protected function create_image_from_data(string $filename, array $metadata);
     abstract protected function create_thumb(string $hash, string $type): bool;
 
-    public static function get_all_supported_exts(): array {
+    public static function get_all_supported_exts(): array
+    {
         $arr = [];
-        foreach(getSubclassesOf("DataHandlerExtension") as $handler) {
+        foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
             $arr = array_merge($arr, $handler->SUPPORTED_EXT);
         }
         return $arr;
