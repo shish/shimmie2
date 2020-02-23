@@ -47,6 +47,7 @@ class UploadTheme extends Themelet
         $upload_list = "";
         $upload_count = $config->get_int('upload_count');
         $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+        $accept = $this->get_accept();
 
         if ($tl_enabled) {
             $upload_list .= "
@@ -60,7 +61,7 @@ class UploadTheme extends Themelet
             for ($i=0; $i<$upload_count; $i++) {
                 $upload_list .= "
 					<tr>
-						<td colspan='2'><input type='file' name='data$i'></td>
+						<td colspan='2'><input type='file' name='data$i' accept='$accept'></td>
 						<td colspan='2'><input type='text' name='url$i'></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
@@ -77,108 +78,11 @@ class UploadTheme extends Themelet
             for ($i=0; $i<$upload_count; $i++) {
                 $upload_list .= "
 					<tr>
-						<td colspan='4'><input type='file' name='data$i'></td>
+						<td colspan='4'><input type='file' name='data$i' accept='$accept'></td>
 						<td colspan='2'><input type='text' name='tags$i' class='autocomplete_tags' autocomplete='off'></td>
 					</tr>
 				";
             }
-        }
-
-        return $upload_list;
-    }
-
-    protected function h_upload_List_2(): string
-    {
-        global $config;
-
-        $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
-        // Uploader 2.0!
-        $upload_list = "";
-        $upload_count = $config->get_int('upload_count');
-
-        for ($i=0; $i<$upload_count; $i++) {
-            $a = $i+1;
-            $s = $i-1;
-
-            if ($i != 0) {
-                $upload_list .="<tr id='row$i' style='display:none'>";
-            } else {
-                $upload_list .= "<tr id='row$i'>";
-            }
-
-            $upload_list .= "<td width='15'>";
-
-            if ($i == 0) {
-                $js = 'javascript:$(function() {
-					$("#row'.$a.'").show();
-					$("#hide'.$i.'").hide();
-					$("#hide'.$a.'").show();});';
-
-                $upload_list .= "
-					<div id='hide$i'>
-						<img id='wrapper' src='ext/upload/minus.png' />
-						<a href='#' onclick='$js'><img src='ext/upload/plus.png'></a>
-					</div>
-				";
-            } else {
-                $js = 'javascript:$(function() {
-				$("#row'.$i.'").hide();
-				$("#hide'.$i.'").hide();
-				$("#hide'.$s.'").show();
-				$("#data'.$i.'").val("");
-				$("#url'.$i.'").val("");
-				});';
-
-                $upload_list .="
-					<div id='hide$i'>
-						<a href='#' onclick='$js'><img src='ext/upload/minus.png' /></a>
-				";
-
-                if ($a == $upload_count) {
-                    $upload_list .="<img id='wrapper' src='ext/upload/plus.png' />";
-                } else {
-                    $js1 = 'javascript:$(function() {
-						$("#row'.$a.'").show();
-						$("#hide'.$i.'").hide();
-						$("#hide'.$a.'").show(); });';
-
-                    $upload_list .=
-                    "<a href='#' onclick='$js1'>".
-                    "<img src='ext/upload/plus.png' /></a>";
-                }
-                $upload_list .= "</div>";
-            }
-            $upload_list .= "</td>";
-
-            $js2 = 'javascript:$(function() {
-						$("#url'.$i.'").hide();
-						$("#url'.$i.'").val("");
-						$("#data'.$i.'").show(); });';
-
-            $upload_list .= "
-				<form><td width='60'><input id='radio_button_a$i' type='radio' name='method' value='file' checked='checked' onclick='$js2' /> File<br>";
-
-            if ($tl_enabled) {
-                $js = 'javascript:$(function() {
-						$("#data'.$i.'").hide();
-						$("#data'.$i.'").val("");
-						$("#url'.$i.'").show(); });';
-
-                $upload_list .=
-                "<input id='radio_button_b$i' type='radio' name='method' value='url' onclick='$js' /> URL</ br></td></form>
-				<td>
-					<input id='data$i' name='data$i' class='wid' type='file'>
-					<input id='url$i' name='url$i' class='wid' type='text' style='display:none'>
-				</td>";
-            } else {
-                $upload_list .= "</td>
-				<td width='250'><input id='data$i' name='data$i' class='wid' type='file'></td>
-				";
-            }
-
-            $upload_list .= "
-				</tr>
-			";
         }
 
         return $upload_list;
@@ -255,11 +159,12 @@ class UploadTheme extends Themelet
     {
         global $config, $page;
         $tl_enabled = ($config->get_string("transload_engine", "none") != "none");
+        $accept = $this->get_accept();
 
         $upload_list = "
 			<tr>
 				<td>File</td>
-				<td><input name='data' type='file'></td>
+				<td><input name='data' type='file' accept='$accept'></td>
 			</tr>
 		";
         if ($tl_enabled) {
@@ -320,6 +225,7 @@ class UploadTheme extends Themelet
 
         $upload_list = "";
         $upload_count = $config->get_int('upload_count');
+        $accept = $this->get_accept();
 
         for ($i=0; $i<$upload_count; $i++) {
             if ($i == 0) {
@@ -328,7 +234,7 @@ class UploadTheme extends Themelet
             else {
                 $style = "style='display:none'";
             }
-            $upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" size='16' type='file'>\n";
+            $upload_list .= "<input id='data$i' name='data$i' $style onchange=\"$('#data".($i+1)."').show()\" size='16' type='file' accept='$accept'>\n";
         }
         $max_size = $config->get_int('upload_size');
         $max_kb = to_shorthand_int($max_size);
@@ -344,5 +250,9 @@ class UploadTheme extends Themelet
 			<noscript><br><a href='".make_link("upload")."'>Larger Form</a></noscript>
 			</div>
 		";
+    }
+
+    protected function get_accept() {
+        return join(",", DataHandlerExtension::get_all_supported_exts());
     }
 }
