@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-class Handle404Info extends ExtensionInfo
+class FourOhFourInfo extends ExtensionInfo
 {
-    public const KEY = "handle_404";
+    public const KEY = "four_oh_four";
 
     public $key = self::KEY;
     public $name = "404 Detector";

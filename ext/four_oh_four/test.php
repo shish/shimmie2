@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
-class Handle404Test extends ShimmiePHPUnitTestCase
+
+class FourOhFourTest extends ShimmiePHPUnitTestCase
 {
     public function test404Handler()
     {
