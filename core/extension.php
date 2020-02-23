@@ -344,6 +344,8 @@ abstract class FormatterExtension extends Extension
  */
 abstract class DataHandlerExtension extends Extension
 {
+    protected $SUPPORTED_EXT = [];
+
     protected function move_upload_to_archive(DataUploadEvent $event)
     {
         $target = warehouse_path(Image::IMAGE_DIR, $event->hash);
@@ -455,6 +457,13 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
+    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    {
+        if ($this->supported_ext($event->ext)) {
+            $this->media_check_properties($event);
+        }
+    }
+
     protected function create_image_from_data(string $filename, array $metadata): Image
     {
         global $config;
@@ -475,9 +484,14 @@ abstract class DataHandlerExtension extends Extension
         return $image;
     }
 
-    abstract protected function supported_ext(string $ext): bool;
+    abstract protected function media_check_properties(MediaCheckPropertiesEvent $event): void;
     abstract protected function check_contents(string $tmpname): bool;
     abstract protected function create_thumb(string $hash, string $type): bool;
+
+    protected function supported_ext(string $ext): bool
+    {
+        return in_array(strtolower($ext), $this->SUPPORTED_EXT);
+    }
 
     public static function get_all_supported_exts(): array
     {

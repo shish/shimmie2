@@ -3,24 +3,40 @@ use enshrined\svgSanitize\Sanitizer;
 
 class SVGFileHandler extends DataHandlerExtension
 {
+    protected $SUPPORTED_EXT = ["svg"];
+
     /** @var SVGFileHandlerTheme */
     protected $theme;
 
-    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    public function onPageRequest(PageRequestEvent $event)
     {
-        switch ($event->ext) {
-            case "svg":
-                $event->image->lossless = true;
-                $event->image->video = false;
-                $event->image->audio = false;
-                $event->image->image = true;
+        global $page;
+        if ($event->page_matches("get_svg")) {
+            $id = int_escape($event->get_arg(0));
+            $image = Image::by_id($id);
+            $hash = $image->hash;
 
-                $msp = new MiniSVGParser($event->file_name);
-                $event->image->width = $msp->width;
-                $event->image->height = $msp->height;
+            $page->set_type("image/svg+xml");
+            $page->set_mode(PageMode::DATA);
 
-                break;
+            $sanitizer = new Sanitizer();
+            $sanitizer->removeRemoteReferences(true);
+            $dirtySVG = file_get_contents(warehouse_path(Image::IMAGE_DIR, $hash));
+            $cleanSVG = $sanitizer->sanitize($dirtySVG);
+            $page->set_data($cleanSVG);
         }
+    }
+
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
+    {
+        $event->image->lossless = true;
+        $event->image->video = false;
+        $event->image->audio = false;
+        $event->image->image = true;
+
+        $msp = new MiniSVGParser($event->file_name);
+        $event->image->width = $msp->width;
+        $event->image->height = $msp->height;
     }
 
     protected function move_upload_to_archive(DataUploadEvent $event)
@@ -47,39 +63,6 @@ class SVGFileHandler extends DataHandlerExtension
             copy("ext/handle_svg/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
             return false;
         }
-    }
-
-    public function onDisplayingImage(DisplayingImageEvent $event)
-    {
-        global $page;
-        if ($this->supported_ext($event->image->ext)) {
-            $this->theme->display_image($page, $event->image);
-        }
-    }
-
-    public function onPageRequest(PageRequestEvent $event)
-    {
-        global $page;
-        if ($event->page_matches("get_svg")) {
-            $id = int_escape($event->get_arg(0));
-            $image = Image::by_id($id);
-            $hash = $image->hash;
-
-            $page->set_type("image/svg+xml");
-            $page->set_mode(PageMode::DATA);
-
-            $sanitizer = new Sanitizer();
-            $sanitizer->removeRemoteReferences(true);
-            $dirtySVG = file_get_contents(warehouse_path(Image::IMAGE_DIR, $hash));
-            $cleanSVG = $sanitizer->sanitize($dirtySVG);
-            $page->set_data($cleanSVG);
-        }
-    }
-
-    protected function supported_ext(string $ext): bool
-    {
-        $exts = ["svg"];
-        return in_array(strtolower($ext), $exts);
     }
 
     protected function check_contents(string $file): bool

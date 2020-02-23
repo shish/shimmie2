@@ -2,42 +2,27 @@
 
 class IcoFileHandler extends DataHandlerExtension
 {
-    const SUPPORTED_EXTENSIONS = ["ico", "ani", "cur"];
+    protected $SUPPORTED_EXT = ["ico", "ani", "cur"];
 
-    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        if (in_array($event->ext, self::SUPPORTED_EXTENSIONS)) {
-            $event->image->lossless = true;
-            $event->image->video = false;
-            $event->image->audio = false;
-            $event->image->image = ($event->ext!="ani");
+        $event->image->lossless = true;
+        $event->image->video = false;
+        $event->image->audio = false;
+        $event->image->image = ($event->ext!="ani");
 
-            $fp = fopen($event->file_name, "r");
-            try {
-                unpack("Snull/Stype/Scount", fread($fp, 6));
-                $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
-            } finally {
-                fclose($fp);
-            }
-
-            $width = $subheader['width'];
-            $height = $subheader['height'];
-            $event->image->width = $width == 0 ? 256 : $width;
-            $event->image->height = $height == 0 ? 256 : $height;
+        $fp = fopen($event->file_name, "r");
+        try {
+            unpack("Snull/Stype/Scount", fread($fp, 6));
+            $subheader = unpack("Cwidth/Cheight/Ccolours/Cnull/Splanes/Sbpp/Lsize/loffset", fread($fp, 16));
+        } finally {
+            fclose($fp);
         }
-    }
 
-    protected function supported_ext(string $ext): bool
-    {
-        return in_array(strtolower($ext), self::SUPPORTED_EXTENSIONS);
-    }
-
-    protected function check_contents(string $file): bool
-    {
-        $fp = fopen($file, "r");
-        $header = unpack("Snull/Stype/Scount", fread($fp, 6));
-        fclose($fp);
-        return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
+        $width = $subheader['width'];
+        $height = $subheader['height'];
+        $event->image->width = $width == 0 ? 256 : $width;
+        $event->image->height = $height == 0 ? 256 : $height;
     }
 
     protected function create_thumb(string $hash, string $type): bool
@@ -49,5 +34,13 @@ class IcoFileHandler extends DataHandlerExtension
             log_warning("handle_ico", "Could not generate thumbnail. " . $e->getMessage());
             return false;
         }
+    }
+
+    protected function check_contents(string $file): bool
+    {
+        $fp = fopen($file, "r");
+        $header = unpack("Snull/Stype/Scount", fread($fp, 6));
+        fclose($fp);
+        return ($header['null'] == 0 && ($header['type'] == 0 || $header['type'] == 1));
     }
 }

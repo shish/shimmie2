@@ -2,23 +2,18 @@
 
 class FlashFileHandler extends DataHandlerExtension
 {
-    public function onMediaCheckProperties(MediaCheckPropertiesEvent $event)
+    protected $SUPPORTED_EXT = ["swf"];
+
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void
     {
-        switch ($event->ext) {
-            case "swf":
-                $event->image->lossless = true;
-                $event->image->video = true;
+        $event->image->lossless = true;
+        $event->image->video = true;
+        $event->image->image = false;
 
-                $info = getimagesize($event->file_name);
-                if (!$info) {
-                    return null;
-                }
-                $event->image->image = false;
-
-                $event->image->width = $info[0];
-                $event->image->height = $info[1];
-
-                break;
+        $info = getimagesize($event->file_name);
+        if ($info) {
+            $event->image->width = $info[0];
+            $event->image->height = $info[1];
         }
     }
 
@@ -28,12 +23,6 @@ class FlashFileHandler extends DataHandlerExtension
             copy("ext/handle_flash/thumb.jpg", warehouse_path(Image::THUMBNAIL_DIR, $hash));
         }
         return true;
-    }
-
-    protected function supported_ext(string $ext): bool
-    {
-        $exts = ["swf"];
-        return in_array(strtolower($ext), $exts);
     }
 
     protected function check_contents(string $tmpname): bool
