@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 
-class ArchiveFileHandler extends Extension
+class ArchiveFileHandler extends DataHandlerExtension
 {
+    protected $SUPPORTED_EXT = ["zip"];
+
     public function onInitExt(InitExtEvent $event)
     {
         global $config;
@@ -36,9 +38,10 @@ class ArchiveFileHandler extends Extension
         }
     }
 
-    private function supported_ext($ext)
-    {
-        $exts = ["zip"];
-        return in_array(strtolower($ext), $exts);
-    }
+    public function onDisplayingImage(DisplayingImageEvent $event) {}
+
+    // we don't actually do anything, just accept one upload and spawn several
+    protected function media_check_properties(MediaCheckPropertiesEvent $event): void {}
+    protected function check_contents(string $tmpname): bool {return false;}
+    protected function create_thumb(string $hash, string $type): bool {return false;}
 }
