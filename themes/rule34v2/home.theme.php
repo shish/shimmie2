@@ -26,9 +26,7 @@ class CustomHomeTheme extends HomeTheme
 				#counter {display: none;}
 			}
 		</style>
-<meta name="trafficjunky-site-verification" content="9z3puyut0" />
 	</head>
-<!--ja31114--p103-->
 	<body>
 		$body
 	</body>
@@ -60,9 +58,16 @@ EOD
 			$message_html
 			$counter_html
 			<div class='space' id='foot'>
+
+<!-- JuicyAds v3.1 -->
+<script type='text/javascript' data-cfasync='false' async src='https://poweredby.jads.co/js/jads.js'></script>
+<ins id='825625' data-width='908' data-height='270'></ins>
+<script type='text/javascript' data-cfasync='false' async>(adsbyjuicy = window.adsbyjuicy || []).push({'adzone':825625});</script>
+<!--JuicyAds END-->
+
 				<small><small>
 				$contact_link Serving $num_comma posts &ndash;
-				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie</a>
+				Running <a href='http://code.shishnet.org/shimmie2/'>Shimmie2</a>
 				</small></small>
 			</div>
 		</div>";
