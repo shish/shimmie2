@@ -90,6 +90,8 @@ class ET extends Extension
         }
         $info['sys_extensions'] = join(', ', $els);
 
+        $info['handled_extensions'] = join(', ', DataHandlerExtension::get_all_supported_exts());
+
         //$cfs = array();
         //foreach($database->get_all("SELECT name, value FROM config") as $pair) {
         //	$cfs[] = $pair['name']."=".$pair['value'];

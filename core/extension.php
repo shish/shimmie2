@@ -497,7 +497,7 @@ abstract class DataHandlerExtension extends Extension
     {
         $arr = [];
         foreach (getSubclassesOf("DataHandlerExtension") as $handler) {
-            $arr = array_merge($arr, $handler->SUPPORTED_EXT);
+            $arr = array_merge($arr, (new $handler())->SUPPORTED_EXT);
         }
         return $arr;
     }
