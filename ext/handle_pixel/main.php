@@ -63,9 +63,6 @@ class PixelFileHandler extends DataHandlerExtension
     protected function check_contents(string $tmpname): bool
     {
         $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
-        if (!file_exists($tmpname)) {
-            return false;
-        }
         $info = getimagesize($tmpname);
         if (!$info) {
             return false;

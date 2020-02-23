@@ -126,9 +126,6 @@ class VideoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        return (
-            file_exists($tmpname) &&
-            in_array(getMimeType($tmpname), self::SUPPORTED_MIME)
-        );
+        return in_array(getMimeType($tmpname), self::SUPPORTED_MIME);
     }
 }

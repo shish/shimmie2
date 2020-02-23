@@ -54,10 +54,6 @@ class FlashFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        if (!file_exists($tmpname)) {
-            return false;
-        }
-
         $fp = fopen($tmpname, "r");
         $head = fread($fp, 3);
         fclose($fp);

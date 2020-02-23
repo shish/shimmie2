@@ -98,10 +98,6 @@ class SVGFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $file): bool
     {
-        if (!file_exists($file)) {
-            return false;
-        }
-
         $msp = new MiniSVGParser($file);
         return bool_escape($msp->valid);
     }

@@ -51,14 +51,7 @@ class MP3FileHandler extends DataHandlerExtension
 
     protected function check_contents(string $tmpname): bool
     {
-        $success = false;
-
-        if (file_exists($tmpname)) {
-            $mimeType = getMimeType($tmpname);
-
-            $success = ($mimeType == 'audio/mpeg');
-        }
-
-        return $success;
+        $mimeType = getMimeType($tmpname);
+        return ($mimeType == 'audio/mpeg');
     }
 }

@@ -48,9 +48,6 @@ class IcoFileHandler extends DataHandlerExtension
 
     protected function check_contents(string $file): bool
     {
-        if (!file_exists($file)) {
-            return false;
-        }
         $fp = fopen($file, "r");
         $header = unpack("Snull/Stype/Scount", fread($fp, 6));
         fclose($fp);
