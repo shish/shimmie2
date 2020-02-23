@@ -72,11 +72,8 @@ class ET extends Extension
         $info['stat_image_tags'] = $database->get_one("SELECT COUNT(*) FROM image_tags");
 
         $els = [];
-        foreach (get_declared_classes() as $class) {
-            $rclass = new ReflectionClass($class);
-            if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
-                $els[] = $class;
-            }
+        foreach (getSubclassesOf("Extension") as $class) {
+            $els[] = $class;
         }
         $info['sys_extensions'] = join(', ', $els);
 

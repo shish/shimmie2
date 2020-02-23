@@ -341,6 +341,17 @@ function get_extension(?string $mime_type): ?string
     return ($ext ? $ext : null);
 }
 
+function getSubclassesOf(string $parent) {
+    $result = [];
+    foreach (get_declared_classes() as $class) {
+        $rclass = new ReflectionClass($class);
+        if (!$rclass->isAbstract() && is_subclass_of($class, $parent)) {
+            $result[] = $class;
+        }
+    }
+    return $result;
+}
+
 /**
  * Like glob, with support for matching very long patterns with braces.
  */

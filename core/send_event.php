@@ -35,26 +35,23 @@ function _set_event_listeners(): void
     global $_shm_event_listeners;
     $_shm_event_listeners = [];
 
-    foreach (get_declared_classes() as $class) {
-        $rclass = new ReflectionClass($class);
-        if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
-            /** @var Extension $extension */
-            $extension = new $class();
+    foreach (getSubclassesOf("Extension") as $class) {
+        /** @var Extension $extension */
+        $extension = new $class();
 
-            // skip extensions which don't support our current database
-            if (!$extension->info->is_supported()) {
-                continue;
-            }
+        // skip extensions which don't support our current database
+        if (!$extension->info->is_supported()) {
+            continue;
+        }
 
-            foreach (get_class_methods($extension) as $method) {
-                if (substr($method, 0, 2) == "on") {
-                    $event = substr($method, 2) . "Event";
-                    $pos = $extension->get_priority() * 100;
-                    while (isset($_shm_event_listeners[$event][$pos])) {
-                        $pos += 1;
-                    }
-                    $_shm_event_listeners[$event][$pos] = $extension;
+        foreach (get_class_methods($extension) as $method) {
+            if (substr($method, 0, 2) == "on") {
+                $event = substr($method, 2) . "Event";
+                $pos = $extension->get_priority() * 100;
+                while (isset($_shm_event_listeners[$event][$pos])) {
+                    $pos += 1;
                 }
+                $_shm_event_listeners[$event][$pos] = $extension;
             }
         }
     }
@@ -64,11 +61,8 @@ function _dump_event_listeners(array $event_listeners, string $path): void
 {
     $p = "<"."?php\n";
 
-    foreach (get_declared_classes() as $class) {
-        $rclass = new ReflectionClass($class);
-        if (!$rclass->isAbstract() && is_subclass_of($class, "Extension")) {
-            $p .= "\$$class = new $class(); ";
-        }
+    foreach (getSubclassesOf("Extension") as $class) {
+        $p .= "\$$class = new $class(); ";
     }
 
     $p .= "\$_shm_event_listeners = array(\n";

@@ -304,19 +304,16 @@ abstract class ExtensionInfo
 
     public static function load_all_extension_info()
     {
-        foreach (get_declared_classes() as $class) {
-            $rclass = new ReflectionClass($class);
-            if (!$rclass->isAbstract() && is_subclass_of($class, "ExtensionInfo")) {
-                $extension_info = new $class();
-                if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
-                    throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
-                }
+        foreach (getSubclassesOf("ExtensionInfo") as $class) {
+            $extension_info = new $class();
+            if (array_key_exists($extension_info->key, self::$all_info_by_key)) {
+                throw new ScoreException("Extension Info $class with key $extension_info->key has already been loaded");
+            }
 
-                self::$all_info_by_key[$extension_info->key] = $extension_info;
-                self::$all_info_by_class[$class] = $extension_info;
-                if ($extension_info->core===true) {
-                    self::$core_extensions[] = $extension_info->key;
-                }
+            self::$all_info_by_key[$extension_info->key] = $extension_info;
+            self::$all_info_by_class[$class] = $extension_info;
+            if ($extension_info->core===true) {
+                self::$core_extensions[] = $extension_info->key;
             }
         }
     }
@@ -462,4 +459,12 @@ abstract class DataHandlerExtension extends Extension
     abstract protected function check_contents(string $tmpname): bool;
     abstract protected function create_image_from_data(string $filename, array $metadata);
     abstract protected function create_thumb(string $hash, string $type): bool;
+
+    public static function get_all_supported_exts(): array {
+        $arr = [];
+        foreach(getSubclassesOf("DataHandlerExtension") as $handler) {
+            $arr = array_merge($arr, $handler->SUPPORTED_EXT);
+        }
+        return $arr;
+    }
 }
