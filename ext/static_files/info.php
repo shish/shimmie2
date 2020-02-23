@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-class HandleStaticInfo extends ExtensionInfo
+class StaticFilesInfo extends ExtensionInfo
 {
-    public const KEY = "handle_static";
+    public const KEY = "static_files";
 
     public $key = self::KEY;
     public $name = "Static File Handler";
@@ -10,6 +10,6 @@ class HandleStaticInfo extends ExtensionInfo
     public $authors = self::SHISH_AUTHOR;
     public $license = self::LICENSE_GPLV2;
     public $visibility = self::VISIBLE_ADMIN;
-    public $description = 'If Shimmie can\'t handle a request, check static files ($theme/static/$filename, then ext/handle_static/static/$filename)';
+    public $description = 'If Shimmie can\'t handle a request, check static files ($theme/static/$filename, then ext/static_files/static/$filename)';
     public $core = true;
 }

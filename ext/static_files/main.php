@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-class HandleStatic extends Extension
+class StaticFiles extends Extension
 {
     public function onPageRequest(PageRequestEvent $event)
     {
@@ -12,7 +12,7 @@ class HandleStatic extends Extension
             $theme_name = $config->get_string(SetupConfig::THEME, "default");
 
             $theme_file = "themes/$theme_name/static/$f_pagename";
-            $static_file = "ext/handle_static/static/$f_pagename";
+            $static_file = "ext/static_files/static/$f_pagename";
 
             if (file_exists($theme_file) || file_exists($static_file)) {
                 $filename = file_exists($theme_file) ? $theme_file : $static_file;

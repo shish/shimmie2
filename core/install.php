@@ -345,8 +345,8 @@ function exit_with_page($title, $body, $code=0)
 <html>
 	<head>
 		<title>Shimmie Installer</title>
-		<link rel=\"shortcut icon\" href=\"ext/handle_static/static/favicon.ico\">
-		<link rel=\"stylesheet\" href=\"ext/handle_static/style.css\" type=\"text/css\">
+		<link rel=\"shortcut icon\" href=\"ext/static_files/static/favicon.ico\">
+		<link rel=\"stylesheet\" href=\"ext/static_files/style.css\" type=\"text/css\">
 	</head>
 	<body>
 		<div id=\"installer\">

@@ -24,7 +24,7 @@ class BrowserSearch extends Extension
             $search_title = $config->get_string(SetupConfig::TITLE);
             $search_form_url =  make_link('post/list/{searchTerms}');
             $suggenton_url = make_link('browser_search/')."{searchTerms}";
-            $icon_b64 = base64_encode(file_get_contents("ext/handle_static/static/favicon.ico"));
+            $icon_b64 = base64_encode(file_get_contents("ext/static_files/static/favicon.ico"));
 
             // Now for the XML
             $xml = "

@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-class HandleStaticTest extends ShimmiePHPUnitTestCase
+class StaticFilesTest extends ShimmiePHPUnitTestCase
 {
     public function testStaticHandler()
     {
