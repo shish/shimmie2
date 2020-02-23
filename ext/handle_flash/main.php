@@ -57,10 +57,6 @@ class FlashFileHandler extends DataHandlerExtension
         $fp = fopen($tmpname, "r");
         $head = fread($fp, 3);
         fclose($fp);
-        if (!in_array($head, ["CWS", "FWS"])) {
-            return false;
-        }
-
-        return true;
+        return in_array($head, ["CWS", "FWS"]);
     }
 }

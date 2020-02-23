@@ -64,13 +64,7 @@ class PixelFileHandler extends DataHandlerExtension
     {
         $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP];
         $info = getimagesize($tmpname);
-        if (!$info) {
-            return false;
-        }
-        if (in_array($info[2], $valid)) {
-            return true;
-        }
-        return false;
+        return $info && in_array($info[2], $valid);
     }
 
     protected function create_thumb(string $hash, string $type): bool
