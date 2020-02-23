@@ -128,12 +128,15 @@ function get_thumbnail_max_size_scaled(): array
 
 function create_image_thumb(string $hash, string $type, string $engine = null)
 {
-    global $config;
-
-    $inname  = warehouse_path(Image::IMAGE_DIR, $hash);
+    $inname = warehouse_path(Image::IMAGE_DIR, $hash);
     $outname = warehouse_path(Image::THUMBNAIL_DIR, $hash);
     $tsize = get_thumbnail_max_size_scaled();
+    create_scaled_image($inname, $outname, $tsize, $type, $engine);
+}
 
+function create_scaled_image(string $inname, string $outname, array $tsize, string $type, ?string $engine)
+{
+    global $config;
     if (empty($engine)) {
         $engine = $config->get_string(ImageConfig::THUMB_ENGINE);
     }
