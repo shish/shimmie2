@@ -56,26 +56,6 @@ function add_image(string $tmpname, string $filename, string $tags): void
 }
 
 /**
- * Gets an the extension defined in MIME_TYPE_MAP for a file.
- *
- * @param String $file_path
- * @return String The extension that was found.
- * @throws UploadException if the mimetype could not be determined, or if an extension for hte mimetype could not be found.
- */
-function get_extension_from_mime(String $file_path): String
-{
-    $mime = mime_content_type($file_path);
-    if (!empty($mime)) {
-        $ext = get_extension($mime);
-        if (!empty($ext)) {
-            return $ext;
-        }
-        throw new UploadException("Could not determine extension for mimetype ".$mime);
-    }
-    throw new UploadException("Could not determine file mime type: ".$file_path);
-}
-
-/**
  * Given a full size pair of dimensions, return a pair scaled down to fit
  * into the configured thumbnail square, with ratio intact.
  * Optionally uses the High-DPI scaling setting to adjust the final resolution.

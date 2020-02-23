@@ -46,20 +46,6 @@ class PixelFileHandler extends DataHandlerExtension
         return in_array(strtolower($ext), self::SUPPORTED_EXTENSIONS);
     }
 
-    protected function create_image_from_data(string $filename, array $metadata)
-    {
-        $image = new Image();
-
-        $image->filesize  = $metadata['size'];
-        $image->hash      = $metadata['hash'];
-        $image->filename  = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
-        $image->ext       = (($pos = strpos($metadata['extension'], '?')) !== false) ? substr($metadata['extension'], 0, $pos) : $metadata['extension'];
-        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-        $image->source    = $metadata['source'];
-
-        return $image;
-    }
-
     protected function check_contents(string $tmpname): bool
     {
         $valid = [IMAGETYPE_PNG, IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_WEBP];

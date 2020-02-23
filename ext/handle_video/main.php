@@ -95,35 +95,6 @@ class VideoFileHandler extends DataHandlerExtension
         return in_array(strtolower($ext), self::SUPPORTED_EXT);
     }
 
-    protected function create_image_from_data(string $filename, array $metadata): Image
-    {
-        $image = new Image();
-
-        switch (getMimeType($filename)) {
-            case "video/webm":
-                $image->ext = "webm";
-                break;
-            case "video/mp4":
-                $image->ext = "mp4";
-                break;
-            case "video/ogg":
-                $image->ext = "ogv";
-                break;
-            case "video/flv":
-            case "video/x-flv":
-                $image->ext = "flv";
-                break;
-        }
-
-        $image->filesize  = $metadata['size'];
-        $image->hash      = $metadata['hash'];
-        $image->filename  = $metadata['filename'];
-        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-        $image->source    = $metadata['source'];
-
-        return $image;
-    }
-
     protected function check_contents(string $tmpname): bool
     {
         return in_array(getMimeType($tmpname), self::SUPPORTED_MIME);

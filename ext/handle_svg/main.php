@@ -82,20 +82,6 @@ class SVGFileHandler extends DataHandlerExtension
         return in_array(strtolower($ext), $exts);
     }
 
-    protected function create_image_from_data(string $filename, array $metadata): Image
-    {
-        $image = new Image();
-
-        $image->filesize  = $metadata['size'];
-        $image->hash      = $metadata['hash'];
-        $image->filename  = $metadata['filename'];
-        $image->ext       = $metadata['extension'];
-        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-        $image->source    = $metadata['source'];
-
-        return $image;
-    }
-
     protected function check_contents(string $file): bool
     {
         $msp = new MiniSVGParser($file);

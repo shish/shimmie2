@@ -32,20 +32,6 @@ class IcoFileHandler extends DataHandlerExtension
         return in_array(strtolower($ext), self::SUPPORTED_EXTENSIONS);
     }
 
-    protected function create_image_from_data(string $filename, array $metadata)
-    {
-        $image = new Image();
-
-        $image->filesize = $metadata['size'];
-        $image->hash = $metadata['hash'];
-        $image->filename = $metadata['filename'];
-        $image->ext = $metadata['extension'];
-        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
-        $image->source = $metadata['source'];
-
-        return $image;
-    }
-
     protected function check_contents(string $file): bool
     {
         $fp = fopen($file, "r");

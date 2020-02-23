@@ -43,7 +43,7 @@ class DataUploadEvent extends Event
         $this->set_tmpname($tmpname);
 
         if ($config->get_bool("upload_use_mime")) {
-            $this->set_type(get_extension_from_mime($tmpname));
+            $this->set_type(get_extension(getMimeType($tmpname)));
         } else {
             if (array_key_exists('extension', $metadata) && !empty($metadata['extension'])) {
                 $this->type = strtolower($metadata['extension']);

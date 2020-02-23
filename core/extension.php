@@ -455,9 +455,28 @@ abstract class DataHandlerExtension extends Extension
         }
     }
 
+    protected function create_image_from_data(string $filename, array $metadata): Image
+    {
+        global $config;
+
+        $image = new Image();
+
+        $image->filesize = $metadata['size'];
+        $image->hash = $metadata['hash'];
+        $image->filename = (($pos = strpos($metadata['filename'], '?')) !== false) ? substr($metadata['filename'], 0, $pos) : $metadata['filename'];
+        if ($config->get_bool("upload_use_mime")) {
+            $image->ext = get_extension(getMimeType($filename));
+        } else {
+            $image->ext = (($pos = strpos($metadata['extension'], '?')) !== false) ? substr($metadata['extension'], 0, $pos) : $metadata['extension'];
+        }
+        $image->tag_array = is_array($metadata['tags']) ? $metadata['tags'] : Tag::explode($metadata['tags']);
+        $image->source = $metadata['source'];
+
+        return $image;
+    }
+
     abstract protected function supported_ext(string $ext): bool;
     abstract protected function check_contents(string $tmpname): bool;
-    abstract protected function create_image_from_data(string $filename, array $metadata);
     abstract protected function create_thumb(string $hash, string $type): bool;
 
     public static function get_all_supported_exts(): array
