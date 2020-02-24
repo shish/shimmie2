@@ -180,11 +180,13 @@ class ImageIO extends Extension
                 throw new ImageReplaceException($error);
             }
 
-            if (strlen(trim($image->source)) == 0) {
+            if (strlen(trim($image->source ?? '')) == 0) {
                 $image->source = $existing->get_source();
             }
 
             // Update the data in the database.
+            $image->id = $id;
+            send_event(new MediaCheckPropertiesEvent($image));
             $image->save_to_db();
 
             /*
